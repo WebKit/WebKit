@@ -502,7 +502,6 @@ namespace WebCore {
         void restorePlatformState();
 
         void setPlatformTextDrawingMode(TextDrawingModeFlags);
-        void setPlatformFont(const Font& font);
 
         void setPlatformStrokeColor(const Color&, ColorSpace);
         void setPlatformStrokeStyle(StrokeStyle);

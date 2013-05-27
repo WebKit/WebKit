@@ -66,9 +66,12 @@ public:
     };
 
     static PassRefPtr<FontGlyphs> create() { return adoptRef(new FontGlyphs()); }
+    static PassRefPtr<FontGlyphs> createForPlatformData(const FontPlatformData& platformData) { return adoptRef(new FontGlyphs(platformData)); }
 
     ~FontGlyphs() { releaseFontData(); }
     void invalidate(PassRefPtr<FontSelector>);
+
+    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(const Font&, UChar32, bool mirror, FontDataVariant) const;
     
     bool isFixedPitch(const Font* f) const { if (m_pitch == UnknownPitch) determinePitch(f); return m_pitch == FixedPitch; };
     void determinePitch(const Font*) const;
@@ -82,21 +85,13 @@ public:
 
     WidthCache& widthCache() const { return m_widthCache; }
 
-private:
-    FontGlyphs();
-
-    const SimpleFontData* primarySimpleFontData(const Font* f)
-    { 
-        ASSERT(isMainThread());
-        if (!m_cachedPrimarySimpleFontData)
-            m_cachedPrimarySimpleFontData = primaryFontData(f)->fontDataForCharacter(' ');
-        return m_cachedPrimarySimpleFontData;
-    }
-
+    const SimpleFontData* primarySimpleFontData(const Font*) const;
     const FontData* primaryFontData(const Font* f) const { return realizeFontDataAt(f, 0); }
     const FontData* realizeFontDataAt(const Font*, unsigned index) const;
 
-    void setPlatformFont(const FontPlatformData&);
+private:
+    FontGlyphs();
+    FontGlyphs(const FontPlatformData&);
 
     void releaseFontData();
     
@@ -111,9 +106,15 @@ private:
     unsigned short m_generation;
     mutable unsigned m_pitch : 3; // Pitch
     mutable bool m_loadingCustomFonts : 1;
-
-    friend class Font;
 };
+
+inline const SimpleFontData* FontGlyphs::primarySimpleFontData(const Font* f) const
+{
+    ASSERT(isMainThread());
+    if (!m_cachedPrimarySimpleFontData)
+        m_cachedPrimarySimpleFontData = primaryFontData(f)->fontDataForCharacter(' ');
+    return m_cachedPrimarySimpleFontData;
+}
 
 }
 

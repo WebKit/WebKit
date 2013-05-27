@@ -1,3 +1,43 @@
+2013-05-26  Antti Koivisto  <antti@apple.com>
+
+        Encapsulate FontGlyphs
+        https://bugs.webkit.org/show_bug.cgi?id=116803
+
+        Reviewed by Andreas Kling.
+
+        FontGlyphs is unfriending Font. Give it a real class interface and some actual code.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        * platform/graphics/Font.h:
+        (WebCore::Font::glyphDataForCharacter):
+        (WebCore::Font::glyphDataAndPageForCharacter):
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontGlyphs::FontGlyphs):
+        (WebCore::isInRange):
+        (WebCore::shouldIgnoreRotation):
+        (WebCore::glyphDataAndPageForNonCJKCharacterWithGlyphOrientation):
+        
+            Helpers from FontFastPath.cpp.
+
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter):
+        
+            This is the primary interface. The code moves here from FontFastPath.cpp.
+
+        * platform/graphics/FontFallbackList.h:
+        (WebCore::FontGlyphs::createForPlatformData):
+        
+            Remove setPlatformData in favor of constructor.
+
+        (WebCore::FontGlyphs::primarySimpleFontData):
+        * platform/graphics/FontFastPath.cpp:
+        * platform/graphics/GraphicsContext.h:
+
+            Remove a stray function definition also called setPlatformFont().
+
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter):
+
 2013-05-26  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Remove a leftover CALENDAR_PICKER from LocaleNone.cpp

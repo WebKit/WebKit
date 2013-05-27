@@ -89,7 +89,7 @@ Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing)
 }
 
 Font::Font(const FontPlatformData& fontData, bool isPrinterFont, FontSmoothingMode fontSmoothingMode)
-    : m_glyphs(FontGlyphs::create())
+    : m_glyphs(FontGlyphs::createForPlatformData(fontData))
     , m_letterSpacing(0)
     , m_wordSpacing(0)
     , m_isPlatformFont(true)
@@ -98,7 +98,6 @@ Font::Font(const FontPlatformData& fontData, bool isPrinterFont, FontSmoothingMo
     m_fontDescription.setUsePrinterFont(isPrinterFont);
     m_fontDescription.setFontSmoothing(fontSmoothingMode);
     m_needsTranscoding = fontTranscoder().needsTranscoding(fontDescription());
-    m_glyphs->setPlatformFont(fontData);
 }
 
 Font::Font(const Font& other)
