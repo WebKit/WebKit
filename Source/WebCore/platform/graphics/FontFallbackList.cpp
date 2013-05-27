@@ -45,6 +45,7 @@ FontGlyphs::FontGlyphs()
     , m_generation(fontCache()->generation())
     , m_pitch(UnknownPitch)
     , m_loadingCustomFonts(false)
+    , m_isForPlatformFont(false)
 {
 }
 
@@ -57,6 +58,7 @@ FontGlyphs::FontGlyphs(const FontPlatformData& platformData)
     , m_generation(fontCache()->generation())
     , m_pitch(UnknownPitch)
     , m_loadingCustomFonts(false)
+    , m_isForPlatformFont(true)
 {
     RefPtr<FontData> fontData = fontCache()->getCachedFontData(&platformData);
     m_realizedFontData.append(fontData.release());
@@ -247,11 +249,10 @@ static inline std::pair<GlyphData, GlyphPage*> glyphDataAndPageForNonCJKCharacte
     return std::make_pair(data, page);
 }
 
-std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForCharacter(const Font& font, UChar32 c, bool mirror, FontDataVariant variant) const
+std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForCharacter(const FontDescription& description, UChar32 c, bool mirror, FontDataVariant variant) const
 {
     ASSERT(isMainThread());
 
-    const FontDescription& description = font.fontDescription();
     if (variant == AutoVariant) {
         if (description.smallCaps() && !primarySimpleFontData(description)->isSVGFont()) {
             UChar32 upperC = WTF::Unicode::toUpper(c);
@@ -366,7 +367,8 @@ std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForCharacter(const 
         codeUnits[1] = U16_TRAIL(c);
         codeUnitsLength = 2;
     }
-    RefPtr<SimpleFontData> characterFontData = fontCache()->getFontDataForCharacters(font, codeUnits, codeUnitsLength);
+    const SimpleFontData* originalFontData = primaryFontData(description)->fontDataForCharacter(c);
+    RefPtr<SimpleFontData> characterFontData = fontCache()->systemFallbackForCharacters(description, originalFontData, m_isForPlatformFont, codeUnits, codeUnitsLength);
     if (characterFontData) {
         if (characterFontData->platformData().orientation() == Vertical && !characterFontData->hasVerticalGlyphs() && Font::isCJKIdeographOrSymbol(c))
             variant = BrokenIdeographVariant;

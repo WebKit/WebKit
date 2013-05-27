@@ -1,3 +1,48 @@
+2013-05-27  Antti Koivisto  <antti@apple.com>
+
+        Tighten FontGlyphs::glyphDataAndPageForCharacter to take FontDescription
+        https://bugs.webkit.org/show_bug.cgi?id=116823
+
+        Reviewed by Andreas Kling.
+
+        FontGlyphs does not need to know about Font anymore.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        * platform/graphics/Font.h:
+        (WebCore::Font::isPlatformFont):
+        (WebCore::Font::glyphDataAndPageForCharacter):
+        (Font):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontGlyphs::FontGlyphs):
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter):
+        * platform/graphics/FontFallbackList.h:
+        (WebCore):
+        (WebCore::FontGlyphs::createForPlatformFont):
+        
+            Tweaked the name.
+
+        (WebCore::FontGlyphs::isForPlatformFont):
+        
+            Move knowledge about platform font to FontGlyphs as it is needed for resolving system fallback on Mac.
+
+        * platform/graphics/blackberry/FontCacheBlackBerry.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/wince/FontCacheWinCE.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        
+            More descriptive name and tighter interface.
+
 2013-05-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Prevent unnecessary copy of LayoutRect objects

@@ -138,7 +138,7 @@ public:
     FontWeight weight() const { return m_fontDescription.weight(); }
     FontWidthVariant widthVariant() const { return m_fontDescription.widthVariant(); }
 
-    bool isPlatformFont() const { return m_isPlatformFont; }
+    bool isPlatformFont() const { return m_glyphs->isForPlatformFont(); }
 
     const FontMetrics& fontMetrics() const { return primaryFont()->fontMetrics(); }
     float spaceWidth() const { return primaryFont()->spaceWidth() + m_letterSpacing; }
@@ -160,7 +160,7 @@ public:
 #endif
     std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(UChar32 c, bool mirror, FontDataVariant variant) const
     {
-        return m_glyphs->glyphDataAndPageForCharacter(*this, c, mirror, variant);
+        return m_glyphs->glyphDataAndPageForCharacter(m_fontDescription, c, mirror, variant);
     }
     bool primaryFontHasGlyphForCharacter(UChar32) const;
 
@@ -309,7 +309,6 @@ private:
     mutable RefPtr<FontGlyphs> m_glyphs;
     short m_letterSpacing;
     short m_wordSpacing;
-    bool m_isPlatformFont;
     bool m_needsTranscoding;
     mutable TypesettingFeatures m_typesettingFeatures; // Caches values computed from m_fontDescription.
 };

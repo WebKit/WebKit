@@ -203,13 +203,13 @@ void FontCache::comUninitialize()
     }
 }
 
-PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool, const UChar* characters, int length)
 {
     String familyName;
     WCHAR name[LF_FACESIZE];
 
     UChar character = characters[0];
-    const FontPlatformData& origFont = font.primaryFont()->fontDataForCharacter(character)->platformData();
+    const FontPlatformData& origFont = originalFontData->platformData();
     unsigned unicodeRange = findCharUnicodeRange(character);
 
     if (IMLangFontLinkType* langFontLink = getFontLinkInterface()) {
@@ -265,7 +265,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
 
     if (!familyName.isEmpty()) {
         // FIXME: temporary workaround for Thai font problem
-        FontDescription fontDescription(font.fontDescription());
+        FontDescription fontDescription(description);
         if (unicodeRange == cRangeThai && fontDescription.weight() > FontWeightNormal)
             fontDescription.setWeight(FontWeightNormal);
 

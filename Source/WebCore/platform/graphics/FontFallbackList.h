@@ -29,7 +29,6 @@
 
 namespace WebCore {
 
-class Font;
 class GlyphPageTreeNode;
 class GraphicsContext;
 class IntRect;
@@ -66,12 +65,14 @@ public:
     };
 
     static PassRefPtr<FontGlyphs> create() { return adoptRef(new FontGlyphs()); }
-    static PassRefPtr<FontGlyphs> createForPlatformData(const FontPlatformData& platformData) { return adoptRef(new FontGlyphs(platformData)); }
+    static PassRefPtr<FontGlyphs> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(new FontGlyphs(platformData)); }
 
     ~FontGlyphs() { releaseFontData(); }
     void invalidate(PassRefPtr<FontSelector>);
 
-    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(const Font&, UChar32, bool mirror, FontDataVariant) const;
+    bool isForPlatformFont() const { return m_isForPlatformFont; }
+
+    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(const FontDescription&, UChar32, bool mirror, FontDataVariant) const;
     
     bool isFixedPitch(const FontDescription&) const;
     void determinePitch(const FontDescription&) const;
@@ -106,6 +107,7 @@ private:
     unsigned short m_generation;
     mutable unsigned m_pitch : 3; // Pitch
     mutable bool m_loadingCustomFonts : 1;
+    bool m_isForPlatformFont : 1;
 };
 
 inline bool FontGlyphs::isFixedPitch(const FontDescription& description) const

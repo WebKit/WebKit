@@ -75,7 +75,7 @@ public:
     void releaseFontData(const SimpleFontData*);
 
     // This method is implemented by the platform.
-    PassRefPtr<SimpleFontData> getFontDataForCharacters(const Font&, const UChar* characters, int length);
+    PassRefPtr<SimpleFontData> systemFallbackForCharacters(const FontDescription&, const SimpleFontData* originalFontData, bool isPlatformFont, const UChar* characters, int length);
 
     // Also implemented by the platform.
     void platformInit();

@@ -86,11 +86,11 @@ static inline bool isAppKitFontWeightBold(NSInteger appKitFontWeight)
     return appKitFontWeight >= 7;
 }
 
-PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool isPlatformFont, const UChar* characters, int length)
 {
     UChar32 character;
     U16_GET(characters, 0, 0, length, character);
-    const FontPlatformData& platformData = font.fontDataAt(0)->fontDataForCharacter(character)->platformData();
+    const FontPlatformData& platformData = originalFontData->platformData();
     NSFont *nsFont = platformData.font();
 
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(characters) length:length freeWhenDone:NO];
@@ -124,9 +124,9 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
         size = [nsFont pointSize];
     } else {
         // For custom fonts nsFont is nil.
-        traits = font.italic() ? NSFontItalicTrait : 0;
-        weight = toAppKitFontWeight(font.weight());
-        size = font.pixelSize();
+        traits = description.italic() ? NSFontItalicTrait : 0;
+        weight = toAppKitFontWeight(description.weight());
+        size = description.computedPixelSize();
     }
 
     NSFontTraitMask substituteFontTraits = [fontManager traitsOfFont:substituteFont];
@@ -140,14 +140,14 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
         }
     }
 
-    substituteFont = font.fontDescription().usePrinterFont() ? [substituteFont printerFont] : [substituteFont screenFont];
+    substituteFont = description.usePrinterFont() ? [substituteFont printerFont] : [substituteFont screenFont];
 
     substituteFontTraits = [fontManager traitsOfFont:substituteFont];
     substituteFontWeight = [fontManager weightOfFont:substituteFont];
 
     FontPlatformData alternateFont(substituteFont, platformData.size(), platformData.isPrinterFont(),
-        !font.isPlatformFont() && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(substituteFontWeight),
-        !font.isPlatformFont() && (traits & NSFontItalicTrait) && !(substituteFontTraits & NSFontItalicTrait),
+        !isPlatformFont && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(substituteFontWeight),
+        !isPlatformFont && (traits & NSFontItalicTrait) && !(substituteFontTraits & NSFontItalicTrait),
         platformData.m_orientation);
 
     return getCachedFontData(&alternateFont, DoNotRetain);

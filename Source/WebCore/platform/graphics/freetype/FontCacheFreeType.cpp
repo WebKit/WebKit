@@ -81,14 +81,14 @@ FcPattern* findBestFontGivenFallbacks(const FontPlatformData& fontData, FcPatter
     return FcFontSetMatch(0, sets, 1, pattern, &fontConfigResult);
 }
 
-PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool, const UChar* characters, int length)
 {
     RefPtr<FcPattern> pattern = adoptRef(createFontConfigPatternForCharacters(characters, length));
-    const FontPlatformData& fontData = font.primaryFont()->platformData();
+    const FontPlatformData& fontData = originalFontData->platformData();
 
     RefPtr<FcPattern> fallbackPattern = adoptRef(findBestFontGivenFallbacks(fontData, pattern.get()));
     if (fallbackPattern) {
-        FontPlatformData alternateFontData(fallbackPattern.get(), font.fontDescription());
+        FontPlatformData alternateFontData(fallbackPattern.get(), description);
         return getCachedFontData(&alternateFontData, DoNotRetain);
     }
 
@@ -96,7 +96,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     RefPtr<FcPattern> resultPattern = adoptRef(FcFontMatch(0, pattern.get(), &fontConfigResult));
     if (!resultPattern)
         return 0;
-    FontPlatformData alternateFontData(resultPattern.get(), font.fontDescription());
+    FontPlatformData alternateFontData(resultPattern.get(), description);
     return getCachedFontData(&alternateFontData, DoNotRetain);
 }
 
