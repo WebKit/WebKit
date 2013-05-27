@@ -3596,10 +3596,12 @@ static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
     return false;
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 static bool paintForFixedRootBackground(const RenderLayer* layer, RenderLayer::PaintLayerFlags paintFlags)
 {
     return layer->renderer()->isRoot() && (paintFlags & RenderLayer::PaintLayerPaintingRootBackgroundOnly);
 }
+#endif
 
 void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags)
 {
