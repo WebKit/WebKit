@@ -109,4 +109,5 @@ input[type="date"], input[type="datetime"], input[type="datetime-local"], input[
     font-family: "Slate Pro";
     -webkit-appearance: button;
     text-align: center;
+    width:auto;
 }
