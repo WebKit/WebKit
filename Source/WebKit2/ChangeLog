@@ -1,3 +1,23 @@
+2013-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView child widgets are not rendered with recent GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=116794
+
+        Reviewed by Xan Lopez.
+
+        Since rev d22fd7223c75f4720ddb982c659efb0d8d7543c4 of GTK+ expose
+        events are not propagated to child GdkWindows anymore, and child
+        widgets are rendered via gtk_container_propagate_draw(). Since all
+        our children have its own GdkWindow (auth widget, inspector view
+        and windowed plugins) we don't propagate the draw signal making
+        them invisible with current GTK+.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDraw): Chain up to the parent draw(), so it's
+        propagated to the children. This shouldn't have any effect in
+        previous versions of GTK+ because gtk_container_propagate_draw()
+        returned early when the child widget had its own GdkWindow.
+
 2013-05-27  Xan Lopez  <xlopez@igalia.com>
 
         Reset all clients on WebPage close
