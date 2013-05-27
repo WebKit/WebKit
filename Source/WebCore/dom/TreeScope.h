@@ -54,7 +54,7 @@ public:
     TreeScope* parentTreeScope() const { return m_parentTreeScope; }
     void setParentTreeScope(TreeScope*);
 
-    Node* focusedNode();
+    Element* focusedElement();
     Element* getElementById(const AtomicString&) const;
     const Vector<Element*>* getAllElementsById(const AtomicString&) const;
     bool hasElementWithId(AtomicStringImpl* id) const;

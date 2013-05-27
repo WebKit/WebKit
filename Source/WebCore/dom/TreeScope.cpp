@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All Rights Reserved.
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Element.h"
-#include "EventPathWalker.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -43,7 +42,6 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IdTargetObserverRegistry.h"
-#include "InsertionPoint.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderView.h"
@@ -382,7 +380,7 @@ void TreeScope::adoptIfNeeded(Node* node)
         adopter.execute();
 }
 
-static Node* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFrame)
+static Element* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFrame)
 {
     for (; focusedFrame; focusedFrame = focusedFrame->tree()->parent()) {
         if (focusedFrame->tree()->parent() == currentFrame)
@@ -391,29 +389,26 @@ static Node* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFrame)
     return 0;
 }
 
-Node* TreeScope::focusedNode()
+Element* TreeScope::focusedElement()
 {
     Document* document = rootNode()->document();
     Node* node = document->focusedNode();
-    if (!node && document->page())
-        node = focusedFrameOwnerElement(document->page()->focusController()->focusedFrame(), document->frame());
-    if (!node)
+
+    ASSERT(!node || node->isElementNode());
+    Element* element = toElement(node);
+
+    if (!element && document->page())
+        element = focusedFrameOwnerElement(document->page()->focusController()->focusedFrame(), document->frame());
+    if (!element)
         return 0;
-    Vector<Node*> targetStack;
-    for (EventPathWalker walker(node); walker.node(); walker.moveToParent()) {
-        Node* node = walker.node();
-        if (targetStack.isEmpty())
-            targetStack.append(node);
-        else if (walker.isVisitingInsertionPointInReprojection())
-            targetStack.append(targetStack.last());
-        if (node == rootNode())
-            return targetStack.last();
-        if (node->isShadowRoot()) {
-            ASSERT(!targetStack.isEmpty());
-            targetStack.removeLast();
-        }
+    TreeScope* treeScope = element->treeScope();
+    while (treeScope != this && treeScope != document) {
+        element = toShadowRoot(treeScope->rootNode())->host();
+        treeScope = element->treeScope();
     }
-    return 0;
+    if (this != treeScope)
+        return 0;
+    return element;
 }
 
 static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)

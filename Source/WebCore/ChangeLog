@@ -1,3 +1,38 @@
+2013-05-26  Andreas Kling  <akling@apple.com>
+
+        Turn TreeScope::focusedNode() into focusedElement().
+        <http://webkit.org/b/116802>
+
+        Reviewed by Darin Adler.
+
+        For the hundredth time, only Elements can be focused!
+
+        This change mostly reverts r121079 since that made things unnecessarily complicated
+        just to tweak the behavior of ShadowRoot.activeElement, an API that we don't expose.
+        Finding a TreeScope's focused element now does a simple walk up the parent chain instead
+        of running the full Shadow DOM re-targeting algorithm.
+
+        (WebCore::TreeScope::focusedElement):
+
+            Simplify and return Element* instead of Node*.
+
+        * dom/TreeScope.h:
+        * dom/TreeScope.cpp:
+        (WebCore::focusedFrameOwnerElement):
+
+            Make this return Element* as the name already suggested.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeFocusedNodeOfSubtree):
+        * dom/Element.cpp:
+        (WebCore::Element::blur):
+        * dom/ShadowRoot.h:
+        (WebCore::ShadowRoot::activeElement):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::activeElement):
+
+            Simplified call sites that were paranoid about getting a non-Element focused node.
+
 2013-05-26  Dean Jackson  <dino@apple.com>
 
         Plugins with no src but valid type should not snapshot
