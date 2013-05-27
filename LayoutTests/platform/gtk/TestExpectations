@@ -932,7 +932,7 @@ Bug(GTK) inspector/timeline/timeline-decode-resize.html [ Failure ]
 Bug(GTK) http/tests/inspector/resource-har-pages.html [ Failure ]
 Bug(GTK) http/tests/inspector/resource-parameters.html [ Timeout ]
 
-webkit.org/b/56691 http/tests/inspector/network/network-size-chunked.html [ Missing ]
+webkit.org/b/56691 http/tests/inspector/network/network-size-chunked.html [ Failure ]
 webkit.org/b/56691 http/tests/inspector/network/network-size-sync.html [ Failure ]
 webkit.org/b/56691 http/tests/inspector/network/network-size.html [ Failure ]
 webkit.org/b/51380 http/tests/inspector/console-websocket-error.html [ Failure Timeout ]
@@ -1380,6 +1380,12 @@ webkit.org/b/115633 accessibility/meter-element.html [ Failure ]
 webkit.org/b/116059 fast/css/variables/var-inside-shape.html [ ImageOnlyFailure ]
 
 webkit.org/b/116153 fast/css/text-overflow-ellipsis-full-truncate-rtl.html [ ImageOnlyFailure ]
+
+webkit.org/b/90589 fast/css/user-drag-none.html [ Failure ]
+
+webkit.org/b/116806 fast/css/text-overflow-ellipsis-behind-floats.html [ ImageOnlyFailure ]
+
+webkit.org/b/116808 fast/regions/offsetLeft-offsetTop-in-multiple-regions.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

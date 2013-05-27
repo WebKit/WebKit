@@ -1,6 +1,14 @@
 2013-05-27  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
+        Adding failure expectations for the current test failures.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2013-05-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
 
         * platform/gtk/fast/dynamic/002-expected.txt: Rebaselining after r150527.
         * platform/gtk/fast/js/global-constructors-attributes-worker-expected.txt: Added. Rebaselining after r150664.
