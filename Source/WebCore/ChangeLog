@@ -1,3 +1,15 @@
+2013-05-27  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Remove a leftover Pagepoup from PickerIndicatorElement.h
+        https://bugs.webkit.org/show_bug.cgi?id=116801
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, no behavior change.
+
+        * html/shadow/PickerIndicatorElement.h:
+        (WebCore):
+
 2013-05-27  Claudio Saavedra  <csaavedra@igalia.com>
 
         [CSS] -webkit-var prefix is case-sensitive

@@ -40,7 +40,6 @@
 namespace WebCore {
 
 class HTMLInputElement;
-class PagePopup;
 
 class PickerIndicatorElement FINAL : public HTMLDivElement, public DateTimeChooserClient {
 public:
