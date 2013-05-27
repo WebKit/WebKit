@@ -1,3 +1,22 @@
+2013-05-26  Dean Jackson  <dino@apple.com>
+
+        Plugins with no src but valid type should not snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=116799
+        <rdar://problem/13695911>
+
+        Reviewed by Simon Fraser.
+
+        There are a few plug-ins around that don't take any source content
+        via the src attribute, but rather just load the binary based on the
+        mime-type. In those cases we shouldn't snapshot until we have a
+        mechanism to do so.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn):
+            Add MIMEType logging, and detect the case of no src but valid type.
+        * html/HTMLPlugInImageElement.h: Add another SnapshotReason enum for
+            this special case.
+
 2013-05-26  Antti Koivisto  <antti@apple.com>
 
         Encapsulate FontGlyphs

@@ -577,7 +577,8 @@ void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
 void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
 {
     LOG(Plugins, "%p Plug-in URL: %s", this, m_url.utf8().data());
-    LOG(Plugins, "   Loaded URL: %s", url.string().utf8().data());
+    LOG(Plugins, "   Actual URL: %s", url.string().utf8().data());
+    LOG(Plugins, "   MIME type: %s", loadedMimeType().utf8().data());
 
     m_loadedUrl = url;
     m_plugInWasCreated = false;
@@ -642,6 +643,12 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
     if (document()->page()->settings()->autostartOriginPlugInSnapshottingEnabled() && document()->page()->plugInClient() && document()->page()->plugInClient()->shouldAutoStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), url.host(), loadedMimeType())) {
         LOG(Plugins, "%p Plug-in from (%s, %s) is marked to auto-start, set to play", this, document()->page()->mainFrame()->document()->baseURL().host().utf8().data(), url.host().utf8().data());
         m_snapshotDecision = NeverSnapshot;
+        return;
+    }
+
+    if (m_loadedUrl.isEmpty() && !loadedMimeType().isEmpty()) {
+        LOG(Plugins, "%p Plug-in has no src URL but does have a valid mime type %s, set to play", this, loadedMimeType().utf8().data());
+        m_snapshotDecision = MaySnapshotWhenContentIsSet;
         return;
     }
 

@@ -94,7 +94,8 @@ public:
         SnapshotNotYetDecided,
         NeverSnapshot,
         Snapshotted,
-        MaySnapshotWhenResized
+        MaySnapshotWhenResized,
+        MaySnapshotWhenContentIsSet
     };
     SnapshotDecision snapshotDecision() const { return m_snapshotDecision; }
 
