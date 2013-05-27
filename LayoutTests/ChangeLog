@@ -1,3 +1,10 @@
+2013-05-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/fast/dynamic/002-expected.txt: Rebaselining after r150527.
+        * platform/gtk/fast/js/global-constructors-attributes-worker-expected.txt: Added. Rebaselining after r150664.
+
 2013-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Unprefix Page Visibility API
