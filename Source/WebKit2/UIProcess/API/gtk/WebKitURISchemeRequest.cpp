@@ -163,10 +163,10 @@ WebKitWebView* webkit_uri_scheme_request_get_web_view(WebKitURISchemeRequest* re
 static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsyncResult* result, WebKitURISchemeRequest* schemeRequest)
 {
     GRefPtr<WebKitURISchemeRequest> request = adoptGRef(schemeRequest);
-    gssize bytesRead = g_input_stream_read_finish(inputStream, result, 0);
-    // FIXME: notify the WebProcess that we failed to read from the user stream.
+    GOwnPtr<GError> error;
+    gssize bytesRead = g_input_stream_read_finish(inputStream, result, &error.outPtr());
     if (bytesRead == -1) {
-        webkitWebContextDidFinishURIRequest(request->priv->webContext, request->priv->requestID);
+        webkit_uri_scheme_request_finish_error(request.get(), error.get());
         return;
     }
 

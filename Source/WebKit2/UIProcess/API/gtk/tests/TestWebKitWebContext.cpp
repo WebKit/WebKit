@@ -166,7 +166,9 @@ public:
         if (!g_strcmp0(scheme, "echo")) {
             char* replyHTML = g_strdup_printf(handler.reply.data(), webkit_uri_scheme_request_get_path(request));
             g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), replyHTML, strlen(replyHTML), g_free);
-        } else if (!handler.reply.isNull())
+        } else if (!g_strcmp0(scheme, "closed"))
+            g_input_stream_close(inputStream.get(), 0, 0);
+        else if (!handler.reply.isNull())
             g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), handler.reply.data(), handler.reply.length(), 0);
 
         webkit_uri_scheme_request_finish(request, inputStream.get(), handler.replyLength, handler.mimeType.data());
@@ -222,6 +224,14 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert(test->m_loadFailed);
     g_assert_error(test->m_error.get(), g_quark_from_string(errorDomain), errorCode);
     g_assert_cmpstr(test->m_error->message, ==, errorMessage);
+
+    test->registerURISchemeHandler("closed", 0, 0, 0);
+    test->m_loadEvents.clear();
+    test->loadURI("closed:input-stream");
+    test->waitUntilLoadFinished();
+    g_assert(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
+    g_assert(test->m_loadFailed);
+    g_assert_error(test->m_error.get(), G_IO_ERROR, G_IO_ERROR_CLOSED);
 }
 
 static void testWebContextSpellChecker(Test* test, gconstpointer)
