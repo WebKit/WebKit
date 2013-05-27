@@ -1,3 +1,17 @@
+2013-05-26  Patrick Gansterer  <paroga@webkit.org>
+
+        [WINCE] Add wtf_bsearch()
+        https://bugs.webkit.org/show_bug.cgi?id=116528
+
+        Reviewed by Darin Adler.
+
+        r149833 introduced usage of ::bsearch(), which does not exist on Windwos CE.
+        Add our own implementation of this function as wtf_bsearch and define
+        bsearch as wtf_bsearch to fix compilation on Windwos CE.
+
+        * wtf/StdLibExtras.h:
+        (wtf_bsearch):
+
 2013-05-26  Kent Tamura  <tkent@chromium.org>
 
         Remove ENABLE_CALENDAR_PICKER
