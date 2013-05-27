@@ -207,7 +207,7 @@ static PassRefPtr<Range> makeSearchRange(const Position& pos)
     Node* de = d->documentElement();
     if (!de)
         return 0;
-    Node* boundary = n->enclosingBlockFlowElement();
+    Element* boundary = deprecatedEnclosingBlockFlowElement(n);
     if (!boundary)
         return 0;
 

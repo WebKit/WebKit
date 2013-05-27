@@ -1265,27 +1265,6 @@ bool Node::needsShadowTreeWalkerSlow() const
     return (isShadowRoot() || (isElementNode() && (isInsertionPoint() || isPseudoElement() || toElement(this)->hasPseudoElements() || toElement(this)->shadow())));
 }
 
-bool Node::isBlockFlowElement() const
-{
-    return isElementNode() && renderer() && renderer()->isBlockFlow();
-}
-
-Element *Node::enclosingBlockFlowElement() const
-{
-    Node *n = const_cast<Node *>(this);
-    if (isBlockFlowElement())
-        return toElement(n);
-
-    while (1) {
-        n = n->parentNode();
-        if (!n)
-            break;
-        if (n->isBlockFlowElement() || n->hasTagName(bodyTag))
-            return toElement(n);
-    }
-    return 0;
-}
-
 bool Node::isRootEditableElement() const
 {
     return rendererIsEditable() && isElementNode() && (!parentNode() || !parentNode()->rendererIsEditable()
@@ -1312,11 +1291,6 @@ Element* Node::rootEditableElement() const
             break;
     }
     return result;
-}
-
-bool Node::inSameContainingBlockFlowElement(Node *n)
-{
-    return n ? enclosingBlockFlowElement() == n->enclosingBlockFlowElement() : false;
 }
 
 // FIXME: End of obviously misplaced HTML editing functions.  Try to move these out of Node.

@@ -1,3 +1,48 @@
+2013-05-27  Darin Adler  <darin@apple.com>
+
+        Move isBlockFlowElement and related functions out of the Node class into editing code
+        https://bugs.webkit.org/show_bug.cgi?id=116846
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Node.cpp: Removed isBlockFlowElement, enclosingBlockFlowElement, and
+        inSameContainingBlockFlowElement. These are all editing functions that don't
+        belong in the Node class, and mostly-deprecated ones to boot.
+        * dom/Node.h: Ditto.
+
+        * dom/Position.cpp:
+        (WebCore::inSameEnclosingBlockFlowElement): Added. This editing-specific function
+        is used only here, so put it here.
+        (WebCore::Position::rendersInDifferentPosition): Updated to call new function above.
+        (WebCore::Position::leadingWhitespacePosition): Ditto.
+
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::insertNodeAfterPosition): Use
+        deprecatedEnclosingBlockFlowElement at its new location.
+        (WebCore::InsertLineBreakCommand::insertNodeBeforePosition): Ditto.
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApplyForSingleParagraph): use
+        isBlockFlowElement at its new location.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::enclosingInline): Ditto.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::canonicalPosition): Use deprecatedEnclosingBlockFlowElement
+        at its new location.
+        (WebCore::enclosingBlockFlowElement): Ditto. Also added FIXME.
+        * editing/VisibleSelection.cpp:
+        (WebCore::makeSearchRange): Ditto.
+
+        * editing/htmlediting.cpp:
+        (WebCore::isBlockFlowElement): Added. Same as the Node::isBlockFlowElement
+        function, but here because this is an editing function, not suitable as a Node member.
+        (WebCore::deprecatedEnclosingBlockFlowElement): Ditto. Added "deprecated" to the name
+        since the Node member function had a comment saying it was deprecated. Also changed so
+        it tolerates a 0 for an argument, which made it easier for one caller.
+
+        * editing/htmlediting.h: Added the two new functions.
+
 2013-05-27  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Add guard around paintForFixedRootBackground

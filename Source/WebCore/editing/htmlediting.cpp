@@ -1208,4 +1208,26 @@ Position adjustedSelectionStartForStyleComputation(const VisibleSelection& selec
     return visiblePosition.deepEquivalent().downstream();
 }
 
+// FIXME: Should this be deprecated like deprecatedEnclosingBlockFlowElement is?
+bool isBlockFlowElement(const Node* node)
+{
+    if (!node->isElementNode())
+        return false;
+    RenderObject* renderer = node->renderer();
+    return renderer && renderer->isBlockFlow();
+}
+
+Element* deprecatedEnclosingBlockFlowElement(Node* node)
+{
+    if (!node)
+        return 0;
+    if (isBlockFlowElement(node))
+        return toElement(node);
+    while ((node = node->parentNode())) {
+        if (isBlockFlowElement(node) || node->hasTagName(bodyTag))
+            return toElement(node);
+    }
+    return 0;
+}
+
 } // namespace WebCore

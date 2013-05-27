@@ -58,7 +58,7 @@ void InsertLineBreakCommand::insertNodeAfterPosition(Node* node, const Position&
     // Insert the BR after the caret position. In the case the
     // position is a block, do an append. We don't want to insert
     // the BR *after* the block.
-    Element* cb = pos.deprecatedNode()->enclosingBlockFlowElement();
+    Element* cb = deprecatedEnclosingBlockFlowElement(pos.deprecatedNode());
     if (cb == pos.deprecatedNode())
         appendNode(node, cb);
     else
@@ -70,7 +70,7 @@ void InsertLineBreakCommand::insertNodeBeforePosition(Node* node, const Position
     // Insert the BR after the caret position. In the case the
     // position is a block, do an append. We don't want to insert
     // the BR *before* the block.
-    Element* cb = pos.deprecatedNode()->enclosingBlockFlowElement();
+    Element* cb = deprecatedEnclosingBlockFlowElement(pos.deprecatedNode());
     if (cb == pos.deprecatedNode())
         appendNode(node, cb);
     else

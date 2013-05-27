@@ -304,8 +304,6 @@ public:
     // Returns the enclosing event parent node (or self) that, when clicked, would trigger a navigation.
     Node* enclosingLinkEventParentOrSelf();
 
-    bool isBlockFlowElement() const;
-
     // These low-level calls give the caller responsibility for maintaining the integrity of the tree.
     void setPreviousSibling(Node* previous) { m_previous = previous; }
     void setNextSibling(Node* next) { m_next = next; }
@@ -328,14 +326,9 @@ public:
     // out of the Node class into an editing-specific source file.
     Node* previousLeafNode() const;
 
-    // enclosingBlockFlowElement() is deprecated. Use enclosingBlock instead.
-    Element* enclosingBlockFlowElement() const;
-
     bool isRootEditableElement() const;
     Element* rootEditableElement() const;
     Element* rootEditableElement(EditableType) const;
-
-    bool inSameContainingBlockFlowElement(Node*);
 
     // Called by the parser when this element's close tag is reached,
     // signaling that all child tags have been parsed and added.

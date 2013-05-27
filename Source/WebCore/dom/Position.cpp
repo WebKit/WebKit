@@ -993,6 +993,11 @@ bool Position::isRenderedCharacter() const
     return false;
 }
 
+static bool inSameEnclosingBlockFlowElement(Node* a, Node* b)
+{
+    return a && b && deprecatedEnclosingBlockFlowElement(a) == deprecatedEnclosingBlockFlowElement(b);
+}
+
 bool Position::rendersInDifferentPosition(const Position &pos) const
 {
     if (isNull() || pos.isNull())
@@ -1029,7 +1034,7 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     if (pos.deprecatedNode()->hasTagName(brTag) && isCandidate())
         return true;
                 
-    if (deprecatedNode()->enclosingBlockFlowElement() != pos.deprecatedNode()->enclosingBlockFlowElement())
+    if (!inSameEnclosingBlockFlowElement(deprecatedNode(), pos.deprecatedNode()))
         return true;
 
     if (deprecatedNode()->isTextNode() && !inRenderedText())
@@ -1090,7 +1095,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
         return Position();
 
     Position prev = previousCharacterPosition(affinity);
-    if (prev != *this && prev.deprecatedNode()->inSameContainingBlockFlowElement(deprecatedNode()) && prev.deprecatedNode()->isTextNode()) {
+    if (prev != *this && inSameEnclosingBlockFlowElement(deprecatedNode(), prev.deprecatedNode()) && prev.deprecatedNode()->isTextNode()) {
         String string = toText(prev.deprecatedNode())->data();
         UChar c = string[prev.deprecatedEditingOffset()];
         if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : isCollapsibleWhitespace(c))
