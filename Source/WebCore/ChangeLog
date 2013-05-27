@@ -1,3 +1,22 @@
+2013-05-27  Zalan Bujtas  <zalan@apple.com>
+
+        drop-shadow filter with overflow:hidden child misbehaves.
+        https://bugs.webkit.org/show_bug.cgi?id=109783
+
+        Reviewed by Simon Fraser.
+
+        Applying CSS filters only to the scrollbar rect leaves rendering
+        artefacts. Filters should skip such partial repaints.
+
+        Tests: Test framework uses mock theme for scrollbars. Such scrollbars do not
+        initiate partial repaints.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupFilters):
+        (WebCore::RenderLayer::paintLayerContents):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+
 2013-05-27  Xueqing Huang  <huangxueqing@baidu.com>
 
         Move Windows port off legacy clipboard.
