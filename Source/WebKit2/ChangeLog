@@ -1,3 +1,9 @@
+2013-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2013-05-26  Changhun Kang  <temoochin@company100.net>
 
         The public WK header file should not include WKAPICast.h

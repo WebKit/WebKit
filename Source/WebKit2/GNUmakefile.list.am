@@ -454,6 +454,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/Plugins/NPVariantData.h \
 	Source/WebKit2/Shared/Plugins/PluginModuleInfo.cpp \
 	Source/WebKit2/Shared/Plugins/PluginModuleInfo.h \
+	Source/WebKit2/Shared/Plugins/PluginProcessAttributes.h \
 	Source/WebKit2/Shared/Plugins/PluginProcessCreationParameters.cpp \
 	Source/WebKit2/Shared/Plugins/PluginProcessCreationParameters.h \
 	Source/WebKit2/Shared/Plugins/PluginQuirks.h \
