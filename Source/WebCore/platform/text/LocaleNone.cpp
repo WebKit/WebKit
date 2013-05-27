@@ -36,9 +36,6 @@ public:
 
 private:
     virtual void initializeLocaleData() OVERRIDE FINAL;
-#if ENABLE(CALENDAR_PICKER)
-    virtual bool isRTL() OVERRIDE;
-#endif
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     virtual String dateFormat() OVERRIDE;
     virtual String monthFormat() OVERRIDE;
@@ -71,13 +68,6 @@ LocaleNone::~LocaleNone()
 void LocaleNone::initializeLocaleData()
 {
 }
-
-#if ENABLE(CALENDAR_PICKER)
-bool LocaleNone::isRTL()
-{
-    return false;
-}
-#endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 const Vector<String>& LocaleNone::monthLabels()

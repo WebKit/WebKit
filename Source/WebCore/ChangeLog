@@ -1,3 +1,15 @@
+2013-05-26  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Remove a leftover CALENDAR_PICKER from LocaleNone.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=116800
+
+        Reviewed by Kent Tamura.
+
+        No new tests, no behavior change.
+
+        * platform/text/LocaleNone.cpp:
+        (LocaleNone):
+
 2013-05-26  Antti Koivisto  <antti@apple.com>
 
         Rename FontFallbackList to FontGlyphs
