@@ -1,3 +1,15 @@
+2013-05-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Use ICU_INCLUDE_DIRS in BlackBerry CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=116210
+
+        Reviewed by Rob Buis.
+
+        Set and use the ICU_INCLUDE_DIRS variable to avoid
+        duplicated adding of the ICU include directory.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2013-05-24  Anders Carlsson  <andersca@apple.com>
 
         Remove PagePopup code

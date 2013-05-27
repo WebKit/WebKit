@@ -1,6 +1,5 @@
 list(INSERT WebCore_INCLUDE_DIRECTORIES 0
     "${BLACKBERRY_THIRD_PARTY_DIR}" # For <unicode.h>, which is included from <sys/keycodes.h>.
-    "${BLACKBERRY_THIRD_PARTY_DIR}/icu"
 )
 
 list(REMOVE_ITEM WebCore_SOURCES

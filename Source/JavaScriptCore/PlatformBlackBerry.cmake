@@ -1,7 +1,3 @@
-list(INSERT JavaScriptCore_INCLUDE_DIRECTORIES 0
-    "${BLACKBERRY_THIRD_PARTY_DIR}/icu"
-)
-
 list(REMOVE_ITEM JavaScriptCore_SOURCES
     runtime/GCActivityCallback.cpp
 )

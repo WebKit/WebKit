@@ -1,3 +1,15 @@
+2013-05-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Use ICU_INCLUDE_DIRS in BlackBerry CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=116210
+
+        Reviewed by Rob Buis.
+
+        Set and use the ICU_INCLUDE_DIRS variable to avoid
+        duplicated adding of the ICU include directory.
+
+        * wtf/PlatformBlackBerry.cmake:
+
 2013-05-27  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Enable parallel GC. Probably it has been fixed in r131791.
