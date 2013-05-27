@@ -72,6 +72,7 @@ public:
     virtual int screenNumber() const;
     virtual QObject* ownerWidget() const;
     virtual QRect geometryRelativeToOwnerWidget() const;
+    virtual QPoint mapToOwnerWindow(const QPoint&) const;
 
     virtual QObject* pluginParent() const;
 
@@ -158,6 +159,7 @@ public:
     virtual int screenNumber() const;
     virtual QObject* ownerWidget() const;
     virtual QRect geometryRelativeToOwnerWidget() const;
+    virtual QPoint mapToOwnerWindow(const QPoint&) const;
 
     virtual QObject* pluginParent() const;
 
@@ -174,6 +176,8 @@ public:
     virtual bool makeOpenGLContextCurrentIfAvailable();
 
     virtual QRectF windowRect() const;
+
+    QGraphicsView* firstGraphicsView() const;
 
     QGraphicsWebView* view;
     QWebPage* page;

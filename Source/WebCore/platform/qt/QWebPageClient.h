@@ -86,6 +86,7 @@ public:
     virtual int screenNumber() const = 0;
     virtual QObject* ownerWidget() const = 0;
     virtual QRect geometryRelativeToOwnerWidget() const = 0;
+    virtual QPoint mapToOwnerWindow(const QPoint&) const = 0;
 
     virtual QObject* pluginParent() const = 0;
 

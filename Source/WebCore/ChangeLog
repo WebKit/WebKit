@@ -1,3 +1,33 @@
+2013-05-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt][Win] Input events aren't mapped properly with windowless plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=116094
+
+        Reviewed by Tor Arne Vestbø.
+
+        The events are first sent properly but Flash then immediately repaints
+        and this causes flickering painting.
+        The issue is that Flash seems to be doing some input event tracking of
+        its own internally, using the HWND returned through NPN_GetValue(NPNVnetscapeWindow).
+
+        We are currently using two coordinate systems for windowless plugins on Windows with Qt:
+        - FrameView coordinates: Used for input events and ajusted with the WM_WINDOWPOSCHANGED message
+        - Drawable coordinates: Used by WM_PAINT and adjusted with NPP_SetWindow
+
+        This patch fixes the bug by mapping input events to the native window returned
+        as NPNVnetscapeWindow instead of the FrameView to ensure that those coordinates will match
+        the ones used by Flash internally.
+        With this we shouldn't be using FrameView coordinates anywhere for windowless plugins
+        on Windows with Qt.
+
+        * platform/qt/QWebPageClient.h:
+        (QWebPageClient):
+          Added mapToOwnerWindow to the interface, mapping from the FrameView up to the wrapping nativeParentWidget.
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::contentsToNativeWindow):
+        (WebCore::PluginView::paintIntoTransformedContext):
+        (WebCore::PluginView::handleMouseEvent):
+
 2013-05-27  Antti Koivisto  <antti@apple.com>
 
         Tighten FontGlyphs interfaces to take FontDescription instead of Font

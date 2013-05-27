@@ -345,6 +345,29 @@ static bool isWindowsMessageUserGesture(UINT message)
     }
 }
 
+static inline IntPoint contentsToNativeWindow(FrameView* view, const IntPoint& point)
+{
+#if PLATFORM(QT)
+    // Our web view's QWidget isn't necessarily a native window itself. Map the position
+    // all the way up to the QWidget associated with the HWND returned as NPNVnetscapeWindow.
+    PlatformPageClient client = view->hostWindow()->platformPageClient();
+    return client->mapToOwnerWindow(view->contentsToWindow(point));
+#else
+    return view->contentsToWindow(point);
+#endif
+}
+
+static inline IntRect contentsToNativeWindow(FrameView* view, const IntRect& rect)
+{
+#if PLATFORM(QT)
+    // This only handles translation of the rect.
+    ASSERT(view->contentsToWindow(rect).size() == rect.size());
+    return IntRect(contentsToNativeWindow(view, rect.location()), rect.size());
+#else
+    return view->contentsToWindow(rect);
+#endif
+}
+
 LRESULT
 PluginView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -541,7 +564,7 @@ void PluginView::paintIntoTransformedContext(HDC hdc)
 
     WINDOWPOS windowpos = { 0, 0, 0, 0, 0, 0, 0 };
 
-    IntRect r = toFrameView(parent())->contentsToWindow(frameRect());
+    IntRect r = contentsToNativeWindow(toFrameView(parent()), frameRect());
 
     windowpos.x = r.x();
     windowpos.y = r.y();
@@ -690,7 +713,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
 
     NPEvent npEvent;
 
-    IntPoint p = toFrameView(parent())->contentsToWindow(IntPoint(event->pageX(), event->pageY()));
+    IntPoint p = contentsToNativeWindow(toFrameView(parent()), IntPoint(event->pageX(), event->pageY()));
 
     npEvent.lParam = MAKELPARAM(p.x(), p.y());
     npEvent.wParam = 0;

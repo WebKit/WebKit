@@ -1,3 +1,25 @@
+2013-05-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt][Win] Input events aren't mapped properly with windowless plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=116094
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WidgetSupport/PageClientQt.cpp:
+        (WebCore::PageClientQWidget::mapToOwnerWindow):
+        (WebCore::PageClientQGraphicsWidget::makeOpenGLContextCurrentIfAvailable):
+        (WebCore::PageClientQGraphicsWidget::screenNumber):
+        (WebCore::PageClientQGraphicsWidget::geometryRelativeToOwnerWidget):
+        (WebCore::PageClientQGraphicsWidget::mapToOwnerWindow):
+        (WebCore::PageClientQGraphicsWidget::graphicsItemVisibleRect):
+        (WebCore::PageClientQGraphicsWidget::firstGraphicsView):
+          Extracted this common logic from makeOpenGLContextCurrentIfAvailable,
+          screenNumber, geometryRelativeToOwnerWidget and graphicsItemVisibleRect
+          to be able to use it in mapToOwnerWindow.
+        * WidgetSupport/PageClientQt.h:
+        (PageClientQWidget):
+        (PageClientQGraphicsWidget):
+
 2013-05-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove custom code for webkitAudioContext global constructor getter

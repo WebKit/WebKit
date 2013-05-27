@@ -120,6 +120,16 @@ QRect PageClientQWidget::geometryRelativeToOwnerWidget() const
     return view->geometry();
 }
 
+QPoint PageClientQWidget::mapToOwnerWindow(const QPoint& point) const
+{
+    QWidget* widget = qobject_cast<QWidget*>(ownerWidget());
+    // Can be false both if ownerWidget() is native or if it doesn't have any native parent.
+    if (const QWidget *nativeParent = widget->nativeParentWidget())
+        return widget->mapTo(nativeParent, point);
+
+    return point;
+}
+
 QObject* PageClientQWidget::pluginParent() const
 {
     return view;
@@ -170,7 +180,7 @@ void PageClientQGraphicsWidget::repaintViewport()
 bool PageClientQGraphicsWidget::makeOpenGLContextCurrentIfAvailable()
 {
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && defined(QT_OPENGL_LIB)
-    QGraphicsView* graphicsView = view->scene()->views()[0];
+    QGraphicsView* graphicsView = firstGraphicsView();
     if (graphicsView && graphicsView->viewport()) {
         QGLWidget* glWidget = qobject_cast<QGLWidget*>(graphicsView->viewport());
         if (glWidget) {
@@ -218,14 +228,9 @@ QPalette PageClientQGraphicsWidget::palette() const
 int PageClientQGraphicsWidget::screenNumber() const
 {
 #if defined(Q_WS_X11)
-    if (QGraphicsScene* scene = view->scene()) {
-        const QList<QGraphicsView*> views = scene->views();
-
-        if (!views.isEmpty())
-            return views.at(0)->x11Info().screen();
-    }
+    if (QGraphicsView* graphicsView = firstGraphicsView())
+        return graphicsView->x11Info().screen();
 #endif
-
     return 0;
 }
 
@@ -240,28 +245,26 @@ QObject* PageClientQGraphicsWidget::ownerWidget() const
 
 QRect PageClientQGraphicsWidget::geometryRelativeToOwnerWidget() const
 {
-    if (!view->scene())
-        return QRect();
+    if (QGraphicsView* graphicsView = firstGraphicsView())
+        return graphicsView->mapFromScene(view->boundingRect()).boundingRect();
+    return QRect();
+}
 
-    QList<QGraphicsView*> views = view->scene()->views();
-    if (views.isEmpty())
-        return QRect();
-
-    QGraphicsView* graphicsView = views.at(0);
-    return graphicsView->mapFromScene(view->boundingRect()).boundingRect();
+QPoint PageClientQGraphicsWidget::mapToOwnerWindow(const QPoint& point) const
+{
+    if (const QGraphicsView* graphicsView = firstGraphicsView())
+        if (const QWidget *nativeParent = graphicsView->nativeParentWidget())
+            return graphicsView->mapTo(nativeParent, graphicsView->mapFromScene(view->mapToScene(point)));
+    return point;
 }
 
 #if USE(TILED_BACKING_STORE)
 QRectF PageClientQGraphicsWidget::graphicsItemVisibleRect() const
 {
-    if (!view->scene())
+    QGraphicsView* graphicsView = firstGraphicsView();
+    if (!graphicsView)
         return QRectF();
 
-    QList<QGraphicsView*> views = view->scene()->views();
-    if (views.isEmpty())
-        return QRectF();
-
-    QGraphicsView* graphicsView = views.at(0);
     int xOffset = graphicsView->horizontalScrollBar()->value();
     int yOffset = graphicsView->verticalScrollBar()->value();
     return view->mapRectFromScene(QRectF(QPointF(xOffset, yOffset), graphicsView->viewport()->size()));
@@ -290,6 +293,13 @@ QRectF PageClientQGraphicsWidget::windowRect() const
 
     // The sceneRect is a good approximation of the size of the application, independent of the view.
     return view->scene()->sceneRect();
+}
+
+QGraphicsView* PageClientQGraphicsWidget::firstGraphicsView() const
+{
+    if (view->scene() && !view->scene()->views().isEmpty())
+        return view->scene()->views().first();
+    return 0;
 }
 #endif // QT_NO_GRAPHICSVIEW
 
