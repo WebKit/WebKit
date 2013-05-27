@@ -371,7 +371,7 @@ bool RenderThemeWinCE::paintSearchField(RenderObject* o, const PaintInfo& i, con
 
 bool RenderThemeWinCE::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    Color buttonColor = (o->node() && o->node()->active()) ? Color(138, 138, 138) : Color(186, 186, 186);
+    Color buttonColor = (o->node() && o->node()->isElementNode() && toElement(o->node())->active()) ? Color(138, 138, 138) : Color(186, 186, 186);
 
     IntSize cancelSize(10, 10);
     IntSize cancelRadius(cancelSize.width() / 2, cancelSize.height() / 2);

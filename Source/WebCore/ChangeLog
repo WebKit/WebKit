@@ -1,3 +1,10 @@
+2013-05-27  Andreas Kling  <akling@apple.com>
+
+        WinCE build TLC: Node::active() moved to Element.
+
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::RenderThemeWinCE::paintSearchFieldCancelButton):
+
 2013-05-26  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         CSSParser::parseImageResolution doesn't need a parameter.
