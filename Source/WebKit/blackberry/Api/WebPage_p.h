@@ -466,6 +466,7 @@ public:
     void scheduleAnimation();
     void startRefreshAnimationClient();
     void stopRefreshAnimationClient();
+    void serviceAnimations();
     static void handleServiceScriptedAnimationsOnMainThread(void*);
 #endif
 
@@ -662,6 +663,8 @@ public:
     Mutex m_animationMutex;
     bool m_isRunningRefreshAnimationClient;
     bool m_animationScheduled;
+    bool m_previousFrameDone;
+    double m_monotonicAnimationStartTime;
 #endif
 
 protected:

@@ -428,6 +428,8 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
     , m_isRunningRefreshAnimationClient(false)
     , m_animationScheduled(false)
+    , m_previousFrameDone(true)
+    , m_monotonicAnimationStartTime(0)
 #endif
 {
     static bool isInitialized = false;
@@ -6322,13 +6324,20 @@ void WebPagePrivate::animationFrameChanged()
     if (!m_animationMutex.tryLock())
         return;
 
+    if (!m_previousFrameDone) {
+        m_animationMutex.unlock();
+        return;
+    }
+
     if (!m_animationScheduled) {
         stopRefreshAnimationClient();
         m_animationMutex.unlock();
         return;
     }
 
-    m_animationScheduled = false;
+    m_previousFrameDone = false;
+
+    m_monotonicAnimationStartTime = monotonicallyIncreasingTime();
     callOnMainThread(handleServiceScriptedAnimationsOnMainThread, this);
     m_animationMutex.unlock();
 }
@@ -6358,10 +6367,26 @@ void WebPagePrivate::stopRefreshAnimationClient()
     BlackBerry::Platform::AnimationFrameRateController::instance()->removeClient(this);
 }
 
+void WebPagePrivate::serviceAnimations()
+{
+    double monotonicAnimationStartTime;
+    {
+        MutexLocker lock(m_animationMutex);
+        m_animationScheduled = false;
+        monotonicAnimationStartTime = m_monotonicAnimationStartTime;
+    }
+
+    m_mainFrame->view()->serviceScriptedAnimations(monotonicAnimationStartTime);
+
+    {
+        MutexLocker lock(m_animationMutex);
+        m_previousFrameDone = true;
+    }
+}
+
 void WebPagePrivate::handleServiceScriptedAnimationsOnMainThread(void* data)
 {
-    WebPagePrivate* webPagePrivate = static_cast<WebPagePrivate*>(data);
-    webPagePrivate->m_mainFrame->view()->serviceScriptedAnimations(currentTime());
+    static_cast<WebPagePrivate*>(data)->serviceAnimations();
 }
 #endif
 

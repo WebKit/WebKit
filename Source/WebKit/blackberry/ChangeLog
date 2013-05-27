@@ -1,5 +1,31 @@
 2013-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [BlackBerry] REGRESSION(r150071): Animation performance issues in some websites with CSS transforms
+        https://bugs.webkit.org/show_bug.cgi?id=116724
+
+        Reviewed by Rob Buis.
+
+        Add another bool variable m_previousFrameDone to make sure we
+        don't start a new frame until the previous one has been done. Also
+        make sure we pass the animation start time to
+        serviceScriptedAnimations().
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate): Initialize
+        m_previousFrameDone and m_monotonicAnimationStartTime.
+        (BlackBerry::WebKit::WebPagePrivate::animationFrameChanged):
+        Return early if previous frame is not done. Otherwise set
+        m_previousFrameDone to false and save the animation start time.
+        (BlackBerry::WebKit::WebPagePrivate::serviceAnimations): Call
+        serviceScriptedAnimations() passing the saved animation start time
+        and reset m_animationScheduled and m_previousFrameDone.
+        (BlackBerry::WebKit::WebPagePrivate::handleServiceScriptedAnimationsOnMainThread):
+        Call WebPagePrivate::serviceAnimations().
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
+2013-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [BlackBerry] Remove encoding parameter from FrameLoaderClientBlackBerry::receivedData()
         https://bugs.webkit.org/show_bug.cgi?id=116598
 
