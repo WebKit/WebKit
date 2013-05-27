@@ -410,6 +410,7 @@ void BackingStorePrivate::updateSuspendScreenUpdateState(bool* hasSyncedToUserIn
         && (m_suspendBackingStoreUpdates || !m_renderQueue->hasCurrentVisibleZoomJob()); // Backingstore is not usable while we're waiting for an ("atomic") zoom job to finish.
 
     bool shouldSuspend = m_suspendScreenUpdateCounterWebKitThread
+        || !buffer()
         || !m_webPage->isVisible()
         || (!isBackingStoreUsable && !m_webPage->d->compositorDrawsRootLayer());
 
@@ -1698,9 +1699,9 @@ void BackingStorePrivate::createSurfaces()
         return;
     }
 
-    // Don't try to blit to screen unless we have a buffer.
-    if (!buffer())
-        suspendScreenUpdates();
+    // Initialize (initially, probably suspend) screen updates based on various
+    // conditions, including whether or not we have a drawing target buffer.
+    updateSuspendScreenUpdateState();
 
     SurfacePool* surfacePool = SurfacePool::globalSurfacePool();
     surfacePool->initialize(tileSize());

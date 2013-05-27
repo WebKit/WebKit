@@ -1,3 +1,22 @@
+2013-05-26  Jakob Petsovits  <jpetsovits@blackberry.com>
+
+        [BlackBerry] Make screen updates dependent on the existence of a drawing buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=116539
+        Internal PR 330917
+
+        Reviewed by Carlos Garcia Campos.
+        Internally reviewed by Xiaobo Wang and Arvid Nilsson.
+
+        This reduces complexity by relying on the current state,
+        rather than the suspend counter, which in turn makes it
+        possible to simplify the code in setCompositor().
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::updateSuspendScreenUpdateState):
+        (BlackBerry::WebKit::BackingStorePrivate::createSurfaces):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setCompositor):
+
 2013-05-26  Kent Tamura  <tkent@chromium.org>
 
         Remove ENABLE_CALENDAR_PICKER
