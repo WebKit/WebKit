@@ -1,3 +1,15 @@
+2013-05-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] REGRESSION(r150716): It made 15 inspector and 1 mozilla test to assert
+        https://bugs.webkit.org/show_bug.cgi?id=116822
+
+        Reviewed by Andreas Kling.
+
+        The input fontDescription may have more than one family defined.
+
+        * platform/qt/RenderThemeQStyle.cpp:
+        (WebCore::RenderThemeQStyle::adjustButtonStyle):
+
 2013-05-27  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt][Win] Input events aren't mapped properly with windowless plugins.
