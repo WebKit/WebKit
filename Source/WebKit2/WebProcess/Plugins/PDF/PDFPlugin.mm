@@ -103,6 +103,11 @@ static const char* annotationStyle =
 static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 @interface WKPDFPluginAccessibilityObject : NSObject
+{
+    PDFLayerController *_pdfLayerController;
+    NSObject *_parent;
+    WebKit::PDFPlugin* _pdfPlugin;
+}
 
 @property(assign) PDFLayerController *pdfLayerController;
 @property(assign) NSObject *parent;
