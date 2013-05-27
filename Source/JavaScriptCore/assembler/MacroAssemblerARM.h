@@ -539,9 +539,9 @@ public:
 
     void swap(RegisterID reg1, RegisterID reg2)
     {
-        move(reg1, ARMRegisters::S0);
-        move(reg2, reg1);
-        move(ARMRegisters::S0, reg2);
+        xor32(reg1, reg2);
+        xor32(reg2, reg1);
+        xor32(reg1, reg2);
     }
 
     void signExtend32ToPtr(RegisterID src, RegisterID dest)

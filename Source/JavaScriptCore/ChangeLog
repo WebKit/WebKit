@@ -1,3 +1,16 @@
+2013-05-27  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        MacroAssemblerARM should use xor to swap registers instead of move
+        https://bugs.webkit.org/show_bug.cgi?id=116306
+
+        Reviewed by Zoltan Herczeg.
+
+        Change register swapping to xor from move and this way we don't need
+        temporary register anymore.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::swap):
+
 2013-05-25  Filip Pizlo  <fpizlo@apple.com>
 
         We broke (-2^31/-1)|0 in the DFG
