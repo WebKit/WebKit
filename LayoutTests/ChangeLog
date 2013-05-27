@@ -1,6 +1,12 @@
 2013-05-27  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
+
+        * platform/gtk/plugins/mouse-events-expected.txt: Added. Rebaselining after r150558.
+
+2013-05-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
         Adding failure expectations for the current test failures.
 
         * platform/gtk-wk1/TestExpectations:
