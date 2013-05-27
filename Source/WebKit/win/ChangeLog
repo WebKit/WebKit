@@ -1,3 +1,14 @@
+2013-05-27  Xueqing Huang  <huangxueqing@baidu.com>
+
+        Move Windows port off legacy clipboard.
+        https://bugs.webkit.org/show_bug.cgi?id=116258
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebDragClient.cpp:
+        (WebDragClient::willPerformDragSourceAction): Get IDataObject from Pasteboard instead of Clipboard.
+        (WebDragClient::startDrag): Ditto.
+
 2013-05-26  Antti Koivisto  <antti@apple.com>
 
         Another build fix.

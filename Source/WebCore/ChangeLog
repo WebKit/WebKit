@@ -1,3 +1,59 @@
+2013-05-27  Xueqing Huang  <huangxueqing@baidu.com>
+
+        Move Windows port off legacy clipboard.
+        https://bugs.webkit.org/show_bug.cgi?id=116258
+
+        Reviewed by Darin Adler.
+
+        Clipboard refactor, no new tests.
+
+        * dom/Clipboard.h:
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::createDraggingClipboard): Create Clipboard instead of ClipboardWin.
+        * platform/Pasteboard.h:
+        (WebCore::Pasteboard::dataObject): Get IDataObject by Clipborad.
+        (WebCore::Pasteboard::writableDataObject): Get WCDataObject by Clipborad.
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::Clipboard::createDragImage): Change parameter name loc to dragLocation.
+        (WebCore::Clipboard::declareAndWriteDragImage): Implement declareAndWriteDragImage use WCDataObject exposed by Pasteboard.
+        * platform/win/ClipboardWin.h: Removed.
+        * platform/win/EditorWin.cpp:
+        (WebCore::Editor::newGeneralClipboard): Create Clipboard instead of ClipboardWin.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::createForCopyAndPaste): Create a Pasteboard.
+        (WebCore::Pasteboard::createPrivate): Ditto.
+        (WebCore::Pasteboard::createForDragAndDrop): Ditto.
+        (WebCore::Pasteboard::finishCreatingPasteboard): Create Pasteboard use Windows API.
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::clipboardTypeFromMIMEType): Copied from ClipboardWin.cpp.
+        (WebCore::Pasteboard::clear): Ditto.
+        (WebCore::Pasteboard::hasData): Ditto.
+        (WebCore::addMimeTypesForFormat): Ditto.
+        (WebCore::Pasteboard::types): Ditto.
+        (WebCore::Pasteboard::readString): Ditto.
+        (WebCore::Pasteboard::readFilenames): Ditto.
+        (WebCore::writeURL): Ditto.
+        (WebCore::Pasteboard::writeString): Ditto.
+        (WebCore::Pasteboard::setDragImage): Ditto.
+        (WebCore::Pasteboard::writeRangeToDataObject): Write range to WCDataObject.
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainTextToDataObject): Write PlainText to WCDataObject.
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::pathRemoveBadFSCharacters): Copied from ClipboardWin.cpp.
+        (WebCore::filesystemPathFromUrlOrTitle): Ditto.
+        (WebCore::writeFileToDataObject): Ditto.
+        (WebCore::Pasteboard::writeURLToDataObject): Write URL to WCDataObject.
+        (WebCore::Pasteboard::writeURL): Copied from ClipboardWin.cpp.
+        (WebCore::Pasteboard::writePasteboard): Copied from Pasteboard::writeClipboard.
+        (WebCore::Pasteboard::documentFragment): Copied from ClipboardWin.cpp.
+        (WebCore::Pasteboard::setExternalDataObject): Clipboard can set new IDataObject.
+        (WebCore::getCachedImage): Copied from ClipboardWin.cpp.
+        (WebCore::createGlobalImageFileDescriptor): Ditto.
+        (WebCore::createGlobalImageFileContent): Ditto.
+        (WebCore::createGlobalHDropContent): Ditto.
+        (WebCore::Pasteboard::writeImageToDataObject): Expose to make Clipboard implement declareAndWriteDragImage.
+        (WebCore::Pasteboard::writeURLToWritableDataObject): Ditto.
+
 2013-05-27  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Main-frame PDFPlugin Accessibility

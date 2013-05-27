@@ -29,17 +29,17 @@
 #include "WebKitGraphics.h"
 #include "WebView.h"
 
-#include <shlobj.h>
-
-#include <WebCore/ClipboardWin.h>
+#include <WebCore/Clipboard.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/EventHandler.h>
+#include <WebCore/Page.h>
+#include <WebCore/Pasteboard.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/Page.h>
+#include <shlobj.h>
 
 using namespace WebCore;
 
@@ -103,12 +103,12 @@ void WebDragClient::willPerformDragSourceAction(DragSourceAction action, const I
         return;
 
     POINT point = intPoint;
-    COMPtr<IDataObject> dataObject = static_cast<ClipboardWin*>(clipboard)->dataObject();
+    COMPtr<IDataObject> dataObject = clipboard->pasteboard().dataObject();
 
     COMPtr<IDataObject> newDataObject;
     HRESULT result = uiDelegate->willPerformDragSourceAction(m_webView, static_cast<WebDragSourceAction>(action), &point, dataObject.get(), &newDataObject);
     if (result == S_OK && newDataObject != dataObject)
-        static_cast<ClipboardWin*>(clipboard)->setExternalDataObject(newDataObject.get());
+        const_cast<Pasteboard&>(clipboard->pasteboard()).setExternalDataObject(newDataObject.get());
 }
 
 void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, const IntPoint& dragPoint, Clipboard* clipboard, Frame* frame, bool isLink)
@@ -124,7 +124,7 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
     if (FAILED(WebDropSource::createInstance(m_webView, &source)))
         return;
 
-    dataObject = static_cast<ClipboardWin*>(clipboard)->dataObject();
+    dataObject = clipboard->pasteboard().dataObject();
     if (source && (image || dataObject)) {
         if (image) {
             if(SUCCEEDED(CoCreateInstance(CLSID_DragDropHelper, 0, CLSCTX_INPROC_SERVER,

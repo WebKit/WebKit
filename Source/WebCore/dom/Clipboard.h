@@ -34,7 +34,7 @@
 // This DOM object now works by calling through to classes in the platform layer.
 // Specifically, the class currently named Pasteboard. The legacy style instead
 // uses this as an abstract base class.
-#define WTF_USE_LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS (PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
+#define WTF_USE_LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS (PLATFORM(IOS) || PLATFORM(QT))
 
 #if USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
 #define LEGACY_VIRTUAL virtual

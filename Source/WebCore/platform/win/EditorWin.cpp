@@ -25,15 +25,17 @@
 
 #include "config.h"
 #include "Editor.h"
-#include "EditorClient.h"
 
-#include "ClipboardWin.h"
+#include "COMPtr.h"
+#include "Clipboard.h"
 #include "Document.h"
+#include "EditorClient.h"
 #include "Element.h"
 #include "Frame.h"
-#include "htmlediting.h"
+#include "Pasteboard.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
+#include "htmlediting.h"
 
 #include <windows.h>
 
@@ -46,8 +48,9 @@ PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, 
     if (!SUCCEEDED(OleGetClipboard(&clipboardData)))
         clipboardData = 0;
 #endif
-
-    return ClipboardWin::create(Clipboard::CopyAndPaste, clipboardData.get(), policy, frame);
+    RefPtr<Clipboard> clipboard = Clipboard::createForCopyAndPaste(policy);
+    const_cast<Pasteboard&>(clipboard->pasteboard()).setExternalDataObject(clipboardData.get());
+    return clipboard.release();
 }
 
 } // namespace WebCore

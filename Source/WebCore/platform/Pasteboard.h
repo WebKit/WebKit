@@ -38,6 +38,9 @@ typedef struct _GtkClipboard GtkClipboard;
 #endif
 
 #if PLATFORM(WIN)
+#include "COMPtr.h"
+#include "WCDataObject.h"
+#include <objidl.h>
 #include <windows.h>
 typedef struct HWND__* HWND;
 #endif
@@ -64,6 +67,7 @@ extern const char* WebURLsWithTitlesPboardType;
 class Clipboard;
 class DocumentFragment;
 class DragData;
+class Element;
 class Frame;
 class HitTestResult;
 class KURL;
@@ -153,6 +157,14 @@ public:
     void setSelectionMode(bool) { }
 #endif
 
+#if PLATFORM(WIN)
+    COMPtr<IDataObject> dataObject() const { return m_dataObject; }
+    void setExternalDataObject(IDataObject*);
+    void writeURLToWritableDataObject(const KURL&, const String&);
+    COMPtr<WCDataObject> writableDataObject() const { return m_writableDataObject; }
+    void writeImageToDataObject(Element*, const KURL&);
+#endif
+
 #if PLATFORM(GTK)
     ~Pasteboard();
 #endif
@@ -165,6 +177,12 @@ private:
     Pasteboard(GtkClipboard*);
 #endif
 
+#if PLATFORM(WIN)
+    explicit Pasteboard(IDataObject*);
+    explicit Pasteboard(WCDataObject*);
+    explicit Pasteboard(const DragDataMap&);
+#endif
+
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     String m_pasteboardName;
     long m_changeCount;
@@ -175,7 +193,15 @@ private:
 #endif
 
 #if PLATFORM(WIN)
+    void finishCreatingPasteboard();
+    void writeRangeToDataObject(Range*, Frame*);
+    void writeURLToDataObject(const KURL&, const String&, Frame*);
+    void writePlainTextToDataObject(const String&, SmartReplaceOption);
+
     HWND m_owner;
+    COMPtr<IDataObject> m_dataObject;
+    COMPtr<WCDataObject> m_writableDataObject;
+    DragDataMap m_dragDataMap;
 #endif
 
 #if PLATFORM(QT)
