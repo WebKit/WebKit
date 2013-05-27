@@ -94,15 +94,38 @@ bool HTMLAnchorElement::supportsFocus() const
 
 bool HTMLAnchorElement::isMouseFocusable() const
 {
-    // Anchor elements should be mouse focusable, https://bugs.webkit.org/show_bug.cgi?id=26856
-#if !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(EFL)
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT))
+    // Only allow links with tabIndex or contentEditable to be mouse focusable.
+    // This is our rule for the Mac platform; on many other platforms we focus any link you click on.
     if (isLink())
-        // Only allow links with tabIndex or contentEditable to be mouse focusable.
         return HTMLElement::supportsFocus();
 #endif
 
-    // Allow tab index etc to control focus.
     return HTMLElement::isMouseFocusable();
+}
+
+static bool hasNonEmptyBox(RenderModelBoxObject* renderer)
+{
+    if (!renderer)
+        return false;
+
+    // Before calling absoluteRects, check for the common case where borderBoundingBox
+    // is non-empty, since this is a faster check and almost always returns true.
+    // FIXME: Why do we need to call absoluteRects at all?
+    if (!renderer->borderBoundingBox().isEmpty())
+        return true;
+
+    // FIXME: Since all we are checking is whether the rects are empty, could we just
+    // pass in 0,0 for the layout point instead of calling localToAbsolute?
+    Vector<IntRect> rects;
+    renderer->absoluteRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
+    size_t size = rects.size();
+    for (size_t i = 0; i < size; ++i) {
+        if (!rects[i].isEmpty())
+            return true;
+    }
+
+    return false;
 }
 
 bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
@@ -122,7 +145,7 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     if (isInCanvasSubtree())
         return true;
 
-    return hasNonEmptyBoundingBox();
+    return hasNonEmptyBox(renderBoxModelObject());
 }
 
 static void appendServerMapMousePosition(StringBuilder& url, Event* event)

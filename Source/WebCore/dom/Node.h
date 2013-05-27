@@ -426,11 +426,6 @@ public:
     LayoutRect renderRect(bool* isReplaced);
     IntRect pixelSnappedRenderRect(bool* isReplaced) { return pixelSnappedIntRect(renderRect(isReplaced)); }
 
-    // Returns true if the node has a non-empty bounding box in layout.
-    // This does not 100% guarantee the user can see it, but is pretty close.
-    // Note: This method only works properly after layout has occurred.
-    bool hasNonEmptyBoundingBox() const;
-
     unsigned nodeIndex() const;
 
     // Returns the DOM ownerDocument attribute. This method never returns NULL, except in the case 

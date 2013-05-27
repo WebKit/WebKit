@@ -773,27 +773,6 @@ LayoutRect Node::renderRect(bool* isReplaced)
     return LayoutRect();    
 }
 
-bool Node::hasNonEmptyBoundingBox() const
-{
-    // Before calling absoluteRects, check for the common case where the renderer
-    // is non-empty, since this is a faster check and almost always returns true.
-    RenderBoxModelObject* box = renderBoxModelObject();
-    if (!box)
-        return false;
-    if (!box->borderBoundingBox().isEmpty())
-        return true;
-
-    Vector<IntRect> rects;
-    FloatPoint absPos = renderer()->localToAbsolute();
-    renderer()->absoluteRects(rects, flooredLayoutPoint(absPos));
-    size_t n = rects.size();
-    for (size_t i = 0; i < n; ++i)
-        if (!rects[i].isEmpty())
-            return true;
-
-    return false;
-}
-
 inline void Node::setStyleChange(StyleChangeType changeType)
 {
     m_nodeFlags = (m_nodeFlags & ~StyleChangeMask) | changeType;
