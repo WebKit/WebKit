@@ -224,11 +224,6 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
     return true;
 }
 
-SubresourceLoader* CachedRawResource::loader() const
-{
-    return m_loader.get();
-}
-
 void CachedRawResource::clear()
 {
     m_data.clear();
