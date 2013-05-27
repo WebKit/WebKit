@@ -1,3 +1,91 @@
+2013-05-27  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Remove the offsetFromLogicalTopOfFirstPage parameter from layout functions
+        https://bugs.webkit.org/show_bug.cgi?id=116441
+
+        Reviewed by David Hyatt.
+
+        The patch changes the following things:
+        - exposes offsetFromLogicalTopOfFirstPage() to all the RenderBoxes;
+        - offsetFromLogicalTopOfFirstPage() is now safe to call from any box inside a flow thread, not only the
+        currently being laid out;
+        - removes the offsetFromLogicalTopOfFirstPage parameter from all the layout functions
+        that didn't actually required it; when the value is necessary, the offsetFromLogicalTopOfFirstPage
+        function is called instead;
+        - RenderFlowThread now handles its own logic for obtaining the offset from logical top of the first
+        region for a box, based on the layout states pushed on RenderView; it provides a better caching mechanism
+        that can be used for all the ancestor containing blocks of the current box being laid out.
+
+        The RenderBoxRegionInfo structures are cached only based on the box and the region. This means that
+        passing around a value for offsetFromLogicalTopOfFirstPage different in some cases than others was
+        risky. If there is a possibility of having a different box info result for a different offset
+        then the cache is not working correctly.
+
+        Tests: No function change, no tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeStartPositionDeltaForChildAvoidingFloats):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        (WebCore::RenderBlock::getClearDelta):
+        (WebCore::RenderBlock::lineWidthForPaginatedLineChanged):
+        (WebCore::RenderBlock::offsetFromLogicalTopOfFirstPage):
+        (WebCore::RenderBlock::logicalWidthChangedInRegions):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::availableLogicalWidthForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::startOffsetForLine):
+        (WebCore::RenderBlock::endOffsetForLine):
+        (WebCore::RenderBlock::availableLogicalWidthForContent):
+        (WebCore::RenderBlock::startOffsetForContent):
+        (WebCore::RenderBlock::endOffsetForContent):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::borderBoxRectInRegion):
+        (WebCore::RenderBox::constrainLogicalWidthInRegionByMinMax):
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats):
+        (WebCore::RenderBox::containingBlockLogicalWidthForContentInRegion):
+        (WebCore::RenderBox::containingBlockAvailableLineWidthInRegion):
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::computeLogicalWidthInRegionUsing):
+        (WebCore::RenderBox::renderBoxRegionInfo):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        (WebCore::computeInlineStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+        (WebCore::RenderBox::offsetFromLogicalTopOfFirstPage):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeMainAxisExtentForChild):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegionsForBlock):
+        (WebCore::RenderFlowThread::hasCachedOffsetFromLogicalTopOfFirstRegion):
+        (WebCore::RenderFlowThread::cachedOffsetFromLogicalTopOfFirstRegion):
+        (WebCore::RenderFlowThread::setOffsetFromLogicalTopOfFirstRegion):
+        (WebCore::RenderFlowThread::clearOffsetFromLogicalTopOfFirstRegion):
+        (WebCore::RenderFlowThread::currentActiveRenderBox):
+        (WebCore::RenderFlowThread::pushFlowThreadLayoutState):
+        (WebCore::RenderFlowThread::popFlowThreadLayoutState):
+        (WebCore::RenderFlowThread::offsetFromLogicalTopOfFirstRegion):
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateLogicalWidth):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pushLayoutState):
+        (WebCore::RenderView::pushLayoutStateForCurrentFlowThread):
+        (WebCore::RenderView::popLayoutStateForCurrentFlowThread):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pushLayoutState):
+        (WebCore::RenderView::popLayoutState):
+
 2013-05-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Active DOM objects stopped twice

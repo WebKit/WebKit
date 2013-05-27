@@ -1026,6 +1026,7 @@ void RenderView::pushLayoutState(RenderObject* root)
     ASSERT(m_layoutStateDisableCount == 0);
     ASSERT(m_layoutState == 0);
 
+    pushLayoutStateForCurrentFlowThread(root);
     m_layoutState = new (renderArena()) LayoutState(root);
 }
 
@@ -1138,6 +1139,30 @@ FlowThreadController* RenderView::flowThreadController()
         m_flowThreadController = FlowThreadController::create(this);
 
     return m_flowThreadController.get();
+}
+
+void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject* object)
+{
+    if (!m_flowThreadController)
+        return;
+
+    RenderFlowThread* currentFlowThread = m_flowThreadController->currentRenderFlowThread();
+    if (!currentFlowThread)
+        return;
+
+    currentFlowThread->pushFlowThreadLayoutState(object);
+}
+
+void RenderView::popLayoutStateForCurrentFlowThread()
+{
+    if (!m_flowThreadController)
+        return;
+
+    RenderFlowThread* currentFlowThread = m_flowThreadController->currentRenderFlowThread();
+    if (!currentFlowThread)
+        return;
+
+    currentFlowThread->popFlowThreadLayoutState();
 }
 
 RenderBlock::IntervalArena* RenderView::intervalArena()

@@ -115,7 +115,7 @@ public:
     RenderRegion* mapFromFlowToRegion(TransformState&) const;
 
     void removeRenderBoxRegionInfo(RenderBox*);
-    bool logicalWidthChangedInRegions(const RenderBlock*, LayoutUnit offsetFromLogicalTopOfFirstPage);
+    bool logicalWidthChangedInRegionsForBlock(const RenderBlock*);
 
     LayoutUnit contentLogicalWidthOfFirstRegion() const;
     LayoutUnit contentLogicalHeightOfFirstRegion() const;
@@ -162,6 +162,10 @@ public:
     bool needsTwoPhasesLayout() const { return m_needsTwoPhasesLayout; }
     void clearNeedsTwoPhasesLayout() { m_needsTwoPhasesLayout = false; }
 
+    void pushFlowThreadLayoutState(const RenderObject*);
+    void popFlowThreadLayoutState();
+    LayoutUnit offsetFromLogicalTopOfFirstRegion(const RenderBlock*) const;
+
 protected:
     virtual const char* renderName() const = 0;
 
@@ -184,6 +188,13 @@ protected:
     void initializeRegionsOverrideLogicalContentHeight(RenderRegion* = 0);
 
     virtual void autoGenerateRegionsToBlockOffset(LayoutUnit) { };
+
+    inline bool hasCachedOffsetFromLogicalTopOfFirstRegion(const RenderBox*) const;
+    inline LayoutUnit cachedOffsetFromLogicalTopOfFirstRegion(const RenderBox*) const;
+    inline void setOffsetFromLogicalTopOfFirstRegion(const RenderBox*, LayoutUnit);
+    inline void clearOffsetFromLogicalTopOfFirstRegion(const RenderBox*);
+
+    inline const RenderBox* currentActiveRenderBox() const;
 
     RenderRegionList m_regionList;
 
@@ -242,6 +253,11 @@ protected:
     typedef HashMap<RenderObject*, RenderRegion*> RenderObjectToRegionMap;
     RenderObjectToRegionMap m_breakBeforeToRegionMap;
     RenderObjectToRegionMap m_breakAfterToRegionMap;
+
+    typedef ListHashSet<const RenderObject*> RenderObjectStack;
+    RenderObjectStack m_activeObjectsStack;
+    typedef HashMap<const RenderBox*, LayoutUnit> RenderBoxToOffsetMap;
+    RenderBoxToOffsetMap m_boxesToOffsetMap;
 
     unsigned m_autoLogicalHeightRegionsCount;
 

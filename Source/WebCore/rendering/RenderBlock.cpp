@@ -2371,10 +2371,9 @@ LayoutUnit RenderBlock::estimateLogicalTopPosition(RenderBox* child, const Margi
     return logicalTopEstimate;
 }
 
-LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const RenderBox* child, LayoutUnit childMarginStart,
-    RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage)
+LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const RenderBox* child, LayoutUnit childMarginStart, RenderRegion* region)
 {
-    LayoutUnit startPosition = startOffsetForContent(region, offsetFromLogicalTopOfFirstPage);
+    LayoutUnit startPosition = startOffsetForContent(region);
 
     // Add in our start margin.
     LayoutUnit oldPosition = startPosition + childMarginStart;
@@ -2382,9 +2381,9 @@ LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const Re
 
     LayoutUnit blockOffset = logicalTopForChild(child);
     if (region)
-        blockOffset = max(blockOffset, blockOffset + (region->logicalTopForFlowThreadContent() - offsetFromLogicalTopOfFirstPage));
+        blockOffset = max(blockOffset, blockOffset + (region->logicalTopForFlowThreadContent() - offsetFromLogicalTopOfFirstPage()));
 
-    LayoutUnit startOff = startOffsetForLine(blockOffset, false, region, offsetFromLogicalTopOfFirstPage, logicalHeightForChild(child));
+    LayoutUnit startOff = startOffsetForLine(blockOffset, false, region, logicalHeightForChild(child));
 
     if (style()->textAlign() != WEBKIT_CENTER && !child->style()->marginStartUsing(style()).isAuto()) {
         if (childMarginStart < 0)
@@ -4391,22 +4390,22 @@ LayoutUnit RenderBlock::textIndentOffset() const
     return minimumValueForLength(style()->textIndent(), cw, renderView);
 }
 
-LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
+LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderRegion* region) const
 {
     LayoutUnit logicalLeftOffset = style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop();
     if (!region)
         return logicalLeftOffset;
-    LayoutRect boxRect = borderBoxRectInRegion(region, offsetFromLogicalTopOfFirstPage);
+    LayoutRect boxRect = borderBoxRectInRegion(region);
     return logicalLeftOffset + (isHorizontalWritingMode() ? boxRect.x() : boxRect.y());
 }
 
-LayoutUnit RenderBlock::logicalRightOffsetForContent(RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
+LayoutUnit RenderBlock::logicalRightOffsetForContent(RenderRegion* region) const
 {
     LayoutUnit logicalRightOffset = style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop();
     logicalRightOffset += availableLogicalWidth();
     if (!region)
         return logicalRightOffset;
-    LayoutRect boxRect = borderBoxRectInRegion(region, offsetFromLogicalTopOfFirstPage);
+    LayoutRect boxRect = borderBoxRectInRegion(region);
     return logicalRightOffset - (logicalWidth() - (isHorizontalWritingMode() ? boxRect.maxX() : boxRect.maxY()));
 }
 
@@ -4933,7 +4932,7 @@ LayoutUnit RenderBlock::getClearDelta(RenderBox* child, LayoutUnit logicalTop)
                 return newLogicalTop - logicalTop;
 
             RenderRegion* region = regionAtBlockOffset(logicalTopForChild(child));
-            LayoutRect borderBox = child->borderBoxRectInRegion(region, offsetFromLogicalTopOfFirstPage() + logicalTopForChild(child), DoNotCacheRenderBoxRegionInfo);
+            LayoutRect borderBox = child->borderBoxRectInRegion(region, DoNotCacheRenderBoxRegionInfo);
             LayoutUnit childLogicalWidthAtOldLogicalTopOffset = isHorizontalWritingMode() ? borderBox.width() : borderBox.height();
 
             // FIXME: None of this is right for perpendicular writing-mode children.
@@ -4945,7 +4944,7 @@ LayoutUnit RenderBlock::getClearDelta(RenderBox* child, LayoutUnit logicalTop)
             child->setLogicalTop(newLogicalTop);
             child->updateLogicalWidth();
             region = regionAtBlockOffset(logicalTopForChild(child));
-            borderBox = child->borderBoxRectInRegion(region, offsetFromLogicalTopOfFirstPage() + logicalTopForChild(child), DoNotCacheRenderBoxRegionInfo);
+            borderBox = child->borderBoxRectInRegion(region, DoNotCacheRenderBoxRegionInfo);
             LayoutUnit childLogicalWidthAtNewLogicalTopOffset = isHorizontalWritingMode() ? borderBox.width() : borderBox.height();
 
             child->setLogicalTop(childOldLogicalTop);
@@ -7670,7 +7669,7 @@ bool RenderBlock::lineWidthForPaginatedLineChanged(RootInlineBox* rootBox, Layou
     // Just bail if the region didn't change.
     if (rootBox->containingRegion() == currentRegion)
         return false;
-    return rootBox->paginatedLineWidth() != availableLogicalWidthForContent(currentRegion, offsetFromLogicalTopOfFirstPage());
+    return rootBox->paginatedLineWidth() != availableLogicalWidthForContent(currentRegion);
 }
 
 LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
@@ -7678,49 +7677,20 @@ LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
     LayoutState* layoutState = view()->layoutState();
     if (layoutState && !layoutState->isPaginated())
         return 0;
+
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (flowThread)
+        return flowThread->offsetFromLogicalTopOfFirstRegion(this);
+
     if (layoutState) {
-        // FIXME: Sanity check that the renderer in the layout state is ours, since otherwise the computation will be off.
-        // Right now this assert gets hit inside computeLogicalHeight for percentage margins, since they're computed using
-        // widths which can vary in each region. Until we patch that, we can't have this assert.
-        // ASSERT(layoutState->m_renderer == this);
+        ASSERT(layoutState->m_renderer == this);
 
         LayoutSize offsetDelta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
         return isHorizontalWritingMode() ? offsetDelta.height() : offsetDelta.width();
     }
-    // FIXME: Right now, this assert is hit outside layout, from logicalLeftSelectionOffset in selectionGapRectsForRepaint (called from FrameSelection::selectAll).
-    // ASSERT(inRenderFlowThread());
-
-    // FIXME: This is a slower path that doesn't use layout state and relies on getting your logical top inside the enclosing flow thread. It doesn't
-    // work with columns or pages currently, but it should once they have been switched over to using flow threads.
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!flowThread)
-        return 0;
-
-    const RenderBlock* currentBlock = this;
-    LayoutRect blockRect(0, 0, width(), height());
-
-    while (currentBlock && !currentBlock->isRenderFlowThread()) {
-        RenderBlock* containerBlock = currentBlock->containingBlock();
-        ASSERT(containerBlock);
-        if (!containerBlock)
-            return 0;
-        LayoutPoint currentBlockLocation = currentBlock->location();
-
-        if (containerBlock->style()->writingMode() != currentBlock->style()->writingMode()) {
-            // We have to put the block rect in container coordinates
-            // and we have to take into account both the container and current block flipping modes
-            if (containerBlock->style()->isFlippedBlocksWritingMode()) {
-                if (containerBlock->isHorizontalWritingMode())
-                    blockRect.setY(currentBlock->height() - blockRect.maxY());
-                else
-                    blockRect.setX(currentBlock->width() - blockRect.maxX());
-            }
-            currentBlock->flipForWritingMode(blockRect);
-        }
-        blockRect.moveBy(currentBlockLocation);
-        currentBlock = containerBlock;
-    };
-    return currentBlock->isHorizontalWritingMode() ? blockRect.y() : blockRect.x();
+    
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
@@ -7754,7 +7724,7 @@ bool RenderBlock::logicalWidthChangedInRegions(RenderFlowThread* flowThread) con
     if (!flowThread || !flowThread->hasValidRegionInfo())
         return false;
     
-    return flowThread->logicalWidthChangedInRegions(this, offsetFromLogicalTopOfFirstPage());
+    return flowThread->logicalWidthChangedInRegionsForBlock(this);
 }
 
 RenderRegion* RenderBlock::clampToStartAndEndRegions(RenderRegion* region) const
