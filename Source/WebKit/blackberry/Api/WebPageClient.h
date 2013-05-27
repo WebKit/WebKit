@@ -276,6 +276,7 @@ public:
     virtual void notificationDestroyed(const BlackBerry::Platform::String& /*notificationId*/) = 0;
     virtual void startSelectionScroll() = 0;
     virtual void stopExpandingSelection() = 0;
+    virtual void suppressCaretChangeNotification(bool shouldClearState) = 0;
 };
 } // namespace WebKit
 } // namespace BlackBerry

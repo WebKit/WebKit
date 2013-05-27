@@ -1,3 +1,24 @@
+2013-05-27  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        [BlackBerry] Clear supression flag when caret changes aren't propogated through
+        https://bugs.webkit.org/show_bug.cgi?id=116840
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        PR339965
+        We set and clear the flag upon every use. This leaves us vulnerable if
+        1. midway through processing the selection change event is dismissed and
+        2. we don't receive a TouchRelease event
+        One example of this is while dragging the FCC handle we start typing. To
+        safeguard against this, if the process change guard is set during a
+        selection change event, we send out to clear the flag status before returning.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::selectionChanged):
+
 2013-05-27  Andy Chen  <andchen@blackberry.com>
 
         [BlackBerry] Find-on-page should be able to convert the active match to selection when clearing all matches
