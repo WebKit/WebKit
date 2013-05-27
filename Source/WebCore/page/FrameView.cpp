@@ -400,7 +400,7 @@ void FrameView::recalculateScrollbarOverlayStyle()
         // heuristic.
         double hue, saturation, lightness;
         backgroundColor.getHSL(hue, saturation, lightness);
-        if (lightness <= .5)
+        if (lightness <= .5 && backgroundColor.alpha() > 0)
             overlayStyle = ScrollbarOverlayStyleLight;
     }
 

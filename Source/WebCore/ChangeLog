@@ -1,3 +1,15 @@
+2013-05-27  Sam Weinig  <sam@webkit.org>
+
+        When the background is completely transparent we should be conservative and use the default scrollbar style, not the light one
+        https://bugs.webkit.org/show_bug.cgi?id=116836
+        <rdar://problem/13949905>
+
+        Reviewed by Simon Fraser.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recalculateScrollbarOverlayStyle):
+        Don't use the light style when the background is completely transparent.
+
 2013-05-27  Patrick Gansterer  <paroga@webkit.org>
 
         Use ICU_INCLUDE_DIRS in BlackBerry CMake files
