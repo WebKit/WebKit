@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include "config.h"
-#include "PagePopupBlackBerry.h"
+#include "PagePopup.h"
 
 #include "DocumentLoader.h"
 #include "DocumentWriter.h"
@@ -27,88 +27,76 @@
 #include "JSObject.h"
 #include "JSRetainPtr.h"
 #include "KURL.h"
-#include "PagePopupBlackBerryClient.h"
+#include "PagePopupClient.h"
 #include "Settings.h"
 #include "WebPage.h"
 #include "WebPage_p.h"
-
 #include <JavaScriptCore/API/JSCallbackObject.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSValueRef.h>
-
-#define PADDING 80
 
 using namespace WebCore;
 
 namespace BlackBerry {
 namespace WebKit {
 
-PagePopupBlackBerry::PagePopupBlackBerry(WebPagePrivate* webPage, PagePopupBlackBerryClient* client)
+PagePopup::PagePopup(WebPagePrivate* webPage, PagePopupClient* client)
     : m_webPagePrivate(webPage)
     , m_client(adoptPtr(client))
-    , m_sharedClientPointer(adoptRef(new PagePopupBlackBerry::SharedClientPointer(client)))
 {
 }
 
-PagePopupBlackBerry::~PagePopupBlackBerry()
+PagePopup::~PagePopup()
 {
-    ASSERT(!m_sharedClientPointer->get());
 }
 
-bool PagePopupBlackBerry::init(WebPage* webpage)
+void PagePopup::initialize(WebPage* webPage)
 {
     // Don't use backing store for the pop-up web page.
-    webpage->settings()->setBackingStoreEnabled(false);
+    webPage->settings()->setBackingStoreEnabled(false);
 
-    webpage->d->setLoadState(WebPagePrivate::Committed);
+    webPage->d->setLoadState(WebPagePrivate::Committed);
 
-    generateHTML(webpage);
-    installDOMFunction(webpage->d->mainFrame());
+    writeDocument(webPage->d->mainFrame()->loader()->activeDocumentLoader()->writer());
+    installDOMFunction(webPage->d->mainFrame());
 
-    webpage->d->setLoadState(WebPagePrivate::Finished);
-    webpage->client()->notifyLoadFinished(0);
-
-    return true;
+    webPage->d->setLoadState(WebPagePrivate::Finished);
+    webPage->client()->notifyLoadFinished(0);
 }
 
-void PagePopupBlackBerry::generateHTML(WebPage* webpage)
+void PagePopup::writeDocument(DocumentWriter* writer)
 {
-    DocumentWriter* writer = webpage->d->mainFrame()->loader()->activeDocumentLoader()->writer();
+    ASSERT(writter);
     writer->setMIMEType("text/html");
     writer->begin(KURL());
 
     // All the popups have the same html head and the page content should be non-zoomable.
     StringBuilder source;
     // FIXME: the hardcoding padding will be removed soon.
-    int screenWidth = webpage->d->screenSize().width() - PADDING;
     source.appendLiteral("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n");
-    source.append("<meta name=\"viewport\" content=\"width=" + String::number(screenWidth));
-    source.appendLiteral(", user-scalable=no\" />\n");
-    writer->addData(source.toString().utf8().data(), source.toString().utf8().length());
+    source.appendLiteral("<meta name=\"viewport\" content=\"user-scalable=no, width=device-width\" />\n");
+    CString utf8Data = source.toString().utf8();
+    writer->addData(utf8Data.data(), utf8Data.length());
 
     m_client->writeDocument(*writer);
     writer->end();
 }
 
-static JSValueRef setValueAndClosePopupCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*)
+JSValueRef PagePopup::setValueAndClosePopupCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*)
 {
     JSValueRef jsRetVal = JSValueMakeUndefined(context);
     if (argumentCount <= 0)
         return jsRetVal;
 
-    JSStringRef string = JSValueToStringCopy(context, arguments[0], 0);
-    size_t sizeUTF8 = JSStringGetMaximumUTF8CStringSize(string);
-    Vector<char> strArgs(sizeUTF8 + 1);
-    strArgs[sizeUTF8] = 0;
-    JSStringGetUTF8CString(string, strArgs.data(), sizeUTF8);
-    JSStringRelease(string);
+    JSRetainPtr<JSStringRef> string(Adopt, JSValueToStringCopy(context, arguments[0], 0));
+    size_t sizeUTF8 = JSStringGetMaximumUTF8CStringSize(string.get());
+    Vector<char> utf8String(sizeUTF8 + 1);
+    utf8String[sizeUTF8] = 0;
+    JSStringGetUTF8CString(string.get(), utf8String.data(), sizeUTF8);
     JSObjectRef popUpObject = JSValueToObject(context, arguments[argumentCount - 1], 0);
-    PagePopupBlackBerry::SharedClientPointer* client = reinterpret_cast<PagePopupBlackBerry::SharedClientPointer*>(JSObjectGetPrivate(popUpObject));
-
-    // Check the weak pointer as the owner page may have destroyed the popup.
-    if (client->get())
-        client->get()->setValueAndClosePopup(0, strArgs.data());
+    PagePopup* pagePopup = static_cast<PagePopup*>(JSObjectGetPrivate(popUpObject));
+    pagePopup->m_client->setValueAndClosePopup(String::fromUTF8(utf8String.data()));
 
     return jsRetVal;
 }
@@ -116,14 +104,14 @@ static JSValueRef setValueAndClosePopupCallback(JSContextRef context, JSObjectRe
 static void popUpExtensionInitialize(JSContextRef context, JSObjectRef object)
 {
     UNUSED_PARAM(context);
-    UNUSED_PARAM(object);
+    PagePopup* pagePopup = static_cast<PagePopup*>(JSObjectGetPrivate(object));
+    pagePopup->ref();
 }
 
 static void popUpExtensionFinalize(JSObjectRef object)
 {
-    // Clear the reference. See installDOMFunction().
-    PagePopupBlackBerry::SharedClientPointer* client = reinterpret_cast<PagePopupBlackBerry::SharedClientPointer*>(JSObjectGetPrivate(object));
-    client->deref();
+    PagePopup* pagePopup = static_cast<PagePopup*>(JSObjectGetPrivate(object));
+    pagePopup->deref();
 }
 
 static JSStaticFunction popUpExtensionStaticFunctions[] =
@@ -137,7 +125,7 @@ static JSStaticValue popUpExtensionStaticValues[] =
 { 0, 0, 0, 0 }
 };
 
-void PagePopupBlackBerry::installDOMFunction(Frame* frame)
+void PagePopup::installDOMFunction(Frame* frame)
 {
     JSDOMWindow* window = toJSDOMWindow(frame, mainThreadNormalWorld());
     ASSERT(window);
@@ -160,11 +148,7 @@ void PagePopupBlackBerry::installDOMFunction(Frame* frame)
     definition.finalize = popUpExtensionFinalize;
     JSClassRef clientClass = JSClassCreate(&definition);
 
-    JSObjectRef clientClassObject = JSObjectMake(context, clientClass, 0);
-
-    // Add a reference. See popUpExtensionFinalize.
-    m_sharedClientPointer->ref();
-    JSObjectSetPrivate(clientClassObject, m_sharedClientPointer.get());
+    JSObjectRef clientClassObject = JSObjectMake(context, clientClass, this);
 
     String name("popUp");
 
@@ -174,11 +158,8 @@ void PagePopupBlackBerry::installDOMFunction(Frame* frame)
     JSClassRelease(clientClass);
 }
 
-void PagePopupBlackBerry::closePopup()
+void PagePopup::close()
 {
-    // Prevent the popup page from accessing the client.
-    m_sharedClientPointer->clear();
-
     m_client->didClosePopup();
 }
 

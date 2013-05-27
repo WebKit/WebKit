@@ -30,8 +30,6 @@
 #include <LocalizeResource.h>
 #include <wtf/text/StringBuilder.h>
 
-#define CELL_HEIGHT 30
-
 using namespace WebCore;
 
 namespace BlackBerry {
@@ -39,9 +37,8 @@ namespace WebKit {
 
 DEFINE_STATIC_LOCAL(BlackBerry::Platform::LocalizeResource, s_resource, ());
 
-SelectPopupClient::SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds,
-    const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLSelectElement* element)
-    : PagePopupBlackBerryClient(webPage)
+SelectPopupClient::SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds, const int* itemType, bool* selecteds, WebPagePrivate* webPagePrivate, HTMLSelectElement* element)
+    : PagePopupClient(webPagePrivate)
     , m_multiple(multiple)
     , m_size(size)
     , m_element(element)
@@ -60,11 +57,9 @@ void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry
     StringBuilder source;
     source.appendLiteral("<style>\n");
     // Include CSS file.
-    source.append(popupControlBlackBerryCss,
-            sizeof(popupControlBlackBerryCss));
+    source.append(popupControlBlackBerryCss, sizeof(popupControlBlackBerryCss));
     source.appendLiteral("</style>\n<style>");
-    source.append(selectControlBlackBerryCss,
-            sizeof(selectControlBlackBerryCss));
+    source.append(selectControlBlackBerryCss, sizeof(selectControlBlackBerryCss));
     source.appendLiteral("</style></head><body>\n");
     source.appendLiteral("<script>\n");
     source.appendLiteral("window.addEventListener('load', function showIt() {");
@@ -129,14 +124,15 @@ void SelectPopupClient::generateHTML(bool, int size, const ScopeArray<BlackBerry
     source.appendLiteral("});\n");
     source.appendLiteral(" window.removeEventListener('load', showIt); }); \n");
     source.append(selectControlBlackBerryJs, sizeof(selectControlBlackBerryJs));
-    source.appendLiteral("</script>\n"
-                         "</body> </html>\n");
+    source.appendLiteral("</script>\n</body> </html>\n");
     m_source = source.toString();
 }
 
-void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
+void SelectPopupClient::setValueAndClosePopup(const String& stringValue)
 {
-    ASSERT(m_element);
+    // Popup closed.
+    if (!m_element)
+        return;
 
     static const char* cancelValue = "-1";
     if (stringValue == cancelValue) {
@@ -175,7 +171,7 @@ void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
 
 void SelectPopupClient::didClosePopup()
 {
-    PagePopupBlackBerryClient::didClosePopup();
+    PagePopupClient::didClosePopup();
     m_element = 0;
 }
 

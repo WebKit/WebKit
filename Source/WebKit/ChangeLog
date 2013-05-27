@@ -1,3 +1,12 @@
+2013-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Move PagePopup implementation to WebKitSupport
+        https://bugs.webkit.org/show_bug.cgi?id=116824
+
+        Reviewed by Rob Buis.
+
+        * PlatformBlackBerry.cmake: Update new file paths and names.
+
 2013-05-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Expose database storage and cache locations via preferences.

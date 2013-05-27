@@ -1,3 +1,91 @@
+2013-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Move PagePopup implementation to WebKitSupport
+        https://bugs.webkit.org/show_bug.cgi?id=116824
+
+        Reviewed by Rob Buis.
+
+        After r150434 PagePopup implementation in BlackBerry port is
+        independent from WebCore. The classes are now in the
+        BlackBerry::WebKit namespace so they can be moved from
+        WebCoresupport to WebKitSupport and renamed to remove the
+        BlackBerry suffix which is now redundant. Also, now that the
+        implementation is not shared, it can be simplified a bit more.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate): Update to
+        API changes.
+        (BlackBerry::WebKit::WebPage::initPopupWebView): Ditto.
+        (BlackBerry::WebKit::WebPagePrivate::openPagePopup): Ditto.
+        (BlackBerry::WebKit::WebPagePrivate::closePagePopup): Ditto.
+        (BlackBerry::WebKit::WebPagePrivate::hasOpenedPopup): Ditto.
+        * Api/WebPage.h:
+        (WebKit): Ditto.
+        * Api/WebPage_p.h:
+        (WebKit): Ditto.
+        (WebPagePrivate): Rename m_selectPopup as m_pagePopup, since it
+        can also point to a color picker or date picker page popup. Also
+        use RefPtr instead of raw pointer.
+        * WebKitSupport/ColorPickerClient.cpp: Renamed from Source/WebKit/blackberry/WebCoreSupport/ColorPickerClient.cpp.
+        (BlackBerry::WebKit::ColorPickerClient::ColorPickerClient):
+        (BlackBerry::WebKit::ColorPickerClient::generateHTML):
+        (BlackBerry::WebKit::ColorPickerClient::setValueAndClosePopup):
+        Return early if popup has been closed already.
+        (BlackBerry::WebKit::ColorPickerClient::didClosePopup):
+        * WebKitSupport/ColorPickerClient.h: Renamed from Source/WebKit/blackberry/WebCoreSupport/ColorPickerClient.h.
+        * WebKitSupport/DatePickerClient.cpp: Renamed from Source/WebKit/blackberry/WebCoreSupport/DatePickerClient.cpp.
+        (BlackBerry::WebKit::DatePickerClient::DatePickerClient):
+        (BlackBerry::WebKit::DatePickerClient::~DatePickerClient):
+        (BlackBerry::WebKit::DatePickerClient::generateHTML):
+        (BlackBerry::WebKit::DatePickerClient::setValueAndClosePopup):
+        Return early if popup has been closed already.
+        (BlackBerry::WebKit::DatePickerClient::didClosePopup):
+        (BlackBerry::WebKit::DatePickerClient::generateDateLabels):
+        * WebKitSupport/DatePickerClient.h: Renamed from Source/WebKit/blackberry/WebCoreSupport/DatePickerClient.h.
+        * WebKitSupport/PagePopup.cpp: Renamed from Source/WebKit/blackberry/WebCoreSupport/PagePopupBlackBerry.cpp.
+        (BlackBerry::WebKit::PagePopup::PagePopup):
+        (BlackBerry::WebKit::PagePopup::~PagePopup):
+        (BlackBerry::WebKit::PagePopup::initialize): Renamed as initialize
+        and made void, since it always returned true and the callers
+        ignored the return value.
+        (BlackBerry::WebKit::PagePopup::writeDocument): Renamed from
+        generateHTML for consistency with PagePopupClient::writeDocument()
+        and to avoid confusion with generateHTML method in the clients
+        that create the HTML contents but they don't write the document.
+        (BlackBerry::WebKit::PagePopup::setValueAndClosePopupCallback):
+        Make it static member of PagePopup since the JS object now holds a
+        reference of PagePopup instance as private data.
+        (BlackBerry::WebKit::popUpExtensionInitialize): Take a reference
+        of the PagePopup instance saved as private data of the JS object.
+        (BlackBerry::WebKit::popUpExtensionFinalize): Unref the PagePopup
+        instance saved as private data of the JS object.
+        (BlackBerry::WebKit::PagePopup::installDOMFunction): Instead of
+        saving the client as private data of the JS object using a wrapper
+        refcounted object, save the PagePopup instance that is now
+        refcounted and access the client from the PagePopup instance in
+        the callback.
+        (BlackBerry::WebKit::PagePopup::close): Renamed from closePagePopup
+        since PagePopup::closePagePopup was a bit redundant.
+        * WebKitSupport/PagePopup.h: Renamed from Source/WebKit/blackberry/WebCoreSupport/PagePopupBlackBerry.h.
+        (BlackBerry::WebKit::PagePopup::create): Static member to create
+        instances of PagePopup now that it's refcounted.
+        * WebKitSupport/PagePopupClient.cpp: Renamed from Source/WebKit/blackberry/WebCoreSupport/PagePopupBlackBerryClient.cpp.
+        (BlackBerry::WebKit::PagePopupClient::PagePopupClient):
+        (BlackBerry::WebKit::PagePopupClient::closePopup):
+        (BlackBerry::WebKit::PagePopupClient::didClosePopup):
+        (BlackBerry::WebKit::PagePopupClient::contentSize):
+        (BlackBerry::WebKit::PagePopupClient::writeDocument):
+        * WebKitSupport/PagePopupClient.h: Renamed from Source/WebKit/blackberry/WebCoreSupport/PagePopupBlackBerryClient.h.
+        * WebKitSupport/SelectPopupClient.cpp: Renamed from Source/WebKit/blackberry/WebCoreSupport/SelectPopupClient.cpp.
+        (BlackBerry::WebKit::SelectPopupClient::SelectPopupClient):
+        (BlackBerry::WebKit::SelectPopupClient::~SelectPopupClient):
+        (BlackBerry::WebKit::SelectPopupClient::generateHTML):
+        (BlackBerry::WebKit::SelectPopupClient::setValueAndClosePopup):
+        Return early if popup has been closed already.
+        (BlackBerry::WebKit::SelectPopupClient::didClosePopup):
+        (BlackBerry::WebKit::SelectPopupClient::notifySelectionChange):
+        * WebKitSupport/SelectPopupClient.h: Renamed from Source/WebKit/blackberry/WebCoreSupport/SelectPopupClient.h.
+
 2013-05-26  Jakob Petsovits  <jpetsovits@blackberry.com>
 
         [BlackBerry] Make screen updates dependent on the existence of a drawing buffer.

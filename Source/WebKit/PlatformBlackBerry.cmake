@@ -101,20 +101,17 @@ list(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/InspectorClientBlackBerry.cpp
     blackberry/WebCoreSupport/NetworkInfoClientBlackBerry.cpp
     blackberry/WebCoreSupport/NotificationClientBlackBerry.cpp
-    blackberry/WebCoreSupport/PagePopupBlackBerry.cpp
-    blackberry/WebCoreSupport/PagePopupBlackBerryClient.cpp
     blackberry/WebCoreSupport/PlatformStrategiesBlackBerry.cpp
     blackberry/WebCoreSupport/NavigatorContentUtilsClientBlackBerry.cpp
-    blackberry/WebCoreSupport/SelectPopupClient.cpp
     blackberry/WebCoreSupport/SuggestionBoxHandler.cpp
     blackberry/WebCoreSupport/SuggestionBoxElement.cpp
     blackberry/WebCoreSupport/VibrationClientBlackBerry.cpp
-    blackberry/WebCoreSupport/DatePickerClient.cpp
-    blackberry/WebCoreSupport/ColorPickerClient.cpp
     blackberry/WebKitSupport/AboutData.cpp
     blackberry/WebKitSupport/BackingStoreTile.cpp
     blackberry/WebKitSupport/BackingStoreClient.cpp
     blackberry/WebKitSupport/BackingStoreVisualizationViewportAccessor.cpp
+    blackberry/WebKitSupport/ColorPickerClient.cpp
+    blackberry/WebKitSupport/DatePickerClient.cpp
     blackberry/WebKitSupport/DefaultTapHighlight.cpp
     blackberry/WebKitSupport/DOMSupport.cpp
     blackberry/WebKitSupport/FrameLayers.cpp
@@ -123,8 +120,11 @@ list(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/InRegionScrollableArea.cpp
     blackberry/WebKitSupport/InspectorOverlayBlackBerry.cpp
     blackberry/WebKitSupport/NotificationManager.cpp
+    blackberry/WebKitSupport/PagePopup.cpp
+    blackberry/WebKitSupport/PagePopupClient.cpp
     blackberry/WebKitSupport/ProximityDetector.cpp
     blackberry/WebKitSupport/RenderQueue.cpp
+    blackberry/WebKitSupport/SelectPopupClient.cpp
     blackberry/WebKitSupport/SelectionHandler.cpp
     blackberry/WebKitSupport/SelectionOverlay.cpp
     blackberry/WebKitSupport/SpellingHandler.cpp

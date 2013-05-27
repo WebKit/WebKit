@@ -100,8 +100,8 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
-#include "PagePopupBlackBerry.h"
-#include "PagePopupBlackBerryClient.h"
+#include "PagePopup.h"
+#include "PagePopupClient.h"
 #include "PlatformTouchEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDatabase.h"
@@ -416,7 +416,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_hasInRegionScrollableAreas(false)
     , m_updateDelegatedOverlaysDispatched(false)
     , m_deferredTasksTimer(this, &WebPagePrivate::deferredTasksTimerFired)
-    , m_selectPopup(0)
+    , m_pagePopup(0)
     , m_autofillManager(AutofillManager::create(this))
     , m_documentStyleRecalcPostponed(false)
     , m_documentChildNeedsStyleRecalc(false)
@@ -4941,7 +4941,7 @@ bool WebPage::nodeHasHover(const WebDOMNode& node)
 
 void WebPage::initPopupWebView(BlackBerry::WebKit::WebPage* webPage)
 {
-    d->m_selectPopup->init(webPage);
+    d->m_pagePopup->initialize(webPage);
 }
 
 String WebPagePrivate::findPatternStringForUrl(const KURL& url) const
@@ -6062,10 +6062,10 @@ void WebPage::removeCompositingThreadOverlay(WebOverlay* overlay)
 #endif
 }
 
-bool WebPagePrivate::openPagePopup(PagePopupBlackBerryClient* popupClient, const WebCore::IntRect& originBoundsInRootView)
+bool WebPagePrivate::openPagePopup(PagePopupClient* popupClient, const WebCore::IntRect& originBoundsInRootView)
 {
     closePagePopup();
-    m_selectPopup = new PagePopupBlackBerry(this, popupClient);
+    m_pagePopup = PagePopup::create(this, popupClient);
 
     WebCore::IntRect popupRect = m_page->chrome().client()->rootViewToScreen(originBoundsInRootView);
     popupRect.setSize(popupClient->contentSize());
@@ -6079,18 +6079,17 @@ bool WebPagePrivate::openPagePopup(PagePopupBlackBerryClient* popupClient, const
 
 void WebPagePrivate::closePagePopup()
 {
-    if (!m_selectPopup)
+    if (!m_pagePopup)
         return;
 
-    m_selectPopup->closePopup();
+    m_pagePopup->close();
     m_client->closePopupWebView();
-    delete m_selectPopup;
-    m_selectPopup = 0;
+    m_pagePopup = 0;
 }
 
 bool WebPagePrivate::hasOpenedPopup() const
 {
-    return m_selectPopup;
+    return m_pagePopup;
 }
 
 void WebPagePrivate::setInspectorOverlayClient(InspectorOverlay::InspectorOverlayClient* inspectorOverlayClient)

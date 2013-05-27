@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,36 +16,46 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ColorPickerClient_h
-#define ColorPickerClient_h
+#include "config.h"
+#include "PagePopupClient.h"
 
-#include "PagePopupBlackBerryClient.h"
-#include <BlackBerryPlatformInputEvents.h>
+#include "DocumentWriter.h"
+#include "IntRect.h"
+#include "WebPage_p.h"
+#include <BlackBerryPlatformString.h>
 
-namespace WebCore {
-class HTMLInputElement;
-}
+using namespace WebCore;
 
 namespace BlackBerry {
-namespace Platform {
-class String;
-}
-
 namespace WebKit {
 
-class ColorPickerClient : public PagePopupBlackBerryClient {
-public:
-    ColorPickerClient(const BlackBerry::Platform::String& value, BlackBerry::WebKit::WebPagePrivate*, WebCore::HTMLInputElement*);
+PagePopupClient::PagePopupClient(WebPagePrivate* webPagePrivate)
+    : m_webPagePrivate(webPagePrivate)
+{
+}
 
-    void setValueAndClosePopup(int, const String&);
-    void didClosePopup();
+void PagePopupClient::closePopup()
+{
+    ASSERT(m_webPagePrivate);
+    m_webPagePrivate->closePagePopup();
+}
 
-private:
-    void generateHTML(const BlackBerry::Platform::String& value);
+void PagePopupClient::didClosePopup()
+{
+    m_webPagePrivate = 0;
+}
 
-    RefPtr<WebCore::HTMLInputElement> m_element;
-};
+IntSize PagePopupClient::contentSize()
+{
+    // FIXME: will generate content size dynamically.
+    return IntSize(320, 256);
+}
+
+void PagePopupClient::writeDocument(DocumentWriter& writer)
+{
+    writer.addData(m_source.utf8().data(), m_source.utf8().length());
+}
 
 }
 }
-#endif
+

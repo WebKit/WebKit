@@ -35,8 +35,8 @@ namespace WebKit {
 
 DEFINE_STATIC_LOCAL(BlackBerry::Platform::LocalizeResource, s_resource, ());
 
-ColorPickerClient::ColorPickerClient(const BlackBerry::Platform::String& value, BlackBerry::WebKit::WebPagePrivate* webPage, WebCore::HTMLInputElement* element)
-    : PagePopupBlackBerryClient(webPage)
+ColorPickerClient::ColorPickerClient(const BlackBerry::Platform::String& value, WebPagePrivate* webPagePrivate, WebCore::HTMLInputElement* element)
+    : PagePopupClient(webPagePrivate)
     , m_element(element)
 {
     generateHTML(value);
@@ -79,9 +79,11 @@ void ColorPickerClient::generateHTML(const BlackBerry::Platform::String& value)
     m_source = source.toString();
 }
 
-void ColorPickerClient::setValueAndClosePopup(int, const String& value)
+void ColorPickerClient::setValueAndClosePopup(const String& value)
 {
-    ASSERT(m_element);
+    // Popup closed.
+    if (!m_element)
+        return;
 
     static const char* cancelValue = "-1";
     if (value != cancelValue)
@@ -91,7 +93,7 @@ void ColorPickerClient::setValueAndClosePopup(int, const String& value)
 
 void ColorPickerClient::didClosePopup()
 {
-    PagePopupBlackBerryClient::didClosePopup();
+    PagePopupClient::didClosePopup();
     m_element = 0;
 }
 

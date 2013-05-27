@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,14 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PagePopupBlackBerry_h
-#define PagePopupBlackBerry_h
+#ifndef PagePopup_h
+#define PagePopup_h
 
 #include "IntRect.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+typedef const struct OpaqueJSContext* JSContextRef;
+typedef struct OpaqueJSValue* JSObjectRef;
+typedef const struct OpaqueJSValue* JSValueRef;
+
 namespace WebCore {
+class DocumentWriter;
 class Frame;
 }
 
@@ -31,35 +36,32 @@ namespace BlackBerry {
 namespace WebKit {
 class WebPage;
 class WebPagePrivate;
-class PagePopupBlackBerryClient;
+class PagePopupClient;
 
-class PagePopupBlackBerry {
+class PagePopup : public RefCounted<PagePopup> {
 public:
-    PagePopupBlackBerry(BlackBerry::WebKit::WebPagePrivate*, PagePopupBlackBerryClient*);
-    ~PagePopupBlackBerry();
+    static PassRefPtr<PagePopup> create(WebPagePrivate* webPagePrivate, PagePopupClient* client)
+    {
+        return adoptRef(new PagePopup(webPagePrivate, client));
+    }
+    ~PagePopup();
 
-    bool init(BlackBerry::WebKit::WebPage*);
-    void closePopup();
-
-    class SharedClientPointer : public RefCounted<SharedClientPointer> {
-    public:
-        explicit SharedClientPointer(PagePopupBlackBerryClient* client) : m_client(client) { }
-        void clear() { m_client = 0; }
-        PagePopupBlackBerryClient* get() const { return m_client; }
-    private:
-        PagePopupBlackBerryClient* m_client;
-    };
+    void initialize(WebPage*);
+    void close();
 
 private:
-    void generateHTML(BlackBerry::WebKit::WebPage*);
+    PagePopup(WebPagePrivate*, PagePopupClient*);
+
+    void writeDocument(WebCore::DocumentWriter*);
     void installDOMFunction(WebCore::Frame*);
 
-    BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
-    OwnPtr<PagePopupBlackBerryClient> m_client;
-    RefPtr<SharedClientPointer> m_sharedClientPointer;
+    static JSValueRef setValueAndClosePopupCallback(JSContextRef, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*);
+
+    WebPagePrivate* m_webPagePrivate;
+    OwnPtr<PagePopupClient> m_client;
 };
 
 }
 }
 
-#endif // PagePopupBlackBerry_h
+#endif // PagePopup_h

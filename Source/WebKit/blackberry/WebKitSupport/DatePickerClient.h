@@ -19,7 +19,7 @@
 #ifndef DatePickerClient_h
 #define DatePickerClient_h
 
-#include "PagePopupBlackBerryClient.h"
+#include "PagePopupClient.h"
 #include <BlackBerryPlatformInputEvents.h>
 #include <unicode/udat.h>
 
@@ -35,12 +35,12 @@ class String;
 namespace WebKit {
 class WebPagePrivate;
 
-class DatePickerClient : public PagePopupBlackBerryClient {
+class DatePickerClient : public PagePopupClient {
 public:
-    DatePickerClient(BlackBerry::Platform::BlackBerryInputType, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step, BlackBerry::WebKit::WebPagePrivate*, WebCore::HTMLInputElement*);
+    DatePickerClient(BlackBerry::Platform::BlackBerryInputType, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step, WebPagePrivate*, WebCore::HTMLInputElement*);
     ~DatePickerClient();
 
-    void setValueAndClosePopup(int, const String&);
+    void setValueAndClosePopup(const String&);
     void didClosePopup();
 
 private:

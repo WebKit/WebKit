@@ -39,8 +39,8 @@ namespace WebKit {
 
 DEFINE_STATIC_LOCAL(BlackBerry::Platform::LocalizeResource, s_resource, ());
 
-DatePickerClient::DatePickerClient(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step, BlackBerry::WebKit::WebPagePrivate* webPage, WebCore::HTMLInputElement* element)
-    : PagePopupBlackBerryClient(webPage)
+DatePickerClient::DatePickerClient(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step, WebPagePrivate* webPagePrivate, WebCore::HTMLInputElement* element)
+    : PagePopupClient(webPagePrivate)
     , m_type(type)
     , m_element(element)
 {
@@ -57,11 +57,9 @@ void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType ty
     String title = "";
     source.appendLiteral("<style>\n");
     // Include CSS file.
-    source.append(popupControlBlackBerryCss,
-            sizeof(popupControlBlackBerryCss));
+    source.append(popupControlBlackBerryCss, sizeof(popupControlBlackBerryCss));
     source.appendLiteral("</style>\n<style>");
-    source.append(timeControlBlackBerryCss,
-            sizeof(timeControlBlackBerryCss));
+    source.append(timeControlBlackBerryCss, sizeof(timeControlBlackBerryCss));
     source.appendLiteral("</style></head><body>\n");
     source.appendLiteral("<script>\n");
     source.appendLiteral("window.addEventListener('load', function showIt() {");
@@ -128,19 +126,20 @@ void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType ty
     source.appendLiteral("});\n");
     source.appendLiteral(" window.removeEventListener('load', showIt); }); \n");
     source.append(timeControlBlackBerryJs, sizeof(timeControlBlackBerryJs));
-    source.appendLiteral("</script>\n"
-                         "</body> </html>\n");
+    source.appendLiteral("</script>\n</body> </html>\n");
     m_source = source.toString();
 }
 
-void DatePickerClient::setValueAndClosePopup(int, const String& value)
+void DatePickerClient::setValueAndClosePopup(const String& value)
 {
-    // Return -1 if user cancel the selection.
-    ASSERT(m_element);
+    // Popup closed.
+    if (!m_element)
+        return;
 
     // We hide caret when we select date input field, restore it when we close date picker.
     m_element->document()->frame()->selection()->setCaretVisible(true);
 
+    // Return -1 if user cancel the selection.
     if (value != "-1")
         m_element->setValue(value, DispatchChangeEvent);
     closePopup();
@@ -148,7 +147,7 @@ void DatePickerClient::setValueAndClosePopup(int, const String& value)
 
 void DatePickerClient::didClosePopup()
 {
-    PagePopupBlackBerryClient::didClosePopup();
+    PagePopupClient::didClosePopup();
     m_element = 0;
 }
 

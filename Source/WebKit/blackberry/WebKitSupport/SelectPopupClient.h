@@ -20,7 +20,7 @@
 #define SelectPopupClient_h
 
 #include "IntSize.h"
-#include "PagePopupBlackBerryClient.h"
+#include "PagePopupClient.h"
 #include "ScopePointer.h"
 #include "Timer.h"
 #include <wtf/text/WTFString.h>
@@ -36,12 +36,12 @@ class String;
 
 namespace WebKit {
 
-class SelectPopupClient : public PagePopupBlackBerryClient {
+class SelectPopupClient : public PagePopupClient {
 public:
-    SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds, const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate*, WebCore::HTMLSelectElement*);
+    SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds, const int* itemType, bool* selecteds, WebPagePrivate*, WebCore::HTMLSelectElement*);
     ~SelectPopupClient();
 
-    virtual void setValueAndClosePopup(int, const String&);
+    virtual void setValueAndClosePopup(const String&);
     virtual void didClosePopup();
 
 private:

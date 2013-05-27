@@ -61,7 +61,7 @@ class BackingStore;
 class BackingStoreClient;
 class BackingStorePrivate;
 class InRegionScroller;
-class PagePopupBlackBerry;
+class PagePopup;
 class RenderQueue;
 class WebCookieJar;
 class WebOverlay;
@@ -389,7 +389,7 @@ private:
     friend class WebKit::BackingStore;
     friend class WebKit::BackingStoreClient;
     friend class WebKit::BackingStorePrivate;
-    friend class WebKit::PagePopupBlackBerry;
+    friend class WebKit::PagePopup;
     friend class WebKit::RenderQueue;
     friend class WebKit::WebPageCompositor;
     friend class WebKit::WebPageGroupLoadDeferrer;

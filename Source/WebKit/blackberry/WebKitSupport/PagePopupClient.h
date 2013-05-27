@@ -17,8 +17,8 @@
  */
 
 
-#ifndef PagePopupBlackBerryClient_h
-#define PagePopupBlackBerryClient_h
+#ifndef PagePopupClient_h
+#define PagePopupClient_h
 
 #include "DocumentWriter.h"
 #include "IntRect.h"
@@ -33,7 +33,7 @@ namespace BlackBerry {
 namespace WebKit {
 class WebPagePrivate;
 
-class PagePopupBlackBerryClient {
+class PagePopupClient {
 public:
     virtual WebCore::IntSize contentSize();
 
@@ -45,21 +45,21 @@ public:
     virtual void writeDocument(WebCore::DocumentWriter&);
 
     // This is called by the content HTML of a PagePopup.
-    // An implementation of this function should call ChromeClient::closePagePopup().
-    virtual void setValueAndClosePopup(int numValue, const String& stringValue) = 0;
-
-    // This is called by the content HTML of a PagePopup.
-    virtual void closePopup();
+    // An implementation of this function should call closePopup().
+    virtual void setValueAndClosePopup(const String& stringValue) = 0;
 
     // This is called whenever a PagePopup was closed.
     virtual void didClosePopup();
 
-    virtual ~PagePopupBlackBerryClient() { }
+    virtual ~PagePopupClient() { }
 
 protected:
-    PagePopupBlackBerryClient(BlackBerry::WebKit::WebPagePrivate*);
+    PagePopupClient(WebPagePrivate*);
 
-    BlackBerry::WebKit::WebPagePrivate* m_webPage;
+    // This is called by the content HTML of a PagePopup.
+    virtual void closePopup();
+
+    WebPagePrivate* m_webPagePrivate;
     String m_source;
 };
 
