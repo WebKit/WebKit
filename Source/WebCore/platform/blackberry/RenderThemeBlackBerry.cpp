@@ -445,15 +445,15 @@ bool RenderThemeBlackBerry::paintCheckbox(RenderObject* object, const PaintInfo&
     ASSERT(info.context);
     GraphicsContext* context = info.context;
 
-    static RefPtr<Image> disabled, background, inactive, pressed, active, activeMark, disableMark;
+    static RefPtr<Image> disabled, inactive, pressed, active, activeMark, disableMark, pressedMark;
     if (!disabled) {
         disabled = loadImage("core_checkbox_disabled");
-        background = loadImage("core_checkbox_moat");
         inactive = loadImage("core_checkbox_inactive");
         pressed = loadImage("core_checkbox_pressed");
         active = loadImage("core_checkbox_active");
         activeMark = loadImage("core_checkbox_active_mark");
         disableMark = loadImage("core_checkbox_disabled_mark");
+        pressedMark = loadImage("core_checkbox_pressed_mark");
     }
 
     // Caculate where to put center checkmark.
@@ -465,14 +465,11 @@ bool RenderThemeBlackBerry::paintCheckbox(RenderObject* object, const PaintInfo&
     float height = float(activeMark->height()) / float(inactive->height()) * tmpRect.height();
     FloatRect centerRect(centerX, centerY, width, height);
 
-    drawControl(context, rect, background.get());
-
     if (isEnabled(object)) {
         if (isPressed(object)) {
             drawControl(context, rect, pressed.get());
             if (isChecked(object)) {
-                // FIXME: need opacity 30% on activeMark
-                drawControl(context, centerRect, activeMark.get());
+                drawControl(context, centerRect, pressedMark.get());
             }
         } else {
             drawControl(context, rect, inactive.get());

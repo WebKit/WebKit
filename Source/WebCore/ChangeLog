@@ -1,3 +1,17 @@
+2013-05-27  Tiancheng Jiang  <tijiang@rim.com>
+
+        Checkbox UX update.
+        https://bugs.webkit.org/show_bug.cgi?id=116838.
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PR 342302.
+        Internally Reviewed by Jeff Rogers.
+        Remove old background and change pressed checkmark image.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::paintCheckbox):
+
 2013-05-27  Sam Weinig  <sam@webkit.org>
 
         When the background is completely transparent we should be conservative and use the default scrollbar style, not the light one
