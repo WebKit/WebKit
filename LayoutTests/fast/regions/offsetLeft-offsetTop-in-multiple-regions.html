@@ -33,7 +33,6 @@
 		.divText {
 			border: 1px solid green;
 			color: green;
-			font-size: 14px;
 		}
 
 		#divText1 {
@@ -74,7 +73,7 @@
 		#span {
 			position: relative;
 			top: 115px;
-			left: 25;
+			left: 24;
 			color: black;
 			font-size: 12px;
 			margin-left: 4px;
@@ -86,7 +85,7 @@
 			border: 1px dashed red;
 			width: 15px;
 			position: relative;
-			top: 123px;
+			top: 124px;
 			margin-left: 54px;
 		}
 
@@ -213,16 +212,15 @@
 
 <body id="body">
 	<div id="divMain1">
-		<div class="divText" id="divText1"><b>divText1</b></div>
+		<div class="divText" id="divText1"></div>
 	</div>
 
 	<div id="divMain2">
-		<div class="dummy" id="dummy1">dummy</div>
-		<div class="divText" id="divText2_1"><span><b>divText2_1</b></span></div>
-		<div class="divText" id="divText2_2"><span id="absoluteSpan"><b>divText2_2</b></span>
-			<div class="divText" id="divText2_3"><b>divText2_3</b></div>
+		<div class="dummy" id="dummy1"></div>
+		<div class="divText" id="divText2_1"></div>
+		<div class="divText" id="divText2_2">
+			<div class="divText" id="divText2_3"></div>
 			<img id="image" src="resources/transparent.png"></input>
-			<span id="span">span</span>
 		</div>		
 	</div>
 
@@ -268,13 +266,9 @@
 		shouldBe("divText2_3.offsetLeft", "600");
 		shouldBe("divText2_3.offsetTop", "500");
 
-		shouldBe("span.offsetParent", "document.body");
-		shouldBe("span.offsetLeft", "700");
-		shouldBe("span.offsetTop", "610");
-
 		shouldBe("image.offsetParent", "document.body");
 		shouldBe("image.offsetLeft", "650");
-		shouldBe("image.offsetTop", "630");
+		shouldBe("image.offsetTop", "620");
 
 		if (window.testRunner) {
 			var allGraphicElements = document.querySelectorAll(".region1, .region2, .divText, .grid, .vgrid, .dummy, #span, #image");

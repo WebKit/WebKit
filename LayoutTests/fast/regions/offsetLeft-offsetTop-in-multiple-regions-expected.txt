@@ -14,12 +14,9 @@ PASS divText2_2.offsetTop is 350
 PASS divText2_3.offsetParent is document.body
 PASS divText2_3.offsetLeft is 600
 PASS divText2_3.offsetTop is 500
-PASS span.offsetParent is document.body
-PASS span.offsetLeft is 700
-PASS span.offsetTop is 610
 PASS image.offsetParent is document.body
 PASS image.offsetLeft is 650
-PASS image.offsetTop is 630
+PASS image.offsetTop is 620
 PASS successfullyParsed is true
 
 TEST COMPLETE

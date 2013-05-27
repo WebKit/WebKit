@@ -1,3 +1,15 @@
+2013-05-27  Radu Stavila  <stavila@adobe.com>
+
+        [EFL][GTK] fast/regions/offsetLeft-offsetTop-in-multiple-regions.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=116808
+
+        Reviewed by Anders Carlsson.
+
+        The test was failing because of differences between different fonts.
+
+        * fast/regions/offsetLeft-offsetTop-in-multiple-regions-expected.txt:
+        * fast/regions/offsetLeft-offsetTop-in-multiple-regions.html:
+
 2013-05-27  Noam Rosenthal  <noam@webkit.org>
 
         New test direct-pattern-compositing-contain-no-repeat.html fails on Mac
