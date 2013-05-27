@@ -230,7 +230,7 @@ public:
 
     // Find the next utf8 string in the given direction.
     // Case sensitivity, wrapping, and highlighting all matches are also toggleable.
-    bool findNextString(const char*, bool forward, bool caseSensitive, bool wrap, bool highlightAllMatches);
+    bool findNextString(const char*, bool forward, bool caseSensitive, bool wrap, bool highlightAllMatches, bool selectActiveMatchOnClear);
 
     JSGlobalContextRef globalContext() const;
 

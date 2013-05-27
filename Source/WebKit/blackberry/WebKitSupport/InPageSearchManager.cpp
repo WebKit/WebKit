@@ -84,13 +84,13 @@ InPageSearchManager::~InPageSearchManager()
     cancelPendingScopingEffort();
 }
 
-bool InPageSearchManager::findNextString(const String& text, FindOptions findOptions, bool wrap, bool highlightAllMatches)
+bool InPageSearchManager::findNextString(const String& text, FindOptions findOptions, bool wrap, bool highlightAllMatches, bool selectActiveMatchOnClear)
 {
     bool highlightAllMatchesStateChanged = m_highlightAllMatches != highlightAllMatches;
     m_highlightAllMatches = highlightAllMatches;
 
     if (!text.length()) {
-        clearTextMatches();
+        clearTextMatches(selectActiveMatchOnClear);
         cancelPendingScopingEffort();
         m_activeSearchString = String();
         m_webPage->m_client->updateFindStringResult(m_activeMatchCount, m_activeMatchIndex);
@@ -231,8 +231,12 @@ bool InPageSearchManager::findAndMarkText(const String& text, Range* range, Fram
     return false;
 }
 
-void InPageSearchManager::clearTextMatches()
+void InPageSearchManager::clearTextMatches(bool selectActiveMatchOnClear)
 {
+    if (selectActiveMatchOnClear && m_activeMatch.get()) {
+        VisibleSelection selection(m_activeMatch.get());
+        m_activeMatch->ownerDocument()->frame()->selection()->setSelection(selection);
+    }
     m_webPage->m_page->unmarkAllTextMatches();
     m_activeMatch = 0;
     m_activeMatchCount = 0;

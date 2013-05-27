@@ -1,3 +1,22 @@
+2013-05-27  Andy Chen  <andchen@blackberry.com>
+
+        [BlackBerry] Find-on-page should be able to convert the active match to selection when clearing all matches
+        https://bugs.webkit.org/show_bug.cgi?id=116837
+
+        Reviewed by Rob Buis.
+
+        PR 291903
+        Internally reviewed by Mike Fenton.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::findNextString):
+        * Api/WebPage.h:
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::findNextString):
+        (BlackBerry::WebKit::InPageSearchManager::clearTextMatches):
+        * WebKitSupport/InPageSearchManager.h:
+        (InPageSearchManager):
+
 2013-05-27  Eli Fidler  <efidler@rim.com>
 
         [BlackBerry] Fix subframe target added to new requests

@@ -39,14 +39,14 @@ public:
     InPageSearchManager(WebPagePrivate*);
     ~InPageSearchManager();
 
-    bool findNextString(const String&, WebCore::FindOptions, bool wrap, bool highlightAllMatches);
+    bool findNextString(const String&, WebCore::FindOptions, bool wrap, bool highlightAllMatches, bool selectActiveMatchOnClear);
     void frameUnloaded(const WebCore::Frame*);
 
 private:
     class DeferredScopeStringMatches;
     friend class DeferredScopeStringMatches;
 
-    void clearTextMatches();
+    void clearTextMatches(bool selectActiveMatchOnClear = false);
     void setActiveMatchAndMarker(PassRefPtr<WebCore::Range>);
     bool findAndMarkText(const String&, WebCore::Range*, WebCore::Frame*, const WebCore::FindOptions&, bool /* isNewSearch */, bool /* startFromSelection */);
     bool shouldSearchForText(const String&);

@@ -617,7 +617,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
 
     // Our layout tests assume find will wrap and highlight all matches.
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->findNextString(nameStr.utf8().data(),
-        !(options & WebCore::Backwards), !(options & WebCore::CaseInsensitive), true /* wrap */, true /* highlightAllMatches */);
+        !(options & WebCore::Backwards), !(options & WebCore::CaseInsensitive), true /* wrap */, true /* highlightAllMatches */, false /* selectActiveMatchOnClear */);
 
     return mainFrame->page()->findString(nameStr, options);
 }
