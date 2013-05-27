@@ -235,7 +235,7 @@ public:
     bool parseCrossfade(CSSParserValueList*, RefPtr<CSSValue>&);
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-    PassRefPtr<CSSValue> parseImageResolution(CSSParserValueList*);
+    PassRefPtr<CSSValue> parseImageResolution();
 #endif
 
 #if ENABLE(CSS_IMAGE_SET)

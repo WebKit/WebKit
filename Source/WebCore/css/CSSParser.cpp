@@ -2977,10 +2977,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     case CSSPropertyImageResolution:
-        parsedValue = parseImageResolution(m_valueList.get());
-        if (!parsedValue)
-            return false;
-        m_valueList->next();
+        parsedValue = parseImageResolution();
         break;
 #endif
     case CSSPropertyBorderBottomStyle:
@@ -7935,14 +7932,14 @@ bool CSSParser::parseCanvas(CSSParserValueList* valueList, RefPtr<CSSValue>& can
 }
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-PassRefPtr<CSSValue> CSSParser::parseImageResolution(CSSParserValueList* valueList)
+PassRefPtr<CSSValue> CSSParser::parseImageResolution()
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     bool haveResolution = false;
     bool haveFromImage = false;
     bool haveSnap = false;
 
-    CSSParserValue* value = valueList->current();
+    CSSParserValue* value = m_valueList->current();
     while (value) {
         if (!haveFromImage && value->id == CSSValueFromImage) {
             list->append(cssValuePool().createIdentifierValue(value->id));
