@@ -1,5 +1,12 @@
 2013-05-27  Darin Adler  <darin@apple.com>
 
+        Fix build.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::hasNonEmptyBox): Fix typo.
+
+2013-05-27  Darin Adler  <darin@apple.com>
+
         Move hasNonEmptyBoundingBox from Node to HTMLAnchorElement
         https://bugs.webkit.org/show_bug.cgi?id=116842
 

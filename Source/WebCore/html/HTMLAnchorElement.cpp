@@ -104,7 +104,7 @@ bool HTMLAnchorElement::isMouseFocusable() const
     return HTMLElement::isMouseFocusable();
 }
 
-static bool hasNonEmptyBox(RenderModelBoxObject* renderer)
+static bool hasNonEmptyBox(RenderBoxModelObject* renderer)
 {
     if (!renderer)
         return false;
