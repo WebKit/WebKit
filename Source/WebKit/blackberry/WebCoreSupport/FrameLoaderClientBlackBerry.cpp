@@ -965,8 +965,8 @@ void FrameLoaderClientBlackBerry::dispatchWillSendRequest(DocumentLoader* docLoa
     bool isMainResourceLoad = docLoader && docLoader == docLoader->frameLoader()->provisionalDocumentLoader();
 
     // TargetType for subresource loads should have been set in CachedResource::load().
-    if (isMainResourceLoad && request.targetType() == ResourceRequest::TargetIsUnspecified)
-        request.setTargetType(isMainFrame() ? ResourceRequest::TargetIsMainFrame : ResourceRequest::TargetIsSubframe);
+    if (isMainResourceLoad)
+        request.setTargetType(docLoader->frameLoader()->isLoadingMainFrame() ? ResourceRequest::TargetIsMainFrame : ResourceRequest::TargetIsSubframe);
 
     // Any processing which is done for all loads (both main and subresource) should go here.
     NetworkRequest platformRequest;

@@ -1,3 +1,18 @@
+2013-05-27  Eli Fidler  <efidler@rim.com>
+
+        [BlackBerry] Fix subframe target added to new requests
+        https://bugs.webkit.org/show_bug.cgi?id=116602
+
+        Reviewed by Rob Buis.
+
+        In some cases we might be adding TargetIsMainFrame to a subframe
+        request causing an isMainFrame assert.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendRequest):
+        Check we are actually loading the main frame before setting
+        ResourceRequest::TargetIsMainFrame target.
+
 2013-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] REGRESSION(r150071): Animation performance issues in some websites with CSS transforms
