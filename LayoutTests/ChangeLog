@@ -1,3 +1,9 @@
+2013-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] More attempts to make the bot green.
+
+        * platform/win/TestExpectations: Exclude another two flaky tests.
+
 2013-05-28  Tim Horton  <timothy_horton@apple.com>
 
         fast/js/date-DST-time-cusps.html fails after http://trac.webkit.org/changeset/150833
