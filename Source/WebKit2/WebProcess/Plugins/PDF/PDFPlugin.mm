@@ -262,8 +262,11 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
 
 
 @interface WKPDFPluginScrollbarLayer : CALayer
+{
+    WebKit::PDFPlugin* _pdfPlugin;
+}
 
-@property(assign) WebKit::PDFPlugin* pdfPlugin;
+@property (assign) WebKit::PDFPlugin* pdfPlugin;
 
 @end
 
