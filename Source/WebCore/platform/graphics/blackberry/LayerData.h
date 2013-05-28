@@ -224,7 +224,6 @@ protected:
     PluginView* m_pluginView;
 #if ENABLE(VIDEO)
     MediaPlayer* m_mediaPlayer;
-    IntRect m_holePunchClipRect;
 #endif
     IntRect m_holePunchRect;
 

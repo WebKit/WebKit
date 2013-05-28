@@ -1,3 +1,59 @@
+2013-05-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Fix style issues in BlackBerry accelerated compositing backend
+        https://bugs.webkit.org/show_bug.cgi?id=116604
+
+        Reviewed by Carlos Garcia Campos.
+
+        PR 273550, 99638
+
+        Remove the "get" prefix from getters in the WebKit- and compositing-
+        thread layer classes, as well as LayerRendererSurface. Clarify which
+        geometry-related getters return normalized device coordinates by adding
+        a comment.
+
+        Also remove dead code related to LayerData::m_holePunchClipRect, which
+        was part of an eventually disabled fix for video clipping in iframes,
+        PR 99638. Since we now use AC layers for iframes, the bug is no longer
+        reproducible, and the dead code will never need to be enabled again.
+
+        No change in behavior, no new tests.
+
+        * platform/graphics/blackberry/EGLImageLayerCompositingThreadClient.cpp:
+        (WebCore::EGLImageLayerCompositingThreadClient::drawTextures):
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::setDrawTransform):
+        (WebCore::LayerCompositingThread::transformedHolePunchRect):
+        (WebCore::LayerCompositingThread::drawTextures):
+        (WebCore::LayerCompositingThread::drawSurface):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (WebCore::LayerCompositingThread::sublayers): Removed "get" prefix
+        (LayerCompositingThread):
+        (WebCore::LayerCompositingThread::boundingBox): Renamed from "getDrawRect"
+        (WebCore::LayerCompositingThread::transformedBounds): Removed "get" prefix
+        (WebCore::LayerCompositingThread::transformedHolePunchRect): Removed "get" prefix
+        * platform/graphics/blackberry/LayerData.h:
+        (LayerData): Removed unused data member "m_holePunchClipRect"
+        * platform/graphics/blackberry/LayerFilterRenderer.cpp:
+        (WebCore::LayerFilterRenderer::applyActions):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::compositeLayers):
+        (WebCore::LayerRenderer::drawDebugBorder):
+        (WebCore::LayerRenderer::drawHolePunchRect):
+        (WebCore::LayerRenderer::prepareFrameRecursive):
+        (WebCore::LayerRenderer::updateLayersRecursive):
+        (WebCore::collect3DPreservingLayers):
+        (WebCore::LayerRenderer::compositeLayersRecursive):
+        * platform/graphics/blackberry/LayerRendererSurface.cpp:
+        (WebCore::LayerRendererSurface::boundingBox):
+        * platform/graphics/blackberry/LayerRendererSurface.h:
+        (WebCore::LayerRendererSurface::boundingBox): Renamed from "drawRect" because that sounds like a verb, and this is a getter
+        * platform/graphics/blackberry/LayerWebKitThread.h:
+        (WebCore::LayerWebKitThread::sublayers): Removed "get" prefix
+        * platform/graphics/blackberry/VideoLayerWebKitThread.cpp:
+        (WebCore::VideoLayerWebKitThread::setHolePunchRect):
+        (WebCore::VideoLayerWebKitThread::boundsChanged):
+
 2013-05-28  Jer Noble  <jer.noble@apple.com>
 
         Made AudioNode an EventTarget

@@ -27,8 +27,6 @@
 
 #include <BlackBerryPlatformLog.h>
 
-#define DEBUG_VIDEO_CLIPPING 0
-
 namespace WebCore {
 
 VideoLayerWebKitThread::VideoLayerWebKitThread(MediaPlayer* mediaPlayer)
@@ -64,9 +62,6 @@ void VideoLayerWebKitThread::setMediaPlayer(MediaPlayer* mediaPlayer)
 void VideoLayerWebKitThread::setHolePunchRect(const IntRect& rect)
 {
     m_holePunchRect = rect;
-#if DEBUG_VIDEO_CLIPPING
-    BBLOG(BlackBerry::Platform::LogLevelInfo, "VideoLayerWebKitThread m_holePunchRect=(x=%d,y=%d,width=%d,height=%d).", m_holePunchRect.x(), m_holePunchRect.y(), m_holePunchRect.width(), m_holePunchRect.height());
-#endif
     setNeedsCommit();
 }
 
@@ -87,16 +82,6 @@ void VideoLayerWebKitThread::boundsChanged()
     // Note that although we know the *size* of this layer, we won't know the position of this layer
     // until the LayerCompositingThread::setDrawTransform method is called from the LayerRenderer.
     setHolePunchRect(IntRect(IntPoint::zero(), m_bounds));
-
-    // Also set a clipping rectangle for this hole punch rectangle.
-    if (FrameView* frameView = mediaPlayer()->frameView())
-        m_holePunchClipRect = frameView->windowClipRect();
-    else
-        m_holePunchClipRect = holePunchRect();
-
-#if DEBUG_VIDEO_CLIPPING
-    BBLOG(BlackBerry::Platform::LogLevelInfo, "VideoLayerWebKitThread m_holePunchClipRect=(x=%d,y=%d,width=%d,height=%d).", m_holePunchClipRect.x(), m_holePunchClipRect.y(), m_holePunchClipRect.width(), m_holePunchClipRect.height());
-#endif
 }
 
 void VideoLayerWebKitThread::updateTextureContentsIfNeeded()

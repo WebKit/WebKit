@@ -45,7 +45,7 @@ void LayerRendererSurface::setContentRect(const IntRect& contentRect)
     m_size = contentRect.size();
 }
 
-FloatRect LayerRendererSurface::drawRect() const
+FloatRect LayerRendererSurface::boundingBox() const
 {
     FloatRect rect = transformedBounds().boundingBox();
 

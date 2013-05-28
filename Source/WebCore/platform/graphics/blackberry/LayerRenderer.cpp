@@ -309,7 +309,7 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
     m_scale = matrix.m11() * m_viewport.width() / 2;
 
     Vector<RefPtr<LayerCompositingThread> > surfaceLayers;
-    const Vector<RefPtr<LayerCompositingThread> >& sublayers = rootLayer->getSublayers();
+    const Vector<RefPtr<LayerCompositingThread> >& sublayers = rootLayer->sublayers();
     for (size_t i = 0; i < sublayers.size(); i++) {
         float opacity = 1;
         FloatRect clipRect(m_clipRect);
@@ -607,7 +607,7 @@ void LayerRenderer::drawDebugBorder(LayerCompositingThread* layer)
     if (layerAlreadyOnSurface(layer))
         transformedBounds = layer->layerRendererSurface()->transformedBounds();
     else
-        transformedBounds = layer->getTransformedBounds();
+        transformedBounds = layer->transformedBounds();
 
     const GLES2Program& program = useProgram(ColorProgram);
     glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &transformedBounds);
@@ -625,7 +625,7 @@ void LayerRenderer::drawHolePunchRect(LayerCompositingThread* layer)
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ZERO);
-    FloatQuad hole = layer->getTransformedHolePunchRect();
+    FloatQuad hole = layer->transformedHolePunchRect();
     glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &hole);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     checkGLError();
@@ -652,7 +652,7 @@ void LayerRenderer::prepareFrameRecursive(LayerCompositingThread* layer, double 
         }
     }
 
-    const Vector<RefPtr<LayerCompositingThread> >& sublayers = layer->getSublayers();
+    const Vector<RefPtr<LayerCompositingThread> >& sublayers = layer->sublayers();
     for (size_t i = 0; i < sublayers.size(); i++)
         prepareFrameRecursive(sublayers[i].get(), animationTime, isContextCurrent);
 }
@@ -795,10 +795,10 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
             surface->setReplicaDrawTransform(replicaMatrix);
         }
 
-        IntRect drawRect = enclosingIntRect(FloatRect(FloatPoint(), bounds));
-        surface->setContentRect(drawRect);
+        IntRect contentRect = enclosingIntRect(FloatRect(FloatPoint::zero(), bounds));
+        surface->setContentRect(contentRect);
 
-        TransformationMatrix projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.y(), drawRect.maxY(), -1000, 1000);
+        TransformationMatrix projectionMatrix = orthoMatrix(contentRect.x(), contentRect.maxX(), contentRect.y(), contentRect.maxY(), -1000, 1000);
         // The origin of the new surface is the upper left corner of the layer.
         TransformationMatrix drawTransform;
         drawTransform.translate3d(0.5 * bounds.width(), 0.5 * bounds.height(), 0);
@@ -811,18 +811,18 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
     layer->setDrawTransform(m_scale, localMatrix);
 
 #if ENABLE(VIDEO)
-    bool layerVisible = clipRect.intersects(layer->getDrawRect()) || layer->mediaPlayer();
+    bool layerVisible = clipRect.intersects(layer->boundingBox()) || layer->mediaPlayer();
 #else
-    bool layerVisible = clipRect.intersects(layer->getDrawRect());
+    bool layerVisible = clipRect.intersects(layer->boundingBox());
 #endif
 
     if (layer->needsTexture() && layerVisible) {
-        IntRect dirtyRect = toWindowCoordinates(intersection(layer->getDrawRect(), clipRect));
+        IntRect dirtyRect = toWindowCoordinates(intersection(layer->boundingBox(), clipRect));
         m_lastRenderingResults.addDirtyRect(dirtyRect);
     }
 
     if (layer->masksToBounds())
-        clipRect.intersect(layer->getDrawRect());
+        clipRect.intersect(layer->boundingBox());
 
     // Flatten to 2D if the layer doesn't preserve 3D.
     if (!layer->preserves3D()) {
@@ -845,7 +845,7 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
     // M[s] = M * Tr[-center]
     localMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
 
-    const Vector<RefPtr<LayerCompositingThread> >& sublayers = layer->getSublayers();
+    const Vector<RefPtr<LayerCompositingThread> >& sublayers = layer->sublayers();
     for (size_t i = 0; i < sublayers.size(); i++)
         updateLayersRecursive(sublayers[i].get(), localMatrix, surfaceLayers, opacity, clipRect);
 }
@@ -864,10 +864,10 @@ static void collect3DPreservingLayers(Vector<LayerCompositingThread*>& layers)
 {
     for (size_t i = 0; i < layers.size(); ++i) {
         LayerCompositingThread* layer = layers[i];
-        if (!layer->preserves3D() || !layer->getSublayers().size())
+        if (!layer->preserves3D() || !layer->sublayers().size())
             continue;
 
-        Vector<LayerCompositingThread*> sublayers = rawPtrVectorFromRefPtrVector(layer->getSublayers());
+        Vector<LayerCompositingThread*> sublayers = rawPtrVectorFromRefPtrVector(layer->sublayers());
         collect3DPreservingLayers(sublayers);
         layers.insert(i+1, sublayers);
         i += sublayers.size();
@@ -878,9 +878,9 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
 {
     FloatRect rect;
     if (layerAlreadyOnSurface(layer))
-        rect = layer->layerRendererSurface()->drawRect();
+        rect = layer->layerRendererSurface()->boundingBox();
     else
-        rect = layer->getDrawRect();
+        rect = layer->boundingBox();
 
 #if ENABLE(VIDEO)
     bool layerVisible = clipRect.intersects(rect) || layer->mediaPlayer();
@@ -965,18 +965,18 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         updateScissorIfNeeded(clipRect);
         const GLES2Program& program = useProgram(ColorProgram);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
+        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->transformedBounds());
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     }
 
     if (layer->masksToBounds())
-        clipRect.intersect(layer->getDrawRect());
+        clipRect.intersect(layer->boundingBox());
 
     // Here, we need to sort the whole subtree of layers with preserve-3d. It
     // affects all children, and the children of any children with preserve-3d,
     // and so on.
-    Vector<LayerCompositingThread*> sublayers = rawPtrVectorFromRefPtrVector(layer->getSublayers());
+    Vector<LayerCompositingThread*> sublayers = rawPtrVectorFromRefPtrVector(layer->sublayers());
 
     bool preserves3D = layer->preserves3D();
     bool superlayerPreserves3D = layer->superlayer() && layer->superlayer()->preserves3D();
@@ -1008,7 +1008,7 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         updateScissorIfNeeded(clipRect);
         const GLES2Program& program = useProgram(ColorProgram);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
+        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->transformedBounds());
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 

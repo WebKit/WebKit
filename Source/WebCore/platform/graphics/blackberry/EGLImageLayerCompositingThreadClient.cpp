@@ -56,7 +56,7 @@ void EGLImageLayerCompositingThreadClient::drawTextures(LayerCompositingThread* 
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glUseProgram(program.m_program);
     glUniform1f(program.opacityLocation(), layer->drawOpacity());
-    glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
+    glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->transformedBounds());
     glVertexAttribPointer(program.texCoordLocation(), 2, GL_FLOAT, GL_FALSE, 0, upsideDown);
     glBindTexture(GL_TEXTURE_2D, m_textureAccessor->textureID());
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

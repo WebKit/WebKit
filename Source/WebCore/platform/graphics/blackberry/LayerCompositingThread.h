@@ -153,7 +153,7 @@ public:
 
     const LayerCompositingThread* rootLayer() const;
     void setSublayers(const Vector<RefPtr<LayerCompositingThread> >&);
-    const Vector<RefPtr<LayerCompositingThread> >& getSublayers() const { return m_sublayers; }
+    const Vector<RefPtr<LayerCompositingThread> >& sublayers() const { return m_sublayers; }
     void setSuperlayer(LayerCompositingThread* superlayer) { m_superlayer = superlayer; }
     LayerCompositingThread* superlayer() const { return m_superlayer; }
 
@@ -180,9 +180,10 @@ public:
     void setReplicaLayer(LayerCompositingThread* layer) { m_replicaLayer = layer; }
     LayerCompositingThread* replicaLayer() const { return m_replicaLayer.get(); }
 
-    FloatRect getDrawRect() const { return m_drawRect; }
-    const FloatQuad& getTransformedBounds() const { return m_transformedBounds; }
-    FloatQuad getTransformedHolePunchRect() const;
+    // These use normalized device coordinates
+    FloatRect boundingBox() const { return m_boundingBox; }
+    const FloatQuad& transformedBounds() const { return m_transformedBounds; }
+    FloatQuad transformedHolePunchRect() const;
 
     void deleteTextures();
 
@@ -250,7 +251,7 @@ private:
     // Vertex data for the bounds of this layer
     FloatQuad m_transformedBounds;
     // The bounding rectangle of the transformed layer
-    FloatRect m_drawRect;
+    FloatRect m_boundingBox;
 
     OwnPtr<LayerRendererSurface> m_layerRendererSurface;
 

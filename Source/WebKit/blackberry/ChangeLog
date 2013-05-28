@@ -1,3 +1,20 @@
+2013-05-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Fix style issues in BlackBerry accelerated compositing backend
+        https://bugs.webkit.org/show_bug.cgi?id=116604
+
+        Reviewed by Carlos Garcia Campos.
+
+        Adapt to the removal of "get" prefix from getters in the WebKit- and
+        compositing-thread layer classes.
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::pixelViewportRect):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::attachOverlays):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::removeOverlay):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::findFixedElementRect):
+
 2013-05-28  Andreas Kling  <akling@apple.com>
 
         Document::setFocusedNode() should be setFocusedElement().

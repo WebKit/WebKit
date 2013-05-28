@@ -52,7 +52,8 @@ public:
     void setReplicaDrawTransform(const TransformationMatrix& matrix) { m_replicaDrawTransform = matrix; }
     const TransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
 
-    FloatRect drawRect() const;
+    // These use normalized device coordinates
+    FloatRect boundingBox() const;
     FloatQuad transformedBounds() const;
 
     bool ensureTexture();

@@ -115,7 +115,7 @@ public:
 
     void setSublayers(const Vector<RefPtr<LayerWebKitThread> >&);
 
-    const Vector<RefPtr<LayerWebKitThread> >& getSublayers() const { return m_sublayers; }
+    const Vector<RefPtr<LayerWebKitThread> >& sublayers() const { return m_sublayers; }
 
     void setSublayerTransform(const TransformationMatrix& transform) { m_sublayerTransform = transform; setNeedsCommit(); }
 

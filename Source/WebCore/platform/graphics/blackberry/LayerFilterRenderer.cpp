@@ -709,7 +709,7 @@ void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* la
 
     LayerRendererSurface* surface = layer->layerRendererSurface();
 
-    glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
+    glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &layer->transformedBounds());
     glEnableVertexAttribArray(m_positionLocation);
     glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
     glEnableVertexAttribArray(m_texCoordLocation);
@@ -764,7 +764,7 @@ void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* la
 
         actions[i]->restoreState();
 
-        glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds() );
+        glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &layer->transformedBounds());
         glEnableVertexAttribArray(m_positionLocation);
         glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
         glEnableVertexAttribArray(m_texCoordLocation);

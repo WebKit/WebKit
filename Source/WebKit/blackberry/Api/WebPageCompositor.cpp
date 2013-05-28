@@ -82,7 +82,7 @@ void WebPageCompositorPrivate::attachOverlays(LayerCompositingThread* overlayRoo
     if (!overlayRoot)
         return;
 
-    const Vector<RefPtr<LayerCompositingThread> >& overlays = overlayRoot->getSublayers();
+    const Vector<RefPtr<LayerCompositingThread> >& overlays = overlayRoot->sublayers();
     for (size_t i = 0; i < overlays.size(); ++i) {
         LayerCompositingThread* overlay = overlays[i].get();
         if (LayerCompositingThreadClient* client = overlay->client()) {
@@ -275,14 +275,14 @@ void WebPageCompositorPrivate::removeOverlay(LayerCompositingThread* layer)
 
     layer->removeFromSuperlayer();
 
-    if (m_compositingThreadOverlayLayer && m_compositingThreadOverlayLayer->getSublayers().isEmpty())
+    if (m_compositingThreadOverlayLayer && m_compositingThreadOverlayLayer->sublayers().isEmpty())
         m_compositingThreadOverlayLayer.clear();
 }
 
 void WebPageCompositorPrivate::findFixedElementRect(LayerCompositingThread* layer, WebCore::IntRect& fixedElementRect)
 {
     if ((layer->hasFixedContainer() || layer->isFixedPosition() || layer->hasFixedAncestorInDOMTree()) && layer->layerRenderer()) {
-        IntRect fixedRect = layer->layerRenderer()->toPixelViewportCoordinates(layer->getDrawRect());
+        IntRect fixedRect = layer->layerRenderer()->toPixelViewportCoordinates(layer->boundingBox());
         // FIXME: It's possible that the rects don't intersect now, but will be connected by a fixed rect found later.
         // We need to handle it as well.
         if (fixedElementRect.isEmpty() || fixedElementRect.intersects(fixedRect)) // Unite rects if they intersect each other.
@@ -291,7 +291,7 @@ void WebPageCompositorPrivate::findFixedElementRect(LayerCompositingThread* laye
             fixedElementRect = fixedRect;
     }
 
-    const Vector<RefPtr<LayerCompositingThread> >& sublayers = layer->getSublayers();
+    const Vector<RefPtr<LayerCompositingThread> >& sublayers = layer->sublayers();
     for (size_t i = 0; i < sublayers.size(); i++)
         findFixedElementRect(sublayers[i].get(), fixedElementRect);
 }
