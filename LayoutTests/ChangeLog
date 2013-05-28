@@ -1,3 +1,9 @@
+2013-05-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unskip now passing tests.
+
+        * platform/qt-arm/TestExpectations:
+
 2013-05-28  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip failing tests after parallel gc is enabled.
