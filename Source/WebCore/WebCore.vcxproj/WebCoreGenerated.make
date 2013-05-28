@@ -9,6 +9,6 @@ make:
 	cmd /C copyWebCoreResourceFiles.cmd
 	
 clean:
-	del /s /q "%ConfigurationBuildDir%\obj32\WebCore\DerivedSources"
-	del /s /q "%ConfigurationBuildDir%\obj32\WebCore\scripts"
+	if exist "%ConfigurationBuildDir%\obj32\WebCore\DerivedSources" del /s /q "%ConfigurationBuildDir%\obj32\WebCore\DerivedSources"
+	if exist "%ConfigurationBuildDir%\obj32\WebCore\scripts" del /s /q "%ConfigurationBuildDir%\obj32\WebCore\scripts"
 	if exist "%ConfigurationBuildDir%\buildfailed" del "%ConfigurationBuildDir%\buildfailed"
