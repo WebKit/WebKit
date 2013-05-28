@@ -1,5 +1,12 @@
 2013-05-27  Patrick Gansterer  <paroga@webkit.org>
 
+        Build fix for WinCE after r150730.
+
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter):
+
+2013-05-27  Patrick Gansterer  <paroga@webkit.org>
+
         Build fix for WinCE after r150772.
 
         * platform/win/ClipboardWin.cpp:
