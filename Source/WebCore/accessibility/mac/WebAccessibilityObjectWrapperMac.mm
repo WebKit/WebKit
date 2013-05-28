@@ -3047,7 +3047,24 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         m_object->setSelectedVisiblePositionRange([self visiblePositionRangeForTextMarkerRange:textMarkerRange]);
     } else if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
         ASSERT(number);
-        m_object->setFocused([number intValue] != 0);
+        
+        bool focus = [number boolValue];
+        
+        // If focus is just set without making the view the first responder, then keyboard focus won't move to the right place.
+        if (focus && m_object->isWebArea() && !m_object->document()->frame()->selection()->isFocusedAndActive()) {
+            FrameView* frameView = m_object->documentFrameView();
+            Page* page = m_object->page();
+            if (page && frameView) {
+                ChromeClient* client = page->chrome().client();
+                client->focus();
+                if (frameView->platformWidget())
+                    client->makeFirstResponder(frameView->platformWidget());
+                else
+                    client->makeFirstResponder();
+            }
+        }
+        
+        m_object->setFocused(focus);
     } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
         if (number && m_object->canSetNumericValue())
             m_object->setValue([number floatValue]);

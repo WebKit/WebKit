@@ -1,3 +1,19 @@
+2013-05-28  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WKView is unable to set AXFocused to YES and does not handle keyboard events as expected
+        https://bugs.webkit.org/show_bug.cgi?id=116756
+
+        Reviewed by Tim Horton.
+
+        If AXFocused is set to true, but the WebView is not the first responder, then the call will
+        not do anything. This change asks the Chrome to make the WebView the first responder before
+        trying to set focus within the page.
+
+        Was not able to make a test, it requires on interplay between areas outside the web view.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+
 2013-05-28  Jer Noble  <jer.noble@apple.com>
 
         Crash in DumpRenderTree at com.apple.WebCore: WebCore::RenderTextTrackCue::repositionGenericCue + 154
