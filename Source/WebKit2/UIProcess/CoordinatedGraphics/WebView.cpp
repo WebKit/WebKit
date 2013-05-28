@@ -186,8 +186,13 @@ void WebView::initializeClient(const WKViewClient* client)
 
 void WebView::didChangeContentsSize(const WebCore::IntSize& size)
 {
+    if (m_contentsSize == size)
+        return;
+
     m_contentsSize = size;
     m_client.didChangeContentsSize(this, size);
+
+    updateViewportSize();
 }
 
 AffineTransform WebView::transformFromScene() const
