@@ -1,3 +1,16 @@
+2013-05-28  Noam Rosenthal  <noam@webkit.org>
+
+        [Qt] REGRESSION(r149292): broke scrolling in Qt WK2 desktop mode
+        https://bugs.webkit.org/show_bug.cgi?id=116597
+
+        ScrollingCoordinatorCoordinatedGraphics is tailored specifically for
+        fixedLayout mode. When fixedLayout is not set, it should be turned off.
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+
 2013-05-28  Andreas Kling  <akling@apple.com>
 
         Document::setFocusedNode() should be setFocusedElement().
