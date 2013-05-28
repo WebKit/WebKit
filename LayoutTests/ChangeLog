@@ -1,3 +1,11 @@
+2013-05-28  Robert Hogan  <robert@webkit.org>
+
+        Fix line endings in test added in r150602
+
+        Unreviewed.
+
+        * fast/css/text-overflow-ellipsis-behind-floats.html:
+
 2013-05-28  Jer Noble  <jer.noble@apple.com>
 
         Made AudioNode an EventTarget
