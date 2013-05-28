@@ -1,3 +1,30 @@
+2013-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] NRWT reports failure for 'mac' test cases.
+        https://bugs.webkit.org/show_bug.cgi?id=116698
+
+        Reviewed by Ryosuke Niwa.
+
+        The Windows port falls back to the Mac port for many test results,
+        and so adds the mac and mac-wk2 to its set of fallbacks.
+        Unfortunately, NRWT thinks that this means that tests in these
+        folders should be executed, resulting in many failures on
+        Windows.
+
+        This change overloads the '_tests_for_other_platforms' method
+        to return a subset of the result fallback list so that we do
+        not attempt to execute Mac tests on Windows.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.test_search_path): Added. Defaults to just calling the
+        baseline_search_path method, which is how most ports behave.
+        (Port._test_for_other_platforms): Modified to call the new
+        test_search_path method.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.test_search_path): Added custom overload. Strips
+        out mac-specific test paths.
+
 2013-05-28  Martin Robinson  <mrobinson@igalia.com>
 
         Fix GTK+ CMake build

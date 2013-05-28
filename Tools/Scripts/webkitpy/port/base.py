@@ -1455,6 +1455,9 @@ class Port(object):
     def _build_driver_flags(self):
         return []
 
+    def test_search_path(self):
+        return self.baseline_search_path()
+
     def _tests_for_other_platforms(self):
         # By default we will skip any directory under LayoutTests/platform
         # that isn't in our baseline search path (this mirrors what
@@ -1463,7 +1466,7 @@ class Port(object):
         entries = self._filesystem.glob(self._webkit_baseline_path('*'))
         dirs_to_skip = []
         for entry in entries:
-            if self._filesystem.isdir(entry) and entry not in self.baseline_search_path():
+            if self._filesystem.isdir(entry) and entry not in self.test_search_path():
                 basename = self._filesystem.basename(entry)
                 dirs_to_skip.append('platform/%s' % basename)
         return dirs_to_skip
