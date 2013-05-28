@@ -46,6 +46,7 @@
 #include "ExceptionCode.h"
 #include "FlowThreadController.h"
 #include "FocusController.h"
+#include "FocusEvent.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -2157,6 +2158,39 @@ void Element::blur()
             doc->setFocusedElement(0);
     }
 }
+
+void Element::dispatchFocusInEvent(const AtomicString& eventType, PassRefPtr<Element> oldFocusedElement)
+{
+    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT(eventType == eventNames().focusinEvent || eventType == eventNames().DOMFocusInEvent);
+    dispatchScopedEventDispatchMediator(FocusInEventDispatchMediator::create(FocusEvent::create(eventType, true, false, document()->defaultView(), 0, oldFocusedElement)));
+}
+
+void Element::dispatchFocusOutEvent(const AtomicString& eventType, PassRefPtr<Element> newFocusedElement)
+{
+    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT(eventType == eventNames().focusoutEvent || eventType == eventNames().DOMFocusOutEvent);
+    dispatchScopedEventDispatchMediator(FocusOutEventDispatchMediator::create(FocusEvent::create(eventType, true, false, document()->defaultView(), 0, newFocusedElement)));
+}
+
+void Element::dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection)
+{
+    if (document()->page())
+        document()->page()->chrome().client()->elementDidFocus(this);
+
+    RefPtr<FocusEvent> event = FocusEvent::create(eventNames().focusEvent, false, false, document()->defaultView(), 0, oldFocusedElement);
+    EventDispatcher::dispatchEvent(this, FocusEventDispatchMediator::create(event.release()));
+}
+
+void Element::dispatchBlurEvent(PassRefPtr<Element> newFocusedElement)
+{
+    if (document()->page())
+        document()->page()->chrome().client()->elementDidBlur(this);
+
+    RefPtr<FocusEvent> event = FocusEvent::create(eventNames().blurEvent, false, false, document()->defaultView(), 0, newFocusedElement);
+    EventDispatcher::dispatchEvent(this, BlurEventDispatchMediator::create(event.release()));
+}
+
 
 String Element::innerText()
 {

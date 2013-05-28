@@ -1,3 +1,37 @@
+2013-05-28  Andreas Kling  <akling@apple.com>
+
+        Move dispatching of focus-related events from Node to Element.
+        <http://webkit.org/b/116864>
+
+        Reviewed by Antti Koivisto.
+
+        ...and pass around pointers to Element instead of Node.
+
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/Element.h:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchFocusInEvent):
+        (WebCore::Element::dispatchFocusOutEvent):
+        (WebCore::Element::dispatchFocusEvent):
+        (WebCore::Element::dispatchBlurEvent):
+
+            Moved here from Node.
+
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchBlurEvent):
+        * html/HTMLSelectElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::dispatchFocusEvent):
+        (WebCore::HTMLSelectElement::dispatchBlurEvent):
+        * html/HTMLTextFormControlElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::dispatchFocusEvent):
+        (WebCore::HTMLTextFormControlElement::dispatchBlurEvent):
+
+            Update subclass overrides and sprinkle OVERRIDE/FINAL.
+
 2013-05-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove CachedResourceRequest::initiatorElement

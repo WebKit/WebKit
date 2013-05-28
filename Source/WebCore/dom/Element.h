@@ -636,6 +636,10 @@ public:
     void setSavedLayerScrollOffset(const IntSize&);
 
     void dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
+    void dispatchFocusInEvent(const AtomicString& eventType, PassRefPtr<Element> oldFocusedElement);
+    void dispatchFocusOutEvent(const AtomicString& eventType, PassRefPtr<Element> newFocusedElement);
+    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection);
+    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement);
 
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)

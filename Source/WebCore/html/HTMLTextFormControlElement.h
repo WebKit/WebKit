@@ -116,8 +116,8 @@ private:
     int computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
 
-    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection) OVERRIDE;
-    virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
+    virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection) OVERRIDE FINAL;
+    virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) OVERRIDE FINAL;
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
 
     // Returns true if user-editable value is empty. Used to check placeholder visibility.

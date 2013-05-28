@@ -60,7 +60,6 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
-#include "FocusEvent.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
@@ -2298,20 +2297,6 @@ void Node::dispatchSubtreeModifiedEvent()
     dispatchScopedEvent(MutationEvent::create(eventNames().DOMSubtreeModifiedEvent, true));
 }
 
-void Node::dispatchFocusInEvent(const AtomicString& eventType, PassRefPtr<Node> oldFocusedNode)
-{
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    ASSERT(eventType == eventNames().focusinEvent || eventType == eventNames().DOMFocusInEvent);
-    dispatchScopedEventDispatchMediator(FocusInEventDispatchMediator::create(FocusEvent::create(eventType, true, false, document()->defaultView(), 0, oldFocusedNode)));
-}
-
-void Node::dispatchFocusOutEvent(const AtomicString& eventType, PassRefPtr<Node> newFocusedNode)
-{
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    ASSERT(eventType == eventNames().focusoutEvent || eventType == eventNames().DOMFocusOutEvent);
-    dispatchScopedEventDispatchMediator(FocusOutEventDispatchMediator::create(FocusEvent::create(eventType, true, false, document()->defaultView(), 0, newFocusedNode)));
-}
-
 bool Node::dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent)
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
@@ -2363,24 +2348,6 @@ bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
 bool Node::dispatchWheelEvent(const PlatformWheelEvent& event)
 {
     return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator::create(event, document()->defaultView()));
-}
-
-void Node::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection)
-{
-    if (document()->page())
-        document()->page()->chrome().client()->elementDidFocus(this);
-
-    RefPtr<FocusEvent> event = FocusEvent::create(eventNames().focusEvent, false, false, document()->defaultView(), 0, oldFocusedNode);
-    EventDispatcher::dispatchEvent(this, FocusEventDispatchMediator::create(event.release()));
-}
-
-void Node::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
-{
-    if (document()->page())
-        document()->page()->chrome().client()->elementDidBlur(this);
-
-    RefPtr<FocusEvent> event = FocusEvent::create(eventNames().blurEvent, false, false, document()->defaultView(), 0, newFocusedNode);
-    EventDispatcher::dispatchEvent(this, BlurEventDispatchMediator::create(event.release()));
 }
 
 void Node::dispatchChangeEvent()

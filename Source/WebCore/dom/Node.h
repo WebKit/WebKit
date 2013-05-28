@@ -27,7 +27,6 @@
 
 #include "EditingBoundary.h"
 #include "EventTarget.h"
-#include "FocusDirection.h"
 #include "KURLHash.h"
 #include "LayoutRect.h"
 #include "MutationObserver.h"
@@ -603,8 +602,6 @@ public:
 
     void dispatchSubtreeModifiedEvent();
     bool dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent);
-    void dispatchFocusInEvent(const AtomicString& eventType, PassRefPtr<Node> oldFocusedNode);
-    void dispatchFocusOutEvent(const AtomicString& eventType, PassRefPtr<Node> newFocusedNode);
 
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     bool dispatchWheelEvent(const PlatformWheelEvent&);
@@ -618,8 +615,6 @@ public:
 
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 
-    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection);
-    virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
     virtual void dispatchChangeEvent();
     virtual void dispatchInputEvent();
 
