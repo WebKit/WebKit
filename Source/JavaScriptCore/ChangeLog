@@ -1,3 +1,18 @@
+2013-05-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        r150199 is very wrong
+        https://bugs.webkit.org/show_bug.cgi?id=116876
+
+        JSValue needs to protect its internal JSValueRef.
+
+        Reviewed by Darin Adler.
+
+        * API/JSValue.mm:
+        (-[JSValue initWithValue:inContext:]):
+        (-[JSValue dealloc]):
+        * API/tests/testapi.mm: Added a simple test to make sure that we protect the
+        underlying JavaScript value across garbage collections.
+
 2013-05-27  Patrick Gansterer  <paroga@webkit.org>
 
         Use ICU_INCLUDE_DIRS in BlackBerry CMake files

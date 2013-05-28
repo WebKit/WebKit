@@ -802,6 +802,15 @@ void testObjectiveCAPI()
 
         [TinyDOMNode clearSharedVirtualMachine];
     }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        JSValue *o = [JSValue valueWithNewObjectInContext:context];
+        o[@"foo"] = @"foo";
+        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+
+        checkResult(@"JSValue correctly protected its internal value", [[o[@"foo"] toString] isEqualToString:@"foo"]);
+    }
 }
 
 #else
