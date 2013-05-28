@@ -55,7 +55,7 @@ RetainPtr<CFURLRef> KURL::createCFURL() const
     // which is clearly wrong.
     URLCharBuffer buffer;
     copyToBuffer(buffer);
-    return createCFURLFromBuffer(buffer);
+    return createCFURLFromBuffer(buffer.data(), buffer.size());
 }
 #endif
 
