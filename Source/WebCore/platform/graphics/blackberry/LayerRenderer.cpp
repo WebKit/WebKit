@@ -331,8 +331,9 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
     if (!makeContextCurrent())
         return;
 
-    // If some layers should be drawed on temporary surfaces, we should do it first.
-    drawLayersOnSurfaces(surfaceLayers);
+    // If some layers should be drawn on temporary surfaces, we should do it first.
+    if (!surfaceLayers.isEmpty())
+        drawLayersOnSurfaces(surfaceLayers);
 
     // Don't render the root layer, the BlackBerry port uses the BackingStore to draw the
     // root layer.
@@ -372,7 +373,7 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
     textureCacheCompositingThread()->collectGarbage();
 }
 
-static float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
+static float texcoords[4 * 2] = { 0, 0,  1, 0,  1, 1,  0, 1 };
 
 void LayerRenderer::compositeBuffer(const TransformationMatrix& transform, const FloatRect& contents, BlackBerry::Platform::Graphics::Buffer* buffer, bool contentsOpaque, float opacity)
 {
@@ -465,6 +466,11 @@ bool LayerRenderer::useSurface(LayerRendererSurface* surface)
 
 void LayerRenderer::drawLayersOnSurfaces(const Vector<RefPtr<LayerCompositingThread> >& surfaceLayers)
 {
+    // Normally, an upside-down transform is used, as is the GL custom. However, when drawing
+    // layers to surfaces, a right-side-up transform is used, so we need to switch the winding order
+    // for culling.
+    glFrontFace(GL_CCW);
+
     for (int i = surfaceLayers.size() - 1; i >= 0; i--) {
         LayerCompositingThread* layer = surfaceLayers[i].get();
         LayerRendererSurface* surface = layer->layerRendererSurface();
@@ -491,13 +497,13 @@ void LayerRenderer::drawLayersOnSurfaces(const Vector<RefPtr<LayerCompositingThr
 #endif
     }
 
-    // If there are layers drawed on surfaces, we need to switch to default framebuffer.
+    glFrontFace(GL_CW);
+
+    // If there are layers drawn on surfaces, we need to switch to default framebuffer.
     // Otherwise, we just need to set viewport.
-    if (surfaceLayers.size()) {
-        useSurface(0);
-        glEnable(GL_SCISSOR_TEST);
-        glScissor(m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
-    }
+    useSurface(0);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
 }
 
 void LayerRenderer::addLayer(LayerCompositingThread* layer)
@@ -934,7 +940,7 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
     // Draw the debug border if there is one.
     drawDebugBorder(layer);
 
-    // The texture for the LayerRendererSurface can be released after the surface was drawed on another surface.
+    // The texture for the LayerRendererSurface can be released after the surface was drawn on another surface.
     if (layerAlreadyOnSurface(layer)) {
         layer->layerRendererSurface()->releaseTexture();
         return;

@@ -161,6 +161,9 @@ public:
     LayerRenderer* layerRenderer() const { return m_layerRenderer; }
     void setLayerRenderer(LayerRenderer*);
 
+    // The draw transform expects the origin to be located at the center of the layer.
+    FloatPoint origin() const { return FloatPoint(m_bounds.width() / 2.0f, m_bounds.height() / 2.0f); }
+
     void setDrawTransform(double scale, const TransformationMatrix&);
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
 

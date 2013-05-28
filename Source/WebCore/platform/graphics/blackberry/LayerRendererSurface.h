@@ -45,6 +45,8 @@ public:
     FloatRect clipRect() const { return m_clipRect; }
     void setClipRect(const FloatRect& rect) { m_clipRect = rect; }
 
+    FloatPoint origin() const { return FloatPoint(m_size.width() / 2.0f, m_size.height() / 2.0f); }
+
     void setDrawTransform(const TransformationMatrix& matrix) { m_drawTransform = matrix; }
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
     void setReplicaDrawTransform(const TransformationMatrix& matrix) { m_replicaDrawTransform = matrix; }

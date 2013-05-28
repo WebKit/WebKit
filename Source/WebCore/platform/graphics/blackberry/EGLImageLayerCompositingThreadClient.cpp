@@ -47,7 +47,7 @@ void EGLImageLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerCompositi
 
 void EGLImageLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double /*scale*/, const GLES2Program& program)
 {
-    static float upsideDown[4 * 2] = { 0, 1,  0, 0,  1, 0,  1, 1 };
+    static float upsideDown[4 * 2] = { 0, 1,  1, 1,  1, 0,  0, 0 };
 
     if (!m_textureAccessor || !m_textureAccessor->textureID())
         return;

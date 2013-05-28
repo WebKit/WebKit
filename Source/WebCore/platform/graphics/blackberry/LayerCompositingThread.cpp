@@ -133,35 +133,21 @@ void LayerCompositingThread::setDrawTransform(double scale, const Transformation
 {
     m_drawTransform = matrix;
 
-    float bx = m_bounds.width() / 2.0;
-    float by = m_bounds.height() / 2.0;
+    FloatRect boundsRect(-origin(), bounds());
 
-    if (sizeIsScaleInvariant()) {
-        bx /= scale;
-        by /= scale;
-    }
+    if (sizeIsScaleInvariant())
+        boundsRect.scale(1 / scale);
 
-    m_transformedBounds.setP1(matrix.mapPoint(FloatPoint(-bx, -by)));
-    m_transformedBounds.setP2(matrix.mapPoint(FloatPoint(-bx, by)));
-    m_transformedBounds.setP3(matrix.mapPoint(FloatPoint(bx, by)));
-    m_transformedBounds.setP4(matrix.mapPoint(FloatPoint(bx, -by)));
-
+    m_transformedBounds = matrix.mapQuad(boundsRect);
     m_drawRect = m_transformedBounds.boundingBox();
 }
 
 static FloatQuad getTransformedRect(const IntSize& bounds, const IntRect& rect, const TransformationMatrix& drawTransform)
 {
-    float x = -bounds.width() / 2.0 + rect.x();
-    float y = -bounds.height() / 2.0 + rect.y();
-    float w = rect.width();
-    float h = rect.height();
-    FloatQuad result;
-    result.setP1(drawTransform.mapPoint(FloatPoint(x, y)));
-    result.setP2(drawTransform.mapPoint(FloatPoint(x, y + h)));
-    result.setP3(drawTransform.mapPoint(FloatPoint(x + w, y + h)));
-    result.setP4(drawTransform.mapPoint(FloatPoint(x + w, y)));
-
-    return result;
+    FloatPoint origin(bounds.width() / 2.0f, bounds.height() / 2.0f);
+    FloatRect layerRect(rect);
+    layerRect.moveBy(-origin);
+    return drawTransform.mapQuad(layerRect);
 }
 
 
@@ -213,7 +199,7 @@ FloatQuad LayerCompositingThread::getTransformedHolePunchRect() const
 
 void LayerCompositingThread::drawTextures(double scale, const GLES2Program& program, const FloatRect& visibleRect)
 {
-    static float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
+    static float texcoords[4 * 2] = { 0, 0,  1, 0,  1, 1,  0, 1 };
 
     if (m_pluginView) {
         if (m_isVisible) {
@@ -303,7 +289,7 @@ void LayerCompositingThread::drawSurface(const TransformationMatrix& drawTransfo
         glUniform1f(program.opacityLocation(), layerRendererSurface()->drawOpacity());
         glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &surfaceQuad);
 
-        static float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
+        static float texcoords[4 * 2] = { 0, 0,  1, 0,  1, 1,  0, 1 };
         glVertexAttribPointer(program.texCoordLocation(), 2, GL_FLOAT, GL_FALSE, 0, texcoords);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }

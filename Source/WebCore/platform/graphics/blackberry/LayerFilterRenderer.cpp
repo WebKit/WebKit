@@ -682,7 +682,7 @@ Vector<RefPtr<LayerFilterRendererAction> > LayerFilterRenderer::actionsForOperat
     return ret;
 }
 
-static float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
+static float texcoords[4 * 2] = { 0, 0,  1, 0,  1, 1,  0, 1 };
 
 void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* layer, Vector<RefPtr<LayerFilterRendererAction> > actions)
 {

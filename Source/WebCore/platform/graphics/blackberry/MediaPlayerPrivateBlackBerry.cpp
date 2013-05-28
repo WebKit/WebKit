@@ -876,8 +876,7 @@ bool MediaPlayerPrivate::supportsAcceleratedRendering() const
 #if USE(ACCELERATED_COMPOSITING)
 static const double BufferingAnimationDelay = 1.0 / 24;
 static unsigned* s_bufferingImageData = 0;
-static int s_bufferingImageWidth = 0;
-static int s_bufferingImageHeight = 0;
+static IntSize s_bufferingImageSize;
 
 PlatformMedia MediaPlayerPrivate::platformMedia() const
 {
@@ -905,12 +904,11 @@ static void loadBufferingImageData()
             return;
 
         loaded = true;
-        s_bufferingImageWidth = bufferingIcon->width();
-        s_bufferingImageHeight = bufferingIcon->height();
+        s_bufferingImageSize = bufferingIcon->size();
         int bufSize = bufferingIcon->decodedSize();
         s_bufferingImageData = static_cast<unsigned*>(malloc(bufSize));
 
-        nativeImage->readPixels(s_bufferingImageData, s_bufferingImageWidth * s_bufferingImageHeight);
+        nativeImage->readPixels(s_bufferingImageData, s_bufferingImageSize.width() * s_bufferingImageSize.height());
 
         bufferingIcon->deref();
     }
@@ -972,24 +970,19 @@ void MediaPlayerPrivate::drawBufferingAnimation(const TransformationMatrix& matr
         glBindTexture(GL_TEXTURE_2D, texId);
         if (!initialized) {
             initialized = true;
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s_bufferingImageWidth, s_bufferingImageHeight,
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s_bufferingImageSize.width(), s_bufferingImageSize.height(),
                 0, GL_RGBA, GL_UNSIGNED_BYTE, s_bufferingImageData);
             free(s_bufferingImageData);
         }
 
-        float texcoords[] = { 0, 0,  0, 1,  1, 1,  1, 0 };
-        FloatPoint vertices[4];
-        float bx = s_bufferingImageWidth / 2.0;
-        float by = s_bufferingImageHeight / 2.0;
-        vertices[0] = renderMatrix.mapPoint(FloatPoint(-bx, -by));
-        vertices[1] = renderMatrix.mapPoint(FloatPoint(-bx, by));
-        vertices[2] = renderMatrix.mapPoint(FloatPoint(bx, by));
-        vertices[3] = renderMatrix.mapPoint(FloatPoint(bx, -by));
+        float texcoords[] = { 0, 0,  1, 0,  1, 1,  0, 1 };
+        FloatRect bufferingImageRect(FloatPoint(-s_bufferingImageSize.width() / 2.0f, -s_bufferingImageSize.height() / 2.0f), s_bufferingImageSize);
+        FloatQuad transformedQuad = renderMatrix.mapQuad(bufferingImageRect);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         glUniform1f(program.opacityLocation(), 1.0);
-        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, vertices);
+        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &transformedQuad);
         glVertexAttribPointer(program.texCoordLocation(), 2, GL_FLOAT, GL_FALSE, 0, texcoords);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }

@@ -1,3 +1,63 @@
+2013-05-28  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] backface-visibility: hidden doesn't work properly with masks and filters
+        https://bugs.webkit.org/show_bug.cgi?id=116616
+
+        Reviewed by Carlos Garcia Campos.
+
+        The BlackBerry::Platform::Graphics::GraphicsContext generates geometry
+        with a different winding order than the accelerated compositing backend
+        of the BlackBerry port. So, when we switched from Skia to this new
+        rendering engine, we switched from glFrontFace(GL_CCW) to
+        glFrontFace(GL_CW), and all was well when drawing display lists.
+        However, we forgot to update the winding order of geometry generated
+        within the accelerated compositing backend, which is used for masks and
+        filters, so they were getting erroneously culled out when
+        backface-visibility: hidden was applied to them. Fixed by switching the
+        winding order of all geometry generated up here, which has the added
+        benefit of enabling us to use TransformationMatrix::mapQuad instead of
+        transforming point-by-point.
+
+        To further complicate matters, a right-side up transform is used when
+        drawing layers into surfaces, reversing the winding order and requiring
+        us to switch back to glFrontFace(GL_CCW) temporarily, when drawing
+        layers to surfaces, or the layers will get culled out inside the
+        surface.
+
+        Also fix spelling error, "drawed" should be "drawn".
+
+        No new tests, this is only detectable by pixel tests, which the
+        BlackBerry port currently doesn't support.
+
+        PR 341945.
+
+        * platform/graphics/blackberry/EGLImageLayerCompositingThreadClient.cpp:
+        (WebCore::EGLImageLayerCompositingThreadClient::drawTextures):
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::setDrawTransform):
+        (WebCore::getTransformedRect):
+        (WebCore::LayerCompositingThread::drawTextures):
+        (WebCore::LayerCompositingThread::drawSurface):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (LayerCompositingThread):
+        (WebCore::LayerCompositingThread::origin):
+        * platform/graphics/blackberry/LayerFilterRenderer.cpp:
+        (WebCore):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::compositeLayers):
+        (WebCore):
+        (WebCore::LayerRenderer::drawLayersOnSurfaces):
+        * platform/graphics/blackberry/LayerRendererSurface.cpp:
+        (WebCore::LayerRendererSurface::drawRect):
+        (WebCore::LayerRendererSurface::transformedBounds):
+        * platform/graphics/blackberry/LayerRendererSurface.h:
+        (WebCore::LayerRendererSurface::origin):
+        (LayerRendererSurface):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore):
+        (WebCore::loadBufferingImageData):
+        (WebCore::MediaPlayerPrivate::drawBufferingAnimation):
+
 2013-05-28  Andreas Kling  <akling@apple.com>
 
         Move Node::dispatchChangeEvent() to HTMLFormControlElement.
