@@ -1,3 +1,10 @@
+2013-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r150833
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        A CR/LF combination was lost in the file, combining two symbols.
+
 2013-05-27  Gavin Barraclough  <barraclough@apple.com>
 
         String(new Date(2010,10,1)) is wrong in KRAT, YAKT
