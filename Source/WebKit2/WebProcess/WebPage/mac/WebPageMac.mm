@@ -507,13 +507,28 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 
     NSDictionary *options = nil;
 
-    // As context, we are going to use the surrounding paragraph of text.
-    VisiblePosition paragraphStart = startOfParagraph(position);
-    VisiblePosition paragraphEnd = endOfParagraph(position);
+    // As context, we are going to use four lines of text before and after the point. (Dictionary can sometimes look up things that are four lines long)
+    const int numberOfLinesOfContext = 4;
+    VisiblePosition contextStart = position;
+    VisiblePosition contextEnd = position;
+    for (int i = 0; i < numberOfLinesOfContext; i++) {
+        VisiblePosition n = previousLinePosition(contextStart, contextStart.lineDirectionPointForBlockDirectionNavigation());
+        if (n.isNull() || n == contextStart)
+            break;
+        contextStart = n;
+    }
+    for (int i = 0; i < numberOfLinesOfContext; i++) {
+        VisiblePosition n = nextLinePosition(contextEnd, contextEnd.lineDirectionPointForBlockDirectionNavigation());
+        if (n.isNull() || n == contextEnd)
+            break;
+        contextEnd = n;
+    }
+    contextStart = startOfLine(contextStart);
+    contextEnd = endOfLine(contextEnd);
+    
+    NSRange rangeToPass = NSMakeRange(TextIterator::rangeLength(makeRange(contextStart, position).get()), 0);
 
-    NSRange rangeToPass = NSMakeRange(TextIterator::rangeLength(makeRange(paragraphStart, position).get()), 0);
-
-    RefPtr<Range> fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
+    RefPtr<Range> fullCharacterRange = makeRange(contextStart, contextEnd);
     String fullPlainTextString = plainText(fullCharacterRange.get());
 
     NSRange extractedRange = WKExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, &options);
