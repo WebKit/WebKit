@@ -307,9 +307,9 @@ String Pasteboard::readString(const String& type)
 
 Vector<String> Pasteboard::readFilenames()
 {
-#if USE(CF)
     Vector<String> fileNames;
 
+#if USE(CF)
     if (m_dataObject) {
         STGMEDIUM medium;
         if (FAILED(m_dataObject->GetData(cfHDropFormat(), &medium)))
@@ -336,7 +336,7 @@ Vector<String> Pasteboard::readFilenames()
     return m_dragDataMap.get(cfHDropFormat()->cfFormat);
 #else
     notImplemented();
-    return 0;
+    return fileNames;
 #endif
 }
 
@@ -411,10 +411,12 @@ bool Pasteboard::writeString(const String& type, const String& data)
     return false;
 }
 
+#if ENABLE(DRAG_SUPPORT)
 void Pasteboard::setDragImage(DragImageRef, const IntPoint&)
 {
     // Do nothing in Windows.
 }
+#endif
 
 void Pasteboard::writeRangeToDataObject(Range* selectedRange, Frame* frame)
 {

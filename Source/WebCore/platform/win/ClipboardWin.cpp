@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "NotImplemented.h"
 #include "Pasteboard.h"
 #include "markup.h"
 
@@ -57,6 +58,7 @@ DragImageRef Clipboard::createDragImage(IntPoint& dragLocation) const
     return result;
 }
 
+#if ENABLE(DRAG_SUPPORT)
 void Clipboard::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
 {
     // Order is important here for Explorer's sake
@@ -81,5 +83,6 @@ void Clipboard::declareAndWriteDragImage(Element* element, const KURL& url, cons
     if (medium.hGlobal && FAILED(m_pasteboard->writableDataObject()->SetData(htmlFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);
 }
+#endif
 
 } // namespace WebCore
