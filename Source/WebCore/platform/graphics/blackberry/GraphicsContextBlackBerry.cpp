@@ -23,6 +23,7 @@
 #include "GraphicsContext3D.h"
 #include "KURL.h"
 #include "NotImplemented.h"
+#include "RoundedRect.h"
 #include "TransformationMatrix.h"
 
 #include <BlackBerryPlatformGraphicsContext.h>
