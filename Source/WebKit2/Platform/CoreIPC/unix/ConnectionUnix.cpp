@@ -133,8 +133,11 @@ void Connection::platformInitialize(Identifier identifier)
 
 void Connection::platformInvalidate()
 {
+    // In GTK+ platform the socket is closed by the work queue.
+#if !PLATFORM(GTK)
     if (m_socketDescriptor != -1)
         while (close(m_socketDescriptor) == -1 && errno == EINTR) { }
+#endif
 
     if (!m_isConnected)
         return;

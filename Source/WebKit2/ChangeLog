@@ -1,3 +1,36 @@
+2013-05-28  Lauro Neto <lauro.neto@openbossa.org>
+
+        [GTK] Connection issues in repeated WebProcess crash/reloads.
+        https://bugs.webkit.org/show_bug.cgi?id=115880
+
+        Reviewed by Anders Carlsson.
+
+        When stressing the WebProcess creation/destruction, WebKitGTK can
+        often run into socket issues like bad file descriptor errors or
+        polling a socket indefinitely.
+
+        Currently WebKitGTK has three places where a socket can be
+        closed.
+
+        - childFinishedFunction (in ProcessLauncherGtk.cpp)
+        - Connection::platformInvalidate (in ConnectionUnix.cpp)
+        - WorkQueue EventSource destruction (in WorkQueueGtk.cpp)
+
+        To avoid these race conditions, socket closing will be handled
+        by the event source callback in WorkQueueGtk.cpp.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::platformInvalidate): Do not close the socket
+        when the connection is invalidated, the socket event source is
+        unregistered in this method and the socket is closed when the
+        GSocket associated to the event source is destroyed.
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Do not monitor child
+        process to close the connection on termination. This was needed in
+        the past when we used DGRAM sockets, we currently use always
+        connection oriented sockets, so that when the other end closes
+        the connection we are notified and the connection is invalidated.
+
 2013-05-28  Martin Robinson  <mrobinson@igalia.com>
 
         Fix GTK+ CMake build
