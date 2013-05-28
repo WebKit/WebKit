@@ -203,7 +203,7 @@ double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double
 // input is UTC
 void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, GregorianDateTime& tm)
 {
-    LocalTimeOffset localTime(false, 0);
+    LocalTimeOffset localTime;
     if (!outputIsUTC) {
         localTime = localTimeOffset(exec, ms);
         ms += localTime.offset;

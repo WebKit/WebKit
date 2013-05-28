@@ -1,3 +1,14 @@
+2013-05-28  Gavin Barraclough  <barraclough@apple.com>
+
+        String(new Date(2010,10,1)) is wrong in KRAT, YAKT
+        https://bugs.webkit.org/show_bug.cgi?id=106750
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSDateMath.cpp:
+        (JSC::msToGregorianDateTime):
+            - Additional review comment fix.
+
 2013-05-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix after r150833
