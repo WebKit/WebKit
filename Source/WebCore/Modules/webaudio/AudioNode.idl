@@ -23,8 +23,12 @@
  */
 
 [
-    Conditional=WEB_AUDIO
-] interface AudioNode {
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
+    GenerateIsReachable=Impl,
+    EventTarget
+] interface AudioNode : EventTarget {
     readonly attribute AudioContext context;
     readonly attribute unsigned long numberOfInputs;
     readonly attribute unsigned long numberOfOutputs;
@@ -46,4 +50,11 @@
 
     void disconnect([Default=Undefined] optional unsigned long output)
         raises(DOMException);
+
+    void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+
+    void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);
+
+    boolean dispatchEvent(Event event)
+        raises(EventException);
 };

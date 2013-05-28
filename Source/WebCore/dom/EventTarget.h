@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+    class AudioNode;
     class AudioContext;
     class AudioTrackList;
     class DedicatedWorkerContext;

@@ -101,6 +101,16 @@ function runTest() {
         testPassed("exception thrown when creating audio context with not enough arguments.");
     }
 
+    // Ensure it is an EventTarget
+    try {
+        audioNode.addEventListener('testEvent', function(){
+            testPassed("AudioNode is an EventTarget");
+        });
+        audioNode.dispatchEvent(new Event('testEvent'));
+    } catch(e) {
+        testFailed("exception shouldn't be thrown when testing whether audio node is an event target");
+    }
+
     finishJSTest();
 }
 

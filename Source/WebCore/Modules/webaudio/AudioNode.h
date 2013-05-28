@@ -26,6 +26,7 @@
 #define AudioNode_h
 
 #include "AudioBus.h"
+#include "EventTarget.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -49,7 +50,7 @@ typedef int ExceptionCode;
 // An AudioDestinationNode has one input and no outputs and represents the final destination to the audio hardware.
 // Most processing nodes such as filters will have one input and one output, although multiple inputs and outputs are possible.
 
-class AudioNode {
+class AudioNode : public EventTarget {
 public:
     enum { ProcessingSizeInFrames = 128 };
 
@@ -178,6 +179,12 @@ public:
     ChannelCountMode internalChannelCountMode() const { return m_channelCountMode; }
     AudioBus::ChannelInterpretation internalChannelInterpretation() const { return m_channelInterpretation; }
 
+    // EventTarget
+    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+    virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
+    virtual EventTargetData* ensureEventTargetData() OVERRIDE { return &m_eventTargetData; }
+
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
     void addInput(PassOwnPtr<AudioNodeInput>);
@@ -199,6 +206,8 @@ private:
     Vector<OwnPtr<AudioNodeInput> > m_inputs;
     Vector<OwnPtr<AudioNodeOutput> > m_outputs;
 
+    EventTargetData m_eventTargetData;
+
     double m_lastProcessingTime;
     double m_lastNonSilentTime;
 
@@ -213,6 +222,9 @@ private:
     static bool s_isNodeCountInitialized;
     static int s_nodeCount[NodeTypeEnd];
 #endif
+
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 
 protected:
     unsigned m_channelCount;

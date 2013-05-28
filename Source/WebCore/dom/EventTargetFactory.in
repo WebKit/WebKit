@@ -1,5 +1,6 @@
 namespace="EventTarget"
 
+AudioNode conditional=WEB_AUDIO
 AudioContext conditional=WEB_AUDIO
 AudioTrackList conditional=VIDEO_TRACK
 BatteryManager conditional=BATTERY_STATUS
@@ -14,7 +15,6 @@ IDBDatabase conditional=INDEXED_DATABASE
 IDBOpenDBRequest conditional=INDEXED_DATABASE
 IDBRequest conditional=INDEXED_DATABASE
 IDBTransaction conditional=INDEXED_DATABASE
-ScriptProcessorNode conditional=WEB_AUDIO
 LocalMediaStream conditional=MEDIA_STREAM
 MediaKeySession conditional=ENCRYPTED_MEDIA_V2
 MediaController conditional=VIDEO

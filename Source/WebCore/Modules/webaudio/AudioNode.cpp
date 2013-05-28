@@ -280,10 +280,20 @@ void AudioNode::updateChannelsForInputs()
         input(i)->changedOutputs();
 }
 
+const AtomicString& AudioNode::interfaceName() const
+{
+    return eventNames().interfaceForAudioNode;
+}
+
+ScriptExecutionContext* AudioNode::scriptExecutionContext() const
+{
+    return const_cast<AudioNode*>(this)->context()->scriptExecutionContext();
+}
+
 void AudioNode::processIfNecessary(size_t framesToProcess)
 {
     ASSERT(context()->isAudioThread());
-    
+
     if (!isInitialized())
         return;
 

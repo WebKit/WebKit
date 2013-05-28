@@ -26,11 +26,10 @@
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
-    JSGenerateToNativeObject,
-    EventTarget
+    JSGenerateToNativeObject
 ] interface ScriptProcessorNode : AudioNode {
     // Rendering callback
     attribute EventListener onaudioprocess;
-    
+
     readonly attribute long bufferSize;
 };

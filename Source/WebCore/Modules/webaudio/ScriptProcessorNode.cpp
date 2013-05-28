@@ -263,16 +263,6 @@ void ScriptProcessorNode::reset()
     }
 }
 
-const AtomicString& ScriptProcessorNode::interfaceName() const
-{
-    return eventNames().interfaceForScriptProcessorNode;
-}
-
-ScriptExecutionContext* ScriptProcessorNode::scriptExecutionContext() const
-{
-    return const_cast<ScriptProcessorNode*>(this)->context()->scriptExecutionContext();
-}
-
 double ScriptProcessorNode::tailTime() const
 {
     return std::numeric_limits<double>::infinity();
