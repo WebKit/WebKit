@@ -44,6 +44,7 @@ OBJC_CLASS NSArray;
 OBJC_CLASS PDFAnnotation;
 OBJC_CLASS PDFLayerController;
 OBJC_CLASS PDFSelection;
+OBJC_CLASS WKPDFPluginAccessibilityObject;
 OBJC_CLASS WKPDFLayerControllerDelegate;
 
 namespace CoreIPC {
@@ -89,6 +90,11 @@ public:
 
     void attemptToUnlockPDF(const String& password);
 
+    WebCore::FloatRect convertFromPDFViewToScreen(const WebCore::FloatRect&) const;
+    WebCore::IntRect boundsOnScreen() const;
+    
+    bool showContextMenuAtPoint(const WebCore::IntPoint&);
+
 private:
     explicit PDFPlugin(WebFrame*);
 
@@ -132,6 +138,7 @@ private:
     NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
     WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromRootViewToPlugin(const WebCore::IntPoint&) const;
+    WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
     
     bool supportsForms();
     bool isFullFramePlugin();
@@ -139,8 +146,6 @@ private:
     void updatePageAndDeviceScaleFactors();
 
     void createPasswordEntryForm();
-
-    WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
 
     virtual NSData *liveData() const OVERRIDE;
 
@@ -156,12 +161,15 @@ private:
 
     void updateCursor(const WebMouseEvent&, UpdateCursorMode = UpdateIfNeeded);
 
+    virtual NSObject *accessibilityObject() const OVERRIDE;
+
     RetainPtr<CALayer> m_containerLayer;
     RetainPtr<CALayer> m_contentLayer;
     RetainPtr<CALayer> m_horizontalScrollbarLayer;
     RetainPtr<CALayer> m_verticalScrollbarLayer;
     RetainPtr<CALayer> m_scrollCornerLayer;
     RetainPtr<PDFLayerController> m_pdfLayerController;
+    RetainPtr<WKPDFPluginAccessibilityObject> m_accessibilityObject;
     
     RefPtr<PDFPluginAnnotation> m_activeAnnotation;
     RefPtr<PDFPluginPasswordField> m_passwordField;

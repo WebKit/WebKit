@@ -46,6 +46,10 @@ using namespace WebKit;
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
 
+    NSObject* mainFramePluginAccessibilityObjectWrapper = m_page->accessibilityObjectForMainFramePlugin();
+    if (mainFramePluginAccessibilityObjectWrapper)
+        return mainFramePluginAccessibilityObjectWrapper;
+
     WebCore::Page* page = m_page->corePage();
     if (!page)
         return nil;
@@ -119,7 +123,7 @@ using namespace WebKit;
     id wrapper = [self accessibilityRootObjectWrapper];
     if (!wrapper)
         return [NSArray array];
-    
+
     return [NSArray arrayWithObject:wrapper];
 }
 

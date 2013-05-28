@@ -56,13 +56,14 @@ public:
     virtual bool isBeingAsynchronouslyInitialized() const { return false; }
 
     void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
+    
+    WebCore::IntSize size() const { return m_size; }
 
 protected:
     explicit SimplePDFPlugin(WebFrame*);
 
     WebFrame* webFrame() const { return m_frame; }
 
-    WebCore::IntSize size() const { return m_size; }
     void setSize(WebCore::IntSize size) { m_size = size; }
 
     RetainPtr<PDFDocument> pdfDocument() const { return m_pdfDocument; }

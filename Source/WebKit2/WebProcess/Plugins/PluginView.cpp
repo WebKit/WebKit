@@ -519,7 +519,14 @@ void PluginView::setLayerHostingMode(LayerHostingMode layerHostingMode)
 
     m_plugin->setLayerHostingMode(layerHostingMode);
 }
-
+    
+NSObject *PluginView::accessibilityObject() const
+{
+    if (!m_isInitialized || !m_plugin)
+        return 0;
+    
+    return m_plugin->accessibilityObject();
+}
 #endif
 
 void PluginView::initializePlugin()
