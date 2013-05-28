@@ -48,6 +48,18 @@
             display:none;
         }
 
+        #test6 {
+            display: none !important;
+            display: block !important {invalid_block};
+        }
+
+        #test7 {
+            display: none !important;
+        }
+        #test7 {
+            display: block !important {invalid_block}
+        }
+
         /* Successfully parsed */
         #last {
             display:block;
@@ -60,6 +72,8 @@
   <div class="to_be_hidden" id="test3">FAIL: Test 3</div>
   <div class="to_be_hidden" id="test4">FAIL: Test 4</div>
   <div class="to_be_hidden" id="test5">FAIL: Test 5</div>
+  <div class="to_be_hidden" id="test6">FAIL: Test 6</div>
+  <div class="to_be_hidden" id="test7">FAIL: Test 7</div>
   <div class="to_be_shown" id="last">PASS</div>
 </body>
 </html>

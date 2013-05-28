@@ -88,9 +88,9 @@ static inline bool isCSSTokenAString(int yytype)
 %}
 
 #if ENABLE_SHADOW_DOM
-%expect 68
+%expect 65
 #else
-%expect 67
+%expect 64
 #endif
 
 %nonassoc LOWEST_PREC
@@ -336,7 +336,6 @@ static inline bool isCSSTokenAString(int yytype)
 %type <string> element_name
 %type <string> attr_name
 
-%type <location> errors
 %type <location> error_location
 
 %%
@@ -1545,14 +1544,6 @@ decl_list:
         parser->markPropertyStart();
         $$ = $1;
     }
-    | declaration error_location invalid_block_list maybe_space {
-        parser->syntaxError($2);
-        $$ = false;
-    }
-    | declaration error_location invalid_block_list ';' maybe_space {
-        parser->syntaxError($2);
-        $$ = false;
-    }
     | decl_list_recovery ';' maybe_space {
         parser->markPropertyStart();
         $$ = false;
@@ -1604,51 +1595,34 @@ declaration:
         parser->markPropertyEnd($5, isPropertyParsed);
     }
     |
-    property errors {
-        parser->syntaxError($2);
+    property declaration_recovery {
         $$ = false;
     }
     |
-    property ':' maybe_space errors expr prio {
-        /* The default movable type template has letter-spacing: .none;  Handle this by looking for
-        error tokens at the start of an expr, recover the expr and then treat as an error, cleaning
-        up and deleting the shifted expr.  */
-        parser->syntaxError($4);
-        parser->markPropertyEnd(false, false);
-        $$ = false;
-    }
-    |
-    property ':' maybe_space expr prio error {
+    property ':' maybe_space expr prio declaration_recovery {
         /* When we encounter something like p {color: red !important fail;} we should drop the declaration */
         parser->markPropertyEnd(false, false);
         $$ = false;
     }
     |
-    IMPORTANT_SYM maybe_space error_location {
+    IMPORTANT_SYM maybe_space declaration_recovery {
         /* Handle this case: div { text-align: center; !important } Just reduce away the stray !important. */
-        parser->syntaxError($3);
         $$ = false;
     }
     |
-    property ':' maybe_space error_location {
-        /* div { font-family: } Just reduce away this property with no value. */
-        parser->syntaxError($4);
-        parser->markPropertyEnd(false, false);
-        $$ = false;
-    }
-    |
-    property ':' maybe_space errors {
+    property ':' maybe_space declaration_recovery {
         /* if we come across rules with invalid values like this case: p { weight: *; }, just discard the rule */
-        parser->syntaxError($4);
         parser->markPropertyEnd(false, false);
         $$ = false;
     }
-    |
-    property error_location invalid_block {
-        /* if we come across: div { color{;color:maroon} }, ignore everything within curly brackets */
+  ;
+
+declaration_recovery:
+    error error_location {
         parser->syntaxError($2);
-        $$ = false;
     }
+    | declaration_recovery invalid_block
+    | declaration_recovery error
   ;
 
 property:
@@ -2000,12 +1974,6 @@ invalid_block_list:
     invalid_block
   | invalid_block_list error invalid_block
 ;
-
-errors:
-    error error_location {
-        $$ = $2;
-    }
-    ;
 
 error_location: {
         $$ = parser->currentLocation();

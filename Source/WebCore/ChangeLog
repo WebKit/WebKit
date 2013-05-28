@@ -1,3 +1,25 @@
+2013-05-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        Invalid block doesn't make declaration invalid
+        https://bugs.webkit.org/show_bug.cgi?id=115709
+
+        Reviewed by Andreas Kling.
+
+        From Blink r149446 by <serya@chromium.org>
+
+        Added a new rule "declaration_recovery:" which covers any kind of
+        "invalid_block_list maybe_space" sequence. By appending this new
+        rule to every rule reductable to "declaration:" we can remove some
+        redundant rules and improve error recovery of some others that
+        were only accepting exactly one error.
+
+        One of the rules being removed was preventing invalid blocks in a
+        declaration to invalidate the whole declaration. The rule was
+        reporting the syntax error but at the same time accepting the
+        invalid block as part of a valid declaration.
+
+        * css/CSSGrammar.y.in:
+
 2013-05-28  Andreas Kling  <akling@apple.com>
 
         Move dispatching of focus-related events from Node to Element.
