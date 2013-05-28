@@ -1,3 +1,11 @@
+2013-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.  Remove ?byteCompile symbol that
+        is no longer accessible during link.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-05-28  Gavin Barraclough  <barraclough@apple.com>
 
         String(new Date(2010,10,1)) is wrong in KRAT, YAKT
