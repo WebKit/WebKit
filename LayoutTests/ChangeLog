@@ -1,3 +1,10 @@
+2013-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Silence a few failures to get bot green.
+        https://bugs.webkit.org/show_bug.cgi?id=116564
+
+        * platform/win/TestExpectations: Disable some tests.
+
 2013-05-28  Robert Hogan  <robert@webkit.org>
 
         Fix line endings in test added in r150602

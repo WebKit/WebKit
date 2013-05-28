@@ -6,13 +6,13 @@
 # are met:
 #
 # 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer. 
+#     notice, this list of conditions and the following disclaimer.
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution. 
+#     documentation and/or other materials provided with the distribution.
 # 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -366,7 +366,7 @@ http/tests/navigation/reload-subframe-object.html
 
 #<rdar://problem/5829260> REGRESSION: frame-default-enc tests fail on Windows intermittently
 fast/encoding/frame-default-enc.html
-http/tests/misc/frame-default-enc-same-domain.html 
+http/tests/misc/frame-default-enc-same-domain.html
 
 #<rdar://problem/5829328> REGRESSION: fast/frames/viewsource-empty-attribute-value.html fails on Windows intermittently
 fast/frames/viewsource-empty-attribute-value.html
@@ -381,7 +381,7 @@ fast/loader/frame-creation-removal.html
 fast/text/international/danda-space.html
 fast/text/international/thai-baht-space.html
 
-# Sensitive to load timing or PHP behavior (https://bugs.webkit.org/show_bug.cgi?id=44873) 
+# Sensitive to load timing or PHP behavior (https://bugs.webkit.org/show_bug.cgi?id=44873)
 http/tests/css/css-image-loading.html
 
 # missing DRT feature, see also https://bugs.webkit.org/show_bug.cgi?id=39102
@@ -1032,7 +1032,7 @@ scrollbars/scrollevent-iframe-no-scrolling-wheel.html
 scrollbars/scroll-rtl-or-bt-layer.html
 
 # Windows port doesn't yet support rendering of non-BMP characters even though there's a font available.
-fast/text/international/plane2.html 
+fast/text/international/plane2.html
 
 # Requires testRunner.setMediaType() and implementation
 fast/media/print-restores-previous-mediatype.html
@@ -1177,7 +1177,7 @@ sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.
 # LayoutTestController::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for WIN.
 printing/page-format-data.html
 
-# Implement spinbutton support in RenderThemeSafari 
+# Implement spinbutton support in RenderThemeSafari
 # https://bugs.webkit.org/show_bug.cgi?id=54662
 fast/forms/number/number-appearance-rtl.html
 fast/forms/number/number-appearance-spinbutton-disabled-readonly.html
@@ -1377,7 +1377,7 @@ http/tests/images/webp-progressive-load.html
 
 # Missing layoutTestController.findString() http://webkit.org/b/50234
 editing/text-iterator/findString.html
- 
+
 # The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
 # method. But that method is not implemented in win port since win port can't
 # not get user gesture in frameload callbacks.
@@ -1464,7 +1464,7 @@ fast/js/array-sort-modifying-tostring.html
 plugins/windowless_plugin_paint_test.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=58421
-svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg    
+svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg
 
 # scalePage is currently Mac-specific WebKit API. http://webkit.org/b/59098
 fast/dom/Element/scale-page-bounding-client-rect.html
@@ -1615,7 +1615,7 @@ webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/onremovetrack.htm
 webkit.org/b/103926 media/track/opera/track/track-element/cloneNode.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/track-element/src-clear-cues.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ] 
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tags.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timestamps.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
@@ -1809,7 +1809,7 @@ fast/events/constructors/device-proximity-event-constructor.html
 tables/mozilla_expected_failures/bugs/bug85016.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=81276
-# Allowed to regress to fix a crash. 
+# Allowed to regress to fix a crash.
 fast/inline/continuation-outlines-with-layers.html
 
 # Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=78412
@@ -1851,7 +1851,7 @@ inspector/styles/override-screen-size.html
 fast/animation/request-animation-frame-disabled.html
 
 # Inspector only supports evaluation in content script world with v8, see https://bugs.webkit.org/show_bug.cgi?id=85709
-inspector/extensions/extensions-eval-content-script.html 
+inspector/extensions/extensions-eval-content-script.html
 inspector/extensions/extensions-audits-content-script.html
 
 # Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
@@ -2170,46 +2170,46 @@ fast/css/caption-width-fixed-position-offset-top.htm
 fast/table/border-collapsing/equal-precedence-resolution.html
 fast/table/border-collapsing/equal-precedence-resolution-vertical.html
 fast/text/apply-start-width-after-skipped-text.html
-compositing/iframes/invisible-nested-iframe-show.html 
+compositing/iframes/invisible-nested-iframe-show.html
 compositing/overflow/overflow-auto-with-touch.html
-compositing/overflow/overflow-overlay-with-touch.html 
-compositing/overflow/scrolling-content-clip-to-viewport.html  
+compositing/overflow/overflow-overlay-with-touch.html
+compositing/overflow/scrolling-content-clip-to-viewport.html
 compositing/overflow/textarea-scroll-touch.html
-compositing/plugins/no-backing-store.html 
+compositing/plugins/no-backing-store.html
 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html
-compositing/rtl/rtl-iframe-absolute-overflow.html 
+compositing/rtl/rtl-iframe-absolute-overflow.html
 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html
 compositing/rtl/rtl-iframe-fixed-overflow.html
-css2.1/20110323/abspos-replaced-width-margin-000-ref.htm  
-fast/block/positioning/inline-block-relposition.html  
+css2.1/20110323/abspos-replaced-width-margin-000-ref.htm
+fast/block/positioning/inline-block-relposition.html
 fast/css/rtl-ordering.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
 fast/dynamic/positioned-movement-with-positioned-children.html
-fast/forms/basic-buttons.html 
+fast/forms/basic-buttons.html
 fast/forms/box-shadow-override.html
-fast/forms/button-align.html  
+fast/forms/button-align.html
 fast/forms/button-cannot-be-nested.html
-fast/forms/button-generated-content.html  
-fast/forms/button-inner-block-reuse.html  
-fast/forms/button-positioned.html 
-fast/forms/button-sizes.html  
+fast/forms/button-generated-content.html
+fast/forms/button-inner-block-reuse.html
+fast/forms/button-positioned.html
+fast/forms/button-sizes.html
 fast/forms/button-style-color.html
-fast/forms/button-text-transform.html 
+fast/forms/button-text-transform.html
 fast/forms/button-white-space.html
-fast/forms/control-clip-overflow.html 
+fast/forms/control-clip-overflow.html
 fast/forms/select-baseline.html
 fast/repaint/control-clip.html
 fast/selectors/064.html
-fast/table/append-cells2.html 
+fast/table/append-cells2.html
 fast/table/remove-td-display-none.html
 fast/writing-mode/broken-ideograph-small-caps.html
 fast/writing-mode/broken-ideographic-font.html
-fast/writing-mode/vertical-font-fallback.html 
+fast/writing-mode/vertical-font-fallback.html
 svg/custom/inline-svg-in-xhtml.xml
 svg/custom/use-on-symbol-inside-pattern.svg
-tables/mozilla/bugs/bug68912.html 
+tables/mozilla/bugs/bug68912.html
 tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html
-http/tests/security/referrer-policy-https-origin.html 
+http/tests/security/referrer-policy-https-origin.html
 
 # Rebaseline after bug 77754
 fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html
@@ -2472,19 +2472,19 @@ http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.htm
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html
 
 # Feature introduced in r132708 is chromium only
-animations/3d/change-transform-in-end-event.html 
-transitions/move-after-transition.html 
-compositing/text-on-large-layer.html 
-compositing/iframes/fixed-position-iframe.html 
-compositing/tiling/backface-preserve-3d-tiled.html 
-compositing/tiling/constrained-layer-size.html 
-compositing/tiling/crash-huge-layer.html 
-compositing/tiling/crash-reparent-tiled-layer.html 
-compositing/tiling/huge-layer-add-remove-child.html 
-compositing/tiling/huge-layer-img.html 
-compositing/tiling/huge-layer-with-layer-children-resize.html 
-compositing/tiling/huge-layer-with-layer-children.html 
-compositing/tiling/preserve3d-tiled.html 
+animations/3d/change-transform-in-end-event.html
+transitions/move-after-transition.html
+compositing/text-on-large-layer.html
+compositing/iframes/fixed-position-iframe.html
+compositing/tiling/backface-preserve-3d-tiled.html
+compositing/tiling/constrained-layer-size.html
+compositing/tiling/crash-huge-layer.html
+compositing/tiling/crash-reparent-tiled-layer.html
+compositing/tiling/huge-layer-add-remove-child.html
+compositing/tiling/huge-layer-img.html
+compositing/tiling/huge-layer-with-layer-children-resize.html
+compositing/tiling/huge-layer-with-layer-children.html
+compositing/tiling/preserve3d-tiled.html
 compositing/tiling/tile-cache-zoomed.html
 
 # Test added in r132901 is for chromium only
@@ -2631,7 +2631,7 @@ fast/canvas/canvas-quadratic-same-endpoint.html
 fast/events/ime-composition-events-001.html
 fast/text/international/hebrew-vowels.html
 jquery/attributes.html
-media/W3C/video/events/event_canplaythrough.html		
+media/W3C/video/events/event_canplaythrough.html
 
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
@@ -2752,6 +2752,8 @@ webkit.org/b/116564 compositing/contents-opaque/filter.html
 webkit.org/b/116564 compositing/layer-creation/animation-overlap-with-children.html
 webkit.org/b/116564 css1/units/rounding.html
 webkit.org/b/116564 editing/pasteboard/copy-without-selection.html
+webkit.org/b/116564 editing/pasteboard/get-data-text-plain-paste.html
+webkit.org/b/116564 editing/pasteboard/onpaste-text-html.htm
 webkit.org/b/116564 editing/selection/user-drag-element-and-user-select-none.html
 webkit.org/b/116564 editing/style/block-style-005.html
 webkit.org/b/116564 fast/block/lineboxcontain/block-with-ideographs.xhtml
@@ -2759,12 +2761,15 @@ webkit.org/b/116564 fast/dom/Window/window-onFocus.html
 webkit.org/b/116564 fast/events/clientXY-in-zoom-and-scroll.html
 webkit.org/b/116564 fast/events/remove-target-with-shadow-in-drag.html
 webkit.org/b/116564 fast/js/global-constructors-attributes.html
+webkit.org/b/116564 fast/js/post-message-numeric-property.html
 webkit.org/b/116564 fast/overflow/infiniteRecursionGuard.html
 webkit.org/b/116564 fast/text/text-combine-different-fonts.html
 webkit.org/b/116564 fast/writing-mode/Kusa-Makura-background-canvas.html
 webkit.org/b/116564 media/click-volume-bar-not-pausing.html
 webkit.org/b/116564 media/track/track-css-user-override.html
+webkit.org/b/116564 platform/win/editing/pasteboard/pasting-crlf-isnt-translated-to-crcrlf-win.html
 webkit.org/b/116564 printing/allowed-page-breaks.html
+webkit.org/b/116564 printing/no-content-empty-pages.html
 webkit.org/b/116564 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
 webkit.org/b/116564 transitions/svg-text-shadow-transition.html
 
