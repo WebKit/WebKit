@@ -15,3 +15,6 @@ webkit.org/b/116473 editing/selection/user-drag-element-and-user-select-none.htm
 
 # media/W3C/video/networkState/networkState_during_progress.html is flaky
 webkit.org/b/76280 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
+
+# fast/js/date-DST-time-cusps.html fails after http://trac.webkit.org/changeset/150833
+webkit.org/b/116895 fast/js/date-DST-time-cusps.html [ Failure ]

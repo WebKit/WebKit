@@ -1,3 +1,12 @@
+2013-05-28  Tim Horton  <timothy_horton@apple.com>
+
+        fast/js/date-DST-time-cusps.html fails after http://trac.webkit.org/changeset/150833
+        https://bugs.webkit.org/show_bug.cgi?id=116895
+
+        Unreviewed, add failing test expectation.
+
+        * TestExpectations:
+
 2013-05-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Silence a few failures to get bot green.
