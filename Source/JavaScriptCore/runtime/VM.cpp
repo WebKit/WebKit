@@ -171,7 +171,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , sizeOfLastScratchBuffer(0)
 #endif
     , dynamicGlobalObject(0)
-    , cachedUTCOffset(QNaN)
     , m_enabledProfiler(0)
     , m_regExpCache(new RegExpCache(this))
 #if ENABLE(REGEXP_TRACING)
@@ -425,8 +424,7 @@ VM::ClientData::~ClientData()
 
 void VM::resetDateCache()
 {
-    cachedUTCOffset = QNaN;
-    dstOffsetCache.reset();
+    localTimeOffsetCache.reset();
     cachedDateString = String();
     cachedDateStringValue = QNaN;
     dateInstanceCache.reset();

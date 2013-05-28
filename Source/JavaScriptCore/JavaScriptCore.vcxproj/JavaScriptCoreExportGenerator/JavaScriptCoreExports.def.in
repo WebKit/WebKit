@@ -119,9 +119,7 @@ EXPORTS
     ?bufferLengthForStringDecimal@DecimalNumber@WTF@@QBEIXZ
     ?bufferLengthForStringExponential@DecimalNumber@WTF@@QBEIXZ
     ?byteCompile@Yarr@JSC@@YA?AV?$PassOwnPtr@UBytecodePattern@Yarr@JSC@@@WTF@@AAUYarrPattern@12@PAVBumpPointerAllocator@4@@Z
-    ?calculateDSTOffset@WTF@@YANNN@Z
     ?calculateStringHashAndLengthFromUTF8MaskingTop8Bits@Unicode@WTF@@YAIPBD0AAI1@Z
-    ?calculateUTCOffset@WTF@@YAHXZ
     ?calculatedFunctionName@DebuggerCallFrame@JSC@@QBE?AVString@WTF@@XZ
     ?call@JSC@@YA?AVJSValue@1@PAVExecState@1@V21@W4CallType@1@ABTCallData@1@1ABVArgList@1@@Z
     ?callHostFunctionAsConstructor@JSC@@YI_JPAVExecState@1@@Z

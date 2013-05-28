@@ -1,3 +1,34 @@
+2013-05-27  Gavin Barraclough  <barraclough@apple.com>
+
+        String(new Date(2010,10,1)) is wrong in KRAT, YAKT
+        https://bugs.webkit.org/show_bug.cgi?id=106750
+
+        Reviewed by Darin Adler.
+
+        First part of a fix, simplfy date handling code, instead of operating separately
+        on the UTC-standard and standard-DST offsets, just generate a combined UTC-local
+        offset (this is what we actually need, and what the OS gives us).
+
+        * wtf/DateMath.cpp:
+        (WTF::calculateUTCOffset):
+        (WTF::calculateDSTOffset):
+            - made static, now not called from outside of this file.
+        (WTF::calculateLocalTimeOffset):
+            - This combines the 2038 related adjustment from calculateDSTOffset with the
+              maxUnixTime adjustment from calculateDSTOffsetSimple. Then, if HAVE(TM_GMTOFF)
+              just call getLocalTime, if not use calculateUTCOffset/calculateDSTOffset.
+        (WTF::parseDateFromNullTerminatedCharacters):
+            - call calculateLocalTimeOffset instead of calculateUTCOffset/calculateDSTOffset
+        * wtf/DateMath.h:
+        (WTF::LocalTimeOffset::LocalTimeOffset):
+        (LocalTimeOffset):
+        (WTF::LocalTimeOffset::operator==):
+            - new struct type, a tuple of UTC-local offset & isDST flag.
+            - replaced calculateUTCOffset/calculateDSTOffset with calculateLocalTimeOffset
+        * wtf/GregorianDateTime.cpp:
+        (WTF::GregorianDateTime::setToCurrentLocalTime):
+            - call calculateLocalTimeOffset instead of calculateUTCOffset/calculateDSTOffset
+
 2013-05-27  Patrick Gansterer  <paroga@webkit.org>
 
         Use correct stack size on Solaris and OpenBSD

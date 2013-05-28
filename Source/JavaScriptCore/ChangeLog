@@ -1,3 +1,30 @@
+2013-05-27  Gavin Barraclough  <barraclough@apple.com>
+
+        String(new Date(2010,10,1)) is wrong in KRAT, YAKT
+        https://bugs.webkit.org/show_bug.cgi?id=106750
+
+        Reviewed by Darin Adler.
+
+        First part of a fix, simplfy date handling code, instead of operating separately
+        on the UTC-standard and standard-DST offsets, just generate a combined UTC-local
+        offset (this is what we actually need, and what the OS gives us).
+
+        * runtime/JSDateMath.cpp:
+        (JSC::getLocalTimeOffset):
+            - removed getUTCOffset, converted getDSTOffset -> getLocalTimeOffset
+        (JSC::gregorianDateTimeToMS):
+        (JSC::msToGregorianDateTime):
+        (JSC::parseDateFromNullTerminatedCharacters):
+            - call getLocalTimeOffset instead of getUTCOffset/getDSTOffset
+        * runtime/VM.cpp:
+        (JSC::VM::resetDateCache):
+            - removed cachedUTCOffset, converted DSTOffsetCache -> LocalTimeOffsetCache
+        * runtime/VM.h:
+        (JSC::LocalTimeOffsetCache::LocalTimeOffsetCache):
+        (JSC::LocalTimeOffsetCache::reset):
+        (LocalTimeOffsetCache):
+            - removed cachedUTCOffset, converted DSTOffsetCache -> LocalTimeOffsetCache
+
 2013-05-28  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         r150199 is very wrong

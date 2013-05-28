@@ -127,14 +127,14 @@ static inline int msToWeekDay(double ms)
     return wd;
 }
 
-// Get the DST offset for the time passed in.
+// Get the combined UTC + DST offset for the time passed in.
 //
 // NOTE: The implementation relies on the fact that no time zones have
 // more than one daylight savings offset change per month.
 // If this function is called with NaN it returns NaN.
-static double getDSTOffset(ExecState* exec, double ms, double utcOffset)
+static LocalTimeOffset localTimeOffset(ExecState* exec, double ms)
 {
-    DSTOffsetCache& cache = exec->vm().dstOffsetCache;
+    LocalTimeOffsetCache& cache = exec->vm().localTimeOffsetCache;
     double start = cache.start;
     double end = cache.end;
 
@@ -146,7 +146,7 @@ static double getDSTOffset(ExecState* exec, double ms, double utcOffset)
         double newEnd = end + cache.increment;
 
         if (ms <= newEnd) {
-            double endOffset = calculateDSTOffset(newEnd, utcOffset);
+            LocalTimeOffset endOffset = calculateLocalTimeOffset(newEnd);
             if (cache.offset == endOffset) {
                 // If the offset at the end of the new interval still matches
                 // the offset in the cache, we grow the cached time interval
@@ -154,52 +154,38 @@ static double getDSTOffset(ExecState* exec, double ms, double utcOffset)
                 cache.end = newEnd;
                 cache.increment = msPerMonth;
                 return endOffset;
-            } else {
-                double offset = calculateDSTOffset(ms, utcOffset);
-                if (offset == endOffset) {
-                    // The offset at the given time is equal to the offset at the
-                    // new end of the interval, so that means that we've just skipped
-                    // the point in time where the DST offset change occurred. Updated
-                    // the interval to reflect this and reset the increment.
-                    cache.start = ms;
-                    cache.end = newEnd;
-                    cache.increment = msPerMonth;
-                } else {
-                    // The interval contains a DST offset change and the given time is
-                    // before it. Adjust the increment to avoid a linear search for
-                    // the offset change point and change the end of the interval.
-                    cache.increment /= 3;
-                    cache.end = ms;
-                }
-                // Update the offset in the cache and return it.
-                cache.offset = offset;
-                return offset;
             }
+            LocalTimeOffset offset = calculateLocalTimeOffset(ms);
+            if (offset == endOffset) {
+                // The offset at the given time is equal to the offset at the
+                // new end of the interval, so that means that we've just skipped
+                // the point in time where the DST offset change occurred. Updated
+                // the interval to reflect this and reset the increment.
+                cache.start = ms;
+                cache.end = newEnd;
+                cache.increment = msPerMonth;
+            } else {
+                // The interval contains a DST offset change and the given time is
+                // before it. Adjust the increment to avoid a linear search for
+                // the offset change point and change the end of the interval.
+                cache.increment /= 3;
+                cache.end = ms;
+            }
+            // Update the offset in the cache and return it.
+            cache.offset = offset;
+            return offset;
         }
     }
 
     // Compute the DST offset for the time and shrink the cache interval
     // to only contain the time. This allows fast repeated DST offset
     // computations for the same time.
-    double offset = calculateDSTOffset(ms, utcOffset);
+    LocalTimeOffset offset = calculateLocalTimeOffset(ms);
     cache.offset = offset;
     cache.start = ms;
     cache.end = ms;
     cache.increment = msPerMonth;
     return offset;
-}
-
-/*
- * Get the difference in milliseconds between this time zone and UTC (GMT)
- * NOT including DST.
- */
-double getUTCOffset(ExecState* exec)
-{
-    double utcOffset = exec->vm().cachedUTCOffset;
-    if (!std::isnan(utcOffset))
-        return utcOffset;
-    exec->vm().cachedUTCOffset = calculateUTCOffset();
-    return exec->vm().cachedUTCOffset;
 }
 
 double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
@@ -208,11 +194,8 @@ double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double
     double ms = timeToMS(t.hour(), t.minute(), t.second(), milliSeconds);
     double result = (day * WTF::msPerDay) + ms;
 
-    if (!inputIsUTC) { // convert to UTC
-        double utcOffset = getUTCOffset(exec);
-        result -= utcOffset;
-        result -= getDSTOffset(exec, result, utcOffset);
-    }
+    if (!inputIsUTC)
+        result -= localTimeOffset(exec, result).offset;
 
     return result;
 }
@@ -220,12 +203,10 @@ double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double
 // input is UTC
 void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, GregorianDateTime& tm)
 {
-    double dstOff = 0.0;
-    double utcOff = 0.0;
+    LocalTimeOffset localTime(false, 0);
     if (!outputIsUTC) {
-        utcOff = getUTCOffset(exec);
-        dstOff = getDSTOffset(exec, ms, utcOff);
-        ms += dstOff + utcOff;
+        localTime = localTimeOffset(exec, ms);
+        ms += localTime.offset;
     }
 
     const int year = msToYear(ms);
@@ -237,8 +218,8 @@ void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, Gregori
     tm.setMonthDay(dayInMonthFromDayInYear(tm.yearDay(), isLeapYear(year)));
     tm.setMonth(monthFromDayInYear(tm.yearDay(), isLeapYear(year)));
     tm.setYear(year);
-    tm.setIsDST(dstOff != 0.0);
-    tm.setUtcOffset(static_cast<long>((dstOff + utcOff) / WTF::msPerSecond));
+    tm.setIsDST(localTime.isDST);
+    tm.setUtcOffset(localTime.offset / WTF::msPerSecond);
 }
 
 double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateString)
@@ -251,11 +232,9 @@ double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateSt
         return QNaN;
 
     // fall back to local timezone
-    if (!haveTZ) {
-        double utcOffset = getUTCOffset(exec);
-        double dstOffset = getDSTOffset(exec, ms, utcOffset);
-        offset = (utcOffset + dstOffset) / WTF::msPerMinute;
-    }
+    if (!haveTZ)
+        offset = localTimeOffset(exec, ms).offset / WTF::msPerMinute;
+
     return ms - (offset * WTF::msPerMinute);
 }
 

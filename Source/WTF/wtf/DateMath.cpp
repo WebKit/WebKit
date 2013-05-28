@@ -374,7 +374,9 @@ int equivalentYearForDST(int year)
     return year;
 }
 
-int32_t calculateUTCOffset()
+#if !HAVE(TM_GMTOFF)
+
+static int32_t calculateUTCOffset()
 {
 #if OS(WINDOWS)
     TIME_ZONE_INFORMATION timeZoneInformation;
@@ -418,27 +420,19 @@ int32_t calculateUTCOffset()
 /*
  * Get the DST offset for the time passed in.
  */
-static double calculateDSTOffsetSimple(double localTimeSeconds, double utcOffset)
+static double calculateDSTOffset(time_t localTime, double utcOffset)
 {
 #if OS(WINCE)
     UNUSED_PARAM(localTimeSeconds);
     UNUSED_PARAM(utcOffset);
     return 0;
 #else
-    if (localTimeSeconds > maxUnixTime)
-        localTimeSeconds = maxUnixTime;
-    else if (localTimeSeconds < 0) // Go ahead a day to make localtime work (does not work with 0)
-        localTimeSeconds += secondsPerDay;
-
     //input is UTC so we have to shift back to local time to determine DST thus the + getUTCOffset()
-    double offsetTime = (localTimeSeconds * msPerSecond) + utcOffset;
+    double offsetTime = (localTime * msPerSecond) + utcOffset;
 
     // Offset from UTC but doesn't include DST obviously
     int offsetHour =  msToHours(offsetTime);
     int offsetMinute =  msToMinutes(offsetTime);
-
-    // FIXME: time_t has a potential problem in 2038
-    time_t localTime = static_cast<time_t>(localTimeSeconds);
 
     tm localTM;
     getLocalTime(&localTime, &localTM);
@@ -452,10 +446,12 @@ static double calculateDSTOffsetSimple(double localTimeSeconds, double utcOffset
 #endif
 }
 
-// Get the DST offset, given a time in UTC
-double calculateDSTOffset(double ms, double utcOffset)
+#endif
+
+// Returns combined offset in millisecond (UTC + DST).
+LocalTimeOffset calculateLocalTimeOffset(double ms)
 {
-    // On Mac OS X, the call to localtime (see calculateDSTOffsetSimple) will return historically accurate
+    // On Mac OS X, the call to localtime (see calculateDSTOffset) will return historically accurate
     // DST information (e.g. New Zealand did not have DST from 1946 to 1974) however the JavaScript
     // standard explicitly dictates that historical information should not be considered when
     // determining DST. For this reason we shift away from years that localtime can handle but would
@@ -471,7 +467,23 @@ double calculateDSTOffset(double ms, double utcOffset)
         ms = (day * msPerDay) + msToMilliseconds(ms);
     }
 
-    return calculateDSTOffsetSimple(ms / msPerSecond, utcOffset);
+    double localTimeSeconds = ms / msPerSecond;
+    if (localTimeSeconds > maxUnixTime)
+        localTimeSeconds = maxUnixTime;
+    else if (localTimeSeconds < 0) // Go ahead a day to make localtime work (does not work with 0).
+        localTimeSeconds += secondsPerDay;
+    // FIXME: time_t has a potential problem in 2038.
+    time_t localTime = static_cast<time_t>(localTimeSeconds);
+
+#if HAVE(TM_GMTOFF)
+    tm localTM;
+    getLocalTime(&localTime, &localTM);
+    return LocalTimeOffset(localTM.tm_isdst, localTM.tm_gmtoff * msPerSecond);
+#else
+    double utcOffset = calculateUTCOffset();
+    double dstOffset = calculateDSTOffset(localTime, utcOffset);
+    return LocalTimeOffset(dstOffset, utcOffset + dstOffset);
+#endif
 }
 
 void initializeDates()
@@ -1062,11 +1074,9 @@ double parseDateFromNullTerminatedCharacters(const char* dateString)
         return std::numeric_limits<double>::quiet_NaN();
 
     // fall back to local timezone
-    if (!haveTZ) {
-        double utcOffset = calculateUTCOffset();
-        double dstOffset = calculateDSTOffset(ms, utcOffset);
-        offset = (utcOffset + dstOffset) / msPerMinute;
-    }
+    if (!haveTZ)
+        offset = calculateLocalTimeOffset(ms).offset / msPerMinute;
+
     return ms - (offset * msPerMinute);
 }
 

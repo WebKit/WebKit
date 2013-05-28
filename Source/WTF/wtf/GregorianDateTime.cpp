@@ -78,9 +78,7 @@ void GregorianDateTime::setToCurrentLocalTime()
 #if HAVE(TM_GMTOFF)
     m_utcOffset = localTM.tm_gmtoff;
 #else
-    int utcOffset = calculateUTCOffset();
-    utcOffset += calculateDSTOffset(localTime * msPerSecond, utcOffset);
-    m_utcOffset = utcOffset / msPerSecond;
+    m_utcOffset = calculateLocalTimeOffset(localTime * msPerSecond).offset / msPerSecond;
 #endif
 #endif
 }

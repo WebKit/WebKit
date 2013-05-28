@@ -55,6 +55,33 @@
 
 namespace WTF {
 
+struct LocalTimeOffset {
+    LocalTimeOffset()
+        : isDST(false)
+        , offset(0)
+    {
+    }
+
+    LocalTimeOffset(bool isDST, int offset)
+        : isDST(isDST)
+        , offset(offset)
+    {
+    }
+
+    bool operator==(const LocalTimeOffset& other)
+    {
+        return isDST == other.isDST && offset == other.offset;
+    }
+
+    bool operator!=(const LocalTimeOffset& other)
+    {
+        return isDST != other.isDST || offset != other.offset;
+    }
+
+    bool isDST;
+    int offset;
+};
+
 void initializeDates();
 int equivalentYearForDST(int year);
 
@@ -99,9 +126,8 @@ WTF_EXPORT_PRIVATE int dayInYear(double ms, int year);
 WTF_EXPORT_PRIVATE int monthFromDayInYear(int dayInYear, bool leapYear);
 WTF_EXPORT_PRIVATE int dayInMonthFromDayInYear(int dayInYear, bool leapYear);
 
-// Returns offset milliseconds for UTC and DST.
-WTF_EXPORT_PRIVATE int32_t calculateUTCOffset();
-WTF_EXPORT_PRIVATE double calculateDSTOffset(double ms, double utcOffset);
+// Returns combined offset in millisecond (UTC + DST).
+WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMilliseconds);
 
 } // namespace WTF
 
@@ -122,7 +148,7 @@ using WTF::msToHours;
 using WTF::secondsPerMinute;
 using WTF::parseDateFromNullTerminatedCharacters;
 using WTF::makeRFC2822DateString;
-using WTF::calculateUTCOffset;
-using WTF::calculateDSTOffset;
+using WTF::LocalTimeOffset;
+using WTF::calculateLocalTimeOffset;
 
 #endif // DateMath_h
