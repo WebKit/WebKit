@@ -373,7 +373,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     ASSERT(m_flushingLayers);
     m_flushingLayers = false;
 
-    if (!m_paintRelatedMilestonesTimer.isActive())
+    if (!m_paintRelatedMilestonesTimer.isActive() && frameView->hasEverPainted())
         m_paintRelatedMilestonesTimer.startOneShot(0);
 
     if (!m_viewportConstrainedLayersNeedingUpdate.isEmpty()) {
