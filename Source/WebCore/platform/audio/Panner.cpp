@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<Panner> Panner::create(PanningModel model, float sampleRate)
+PassOwnPtr<Panner> Panner::create(PanningModel model, float sampleRate, HRTFDatabaseLoader* databaseLoader)
 {
     OwnPtr<Panner> panner;
 
@@ -48,7 +48,7 @@ PassOwnPtr<Panner> Panner::create(PanningModel model, float sampleRate)
         break;
 
     case PanningModelHRTF:
-        panner = adoptPtr(new HRTFPanner(sampleRate));
+        panner = adoptPtr(new HRTFPanner(sampleRate, databaseLoader));
         break;
 
     // FIXME: sound field panning is not yet implemented...

@@ -89,6 +89,8 @@ public:
     // Returns true when initialize() was called AND all asynchronous initialization has completed.
     bool isRunnable() const;
 
+    HRTFDatabaseLoader* hrtfDatabaseLoader() const { return m_hrtfDatabaseLoader.get(); }
+
     // Document notification
     virtual void stop();
 

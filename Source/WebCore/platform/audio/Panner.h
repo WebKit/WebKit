@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class AudioBus;
+class HRTFDatabaseLoader;
 
 // Abstract base class for panning a mono or stereo source.
 
@@ -47,7 +48,7 @@ public:
     
     typedef unsigned PanningModel;
 
-    static PassOwnPtr<Panner> create(PanningModel, float sampleRate);
+    static PassOwnPtr<Panner> create(PanningModel, float sampleRate, HRTFDatabaseLoader*);
 
     virtual ~Panner() { };
 

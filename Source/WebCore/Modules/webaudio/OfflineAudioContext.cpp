@@ -30,7 +30,6 @@
 
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "HRTFDatabaseLoader.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -45,10 +44,7 @@ PassRefPtr<OfflineAudioContext> OfflineAudioContext::create(ScriptExecutionConte
 
     Document* document = toDocument(context);
 
-    // FIXME: offline contexts have limitations on supported sample-rates.
-    // Currently all AudioContexts must have the same sample-rate.
-    HRTFDatabaseLoader* loader = HRTFDatabaseLoader::loader();
-    if (numberOfChannels > 10 || !isSampleRateRangeGood(sampleRate) || (loader && loader->databaseSampleRate() != sampleRate)) {
+    if (numberOfChannels > 10 || !isSampleRateRangeGood(sampleRate)) {
         ec = SYNTAX_ERR;
         return 0;
     }

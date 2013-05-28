@@ -116,7 +116,7 @@ void OfflineAudioDestinationNode::offlineRender()
         
     // Synchronize with HRTFDatabaseLoader.
     // The database must be loaded before we can proceed.
-    HRTFDatabaseLoader* loader = HRTFDatabaseLoader::loader();
+    HRTFDatabaseLoader* loader = context()->hrtfDatabaseLoader();
     ASSERT(loader);
     if (!loader)
         return;

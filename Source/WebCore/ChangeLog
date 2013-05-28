@@ -1,3 +1,43 @@
+2013-05-28  Chris Rogers  <crogers@google.com>
+
+        Support multiple HRTFDatabases for different sample-rates
+        https://bugs.webkit.org/show_bug.cgi?id=116183
+
+        Reviewed by Kenneth Russell.
+
+        Adapted from Blink:
+        https://codereview.chromium.org/14636011/
+
+        This removes the limitation which required OfflineAudioContexts to be created at native sample-rate
+
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::hrtfDatabaseLoader):
+        (AudioContext):
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::create):
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::offlineRender):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::initialize):
+        (WebCore::PannerNode::setPanningModel):
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore):
+        (WebCore::HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary):
+        (WebCore::HRTFDatabaseLoader::~HRTFDatabaseLoader):
+        * platform/audio/HRTFDatabaseLoader.h:
+        (HRTFDatabaseLoader):
+        (WebCore::HRTFDatabaseLoader::loaderMap):
+        * platform/audio/HRTFPanner.cpp:
+        (WebCore::HRTFPanner::HRTFPanner):
+        (WebCore::HRTFPanner::calculateDesiredAzimuthIndexAndBlend):
+        (WebCore::HRTFPanner::pan):
+        * platform/audio/HRTFPanner.h:
+        (HRTFPanner):
+        * platform/audio/Panner.cpp:
+        (WebCore::Panner::create):
+        * platform/audio/Panner.h:
+        (WebCore):
+
 2013-05-28  Alexey Proskuryakov  <ap@apple.com>
 
         Windows build fix.
