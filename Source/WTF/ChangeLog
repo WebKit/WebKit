@@ -1,5 +1,16 @@
 2013-05-27  Patrick Gansterer  <paroga@webkit.org>
 
+        Use correct stack size on Solaris and OpenBSD
+        https://bugs.webkit.org/show_bug.cgi?id=114978
+
+        Recommit after wrong rollout in r150621.
+
+        * wtf/StackBounds.cpp:
+        (WTF):
+        (WTF::StackBounds::initialize):
+
+2013-05-27  Patrick Gansterer  <paroga@webkit.org>
+
         Use ICU_INCLUDE_DIRS in BlackBerry CMake files
         https://bugs.webkit.org/show_bug.cgi?id=116210
 
