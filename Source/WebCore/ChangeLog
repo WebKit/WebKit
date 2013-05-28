@@ -1,3 +1,35 @@
+2013-05-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        Web Inspector: Enable CSS logging
+        https://bugs.webkit.org/show_bug.cgi?id=113401
+
+        Reviewed by Benjamin Poulain.
+
+        From Blink r149265 by <serya@chromium.org>
+
+        CSS logging was disabled in r147028 to prevent message overflow in
+        the inspector console. This change restores it by modifying the
+        CSS grammar in order to reduce as much consecutive errors as
+        possible in 'declaration_list' and 'decl_list' rules.
+
+        This way, for rules like 'x { color: ### }' only the first '#'
+        will be reported as error (instead of 3 identical errors).
+
+        The rule 'declaration' still produces multiple errors, because it
+        does not eat as much errors as possible. So in order not to create
+        a complex risky patch we just disable logging in the parser for
+        that rule.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::syntaxError):
+        (WebCore::CSSParser::isLoggingErrors):
+        (WebCore::CSSParser::rewriteSpecifiers):
+        * css/CSSParser.h:
+        (CSSParser):
+
 2013-05-27  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r150730.

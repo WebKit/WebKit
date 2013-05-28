@@ -397,6 +397,7 @@ public:
     bool m_hasFontFaceOnlyValues;
     bool m_hadSyntacticallyValidCSSRule;
     bool m_logErrors;
+    bool m_ignoreErrorsInDeclaration;
 
 #if ENABLE(CSS_SHADERS)
     bool m_inFilterRule;
