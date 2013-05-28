@@ -29,7 +29,7 @@ set(MiniBrowser_INCLUDE_DIRECTORIES
 
 set(MiniBrowser_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
-    ${WebKit2_LIBRARY_NAME}
+    WebKit2
     ${GTK3_LIBRARIES}
     ${GLIB_LIBRARIES}
 )

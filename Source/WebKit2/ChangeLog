@@ -1,3 +1,10 @@
+2013-05-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix GTK+ CMake build
+
+        * PlatformGTK.cmake: After r150336, the name of the WebKit2
+        library target is simply "WebKit2."
+
 2013-05-28  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         [WK2][CoordinatedGraphics] DrawingArea's visible content area must be updated when contents size changes

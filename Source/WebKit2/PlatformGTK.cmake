@@ -402,7 +402,9 @@ if (ENABLE_PLUGIN_PROCESS)
         ${WEBKIT2_DIR}/unix/PluginMainUnix.cpp
     )
 
-    set(PluginProcess_LIBRARIES ${WebKit2_LIBRARY_NAME})
+    set(PluginProcess_LIBRARIES
+        WebKit2
+    )
 
     add_executable(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_SOURCES})
     target_link_libraries(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_LIBRARIES})
