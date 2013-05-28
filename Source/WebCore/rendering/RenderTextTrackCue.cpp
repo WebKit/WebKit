@@ -322,7 +322,6 @@ void RenderTextTrackCue::repositionCueSnapToLinesSet()
 void RenderTextTrackCue::repositionGenericCue()
 {
     ASSERT(firstChild());
-    ASSERT(m_cue->cueType() == TextTrackCue::WebVTT);
     InlineFlowBox* firstLineBox = toRenderInline(firstChild())->firstLineBox();
     if (static_cast<TextTrackCueGeneric*>(m_cue)->useDefaultPosition() && firstLineBox) {
         LayoutUnit parentWidth = containingBlock()->logicalWidth();

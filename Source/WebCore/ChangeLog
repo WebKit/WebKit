@@ -1,3 +1,15 @@
+2013-05-28  Jer Noble  <jer.noble@apple.com>
+
+        Crash in DumpRenderTree at com.apple.WebCore: WebCore::RenderTextTrackCue::repositionGenericCue + 154
+        https://bugs.webkit.org/show_bug.cgi?id=116882
+
+        Reviewed by Eric Carlson.
+
+        Remove an inappropriate assert. No cues coming through repositionGenericCue will be WebVTT ones.
+
+        * rendering/RenderTextTrackCue.cpp:
+        (WebCore::RenderTextTrackCue::repositionGenericCue):
+
 2013-05-28  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] GraphicsContext: add missing definitions.
