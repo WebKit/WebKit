@@ -1,3 +1,9 @@
+2013-05-28  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip failing tests after parallel gc is enabled.
+
+        * platform/qt/TestExpectations:
+
 2013-05-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Web Inspector: Enable CSS logging
