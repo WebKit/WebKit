@@ -24,7 +24,6 @@
 #include "WKColorPickerResultListener.h"
 #include "WKString.h"
 #include "ewk_color_picker_private.h"
-#include <WebCore/Color.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

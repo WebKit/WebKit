@@ -1,3 +1,17 @@
+2013-05-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Clean up duplicated include files.
+        https://bugs.webkit.org/show_bug.cgi?id=116851
+
+        Reviewed by Christophe Dumez.
+
+        Remove some of duplicated include file in ewk files.
+
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/ewk_color_picker.cpp:
+        * UIProcess/API/efl/ewk_context_menu.cpp:
+        * UIProcess/API/efl/ewk_security_origin_private.h:
+
 2013-05-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] pc files should have harfbuzz dependency.

@@ -27,7 +27,6 @@
 #define ewk_security_origin_private_h
 
 #include "WKEinaSharedString.h"
-#include "WKSecurityOrigin.h"
 #include "ewk_object_private.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/PassRefPtr.h>
