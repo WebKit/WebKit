@@ -23,63 +23,63 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioSession_h
-#define AudioSession_h
+#include "config.h"
+#include "AudioSessionManager.h"
 
 #if USE(AUDIO_SESSION)
 
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
+using namespace WebCore;
 
-namespace WebCore {
-
-class AudioSessionListener;
-class AudioSessionPrivate;
-
-class AudioSession {
-    WTF_MAKE_NONCOPYABLE(AudioSession);
-public:
-    static AudioSession& sharedSession();
-
-    enum CategoryType {
-        None,
-        AmbientSound,
-        SoloAmbientSound,
-        MediaPlayback,
-        RecordAudio,
-        PlayAndRecord,
-        AudioProcessing,
-    };
-    void setCategory(CategoryType);
-    CategoryType category() const;
-
-    void setCategoryOverride(CategoryType);
-    CategoryType categoryOverride() const;
-
-    void addListener(AudioSessionListener*);
-    void removeListener(AudioSessionListener*);
-
-    float sampleRate() const;
-    size_t numberOfOutputChannels() const;
-
-    void setActive(bool);
-
-    size_t preferredBufferSize() const;
-    void setPreferredBufferSize(size_t);
-
-    void beganAudioInterruption();
-    void endedAudioInterruption();
-
-private:
-    AudioSession();
-    ~AudioSession();
-
-    OwnPtr<AudioSessionPrivate> m_private;
-    HashSet<AudioSessionListener*> m_listeners;
-};
-
+PassOwnPtr<AudioSessionManagerToken> AudioSessionManagerToken::create(AudioSessionManager::AudioType type)
+{
+    return adoptPtr(new AudioSessionManagerToken(type));
 }
 
-#endif // USE(AUDIO_SESSION)
+AudioSessionManagerToken::AudioSessionManagerToken(AudioSessionManager::AudioType type)
+    : m_type(type)
+{
+    AudioSessionManager::sharedManager().incrementCount(type);
+}
 
-#endif // AudioSession_h
+AudioSessionManagerToken::~AudioSessionManagerToken()
+{
+    AudioSessionManager::sharedManager().decrementCount(m_type);
+}
+
+AudioSessionManager& AudioSessionManager::sharedManager()
+{
+    DEFINE_STATIC_LOCAL(AudioSessionManager, manager, ());
+    return manager;
+}
+
+AudioSessionManager::AudioSessionManager()
+{
+}
+
+bool AudioSessionManager::has(AudioSessionManager::AudioType type)
+{
+    ASSERT(type >= 0);
+    return m_typeCount.contains(type);
+}
+
+void AudioSessionManager::incrementCount(AudioSessionManager::AudioType type)
+{
+    ASSERT(type >= 0);
+    m_typeCount.add(type);
+    updateSessionState();
+}
+
+void AudioSessionManager::decrementCount(AudioSessionManager::AudioType type)
+{
+    ASSERT(type >= 0);
+    m_typeCount.remove(type);
+    updateSessionState();
+}
+
+#if !PLATFORM(MAC)
+void AudioSessionManager::updateSessionState()
+{
+}
+#endif
+
+#endif // USE(AUDIO_SESSION)

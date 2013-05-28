@@ -23,63 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioSession_h
-#define AudioSession_h
+#ifndef AudioSessionManager_h
+#define AudioSessionManager_h
 
 #if USE(AUDIO_SESSION)
 
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
+#include "AudioSession.h"
+#include <wtf/HashCountedSet.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class AudioSessionListener;
-class AudioSessionPrivate;
-
-class AudioSession {
-    WTF_MAKE_NONCOPYABLE(AudioSession);
+class AudioSessionManager {
 public:
-    static AudioSession& sharedSession();
+    static AudioSessionManager& sharedManager();
 
-    enum CategoryType {
+    enum AudioType {
         None,
-        AmbientSound,
-        SoloAmbientSound,
-        MediaPlayback,
-        RecordAudio,
-        PlayAndRecord,
-        AudioProcessing,
+        Video,
+        Audio,
+        WebAudio,
     };
-    void setCategory(CategoryType);
-    CategoryType category() const;
 
-    void setCategoryOverride(CategoryType);
-    CategoryType categoryOverride() const;
+    bool has(AudioType);
 
-    void addListener(AudioSessionListener*);
-    void removeListener(AudioSessionListener*);
-
-    float sampleRate() const;
-    size_t numberOfOutputChannels() const;
-
-    void setActive(bool);
-
-    size_t preferredBufferSize() const;
-    void setPreferredBufferSize(size_t);
-
-    void beganAudioInterruption();
-    void endedAudioInterruption();
-
+protected:
+    friend class AudioSessionManagerToken;
+    void incrementCount(AudioType);
+    void decrementCount(AudioType);
+    
 private:
-    AudioSession();
-    ~AudioSession();
+    AudioSessionManager();
 
-    OwnPtr<AudioSessionPrivate> m_private;
-    HashSet<AudioSessionListener*> m_listeners;
+    void updateSessionState();
+
+    HashCountedSet<size_t> m_typeCount;
 };
 
+class AudioSessionManagerToken {
+public:
+    static PassOwnPtr<AudioSessionManagerToken> create(AudioSessionManager::AudioType);
+    ~AudioSessionManagerToken();
+
+private:
+    AudioSessionManagerToken(AudioSessionManager::AudioType);
+
+    AudioSessionManager::AudioType m_type;
+};
 }
 
 #endif // USE(AUDIO_SESSION)
 
-#endif // AudioSession_h
+#endif // AudioSessionManager_h
