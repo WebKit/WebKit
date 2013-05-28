@@ -591,6 +591,7 @@ void WebPageProxy::close()
 #endif
 
     m_notificationPermissionRequestManager.invalidateRequests();
+    m_process->context()->supplement<WebNotificationManagerProxy>()->clearNotifications(this);
 
     m_toolTip = String();
 
@@ -4101,6 +4102,21 @@ void WebPageProxy::requestNotificationPermission(uint64_t requestID, const Strin
 void WebPageProxy::showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)
 {
     m_process->context()->supplement<WebNotificationManagerProxy>()->show(this, title, body, iconURL, tag, lang, dir, originString, notificationID);
+}
+
+void WebPageProxy::cancelNotification(uint64_t notificationID)
+{
+    m_process->context()->supplement<WebNotificationManagerProxy>()->cancel(this, notificationID);
+}
+
+void WebPageProxy::clearNotifications(const Vector<uint64_t>& notificationIDs)
+{
+    m_process->context()->supplement<WebNotificationManagerProxy>()->clearNotifications(this, notificationIDs);
+}
+
+void WebPageProxy::didDestroyNotification(uint64_t notificationID)
+{
+    m_process->context()->supplement<WebNotificationManagerProxy>()->didDestroyNotification(this, notificationID);
 }
 
 float WebPageProxy::headerHeight(WebFrameProxy* frame)

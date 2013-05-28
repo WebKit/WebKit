@@ -104,7 +104,6 @@ MESSAGE_RECEIVERS = \
     WebInspectorProxy \
     WebMediaCacheManager \
     WebMediaCacheManagerProxy \
-    WebNotificationManagerProxy \
     WebNotificationManager \
     WebPage \
     WebPageGroupProxy \

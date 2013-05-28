@@ -220,6 +220,9 @@ messages -> WebPageProxy {
     # Notification messages
     RequestNotificationPermission(uint64_t requestID, WTF::String originIdentifier)
     ShowNotification(WTF::String title, WTF::String body, WTF::String iconURL, WTF::String tag, WTF::String lang, WTF::String dir, WTF::String originIdentifier, uint64_t notificationID)
+    CancelNotification(uint64_t notificationID)
+    ClearNotifications(Vector<uint64_t> notificationIDs)
+    DidDestroyNotification(uint64_t notificationID)
 
     # Spelling and grammar messages
 #if USE(UNIFIED_TEXT_CHECKING)  

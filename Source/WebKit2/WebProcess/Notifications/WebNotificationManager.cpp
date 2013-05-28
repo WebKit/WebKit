@@ -33,7 +33,6 @@
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
-#include "WebNotificationManagerProxyMessages.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/Document.h>
 #include <WebCore/Notification.h>
@@ -175,7 +174,7 @@ void WebNotificationManager::cancel(Notification* notification, WebPage* page)
     if (!notificationID)
         return;
     
-    m_process->parentProcessConnection()->send(Messages::WebNotificationManagerProxy::Cancel(notificationID), 0);
+    m_process->parentProcessConnection()->send(Messages::WebPageProxy::CancelNotification(notificationID), page->pageID());
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);
@@ -188,9 +187,9 @@ void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext*
     NotificationContextMap::iterator it = m_notificationContextMap.find(context);
     if (it == m_notificationContextMap.end())
         return;
-    
+
     Vector<uint64_t>& notificationIDs = it->value;
-    m_process->parentProcessConnection()->send(Messages::WebNotificationManagerProxy::ClearNotifications(notificationIDs), 0);
+    m_process->parentProcessConnection()->send(Messages::WebPageProxy::ClearNotifications(notificationIDs), page->pageID());
     size_t count = notificationIDs.size();
     for (size_t i = 0; i < count; ++i) {
         RefPtr<Notification> notification = m_notificationIDMap.take(notificationIDs[i]);
@@ -216,7 +215,7 @@ void WebNotificationManager::didDestroyNotification(Notification* notification, 
 
     m_notificationIDMap.remove(notificationID);
     removeNotificationFromContextMap(notificationID, notification);
-    m_process->parentProcessConnection()->send(Messages::WebNotificationManagerProxy::DidDestroyNotification(notificationID), 0);
+    m_process->parentProcessConnection()->send(Messages::WebPageProxy::DidDestroyNotification(notificationID), page->pageID());
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);

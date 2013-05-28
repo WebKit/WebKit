@@ -1,3 +1,96 @@
+2013-05-26  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Notifications clobber each other with multiple processes
+        https://bugs.webkit.org/show_bug.cgi?id=116428
+        <rdar://problem/13935191>
+
+        Reviewed by Darin Adler.
+
+        With multiple processes, the notification IDs, when passed up to the UI process, can clobber
+        each other. To fix this, we need to maintain a global map of notification IDs. This map is
+        keyed by its own unique notification ID, and maps to a pair containing the web page ID and that
+        web page's ID for the notification.
+
+        Now that we maintain groups of notifications based on the web page, we no longer send IPC messages
+        from WebNotificationManager to WebNotificationManagerProxy; instead we send messages to the
+        WebPageProxy. This removes the need for WebNotificationManagerProxy to be a message receiver.
+
+        When a page closes, all of the web notifications are cleared out. However, by the time the
+        WebPage::close() is called, the connection between WebPage and WebPageProxy is destroyed. Since
+        the WebPage is told to close from the UI process anyway, we clear out the notifications separately,
+        instead of waiting for a message from the WebPage.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.h: Update to take into account the
+        notification's web page. Remove inheritance of CoreIPC::MessageReceiver. Expose the original message
+        handlers as public functions, since they will be called from WebPageProxy. Add a new map that
+        associates a global ID with a notification ID that came from a web page.
+            There are now two flavors of clearNotifications(). One clears out all notifications associated
+        with a web page. This is called when the page is closed. The other clears out a subset of
+        notifications associated with a web page. This is called when notifications associated with a sub-frame
+        is closed.
+        * UIProcess/Notifications/WebNotificationManagerProxy.messages.in: Removed. All messages from
+        the web process go to WebPageProxy now.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp: Update to take into account the
+        notification's web page.
+
+        (WebKit::generateGlobalNotificationID): The manager proxy now maintains its own global notification
+        ID generator.
+        (WebKit::WebNotificationManagerProxy::WebNotificationManagerProxy): The proxy is no longer a
+        message receiver. Remove code that registers it as such.
+
+        (WebKit::WebNotificationManagerProxy::show): Refactor to differentiate between the notification ID
+        that came from the web process, and the global notification ID the proxy maintains. Add the mapping
+        from the global ID to the (web page ID, notification ID) pair.
+        (WebKit::WebNotificationManagerProxy::cancel): Refactor to take into consideration the web page.
+        (WebKit::WebNotificationManagerProxy::didDestroyNotification): Refactor to take into consideration
+        the web page. Fixes a leak where we did not remove the item from the maps. This function is called
+        from the web process, when the ScriptExecutionContext is destroyed, so we remove it from our maps
+        before we pass the message along to the provider.
+
+        Helper functions that evaluate when a given notification in the map matches the desired parameters.
+        (WebKit::pageIDsMatch): The notification is associated with the provided page.
+        (WebKit::pageAndNotificationIDsMatch): The notification is associated with the provided page and is
+        contained within the list of provided notifications.
+
+        (WebKit::WebNotificationManagerProxy::clearNotifications): Changed to only remove notifications
+        associated with the provided web page, and could include a specific list of notifications. This latter
+        situation occurs if notifications were associated with an iframe, and that iframe was removed.
+        There is an O(n) walk that could be make more efficient using another hash map, but that's overhead
+        for a map that should be small in size anyway.
+
+        (WebKit::WebNotificationManagerProxy::providerDidShowNotification): Refactor to take into
+        consideration the web page.
+        (WebKit::WebNotificationManagerProxy::providerDidClickNotification): Refactor to take into
+        consideration the web page.
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications): Now we need to comb through
+        the list of global IDs and put them in buckets based on the notification's web pages. After that
+        is done we can send the DidCloseNotifications() to those pages' processes. There is a possible
+        extra optimization here where we group based on the page's process instead, to reduce the number
+        of messages sent to processes.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): When a web page is closed, we clear the notifications associated
+        with the page.
+        (WebKit::WebPageProxy::cancelNotification): Forward call to WebNotificationManagerProxy.
+        (WebKit::WebPageProxy::clearNotifications): Ditto.
+        (WebKit::WebPageProxy::didDestroyNotification): Ditto.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::cancel):
+        (WebKit::WebNotificationManager::clearNotifications):
+        (WebKit::WebNotificationManager::didDestroyNotification):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp: Remove extraneous include.
+
+        * CMakeLists.txt: Remove WebNotificationManagerProxy.messages.in and related files.
+        * DerivedSources.pri: Ditto.
+        * DerivedSources.make: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebKit2.xcodeproj/project.pbxproj: Ditto.
+
 2013-05-27  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed build fix take 2.

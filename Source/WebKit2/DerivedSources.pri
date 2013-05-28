@@ -97,7 +97,6 @@ MESSAGE_RECEIVERS = \
     WebMediaCacheManagerProxy.messages.in \
     WebNetworkInfoManager.messages.in \
     WebNetworkInfoManagerProxy.messages.in \
-    WebNotificationManagerProxy.messages.in \
     WebNotificationManager.messages.in \
     WebFullScreenManager.messages.in \
     WebFullScreenManagerProxy.messages.in \

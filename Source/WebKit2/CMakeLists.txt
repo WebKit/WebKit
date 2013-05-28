@@ -551,8 +551,6 @@ set(WebKit2_MESSAGES_IN_FILES
 
     UIProcess/Downloads/DownloadProxy.messages.in
 
-    UIProcess/Notifications/WebNotificationManagerProxy.messages.in
-
     UIProcess/Plugins/PluginProcessProxy.messages.in
 
     WebProcess/WebProcess.messages.in

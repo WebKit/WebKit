@@ -27,7 +27,6 @@
 #include "NotificationPermissionRequestManager.h"
 
 #include "WebCoreArgumentCoders.h"
-#include "WebNotificationManagerProxyMessages.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"

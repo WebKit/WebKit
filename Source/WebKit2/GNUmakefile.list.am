@@ -214,8 +214,6 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebNetworkInfoManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebNotificationManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebNotificationManagerMessages.h \
-	DerivedSources/WebKit2/WebNotificationManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebNotificationManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebPageGroupProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebPageGroupProxyMessages.h \
 	DerivedSources/WebKit2/WebPageProxyMessageReceiver.cpp \
