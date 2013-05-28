@@ -1459,6 +1459,7 @@ void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const Exclusion
 static inline bool exclusionInfoRequiresRelayout(const RenderBlock* block)
 {
 #if !ENABLE(CSS_EXCLUSIONS)
+    UNUSED_PARAM(block);
     return false;
 #else
     ExclusionShapeInsideInfo* info = block->exclusionShapeInsideInfo(RenderBlock::ShapePresentOrRemoved);
@@ -1523,6 +1524,8 @@ void RenderBlock::updateRegionsAndExclusionsAfterChildLayout(RenderFlowThread* f
     ExclusionShapeInsideInfo* shapeInsideInfo = layoutExclusionShapeInsideInfo();
     if (heightChanged && shapeInsideInfo)
         shapeInsideInfo->dirtyShapeSize();
+#else
+    UNUSED_PARAM(heightChanged);
 #endif
     computeRegionRangeForBlock(flowThread);
 }
@@ -4404,6 +4407,9 @@ LayoutUnit RenderBlock::logicalRightOffsetForContent(RenderRegion* region, Layou
 
 LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode offsetMode) const
 {
+#if !ENABLE(CSS_EXCLUSIONS)
+    UNUSED_PARAM(offsetMode);
+#endif
     LayoutUnit left = fixedOffset;
     if (m_floatingObjects && m_floatingObjects->hasLeftObjects()) {
         if (heightRemaining)
@@ -4461,6 +4467,9 @@ LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUn
 
 LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode offsetMode) const
 {
+#if !ENABLE(CSS_EXCLUSIONS)
+    UNUSED_PARAM(offsetMode);
+#endif
     LayoutUnit right = fixedOffset;
     if (m_floatingObjects && m_floatingObjects->hasRightObjects()) {
         if (heightRemaining)

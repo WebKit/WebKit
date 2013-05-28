@@ -1,3 +1,15 @@
+2013-05-28  Roger Fong  <roger_fong@apple.com>
+
+        Update layout test results after disabling a bunch of feature flags.
+        <rdar://problem/12952646>.
+
+        Rubberstamped by Jon Lee.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/dom/call-a-constructor-as-a-function-expected.txt: Added.
+        * platform/mac/fast/js/constructor-length-expected.txt:
+        * platform/mac/fast/js/global-constructors-attributes-expected.txt: Added.
+
 2013-05-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r150695

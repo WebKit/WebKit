@@ -1,3 +1,20 @@
+2013-05-28  Roger Fong  <roger_fong@apple.com>
+
+        Disable some feature flags.
+        <rdar://problem/12952646>.
+
+        Disabled flags:
+        ENABLE_CSS_COMPOSITING
+        ENABLE_CSS_EXCLUSIONS
+        ENABLE_CSS_SHADERS
+        ENABLE_IFRAME_SEAMLESS
+        ENABLE_CSS_TRANSFORMS_ANIMATIONS_UNPREFIXED
+        ENABLE_SHARED_WORKERS
+
+        Rubberstamped by Jon Lee.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-05-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Disable SuperRegion

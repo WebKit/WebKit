@@ -1,3 +1,25 @@
+2013-05-28  Roger Fong  <roger_fong@apple.com>
+
+        Disable some feature flags.
+        <rdar://problem/12952646>.
+
+        Rubberstamped by Jon Lee.
+
+        Disabled flags:
+        ENABLE_CSS_COMPOSITING
+        ENABLE_CSS_EXCLUSIONS
+        ENABLE_CSS_SHADERS
+        ENABLE_IFRAME_SEAMLESS
+        ENABLE_CSS_TRANSFORMS_ANIMATIONS_UNPREFIXED
+        ENABLE_SHARED_WORKERS
+
+        * Configurations/FeatureDefines.xcconfig:
+        * rendering/RenderBlock.cpp:
+        (WebCore::exclusionInfoRequiresRelayout):
+        (WebCore::RenderBlock::updateRegionsAndExclusionsAfterChildLayout):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+
 2013-05-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r150618
