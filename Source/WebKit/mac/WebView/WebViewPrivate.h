@@ -119,7 +119,7 @@ typedef enum {
     WebPageVisibilityStateVisible,
     WebPageVisibilityStateHidden,
     WebPageVisibilityStatePrerender,
-    WebPageVisibilityStatePreview
+    WebPageVisibilityStateUnloaded
 } WebPageVisibilityState;
 
 typedef enum {

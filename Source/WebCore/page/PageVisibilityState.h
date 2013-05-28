@@ -41,7 +41,7 @@ enum PageVisibilityState {
     PageVisibilityStateVisible,
     PageVisibilityStateHidden,
     PageVisibilityStatePrerender,
-    PageVisibilityStatePreview
+    PageVisibilityStateUnloaded
 };
 
 #if ENABLE(PAGE_VISIBILITY_API)

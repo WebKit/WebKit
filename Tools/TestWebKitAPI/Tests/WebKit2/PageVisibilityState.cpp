@@ -37,13 +37,13 @@ static bool testDone;
 
 static void didRunStep1StateChangeVisibleToHidden(WKSerializedScriptValueRef, WKErrorRef, void*);
 static void didRunStep2StateChangeHiddenToPrerender(WKSerializedScriptValueRef, WKErrorRef, void*);
-static void didRunStep3StateChangePrerenderToPreview(WKSerializedScriptValueRef, WKErrorRef, void*);
-static void didRunStep4InStatePreview(WKSerializedScriptValueRef, WKErrorRef, void*);
+static void didRunStep3StateChangePrerenderToUnloaded(WKSerializedScriptValueRef, WKErrorRef, void*);
+static void didRunStep4InStateUnloaded(WKSerializedScriptValueRef, WKErrorRef, void*);
 
 static void setPageVisibilityStateWithEvalContinuation(PlatformWebView* webView, WKPageVisibilityState visibilityState, WKPageRunJavaScriptFunction callback)
 {
     WKPageSetVisibilityState(webView->page(), visibilityState, false);
-    WKRetainPtr<WKStringRef> javaScriptString(AdoptWK, WKStringCreateWithUTF8CString("document.webkitVisibilityState"));
+    WKRetainPtr<WKStringRef> javaScriptString(AdoptWK, WKStringCreateWithUTF8CString("document.visibilityState"));
     WKPageRunJavaScriptInMainFrame(webView->page(), javaScriptString.get(), static_cast<void*>(webView), callback);
 }
 
@@ -80,18 +80,18 @@ static void didRunStep1StateChangeVisibleToHidden(WKSerializedScriptValueRef res
 static void didRunStep2StateChangeHiddenToPrerender(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
 {
     assertSerializedScriptValueIsStringValue(resultSerializedScriptValue, error, "hidden");
-    setPageVisibilityStateWithEvalContinuation(static_cast<PlatformWebView*>(context), kWKPageVisibilityStatePrerender, didRunStep3StateChangePrerenderToPreview);
+    setPageVisibilityStateWithEvalContinuation(static_cast<PlatformWebView*>(context), kWKPageVisibilityStatePrerender, didRunStep3StateChangePrerenderToUnloaded);
 }
 
-static void didRunStep3StateChangePrerenderToPreview(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
+static void didRunStep3StateChangePrerenderToUnloaded(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
 {
     assertSerializedScriptValueIsStringValue(resultSerializedScriptValue, error, "prerender");
-    setPageVisibilityStateWithEvalContinuation(static_cast<PlatformWebView*>(context), kWKPageVisibilityStatePreview, didRunStep4InStatePreview);
+    setPageVisibilityStateWithEvalContinuation(static_cast<PlatformWebView*>(context), kWKPageVisibilityStateUnloaded, didRunStep4InStateUnloaded);
 }
 
-static void didRunStep4InStatePreview(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
+static void didRunStep4InStateUnloaded(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
 {
-    assertSerializedScriptValueIsStringValue(resultSerializedScriptValue, error, "preview");
+    assertSerializedScriptValueIsStringValue(resultSerializedScriptValue, error, "unloaded");
     testDone = true;
 }
 

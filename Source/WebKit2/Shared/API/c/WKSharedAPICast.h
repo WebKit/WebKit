@@ -841,8 +841,8 @@ inline WebCore::PageVisibilityState toPageVisibilityState(WKPageVisibilityState 
         return WebCore::PageVisibilityStateHidden;
     case kWKPageVisibilityStatePrerender:
         return WebCore::PageVisibilityStatePrerender;
-    case kWKPageVisibilityStatePreview:
-        return WebCore::PageVisibilityStatePreview;
+    case kWKPageVisibilityStateUnloaded:
+        return WebCore::PageVisibilityStateUnloaded;
     }
 
     ASSERT_NOT_REACHED();

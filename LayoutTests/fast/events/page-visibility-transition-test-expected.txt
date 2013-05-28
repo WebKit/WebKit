@@ -3,20 +3,20 @@ This test checks that Page Visibility state values are correct and the event cha
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.webkitVisibilityState is "visible"
-PASS document.webkitHidden is false
-PASS document.webkitVisibilityState is "hidden"
-PASS document.webkitHidden is true
-PASS document.webkitVisibilityState is "hidden"
-PASS document.webkitHidden is true
-PASS document.webkitVisibilityState is "prerender"
-PASS document.webkitHidden is true
-PASS document.webkitVisibilityState is "visible"
-PASS document.webkitHidden is false
-PASS document.webkitVisibilityState is "preview"
-PASS document.webkitHidden is true
-PASS document.webkitVisibilityState is "visible"
-PASS document.webkitHidden is false
+PASS document.visibilityState is "visible"
+PASS document.hidden is false
+PASS document.visibilityState is "hidden"
+PASS document.hidden is true
+PASS document.visibilityState is "hidden"
+PASS document.hidden is true
+PASS document.visibilityState is "prerender"
+PASS document.hidden is true
+PASS document.visibilityState is "visible"
+PASS document.hidden is false
+PASS document.visibilityState is "unloaded"
+PASS document.hidden is true
+PASS document.visibilityState is "visible"
+PASS document.hidden is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

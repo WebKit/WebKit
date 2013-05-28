@@ -421,8 +421,8 @@ static PageVisibilityState core(WebPageVisibilityState visibilityState)
         return PageVisibilityStateHidden;
     case WebPageVisibilityStatePrerender:
         return PageVisibilityStatePrerender;
-    case WebPageVisibilityStatePreview:
-        return PageVisibilityStatePreview;
+    case WebPageVisibilityStateUnloaded:
+        return PageVisibilityStateUnloaded;
     }
 
     ASSERT_NOT_REACHED();

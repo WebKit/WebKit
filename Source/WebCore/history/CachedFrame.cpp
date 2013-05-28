@@ -133,6 +133,9 @@ void CachedFrameBase::restore()
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
         m_childFrames[i]->open();
 
+    // FIXME: update Page Visibility state here.
+    // https://bugs.webkit.org/show_bug.cgi?id=116770
+
     m_document->enqueuePageshowEvent(PageshowEventPersisted);
     
     HistoryItem* historyItem = frame->loader()->history()->currentItem();
