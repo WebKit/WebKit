@@ -28855,14 +28855,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\FileIconLoader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\FileIconLoader.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\FileMetadata.h"
 				>
 			</File>
@@ -65066,6 +65058,18 @@
 				RelativePath="..\html\WeekInputType.h"
 				>
 			</File>
+			<Filter
+				Name="forms"
+				>
+				<File
+					RelativePath="..\html\forms\FileIconLoader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\forms\FileIconLoader.h"
+					>
+				</File>
+			</Filter>
 			<Filter
 				Name="parser"
 				>

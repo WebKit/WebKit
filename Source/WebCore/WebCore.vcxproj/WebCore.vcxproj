@@ -4086,7 +4086,6 @@
     <ClCompile Include="..\platform\DragData.cpp" />
     <ClCompile Include="..\platform\DragImage.cpp" />
     <ClCompile Include="..\platform\FileChooser.cpp" />
-    <ClCompile Include="..\platform\FileIconLoader.cpp" />
     <ClCompile Include="..\platform\FileStream.cpp" />
     <ClCompile Include="..\platform\FileSystem.cpp" />
     <ClCompile Include="..\platform\graphics\ca\win\PlatformCAFiltersWin.cpp" />
@@ -8998,6 +8997,7 @@
     <ClCompile Include="..\html\ValidationMessage.cpp" />
     <ClCompile Include="..\html\ValidityState.cpp" />
     <ClCompile Include="..\html\WeekInputType.cpp" />
+    <ClCompile Include="..\html\forms\FileIconLoader.cpp" />
     <ClCompile Include="..\html\parser\BackgroundHTMLInputStream.cpp" />
     <ClCompile Include="..\html\parser\BackgroundHTMLParser.cpp" />
     <ClCompile Include="..\html\parser\CompactHTMLToken.cpp" />
@@ -11507,7 +11507,6 @@
     <ClInclude Include="..\platform\DragImage.h" />
     <ClInclude Include="..\platform\EventLoop.h" />
     <ClInclude Include="..\platform\FileChooser.h" />
-    <ClInclude Include="..\platform\FileIconLoader.h" />
     <ClInclude Include="..\platform\FileMetadata.h" />
     <ClInclude Include="..\platform\FileStream.h" />
     <ClInclude Include="..\platform\FileStreamClient.h" />
@@ -12785,6 +12784,7 @@
     <ClInclude Include="..\html\ValidityState.h" />
     <ClInclude Include="..\html\VoidCallback.h" />
     <ClInclude Include="..\html\WeekInputType.h" />
+    <ClInclude Include="..\html\forms\FileIconLoader.h" />
     <ClInclude Include="..\html\parser\AtomicHTMLToken.h" />
     <ClInclude Include="..\html\parser\BackgroundHTMLParser.h" />
     <ClInclude Include="..\html\parser\CompactHTMLToken.h" />

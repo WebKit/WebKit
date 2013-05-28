@@ -19,6 +19,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/editing"
     "${WEBCORE_DIR}/history"
     "${WEBCORE_DIR}/html"
+    "${WEBCORE_DIR}/html/forms"
     "${WEBCORE_DIR}/html/shadow"
     "${WEBCORE_DIR}/inspector"
     "${WEBCORE_DIR}/loader"

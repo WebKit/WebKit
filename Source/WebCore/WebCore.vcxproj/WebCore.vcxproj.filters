@@ -202,6 +202,9 @@
     <Filter Include="html">
       <UniqueIdentifier>{7f307654-5fd9-4fc8-9b64-d4afbdaf0e8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="html\forms">
+      <UniqueIdentifier>{76631c4f-10d3-4e45-b289-088cd8314a98}</UniqueIdentifier>
+    </Filter>
     <Filter Include="html\parser">
       <UniqueIdentifier>{5208479d-ffff-4f5b-a98f-d87083ec9221}</UniqueIdentifier>
     </Filter>
@@ -1102,9 +1105,6 @@
       <Filter>platform</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\FileChooser.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\FileIconLoader.cpp">
       <Filter>platform</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\FileStream.cpp">
@@ -4220,6 +4220,9 @@
     </ClCompile>
     <ClCompile Include="..\html\WeekInputType.cpp">
       <Filter>html</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\forms\FileIconLoader.cpp">
+      <Filter>html\forms</Filter>
     </ClCompile>
     <ClCompile Include="..\html\parser\BackgroundHTMLInputStream.cpp">
       <Filter>html\parser</Filter>
@@ -7845,9 +7848,6 @@
     <ClInclude Include="..\platform\FileChooser.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\FileIconLoader.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\FileMetadata.h">
       <Filter>platform</Filter>
     </ClInclude>
@@ -11096,6 +11096,9 @@
     </ClInclude>
     <ClInclude Include="..\html\WeekInputType.h">
       <Filter>html</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\forms\FileIconLoader.h">
+      <Filter>html\forms</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\AtomicHTMLToken.h">
       <Filter>html\parser</Filter>

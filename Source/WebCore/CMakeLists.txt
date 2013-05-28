@@ -29,6 +29,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/history"
     "${WEBCORE_DIR}/html"
     "${WEBCORE_DIR}/html/canvas"
+    "${WEBCORE_DIR}/html/forms"
     "${WEBCORE_DIR}/html/parser"
     "${WEBCORE_DIR}/html/shadow"
     "${WEBCORE_DIR}/html/track"
@@ -1528,6 +1529,8 @@ set(WebCore_SOURCES
     html/canvas/WebGLUniformLocation.cpp
     html/canvas/WebGLVertexArrayObjectOES.cpp
 
+    html/forms/FileIconLoader.cpp
+
     html/parser/BackgroundHTMLInputStream.cpp
     html/parser/BackgroundHTMLParser.cpp
     html/parser/CSSPreloadScanner.cpp
@@ -1813,7 +1816,6 @@ set(WebCore_SOURCES
     platform/DragData.cpp
     platform/DragImage.cpp
     platform/FileChooser.cpp
-    platform/FileIconLoader.cpp
     platform/FileStream.cpp
     platform/FileSystem.cpp
     platform/ClockGeneric.cpp
