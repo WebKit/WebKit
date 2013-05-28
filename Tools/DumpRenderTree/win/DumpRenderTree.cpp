@@ -959,6 +959,75 @@ static void sizeWebViewForCurrentTest()
     ::SetWindowPos(webViewWindow, 0, 0, 0, width, height, SWP_NOMOVE);
 }
 
+static String findFontFallback(const char* pathOrUrl)
+{
+    String pathToFontFallback = WebCore::directoryName(pathOrUrl);
+
+    wchar_t fullPath[_MAX_PATH];
+    if (!_wfullpath(fullPath, pathToFontFallback.charactersWithNullTermination(), _MAX_PATH))
+        return emptyString();
+
+    if (!::PathIsDirectoryW(fullPath))
+        return emptyString();
+
+    String pathToCheck = fullPath;
+
+    static const String layoutTests = "LayoutTests";
+
+    // Find the layout test root on the current path:
+    size_t location = pathToCheck.find(layoutTests);
+    if (WTF::notFound == location)
+        return emptyString();
+
+    String pathToTest = pathToCheck.substring(location + layoutTests.length() + 1);
+    String possiblePathToLogue = WebCore::pathByAppendingComponent(pathToCheck.substring(0, location + layoutTests.length() + 1), "platform\\win");
+
+    Vector<String> possiblePaths;
+    possiblePaths.append(WebCore::pathByAppendingComponent(possiblePathToLogue, pathToTest));
+
+    size_t nextCandidateEnd = pathToTest.reverseFind('\\');
+    while (nextCandidateEnd && nextCandidateEnd != WTF::notFound) {
+        pathToTest = pathToTest.substring(0, nextCandidateEnd);
+        possiblePaths.append(WebCore::pathByAppendingComponent(possiblePathToLogue, pathToTest));
+        nextCandidateEnd = pathToTest.reverseFind('\\');
+    }
+
+    for (Vector<String>::iterator pos = possiblePaths.begin(); pos != possiblePaths.end(); ++pos) {
+        pathToFontFallback = WebCore::pathByAppendingComponent(*pos, "resources\\"); 
+
+        if (::PathIsDirectoryW(pathToFontFallback.charactersWithNullTermination()))
+            return pathToFontFallback;
+    }
+
+    return emptyString();
+}
+
+static void addFontFallbackIfPresent(const String& fontFallbackPath)
+{
+    if (fontFallbackPath.isEmpty())
+        return;
+
+    String fontFallback = WebCore::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css");
+
+    if (!::PathFileExistsW(fontFallback.charactersWithNullTermination()))
+        return;
+
+    ::setPersistentUserStyleSheetLocation(fontFallback.createCFString().get());
+}
+
+static void removeFontFallbackIfPresent(const String& fontFallbackPath)
+{
+    if (fontFallbackPath.isEmpty())
+        return;
+
+    String fontFallback = WebCore::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css");
+
+    if (!::PathFileExistsW(fontFallback.charactersWithNullTermination()))
+        return;
+
+    ::setPersistentUserStyleSheetLocation(0);
+}
+
 static void runTest(const string& inputLine)
 {
     TestCommand command = parseInputLine(inputLine);
@@ -977,6 +1046,8 @@ static void runTest(const string& inputLine)
 
     CFRelease(str);
 
+    String fallbackPath = findFontFallback(pathOrURL.c_str());
+
     str = CFURLGetString(url);
 
     CFIndex length = CFStringGetLength(str);
@@ -991,6 +1062,8 @@ static void runTest(const string& inputLine)
     ::gTestRunner = TestRunner::create(pathOrURL, command.expectedPixelHash);
     done = false;
     topLoadingFrame = 0;
+
+    addFontFallbackIfPresent(fallbackPath);
 
     sizeWebViewForCurrentTest();
     gTestRunner->setIconDatabaseEnabled(false);
@@ -1083,6 +1156,7 @@ static void runTest(const string& inputLine)
     }
 
 exit:
+    removeFontFallbackIfPresent(fallbackPath);
     SysFreeString(urlBStr);
     ::gTestRunner.clear();
 

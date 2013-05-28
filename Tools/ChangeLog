@@ -1,3 +1,16 @@
+2013-05-28  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows] Many CSS2.1 tests fail under NRWT.
+        https://bugs.webkit.org/show_bug.cgi?id=75707
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (findFontFallback): Added
+        (addFontFallbackIfPresent): Added
+        (removeFontFallbackIfPresent): Added
+        (runTest): Set up/remove font fallbacks when needed.
+
 2013-05-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] NRWT reports failure for 'mac' test cases.
