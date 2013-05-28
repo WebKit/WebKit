@@ -249,16 +249,16 @@ static TriState stateTextWritingDirection(Frame* frame, WritingDirection directi
 
 static unsigned verticalScrollDistance(Frame* frame)
 {
-    Node* focusedNode = frame->document()->focusedNode();
-    if (!focusedNode)
+    Element* focusedElement = frame->document()->focusedElement();
+    if (!focusedElement)
         return 0;
-    RenderObject* renderer = focusedNode->renderer();
+    RenderObject* renderer = focusedElement->renderer();
     if (!renderer || !renderer->isBox())
         return 0;
     RenderStyle* style = renderer->style();
     if (!style)
         return 0;
-    if (!(style->overflowY() == OSCROLL || style->overflowY() == OAUTO || focusedNode->rendererIsEditable()))
+    if (!(style->overflowY() == OSCROLL || style->overflowY() == OAUTO || focusedElement->rendererIsEditable()))
         return 0;
     int height = std::min<int>(toRenderBox(renderer)->clientHeight(), frame->view()->visibleHeight());
     return static_cast<unsigned>(max(max<int>(height * Scrollbar::minFractionToStepWhenPaging(), height - Scrollbar::maxOverlapBetweenPages()), 1));

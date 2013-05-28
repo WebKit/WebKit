@@ -1,3 +1,16 @@
+2013-05-28  Andreas Kling  <akling@apple.com>
+
+        Document::setFocusedNode() should be setFocusedElement().
+        <http://webkit.org/b/116857>
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::focusPluginElement):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::focusedPluginViewForFrame):
+        (WebKit::WebPage::setInitialFocus):
+
 2013-05-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Clean up duplicated include files.

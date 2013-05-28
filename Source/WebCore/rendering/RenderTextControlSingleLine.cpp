@@ -276,7 +276,7 @@ void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
     if (Frame* frame = document()->frame())
         shouldDrawCapsLockIndicator = inputElement()->isPasswordField()
                                       && frame->selection()->isFocusedAndActive()
-                                      && document()->focusedNode() == node()
+                                      && document()->focusedElement() == node()
                                       && PlatformKeyboardEvent::currentCapsLockState();
 
     if (shouldDrawCapsLockIndicator != m_shouldDrawCapsLockIndicator) {
@@ -403,7 +403,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const
 
 bool RenderTextControlSingleLine::textShouldBeTruncated() const
 {
-    return document()->focusedNode() != node()
+    return document()->focusedElement() != node()
         && style()->textOverflow() == TextOverflowEllipsis;
 }
 

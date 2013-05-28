@@ -1,3 +1,13 @@
+2013-05-28  Andreas Kling  <akling@apple.com>
+
+        Document::setFocusedNode() should be setFocusedElement().
+        <http://webkit.org/b/116857>
+
+        Reviewed by Antti Koivisto.
+
+        * webkit/webkitwebview.cpp:
+        (getFocusedNode):
+
 2013-05-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove custom code for webkitAudioContext global constructor getter

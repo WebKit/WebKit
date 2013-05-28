@@ -1369,12 +1369,12 @@ void Editor::toggleUnderline()
 
 void Editor::setBaseWritingDirection(WritingDirection direction)
 {
-    Node* focusedNode = frame()->document()->focusedNode();
-    if (focusedNode && isHTMLTextFormControlElement(focusedNode)) {
+    Element* focusedElement = frame()->document()->focusedElement();
+    if (focusedElement && isHTMLTextFormControlElement(focusedElement)) {
         if (direction == NaturalWritingDirection)
             return;
-        toHTMLElement(focusedNode)->setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
-        focusedNode->dispatchInputEvent();
+        toHTMLElement(focusedElement)->setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
+        focusedElement->dispatchInputEvent();
         frame()->document()->updateStyleIfNeeded();
         return;
     }
@@ -1480,7 +1480,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     // Dispatch a compositionend event to the focused node.
     // We should send this event before sending a TextEvent as written in Section 6.2.2 and 6.2.3 of
     // the DOM Event specification.
-    Node* target = m_frame->document()->focusedNode();
+    Element* target = m_frame->document()->focusedElement();
     if (target) {
         RefPtr<CompositionEvent> event = CompositionEvent::create(eventNames().compositionendEvent, m_frame->document()->domWindow(), text);
         target->dispatchEvent(event, IGNORE_EXCEPTION);
@@ -1522,7 +1522,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         return;
     }
 
-    Node* target = m_frame->document()->focusedNode();
+    Element* target = m_frame->document()->focusedElement();
     if (target) {
         // Dispatch an appropriate composition event to the focused node.
         // We check the composition status and choose an appropriate composition event since this
@@ -1905,7 +1905,7 @@ Vector<String> Editor::guessesForMisspelledOrUngrammatical(bool& misspelled, boo
         return TextCheckingHelper(client(), range).guessesForMisspelledOrUngrammaticalRange(isGrammarCheckingEnabled(), misspelled, ungrammatical);
     }
 
-    String misspelledWord = behavior().shouldAllowSpellingSuggestionsWithoutSelection() ? misspelledWordAtCaretOrRange(m_frame->document()->focusedNode()) : misspelledSelectionString();
+    String misspelledWord = behavior().shouldAllowSpellingSuggestionsWithoutSelection() ? misspelledWordAtCaretOrRange(m_frame->document()->focusedElement()) : misspelledSelectionString();
     misspelled = !misspelledWord.isEmpty();
 
     if (misspelled) {

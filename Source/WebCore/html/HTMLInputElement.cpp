@@ -537,7 +537,7 @@ void HTMLInputElement::updateType()
 
     if (wasAttached) {
         attach();
-        if (document()->focusedNode() == this)
+        if (document()->focusedElement() == this)
             updateFocusAppearance(true);
     }
 
@@ -813,7 +813,7 @@ void HTMLInputElement::attach()
 
     m_inputType->attach();
 
-    if (document()->focusedNode() == this)
+    if (document()->focusedElement() == this)
         document()->updateFocusAppearanceSoon(true /* restore selection */);
 }
 

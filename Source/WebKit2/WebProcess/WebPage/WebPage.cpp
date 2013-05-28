@@ -744,7 +744,7 @@ PluginView* WebPage::focusedPluginViewForFrame(Frame* frame)
 
     PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame->document());
 
-    if (pluginDocument->focusedNode() != pluginDocument->pluginElement())
+    if (pluginDocument->focusedElement() != pluginDocument->pluginElement())
         return 0;
 
     PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
@@ -2048,7 +2048,7 @@ void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const Web
         return;
 
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    frame->document()->setFocusedNode(0);
+    frame->document()->setFocusedElement(0);
 
     if (isKeyboardEventValid && event.type() == WebEvent::KeyDown) {
         PlatformKeyboardEvent platformEvent(platform(event));

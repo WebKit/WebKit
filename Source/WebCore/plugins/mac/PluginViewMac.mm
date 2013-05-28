@@ -708,7 +708,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
             // The plugin needs focus to receive keyboard events
             if (Page* page = m_parentFrame->page())
                 page->focusController()->setFocusedFrame(m_parentFrame);
-            m_parentFrame->document()->setFocusedNode(m_element);
+            m_parentFrame->document()->setFocusedElement(m_element);
         } else if (event->type() == eventNames().mouseupEvent) {
             record.what = mouseUp;
         } else {
@@ -752,7 +752,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
                 // The plugin needs focus to receive keyboard events
                 if (Page* page = m_parentFrame->page())
                     page->focusController()->setFocusedFrame(m_parentFrame);
-                m_parentFrame->document()->setFocusedNode(m_element);
+                m_parentFrame->document()->setFocusedElement(m_element);
                 break;
                 
             case NSLeftMouseUp:

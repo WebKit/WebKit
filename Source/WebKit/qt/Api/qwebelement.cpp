@@ -521,7 +521,7 @@ bool QWebElement::hasFocus() const
     if (!m_element)
         return false;
     if (m_element->document())
-        return m_element == m_element->document()->focusedNode();
+        return m_element == m_element->document()->focusedElement();
     return false;
 }
 
@@ -535,7 +535,7 @@ void QWebElement::setFocus()
     if (!m_element)
         return;
     if (m_element->document() && m_element->isFocusable())
-        m_element->document()->setFocusedNode(m_element);
+        m_element->document()->setFocusedElement(m_element);
 }
 
 /*!

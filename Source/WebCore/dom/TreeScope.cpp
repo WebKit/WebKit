@@ -392,10 +392,7 @@ static Element* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFram
 Element* TreeScope::focusedElement()
 {
     Document* document = rootNode()->document();
-    Node* node = document->focusedNode();
-
-    ASSERT(!node || node->isElementNode());
-    Element* element = toElement(node);
+    Element* element = document->focusedElement();
 
     if (!element && document->page())
         element = focusedFrameOwnerElement(document->page()->focusController()->focusedFrame(), document->frame());

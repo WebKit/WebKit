@@ -427,7 +427,7 @@ void InputHandler::focusedNodeChanged()
     if (!frame || !frame->document())
         return;
 
-    Node* node = frame->document()->focusedNode();
+    Node* node = frame->document()->focusedElement();
 
     if (isActiveTextEdit() && m_currentFocusElement == node) {
         notifyClientOfKeyboardVisibilityChange(true);

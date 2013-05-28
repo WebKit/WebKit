@@ -5283,7 +5283,7 @@ HRESULT STDMETHODCALLTYPE WebView::setInitialFocus(
 {
     if (m_page && m_page->focusController()) {
         Frame* frame = m_page->focusController()->focusedOrMainFrame();
-        frame->document()->setFocusedNode(0);
+        frame->document()->setFocusedElement(0);
         m_page->focusController()->setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, 0);
     }
     return S_OK;

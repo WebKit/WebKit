@@ -96,7 +96,7 @@ bool EditorClientBlackBerry::shouldSpellCheckFocusedField()
     if (!frame || !frame->document() || !frame->editor())
         return false;
 
-    const Node* node = frame->document()->focusedNode();
+    const Node* node = frame->document()->focusedElement();
     // NOTE: This logic is taken from EditorClientImpl::shouldSpellcheckByDefault
     // If |node| is null, we default to allowing spellchecking. This is done in
     // order to mitigate the issue when the user clicks outside the textbox, as a
@@ -190,10 +190,10 @@ bool EditorClientBlackBerry::shouldChangeSelectedRange(Range* fromRange, Range* 
 
     Frame* frame = m_webPagePrivate->focusedOrMainFrame();
     if (frame && frame->document()) {
-        if (Node* focusedNode = frame->document()->focusedNode()) {
-            if (focusedNode->hasTagName(HTMLNames::selectTag))
+        if (Element* focusedElement = frame->document()->focusedElement()) {
+            if (focusedElement->hasTagName(HTMLNames::selectTag))
                 return false;
-            if (focusedNode->isElementNode() && DOMSupport::isPopupInputField(toElement(focusedNode)))
+            if (DOMSupport::isPopupInputField(focusedElement))
                 return false;
         }
 

@@ -1865,7 +1865,7 @@ bool FrameView::scrollToAnchor(const String& name)
     
     // If the anchor accepts keyboard focus, move focus there to aid users relying on keyboard navigation.
     if (anchorElement && anchorElement->isFocusable())
-        m_frame->document()->setFocusedNode(anchorElement);
+        m_frame->document()->setFocusedElement(anchorElement);
     
     return true;
 }

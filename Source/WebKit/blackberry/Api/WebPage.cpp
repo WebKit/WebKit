@@ -2556,8 +2556,8 @@ Platform::IntRect WebPagePrivate::focusNodeRect()
 
     const Platform::ViewportAccessor* viewportAccessor = m_webkitThreadViewportAccessor;
 
-    IntRect focusRect = rectForNode(doc->focusedNode());
-    focusRect = adjustRectOffsetForFrameOffset(focusRect, doc->focusedNode());
+    IntRect focusRect = rectForNode(doc->focusedElement());
+    focusRect = adjustRectOffsetForFrameOffset(focusRect, doc->focusedElement());
     focusRect = viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatRect(focusRect));
     focusRect.intersect(viewportAccessor->pixelContentsRect());
     return focusRect;
@@ -2572,7 +2572,7 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
     // Check if we're using LinkToLink and the user is not touching the screen.
     if (m_webSettings->doesGetFocusNodeContext() && !isTouching) {
         RefPtr<Node> node;
-        node = m_page->focusController()->focusedOrMainFrame()->document()->focusedNode();
+        node = m_page->focusController()->focusedOrMainFrame()->document()->focusedElement();
         if (node) {
             IntRect visibleRect = IntRect(IntPoint(), actualVisibleSize());
             if (!visibleRect.intersects(getNodeWindowRect(node.get())))
@@ -4168,7 +4168,7 @@ void WebPagePrivate::clearFocusNode()
         return;
     ASSERT(frame->document());
 
-    if (frame->document()->focusedNode())
+    if (frame->document()->focusedElement())
         frame->page()->focusController()->setFocusedElement(0, frame);
 }
 
@@ -4913,7 +4913,7 @@ bool WebPage::setNodeFocus(const WebDOMNode& node, bool on)
                 if (nodeImpl->isElementNode())
                     toElement(nodeImpl)->updateFocusAppearance(true);
                 d->m_inputHandler->didNodeOpenPopup(nodeImpl);
-            } else if (doc->focusedNode() == nodeImpl) // && !on
+            } else if (doc->focusedElement() == nodeImpl) // && !on
                 page->focusController()->setFocusedElement(0, doc->frame());
 
             return true;

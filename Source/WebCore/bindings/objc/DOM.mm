@@ -405,7 +405,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 {
     // FIXME: Could we move this function to WebCore::Element and autogenerate?
     WebCore::Element* element = core(self);
-    return element->document()->focusedNode() == element;
+    return element->document()->focusedElement() == element;
 }
 
 @end

@@ -670,8 +670,8 @@ public:
     String selectedStylesheetSet() const;
     void setSelectedStylesheetSet(const String&);
 
-    bool setFocusedNode(PassRefPtr<Node>, FocusDirection = FocusDirectionNone);
-    Node* focusedNode() const { return m_focusedNode.get(); }
+    bool setFocusedElement(PassRefPtr<Element>, FocusDirection = FocusDirectionNone);
+    Element* focusedElement() const { return m_focusedElement.get(); }
     UserActionElementSet& userActionElements()  { return m_userActionElements; }
     const UserActionElementSet& userActionElements() const { return m_userActionElements; }
 
@@ -1345,7 +1345,7 @@ private:
 
     Color m_textColor;
 
-    RefPtr<Node> m_focusedNode;
+    RefPtr<Element> m_focusedElement;
     RefPtr<Element> m_hoveredElement;
     RefPtr<Element> m_activeElement;
     RefPtr<Element> m_documentElement;

@@ -27,8 +27,8 @@
 #include "UserTypingGestureIndicator.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
-#include "Node.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -55,7 +55,7 @@ UserTypingGestureIndicator::UserTypingGestureIndicator(Frame* frame)
     , m_previousFocusedNode(focusedNode())
 {
     s_processingUserTypingGesture = true;
-    focusedNode() = frame->document() ? frame->document()->focusedNode() : 0;
+    focusedNode() = frame->document() ? frame->document()->focusedElement() : 0;
 }
 
 UserTypingGestureIndicator::~UserTypingGestureIndicator()

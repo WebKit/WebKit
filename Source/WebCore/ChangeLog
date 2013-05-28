@@ -1,3 +1,112 @@
+2013-05-28  Andreas Kling  <akling@apple.com>
+
+        Document::setFocusedNode() should be setFocusedElement().
+        <http://webkit.org/b/116857>
+
+        Reviewed by Antti Koivisto.
+
+        Only Elements can be focused, so tighten Document's idea of what's focused.
+
+        Most of this patch is just updating call sites for the new names and removing
+        now-unnecessary isElementNode() checks and casts.
+
+        * WebCore.exp.in:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canSetFocusAttribute):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isFocused):
+        (WebCore::AccessibilityRenderObject::setFocused):
+        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
+        * bindings/objc/DOM.mm:
+        (-[DOMElement isFocused]):
+        * dom/Document.cpp:
+        (WebCore::Document::dispose):
+        (WebCore::Document::detach):
+        (WebCore::Document::focusedNodeRemoved):
+        (WebCore::Document::removeFocusedNodeOfSubtree):
+        (WebCore::Document::setFocusedElement):
+        (WebCore::Document::updateFocusAppearanceTimerFired):
+        (WebCore::eventTargetNodeForDocument):
+        * dom/Document.h:
+        (Document):
+        (WebCore::Document::focusedElement):
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        (WebCore::Element::focus):
+        (WebCore::Element::blur):
+        (WebCore::Element::cancelFocusAppearanceUpdate):
+        * dom/Node.cpp:
+        (WebCore::Node::rendererIsEditable):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::focusedElement):
+        * dom/UserTypingGestureIndicator.cpp:
+        (WebCore::UserTypingGestureIndicator::UserTypingGestureIndicator):
+        * editing/Editor.cpp:
+        (WebCore::Editor::setBaseWritingDirection):
+        (WebCore::Editor::setComposition):
+        (WebCore::Editor::guessesForMisspelledOrUngrammatical):
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectAll):
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        (WebCore::FrameSelection::setFocusedElementIfNeeded):
+        (WebCore::FrameSelection::currentForm):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::attach):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValueCommon):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::placeholderShouldBeVisible):
+        (WebCore::HTMLTextFormControlElement::selectionStart):
+        (WebCore::HTMLTextFormControlElement::selectionEnd):
+        (WebCore::HTMLTextFormControlElement::selectionDirection):
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::handleKeydownEvent):
+        (WebCore::RadioInputType::isKeyboardFocusable):
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::focusedFieldIndex):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::focus):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::scrollOverflow):
+        (WebCore::EventHandler::logicalScrollOverflow):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::capsLockStateMayHaveChanged):
+        * page/FocusController.cpp:
+        (WebCore::dispatchEventsOnWindowAndFocusedNode):
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        (WebCore::FocusController::setFocusedElement):
+        (WebCore::FocusController::findFocusCandidateInContainer):
+        (WebCore::FocusController::advanceFocusDirectionallyInContainer):
+        (WebCore::FocusController::advanceFocusDirectionally):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToAnchor):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::focusPluginElement):
+        * plugins/efl/PluginViewEfl.cpp:
+        (WebCore::PluginView::setFocus):
+        * plugins/mac/PluginViewMac.mm:
+        (WebCore::PluginView::platformStart):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::capsLockStateMayHaveChanged):
+        (WebCore::RenderTextControlSingleLine::textShouldBeTruncated):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isFocused):
+
 2013-05-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Web Inspector: Enable CSS logging

@@ -303,7 +303,7 @@ static void PopupMenuPositionFunc(GtkMenu* menu, gint *x, gint *y, gboolean *pus
 static Node* getFocusedNode(Frame* frame)
 {
     if (Document* doc = frame->document())
-        return doc->focusedNode();
+        return doc->focusedElement();
     return 0;
 }
 

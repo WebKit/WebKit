@@ -162,14 +162,11 @@ AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
 
     // get the focused node in the page
     Document* focusedDocument = page->focusController()->focusedOrMainFrame()->document();
-    Node* focusedNode = focusedDocument->focusedNode();
-    if (!focusedNode)
-        focusedNode = focusedDocument;
+    Element* focusedElement = focusedDocument->focusedElement();
+    if (focusedElement && focusedElement->hasTagName(areaTag))
+        return focusedImageMapUIElement(static_cast<HTMLAreaElement*>(focusedElement));
 
-    if (focusedNode->hasTagName(areaTag))
-        return focusedImageMapUIElement(static_cast<HTMLAreaElement*>(focusedNode));
-    
-    AccessibilityObject* obj = focusedNode->document()->axObjectCache()->getOrCreate(focusedNode);
+    AccessibilityObject* obj = focusedDocument->axObjectCache()->getOrCreate(focusedElement ? static_cast<Node*>(focusedElement) : focusedDocument);
     if (!obj)
         return 0;
 

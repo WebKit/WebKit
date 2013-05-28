@@ -389,7 +389,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue)
     setFormControlValueMatchesRenderer(true);
 
     // Set the caret to the end of the text value.
-    if (document()->focusedNode() == this) {
+    if (document()->focusedElement() == this) {
         unsigned endOfString = m_value.length();
         setSelectionRange(endOfString, endOfString);
     }

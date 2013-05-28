@@ -433,7 +433,7 @@ void QWebPageAdapter::mousePressEvent(QMouseEvent* ev)
     RefPtr<WebCore::Node> oldNode;
     Frame* focusedFrame = page->focusController()->focusedFrame();
     if (Document* focusedDocument = focusedFrame ? focusedFrame->document() : 0)
-        oldNode = focusedDocument->focusedNode();
+        oldNode = focusedDocument->focusedElement();
 
     if (tripleClickTimer.isActive()
         && (ev->pos() - tripleClick).manhattanLength() < qGuiApp->styleHints()->startDragDistance()) {
@@ -451,7 +451,7 @@ void QWebPageAdapter::mousePressEvent(QMouseEvent* ev)
     RefPtr<WebCore::Node> newNode;
     focusedFrame = page->focusController()->focusedFrame();
     if (Document* focusedDocument = focusedFrame ? focusedFrame->document() : 0)
-        newNode = focusedDocument->focusedNode();
+        newNode = focusedDocument->focusedElement();
 
     if (newNode && oldNode != newNode)
         clickCausedFocus = true;
@@ -511,7 +511,7 @@ void QWebPageAdapter::handleSoftwareInputPanel(Qt::MouseButton button, const QPo
         return;
 
     if (client && client->inputMethodEnabled()
-        && frame->document()->focusedNode()
+        && frame->document()->focusedElement()
             && button == Qt::LeftButton && qGuiApp->property("autoSipEnabled").toBool()) {
         if (!clickCausedFocus || requestSoftwareInputPanel()) {
             HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(pos));
@@ -709,9 +709,9 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
     }
     case Qt::ImMaximumTextLength: {
         if (frame->selection()->isContentEditable()) {
-            if (frame->document() && frame->document()->focusedNode()) {
-                if (frame->document()->focusedNode()->hasTagName(HTMLNames::inputTag)) {
-                    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(frame->document()->focusedNode());
+            if (frame->document() && frame->document()->focusedElement()) {
+                if (frame->document()->focusedElement()->hasTagName(HTMLNames::inputTag)) {
+                    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(frame->document()->focusedElement());
                     return QVariant(inputElement->maxLength());
                 }
             }
@@ -1209,7 +1209,7 @@ bool QWebPageAdapter::hasFocusedNode() const
     Frame* frame = page->focusController()->focusedFrame();
     if (frame) {
         Document* document = frame->document();
-        hasFocus = document && document->focusedNode();
+        hasFocus = document && document->focusedElement();
     }
     return hasFocus;
 }

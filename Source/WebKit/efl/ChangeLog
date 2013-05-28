@@ -1,3 +1,15 @@
+2013-05-28  Andreas Kling  <akling@apple.com>
+
+        Document::setFocusedNode() should be setFocusedElement().
+        <http://webkit.org/b/116857>
+
+        Reviewed by Antti Koivisto.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_focused_element_geometry_get):
+        * ewk/ewk_view.cpp:
+        (ewk_view_input_method_state_set):
+
 2013-05-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] pc files should have harfbuzz dependency.

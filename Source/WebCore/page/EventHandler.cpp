@@ -1084,7 +1084,7 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
     Node* node = startingNode;
 
     if (!node)
-        node = m_frame->document()->focusedNode();
+        node = m_frame->document()->focusedElement();
 
     if (!node)
         node = m_mousePressNode.get();
@@ -1105,7 +1105,7 @@ bool EventHandler::logicalScrollOverflow(ScrollLogicalDirection direction, Scrol
     Node* node = startingNode;
 
     if (!node)
-        node = m_frame->document()->focusedNode();
+        node = m_frame->document()->focusedElement();
 
     if (!node)
         node = m_mousePressNode.get();
@@ -2346,7 +2346,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
                 // will set a selection inside it, which will call setFocuseNodeIfNeeded.
                 if (m_frame->selection()->isRange()
                     && m_frame->selection()->toNormalizedRange()->compareNode(element, IGNORE_EXCEPTION) == Range::NODE_INSIDE
-                    && element->isDescendantOf(m_frame->document()->focusedNode()))
+                    && element->isDescendantOf(m_frame->document()->focusedElement()))
                     return true;
                     
                 break;
@@ -2945,7 +2945,7 @@ bool EventHandler::sendContextMenuEventForKey()
 #endif
     IntPoint location;
 
-    Node* focusedNode = doc->focusedNode();
+    Element* focusedElement = doc->focusedElement();
     FrameSelection* selection = m_frame->selection();
     Position start = selection->selection().start();
 
@@ -2957,8 +2957,8 @@ bool EventHandler::sendContextMenuEventForKey()
         // In a multiline edit, firstRect.maxY() would endup on the next line, so -1.
         int y = firstRect.maxY() ? firstRect.maxY() - 1 : 0;
         location = IntPoint(x, y);
-    } else if (focusedNode) {
-        RenderBoxModelObject* box = focusedNode->renderBoxModelObject();
+    } else if (focusedElement) {
+        RenderBoxModelObject* box = focusedElement->renderBoxModelObject();
         if (!box)
             return false;
         IntRect clippedRect = box->pixelSnappedAbsoluteClippedOverflowRect();
@@ -2974,7 +2974,7 @@ bool EventHandler::sendContextMenuEventForKey()
     IntPoint position = view->contentsToRootView(location);
     IntPoint globalPosition = view->hostWindow()->rootViewToScreen(IntRect(position, IntSize())).location();
 
-    Node* targetNode = doc->focusedNode();
+    Node* targetNode = doc->focusedElement();
     if (!targetNode)
         targetNode = doc;
 
@@ -3775,8 +3775,8 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
 void EventHandler::capsLockStateMayHaveChanged()
 {
     Document* d = m_frame->document();
-    if (Node* node = d->focusedNode()) {
-        if (RenderObject* r = node->renderer()) {
+    if (Element* element = d->focusedElement()) {
+        if (RenderObject* r = element->renderer()) {
             if (r->isTextField())
                 toRenderTextControlSingleLine(r)->capsLockStateMayHaveChanged();
         }

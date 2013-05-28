@@ -122,11 +122,11 @@ static inline void dispatchEventsOnWindowAndFocusedNode(Document* document, bool
             return;
     }
 
-    if (!focused && document->focusedNode())
-        document->focusedNode()->dispatchBlurEvent(0);
+    if (!focused && document->focusedElement())
+        document->focusedElement()->dispatchBlurEvent(0);
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, false, false));
-    if (focused && document->focusedNode())
-        document->focusedNode()->dispatchFocusEvent(0, FocusDirectionNone);
+    if (focused && document->focusedElement())
+        document->focusedElement()->dispatchFocusEvent(0, FocusDirectionNone);
 }
 
 static inline bool hasCustomFocusLogic(Node* node)
@@ -284,7 +284,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     ASSERT(frame);
     Document* document = frame->document();
 
-    Node* currentNode = document->focusedNode();
+    Node* currentNode = document->focusedElement();
     // FIXME: Not quite correct when it comes to focus transitions leaving/entering the WebView itself
     bool caretBrowsing = frame->settings() && frame->settings()->caretBrowsingEnabled();
 
@@ -298,7 +298,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     if (!node) {
         // We didn't find a node to focus, so we should try to pass focus to Chrome.
         if (!initialFocus && m_page->chrome().canTakeFocus(direction)) {
-            document->setFocusedNode(0);
+            document->setFocusedElement(0);
             setFocusedFrame(0);
             m_page->chrome().takeFocus(direction);
             return true;
@@ -314,7 +314,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
     ASSERT(node);
 
-    if (node == document->focusedNode())
+    if (node == document->focusedElement())
         // Focus wrapped around to the same node.
         return true;
 
@@ -331,12 +331,12 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         if (!owner->contentFrame())
             return false;
 
-        document->setFocusedNode(0);
+        document->setFocusedElement(0);
         setFocusedFrame(owner->contentFrame());
         return true;
     }
     
-    // FIXME: It would be nice to just be able to call setFocusedNode(node) here, but we can't do
+    // FIXME: It would be nice to just be able to call setFocusedElement(node) here, but we can't do
     // that because some elements (e.g. HTMLInputElement and HTMLTextAreaElement) do extra work in
     // their focus() methods.
 
@@ -344,7 +344,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
     if (newDocument != document)
         // Focus is going away from this document, so clear the focused node.
-        document->setFocusedNode(0);
+        document->setFocusedElement(0);
 
     if (newDocument)
         setFocusedFrame(newDocument->frame());
@@ -595,12 +595,12 @@ bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newF
     RefPtr<Frame> oldFocusedFrame = focusedFrame();
     RefPtr<Document> oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : 0;
     
-    Node* oldFocusedNode = oldDocument ? oldDocument->focusedNode() : 0;
-    if (oldFocusedNode == element)
+    Element* oldFocusedElement = oldDocument ? oldDocument->focusedElement() : 0;
+    if (oldFocusedElement == element)
         return true;
 
     // FIXME: Might want to disable this check for caretBrowsing
-    if (oldFocusedNode && oldFocusedNode->isRootEditableElement() && !relinquishesEditingFocus(oldFocusedNode))
+    if (oldFocusedElement && oldFocusedElement->isRootEditableElement() && !relinquishesEditingFocus(oldFocusedElement))
         return false;
 
     m_page->editorClient()->willSetInputMethodState();
@@ -609,20 +609,20 @@ bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newF
 
     if (!element) {
         if (oldDocument)
-            oldDocument->setFocusedNode(0);
+            oldDocument->setFocusedElement(0);
         m_page->editorClient()->setInputMethodState(false);
         return true;
     }
 
     RefPtr<Document> newDocument = element->document();
 
-    if (newDocument && newDocument->focusedNode() == element) {
+    if (newDocument && newDocument->focusedElement() == element) {
         m_page->editorClient()->setInputMethodState(element->shouldUseInputMethod());
         return true;
     }
     
     if (oldDocument && oldDocument != newDocument)
-        oldDocument->setFocusedNode(0);
+        oldDocument->setFocusedElement(0);
 
     if (newFocusedFrame && !newFocusedFrame->page()) {
         setFocusedFrame(0);
@@ -632,12 +632,12 @@ bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newF
 
     RefPtr<Element> protect(element);
     if (newDocument) {
-        bool successfullyFocused = newDocument->setFocusedNode(element, direction);
+        bool successfullyFocused = newDocument->setFocusedElement(element, direction);
         if (!successfullyFocused)
             return false;
     }
 
-    if (newDocument->focusedNode() == element)
+    if (newDocument->focusedElement() == element)
         m_page->editorClient()->setInputMethodState(element->shouldUseInputMethod());
 
     return true;
@@ -754,7 +754,7 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCa
 void FocusController::findFocusCandidateInContainer(Node* container, const LayoutRect& startingRect, FocusDirection direction, KeyboardEvent* event, FocusCandidate& closest)
 {
     ASSERT(container);
-    Node* focusedNode = (focusedFrame() && focusedFrame()->document()) ? focusedFrame()->document()->focusedNode() : 0;
+    Node* focusedNode = (focusedFrame() && focusedFrame()->document()) ? focusedFrame()->document()->focusedElement() : 0;
 
     Element* element = ElementTraversal::firstWithin(container);
     FocusCandidate current;
@@ -813,9 +813,9 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         }
         // Navigate into a new frame.
         LayoutRect rect;
-        Node* focusedNode = focusedOrMainFrame()->document()->focusedNode();
-        if (focusedNode && !hasOffscreenRect(focusedNode))
-            rect = nodeRectInAbsoluteCoordinates(focusedNode, true /* ignore border */);
+        Element* focusedElement = focusedOrMainFrame()->document()->focusedElement();
+        if (focusedElement && !hasOffscreenRect(focusedElement))
+            rect = nodeRectInAbsoluteCoordinates(focusedElement, true /* ignore border */);
         frameElement->contentFrame()->document()->updateLayoutIgnorePendingStylesheets();
         if (!advanceFocusDirectionallyInContainer(frameElement->contentFrame()->document(), rect, direction, event)) {
             // The new frame had nothing interesting, need to find another candidate.
@@ -831,9 +831,9 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         }
         // Navigate into a new scrollable container.
         LayoutRect startingRect;
-        Node* focusedNode = focusedOrMainFrame()->document()->focusedNode();
-        if (focusedNode && !hasOffscreenRect(focusedNode))
-            startingRect = nodeRectInAbsoluteCoordinates(focusedNode, true);
+        Element* focusedElement = focusedOrMainFrame()->document()->focusedElement();
+        if (focusedElement && !hasOffscreenRect(focusedElement))
+            startingRect = nodeRectInAbsoluteCoordinates(focusedElement, true);
         return advanceFocusDirectionallyInContainer(focusCandidate.visibleNode, startingRect, direction, event);
     }
     if (focusCandidate.isOffscreenAfterScrolling) {
@@ -859,7 +859,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     if (!focusedDocument)
         return false;
 
-    Node* focusedNode = focusedDocument->focusedNode();
+    Element* focusedElement = focusedDocument->focusedElement();
     Node* container = focusedDocument;
 
     if (container->isDocumentNode())
@@ -867,12 +867,12 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
         
     // Figure out the starting rect.
     LayoutRect startingRect;
-    if (focusedNode) {
-        if (!hasOffscreenRect(focusedNode)) {
-            container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, focusedNode);
-            startingRect = nodeRectInAbsoluteCoordinates(focusedNode, true /* ignore border */);
-        } else if (focusedNode->hasTagName(areaTag)) {
-            HTMLAreaElement* area = static_cast<HTMLAreaElement*>(focusedNode);
+    if (focusedElement) {
+        if (!hasOffscreenRect(focusedElement)) {
+            container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, focusedElement);
+            startingRect = nodeRectInAbsoluteCoordinates(focusedElement, true /* ignore border */);
+        } else if (focusedElement->hasTagName(areaTag)) {
+            HTMLAreaElement* area = static_cast<HTMLAreaElement*>(focusedElement);
             container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, area->imageElement());
             startingRect = virtualRectForAreaElementAndDirection(area, direction);
         }

@@ -660,7 +660,7 @@ void Document::dispose()
     // We must make sure not to be retaining any of our children through
     // these extra pointers or we will create a reference cycle.
     m_docType = 0;
-    m_focusedNode = 0;
+    m_focusedElement = 0;
     m_hoveredElement = 0;
     m_activeElement = 0;
     m_titleElement = 0;
@@ -2104,7 +2104,7 @@ void Document::detach()
 #endif
 
     m_hoveredElement = 0;
-    m_focusedNode = 0;
+    m_focusedElement = 0;
     m_activeElement = 0;
 
     ContainerNode::detach();
@@ -3256,12 +3256,12 @@ void Document::setActiveElement(PassRefPtr<Element> newActiveElement)
 
 void Document::focusedNodeRemoved()
 {
-    setFocusedNode(0);
+    setFocusedElement(0);
 }
 
 void Document::removeFocusedNodeOfSubtree(Node* node, bool amongChildrenOnly)
 {
-    if (!m_focusedNode || this->inPageCache()) // If the document is in the page cache, then we don't need to clear out the focused node.
+    if (!m_focusedElement || this->inPageCache()) // If the document is in the page cache, then we don't need to clear out the focused node.
         return;
 
     Element* focusedElement = node->treeScope()->focusedElement();
@@ -3313,70 +3313,64 @@ void Document::setAnnotatedRegions(const Vector<AnnotatedRegionValue>& regions)
 }
 #endif
 
-bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection direction)
+bool Document::setFocusedElement(PassRefPtr<Element> prpNewFocusedElement, FocusDirection direction)
 {
-    RefPtr<Node> newFocusedNode = prpNewFocusedNode;
+    RefPtr<Element> newFocusedElement = prpNewFocusedElement;
 
-    // Make sure newFocusedNode is actually in this document
-    if (newFocusedNode && (newFocusedNode->document() != this))
+    // Make sure newFocusedElement is actually in this document
+    if (newFocusedElement && (newFocusedElement->document() != this))
         return true;
 
-    if (m_focusedNode == newFocusedNode)
+    if (m_focusedElement == newFocusedElement)
         return true;
 
     if (m_inPageCache)
         return false;
 
     bool focusChangeBlocked = false;
-    RefPtr<Node> oldFocusedNode = m_focusedNode;
-    m_focusedNode = 0;
+    RefPtr<Element> oldFocusedElement = m_focusedElement.release();
 
     // Remove focus from the existing focus node (if any)
-    if (oldFocusedNode) {
-        ASSERT(!oldFocusedNode->inDetach());
+    if (oldFocusedElement) {
+        ASSERT(!oldFocusedElement->inDetach());
 
-        if (oldFocusedNode->isElementNode()) {
-            Element* oldFocusedElement = toElement(oldFocusedNode.get());
-            if (oldFocusedElement->active())
-                oldFocusedElement->setActive(false);
+        if (oldFocusedElement->active())
+            oldFocusedElement->setActive(false);
 
-            toElement(oldFocusedNode.get())->setFocus(false);
-        }
+        oldFocusedElement->setFocus(false);
 
         // Dispatch a change event for form control elements that have been edited.
-        if (oldFocusedNode->isElementNode() && toElement(oldFocusedNode.get())->isFormControlElement()) {
-            HTMLFormControlElement* formControlElement = toHTMLFormControlElement(oldFocusedNode.get());
+        if (oldFocusedElement->isFormControlElement()) {
+            HTMLFormControlElement* formControlElement = toHTMLFormControlElement(oldFocusedElement.get());
             if (formControlElement->wasChangedSinceLastFormControlChangeEvent())
                 formControlElement->dispatchFormControlChangeEvent();
         }
 
         // Dispatch the blur event and let the node do any other blur related activities (important for text fields)
-        oldFocusedNode->dispatchBlurEvent(newFocusedNode);
+        oldFocusedElement->dispatchBlurEvent(newFocusedElement);
 
-        if (m_focusedNode) {
+        if (m_focusedElement) {
             // handler shifted focus
             focusChangeBlocked = true;
-            newFocusedNode = 0;
+            newFocusedElement = 0;
         }
         
-        oldFocusedNode->dispatchFocusOutEvent(eventNames().focusoutEvent, newFocusedNode); // DOM level 3 name for the bubbling blur event.
+        oldFocusedElement->dispatchFocusOutEvent(eventNames().focusoutEvent, newFocusedElement); // DOM level 3 name for the bubbling blur event.
         // FIXME: We should remove firing DOMFocusOutEvent event when we are sure no content depends
         // on it, probably when <rdar://problem/8503958> is resolved.
-        oldFocusedNode->dispatchFocusOutEvent(eventNames().DOMFocusOutEvent, newFocusedNode); // DOM level 2 name for compatibility.
+        oldFocusedElement->dispatchFocusOutEvent(eventNames().DOMFocusOutEvent, newFocusedElement); // DOM level 2 name for compatibility.
 
-        if (m_focusedNode) {
+        if (m_focusedElement) {
             // handler shifted focus
             focusChangeBlocked = true;
-            newFocusedNode = 0;
+            newFocusedElement = 0;
         }
-        if (oldFocusedNode == this && oldFocusedNode->hasOneRef())
-            return true;
             
-        if (oldFocusedNode->isRootEditableElement())
+        if (oldFocusedElement->isRootEditableElement())
             frame()->editor().didEndEditing();
 
         if (view()) {
-            Widget* oldWidget = widgetForNode(oldFocusedNode.get());
+            Widget* oldWidget = widgetForNode(oldFocusedElement.get());
             if (oldWidget)
                 oldWidget->setFocus(false);
             else
@@ -3384,27 +3378,27 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection
         }
     }
 
-    if (newFocusedNode && newFocusedNode->isElementNode() && toElement(newFocusedNode.get())->isFocusable()) {
-        if (newFocusedNode->isRootEditableElement() && !acceptsEditingFocus(newFocusedNode.get())) {
+    if (newFocusedElement && newFocusedElement->isFocusable()) {
+        if (newFocusedElement->isRootEditableElement() && !acceptsEditingFocus(newFocusedElement.get())) {
             // delegate blocks focus change
             focusChangeBlocked = true;
             goto SetFocusedNodeDone;
         }
         // Set focus on the new node
-        m_focusedNode = newFocusedNode;
+        m_focusedElement = newFocusedElement;
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
-        m_focusedNode->dispatchFocusEvent(oldFocusedNode, direction);
+        m_focusedElement->dispatchFocusEvent(oldFocusedElement, direction);
 
-        if (m_focusedNode != newFocusedNode) {
+        if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
             focusChangeBlocked = true;
             goto SetFocusedNodeDone;
         }
 
-        m_focusedNode->dispatchFocusInEvent(eventNames().focusinEvent, oldFocusedNode); // DOM level 3 bubbling focus event.
+        m_focusedElement->dispatchFocusInEvent(eventNames().focusinEvent, oldFocusedElement); // DOM level 3 bubbling focus event.
 
-        if (m_focusedNode != newFocusedNode) {
+        if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
             focusChangeBlocked = true;
             goto SetFocusedNodeDone;
@@ -3412,31 +3406,30 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection
 
         // FIXME: We should remove firing DOMFocusInEvent event when we are sure no content depends
         // on it, probably when <rdar://problem/8503958> is m.
-        m_focusedNode->dispatchFocusInEvent(eventNames().DOMFocusInEvent, oldFocusedNode); // DOM level 2 for compatibility.
+        m_focusedElement->dispatchFocusInEvent(eventNames().DOMFocusInEvent, oldFocusedElement); // DOM level 2 for compatibility.
 
-        if (m_focusedNode != newFocusedNode) { 
+        if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
             focusChangeBlocked = true;
             goto SetFocusedNodeDone;
         }
 
-        if (m_focusedNode->isElementNode())
-            toElement(m_focusedNode.get())->setFocus(true);
+        m_focusedElement->setFocus(true);
 
-        if (m_focusedNode->isRootEditableElement())
+        if (m_focusedElement->isRootEditableElement())
             frame()->editor().didBeginEditing();
 
         // eww, I suck. set the qt focus correctly
         // ### find a better place in the code for this
         if (view()) {
-            Widget* focusWidget = widgetForNode(m_focusedNode.get());
+            Widget* focusWidget = widgetForNode(m_focusedElement.get());
             if (focusWidget) {
                 // Make sure a widget has the right size before giving it focus.
                 // Otherwise, we are testing edge cases of the Widget code.
                 // Specifically, in WebCore this does not work well for text fields.
                 updateLayout();
                 // Re-get the widget in case updating the layout changed things.
-                focusWidget = widgetForNode(m_focusedNode.get());
+                focusWidget = widgetForNode(m_focusedElement.get());
             }
             if (focusWidget)
                 focusWidget->setFocus(true);
@@ -3445,14 +3438,14 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection
         }
     }
 
-    if (!focusChangeBlocked && m_focusedNode) {
+    if (!focusChangeBlocked && m_focusedElement) {
         // Create the AXObject cache in a focus change because GTK relies on it.
         if (AXObjectCache* cache = axObjectCache())
-            cache->handleFocusedUIElementChanged(oldFocusedNode.get(), newFocusedNode.get());
+            cache->handleFocusedUIElementChanged(oldFocusedElement.get(), newFocusedElement.get());
     }
 
     if (!focusChangeBlocked)
-        page()->chrome().focusedNodeChanged(m_focusedNode.get());
+        page()->chrome().focusedNodeChanged(m_focusedElement.get());
 
 SetFocusedNodeDone:
     updateStyleIfNeeded();
@@ -4703,15 +4696,11 @@ void Document::cancelFocusAppearanceUpdate()
 
 void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
 {
-    Node* node = focusedNode();
-    if (!node)
-        return;
-    if (!node->isElementNode())
+    Element* element = focusedElement();
+    if (!element)
         return;
 
     updateLayout();
-
-    Element* element = toElement(node);
     if (element->isFocusable())
         element->updateFocusAppearance(m_updateFocusAppearanceRestoresSelection);
 }
@@ -5766,7 +5755,7 @@ Node* eventTargetNodeForDocument(Document* doc)
 {
     if (!doc)
         return 0;
-    Node* node = doc->focusedNode();
+    Node* node = doc->focusedElement();
     if (!node && doc->isPluginDocument()) {
         PluginDocument* pluginDocument = toPluginDocument(doc);
         node = pluginDocument->pluginElement();

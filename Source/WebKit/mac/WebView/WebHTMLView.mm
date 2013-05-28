@@ -3144,7 +3144,7 @@ static void setMenuTargets(NSMenu* menu)
     if (!document)
         return;
     
-    document->setFocusedNode(0);
+    document->setFocusedElement(0);
 }
 
 - (BOOL)isOpaque
@@ -3817,7 +3817,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
         return YES;
 
     if (Document* document = frame->document())
-        document->setFocusedNode(0);
+        document->setFocusedElement(0);
     page->focusController()->setInitialFocus(direction == NSSelectingNext ? FocusDirectionForward : FocusDirectionBackward,
                                              currentKeyboardEvent(frame).get());
     return YES;

@@ -1633,8 +1633,8 @@ void FrameSelection::selectAll()
 {
     Document* document = m_frame->document();
 
-    if (document->focusedNode() && document->focusedNode()->hasTagName(selectTag)) {
-        HTMLSelectElement* selectElement = toHTMLSelectElement(document->focusedNode());
+    if (document->focusedElement() && document->focusedElement()->hasTagName(selectTag)) {
+        HTMLSelectElement* selectElement = toHTMLSelectElement(document->focusedElement());
         if (selectElement->canSelectAll()) {
             selectElement->selectAll();
             return;
@@ -1722,9 +1722,9 @@ void FrameSelection::focusedOrActiveStateChanged()
     // Because StyleResolver::checkOneSelector() and
     // RenderTheme::isFocused() check if the frame is active, we have to
     // update style and theme state that depended on those.
-    if (Node* node = m_frame->document()->focusedNode()) {
-        node->setNeedsStyleRecalc();
-        if (RenderObject* renderer = node->renderer())
+    if (Element* element = m_frame->document()->focusedElement()) {
+        element->setNeedsStyleRecalc();
+        if (RenderObject* renderer = element->renderer())
             if (renderer && renderer->style()->hasAppearance())
                 renderer->theme()->stateChanged(renderer, FocusState);
     }
@@ -1901,7 +1901,7 @@ void FrameSelection::setFocusedElementIfNeeded()
             }
             target = target->parentOrShadowHostElement();
         }
-        m_frame->document()->setFocusedNode(0);
+        m_frame->document()->setFocusedElement(0);
     }
 
     if (caretBrowsing)
@@ -1987,7 +1987,7 @@ static HTMLFormElement* scanForForm(Node* start)
 HTMLFormElement* FrameSelection::currentForm() const
 {
     // Start looking either at the active (first responder) node, or where the selection is.
-    Node* start = m_frame->document()->focusedNode();
+    Node* start = m_frame->document()->focusedElement();
     if (!start)
         start = this->start().deprecatedNode();
 

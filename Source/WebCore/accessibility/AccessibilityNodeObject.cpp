@@ -1781,8 +1781,8 @@ bool AccessibilityNodeObject::canSetFocusAttribute() const
     if (isWebArea())
         return true;
     
-    // NOTE: It would be more accurate to ask the document whether setFocusedNode() would
-    // do anything. For example, setFocusedNode() will do nothing if the current focused
+    // NOTE: It would be more accurate to ask the document whether setFocusedElement() would
+    // do anything. For example, setFocusedElement() will do nothing if the current focused
     // node will not relinquish the focus.
     if (!node)
         return false;

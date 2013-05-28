@@ -84,10 +84,8 @@ void CachedPage::restore(Page* page)
     // Restore the focus appearance for the focused element.
     // FIXME: Right now we don't support pages w/ frames in the b/f cache.  This may need to be tweaked when we add support for that.
     Document* focusedDocument = page->focusController()->focusedOrMainFrame()->document();
-    if (Node* node = focusedDocument->focusedNode()) {
-        if (node->isElementNode())
-            toElement(node)->updateFocusAppearance(true);
-    }
+    if (Element* element = focusedDocument->focusedElement())
+        element->updateFocusAppearance(true);
 
     if (m_needStyleRecalcForVisitedLinks) {
         for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())

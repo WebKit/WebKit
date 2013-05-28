@@ -3061,11 +3061,11 @@ void ewk_view_input_method_state_set(Evas_Object* ewkView, bool active)
     priv->imh = 0;
     if (focusedFrame
         && focusedFrame->document()
-        && focusedFrame->document()->focusedNode()
-        && focusedFrame->document()->focusedNode()->hasTagName(WebCore::HTMLNames::inputTag)) {
+        && focusedFrame->document()->focusedElement()
+        && focusedFrame->document()->focusedElement()->hasTagName(WebCore::HTMLNames::inputTag)) {
         WebCore::HTMLInputElement* inputElement;
 
-        inputElement = static_cast<WebCore::HTMLInputElement*>(focusedFrame->document()->focusedNode());
+        inputElement = static_cast<WebCore::HTMLInputElement*>(focusedFrame->document()->focusedElement());
         if (inputElement) {
             // for password fields, active == false
             if (!active) {

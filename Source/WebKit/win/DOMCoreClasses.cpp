@@ -1216,7 +1216,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::isFocused(
     if (!m_element)
         return E_FAIL;
 
-    if (m_element->document()->focusedNode() == m_element)
+    if (m_element->document()->focusedElement() == m_element)
         *result = TRUE;
     else
         *result = FALSE;

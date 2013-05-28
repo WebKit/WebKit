@@ -887,11 +887,10 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 
 void PluginView::focusPluginElement()
 {
-    // Focus the plugin
     if (Page* page = m_parentFrame->page())
         page->focusController()->setFocusedElement(m_element, m_parentFrame);
     else
-        m_parentFrame->document()->setFocusedNode(m_element);
+        m_parentFrame->document()->setFocusedElement(m_element);
 }
 
 void PluginView::didReceiveResponse(const ResourceResponse& response)
