@@ -1,5 +1,13 @@
 2013-05-28  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Put correct byteCompile symbol in file. Previous version
+        had an extra 'i' appended to the end.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
+2013-05-28  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Unreviewed build fix.  Remove ?byteCompile symbol that
         is no longer accessible during link.
 
