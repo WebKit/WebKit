@@ -2350,11 +2350,6 @@ bool Node::dispatchWheelEvent(const PlatformWheelEvent& event)
     return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator::create(event, document()->defaultView()));
 }
 
-void Node::dispatchChangeEvent()
-{
-    dispatchScopedEvent(Event::create(eventNames().changeEvent, true, false));
-}
-
 void Node::dispatchInputEvent()
 {
     dispatchScopedEvent(Event::create(eventNames().inputEvent, true, false));

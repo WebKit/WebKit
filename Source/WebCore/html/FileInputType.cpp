@@ -394,7 +394,7 @@ void FileInputType::setFiles(PassRefPtr<FileList> files)
     if (pathsChanged) {
         // This call may cause destruction of this instance.
         // input instance is safe since it is ref-counted.
-        input->HTMLElement::dispatchChangeEvent();
+        input->dispatchChangeEvent();
     }
     input->setChangedSinceLastFormControlChangeEvent(false);
 }

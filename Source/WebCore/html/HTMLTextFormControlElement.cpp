@@ -225,7 +225,7 @@ String HTMLTextFormControlElement::selectedText() const
 void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
 {
     if (m_textAsOfLastFormControlChangeEvent != value()) {
-        HTMLElement::dispatchChangeEvent();
+        dispatchChangeEvent();
         setTextAsOfLastFormControlChangeEvent(value());
     }
     setChangedSinceLastFormControlChangeEvent(false);

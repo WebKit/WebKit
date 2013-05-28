@@ -62,6 +62,7 @@ public:
     void setChangedSinceLastFormControlChangeEvent(bool);
 
     virtual void dispatchFormControlChangeEvent();
+    void dispatchChangeEvent();
     void dispatchFormControlInputEvent();
 
     virtual bool isDisabledFormControl() const OVERRIDE;

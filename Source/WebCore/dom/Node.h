@@ -615,7 +615,6 @@ public:
 
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 
-    virtual void dispatchChangeEvent();
     virtual void dispatchInputEvent();
 
     // Perform the default action for an event.

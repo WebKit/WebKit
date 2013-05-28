@@ -1,3 +1,23 @@
+2013-05-28  Andreas Kling  <akling@apple.com>
+
+        Move Node::dispatchChangeEvent() to HTMLFormControlElement.
+        <http://webkit.org/b/116866>
+
+        Reviewed by Anders Carlsson.
+
+        ...and devirtualize it, since it had no overrides.
+
+        * dom/Node.h:
+        * dom/Node.cpp:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchChangeEvent):
+        (WebCore::HTMLFormControlElement::dispatchFormControlChangeEvent):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::setFiles):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::dispatchFormControlChangeEvent):
+
 2013-05-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Refactoring CSS grammar

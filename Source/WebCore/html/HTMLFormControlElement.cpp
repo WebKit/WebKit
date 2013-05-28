@@ -257,9 +257,14 @@ void HTMLFormControlElement::setChangedSinceLastFormControlChangeEvent(bool chan
     m_wasChangedSinceLastFormControlChangeEvent = changed;
 }
 
+void HTMLFormControlElement::dispatchChangeEvent()
+{
+    dispatchScopedEvent(Event::create(eventNames().changeEvent, true, false));
+}
+
 void HTMLFormControlElement::dispatchFormControlChangeEvent()
 {
-    HTMLElement::dispatchChangeEvent();
+    dispatchChangeEvent();
     setChangedSinceLastFormControlChangeEvent(false);
 }
 
