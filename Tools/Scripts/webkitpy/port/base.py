@@ -571,7 +571,7 @@ class Port(object):
         if not reftest_list:
             reftest_list = []
             for expectation, prefix in (('==', ''), ('!=', '-mismatch')):
-                for extention in Port._supported_file_extensions:
+                for extention in Port._supported_reference_extensions:
                     path = self.expected_filename(test_name, prefix + extention)
                     if self._filesystem.exists(path):
                         reftest_list.append((expectation, path))
@@ -606,15 +606,17 @@ class Port(object):
         return [self.relative_test_filename(f) for f in files]
 
     # When collecting test cases, we include any file with these extensions.
-    _supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl',
-                                      '.htm', '.php', '.svg', '.mht'])
+    _supported_test_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl', '.htm', '.php', '.svg', '.mht'])
+    _supported_reference_extensions = set(['.html', '.xml', '.xhtml', '.htm', '.svg'])
 
     @staticmethod
     # If any changes are made here be sure to update the isUsedInReftest method in old-run-webkit-tests as well.
     def is_reference_html_file(filesystem, dirname, filename):
         if filename.startswith('ref-') or filename.startswith('notref-'):
             return True
-        filename_wihout_ext, unused = filesystem.splitext(filename)
+        filename_wihout_ext, ext = filesystem.splitext(filename)
+        if ext not in Port._supported_reference_extensions:
+            return False
         for suffix in ['-expected', '-expected-mismatch', '-ref', '-notref']:
             if filename_wihout_ext.endswith(suffix):
                 return True
@@ -624,7 +626,7 @@ class Port(object):
     def _has_supported_extension(filesystem, filename):
         """Return true if filename is one of the file extensions we want to run a test on."""
         extension = filesystem.splitext(filename)[1]
-        return extension in Port._supported_file_extensions
+        return extension in Port._supported_test_extensions
 
     @staticmethod
     def _is_test_file(filesystem, dirname, filename):

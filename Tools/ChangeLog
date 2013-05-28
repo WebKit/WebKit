@@ -1,3 +1,27 @@
+2013-05-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [webkitpy] Explicitly specify the reference file extensions
+        https://bugs.webkit.org/show_bug.cgi?id=116333
+
+        Reviewed by Benjamin Poulain.
+
+        Explicitly specify the extensions that are valid for the reference files. This helps to differentiate
+        between valid reference files required by reftests and text baselines that have the same extension as
+        potential test files (specifically the current MHTML tests in the .mht files and the future .mht baselines
+        that were until this change recognized as reference files).
+
+        Covered by existing tests and the new test_is_reference_html_file test in webkitpy.port.base_unittest.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.reference_files): Iterate through the _supported_reference_extensions set.
+        (Port): Rename the _supported_file_extensions set to _supported_test_extensions. Add the
+        _supported_reference_extensions set, containing the extensions allowed for reference files.
+        (Port.is_reference_html_file): Return False if the file's extension is not a supported reference file extension.
+        (Port._has_supported_extension): Use _supported_test_extensions.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_is_reference_html_file): Add the unit test, testing various test cases around the
+        Port.is_reference_html_file method.
+
 2013-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet another WKR build fix. Sorry for the mess. It seems like I can't win today :(
