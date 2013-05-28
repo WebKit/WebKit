@@ -87,9 +87,4 @@ const AtomicString& CachedResourceRequest::initiatorName() const
     return defaultName;
 }
 
-PassRefPtr<Element> CachedResourceRequest::initiatorElement()
-{
-    return m_initiatorElement;
-}
-
 } // namespace WebCore

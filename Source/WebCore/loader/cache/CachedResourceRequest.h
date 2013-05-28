@@ -60,7 +60,6 @@ public:
     void setInitiator(PassRefPtr<Element>);
     void setInitiator(const AtomicString& name);
     const AtomicString& initiatorName() const;
-    PassRefPtr<Element> initiatorElement();
 
 private:
     ResourceRequest m_resourceRequest;
