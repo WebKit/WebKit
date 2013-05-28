@@ -30,9 +30,7 @@
 #include "WKSecurityOrigin.h"
 #include "WKString.h"
 #include "ewk_security_origin_private.h"
-#include <WebCore/SecurityOrigin.h>
 
-using namespace WebCore;
 using namespace WebKit;
 
 EwkSecurityOrigin::EwkSecurityOrigin(WKSecurityOriginRef originRef)

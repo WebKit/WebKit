@@ -1,3 +1,13 @@
+2013-05-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Remove unneeded WebCore namespace use in ewk
+        https://bugs.webkit.org/show_bug.cgi?id=116707
+
+        Reviewed by Christophe Dumez.
+
+        * UIProcess/API/efl/ewk_security_origin.cpp: Remove "using namespace WebCore".
+        * UIProcess/API/efl/ewk_text_checker.cpp: ditto.
+
 2013-05-26  Jon Lee  <jonlee@apple.com>
 
         [WK2] Notifications clobber each other with multiple processes

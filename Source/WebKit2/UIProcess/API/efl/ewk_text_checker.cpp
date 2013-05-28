@@ -30,7 +30,6 @@
 #if ENABLE(SPELLCHECK)
 #include "TextCheckerClientEfl.h"
 
-using namespace WebCore;
 using namespace WebKit;
 
 static Eina_List* convertLanguagesToEinaList(const Vector<String>& languages)
