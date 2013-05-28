@@ -1,3 +1,13 @@
+2013-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Many css2.1 tests fail on Apple's Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=75707
+
+        Reviewed by Darin Adler.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Export the WebCore::directoryName method for use by DRT.
+
 2013-05-27  Patrick Gansterer  <paroga@webkit.org>
 
         Use ICU_INCLUDE_DIRS in BlackBerry CMake files

@@ -130,6 +130,7 @@ EXPORTS
         ?currentThread@WTF@@YAIXZ
         ?detachThread@WTF@@YAXI@Z
         ?destroy@StringImpl@WTF@@SAXPAV12@@Z
+        ?directoryName@WebCore@@YA?AVString@WTF@@ABV23@@Z
         ?initializeMainThread@WTF@@YAXXZ
         ?initializeThreading@WTF@@YAXXZ
         ?instrumentationForPage@WebCore@@YAPAVInstrumentingAgents@1@PAVPage@1@@Z
