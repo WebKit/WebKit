@@ -29722,6 +29722,14 @@
 				Name="cf"
 				>
 				<File
+					RelativePath="..\platform\cf\CFURLExtras.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\cf\CFURLExtras.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\cf\FileSystemCF.cpp"
 					>
 				</File>

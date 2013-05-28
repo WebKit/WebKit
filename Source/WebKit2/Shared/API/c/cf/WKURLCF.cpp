@@ -27,9 +27,9 @@
 #include "WKURLCF.h"
 
 #include "WKAPICast.h"
+#include <WebCore/CFURLExtras.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,8 +41,10 @@ WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
     if (!cfURL)
         return 0;
 
-    String urlString(CFURLGetString(cfURL));
-    return toCopiedURLAPI(urlString);
+    CString urlBytes;
+    getURLBytes(cfURL, urlBytes);
+
+    return toCopiedURLAPI(urlBytes.data());
 }
 
 CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)

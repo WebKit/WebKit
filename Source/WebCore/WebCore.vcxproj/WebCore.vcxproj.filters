@@ -5178,6 +5178,9 @@
     <ClCompile Include="..\page\Chrome.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\cf\CFURLExtras.cpp">
+      <Filter>platform\cf</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\cf\SharedBufferCF.cpp">
       <Filter>platform\cf</Filter>
     </ClCompile>
@@ -12681,6 +12684,9 @@
     </ClInclude>
     <ClInclude Include="..\svg\SVGAnimatedTypeAnimator.h">
       <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\cf\CFURLExtras.h">
+      <Filter>platform\cf</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\cf\win\CertificateCFWin.h">
       <Filter>platform\cf\win</Filter>

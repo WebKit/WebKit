@@ -29,11 +29,14 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
+#include <WebCore/CFURLExtras.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 #import <Foundation/Foundation.h>
 #endif
+
+using namespace WebCore;
 
 namespace CoreIPC {
 
@@ -500,7 +503,10 @@ void encode(ArgumentEncoder& encoder, CFURLRef url)
     if (baseURL)
         encode(encoder, baseURL);
 
-    encode(encoder, CFURLGetString(url));
+    URLCharBuffer urlBytes;
+    getURLBytes(url, urlBytes);
+    CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(urlBytes.data()), urlBytes.size());
+    encoder << dataReference;
 }
 
 bool decode(ArgumentDecoder& decoder, RetainPtr<CFURLRef>& result)
@@ -514,26 +520,23 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<CFURLRef>& result)
             return false;
     }
 
-    RetainPtr<CFStringRef> string;
-    if (!decode(decoder, string))
+    CoreIPC::DataReference urlBytes;
+    if (!decoder.decode(urlBytes))
         return false;
 
 #if PLATFORM(MAC)
     // FIXME: Move this to ArgumentCodersCFMac.mm and change this file back to be C++
     // instead of Objective-C++.
-    if (!CFStringGetLength(string.get())) {
+    if (urlBytes.isEmpty()) {
         // CFURL can't hold an empty URL, unlike NSURL.
+        // FIXME: This discards base URL, which seems incorrect.
         result = reinterpret_cast<CFURLRef>([NSURL URLWithString:@""]);
         return true;
     }
 #endif
-                    
-    CFURLRef url = CFURLCreateWithString(0, string.get(), baseURL.get());
-    if (!url)
-        return false;
 
-    result = adoptCF(url);
-    return true;
+    result = createCFURLFromBuffer(reinterpret_cast<const char*>(urlBytes.data()), urlBytes.size(), baseURL.get());
+    return result;
 }
 
 #if USE(SECURITY_FRAMEWORK)

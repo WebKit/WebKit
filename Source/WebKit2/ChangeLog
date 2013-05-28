@@ -1,3 +1,21 @@
+2013-05-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Freeze when loading a particular page on washingtonpost.com with NetworkProcess enabled
+        https://bugs.webkit.org/show_bug.cgi?id=116887
+        <rdar://problem/12965959>
+
+        Reviewed by Darin Adler.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::encode):
+        (CoreIPC::decode):
+        Fix for the bug: use good shared WebCore code to manipulate CFURLs. Also, added
+        a FIXME about empty URLs.
+
+        * Shared/API/c/cf/WKURLCF.cpp: (WKURLCreateWithCFURL): Fixed to not use
+        CFURLGetString, as that could prevent loading certain resources, like ones with
+        curly braces in resource specifiers. We want KURL normalization, not CFURL one.
+
 2013-05-28  Tim Horton  <timothy_horton@apple.com>
 
         Rendering suppression extension tokens shouldn't be 0, should handle overflow

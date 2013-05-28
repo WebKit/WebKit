@@ -1695,7 +1695,7 @@ bool KURL::isHierarchical() const
     return m_string[m_schemeEnd + 1] == '/';
 }
 
-void KURL::copyToBuffer(CharBuffer& buffer) const
+void KURL::copyToBuffer(Vector<char, 512>& buffer) const
 {
     // FIXME: This throws away the high bytes of all the characters in the string!
     // That's fine for a valid URL, which is all ASCII, but not for invalid URLs.

@@ -26,16 +26,13 @@
 #include "config.h"
 #include "KURL.h"
 
-#include <wtf/RetainPtr.h>
+#include "CFURLExtras.h"
 #include <CoreFoundation/CFURL.h>
+#include <wtf/text/CString.h>
 
 using namespace std;
 
 namespace WebCore {
-
-typedef Vector<char, 512> CharBuffer;
-
-RetainPtr<CFURLRef> createCFURLFromBuffer(const CharBuffer&);
 
 KURL::KURL(CFURLRef url)
 {
@@ -44,24 +41,10 @@ KURL::KURL(CFURLRef url)
         return;
     }
 
-    CFIndex bytesLength = CFURLGetBytes(url, 0, 0);
-    Vector<char, 512> buffer(bytesLength + 1);
-    char* bytes = &buffer[0];
-    CFURLGetBytes(url, reinterpret_cast<UInt8*>(bytes), bytesLength);
-    bytes[bytesLength] = '\0';
-    parse(bytes);
-}
-
-RetainPtr<CFURLRef> createCFURLFromBuffer(const CharBuffer& buffer)
-{
-    // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
-    // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
-    // could either be a malformed string or bytes in a different encoding, like Shift-JIS, so we fall back
-    // onto using ISO Latin-1 in those cases.
-    RetainPtr<CFURLRef> result = adoptCF(CFURLCreateAbsoluteURLWithBytes(0, reinterpret_cast<const UInt8*>(buffer.data()), buffer.size(), kCFStringEncodingUTF8, 0, true));
-    if (!result)
-        result = adoptCF(CFURLCreateAbsoluteURLWithBytes(0, reinterpret_cast<const UInt8*>(buffer.data()), buffer.size(), kCFStringEncodingISOLatin1, 0, true));
-    return result;
+    // FIXME: Why is it OK to ignore base URL here?
+    CString urlBytes;
+    getURLBytes(url, urlBytes);
+    parse(urlBytes.data());
 }
 
 #if !PLATFORM(MAC) && !(PLATFORM(QT) && USE(QTKIT))
@@ -70,7 +53,7 @@ RetainPtr<CFURLRef> KURL::createCFURL() const
     // FIXME: What should this return for invalid URLs?
     // Currently it throws away the high bytes of the characters in the string in that case,
     // which is clearly wrong.
-    CharBuffer buffer;
+    URLCharBuffer buffer;
     copyToBuffer(buffer);
     return createCFURLFromBuffer(buffer);
 }

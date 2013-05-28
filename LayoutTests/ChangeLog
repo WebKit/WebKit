@@ -1,3 +1,15 @@
+2013-05-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Freeze when loading a particular page on washingtonpost.com with NetworkProcess enabled
+        https://bugs.webkit.org/show_bug.cgi?id=116887
+        <rdar://problem/12965959>
+
+        Reviewed by Darin Adler.
+
+        * http/tests/uri/curly-braces-escaping-expected.txt: Added.
+        * http/tests/uri/curly-braces-escaping.html: Added.
+        * http/tests/uri/resources/echo-uri.php: Added.
+
 2013-05-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] More attempts to make the bot green.

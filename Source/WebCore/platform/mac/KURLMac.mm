@@ -26,15 +26,11 @@
 #import "config.h"
 #import "KURL.h"
 
+#import "CFURLExtras.h"
 #import "FoundationExtras.h"
-#import <CoreFoundation/CFURL.h>
-
-using namespace WTF;
+#import <wtf/text/CString.h>
 
 namespace WebCore {
-
-typedef Vector<char, 512> CharBuffer;
-extern RetainPtr<CFURLRef> createCFURLFromBuffer(const CharBuffer& buffer);
 
 KURL::KURL(NSURL *url)
 {
@@ -43,34 +39,34 @@ KURL::KURL(NSURL *url)
         return;
     }
 
-    CFIndex bytesLength = CFURLGetBytes(reinterpret_cast<CFURLRef>(url), 0, 0);
-    Vector<char, 512> buffer(bytesLength + 1);
-    char* bytes = &buffer[0];
-    CFURLGetBytes(reinterpret_cast<CFURLRef>(url), reinterpret_cast<UInt8*>(bytes), bytesLength);
-    bytes[bytesLength] = '\0';
-    parse(bytes);
+    // FIXME: Why is it OK to ignore base URL here?
+    CString urlBytes;
+    getURLBytes(reinterpret_cast<CFURLRef>(url), urlBytes);
+    parse(urlBytes.data());
 }
 
 KURL::operator NSURL *() const
 {
+    // Creating a toll-free bridged CFURL, because a real NSURL would not preserve the original string.
+    // We'll need fidelity when round-tripping via CFURLGetBytes().
     return HardAutorelease(createCFURL().leakRef());
 }
 
-// We use the toll-free bridge between NSURL and CFURL to
-// create a CFURLRef supporting both empty and null values.
 RetainPtr<CFURLRef> KURL::createCFURL() const
 {
     if (isNull())
         return 0;
 
     if (isEmpty()) {
+        // We use the toll-free bridge between NSURL and CFURL to
+        // create a CFURLRef supporting both empty and null values.
         RetainPtr<NSURL> emptyNSURL = adoptNS([[NSURL alloc] initWithString:@""]);
         return reinterpret_cast<CFURLRef>(emptyNSURL.get());
     }
 
-    CharBuffer buffer;
+    URLCharBuffer buffer;
     copyToBuffer(buffer);
-    return createCFURLFromBuffer(buffer);
+    return createCFURLFromBuffer(buffer.data(), buffer.size());
 }
 
 
