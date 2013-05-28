@@ -67,7 +67,7 @@ void PagePopup::initialize(WebPage* webPage)
 
 void PagePopup::writeDocument(DocumentWriter* writer)
 {
-    ASSERT(writter);
+    ASSERT(writer);
     writer->setMIMEType("text/html");
     writer->begin(KURL());
 

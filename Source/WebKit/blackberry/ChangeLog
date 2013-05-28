@@ -1,3 +1,11 @@
+2013-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix BlackBerry debug build after r150756.
+
+        * WebKitSupport/PagePopup.cpp:
+        (BlackBerry::WebKit::PagePopup::writeDocument): Fix typo in
+        assert.
+
 2013-05-27  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
         [BlackBerry] Clear supression flag when caret changes aren't propogated through
