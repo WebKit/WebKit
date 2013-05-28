@@ -4195,10 +4195,14 @@ void WebPage::reportUsedFeatures()
 
 unsigned WebPage::extendIncrementalRenderingSuppression()
 {
-    unsigned token = m_maximumRenderingSuppressionToken++;
+    unsigned token = m_maximumRenderingSuppressionToken + 1;
+    while (!HashSet<unsigned>::isValidValue(token) || m_activeRenderingSuppressionTokens.contains(token))
+        token++;
 
     m_activeRenderingSuppressionTokens.add(token);
     m_page->mainFrame()->view()->setVisualUpdatesAllowedByClient(false);
+
+    m_maximumRenderingSuppressionToken = token;
 
     return token;
 }

@@ -1,3 +1,17 @@
+2013-05-28  Tim Horton  <timothy_horton@apple.com>
+
+        Rendering suppression extension tokens shouldn't be 0, should handle overflow
+        https://bugs.webkit.org/show_bug.cgi?id=116886
+        <rdar://problem/14004474>
+
+        Reviewed by Darin Adler.
+
+        Don't use invalid HashSet values as tokens, and ensure that
+        we're not already using a token before returning it.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::extendIncrementalRenderingSuppression):
+
 2013-05-28  Lauro Neto <lauro.neto@openbossa.org>
 
         [GTK] Connection issues in repeated WebProcess crash/reloads.
