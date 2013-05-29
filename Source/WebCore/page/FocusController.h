@@ -88,9 +88,9 @@ private:
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
 
-    Node* findFocusableNodeAcrossFocusScope(FocusDirection, FocusNavigationScope startScope, Node* start, KeyboardEvent*);
-    Node* findFocusableNodeRecursively(FocusDirection, FocusNavigationScope, Node* start, KeyboardEvent*);
-    Node* findFocusableNodeDecendingDownIntoFrameDocument(FocusDirection, Node*, KeyboardEvent*);
+    Element* findFocusableElementAcrossFocusScope(FocusDirection, FocusNavigationScope startScope, Node* start, KeyboardEvent*);
+    Element* findFocusableElementRecursively(FocusDirection, FocusNavigationScope, Node* start, KeyboardEvent*);
+    Element* findFocusableElementDescendingDownIntoFrameDocument(FocusDirection, Element*, KeyboardEvent*);
 
     // Searches through the given tree scope, starting from start node, for the next/previous selectable element that comes after/before start node.
     // The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes
@@ -101,10 +101,10 @@ private:
     // @return The focus node that comes after/before start node.
     //
     // See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-    inline Node* findFocusableNode(FocusDirection, FocusNavigationScope, Node* start, KeyboardEvent*);
+    Element* findFocusableElement(FocusDirection, FocusNavigationScope, Node* start, KeyboardEvent*);
 
-    Node* nextFocusableNode(FocusNavigationScope, Node* start, KeyboardEvent*);
-    Node* previousFocusableNode(FocusNavigationScope, Node* start, KeyboardEvent*);
+    Element* nextFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
+    Element* previousFocusableElement(FocusNavigationScope, Node* start, KeyboardEvent*);
 
     Element* findElementWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent*, FocusDirection);
 

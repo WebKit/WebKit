@@ -1,3 +1,29 @@
+2013-05-28  Andreas Kling  <akling@apple.com>
+
+        FocusController should operate on Elements internally.
+        <http://webkit.org/b/116781>
+
+        Reviewed by Antti Koivisto.
+
+        Switch from Node* to Element* as much as possible inside FocusController.
+        Mostly mechanical, gets rid of some unnecessary isElementNode() checks and casts.
+
+        * page/FocusController.h:
+        * page/FocusController.cpp:
+        (WebCore::dispatchEventsOnWindowAndFocusedElement):
+        (WebCore::isNonFocusableShadowHost):
+        (WebCore::adjustedTabIndex):
+        (WebCore::shouldVisit):
+        (WebCore::FocusController::setFocused):
+        (WebCore::FocusController::findFocusableElementDescendingDownIntoFrameDocument):
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        (WebCore::FocusController::findFocusableElementAcrossFocusScope):
+        (WebCore::FocusController::findFocusableElementRecursively):
+        (WebCore::FocusController::findFocusableElement):
+        (WebCore::FocusController::nextFocusableElement):
+        (WebCore::FocusController::previousFocusableElement):
+        (WebCore::FocusController::setActive):
+
 2013-05-29  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Mouse over an element does not trigger :hover state for parent when the element is flowed in a region
