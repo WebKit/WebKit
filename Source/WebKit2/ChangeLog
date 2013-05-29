@@ -1,3 +1,28 @@
+2013-05-29  Tim Horton  <timothy_horton@apple.com>
+
+        WKViews using shouldClipToVisibleRect=YES should respect prepareContentInRect: if called
+        https://bugs.webkit.org/show_bug.cgi?id=116989
+        <rdar://problem/14007440>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView prepareContentInRect:]):
+        If prepareContentInRect: is called, save the rect and set a flag so we know we should use it.
+
+        (-[WKView _updateViewExposedRect]):
+        Give the WebPage (and later the DrawingArea) the union of the rect handed to prepareContentInRect:
+        and the WKView's visibleRect, if we're in that mode, so that applications that do their own scrolling
+        can cause tiles to be created in currently offscreen views (for overdraw).
+
+        (-[WKView setFrameSize:]):
+        (-[WKView _updateWindowAndViewFrames]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        (-[WKView enableFrameSizeUpdates]):
+        (-[WKView setShouldClipToVisibleRect:]):
+        (-[WKView forceAsyncDrawingAreaSizeUpdate:]):
+        Use [_updateViewExposedRect].
+
 2013-05-28  Oliver Hunt  <oliver@apple.com>
 
         Add more accurate activity state tracking
