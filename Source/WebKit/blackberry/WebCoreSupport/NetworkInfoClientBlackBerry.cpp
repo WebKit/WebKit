@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,12 +27,19 @@
 
 namespace WebCore {
 
-static const double  networkSpeedNone = 0; // 0 Mb/s
-static const double  networkSpeedEthernet = 20; // 20 Mb/s
-static const double  networkSpeedWifi = 20; // 20 Mb/s
-static const double  networkSpeed2G = 60 / 1024; // 60 kb/s
-static const double  networkSpeed3G = 7; // 7 Mb/s
-static const double  networkSpeed4G = 50; // 50 Mb/s
+static const double  networkSpeedNone = 0;
+static const double  networkSpeedEthernet = 20.0;
+static const double  networkSpeedWifi = 20.0;
+static const double  networkSpeedGPRS = 7.2 / 1024.0;
+static const double  networkSpeedEDGE = 30.0 / 1024.0;
+static const double  networkSpeedUMTS = 48.0 / 1024.0;
+static const double  networkSpeedHSPA = 1.7;
+static const double  networkSpeedHSPAP = 5.25;
+static const double  networkSpeedCDMA = 18.0 / 1024.0;
+static const double  networkSpeedEVDO = 307.0 / 1024.0;
+static const double  networkSpeedEVDOA = 397.0 / 1024.0;
+static const double  networkSpeedEHRPD = 21.625;
+static const double  networkSpeedLTE = 21.625;
 static const double  networkSpeedDefault = INFINITY; // w3c draft states it should be infinity
 
 NetworkInfoClientBlackBerry::NetworkInfoClientBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPagePrivate)
@@ -69,13 +76,26 @@ double NetworkInfoClientBlackBerry::bandwidth() const
         return networkSpeedWifi;
     case BlackBerry::Platform::NetworkTypeCellular:
         switch (BlackBerry::Platform::NetworkInfo::instance()->getCurrentCellularType()) {
+        case BlackBerry::Platform::CellularTypeGPRS:
+            return networkSpeedGPRS;
         case BlackBerry::Platform::CellularTypeEDGE:
-            return networkSpeed2G;
-        case BlackBerry::Platform::CellularTypeEVDO:
+            return networkSpeedEDGE;
         case BlackBerry::Platform::CellularTypeUMTS:
-            return networkSpeed3G;
+            return networkSpeedUMTS;
+        case BlackBerry::Platform::CellularTypeHSPA:
+            return networkSpeedHSPA;
+        case BlackBerry::Platform::CellularTypeHSPAP:
+            return networkSpeedHSPAP;
+        case BlackBerry::Platform::CellularTypeCDMA:
+            return networkSpeedCDMA;
+        case BlackBerry::Platform::CellularTypeEVDO:
+            return networkSpeedEVDO;
+        case BlackBerry::Platform::CellularTypeEVDOA:
+            return networkSpeedEVDOA;
+        case BlackBerry::Platform::CellularTypeEHRPD:
+            return networkSpeedEHRPD;
         case BlackBerry::Platform::CellularTypeLTE:
-            return networkSpeed4G;
+            return networkSpeedLTE;
         case BlackBerry::Platform::CellularTypeUnknown:
             return networkSpeedDefault;
         }

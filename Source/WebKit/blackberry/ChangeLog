@@ -1,3 +1,18 @@
+2013-05-29  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Add more cellular technologies into the NetworkInfo enum
+        https://bugs.webkit.org/show_bug.cgi?id=116982
+
+        PR 340189
+        Reviewed by Rob Buis.
+
+        Provide more specific bandwidth speeds on different network
+        services our devices provide.
+
+        * WebCoreSupport/NetworkInfoClientBlackBerry.cpp:
+        (WebCore):
+        (WebCore::NetworkInfoClientBlackBerry::bandwidth):
+
 2013-05-29  Yong Li  <yoli@rim.com>
 
         [BlackBerry] about:memory should use malloc_stats instead of mallinfo
