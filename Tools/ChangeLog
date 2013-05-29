@@ -1,3 +1,15 @@
+2013-05-29  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        Cleanup AudioSourceNode.idl from WebKit build.
+        https://bugs.webkit.org/show_bug.cgi?id=116905.
+
+        Reviewed by Darin Adler.
+
+        AudioSourceNode.idl is not part of WebAudio Specifications anymore.
+        AudioNode is inherited directly in all the audio source nodes.
+
+        * Scripts/webkitperl/filter-build-webkit_unittest/shouldIgnoreLine_unittests.pl:
+
 2013-05-29  Andrew Lo  <anlo@rim.com>
 
         Add Andrew Lo to contributors.json

@@ -25,6 +25,6 @@
 [
     Conditional=WEB_AUDIO&MEDIA_STREAM,
     JSGenerateToJSObject
-] interface MediaStreamAudioSourceNode : AudioSourceNode {
+] interface MediaStreamAudioSourceNode : AudioNode {
     readonly attribute MediaStream mediaStream;
 };

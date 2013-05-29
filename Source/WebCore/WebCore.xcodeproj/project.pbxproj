@@ -5775,7 +5775,6 @@
 		FD31601D12B0267600C1A359 /* AudioParam.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FD312B0267500C1A359 /* AudioParam.h */; };
 		FD31601F12B0267600C1A359 /* AudioProcessingEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FD512B0267600C1A359 /* AudioProcessingEvent.cpp */; };
 		FD31602012B0267600C1A359 /* AudioProcessingEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FD612B0267600C1A359 /* AudioProcessingEvent.h */; };
-		FD31602212B0267600C1A359 /* AudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FD812B0267600C1A359 /* AudioSourceNode.h */; };
 		FD31602412B0267600C1A359 /* BiquadDSPKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FDA12B0267600C1A359 /* BiquadDSPKernel.cpp */; };
 		FD31602512B0267600C1A359 /* BiquadDSPKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FDB12B0267600C1A359 /* BiquadDSPKernel.h */; };
 		FD31602612B0267600C1A359 /* BiquadProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FDC12B0267600C1A359 /* BiquadProcessor.cpp */; };
@@ -5918,8 +5917,6 @@
 		FDA15EB412B03EE1003A583A /* JSAudioParam.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9812B03EE1003A583A /* JSAudioParam.h */; };
 		FDA15EB512B03EE1003A583A /* JSAudioProcessingEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9912B03EE1003A583A /* JSAudioProcessingEvent.cpp */; };
 		FDA15EB612B03EE1003A583A /* JSAudioProcessingEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9A12B03EE1003A583A /* JSAudioProcessingEvent.h */; };
-		FDA15EB712B03EE1003A583A /* JSAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9B12B03EE1003A583A /* JSAudioSourceNode.cpp */; };
-		FDA15EB812B03EE1003A583A /* JSAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */; };
 		FDA15EBD12B03F0B003A583A /* JSConvolverNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EBB12B03F0B003A583A /* JSConvolverNode.cpp */; };
 		FDA15EBE12B03F0B003A583A /* JSConvolverNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */; };
 		FDA15EC912B03F50003A583A /* JSAnalyserNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EC712B03F50003A583A /* JSAnalyserNode.cpp */; };
@@ -12629,8 +12626,6 @@
 		FD315FD512B0267600C1A359 /* AudioProcessingEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioProcessingEvent.cpp; sourceTree = "<group>"; };
 		FD315FD612B0267600C1A359 /* AudioProcessingEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioProcessingEvent.h; sourceTree = "<group>"; };
 		FD315FD712B0267600C1A359 /* AudioProcessingEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioProcessingEvent.idl; sourceTree = "<group>"; };
-		FD315FD812B0267600C1A359 /* AudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSourceNode.h; sourceTree = "<group>"; };
-		FD315FD912B0267600C1A359 /* AudioSourceNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioSourceNode.idl; sourceTree = "<group>"; };
 		FD315FDA12B0267600C1A359 /* BiquadDSPKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadDSPKernel.cpp; sourceTree = "<group>"; };
 		FD315FDB12B0267600C1A359 /* BiquadDSPKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadDSPKernel.h; sourceTree = "<group>"; };
 		FD315FDC12B0267600C1A359 /* BiquadProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadProcessor.cpp; sourceTree = "<group>"; };
@@ -12784,8 +12779,6 @@
 		FDA15E9812B03EE1003A583A /* JSAudioParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioParam.h; sourceTree = "<group>"; };
 		FDA15E9912B03EE1003A583A /* JSAudioProcessingEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioProcessingEvent.cpp; sourceTree = "<group>"; };
 		FDA15E9A12B03EE1003A583A /* JSAudioProcessingEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioProcessingEvent.h; sourceTree = "<group>"; };
-		FDA15E9B12B03EE1003A583A /* JSAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioSourceNode.cpp; sourceTree = "<group>"; };
-		FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioSourceNode.h; sourceTree = "<group>"; };
 		FDA15EBB12B03F0B003A583A /* JSConvolverNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConvolverNode.cpp; sourceTree = "<group>"; };
 		FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSConvolverNode.h; sourceTree = "<group>"; };
 		FDA15EC712B03F50003A583A /* JSAnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnalyserNode.cpp; sourceTree = "<group>"; };
@@ -20598,8 +20591,6 @@
 				FD315FD712B0267600C1A359 /* AudioProcessingEvent.idl */,
 				FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */,
 				FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */,
-				FD315FD812B0267600C1A359 /* AudioSourceNode.h */,
-				FD315FD912B0267600C1A359 /* AudioSourceNode.idl */,
 				FDB052DD1561A42C00B500D6 /* AudioSummingJunction.cpp */,
 				FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */,
 				FD315FDA12B0267600C1A359 /* BiquadDSPKernel.cpp */,
@@ -20794,8 +20785,6 @@
 				FDA15E9812B03EE1003A583A /* JSAudioParam.h */,
 				FDA15E9912B03EE1003A583A /* JSAudioProcessingEvent.cpp */,
 				FDA15E9A12B03EE1003A583A /* JSAudioProcessingEvent.h */,
-				FDA15E9B12B03EE1003A583A /* JSAudioSourceNode.cpp */,
-				FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */,
 				FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */,
 				FDF09DC71399B62200688E5B /* JSBiquadFilterNode.h */,
 				FDA15E8512B03EE1003A583A /* JSChannelMergerNode.cpp */,
@@ -20954,7 +20943,6 @@
 				FD31608812B026F700C1A359 /* AudioResamplerKernel.h in Headers */,
 				FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */,
 				CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */,
-				FD31602212B0267600C1A359 /* AudioSourceNode.h in Headers */,
 				FD31608912B026F700C1A359 /* AudioSourceProvider.h in Headers */,
 				FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */,
 				FDB052E01561A42C00B500D6 /* AudioSummingJunction.h in Headers */,
@@ -22182,7 +22170,6 @@
 				FDA15EB012B03EE1003A583A /* JSAudioNode.h in Headers */,
 				FDA15EB412B03EE1003A583A /* JSAudioParam.h in Headers */,
 				FDA15EB612B03EE1003A583A /* JSAudioProcessingEvent.h in Headers */,
-				FDA15EB812B03EE1003A583A /* JSAudioSourceNode.h in Headers */,
 				BC124F000C26447A009E2349 /* JSBarProp.h in Headers */,
 				BC946348107A936600857193 /* JSBeforeLoadEvent.h in Headers */,
 				FDF09DC91399B62200688E5B /* JSBiquadFilterNode.h in Headers */,
@@ -25315,7 +25302,6 @@
 				FDA15EAF12B03EE1003A583A /* JSAudioNode.cpp in Sources */,
 				FDA15EB312B03EE1003A583A /* JSAudioParam.cpp in Sources */,
 				FDA15EB512B03EE1003A583A /* JSAudioProcessingEvent.cpp in Sources */,
-				FDA15EB712B03EE1003A583A /* JSAudioSourceNode.cpp in Sources */,
 				BC124EFF0C26447A009E2349 /* JSBarProp.cpp in Sources */,
 				BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */,
 				FDF09DC81399B62200688E5B /* JSBiquadFilterNode.cpp in Sources */,

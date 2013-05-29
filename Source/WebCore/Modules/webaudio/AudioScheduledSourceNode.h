@@ -29,13 +29,13 @@
 #ifndef AudioScheduledSourceNode_h
 #define AudioScheduledSourceNode_h
 
-#include "AudioSourceNode.h"
+#include "AudioNode.h"
 
 namespace WebCore {
 
 class AudioBus;
 
-class AudioScheduledSourceNode : public AudioSourceNode {
+class AudioScheduledSourceNode : public AudioNode {
 public:
     // These are the possible states an AudioScheduledSourceNode can be in:
     //

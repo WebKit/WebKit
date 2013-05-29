@@ -1,3 +1,42 @@
+2013-05-29  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        Cleanup AudioSourceNode.idl from WebKit build.
+        https://bugs.webkit.org/show_bug.cgi?id=116905.
+
+        Reviewed by Darin Adler.
+
+        AudioSourceNode.idl is not part of WebAudio Specifications anymore.
+        AudioNode is inherited directly in all the audio source nodes.
+
+        No new tests. Current test cases will cover all the scenarios.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/AudioSourceNode.h: Removed.
+        * Modules/webaudio/AudioSourceNode.idl: Removed.
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        (MediaElementAudioSourceNode):
+        * Modules/webaudio/MediaElementAudioSourceNode.idl:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.idl:
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::MediaStreamAudioSourceNode):
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        (MediaStreamAudioSourceNode):
+        * Modules/webaudio/MediaStreamAudioSourceNode.idl:
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Target.pri:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-05-29  Adam Barth  <abarth@webkit.org>
 
         Optimize RenderText::offsetNext for 8 bit strings

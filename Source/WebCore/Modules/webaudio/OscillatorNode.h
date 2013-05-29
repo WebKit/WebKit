@@ -73,6 +73,9 @@ public:
 private:
     OscillatorNode(AudioContext*, float sampleRate);
 
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
+
     // Returns true if there are sample-accurate timeline parameter changes.
     bool calculateSampleAccuratePhaseIncrements(size_t framesToProcess);
 

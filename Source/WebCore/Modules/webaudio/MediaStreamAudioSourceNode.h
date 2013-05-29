@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)
 
-#include "AudioSourceNode.h"
+#include "AudioNode.h"
 #include "AudioSourceProvider.h"
 #include "AudioSourceProviderClient.h"
 #include "MediaStream.h"
@@ -39,7 +39,7 @@ namespace WebCore {
 
 class AudioContext;
 
-class MediaStreamAudioSourceNode : public AudioSourceNode, public AudioSourceProviderClient {
+class MediaStreamAudioSourceNode : public AudioNode, public AudioSourceProviderClient {
 public:
     static PassRefPtr<MediaStreamAudioSourceNode> create(AudioContext*, MediaStream*, AudioSourceProvider*);
 
@@ -58,6 +58,9 @@ public:
 
 private:
     MediaStreamAudioSourceNode(AudioContext*, MediaStream*, AudioSourceProvider*);
+
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
 
     // As an audio source, we will never propagate silence.
     virtual bool propagatesSilence() const OVERRIDE { return false; }

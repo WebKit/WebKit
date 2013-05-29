@@ -26,7 +26,7 @@
 [
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject
-] interface AudioBufferSourceNode : AudioSourceNode {
+] interface AudioBufferSourceNode : AudioNode {
     [CustomSetter] attribute AudioBuffer buffer
         setter raises (DOMException);
 

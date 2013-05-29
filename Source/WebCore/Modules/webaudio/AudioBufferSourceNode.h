@@ -101,6 +101,9 @@ public:
 private:
     AudioBufferSourceNode(AudioContext*, float sampleRate);
 
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
+
     // Returns true on success.
     bool renderFromBuffer(AudioBus*, unsigned destinationFrameOffset, size_t numberOfFrames);
 

@@ -144,7 +144,6 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/PannerNode.idl \
     $(WebCore)/Modules/webaudio/AudioParam.idl \
     $(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
-    $(WebCore)/Modules/webaudio/AudioSourceNode.idl \
     $(WebCore)/Modules/webaudio/BiquadFilterNode.idl \
     $(WebCore)/Modules/webaudio/ConvolverNode.idl \
     $(WebCore)/Modules/webaudio/DelayNode.idl \

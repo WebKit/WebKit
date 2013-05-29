@@ -41,7 +41,7 @@ PassRefPtr<MediaStreamAudioSourceNode> MediaStreamAudioSourceNode::create(AudioC
 }
 
 MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(AudioContext* context, MediaStream* mediaStream, AudioSourceProvider* audioSourceProvider)
-    : AudioSourceNode(context, context->sampleRate())
+    : AudioNode(context, context->sampleRate())
     , m_mediaStream(mediaStream)
     , m_audioSourceProvider(audioSourceProvider)
     , m_sourceNumberOfChannels(0)

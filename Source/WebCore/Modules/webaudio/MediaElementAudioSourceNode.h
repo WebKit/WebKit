@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_AUDIO) && ENABLE(VIDEO)
 
-#include "AudioSourceNode.h"
+#include "AudioNode.h"
 #include "AudioSourceProviderClient.h"
 #include "HTMLMediaElement.h"
 #include "MultiChannelResampler.h"
@@ -39,7 +39,7 @@ namespace WebCore {
 
 class AudioContext;
     
-class MediaElementAudioSourceNode : public AudioSourceNode, public AudioSourceProviderClient {
+class MediaElementAudioSourceNode : public AudioNode, public AudioSourceProviderClient {
 public:
     static PassRefPtr<MediaElementAudioSourceNode> create(AudioContext*, HTMLMediaElement*);
 
@@ -59,6 +59,9 @@ public:
 
 private:
     MediaElementAudioSourceNode(AudioContext*, HTMLMediaElement*);
+
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
 
     // As an audio source, we will never propagate silence.
     virtual bool propagatesSilence() const OVERRIDE { return false; }

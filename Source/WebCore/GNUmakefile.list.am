@@ -62,8 +62,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSAudioParam.h \
 	DerivedSources/WebCore/JSAudioProcessingEvent.cpp \
 	DerivedSources/WebCore/JSAudioProcessingEvent.h \
-	DerivedSources/WebCore/JSAudioSourceNode.cpp \
-	DerivedSources/WebCore/JSAudioSourceNode.h \
 	DerivedSources/WebCore/JSAudioTrack.cpp \
 	DerivedSources/WebCore/JSAudioTrack.h \
 	DerivedSources/WebCore/JSAudioTrackList.cpp \
@@ -1321,7 +1319,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webaudio/PannerNode.idl \
 	$(WebCore)/Modules/webaudio/AudioParam.idl \
 	$(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
-	$(WebCore)/Modules/webaudio/AudioSourceNode.idl \
 	$(WebCore)/Modules/webaudio/BiquadFilterNode.idl \
 	$(WebCore)/Modules/webaudio/ConvolverNode.idl \
 	$(WebCore)/Modules/webaudio/DelayNode.idl \
@@ -2110,7 +2107,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/AudioScheduledSourceNode.h \
 	Source/WebCore/Modules/webaudio/AudioSummingJunction.cpp \
 	Source/WebCore/Modules/webaudio/AudioSummingJunction.h \
-	Source/WebCore/Modules/webaudio/AudioSourceNode.h \
 	Source/WebCore/Modules/webaudio/BiquadDSPKernel.cpp \
 	Source/WebCore/Modules/webaudio/BiquadDSPKernel.h \
 	Source/WebCore/Modules/webaudio/BiquadFilterNode.cpp \

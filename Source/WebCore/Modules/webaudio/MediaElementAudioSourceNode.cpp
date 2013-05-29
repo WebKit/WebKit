@@ -46,7 +46,7 @@ PassRefPtr<MediaElementAudioSourceNode> MediaElementAudioSourceNode::create(Audi
 }
 
 MediaElementAudioSourceNode::MediaElementAudioSourceNode(AudioContext* context, HTMLMediaElement* mediaElement)
-    : AudioSourceNode(context, context->sampleRate())
+    : AudioNode(context, context->sampleRate())
     , m_mediaElement(mediaElement)
     , m_sourceNumberOfChannels(0)
     , m_sourceSampleRate(0)

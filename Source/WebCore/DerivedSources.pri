@@ -157,7 +157,6 @@ IDL_BINDINGS += \
     $$PWD/Modules/webaudio/PannerNode.idl \
     $$PWD/Modules/webaudio/AudioParam.idl \
     $$PWD/Modules/webaudio/AudioProcessingEvent.idl \
-    $$PWD/Modules/webaudio/AudioSourceNode.idl \
     $$PWD/Modules/webaudio/BiquadFilterNode.idl \
     $$PWD/Modules/webaudio/ConvolverNode.idl \
     $$PWD/Modules/webaudio/DelayNode.idl \

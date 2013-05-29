@@ -258,7 +258,6 @@ set(WebCore_IDL_FILES
     Modules/webaudio/PannerNode.idl
     Modules/webaudio/AudioParam.idl
     Modules/webaudio/AudioProcessingEvent.idl
-    Modules/webaudio/AudioSourceNode.idl
     Modules/webaudio/BiquadFilterNode.idl
     Modules/webaudio/ConvolverNode.idl
     Modules/webaudio/DelayNode.idl

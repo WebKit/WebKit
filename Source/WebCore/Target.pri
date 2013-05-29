@@ -3403,7 +3403,6 @@ enable?(WEB_AUDIO) {
         Modules/webaudio/AudioParamTimeline.h \
         Modules/webaudio/AudioProcessingEvent.h \
         Modules/webaudio/AudioScheduledSourceNode.h \
-        Modules/webaudio/AudioSourceNode.h \
         Modules/webaudio/AudioSummingJunction.h \
         Modules/webaudio/BiquadDSPKernel.h \
         Modules/webaudio/BiquadFilterNode.h \
