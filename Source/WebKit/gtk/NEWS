@@ -1,4 +1,28 @@
 =================
+WebKitGTK+  2.1.1
+=================
+
+What's new in WebKitGTK+ 2.1.1?
+
+  - Add webkit_uri_scheme_request_finish_error to WebKit2 GTK+ API.
+  - Add a setting to control whether or not accelerated 2D canvas is
+    enabled in WebKit2.
+  - Add a setting to WebKit2 to allow sending console log messages to
+    stdout.
+  - Always use EGL to create the GL context when running on Wayland.
+  - Fix rendering of WebKitWebView child widgets with recent GTK+.
+  - Notify the web process in WebKitURISchemeRequest when we fail to read
+    from the user InputStream.
+  - Fixed race conditions closing the socket descriptor when the web
+    process crashes.
+  - Add video accelerated compositing support to the GStreamer backend.
+  - Add support for audio/speex MIME type to the GStreamer backend.
+  - Fix seek after video finished in GStreamer backend.
+  - Initialize WebKitWebPlugin path to prevent double-free in WebKit1.
+  - Fix several GObject instrospection warnings.
+  - Fixed several memory leaks.
+
+=================
 WebKitGTK+ 1.11.5
 =================
 

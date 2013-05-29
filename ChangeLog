@@ -1,5 +1,11 @@
 2013-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update NEWS and Versions.m4 for 2.1.1 release.
+
+        * Source/autotools/Versions.m4: Bump version numbers.
+
+2013-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix make distcheck.
 
         * GNUmakefile.am: Add WebKitFeatures.h and WebKitFeatures.txt to
