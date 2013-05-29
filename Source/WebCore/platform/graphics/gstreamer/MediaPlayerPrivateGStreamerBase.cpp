@@ -111,6 +111,9 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_repaintHandler(0)
     , m_volumeSignalHandler(0)
     , m_muteSignalHandler(0)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+    , m_texture(0)
+#endif
 {
 }
 
@@ -297,11 +300,54 @@ void MediaPlayerPrivateGStreamerBase::muteChanged()
     m_muteTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateMuteChangeTimeoutCallback), this);
 }
 
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+void MediaPlayerPrivateGStreamerBase::updateTexture(GstBuffer* buffer)
+{
+    if (!m_texture)
+        return;
+
+    if (!client())
+        return;
+
+    const void* srcData = 0;
+    IntSize size = naturalSize();
+
+    if (m_texture->size() != size)
+        m_texture->reset(size);
+
+#ifdef GST_API_VERSION_1
+    GstMapInfo srcInfo;
+    gst_buffer_map(buffer, &srcInfo, GST_MAP_READ);
+    srcData = srcInfo.data;
+#else
+    srcData = GST_BUFFER_DATA(buffer);
+#endif
+
+    // @TODO: support cropping
+    m_texture->updateContents(srcData, WebCore::IntRect(WebCore::IntPoint(0, 0), size), WebCore::IntPoint(0, 0), size.width() * 4, BitmapTexture::UpdateCannotModifyOriginalImageData);
+
+#ifdef GST_API_VERSION_1
+    gst_buffer_unmap(buffer, &srcInfo);
+#endif
+
+    client()->setPlatformLayerNeedsDisplay();
+}
+#endif
+
 void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstBuffer* buffer)
 {
     g_return_if_fail(GST_IS_BUFFER(buffer));
-    gst_buffer_replace(&m_buffer, buffer);
-    m_player->repaint();
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+    if (supportsAcceleratedRendering() && m_player->mediaPlayerClient()->mediaPlayerRenderingCanBeAccelerated(m_player))
+        updateTexture(buffer);
+    else
+#endif
+    {
+        gst_buffer_replace(&m_buffer, buffer);
+        m_player->repaint();
+    }
 }
 
 void MediaPlayerPrivateGStreamerBase::setSize(const IntSize& size)
@@ -311,6 +357,11 @@ void MediaPlayerPrivateGStreamerBase::setSize(const IntSize& size)
 
 void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntRect& rect)
 {
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+    if (m_texture)
+        return;
+#endif
+
     if (context->paintingDisabled())
         return;
 
@@ -331,6 +382,21 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
     context->drawImage(reinterpret_cast<Image*>(gstImage->image().get()), ColorSpaceSRGB,
         rect, gstImage->rect(), CompositeCopy, DoNotRespectImageOrientation, false);
 }
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
+void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
+{
+    if (textureMapper->accelerationMode() != TextureMapper::OpenGLMode)
+        return;
+
+    if (!m_texture) {
+        m_texture = textureMapper->acquireTextureFromPool(naturalSize());
+        return;
+    }
+
+    textureMapper->drawTexture(*m_texture.get(), targetRect, matrix, opacity);
+}
+#endif
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
 void MediaPlayerPrivateGStreamerBase::enterFullscreen()

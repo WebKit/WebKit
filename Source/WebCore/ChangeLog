@@ -1,3 +1,38 @@
+2013-05-29  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [texmap][GStreamer][GTK] Composited Video support
+        https://bugs.webkit.org/show_bug.cgi?id=86410
+
+        Reviewed by Noam Rosenthal.
+
+        Enable the video accelerated compositing using the WebKit's
+        TextureMapper.
+
+        This patch does not use hardware accelerated video decoding. It
+        provides a generic path for system memory buffers.
+
+        This new functionality is only available when the coordinated graphics
+        system is not used.
+
+        No new tests, already covered by existing tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore):
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture): update the
+        texture content with the new received video buffer.
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint): choose to
+        use the accelerated compositing or the normal code path
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint): if accelerated
+        compositing is used this method is halted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::paintToTextureMapper): get
+        a texture from the pool and draws it if it is already available.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        (MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::platformLayer): returns itself
+        (WebCore::MediaPlayerPrivateGStreamerBase::supportsAcceleratedRendering):
+        returns true
+
 2013-05-29  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [Qt] Missing files from build after r150853
