@@ -1,3 +1,12 @@
+2013-05-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix more CMake GTK+ build issues after r150336
+
+        * CMakeLists.txt: We need to allow for setting the WebProcess output name, since
+        WebKitGTK+ expects it to be called WebKitWebProcess.
+        * PlatformGTK.cmake: No longer set WebProcess_EXECUTABLE_NAME as it's been replaced
+        by WebKit2_WebProcess_OUTPUT_NAME.
+
 2013-05-29  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         [WK2][CoordinatedGraphics][EFL] WKViewUserViewportToContents() function doesn't do what it says

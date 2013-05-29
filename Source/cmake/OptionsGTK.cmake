@@ -83,6 +83,7 @@ set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk)
 set(WebCore_OUTPUT_NAME WebCoreGTK)
 set(WebKit_OUTPUT_NAME webkitgtk-3.0)
 set(WebKit2_OUTPUT_NAME webkit2gtk-3.0)
+set(WebKit2_WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(VERSION_SCRIPT "-Wl,--version-script,${CMAKE_MODULE_PATH}/gtksymbols.filter")
 
 set(DATA_BUILD_DIR "${CMAKE_BINARY_DIR}/share/${WebKit_OUTPUT_NAME}")
@@ -125,6 +126,10 @@ find_package(GStreamer 1.0.3 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
 find_package(OpenGL)
 check_include_files("GL/glx.h" GLX_FOUND)
 find_package(EGL)
+
+if (EGL_FOUND)
+    set(WTF_USE_EGL 1)
+endif ()
 
 if (ENABLE_SPELLCHECK)
     find_package(Enchant REQUIRED)

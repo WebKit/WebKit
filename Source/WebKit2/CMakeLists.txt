@@ -643,6 +643,10 @@ add_executable(WebProcess ${WebProcess_SOURCES})
 target_link_libraries(WebProcess ${WebProcess_LIBRARIES})
 set_target_properties(WebProcess PROPERTIES FOLDER "WebKit")
 
+if (WebKit2_WebProcess_OUTPUT_NAME)
+    set_target_properties(WebProcess PROPERTIES OUTPUT_NAME ${WebKit2_WebProcess_OUTPUT_NAME})
+endif ()
+
 set_target_properties(WebKit2 PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
 
 install(TARGETS WebKit2 DESTINATION "${LIB_INSTALL_DIR}")

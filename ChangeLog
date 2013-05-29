@@ -1,3 +1,10 @@
+2013-05-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix more CMake GTK+ build issues after r150336
+
+        * Source/cmake/OptionsGTK.cmake: Actually set the new output name variable
+        and be sure to set WTF_USE_EGL when EGL is enabled.
+
 2013-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.1.1 release.
