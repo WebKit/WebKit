@@ -1,3 +1,26 @@
+2013-05-28  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r150169): Images from file: URLs display after a delay even though they were preloaded by JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=116906
+        <rdar://problem/13991927>
+
+        Reviewed by Andreas Kling.
+
+        Writing a test for this is blocked on https://webkit.org/b/116199.
+
+        Some WebKit clients use JavaScript to preload images from disk so that
+        subsequent loads will display immediately from the memory cache. By not
+        caching non-HTTP sub-resources in memory, we break this common pattern.
+        This change restricts r150169 to only apply to cached main resources.
+        Sub-resources will again be cached indefinitely as they were prior to
+        r150169.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::freshnessLifetime): If this is a non-HTTP
+        main resource from a scheme that should not be cached indefinitely,
+        return 0 for the freshness lifetime. For other non-HTTP cached
+        resources, return an indefinite freshness lifetime.
+
 2013-05-28  Dean Jackson  <dino@apple.com>
 
         Animations do not restart after exiting page cache
