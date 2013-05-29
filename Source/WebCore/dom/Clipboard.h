@@ -82,6 +82,13 @@ namespace WebCore {
     
         LEGACY_VIRTUAL void clearData(const String& type) LEGACY_PURE;
         LEGACY_VIRTUAL void clearData() LEGACY_PURE;
+
+        void setDragImage(Element*, int x, int y);
+#if USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+        virtual void setDragImage(CachedImage*, const IntPoint&) = 0;
+        virtual void setDragImageElement(Node*, const IntPoint&) = 0;
+#endif
+
         LEGACY_VIRTUAL String getData(const String& type) const LEGACY_PURE;
         LEGACY_VIRTUAL bool setData(const String& type, const String& data) LEGACY_PURE;
     
@@ -90,9 +97,7 @@ namespace WebCore {
 
         IntPoint dragLocation() const { return m_dragLoc; }
         CachedImage* dragImage() const { return m_dragImage.get(); }
-        LEGACY_VIRTUAL void setDragImage(CachedImage*, const IntPoint&) LEGACY_PURE;
         Node* dragImageElement() const { return m_dragImageElement.get(); }
-        LEGACY_VIRTUAL void setDragImageElement(Node*, const IntPoint&) LEGACY_PURE;
         
         LEGACY_VIRTUAL DragImageRef createDragImage(IntPoint& dragLocation) const LEGACY_PURE;
 #if ENABLE(DRAG_SUPPORT)

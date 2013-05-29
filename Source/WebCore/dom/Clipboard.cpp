@@ -33,6 +33,7 @@
 #include "FileList.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "HTMLImageElement.h"
 #include "Image.h"
 #include "Pasteboard.h"
 
@@ -104,7 +105,7 @@ bool Clipboard::canWriteData() const
 
 bool Clipboard::canSetDragImage() const
 {
-    return m_policy == ClipboardImageWritable || m_policy == ClipboardWritable;
+    return m_clipboardType == DragAndDrop && (m_policy == ClipboardImageWritable || m_policy == ClipboardWritable);
 }
 
 // These "conversion" methods are called by both WebCore and WebKit, and never make sense to JS, so we don't
@@ -277,7 +278,20 @@ bool Clipboard::hasDropZoneType(const String& keyword)
     return false;
 }
 
-#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+#if USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
+
+void Clipboard::setDragImage(Element* element, int x, int y)
+{
+    if (!canSetDragImage())
+        return;
+
+    if (element && element->hasTagName(HTMLNames::imgTag) && !element->inDocument())
+        setDragImage(static_cast<HTMLImageElement*>(element)->cachedImage(), IntPoint(x, y));
+    else
+        setDragImageElement(element, IntPoint(x, y));
+}
+
+#else // !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
 
 PassRefPtr<Clipboard> Clipboard::createForCopyAndPaste(ClipboardAccessPolicy policy)
 {
@@ -346,11 +360,7 @@ PassRefPtr<FileList> Clipboard::files() const
 
 #if !ENABLE(DRAG_SUPPORT)
 
-void Clipboard::setDragImage(CachedImage*, const IntPoint&)
-{
-}
-
-void Clipboard::setDragImageElement(Node*, const IntPoint&)
+void Clipboard::setDragImage(Element*, int, int)
 {
 }
 
@@ -369,12 +379,18 @@ PassRefPtr<Clipboard> Clipboard::createForDragAndDrop()
     return adoptRef(new Clipboard(ClipboardWritable, DragAndDrop, Pasteboard::createForDragAndDrop()));
 }
 
-void Clipboard::setDragImage(CachedImage* image, const IntPoint& location)
+void Clipboard::setDragImage(Element* element, int x, int y)
 {
     if (!canSetDragImage())
         return;
 
-    m_dragLoc = location;
+    CachedImage* image;
+    if (element && element->hasTagName(HTMLNames::imgTag) && !element->inDocument())
+        image = static_cast<HTMLImageElement*>(element)->cachedImage();
+    else
+        image = 0;
+
+    m_dragLoc = IntPoint(x, y);
 
     if (m_dragImageLoader && m_dragImage)
         m_dragImageLoader->stopLoading(m_dragImage);
@@ -385,24 +401,7 @@ void Clipboard::setDragImage(CachedImage* image, const IntPoint& location)
         m_dragImageLoader->startLoading(m_dragImage);
     }
 
-    m_dragImageElement = 0;
-
-    updateDragImage();
-}
-
-// FIXME: Should change Node to Element.
-void Clipboard::setDragImageElement(Node* element, const IntPoint& location)
-{
-    if (!canSetDragImage())
-        return;
-
-    m_dragLoc = location;
-
-    if (m_dragImageLoader && m_dragImage)
-        m_dragImageLoader->stopLoading(m_dragImage);
-    m_dragImage = 0;
-
-    m_dragImageElement = element;
+    m_dragImageElement = image ? 0 : element;
 
     updateDragImage();
 }

@@ -3556,7 +3556,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
                 // FIXME: This doesn't work correctly with transforms.
                 FloatPoint absPos = renderer->localToAbsolute();
                 IntSize delta = m_mouseDownPos - roundedIntPoint(absPos);
-                dragState().clipboard->setDragImageElement(dragState().source.get(), IntPoint(delta));
+                dragState().clipboard->setDragImage(dragState().source.get(), delta.width(), delta.height());
             } else {
                 // The renderer has disappeared, this can happen if the onStartDrag handler has hidden
                 // the element in some way.  In this case we just kill the drag.

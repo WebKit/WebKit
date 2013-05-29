@@ -62,35 +62,4 @@ JSValue JSClipboard::types(ExecState* exec) const
     return constructArray(exec, 0, globalObject(), list);
 }
 
-JSValue JSClipboard::setDragImage(ExecState* exec)
-{
-    Clipboard* clipboard = impl();
-
-    if (!clipboard->isForDragAndDrop())
-        return jsUndefined();
-
-    // FIXME: It does not match the rest of the JS bindings to throw on invalid number of arguments. 
-    if (exec->argumentCount() != 3)
-        return throwError(exec, createSyntaxError(exec, "setDragImage: Invalid number of arguments"));
-
-    int x = exec->argument(1).toInt32(exec);
-    int y = exec->argument(2).toInt32(exec);
-
-    // See if they passed us a node
-    Node* node = toNode(exec->argument(0));
-    if (!node)
-        return throwTypeError(exec);
-
-    // FIXME: This should probably be a TypeError. 
-    if (!node->isElementNode())
-        return throwError(exec, createSyntaxError(exec, "setDragImageFromElement: Invalid first argument"));
-
-    if (toElement(node)->hasLocalName(imgTag) && !node->inDocument())
-        clipboard->setDragImage(static_cast<HTMLImageElement*>(node)->cachedImage(), IntPoint(x, y));
-    else
-        clipboard->setDragImageElement(node, IntPoint(x, y));
-
-    return jsUndefined();
-}
-
 } // namespace WebCore

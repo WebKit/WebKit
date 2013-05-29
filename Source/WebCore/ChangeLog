@@ -1,3 +1,27 @@
+2013-05-29  Darin Adler  <darin@apple.com>
+
+        Remove custom binding for Clipboard setDragImage function
+        https://bugs.webkit.org/show_bug.cgi?id=116422
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/JSClipboardCustom.cpp: Removed setDragImage binding.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::canSetDragImage): Added a condition that this is a drag
+        and drop clipboard. That used to be checked in the setDragImage binding.
+        (WebCore::Clipboard::setDragImage): Added a version that takes an Element
+        and calls through to the existing functions (in the legacy code path), or handles
+        both the Element and HTMLImageElement not-in-document cases (in the new code path).
+
+        * dom/Clipboard.h: Updated for changes above.
+
+        * dom/Clipboard.idl: Removed [Custom] from setDragImage.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag): Call the new setDragImage instead of the
+        old setDragImageElement.
+
 2013-05-29  Praveen R Jadhav  <praveen.j@samsung.com>
 
         Cleanup AudioSourceNode.idl from WebKit build.
