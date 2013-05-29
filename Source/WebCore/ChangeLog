@@ -1,5 +1,19 @@
 2013-05-29  Tiancheng Jiang  <tijiang@rim.com>
 
+        [BlackBerry] Radio Button UX updates.
+        https://bugs.webkit.org/show_bug.cgi?id=116881
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PR 342322.
+        Internally Reviewed by Jeff Rogers.
+        Change images.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::paintRadio):
+
+2013-05-29  Tiancheng Jiang  <tijiang@rim.com>
+
         [BlackBerry] Datetime string is not centred in form controls.
         https://bugs.webkit.org/show_bug.cgi?id=100760
 

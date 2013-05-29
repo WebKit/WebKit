@@ -496,45 +496,42 @@ bool RenderThemeBlackBerry::paintRadio(RenderObject* object, const PaintInfo& in
     ASSERT(info.context);
     GraphicsContext* context = info.context;
 
-    static RefPtr<Image> disabled, disabledActive, inactive, pressed, active, activeMark;
+    static RefPtr<Image> disabled, disabledDot, inactive, pressed, active, activeDot, pressedDot;
     if (!disabled) {
         disabled = loadImage("core_radiobutton_disabled");
-        disabledActive = loadImage("core_radiobutton_disabled_active");
+        disabledDot = loadImage("core_radiobutton_dot_disabled");
         inactive = loadImage("core_radiobutton_inactive");
         pressed = loadImage("core_radiobutton_pressed");
         active = loadImage("core_radiobutton_active");
-        activeMark = loadImage("core_radiobutton_active_mark");
+        activeDot = loadImage("core_radiobutton_dot_selected");
+        pressedDot = loadImage("core_radiobutton_dot_pressed");
     }
 
     // Caculate where to put center circle.
     FloatRect tmpRect(rect);
 
-    float centerX = ((float(inactive->width()) - float(activeMark->width())) / float(inactive->width()) * tmpRect.width() / 2)+ tmpRect.x();
-    float centerY = ((float(inactive->height()) - float(activeMark->height())) / float(inactive->height()) * tmpRect.height() / 2) + tmpRect.y();
-    float width = float(activeMark->width()) / float(inactive->width()) * tmpRect.width();
-    float height = float(activeMark->height()) / float(inactive->height()) * tmpRect.height();
+    float centerX = ((float(inactive->width()) - float(activeDot->width())) / float(inactive->width()) * tmpRect.width() / 2)+ tmpRect.x();
+    float centerY = ((float(inactive->height()) - float(activeDot->height())) / float(inactive->height()) * tmpRect.height() / 2) + tmpRect.y();
+    float width = float(activeDot->width()) / float(inactive->width()) * tmpRect.width();
+    float height = float(activeDot->height()) / float(inactive->height()) * tmpRect.height();
     FloatRect centerRect(centerX, centerY, width, height);
 
     if (isEnabled(object)) {
         if (isPressed(object)) {
             drawControl(context, rect, pressed.get());
-            if (isChecked(object)) {
-                // FIXME: need opacity 30% on activeMark
-                drawControl(context, centerRect, activeMark.get());
-            }
+            if (isChecked(object))
+                drawControl(context, centerRect, pressedDot.get());
         } else {
             drawControl(context, rect, inactive.get());
             if (isChecked(object)) {
                 drawControl(context, rect, active.get());
-                drawControl(context, centerRect, activeMark.get());
+                drawControl(context, centerRect, activeDot.get());
             }
         }
     } else {
-        drawControl(context, rect, inactive.get());
+        drawControl(context, rect, disabled.get());
         if (isChecked(object))
-            drawControl(context, rect, disabledActive.get());
-        else
-            drawControl(context, rect, disabled.get());
+            drawControl(context, rect, disabledDot.get());
     }
     return false;
 }
