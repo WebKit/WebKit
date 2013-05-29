@@ -1,3 +1,12 @@
+2013-05-29  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [Qt] Missing files from build after r150853
+        https://bugs.webkit.org/show_bug.cgi?id=116932
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Target.pri: Added the CFURLExtras.{cpp,h} files to the projectfile.
+
 2013-05-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         PresentationAttributeCacheCleaner::m_hitCount is never initialized

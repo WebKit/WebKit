@@ -3322,13 +3322,15 @@ enable?(VIDEO) {
             platform/mac/WebCoreObjCExtras.h \
             platform/mac/WebVideoFullscreenController.h \
             platform/mac/WebVideoFullscreenHUDWindowController.h \
-            platform/mac/WebWindowAnimation.h
+            platform/mac/WebWindowAnimation.h \
+            platform/cf/CFURLExtras.h
 
         SOURCES += \
             platform/mac/DisplaySleepDisabler.cpp \
             platform/graphics/cg/IntRectCG.cpp \
             platform/graphics/cg/FloatSizeCG.cpp \
-            platform/cf/KURLCFNet.cpp
+            platform/cf/KURLCFNet.cpp \
+            platform/cf/CFURLExtras.cpp
 
          OBJECTIVE_SOURCES += \
             platform/qt/WebCoreSystemInterface.mm \
