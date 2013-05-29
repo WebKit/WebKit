@@ -1,3 +1,14 @@
+2013-05-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Drag to move DOM nodes does not work
+        https://bugs.webkit.org/show_bug.cgi?id=116865
+
+        Do not block drag events on the WebKit 1 Web Inspector WebView.
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+
 2013-05-28  Andreas Kling  <akling@apple.com>
 
         Document::setFocusedNode() should be setFocusedElement().

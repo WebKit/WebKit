@@ -684,11 +684,6 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 // MARK: -
 // MARK: UI delegate
 
-- (NSUInteger)webView:(WebView *)sender dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{
-    return WebDragDestinationActionNone;
-}
-
 - (void)webView:(WebView *)sender runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener allowMultipleFiles:(BOOL)allowMultipleFiles
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
