@@ -380,6 +380,16 @@ void CachedResource::error(CachedResource::Status status)
     setLoading(false);
     checkNotify();
 }
+    
+void CachedResource::cancelLoad()
+{
+    if (!isLoading())
+        return;
+
+    setStatus(LoadError);
+    setLoading(false);
+    checkNotify();
+}
 
 void CachedResource::finish()
 {
@@ -450,21 +460,10 @@ void CachedResource::responseReceived(const ResourceResponse& response)
         setEncoding(encoding);
 }
 
-void CachedResource::stopLoading()
+void CachedResource::clearLoader()
 {
-    ASSERT(m_loader);            
+    ASSERT(m_loader);
     m_loader = 0;
-
-    CachedResourceHandle<CachedResource> protect(this);
-
-    // All loads finish with data(allDataReceived = true) or error(), except for
-    // canceled loads, which silently set our request to 0. Be sure to notify our
-    // client in that case, so we don't seem to continue loading forever.
-    if (isLoading()) {
-        setLoading(false);
-        setStatus(LoadError);
-        checkNotify();
-    }
 }
 
 void CachedResource::addClient(CachedResourceClient* client)

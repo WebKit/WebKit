@@ -1,3 +1,37 @@
+2013-05-28  Nate Chapin  <japhet@chromium.org>
+
+        Crash in WebCore::SubresourceLoader::releaseResources when connection fails
+        https://bugs.webkit.org/show_bug.cgi?id=87743
+
+        Don't do anything complicated in SubresourceLoader::releaseResources(),
+        just clear variables. With this patch, releaseResources() will still
+        assert in debug builds if it is called twice, but it will safely execute
+        in release.
+
+        Reviewed by Darin Adler.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::cleanupForError): Pull shared cleanup code out of didFail()
+            and cancel() into a helper.
+        (WebCore::ResourceLoader::cancel): Merge a couple variables into an enum, check for
+            reentrancy from within didCancel().
+        * loader/ResourceLoader.h: Replace m_calledWillCancel and m_cancelled with an enum.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading): Don't call ResourceLoader::didFinishLoading(),
+            put finish() in the middle of the process.
+        (WebCore::SubresourceLoader::didFail): Don't call ResourceLoader::didFail(), put finish()
+            in the middle of the process.
+        (WebCore::SubresourceLoader::didCancel):
+        (WebCore::SubresourceLoader::notifyDone): Do the non-trivial work previous done in releaseResources(),
+            most importantly calling loadDone().
+        (WebCore::SubresourceLoader::releaseResources): Only do simple variable clearing here.
+        * loader/SubresourceLoader.h:
+        (SubresourceLoader):
+        * loader/cache/CachedResource.cpp: Split stopLoading() into cancelLoad() (which notifies clients)
+            and clearLoader() (which just nulls m_loader).
+        * loader/cache/CachedResource.h:
+        * loader/chromium/ResourceLoaderChromium.cpp:
+
 2013-05-28  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [GTK] Build fix after r150837

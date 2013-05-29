@@ -154,8 +154,9 @@ protected:
     void start();
 
     void didFinishLoadingOnePart(double finishTime);
+    void cleanupForError(const ResourceError&);
 
-    bool cancelled() const { return m_cancelled; }
+    bool wasCancelled() const { return m_cancellationStatus >= Cancelled; }
 
     void didReceiveDataOrBuffer(const char*, int, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
 
@@ -177,9 +178,15 @@ private:
     unsigned long m_identifier;
 
     bool m_reachedTerminalState;
-    bool m_calledWillCancel;
-    bool m_cancelled;
     bool m_notifiedLoadComplete;
+
+    enum CancellationStatus {
+        NotCancelled,
+        CalledWillCancel,
+        Cancelled,
+        FinishedCancel
+    };
+    CancellationStatus m_cancellationStatus;
 
     bool m_defersLoading;
     ResourceRequest m_deferredRequest;

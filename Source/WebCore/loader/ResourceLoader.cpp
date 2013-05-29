@@ -62,9 +62,8 @@ ResourceLoader::ResourceLoader(Frame* frame, ResourceLoaderOptions options)
     , m_documentLoader(frame->loader()->activeDocumentLoader())
     , m_identifier(0)
     , m_reachedTerminalState(false)
-    , m_calledWillCancel(false)
-    , m_cancelled(false)
     , m_notifiedLoadComplete(false)
+    , m_cancellationStatus(NotCancelled)
     , m_defersLoading(frame->page()->defersLoading())
     , m_options(options)
 {
@@ -332,7 +331,7 @@ void ResourceLoader::didFinishLoading(double finishTime)
 
     // If the load has been cancelled by a delegate in response to didFinishLoad(), do not release
     // the resources a second time, they have been released by cancel.
-    if (m_cancelled)
+    if (wasCancelled())
         return;
     releaseResources();
 }
@@ -341,7 +340,7 @@ void ResourceLoader::didFinishLoadingOnePart(double finishTime)
 {
     // If load has been cancelled after finishing (which could happen with a
     // JavaScript that changes the window location), do nothing.
-    if (m_cancelled)
+    if (wasCancelled())
         return;
     ASSERT(!m_reachedTerminalState);
 
@@ -354,7 +353,7 @@ void ResourceLoader::didFinishLoadingOnePart(double finishTime)
 
 void ResourceLoader::didFail(const ResourceError& error)
 {
-    if (m_cancelled)
+    if (wasCancelled())
         return;
     ASSERT(!m_reachedTerminalState);
 
@@ -362,16 +361,20 @@ void ResourceLoader::didFail(const ResourceError& error)
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
+    cleanupForError(error);
+    releaseResources();
+}
+
+void ResourceLoader::cleanupForError(const ResourceError& error)
+{
     if (FormData* data = m_request.httpBody())
         data->removeGeneratedFilesIfNeeded();
 
-    if (!m_notifiedLoadComplete) {
-        m_notifiedLoadComplete = true;
-        if (m_options.sendLoadCallbacks == SendCallbacks)
-            frameLoader()->notifier()->didFailToLoad(this, error);
-    }
-
-    releaseResources();
+    if (m_notifiedLoadComplete)
+        return;
+    m_notifiedLoadComplete = true;
+    if (m_options.sendLoadCallbacks == SendCallbacks && m_identifier)
+        frameLoader()->notifier()->didFailToLoad(this, error);
 }
 
 void ResourceLoader::didChangePriority(ResourceLoadPriority loadPriority)
@@ -401,19 +404,16 @@ void ResourceLoader::cancel(const ResourceError& error)
     
     // If we re-enter cancel() from inside willCancel(), we want to pick up from where we left 
     // off without re-running willCancel()
-    if (!m_calledWillCancel) {
-        m_calledWillCancel = true;
+    if (m_cancellationStatus == NotCancelled) {
+        m_cancellationStatus = CalledWillCancel;
         
         willCancel(nonNullError);
     }
 
     // If we re-enter cancel() from inside didFailToLoad(), we want to pick up from where we 
     // left off without redoing any of this work.
-    if (!m_cancelled) {
-        m_cancelled = true;
-        
-        if (FormData* data = m_request.httpBody())
-            data->removeGeneratedFilesIfNeeded();
+    if (m_cancellationStatus == CalledWillCancel) {
+        m_cancellationStatus = Cancelled;
 
         if (m_handle)
             m_handle->clearAuthentication();
@@ -423,9 +423,7 @@ void ResourceLoader::cancel(const ResourceError& error)
             m_handle->cancel();
             m_handle = 0;
         }
-
-        if (m_options.sendLoadCallbacks == SendCallbacks && m_identifier && !m_notifiedLoadComplete)
-            frameLoader()->notifier()->didFailToLoad(this, nonNullError);
+        cleanupForError(nonNullError);
     }
 
     // If cancel() completed from within the call to willCancel() or didFailToLoad(),
@@ -434,7 +432,11 @@ void ResourceLoader::cancel(const ResourceError& error)
         return;
 
     didCancel(nonNullError);
-            
+
+    if (m_cancellationStatus == FinishedCancel)
+        return;
+    m_cancellationStatus = FinishedCancel;
+
     releaseResources();
 }
 

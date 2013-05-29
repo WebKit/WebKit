@@ -185,7 +185,7 @@ public:
     
     bool inLiveDecodedResourcesList() { return m_inLiveDecodedResourcesList; }
     
-    void stopLoading();
+    void clearLoader();
 
     ResourceBuffer* resourceBuffer() const { ASSERT(!m_purgeableData); return m_data.get(); }
 
@@ -204,6 +204,7 @@ public:
     String accept() const { return m_accept; }
     void setAccept(const String& accept) { m_accept = accept; }
 
+    void cancelLoad();
     bool wasCanceled() const { return m_error.isCancellation(); }
     bool errorOccurred() const { return m_status == LoadError || m_status == DecodeError; }
     bool loadFailedOrCanceled() { return !m_error.isNull(); }
