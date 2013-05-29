@@ -1,3 +1,24 @@
+2013-05-29  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Content that has overflow: scroll cannot be scrolled by dragging the scroll thumbs with the mouse
+        https://bugs.webkit.org/show_bug.cgi?id=113703
+
+        Reviewed by Darin Adler.
+
+        The point inside a box that's inside a region has its coordinates relative to the region, not the FlowThread
+        that is its container in the RenderObject tree.
+
+        Previously, the coordinates were computed relatively to the FlowThread which doesn't really have a location in
+        the page.
+
+        Tests: fast/regions/drag-scrollbars-of-content.html
+               fast/regions/hover-in-second-region.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint):
+
 2013-05-29  Andreas Kling  <akling@apple.com>
 
         Fix dumb typo in r150879.

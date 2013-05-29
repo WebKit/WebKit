@@ -1826,7 +1826,8 @@ void RenderBox::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState
 
 LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& point, bool* offsetDependsOnPoint) const
 {
-    ASSERT(o == container());
+    // A region "has" boxes inside it without being their container. 
+    ASSERT(o == container() || o->isRenderRegion());
 
     LayoutSize offset;    
     if (hasPaintOffset())

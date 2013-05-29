@@ -1,3 +1,15 @@
+2013-05-29  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Content that has overflow: scroll cannot be scrolled by dragging the scroll thumbs with the mouse
+        https://bugs.webkit.org/show_bug.cgi?id=113703
+
+        Reviewed by Darin Adler.
+
+        * fast/regions/drag-scrollbars-of-content-expected.html: Added.
+        * fast/regions/drag-scrollbars-of-content.html: Added.
+        * fast/regions/hover-in-second-region-expected.html: Added.
+        * fast/regions/hover-in-second-region.html: Added.
+
 2013-05-29  Kent Tamura  <tkent@chromium.org>
 
         Remove ENABLE_INPUT_MULTIPLE_FIELDS_UI.
