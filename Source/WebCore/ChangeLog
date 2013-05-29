@@ -1,3 +1,31 @@
+2013-05-29  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Handle Host-Only cookies
+        https://bugs.webkit.org/show_bug.cgi?id=116969
+
+        PR 338809
+        Reviewed by Rob Buis.
+        Internally Reviewed by Joe Mason.
+
+        Adding support for host-only cookies (cookies with no
+        specified domains). These cookies should only be returned
+        when the host matches the cookie domain exactly.
+
+        Tested using Opera and Browser cookie test suite. Tested
+        that host cookies are being stored in it's own map using
+        Web Inspector.
+
+        * platform/blackberry/CookieManager.cpp:
+        (WebCore::CookieManager::getRawCookies):
+        (WebCore::CookieManager::checkAndTreatCookie):
+        (WebCore::CookieManager::findOrCreateCookieMap):
+        * platform/blackberry/CookieParser.cpp:
+        (WebCore::CookieParser::CookieParser):
+        (WebCore::CookieParser::parseOneCookie):
+        * platform/blackberry/ParsedCookie.h:
+        (WebCore::ParsedCookie::isHostOnly):
+        (ParsedCookie):
+
 2013-05-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the size of DataVector in HTMLToken

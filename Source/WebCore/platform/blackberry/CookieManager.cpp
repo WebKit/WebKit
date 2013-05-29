@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008, 2009 Julien Chaffraix <julien.chaffraix@gmail.com>
- * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -296,6 +296,14 @@ void CookieManager::getRawCookies(Vector<RefPtr<ParsedCookie> > &stackOfCookies,
             // Get cookies from the null domain map
             currentMap->getAllCookies(&cookieCandidates);
 
+            // Get cookies from Host-only cookies
+            if (canonicalIP.empty()) {
+                CookieLog("CookieManager - looking for host-only cookies for host - %s", requestURL.host().utf8().data());
+                CookieMap* hostMap = currentMap->getSubdomainMap(requestURL.host());
+                if (hostMap)
+                    hostMap->getAllCookies(&cookieCandidates);
+            }
+
             // Get cookies from the valid domain maps
             int i = delimitedHost.size() - 1;
             while (i >= 0) {
@@ -422,6 +430,7 @@ void CookieManager::checkAndTreatCookie(PassRefPtr<ParsedCookie> prpCandidateCoo
         }
     } else {
         ASSERT(curMap);
+        CookieLog("CookieManager - adding cookiemap - %s\n", curMap->getName().utf8().data());
         addCookieToMap(curMap, candidateCookie, postToBackingStore, filter);
     }
 }
@@ -548,8 +557,8 @@ CookieMap* CookieManager::findOrCreateCookieMap(CookieMap* protocolMap, const Pa
     // Explode the domain with the '.' delimiter
     Vector<String> delimitedHost;
 
-    // If the domain is an IP address, don't split it.
-    if (candidateCookie->domainIsIPAddress())
+    // If the domain is an IP address or is a host-only domain, don't split it.
+    if (candidateCookie->domainIsIPAddress() || candidateCookie->isHostOnly())
         delimitedHost.append(candidateCookie->domain());
     else
         candidateCookie->domain().split(".", delimitedHost);

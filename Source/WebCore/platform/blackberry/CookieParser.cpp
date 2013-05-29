@@ -32,6 +32,7 @@
 #include <network/DomainTools.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -60,8 +61,7 @@ CookieParser::CookieParser(const KURL& defaultCookieURL)
     if (!hostDomainCanonical.empty()) {
         m_defaultCookieHost = hostDomainCanonical;
         m_defaultDomainIsIPAddress = true;
-    } else
-        m_defaultCookieHost = m_defaultCookieHost.startsWith(".") ? m_defaultCookieHost : "." + m_defaultCookieHost;
+    }
 }
 
 CookieParser::~CookieParser()
@@ -265,9 +265,18 @@ PassRefPtr<ParsedCookie> CookieParser::parseOneCookie(const String& cookie, unsi
                 if (dotPosition == notFound || dotPosition == parsedValue.length())
                     LOG_ERROR_AND_RETURN("Invalid cookie attribute %s (domain): it does not contain an embedded dot", cookie.ascii().data());
 
-                // If the domain does not start with a dot, add one for security checks,
+                // If the domain does not start with a dot, add one for security checks and to distinguish it from host-only domains
                 // For example: ab.c.com dose not domain match b.c.com;
-                String realDomain = parsedValue[0] == '.' ? parsedValue : "." + parsedValue;
+                StringBuilder parsedValueBuilder;
+                if (parsedValue[0] != '.')
+                    parsedValueBuilder.appendLiteral(".");
+                parsedValueBuilder.append(parsedValue);
+                String realDomain = parsedValueBuilder.toString();
+
+                StringBuilder defaultHostBuilder;
+                defaultHostBuilder.appendLiteral(".");
+                defaultHostBuilder.append(m_defaultCookieHost);
+                String defaultHost = defaultHostBuilder.toString();
 
                 // Try to return an canonical ip address if the domain is an ip
 
@@ -278,7 +287,7 @@ PassRefPtr<ParsedCookie> CookieParser::parseOneCookie(const String& cookie, unsi
                 // We determine the canonical IP format before comparing because IPv6 could be represented in multiple formats
                 if (m_defaultDomainIsIPAddress) {
                     String realDomainCanonical = BlackBerry::Platform::getCanonicalIPFormat(realDomain);
-                    if (realDomainCanonical.isEmpty() || realDomainCanonical != m_defaultCookieHost)
+                    if (realDomainCanonical.isEmpty() || realDomainCanonical != defaultHost)
                         LOG_ERROR_AND_RETURN("Invalid cookie attribute %s (domain): domain is IP but does not match host's IP", cookie.ascii().data());
                     realDomain = realDomainCanonical;
                     isIPAddress = true;
@@ -288,10 +297,9 @@ PassRefPtr<ParsedCookie> CookieParser::parseOneCookie(const String& cookie, unsi
                     // add a "." at beginning of host name, because it can handle many cases such as
                     // a.b.com matches b.com, a.b.com matches .B.com and a.b.com matches .A.b.Com
                     // and so on.
-                    // We also have to make a special case for IP addresses. If a website tries to set
-                    // a cookie to 61.97, that domain is not an IP address and will end with the m_defaultCookieHost
-                    if (!m_defaultCookieHost.endsWith(realDomain, false))
+                    if (!defaultHost.endsWith(realDomain, false))
                         LOG_ERROR_AND_RETURN("Invalid cookie attribute %s (domain): it does not domain match the host", cookie.ascii().data());
+
                     // We should check for an embedded dot in the portion of string in the host not in the domain
                     // but to match firefox behaviour we do not.
 

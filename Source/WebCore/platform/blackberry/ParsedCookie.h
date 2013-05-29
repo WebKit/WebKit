@@ -85,6 +85,8 @@ public:
 
     bool isSession() const { return m_isSession; }
 
+    bool isHostOnly() const { return !m_domain.startsWith("."); }
+
     bool hasExpired() const;
     bool isForceExpired() const { return m_isForceExpired; }
     bool isUnderSizeLimit() const;
