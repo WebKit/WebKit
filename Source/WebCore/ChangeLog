@@ -1,3 +1,16 @@
+2013-05-29  Nico Weber  <thakis@chromium.org>
+
+        Remove unused file PlatformGestureEvent.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=116894
+
+        Reviewed by Darin Adler.
+
+        This was added in https://bugs.webkit.org/show_bug.cgi?id=49345 but
+        not removed in https://bugs.webkit.org/show_bug.cgi?id=77492 which
+        removed most of that code again.
+        
+        * platform/PlatformGestureRecognizer.cpp: Removed.
+
 2013-05-29  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [texmap][GStreamer][GTK] Composited Video support
