@@ -33,6 +33,7 @@ testStyleValue("circle(-1.5px, +1.5px, 1.5px)", "circle(-1.5px, 1.5px, 1.5px)");
 testStyleValue("circle(-.5px, +.5px, .5px)", "circle(-0.5px, 0.5px, 0.5px)");
 
 testStyleValue("rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)", "rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)");
+testStyleValue("inset-rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)", "inset-rectangle(1cm, 1mm, 1in, 1px, 1pt, 1pc)");
 
 // font-relative lengths - number serialization, units, resolution
 testStyleValue("circle(-1em, +1em, 1em)", "circle(-1em, 1em, 1em)");
@@ -58,11 +59,13 @@ testComputedStyleValue("circle(.5vmin, 1vmin, 1.5vmin)", "circle(0.5vmin, 1vmin,
 // percentage lengths - units
 testStyleValue("circle(100%, 100%, 100%)", "circle(100%, 100%, 100%)");
 testStyleValue("rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)");
+testStyleValue("inset-rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "inset-rectangle(45%, 45%, 90%, 60%, 25%, 10%)");
 testStyleValue("ellipse(100%, 100%, 100%, 100%)", "ellipse(100%, 100%, 100%, 100%)");
 testStyleValue("polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
 
 testComputedStyleValue("circle(50%, 100%, 150%)", "circle(50%, 100%, 150%)");
 testComputedStyleValue("rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)");
+testComputedStyleValue("inset-rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "inset-rectangle(45%, 45%, 90%, 60%, 25%, 10%)");
 testComputedStyleValue("ellipse(100%, 100%, 100%, 100%)", "ellipse(100%, 100%, 100%, 100%)");
 testComputedStyleValue("polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
 
@@ -76,9 +79,17 @@ testInvalidValue("-webkit-shape-inside", "circle(1px, 1px, calc())");
 testInvalidValue("-webkit-shape-inside", "circle(-1.5px, +1.5px, -1.5px)");
 testInvalidValue("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, 1px, -1pt, 1pc)");
 testInvalidValue("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, 1px, 1pt, -1pc)");
+testInvalidValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, 1in, 1px, -1pt, 1pc)");
+testInvalidValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, 1in, 1px, 1pt, -1pc)");
 testInvalidValue("-webkit-shape-inside", "ellipse(1em, 1em, -1em, 1em)");
 testInvalidValue("-webkit-shape-inside", "ellipse(1em, 1em, 1em, -1em)");
 
 // reject negative height and width
 testInvalidValue("-webkit-shape-inside", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)");
 testInvalidValue("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)");
+
+// reject negative top, right, bottom, and left
+testInvalidValue("-webkit-shape-inside", "inset-rectangle(-1cm, 1mm, 1in, 1px, 1pt, 1pc)");
+testInvalidValue("-webkit-shape-inside", "inset-rectangle(1cm, -1mm, 1in, 1px, 1pt, 1pc)");
+testInvalidValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)");
+testInvalidValue("-webkit-shape-inside", "inset-rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)");

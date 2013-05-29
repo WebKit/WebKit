@@ -1,3 +1,91 @@
+2013-05-29  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Support parsing inset-rectangle shapes
+        https://bugs.webkit.org/show_bug.cgi?id=116638
+
+        Reviewed by Dean Jackson.
+
+        Add parsing for inset-rectangle. It's very similar to parsing for
+        rectangle.
+
+        No new tests, updated existing tests to cover this.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape): Add support for inset rectangles.
+        (WebCore::basicShapeForValue): Add support for inset rectangles.
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildInsetRectangleString): Create an inset-rectangle css
+            string.
+        (WebCore::CSSBasicShapeInsetRectangle::cssText): Convert inset
+            rectangle shape to a CSS string.
+        (WebCore::CSSBasicShapeInsetRectangle::equals): Compare two inset
+            rectangles.
+        (WebCore::CSSBasicShapeInsetRectangle::serializeResolvingVariables):
+            Create an inset rectangle string, with CSS variables resolved.
+        (WebCore::CSSBasicShapeInsetRectangle::hasVariableReference):
+            Determine if this inset rectangle has any CSS Variable references.
+        * css/CSSBasicShapes.h:
+        (CSSBasicShapeInsetRectangle): Add inset rectangle class. This is a
+            direct representation of the CSS property. All the methods below
+            are just simple getters and setters, along with a construtor and a
+            factory method.
+        (WebCore::CSSBasicShapeInsetRectangle::create): 
+        (WebCore::CSSBasicShapeInsetRectangle::top): 
+        (WebCore::CSSBasicShapeInsetRectangle::right):
+        (WebCore::CSSBasicShapeInsetRectangle::bottom):
+        (WebCore::CSSBasicShapeInsetRectangle::left):
+        (WebCore::CSSBasicShapeInsetRectangle::radiusX):
+        (WebCore::CSSBasicShapeInsetRectangle::radiusY):
+        (WebCore::CSSBasicShapeInsetRectangle::setTop):
+        (WebCore::CSSBasicShapeInsetRectangle::setRight):
+        (WebCore::CSSBasicShapeInsetRectangle::setBottom):
+        (WebCore::CSSBasicShapeInsetRectangle::setLeft):
+        (WebCore::CSSBasicShapeInsetRectangle::setRadiusX):
+        (WebCore::CSSBasicShapeInsetRectangle::setRadiusY):
+        (WebCore::CSSBasicShapeInsetRectangle::type):
+        (WebCore::CSSBasicShapeInsetRectangle::CSSBasicShapeInsetRectangle):
+        (WebCore):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBasicShapeInsetRectangle): Parse the
+            inset-rectangle CSS property and create a
+            CSSBasicShapeInsetRectangle.
+        (WebCore::CSSParser::parseBasicShape): Add a call to parse
+            inset-rectangle.
+        * rendering/ExclusionShapeInsideInfo.cpp:
+        (WebCore::ExclusionShapeInsideInfo::isEnabledFor): Disable
+            inset-rectangles, since only the parsing has been implemented so
+            far.
+        * rendering/ExclusionShapeOutsideInfo.cpp:
+        (WebCore::ExclusionShapeOutsideInfo::isEnabledFor): Disable
+            inset-rectangles, since only the parsing has been implemented so
+            far.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeInsetRectangle::path): Calculate the Path for an
+            inset-rectangle.
+        (WebCore::BasicShapeInsetRectangle::blend): Blend two inset rectangles
+            together at a point depending on the "progress" and return the
+            blended rectangle.
+        * rendering/style/BasicShapes.h:
+        (BasicShapeInsetRectangle): Add higher level inset rectangle class.
+            This is used outside of the CSS representation. The methods below
+            are just simple getters and setters, along with a constructor and
+            a factory method.
+        (WebCore::BasicShapeInsetRectangle::create):
+        (WebCore::BasicShapeInsetRectangle::top):
+        (WebCore::BasicShapeInsetRectangle::right):
+        (WebCore::BasicShapeInsetRectangle::bottom):
+        (WebCore::BasicShapeInsetRectangle::left):
+        (WebCore::BasicShapeInsetRectangle::cornerRadiusX):
+        (WebCore::BasicShapeInsetRectangle::cornerRadiusY):
+        (WebCore::BasicShapeInsetRectangle::setTop):
+        (WebCore::BasicShapeInsetRectangle::setRight):
+        (WebCore::BasicShapeInsetRectangle::setBottom):
+        (WebCore::BasicShapeInsetRectangle::setLeft):
+        (WebCore::BasicShapeInsetRectangle::setCornerRadiusX):
+        (WebCore::BasicShapeInsetRectangle::setCornerRadiusY):
+        (WebCore::BasicShapeInsetRectangle::type):
+        (WebCore::BasicShapeInsetRectangle::BasicShapeInsetRectangle):
+
 2013-05-29  Andreas Kling  <akling@apple.com>
 
         Move computed style extraction out of CSSComputedStyleDeclaration.

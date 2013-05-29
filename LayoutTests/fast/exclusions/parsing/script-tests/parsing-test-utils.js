@@ -6,6 +6,10 @@ var validShapeValues = [
     "rectangle(10px, 20px, 30px, 40px, 5px)", 
     "rectangle(10px, 20px, 30px, 40px, 5px, 10px)",
 
+    "inset-rectangle(10px, 20px, 30px, 40px)",
+    "inset-rectangle(10px, 20px, 30px, 40px, 5px)",
+    "inset-rectangle(10px, 20px, 30px, 40px, 5px, 10px)",
+
     "circle(10px, 20px, 30px)",
 
     "ellipse(10px, 20px, 30px, 40px)",
@@ -27,6 +31,13 @@ var invalidShapeValues = [
     "rectangle(10px, 20px, 30px)",
     "rectangle(10px 20px 30px 40px)",
     "rectangle(10px, 20px, 30px, 40px, 50px, 60px, 70px)",
+
+    "inset-rectangle()",
+    "inset-rectangle(10px)",
+    "inset-rectangle(10px, 10px)",
+    "inset-rectangle(10px, 20px, 30px)",
+    "inset-rectangle(10px 20px 30px 40px)",
+    "inset-rectangle(10px, 20px, 30px, 40px, 50px, 60px, 70px)",
 
     "circle()",
     "circle(10px)",

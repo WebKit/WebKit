@@ -94,6 +94,23 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         basicShapeValue = polygonValue.release();
         break;
     }
+    case BasicShape::BASIC_SHAPE_INSET_RECTANGLE: {
+        const BasicShapeInsetRectangle* rectangle = static_cast<const BasicShapeInsetRectangle*>(basicShape);
+        RefPtr<CSSBasicShapeInsetRectangle> rectangleValue = CSSBasicShapeInsetRectangle::create();
+
+        rectangleValue->setTop(cssValuePool().createValue(rectangle->top()));
+        rectangleValue->setRight(cssValuePool().createValue(rectangle->right()));
+        rectangleValue->setBottom(cssValuePool().createValue(rectangle->bottom()));
+        rectangleValue->setLeft(cssValuePool().createValue(rectangle->left()));
+        if (!rectangle->cornerRadiusX().isUndefined()) {
+            rectangleValue->setRadiusX(cssValuePool().createValue(rectangle->cornerRadiusX()));
+            if (!rectangle->cornerRadiusY().isUndefined())
+                rectangleValue->setRadiusY(cssValuePool().createValue(rectangle->cornerRadiusY()));
+        }
+
+        basicShapeValue = rectangleValue.release();
+        break;
+    }
     default:
         break;
     }
@@ -159,6 +176,22 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
             polygon->appendPoint(convertToLength(style, rootStyle, values.at(i).get()), convertToLength(style, rootStyle, values.at(i + 1).get()));
 
         basicShape = polygon.release();
+        break;
+    }
+    case CSSBasicShape::CSS_BASIC_SHAPE_INSET_RECTANGLE: {
+        const CSSBasicShapeInsetRectangle* rectValue = static_cast<const CSSBasicShapeInsetRectangle *>(basicShapeValue);
+        RefPtr<BasicShapeInsetRectangle> rect = BasicShapeInsetRectangle::create();
+
+        rect->setTop(convertToLength(style, rootStyle, rectValue->top()));
+        rect->setRight(convertToLength(style, rootStyle, rectValue->right()));
+        rect->setBottom(convertToLength(style, rootStyle, rectValue->bottom()));
+        rect->setLeft(convertToLength(style, rootStyle, rectValue->left()));
+        if (rectValue->radiusX()) {
+            rect->setCornerRadiusX(convertToLength(style, rootStyle, rectValue->radiusX()));
+            if (rectValue->radiusY())
+                rect->setCornerRadiusY(convertToLength(style, rootStyle, rectValue->radiusY()));
+        }
+        basicShape = rect.release();
         break;
     }
     default:
