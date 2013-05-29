@@ -140,8 +140,6 @@ webkit.org/b/86443 plugins/npruntime/delete-plugin-within-getProperty.html [ Cra
 # Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/90589 fast/css/user-drag-none.html [ Timeout ]
-
 webkit.org/b/61118 fullscreen/full-screen-keyboard-enabled.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

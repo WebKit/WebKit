@@ -1,3 +1,10 @@
+2013-05-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk-wk1/TestExpectations: Remove an unnecessary expectation.
+        * platform/gtk/TestExpectations: Add timeout expectations for tests that are currently timing out.
+
 2013-05-29  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Content that has overflow: scroll cannot be scrolled by dragging the scroll thumbs with the mouse

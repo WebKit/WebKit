@@ -751,6 +751,16 @@ webkit.org/b/108925 http/tests/media/video-play-stall.html [ Timeout Failure ]
 
 webkit.org/b/114789 fast/events/page-visibility-transition-test.html [ Timeout ]
 
+webkit.org/b/116956 fast/events/event-view-toString.html [ Timeout ]
+
+webkit.org/b/116957 media/track/track-automatic-subtitles.html [ Timeout ]
+
+webkit.org/b/116958 http/tests/navigation/redirect-to-random-url-versus-memory-cache.html [ Timeout ]
+webkit.org/b/116958 http/tests/navigation/slowmetaredirect-basic.html [ Timeout ]
+webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Timeout ]
+webkit.org/b/116958 http/tests/navigation/scrollstate-after-http-equiv-refresh.html [ Timeout ]
+webkit.org/b/116958 http/tests/navigation/scrollstate-after-location-reload.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1020,7 +1030,7 @@ webkit.org/b/44316 platform/gtk/accessibility/title-and-alt.html [ Failure ]
 # not get user gesture in frameload callbacks.
 # The related bugs are https://bugs.webkit.org/show_bug.cgi?id=47849/47817.
 Bug(GTK) fast/frames/location-redirect-user-gesture.html [ Failure ]
-Bug(GTK) fast/frames/meta-refresh-user-gesture.html [ Failure ]
+Bug(GTK) fast/frames/meta-refresh-user-gesture.html [ Failure Timeout ]
 
 # Rounding color problems inside pixman
 webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
