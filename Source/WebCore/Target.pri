@@ -3311,7 +3311,8 @@ enable?(VIDEO) {
     use?(QTKIT) {
         INCLUDEPATH += \
             $$SOURCE_DIR/../WebKitLibraries/ \
-            $$PWD/platform/mac
+            $$PWD/platform/mac \
+            $$PWD/platform/cf
 
 
         HEADERS += \
