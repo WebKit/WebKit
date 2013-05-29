@@ -250,10 +250,6 @@ plugins/netscape-plugin-setwindow-size-2.html
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
 
-# [Qt][WK2] fast/events/drag-selects-image.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=70907
-fast/events/drag-selects-image.html
-
 # [Qt][WK2] Metric mismatches (fast/text/justify-padding-distribution.html and svg/as-object/svg-embedded-in-html-in-iframe.html)
 # https://bugs.webkit.org/show_bug.cgi?id=70915
 svg/as-object/svg-embedded-in-html-in-iframe.html
@@ -269,7 +265,6 @@ fast/dom/rtl-scroll-to-leftmost-and-resize.html
 # [Qt][WK2] fast/forms/range/slider-mouse-events.html and fast/forms/range/slider-onchange-event.html fail after r124625
 # https://bugs.webkit.org/show_bug.cgi?id=93231
 fast/forms/range/slider-mouse-events.html
-fast/forms/range/slider-onchange-event.html
 
 # flakey svg tests
 svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
@@ -282,10 +277,7 @@ fast/layers/layer-visibility-sublayer.html
 fast/layers/layer-visibility.html
 fast/repaint/invisible-objects.html
 fast/repaint/layer-hide-when-needs-layout.html
-fast/replaced/no-focus-ring-embed.html
-fast/replaced/no-focus-ring-object.html
 fast/text/whitespace/028.html
-http/tests/security/mixedContent/insecure-plugin-in-iframe.html
 
 # It made the following test(s) timeout
 editing/selection/drag-in-iframe.html
@@ -336,7 +328,6 @@ compositing/reflections/transform-inside-reflection.html
 
 # Flaky tests.
 compositing/geometry/limit-layer-bounds-fixed-positioned.html
-compositing/geometry/video-opacity-overlay.html
 compositing/rtl/rtl-absolute-overflow-scrolled.html
 compositing/visibility/layer-visible-content.html
 
@@ -369,10 +360,6 @@ compositing/plugins
 compositing/video
 compositing/layers-inside-overflow-scroll.html
 
-# [Qt][WK2] New compositing/backface-visibility/backface-visibility-webgl.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=89645
-compositing/backface-visibility/backface-visibility-webgl.html
-
 # [Qt][WK2] New compositing test are failing since added in r126663.
 # https://bugs.webkit.org/show_bug.cgi?id=95076
 compositing/overflow/overflow-auto-with-touch-no-overflow.html
@@ -393,14 +380,8 @@ webkit.org/b/101165 compositing/repaint/invalidations-on-composited-layers.html
 
 # [Qt][Wk2] REGGRESSION (r142112): It made compositing tests fail.
 webkit.org/b/109291 compositing/iframes/iframe-composited-scrolling.html
-webkit.org/b/109291 compositing/layer-creation/fixed-position-in-view-dynamic.html
 
 webkit.org/b/112675 compositing/layer-creation/fixed-position-change-out-of-view-in-view.html [ Skip ]
-
-# [Qt] [WK2] Some fullscreen layout tests are timing out on the bot
-# https://bugs.webkit.org/show_bug.cgi?id=92543
-fullscreen/video-controls-timeline.html
-fullscreen/full-screen-iframe-legacy.html
 
 webkit.org/b/112146 fullscreen/video-controls-drag.html [ Skip ]
 
@@ -413,13 +394,7 @@ http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
 # [Qt][WK2] Failing http/tests/plugins tests after reenabled plugins
 # https://bugs.webkit.org/show_bug.cgi?id=82895
 http/tests/plugins/create-v8-script-objects.html
-http/tests/plugins/cross-frame-object-access.html
-http/tests/plugins/get-url.html
-http/tests/plugins/geturlnotify-from-npp-destroystream.html
-http/tests/plugins/interrupted-get-url.html
-http/tests/plugins/local-geturl-from-remote.html
 http/tests/plugins/npapi-response-headers.html
-http/tests/plugins/post-url-file.html
 http/tests/plugins/third-party-cookie-accept-policy.html
 
 # [Qt][WK2] fast/frames/iframe-window-focus.html fails
@@ -429,26 +404,9 @@ fast/frames/iframe-window-focus.html
 # Missing layoutTestController.numberOfPendingGeolocationPermissionRequests() implementation
 fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 
-# [Qt][WK2] fast/forms/ValidityState-valueMissing-002.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=87395
-fast/forms/ValidityState-valueMissing-002.html
-
-# REGRESSION(r118618): fast/dom/beforeload/image-object-before-load* fail
-# https://bugs.webkit.org/show_bug.cgi?id=87631
-fast/dom/beforeload/image-object-before-load-innerHTML.html
-fast/dom/beforeload/image-object-before-load.html
-
 # [Qt][WK2] New http/tests/cache/xhr-vary-header.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=89278
 http/tests/cache/xhr-vary-header.html
-
-# [Qt][WK2] editing/pasteboard/copy-in-password-field.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=89473
-editing/pasteboard/copy-in-password-field.html
-editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html
-
-# WebKitTestRunner needs to allow self-signed certificates for localhost.
-http/tests/ssl
 
 # [Qt][WK2] REGRESSION(r122326): It made fast/repaint/background-scaling.html crash
 # https://bugs.webkit.org/show_bug.cgi?id=90985
@@ -496,14 +454,6 @@ fast/block/positioning/replaced-inside-fixed-top-bottom.html
 svg/carto.net/scrollbar.svg
 svg/carto.net/selectionlist.svg
 tables/mozilla_expected_failures/bugs/bug85016.html
-
-# [Qt]REGRESSION(r123786): It made 3 fast/animation tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=92490
-fast/animation/request-animation-frame-iframe.html
-fast/animation/request-animation-frame-timestamps-advance.html
-fast/animation/request-animation-frame-timestamps.html
-fast/animation/request-animation-frame-within-callback.html
-fast/animation/request-animation-frame.html
 
 # [Qt][WK2] REGRESSION(r125045): It made fast/events/media-focus-in-standalone-media-document.html fail
 # https://bugs.webkit.org/show_bug.cgi?id=93658
