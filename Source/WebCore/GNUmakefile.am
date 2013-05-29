@@ -38,6 +38,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/history \
 	-I$(srcdir)/Source/WebCore/html \
 	-I$(srcdir)/Source/WebCore/html/canvas \
+	-I$(srcdir)/Source/WebCore/html/forms \
 	-I$(srcdir)/Source/WebCore/html/parser \
 	-I$(srcdir)/Source/WebCore/html/shadow \
 	-I$(srcdir)/Source/WebCore/html/track \
