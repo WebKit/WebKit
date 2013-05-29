@@ -309,22 +309,6 @@ public:
 
     virtual bool canContainRangeEndPoint() const { return false; }
 
-    // FIXME: These two functions belong in editing -- "atomic node" is an editing concept.
-    Node* previousNodeConsideringAtomicNodes() const;
-    Node* nextNodeConsideringAtomicNodes() const;
-    
-    // Returns the next leaf node or 0 if there are no more.
-    // Delivers leaf nodes as if the whole DOM tree were a linear chain of its leaf nodes.
-    // Uses an editing-specific concept of what a leaf node is, and should probably be moved
-    // out of the Node class into an editing-specific source file.
-    Node* nextLeafNode() const;
-
-    // Returns the previous leaf node or 0 if there are no more.
-    // Delivers leaf nodes as if the whole DOM tree were a linear chain of its leaf nodes.
-    // Uses an editing-specific concept of what a leaf node is, and should probably be moved
-    // out of the Node class into an editing-specific source file.
-    Node* previousLeafNode() const;
-
     bool isRootEditableElement() const;
     Element* rootEditableElement() const;
     Element* rootEditableElement(EditableType) const;

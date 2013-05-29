@@ -51,7 +51,7 @@ using namespace HTMLNames;
 
 static Node* nextRenderedEditable(Node* node)
 {
-    while ((node = node->nextLeafNode())) {
+    while ((node = nextLeafNode(node))) {
         if (!node->rendererIsEditable())
             continue;
         RenderObject* renderer = node->renderer();
@@ -65,7 +65,7 @@ static Node* nextRenderedEditable(Node* node)
 
 static Node* previousRenderedEditable(Node* node)
 {
-    while ((node = node->previousLeafNode())) {
+    while ((node = previousLeafNode(node))) {
         if (!node->rendererIsEditable())
             continue;
         RenderObject* renderer = node->renderer();

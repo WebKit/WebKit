@@ -73,6 +73,10 @@ Node* tabSpanNode(const Node*);
 Node* isLastPositionBeforeTable(const VisiblePosition&);
 Node* isFirstPositionAfterTable(const VisiblePosition&);
 
+// These two deliver leaf nodes as if the whole DOM tree were a linear chain of its leaf nodes.
+Node* nextLeafNode(const Node*);
+Node* previousLeafNode(const Node*);
+
 // offset functions on Node
 
 int lastOffsetForEditing(const Node*);

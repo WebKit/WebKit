@@ -1,3 +1,28 @@
+2013-05-29  Andreas Kling  <akling@apple.com>
+
+        Move leaf Node traversal helpers to htmlediting.cpp
+        <http://webkit.org/b/116940>
+
+        Reviewed by Antti Koivisto.
+
+        Move Node::previousLeafNode() and Node::nextLeafNode() to htmlediting.cpp along with their helpers.
+        Fixes an 8-year old FIXME. \o/
+
+        * dom/Node.h:
+        * dom/Node.cpp:
+        * dom/Position.cpp:
+        (WebCore::nextRenderedEditable):
+        (WebCore::previousRenderedEditable):
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousLeafWithSameEditability):
+        (WebCore::nextLeafWithSameEditability):
+        * editing/htmlediting.h:
+        * editing/htmlediting.cpp:
+        (WebCore::previousNodeConsideringAtomicNodes):
+        (WebCore::nextNodeConsideringAtomicNodes):
+        (WebCore::previousLeafNode):
+        (WebCore::nextLeafNode):
+
 2013-05-29  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [Qt] Missing files from build after r150853

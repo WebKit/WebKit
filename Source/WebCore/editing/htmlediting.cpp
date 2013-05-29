@@ -802,6 +802,55 @@ Node* highestAncestor(Node* node)
     return parent;
 }
 
+static Node* previousNodeConsideringAtomicNodes(const Node* node)
+{
+    if (node->previousSibling()) {
+        Node* n = node->previousSibling();
+        while (!isAtomicNode(n) && n->lastChild())
+            n = n->lastChild();
+        return n;
+    }
+    if (node->parentNode())
+        return node->parentNode();
+    return 0;
+}
+
+static Node* nextNodeConsideringAtomicNodes(const Node* node)
+{
+    if (!isAtomicNode(node) && node->firstChild())
+        return node->firstChild();
+    if (node->nextSibling())
+        return node->nextSibling();
+    const Node* n = node;
+    while (n && !n->nextSibling())
+        n = n->parentNode();
+    if (n)
+        return n->nextSibling();
+    return 0;
+}
+
+Node* previousLeafNode(const Node* node)
+{
+    Node* n = previousNodeConsideringAtomicNodes(node);
+    while (n) {
+        if (isAtomicNode(n))
+            return n;
+        n = previousNodeConsideringAtomicNodes(n);
+    }
+    return 0;
+}
+
+Node* nextLeafNode(const Node* node)
+{
+    Node* n = nextNodeConsideringAtomicNodes(node);
+    while (node) {
+        if (isAtomicNode(n))
+            return n;
+        n = nextNodeConsideringAtomicNodes(n);
+    }
+    return 0;
+}
+
 // FIXME: do not require renderer, so that this can be used within fragments, or rename to isRenderedTable()
 bool isTableElement(Node* n)
 {

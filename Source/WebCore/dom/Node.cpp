@@ -1090,59 +1090,6 @@ Node* Node::pseudoAwareLastChild() const
     return lastChild();
 }
 
-// FIXME: This code is used by editing.  Seems like it could move over there and not pollute Node.
-Node *Node::previousNodeConsideringAtomicNodes() const
-{
-    if (previousSibling()) {
-        Node *n = previousSibling();
-        while (!isAtomicNode(n) && n->lastChild())
-            n = n->lastChild();
-        return n;
-    }
-    else if (parentNode()) {
-        return parentNode();
-    }
-    else {
-        return 0;
-    }
-}
-
-Node *Node::nextNodeConsideringAtomicNodes() const
-{
-    if (!isAtomicNode(this) && firstChild())
-        return firstChild();
-    if (nextSibling())
-        return nextSibling();
-    const Node *n = this;
-    while (n && !n->nextSibling())
-        n = n->parentNode();
-    if (n)
-        return n->nextSibling();
-    return 0;
-}
-
-Node *Node::previousLeafNode() const
-{
-    Node *node = previousNodeConsideringAtomicNodes();
-    while (node) {
-        if (isAtomicNode(node))
-            return node;
-        node = node->previousNodeConsideringAtomicNodes();
-    }
-    return 0;
-}
-
-Node *Node::nextLeafNode() const
-{
-    Node *node = nextNodeConsideringAtomicNodes();
-    while (node) {
-        if (isAtomicNode(node))
-            return node;
-        node = node->nextNodeConsideringAtomicNodes();
-    }
-    return 0;
-}
-
 ContainerNode* Node::parentNodeForRenderingAndStyle()
 {
     return NodeRenderingContext(this).parentNodeForRenderingAndStyle();
