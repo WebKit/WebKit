@@ -1,3 +1,16 @@
+2013-05-29  Jer Noble  <jer.noble@apple.com>
+
+        media/video-pause-immediately.html test failing on some platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=116985
+
+        video-pause-immediately.html will fail on some platforms if the <video> element issues a
+        timeupdate event at currentTime=0. Fix the test by only removing the timeupdate listener
+        inside the currentTime>0 conditional.
+        
+        Reviewed by Eric Carlson.
+
+        * media/video-pause-immediately.html:
+
 2013-05-29  Adam Barth  <abarth@webkit.org>
 
         Optimize RenderText::offsetNext for 8 bit strings
