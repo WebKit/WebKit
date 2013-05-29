@@ -354,7 +354,7 @@ void WebPreferences::setStringValue(CFStringRef key, LPCTSTR value)
     if (val && !wcscmp(val, value))
         return;
     
-    RetainPtr<CFStringRef> valueRef = adoptCF(CFStringCreateWithCharactersNoCopy(0, (UniChar*)_wcsdup(value), (CFIndex)wcslen(value), kCFAllocatorMalloc));
+    RetainPtr<CFStringRef> valueRef = adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(value), static_cast<CFIndex>(wcslen(value))));
     setValueForKey(key, valueRef.get());
 
     postPreferencesChangesNotification();
