@@ -1,3 +1,18 @@
+2013-05-29  Anders Carlsson  <andersca@apple.com>
+
+        Move some PODArena members to PODFreeListArena
+        https://bugs.webkit.org/show_bug.cgi?id=116993
+
+        Reviewed by Sam Weinig.
+
+        This is more work towards merging the two classes.
+
+        * platform/PODArena.h:
+        (PODArena):
+        * platform/PODFreeListArena.h:
+        (PODFreeListArena):
+        (WebCore::PODFreeListArena::PODFreeListArena):
+
 2013-05-29  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Scrubbing long movie files results in timeline snapping back to 0 during scrub.

@@ -53,8 +53,7 @@ public:
 
     void freeObject(T* ptr)
     {
-        ChunkVector::const_iterator end = m_chunks.end();
-        for (ChunkVector::const_iterator it = m_chunks.begin(); it != end; ++it) {
+        for (typename Vector<OwnPtr<FreeListChunk> >::const_iterator it = m_chunks.begin(), end = m_chunks.end(); it != end; ++it) {
             FreeListChunk* chunk = static_cast<FreeListChunk*>(it->get());
             if (chunk->contains(ptr))
                 chunk->free(ptr);
@@ -62,8 +61,17 @@ public:
     }
 
 private:
+    // The initial size of allocated chunks; increases as necessary to
+    // satisfy large allocations. Mainly public for unit tests.
+    enum {
+        DefaultChunkSize = 16384
+    };
+
     PODFreeListArena()
-        : PODArena() { }
+        : m_current(0)
+        , m_currentChunkSize(DefaultChunkSize)
+    {
+    }
 
     void* allocate(size_t size)
     {
@@ -73,8 +81,7 @@ private:
             ptr = m_current->allocate(size);
             if (!ptr) {
                 // Check if we can allocate from other chunks' free list.
-                ChunkVector::const_iterator end = m_chunks.end();
-                for (ChunkVector::const_iterator it = m_chunks.begin(); it != end; ++it) {
+                for (typename Vector<OwnPtr<FreeListChunk> >::const_iterator it = m_chunks.begin(), end = m_chunks.end(); it != end; ++it) {
                     FreeListChunk* chunk = static_cast<FreeListChunk*>(it->get());
                     if (chunk->hasFreeList()) {
                         ptr = chunk->allocate(size);
@@ -141,6 +148,10 @@ private:
     private:
         FreeCell *m_freeList;
     };
+
+    FreeListChunk* m_current;
+    size_t m_currentChunkSize;
+    Vector<OwnPtr<FreeListChunk> > m_chunks;
 };
 
 } // namespace WebCore

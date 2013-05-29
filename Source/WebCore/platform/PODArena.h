@@ -44,18 +44,8 @@ namespace WebCore {
 
 class PODArena : public RefCounted<PODArena> {
 protected:
-    // The initial size of allocated chunks; increases as necessary to
-    // satisfy large allocations. Mainly public for unit tests.
-    enum {
-        DefaultChunkSize = 16384
-    };
-
     virtual ~PODArena() { }
     friend class WTF::RefCounted<PODArena>;
-
-    PODArena()
-        : m_current(0)
-        , m_currentChunkSize(DefaultChunkSize) { }
 
     // Returns the alignment requirement for classes and structs on the
     // current platform.
@@ -112,10 +102,6 @@ protected:
         size_t m_size;
         size_t m_currentOffset;
     };
-
-    Chunk* m_current;
-    size_t m_currentChunkSize;
-    Vector<OwnPtr<Chunk> > m_chunks;
 };
 
 } // namespace WebCore
