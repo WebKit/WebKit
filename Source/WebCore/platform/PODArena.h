@@ -43,32 +43,13 @@ namespace WebCore {
 // destructors.
 
 class PODArena : public RefCounted<PODArena> {
-public:
-    // Creates a new PODArena configured with a FastMallocAllocator.
-    static PassRefPtr<PODArena> create()
-    {
-        return adoptRef(new PODArena);
-    }
-
-    // Allocates an object from the arena.
-    template<class T> T* allocateObject()
-    {
-        return new (allocateBase<T>()) T();
-    }
-
-    // Allocates an object from the arena, calling a single-argument constructor.
-    template<class T, class Argument1Type> T* allocateObject(const Argument1Type& argument1)
-    {
-        return new (allocateBase<T>()) T(argument1);
-    }
-
+protected:
     // The initial size of allocated chunks; increases as necessary to
     // satisfy large allocations. Mainly public for unit tests.
     enum {
         DefaultChunkSize = 16384
     };
 
-protected:
     virtual ~PODArena() { }
     friend class WTF::RefCounted<PODArena>;
 
@@ -81,23 +62,6 @@ protected:
     template <class T> static size_t minAlignment()
     {
         return WTF_ALIGN_OF(T);
-    }
-
-    template<class T> void* allocateBase()
-    {
-        void* ptr = 0;
-        size_t roundedSize = roundUp(sizeof(T), minAlignment<T>());
-        if (m_current)
-            ptr = m_current->allocate(roundedSize);
-
-        if (!ptr) {
-            if (roundedSize > m_currentChunkSize)
-                m_currentChunkSize = roundedSize;
-            m_chunks.append(adoptPtr(new Chunk(m_currentChunkSize)));
-            m_current = m_chunks.last().get();
-            ptr = m_current->allocate(roundedSize);
-        }
-        return ptr;
     }
 
     // Rounds up the given allocation size to the specified alignment.
