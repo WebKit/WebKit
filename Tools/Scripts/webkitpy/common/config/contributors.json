@@ -626,6 +626,17 @@
             "drott"
          ]
       },
+      "Dongseong Hwang" : {
+         "emails" : [
+            "dongseong.hwang@intel.com",
+            "luxtella@gmail.com",
+            "luxtella@company100.net"
+         ],
+         "expertise" : "Accelerated Compositing, Canvas, CSS Shaders",
+         "nicks" : [
+            "dshwang"
+         ]
+      },
       "Dongwoo Joshua Im" : {
          "emails" : [
             "dw.im@samsung.com",
@@ -2500,14 +2511,6 @@
          ],
          "nicks" : [
             "reveman"
-         ]
-      },
-      "Dongsung Huang" : {
-         "emails" : [
-            "luxtella@company100.net"
-         ],
-         "nicks" : [
-            "Huang"
          ]
       },
       "Douglas Davidson" : {

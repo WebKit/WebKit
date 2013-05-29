@@ -1,3 +1,9 @@
+2013-05-29  Dongseong Hwang  <dongseong.hwang@intel.com>
+
+        Unreviewed. Add myself as committer in contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
