@@ -58,8 +58,8 @@ WidgetHierarchyUpdatesSuspensionScope::WidgetToParentMap& WidgetHierarchyUpdates
 
 void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
 {
-    WidgetToParentMap map = widgetNewParentMap();
-    widgetNewParentMap().clear();
+    WidgetToParentMap map;
+    widgetNewParentMap().swap(map);
     WidgetToParentMap::iterator end = map.end();
     for (WidgetToParentMap::iterator it = map.begin(); it != end; ++it) {
         Widget* child = it->key.get();

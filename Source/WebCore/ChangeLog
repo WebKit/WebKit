@@ -1,3 +1,18 @@
+2013-05-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make WidgetHierarchyUpdatesSuspensionScope use swap instead of copy
+        https://bugs.webkit.org/show_bug.cgi?id=116927
+
+        Reviewed by Andreas Kling.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/1d577e1fd5c5716a06e4007e04fc3d9d0a88f5e4
+
+        This is equivalent behavior code that is unambiguously better performance. swap is O(1) time and memory,
+        copying a hash table is at least linear with the number of elements.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::WidgetHierarchyUpdatesSuspensionScope::moveWidgets):
+
 2013-05-29  Andreas Kling  <akling@apple.com>
 
         Remove Document::nodeAbsIndex() and Document::nodeWithAbsIndex().
