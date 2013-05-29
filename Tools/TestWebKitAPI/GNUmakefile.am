@@ -121,6 +121,9 @@ WebCoreLayer.a: $(webcore_layer_deps)
 	$(AM_V_GEN)
 	$(AM_V_at)$(foreach archive, $(webcore_layer_archives), $(shell ar t $(archive) | xargs -n50 ar cruT $@))
 
+DISTCLEANFILES += \
+	$(top_builddir)/WebCoreLayer.a
+
 Programs_TestWebKitAPI_TestWebCore_CPPFLAGS = \
 	$(Libraries_libTestWebKitAPIMain_la_CPPFLAGS) \
 	-I$(top_builddir)/DerivedSources/WebCore/include

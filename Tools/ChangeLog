@@ -1,3 +1,10 @@
+2013-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * TestWebKitAPI/GNUmakefile.am: Add WebCoreLayer.a to
+        DISTCLEANFILES.
+
 2013-05-29  Mary Wu  <mawu@blackberry.com>
 
         Unreviewed: update my email address in contributors.json.

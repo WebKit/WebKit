@@ -1,3 +1,9 @@
+2013-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add WebCoreLayerGtk2.a to DISTCLEANFILES.
+
 2013-05-29  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [GTK] Clean up WebKit2 GNUmakefile.am

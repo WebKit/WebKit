@@ -1,3 +1,10 @@
+2013-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add WebKitFeatures.h and WebKitFeatures.txt to
+        DISTCLEANFILES.
+
 2013-05-26  Jon Lee  <jonlee@apple.com>
 
         [WK2] Notifications clobber each other with multiple processes

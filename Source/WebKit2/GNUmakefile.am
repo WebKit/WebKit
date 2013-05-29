@@ -587,6 +587,9 @@ WebCoreLayerGtk2.a: $(webcore_layer_gtk2_deps)
 	$(AM_V_GEN)
 	$(AM_V_at)$(foreach archive, $(webcore_layer_gtk2_archives), $(shell ar t $(archive) | xargs -n50 ar cruT $@))
 
+DISTCLEANFILES += \
+	$(top_builddir)/WebCoreLayerGtk2.a
+
 Programs_WebKitPluginProcess_CPPFLAGS = \
 	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \
 	-I$(srcdir)/Source/WebKit2 \

@@ -227,7 +227,9 @@ BUILT_SOURCES += \
 DISTCLEANFILES += \
 	$(CLEANFILES) \
 	$(builddir)/doltcompile \
-	$(builddir)/doltlibtool
+	$(builddir)/doltlibtool \
+	$(builddir)/WebKitFeatures.h \
+	$(builddir)/WebKitFeatures.txt
 
 MAINTAINERCLEANFILES += \
 	$(CLEANFILES) \
