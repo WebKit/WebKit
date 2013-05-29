@@ -1,3 +1,15 @@
+2013-05-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Build correction after r150837
+
+        New 'forms' sub-folder of html needs to be included in
+        copy operations.
+
+        * WebCore.vcproj/copyForwardingHeaders.cmd: copy html/forms.
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj.filters: Use correct
+        'obj32' folder for build output.
+        * WebCore.vcxproj/copyForwardingHeaders.cmd: copy html/forms.
+
 2013-05-29  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Radio Button UX updates.
