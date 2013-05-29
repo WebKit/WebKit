@@ -133,7 +133,6 @@ static String configPage()
     page += numberToHTMLTr("shouldReportLowMemoryToUser", settings->shouldReportLowMemoryToUser());
     page += numberToHTMLTr("numberOfBackingStoreFrontBuffers", settings->numberOfBackingStoreFrontBuffers()));
     page += numberToHTMLTr("numberOfBackingStoreBackBuffers", settings->numberOfBackingStoreBackBuffers()));
-    page += numberToHTMLTr("maximumNumberOfBacking...AcrossProcesses", settings->maximumNumberOfBackingStoreTilesAcrossProcesses());
     page += numberToHTMLTr("tabsSupportedByClient", settings->tabsSupportedByClient());
     page += numberToHTMLTr("contextMenuEnabled", settings->contextMenuEnabled());
     page += numberToHTMLTr("selectionEnabled", settings->selectionEnabled());

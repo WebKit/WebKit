@@ -33,8 +33,6 @@
 #include <EGL/eglext.h>
 #endif
 
-#define SHARED_PIXMAP_GROUP "webkit_backingstore_group"
-
 namespace BlackBerry {
 namespace WebKit {
 
@@ -72,16 +70,6 @@ void SurfacePool::initialize(const Platform::IntSize& tileSize)
     m_initialized = true;
 
     m_numberOfFrontBuffers = Platform::Settings::instance()->numberOfBackingStoreFrontBuffers();
-    const unsigned maxNumberOfTiles = Platform::Settings::instance()->maximumNumberOfBackingStoreTilesAcrossProcesses();
-
-    if (m_numberOfFrontBuffers) { // Only allocate if we actually use a backingstore.
-        unsigned byteLimit = maxNumberOfTiles * tileSize.width() * tileSize.height() * 4;
-        bool success = Platform::Graphics::createPixmapGroup(SHARED_PIXMAP_GROUP, byteLimit);
-        if (!success) {
-            Platform::logAlways(Platform::LogLevelWarn,
-                "Shared buffer pool could not be set up, using regular memory allocation instead.");
-        }
-    }
 
     if (!m_numberOfFrontBuffers)
         return; // We completely disable tile rendering when 0 tiles are specified.
@@ -154,11 +142,6 @@ void SurfacePool::addBackBuffer(TileBuffer* tileBuffer)
     ASSERT(tileBuffer);
     tileBuffer->clearRenderedRegion();
     m_availableBackBufferPool.append(tileBuffer);
-}
-
-const char *SurfacePool::sharedPixmapGroup() const
-{
-    return SHARED_PIXMAP_GROUP;
 }
 
 void SurfacePool::createBuffers()

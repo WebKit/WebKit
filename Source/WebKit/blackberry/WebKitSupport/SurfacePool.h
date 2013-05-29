@@ -52,8 +52,6 @@ public:
     TileBuffer* takeBackBuffer();
     void addBackBuffer(TileBuffer*);
 
-    const char *sharedPixmapGroup() const;
-
     void releaseBuffers();
     void createBuffers();
 

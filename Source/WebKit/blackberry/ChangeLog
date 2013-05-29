@@ -1,3 +1,24 @@
+2013-05-29  Jakob Petsovits  <jpetsovits@blackberry.com>
+
+        [BlackBerry] Use lazily-backed backingstore tiles
+        https://bugs.webkit.org/show_bug.cgi?id=116879
+        Internal PR 344523
+
+        Reviewed by Carlos Garcia Campos.
+        Informally reviewed by Arvid Nilsson and Mike Lattanzio.
+
+        As a consequence, also don't use fixed-size
+        shared pixmap buffers for these tiles anymore.
+
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::configPage):
+        * WebKitSupport/BackingStoreTile.cpp:
+        (BlackBerry::WebKit::TileBuffer::nativeBuffer):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::initialize):
+        * WebKitSupport/SurfacePool.h:
+        (SurfacePool):
+
 2013-05-29  Kent Tamura  <tkent@chromium.org>
 
         Remove ENABLE_INPUT_MULTIPLE_FIELDS_UI.
