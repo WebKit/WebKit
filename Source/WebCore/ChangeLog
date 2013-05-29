@@ -1,3 +1,10 @@
+2013-05-29  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; remove unintentional semicolon.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::finish):
+
 2013-05-29  Anders Carlsson  <andersca@apple.com>
 
         Merge PODArea::Chunk into PODFreeListArena::FreeListChunk

@@ -181,7 +181,7 @@ void AudioScheduledSourceNode::finish()
         context()->decrementActiveSourceCount();
     }
 
-    if (m_hasEndedListener);
+    if (m_hasEndedListener)
         callOnMainThread(&AudioScheduledSourceNode::notifyEndedDispatch, this);
 }
 
