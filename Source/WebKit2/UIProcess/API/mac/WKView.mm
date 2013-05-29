@@ -236,6 +236,8 @@ struct WKViewInterpretKeyEventsParameters {
     
     NSSize _intrinsicContentSize;
     BOOL _clipsToVisibleRect;
+    NSRect _contentPreparationRect;
+    BOOL _useContentPreparationRectForVisibleRect;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     BOOL _isWindowOccluded;
@@ -392,6 +394,24 @@ struct WKViewInterpretKeyEventsParameters {
     return _data->_intrinsicContentSize;
 }
 
+- (void)prepareContentInRect:(NSRect)rect
+{
+    _data->_contentPreparationRect = rect;
+    _data->_useContentPreparationRectForVisibleRect = YES;
+
+    [self _updateViewExposedRect];
+}
+
+- (void)_updateViewExposedRect
+{
+    NSRect exposedRect = [self visibleRect];
+
+    if (_data->_useContentPreparationRectForVisibleRect)
+        exposedRect = NSUnionRect(_data->_contentPreparationRect, exposedRect);
+
+    _data->_page->viewExposedRectChanged(exposedRect);
+}
+
 - (void)setFrameSize:(NSSize)size
 {
     if (!NSEqualSizes(size, [self frame].size))
@@ -427,7 +447,7 @@ struct WKViewInterpretKeyEventsParameters {
 
     if (frameSizeUpdatesEnabled) {
         if (_data->_clipsToVisibleRect)
-            _data->_page->viewExposedRectChanged([self visibleRect]);
+            [self _updateViewExposedRect];
         [self _setDrawingAreaSize:size];
     }
 }
@@ -439,7 +459,7 @@ struct WKViewInterpretKeyEventsParameters {
     
     _data->_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
     if (_data->_clipsToVisibleRect)
-        _data->_page->viewExposedRectChanged([self visibleRect]);
+        [self _updateViewExposedRect];
 }
 
 - (void)renewGState
@@ -3067,6 +3087,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_mouseDownEvent = nil;
     _data->_ignoringMouseDraggedEvents = NO;
     _data->_clipsToVisibleRect = NO;
+    _data->_useContentPreparationRectForVisibleRect = NO;
 
     _data->_intrinsicContentSize = NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
 
@@ -3172,7 +3193,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     
     if (!(--_data->_frameSizeUpdatesDisabledCount)) {
         if (_data->_clipsToVisibleRect)
-            _data->_page->viewExposedRectChanged([self visibleRect]);
+            [self _updateViewExposedRect];
         [self _setDrawingAreaSize:[self frame].size];
     }
 }
@@ -3244,7 +3265,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_clipsToVisibleRect = clipsToVisibleRect;
 
     if (clipsToVisibleRect)
-        _data->_page->viewExposedRectChanged([self visibleRect]);
+        [self _updateViewExposedRect];
 
     _data->_page->setMainFrameIsScrollable(!clipsToVisibleRect);
 }
@@ -3365,7 +3386,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)forceAsyncDrawingAreaSizeUpdate:(NSSize)size
 {
     if (_data->_clipsToVisibleRect)
-        _data->_page->viewExposedRectChanged([self visibleRect]);
+        [self _updateViewExposedRect];
     [self _setDrawingAreaSize:size];
 
     // If a geometry update is pending the new update won't be sent. Poll without waiting for any
