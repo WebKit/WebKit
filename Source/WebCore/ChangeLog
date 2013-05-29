@@ -1,3 +1,45 @@
+2013-05-29  Andreas Kling  <akling@apple.com>
+
+        Move computed style extraction out of CSSComputedStyleDeclaration.
+        <http://webkit.org/b/116965>
+
+        Reviewed by Antti Koivisto.
+
+        Make it possible to get computed CSSValues from a Node without creating a CSSOM
+        style declaration object.
+
+        The bulk of the logic moves to a new class; ComputedStyleExtractor, which can be created
+        on the stack, and takes the same setup variables as CSSComputedStyleDeclaration.
+
+        This is prep to enable futuristic optimizations in editing and elsewhere.
+
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
+            Create a ComputedStyleExtractor to do the work!
+
+        (WebCore::ComputedStyleExtractor::currentColorOrValidColor):
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        (WebCore::ComputedStyleExtractor::ComputedStyleExtractor):
+        (WebCore::ComputedStyleExtractor::valueForShadow):
+        (WebCore::ComputedStyleExtractor::styledNode):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesForShorthandProperties):
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesForSidesShorthand):
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesForGridShorthand):
+        (WebCore::ComputedStyleExtractor::getBackgroundShorthandValue):
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::adjustSVGPaintForCurrentColor):
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+
+            Moved all of these from CSSComputedStyleDeclaration to the new class.
+
+        * rendering/style/RenderStyle.h:
+        * svg/SVGPaint.h:
+
+            Have these two befriend ComputedStyleExtractor.
+
 2013-05-29  Antti Koivisto  <antti@apple.com>
 
         Another attempt to fix windows build.
