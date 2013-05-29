@@ -1,3 +1,18 @@
+2013-05-29  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Datetime string is not centred in form controls.
+        https://bugs.webkit.org/show_bug.cgi?id=100760
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PR 343512
+        Internally Reviewed by Jeff Rogers.
+
+        Adjust margin for inner text node of datetime form controls.
+
+        * css/themeBlackBerry.css:
+        (input::-webkit-date-and-time-value):
+
 2013-05-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Build correction after r150876

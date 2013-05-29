@@ -111,3 +111,7 @@ input[type="date"], input[type="datetime"], input[type="datetime-local"], input[
     text-align: center;
     width:auto;
 }
+
+input::-webkit-date-and-time-value {
+    margin: 1px 6px 1px 6px;
+}
