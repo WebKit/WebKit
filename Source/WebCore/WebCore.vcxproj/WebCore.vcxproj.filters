@@ -3759,9 +3759,6 @@
     <ClCompile Include="..\html\BaseDateAndTimeInputType.cpp">
       <Filter>html</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\BaseMultipleFieldsDateAndTimeInputType.cpp">
-      <Filter>html</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\BaseTextInputType.cpp">
       <Filter>html</Filter>
     </ClCompile>
@@ -5197,9 +5194,6 @@
       <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\FontFallbackList.cpp">
-      <Filter>platform\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\FontFamily.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\FontFastPath.cpp">
@@ -7998,9 +7992,6 @@
     <ClInclude Include="..\platform\SuddenTermination.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\Theme.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\ThemeTypes.h">
       <Filter>platform</Filter>
     </ClInclude>
@@ -10608,9 +10599,6 @@
     <ClInclude Include="..\html\BaseDateAndTimeInputType.h">
       <Filter>html</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\BaseMultipleFieldsDateAndTimeInputType.h">
-      <Filter>html</Filter>
-    </ClInclude>
     <ClInclude Include="..\html\BaseTextInputType.h">
       <Filter>html</Filter>
     </ClInclude>
@@ -12677,9 +12665,6 @@
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\FontFallbackList.h">
-      <Filter>platform\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\FontFamily.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\FontFeatureSettings.h">

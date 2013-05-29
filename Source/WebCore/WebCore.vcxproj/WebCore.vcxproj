@@ -8306,7 +8306,6 @@
     <ClCompile Include="..\html\BaseCheckableInputType.cpp" />
     <ClCompile Include="..\html\BaseClickableWithKeyInputType.cpp" />
     <ClCompile Include="..\html\BaseDateAndTimeInputType.cpp" />
-    <ClCompile Include="..\html\BaseMultipleFieldsDateAndTimeInputType.cpp" />
     <ClCompile Include="..\html\BaseTextInputType.cpp" />
     <ClCompile Include="..\fileapi\Blob.cpp" />
     <ClCompile Include="..\fileapi\BlobURL.cpp" />
@@ -12616,7 +12615,6 @@
     <ClInclude Include="..\html\BaseCheckableInputType.h" />
     <ClInclude Include="..\html\BaseClickableWithKeyInputType.h" />
     <ClInclude Include="..\html\BaseDateAndTimeInputType.h" />
-    <ClInclude Include="..\html\BaseMultipleFieldsDateAndTimeInputType.h" />
     <ClInclude Include="..\html\BaseTextInputType.h" />
     <ClInclude Include="..\fileapi\Blob.h" />
     <ClInclude Include="..\fileapi\BlobURL.h" />

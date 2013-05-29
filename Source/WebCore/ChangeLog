@@ -1,3 +1,13 @@
+2013-05-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Build correction after r150876
+
+        A clean build will now fail because the BaseMultipleFieldsDateAndTimeInputType sources have
+        been removed, but are still referenced in the project file.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Remove reference to BaseMultipleFieldsDateAndTimeInputType
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto
+
 2013-05-28  Jer Noble  <jer.noble@apple.com>
 
         Support the 'onended' EventListener property for AudioBufferSourceNode and OscillatorNode.
