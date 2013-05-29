@@ -1,3 +1,23 @@
+2013-05-29  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        [BlackBerry] Notify client of selection deletion
+        https://bugs.webkit.org/show_bug.cgi?id=116843
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        PR342106
+        Our change guard was preventing caret change notification to be sent to IMF.
+        This put us out of state when a selection was deleted because it is not a simple
+        single character deletion. Ensure that selection deletions always send a caret
+        update.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::deleteSelection):
+        (BlackBerry::WebKit::InputHandler::deleteTextRelativeToCursor):
+        (BlackBerry::WebKit::InputHandler::deleteText):
+
 2013-05-29  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Use StringBuilder instead of + operator to build strings in AboutData

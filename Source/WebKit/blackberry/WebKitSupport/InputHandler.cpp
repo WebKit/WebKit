@@ -1892,7 +1892,11 @@ bool InputHandler::deleteSelection()
         return false;
 
     ASSERT(frame->editor());
-    return handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyDown, 0), false /* changeIsPartOfComposition */);
+    if (!handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyDown, 0), false /* changeIsPartOfComposition */))
+        return false;
+
+    selectionChanged();
+    return true;
 }
 
 void InputHandler::insertText(const WTF::String& string)
@@ -2189,8 +2193,6 @@ bool InputHandler::deleteTextRelativeToCursor(int leftOffset, int rightOffset)
     if (!isActiveTextEdit() || compositionActive())
         return false;
 
-    ProcessingChangeGuard guard(this);
-
     InputLog(Platform::LogLevelInfo,
         "InputHandler::deleteTextRelativeToCursor left %d right %d",
         leftOffset, rightOffset);
@@ -2201,10 +2203,15 @@ bool InputHandler::deleteTextRelativeToCursor(int leftOffset, int rightOffset)
 
     // If we have backspace in a single character, send this to webkit as a KeyboardEvent. Otherwise, call deleteText.
     if (leftOffset == 1 && !rightOffset) {
+        if (selectionActive())
+            return deleteSelection();
+
         if (!handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */))
             return false;
     } else if (!deleteText(start, end))
         return false;
+
+    ProcessingChangeGuard guard(this);
 
     // Scroll the field if necessary. The automatic update is suppressed
     // by the processing change guard.
@@ -2218,13 +2225,15 @@ bool InputHandler::deleteText(int start, int end)
     if (!isActiveTextEdit())
         return false;
 
-    ProcessingChangeGuard guard(this);
+    {
+        ProcessingChangeGuard guard(this);
 
-    if (end - start == 1)
-        return handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */);
+        if (end - start == 1)
+            return handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */);
 
-    if (!setSelection(start, end, true /*changeIsPartOfComposition*/))
-        return false;
+        if (!setSelection(start, end, true /*changeIsPartOfComposition*/))
+            return false;
+    }
 
     InputLog(Platform::LogLevelInfo, "InputHandler::deleteText start %d end %d", start, end);
 
