@@ -59,13 +59,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void ChildProcess::setProcessSuppressionEnabled(bool processSuppressionEnabled)
+static const double kSuspensionHysteresisSeconds = 5.0;
+
+void ChildProcess::setProcessSuppressionEnabledInternal(bool processSuppressionEnabled)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (this->processSuppressionEnabled() == processSuppressionEnabled)
         return;
 
     if (processSuppressionEnabled) {
+        ASSERT(!m_activeTaskCount);
         [[NSProcessInfo processInfo] endActivity:m_processSuppressionAssertion.get()];
         m_processSuppressionAssertion.clear();
     } else {
@@ -75,6 +78,47 @@ void ChildProcess::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 #else
     UNUSED_PARAM(processSuppressionEnabled);
 #endif
+}
+
+void ChildProcess::setProcessSuppressionEnabled(bool processSuppressionEnabled)
+{
+    if (this->processSuppressionEnabled() == processSuppressionEnabled)
+        return;
+    if (m_shouldSuspend == processSuppressionEnabled)
+        return;
+    m_shouldSuspend = processSuppressionEnabled;
+    if (m_shouldSuspend) {
+        if (!m_activeTaskCount)
+            m_suspensionHysteresisTimer.startOneShot(kSuspensionHysteresisSeconds);
+        return;
+    }
+    setProcessSuppressionEnabledInternal(false);
+}
+
+void ChildProcess::incrementActiveTaskCount()
+{
+    m_activeTaskCount++;
+    if (m_suspensionHysteresisTimer.isActive())
+        m_suspensionHysteresisTimer.stop();
+    if (m_activeTaskCount)
+        setProcessSuppressionEnabledInternal(false);
+}
+
+void ChildProcess::decrementActiveTaskCount()
+{
+    ASSERT(m_activeTaskCount);
+    m_activeTaskCount--;
+    if (m_activeTaskCount)
+        return;
+    if (m_shouldSuspend)
+        m_suspensionHysteresisTimer.startOneShot(kSuspensionHysteresisSeconds);
+}
+
+void ChildProcess::suspensionHysteresisTimerFired()
+{
+    ASSERT(!m_activeTaskCount);
+    ASSERT(m_shouldSuspend);
+    setProcessSuppressionEnabledInternal(true);
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090

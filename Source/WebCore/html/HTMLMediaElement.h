@@ -59,10 +59,11 @@ class MediaElementAudioSourceNode;
 class Event;
 class HTMLSourceElement;
 class HTMLTrackElement;
+class KURL;
 class MediaController;
 class MediaControls;
 class MediaError;
-class KURL;
+class PageThrottler;
 class TimeRanges;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Widget;
@@ -754,6 +755,9 @@ private:
     String m_mediaGroup;
     friend class MediaController;
     RefPtr<MediaController> m_mediaController;
+
+    PageThrottler* pageThrottlerIfPossible();
+    RefPtr<PageThrottler> m_pageThrottler;
 
 #if PLATFORM(MAC)
     OwnPtr<DisplaySleepDisabler> m_sleepDisabler;

@@ -5232,6 +5232,9 @@
     <ClCompile Include="..\page\PageSerializer.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\PageThrottler.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\PageVisibilityState.cpp">
       <Filter>page</Filter>
     </ClCompile>

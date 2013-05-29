@@ -27578,7 +27578,7 @@
 				RelativePath="..\page\Page.cpp"
 				>
 			</File>
-                        <File
+             <File
 				RelativePath="..\page\PageConsole.cpp"
 				>
 			</File>
@@ -27608,6 +27608,14 @@
 			</File>
 			<File
 				RelativePath="..\page\PageSerializer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PageThrottler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PageThrottler.h"
 				>
 			</File>
 			<File

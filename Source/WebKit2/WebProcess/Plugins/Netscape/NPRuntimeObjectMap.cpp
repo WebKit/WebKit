@@ -41,6 +41,8 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/Frame.h>
+#include <WebCore/Page.h>
+#include <WebCore/PageThrottler.h>
 #include <WebCore/ScriptController.h>
 
 using namespace JSC;
@@ -49,8 +51,9 @@ using namespace WebCore;
 namespace WebKit {
 
 
-NPRuntimeObjectMap::NPRuntimeObjectMap(PluginView* pluginView)
+NPRuntimeObjectMap::NPRuntimeObjectMap(PluginView* pluginView, PageThrottler* pageThrottler)
     : m_pluginView(pluginView)
+    , m_pageThrottler(pageThrottler)
     , m_finalizationTimer(RunLoop::main(), this, &NPRuntimeObjectMap::invalidateQueuedObjects)
 {
 }
@@ -182,6 +185,7 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
 
 bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
 {
+    m_pageThrottler->reportInterestingEvent();
     Strong<JSGlobalObject> globalObject(this->globalObject()->vm(), this->globalObject());
     if (!globalObject)
         return false;

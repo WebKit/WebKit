@@ -183,7 +183,6 @@ void MediaController::unpause()
     // When the unpause() method is invoked, if the MediaController is a paused media controller,
     if (!m_paused)
         return;
-
     // the user agent must change the MediaController into a playing media controller,
     m_paused = false;
     // queue a task to fire a simple event named play at the MediaController,

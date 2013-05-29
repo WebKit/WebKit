@@ -1,3 +1,71 @@
+2013-05-28  Oliver Hunt  <oliver@apple.com>
+
+        Add more accurate activity state tracking
+        https://bugs.webkit.org/show_bug.cgi?id=116893
+
+        Reviewed by Gavin Barraclough.
+
+        Add a hysteresis to Page activity throttling.  We do this
+        through a PageThrottler class that now handles entering and
+        exiting throttling state, and adds a hysteresis to we can
+        limit the amount of on/off bouncing on the throttle.
+
+        Media elements now make use of this to disable timer throttling
+        while they are playing, and plugins use it to momentarily bounce
+        from throttled to unthrottled state.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::pageThrottlerIfPossible):
+        (WebCore):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        * html/HTMLMediaElement.h:
+        (WebCore):
+        * html/MediaController.cpp:
+        (MediaController::unpause):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::incrementActivePageCount):
+        (WebCore::ChromeClient::decrementActivePageCount):
+        (ChromeClient):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::setThrottled):
+        * page/Page.h:
+        (WebCore):
+        (Page):
+        (WebCore::Page::pageThrottler):
+        * page/PageThrottleState.h: Added.
+        * page/PageThrottler.cpp: Added.
+        (WebCore):
+        (WebCore::PageThrottler::PageThrottler):
+        (WebCore::PageThrottler::~PageThrottler):
+        (WebCore::PageThrottler::clearPage):
+        (WebCore::PageThrottler::throttlePage):
+        (WebCore::PageThrottler::unthrottlePage):
+        (WebCore::PageThrottler::setThrottled):
+        (WebCore::PageThrottler::preventThrottling):
+        (WebCore::PageThrottler::allowThrottling):
+        (WebCore::PageThrottler::stopThrottleHysteresisTimer):
+        (WebCore::PageThrottler::reportInterestingEvent):
+        (WebCore::PageThrottler::startThrottleHysteresisTimer):
+        (WebCore::PageThrottler::throttleHysteresisTimerFired):
+        * page/PageThrottler.h: Added.
+        (WebCore):
+        (PageThrottler):
+        (WebCore::PageThrottler::create):
+        (WebCore::PageThrottler::shouldThrottleAnimations):
+        (WebCore::PageThrottler::shouldThrottleTimers):
+
 2013-05-29  Kent Tamura  <tkent@chromium.org>
 
         Remove leftover files for ENABLE_PAGE_POPUP and ENABLE_CALENDAR_PICKER

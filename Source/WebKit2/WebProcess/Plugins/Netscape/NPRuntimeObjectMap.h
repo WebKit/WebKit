@@ -45,6 +45,10 @@ namespace JSC {
     class JSValue;
 }
 
+namespace WebCore {
+    class PageThrottler;
+}
+
 namespace WebKit {
 
 class JSNPObject;
@@ -54,7 +58,7 @@ class PluginView;
 // A per plug-in map of NPObjects that wrap JavaScript objects.
 class NPRuntimeObjectMap : private JSC::WeakHandleOwner {
 public:
-    explicit NPRuntimeObjectMap(PluginView*);
+    explicit NPRuntimeObjectMap(PluginView*, WebCore::PageThrottler*);
 
     class PluginProtector {
     public:
@@ -95,7 +99,7 @@ private:
     void invalidateQueuedObjects();
 
     PluginView* m_pluginView;
-
+    RefPtr<WebCore::PageThrottler> m_pageThrottler;
     HashMap<JSC::JSObject*, NPJSObject*> m_npJSObjects;
     HashMap<NPObject*, JSC::Weak<JSNPObject>> m_jsNPObjects;
     Vector<NPObject*> m_npObjectsToFinalize;

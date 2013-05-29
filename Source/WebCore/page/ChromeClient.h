@@ -362,6 +362,12 @@ public:
     virtual void didAddHeaderLayer(GraphicsLayer*) { }
     virtual void didAddFooterLayer(GraphicsLayer*) { }
 
+    // These methods are used to report pages that are performing
+    // some task that we consider to be "active", and so the user
+    // would likely want the page to remain running uninterrupted.
+    virtual void incrementActivePageCount() { }
+    virtual void decrementActivePageCount() { }
+
 protected:
     virtual ~ChromeClient() { }
 };

@@ -62,10 +62,15 @@ public:
     void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
 
 #if PLATFORM(MAC)
-    bool processSuppressionEnabled() const { return !m_processSuppressionAssertion; }
     void setProcessSuppressionEnabled(bool);
+    bool processSuppressionEnabled() const { return !m_processSuppressionAssertion; }
+    void incrementActiveTaskCount();
+    void decrementActiveTaskCount();
 
     void setApplicationIsDaemon();
+#else
+    void incrementActiveTaskCount() { }
+    void decrementActiveTaskCount() { }
 #endif
 
     CoreIPC::Connection* parentProcessConnection() const { return m_connection.get(); }
@@ -109,6 +114,11 @@ private:
     CoreIPC::MessageReceiverMap m_messageReceiverMap;
 
 #if PLATFORM(MAC)
+    void suspensionHysteresisTimerFired();
+    void setProcessSuppressionEnabledInternal(bool);
+    size_t m_activeTaskCount;
+    bool m_shouldSuspend;
+    WebCore::RunLoop::Timer<ChildProcess> m_suspensionHysteresisTimer;
     RetainPtr<id> m_processSuppressionAssertion;
 #endif
 };
