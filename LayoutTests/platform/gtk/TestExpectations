@@ -634,7 +634,10 @@ webkit.org/b/114735 fast/dynamic/window-resize-scrollbars-test.html [ Failure Pa
 webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 webkit.org/b/114735 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure Pass ]
 
-webkit.org/b/115630  fast/images/support-broken-image-delegate.html [ Failure Pass ]
+webkit.org/b/115630 fast/images/support-broken-image-delegate.html [ Failure Pass ]
+
+webkit.org/b/116960 perf/adding-radio-buttons.html [ Failure Pass ]
+webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

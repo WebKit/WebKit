@@ -1,6 +1,13 @@
 2013-05-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
+        Adding flaky failure expectations for two perf/ layout tests.
+
+        * platform/gtk/TestExpectations:
+
+2013-05-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
 
         * platform/gtk-wk1/TestExpectations: Remove an unnecessary expectation.
         * platform/gtk/TestExpectations: Add timeout expectations for tests that are currently timing out.
