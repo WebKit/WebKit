@@ -292,9 +292,6 @@ void AnimationControllerPrivate::resumeAnimations()
 
 void AnimationControllerPrivate::suspendAnimationsForDocument(Document* document)
 {
-    if (isSuspended())
-        return;
-
     setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
 
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
@@ -311,9 +308,6 @@ void AnimationControllerPrivate::suspendAnimationsForDocument(Document* document
 
 void AnimationControllerPrivate::resumeAnimationsForDocument(Document* document)
 {
-    if (!isSuspended())
-        return;
-
     setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
 
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();

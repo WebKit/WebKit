@@ -1,3 +1,17 @@
+2013-05-28  Dean Jackson  <dino@apple.com>
+
+        Animations do not restart after exiting page cache
+        https://bugs.webkit.org/show_bug.cgi?id=116900
+
+        Reviewed by Tim Horton.
+
+        New test to make sure an animation will resume if it
+        enters and leaves the page cache.
+
+        * animations/resources/page-cache-helper.html: Added.
+        * animations/resume-after-page-cache-expected.txt: Added.
+        * animations/resume-after-page-cache.html: Added.
+
 2013-05-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Silence last crash to get bots green.
