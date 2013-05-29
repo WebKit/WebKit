@@ -1,5 +1,12 @@
 2013-05-29  Andreas Kling  <akling@apple.com>
 
+        Fix dumb typo in r150879.
+
+        * editing/htmlediting.cpp:
+        (WebCore::nextLeafNode):
+
+2013-05-29  Andreas Kling  <akling@apple.com>
+
         Move leaf Node traversal helpers to htmlediting.cpp
         <http://webkit.org/b/116940>
 

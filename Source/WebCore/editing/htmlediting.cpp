@@ -843,7 +843,7 @@ Node* previousLeafNode(const Node* node)
 Node* nextLeafNode(const Node* node)
 {
     Node* n = nextNodeConsideringAtomicNodes(node);
-    while (node) {
+    while (n) {
         if (isAtomicNode(n))
             return n;
         n = nextNodeConsideringAtomicNodes(n);
