@@ -58,7 +58,6 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TiledBacking.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CSS_FILTERS)
@@ -1978,6 +1977,8 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     if (m_owningLayer->containsDirtyOverlayScrollbars())
         m_owningLayer->paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
 
+    compositor()->didPaintBacking(this);
+
     ASSERT(!m_owningLayer->m_usedTransparency);
 }
 
@@ -2017,9 +2018,6 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         paintIntoLayer(graphicsLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase);
-
-        if (m_usingTiledCacheLayer)
-            renderer()->frame()->view()->setLastPaintTime(currentTime());
 
         InspectorInstrumentation::didPaint(renderer(), &context, clip);
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {

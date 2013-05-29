@@ -1,3 +1,35 @@
+2013-05-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the firing of m_paintRelatedMilestonesTimer
+        https://bugs.webkit.org/show_bug.cgi?id=116919
+
+        Reviewed by Tim Horton.
+
+        r150671 intended to change things so that paint-related milestones
+        only fire when painting has actually happened, so that WebKit clients
+        are notified when we actually have bits to present.
+        
+        However, it made an incorrect assumption that painting would happen
+        inside of flushCompositingState(). This is not the case; flushCompositingState()
+        will just dirty CALayers, and later on Core Animation will ask us to paint them.
+        
+        This incorrect assumption meant that we would never start the
+        m_paintRelatedMilestonesTimer, so never fire the milestones.
+        
+        Fix by starting the m_paintRelatedMilestonesTimer via the RenderLayerBacking
+        paintContents call back. At this time we know we're painting, so we can both
+        set the FrameView's last paint time, and start up the timer. We also only
+        want to start the timer if there are pending milestones.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::didPaintBacking):
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2013-05-29  Antti Koivisto  <antti@apple.com>
 
         Share FontGlyphs
