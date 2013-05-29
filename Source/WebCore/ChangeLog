@@ -1,3 +1,24 @@
+2013-05-29  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Mouse over an element does not trigger :hover state for parent when the element is flowed in a region
+        https://bugs.webkit.org/show_bug.cgi?id=111749
+
+        Reviewed by Antti Koivisto.
+
+        When searching for the hover ancestor and encountering a named flow thread,
+        the search will continue with the DOM ancestor of the top-most element
+        in the named flow thread.
+
+        Tests: fast/regions/hover-in-region-grandparent.html
+               fast/regions/hover-in-region-parent-skip.html
+               fast/regions/hover-in-region-parent-skip-inlines-anonymous.html
+               fast/regions/hover-on-child-in-region.html
+               fast/regions/hover-on-child-in-region-in-region.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hoverAncestor):
+        * rendering/RenderObject.h:
+
 2013-05-28  Nate Chapin  <japhet@chromium.org>
 
         Crash in WebCore::SubresourceLoader::releaseResources when connection fails

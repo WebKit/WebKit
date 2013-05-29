@@ -1,3 +1,21 @@
+2013-05-29  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Mouse over an element does not trigger :hover state for parent when the element is flowed in a region
+        https://bugs.webkit.org/show_bug.cgi?id=111749
+
+        Reviewed by Antti Koivisto.
+
+        * fast/regions/hover-in-region-grandparent-expected.txt: Added.
+        * fast/regions/hover-in-region-grandparent.html: Added.
+        * fast/regions/hover-in-region-parent-skip-expected.txt: Added.
+        * fast/regions/hover-in-region-parent-skip.html: Added.
+        * fast/regions/hover-in-region-parent-skip-inlines-anonymous-expected.txt: Added.
+        * fast/regions/hover-in-region-parent-skip-inlines-anonymous.html: Added.
+        * fast/regions/hover-on-child-in-region-expected.txt: Added.
+        * fast/regions/hover-on-child-in-region.html: Added.
+        * fast/regions/hover-on-child-in-region-in-region-expected.txt: Added.
+        * fast/regions/hover-on-child-in-region-in-region.html: Added.
+
 2013-05-28  Dean Jackson  <dino@apple.com>
 
         Animations do not restart after exiting page cache

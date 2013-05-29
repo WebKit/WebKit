@@ -658,7 +658,7 @@ public:
     // is true if the renderer returned is an ancestor of repaintContainer.
     RenderObject* container(const RenderLayerModelObject* repaintContainer = 0, bool* repaintContainerSkipped = 0) const;
 
-    virtual RenderObject* hoverAncestor() const { return parent(); }
+    virtual RenderObject* hoverAncestor() const;
 
     RenderBoxModelObject* offsetParent() const;
 
