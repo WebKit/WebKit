@@ -1,2 +1,3 @@
 module QtWebKit
 plugin qmlwebkitplugin
+typeinfo plugins.qmltypes
