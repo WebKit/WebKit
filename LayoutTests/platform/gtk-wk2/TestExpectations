@@ -476,8 +476,8 @@ Bug(GTK) editing/selection/context-menu-text-selection.html [ Failure Pass ]
 Bug(GTK) editing/spelling/context-menu-suggestions.html [ Failure ]
 
 # EventSender's contextClick should return objects that implements click() method
-webkit.org/b/98410 editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
-webkit.org/b/98410 media/context-menu-actions.html [ Failure ]
+webkit.org/b/98410 editing/pasteboard/copy-standalone-image-crash.html [ Timeout ]
+webkit.org/b/98410 media/context-menu-actions.html [ Timeout ]
 
 # An oncontextmenu attribute is not called.
 Bug(GTK) editing/spelling/spellcheck-input-search-crash.html [ Failure ]

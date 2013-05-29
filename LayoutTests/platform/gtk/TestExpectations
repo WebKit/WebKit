@@ -639,6 +639,12 @@ webkit.org/b/115630 fast/images/support-broken-image-delegate.html [ Failure Pas
 webkit.org/b/116960 perf/adding-radio-buttons.html [ Failure Pass ]
 webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 
+webkit.org/b/116975 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure Pass ]
+
+webkit.org/b/116976 media/video-played-collapse.html [ Failure Pass ]
+
+webkit.org/b/116977 media/event-attributes.html [ Failure Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
