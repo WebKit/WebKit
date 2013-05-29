@@ -1,3 +1,15 @@
+2013-05-29  Adam Barth  <abarth@webkit.org>
+
+        Optimize RenderText::offsetNext for 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=116877
+
+        Reviewed by Darin Adler.
+
+        Test that caret movement works correctly for many code points.
+
+        * editing/selection/move-by-character-brute-force-expected.txt: Added.
+        * editing/selection/move-by-character-brute-force.html: Added.
+
 2013-05-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening, managing media layout tests failures on GTK WK2.
