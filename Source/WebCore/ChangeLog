@@ -1,5 +1,21 @@
 2013-05-29  Anders Carlsson  <andersca@apple.com>
 
+        Merge PODArea::Chunk into PODFreeListArena::FreeListChunk
+        https://bugs.webkit.org/show_bug.cgi?id=117000
+
+        Reviewed by Oliver Hunt.
+
+        * platform/PODArena.h:
+        (WebCore::PODArena::roundUp):
+        * platform/PODFreeListArena.h:
+        (PODFreeListArena):
+        (WebCore::PODFreeListArena::FreeListChunk::FreeListChunk):
+        (FreeListChunk):
+        (WebCore::PODFreeListArena::FreeListChunk::~FreeListChunk):
+        (WebCore::PODFreeListArena::FreeListChunk::allocate):
+
+2013-05-29  Anders Carlsson  <andersca@apple.com>
+
         Move some PODArena members to PODFreeListArena
         https://bugs.webkit.org/show_bug.cgi?id=116993
 

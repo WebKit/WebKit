@@ -60,48 +60,6 @@ protected:
         ASSERT(!(alignment % 2));
         return (size + alignment - 1) & ~(alignment - 1);
     }
-
-    // Manages a chunk of memory and individual allocations out of it.
-    class Chunk {
-        WTF_MAKE_NONCOPYABLE(Chunk);
-    public:
-        // Allocates a block of memory of the given size from the passed
-        // Allocator.
-        Chunk(size_t size)
-            : m_size(size)
-            , m_currentOffset(0)
-        {
-            m_base = static_cast<uint8_t*>(fastMalloc(size));
-        }
-
-        // Frees the memory allocated from the Allocator in the
-        // constructor.
-        virtual ~Chunk()
-        {
-            fastFree(m_base);
-        }
-
-        // Returns a pointer to "size" bytes of storage, or 0 if this
-        // Chunk could not satisfy the allocation.
-        void* allocate(size_t size)
-        {
-            // Check for overflow
-            if (m_currentOffset + size < m_currentOffset)
-                return 0;
-
-            if (m_currentOffset + size > m_size)
-                return 0;
-
-            void* result = m_base + m_currentOffset;
-            m_currentOffset += size;
-            return result;
-        }
-
-    protected:
-        uint8_t* m_base;
-        size_t m_size;
-        size_t m_currentOffset;
-    };
 };
 
 } // namespace WebCore

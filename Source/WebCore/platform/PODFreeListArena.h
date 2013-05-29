@@ -33,8 +33,6 @@ namespace WebCore {
 template <class T>
 class PODFreeListArena : public PODArena {
 public:
-    typedef Vector<OwnPtr<Chunk> > ChunkVector;
-
     static PassRefPtr<PODFreeListArena> create()
     {
         return adoptRef(new PODFreeListArena);
@@ -102,7 +100,8 @@ private:
         return ptr;
     }
 
-    class FreeListChunk : public PODArena::Chunk {
+    // Manages a chunk of memory and individual allocations out of it.
+    class FreeListChunk {
         WTF_MAKE_NONCOPYABLE(FreeListChunk);
 
         struct FreeCell {
@@ -110,9 +109,22 @@ private:
         };
     public:
         explicit FreeListChunk(size_t size)
-            : Chunk(size)
-            , m_freeList(0) { }
+            : m_size(size)
+            , m_currentOffset(0)
+            , m_freeList(0)
+        {
+            m_base = static_cast<uint8_t*>(fastMalloc(size));
+        }
 
+        // Frees the memory allocated from the Allocator in the
+        // constructor.
+        ~FreeListChunk()
+        {
+            fastFree(m_base);
+        }
+
+        // Returns a pointer to "size" bytes of storage, or 0 if this
+        // Chunk could not satisfy the allocation.
         void* allocate(size_t size)
         {
             if (m_freeList) {
@@ -122,7 +134,16 @@ private:
                 return cell;
             }
 
-            return Chunk::allocate(size);
+            // Check for overflow
+            if (m_currentOffset + size < m_currentOffset)
+                return 0;
+
+            if (m_currentOffset + size > m_size)
+                return 0;
+
+            void* result = m_base + m_currentOffset;
+            m_currentOffset += size;
+            return result;
         }
 
         void free(void* ptr)
@@ -146,6 +167,10 @@ private:
         }
 
     private:
+        uint8_t* m_base;
+        size_t m_size;
+        size_t m_currentOffset;
+
         FreeCell *m_freeList;
     };
 
