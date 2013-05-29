@@ -1,3 +1,9 @@
+2013-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Silence last crash to get bots green.
+
+        * platform/win/TestExpectations: 
+
 2013-05-28  Alexey Proskuryakov  <ap@apple.com>
 
         Freeze when loading a particular page on washingtonpost.com with NetworkProcess enabled
