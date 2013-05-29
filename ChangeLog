@@ -1,3 +1,15 @@
+2013-05-29  Kent Tamura  <tkent@chromium.org>
+
+        Remove leftover files for ENABLE_PAGE_POPUP and ENABLE_CALENDAR_PICKER
+        https://bugs.webkit.org/show_bug.cgi?id=116999
+
+        Reviewed by Anders Carlsson.
+
+        * ManualTests/forms/calendar-picker-crash-by-type-change.html: Removed.
+        * ManualTests/forms/calendar-picker.html: Removed.
+        * ManualTests/forms/color-suggestion-picker.html: Removed.
+        * ManualTests/forms/date-suggestion-picker.html: Removed.
+
 2013-05-29  Martin Robinson  <mrobinson@igalia.com>
 
         Fix more CMake GTK+ build issues after r150336

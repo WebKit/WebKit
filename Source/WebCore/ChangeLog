@@ -1,3 +1,17 @@
+2013-05-29  Kent Tamura  <tkent@chromium.org>
+
+        Remove leftover files for ENABLE_PAGE_POPUP and ENABLE_CALENDAR_PICKER
+        https://bugs.webkit.org/show_bug.cgi?id=116999
+
+        Reviewed by Anders Carlsson.
+
+        * Resources/pagepopups/colorSuggestionPicker.css: Removed.
+        * Resources/pagepopups/colorSuggestionPicker.js: Removed.
+        * Resources/pagepopups/pickerCommon.css: Removed.
+        * Resources/pagepopups/pickerCommon.js: Removed.
+        * Resources/pagepopups/suggestionPicker.css: Removed.
+        * Resources/pagepopups/suggestionPicker.js: Removed.
+
 2013-05-29  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; remove unintentional semicolon.
