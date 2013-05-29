@@ -1,3 +1,24 @@
+2013-05-28  Jer Noble  <jer.noble@apple.com>
+
+        Support the 'onended' EventListener property for AudioBufferSourceNode and OscillatorNode.
+        https://bugs.webkit.org/show_bug.cgi?id=116798
+
+        Reviewed by Eric Carlson.
+
+        Tests: webaudio/audiobuffersource-ended.html
+               webaudio/oscillator-ended.html
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        (WebCore::AudioScheduledSourceNode::setOnended): Set m_hasEndedListener.
+        (WebCore::AudioScheduledSourceNode::finish): Call notifyEndedDispatch on the main thread.
+        (WebCore::AudioScheduledSourceNode::notifyEndedDispatch): Call notifyEnded().
+        (WebCore::AudioScheduledSourceNode::notifyEnded): Call the onended event listener.
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        (WebCore::AudioScheduledSourceNode::onended): Added boilerplate.
+        * Modules/webaudio/AudioBufferSourceNode.idl: Added the onerror attribute.
+        * Modules/webaudio/OscillatorNode.idl: Ditto.
+
 2013-05-29  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Support parsing inset-rectangle shapes

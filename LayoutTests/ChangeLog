@@ -1,3 +1,15 @@
+2013-05-26  Jer Noble  <jer.noble@apple.com>
+
+        Support the 'onended' EventListener property for AudioBufferSourceNode and OscillatorNode.
+        https://bugs.webkit.org/show_bug.cgi?id=116798
+
+        Reviewed by Eric Carlson.
+
+        * webaudio/audiobuffersource-ended-expected.txt: Added.
+        * webaudio/audiobuffersource-ended.html: Added.
+        * webaudio/oscillator-ended-expected.txt: Added.
+        * webaudio/oscillator-ended.html: Added.
+
 2013-05-29  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Support parsing inset-rectangle shapes

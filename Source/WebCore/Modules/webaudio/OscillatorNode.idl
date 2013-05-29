@@ -56,4 +56,5 @@
 
     void setWaveTable(WaveTable waveTable);
 
+    attribute EventListener onended;
 };

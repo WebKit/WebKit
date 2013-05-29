@@ -55,4 +55,6 @@
     [Conditional=LEGACY_WEB_AUDIO] void noteOn(double when);
     [Conditional=LEGACY_WEB_AUDIO] void noteGrainOn(double when, double grainOffset, double grainDuration);
     [Conditional=LEGACY_WEB_AUDIO] void noteOff(double when);
+    
+    attribute EventListener onended;
 };
