@@ -1,3 +1,9 @@
+2013-05-29  Yong Li  <yong.li.webkit@outlook.com>
+
+        Unreviewed. Update my info.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-05-29  Dongseong Hwang  <dongseong.hwang@intel.com>
 
         Unreviewed. Add myself as committer in contributors.json.
