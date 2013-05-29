@@ -771,9 +771,6 @@ public:
 
     CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
 
-    int nodeAbsIndex(Node*);
-    Node* nodeWithAbsIndex(int absIndex);
-
     /**
      * Handles a HTTP header equivalent set by a meta tag using <meta http-equiv="..." content="...">. This is called
      * when a meta tag is encountered during document parsing, and also when a script dynamically changes or adds a meta

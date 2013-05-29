@@ -2833,24 +2833,6 @@ CSSStyleSheet* Document::elementSheet()
     return m_elemSheet.get();
 }
 
-int Document::nodeAbsIndex(Node *node)
-{
-    ASSERT(node->document() == this);
-
-    int absIndex = 0;
-    for (Node* n = node; n && n != this; n = NodeTraversal::previous(n))
-        absIndex++;
-    return absIndex;
-}
-
-Node* Document::nodeWithAbsIndex(int absIndex)
-{
-    Node* n = this;
-    for (int i = 0; n && (i < absIndex); i++)
-        n = NodeTraversal::next(n);
-    return n;
-}
-
 void Document::processHttpEquiv(const String& equiv, const String& content)
 {
     ASSERT(!equiv.isNull() && !content.isNull());
