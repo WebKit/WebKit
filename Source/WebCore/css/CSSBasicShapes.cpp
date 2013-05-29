@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include "CSSBasicShapes.h"
+
 #include "CSSPrimitiveValueMappings.h"
 
 #include <wtf/text/StringBuilder.h>
@@ -44,7 +45,7 @@ static String buildRectangleString(const String& x, const String& y, const Strin
     char separator[] = ", ";
     StringBuilder result;
     // Compute the required capacity in advance to reduce allocations.
-    result.reserveCapacity((sizeof(opening) - 1) + (5 * (sizeof(separator) -1 )) + 1 + x.length() + y.length() + width.length() + height.length() + radiusX.length() + radiusY.length());
+    result.reserveCapacity((sizeof(opening) - 1) + (5 * (sizeof(separator) - 1)) + 1 + x.length() + y.length() + width.length() + height.length() + radiusX.length() + radiusY.length());
     result.appendLiteral(opening);
     result.append(x);
     result.appendLiteral(separator);
@@ -77,7 +78,7 @@ String CSSBasicShapeRectangle::cssText() const
 
 bool CSSBasicShapeRectangle::equals(const CSSBasicShape& shape) const
 {
-    if (shape.type() != CSS_BASIC_SHAPE_RECTANGLE)
+    if (shape.type() != CSSBasicShapeRectangleType)
         return false;
 
     const CSSBasicShapeRectangle& other = static_cast<const CSSBasicShapeRectangle&>(shape);
@@ -123,7 +124,7 @@ String CSSBasicShapeCircle::cssText() const
 
 bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
 {
-    if (shape.type() != CSS_BASIC_SHAPE_CIRCLE)
+    if (shape.type() != CSSBasicShapeCircleType)
         return false;
 
     const CSSBasicShapeCircle& other = static_cast<const CSSBasicShapeCircle&>(shape);
@@ -160,7 +161,7 @@ String CSSBasicShapeEllipse::cssText() const
 
 bool CSSBasicShapeEllipse::equals(const CSSBasicShape& shape) const
 {
-    if (shape.type() != CSS_BASIC_SHAPE_ELLIPSE)
+    if (shape.type() != CSSBasicShapeEllipseType)
         return false;
 
     const CSSBasicShapeEllipse& other = static_cast<const CSSBasicShapeEllipse&>(shape);
@@ -239,7 +240,7 @@ String CSSBasicShapePolygon::cssText() const
 
 bool CSSBasicShapePolygon::equals(const CSSBasicShape& shape) const
 {
-    if (shape.type() != CSS_BASIC_SHAPE_POLYGON)
+    if (shape.type() != CSSBasicShapePolygonType)
         return false;
 
     const CSSBasicShapePolygon& rhs = static_cast<const CSSBasicShapePolygon&>(shape);
@@ -307,7 +308,7 @@ String CSSBasicShapeInsetRectangle::cssText() const
 
 bool CSSBasicShapeInsetRectangle::equals(const CSSBasicShape& shape) const
 {
-    if (shape.type() != CSS_BASIC_SHAPE_INSET_RECTANGLE)
+    if (shape.type() != CSSBasicShapeInsetRectangleType)
         return false;
 
     const CSSBasicShapeInsetRectangle& other = static_cast<const CSSBasicShapeInsetRectangle&>(shape);

@@ -43,7 +43,7 @@ bool ExclusionShapeOutsideInfo::isEnabledFor(const RenderBox* box)
         return false;
 
     BasicShape* shape = value->shape();
-    return shape && shape->type() != BasicShape::BASIC_SHAPE_INSET_RECTANGLE;
+    return shape && shape->type() != BasicShape::BasicShapeInsetRectangleType;
 }
 
 bool ExclusionShapeOutsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)

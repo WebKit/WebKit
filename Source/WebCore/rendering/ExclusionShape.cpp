@@ -101,7 +101,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
 
     switch (basicShape->type()) {
 
-    case BasicShape::BASIC_SHAPE_RECTANGLE: {
+    case BasicShape::BasicShapeRectangleType: {
         const BasicShapeRectangle* rectangle = static_cast<const BasicShapeRectangle*>(basicShape);
         FloatRect bounds(
             floatValueForLength(rectangle->x(), boxWidth),
@@ -119,7 +119,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         break;
     }
 
-    case BasicShape::BASIC_SHAPE_CIRCLE: {
+    case BasicShape::BasicShapeCircleType: {
         const BasicShapeCircle* circle = static_cast<const BasicShapeCircle*>(basicShape);
         float centerX = floatValueForLength(circle->centerX(), boxWidth);
         float centerY = floatValueForLength(circle->centerY(), boxHeight);
@@ -130,7 +130,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         break;
     }
 
-    case BasicShape::BASIC_SHAPE_ELLIPSE: {
+    case BasicShape::BasicShapeEllipseType: {
         const BasicShapeEllipse* ellipse = static_cast<const BasicShapeEllipse*>(basicShape);
         float centerX = floatValueForLength(ellipse->centerX(), boxWidth);
         float centerY = floatValueForLength(ellipse->centerY(), boxHeight);
@@ -143,7 +143,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         break;
     }
 
-    case BasicShape::BASIC_SHAPE_POLYGON: {
+    case BasicShape::BasicShapePolygonType: {
         const BasicShapePolygon* polygon = static_cast<const BasicShapePolygon*>(basicShape);
         const Vector<Length>& values = polygon->values();
         size_t valuesSize = values.size();

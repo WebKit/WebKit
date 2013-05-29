@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include "BasicShapes.h"
+
 #include "FloatRect.h"
 #include "LengthFunctions.h"
 #include "Path.h"
@@ -43,7 +44,7 @@ bool BasicShape::canBlend(const BasicShape* other) const
         return false;
 
     // Just polygons with same number of vertices can be animated.
-    if (type() == BasicShape::BASIC_SHAPE_POLYGON
+    if (type() == BasicShape::BasicShapePolygonType
         && static_cast<const BasicShapePolygon*>(this)->values().size() != static_cast<const BasicShapePolygon*>(other)->values().size())
         return false;
 
@@ -53,12 +54,17 @@ bool BasicShape::canBlend(const BasicShape* other) const
 void BasicShapeRectangle::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
-    path.addRoundedRect(FloatRect(floatValueForLength(m_x, boundingBox.width()) + boundingBox.x(),
-                                  floatValueForLength(m_y, boundingBox.height()) + boundingBox.y(),
-                                  floatValueForLength(m_width, boundingBox.width()),
-                                  floatValueForLength(m_height, boundingBox.height())),
-                        FloatSize(m_cornerRadiusX.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusX, boundingBox.width()),
-                                  m_cornerRadiusY.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusY, boundingBox.height())));
+    path.addRoundedRect(FloatRect(floatValueForLength(
+        m_x,
+        boundingBox.width()) + boundingBox.x(),
+        floatValueForLength(m_y, boundingBox.height()) + boundingBox.y(),
+        floatValueForLength(m_width, boundingBox.width()),
+        floatValueForLength(m_height, boundingBox.height())),
+        FloatSize(
+            m_cornerRadiusX.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusX, boundingBox.width()),
+            m_cornerRadiusY.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusY, boundingBox.height())
+        )
+    );
 }
 
 PassRefPtr<BasicShape> BasicShapeRectangle::blend(const BasicShape* other, double progress) const
@@ -85,10 +91,12 @@ void BasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
     float centerX = floatValueForLength(m_centerX, boundingBox.width());
     float centerY = floatValueForLength(m_centerY, boundingBox.height());
     float radius = floatValueForLength(m_radius, diagonal);
-    path.addEllipse(FloatRect(centerX - radius + boundingBox.x(),
-                              centerY - radius + boundingBox.y(),
-                              radius * 2,
-                              radius * 2));
+    path.addEllipse(FloatRect(
+        centerX - radius + boundingBox.x(),
+        centerY - radius + boundingBox.y(),
+        radius * 2,
+        radius * 2
+    ));
 }
 
 PassRefPtr<BasicShape> BasicShapeCircle::blend(const BasicShape* other, double progress) const
@@ -110,10 +118,12 @@ void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
     float centerY = floatValueForLength(m_centerY, boundingBox.height());
     float radiusX = floatValueForLength(m_radiusX, boundingBox.width());
     float radiusY = floatValueForLength(m_radiusY, boundingBox.height());
-    path.addEllipse(FloatRect(centerX - radiusX + boundingBox.x(),
-                              centerY - radiusY + boundingBox.y(),
-                              radiusX * 2,
-                              radiusY * 2));
+    path.addEllipse(FloatRect(
+        centerX - radiusX + boundingBox.x(),
+        centerY - radiusY + boundingBox.y(),
+        radiusX * 2,
+        radiusY * 2
+    ));
 }
 
 PassRefPtr<BasicShape> BasicShapeEllipse::blend(const BasicShape* other, double progress) const
@@ -175,11 +185,16 @@ void BasicShapeInsetRectangle::path(Path& path, const FloatRect& boundingBox)
     ASSERT(path.isEmpty());
     float left = floatValueForLength(m_left, boundingBox.width());
     float top = floatValueForLength(m_top, boundingBox.height());
-    path.addRoundedRect(FloatRect(left + boundingBox.x(), top + boundingBox.y(),
-                                  std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
-                                  std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0)),
-                        FloatSize(m_cornerRadiusX.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusX, boundingBox.width()),
-                                  m_cornerRadiusY.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusY, boundingBox.height())));
+    path.addRoundedRect(FloatRect(
+        left + boundingBox.x(),
+        top + boundingBox.y(),
+        std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
+        std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0)),
+        FloatSize(
+            m_cornerRadiusX.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusX, boundingBox.width()),
+            m_cornerRadiusY.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusY, boundingBox.height())
+        )
+    );
 }
 
 PassRefPtr<BasicShape> BasicShapeInsetRectangle::blend(const BasicShape* other, double progress) const

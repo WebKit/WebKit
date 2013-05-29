@@ -42,7 +42,7 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
 {
     RefPtr<CSSBasicShape> basicShapeValue;
     switch (basicShape->type()) {
-    case BasicShape::BASIC_SHAPE_RECTANGLE: {
+    case BasicShape::BasicShapeRectangleType: {
         const BasicShapeRectangle* rectangle = static_cast<const BasicShapeRectangle*>(basicShape);
         RefPtr<CSSBasicShapeRectangle> rectangleValue = CSSBasicShapeRectangle::create();
 
@@ -59,7 +59,7 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         basicShapeValue = rectangleValue.release();
         break;
     }
-    case BasicShape::BASIC_SHAPE_CIRCLE: {
+    case BasicShape::BasicShapeCircleType: {
         const BasicShapeCircle* circle = static_cast<const BasicShapeCircle*>(basicShape);
         RefPtr<CSSBasicShapeCircle> circleValue = CSSBasicShapeCircle::create();
 
@@ -70,7 +70,7 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         basicShapeValue = circleValue.release();
         break;
     }
-    case BasicShape::BASIC_SHAPE_ELLIPSE: {
+    case BasicShape::BasicShapeEllipseType: {
         const BasicShapeEllipse* ellipse = static_cast<const BasicShapeEllipse*>(basicShape);
         RefPtr<CSSBasicShapeEllipse> ellipseValue = CSSBasicShapeEllipse::create();
 
@@ -82,7 +82,7 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         basicShapeValue = ellipseValue.release();
         break;
     }
-    case BasicShape::BASIC_SHAPE_POLYGON: {
+    case BasicShape::BasicShapePolygonType: {
         const BasicShapePolygon* polygon = static_cast<const BasicShapePolygon*>(basicShape);
         RefPtr<CSSBasicShapePolygon> polygonValue = CSSBasicShapePolygon::create();
 
@@ -94,7 +94,7 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         basicShapeValue = polygonValue.release();
         break;
     }
-    case BasicShape::BASIC_SHAPE_INSET_RECTANGLE: {
+    case BasicShape::BasicShapeInsetRectangleType: {
         const BasicShapeInsetRectangle* rectangle = static_cast<const BasicShapeInsetRectangle*>(basicShape);
         RefPtr<CSSBasicShapeInsetRectangle> rectangleValue = CSSBasicShapeInsetRectangle::create();
 
@@ -127,7 +127,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
     RefPtr<BasicShape> basicShape;
 
     switch (basicShapeValue->type()) {
-    case CSSBasicShape::CSS_BASIC_SHAPE_RECTANGLE: {
+    case CSSBasicShape::CSSBasicShapeRectangleType: {
         const CSSBasicShapeRectangle* rectValue = static_cast<const CSSBasicShapeRectangle *>(basicShapeValue);
         RefPtr<BasicShapeRectangle> rect = BasicShapeRectangle::create();
 
@@ -143,7 +143,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         basicShape = rect.release();
         break;
     }
-    case CSSBasicShape::CSS_BASIC_SHAPE_CIRCLE: {
+    case CSSBasicShape::CSSBasicShapeCircleType: {
         const CSSBasicShapeCircle* circleValue = static_cast<const CSSBasicShapeCircle *>(basicShapeValue);
         RefPtr<BasicShapeCircle> circle = BasicShapeCircle::create();
 
@@ -154,7 +154,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         basicShape = circle.release();
         break;
     }
-    case CSSBasicShape::CSS_BASIC_SHAPE_ELLIPSE: {
+    case CSSBasicShape::CSSBasicShapeEllipseType: {
         const CSSBasicShapeEllipse* ellipseValue = static_cast<const CSSBasicShapeEllipse *>(basicShapeValue);
         RefPtr<BasicShapeEllipse> ellipse = BasicShapeEllipse::create();
 
@@ -166,7 +166,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         basicShape = ellipse.release();
         break;
     }
-    case CSSBasicShape::CSS_BASIC_SHAPE_POLYGON: {
+    case CSSBasicShape::CSSBasicShapePolygonType: {
         const CSSBasicShapePolygon* polygonValue = static_cast<const CSSBasicShapePolygon *>(basicShapeValue);
         RefPtr<BasicShapePolygon> polygon = BasicShapePolygon::create();
 
@@ -178,7 +178,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         basicShape = polygon.release();
         break;
     }
-    case CSSBasicShape::CSS_BASIC_SHAPE_INSET_RECTANGLE: {
+    case CSSBasicShape::CSSBasicShapeInsetRectangleType: {
         const CSSBasicShapeInsetRectangle* rectValue = static_cast<const CSSBasicShapeInsetRectangle *>(basicShapeValue);
         RefPtr<BasicShapeInsetRectangle> rect = BasicShapeInsetRectangle::create();
 

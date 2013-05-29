@@ -50,7 +50,7 @@ bool ExclusionShapeInsideInfo::isEnabledFor(const RenderBlock* renderer)
         return false;
 
     BasicShape* shape = shapeValue->shape();
-    return shape && shape->type() != BasicShape::BASIC_SHAPE_INSET_RECTANGLE;
+    return shape && shape->type() != BasicShape::BasicShapeInsetRectangleType;
 }
 
 bool ExclusionShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)

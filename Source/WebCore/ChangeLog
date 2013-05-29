@@ -1,3 +1,50 @@
+2013-05-29  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Fix style issues in BasicShapes
+        https://bugs.webkit.org/show_bug.cgi?id=116734
+
+        Reviewed by Alexandru Chiculita.
+
+        Fix indentation in BasicShapes.cpp, and change enums to respect the
+        style rules CamelCase instead of HAVING_UNDERSCORES.
+
+        No new tests, only style changes.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape):
+        (WebCore::basicShapeForValue):
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildRectangleString):
+        (WebCore::CSSBasicShapeRectangle::equals):
+        (WebCore::CSSBasicShapeCircle::equals):
+        (WebCore::CSSBasicShapeEllipse::equals):
+        (WebCore::CSSBasicShapePolygon::equals):
+        (WebCore::CSSBasicShapeInsetRectangle::equals):
+        * css/CSSBasicShapes.h:
+        (WebCore::CSSBasicShapeRectangle::type):
+        (WebCore::CSSBasicShapeInsetRectangle::type):
+        (WebCore::CSSBasicShapeCircle::type):
+        (WebCore::CSSBasicShapeEllipse::type):
+        (WebCore::CSSBasicShapePolygon::type):
+        * rendering/ExclusionShape.cpp:
+        (WebCore::ExclusionShape::createExclusionShape):
+        * rendering/ExclusionShapeInsideInfo.cpp:
+        (WebCore::ExclusionShapeInsideInfo::isEnabledFor):
+        * rendering/ExclusionShapeOutsideInfo.cpp:
+        (WebCore::ExclusionShapeOutsideInfo::isEnabledFor):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend):
+        (WebCore::BasicShapeRectangle::path):
+        (WebCore::BasicShapeCircle::path):
+        (WebCore::BasicShapeEllipse::path):
+        (WebCore::BasicShapeInsetRectangle::path):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShapeRectangle::type):
+        (WebCore::BasicShapeCircle::type):
+        (WebCore::BasicShapeEllipse::type):
+        (WebCore::BasicShapePolygon::type):
+        (WebCore::BasicShapeInsetRectangle::type):
+
 2013-05-29  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Handle Host-Only cookies
