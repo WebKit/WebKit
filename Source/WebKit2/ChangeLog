@@ -1,3 +1,32 @@
+2013-05-29  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [WK2][CoordinatedGraphics][EFL] WKViewUserViewportToContents() function doesn't do what it says
+        https://bugs.webkit.org/show_bug.cgi?id=116683
+
+        Reviewed by Noam Rosenthal.
+
+        WKViewUserViewportToContents now converts WebView coordinates to
+        page contents coordinates, taking into account factors as content
+        scale and scroll, and also device scale.
+
+        The function WKViewUserViewportToScene was added to convert WebView
+        coordinates to the coordinates of the canvas/scene where the view
+        is drawn, and EwkView was fixed to use it, instead of
+        WKViewUserViewportToContents.
+
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewUserViewportToScene):
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::createGLSurface):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::userViewportToContents):
+        (WebKit):
+        (WebKit::WebView::userViewportToScene):
+        (WebKit::WebView::transformToScene):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        (WebView):
+
 2013-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

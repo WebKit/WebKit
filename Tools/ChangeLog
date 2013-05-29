@@ -1,3 +1,18 @@
+2013-05-29  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [WK2][CoordinatedGraphics][EFL] WKViewUserViewportToContents() function doesn't do what it says
+        https://bugs.webkit.org/show_bug.cgi?id=116683
+
+        Reviewed by Noam Rosenthal.
+
+        A coordinates conversion test for WKViewUserViewportToContents was
+        added to WebKit2 API tests.
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/Tests/WebKit2/CoordinatedGraphics/WKViewUserViewportToContents.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2013-05-29  Yong Li  <yong.li.webkit@outlook.com>
 
         Unreviewed. Update my info.

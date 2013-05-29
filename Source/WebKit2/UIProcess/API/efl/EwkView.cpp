@@ -774,7 +774,7 @@ bool EwkView::createGLSurface()
 
     Evas_GL_API* gl = evas_gl_api_get(m_evasGL.get());
 
-    const WKPoint& boundsEnd = WKViewUserViewportToContents(wkView(), WKPointMake(deviceSize().width(), deviceSize().height()));
+    WKPoint boundsEnd = WKViewUserViewportToScene(wkView(), WKPointMake(deviceSize().width(), deviceSize().height()));
     gl->glViewport(0, 0, boundsEnd.x, boundsEnd.y);
     gl->glClearColor(1.0, 1.0, 1.0, 0);
     gl->glClear(GL_COLOR_BUFFER_BIT);

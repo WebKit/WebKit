@@ -94,6 +94,7 @@ set(test_webkit2_api_BINARIES
     WKStringJSString
     WKURL
     WillSendSubmitEvent
+    CoordinatedGraphics/WKViewUserViewportToContents
     efl/WKViewClientWebProcessCallbacks
 )
 
