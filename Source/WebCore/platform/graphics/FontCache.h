@@ -92,7 +92,7 @@ struct FontDescriptionFontDataCacheKey {
     }
     inline unsigned computeHash() const
     {
-        return StringHasher::hashMemory<sizeof(*this)>(this);
+        return StringHasher::hashMemory<sizeof(FontDescriptionFontDataCacheKey)>(this);
     }
     unsigned size;
     unsigned weight;

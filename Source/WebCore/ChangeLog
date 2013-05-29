@@ -1,3 +1,12 @@
+2013-05-29  Antti Koivisto  <antti@apple.com>
+
+        Try to fix window build.
+        
+        Not reviewed.
+
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionFontDataCacheKey::computeHash):
+
 2013-05-29  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the firing of m_paintRelatedMilestonesTimer
