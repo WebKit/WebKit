@@ -1,3 +1,14 @@
+2013-05-29  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [GTK] Clean up WebKit2 GNUmakefile.am
+        https://bugs.webkit.org/show_bug.cgi?id=116907
+
+        Reviewed by Martin Robinson.
+
+        Removed WebNotificationManagerProxy.messages.in after r150785.
+
+        * GNUmakefile.am:
+
 2013-05-28  Alexey Proskuryakov  <ap@apple.com>
 
         Freeze when loading a particular page on washingtonpost.com with NetworkProcess enabled

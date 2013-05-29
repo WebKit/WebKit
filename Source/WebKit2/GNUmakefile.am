@@ -341,7 +341,6 @@ vpath %.messages.in = \
 	$(WebKit2)/UIProcess/ApplicationCache \
 	$(WebKit2)/UIProcess/Downloads \
 	$(WebKit2)/UIProcess/Geolocation \
-	$(WebKit2)/UIProcess/Notifications \
 	$(WebKit2)/UIProcess/Plugins \
 	$(WebKit2)/UIProcess/ResourceCache \
 	$(WebKit2)/UIProcess/Storage \
@@ -700,7 +699,6 @@ EXTRA_DIST += \
 	$(shell ls $(WebKit2)/Shared/Plugins/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Downloads/*.in) \
-	$(shell ls $(WebKit2)/UIProcess/Notifications/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Plugins/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Storage/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/soup/*.in) \
