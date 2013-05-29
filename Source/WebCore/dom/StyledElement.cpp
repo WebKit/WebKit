@@ -86,7 +86,8 @@ class PresentationAttributeCacheCleaner {
     WTF_MAKE_NONCOPYABLE(PresentationAttributeCacheCleaner); WTF_MAKE_FAST_ALLOCATED;
 public:
     PresentationAttributeCacheCleaner()
-        : m_cleanTimer(this, &PresentationAttributeCacheCleaner::cleanCache)
+        : m_hitCount(0)
+        , m_cleanTimer(this, &PresentationAttributeCacheCleaner::cleanCache)
     {
     }
 

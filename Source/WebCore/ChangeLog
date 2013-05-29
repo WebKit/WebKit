@@ -1,3 +1,15 @@
+2013-05-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PresentationAttributeCacheCleaner::m_hitCount is never initialized
+        https://bugs.webkit.org/show_bug.cgi?id=116946
+
+        Reviewed by Andreas Kling.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/70be7ddc41141ef6dec7795d37842c27dab2e194.
+
+        * dom/StyledElement.cpp:
+        (WebCore::PresentationAttributeCacheCleaner::PresentationAttributeCacheCleaner):
+
 2013-05-29  Kent Tamura  <tkent@chromium.org>
 
         Remove ENABLE_INPUT_MULTIPLE_FIELDS_UI.
