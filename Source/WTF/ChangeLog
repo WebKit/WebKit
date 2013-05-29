@@ -1,3 +1,12 @@
+2013-05-29  Kent Tamura  <tkent@chromium.org>
+
+        Remove ENABLE_INPUT_MULTIPLE_FIELDS_UI.
+        https://bugs.webkit.org/show_bug.cgi?id=116796
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/FeatureDefines.h:
+
 2013-05-27  Gavin Barraclough  <barraclough@apple.com>
 
         String(new Date(2010,10,1)) is wrong in KRAT, YAKT

@@ -326,14 +326,6 @@ String Locale::convertFromLocalizedNumber(const String& localized)
     return builder.toString();
 }
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-String Locale::localizedDecimalSeparator()
-{
-    initializeLocaleData();
-    return m_decimalSymbols[DecimalSeparatorIndex];
-}
-#endif
-
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 String Locale::formatDateTime(const DateComponents& date, FormatType formatType)

@@ -53,11 +53,6 @@ public:
     // resultant string.
     String convertFromLocalizedNumber(const String&);
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    // Returns localized decimal separator, e.g. "." for English, "," for French.
-    String localizedDecimalSeparator();
-#endif
-
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     // Returns date format in Unicode TR35 LDML[1] containing day of month,
     // month, and year, e.g. "dd/mm/yyyy"

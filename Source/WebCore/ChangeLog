@@ -1,3 +1,81 @@
+2013-05-29  Kent Tamura  <tkent@chromium.org>
+
+        Remove ENABLE_INPUT_MULTIPLE_FIELDS_UI.
+        https://bugs.webkit.org/show_bug.cgi?id=116796
+
+        Reviewed by Ryosuke Niwa.
+
+        This feature was used only by Chromium port.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/html.css:
+        (input::-webkit-date-and-time-value):
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp: Removed.
+        * html/BaseMultipleFieldsDateAndTimeInputType.h: Removed.
+        * html/DateInputType.cpp:
+        * html/DateInputType.h:
+        (DateInputType):
+        * html/DateTimeFieldsState.cpp: Removed.
+        * html/DateTimeFieldsState.h: Removed.
+        * html/DateTimeInputType.cpp:
+        * html/DateTimeInputType.h:
+        (DateTimeInputType):
+        * html/DateTimeLocalInputType.cpp:
+        * html/DateTimeLocalInputType.h:
+        (DateTimeLocalInputType):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/InputType.cpp:
+        * html/InputType.h:
+        (InputType):
+        * html/MonthInputType.cpp:
+        * html/MonthInputType.h:
+        (MonthInputType):
+        * html/TimeInputType.cpp:
+        * html/TimeInputType.h:
+        (TimeInputType):
+        * html/WeekInputType.cpp:
+        * html/WeekInputType.h:
+        (WeekInputType):
+        * html/shadow/ClearButtonElement.cpp: Removed.
+        * html/shadow/ClearButtonElement.h: Removed.
+        * html/shadow/DateTimeEditElement.cpp: Removed.
+        * html/shadow/DateTimeEditElement.h: Removed.
+        * html/shadow/DateTimeFieldElement.cpp: Removed.
+        * html/shadow/DateTimeFieldElement.h: Removed.
+        * html/shadow/DateTimeFieldElements.cpp: Removed.
+        * html/shadow/DateTimeFieldElements.h: Removed.
+        * html/shadow/DateTimeNumericFieldElement.cpp: Removed.
+        * html/shadow/DateTimeNumericFieldElement.h: Removed.
+        * html/shadow/DateTimeSymbolicFieldElement.cpp: Removed.
+        * html/shadow/DateTimeSymbolicFieldElement.h: Removed.
+        * html/shadow/PickerIndicatorElement.cpp: Removed.
+        * html/shadow/PickerIndicatorElement.h: Removed.
+        * page/ChromeClient.h:
+        (ChromeClient):
+        * platform/LocalizedStrings.h:
+        (WebCore):
+        * platform/text/PlatformLocale.cpp:
+        * platform/text/PlatformLocale.h:
+        (Locale):
+        * rendering/RenderDetailsMarker.cpp:
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2013-05-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove setFullScreenRendererSize and setFullScreenRendererBackgroundColor

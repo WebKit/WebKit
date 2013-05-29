@@ -559,9 +559,6 @@ public:
 #if ENABLE(INPUT_SPEECH)
     virtual bool isInputFieldSpeechButtonElement() const { return false; }
 #endif
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    virtual bool isDateTimeFieldElement() const;
-#endif
 
     virtual bool isFormControlElement() const { return false; }
     virtual bool isSpinButtonElement() const { return false; }

@@ -465,11 +465,6 @@ RenderObject* InputType::createRenderer(RenderArena*, RenderStyle* style) const
     return RenderObject::createObject(element(), style);
 }
 
-PassRefPtr<RenderStyle> InputType::customStyleForRenderer(PassRefPtr<RenderStyle> originalStyle)
-{
-    return originalStyle;
-}
-
 void InputType::blur()
 {
     element()->defaultBlur();

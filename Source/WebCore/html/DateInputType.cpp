@@ -33,14 +33,9 @@
 #include "DateInputType.h"
 
 #include "DateComponents.h"
-#include "DateTimeFieldsState.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
-#include "KeyboardEvent.h"
-#include "LocalizedStrings.h"
-#include "PickerIndicatorElement.h"
-#include "PlatformLocale.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -104,34 +99,6 @@ bool DateInputType::isDateField() const
 {
     return true;
 }
-
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-String DateInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState) const
-{
-    if (!dateTimeFieldsState.hasDayOfMonth() || !dateTimeFieldsState.hasMonth() || !dateTimeFieldsState.hasYear())
-        return emptyString();
-
-    return String::format("%04u-%02u-%02u", dateTimeFieldsState.year(), dateTimeFieldsState.month(), dateTimeFieldsState.dayOfMonth());
-}
-
-void DateInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
-{
-    layoutParameters.dateTimeFormat = layoutParameters.locale.dateFormat();
-    layoutParameters.fallbackDateTimeFormat = ASCIILiteral("yyyy-MM-dd");
-    if (!parseToDateComponents(element()->fastGetAttribute(minAttr), &layoutParameters.minimum))
-        layoutParameters.minimum = DateComponents();
-    if (!parseToDateComponents(element()->fastGetAttribute(maxAttr), &layoutParameters.maximum))
-        layoutParameters.maximum = DateComponents();
-    layoutParameters.placeholderForDay = placeholderForDayOfMonthField();
-    layoutParameters.placeholderForMonth = placeholderForMonthField();
-    layoutParameters.placeholderForYear = placeholderForYearField();
-}
-
-bool DateInputType::isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const
-{
-    return hasYear && hasMonth && hasDay;
-}
-#endif
 
 } // namespace WebCore
 #endif

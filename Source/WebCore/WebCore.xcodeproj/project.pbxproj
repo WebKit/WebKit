@@ -1221,18 +1221,6 @@
 		453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 453EB635159C570400001BB7 /* DateTimeFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45830D4D1679B4F800ACF8C3 /* AutoscrollController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45830D4B1679B4F800ACF8C3 /* AutoscrollController.cpp */; };
 		45830D4E1679B4F800ACF8C3 /* AutoscrollController.h in Headers */ = {isa = PBXBuildFile; fileRef = 45830D4C1679B4F800ACF8C3 /* AutoscrollController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		45861C72161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45861C70161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.cpp */; };
-		45861C73161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = 45861C71161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.h */; };
-		45861C7F16194A7400010F3A /* DateTimeEditElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45861C7516194A7400010F3A /* DateTimeEditElement.cpp */; };
-		45861C8016194A7400010F3A /* DateTimeEditElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 45861C7616194A7400010F3A /* DateTimeEditElement.h */; };
-		45861C8116194A7400010F3A /* DateTimeFieldElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45861C7716194A7400010F3A /* DateTimeFieldElement.cpp */; };
-		45861C8216194A7400010F3A /* DateTimeFieldElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 45861C7816194A7400010F3A /* DateTimeFieldElement.h */; };
-		45861C8316194A7400010F3A /* DateTimeFieldElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45861C7916194A7400010F3A /* DateTimeFieldElements.cpp */; };
-		45861C8416194A7400010F3A /* DateTimeFieldElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 45861C7A16194A7400010F3A /* DateTimeFieldElements.h */; };
-		45861C8516194A7400010F3A /* DateTimeNumericFieldElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45861C7B16194A7400010F3A /* DateTimeNumericFieldElement.cpp */; };
-		45861C8616194A7400010F3A /* DateTimeNumericFieldElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 45861C7C16194A7400010F3A /* DateTimeNumericFieldElement.h */; };
-		45861C8716194A7400010F3A /* DateTimeSymbolicFieldElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45861C7D16194A7400010F3A /* DateTimeSymbolicFieldElement.cpp */; };
-		45861C8816194A7400010F3A /* DateTimeSymbolicFieldElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 45861C7E16194A7400010F3A /* DateTimeSymbolicFieldElement.h */; };
 		458FE4091589DF0B005609E6 /* RenderSearchField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 458FE4071589DF0B005609E6 /* RenderSearchField.cpp */; };
 		458FE40A1589DF0B005609E6 /* RenderSearchField.h in Headers */ = {isa = PBXBuildFile; fileRef = 458FE4081589DF0B005609E6 /* RenderSearchField.h */; };
 		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5121,8 +5109,6 @@
 		C375D7FD16639519006184AB /* TypeAhead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C375D7FB16639519006184AB /* TypeAhead.cpp */; };
 		C375D7FE16639519006184AB /* TypeAhead.h in Headers */ = {isa = PBXBuildFile; fileRef = C375D7FC16639519006184AB /* TypeAhead.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C37CDEBC149EF2030042090D /* ColorChooserClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C37DF8EF16E746710079A0EB /* ClearButtonElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37DF8ED16E746710079A0EB /* ClearButtonElement.cpp */; };
-		C37DF8F016E746710079A0EB /* ClearButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = C37DF8EE16E746710079A0EB /* ClearButtonElement.h */; };
 		C3CF17A415B0063F00276D39 /* IdTargetObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3CF17A015B0063F00276D39 /* IdTargetObserver.cpp */; };
 		C3CF17A515B0063F00276D39 /* IdTargetObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CF17A115B0063F00276D39 /* IdTargetObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C3CF17A615B0063F00276D39 /* IdTargetObserverRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3CF17A215B0063F00276D39 /* IdTargetObserverRegistry.cpp */; };
@@ -7578,18 +7564,6 @@
 		453EB635159C570400001BB7 /* DateTimeFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeFormat.h; sourceTree = "<group>"; };
 		45830D4B1679B4F800ACF8C3 /* AutoscrollController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutoscrollController.cpp; sourceTree = "<group>"; };
 		45830D4C1679B4F800ACF8C3 /* AutoscrollController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoscrollController.h; sourceTree = "<group>"; };
-		45861C70161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseMultipleFieldsDateAndTimeInputType.cpp; sourceTree = "<group>"; };
-		45861C71161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseMultipleFieldsDateAndTimeInputType.h; sourceTree = "<group>"; };
-		45861C7516194A7400010F3A /* DateTimeEditElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeEditElement.cpp; sourceTree = "<group>"; };
-		45861C7616194A7400010F3A /* DateTimeEditElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeEditElement.h; sourceTree = "<group>"; };
-		45861C7716194A7400010F3A /* DateTimeFieldElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFieldElement.cpp; sourceTree = "<group>"; };
-		45861C7816194A7400010F3A /* DateTimeFieldElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeFieldElement.h; sourceTree = "<group>"; };
-		45861C7916194A7400010F3A /* DateTimeFieldElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFieldElements.cpp; sourceTree = "<group>"; };
-		45861C7A16194A7400010F3A /* DateTimeFieldElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeFieldElements.h; sourceTree = "<group>"; };
-		45861C7B16194A7400010F3A /* DateTimeNumericFieldElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeNumericFieldElement.cpp; sourceTree = "<group>"; };
-		45861C7C16194A7400010F3A /* DateTimeNumericFieldElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeNumericFieldElement.h; sourceTree = "<group>"; };
-		45861C7D16194A7400010F3A /* DateTimeSymbolicFieldElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeSymbolicFieldElement.cpp; sourceTree = "<group>"; };
-		45861C7E16194A7400010F3A /* DateTimeSymbolicFieldElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeSymbolicFieldElement.h; sourceTree = "<group>"; };
 		458FE4071589DF0B005609E6 /* RenderSearchField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSearchField.cpp; sourceTree = "<group>"; };
 		458FE4081589DF0B005609E6 /* RenderSearchField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSearchField.h; sourceTree = "<group>"; };
 		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconURL.h; sourceTree = "<group>"; };
@@ -11852,8 +11826,6 @@
 		C375D7FB16639519006184AB /* TypeAhead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeAhead.cpp; sourceTree = "<group>"; };
 		C375D7FC16639519006184AB /* TypeAhead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeAhead.h; sourceTree = "<group>"; };
 		C37CDEBC149EF2030042090D /* ColorChooserClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorChooserClient.h; sourceTree = "<group>"; };
-		C37DF8ED16E746710079A0EB /* ClearButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClearButtonElement.cpp; sourceTree = "<group>"; };
-		C37DF8EE16E746710079A0EB /* ClearButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClearButtonElement.h; sourceTree = "<group>"; };
 		C3CF17A015B0063F00276D39 /* IdTargetObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdTargetObserver.cpp; sourceTree = "<group>"; };
 		C3CF17A115B0063F00276D39 /* IdTargetObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdTargetObserver.h; sourceTree = "<group>"; };
 		C3CF17A215B0063F00276D39 /* IdTargetObserverRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdTargetObserverRegistry.cpp; sourceTree = "<group>"; };
@@ -13898,20 +13870,8 @@
 		4150F9ED12B6E0990008C860 /* shadow */ = {
 			isa = PBXGroup;
 			children = (
-				C37DF8ED16E746710079A0EB /* ClearButtonElement.cpp */,
-				C37DF8EE16E746710079A0EB /* ClearButtonElement.h */,
 				57B7919F14C6A62900F202D1 /* ContentDistributor.cpp */,
 				57B791A014C6A62900F202D1 /* ContentDistributor.h */,
-				45861C7516194A7400010F3A /* DateTimeEditElement.cpp */,
-				45861C7616194A7400010F3A /* DateTimeEditElement.h */,
-				45861C7716194A7400010F3A /* DateTimeFieldElement.cpp */,
-				45861C7816194A7400010F3A /* DateTimeFieldElement.h */,
-				45861C7916194A7400010F3A /* DateTimeFieldElements.cpp */,
-				45861C7A16194A7400010F3A /* DateTimeFieldElements.h */,
-				45861C7B16194A7400010F3A /* DateTimeNumericFieldElement.cpp */,
-				45861C7C16194A7400010F3A /* DateTimeNumericFieldElement.h */,
-				45861C7D16194A7400010F3A /* DateTimeSymbolicFieldElement.cpp */,
-				45861C7E16194A7400010F3A /* DateTimeSymbolicFieldElement.h */,
 				A7C9ABF61357A3BF00F5503F /* DetailsMarkerControl.cpp */,
 				A7C9ABF71357A3BF00F5503F /* DetailsMarkerControl.h */,
 				57B791A714C6A63300F202D1 /* HTMLContentElement.cpp */,
@@ -15719,8 +15679,6 @@
 				C33EE5C314FB49610002095A /* BaseClickableWithKeyInputType.h */,
 				F59C95FD1255B23F000623C0 /* BaseDateAndTimeInputType.cpp */,
 				F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */,
-				45861C70161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.cpp */,
-				45861C71161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.h */,
 				F55B3D791251F12D003EF269 /* BaseTextInputType.cpp */,
 				F55B3D7A1251F12D003EF269 /* BaseTextInputType.h */,
 				F55B3D7B1251F12D003EF269 /* ButtonInputType.cpp */,
@@ -21021,7 +20979,6 @@
 				F5E0C65C1643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.h in Headers */,
 				C33EE5C514FB49610002095A /* BaseClickableWithKeyInputType.h in Headers */,
 				F59C96001255B23F000623C0 /* BaseDateAndTimeInputType.h in Headers */,
-				45861C73161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.h in Headers */,
 				F55B3DAE1251F12D003EF269 /* BaseTextInputType.h in Headers */,
 				FBD6AF8A15EF25DF008B7110 /* BasicShapeFunctions.h in Headers */,
 				FBD6AF8C15EF2604008B7110 /* BasicShapes.h in Headers */,
@@ -21113,7 +21070,6 @@
 				14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */,
 				4ACBC0BF12713CBD0094F9B2 /* ClassList.h in Headers */,
 				BC904B770D10998F00680D32 /* ClassNodeList.h in Headers */,
-				C37DF8F016E746710079A0EB /* ClearButtonElement.h in Headers */,
 				BCC0657E0F3CE1B700CD2D87 /* ClientRect.h in Headers */,
 				BCC065810F3CE1B700CD2D87 /* ClientRectList.h in Headers */,
 				85031B3E0A44EFC700F992E0 /* Clipboard.h in Headers */,
@@ -21292,14 +21248,9 @@
 				2E97CCEB12939CB800C5C8FF /* DataView.h in Headers */,
 				A5732B0B136A161D005C8D7C /* DateComponents.h in Headers */,
 				F55B3DB61251F12D003EF269 /* DateInputType.h in Headers */,
-				45861C8016194A7400010F3A /* DateTimeEditElement.h in Headers */,
-				45861C8216194A7400010F3A /* DateTimeFieldElement.h in Headers */,
-				45861C8416194A7400010F3A /* DateTimeFieldElements.h in Headers */,
 				453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */,
 				F55B3DB81251F12D003EF269 /* DateTimeInputType.h in Headers */,
 				F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */,
-				45861C8616194A7400010F3A /* DateTimeNumericFieldElement.h in Headers */,
-				45861C8816194A7400010F3A /* DateTimeSymbolicFieldElement.h in Headers */,
 				45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */,
 				A8C228A111D5722E00D5A7D3 /* DecodedDataDocumentParser.h in Headers */,
 				CECCFC3B141973D5002A0AC1 /* DecodeEscapeSequences.h in Headers */,
@@ -24477,7 +24428,6 @@
 				F5E0C65B1643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.cpp in Sources */,
 				C33EE5C414FB49610002095A /* BaseClickableWithKeyInputType.cpp in Sources */,
 				F59C95FF1255B23F000623C0 /* BaseDateAndTimeInputType.cpp in Sources */,
-				45861C72161949DC00010F3A /* BaseMultipleFieldsDateAndTimeInputType.cpp in Sources */,
 				F55B3DAD1251F12D003EF269 /* BaseTextInputType.cpp in Sources */,
 				FBD6AF8915EF25DB008B7110 /* BasicShapeFunctions.cpp in Sources */,
 				FBD6AF8D15EF260A008B7110 /* BasicShapes.cpp in Sources */,
@@ -24551,7 +24501,6 @@
 				ABAF22080C03B1C700B0BCF0 /* ChromeMac.mm in Sources */,
 				4ACBC0BE12713CBD0094F9B2 /* ClassList.cpp in Sources */,
 				BC904B760D10998F00680D32 /* ClassNodeList.cpp in Sources */,
-				C37DF8EF16E746710079A0EB /* ClearButtonElement.cpp in Sources */,
 				BCC0657D0F3CE1B700CD2D87 /* ClientRect.cpp in Sources */,
 				BCC065800F3CE1B700CD2D87 /* ClientRectList.cpp in Sources */,
 				A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */,
@@ -24694,13 +24643,8 @@
 				2E97CCEA12939CB800C5C8FF /* DataView.cpp in Sources */,
 				A5732B0A136A161D005C8D7C /* DateComponents.cpp in Sources */,
 				F55B3DB51251F12D003EF269 /* DateInputType.cpp in Sources */,
-				45861C7F16194A7400010F3A /* DateTimeEditElement.cpp in Sources */,
-				45861C8116194A7400010F3A /* DateTimeFieldElement.cpp in Sources */,
-				45861C8316194A7400010F3A /* DateTimeFieldElements.cpp in Sources */,
 				F55B3DB71251F12D003EF269 /* DateTimeInputType.cpp in Sources */,
 				F55B3DB91251F12D003EF269 /* DateTimeLocalInputType.cpp in Sources */,
-				45861C8516194A7400010F3A /* DateTimeNumericFieldElement.cpp in Sources */,
-				45861C8716194A7400010F3A /* DateTimeSymbolicFieldElement.cpp in Sources */,
 				45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */,
 				A8C228A211D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp in Sources */,
 				4162A450101145AE00DFF3ED /* DedicatedWorkerContext.cpp in Sources */,

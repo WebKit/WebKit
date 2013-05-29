@@ -1,3 +1,12 @@
+2013-05-29  Kent Tamura  <tkent@chromium.org>
+
+        Remove ENABLE_INPUT_MULTIPLE_FIELDS_UI.
+        https://bugs.webkit.org/show_bug.cgi?id=116796
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+
 2013-05-28  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Fix style issues in BlackBerry accelerated compositing backend

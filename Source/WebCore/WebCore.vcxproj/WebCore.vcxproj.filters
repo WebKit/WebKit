@@ -4299,25 +4299,7 @@
     <ClCompile Include="..\html\parser\XSSAuditorDelegate.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\shadow\ClearButtonElement.cpp">
-      <Filter>html\shadow</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\shadow\ContentDistributor.cpp">
-      <Filter>html\shadow</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\shadow\DateTimeEditElement.cpp">
-      <Filter>html\shadow</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\shadow\DateTimeFieldElement.cpp">
-      <Filter>html\shadow</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\shadow\DateTimeFieldElements.cpp">
-      <Filter>html\shadow</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\shadow\DateTimeNumericFieldElement.cpp">
-      <Filter>html\shadow</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\shadow\DateTimeSymbolicFieldElement.cpp">
       <Filter>html\shadow</Filter>
     </ClCompile>
     <ClCompile Include="..\html\shadow\DetailsMarkerControl.cpp">
@@ -11196,25 +11178,7 @@
     <ClInclude Include="..\html\parser\XSSAuditorDelegate.h">
       <Filter>html\parser</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\shadow\ClearButtonElement.h">
-      <Filter>html\shadow</Filter>
-    </ClInclude>
     <ClInclude Include="..\html\shadow\ContentDistributor.h">
-      <Filter>html\shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\shadow\DateTimeEditElement.h">
-      <Filter>html\shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\shadow\DateTimeFieldElement.h">
-      <Filter>html\shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\shadow\DateTimeFieldElements.h">
-      <Filter>html\shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\shadow\DateTimeNumericFieldElement.h">
-      <Filter>html\shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\shadow\DateTimeSymbolicFieldElement.h">
       <Filter>html\shadow</Filter>
     </ClInclude>
     <ClInclude Include="..\html\shadow\DetailsMarkerControl.h">

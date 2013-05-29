@@ -329,7 +329,7 @@ public:
 #endif
     virtual bool isQuote() const { return false; }
 
-#if ENABLE(DETAILS_ELEMENT) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DETAILS_ELEMENT)
     virtual bool isDetailsMarker() const { return false; }
 #endif
     virtual bool isEmbeddedObject() const { return false; }

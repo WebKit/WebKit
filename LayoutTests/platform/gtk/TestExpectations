@@ -167,17 +167,11 @@ webkit.org/b/98935 fast/forms/color [ Skip ]
 
 # ENABLE_INPUT_TYPE_* are not enabled.
 webkit.org/b/98936 fast/forms/date [ Skip ]
-webkit.org/b/98936 fast/forms/date-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/datetime [ Skip ]
-webkit.org/b/98936 fast/forms/datetime-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/datetimelocal [ Skip ]
-webkit.org/b/98936 fast/forms/datetimelocal-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/month [ Skip ]
-webkit.org/b/98936 fast/forms/month-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/time [ Skip ]
-webkit.org/b/98936 fast/forms/time-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/week [ Skip ]
-webkit.org/b/98936 fast/forms/week-multiple-fields [ Skip ]
 
 # ENABLE_GAMEPAD not enabled.
 webkit.org/b/98937 gamepad [ Skip ]

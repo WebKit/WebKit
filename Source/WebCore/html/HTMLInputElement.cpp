@@ -139,9 +139,6 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
     , m_inputType(InputType::createText(this))
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    setHasCustomStyleCallbacks();
-#endif
 }
 
 PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)
@@ -1966,13 +1963,6 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
     }
 #endif
     return true;
-}
-#endif
-
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-PassRefPtr<RenderStyle> HTMLInputElement::customStyleForRenderer()
-{
-    return m_inputType->customStyleForRenderer(document()->ensureStyleResolver()->styleForElement(this));
 }
 #endif
 

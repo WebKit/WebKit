@@ -168,33 +168,6 @@ namespace WebCore {
     String AXMenuListPopupActionVerb();
     String AXLinkActionVerb();
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    String AXAMPMFieldText();
-    String AXDayOfMonthFieldText();
-    String AXDateTimeFieldEmptyValueText();
-    String AXHourFieldText();
-    String AXMillisecondFieldText();
-    String AXMinuteFieldText();
-    String AXMonthFieldText();
-    String AXSecondFieldText();
-    String AXWeekOfYearFieldText();
-    String AXYearFieldText();
-
-    // placeholderForDayOfMonthField() returns localized placeholder text, e.g.
-    // "dd", for date field used in multiple fields "date", "datetime", and
-    // "datetime-local" input UI instead "--".
-    String placeholderForDayOfMonthField();
-
-    // placeholderForfMonthField() returns localized placeholder text, e.g.
-    // "mm", for month field used in multiple fields "date", "datetime", and
-    // "datetime-local" input UI instead "--".
-    String placeholderForMonthField();
-
-    // placeholderForYearField() returns localized placeholder text, e.g.
-    // "yyyy", for year field used in multiple fields "date", "datetime", and
-    // "datetime-local" input UI instead "----".
-    String placeholderForYearField();
-#endif
 #if ENABLE(INPUT_TYPE_WEEK)
     // weekFormatInLDML() returns week and year format in LDML, Unicode
     // technical standard 35, Locale Data Markup Language, e.g. "'Week' ww, yyyy"
@@ -256,9 +229,6 @@ namespace WebCore {
     String validationMessageRangeOverflowText(const String& maximum);
     String validationMessageStepMismatchText(const String& base, const String& step);
     String validationMessageBadInputForNumberText();
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    String validationMessageBadInputForDateTimeText();
-#endif
 #if USE(SOUP)
     String unacceptableTLSCertificate();
 #endif

@@ -9025,13 +9025,7 @@
     <ClCompile Include="..\html\parser\TextViewSourceParser.cpp" />
     <ClCompile Include="..\html\parser\XSSAuditor.cpp" />
     <ClCompile Include="..\html\parser\XSSAuditorDelegate.cpp" />
-    <ClCompile Include="..\html\shadow\ClearButtonElement.cpp" />
     <ClCompile Include="..\html\shadow\ContentDistributor.cpp" />
-    <ClCompile Include="..\html\shadow\DateTimeEditElement.cpp" />
-    <ClCompile Include="..\html\shadow\DateTimeFieldElement.cpp" />
-    <ClCompile Include="..\html\shadow\DateTimeFieldElements.cpp" />
-    <ClCompile Include="..\html\shadow\DateTimeNumericFieldElement.cpp" />
-    <ClCompile Include="..\html\shadow\DateTimeSymbolicFieldElement.cpp" />
     <ClCompile Include="..\html\shadow\DetailsMarkerControl.cpp" />
     <ClCompile Include="..\html\shadow\HTMLContentElement.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -12819,13 +12813,7 @@
     <ClInclude Include="..\html\parser\TextViewSourceParser.h" />
     <ClInclude Include="..\html\parser\XSSAuditor.h" />
     <ClInclude Include="..\html\parser\XSSAuditorDelegate.h" />
-    <ClInclude Include="..\html\shadow\ClearButtonElement.h" />
     <ClInclude Include="..\html\shadow\ContentDistributor.h" />
-    <ClInclude Include="..\html\shadow\DateTimeEditElement.h" />
-    <ClInclude Include="..\html\shadow\DateTimeFieldElement.h" />
-    <ClInclude Include="..\html\shadow\DateTimeFieldElements.h" />
-    <ClInclude Include="..\html\shadow\DateTimeNumericFieldElement.h" />
-    <ClInclude Include="..\html\shadow\DateTimeSymbolicFieldElement.h" />
     <ClInclude Include="..\html\shadow\DetailsMarkerControl.h" />
     <ClInclude Include="..\html\shadow\HTMLContentElement.h" />
     <ClInclude Include="..\html\shadow\InsertionPoint.h" />

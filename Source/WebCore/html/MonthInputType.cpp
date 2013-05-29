@@ -41,13 +41,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-#include "DateTimeFieldsState.h"
-#include "LocalizedStrings.h"
-#include "PlatformLocale.h"
-#include <wtf/text/WTFString.h>
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -148,31 +141,6 @@ bool MonthInputType::isMonthField() const
     return true;
 }
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-String MonthInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState) const
-{
-    if (!dateTimeFieldsState.hasMonth() || !dateTimeFieldsState.hasYear())
-        return emptyString();
-    return String::format("%04u-%02u", dateTimeFieldsState.year(), dateTimeFieldsState.month());
-}
-
-void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
-{
-    layoutParameters.dateTimeFormat = layoutParameters.locale.monthFormat();
-    layoutParameters.fallbackDateTimeFormat = "yyyy-MM";
-    if (!parseToDateComponents(element()->fastGetAttribute(minAttr), &layoutParameters.minimum))
-        layoutParameters.minimum = DateComponents();
-    if (!parseToDateComponents(element()->fastGetAttribute(maxAttr), &layoutParameters.maximum))
-        layoutParameters.maximum = DateComponents();
-    layoutParameters.placeholderForMonth = "--";
-    layoutParameters.placeholderForYear = "----";
-}
-
-bool MonthInputType::isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const
-{
-    return hasYear && hasMonth;
-}
-#endif
 } // namespace WebCore
 
 #endif

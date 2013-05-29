@@ -404,9 +404,6 @@ private:
     CheckedRadioButtons* checkedRadioButtons() const;
     void addToRadioButtonGroup();
     void removeFromRadioButtonGroup();
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
-#endif
 
     AtomicString m_name;
     String m_valueIfDirty;

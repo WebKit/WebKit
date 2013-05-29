@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include "BaseChooserOnlyDateAndTimeInputType.h"
 
 #include "Chrome.h"

@@ -39,14 +39,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-#include "DateTimeFieldsState.h"
-#include "LocalizedStrings.h"
-#include "PlatformLocale.h"
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -108,68 +100,6 @@ bool DateTimeInputType::isDateTimeField() const
 {
     return true;
 }
-
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-// FIXME: It is better to share code for DateTimeInputType::formatDateTimeFieldsState()
-// and DateTimeInputLocalType::formatDateTimeFieldsState().
-String DateTimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState) const
-{
-    if (!dateTimeFieldsState.hasDayOfMonth() || !dateTimeFieldsState.hasMonth() || !dateTimeFieldsState.hasYear()
-        || !dateTimeFieldsState.hasHour() || !dateTimeFieldsState.hasMinute() || !dateTimeFieldsState.hasAMPM())
-        return emptyString();
-
-    if (dateTimeFieldsState.hasMillisecond() && dateTimeFieldsState.millisecond()) {
-        return String::format("%04u-%02u-%02uT%02u:%02u:%02u.%03uZ",
-            dateTimeFieldsState.year(),
-            dateTimeFieldsState.month(),
-            dateTimeFieldsState.dayOfMonth(),
-            dateTimeFieldsState.hour23(),
-            dateTimeFieldsState.minute(),
-            dateTimeFieldsState.hasSecond() ? dateTimeFieldsState.second() : 0,
-            dateTimeFieldsState.millisecond());
-    }
-
-    if (dateTimeFieldsState.hasSecond() && dateTimeFieldsState.second()) {
-        return String::format("%04u-%02u-%02uT%02u:%02u:%02uZ",
-            dateTimeFieldsState.year(),
-            dateTimeFieldsState.month(),
-            dateTimeFieldsState.dayOfMonth(),
-            dateTimeFieldsState.hour23(),
-            dateTimeFieldsState.minute(),
-            dateTimeFieldsState.second());
-    }
-
-    return String::format("%04u-%02u-%02uT%02u:%02uZ",
-        dateTimeFieldsState.year(),
-        dateTimeFieldsState.month(),
-        dateTimeFieldsState.dayOfMonth(),
-        dateTimeFieldsState.hour23(),
-        dateTimeFieldsState.minute());
-}
-
-void DateTimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
-{
-    if (shouldHaveSecondField(date)) {
-        layoutParameters.dateTimeFormat = layoutParameters.locale.dateTimeFormatWithSeconds();
-        layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-    } else {
-        layoutParameters.dateTimeFormat = layoutParameters.locale.dateTimeFormatWithoutSeconds();
-        layoutParameters.fallbackDateTimeFormat = "yyyy-MM-dd'T'HH:mm'Z'";
-    }
-    if (!parseToDateComponents(element()->fastGetAttribute(minAttr), &layoutParameters.minimum))
-        layoutParameters.minimum = DateComponents();
-    if (!parseToDateComponents(element()->fastGetAttribute(maxAttr), &layoutParameters.maximum))
-        layoutParameters.maximum = DateComponents();
-    layoutParameters.placeholderForDay = placeholderForDayOfMonthField();
-    layoutParameters.placeholderForMonth = placeholderForMonthField();
-    layoutParameters.placeholderForYear = placeholderForYearField();
-}
-
-bool DateTimeInputType::isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const
-{
-    return hasYear && hasMonth && hasDay && hasAMPM && hasHour && hasMinute;
-}
-#endif
 
 String DateTimeInputType::sanitizeValue(const String& proposedValue) const
 {

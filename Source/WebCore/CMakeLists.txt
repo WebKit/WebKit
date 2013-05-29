@@ -1342,7 +1342,6 @@ set(WebCore_SOURCES
     html/BaseChooserOnlyDateAndTimeInputType.cpp
     html/BaseClickableWithKeyInputType.cpp
     html/BaseDateAndTimeInputType.cpp
-    html/BaseMultipleFieldsDateAndTimeInputType.cpp
     html/BaseTextInputType.cpp
     html/ButtonInputType.cpp
     html/CheckboxInputType.cpp
@@ -1560,13 +1559,7 @@ set(WebCore_SOURCES
     html/parser/XSSAuditor.cpp
     html/parser/XSSAuditorDelegate.cpp
 
-    html/shadow/ClearButtonElement.cpp
     html/shadow/ContentDistributor.cpp
-    html/shadow/DateTimeEditElement.cpp
-    html/shadow/DateTimeFieldElement.cpp
-    html/shadow/DateTimeFieldElements.cpp
-    html/shadow/DateTimeNumericFieldElement.cpp
-    html/shadow/DateTimeSymbolicFieldElement.cpp
     html/shadow/DetailsMarkerControl.cpp
     html/shadow/HTMLContentElement.cpp
     html/shadow/InsertionPoint.cpp

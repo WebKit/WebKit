@@ -300,14 +300,6 @@ fast/events/touch/gesture/context-menu-on-long-tap.html
 # ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING) is disabled
 fast/dom/timer-throttling-hidden-page.html
 
-# ENABLE(INPUT_MULTIPLE_FIELDS_UI) is disabled
-fast/forms/date-multiple-fields
-fast/forms/datetime-multiple-fields
-fast/forms/datetimelocal-multiple-fields
-fast/forms/month-multiple-fields
-fast/forms/time-multiple-fields
-fast/forms/week-multiple-fields
-
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 

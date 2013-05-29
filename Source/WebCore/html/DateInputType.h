@@ -33,20 +33,11 @@
 
 #if ENABLE(INPUT_TYPE_DATE)
 #include "BaseChooserOnlyDateAndTimeInputType.h"
-#include "BaseMultipleFieldsDateAndTimeInputType.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class PickerIndicatorElement;
-
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-typedef BaseMultipleFieldsDateAndTimeInputType BaseDateInputType;
-#else
-typedef BaseChooserOnlyDateAndTimeInputType BaseDateInputType;
-#endif
-
-class DateInputType : public BaseDateInputType {
+class DateInputType : public BaseChooserOnlyDateAndTimeInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
@@ -59,13 +50,6 @@ private:
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
     virtual bool isDateField() const OVERRIDE;
-
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    // BaseMultipleFieldsDateAndTimeInputType functions
-    virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const OVERRIDE;
-    virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const OVERRIDE;
-    virtual bool isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const;
-#endif
 };
 
 } // namespace WebCore
