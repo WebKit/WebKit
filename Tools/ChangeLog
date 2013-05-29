@@ -1,3 +1,14 @@
+2013-05-29  Andrew Lo  <anlo@rim.com>
+
+        Add Andrew Lo to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=116981
+
+        Reviewed by Rob Buis.
+
+        Adding Andrew Lo to contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-05-29  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Unreviewed. Adding myself as a committer.
