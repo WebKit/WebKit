@@ -1,3 +1,18 @@
+2013-05-29  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] about:memory should use malloc_stats instead of mallinfo
+        https://bugs.webkit.org/show_bug.cgi?id=96420
+
+        Reviewed by Rob Buis.
+
+        PR 206297
+        Use mallopt to get malloc_stats.
+
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::mallocStats):
+        (BlackBerry::WebKit::memoryPage):
+        (BlackBerry::WebKit::MemoryTracker::updateMemoryPeaks):
+
 2013-05-29  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
         [BlackBerry] Notify client of selection deletion

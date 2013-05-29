@@ -203,6 +203,15 @@ static void dumpJSCTypeCountSetToTableHTML(StringBuilder& tableHTML, JSC::TypeCo
         tableHTML.append(numberToHTMLTr(iter->key, iter->value));
 }
 
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
+static inline struct malloc_stats mallocStats()
+{
+    struct malloc_stats ms;
+    mallopt(MALLOC_STATS, reinterpret_cast<intptr_t>(&ms));
+    return ms;
+}
+#endif
+
 static String memoryPage()
 {
     StringBuilder builder;
@@ -246,7 +255,7 @@ static String memoryPage()
     OwnPtr<JSC::TypeCountSet> protectedObjectTypeCounts = mainHeap.protectedObjectTypeCounts();
 
     // Malloc info.
-    struct mallinfo mallocInfo = mallinfo();
+    struct malloc_stats mallocInfo = mallocStats();
 
     builder.appendLiteral("<div class='box'><div class='box-title'>Process memory usage summary</div><table class='fixed-table'><col width=75%><col width=25%>");
 
@@ -378,10 +387,10 @@ void MemoryTracker::updateMemoryPeaks(Timer<MemoryTracker>*)
     JSC::Heap& mainHeap = JSDOMWindow::commonVM()->heap;
 
     // Malloc info.
-    struct mallinfo mallocInfo = mallinfo();
+    struct malloc_stats mallocInfo = mallocStats();
 
     // Malloc and JSC memory.
-    unsigned totalUsedMemory = static_cast<unsigned>(mallocInfo.usmblks + mallocInfo.uordblks + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity());
+    unsigned totalUsedMemory = static_cast<unsigned>(mallocInfo.m_small_allocmem + mallocInfo.m_allocmem + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity());
     if (totalUsedMemory > m_peakTotalUsedMemory)
         m_peakTotalUsedMemory = totalUsedMemory;
 
