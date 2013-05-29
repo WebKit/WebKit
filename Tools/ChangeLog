@@ -1,3 +1,9 @@
+2013-05-29  Mary Wu  <mawu@blackberry.com>
+
+        Unreviewed: update my email address in contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-05-29  Kalyan Kondapally  <kalyan.kondapally@intel.com>
 
         Unreviewed: Adding myself to committers list.
