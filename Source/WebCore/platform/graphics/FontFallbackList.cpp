@@ -36,11 +36,12 @@
 
 namespace WebCore {
 
-FontGlyphs::FontGlyphs()
+
+FontGlyphs::FontGlyphs(PassRefPtr<FontSelector> fontSelector)
     : m_pageZero(0)
     , m_cachedPrimarySimpleFontData(0)
-    , m_fontSelector(0)
-    , m_fontSelectorVersion(0)
+    , m_fontSelector(fontSelector)
+    , m_fontSelectorVersion(m_fontSelector ? m_fontSelector->version() : 0)
     , m_familyIndex(0)
     , m_generation(fontCache()->generation())
     , m_pitch(UnknownPitch)
@@ -62,22 +63,6 @@ FontGlyphs::FontGlyphs(const FontPlatformData& platformData)
 {
     RefPtr<FontData> fontData = fontCache()->getCachedFontData(&platformData);
     m_realizedFontData.append(fontData.release());
-}
-
-void FontGlyphs::invalidate(PassRefPtr<FontSelector> fontSelector)
-{
-    releaseFontData();
-    m_realizedFontData.clear();
-    m_pageZero = 0;
-    m_pages.clear();
-    m_cachedPrimarySimpleFontData = 0;
-    m_familyIndex = 0;    
-    m_pitch = UnknownPitch;
-    m_loadingCustomFonts = false;
-    m_fontSelector = fontSelector;
-    m_fontSelectorVersion = m_fontSelector ? m_fontSelector->version() : 0;
-    m_generation = fontCache()->generation();
-    m_widthCache.clear();
 }
 
 void FontGlyphs::releaseFontData()

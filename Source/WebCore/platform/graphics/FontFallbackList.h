@@ -64,11 +64,10 @@ public:
         GlyphPageTreeNode* m_pageZero;
     };
 
-    static PassRefPtr<FontGlyphs> create() { return adoptRef(new FontGlyphs()); }
+    static PassRefPtr<FontGlyphs> create(PassRefPtr<FontSelector> fontSelector) { return adoptRef(new FontGlyphs(fontSelector)); }
     static PassRefPtr<FontGlyphs> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(new FontGlyphs(platformData)); }
 
     ~FontGlyphs() { releaseFontData(); }
-    void invalidate(PassRefPtr<FontSelector>);
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
@@ -91,7 +90,7 @@ public:
     const FontData* realizeFontDataAt(const FontDescription&, unsigned index) const;
 
 private:
-    FontGlyphs();
+    FontGlyphs(PassRefPtr<FontSelector>);
     FontGlyphs(const FontPlatformData&);
 
     void releaseFontData();

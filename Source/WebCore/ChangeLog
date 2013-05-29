@@ -1,3 +1,92 @@
+2013-05-29  Antti Koivisto  <antti@apple.com>
+
+        Share FontGlyphs
+        https://bugs.webkit.org/show_bug.cgi?id=116863
+
+        Reviewed by Anreas Kling.
+
+        Style system generates many Font objects that are identical or similar enough to have identical FontGlyphs. 
+        We can figure out that the FontGlyphs are going to be the same and share them. This reduces memory usage.
+        It also improves performance as the glyph cache and the width cache hang from FontGlyphs and their hit rate
+        increases.
+        
+        On PLT3 this takes the number of live FontGlyphs at the end from 40k+ to <1k. Width cache hit rate improves
+        from ~42% to ~55%.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        
+            Add unique id we can use in cache key.
+
+        (WebCore::CSSFontSelector::dispatchInvalidationCallbacks):
+        
+            Bump the version number on invalidation so we don't reuse cache entries after web font is loaded.
+
+        (WebCore::CSSFontSelector::resolvesFamilyFor):
+        
+            Test if FontSelector is needed for resolving a particular FontDescription.
+
+        * css/CSSFontSelector.h:
+        * page/Settings.cpp:
+        (WebCore::setGenericFontFamilyMap):
+        
+            Invalidate the cache if standard font settings change.
+
+        * platform/graphics/Font.cpp:
+        (FontGlyphsCacheKey):
+        (FontGlyphsCacheEntry):
+        (WebCore::operator==):
+        (WebCore::fontGlyphsCache):
+        (WebCore::invalidateFontGlyphsCache):
+        (WebCore::makeFontSelectorFlags):
+        (WebCore::makeFontGlyphsCacheKey):
+        
+            The cache key consists of
+            
+            - all families.
+            - shared key with the lower level FontData cache (FontCache), guaranteeing FontDatas would be identical.
+            - font selector specific keys.
+
+            These guarantee the FontData will be identical.
+
+        (WebCore::computeFontGlyphsCacheHash):
+        (WebCore::pruneUnreferencedFromFontGlyphsCache):
+        
+            Don't accumulate unused entries.
+
+        (WebCore::retrieveOrAddCachedFontGlyphs):
+        (WebCore::Font::update):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::isHashTableDeletedValue):
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (FontPlatformDataCacheKey):
+        (WebCore::computeHash):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::purgeInactiveFontData):
+        (WebCore::FontCache::invalidate):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionFontDataCacheKey::FontDescriptionFontDataCacheKey):
+        (WebCore::FontDescriptionFontDataCacheKey::makeFlagKey):
+        (WebCore::FontDescriptionFontDataCacheKey::operator==):
+        (WebCore::FontDescriptionFontDataCacheKey::operator!=):
+        (WebCore::FontDescriptionFontDataCacheKey::computeHash):
+        
+            Separate part of the key for sharing.
+
+        (FontDescriptionFontDataCacheKey):
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontGlyphs::FontGlyphs):
+        (WebCore::FontGlyphs::releaseFontData):
+        * platform/graphics/FontFallbackList.h:
+        (WebCore::FontGlyphs::create):
+        (WebCore::FontGlyphs::~FontGlyphs):
+        
+            Remove invalidate(). If FontGlyphs needs invalidation it is reconstructed.
+
+        * platform/graphics/FontSelector.h:
+
 2013-05-29  Nico Weber  <thakis@chromium.org>
 
         Remove unused file PlatformGestureEvent.cpp

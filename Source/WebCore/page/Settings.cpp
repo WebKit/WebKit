@@ -32,6 +32,7 @@
 #include "DOMTimer.h"
 #include "Database.h"
 #include "Document.h"
+#include "Font.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -69,6 +70,7 @@ static inline void setGenericFontFamilyMap(ScriptFontFamilyMap& fontMap, const A
     else
         fontMap.set(static_cast<int>(script), family);
 
+    invalidateFontGlyphsCache();
     if (page)
         page->setNeedsRecalcStyleInAllFrames();
 }

@@ -30,6 +30,7 @@
 #ifndef FontCache_h
 #define FontCache_h
 
+#include "FontDescription.h"
 #include <limits.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -49,7 +50,6 @@ namespace WebCore {
 class Font;
 class FontPlatformData;
 class FontData;
-class FontDescription;
 class FontSelector;
 class OpenTypeVerticalData;
 class SimpleFontData;
@@ -61,6 +61,43 @@ typedef IMLangFontLink2 IMLangFontLinkType;
 typedef IMLangFontLink IMLangFontLinkType;
 #endif
 #endif
+
+// This key contains the FontDescription fields other than family that matter when fetching FontDatas (platform fonts).
+struct FontDescriptionFontDataCacheKey {
+    explicit FontDescriptionFontDataCacheKey(unsigned size = 0)
+        : size(size)
+        , weight(0)
+        , flags(0)
+    { }
+    FontDescriptionFontDataCacheKey(const FontDescription& description)
+        : size(description.computedPixelSize())
+        , weight(description.weight())
+        , flags(makeFlagKey(description))
+    { }
+    static unsigned makeFlagKey(const FontDescription& description)
+    {
+        return static_cast<unsigned>(description.widthVariant()) << 4
+            | static_cast<unsigned>(description.orientation()) << 3
+            | static_cast<unsigned>(description.italic()) << 2
+            | static_cast<unsigned>(description.usePrinterFont()) << 1
+            | static_cast<unsigned>(description.renderingMode());
+    }
+    bool operator==(const FontDescriptionFontDataCacheKey& other) const
+    {
+        return size == other.size && weight == other.weight && flags == other.flags;
+    }
+    bool operator!=(const FontDescriptionFontDataCacheKey& other) const
+    {
+        return !(*this == other);
+    }
+    inline unsigned computeHash() const
+    {
+        return StringHasher::hashMemory<sizeof(*this)>(this);
+    }
+    unsigned size;
+    unsigned weight;
+    unsigned flags;
+};
 
 class FontCache {
     friend class FontCachePurgePreventer;

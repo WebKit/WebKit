@@ -45,30 +45,33 @@ class Document;
 class FontDescription;
 class StyleRuleFontFace;
 
-class CSSFontSelector : public FontSelector {
+class CSSFontSelector FINAL : public FontSelector {
 public:
     static PassRefPtr<CSSFontSelector> create(Document* document)
     {
         return adoptRef(new CSSFontSelector(document));
     }
-    virtual ~CSSFontSelector();
+    virtual ~CSSFontSelector() OVERRIDE;
     
     virtual unsigned version() const OVERRIDE { return m_version; }
+    virtual unsigned uniqueId() const OVERRIDE { return m_uniqueId; }
 
-    virtual PassRefPtr<FontData> getFontData(const FontDescription&, const AtomicString&);
+    virtual PassRefPtr<FontData> getFontData(const FontDescription&, const AtomicString&) OVERRIDE;
     CSSSegmentedFontFace* getFontFace(const FontDescription&, const AtomicString& family);
+
+    virtual bool resolvesFamilyFor(const FontDescription&) const OVERRIDE;
 
     void clearDocument();
 
     void addFontFaceRule(const StyleRuleFontFace*);
 
     void fontLoaded();
-    virtual void fontCacheInvalidated();
+    virtual void fontCacheInvalidated() OVERRIDE;
 
     bool isEmpty() const;
 
-    virtual void registerForInvalidationCallbacks(FontSelectorClient*);
-    virtual void unregisterForInvalidationCallbacks(FontSelectorClient*);
+    virtual void registerForInvalidationCallbacks(FontSelectorClient*) OVERRIDE;
+    virtual void unregisterForInvalidationCallbacks(FontSelectorClient*) OVERRIDE;
 
     Document* document() const { return m_document; }
 
@@ -89,7 +92,8 @@ private:
 
     Vector<CachedResourceHandle<CachedFont> > m_fontsToBeginLoading;
     Timer<CSSFontSelector> m_beginLoadingTimer;
-    
+
+    unsigned m_uniqueId;
     unsigned m_version;
 };
 

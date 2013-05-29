@@ -61,10 +61,14 @@ using namespace std;
 
 namespace WebCore {
 
+static unsigned fontSelectorId;
+
 CSSFontSelector::CSSFontSelector(Document* document)
     : m_document(document)
     , m_beginLoadingTimer(this, &CSSFontSelector::beginLoadTimerFired)
+    , m_uniqueId(++fontSelectorId)
     , m_version(0)
+    
 {
     // FIXME: An old comment used to say there was no need to hold a reference to m_document
     // because "we are guaranteed to be destroyed before the document". But there does not
@@ -334,6 +338,8 @@ void CSSFontSelector::unregisterForInvalidationCallbacks(FontSelectorClient* cli
 
 void CSSFontSelector::dispatchInvalidationCallbacks()
 {
+    ++m_version;
+
     Vector<FontSelectorClient*> clients;
     copyToVector(m_clients, clients);
     for (size_t i = 0; i < clients.size(); ++i)
@@ -608,6 +614,24 @@ void CSSFontSelector::beginLoadTimerFired(Timer<WebCore::CSSFontSelector>*)
     // didFinishLoading for the frame. Make sure the delegate is always dispatched by checking explicitly.
     if (m_document && m_document->frame())
         m_document->frame()->loader()->checkLoadComplete();
+}
+
+bool CSSFontSelector::resolvesFamilyFor(const FontDescription& description) const
+{
+    for (unsigned i = 0; i < description.familyCount(); ++i) {
+        const AtomicString& familyName = description.familyAt(i);
+        if (description.genericFamily() == FontDescription::StandardFamily && !description.isSpecifiedFont())
+            return true;
+        if (familyName.isEmpty())
+            continue;
+        if (m_fontFaces.contains(familyName))
+            return true;
+        DEFINE_STATIC_LOCAL(String, webkitPrefix, ("-webkit-"));
+        if (familyName.startsWith(webkitPrefix))
+            return true;
+            
+    }
+    return false;
 }
 
 }

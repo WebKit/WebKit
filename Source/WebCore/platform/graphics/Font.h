@@ -182,7 +182,7 @@ public:
     CodePath codePath(const TextRun&) const;
     static CodePath characterRangeCodePath(const LChar*, unsigned) { return Simple; }
     static CodePath characterRangeCodePath(const UChar*, unsigned len);
-    
+
 private:
     enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };
 
@@ -312,6 +312,9 @@ private:
     bool m_needsTranscoding;
     mutable TypesettingFeatures m_typesettingFeatures; // Caches values computed from m_fontDescription.
 };
+
+void invalidateFontGlyphsCache();
+void pruneUnreferencedEntriesFromFontGlyphsCache();
 
 inline Font::~Font()
 {
