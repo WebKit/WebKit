@@ -309,6 +309,7 @@ private:
 #if !PLATFORM(WIN)
     bool m_inbandTrackConfigurationPending;
 #endif
+    size_t m_seekCount;
 };
 
 } // namespace WebCore

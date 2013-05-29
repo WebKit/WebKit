@@ -1,3 +1,21 @@
+2013-05-29  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Scrubbing long movie files results in timeline snapping back to 0 during scrub.
+        https://bugs.webkit.org/show_bug.cgi?id=116986
+
+        Reviewed by Eric Carlson.
+
+        Keep a count of the number of in-flight seek requests, and only issue a timeupdate
+        (which triggers a "seeked" event) when the final seek completes.
+
+        Test: media/video-seek-multiple.html
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::seek):
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (MediaPlayerPrivateAVFoundation):
+
 2013-05-29  Anders Carlsson  <andersca@apple.com>
 
         Remove unused code from PODArena
