@@ -279,6 +279,8 @@ public:
 
     void setLayerFlushThrottlingEnabled(bool);
     void disableLayerFlushThrottlingTemporarilyForInteraction();
+    
+    void didPaintBacking(RenderLayerBacking*);
 
 private:
     class OverlapMap;
