@@ -67,123 +67,120 @@ template<> String numberToHTMLTr<bool>(const String& description, bool truth)
 
 static String configPage()
 {
-    String page;
+    StringBuilder builder;
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
-    page = writeHeader("Configuration")
-    + "<div class=\"box\"><div class=\"box-title\">Compiler Information</div><table class='fixed-table'><col width=75%><col width=25%>"
+    builder.append(writeHeader("Configuration"));
+    builder.appendLiteral("<div class=\"box\"><div class=\"box-title\">Compiler Information</div><table class='fixed-table'><col width=75%><col width=25%>");
 #if COMPILER(MSVC)
-    + "<tr><td>Microsoft Visual C++</td><td>MSVC</td></tr>"
-    + "<tr><td>_MSC_VER</td><td>" + String::number(_MSC_VER) + "</td></tr>"
-    + "<tr><td>_MSC_FULL_VER</td><td>" + String::number(_MSC_FULL_VER) + "</td></tr>"
-    + "<tr><td>_MSC_BUILD</td><td>" + String::number(_MSC_BUILD) + "</td></tr>"
+    builder.appendLiteral("<tr><td>Microsoft Visual C++</td><td>MSVC</td></tr>");
+    builder.append("<tr><td>_MSC_VER</td><td>" + String::number(_MSC_VER) + "</td></tr>");
+    builder.append("<tr><td>_MSC_FULL_VER</td><td>" + String::number(_MSC_FULL_VER) + "</td></tr>");
+    builder.append("<tr><td>_MSC_BUILD</td><td>" + String::number(_MSC_BUILD) + "</td></tr>");
 #elif COMPILER(RVCT)
-    + "<tr><td>ARM RealView Compiler Toolkit</td><td>RVCT</td></tr>"
-    + "<tr><td>__ARMCC_VERSION</td><td>" + String::number(__ARMCC_VERSION) + "</td></tr>"
+    builder.appendLiteral("<tr><td>ARM RealView Compiler Toolkit</td><td>RVCT</td></tr>");
+    builder.append("<tr><td>__ARMCC_VERSION</td><td>" + String::number(__ARMCC_VERSION) + "</td></tr>");
 #if COMPILER(RVCT4GNU)
-    + "<tr><td>RVCT 4+ in --gnu mode</td><td>1</td></tr>"
+    builder.appendLiteral("<tr><td>RVCT 4+ in --gnu mode</td><td>1</td></tr>");
 #endif
 #elif COMPILER(GCC)
-    + "<tr><td>GCC</td><td>" + String::number(__GNUC__) + "." + String::number(__GNUC_MINOR__) + "." + String::number(__GNUC_PATCHLEVEL__) + "</td></tr>"
+    builder.append("<tr><td>GCC</td><td>" + String::number(__GNUC__) + "." + String::number(__GNUC_MINOR__) + "." + String::number(__GNUC_PATCHLEVEL__) + "</td></tr>");
 #endif
 
     // Add "" to satisfy check-webkit-style.
-    + "";
+    builder.appendLiteral("");
 
-    page += String("</table></div><br><div class='box'><div class='box-title'>CPU Information</div><table class='fixed-table'><col width=75%><col width=25%>")
+    builder.append(String("</table></div><br><div class='box'><div class='box-title'>CPU Information</div><table class='fixed-table'><col width=75%><col width=25%>"));
 #if CPU(X86)
-    + "<tr><td>X86</td><td></td></tr>"
+    builder.appendLiteral("<tr><td>X86</td><td></td></tr>");
 #elif CPU(ARM)
-    + "<tr><td>ARM</td><td></td></tr>"
-    + "<tr><td>ARM_ARCH_VERSION</td><td>" + String::number(WTF_ARM_ARCH_VERSION) + "</td></tr>"
-    + "<tr><td>THUMB_ARCH_VERSION</td><td>" + String::number(WTF_THUMB_ARCH_VERSION) + "</td></tr>"
-    + "<tr><td>THUMB2</td><td>" + String::number(WTF_CPU_ARM_THUMB2) + "</td></tr>"
+    builder.appendLiteral("<tr><td>ARM</td><td></td></tr>");
+    builder.append("<tr><td>ARM_ARCH_VERSION</td><td>" + String::number(WTF_ARM_ARCH_VERSION) + "</td></tr>");
+    builder.append("<tr><td>THUMB_ARCH_VERSION</td><td>" + String::number(WTF_THUMB_ARCH_VERSION) + "</td></tr>");
+    builder.append("<tr><td>THUMB2</td><td>" + String::number(WTF_CPU_ARM_THUMB2) + "</td></tr>");
 #endif
-    + "<tr><td>Endianness</td><td>"
+    builder.appendLiteral("<tr><td>Endianness</td><td>");
 #if CPU(BIG_ENDIAN)
-    + "big"
+    builder.appendLiteral("big");
 #elif CPU(MIDDLE_ENDIAN)
-    + "middle"
+    builder.appendLiteral("middle");
 #else
-    + "little"
+    builder.appendLiteral("little");
 #endif
-    + "</td></tr>";
+    builder.appendLiteral("</td></tr>");
 
-    page += String("</table></div><br><div class='box'><div class='box-title'>Platform Information</div><table class='fixed-table'><col width=75%><col width=25%>")
-    + "<tr><td>WebKit Version</td><td>" + String::number(WEBKIT_MAJOR_VERSION) + "." + String::number(WEBKIT_MINOR_VERSION) + "</td></tr>"
-    + "<tr><td>BlackBerry</td><td>"
+    builder.append(String("</table></div><br><div class='box'><div class='box-title'>Platform Information</div><table class='fixed-table'><col width=75%><col width=25%>"));
+    builder.append("<tr><td>WebKit Version</td><td>" + String::number(WEBKIT_MAJOR_VERSION) + "." + String::number(WEBKIT_MINOR_VERSION) + "</td></tr>");
+    builder.appendLiteral("<tr><td>BlackBerry</td><td>");
 #if PLATFORM(BLACKBERRY)
-    + "1"
+    builder.appendLiteral("1");
 #else
-    + "0"
+    builder.appendLiteral("0");
 #endif
-    + "</td></tr>"
-    + "<tr><td>__STDC_ISO_10646__</td><td>"
+    builder.appendLiteral("</td></tr>");
+    builder.appendLiteral("<tr><td>__STDC_ISO_10646__</td><td>");
 #ifdef __STDC_ISO_10646__
-    + "1"
+    builder.appendLiteral("1");
 #else
-    + "0"
+    builder.appendLiteral("0");
 #endif
-    + "</td></tr>";
+    builder.appendLiteral("</td></tr>");
 
     BlackBerry::Platform::Settings* settings = BlackBerry::Platform::Settings::instance();
-    page += String("</table></div><br><div class='box'><div class='box-title'>Platform Settings</div><table style='font-size:11px;' class='fixed-table'><col width=75%><col width=25%>");
-    page += numberToHTMLTr("isRSSFilteringEnabled", settings->isRSSFilteringEnabled());
-    page += numberToHTMLTr("secondaryThreadStackSize", settings->secondaryThreadStackSize());
-    page += numberToHTMLTr("maxPixelsPerDecodedImage", settings->maxPixelsPerDecodedImage());
-    page += numberToHTMLTr("shouldReportLowMemoryToUser", settings->shouldReportLowMemoryToUser());
-    page += numberToHTMLTr("numberOfBackingStoreFrontBuffers", settings->numberOfBackingStoreFrontBuffers()));
-    page += numberToHTMLTr("numberOfBackingStoreBackBuffers", settings->numberOfBackingStoreBackBuffers()));
-    page += numberToHTMLTr("tabsSupportedByClient", settings->tabsSupportedByClient());
-    page += numberToHTMLTr("contextMenuEnabled", settings->contextMenuEnabled());
-    page += numberToHTMLTr("selectionEnabled", settings->selectionEnabled());
-    page += numberToHTMLTr("fineCursorControlEnabled", settings->fineCursorControlEnabled());
-    page += numberToHTMLTr("alwaysShowKeyboardOnFocus", settings->alwaysShowKeyboardOnFocus());
-    page += numberToHTMLTr("allowedScrollAdjustmentForInputFields", settings->allowedScrollAdjustmentForInputFields());
-    page += numberToHTMLTr("unrestrictedResizeEvents", settings->unrestrictedResizeEvents());
-    page += numberToHTMLTr("isBridgeBrowser", settings->isBridgeBrowser());
-    page += numberToHTMLTr("showImageLocationOptionsInGCM", settings->showImageLocationOptionsInGCM());
-    page += numberToHTMLTr("forceGLES2WindowUsage", settings->forceGLES2WindowUsage());
-    page += numberToHTMLTr("maxClickableSpeed", settings->maxClickableSpeed());
-    page += numberToHTMLTr("maxJitterRadiusClick", settings->maxJitterRadiusClick());
-    page += numberToHTMLTr("maxJitterRadiusTap", settings->maxJitterRadiusTap());
-    page += numberToHTMLTr("maxJitterRadiusSingleTouchMove", settings->maxJitterRadiusSingleTouchMove());
-    page += numberToHTMLTr("maxJitterRadiusTouchHold", settings->maxJitterRadiusTouchHold());
-    page += numberToHTMLTr("maxJitterRadiusHandleDrag", settings->maxJitterRadiusHandleDrag());
-    page += numberToHTMLTr("maxJitterRadiusTapHighlight", settings->maxJitterRadiusTapHighlight());
-    page += numberToHTMLTr("maxJitterDistanceClick", settings->maxJitterDistanceClick());
-    page += numberToHTMLTr("maxJitterDistanceTap", settings->maxJitterDistanceTap());
-    page += numberToHTMLTr("maxJitterDistanceSingleTouchMove", settings->maxJitterDistanceSingleTouchMove());
-    page += numberToHTMLTr("maxJitterDistanceTouchHold", settings->maxJitterDistanceTouchHold());
-    page += numberToHTMLTr("maxJitterDistanceTapHighlight", settings->maxJitterDistanceTapHighlight());
-    page += numberToHTMLTr("maxJitterDistanceHandleDrag", settings->maxJitterDistanceHandleDrag());
-    page += numberToHTMLTr("topFatFingerPadding", settings->topFatFingerPadding());
-    page += numberToHTMLTr("rightFatFingerPadding", settings->rightFatFingerPadding());
-    page += numberToHTMLTr("bottomFatFingerPadding", settings->bottomFatFingerPadding());
-    page += numberToHTMLTr("maxSelectionNeckHeight", settings->maxSelectionNeckHeight());
-    page += numberToHTMLTr("leftFatFingerPadding", settings->leftFatFingerPadding());
+    builder.append(String("</table></div><br><div class='box'><div class='box-title'>Platform Settings</div><table style='font-size:11px;' class='fixed-table'><col width=75%><col width=25%>"));
+    builder.append(numberToHTMLTr("isRSSFilteringEnabled", settings->isRSSFilteringEnabled()));
+    builder.append(numberToHTMLTr("maxPixelsPerDecodedImage", settings->maxPixelsPerDecodedImage()));
+    builder.append(numberToHTMLTr("shouldReportLowMemoryToUser", settings->shouldReportLowMemoryToUser()));
+    builder.append(numberToHTMLTr("numberOfBackingStoreFrontBuffers", settings->numberOfBackingStoreFrontBuffers()));
+    builder.append(numberToHTMLTr("numberOfBackingStoreBackBuffers", settings->numberOfBackingStoreBackBuffers()));
+    builder.append(numberToHTMLTr("tabsSupportedByClient", settings->tabsSupportedByClient()));
+    builder.append(numberToHTMLTr("contextMenuEnabled", settings->contextMenuEnabled()));
+    builder.append(numberToHTMLTr("selectionEnabled", settings->selectionEnabled()));
+    builder.append(numberToHTMLTr("fineCursorControlEnabled", settings->fineCursorControlEnabled()));
+    builder.append(numberToHTMLTr("alwaysShowKeyboardOnFocus", settings->alwaysShowKeyboardOnFocus()));
+    builder.append(numberToHTMLTr("allowedScrollAdjustmentForInputFields", settings->allowedScrollAdjustmentForInputFields()));
+    builder.append(numberToHTMLTr("unrestrictedResizeEvents", settings->unrestrictedResizeEvents()));
+    builder.append(numberToHTMLTr("isBridgeBrowser", settings->isBridgeBrowser()));
+    builder.append(numberToHTMLTr("showImageLocationOptionsInGCM", settings->showImageLocationOptionsInGCM()));
+    builder.append(numberToHTMLTr("forceGLES2WindowUsage", settings->forceGLES2WindowUsage()));
+    builder.append(numberToHTMLTr("maxClickableSpeed", settings->maxClickableSpeed()));
+    builder.append(numberToHTMLTr("maxJitterRadiusClick", settings->maxJitterRadiusClick()));
+    builder.append(numberToHTMLTr("maxJitterRadiusTap", settings->maxJitterRadiusTap()));
+    builder.append(numberToHTMLTr("maxJitterRadiusSingleTouchMove", settings->maxJitterRadiusSingleTouchMove()));
+    builder.append(numberToHTMLTr("maxJitterRadiusTouchHold", settings->maxJitterRadiusTouchHold()));
+    builder.append(numberToHTMLTr("maxJitterRadiusHandleDrag", settings->maxJitterRadiusHandleDrag()));
+    builder.append(numberToHTMLTr("maxJitterDistanceClick", settings->maxJitterDistanceClick()));
+    builder.append(numberToHTMLTr("maxJitterDistanceTap", settings->maxJitterDistanceTap()));
+    builder.append(numberToHTMLTr("maxJitterDistanceSingleTouchMove", settings->maxJitterDistanceSingleTouchMove()));
+    builder.append(numberToHTMLTr("maxJitterDistanceTouchHold", settings->maxJitterDistanceTouchHold()));
+    builder.append(numberToHTMLTr("maxJitterDistanceHandleDrag", settings->maxJitterDistanceHandleDrag()));
+    builder.append(numberToHTMLTr("topFatFingerPadding", settings->topFatFingerPadding()));
+    builder.append(numberToHTMLTr("rightFatFingerPadding", settings->rightFatFingerPadding()));
+    builder.append(numberToHTMLTr("bottomFatFingerPadding", settings->bottomFatFingerPadding()));
+    builder.append(numberToHTMLTr("maxSelectionNeckHeight", settings->maxSelectionNeckHeight()));
+    builder.append(numberToHTMLTr("leftFatFingerPadding", settings->leftFatFingerPadding()));
 
     Vector<String> trueList, falseList;
-    #include "AboutDataEnableFeatures.cpp"
-    page += String("</table></div><br><div class='box'><div class='box-title'>WebKit Features (ENABLE_)</div><table class='fixed-table'>");
+#include "AboutDataEnableFeatures.cpp"
+    builder.append(String("</table></div><br><div class='box'><div class='box-title'>WebKit Features (ENABLE_)</div><table class='fixed-table'>"));
 
-    page += writeFeatures(trueList, falseList);
-
-    trueList.clear();
-    falseList.clear();
-    #include "AboutDataHaveFeatures.cpp"
-    page += String("</table></div><br><div class='box'><div class='box-title'>WebKit Features (HAVE_)</div><table class='fixed-table'>");
-
-    page += writeFeatures(trueList, falseList);
+    builder.append(writeFeatures(trueList, falseList));
 
     trueList.clear();
     falseList.clear();
-    #include "AboutDataUseFeatures.cpp"
-    page += String("</table></div><br><div class='box'><div class='box-title'>WebKit Features (USE_)</div><table class='fixed-table'>");
-    page += writeFeatures(trueList, falseList);
-    page += String("</table></div></body></html>");
+#include "AboutDataHaveFeatures.cpp"
+    builder.append(String("</table></div><br><div class='box'><div class='box-title'>WebKit Features (HAVE_)</div><table class='fixed-table'>"));
+
+    builder.append(writeFeatures(trueList, falseList));
+
+    trueList.clear();
+    falseList.clear();
+#include "AboutDataUseFeatures.cpp"
+    builder.append(String("</table></div><br><div class='box'><div class='box-title'>WebKit Features (USE_)</div><table class='fixed-table'>"));
+    builder.append(writeFeatures(trueList, falseList));
+    builder.append(String("</table></div></body></html>"));
 #endif
 
-    return page;
+    return builder.toString();
 }
 
 static String cacheTypeStatisticToHTMLTr(const String& description, const MemoryCache::TypeStatistic& statistic)
@@ -197,27 +194,27 @@ static String cacheTypeStatisticToHTMLTr(const String& description, const Memory
         + "</tr>";
 }
 
-static void dumpJSCTypeCountSetToTableHTML(String& tableHTML, JSC::TypeCountSet* typeCountSet)
+static void dumpJSCTypeCountSetToTableHTML(StringBuilder& tableHTML, JSC::TypeCountSet* typeCountSet)
 {
     if (!typeCountSet)
         return;
 
     for (JSC::TypeCountSet::const_iterator iter = typeCountSet->begin(); iter != typeCountSet->end(); ++iter)
-        tableHTML += numberToHTMLTr(iter->key, iter->value);
+        tableHTML.append(numberToHTMLTr(iter->key, iter->value));
 }
 
 static String memoryPage()
 {
-    String page;
+    StringBuilder builder;
 
-    page = writeHeader("Memory")
-    + "<div class=\"box\"><div class=\"box-title\">Cache Information<br><div style='font-size:11px;color:#A8A8A8'>Size, Living, and Decoded are expressed in KB.</div><br></div><table class='fixed-table'><col width=75%><col width=25%>";
+    builder.append(writeHeader("Memory"));
+    builder.appendLiteral("<div class=\"box\"><div class=\"box-title\">Cache Information<br><div style='font-size:11px;color:#A8A8A8'>Size, Living, and Decoded are expressed in KB.</div><br></div><table class='fixed-table'><col width=75%><col width=25%>");
 
     // generate cache information
     MemoryCache* cacheInc = memoryCache();
     MemoryCache::Statistics cacheStat = cacheInc->getStatistics();
 
-    page += "<tr> <th align=left>Item</th> <th align=left>Count</th> <th align=left>Size</th> <th align=left>Living</th> <th align=left>Decoded</th></tr>";
+    builder.appendLiteral("<tr> <th align=left>Item</th> <th align=left>Count</th> <th align=left>Size</th> <th align=left>Living</th> <th align=left>Decoded</th></tr>");
 
     MemoryCache::TypeStatistic total;
     total.count = cacheStat.images.count + cacheStat.cssStyleSheets.count
@@ -229,16 +226,16 @@ static String memoryPage()
             + cacheStat.cssStyleSheets.decodedSize + cacheStat.scripts.decodedSize
             + cacheStat.xslStyleSheets.decodedSize + cacheStat.fonts.decodedSize;
 
-    page += cacheTypeStatisticToHTMLTr("Total", total);
-    page += cacheTypeStatisticToHTMLTr("Images", cacheStat.images);
-    page += cacheTypeStatisticToHTMLTr("CSS Style Sheets", cacheStat.cssStyleSheets);
-    page += cacheTypeStatisticToHTMLTr("Scripts", cacheStat.scripts);
+    builder.append(cacheTypeStatisticToHTMLTr("Total", total));
+    builder.append(cacheTypeStatisticToHTMLTr("Images", cacheStat.images));
+    builder.append(cacheTypeStatisticToHTMLTr("CSS Style Sheets", cacheStat.cssStyleSheets));
+    builder.append(cacheTypeStatisticToHTMLTr("Scripts", cacheStat.scripts));
 #if ENABLE(XSLT)
-    page += cacheTypeStatisticToHTMLTr("XSL Style Sheets", cacheStat.xslStyleSheets);
+    builder.append(cacheTypeStatisticToHTMLTr("XSL Style Sheets", cacheStat.xslStyleSheets));
 #endif
-    page += cacheTypeStatisticToHTMLTr("Fonts", cacheStat.fonts);
+    builder.append(cacheTypeStatisticToHTMLTr("Fonts", cacheStat.fonts));
 
-    page += "</table></div><br>";
+    builder.appendLiteral("</table></div><br>");
 
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
 
@@ -251,64 +248,70 @@ static String memoryPage()
     // Malloc info.
     struct mallinfo mallocInfo = mallinfo();
 
-    page += "<div class='box'><div class='box-title'>Process memory usage summary</div><table class='fixed-table'><col width=75%><col width=25%>";
+    builder.appendLiteral("<div class='box'><div class='box-title'>Process memory usage summary</div><table class='fixed-table'><col width=75%><col width=25%>");
 
-    page += numberToHTMLTr("Total used memory (malloc + JSC)", mallocInfo.usmblks + mallocInfo.uordblks + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity());
+    builder.append(numberToHTMLTr("Total used memory (malloc + JSC)", mallocInfo.m_small_allocmem + mallocInfo.m_allocmem + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity()));
 
     if (unsigned totalCommittedMemoryOfChromeProcess = BlackBerry::Platform::totalCommittedMemoryOfChromeProcess()) {
-        page += numberToHTMLTr("Total committed memory of tab process", BlackBerry::Platform::totalCommittedMemoryOfCurrentProcess());
-        page += numberToHTMLTr("Total committed memory of chrome process", totalCommittedMemoryOfChromeProcess);
+        builder.append(numberToHTMLTr("Total committed memory of tab process", BlackBerry::Platform::totalCommittedMemoryOfCurrentProcess()));
+        builder.append(numberToHTMLTr("Total committed memory of chrome process", totalCommittedMemoryOfChromeProcess));
     } else
-        page += numberToHTMLTr("Total committed memory", BlackBerry::Platform::totalCommittedMemoryOfCurrentProcess());
+        builder.append(numberToHTMLTr("Total committed memory", BlackBerry::Platform::totalCommittedMemoryOfCurrentProcess()));
 
     struct stat processInfo;
     if (!stat(String::format("/proc/%u/as", getpid()).latin1().data(), &processInfo))
-        page += numberToHTMLTr("Total mapped memory", processInfo.st_size);
+        builder.append(numberToHTMLTr("Total mapped memory", processInfo.st_size));
 
-    page += numberToHTMLTr("System free memory", BlackBerry::Platform::systemFreeMemory());
+    builder.append(numberToHTMLTr("System free memory", BlackBerry::Platform::systemFreeMemory()));
 
-    page += "</table></div><br>";
+    builder.appendLiteral("</table></div><br>");
 
-    page += "<div class='box'><div class='box-title'>JS engine memory usage</div><table class='fixed-table'><col width=75%><col width=25%>";
+    builder.appendLiteral("<div class='box'><div class='box-title'>JS engine memory usage</div><table class='fixed-table'><col width=75%><col width=25%>");
 
-    page += numberToHTMLTr("Stack size", jscMemoryStat.stackBytes);
-    page += numberToHTMLTr("JIT memory usage", jscMemoryStat.JITBytes);
-    page += numberToHTMLTr("Main heap capacity", mainHeap.capacity());
-    page += numberToHTMLTr("Main heap size", mainHeap.size());
-    page += numberToHTMLTr("Object count", mainHeap.objectCount());
-    page += numberToHTMLTr("Global object count", mainHeap.globalObjectCount());
-    page += numberToHTMLTr("Protected object count", mainHeap.protectedObjectCount());
-    page += numberToHTMLTr("Protected global object count", mainHeap.protectedGlobalObjectCount());
+    builder.append(numberToHTMLTr("Stack size", jscMemoryStat.stackBytes));
+    builder.append(numberToHTMLTr("JIT memory usage", jscMemoryStat.JITBytes));
+    builder.append(numberToHTMLTr("Main heap capacity", mainHeap.capacity()));
+    builder.append(numberToHTMLTr("Main heap size", mainHeap.size()));
+    builder.append(numberToHTMLTr("Object count", mainHeap.objectCount()));
+    builder.append(numberToHTMLTr("Global object count", mainHeap.globalObjectCount()));
+    builder.append(numberToHTMLTr("Protected object count", mainHeap.protectedObjectCount()));
+    builder.append(numberToHTMLTr("Protected global object count", mainHeap.protectedGlobalObjectCount()));
 
-    page += "</table></div><br>";
+    builder.appendLiteral("</table></div><br>");
 
-    page += "<div class='box'><div class='box-title'>JS object type counts</div><table class='fixed-table'><col width=75%><col width=25%>";
-    dumpJSCTypeCountSetToTableHTML(page, objectTypeCounts.get());
-    page += "</table></div><br>";
+    builder.appendLiteral("<div class='box'><div class='box-title'>JS object type counts</div><table class='fixed-table'><col width=75%><col width=25%>");
+    dumpJSCTypeCountSetToTableHTML(builder, objectTypeCounts.get());
+    builder.appendLiteral("</table></div><br>");
 
-    page += "<div class='box'><div class='box-title'>JS protected object type counts</div><table class='fixed-table'><col width=75%><col width=25%>";
-    dumpJSCTypeCountSetToTableHTML(page, protectedObjectTypeCounts.get());
-    page += "</table></div><br>";
+    builder.appendLiteral("<div class='box'><div class='box-title'>JS protected object type counts</div><table class='fixed-table'><col width=75%><col width=25%>");
+    dumpJSCTypeCountSetToTableHTML(builder, protectedObjectTypeCounts.get());
+    builder.appendLiteral("</table></div><br>");
 
-    page += "<div class='box'><div class='box-title'>Malloc Information</div><table class='fixed-table'><col width=75%><col width=25%>";
+    builder.appendLiteral("<div class='box'><div class='box-title'>Malloc Information</div><table class='fixed-table'><col width=75%><col width=25%>");
 
-    page += numberToHTMLTr("Total space in use", mallocInfo.usmblks + mallocInfo.uordblks);
-    page += numberToHTMLTr("Total space in free blocks", mallocInfo.fsmblks + mallocInfo.fordblks);
-    page += numberToHTMLTr("Size of the arena", mallocInfo.arena);
-    page += numberToHTMLTr("Number of big blocks in use", mallocInfo.ordblks);
-    page += numberToHTMLTr("Number of small blocks in use", mallocInfo.smblks);
-    page += numberToHTMLTr("Number of header blocks in use", mallocInfo.hblks);
-    page += numberToHTMLTr("Space in header block headers", mallocInfo.hblkhd);
-    page += numberToHTMLTr("Space in small blocks in use", mallocInfo.usmblks);
-    page += numberToHTMLTr("Memory in free small blocks", mallocInfo.fsmblks);
-    page += numberToHTMLTr("Space in big blocks in use", mallocInfo.uordblks);
-    page += numberToHTMLTr("Memory in free big blocks", mallocInfo.fordblks);
+    builder.append(numberToHTMLTr("Total space in use", mallocInfo.m_small_allocmem + mallocInfo.m_allocmem));
+    builder.append(numberToHTMLTr("Total space in free blocks", mallocInfo.m_small_freemem + mallocInfo.m_freemem));
+    builder.append(numberToHTMLTr("Memory in free small blocks", mallocInfo.m_small_freemem));
+    builder.append(numberToHTMLTr("Memory in free big blocks", mallocInfo.m_freemem));
+    builder.append(numberToHTMLTr("Space in header block headers", mallocInfo.m_small_overhead));
+    builder.append(numberToHTMLTr("Space used by block headers", mallocInfo.m_overhead));
+    builder.append(numberToHTMLTr("Space in small blocks in use", mallocInfo.m_small_allocmem));
+    builder.append(numberToHTMLTr("Space in big blocks in use", mallocInfo.m_allocmem));
+    builder.append(numberToHTMLTr("Number of core allocations", mallocInfo.m_coreallocs));
+    builder.append(numberToHTMLTr("Number of core de-allocations performed", mallocInfo.m_corefrees));
+    builder.append(numberToHTMLTr("Size of the arena", mallocInfo.m_heapsize));
+    builder.append(numberToHTMLTr("Number of frees performed", mallocInfo.m_frees));
+    builder.append(numberToHTMLTr("Number of allocations performed", mallocInfo.m_allocs));
+    builder.append(numberToHTMLTr("Number of realloc functions performed", mallocInfo.m_reallocs));
+    builder.append(numberToHTMLTr("Number of small blocks", mallocInfo.m_small_blocks));
+    builder.append(numberToHTMLTr("Number of big blocks", mallocInfo.m_blocks));
+    builder.append(numberToHTMLTr("Number of header blocks", mallocInfo.m_hblocks));
 
-    page += "</table></div>";
+    builder.append("</table></div>");
 #endif
 
-    page += "</body></html>";
-    return page;
+    builder.append("</body></html>");
+    return builder.toString();
 }
 
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
@@ -415,38 +418,38 @@ static String memoryPeaksToHtmlTable(MemoryTracker& memoryTracker)
 
 static String memoryLivePage(String memoryLiveCommand)
 {
-    String page;
+    StringBuilder builder;
 
-    page = writeHeader("Memory Live Page")
-        + "<div class='box'><div class='box-title'>Memory Peaks</div>"
-        + "<div style='font-size:12px;color:#1BE0C9'>\"about:memory-live/start\": start tracking memory peaks.</div>"
-        + "<div style='font-size:12px;color:#1BE0C9'>\"about:memory-live\": show memory peaks every 30ms.</div>"
-        + "<div style='font-size:12px;color:#1BE0C9'>\"about:memory-live/stop\": stop tracking and show memory peaks.</div><br>";
+    builder.append(writeHeader("Memory Live Page"));
+    builder.appendLiteral("<div class='box'><div class='box-title'>Memory Peaks</div>");
+    builder.appendLiteral("<div style='font-size:12px;color:#1BE0C9'>\"about:memory-live/start\": start tracking memory peaks.</div>");
+    builder.appendLiteral("<div style='font-size:12px;color:#1BE0C9'>\"about:memory-live\": show memory peaks every 30ms.</div>");
+    builder.appendLiteral("<div style='font-size:12px;color:#1BE0C9'>\"about:memory-live/stop\": stop tracking and show memory peaks.</div><br>");
 
     MemoryTracker& memoryTracker = MemoryTracker::instance();
     if (memoryLiveCommand.isEmpty()) {
         if (!memoryTracker.isActive())
-            page += "<div style='font-size:15px;color:#E6F032'>Memory tracker isn't running, please use \"about:memory-live/start\" to start the tracker.</div>";
+            builder.appendLiteral("<div style='font-size:15px;color:#E6F032'>Memory tracker isn't running, please use \"about:memory-live/start\" to start the tracker.</div>");
         else {
-            page += memoryPeaksToHtmlTable(memoryTracker);
-            page += "<script type=\"text/javascript\">setInterval(function(){window.location.reload()},30);</script>";
+            builder.append(memoryPeaksToHtmlTable(memoryTracker));
+            builder.appendLiteral("<script type=\"text/javascript\">setInterval(function(){window.location.reload()},30);</script>");
         }
     } else if (equalIgnoringCase(memoryLiveCommand, "/start")) {
         memoryTracker.start();
-        page += "<div style='font-size:15px;color:#E6F032'>Memory tracker is running.</div>";
+        builder.appendLiteral("<div style='font-size:15px;color:#E6F032'>Memory tracker is running.</div>");
     } else if (equalIgnoringCase(memoryLiveCommand, "/stop")) {
         if (!memoryTracker.isActive())
-            page += "<div style='font-size:15px;color:#E6F032'>Memory tracker isn't running.</div>";
+            builder.appendLiteral("<div style='font-size:15px;color:#E6F032'>Memory tracker isn't running.</div>");
         else {
             memoryTracker.stop();
-            page += memoryPeaksToHtmlTable(memoryTracker);
-            page += "<div style='font-size:15px;color:#E6F032'>Memory tracker is stopped.</div>";
+            builder.append(memoryPeaksToHtmlTable(memoryTracker));
+            builder.appendLiteral("<div style='font-size:15px;color:#E6F032'>Memory tracker is stopped.</div>");
         }
     } else
-        page += "<div style='font-size:15spx;color:#E6F032'>Unknown command! Please input a correct command!</div>";
+        builder.appendLiteral("<div style='font-size:15spx;color:#E6F032'>Unknown command! Please input a correct command!</div>");
 
-    page += "</div><br></div></body></html>";
-    return page;
+    builder.appendLiteral("</div><br></div></body></html>");
+    return builder.toString();
 }
 #endif
 

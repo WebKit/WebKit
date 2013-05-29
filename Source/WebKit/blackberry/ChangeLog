@@ -1,3 +1,21 @@
+2013-05-29  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Use StringBuilder instead of + operator to build strings in AboutData
+        https://bugs.webkit.org/show_bug.cgi?id=116954
+
+        Reviewed by Carlos Garcia Campos.
+
+        PR 206152
+        Internally reviewed by Konrad Piascik
+
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::configPage):
+        (BlackBerry::WebKit::dumpJSCTypeCountSetToTableHTML):
+        (BlackBerry::WebKit::mallocStats):
+        (BlackBerry::WebKit::memoryPage):
+        (BlackBerry::WebKit::memoryPeaksToHtmlTable):
+        (BlackBerry::WebKit::memoryLivePage):
+
 2013-05-29  Jakob Petsovits  <jpetsovits@blackberry.com>
 
         [BlackBerry] Use lazily-backed backingstore tiles
