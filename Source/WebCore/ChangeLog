@@ -1,5 +1,17 @@
 2013-05-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove setFullScreenRendererSize and setFullScreenRendererBackgroundColor
+        https://bugs.webkit.org/show_bug.cgi?id=116914
+
+        Reviewed by Benjamin Poulain.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/508eb21a07f69ed38b9be9ff92fe75dcb907861f
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+
+2013-05-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make WidgetHierarchyUpdatesSuspensionScope use swap instead of copy
         https://bugs.webkit.org/show_bug.cgi?id=116927
 
