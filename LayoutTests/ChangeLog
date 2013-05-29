@@ -1,3 +1,9 @@
+2013-05-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening, managing accessibility layout tests failures on GTK WK2.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2013-05-26  Jer Noble  <jer.noble@apple.com>
 
         Support the 'onended' EventListener property for AudioBufferSourceNode and OscillatorNode.
