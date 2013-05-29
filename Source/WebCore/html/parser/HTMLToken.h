@@ -90,8 +90,8 @@ public:
         Vector<UChar, 32> value;
     };
 
-    typedef WTF::Vector<Attribute, 10> AttributeList;
-    typedef WTF::Vector<UChar, 1024> DataVector;
+    typedef Vector<Attribute, 10> AttributeList;
+    typedef Vector<UChar, 256> DataVector;
 
     HTMLToken() { clear(); }
 
