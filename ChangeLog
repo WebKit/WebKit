@@ -1,3 +1,19 @@
+2013-05-30  Alberto Garcia  <agarcia@igalia.com>
+
+        [GTK] Needs to check for harfbuzz-icu
+        https://bugs.webkit.org/show_bug.cgi?id=116978
+
+        Reviewed by Xan Lopez.
+
+        HarfBuzz 0.9.18 splits harbuzz-icu into a separate library so we
+        also need to check for it in order to get the necessary flags for
+        the compiler and the linker.
+
+        We keep this conditional for now since we still want to support
+        earlier versions of HarfBuzz.
+
+        * Source/autotools/FindDependencies.m4:
+
 2013-05-29  Kent Tamura  <tkent@chromium.org>
 
         Remove leftover files for ENABLE_PAGE_POPUP and ENABLE_CALENDAR_PICKER
