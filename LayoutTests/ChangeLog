@@ -1,3 +1,17 @@
+2013-05-30  Tim Horton  <timothy_horton@apple.com>
+
+        fast/dom/location-new-window-no-crash.html times out flakily on mac-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=117037
+
+        Reviewed by Alexey Proskuryakov.
+
+        Close the window on a zero-delay timer, working around a bug where WKTR
+        will hang if a window is closed while a load is in progress.
+
+        Doesn't affect the test in an important way.
+
+        * fast/dom/script-tests/location-new-window-no-crash.js:
+
 2013-05-30  Zan Dobersek  <zdobersek@igalia.com>
 
         Update XMLHttpRequest timeout tests to a newer version from W3C

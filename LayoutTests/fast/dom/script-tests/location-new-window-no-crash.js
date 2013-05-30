@@ -44,16 +44,18 @@ shouldBe("testWindow.location.pathname", "'blank'"); // Firefox returns the empt
 shouldBe("testWindow.location.search", "''");
 shouldBe("testWindow.location.hash", "''");
 
-testWindow.close();
+setTimeout(function () {
+    testWindow.close();
 
-if (window.testRunner) {
-    function doneHandler()
-    {
-        if (testWindow.closed) {
-            testRunner.notifyDone();
-            return;
+    if (window.testRunner) {
+        function doneHandler()
+        {
+            if (testWindow.closed) {
+                testRunner.notifyDone();
+                return;
+            }
+            setTimeout(doneHandler, 0);
         }
-        setTimeout(doneHandler, 0);
+        doneHandler();
     }
-    doneHandler();
-}
+}, 0);
