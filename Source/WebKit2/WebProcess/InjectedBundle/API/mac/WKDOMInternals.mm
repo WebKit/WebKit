@@ -84,7 +84,6 @@ static Class WKDOMNodeClass(WebCore::Node* impl)
     case WebCore::Node::XPATH_NAMESPACE_NODE:
         break;
     }
-    ASSERT_NOT_REACHED();
     return nil;
 }
 

@@ -1,3 +1,15 @@
+2013-05-30  Tim Horton  <timothy_horton@apple.com>
+
+        Remove ASSERT_NOT_REACHED from WKDOMNodeClass
+        https://bugs.webkit.org/show_bug.cgi?id=117051
+
+        Reviewed by Anders Carlsson.
+
+        It's easy to fail this assertion in seemingly-legitimate cases.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        (WebKit::WKDOMNodeClass):
+
 2013-05-29  Jeffrey Pfau  <jpfau@apple.com>
 
         [Mac] Enable cache partitioning and the public suffix list on 10.8
