@@ -2883,7 +2883,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
             if (frameLoader->activeDocumentLoader() && frameLoader->activeDocumentLoader()->mainResourceLoader())
                 requestIdentifier = frameLoader->activeDocumentLoader()->mainResourceLoader()->identifier();
             if (frameLoader->shouldInterruptLoadForXFrameOptions(content, url(), requestIdentifier)) {
-                String message = "Refused to display '" + url().elidedString() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
+                String message = "Refused to display '" + url().stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
                 frameLoader->stopAllLoaders();
                 // Stopping the loader isn't enough, as we're already parsing the document; to honor the header's
                 // intent, we must navigate away from the possibly partially-rendered document to a location that

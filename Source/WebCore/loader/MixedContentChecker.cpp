@@ -95,7 +95,7 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
 
 void MixedContentChecker::logWarning(bool allowed, const String& action, const KURL& target) const
 {
-    String message = makeString((allowed ? "" : "[blocked] "), "The page at ", m_frame->document()->url().elidedString(), " ", action, " insecure content from ", target.elidedString(), ".\n");
+    String message = makeString((allowed ? "" : "[blocked] "), "The page at ", m_frame->document()->url().stringCenterEllipsizedToLength(), " ", action, " insecure content from ", target.stringCenterEllipsizedToLength(), ".\n");
     m_frame->document()->addConsoleMessage(SecurityMessageSource, WarningMessageLevel, message);
 }
 

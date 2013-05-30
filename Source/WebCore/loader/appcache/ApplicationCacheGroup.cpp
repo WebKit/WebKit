@@ -573,7 +573,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
 
     if (response.httpStatusCode() / 100 != 2 || response.url() != m_currentHandle->firstRequest().url()) {
         if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
-            m_frame->document()->addConsoleMessage(AppCacheMessageSource, ErrorMessageLevel, "Application Cache update failed, because " + m_currentHandle->firstRequest().url().elidedString() +
+            m_frame->document()->addConsoleMessage(AppCacheMessageSource, ErrorMessageLevel, "Application Cache update failed, because " + m_currentHandle->firstRequest().url().stringCenterEllipsizedToLength() +
                 ((response.httpStatusCode() / 100 != 2) ? " could not be fetched." : " was redirected."));
             // Note that cacheUpdateFailed() can cause the cache group to be deleted.
             cacheUpdateFailed();
@@ -687,7 +687,7 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
     m_pendingEntries.remove(url);
 
     if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
-        m_frame->document()->addConsoleMessage(AppCacheMessageSource, ErrorMessageLevel, "Application Cache update failed, because " + url.elidedString() + " could not be fetched.");
+        m_frame->document()->addConsoleMessage(AppCacheMessageSource, ErrorMessageLevel, "Application Cache update failed, because " + url.stringCenterEllipsizedToLength() + " could not be fetched.");
         // Note that cacheUpdateFailed() can cause the cache group to be deleted.
         cacheUpdateFailed();
     } else {

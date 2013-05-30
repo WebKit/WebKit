@@ -139,7 +139,7 @@ WebInspector.Linkifier.DefaultFormatter.prototype = {
     {
         var text = WebInspector.formatLinkText(uiLocation.uiSourceCode.originURL(), uiLocation.lineNumber);
         if (this._maxLength)
-            text = text.trimMiddle(this._maxLength);
+            text = text.centerEllipsizedToLength(this._maxLength);
         anchor.textContent = text;
 
         var titleText = uiLocation.uiSourceCode.originURL();

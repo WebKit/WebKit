@@ -1076,7 +1076,7 @@ bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* direct
     if (directive == m_defaultSrc)
         suffix = " Note that '" + effectiveDirective + "' was not explicitly set, so 'default-src' is used as a fallback.";
 
-    reportViolation(directive->text(), effectiveDirective, prefix + url.elidedString() + "' because it violates the following Content Security Policy directive: \"" + directive->text() + "\"." + suffix + "\n", url);
+    reportViolation(directive->text(), effectiveDirective, prefix + url.stringCenterEllipsizedToLength() + "' because it violates the following Content Security Policy directive: \"" + directive->text() + "\"." + suffix + "\n", url);
     return denyIfEnforcingPolicy();
 }
 
@@ -1133,13 +1133,13 @@ bool CSPDirectiveList::allowScriptNonce(const String& nonce, const String& conte
     DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute script because it violates the following Content Security Policy directive: ")));
     if (url.isEmpty())
         return checkNonceAndReportViolation(m_scriptNonce.get(), nonce, consoleMessage, contextURL, contextLine);
-    return checkNonceAndReportViolation(m_scriptNonce.get(), nonce, "Refused to load '" + url.elidedString() + "' because it violates the following Content Security Policy directive: ", contextURL, contextLine);
+    return checkNonceAndReportViolation(m_scriptNonce.get(), nonce, "Refused to load '" + url.stringCenterEllipsizedToLength() + "' because it violates the following Content Security Policy directive: ", contextURL, contextLine);
 }
 
 bool CSPDirectiveList::allowPluginType(const String& type, const String& typeAttribute, const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkMediaTypeAndReportViolation(m_pluginTypes.get(), type, typeAttribute, "Refused to load '" + url.elidedString() + "' (MIME type '" + typeAttribute + "') because it violates the following Content Security Policy Directive: ") :
+        checkMediaTypeAndReportViolation(m_pluginTypes.get(), type, typeAttribute, "Refused to load '" + url.stringCenterEllipsizedToLength() + "' (MIME type '" + typeAttribute + "') because it violates the following Content Security Policy Directive: ") :
         checkMediaType(m_pluginTypes.get(), type, typeAttribute);
 }
 

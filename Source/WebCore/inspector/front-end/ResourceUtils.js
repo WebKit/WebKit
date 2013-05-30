@@ -172,7 +172,7 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, too
         a.title = url;
     else if (typeof tooltipText !== "string" || tooltipText.length)
         a.title = tooltipText;
-    a.textContent = linkText.trimMiddle(WebInspector.Linkifier.MaxLengthForDisplayedURLs);
+    a.textContent = linkText.centerEllipsizedToLength(WebInspector.Linkifier.MaxLengthForDisplayedURLs);
     if (isExternal)
         a.setAttribute("target", "_blank");
 

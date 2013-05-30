@@ -517,7 +517,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
             var fullURL = fullName.substring(startPos + 1, endPos).trimLeft();
             var url = fullURL.trimURL();
             if (url.length > 40)
-                url = url.trimMiddle(40);
+                url = url.centerEllipsizedToLength(40);
             return fullName.substr(0, startPos + 2) + url + fullName.substr(endPos);
         } else
             return fullName;

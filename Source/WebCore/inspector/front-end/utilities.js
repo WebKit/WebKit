@@ -114,7 +114,7 @@ String.prototype.collapseWhitespace = function()
     return this.replace(/[\s\xA0]+/g, " ");
 }
 
-String.prototype.trimMiddle = function(maxLength)
+String.prototype.centerEllipsizedToLength = function(maxLength)
 {
     if (this.length <= maxLength)
         return String(this);

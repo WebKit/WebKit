@@ -1796,7 +1796,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 attrValueElement.textContent = value;
             } else {
                 if (value.startsWith("data:"))
-                    value = value.trimMiddle(60);
+                    value = value.centerEllipsizedToLength(60);
                 attrSpanElement.appendChild(linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName().toLowerCase() === "a"));
             }
         } else {

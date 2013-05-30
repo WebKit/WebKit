@@ -1,3 +1,82 @@
+2013-05-30  Mike West  <mkwst@chromium.org>
+
+        Rename 'KURL::elidedString' and inspector's 'String.prototype.trimMiddle' for clarity.
+        https://bugs.webkit.org/show_bug.cgi?id=111700
+
+        Reviewed by Darin Adler.
+
+        Darin suggested that 'KURL::elidedString' is inaccurately named[1], this
+        patch is an attempt to do better. It additionally brings the Inspector's
+        'String.prototype.trimMiddle' method into line, as the two methods do
+        more or less the same thing.
+
+        After a bit of discussion with Maciej and Daniel Bates on IRC, I've
+        settled on 'KURL::stringCenterEllipsizedToLength(unsigned)' and
+        'String.prototype.centerEllipsizedToLength(number)' respectively.
+
+        No new tests are added, as this patch shouldn't have any visible effect
+        on the web. It's strictly an internal refactoring.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        (WebCore::WebSocket::send):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send):
+        (WebCore::WebSocketChannel::fail):
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::canExecuteScripts):
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::executeScript):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType):
+        (WebCore::HTMLMediaElement::isSafeToLoadURL):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::shouldInterruptLoadForXFrameOptions):
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage):
+        (WebCore::createWindow):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::responseReceived):
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::logWarning):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFail):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        (WebCore::CachedResourceLoader::printAccessDeniedMessage):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::checkSourceAndReportViolation):
+        (WebCore::CSPDirectiveList::allowScriptNonce):
+        (WebCore::CSPDirectiveList::allowPluginType):
+        * platform/KURL.cpp:
+        (WebCore::KURL::stringCenterEllipsizedToLength):
+        * platform/KURL.h:
+            Rename 'KURL::elidedString' to 'KURL::stringCenterEllipsizedToLength',
+            and adjust callsites accordingly.
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.Placard.prototype._update):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._buildAttributeDOM):
+        * inspector/front-end/HeapSnapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.shortenWindowURL):
+        * inspector/front-end/Linkifier.js:
+        (WebInspector.Linkifier.DefaultFormatter.prototype.formatLiveAnchor):
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.linkifyURLAsNode):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer.prototype._titleForFile):
+        * inspector/front-end/utilities.js:
+            Rename 'String.prototype.trimMiddle' to 'String.prototype.centerEllipsizedToLength'
+            and adjust callsites accordingly.
+
 2013-05-30  Antti Koivisto  <antti@apple.com>
 
         Rename FontFallbackList.cpp/h to FontGlyphs.cpp/h

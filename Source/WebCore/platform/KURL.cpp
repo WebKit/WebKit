@@ -1924,12 +1924,12 @@ bool KURL::isSafeToSendToAnotherThread() const
     return m_string.isSafeToSendToAnotherThread();
 }
 
-String KURL::elidedString() const
+String KURL::stringCenterEllipsizedToLength(unsigned length) const
 {
-    if (string().length() <= 1024)
+    if (string().length() <= length)
         return string();
 
-    return string().left(511) + "..." + string().right(510);
+    return string().left(length / 2 - 1) + "..." + string().right(length / 2 - 2);
 }
 
 }

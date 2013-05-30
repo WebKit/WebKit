@@ -173,7 +173,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         const minDisplayQueryParamLength = 5;
 
         var title = uiSourceCode.name();
-        title = title ? title.trimMiddle(maxDisplayNameLength) : WebInspector.UIString("(program)");
+        title = title ? title.centerEllipsizedToLength(maxDisplayNameLength) : WebInspector.UIString("(program)");
         if (uiSourceCode.isDirty())
             title += "*";
         return title;
