@@ -1,5 +1,31 @@
 2013-05-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Web Inspector: tests in PerformanceTests/inspector/ are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=77024
+
+        Reviewed by Andreas Kling.
+
+        Remove inspector performance tests since they have been disabled for ages,
+        and they don't use the standard parser-style performance output.
+
+        It's adding a lot of code complexity to our infrastructure.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (SingleProcessPerfTest.__init__):
+        (PerfTestFactory):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTestFactory.test_regular_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (TestDriver.run_test):
+        (MainTest.run_test):
+        (MainTest._tests_for_runner):
+        (MainTest.test_run_test_set_kills_drt_per_run):
+        (MainTest._test_run_with_json_output):
+        (MainTest):
+        (MainTest.test_run_with_upload_json_should_generate_perf_webkit_json):
+
+2013-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove requires_http_server as Chromium Android was the only port that needed this
         https://bugs.webkit.org/show_bug.cgi?id=117018
 

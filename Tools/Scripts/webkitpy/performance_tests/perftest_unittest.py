@@ -36,7 +36,6 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.port.driver import DriverOutput
 from webkitpy.port.test import TestDriver
 from webkitpy.port.test import TestPort
-from webkitpy.performance_tests.perftest import ChromiumStylePerfTest
 from webkitpy.performance_tests.perftest import PerfTest
 from webkitpy.performance_tests.perftest import PerfTestMetric
 from webkitpy.performance_tests.perftest import PerfTestFactory
@@ -471,7 +470,3 @@ class TestPerfTestFactory(unittest.TestCase):
     def test_regular_test(self):
         test = PerfTestFactory.create_perf_test(MockPort(), 'some-dir/some-test', '/path/some-dir/some-test')
         self.assertEqual(test.__class__, PerfTest)
-
-    def test_inspector_test(self):
-        test = PerfTestFactory.create_perf_test(MockPort(), 'inspector/some-test', '/path/inspector/some-test')
-        self.assertEqual(test.__class__, ChromiumStylePerfTest)

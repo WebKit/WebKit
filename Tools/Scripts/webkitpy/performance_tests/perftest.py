@@ -268,40 +268,6 @@ class SingleProcessPerfTest(PerfTest):
         super(SingleProcessPerfTest, self).__init__(port, test_name, test_path, test_runner_count)
 
 
-class ChromiumStylePerfTest(PerfTest):
-    _chromium_style_result_regex = re.compile(r'^RESULT\s+(?P<name>[^=]+)\s*=\s+(?P<value>\d+(\.\d+)?)\s*(?P<unit>\w+)$')
-
-    def __init__(self, port, test_name, test_path, test_runner_count=DEFAULT_TEST_RUNNER_COUNT):
-        super(ChromiumStylePerfTest, self).__init__(port, test_name, test_path, test_runner_count)
-
-    def run(self, time_out_ms):
-        driver = self._create_driver()
-        try:
-            output = self.run_single(driver, self.test_path(), time_out_ms)
-        finally:
-            driver.stop()
-
-        self._filter_output(output)
-        if self.run_failed(output):
-            return None
-
-        return self.parse_and_log_output(output)
-
-    def parse_and_log_output(self, output):
-        test_failed = False
-        results = {}
-        for line in re.split('\n', output.text):
-            resultLine = ChromiumStylePerfTest._chromium_style_result_regex.match(line)
-            if resultLine:
-                # FIXME: Store the unit
-                results[resultLine.group('name').replace(' ', '')] = float(resultLine.group('value'))
-                _log.info(line)
-            elif not len(line) == 0:
-                test_failed = True
-                _log.error(line)
-        return results if results and not test_failed else None
-
-
 class ReplayServer(object):
     def __init__(self, archive, record):
         self._process = None
@@ -456,7 +422,6 @@ class PerfTestFactory(object):
 
     _pattern_map = [
         (re.compile(r'^Dromaeo/'), SingleProcessPerfTest),
-        (re.compile(r'^inspector/'), ChromiumStylePerfTest),
         (re.compile(r'(.+)\.replay$'), ReplayPerfTest),
     ]
 

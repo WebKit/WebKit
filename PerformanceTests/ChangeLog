@@ -1,3 +1,26 @@
+2013-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Web Inspector: tests in PerformanceTests/inspector/ are timing out
+        https://bugs.webkit.org/show_bug.cgi?id=77024
+
+        Reviewed by Andreas Kling.
+
+        These tests have been disabled for ages and don't conform to the standard format.
+
+        * Skipped:
+        * inspector: Removed.
+        * inspector/console-300-lines.html: Removed.
+        * inspector/first-open-elements.html: Removed.
+        * inspector/first-open-resources.html: Removed.
+        * inspector/first-open-scripts.html.broken: Removed.
+        * inspector/heap-snapshot-advanced.html: Removed.
+        * inspector/heap-snapshot-performance-test.js: Removed.
+        * inspector/heap-snapshot.html: Removed.
+        * inspector/inspector-startup-time.html: Removed.
+        * inspector/network-append-30-requests.html.broken: Removed.
+        * inspector/performance-test.js: Removed.
+        * inspector/show-panel.html.broken: Removed.
+
 2013-05-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a balanced benchmark for QuerySelector
