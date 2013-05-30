@@ -1,3 +1,20 @@
+2013-05-29  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        ProgressEvent should not be cancelable
+        https://bugs.webkit.org/show_bug.cgi?id=114444
+
+        Reviewed by Darin Adler.
+
+        Parameter "cancelable" in ProgressEvent is set to false, by default, as mentioned in the specification. The spec link is given below.
+
+        Spec: http://www.w3.org/TR/2011/CR-progress-events-20110922/#suggested-names-for-events-using-the-progressevent-interface
+
+        No new tests. file-reader-event-listener.html and infoOnProgressEvent-expected.txt are updated.
+
+        * dom/ProgressEvent.cpp:
+        (WebCore::ProgressEvent::ProgressEvent):
+        (WebCore):
+
 2013-05-29  Simon Fraser  <simon.fraser@apple.com>
 
         Fix paint-related milestones to not fire when the layer tree is frozen

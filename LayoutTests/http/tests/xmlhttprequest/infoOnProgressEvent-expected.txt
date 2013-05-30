@@ -4,7 +4,7 @@ You should see type, bubble, cancelable, eventPhase, target and current target.
 
 Type: progress
 Bubble: false
-Cancelable: true
+Cancelable: false
 EventPhase: 2
 Target: [object XMLHttpRequest]
 Current target: [object XMLHttpRequest]
