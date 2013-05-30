@@ -1,3 +1,580 @@
+2013-05-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][WK2] Unreviewed expected pixel result rebaselining after r150798.
+
+        * platform/qt-5.0-wk2/compositing/checkerboard-expected.png:
+        * platform/qt-5.0-wk2/compositing/culling/filter-occlusion-blur-large-expected.png:
+        * platform/qt-5.0-wk2/compositing/direct-image-compositing-expected.png:
+        * platform/qt-5.0-wk2/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/qt-5.0-wk2/compositing/masks/masked-ancestor-expected.png:
+        * platform/qt-5.0-wk2/compositing/masks/multiple-masks-expected.png:
+        * platform/qt-5.0-wk2/compositing/masks/simple-composited-mask-expected.png:
+        * platform/qt-5.0-wk2/compositing/overflow/nested-scrolling-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-scroll-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/patterns/direct-pattern-compositing-contain-no-repeat-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/repaint/newly-composited-on-scroll-expected.png:
+        * platform/qt-5.0-wk2/compositing/repaint/page-scale-repaint-expected.png:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-absolute-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-absolute-overflow-expected.png:
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-overflow-expected.png:
+        * platform/qt-5.0-wk2/compositing/scaling/tiled-layer-recursion-expected.png:
+        * platform/qt-5.0-wk2/css1/basic/containment-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/basic/id_as_selector-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/basic/inheritance-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_bottom-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_bottom_width-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_left-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_left_width-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_right_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_right_width-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_style-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_top-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_top_width-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_width-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/clear-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/clear_float-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/float_elements_in_series-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/float_margin-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/float_on_text_elements-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/height-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/margin-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/margin_bottom-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/margin_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/margin_left-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/margin_right-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/margin_top-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/padding-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/padding_bottom-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/padding_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/padding_left-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/padding_right-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/padding_top-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/width-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/cascade/cascade_order-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/classification/display-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/classification/list_style_type-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/classification/white_space-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/color_and_background/background-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/color_and_background/background_attachment-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/color_and_background/background_position-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/color_and_background/background_repeat-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/conformance/forward_compatible_parsing-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/font_properties/font-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/font_properties/font_family-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/font_properties/font_size-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/font_properties/font_weight-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/formatting_model/floating_elements-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/formatting_model/height_of_lines-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/formatting_model/horizontal_formatting-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/formatting_model/inline_elements-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/formatting_model/replaced_elements-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/formatting_model/vertical_formatting-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/pseudo/anchor-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/pseudo/firstletter-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/pseudo/firstline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/pseudo/multiple_pseudo_elements-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/text_properties/letter_spacing-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/text_properties/line_height-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/text_properties/text_decoration-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/text_properties/text_indent-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/text_properties/text_transform-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/text_properties/vertical_align-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/text_properties/word_spacing-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/units/color_units-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/units/length_units-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/abspos-containing-block-initial-007-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/layout-state-only-positioned-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/abspos-non-replaced-width-margin-000-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/abspos-replaced-width-margin-000-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-010-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-012-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-014-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-016-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/replaced-intrinsic-ratio-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5502-mrgn-r-02-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5505-mrgn-02-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t080301-c411-vt-mrgn-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltclr-00-c-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltmrgn-00-c-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c5526-fltclr-00-c-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t1002-c5523-width-02-b-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t1202-counters-08-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t140201-c535-bg-fixd-00-b-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t140201-c537-bgfxps-00-c-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t1508-c527-font-07-b-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/delete-after-span-ws-001-expected.png:
+        * platform/qt-5.0-wk2/editing/deleting/delete-after-span-ws-002-expected.png:
+        * platform/qt-5.0-wk2/editing/deleting/delete-after-span-ws-003-expected.png:
+        * platform/qt-5.0-wk2/editing/deleting/delete-line-end-ws-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/delete-line-end-ws-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-023-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/extend-by-character-004-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/focus_editable_html-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-by-character-004-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-all-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-all-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-all-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-all-004-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-in-fixed-layer-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/unrendered-001-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/unrendered-002-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/unrendered-003-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/unrendered-004-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/unrendered-005-expected.png:
+        * platform/qt-5.0-wk2/fast/backgrounds/background-inherit-color-bug-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/background-leakage-transforms-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/size/backgroundSize15-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/016-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/fieldset-stretch-to-legend-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/truncation-rtl-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/008-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/layout-state-only-positioned-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/013-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/019-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-relative-table-inside-table-cell-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/021-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/025-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/027-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/032-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/033-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/035-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/repaint/newly-composited-on-scroll-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/avoidance-percent-width-strict-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/br-with-clear-2-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-in-fixed-layer-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/centered-float-avoidance-complexity-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/float-avoidance-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/nested-clearance-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/relative-painted-twice-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-overflow-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/shrink-to-avoid-float-complexity-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/lineboxcontain/parsing-invalid-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/103-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/104-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/empty-clear-blocks-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/047-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/051-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/055-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-lr/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-lr/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-rl/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-rl/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/negative-rel-position-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png.
+        * platform/qt-5.0-wk2/fast/block/positioning/relative-overflow-block-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/relative-overflow-replaced-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/relative-overflow-replaced-float-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/001-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/005-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/005-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-massive-scale-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/border-image-scale-transform-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/border-image-scaled-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/inline-mask-overlay-image-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/rtl-border-01-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/rtl-border-02-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/rtl-border-03-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/box-shadow/basic-shadows-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/box-sizing/box-sizing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-bg-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-text-alignment-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/image-object-in-canvas-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/014-expected.png:
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-parts-before-and-after-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png:
+        * platform/qt-5.0-wk2/fast/css/border-height-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/clip-text-in-scaled-div-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/color-correction-backgrounds-and-text-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/empty-pseudo-class-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-child-pseudo-class-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-of-type-pseudo-class-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/font_property_normal-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/hsl-color-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/last-child-pseudo-class-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/last-of-type-pseudo-class-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/line-height-overflow-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/nested-floating-relative-position-percentages-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/only-child-pseudo-class-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/only-of-type-pseudo-class-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-removed-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-ancestor-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-parent-dynamic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/shadow-multiple-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/clone-node-dynamic-style-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/008-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/custom/text-xy-updates-SVGList-expected.png.
+        * platform/qt-5.0-wk2/fast/dynamic/anchor-lock-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/insert-before-table-part-in-continuation-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/encoding/utf-16-big-endian-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/encoding/utf-16-little-endian-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/events/pointer-events-2-expected.png:
+        * platform/qt-5.0-wk2/fast/events/resize-events-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/016-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/flex-hang-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png.
+        * platform/qt-5.0-wk2/fast/forms/basic-textareas-quirks-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/button-default-title-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/button-table-styles-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/disabled-select-change-index-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/fieldset-align-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/file/file-input-direction-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/form-hides-table-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-selection-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-placeholder-paint-order-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/textarea/textarea-placeholder-paint-order-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/frames/flattening/frameset-flattening-advanced-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/frames/flattening/frameset-flattening-grid-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/frames/flattening/frameset-flattening-simple-expected.png:
+        * platform/qt-5.0-wk2/fast/frames/flattening/frameset-flattening-subframe-resize-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/frames/flattening/iframe-flattening-out-of-view-and-scroll-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/frames/flattening/iframe-flattening-out-of-view-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/frames/iframe-scrolling-attribute-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/frames/transparent-scrollbar-expected.png:
+        * platform/qt-5.0-wk2/fast/gradients/background-clipped-expected.png:
+        * platform/qt-5.0-wk2/fast/gradients/css3-color-stop-units-expected.png:
+        * platform/qt-5.0-wk2/fast/html/details-position-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/html/details-writing-mode-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/images/gif-large-checkerboard-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/images/gray-scale-jpeg-with-color-profile-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline/inline-borders-with-bidi-override-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline/inline-continuation-borders-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline/long-wrapped-line-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/layers/layer-content-visibility-change-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png.
+        * platform/qt-5.0-wk2/fast/layers/scroll-rect-to-visible-expected.png:
+        * platform/qt-5.0-wk2/fast/line-grid/line-grid-inside-columns-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/lists/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/lists/001-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/lists/008-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/lists/008-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/lists/li-br-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png.
+        * platform/qt-5.0-wk2/fast/lists/ol-start-parsing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/lists/olstart-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/block-axis-horizontal-tb-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/client-rects-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/column-break-with-balancing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/column-rules-stacking-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/columns-shorthand-parsing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/float-multicol-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/float-paginate-complex-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/float-paginate-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/layers-in-multicol-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/layers-split-across-columns-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/paginate-block-replaced-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/pagination-h-horizontal-bt-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png.
+        * platform/qt-5.0-wk2/fast/multicol/pagination-h-horizontal-tb-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/repaint/image-with-clip-path-expected.png.
+        * platform/qt-5.0-wk2/fast/multicol/pagination-h-vertical-lr-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png.
+        * platform/qt-5.0-wk2/fast/multicol/pagination-h-vertical-rl-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png.
+        * platform/qt-5.0-wk2/fast/multicol/pagination-v-horizontal-bt-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png.
+        * platform/qt-5.0-wk2/fast/multicol/pagination-v-horizontal-tb-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/repaint/image-with-clip-path-expected.png.
+        * platform/qt-5.0-wk2/fast/multicol/pagination-v-vertical-lr-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/scaling/tiled-layer-recursion-expected.png.
+        * platform/qt-5.0-wk2/fast/multicol/pagination-v-vertical-rl-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/repaint/newly-composited-on-scroll-expected.png.
+        * platform/qt-5.0-wk2/fast/multicol/positioned-with-constrained-height-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/progression-reverse-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/span/anonymous-style-inheritance-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/span/span-as-immediate-child-generated-content-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/span/span-as-immediate-child-property-removal-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/span/span-as-immediate-columns-child-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/span/span-as-nested-columns-child-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/span/span-margin-collapsing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/table-vertical-align-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/vertical-lr/column-break-with-balancing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/vertical-lr/float-paginate-complex-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/vertical-lr/float-paginate-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/vertical-lr/nested-columns-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/vertical-lr/unsplittable-inline-block-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/vertical-rl/column-break-with-balancing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/vertical-rl/float-paginate-complex-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/vertical-rl/float-paginate-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/vertical-rl/unsplittable-inline-block-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/overflow/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/overflow/overflow-auto-table-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/overflow/overflow-stacking-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/overflow/paged-x-on-root-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/overflow/paged-y-on-root-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/overflow/position-fixed-transform-clipping-expected.png:
+        * platform/qt-5.0-wk2/fast/reflections/reflection-direction-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png:
+        * platform/qt-5.0-wk2/fast/regions/region-style-inline-background-color-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/dynamic-table-vertical-alignment-change-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/fixed-position-transparency-with-overflow-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/float-new-in-block-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/layout-state-only-positioned-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/overflow-scroll-body-appear-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/scroll-fixed-layer-with-reflection-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/scroll-in-fixed-layer-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/scroll-relative-table-inside-table-cell-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/transform-absolute-in-positioned-container-expected.png:
+        * platform/qt-5.0-wk2/fast/replaced/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/replaced/width100percent-image-expected.png:
+        * platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png:
+        * platform/qt-5.0-wk2/fast/selectors/166-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/023-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/027-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/034-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/038-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/040-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/040-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/border-collapsing/002-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/border-collapsing/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/border-collapsing/004-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/border-collapsing/equal-precedence-resolution-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/empty-cells-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/frame-and-rules-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/height-percent-test-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png.
+        * platform/qt-5.0-wk2/fast/table/height-percent-test-vertical-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png.
+        * platform/qt-5.0-wk2/fast/table/overflowHidden-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/prepend-in-anonymous-table-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/table-display-types-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/wide-colspan-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/layout-state-only-positioned-expected.png.
+        * platform/qt-5.0-wk2/fast/table/wide-column-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png.
+        * platform/qt-5.0-wk2/fast/text/backslash-to-yen-sign-euc-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/hyphenate-limit-lines-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/large-text-composed-char-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/softHyphen-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/text-letter-spacing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/wbr-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/word-break-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/transforms/rotated-transform-affects-scrolling-1-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/transforms/rotated-transform-affects-scrolling-2-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/writing-mode/border-radius-clipping-vertical-lr-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/qt-5.0-wk2/fast/writing-mode/box-shadow-vertical-rl-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/writing-mode/fieldsets-expected.png: Added.
+        * platform/qt-5.0-wk2/fonts/cursive-expected.png: Added.
+        * platform/qt-5.0-wk2/fonts/default-expected.png: Added.
+        * platform/qt-5.0-wk2/fonts/fantasy-expected.png: Added.
+        * platform/qt-5.0-wk2/fonts/monospace-expected.png: Added.
+        * platform/qt-5.0-wk2/fonts/sans-serif-expected.png: Added.
+        * platform/qt-5.0-wk2/fonts/serif-expected.png: Added.
+        * platform/qt-5.0-wk2/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added.
+        * platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background-size-aspect-ratio-expected.png: Added.
+        * platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background_position_three_four_values-expected.png: Added.
+        * platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png: Added.
+        * platform/qt-5.0-wk2/printing/return-from-printing-mode-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/qt-5.0-wk2/svg/as-image/image-preserveAspectRatio-all-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/as-image/image-respects-pageScaleFactor-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/altglyph-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/external-paintserver-reference-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-in-fixed-layer-expected.png.
+        * platform/qt-5.0-wk2/svg/custom/js-late-pattern-creation-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/junk-data-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/linking-base-external-reference-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-in-fixed-layer-expected.png.
+        * platform/qt-5.0-wk2/svg/custom/missing-xlink-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/object-sizing-no-width-height-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/path-bad-data-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/pattern-scaling-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/text-xy-updates-SVGList-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/use-font-face-crash-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-appendItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-initialize-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-insertItemBefore-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-removeItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-replaceItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-xml-dom-modifications-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-appendItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-clear-and-initialize-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-insertItemBefore-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-removeItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-replaceItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGStringList-basics-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/css-transforms-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVG-dynamic-css-transform-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-multiple-targets-id-change-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png.
+        * platform/qt-5.0-wk2/svg/hixie/error/012-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/in-html/circle-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/scaling/tiled-layer-recursion-expected.png.
+        * platform/qt-5.0-wk2/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/scaling/tiled-layer-recursion-expected.png.
+        * platform/qt-5.0-wk2/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/scaling/tiled-layer-recursion-expected.png.
+        * platform/qt-5.0-wk2/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/scaling/tiled-layer-recursion-expected.png.
+        * platform/qt-5.0-wk2/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/scaling/tiled-layer-recursion-expected.png.
+        * platform/qt-5.0-wk2/svg/repaint/image-with-clip-path-expected.png:
+        * platform/qt-5.0-wk2/svg/text/kerning-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/multichar-glyph-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/wicd/rightsizing-grid-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/qt-5.0-wk2/svg/wicd/test-scalable-background-image1-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/zoom/page/absolute-sized-document-scrollbars-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-hixie-mixed-008-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-svg-float-border-padding-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/text/zoom-svg-float-border-padding-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug101674-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug10269-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug10296-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1055-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug113235-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug113235-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug11944-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug120364-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug12384-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1302-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug131020-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug131020_iframe-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug137388-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug16252-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug194024-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug22019-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug23151-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2479-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2479-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2479-4-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug27038-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug29314-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2947-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug32205-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug38916-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug3977-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug43039-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug43854-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug44505-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46480-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46480-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug50695-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug56405-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug5797-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug5835-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug625-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug650-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug67915-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug7112-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug7112-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug73321-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug92143-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug96343-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/collapsing_borders/bug41262-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/core/bloomberg-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/core/captions-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/core/cell_heights-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/core/col_span-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/core/col_widths_auto_fix-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/core/col_widths_fix_fixPer-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/core/nested1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/core/one_row-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/core/row_span-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_index-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_layers-opacity-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_position-table-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_simple-table-cell-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_simple-table-column-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_simple-table-column-group-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_simple-table-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_simple-table-row-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_simple-table-row-group-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_table_bgcolor_name-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_table_bgcolor_rgb-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_td_bgcolor_name-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_td_bgcolor_rgb-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_td_height-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_td_nowrap-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_th_bgcolor_name-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_th_bgcolor_rgb-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_th_height-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_th_nowrap-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_tr_bgcolor_name-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_tr_bgcolor_rgb-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/other/cell_widths-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/other/nestedTables-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/other/test3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/other/test6-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/other/wa_table_thtd_rowspan-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/other/wa_table_tr_align-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug10140-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug101759-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug10216-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug1055-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug106966-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug131020-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug14007-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug14007-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug19526-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug220653-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug22122-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug32205-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug67915-2-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug7243-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug80762-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug89315-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug91057-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/core/backgrounds-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/core/captions1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/core/captions2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/core/captions3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/core/col_span2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/core/columns-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/core/conflicts-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/core/standards1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/other/empty_cells-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/other/test4-expected.png: Added.
+        * platform/qt-5.0-wk2/transforms/2d/transform-fixed-container-expected.png:
+
 2013-05-30  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [GTK] Cleanup TestExpectations
