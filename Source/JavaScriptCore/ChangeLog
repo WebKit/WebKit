@@ -1,3 +1,16 @@
+2013-05-30  Oliver Hunt  <oliver@apple.com>
+
+        JSCallbackObject does not correctly initialise the PropertySlot for getOwnPropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=117053
+
+        Reviewed by Mark Hahnenberg.
+
+        Set appropriate thisValue on the PropertySlot
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertyDescriptor):
+        * API/tests/testapi.mm:
+
 2013-05-29  Jeffrey Pfau  <jpfau@apple.com>
 
         [Mac] Enable cache partitioning and the public suffix list on 10.8

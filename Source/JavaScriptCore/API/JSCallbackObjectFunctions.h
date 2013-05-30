@@ -216,7 +216,7 @@ template <class Parent>
 bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
-    PropertySlot slot;
+    PropertySlot slot(thisObject);
     if (thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot)) {
         // Ideally we should return an access descriptor, but returning a value descriptor is better than nothing.
         JSValue value = slot.getValue(exec, propertyName);
