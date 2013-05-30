@@ -303,14 +303,6 @@ Element* Position::element() const
     return toElement(n);
 }
 
-PassRefPtr<CSSComputedStyleDeclaration> Position::computedStyle() const
-{
-    Element* elem = element();
-    if (!elem)
-        return 0;
-    return CSSComputedStyleDeclaration::create(elem);
-}
-
 Position Position::previous(PositionMoveType moveType) const
 {
     Node* n = deprecatedNode();

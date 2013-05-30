@@ -144,7 +144,6 @@ public:
     bool isOrphan() const { return m_anchorNode && !m_anchorNode->inDocument(); }
 
     Element* element() const;
-    PassRefPtr<CSSComputedStyleDeclaration> computedStyle() const;
 
     // Move up or down the DOM by one position.
     // Offsets are computed using render text for nodes that have renderers - but note that even when

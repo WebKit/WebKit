@@ -1338,7 +1338,12 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     if (!style || !style->style() || !document || !document->frame())
         return;
 
-    RefPtr<CSSComputedStyleDeclaration> computedStyle = position.computedStyle();
+    Node* node = position.containerNode();
+    if (!node)
+        return;
+
+    RefPtr<CSSComputedStyleDeclaration> computedStyle = CSSComputedStyleDeclaration::create(node);
+
     // FIXME: take care of background-color in effect
     RefPtr<MutableStylePropertySet> mutableStyle = getPropertiesNotIn(style->style(), computedStyle.get());
 
