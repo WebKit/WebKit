@@ -1,3 +1,24 @@
+2013-05-29  Ruth Fong  <ruth_fong@apple.com>
+
+        prepare-Changelog should not be generating namespace-only or class-name-only lines like "(WebCore):"
+        https://bugs.webkit.org/show_bug.cgi?id=113221
+
+        Reviewed by Ryosuke Niwa.
+
+        Teach prepare-Changelog to not list the names of modified namespaces, 
+        classes, or structs in C++ files. Thus, if a change is made 
+        within a namespace/class/struct yet outside a function, it will 
+        not be reflected in the ChangeLog entry. 
+        See https://bugs.webkit.org/show_bug.cgi?id=113221#c8 
+        for more details on how ChangeLog entries are affected.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_cpp): 
+        (delete_namespaces_from_ranges_for_cpp): Added.
+        (is_function_in_namespace): Added.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests-expected.txt: Updated
+        to reflect revised definition of a function (i.e. excludes namespaces, classes, structs)
+
 2013-05-29  Praveen R Jadhav  <praveen.j@samsung.com>
 
         Cleanup AudioSourceNode.idl from WebKit build.
