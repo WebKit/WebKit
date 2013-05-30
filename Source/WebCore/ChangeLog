@@ -1,3 +1,18 @@
+2013-05-30  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Remove obsolete forward declaration from InspectorFrontendHost.h
+        https://bugs.webkit.org/show_bug.cgi?id=117017
+
+        Reviewed by Joseph Pecoraro.
+
+        Remove obsolete forward declaration and fix style issue as well.
+
+        No change in behavior, no new tests.
+
+        * inspector/InspectorFrontendHost.h:
+        (WebCore):
+        (InspectorFrontendHost):
+
 2013-05-29  Tim Horton  <timothy_horton@apple.com>
 
         Expose incrementalRenderingSuppressionTimeout via WK2
