@@ -27,6 +27,7 @@
 #include "FileSystem.h"
 
 #include <wtf/HexNumber.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -77,27 +78,21 @@ static inline bool shouldEscapeUChar(UChar c)
     return c > 127 ? false : needsEscaping[c];
 }
 
-String encodeForFileName(const String& inputStr)
+String encodeForFileName(const String& inputString)
 {
-    unsigned length = inputStr.length();
-    Vector<UChar, 512> buffer(length * 3 + 1);
-    UChar* p = buffer.data();
-
-    const UChar* str = inputStr.characters();
-    const UChar* strEnd = str + length;
-
-    while (str < strEnd) {
-        UChar c = *str++;
-        if (shouldEscapeUChar(c)) {
-            *p++ = '%';
-            placeByteAsHex(c, p);
+    StringBuilder result;
+    StringImpl* stringImpl = inputString.impl();
+    unsigned length = inputString.length();
+    for (unsigned i = 0; i < length; ++i) {
+        UChar character = (*stringImpl)[i];
+        if (shouldEscapeUChar(character)) {
+            result.append('%');
+            appendByteAsHex(character, result);
         } else
-            *p++ = c;
+            result.append(character);
     }
 
-    ASSERT(p - buffer.data() <= static_cast<int>(buffer.size()));
-
-    return String(buffer.data(), p - buffer.data());
+    return result.toString();
 }
 
 #if !PLATFORM(MAC) || PLATFORM(IOS)

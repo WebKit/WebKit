@@ -1,3 +1,17 @@
+2013-05-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove some 16bits conversion.
+        https://bugs.webkit.org/show_bug.cgi?id=116935
+
+        Reviewed by Darin Adler.
+
+        Merge chromium ce35a544d09e6cb907457535340eb0e9984e57b8.
+        https://chromium.googlesource.com/chromium/blink/+/ce35a544d09e6cb907457535340eb0e9984e57b8
+
+        * html/parser/InputStreamPreprocessor.h:
+        * platform/FileSystem.cpp:
+        (WebCore::encodeForFileName):
+
 2013-05-30  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION (r119759): Adobe Flash Player "smaller" installer relies on the incorrect firing of a load event and needs an app-specific hack for compatibility

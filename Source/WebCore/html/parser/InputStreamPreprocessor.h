@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-const UChar kEndOfFileMarker = 0;
+const LChar kEndOfFileMarker = 0;
 
 // http://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
 template <typename Tokenizer>
