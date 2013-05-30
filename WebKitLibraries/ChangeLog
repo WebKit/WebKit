@@ -1,3 +1,14 @@
+2013-05-29  Jeffrey Pfau  <jpfau@apple.com>
+
+        [Mac] Enable cache partitioning and the public suffix list on 10.8
+        <rdar://problem/13679019>
+
+        Rubber-stamped by David Kilzer.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-05-14  Beth Dakin  <bdakin@apple.com>
 
         Printing in 1Password app is broken with screen fonts disabled

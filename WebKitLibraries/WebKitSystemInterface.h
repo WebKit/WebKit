@@ -65,7 +65,9 @@ void WKDisableCGDeferredUpdates(void);
 Class WKNSURLProtocolClassForRequest(NSURLRequest *request);
 void WKSetNSURLRequestShouldContentSniff(NSMutableURLRequest *request, BOOL shouldContentSniff);
 
+#ifndef __LP64__
 unsigned WKGetNSAutoreleasePoolCount(void);
+#endif
 
 void WKAdvanceDefaultButtonPulseAnimation(NSButtonCell *button);
 
@@ -458,6 +460,10 @@ dispatch_source_t WKCreateVMPressureDispatchOnMainQueue(void);
 bool WKExecutableWasLinkedOnOrBeforeLion(void);
 #endif
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+bool WKExecutableWasLinkedOnOrBeforeMountainLion(void);
+#endif
+
 void WKCGPathAddRoundedRect(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 
 void WKCFURLRequestAllowAllPostCaching(CFURLRequestRef);
@@ -494,11 +500,6 @@ typedef void (*WKOcclusionNotificationHandler)(uint32_t, void* data, uint32_t da
 bool WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
 bool WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
 bool WKEnableWindowOcclusionNotifications(NSInteger windowID, bool *outCurrentOcclusionState);
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-extern const NSSystemBehaviors WKProcessSuppressionSystemBehaviors;
-#pragma clang diagnostic pop
 #endif
 
 bool WKIsJavaPlugInActive(void);
