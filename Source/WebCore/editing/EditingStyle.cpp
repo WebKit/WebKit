@@ -113,7 +113,6 @@ static PassRefPtr<MutableStylePropertySet> getPropertiesNotIn(StylePropertySet* 
 enum LegacyFontSizeMode { AlwaysUseLegacyFontSize, UseLegacyFontSizeOnlyIfPixelValuesMatch };
 static int legacyFontSizeFromCSSValue(Document*, CSSPrimitiveValue*, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode);
 static bool isTransparentColorValue(CSSValue*);
-static bool hasTransparentBackgroundColor(CSSStyleDeclaration*);
 static bool hasTransparentBackgroundColor(StylePropertySet*);
 static PassRefPtr<CSSValue> backgroundColorInEffect(Node*);
 
@@ -1105,8 +1104,9 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
     // The property value, if it's a percentage, may not reflect the actual computed value.  
     // For example: style="height: 1%; overflow: visible;" in quirksmode
     // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
-    RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = CSSComputedStyleDeclaration::create(element);
     RefPtr<MutableStylePropertySet> fromComputedStyle = MutableStylePropertySet::create();
+    ComputedStyleExtractor computedStyle(element);
+
     {
         unsigned propertyCount = m_mutableStyle->propertyCount();
         for (unsigned i = 0; i < propertyCount; ++i) {
@@ -1115,8 +1115,8 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
             if (!value->isPrimitiveValue())
                 continue;
             if (static_cast<CSSPrimitiveValue*>(value)->isPercentage()) {
-                if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
-                    fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
+                if (RefPtr<CSSValue> computedPropertyValue = computedStyle.propertyValue(property.id()))
+                    fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue.release()));
             }
         }
     }
@@ -1247,8 +1247,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
             if (!n->isStyledElement())
                 continue;
 
-            RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(n);
-            RefPtr<CSSValue> unicodeBidi = style->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+            RefPtr<CSSValue> unicodeBidi = ComputedStyleExtractor(n).propertyValue(CSSPropertyUnicodeBidi);
             if (!unicodeBidi || !unicodeBidi->isPrimitiveValue())
                 continue;
 
@@ -1276,8 +1275,8 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
         if (!node->isStyledElement())
             continue;
 
-        RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(node);
-        RefPtr<CSSValue> unicodeBidi = style->getPropertyCSSValue(CSSPropertyUnicodeBidi);
+        ComputedStyleExtractor computedStyle(node);
+        RefPtr<CSSValue> unicodeBidi = computedStyle.propertyValue(CSSPropertyUnicodeBidi);
         if (!unicodeBidi || !unicodeBidi->isPrimitiveValue())
             continue;
 
@@ -1289,7 +1288,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
             return NaturalWritingDirection;
 
         ASSERT(unicodeBidiValue == CSSValueEmbed);
-        RefPtr<CSSValue> direction = style->getPropertyCSSValue(CSSPropertyDirection);
+        RefPtr<CSSValue> direction = computedStyle.propertyValue(CSSPropertyDirection);
         if (!direction || !direction->isPrimitiveValue())
             continue;
 
@@ -1542,6 +1541,14 @@ int getIdentifierValue(CSSStyleDeclaration* style, CSSPropertyID propertyID)
     return static_cast<CSSPrimitiveValue*>(value.get())->getIdent();
 }
 
+int getIdentifierValue(Node* node, CSSPropertyID propertyID)
+{
+    RefPtr<CSSValue> value = ComputedStyleExtractor(node).propertyValue(propertyID);
+    if (!value || !value->isPrimitiveValue())
+        return 0;
+    return static_cast<CSSPrimitiveValue*>(value.get())->getIdent();
+}
+
 static bool isCSSValueLength(CSSPrimitiveValue* value)
 {
     return value->isFontIndependentLength();
@@ -1578,12 +1585,6 @@ bool isTransparentColorValue(CSSValue* cssValue)
     return value->getIdent() == CSSValueTransparent;
 }
 
-bool hasTransparentBackgroundColor(CSSStyleDeclaration* style)
-{
-    RefPtr<CSSValue> cssValue = style->getPropertyCSSValueInternal(CSSPropertyBackgroundColor);
-    return isTransparentColorValue(cssValue.get());
-}
-    
 bool hasTransparentBackgroundColor(StylePropertySet* style)
 {
     RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(CSSPropertyBackgroundColor);
@@ -1593,9 +1594,10 @@ bool hasTransparentBackgroundColor(StylePropertySet* style)
 PassRefPtr<CSSValue> backgroundColorInEffect(Node* node)
 {
     for (Node* ancestor = node; ancestor; ancestor = ancestor->parentNode()) {
-        RefPtr<CSSComputedStyleDeclaration> ancestorStyle = CSSComputedStyleDeclaration::create(ancestor);
-        if (!hasTransparentBackgroundColor(ancestorStyle.get()))
-            return ancestorStyle->getPropertyCSSValue(CSSPropertyBackgroundColor);
+        if (RefPtr<CSSValue> value = ComputedStyleExtractor(ancestor).propertyValue(CSSPropertyBackgroundColor)) {
+            if (!isTransparentColorValue(value.get()))
+                return value.release();
+        }
     }
     return 0;
 }

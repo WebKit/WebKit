@@ -456,7 +456,7 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
     Node* nextHighestAncestorWithUnicodeBidi = 0;
     int highestAncestorUnicodeBidi = 0;
     for (Node* n = node->parentNode(); n != block; n = n->parentNode()) {
-        int unicodeBidi = getIdentifierValue(CSSComputedStyleDeclaration::create(n).get(), CSSPropertyUnicodeBidi);
+        int unicodeBidi = getIdentifierValue(n, CSSPropertyUnicodeBidi);
         if (unicodeBidi && unicodeBidi != CSSValueNormal) {
             highestAncestorUnicodeBidi = unicodeBidi;
             nextHighestAncestorWithUnicodeBidi = highestAncestorWithUnicodeBidi;
@@ -508,7 +508,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
             continue;
 
         StyledElement* element = static_cast<StyledElement*>(n);
-        int unicodeBidi = getIdentifierValue(CSSComputedStyleDeclaration::create(element).get(), CSSPropertyUnicodeBidi);
+        int unicodeBidi = getIdentifierValue(element, CSSPropertyUnicodeBidi);
         if (!unicodeBidi || unicodeBidi == CSSValueNormal)
             continue;
 
@@ -534,7 +534,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
 static Node* highestEmbeddingAncestor(Node* startNode, Node* enclosingNode)
 {
     for (Node* n = startNode; n && n != enclosingNode; n = n->parentNode()) {
-        if (n->isHTMLElement() && getIdentifierValue(CSSComputedStyleDeclaration::create(n).get(), CSSPropertyUnicodeBidi) == CSSValueEmbed)
+        if (n->isHTMLElement() && getIdentifierValue(n, CSSPropertyUnicodeBidi) == CSSValueEmbed)
             return n;
     }
 
@@ -1507,15 +1507,9 @@ float ApplyStyleCommand::computedFontSize(Node* node)
     if (!node)
         return 0;
 
-    RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(node);
-    if (!style)
-        return 0;
-
-    RefPtr<CSSPrimitiveValue> value = static_pointer_cast<CSSPrimitiveValue>(style->getPropertyCSSValue(CSSPropertyFontSize));
-    if (!value)
-        return 0;
-
-    return value->getFloatValue(CSSPrimitiveValue::CSS_PX);
+    RefPtr<CSSValue> value = ComputedStyleExtractor(node).propertyValue(CSSPropertyFontSize);
+    ASSERT(value && value->isPrimitiveValue());
+    return static_cast<CSSPrimitiveValue*>(value.get())->getFloatValue(CSSPrimitiveValue::CSS_PX);
 }
 
 void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, const Position& end)

@@ -1,3 +1,27 @@
+2013-05-29  Andreas Kling  <akling@apple.com>
+
+        Take ComputedStyleExtractor for a spin.
+        <http://webkit.org/b/116968>
+
+        Reviewed by Antti Koivisto.
+
+        Convert some editing and SVG code to use ComputedStyleExtractor instead of creating full
+        blown CSSComputedStyleDeclaration objects.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::highestEmbeddingAncestor):
+        (WebCore::ApplyStyleCommand::computedFontSize):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization):
+        (WebCore::EditingStyle::textDirectionForSelection):
+        (WebCore::getIdentifierValue):
+        (WebCore::backgroundColorInEffect):
+        * editing/EditingStyle.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::computeCSSPropertyValue):
+
 2013-05-29  Benjamin Poulain  <bpoulain@apple.com>
 
         Add a special case for SelectorDataList::execute when there is only one selector

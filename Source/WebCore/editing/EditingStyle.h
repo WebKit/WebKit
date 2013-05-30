@@ -47,6 +47,7 @@ class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
 class CSSPrimitiveValue;
 class CSSValue;
+class ComputedStyleExtractor;
 class Document;
 class Element;
 class HTMLElement;
@@ -235,6 +236,7 @@ private:
 // FIXME: Remove these functions or make them non-global to discourage using CSSStyleDeclaration directly.
 int getIdentifierValue(CSSStyleDeclaration*, CSSPropertyID);
 int getIdentifierValue(StylePropertySet*, CSSPropertyID);
+int getIdentifierValue(Node*, CSSPropertyID);
 
 } // namespace WebCore
 

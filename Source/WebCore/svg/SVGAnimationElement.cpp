@@ -632,14 +632,15 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, S
     calculateAnimatedValue(effectivePercent, repeatCount, resultElement);
 }
 
-void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSPropertyID id, String& value)
+void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSPropertyID id, String& valueString)
 {
     ASSERT(element);
     ASSERT(element->isSVGStyledElement());
 
     // Don't include any properties resulting from CSS Transitions/Animations or SMIL animations, as we want to retrieve the "base value".
     element->setUseOverrideComputedStyle(true);
-    value = CSSComputedStyleDeclaration::create(element)->getPropertyValue(id);
+    RefPtr<CSSValue> value = ComputedStyleExtractor(element).propertyValue(id);
+    valueString = value ? value->cssText() : String();
     element->setUseOverrideComputedStyle(false);
 }
 
