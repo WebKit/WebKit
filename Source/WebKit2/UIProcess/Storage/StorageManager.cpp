@@ -461,6 +461,15 @@ void StorageManager::createLocalStorageMap(CoreIPC::Connection* connection, uint
 
 void StorageManager::createSessionStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
+    // FIXME: This should be a message check.
+    ASSERT((HashMap<uint64_t, RefPtr<SessionStorageNamespace>>::isValidKey(storageNamespaceID)));
+    SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
+    if (!sessionStorageNamespace) {
+        // We're getting an incoming message from the web process that's for session storage for a web page
+        // that has already been closed, just ignore it.
+        return;
+    }
+
     std::pair<RefPtr<CoreIPC::Connection>, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
 
     // FIXME: This should be a message check.
@@ -470,14 +479,6 @@ void StorageManager::createSessionStorageMap(CoreIPC::Connection* connection, ui
 
     // FIXME: This should be a message check.
     ASSERT(result.isNewEntry);
-
-    ASSERT((HashMap<uint64_t, RefPtr<SessionStorageNamespace>>::isValidKey(storageNamespaceID)));
-    SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID);
-    if (!sessionStorageNamespace) {
-        // We're getting an incoming message from the web process that's for session storage for a web page
-        // that has already been closed, just ignore it.
-        return;
-    }
 
     // FIXME: This should be a message check.
     ASSERT(connection == sessionStorageNamespace->allowedConnection());

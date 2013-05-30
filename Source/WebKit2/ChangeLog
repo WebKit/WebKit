@@ -1,5 +1,23 @@
 2013-05-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r150925
+
+    2013-05-29  Anders Carlsson  <andersca@apple.com>
+
+            Return earlier if there's no session storage namespace
+            https://bugs.webkit.org/show_bug.cgi?id=116984
+            <rdar://problem/13976781>
+
+            Reviewed by Tim Horton.
+
+            If we can't find a session storage namespace, return before creating an entry in the m_storageAreasByConnection
+            hash map since then we'll crash trying to remove it later.
+
+            * UIProcess/Storage/StorageManager.cpp:
+            (WebKit::StorageManager::createSessionStorageMap):
+
+2013-05-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r150648
 
     2013-05-24  Anders Carlsson  <andersca@apple.com>
