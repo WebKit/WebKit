@@ -81,6 +81,8 @@ PASS style.backgroundPosition is '50% 50%'
 PASS computedStyle.backgroundPosition is '50% 50%'
 PASS style.backgroundPosition is '50% 50%'
 PASS computedStyle.backgroundPosition is '50% 50%'
+PASS style.backgroundPosition is '1px 1px'
+PASS computedStyle.backgroundPosition is '1px 1px'
 background-position with CSS3 comma separator, one or two values
 PASS style.backgroundPosition is '50% 50%, 100% 50%'
 PASS computedStyle.backgroundPosition is '50% 50%, 100% 50%'

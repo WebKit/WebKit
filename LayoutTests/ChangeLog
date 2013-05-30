@@ -1,3 +1,15 @@
+2013-05-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        Allow no space between "background-position:" dimensions
+        https://bugs.webkit.org/show_bug.cgi?id=116870
+
+        Reviewed by Darin Adler.
+
+        From Blink r149314 by <ericwilligers@chromium.org>
+
+        * fast/backgrounds/background-position-parsing-2-expected.txt:
+        * fast/backgrounds/background-position-parsing-2.html:
+
 2013-05-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

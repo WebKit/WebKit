@@ -1,3 +1,25 @@
+2013-05-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        Allow no space between "background-position:" dimensions
+        https://bugs.webkit.org/show_bug.cgi?id=116870
+
+        Reviewed by Darin Adler.
+
+        From Blink r149314 by <ericwilligers@chromium.org>
+
+        Specs allow no spaces between the dimensions of a
+        "background-position:" like "1px+1px", we should support
+        that.
+
+        Whitespaces are no longer early consumed, dramatically dropping
+        the shift/reduce conflicts to half. The productions unary_term,
+        calc_func_term, calc_func_expr and calc_func_paren_expr no longer
+        consume whitespaces.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::realLex):
+
 2013-05-30  Jer Noble  <jer.noble@apple.com>
 
         HTMLMediaElement will not unthrottle page when playback stops for nreasons other than user-initiated pause.
