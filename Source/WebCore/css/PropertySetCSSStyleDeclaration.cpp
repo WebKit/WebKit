@@ -294,11 +294,6 @@ PassRefPtr<MutableStylePropertySet> PropertySetCSSStyleDeclaration::copyProperti
 {
     return m_propertySet->mutableCopy();
 }
-
-bool PropertySetCSSStyleDeclaration::cssPropertyMatches(CSSPropertyID propertyID, const CSSValue* propertyValue) const
-{
-    return m_propertySet->propertyMatches(propertyID, propertyValue);
-}
     
 StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration(MutableStylePropertySet* propertySet, CSSRule* parentRule)
     : PropertySetCSSStyleDeclaration(propertySet)

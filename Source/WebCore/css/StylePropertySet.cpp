@@ -22,6 +22,7 @@
 #include "config.h"
 #include "StylePropertySet.h"
 
+#include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
@@ -1142,7 +1143,7 @@ bool StylePropertySet::propertyMatches(CSSPropertyID propertyID, const CSSValue*
         return false;
     return propertyAt(foundPropertyIndex).value()->equals(*propertyValue);
 }
-    
+
 void MutableStylePropertySet::removeEquivalentProperties(const StylePropertySet* style)
 {
     Vector<CSSPropertyID> propertiesToRemove;
@@ -1157,13 +1158,13 @@ void MutableStylePropertySet::removeEquivalentProperties(const StylePropertySet*
         removeProperty(propertiesToRemove[i]);
 }
 
-void MutableStylePropertySet::removeEquivalentProperties(const CSSStyleDeclaration* style)
+void MutableStylePropertySet::removeEquivalentProperties(const ComputedStyleExtractor* computedStyle)
 {
     Vector<CSSPropertyID> propertiesToRemove;
     unsigned size = m_propertyVector.size();
     for (unsigned i = 0; i < size; ++i) {
         PropertyReference property = propertyAt(i);
-        if (style->cssPropertyMatches(property.id(), property.value()))
+        if (computedStyle->propertyMatches(property.id(), property.value()))
             propertiesToRemove.append(property.id());
     }    
     // FIXME: This should use mass removal.

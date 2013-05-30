@@ -1,3 +1,71 @@
+2013-05-30  Andreas Kling  <akling@apple.com>
+
+        Avoid using CSSOM style declarations in HTML editing.
+        <http://webkit.org/b/117019>
+
+        Reviewed by Antti Koivisto.
+
+        Convert the editing code to use ComputedStyleExtractor instead of instantiating CSSOM wrappers.
+
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::getFontSizeCSSValuePreferringKeyword):
+        (WebCore::ComputedStyleExtractor::useFixedFontDefaultSize):
+        (WebCore::ComputedStyleExtractor::propertyMatches):
+        (WebCore::ComputedStyleExtractor::copyProperties):
+        (WebCore::ComputedStyleExtractor::copyPropertiesInSet):
+
+            Moved here from CSSComputedStyleDeclaration. These methods are used by HTML editing.
+
+        (WebCore::CSSComputedStyleDeclaration::copyProperties):
+
+            Reimplemented to call ComputedStyleExtractor.
+
+        * css/CSSStyleDeclaration.h:
+        * css/PropertySetCSSStyleDeclaration.h:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::copyProperties):
+
+            Removed CSSStyleDeclaration::cssPropertyMatches(), the remaining code lives in
+            ComputedStyleExtractor::propertyMatches() and is only used by HTML editing.
+
+        * css/StylePropertySet.h:
+        * css/StylePropertySet.cpp:
+        (WebCore::MutableStylePropertySet::removeEquivalentProperties):
+
+            Added an overload that takes a ComputedStyleExtractor.
+            This code should move into EditingStyle.cpp, material for a follow-up patch.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::toIdentifier):
+
+            Add a file-local helper for yanking the identifier value (if any) out of a CSSPrimitiveValue.
+
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::highestEmbeddingAncestor):
+        * editing/EditingStyle.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::editingStyleFromComputedStyle):
+        (WebCore::extractPropertyValue):
+        (WebCore::identifierForStyleProperty):
+        (WebCore::textColorFromStyle):
+        (WebCore::backgroundColorFromStyle):
+        (WebCore::EditingStyle::init):
+        (WebCore::EditingStyle::removeStyleAddedByNode):
+        (WebCore::EditingStyle::removeStyleConflictingWithStyleOfNode):
+        (WebCore::EditingStyle::triStateOfStyle):
+        (WebCore::EditingStyle::styleIsPresentInComputedStyleOfNode):
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext):
+        (WebCore::StyleChange::StyleChange):
+        (WebCore::fontWeightIsBold):
+        (WebCore::extractPropertiesNotIn):
+        (WebCore::getPropertiesNotIn):
+
+            Use ComputedStyleExtractor instead of CSSComputedStyleDeclaration in all of this code.
+            Templatized a bunch of the code so we don't have to repeat ourselves for both StylePropertySet
+            and ComputedStyleExtractor inputs.
+
 2013-05-30  Roland Takacs  <rtakacs@inf.u-szeged.hu>
 
         Remove "hidden"=true from Inspector.json

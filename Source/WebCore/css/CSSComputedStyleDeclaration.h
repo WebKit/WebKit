@@ -53,6 +53,13 @@ public:
 
     PassRefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
 
+    // Helper methods for HTML editing.
+    PassRefPtr<MutableStylePropertySet> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
+    PassRefPtr<MutableStylePropertySet> copyProperties() const;
+    PassRefPtr<CSSPrimitiveValue> getFontSizeCSSValuePreferringKeyword() const;
+    bool useFixedFontDefaultSize() const;
+    bool propertyMatches(CSSPropertyID, const CSSValue*) const;
+
 private:
     // The styled node is either the node passed into computedPropertyValue, or the
     // PseudoElement for :before and :after if they exist.
@@ -93,17 +100,7 @@ public:
     virtual void ref() OVERRIDE;
     virtual void deref() OVERRIDE;
 
-    PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     String getPropertyValue(CSSPropertyID) const;
-    bool getPropertyPriority(CSSPropertyID) const;
-
-    virtual PassRefPtr<MutableStylePropertySet> copyProperties() const OVERRIDE;
-
-    PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout) const;
-    PassRefPtr<CSSValue> getFontSizeCSSValuePreferringKeyword() const;
-    bool useFixedFontDefaultSize() const;
-
-    PassRefPtr<MutableStylePropertySet> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
 
 private:
     CSSComputedStyleDeclaration(PassRefPtr<Node>, bool allowVisitedStyle, const String&);
@@ -124,8 +121,9 @@ private:
     virtual PassRefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID);
     virtual String getPropertyValueInternal(CSSPropertyID);
     virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&);
+    virtual PassRefPtr<MutableStylePropertySet> copyProperties() const OVERRIDE;
 
-    virtual bool cssPropertyMatches(CSSPropertyID, const CSSValue*) const OVERRIDE;
+    PassRefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
 
     RefPtr<Node> m_node;
     PseudoId m_pseudoElementSpecifier;

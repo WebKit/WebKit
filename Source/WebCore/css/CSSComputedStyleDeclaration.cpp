@@ -1265,7 +1265,7 @@ static int cssIdentifierForFontSizeKeyword(int keywordSize)
     return CSSValueXxSmall + keywordSize - 1;
 }
 
-PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringKeyword() const
+PassRefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringKeyword() const
 {
     if (!m_node)
         return 0;
@@ -1279,11 +1279,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringK
     if (int keywordSize = style->fontDescription().keywordSize())
         return cssValuePool().createIdentifierValue(cssIdentifierForFontSizeKeyword(keywordSize));
 
-
     return zoomAdjustedPixelValue(style->fontDescription().computedPixelSize(), style.get());
 }
 
-bool CSSComputedStyleDeclaration::useFixedFontDefaultSize() const
+bool ComputedStyleExtractor::useFixedFontDefaultSize() const
 {
     if (!m_node)
         return false;
@@ -1311,11 +1310,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* sh
         list->prepend(ShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), style.release(), color.release()));
     }
     return list.release();
-}
-
-PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID) const
-{
-    return getPropertyCSSValue(propertyID, UpdateLayout);
 }
 
 static int identifierForFamily(const AtomicString& family)
@@ -1565,6 +1559,11 @@ Node* ComputedStyleExtractor::styledNode() const
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).propertyValue(propertyID, updateLayout);
+}
+
+PassRefPtr<MutableStylePropertySet> CSSComputedStyleDeclaration::copyProperties() const
+{
+    return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
 }
 
 PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
@@ -2939,7 +2938,6 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
     return "";
 }
 
-
 unsigned CSSComputedStyleDeclaration::length() const
 {
     Node* node = m_node.get();
@@ -2961,23 +2959,23 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     return getPropertyNameString(computedProperties[i]);
 }
 
-bool CSSComputedStyleDeclaration::cssPropertyMatches(CSSPropertyID propertyID, const CSSValue* propertyValue) const
+bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSSValue* value) const
 {
-    if (propertyID == CSSPropertyFontSize && propertyValue->isPrimitiveValue() && m_node) {
+    if (propertyID == CSSPropertyFontSize && value->isPrimitiveValue() && m_node) {
         m_node->document()->updateLayoutIgnorePendingStylesheets();
         RenderStyle* style = m_node->computedStyle(m_pseudoElementSpecifier);
         if (style && style->fontDescription().keywordSize()) {
             int sizeValue = cssIdentifierForFontSizeKeyword(style->fontDescription().keywordSize());
-            const CSSPrimitiveValue* primitiveValue = static_cast<const CSSPrimitiveValue*>(propertyValue);
+            const CSSPrimitiveValue* primitiveValue = static_cast<const CSSPrimitiveValue*>(value);
             if (primitiveValue->isIdent() && primitiveValue->getIdent() == sizeValue)
                 return true;
         }
     }
-    RefPtr<CSSValue> value = getPropertyCSSValue(propertyID);
-    return value && propertyValue && value->equals(*propertyValue);
+    RefPtr<CSSValue> computedValue = propertyValue(propertyID);
+    return computedValue && value && computedValue->equals(*value);
 }
 
-PassRefPtr<MutableStylePropertySet> CSSComputedStyleDeclaration::copyProperties() const
+PassRefPtr<MutableStylePropertySet> ComputedStyleExtractor::copyProperties() const
 {
     return copyPropertiesInSet(computedProperties, numComputedProperties);
 }
@@ -3030,12 +3028,12 @@ PassRefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForGridShor
     return list.release();
 }
 
-PassRefPtr<MutableStylePropertySet> CSSComputedStyleDeclaration::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
+PassRefPtr<MutableStylePropertySet> ComputedStyleExtractor::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
 {
     Vector<CSSProperty, 256> list;
     list.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
-        RefPtr<CSSValue> value = getPropertyCSSValue(set[i]);
+        RefPtr<CSSValue> value = propertyValue(set[i]);
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }

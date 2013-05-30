@@ -56,6 +56,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static int toIdentifier(PassRefPtr<CSSValue> value)
+{
+    return (value && value->isPrimitiveValue()) ? static_pointer_cast<CSSPrimitiveValue>(value)->getIdent() : 0;
+}
+
 static String& styleSpanClassString()
 {
     DEFINE_STATIC_LOCAL(String, styleSpanClassString, ((AppleStyleSpanClass)));
@@ -456,7 +461,7 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
     Node* nextHighestAncestorWithUnicodeBidi = 0;
     int highestAncestorUnicodeBidi = 0;
     for (Node* n = node->parentNode(); n != block; n = n->parentNode()) {
-        int unicodeBidi = getIdentifierValue(n, CSSPropertyUnicodeBidi);
+        int unicodeBidi = toIdentifier(ComputedStyleExtractor(n).propertyValue(CSSPropertyUnicodeBidi));
         if (unicodeBidi && unicodeBidi != CSSValueNormal) {
             highestAncestorUnicodeBidi = unicodeBidi;
             nextHighestAncestorWithUnicodeBidi = highestAncestorWithUnicodeBidi;
@@ -508,7 +513,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
             continue;
 
         StyledElement* element = static_cast<StyledElement*>(n);
-        int unicodeBidi = getIdentifierValue(element, CSSPropertyUnicodeBidi);
+        int unicodeBidi = toIdentifier(ComputedStyleExtractor(element).propertyValue(CSSPropertyUnicodeBidi));
         if (!unicodeBidi || unicodeBidi == CSSValueNormal)
             continue;
 
@@ -534,7 +539,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
 static Node* highestEmbeddingAncestor(Node* startNode, Node* enclosingNode)
 {
     for (Node* n = startNode; n && n != enclosingNode; n = n->parentNode()) {
-        if (n->isHTMLElement() && getIdentifierValue(n, CSSPropertyUnicodeBidi) == CSSValueEmbed)
+        if (n->isHTMLElement() && toIdentifier(ComputedStyleExtractor(n).propertyValue(CSSPropertyUnicodeBidi)) == CSSValueEmbed)
             return n;
     }
 

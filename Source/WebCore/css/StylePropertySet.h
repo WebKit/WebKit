@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +33,7 @@ namespace WebCore {
 
 class CSSRule;
 class CSSStyleDeclaration;
+class ComputedStyleExtractor;
 class ImmutableStylePropertySet;
 class KURL;
 class MutableStylePropertySet;
@@ -209,8 +210,10 @@ public:
     void removePrefixedOrUnprefixedProperty(CSSPropertyID);
     void removeBlockProperties();
     bool removePropertiesInSet(const CSSPropertyID* set, unsigned length);
+
+    // FIXME: These two can be moved to EditingStyle.cpp
     void removeEquivalentProperties(const StylePropertySet*);
-    void removeEquivalentProperties(const CSSStyleDeclaration*);
+    void removeEquivalentProperties(const ComputedStyleExtractor*);
 
     void mergeAndOverrideOnConflict(const StylePropertySet*);
 
