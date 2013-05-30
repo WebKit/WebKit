@@ -164,6 +164,7 @@ namespace WebKit {
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
     macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \
+    macro(IncrementalRenderingSuppressionTimeout, incrementalRenderingSuppressionTimeout, Double, double, 5) \
     \
 
 #define FOR_EACH_WEBKIT_FLOAT_PREFERENCE(macro) \

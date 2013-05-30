@@ -1143,3 +1143,13 @@ bool WKPreferencesGetHiddenPageCSSAnimationSuspensionEnabled(WKPreferencesRef pr
 {
     return toImpl(preferencesRef)->hiddenPageCSSAnimationSuspensionEnabled();
 }
+
+void WKPreferencesSetIncrementalRenderingSuppressionTimeout(WKPreferencesRef preferencesRef, double timeout)
+{
+    toImpl(preferencesRef)->setIncrementalRenderingSuppressionTimeout(timeout);
+}
+
+double WKPreferencesGetIncrementalRenderingSuppressionTimeout(WKPreferencesRef preferencesRef)
+{
+    return toAPI(toImpl(preferencesRef)->incrementalRenderingSuppressionTimeout());
+}

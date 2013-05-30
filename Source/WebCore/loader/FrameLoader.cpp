@@ -3339,6 +3339,11 @@ void FrameLoader::loadProgressingStatusChanged()
     view->adjustTiledBackingCoverage();
 }
 
+void FrameLoader::forcePageTransitionIfNeeded()
+{
+    m_client->forcePageTransitionIfNeeded();
+}
+
 bool FrameLoaderClient::hasHTMLView() const
 {
     return true;
