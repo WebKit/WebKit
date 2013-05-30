@@ -183,7 +183,6 @@ public:
 
 #if ENABLE(CSS3_TEXT)
     unsigned m_textDecorationStyle : 3; // TextDecorationStyle
-    unsigned m_textUnderlinePosition : 3; // TextUnderlinePosition
 #endif // CSS3_TEXT
     unsigned m_wrapFlow: 3; // WrapFlow
     unsigned m_wrapThrough: 1; // WrapThrough

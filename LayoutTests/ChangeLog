@@ -1,3 +1,14 @@
+2013-05-29  Dean Jackson  <dino@apple.com>
+
+        -webkit-text-underline-position should not be inherited
+        https://bugs.webkit.org/show_bug.cgi?id=116363
+
+        Reverting http://trac.webkit.org/changeset/150366
+        It was an incorrect fix referring to an old specification.
+
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-underline-position-expected.txt:
+        * fast/css3-text/css3-text-decoration/getComputedStyle/script-tests/getComputedStyle-text-underline-position.js:
+
 2013-05-29  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Scrubbing long movie files results in timeline snapping back to 0 during scrub.

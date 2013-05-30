@@ -75,7 +75,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_textCombine(RenderStyle::initialTextCombine())
 #if ENABLE(CSS3_TEXT)
     , m_textDecorationStyle(RenderStyle::initialTextDecorationStyle())
-    , m_textUnderlinePosition(RenderStyle::initialTextUnderlinePosition())
 #endif // CSS3_TEXT
     , m_wrapFlow(RenderStyle::initialWrapFlow())
     , m_wrapThrough(RenderStyle::initialWrapThrough())
@@ -159,7 +158,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_textCombine(o.m_textCombine)
 #if ENABLE(CSS3_TEXT)
     , m_textDecorationStyle(o.m_textDecorationStyle)
-    , m_textUnderlinePosition(o.m_textUnderlinePosition)
 #endif // CSS3_TEXT
     , m_wrapFlow(o.m_wrapFlow)
     , m_wrapThrough(o.m_wrapThrough)
@@ -249,7 +247,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_textCombine == o.m_textCombine
 #if ENABLE(CSS3_TEXT)
         && m_textDecorationStyle == o.m_textDecorationStyle
-        && m_textUnderlinePosition == o.m_textUnderlinePosition
 #endif // CSS3_TEXT
         && m_wrapFlow == o.m_wrapFlow
         && m_wrapThrough == o.m_wrapThrough

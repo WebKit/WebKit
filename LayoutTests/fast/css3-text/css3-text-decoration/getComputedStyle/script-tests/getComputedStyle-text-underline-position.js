@@ -65,10 +65,10 @@ testComputedStyle("webkitTextUnderlinePosition", "-webkit-text-underline-positio
 debug('');
 
 testContainer.innerHTML = '<div id="test-parent" style="-webkit-text-underline-position: under;">hello <span id="test-ancestor">world</span></div>';
-debug("Ancestor does not inherit values from parent:");
+debug("Ancestor inherits values from parent:");
 e = document.getElementById('test-ancestor');
 testElementStyle("webkitTextUnderlinePosition", "-webkit-text-underline-position", null, "");
-testComputedStyle("webkitTextUnderlinePosition", "-webkit-text-underline-position", "[object CSSPrimitiveValue]", "auto");
+testComputedStyle("webkitTextUnderlinePosition", "-webkit-text-underline-position", "[object CSSPrimitiveValue]", "under");
 debug('');
 
 debug("Value 'auto alphabetic':");

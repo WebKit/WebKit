@@ -1,3 +1,25 @@
+2013-05-29  Dean Jackson  <dino@apple.com>
+
+        -webkit-text-underline-position should not be inherited
+        https://bugs.webkit.org/show_bug.cgi?id=116363
+
+        Reverting http://trac.webkit.org/changeset/150366
+        It was an incorrect fix referring to an old specification.
+
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (StyleRareNonInheritedData):
+
 2013-05-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] cmake errors when CMAKE_BUILD_TYPE is not specified.

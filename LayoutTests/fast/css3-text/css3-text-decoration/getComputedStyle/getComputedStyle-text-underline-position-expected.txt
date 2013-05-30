@@ -47,11 +47,11 @@ PASS computedStyle.webkitTextUnderlinePosition is 'under'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'under'
 
-Ancestor does not inherit values from parent:
+Ancestor inherits values from parent:
 PASS e.style.getPropertyCSSValue('-webkit-text-underline-position') is null
-PASS computedStyle.webkitTextUnderlinePosition is 'auto'
+PASS computedStyle.webkitTextUnderlinePosition is 'under'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'under'
 
 Value 'auto alphabetic':
 PASS e.style.getPropertyCSSValue('-webkit-text-underline-position') is null
