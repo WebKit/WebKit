@@ -1,3 +1,13 @@
+2013-05-30  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        Fix double hash lookup in WebSocket::connect loop
+        https://bugs.webkit.org/show_bug.cgi?id=117052
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+
 2013-05-30  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove some 16bits conversion.
