@@ -194,6 +194,8 @@ private:
             CanvasTrigger |
             AnimationTrigger);
     }
+
+    virtual bool layerTreeStateIsFrozen() const OVERRIDE;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

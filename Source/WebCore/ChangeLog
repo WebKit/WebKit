@@ -1,3 +1,25 @@
+2013-05-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix paint-related milestones to not fire when the layer tree is frozen
+        https://bugs.webkit.org/show_bug.cgi?id=117012
+
+        Reviewed by Tim Horton.
+
+        In the previous code, it was possible to paint some layer and schedule
+        the m_paintRelatedMilestonesTimer, but then the layer tree was put into
+        a frozen state because the page redirected. However, the paint-related
+        milestones timer would still fire. This caused woes with header/footer
+        banners.
+        
+        Fix by not firing paint-related milestones if the layer tree is frozen,
+        which we know via a new ChromeClient callback. When unfrozen, we'll
+        paint again, and fire the timer later.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::layerTreeStateIsFrozen):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::paintRelatedMilestonesTimerFired):
+
 2013-05-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Store form control list with RefPtr

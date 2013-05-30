@@ -3252,8 +3252,19 @@ void RenderLayerCompositor::layerFlushTimerFired(Timer<RenderLayerCompositor>*)
 void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCompositor>*)
 {
     FrameView* frameView = m_renderView ? m_renderView->frameView() : 0;
-    if (frameView)
-        frameView->firePaintRelatedMilestones();
+    if (!frameView)
+        return;
+
+    Frame* frame = frameView->frame();
+    Page* page = frame ? frame->page() : 0;
+    if (!page)
+        return;
+
+    // If the layer tree is frozen, we'll paint when it's unfrozen and schedule the timer again.
+    if (page->chrome().client()->layerTreeStateIsFrozen())
+        return;
+
+    frameView->firePaintRelatedMilestones();
 }
 
 } // namespace WebCore

@@ -1,3 +1,18 @@
+2013-05-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix paint-related milestones to not fire when the layer tree is frozen
+        https://bugs.webkit.org/show_bug.cgi?id=117012
+
+        Reviewed by Tim Horton.
+        
+        Implement ChromeClient::layerTreeStateIsFrozen() to return
+        the frozen state of the drawing area.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::layerTreeStateIsFrozen):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+
 2013-05-29  Anders Carlsson  <andersca@apple.com>
 
         WebKit should expose HSTS APIs to determine whether a host is in the HSTS cache and to reset HSTS policies

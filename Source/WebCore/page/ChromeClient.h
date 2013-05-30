@@ -271,6 +271,9 @@ public:
 
     // Returns a bitfield indicating conditions that can trigger the compositor.
     virtual CompositingTriggerFlags allowedCompositingTriggers() const { return static_cast<CompositingTriggerFlags>(AllTriggers); }
+    
+    // Returns true if layer tree updates are disabled.
+    virtual bool layerTreeStateIsFrozen() const { return false; }
 #endif
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
