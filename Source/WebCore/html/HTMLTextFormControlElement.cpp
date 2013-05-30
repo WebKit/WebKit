@@ -77,7 +77,7 @@ bool HTMLTextFormControlElement::childShouldCreateRenderer(const NodeRenderingCo
 
 Node::InsertionNotificationRequest HTMLTextFormControlElement::insertedInto(ContainerNode* insertionPoint)
 {
-    HTMLFormControlElement::insertedInto(insertionPoint);
+    HTMLFormControlElementWithState::insertedInto(insertionPoint);
     if (!insertionPoint->inDocument())
         return InsertionDone;
     String initialValue = value();

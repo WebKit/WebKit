@@ -400,7 +400,7 @@ PassOwnPtr<FormController::SavedFormStateMap> FormController::createSavedFormSta
     OwnPtr<FormKeyGenerator> keyGenerator = FormKeyGenerator::create();
     OwnPtr<SavedFormStateMap> stateMap = adoptPtr(new SavedFormStateMap);
     for (FormElementListHashSet::const_iterator it = controlList.begin(); it != controlList.end(); ++it) {
-        HTMLFormControlElementWithState* control = *it;
+        HTMLFormControlElementWithState* control = it->get();
         if (!control->shouldSaveAndRestoreFormControlState())
             continue;
         SavedFormStateMap::AddResult result = stateMap->add(keyGenerator->formKey(*control).impl(), nullptr);
@@ -513,6 +513,18 @@ Vector<String> FormController::getReferencedFilePaths(const Vector<String>& stat
     for (SavedFormStateMap::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
         toReturn.appendVector(it->value->getReferencedFilePaths());
     return toReturn;
+}
+
+void FormController::registerFormElementWithState(HTMLFormControlElementWithState* control)
+{
+    ASSERT(!m_formElementsWithState.contains(control));
+    m_formElementsWithState.add(control);
+}
+
+void FormController::unregisterFormElementWithState(HTMLFormControlElementWithState* control)
+{
+    ASSERT(m_formElementsWithState.contains(control));
+    m_formElementsWithState.remove(control);
 }
 
 } // namespace WebCore

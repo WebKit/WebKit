@@ -37,20 +37,24 @@ namespace WebCore {
 HTMLFormControlElementWithState::HTMLFormControlElementWithState(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLFormControlElement(tagName, doc, f)
 {
-    document()->formController().registerFormElementWithState(this);
 }
 
 HTMLFormControlElementWithState::~HTMLFormControlElementWithState()
 {
-    document()->formController().unregisterFormElementWithState(this);
 }
 
-void HTMLFormControlElementWithState::didMoveToNewDocument(Document* oldDocument)
+Node::InsertionNotificationRequest HTMLFormControlElementWithState::insertedInto(ContainerNode* insertionPoint)
 {
-    if (oldDocument)
-        oldDocument->formController().unregisterFormElementWithState(this);
-    document()->formController().registerFormElementWithState(this);
-    HTMLFormControlElement::didMoveToNewDocument(oldDocument);
+    if (insertionPoint->inDocument() && !containingShadowRoot())
+        document()->formController().registerFormElementWithState(this);
+    return HTMLFormControlElement::insertedInto(insertionPoint);
+}
+
+void HTMLFormControlElementWithState::removedFrom(ContainerNode* insertionPoint)
+{
+    if (insertionPoint->inDocument() && !containingShadowRoot() && !insertionPoint->containingShadowRoot())
+        document()->formController().unregisterFormElementWithState(this);
+    HTMLFormControlElement::removedFrom(insertionPoint);
 }
 
 bool HTMLFormControlElementWithState::shouldAutocomplete() const

@@ -47,7 +47,8 @@ protected:
 
     virtual bool shouldAutocomplete() const;
     virtual void finishParsingChildren();
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    virtual void removedFrom(ContainerNode*) OVERRIDE;
     virtual bool isFormControlElementWithState() const OVERRIDE;
 };
 

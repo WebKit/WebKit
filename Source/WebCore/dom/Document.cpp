@@ -682,6 +682,7 @@ void Document::dispose()
     // so tear down scope information upfront to avoid having stale references in the map.
     destroyTreeScopeData();
     removeDetachedChildren();
+    m_formController.clear();
 
     m_markers->detach();
 
