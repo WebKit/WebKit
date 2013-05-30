@@ -33,6 +33,9 @@
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
+#if PLATFORM(X11)
+typedef VisualID NativeVisualId;
+#endif
 
 class EGLConfigSelector {
     WTF_MAKE_NONCOPYABLE(EGLConfigSelector);
@@ -44,8 +47,14 @@ public:
     EGLint nativeVisualId(const EGLConfig&) const;
     GLPlatformSurface::SurfaceAttributes attributes() const;
     void reset();
+#if PLATFORM(X11)
+    virtual EGLConfig surfaceClientConfig(NativeVisualId);
+#endif
 
 private:
+#if PLATFORM(X11)
+    EGLConfig findMatchingConfigWithVisualId(NativeVisualId);
+#endif
     EGLConfig createConfig(EGLint expectedSurfaceType);
 
 protected:

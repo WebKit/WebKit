@@ -43,10 +43,31 @@ PassOwnPtr<GLTransportSurface> EGLTransportSurface::createTransportSurface(const
     OwnPtr<GLTransportSurface> surface;
 #if PLATFORM(X11)
     surface = adoptPtr(new EGLWindowTransportSurface(size, attributes));
+#else
+    UNUSED_PARAM(size);
+    UNUSED_PARAM(attributes);
 #endif
 
     if (surface)
         return surface.release();
+
+    return nullptr;
+}
+
+PassOwnPtr<GLTransportSurfaceClient> EGLTransportSurface::createTransportSurfaceClient(const PlatformBufferHandle handle, const IntSize& size, bool hasAlpha)
+{
+    EGLHelper::resolveEGLBindings();
+    OwnPtr<GLTransportSurfaceClient> client;
+#if PLATFORM(X11)
+    client = adoptPtr(new EGLXTransportSurfaceClient(handle, size, hasAlpha));
+#else
+    UNUSED_PARAM(handle);
+    UNUSED_PARAM(size);
+    UNUSED_PARAM(hasAlpha);
+#endif
+
+    if (client)
+        return client.release();
 
     return nullptr;
 }
@@ -96,6 +117,8 @@ PassOwnPtr<GLPlatformSurface> EGLOffScreenSurface::createOffScreenSurface(Surfac
     OwnPtr<GLPlatformSurface> surface;
 #if PLATFORM(X11)
     surface = adoptPtr(new EGLPixmapSurface(attributes));
+#else
+    UNUSED_PARAM(attributes);
 #endif
 
     if (surface)

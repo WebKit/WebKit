@@ -163,6 +163,68 @@ EGLConfig EGLConfigSelector::createConfig(EGLint expectedSurfaceType)
     return config;
 }
 
+#if PLATFORM(X11)
+EGLConfig EGLConfigSelector::surfaceClientConfig(NativeVisualId id)
+{
+    EGLConfig config = findMatchingConfigWithVisualId(id);
+
+    if (!config)
+        config = createConfig(EGL_PIXMAP_BIT);
+
+    return config;
+}
+
+EGLConfig EGLConfigSelector::findMatchingConfigWithVisualId(NativeVisualId id)
+{
+    if (m_sharedDisplay == EGL_NO_DISPLAY)
+        return 0;
+
+    EGLint numConfigs;
+    EGLint i;
+    EGLint visualId;
+    EGLConfig config = 0;
+
+    eglGetConfigs(m_sharedDisplay, 0, 0, &numConfigs);
+
+    if (!numConfigs) {
+        LOG_ERROR("Failed to retrieve any EGL configs.");
+        return 0;
+    }
+
+    EGLConfig configs[numConfigs];
+    eglGetConfigs(m_sharedDisplay, configs, numConfigs, &numConfigs);
+
+    if (!numConfigs) {
+        LOG_ERROR("Failed to retrieve any EGL configs.");
+        return 0;
+    }
+
+    int alphaChannelRequired = m_attributes & GLPlatformSurface::SupportAlpha ? 8 : 0;
+    for (i = 0; i < numConfigs; i++) {
+        EGLint alpha, surfaces;
+        EGLConfig tempConfig = configs[i];
+        eglGetConfigAttrib(m_sharedDisplay, tempConfig, EGL_NATIVE_VISUAL_ID, &visualId);
+
+        if (static_cast<NativeVisualId>(visualId) != id)
+            continue;
+
+        eglGetConfigAttrib(m_sharedDisplay, tempConfig, EGL_ALPHA_SIZE, &alpha);
+
+        if (alphaChannelRequired != alpha)
+            continue;
+
+        eglGetConfigAttrib(m_sharedDisplay, tempConfig, EGL_SURFACE_TYPE, &surfaces);
+
+        if (surfaces & EGL_PIXMAP_BIT) {
+            config = tempConfig;
+            break;
+        }
+    }
+
+    return config;
+}
+#endif
+
 }
 
 #endif

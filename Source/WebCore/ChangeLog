@@ -1,3 +1,72 @@
+2013-05-30  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL][EGL] Implement TransportSurface client.
+        https://bugs.webkit.org/show_bug.cgi?id=114122
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Covered by existing WebGL tests.
+
+        This patch implements the client support for Transport
+        Surface with EGL backend using GLES2.
+
+        * platform/graphics/surfaces/efl/GLTransportSurface.cpp:
+        (WebCore::GLTransportSurfaceClient::createTransportSurfaceClient):
+        (WebCore::GLTransportSurfaceClient::GLTransportSurfaceClient):
+        * platform/graphics/surfaces/efl/GLTransportSurface.h:
+        (GLTransportSurfaceClient):
+        * platform/graphics/surfaces/efl/GraphicsSurfaceCommon.cpp:
+        (WebCore::GraphicsSurfacePrivate::initializeClient):
+        * platform/graphics/surfaces/egl/EGLConfigSelector.cpp:
+        (WebCore):
+        (WebCore::EGLConfigSelector::surfaceClientConfig):
+        (WebCore::EGLConfigSelector::findMatchingConfigWithVisualId):
+        * platform/graphics/surfaces/egl/EGLConfigSelector.h:
+        (WebCore):
+        (EGLConfigSelector):
+
+        Support for retrieving valid EGLConfig on client side.
+
+        * platform/graphics/surfaces/egl/EGLHelper.cpp:
+        (WebCore):
+        (WebCore::resolveDisplay):
+        (WebCore::EGLHelper::resolveEGLBindings):
+        (WebCore::EGLHelper::createEGLImage):
+        (WebCore::EGLHelper::destroyEGLImage):
+        (WebCore::EGLHelper::imageTargetTexture2DOES):
+        * platform/graphics/surfaces/egl/EGLHelper.h:
+
+        Helper functions to create and destroy EGLImage.
+
+        * platform/graphics/surfaces/egl/EGLXSurface.cpp:
+        (WebCore::EGLXTransportSurfaceClient::EGLXTransportSurfaceClient):
+        (WebCore):
+        (WebCore::EGLXTransportSurfaceClient::~EGLXTransportSurfaceClient):
+        (WebCore::EGLXTransportSurfaceClient::destroy):
+        (WebCore::EGLXTransportSurfaceClient::prepareTexture):
+        (WebCore::EGLTextureFromPixmap::EGLTextureFromPixmap):
+        (WebCore::EGLTextureFromPixmap::~EGLTextureFromPixmap):
+        (WebCore::EGLTextureFromPixmap::destroy):
+        (WebCore::EGLTextureFromPixmap::isValid):
+        (WebCore::EGLTextureFromPixmap::bindTexImage):
+        (WebCore::EGLTextureFromPixmap::reBindTexImage):
+        * platform/graphics/surfaces/egl/EGLXSurface.h:
+        (EGLXTransportSurfaceClient):
+
+        TransportSurfaceClient implementation.
+
+        (WebCore):
+        * platform/graphics/surfaces/glx/GLXSurface.cpp:
+        (WebCore::GLXTransportSurfaceClient::GLXTransportSurfaceClient):
+        * platform/graphics/surfaces/glx/GLXSurface.h:
+        (GLXTransportSurfaceClient):
+        * platform/graphics/surfaces/glx/X11Helper.cpp:
+        (WebCore::X11Helper::createOffScreenWindow):
+        (WebCore):
+        (WebCore::X11Helper::createPixmap):
+        * platform/graphics/surfaces/glx/X11Helper.h:
+        (X11Helper):
+
 2013-05-30  Mike West  <mkwst@chromium.org>
 
         Rename 'KURL::elidedString' and inspector's 'String.prototype.trimMiddle' for clarity.

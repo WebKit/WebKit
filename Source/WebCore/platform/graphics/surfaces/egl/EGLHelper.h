@@ -28,24 +28,18 @@
 
 #if USE(EGL)
 
-#if PLATFORM(X11)
-#include <glx/X11Helper.h>
-#endif
-
 #include <opengl/GLDefs.h>
 
 namespace WebCore {
 
-#if PLATFORM(X11)
-typedef X11Helper NativeWrapper;
-typedef Display NativeSharedDisplay;
-#else
-typedef void NativeSharedDisplay;
-#endif
-
 class EGLHelper {
 public:
     static PlatformDisplay eglDisplay();
+    static PlatformDisplay currentDisplay();
+    static void resolveEGLBindings();
+    static void createEGLImage(EGLImageKHR*, GLenum, const EGLClientBuffer, const EGLint* = 0);
+    static void destroyEGLImage(const EGLImageKHR);
+    static void imageTargetTexture2DOES(const EGLImageKHR);
 };
 
 }

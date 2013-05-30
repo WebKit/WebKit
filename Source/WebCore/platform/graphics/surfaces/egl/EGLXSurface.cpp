@@ -29,6 +29,8 @@
 #if PLATFORM(X11) && USE(EGL) && USE(GRAPHICS_SURFACE)
 
 #include "EGLConfigSelector.h"
+#include "EGLHelper.h"
+#include "GLPlatformContext.h"
 
 namespace WebCore {
 
@@ -134,6 +136,196 @@ void EGLPixmapSurface::destroy()
         NativeWrapper::destroyPixmap(m_bufferHandle);
         m_bufferHandle = 0;
     }
+}
+
+EGLXTransportSurfaceClient::EGLXTransportSurfaceClient(const PlatformBufferHandle handle, const IntSize& size, bool hasAlpha)
+    : GLTransportSurfaceClient()
+    , m_image(0)
+    , m_size(size)
+    , m_totalBytes(0)
+{
+    if (!handle)
+        return;
+
+    m_handle = handle;
+    XWindowAttributes attr;
+
+    if (!XGetWindowAttributes(NativeWrapper::nativeDisplay(), m_handle, &attr))
+        return;
+
+    createTexture();
+    GLPlatformSurface::SurfaceAttributes sharedSurfaceAttributes = GLPlatformSurface::Default;
+
+    if (hasAlpha)
+        sharedSurfaceAttributes = GLPlatformSurface::SupportAlpha;
+
+    EGLConfigSelector configSelector(sharedSurfaceAttributes);
+    EGLConfig config = configSelector.surfaceClientConfig(XVisualIDFromVisual(attr.visual));
+    m_eglImage = adoptPtr(new EGLTextureFromPixmap(m_handle, hasAlpha, config));
+
+    if (!m_eglImage->isValid() || eglGetError() != EGL_SUCCESS)
+        destroy();
+
+    if (m_eglImage)
+        return;
+
+    m_totalBytes = m_size.width() * m_size.height() * 4;
+
+#if USE(OPENGL_ES_2)
+    m_format = GraphicsContext3D::RGBA;
+    static bool bgraSupported = GLPlatformContext::supportsGLExtension("GL_EXT_texture_format_BGRA8888");
+    if (bgraSupported)
+        m_format = GraphicsContext3D::BGRA;
+#endif
+
+    createTexture();
+    prepareTexture();
+}
+
+EGLXTransportSurfaceClient::~EGLXTransportSurfaceClient()
+{
+}
+
+void EGLXTransportSurfaceClient::destroy()
+{
+    GLTransportSurfaceClient::destroy();
+
+    if (m_eglImage) {
+        m_eglImage->destroy();
+        m_eglImage = nullptr;
+    }
+
+    eglWaitGL();
+
+    if (m_image) {
+        XDestroyImage(m_image);
+        m_image = 0;
+    }
+}
+
+void EGLXTransportSurfaceClient::prepareTexture()
+{
+    ::glBindTexture(GL_TEXTURE_2D, m_texture);
+
+    if (m_eglImage) {
+        m_eglImage->reBindTexImage();
+        return;
+    }
+
+    // Fallback to use XImage in case EGLImage and TextureToPixmap are not supported.
+    m_image = XGetImage(NativeWrapper::nativeDisplay(), m_handle, 0, 0, m_size.width(), m_size.height(), AllPlanes, ZPixmap);
+
+#if USE(OPENGL_ES_2)
+    if (m_format != GraphicsContext3D::BGRA) {
+        for (unsigned i = 0; i < m_totalBytes; i += 4)
+            std::swap(m_image->data[i], m_image->data[i + 2]);
+    }
+#endif
+
+    glTexImage2D(GL_TEXTURE_2D, 0, m_format, m_size.width(), m_size.height(), 0, m_format, GL_UNSIGNED_BYTE, m_image->data);
+
+    if (m_image) {
+        XDestroyImage(m_image);
+        m_image = 0;
+    }
+}
+
+EGLTextureFromPixmap::EGLTextureFromPixmap(const NativePixmap handle, bool hasAlpha, EGLConfig config)
+    : m_eglImage(0)
+    , m_surface(EGL_NO_SURFACE)
+{
+    if (!handle)
+        return;
+
+    static bool textureFromPixmapSupported = GLPlatformContext::supportsEGLExtension(EGLHelper::eglDisplay(), "EGL_NOK_texture_from_pixmap");
+
+    if (textureFromPixmapSupported) {
+        const EGLint pixmapAttribs[] = { EGL_TEXTURE_FORMAT, hasAlpha ? EGL_TEXTURE_RGBA : EGL_TEXTURE_RGB, EGL_TEXTURE_TARGET, EGL_TEXTURE_2D, EGL_NONE };
+        m_surface = eglCreatePixmapSurface(EGLHelper::eglDisplay(), config, handle, pixmapAttribs);
+
+        if (m_surface != EGL_NO_SURFACE && !eglBindTexImage(EGLHelper::eglDisplay(), m_surface, EGL_BACK_BUFFER))
+            destroy();
+    }
+
+    if (m_surface != EGL_NO_SURFACE)
+        return;
+
+    static const EGLint imageAttrs[] = { EGL_IMAGE_PRESERVED_KHR, EGL_TRUE, EGL_NONE };
+    EGLHelper::createEGLImage(&m_eglImage, EGL_NATIVE_PIXMAP_KHR, (EGLClientBuffer)(handle), imageAttrs);
+
+    if (m_eglImage) {
+        EGLHelper::imageTargetTexture2DOES(m_eglImage);
+        EGLint error = eglGetError();
+
+        if (error != EGL_SUCCESS)
+            destroy();
+    }
+}
+
+EGLTextureFromPixmap::~EGLTextureFromPixmap()
+{
+}
+
+void EGLTextureFromPixmap::destroy()
+{
+    eglWaitNative(EGL_CORE_NATIVE_ENGINE);
+
+    if (m_surface != EGL_NO_SURFACE)
+        eglReleaseTexImage(EGLHelper::eglDisplay(), m_surface, EGL_BACK_BUFFER);
+
+    if (m_eglImage) {
+        EGLHelper::destroyEGLImage(m_eglImage);
+        m_eglImage = 0;
+    }
+
+    if (m_surface != EGL_NO_SURFACE) {
+        eglDestroySurface(EGLHelper::eglDisplay(), m_surface);
+        m_surface = EGL_NO_SURFACE;
+    }
+
+    eglWaitGL();
+}
+
+bool EGLTextureFromPixmap::isValid() const
+{
+    if (m_surface || m_eglImage)
+        return true;
+
+    return false;
+}
+
+bool EGLTextureFromPixmap::bindTexImage()
+{
+    if (m_surface != EGL_NO_SURFACE) {
+        bool success = eglBindTexImage(EGLHelper::eglDisplay(), m_surface, EGL_BACK_BUFFER);
+        return success;
+    }
+
+    if (m_eglImage) {
+        EGLHelper::imageTargetTexture2DOES(m_eglImage);
+        return true;
+    }
+
+    return false;
+}
+
+bool EGLTextureFromPixmap::reBindTexImage()
+{
+    if (m_surface != EGL_NO_SURFACE) {
+        bool success = eglReleaseTexImage(EGLHelper::eglDisplay(), m_surface, EGL_BACK_BUFFER);
+
+        if (success)
+            success = eglBindTexImage(EGLHelper::eglDisplay(), m_surface, EGL_BACK_BUFFER);
+
+        return success;
+    }
+
+    if (m_eglImage) {
+        EGLHelper::imageTargetTexture2DOES(m_eglImage);
+        return true;
+    }
+
+    return false;
 }
 
 }

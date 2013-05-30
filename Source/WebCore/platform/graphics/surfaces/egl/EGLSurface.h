@@ -40,6 +40,7 @@ class EGLConfigSelector;
 class EGLTransportSurface : public GLTransportSurface {
 public:
     static PassOwnPtr<GLTransportSurface> createTransportSurface(const IntSize&, SurfaceAttributes);
+    static PassOwnPtr<GLTransportSurfaceClient> createTransportSurfaceClient(const PlatformBufferHandle, const IntSize&, bool);
     virtual ~EGLTransportSurface();
     virtual PlatformSurfaceConfig configuration() OVERRIDE;
     virtual void destroy() OVERRIDE;

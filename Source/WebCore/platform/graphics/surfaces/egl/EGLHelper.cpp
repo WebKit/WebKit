@@ -28,7 +28,24 @@
 
 #if USE(EGL)
 
+#include <opengl/GLPlatformContext.h>
+
+#if PLATFORM(X11)
+#include "X11Helper.h"
+#endif
+
 namespace WebCore {
+
+#if PLATFORM(X11)
+typedef X11Helper NativeWrapper;
+typedef Display NativeSharedDisplay;
+#else
+typedef void NativeSharedDisplay;
+#endif
+
+static PFNEGLCREATEIMAGEKHRPROC eglCreateImageKHR = 0;
+static PFNEGLDESTROYIMAGEKHRPROC eglDestroyImageKHR = 0;
+static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC eglImageTargetTexture2DOES = 0;
 
 struct EGLDisplayConnection {
 
@@ -93,6 +110,67 @@ PlatformDisplay EGLHelper::eglDisplay()
     return displayConnection.display();
 }
 
+PlatformDisplay EGLHelper::currentDisplay()
+{
+    EGLDisplay display = eglGetCurrentDisplay();
+
+    if (display == EGL_NO_DISPLAY)
+        display = EGLHelper::eglDisplay();
+
+    return display;
 }
 
+void EGLHelper::resolveEGLBindings()
+{
+    static bool initialized = false;
+
+    if (initialized)
+        return;
+
+    initialized = true;
+
+    EGLDisplay display = currentDisplay();
+
+    if (display == EGL_NO_DISPLAY)
+        return;
+
+    if (GLPlatformContext::supportsEGLExtension(display, "EGL_KHR_image") && GLPlatformContext::supportsEGLExtension(display, "EGL_KHR_image_pixmap") && GLPlatformContext::supportsGLExtension("GL_OES_EGL_image")) {
+        eglCreateImageKHR = (PFNEGLCREATEIMAGEKHRPROC) eglGetProcAddress("eglCreateImageKHR");
+        eglDestroyImageKHR = (PFNEGLDESTROYIMAGEKHRPROC) eglGetProcAddress("eglDestroyImageKHR");
+        eglImageTargetTexture2DOES = (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)eglGetProcAddress("glEGLImageTargetTexture2DOES");
+    }
+}
+
+void EGLHelper::createEGLImage(EGLImageKHR* image, GLenum target, const EGLClientBuffer clientBuffer, const EGLint attributes[])
+{
+    EGLDisplay display = currentDisplay();
+
+    if (display == EGL_NO_DISPLAY)
+        return;
+
+    EGLImageKHR tempHandle = EGL_NO_IMAGE_KHR;
+
+    if (eglCreateImageKHR && eglImageTargetTexture2DOES && eglDestroyImageKHR)
+        tempHandle = eglCreateImageKHR(display, EGL_NO_CONTEXT, target, clientBuffer, attributes);
+
+    *image = tempHandle;
+}
+
+void EGLHelper::destroyEGLImage(const EGLImageKHR image)
+{
+    EGLDisplay display = currentDisplay();
+
+    if (display == EGL_NO_DISPLAY)
+        return;
+
+    if (eglDestroyImageKHR)
+        eglDestroyImageKHR(display, image);
+}
+
+void EGLHelper::imageTargetTexture2DOES(const EGLImageKHR image)
+{
+    eglImageTargetTexture2DOES(GL_TEXTURE_2D, static_cast<GLeglImageOES>(image));
+}
+
+}
 #endif

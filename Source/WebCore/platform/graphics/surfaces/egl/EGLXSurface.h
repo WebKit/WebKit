@@ -52,6 +52,36 @@ public:
     virtual void destroy() OVERRIDE;
 };
 
+class EGLTextureFromPixmap {
+public:
+    EGLTextureFromPixmap(const NativePixmap, bool, EGLConfig);
+    virtual ~EGLTextureFromPixmap();
+    bool bindTexImage();
+    bool isValid() const;
+    bool reBindTexImage();
+    void destroy();
+
+private:
+    EGLImageKHR m_eglImage;
+    EGLSurface m_surface;
+};
+
+class EGLXTransportSurfaceClient : public GLTransportSurfaceClient {
+public:
+    EGLXTransportSurfaceClient(const PlatformBufferHandle, const IntSize&, bool);
+    virtual ~EGLXTransportSurfaceClient();
+    virtual void prepareTexture() OVERRIDE;
+    virtual void destroy() OVERRIDE;
+
+private:
+    XImage* m_image;
+    IntSize m_size;
+    PlatformBufferHandle m_handle;
+    GLuint m_format;
+    unsigned m_totalBytes;
+    OwnPtr<EGLTextureFromPixmap> m_eglImage;
+};
+
 }
 
 #endif
