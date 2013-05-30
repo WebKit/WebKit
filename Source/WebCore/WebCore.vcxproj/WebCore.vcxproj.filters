@@ -5223,6 +5223,9 @@
     <ClCompile Include="..\page\Page.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\PageActivityAssertionToken.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\PageConsole.cpp">
       <Filter>page</Filter>
     </ClCompile>

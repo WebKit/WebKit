@@ -56,6 +56,7 @@
 #include "MediaCanStartListener.h"
 #include "Navigator.h"
 #include "NetworkStateNotifier.h"
+#include "PageActivityAssertionToken.h"
 #include "PageCache.h"
 #include "PageConsole.h"
 #include "PageGroup.h"
@@ -1512,6 +1513,11 @@ void Page::sawMediaEngine(const String& engineDescription)
 void Page::resetSeenMediaEngines()
 {
     m_seenMediaEngines.clear();
+}
+
+PassOwnPtr<PageActivityAssertionToken> Page::createActivityToken()
+{
+    return adoptPtr(new PageActivityAssertionToken(m_pageThrottler.get()));
 }
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)

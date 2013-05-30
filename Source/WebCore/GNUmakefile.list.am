@@ -4251,6 +4251,8 @@ webcore_sources += \
 	Source/WebCore/page/OriginAccessEntry.h \
 	Source/WebCore/page/Page.cpp \
 	Source/WebCore/page/Page.h \
+	Source/WebCore/page/PageActivityAssertionToken.h \
+	Source/WebCore/page/PageActivityAssertionToken.cpp \
 	Source/WebCore/page/PageConsole.cpp \
 	Source/WebCore/page/PageConsole.h \
 	Source/WebCore/page/PageGroup.cpp \

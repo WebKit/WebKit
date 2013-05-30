@@ -28,11 +28,13 @@
 
 #include "Timer.h"
 
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class Page;
+class PageActivityAssertionToken;
 
 class PageThrottler : public RefCounted<PageThrottler> {
 public:
@@ -60,6 +62,10 @@ private:
         PageThrottledState
     };
 
+    friend class PageActivityAssertionToken;
+    void addActivityToken(PageActivityAssertionToken*);
+    void removeActivityToken(PageActivityAssertionToken*);
+
     PageThrottler(Page*);
     void startThrottleHysteresisTimer();
     void stopThrottleHysteresisTimer();
@@ -73,6 +79,7 @@ private:
     unsigned m_activeThrottleBlockers;
     PageThrottleState m_throttleState;
     Timer<PageThrottler> m_throttleHysteresisTimer;
+    HashSet<PageActivityAssertionToken*> m_activityTokens;
 };
 
 }

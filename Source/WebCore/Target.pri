@@ -931,6 +931,7 @@ SOURCES += \
     page/NavigatorBase.cpp \
     page/OriginAccessEntry.cpp \
     page/Page.cpp \
+    page/PageActivityAssertionToken.cpp \
     page/PageConsole.cpp \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \
@@ -2100,6 +2101,7 @@ HEADERS += \
     page/PageGroup.h \
     page/PageGroupLoadDeferrer.h \
     page/Page.h \
+    page/PageActivityAssertionToken.h \
     page/PageConsole.h \
     page/PageThrottler.h \
     page/PageVisibilityState.h \

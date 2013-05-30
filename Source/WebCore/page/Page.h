@@ -75,6 +75,7 @@ class InspectorClient;
 class InspectorController;
 class MediaCanStartListener;
 class Node;
+class PageActivityAssertionToken;
 class PageConsole;
 class PageGroup;
 class PageThrottler;
@@ -394,6 +395,7 @@ public:
     void resetSeenMediaEngines();
 
     PageThrottler* pageThrottler() { return m_pageThrottler.get(); }
+    PassOwnPtr<PageActivityAssertionToken> createActivityToken();
 
     PageConsole* console() { return m_console.get(); }
 

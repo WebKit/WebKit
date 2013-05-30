@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "Frame.h"
 #include "Page.h"
+#include "PageActivityAssertionToken.h"
 
 namespace WebCore {
 
@@ -47,6 +48,9 @@ PageThrottler::PageThrottler(Page* page)
 
 PageThrottler::~PageThrottler()
 {
+    for (HashSet<PageActivityAssertionToken*>::iterator i = m_activityTokens.begin(); i != m_activityTokens.end(); ++i)
+        (*i)->invalidate();
+
     if (m_throttleState != PageThrottledState && m_page) {
         if (ChromeClient* chromeClient = m_page->chrome().client())
             chromeClient->decrementActivePageCount();
@@ -163,6 +167,24 @@ void PageThrottler::throttleHysteresisTimerFired(Timer<PageThrottler>*)
 {
     ASSERT(!m_activeThrottleBlockers);
     throttlePage();
+}
+
+void PageThrottler::addActivityToken(PageActivityAssertionToken* token)
+{
+    if (!token || m_activityTokens.contains(token))
+        return;
+
+    m_activityTokens.add(token);
+    preventThrottling();
+}
+
+void PageThrottler::removeActivityToken(PageActivityAssertionToken* token)
+{
+    if (!token || !m_activityTokens.contains(token))
+        return;
+
+    m_activityTokens.remove(token);
+    allowThrottling();
 }
 
 }

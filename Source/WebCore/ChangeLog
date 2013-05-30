@@ -1,3 +1,49 @@
+2013-05-30  Jer Noble  <jer.noble@apple.com>
+
+        HTMLMediaElement will not unthrottle page when playback stops for nreasons other than user-initiated pause.
+        https://bugs.webkit.org/show_bug.cgi?id=117016
+
+        Reviewed by Oliver Hunt.
+
+        Add a new class PageActivityAssertionToken to allow HTMLMediaElement to decouple
+        knowledge of and control over the lifetime of PageThrottler. The new class will
+        have weak references to and from the PageThrottler so that holders of the token
+        will not need to care if the Page or PageThrottler has been destroyed. 
+
+        HTMLMediaElement will create one of these PageActivityAssertionTokens when playback
+        begins and destroy it when playback stops for any reason, or when the element is
+        destroyed.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        * html/HTMLMediaElement.h:
+        * page/Page.cpp:
+        (WebCore::createActivityToken): Added simple factory method.
+        * page/Page.h:
+        * page/PageActivityAssertionToken.cpp: 
+        (WebCore::PageActivityAssertionToken::PageActivityAssertionToken): Call addActivityToken();
+        (WebCore::PageActivityAssertionToken::~PageActivityAssertionToken): Call removeActivityToken();
+        (WebCore::PageActivityAssertionToken::invalidate): Clear m_throttler.
+        * page/PageActivityAssertionToken.h:
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::~PageThrottler): Invalidate all outstanding tokens.
+        (WebCore::PageThrottler::addActivityToken): Bump the activity count.
+        (WebCore::PageThrottler::removeActivityToken): Lower the activity count.
+        * page/PageThrottler.h:
+
+        Add the new files to the various build systems:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-05-29  Jeffrey Pfau  <jpfau@apple.com>
 
         [Mac] Enable cache partitioning and the public suffix list on 10.8

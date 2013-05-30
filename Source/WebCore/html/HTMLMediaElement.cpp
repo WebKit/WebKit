@@ -69,8 +69,8 @@
 #include "MIMETypeRegistry.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
+#include "PageActivityAssertionToken.h"
 #include "PageGroup.h"
-#include "PageThrottler.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptController.h"
@@ -346,10 +346,6 @@ HTMLMediaElement::~HTMLMediaElement()
 {
     LOG(Media, "HTMLMediaElement::~HTMLMediaElement");
 
-    if (!m_paused && m_pageThrottler) {
-        m_pageThrottler->allowThrottling();
-        m_pageThrottler.clear();
-    }
     if (m_isWaitingUntilMediaCanStart)
         document()->removeMediaCanStartListener(this);
     setShouldDelayLoadEvent(false);
@@ -2483,20 +2479,6 @@ void HTMLMediaElement::play()
     playInternal();
 }
 
-PageThrottler* HTMLMediaElement::pageThrottlerIfPossible()
-{
-    if (m_pageThrottler)
-        return m_pageThrottler.get();
-
-    if (!document())
-        return 0;
-
-    if (Page* page = document()->page())
-        m_pageThrottler = page->pageThrottler();
-    
-    return m_pageThrottler.get();
-}
-
 void HTMLMediaElement::playInternal()
 {
     LOG(Media, "HTMLMediaElement::playInternal");
@@ -2512,8 +2494,6 @@ void HTMLMediaElement::playInternal()
         m_mediaController->bringElementUpToSpeed(this);
 
     if (m_paused) {
-        if (PageThrottler* throttler = pageThrottlerIfPossible())
-            throttler->preventThrottling();
         m_paused = false;
         invalidateCachedTime();
         scheduleEvent(eventNames().playEvent);
@@ -2550,8 +2530,6 @@ void HTMLMediaElement::pauseInternal()
     m_autoplaying = false;
 
     if (!m_paused) {
-        if (PageThrottler* throttler = m_pageThrottler.get())
-            throttler->preventThrottling();
         m_paused = true;
         scheduleTimeupdateEvent(false);
         scheduleEvent(eventNames().pauseEvent);
@@ -2825,7 +2803,7 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>*)
 
     if (!m_paused && hasMediaControls())
         mediaControls()->playbackProgressed();
-    
+
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         updateActiveTextTrackCues(currentTime());
@@ -4002,6 +3980,7 @@ void HTMLMediaElement::updatePlayState()
         m_playbackProgressTimer.stop();
         if (hasMediaControls())
             mediaControls()->playbackStopped();
+        m_activityToken = nullptr;
         return;
     }
     
@@ -4029,6 +4008,9 @@ void HTMLMediaElement::updatePlayState()
 
         if (hasMediaControls())
             mediaControls()->playbackStarted();
+        if (document()->page())
+            m_activityToken = document()->page()->createActivityToken();
+
         startPlaybackProgressTimer();
         m_playing = true;
 
@@ -4048,6 +4030,7 @@ void HTMLMediaElement::updatePlayState()
 
         if (hasMediaControls())
             mediaControls()->playbackStopped();
+        m_activityToken = nullptr;
     }
 
     updateMediaController();

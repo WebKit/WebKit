@@ -63,7 +63,7 @@ class KURL;
 class MediaController;
 class MediaControls;
 class MediaError;
-class PageThrottler;
+class PageActivityAssertionToken;
 class TimeRanges;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Widget;
@@ -756,9 +756,6 @@ private:
     friend class MediaController;
     RefPtr<MediaController> m_mediaController;
 
-    PageThrottler* pageThrottlerIfPossible();
-    RefPtr<PageThrottler> m_pageThrottler;
-
 #if PLATFORM(MAC)
     OwnPtr<DisplaySleepDisabler> m_sleepDisabler;
 #endif
@@ -776,6 +773,8 @@ private:
 #if USE(AUDIO_SESSION)
     OwnPtr<AudioSessionManagerToken> m_audioSessionManagerToken;
 #endif
+
+    OwnPtr<PageActivityAssertionToken> m_activityToken;
 };
 
 #if ENABLE(VIDEO_TRACK)

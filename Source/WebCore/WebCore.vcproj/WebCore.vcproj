@@ -27578,6 +27578,14 @@
 				RelativePath="..\page\Page.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\page\PageActivityAssertionToken.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PageActivityAssertionToken.h"
+				>
+			</File>
              <File
 				RelativePath="..\page\PageConsole.cpp"
 				>
