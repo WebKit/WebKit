@@ -1,5 +1,15 @@
 2013-05-30  Andreas Kling  <akling@apple.com>
 
+        Fix double hash lookup in DocumentLoader::removeSubresourceLoader().
+        <http://webkit.org/b/117030>
+
+        Reviewed by Anders Carlsson.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::removeSubresourceLoader):
+
+2013-05-30  Andreas Kling  <akling@apple.com>
+
         Fix double hash lookup in RenderView::repaintSelection() loop.
         <http://webkit.org/b/117029>
 
