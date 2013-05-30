@@ -98,8 +98,10 @@ void DocumentEventQueue::enqueueOrDispatchScrollEvent(PassRefPtr<Node> target, S
 
 bool DocumentEventQueue::cancelEvent(Event* event)
 {
-    bool found = m_queuedEvents.contains(event);
-    m_queuedEvents.remove(event);
+    ListHashSet<RefPtr<Event>, 16>::iterator it = m_queuedEvents.find(event);
+    bool found = it != m_queuedEvents.end();
+    if (found)
+        m_queuedEvents.remove(it);
     if (m_queuedEvents.isEmpty())
         m_pendingEventTimer->stop();
     return found;

@@ -1,5 +1,15 @@
 2013-05-30  Andreas Kling  <akling@apple.com>
 
+        Fix double hash lookup in DocumentEventQueue::cancelEvent().
+        <http://webkit.org/b/117031>
+
+        Reviewed by Anders Carlsson.
+
+        * dom/DocumentEventQueue.cpp:
+        (WebCore::DocumentEventQueue::cancelEvent):
+
+2013-05-30  Andreas Kling  <akling@apple.com>
+
         Fix double hash lookup in DocumentLoader::removeSubresourceLoader().
         <http://webkit.org/b/117030>
 
