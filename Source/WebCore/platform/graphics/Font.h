@@ -26,7 +26,7 @@
 #define Font_h
 
 #include "FontDescription.h"
-#include "FontFallbackList.h"
+#include "FontGlyphs.h"
 #include "SimpleFontData.h"
 #include "TextDirection.h"
 #include "TypesettingFeatures.h"

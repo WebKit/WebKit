@@ -24,7 +24,7 @@
 
 #include "AffineTransform.h"
 #include "FontDescription.h"
-#include "FontFallbackList.h"
+#include "FontGlyphs.h"
 #include "FontSelector.h"
 #include "GlyphBuffer.h"
 #include "Gradient.h"

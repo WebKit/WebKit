@@ -1892,7 +1892,7 @@ set(WebCore_SOURCES
     platform/graphics/FontCache.cpp
     platform/graphics/FontData.cpp
     platform/graphics/FontDescription.cpp
-    platform/graphics/FontFallbackList.cpp
+    platform/graphics/FontGlyphs.cpp
     platform/graphics/FontFastPath.cpp
     platform/graphics/FontFeatureSettings.cpp
     platform/graphics/LayoutBoxExtent.cpp

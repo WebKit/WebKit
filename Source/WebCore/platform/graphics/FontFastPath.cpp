@@ -25,7 +25,7 @@
 
 #include "FloatRect.h"
 #include "FontCache.h"
-#include "FontFallbackList.h"
+#include "FontGlyphs.h"
 #include "GlyphBuffer.h"
 #include "GlyphPageTreeNode.h"
 #include "SimpleFontData.h"

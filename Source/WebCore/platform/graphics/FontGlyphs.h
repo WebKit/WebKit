@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef FontFallbackList_h
-#define FontFallbackList_h
+#ifndef FontGlyphs_h
+#define FontGlyphs_h
 
 #include "FontSelector.h"
 #include "SimpleFontData.h"

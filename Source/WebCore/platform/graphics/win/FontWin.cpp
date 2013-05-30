@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Font.h"
 
-#include "FontFallbackList.h"
+#include "FontGlyphs.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"

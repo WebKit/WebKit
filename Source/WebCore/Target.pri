@@ -986,7 +986,7 @@ SOURCES += \
     platform/FileSystem.cpp \
     platform/HistogramSupport.cpp \
     platform/graphics/FontDescription.cpp \
-    platform/graphics/FontFallbackList.cpp \
+    platform/graphics/FontGlyphs.cpp \
     platform/graphics/FontFeatureSettings.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \

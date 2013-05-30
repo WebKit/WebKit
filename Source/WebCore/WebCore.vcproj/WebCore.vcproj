@@ -29882,11 +29882,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FontFallbackList.cpp"
+					RelativePath="..\platform\graphics\FontGlyphs.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FontFallbackList.h"
+					RelativePath="..\platform\graphics\FontGlyphs.h"
 					>
 				</File>
 				<File

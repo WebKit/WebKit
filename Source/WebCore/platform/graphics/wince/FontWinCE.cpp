@@ -33,7 +33,7 @@
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "FontData.h"
-#include "FontFallbackList.h"
+#include "FontGlyphs.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"

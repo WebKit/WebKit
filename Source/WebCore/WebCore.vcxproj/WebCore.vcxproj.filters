@@ -5193,7 +5193,7 @@
     <ClCompile Include="..\platform\graphics\FontDescription.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\FontFallbackList.cpp">
+    <ClCompile Include="..\platform\graphics\FontGlyphs.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\FontFastPath.cpp">
@@ -12667,7 +12667,7 @@
     <ClInclude Include="..\platform\graphics\FontDescription.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\FontFallbackList.h">
+    <ClInclude Include="..\platform\graphics\FontGlyphs.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\FontFeatureSettings.h">

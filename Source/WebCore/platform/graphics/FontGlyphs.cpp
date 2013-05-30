@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "FontFallbackList.h"
+#include "FontGlyphs.h"
 
 #include "Font.h"
 #include "FontCache.h"
@@ -103,8 +103,8 @@ const FontData* FontGlyphs::realizeFontDataAt(const FontDescription& description
         return 0;
 
     // Ask the font cache for the font data.
-    // We are obtaining this font for the first time.  We keep track of the families we've looked at before
-    // in |m_familyIndex|, so that we never scan the same spot in the list twice.  getFontData will adjust our
+    // We are obtaining this font for the first time. We keep track of the families we've looked at before
+    // in |m_familyIndex|, so that we never scan the same spot in the list twice. getFontData will adjust our
     // |m_familyIndex| as it scans for the right font to make.
     ASSERT(fontCache()->generation() == m_generation);
     RefPtr<FontData> result = fontCache()->getFontData(description, m_familyIndex, m_fontSelector.get());
