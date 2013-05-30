@@ -1,3 +1,22 @@
+2013-05-30  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r119759): Adobe Flash Player "smaller" installer relies on the incorrect firing of a load event and needs an app-specific hack for compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=117042
+        <rdar://problem/13916291>
+
+        Reviewed by Mark Rowe.
+
+        Ignore HTTP errors for scripts requested from within the installer. Instead of just checking for the
+        Adobe Flash installer, we use the "com.solidstatenetworks.awkhost" bundle identifier to determine
+        whether to apply the workaround. This could in theory fix other installers that use the same mechanism.
+
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::shouldIgnoreHTTPStatusCodeErrors):
+        * loader/cache/CachedScript.h:
+        * platform/RuntimeApplicationChecks.cpp:
+        (WebCore::applicationIsSolidStateNetworksDownloader):
+        * platform/RuntimeApplicationChecks.h:
+
 2013-05-30  Sergio Villar Senin  <svillar@igalia.com>
 
         Allow no space between "background-position:" dimensions

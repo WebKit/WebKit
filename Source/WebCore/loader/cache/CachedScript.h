@@ -54,6 +54,8 @@ namespace WebCore {
         virtual PurgePriority purgePriority() const { return PurgeLast; }
         virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
 
+        virtual bool shouldIgnoreHTTPStatusCodeErrors() const OVERRIDE;
+
         String m_script;
         RefPtr<TextResourceDecoder> m_decoder;
     };
