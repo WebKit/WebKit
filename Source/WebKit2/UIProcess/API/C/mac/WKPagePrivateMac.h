@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 WK_EXPORT pid_t WKPageGetProcessIdentifier(WKPageRef page);
+WK_EXPORT bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url);
 
 #ifdef __cplusplus
 }

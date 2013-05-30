@@ -297,6 +297,9 @@ public:
 
     void processDidCachePage(WebProcessProxy*);
 
+    bool isURLKnownHSTSHost(const String& urlString, bool privateBrowsingEnabled) const;
+    void resetHSTSHosts();
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
     void platformInitialize();

@@ -87,6 +87,11 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
     });
 }
 
+void WKContextResetHSTSHosts(WKContextRef context)
+{
+    return toImpl(context)->resetHSTSHosts();
+}
+
 
 /* DEPRECATED -  Please use constants from WKPluginInformation instead. */
 

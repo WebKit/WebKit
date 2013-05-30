@@ -27,11 +27,22 @@
 #include "WKPagePrivateMac.h"
 
 #include "WKAPICast.h"
+#include "WebContext.h"
+#include "WebPageGroup.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 
 using namespace WebKit;
 
 pid_t WKPageGetProcessIdentifier(WKPageRef pageRef)
 {
     return toImpl(pageRef)->processIdentifier();
+}
+
+bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
+{
+    WebPageProxy* webPageProxy = toImpl(page);
+    bool privateBrowsingEnabled = webPageProxy->pageGroup()->preferences()->privateBrowsingEnabled();
+
+    return webPageProxy->process()->context()->isURLKnownHSTSHost(toImpl(url)->string(), privateBrowsingEnabled);
 }

@@ -42,6 +42,7 @@ WK_EXPORT WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRe
 typedef void (^WKContextGetInfoForInstalledPlugInsBlock)(WKArrayRef, WKErrorRef);
 WK_EXPORT void WKContextGetInfoForInstalledPlugIns(WKContextRef context, WKContextGetInfoForInstalledPlugInsBlock block);
 
+WK_EXPORT void WKContextResetHSTSHosts(WKContextRef context);
 
 /* DEPRECATED -  Please use constants from WKPluginInformation instead. */
 
