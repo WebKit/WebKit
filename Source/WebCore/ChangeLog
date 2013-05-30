@@ -1,3 +1,13 @@
+2013-05-30  Andreas Kling  <akling@apple.com>
+
+        Fix double hash lookup in RenderView::repaintSelection() loop.
+        <http://webkit.org/b/117029>
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintSelection):
+
 2013-05-30  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         CURL: Incorrect stripping of query from file URL

@@ -662,9 +662,8 @@ void RenderView::repaintSelection() const
 
         // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
         for (RenderBlock* block = o->containingBlock(); block && !block->isRenderView(); block = block->containingBlock()) {
-            if (processedBlocks.contains(block))
+            if (!processedBlocks.add(block).isNewEntry)
                 break;
-            processedBlocks.add(block);
             RenderSelectionInfo(block, true).repaint();
         }
     }
