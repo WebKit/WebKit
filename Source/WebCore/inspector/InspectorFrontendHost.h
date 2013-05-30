@@ -98,7 +98,6 @@ public:
 
     bool canInspectWorkers();
     bool canSaveAs();
-    String hiddenPanels();
 
 private:
 #if ENABLE(CONTEXT_MENUS)

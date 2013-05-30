@@ -344,11 +344,6 @@ bool InspectorFrontendHost::canInspectWorkers()
     return false;
 }
 
-String InspectorFrontendHost::hiddenPanels()
-{
-    return "";
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

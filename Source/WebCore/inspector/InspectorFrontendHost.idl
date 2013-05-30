@@ -81,5 +81,4 @@
     // Deprecated
     boolean canInspectWorkers();
     boolean canSaveAs();
-    DOMString hiddenPanels();
 };
