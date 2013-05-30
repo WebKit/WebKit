@@ -108,4 +108,10 @@ bool applicationIsVersions()
     return isVersions;
 }
 
+bool applicationIsSolidStateNetworksDownloader()
+{
+    static bool isSolidStateNetworksDownloader = mainBundleIsEqualTo("com.solidstatenetworks.awkhost");
+    return isSolidStateNetworksDownloader;
+}
+
 } // namespace WebCore

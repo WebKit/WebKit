@@ -33,6 +33,7 @@
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "ResourceBuffer.h"
+#include "RuntimeApplicationChecks.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Vector.h>
 
@@ -106,5 +107,19 @@ bool CachedScript::mimeTypeAllowedByNosniff() const
     return !parseContentTypeOptionsHeader(m_response.httpHeaderField("X-Content-Type-Options")) == ContentTypeOptionsNosniff || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType());
 }
 #endif
+
+bool CachedScript::shouldIgnoreHTTPStatusCodeErrors() const
+{
+    // This is a workaround for <rdar://problem/13916291>
+    // REGRESSION (r119759): Adobe Flash Player "smaller" installer relies on the incorrect firing
+    // of a load event and needs an app-specific hack for compatibility.
+    // The installer in question tries to load .js file that doesn't exist, causing the server to
+    // return a 404 response. Normally, this would trigger an error event to be dispatched, but the
+    // installer expects a load event instead so we work around it here.
+    if (applicationIsSolidStateNetworksDownloader())
+        return true;
+
+    return CachedResource::shouldIgnoreHTTPStatusCodeErrors();
+}
 
 } // namespace WebCore
