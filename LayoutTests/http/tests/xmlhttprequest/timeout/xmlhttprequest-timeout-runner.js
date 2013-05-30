@@ -13,12 +13,7 @@ function testResultCallbackHandler(event) {
     }
 }
 
-function groupFromLocation() {
-    suffixMatch = /xmlhttprequest-timeout-(.*)\.html/;
-    group = suffixMatch.exec(document.location.href)[1];
-    group = group.replace("worker-", "");
-    return group;
-}
+window.addEventListener("message", testResultCallbackHandler);
 
 // Setting up testharness.js
 setup({ explicit_done: true, timeout: 30 * 1000 });
@@ -28,4 +23,3 @@ add_result_callback(function (t) {
     if (t.status == t.FAIL)
         done();
 });
-

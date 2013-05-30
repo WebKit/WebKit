@@ -1,6 +1,6 @@
-/* Test imported from Alex Vincent's XHR2 timeout tests, written for Mozilla.
+/* Test adapted from Alex Vincent's XHR2 timeout tests, written for Mozilla.
    https://hg.mozilla.org/mozilla-central/file/tip/content/base/test/
-   Released into the public domain, according to
+   Released into the public domain or under BSD, according to
    https://bugzilla.mozilla.org/show_bug.cgi?id=525816#c86
 */
 
@@ -19,7 +19,7 @@ var TIME_SYNC_TIMEOUT = 200;
 var TIME_DELAY = 200;
 
 /*
- * This should point to a resource that responds after a delay of TIME_XHR_LOAD milliseconds.
+ * This should point to a resource that responds with a text/plain resource after a delay of TIME_XHR_LOAD milliseconds.
  */
 var STALLED_REQUEST_URL = "/resources/load-and-stall.cgi?name=../../../http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout.js&stallFor=" + TIME_XHR_LOAD/1000 + "&stallAt=0&mimeType=text/plain";
 
@@ -103,7 +103,7 @@ RequestTracker.prototype = {
     req.ontimeout = handleEvent;
 
     req.timeout = this.timeLimit;
-    
+
     if (this.mustReset) {
       var resetTo = this.resetTo;
       self.setTimeout(function() {
@@ -185,15 +185,14 @@ AbortedRequest.prototype = {
     var req = new XMLHttpRequest();
     this.request = req;
     req.open("GET", STALLED_REQUEST_URL);
-    var me = this;
-    function handleEvent(e) { return me.handleEvent(e); };
+    var _this = this;
+    function handleEvent(e) { return _this.handleEvent(e); };
     req.onerror = handleEvent;
     req.onload = handleEvent;
     req.onabort = handleEvent;
     req.ontimeout = handleEvent;
 
     req.timeout = TIME_REGULAR_TIMEOUT;
-    var _this = this;
 
     function abortReq() {
       req.abort();
@@ -294,56 +293,6 @@ var SyncRequestSettingTimeoutBeforeOpen = {
   }
 };
 
-var TestRequestGroups = {
-  "simple" : [
-    new RequestTracker(true, "no time out scheduled, load fires normally", 0),
-    new RequestTracker(true, "load fires normally", TIME_NORMAL_LOAD),
-    new RequestTracker(true, "timeout hit before load", TIME_REGULAR_TIMEOUT)
-  ],
-
-  "twice" : [
-     new RequestTracker(true, "load fires normally with no timeout set, twice", 0, TIME_REGULAR_TIMEOUT, 0),
-     new RequestTracker(true, "load fires normally with same timeout set twice", TIME_NORMAL_LOAD, TIME_REGULAR_TIMEOUT, TIME_NORMAL_LOAD),
-     new RequestTracker(true, "timeout fires normally with same timeout set twice", TIME_REGULAR_TIMEOUT, TIME_DELAY, TIME_REGULAR_TIMEOUT)
-  ],
-
-  // FIXME: http://webkit.org/b/98156 - Late updates are not supported yet, these tests are not run.
-  "overrides" : [
-    new RequestTracker(true, "timeout disabled after initially set", TIME_NORMAL_LOAD, TIME_REGULAR_TIMEOUT, 0),
-    new RequestTracker(true, "timeout overrides load after a delay", TIME_NORMAL_LOAD, TIME_DELAY, TIME_REGULAR_TIMEOUT),
-    new RequestTracker(true, "timeout enabled after initially disabled", 0, TIME_REGULAR_TIMEOUT, TIME_NORMAL_LOAD)
-  ],
-
-  "overridesexpires" : [
-    new RequestTracker(true, "timeout set to expiring value after load fires", TIME_NORMAL_LOAD, TIME_LATE_TIMEOUT, TIME_DELAY),
-    // FIXME: http://webkit.org/b/98156 - Late updates are not supported yet, this test is not run.
-    // new RequestTracker(true, "timeout set to expired value before load fires", TIME_NORMAL_LOAD, TIME_REGULAR_TIMEOUT, TIME_DELAY),
-    new RequestTracker(true, "timeout set to non-expiring value after timeout fires", TIME_DELAY, TIME_REGULAR_TIMEOUT, TIME_NORMAL_LOAD)
-  ],
-
-  "aborted" : [
-    new AbortedRequest(false),
-    new AbortedRequest(true, -1),
-    new AbortedRequest(true, TIME_NORMAL_LOAD)
-  ],
-
-  "abortedonmain" : [
-    new AbortedRequest(true, 0),
-    new AbortedRequest(true, TIME_DELAY)
-  ],
-
-  "synconmain" : [
-    SyncRequestSettingTimeoutAfterOpen,
-    SyncRequestSettingTimeoutBeforeOpen
-  ],
-
-  "synconworker" : [
-    new RequestTracker(false, "no time out scheduled, load fires normally", 0),
-    new RequestTracker(false, "load fires normally", TIME_NORMAL_LOAD),
-    new RequestTracker(false, "timeout hit before load", TIME_REGULAR_TIMEOUT)
-  ]
-};
-
 var TestRequests = [];
 
 // This code controls moving from one test to another.
@@ -367,9 +316,7 @@ var TestCounter = {
   }
 };
 
-self.addEventListener("message", function (event) {
-  if (event.data.type == "start") {
-    TestRequests = TestRequestGroups[event.data.group];
+function runTestRequests(testRequests) {
+    TestRequests = testRequests;
     TestCounter.next();
-  }
-});
+}

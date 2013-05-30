@@ -9,18 +9,11 @@
     <script src="/w3c/resources/testharnessreport.js"></script>
     <script src="xmlhttprequest-timeout.js"></script>
     <script src="xmlhttprequest-timeout-runner.js"></script>
-    <script>
-        function testXhr() {
-            window.addEventListener("message", testResultCallbackHandler);
-            var runTests = { "type": "start", "group": groupFromLocation() };
-            window.postMessage(runTests, "*");
-        };
-    </script>
 </head>
-<body onload="testXhr()">
+<body>
     <h1>Description</h1>
     <p>This test validates that the XHR2 timeout property behaves as expected in async cases in document (i.e. non-worker) context.</p>
     <div id="log"></div>
+    <script src="xmlhttprequest-timeout-aborted.js" type="text/javascript"></script>
 </body>
 </html>
-

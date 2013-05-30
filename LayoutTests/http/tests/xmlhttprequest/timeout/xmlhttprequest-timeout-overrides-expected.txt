@@ -1,0 +1,8 @@
+Description
+
+This test validates that the XHR2 timeout property behaves as expected in async cases in document (i.e. non-worker) context.
+
+
+PASS XHR2 Timeout Property Tests 
+PASS XHR2 Timeout Property Tests 1 
+

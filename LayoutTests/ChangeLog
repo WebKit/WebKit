@@ -1,3 +1,46 @@
+2013-05-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Update XMLHttpRequest timeout tests to a newer version from W3C
+        https://bugs.webkit.org/show_bug.cgi?id=117023
+
+        Reviewed by Alexey Proskuryakov.
+
+        The XMLHttpRequest Timeout tests have gone through a bit of restructuring and should
+        be updated. This is being primarily done because of the intention of updating the
+        testharness scripts which would break these tests if they were left not updated.
+
+        These tests were updated from the W3C web-platform-tests GitHub repository.
+        https://github.com/w3c/web-platform-tests
+
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.js: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.js: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overrides-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overrides.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overrides.js: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.js: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-runner.js:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.js: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain.js: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconworker.js: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.js: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-aborted.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overrides-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overrides.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout.js:
+        (RequestTracker.prototype.startXHR):
+        (AbortedRequest.prototype.startXHR.handleEvent):
+        (runTestRequests):
+
 2013-05-30  Sergio Villar Senin  <svillar@igalia.com>
 
         Allow no space between "background-position:" dimensions
