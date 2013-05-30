@@ -1,3 +1,31 @@
+2013-05-29  Tim Horton  <timothy_horton@apple.com>
+
+        Expose incrementalRenderingSuppressionTimeout via WK2
+        https://bugs.webkit.org/show_bug.cgi?id=117015
+        <rdar://problem/13992853>
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        Add IncrementalRenderingSuppressionTimeout preference.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetIncrementalRenderingSuppressionTimeout): Added.
+        (WKPreferencesGetIncrementalRenderingSuppressionTimeout): Added.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebKit::WebFrameLoaderClient::forcePageTransitionIfNeeded): Added.
+        Call didCompletePageTransition, which un-freezes the layer tree.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompletePageTransition):
+        Fix some indentation.
+
+        (WebKit::WebPage::updatePreferences):
+        Forward the timeout value through to WebCore.
+
 2013-05-29  Simon Fraser  <simon.fraser@apple.com>
 
         Fix paint-related milestones to not fire when the layer tree is frozen

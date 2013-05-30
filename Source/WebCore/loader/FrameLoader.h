@@ -286,6 +286,8 @@ public:
 
     const KURL& previousURL() const { return m_previousURL; }
 
+    void forcePageTransitionIfNeeded();
+
 private:
     enum FormSubmissionCacheLoadPolicy {
         MayAttemptCacheOnlyLoadForFormSubmissionItem,

@@ -1,3 +1,31 @@
+2013-05-29  Tim Horton  <timothy_horton@apple.com>
+
+        Expose incrementalRenderingSuppressionTimeout via WK2
+        https://bugs.webkit.org/show_bug.cgi?id=117015
+        <rdar://problem/13992853>
+
+        Reviewed by Darin Adler.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setVisualUpdatesAllowed):
+        Inform the FrameLoader that we're ready to transition the page, if
+        nothing else already has. This will be forwarded to the FrameLoaderClient,
+        and WebKit2's implementation will go ahead and un-freeze the layer tree,
+        so that the incremental rendering suppression watchdog timer actually works.
+
+        (WebCore::Document::setVisualUpdatesAllowedByClient):
+        Make incremental rendering suppression extension tokens play nice with the
+        watchdog timer; allow setVisualUpdatesAllowedByClient=true to re-enable updates
+        if either the page is in the "completed" state or the watchdog has already fired.
+
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::forcePageTransitionIfNeeded): Added.
+        Forward to the client.
+
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::forcePageTransitionIfNeeded): Added.
+
 2013-05-29  Praveen R Jadhav  <praveen.j@samsung.com>
 
         ProgressEvent should not be cancelable

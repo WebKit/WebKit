@@ -1313,6 +1313,9 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
 
     if (RenderView* renderView = this->renderView())
         renderView->repaintViewAndCompositedLayers();
+
+    if (Frame* frame = this->frame())
+        frame->loader()->forcePageTransitionIfNeeded();
 }
 
 void Document::visualUpdatesSuppressionTimerFired(Timer<Document>*)
@@ -1329,7 +1332,10 @@ void Document::visualUpdatesSuppressionTimerFired(Timer<Document>*)
 
 void Document::setVisualUpdatesAllowedByClient(bool visualUpdatesAllowedByClient)
 {
-    if (visualUpdatesAllowedByClient && m_readyState == Complete && !visualUpdatesAllowed())
+    // We should only re-enable visual updates if ReadyState is Completed or the watchdog timer has fired,
+    // both of which we can determine by looking at the timer.
+
+    if (visualUpdatesAllowedByClient && !m_visualUpdatesSuppressionTimer.isActive() && !visualUpdatesAllowed())
         setVisualUpdatesAllowed(true);
 }
 

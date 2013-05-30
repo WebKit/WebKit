@@ -524,6 +524,19 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
     webPage->didFinishLoad(m_frame);
 }
 
+void WebFrameLoaderClient::forcePageTransitionIfNeeded()
+{
+    if (m_didCompletePageTransitionAlready)
+        return;
+
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->didCompletePageTransition();
+    m_didCompletePageTransitionAlready = true;
+}
+
 void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
 {
     WebPage* webPage = m_frame->page();
