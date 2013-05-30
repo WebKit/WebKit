@@ -1,3 +1,15 @@
+2013-05-30  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        CURL: Incorrect stripping of query from file URL
+        https://bugs.webkit.org/show_bug.cgi?id=104307
+
+        Reviewed by Darin Adler.
+
+        Clear the query part of the file URL if there is any.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2013-05-30  Antti Koivisto  <antti@apple.com>
 
         Separate generic font family settings to a class

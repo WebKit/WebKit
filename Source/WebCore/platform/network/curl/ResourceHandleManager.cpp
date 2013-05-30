@@ -666,12 +666,11 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     String url = kurl.string();
 
     if (kurl.isLocalFile()) {
-        String query = kurl.query();
         // Remove any query part sent to a local file.
-        if (!query.isEmpty()) {
-            int queryIndex = url.find(query);
-            if (queryIndex != -1)
-                url = url.left(queryIndex - 1);
+        if (!kurl.query().isEmpty()) {
+            // By setting the query to a null string it'll be removed.
+            kurl.setQuery(String());
+            url = kurl.string();
         }
         // Determine the MIME type based on the path.
         d->m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(url));
