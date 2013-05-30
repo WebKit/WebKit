@@ -516,7 +516,7 @@ static void coalesceRectsIfPossible(const IntRect& clipRect, Vector<IntRect>& re
     rects.append(clipRect);
 }
 
-static void paintWebView(WebKitWebView* webView, Frame* frame, Region dirtyRegion)
+static void paintWebView(WebKitWebView* webView, Frame* frame, const Region& dirtyRegion)
 {
     if (!webView->priv->backingStore)
         return;

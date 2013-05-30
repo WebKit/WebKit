@@ -1,3 +1,15 @@
+2013-05-30  Enrique Ocana Gonzalez  <eocanha@igalia.com>
+
+        [GTK] Fix pass_by_value coverity warning in ChromeClientGtk
+        https://bugs.webkit.org/show_bug.cgi?id=117021
+
+        Reviewed by Anders Carlsson.
+
+        Pass dirtyRegion parameter in paintWebView() by reference to avoid object copying.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::paintWebView):
+
 2013-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.1.1 release.
