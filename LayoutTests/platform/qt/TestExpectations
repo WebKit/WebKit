@@ -2673,3 +2673,6 @@ webkit.org/b/114800 fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailure ]
 webkit.org/b/116649 http/tests/security/cross-frame-access-put.html [ Skip ]
 
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
+
+# [Qt] Newly added test http/tests/uri/curly-braces-escaping.html fails
+webkit.org/b/117036 http/tests/uri/curly-braces-escaping.html [ Skip ]

@@ -383,6 +383,11 @@ webkit.org/b/109291 compositing/iframes/iframe-composited-scrolling.html
 
 webkit.org/b/112675 compositing/layer-creation/fixed-position-change-out-of-view-in-view.html [ Skip ]
 
+# [Qt] [WK2] Some fullscreen layout tests are timing out on the bot
+# https://bugs.webkit.org/show_bug.cgi?id=92543
+fullscreen/video-controls-timeline.html
+fullscreen/full-screen-iframe-legacy.html
+
 webkit.org/b/112146 fullscreen/video-controls-drag.html [ Skip ]
 
 webkit.org/b/112128 fullscreen/full-screen-table-section.html [ Skip ]

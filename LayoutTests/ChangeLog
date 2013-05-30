@@ -1,5 +1,17 @@
 2013-05-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0-wk1/TestExpectations: Skip new failures after r150868.
+        * platform/qt-5.0-wk2/TestExpectations: re-skip still failing tests after r150892.
+        * platform/qt-5.0-wk2/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.png: Rebaselining after r150798.
+        * platform/qt-5.0-wk2/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.txt: Added.
+        * platform/qt-5.0-wk2/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.png: Added.
+        * platform/qt-5.0-wk2/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.txt: Added.
+        * platform/qt/TestExpectations: Skip new failre after r150853.
+
+2013-05-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
         [Qt][WK2] Unreviewed expected pixel result rebaselining after r150798.
 
         * platform/qt-5.0-wk2/compositing/checkerboard-expected.png:
