@@ -4121,9 +4121,8 @@ void WebPage::determinePrimarySnapshottedPlugIn()
 
             RenderBox* renderBox = toRenderBox(renderer);
 
-            if (seenRenderers.contains(renderer))
+            if (!seenRenderers.add(renderer).isNewEntry)
                 continue;
-            seenRenderers.add(renderer);
 
             if (!element->isPluginElement())
                 continue;
