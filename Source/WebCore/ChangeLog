@@ -1,3 +1,21 @@
+2013-05-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add a special case for SelectorDataList::execute when there is only one selector
+        https://bugs.webkit.org/show_bug.cgi?id=116891
+
+        Reviewed by Andreas Kling.
+
+        In the vast majority of cases, querySelector is called with a single selector.
+
+        This patch takes that input into account to improve the performance of
+        SelectorDataList::execute(). For the case of a single selector, we avoid three
+        branches executed for every node of the traversal.
+
+        This improves QuerySelector's time by 2.3%.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::execute):
+
 2013-05-29  Dean Jackson  <dino@apple.com>
 
         -webkit-text-underline-position should not be inherited
