@@ -941,6 +941,7 @@ SOURCES += \
     page/PageConsole.cpp \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \
+    page/PageThrottler.cpp \
     page/PageVisibilityState.cpp \
     page/Performance.cpp \
     page/PerformanceEntry.cpp \
@@ -2108,6 +2109,7 @@ HEADERS += \
     page/PageGroupLoadDeferrer.h \
     page/Page.h \
     page/PageConsole.h \
+    page/PageThrottler.h \
     page/PageVisibilityState.h \
     page/PlugInClient.h \
     page/PopupOpeningObserver.h \

@@ -3937,6 +3937,7 @@
     <ClCompile Include="..\page\PageGroup.cpp" />
     <ClCompile Include="..\page\PageGroupLoadDeferrer.cpp" />
     <ClCompile Include="..\page\PageSerializer.cpp" />
+    <ClCompile Include="..\page\PageThrottler.cpp" />
     <ClCompile Include="..\page\PageVisibilityState.cpp" />
     <ClCompile Include="..\page\Performance.cpp" />
     <ClCompile Include="..\page\PerformanceEntry.cpp" />
