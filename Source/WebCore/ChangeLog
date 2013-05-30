@@ -1,3 +1,57 @@
+2013-05-30  Antti Koivisto  <antti@apple.com>
+
+        Separate generic font family settings to a class
+        https://bugs.webkit.org/show_bug.cgi?id=117027
+
+        Reviewed by Andreas Kling.
+
+        The new class is under platform/ and can be accessed by the font code directly without platform violations.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Settings.cpp:
+        (WebCore::invalidateAfterGenericFamilyChange):
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::~Settings):
+        (WebCore::Settings::create):
+        (WebCore::Settings::standardFontFamily):
+        (WebCore::Settings::setStandardFontFamily):
+        (WebCore::Settings::fixedFontFamily):
+        (WebCore::Settings::setFixedFontFamily):
+        (WebCore::Settings::serifFontFamily):
+        (WebCore::Settings::setSerifFontFamily):
+        (WebCore::Settings::sansSerifFontFamily):
+        (WebCore::Settings::setSansSerifFontFamily):
+        (WebCore::Settings::cursiveFontFamily):
+        (WebCore::Settings::setCursiveFontFamily):
+        (WebCore::Settings::fantasyFontFamily):
+        (WebCore::Settings::setFantasyFontFamily):
+        (WebCore::Settings::pictographFontFamily):
+        (WebCore::Settings::setPictographFontFamily):
+        * page/Settings.h:
+        * platform/graphics/FontGenericFamilies.cpp: Added.
+        (WebCore::setGenericFontFamilyForScript):
+        (WebCore::genericFontFamilyForScript):
+        (WebCore::FontGenericFamilies::FontGenericFamilies):
+        (WebCore::FontGenericFamilies::standardFontFamily):
+        (WebCore::FontGenericFamilies::fixedFontFamily):
+        (WebCore::FontGenericFamilies::serifFontFamily):
+        (WebCore::FontGenericFamilies::sansSerifFontFamily):
+        (WebCore::FontGenericFamilies::cursiveFontFamily):
+        (WebCore::FontGenericFamilies::fantasyFontFamily):
+        (WebCore::FontGenericFamilies::pictographFontFamily):
+        (WebCore::FontGenericFamilies::setStandardFontFamily):
+        (WebCore::FontGenericFamilies::setFixedFontFamily):
+        (WebCore::FontGenericFamilies::setSerifFontFamily):
+        (WebCore::FontGenericFamilies::setSansSerifFontFamily):
+        (WebCore::FontGenericFamilies::setCursiveFontFamily):
+        (WebCore::FontGenericFamilies::setFantasyFontFamily):
+        (WebCore::FontGenericFamilies::setPictographFontFamily):
+        * platform/graphics/FontGenericFamilies.h: Added.
+        (WebCore::UScriptCodeHashTraits::emptyValue):
+        (WebCore::UScriptCodeHashTraits::constructDeletedValue):
+        (WebCore::UScriptCodeHashTraits::isDeletedValue):
+        (WebCore::FontGenericFamilies::create):
+
 2013-05-30  Andreas Kling  <akling@apple.com>
 
         Avoid using CSSOM style declarations in HTML editing.

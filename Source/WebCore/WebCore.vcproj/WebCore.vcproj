@@ -29881,6 +29881,14 @@
 					RelativePath="..\platform\graphics\FontDescription.h"
 					>
 				</File>
+                <File
+					RelativePath="..\platform\graphics\FontGenericFamilies.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontGenericFamilies.h"
+					>
+				</File>
 				<File
 					RelativePath="..\platform\graphics\FontGlyphs.cpp"
 					>

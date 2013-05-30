@@ -5193,6 +5193,9 @@
     <ClCompile Include="..\platform\graphics\FontDescription.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\FontGenericFamilies.cpp">
+        <Filter>platform\graphics</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\FontGlyphs.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
@@ -12666,6 +12669,9 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\FontDescription.h">
       <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\FontGenericFamilies.h">
+        <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\FontGlyphs.h">
       <Filter>platform\graphics</Filter>

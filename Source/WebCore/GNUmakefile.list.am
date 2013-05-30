@@ -5626,6 +5626,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/FontData.h \
 	Source/WebCore/platform/graphics/FontDescription.cpp \
 	Source/WebCore/platform/graphics/FontDescription.h \
+	Source/WebCore/platform/graphics/FontGenericFamilies.cpp \
+	Source/WebCore/platform/graphics/FontGenericFamilies.h \
 	Source/WebCore/platform/graphics/FontGlyphs.cpp \
 	Source/WebCore/platform/graphics/FontGlyphs.h \
 	Source/WebCore/platform/graphics/FontFastPath.cpp \

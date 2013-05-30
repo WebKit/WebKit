@@ -33,6 +33,7 @@
 #include "Database.h"
 #include "Document.h"
 #include "Font.h"
+#include "FontGenericFamilies.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -57,32 +58,11 @@ static void setImageLoadingSettings(Page* page)
     }
 }
 
-// Sets the entry in the font map for the given script. If family is the empty string, removes the entry instead.
-static inline void setGenericFontFamilyMap(ScriptFontFamilyMap& fontMap, const AtomicString& family, UScriptCode script, Page* page)
+static void invalidateAfterGenericFamilyChange(Page* page)
 {
-    ScriptFontFamilyMap::iterator it = fontMap.find(static_cast<int>(script));
-    if (family.isEmpty()) {
-        if (it == fontMap.end())
-            return;
-        fontMap.remove(it);
-    } else if (it != fontMap.end() && it->value == family)
-        return;
-    else
-        fontMap.set(static_cast<int>(script), family);
-
     invalidateFontGlyphsCache();
     if (page)
         page->setNeedsRecalcStyleInAllFrames();
-}
-
-static inline const AtomicString& getGenericFontFamilyForScript(const ScriptFontFamilyMap& fontMap, UScriptCode script)
-{
-    ScriptFontFamilyMap::const_iterator it = fontMap.find(static_cast<int>(script));
-    if (it != fontMap.end())
-        return it->value;
-    if (script != USCRIPT_COMMON)
-        return getGenericFontFamilyForScript(fontMap, USCRIPT_COMMON);
-    return emptyAtom;
 }
 
 double Settings::gDefaultMinDOMTimerInterval = 0.010; // 10 milliseconds
@@ -143,6 +123,7 @@ static const bool defaultSelectTrailingWhitespaceEnabled = false;
 Settings::Settings(Page* page)
     : m_page(0)
     , m_mediaTypeOverride("screen")
+    , m_fontGenericFamilies(FontGenericFamilies::create())
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutosizingFontScaleFactor(1)
@@ -195,10 +176,14 @@ Settings::Settings(Page* page)
     m_page = page; // Page is not yet fully initialized wen constructing Settings, so keeping m_page null over initializeDefaultFontFamilies() call.
 }
 
+Settings::~Settings()
+{
+}
+
 PassOwnPtr<Settings> Settings::create(Page* page)
 {
     return adoptPtr(new Settings(page));
-} 
+}
 
 SETTINGS_SETTER_BODIES
 
@@ -221,72 +206,86 @@ void Settings::initializeDefaultFontFamilies()
 
 const AtomicString& Settings::standardFontFamily(UScriptCode script) const
 {
-    return getGenericFontFamilyForScript(m_standardFontFamilyMap, script);
+    return m_fontGenericFamilies->standardFontFamily(script);
 }
 
 void Settings::setStandardFontFamily(const AtomicString& family, UScriptCode script)
 {
-    setGenericFontFamilyMap(m_standardFontFamilyMap, family, script, m_page);
+    bool changes = m_fontGenericFamilies->setStandardFontFamily(family, script);
+    if (changes)
+        invalidateAfterGenericFamilyChange(m_page);
 }
 
 const AtomicString& Settings::fixedFontFamily(UScriptCode script) const
 {
-    return getGenericFontFamilyForScript(m_fixedFontFamilyMap, script);
+    return m_fontGenericFamilies->fixedFontFamily(script);
 }
 
 void Settings::setFixedFontFamily(const AtomicString& family, UScriptCode script)
 {
-    setGenericFontFamilyMap(m_fixedFontFamilyMap, family, script, m_page);
+    bool changes = m_fontGenericFamilies->setFixedFontFamily(family, script);
+    if (changes)
+        invalidateAfterGenericFamilyChange(m_page);
 }
 
 const AtomicString& Settings::serifFontFamily(UScriptCode script) const
 {
-    return getGenericFontFamilyForScript(m_serifFontFamilyMap, script);
+    return m_fontGenericFamilies->serifFontFamily(script);
 }
 
 void Settings::setSerifFontFamily(const AtomicString& family, UScriptCode script)
 {
-     setGenericFontFamilyMap(m_serifFontFamilyMap, family, script, m_page);
+    bool changes = m_fontGenericFamilies->setSerifFontFamily(family, script);
+    if (changes)
+        invalidateAfterGenericFamilyChange(m_page);
 }
 
 const AtomicString& Settings::sansSerifFontFamily(UScriptCode script) const
 {
-    return getGenericFontFamilyForScript(m_sansSerifFontFamilyMap, script);
+    return m_fontGenericFamilies->sansSerifFontFamily(script);
 }
 
 void Settings::setSansSerifFontFamily(const AtomicString& family, UScriptCode script)
 {
-    setGenericFontFamilyMap(m_sansSerifFontFamilyMap, family, script, m_page);
+    bool changes = m_fontGenericFamilies->setSansSerifFontFamily(family, script);
+    if (changes)
+        invalidateAfterGenericFamilyChange(m_page);
 }
 
 const AtomicString& Settings::cursiveFontFamily(UScriptCode script) const
 {
-    return getGenericFontFamilyForScript(m_cursiveFontFamilyMap, script);
+    return m_fontGenericFamilies->cursiveFontFamily(script);
 }
 
 void Settings::setCursiveFontFamily(const AtomicString& family, UScriptCode script)
 {
-    setGenericFontFamilyMap(m_cursiveFontFamilyMap, family, script, m_page);
+    bool changes = m_fontGenericFamilies->setCursiveFontFamily(family, script);
+    if (changes)
+        invalidateAfterGenericFamilyChange(m_page);
 }
 
 const AtomicString& Settings::fantasyFontFamily(UScriptCode script) const
 {
-    return getGenericFontFamilyForScript(m_fantasyFontFamilyMap, script);
+    return m_fontGenericFamilies->fantasyFontFamily(script);
 }
 
 void Settings::setFantasyFontFamily(const AtomicString& family, UScriptCode script)
 {
-    setGenericFontFamilyMap(m_fantasyFontFamilyMap, family, script, m_page);
+    bool changes = m_fontGenericFamilies->setFantasyFontFamily(family, script);
+    if (changes)
+        invalidateAfterGenericFamilyChange(m_page);
 }
 
 const AtomicString& Settings::pictographFontFamily(UScriptCode script) const
 {
-    return getGenericFontFamilyForScript(m_pictographFontFamilyMap, script);
+    return m_fontGenericFamilies->pictographFontFamily(script);
 }
 
 void Settings::setPictographFontFamily(const AtomicString& family, UScriptCode script)
 {
-    setGenericFontFamilyMap(m_pictographFontFamilyMap, family, script, m_page);
+    bool changes = m_fontGenericFamilies->setPictographFontFamily(family, script);
+    if (changes)
+        invalidateAfterGenericFamilyChange(m_page);
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
