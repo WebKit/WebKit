@@ -241,7 +241,7 @@ class Manager(object):
                                            summarized_results, initial_results, retry_results, enabled_pixel_tests_in_retry)
 
     def _run_tests(self, tests_to_run, tests_to_skip, repeat_each, iterations, num_workers, retrying):
-        needs_http = self._port.requires_http_server() or any(self._is_http_test(test) for test in tests_to_run)
+        needs_http = any(self._is_http_test(test) for test in tests_to_run)
         needs_websockets = any(self._is_websocket_test(test) for test in tests_to_run)
 
         test_inputs = []

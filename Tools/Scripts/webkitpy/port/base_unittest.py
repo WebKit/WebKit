@@ -463,10 +463,6 @@ class PortTest(unittest.TestCase):
         port = self.make_port(options=optparse.Values({'build_directory': '/my-build-directory/'}))
         self.assertEqual(port._build_path(), '/my-build-directory/Release')
 
-    def test_dont_require_http_server(self):
-        port = self.make_port()
-        self.assertEqual(port.requires_http_server(), False)
-
 
 class NaturalCompareTest(unittest.TestCase):
     def setUp(self):

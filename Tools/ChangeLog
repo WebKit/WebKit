@@ -1,3 +1,25 @@
+2013-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove requires_http_server as Chromium Android was the only port that needed this
+        https://bugs.webkit.org/show_bug.cgi?id=117018
+
+        Reviewed by Benjamin Poulain.
+
+        Removed the unused code that existed for Chromium Android port.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        (LayoutTestRunner._handle_finished_test_list):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._collect_tests):
+        (PerfTestsRunner.run):
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.start_helper):
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_build_path):
+
 2013-05-29  Ruth Fong  <ruth_fong@apple.com>
 
         prepare-Changelog should not be generating namespace-only or class-name-only lines like "(WebCore):"

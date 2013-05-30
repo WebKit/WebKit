@@ -165,18 +165,8 @@ class PerfTestsRunner(object):
 
         return tests
 
-    def _start_http_servers(self):
-        self._port.acquire_http_lock()
-        self._port.start_http_server(number_of_servers=2)
-
-    def _stop_http_servers(self):
-        self._port.stop_http_server()
-        self._port.release_http_lock()
-
     def run(self):
-        needs_http = self._port.requires_http_server()
-
-        if not self._port.check_build(needs_http=needs_http):
+        if not self._port.check_build(needs_http=False):
             _log.error("Build not up to date for %s" % self._port._path_to_driver())
             return self.EXIT_CODE_BAD_BUILD
 
@@ -193,14 +183,7 @@ class PerfTestsRunner(object):
                 if not test.prepare(self._options.time_out_ms):
                     return self.EXIT_CODE_BAD_PREPARATION
 
-            try:
-                if needs_http:
-                    self._start_http_servers()
-                unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()))
-
-            finally:
-                if needs_http:
-                    self._stop_http_servers()
+            unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()))
 
             if self._options.generate_results and not self._options.profile:
                 exit_code = self._generate_results()
