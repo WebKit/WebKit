@@ -1,3 +1,15 @@
+2013-05-30  Roland Takacs  <rtakacs@inf.u-szeged.hu>
+
+        Remove "hidden"=true from Inspector.json
+        https://bugs.webkit.org/show_bug.cgi?id=114116
+
+        Reviewed by Timothy Hatcher.
+
+        Remove "hidden"=true because it's a Chromium concept.
+        Patch created by Timothy Hatcher.
+
+        * inspector/Inspector.json:
+
 2013-05-30  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL][EGL] Implement TransportSurface client.
