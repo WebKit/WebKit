@@ -320,21 +320,17 @@ def sh4LowerDoubleSpecials(list)
             case node.opcode
             when "bdltun", "bdgtun"
                 # Handle specific floating point unordered opcodes.
-                tmp1 = Tmp.new(codeOrigin, :gpr)
-                tmp2 = Tmp.new(codeOrigin, :gpr)
-                newList << Instruction.new(codeOrigin, "bdnan", [node.operands[0], node.operands[2], tmp1, tmp2])
-                newList << Instruction.new(codeOrigin, "bdnan", [node.operands[1], node.operands[2], tmp1, tmp2])
+                newList << Instruction.new(codeOrigin, "bdnan", [node.operands[0], node.operands[2]])
+                newList << Instruction.new(codeOrigin, "bdnan", [node.operands[1], node.operands[2]])
                 newList << Instruction.new(codeOrigin, node.opcode[0..-3], node.operands)
             when "bdnequn", "bdgtequn", "bdltequn"
                 newList << Instruction.new(codeOrigin, node.opcode[0..-3], node.operands)
             when "bdneq", "bdgteq", "bdlteq"
                 # Handle specific floating point ordered opcodes.
-                tmp1 = Tmp.new(codeOrigin, :gpr)
-                tmp2 = Tmp.new(codeOrigin, :gpr)
                 outlabel = LocalLabel.unique("out_#{node.opcode}")
                 outref = LocalLabelReference.new(codeOrigin, outlabel)
-                newList << Instruction.new(codeOrigin, "bdnan", [node.operands[0], outref, tmp1, tmp2])
-                newList << Instruction.new(codeOrigin, "bdnan", [node.operands[1], outref, tmp1, tmp2])
+                newList << Instruction.new(codeOrigin, "bdnan", [node.operands[0], outref])
+                newList << Instruction.new(codeOrigin, "bdnan", [node.operands[1], outref])
                 newList << Instruction.new(codeOrigin, node.opcode, node.operands)
                 newList << outlabel
             else
@@ -544,40 +540,9 @@ def emitSH4CompareSet(cmpOpcode, neg, operands)
 end
 
 def emitSH4BranchIfNaN(operands)
-    raise "Invalid operands number (#{operands.size})" unless operands.size == 4
-    dblop = operands[0]
-    labelop = operands[1]
-    scrmask = operands[2]
-    scrint = operands[3]
-
-    notNaNlabel = LocalLabel.unique("notnan")
-    notNaNref = LocalLabelReference.new(codeOrigin, notNaNlabel)
-    constlabel1 = LocalLabel.unique("notnanConst1")
-    constlabel2 = LocalLabel.unique("notnanConst2")
-
-    # If we don't have "E = Emax + 1", it's not a NaN.
-    $asm.puts "fcnvds #{dblop.sh4Operand}, fpul"
-    $asm.puts "sts fpul, #{scrint.sh4Operand}"
-    $asm.puts "mov.l #{LocalLabelReference.new(codeOrigin, constlabel1).asmLabel}, #{scrmask.sh4Operand}"
-    $asm.puts "and #{sh4Operands([scrmask, scrint])}"
-    $asm.puts "cmp/eq #{sh4Operands([scrmask, scrint])}"
-    $asm.puts "bf #{notNaNref.asmLabel}"
-
-    # If we have "E = Emax + 1" and "f != 0", then it's a NaN.
-    $asm.puts "sts fpul, #{scrint.sh4Operand}"
-    $asm.puts "mov.l #{LocalLabelReference.new(codeOrigin, constlabel2).asmLabel}, #{scrmask.sh4Operand}"
-    $asm.puts "tst #{sh4Operands([scrmask, scrint])}"
-    $asm.puts "bt #{notNaNref.asmLabel}"
-    $asm.puts "bra #{labelop.asmLabel}"
-    $asm.puts "nop"
-
-    $asm.puts ".balign 4"
-    constlabel1.lower("SH4")
-    $asm.puts ".long 0x7f800000"
-    constlabel2.lower("SH4")
-    $asm.puts ".long 0x003fffff"
-
-    notNaNlabel.lower("SH4")
+    raise "Invalid operands number (#{operands.size})" unless operands.size == 2
+    $asm.puts "fcmp/eq #{sh4Operands([operands[0], operands[0]])}"
+    $asm.puts "bf #{operands[1].asmLabel}"
 end
 
 def emitSH4DoubleCondBranch(cmpOpcode, neg, operands)

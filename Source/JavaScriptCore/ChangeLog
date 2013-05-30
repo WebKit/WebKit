@@ -1,3 +1,17 @@
+2013-05-30  Julien Brianceau  <jbrianceau@nds.com>
+
+        [sh4] Optimize NaN checks in LLINT for floating point comparisons.
+        https://bugs.webkit.org/show_bug.cgi?id=117049
+
+        Reviewed by Oliver Hunt.
+
+        Use the fcmp/eq opcode in sh4 LLINT to test if a double is NaN.
+        This is more efficient, doesn't require two tmp registers and requires
+        less code than current implementation (which converts double to float,
+        then checks 'E = Emax + 1' and 'f != 0').
+
+        * offlineasm/sh4.rb:
+
 2013-05-30  Oliver Hunt  <oliver@apple.com>
 
         JSCallbackObject does not correctly initialise the PropertySlot for getOwnPropertyDescriptor
