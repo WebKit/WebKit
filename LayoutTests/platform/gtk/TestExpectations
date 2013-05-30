@@ -544,7 +544,6 @@ webkit.org/b/89650 svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Failure Pass ]
 
 webkit.org/b/80158 plugins/netscape-plugin-page-cache-works.html [ Failure Pass ]
 
-webkit.org/b/83704 media/event-attributes.html [ Failure Pass ]
 webkit.org/b/89811 media/media-blocked-by-beforeload.html [ Failure Pass ]
 webkit.org/b/84856 media/media-controller-playback.html [ Failure Pass ]
 

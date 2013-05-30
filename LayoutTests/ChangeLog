@@ -1,3 +1,12 @@
+2013-05-30  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [GTK] Cleanup TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=117005
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Get rid of duplicate entry line.
+
 2013-05-29  Praveen R Jadhav  <praveen.j@samsung.com>
 
         ProgressEvent should not be cancelable
