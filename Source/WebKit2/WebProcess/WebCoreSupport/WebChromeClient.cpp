@@ -781,6 +781,14 @@ void WebChromeClient::scheduleCompositingLayerFlush()
         m_page->drawingArea()->scheduleCompositingLayerFlush();
 }
 
+
+bool WebChromeClient::layerTreeStateIsFrozen() const
+{
+    if (m_page->drawingArea())
+        return m_page->drawingArea()->layerTreeStateIsFrozen();
+
+    return false;
+}
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
