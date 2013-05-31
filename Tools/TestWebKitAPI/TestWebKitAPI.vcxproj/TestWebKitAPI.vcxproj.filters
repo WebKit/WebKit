@@ -54,10 +54,16 @@
     <ClCompile Include="..\Tests\WTF\HashMap.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>
+    <ClCompile Include="..\Tests\WTF\MD5.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
     <ClCompile Include="..\Tests\WTF\MathExtras.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>
     <ClCompile Include="..\Tests\WTF\MediaTime.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\SHA1.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>
     <ClCompile Include="..\Tests\WTF\SaturatedArithmeticOperations.cpp">

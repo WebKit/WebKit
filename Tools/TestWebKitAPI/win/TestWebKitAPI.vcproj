@@ -484,11 +484,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WTF\MD5.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WTF\MathExtras.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\Tests\WTF\MediaTime.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WTF\SHA1.cpp"
 					>
 				</File>
 				<File

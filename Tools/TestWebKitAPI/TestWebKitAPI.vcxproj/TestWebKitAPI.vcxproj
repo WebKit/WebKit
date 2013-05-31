@@ -160,8 +160,10 @@
     <ClCompile Include="..\Tests\WTF\CheckedArithmeticOperations.cpp" />
     <ClCompile Include="..\Tests\WTF\Functional.cpp" />
     <ClCompile Include="..\Tests\WTF\HashMap.cpp" />
+    <ClCompile Include="..\Tests\WTF\MD5.cpp" />
     <ClCompile Include="..\Tests\WTF\MathExtras.cpp" />
     <ClCompile Include="..\Tests\WTF\MediaTime.cpp" />
+    <ClCompile Include="..\Tests\WTF\SHA1.cpp" />
     <ClCompile Include="..\Tests\WTF\SaturatedArithmeticOperations.cpp" />
     <ClCompile Include="..\Tests\WTF\StringHasher.cpp" />
     <ClCompile Include="..\Tests\WTF\StringOperators.cpp" />

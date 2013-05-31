@@ -1,3 +1,17 @@
+2013-05-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move MD5, SHA1 unit tests from WTF to TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=116445
+
+        Reviewed by Benjamin Poulain.
+
+        Remove the MD5 and SHA1 test cases from the WTF code. The same cases are now built and run under TestWebKitAPI.
+
+        * wtf/MD5.cpp:
+        (WTF::MD5::MD5):
+        * wtf/SHA1.cpp:
+        (WTF::SHA1::SHA1):
+
 2013-05-30  Roger Fong  <roger_fong@apple.com>
 
         Another unreviewed build fix for Mac.

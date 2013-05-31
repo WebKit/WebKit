@@ -1,3 +1,28 @@
+2013-05-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move MD5, SHA1 unit tests from WTF to TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=116445
+
+        Reviewed by Benjamin Poulain.
+
+        Add the MD5 and SHA1 unit tests that were previously located inside WTF.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/GNUmakefile.am:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/MD5.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::expectMD5):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/SHA1.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::expectSHA1):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/WTF.pro:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
 2013-05-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction.

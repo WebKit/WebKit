@@ -58,44 +58,6 @@
 
 namespace WTF {
 
-#ifdef NDEBUG
-static inline void testMD5() { }
-#else
-// MD5 test case.
-static bool isTestMD5Done;
-
-static void expectMD5(CString input, CString expected)
-{
-    MD5 md5;
-    md5.addBytes(reinterpret_cast<const uint8_t*>(input.data()), input.length());
-    Vector<uint8_t, 16> digest;
-    md5.checksum(digest);
-    char* buf = 0;
-    CString actual = CString::newUninitialized(32, buf);
-    for (size_t i = 0; i < 16; i++) {
-        snprintf(buf, 3, "%02x", digest.at(i));
-        buf += 2;
-    }
-    ASSERT_WITH_MESSAGE(actual == expected, "input:%s[%lu] actual:%s expected:%s", input.data(), static_cast<unsigned long>(input.length()), actual.data(), expected.data());
-}
-
-static void testMD5()
-{
-    if (isTestMD5Done)
-        return;
-    isTestMD5Done = true;
-
-    // MD5 Test suite from http://www.ietf.org/rfc/rfc1321.txt
-    expectMD5("", "d41d8cd98f00b204e9800998ecf8427e");
-    expectMD5("a", "0cc175b9c0f1b6a831c399e269772661");
-    expectMD5("abc", "900150983cd24fb0d6963f7d28e17f72");
-    expectMD5("message digest", "f96b697d7cb7938d525a2f31aaf161d0");
-    expectMD5("abcdefghijklmnopqrstuvwxyz", "c3fcd3d76192e4007dfb496cca67e13b");
-    expectMD5("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", "d174ab98d277d9f5a5611c2c9f419d9f");
-    expectMD5("12345678901234567890123456789012345678901234567890123456789012345678901234567890", "57edf4a22be3c955ac49da2e2107b67a");
-}
-#endif
-
 // Note: this code is harmless on little-endian machines.
 
 static void reverseBytes(uint8_t* buf, unsigned longs)
@@ -203,8 +165,6 @@ static void MD5Transform(uint32_t buf[4], const uint32_t in[16])
 
 MD5::MD5()
 {
-    // FIXME: Move unit tests somewhere outside the constructor. See bug 55853.
-    testMD5();
     m_buf[0] = 0x67452301;
     m_buf[1] = 0xefcdab89;
     m_buf[2] = 0x98badcfe;

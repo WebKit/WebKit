@@ -10,9 +10,11 @@ SOURCES += \
     HashSet.cpp \
     IntegerToStringConversion.cpp \
     ListHashSet.cpp \
+    MD5.cpp \
     MathExtras.cpp \
     MediaTime.cpp \
     RedBlackTree.cpp \
+    SHA1.cpp \
     SaturatedArithmeticOperations.cpp \
     StringBuilder.cpp \
     StringHasher.cpp \
