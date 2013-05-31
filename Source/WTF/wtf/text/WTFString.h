@@ -453,8 +453,8 @@ public:
     // the input data contains invalid UTF-8 sequences.
     WTF_EXPORT_STRING_API static String fromUTF8(const LChar*, size_t);
     WTF_EXPORT_STRING_API static String fromUTF8(const LChar*);
-    WTF_EXPORT_STRING_API static String fromUTF8(const char* s, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(s), length); };
-    WTF_EXPORT_STRING_API static String fromUTF8(const char* s) { return fromUTF8(reinterpret_cast<const LChar*>(s)); };
+    static String fromUTF8(const char* s, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(s), length); };
+    static String fromUTF8(const char* s) { return fromUTF8(reinterpret_cast<const LChar*>(s)); };
     WTF_EXPORT_STRING_API static String fromUTF8(const CString&);
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.

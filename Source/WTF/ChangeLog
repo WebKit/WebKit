@@ -1,5 +1,13 @@
 2013-05-30  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed build fix for Mac.
+
+        * wtf/OSAllocator.h:
+        * wtf/text/WTFString.h:
+        (WTF::String::fromUTF8):
+
+2013-05-30  Roger Fong  <roger_fong@apple.com>
+
         Get rid of JavaScript exports file on AppleWin port.
         https://bugs.webkit.org/show_bug.cgi?id=117050.
 

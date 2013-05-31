@@ -57,13 +57,13 @@ public:
     // decommitAndRelease should be called on a region of VM allocated by a single reservation,
     // the memory must all currently be in a committed state.
     WTF_EXPORT_PRIVATE static void* reserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool includesGuardPages = false);
-    WTF_EXPORT_PRIVATE static void decommitAndRelease(void* base, size_t size);
+    static void decommitAndRelease(void* base, size_t size);
 
     // These methods are akin to reserveAndCommit/decommitAndRelease, above - however rather than
     // committing/decommitting the entire region additional parameters allow a subregion to be
     // specified.
     WTF_EXPORT_PRIVATE static void* reserveAndCommit(size_t reserveSize, size_t commitSize, Usage = UnknownUsage, bool writable = true, bool executable = false);
-    WTF_EXPORT_PRIVATE static void decommitAndRelease(void* releaseBase, size_t releaseSize, void* decommitBase, size_t decommitSize);
+    static void decommitAndRelease(void* releaseBase, size_t releaseSize, void* decommitBase, size_t decommitSize);
 
     // Reallocate an existing, committed allocation.
     // The prior allocation must be fully comitted, and the new size will also be fully committed.
