@@ -82,8 +82,9 @@ static Class WKDOMNodeClass(WebCore::Node* impl)
     case WebCore::Node::DOCUMENT_FRAGMENT_NODE:
     case WebCore::Node::NOTATION_NODE:
     case WebCore::Node::XPATH_NAMESPACE_NODE:
-        break;
+        return [WKDOMNode class];
     }
+    ASSERT_NOT_REACHED();
     return nil;
 }
 
