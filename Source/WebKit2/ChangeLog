@@ -1,3 +1,66 @@
+2013-05-31  Jessie Berlin  <jberlin@apple.com>
+
+        Need the ability to get the information for a plug-in with a particular process id that may
+        be running on a page
+        https://bugs.webkit.org/show_bug.cgi?id=117090
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.cpp:
+        (callGetInformationForPlugInWithProcessIDBlockAndDispose):
+        Get the block from the context, invoke it with the result, and dispose of it.
+        (WKPageGetInformationForPlugInWithProcessID):
+        Ask the WebPageProxy and provide it with a dictionary callback that uses the
+        above function to invoke the passed in block.
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        Add WKPageGetInformationForPlugInWithProcessID and a typedef for the callback block.
+
+        * UIProcess/Plugins/PluginProcessManager.h:
+        Add ways to get the PluginProcessProxy associated with a process id or process token.
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm:
+        (WebKit::PluginProcessManager::plugInProcessWithProcessID):
+        Return the first PluginProcessProxy with the passed in process ID.
+        (WebKit::PluginProcessManager::plugInProcessWithToken):
+        Return the first PluginProcessProxy with the passed in process token.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        Invalidate any outstanding requests for plug-in information.
+        * UIProcess/WebPageProxy.h:
+        Keep track of the callbacks for the requests for plug-in information.
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::getInformationForPlugInWithProcessID):
+        If there are no known plug-ins with the provided process ID, invoke the callback with a null
+        dictionary of plug-in information.
+        Otherwise, keep track of the callback and send a message to the web process asking for the
+        information.
+        (WebKit::WebPageProxy::containsPlugInCallback):
+        If the page did not contain the plug-in, invoke the callback with a null dictionary of
+        plug-in information.
+        Invoke the callback with a dictionary containing the PlugInModuleInfo.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Return 0 for the plugInProcessToken.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:
+        Ditto.
+        * WebProcess/Plugins/Plugin.h:
+        Add a pure virtual method for plugInProcessToken so it can be accessed from from the Plugin
+        on the PluginView.
+        * WebProcess/Plugins/PluginProxy.h:
+        Return the actual plug-in process token.
+
+        * WebProcess/Plugins/PluginView.h:
+        (WebKit::PluginView::plugIn):
+        Make it possible to get at the plug-in process token through the Plugin.
+
+        * WebProcess/WebPage/WebPageMac.mm:
+        (WebKit::WebPage::containsPluginViewsWithPluginProcessToken):
+        If there is an instance of the plug-in with that token, send a confirmation to the ui
+        process.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-05-31  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r141445): MPEG-4 videos do not play on certain hardware configurations

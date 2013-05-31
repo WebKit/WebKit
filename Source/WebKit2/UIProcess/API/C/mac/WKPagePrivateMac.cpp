@@ -46,3 +46,15 @@ bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
 
     return webPageProxy->process()->context()->isURLKnownHSTSHost(toImpl(url)->string(), privateBrowsingEnabled);
 }
+
+static void callGetInformationForPlugInWithProcessIDBlockAndDispose(WKDictionaryRef resultValue, WKErrorRef error, void* context)
+{
+    WKPageGetInformationForPlugInWithProcessIDBlock block = (WKPageGetInformationForPlugInWithProcessIDBlock)context;
+    block(resultValue, error);
+    Block_release(block);
+}
+
+void WKPageGetInformationForPlugInWithProcessID(WKPageRef pageRef, pid_t plugInProcessID, WKPageGetInformationForPlugInWithProcessIDBlock block)
+{
+    toImpl(pageRef)->getInformationForPlugInWithProcessID(plugInProcessID, DictionaryCallback::create(Block_copy(block), callGetInformationForPlugInWithProcessIDBlockAndDispose));
+}

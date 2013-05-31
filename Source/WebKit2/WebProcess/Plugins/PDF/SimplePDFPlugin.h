@@ -191,6 +191,8 @@ protected:
 
     virtual String getSelectionString() const OVERRIDE { return String(); }
 
+    virtual uint64_t plugInProcessToken() const OVERRIDE { return 0; }
+
     WebCore::IntSize m_scrollOffset;
 
 private:

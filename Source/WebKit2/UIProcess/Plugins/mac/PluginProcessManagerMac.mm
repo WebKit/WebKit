@@ -39,6 +39,24 @@ void PluginProcessManager::setProcessSuppressionEnabled(bool processSuppressionE
         m_pluginProcesses[i]->setProcessSuppressionEnabled(processSuppressionEnabled);
 }
 
+PluginProcessProxy* PluginProcessManager::plugInProcessWithProcessID(pid_t plugInProcessID) const
+{
+    for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
+        if (m_pluginProcesses[i]->processIdentifier() == plugInProcessID)
+            return m_pluginProcesses[i].get();
+    }
+    return 0;
+}
+
+PluginProcessProxy* PluginProcessManager::plugInProcessWithToken(uint64_t plugInProcessToken) const
+{
+    for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
+        if (m_pluginProcesses[i]->pluginProcessToken() == plugInProcessToken)
+            return m_pluginProcesses[i].get();
+    }
+    return 0;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)

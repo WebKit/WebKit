@@ -35,6 +35,9 @@
 #import "PluginComplexTextInputState.h"
 #import "PageClient.h"
 #import "PageClientImpl.h"
+#import "PluginInformation.h"
+#import "PluginProcessManager.h"
+#import "PluginProcessProxy.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "WebPageMessages.h"
@@ -454,6 +457,46 @@ void WebPageProxy::setPluginComplexTextInputState(uint64_t pluginComplexTextInpu
     MESSAGE_CHECK(isValidPluginComplexTextInputState(pluginComplexTextInputState));
 
     m_pageClient->setPluginComplexTextInputState(pluginComplexTextInputIdentifier, static_cast<PluginComplexTextInputState>(pluginComplexTextInputState));
+}
+
+void WebPageProxy::getInformationForPlugInWithProcessID(pid_t plugInProcessID, PassRefPtr<DictionaryCallback> prpCallback)
+{
+    RefPtr<DictionaryCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+
+    PluginProcessProxy* pluginProcessProxy = PluginProcessManager::shared().plugInProcessWithProcessID(plugInProcessID);
+    if (!pluginProcessProxy)
+        callback->performCallbackWithReturnValue(0);
+
+    uint64_t callbackID = callback->callbackID();
+    m_plugInInformationCallbacks.set(callbackID, callback.get());
+    m_process->send(Messages::WebPage::ContainsPluginViewsWithPluginProcessToken(pluginProcessProxy->pluginProcessToken(), callbackID), m_pageID);
+}
+
+void WebPageProxy::containsPlugInCallback(bool containsPlugIn, uint64_t plugInToken, uint64_t callbackID)
+{
+    RefPtr<DictionaryCallback> callback = m_plugInInformationCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    if (!containsPlugIn) {
+        callback->performCallbackWithReturnValue(0);
+        return;
+    }
+
+    PluginProcessProxy* plugInProcessProxy = PluginProcessManager::shared().plugInProcessWithToken(plugInToken);
+    ASSERT(plugInProcessProxy);
+
+    ImmutableDictionary::MapType map;
+    getPluginModuleInformation(plugInProcessProxy->pluginProcessAttributes().moduleInfo, map);
+    RefPtr<ImmutableDictionary> plugInInformation = ImmutableDictionary::adopt(map);
+
+    callback->performCallbackWithReturnValue(plugInInformation.get());
 }
 
 void WebPageProxy::executeSavedCommandBySelector(const String& selector, bool& handled)
