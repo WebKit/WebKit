@@ -1,5 +1,15 @@
 2013-05-30  Rafael Brandao  <rafael.lobo@openbossa.org>
 
+        Fix double hash lookup in RenderTableSection::paintObject loop
+        https://bugs.webkit.org/show_bug.cgi?id=117055
+
+        Reviewed by Antonio Gomes.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintObject):
+
+2013-05-30  Rafael Brandao  <rafael.lobo@openbossa.org>
+
         Fix double hash lookup in WebSocket::connect loop
         https://bugs.webkit.org/show_bug.cgi?id=117052
 
