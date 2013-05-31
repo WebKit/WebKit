@@ -1,3 +1,9 @@
+2013-05-31  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening. Update test-expectations after r151000.
+
+        * fast/js/date-DST-time-cusps-expected.txt:
+
 2013-05-31  Eugene Klyuchnikov  <eustas@chromium.org>
 
         [Qt][WK2] Newly added editing/selection/caret-after-keypress.html crashing
