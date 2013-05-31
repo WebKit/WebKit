@@ -2,6 +2,13 @@
 
         [Windows] Unreviewed build fix after r151012
 
+        * TestWebKitAPI/Configurations/TestWebKitAPICommon.vsprops: Add dependency on
+        WTF library to support SHA tests
+
+2013-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r151012
+
         * TestWebKitAPI/Tests/WTF/MD5.cpp: Include <wtf/StringExtras.h> to provide
         snprintf definition for Windows.
 

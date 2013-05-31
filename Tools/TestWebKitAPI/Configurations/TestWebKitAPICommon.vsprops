@@ -10,7 +10,7 @@
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="WebKit$(WebKitDLLConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib gtest.lib"
+		AdditionalDependencies="WebKit$(WebKitDLLConfigSuffix).lib JavaScriptCore$(WebKitDLLConfigSuffix).lib gtest.lib WTF$(WebKitConfigSuffix).lib"
 		SubSystem="1"
 	/>
 </VisualStudioPropertySheet>
