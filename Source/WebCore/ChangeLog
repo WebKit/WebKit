@@ -1,3 +1,40 @@
+2013-05-31  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        Make sure gstreamer source element is thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=115352
+
+        Reviewed by Philippe Normand.
+
+        GStreamer source element may be created by any gstreamer element on any thread by calling
+        gst_element_make_from_uri with the URIs handled by the source element.
+        This patch makes sure the gstreamer source element is thread-safe to avoid issues with it
+        being created outside the main thread.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (_WebKitWebSrcPrivate):
+        (webkit_web_src_init):
+        (webKitWebSrcFinalize):
+        (webKitWebSrcSetProperty):
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcStop):
+        (webKitWebSrcStart):
+        (webKitWebSrcChangeState):
+        (webKitWebSrcQueryWithParent):
+        (webKitWebSrcGetUri):
+        (webKitWebSrcSetUri):
+        (webKitWebSrcNeedDataMainCb):
+        (webKitWebSrcEnoughDataMainCb):
+        (webKitWebSrcSeekMainCb):
+        (webKitWebSrcSeekDataCb):
+        (webKitWebSrcSetMediaPlayer):
+        (StreamingClient::StreamingClient):
+        (StreamingClient::~StreamingClient):
+        (StreamingClient::didReceiveResponse):
+        (StreamingClient::didReceiveData):
+        (StreamingClient::didFinishLoading):
+        (StreamingClient::wasBlocked):
+        (StreamingClient::cannotShowURL):
+
 2013-05-31  Sergio Villar Senin  <svillar@igalia.com>
 
         Build fix when CSSParser debugging is enabled
