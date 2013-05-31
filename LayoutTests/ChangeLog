@@ -1,3 +1,11 @@
+2013-05-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening.
+
+        Some of tests in printing are passing on EFL WK2. But, they are still failing on EFL WK1.
+
+        * platform/efl/TestExpectations:
+
 2013-05-28  Gavin Barraclough  <barraclough@apple.com>
 
         fast/js/date-DST-time-cusps.html fails after http://trac.webkit.org/changeset/150833

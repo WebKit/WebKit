@@ -462,3 +462,9 @@ webkit.org/b/84333 storage/indexeddb/noblobs.html [ Failure ]
 # css3 device adaptation does not work for EFL WK1 properly.
 webkit.org/b/114948 css3/device-adapt/viewport-width-check-window-innerwidth-correct.html [ Failure ]
 webkit.org/b/114948 css3/device-adapt/viewport-width-not-affecting-next-page.html [ Failure ]
+
+# DRT doesn't check for isPrinting().
+webkit.org/b/87226 printing/media-queries-print.html [ Failure ]
+webkit.org/b/87226 printing/setPrinting.html [ Failure ]
+webkit.org/b/87226 printing/simultaneous-position-float-change.html [ Failure ]
+webkit.org/b/87226 printing/width-overflow.html [ Failure ]
