@@ -2552,7 +2552,7 @@ sub runSafari
     if (isAppleWinWebKit()) {
         my $result;
         my $productDir = productDir();
-        my $webKitLauncherPath = File::Spec->catfile(productDir(), "WebKit.exe");
+        my $webKitLauncherPath = File::Spec->catfile(productDir(), "WinLauncher.exe");
         return system { $webKitLauncherPath } $webKitLauncherPath, @ARGV;
     }
 

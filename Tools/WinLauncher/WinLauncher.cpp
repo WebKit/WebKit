@@ -274,6 +274,7 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HIN
     InitCtrlEx.dwICC  = 0x00004000; //ICC_STANDARD_CLASSES;
     InitCommonControlsEx(&InitCtrlEx);
 
+    BSTR requestedURL = 0;
     int argc = 0;
     WCHAR** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     for (int i = 1; i < argc; ++i) {
@@ -281,6 +282,8 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HIN
             s_usesLayeredWebView = true;
         else if (!wcsicmp(argv[i], L"--desktop"))
             s_fullDesktop = true;
+        else if (!requestedURL)
+            requestedURL = ::SysAllocString(argv[i]);
     }
 
     // Initialize global strings
@@ -369,14 +372,16 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HIN
     if (FAILED(hr))
         goto exit;
 
-    IWebFrame* frame;
-    hr = gWebView->mainFrame(&frame);
-    if (FAILED(hr))
-        goto exit;
+    if (!requestedURL) {
+        IWebFrame* frame;
+        hr = gWebView->mainFrame(&frame);
+        if (FAILED(hr))
+            goto exit;
 
-    static BSTR defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img id=\"webkit logo\" src=\"http://webkit.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue; background: white;\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
-    frame->loadHTMLString(defaultHTML, 0);
-    frame->Release();
+        static BSTR defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img id=\"webkit logo\" src=\"http://webkit.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue; background: white;\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
+        frame->loadHTMLString(defaultHTML, 0);
+        frame->Release();
+    }
 
     hr = gWebViewPrivate->setTransparent(usesLayeredWebView());
     if (FAILED(hr))
@@ -399,6 +404,12 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HIN
     UpdateWindow(gViewWindow);
 
     hAccelTable = LoadAccelerators(hInst, MAKEINTRESOURCE(IDC_WINLAUNCHER));
+
+    if (requestedURL) {
+        loadURL(requestedURL);
+        ::SysFreeString(requestedURL);
+        requestedURL = 0;
+    }
 
     // Main message loop:
     while (GetMessage(&msg, NULL, 0, 0)) {

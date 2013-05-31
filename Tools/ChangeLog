@@ -1,3 +1,15 @@
+2013-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Use WinLauncher to display LayoutTest results
+        https://bugs.webkit.org/show_bug.cgi?id=117085
+
+        Reviewed by Oliver Hunt.
+
+        * Scripts/webkitdirs.pm:
+        (runSafari): Use WinLauncher to display content
+        * WinLauncher/WinLauncher.cpp:
+        (dllLauncherEntryPoint): Check for URL argument.
+
 2013-05-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Modify AssembleBuildLogs project to WebKit solution in preparation for moving buildbots to VCExpress 2010.
