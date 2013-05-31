@@ -25,10 +25,6 @@ input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:ac
     color: #fafafa;
 }
 
-input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled, select:not([multiple]):not([size]):active:disabled, select[size="0"]:active:disabled, select[size="1"]:active:disabled {
-    color: GrayText;
-}
-
 select {
     border-radius: 0;
 }

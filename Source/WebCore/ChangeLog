@@ -1,3 +1,17 @@
+2013-05-31  Tiancheng Jiang  <tijiang@rim.com>
+
+        Text Field UX updates.
+        https://bugs.webkit.org/show_bug.cgi?id=116996
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PR 342333.
+        Internally Reviewed by Jeff Rogers.
+
+        Update disabled text field font color.
+
+        * css/themeBlackBerry.css:
+
 2013-05-31  Dean Jackson  <dino@apple.com>
 
         Update CheckedInt.h to latest version from Mozilla
