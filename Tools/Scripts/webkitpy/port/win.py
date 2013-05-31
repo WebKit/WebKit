@@ -148,11 +148,12 @@ class WinPort(ApplePort):
     def create_debugger_command_file(self):
         debugger_temp_directory = str(self._filesystem.mkdtemp())
         command_file = self._filesystem.join(debugger_temp_directory, "debugger-commands.txt")
-        self._filesystem.write_text_file(command_file, '.logopen /t "%s\\%s.txt"\n' % (cygpath(self.results_directory()), self.CRASH_LOG_PREFIX))
-        self._filesystem.write_text_file(command_file, '.srcpath "%s"\n' % cygpath(self._webkit_finder.webkit_base()))
-        self._filesystem.write_text_file(command_file, '!analyze -vv\n')
-        self._filesystem.write_text_file(command_file, '~*kpn\n')
-        self._filesystem.write_text_file(command_file, 'q\n')
+        commands = ''.join(['.logopen /t "%s\\%s.txt"\n' % (cygpath(self.results_directory()), self.CRASH_LOG_PREFIX),
+            '.srcpath "%s"\n' % cygpath(self._webkit_finder.webkit_base()),
+            '!analyze -vv\n',
+            '~*kpn\n',
+            'q\n'])
+        self._filesystem.write_text_file(command_file, commands)
         return command_file
 
     def read_registry_string(self, key):
