@@ -1,3 +1,10 @@
+2013-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix for VS2005 builders.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def: Add
+        missing export for WTF::SHA1::computeHexDigest
+
 2013-05-30  David Farler  <dfarler@apple.com>
 
         Fix jscore-test when not using --sdk option with jsDriver.pl

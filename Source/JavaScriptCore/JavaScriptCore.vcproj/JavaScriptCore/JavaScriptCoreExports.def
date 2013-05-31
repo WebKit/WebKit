@@ -154,6 +154,7 @@ EXPORTS
     ?collectAllGarbage@Heap@JSC@@QAEXXZ
     ?column@StackFrame@JSC@@QAEIXZ
     ?computeHash@SHA1@WTF@@QAEXAAV?$Vector@E$0BE@VCrashOnOverflow@WTF@@@2@@Z
+    ?computeHexDigest@SHA1@WTF@@QAE?AVCString@2@XZ
     ?configurable@PropertyDescriptor@JSC@@QBE_NXZ
     ?construct@JSC@@YAPAVJSObject@1@PAVExecState@1@VJSValue@1@W4ConstructType@1@ABTConstructData@1@ABVArgList@1@@Z
     ?constructEmptyObject@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
