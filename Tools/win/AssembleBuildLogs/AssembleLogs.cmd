@@ -30,11 +30,6 @@ echo _________________________________________________________ >> "%CONFIGURATIO
 type "%CONFIGURATIONBUILDDIR%\obj32\LLIntAssembly\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-echo COMPILING JavaScriptCoreExportGenerator...                >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-type "%CONFIGURATIONBUILDDIR%\obj32\JavaScriptCoreExportGenerator\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
-
-echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo COMPILING JavaScriptCore...                               >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 type "%CONFIGURATIONBUILDDIR%\obj32\JavaScriptCore\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
@@ -53,6 +48,8 @@ echo _________________________________________________________ >> "%CONFIGURATIO
 echo COMPILING testapi...                                      >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 type "%CONFIGURATIONBUILDDIR%\obj32\testapi\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+if not exist "%CONFIGURATIONBUILDDIR%\obj32\WebKitQuartzCoreAdditions\BuildLog.htm" GOTO SkipInternalProjects
 
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo COMPILING WebKitSystemInterfaceGenerated...               >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
@@ -73,6 +70,18 @@ echo _________________________________________________________ >> "%CONFIGURATIO
 echo COMPILING WebKitQuartzCoreAdditions...                    >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 type "%CONFIGURATIONBUILDDIR%\obj32\WebKitQuartzCoreAdditions\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING CoreUI...                                       >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj32\CoreUI\BuildLog.htm"       >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING SafariTheme...                                  >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj32\SafariTheme\BuildLog.htm"  >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+:SkipInternalProjects
 
 echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
 echo COMPILING WebCoreGenerated...                             >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"

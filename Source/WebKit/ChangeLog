@@ -1,3 +1,9 @@
+2013-05-31  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Add AssembleBuildLogs project to WebKit solution in preparation for moving buildbots to VCExpress 2010.
+
+        * WebKit.vcxproj/WebKit.sln:
+
 2013-05-30  Roger Fong  <roger_fong@apple.com>
 
         Get rid of JavaScript exports file on AppleWin port.

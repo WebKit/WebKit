@@ -156,6 +156,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "record-memory", "..\..\..\T
 		{2974EA02-840B-4995-8719-8920A61006F1} = {2974EA02-840B-4995-8719-8920A61006F1}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AssembleBuildLogs", "..\..\..\Tools\win\AssembleBuildLogs\AssembleBuildLogs.vcxproj", "{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D} = {AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_WinCairo|Win32 = Debug_WinCairo|Win32
@@ -443,6 +448,16 @@ Global
 		{F93EBE5A-20F3-44C1-B192-C4AA2BA95FD5}.Release_WinCairo|Win32.Build.0 = Release_WinCairo|Win32
 		{F93EBE5A-20F3-44C1-B192-C4AA2BA95FD5}.Release|Win32.ActiveCfg = Release|Win32
 		{F93EBE5A-20F3-44C1-B192-C4AA2BA95FD5}.Release|Win32.Build.0 = Release|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug_WinCairo|Win32.ActiveCfg = Debug|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug_WinCairo|Win32.Build.0 = Debug|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug|Win32.Build.0 = Debug|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Production|Win32.ActiveCfg = Production|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Production|Win32.Build.0 = Production|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release_WinCairo|Win32.ActiveCfg = Release|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release_WinCairo|Win32.Build.0 = Release|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release|Win32.ActiveCfg = Release|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -480,5 +495,6 @@ Global
 		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8} = {68A7C287-F9C4-4A31-9B49-995E64CAC100}
 		{AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D} = {68A7C287-F9C4-4A31-9B49-995E64CAC100}
 		{F93EBE5A-20F3-44C1-B192-C4AA2BA95FD5} = {74E05245-682B-4D12-98AD-BFC64C9C14CE}
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE} = {74E05245-682B-4D12-98AD-BFC64C9C14CE}
 	EndGlobalSection
 EndGlobal
