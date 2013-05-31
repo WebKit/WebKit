@@ -1,3 +1,18 @@
+2013-05-22  David Farler  <dfarler@apple.com>
+
+        Add --sdk option to jsDriver.pl to run with iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=116339
+
+        Reviewed by David Kilzer.
+
+        * tests/mozilla/jsDriver.pl:
+        (execute_tests):
+        Prefix shell command with the path to the "sim" tool.
+        (parse_args):
+        Add -d / --sdk option.
+        (usage):
+        Help message for -d / --sdk option.
+
 2013-05-30  Julien Brianceau  <jbrianceau@nds.com>
 
         [sh4] Optimize NaN checks in LLINT for floating point comparisons.

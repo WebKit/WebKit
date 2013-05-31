@@ -65,9 +65,10 @@ my $opt_console_failures = 0;
 my $opt_lxr_url = "./"; # "http://lxr.mozilla.org/mozilla/source/js/tests/";
 my $opt_exit_munge = ($os_type ne "MAC") ? 1 : 0;
 my $opt_arch= "";
+my $opt_sim_sdk = "";
 
 # command line option definition
-my $options = "a=s arch>a b=s bugurl>b c=s classpath>c e=s engine>e f=s file>f " .
+my $options = "a=s arch>a b=s bugurl>b c=s classpath>c d=s sdk>d e=s engine>e f=s file>f " .
 "h help>h i j=s javapath>j k confail>k l=s list>l L=s neglist>L " .
 "o=s opt>o p=s testpath>p s=s shellpath>s t trace>t u=s lxrurl>u " .
 "x noexitmunge>x";
@@ -148,7 +149,8 @@ sub main {
 
 sub execute_tests {
     my (@test_list) = @_;
-    my ($test, $shell_command, $line, @output, $path);
+    my ($test, $line, @output, $path);
+    my $shell_command = "";
     my $file_param = " -f ";
     my ($last_suite, $last_test_dir);
     
@@ -175,7 +177,12 @@ sub execute_tests {
 # (only check for their existance if the suite or test_dir has changed
 # since the last time we looked.)
         if ($last_suite ne $suite || $last_test_dir ne $test_dir) {
-            $shell_command = $opt_arch . " ";
+            if ($opt_sim_sdk) {
+                chomp($shell_command = `xcrun -sdk $opt_sim_sdk -find sim`);
+                $shell_command .= " --adopt-pid ";
+            }
+
+            $shell_command .= "$opt_arch ";
             
             $shell_command .= &xp_path($engine_command)  . " -s ";
 
@@ -449,6 +456,11 @@ sub parse_args {
             &dd ("opt: adding negative list '$value'.");
             push (@opt_neg_list_files, $value);
             
+        } elsif ($option eq "d") {
+            $option = 'd';
+            &dd ("opt: using $value simulator SDK to run jsc.");
+            $opt_sim_sdk = $value;
+
         } elsif ($option eq "o") {
             $opt_engine_params = $value;
             &dd ("opt: setting engine params to '$opt_engine_params'.");
@@ -511,6 +523,7 @@ sub usage {
      "(-b|--bugurl)             Bugzilla URL.\n" .
      "                          (default is $opt_bug_url)\n" .
      "(-c|--classpath)          Classpath (Rhino only.)\n" .
+     "(-d|--sdk)                Use a simulator SDK to run jsc\n" .
      "(-e|--engine) <type> ...  Specify the type of engine(s) to test.\n" .
      "                          <type> is one or more of\n" .
      "                          (squirrelfish|smopt|smdebug|lcopt|lcdebug|xpcshell|" .
