@@ -1,3 +1,17 @@
+2013-05-31  David Kilzer  <ddkilzer@apple.com>
+
+        DerivedSources.make: any rules that use $(FEATURE_DEFINES) should be rebuilt when FeatureDefines.xcconfig changes
+        <http://webkit.org/b/117081>
+
+        Reviewed by Mark Rowe.
+
+        * DerivedSources.make: Add $(PLATFORM_FEATURE_DEFINES)
+        dependency for all rules that use $(FEATURE_DEFINES) to generate
+        files.
+        (PLATFORM_FEATURE_DEFINES): Set this variable to
+        Configurations/FeatureDefines.xcconfig if not already set on
+        Mac OS X.
+
 2013-05-31  Tiancheng Jiang  <tijiang@rim.com>
 
         Text Field UX updates.
