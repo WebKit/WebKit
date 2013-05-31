@@ -1,5 +1,12 @@
 2013-05-30  Roger Fong  <roger_fong@apple.com>
 
+        Another unreviewed build fix for Mac.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::fromUTF8WithLatin1Fallback):
+
+2013-05-30  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed build fix for Mac.
 
         * wtf/OSAllocator.h:
