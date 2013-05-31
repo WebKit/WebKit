@@ -1,3 +1,16 @@
+2013-05-31  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        [EFL] Update EFL TextExpectation for WebAudio cases.
+        https://bugs.webkit.org/show_bug.cgi?id=117061.
+
+        Unreviewed EFL Gardening.
+
+        WebAudio test cases delaynode-max-nondefault-delay.html, delaynode-scheduling.html
+        and javascriptaudionode.html pass with latest updates in efl port. Updating 
+        TestExpectation accordingly.
+
+        * platform/efl/TestExpectations:
+
 2013-05-30  Noel Gordon  <noel.gordon@gmail.com>
 
         [Mac] Should pass http/tests/images/png-partial-load-no-alpha.html 
