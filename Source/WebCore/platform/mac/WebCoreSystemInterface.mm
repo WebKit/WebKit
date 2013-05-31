@@ -204,6 +204,10 @@ void(*wkDestroyRenderingResources)(void);
 dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+dispatch_source_t (*wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue)(void);
+#endif
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 #endif

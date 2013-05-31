@@ -1,5 +1,19 @@
 2013-05-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151040
+
+    2013-05-31  Stephanie Lewis  <slewis@apple.com>
+
+            Update low memory handler to use new memory pressure notifications on new OS versions.
+            <rdar://problem/14027095>
+
+            Reviewed by Mark Rowe.
+
+            * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+            (InitWebCoreSystemInterface):
+
+2013-05-31  Lucas Forschler  <lforschler@apple.com>
+
     Rollout r151048
 
 2013-05-31  Lucas Forschler  <lforschler@apple.com>
