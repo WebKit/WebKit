@@ -1,5 +1,13 @@
 2013-05-30  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Unreviewed build correction.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.create_debugger_command_file): The directory needs to be
+        a string, not a temporary directory object.
+
+2013-05-30  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] NRWT doesn't save crash logs on Apple's Windows port.
         https://bugs.webkit.org/show_bug.cgi?id=76935
 
