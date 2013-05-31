@@ -2312,6 +2312,10 @@ _wkExecutableWasLinkedOnOrBeforeSnowLeopard
 _wkRecommendedScrollerStyle
 #endif
 
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+_wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue
+#endif
+
 #if USE(CONTENT_FILTERING)
 _wkFilterAddData
 _wkFilterCreateInstance

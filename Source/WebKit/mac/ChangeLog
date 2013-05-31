@@ -1,3 +1,13 @@
+2013-05-31  Stephanie Lewis  <slewis@apple.com>
+
+        Update low memory handler to use new memory pressure notifications on new OS versions.
+        <rdar://problem/14027095> 
+
+        Reviewed by Mark Rowe.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2013-05-29  Jeffrey Pfau  <jpfau@apple.com>
 
         [Mac] Enable cache partitioning and the public suffix list on 10.8

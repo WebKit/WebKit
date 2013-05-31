@@ -39,6 +39,16 @@
         * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
         (WebKit::WKDOMNodeClass):
 
+2013-05-31  Stephanie Lewis  <slewis@apple.com>
+
+        Update low memory handler to use new memory pressure notifications on new OS versions.
+        <rdar://problem/14027095>
+
+        Reviewed by Mark Rowe.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2013-05-30  Tim Horton  <timothy_horton@apple.com>
 
         Remove ASSERT_NOT_REACHED from WKDOMNodeClass

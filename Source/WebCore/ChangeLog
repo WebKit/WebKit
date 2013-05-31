@@ -201,6 +201,21 @@
         * rendering/RenderTableSection.cpp:
         (WebCore::RenderTableSection::paintObject):
 
+2013-05-31  Stephanie Lewis  <slewis@apple.com>
+
+        Update low memory handler to use new memory pressure notifications on new OS versions.
+        <rdar://problem/14027095>
+
+        Reviewed by Mark Rowe.
+
+        No change in functionality.
+
+        * WebCore.exp.in:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::install): Call new API
+        * platform/mac/WebCoreSystemInterface.h: 
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2013-05-30  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         Fix double hash lookup in WebSocket::connect loop

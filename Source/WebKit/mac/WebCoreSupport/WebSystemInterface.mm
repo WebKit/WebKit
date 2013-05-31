@@ -198,6 +198,10 @@ void InitWebCoreSystemInterface(void)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(CreateVMPressureDispatchOnMainQueue);
 #endif
+    
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    INIT(CreateMemoryStatusPressureCriticalDispatchOnMainQueue);
+#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     INIT(ExecutableWasLinkedOnOrBeforeLion);
