@@ -36,7 +36,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(SOLARIS)
@@ -77,7 +76,6 @@ class MediaCanStartListener;
 class Node;
 class PageConsole;
 class PageGroup;
-class PageThrottler;
 class PlugInClient;
 class PluginData;
 class PluginViewBase;
@@ -112,8 +110,6 @@ struct ArenaSize {
 class Page : public Supplementable<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
     friend class Settings;
-    friend class PageThrottler;
-
 public:
     static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 
@@ -393,8 +389,6 @@ public:
     void sawMediaEngine(const String& engineName);
     void resetSeenMediaEngines();
 
-    PageThrottler* pageThrottler() { return m_pageThrottler.get(); }
-
     PageConsole* console() { return m_console.get(); }
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
@@ -531,8 +525,6 @@ private:
     AlternativeTextClient* m_alternativeTextClient;
 
     bool m_scriptedAnimationsSuspended;
-    RefPtr<PageThrottler> m_pageThrottler;
-
     OwnPtr<PageConsole> m_console;
 
     HashSet<String> m_seenPlugins;

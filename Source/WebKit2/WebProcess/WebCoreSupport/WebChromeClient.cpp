@@ -908,14 +908,4 @@ void WebChromeClient::didAddFooterLayer(GraphicsLayer* footerParent)
         banner->didAddParentLayer(footerParent);
 }
 
-void WebChromeClient::incrementActivePageCount()
-{
-    WebProcess::shared().incrementActiveTaskCount();
-}
-
-void WebChromeClient::decrementActivePageCount()
-{
-    WebProcess::shared().decrementActiveTaskCount();
-}
-
 } // namespace WebKit

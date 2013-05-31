@@ -1762,7 +1762,6 @@ set(WebCore_SOURCES
     page/PageGroup.cpp
     page/PageGroupLoadDeferrer.cpp
     page/PageSerializer.cpp
-    page/PageThrottler.cpp
     page/PageVisibilityState.cpp
     page/Performance.cpp
     page/PerformanceEntry.cpp

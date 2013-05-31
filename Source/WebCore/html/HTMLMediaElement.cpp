@@ -70,7 +70,6 @@
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PageThrottler.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptController.h"
@@ -345,11 +344,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
 HTMLMediaElement::~HTMLMediaElement()
 {
     LOG(Media, "HTMLMediaElement::~HTMLMediaElement");
-
-    if (!m_paused && m_pageThrottler) {
-        m_pageThrottler->allowThrottling();
-        m_pageThrottler.clear();
-    }
     if (m_isWaitingUntilMediaCanStart)
         document()->removeMediaCanStartListener(this);
     setShouldDelayLoadEvent(false);
@@ -2476,20 +2470,6 @@ void HTMLMediaElement::play()
     playInternal();
 }
 
-PageThrottler* HTMLMediaElement::pageThrottlerIfPossible()
-{
-    if (m_pageThrottler)
-        return m_pageThrottler.get();
-
-    if (!document())
-        return 0;
-
-    if (Page* page = document()->page())
-        m_pageThrottler = page->pageThrottler();
-    
-    return m_pageThrottler.get();
-}
-
 void HTMLMediaElement::playInternal()
 {
     LOG(Media, "HTMLMediaElement::playInternal");
@@ -2505,8 +2485,6 @@ void HTMLMediaElement::playInternal()
         m_mediaController->bringElementUpToSpeed(this);
 
     if (m_paused) {
-        if (PageThrottler* throttler = pageThrottlerIfPossible())
-            throttler->preventThrottling();
         m_paused = false;
         invalidateCachedTime();
         scheduleEvent(eventNames().playEvent);
@@ -2517,6 +2495,7 @@ void HTMLMediaElement::playInternal()
             scheduleEvent(eventNames().playingEvent);
     }
     m_autoplaying = false;
+
     updatePlayState();
     updateMediaController();
 }
@@ -2543,8 +2522,6 @@ void HTMLMediaElement::pauseInternal()
     m_autoplaying = false;
 
     if (!m_paused) {
-        if (PageThrottler* throttler = m_pageThrottler.get())
-            throttler->preventThrottling();
         m_paused = true;
         scheduleTimeupdateEvent(false);
         scheduleEvent(eventNames().pauseEvent);
