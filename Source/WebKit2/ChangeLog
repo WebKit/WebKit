@@ -1,3 +1,11 @@
+2013-05-31  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/14036464> Sandbox violation when using Web SpeechSynthesis
+
+        Reviewed by Anders Carlsson
+
+        * WebProcess/com.apple.WebProcess.sb.in: Allow com.apple.speech.synthesis.console.
+
 2013-05-31  Jessie Berlin  <jberlin@apple.com>
 
         Need the ability to get the information for a plug-in with a particular process id that may
