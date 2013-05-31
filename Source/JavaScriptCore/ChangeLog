@@ -1,3 +1,16 @@
+2013-05-31  Julien Brianceau  <jbrianceau@nds.com>
+
+        [sh4] Handle branchType properly in branchTruncateDoubleToInt32.
+        https://bugs.webkit.org/show_bug.cgi?id=117062
+
+        Reviewed by Oliver Hunt.
+
+        Current implementation of branchTruncateDoubleToInt32 is incorrect
+        when branchType == BranchIfTruncateSuccessful in sh4 baseline JIT.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchTruncateDoubleToInt32):
+
 2013-05-31  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix for VS2005 builders.
