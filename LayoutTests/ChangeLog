@@ -1,3 +1,11 @@
+2013-05-31  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0-wk1/TestExpectations: Skip flaky test.
+        * platform/qt-5.0-wk2/TestExpectations: Skip crashing test.
+        * platform/qt/fast/js/date-DST-time-cusps-expected.txt: Rebaselining after r151000.
+
 2013-05-31  Praveen R Jadhav  <praveen.j@samsung.com>
 
         [EFL] Update EFL TextExpectation for WebAudio cases.

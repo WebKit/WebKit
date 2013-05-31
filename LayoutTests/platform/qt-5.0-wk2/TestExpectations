@@ -752,3 +752,6 @@ webkit.org/b/116668 fast/events/touch/frame-hover-update.html [ Skip ]
 
 # [Qt] Newly addded test in r150234 fast/frames/flattening/scrolling-in-object.html fails
 webkit.org/b/116810 fast/frames/flattening/scrolling-in-object.html [ Skip ]
+
+# [Qt][WK2] Newly added editing/selection/caret-after-keypress.html crashing
+webkit.org/b/117070 editing/selection/caret-after-keypress.html [ Skip ]
