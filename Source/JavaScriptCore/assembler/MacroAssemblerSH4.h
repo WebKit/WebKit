@@ -1848,17 +1848,17 @@ public:
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
 
         if (cond == Overflow) {
-            RegisterID scr1 = claimScratch();
-            RegisterID scr = claimScratch();
-            m_assembler.dmullRegReg(src, dest);
+            RegisterID scrsign = claimScratch();
+            RegisterID msbres = claimScratch();
+            m_assembler.dmulslRegReg(src, dest);
             m_assembler.stsmacl(dest);
-            m_assembler.movImm8(-31, scr);
-            m_assembler.movlRegReg(dest, scr1);
-            m_assembler.shadRegReg(scr1, scr);
-            m_assembler.stsmach(scr);
-            m_assembler.cmplRegReg(scr, scr1, SH4Condition(Equal));
-            releaseScratch(scr1);
-            releaseScratch(scr);
+            m_assembler.cmppz(dest);
+            m_assembler.movt(scrsign);
+            m_assembler.addlImm8r(-1, scrsign);
+            m_assembler.stsmach(msbres);
+            m_assembler.cmplRegReg(msbres, scrsign, SH4Condition(Equal));
+            releaseScratch(msbres);
+            releaseScratch(scrsign);
             return branchFalse();
         }
 

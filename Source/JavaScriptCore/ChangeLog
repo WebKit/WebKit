@@ -1,5 +1,18 @@
 2013-05-31  Julien Brianceau  <jbrianceau@nds.com>
 
+        [sh4] Fix Overflow case of branchMul32 in baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=117057
+
+        Reviewed by Oliver Hunt.
+
+        Current implementation of Overflow case in branchMul32 performs an
+        unsigned multiplication whereas a signed multiplication is expected.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchMul32):
+
+2013-05-31  Julien Brianceau  <jbrianceau@nds.com>
+
         [sh4] Fix floating point comparisons in baseline JIT.
         https://bugs.webkit.org/show_bug.cgi?id=117066.
 
