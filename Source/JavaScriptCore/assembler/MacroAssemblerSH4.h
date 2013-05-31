@@ -965,6 +965,14 @@ public:
         m_assembler.fstsfpul(dest);
     }
 
+    void moveDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        if (src != dest) {
+            m_assembler.fmovsRegReg((FPRegisterID)(src + 1), (FPRegisterID)(dest + 1));
+            m_assembler.fmovsRegReg(src, dest);
+        }
+    }
+
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
         RegisterID scr = claimScratch();
@@ -1065,10 +1073,10 @@ public:
     void addDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         if (op1 == dest)
-            m_assembler.daddRegReg(op2, dest);
+            addDouble(op2, dest);
         else {
-            m_assembler.dmovRegReg(op1, dest);
-            m_assembler.daddRegReg(op2, dest);
+            moveDouble(op2, dest);
+            addDouble(op1, dest);
         }
     }
 
@@ -1440,8 +1448,7 @@ public:
 
     void sqrtDouble(FPRegisterID src, FPRegisterID dest)
     {
-        if (dest != src)
-            m_assembler.dmovRegReg(src, dest);
+        moveDouble(src, dest);
         m_assembler.dsqrt(dest);
     }
     

@@ -829,6 +829,12 @@ public:
         oneShortOp(opc, true, false);
     }
 
+    void fmovsRegReg(FPRegisterID src, FPRegisterID dst)
+    {
+        uint16_t opc = getOpcodeGroup1(FMOV_OPCODE, dst, src);
+        oneShortOp(opc, true, false);
+    }
+
     void fmovsReadrm(RegisterID src, FPRegisterID dst)
     {
         uint16_t opc = getOpcodeGroup1(FMOVS_READ_RM_OPCODE, dst, src);

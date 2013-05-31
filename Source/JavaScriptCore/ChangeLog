@@ -1,5 +1,23 @@
 2013-05-31  Julien Brianceau  <jbrianceau@nds.com>
 
+        [sh4] Fix double floating point transfer in baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=117054
+
+        Reviewed by Oliver Hunt.
+
+        In current implementation, dmovRegReg function transfers only one single
+        FPRegister as PR=1 and SZ=0 in floating point status/control register.
+        Double transfers must be performed with two fmov.s opcodes.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::moveDouble):
+        (JSC::MacroAssemblerSH4::addDouble): Handle (op2==dest) case properly.
+        (JSC::MacroAssemblerSH4::sqrtDouble):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::fmovsRegReg):
+
+2013-05-31  Julien Brianceau  <jbrianceau@nds.com>
+
         [sh4] Handle branchType properly in branchTruncateDoubleToInt32.
         https://bugs.webkit.org/show_bug.cgi?id=117062
 
