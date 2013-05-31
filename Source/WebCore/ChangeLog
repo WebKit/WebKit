@@ -1,3 +1,31 @@
+2013-05-31  Dean Jackson  <dino@apple.com>
+
+        Update CheckedInt.h to latest version from Mozilla
+        https://bugs.webkit.org/show_bug.cgi?id=117009
+
+        Reviewed by Darin Adler.
+
+        Mozilla have updated their version of CheckedInt and suggested
+        we sync. Here are the improvements:
+
+        - CheckedInt now consistently rejects unsupported types. Before, you
+        could sometimes construct a CheckedInt from an unsupported type (like,
+        float) or multiply a CheckedInt by a float, and have it not caught! See
+        https://bugzilla.mozilla.org/show_bug.cgi?id=869194
+         - Fixed a possibility of undefined behavior in unary operator-. See bug
+        https://bugzilla.mozilla.org/show_bug.cgi?id=849666
+         - CheckedInt now supports the "long long" and "unsigned long long"
+        types. We don't like "long long" (and neither does the Google C++ style
+        guide!) but we had to do that because libogg exposes typedefs to those
+        types. See Bug https://bugzilla.mozilla.org/show_bug.cgi?id=869685
+         - CheckedInt also now supports "signed char" in addition to "char" ---
+        they are not the same type! See Bug https://bugzilla.mozilla.org/show_bug.cgi?id=847521
+         - Fixed and simplified usage of CheckedInt outside of Mozilla. You'll
+        like this one! See Bug https://bugzilla.mozilla.org/show_bug.cgi?id=849667
+         - Fixed compilation with the Intel C++ compiler. See bug https://bugzilla.mozilla.org/show_bug.cgi?id=784309
+
+        * html/canvas/CheckedInt.h: Updated.
+
 2013-05-31  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         Make sure gstreamer source element is thread-safe

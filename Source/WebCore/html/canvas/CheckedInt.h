@@ -5,50 +5,37 @@
 
 /* Provides checked integers, detecting integer overflow and divide-by-0. */
 
+// The original version of this file can be found at:
+// http://hg.mozilla.org/mozilla-central/raw-file/8d85de779506/mfbt/CheckedInt.h
 // Necessary modifications are made to the original CheckedInt.h file when
 // incorporating it into WebKit:
-// 1) Comment out #define MOZ_CHECKEDINT_ENABLE_MOZ_ASSERTS
-// 2) Comment out #include "mozilla/StandardInteger.h"
-// 3) Define MOZ_DELETE
-// 4) Change namespace mozilla to namespace WebCore
+// 1) Comment out #define MOZ_CHECKEDINT_USE_MFBT
+// 2) Change namespace mozilla to namespace WebCore
+// 3) Change one instance of "friend class detail::NegateImpl<T>;" to "friend struct detail::NegateImpl<T>;"
 
 #ifndef mozilla_CheckedInt_h_
 #define mozilla_CheckedInt_h_
 
-/*
- * Build options. Comment out these #defines to disable the corresponding
- * optional feature. Disabling features may be useful for code using
- * CheckedInt outside of Mozilla (e.g. WebKit)
- */
+// Enable relying of Mozilla's MFBT for possibly-available C++11 features
+// #define MOZ_CHECKEDINT_USE_MFBT
 
-// Enable usage of MOZ_STATIC_ASSERT to check for unsupported types.
-// If disabled, static asserts are replaced by regular assert().
-// #define MOZ_CHECKEDINT_ENABLE_MOZ_ASSERTS
-
-/*
- * End of build options
- */
-
-#ifdef MOZ_CHECKEDINT_ENABLE_MOZ_ASSERTS
+#ifdef MOZ_CHECKEDINT_USE_MFBT
 #  include "mozilla/Assertions.h"
+#  include "mozilla/StandardInteger.h"
 #else
-#  ifndef MOZ_STATIC_ASSERT
-#    include <cassert>
-#    define MOZ_STATIC_ASSERT(cond, reason) assert((cond) && reason)
-#    define MOZ_ASSERT(cond, reason) assert((cond) && reason)
-#  endif
-#endif
-
-// #include "mozilla/StandardInteger.h"
-
-#ifndef MOZ_DELETE
-#define MOZ_DELETE
+#  include <cassert>
+#  include <stdint.h>
+#  define MOZ_STATIC_ASSERT(cond, reason) assert((cond) && reason)
+#  define MOZ_ASSERT(cond, reason) assert((cond) && reason)
+#  define MOZ_DELETE
 #endif
 
 #include <climits>
 #include <cstddef>
 
 namespace WebCore {
+
+template<typename T> class CheckedInt;
 
 namespace detail {
 
@@ -115,6 +102,10 @@ struct IsSupportedPass2<char>
 { static const bool value = true; };
 
 template<>
+struct IsSupportedPass2<signed char>
+{ static const bool value = true; };
+
+template<>
 struct IsSupportedPass2<unsigned char>
 { static const bool value = true; };
 
@@ -142,6 +133,13 @@ template<>
 struct IsSupportedPass2<unsigned long>
 { static const bool value = true; };
 
+template<>
+struct IsSupportedPass2<long long>
+{ static const bool value = true; };
+
+template<>
+struct IsSupportedPass2<unsigned long long>
+{ static const bool value = true; };
 
 /*
  * Step 2: some integer-traits kind of stuff.
@@ -395,13 +393,13 @@ IsSubValid(T x, T y)
 }
 
 template<typename T,
-         bool IsSigned = IsSigned<T>::value,
+         bool IsTSigned = IsSigned<T>::value,
          bool TwiceBiggerTypeIsSupported =
            IsSupported<typename TwiceBiggerType<T>::Type>::value>
 struct IsMulValidImpl {};
 
-template<typename T, bool IsSigned>
-struct IsMulValidImpl<T, IsSigned, true>
+template<typename T, bool IsTSigned>
+struct IsMulValidImpl<T, IsTSigned, true>
 {
     static bool run(T x, T y)
     {
@@ -460,23 +458,32 @@ IsDivValid(T x, T y)
          !(IsSigned<T>::value && x == MinValue<T>::value && y == T(-1));
 }
 
-// This is just to shut up msvc warnings about negating unsigned ints.
 template<typename T, bool IsSigned = IsSigned<T>::value>
-struct OppositeIfSignedImpl
-{
-    static T run(T x) { return -x; }
-};
+struct NegateImpl;
+
 template<typename T>
-struct OppositeIfSignedImpl<T, false>
+struct NegateImpl<T, false>
 {
-    static T run(T x) { return x; }
+    static CheckedInt<T> negate(const CheckedInt<T>& val)
+    {
+      // Handle negation separately for signed/unsigned, for simpler code and to
+      // avoid an MSVC warning negating an unsigned value.
+      return CheckedInt<T>(0, val.isValid() && val.mValue == 0);
+    }
 };
+
 template<typename T>
-inline T
-OppositeIfSigned(T x)
+struct NegateImpl<T, true>
 {
-  return OppositeIfSignedImpl<T>::run(x);
-}
+    static CheckedInt<T> negate(const CheckedInt<T>& val)
+    {
+      // Watch out for the min-value, which (with twos-complement) can't be
+      // negated as -min-value is then (max-value + 1).
+      if (!val.isValid() || val.mValue == MinValue<T>::value)
+        return CheckedInt<T>(val.mValue, false);
+      return CheckedInt<T>(-val.mValue, true);
+    }
+};
 
 } // namespace detail
 
@@ -562,9 +569,12 @@ class CheckedInt
     template<typename U>
     CheckedInt(U value, bool isValid) : mValue(value), mIsValid(isValid)
     {
-      MOZ_STATIC_ASSERT(detail::IsSupported<T>::value,
+      MOZ_STATIC_ASSERT(detail::IsSupported<T>::value &&
+                        detail::IsSupported<U>::value,
                         "This type is not supported by CheckedInt");
     }
+
+    friend struct detail::NegateImpl<T>;
 
   public:
     /**
@@ -583,7 +593,8 @@ class CheckedInt
       : mValue(T(value)),
         mIsValid(detail::IsInRange<T>(value))
     {
-      MOZ_STATIC_ASSERT(detail::IsSupported<T>::value,
+      MOZ_STATIC_ASSERT(detail::IsSupported<T>::value &&
+                        detail::IsSupported<U>::value,
                         "This type is not supported by CheckedInt");
     }
 
@@ -634,14 +645,7 @@ class CheckedInt
 
     CheckedInt operator -() const
     {
-      // Circumvent msvc warning about - applied to unsigned int.
-      // if we're unsigned, the only valid case anyway is 0
-      // in which case - is a no-op.
-      T result = detail::OppositeIfSigned(mValue);
-      /* Help the compiler perform RVO (return value optimization). */
-      return CheckedInt(result,
-                        mIsValid && detail::IsSubValid(T(0),
-                                                       mValue));
+      return detail::NegateImpl<T>::negate(*this);
     }
 
     /**
@@ -761,6 +765,9 @@ template<typename T, typename U>
 inline typename detail::CastToCheckedIntImpl<T, U>::ReturnType
 castToCheckedInt(U u)
 {
+  MOZ_STATIC_ASSERT(detail::IsSupported<T>::value &&
+                    detail::IsSupported<U>::value,
+                    "This type is not supported by CheckedInt");
   return detail::CastToCheckedIntImpl<T, U>::run(u);
 }
 
