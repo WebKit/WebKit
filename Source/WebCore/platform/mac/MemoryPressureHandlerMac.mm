@@ -70,7 +70,11 @@ void MemoryPressureHandler::install()
         return;
 
     dispatch_async(dispatch_get_main_queue(), ^{
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        _cache_event_source = wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue();
+#else
         _cache_event_source = wkCreateVMPressureDispatchOnMainQueue();
+#endif
         if (_cache_event_source) {
             dispatch_set_context(_cache_event_source, this);
             dispatch_source_set_event_handler(_cache_event_source, ^{ memoryPressureHandler().respondToMemoryPressure();});
