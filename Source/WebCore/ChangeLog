@@ -1,3 +1,22 @@
+2013-05-30  Ruth Fong  <ruth_fong@apple.com>
+
+        WebKit's Enter Full Screen for <video> elements isn't working
+        https://bugs.webkit.org/show_bug.cgi?id=117001
+
+        Reviewed by Jer Noble.
+
+        Fix workflow to allow a video to enter into full screen
+        mode from a kWKContextMenuItemTagEnterVideoFullscreen 
+        context menu item by denoting the enterFullscreenForVideo
+        call as a user gesture, so Document::requestFullScreenForElement
+        will execute correctly.
+
+        No new tests. Covered by media/context-menu-actions.html,
+        which is disabled due to bug #116651.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::enterFullscreenForVideo):
+
 2013-05-30  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         Fix double hash lookup in RenderTableSection::paintObject loop
