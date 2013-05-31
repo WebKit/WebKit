@@ -1,3 +1,19 @@
+2013-05-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Incorrect assertion in DFG::Graph::uncheckedActivationRegisterFor()
+        <rdar://problem/13989324>
+
+        Rubber stamped by Mark Hahnenberg.
+        
+        This has a bogus assertion that checks that the passed CodeOrigin doesn't have
+        an inline call frame. This was well intentioned in the sense that it is true
+        that inlined call frames wouldn't have an activation register. But that doesn't
+        mean that people won't ask. Removing the assertion fixes a debug-only crash and
+        has no impact on production code. This change adds a comment to that effect.
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::uncheckedActivationRegisterFor):
+
 2013-05-31  Julien Brianceau  <jbrianceau@nds.com>
 
         [sh4] Fix Overflow case of branchMul32 in baseline JIT.
