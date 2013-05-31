@@ -12,7 +12,7 @@
       <ForcedIncludeFiles>ICUVersion.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>JavaScriptCore$(DebugSuffix).lib;winmm.lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>WTF$(DebugSuffix).lib;JavaScriptCore$(DebugSuffix).lib;winmm.lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <SubSystem>Console</SubSystem>

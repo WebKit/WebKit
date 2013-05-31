@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="API">
-      <UniqueIdentifier>{9ed0bc6e-7372-4795-9651-917c9e05c641}</UniqueIdentifier>
-    </Filter>
     <Filter Include="assembler">
       <UniqueIdentifier>{429783a1-5d6a-4019-ad1a-ddb2c98f9b6c}</UniqueIdentifier>
     </Filter>
@@ -51,6 +48,9 @@
     </Filter>
     <Filter Include="yarr">
       <UniqueIdentifier>{fac52666-842e-4d02-9d5f-844f54dca5f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API">
+      <UniqueIdentifier>{9ed0bc6e-7372-4795-9651-917c9e05c641}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

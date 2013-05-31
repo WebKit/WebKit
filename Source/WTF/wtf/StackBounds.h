@@ -77,7 +77,7 @@ private:
     {
     }
 
-    void initialize();
+    WTF_EXPORT_PRIVATE void initialize();
 
     void* current() const
     {

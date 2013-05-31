@@ -86,10 +86,10 @@ void initializeDates();
 int equivalentYearForDST(int year);
 
 // Not really math related, but this is currently the only shared place to put these.
-double parseES5DateFromNullTerminatedCharacters(const char* dateString);
+WTF_EXPORT_PRIVATE double parseES5DateFromNullTerminatedCharacters(const char* dateString);
 WTF_EXPORT_PRIVATE double parseDateFromNullTerminatedCharacters(const char* dateString);
-double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveTZ, int& offset);
-double timeClip(double);
+WTF_EXPORT_PRIVATE double parseDateFromNullTerminatedCharacters(const char* dateString, bool& haveTZ, int& offset);
+WTF_EXPORT_PRIVATE double timeClip(double);
 // dayOfWeek: [0, 6] 0 being Monday, day: [1, 31], month: [0, 11], year: ex: 2011, hours: [0, 23], minutes: [0, 59], seconds: [0, 59], utcOffset: [-720,720]. 
 String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset);
 
@@ -113,15 +113,15 @@ const double msPerHour = 60.0 * 60.0 * 1000.0;
 const double msPerDay = 24.0 * 60.0 * 60.0 * 1000.0;
 const double msPerMonth = 2592000000.0;
 
-bool isLeapYear(int year);
+WTF_EXPORT_PRIVATE bool isLeapYear(int year);
 
 // Returns the number of days from 1970-01-01 to the specified date.
 WTF_EXPORT_PRIVATE double dateToDaysFrom1970(int year, int month, int day);
 WTF_EXPORT_PRIVATE int msToYear(double ms);
-double msToDays(double ms);
-int msToMinutes(double ms);
-int msToHours(double ms);
-int dayInYear(int year, int month, int day);
+WTF_EXPORT_PRIVATE double msToDays(double ms);
+WTF_EXPORT_PRIVATE int msToMinutes(double ms);
+WTF_EXPORT_PRIVATE int msToHours(double ms);
+WTF_EXPORT_PRIVATE int dayInYear(int year, int month, int day);
 WTF_EXPORT_PRIVATE int dayInYear(double ms, int year);
 WTF_EXPORT_PRIVATE int monthFromDayInYear(int dayInYear, bool leapYear);
 WTF_EXPORT_PRIVATE int dayInMonthFromDayInYear(int dayInYear, bool leapYear);

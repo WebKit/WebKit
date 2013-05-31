@@ -131,7 +131,7 @@ namespace double_conversion {
         }
         
         // Returns a converter following the EcmaScript specification.
-        static const DoubleToStringConverter& EcmaScriptConverter();
+        WTF_EXPORT_PRIVATE static const DoubleToStringConverter& EcmaScriptConverter();
         
         // Computes the shortest string of digits that correctly represent the input
         // number. Depending on decimal_in_shortest_low and decimal_in_shortest_high
@@ -224,7 +224,7 @@ namespace double_conversion {
         // kMaxExponentialDigits + 8 characters (the sign, the digit before the
         // decimal point, the decimal point, the exponent character, the
         // exponent's sign, and at most 3 exponent digits).
-        bool ToExponential(double value,
+        WTF_EXPORT_PRIVATE bool ToExponential(double value,
                            int requested_digits,
                            StringBuilder* result_builder) const;
         

@@ -41,9 +41,9 @@ public:
     using PageBlock::size;
     using PageBlock::base;
 
-    static PageAllocationAligned allocate(size_t size, size_t alignment, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true);
+    WTF_EXPORT_PRIVATE static PageAllocationAligned allocate(size_t size, size_t alignment, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true);
 
-    void deallocate();
+    WTF_EXPORT_PRIVATE void deallocate();
 
 private:
 #if OS(DARWIN)

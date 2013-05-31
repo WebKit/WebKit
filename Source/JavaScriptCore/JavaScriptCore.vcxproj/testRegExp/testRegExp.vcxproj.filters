@@ -1,24 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\WTFString.cpp" />
-    <ClCompile Include="..\..\testRegExp.cpp">
-      <Filter>wtf/text</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\AtomicString.cpp">
-      <Filter>wtf/text</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\StringBuilder.cpp">
-      <Filter>wtf/text</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\StringImpl.cpp">
-      <Filter>wtf/text</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="wtf/text">
-      <UniqueIdentifier>{aff6b899-9fb0-445b-bdb9-fa60579dd138}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="..\..\testRegExp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="testRegExpPostBuild.cmd" />

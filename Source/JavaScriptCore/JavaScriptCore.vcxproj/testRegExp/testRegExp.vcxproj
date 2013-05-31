@@ -159,10 +159,6 @@
     <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\AtomicString.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\StringBuilder.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\StringImpl.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\include\private\wtf\text\WTFString.cpp" />
     <ClCompile Include="..\..\testRegExp.cpp" />
   </ItemGroup>
   <ItemGroup>

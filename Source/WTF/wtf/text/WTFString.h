@@ -453,13 +453,13 @@ public:
     // the input data contains invalid UTF-8 sequences.
     WTF_EXPORT_STRING_API static String fromUTF8(const LChar*, size_t);
     WTF_EXPORT_STRING_API static String fromUTF8(const LChar*);
-    static String fromUTF8(const char* s, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(s), length); };
-    static String fromUTF8(const char* s) { return fromUTF8(reinterpret_cast<const LChar*>(s)); };
-    static String fromUTF8(const CString&);
+    WTF_EXPORT_STRING_API static String fromUTF8(const char* s, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(s), length); };
+    WTF_EXPORT_STRING_API static String fromUTF8(const char* s) { return fromUTF8(reinterpret_cast<const LChar*>(s)); };
+    WTF_EXPORT_STRING_API static String fromUTF8(const CString&);
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
     WTF_EXPORT_STRING_API static String fromUTF8WithLatin1Fallback(const LChar*, size_t);
-    static String fromUTF8WithLatin1Fallback(const char* s, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(s), length); };
+    WTF_EXPORT_STRING_API static String fromUTF8WithLatin1Fallback(const char* s, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(s), length); };
     
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
     WTF::Unicode::Direction defaultWritingDirection(bool* hasStrongDirectionality = 0) const

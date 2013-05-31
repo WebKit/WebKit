@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCore", "JavaScriptCore.vcxproj", "{22413D41-3A18-42B7-92A8-CEDC6CE86920}"
 	ProjectSection(ProjectDependencies) = postProject
-		{BB7E61B8-869E-45E7-8F12-0907D08C1F57} = {BB7E61B8-869E-45E7-8F12-0907D08C1F57}
+		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreGenerated", "JavaScriptCoreGenerated.vcxproj", "{3670D01F-95F3-45A8-B878-947EB6CF214E}"
@@ -21,11 +21,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testapi", "testapi\testapi.vcxproj", "{5CC08E13-2CF9-4C2E-8544-07DA4E8C1843}"
 	ProjectSection(ProjectDependencies) = postProject
 		{BB16286B-AADC-46C1-BC0D-6C06F323E04B} = {BB16286B-AADC-46C1-BC0D-6C06F323E04B}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreExportGenerator", "JavaScriptCoreExportGenerator\JavaScriptCoreExportGenerator.vcxproj", "{BB7E61B8-869E-45E7-8F12-0907D08C1F57}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3670D01F-95F3-45A8-B878-947EB6CF214E} = {3670D01F-95F3-45A8-B878-947EB6CF214E}
 	EndProjectSection
 EndProject
 Global
@@ -76,14 +71,6 @@ Global
 		{5CC08E13-2CF9-4C2E-8544-07DA4E8C1843}.Production|Win32.Build.0 = Production|Win32
 		{5CC08E13-2CF9-4C2E-8544-07DA4E8C1843}.Release|Win32.ActiveCfg = Release|Win32
 		{5CC08E13-2CF9-4C2E-8544-07DA4E8C1843}.Release|Win32.Build.0 = Release|Win32
-		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.Debug|Win32.ActiveCfg = Debug|Win32
-		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.Debug|Win32.Build.0 = Debug|Win32
-		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.DebugSuffix|Win32.ActiveCfg = DebugSuffix|Win32
-		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.DebugSuffix|Win32.Build.0 = DebugSuffix|Win32
-		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.Production|Win32.ActiveCfg = Production|Win32
-		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.Production|Win32.Build.0 = Production|Win32
-		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.Release|Win32.ActiveCfg = Release|Win32
-		{BB7E61B8-869E-45E7-8F12-0907D08C1F57}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,12 +6,12 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>..\;..\tools\;..\runtime\;..\llint\;..\jit\;..\disassembler\;..\heap\;..\debugger\;..\assembler\;..\profiler\;..\yarr\;..\interpreter\;..\bytecode\;..\dfg\;..\bytecompiler\;..\parser\;..\API\;$(ConfigurationBuildDir)\obj32\JavaScriptCore\DerivedSources\;$(ConfigurationBuildDir)\include\;$(ConfigurationBuildDir)\include\JavaScriptCore\;$(ConfigurationBuildDir)\include\private\;$(WebKit_Libraries)\include;$(WebKit_Libraries)\include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>STATICALLY_LINKED_WITH_WTF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;libicuin$(DebugSuffix).lib;libicuuc$(DebugSuffix).lib;WTF$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>$(ConfigurationBuildDir)\obj32\JavaScriptCoreExportGenerator\JavaScriptCoreExports.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

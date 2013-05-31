@@ -63,7 +63,7 @@ namespace double_conversion {
     
     // Initializes the table of cached powers used by the dtoa algorithm.
     // This needs to be called when JSC is being initialized.
-    void initialize();
+    WTF_EXPORT_PRIVATE void initialize();
     
 }  // namespace double_conversion
 

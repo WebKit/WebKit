@@ -170,10 +170,10 @@ WTF_EXPORT_PRIVATE DWORD* tlsKeys();
 class PlatformThreadSpecificKey;
 typedef PlatformThreadSpecificKey* ThreadSpecificKey;
 
-void threadSpecificKeyCreate(ThreadSpecificKey*, void (*)(void *));
-void threadSpecificKeyDelete(ThreadSpecificKey);
-void threadSpecificSet(ThreadSpecificKey, void*);
-void* threadSpecificGet(ThreadSpecificKey);
+WTF_EXPORT_PRIVATE void threadSpecificKeyCreate(ThreadSpecificKey*, void (*)(void *));
+WTF_EXPORT_PRIVATE void threadSpecificKeyDelete(ThreadSpecificKey);
+WTF_EXPORT_PRIVATE void threadSpecificSet(ThreadSpecificKey, void*);
+WTF_EXPORT_PRIVATE void* threadSpecificGet(ThreadSpecificKey);
 
 template<typename T>
 inline ThreadSpecific<T>::ThreadSpecific()

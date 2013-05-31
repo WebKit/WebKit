@@ -9,7 +9,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/NXCOMPAT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>JavaScriptCore$(DebugSuffix).lib;WebKitGUID$(DebugSuffix).lib;WebKit$(DebugSuffix).lib;WebCoreTestSupport$(DebugSuffix).lib;gdi32.lib;ole32.lib;oleaut32.lib;user32.lib;shlwapi.lib;oleacc.lib;comsuppw.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>WTF$(DebugSuffix).lib;JavaScriptCore$(DebugSuffix).lib;WebKitGUID$(DebugSuffix).lib;WebKit$(DebugSuffix).lib;WebCoreTestSupport$(DebugSuffix).lib;gdi32.lib;ole32.lib;oleaut32.lib;user32.lib;shlwapi.lib;oleacc.lib;comsuppw.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

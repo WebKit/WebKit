@@ -44,7 +44,7 @@ public:
     PrintStream();
     virtual ~PrintStream();
 
-    void printf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
+    WTF_EXPORT_PRIVATE void printf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
     virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0) = 0;
 
     // Typically a no-op for many subclasses of PrintStream, this is a hint that

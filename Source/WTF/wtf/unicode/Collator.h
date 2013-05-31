@@ -49,7 +49,7 @@ namespace WTF {
         WTF_EXPORT_PRIVATE ~Collator();
         WTF_EXPORT_PRIVATE void setOrderLowerFirst(bool);
 
-        static PassOwnPtr<Collator> userDefault();
+        WTF_EXPORT_PRIVATE static PassOwnPtr<Collator> userDefault();
 
         WTF_EXPORT_PRIVATE Result collate(const ::UChar*, size_t, const ::UChar*, size_t) const;
 

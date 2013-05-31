@@ -41,7 +41,7 @@ public:
     
     WTF_EXPORT_PRIVATE CString toCString();
     WTF_EXPORT_PRIVATE String toString();
-    void reset();
+    WTF_EXPORT_PRIVATE void reset();
     
 private:
     void increaseSize(size_t);

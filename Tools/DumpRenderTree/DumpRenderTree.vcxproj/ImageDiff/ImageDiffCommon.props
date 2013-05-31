@@ -7,7 +7,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/NXCOMPAT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>JavaScriptCore$(DebugSuffix).lib;CoreGraphics$(DebugSuffix).lib;CoreFoundation$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>WTF$(DebugSuffix).lib;JavaScriptCore$(DebugSuffix).lib;CoreGraphics$(DebugSuffix).lib;CoreFoundation$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
