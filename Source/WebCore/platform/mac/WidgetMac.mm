@@ -54,6 +54,9 @@
 
 @interface NSView (Widget)
 - (void)visibleRectDidChange;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+- (BOOL)_hasCanDrawSubviewsIntoLayerOrAncestor;
+#endif
 @end
 
 namespace WebCore {
@@ -208,9 +211,14 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
     // code, which can deref it.
     RefPtr<Widget> protectedThis(this);
 
+    BOOL hasCanDrawSubviewsIntoLayerOrAncestor = NO;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    hasCanDrawSubviewsIntoLayerOrAncestor = [view _hasCanDrawSubviewsIntoLayerOrAncestor];
+#endif
+    
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-    if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {
-        // This is the common case of drawing into a window or printing.
+    if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen] || hasCanDrawSubviewsIntoLayerOrAncestor) {
+        // This is the common case of drawing into a window or an inclusive layer, or printing.
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
         END_BLOCK_OBJC_EXCEPTIONS;
