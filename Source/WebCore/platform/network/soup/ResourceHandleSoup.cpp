@@ -86,6 +86,7 @@ inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char directio
 }
 
 static bool loadingSynchronousRequest = false;
+static const size_t defaultReadBufferSize = 8192;
 
 class WebCoreSynchronousLoader : public ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(WebCoreSynchronousLoader);
@@ -306,7 +307,6 @@ void ResourceHandle::ensureReadBuffer()
 {
     ResourceHandleInternal* d = getInternal();
 
-    static const size_t defaultReadBufferSize = 8192;
     size_t bufferSize;
     char* bufferPtr = client()->getOrCreateReadBuffer(defaultReadBufferSize, bufferSize);
     if (bufferPtr) {
@@ -524,7 +524,7 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
 
     GOwnPtr<GError> error;
     ResourceHandleInternal* d = handle->getInternal();
-    gssize bytesSkipped = g_input_stream_read_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
+    gssize bytesSkipped = g_input_stream_skip_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
     if (error) {
         handle->client()->didFail(handle.get(), ResourceError::genericGError(error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
@@ -532,8 +532,7 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
     }
 
     if (bytesSkipped > 0) {
-        handle->ensureReadBuffer();
-        g_input_stream_read_async(d->m_inputStream.get(), d->m_readBufferPtr, d->m_readBufferSize, G_PRIORITY_DEFAULT,
+        g_input_stream_skip_async(d->m_inputStream.get(), defaultReadBufferSize, G_PRIORITY_DEFAULT,
             d->m_cancellable.get(), redirectSkipCallback, handle.get());
         return;
     }
@@ -683,11 +682,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
     if (soupMessage) {
         if (SOUP_STATUS_IS_REDIRECTION(soupMessage->status_code) && shouldRedirect(handle.get())) {
             d->m_inputStream = inputStream;
-            // We use read_async() rather than skip_async() to work around
-            // https://bugzilla.gnome.org/show_bug.cgi?id=691489 until we can
-            // depend on glib > 2.35.4
-            handle->ensureReadBuffer();
-            g_input_stream_read_async(d->m_inputStream.get(), d->m_readBufferPtr, d->m_readBufferSize, G_PRIORITY_DEFAULT,
+            g_input_stream_skip_async(d->m_inputStream.get(), defaultReadBufferSize, G_PRIORITY_DEFAULT,
                 d->m_cancellable.get(), redirectSkipCallback, handle.get());
             return;
         }

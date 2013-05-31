@@ -1,3 +1,24 @@
+2013-05-31  Alberto Garcia  <agarcia@igalia.com>
+
+        [Soup] [Gstreamer] ASSERT in StreamingClient::getOrCreateReadBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=116686
+
+        Reviewed by Carlos Garcia Campos.
+
+        We were using g_input_stream_read_async() to handle redirections
+        because of Gnome bug #691489.
+
+        This produces an unexpected read attempt which triggers an assert
+        in StreamingClient::getOrCreateReadBuffer().
+
+        Now that the Gnome bug is fixed we can replace read_async() with
+        skip_async().
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::ensureReadBuffer):
+        (WebCore::redirectSkipCallback):
+        (WebCore::sendRequestCallback):
+
 2013-05-30  Eugene Klyuchnikov  <eustas@chromium.org>
 
         selectionStart/selectionEnd return "obsolete" values when requested during "input" event
