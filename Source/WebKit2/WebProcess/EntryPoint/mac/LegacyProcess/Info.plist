@@ -34,5 +34,7 @@
 	<string>WebContentProcessMain</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
+	<key>NSMainNibFile</key>
+	<string>WebContentProcess</string>
 </dict>
 </plist>

@@ -1,5 +1,22 @@
 2013-05-31  Alexey Proskuryakov  <ap@apple.com>
 
+        Sandbox violations when trying to access fonts in non-standard locations
+        https://bugs.webkit.org/show_bug.cgi?id=117097
+        <rdar://problem/9264746>
+
+        Reviewed by Anders Carlsson.
+
+        The issue was that lack of a main xib was resulting in font machinery being
+        initialized too early, before we entered sandbox.
+
+        * Resources/WebContentProcess.xib: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info.plist:
+
+2013-05-31  Alexey Proskuryakov  <ap@apple.com>
+
         <rdar://problem/14036464> Sandbox violation when using Web SpeechSynthesis
 
         Reviewed by Anders Carlsson

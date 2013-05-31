@@ -45,5 +45,7 @@
 		<key>_MultipleInstances</key>
 		<true/>
 	</dict>
+	<key>NSMainNibFile</key>
+	<string>WebContentProcess</string>
 </dict>
 </plist>
