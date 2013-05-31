@@ -179,11 +179,11 @@ sub execute_tests {
         if ($last_suite ne $suite || $last_test_dir ne $test_dir) {
             if ($opt_sim_sdk) {
                 chomp($shell_command = `xcrun -sdk $opt_sim_sdk -find sim`);
-                $shell_command .= " --adopt-pid ";
+                $shell_command .= " --adopt-pid $opt_arch ";
+            } else {
+                $shell_command = "$opt_arch ";
             }
 
-            $shell_command .= "$opt_arch ";
-            
             $shell_command .= &xp_path($engine_command)  . " -s ";
 
 # FIXME: <https://bugs.webkit.org/show_bug.cgi?id=90119>

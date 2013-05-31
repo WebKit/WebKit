@@ -1,3 +1,17 @@
+2013-05-30  David Farler  <dfarler@apple.com>
+
+        Fix jscore-test when not using --sdk option with jsDriver.pl
+        https://bugs.webkit.org/show_bug.cgi?id=116339
+
+        Reviewed by Joe Pecoraro.
+
+        * tests/mozilla/jsDriver.pl:
+        (execute_tests):
+        With each test, the shell_command needs to be started from scratch.
+
+        This fix will clear the shell_command and start over as before with
+        the opt_arch option when not using --sdk with jsDriver.pl.
+
 2013-05-30  Roger Fong  <roger_fong@apple.com>
 
         Get rid of JavaScript exports file on AppleWin port.
