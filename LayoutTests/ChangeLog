@@ -1,3 +1,19 @@
+2013-05-28  Gavin Barraclough  <barraclough@apple.com>
+
+        fast/js/date-DST-time-cusps.html fails after http://trac.webkit.org/changeset/150833
+        https://bugs.webkit.org/show_bug.cgi?id=116895
+        <rdar://problem/4777813> Safari incorrectly handles times that shouldn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=11157
+
+        Reviewed by Alexey Proskuryakov.
+
+        Accidental progression, updating results to expect success.
+
+        * TestExpectations:
+            - Remove expectations of failure.
+        * fast/js/script-tests/date-DST-time-cusps.js:
+            - Prefer the latter option for non-existent time (due to clock rolling forward).
+
 2013-05-30  Tim Horton  <timothy_horton@apple.com>
 
         fast/dom/location-new-window-no-crash.html times out flakily on mac-wk2
