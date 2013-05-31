@@ -1,3 +1,15 @@
+2013-05-31  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update Button UX.
+        https://bugs.webkit.org/show_bug.cgi?id=116992
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PR 342298.
+        Internally Review by Jeff Rogers.
+
+        * css/themeBlackBerry.css:
+
 2013-05-31  David Kilzer  <ddkilzer@apple.com>
 
         DerivedSources.make: any rules that use $(FEATURE_DEFINES) should be rebuilt when FeatureDefines.xcconfig changes
