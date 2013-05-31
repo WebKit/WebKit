@@ -1,3 +1,13 @@
+2013-05-30  Noel Gordon  <noel.gordon@gmail.com>
+
+        [Mac] Should pass http/tests/images/png-partial-load-no-alpha.html 
+        https://bugs.webkit.org/show_bug.cgi?id=97170
+
+        Unreviewed test expectations update.
+
+        * platform/mac/TestExpectations: Passing after r150340: remove the
+        Mac-specfic [ImageOnlyFailure] for this test.
+
 2013-05-30  Eugene Klyuchnikov  <eustas@chromium.org>
 
         selectionStart/selectionEnd return "obsolete" values when requested during "input" event
