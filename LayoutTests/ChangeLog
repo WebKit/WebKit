@@ -1,3 +1,16 @@
+2013-05-30  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        selectionStart/selectionEnd return "obsolete" values when requested during "input" event
+        https://bugs.webkit.org/show_bug.cgi?id=110742
+
+        Reviewed by Ryosuke Niwa.
+
+        Test that cursor is up-to-date during "input" event.
+
+        * editing/selection/caret-after-keypress-expected.txt: Added.
+        * editing/selection/caret-after-keypress.html: Added.
+        * platform/mac-wk2/TestExpectations: Exclude new test.
+
 2013-05-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening.

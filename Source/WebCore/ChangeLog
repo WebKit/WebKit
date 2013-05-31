@@ -1,3 +1,39 @@
+2013-05-30  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        selectionStart/selectionEnd return "obsolete" values when requested during "input" event
+        https://bugs.webkit.org/show_bug.cgi?id=110742
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch defers firing "webkitEditableContentChanged" until new
+        selection is applied to control. This makes selection during "input"
+        more consistent and reliable.
+
+        Background: "input" event is fired by "webkitEditableContentChanged"
+        dispatcher. But "input" is scoped event, so under some conditions its
+        dispatching may be deferred. When "input" dispatching is deferred,
+        dispatcher observes updated selectionStart and selectionEnd.
+        Otherwise values repersent state before applying editing command.
+
+        So, to make selectionStart/End to be more predictable and useful, we
+        need either always dispatch "input" before selection is updated, or
+        always dispatch "input" after selection is updated.
+
+        As it was mentioned, dispatching could be deferred by scoping. So
+        dispatching before updating selection couldn't be guaranteed.
+        Moreover, it will be hard to calculate updated selection in user
+        code. On the other side - old selection could be easily tracked.
+
+        So, it looks logically that we should guarantee dispatching "input"
+        after updating selection. There are no execution paths in
+        "webkitEditableContentChanged" dispatched that depends on current
+        selection. So it is safe to fire this event after selection is updated.
+
+        Test: editing/selection/caret-after-keypress.html
+
+        * editing/Editor.cpp:
+        Dispatch "input" event after new selection in applied.
+
 2013-05-30  Ruth Fong  <ruth_fong@apple.com>
 
         WebKit's Enter Full Screen for <video> elements isn't working

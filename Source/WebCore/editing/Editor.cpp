@@ -847,7 +847,6 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
 
     EditCommandComposition* composition = cmd->composition();
     ASSERT(composition);
-    dispatchEditableContentChangedEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement());
     VisibleSelection newSelection(cmd->endingSelection());
 
     m_alternativeTextController->respondToAppliedEditing(cmd.get());
@@ -855,6 +854,7 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
     // Don't clear the typing style with this selection change.  We do those things elsewhere if necessary.
     FrameSelection::SetSelectionOptions options = cmd->isDictationCommand() ? FrameSelection::DictationTriggered : 0;
     changeSelectionAfterCommand(newSelection, options);
+    dispatchEditableContentChangedEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement());
 
     if (!cmd->preservesTypingStyle())
         m_frame->selection()->clearTypingStyle();
@@ -876,13 +876,13 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
 void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 {
     m_frame->document()->updateLayout();
-    
-    dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
-    
+
     VisibleSelection newSelection(cmd->startingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle);
+    dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
+
     m_alternativeTextController->respondToUnappliedEditing(cmd.get());
-    
+
     m_lastEditCommand = 0;
     if (client())
         client()->registerRedoStep(cmd);
@@ -892,12 +892,11 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 {
     m_frame->document()->updateLayout();
-    
-    dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
-    
+
     VisibleSelection newSelection(cmd->endingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle);
-    
+    dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
+
     m_lastEditCommand = 0;
     if (client())
         client()->registerUndoStep(cmd);
