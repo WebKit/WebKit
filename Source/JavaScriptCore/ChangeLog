@@ -1,5 +1,22 @@
 2013-05-31  Julien Brianceau  <jbrianceau@nds.com>
 
+        [sh4] Fix floating point comparisons in baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=117066.
+
+        Reviewed by Oliver Hunt.
+
+        Current implementation of branchDouble function in baseline JIT is wrong
+        for some conditions and overkill for others. For instance:
+        - With DoubleGreaterThanOrEqual condition, branch will be taken if either
+          operand is NaN with current implementation whereras it should not.
+        - With DoubleNotEqualOrUnordered condition, performed NaN checks are
+          useless (because comparison result is false if either operand is NaN).
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchDouble):
+
+2013-05-31  Julien Brianceau  <jbrianceau@nds.com>
+
         [sh4] Fix double floating point transfer in baseline JIT.
         https://bugs.webkit.org/show_bug.cgi?id=117054
 
