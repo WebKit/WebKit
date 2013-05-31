@@ -54,6 +54,7 @@ using namespace HTMLNames;
 #define YYDEBUG 0
 
 #if YYDEBUG > 0
+#include <wtf/text/CString.h>
 #define YYPRINT(File,Type,Value) if (isCSSTokenAString(Type)) YYFPRINTF(File, "%s", String((Value).string).utf8().data())
 #endif
 
