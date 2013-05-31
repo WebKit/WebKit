@@ -538,7 +538,7 @@ public:
 
     ColorSpaceData colorSpace();
 
-    void getInformationForPlugInWithProcessID(pid_t plugInProcessID, PassRefPtr<DictionaryCallback>);
+    void getPlugInInformation(pid_t plugInProcessID, PassRefPtr<DictionaryCallback>);
     void containsPlugInCallback(bool containsPlugIn, uint64_t plugInToken, uint64_t callbackID);
 #endif
 

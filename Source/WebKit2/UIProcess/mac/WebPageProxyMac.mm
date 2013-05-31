@@ -459,7 +459,7 @@ void WebPageProxy::setPluginComplexTextInputState(uint64_t pluginComplexTextInpu
     m_pageClient->setPluginComplexTextInputState(pluginComplexTextInputIdentifier, static_cast<PluginComplexTextInputState>(pluginComplexTextInputState));
 }
 
-void WebPageProxy::getInformationForPlugInWithProcessID(pid_t plugInProcessID, PassRefPtr<DictionaryCallback> prpCallback)
+void WebPageProxy::getPlugInInformation(pid_t plugInProcessID, PassRefPtr<DictionaryCallback> prpCallback)
 {
     RefPtr<DictionaryCallback> callback = prpCallback;
     if (!isValid()) {
@@ -467,13 +467,13 @@ void WebPageProxy::getInformationForPlugInWithProcessID(pid_t plugInProcessID, P
         return;
     }
 
-    PluginProcessProxy* pluginProcessProxy = PluginProcessManager::shared().plugInProcessWithProcessID(plugInProcessID);
-    if (!pluginProcessProxy)
+    PluginProcessProxy* plugInProcessProxy = PluginProcessManager::shared().findPlugInProcessByID(plugInProcessID);
+    if (!plugInProcessProxy)
         callback->performCallbackWithReturnValue(0);
 
     uint64_t callbackID = callback->callbackID();
-    m_plugInInformationCallbacks.set(callbackID, callback.get());
-    m_process->send(Messages::WebPage::ContainsPluginViewsWithPluginProcessToken(pluginProcessProxy->pluginProcessToken(), callbackID), m_pageID);
+    m_plugInInformationCallbacks.set(callbackID, callback.release());
+    m_process->send(Messages::WebPage::ContainsPluginViewsWithPluginProcessToken(plugInProcessProxy->pluginProcessToken(), callbackID), m_pageID);
 }
 
 void WebPageProxy::containsPlugInCallback(bool containsPlugIn, uint64_t plugInToken, uint64_t callbackID)
@@ -489,7 +489,7 @@ void WebPageProxy::containsPlugInCallback(bool containsPlugIn, uint64_t plugInTo
         return;
     }
 
-    PluginProcessProxy* plugInProcessProxy = PluginProcessManager::shared().plugInProcessWithToken(plugInToken);
+    PluginProcessProxy* plugInProcessProxy = PluginProcessManager::shared().findPlugInProcessByToken(plugInToken);
     ASSERT(plugInProcessProxy);
 
     ImmutableDictionary::MapType map;

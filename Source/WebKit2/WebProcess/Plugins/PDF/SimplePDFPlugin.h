@@ -191,8 +191,6 @@ protected:
 
     virtual String getSelectionString() const OVERRIDE { return String(); }
 
-    virtual uint64_t plugInProcessToken() const OVERRIDE { return 0; }
-
     WebCore::IntSize m_scrollOffset;
 
 private:
@@ -203,6 +201,8 @@ private:
     void convertPostScriptDataIfNeeded();
 
     virtual bool shouldAlwaysAutoStart() const OVERRIDE { return true; }
+
+    virtual uint64_t plugInProcessToken() const OVERRIDE { return 0; }
 
     WebCore::IntSize m_size;
 

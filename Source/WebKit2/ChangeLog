@@ -12,6 +12,43 @@
         be running on a page
         https://bugs.webkit.org/show_bug.cgi?id=117090
 
+        Rubber-stamped by Anders Carlsson.
+
+        Follow-up to r151043 incorprating some feedback I got from Darin after I had already
+        committed the patch.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.cpp:
+        (callGetPlugInInformationBlockAndDispose):
+        Renamed to be less wordy.
+        (WKPageGetPlugInInformation):
+        Ditto.
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        Ditto.
+
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm:
+        (WebKit::PluginProcessManager::findPlugInProcessByID):
+        Renamed to not use "Cocoa method style" in non-Cocoa functions.
+        (WebKit::PluginProcessManager::findPlugInProcessByToken):
+        Ditto.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::getPlugInInformation):
+        Reduce ref count churn and fix a variable name.
+        Updated for the change to findPlugInProcessByID.
+        (WebKit::WebPageProxy::containsPlugInCallback):
+        Updated for the change to findPlugInProcessByToken.
+
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:
+        Move the override of a virtual function to the private section.
+
+2013-05-31  Jessie Berlin  <jberlin@apple.com>
+
+        Need the ability to get the information for a plug-in with a particular process id that may
+        be running on a page
+        https://bugs.webkit.org/show_bug.cgi?id=117090
+
         Reviewed by Anders Carlsson.
 
         * UIProcess/API/C/mac/WKPagePrivateMac.cpp:

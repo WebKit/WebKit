@@ -39,7 +39,7 @@ void PluginProcessManager::setProcessSuppressionEnabled(bool processSuppressionE
         m_pluginProcesses[i]->setProcessSuppressionEnabled(processSuppressionEnabled);
 }
 
-PluginProcessProxy* PluginProcessManager::plugInProcessWithProcessID(pid_t plugInProcessID) const
+PluginProcessProxy* PluginProcessManager::findPlugInProcessByID(pid_t plugInProcessID) const
 {
     for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
         if (m_pluginProcesses[i]->processIdentifier() == plugInProcessID)
@@ -48,7 +48,7 @@ PluginProcessProxy* PluginProcessManager::plugInProcessWithProcessID(pid_t plugI
     return 0;
 }
 
-PluginProcessProxy* PluginProcessManager::plugInProcessWithToken(uint64_t plugInProcessToken) const
+PluginProcessProxy* PluginProcessManager::findPlugInProcessByToken(uint64_t plugInProcessToken) const
 {
     for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
         if (m_pluginProcesses[i]->pluginProcessToken() == plugInProcessToken)
