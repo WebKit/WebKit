@@ -1,3 +1,18 @@
+2013-05-31  Roger Fong  <roger_fong@apple.com>
+
+        Make build-webkit output VCExpress 2010 build logs properly.
+        https://bugs.webkit.org/show_bug.cgi?id=117096
+
+        Reviewed by Brent Fulgham.
+
+        Make it so that output from VCExpress is always printed to console.
+        Get build log results from AssembleBuildLogs project output.
+        We don't need those old VCExpress scripts anymore either. 
+
+        * Scripts/build-webkit:
+        * Scripts/print-msvc-project-dependencies: Removed.
+        * Scripts/print-vse-failure-logs: Removed.
+
 2013-05-31  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Use WinLauncher to display LayoutTest results
