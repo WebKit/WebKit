@@ -4861,9 +4861,8 @@ public:
         if (!span || !span->start)
             return 1;
 
-        if (m_seenPointers.contains(ptr))
+        if (!m_seenPointers.add(ptr).isNewEntry)
             return span->length;
-        m_seenPointers.add(ptr);
 
         if (!m_coalescedSpans.size()) {
             m_coalescedSpans.append(span);

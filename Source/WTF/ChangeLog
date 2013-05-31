@@ -1,3 +1,13 @@
+2013-05-31  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        Fix double hash lookup in PageMapMemoryUsageRecorder::visit
+        https://bugs.webkit.org/show_bug.cgi?id=117071
+
+        Reviewed by Andreas Kling.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+
 2013-05-31  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Speculative build fix for pre-VS2010 compilers
