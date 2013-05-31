@@ -1,5 +1,22 @@
 2013-05-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151042
+
+    2013-05-31  Anders Carlsson  <andersca@apple.com>
+
+            Take the normal NSView code path when drawing into an inclusive layer
+            https://bugs.webkit.org/show_bug.cgi?id=117094
+            <rdar://problem/13812355>
+
+            Reviewed by Sam Weinig.
+
+            For now, take the normal code path when drawing into an inclusive layer.
+
+            * platform/mac/WidgetMac.mm:
+            (WebCore::Widget::paint):
+
+2013-05-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r150836
 
     2013-05-28  Chris Fleizach  <cfleizach@apple.com>
