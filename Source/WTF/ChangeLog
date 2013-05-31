@@ -1,3 +1,9 @@
+2013-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Speculative build fix for pre-VS2010 compilers
+
+        * wtf/Platform.h: Only treat WTF as DLL for VS2010 builds
+
 2013-05-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Move MD5, SHA1 unit tests from WTF to TestWebKitAPI
