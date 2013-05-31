@@ -1393,6 +1393,13 @@ bool PluginView::isAcceleratedCompositingEnabled()
     if (!settings)
         return false;
 
+    // We know that some plug-ins can support snapshotting without needing
+    // accelerated compositing. Since we're trying to snapshot them anyway,
+    // put them into normal compositing mode. A side benefit is that this might
+    // allow the entire page to stay in that mode.
+    if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting && m_parameters.mimeType == "application/x-shockwave-flash")
+        return false;
+
     return settings->acceleratedCompositingEnabled();
 }
 
