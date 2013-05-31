@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,6 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import atexit
+import os
 import logging
 import re
 import sys
@@ -45,6 +48,12 @@ class WinPort(ApplePort):
     VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win"]
 
     ARCHITECTURES = ['x86']
+
+    CRASH_LOG_PREFIX = "CrashLog"
+
+    POST_MORTEM_DEBUGGER_KEY = "/HKLM/SOFTWARE/Microsoft/Windows NT/CurrentVersion/AeDebug/%s"
+
+    previous_debugger_values = {}
 
     def do_text_results_differ(self, expected_text, actual_text):
         # Sanity was restored in WK2, so we don't need this hack there.
@@ -122,3 +131,89 @@ class WinPort(ApplePort):
     def test_search_path(self):
         test_fallback_names = [path for path in self.baseline_search_path() if not path.startswith(self._webkit_baseline_path('mac'))]
         return map(self._webkit_baseline_path, test_fallback_names)
+
+    def _ntsd_location(self):
+        possible_paths = [self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x86", "ntsd.exe"),
+            self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x64", "ntsd.exe"),
+            self._filesystem.join(os.environ['PROGRAMFILES'], "Debugging Tools for Windows (x86)", "ntsd.exe"),
+            self._filesystem.join(os.environ['ProgramW6432'], "Debugging Tools for Windows (x64)", "ntsd.exe"),
+            self._filesystem.join(os.environ['SYSTEMROOT'], "system32", "ntsd.exe")]
+        for path in possible_paths:
+            expanded_path = self._filesystem.expanduser(path)
+            if self._filesystem.exists(expanded_path):
+                _log.debug("Using ntsd located in '%s'" % path)
+                return expanded_path
+        return None
+
+    def create_debugger_command_file(self):
+        debugger_temp_directory = self._filesystem.mkdtemp()
+        command_file = self._filesystem.join(debugger_temp_directory, "debugger-commands.txt")
+        self._filesystem.write_text_file(command_file, '.logopen /t "%s\\%s.txt"\n' % (cygpath(self.results_directory()), self.CRASH_LOG_PREFIX))
+        self._filesystem.write_text_file(command_file, '.srcpath "%s"\n' % cygpath(self._webkit_finder.webkit_base()))
+        self._filesystem.write_text_file(command_file, '!analyze -vv\n')
+        self._filesystem.write_text_file(command_file, '~*kpn\n')
+        self._filesystem.write_text_file(command_file, 'q\n')
+        return command_file
+
+    def read_registry_string(self, key):
+        registry_key = self.POST_MORTEM_DEBUGGER_KEY % key
+        read_registry_command = ["regtool", "--wow32", "get", registry_key]
+        value = self._executive.run_command(read_registry_command, error_handler=Executive.ignore_error)
+        return value.rstrip()
+
+    def write_registry_string(self, key, value):
+        registry_key = self.POST_MORTEM_DEBUGGER_KEY % key
+        set_reg_value_command = ["regtool", "--wow32", "set", "-s", str(registry_key), str(value)]
+        rc = self._executive.run_command(set_reg_value_command, return_exit_code=True)
+        if rc == 2:
+            add_reg_value_command = ["regtool", "--wow32", "add", "-s", str(registry_key)]
+            rc = self._executive.run_command(add_reg_value_command, return_exit_code=True)
+            if rc == 0:
+                rc = self._executive.run_command(set_reg_value_command, return_exit_code=True)
+        if rc:
+            _log.warn("Error setting key: %s to value %s.  Error=%ld." % (key, value, rc))
+            return False
+
+        # On Windows Vista/7 with UAC enabled, regtool will fail to modify the registry, but will still
+        # return a successful exit code. So we double-check here that the value we tried to write to the
+        # registry was really written.
+        if self.read_registry_string(key) != value:
+            _log.warn("Regtool reported success, but value of key %s did not change." % key)
+            return False
+
+        return True
+
+    def setup_crash_log_saving(self):
+        if '_NT_SYMBOL_PATH' not in os.environ:
+            _log.warning("The _NT_SYMBOL_PATH environment variable is not set. Crash logs will not be saved.")
+            return None
+        ntsd_path = self._ntsd_location()
+        if not ntsd_path:
+            _log.warning("Can't find ntsd.exe. Crash logs will not be saved.")
+            return None
+        # If we used -c (instead of -cf) we could pass the commands directly on the command line. But
+        # when the commands include multiple quoted paths (e.g., for .logopen and .srcpath), Windows
+        # fails to invoke the post-mortem debugger at all (perhaps due to a bug in Windows's command
+        # line parsing). So we save the commands to a file instead and tell the debugger to execute them
+        # using -cf.
+        command_file = self.create_debugger_command_file()
+        if not command_file:
+            return None
+        debugger_options = '"{0}" -p %ld -e %ld -g -lines -cf "{1}"'.format(cygpath(ntsd_path), cygpath(command_file))
+        registry_settings = {'Debugger': debugger_options, 'Auto': "1"}
+        for key in registry_settings:
+            self.previous_debugger_values[key] = self.read_registry_string(key)
+            self.write_registry_string(key, registry_settings[key])
+
+    def restore_crash_log_saving(self):
+        for key in self.previous_debugger_values:
+            self.write_registry_string(key, self.previous_debugger_values[key])
+
+    def setup_test_run(self):
+        atexit.register(self.restore_crash_log_saving)
+        self.setup_crash_log_saving()
+        super(WinPort, self).setup_test_run()
+
+    def clean_up_test_run(self):
+        self.restore_crash_log_saving()
+        super(WinPort, self).clean_up_test_run()

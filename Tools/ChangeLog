@@ -1,3 +1,24 @@
+2013-05-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] NRWT doesn't save crash logs on Apple's Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=76935
+
+        Reviewed by Ryosuke Niwa.
+
+        Extend the WinPort class with commands to set and clean up various registry
+        values needed to invoke the correct debugger to get crash files.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort): Added global caches for registry keys and settings
+        (WinPort._ntsd_location): Added
+        (WinPort.create_debugger_command_file): Added
+        (WinPort.read_registry_string): Added
+        (WinPort.write_registry_string): Added
+        (WinPort.setup_crash_log_saving): Added
+        (WinPort.restore_crash_log_saving): Added
+        (WinPort.setup_test_run): Added overload to add registry settings.
+        (WinPort.clean_up_test_run): Added overload to clean up registry settings.
+
 2013-05-30  Roger Fong  <roger_fong@apple.com>
 
         Get rid of JavaScript exports file on AppleWin port.
