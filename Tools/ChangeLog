@@ -1,3 +1,10 @@
+2013-05-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r151012
+
+        * TestWebKitAPI/Tests/WTF/MD5.cpp: Include <wtf/StringExtras.h> to provide
+        snprintf definition for Windows.
+
 2013-05-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Move MD5, SHA1 unit tests from WTF to TestWebKitAPI

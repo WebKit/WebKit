@@ -12,6 +12,7 @@
 
 #include "config.h"
 #include <wtf/MD5.h>
+#include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 
 namespace TestWebKitAPI {
