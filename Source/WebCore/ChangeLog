@@ -1,3 +1,18 @@
+2013-05-31  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Unable to download files.
+        https://bugs.webkit.org/show_bug.cgi?id=116150
+
+        Reviewed by Brent Fulgham.
+
+        Implemented basic download functionality for Curl.
+
+        * WebCore.vcproj/WebCore.vcproj: Added file.
+        * WebCore.vcxproj/WebCore.vcxproj: Added file.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Added file.
+        * platform/network/curl/CurlDownload.h: Added.
+        * platform/network/curl/CurlDownload.cpp: Added.
+
 2013-05-31  Anders Carlsson  <andersca@apple.com>
 
         Take the normal NSView code path when drawing into an inclusive layer

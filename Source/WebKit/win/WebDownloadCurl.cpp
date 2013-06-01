@@ -62,7 +62,9 @@ void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, c
 
 void WebDownload::init(const KURL& url, IWebDownloadDelegate* delegate)
 {
-   notImplemented();
+    m_delegate = delegate;
+
+    m_download.init(this, url);
 }
 
 // IWebDownload -------------------------------------------------------------------
@@ -85,14 +87,21 @@ HRESULT STDMETHODCALLTYPE WebDownload::initToResumeWithBundle(
 
 HRESULT STDMETHODCALLTYPE WebDownload::start()
 {
-   notImplemented();
-   return E_FAIL;
+    if (!m_download.start())
+        return E_FAIL;
+
+    if (m_delegate)
+        m_delegate->didBegin(this);
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebDownload::cancel()
 {
-   notImplemented();
-   return E_FAIL;
+    if (!m_download.cancel())
+        return E_FAIL;
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebDownload::cancelForResume()
@@ -104,23 +113,25 @@ HRESULT STDMETHODCALLTYPE WebDownload::cancelForResume()
 HRESULT STDMETHODCALLTYPE WebDownload::deletesFileUponFailure(
         /* [out, retval] */ BOOL* result)
 {
-   notImplemented();
-   return E_FAIL;
+    *result = m_download.deletesFileUponFailure() ? TRUE : FALSE;
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebDownload::setDeletesFileUponFailure(
         /* [in] */ BOOL deletesFileUponFailure)
 {
-   notImplemented();
-   return E_FAIL;
+    m_download.setDeletesFileUponFailure(deletesFileUponFailure);
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebDownload::setDestination(
         /* [in] */ BSTR path, 
         /* [in] */ BOOL allowOverwrite)
 {
-   notImplemented();
-   return E_FAIL;
+    size_t len = wcslen(path);
+    m_destination = String(path, len);
+    m_download.setDestination(m_destination);
+    return S_OK;
 }
 
 // IWebURLAuthenticationChallengeSender -------------------------------------------------------------------
@@ -145,4 +156,45 @@ HRESULT STDMETHODCALLTYPE WebDownload::useCredential(
 {
    notImplemented();
    return E_FAIL;
+}
+
+void WebDownload::didReceiveResponse()
+{
+    COMPtr<WebDownload> protect = this;
+
+    if (m_delegate) {
+        ResourceResponse response = m_download.getResponse();
+        COMPtr<WebURLResponse> webResponse(AdoptCOM, WebURLResponse::createInstance(response));
+        m_delegate->didReceiveResponse(this, webResponse.get());
+
+        String suggestedFilename = response.suggestedFilename();
+        if (suggestedFilename.isEmpty())
+            suggestedFilename = pathGetFileName(response.url().string());
+        BString suggestedFilenameBSTR(suggestedFilename.characters(), suggestedFilename.length());
+        m_delegate->decideDestinationWithSuggestedFilename(this, suggestedFilenameBSTR);
+    }
+}
+
+void WebDownload::didReceiveDataOfLength(int size)
+{
+    COMPtr<WebDownload> protect = this;
+
+    if (m_delegate)
+        m_delegate->didReceiveDataOfLength(this, size);
+}
+
+void WebDownload::didFinish()
+{
+    COMPtr<WebDownload> protect = this;
+
+    if (m_delegate)
+        m_delegate->didFinish(this);
+}
+
+void WebDownload::didFail()
+{
+    COMPtr<WebDownload> protect = this;
+
+    if (m_delegate)
+        m_delegate->didFailWithError(this, 0);
 }

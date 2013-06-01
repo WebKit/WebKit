@@ -1953,6 +1953,9 @@
     <ClCompile Include="..\platform\network\curl\CredentialStorageCurl.cpp">
       <Filter>platform\network\curl</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\network\curl\CurlDownload.cpp">
+      <Filter>platform\network\curl</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\network\curl\DNSCurl.cpp">
       <Filter>platform\network\curl</Filter>
     </ClCompile>
