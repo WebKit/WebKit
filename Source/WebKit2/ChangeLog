@@ -1,3 +1,20 @@
+2013-05-31  Oliver Hunt  <oliver@apple.com>
+
+        Fix bug in active page tracking that lead to plugins hanging during destruction
+        https://bugs.webkit.org/show_bug.cgi?id=117099
+
+        Reviewed by Anders Carlsson.
+
+        NPRuntimeObjectMap no longer keeps its own reference to the
+        throttler, and no longer reports activity during destruction.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::NPRuntimeObjectMap):
+        (WebKit::NPRuntimeObjectMap::evaluate):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+
 2013-05-31  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] All intrinsic content size changes should go through the 0-delay timer

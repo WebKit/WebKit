@@ -51,9 +51,8 @@ using namespace WebCore;
 namespace WebKit {
 
 
-NPRuntimeObjectMap::NPRuntimeObjectMap(PluginView* pluginView, PageThrottler* pageThrottler)
+NPRuntimeObjectMap::NPRuntimeObjectMap(PluginView* pluginView)
     : m_pluginView(pluginView)
-    , m_pageThrottler(pageThrottler)
     , m_finalizationTimer(RunLoop::main(), this, &NPRuntimeObjectMap::invalidateQueuedObjects)
 {
 }
@@ -185,10 +184,14 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
 
 bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
 {
-    m_pageThrottler->reportInterestingEvent();
     Strong<JSGlobalObject> globalObject(this->globalObject()->vm(), this->globalObject());
     if (!globalObject)
         return false;
+
+    if (m_pluginView && !m_pluginView->isBeingDestroyed()) {
+        if (Page* page = m_pluginView->frame()->page())
+            page->pageThrottler()->reportInterestingEvent();
+    }
 
     ExecState* exec = globalObject->globalExec();
     
