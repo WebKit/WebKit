@@ -120,9 +120,9 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
     if platform == 'mac':
         return createZip(configurationBuildDirectory, configuration, archiveConfigurationOnMac=True)
     elif platform == 'win':
-        binDirectory = os.path.join(configurationBuildDirectory, "bin")
+        binDirectory = os.path.join(configurationBuildDirectory, "bin32")
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
-        thinBinDirectory = os.path.join(thinDirectory, "bin")
+        thinBinDirectory = os.path.join(thinDirectory, "bin32")
 
         removeDirectoryIfExists(thinDirectory)
         copyBuildFiles(binDirectory, thinBinDirectory, ['*.ilk'])
@@ -188,7 +188,7 @@ def extractBuiltProduct(configuration, platform):
     if platform == 'mac':
         return unzipArchive(_buildDirectory, configuration)
     elif platform == 'win':
-        binDirectory = os.path.join(configurationBuildDirectory, "bin")
+        binDirectory = os.path.join(configurationBuildDirectory, "bin32")
         os.makedirs(binDirectory)
 
         safariPath = subprocess.Popen('cygpath -w "$PROGRAMFILES"/Safari',
