@@ -1027,7 +1027,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
     } else if (name == classAttr)
         classAttributeChanged(newValue);
     else if (name == HTMLNames::nameAttr)
-        setHasName(!newValue.isNull());
+        elementData()->m_hasNameAttribute = newValue.isNull();
     else if (name == HTMLNames::pseudoAttr)
         shouldInvalidateStyle |= testShouldInvalidateStyle && isInShadowTree();
 
@@ -3193,6 +3193,7 @@ void ElementData::deref()
 ElementData::ElementData()
     : m_isUnique(true)
     , m_arraySize(0)
+    , m_hasNameAttribute(false)
     , m_presentationAttributeStyleIsDirty(false)
     , m_styleAttributeIsDirty(false)
 #if ENABLE(SVG)
@@ -3204,6 +3205,7 @@ ElementData::ElementData()
 ElementData::ElementData(unsigned arraySize)
     : m_isUnique(false)
     , m_arraySize(arraySize)
+    , m_hasNameAttribute(false)
     , m_presentationAttributeStyleIsDirty(false)
     , m_styleAttributeIsDirty(false)
 #if ENABLE(SVG)
@@ -3265,6 +3267,7 @@ ShareableElementData::ShareableElementData(const UniqueElementData& other)
 ElementData::ElementData(const ElementData& other, bool isUnique)
     : m_isUnique(isUnique)
     , m_arraySize(isUnique ? 0 : other.length())
+    , m_hasNameAttribute(other.m_hasNameAttribute)
     , m_presentationAttributeStyleIsDirty(other.m_presentationAttributeStyleIsDirty)
     , m_styleAttributeIsDirty(other.m_styleAttributeIsDirty)
 #if ENABLE(SVG)

@@ -83,6 +83,7 @@ public:
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
     bool hasClass() const { return !m_classNames.isNull(); }
+    bool hasName() const { return m_hasNameAttribute; }
 
     bool isEquivalent(const ElementData* other) const;
 
@@ -94,7 +95,8 @@ protected:
     ElementData(const ElementData&, bool isUnique);
 
     unsigned m_isUnique : 1;
-    unsigned m_arraySize : 28;
+    unsigned m_arraySize : 27;
+    mutable unsigned m_hasNameAttribute : 1;
     mutable unsigned m_presentationAttributeStyleIsDirty : 1;
     mutable unsigned m_styleAttributeIsDirty : 1;
 #if ENABLE(SVG)
@@ -627,6 +629,7 @@ public:
 
     bool hasID() const;
     bool hasClass() const;
+    bool hasName() const;
     const SpaceSplitString& classNames() const;
 
     IntSize savedLayerScrollOffset() const;
@@ -906,6 +909,11 @@ inline bool Element::hasID() const
 inline bool Element::hasClass() const
 {
     return elementData() && elementData()->hasClass();
+}
+
+inline bool Element::hasName() const
+{
+    return elementData() && elementData()->hasName();
 }
 
 inline UniqueElementData* Element::ensureUniqueElementData()

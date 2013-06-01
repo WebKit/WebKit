@@ -1,5 +1,24 @@
 2013-06-01  Andreas Kling  <akling@apple.com>
 
+        Move Node::hasName() to Element.
+        <http://webkit.org/b/117107>
+
+        Reviewed by Antti Koivisto.
+
+        A Node can't have attributes, and thus can't have a name.
+        Use a bit on ElementData instead of (half) a Node flag to track whether we have a name.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::ElementData::ElementData):
+        * dom/Element.h:
+        (WebCore::ElementData::hasName):
+        (WebCore::Element::hasName):
+        * dom/Node.h:
+        (WebCore::Node::isEditingText):
+
+2013-06-01  Andreas Kling  <akling@apple.com>
+
         Move Node::hasID() and hasClass() to Element.
         <http://webkit.org/b/117104>
 

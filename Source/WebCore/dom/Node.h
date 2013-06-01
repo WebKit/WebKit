@@ -327,8 +327,6 @@ public:
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool /* error loading subresource */) { }
     virtual void startLoadingDynamicSheet() { ASSERT_NOT_REACHED(); }
 
-    bool hasName() const { return !isTextNode() && getFlag(HasNameOrIsEditingTextFlag); }
-
     bool isUserActionElement() const { return getFlag(IsUserActionElement); }
     void setUserActionElement(bool flag) { setFlag(flag, IsUserActionElement); }
 
@@ -338,9 +336,8 @@ public:
     StyleChangeType styleChangeType() const { return static_cast<StyleChangeType>(m_nodeFlags & StyleChangeMask); }
     bool childNeedsStyleRecalc() const { return getFlag(ChildNeedsStyleRecalcFlag); }
     bool isLink() const { return getFlag(IsLinkFlag); }
-    bool isEditingText() const { return isTextNode() && getFlag(HasNameOrIsEditingTextFlag); }
+    bool isEditingText() const { return getFlag(IsEditingTextFlag); }
 
-    void setHasName(bool f) { ASSERT(!isTextNode()); setFlag(f, HasNameOrIsEditingTextFlag); }
     void setChildNeedsStyleRecalc() { setFlag(ChildNeedsStyleRecalcFlag); }
     void clearChildNeedsStyleRecalc() { clearFlag(ChildNeedsStyleRecalcFlag); }
 
@@ -661,7 +658,7 @@ private:
 
         SelfOrAncestorHasDirAutoFlag = 1 << 17,
 
-        HasNameOrIsEditingTextFlag = 1 << 18,
+        IsEditingTextFlag = 1 << 18,
 
         InNamedFlowFlag = 1 << 19,
         HasSyntheticAttrChildNodesFlag = 1 << 20,
@@ -695,7 +692,7 @@ protected:
         CreateSVGElement = CreateStyledElement | IsSVGFlag,
         CreateDocument = CreateContainer | InDocumentFlag,
         CreateInsertionPoint = CreateHTMLElement | NeedsShadowTreeWalkerFlag,
-        CreateEditingText = CreateText | HasNameOrIsEditingTextFlag,
+        CreateEditingText = CreateText | IsEditingTextFlag,
     };
     Node(Document*, ConstructionType);
 
