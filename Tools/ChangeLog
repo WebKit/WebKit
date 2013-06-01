@@ -1,5 +1,14 @@
 2013-05-31  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Make windows test bots search in the correct directory for build output.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests.start):
+        * Scripts/webkitdirs.pm:
+        (determineConfigurationProductDir):
+
+2013-05-31  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Windows build fix...
 
         * BuildSlaveSupport/built-product-archive:
