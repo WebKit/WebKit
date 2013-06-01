@@ -455,8 +455,10 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, cons
     [CATransaction flush];
     [CATransaction synchronize];
 
-    m_lastSentIntrinsicContentSize = contentSize;
-    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry(contentSize));
+    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
+
+    if (m_webPage->minimumLayoutWidth() && !m_updateIntrinsicContentSizeTimer.isActive())
+        m_updateIntrinsicContentSizeTimer.startOneShot(0);
 
     m_inUpdateGeometry = false;
 }

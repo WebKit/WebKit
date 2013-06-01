@@ -31,7 +31,7 @@ messages -> DrawingAreaProxy {
 
 #if PLATFORM(MAC)
     // Used by TiledCoreAnimationDrawingAreaProxy.
-    DidUpdateGeometry(WebCore::IntSize newIntrinsicContentSize)
+    DidUpdateGeometry()
     IntrinsicContentSizeDidChange(WebCore::IntSize newIntrinsicContentSize)
 #endif
 }

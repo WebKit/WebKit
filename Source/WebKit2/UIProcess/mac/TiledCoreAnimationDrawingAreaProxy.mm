@@ -131,7 +131,7 @@ void TiledCoreAnimationDrawingAreaProxy::updateAcceleratedCompositingMode(uint64
     m_webPageProxy->updateAcceleratedCompositingMode(layerTreeContext);
 }
 
-void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry(const IntSize& newIntrinsicContentSize)
+void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
 {
     ASSERT(m_isWaitingForDidUpdateGeometry);
 
@@ -143,9 +143,6 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry(const IntSize& newInt
     // we need to resend the new size here.
     if (m_lastSentSize != m_size || m_lastSentLayerPosition != m_layerPosition || m_lastSentMinimumLayoutWidth != minimumLayoutWidth)
         sendUpdateGeometry();
-
-    if (minimumLayoutWidth > 0)
-        m_webPageProxy->intrinsicContentSizeDidChange(newIntrinsicContentSize);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::intrinsicContentSizeDidChange(const IntSize& newIntrinsicContentSize)

@@ -55,7 +55,7 @@ private:
     virtual void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) OVERRIDE;
 
     // Message handlers.
-    virtual void didUpdateGeometry(const WebCore::IntSize& newIntrinsicContentSize) OVERRIDE;
+    virtual void didUpdateGeometry() OVERRIDE;
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) OVERRIDE;
 
     void sendUpdateGeometry();
