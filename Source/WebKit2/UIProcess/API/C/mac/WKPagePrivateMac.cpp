@@ -36,14 +36,14 @@ pid_t WKPageGetProcessIdentifier(WKPageRef pageRef)
     return toImpl(pageRef)->processIdentifier();
 }
 
-static void callGetInformationForPlugInWithProcessIDBlockAndDispose(WKDictionaryRef resultValue, WKErrorRef error, void* context)
+static void callGetPlugInInformationBlockAndDispose(WKDictionaryRef resultValue, WKErrorRef error, void* context)
 {
-    WKPageGetInformationForPlugInWithProcessIDBlock block = (WKPageGetInformationForPlugInWithProcessIDBlock)context;
+    WKPageGetPlugInInformationBlock block = (WKPageGetPlugInInformationBlock)context;
     block(resultValue, error);
     Block_release(block);
 }
 
-void WKPageGetInformationForPlugInWithProcessID(WKPageRef pageRef, pid_t plugInProcessID, WKPageGetInformationForPlugInWithProcessIDBlock block)
+void WKPageGetPlugInInformation(WKPageRef pageRef, pid_t plugInProcessID, WKPageGetPlugInInformationBlock block)
 {
-    toImpl(pageRef)->getInformationForPlugInWithProcessID(plugInProcessID, DictionaryCallback::create(Block_copy(block), callGetInformationForPlugInWithProcessIDBlockAndDispose));
+    toImpl(pageRef)->getPlugInInformation(plugInProcessID, DictionaryCallback::create(Block_copy(block), callGetPlugInInformationBlockAndDispose));
 }

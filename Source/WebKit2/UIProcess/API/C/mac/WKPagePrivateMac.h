@@ -34,8 +34,8 @@ extern "C" {
 
 WK_EXPORT pid_t WKPageGetProcessIdentifier(WKPageRef page);
 
-typedef void (^WKPageGetInformationForPlugInWithProcessIDBlock)(WKDictionaryRef, WKErrorRef);
-WK_EXPORT void WKPageGetInformationForPlugInWithProcessID(WKPageRef, pid_t plugInProcessID, WKPageGetInformationForPlugInWithProcessIDBlock);
+typedef void (^WKPageGetPlugInInformationBlock)(WKDictionaryRef, WKErrorRef);
+WK_EXPORT void WKPageGetPlugInInformation(WKPageRef, pid_t plugInProcessID, WKPageGetPlugInInformationBlock);
 
 #ifdef __cplusplus
 }

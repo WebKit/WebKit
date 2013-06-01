@@ -63,8 +63,8 @@ public:
 
 #if PLATFORM(MAC)
     void setProcessSuppressionEnabled(bool);
-    PluginProcessProxy* plugInProcessWithProcessID(pid_t plugInProcessID) const;
-    PluginProcessProxy* plugInProcessWithToken(uint64_t plugInProcessToken) const;
+    PluginProcessProxy* findPlugInProcessByID(pid_t plugInProcessID) const;
+    PluginProcessProxy* findPlugInProcessByToken(uint64_t plugInProcessToken) const;
 #endif
 
 private:
