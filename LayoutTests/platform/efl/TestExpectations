@@ -1673,9 +1673,6 @@ webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
 # New accessibility test added in r147801 that is failing for EFL.
 webkit.org/b/114151 accessibility/svg-group-element-with-title.html [ Failure ]
 
-# New accessibility test added in r149858 that is failing for EFL.
-webkit.org/b/115901 accessibility/poorly-formed-aria-table.html [ Failure ]
-
 # Newly added test in r144727 failing.
 webkit.org/b/111850 accessibility/table-with-hidden-head-section.html [ Failure ]
 

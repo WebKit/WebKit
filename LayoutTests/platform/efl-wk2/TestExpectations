@@ -252,6 +252,9 @@ webkit.org/b/112018 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/112020 accessibility/transformed-element.html [ Failure ]
 webkit.org/b/112021 accessibility/visible-elements.html [ Failure ]
 
+# New accessibility test added in r149858 that is failing for EFL.
+webkit.org/b/115901 accessibility/poorly-formed-aria-table.html [ Failure ]
+
 webkit.org/b/112019 accessibility/title-ui-element-correctness.html [ Crash ]
 
 accessibility/aria-checkbox-sends-notification.html [ Skip ]

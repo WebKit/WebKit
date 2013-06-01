@@ -1,3 +1,11 @@
+2013-05-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Remove passed accessibility test from EFL WK1.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2013-05-31  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening. Update test-expectations after r151000.
