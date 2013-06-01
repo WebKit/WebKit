@@ -427,17 +427,16 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     }
     
     if (behavior & RenderAsTextShowIDAndClass) {
-        if (Node* node = o.node()) {
-            if (node->hasID())
-                ts << " id=\"" + toElement(node)->getIdAttribute() + "\"";
+        if (Element* element = o.node() && o.node()->isElementNode() ? toElement(o.node()) : 0) {
+            if (element->hasID())
+                ts << " id=\"" + element->getIdAttribute() + "\"";
 
-            if (node->hasClass()) {
+            if (element->hasClass()) {
                 ts << " class=\"";
-                StyledElement* styledElement = static_cast<StyledElement*>(node);
-                for (size_t i = 0; i < styledElement->classNames().size(); ++i) {
+                for (size_t i = 0; i < element->classNames().size(); ++i) {
                     if (i > 0)
                         ts << " ";
-                    ts << styledElement->classNames()[i];
+                    ts << element->classNames()[i];
                 }
                 ts << "\"";
             }
@@ -667,7 +666,7 @@ static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, 
             String tagName = getTagName(renderRegion->generatingNode());
             if (!tagName.isEmpty())
                 ts << " {" << tagName << "}";
-            if (renderRegion->generatingNode()->isElementNode() && renderRegion->generatingNode()->hasID()) {
+            if (renderRegion->generatingNode()->isElementNode() && toElement(renderRegion->generatingNode())->hasID()) {
                 Element* element = toElement(renderRegion->generatingNode());
                 ts << " #" << element->idForStyleResolution();
             }

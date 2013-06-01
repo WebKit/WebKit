@@ -1,3 +1,13 @@
+2013-06-01  Andreas Kling  <akling@apple.com>
+
+        Move Node::hasID() and hasClass() to Element.
+        <http://webkit.org/b/117104>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView/WebRenderLayer.mm:
+        (+[WebRenderLayer nameForLayer:]):
+
 2013-05-31  Stephanie Lewis  <slewis@apple.com>
 
         Update low memory handler to use new memory pressure notifications on new OS versions.

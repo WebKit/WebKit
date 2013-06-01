@@ -1,3 +1,23 @@
+2013-06-01  Andreas Kling  <akling@apple.com>
+
+        Move Node::hasID() and hasClass() to Element.
+        <http://webkit.org/b/117104>
+
+        Reviewed by Ryosuke Niwa.
+
+        A Node can't have attributes, and thus can't have an ID or a class.
+        Move these to Element instead, and fix up a few call sites that called through on a Node*.
+
+        * dom/Element.h:
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeList::namedItem):
+        * dom/Node.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::name):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::writeRenderRegionList):
+
 2013-05-31  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Unable to download files.

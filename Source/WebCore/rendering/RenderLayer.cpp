@@ -279,24 +279,23 @@ String RenderLayer::name() const
 {
     StringBuilder name;
     name.append(renderer()->renderName());
-    if (Node* node = renderer()->node()) {
-        if (node->isElementNode()) {
-            name.append(' ');
-            name.append(toElement(node)->tagName());
-        }
-        if (node->hasID()) {
+
+    if (Element* element = renderer()->node() && renderer()->node()->isElementNode() ? toElement(renderer()->node()) : 0) {
+        name.append(' ');
+        name.append(element->tagName());
+
+        if (element->hasID()) {
             name.appendLiteral(" id=\'");
-            name.append(toElement(node)->getIdAttribute());
+            name.append(element->getIdAttribute());
             name.append('\'');
         }
 
-        if (node->hasClass()) {
+        if (element->hasClass()) {
             name.appendLiteral(" class=\'");
-            StyledElement* styledElement = static_cast<StyledElement*>(node);
-            for (size_t i = 0; i < styledElement->classNames().size(); ++i) {
+            for (size_t i = 0; i < element->classNames().size(); ++i) {
                 if (i > 0)
                     name.append(' ');
-                name.append(styledElement->classNames()[i]);
+                name.append(element->classNames()[i]);
             }
             name.append('\'');
         }
