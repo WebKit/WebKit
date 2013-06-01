@@ -1,5 +1,16 @@
 2013-06-01  Andreas Kling  <akling@apple.com>
 
+        Remove unnused WebDOMNodeOperationsInternal category.
+        <http://webkit.org/b/117105>
+
+        Reviewed by Ryosuke Niwa.
+
+        _subresourceURLs had no clients.
+
+        * DOM/WebDOMOperations.mm:
+
+2013-06-01  Andreas Kling  <akling@apple.com>
+
         Move Node::hasID() and hasClass() to Element.
         <http://webkit.org/b/117104>
 

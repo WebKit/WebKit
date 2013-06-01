@@ -132,26 +132,6 @@ bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
 
 @end
 
-/* This doesn't appear to be used by anyone.  We should consider removing this. */
-@implementation DOMNode (WebDOMNodeOperationsInternal)
-
-- (NSArray *)_subresourceURLs
-{
-    ListHashSet<KURL> urls;
-    core(self)->getSubresourceURLs(urls);
-    if (!urls.size())
-        return nil;
-
-    NSMutableArray *array = [NSMutableArray arrayWithCapacity:urls.size()];
-    ListHashSet<KURL>::iterator end = urls.end();
-    for (ListHashSet<KURL>::iterator it = urls.begin(); it != end; ++it)
-        [array addObject:(NSURL *)*it];
-
-    return array;
-}
-
-@end
-
 @implementation DOMDocument (WebDOMDocumentOperations)
 
 - (WebFrame *)webFrame
