@@ -1,5 +1,12 @@
 2013-05-31  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Windows build fix...
+
+        * BuildSlaveSupport/built-product-archive:
+        (createZip):
+
+2013-05-31  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Windows build fix. One more time!
 
         * BuildSlaveSupport/built-product-archive:

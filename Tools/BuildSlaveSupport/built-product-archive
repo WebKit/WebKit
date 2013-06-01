@@ -104,7 +104,7 @@ def createZip(directoryToZip, configuration, archiveConfigurationOnMac=False):
             return subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", directoryToZip, archiveFile])
         return subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", directoryToZip, archiveFile])
     elif sys.platform == 'cygwin':
-        return subprocess.call(["zip", "-r", archiveFile, "bin"], cwd=directoryToZip)
+        return subprocess.call(["zip", "-r", archiveFile, "bin32"], cwd=directoryToZip)
     elif sys.platform == 'win32':
         createZipManually(directoryToZip, archiveFile)
         return 0
