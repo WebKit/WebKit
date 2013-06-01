@@ -326,6 +326,7 @@ for my $dir (@projects) {
     }
 
     my $project = basename($dir);
+    my $baseProductDir = baseProductDir();
     if (isGtk()) {
         $result = buildGtkProject($project, $clean, $prefixPath, $makeArgs, $noWebKit1, $noWebKit2, @features);
     } elsif (isAppleMacWebKit()) {
@@ -342,19 +343,17 @@ for my $dir (@projects) {
                 $webkitSolutionPath = "win/WebKit.vcproj/WebKit.sln";
             }
             $result = buildVisualStudioProject($webkitSolutionPath, $clean);
+            my $vsConfiguration = configurationForVisualStudio();
+            if (usingVisualStudioExpress()) {
+                # Visual Studio Express is so lame it can't stdout build failures.
+                # So we find its logs and dump them to the console ourselves.
+                open(my $OUTPUT_HANDLE, '<', "$baseProductDir/$vsConfiguration/BuildOutput.htm") or die "Could not open build log file at $baseProductDir/$vsConfiguration/BuildOutput.htm";
+                print while (<$OUTPUT_HANDLE>);
+            }
         }
     }
     # Various build* calls above may change the CWD.
     chdirWebKit();
-
-    my $baseProductDir = baseProductDir();
-    my $vsConfiguration = configurationForVisualStudio();
-    if (usingVisualStudioExpress()) {
-        # Visual Studio Express is so lame it can't stdout build failures.
-        # So we find its logs and dump them to the console ourselves.
-        open(my $OUTPUT_HANDLE, '<', "$baseProductDir/$vsConfiguration/BuildOutput.htm") or die "Could not open build log file at $baseProductDir/$vsConfiguration/BuildOutput.htm";
-        print while (<$OUTPUT_HANDLE>);
-    }
 
     if (exitStatus($result)) {
         my $scriptDir = relativeScriptsDir();
