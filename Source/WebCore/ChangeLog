@@ -1,5 +1,12 @@
 2013-06-01  Andreas Kling  <akling@apple.com>
 
+        Fix typo in r151071.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+
+2013-06-01  Andreas Kling  <akling@apple.com>
+
         Move Node::hasName() to Element.
         <http://webkit.org/b/117107>
 
