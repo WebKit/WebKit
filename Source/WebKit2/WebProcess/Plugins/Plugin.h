@@ -277,6 +277,8 @@ public:
 
     virtual String getSelectionString() const = 0;
 
+    virtual uint64_t plugInProcessToken() const = 0;
+
 protected:
     Plugin();
 

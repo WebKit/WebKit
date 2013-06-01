@@ -372,7 +372,9 @@ public:
     void setBottomOverhangImage(PassRefPtr<WebImage>);
 
     void updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor);
-#endif
+
+    void containsPluginViewsWithPluginProcessToken(uint64_t plugInProcessToken, uint64_t callbackID);
+#endif // PLATFORM(MAC)
 
     bool windowIsFocused() const;
     bool windowAndWebPageAreFocused() const;

@@ -166,6 +166,7 @@ class WebGestureEvent;
 class WebVibrationProxy;
 #endif
 
+typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
 typedef GenericCallback<WKStringRef, StringImpl*> StringCallback;
 typedef GenericCallback<WKSerializedScriptValueRef, WebSerializedScriptValue*> ScriptValueCallback;
 
@@ -536,6 +537,9 @@ public:
     void makeFirstResponder();
 
     ColorSpaceData colorSpace();
+
+    void getInformationForPlugInWithProcessID(pid_t plugInProcessID, PassRefPtr<DictionaryCallback>);
+    void containsPlugInCallback(bool containsPlugIn, uint64_t plugInToken, uint64_t callbackID);
 #endif
 
     void pageScaleFactorDidChange(double);
@@ -1098,6 +1102,9 @@ private:
     HashMap<uint64_t, RefPtr<ValidateCommandCallback>> m_validateCommandCallbacks;
 #if PLATFORM(GTK)
     HashMap<uint64_t, RefPtr<PrintFinishedCallback>> m_printFinishedCallbacks;
+#endif
+#if PLATFORM(MAC)
+    HashMap<uint64_t, RefPtr<DictionaryCallback>> m_plugInInformationCallbacks;
 #endif
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;

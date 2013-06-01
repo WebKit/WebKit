@@ -263,6 +263,8 @@ messages -> WebPage LegacyReceiver {
     # Complex text input support for plug-ins.
     SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)
 
+    ContainsPluginViewsWithPluginProcessToken(uint64_t plugInProcessToken, uint64_t callbackID)
+
     SetWindowIsVisible(bool windowIsVisible)
     WindowAndViewFramesChanged(WebCore::FloatRect windowFrameInScreenCoordinates, WebCore::FloatRect windowFrameInUnflippedScreenCoordinates, WebCore::FloatRect viewFrameInWindowCoordinates, WebCore::FloatPoint accessibilityViewCoordinates)
     ViewExposedRectChanged(WebCore::FloatRect exposedRect)
