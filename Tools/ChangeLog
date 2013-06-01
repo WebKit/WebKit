@@ -1,3 +1,9 @@
+2013-06-01  Tim Horton  <timothy_horton@apple.com>
+
+        Add a preferred email address and "expertise" for me.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-05-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Make windows test bots search in the correct directory for build output.

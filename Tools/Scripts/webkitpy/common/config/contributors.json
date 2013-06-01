@@ -4021,8 +4021,10 @@
       },
       "Tim Horton" : {
          "emails" : [
+            "thorton@apple.com",
             "timothy_horton@apple.com"
          ],
+         "expertise" : "SVG/Canvas/Graphics, WebKit2",
          "nicks" : [
             "thorton"
          ]
