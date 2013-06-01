@@ -76,6 +76,9 @@ EwkContextMenu::~EwkContextMenu()
 
 void EwkContextMenu::hide()
 {
+    if (!m_viewImpl)
+        return;
+
     m_viewImpl->hideContextMenu();
 }
 

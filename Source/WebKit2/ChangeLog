@@ -1,3 +1,18 @@
+2013-05-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Add a null checking condition to in hide() of EwkContextMenu
+        https://bugs.webkit.org/show_bug.cgi?id=117014
+
+        Reviewed by Christophe Dumez.
+
+        m_viewImpl is able to be null. So, we need to protect this function against such case.
+
+        * UIProcess/API/efl/ewk_context_menu.cpp:
+        (EwkContextMenu::hide):
+        (ewk_context_menu_hide):
+        * UIProcess/API/efl/ewk_context_menu_private.h:
+        (EwkContextMenu):
+
 2013-05-31  Oliver Hunt  <oliver@apple.com>
 
         Fix bug in active page tracking that lead to plugins hanging during destruction
