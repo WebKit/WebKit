@@ -1,3 +1,53 @@
+2013-06-01  Darin Adler  <darin@apple.com>
+
+        window.speechSynthesis needs to be cheap
+        https://bugs.webkit.org/show_bug.cgi?id=117111
+        rdar://problem/14042030
+
+        Reviewed by Dean Jackson.
+
+        Add the traditional laziness to all of the speech synthesis code, wherever
+        it was omitted.
+
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::create): Tweaked style (took out unneeded parentheses).
+        (WebCore::SpeechSynthesis::SpeechSynthesis): Don't create m_platformSpeechSynthesizer.
+        (WebCore::SpeechSynthesis::setPlatformSynthesizer): Clear state when changing the
+        platform speech synthesizer. Since this code is only used to set up a mock in the
+        test runner, the fact that it was wrong before was harmless, but still not good.
+        (WebCore::SpeechSynthesis::getVoices): Create the platform speech synthesizer here
+        so we can get the voice list from it.
+        (WebCore::SpeechSynthesis::startSpeakingImmediately): Create the platform speech
+        synthesizer here.
+        (WebCore::SpeechSynthesis::cancel): Check the platform speech synthesizer for
+        null and do nothing if it's not present.
+        (WebCore::SpeechSynthesis::pause): Ditto.
+        (WebCore::SpeechSynthesis::resume): Ditto.
+
+        * platform/PlatformSpeechSynthesizer.cpp:
+        (WebCore::PlatformSpeechSynthesizer::create): Don't call initializeVoiceList just
+        to create a synthesizer.
+        (WebCore::PlatformSpeechSynthesizer::voiceList): Do call initializeVoiceList once
+        when asked for a voice list.
+
+        * platform/PlatformSpeechSynthesizer.h: The voiceList function is no longer inlined.
+        The unused setVoiceList function has been removed. The initializeVoiceList is now
+        private rather than protected. Added a new m_voiceListIsInitialized boolean.
+
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (WebCore::PlatformSpeechSynthesizer::PlatformSpeechSynthesizer): Initialize
+        m_voiceListIsInitialized to false.
+
+        * platform/mock/PlatformSpeechSynthesizerMock.cpp:
+        (WebCore::PlatformSpeechSynthesizerMock::create): Don't call initializeVoiceList just
+        to create a synthesizer.
+        (WebCore::PlatformSpeechSynthesizerMock::~PlatformSpeechSynthesizerMock):
+        Removed unneeded call to m_speakingFinishedTimer.stop() since timers automatically
+        stop when you destroy them.
+        (WebCore::PlatformSpeechSynthesizerMock::initializeVoiceList): Removed unneeded
+        call to m_voiceList.clear(), since the caller only calls this once when the
+        voice list is already clear.
+
 2013-06-01  Andreas Kling  <akling@apple.com>
 
         Fix typo in r151071.
