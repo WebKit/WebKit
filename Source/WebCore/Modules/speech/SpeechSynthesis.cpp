@@ -38,11 +38,12 @@ namespace WebCore {
     
 PassRefPtr<SpeechSynthesis> SpeechSynthesis::create()
 {
-    return adoptRef(new SpeechSynthesis);
+    return adoptRef(new SpeechSynthesis());
 }
     
 SpeechSynthesis::SpeechSynthesis()
-    : m_currentSpeechUtterance(0)
+    : m_platformSpeechSynthesizer(PlatformSpeechSynthesizer::create(this))
+    , m_currentSpeechUtterance(0)
     , m_isPaused(false)
 {
 }
@@ -50,10 +51,6 @@ SpeechSynthesis::SpeechSynthesis()
 void SpeechSynthesis::setPlatformSynthesizer(PassOwnPtr<PlatformSpeechSynthesizer> synthesizer)
 {
     m_platformSpeechSynthesizer = synthesizer;
-    m_voiceList.clear();
-    m_currentSpeechUtterance = 0;
-    m_utteranceQueue.clear();
-    m_isPaused = false;
 }
     
 void SpeechSynthesis::voicesDidChange()
@@ -65,10 +62,7 @@ const Vector<RefPtr<SpeechSynthesisVoice> >& SpeechSynthesis::getVoices()
 {
     if (m_voiceList.size())
         return m_voiceList;
-
-    if (!m_platformSpeechSynthesizer)
-        m_platformSpeechSynthesizer = PlatformSpeechSynthesizer::create(this);
-
+    
     // If the voiceList is empty, that's the cue to get the voices from the platform again.
     const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& platformVoices = m_platformSpeechSynthesizer->voiceList();
     size_t voiceCount = platformVoices.size();
@@ -103,8 +97,6 @@ void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance* utteran
     utterance->setStartTime(monotonicallyIncreasingTime());
     m_currentSpeechUtterance = utterance;
     m_isPaused = false;
-    if (!m_platformSpeechSynthesizer)
-        m_platformSpeechSynthesizer = PlatformSpeechSynthesizer::create(this);
     m_platformSpeechSynthesizer->speak(utterance->platformUtterance());
 }
 
@@ -126,8 +118,7 @@ void SpeechSynthesis::cancel()
     // Hold on to the current utterance so the platform synthesizer can have a chance to clean up.
     RefPtr<SpeechSynthesisUtterance> current = m_currentSpeechUtterance;
     m_utteranceQueue.clear();
-    if (m_platformSpeechSynthesizer)
-        m_platformSpeechSynthesizer->cancel();
+    m_platformSpeechSynthesizer->cancel();
     current = 0;
     
     // The platform should have called back immediately and cleared the current utterance.
@@ -136,14 +127,15 @@ void SpeechSynthesis::cancel()
 
 void SpeechSynthesis::pause()
 {
-    if (!m_isPaused && m_platformSpeechSynthesizer)
+    if (!m_isPaused)
         m_platformSpeechSynthesizer->pause();
 }
 
 void SpeechSynthesis::resume()
 {
-    if (m_currentSpeechUtterance && m_platformSpeechSynthesizer)
-        m_platformSpeechSynthesizer->resume();
+    if (!m_currentSpeechUtterance)
+        return;
+    m_platformSpeechSynthesizer->resume();
 }
 
 void SpeechSynthesis::fireEvent(const AtomicString& type, SpeechSynthesisUtterance* utterance, unsigned long charIndex, const String& name)

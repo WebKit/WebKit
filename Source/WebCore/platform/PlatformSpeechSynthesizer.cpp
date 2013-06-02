@@ -32,18 +32,16 @@ namespace WebCore {
     
 PassOwnPtr<PlatformSpeechSynthesizer> PlatformSpeechSynthesizer::create(PlatformSpeechSynthesizerClient* client)
 {
-    return adoptPtr(new PlatformSpeechSynthesizer(client));
+    OwnPtr<PlatformSpeechSynthesizer> synthesizer = adoptPtr(new PlatformSpeechSynthesizer(client));
+    synthesizer->initializeVoiceList();
+    return synthesizer.release();
 }
 
-const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& PlatformSpeechSynthesizer::voiceList() const
+void PlatformSpeechSynthesizer::setVoiceList(Vector<RefPtr<PlatformSpeechSynthesisVoice> >& voices)
 {
-    if (!m_voiceListIsInitialized) {
-        ASSERT(m_voiceList.isEmpty());
-        const_cast<PlatformSpeechSynthesizer*>(this)->initializeVoiceList();
-        const_cast<PlatformSpeechSynthesizer*>(this)->m_voiceListIsInitialized = true;
-    }
-    return m_voiceList;
+    m_voiceList = voices;
 }
+
 
 } // namespace WebCore
 
