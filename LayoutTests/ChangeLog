@@ -1,5 +1,12 @@
 2013-06-02  Alexey Proskuryakov  <ap@apple.com>
 
+        The empty directory did not get deleted by commit queue, deleting manually.
+
+        * xmlviewer: Removed.
+        * xmlviewer/resources: Removed.
+
+2013-06-02  Alexey Proskuryakov  <ap@apple.com>
+
         Unstyled XML viewer crashes when XML contains an element with id="tree"
         https://bugs.webkit.org/show_bug.cgi?id=117117
         <rdar://problem/13727267>
