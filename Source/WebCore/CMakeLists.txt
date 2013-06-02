@@ -2542,7 +2542,7 @@ set(WebCore_SOURCES
 if (CMAKE_COMPILER_IS_GNUCXX) # Can restrict based on the version.
     string(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _CXXFLAGS_VARNAME)
 
-    string(FIND ${_CXXFLAGS_VARNAME} "-O3" _CXXFLAGS_O3_INDEX)
+    string(FIND ${${_CXXFLAGS_VARNAME}} "-O3" _CXXFLAGS_O3_INDEX)
     if (_CXXFLAGS_O3_INDEX GREATER -1)
         string(REPLACE "-O3" "-O2" _CXXFLAGS ${${_CXXFLAGS_VARNAME}})
         set_source_files_properties(Modules/websockets/WebSocketDeflater.cpp

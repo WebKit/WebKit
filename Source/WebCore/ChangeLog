@@ -1,3 +1,9 @@
+2013-06-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [CMake] Unreviewed buildfix after r148896 and r150940.
+
+        * CMakeLists.txt:
+
 2013-06-02  Alexey Proskuryakov  <ap@apple.com>
 
         Unstyled XML viewer crashes when XML contains an element with id="tree"
