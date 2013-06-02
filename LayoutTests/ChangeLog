@@ -1,3 +1,21 @@
+2013-06-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Unstyled XML viewer crashes when XML contains an element with id="tree"
+        https://bugs.webkit.org/show_bug.cgi?id=117117
+        <rdar://problem/13727267>
+
+        Reviewed by Darin Adler.
+
+        * http/tests/xmlviewer/dumpAsText/existing-tree-element-crash-expected.txt: Added.
+        * http/tests/xmlviewer/dumpAsText/existing-tree-element-crash.xml: Added.
+
+        * xmlviewer: Removed.
+        * xmlviewer/extensions-api-expected.txt: Removed.
+        * xmlviewer/extensions-api.html: Removed.
+        * xmlviewer/resources: Removed.
+        * xmlviewer/resources/sample.xml: Removed.
+        The "API" no longer exists.
+
 2013-06-01  Chris Fleizach  <cfleizach@apple.com>
 
         WebKit ignores aria-hidden when traversing nodes for name calculation

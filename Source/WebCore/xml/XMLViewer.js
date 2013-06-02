@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -27,6 +28,7 @@
  */
 
 var nodeParentPairs = [];
+var sourceXML;
 
 // Script entry point.
 
@@ -40,9 +42,7 @@ function prepareWebKitXMLViewer(noStyleMessage)
     head.appendChild(style);
     var body = createHTMLElement('body');
     html.appendChild(body);
-    var sourceXML = createHTMLElement('div');
-    sourceXML.id = 'webkit-xml-viewer-source-xml';
-    body.appendChild(sourceXML);
+    sourceXML = createHTMLElement('div');
 
     var child;
     while (child = document.firstChild) {
@@ -69,12 +69,6 @@ function prepareWebKitXMLViewer(noStyleMessage)
 
 function sourceXMLLoaded()
 {
-    var sourceXML = document.getElementById('webkit-xml-viewer-source-xml');
-    if (!sourceXML)
-        return; // Stop if some XML tree extension is already processing this document
-    //var style = document.head.firstChild;
-    //document.head.removeChild(style);
-    //document.head.appendChild(style);
     var root = document.getElementById('tree');
 
     for (var child = sourceXML.firstChild; child; child = child.nextSibling)
