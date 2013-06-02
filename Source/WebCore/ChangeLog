@@ -1,3 +1,17 @@
+2013-06-01  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKit ignores aria-hidden when traversing nodes for name calculation
+        https://bugs.webkit.org/show_bug.cgi?id=117101
+
+        Reviewed by Tim Horton.
+
+        When calculating the inner text, aria-hidden should be considered.
+
+        Test: accessibility/text-role-with-aria-hidden-inside.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::shouldUseAccessiblityObjectInnerText):
+
 2013-06-01  Darin Adler  <darin@apple.com>
 
         window.speechSynthesis needs to be cheap

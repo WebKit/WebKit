@@ -1,3 +1,13 @@
+2013-06-01  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKit ignores aria-hidden when traversing nodes for name calculation
+        https://bugs.webkit.org/show_bug.cgi?id=117101
+
+        Reviewed by Tim Horton.
+
+        * accessibility/text-role-with-aria-hidden-inside-expected.txt: Added.
+        * accessibility/text-role-with-aria-hidden-inside.html: Added.
+
 2013-05-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Remove passed accessibility test from EFL WK1.

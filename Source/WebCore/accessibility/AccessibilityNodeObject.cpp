@@ -1497,6 +1497,9 @@ static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj)
     // quite long. As a heuristic, skip links, controls, and elements that are usually
     // containers with lots of children.
 
+    if (equalIgnoringCase(obj->getAttribute(aria_hiddenAttr), "true"))
+        return false;
+    
     // If something doesn't expose any children, then we can always take the inner text content.
     // This is what we want when someone puts an <a> inside a <button> for example.
     if (obj->isDescendantOfBarrenParent())
