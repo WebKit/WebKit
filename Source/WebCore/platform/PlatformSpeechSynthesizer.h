@@ -58,14 +58,16 @@ public:
 protected:
     virtual ~PlatformSpeechSynthesizerClient() { }
 };
-    
+
 class PlatformSpeechSynthesizer {
 public:
     static PassOwnPtr<PlatformSpeechSynthesizer> create(PlatformSpeechSynthesizerClient*);
 
+    // FIXME: We have multiple virtual functions just so we can support a mock for testing.
+    // Seems wasteful. Would be nice to find a better way.
     virtual ~PlatformSpeechSynthesizer();
     
-    const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& voiceList() const { return m_voiceList; }
+    const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& voiceList() const;
     virtual void speak(PassRefPtr<PlatformSpeechSynthesisUtterance>);
     virtual void pause();
     virtual void resume();
@@ -73,14 +75,15 @@ public:
     
     PlatformSpeechSynthesizerClient* client() const { return m_speechSynthesizerClient; }
 
-    void setVoiceList(Vector<RefPtr<PlatformSpeechSynthesisVoice> >&);
-
 protected:
-    virtual void initializeVoiceList();
     explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient*);
+
     Vector<RefPtr<PlatformSpeechSynthesisVoice> > m_voiceList;
-    
+
 private:
+    virtual void initializeVoiceList();
+
+    bool m_voiceListIsInitialized;
     PlatformSpeechSynthesizerClient* m_speechSynthesizerClient;
     
 #if PLATFORM(MAC)

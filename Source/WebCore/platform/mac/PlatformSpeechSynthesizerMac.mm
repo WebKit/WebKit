@@ -201,7 +201,8 @@
 namespace WebCore {
 
 PlatformSpeechSynthesizer::PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient* client)
-    : m_speechSynthesizerClient(client)
+    : m_voiceListIsInitialized(false)
+    , m_speechSynthesizerClient(client)
 {
 }
 

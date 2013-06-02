@@ -33,9 +33,7 @@ namespace WebCore {
 
 PassOwnPtr<PlatformSpeechSynthesizerMock> PlatformSpeechSynthesizerMock::create(PlatformSpeechSynthesizerClient* client)
 {
-    OwnPtr<PlatformSpeechSynthesizerMock> synthesizer = adoptPtr(new PlatformSpeechSynthesizerMock(client));
-    synthesizer->initializeVoiceList();
-    return synthesizer.release();
+    return adoptPtr(new PlatformSpeechSynthesizerMock(client));
 }
     
 PlatformSpeechSynthesizerMock::PlatformSpeechSynthesizerMock(PlatformSpeechSynthesizerClient* client)
@@ -46,7 +44,6 @@ PlatformSpeechSynthesizerMock::PlatformSpeechSynthesizerMock(PlatformSpeechSynth
     
 PlatformSpeechSynthesizerMock::~PlatformSpeechSynthesizerMock()
 {
-    m_speakingFinishedTimer.stop();
 }
 
 void PlatformSpeechSynthesizerMock::speakingFinished(Timer<PlatformSpeechSynthesizerMock>*)
@@ -58,7 +55,6 @@ void PlatformSpeechSynthesizerMock::speakingFinished(Timer<PlatformSpeechSynthes
     
 void PlatformSpeechSynthesizerMock::initializeVoiceList()
 {
-    m_voiceList.clear();
     m_voiceList.append(PlatformSpeechSynthesisVoice::create(String("mock.voice.bruce"), String("bruce"), String("en-US"), true, true));
     m_voiceList.append(PlatformSpeechSynthesisVoice::create(String("mock.voice.clark"), String("clark"), String("en-US"), true, false));
     m_voiceList.append(PlatformSpeechSynthesisVoice::create(String("mock.voice.logan"), String("logan"), String("fr-CA"), true, true));
@@ -98,7 +94,6 @@ void PlatformSpeechSynthesizerMock::resume()
     client()->didResumeSpeaking(m_utterance);
 }
 
-    
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)
