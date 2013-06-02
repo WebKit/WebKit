@@ -1,3 +1,49 @@
+2013-06-02  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [WK2][CoordinatedGraphics]: Use a properly initialized WebPage when creating a PageClient
+        https://bugs.webkit.org/show_bug.cgi?id=117116
+
+        Reviewed by Tim Horton.
+
+        Valgrind reported a "conditional jump or move depends on uninitialised value"
+        at WebPageProxy constructor, when checking the m_isVisible variable inside
+        the ENABLE(PAGE_VISIBILITY_API) guard.
+
+        The issue was tracked down to the WebView constructor, which was creating a
+        WebKit::PageClient* making use of `this' before having initialized all of its
+        attributes.
+
+        The solution was to move the initialization of the `page' member to inside the
+        constructor itself - out of the initialization list -, where we can guarantee
+        all the relevant stuff has already been properly initialized.
+
+        Here's the relevant valgrind trace for reference:
+
+        Conditional jump or move depends on uninitialised value(s)
+            at 0x65A35A4: WebKit::WebPageProxy::WebPageProxy(WebKit::PageClient*,
+                          WTF::PassRefPtr<WebKit::WebProcessProxy>,
+                          WebKit::WebPageGroup*, unsigned long) (WebPageProxy.cpp:322)
+            by 0x65A2BA2: WebKit::WebPageProxy::create(WebKit::PageClient*,
+                          WTF::PassRefPtr<WebKit::WebProcessProxy>,
+                          WebKit::WebPageGroup*, unsigned long) (WebPageProxy.cpp:233)
+            by 0x65E94BB: WebKit::WebProcessProxy::createWebPage(WebKit::PageClient*,
+                          WebKit::WebContext*, WebKit::WebPageGroup*)
+                          (WebProcessProxy.cpp:172)
+            by 0x6570957: WebKit::WebContext::createWebPage(WebKit::PageClient*,
+                          WebKit::WebPageGroup*, WebKit::WebPageProxy*)
+                          (WebContext.cpp:735)
+            by 0x67673E3: WebKit::WebView::WebView(WebKit::WebContext*,
+                          WebKit::WebPageGroup*) (WebView.cpp:52)
+            by 0x6775F18: WebKit::WebViewEfl::WebViewEfl(WebKit::WebContext*,
+                          WebKit::WebPageGroup*) (WebViewEfl.cpp:54)
+            by 0x6775EB4: WebKit::WebView::create(WebKit::WebContext*,
+                          WebKit::WebPageGroup*) (WebViewEfl.cpp:49)
+            by 0x673E13D: WKViewCreate (WKView.cpp:33)
+            by 0x6763ECE: EWKViewCreate (ewk_view.cpp:92)
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::WebView):
+
 2013-05-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Add a null checking condition to in hide() of EwkContextMenu
