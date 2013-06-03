@@ -1,3 +1,15 @@
+2013-06-03  Anders Carlsson  <andersca@apple.com>
+
+        Reduce indentation in Widget::paint in WidgetMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=117171
+
+        Reviewed by Darin Adler.
+
+        Use an early return for the common case to reduce indentation in the complex case.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. AppleWin VS2010 build fix.
