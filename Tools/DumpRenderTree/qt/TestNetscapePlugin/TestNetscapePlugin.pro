@@ -56,7 +56,7 @@ mac {
     LIBS += -framework Carbon -framework Cocoa -framework QuartzCore
 }
 
-!win32:!mac {
+!win32:!embedded:!mac {
     LIBS += -lX11
     DEFINES += XP_UNIX
 }

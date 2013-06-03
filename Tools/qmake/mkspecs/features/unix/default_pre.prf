@@ -12,6 +12,10 @@ CONFIG += object_parallel_to_source
 SBOX_CHECK = $$(_SBOX_DIR)
 !isEmpty(SBOX_CHECK): CONFIG += scratchbox
 
+# If Qt is configured with embedded or QPA we set a convenience config
+# flag that can be used to test for either of these situations.
+contains(QT_CONFIG, qpa)|contains(QT_CONFIG, embedded): CONFIG += embedded
+
 # Reduce linking memory pressure on 32-bit debug builds on Linux
 linux-g++*:CONFIG(debug, debug|release):isEqual(QT_ARCH,i386): CONFIG += use_all_in_one_files
 *clang: CONFIG += c++11

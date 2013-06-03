@@ -61,7 +61,6 @@
 #include "WheelEvent.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
-#include <AppKit/NSMenu.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSCJSValue.h>
 #include <wtf/RetainPtr.h>
