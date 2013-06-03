@@ -53,6 +53,7 @@
 #include "ProgressTracker.h"
 #include "ResourceBuffer.h"
 #include "ScopePointer.h"
+#include "SelectionHandler.h"
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
 #include "Settings.h"
 #endif
@@ -741,6 +742,10 @@ void FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad(const ResourceE
         ASSERT(m_frame->loader()->history()->provisionalItem());
         m_frame->loader()->history()->provisionalItem()->viewState().shouldSaveViewState = false;
     }
+
+    // PR 342159. This can be called in such a way that the selection is not cancelled on
+    // the content page. Explicitly cancel the selection.
+    m_webPagePrivate->m_client->cancelSelectionVisuals();
 
     m_loadingErrorPage = true;
     m_frame->loader()->load(FrameLoadRequest(m_frame, originalRequest, errorData));

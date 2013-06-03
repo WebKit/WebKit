@@ -1,5 +1,22 @@
 2013-06-03  Mike Fenton  <mifenton@rim.com>
 
+        [BlackBerry] Selection handles are not cleared when displaying error pages.
+        https://bugs.webkit.org/show_bug.cgi?id=117158
+
+        Reviewed by Carlos Garcia Campos.
+
+        PR 342159.
+
+        Add explicit cancel of selection state when loading an error page
+        as it is not always cleared.
+
+        Internally Reviewed by Nima Ghanavatian.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad):
+
+2013-06-03  Mike Fenton  <mifenton@rim.com>
+
         [BlackBerry] ROI details are not always cleared when using back navigation.
         https://bugs.webkit.org/show_bug.cgi?id=117159
 
