@@ -396,19 +396,21 @@ class PkgConfigGTKDoc(GTKDoc):
     def __init__(self, pkg_config_path, args):
         super(PkgConfigGTKDoc, self).__init__(args)
 
+        pkg_config = os.environ.get('PKG_CONFIG', 'pkg-config')
+
         if not os.path.exists(pkg_config_path):
             raise Exception('Could not find pkg-config file at: %s'
                             % pkg_config_path)
 
-        self.cflags += " " + self._run_command(['pkg-config',
+        self.cflags += " " + self._run_command([pkg_config,
                                                 pkg_config_path,
                                                 '--cflags'], print_output=False)
-        self.ldflags += " " + self._run_command(['pkg-config',
+        self.ldflags += " " + self._run_command([pkg_config,
                                                 pkg_config_path,
                                                 '--libs'], print_output=False)
-        self.version = self._run_command(['pkg-config',
+        self.version = self._run_command([pkg_config,
                                           pkg_config_path,
                                           '--modversion'], print_output=False)
-        self.prefix = self._run_command(['pkg-config',
+        self.prefix = self._run_command([pkg_config,
                                          pkg_config_path,
                                          '--variable=prefix'], print_output=False)

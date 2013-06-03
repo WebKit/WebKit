@@ -1,3 +1,20 @@
+2013-06-03  Erik van Pienbroek  <epienbro@fedoraproject.org>
+
+        [GTK] Respect PKG_CONFIG env variable when generating gtk-doc
+        https://bugs.webkit.org/show_bug.cgi?id=117168
+
+        Reviewed by Martin Robinson.
+
+        The tool generate-gtkdoc internally calls pkg-config.
+        When cross-compiling it shouldn't use pkg-config, but
+        it should use the pkg-config which was detected by
+        the ./configure script (for example this can be
+        i686-w64-mingw32-pkg-config when cross-compiling)
+
+        * GNUmakefile.am:
+        * gtk/gtkdoc.py:
+        (PkgConfigGTKDoc.__init__):
+
 2013-06-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.
