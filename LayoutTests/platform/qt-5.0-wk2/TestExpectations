@@ -379,9 +379,6 @@ webkit.org/b/100490 compositing/tiling/tile-cache-zoomed.html
 # [Qt][WK2]New compositing/repaint/invalidations-on-composited-layers.html fails
 webkit.org/b/101165 compositing/repaint/invalidations-on-composited-layers.html
 
-# [Qt][Wk2] REGGRESSION (r142112): It made compositing tests fail.
-webkit.org/b/109291 compositing/iframes/iframe-composited-scrolling.html
-
 webkit.org/b/112675 compositing/layer-creation/fixed-position-change-out-of-view-in-view.html [ Skip ]
 
 # [Qt] [WK2] Some fullscreen layout tests are timing out on the bot
@@ -461,10 +458,6 @@ svg/carto.net/scrollbar.svg
 svg/carto.net/selectionlist.svg
 tables/mozilla_expected_failures/bugs/bug85016.html
 
-# [Qt][WK2] REGRESSION(r125045): It made fast/events/media-focus-in-standalone-media-document.html fail
-# https://bugs.webkit.org/show_bug.cgi?id=93658
-fast/events/media-focus-in-standalone-media-document.html
-
 # New http/tests/securitycontentSecurityPolicy/object-src-url-blocked.html introduced in r124371 fails on EFL, GTK, Qt
 # https://bugs.webkit.org/show_bug.cgi?id=92963
 http/tests/security/contentSecurityPolicy/object-src-url-blocked.html
@@ -486,14 +479,6 @@ http/tests/security/cross-origin-plugin.html
 
 # ENABLE(OVERFLOW_SCROLLING) is disabled (not enabled)
 compositing/overflow/overflow-auto-with-touch-toggle.html
-
-# [Qt][WK2] REGRESSION(r128169): It made fast/events/dispatch-message-string-data.html timeout
-# https://bugs.webkit.org/show_bug.cgi?id=96396
-fast/events/dispatch-message-string-data.html
-
-# [Qt][WK2] fast/spatial-navigation/snav-media-elements.html timeouts
-# https://bugs.webkit.org/show_bug.cgi?id=96397
-fast/spatial-navigation/snav-media-elements.html
 
 # [Qt][WK2] New fast/forms/number/number-spinbutton-click-in-iframe.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=96634
@@ -621,9 +606,6 @@ webkit.org/b/99167 css3/filters/null-effect-check.html
 # [Qt][WK2] http/tests/misc/willCacheResponse-delegate-callback.html fails
 webkit.org/b/99148 http/tests/misc/willCacheResponse-delegate-callback.html
 
-# [Qt][WK2] REGRESSION(r131057): It made plugins/plugin-document-back-forward.html timeout
-webkit.org/b/99152 plugins/plugin-document-back-forward.html
-
 # [Qt][WK2] http/tests/navigation/ping-cross-origin-from-https.html fails
 webkit.org/b/99155 http/tests/navigation/ping-cross-origin-from-https.html
 
@@ -715,19 +697,14 @@ svg/text/select-x-list-with-tspans-1.svg
 svg/text/select-x-list-1.svg
 
 # Missing TextChecker::requestCheckingOfString() implementation for Qt.
-editing/spelling/grammar-markers.html
 editing/spelling/grammar-paste.html
-editing/spelling/grammar-markers-hidpi.html
 editing/spelling/spellcheck-async-mutation.html
-editing/spelling/spellcheck-async-remove-frame.html
 editing/spelling/spellcheck-async.html
 editing/spelling/spellcheck-queue.html
-editing/spelling/spellcheck-sequencenum.html
 editing/spelling/spelling-marker-description.html
 
 # Spellcheck tests don't seem to work.
 editing/spelling/spelling-backspace-between-lines.html
-editing/spelling/design-mode-spellcheck-off.html
 editing/spelling/spellcheck-attribute.html
 editing/spelling/spelling-attribute-at-child.html
 editing/spelling/spelling-attribute-change.html
@@ -741,7 +718,6 @@ editing/spelling/spelling-should-select-multiple-words.html
 editing/spelling/spelling-subword-selection.html
 editing/spelling/spelling-with-punctuation-selection.html
 editing/spelling/spelling-with-whitespace-selection.html
-editing/spelling/spellcheck-input-search-crash.html
 editing/spelling/grammar.html
 
 # [Qt][WK2] REGRESSION(r148594): fast/events/mouseout-on-window.html fails with enabled sub-pixel layout
