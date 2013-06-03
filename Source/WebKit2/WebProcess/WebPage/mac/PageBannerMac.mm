@@ -43,6 +43,7 @@ PageBanner::PageBanner(CALayer *layer, int height, Client* client)
     : m_type(NotSet)
     , m_client(client)
     , m_webPage(0)
+    , m_mouseDownInBanner(false)
     , m_layer(layer)
     , m_height(height)
 {
@@ -110,8 +111,13 @@ bool PageBanner::mouseEvent(const WebMouseEvent& mouseEvent)
         ASSERT_NOT_REACHED();
     }
 
-    if (positionInBannerSpace.y() < 0 || positionInBannerSpace.y() > m_height)
+    if (!m_mouseDownInBanner && (positionInBannerSpace.y() < 0 || positionInBannerSpace.y() > m_height))
         return false;
+
+    if (mouseEvent.type() == WebEvent::MouseDown)
+        m_mouseDownInBanner = true;
+    else if (mouseEvent.type() == WebEvent::MouseUp)
+        m_mouseDownInBanner = false;
 
     return m_client->mouseEvent(this, mouseEvent.type(), mouseEvent.button(), positionInBannerSpace);
 }

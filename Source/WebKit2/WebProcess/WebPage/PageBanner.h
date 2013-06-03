@@ -84,6 +84,8 @@ private:
     Client* m_client;
     WebPage* m_webPage;
 
+    bool m_mouseDownInBanner;
+
 #if PLATFORM(MAC)
     RetainPtr<CALayer> m_layer;
     int m_height;

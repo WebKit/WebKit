@@ -1,3 +1,18 @@
+2013-06-03  Anders Carlsson  <andersca@apple.com>
+
+        Send mouse events to the banner for as long as the mouse button is down
+        https://bugs.webkit.org/show_bug.cgi?id=117161
+
+        Reviewed by Beth Dakin.
+
+        Keep track of whether the mouse was pressed in a banner and keep sending mouse events to it,
+        even if they are outside the banner's bounds for as long as the mouse is down.
+
+        * WebProcess/WebPage/PageBanner.h:
+        * WebProcess/WebPage/mac/PageBannerMac.mm:
+        (WebKit::PageBanner::PageBanner):
+        (WebKit::PageBanner::mouseEvent):
+
 2013-06-03  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL][WK2] Process launcher uses system() for wrapping the WebProcess when using WEB_PROCESS_CMD_PREFIX
