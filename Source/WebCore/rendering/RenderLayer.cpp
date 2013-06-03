@@ -3910,8 +3910,15 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     LayerFragments layerFragments;
     if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
         // Collect the fragments. This will compute the clip rectangles and paint offsets for each layer fragment, as well as whether or not the content of each
-        // fragment should paint.
-        collectFragments(layerFragments, localPaintingInfo.rootLayer, localPaintingInfo.region, localPaintingInfo.paintDirtyRect,
+        // fragment should paint. If the parent's filter dictates full repaint to ensure proper filter effect,
+        // use the overflow clip as dirty rect, instead of no clipping. It maintains proper clipping for overflow::scroll.
+        LayoutRect paintDirtyRect = localPaintingInfo.paintDirtyRect;
+        if (!paintingInfo.clipToDirtyRect && renderer()->hasOverflowClip()) {
+            // We can turn clipping back by requesting full repaint for the overflow area.
+            localPaintingInfo.clipToDirtyRect = true;
+            paintDirtyRect = selfClipRect();
+        }
+        collectFragments(layerFragments, localPaintingInfo.rootLayer, localPaintingInfo.region, paintDirtyRect,
             (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, IgnoreOverlayScrollbarSize,
             (isPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip, &offsetFromRoot);
         updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, &offsetFromRoot);

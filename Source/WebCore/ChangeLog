@@ -1,3 +1,25 @@
+2013-06-03  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r143070): Overflow:scroll content does not get clipped properly when the parent box has CSS3 filter on.
+        https://bugs.webkit.org/show_bug.cgi?id=116859
+
+        Reviewed by Simon Fraser.
+
+        Apply proper clipping for overflow:scroll, when parent dictates
+        full repaint to ensure correct CSS3 filter effect.
+
+        When a particular layer has 'pixel moving' CSS3 filter(drop shadow, blur), it sets clipToDirtyRect 
+        to false to force no clipping on itself and on the child layers too.
+        No clipping makes overflow:scroll behave like overflow:display, because
+        overflow::scroll gets clipped at RenderLayer level (as opposed to overflow::hidden).
+        This patch makes sure that both full repaint and clipping are ensured.
+
+        Tests: css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on-parent.html
+               css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+
 2013-05-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Re-enable plugins on Mac.
