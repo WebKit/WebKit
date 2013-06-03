@@ -2,6 +2,17 @@
 
         Unreviewed EFL gardening.
 
+        Rebaseline 2 printing test cases on EFL port.
+
+        * platform/efl/printing/compositing-layer-printing-expected.png:
+        * platform/efl/printing/compositing-layer-printing-expected.txt:
+        * platform/efl/printing/page-rule-in-media-query-expected.png:
+        * platform/efl/printing/page-rule-in-media-query-expected.txt:
+
+2013-06-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
         Skip 2 webaudio tests that are failing due to the onended event not getting
         fired.
 
