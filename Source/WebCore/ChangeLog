@@ -1,3 +1,51 @@
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
+        Nuke VS2005 files from the tree.
+        <rdar://problem/14042021>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * WebCore.vcproj: Removed.
+        * WebCore.vcproj/MigrateScripts: Removed.
+        * WebCore.vcproj/QTMovieWin.vcproj: Removed.
+        * WebCore.vcproj/QTMovieWinCommon.vsprops: Removed.
+        * WebCore.vcproj/QTMovieWinDebug.vsprops: Removed.
+        * WebCore.vcproj/QTMovieWinDebugAll.vsprops: Removed.
+        * WebCore.vcproj/QTMovieWinDebugCairoCFLite.vsprops: Removed.
+        * WebCore.vcproj/QTMovieWinPostBuild.cmd: Removed.
+        * WebCore.vcproj/QTMovieWinPreBuild.cmd: Removed.
+        * WebCore.vcproj/QTMovieWinProduction.vsprops: Removed.
+        * WebCore.vcproj/QTMovieWinRelease.vsprops: Removed.
+        * WebCore.vcproj/QTMovieWinReleaseCairoCFLite.vsprops: Removed.
+        * WebCore.vcproj/WebCore.make: Removed.
+        * WebCore.vcproj/WebCore.sln: Removed.
+        * WebCore.vcproj/WebCore.submit.sln: Removed.
+        * WebCore.vcproj/WebCore.vcproj: Removed.
+        * WebCore.vcproj/WebCoreCFNetwork.vsprops: Removed.
+        * WebCore.vcproj/WebCoreCG.vsprops: Removed.
+        * WebCore.vcproj/WebCoreCURL.vsprops: Removed.
+        * WebCore.vcproj/WebCoreCairo.vsprops: Removed.
+        * WebCore.vcproj/WebCoreCommon.vsprops: Removed.
+        * WebCore.vcproj/WebCoreDebug.vsprops: Removed.
+        * WebCore.vcproj/WebCoreDebugAll.vsprops: Removed.
+        * WebCore.vcproj/WebCoreDebugCairoCFLite.vsprops: Removed.
+        * WebCore.vcproj/WebCoreGenerated.vcproj: Removed.
+        * WebCore.vcproj/WebCoreGeneratedCairo.vsprops: Removed.
+        * WebCore.vcproj/WebCoreGeneratedCommon.vsprops: Removed.
+        * WebCore.vcproj/WebCoreMediaQT.vsprops: Removed.
+        * WebCore.vcproj/WebCorePostBuild.cmd: Removed.
+        * WebCore.vcproj/WebCorePreBuild.cmd: Removed.
+        * WebCore.vcproj/WebCoreProduction.vsprops: Removed.
+        * WebCore.vcproj/WebCoreQuartzCore.vsprops: Removed.
+        * WebCore.vcproj/WebCoreRelease.vsprops: Removed.
+        * WebCore.vcproj/WebCoreReleaseCairoCFLite.vsprops: Removed.
+        * WebCore.vcproj/WebCoreTestSupport.vcproj: Removed.
+        * WebCore.vcproj/build-generated-files.sh: Removed.
+        * WebCore.vcproj/copyForwardingHeaders.cmd: Removed.
+        * WebCore.vcproj/copyWebCoreResourceFiles.cmd: Removed.
+        * WebCore.vcproj/migrate-scripts.sh: Removed.
+        * WebCore.vcproj/xcopy.excludes: Removed.
+
 2013-06-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit should join substrings on single space when concatenating the accessible name of an element

@@ -1,3 +1,44 @@
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
+        Nuke VS2005 files from the tree.
+        <rdar://problem/14042021>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * win/lib: Removed.
+        * win/lib/WebKitSystemInterface.lib: Removed.
+        * win/tools: Removed.
+        * win/tools/WinTools.make: Removed.
+        * win/tools/scripts: Removed.
+        * win/tools/scripts/COPYRIGHT-END-YEAR: Removed.
+        * win/tools/scripts/VERSION: Removed.
+        * win/tools/scripts/auto-version.sh: Removed.
+        * win/tools/scripts/auto-version2010.sh: Removed.
+        * win/tools/scripts/feature-defines.sh: Removed.
+        * win/tools/scripts/feature-defines2010.sh: Removed.
+        * win/tools/vsprops: Removed.
+        * win/tools/vsprops/FeatureDefines.props: Removed.
+        * win/tools/vsprops/FeatureDefines.vsprops: Removed.
+        * win/tools/vsprops/FeatureDefinesCairo.props: Removed.
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: Removed.
+        * win/tools/vsprops/WinCairo.props: Removed.
+        * win/tools/vsprops/WinCairo.vsprops: Removed.
+        * win/tools/vsprops/cURL.props: Removed.
+        * win/tools/vsprops/cURL.vsprops: Removed.
+        * win/tools/vsprops/common.props: Removed.
+        * win/tools/vsprops/common.vsprops: Removed.
+        * win/tools/vsprops/debug.props: Removed.
+        * win/tools/vsprops/debug.vsprops: Removed.
+        * win/tools/vsprops/debug_all.vsprops: Removed.
+        * win/tools/vsprops/debug_wincairo.props: Removed.
+        * win/tools/vsprops/debug_wincairo.vsprops: Removed.
+        * win/tools/vsprops/debugsuffix.props: Removed.
+        * win/tools/vsprops/production.props: Removed.
+        * win/tools/vsprops/production.vsprops: Removed.
+        * win/tools/vsprops/release.props: Removed.
+        * win/tools/vsprops/release.vsprops: Removed.
+        * win/tools/vsprops/releaseproduction.vsprops: Removed.
+
 2013-05-29  Jeffrey Pfau  <jpfau@apple.com>
 
         [Mac] Enable cache partitioning and the public suffix list on 10.8

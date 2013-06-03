@@ -1,3 +1,91 @@
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
+        Nuke VS2005 files from the tree.
+        <rdar://problem/14042021>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * WebKit.vcproj: Removed.
+        * WebKit.vcproj/FixMIDLHeaders.pl: Removed.
+        * WebKit.vcproj/Interfaces.vcproj: Removed.
+        * WebKit.vcproj/InterfacesCommon.vsprops: Removed.
+        * WebKit.vcproj/InterfacesDebug.vsprops: Removed.
+        * WebKit.vcproj/InterfacesDebugAll.vsprops: Removed.
+        * WebKit.vcproj/InterfacesDebugCairoCFLite.vsprops: Removed.
+        * WebKit.vcproj/InterfacesPostBuild.cmd: Removed.
+        * WebKit.vcproj/InterfacesPreBuild.cmd: Removed.
+        * WebKit.vcproj/InterfacesProduction.vsprops: Removed.
+        * WebKit.vcproj/InterfacesRelease.vsprops: Removed.
+        * WebKit.vcproj/InterfacesReleaseCairoCFLite.vsprops: Removed.
+        * WebKit.vcproj/WebKit.make: Removed.
+        * WebKit.vcproj/WebKit.rc: Removed.
+        * WebKit.vcproj/WebKit.sln: Removed.
+        * WebKit.vcproj/WebKit.submit.sln: Removed.
+        * WebKit.vcproj/WebKit.vcproj: Removed.
+        * WebKit.vcproj/WebKitApple.vsprops: Removed.
+        * WebKit.vcproj/WebKitCFLite.vsprops: Removed.
+        * WebKit.vcproj/WebKitDirectX.vsprops: Removed.
+        * WebKit.vcproj/WebKitExportGenerator.vcproj: Removed.
+        * WebKit.vcproj/WebKitExportGeneratorBuildCmd.cmd: Removed.
+        * WebKit.vcproj/WebKitExportGeneratorCommon.vsprops: Removed.
+        * WebKit.vcproj/WebKitExportGeneratorDebug.vsprops: Removed.
+        * WebKit.vcproj/WebKitExportGeneratorDebugAll.vsprops: Removed.
+        * WebKit.vcproj/WebKitExportGeneratorDebugCairoCFLite.vsprops: Removed.
+        * WebKit.vcproj/WebKitExportGeneratorPostBuild.cmd: Removed.
+        * WebKit.vcproj/WebKitExportGeneratorPreBuild.cmd: Removed.
+        * WebKit.vcproj/WebKitExportGeneratorProduction.vsprops: Removed.
+        * WebKit.vcproj/WebKitExportGeneratorRelease.vsprops: Removed.
+        * WebKit.vcproj/WebKitExportGeneratorReleaseCairoCFLite.vsprops: Removed.
+        * WebKit.vcproj/WebKitExports.def.in: Removed.
+        * WebKit.vcproj/WebKitGUID.vcproj: Removed.
+        * WebKit.vcproj/WebKitGUIDCommon.vsprops: Removed.
+        * WebKit.vcproj/WebKitGUIDDebug.vsprops: Removed.
+        * WebKit.vcproj/WebKitGUIDDebugAll.vsprops: Removed.
+        * WebKit.vcproj/WebKitGUIDDebugCairoCFLite.vsprops: Removed.
+        * WebKit.vcproj/WebKitGUIDPostBuild.cmd: Removed.
+        * WebKit.vcproj/WebKitGUIDPreBuild.cmd: Removed.
+        * WebKit.vcproj/WebKitGUIDProduction.vsprops: Removed.
+        * WebKit.vcproj/WebKitGUIDRelease.vsprops: Removed.
+        * WebKit.vcproj/WebKitGUIDReleaseCairoCFLite.vsprops: Removed.
+        * WebKit.vcproj/WebKitLibCommon.vsprops: Removed.
+        * WebKit.vcproj/WebKitLibDebug.vsprops: Removed.
+        * WebKit.vcproj/WebKitLibDebugAll.vsprops: Removed.
+        * WebKit.vcproj/WebKitLibDebugCairoCFLite.vsprops: Removed.
+        * WebKit.vcproj/WebKitLibPostBuild.cmd: Removed.
+        * WebKit.vcproj/WebKitLibPreBuild.cmd: Removed.
+        * WebKit.vcproj/WebKitLibProduction.vsprops: Removed.
+        * WebKit.vcproj/WebKitLibRelease.vsprops: Removed.
+        * WebKit.vcproj/WebKitLibReleaseCairoCFLite.vsprops: Removed.
+        * WebKit.vcproj/WebKit_Cairo.def: Removed.
+        * WebKit.vcproj/WebKit_Cairo_debug.def: Removed.
+        * WebKit.vcproj/deleteButton.png: Removed.
+        * WebKit.vcproj/deleteButtonPressed.png: Removed.
+        * WebKit.vcproj/fsVideoAudioVolumeHigh.png: Removed.
+        * WebKit.vcproj/fsVideoAudioVolumeLow.png: Removed.
+        * WebKit.vcproj/fsVideoExitFullscreen.png: Removed.
+        * WebKit.vcproj/fsVideoPause.png: Removed.
+        * WebKit.vcproj/fsVideoPlay.png: Removed.
+        * WebKit.vcproj/missingImage.png: Removed.
+        * WebKit.vcproj/nullplugin.png: Removed.
+        * WebKit.vcproj/panEastCursor.png: Removed.
+        * WebKit.vcproj/panIcon.png: Removed.
+        * WebKit.vcproj/panNorthCursor.png: Removed.
+        * WebKit.vcproj/panNorthEastCursor.png: Removed.
+        * WebKit.vcproj/panNorthWestCursor.png: Removed.
+        * WebKit.vcproj/panSouthCursor.png: Removed.
+        * WebKit.vcproj/panSouthEastCursor.png: Removed.
+        * WebKit.vcproj/panSouthWestCursor.png: Removed.
+        * WebKit.vcproj/panWestCursor.png: Removed.
+        * WebKit.vcproj/resource.h: Removed.
+        * WebKit.vcproj/searchCancel.png: Removed.
+        * WebKit.vcproj/searchCancelPressed.png: Removed.
+        * WebKit.vcproj/searchMagnifier.png: Removed.
+        * WebKit.vcproj/searchMagnifierResults.png: Removed.
+        * WebKit.vcproj/textAreaResizeCorner.png: Removed.
+        * WebKit.vcproj/verticalTextCursor.png: Removed.
+        * WebKit.vcproj/zoomInCursor.png: Removed.
+        * WebKit.vcproj/zoomOutCursor.png: Removed.
+
 2013-05-31  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Unable to download files.

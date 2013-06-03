@@ -1,3 +1,36 @@
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
+        Nuke VS2005 files from the tree.
+        <rdar://problem/14042021>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * WTF.vcproj: Removed.
+        * WTF.vcproj/WTF.make: Removed.
+        * WTF.vcproj/WTF.sln: Removed.
+        * WTF.vcproj/WTF.vcproj: Removed.
+        * WTF.vcproj/WTFCommon.vsprops: Removed.
+        * WTF.vcproj/WTFDebug.vsprops: Removed.
+        * WTF.vcproj/WTFDebugAll.vsprops: Removed.
+        * WTF.vcproj/WTFDebugCairoCFLite.vsprops: Removed.
+        * WTF.vcproj/WTFGenerated.make: Removed.
+        * WTF.vcproj/WTFGenerated.vcproj: Removed.
+        * WTF.vcproj/WTFGeneratedCommon.vsprops: Removed.
+        * WTF.vcproj/WTFGeneratedDebug.vsprops: Removed.
+        * WTF.vcproj/WTFGeneratedDebugAll.vsprops: Removed.
+        * WTF.vcproj/WTFGeneratedDebugCairoCFLite.vsprops: Removed.
+        * WTF.vcproj/WTFGeneratedProduction.vsprops: Removed.
+        * WTF.vcproj/WTFGeneratedRelease.vsprops: Removed.
+        * WTF.vcproj/WTFGeneratedReleaseCairoCFLite.vsprops: Removed.
+        * WTF.vcproj/WTFPostBuild.cmd: Removed.
+        * WTF.vcproj/WTFPreBuild.cmd: Removed.
+        * WTF.vcproj/WTFProduction.vsprops: Removed.
+        * WTF.vcproj/WTFRelease.vsprops: Removed.
+        * WTF.vcproj/WTFReleaseCairoCFLite.vsprops: Removed.
+        * WTF.vcproj/build-generated-files.sh: Removed.
+        * WTF.vcproj/copy-files.cmd: Removed.
+        * WTF.vcproj/work-around-vs-dependency-tracking-bugs.py: Removed.
+
 2013-06-03  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix after r150833.

@@ -1,3 +1,21 @@
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
+        Nuke VS2005 files from the tree.
+        <rdar://problem/14042021>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * gtest/msvc/gtest-md.sln: Removed.
+        * gtest/msvc/gtest-md.vcproj: Removed.
+        * gtest/msvc/gtest.sln: Removed.
+        * gtest/msvc/gtest.vcproj: Removed.
+        * gtest/msvc/gtest_main-md.vcproj: Removed.
+        * gtest/msvc/gtest_main.vcproj: Removed.
+        * gtest/msvc/gtest_prod_test-md.vcproj: Removed.
+        * gtest/msvc/gtest_prod_test.vcproj: Removed.
+        * gtest/msvc/gtest_unittest-md.vcproj: Removed.
+        * gtest/msvc/gtest_unittest.vcproj: Removed.
+
 2013-04-26  Roger Fong  <roger_fong@apple.com>
 
         Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
