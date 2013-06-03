@@ -1812,10 +1812,6 @@ webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ 
 # New accessibility test added in r149155 is failing.
 webkit.org/b/115659 accessibility/meter-element.html [ Failure ]
 
-# onended event is not fired.
-webkit.org/b/117132 webaudio/audiobuffersource-ended.html [ Failure ]
-webkit.org/b/117132 webaudio/oscillator-ended.html [ Failure ]
-
 # Regression(r149292): Missing repaint rects.
 webkit.org/b/114611 fast/box-shadow/shadow-repaint.html [ Failure ]
 webkit.org/b/114611 fast/css-grid-layout/grid-element-change-columns-repaint.html [ Failure ]

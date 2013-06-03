@@ -168,8 +168,8 @@ void AudioScheduledSourceNode::noteOff(double when)
 
 void AudioScheduledSourceNode::setOnended(PassRefPtr<EventListener> listener)
 {
-    setAttributeEventListener(eventNames().endedEvent, listener);
     m_hasEndedListener = listener;
+    setAttributeEventListener(eventNames().endedEvent, listener);
 }
 
 void AudioScheduledSourceNode::finish()
