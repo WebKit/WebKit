@@ -2,6 +2,25 @@
 
         Unreviewed EFL gardening.
 
+        Rebaseline several test cases on EFL.
+
+        * platform/efl-wk2/compositing/overflow/content-gains-scrollbars-expected.txt: Added.
+        * platform/efl-wk2/compositing/overflow/content-loses-scrollbars-expected.txt: Added.
+        * platform/efl-wk2/fast/dynamic/002-expected.txt:
+        * platform/efl/fast/block/float/float-not-removed-from-next-sibling2-expected.png:
+        * platform/efl/fast/block/float/float-not-removed-from-next-sibling2-expected.txt:
+        * platform/efl/fast/dynamic/002-expected.png:
+        * platform/efl/fast/table/007-expected.png:
+        * platform/efl/fast/table/007-expected.txt:
+        * platform/efl/fast/table/colspanMinWidth-expected.png:
+        * platform/efl/fast/table/colspanMinWidth-expected.txt:
+        * platform/efl/fast/table/spanOverlapRepaint-expected.png:
+        * platform/efl/fast/table/spanOverlapRepaint-expected.txt:
+
+2013-06-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
         Rebaseline several mozilla tables layout tests for EFL port.
 
         * platform/efl/tables/mozilla/bugs/bug13169-expected.png:
