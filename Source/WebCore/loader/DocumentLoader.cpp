@@ -294,10 +294,16 @@ void DocumentLoader::stopLoading()
 
     FrameLoader* frameLoader = DocumentLoader::frameLoader();
     
-    if (isLoadingMainResource())
+    if (isLoadingMainResource()) {
         // Stop the main resource loader and let it send the cancelled message.
         cancelMainResourceLoad(frameLoader->cancelledError(m_request));
-    else if (!m_subresourceLoaders.isEmpty())
+    
+        // When cancelling the main resource load, we need to also cancel the Document's parser.
+        // Otherwise cancelling the parser when starting the next page load might result
+        // in unexpected side effects such as erroneous event dispatch. ( http://webkit.org/b/117112 )
+        if (Document* doc = document())
+            doc->cancelParsing();
+    } else if (!m_subresourceLoaders.isEmpty())
         // The main resource loader already finished loading. Set the cancelled error on the 
         // document and let the subresourceLoaders send individual cancelled messages below.
         setMainDocumentError(frameLoader->cancelledError(m_request));

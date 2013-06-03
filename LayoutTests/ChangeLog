@@ -1,3 +1,14 @@
+2013-06-02  Brady Eidson  <beidson@apple.com>
+
+        Going "back" to a cached page from a page with a main resource error breaks scrolling, amongst other issues.
+        <rdar://problem/13751844> and https://bugs.webkit.org/show_bug.cgi?id=117112
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/loading/resources/resource-that-goes-back-while-still-loading.php: Added.
+        * http/tests/loading/unfinished-load-back-to-cached-page-callbacks-expected.txt: Added.
+        * http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html: Added.
+
 2013-06-02  Alexey Proskuryakov  <ap@apple.com>
 
         The empty directory did not get deleted by commit queue, deleting manually.

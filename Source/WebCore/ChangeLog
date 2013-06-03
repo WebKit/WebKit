@@ -1,3 +1,27 @@
+2013-06-02  Brady Eidson  <beidson@apple.com>
+
+        Going "back" to a cached page from a page with a main resource error breaks scrolling, amongst other issues.
+        <rdar://problem/13751844> and https://bugs.webkit.org/show_bug.cgi?id=117112
+
+        Reviewed by Alexey Proskuryakov.
+
+        If a main resource load ends in error, the Document's parser is never cleared out.
+
+        If you then return to a CachedPage, we run the Document->clearParser() step for the 
+        old page and that incorrectly dispatches didFinishLoad for the previous page load 
+        in the middle of the load for the cached page.
+
+        The parser should never be needed after a load completes (even if it fails) and 
+        holding on to the parser after the page load failed but before a new navigation is
+        actually using unnecessary resources.
+
+        So we should just clear the parser right when the main resource fails.
+
+        Test: http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading): After canceling the main resource load, also clear the parser.
+
 2013-06-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [CMake] Unreviewed buildfix after r148896 and r150940.
