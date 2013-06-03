@@ -1,3 +1,26 @@
+2013-06-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Layout Tests] Update testharness scripts, add WebIDLParser.js and idlharness.js
+        https://bugs.webkit.org/show_bug.cgi?id=116983
+
+        Reviewed by Sam Weinig.
+
+        Update the testharness scripts that are used by the W3C tests that are located under LayoutTests/http/tests/w3c. Also add the
+        WebIDLParser.js and idlharness.js scripts that will be used by tests imported in the future. The files are being updated or impoted
+        off the 06cab30bcee2 changeset in the http://w3c-test.org/resources repository.
+
+        No test is affected by this update, though some tests will require rebaselining due to the baselines containing stack traces of which
+        line numbers will change due to the updated scripts.
+
+        * http/tests/w3c/README: List the currently-imported directories, noting from where they originate, at which changeset were
+        they imported and what files can or should be modified. Also note what script should be used to import/update the files, if available.
+        * http/tests/w3c/resources/WebIDLParser.js: Added. Will be used by future tests imported from the W3C test suites.
+        * http/tests/w3c/resources/idlharness.js: Ditto.
+        * http/tests/w3c/resources/testharness.css: Updated.
+        * http/tests/w3c/resources/testharness.js: Updated.
+        * http/tests/w3c/resources/testharnessreport.js: Updated. Removed the default completion callback and readded
+        the completion callback that was in use until now.
+
 2013-06-03  Radu Stavila  <stavila@adobe.com>
 
         [Qt][WK1][CSS Regions]  New test fast/regions/hover-on-child-parent-different-regions.html fails
