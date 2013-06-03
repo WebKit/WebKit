@@ -97,6 +97,8 @@ static inline void drawErrorUnderline(cairo_t* cr, double x, double y, double wi
 
         cairo_line_to(cr, left, top); // H
     }
+
+    cairo_fill(cr);
 }
 
 #endif // DrawErrorUnderline_h

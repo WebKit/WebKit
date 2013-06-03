@@ -1,3 +1,20 @@
+2013-06-03  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Use drawErrorUnderline() instead of Pango API for highlighting misspelled words
+        https://bugs.webkit.org/show_bug.cgi?id=115406
+
+        Reviewed by Martin Robinson.
+
+        Replace pango API for drawing underline error on misspelled words, in favor of
+        drawErrorUnderline() method, removing the platform #ifdef check. As this was the
+        only usage of Pango in GraphicsContextCairo, it no longer includes pango.h.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker): Removes
+        pango_cairo_show_error_underline() in favor of drawErrorUnderline().
+        * platform/graphics/cairo/DrawErrorUnderline.h:
+        (drawErrorUnderline): Fills the cairo path at the end of the drawing.
+
 2013-06-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: MathML multiscripts not exposed in Accessibility

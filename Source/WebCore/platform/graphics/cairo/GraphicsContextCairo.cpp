@@ -37,6 +37,7 @@
 
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
+#include "DrawErrorUnderline.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Font.h"
@@ -59,7 +60,6 @@
 
 #if PLATFORM(GTK)
 #include <gdk/gdk.h>
-#include <pango/pango.h>
 #elif PLATFORM(WIN)
 #include <cairo-win32.h>
 #endif
@@ -632,10 +632,6 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
     cairo_restore(cairoContext);
 }
 
-#if !PLATFORM(GTK)
-#include "DrawErrorUnderline.h"
-#endif
-
 void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
@@ -656,12 +652,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& origin, float 
         return;
     }
 
-#if PLATFORM(GTK)
-    // We ignore most of the provided constants in favour of the platform style
-    pango_cairo_show_error_underline(cr, origin.x(), origin.y(), width, cMisspellingLineThickness);
-#else
     drawErrorUnderline(cr, origin.x(), origin.y(), width, cMisspellingLineThickness);
-#endif
 
     cairo_restore(cr);
 }

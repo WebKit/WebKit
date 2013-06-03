@@ -1,3 +1,20 @@
+2013-06-03  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Use drawErrorUnderline() instead of Pango API for highlighting misspelled words
+        https://bugs.webkit.org/show_bug.cgi?id=115406
+
+        Reviewed by Martin Robinson.
+
+        Update PNG expectations for some spell checking tests to pass pixel hash comparison.
+        The images are not visually modified.
+
+        * platform/gtk/editing/spelling/inline-spelling-markers-hidpi-expected.png: Rebaseline
+        image to pass pixel hash
+        * platform/gtk/editing/spelling/inline_spelling_markers-expected.png: Rebasline
+        image to pass pixel hash
+        * platform/gtk/editing/spelling/spelling-expected.png: Rebasline
+        image to pass pixel hash
+
 2013-06-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: MathML multiscripts not exposed in Accessibility
