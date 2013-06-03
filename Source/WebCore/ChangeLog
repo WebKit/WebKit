@@ -1,5 +1,37 @@
 2013-05-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt][Mac] Allow drawing plugins with QWindow by always using an intermediate bitmap.
+        https://bugs.webkit.org/show_bug.cgi?id=116620
+
+        Reviewed by Tor Arne Vestbø.
+
+        The isolation of QWidget along with QPA in Qt5 is abstracting away the native CGContext
+        of a QWidget and we would need to create a non-public API to be able to achieve it.
+        Instead of adding complexity to this rarely touched code, always draw into an
+        intermediate bitmap that we then paint into our QPainter afterward.
+
+        - Use CGBitmapContextCreate to allocate a buffer directly instead of creating a QPixmap
+          and extract an CGContextRef out of it.
+        - Get rid of the "if (platformPluginWidget())" code path since we don't paint directly
+          into the QWidget's backing store anymore.
+        - Always use m_contextRef to draw the plugin instead of alternating between direct and
+          indirect drawing.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/mac/PluginViewMac.mm:
+        (WebCore::createBitmapContext):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::platformDestroy):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::invalidateRect):
+
+2013-05-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt][Mac] Remove Carbon and QuickDraw support for plugins.
         https://bugs.webkit.org/show_bug.cgi?id=116619
 

@@ -73,16 +73,7 @@ using JSC::JSObject;
 using JSC::JSValue;
 
 #if PLATFORM(QT)
-#include <QWidget>
-#include <QKeyEvent>
 #include <QPainter>
-#include <QDateTime>
-#include <QPixmap>
-#include "QWebPageClient.h"
-QT_BEGIN_NAMESPACE
-extern Q_GUI_EXPORT OSWindowRef qt_mac_window_for(const QWidget* w);
-extern Q_GUI_EXPORT CGContextRef qt_mac_cg_context(const QPaintDevice *pdev); //qpaintdevice_mac.cpp
-QT_END_NAMESPACE
 #endif
 
 using namespace WTF;
@@ -90,39 +81,6 @@ using namespace WTF;
 namespace WebCore {
 
 using namespace HTMLNames;
-
-static inline WindowRef nativeWindowFor(PlatformWidget widget)
-{
-#if PLATFORM(QT)
-    if (widget)
-#if QT_MAC_USE_COCOA
-        return static_cast<WindowRef>([qt_mac_window_for(static_cast<QWidget*>(widget)) windowRef]);
-#else
-        return static_cast<WindowRef>(qt_mac_window_for(widget));
-#endif
-#endif
-    return 0;
-}
-
-static inline CGContextRef cgHandleFor(PlatformWidget widget)
-{
-#if PLATFORM(QT)
-    if (widget)
-        return (CGContextRef)static_cast<QWidget*>(widget)->macCGHandle();
-#endif
-    return 0;
-}
-
-static inline IntPoint topLevelOffsetFor(PlatformWidget widget)
-{
-#if PLATFORM(QT)
-    if (widget) {
-        QWidget* topLevel = static_cast<QWidget*>(widget)->window();
-        return static_cast<QWidget*>(widget)->mapTo(topLevel, QPoint(0, 0)) + topLevel->geometry().topLeft() - topLevel->pos();
-    }
-#endif
-    return IntPoint();
-}
 
 // --------- Cocoa specific utility functions ----------
 
@@ -143,6 +101,19 @@ static int32_t getModifiers(UIEventWithKeyState *event)
     return modifiers;
 }
 
+static CGContextRef createBitmapContext(const IntSize& size)
+{
+    CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
+    uint flags = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
+    CGContextRef context = CGBitmapContextCreate(0, size.width(), size.height(),
+                                8, 4 * size.width(), colorspace, flags);
+
+    CGContextTranslateCTM(context, 0, size.height());
+    CGContextScaleCTM(context, 1, -1);
+    CGColorSpaceRelease(colorspace);
+    return context;
+}
+
 // --------------- Lifetime management -----------------
 
 bool PluginView::platformStart()
@@ -161,16 +132,6 @@ bool PluginView::platformStart()
         return false;
     }
 
-
-#if PLATFORM(QT)
-    // Set the platformPluginWidget only in the case of QWebView so that the context menu appears in the right place.
-    // In all other cases, we use off-screen rendering
-    if (QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient()) {
-        if (QWidget* widget = qobject_cast<QWidget*>(client->pluginParent()))
-            setPlatformPluginWidget(widget);
-    }
-#endif
-
     updatePluginWidget();
 
     if (!m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall))
@@ -181,11 +142,7 @@ bool PluginView::platformStart()
 
 void PluginView::platformDestroy()
 {
-    if (platformPluginWidget())
-        setPlatformPluginWidget(0);
-    else {
-        CGContextRelease(m_contextRef);
-    }
+    CGContextRelease(m_contextRef);
 }
 
 // Used before the plugin view has been initialized properly, and as a
@@ -286,15 +243,7 @@ void PluginView::setFocus(bool focused)
     if (!focused)
         Widget::setFocus(focused);
 
-    if (platformPluginWidget())
-#if PLATFORM(QT)
-        static_cast<QWidget*>(platformPluginWidget())->setFocus(Qt::OtherFocusReason);
-#else
-        platformPluginWidget()->SetFocus();
-#endif
-    else
-        Widget::setFocus(focused);
-
+    Widget::setFocus(focused);
 
     NPCocoaEvent cocoaEvent;
     initializeNPCocoaEvent(&cocoaEvent);
@@ -322,32 +271,19 @@ void PluginView::setNPWindowRect(const IntRect&)
 
 void PluginView::setNPWindowIfNeeded()
 {
-    if (!m_isStarted || !parent() || !m_plugin->pluginFuncs()->setwindow)
+    if (!m_isStarted || !parent() || !m_plugin->pluginFuncs()->setwindow || !m_contextRef)
         return;
 
-    CGContextRef newContextRef = 0;
-    if (platformPluginWidget()) {
-        newContextRef = cgHandleFor(platformPluginWidget());
-        m_npWindow.type = NPWindowTypeWindow;
-    } else {
-        newContextRef = m_contextRef;
-        m_npWindow.type = NPWindowTypeDrawable;
-    }
-
-    if (!newContextRef) {
-        if (!m_usePixmap)
-            return;
-    }
-
+    // The context is set through the draw event.
+    ASSERT(!m_npCgContext.context && !m_npCgContext.window);
     m_npWindow.window = (void*)&m_npCgContext;
-    m_npCgContext.context = newContextRef;
+    m_npWindow.type = NPWindowTypeDrawable;
 
     m_npWindow.x = m_windowRect.x();
     m_npWindow.y = m_windowRect.y();
     m_npWindow.width = m_windowRect.width();
     m_npWindow.height = m_windowRect.height();
 
-    // TODO: (also clip against scrollbars, etc.)
     m_npWindow.clipRect.left = max(0, m_windowRect.x());
     m_npWindow.clipRect.top = max(0, m_windowRect.y());
     m_npWindow.clipRect.right = m_windowRect.x() + m_windowRect.width();
@@ -355,7 +291,7 @@ void PluginView::setNPWindowIfNeeded()
 
     LOG(Plugins, "PluginView::setNPWindowIfNeeded(): context=%p,"
             " window.x:%d window.y:%d window.width:%d window.height:%d window.clipRect size:%dx%d",
-            newContextRef, m_npWindow.x, m_npWindow.y, m_npWindow.width, m_npWindow.height,
+            m_contextRef, m_npWindow.x, m_npWindow.y, m_npWindow.width, m_npWindow.height,
             m_npWindow.clipRect.right - m_npWindow.clipRect.left, m_npWindow.clipRect.bottom - m_npWindow.clipRect.top);
 
     PluginView::setCurrentPluginView(this);
@@ -375,27 +311,15 @@ void PluginView::updatePluginWidget()
     FrameView* frameView = toFrameView(parent());
 
     IntRect oldWindowRect = m_windowRect;
-    IntRect oldClipRect = m_clipRect;
-
     m_windowRect = frameView->contentsToWindow(frameRect());
-    IntPoint offset = topLevelOffsetFor(platformPluginWidget());
-    m_windowRect.move(offset.x(), offset.y());
 
-    if (!platformPluginWidget()) {
-        if (m_windowRect.size() != oldWindowRect.size()) {
-            CGContextRelease(m_contextRef);
-#if PLATFORM(QT)
-            m_pixmap = QPixmap(m_windowRect.size());
-            m_pixmap.fill(Qt::transparent);
-            m_contextRef = m_pixmap.isNull() ? 0 : qt_mac_cg_context(&m_pixmap);
-#endif
-        }
+    if (m_windowRect.size() != oldWindowRect.size()) {
+        CGContextRelease(m_contextRef);
+        m_contextRef = createBitmapContext(m_windowRect.size());
+        CGContextClearRect(m_contextRef, CGRectMake(0, 0, m_windowRect.width(), m_windowRect.height()));
     }
 
-    m_clipRect = windowClipRect();
-    m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
-
-    if (platformPluginWidget() && (m_windowRect != oldWindowRect || m_clipRect != oldClipRect))
+    if (m_windowRect != oldWindowRect)
         setNPWindowIfNeeded();
 }
 
@@ -406,41 +330,10 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
     }
 
-    if (context->paintingDisabled())
+    if (context->paintingDisabled() || !m_contextRef)
         return;
-#if PLATFORM(QT)
-    QPainter* p = context->platformContext();
-    CGContextRef cgContext = qt_mac_cg_context(p->device());
-#else
-    CGContextRef cgContext = m_npCgContext.context;
-#endif
-    setNPWindowIfNeeded();
-    if (!cgContext) {
-        cgContext = m_contextRef;
-        if (!cgContext)
-            return;
-        else {
-            m_usePixmap = true;
-            setNPWindowIfNeeded();
-        }
-    } else
-        m_usePixmap = false;
 
-    bool oldUsePixmap = m_usePixmap;
-    if (m_isTransparent && !m_usePixmap) {
-        if (m_pixmap.isNull())
-            m_pixmap = QPixmap(frameRect().size());
-        m_usePixmap = true;
-        setNPWindowIfNeeded();
-        cgContext = qt_mac_cg_context(&m_pixmap);
-    }
-
-    CGContextSaveGState(cgContext);
-    if (platformPluginWidget()) {
-        IntPoint offset = frameRect().location();
-        CGContextTranslateCTM(cgContext, offset.x(), offset.y());
-    }
-
+    CGContextSaveGState(m_contextRef);
     IntRect targetRect(frameRect());
     targetRect.intersects(rect);
 
@@ -450,40 +343,40 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     r.origin.y = targetRect.y() - frameRect().y();
     r.size.width = targetRect.width();
     r.size.height = targetRect.height();
-    CGContextClipToRect(cgContext, r);
+    CGContextClipToRect(m_contextRef, r);
 
-    if (!platformPluginWidget() || m_isTransparent) { // clean the pixmap in transparent mode
-#if PLATFORM(QT)
-        QPainter painter(&m_pixmap);
-        painter.setCompositionMode(QPainter::CompositionMode_Clear);
-        painter.fillRect(QRectF(r.origin.x, r.origin.y, r.size.width, r.size.height), Qt::transparent);
-#endif
+    if (m_isTransparent) {
+        // Clean the pixmap in transparent mode.
+        CGContextClearRect(m_contextRef, CGRectMake(r.origin.x, r.origin.y, r.size.width, r.size.height));
     }
 
     NPCocoaEvent cocoaEvent;
     initializeNPCocoaEvent(&cocoaEvent);
     cocoaEvent.type = NPCocoaEventDrawRect;
-    cocoaEvent.data.draw.x = m_usePixmap ? 0 : r.origin.x;
-    cocoaEvent.data.draw.y = m_usePixmap ? 0 : r.origin.y;
-    cocoaEvent.data.draw.width = m_usePixmap ? m_pixmap.width() : r.size.width;
-    cocoaEvent.data.draw.height = m_usePixmap ? m_pixmap.height() : r.size.height;
-    cocoaEvent.data.draw.context = cgContext;
+    cocoaEvent.data.draw.x = 0;
+    cocoaEvent.data.draw.y = 0;
+    cocoaEvent.data.draw.width = CGBitmapContextGetWidth(m_contextRef);
+    cocoaEvent.data.draw.height = CGBitmapContextGetHeight(m_contextRef);
+    cocoaEvent.data.draw.context = m_contextRef;
 
     if(!dispatchNPCocoaEvent(cocoaEvent))
         LOG(Events, "PluginView::paint(): Paint event type %d not accepted", cocoaEvent.type);
     
-    if (!platformPluginWidget() || m_isTransparent) {
 #if PLATFORM(QT)
-        QPainter* painter = context->platformContext();
-        painter->drawPixmap(targetRect.x(), targetRect.y(), m_pixmap,
-                            targetRect.x() - frameRect().x(), targetRect.y() - frameRect().y(), targetRect.width(), targetRect.height());
+    // Paint the intermediate bitmap into our graphics context.
+    ASSERT(CGBitmapContextGetBitmapInfo(m_contextRef) & (kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+    ASSERT(CGBitmapContextGetBitsPerPixel(m_contextRef) == 32);
+    const uint8_t* data = reinterpret_cast<const uint8_t*>(CGBitmapContextGetData(m_contextRef));
+    size_t width = CGBitmapContextGetWidth(m_contextRef);
+    size_t height = CGBitmapContextGetHeight(m_contextRef);
+    const QImage imageFromBitmap(data, width, height, QImage::Format_ARGB32_Premultiplied);
+
+    QPainter* painter = context->platformContext();
+    painter->drawImage(targetRect.x(), targetRect.y(), imageFromBitmap,
+        targetRect.x() - frameRect().x(), targetRect.y() - frameRect().y(), targetRect.width(), targetRect.height());
 #endif
-    }
-    CGContextRestoreGState(cgContext);
-    if (oldUsePixmap != m_usePixmap) {
-        m_usePixmap = oldUsePixmap;
-        m_pixmap = QPixmap();
-    }    
+
+    CGContextRestoreGState(m_contextRef);
 }
 
 bool PluginView::popUpContextMenu(NPMenu *menu)
@@ -502,12 +395,6 @@ bool PluginView::popUpContextMenu(NPMenu *menu)
     
 void PluginView::invalidateRect(const IntRect& rect)
 {
-    if (platformPluginWidget() && m_isTransparent)
-#if PLATFORM(QT)
-        static_cast<QWidget*>(platformPluginWidget())->update(convertToContainingWindow(rect));
-#else
-        platformPluginWidget()->RefreshRect(convertToContainingWindow(rect));
-#endif
     invalidateWindowlessPluginRect(rect);
 }
 

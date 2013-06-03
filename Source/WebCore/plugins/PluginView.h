@@ -52,9 +52,6 @@ typedef struct HWND__* HWND;
 typedef HWND PlatformPluginWidget;
 #else
 typedef PlatformWidget PlatformPluginWidget;
-#if defined(XP_MACOSX) && PLATFORM(QT)
-#include <QPixmap>
-#endif
 #endif
 #if PLATFORM(QT)
 #if USE(TEXTURE_MAPPER)
@@ -327,7 +324,6 @@ namespace WebCore {
         int16_t dispatchNPCocoaEvent(NPCocoaEvent&);
         bool m_updatedCocoaTextInputRequested;
         bool m_keyDownSent;
-        bool m_usePixmap;
         uint16_t m_disregardKeyUpCounter;
 #endif
 
@@ -387,7 +383,7 @@ namespace WebCore {
         bool m_haveUpdatedPluginWidget;
 #endif
 
-#if ((PLATFORM(GTK) || PLATFORM(QT)) && OS(WINDOWS)) || defined(XP_MACOSX) || PLATFORM(EFL)
+#if ((PLATFORM(GTK) || PLATFORM(QT)) && OS(WINDOWS)) || PLATFORM(EFL)
         // On Mac OSX and Qt/Windows the plugin does not have its own native widget,
         // but is using the containing window as its reference for positioning/painting.
         PlatformPluginWidget m_window;
@@ -407,9 +403,6 @@ private:
 #elif defined(XP_MACOSX)
         NP_CGContext m_npCgContext;
         CGContextRef m_contextRef;
-#if PLATFORM(QT)
-        QPixmap m_pixmap;
-#endif
 
         void setNPWindowIfNeeded();
 #endif
