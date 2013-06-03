@@ -1,3 +1,33 @@
+2013-06-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: MathML multiscripts not exposed in Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=115069
+
+        Reviewed by Tim Horton.
+
+        Add methods to help output components of math multiscripts for accessibility.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (mathPostscriptsDescriptionCallback):
+        (mathPrescriptsDescriptionCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (convertMathMultiscriptPairsToString):
+        (AccessibilityUIElement::mathPostscriptsDescription):
+        (AccessibilityUIElement::mathPrescriptsDescription):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription):
+        (WTR::AccessibilityUIElement::mathPrescriptsDescription):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::_convertMathMultiscriptPairsToString):
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription):
+        (WTR::AccessibilityUIElement::mathPrescriptsDescription):
+
 2013-06-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r151109.

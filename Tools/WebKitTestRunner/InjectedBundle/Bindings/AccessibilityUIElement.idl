@@ -168,6 +168,8 @@ interface AccessibilityUIElement {
 
     // Returns an ordered list of supported actions for an element.
     readonly attribute DOMString supportedActions;
+    readonly attribute DOMString mathPostscriptsDescription;
+    readonly attribute DOMString mathPrescriptsDescription;
 
     readonly attribute DOMString pathDescription;
     

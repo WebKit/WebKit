@@ -1076,6 +1076,19 @@ static JSValueRef supportedActionsCallback(JSContextRef context, JSObjectRef thi
     JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->supportedActions());
     return JSValueMakeString(context, valueString.get());
 }
+
+static JSValueRef mathPostscriptsDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->mathPostscriptsDescription());
+    return JSValueMakeString(context, valueString.get());
+}
+
+static JSValueRef mathPrescriptsDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->mathPrescriptsDescription());
+    return JSValueMakeString(context, valueString.get());
+}
+
 #endif
 
 // Implementation
@@ -1262,6 +1275,8 @@ JSClassRef AccessibilityUIElement::getJSClass()
 #endif // PLATFORM(IOS)
 #if PLATFORM(MAC) && !PLATFORM(IOS)
         { "supportedActions", supportedActionsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "mathPostscriptsDescription", mathPostscriptsDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "mathPrescriptsDescription", mathPrescriptsDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif
         { 0, 0, 0, 0 }
     };

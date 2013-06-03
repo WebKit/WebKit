@@ -1487,6 +1487,37 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(i
     return 0;                                                                          
 }
 
+static NSString *_convertMathMultiscriptPairsToString(NSArray *pairs)
+{
+    __block NSMutableString *result = [NSMutableString string];
+    [pairs enumerateObjectsUsingBlock:^(id pair, NSUInteger index, BOOL *stop) {
+        for (NSString *key in pair)
+            [result appendFormat:@"\t%lu. %@ = %@\n", (unsigned long)index, key, [[pair objectForKey:key] accessibilityAttributeValue:NSAccessibilitySubroleAttribute]];
+    }];
+    
+    return result;
+}
+    
+JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPostscriptsDescription() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray *pairs = [m_element accessibilityAttributeValue:@"AXMathPostscripts"];
+    return [_convertMathMultiscriptPairsToString(pairs) createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPrescriptsDescription() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray *pairs = [m_element accessibilityAttributeValue:@"AXMathPrescripts"];
+    return [_convertMathMultiscriptPairsToString(pairs) createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+    
 JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS

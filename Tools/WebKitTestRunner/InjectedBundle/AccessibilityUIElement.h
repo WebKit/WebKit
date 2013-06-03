@@ -232,6 +232,8 @@ public:
 
     // Returns an ordered list of supported actions for an element.
     JSRetainPtr<JSStringRef> supportedActions() const;
+    JSRetainPtr<JSStringRef> mathPostscriptsDescription() const;
+    JSRetainPtr<JSStringRef> mathPrescriptsDescription() const;
 
     JSRetainPtr<JSStringRef> pathDescription() const;
     

@@ -1521,6 +1521,38 @@ JSStringRef AccessibilityUIElement::supportedActions()
     return 0;
 }
 
+static NSString *convertMathMultiscriptPairsToString(NSArray *pairs)
+{
+    __block NSMutableString *result = [NSMutableString string];
+    [pairs enumerateObjectsUsingBlock:^(id pair, NSUInteger index, BOOL *stop) {
+        for (NSString *key in pair)
+            [result appendFormat:@"\t%lu. %@ = %@\n", (unsigned long)index, key, [[pair objectForKey:key] accessibilityAttributeValue:NSAccessibilitySubroleAttribute]];
+    }];
+    
+    return result;
+}
+
+JSStringRef AccessibilityUIElement::mathPostscriptsDescription() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray *pairs = [m_element accessibilityAttributeValue:@"AXMathPostscripts"];
+    return [convertMathMultiscriptPairsToString(pairs) createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+JSStringRef AccessibilityUIElement::mathPrescriptsDescription() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray *pairs = [m_element accessibilityAttributeValue:@"AXMathPrescripts"];
+    return [convertMathMultiscriptPairsToString(pairs) createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+
 void AccessibilityUIElement::scrollToMakeVisible()
 {
     BEGIN_AX_OBJC_EXCEPTIONS

@@ -259,6 +259,10 @@ public:
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     // Returns an ordered list of supported actions for an element.
     JSStringRef supportedActions();
+    
+    // A general description of the elements making up multiscript pre/post objects.
+    JSStringRef mathPostscriptsDescription() const;
+    JSStringRef mathPrescriptsDescription() const;
 #endif
     
 private:
