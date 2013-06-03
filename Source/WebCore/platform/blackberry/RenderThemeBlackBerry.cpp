@@ -658,7 +658,7 @@ bool RenderThemeBlackBerry::paintSliderTrack(RenderObject* object, const PaintIn
         rect2.setX(rect.x() + (rect.width() - SliderTrackHeight) / 2);
         rect2.setY(rect.y());
     }
-    static Image* sliderTrack = Image::loadPlatformResource("core_slider_bg").leakRef();
+    static Image* sliderTrack = Image::loadPlatformResource("core_progressindicator_bg").leakRef();
     return paintSliderTrackRect(object, info, rect2, sliderTrack);
 }
 
@@ -718,9 +718,12 @@ bool RenderThemeBlackBerry::paintSliderThumb(RenderObject* object, const PaintIn
     float auraY = tmpRect.y() - (auraHeight - tmpRect.height()) / 2;
     FloatRect auraRect(auraX, auraY, auraWidth, auraHeight);
 
-    if (!isEnabled(object))
+    if (!isEnabled(object)) {
+        // Disabled handle shrink 30%
+        tmpRect.move(tmpRect.width() * 0.075, tmpRect.height() * 0.075);
+        tmpRect.contract(tmpRect.width() * 0.15, tmpRect.height() * 0.15);
         drawControl(context, tmpRect, disabled.get());
-    else {
+    } else {
         if (isPressed(object) || isHovered(object) || isFocused(object)) {
             drawControl(context, tmpRect, pressed.get());
             drawControl(context, auraRect, aura.get());
