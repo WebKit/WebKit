@@ -1,5 +1,18 @@
 2013-06-03  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        ASSERTION FAILED: node->parentNode(), Heap-use-after-free in WebCore::RenderBox::exclusionShapeOutsideInfo
+        https://bugs.webkit.org/show_bug.cgi?id=117155
+
+        Reviewed by David Hyatt.
+
+        Test for crash. Note that this will only crash when run under a memory
+        checking tool like ASAN.
+
+        * fast/block/float/float-list-changed-before-layout-crash-expected.txt: Added.
+        * fast/block/float/float-list-changed-before-layout-crash.html: Added.
+
+2013-06-03  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         [CSS Shapes] inset-rectangle support for shape-outside
         https://bugs.webkit.org/show_bug.cgi?id=116641
 

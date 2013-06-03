@@ -4855,7 +4855,7 @@ bool RenderBlock::containsFloat(RenderBox* renderer) const
 
 void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove, bool inLayout)
 {
-    if (!everHadLayout())
+    if (!everHadLayout() && !containsFloats())
         return;
 
     MarkingBehavior markParents = inLayout ? MarkOnlyThis : MarkContainingBlockChain;
