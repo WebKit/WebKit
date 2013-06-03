@@ -1,3 +1,15 @@
+2013-06-03  Radu Stavila  <stavila@adobe.com>
+
+        [Qt][WK1][CSS Regions]  New test fast/regions/hover-on-child-parent-different-regions.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=117035
+
+        Used waitUntilDone() to ensure correct results.
+
+        Reviewed by Antti Koivisto.
+
+        * fast/regions/hover-on-child-parent-different-regions-expected.txt:
+        * fast/regions/hover-on-child-parent-different-regions.html:
+
 2013-06-03  Krzysztof Czech  <k.czech@samsung.com>
 
         [GTK][WK2] accessibility/placeholder.html is failing
