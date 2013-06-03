@@ -1,3 +1,14 @@
+2013-06-03  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] accessibility/placeholder.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=112031
+
+        Unreviewed EFL gardening.
+
+        accessibility/placeholder.html passes after r151103.
+
+        * platform/efl-wk2/TestExpectations:
+
 2013-06-03  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r143070): Overflow:scroll content does not get clipped properly when the parent box has CSS3 filter on.
