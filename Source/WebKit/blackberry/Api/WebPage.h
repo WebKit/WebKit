@@ -383,6 +383,8 @@ public:
 
     bool isProcessingUserGesture() const;
 
+    void setShowDebugBorders(bool);
+
 private:
     virtual ~WebPage();
 

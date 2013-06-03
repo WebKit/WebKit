@@ -6390,5 +6390,12 @@ void WebPagePrivate::handleServiceScriptedAnimationsOnMainThread(void* data)
 }
 #endif
 
+void WebPage::setShowDebugBorders(bool show)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    d->m_page->settings()->setShowDebugBorders(show);
+#endif
+}
+
 }
 }
