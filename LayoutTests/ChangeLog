@@ -1,3 +1,14 @@
+2013-06-03  Radu Stavila  <stavila@adobe.com>
+
+        [Qt][WK1][CSS Regions]  New test fast/regions/hover-on-child-parent-different-regions.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=117035
+
+        Forced relayout to ensure the hover event has propagated before checking the results.
+
+        Reviewed by Alexandru Chiculita.
+
+        * fast/regions/hover-on-child-parent-different-regions.html:
+
 2013-06-03  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         ASSERTION FAILED: node->parentNode(), Heap-use-after-free in WebCore::RenderBox::exclusionShapeOutsideInfo

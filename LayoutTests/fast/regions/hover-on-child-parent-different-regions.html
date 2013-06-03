@@ -89,7 +89,10 @@
 			eventSender.mouseMoveTo(child.offsetLeft + 50, child.offsetTop + 50);
 			eventSender.mouseDown(0);
 
-			setTimeout(release, 0);			
+			// force a re-layout to ensure the hover events gets propagated before we check the results
+			var top = document.body.offsetTop;
+
+			setTimeout(release, 0);
 		}
 	}
 
