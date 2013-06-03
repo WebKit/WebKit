@@ -1,3 +1,11 @@
+2013-06-03  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0-wk1/TestExpectations: Unskip after r151104.
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations: Skip crashing test.
+
 2013-06-03  Radu Stavila  <stavila@adobe.com>
 
         [Qt][WK1][CSS Regions]  New test fast/regions/hover-on-child-parent-different-regions.html fails
