@@ -1,3 +1,20 @@
+2013-06-03  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [WK2] REGRESSION(r150798): scrolling coordinator is not being enabled when WebPage is set to use fixed layout
+        https://bugs.webkit.org/show_bug.cgi?id=117163
+
+        Reviewed by Darin Adler.
+
+        Moved call to WebPage::settings()->setScrollingCoordinatorEnabled()
+        from CoordinatedLayerTreeHost constructor to WebPage::setUseFixedLayout().
+        The scrolling coordinator must be enabled or disabled following the
+        WebPage's use of fixed layout.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setUseFixedLayout):
+
 2013-06-03  Anders Carlsson  <andersca@apple.com>
 
         Send mouse events to the banner for as long as the mouse button is down

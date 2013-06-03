@@ -99,8 +99,6 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
     , m_lastAnimationServiceTime(0)
 #endif
 {
-    if (m_webPage->useFixedLayout())
-        m_webPage->corePage()->settings()->setScrollingCoordinatorEnabled(true);
     m_webPage->corePage()->settings()->setApplyDeviceScaleFactorInCompositor(true);
 
     // Create a root layer.
