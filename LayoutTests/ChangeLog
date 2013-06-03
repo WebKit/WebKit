@@ -1,3 +1,43 @@
+2013-06-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: Undoing autocorrection doesn't prevent a future autocorrection
+        https://bugs.webkit.org/show_bug.cgi?id=117165
+
+        Reviewed by Darin Adler.
+
+        Add a regression test and rebaseline other tests as ReplaceSelectionCommand now merges text nodes at
+        the end of replaced text.
+
+        * editing/deleting/merge-paragraph-from-address-expected.txt:
+        * editing/deleting/merge-paragraph-from-h6-expected.txt:
+        * editing/deleting/merge-paragraph-from-listing-expected.txt:
+        * editing/deleting/paste-with-transparent-background-color-expected.txt:
+        * editing/inserting/insert-3907422-fix-expected.txt:
+        * editing/pasteboard/copy-image-with-alt-text-expected.txt:
+        * editing/pasteboard/merge-end-4-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-area-expected.txt:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.txt:
+        * editing/pasteboard/paste-text-001-expected.txt:
+        * editing/pasteboard/paste-unrendered-select-expected.txt:
+        * editing/pasteboard/smart-paste-003-trailing-whitespace-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-019-expected.txt:
+        * platform/mac/editing/deleting/delete-block-merge-contents-020-expected.txt:
+        * platform/mac/editing/pasteboard/4944770-2-expected.txt:
+        * platform/mac/editing/pasteboard/8145-2-expected.txt:
+        * platform/mac/editing/pasteboard/paste-line-endings-006-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-at-tabspan-003-expected.txt:
+        * platform/mac/editing/pasteboard/paste-xml-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-blockquote-crash-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-blockquote-crash.html: Added more asssertions to ensure that
+        the autocorrected text is in the blockquote. r122176 modified the test description saying that this test
+        already checks this condition but it never did so explicitly; it assumed that the autocorrected text was
+        inside a blockquote as long as it started at a certain offset in the text node.
+        * platform/mac/editing/spelling/autocorrection-respets-undo-expected.txt: Added.
+        * platform/mac/editing/spelling/autocorrection-respets-undo.html: Added.
+        * platform/mac/editing/spelling/autocorrection-with-multi-line-text-expected.txt:
+
 2013-06-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit should join substrings on single space when concatenating the accessible name of an element

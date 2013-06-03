@@ -218,7 +218,7 @@ void CompositeEditCommand::apply()
 
     // Only need to call appliedEditing for top-level commands,
     // and TypingCommands do it on their own (see TypingCommand::typingAddedToOpenCommand).
-    if (!callsAppliedEditingInDoApply())
+    if (!isTypingCommand())
         frame->editor().appliedEditing(this);
     setShouldRetainAutocorrectionIndicator(false);
 }
@@ -244,11 +244,6 @@ bool CompositeEditCommand::preservesTypingStyle() const
 }
 
 bool CompositeEditCommand::isTypingCommand() const
-{
-    return false;
-}
-
-bool CompositeEditCommand::callsAppliedEditingInDoApply() const
 {
     return false;
 }

@@ -1335,6 +1335,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
             end = lastPositionToSelect;
 
         mergeTextNodesAroundPosition(start, end);
+        mergeTextNodesAroundPosition(end, start);
     } else if (lastPositionToSelect.isNotNull())
         start = end = lastPositionToSelect;
     else

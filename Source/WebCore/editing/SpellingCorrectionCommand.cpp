@@ -31,9 +31,9 @@
 #include "DocumentFragment.h"
 #include "Editor.h"
 #include "Frame.h"
+#include "ReplaceSelectionCommand.h"
 #include "SetSelectionCommand.h"
 #include "TextIterator.h"
-#include "TypingCommand.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -98,19 +98,19 @@ void SpellingCorrectionCommand::doApply()
     if (!document()->frame()->selection()->shouldChangeSelection(m_selectionToBeCorrected))
         return;
 
+    RefPtr<DocumentFragment> fragment = createFragmentFromText(m_rangeToBeCorrected.get(), m_correction);
+    if (!fragment)
+        return;
+
     applyCommandToComposite(SetSelectionCommand::create(m_selectionToBeCorrected, FrameSelection::SpellCorrectionTriggered | FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle));
 #if USE(AUTOCORRECTION_PANEL)
     applyCommandToComposite(SpellingCorrectionRecordUndoCommand::create(document(), m_corrected, m_correction));
 #endif
-    TypingCommand::insertText(document(), m_correction, TypingCommand::PreventSpellChecking);
+
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment.release(), ReplaceSelectionCommand::MatchStyle, EditActionPaste));
 }
 
 bool SpellingCorrectionCommand::shouldRetainAutocorrectionIndicator() const
-{
-    return true;
-}
-
-bool SpellingCorrectionCommand::callsAppliedEditingInDoApply() const
 {
     return true;
 }
