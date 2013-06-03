@@ -1,3 +1,14 @@
+2013-06-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WTF] Add OwnArrayPtr vectortraits template 
+        https://bugs.webkit.org/show_bug.cgi?id=117131
+
+        Reviewed by Darin Adler.
+
+        To support Vector<OwnArrayPtr<P>>, which will be used by EFL port.
+
+        * wtf/VectorTraits.h:
+
 2013-05-31  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         Fix double hash lookup in PageMapMemoryUsageRecorder::visit
