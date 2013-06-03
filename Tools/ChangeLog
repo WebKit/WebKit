@@ -1,3 +1,10 @@
+2013-06-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * TestWebKitAPI/win/main.cpp: Embed proper manifest information to
+        allow VS2010 builds to use VS2005 runtime libraries as needed.
+
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
         Nuke VS2005 files from the tree.

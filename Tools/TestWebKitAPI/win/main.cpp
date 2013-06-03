@@ -27,6 +27,10 @@
 #include "TestsController.h"
 #include <windows.h>
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1600)
+#pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.VC80.CRT' version='8.0.50727.6195' processorArchitecture='" PROCESSORARCHITECTURE "' publicKeyToken='1fc8b3b9a1e18e3b' language='*'\"")
+#endif
+
 int main(int argc, char** argv)
 {
     // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
