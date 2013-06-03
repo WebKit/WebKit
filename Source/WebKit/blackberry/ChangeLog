@@ -1,3 +1,20 @@
+2013-06-03  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] ROI details are not always cleared when using back navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=117159
+
+        Reviewed by Carlos Garcia Campos.
+
+        PR 328557.
+
+        Secondary change to ensure when restoreViewState is triggered
+        ROI is reset.
+
+        Internally Reviewed by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::restoreViewState):
+
 2013-05-29  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Add more cellular technologies into the NetworkInfo enum

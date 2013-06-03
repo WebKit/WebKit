@@ -2688,6 +2688,9 @@ int32_t InputHandler::commitText(spannable_string_t* spannableString, int32_t re
 void InputHandler::restoreViewState()
 {
     setInputModeEnabled();
+
+    // Make sure we reset the selection / FCC state.
+    m_webPage->m_selectionHandler->selectionPositionChanged();
 }
 
 void InputHandler::showTextInputTypeSuggestionBox(bool allowEmptyPrefix)
