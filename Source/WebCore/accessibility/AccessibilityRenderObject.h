@@ -299,6 +299,7 @@ private:
     virtual bool isMathTable() const;
     virtual bool isMathTableRow() const;
     virtual bool isMathTableCell() const;
+    virtual bool isMathMultiscript() const;
     
     // Generic components.
     virtual AccessibilityObject* mathBaseObject();
@@ -324,6 +325,10 @@ private:
     virtual String mathFencedCloseString() const;
     virtual int mathLineThickness() const;
 
+    // Multiscripts components.
+    virtual void mathPrescripts(AccessibilityMathMultiscriptPairs&);
+    virtual void mathPostscripts(AccessibilityMathMultiscriptPairs&);
+    
     bool isIgnoredElementWithinMathTree() const;
 #endif
 };

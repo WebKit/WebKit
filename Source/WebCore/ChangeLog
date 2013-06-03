@@ -1,3 +1,54 @@
+2013-06-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: MathML multiscripts not exposed in Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=115069
+
+        Reviewed by Tim Horton.
+
+        Math multiscript tags allow for an arbitrary number of prescripts and postscripts
+        around a base object. 
+
+        This MathML tag currently is not supported in the render tree, but that doesn't need to 
+        stop it from being exposed through accessibility, as a base object with an array of postscripts
+        and an array of prescripts.
+
+        Test: platform/mac/accessibility/mathml-multiscript.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isMathMultiscript):
+        (AccessibilityObject):
+        (WebCore::AccessibilityObject::mathPrescripts):
+        (WebCore::AccessibilityObject::mathPostscripts):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isMathMultiscript):
+        (WebCore::AccessibilityRenderObject::isIgnoredElementWithinMathTree):
+        (WebCore::AccessibilityRenderObject::mathBaseObject):
+        (WebCore::AccessibilityRenderObject::mathPrescripts):
+        (WebCore::AccessibilityRenderObject::mathPostscripts):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityPlatformMathSubscriptKey]):
+        (-[WebAccessibilityObjectWrapper accessibilityPlatformMathSuperscriptKey]):
+        (-[WebAccessibilityObjectWrapper accessibilityMathPostscripts]):
+        (-[WebAccessibilityObjectWrapper accessibilityMathPrescripts]):
+        (-[WebAccessibilityObjectWrapper accessibilityMathOverObject]):
+        (-[WebAccessibilityObjectWrapper accessibilityMathType]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertMathPairsToNSArray):
+        (-[WebAccessibilityObjectWrapperBase accessibilityPlatformMathSubscriptKey]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityPlatformMathSuperscriptKey]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityMathPostscriptPairs]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityMathPrescriptPairs]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityPlatformMathSubscriptKey]):
+        (-[WebAccessibilityObjectWrapper accessibilityPlatformMathSuperscriptKey]):
+        * mathml/mathtags.in:
+
 2013-06-03  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         ASSERTION FAILED: node->parentNode(), Heap-use-after-free in WebCore::RenderBox::exclusionShapeOutsideInfo

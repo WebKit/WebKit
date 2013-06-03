@@ -792,7 +792,8 @@ public:
     virtual bool isMathTable() const { return false; }
     virtual bool isMathTableRow() const { return false; }
     virtual bool isMathTableCell() const { return false; }
-    
+    virtual bool isMathMultiscript() const { return false; }
+
     // Root components.
     virtual AccessibilityObject* mathRadicandObject() { return 0; }
     virtual AccessibilityObject* mathRootIndexObject() { return 0; }
@@ -815,6 +816,11 @@ public:
     virtual String mathFencedCloseString() const { return String(); }
     virtual int mathLineThickness() const { return 0; }
     
+    // Multiscripts components.
+    typedef Vector<pair<AccessibilityObject*, AccessibilityObject*> > AccessibilityMathMultiscriptPairs;
+    virtual void mathPrescripts(AccessibilityMathMultiscriptPairs&) { }
+    virtual void mathPostscripts(AccessibilityMathMultiscriptPairs&) { }
+
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(GTK) || PLATFORM(EFL)
     AccessibilityObjectWrapper* wrapper() const;

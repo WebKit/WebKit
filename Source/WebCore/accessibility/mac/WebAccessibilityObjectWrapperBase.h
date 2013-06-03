@@ -61,6 +61,10 @@ class VisiblePosition;
 - (CGPathRef)convertPathToScreenSpace:(WebCore::Path &)path;
 - (CGPoint)convertPointToScreenSpace:(WebCore::FloatPoint &)point;
 
+// Math related functions
+- (NSArray *)accessibilityMathPostscriptPairs;
+- (NSArray *)accessibilityMathPrescriptPairs;
+
 @end
 
 #endif // WebAccessibilityObjectWrapperBase_h

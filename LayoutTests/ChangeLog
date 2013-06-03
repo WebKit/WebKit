@@ -1,3 +1,13 @@
+2013-06-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: MathML multiscripts not exposed in Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=115069
+
+        Reviewed by Tim Horton.
+
+        * platform/mac/accessibility/mathml-multiscript-expected.txt: Added.
+        * platform/mac/accessibility/mathml-multiscript.html: Added.
+
 2013-06-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [Layout Tests] Update testharness scripts, add WebIDLParser.js and idlharness.js

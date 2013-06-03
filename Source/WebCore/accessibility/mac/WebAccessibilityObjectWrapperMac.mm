@@ -372,6 +372,8 @@ using namespace std;
 #define NSAccessibilityMathFencedOpenAttribute @"AXMathFencedOpen"
 #define NSAccessibilityMathFencedCloseAttribute @"AXMathFencedClose"
 #define NSAccessibilityMathLineThicknessAttribute @"AXMathLineThickness"
+#define NSAccessibilityMathPrescriptsAttribute @"AXMathPrescripts"
+#define NSAccessibilityMathPostscriptsAttribute @"AXMathPostscripts"
 
 @implementation WebAccessibilityObjectWrapper
 
@@ -1042,6 +1044,10 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     } else if (m_object->isMathFenced()) {
         [additional addObject:NSAccessibilityMathFencedOpenAttribute];
         [additional addObject:NSAccessibilityMathFencedCloseAttribute];
+    } else if (m_object->isMathMultiscript()) {
+        [additional addObject:NSAccessibilityMathBaseAttribute];
+        [additional addObject:NSAccessibilityMathPrescriptsAttribute];
+        [additional addObject:NSAccessibilityMathPostscriptsAttribute];
     }
     
     if (m_object->supportsPath())
@@ -1855,6 +1861,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXMathSeparatorOperator";
         if (m_object->isMathOperator())
             return @"AXMathOperator";
+        if (m_object->isMathMultiscript())
+            return @"AXMathMultiscript";
     }
     
     if (m_object->isMediaTimeline())
@@ -2708,6 +2716,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return m_object->mathFencedCloseString();
         if ([attributeName isEqualToString:NSAccessibilityMathLineThicknessAttribute])
             return [NSNumber numberWithInteger:m_object->mathLineThickness()];
+        if ([attributeName isEqualToString:NSAccessibilityMathPostscriptsAttribute])
+            return [self accessibilityMathPostscriptPairs];
+        if ([attributeName isEqualToString:NSAccessibilityMathPrescriptsAttribute])
+            return [self accessibilityMathPrescriptPairs];
     }
     
     // this is used only by DumpRenderTree for testing
@@ -2739,6 +2751,16 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return m_object->getAttribute(idAttr);
     
     return nil;
+}
+
+- (NSString *)accessibilityPlatformMathSubscriptKey
+{
+    return NSAccessibilityMathSubscriptAttribute;
+}
+
+- (NSString *)accessibilityPlatformMathSuperscriptKey
+{
+    return NSAccessibilityMathSuperscriptAttribute;
 }
 
 - (id)accessibilityFocusedUIElement

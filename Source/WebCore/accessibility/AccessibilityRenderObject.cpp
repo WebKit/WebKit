@@ -3528,6 +3528,11 @@ bool AccessibilityRenderObject::isMathIdentifier() const
     return node() && node()->hasTagName(MathMLNames::miTag);
 }
 
+bool AccessibilityRenderObject::isMathMultiscript() const
+{
+    return node() && node()->hasTagName(MathMLNames::mmultiscriptsTag);
+}
+    
 bool AccessibilityRenderObject::isMathTable() const
 {
     return node() && node()->hasTagName(MathMLNames::mtableTag);
@@ -3566,7 +3571,7 @@ bool AccessibilityRenderObject::isIgnoredElementWithinMathTree() const
         if (isMathFraction() || isMathFenced() || isMathSubscriptSuperscript() || isMathRow()
             || isMathUnderOver() || isMathRoot() || isMathText() || isMathNumber()
             || isMathOperator() || isMathFenceOperator() || isMathSeparatorOperator()
-            || isMathIdentifier() || isMathTable() || isMathTableRow() || isMathTableCell())
+            || isMathIdentifier() || isMathTable() || isMathTableRow() || isMathTableCell() || isMathMultiscript())
             return false;
         return true;
     }
@@ -3659,7 +3664,7 @@ AccessibilityObject* AccessibilityRenderObject::mathOverObject()
 
 AccessibilityObject* AccessibilityRenderObject::mathBaseObject()
 {
-    if (!isMathSubscriptSuperscript() && !isMathUnderOver())
+    if (!isMathSubscriptSuperscript() && !isMathUnderOver() && !isMathMultiscript())
         return 0;
     
     AccessibilityChildrenVector children = this->children();
@@ -3716,6 +3721,68 @@ String AccessibilityRenderObject::mathFencedCloseString() const
         return String();
     
     return getAttribute(MathMLNames::closeAttr);
+}
+    
+void AccessibilityRenderObject::mathPrescripts(AccessibilityMathMultiscriptPairs& prescripts)
+{
+    if (!isMathMultiscript() || !node())
+        return;
+    
+    bool foundPrescript = false;
+    pair<AccessibilityObject*, AccessibilityObject*> prescriptPair;
+    for (Node* child = node()->firstChild(); child; child = child->nextSibling()) {
+        if (foundPrescript) {
+            AccessibilityObject* axChild = axObjectCache()->getOrCreate(child);
+            if (axChild && axChild->isMathElement()) {
+                if (!prescriptPair.first)
+                    prescriptPair.first = axChild;
+                else {
+                    prescriptPair.second = axChild;
+                    prescripts.append(prescriptPair);
+                    prescriptPair.first = 0;
+                    prescriptPair.second = 0;
+                }
+            }
+        } else if (child->hasTagName(MathMLNames::mprescriptsTag))
+            foundPrescript = true;
+    }
+    
+    // Handle the odd number of pre scripts case.
+    if (prescriptPair.first)
+        prescripts.append(prescriptPair);
+}
+
+void AccessibilityRenderObject::mathPostscripts(AccessibilityMathMultiscriptPairs& postscripts)
+{
+    if (!isMathMultiscript() || !node())
+        return;
+
+    // In Multiscripts, the post-script elements start after the first element (which is the base)
+    // and continue until a <mprescripts> tag is found
+    pair<AccessibilityObject*, AccessibilityObject*> postscriptPair;
+    bool foundBaseElement = false;
+    for (Node* child = node()->firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(MathMLNames::mprescriptsTag))
+            break;
+
+        AccessibilityObject* axChild = axObjectCache()->getOrCreate(child);
+        if (axChild && axChild->isMathElement()) {
+            if (!foundBaseElement)
+                foundBaseElement = true;
+            else if (!postscriptPair.first)
+                postscriptPair.first = axChild;
+            else {
+                postscriptPair.second = axChild;
+                postscripts.append(postscriptPair);
+                postscriptPair.first = 0;
+                postscriptPair.second = 0;
+            }
+        }
+    }
+
+    // Handle the odd number of post scripts case.
+    if (postscriptPair.first)
+        postscripts.append(postscriptPair);
 }
 
 int AccessibilityRenderObject::mathLineThickness() const

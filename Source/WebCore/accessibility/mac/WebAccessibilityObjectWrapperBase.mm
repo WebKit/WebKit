@@ -77,6 +77,22 @@ using namespace WebCore;
 using namespace HTMLNames;
 using namespace std;
 
+static NSArray *convertMathPairsToNSArray(const AccessibilityObject::AccessibilityMathMultiscriptPairs& pairs, NSString *subscriptKey, NSString *superscriptKey)
+{
+    unsigned length = pairs.size();
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:length];
+    for (unsigned i = 0; i < length; ++i) {
+        NSMutableDictionary *pairDictionary = [NSMutableDictionary dictionary];
+        pair<AccessibilityObject*, AccessibilityObject*> pair = pairs[i];
+        if (pair.first && pair.first->wrapper() && !pair.first->accessibilityIsIgnored())
+            [pairDictionary setObject:pair.first->wrapper() forKey:subscriptKey];
+        if (pair.second && pair.second->wrapper() && !pair.second->accessibilityIsIgnored())
+            [pairDictionary setObject:pair.second->wrapper() forKey:superscriptKey];
+        [array addObject:pairDictionary];
+    }
+    return array;
+}
+
 @implementation WebAccessibilityObjectWrapperBase
 
 - (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
@@ -340,6 +356,32 @@ static void ConvertPathToScreenSpaceFunction(void* info, const PathElement* elem
     default:
         return nil;
     }
+}
+
+- (NSString *)accessibilityPlatformMathSubscriptKey
+{
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+- (NSString *)accessibilityPlatformMathSuperscriptKey
+{
+    ASSERT_NOT_REACHED();
+    return nil;    
+}
+
+- (NSArray *)accessibilityMathPostscriptPairs
+{
+    AccessibilityObject::AccessibilityMathMultiscriptPairs pairs;
+    m_object->mathPostscripts(pairs);
+    return convertMathPairsToNSArray(pairs, [self accessibilityPlatformMathSubscriptKey], [self accessibilityPlatformMathSuperscriptKey]);
+}
+
+- (NSArray *)accessibilityMathPrescriptPairs
+{
+    AccessibilityObject::AccessibilityMathMultiscriptPairs pairs;
+    m_object->mathPrescripts(pairs);
+    return convertMathPairsToNSArray(pairs, [self accessibilityPlatformMathSubscriptKey], [self accessibilityPlatformMathSuperscriptKey]);
 }
 
 // This is set by DRT when it wants to listen for notifications.
