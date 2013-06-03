@@ -2,6 +2,7 @@
 
         Send mouse events to the banner for as long as the mouse button is down
         https://bugs.webkit.org/show_bug.cgi?id=117161
+        <rdar://problem/13821220>
 
         Reviewed by Beth Dakin.
 
