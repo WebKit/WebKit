@@ -423,7 +423,7 @@ static int32_t calculateUTCOffset()
 static double calculateDSTOffset(time_t localTime, double utcOffset)
 {
 #if OS(WINCE)
-    UNUSED_PARAM(localTimeSeconds);
+    UNUSED_PARAM(localTime);
     UNUSED_PARAM(utcOffset);
     return 0;
 #else

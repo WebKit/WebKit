@@ -1,3 +1,10 @@
+2013-06-03  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix after r150833.
+
+        * wtf/DateMath.cpp:
+        (WTF::calculateDSTOffset):
+
 2013-06-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [WTF] Add OwnArrayPtr vectortraits template 
