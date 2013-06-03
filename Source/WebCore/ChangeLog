@@ -1,3 +1,16 @@
+2013-06-03  Paweł Forysiuk  <tuxator@o2.pl>
+
+        [harfbuzz] WebKit fails to build with MinGW compiler because of invalid cast in HarfBuzzShaper.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=108373
+
+        Reviewed by Darin Adler.
+
+        Fix building on platforms where UChar is defined as wchar_t.
+
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRuns):
+
 2013-06-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: Undoing autocorrection doesn't prevent a future autocorrection
