@@ -1,3 +1,14 @@
+2013-06-03  Krzysztof Czech  <k.czech@samsung.com>
+
+        [GTK][WK2] accessibility/placeholder.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=106344
+
+        Reviewed by Gyuyoung Kim.
+
+        Unskipping failing test. It's been fixed.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2013-06-03  Praveen R Jadhav  <praveen.j@samsung.com>
 
         'onended' event is not received in AudioBufferSourceNode and OscillatorNode.
