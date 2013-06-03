@@ -160,6 +160,26 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         break;
     }
 
+    case BasicShape::BasicShapeInsetRectangleType: {
+        const BasicShapeInsetRectangle* rectangle = static_cast<const BasicShapeInsetRectangle*>(basicShape);
+        float left = floatValueForLength(rectangle->left(), boxWidth);
+        float top = floatValueForLength(rectangle->top(), boxHeight);
+        FloatRect bounds(
+            left,
+            top,
+            boxWidth - left - floatValueForLength(rectangle->right(), boxWidth),
+            boxHeight - top - floatValueForLength(rectangle->bottom(), boxHeight));
+        Length radiusXLength = rectangle->cornerRadiusX();
+        Length radiusYLength = rectangle->cornerRadiusY();
+        FloatSize cornerRadii(
+            radiusXLength.isUndefined() ? 0 : floatValueForLength(radiusXLength, boxWidth),
+            radiusYLength.isUndefined() ? 0 : floatValueForLength(radiusYLength, boxHeight));
+        FloatRect logicalBounds = physicalRectToLogical(bounds, logicalBoxSize.height(), writingMode);
+
+        exclusionShape = createExclusionRectangle(logicalBounds, physicalSizeToLogical(cornerRadii, writingMode));
+        break;
+    }
+
     default:
         ASSERT_NOT_REACHED();
     }

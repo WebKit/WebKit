@@ -1,3 +1,19 @@
+2013-06-03  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] inset-rectangle support for shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=116641
+
+        Reviewed by Alexandru Chiculita.
+
+        Add tests for inset-rectangles.
+
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-inset-rectangle-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-inset-rectangle.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-inset-rectangle-percentage-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-inset-rectangle-percentage.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-inset-rectangle-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-inset-rectangle.html: Added.
+
 2013-06-03  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] [WK2] Unreviewed gardening. Unskipping passing tests and generate new test expectations where needed.

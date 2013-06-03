@@ -39,11 +39,7 @@ namespace WebCore {
 bool ExclusionShapeOutsideInfo::isEnabledFor(const RenderBox* box)
 {
     ExclusionShapeValue* value = box->style()->shapeOutside();
-    if (!box->isFloatingWithShapeOutside() || value->type() != ExclusionShapeValue::Shape)
-        return false;
-
-    BasicShape* shape = value->shape();
-    return shape && shape->type() != BasicShape::BasicShapeInsetRectangleType;
+    return box->isFloatingWithShapeOutside() && value->type() == ExclusionShapeValue::Shape && value->shape();
 }
 
 bool ExclusionShapeOutsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)

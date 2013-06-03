@@ -1,3 +1,23 @@
+2013-06-03  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] inset-rectangle support for shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=116641
+
+        Reviewed by Alexandru Chiculita.
+
+        Implement support for using inset-rectangles in a shape-outside.
+
+        Tests: fast/exclusions/shape-outside-floats/shape-outside-floats-simple-inset-rectangle.html
+               fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-inset-rectangle.html
+
+        * rendering/ExclusionShape.cpp:
+        (WebCore::ExclusionShape::createExclusionShape): An inset-rectangle is
+            simply a rectangle with the dimensions calculated differently. So
+            just use ExclusionRectangle after converting the dimensions.
+        * rendering/ExclusionShapeOutsideInfo.cpp:
+        (WebCore::ExclusionShapeOutsideInfo::isEnabledFor): Enable inset
+            rectangles for shape-outside.
+
 2013-06-03  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Slider UX updates.
