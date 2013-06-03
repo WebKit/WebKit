@@ -1,5 +1,23 @@
 2013-05-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Re-enable plugins on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=116622
+
+        Reviewed by Tor Arne Vestbø.
+
+        * platform/FileSystem.h:
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::unloadModule):
+          - Q_WS_* aren't defined since Qt5, use Q_OS_MACX instead.
+        * plugins/mac/PluginPackageMac.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+          - createCFString now does the adoption itself.
+        * plugins/mac/PluginViewMac.mm:
+          - Add missing include.
+
+2013-05-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt][Mac] Allow drawing plugins with QWindow by always using an intermediate bitmap.
         https://bugs.webkit.org/show_bug.cgi?id=116620
 

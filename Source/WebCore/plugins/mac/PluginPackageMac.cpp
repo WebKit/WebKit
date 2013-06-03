@@ -138,7 +138,7 @@ bool PluginPackage::fetchInfo()
     if (mimeTypesFileName && CFGetTypeID(mimeTypesFileName.get()) == CFStringGetTypeID()) {
 
         WTF::RetainPtr<CFStringRef> fileName = (CFStringRef)mimeTypesFileName.get();
-        WTF::RetainPtr<CFStringRef> homeDir = adoptCF(homeDirectoryPath().createCFString());
+        WTF::RetainPtr<CFStringRef> homeDir = homeDirectoryPath().createCFString();
         WTF::RetainPtr<CFStringRef> path = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%@/Library/Preferences/%@"), homeDir.get(), fileName.get()));
 
         WTF::RetainPtr<CFDictionaryRef> plist = readPListFile(path.get(), /*createFile*/ false, m_module);
@@ -255,7 +255,7 @@ bool PluginPackage::load()
         return true;
     }
 
-    WTF::RetainPtr<CFStringRef> path = adoptCF(m_path.createCFString());
+    WTF::RetainPtr<CFStringRef> path = m_path.createCFString();
     WTF::RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, path.get(),
                                                                         kCFURLPOSIXPathStyle, false));
     m_module = CFBundleCreate(NULL, url.get());

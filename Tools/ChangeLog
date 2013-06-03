@@ -1,3 +1,21 @@
+2013-05-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Re-enable plugins on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=116622
+
+        Reviewed by Tor Arne Vestbø.
+
+        Plugins on Mac were only enabled if !embedded but the later was set if
+        QPA is enabled, which is the default since Qt 5.0.
+
+        Remove references to 'embedded' and fix various build issues,
+        PluginViewMac.mm and PluginPackageMac.cpp haven't been compiled since a few
+        months.
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/unix/default_pre.prf:
+
 2013-06-03  Krzysztof Czech  <k.czech@samsung.com>
 
         [GTK][WK2] accessibility/placeholder.html is failing

@@ -74,7 +74,7 @@ defineTest(detectFeatures) {
             plugin_architecture_x11 \
             plugin_process
 
-    } else: unix|win32-*:!embedded:!wince* {
+    } else: mac|win32 {
         WEBKIT_CONFIG += netscape_plugin_api
         # WebKit2
         WEBKIT_CONFIG += plugin_architecture_unsupported
