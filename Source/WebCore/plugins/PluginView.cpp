@@ -634,11 +634,7 @@ NPError PluginView::setValue(NPPVariable variable, void* value)
         NPDrawingModel newDrawingModel = NPDrawingModel(uintptr_t(value));
         switch (newDrawingModel) {
         case NPDrawingModelCoreGraphics:
-            m_drawingModel = newDrawingModel;
             return NPERR_NO_ERROR;
-#ifndef NP_NO_QUICKDRAW
-        case NPDrawingModelQuickDraw:
-#endif
         case NPDrawingModelCoreAnimation:
         default:
             LOG(Plugins, "Plugin asked for unsupported drawing model: %s",
@@ -654,13 +650,8 @@ NPError PluginView::setValue(NPPVariable variable, void* value)
 
         NPEventModel newEventModel = NPEventModel(uintptr_t(value));
         switch (newEventModel) {
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon:
-#endif
         case NPEventModelCocoa:
-            m_eventModel = newEventModel;
             return NPERR_NO_ERROR;
-
         default:
             LOG(Plugins, "Plugin asked for unsupported event model: %s",
                     prettyNameForEventModel(newEventModel));
@@ -844,10 +835,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_window(0)
 #endif
 #if defined(XP_MACOSX)
-    , m_drawingModel(NPDrawingModel(-1))
-    , m_eventModel(NPEventModel(-1))
     , m_contextRef(0)
-    , m_fakeWindow(0)
 #endif
 #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
     , m_hasPendingGeometryChange(true)

@@ -1,3 +1,33 @@
+2013-05-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt][Mac] Remove Carbon and QuickDraw support for plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=116619
+
+        Reviewed by Tor Arne Vestbø.
+
+        They are only enabled for 32bit builds of QtWebKit and are rarely tested.
+        Other browsers support them through a 32bit host process.
+        PluginViewMac.mm is only used by Qt since the Wx port was removed.
+
+        - Only support the Cocoa event model
+        - Only support the CoreGraphics drawing model
+        - Remove all NP_NO_CARBON and NP_NO_QUICKDRAW blocks in PluginViewMac.mm
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setValue):
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+        * plugins/mac/PluginViewMac.mm:
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::platformDestroy):
+        (WebCore::PluginView::platformGetValueStatic):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleWheelEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::handleKeyboardEvent):
+
 2013-06-03  Praveen R Jadhav  <praveen.j@samsung.com>
 
         'onended' event is not received in AudioBufferSourceNode and OscillatorNode.

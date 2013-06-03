@@ -320,10 +320,8 @@ namespace WebCore {
         void lifeSupportTimerFired(Timer<PluginView>*);
         Timer<PluginView> m_lifeSupportTimer;
 
-#ifndef NP_NO_CARBON
 #if ENABLE(NETSCAPE_PLUGIN_API)
         bool dispatchNPEvent(NPEvent&);
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 #endif
 #if defined(XP_MACOSX) && ENABLE(NETSCAPE_PLUGIN_API)
         int16_t dispatchNPCocoaEvent(NPCocoaEvent&);
@@ -408,20 +406,12 @@ private:
         void setNPWindowIfNeeded();
 #elif defined(XP_MACOSX)
         NP_CGContext m_npCgContext;
-        OwnPtr<Timer<PluginView> > m_nullEventTimer;
-        NPDrawingModel m_drawingModel;
-        NPEventModel m_eventModel;
         CGContextRef m_contextRef;
-        WindowRef m_fakeWindow;
 #if PLATFORM(QT)
         QPixmap m_pixmap;
 #endif
 
-        Point m_lastMousePos;
         void setNPWindowIfNeeded();
-        void nullEventTimerFired(Timer<PluginView>*);
-        Point globalMousePosForPlugin() const;
-        Point mousePosForPlugin(MouseEvent* event = 0) const;
 #endif
 
 #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
