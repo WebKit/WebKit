@@ -190,9 +190,12 @@ bool ApplicationCacheHost::maybeLoadFallbackForResponse(ResourceLoader* resource
 
 bool ApplicationCacheHost::maybeLoadFallbackForError(ResourceLoader* resourceLoader, const ResourceError& error)
 {
-    if (!error.isCancellation())
+    if (!error.isCancellation()) {
+        if (resourceLoader == m_documentLoader->mainResourceLoader())
+            return maybeLoadFallbackForMainError(resourceLoader->request(), error);
         if (scheduleLoadFallbackResourceFromApplicationCache(resourceLoader))
             return true;
+    }
     return false;
 }
 

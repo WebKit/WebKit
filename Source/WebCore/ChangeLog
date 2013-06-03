@@ -1,3 +1,30 @@
+2013-06-03  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Webkit crashes while loading content from Application Cache.
+        https://bugs.webkit.org/show_bug.cgi?id=116814
+
+        Reviewed by Darin Adler.
+
+        With the refacor for 112722, which removes MainResourceLoader and moves the functionality to DocumentLoader,
+        the processing of appcache for main resource error (because of network error) was moved DocumentLoader::
+        mainReceivedError(), which was trigged by ResourceHandle::didFail->SubResourceLoader::didFail, which already
+        in a Finishing state after notifying the DocumentLoader of the load failure.
+
+        Before patch for 112722, the appcache for main resource error was in MainResourceLoader::didFail(),
+        which will start processing the potential fallback before notifying DocumentLoader and moving the the state
+        of the resource loader to finishing state.
+
+        So we should move maybeLoadFallbackForMainError out of DocumentLoader::mainReceivedError, and move it to
+        ApplicationCacheHost::maybeLoadFallbackForError, if the resource that has error is the main resource.
+
+        Test: http/tests/appcache/main-resource-fallback-for-network-error-crash.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::mainReceivedError):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackForError):
+        * loader/appcache/ApplicationCacheHost.h:
+
 2013-06-02  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         [Qt] Move Qt port off legacy clipboard

@@ -119,7 +119,6 @@ namespace WebCore {
         void maybeLoadMainResource(ResourceRequest&, SubstituteData&);
         void maybeLoadMainResourceForRedirect(ResourceRequest&, SubstituteData&);
         bool maybeLoadFallbackForMainResponse(const ResourceRequest&, const ResourceResponse&);
-        bool maybeLoadFallbackForMainError(const ResourceRequest&, const ResourceError&);
         void mainResourceDataReceived(const char* data, int length, long long encodedDataLength, bool allAtOnce);
         void finishedLoadingMainResource();
         void failedLoadingMainResource();
@@ -181,6 +180,7 @@ namespace WebCore {
         void setApplicationCache(PassRefPtr<ApplicationCache> applicationCache);
         ApplicationCache* applicationCache() const { return m_applicationCache.get(); }
         ApplicationCache* mainResourceApplicationCache() const { return m_mainResourceApplicationCache.get(); }
+        bool maybeLoadFallbackForMainError(const ResourceRequest&, const ResourceError&);
 
 
         // The application cache that the document loader is associated with (if any).

@@ -1,3 +1,15 @@
+2013-06-03  Charles Wei  <chwei@blackberry.com>
+
+        Webkit crashes while loading  content from Application Cache.
+        https://bugs.webkit.org/show_bug.cgi?id=116814
+
+        Reviewed by Darin Adler.
+
+        * http/tests/appcache/main-resource-fallback-for-network-error-crash-expected.txt: Added.
+        * http/tests/appcache/main-resource-fallback-for-network-error-crash.html: Added.
+        * http/tests/appcache/resources/main-resource-fallback-for-network-error-crash.manifest: Added.
+        * http/tests/appcache/resources/success-and-notify-done.html: Added.
+
 2013-06-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL gardening.
