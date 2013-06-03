@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening.
 
+        Skip 2 webaudio tests that are failing due to the onended event not getting
+        fired.
+
+        * platform/efl/TestExpectations:
+
+2013-06-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
         Rebaseline several test cases on EFL.
 
         * platform/efl-wk2/compositing/overflow/content-gains-scrollbars-expected.txt: Added.
