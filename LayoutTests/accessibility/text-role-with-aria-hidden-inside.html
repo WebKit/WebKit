@@ -20,7 +20,7 @@ description("This tests that when calculating the text under an element, aria-hi
 
 if (window.testRunner && window.accessibilityController) {
     var text = accessibilityController.accessibleElementById("text");
-    shouldBe("text.stringValue", "'AXValue: Song TitleArtist Name(4 stars, 1,234 ratings) '");
+    shouldBe("text.stringValue", "'AXValue: Song Title Artist Name (4 stars, 1,234 ratings)'");
     document.getElementById("content").style.visibility = 'hidden';    
 }
 </script>

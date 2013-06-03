@@ -1522,7 +1522,7 @@ String AccessibilityNodeObject::textUnderElement() const
     if (node && node->isTextNode())
         return toText(node)->wholeText();
 
-    String result;
+    StringBuilder builder;
     for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {
         if (!shouldUseAccessiblityObjectInnerText(child))
             continue;
@@ -1530,16 +1530,23 @@ String AccessibilityNodeObject::textUnderElement() const
         if (child->isAccessibilityNodeObject()) {
             Vector<AccessibilityText> textOrder;
             toAccessibilityNodeObject(child)->alternativeText(textOrder);
-            if (textOrder.size() > 0) {
-                result.append(textOrder[0].text);
+            if (textOrder.size() > 0 && textOrder[0].text.length()) {
+                if (builder.length())
+                    builder.append(' ');
+                builder.append(textOrder[0].text);
                 continue;
             }
         }
 
-        result.append(child->textUnderElement());
+        String childText = child->textUnderElement();
+        if (childText.length()) {
+            if (builder.length())
+                builder.append(' ');
+            builder.append(childText);
+        }
     }
 
-    return result;
+    return builder.toString().stripWhiteSpace().simplifyWhiteSpace();
 }
 
 String AccessibilityNodeObject::title() const
