@@ -37,6 +37,10 @@
 typedef struct _GtkClipboard GtkClipboard;
 #endif
 
+#if PLATFORM(QT)
+#include <QMimeData>
+#endif
+
 #if PLATFORM(WIN)
 #include "COMPtr.h"
 #include "WCDataObject.h"
@@ -104,6 +108,14 @@ public:
     PassRefPtr<DataObjectGtk> dataObject() const;
 #endif
 
+#if PLATFORM(QT)
+    static PassOwnPtr<Pasteboard> create(const QMimeData* readableClipboard = 0, bool isForDragAndDrop = false);
+    QMimeData* clipboardData() const { return m_writableData; }
+    void invalidateWritableData() const { m_writableData = 0; }
+    bool isForDragAndDrop() const { return m_isForDragAndDrop; }
+    bool isForCopyAndPaste() const { return !m_isForDragAndDrop; }
+#endif
+
     // Deprecated. Use createForCopyAndPaste instead.
     static Pasteboard* generalPasteboard();
 
@@ -165,7 +177,7 @@ public:
     void writeImageToDataObject(Element*, const KURL&);
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(QT)
     ~Pasteboard();
 #endif
 
@@ -175,6 +187,10 @@ private:
 #if PLATFORM(GTK)
     Pasteboard(PassRefPtr<DataObjectGtk>);
     Pasteboard(GtkClipboard*);
+#endif
+
+#if PLATFORM(QT)
+    Pasteboard(const QMimeData* , bool);
 #endif
 
 #if PLATFORM(WIN)
@@ -205,7 +221,12 @@ private:
 #endif
 
 #if PLATFORM(QT)
+    const QMimeData* readData() const;
+
     bool m_selectionMode;
+    const QMimeData* m_readableData;
+    mutable QMimeData* m_writableData;
+    bool m_isForDragAndDrop;
 #endif
 
 #if PLATFORM(GTK)

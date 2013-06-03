@@ -1,3 +1,13 @@
+2013-06-02  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        [Qt] Move Qt port off legacy clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=116416
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::startDrag):
+
 2013-05-29  Liang Qi  <liang.qi@digia.com>
 
         [Qt] Add all plugins.qmltypes files and update qmldir files

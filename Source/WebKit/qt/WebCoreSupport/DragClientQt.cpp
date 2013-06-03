@@ -27,11 +27,12 @@
 #include "DragClientQt.h"
 
 #include "ChromeClient.h"
-#include "ClipboardQt.h"
+#include "Clipboard.h"
 #include "DragController.h"
 #include "EventHandler.h"
 #include "Frame.h"
 #include "Page.h"
+#include "Pasteboard.h"
 #include "PlatformMouseEvent.h"
 
 #include <QDrag>
@@ -92,8 +93,8 @@ void DragClientQt::willPerformDragSourceAction(DragSourceAction, const IntPoint&
 void DragClientQt::startDrag(DragImageRef dragImage, const IntPoint&, const IntPoint&, Clipboard* clipboard, Frame* frame, bool)
 {
 #ifndef QT_NO_DRAGANDDROP
-    QMimeData* clipboardData = static_cast<ClipboardQt*>(clipboard)->clipboardData();
-    static_cast<ClipboardQt*>(clipboard)->invalidateWritableData();
+    QMimeData* clipboardData = clipboard->pasteboard().clipboardData();
+    clipboard->pasteboard().invalidateWritableData();
     QObject* view = m_chromeClient->platformPageClient()->ownerWidget();
     if (view) {
         QDrag* drag = new QDrag(view);

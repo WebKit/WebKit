@@ -1,3 +1,49 @@
+2013-06-02  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        [Qt] Move Qt port off legacy clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=116416
+
+        Reviewed by Darin Adler.
+
+        No change in behavior, no new tests added.
+
+        * Target.pri: Removed ClipboardQt.h and EditorQt.cpp from compilation.
+        * dom/Clipboard.h:
+        * editing/qt/EditorQt.cpp: Removed.
+        * page/qt/EventHandlerQt.cpp: Use Clipboard::createForDragAndDrop().
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/Pasteboard.h:
+        (WebCore::Pasteboard::clipboardData): Expose writable QMimeData* to outside, so that it is accessible
+        from DragClientQt.cpp and WebDragClientQt.cpp.
+        (WebCore::Pasteboard::invalidateWritableData): 
+        (WebCore::Pasteboard::isForDragAndDrop):
+        (WebCore::Pasteboard::isForCopyAndPaste):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::Clipboard::createDragImage):
+        (WebCore::Clipboard::declareAndWriteDragImage):
+        * platform/qt/ClipboardQt.h: Removed.
+        * platform/qt/PasteboardQt.cpp: Moved required methods from ClipboardQt.cpp.
+        (WebCore::isTextMimeType):
+        (WebCore::isHtmlMimeType):
+        (WebCore::Pasteboard::create):
+        (WebCore::Pasteboard::createForCopyAndPaste):
+        (WebCore::Pasteboard::createPrivate):
+        (WebCore::Pasteboard::createForDragAndDrop):
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::~Pasteboard):
+        (WebCore::Pasteboard::generalPasteboard):
+        (WebCore::Pasteboard::isSelectionMode):
+        (WebCore::Pasteboard::setSelectionMode):
+        (WebCore::Pasteboard::readData):
+        (WebCore::Pasteboard::hasData):
+        (WebCore::Pasteboard::clear):
+        (WebCore::Pasteboard::readString):
+        (WebCore::Pasteboard::writeString):
+        (WebCore::Pasteboard::types):
+        (WebCore::Pasteboard::readFilenames):
+        (WebCore::Pasteboard::setDragImage):
+        (WebCore::Pasteboard::writePasteboard):
+
 2013-06-02  Brady Eidson  <beidson@apple.com>
 
         Going "back" to a cached page from a page with a main resource error breaks scrolling, amongst other issues.

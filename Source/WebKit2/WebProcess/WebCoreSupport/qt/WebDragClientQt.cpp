@@ -26,9 +26,10 @@
 #include "config.h"
 #include "WebDragClient.h"
 
-#include "ClipboardQt.h"
+#include "Clipboard.h"
 #include "DragData.h"
 #include "GraphicsContext.h"
+#include "Pasteboard.h"
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
@@ -52,9 +53,9 @@ static PassRefPtr<ShareableBitmap> convertQPixmapToShareableBitmap(QPixmap* pixm
 
 void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosition, const IntPoint& globalPosition, Clipboard* clipboard, Frame*, bool)
 {
-    QMimeData* clipboardData = static_cast<ClipboardQt*>(clipboard)->clipboardData();
+    QMimeData* clipboardData = clipboard->pasteboard().clipboardData();
     DragOperation dragOperationMask = clipboard->sourceOperation();
-    static_cast<ClipboardQt*>(clipboard)->invalidateWritableData();
+    clipboard->pasteboard().invalidateWritableData();
     DragData dragData(clipboardData, clientPosition, globalPosition, dragOperationMask);
 
     RefPtr<ShareableBitmap> bitmap = convertQPixmapToShareableBitmap(dragImage);

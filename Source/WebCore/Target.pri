@@ -2342,7 +2342,6 @@ HEADERS += \
     platform/PlatformTouchPoint.h \
     platform/PopupMenu.h \
     platform/ReferrerPolicy.h \
-    platform/qt/ClipboardQt.h \
     platform/qt/QWebPageClient.h \
     platform/qt/QStyleFacade.h \
     platform/qt/RenderThemeQStyle.h \
@@ -2902,7 +2901,6 @@ SOURCES += \
     platform/network/qt/ProxyServerQt.cpp \
     platform/network/qt/QtMIMETypeSniffer.cpp \
     platform/network/qt/QNetworkReplyHandler.cpp \
-    editing/qt/EditorQt.cpp \
     platform/Cursor.cpp \
     platform/ContextMenu.cpp \
     platform/ContextMenuItem.cpp \
