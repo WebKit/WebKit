@@ -47,7 +47,6 @@
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
-#include "RegularExpression.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
@@ -333,27 +332,34 @@ PassRefPtr<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, 
     return sheet;
 }
 
-static const char* const validXMLMIMETypeChars = "[0-9a-zA-Z_\\-+~!$\\^{}|.%'`#&*]"; // per RFCs: 3023, 2045
-
-XMLMIMETypeRegExp::XMLMIMETypeRegExp()
-    : m_regex(adoptPtr(new RegularExpression(WTF::makeString("^", validXMLMIMETypeChars, "+/", validXMLMIMETypeChars, "+\\+xml$"), TextCaseSensitive)))
+static inline bool isValidXMLMIMETypeChar(UChar c)
 {
-}
-
-XMLMIMETypeRegExp::~XMLMIMETypeRegExp()
-{
-}
-
-bool XMLMIMETypeRegExp::isXMLMIMEType(const String& mimeType)
-{
-    return m_regex->match(mimeType) > -1;
+    // Valid characters per RFCs 3023 and 2045:
+    // 0-9a-zA-Z_-+~!$^{}|.%'`#&*
+    return isASCIIAlphanumeric(c) || c == '!' || c == '#' || c == '$' || c == '%' || c == '&' || c == '\'' || c == '*' || c == '+'
+        || c == '-' || c == '.' || c == '^' || c == '_' || c == '`' || c == '{' || c == '|' || c == '}' || c == '~';
 }
 
 bool DOMImplementation::isXMLMIMEType(const String& mimeType)
 {
     if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "text/xsl")
         return true;
-    return threadGlobalData().xmlTypeRegExp().isXMLMIMEType(mimeType);
+
+    if (!mimeType.endsWith("+xml"))
+        return false;
+
+    size_t slashPosition = mimeType.find('/');
+    // Take into account the '+xml' ending of mimeType.
+    if (slashPosition == notFound || !slashPosition || slashPosition == mimeType.length() - 5)
+        return false;
+
+    // Again, mimeType ends with '+xml', no need to check the validity of that substring.
+    for (size_t i = 0; i < mimeType.length() - 4; ++i) {
+        if (!isValidXMLMIMETypeChar(mimeType[i]) && i != slashPosition)
+            return false;
+    }
+
+    return true;
 }
 
 bool DOMImplementation::isTextMIMEType(const String& mimeType)

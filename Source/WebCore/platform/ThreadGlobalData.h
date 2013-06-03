@@ -44,7 +44,6 @@ namespace WebCore {
     class EventNames;
     class ThreadLocalInspectorCounters;
     class ThreadTimers;
-    class XMLMIMETypeRegExp;
 
     struct CachedResourceRequestInitiators;
     struct ICUConverterWrapper;
@@ -60,7 +59,6 @@ namespace WebCore {
         const CachedResourceRequestInitiators& cachedResourceRequestInitiators() { return *m_cachedResourceRequestInitiators; }
         EventNames& eventNames() { return *m_eventNames; }
         ThreadTimers& threadTimers() { return *m_threadTimers; }
-        XMLMIMETypeRegExp& xmlTypeRegExp() { return *m_xmlTypeRegExp; }
 
 #if USE(ICU_UNICODE)
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
@@ -78,7 +76,6 @@ namespace WebCore {
         OwnPtr<CachedResourceRequestInitiators> m_cachedResourceRequestInitiators;
         OwnPtr<EventNames> m_eventNames;
         OwnPtr<ThreadTimers> m_threadTimers;
-        OwnPtr<XMLMIMETypeRegExp> m_xmlTypeRegExp;
 
 #ifndef NDEBUG
         bool m_isMainThread;

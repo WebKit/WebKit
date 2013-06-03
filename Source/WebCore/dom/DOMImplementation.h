@@ -76,17 +76,6 @@ private:
     Document* m_document;
 };
 
-class XMLMIMETypeRegExp {
-    WTF_MAKE_NONCOPYABLE(XMLMIMETypeRegExp); WTF_MAKE_FAST_ALLOCATED;
-public:
-    XMLMIMETypeRegExp();
-    ~XMLMIMETypeRegExp();
-    bool isXMLMIMEType(const String& mimeType);
-private:
-    OwnPtr<RegularExpression> m_regex;
-};
-
-
 } // namespace WebCore
 
 #endif

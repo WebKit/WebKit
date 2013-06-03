@@ -1,3 +1,33 @@
+2013-06-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove XMLMIMETypeRegExp
+        https://bugs.webkit.org/show_bug.cgi?id=116861
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove the XMLMIMETypeRegExp class. It contained a regular expression that was used
+        for checking for valid XML MIME types in DOMImplementation::isXMLMIMEType. The thread-global
+        instance was stored in ThreadGlobalData.
+
+        The class is removed, with DOMImplementation::isXMLMIMEType now testing that the given MIME type
+        is of proper form and contains only valid characters.
+
+        No new tests - no change in functionality.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::isValidXMLMIMETypeChar): A helper method that returns true only for characters that
+        are acceptable in a valid XML MIME type (apart from the forward slash).
+        (WebCore::DOMImplementation::isXMLMIMEType): Instead of using a regular expression, determine
+        whether the given string is a valid non-standard XML mime type by checking for the '+xml' ending,
+        proper forward slash position, and that no invalid characters are used in the string.
+        * dom/DOMImplementation.h:
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData): The OwnPtr<XMLMIMETypeRegExp> member variable is being removed.
+        (WebCore::ThreadGlobalData::destroy): Ditto.
+        * platform/ThreadGlobalData.h:
+        (WebCore): No need for the XMLMIMETypeRegExp forward declaration.
+        (ThreadGlobalData): Remove the OwnPtr<XMLMIMETypeRegExp> member variable.
+
 2013-06-03  Eduardo Lima Mitev  <elima@igalia.com>
 
         [GTK] Use drawErrorUnderline() instead of Pango API for highlighting misspelled words
