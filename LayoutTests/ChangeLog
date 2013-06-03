@@ -1,3 +1,13 @@
+2013-06-03  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL] Remove obsolete test case from TestExpectations
+
+        Unreviewed EFL gardening.
+
+        xmlviewer/extensions-api.html case has been removed since r151080.
+
+        * platform/efl/TestExpectations:
+
 2013-06-03  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

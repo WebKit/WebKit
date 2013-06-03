@@ -267,7 +267,6 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
-xmlviewer/extensions-api.html
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html [ WontFix ]
