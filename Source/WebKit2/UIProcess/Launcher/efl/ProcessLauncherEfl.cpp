@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2012 Samsung Electronics
+    Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -27,12 +28,41 @@
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RunLoop.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+static Vector<OwnArrayPtr<char>> createArgsArray(const String& prefix, const String& executablePath, const String& socket, const String& pluginPath)
+{
+    ASSERT(!executablePath.isEmpty());
+    ASSERT(!socket.isEmpty());
+
+    Vector<String> splitArgs;
+    prefix.split(' ', splitArgs);
+
+    splitArgs.append(executablePath);
+    splitArgs.append(socket);
+    if (!pluginPath.isEmpty())
+        splitArgs.append(pluginPath);
+
+    Vector<OwnArrayPtr<char>> args;
+    args.resize(splitArgs.size() + 1); // Extra room for null.
+
+    size_t numArgs = splitArgs.size();
+    for (size_t i = 0; i < numArgs; ++i) {
+        CString param = splitArgs[i].utf8();
+        args[i] = adoptArrayPtr(new char[param.length() + 1]); // Room for the terminating null coming from the CString.
+        strncpy(args[i].get(), param.data(), param.length() + 1); // +1 here so that strncpy copies the ending null.
+    }
+    // execvp() needs the pointers' array to be null-terminated.
+    args[numArgs] = nullptr;
+
+    return args;
+}
 
 void ProcessLauncher::launchProcess()
 {
@@ -42,15 +72,15 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    CString executablePath, pluginPath;
+    String processCmdPrefix, executablePath, pluginPath;
     switch (m_launchOptions.processType) {
     case WebProcess:
-        executablePath = executablePathOfWebProcess().utf8();
+        executablePath = executablePathOfWebProcess();
         break;
 #if ENABLE(PLUGIN_PROCESS)
     case PluginProcess:
-        executablePath = executablePathOfPluginProcess().utf8();
-        pluginPath = m_launchOptions.extraInitializationData.get("plugin-path").utf8();
+        executablePath = executablePathOfPluginProcess();
+        pluginPath = m_launchOptions.extraInitializationData.get("plugin-path");
         break;
 #endif
     default:
@@ -58,17 +88,11 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    char socket[5];
-    snprintf(socket, sizeof(socket), "%d", sockets[0]);
-
 #ifndef NDEBUG
-    CString prefixedExecutablePath;
-    if (!m_launchOptions.processCmdPrefix.isEmpty()) {
-        String prefixedExecutablePathStr = m_launchOptions.processCmdPrefix + ' ' +
-            String::fromUTF8(executablePath.data()) + ' ' + socket + ' ' + String::fromUTF8(pluginPath.data());
-        prefixedExecutablePath = prefixedExecutablePathStr.utf8();
-    }
+    if (!m_launchOptions.processCmdPrefix.isEmpty())
+        processCmdPrefix = m_launchOptions.processCmdPrefix;
 #endif
+    Vector<OwnArrayPtr<char>> args = createArgsArray(processCmdPrefix, executablePath, String::number(sockets[0]), pluginPath);
 
     // Do not perform memory allocation in the middle of the fork()
     // exec() below. FastMalloc can potentially deadlock because
@@ -76,19 +100,7 @@ void ProcessLauncher::launchProcess()
     pid_t pid = fork();
     if (!pid) { // Child process.
         close(sockets[1]);
-#ifndef NDEBUG
-        if (!prefixedExecutablePath.isNull()) {
-            // FIXME: This is not correct because it invokes the shell
-            // and keeps this process waiting. Should be changed to
-            // something like execvp().
-            if (system(prefixedExecutablePath.data()) == -1) {
-                ASSERT_NOT_REACHED();
-                exit(EXIT_FAILURE);
-            } else
-                exit(EXIT_SUCCESS);
-        }
-#endif
-        execl(executablePath.data(), executablePath.data(), socket, pluginPath.data(), static_cast<char*>(0));
+        execvp(args.data()[0].get(), reinterpret_cast<char* const*>(args.data()));
     } else if (pid > 0) { // parent process;
         close(sockets[0]);
         m_processIdentifier = pid;

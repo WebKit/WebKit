@@ -1,3 +1,32 @@
+2013-06-03  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [EFL][WK2] Process launcher uses system() for wrapping the WebProcess when using WEB_PROCESS_CMD_PREFIX
+        https://bugs.webkit.org/show_bug.cgi?id=105156
+
+        Reviewed by Christophe Dumez.
+
+        When using WEB_PROCESS_CMD_PREFIX - which allows us for instance to analyze
+        WebProcess under tools like valgrind or gdb -, the ProcessLauncher would
+        spawn the new process using system(), which would, among other things, keep
+        an extra UIProcess waiting and executing the shell.
+
+        This patch handles the normal case and the case where we have something to
+        prefix WebProcess (i.e., by using WEB_PROCESS_CMD_PREFIX in a debug build)
+        the same way, through a call to execvp().
+
+        To achieve this a function was introduced to create an array with the given
+        arguments to the full command to be executed, to be used by execvp(). We use
+        a Vector<OwnArrayPtr<char>>, so that we can take advantage of the destructor
+        of OwnArrayPtr to handle the memory deallocation when it goes out of scope.
+
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::createArgsArray):  This function creates the array to be used by
+        execvp(), out of the Strings given as arguments.
+        (WebKit::ProcessLauncher::launchProcess): Rework the logic to accomodate
+        both the cases with and without WEB_PROCESS_CMD_PREFIX. The execl() call
+        was replaced with an execvp() call, since now we should deal with having
+        a variable number of arguments (WEB_PROCESS_CMD_PREFIX) as well.
+
 2013-06-02  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         [Qt] Move Qt port off legacy clipboard
