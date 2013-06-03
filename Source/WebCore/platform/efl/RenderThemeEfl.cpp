@@ -866,6 +866,17 @@ bool RenderThemeEfl::paintMenuList(RenderObject* object, const PaintInfo& info, 
 
 void RenderThemeEfl::adjustMenuListButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
+    // Height is locked to auto if height is not specified.
+    style->setHeight(Length(Auto));
+
+    // The <select> box must be at least 12px high for the button to render the text inside the box without clipping.
+    const int dropDownBoxMinHeight = 12;
+
+    // Calculate min-height of the <select> element.
+    int minHeight = style->fontMetrics().height();
+    minHeight = max(minHeight, dropDownBoxMinHeight);
+    style->setMinHeight(Length(minHeight, Fixed));
+
     adjustMenuListStyle(styleResolver, style, element);
 }
 

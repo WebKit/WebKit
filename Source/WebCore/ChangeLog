@@ -1,3 +1,18 @@
+2013-06-03  Rashmi Kulakarni  <rashmi.vijay@samsung.com>
+
+        [EFL]<select> element's text is clipped when a height is specified along with CSS line-height.
+        https://bugs.webkit.org/show_bug.cgi?id=114862
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix <select> element getting clipped when element height becomes less than the line-height.
+        Set minimum height for <select> element.
+
+        No new tests, no behavior change.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::adjustMenuListButtonStyle):
+
 2013-06-03  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Webkit crashes while loading content from Application Cache.

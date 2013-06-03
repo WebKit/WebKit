@@ -1,3 +1,15 @@
+2013-06-03  Rashmi Kulakarni  <rashmi.vijay@samsung.com>
+
+        [EFL]<select> element's text is clipped when a height is specified along with CSS line-height.
+        https://bugs.webkit.org/show_bug.cgi?id=114862
+
+        Reviewed by Gyuyoung Kim.
+
+        Rebaselined the test case fast/forms/001.html.
+
+        * platform/efl/fast/forms/001-expected.png:
+        * platform/efl/fast/forms/001-expected.txt:
+
 2013-06-03  Charles Wei  <chwei@blackberry.com>
 
         Webkit crashes while loading  content from Application Cache.
