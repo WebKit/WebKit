@@ -1,5 +1,11 @@
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. AppleWin VS2010 build fix.
+
+        * WebCore.vcxproj/migrate-scripts.sh:
+
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
         Nuke VS2005 files from the tree.
         <rdar://problem/14042021>.
 
