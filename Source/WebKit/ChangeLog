@@ -1,3 +1,10 @@
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Some AppleWin VS2010 house cleaning.
+
+        * WebKit.vcxproj/Interfaces/InterfacesPreBuild.cmd:
+        * WebKit.vcxproj/WebKit/WebKitPreBuild.cmd:
+
 2013-05-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Add AssembleBuildLogs project to WebKit solution in preparation for moving buildbots to VCExpress 2010.

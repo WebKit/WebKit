@@ -8,4 +8,4 @@ echo XX%PROJECTNAME%XX > "%CONFIGURATIONBUILDDIR%\buildfailed"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\JavaScriptCore"
 xcopy /y /d "%WEBKIT_LIBRARIES%\include\JavaScriptCore\*" "%CONFIGURATIONBUILDDIR%\include\JavaScriptCore"
 
-bash "%WEBKIT_LIBRARIES%\tools32\scripts\auto-version2010.sh" "%INTDIR%"
+bash "%WEBKIT_LIBRARIES%\tools32\scripts\auto-version.sh" "%INTDIR%"

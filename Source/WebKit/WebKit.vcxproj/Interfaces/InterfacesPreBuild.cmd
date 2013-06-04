@@ -6,4 +6,4 @@ if errorlevel 1 exit 1
 echo XX%PROJECTNAME%XX > "%CONFIGURATIONBUILDDIR%\buildfailed"
 
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\obj32\WebKit\%PROJECTNAME%"
-bash "%WEBKIT_LIBRARIES%\tools32\scripts\auto-version2010.sh" "%INTDIR%"
+bash "%WEBKIT_LIBRARIES%\tools32\scripts\auto-version.sh" "%INTDIR%"

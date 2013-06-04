@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (C) 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,9 +23,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 if [ "$2" = "cairo" ]; then
-    FeatureDefines=$1/tools/vsprops/FeatureDefinesCairo.vsprops
+    FeatureDefines=$1/tools32/vsprops/FeatureDefinesCairo.props
 else
-    FeatureDefines=$1/tools/vsprops/FeatureDefines.vsprops
+    FeatureDefines=$1/tools32/vsprops/FeatureDefines.props
 fi
 
-grep Value=\"ENABLE_ $FeatureDefines | sed 's/^.*Value\=\"/ /' | sed 's/\"//' | tr -d '\n'
+grep "<ENABLE_" $FeatureDefines | sed '/\/>/d' | sed 's/<\/.*>//' | sed 's/<.*>//' | tr -d '\n'
+

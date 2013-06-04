@@ -1,5 +1,14 @@
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Some AppleWin VS2010 house cleaning.
+
+        * win/tools32/scripts/auto-version.sh: Replaced with win/tools32/scripts/auto-version2010.sh.
+        * win/tools32/scripts/auto-version2010.sh: Removed.
+        * win/tools32/scripts/feature-defines.sh: Replaced with win/tools32/scripts/feature-defines2010.sh.
+        * win/tools32/scripts/feature-defines2010.sh: Removed.
+
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
         Nuke VS2005 files from the tree.
         <rdar://problem/14042021>.
 

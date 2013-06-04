@@ -32,11 +32,11 @@ chomp()
     eval $1=\$value;
 }
 
-if [[ -n "$WEBKITLIBRARIESDIR" ]]; then
-    FALLBACK_VERSION_PATH=`cygpath -u "$WEBKITLIBRARIESDIR\\tools\\scripts\\VERSION"`
+if [[ -n "$WEBKIT_LIBRARIES" ]]; then
+    FALLBACK_VERSION_PATH=`cygpath -u "$WEBKIT_LIBRARIES\\tools32\\scripts\\VERSION"`
     FALLBACK_VERSION=$(cat "$FALLBACK_VERSION_PATH");
 
-    COPYRIGHT_END_YEAR_PATH=`cygpath -u "$WEBKITLIBRARIESDIR\\tools\\scripts\\COPYRIGHT-END-YEAR"`
+    COPYRIGHT_END_YEAR_PATH=`cygpath -u "$WEBKIT_LIBRARIES\\tools32\\scripts\\COPYRIGHT-END-YEAR"`
     COPYRIGHT_END_YEAR=$(cat "$COPYRIGHT_END_YEAR_PATH");
     chomp COPYRIGHT_END_YEAR
 fi

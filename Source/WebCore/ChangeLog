@@ -1,5 +1,11 @@
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Some AppleWin VS2010 house cleaning.
+
+        * WebCore.vcxproj/build-generated-files.sh:
+
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
         clearLayoutOverflow should never be called before calling layer()->updateScrollInfoAfterLayout().
         https://bugs.webkit.org/show_bug.cgi?id=116689.
 
