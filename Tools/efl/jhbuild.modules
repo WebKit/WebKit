@@ -25,6 +25,7 @@
       <dep package="gst-plugins-bad"/>
       <dep package="gst-libav"/>
       <dep package="libseccomp"/>
+      <dep package="atk"/>
     </dependencies>
   </metamodule>
 
@@ -332,6 +333,14 @@
       <branch module="libseccomp/libseccomp"
           repo="git.code.sf.net"
           tag="bbd7ca07a7c76d5cd884dbddec58385e1b7439d2"/>
+  </autotools>
+
+  <autotools id="atk"
+             autogen-sh="configure"
+             autogenargs="--disable-introspection">
+    <branch module="pub/GNOME/sources/atk/2.8/atk-2.8.0.tar.xz" version="2.8.0"
+            repo="ftp.gnome.org"
+            hash="sha256:b22519176226f3e07cf6d932b77852e6b6be4780977770704b32d0f4e0686df4"/>
   </autotools>
 
 </moduleset>

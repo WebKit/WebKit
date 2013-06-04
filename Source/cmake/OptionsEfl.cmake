@@ -270,7 +270,7 @@ if (ENABLE_SPELLCHECK)
 endif ()
 
 if (ENABLE_ACCESSIBILITY)
-    find_package(ATK REQUIRED)
+    find_package(ATK 2.8.0 REQUIRED)
 else ()
     add_definitions(-DHAVE_ACCESSIBILITY=0)
 endif ()

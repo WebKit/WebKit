@@ -42,3 +42,7 @@ find_library(ATK_LIBRARIES
     HINTS ${PC_ATK_LIBRARY_DIRS}
           ${PC_ATK_LIBDIR}
 )
+
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(ATK REQUIRED_VARS ATK_INCLUDE_DIRS ATK_LIBRARIES
+                                      VERSION_VAR   PC_ATK_VERSION)
