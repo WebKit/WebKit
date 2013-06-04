@@ -1,3 +1,19 @@
+2013-06-04  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-mac/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.png: Rebaselining after r150798.
+        * platform/qt/TestExpectations: Skip faling test after r151146.
+        * platform/qt/editing/deleting/delete-block-merge-contents-001-expected.txt: Rebaselining after r151140.
+        * platform/qt/editing/deleting/delete-block-merge-contents-019-expected.txt:
+        * platform/qt/editing/deleting/delete-block-merge-contents-020-expected.txt:
+        * platform/qt/editing/inserting/insert-3907422-fix-expected.txt:
+        * platform/qt/editing/pasteboard/4944770-2-expected.txt:
+        * platform/qt/editing/pasteboard/8145-2-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-006-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-at-tabspan-003-expected.txt:
+
 2013-06-04  Kent Tamura  <tkent@chromium.org>
 
         Fix an assertion failure in Range::textNodeSplit by Text::splitText

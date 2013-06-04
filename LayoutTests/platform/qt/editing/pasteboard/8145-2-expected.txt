@@ -3,7 +3,7 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -25,10 +25,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 20x19
             text run at (0,0) width 20: "foo"
         RenderBlock (anonymous) at (1,39) size 782x38
-          RenderText {#text} at (0,0) size 20x19
-            text run at (0,0) width 20: "bar"
-          RenderText {#text} at (20,0) size 20x19
-            text run at (20,0) width 20: "bar"
+          RenderText {#text} at (0,0) size 40x19
+            text run at (0,0) width 40: "barbar"
           RenderBR {BR} at (40,15) size 0x0
           RenderText {#text} at (0,19) size 21x19
             text run at (0,19) width 21: "baz"
