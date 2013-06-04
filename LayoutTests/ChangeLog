@@ -1,3 +1,9 @@
+2013-06-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Rollout of r151146. Broke some tests.
+
+        * fast/flexbox/clear-overflow-before-scroll-update.html: Removed.
+
 2013-06-04  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

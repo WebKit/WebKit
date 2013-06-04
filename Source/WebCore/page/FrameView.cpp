@@ -3771,7 +3771,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, const FloatS
 
             if (!horizontalWritingMode)
                 overflow = overflow.transposedRect();
-            renderView->updateScrollAndclearLayoutOverflow();
+            renderView->clearLayoutOverflow();
             renderView->addLayoutOverflow(overflow); // This is how we clip in case we overflow again.
         }
     }

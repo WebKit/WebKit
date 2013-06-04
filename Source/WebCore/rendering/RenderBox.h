@@ -191,6 +191,7 @@ public:
     void addVisualEffectOverflow();
     void addOverflowFromChild(RenderBox* child) { addOverflowFromChild(child, child->locationOffset()); }
     void addOverflowFromChild(RenderBox* child, const LayoutSize& delta);
+    void clearLayoutOverflow();
     
     void updateLayerTransform();
 

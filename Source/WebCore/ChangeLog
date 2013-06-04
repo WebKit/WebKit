@@ -1,3 +1,22 @@
+2013-06-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Rollout of r151146. Broke some tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::finishDelayUpdateScrollInfo):
+        (WebCore::RenderBlock::updateScrollInfoAfterLayout):
+        (WebCore::RenderBlock::layout):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clearLayoutOverflow):
+        * rendering/RenderBox.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+
 2013-06-04  Noam Rosenthal  <noam@webkit.org>
 
         Refactor the code that decides whether to enable WebGL from settings to helper functions
