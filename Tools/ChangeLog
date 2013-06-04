@@ -1,3 +1,9 @@
+2013-06-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r150592. We need to disable \2 shouldn't be treated as an escape character.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2013-06-04  Greg Hughes  <ghughes@apple.com>
 
         Add "VisibleOnly" key to search predicate
