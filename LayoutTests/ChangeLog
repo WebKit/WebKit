@@ -1,3 +1,16 @@
+2013-06-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, added missing new line in baseline.
+
+        Those tests can be passed on EFL port as gtk port.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/css/color-correction-on-background-image-expected.txt: Added.
+        * platform/efl/fast/css/color-correction-on-backgrounds-expected.txt: Added.
+        * platform/efl/fast/css/color-correction-on-box-shadow-expected.txt: Added.
+        * platform/efl/fast/css/color-correction-on-text-expected.txt: Added.
+        * platform/efl/fast/css/color-correction-on-text-shadow-expected.txt: Added.
+
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
         clearLayoutOverflow should never be called before calling layer()->updateScrollInfoAfterLayout().
