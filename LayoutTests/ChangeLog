@@ -1,3 +1,11 @@
+2013-06-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL Gardening.
+
+        fast/forms/datalist/update-range-with-datalist.html was fixed after r122290.
+
+        * platform/efl/TestExpectations:
+
 2013-06-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove [NoInterfaceObject] from XPathExpression and NodeIterator
