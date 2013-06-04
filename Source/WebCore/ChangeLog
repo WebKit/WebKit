@@ -1,3 +1,19 @@
+2013-06-04  Kangil Han  <kangil.han@samsung.com>
+
+        Use ASSERT_DISABLED option for assertion purpose code in InlineBox
+        https://bugs.webkit.org/show_bug.cgi?id=117146
+
+        Reviewed by Alexey Proskuryakov.
+
+        We can distinguish assertion code with debug purpose by using ASSERT_DISABLED option.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::~InlineBox):
+        (WebCore::InlineBox::destroy):
+        (WebCore::InlineBox::operator delete):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+
 2013-06-04  Kent Tamura  <tkent@chromium.org>
 
         Fix an assertion failure in Range::textNodeSplit by Text::splitText

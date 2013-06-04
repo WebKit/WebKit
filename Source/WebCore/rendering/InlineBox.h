@@ -40,7 +40,7 @@ public:
         , m_parent(0)
         , m_renderer(obj)
         , m_logicalWidth(0)
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
         , m_hasBadParent(false)
 #endif
     {
@@ -55,7 +55,7 @@ public:
         , m_topLeft(topLeft)
         , m_logicalWidth(logicalWidth)
         , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
         , m_hasBadParent(false)
 #endif
     {
@@ -272,7 +272,7 @@ public:
     // visibleLeftEdge, visibleRightEdge are in the parent's coordinate system.
     virtual float placeEllipsisBox(bool ltr, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool&);
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     void setHasBadParent();
 #endif
 
@@ -415,19 +415,19 @@ protected:
     // For InlineFlowBox and InlineTextBox
     bool extracted() const { return m_bitfields.extracted(); }
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
 private:
     bool m_hasBadParent;
 #endif
 };
 
-#ifdef NDEBUG
+#if ASSERT_DISABLED
 inline InlineBox::~InlineBox()
 {
 }
 #endif
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
 inline void InlineBox::setHasBadParent()
 {
     m_hasBadParent = true;

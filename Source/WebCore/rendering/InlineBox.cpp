@@ -44,25 +44,23 @@ struct SameSizeAsInlineBox {
     FloatPoint b;
     float c;
     uint32_t d : 32;
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     bool f;
 #endif
 };
 
 COMPILE_ASSERT(sizeof(InlineBox) == sizeof(SameSizeAsInlineBox), InlineBox_size_guard);
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
 static bool inInlineBoxDetach;
 #endif
 
-#ifndef NDEBUG
-
+#if !ASSERT_DISABLED
 InlineBox::~InlineBox()
 {
     if (!m_hasBadParent && m_parent)
         m_parent->setHasBadChildList();
 }
-
 #endif
 
 void InlineBox::remove()
@@ -73,11 +71,11 @@ void InlineBox::remove()
 
 void InlineBox::destroy(RenderArena* renderArena)
 {
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     inInlineBoxDetach = true;
 #endif
     delete this;
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     inInlineBoxDetach = false;
 #endif
 
@@ -93,7 +91,6 @@ void* InlineBox::operator new(size_t sz, RenderArena* renderArena)
 void InlineBox::operator delete(void* ptr, size_t sz)
 {
     ASSERT(inInlineBoxDetach);
-
     // Stash size where destroy can find it.
     *(size_t *)ptr = sz;
 }
