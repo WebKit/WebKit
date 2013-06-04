@@ -1,3 +1,24 @@
+2013-06-03  Simon Pena  <simon.pena@samsung.com>
+
+        validate-committer-lists script is now outdated and does not work
+        https://bugs.webkit.org/show_bug.cgi?id=115860
+
+        Reviewed by Brent Fulgham.
+
+        The script validate-committer-lists was outdated, still using the deprecated log
+        system and having the old addresses for the mailing lists, as well as still referring
+        to committers.py, after this was renamed to contributors.json. This patch fixes that
+        so it can be used again.
+
+        * Scripts/validate-committer-lists: Replace calls to log and error with the
+        new logging mechanism, fix the URLs for the mailing lists, and fix the mentions
+        to committers.py, which should be contributors.json.
+        (CommitterListFromMailingList):
+        (CommitterListFromMailingList.check_for_emails_missing_from_list):
+        (CommitterListFromGit._fetch_authors_and_last_commit_time_from_git_log):
+        (CommitterListFromGit._fill_in_emails_for_old_logins):
+        (CommitterListFromGit.print_committers_missing_from_committer_list):
+
 2013-06-03  Dirk Pranke  <dpranke@chromium.org>
 
         add a script to dump the tests run most recently by a given worker

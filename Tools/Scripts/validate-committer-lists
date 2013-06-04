@@ -31,6 +31,7 @@
 # Checks Python's known list of committers against lists.webkit.org and SVN history.
 
 
+import logging
 import os
 import subprocess
 import re
@@ -39,7 +40,6 @@ from datetime import date, datetime, timedelta
 from optparse import OptionParser
 
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.system.deprecated_logging import log, error
 from webkitpy.common.checkout.scm import Git
 from webkitpy.common.net.bugzilla import Bugzilla
 
@@ -47,6 +47,7 @@ from webkitpy.common.net.bugzilla import Bugzilla
 # so this import should always succeed.
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
+_log = logging.getLogger(__name__)
 
 def print_list_if_non_empty(title, list_to_print):
     if not list_to_print:
@@ -58,8 +59,8 @@ def print_list_if_non_empty(title, list_to_print):
 
 
 class CommitterListFromMailingList(object):
-    committers_list_url = "http://lists.webkit.org/mailman/roster.cgi/webkit-committers"
-    reviewers_list_url = "http://lists.webkit.org/mailman/roster.cgi/webkit-reviewers"
+    committers_list_url = "http://lists.webkit.org/mailman/roster/webkit-committers"
+    reviewers_list_url = "http://lists.webkit.org/mailman/roster/webkit-reviewers"
 
     def _fetch_emails_from_page(self, url):
         page = urllib2.urlopen(url)
@@ -101,7 +102,7 @@ class CommitterListFromMailingList(object):
         print_list_if_non_empty("Committers missing from %s:" % list_name, missing_from_mailing_list)
 
         users_missing_from_committers = self._emails_not_found_in_committer_list(committer_list.committers(), committer_emails)
-        print_list_if_non_empty("Subcribers to %s missing from committer.py:" % list_name, users_missing_from_committers)
+        print_list_if_non_empty("Subcribers to %s missing from contributors.json:" % list_name, users_missing_from_committers)
 
 
         reviewer_emails = self._fetch_emails_from_page(self.reviewers_list_url)
@@ -111,10 +112,10 @@ class CommitterListFromMailingList(object):
         print_list_if_non_empty("Reviewers missing from %s:" % list_name, missing_from_mailing_list)
 
         missing_from_reviewers = self._emails_not_found_in_committer_list(committer_list.reviewers(), reviewer_emails)
-        print_list_if_non_empty("Subcribers to %s missing from reviewers in committer.py:" % list_name, missing_from_reviewers)
+        print_list_if_non_empty("Subcribers to %s missing from reviewers in contributors.json:" % list_name, missing_from_reviewers)
 
         missing_from_committers = self._emails_not_found_in_committer_list(committer_list.committers(), reviewer_emails)
-        print_list_if_non_empty("Subcribers to %s completely missing from committers.py" % list_name, missing_from_committers)
+        print_list_if_non_empty("Subcribers to %s completely missing from contributors.json:" % list_name, missing_from_committers)
 
 
 class CommitterListFromGit(object):
@@ -173,7 +174,8 @@ class CommitterListFromGit(object):
 
             match_result = line_regexp.match(output_line)
             if not match_result:
-                error("Failed to match line: %s" % output_line)
+                _log.error("Failed to match line: %s" % output_line)
+                exit(1)
             last_commit_dates[match_result.group('author')] = float(match_result.group('timestamp'))
 
     def _fill_in_emails_for_old_logins(self):
@@ -194,7 +196,7 @@ class CommitterListFromGit(object):
                 # No known email mapping, likely not an active committer.  We could log here.
                 continue
 
-            # log("%s -> %s" % (author, author_email)) # For sanity checking.
+            # _log.info("%s -> %s" % (author, author_email)) # For sanity checking.
             no_email_commit_time = self._last_commit_time_by_author_cache.get(author)
             email_commit_time = self._last_commit_time_by_author_cache.get(author_email)
             # We compare the timestamps for extra sanity even though we could assume commits before email address were used for login are always going to be older.
@@ -228,11 +230,11 @@ class CommitterListFromGit(object):
                 self._print_three_column_row(column_widths, (str(last_commit_date), author, committer_record))
 
     def print_committers_missing_from_committer_list(self, committer_list):
-        missing_from_committers_py = []
+        missing_from_contributors_json = []
         last_commit_time_by_author = self._last_commit_by_author()
         for author in last_commit_time_by_author:
             if not committer_list.committer_by_email(author):
-                missing_from_committers_py.append(author)
+                missing_from_contributors_json.append(author)
 
         never_committed = []
         for committer in committer_list.committers():
@@ -242,8 +244,8 @@ class CommitterListFromGit(object):
             else:
                 never_committed.append(committer)
 
-        print_list_if_non_empty("Historical committers missing from committer.py:", missing_from_committers_py)
-        print_list_if_non_empty("Committers in committer.py who have never committed:", never_committed)
+        print_list_if_non_empty("Historical committers missing from contributors.json:", missing_from_contributors_json)
+        print_list_if_non_empty("Committers in contributors.json who have never committed:", never_committed)
 
 
 class CommitterListBugzillaChecker(object):
@@ -272,7 +274,7 @@ def main():
         print """\n\nWARNING: validate-committer-lists requires a git checkout.
 The following checks are disabled:
  - List of committers ordered by last commit
- - List of historical committers missing from committers.py
+ - List of historical committers missing from contributors.json
 """
         return 1
     svn_committer_list = CommitterListFromGit()
