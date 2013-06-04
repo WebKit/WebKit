@@ -168,4 +168,5 @@ webkit.org/b/114619 http/tests/ssl/ping-with-unsafe-redirect.html [ Skip ]
 webkit.org/b/116809 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Skip ]
 
 # [Qt][WK1][CSS Regions]  New test fast/regions/hover-on-child-parent-different-regions.html fails
+webkit.org/b/117035 fast/regions/hover-on-child-parent-different-regions.html [ Skip ]
 webkit.org/b/117035 fast/regions/hover-on-child-in-region.html [ Skip ]

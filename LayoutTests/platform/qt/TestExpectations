@@ -2677,8 +2677,10 @@ webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cac
 # [Qt] Newly added test http/tests/uri/curly-braces-escaping.html fails
 webkit.org/b/117036 http/tests/uri/curly-braces-escaping.html [ Skip ]
 
-# [Qt] REGRESSION(r151020): fast/js/cyclic-proto.html crashing
-webkit.org/b/117141 fast/js/cyclic-proto.html [ Skip ]
+# [Qt] REGRESSION(r151020): fast/js/custom-constructors.html makes next test crashing
+webkit.org/b/117141 fast/js/custom-constructors.html [ Skip ]
+
+
 
 # REGRESSION(r151146) fast/forms/control-clip-overflow.html fails
 webkit.org/b/117185 fast/forms/control-clip-overflow.html [ Skip ]
