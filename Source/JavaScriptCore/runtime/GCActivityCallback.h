@@ -57,6 +57,12 @@ protected:
         , m_enabled(true)
     {
     }
+#elif PLATFORM(EFL)
+    GCActivityCallback(VM* vm, bool flag)
+        : HeapTimer(vm)
+        , m_enabled(flag)
+    {
+    }
 #else
     GCActivityCallback(VM* vm)
         : HeapTimer(vm)
@@ -84,7 +90,7 @@ public:
 protected:
     DefaultGCActivityCallback(Heap*, CFRunLoopRef);
 #endif
-#if USE(CF) || PLATFORM(QT)
+#if USE(CF) || PLATFORM(QT) || PLATFORM(EFL)
 protected:
     void cancelTimer();
     void scheduleTimer(double);

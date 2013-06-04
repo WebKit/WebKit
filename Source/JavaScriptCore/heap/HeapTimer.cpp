@@ -38,6 +38,8 @@
 #include <QMutexLocker>
 #include <QThread>
 #include <QTimerEvent>
+#elif PLATFORM(EFL)
+#include <Ecore.h>
 #endif
 
 namespace JSC {
@@ -163,6 +165,44 @@ void HeapTimer::customEvent(QEvent*)
     QMutexLocker lock(&m_mutex);
     moveToThread(m_newThread);
     m_newThread = 0;
+}
+
+#elif PLATFORM(EFL)
+
+HeapTimer::HeapTimer(VM* vm)
+    : m_vm(vm)
+    , m_timer(0)
+{
+}
+
+HeapTimer::~HeapTimer()
+{
+    stop();
+}
+
+Ecore_Timer* HeapTimer::add(double delay, void* agent)
+{
+    return ecore_timer_add(delay, reinterpret_cast<Ecore_Task_Cb>(timerEvent), agent);
+}
+    
+void HeapTimer::stop()
+{
+    if (!m_timer)
+        return;
+
+    ecore_timer_del(m_timer);
+    m_timer = 0;
+}
+
+bool HeapTimer::timerEvent(void* info)
+{
+    HeapTimer* agent = static_cast<HeapTimer*>(info);
+    
+    APIEntryShim shim(agent->m_vm);
+    agent->doWork();
+    agent->m_timer = 0;
+    
+    return ECORE_CALLBACK_CANCEL;
 }
 
 #else

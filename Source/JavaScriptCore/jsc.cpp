@@ -90,6 +90,10 @@
 #include <BlackBerryPlatformLog.h>
 #endif
 
+#if PLATFORM(EFL)
+#include <Ecore.h>
+#endif
+
 using namespace JSC;
 using namespace WTF;
 
@@ -537,6 +541,10 @@ int main(int argc, char** argv)
     QCoreApplication app(argc, argv);
 #endif
 
+#if PLATFORM(EFL)
+    ecore_init();
+#endif
+
     // Initialize JSC before getting VM.
 #if ENABLE(SAMPLING_REGIONS)
     WTF::initializeMainThread();
@@ -551,6 +559,11 @@ int main(int argc, char** argv)
     EXCEPT(res = 3)
     if (Options::logHeapStatisticsAtExit())
         HeapStatistics::reportSuccess();
+
+#if PLATFORM(EFL)
+    ecore_shutdown();
+#endif
+
     return res;
 }
 

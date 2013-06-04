@@ -38,6 +38,8 @@
 #include <QMutex>
 #include <QObject>
 #include <QThread>
+#elif PLATFORM(EFL)
+typedef struct _Ecore_Timer Ecore_Timer;
 #endif
 
 namespace JSC {
@@ -81,6 +83,11 @@ protected:
     QBasicTimer m_timer;
     QThread* m_newThread;
     QMutex m_mutex;
+#elif PLATFORM(EFL)
+    static bool timerEvent(void*);
+    Ecore_Timer* add(double delay, void* agent);
+    void stop();
+    Ecore_Timer* m_timer;
 #endif
     
 private:

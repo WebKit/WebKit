@@ -38,9 +38,13 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WTFThreadData.h>
 
+#if PLATFORM(EFL)
+#include <wtf/MainThread.h>
+#endif
+
 namespace JSC {
 
-#if USE(CF) || PLATFORM(QT)
+#if USE(CF) || PLATFORM(QT) || PLATFORM(EFL)
 
 const double gcTimeSlicePerMB = 0.01; // Percentage of CPU time we will spend to reclaim 1 MB
 const double maxGCTimeSlice = 0.05; // The maximum amount of CPU time we want to use for opportunistic timer-triggered collections.
@@ -63,6 +67,12 @@ DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap, CFRunLoopRef ru
 #elif PLATFORM(QT)
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
     : GCActivityCallback(heap->vm())
+    , m_delay(hour)
+{
+}
+#elif PLATFORM(EFL)
+DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
+    : GCActivityCallback(heap->vm(), WTF::isMainThread())
     , m_delay(hour)
 {
 }
@@ -116,10 +126,35 @@ void DefaultGCActivityCallback::cancelTimer()
     m_delay = hour;
     m_timer.stop();
 }
+#elif PLATFORM(EFL)
+void DefaultGCActivityCallback::scheduleTimer(double newDelay)
+{
+    if (newDelay * timerSlop > m_delay)
+        return;
+
+    stop();
+    m_delay = newDelay;
+    
+    ASSERT(!m_timer);
+    m_timer = add(newDelay, this);
+}
+
+void DefaultGCActivityCallback::cancelTimer()
+{
+    m_delay = hour;
+    stop();
+}
 #endif
 
 void DefaultGCActivityCallback::didAllocate(size_t bytes)
 {
+#if PLATFORM(EFL)
+    if (!isEnabled())
+        return;
+
+    ASSERT(WTF::isMainThread());
+#endif
+
     // The first byte allocated in an allocation cycle will report 0 bytes to didAllocate. 
     // We pretend it's one byte so that we don't ignore this allocation entirely.
     if (!bytes)
