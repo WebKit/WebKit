@@ -4225,19 +4225,6 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
     m_overflow->addVisualOverflow(rect);
 }
 
-void RenderBox::clearLayoutOverflow()
-{
-    if (!m_overflow)
-        return;
-    
-    if (visualOverflowRect() == borderBoxRect()) {
-        m_overflow.clear();
-        return;
-    }
-    
-    m_overflow->setLayoutOverflow(borderBoxRect());
-}
-
 inline static bool percentageLogicalHeightIsResolvable(const RenderBox* box)
 {
     return RenderBox::percentageLogicalHeightIsResolvableFromBlock(box->containingBlock(), box->isOutOfFlowPositioned());

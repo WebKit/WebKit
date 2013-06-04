@@ -1393,9 +1393,8 @@ void RenderBlock::finishDelayUpdateScrollInfo()
 
         for (DelayedUpdateScrollInfoSet::iterator it = infoSet->begin(); it != infoSet->end(); ++it) {
             RenderBlock* block = *it;
-            if (block->hasOverflowClip()) {
-                block->layer()->updateScrollInfoAfterLayout();
-            }
+            if (block->hasOverflowClip())
+                block->updateScrollAndclearLayoutOverflow();
         }
     }
 }
@@ -1408,14 +1407,14 @@ void RenderBlock::updateScrollInfoAfterLayout()
             // Workaround for now. We cannot delay the scroll info for overflow
             // for items with opposite writing directions, as the contents needs
             // to overflow in that direction
-            layer()->updateScrollInfoAfterLayout();
+            updateScrollAndclearLayoutOverflow();
             return;
         }
 
         if (gDelayUpdateScrollInfo)
             gDelayedUpdateScrollInfoSet->add(this);
         else
-            layer()->updateScrollInfoAfterLayout();
+            updateScrollAndclearLayoutOverflow();
     }
 }
 
@@ -1430,11 +1429,6 @@ void RenderBlock::layout()
     // Table cells call layoutBlock directly, so don't add any logic here.  Put code into
     // layoutBlock().
     layoutBlock(false);
-    
-    // It's safe to check for control clip here, since controls can never be table cells.
-    // If we have a lightweight clip, there can never be any overflow from children.
-    if (hasControlClip() && m_overflow)
-        clearLayoutOverflow();
 
     invalidateBackgroundObscurationStatus();
 }
@@ -1808,6 +1802,26 @@ void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeF
 
     if (isRenderFlowThread())
         toRenderFlowThread(this)->computeOverflowStateForRegions(oldClientAfterEdge);
+}
+
+void RenderBlock::updateScrollAndclearLayoutOverflow()
+{
+    ASSERT(!gDelayUpdateScrollInfo);
+
+    layer()->updateScrollInfoAfterLayout();
+
+    if (!hasControlClip())
+        return;
+
+    if (!m_overflow)
+        return;
+    
+    if (visualOverflowRect() == borderBoxRect()) {
+        m_overflow.clear();
+        return;
+    }
+    
+    m_overflow->setLayoutOverflow(borderBoxRect());
 }
 
 void RenderBlock::addOverflowFromBlockChildren()
