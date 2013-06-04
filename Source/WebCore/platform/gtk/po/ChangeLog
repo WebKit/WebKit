@@ -1,3 +1,12 @@
+2013-06-04  Krishnababu Krothapalli  <kkrothap@redhat.com>
+
+        Updated Telugu [te] Translations for WebKitGTK+ HEAD
+        https://bugs.webkit.org/show_bug.cgi?id=115856
+
+        Reviewed by Gustavo Noronha Silva (kov).
+
+        * te.po: Updated.
+
 2013-06-04  Manoj Kumar Giri  <mgiri@redhat.com>
 
         Updated WebKitGTK+ Translation for Odia [or] language.
