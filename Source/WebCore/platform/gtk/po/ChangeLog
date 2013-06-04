@@ -1,3 +1,12 @@
+2013-06-04  Manoj Kumar Giri  <mgiri@redhat.com>
+
+        Updated WebKitGTK+ Translation for Odia [or] language.
+        https://bugs.webkit.org/show_bug.cgi?id=116825
+
+        Reviewed by Gustavo Noronha Silva (kov).
+
+        * or.po: Updated.
+
 2013-06-04  Shankar Prasad  <svenkate@redhat.com>
 
         [kn] Kannada Translation for webkit - Updated
