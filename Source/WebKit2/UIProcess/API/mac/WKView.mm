@@ -66,6 +66,7 @@
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
@@ -455,7 +456,9 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)_updateWindowAndViewFrames
 {
     NSRect viewFrameInWindowCoordinates = [self convertRect:[self frame] toView:nil];
-    NSPoint accessibilityPosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
+    NSPoint accessibilityPosition = NSMakePoint(0, 0);
+    if (WebCore::AXObjectCache::accessibilityEnabled())
+        accessibilityPosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
     
     _data->_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
     if (_data->_clipsToVisibleRect)
@@ -2194,7 +2197,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 {
     // Initialize remote accessibility when the window connection has been established.
     NSData *remoteElementToken = WKAXRemoteTokenForElement(self);
-    NSData *remoteWindowToken = WKAXRemoteTokenForElement([self accessibilityAttributeValue:NSAccessibilityWindowAttribute]);
+    NSData *remoteWindowToken = WKAXRemoteTokenForElement([self window]);
     CoreIPC::DataReference elementToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
     CoreIPC::DataReference windowToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteWindowToken bytes]), [remoteWindowToken length]);
     _data->_page->registerUIProcessAccessibilityTokens(elementToken, windowToken);
@@ -2216,8 +2219,21 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         WKAXRegisterRemoteProcess(registerProcess, pid); 
 }
 
+- (void)enableAccessibilityIfNecessary
+{
+    if (WebCore::AXObjectCache::accessibilityEnabled())
+        return;
+
+    // After enabling accessibility update the window frame on the web process so that the
+    // correct accessibility position is transmitted (when AX is off, that position is not calculated).
+    WebCore::AXObjectCache::enableAccessibility();
+    [self _updateWindowAndViewFrames];
+}
+
 - (id)accessibilityFocusedUIElement
 {
+    [self enableAccessibilityIfNecessary];
+    
     if (_data->_pdfViewController)
         return NSAccessibilityUnignoredDescendant(_data->_pdfViewController->pdfView());
 
@@ -2231,6 +2247,8 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (id)accessibilityHitTest:(NSPoint)point
 {
+    [self enableAccessibilityIfNecessary];
+
     if (_data->_pdfViewController)
         return [_data->_pdfViewController->pdfView() accessibilityHitTest:point];
     
@@ -2239,6 +2257,8 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (id)accessibilityAttributeValue:(NSString*)attribute
 {
+    [self enableAccessibilityIfNecessary];
+
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
 
         id child = nil;

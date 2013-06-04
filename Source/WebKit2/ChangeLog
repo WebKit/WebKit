@@ -1,3 +1,24 @@
+2013-06-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WK2: accessibility position is calculated every time window frame is updated
+        https://bugs.webkit.org/show_bug.cgi?id=117201
+
+        Reviewed by Tim Horton.
+
+        Only calculate the AX position if AX has already been enabled when updating the
+        WKView's window and frame.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateWindowAndViewFrames]):
+        (-[WKView _accessibilityRegisterUIProcessTokens]):
+            Don't call accessibilityAttributeValue: here because it could enable accessibility prematurely.
+        (-[WKView enableAccessibilityIfNecessary]):
+            After enabling AX for the first time, also update the frame so that the AX position is correct.
+        (-[WKView accessibilityFocusedUIElement]):
+        (-[WKView accessibilityHitTest:]):
+        (-[WKView accessibilityAttributeValue:]):
+            Tell the AXObjectCache that AX is now enabled.
+
 2013-06-04  Mark Rowe  <mrowe@apple.com>
 
         REGRESSION (r151043): Frequent crashes inside WebPageProxy::getPlugInInformation
