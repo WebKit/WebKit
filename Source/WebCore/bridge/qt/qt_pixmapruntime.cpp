@@ -249,14 +249,16 @@ JSClassRef QtPixmapRuntime::getClassRef()
 {
     static const JSStaticValue staticValues[] = {
         { "width", getPixmapWidth, 0, 0 },
-        { "height", getPixmapHeight, 0, 0 }
+        { "height", getPixmapHeight, 0, 0 },
+        { 0, 0, 0, 0}
     };
 
     static const JSStaticFunction staticFunctions[] = {
         { "assignToHTMLImageElement", assignToHTMLImageElement, 0 },
         { "toDataUrl", pixmapToDataUrl, 0 },
         { "toImageData", pixmapToImageData, 0 },
-        { "toString", pixmapToString, 0 }
+        { "toString", pixmapToString, 0 },
+        { 0, 0, 0 }
     };
 
     static const JSClassDefinition classDefinition = {
