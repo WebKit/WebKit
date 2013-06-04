@@ -1,3 +1,15 @@
+2013-06-03  Kangil Han  <kangil.han@samsung.com>
+
+        Remove unused arithmetic operation in RenderListItem
+        https://bugs.webkit.org/show_bug.cgi?id=117175
+
+        Reviewed by Brent Fulgham.
+
+        Variable 'markerLogicalLeft' is reassigned a value before the old one has been used.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Some AppleWin VS2010 house cleaning.
