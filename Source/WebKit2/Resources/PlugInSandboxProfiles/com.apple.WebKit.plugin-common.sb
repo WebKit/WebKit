@@ -50,6 +50,13 @@
                        (home-library-preferences-regex (string-append #"/ByHost/" (regex-quote domain) #"\..*\.plist$")))))
             domains))
 
+;; OS X 10.7 (Lion) compatibility
+(if (not (defined? 'ipc-posix-shm*))
+    (define ipc-posix-shm* ipc-posix-shm))
+(if (not (defined? 'ipc-posix-shm-read*))
+    (define ipc-posix-shm-read* ipc-posix-shm))
+(if (not (defined? 'ipc-posix-shm-write-data))
+    (define ipc-posix-shm-write-data ipc-posix-shm))
 
 ;; Graphics
 (if (defined? 'system-graphics)
@@ -85,6 +92,7 @@
     "com.apple.LaunchServices"
     "com.apple.MultitouchSupport"
     "com.apple.security"
+    "com.apple.security.revocation"
     "com.apple.security_common"
     "com.apple.speech.voice.prefs"
     "com.apple.speech.synthesis.general.prefs"
@@ -144,6 +152,14 @@
     ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
     (subpath "/Library/Keychains"))
 
+;; Security framework
+(allow mach-lookup (global-name "com.apple.ocspd"))
+(allow file-read* file-write* (home-library-subpath "/Keychains"))
+(allow file-read*
+       (subpath "/private/var/db/mds")
+       (literal "/private/var/db/DetachedSignatures"))
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data
+       (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 ;; Read-write preferences and data
 (allow file*
@@ -262,19 +278,14 @@
 (define (webkit-imagecapture)
     (allow appleevent-send (appleevent-destination "com.apple.imagecaptureextension2")))
 
-(if (not (defined? 'ipc-posix-shm*))
-    (define ipc-posix-shm* ipc-posix-shm))
-
 (allow ipc-posix-shm*
     (ipc-posix-name-regex #"^AudioIO")
     (ipc-posix-name-regex #"^CFPBS:")
     (ipc-posix-name "_CS_GSHMEMLOCK")
     (ipc-posix-name "_CS_DSHMEMLOCK"))
 
-(if (not (defined? 'ipc-posix-shm-read*))
-    (define ipc-posix-shm-read* ipc-posix-shm))
-
 (allow ipc-posix-shm-read*
+    (ipc-posix-name "FNetwork.defaultStorageSession")
     (ipc-posix-name "apple.shm.notification_center"))
 
 ;; Silently block access to some resources

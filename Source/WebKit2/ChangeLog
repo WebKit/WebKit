@@ -1,3 +1,16 @@
+2013-06-03  Simon Cooper  <scooper@apple.com>
+
+        Unable to play videos in Safari using QuickTime plug-in until I've played those videos in Chrome first
+        https://bugs.webkit.org/show_bug.cgi?id=117174
+        <rdar://problem/13711687>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Pull in fixes that allow https connections within the plugin
+        environment.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
 2013-06-03  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         [WK2] REGRESSION(r150798): scrolling coordinator is not being enabled when WebPage is set to use fixed layout
