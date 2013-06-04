@@ -2119,14 +2119,6 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return [self accessibilityMathPrescriptPairs];
 }
 
-- (NSArray *)accessibilityMathOverObject
-{
-    if (![self _prepareAccessibilityCall])
-        return nil;
-    
-    return m_object->mathOverObject() ? m_object->mathOverObject()->wrapper() : 0;
-}
-
 - (NSString *)accessibilityMathFencedOpenString
 {
     if (![self _prepareAccessibilityCall])
