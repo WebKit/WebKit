@@ -1,3 +1,17 @@
+2013-06-04  Julien Brianceau  <jbrianceau@nds.com>
+
+        [sh4] Add floating point absolute function support in baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=117147
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::supportsFloatingPointAbs):
+        (JSC::MacroAssemblerSH4::absDouble):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::dabs):
+        (JSC::SH4Assembler::printInstr):
+
 2013-06-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [JSC] Test262 15.5.4.9_3 test is failing

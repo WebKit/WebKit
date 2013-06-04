@@ -178,6 +178,7 @@ enum {
     STSFPSCR_OPCODE = 0x006a,
     LDSRMFPUL_OPCODE = 0x405a,
     FSTSFPULFRN_OPCODE = 0xf00d,
+    FABS_OPCODE = 0xf05d,
     FSQRT_OPCODE = 0xf06d,
     FSCHG_OPCODE = 0xf3fd,
     CLRT_OPCODE = 8,
@@ -954,6 +955,12 @@ public:
     void ddivRegReg(FPRegisterID src, FPRegisterID dst)
     {
         uint16_t opc = getOpcodeGroup8(FDIV_OPCODE, dst >> 1, src >> 1);
+        oneShortOp(opc);
+    }
+
+    void dabs(FPRegisterID dst)
+    {
+        uint16_t opc = getOpcodeGroup7(FABS_OPCODE, dst >> 1);
         oneShortOp(opc);
     }
 
@@ -1835,6 +1842,9 @@ public:
             break;
         case FTRC_OPCODE:
             format = "    FTRC FR%d, FPUL\n";
+            break;
+        case FABS_OPCODE:
+            format = "    FABS FR%d\n";
             break;
         case FSQRT_OPCODE:
             format = "    FSQRT FR%d\n";

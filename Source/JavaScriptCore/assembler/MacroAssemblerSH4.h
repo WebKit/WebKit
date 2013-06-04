@@ -946,7 +946,7 @@ public:
     static bool supportsFloatingPoint() { return true; }
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }
-    static bool supportsFloatingPointAbs() { return false; }
+    static bool supportsFloatingPointAbs() { return true; }
 
     void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
     {
@@ -1392,9 +1392,10 @@ public:
         m_assembler.dsqrt(dest);
     }
     
-    void absDouble(FPRegisterID, FPRegisterID)
+    void absDouble(FPRegisterID src, FPRegisterID dest)
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        moveDouble(src, dest);
+        m_assembler.dabs(dest);
     }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
