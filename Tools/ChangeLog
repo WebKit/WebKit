@@ -1,3 +1,28 @@
+2013-06-04  Greg Hughes  <ghughes@apple.com>
+
+        Add "VisibleOnly" key to search predicate
+        https://bugs.webkit.org/show_bug.cgi?id=115491
+
+        Reviewed by Chris Fleizach.
+
+        Added support for accessibility clients to use the search predicate to find only visible elements
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (uiElementForSearchPredicateCallback):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+
 2013-06-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.  The last check-in lost CR/LF endings on the batch file,

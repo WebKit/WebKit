@@ -912,11 +912,13 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location
     return false;
 }
 
-AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText)
+AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSMutableDictionary* parameter = [NSMutableDictionary dictionary];
     [parameter setObject:(isDirectionNext) ? @"AXDirectionNext" : @"AXDirectionPrevious" forKey:@"AXDirection"];
+    if (visibleOnly)
+        [parameter setObject:[NSNumber numberWithBool:YES] forKey:@"AXVisibleOnly"];
     [parameter setObject:[NSNumber numberWithInt:1] forKey:@"AXResultsLimit"];
     if (startElement && startElement->platformUIElement())
         [parameter setObject:(id)startElement->platformUIElement() forKey:@"AXStartElement"];

@@ -206,9 +206,10 @@ static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSOb
 {
     AccessibilityUIElement* startElement = 0;
     bool isDirectionNext = true;
+    bool visibleOnly = false;
     JSValueRef searchKey = 0;
     JSStringRef searchText = 0;
-    if (argumentCount == 4) {
+    if (argumentCount == 5) {
         JSObjectRef startElementObject = JSValueToObject(context, arguments[0], exception);
         if (startElementObject)
             startElement = toAXElement(startElementObject);
@@ -218,8 +219,10 @@ static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSOb
         
         if (JSValueIsString(context, arguments[3]))
             searchText = JSValueToStringCopy(context, arguments[3], exception);
+        
+        visibleOnly = JSValueToBoolean(context, arguments[4]);
     }
-    JSObjectRef resultObject = AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementForSearchPredicate(context, startElement, isDirectionNext, searchKey, searchText));
+    JSObjectRef resultObject = AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementForSearchPredicate(context, startElement, isDirectionNext, searchKey, searchText, visibleOnly));
 
     if (searchText)
         JSStringRelease(searchText);

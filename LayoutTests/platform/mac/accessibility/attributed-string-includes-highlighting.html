@@ -29,7 +29,7 @@
         // Search for a highlighted element from the top of the webpage.
         document.getElementById("body").focus();
         var body = accessibilityController.focusedElement;
-        var resultElement = body.uiElementForSearchPredicate("", true, "AXHighlightedSearchKey", "");
+        var resultElement = body.uiElementForSearchPredicate("", true, "AXHighlightedSearchKey", "", false);
         shouldBeTrue("resultElement.isEqual(item1.childAtIndex(0))");
     }
 

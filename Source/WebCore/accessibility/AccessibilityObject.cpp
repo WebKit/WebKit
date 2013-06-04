@@ -248,8 +248,11 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* 
     
     size_t length = criteria->searchKeys.size();
     for (size_t i = 0; i < length; ++i) {
-        if (isAccessibilityObjectSearchMatchAtIndex(axObject, criteria, i))
+        if (isAccessibilityObjectSearchMatchAtIndex(axObject, criteria, i)) {
+            if (criteria->visibleOnly && !axObject->isOnscreen())
+                return false;
             return true;
+        }
     }
     return false;
 }
@@ -1719,6 +1722,39 @@ static int computeBestScrollOffset(int currentScrollOffset,
 
     // This shouldn't happen.
     return currentScrollOffset;
+}
+
+bool AccessibilityObject::isOnscreen() const
+{   
+    bool isOnscreen = true;
+
+    // To figure out if the element is onscreen, we start by building of a stack starting with the
+    // element, and then include every scrollable parent in the hierarchy.
+    Vector<const AccessibilityObject*> objects;
+    
+    objects.append(this);
+    for (AccessibilityObject* parentObject = this->parentObject(); parentObject; parentObject = parentObject->parentObject()) {
+        if (parentObject->getScrollableAreaIfScrollable())
+            objects.append(parentObject);
+    }
+
+    // Now, go back through that chain and make sure each inner object is within the
+    // visible bounds of the outer object.
+    size_t levels = objects.size() - 1;
+    
+    for (size_t i = levels; i >= 1; i--) {
+        const AccessibilityObject* outer = objects[i];
+        const AccessibilityObject* inner = objects[i - 1];
+        const IntRect outerRect = i < levels ? pixelSnappedIntRect(outer->boundingBoxRect()) : outer->getScrollableAreaIfScrollable()->visibleContentRect();
+        const IntRect innerRect = pixelSnappedIntRect(inner->isAccessibilityScrollView() ? inner->parentObject()->boundingBoxRect() : inner->boundingBoxRect());
+        
+        if (!outerRect.intersects(innerRect)) {
+            isOnscreen = false;
+            break;
+        }
+    }
+    
+    return isOnscreen;
 }
 
 void AccessibilityObject::scrollToMakeVisible() const

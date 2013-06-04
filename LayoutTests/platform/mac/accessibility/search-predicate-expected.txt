@@ -33,6 +33,20 @@ first table heading level 1
 first table body level 1
 second table heading level 1
 second table body level 1
+isVisible test start
+
+test button 1
+test test test test 
+test test test test 
+test test test test 
+test test test test 
+test test test test 
+test test test test 
+test test test test 
+test test test test 
+test test test test 
+test button 2
+test button 3
 This tests the ability to search for accessible elements by key or text.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -109,6 +123,29 @@ PASS resultElement.role is 'AXRole: AXLink'
 PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
 PASS resultElement.role is 'AXRole: AXHeading'
 PASS resultElement.childAtIndex(0).stringValue is 'AXValue: heading level 2'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 3'
+PASS resultElement.role is 'AXRole: AXHeading'
+PASS resultElement.childAtIndex(0).stringValue is 'AXValue: isVisible test start'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 1'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 2'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 3'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 1'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 3'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 2'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 3'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 2'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: Submit'
+PASS resultElement.role is 'AXRole: '
 PASS successfullyParsed is true
 
 TEST COMPLETE

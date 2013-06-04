@@ -3286,7 +3286,11 @@ static RenderObject* rendererForView(NSView* view)
         if ([[dictionary objectForKey:@"AXResultsLimit"] isKindOfClass:[NSNumber self]])
             resultsLimit = [(NSNumber*)[dictionary objectForKey:@"AXResultsLimit"] unsignedIntValue];
         
-        AccessibilitySearchCriteria criteria = AccessibilitySearchCriteria(startObject, searchDirection, &searchText, resultsLimit);
+        BOOL visibleOnly = NO;
+        if ([[dictionary objectForKey:@"AXVisibleOnly"] isKindOfClass:[NSNumber self]])
+            visibleOnly = [(NSNumber*)[dictionary objectForKey:@"AXVisibleOnly"] boolValue];
+        
+        AccessibilitySearchCriteria criteria = AccessibilitySearchCriteria(startObject, searchDirection, &searchText, resultsLimit, visibleOnly);
                 
         id searchKeyEntry = [dictionary objectForKey:@"AXSearchKey"];
         if ([searchKeyEntry isKindOfClass:[NSString class]])

@@ -315,12 +315,14 @@ struct AccessibilitySearchCriteria {
     Vector<AccessibilitySearchKey> searchKeys;
     String* searchText;
     unsigned resultsLimit;
+    bool visibleOnly;
     
-    AccessibilitySearchCriteria(AccessibilityObject* o, AccessibilitySearchDirection d, String* t, unsigned l)
+    AccessibilitySearchCriteria(AccessibilityObject* o, AccessibilitySearchDirection d, String* t, unsigned l, bool v)
     : startObject(o)
     , searchDirection(d)
     , searchText(t)
     , resultsLimit(l)
+    , visibleOnly(v)
     { }
 };
 
@@ -873,7 +875,8 @@ protected:
     static bool objectMatchesSearchCriteriaWithResultLimit(AccessibilityObject*, AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
     virtual AccessibilityRole buttonRoleType() const;
     bool ariaIsHidden() const;
-
+    bool isOnscreen() const;
+    
 #if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;

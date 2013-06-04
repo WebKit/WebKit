@@ -26,33 +26,33 @@
         var heading = accessibilityController.focusedElement;
 
         // The next heading should be outside the table
-        resultElement = containerElement.uiElementForSearchPredicate(heading, true, "AXHeadingSearchKey", "");
+        resultElement = containerElement.uiElementForSearchPredicate(heading, true, "AXHeadingSearchKey", "", false);
         shouldBe("resultElement.role", "'AXRole: AXHeading'");
         shouldBe("resultElement.title", "'AXTitle: outside heading'");        
 
         // A search for the previous heading should return nothing.
-        resultElement = containerElement.uiElementForSearchPredicate(heading, false, "AXHeadingSearchKey", "");
+        resultElement = containerElement.uiElementForSearchPredicate(heading, false, "AXHeadingSearchKey", "", false);
         shouldBe("resultElement.role", "'AXRole: '");
 
         // When asking the child of the heading for the previous element, it should return the heading.
-        resultElement = containerElement.uiElementForSearchPredicate(heading.childAtIndex(0), false, "AXAnyTypeSearchKey", "");
+        resultElement = containerElement.uiElementForSearchPredicate(heading.childAtIndex(0), false, "AXAnyTypeSearchKey", "", false);
         shouldBe("resultElement.role", "'AXRole: AXHeading'");
 
         // When asking the heading for the previous element, it should return the cell.
-        resultElement = containerElement.uiElementForSearchPredicate(resultElement, false, "AXAnyTypeSearchKey", "");
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, false, "AXAnyTypeSearchKey", "", false);
         shouldBe("resultElement.role", "'AXRole: AXCell'");
 
         // When asking the cell for the previous element, it should return the row.
-        resultElement = containerElement.uiElementForSearchPredicate(resultElement, false, "AXAnyTypeSearchKey", "");
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, false, "AXAnyTypeSearchKey", "", false);
         shouldBe("resultElement.role", "'AXRole: AXRow'");
 
         // Now when trying to find the previous static text, it should go into the table's children to find the text in the first cell.
-        resultElement = containerElement.uiElementForSearchPredicate(resultElement, false, "AXStaticTextSearchKey", "");
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, false, "AXStaticTextSearchKey", "", false);
         shouldBe("resultElement.role", "'AXRole: AXStaticText'");
         shouldBe("resultElement.stringValue", "'AXValue: Column'");
 
         // When asking the text for the previous element it should return the first cell of the table.
-        resultElement = containerElement.uiElementForSearchPredicate(resultElement, false, "AXAnyTypeSearchKey", "");
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, false, "AXAnyTypeSearchKey", "", false);
         shouldBe("resultElement.role", "'AXRole: AXCell'");
         shouldBe("resultElement.rowIndexRange()", "'{0, 1}'");
         shouldBe("resultElement.columnIndexRange()", "'{0, 1}'");
