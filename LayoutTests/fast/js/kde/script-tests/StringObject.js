@@ -103,11 +103,11 @@ shouldBe("'a'.localeCompare('aa') < 0", "true");
 shouldBe("'a'.localeCompare('x') < 0", "true");
 shouldBe("'x'.localeCompare('a') > 0", "true");
 shouldBe("''.localeCompare('')", "0");
-shouldBe("''.localeCompare()", "0");
+shouldBe("''.localeCompare()", "-1");
 shouldBe("''.localeCompare(undefined)", "-1");
 shouldBe("''.localeCompare(null)", "-1");
 shouldBe("'a'.localeCompare('')", "1");
-shouldBe("'a'.localeCompare()", "0");
+shouldBe("'a'.localeCompare()", "-1");
 
 // warning: prototype modification below
 shouldBe("'abc'[0]", "'a'");

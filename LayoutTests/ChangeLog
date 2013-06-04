@@ -1,3 +1,24 @@
+2013-06-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [JSC] Test262 15.5.4.9_3 test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=116789
+
+        Reviewed by Geoffrey Garen.
+
+        Add the 15.5.4.9_3 test from the test262 test suite to cover proper behavior of String.prototype.localeCompare
+        when no arguments are passed to it. The test tests that str.localeCompare() and str.localeCompare(undefined) work
+        the same way, i.e. using the string 'undefined' as the string with which str is compared (meaning that the first argument
+        defaults to 'undefined' when not given).
+
+        The test and the rationale behind it originates from bug #1245 in ECMAScript Bugzilla.
+        https://bugs.ecmascript.org/show_bug.cgi?id=1245
+
+        * fast/js/kde/StringObject-expected.txt: Update the baseline.
+        * fast/js/kde/script-tests/StringObject.js: Update the expected return of the localeCompare test case with no arguments. -1 is
+        expected as the missing argument defaults to 'undefined' and is then compared to the string on which localeCompare is called.
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.9_String.prototype.localeCompare/S15.5.4.9_3-expected.txt: Added.
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.9_String.prototype.localeCompare/S15.5.4.9_3.html: Added.
+
 2013-06-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, added missing new line in baseline.

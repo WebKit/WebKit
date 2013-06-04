@@ -1,3 +1,19 @@
+2013-06-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [JSC] Test262 15.5.4.9_3 test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=116789
+
+        Reviewed by Geoffrey Garen.
+
+        Bring the String.prototype.localeCompare behavior in line wit ES5 15.9.4.9.
+        If method is not given enough arguments, the minimal amount of arguments must be assumed, with their value being undefined.
+        The first argument to localeCompare, in its string form, is used as the 'that' string that's used in the comparison.
+        Therefor, when calling str.localeCompare() or str.localeCompare(undefined), the first argument is `undefined` and the
+        string "undefined" is used as the string to which value of str is compared.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncLocaleCompare): Remove the early return in case of no given arguments to achieve the desired behavior.
+
 2013-06-03  Hojong Han  <hojong.han@samsung.com>
 
         [EFL] Implement GCActivityCallback
