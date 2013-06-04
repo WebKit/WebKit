@@ -1,3 +1,13 @@
+2013-06-04  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] File dialog of MiniBrowser have broken background.
+        https://bugs.webkit.org/show_bug.cgi?id=117189
+
+        Reviewed by Christophe Dumez.
+
+        * MiniBrowser/efl/main.c:
+        (on_file_chooser_request): Added elm_bg for elm_win of file chooser.
+
 2013-06-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [WKTR][WTK] Undefined symbols in libTestRunnerInjectedBundle.so after r151124

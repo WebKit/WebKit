@@ -575,6 +575,7 @@ on_fileselector_done(void *user_data, Evas_Object *file_selector, void *event_in
 static void
 on_file_chooser_request(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
+    Evas_Object *bg;
     Browser_Window *window = (Browser_Window *)user_data;
     Ewk_File_Chooser_Request *request = (Ewk_File_Chooser_Request *)event_info;
 
@@ -583,6 +584,11 @@ on_file_chooser_request(void *user_data, Evas_Object *ewk_view, void *event_info
     Evas_Object *elm_window = elm_win_add(window->elm_window, "file-picker-window", ELM_WIN_DIALOG_BASIC);
     elm_win_title_set(elm_window, "File picker");
     elm_win_modal_set(elm_window, EINA_TRUE);
+
+    bg = elm_bg_add(elm_window);
+    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(elm_window, bg);
+    evas_object_show(bg);
 
     File_Selector_Data *fs_data = (File_Selector_Data *)malloc(sizeof(File_Selector_Data));
     fs_data->parent = window;
