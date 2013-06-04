@@ -27,7 +27,7 @@
  */
 
 [
-    NoInterfaceObject,
+    GlobalContext=WorkerOnly,
     Conditional=WORKERS,
     GenerateIsReachable=Impl,
     JSNoStaticTables,

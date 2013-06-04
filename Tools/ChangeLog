@@ -1,3 +1,17 @@
+2013-06-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Automatically generate WorkerContext constructor attributes
+        https://bugs.webkit.org/show_bug.cgi?id=117183
+
+        Reviewed by Kentaro Hara.
+
+        Pass new --workerContextConstructorsFile to preprocess-idl.pl for bindings
+        tests.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_supplemental_dependency):
+        (BindingsTests.main):
+
 2013-06-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] File dialog of MiniBrowser have broken background.

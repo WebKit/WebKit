@@ -26,6 +26,7 @@
  */
 
 [
+    GlobalContext=WindowAndWorker,
     JSNoStaticTables,
     ConstructorTemplate=Event
 ] interface MessageEvent : Event {

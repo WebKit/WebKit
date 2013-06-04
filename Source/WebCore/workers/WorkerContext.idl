@@ -68,33 +68,11 @@
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     // Constructors
-    attribute MessageEventConstructor MessageEvent;
-    attribute WorkerLocationConstructor WorkerLocation;
-
     [Conditional=CHANNEL_MESSAGING, CustomGetter] attribute MessageChannelConstructor MessageChannel;
     [CustomGetter] attribute EventSourceConstructor EventSource;
     [CustomGetter] attribute XMLHttpRequestConstructor XMLHttpRequest;
 #endif
 
-#if defined(ENABLE_BLOB) && ENABLE_BLOB
-    attribute BlobConstructor Blob;
-    attribute FileReaderConstructor FileReader;
-    attribute FileReaderSyncConstructor FileReaderSync;
-#endif
-
-    [Conditional=BLOB] attribute DOMURLConstructor URL;
     [Conditional=BLOB] attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
-
-    attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator
-    attribute Int8ArrayConstructor Int8Array; // Usable with new operator
-    attribute Uint8ArrayConstructor Uint8Array; // Usable with new operator
-    attribute Uint8ClampedArrayConstructor Uint8ClampedArray; // Usable with new operator
-    attribute Int16ArrayConstructor Int16Array; // Usable with new operator
-    attribute Uint16ArrayConstructor Uint16Array; // Usable with new operator
-    attribute Int32ArrayConstructor Int32Array; // Usable with new operator
-    attribute Uint32ArrayConstructor Uint32Array; // Usable with new operator
-    attribute Float32ArrayConstructor Float32Array; // Usable with new operator
-    attribute Float64ArrayConstructor Float64Array; // Usable with new operator
-    attribute DataViewConstructor DataView; // Usable with new operator
 };
 

@@ -29,7 +29,7 @@
  */
 
 [
-    NoInterfaceObject,
+    GlobalContext=WorkerOnly,
     Conditional=BLOB,
     Constructor,
     JSNoStaticTables

@@ -24,6 +24,7 @@
  */
 
 [
+    GlobalContext=WindowAndWorker,
     CustomConstructor(ArrayBuffer buffer, optional unsigned long byteOffset, optional unsigned long byteLength),
     CustomToJSObject,
     JSNoStaticTables

@@ -29,6 +29,7 @@ my $preprocessor;
 my $idlFilesList;
 my $supplementalDependencyFile;
 my $windowConstructorsFile;
+my $workerContextConstructorsFile;
 my $supplementalMakefileDeps;
 
 GetOptions('defines=s' => \$defines,
@@ -36,11 +37,13 @@ GetOptions('defines=s' => \$defines,
            'idlFilesList=s' => \$idlFilesList,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
            'windowConstructorsFile=s' => \$windowConstructorsFile,
+           'workerContextConstructorsFile=s' => \$workerContextConstructorsFile,
            'supplementalMakefileDeps=s' => \$supplementalMakefileDeps);
 
 die('Must specify #define macros using --defines.') unless defined($defines);
 die('Must specify an output file using --supplementalDependencyFile.') unless defined($supplementalDependencyFile);
 die('Must specify an output file using --windowConstructorsFile.') unless defined($windowConstructorsFile);
+die('Must specify an output file using --workerContextConstructorsFile.') unless defined($workerContextConstructorsFile);
 die('Must specify the file listing all IDLs using --idlFilesList.') unless defined($idlFilesList);
 
 open FH, "< $idlFilesList" or die "Cannot open $idlFilesList\n";
@@ -53,7 +56,8 @@ my %interfaceNameToIdlFile;
 my %idlFileToInterfaceName;
 my %supplementalDependencies;
 my %supplementals;
-my $constructorAttributesCode = "";
+my $windowConstructorsCode = "";
+my $workerContextConstructorsCode = "";
 # Get rid of duplicates in idlFiles array.
 my %idlFileHash = map { $_, 1 } @idlFiles;
 foreach my $idlFile (keys %idlFileHash) {
@@ -68,7 +72,10 @@ foreach my $idlFile (keys %idlFileHash) {
     unless (isCallbackInterfaceFromIDL($idlFileContents)) {
         my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFileContents);
         unless ($extendedAttributes->{"NoInterfaceObject"}) {
-            $constructorAttributesCode .= GenerateConstructorAttribute($interfaceName, $extendedAttributes);
+            my $globalContext = $extendedAttributes->{"GlobalContext"} || "WindowOnly";
+            my $attributeCode = GenerateConstructorAttribute($interfaceName, $extendedAttributes);
+            $windowConstructorsCode .= $attributeCode unless $globalContext eq "WorkerOnly";
+            $workerContextConstructorsCode .= $attributeCode unless $globalContext eq "WindowOnly"
         }
     }
     $interfaceNameToIdlFile{$interfaceName} = $fullPath;
@@ -77,13 +84,10 @@ foreach my $idlFile (keys %idlFileHash) {
 }
 
 # Generate DOMWindow Constructors partial interface.
-open PARTIAL_WINDOW_FH, "> $windowConstructorsFile" or die "Cannot open $windowConstructorsFile\n";
-print PARTIAL_WINDOW_FH "partial interface DOMWindow {\n";
-print PARTIAL_WINDOW_FH $constructorAttributesCode;
-print PARTIAL_WINDOW_FH "};\n";
-close PARTIAL_WINDOW_FH;
-my $fullPath = Cwd::realpath($windowConstructorsFile);
-$supplementalDependencies{$fullPath} = "DOMWindow" if $interfaceNameToIdlFile{"DOMWindow"};
+GeneratePartialInterface("DOMWindow", $windowConstructorsCode, $windowConstructorsFile);
+
+# Generate WorkerContext Constructors partial interface.
+GeneratePartialInterface("WorkerContext", $workerContextConstructorsCode, $workerContextConstructorsFile);
 
 # Resolves partial interfaces dependencies.
 foreach my $idlFile (keys %supplementalDependencies) {
@@ -130,6 +134,22 @@ if ($supplementalMakefileDeps) {
     }
 
     close MAKE_FH;
+}
+
+sub GeneratePartialInterface
+{
+    my $interfaceName = shift;
+    my $attributesCode = shift;
+    my $destinationFile = shift;
+
+    # Generate partial interface for global constructors.
+    open PARTIAL_INTERFACE_FH, "> $destinationFile" or die "Cannot open $destinationFile\n";
+    print PARTIAL_INTERFACE_FH "partial interface ${interfaceName} {\n";
+    print PARTIAL_INTERFACE_FH $attributesCode;
+    print PARTIAL_INTERFACE_FH "};\n";
+    close PARTIAL_INTERFACE_FH;
+    my $fullPath = Cwd::realpath($destinationFile);
+    $supplementalDependencies{$fullPath} = $interfaceName if $interfaceNameToIdlFile{$interfaceName};
 }
 
 sub GenerateConstructorAttribute

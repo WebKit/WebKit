@@ -1,3 +1,61 @@
+2013-06-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Automatically generate WorkerContext constructor attributes
+        https://bugs.webkit.org/show_bug.cgi?id=117183
+
+        Reviewed by Kentaro Hara.
+
+        Add [GlobalContext=WindowOnly|WorkerOnly|WindowAndWorker] IDL extended attribute
+        to indicate to the bindings generator on which global context the constructor
+        attribute should be generated for interfaces without [NoInterfaceObject]:
+        - WindowOnly: only on the global Window object (default if ommitted)
+        - WorkerOnly: only on the worker context
+        - WindowAndWorker: On both the global Window object and the worker context
+
+        This covers all the current use cases.
+
+        The JSC bindings generator now automatically generates the Constructor attributes
+        on the WorkerContext for non-callback interfaces which do not have the
+        [NoInterfaceObject] extended attribute but have [GlobalContext=WorkerOnly|WindowAndWorker]
+        extended attribute.
+
+        No new tests, already covered by:
+        fast/js/global-constructors-attributes.html
+        fast/js/global-constructors-attributes-worker.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make: Pass new --workerContextConstructorsFile argument to preprocess-idls.pl.
+        * DerivedSources.pri: Ditto.
+        * GNUmakefile.am: Ditto.
+        * PlatformBlackBerry.cmake: Ditto.
+        * UseJSC.cmake: Ditto.
+        * bindings/scripts/IDLAttributes.txt: Add [GlobalContext=WindowOnly|WorkerOnly|WindowAndWorker]
+        IDL extended attribute.
+        * bindings/scripts/preprocess-idls.pl: Add support for [GlobalContext] extended attribute and
+        generate a partial interface for WorkerContext global constructors that are automatically
+        generated.
+        * dom/MessageEvent.idl: Add [GlobalContext=WindowAndWorker].
+        * fileapi/Blob.idl: Add [GlobalContext=WindowAndWorker].
+        * fileapi/FileReader.idl: Add [GlobalContext=WindowAndWorker].
+        * fileapi/FileReaderSync.idl: Add [GlobalContext=WorkerOnly] and remove [NoInterfaceObject]
+        as the interface should only be visible in worker environment as per the spec.
+        * html/DOMURL.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/ArrayBuffer.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/DataView.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/Float32Array.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/Float64Array.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/Int16Array.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/Int32Array.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/Int8Array.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/Uint16Array.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/Uint32Array.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/Uint8Array.idl: Add [GlobalContext=WindowAndWorker].
+        * html/canvas/Uint8ClampedArray.idl: Add [GlobalContext=WindowAndWorker].
+        * workers/WorkerContext.idl: Remove several Constructor attributes which are now automatically
+        generated.
+        * workers/WorkerLocation.idl: Add [GlobalContext=WorkerOnly] and remove [NoInterfaceObject]
+        as the interface should only be visible in worker environment as per the spec.
+
 2013-06-04  Kangil Han  <kangil.han@samsung.com>
 
         Use ASSERT_DISABLED option for assertion purpose code in InlineBox

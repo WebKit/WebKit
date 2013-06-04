@@ -25,6 +25,7 @@
  */
 
 [
+    GlobalContext=WindowAndWorker,
     ConstructorTemplate=TypedArray,
     NumericIndexedGetter,
     CustomIndexedSetter,

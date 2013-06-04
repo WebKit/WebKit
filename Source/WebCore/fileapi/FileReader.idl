@@ -30,6 +30,7 @@
  */
 
 [
+    GlobalContext=WindowAndWorker,
     Conditional=BLOB,
     ActiveDOMObject,
     Constructor,
