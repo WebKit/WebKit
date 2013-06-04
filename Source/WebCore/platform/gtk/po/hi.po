@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
-"POT-Creation-Date: 2013-03-19 18:04+0000\n"
-"PO-Revision-Date: 2013-03-25 14:55+0530\n"
-"Last-Translator: raj <raj>\n"
+"POT-Creation-Date: 2013-04-25 22:42+0000\n"
+"PO-Revision-Date: 2013-05-02 14:54+0530\n"
+"Last-Translator: Rajesh Ranjan <rajeshkajha@yahoo.com>\n"
 "Language-Team: Hindi <kde-i18n-doc@kde.org>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
@@ -57,27 +57,6 @@ msgstr "प्रिंटर पाया नहीं गया"
 #: ../ErrorsGtk.cpp:112
 msgid "Invalid page range"
 msgstr "अवैध पृष्ठ दायरा"
-
-#: ../GtkAuthenticationDialog.cpp:171
-#, c-format
-msgid "The site %s:%i requests a username and password"
-msgstr "साइट %s:%i एक उपयोक्तानाम और कूटशब्द का आग्रह करता है"
-
-#: ../GtkAuthenticationDialog.cpp:175
-msgid "_Remember password"
-msgstr "कूटशब्द याद रखें (_R)"
-
-#: ../GtkAuthenticationDialog.cpp:201
-msgid "Server message:"
-msgstr "सर्वर संदेश:"
-
-#: ../GtkAuthenticationDialog.cpp:202 ../GtkAuthenticationDialog.cpp:210
-msgid "Username:"
-msgstr "उपयोक्ता नाम:"
-
-#: ../GtkAuthenticationDialog.cpp:203 ../GtkAuthenticationDialog.cpp:211
-msgid "Password:"
-msgstr "पासवर्ड: "
 
 #: ../LocalizedStringsGtk.cpp:56 ../LocalizedStringsGtk.cpp:61
 msgid "Submit"
@@ -312,296 +291,323 @@ msgid "definition"
 msgstr "परिभाषा"
 
 #: ../LocalizedStringsGtk.cpp:417
+#| msgid "description"
+msgid "description list"
+msgstr "विवरण  सूची"
+
+#: ../LocalizedStringsGtk.cpp:422
 msgid "term"
 msgstr "मद"
 
-#: ../LocalizedStringsGtk.cpp:422
+#: ../LocalizedStringsGtk.cpp:427
 msgid "description"
 msgstr "वर्णन"
 
-#: ../LocalizedStringsGtk.cpp:427
+#: ../LocalizedStringsGtk.cpp:432
 msgid "footer"
 msgstr "पादिका"
 
-#: ../LocalizedStringsGtk.cpp:432
+#: ../LocalizedStringsGtk.cpp:437
 msgid "press"
 msgstr "दबायें"
 
-#: ../LocalizedStringsGtk.cpp:437
+#: ../LocalizedStringsGtk.cpp:442
 msgid "select"
 msgstr "चुनें"
 
-#: ../LocalizedStringsGtk.cpp:442
+#: ../LocalizedStringsGtk.cpp:447
 msgid "activate"
 msgstr "सक्रिय करें"
 
-#: ../LocalizedStringsGtk.cpp:447
+#: ../LocalizedStringsGtk.cpp:452
 msgid "uncheck"
 msgstr "अनचेक करें"
 
-#: ../LocalizedStringsGtk.cpp:452
+#: ../LocalizedStringsGtk.cpp:457
 msgid "check"
 msgstr "जांचें"
 
-#: ../LocalizedStringsGtk.cpp:457
+#: ../LocalizedStringsGtk.cpp:462
 msgid "jump"
 msgstr "कूदें"
 
-#: ../LocalizedStringsGtk.cpp:472
+#: ../LocalizedStringsGtk.cpp:477
 msgid "Missing Plug-in"
 msgstr "प्लग - इन गुम"
 
-#: ../LocalizedStringsGtk.cpp:478
+#: ../LocalizedStringsGtk.cpp:483
 msgid "Plug-in Failure"
 msgstr "प्लग-इन में विफलता"
 
 #. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
-#: ../LocalizedStringsGtk.cpp:502
+#: ../LocalizedStringsGtk.cpp:507
 msgid " files"
 msgstr " फ़ाइल"
 
-#: ../LocalizedStringsGtk.cpp:507
+#: ../LocalizedStringsGtk.cpp:512
 msgid "Unknown"
 msgstr "अज्ञात"
 
-#: ../LocalizedStringsGtk.cpp:512
+#: ../LocalizedStringsGtk.cpp:517
 #, c-format
 msgctxt "Title string for images"
 msgid "%s  (%dx%d pixels)"
 msgstr "%s  (%dx%d पिक्सल्स)"
 
-#: ../LocalizedStringsGtk.cpp:524
+#: ../LocalizedStringsGtk.cpp:529
 msgid "Loading..."
 msgstr "लोड किया जा रहा है..."
 
-#: ../LocalizedStringsGtk.cpp:529
+#: ../LocalizedStringsGtk.cpp:534
 msgid "Live Broadcast"
 msgstr "लाइव प्रसारण"
 
-#: ../LocalizedStringsGtk.cpp:535
-msgid "audio element controller"
-msgstr "ऑडियो तत्व नियंत्रक"
+#: ../LocalizedStringsGtk.cpp:540
+#| msgid "pause playback"
+msgid "audio playback"
+msgstr "ऑडियो प्लेबैक"
 
-#: ../LocalizedStringsGtk.cpp:537
-msgid "video element controller"
-msgstr "वीडियो तत्व नियंत्रक"
+#: ../LocalizedStringsGtk.cpp:542
+#| msgid "begin playback"
+msgid "video playback"
+msgstr "वीडिया प्लेबैक"
 
-#: ../LocalizedStringsGtk.cpp:539
+#: ../LocalizedStringsGtk.cpp:544
 msgid "mute"
 msgstr "मूक करें"
 
-#: ../LocalizedStringsGtk.cpp:541
+#: ../LocalizedStringsGtk.cpp:546
 msgid "unmute"
 msgstr "आवाज़ चालू"
 
-#: ../LocalizedStringsGtk.cpp:543
+#: ../LocalizedStringsGtk.cpp:548
 msgid "play"
 msgstr "चलाएँ"
 
-#: ../LocalizedStringsGtk.cpp:545
+#: ../LocalizedStringsGtk.cpp:550
 msgid "pause"
 msgstr "ठहरें"
 
-#: ../LocalizedStringsGtk.cpp:547
+#: ../LocalizedStringsGtk.cpp:552
 msgid "movie time"
 msgstr "फिल्म समय"
 
-#: ../LocalizedStringsGtk.cpp:549
+#: ../LocalizedStringsGtk.cpp:554
 msgid "timeline slider thumb"
 msgstr "समय फ़िसलपट्टी अंगूठा"
 
-#: ../LocalizedStringsGtk.cpp:551
+#: ../LocalizedStringsGtk.cpp:556
 msgid "back 30 seconds"
 msgstr "30 सेकंड वापस "
 
-#: ../LocalizedStringsGtk.cpp:553
+#: ../LocalizedStringsGtk.cpp:558
 msgid "return to realtime"
 msgstr "वास्तविक समय में वापसी"
 
-#: ../LocalizedStringsGtk.cpp:555
+#: ../LocalizedStringsGtk.cpp:560
 msgid "elapsed time"
 msgstr "बीता समय"
 
-#: ../LocalizedStringsGtk.cpp:557
+#: ../LocalizedStringsGtk.cpp:562
 msgid "remaining time"
 msgstr "शेष समय"
 
-#: ../LocalizedStringsGtk.cpp:559
+#: ../LocalizedStringsGtk.cpp:564
 msgid "status"
 msgstr "स्थिति"
 
-#: ../LocalizedStringsGtk.cpp:561
+#: ../LocalizedStringsGtk.cpp:566
 msgid "enter fullscreen"
 msgstr "पूर्णस्क्रीन दर्ज़ करें"
 
-#: ../LocalizedStringsGtk.cpp:563
+#: ../LocalizedStringsGtk.cpp:568
 msgid "exit fullscreen"
 msgstr "पूर्णस्क्रीन से बाहर निकलें"
 
-#: ../LocalizedStringsGtk.cpp:565
+#: ../LocalizedStringsGtk.cpp:570
 msgid "fast forward"
 msgstr "तेज़ी से आगे"
 
-#: ../LocalizedStringsGtk.cpp:567
+#: ../LocalizedStringsGtk.cpp:572
 msgid "fast reverse"
 msgstr "तेज़ी से विपरीत"
 
-#: ../LocalizedStringsGtk.cpp:569
+#: ../LocalizedStringsGtk.cpp:574
 msgid "show closed captions"
 msgstr "बंद शीर्षकों को दिखाएँ "
 
-#: ../LocalizedStringsGtk.cpp:571
+#: ../LocalizedStringsGtk.cpp:576
 msgid "hide closed captions"
 msgstr "बंद शीर्षकों को छिपायें"
 
-#: ../LocalizedStringsGtk.cpp:573
+#: ../LocalizedStringsGtk.cpp:578
 msgid "media controls"
 msgstr "मीडिया नियंत्रण"
 
-#: ../LocalizedStringsGtk.cpp:582
+#: ../LocalizedStringsGtk.cpp:587
 msgid "audio element playback controls and status display"
 msgstr "ऑडियो तत्व प्लेबैक नियंत्रण और स्थिति का प्रदर्शन"
 
-#: ../LocalizedStringsGtk.cpp:584
+#: ../LocalizedStringsGtk.cpp:589
 msgid "video element playback controls and status display"
 msgstr "वीडियो तत्व प्लेबैक नियंत्रण और स्थिति प्रदर्शन"
 
-#: ../LocalizedStringsGtk.cpp:586
+#: ../LocalizedStringsGtk.cpp:591
 msgid "mute audio tracks"
 msgstr "मूक ऑडियो ट्रैक्स"
 
-#: ../LocalizedStringsGtk.cpp:588
+#: ../LocalizedStringsGtk.cpp:593
 msgid "unmute audio tracks"
 msgstr "ऑडियो ट्रैक्स अनम्यूट करें"
 
-#: ../LocalizedStringsGtk.cpp:590
+#: ../LocalizedStringsGtk.cpp:595
 msgid "begin playback"
 msgstr "प्लेबैक शुरू करते हैं"
 
-#: ../LocalizedStringsGtk.cpp:592
+#: ../LocalizedStringsGtk.cpp:597
 msgid "pause playback"
 msgstr "प्लेबैक रोकें"
 
-#: ../LocalizedStringsGtk.cpp:594
+#: ../LocalizedStringsGtk.cpp:599
 msgid "movie time scrubber"
 msgstr "फिल्म समय स्क्रबर"
 
-#: ../LocalizedStringsGtk.cpp:596
+#: ../LocalizedStringsGtk.cpp:601
 msgid "movie time scrubber thumb"
 msgstr "फिल्म समय स्क्रबर अंगूठा"
 
-#: ../LocalizedStringsGtk.cpp:598
+#: ../LocalizedStringsGtk.cpp:603
 msgid "seek movie back 30 seconds"
 msgstr " फिल्म को 30 सेकंड पीछें करना चाहते हैं."
 
-#: ../LocalizedStringsGtk.cpp:600
+#: ../LocalizedStringsGtk.cpp:605
 msgid "return streaming movie to real time"
 msgstr "वास्तविक समय स्ट्रीमिंग फिल्म वापसी"
 
-#: ../LocalizedStringsGtk.cpp:602
+#: ../LocalizedStringsGtk.cpp:607
 msgid "current movie time in seconds"
 msgstr "सेकंड में मौजूदा फिल्म समय"
 
-#: ../LocalizedStringsGtk.cpp:604
+#: ../LocalizedStringsGtk.cpp:609
 msgid "number of seconds of movie remaining"
 msgstr "फिल्म के शेष सेकंड की संख्या"
 
-#: ../LocalizedStringsGtk.cpp:606
+#: ../LocalizedStringsGtk.cpp:611
 msgid "current movie status"
 msgstr "मौजूदा फिल्म का दर्जा"
 
-#: ../LocalizedStringsGtk.cpp:608
+#: ../LocalizedStringsGtk.cpp:613
 msgid "seek quickly back"
 msgstr "जल्दी वापस करना चाहते हैं."
 
-#: ../LocalizedStringsGtk.cpp:610
+#: ../LocalizedStringsGtk.cpp:615
 msgid "seek quickly forward"
 msgstr " जल्दी से आगे बढ़ना चाहते हैं "
 
-#: ../LocalizedStringsGtk.cpp:612
+#: ../LocalizedStringsGtk.cpp:617
 msgid "Play movie in fullscreen mode"
 msgstr " फुल स्क्रीन मोड में फिल्म चलायें"
 
-#: ../LocalizedStringsGtk.cpp:614
+#: ../LocalizedStringsGtk.cpp:619
 msgid "Exit fullscreen mode"
 msgstr "पूर्ण स्क्रीन मोड से बाहर"
 
-#: ../LocalizedStringsGtk.cpp:616
+#: ../LocalizedStringsGtk.cpp:621
 msgid "start displaying closed captions"
 msgstr "बंद शीर्षकों को प्रदर्शित करना प्रारंभ करें"
 
-#: ../LocalizedStringsGtk.cpp:618
+#: ../LocalizedStringsGtk.cpp:623
 msgid "stop displaying closed captions"
 msgstr "बंद शीर्षकों को प्रदर्शित करना समाप्त करें"
 
-#: ../LocalizedStringsGtk.cpp:627
+#: ../LocalizedStringsGtk.cpp:632
 msgid "indefinite time"
 msgstr "अनिश्चितकालीन समय"
 
-#: ../LocalizedStringsGtk.cpp:657
+#: ../LocalizedStringsGtk.cpp:662
 msgid "value missing"
 msgstr "लापता मान"
 
-#: ../LocalizedStringsGtk.cpp:693
+#: ../LocalizedStringsGtk.cpp:698
 msgid "type mismatch"
 msgstr "प्रकार बेमेल"
 
-#: ../LocalizedStringsGtk.cpp:716
+#: ../LocalizedStringsGtk.cpp:721
 msgid "pattern mismatch"
 msgstr "पैटर्न बेमेल"
 
-#: ../LocalizedStringsGtk.cpp:721
+#: ../LocalizedStringsGtk.cpp:726
 msgid "too long"
 msgstr "बहुत लंबा"
 
-#: ../LocalizedStringsGtk.cpp:726
+#: ../LocalizedStringsGtk.cpp:731
 msgid "range underflow"
 msgstr "श्रृंखला अधःप्रवाह"
 
-#: ../LocalizedStringsGtk.cpp:731
+#: ../LocalizedStringsGtk.cpp:736
 msgid "range overflow"
 msgstr "श्रृंखला ओवरफ़्लो"
 
-#: ../LocalizedStringsGtk.cpp:736
+#: ../LocalizedStringsGtk.cpp:741
 msgid "step mismatch"
 msgstr "कदम बेमेल"
 
-#: ../LocalizedStringsGtk.cpp:741
+#: ../LocalizedStringsGtk.cpp:746
 msgid "Unacceptable TLS certificate"
 msgstr "अस्वीकार्य TLS प्रमाणपत्र"
 
-#: ../LocalizedStringsGtk.cpp:758
-#| msgid "stop displaying closed captions"
+#: ../LocalizedStringsGtk.cpp:763
 msgctxt "Closed Captions"
 msgid "Menu section heading for closed captions"
 msgstr "बंद अनुशीर्षकों के लिए मेन्यू खंड शीर्षिका"
 
-#: ../LocalizedStringsGtk.cpp:763
+#: ../LocalizedStringsGtk.cpp:768
 msgctxt "Subtitles"
 msgid "Menu section heading for subtitles"
 msgstr "सबटाइटिल के लिए मेन्यू खंड़ शीर्षक"
 
-#: ../LocalizedStringsGtk.cpp:768
+#: ../LocalizedStringsGtk.cpp:773
 msgctxt "Off"
 msgid "Menu item label for the track that represents disabling closed captions"
 msgstr ""
 "ट्रैक के लिए मेन्यू मद लेबल जो बंद विकल्प के निष्क्रिय को प्रतिरूपित करता है"
 
-#: ../LocalizedStringsGtk.cpp:773
+#: ../LocalizedStringsGtk.cpp:778
 msgctxt "No label"
 msgid "Menu item label for a closed captions track that has no other name"
 msgstr ""
 "बंद अनुशीर्षक ट्रैक के लिए मेन्यू मद लेबल जिसके लिए कोई दूसरा नाम नहीं है"
 
-#: ../LocalizedStringsGtk.cpp:779
+#: ../LocalizedStringsGtk.cpp:784
 msgctxt "Snapshotted Plug-In"
 msgid "Title of the label to show on a snapshotted plug-in"
 msgstr "स्नैपशॉट प्लगइन पर दिखाने के लिए स्तर का शीर्षक"
 
-#: ../LocalizedStringsGtk.cpp:784
+#: ../LocalizedStringsGtk.cpp:789
 msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "स्नैपशॉट प्लगइन पर दिखाने के लिए स्तर का सबटाइटल"
+
+#: ../WebKitAuthenticationWidget.cpp:155
+#, c-format
+msgid "The site %s:%i requests a username and password"
+msgstr "साइट %s:%i एक उपयोक्तानाम और कूटशब्द का आग्रह करता है"
+
+#: ../WebKitAuthenticationWidget.cpp:159
+msgid "_Remember password"
+msgstr "कूटशब्द याद रखें (_R)"
+
+#: ../WebKitAuthenticationWidget.cpp:167
+msgid "Server message:"
+msgstr "सर्वर संदेश:"
+
+#: ../WebKitAuthenticationWidget.cpp:168 ../WebKitAuthenticationWidget.cpp:177
+msgid "Username:"
+msgstr "उपयोक्ता नाम:"
+
+#: ../WebKitAuthenticationWidget.cpp:169 ../WebKitAuthenticationWidget.cpp:178
+msgid "Password:"
+msgstr "पासवर्ड: "
 
 #: ../../graphics/gtk/FullscreenVideoControllerGtk.cpp:328
 msgid "Play"
@@ -752,87 +758,87 @@ msgstr "चुनी फ़ाइल"
 msgid "The list of selected files associated with the request"
 msgstr "निवेदन से संबद्ध चुने फ़ाइल की सूची"
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:175
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:174
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
 msgid "Context"
 msgstr "संदर्भ"
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:176
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:175
 msgid "Flags indicating the kind of target that received the event."
 msgstr "झंडे का संकेत है कि घटना को किस तरह का लक्ष्य प्राप्त हुआ"
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:190
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:189
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
 msgid "Link URI"
 msgstr "लिंक यूआरआइ"
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:191
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:190
 msgid "The URI to which the target that received the event points, if any."
 msgstr "यूआरआइ जो लक्ष्य है जो घटना अंक प्राप्त करता हैं, यदि कोई हो."
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:204
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:203
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
 msgid "Image URI"
 msgstr "चित्र URI:"
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:205
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:204
 msgid ""
 "The URI of the image that is part of the target that received the event, if "
 "any."
 msgstr ""
 "छवि की यूआरआई जो कि लक्ष्य का भाग है जिसे घटना प्राप्त हुआ हैं, यदि कोई हो."
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:218
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:217
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:218
 msgid "Media URI"
 msgstr "मीडिया यूआरआई"
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:219
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:218
 msgid ""
 "The URI of the media that is part of the target that received the event, if "
 "any."
 msgstr ""
 "मीडिया की यूआरआई जो कि लक्ष्य का भाग है जिसे घटना प्राप्त हुआ हैं, यदि कोई हो."
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:240
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:239
 msgid "Inner node"
 msgstr "आंतरिक नोड"
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:241
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:240
 msgid "The inner DOM node associated with the hit test result."
 msgstr "आंतरिक डोम नोड हिट परीक्षा परिणाम के साथ जुड़े."
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:254
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:253
 msgid "X coordinate"
 msgstr "एक्स निर्देशांक"
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:255
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:254
 msgid "The x coordinate of the event relative to the view's window."
 msgstr "दृश्य विंडो के सापेक्ष कार्यक्रम का x निर्देशांक"
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:268
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:267
 msgid "Y coordinate"
 msgstr "वाई निर्देशांक"
 
-#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:269
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:268
 msgid "The y coordinate of the event relative to the view's window."
 msgstr "दृश्य विंडो के सापेक्ष कार्यक्रम का y निर्देशांक"
 
 #: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:134
 #: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:143
-#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:466
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:467
 #: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:176
 #: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:209
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3238
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:93
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3239
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:99
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:635
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:689
 msgid "URI"
 msgstr "यूआरआई"
 
 #: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:135
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:94
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
 msgid "The URI to which the request will be made."
 msgstr "यूआरआइ जिसके लिए अनुरोध किया जाएगा."
 
@@ -901,43 +907,43 @@ msgstr "वेब डेटाबेस कोटा"
 msgid "The web database quota of the security origin in bytes"
 msgstr "बाइट्स में वेब सुरक्षा उद्गम के डेटाबेस कोटा"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:138
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:139
 msgid "Device Width"
 msgstr "युक्ति चौड़ाई"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:139
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:140
 msgid "The width of the screen."
 msgstr "स्क्रीन की चौड़ाई"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:160
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:161
 msgid "Device Height"
 msgstr "युक्ति ऊँचाई"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:161
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:162
 msgid "The height of the screen."
 msgstr "स्क्रीन की ऊँचाई."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:184
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:185
 msgid "Available Width"
 msgstr "उपलब्ध चौड़ाई"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:185
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:186
 msgid "The width of the visible area."
 msgstr "दृश्य क्षेत्र की चौड़ाई."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:208
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:209
 msgid "Available Height"
 msgstr "उपलब्ध ऊँचाई"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:209
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:210
 msgid "The height of the visible area."
 msgstr "दृश्य क्षेत्र की ऊँचाई."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:230
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:231
 msgid "Desktop Width"
 msgstr "डेस्कटॉप चौड़ाई"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:231
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:232
 msgid ""
 "The width of viewport that works well for most web pages designed for "
 "desktop."
@@ -945,83 +951,83 @@ msgstr ""
 "व्यूपोर्ट की चौड़ाई जो डेस्कटॉप के लिए बने अधिकतर वेबपेज के लिए सही काम करता "
 "है"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:253
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:254
 msgid "Device DPI"
 msgstr "युक्ति डीपीआई"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:254
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:255
 msgid "The number of dots per inch of the screen."
 msgstr "स्क्रीन प्रति इंच डॉट की संख्या."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:272
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:273
 msgid "Width"
 msgstr "चौड़ाई"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:273
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:274
 msgid "The width of the viewport."
 msgstr "व्यूपोर्ट की चौड़ाई."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:291
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:292
 msgid "Height"
 msgstr "ऊँचाई"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:292
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:293
 msgid "The height of the viewport."
 msgstr "व्यूपोर्ट की ऊँचाई."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:310
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:311
 msgid "Initial Scale Factor"
 msgstr "आरंभिक स्केल कारक"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:311
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:312
 msgid "The initial scale of the viewport."
 msgstr "व्यूपोर्ट का आरंभिक स्केल."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:329
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:330
 msgid "Minimum Scale Factor"
 msgstr "न्यूनतम स्केल कारक"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:330
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:331
 msgid "The minimum scale of the viewport."
 msgstr "व्यूपोर्ट का न्यूनतम स्केल."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:348
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:349
 msgid "Maximum Scale Factor"
 msgstr "अधिकतम स्केल कारक"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:349
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:350
 msgid "The maximum scale of the viewport."
 msgstr "व्यूपोर्ट का अधिकतम स्केल."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:367
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:368
 msgid "Device Pixel Ratio"
 msgstr "युक्ति पिक्सेल अनुपात"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:368
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:369
 msgid "The device pixel ratio of the viewport."
 msgstr "व्यूपोर्ट का युक्ति पिक्सेल अनुपात."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:386
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:387
 msgid "user-scalable"
 msgstr "उपयोक्ता-अनुमापनीय"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:387
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:388
 msgid "User Scalable"
 msgstr "उपयोक्ता-अनुमापनीय"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:388
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:389
 msgid "Determines whether or not the user can zoom in and out."
 msgstr "निर्धारित करता है क्या उपयोक्ता बड़ा या छोटा कर सकता है या नहीं."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:405
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:406
 msgid "valid"
 msgstr "मान्य"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:406
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:407
 msgid "Valid"
 msgstr "मान्य"
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:407
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:408
 msgid "Determines whether or not the attributes are valid, and can be used."
 msgstr "निर्धारित करता है क्या विशेषता मान्य है और इसे प्रयोग किया जा सकता है"
 
@@ -1034,7 +1040,7 @@ msgid "The security origin of the database"
 msgstr "डेटाबेस की सुरक्षा उद्गम"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:190
-#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:452
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:453
 msgid "Name"
 msgstr "नाम"
 
@@ -1074,39 +1080,39 @@ msgstr "फ़ाइलनाम"
 msgid "The absolute filename of the Web Storage database"
 msgstr "वेब संग्रहण डेटाबेस के पूर्ण फ़ाइलनाम"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:453
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:454
 msgid "The name of the frame"
 msgstr "फ्रेम के नाम"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:459
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:460
 #: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:144
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3224
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:591
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3225
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:645
 msgid "Title"
 msgstr "शीर्षक"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:460
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:461
 msgid "The document title of the frame"
 msgstr "फ्रेम के दस्तावेज़ शीर्षक"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:467
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:468
 msgid "The current URI of the contents displayed by the frame"
 msgstr "फ्रेम से प्रदर्शित सामग्री के वर्तमान यूआरआइ"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:498
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:499
 msgid "Horizontal Scrollbar Policy"
 msgstr "क्षैतिज स्क्रॉलबार नीति"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:499
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:500
 msgid ""
 "Determines the current policy for the horizontal scrollbar of the frame."
 msgstr "फ्रेम के क्षैतिज स्क्रॉलपट्टी के लिए मौजूदा नीति निर्धारित करता है."
 
-#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:516
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:517
 msgid "Vertical Scrollbar Policy"
 msgstr "उर्ध्वाधर स्क्रॉलबार नीति"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:517
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:518
 msgid "Determines the current policy for the vertical scrollbar of the frame."
 msgstr "फ्रेम के उर्ध्वाधर स्क्रॉलपट्टी के लिए मौजूदा नीति निर्धारित करता है."
 
@@ -1236,7 +1242,7 @@ msgid "The MIME type of the resource"
 msgstr "संसाधन की माइम प्रकार"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:239
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3373
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3374
 msgid "Encoding"
 msgstr "एनकोडिंग"
 
@@ -1320,7 +1326,7 @@ msgid "Default Font Size"
 msgstr "डिफ़ॉल्ट फ़ॉन्ट आकार"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:214
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:717
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:715
 msgid "The default font size used to display text."
 msgstr "मूलभूत फंट आकार के पाठ प्रदर्शित करने के लिए प्रयोग किया जाता है."
 
@@ -1329,7 +1335,7 @@ msgid "Default Monospace Font Size"
 msgstr "डिफ़ॉल्ट मोनोस्पेस फ़ॉन्ट का आकार"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:223
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:731
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:729
 msgid "The default font size used to display monospace text."
 msgstr ""
 "मूलभूत फंट आकार मोनोस्पेस पाठ प्रदर्शित करने के लिए इस्तेमाल किया जाता है."
@@ -1339,7 +1345,7 @@ msgid "Minimum Font Size"
 msgstr "न्यूनतम फ़ॉन्ट आकार"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:232
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:746
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:744
 msgid "The minimum font size used to display text."
 msgstr "न्यूनतम फ़ॉन्ट आकार पाठ प्रदर्शित करने के लिए प्रयोग किया जाता है."
 
@@ -1365,7 +1371,7 @@ msgid "Auto Load Images"
 msgstr "स्वत: छवि लोड करें"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:270
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:458
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:456
 msgid "Load images automatically."
 msgstr "छवि स्वतः लोड करें."
 
@@ -1386,7 +1392,7 @@ msgid "Whether WebKit should respect image orientation."
 msgstr "क्या वेबकिट को छवि को महत्व देना चाहिए."
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:296
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:870
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:868
 msgid "Print Backgrounds"
 msgstr "पृष्ठभूमि छापें"
 
@@ -1407,7 +1413,7 @@ msgid "Enable Plugins"
 msgstr "प्लगइन्स सक्षम करें"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:315
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:568
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:566
 msgid "Enable embedded plugin objects."
 msgstr "एम्बेड किया हुआ प्लगइन वस्तुओं सक्षम करें."
 
@@ -1470,12 +1476,12 @@ msgstr ""
 "भाषाएँ वर्तनी जाँच उपयोग करने के लिए अल्पविराम द्वारा भाषाओं की सूची अलग"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:442
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:841
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:839
 msgid "Enable Caret Browsing"
 msgstr "कैरट ब्राउज़िंग सक्षम करें"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:443
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:842
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:840
 msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "क्या पहुँच का कुंजीपटल नेविगेशन सक्षम करना हैं"
 
@@ -1536,7 +1542,7 @@ msgid "The User-Agent string used by WebKitGtk"
 msgstr "उपयोगकर्ता - एजेंट WebKitGtk द्वारा प्रयुक्त स्ट्रिंग"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:577
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:594
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:592
 msgid "JavaScript can open windows automatically"
 msgstr "जावास्क्रिप्ट विंडोज़ स्वतः खोल सकते हैं"
 
@@ -1549,12 +1555,12 @@ msgid "JavaScript can access Clipboard"
 msgstr "जावास्क्रिप्ट क्लिपबोर्ड का उपयोग कर सकते हैं"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:593
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:954
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:952
 msgid "Whether JavaScript can access Clipboard"
 msgstr "क्या जावास्क्रिप्ट क्लिपबोर्ड का उपयोग कर सकते हैं"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:609
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:489
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:487
 msgid "Enable offline web application cache"
 msgstr "ऑफ़लाइन वेब अनुप्रयोग कैश सक्षम करें"
 
@@ -1607,22 +1613,22 @@ msgstr ""
 "है"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:731
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1018
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1016
 msgid "Enable Site Specific Quirks"
 msgstr "साइट विशिष्ट मोड़ सक्षम करें"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:732
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1019
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1017
 msgid "Enables the site-specific compatibility workarounds"
 msgstr "साइट विशिष्ट संगतता वर्क अराउंड सक्षम बनाता है"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:754
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1039
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1037
 msgid "Enable page cache"
 msgstr "पृष्ठ कैश सक्षम करें"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:755
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1040
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1038
 msgid "Whether the page cache should be used"
 msgstr "क्या पेज कैश इस्तेमाल किया जाना चाहिए"
 
@@ -1651,7 +1657,7 @@ msgid "Whether <a ping> should be able to send pings"
 msgstr "क्या <a ping> पिंग्स भेजने के लिए सक्षम होना चाहिए"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:832
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:857
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:855
 msgid "Enable Fullscreen"
 msgstr "पूर्णस्क्रीन सक्षम करें"
 
@@ -1660,12 +1666,12 @@ msgid "Whether the Mozilla style API should be enabled."
 msgstr "क्या मोज़िला शैली एपीआई सक्षम होना चाहिए."
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:848
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:904
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:902
 msgid "Enable WebGL"
 msgstr "WebGL सक्षम करें"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:849
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:905
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:903
 msgid "Whether WebGL content should be rendered"
 msgstr "क्या WebGL कंटेंट को रेंडर किया जाना चाहिए"
 
@@ -1678,12 +1684,12 @@ msgid "Whether accelerated compositing should be enabled"
 msgstr "क्या त्वरित कंपोजिटिंग सक्रिय की जानी चाहिए"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:884
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:889
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:887
 msgid "Enable WebAudio"
 msgstr "WebAudio सक्रिय करें"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:885
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:890
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:888
 msgid "Whether WebAudio content should be handled"
 msgstr "क्या WebAudio कंटेंट को हैंडल किया जाना चाहिए"
 
@@ -1704,32 +1710,32 @@ msgid "Whether Media Stream should be enabled"
 msgstr "क्या मीडिया स्ट्रीम सक्रिय किया जाना चाहिए"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:936
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1072
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1070
 msgid "Enable smooth scrolling"
 msgstr "आरामदेह स्क्रॉलिंग सक्रिय करें"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:937
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1073
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1071
 msgid "Whether to enable smooth scrolling"
 msgstr "क्या आरामदेह स्क्रॉलिंग सक्रिय करना है"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:955
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:970
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:968
 msgid "Media playback requires user gesture"
 msgstr "मीडिया प्लेबैक को उपयोक्ता गेस्चर की जरूरत है"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:956
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:971
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:969
 msgid "Whether media playback requires user gesture"
 msgstr "क्या मीडिया प्लेबैक को उपयोक्ता गेस्चर की जरूरत है"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:972
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:985
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:983
 msgid "Media playback allows inline"
 msgstr "मीडिया प्लेबैक इनलाइन की स्वीकृति देता है"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:973
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:986
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:984
 msgid "Whether media playback allows inline"
 msgstr "क्या मीडिया प्लेबैक इनलाइन की स्वीकृति देता है"
 
@@ -1757,115 +1763,115 @@ msgstr "असुरक्षित सामग्री का चलना �
 msgid "Whether non-HTTPS resources can run on HTTPS pages."
 msgstr "क्या गैर-HTTPS संसाधन HTTPS पृष्ठ पर चला सकता है."
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1314
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:425
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1315
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:455
 msgid "Select Files"
 msgstr "फ़ाइल चुनें"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1314
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:425
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1315
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:455
 msgid "Select File"
 msgstr "फाइल चुनें"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3225
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3226
 msgid "Returns the @web_view's document title"
 msgstr "@ web_view दस्तावेज़ शीर्षक देता है"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3239
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3240
 msgid "Returns the current URI of the contents displayed by the @web_view"
 msgstr " @ web_view द्वारा प्रदर्शित सामग्री की वर्तमान यूआरआइ देता है"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3252
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3253
 msgid "Copy target list"
 msgstr "कॉपी लक्ष्य सूची"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3253
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3254
 msgid "The list of targets this web view supports for clipboard copying"
 msgstr "लक्ष्य की सूची इस वेब दृश्य क्लिपबोर्ड कॉपी करने के लिए समर्थन करता है"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3266
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3267
 msgid "Paste target list"
 msgstr "लक्ष्य सूची चिपकायें"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3267
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3268
 msgid "The list of targets this web view supports for clipboard pasting"
 msgstr "लक्ष्य की सूची इस वेब दृश्य क्लिपबोर्ड चिपकाने के लिए समर्थन"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3273
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3274
 msgid "Settings"
 msgstr "सेटिंग्स"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3274
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3275
 msgid "An associated WebKitWebSettings instance"
 msgstr "एक संबंधित WebKitWebSettings उदाहरण"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3287
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3288
 #: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:92
-#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:152
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:157
 msgid "Web Inspector"
 msgstr "वेब इंस्पेक्टर"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3288
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3289
 msgid "The associated WebKitWebInspector instance"
 msgstr "एक संबंधित WebKitWebSettings उदाहरण"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3301
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3302
 msgid "Viewport Attributes"
 msgstr "व्यूपोर्ट विशेषताएँ"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3302
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3303
 msgid "The associated WebKitViewportAttributes instance"
 msgstr "संबंधित WebKitViewportAttributes उदाहरण"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3322
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3323
 msgid "Editable"
 msgstr "संशोधनीय"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3323
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3324
 msgid "Whether content can be modified by the user"
 msgstr "क्या सामग्री उपयोगकर्ता द्वारा संशोधित किया जा सकता है"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3329
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3330
 msgid "Transparent"
 msgstr "पारदर्शी"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3330
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3331
 msgid "Whether content has a transparent background"
 msgstr "क्या कन्टेन्ट पर एक पारदर्शी पृष्ठभूमि है"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3343
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3344
 msgid "Zoom level"
 msgstr "जूम स्तर"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3344
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3345
 msgid "The level of zoom of the content"
 msgstr "कन्टेन्ट पर ज़ूम के स्तर"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3359
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3360
 msgid "Full content zoom"
 msgstr "पूर्ण सामग्री ज़ूम"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3360
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3361
 msgid "Whether the full content is scaled when zooming"
 msgstr "क्या जूमिंग के दौरान पूरा विषयवस्तु को मापा जा सकता हैं"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3374
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3375
 msgid "The default encoding of the web view"
 msgstr "वेब दृश्य के डिफ़ॉल्ट एन्कोडिंग"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3387
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3388
 msgid "Custom Encoding"
 msgstr "पसंदीदा एन्कोडिंग"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3388
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3389
 msgid "The custom encoding of the web view"
 msgstr "वेब दृश्य के कस्टम एन्कोडिंग"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3440
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3441
 msgid "Icon URI"
 msgstr "आइकन यूआरआइ"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3441
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3442
 msgid "The URI for the favicon for the #WebKitWebView."
 msgstr "# WebKitWebView के फ़ेविकॉन के लिए यूआरआइ."
 
@@ -2056,91 +2062,91 @@ msgstr "URI अनुक्रिया"
 msgid "The URI response that is associated with this policy decision"
 msgstr "URI अनुक्रिया जो कि इस नीति निर्णय से संबद्ध है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:442
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:440
 msgid "Enable JavaScript"
 msgstr "जावास्क्रिप्ट सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:443
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:441
 msgid "Enable JavaScript."
 msgstr "जावास्क्रिप्ट सक्षम करें."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:457
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:455
 msgid "Auto load images"
 msgstr "स्वत: छवि लोड करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:471
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:469
 msgid "Load icons ignoring image load setting"
 msgstr "छवि लोड सेटिंग को अनदेखा करके चिह्न लोड करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:472
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:470
 msgid "Whether to load site icons ignoring image load setting."
 msgstr "क्या साइट चिह्न लोड करना है छवि लोड सेटिंग को अनदेखा करके."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:490
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:488
 msgid "Whether to enable offline web application cache."
 msgstr "क्या ऑफ़लाइन वेब अनुप्रयोग कैश सक्षम करें."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:506
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:504
 msgid "Enable HTML5 local storage"
 msgstr "HTML5 स्थानीय संग्रहण सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:507
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:505
 msgid "Whether to enable HTML5 Local Storage support."
 msgstr "क्या HTML5 स्थानीय संग्रहण समर्थन सक्षम  करें."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:524
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:522
 msgid "Enable HTML5 database"
 msgstr "HTML5 डेटाबेस सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:525
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:523
 msgid "Whether to enable HTML5 database support."
 msgstr "क्या HTML5 डेटाबेस का समर्थन सक्षम करें."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:538
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:536
 msgid "Enable XSS auditor"
 msgstr "XSS ऑडिटर सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:539
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:537
 msgid "Whether to enable the XSS auditor."
 msgstr "क्या XSS ऑडिटर सक्षम करें."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:554
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:552
 msgid "Enable frame flattening"
 msgstr "फ़्रेम सपाट सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:555
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:553
 msgid "Whether to enable frame flattening."
 msgstr "क्या फ़्रेम सपाट सक्षम करें."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:567
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:565
 msgid "Enable plugins"
 msgstr "प्लगइन्स सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:578
 msgid "Enable Java"
 msgstr "जावा सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:581
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:579
 msgid "Whether Java support should be enabled."
 msgstr "क्या जावा समर्थन सक्रिय किया जाना चाहिए."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:595
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:593
 msgid "Whether JavaScript can open windows automatically."
 msgstr "क्या जावास्क्रिप्ट विंडोज़ स्वतः खोल सकते हैं."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:610
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:608
 msgid "Enable hyperlink auditing"
 msgstr "हाइपरलिंक अंकेक्षण सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:611
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:609
 msgid "Whether <a ping> should be able to send pings."
 msgstr "क्या <a ping> पिंग्स भेजने के लिए सक्षम होना चाहिए."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:623
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:621
 msgid "Default font family"
 msgstr "डिफ़ॉल्ट फ़ॉन्ट परिवार"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:624
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:622
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
@@ -2148,83 +2154,83 @@ msgstr ""
 "बतौर तयशुदा उपयोग के लिए फ़ॉन्ट परिवार जो किसी फ़ॉन्ट को निर्दिष्ट नहीं करता "
 "है."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:637
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:635
 msgid "Monospace font family"
 msgstr "मोनोस्पेस फ़ॉन्ट परिवार"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:638
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:636
 msgid "The font family used as the default for content using monospace font."
 msgstr ""
 "बतौर तयशुदा अंतर्वस्तु के लिए प्रयुक्त फ़ॉन्ट परिवार मोनोस्पेस फ़ॉन्ट का "
 "उपयोग करते हुए."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:650
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:648
 msgid "Serif font family"
 msgstr "सेरिफ़ फ़ॉन्ट परिवार"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:651
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:649
 msgid "The font family used as the default for content using serif font."
 msgstr ""
 "बतौर तयशुदा अंतर्वस्तु के लिए प्रयुक्त फ़ॉन्ट परिवार सेरिफ फ़ॉन्ट का उपयोग "
 "करते हुए."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:663
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:661
 msgid "Sans-serif font family"
 msgstr "सैंस सेरिफ़ फ़ॉन्ट परिवार"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:664
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:662
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
 "बतौर तयशुदा अंतर्वस्तु के लिए प्रयुक्त फ़ॉन्ट परिवार सैंस-सेरिफ फ़ॉन्ट का "
 "उपयोग करते हुए."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:676
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:674
 msgid "Cursive font family"
 msgstr "कर्सिव फ़ॉन्ट परिवार"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:677
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:675
 msgid "The font family used as the default for content using cursive font."
 msgstr ""
 "बतौर तयशुदा अंतर्वस्तु के लिए प्रयुक्त फ़ॉन्ट परिवार कर्सिव सेरिफ फ़ॉन्ट का "
 "उपयोग करते हुए."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:689
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:687
 msgid "Fantasy font family"
 msgstr "काल्पनिक फ़ॉन्ट परिवार"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:690
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:688
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
 "बतौर तयशुदा अंतर्वस्तु के लिए प्रयुक्त फ़ॉन्ट परिवार फैंटेसी सेरिफ फ़ॉन्ट का "
 "उपयोग करते हुए."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:702
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:700
 msgid "Pictograph font family"
 msgstr "चित्रलिपि फ़ॉन्ट परिवार"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:703
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:701
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
 "बतौर तयशुदा अंतर्वस्तु के लिए प्रयुक्त फ़ॉन्ट परिवार चित्रलिपि सेरिफ फ़ॉन्ट "
 "का उपयोग करते हुए."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:716
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:714
 msgid "Default font size"
 msgstr "तयशुदा फ़ॉन्ट आकार"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:730
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:728
 msgid "Default monospace font size"
 msgstr "डिफ़ॉल्ट मोनोस्पेस फ़ॉन्ट का आकार"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:745
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:743
 msgid "Minimum font size"
 msgstr "न्यूनतम फाँट आकार"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:758
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:756
 msgid "Default charset"
 msgstr "डिफ़ॉल्ट अक्षरसेट"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:759
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:757
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
@@ -2232,87 +2238,87 @@ msgstr ""
 "तयशुदा पाठ अक्षरसेट प्रयुक्त जब अनिर्दिष्ट अक्षरसेट के साथ कंटेंट का निर्वचन "
 "होता है."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:772
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:770
 msgid "Enable private browsing"
 msgstr "निजी ब्राउज़िंग सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:773
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:771
 msgid "Whether to enable private browsing"
 msgstr "क्या निजी ब्राउज़िंग सक्षम करना है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:785
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:783
 msgid "Enable developer extras"
 msgstr "विकासकर्ता अतिरिक्त सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:786
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:784
 msgid "Whether to enable developer extras"
 msgstr "विकासकर्ता अतिरिक्त सक्षम करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:798
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:796
 msgid "Enable resizable text areas"
 msgstr "आकार बदलने योग्य पाठ क्षेत्र सक्रिय करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:799
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:797
 msgid "Whether to enable resizable text areas"
 msgstr "क्या आकार बदलने योग्य पाठ क्षेत्र सक्रिय करना है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:814
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:812
 msgid "Enable tabs to links"
 msgstr "टैब को कड़ी में सक्रिय करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:815
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:813
 msgid "Whether to enable tabs to links"
 msgstr "क्या टैब को कड़ी में सक्रिय करना है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:828
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:826
 msgid "Enable DNS prefetching"
 msgstr "DNS प्रीफेचिंग सक्रिय करना है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:829
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:827
 msgid "Whether to enable DNS prefetching"
 msgstr "क्या DNS पूर्वफेचिंग सक्रिय करना है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:858
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:856
 msgid "Whether to enable the Javascriipt Fullscreen API"
 msgstr "क्या जावास्क्रिप्ट पूर्णस्क्रीन API सक्रिय करना है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:871
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:869
 msgid "Whether background images should be drawn during printing"
 msgstr "क्या पृष्ठभूमि छवियों को छपाई के दौरान खींचा जाना चाहिए"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:922
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:920
 msgid "Allow modal dialogs"
 msgstr "मोडल संवाद की अनुमति दें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:923
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:921
 msgid "Whether it is possible to create modal dialogs"
 msgstr "क्या मोडल संवाद बनाना संभव है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:938
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:936
 msgid "Zoom Text Only"
 msgstr "सिर्फ पाठ बड़ा-छोटा करें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:939
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:937
 msgid "Whether zoom level of web view changes only the text size"
 msgstr "क्या वेब व्यू का जूम स्तर केवल पाठ आकार को बदलता है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:953
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:951
 msgid "JavaScript can access clipboard"
 msgstr "जावास्क्रिप्ट क्लिपबोर्ड का उपयोग कर सकते हैं"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1000
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:998
 msgid "Draw compositing indicators"
 msgstr "कंपोजिटिंग सूचक खींचें"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1001
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:999
 msgid "Whether to draw compositing borders and repaint counters"
 msgstr "क्या कंपोसिटिंग सीमा खींचना है और काउंटर रिपेंट करना है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1059
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1057
 msgid "User agent string"
 msgstr "उपयोक्ता एजेंट स्ट्रिंग"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1060
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1058
 msgid "The user agent string"
 msgstr "उपयोक्ता एजेंट स्ट्रिंग"
 
@@ -2360,53 +2366,67 @@ msgstr "संसाधन का मौजूदा सक्रिय यू�
 msgid "The response of the resource"
 msgstr "संसाधन की अनुक्रिया"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:577
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:617
 msgid "Web Context"
 msgstr "वेब संदर्भ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:578
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:618
 msgid "The web context for the view"
 msgstr "दृश्य के लिए वेब संदर्भ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:592
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:631
+#| msgid "WebView"
+msgid "WebView Group"
+msgstr "वेबदृश्य समूह"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:632
+#| msgid "The device pixel ratio of the viewport."
+msgid "The WebKitWebViewGroup of the view"
+msgstr "दृश्य का WebKitWebViewGroup"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:646
 msgid "Main frame document title"
 msgstr "मेन फ्रेम दस्तावेज़ शीर्षक"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:610
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:664
 msgid "Estimated Load Progress"
 msgstr "अनुमानित लोड प्रगति"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:611
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:665
 msgid "An estimate of the percent completion for a document load"
 msgstr "दस्तावेज लोड के लिए प्रतिशत पूर्णता का अनुमान"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:623
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:677
 msgid "Favicon"
 msgstr "फेविकॉन"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:624
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:678
 msgid "The favicon associated to the view, if any"
 msgstr "दृश्य में जुड़ा फेविकॉन, यदि कोई है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:636
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:690
 msgid "The current active URI of the view"
 msgstr "दृश्य का मौजूदा सक्रिय यूआरआइ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:650
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:704
 msgid "The zoom level of the view content"
 msgstr "दृश्य कंटेंट का ज़ूम स्तर"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:668
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:722
 msgid "Whether the view is loading a page"
 msgstr "क्या दृश्य किसी पृष्ठ को लोडिंग करना है"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:682
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:736
 msgid "The view mode to display the web view contents"
 msgstr "वेब दृश्य कंटेंट के द्वारा दिखाए गए दृश्य अवस्था"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2416
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2512
 msgid "An exception was raised in JavaScript"
 msgstr "जावास्क्रिप्ट में उठाए गए अपवाद"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3040
+msgid "There was an error creating the snapshot"
+msgstr "स्नैपशॉट बनाने में त्रुटि थी"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:209
 msgid "Geometry"
@@ -2471,6 +2491,12 @@ msgstr "पूर्ण स्क्रीन"
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
 msgid "Whether window will be displayed fullscreen."
 msgstr "क्या विंडो को पूर्ण स्क्रीन दिखायी जानी है."
+
+#~ msgid "audio element controller"
+#~ msgstr "ऑडियो तत्व नियंत्रक"
+
+#~ msgid "video element controller"
+#~ msgstr "वीडियो तत्व नियंत्रक"
 
 #~ msgid "A username and password are being requested by the site %s"
 #~ msgstr "साइट %s के द्वारा एक उपयोगकर्ता नाम और पासवर्ड का अनुरोध किया जा रहा है"
