@@ -468,8 +468,10 @@ void WebPageProxy::getPlugInInformation(pid_t plugInProcessID, PassRefPtr<Dictio
     }
 
     PluginProcessProxy* plugInProcessProxy = PluginProcessManager::shared().findPlugInProcessByID(plugInProcessID);
-    if (!plugInProcessProxy)
+    if (!plugInProcessProxy) {
         callback->performCallbackWithReturnValue(0);
+        return;
+    }
 
     uint64_t callbackID = callback->callbackID();
     m_plugInInformationCallbacks.set(callbackID, callback.release());

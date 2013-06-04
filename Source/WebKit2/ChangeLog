@@ -1,3 +1,14 @@
+2013-06-04  Mark Rowe  <mrowe@apple.com>
+
+        REGRESSION (r151043): Frequent crashes inside WebPageProxy::getPlugInInformation
+        <http://webkit.org/b/117180>
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::getPlugInInformation): Return early when plugInProcessProxy is null
+        since there's nothing we can do.
+
 2013-06-04  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFl][WK2] Sub menu items should be of EWK_SUBMENU_TYPE and not checkable
