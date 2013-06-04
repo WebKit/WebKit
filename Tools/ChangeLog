@@ -1,5 +1,13 @@
 2013-06-04  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Unreviewed build fix.  The last check-in lost CR/LF endings on the batch file,
+        causing build failure.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreePostBuild.cmd: Revert to
+        DOS-style CR/LF endings.
+
+2013-06-04  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Unreviewed test correction.
 
         * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreePostBuild.cmd: Also copy the
