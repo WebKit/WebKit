@@ -63,6 +63,7 @@ class MockExecutive(object):
         self._running_pids = {'test-webkitpy': os.getpid()}
         self._proc = None
         self.calls = []
+        self.pid_to_system_pid = {}
 
     def check_running_pid(self, pid):
         return pid in self._running_pids.values()

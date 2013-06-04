@@ -1,3 +1,40 @@
+2013-06-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] NRWT is not putting crash logs in proper place
+        https://bugs.webkit.org/show_bug.cgi?id=117098
+
+        Reviewed by Ryosuke Niwa.
+
+        Provide windows-specific overloads for various Port features needed to create and capture
+        crash logs.  This change makes it possible to view crash logs (when created) as part of the
+        summary report at the end of the NRWT run.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs.find_newest_log): Add support for win32 crash logs
+        (CrashLogs._find_newest_log_win): Added
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (make_mock_crash_report_win): Added
+        (CrashLogsTest.test_find_log_win): Added.
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.running_pids): Add support for Cygwin win32 crash logs
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.__init__):
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        (RealFileSystemTest.test_read_and_write_file): Add tests for
+        malformed ascii/utf8 handling (i.e., Windows log files)
+        * Scripts/webkitpy/port/base.py:
+        (Port.find_system_pid): Added
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._start): Gather windows PIDs to match up with Cygwin PIDs
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.setup_crash_log_saving): Don't open windows shell (which might get stuck waiting
+        for user to hit enter.
+        (WinPort._get_crash_log): Added
+        (WinPort.look_for_new_crash_logs): Added
+        (WinPort.find_system_pid): Added
+        * Scripts/webkitpy/port/win_unittest.py:
+        (WinPortTest.test_get_crash_log): Added test
+
 2013-06-03  Eduardo Lima Mitev  <elima@igalia.com>
 
         [EFL] Add ATK version 2.8.0 to efl jhbuild moduleset

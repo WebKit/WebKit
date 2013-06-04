@@ -116,6 +116,7 @@ class ServerProcess(object):
             env=self._env,
             universal_newlines=self._universal_newlines)
         self._pid = self._proc.pid
+        self._port.find_system_pid(self.name(), self._pid)
         fd = self._proc.stdout.fileno()
         if not self._use_win32_apis:
             fl = fcntl.fcntl(fd, fcntl.F_GETFL)

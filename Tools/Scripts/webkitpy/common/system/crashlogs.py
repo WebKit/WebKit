@@ -26,16 +26,22 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import codecs
 import re
 
 
 class CrashLogs(object):
+
+    PID_LINE_REGEX = re.compile(r'\s+Global\s+PID:\s+\[(?P<pid>\d+)\]')
+
     def __init__(self, host):
         self._host = host
 
-    def find_newest_log(self, process_name, pid=None, include_errors=False, newer_than=None):
+    def find_newest_log(self, process_name, pid=None, include_errors=False, newer_than=None, port=None):
         if self._host.platform.is_mac():
             return self._find_newest_log_darwin(process_name, pid, include_errors, newer_than)
+        elif self._host.platform.is_win():
+            return self._find_newest_log_win(process_name, pid, include_errors, newer_than, port)
         return None
 
     def _log_directory_darwin(self):
@@ -68,6 +74,38 @@ class CrashLogs(object):
             except OSError, e:
                 if include_errors:
                     errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
+
+        if include_errors and errors:
+            return errors
+        return None
+
+    def _find_newest_log_win(self, process_name, pid, include_errors, newer_than, port):
+        def is_crash_log(fs, dirpath, basename):
+            return basename.startswith("CrashLog")
+
+        logs = self._host.filesystem.files_under(port.results_directory(), file_filter=is_crash_log)
+        errors = ''
+        for path in reversed(sorted(logs)):
+            try:
+                if not newer_than or self._host.filesystem.mtime(path) > newer_than:
+                    log_file = self._host.filesystem.read_binary_file(path).decode('utf8', 'ignore')
+                    match = self.PID_LINE_REGEX.search(log_file)
+                    if match is None:
+                        continue
+                    if int(match.group('pid')) == pid:
+                        return errors + log_file
+            except IOError, e:
+                print "IOError %s" % str(e)
+                if include_errors:
+                    errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
+            except OSError, e:
+                print "OSError %s" % str(e)
+                if include_errors:
+                    errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
+            except UnicodeDecodeError, e:
+                print "UnicodeDecodeError %s" % str(e)
+                if include_errors:
+                    errors += "ERROR: Failed to decode '%s' as utf8: %s\n" % (path, str(e))
 
         if include_errors and errors:
             return errors

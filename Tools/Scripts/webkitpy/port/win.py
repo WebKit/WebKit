@@ -32,7 +32,9 @@ import os
 import logging
 import re
 import sys
+import time
 
+from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.system.executive import ScriptError, Executive
 from webkitpy.common.system.path import abspath_to_uri, cygpath
@@ -200,7 +202,7 @@ class WinPort(ApplePort):
         command_file = self.create_debugger_command_file()
         if not command_file:
             return None
-        debugger_options = '"{0}" -p %ld -e %ld -g -lines -cf "{1}"'.format(cygpath(ntsd_path), cygpath(command_file))
+        debugger_options = '"{0}" -p %ld -e %ld -g -noio -lines -cf "{1}"'.format(cygpath(ntsd_path), cygpath(command_file))
         registry_settings = {'Debugger': debugger_options, 'Auto': "1"}
         for key in registry_settings:
             self.previous_debugger_values[key] = self.read_registry_string(key)
@@ -218,3 +220,69 @@ class WinPort(ApplePort):
     def clean_up_test_run(self):
         self.restore_crash_log_saving()
         super(WinPort, self).clean_up_test_run()
+
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True):
+        # Note that we do slow-spin here and wait, since it appears the time
+        # ReportCrash takes to actually write and flush the file varies when there are
+        # lots of simultaneous crashes going on.
+        # FIXME: Should most of this be moved into CrashLogs()?
+        time_fn = time_fn or time.time
+        sleep_fn = sleep_fn or time.sleep
+        crash_log = ''
+        crash_logs = CrashLogs(self.host)
+        now = time_fn()
+        # FIXME: delete this after we're sure this code is working ...
+        _log.debug('looking for crash log for %s:%s' % (name, str(pid)))
+        deadline = now + 5 * int(self.get_option('child_processes', 1))
+        while not crash_log and now <= deadline:
+            # If the system_pid hasn't been determined yet, just try with the passed in pid.  We'll be checking again later
+            system_pid = self._executive.pid_to_system_pid.get(pid)
+            if system_pid == None:
+                break  # We haven't mapped cygwin pid->win pid yet
+            crash_log = crash_logs.find_newest_log(name, system_pid, include_errors=True, newer_than=newer_than, port=self)
+            if not wait_for_log:
+                break
+            if not crash_log or not [line for line in crash_log.splitlines() if line.startswith('quit:')]:
+                sleep_fn(0.1)
+                now = time_fn()
+
+        if not crash_log:
+            return (stderr, None)
+        return (stderr, crash_log)
+
+    def look_for_new_crash_logs(self, crashed_processes, start_time):
+        """Since crash logs can take a long time to be written out if the system is
+           under stress do a second pass at the end of the test run.
+
+           crashes: test_name -> pid, process_name tuple of crashed process
+           start_time: time the tests started at.  We're looking for crash
+               logs after that time.
+        """
+        crash_logs = {}
+        for (test_name, process_name, pid) in crashed_processes:
+            # Passing None for output.  This is a second pass after the test finished so
+            # if the output had any logging we would have already collected it.
+            crash_log = self._get_crash_log(process_name, pid, None, None, start_time, wait_for_log=False)[1]
+            if crash_log:
+                crash_logs[test_name] = crash_log
+        return crash_logs
+
+    def find_system_pid(self, name, pid):
+        system_pid = int(pid)
+        # Windows and Cygwin PIDs are not the same.  We need to find the Windows
+        # PID for our Cygwin process so we can match it later to any crash
+        # files we end up creating (which will be tagged with the Windows PID)
+        ps_process = self._executive.run_command(['ps', '-e'], error_handler=Executive.ignore_error)
+        for line in ps_process.splitlines():
+            tokens = line.strip().split()
+            try:
+                cpid, ppid, pgid, winpid, tty, uid, stime, process_name = tokens
+                if process_name.endswith(name):
+                    self._executive.pid_to_system_pid[int(cpid)] = int(winpid)
+                    if int(pid) == int(cpid):
+                        system_pid = int(winpid)
+                    break
+            except ValueError, e:
+                pass
+
+        return system_pid

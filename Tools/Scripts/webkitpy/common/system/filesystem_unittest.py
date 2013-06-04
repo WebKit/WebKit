@@ -209,6 +209,8 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
 
         unicode_text_string = u'\u016An\u012Dc\u014Dde\u033D'
         hex_equivalent = '\xC5\xAA\x6E\xC4\xAD\x63\xC5\x8D\x64\x65\xCC\xBD'
+        malformed_text_hex = '\x4D\x69\x63\x72\x6F\x73\x6F\x66\x74\xAE\x20\x56\x69\x73\x75\x61\x6C\x20\x53\x74\x75\x64\x69\x6F\xAE\x20\x32\x30\x31\x30\x0D\x0A'
+        malformed_ignored_text_hex = '\x4D\x69\x63\x72\x6F\x73\x6F\x66\x74\x20\x56\x69\x73\x75\x61\x6C\x20\x53\x74\x75\x64\x69\x6F\x20\x32\x30\x31\x30\x0D\x0A'
         try:
             text_path = tempfile.mktemp(prefix='tree_unittest_')
             binary_path = tempfile.mktemp(prefix='tree_unittest_')
@@ -219,6 +221,12 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
             fs.write_binary_file(binary_path, hex_equivalent)
             text_contents = fs.read_text_file(binary_path)
             self.assertEqual(text_contents, unicode_text_string)
+
+            self.assertRaises(ValueError, fs.write_text_file, binary_path, malformed_text_hex)
+            fs.write_binary_file(binary_path, malformed_text_hex)
+            self.assertRaises(ValueError, fs.read_text_file, binary_path)
+            text_contents = fs.read_binary_file(binary_path).decode('utf8', 'ignore')
+            self.assertEquals(text_contents, malformed_ignored_text_hex)
         finally:
             if text_path and fs.isfile(text_path):
                 os.remove(text_path)

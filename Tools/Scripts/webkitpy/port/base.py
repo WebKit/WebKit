@@ -1350,6 +1350,10 @@ class Port(object):
     def virtual_test_suites(self):
         return []
 
+    def find_system_pid(self, name, pid):
+        # This is only overridden on Windows
+        return pid
+
     @memoized
     def populated_virtual_test_suites(self):
         suites = self.virtual_test_suites()

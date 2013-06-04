@@ -107,3 +107,12 @@ class WinPortTest(port_testcase.PortTestCase):
     def test_expectations_files(self):
         self.assertEqual(len(self.make_port().expectations_files()), 3)
         self.assertEqual(len(self.make_port(options=MockOptions(webkit_test_runner=True, configuration='Release')).expectations_files()), 5)
+
+    def test_get_crash_log(self):
+        # Win crash logs are tested elsewhere, so here we just make sure we don't crash.
+        def fake_time_cb():
+            times = [0, 20, 40]
+            return lambda: times.pop(0)
+        port = self.make_port(port_name='win')
+        port._get_crash_log('DumpRenderTree', 1234, '', '', 0,
+            time_fn=fake_time_cb(), sleep_fn=lambda delay: None)

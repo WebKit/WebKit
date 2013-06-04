@@ -84,6 +84,9 @@ class Executive(object):
     PIPE = subprocess.PIPE
     STDOUT = subprocess.STDOUT
 
+    def __init__(self):
+        self.pid_to_system_pid = {}
+
     def _should_close_fds(self):
         # We need to pass close_fds=True to work around Python bug #2320
         # (otherwise we can hang when we kill DumpRenderTree when we are running
@@ -272,21 +275,29 @@ class Executive(object):
 
         running_pids = []
 
-        if sys.platform in ("win32", "cygwin"):
-            # FIXME: running_pids isn't implemented on Windows yet...
-            return []
-
-        ps_process = self.popen(['ps', '-eo', 'pid,comm'], stdout=self.PIPE, stderr=self.PIPE)
-        stdout, _ = ps_process.communicate()
-        for line in stdout.splitlines():
-            try:
-                # In some cases the line can contain one or more
-                # leading white-spaces, so strip it before split.
-                pid, process_name = line.strip().split(' ', 1)
-                if process_name_filter(process_name):
-                    running_pids.append(int(pid))
-            except ValueError, e:
-                pass
+        if sys.platform in ("cygwin"):
+            ps_process = self.run_command(['ps', '-e'], error_handler=Executive.ignore_error)
+            for line in ps_process.splitlines():
+                tokens = line.strip().split()
+                try:
+                    pid, ppid, pgid, winpid, tty, uid, stime, process_name = tokens
+                    if process_name_filter(process_name):
+                        running_pids.append(int(pid))
+                        self.pid_to_system_pid[int(pid)] = int(winpid)
+                except ValueError, e:
+                    pass
+        else:
+            ps_process = self.popen(['ps', '-eo', 'pid,comm'], stdout=self.PIPE, stderr=self.PIPE)
+            stdout, _ = ps_process.communicate()
+            for line in stdout.splitlines():
+                try:
+                    # In some cases the line can contain one or more
+                    # leading white-spaces, so strip it before split.
+                    pid, process_name = line.strip().split(' ', 1)
+                    if process_name_filter(process_name):
+                        running_pids.append(int(pid))
+                except ValueError, e:
+                    pass
 
         return sorted(running_pids)
 
