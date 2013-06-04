@@ -88,7 +88,7 @@ static Eina_Bool showContextMenu(Ewk_View_Smart_Data* smartData, Evas_Coord x, E
     // When context menu is created using ewk_context_menu_new_with_items, items should have parent menu.
     EXPECT_EQ(subMenu, ewk_context_menu_item_parent_menu_get(subMenuItem1));
 
-    Ewk_Context_Menu_Item* newItem2 = ewk_context_menu_item_new_with_submenu(EWK_SUBMENU_TYPE, EWK_CONTEXT_MENU_ITEM_TAG_OTHER, "New Custom Item 2", false, true, subMenu);
+    Ewk_Context_Menu_Item* newItem2 = ewk_context_menu_item_new_with_submenu(EWK_CONTEXT_MENU_ITEM_TAG_OTHER, "New Custom Item 2", true, subMenu);
     // When context menu item is created using ewk_context_menu_item_new_with_submenu, it should not have parent menu.
     EXPECT_EQ(0, ewk_context_menu_item_parent_menu_get(newItem));
     ewk_context_menu_item_append(contextMenu, newItem2);
@@ -100,7 +100,7 @@ static Eina_Bool showContextMenu(Ewk_View_Smart_Data* smartData, Evas_Coord x, E
     EXPECT_EQ(contextMenu, ewk_context_menu_item_parent_menu_get(newItem));
 
     Ewk_Context_Menu* subMenu2 = ewk_context_menu_new();
-    Ewk_Context_Menu_Item* newItem3 = ewk_context_menu_item_new_with_submenu(EWK_SUBMENU_TYPE, EWK_CONTEXT_MENU_ITEM_TAG_OTHER, "New Custom Item 3", false, true, subMenu2);
+    Ewk_Context_Menu_Item* newItem3 = ewk_context_menu_item_new_with_submenu(EWK_CONTEXT_MENU_ITEM_TAG_OTHER, "New Custom Item 3", true, subMenu2);
     ewk_context_menu_item_append(contextMenu, newItem3);
 
     list = ewk_context_menu_items_get(contextMenu);

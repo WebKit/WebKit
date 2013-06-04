@@ -66,11 +66,11 @@ Ewk_Context_Menu_Item* ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type
     return Ewk_Context_Menu_Item::create(type, action, title, checked, enabled).leakPtr();
 }
 
-Ewk_Context_Menu_Item* ewk_context_menu_item_new_with_submenu(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, Ewk_Context_Menu* subMenu)
+Ewk_Context_Menu_Item* ewk_context_menu_item_new_with_submenu(Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool enabled, Ewk_Context_Menu* subMenu)
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkContextMenu, subMenu, subMenuImpl, 0);
 
-    return Ewk_Context_Menu_Item::create(type, action, title, checked, enabled, subMenuImpl).leakPtr();
+    return Ewk_Context_Menu_Item::create(EWK_SUBMENU_TYPE, action, title, false, enabled, subMenuImpl).leakPtr();
 }
 
 Ewk_Context_Menu_Item_Type ewk_context_menu_item_type_get(const Ewk_Context_Menu_Item* item)

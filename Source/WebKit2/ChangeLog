@@ -1,5 +1,23 @@
 2013-06-04  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
+        [EFl][WK2] Sub menu items should be of EWK_SUBMENU_TYPE and not checkable
+        https://bugs.webkit.org/show_bug.cgi?id=116959
+
+        Reviewed by Gyuyoung Kim.
+
+        Currently using ewk API it is possible to create a sub menu item which is not an EWK_SUBMENU_TYPE
+        or set checkable flag for it, while it is not possible for items created by WebKit. 
+        This patch changes ewk context menu API to match WebKit2 behaviour, by creating sub menus with
+        proper type and checkable flags.
+
+        * UIProcess/API/efl/ewk_context_menu_item.cpp:
+        (ewk_context_menu_item_new_with_submenu):
+        * UIProcess/API/efl/ewk_context_menu_item.h:
+        * UIProcess/API/efl/tests/test_ewk2_context_menu.cpp:
+        (showContextMenu):
+
+2013-06-04  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
         [EFL][WK2] Custom context menu items cannot be selected
         https://bugs.webkit.org/show_bug.cgi?id=116830
 
