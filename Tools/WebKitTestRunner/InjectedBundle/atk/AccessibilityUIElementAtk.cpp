@@ -1226,6 +1226,18 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
     return 0;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPostscriptsDescription() const
+{
+    notImplemented();
+    return 0;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPrescriptsDescription() const
+{
+    notImplemented();
+    return 0;
+}
+
 } // namespace WTR
 
 #endif

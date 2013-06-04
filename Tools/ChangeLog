@@ -1,3 +1,17 @@
+2013-06-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [WKTR][WTK] Undefined symbols in libTestRunnerInjectedBundle.so after r151124
+        https://bugs.webkit.org/show_bug.cgi?id=117184
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ATK stubs for mathPostscriptsDescription() and mathPrescriptsDescription() so
+        that we don't have undefined symbols in libTestRunnerInjectedBundle.so.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription):
+        (WTR::AccessibilityUIElement::mathPrescriptsDescription):
+
 2013-06-03  Simon Pena  <simon.pena@samsung.com>
 
         validate-committer-lists script is now outdated and does not work
