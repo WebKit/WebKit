@@ -1,3 +1,24 @@
+2013-06-04  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][WK2] Custom context menu items cannot be selected
+        https://bugs.webkit.org/show_bug.cgi?id=116830
+
+        Reviewed by Gyuyoung Kim.
+
+        Custom item added using ewk_context_menu_item_append had no
+        pointer to parent menu, and custom submenu added using with the
+        the same function had no pointer to EwkView. Both issues
+        prevented items to be selected.
+
+        * UIProcess/API/efl/ewk_context_menu.cpp:
+        (EwkContextMenu::appendItem):
+        (EwkContextMenu::contextMenuItemSelected):
+        (ewk_context_menu_item_append):
+        (ewk_context_menu_item_select):
+        * UIProcess/API/efl/ewk_context_menu_private.h:
+        (EwkContextMenu):
+        (EwkContextMenu::setEwkView):
+
 2013-06-03  Simon Cooper  <scooper@apple.com>
 
         Unable to play videos in Safari using QuickTime plug-in until I've played those videos in Chrome first

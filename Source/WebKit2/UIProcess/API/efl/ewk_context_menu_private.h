@@ -59,9 +59,10 @@ public:
     void removeItem(EwkContextMenuItem*);
 
     const Eina_List* items() const { return m_contextMenuItems; }
-    void contextMenuItemSelected(WKContextMenuItemRef item);
+    bool contextMenuItemSelected(WKContextMenuItemRef item);
 
     EwkView* ewkView() const { return m_viewImpl; }
+    void setEwkView(EwkView* ewkView) { m_viewImpl = ewkView; }
 
 private:
     EwkContextMenu();

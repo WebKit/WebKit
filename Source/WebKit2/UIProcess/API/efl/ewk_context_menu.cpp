@@ -84,6 +84,11 @@ void EwkContextMenu::hide()
 
 void EwkContextMenu::appendItem(EwkContextMenuItem* item)
 {
+    item->setParentMenu(this);
+
+    if (item->type() == EWK_SUBMENU_TYPE)
+        item->subMenu()->setEwkView(this->ewkView());
+
     m_contextMenuItems = eina_list_append(m_contextMenuItems, item);
 }
 
@@ -92,9 +97,14 @@ void EwkContextMenu::removeItem(EwkContextMenuItem* item)
     m_contextMenuItems = eina_list_remove(m_contextMenuItems, item);
 }
 
-void EwkContextMenu::contextMenuItemSelected(WKContextMenuItemRef item)
+bool EwkContextMenu::contextMenuItemSelected(WKContextMenuItemRef item)
 {
+    if (!m_viewImpl)
+        return false;
+
     WKPageSelectContextMenuItem(m_viewImpl->wkPage(), item);
+
+    return true;
 } 
 
 Ewk_Context_Menu* ewk_context_menu_new()
@@ -110,6 +120,7 @@ Ewk_Context_Menu* ewk_context_menu_new_with_items(Eina_List* items)
 Eina_Bool ewk_context_menu_item_append(Ewk_Context_Menu* menu, Ewk_Context_Menu_Item* item)
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkContextMenu, menu, impl, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
 
     impl->appendItem(item);
 
@@ -160,9 +171,7 @@ Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu* menu, Ewk_Context_Menu_
         return false;
     }
 
-    impl->contextMenuItemSelected(wkItem);
-
-    return true;
+    return impl->contextMenuItemSelected(wkItem);
 }
 
 static WKContextMenuItemTag getWKTagFromEwkAction(Ewk_Context_Menu_Item_Action action)
