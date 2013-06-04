@@ -229,7 +229,7 @@ class WinPort(ApplePort):
         time_fn = time_fn or time.time
         sleep_fn = sleep_fn or time.sleep
         crash_log = ''
-        crash_logs = CrashLogs(self.host)
+        crash_logs = CrashLogs(self.host, self.results_directory())
         now = time_fn()
         # FIXME: delete this after we're sure this code is working ...
         _log.debug('looking for crash log for %s:%s' % (name, str(pid)))
@@ -239,7 +239,7 @@ class WinPort(ApplePort):
             system_pid = self._executive.pid_to_system_pid.get(pid)
             if system_pid == None:
                 break  # We haven't mapped cygwin pid->win pid yet
-            crash_log = crash_logs.find_newest_log(name, system_pid, include_errors=True, newer_than=newer_than, port=self)
+            crash_log = crash_logs.find_newest_log(name, system_pid, include_errors=True, newer_than=newer_than)
             if not wait_for_log:
                 break
             if not crash_log or not [line for line in crash_log.splitlines() if line.startswith('quit:')]:

@@ -34,14 +34,15 @@ class CrashLogs(object):
 
     PID_LINE_REGEX = re.compile(r'\s+Global\s+PID:\s+\[(?P<pid>\d+)\]')
 
-    def __init__(self, host):
+    def __init__(self, host, results_directory=None):
         self._host = host
+        self._results_directory = results_directory
 
-    def find_newest_log(self, process_name, pid=None, include_errors=False, newer_than=None, port=None):
+    def find_newest_log(self, process_name, pid=None, include_errors=False, newer_than=None):
         if self._host.platform.is_mac():
             return self._find_newest_log_darwin(process_name, pid, include_errors, newer_than)
         elif self._host.platform.is_win():
-            return self._find_newest_log_win(process_name, pid, include_errors, newer_than, port)
+            return self._find_newest_log_win(process_name, pid, include_errors, newer_than)
         return None
 
     def _log_directory_darwin(self):
@@ -79,11 +80,11 @@ class CrashLogs(object):
             return errors
         return None
 
-    def _find_newest_log_win(self, process_name, pid, include_errors, newer_than, port):
+    def _find_newest_log_win(self, process_name, pid, include_errors, newer_than):
         def is_crash_log(fs, dirpath, basename):
             return basename.startswith("CrashLog")
 
-        logs = self._host.filesystem.files_under(port.results_directory(), file_filter=is_crash_log)
+        logs = self._host.filesystem.files_under(self._results_directory, file_filter=is_crash_log)
         errors = ''
         for path in reversed(sorted(logs)):
             try:

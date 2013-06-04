@@ -270,11 +270,14 @@ class Executive(object):
             return False
 
     def running_pids(self, process_name_filter=None):
+        if sys.platform == "win32":
+            # FIXME: running_pids isn't implemented on native Windows yet...
+            return []
+
         if not process_name_filter:
             process_name_filter = lambda process_name: True
 
         running_pids = []
-
         if sys.platform in ("cygwin"):
             ps_process = self.run_command(['ps', '-e'], error_handler=Executive.ignore_error)
             for line in ps_process.splitlines():

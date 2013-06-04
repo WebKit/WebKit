@@ -296,18 +296,15 @@ class CrashLogsTest(unittest.TestCase):
         files['~/CrashLog_aadd_2013-06-03_12-26-24-121.txt'] = misformatted_mock_crash_report
         filesystem = MockFileSystem(files)
         mock_host = MockSystemHost(os_name='win', filesystem=filesystem)
-        crash_logs = CrashLogs(mock_host)
+        crash_logs = CrashLogs(mock_host, "~")
 
-        winport = WinPort(mock_host, 'win-xp')
-        winport._results_directory = "~"
-
-        log = crash_logs.find_newest_log("DumpRenderTree", 28529, port=winport)
+        log = crash_logs.find_newest_log("DumpRenderTree", 28529)
         self.assertMultiLineEqual(log, newer_mock_crash_report)
-        log = crash_logs.find_newest_log("DumpRenderTree", 28530, port=winport)
+        log = crash_logs.find_newest_log("DumpRenderTree", 28530)
         self.assertMultiLineEqual(log, mock_crash_report)
-        log = crash_logs.find_newest_log("DumpRenderTree", 28531, port=winport)
+        log = crash_logs.find_newest_log("DumpRenderTree", 28531)
         self.assertIsNone(log)
-        log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0, port=winport)
+        log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0)
         self.assertIsNone(log)
 
         def bad_read(path):
@@ -315,5 +312,5 @@ class CrashLogsTest(unittest.TestCase):
 
         filesystem.read_text_file = bad_read
         filesystem.read_binary_file = bad_read
-        log = crash_logs.find_newest_log("DumpRenderTree", 28531, port=winport, include_errors=True)
+        log = crash_logs.find_newest_log("DumpRenderTree", 28531, include_errors=True)
         self.assertIn('IOError: No such file or directory', log)

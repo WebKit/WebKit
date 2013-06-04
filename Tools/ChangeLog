@@ -1,3 +1,21 @@
+2013-06-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] NRWT is not putting crash logs in proper place (corrections)
+        https://bugs.webkit.org/show_bug.cgi?id=117212
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs.__init__): Accept a result directory argument in constructor.
+        (CrashLogs.find_newest_log): Don't require 'port' argument anymore.
+        (CrashLogs._find_newest_log_win): No longer use 'port' argument.
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (CrashLogsTest.test_find_log_win): Simplify test.
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.running_pids): Handle "win32" case separately from "cygwin" case.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._get_crash_log): No longer require 'port' argument.
+
 2013-06-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r150592. We need to disable \2 shouldn't be treated as an escape character.
