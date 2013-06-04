@@ -115,11 +115,14 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_texture(0)
 #endif
 {
+    g_mutex_init(&m_bufferMutex);
 }
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
     g_signal_handler_disconnect(m_webkitVideoSink.get(), m_repaintHandler);
+
+    g_mutex_clear(&m_bufferMutex);
 
     if (m_buffer)
         gst_buffer_unref(m_buffer);
@@ -158,7 +161,17 @@ IntSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     if (!m_videoSize.isEmpty())
         return m_videoSize;
 
+#ifdef GST_API_VERSION_1
+    /* FIXME this has a race with the pad setting caps as the buffer (m_buffer)
+     * and the caps won't match and might cause a crash. (In case a
+     * renegotiation happens)
+     */
     GRefPtr<GstCaps> caps = webkitGstGetPadCaps(m_videoSinkPad.get());
+#else
+    g_mutex_lock(&m_bufferMutex);
+    GRefPtr<GstCaps> caps = m_buffer ? GST_BUFFER_CAPS(m_buffer) : 0;
+    g_mutex_unlock(&m_bufferMutex);
+#endif
     if (!caps)
         return IntSize();
 
@@ -345,7 +358,9 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstBuffer* buffer)
     else
 #endif
     {
+        g_mutex_lock(&m_bufferMutex);
         gst_buffer_replace(&m_buffer, buffer);
+        g_mutex_unlock(&m_bufferMutex);
         m_player->repaint();
     }
 }
@@ -368,19 +383,35 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
     if (!m_player->visible())
         return;
 
-    if (!m_buffer)
+    g_mutex_lock(&m_bufferMutex);
+    if (!m_buffer) {
+        g_mutex_unlock(&m_bufferMutex);
         return;
+    }
 
+#ifdef GST_API_VERSION_1
+    /* FIXME this has a race with the pad setting caps as the buffer (m_buffer)
+     * and the caps won't match and might cause a crash. (In case a
+     * renegotiation happens)
+     */
     GRefPtr<GstCaps> caps = webkitGstGetPadCaps(m_videoSinkPad.get());
-    if (!caps)
+#else
+    GRefPtr<GstCaps> caps = GST_BUFFER_CAPS(m_buffer);
+#endif
+    if (!caps) {
+        g_mutex_unlock(&m_bufferMutex);
         return;
+    }
 
     RefPtr<ImageGStreamer> gstImage = ImageGStreamer::createImage(m_buffer, caps.get());
-    if (!gstImage)
+    if (!gstImage) {
+        g_mutex_unlock(&m_bufferMutex);
         return;
+    }
 
     context->drawImage(reinterpret_cast<Image*>(gstImage->image().get()), ColorSpaceSRGB,
         rect, gstImage->rect(), CompositeCopy, DoNotRespectImageOrientation, false);
+    g_mutex_unlock(&m_bufferMutex);
 }
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)

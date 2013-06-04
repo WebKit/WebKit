@@ -27,6 +27,8 @@
 #include "GRefPtrGStreamer.h"
 #include "MediaPlayerPrivate.h"
 
+#include <glib.h>
+
 #include <wtf/Forward.h>
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
@@ -121,6 +123,7 @@ protected:
     MediaPlayer::ReadyState m_readyState;
     MediaPlayer::NetworkState m_networkState;
     IntSize m_size;
+    GMutex m_bufferMutex;
     GstBuffer* m_buffer;
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     RefPtr<GStreamerGWorld> m_gstGWorld;
