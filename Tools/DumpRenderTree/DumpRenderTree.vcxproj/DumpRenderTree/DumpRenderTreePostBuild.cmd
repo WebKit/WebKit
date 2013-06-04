@@ -16,6 +16,8 @@ xcopy /y /d /e /i "%WEBKIT_LIBRARIES%\bin32\CFNetwork.resources" "%CONFIGURATION
 xcopy /y /d /e /i "%WEBKIT_LIBRARIES%\bin32\CoreFoundation.resources" "%CONFIGURATIONBUILDDIR%\bin32\CoreFoundation.resources"
 xcopy /y /d "%WEBKIT_LIBRARIES%\bin32\CoreGraphics%DebugSuffix%.dll" "%CONFIGURATIONBUILDDIR%\bin32"
 xcopy /y /d "%WEBKIT_LIBRARIES%\bin32\CoreGraphics%DebugSuffix%.pdb" "%CONFIGURATIONBUILDDIR%\bin32"
+xcopy /y /d "%WEBKIT_LIBRARIES%\bin32\QuartzCore%DebugSuffix%.dll" "%CONFIGURATIONBUILDDIR%\bin32"
+xcopy /y /d "%WEBKIT_LIBRARIES%\bin32\QuartzCore%DebugSuffix%.pdb" "%CONFIGURATIONBUILDDIR%\bin32"
 if exist "%WEBKIT_LIBRARIES%\bin32\icudt40.dll"xcopy /y /d "%WEBKIT_LIBRARIES%\bin32\icudt40.dll" "%CONFIGURATIONBUILDDIR%\bin32"
 if exist "%WEBKIT_LIBRARIES%\bin32\icudt40.dll"xcopy /y /d "%WEBKIT_LIBRARIES%\bin32\icudt40.dll" "%CONFIGURATIONBUILDDIR%\bin32"
 if exist "%WEBKIT_LIBRARIES%\bin32\icuin40.dll"xcopy /y /d "%WEBKIT_LIBRARIES%\bin32\icuin40.dll" "%CONFIGURATIONBUILDDIR%\bin32"
