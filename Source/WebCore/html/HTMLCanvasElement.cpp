@@ -147,6 +147,31 @@ void HTMLCanvasElement::setWidth(int value)
     setAttribute(widthAttr, String::number(value));
 }
 
+#if ENABLE(WEBGL)
+static bool requiresAcceleratedCompositingForWebGL()
+{
+#if PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(QT)
+    return false;
+#else
+    return true;
+#endif
+
+}
+static bool shouldEnableWebGL(Settings* settings)
+{
+    if (!settings)
+        return false;
+
+    if (!settings->webGLEnabled())
+        return false;
+
+    if (!requiresAcceleratedCompositingForWebGL())
+        return true;
+
+    return settings->acceleratedCompositingEnabled();
+}
+#endif
+
 CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, CanvasContextAttributes* attrs)
 {
     // A Canvas can either be "2D" or "webgl" but never both. If you request a 2D canvas and the existing
@@ -176,14 +201,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
         }
         return m_context.get();
     }
-#if ENABLE(WEBGL)    
-    Settings* settings = document()->settings();
-    if (settings && settings->webGLEnabled()
-#if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(QT)
-        && settings->acceleratedCompositingEnabled()
-#endif
-        ) {
-
+#if ENABLE(WEBGL)
+    if (shouldEnableWebGL(document()->settings())) {
         // Accept the legacy "webkit-3d" name as well as the provisional "experimental-webgl" name.
         bool is3dContext = (type == "webkit-3d") || (type == "experimental-webgl");
 
