@@ -1,3 +1,22 @@
+2013-06-03  Dirk Pranke  <dpranke@chromium.org>
+
+        add a script to dump the tests run most recently by a given worker
+        https://bugs.webkit.org/show_bug.cgi?id=116571
+
+        Reviewed by Brent Fulgham.
+
+        The tests_run*.txt results files in layout-test-results/ were removed
+        in r137356, in favor of collecting more data about how the tests were
+        run and compressing it and storing it in stats.json. However, it was
+        nice to just be able to look at a flat text file.
+
+        This script will extract the tests run by a given worker from a
+        given stats.json file, and should help to address that.
+
+        * Scripts/dump-webkit-tests-run: Added.
+        (main):
+        (convert_trie_to_flat_paths):
+
 2013-06-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] NRWT is not putting crash logs in proper place
