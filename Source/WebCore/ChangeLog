@@ -1,3 +1,24 @@
+2013-06-04  Kent Tamura  <tkent@chromium.org>
+
+        Fix an assertion failure in Range::textNodeSplit by Text::splitText
+        https://bugs.webkit.org/show_bug.cgi?id=116509
+
+        Reviewed by Ryosuke Niwa.
+
+        Range::textNodeSplit is called in Text::splitText, and it assumes the
+        next sibling node is still a Text node. A DOM mutation event handler can
+        break this assumption.
+
+        We had better postpone DOM mutation events dispatched in Node::insertBefore
+        until exiting splitText to avoid inconsistent Range state.
+
+        This imports http://src.chromium.org/viewvc/blink?view=revision&revision=150493 .
+
+        Test: fast/dom/Range/split-text-in-range.html
+
+        * dom/Text.cpp:
+        (WebCore::Text::splitText): Add EventQueueScope.
+
 2013-06-03  Kangil Han  <kangil.han@samsung.com>
 
         Remove unused arithmetic operation in RenderListItem

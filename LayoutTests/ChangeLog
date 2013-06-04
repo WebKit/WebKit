@@ -1,3 +1,13 @@
+2013-06-04  Kent Tamura  <tkent@chromium.org>
+
+        Fix an assertion failure in Range::textNodeSplit by Text::splitText
+        https://bugs.webkit.org/show_bug.cgi?id=116509
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/Range/split-text-in-range-expected.txt: Added.
+        * fast/dom/Range/split-text-in-range.html: Added.
+
 2013-06-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [JSC] Test262 15.5.4.9_3 test is failing

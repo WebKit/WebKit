@@ -27,6 +27,7 @@
 #include "NodeRenderingContext.h"
 #include "RenderCombineText.h"
 #include "RenderText.h"
+#include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
 
 #if ENABLE(SVG)
@@ -64,6 +65,7 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
         return 0;
     }
 
+    EventQueueScope scope;
     String oldStr = data();
     RefPtr<Text> newText = virtualCreate(oldStr.substring(offset));
     setDataWithoutUpdate(oldStr.substring(0, offset));
