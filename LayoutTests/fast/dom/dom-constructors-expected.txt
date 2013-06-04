@@ -117,11 +117,11 @@ PASS TryAllocate('History') is 'exception'
 PASS TryAllocate('HTMLOptionsCollection') is 'exception'
 PASS TryAllocate('Location') is 'exception'
 PASS TryAllocate('Navigator') is 'exception'
-FAIL TryAllocate('NodeIterator') should be exception. Was no constructor.
+PASS TryAllocate('NodeIterator') is 'exception'
 PASS TryAllocate('RGBColor') is 'exception'
 PASS TryAllocate('Screen') is 'exception'
 FAIL TryAllocate('TreeWalker') should be exception. Was no constructor.
-FAIL TryAllocate('XPathExpression') should be exception. Was no constructor.
+PASS TryAllocate('XPathExpression') is 'exception'
 PASS TryAllocate('Worker') is 'exception'
 PASS TryAllocate('EventTargetNode') is 'no constructor'
 PASS TryAllocate('UndetectableHTMLCollection') is 'no constructor'
