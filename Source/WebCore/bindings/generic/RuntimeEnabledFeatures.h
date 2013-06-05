@@ -79,6 +79,14 @@ public:
     static bool cssExclusionsEnabled() { return false; }
 #endif
 
+#if ENABLE(CSS_SHAPES)
+    static void setCSSShapesEnabled(bool isEnabled) { isCSSShapesEnabled = isEnabled; }
+    static bool cssShapesEnabled() { return isCSSShapesEnabled; }
+#else
+    static void setCSSShapesEnabled(bool) { }
+    static bool cssShapesEnabled() { return false; }
+#endif
+
 #if ENABLE(CSS_REGIONS)
     static void setCSSRegionsEnabled(bool isEnabled) { isCSSRegionsEnabled = isEnabled; }
     static bool cssRegionsEnabled() { return isCSSRegionsEnabled; }
@@ -316,6 +324,7 @@ private:
     static bool isSpeechInputEnabled;
     static bool isCanvasPathEnabled;
     static bool isCSSExclusionsEnabled;
+    static bool isCSSShapesEnabled;
     static bool isCSSRegionsEnabled;
     static bool isCSSCompositingEnabled;
     WEBCORE_TESTING static bool isLangAttributeAwareFormControlUIEnabled;

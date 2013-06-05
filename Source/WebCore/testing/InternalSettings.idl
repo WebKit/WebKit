@@ -44,6 +44,7 @@
     void setTextAutosizingFontScaleFactor(float fontScaleFactor) raises(DOMException);
     void setMediaTypeOverride(DOMString mediaTypeOverride) raises(DOMException);
     void setCSSExclusionsEnabled(boolean enabled) raises(DOMException);
+    void setCSSShapesEnabled(boolean enabled) raises(DOMException);
     void setCSSVariablesEnabled(boolean enabled) raises(DOMException);
     boolean cssVariablesEnabled() raises(DOMException);
     void setCanStartMedia(boolean enabled) raises(DOMException);

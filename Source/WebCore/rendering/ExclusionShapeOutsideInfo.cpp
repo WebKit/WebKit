@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 
 #include "ExclusionShapeOutsideInfo.h"
 

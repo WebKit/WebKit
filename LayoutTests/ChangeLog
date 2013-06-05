@@ -1,3 +1,131 @@
+2013-06-05  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
+        https://bugs.webkit.org/show_bug.cgi?id=117172
+
+        Reviewed by Alexandru Chiculita.
+
+        Adjusting the shape inside tests to use the new setCSSShapesEnabled method, rather
+        than the older setCSSExclusionsEnabled method.
+
+        * fast/exclusions/css-exclusions-disabled.html:
+        * fast/exclusions/parsing/script-tests/parsing-shape-inside.js:
+        * fast/exclusions/parsing/script-tests/parsing-shape-lengths.js:
+        * fast/exclusions/parsing/script-tests/parsing-shape-margin.js:
+        * fast/exclusions/parsing/script-tests/parsing-shape-outside.js:
+        * fast/exclusions/parsing/script-tests/parsing-shape-padding.js:
+        * fast/exclusions/resources/multi-segment-polygon.js:
+        (generatePolygon):
+        * fast/exclusions/resources/simple-polygon.js:
+        * fast/exclusions/resources/simple-rectangle.js:
+        * fast/exclusions/shape-inside/shape-inside-animation.html:
+        * fast/exclusions/shape-inside/shape-inside-bottom-edge.html:
+        * fast/exclusions/shape-inside/shape-inside-box-sizing.html:
+        * fast/exclusions/shape-inside/shape-inside-circle-padding.html:
+        * fast/exclusions/shape-inside/shape-inside-circle.html:
+        * fast/exclusions/shape-inside/shape-inside-coincident-vertices-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-coincident-vertices.html:
+        * fast/exclusions/shape-inside/shape-inside-collinear-vertices-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-collinear-vertices.html:
+        * fast/exclusions/shape-inside/shape-inside-counterclockwise-polygon-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-counterclockwise-polygon.html:
+        * fast/exclusions/shape-inside/shape-inside-dynamic-nested-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-dynamic-nested.html:
+        * fast/exclusions/shape-inside/shape-inside-dynamic-shape.html:
+        * fast/exclusions/shape-inside/shape-inside-dynamic-text.html:
+        * fast/exclusions/shape-inside/shape-inside-ellipse-padding.html:
+        * fast/exclusions/shape-inside/shape-inside-ellipse.html:
+        * fast/exclusions/shape-inside/shape-inside-empty-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-empty.html:
+        * fast/exclusions/shape-inside/shape-inside-first-fit-001.html:
+        * fast/exclusions/shape-inside/shape-inside-first-fit-002.html:
+        * fast/exclusions/shape-inside/shape-inside-first-fit-003.html:
+        * fast/exclusions/shape-inside/shape-inside-first-fit-004-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-first-fit-004.html:
+        * fast/exclusions/shape-inside/shape-inside-first-fit-reflex.html:
+        * fast/exclusions/shape-inside/shape-inside-inline-elements.html:
+        * fast/exclusions/shape-inside/shape-inside-multiple-blocks-vertical.html:
+        * fast/exclusions/shape-inside/shape-inside-multiple-blocks.html:
+        * fast/exclusions/shape-inside/shape-inside-on-nested-container-with-unresolved-height.html:
+        * fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions.html:
+        * fast/exclusions/shape-inside/shape-inside-overflow.html:
+        * fast/exclusions/shape-inside/shape-inside-partial-fill-001.html:
+        * fast/exclusions/shape-inside/shape-inside-partial-fill-002.html:
+        * fast/exclusions/shape-inside/shape-inside-percentage-auto.html:
+        * fast/exclusions/shape-inside/shape-inside-percentage.html:
+        * fast/exclusions/shape-inside/shape-inside-polygon-layout.html:
+        * fast/exclusions/shape-inside/shape-inside-polygon-padding-001.html:
+        * fast/exclusions/shape-inside/shape-inside-polygon-padding-002.html:
+        * fast/exclusions/shape-inside/shape-inside-polygon-padding-003.html:
+        * fast/exclusions/shape-inside/shape-inside-polygon-rectangle.html:
+        * fast/exclusions/shape-inside/shape-inside-polygon-zoom.html:
+        * fast/exclusions/shape-inside/shape-inside-rectangle-padding.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-001-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-001.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-002-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-002.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-003-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-003.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-004-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-004.html:
+        * fast/exclusions/shape-inside/shape-inside-regular-polygon16-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-regular-polygon16.html:
+        * fast/exclusions/shape-inside/shape-inside-regular-polygon8-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-regular-polygon8.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-001.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-001-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-001.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-002-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-002.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-003-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-003.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-padding.html:
+        * fast/exclusions/shape-inside/shape-inside-shape-logical-top.html:
+        * fast/exclusions/shape-inside/shape-inside-sibling-block-dimension-change-needs-relayout-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-sibling-block-dimension-change-needs-relayout.html:
+        * fast/exclusions/shape-inside/shape-inside-text.html:
+        * fast/exclusions/shape-inside/shape-inside-vertical-text.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-bottom.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-left-margin-polygon.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-margin-is-ignored.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-non-zero-y.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-overflow-hidden.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-overhang.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-positioning.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-right-margin-polygon.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-inset-rectangle-percentage.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-inset-rectangle.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-polygon.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-percentage.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-inset-rectangle.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-001.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-002.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-003.html:
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-stacked.html:
+        * fast/regions/shape-inside/shape-inside-on-additional-regions.html:
+        * fast/regions/shape-inside/shape-inside-on-first-region-block-content.html:
+        * fast/regions/shape-inside/shape-inside-on-first-region-inline-content-expected.html:
+        * fast/regions/shape-inside/shape-inside-on-first-region-inline-content.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-basic-overflow-shape-top-offset.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-expected.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-basic-overflow-shape-top-offset.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-overflow-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content.html:
+        * fast/regions/shape-inside/shape-inside-on-regions.html:
+        * fast/regions/shape-inside/shape-inside-on-second-region-block-content.html:
+        * fast/regions/shape-inside/shape-inside-on-second-region-inline-content.html:
+        * fast/regions/shape-inside/shape-inside-recursive-layout.html:
+        * fast/regions/shape-inside/shape-inside-with-region-borders.html:
+        * fast/regions/shape-inside/shape-inside-with-region-padding.html:
+
 2013-06-05  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebaselining after r151205.

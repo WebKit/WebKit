@@ -30,7 +30,7 @@
 #include "config.h"
 #include "ExclusionShapeInsideInfo.h"
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 
 #include "InlineIterator.h"
 #include "RenderBlock.h"

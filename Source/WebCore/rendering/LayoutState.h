@@ -38,7 +38,7 @@ class RenderBlock;
 class RenderBox;
 class RenderObject;
 class RenderFlowThread;
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 class ExclusionShapeInsideInfo;
 #endif
 
@@ -56,7 +56,7 @@ public:
         , m_columnInfo(0)
         , m_lineGrid(0)
         , m_next(0)
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         , m_exclusionShapeInsideInfo(0)
 #endif
         , m_pageLogicalHeight(0)
@@ -98,7 +98,7 @@ public:
 
     bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const { return m_exclusionShapeInsideInfo; }
 #endif
 private:

@@ -65,7 +65,7 @@
 #include "WebKitFontFamilyNames.h"
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 #include "ExclusionShapeValue.h"
 #endif
 
@@ -338,7 +338,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitPerspectiveOrigin,
     CSSPropertyWebkitPrintColorAdjust,
     CSSPropertyWebkitRtlOrdering,
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeInside,
     CSSPropertyWebkitShapeOutside,
 #endif
@@ -379,9 +379,11 @@ static const CSSPropertyID computedProperties[] = {
 #endif
 #if ENABLE(CSS_EXCLUSIONS)
     CSSPropertyWebkitWrapFlow,
+    CSSPropertyWebkitWrapThrough,
+#endif
+#if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeMargin,
     CSSPropertyWebkitShapePadding,
-    CSSPropertyWebkitWrapThrough,
 #endif
 #if ENABLE(SVG)
     CSSPropertyBufferedRendering,
@@ -2686,6 +2688,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 #if ENABLE(CSS_EXCLUSIONS)
         case CSSPropertyWebkitWrapFlow:
             return cssValuePool().createValue(style->wrapFlow());
+        case CSSPropertyWebkitWrapThrough:
+            return cssValuePool().createValue(style->wrapThrough());
+#endif
+#if ENABLE(CSS_SHAPES)
         case CSSPropertyWebkitShapeMargin:
             return cssValuePool().createValue(style->shapeMargin());
         case CSSPropertyWebkitShapePadding:
@@ -2712,8 +2718,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             }
             ASSERT(style->shapeOutside()->type() == ExclusionShapeValue::Shape);
             return valueForBasicShape(style->shapeOutside()->shape());
-        case CSSPropertyWebkitWrapThrough:
-            return cssValuePool().createValue(style->wrapThrough());
 #endif
 #if ENABLE(CSS_FILTERS)
         case CSSPropertyWebkitFilter:

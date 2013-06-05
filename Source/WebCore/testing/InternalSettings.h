@@ -51,6 +51,7 @@ public:
         void restoreTo(Settings*);
 
         bool m_originalCSSExclusionsEnabled;
+        bool m_originalCSSShapesEnabled;
         bool m_originalCSSVariablesEnabled;
 #if ENABLE(SHADOW_DOM)
         bool m_originalShadowDOMEnabled;
@@ -113,6 +114,7 @@ public:
     void setTextAutosizingFontScaleFactor(float fontScaleFactor, ExceptionCode&);
     void setMediaTypeOverride(const String& mediaType, ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
+    void setCSSShapesEnabled(bool enabled, ExceptionCode&);
     void setCSSVariablesEnabled(bool enabled, ExceptionCode&);
     bool cssVariablesEnabled(ExceptionCode&);
     void setCanStartMedia(bool, ExceptionCode&);

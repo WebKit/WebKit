@@ -34,7 +34,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/ListHashSet.h>
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 #include "ExclusionShapeInsideInfo.h"
 #include "ExclusionShapeValue.h"
 #endif
@@ -54,7 +54,7 @@ struct BidiRun;
 struct PaintInfo;
 class LineInfo;
 class RenderRubyRun;
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 class BasicShape;
 #endif
 class TextLayout;
@@ -445,7 +445,7 @@ public:
     void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0) const;
 #endif
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     ExclusionShapeInsideInfo* ensureExclusionShapeInsideInfo()
     {
         if (!m_rareData || !m_rareData->m_shapeInsideInfo)
@@ -584,7 +584,7 @@ protected:
     virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
 
 private:
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     void computeExclusionShapeSize();
     void updateExclusionShapeInsideInfoAfterStyleChange(const ExclusionShapeValue*, const ExclusionShapeValue* oldExclusionShape);
 #endif
@@ -788,7 +788,7 @@ private:
 
     LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         ExclusionShapeOutsideInfo *shapeOutside = child->renderer()->exclusionShapeOutsideInfo();
         if (shapeOutside)
             return child->x();
@@ -802,7 +802,7 @@ private:
         
     LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         ExclusionShapeOutsideInfo *shapeOutside = child->renderer()->exclusionShapeOutsideInfo();
         if (shapeOutside)
             return child->y();
@@ -1083,7 +1083,7 @@ private:
     RootInlineBox* createLineBoxesFromBidiRuns(BidiRunList<BidiRun>&, const InlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun, WordMeasurements&);
     void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
     void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines);
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     void updateLineBoundariesForExclusions(ExclusionShapeInsideInfo*, LayoutUnit&, LineLayoutState&, bool&);
     bool adjustLogicalLineTopAndLogicalHeightIfNeeded(ExclusionShapeInsideInfo*, LayoutUnit, LineLayoutState&, InlineBidiResolver&, FloatingObject*, InlineIterator&, WordMeasurements&);
 #endif
@@ -1171,7 +1171,7 @@ protected:
             , m_highValue(highValue)
             , m_offset(offset)
             , m_heightRemaining(heightRemaining)
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
             , m_last(0)
 #endif
         {
@@ -1181,7 +1181,7 @@ protected:
         inline int highValue() const { return m_highValue; }
         void collectIfNeeded(const IntervalType&) const;
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         // When computing the offset caused by the floats on a given line, if
         // the outermost float on that line has a shape-outside, the inline
         // content that butts up against that float must be positioned using
@@ -1197,7 +1197,7 @@ protected:
         int m_highValue;
         LayoutUnit& m_offset;
         LayoutUnit* m_heightRemaining;
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         // This member variable is mutable because the collectIfNeeded method
         // is declared as const, even though it doesn't actually respect that
         // contract. It modifies other member variables via loopholes in the
@@ -1291,7 +1291,7 @@ public:
         RootInlineBox* m_lineGridBox;
 
         RootInlineBox* m_lineBreakToAvoidWidow;
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         OwnPtr<ExclusionShapeInsideInfo> m_shapeInsideInfo;
 #endif
         bool m_shouldBreakAtLineToAvoidWidow : 1;

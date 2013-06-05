@@ -545,7 +545,7 @@ public:
     bool hasPaintOffset() const
     {
         bool positioned = isInFlowPositioned();
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         // Shape outside on a float can reposition the float in much the
         // same way as relative positioning, so treat it as such.
         positioned = positioned || isFloatingWithShapeOutside();

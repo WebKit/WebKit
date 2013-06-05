@@ -1,3 +1,97 @@
+2013-06-05  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
+        https://bugs.webkit.org/show_bug.cgi?id=117172
+
+        Reviewed by Alexandru Chiculita.
+
+        This patch adds a new compile and runtime flag for the CSS Shapes feature, which
+        has split off from the previous CSS Exclusions and Shapes specification. The
+        specifications are available here:
+        http://dev.w3.org/csswg/css-exclusions/
+        http://dev.w3.org/csswg/css-shapes/
+
+        The changes introduce a new CSS_SHAPES compile flag, and a new cssShapesEnabled
+        runtime flag. In general, the code changes are simple renames.
+
+        Refactoring, no new tests.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setCSSShapesEnabled):
+        (WebCore::RuntimeEnabledFeatures::cssShapesEnabled):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::loadPendingImages):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimation::ensurePropertyMap):
+        * rendering/BidiRun.h:
+        (WebCore::BidiRun::BidiRun):
+        * rendering/ExclusionShapeInfo.cpp:
+        * rendering/ExclusionShapeInfo.h:
+        * rendering/ExclusionShapeInsideInfo.cpp:
+        * rendering/ExclusionShapeInsideInfo.h:
+        * rendering/ExclusionShapeOutsideInfo.cpp:
+        * rendering/ExclusionShapeOutsideInfo.h:
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::exclusionInfoRequiresRelayout):
+        (WebCore::RenderBlock::updateRegionsAndExclusionsBeforeChildLayout):
+        (WebCore::RenderBlock::updateRegionsAndExclusionsAfterChildLayout):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::computeLogicalLocationForFloat):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::::collectIfNeeded):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::xPositionForFloatIncludingMargin):
+        (WebCore::RenderBlock::yPositionForFloatIncludingMargin):
+        (WebCore::RenderBlock::FloatIntervalSearchAdapter::FloatIntervalSearchAdapter):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::LineWidth):
+        (WebCore::LineWidth::updateAvailableWidth):
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::computeExpansionForJustifiedText):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForSegment):
+        (WebCore::constructBidiRunsForLine):
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintOffset):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasPaintOffset):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pushLayoutState):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setCSSShapesEnabled):
+
 2013-06-05  Oliver Hunt  <oliver@apple.com>
 
         Don't throttle timers if a page is doing something that might be interesting

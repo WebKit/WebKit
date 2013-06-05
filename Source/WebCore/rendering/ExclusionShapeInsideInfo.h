@@ -30,7 +30,7 @@
 #ifndef ExclusionShapeInsideInfo_h
 #define ExclusionShapeInsideInfo_h
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 
 #include "ExclusionShapeInfo.h"
 #include <wtf/PassOwnPtr.h>

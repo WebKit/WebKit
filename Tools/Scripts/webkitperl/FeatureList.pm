@@ -63,6 +63,7 @@ my (
     $cssImageSetSupport,
     $cssRegionsSupport,
     $cssShadersSupport,
+    $cssShapesSupport,
     $cssStickyPositionSupport,
     $cssCompositingSupport,
     $cssAnimationsTransformsUnprefixedSupport,
@@ -186,6 +187,9 @@ my @features = (
 
     { option => "css-exclusions", desc => "Toggle CSS Exclusions support",
       define => "ENABLE_CSS_EXCLUSIONS", default => 1, value => \$cssExclusionsSupport },
+
+    { option => "css-shapes", desc => "Toggle CSS Shapes support",
+      define => "ENABLE_CSS_SHAPES", default => 1, value => \$cssShapesSupport },
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => isAppleWebKit() || isBlackBerry(), value => \$cssFiltersSupport },

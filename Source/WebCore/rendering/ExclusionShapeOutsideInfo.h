@@ -30,7 +30,7 @@
 #ifndef ExclusionShapeOutsideInfo_h
 #define ExclusionShapeOutsideInfo_h
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 
 #include "ExclusionShapeInfo.h"
 #include "LayoutSize.h"

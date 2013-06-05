@@ -463,7 +463,7 @@ public:
     bool hasPaintOffset() const
     {
         bool paintOffset = hasInFlowPosition();
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         paintOffset = paintOffset || (isFloating() && shapeOutside());
 #endif
         return paintOffset;

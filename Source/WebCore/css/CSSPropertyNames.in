@@ -420,11 +420,13 @@ z-index
 -webkit-region-break-before
 -webkit-region-break-inside
 #endif
-#if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
+#if defined(ENABLE_CSS_SHAPES) && ENABLE_CSS_SHAPES
 -webkit-shape-inside
 -webkit-shape-outside
 -webkit-shape-margin
 -webkit-shape-padding
+#endif
+#if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
 -webkit-wrap-flow
 -webkit-wrap-through
 #endif

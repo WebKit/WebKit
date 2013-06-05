@@ -1,3 +1,15 @@
+2013-06-05  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
+        https://bugs.webkit.org/show_bug.cgi?id=117172
+
+        Reviewed by Alexandru Chiculita.
+
+        Adding the CSS_SHAPES compile flag.
+
+        * win/tools32/vsprops/FeatureDefines.vsprops:
+        * win/tools32/vsprops/FeatureDefinesCairo.vsprops:
+
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Some AppleWin VS2010 house cleaning.

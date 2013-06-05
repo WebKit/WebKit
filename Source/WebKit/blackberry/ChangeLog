@@ -1,3 +1,14 @@
+2013-06-05  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
+        https://bugs.webkit.org/show_bug.cgi?id=117172
+
+        Reviewed by Alexandru Chiculita.
+
+        Adding the CSS_SHAPES compile flag.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+
 2013-06-05  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Deleting the pendingSelectionCandidate on the wrong thread causes an assert.

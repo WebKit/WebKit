@@ -66,7 +66,7 @@
 #include "ShadowRoot.h"
 #include "TransformState.h"
 #include <wtf/StdLibExtras.h>
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 #include "ExclusionShapeInsideInfo.h"
 #include "ExclusionShapeOutsideInfo.h"
 #endif
@@ -362,7 +362,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     
     RenderStyle* newStyle = style();
     
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     // FIXME: Bug 89993: Style changes should affect the ExclusionShapeInsideInfos for other render blocks that
     // share the same ExclusionShapeInsideInfo
     updateExclusionShapeInsideInfoAfterStyleChange(newStyle->resolvedShapeInside(), oldStyle ? oldStyle->resolvedShapeInside() : 0);
@@ -1439,7 +1439,7 @@ void RenderBlock::layout()
     invalidateBackgroundObscurationStatus();
 }
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const ExclusionShapeValue* shapeInside, const ExclusionShapeValue* oldShapeInside)
 {
     // FIXME: A future optimization would do a deep comparison for equality.
@@ -1474,7 +1474,7 @@ void RenderBlock::markShapeInsideDescendantsForLayout()
 
 static inline bool exclusionInfoRequiresRelayout(const RenderBlock* block)
 {
-#if !ENABLE(CSS_EXCLUSIONS)
+#if !ENABLE(CSS_SHAPES)
     return false;
 #else
     ExclusionShapeInsideInfo* info = block->exclusionShapeInsideInfo();
@@ -1488,7 +1488,7 @@ static inline bool exclusionInfoRequiresRelayout(const RenderBlock* block)
 
 bool RenderBlock::updateRegionsAndExclusionsBeforeChildLayout(RenderFlowThread* flowThread)
 {
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     if (!flowThread && !exclusionShapeInsideInfo())
 #else
     if (!flowThread)
@@ -1503,7 +1503,7 @@ bool RenderBlock::updateRegionsAndExclusionsBeforeChildLayout(RenderFlowThread* 
     setLogicalHeight(LayoutUnit::max() / 2);
     updateLogicalHeight();
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     computeExclusionShapeSize();
 #endif
 
@@ -1517,7 +1517,7 @@ bool RenderBlock::updateRegionsAndExclusionsBeforeChildLayout(RenderFlowThread* 
     return exclusionInfoRequiresRelayout(this);
 }
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
 void RenderBlock::computeExclusionShapeSize()
 {
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo = this->exclusionShapeInsideInfo();
@@ -1530,7 +1530,7 @@ void RenderBlock::computeExclusionShapeSize()
 
 void RenderBlock::updateRegionsAndExclusionsAfterChildLayout(RenderFlowThread* flowThread, bool heightChanged)
 {
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     // A previous sibling has changed dimension, so we need to relayout the shape with the content
     ExclusionShapeInsideInfo* shapeInsideInfo = layoutExclusionShapeInsideInfo();
     if (heightChanged && shapeInsideInfo)
@@ -4010,7 +4010,7 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
         o->computeAndSetBlockDirectionMargins(this);
     }
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     ExclusionShapeOutsideInfo* shapeOutside = o->exclusionShapeOutsideInfo();
     if (shapeOutside) {
         shapeOutside->setShapeSize(o->logicalWidth(), o->logicalHeight());
@@ -4090,7 +4090,7 @@ LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* fl
     RenderBox* childBox = floatingObject->renderer();
     LayoutUnit logicalLeftOffset = logicalLeftOffsetForContent(logicalTopOffset); // Constant part of left offset.
     LayoutUnit logicalRightOffset; // Constant part of right offset.
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     // FIXME Bug 102948: This only works for shape outside directly set on this block.
     ExclusionShapeInsideInfo* shapeInsideInfo = exclusionShapeInsideInfo();
     // FIXME Bug 102846: Take into account the height of the content. The offset should be
@@ -4246,7 +4246,7 @@ bool RenderBlock::positionNewFloats()
         }
 
         setLogicalTopForFloat(floatingObject, floatLogicalLocation.y());
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         if (childBox->exclusionShapeOutsideInfo())
             setLogicalHeightForFloat(floatingObject, childBox->exclusionShapeOutsideInfo()->shapeLogicalHeight());
         else
@@ -4386,7 +4386,7 @@ inline void RenderBlock::FloatIntervalSearchAdapter<FloatTypeValue>::collectIfNe
             *m_heightRemaining = m_renderer->logicalBottomForFloat(r) - m_lowValue;
     }
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     m_last = r;
 #endif
 }
@@ -4431,7 +4431,7 @@ LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUn
         FloatIntervalSearchAdapter<FloatingObject::FloatLeft> adapter(this, roundToInt(logicalTop), roundToInt(logicalTop + logicalHeight), left, heightRemaining);
         m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         const FloatingObject* lastFloat = adapter.lastFloat();
         if (offsetMode == ShapeOutsideFloatShapeOffset && lastFloat) {
             if (ExclusionShapeOutsideInfo* shapeOutside = lastFloat->renderer()->exclusionShapeOutsideInfo()) {
@@ -4489,7 +4489,7 @@ LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutU
         FloatIntervalSearchAdapter<FloatingObject::FloatRight> adapter(this, roundToInt(logicalTop), roundToInt(logicalTop + logicalHeight), rightFloatOffset, heightRemaining);
         m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
 
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
         const FloatingObject* lastFloat = adapter.lastFloat();
         if (offsetMode == ShapeOutsideFloatShapeOffset && lastFloat) {
             if (ExclusionShapeOutsideInfo* shapeOutside = lastFloat->renderer()->exclusionShapeOutsideInfo()) {

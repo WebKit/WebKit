@@ -1,3 +1,17 @@
+2013-06-05  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
+        https://bugs.webkit.org/show_bug.cgi?id=117172
+
+        Reviewed by Alexandru Chiculita.
+
+        Adding the CSS_SHAPES compile flag.
+
+        * Source/autotools/SetupWebKitFeatures.m4:
+        * Source/autotools/symbols.filter:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2013-06-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Move MemoryInfo under window.internals

@@ -1,3 +1,14 @@
+2013-06-05  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
+        https://bugs.webkit.org/show_bug.cgi?id=117172
+
+        Reviewed by Alexandru Chiculita.
+
+        Adding the CSS_SHAPES compile flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-06-01  Andreas Kling  <akling@apple.com>
 
         Remove unnused WebDOMNodeOperationsInternal category.

@@ -67,6 +67,7 @@ namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings* settings)
     : m_originalCSSExclusionsEnabled(RuntimeEnabledFeatures::cssExclusionsEnabled())
+    , m_originalCSSShapesEnabled(RuntimeEnabledFeatures::cssShapesEnabled())
     , m_originalCSSVariablesEnabled(settings->cssVariablesEnabled())
 #if ENABLE(SHADOW_DOM)
     , m_originalShadowDOMEnabled(RuntimeEnabledFeatures::shadowDOMEnabled())
@@ -104,6 +105,7 @@ InternalSettings::Backup::Backup(Settings* settings)
 void InternalSettings::Backup::restoreTo(Settings* settings)
 {
     RuntimeEnabledFeatures::setCSSExclusionsEnabled(m_originalCSSExclusionsEnabled);
+    RuntimeEnabledFeatures::setCSSShapesEnabled(m_originalCSSShapesEnabled);
     settings->setCSSVariablesEnabled(m_originalCSSVariablesEnabled);
 #if ENABLE(SHADOW_DOM)
     RuntimeEnabledFeatures::setShadowDOMEnabled(m_originalShadowDOMEnabled);
@@ -349,6 +351,12 @@ void InternalSettings::setCSSExclusionsEnabled(bool enabled, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     RuntimeEnabledFeatures::setCSSExclusionsEnabled(enabled);
+}
+
+void InternalSettings::setCSSShapesEnabled(bool enabled, ExceptionCode& ec)
+{
+    UNUSED_PARAM(ec);
+    RuntimeEnabledFeatures::setCSSShapesEnabled(enabled);
 }
 
 void InternalSettings::setCSSVariablesEnabled(bool enabled, ExceptionCode& ec)
