@@ -123,7 +123,7 @@ protected:
     MediaPlayer::ReadyState m_readyState;
     MediaPlayer::NetworkState m_networkState;
     IntSize m_size;
-    GMutex m_bufferMutex;
+    GMutex* m_bufferMutex;
     GstBuffer* m_buffer;
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     RefPtr<GStreamerGWorld> m_gstGWorld;
