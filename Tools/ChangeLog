@@ -1,3 +1,11 @@
+2013-06-05  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Unreviewed name fix after r150662
+
+        My firstname got duplicated when fixing bug 116737.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-06-05  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Use WEBKITOUTPUTDIR if WEBKIT_OUTPUTDIR is not present.
