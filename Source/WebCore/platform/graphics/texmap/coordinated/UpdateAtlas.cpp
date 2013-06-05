@@ -23,6 +23,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "CoordinatedGraphicsState.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include <wtf/MathExtras.h>
@@ -38,9 +39,7 @@ UpdateAtlas::UpdateAtlas(UpdateAtlasClient* client, int dimension, CoordinatedSu
     IntSize size = nextPowerOfTwo(IntSize(dimension, dimension));
     m_surface = CoordinatedSurface::create(size, flags);
 
-    // FIXME: Currently, if sending the message fails, UpdateAtlas gives up drawing anything implicitly.
-    if (!m_client->createUpdateAtlas(m_ID, m_surface))
-        m_surface.clear();
+    m_client->createUpdateAtlas(m_ID, m_surface);
 }
 
 UpdateAtlas::~UpdateAtlas()

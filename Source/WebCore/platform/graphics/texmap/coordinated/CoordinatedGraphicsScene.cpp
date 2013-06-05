@@ -243,6 +243,15 @@ void CoordinatedGraphicsScene::setLayerFiltersIfNeeded(TextureMapperLayer* layer
 #endif
 
 #if ENABLE(CSS_SHADERS)
+void CoordinatedGraphicsScene::syncCustomFilterPrograms(const CoordinatedGraphicsState& state)
+{
+    for (size_t i = 0; i < state.customFiltersToCreate.size(); ++i)
+        createCustomFilterProgram(state.customFiltersToCreate[i].first, state.customFiltersToCreate[i].second);
+
+    for (size_t i = 0; i < state.customFiltersToRemove.size(); ++i)
+        removeCustomFilterProgram(state.customFiltersToRemove[i]);
+}
+
 void CoordinatedGraphicsScene::injectCachedCustomFilterPrograms(const FilterOperations& filters) const
 {
     for (size_t i = 0; i < filters.size(); ++i) {
@@ -496,6 +505,15 @@ void CoordinatedGraphicsScene::updateTilesIfNeeded(TextureMapperLayer* layer, co
     }
 }
 
+void CoordinatedGraphicsScene::syncUpdateAtlases(const CoordinatedGraphicsState& state)
+{
+    for (size_t i = 0; i < state.updateAtlasesToCreate.size(); ++i)
+        createUpdateAtlas(state.updateAtlasesToCreate[i].first, state.updateAtlasesToCreate[i].second);
+
+    for (size_t i = 0; i < state.updateAtlasesToRemove.size(); ++i)
+        removeUpdateAtlas(state.updateAtlasesToRemove[i]);
+}
+
 void CoordinatedGraphicsScene::createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface> surface)
 {
     ASSERT(!m_surfaces.contains(atlasID));
@@ -506,6 +524,21 @@ void CoordinatedGraphicsScene::removeUpdateAtlas(uint32_t atlasID)
 {
     ASSERT(m_surfaces.contains(atlasID));
     m_surfaces.remove(atlasID);
+}
+
+void CoordinatedGraphicsScene::syncImageBackings(const CoordinatedGraphicsState& state)
+{
+    for (size_t i = 0; i < state.imagesToCreate.size(); ++i)
+        createImageBacking(state.imagesToCreate[i]);
+
+    for (size_t i = 0; i < state.imagesToRemove.size(); ++i)
+        removeImageBacking(state.imagesToRemove[i]);
+
+    for (size_t i = 0; i < state.imagesToUpdate.size(); ++i)
+        updateImageBacking(state.imagesToUpdate[i].first, state.imagesToUpdate[i].second);
+
+    for (size_t i = 0; i < state.imagesToClear.size(); ++i)
+        clearImageBackingContents(state.imagesToClear[i]);
 }
 
 void CoordinatedGraphicsScene::createImageBacking(CoordinatedImageBackingID imageID)
@@ -584,11 +617,17 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
 {
     m_renderedContentsScrollPosition = state.scrollPosition;
 
+    createLayers(state.layersToCreate);
+    deleteLayers(state.layersToRemove);
+
     if (state.rootCompositingLayer != m_rootLayerID)
         setRootLayerID(state.rootCompositingLayer);
 
-    for (size_t i = 0; i < state.imagesToUpdate.size(); ++i)
-        updateImageBacking(state.imagesToUpdate[i].first, state.imagesToUpdate[i].second);
+    syncImageBackings(state);
+    syncUpdateAtlases(state);
+#if ENABLE(CSS_SHADERS)
+    syncCustomFilterPrograms(state);
+#endif
 
     for (size_t i = 0; i < state.layersToUpdate.size(); ++i)
         setLayerState(state.layersToUpdate[i].first, state.layersToUpdate[i].second);

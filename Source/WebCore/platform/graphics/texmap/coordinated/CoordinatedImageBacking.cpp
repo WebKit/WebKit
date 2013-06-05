@@ -28,6 +28,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedImageBacking.h"
 
+#include "CoordinatedGraphicsState.h"
 #include "GraphicsContext.h"
 
 namespace WebCore {
@@ -113,9 +114,8 @@ void CoordinatedImageBacking::update()
 
     m_nativeImagePtr = m_image->nativeImageForCurrentFrame();
 
-    // If sending the message fails, try again in the next update.
-    bool success = m_coordinator->updateImageBacking(id(), m_surface);
-    m_isDirty = !success;
+    m_coordinator->updateImageBacking(id(), m_surface);
+    m_isDirty = false;
 }
 
 void CoordinatedImageBacking::releaseSurfaceIfNeeded()

@@ -1,5 +1,6 @@
 #
 #    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+#    Copyright (C) 2013 Company 100, Inc.
 #
 #    This library is free software; you can redistribute it and/or
 #    modify it under the terms of the GNU Library General Public
@@ -21,20 +22,6 @@
 messages -> CoordinatedLayerTreeHostProxy {
 
     CommitCoordinatedGraphicsState(WebCore::CoordinatedGraphicsState state)
-
-    CreateCompositingLayers(Vector<uint32_t> ids)
-    DeleteCompositingLayers(Vector<uint32_t> ids)
-
-#if ENABLE(CSS_SHADERS)
-    CreateCustomFilterProgram(int id, WebCore::CustomFilterProgramInfo programInfo)
-    RemoveCustomFilterProgram(int id)
-#endif
-    CreateUpdateAtlas(uint32_t atlasID, WebKit::WebCoordinatedSurface::Handle handle)
-    RemoveUpdateAtlas(uint32_t atlasID)
-    CreateImageBacking(uint64_t imageID)
-    UpdateImageBacking(uint64_t imageID, WebKit::WebCoordinatedSurface::Handle handle)
-    ClearImageBackingContents(uint64_t imageID)
-    RemoveImageBacking(uint64_t imageID)
     SetBackgroundColor(WebCore::Color color)
 }
 #endif

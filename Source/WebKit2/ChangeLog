@@ -1,3 +1,48 @@
+2013-06-05  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        [Coordinated Graphics] Unify messages related object's lifecycles into CoordinatedGraphicsState.
+        https://bugs.webkit.org/show_bug.cgi?id=111919
+
+        Reviewed by Noam Rosenthal.
+
+        CoordinatedLayerTreeHostProxy has several methods, which simply passes
+        these calls to CoordinatedGraphicsScene.
+
+        This patch removes methods in CoordinatedLayerTreeHostProxy just for
+        message chaining. Instead of that, messages for creation/deletion of objects
+        (Layers, CustomFilters, UpdateAtlas, and ImageBacking) are unified into
+        CommitCoordinatedGraphicsState.
+
+        And this patch also removes codes for WebCoordinatedSurface in
+        CoordinatedLayerTreeHost, except for a factory method.
+        CoordinatedGraphicsArgumentCoders [en|de]codes CoordinatedSurface itself
+        using WebCoordinatedSurface.
+
+        No new tests, covered by existing tests.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::encodeCoordinatedSurface):
+        (CoreIPC::decodeCoordinatedSurface):
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::flushPendingLayerChanges):
+        (WebKit::CoordinatedLayerTreeHost::clearPendingStateChanges):
+        (WebKit::CoordinatedLayerTreeHost::checkCustomFilterProgramProxies):
+        (WebKit::CoordinatedLayerTreeHost::removeCustomFilterProgramProxy):
+        (WebKit::CoordinatedLayerTreeHost::detachLayer):
+        (WebKit::CoordinatedLayerTreeHost::createImageBacking):
+        (WebKit::CoordinatedLayerTreeHost::updateImageBacking):
+        (WebKit::CoordinatedLayerTreeHost::clearImageBackingContents):
+        (WebKit::CoordinatedLayerTreeHost::removeImageBacking):
+        (WebKit::CoordinatedLayerTreeHost::createGraphicsLayer):
+        (WebKit::CoordinatedLayerTreeHost::createUpdateAtlas):
+        (WebKit::CoordinatedLayerTreeHost::removeUpdateAtlas):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2013-06-04  Simon Cooper  <scooper@apple.com>
 
         Tighten plugin sandbox profiles against symlink attacks

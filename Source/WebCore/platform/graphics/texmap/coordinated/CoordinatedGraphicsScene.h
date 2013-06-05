@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2013 Company 100, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -80,26 +81,13 @@ public:
 
     void commitSceneState(const CoordinatedGraphicsState&);
 
-    void createLayers(const Vector<CoordinatedLayerID>&);
-    void deleteLayers(const Vector<CoordinatedLayerID>&);
-
-#if ENABLE(CSS_SHADERS)
-    void injectCachedCustomFilterPrograms(const FilterOperations& filters) const;
-    void createCustomFilterProgram(int id, const CustomFilterProgramInfo&);
-    void removeCustomFilterProgram(int id);
-#endif
-
-    void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>);
-    void removeUpdateAtlas(uint32_t atlasID);
-    void createImageBacking(CoordinatedImageBackingID);
-    void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>);
-    void clearImageBackingContents(CoordinatedImageBackingID);
-    void removeImageBacking(CoordinatedImageBackingID);
     void setBackgroundColor(const Color&);
     void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
 
 private:
     void setRootLayerID(CoordinatedLayerID);
+    void createLayers(const Vector<CoordinatedLayerID>&);
+    void deleteLayers(const Vector<CoordinatedLayerID>&);
     void setLayerState(CoordinatedLayerID, const CoordinatedGraphicsLayerState&);
     void setLayerChildrenIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
     void updateTilesIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
@@ -115,6 +103,23 @@ private:
     void destroyCanvasIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
 #endif
     void setLayerRepaintCountIfNeeded(TextureMapperLayer*, const CoordinatedGraphicsLayerState&);
+
+    void syncUpdateAtlases(const CoordinatedGraphicsState&);
+    void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>);
+    void removeUpdateAtlas(uint32_t atlasID);
+
+    void syncImageBackings(const CoordinatedGraphicsState&);
+    void createImageBacking(CoordinatedImageBackingID);
+    void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>);
+    void clearImageBackingContents(CoordinatedImageBackingID);
+    void removeImageBacking(CoordinatedImageBackingID);
+
+#if ENABLE(CSS_SHADERS)
+    void syncCustomFilterPrograms(const CoordinatedGraphicsState&);
+    void injectCachedCustomFilterPrograms(const FilterOperations& filters) const;
+    void createCustomFilterProgram(int id, const CustomFilterProgramInfo&);
+    void removeCustomFilterProgram(int id);
+#endif
 
     TextureMapperLayer* layerByID(CoordinatedLayerID id)
     {

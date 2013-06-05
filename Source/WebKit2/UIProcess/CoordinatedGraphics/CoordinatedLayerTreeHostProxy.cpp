@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2013 Company 100, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -62,37 +63,6 @@ void CoordinatedLayerTreeHostProxy::dispatchUpdate(const Function<void()>& funct
     m_scene->appendUpdate(function);
 }
 
-void CoordinatedLayerTreeHostProxy::createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle& handle)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::createUpdateAtlas, m_scene.get(), atlasID, WebCoordinatedSurface::create(handle)));
-}
-
-void CoordinatedLayerTreeHostProxy::removeUpdateAtlas(uint32_t atlasID)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::removeUpdateAtlas, m_scene.get(), atlasID));
-}
-
-void CoordinatedLayerTreeHostProxy::createCompositingLayers(const Vector<CoordinatedLayerID>& ids)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::createLayers, m_scene.get(), ids));
-}
-
-void CoordinatedLayerTreeHostProxy::deleteCompositingLayers(const Vector<CoordinatedLayerID>& ids)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::deleteLayers, m_scene.get(), ids));
-}
-
-#if ENABLE(CSS_SHADERS)
-void CoordinatedLayerTreeHostProxy::removeCustomFilterProgram(int id)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::removeCustomFilterProgram, m_scene.get(), id));
-}
-void CoordinatedLayerTreeHostProxy::createCustomFilterProgram(int id, const CustomFilterProgramInfo& programInfo)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::createCustomFilterProgram, m_scene.get(), id, programInfo));
-}
-#endif
-
 void CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState(const CoordinatedGraphicsState& graphicsState)
 {
     dispatchUpdate(bind(&CoordinatedGraphicsScene::commitSceneState, m_scene.get(), graphicsState));
@@ -100,26 +70,6 @@ void CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState(const Coordin
 #if USE(TILED_BACKING_STORE)
     m_drawingAreaProxy->page()->didRenderFrame(graphicsState.contentsSize, graphicsState.coveredRect);
 #endif
-}
-
-void CoordinatedLayerTreeHostProxy::createImageBacking(CoordinatedImageBackingID imageID)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::createImageBacking, m_scene.get(), imageID));
-}
-
-void CoordinatedLayerTreeHostProxy::updateImageBacking(CoordinatedImageBackingID imageID, const WebCoordinatedSurface::Handle& handle)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::updateImageBacking, m_scene.get(), imageID, WebCoordinatedSurface::create(handle)));
-}
-
-void CoordinatedLayerTreeHostProxy::clearImageBackingContents(CoordinatedImageBackingID imageID)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::clearImageBackingContents, m_scene.get(), imageID));
-}
-
-void CoordinatedLayerTreeHostProxy::removeImageBacking(CoordinatedImageBackingID imageID)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::removeImageBacking, m_scene.get(), imageID));
 }
 
 void CoordinatedLayerTreeHostProxy::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector)

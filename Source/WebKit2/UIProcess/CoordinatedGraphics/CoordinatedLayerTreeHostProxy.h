@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2013 Company 100, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -55,22 +56,7 @@ public:
     explicit CoordinatedLayerTreeHostProxy(DrawingAreaProxy*);
     virtual ~CoordinatedLayerTreeHostProxy();
 
-    // Messages From CoordinatedLayerTreeHost
-    void createCompositingLayers(const Vector<WebCore::CoordinatedLayerID>&);
-    void deleteCompositingLayers(const Vector<WebCore::CoordinatedLayerID>&);
-#if ENABLE(CSS_SHADERS)
-    void createCustomFilterProgram(int id, const WebCore::CustomFilterProgramInfo&);
-    void removeCustomFilterProgram(int id);
-#endif
-    void createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle&);
-    void removeUpdateAtlas(uint32_t atlasID);
-    void createImageBacking(WebCore::CoordinatedImageBackingID);
-    void updateImageBacking(WebCore::CoordinatedImageBackingID, const WebCoordinatedSurface::Handle&);
-    void clearImageBackingContents(WebCore::CoordinatedImageBackingID);
-    void removeImageBacking(WebCore::CoordinatedImageBackingID);
-
     void commitCoordinatedGraphicsState(const WebCore::CoordinatedGraphicsState&);
-    void setAnimationsLocked(bool);
     void setBackgroundColor(const WebCore::Color&);
 
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint& trajectoryVector);

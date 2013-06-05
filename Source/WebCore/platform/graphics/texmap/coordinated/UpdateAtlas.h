@@ -33,7 +33,7 @@ class IntPoint;
 
 class UpdateAtlasClient {
 public:
-    virtual bool createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>) = 0;
+    virtual void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>) = 0;
     virtual void removeUpdateAtlas(uint32_t atlasID) = 0;
 };
 

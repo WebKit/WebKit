@@ -1026,30 +1026,80 @@ bool ArgumentCoder<TileCreationInfo>::decode(ArgumentDecoder& decoder, TileCreat
     return SimpleArgumentCoder<TileCreationInfo>::decode(decoder, updateInfo);
 }
 
+static void encodeCoordinatedSurface(ArgumentEncoder& encoder, const RefPtr<CoordinatedSurface>& surface)
+{
+    bool isValidSurface = false;
+    if (!surface) {
+        encoder << isValidSurface;
+        return;
+    }
+
+    WebCoordinatedSurface* webCoordinatedSurface = static_cast<WebCoordinatedSurface*>(surface.get());
+    WebCoordinatedSurface::Handle handle;
+    if (webCoordinatedSurface->createHandle(handle))
+        isValidSurface = true;
+
+    encoder << isValidSurface;
+
+    if (isValidSurface)
+        encoder << handle;
+}
+
+static bool decodeCoordinatedSurface(ArgumentDecoder& decoder, RefPtr<CoordinatedSurface>& surface)
+{
+    bool isValidSurface;
+    if (!decoder.decode(isValidSurface))
+        return false;
+
+    if (!isValidSurface)
+        return true;
+
+    WebCoordinatedSurface::Handle handle;
+    if (!decoder.decode(handle))
+        return false;
+
+    surface = WebCoordinatedSurface::create(handle);
+    return true;
+}
+
 void ArgumentCoder<CoordinatedGraphicsState>::encode(ArgumentEncoder& encoder, const CoordinatedGraphicsState& state)
 {
     encoder << state.rootCompositingLayer;
     encoder << state.scrollPosition;
     encoder << state.contentsSize;
     encoder << state.coveredRect;
+
+    encoder << state.layersToCreate;
     encoder << state.layersToUpdate;
+    encoder << state.layersToRemove;
+
+    encoder << state.imagesToCreate;
+    encoder << state.imagesToRemove;
 
     // We need to encode WebCoordinatedSurface::Handle right after it's creation.
     // That's why we cannot use simple std::pair encoder.
     encoder << static_cast<uint64_t>(state.imagesToUpdate.size());
-
-    typedef Vector<std::pair<CoordinatedImageBackingID, RefPtr<CoordinatedSurface> > > SurfaceUpdatePairVector;
-    SurfaceUpdatePairVector::const_iterator end = state.imagesToUpdate.end();
-    for (SurfaceUpdatePairVector::const_iterator it = state.imagesToUpdate.begin(); it != end; ++it) {
-
-        WebCoordinatedSurface* webCoordinatedSurface = static_cast<WebCoordinatedSurface*>(it->second.get());
-        WebCoordinatedSurface::Handle handle;
-        if (!webCoordinatedSurface->createHandle(handle))
-            return;
-
-        encoder << it->first;
-        encoder << handle;
+    for (size_t i = 0; i < state.imagesToUpdate.size(); ++i) {
+        encoder << state.imagesToUpdate[i].first;
+        encodeCoordinatedSurface(encoder, state.imagesToUpdate[i].second);
     }
+    encoder << state.imagesToClear;
+
+    encoder << static_cast<uint64_t>(state.updateAtlasesToCreate.size());
+    for (size_t i = 0; i < state.updateAtlasesToCreate.size(); ++i) {
+        encoder << state.updateAtlasesToCreate[i].first;
+        encodeCoordinatedSurface(encoder, state.updateAtlasesToCreate[i].second);
+    }
+    encoder << state.updateAtlasesToRemove;
+
+#if ENABLE(CSS_SHADERS)
+    encoder << static_cast<uint64_t>(state.customFiltersToCreate.size());
+    for (size_t i = 0; i < state.customFiltersToCreate.size(); ++i) {
+        encoder << state.customFiltersToCreate[i].first;
+        encoder << state.customFiltersToCreate[i].second;
+    }
+    encoder << state.customFiltersToRemove;
+#endif
 }
 
 bool ArgumentCoder<CoordinatedGraphicsState>::decode(ArgumentDecoder& decoder, CoordinatedGraphicsState& state)
@@ -1066,25 +1116,77 @@ bool ArgumentCoder<CoordinatedGraphicsState>::decode(ArgumentDecoder& decoder, C
     if (!decoder.decode(state.coveredRect))
         return false;
 
+    if (!decoder.decode(state.layersToCreate))
+        return false;
+
     if (!decoder.decode(state.layersToUpdate))
+        return false;
+
+    if (!decoder.decode(state.layersToRemove))
+        return false;
+
+    if (!decoder.decode(state.imagesToCreate))
+        return false;
+
+    if (!decoder.decode(state.imagesToRemove))
         return false;
 
     uint64_t sizeOfImagesToUpdate;
     if (!decoder.decode(sizeOfImagesToUpdate))
         return false;
 
-    for (uint64_t i = 0; i < sizeOfImagesToUpdate; i++) {
+    for (uint64_t i = 0; i < sizeOfImagesToUpdate; ++i) {
         CoordinatedImageBackingID imageID;
         if (!decoder.decode(imageID))
             return false;
 
-        WebCoordinatedSurface::Handle handle;
-        if (!decoder.decode(handle))
+        RefPtr<CoordinatedSurface> surface;
+        if (!decodeCoordinatedSurface(decoder, surface))
             return false;
 
-        RefPtr<CoordinatedSurface> surface = WebCoordinatedSurface::create(handle);
         state.imagesToUpdate.append(std::make_pair(imageID, surface.release()));
     }
+
+    if (!decoder.decode(state.imagesToClear))
+        return false;
+
+    uint64_t sizeOfUpdateAtlasesToCreate;
+    if (!decoder.decode(sizeOfUpdateAtlasesToCreate))
+        return false;
+
+    for (uint64_t i = 0; i < sizeOfUpdateAtlasesToCreate; ++i) {
+        uint32_t atlasID;
+        if (!decoder.decode(atlasID))
+            return false;
+
+        RefPtr<CoordinatedSurface> surface;
+        if (!decodeCoordinatedSurface(decoder, surface))
+            return false;
+
+        state.updateAtlasesToCreate.append(std::make_pair(atlasID, surface.release()));
+    }
+
+    if (!decoder.decode(state.updateAtlasesToRemove))
+        return false;
+
+#if ENABLE(CSS_SHADERS)
+    uint64_t sizeOfCustomFiltersToCreate;
+    if (!decoder.decode(sizeOfCustomFiltersToCreate))
+        return false;
+
+    for (uint64_t i = 0; i < sizeOfCustomFiltersToCreate; ++i) {
+        uint32_t filterID;
+        if (!decoder.decode(filterID))
+            return false;
+        CustomFilterProgramInfo filterInfo;
+        if (!decoder.decode(filterInfo))
+            return false;
+        state.customFiltersToCreate.append(std::make_pair(filterID, filterInfo));
+    }
+
+    if (!decoder.decode(state.updateAtlasesToRemove))
+        return false;
+#endif
 
     return true;
 }
