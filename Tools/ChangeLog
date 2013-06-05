@@ -1,3 +1,29 @@
+2013-06-05  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Fix layout testing with Qt 5.1
+        https://bugs.webkit.org/show_bug.cgi?id=117203
+
+        Reviewed by Jocelyn Turcotte.
+
+        With Qt 5.1 synchronous requests via QNetworkAccessManager do not
+        go into loading state but directly call handler functions for
+        finished state instead of relying on a connection.
+        Our wrapper QQuickView uses a data URI scheme to create the root
+        item for testing which results in a synchronous request when loading
+        the QML data, therefore the state of the QQuickWindow immediately
+        becomes Ready.
+        Since the final initialization of the root item depended on the
+        emission of QQuickView::statusChanged(QQuickView::Ready) we ended
+        up with a partially initialized wrapper window, thus most of our
+        layout tests were failing.
+        For compatibility with pre-5.1 Qt versions keep the old behaviour
+        in case the WrapperWindow is not ready in the constructor yet.
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WrapperWindow::WrapperWindow):
+        * TestWebKitAPI/qt/PlatformWebViewQt.cpp:
+        (TestWebKitAPI::WrapperWindow::WrapperWindow):
+
 2013-06-05  Dariusz Frankiewicz  <d.frankiewic@samsung.com>
 
         Bad value in tests counter at new-run-webkit-tests

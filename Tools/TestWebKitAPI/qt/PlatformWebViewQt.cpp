@@ -48,7 +48,10 @@ public:
         : QQuickView(QUrl(QStringLiteral("data:text/plain,import QtQuick 2.0\nItem { objectName: 'root' }")))
         , m_view(view)
     {
-        connect(this, SIGNAL(statusChanged(QQuickView::Status)), SLOT(handleStatusChanged(QQuickView::Status)));
+        if (status() == QQuickView::Ready)
+            handleStatusChanged(QQuickView::Ready);
+        else
+            connect(this, SIGNAL(statusChanged(QQuickView::Status)), SLOT(handleStatusChanged(QQuickView::Status)));
     }
 
 private Q_SLOTS:
