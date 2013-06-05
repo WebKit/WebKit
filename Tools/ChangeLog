@@ -1,3 +1,11 @@
+2013-06-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix. Add CRLF eol-style for DOS shell scripts; if they accidentally change
+        to UNIX-style they will not execute properly.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreePostBuild.cmd: Added property svn:eol-style.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreePreBuild.cmd: Added property svn:eol-style.
+
 2013-06-05  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed build fix. Don't pass in --use-remote-links argument on Windows now that we use NRWT.
