@@ -1,5 +1,44 @@
 2013-06-05  Tim Horton  <timothy_horton@apple.com>
 
+        [wk2] WebProcess' page-in-window count can be wrong
+        https://bugs.webkit.org/show_bug.cgi?id=117106
+        <rdar://problem/14040991>
+
+        Reviewed by Anders Carlsson.
+
+        If we're using a single WebProcess and a window is closed, we were
+        not decrementing the page-in-window count (because we apparently don't
+        setIsInWindow(false) a WebPage in a closing window before tearing it down).
+
+        Turn the page-in-window count into a HashSet of pageIDs instead.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setIsInWindow):
+        Send the pageID instead (this change is just so that I don't need to
+        fetch the WebPage in WebProcess::removeWebPage).
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        Remove m_inWindowPageCount.
+
+        (WebKit::WebProcess::removeWebPage):
+        Ensure that WebPages being torn-down are removed from the in-window WebPage set.
+
+        (WebKit::WebProcess::pageDidEnterWindow):
+        (WebKit::WebProcess::pageWillLeaveWindow):
+        Use our new HashSet instead of a count.
+
+        (WebKit::WebProcess::nonVisibleProcessCleanupTimerFired):
+        Make sure that we don't have any visible pages before doing cleanup.
+
+        * WebProcess/WebProcess.h:
+        Remove m_inWindowPageCount.
+        Add m_inWindowPageSet.
+        Make pageDidEnterWindow/pageWillLeaveWindow take pageID instead of WebPage.
+
+2013-06-05  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r148713): Crash under waitForDidUpdateInWindowState
         https://bugs.webkit.org/show_bug.cgi?id=117268
         <rdar://problem/13822353>

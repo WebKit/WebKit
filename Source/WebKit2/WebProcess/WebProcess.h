@@ -163,8 +163,8 @@ public:
     void ensurePrivateBrowsingSession();
     void destroyPrivateBrowsingSession();
     
-    void pageDidEnterWindow(WebPage*);
-    void pageWillLeaveWindow(WebPage*);
+    void pageDidEnterWindow(uint64_t pageID);
+    void pageWillLeaveWindow(uint64_t pageID);
 
     void nonVisibleProcessCleanupTimerFired(WebCore::Timer<WebProcess>*);
 
@@ -313,7 +313,7 @@ private:
     RefPtr<PluginProcessConnectionManager> m_pluginProcessConnectionManager;
 #endif
 
-    int m_inWindowPageCount;
+    HashSet<uint64_t> m_pagesInWindows;
     WebCore::Timer<WebProcess> m_nonVisibleProcessCleanupTimer;
 };
 

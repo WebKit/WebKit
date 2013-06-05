@@ -176,7 +176,6 @@ WebProcess::WebProcess()
 #if ENABLE(PLUGIN_PROCESS)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 #endif
-    , m_inWindowPageCount(0)
     , m_nonVisibleProcessCleanupTimer(this, &WebProcess::nonVisibleProcessCleanupTimerFired)
 {
     // Initialize our platform strategies.
@@ -588,6 +587,7 @@ void WebProcess::removeWebPage(uint64_t pageID)
 {
     ASSERT(m_pageMap.contains(pageID));
 
+    pageWillLeaveWindow(pageID);
     m_pageMap.remove(pageID);
 
     enableTermination();
@@ -1161,27 +1161,26 @@ void WebProcess::updateActivePages()
 
 #endif
     
-void WebProcess::pageDidEnterWindow(WebPage*)
+void WebProcess::pageDidEnterWindow(uint64_t pageID)
 {
-    m_inWindowPageCount++;
+    m_pagesInWindows.add(pageID);
     m_nonVisibleProcessCleanupTimer.stop();
 }
 
-void WebProcess::pageWillLeaveWindow(WebPage*)
+void WebProcess::pageWillLeaveWindow(uint64_t pageID)
 {
-    ASSERT(m_inWindowPageCount > 0);
-    if (m_inWindowPageCount <= 0)
-        return;
+    m_pagesInWindows.remove(pageID);
 
-    m_inWindowPageCount--;
-
-    if (!m_inWindowPageCount)
+    if (m_pagesInWindows.isEmpty() && !m_nonVisibleProcessCleanupTimer.isActive())
         m_nonVisibleProcessCleanupTimer.startOneShot(nonVisibleProcessCleanupDelay);
 }
     
 void WebProcess::nonVisibleProcessCleanupTimerFired(Timer<WebProcess>*)
 {
-    ASSERT(!m_inWindowPageCount);
+    ASSERT(m_pagesInWindows.isEmpty());
+    if (!m_pagesInWindows.isEmpty())
+        return;
+
 #if PLATFORM(MAC)
     wkDestroyRenderingResources();
 #endif
