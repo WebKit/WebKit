@@ -23,7 +23,7 @@
 
 #include "GLContextEGL.h"
 #include "GLContextGLX.h"
-#include <wtf/MainThread.h>
+#include <wtf/ThreadSpecific.h>
 
 #if PLATFORM(X11)
 #include <X11/Xlib.h>
@@ -38,11 +38,32 @@
 #endif
 #endif
 
+using WTF::ThreadSpecific;
+
 namespace WebCore {
+
+class ThreadGlobalGLContext {
+public:
+    static ThreadSpecific<ThreadGlobalGLContext>* staticGLContext;
+
+    void setContext(GLContext* context) { m_context = context; }
+    GLContext* context() { return m_context; }
+
+private:
+    GLContext* m_context;
+};
+
+ThreadSpecific<ThreadGlobalGLContext>* ThreadGlobalGLContext::staticGLContext;
+
+inline ThreadGlobalGLContext* currentContext()
+{
+    if (!ThreadGlobalGLContext::staticGLContext)
+        ThreadGlobalGLContext::staticGLContext = new ThreadSpecific<ThreadGlobalGLContext>;
+    return *ThreadGlobalGLContext::staticGLContext;
+}
 
 GLContext* GLContext::sharingContext()
 {
-    ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(OwnPtr<GLContext>, sharing, (createOffscreenContext()));
     return sharing.get();
 }
@@ -153,28 +174,22 @@ PassOwnPtr<GLContext> GLContext::createOffscreenContext(GLContext* sharingContex
     return createContextForWindow(0, sharingContext);
 }
 
-// FIXME: This should be a thread local eventually if we
-// want to support using GLContexts from multiple threads.
-static GLContext* gCurrentContext = 0;
-
 GLContext::~GLContext()
 {
-    if (this == gCurrentContext)
-        gCurrentContext = 0;
+    if (this == currentContext()->context())
+        currentContext()->setContext(0);
     removeActiveContext(this);
 }
 
 bool GLContext::makeContextCurrent()
 {
-    ASSERT(isMainThread());
-    gCurrentContext = this;
+    currentContext()->setContext(this);
     return true;
 }
 
 GLContext* GLContext::getCurrent()
 {
-    ASSERT(isMainThread());
-    return gCurrentContext;
+    return currentContext()->context();
 }
 
 } // namespace WebCore

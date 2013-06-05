@@ -1,3 +1,24 @@
+2013-06-05  Jae Hyun Park  <jae.park@company100.net>
+
+        [GTK] Support using GLContext from multiple threads
+        https://bugs.webkit.org/show_bug.cgi?id=117238
+
+        Reviewed by Martin Robinson.
+
+        Current implementation assumes that GLContext is only used in the main thread.
+        However, to support using GLContext from multiple threads, we need to change it
+        to thread local. Therefore, ASSERT(isMainThread()) is removed and GLContext is
+        changed to thread local.
+
+        * platform/graphics/cairo/GLContext.cpp:
+        (WebCore::ThreadGlobalGLContext::setContext):
+        (WebCore::ThreadGlobalGLContext::context):
+        (WebCore::currentContext):
+        (WebCore::GLContext::sharingContext):
+        (WebCore::GLContext::~GLContext):
+        (WebCore::GLContext::makeContextCurrent):
+        (WebCore::GLContext::getCurrent):
+
 2013-06-05  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed build fix when CHANNEL_MESSAGING is disabled.
