@@ -1,3 +1,515 @@
+2013-06-05  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaselining after r151205.
+
+        * platform/qt-5.0-wk2/animations/3d/state-at-end-event-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/animations/cross-fade-border-image-source-expected.png: Added.
+        * platform/qt-5.0-wk2/animations/cross-fade-list-style-image-expected.png: Added.
+        * platform/qt-5.0-wk2/animations/cross-fade-webkit-mask-image-expected.png: Added.
+        * platform/qt-5.0-wk2/animations/state-at-end-event-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/animation/state-at-end-event-transform-layer-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/color-matching/image-color-matching-expected.png:
+        * platform/qt-5.0-wk2/compositing/compositing-visible-descendant-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/direct-image-compositing-expected.png:
+        * platform/qt-5.0-wk2/compositing/generated-content-expected.png:
+        * platform/qt-5.0-wk2/compositing/geometry/clipping-foreground-expected.png:
+        * platform/qt-5.0-wk2/compositing/geometry/layer-due-to-layer-children-expected.png:
+        * platform/qt-5.0-wk2/compositing/geometry/outline-change-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/geometry/partial-layout-update-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/geometry/root-layer-update-expected.png:
+        * platform/qt-5.0-wk2/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png:
+        * platform/qt-5.0-wk2/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/qt-5.0-wk2/compositing/geometry/video-opacity-overlay-expected.png:
+        * platform/qt-5.0-wk2/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/qt-5.0-wk2/compositing/iframes/iframe-copy-on-scroll-expected.png:
+        * platform/qt-5.0-wk2/compositing/images/direct-image-background-color-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/masks/direct-image-mask-expected.png:
+        * platform/qt-5.0-wk2/compositing/masks/masked-ancestor-expected.png:
+        * platform/qt-5.0-wk2/compositing/masks/multiple-masks-expected.png:
+        * platform/qt-5.0-wk2/compositing/masks/simple-composited-mask-expected.png:
+        * platform/qt-5.0-wk2/compositing/overflow/ancestor-overflow-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/nested-scrolling-expected.png:
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-positioning-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-scroll-expected.png:
+        * platform/qt-5.0-wk2/compositing/overflow/parent-overflow-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/remove-overflow-crash2-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/qt-5.0-wk2/compositing/overflow/scrollbar-painting-expected.png:
+        * platform/qt-5.0-wk2/compositing/reflections/compositing-change-inside-reflection-expected.png:
+        * platform/qt-5.0-wk2/compositing/reflections/nested-reflection-mask-change-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/qt-5.0-wk2/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/qt-5.0-wk2/compositing/reflections/reflection-in-composited-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/reflections/reflection-on-composited-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/reflections/reflection-ordering-expected.png:
+        * platform/qt-5.0-wk2/compositing/reflections/reflection-positioning-expected.png:
+        * platform/qt-5.0-wk2/compositing/reflections/reflection-positioning2-expected.png:
+        * platform/qt-5.0-wk2/compositing/reflections/simple-composited-reflections-expected.png:
+        * platform/qt-5.0-wk2/compositing/repaint/become-overlay-composited-layer-expected.png:
+        * platform/qt-5.0-wk2/compositing/repaint/composited-document-element-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/repaint/layer-repaint-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/repaint/layer-repaint-rects-expected.png:
+        * platform/qt-5.0-wk2/compositing/repaint/opacity-between-absolute-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/repaint/opacity-between-absolute2-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png:
+        * platform/qt-5.0-wk2/compositing/self-painting-layers-expected.png:
+        * platform/qt-5.0-wk2/compositing/shadows/shadow-drawing-expected.png:
+        * platform/qt-5.0-wk2/compositing/sibling-positioning-expected.png:
+        * platform/qt-5.0-wk2/compositing/text-on-large-layer-expected.png:
+        * platform/qt-5.0-wk2/css1/basic/containment-expected.png:
+        * platform/qt-5.0-wk2/css1/basic/contextual_selectors-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/basic/grouping-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/basic/id_as_selector-expected.png:
+        * platform/qt-5.0-wk2/css1/basic/inheritance-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/acid_test-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_bottom-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_bottom_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_bottom_width-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_bottom_width_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_color-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_color_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_left-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_left_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_left_width-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_left_width_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_right_inline-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_right_width-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_right_width_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_style-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_style_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_top-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_top_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_top_width-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_top_width_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/border_width-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_width_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/clear-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/clear_float-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/float-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/float_elements_in_series-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/float_margin-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/float_on_text_elements-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/height-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/margin-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/margin_bottom-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/margin_bottom_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/margin_inline-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/margin_left-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/margin_left_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/margin_right-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/margin_right_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/margin_top-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/margin_top_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/padding-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/padding_bottom-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/padding_bottom_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/padding_inline-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/padding_left-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/padding_left_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/padding_right-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/padding_right_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/padding_top-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/padding_top_inline-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/box_properties/width-expected.png:
+        * platform/qt-5.0-wk2/css1/cascade/cascade_order-expected.png:
+        * platform/qt-5.0-wk2/css1/cascade/important-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/classification/display-expected.png:
+        * platform/qt-5.0-wk2/css1/classification/list_style-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/classification/list_style_image-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/classification/list_style_position-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/classification/list_style_type-expected.png:
+        * platform/qt-5.0-wk2/css1/classification/white_space-expected.png:
+        * platform/qt-5.0-wk2/css1/color_and_background/background-expected.png:
+        * platform/qt-5.0-wk2/css1/color_and_background/background_attachment-expected.png:
+        * platform/qt-5.0-wk2/css1/color_and_background/background_color-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/color_and_background/background_image-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/color_and_background/background_position-expected.png:
+        * platform/qt-5.0-wk2/css1/color_and_background/background_repeat-expected.png:
+        * platform/qt-5.0-wk2/css1/color_and_background/color-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/conformance/forward_compatible_parsing-expected.png:
+        * platform/qt-5.0-wk2/css1/font_properties/font-expected.png:
+        * platform/qt-5.0-wk2/css1/font_properties/font_family-expected.png:
+        * platform/qt-5.0-wk2/css1/font_properties/font_size-expected.png:
+        * platform/qt-5.0-wk2/css1/font_properties/font_style-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/font_properties/font_variant-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/font_properties/font_weight-expected.png:
+        * platform/qt-5.0-wk2/css1/formatting_model/canvas-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/formatting_model/floating_elements-expected.png:
+        * platform/qt-5.0-wk2/css1/formatting_model/height_of_lines-expected.png:
+        * platform/qt-5.0-wk2/css1/formatting_model/horizontal_formatting-expected.png:
+        * platform/qt-5.0-wk2/css1/formatting_model/inline_elements-expected.png:
+        * platform/qt-5.0-wk2/css1/formatting_model/replaced_elements-expected.png:
+        * platform/qt-5.0-wk2/css1/formatting_model/vertical_formatting-expected.png:
+        * platform/qt-5.0-wk2/css1/pseudo/anchor-expected.png:
+        * platform/qt-5.0-wk2/css1/pseudo/firstletter-expected.png:
+        * platform/qt-5.0-wk2/css1/pseudo/firstline-expected.png:
+        * platform/qt-5.0-wk2/css1/pseudo/multiple_pseudo_elements-expected.png:
+        * platform/qt-5.0-wk2/css1/pseudo/pseudo_elements_in_selectors-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/text_properties/letter_spacing-expected.png:
+        * platform/qt-5.0-wk2/css1/text_properties/line_height-expected.png:
+        * platform/qt-5.0-wk2/css1/text_properties/text_align-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/text_properties/text_decoration-expected.png:
+        * platform/qt-5.0-wk2/css1/text_properties/text_indent-expected.png:
+        * platform/qt-5.0-wk2/css1/text_properties/text_transform-expected.png:
+        * platform/qt-5.0-wk2/css1/text_properties/vertical_align-expected.png:
+        * platform/qt-5.0-wk2/css1/text_properties/word_spacing-expected.png:
+        * platform/qt-5.0-wk2/css1/units/color_units-expected.png:
+        * platform/qt-5.0-wk2/css1/units/length_units-expected.png:
+        * platform/qt-5.0-wk2/css1/units/percentage_units-expected.png: Added.
+        * platform/qt-5.0-wk2/css1/units/urls-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-006-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-007-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-009-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-010-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-011-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-height-012-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-006-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-007-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-009-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-011-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-012-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-width-015-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-width-017-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-width-018-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-width-019-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-width-020-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-width-021-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-width-022-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-width-023-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-width-024-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-002-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-007-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-009-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-010-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-011-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-012-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-014-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-016-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-017-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-018-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-019-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-021-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-023-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-024-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-025-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-026-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-028-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-029-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-030-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-031-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-032-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-033-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-035-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-006-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-013-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-020-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-022-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-027-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-029-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-034-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-036-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-041-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-043-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-048-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-050-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-055-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-057-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-062-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-064-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-069-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-071-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-076-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/background-intrinsic-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/background-intrinsic-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/background-intrinsic-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/background-intrinsic-005-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/background-intrinsic-006-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/background-intrinsic-007-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/background-intrinsic-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/background-intrinsic-009-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-002-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-004-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-007-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-008-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-009-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-010-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-012-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-013-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-014-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-015-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-016-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-width-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-width-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-width-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-width-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-width-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-width-006-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-width-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-replaced-height-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-replaced-height-002-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-replaced-height-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-replaced-height-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-replaced-height-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-replaced-height-007-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-replaced-width-006-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/border-conflict-style-079-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/border-conflict-style-088-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/border-spacing-applies-to-015-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/c543-txt-decor-000-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/empty-inline-001-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/empty-inline-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/empty-inline-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-height-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-007-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-009-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-010-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-011-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-non-replaced-width-012-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-height-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-height-002-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-height-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-height-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-height-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-height-007-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-width-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-width-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-width-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-width-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-width-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-width-006-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/float-replaced-width-011-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/floating-replaced-height-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/height-width-inline-table-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/height-width-table-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-non-replaced-height-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-non-replaced-height-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-non-replaced-width-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-non-replaced-width-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-replaced-height-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-replaced-height-002-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-replaced-height-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-replaced-height-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-replaced-height-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-replaced-height-007-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-replaced-height-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-replaced-width-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-block-replaced-width-006-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-non-replaced-width-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-non-replaced-width-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-height-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-height-002-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-height-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-height-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-height-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-height-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-width-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-width-006-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-width-011-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-width-012-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-width-013-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-width-014-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-width-015-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-table-001-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-006-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-009-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-010-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-012-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-013-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-014-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-015-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/outline-color-applies-to-008-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/replaced-elements-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/replaced-intrinsic-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/replaced-intrinsic-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/replaced-intrinsic-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/replaced-intrinsic-004-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/replaced-intrinsic-ratio-001-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/replaced-min-max-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/table-caption-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/table-caption-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/table-caption-horizontal-alignment-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/table-caption-margins-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/table-caption-optional-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/table-caption-optional-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/table-height-algorithm-023-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/table-height-algorithm-024-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/width-non-replaced-inline-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/width-replaced-element-001-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t010403-shand-border-00-c-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t010403-shand-font-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t010403-shand-font-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t010403-shand-font-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t010403-shand-font-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040102-keywords-00-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040102-keywords-01-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040103-case-00-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040103-case-01-c-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040103-escapes-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-escapes-01-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040103-escapes-02-d-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-escapes-03-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040103-escapes-04-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040103-escapes-07-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040103-escapes-08-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-00-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-01-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-02-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-03-c-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-04-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-05-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-06-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-07-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-08-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-09-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-10-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-11-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-12-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-ident-13-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040105-import-10-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040109-c17-comments-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040109-c17-comments-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0402-c71-fwd-parsing-00-f-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0402-c71-fwd-parsing-01-f-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0402-c71-fwd-parsing-02-f-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0402-c71-fwd-parsing-03-f-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0402-c71-fwd-parsing-04-f-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040302-c61-ex-len-00-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040302-c61-phys-len-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040302-c61-rel-len-00-b-ag-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t040303-c62-percent-00-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040304-c64-uri-00-a-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040306-c63-color-00-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040306-syntax-01-f-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t050201-c12-grouping-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0505-c16-descendant-00-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0505-c16-descendant-01-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t050803-c14-classes-00-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0509-c15-ids-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0509-c15-ids-01-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0511-c21-pseud-anch-00-e-i-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0511-c21-pseud-link-00-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0511-c21-pseud-link-01-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0511-c21-pseud-link-02-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0511-c21-pseud-link-03-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t051103-c21-activ-ln-00-e-i-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t051103-c21-focus-ln-00-e-i-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t051103-c21-hover-ln-00-e-i-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t051103-dom-hover-01-c-io-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t051103-dom-hover-02-c-io-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t051201-c23-first-line-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t051202-c26-psudo-nest-00-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0602-c13-inh-underlin-00-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0602-c13-inheritance-00-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0602-inherit-bdr-pad-b-00-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0603-c11-import-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t060401-c32-cascading-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t060402-c31-important-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t060403-c21-pseu-cls-00-e-i-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t060403-c21-pseu-id-00-e-i-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0801-c412-hz-box-00-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5501-mrgn-t-00-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5502-imrgn-r-00-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5502-imrgn-r-01-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5502-imrgn-r-02-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5502-imrgn-r-04-b-ag-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5502-imrgn-r-05-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5502-imrgn-r-06-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5502-mrgn-r-02-c-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t0803-c5502-mrgn-r-03-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5503-mrgn-b-00-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5504-imrgn-l-00-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5504-imrgn-l-01-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5504-imrgn-l-02-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5504-imrgn-l-04-b-ag-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5504-imrgn-l-06-b-ag-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5504-mrgn-l-02-c-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5504-mrgn-l-03-c-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5505-imrgn-00-a-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5505-mrgn-00-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5505-mrgn-02-c-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t080301-c411-vt-mrgn-00-b-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t0804-c5506-ipadn-t-00-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5506-ipadn-t-01-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5506-ipadn-t-02-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5507-ipadn-r-00-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5507-ipadn-r-01-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5507-ipadn-r-02-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5507-ipadn-r-04-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5507-padn-r-00-c-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5507-padn-r-02-f-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5508-ipadn-b-00-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5508-ipadn-b-01-f-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5508-ipadn-b-02-b-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5509-ipadn-l-00-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5509-ipadn-l-01-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5509-ipadn-l-02-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5509-ipadn-l-04-f-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5509-padn-l-00-b-ag-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5509-padn-l-02-f-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5509-padn-l-03-f-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5510-ipadn-00-b-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5510-padn-02-f-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5511-brdr-tw-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5511-brdr-tw-01-b-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5511-brdr-tw-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5511-brdr-tw-03-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5511-ibrdr-tw-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5512-brdr-rw-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5512-brdr-rw-01-b-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5512-brdr-rw-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5512-brdr-rw-03-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5512-ibrdr-rw-00-a-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5513-brdr-bw-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5513-brdr-bw-01-b-g-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5513-brdr-bw-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5513-brdr-bw-03-b-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5513-ibrdr-bw-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5514-brdr-lw-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5514-brdr-lw-01-b-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5514-brdr-lw-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5514-brdr-lw-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5514-ibrdr-lw-00-a-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5515-brdr-w-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5515-brdr-w-01-b-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5515-brdr-w-02-b-expected.png: Added.
+
 2013-06-05  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Respect renderer creation constraints when element is part of named flow
