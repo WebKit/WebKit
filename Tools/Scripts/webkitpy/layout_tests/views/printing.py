@@ -57,7 +57,7 @@ class Printer(object):
     """Class handling all non-debug-logging printing done by run-webkit-tests."""
 
     def __init__(self, port, options, regular_output, logger=None):
-        self.num_completed = 0
+        self.num_started = 0
         self.num_tests = 0
         self._port = port
         self._options = options
@@ -289,7 +289,7 @@ class Printer(object):
 
     def _test_status_line(self, test_name, suffix):
         format_string = '[%d/%d] %s%s'
-        status_line = format_string % (self.num_completed, self.num_tests, test_name, suffix)
+        status_line = format_string % (self.num_started, self.num_tests, test_name, suffix)
         if len(status_line) > self._meter.number_of_columns():
             overflow_columns = len(status_line) - self._meter.number_of_columns()
             ellipsis = '...'
@@ -301,9 +301,10 @@ class Printer(object):
                 new_length = len(test_name) - overflow_columns - len(ellipsis)
                 prefix = int(new_length / 2)
                 test_name = test_name[:prefix] + ellipsis + test_name[-(new_length - prefix):]
-        return format_string % (self.num_completed, self.num_tests, test_name, suffix)
+        return format_string % (self.num_started, self.num_tests, test_name, suffix)
 
     def print_started_test(self, test_name):
+        self.num_started += 1
         self._running_tests.append(test_name)
         if len(self._running_tests) > 1:
             suffix = ' (+%d)' % (len(self._running_tests) - 1)
@@ -316,7 +317,6 @@ class Printer(object):
         write(self._test_status_line(test_name, suffix))
 
     def print_finished_test(self, result, expected, exp_str, got_str):
-        self.num_completed += 1
         test_name = result.test_name
 
         result_message = self._result_message(result.type, result.failures, expected, self._options.verbose)
@@ -325,7 +325,7 @@ class Printer(object):
             self._print_test_trace(result, exp_str, got_str)
         elif (self._options.verbose and not self._options.debug_rwt_logging) or not expected:
             self.writeln(self._test_status_line(test_name, result_message))
-        elif self.num_completed == self.num_tests:
+        elif self.num_started == self.num_tests:
             self._meter.write_update('')
         else:
             if test_name == self._running_tests[0]:

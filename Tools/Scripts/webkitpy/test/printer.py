@@ -36,7 +36,7 @@ class Printer(object):
         self.meter = None
         self.options = options
         self.num_tests = 0
-        self.num_completed = 0
+        self.num_started = 0
         self.num_errors = 0
         self.num_failures = 0
         self.running_tests = []
@@ -144,7 +144,7 @@ class Printer(object):
         if self.options.timing:
             suffix += ' %.4fs' % test_time
 
-        self.num_completed += 1
+        self.num_started += 1
 
         if test_name == self.running_tests[0]:
             self.completed_tests.insert(0, [test_name, suffix, lines])
@@ -163,7 +163,7 @@ class Printer(object):
 
     def _test_line(self, test_name, suffix):
         format_string = '[%d/%d] %s%s'
-        status_line = format_string % (self.num_completed, self.num_tests, test_name, suffix)
+        status_line = format_string % (self.num_started, self.num_tests, test_name, suffix)
         if len(status_line) > self.meter.number_of_columns():
             overflow_columns = len(status_line) - self.meter.number_of_columns()
             ellipsis = '...'
@@ -174,11 +174,11 @@ class Printer(object):
                 new_length = len(test_name) - overflow_columns - len(ellipsis)
                 prefix = int(new_length / 2)
                 test_name = test_name[:prefix] + ellipsis + test_name[-(new_length - prefix):]
-        return format_string % (self.num_completed, self.num_tests, test_name, suffix)
+        return format_string % (self.num_started, self.num_tests, test_name, suffix)
 
     def print_result(self, run_time):
         write = self.meter.writeln
-        write('Ran %d test%s in %.3fs' % (self.num_completed, self.num_completed != 1 and "s" or "", run_time))
+        write('Ran %d test%s in %.3fs' % (self.num_started, self.num_started != 1 and "s" or "", run_time))
         if self.num_failures or self.num_errors:
             write('FAILED (failures=%d, errors=%d)\n' % (self.num_failures, self.num_errors))
         else:

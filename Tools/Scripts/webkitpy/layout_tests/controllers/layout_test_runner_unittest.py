@@ -45,7 +45,7 @@ TestExpectations = test_expectations.TestExpectations
 
 
 class FakePrinter(object):
-    num_completed = 0
+    num_started = 0
     num_tests = 0
 
     def print_expected(self, run_results, get_tests_with_result_type):

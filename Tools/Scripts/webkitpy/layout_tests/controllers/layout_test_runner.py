@@ -93,7 +93,7 @@ class LayoutTestRunner(object):
         self._remaining_locked_shards = []
         self._has_http_lock = False
         self._printer.num_tests = len(test_inputs)
-        self._printer.num_completed = 0
+        self._printer.num_started = 0
 
         if not retrying:
             self._printer.print_expected(run_results, self._expectations.get_tests_with_result_type)
