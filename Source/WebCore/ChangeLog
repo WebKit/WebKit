@@ -1,3 +1,22 @@
+2013-06-05  Roland Takacs  <rtakacs@inf.u-szeged.hu>
+
+        Web Inspector: Clear button doesn't clean Memory graph in Overview pane.
+        https://bugs.webkit.org/show_bug.cgi?id=112429
+
+        Reviewed by Noam Rosenthal.
+
+        There is an early return from TimelineMemoryOverview.update() when
+        record array is empty. Thats why if you click onto the clear button,
+        the canvas won't be updated.
+        Moved this "return condition" after the canvas size definition
+        because we need to know the canvas size for refreshing.
+        Overridden TimelineOverviewBase's reset function to clear
+        HeapSizeLabels' content.
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineMemoryOverview.prototype.reset):
+        (WebInspector.TimelineMemoryOverview.prototype.update):
+
 2013-06-05  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         [Coordinated Graphics] Rename client classes for CoordinatedImageBacking and UpdateAtlas.

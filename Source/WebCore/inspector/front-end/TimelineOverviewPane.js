@@ -436,15 +436,21 @@ WebInspector.TimelineMemoryOverview = function(model)
 }
 
 WebInspector.TimelineMemoryOverview.prototype = {
+    reset: function()
+    {
+        this._maxHeapSizeLabel.textContent = "";
+        this._minHeapSizeLabel.textContent = "";
+    },
+
     update: function()
     {
-        var records = this._model.records;
-        if (!records.length)
-            return;
-
         const yPadding = 5;
         this._canvas.width = this.element.clientWidth;
         this._canvas.height = this.element.clientHeight - yPadding;
+
+        var records = this._model.records;
+        if (!records.length)
+            return;
 
         const lowerOffset = 3;
         var maxUsedHeapSize = 0;
