@@ -996,8 +996,6 @@ void Frame::deviceOrPageScaleFactorChanged()
     RenderView* root = contentRenderer();
     if (root && root->compositor())
         root->compositor()->deviceOrPageScaleFactorChanged();
-
-    m_page->chrome().client()->deviceOrPageScaleFactorChanged();
 }
 #endif
 void Frame::notifyChromeClientWheelEventHandlerCountChanged() const

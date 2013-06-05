@@ -1,3 +1,19 @@
+2013-06-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Remove ChromeClient::deviceOrPageScaleFactorChanged
+        https://bugs.webkit.org/show_bug.cgi?id=117245
+
+        Reviewed by Andreas Kling.
+
+        It was introduced for chromium at r147357.
+        But now, there are no ports to use this.
+
+        No new tests - no behavior change.
+
+        * page/ChromeClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::deviceOrPageScaleFactorChanged):
+
 2013-06-05  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         [Coordinated Graphics] Prevent a recursive painting in CoordinatedGraphicsLayer
