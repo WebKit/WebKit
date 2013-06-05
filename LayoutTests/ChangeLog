@@ -2,6 +2,1012 @@
 
         [Qt] Unreviewed gardening. Rebaselining after r151205.
 
+        * platform/qt-5.0-wk2/editing/deleting/merge-no-br-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/merge-unrendered-space-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/merge-whitespace-pre-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/move-nodes-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/non-smart-delete-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/pruning-after-merge-2-expected.png:
+        * platform/qt-5.0-wk2/editing/deleting/smart-delete-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/smart-delete-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/smart-delete-003-expected.png:
+        * platform/qt-5.0-wk2/editing/deleting/table-cells-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/type-delete-after-quote-expected.png:
+        * platform/qt-5.0-wk2/editing/execCommand/4580583-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/4641880-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/4641880-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/4747450-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/4916402-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/4916541-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/4924441-expected.png:
+        * platform/qt-5.0-wk2/editing/execCommand/5080333-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/5080333-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/5136770-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/5138441-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/5142012-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/5142012-2-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/execCommand/5190926-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/5481523-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/5482023-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/5569741-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/findString-2-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/execCommand/findString-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/indent-empty-root-expected.png:
+        * platform/qt-5.0-wk2/editing/execCommand/indent-list-item-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/indent-selection-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/insert-list-and-stitch-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/execCommand/insertHorizontalRule-expected.png:
+        * platform/qt-5.0-wk2/editing/execCommand/insertImage-expected.png:
+        * platform/qt-5.0-wk2/editing/execCommand/nsresponder-indent-expected.png:
+        * platform/qt-5.0-wk2/editing/execCommand/nsresponder-outdent-expected.png:
+        * platform/qt-5.0-wk2/editing/execCommand/paste-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/print-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/remove-list-from-range-selection-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/remove-list-item-1-expected.png:
+        * platform/qt-5.0-wk2/editing/execCommand/selectAll-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/input/caret-at-the-edge-of-input-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/input/reveal-caret-of-multiline-input-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/12882-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/4278698-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/4875189-1-expected.png:
+        * platform/qt-5.0-wk2/editing/inserting/4875189-2-expected.png:
+        * platform/qt-5.0-wk2/editing/inserting/4959067-expected.png:
+        * platform/qt-5.0-wk2/editing/inserting/4960120-1-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/inserting/5002441-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/5058163-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/5058163-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/5156401-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/5418891-expected.png:
+        * platform/qt-5.0-wk2/editing/inserting/5510537-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/5549929-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/5549929-3-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/inserting/6703873-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/before-after-input-element-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/editable-html-element-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/editable-inline-element-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/inserting/edited-whitespace-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/editing-empty-divs-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-at-end-01-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-at-end-02-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-br-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-br-005-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-br-009-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-br-quoted-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-br-quoted-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-br-quoted-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-br-quoted-004-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-br-quoted-005-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-br-quoted-006-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-011-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-012-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-013-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-014-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-015-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-016-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-017-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-018-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-019-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-020-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-022-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-023-expected.png:
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-024-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-025-expected.png:
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-026-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-div-027-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-paragraph-01-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-paragraph-02-expected.png:
+        * platform/qt-5.0-wk2/editing/inserting/insert-paragraph-03-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-paragraph-04-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-paragraph-05-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/insert-text-with-newlines-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/line-break-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/inserting/paragraph-separator-01-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/inserting/paragraph-separator-02-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/inserting/paragraph-separator-03-expected.png:
+        * platform/qt-5.0-wk2/editing/inserting/paragraph-separator-in-table-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/paragraph-separator-in-table-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/return-key-with-selection-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/return-key-with-selection-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/typing-002-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/inserting/typing-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/typing-around-br-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/typing-around-image-001-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/3976872-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/4076267-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/4076267-3-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/4076267-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/4242293-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/4631972-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/4641033-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/4806874-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/pasteboard/4944770-1-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/4944770-2-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/4989774-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/5006779-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/5028447-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/pasteboard/5032095-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/5071074-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/5071074-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/5134759-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/5156401-1-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/pasteboard/5387578-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/5478250-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/5601583-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/8145-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/8145-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/8145-3-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/bad-placeholder-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/displaced-generic-placeholder-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/displaced-placeholder-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/innerText-inline-table-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/input-field-1-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/pasteboard/merge-after-delete-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/merge-after-delete-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/merge-end-blockquote-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/merge-end-borders-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/merge-start-blockquote-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/merge-start-list-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-4038267-fix-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-blockquote-after-blockquote-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-line-endings-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-line-endings-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-line-endings-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-line-endings-004-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-line-endings-005-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-line-endings-006-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-line-endings-007-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-line-endings-008-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-line-endings-009-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-line-endings-010-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-match-style-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-match-style-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-text-004-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-text-008-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-text-009-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-text-013-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-text-014-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-text-016-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/paste-text-019-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/pasting-object-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/quirks-mode-br-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/smart-paste-007-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/smart-paste-008-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/styled-element-markup-expected.png:
+        * platform/qt-5.0-wk2/editing/pasteboard/undoable-fragment-removes-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/unrendered-br-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/13804-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/3690703-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/3690703-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/3690719-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4397952-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4402375-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4776665-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4818145-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4866671-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/4889598-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4895428-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4895428-3-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4932260-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4932260-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4932260-3-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4947387-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4960137-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4975120-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4983858-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5007143-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5007143-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5057506-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5076323-1-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/5076323-2-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/5076323-3-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5081257-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5081257-2-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/5099303-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/5131716-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5131716-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5131716-3-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5131716-4-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5234383-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5234383-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5240265-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/7152-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/7152-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/addRange-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/after-line-wrap-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/caret-ltr-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/caret-ltr-2-left-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/caret-ltr-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/caret-ltr-right-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/clear-selection-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/click-start-of-line-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/contenteditable-click-inside-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/display-table-text-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/drag-select-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/editable-html-element-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/editable-non-editable-crash-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/end-of-document-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/expanding-selections-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/expanding-selections2-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/extend-by-character-002-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/extend-by-character-003-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/extend-by-character-004-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/extend-by-character-005-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/extend-by-sentence-001-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/extend-by-word-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/extend-inside-transforms-backward-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/extend-inside-transforms-forward-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/fake-doubleclick-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/focus-body-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/focus_editable_html-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/iframe-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/image-before-linebreak-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/inline-closest-leaf-child-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/inline-table-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/leave-requested-block-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/line-wrap-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/line-wrap-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/mixed-editability-1-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/mixed-editability-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/mixed-editability-3-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/mixed-editability-4-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/mixed-editability-5-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/mixed-editability-6-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/mixed-editability-7-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/mixed-editability-8-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/mixed-editability-9-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/move-3875618-fix-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-3875641-fix-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-backwords-by-word-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-between-blocks-no-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-between-blocks-yes-001-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/move-by-character-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-by-character-003-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/move-by-character-004-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/move-by-character-005-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/move-by-character-6-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/move-by-line-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-by-line-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-by-sentence-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-by-sentence-linebreak-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-past-trailing-space-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/node-removal-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/node-removal-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/paragraph-granularity-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/previous-line-position-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/range-between-block-and-inline-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/replace-selection-1-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/replaced-boundaries-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/replaced-boundaries-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/replaced-boundaries-3-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/select-across-readonly-input-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-across-readonly-input-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-across-readonly-input-3-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-across-readonly-input-4-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-across-readonly-input-5-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-all-001-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/select-all-002-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/select-all-003-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/select-all-005-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-all-006-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-all-iframe-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/select-box-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/select-element-paragraph-boundary-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/select-text-overflow-ellipsis-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/selectNode-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/selectNodeContents-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/selection-actions-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/selection-button-text-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/table-caret-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/table-caret-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/table-caret-3-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/unrendered-space-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/word-granularity-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/wrapped-line-caret-1-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/selection/wrapped-line-caret-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/spelling/grammar-markers-expected.png:
+        * platform/qt-5.0-wk2/editing/style/4916887-expected.png:
+        * platform/qt-5.0-wk2/editing/style/5017613-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/5017613-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/5046875-1-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/5046875-2-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/5065910-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/5084241-expected.png:
+        * platform/qt-5.0-wk2/editing/style/5228141-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/5279521-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/apple-style-editable-mix-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/block-style-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/block-style-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/block-style-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/block-styles-007-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-004-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-005-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-006-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-007-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-008-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-009-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-010-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-011-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-012-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/create-block-for-style-013-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/designmode-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/style/font-family-with-space-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/style/highlight-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/style/relative-font-size-change-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/relative-font-size-change-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/relative-font-size-change-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/relative-font-size-change-004-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/style-3681552-fix-001-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/style/style-3681552-fix-002-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/editing/style/style-3998892-fix-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/style-boundary-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/style-boundary-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/style-boundary-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/style-boundary-004-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/typing-style-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/typing-style-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png:
+        * platform/qt-5.0-wk2/editing/undo/4063751-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/undo/undo-combined-delete-boundary-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/undo/undo-combined-delete-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/undo/undo-delete-boundary-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/undo/undo-delete-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/undo/undo-forward-delete-boundary-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/undo/undo-forward-delete-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/unsupported-content/list-delete-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/unsupported-content/list-delete-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/unsupported-content/list-type-after-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/unsupported-content/list-type-before-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/unsupported-content/table-delete-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/unsupported-content/table-delete-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/unsupported-content/table-delete-003-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/unsupported-content/table-type-after-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/unsupported-content/table-type-before-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/animated-svg-as-mask-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/background-clip-text-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/background-inherit-color-bug-expected.png:
+        * platform/qt-5.0-wk2/fast/backgrounds/background-origin-root-element-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/background-position-1-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/backgrounds/background-position-parsing-expected.png:
+        * platform/qt-5.0-wk2/fast/backgrounds/background-position-rounding-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/body-generated-image-propagated-to-root-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/mask-composite-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/opacity-on-document-element-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/repeat/negative-offset-repeat-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/qt-5.0-wk2/fast/backgrounds/size/backgroundSize16-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/size/zero-expected.png:
+        * platform/qt-5.0-wk2/fast/backgrounds/solid-color-context-restore-expected.png:
+        * platform/qt-5.0-wk2/fast/block/basic/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/003-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/basic/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/005-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/basic/006-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/basic/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/008-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/009-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/basic/011-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/012-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/basic/013-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/014-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/015-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/016-expected.png:
+        * platform/qt-5.0-wk2/fast/block/basic/018-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/019-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/021-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/adding-near-anonymous-block-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/minheight-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/percent-height-inside-anonymous-block-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/quirk-height-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/basic/truncation-rtl-expected.png:
+        * platform/qt-5.0-wk2/fast/block/basic/white-space-pre-wraps-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/007-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/010-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/011-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/012-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/013-expected.png:
+        * platform/qt-5.0-wk2/fast/block/float/014-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/015-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/016-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/017-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/020-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/021-expected.png:
+        * platform/qt-5.0-wk2/fast/block/float/022-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/023-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/024-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/025-expected.png:
+        * platform/qt-5.0-wk2/fast/block/float/027-expected.png:
+        * platform/qt-5.0-wk2/fast/block/float/029-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/030-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/031-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/avoidance-percent-width-compat-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/avoidance-percent-width-strict-expected.png:
+        * platform/qt-5.0-wk2/fast/block/float/avoiding-float-centered-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/centered-float-avoidance-complexity-expected.png:
+        * platform/qt-5.0-wk2/fast/block/float/clamped-right-float-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/clear-element-too-wide-for-containing-block-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/editable-text-overlapping-float-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/fit_line_below_floats-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/float-avoidance-expected.png:
+        * platform/qt-5.0-wk2/fast/block/float/float-in-float-painting-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/floats-and-text-indent-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/floats-and-text-indent-rl-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/intruding-painted-twice-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/marquee-shrink-to-avoid-floats-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/multiple-float-positioning-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/nestedAnonymousBlocks-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/float/nestedAnonymousBlocks2-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/nopaint-after-layer-destruction-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/nopaint-after-layer-destruction2-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/overhanging-after-height-decrease-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/overlapping-floats-with-overflow-hidden-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/shrink-to-avoid-float-complexity-expected.png:
+        * platform/qt-5.0-wk2/fast/block/float/shrink-to-fit-width-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/table-relayout-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/vertical-move-relayout-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/float/width-update-after-clear-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/lineboxcontain/inline-box-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/lineboxcontain/inline-box-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/lineboxcontain/inline-replaced-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/lineboxcontain/none-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/lineboxcontain/parsing-invalid-expected.png:
+        * platform/qt-5.0-wk2/fast/block/lineboxcontain/replaced-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/010-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/011-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/012-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/015-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/016-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/017-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/018-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/019-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/020-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/021-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/022-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/025-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/026-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/027-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/028-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/029-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/031-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/032-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/033-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/034-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/035-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/037-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/038-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/039-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/040-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/041-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/042-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/043-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/055-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/056-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/057-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/058-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/059-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/062-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/063-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/100-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/101-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/102-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/103-expected.png:
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/104-expected.png:
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/010-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/011-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/012-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/015-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/016-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/017-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/018-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/019-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/020-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/021-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/022-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/block-inside-inline/025-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/negative-margins-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/047-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/051-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/053-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/055-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/057-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/positioning/058-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/059-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/060-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/abs-inside-inline-rel-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/absolute-in-inline-ltr-3-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/absolute-in-inline-short-ltr-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/absolute-in-inline-short-rtl-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/absolute-length-of-neg-666666-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/absolute-position-direction-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/positioning/absolute-positioned-overconstrained-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/positioning/absolute-positioning-no-scrollbar-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/positioning/absolute-with-html-border-quirks-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/absolute-with-html-border-strict-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-lr/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-lr/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-lr/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-lr/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-lr/005-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-lr/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-rl/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-rl/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-rl/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-rl/005-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-rl/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/child-of-absolute-with-auto-height-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/differing-writing-modes-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/differing-writing-modes-replaced-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/height-change-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/hiding-inside-relpositioned-inline-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/leftmargin-topmargin-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/negative-right-pos-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/padding-percent-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/block/positioning/relative-overflow-block-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/relative-overflow-replaced-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/relative-overflow-replaced-float-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/relayout-on-position-change-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/rtl-fixed-positioning-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/rtl-static-positioning-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/rtl-static-positioning-inline-block-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/static-distance-with-positioned-ancestor-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/trailing-space-test-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/positioning/window-height-change-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/001-xhtml-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/002-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/002-xhtml-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/003-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/003-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/004-declarative-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/004-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/004-xhtml-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/005-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/005-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/005-xhtml-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/006-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/006-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/007-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/007-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/008-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/008-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/001-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/001-xhtml-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/002-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/003-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/003-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/004-declarative-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/004-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/004-xhtml-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/005-declarative-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/005-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/005-xhtml-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/006-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/006-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/007-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/007-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/008-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/008-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/009-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/009-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/010-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-image/010-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/001-expected.png:
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/001-xhtml-expected.png:
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/002-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/003-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/003-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/004-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/004-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/005-declarative-expected.png:
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/005-expected.png:
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/005-xhtml-expected.png:
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/006-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/006-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/007-declarative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/007-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/bidi-002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/bidi-009a-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/bidi-012-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/block-mask-overlay-image-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/block-mask-overlay-image-outset-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/border-color-inherit-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-border-radius-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/border-image-scaled-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/border-radius-constraints-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-radius-huge-assert-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-radius-inline-flow-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-radius-split-inline-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/borderRadiusInvalidColor-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/different-color-borders-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/inline-mask-overlay-image-outset-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/outline-alpha-block-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/outline-alpha-inline-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/rtl-border-01-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/rtl-border-02-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/rtl-border-03-expected.png:
+        * platform/qt-5.0-wk2/fast/box-shadow/basic-shadows-expected.png:
+        * platform/qt-5.0-wk2/fast/box-shadow/border-radius-big-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/box-shadow/no-blur-multiple-offsets-expected.png:
+        * platform/qt-5.0-wk2/fast/box-shadow/transform-fringing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/box-sizing/box-sizing-expected.png:
+        * platform/qt-5.0-wk2/fast/box-sizing/panels-one-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/box-sizing/panels-two-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/arc360-expected.png:
+        * platform/qt-5.0-wk2/fast/canvas/canvas-before-css-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-composite-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-resize-reset-expected.png:
+        * platform/qt-5.0-wk2/fast/canvas/canvas-size-change-after-layout-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/qt-5.0-wk2/fast/canvas/canvas-text-baseline-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-transforms-during-path-expected.png:
+        * platform/qt-5.0-wk2/fast/canvas/canvas-zoom-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/canvasDrawingIntoSelf-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/canvas/check-stale-putImageData-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/drawImage-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/canvas/drawImage-with-globalAlpha-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/fill-stroke-clip-reset-path-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/fillrect-gradient-zero-stops-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/fillrect_gradient-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/qt-5.0-wk2/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/qt-5.0-wk2/fast/canvas/patternfill-repeat-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/quadraticCurveTo-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/shadow-offset-1-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/shadow-offset-2-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/shadow-offset-3-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/shadow-offset-4-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/shadow-offset-5-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/shadow-offset-6-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/shadow-offset-7-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/toDataURL-alpha-expected.png:
+        * platform/qt-5.0-wk2/fast/canvas/zero-size-fill-rect-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/clip/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/003-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/clip/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/008-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/009-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/010-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/011-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/012-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/013-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/014-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/015-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/clip/016-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/clip/nestedTransparencyClip-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/outline-overflowClip-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/overflow-border-radius-clip-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/overflow-border-radius-composited-expected.png:
+        * platform/qt-5.0-wk2/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/001-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css-generated-content/002-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css-generated-content/003-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css-generated-content/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/008-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/009-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/010-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css-generated-content/012-expected.png:
+        * platform/qt-5.0-wk2/fast/css-generated-content/013-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/014-expected.png:
+        * platform/qt-5.0-wk2/fast/css-generated-content/015-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css-generated-content/016-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/after-duplicated-after-split-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/after-order-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/beforeAfter-interdocument-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/hover-style-change-expected.png:
+        * platform/qt-5.0-wk2/fast/css-generated-content/inline-display-types-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/no-openclose-quote-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-before-after-child-add-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-cell-before-after-child-add-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-cell-before-content-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-row-before-after-child-add-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-row-before-after-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-row-group-to-inline-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-row-group-with-before-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-row-with-before-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-table-before-after-child-add-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/table-with-before-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/visibleContentHiddenParent-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css-generated-content/wbr-with-before-content-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/001-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/005-expected.png:
+        * platform/qt-5.0-wk2/fast/css/007-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/008-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/ZeroOpacityLayers-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/ZeroOpacityLayers2-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/absolute-poition-in-rtl-parent-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/acid2-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/attribute-selector-dynamic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/attribute-selector-empty-value-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/background-image-with-baseurl-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/background-shorthand-invalid-url-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/beforeSelectorOnCodeElement-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/begin-end-contain-selector-empty-value-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/border-height-expected.png:
+        * platform/qt-5.0-wk2/fast/css/border-radius-outline-offset-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/child-style-can-override-visited-style-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/clip-text-in-scaled-div-expected.png:
+        * platform/qt-5.0-wk2/fast/css/clip-zooming-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/color-correction-backgrounds-and-text-expected.png:
+        * platform/qt-5.0-wk2/fast/css/color-quirk-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/color-strict-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/compare-content-style-expected.png:
+        * platform/qt-5.0-wk2/fast/css/continuationCrash-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/counters/counter-text-security-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/counters/counter-text-transform-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/css-imports-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/css1_forward_compatible_parsing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/css2-system-fonts-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/css3-modsel-22-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/css3-nth-child-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/css3-space-in-nth-and-lang-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/disabled-author-styles-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/dynamic-sibling-selector-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/empty-body-test-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/empty-generated-content-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/empty-pseudo-class-expected.png:
+        * platform/qt-5.0-wk2/fast/css/fieldset-display-row-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/find-next-layer-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-child-pseudo-class-expected.png:
+        * platform/qt-5.0-wk2/fast/css/first-letter-capitalized-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-letter-detach-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-letter-first-line-hover-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-letter-float-after-float-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-letter-float-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-letter-hover-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-letter-punctuation-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-letter-recalculation-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-letter-skip-out-of-flow-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-letter-visibility-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-line-text-decoration-expected.png:
+        * platform/qt-5.0-wk2/fast/css/first-line-text-decoration-inherited-from-parent-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/first-of-type-pseudo-class-expected.png:
+        * platform/qt-5.0-wk2/fast/css/focus-ring-detached-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/focus-ring-multiline-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/focus-ring-multiline-writingmode-vertical-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/focus-ring-outline-color-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/focus-ring-outline-offset-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/focus-ring-outline-width-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/font-face-implicit-local-font-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/font-face-multiple-faces-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/font-face-opentype-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/font-face-synthetic-bold-italic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/font-face-weight-matching-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/font-shorthand-weight-only-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/font-smoothing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/font_property_normal-expected.png:
+        * platform/qt-5.0-wk2/fast/css/h1-in-section-elements-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/hover-subselector-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/hsl-color-expected.png:
+        * platform/qt-5.0-wk2/fast/css/hsla-color-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/image-rendering-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/import-rule-regression-11590-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/import_with_baseurl-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/inline-element-line-break-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/inline-properties-important-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/invalid-percentage-property-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/invalidation-errors-2-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/invalidation-errors-3-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/invalidation-errors-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/last-child-pseudo-class-expected.png:
+        * platform/qt-5.0-wk2/fast/css/last-of-type-pseudo-class-expected.png:
+        * platform/qt-5.0-wk2/fast/css/layerZOrderCrash-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/line-height-font-order-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/line-height-negative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/line-height-overflow-expected.png:
+        * platform/qt-5.0-wk2/fast/css/link-outside-head-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/list-outline-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/margin-bottom-form-element-quirk-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/margin-bottom-form-element-strict-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/margin-top-bottom-dynamic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/namespaces/005-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/namespaces/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/namespaces/namespaces-comments-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/namespaces/namespaces-empty-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/namespaces/namespaces-escapes-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/namespaces/namespaces-invalid-at-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/negative-leading-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/negative-nth-child-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/nested-floating-relative-position-percentages-expected.png:
+        * platform/qt-5.0-wk2/fast/css/non-empty-span-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/non-standard-checkbox-size-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/nth-child-dynamic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/only-child-pseudo-class-expected.png:
+        * platform/qt-5.0-wk2/fast/css/only-of-type-pseudo-class-expected.png:
+        * platform/qt-5.0-wk2/fast/css/outline-auto-empty-rects-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/outline-auto-location-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/percent-top-relative-container-height-unspecified-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/percent-top-value-with-relative-position-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/position-negative-top-margin-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/preserve-user-specified-zoom-level-on-reload-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/pseudo-element-line-break-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-nested-with-inline-parent-dynamic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-nested-with-inline-parent-dynamic-removed-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-nested-with-inline-parent-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-nested-with-inline-parent-multiple-descendant-blocks-dynamic-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic-expected.png:
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-expected.png:
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-removed-expected.png:
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-ancestor-expected.png:
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-parent-dynamic-expected.png:
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-parent-dynamic-removed-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/relative-positioned-block-with-inline-parent-keeps-style-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/rem-dynamic-scaling-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/rem-units-on-root-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/resize-corner-tracking-transformed-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/rgb-float-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/selector-set-attribute-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/shadow-multiple-expected.png:
+        * platform/qt-5.0-wk2/fast/css/simple-selector-chain-parsing-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/style-outside-head-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/style-parsed-outside-head-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/table-text-align-quirk-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/target-fragment-match-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/text-align-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/text-input-with-webkit-border-radius-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/text-overflow-ellipsis-text-align-center-expected.png:
+        * platform/qt-5.0-wk2/fast/css/text-overflow-ellipsis-text-align-justify-expected.png:
+        * platform/qt-5.0-wk2/fast/css/text-overflow-ellipsis-text-align-left-expected.png:
+        * platform/qt-5.0-wk2/fast/css/text-overflow-ellipsis-text-align-right-expected.png:
+        * platform/qt-5.0-wk2/fast/css/text-rendering-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/text-transform-select-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/textCapitalizeEdgeCases-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/transform-default-parameter-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/transformed-mask-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/universal-hover-quirk-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/value-list-out-of-bounds-crash-expected.png:
+        * platform/qt-5.0-wk2/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png:
+        * platform/qt-5.0-wk2/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.png:
+        * platform/qt-5.0-wk2/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.png:
+        * platform/qt-5.0-wk2/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.png:
+        * platform/qt-5.0-wk2/fast/css/visibility-hit-test-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/css/zoom-font-size-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/doctypes/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/doctypes/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/doctypes/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/doctypes/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/Element/class-attribute-whitespace-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/Element/null-offset-parent-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLElement/bdo-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLHeadElement/head-link-style-href-check-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLInputElement/input-image-alt-text-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLLinkElement/pending-stylesheet-count-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLMeterElement/meter-styles-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLObjectElement/vspace-hspace-as-number-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLTableElement/colSpan-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLTableElement/createCaption-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/Range/create-contextual-fragment-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/dom/Range/surroundContents-1-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/Window/open-existing-pop-up-blocking-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/anchor-text-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/dom/blur-contenteditable-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/dom/clone-contents-0-end-offset-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/dom/clone-node-dynamic-style-expected.png:
+        * platform/qt-5.0-wk2/fast/dom/createDocumentType-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/css-rule-functions-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/gc-10-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/importNodeHTML-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/importNodeXML-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/outerText-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/row-inner-text-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/004-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/dynamic/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/011-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/013-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/014-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/dynamic/015-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/anchor-lock-expected.png:
+        * platform/qt-5.0-wk2/fast/dynamic/anonymous-block-orphaned-lines-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/create-renderer-for-whitespace-only-text-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/float-withdrawal-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/qt-5.0-wk2/fast/dynamic/link-href-change-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/noninlinebadness-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/outerHTML-doc-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/outerHTML-img-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/selection-highlight-adjust-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/staticY-marking-parents-regression-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/view-overflow-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/window-resize-scrollbars-test-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dynamic/window-scrollbars-test-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/encoding/utf-16-big-endian-expected.png:
+        * platform/qt-5.0-wk2/fast/encoding/utf-16-little-endian-expected.png:
+        * platform/qt-5.0-wk2/fast/events/event-listener-on-link-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/events/pointer-events-2-expected.png:
+        * platform/qt-5.0-wk2/fast/events/resize-events-expected.png:
+        * platform/qt-5.0-wk2/fast/fast-mobile-scrolling/fixed-position-element-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/002-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/003-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/005-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/008-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/009-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/010-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/011-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/012-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/014-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/flexbox/015-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/editing/style/unbold-in-bold-expected.png.
+        * platform/qt-5.0-wk2/fast/flexbox/016-expected.png:
+        * platform/qt-5.0-wk2/fast/flexbox/017-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/018-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/019-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/020-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/021-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/022-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/023-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/024-expected.png: Added.
+
+2013-06-05  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaselining after r151205.
+
         * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
         * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltwidth-01-c-g-expected.png: Added.
         * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltwidth-02-c-g-expected.png: Added.
