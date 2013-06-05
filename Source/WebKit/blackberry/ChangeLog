@@ -1,3 +1,26 @@
+2013-06-05  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Deleting the pendingSelectionCandidate on the wrong thread causes an assert.
+        https://bugs.webkit.org/show_bug.cgi?id=117276
+
+        Reviewed by Rob Buis.
+
+        Reviewed Internally by Nima Ghanavatian.
+        PR #342399
+        Store and delete the selectionScrollView in webkit which is what we already do for
+        scrolling subframes.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::InRegionScrollerPrivate):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::resetSelectionScrollView):
+        (WebKit):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::clearDocumentData):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::updateSelectionScrollView):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::firstScrollableInRegionForNode):
+        * Api/InRegionScroller_p.h:
+        (InRegionScrollerPrivate):
+
 2013-06-05  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Make image clickable when it has anchor as parent node.

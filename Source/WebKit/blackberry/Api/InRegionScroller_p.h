@@ -45,6 +45,7 @@ public:
     InRegionScrollerPrivate(WebPagePrivate*);
 
     void reset();
+    void resetSelectionScrollView();
     bool isActive() const;
 
     bool setScrollPositionCompositingThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
@@ -77,6 +78,7 @@ private:
     bool isValidScrollableNode(WebCore::Node*) const;
     WebCore::IntRect clipToRect(const WebCore::IntRect&, InRegionScrollableArea*);
     std::vector<Platform::ScrollViewBase*> m_activeInRegionScrollableAreas;
+    Platform::ScrollViewBase* m_selectionScrollView;
 };
 
 }

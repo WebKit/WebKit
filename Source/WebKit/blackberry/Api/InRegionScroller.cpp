@@ -79,6 +79,7 @@ bool InRegionScroller::setDocumentScrollPositionWebKitThread(unsigned camouflage
 InRegionScrollerPrivate::InRegionScrollerPrivate(WebPagePrivate* webPagePrivate)
     : m_webPage(webPagePrivate)
     , m_needsActiveScrollableAreaCalculation(false)
+    , m_selectionScrollView(0)
 {
 }
 
@@ -94,6 +95,16 @@ void InRegionScrollerPrivate::reset()
     m_activeInRegionScrollableAreas.clear();
 }
 
+void InRegionScrollerPrivate::resetSelectionScrollView()
+{
+    m_webPage->m_client->notifySelectionScrollView(0);
+    m_webPage->m_selectionHandler->setSelectionSubframeViewportRect(WebCore::IntRect());
+    if (m_selectionScrollView) {
+        delete m_selectionScrollView;
+        m_selectionScrollView = 0;
+    }
+}
+
 bool InRegionScrollerPrivate::isActive() const
 {
     return m_activeInRegionScrollableAreas.size() > 0;
@@ -101,12 +112,17 @@ bool InRegionScrollerPrivate::isActive() const
 
 void InRegionScrollerPrivate::clearDocumentData(const Document* documentGoingAway)
 {
+    InRegionScrollableArea* scrollableArea = static_cast<InRegionScrollableArea*>(m_selectionScrollView);
+    ASSERT(scrollableArea);
+    if (scrollableArea->document() == documentGoingAway)
+        resetSelectionScrollView();
+
     if (m_needsActiveScrollableAreaCalculation) {
         reset();
         return;
     }
 
-    InRegionScrollableArea* scrollableArea = static_cast<InRegionScrollableArea*>(m_activeInRegionScrollableAreas[0]);
+    scrollableArea = static_cast<InRegionScrollableArea*>(m_activeInRegionScrollableAreas[0]);
     ASSERT(scrollableArea);
     if (scrollableArea->document() == documentGoingAway)
         reset();
@@ -240,7 +256,6 @@ void InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint(const Web
 {
     ASSERT(m_activeInRegionScrollableAreas.empty());
     m_needsActiveScrollableAreaCalculation = false;
-
     const HitTestResult& result = m_webPage->hitTestResult(documentPoint);
     Node* node = result.innerNonSharedNode();
     if (!node || !node->renderer())
@@ -303,11 +318,10 @@ void InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint(const Web
 void InRegionScrollerPrivate::updateSelectionScrollView(const Node* node)
 {
     // TODO: don't notify the client if the node didn't change.
-    // Deleting the scrollview is handled by the client.
-    Platform::ScrollViewBase* selectionScrollView = firstScrollableInRegionForNode(node);
-    m_webPage->m_client->notifySelectionScrollView(selectionScrollView);
+    m_selectionScrollView = firstScrollableInRegionForNode(node);
+    m_webPage->m_client->notifySelectionScrollView(m_selectionScrollView);
     // If there's no subframe set an empty rect so that we default to the main frame.
-    m_webPage->m_selectionHandler->setSelectionSubframeViewportRect(selectionScrollView ? WebCore::IntRect(selectionScrollView->documentViewportRect()) : WebCore::IntRect());
+    m_webPage->m_selectionHandler->setSelectionSubframeViewportRect(m_selectionScrollView ? WebCore::IntRect(m_selectionScrollView->documentViewportRect()) : WebCore::IntRect());
 }
 
 Platform::ScrollViewBase* InRegionScrollerPrivate::firstScrollableInRegionForNode(const Node* node)
@@ -325,7 +339,7 @@ Platform::ScrollViewBase* InRegionScrollerPrivate::firstScrollableInRegionForNod
             if (RenderView* renderView = toRenderView(renderer)) {
                 FrameView* view = renderView->frameView();
                 if (!view) {
-                    reset();
+                    resetSelectionScrollView();
                     return 0;
                 }
 
