@@ -33,10 +33,6 @@
     OmitConstructor,
     ImplementationLacksVTable
 ] interface MemoryInfo {
-
-    readonly attribute unsigned long totalJSHeapSize;
     readonly attribute unsigned long usedJSHeapSize;
-    [CustomGetter] readonly attribute unsigned long jsHeapSizeLimit;
-
+    readonly attribute unsigned long totalJSHeapSize;
 };
-

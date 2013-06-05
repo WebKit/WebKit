@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,17 +28,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef MemoryInfo_h
+#define MemoryInfo_h
 
-#include "JSMemoryInfo.h"
-
-using namespace JSC;
+#include "ScriptGCEvent.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-JSValue JSMemoryInfo::jsHeapSizeLimit(ExecState*) const
-{
-    return jsUndefined();
-}
+class MemoryInfo : public RefCounted<MemoryInfo> {
+public:
+    static PassRefPtr<MemoryInfo> create() { return adoptRef(new MemoryInfo); }
+
+    size_t usedJSHeapSize() const { return m_info.usedJSHeapSize; }
+    size_t totalJSHeapSize() const { return m_info.totalJSHeapSize; }
+
+private:
+    explicit MemoryInfo()
+    {
+        ScriptGCEvent::getHeapSize(m_info);
+    }
+
+    HeapInfo m_info;
+};
 
 } // namespace WebCore
+
+#endif // MemoryInfo_h

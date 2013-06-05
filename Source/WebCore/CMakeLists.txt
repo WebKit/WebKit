@@ -562,7 +562,6 @@ set(WebCore_IDL_FILES
     page/EventSource.idl
     page/History.idl
     page/Location.idl
-    page/MemoryInfo.idl
     page/Navigator.idl
     page/Performance.idl
     page/PerformanceEntry.idl
@@ -1747,7 +1746,6 @@ set(WebCore_SOURCES
     page/GestureTapHighlighter.cpp
     page/History.cpp
     page/Location.cpp
-    page/MemoryInfo.cpp
     page/MouseEventWithHitTestResults.cpp
     page/Navigator.cpp
     page/NavigatorBase.cpp
@@ -2925,6 +2923,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/Internals.idl
     testing/InternalSettings.idl
     testing/MallocStatistics.idl
+    testing/MemoryInfo.idl
     testing/TypeConversions.idl
 )
 

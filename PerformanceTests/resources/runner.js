@@ -1,9 +1,5 @@
 // There are tests for computeStatistics() located in LayoutTests/fast/harness/perftests
 
-// We need access to console.memory for the memory measurements
-if (window.internals)
-    internals.settings.setMemoryInfoEnabled(true);
-
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
@@ -106,7 +102,7 @@ if (window.testRunner) {
     }
 
     function getUsedJSHeap() {
-        return console.memory.usedJSHeapSize;
+        return window.internals.memoryInfo().usedJSHeapSize;
     }
 
     PerfTestRunner.gc = function () {

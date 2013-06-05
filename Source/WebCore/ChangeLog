@@ -1,3 +1,60 @@
+2013-06-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move MemoryInfo under window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=117197
+
+        Reviewed by Ryosuke Niwa.
+
+        The MemoryInfo interface is not a subject of any specification and should not be exposed
+        to the Web. It's still used by the performance tests so it is moved under the testing
+        internals, accessible through window.internals.memoryInfo.
+
+        The jsHeapSizeLimit attribute is removed from the MemoryInfo interface as that value was
+        only usable when using the V8 bindings which are not supported anymore. A small fast/harness
+        test is also provided to check that the MemoryInfo object is accessible through window.internals.
+
+        Test: fast/harness/memoryinfo-object.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.exp.in:
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj:
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/gobject/GNUmakefile.am: Remove the GObject bindings targets for MemoryInfo.
+        * bindings/js/JSBindingsAllInOne.cpp: Remove the JSMemoryInfo.h and MemoryInfo.h inclusion.
+        * bindings/js/JSMemoryInfoCustom.cpp: Removed.
+        * bindings/js/ScriptGCEvent.cpp: Remove the ENABLE(INSPECTOR) guards.
+        (WebCore::ScriptGCEvent::getHeapSize): Remove the jsHeapSizeLimit assignment.
+        * bindings/js/ScriptGCEvent.h: Remove the ENABLE(INSPECTOR) guards.
+        (WebCore::HeapInfo::HeapInfo): Remove the jsHeapSizeLimit member.
+        * page/Console.cpp: Remove the Console::memory method.
+        * page/Console.h: Ditto.
+        * page/Console.idl: Remove the window.console.memory attribute.
+        * page/MemoryInfo.cpp: Removed.
+        * page/Performance.cpp: Remove the Performance::memory method.
+        * page/Performance.h: Ditto.
+        * page/Performance.idl: Remove the window.performance.memory attribute.
+        * testing/Internals.cpp:
+        (WebCore::Internals::memoryInfo): Return a MemoryInfo object upon invoking.
+        * testing/Internals.h: Declare the Internals::memoryInfo method.
+        * testing/Internals.idl: Expose the window.internals.memoryInfo operation.
+        * testing/MemoryInfo.h: Renamed from Source/WebCore/page/MemoryInfo.h.
+        (WebCore::MemoryInfo::create): Return a new RefPtr-wrapped MemoryInfo object.
+        (WebCore::MemoryInfo::usedJSHeapSize): Return the value of the equally-named HeapInfo member.
+        (WebCore::MemoryInfo::totalJSHeapSize): Ditto.
+        (WebCore::MemoryInfo::MemoryInfo): Acquire the current heap info upon construction.
+        * testing/MemoryInfo.idl: Renamed from Source/WebCore/page/MemoryInfo.idl.
+        The jsHeapSizeLimit attribute is removed.
+
 2013-06-04  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [curl] Headers should be parsed as utf8 if possible

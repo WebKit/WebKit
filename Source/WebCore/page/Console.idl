@@ -59,7 +59,5 @@
     [CallWith=ScriptArguments|ScriptState] void groupCollapsed();
     void groupEnd();
     [CallWith=ScriptArguments|ScriptState] void clear();
-
-    readonly attribute MemoryInfo memory;
 };
 

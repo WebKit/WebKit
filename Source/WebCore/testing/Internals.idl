@@ -233,6 +233,7 @@
 
     MallocStatistics mallocStatistics();
     TypeConversions typeConversions();
+    MemoryInfo memoryInfo();
 
     DOMString[] getReferencedFilePaths();
 

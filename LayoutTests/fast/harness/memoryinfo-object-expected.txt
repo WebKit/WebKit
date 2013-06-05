@@ -1,0 +1,5 @@
+PASS [object Internals] is defined.
+PASS [object MemoryInfo] is defined.
+PASS stats.usedJSHeapSize is >= 0
+PASS stats.totalJSHeapSize is >= 0
+

@@ -72,6 +72,7 @@
 #include "Language.h"
 #include "MallocStatistics.h"
 #include "MemoryCache.h"
+#include "MemoryInfo.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "PrintContext.h"
@@ -1861,6 +1862,11 @@ PassRefPtr<MallocStatistics> Internals::mallocStatistics() const
 PassRefPtr<TypeConversions> Internals::typeConversions() const
 {
     return TypeConversions::create();
+}
+
+PassRefPtr<MemoryInfo> Internals::memoryInfo() const
+{
+    return MemoryInfo::create();
 }
 
 Vector<String> Internals::getReferencedFilePaths() const

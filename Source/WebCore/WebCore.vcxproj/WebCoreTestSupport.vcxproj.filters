@@ -15,6 +15,9 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMallocStatistics.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMemoryInfo.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSTypeConversions.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -44,6 +47,9 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMallocStatistics.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMemoryInfo.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSTypeConversions.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -57,6 +63,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="..\testing\MallocStatistics.h">
+      <Filter>testing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\testing\MemoryInfo.h">
       <Filter>testing</Filter>
     </ClInclude>
     <ClInclude Include="..\testing\TypeConversions.h">

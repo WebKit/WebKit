@@ -450,7 +450,6 @@ IDL_BINDINGS += \
     $$PWD/page/EventSource.idl \
     $$PWD/page/History.idl \
     $$PWD/page/Location.idl \
-    $$PWD/page/MemoryInfo.idl \
     $$PWD/page/Navigator.idl \
     $$PWD/page/Performance.idl \
     $$PWD/page/PerformanceEntry.idl \
@@ -473,6 +472,7 @@ IDL_BINDINGS += \
     $$PWD/testing/Internals.idl \
     $$PWD/testing/InternalSettings.idl \
     $$PWD/testing/MallocStatistics.idl \
+    $$PWD/testing/MemoryInfo.idl \
     $$PWD/testing/TypeConversions.idl \
     $$PWD/workers/AbstractWorker.idl \
     $$PWD/workers/DedicatedWorkerContext.idl \

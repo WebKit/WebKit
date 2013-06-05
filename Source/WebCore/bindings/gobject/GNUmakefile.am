@@ -213,8 +213,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMMediaListPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMMediaQueryList.cpp \
 	DerivedSources/webkitdom/WebKitDOMMediaQueryListPrivate.h \
-	DerivedSources/webkitdom/WebKitDOMMemoryInfo.cpp \
-	DerivedSources/webkitdom/WebKitDOMMemoryInfoPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMMessagePort.cpp \
 	DerivedSources/webkitdom/WebKitDOMMessagePortPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMMicroDataItemValue.cpp \
@@ -406,7 +404,6 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMEventTarget.h \
 	DerivedSources/webkitdom/WebKitDOMHistory.h \
 	DerivedSources/webkitdom/WebKitDOMLocation.h \
-	DerivedSources/webkitdom/WebKitDOMMemoryInfo.h \
 	DerivedSources/webkitdom/WebKitDOMMicroDataItemValue.h \
 	DerivedSources/webkitdom/WebKitDOMObject.h \
 	DerivedSources/webkitdom/WebKitDOMNavigator.h \

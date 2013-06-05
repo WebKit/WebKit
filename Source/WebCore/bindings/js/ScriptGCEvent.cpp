@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "ScriptGCEvent.h"
 
 #include "JSDOMWindow.h"
@@ -48,9 +46,6 @@ void ScriptGCEvent::getHeapSize(HeapInfo& info)
     VM* vm = JSDOMWindow::commonVM();
     info.totalJSHeapSize = vm->heap.capacity();
     info.usedJSHeapSize = vm->heap.size();
-    info.jsHeapSizeLimit = 0;
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

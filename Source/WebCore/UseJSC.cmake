@@ -106,7 +106,6 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp
     bindings/js/JSMediaListCustom.cpp
-    bindings/js/JSMemoryInfoCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
     bindings/js/JSMessagePortCustom.cpp

@@ -3300,11 +3300,6 @@
 		9FA37EFB1172FDA600C4CD55 /* JSScriptProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA37EF71172FD9300C4CD55 /* JSScriptProfile.h */; };
 		9FA37EFC1172FDA600C4CD55 /* JSScriptProfileNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA37EF81172FD9300C4CD55 /* JSScriptProfileNode.cpp */; };
 		9FA37EFD1172FDA600C4CD55 /* JSScriptProfileNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA37EF91172FD9300C4CD55 /* JSScriptProfileNode.h */; };
-		9FDC8FF212FAB0060099AB1C /* JSMemoryInfoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FDC8FF112FAB0060099AB1C /* JSMemoryInfoCustom.cpp */; };
-		9FFE3E7A11B59C5D0037874E /* MemoryInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3E7811B59C5D0037874E /* MemoryInfo.cpp */; };
-		9FFE3E7B11B59C5D0037874E /* MemoryInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFE3E7911B59C5D0037874E /* MemoryInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9FFE3EA511B5A4390037874E /* JSMemoryInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE3EA311B5A4390037874E /* JSMemoryInfo.cpp */; };
-		9FFE3EA611B5A4390037874E /* JSMemoryInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FFE3EA411B5A4390037874E /* JSMemoryInfo.h */; };
 		A00B721A11DE6428008AB9FF /* CheckedInt.h in Headers */ = {isa = PBXBuildFile; fileRef = A00B721911DE6427008AB9FF /* CheckedInt.h */; };
 		A024575116CEAA27000E5671 /* EXTDrawBuffers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A024574E16CEAA27000E5671 /* EXTDrawBuffers.cpp */; };
 		A024575216CEAA27000E5671 /* EXTDrawBuffers.h in Headers */ = {isa = PBXBuildFile; fileRef = A024574F16CEAA27000E5671 /* EXTDrawBuffers.h */; };
@@ -5189,6 +5184,8 @@
 		CD37B39815C1B971006DC898 /* DiagnosticLoggingKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD37B37415C1A7E1006DC898 /* DiagnosticLoggingKeys.cpp */; };
 		CD47B3FC16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD47B3FA16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm */; };
 		CD4AC52A1496AE9A0087C4EF /* Composite.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD4AC5281496AE2F0087C4EF /* Composite.wav */; };
+		CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393D1175E018600C07123 /* JSMemoryInfo.cpp */; };
+		CD5393D4175E018600C07123 /* JSMemoryInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5393D2175E018600C07123 /* JSMemoryInfo.h */; };
 		CD54DE4717468B6F005E5B36 /* AudioSessionManagerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD54DE4517468B6F005E5B36 /* AudioSessionManagerMac.cpp */; };
 		CD54DE4B17469C6D005E5B36 /* AudioSessionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD54DE4917469C6D005E5B36 /* AudioSessionMac.cpp */; };
 		CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD7E05211651A84100C1201F /* WebCoreAVFResourceLoader.mm */; };
@@ -9750,12 +9747,6 @@
 		9FA37EF71172FD9300C4CD55 /* JSScriptProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptProfile.h; sourceTree = "<group>"; };
 		9FA37EF81172FD9300C4CD55 /* JSScriptProfileNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptProfileNode.cpp; sourceTree = "<group>"; };
 		9FA37EF91172FD9300C4CD55 /* JSScriptProfileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptProfileNode.h; sourceTree = "<group>"; };
-		9FDC8FF112FAB0060099AB1C /* JSMemoryInfoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMemoryInfoCustom.cpp; sourceTree = "<group>"; };
-		9FFE3E7811B59C5D0037874E /* MemoryInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryInfo.cpp; sourceTree = "<group>"; };
-		9FFE3E7911B59C5D0037874E /* MemoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInfo.h; sourceTree = "<group>"; };
-		9FFE3E7C11B59C6E0037874E /* MemoryInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MemoryInfo.idl; sourceTree = "<group>"; };
-		9FFE3EA311B5A4390037874E /* JSMemoryInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMemoryInfo.cpp; sourceTree = "<group>"; };
-		9FFE3EA411B5A4390037874E /* JSMemoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMemoryInfo.h; sourceTree = "<group>"; };
 		A00B721911DE6427008AB9FF /* CheckedInt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CheckedInt.h; path = canvas/CheckedInt.h; sourceTree = "<group>"; };
 		A024574E16CEAA27000E5671 /* EXTDrawBuffers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EXTDrawBuffers.cpp; path = canvas/EXTDrawBuffers.cpp; sourceTree = "<group>"; };
 		A024574F16CEAA27000E5671 /* EXTDrawBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTDrawBuffers.h; path = canvas/EXTDrawBuffers.h; sourceTree = "<group>"; };
@@ -11919,6 +11910,10 @@
 		CD47B3FA16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CDMPrivateAVFoundation.mm; path = Modules/encryptedmedia/CDMPrivateAVFoundation.mm; sourceTree = "<group>"; };
 		CD4AC5281496AE2F0087C4EF /* Composite.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = Composite.wav; path = platform/audio/resources/Composite.wav; sourceTree = SOURCE_ROOT; };
 		CD4E0AFA11F7BC27009D3811 /* fullscreen.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = fullscreen.css; sourceTree = "<group>"; };
+		CD5393CB175DCCE600C07123 /* MemoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInfo.h; sourceTree = "<group>"; };
+		CD5393CC175DCCE600C07123 /* MemoryInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MemoryInfo.idl; sourceTree = "<group>"; };
+		CD5393D1175E018600C07123 /* JSMemoryInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMemoryInfo.cpp; sourceTree = "<group>"; };
+		CD5393D2175E018600C07123 /* JSMemoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMemoryInfo.h; sourceTree = "<group>"; };
 		CD54DE4517468B6F005E5B36 /* AudioSessionManagerMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSessionManagerMac.cpp; sourceTree = "<group>"; };
 		CD54DE4917469C6D005E5B36 /* AudioSessionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSessionMac.cpp; sourceTree = "<group>"; };
 		CD7E05201651A84100C1201F /* WebCoreAVFResourceLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebCoreAVFResourceLoader.h; path = objc/WebCoreAVFResourceLoader.h; sourceTree = "<group>"; };
@@ -13916,6 +13911,8 @@
 				A7BF7EDE14C9175A0014489D /* InternalSettings.idl */,
 				A7BE7EDD14C9175A0014489D /* MallocStatistics.h */,
 				A7BE7EDE14C9175A0014489D /* MallocStatistics.idl */,
+				CD5393CB175DCCE600C07123 /* MemoryInfo.h */,
+				CD5393CC175DCCE600C07123 /* MemoryInfo.idl */,
 				CDC26B3C160A62B00026757B /* MockCDM.cpp */,
 				CDC26B3D160A62B00026757B /* MockCDM.h */,
 				EB081CD81696084400553730 /* TypeConversions.h */,
@@ -13938,6 +13935,8 @@
 				A7B4EA6914C9348400C8F5BF /* JSMallocStatistics.h */,
 				EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */,
 				EBF5121B1696496C0056BD25 /* JSTypeConversions.h */,
+				CD5393D1175E018600C07123 /* JSMemoryInfo.cpp */,
+				CD5393D2175E018600C07123 /* JSMemoryInfo.h */,
 			);
 			name = Testing;
 			sourceTree = "<group>";
@@ -14737,9 +14736,6 @@
 				BCE1C4220D9829F2003B02F2 /* Location.idl */,
 				BC59DEFA169DEDD80016AC34 /* make_settings.pl */,
 				931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */,
-				9FFE3E7811B59C5D0037874E /* MemoryInfo.cpp */,
-				9FFE3E7911B59C5D0037874E /* MemoryInfo.h */,
-				9FFE3E7C11B59C6E0037874E /* MemoryInfo.idl */,
 				93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */,
 				935C476209AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h */,
 				A9C6E5A30D746458006442E9 /* Navigator.cpp */,
@@ -18860,7 +18856,6 @@
 				1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
 				AD726FE716D9F204003A4E6D /* JSMediaListCustom.h */,
-				9FDC8FF112FAB0060099AB1C /* JSMemoryInfoCustom.cpp */,
 				E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */,
 				410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */,
 				E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */,
@@ -19021,8 +19016,6 @@
 				BC94D14D0C275C68006BC617 /* JSHistory.h */,
 				BCE1C4390D9830D3003B02F2 /* JSLocation.cpp */,
 				BCE1C43A0D9830D3003B02F2 /* JSLocation.h */,
-				9FFE3EA311B5A4390037874E /* JSMemoryInfo.cpp */,
-				9FFE3EA411B5A4390037874E /* JSMemoryInfo.h */,
 				A9D247F50D757E3300FDF959 /* JSNavigator.cpp */,
 				A9D247F60D757E3300FDF959 /* JSNavigator.h */,
 				E51A81DE17298D7700BFCA61 /* JSPerformance.cpp */,
@@ -20855,6 +20848,7 @@
 				CDC26B41160A8CCE0026757B /* MockCDM.h in Headers */,
 				AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */,
 				41815C1F138319830057AAA4 /* WebCoreTestSupport.h in Headers */,
+				CD5393D4175E018600C07123 /* JSMemoryInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22425,7 +22419,6 @@
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
 				D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */,
 				FDBD480D159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h in Headers */,
-				9FFE3EA611B5A4390037874E /* JSMemoryInfo.h in Headers */,
 				E107400E0E77BDC00033AF24 /* JSMessageChannel.h in Headers */,
 				75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */,
 				E1ADEDDA0E76BD93004A1A5E /* JSMessagePort.h in Headers */,
@@ -22819,7 +22812,6 @@
 				D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */,
 				FD671A78159BB07000197559 /* MediaStreamAudioSourceNode.h in Headers */,
 				BCB16C180979C3BD00467741 /* MemoryCache.h in Headers */,
-				9FFE3E7B11B59C5D0037874E /* MemoryInfo.h in Headers */,
 				6571DCC81385E6A400702DD0 /* MemoryPressureHandler.h in Headers */,
 				93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */,
 				E1ADECCE0E76AD8B004A1A5E /* MessageChannel.h in Headers */,
@@ -24336,6 +24328,7 @@
 				CDC26B40160A8CC60026757B /* MockCDM.cpp in Sources */,
 				AA5F3B8F16CC4B3900455EB0 /* PlatformSpeechSynthesizerMock.cpp in Sources */,
 				41815C1E138319830057AAA4 /* WebCoreTestSupport.cpp in Sources */,
+				CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25591,8 +25584,6 @@
 				BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */,
 				D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */,
 				FDBD480C159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp in Sources */,
-				9FFE3EA511B5A4390037874E /* JSMemoryInfo.cpp in Sources */,
-				9FDC8FF212FAB0060099AB1C /* JSMemoryInfoCustom.cpp in Sources */,
 				E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */,
 				E1A5F99B0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp in Sources */,
 				75793EC80D0CE72D007FC0AC /* JSMessageEvent.cpp in Sources */,
@@ -26006,7 +25997,6 @@
 				D3AA10F3123A98AA0092152B /* MediaQueryMatcher.cpp in Sources */,
 				FD671A77159BB07000197559 /* MediaStreamAudioSourceNode.cpp in Sources */,
 				BCB16C170979C3BD00467741 /* MemoryCache.cpp in Sources */,
-				9FFE3E7A11B59C5D0037874E /* MemoryInfo.cpp in Sources */,
 				657EDA081385CB97004E0645 /* MemoryPressureHandler.cpp in Sources */,
 				657EDA0B1385CBD8004E0645 /* MemoryPressureHandlerMac.mm in Sources */,
 				93309DF9099E64920056E581 /* MergeIdenticalElementsCommand.cpp in Sources */,

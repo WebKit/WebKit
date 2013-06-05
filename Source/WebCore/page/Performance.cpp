@@ -34,7 +34,6 @@
 
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "MemoryInfo.h"
 #include "PerformanceEntry.h"
 #include "PerformanceNavigation.h"
 #include "PerformanceResourceTiming.h"
@@ -78,11 +77,6 @@ ScriptExecutionContext* Performance::scriptExecutionContext() const
     if (!frame())
         return 0;
     return frame()->document();
-}
-
-PassRefPtr<MemoryInfo> Performance::memory() const
-{
-    return MemoryInfo::create(m_frame);
 }
 
 PerformanceNavigation* Performance::navigation() const

@@ -155,7 +155,6 @@ SOURCES += \
      bindings/js/JSLocationCustom.cpp \
      bindings/js/JSMainThreadExecState.cpp \
      bindings/js/JSMediaListCustom.cpp \
-     bindings/js/JSMemoryInfoCustom.cpp \
      bindings/js/JSMessageChannelCustom.cpp \
      bindings/js/JSMessageEventCustom.cpp \
      bindings/js/JSMessagePortCustom.cpp \
@@ -925,7 +924,6 @@ SOURCES += \
     page/GroupSettings.cpp \
     page/History.cpp \
     page/Location.cpp \
-    page/MemoryInfo.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Navigator.cpp \
     page/NavigatorBase.cpp \
@@ -2814,6 +2812,7 @@ HEADERS += \
     testing/Internals.h \
     testing/InternalSettings.h \
     testing/MallocStatistics.h \
+    testing/MemoryInfo.h \
     testing/TypeConversions.h \
     workers/AbstractWorker.h \
     workers/DedicatedWorkerContext.h \

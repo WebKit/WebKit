@@ -252,7 +252,6 @@
 #if ENABLE(MEDIA_SOURCE)
 #include "JSMediaSource.cpp"
 #endif
-#include "JSMemoryInfo.cpp"
 #include "JSMessageChannel.cpp"
 #include "JSMessageEvent.cpp"
 #include "JSMessagePort.cpp"

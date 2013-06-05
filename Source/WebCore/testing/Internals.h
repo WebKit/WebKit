@@ -49,6 +49,7 @@ class Element;
 class Frame;
 class InspectorFrontendChannelDummy;
 class InternalSettings;
+class MemoryInfo;
 class Node;
 class Page;
 class Range;
@@ -274,6 +275,7 @@ public:
 
     PassRefPtr<MallocStatistics> mallocStatistics() const;
     PassRefPtr<TypeConversions> typeConversions() const;
+    PassRefPtr<MemoryInfo> memoryInfo() const;
 
     Vector<String> getReferencedFilePaths() const;
 

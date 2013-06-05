@@ -318,6 +318,7 @@ _ZN7WebCore10ClientRectC1ERKNS_9FloatRectE;
 _ZN7WebCore13BatteryStatus6createEbddd;
 _ZN7WebCore17BatteryController14supplementNameEv;
 _ZN7WebCore17BatteryController22didChangeBatteryStatusERKN3WTF12AtomicStringENS1_10PassRefPtrINS_13BatteryStatusEEE;
+_ZN7WebCore13ScriptGCEvent11getHeapSizeERNS_8HeapInfoE;
 
 local:
 _Z*;

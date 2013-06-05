@@ -1,3 +1,15 @@
+2013-06-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move MemoryInfo under window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=117197
+
+        Reviewed by Ryosuke Niwa.
+
+        * GNUmakefile.am: Add the testing/MemoryInfo.(h|idl) files and the generated targets to
+        the Automake build
+        * Scripts/webkitperl/filter-build-webkit_unittest/shouldIgnoreLine_unittests.pl: List the
+        testing/MemoryInfo.idl file instead of page/MemoryInfo.idl.
+
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
         Remove uses of VS2005 scripts, executables and associated environment variables from scripts.

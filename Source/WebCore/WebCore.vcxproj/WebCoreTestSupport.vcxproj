@@ -171,6 +171,38 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMemoryInfo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">
+      </PrecompiledHeader>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4065;4273;4565;4701;4702;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">4065;4273;4565;4701;4702;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">4065;4273;4565;4701;4702;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">
+      </ForcedIncludeFiles>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
+      </PrecompiledHeader>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4065;4273;4565;4701;4702;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">4065;4273;4565;4701;4702;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">4065;4273;4565;4701;4702;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
+      </ForcedIncludeFiles>
+    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSTypeConversions.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -399,11 +431,13 @@
   <ItemGroup>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\InternalSettingsGenerated.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMallocStatistics.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMemoryInfo.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSTypeConversions.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternals.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternalSettings.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternalSettingsGenerated.h" />
     <ClInclude Include="..\testing\MallocStatistics.h" />
+    <ClInclude Include="..\testing\MemoryInfo.h" />
     <ClInclude Include="..\testing\TypeConversions.h" />
     <ClInclude Include="..\testing\Internals.h" />
     <ClInclude Include="..\testing\InternalSettings.h" />

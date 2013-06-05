@@ -36,7 +36,6 @@
 
 #include "DOMWindowProperty.h"
 #include "EventTarget.h"
-#include "MemoryInfo.h"
 #include "PerformanceEntryList.h"
 #include "PerformanceNavigation.h"
 #include "PerformanceTiming.h"
@@ -61,7 +60,6 @@ public:
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-    PassRefPtr<MemoryInfo> memory() const;
     PerformanceNavigation* navigation() const;
     PerformanceTiming* timing() const;
     double now() const;

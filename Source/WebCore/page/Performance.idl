@@ -36,7 +36,6 @@
 ] interface Performance {
     readonly attribute PerformanceNavigation navigation;
     readonly attribute PerformanceTiming timing;
-    readonly attribute MemoryInfo memory;
 
 #if defined(ENABLE_PERFORMANCE_TIMELINE) && ENABLE_PERFORMANCE_TIMELINE
     PerformanceEntryList webkitGetEntries();

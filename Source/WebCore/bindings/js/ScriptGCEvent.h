@@ -37,16 +37,12 @@ struct HeapInfo {
     HeapInfo()
         : usedJSHeapSize(0)
         , totalJSHeapSize(0)
-        , jsHeapSizeLimit(0)
     {
     }
 
     size_t usedJSHeapSize;
     size_t totalJSHeapSize;
-    size_t jsHeapSizeLimit;
 };
-
-#if ENABLE(INSPECTOR)
 
 class ScriptGCEventListener;
 
@@ -57,8 +53,6 @@ public:
     static void removeEventListener(ScriptGCEventListener*) { }
     static void getHeapSize(HeapInfo&);
 };
-
-#endif // ENABLE(INSPECTOR)
 
 } // namespace WebCore
 
