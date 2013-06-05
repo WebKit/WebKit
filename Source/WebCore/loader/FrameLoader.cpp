@@ -83,6 +83,7 @@
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "Page.h"
+#include "PageActivityAssertionToken.h"
 #include "PageCache.h"
 #include "PageTransitionEvent.h"
 #include "PlatformStrategies.h"
@@ -1092,10 +1093,13 @@ void FrameLoader::completed()
 
     if (m_frame->view())
         m_frame->view()->maintainScrollPositionAtAnchor(0);
+    m_activityAssertion.clear();
 }
 
 void FrameLoader::started()
 {
+    if (m_frame && m_frame->page())
+        m_activityAssertion = m_frame->page()->createActivityToken();
     for (Frame* frame = m_frame; frame; frame = frame->tree()->parent())
         frame->loader()->m_isComplete = false;
 }

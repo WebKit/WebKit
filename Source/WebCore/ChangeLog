@@ -1,3 +1,25 @@
+2013-06-04  Oliver Hunt  <oliver@apple.com>
+
+        Prevent throttling while resources are being loaded
+        https://bugs.webkit.org/show_bug.cgi?id=117218
+
+        Reviewed by Gavin Barraclough.
+
+        Make use of the page activity assertion infrastructure to delay
+        throttling while we are waiting on resource loads.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::completed):
+        (WebCore::FrameLoader::started):
+        * loader/FrameLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::init):
+        (WebCore::SubresourceLoader::checkForHTTPStatusCodeError):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::willCancel):
+        * loader/SubresourceLoader.h:
+
 2013-06-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove [NoInterfaceObject] from XPathExpression and NodeIterator

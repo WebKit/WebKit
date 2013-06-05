@@ -39,6 +39,7 @@ namespace WebCore {
 class CachedResource;
 class CachedResourceLoader;
 class Document;
+class PageActivityAssertionToken;
 class ResourceRequest;
 
 class SubresourceLoader : public ResourceLoader {
@@ -98,6 +99,7 @@ private:
     bool m_loadingMultipartContent;
     SubresourceLoaderState m_state;
     OwnPtr<RequestCountTracker> m_requestCountTracker;
+    OwnPtr<PageActivityAssertionToken> m_activityAssertion;
 };
 
 }

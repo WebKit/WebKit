@@ -66,6 +66,7 @@ class IconController;
 class NavigationAction;
 class NetworkingContext;
 class Page;
+class PageActivityAssertionToken;
 class PolicyChecker;
 class ResourceError;
 class ResourceRequest;
@@ -446,6 +447,7 @@ private:
 
     KURL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;
+    OwnPtr<PageActivityAssertionToken> m_activityAssertion;
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for
