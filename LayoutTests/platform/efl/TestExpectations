@@ -1471,9 +1471,6 @@ webkit.org/b/116023 svg/as-image/svg-as-image-canvas.html [ ImageOnlyFailure ]
 # EFL does not yet support global selection
 webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Skip ]
 
-# Gradient instead of solid color in the rectangle
-webkit.org/b/54251 fast/canvas/DrawImageSinglePixelStretch.html [ Failure ]
-
 webkit.org/b/98564 fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
 
 # Fails on the bots.
