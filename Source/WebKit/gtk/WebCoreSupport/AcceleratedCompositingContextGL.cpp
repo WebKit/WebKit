@@ -156,7 +156,7 @@ bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t* cr, const IntR
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
     cairo_fill(cr);
 
-    if ((!m_layerFlushTimerCallbackId && toTextureMapperLayer(m_rootLayer.get())->descendantsOrSelfHaveRunningAnimations()) || m_needsExtraFlush) {
+    if (!m_layerFlushTimerCallbackId && (toTextureMapperLayer(m_rootLayer.get())->descendantsOrSelfHaveRunningAnimations() || m_needsExtraFlush)) {
         m_needsExtraFlush = false;
         double nextFlush = max((1 / gFramesPerSecond) - (currentTime() - m_lastFlushTime), 0.0);
         m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 1000 * nextFlush, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);

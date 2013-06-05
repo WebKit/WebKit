@@ -1,3 +1,16 @@
+2013-06-05  Alberto Garcia  <agarcia@igalia.com>
+
+        [GTK] AcceleratedCompositingContext: fix layerFlushTimerFiredCallback condition
+        https://bugs.webkit.org/show_bug.cgi?id=117258
+
+        Reviewed by Martin Robinson.
+
+        The expressions were incorrectly grouped, a timeout handler can
+        only be added only if there's none running already.
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::AcceleratedCompositingContext::renderLayersToWindow):
+
 2013-06-04  Alberto Garcia  <agarcia@igalia.com>
 
         [GTK] Make precedence of logical operators explicit
