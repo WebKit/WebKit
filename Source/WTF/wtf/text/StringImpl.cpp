@@ -290,6 +290,11 @@ PassRefPtr<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters,
     return string.release();
 }
 
+PassRefPtr<StringImpl> StringImpl::create8BitIfPossible(const UChar* string)
+{
+    return StringImpl::create8BitIfPossible(string, lengthOfNullTerminatedString(string));
+}
+
 PassRefPtr<StringImpl> StringImpl::create(const LChar* string)
 {
     if (!string)

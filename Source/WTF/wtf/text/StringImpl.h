@@ -359,6 +359,7 @@ public:
     {
         return create8BitIfPossible(vector.data(), vector.size());
     }
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> create8BitIfPossible(const UChar*);
 
     ALWAYS_INLINE static PassRefPtr<StringImpl> create(const char* s, unsigned length) { return create(reinterpret_cast<const LChar*>(s), length); }
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> create(const LChar*);
@@ -1311,6 +1312,18 @@ static inline bool isSpaceOrNewline(UChar c)
     // Use isASCIISpace() for basic Latin-1.
     // This will include newlines, which aren't included in Unicode DirWS.
     return c <= 0x7F ? WTF::isASCIISpace(c) : WTF::Unicode::direction(c) == WTF::Unicode::WhiteSpaceNeutral;
+}
+
+template<typename CharacterType>
+inline unsigned lengthOfNullTerminatedString(const CharacterType* string)
+{
+    ASSERT(string);
+    size_t length = 0;
+    while (string[length])
+        ++length;
+
+    RELEASE_ASSERT(length < std::numeric_limits<unsigned>::max());
+    return static_cast<unsigned>(length);
 }
 
 inline PassRefPtr<StringImpl> StringImpl::isolatedCopy() const

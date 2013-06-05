@@ -1,3 +1,16 @@
+2013-06-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        WebSQL forces 16-bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=116935
+
+        Reviewed by Darin Adler.
+
+        Merge chromium 49c9632ac135f6f06e623a7a81d9da1f6bb7196f.
+        https://chromium.googlesource.com/chromium/blink/+/49c9632ac135f6f06e623a7a81d9da1f6bb7196f
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::getColumnValue):
+
 2013-06-05  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
