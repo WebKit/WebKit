@@ -439,6 +439,7 @@ EXPORTS
         ?toInt64@WebCore@@YA_JPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z
         ?toUInt32EnforceRange@WebCore@@YAIPAVExecState@JSC@@VJSValue@3@@Z
         ?toUInt64@WebCore@@YA_KPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z
+        ?getHeapSize@ScriptGCEvent@WebCore@@SAXAAUHeapInfo@2@@Z
 
 #if ENABLE(WORKERS)
         ?workerThreadCount@WorkerThread@WebCore@@SAIXZ
