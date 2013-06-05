@@ -1,3 +1,16 @@
+2013-06-05  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Font::shouldUseSmoothing() has fake dependency on Qt 5.1
+        https://bugs.webkit.org/show_bug.cgi?id=117195
+
+        Reviewed by Jocelyn Turcotte.
+
+        Remove the fake dependency on Qt 5.1 so we may rebase the layout tests
+        before switching to Qt 5.1
+
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2013-06-05  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Respect renderer creation constraints when element is part of named flow
