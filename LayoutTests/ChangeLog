@@ -1,5 +1,12 @@
 2013-06-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL Gardening. Move mozilla-focus-blur.html to efl-wk2, because it is only failing on EFL WK2.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2013-06-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL Gardening.
 
         fast/canvas/DrawImageSinglePixelStretch.html has being passed after r137150. 

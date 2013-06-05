@@ -1714,9 +1714,6 @@ webkit.org/b/83869 media/video-zoom-controls.html [ Failure ]
 
 webkit.org/b/109950 fast/dom/Window/webkitConvertPoint.html [ Failure ]
 
-# Failing after r142758.
-webkit.org/b/109948 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
-
 # Newly added test in r142979 is failing.
 webkit.org/b/109951 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure ]
 

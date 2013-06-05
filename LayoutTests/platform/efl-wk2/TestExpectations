@@ -575,3 +575,6 @@ compositing/tiling/rotated-tiled-preserve3d-clamped.html [ Missing ]
 
 # Crashing IndexedDB tests
 webkit.org/b/107194 storage/indexeddb/pending-activity.html [ Crash ]
+
+# Failing after r142758.
+webkit.org/b/109948 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
