@@ -1,5 +1,27 @@
 2013-06-05  Gwang Yoon Hwang  <ryumiel@company100.net>
 
+        [Coordinated Graphics] Prevent a recursive painting in CoordinatedGraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=117222
+
+        Reviewed by Noam Rosenthal.
+
+        CoordinatedGraphicsLayer::flushCompositingState() will cross frame
+        boundaries if the GraphicsLayers are connected. In this case,
+        updateContentBuffers will invoke a painting of a sub-frame that causes
+        flushCompositingState recursively.
+
+        To prevent this behavior this patch extracts updateContentBuffers from
+        flushCompositingState, and places it in
+        updateContentBuffersIncludeSublayers, which traverses the tree
+        separately from flushing the state for painting.
+
+        No new tests, covered by existing tests.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::flushPendingLayerChanges):
+
+2013-06-05  Gwang Yoon Hwang  <ryumiel@company100.net>
+
         [Coordinated Graphics] Rename client classes for CoordinatedImageBacking and UpdateAtlas.
         https://bugs.webkit.org/show_bug.cgi?id=111948
 

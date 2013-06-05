@@ -111,6 +111,9 @@ public:
     virtual void suspendAnimations(double time) OVERRIDE;
     virtual void resumeAnimations() OVERRIDE;
 
+    void syncPendingStateChangesIncludingSubLayers();
+    void updateContentBuffersIncludingSubLayers();
+
     FloatPoint computePositionRelativeToBase();
     void computePixelAlignment(FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset);
 

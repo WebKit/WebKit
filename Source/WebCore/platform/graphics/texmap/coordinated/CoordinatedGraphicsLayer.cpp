@@ -790,19 +790,24 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 #if ENABLE(CSS_FILTERS)
     syncFilters();
 #endif
-    updateContentBuffers();
 #if USE(GRAPHICS_SURFACE)
     syncCanvas();
 #endif
 
+    // Only unset m_movingVisibleRect after we have updated the visible rect after the animation stopped.
+    if (!hasActiveTransformAnimation)
+        m_movingVisibleRect = false;
+}
+
+void CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers()
+{
     if (m_layerState.hasPendingChanges()) {
         m_coordinator->syncLayerState(m_id, m_layerState);
         resetLayerState();
     }
 
-    // Only unset m_movingVisibleRect after we have updated the visible rect after the animation stopped.
-    if (!hasActiveTransformAnimation)
-        m_movingVisibleRect = false;
+    for (size_t i = 0; i < children().size(); ++i)
+        toCoordinatedGraphicsLayer(children()[i])->syncPendingStateChangesIncludingSubLayers();
 }
 
 void CoordinatedGraphicsLayer::resetLayerState()
@@ -991,6 +996,20 @@ void CoordinatedGraphicsLayer::removeTile(uint32_t tileID)
     ASSERT(m_coordinator);
     ASSERT(m_coordinator->isFlushingLayerChanges() || m_isPurging);
     m_layerState.tilesToRemove.append(tileID);
+}
+
+void CoordinatedGraphicsLayer::updateContentBuffersIncludingSubLayers()
+{
+    if (CoordinatedGraphicsLayer* mask = toCoordinatedGraphicsLayer(maskLayer()))
+        mask->updateContentBuffers();
+
+    if (CoordinatedGraphicsLayer* replica = toCoordinatedGraphicsLayer(replicaLayer()))
+        replica->updateContentBuffers();
+
+    updateContentBuffers();
+
+    for (size_t i = 0; i < children().size(); ++i)
+        toCoordinatedGraphicsLayer(children()[i])->updateContentBuffersIncludingSubLayers();
 }
 
 void CoordinatedGraphicsLayer::updateContentBuffers()

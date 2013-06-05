@@ -248,6 +248,9 @@ bool CoordinatedLayerTreeHost::flushPendingLayerChanges()
 
     bool didSync = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 
+    toCoordinatedGraphicsLayer(m_rootLayer.get())->updateContentBuffersIncludingSubLayers();
+    toCoordinatedGraphicsLayer(m_rootLayer.get())->syncPendingStateChangesIncludingSubLayers();
+
     flushPendingImageBackingChanges();
 
     if (m_shouldSyncFrame) {
