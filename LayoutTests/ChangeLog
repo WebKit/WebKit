@@ -1,3 +1,20 @@
+2013-06-05  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove [NoInterfaceObject] from TreeWalker
+        https://bugs.webkit.org/show_bug.cgi?id=117225
+
+        Reviewed by Kentaro Hara.
+
+        Rebaseline fast/js/global-constructors-attributes.html and fast/dom/dom-constructors.html
+        now that a TreeWalker property is exposed on the global Window object.
+
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/js/global-constructors-attributes-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt:
+
 2013-06-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Move MemoryInfo under window.internals

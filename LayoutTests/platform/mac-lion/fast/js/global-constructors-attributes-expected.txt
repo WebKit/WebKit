@@ -1763,6 +1763,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'TransitionEvent').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'TransitionEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'TransitionEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'TransitionEvent').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'TreeWalker').value is TreeWalker
+PASS Object.getOwnPropertyDescriptor(global, 'TreeWalker').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'TreeWalker').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'TreeWalker').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'TreeWalker').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').value is UIEvent
 PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').hasOwnProperty('set') is false

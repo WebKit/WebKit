@@ -120,7 +120,7 @@ PASS TryAllocate('Navigator') is 'exception'
 PASS TryAllocate('NodeIterator') is 'exception'
 PASS TryAllocate('RGBColor') is 'exception'
 PASS TryAllocate('Screen') is 'exception'
-FAIL TryAllocate('TreeWalker') should be exception. Was no constructor.
+PASS TryAllocate('TreeWalker') is 'exception'
 PASS TryAllocate('XPathExpression') is 'exception'
 PASS TryAllocate('Worker') is 'exception'
 PASS TryAllocate('EventTargetNode') is 'no constructor'

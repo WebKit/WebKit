@@ -1,3 +1,18 @@
+2013-06-05  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove [NoInterfaceObject] from TreeWalker
+        https://bugs.webkit.org/show_bug.cgi?id=117225
+
+        Reviewed by Kentaro Hara.
+
+        Remove [NoInterfaceObject] IDL extended attribute from TreeWalker interface
+        to match Firefox's behavior and the specification:
+        http://www.w3.org/TR/DOM-Level-2-Traversal-Range/traversal.html#Traversal-TreeWalker
+
+        No new tests, already covered by existing tests.
+
+        * dom/TreeWalker.idl:
+
 2013-06-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Move MemoryInfo under window.internals
