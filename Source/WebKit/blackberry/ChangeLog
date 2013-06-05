@@ -1,3 +1,15 @@
+2013-06-05  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Make image clickable when it has anchor as parent node.
+        https://bugs.webkit.org/show_bug.cgi?id=117271
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PR 345995
+        Internally Reviewed by Genevieve Mak.
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::isElementClickable):
+
 2013-06-05  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Selection handles are inverted on directional selections
