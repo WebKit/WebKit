@@ -257,7 +257,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
     size_t totalSize = size * nmemb;
     ResourceHandleClient* client = d->client();
 
-    String header(static_cast<const char*>(ptr), totalSize);
+    String header = String::fromUTF8WithLatin1Fallback(static_cast<const char*>(ptr), totalSize);
 
     /*
      * a) We can finish and send the ResourceResponse

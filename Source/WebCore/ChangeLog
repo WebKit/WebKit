@@ -1,3 +1,15 @@
+2013-06-04  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [curl] Headers should be parsed as utf8 if possible
+        https://bugs.webkit.org/show_bug.cgi?id=117196
+
+        Reviewed by Brent Fulgham.
+
+        Testcase already present: http/tests/download/literal-utf-8.html
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback): Parse the header as an utf8 string if possible.
+
 2013-06-04  Oliver Hunt  <oliver@apple.com>
 
         Prevent throttling while resources are being loaded
