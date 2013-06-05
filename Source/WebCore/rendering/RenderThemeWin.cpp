@@ -26,6 +26,7 @@
 #include "Element.h"
 #include "FontMetrics.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "LocalWindowsContext.h"
 #include "PaintInfo.h"

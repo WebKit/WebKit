@@ -1,3 +1,12 @@
+2013-06-05  Mark Salisbury  <mark.salisbury@hp.com>
+
+        [WinCE,WinCairo] RenderThemeWin.cpp needs to include FrameSelection.h.
+        https://bugs.webkit.org/show_bug.cgi?id=116583
+
+        Reviewed by Brent Fulgham.
+
+        * rendering/RenderThemeWin.cpp:
+
 2013-06-05  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [curl] Restrict allowed protocols
