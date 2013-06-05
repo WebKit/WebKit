@@ -28,7 +28,6 @@
     NoInterfaceObject,
     Conditional=SVG,
     ObjCProtocol,
-    OmitConstructor
 ] interface ElementTimeControl { 
     void beginElement();
     void beginElementAt([Default=Undefined] optional float offset);

@@ -27,6 +27,5 @@
     NoInterfaceObject,
     Conditional=WEBGL,
     GenerateIsReachable=ImplContext,
-    OmitConstructor
 ] interface OESTextureFloat {
 };

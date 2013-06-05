@@ -29,7 +29,6 @@ typedef unsigned long GLenum;
     NoInterfaceObject,
     Conditional=WEBGL,
     GenerateIsReachable=ImplContext,
-    OmitConstructor,
     DoNotCheckConstants
 ] interface EXTDrawBuffers {
     const GLenum COLOR_ATTACHMENT0_EXT = 0x8CE0;

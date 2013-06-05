@@ -33,7 +33,6 @@
     NoInterfaceObject,
     Conditional=LEGACY_NOTIFICATIONS,
     ActiveDOMObject,
-    OmitConstructor
 ] interface NotificationCenter {
    Notification createNotification(DOMString iconUrl, DOMString title, DOMString body) raises(DOMException);
 

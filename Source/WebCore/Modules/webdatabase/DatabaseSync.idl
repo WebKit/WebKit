@@ -31,7 +31,6 @@
 [
     NoInterfaceObject,
     Conditional=SQL_DATABASE,
-    OmitConstructor,
     JSNoStaticTables
 ] interface DatabaseSync {
     readonly attribute DOMString version;

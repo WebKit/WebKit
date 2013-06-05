@@ -26,7 +26,6 @@
 [
     NoInterfaceObject,
     Conditional=GEOLOCATION,
-    OmitConstructor,
     ImplementationLacksVTable
 ] interface Coordinates {
     readonly attribute double latitude;

@@ -29,7 +29,6 @@
 [
     NoInterfaceObject,
     Conditional=SQL_DATABASE,
-    OmitConstructor,
     JSNoStaticTables,
     ImplementationLacksVTable
 ] interface SQLError {

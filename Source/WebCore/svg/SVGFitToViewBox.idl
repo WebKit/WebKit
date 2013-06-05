@@ -29,7 +29,6 @@
     Conditional=SVG,
     ObjCProtocol,
     SuppressToJSObject,
-    OmitConstructor
 ] interface SVGFitToViewBox {
     readonly attribute SVGAnimatedRect                viewBox;
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;

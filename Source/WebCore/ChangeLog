@@ -1,3 +1,88 @@
+2013-06-05  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Merge [NoInterfaceObject] and [OmitConstructor] extended attributes
+        https://bugs.webkit.org/show_bug.cgi?id=115853
+
+        Reviewed by Geoffrey Garen.
+
+        Remove [OmitConstructor] extended attribute as it is overlapping with
+        the standard [NoInterfaceObject] Web IDL extended attribute.
+
+        Having [NoInterfaceObject] extended attribute on an interface now
+        implies that its constructor is omitted (i.e. not generated).
+
+        No new tests, no behavior change.
+
+        * Modules/geolocation/Coordinates.idl:
+        * Modules/geolocation/Geolocation.idl:
+        * Modules/geolocation/Geoposition.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/notifications/NotificationCenter.idl:
+        * Modules/quota/StorageInfo.idl:
+        * Modules/quota/StorageQuota.idl:
+        * Modules/webdatabase/Database.idl:
+        * Modules/webdatabase/DatabaseSync.idl:
+        * Modules/webdatabase/SQLError.idl:
+        * Modules/webdatabase/SQLResultSet.idl:
+        * Modules/webdatabase/SQLResultSetRowList.idl:
+        * Modules/webdatabase/SQLTransaction.idl:
+        * Modules/webdatabase/SQLTransactionSync.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateAttributesHashTable):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * css/CSSUnknownRule.idl:
+        * css/MediaQueryListListener.idl:
+        * dom/EventListener.idl:
+        * dom/EventTarget.idl:
+        * html/MicroDataItemValue.idl:
+        * html/ValidityState.idl:
+        * html/canvas/EXTDrawBuffers.idl:
+        * html/canvas/EXTTextureFilterAnisotropic.idl:
+        * html/canvas/OESElementIndexUint.idl:
+        * html/canvas/OESStandardDerivatives.idl:
+        * html/canvas/OESTextureFloat.idl:
+        * html/canvas/OESTextureHalfFloat.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/WebGLCompressedTextureATC.idl:
+        * html/canvas/WebGLCompressedTexturePVRTC.idl:
+        * html/canvas/WebGLCompressedTextureS3TC.idl:
+        * html/canvas/WebGLContextAttributes.idl:
+        * html/canvas/WebGLDebugRendererInfo.idl:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLDepthTexture.idl:
+        * html/canvas/WebGLLoseContext.idl:
+        * inspector/JavaScriptCallFrame.idl:
+        * inspector/ScriptProfile.idl:
+        * inspector/ScriptProfileNode.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/AbstractView.idl:
+        * page/Console.idl:
+        * page/Crypto.idl:
+        * page/PerformanceEntryList.idl:
+        * page/WorkerNavigator.idl:
+        * page/make_settings.pl:
+        (generateInternalSettingsIdlFile):
+        * svg/ElementTimeControl.idl:
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGExternalResourcesRequired.idl:
+        * svg/SVGFitToViewBox.idl:
+        * svg/SVGLangSpace.idl:
+        * svg/SVGLocatable.idl:
+        * svg/SVGTests.idl:
+        * svg/SVGTransformable.idl:
+        * svg/SVGURIReference.idl:
+        * testing/InternalSettings.idl:
+        * testing/Internals.idl:
+        * testing/MallocStatistics.idl:
+        * testing/MemoryInfo.idl:
+        * testing/TypeConversions.idl:
+        * workers/DedicatedWorkerContext.idl:
+        * workers/SharedWorkerContext.idl:
+        * workers/WorkerContext.idl:
+        * xml/XPathNSResolver.idl:
+
 2013-06-05  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Font::shouldUseSmoothing() has fake dependency on Qt 5.1

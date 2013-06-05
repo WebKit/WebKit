@@ -91,7 +91,6 @@ ObjCCustomImplementation
 ObjCLegacyUnnamedParameters
 ObjCPolymorphic
 ObjCProtocol
-OmitConstructor
 PassContext
 PassThisToCallback=*
 Reflect=*

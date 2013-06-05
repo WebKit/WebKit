@@ -28,7 +28,6 @@
 
 [
     NoInterfaceObject,
-    OmitConstructor,
     ImplementationLacksVTable
 ] interface Crypto {
     [Custom] ArrayBufferView getRandomValues(ArrayBufferView array) raises(DOMException);

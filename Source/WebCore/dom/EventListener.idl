@@ -24,7 +24,6 @@
     JSNoStaticTables,
     ObjCProtocol,
     CPPPureInterface,
-    OmitConstructor
 ] interface EventListener {
     void               handleEvent(Event evt);
 };

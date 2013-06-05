@@ -27,7 +27,6 @@
     NoInterfaceObject,
     Conditional=WEBGL,
     GenerateIsReachable=ImplContext,
-    OmitConstructor
 ] interface WebGLDebugShaders {
     [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString getTranslatedShaderSource(WebGLShader shader) raises(DOMException);
 };

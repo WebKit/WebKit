@@ -35,7 +35,6 @@
     IsWorkerContext,
     JSGenerateToNativeObject,
     JSNoStaticTables,
-    OmitConstructor
 ] interface DedicatedWorkerContext : WorkerContext {
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP

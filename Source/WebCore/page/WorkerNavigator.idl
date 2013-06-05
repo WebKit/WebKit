@@ -31,7 +31,6 @@
     Conditional=WORKERS,
     GenerateIsReachable=Impl,
     JSNoStaticTables,
-    OmitConstructor
 ] interface WorkerNavigator {
     readonly attribute DOMString appName;
     readonly attribute DOMString appVersion;

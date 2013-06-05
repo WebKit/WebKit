@@ -25,7 +25,6 @@
 
 [
     NoInterfaceObject,
-    OmitConstructor,
     JSGenerateToJSObject
 ] interface InternalSettings : InternalSettingsGenerated {
     void setMockScrollbarsEnabled(boolean enabled) raises(DOMException);

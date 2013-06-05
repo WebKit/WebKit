@@ -35,7 +35,6 @@
     IsWorkerContext,
     JSGenerateToNativeObject,
     JSNoStaticTables,
-    OmitConstructor
 ] interface SharedWorkerContext : WorkerContext {
 
     readonly attribute DOMString name;

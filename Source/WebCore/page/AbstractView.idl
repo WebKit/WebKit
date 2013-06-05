@@ -28,7 +28,6 @@
 [
     NoInterfaceObject,
     ObjCCustomImplementation,
-    OmitConstructor
 ] interface AbstractView {
     readonly attribute Document document;
     readonly attribute StyleMedia styleMedia;

@@ -26,7 +26,6 @@
 [
     NoInterfaceObject,
     EventTarget,
-    OmitConstructor,
     DoNotCheckConstants,
     GenerateIsReachable=ImplFrame
 ] interface DOMApplicationCache {

@@ -32,6 +32,5 @@
     NoInterfaceObject,
     Conditional=MICRODATA,
     CustomToJSObject,
-    OmitConstructor,
 ] interface MicroDataItemValue {
 };

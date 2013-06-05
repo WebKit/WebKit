@@ -33,7 +33,6 @@
     NoInterfaceObject,
     Conditional=WEB_TIMING,
     Conditional=PERFORMANCE_TIMELINE,
-    OmitConstructor,
     IndexedGetter,
     ImplementationLacksVTable
 ] interface PerformanceEntryList {

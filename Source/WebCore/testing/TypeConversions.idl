@@ -25,7 +25,6 @@
 
 [
     NoInterfaceObject,
-    OmitConstructor,
     ImplementationLacksVTable
 ] interface TypeConversions {
     attribute long testLong;

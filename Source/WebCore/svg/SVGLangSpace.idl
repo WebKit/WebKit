@@ -29,7 +29,6 @@
     Conditional=SVG,
     ObjCProtocol,
     SuppressToJSObject,
-    OmitConstructor
 ] interface SVGLangSpace {
              attribute DOMString xmllang
                  /*setter raises(DOMException)*/;

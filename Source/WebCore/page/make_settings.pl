@@ -353,7 +353,6 @@ sub generateInternalSettingsIdlFile($)
 
     print $file "[\n";
     print $file "    NoInterfaceObject,\n";
-    print $file "    OmitConstructor\n";
     print $file "] interface InternalSettingsGenerated {\n";
 
     sub writeIdlSetter($$$) {

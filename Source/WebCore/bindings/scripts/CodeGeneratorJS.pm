@@ -757,7 +757,7 @@ sub GenerateHeader
         || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
         || $hasImpureNamedGetter;
     
-    my $hasGetter = $numAttributes > 0 || !$interface->extendedAttributes->{"OmitConstructor"} || $hasComplexGetter;
+    my $hasGetter = $numAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"} || $hasComplexGetter;
 
     if ($hasImpureNamedGetter) {
         $structureFlags{"JSC::HasImpureGetOwnPropertySlot"} = 1;
@@ -851,7 +851,7 @@ sub GenerateHeader
     }
 
     # Constructor object getter
-    unless ($interface->extendedAttributes->{"OmitConstructor"}) {
+    unless ($interface->extendedAttributes->{"NoInterfaceObject"}) {
         push(@headerContent, "    static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n");
         push(@headerContent, "    static JSC::JSValue getNamedConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{"NamedConstructor"};
     }
@@ -1104,7 +1104,7 @@ sub GenerateHeader
 
     push(@headerContent, "};\n\n");
 
-    if (!$interface->extendedAttributes->{"OmitConstructor"}) {
+    if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         $headerIncludes{"JSDOMBinding.h"} = 1;
         GenerateConstructorDeclaration(\@headerContent, $className, $interface, $interfaceName);
     }
@@ -1121,7 +1121,7 @@ sub GenerateHeader
         }
     }
 
-    if ($numAttributes > 0 || !$interface->extendedAttributes->{"OmitConstructor"}) {
+    if ($numAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"}) {
         push(@headerContent,"// Attributes\n\n");
         foreach my $attribute (@{$interface->attributes}) {
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
@@ -1135,7 +1135,7 @@ sub GenerateHeader
             push(@headerContent, "#endif\n") if $conditionalString;
         }
         
-        if (!$interface->extendedAttributes->{"OmitConstructor"}) {
+        if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
             my $getter = "js" . $interfaceName . "Constructor";
             push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);\n");
         }
@@ -1179,7 +1179,7 @@ sub GenerateAttributesHashTable($$)
     
     # - Add all attributes in a hashtable definition
     my $numAttributes = @{$interface->attributes};
-    $numAttributes++ if !$interface->extendedAttributes->{"OmitConstructor"};
+    $numAttributes++ if !$interface->extendedAttributes->{"NoInterfaceObject"};
 
     return 0  if !$numAttributes;
 
@@ -1225,7 +1225,7 @@ sub GenerateAttributesHashTable($$)
         }
     }
 
-    if (!$interface->extendedAttributes->{"OmitConstructor"}) {
+    if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         push(@hashKeys, "constructor");
         my $getter = "js" . $interfaceName . "Constructor";
         push(@hashValue1, $getter);
@@ -1579,7 +1579,7 @@ sub GenerateImplementation
     my $numFunctions = @{$interface->functions};
 
     # - Add all constants
-    if (!$interface->extendedAttributes->{"OmitConstructor"}) {
+    if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         my $hashSize = $numConstants;
         my $hashName = $className . "ConstructorTable";
 
@@ -1888,7 +1888,7 @@ sub GenerateImplementation
     }
 
     my $hasGetter = $numAttributes > 0
-                 || !$interface->extendedAttributes->{"OmitConstructor"} 
+                 || !$interface->extendedAttributes->{"NoInterfaceObject"}
                  || $interface->extendedAttributes->{"IndexedGetter"}
                  || $interface->extendedAttributes->{"NumericIndexedGetter"}
                  || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
@@ -2133,7 +2133,7 @@ sub GenerateImplementation
                 push(@implContent, "\n");
             }
 
-            if (!$interface->extendedAttributes->{"OmitConstructor"}) {
+            if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
                 my $constructorFunctionName = "js" . $interfaceName . "Constructor";
 
                 push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, JSValue slotBase, PropertyName)\n");
@@ -2407,7 +2407,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if (!$interface->extendedAttributes->{"OmitConstructor"}) {
+    if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         push(@implContent, "JSValue ${className}::getConstructor(ExecState* exec, JSGlobalObject* globalObject)\n{\n");
         push(@implContent, "    return getDOMConstructor<${className}Constructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");

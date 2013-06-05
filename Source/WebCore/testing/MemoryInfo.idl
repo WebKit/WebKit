@@ -30,7 +30,6 @@
 
 [
     NoInterfaceObject,
-    OmitConstructor,
     ImplementationLacksVTable
 ] interface MemoryInfo {
     readonly attribute unsigned long usedJSHeapSize;

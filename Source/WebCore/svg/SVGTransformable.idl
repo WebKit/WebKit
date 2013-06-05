@@ -28,7 +28,6 @@
     NoInterfaceObject,
     Conditional=SVG,
     ObjCProtocol,
-    OmitConstructor
 ] interface SVGTransformable : SVGLocatable {
     readonly attribute SVGAnimatedTransformList transform;
 };

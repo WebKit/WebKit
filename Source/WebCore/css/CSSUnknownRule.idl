@@ -21,7 +21,6 @@
 // Introduced in DOM Level 2:
 [
     NoInterfaceObject,
-    OmitConstructor
 ] interface CSSUnknownRule : CSSRule {
 };
 

@@ -25,7 +25,6 @@
 
 [
     NoInterfaceObject,
-    OmitConstructor,
     ImplementationLacksVTable
 ] interface MallocStatistics {
     readonly attribute unsigned long reservedVMBytes;

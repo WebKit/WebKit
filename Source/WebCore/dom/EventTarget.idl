@@ -23,7 +23,6 @@
     NoInterfaceObject,
     ObjCProtocol,
     CPPPureInterface,
-    OmitConstructor,
     CustomToJSObject,
     JSCustomToNativeObject,
     EventTarget

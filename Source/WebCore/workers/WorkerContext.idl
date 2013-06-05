@@ -34,7 +34,6 @@
     IsWorkerContext,
     JSLegacyParent=JSWorkerContextBase,
     JSNoStaticTables,
-    OmitConstructor,
 ] interface WorkerContext {
 
     // WorkerGlobalScope

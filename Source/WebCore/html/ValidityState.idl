@@ -22,7 +22,6 @@
 
 [
     NoInterfaceObject,
-    OmitConstructor,
     ImplementationLacksVTable
 ] interface ValidityState {
     readonly attribute boolean         valueMissing;

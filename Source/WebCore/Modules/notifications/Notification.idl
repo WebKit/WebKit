@@ -37,7 +37,6 @@
     Constructor(DOMString title, [Default=Undefined] optional Dictionary options),
     CallWith=ScriptExecutionContext,
 #else
-    OmitConstructor
 #endif
 ] interface Notification {
     void show();
