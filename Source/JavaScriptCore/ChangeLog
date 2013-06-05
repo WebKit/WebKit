@@ -1,3 +1,15 @@
+2013-06-05  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        JSC Assertion tests failures on MIPS.
+        https://bugs.webkit.org/show_bug.cgi?id=116552
+
+        Reviewed by Geoffrey Garen.
+
+        Fix condition handlig in branchAdd32 implemetations.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchAdd32):
+
 2013-06-04  Julien Brianceau  <jbrianceau@nds.com>
 
         [sh4] Add floating point absolute function support in baseline JIT.

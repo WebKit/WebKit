@@ -1545,9 +1545,9 @@ public:
         }
         if (cond == PositiveOrZero) {
             add32(src, dest);
-            // Check if dest is negative.
-            m_assembler.slt(cmpTempRegister, MIPSRegisters::zero, dest);
-            return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+            // Check if dest is not negative.
+            m_assembler.slt(cmpTempRegister, dest, MIPSRegisters::zero);
+            return branchEqual(cmpTempRegister, MIPSRegisters::zero);
         }
         if (cond == Zero) {
             add32(src, dest);
@@ -1563,7 +1563,7 @@ public:
 
     Jump branchAdd32(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
         if (cond == Overflow) {
             /*
                 move    dataTemp, op1
@@ -1596,6 +1596,12 @@ public:
             m_assembler.slt(cmpTempRegister, dest, MIPSRegisters::zero);
             return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
         }
+        if (cond == PositiveOrZero) {
+            add32(op1, op2, dest);
+            // Check if dest is not negative.
+            m_assembler.slt(cmpTempRegister, dest, MIPSRegisters::zero);
+            return branchEqual(cmpTempRegister, MIPSRegisters::zero);
+        }
         if (cond == Zero) {
             add32(op1, op2, dest);
             return branchEqual(dest, MIPSRegisters::zero);
@@ -1623,7 +1629,7 @@ public:
 
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
     {
-        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
         if (cond == Overflow) {
             /*
                 move    dataTemp, dest
@@ -1672,6 +1678,11 @@ public:
             // Check if dest is negative.
             m_assembler.slt(cmpTempRegister, dataTempRegister, MIPSRegisters::zero);
             return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+        }
+        if (cond == PositiveOrZero) {
+            // Check if dest is not negative.
+            m_assembler.slt(cmpTempRegister, dataTempRegister, MIPSRegisters::zero);
+            return branchEqual(cmpTempRegister, MIPSRegisters::zero);
         }
         if (cond == Zero)
             return branchEqual(dataTempRegister, MIPSRegisters::zero);
