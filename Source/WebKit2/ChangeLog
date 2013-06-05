@@ -1,3 +1,18 @@
+2013-06-05  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r148713): Crash under waitForDidUpdateInWindowState
+        https://bugs.webkit.org/show_bug.cgi?id=117268
+        <rdar://problem/13822353>
+
+        Reviewed by Anders Carlsson.
+
+        Check if the WebProcess is valid before waiting for a message from it.
+        Reset the bool that tells us that we have an outstanding didUpdateInWindowState message if the WebProcess quits.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::waitForDidUpdateInWindowState):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+
 2013-06-05  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         [Coordinated Graphics] Prevent a recursive painting in CoordinatedGraphicsLayer

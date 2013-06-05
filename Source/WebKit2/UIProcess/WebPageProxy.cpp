@@ -1104,6 +1104,9 @@ void WebPageProxy::waitForDidUpdateInWindowState()
     if (m_waitingForDidUpdateInWindowState)
         return;
 
+    if (!isValid())
+        return;
+
     m_waitingForDidUpdateInWindowState = true;
 
     if (!m_process->isLaunching()) {
@@ -3847,6 +3850,7 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     m_isValid = false;
     m_isPageSuspended = false;
+    m_waitingForDidUpdateInWindowState = false;
 
     if (m_mainFrame) {
         m_urlAtProcessExit = m_mainFrame->url();
