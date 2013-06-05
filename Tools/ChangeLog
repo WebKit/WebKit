@@ -1,3 +1,21 @@
+2013-06-05  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Use WEBKITOUTPUTDIR if WEBKIT_OUTPUTDIR is not present.
+        https://bugs.webkit.org/show_bug.cgi?id=117244
+
+        Reviewed by Daniel Bates.
+
+        Fixed a regression introduced by r151196: not only does webkit.org
+        still mention WEBKITOUTPUTDIR instead of WEBKIT_OUTPUTDIR, but the
+        infrastructure used by ports such as GTK+ and EFL also use on it for
+        things such as jhbuild.
+
+        While everything is not fully transitioned to WEBKIT_OUTPUTDIR, read
+        both environment variables.
+
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+
 2013-06-05  Wojciech Bielawski  <w.bielawski@samsung.com>
 
         [GTK] Forwarding headers not generated for incremental build
