@@ -657,6 +657,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
 
 void ResourceHandleManager::initializeHandle(ResourceHandle* job)
 {
+    static const int allowedProtocols = CURLPROTO_FILE | CURLPROTO_FTP | CURLPROTO_FTPS | CURLPROTO_HTTP | CURLPROTO_HTTPS;
     KURL kurl = job->firstRequest().url();
 
     // Remove any fragment part, otherwise curl will send it as part of the request.
@@ -700,6 +701,8 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     curl_easy_setopt(d->m_handle, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
     curl_easy_setopt(d->m_handle, CURLOPT_SHARE, m_curlShareHandle);
     curl_easy_setopt(d->m_handle, CURLOPT_DNS_CACHE_TIMEOUT, 60 * 5); // 5 minutes
+    curl_easy_setopt(d->m_handle, CURLOPT_PROTOCOLS, allowedProtocols);
+    curl_easy_setopt(d->m_handle, CURLOPT_REDIR_PROTOCOLS, allowedProtocols);
     // FIXME: Enable SSL verification when we have a way of shipping certs
     // and/or reporting SSL errors to the user.
     if (ignoreSSLErrors)

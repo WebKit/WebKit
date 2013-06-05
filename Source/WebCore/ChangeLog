@@ -1,3 +1,22 @@
+2013-06-05  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [curl] Restrict allowed protocols
+        https://bugs.webkit.org/show_bug.cgi?id=117257
+
+        Reviewed by Brent Fulgham.
+
+        curl supports various protocols (like: HTTP,...,POP3,IMAP...) and by
+        default all of the are enabled for a single curl handle. Furthermore
+        all of the protocols are allowed during Location header follow.
+        This could pose a security risk for example: a malicious server responds
+        with a crafted Location header pointing to an imap/../(etc) url and the
+        curl backend will follow it and will give the result for the WebCore.
+
+        This patch will restrict the allowed protocols to: HTTP(S), FTP(S), FILE
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2013-06-05  Bear Travis  <betravis@adobe.com>
 
         [css exclusions] Clean up ExclusionShapeInsideInfo dynamic removal code
