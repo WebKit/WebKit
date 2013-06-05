@@ -602,7 +602,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             }
             break;
         case CSSSelector::PseudoAutofill:
-            if (!element || !element->isFormControlElement())
+            if (!element->isFormControlElement())
                 break;
             if (HTMLInputElement* inputElement = element->toInputElement())
                 return inputElement->isAutofilled();
@@ -655,40 +655,34 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             }
             break;
         case CSSSelector::PseudoEnabled:
-            if (element && (element->isFormControlElement() || element->hasTagName(optionTag) || element->hasTagName(optgroupTag)))
+            if (element->isFormControlElement() || element->hasTagName(optionTag) || element->hasTagName(optgroupTag))
                 return !element->isDisabledFormControl();
             break;
         case CSSSelector::PseudoFullPageMedia:
-            return element && element->document() && element->document()->isMediaDocument();
+            return element->document() && element->document()->isMediaDocument();
             break;
         case CSSSelector::PseudoDefault:
-            return element && element->isDefaultButtonForForm();
+            return element->isDefaultButtonForForm();
         case CSSSelector::PseudoDisabled:
-            if (element && (element->isFormControlElement() || element->hasTagName(optionTag) || element->hasTagName(optgroupTag)))
+            if (element->isFormControlElement() || element->hasTagName(optionTag) || element->hasTagName(optgroupTag))
                 return element->isDisabledFormControl();
             break;
         case CSSSelector::PseudoReadOnly:
-            return element && element->matchesReadOnlyPseudoClass();
+            return element->matchesReadOnlyPseudoClass();
         case CSSSelector::PseudoReadWrite:
-            return element && element->matchesReadWritePseudoClass();
+            return element->matchesReadWritePseudoClass();
         case CSSSelector::PseudoOptional:
-            return element && element->isOptionalFormControl();
+            return element->isOptionalFormControl();
         case CSSSelector::PseudoRequired:
-            return element && element->isRequiredFormControl();
+            return element->isRequiredFormControl();
         case CSSSelector::PseudoValid:
-            if (!element)
-                return false;
             element->document()->setContainsValidityStyleRules();
             return element->willValidate() && element->isValidFormControlElement();
         case CSSSelector::PseudoInvalid:
-            if (!element)
-                return false;
             element->document()->setContainsValidityStyleRules();
             return element->willValidate() && !element->isValidFormControlElement();
         case CSSSelector::PseudoChecked:
             {
-                if (!element)
-                    break;
                 // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
                 // you can't be both checked and indeterminate. We will behave like WinIE behind the scenes and just
                 // obey the CSS spec here in the test for matching the pseudo.
@@ -700,7 +694,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
                 break;
             }
         case CSSSelector::PseudoIndeterminate:
-            return element && element->shouldAppearIndeterminate();
+            return element->shouldAppearIndeterminate();
         case CSSSelector::PseudoRoot:
             if (element == element->document()->documentElement())
                 return true;
@@ -752,13 +746,9 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             return element->document()->shouldDisplaySeamlesslyWithParent();
 #endif
         case CSSSelector::PseudoInRange:
-            if (!element)
-                return false;
             element->document()->setContainsValidityStyleRules();
             return element->isInRange();
         case CSSSelector::PseudoOutOfRange:
-            if (!element)
-                return false;
             element->document()->setContainsValidityStyleRules();
             return element->isOutOfRange();
 #if ENABLE(VIDEO_TRACK)

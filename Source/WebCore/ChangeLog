@@ -1,3 +1,16 @@
+2013-06-05  Andreas Kling  <akling@apple.com>
+
+        Remove unnecessary null checks in SelectorChecker::checkOne().
+        <http://webkit.org/b/117243>
+
+        Reviewed by Antti Koivisto.
+
+        This function was riddled with unnecessary null checks of 'element', despite ASSERT(element)
+        being the first thing it does.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+
 2013-06-05  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Merge [NoInterfaceObject] and [OmitConstructor] extended attributes
