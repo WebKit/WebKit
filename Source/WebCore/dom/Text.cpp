@@ -326,15 +326,15 @@ PassRefPtr<Text> Text::virtualCreate(const String& data)
     return create(document(), data);
 }
 
-PassRefPtr<Text> Text::createWithLengthLimit(Document* document, const String& data, unsigned start, unsigned maxChars)
+PassRefPtr<Text> Text::createWithLengthLimit(Document* document, const String& data, unsigned start, unsigned lengthLimit)
 {
     unsigned dataLength = data.length();
 
-    if (!start && dataLength <= maxChars)
+    if (!start && dataLength <= lengthLimit)
         return create(document, data);
 
     RefPtr<Text> result = Text::create(document, String());
-    result->parserAppendData(data, start, maxChars);
+    result->parserAppendData(data, start, lengthLimit);
 
     return result;
 }

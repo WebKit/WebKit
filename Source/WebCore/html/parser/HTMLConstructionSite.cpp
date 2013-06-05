@@ -75,6 +75,13 @@ static bool hasImpliedEndTag(const HTMLStackItem* item)
         || item->hasTagName(rtTag);
 }
 
+static bool shouldUseLengthLimit(const ContainerNode* node)
+{
+    return !node->hasTagName(scriptTag)
+        && !node->hasTagName(styleTag)
+        && !node->hasTagName(SVGNames::scriptTag);
+}
+
 static inline bool isAllWhitespace(const String& string)
 {
     return string.isAllSpecialCharacters<isHTMLSpace>();
@@ -490,6 +497,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
         || (whitespaceMode == WhitespaceUnknown && isAllWhitespace(characters));
 
     unsigned currentPosition = 0;
+    unsigned lengthLimit = shouldUseLengthLimit(task.parent.get()) ? Text::defaultLengthLimit : std::numeric_limits<unsigned>::max();
 
     // FIXME: Splitting text nodes into smaller chunks contradicts HTML5 spec, but is currently necessary
     // for performance, see <https://bugs.webkit.org/show_bug.cgi?id=55898>.
@@ -499,11 +507,11 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
         // FIXME: We're only supposed to append to this text node if it
         // was the last text node inserted by the parser.
         CharacterData* textNode = static_cast<CharacterData*>(previousChild);
-        currentPosition = textNode->parserAppendData(characters, 0, Text::defaultLengthLimit);
+        currentPosition = textNode->parserAppendData(characters, 0, lengthLimit);
     }
 
     while (currentPosition < characters.length()) {
-        RefPtr<Text> textNode = Text::createWithLengthLimit(task.parent->document(), shouldUseAtomicString ? AtomicString(characters).string() : characters, currentPosition);
+        RefPtr<Text> textNode = Text::createWithLengthLimit(task.parent->document(), shouldUseAtomicString ? AtomicString(characters).string() : characters, currentPosition, lengthLimit);
         // If we have a whole string of unbreakable characters the above could lead to an infinite loop. Exceeding the length limit is the lesser evil.
         if (!textNode->length()) {
             String substring = characters.substring(currentPosition);

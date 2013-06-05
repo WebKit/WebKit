@@ -1,3 +1,31 @@
+2013-06-05  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        Avoid multiple copies of inline script & style strings
+        https://bugs.webkit.org/show_bug.cgi?id=117202
+
+        Reviewed by Darin Adler.
+
+        Merge from https://chromiumcodereview.appspot.com/16005007.
+
+        No new tests needed.
+
+        The HTML parser breaks up large text nodes into small chunks to avoid some
+        O(n^2) editing algorithms. This fix skips that workaround for <script> and
+        <style> elements, which aren't likely to need editing. As a result, <script>
+        ends up with a single text node, containing a contiguous String, which is the
+        source code of that inline script block.
+
+        Prior this fix, we could end up with two copies of large inline scripts: one
+        monolithic string retained by JSC and a number of shards retained by the DOM.
+        After this fix, both the DOM and JSC use the same monolithic string, removing a
+        copy.
+
+        * dom/Text.cpp:
+        (WebCore::Text::createWithLengthLimit):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::shouldUseLengthLimit):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+
 2013-06-05  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL] Build fix with EGL and GLES2 backend.
