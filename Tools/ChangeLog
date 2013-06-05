@@ -1,3 +1,10 @@
+2013-06-05  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix. Don't pass in --use-remote-links argument on Windows now that we use NRWT.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests.start):
+
 2013-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Switch to NRWT
