@@ -1,3 +1,40 @@
+2013-06-05  Andreas Kling  <akling@apple.com>
+
+        Fix some inefficiencies in AnimationController's composite animation map.
+        <http://webkit.org/b/117248>
+
+        Reviewed by Antti Koivisto.
+
+        Clean up some small things that were showing up in a window resizing profile (0.4%)
+
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::ensureCompositeAnimation):
+
+            Renamed this ensure* to conform to the WebKit Design Patterns, 2013 edition.
+            Always do a single hash lookup instead of two.
+
+        (WebCore::AnimationControllerPrivate::clear):
+
+            Use RefPtr<T> for local variables, never PassRefPtr<T>. See WKDP, 2013 ed.
+
+        (WebCore::AnimationControllerPrivate::updateAnimationTimerForRenderer):
+        (WebCore::AnimationControllerPrivate::isRunningAnimationOnRenderer):
+        (WebCore::AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer):
+        (WebCore::AnimationControllerPrivate::getAnimatedStyleForRenderer):
+
+            Peek into m_compositeAnimations through "const CompositeAnimation*" instead
+            of using RefPtrs. There's no need to hold a reference on the animation while
+            querying some const method on it.
+
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationController::updateAnimations):
+
+            Poke into m_compositeAnimations through "CompositeAnimation*" instead of using
+            RefPtrs. There's no need to hold a reference here either, we can modify the
+            animations through a raw pointer.
+
 2013-06-05  Roland Takacs  <rtakacs@inf.u-szeged.hu>
 
         Web Inspector: Clear button doesn't clean Memory graph in Overview pane.

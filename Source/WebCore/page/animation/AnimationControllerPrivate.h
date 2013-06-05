@@ -65,7 +65,7 @@ public:
     double updateAnimations(SetChanged callSetChanged = DoNotCallSetChanged);
     void updateAnimationTimer(SetChanged callSetChanged = DoNotCallSetChanged);
 
-    PassRefPtr<CompositeAnimation> accessCompositeAnimation(RenderObject*);
+    CompositeAnimation* ensureCompositeAnimation(RenderObject*);
     bool clear(RenderObject*);
 
     void updateStyleIfNeededDispatcherFired(Timer<AnimationControllerPrivate>*);
