@@ -453,12 +453,11 @@ public:
         return m_rareData->m_shapeInsideInfo.get();
     }
 
-    enum ExclusionShapeStatus { ShapePresent, ShapePresentOrRemoved };
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo(ExclusionShapeStatus exclusionShapeStatus = ShapePresent) const
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const
     {
         if (!m_rareData || !m_rareData->m_shapeInsideInfo)
             return 0;
-        return ExclusionShapeInsideInfo::isEnabledFor(this) || (exclusionShapeStatus == ShapePresentOrRemoved) ? m_rareData->m_shapeInsideInfo.get() : 0;
+        return ExclusionShapeInsideInfo::isEnabledFor(this) ? m_rareData->m_shapeInsideInfo.get() : 0;
     }
     void setExclusionShapeInsideInfo(PassOwnPtr<ExclusionShapeInsideInfo> value)
     {
@@ -466,7 +465,8 @@ public:
             m_rareData = adoptPtr(new RenderBlockRareData(this));
         m_rareData->m_shapeInsideInfo = value;
     }
-    ExclusionShapeInsideInfo* layoutExclusionShapeInsideInfo(ExclusionShapeStatus = ShapePresent) const;
+    void markShapeInsideDescendantsForLayout();
+    ExclusionShapeInsideInfo* layoutExclusionShapeInsideInfo() const;
     bool allowsExclusionShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
 #endif
 

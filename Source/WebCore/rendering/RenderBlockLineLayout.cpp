@@ -77,11 +77,9 @@ static LayoutUnit logicalHeightForLine(const RenderBlock* block, bool isFirstLin
 }
 
 #if ENABLE(CSS_EXCLUSIONS)
-ExclusionShapeInsideInfo* RenderBlock::layoutExclusionShapeInsideInfo(ExclusionShapeStatus exclusionShapeStatus) const
+ExclusionShapeInsideInfo* RenderBlock::layoutExclusionShapeInsideInfo() const
 {
     ExclusionShapeInsideInfo* shapeInsideInfo = view()->layoutState()->exclusionShapeInsideInfo();
-    if (shapeInsideInfo && shapeInsideInfo->needsRemoval() && exclusionShapeStatus == ShapePresent)
-        shapeInsideInfo = 0;
 
     if (!shapeInsideInfo && flowThreadContainingBlock() && allowsExclusionShapeInsideInfoSharing()) {
         // regionAtBlockOffset returns regions like an array first={0,N-1}, second={N,M-1}, ...
@@ -89,7 +87,6 @@ ExclusionShapeInsideInfo* RenderBlock::layoutExclusionShapeInsideInfo(ExclusionS
         RenderRegion* region = regionAtBlockOffset(offset);
         if (region)
             shapeInsideInfo = region->exclusionShapeInsideInfo();
-        return shapeInsideInfo && shapeInsideInfo->needsRemoval() && exclusionShapeStatus == ShapePresent ? 0 : shapeInsideInfo;
     }
 
     return shapeInsideInfo;

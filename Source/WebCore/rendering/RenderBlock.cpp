@@ -1446,13 +1446,29 @@ void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const Exclusion
     if (shapeInside == oldShapeInside)
         return;
 
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo;
     if (shapeInside) {
-        exclusionShapeInsideInfo = ensureExclusionShapeInsideInfo();
+        ExclusionShapeInsideInfo* exclusionShapeInsideInfo = ensureExclusionShapeInsideInfo();
         exclusionShapeInsideInfo->dirtyShapeSize();
-        exclusionShapeInsideInfo->setNeedsRemoval(false);
-    } else if ((exclusionShapeInsideInfo = this->exclusionShapeInsideInfo(ShapePresentOrRemoved)))
-        exclusionShapeInsideInfo->setNeedsRemoval(true);
+    } else {
+        setExclusionShapeInsideInfo(nullptr);
+        markShapeInsideDescendantsForLayout();
+    }
+}
+
+void RenderBlock::markShapeInsideDescendantsForLayout()
+{
+    if (!everHadLayout())
+        return;
+    if (childrenInline()) {
+        setNeedsLayout(true);
+        return;
+    }
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->isRenderBlock())
+            continue;
+        RenderBlock* childBlock = toRenderBlock(child);
+        childBlock->markShapeInsideDescendantsForLayout();
+    }
 }
 #endif
 
@@ -1461,11 +1477,11 @@ static inline bool exclusionInfoRequiresRelayout(const RenderBlock* block)
 #if !ENABLE(CSS_EXCLUSIONS)
     return false;
 #else
-    ExclusionShapeInsideInfo* info = block->exclusionShapeInsideInfo(RenderBlock::ShapePresentOrRemoved);
+    ExclusionShapeInsideInfo* info = block->exclusionShapeInsideInfo();
     if (info)
-        info->setNeedsLayout(info->shapeSizeDirty() || info->needsRemoval());
+        info->setNeedsLayout(info->shapeSizeDirty());
     else
-        info = block->layoutExclusionShapeInsideInfo(RenderBlock::ShapePresentOrRemoved);
+        info = block->layoutExclusionShapeInsideInfo();
     return info && info->needsLayout();
 #endif
 }
@@ -1515,10 +1531,6 @@ void RenderBlock::computeExclusionShapeSize()
 void RenderBlock::updateRegionsAndExclusionsAfterChildLayout(RenderFlowThread* flowThread, bool heightChanged)
 {
 #if ENABLE(CSS_EXCLUSIONS)
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = this->exclusionShapeInsideInfo(ShapePresentOrRemoved);
-    if (exclusionShapeInsideInfo && exclusionShapeInsideInfo->needsRemoval())
-        setExclusionShapeInsideInfo(nullptr);
-
     // A previous sibling has changed dimension, so we need to relayout the shape with the content
     ExclusionShapeInsideInfo* shapeInsideInfo = layoutExclusionShapeInsideInfo();
     if (heightChanged && shapeInsideInfo)

@@ -1,3 +1,37 @@
+2013-06-05  Bear Travis  <betravis@adobe.com>
+
+        [css exclusions] Clean up ExclusionShapeInsideInfo dynamic removal code
+        https://bugs.webkit.org/show_bug.cgi?id=116236
+
+        Reviewed by David Hyatt.
+
+        Instead of keeping the ExclusionShapeInsideInfo around after it has
+        become stale, we can immediately remove it and just mark descendants
+        for relayout. This patch removes most of the code added by
+        https://bugs.webkit.org/show_bug.cgi?id=111029
+        in favor of this simpler approach.
+
+        This patch does not introduce new functionality.
+
+        * rendering/ExclusionShapeInsideInfo.h:
+        (WebCore::ExclusionShapeInsideInfo::ExclusionShapeInsideInfo):
+        (ExclusionShapeInsideInfo): Remove needsRemoval code.
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState): Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange): Remove
+        needsRemoval code and mark descendants for layout.
+        (WebCore):
+        (WebCore::RenderBlock::markShapeInsideDescendantsForLayout): Method to mark
+        descendants of a shape inside with inline content for layout.
+        (WebCore::exclusionInfoRequiresRelayout): Remove needsRemoval code.
+        (WebCore::RenderBlock::updateRegionsAndExclusionsAfterChildLayout): Ditto.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::exclusionShapeInsideInfo): Ditto.
+        (RenderBlock):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutExclusionShapeInsideInfo): Ditto.
+
 2013-06-05  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         Avoid multiple copies of inline script & style strings

@@ -70,7 +70,6 @@ public:
 
     virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE
     {
-        ASSERT(!needsRemoval());
         m_segmentRanges.clear();
         return ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &ExclusionShape::getIncludedIntervals>::computeSegmentsForLine(lineTop, lineHeight);
     }
@@ -98,9 +97,6 @@ public:
     void setNeedsLayout(bool value) { m_needsLayout = value; }
     bool needsLayout() { return m_needsLayout; }
 
-    void setNeedsRemoval(bool value) { m_needsRemoval = value; }
-    bool needsRemoval() { return m_needsRemoval; }
-
 protected:
     virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapePaddingLogicalBoundingBox(); }
 
@@ -108,12 +104,10 @@ private:
     ExclusionShapeInsideInfo(const RenderBlock* renderer)
     : ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &ExclusionShape::getIncludedIntervals> (renderer)
     , m_needsLayout(false)
-    , m_needsRemoval(false)
     { }
 
     SegmentRangeList m_segmentRanges;
     bool m_needsLayout:1;
-    bool m_needsRemoval:1;
 };
 
 }
