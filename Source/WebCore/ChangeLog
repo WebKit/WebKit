@@ -1,5 +1,13 @@
 2013-06-05  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Unreviewed build fix when CHANNEL_MESSAGING is disabled.
+
+        Add #if ENABLE(CHANNEL_MESSAGING) to JSMessageChannelCustom.cpp.
+
+        * bindings/js/JSMessageChannelCustom.cpp:
+
+2013-06-05  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Remove remaining custom getters for WorkerContext constructor attributes
         https://bugs.webkit.org/show_bug.cgi?id=117247
 

@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(CHANNEL_MESSAGING)
+
 #include "JSMessageChannel.h"
 
 #include "MessageChannel.h"
@@ -49,3 +52,5 @@ void JSMessageChannel::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(CHANNEL_MESSAGING)
