@@ -1237,13 +1237,6 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
         }
     }
 
-    if (!frame->selection()->selection().isBaseFirst()) {
-        // End handle comes before start, invert the caret reference points.
-        WebCore::IntRect tmpCaret(startCaret);
-        startCaret = endCaret;
-        endCaret = tmpCaret;
-    }
-
     SelectionLog(Platform::LogLevelInfo,
         "SelectionHandler::selectionPositionChanged Start Rect=%s End Rect=%s",
         Platform::IntRect(startCaret).toString().c_str(),
