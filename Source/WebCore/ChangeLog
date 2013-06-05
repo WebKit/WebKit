@@ -1,3 +1,29 @@
+2013-06-05  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] REGRESSION Incorrect layer clipping inside flow thread
+        https://bugs.webkit.org/show_bug.cgi?id=117074
+
+        Reviewed by David Hyatt.
+
+        Function RenderBox::mapLocalToContainer was adapted for elements inside flow threads to convert
+        elements coordinates to RenderView coordinates, passing through the region in which the elements
+        were flowed (https://bugs.webkit.org/show_bug.cgi?id=66641).
+
+        The fix for https://bugs.webkit.org/show_bug.cgi?id=76486 modified RenderLayer::calculateClipRects and replaced
+        convertToLayerCoords with localToContainerPoint, which further calls mapLocalToContainer.
+
+        However, for elements inside the flow thread, which acts as a root layer for its collected children, we do not want
+        to get the offset in RenderView coordinates but rather in flow thread coordinates (and still take transforms into
+        account). This patch modifies RenderBox::mapLocalToContainer so that it stops at flow thread boundary when the passed
+        repaintContainer is the flow thread. The flow thread is the container for repaint for elements inside it, as seen from
+        RenderObject::containerForRepaint.
+
+        No new tests, converted overflow-size-change-with-stacking-context and overflow-size-change-with-stacking-context-rtl
+        into ref tests so that the we do not rely on pixel tests in the future.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+
 2013-06-05  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove [NoInterfaceObject] from TreeWalker

@@ -1,3 +1,33 @@
+2013-06-05  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] REGRESSION Incorrect layer clipping inside flow thread
+        https://bugs.webkit.org/show_bug.cgi?id=117074
+
+        Reviewed by David Hyatt.
+
+        Convert overflow-size-change-with-stacking-context and overflow-size-change-with-stacking-context-rtl
+        to ref tests.
+
+        * fast/regions/overflow-size-change-with-stacking-context-expected.html: Added.
+        * fast/regions/overflow-size-change-with-stacking-context-rtl-expected.html: Added.
+        * fast/regions/overflow-size-change-with-stacking-context-rtl.html:
+        * fast/regions/overflow-size-change-with-stacking-context.html:
+        * platform/efl/fast/regions/overflow-size-change-with-stacking-context-expected.png: Removed.
+        * platform/efl/fast/regions/overflow-size-change-with-stacking-context-expected.txt: Removed.
+        * platform/efl/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.png: Removed.
+        * platform/efl/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.txt: Removed.
+        * platform/gtk/fast/regions/overflow-size-change-with-stacking-context-expected.png: Removed.
+        * platform/gtk/fast/regions/overflow-size-change-with-stacking-context-expected.txt: Removed.
+        * platform/gtk/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.png: Removed.
+        * platform/gtk/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.txt: Removed.
+        * platform/mac/fast/regions/overflow-size-change-with-stacking-context-expected.png: Removed.
+        * platform/mac/fast/regions/overflow-size-change-with-stacking-context-expected.txt: Removed.
+        * platform/mac/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.png: Removed.
+        * platform/mac/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.txt: Removed.
+        * platform/qt/fast/regions/overflow-size-change-with-stacking-context-expected.txt: Removed.
+        * platform/qt/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.png: Removed.
+        * platform/qt/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.txt: Removed.
+
 2013-06-05  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove [NoInterfaceObject] from TreeWalker

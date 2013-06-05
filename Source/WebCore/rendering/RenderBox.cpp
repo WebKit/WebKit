@@ -1759,7 +1759,8 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     }
 
     mode &= ~ApplyContainerFlip;
-    if (o->isRenderFlowThread()) {
+
+    if (o->isRenderFlowThread() && (o != repaintContainer)) {
         // Transform from render flow coordinates into region coordinates.
         RenderRegion* region = toRenderFlowThread(o)->mapFromFlowToRegion(transformState);
         if (region)
