@@ -722,8 +722,8 @@ void ChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
     GtkRequisition requisition;
     gtk_widget_get_requisition(widget, &requisition);
     if (gtk_widget_get_realized(widget)
-        && (requisition.height != size.height())
-        || (requisition.width != size.width()))
+        && (requisition.height != size.height()
+        || requisition.width != size.width()))
         gtk_widget_queue_resize_no_redraw(widget);
 
     // If this was a main frame size change, update the scrollbars.

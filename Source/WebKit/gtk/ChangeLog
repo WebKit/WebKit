@@ -1,3 +1,19 @@
+2013-06-04  Alberto Garcia  <agarcia@igalia.com>
+
+        [GTK] Make precedence of logical operators explicit
+        https://bugs.webkit.org/show_bug.cgi?id=117216
+
+        Reviewed by Martin Robinson.
+
+        There's a couple of cases where we mix && and || in the same
+        expression. In ChromeClient::contentsSizeChanged() the lack of
+        parentheses actually makes the expression wrong.
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::AcceleratedCompositingContext::renderLayersToWindow):
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::contentsSizeChanged):
+
 2013-05-30  Enrique Ocana Gonzalez  <eocanha@igalia.com>
 
         [GTK] Fix pass_by_value coverity warning in ChromeClientGtk
