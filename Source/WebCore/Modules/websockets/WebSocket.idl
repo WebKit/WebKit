@@ -30,6 +30,7 @@
  */
 
 [
+    GlobalContext=WindowAndWorker,
     EnabledAtRuntime,
     Conditional=WEB_SOCKETS,
     ActiveDOMObject,

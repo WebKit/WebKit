@@ -25,6 +25,8 @@
  */
 
 [
+    GlobalContext=WindowAndWorker,
+    Conditional=CHANNEL_MESSAGING,
     Constructor,
     CallWith=ScriptExecutionContext,
     JSCustomMarkFunction,

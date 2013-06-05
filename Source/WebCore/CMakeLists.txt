@@ -290,7 +290,6 @@ set(WebCore_IDL_FILES
 
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl
-    Modules/websockets/WorkerContextWebSocket.idl
 
     css/Counter.idl
     css/CSSCharsetRule.idl

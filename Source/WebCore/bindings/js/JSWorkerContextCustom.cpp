@@ -85,23 +85,6 @@ bool JSWorkerContext::getOwnPropertyDescriptorDelegate(ExecState* exec, Property
     return false;
 }
 
-JSValue JSWorkerContext::eventSource(ExecState* exec) const
-{
-    return getDOMConstructor<JSEventSourceConstructor>(exec, this);
-}
-
-JSValue JSWorkerContext::xmlHttpRequest(ExecState* exec) const
-{
-    return getDOMConstructor<JSXMLHttpRequestConstructor>(exec, this);
-}
-
-#if ENABLE(WEB_SOCKETS)
-JSValue JSWorkerContext::webSocket(ExecState* exec) const
-{
-    return getDOMConstructor<JSWebSocketConstructor>(exec, this);
-}
-#endif
-
 JSValue JSWorkerContext::importScripts(ExecState* exec)
 {
     if (!exec->argumentCount())
@@ -141,14 +124,6 @@ JSValue JSWorkerContext::setInterval(ExecState* exec)
     int delay = exec->argument(1).toInt32(exec);
     return jsNumber(impl()->setInterval(action.release(), delay));
 }
-
-
-#if ENABLE(CHANNEL_MESSAGING)
-JSValue JSWorkerContext::messageChannel(ExecState* exec) const
-{
-    return getDOMConstructor<JSMessageChannelConstructor>(exec, this);
-}
-#endif
 
 } // namespace WebCore
 

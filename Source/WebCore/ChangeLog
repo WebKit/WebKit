@@ -1,3 +1,30 @@
+2013-06-05  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove remaining custom getters for WorkerContext constructor attributes
+        https://bugs.webkit.org/show_bug.cgi?id=117247
+
+        Reviewed by Kentaro Hara.
+
+        Remove custom getter code for remaining constructor attribute on WorkerContext
+        interface. The custom code wasn't needed as it was doing nothing more than the
+        generated one. These constructor attributes are now automatically generated.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Modules/websockets/WebSocket.idl:
+        * Modules/websockets/WorkerContextWebSocket.idl: Removed.
+        * WebCore.order:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        * dom/MessageChannel.idl:
+        * page/EventSource.idl:
+        * workers/WorkerContext.idl:
+        * xml/XMLHttpRequest.idl:
+
 2013-06-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Remove ChromeClient::deviceOrPageScaleFactorChanged

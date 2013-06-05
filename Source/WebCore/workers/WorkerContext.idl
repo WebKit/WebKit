@@ -65,13 +65,7 @@
     boolean dispatchEvent(Event evt)
         raises(EventException);
 
-#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-    // Constructors
-    [Conditional=CHANNEL_MESSAGING, CustomGetter] attribute MessageChannelConstructor MessageChannel;
-    [CustomGetter] attribute EventSourceConstructor EventSource;
-    [CustomGetter] attribute XMLHttpRequestConstructor XMLHttpRequest;
-#endif
-
+    // Additional constructors
     [Conditional=BLOB] attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
 };
 
