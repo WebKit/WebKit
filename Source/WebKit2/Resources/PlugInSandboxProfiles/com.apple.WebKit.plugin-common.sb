@@ -304,3 +304,16 @@
     (global-name "com.apple.coreservices.appleevents")
     (global-name "com.apple.dock.server")
     (global-name-regex #"^com\.apple\.distributed_notifications"))
+
+;; This inserts deny rules for creating symbolic links. The rules are inserted
+;; at the end of sandbox profile compilation by overriding the finalizer. The
+;; initial value of %finalize must be the last function called.
+(letrec
+   ((original-%finalize %finalize)
+    (webkit-%finalize
+        (lambda ()
+            (if (defined? 'vnode-type)
+                (deny file-write-create
+                      (vnode-type SYMLINK)))
+            (original-%finalize))))
+   (set! %finalize webkit-%finalize))

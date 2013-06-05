@@ -1,3 +1,18 @@
+2013-06-04  Simon Cooper  <scooper@apple.com>
+
+        Tighten plugin sandbox profiles against symlink attacks
+        https://bugs.webkit.org/show_bug.cgi?id=117219
+        <rdar://problem/13044569>
+
+        Reviewed by Sam Weinig.
+
+        This inserts deny rules for creating symbolic links. The rules are
+        inserted at the end of sandbox profile compilation by overriding the
+        finalizer.  The initial value of %finalize must be the last function
+        called.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
 2013-06-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WK2: accessibility position is calculated every time window frame is updated
