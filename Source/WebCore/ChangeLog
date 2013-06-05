@@ -1,3 +1,27 @@
+2013-06-05  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        [Coordinated Graphics] Rename client classes for CoordinatedImageBacking and UpdateAtlas.
+        https://bugs.webkit.org/show_bug.cgi?id=111948
+
+        Reviewed by Noam Rosenthal.
+
+        This patch renames CoordinatedImageBacking::Coordinator to
+        CoordinatedImageBacking::Client, and UpdateAtlasClient to
+        UpdateAtlas::Client for naming consistency and clarification.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp:
+        (WebCore::CoordinatedImageBacking::create):
+        (WebCore::CoordinatedImageBacking::CoordinatedImageBacking):
+        (WebCore::CoordinatedImageBacking::removeHost):
+        (WebCore::CoordinatedImageBacking::update):
+        (WebCore::CoordinatedImageBacking::clearContentsTimerFired):
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.h:
+        * platform/graphics/texmap/coordinated/UpdateAtlas.cpp:
+        (WebCore::UpdateAtlas::UpdateAtlas):
+        * platform/graphics/texmap/coordinated/UpdateAtlas.h:
+
 2013-06-05  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Handle Return key without key text

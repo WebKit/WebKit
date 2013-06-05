@@ -31,16 +31,16 @@ namespace WebCore {
 class GraphicsContext;
 class IntPoint;
 
-class UpdateAtlasClient {
-public:
-    virtual void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>) = 0;
-    virtual void removeUpdateAtlas(uint32_t atlasID) = 0;
-};
-
 class UpdateAtlas {
     WTF_MAKE_NONCOPYABLE(UpdateAtlas);
 public:
-    UpdateAtlas(UpdateAtlasClient*, int dimension, CoordinatedSurface::Flags);
+    class Client {
+    public:
+        virtual void createUpdateAtlas(uint32_t /* id */, PassRefPtr<CoordinatedSurface>) = 0;
+        virtual void removeUpdateAtlas(uint32_t /* id */) = 0;
+    };
+
+    UpdateAtlas(Client*, int dimension, CoordinatedSurface::Flags);
     ~UpdateAtlas();
 
     inline IntSize size() const { return m_surface->size(); }
@@ -66,7 +66,7 @@ private:
     void buildLayoutIfNeeded();
 
 private:
-    UpdateAtlasClient* m_client;
+    Client* m_client;
     OwnPtr<GeneralAreaAllocator> m_areaAllocator;
     RefPtr<CoordinatedSurface> m_surface;
     double m_inactivityInSeconds;

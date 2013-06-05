@@ -39,7 +39,7 @@ namespace WebCore {
 
 class CoordinatedImageBacking : public RefCounted<CoordinatedImageBacking> {
 public:
-    class Coordinator {
+    class Client {
     public:
         virtual void createImageBacking(CoordinatedImageBackingID) = 0;
         virtual void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>) = 0;
@@ -52,7 +52,7 @@ public:
         virtual bool imageBackingVisible() = 0;
     };
 
-    static PassRefPtr<CoordinatedImageBacking> create(Coordinator*, PassRefPtr<Image>);
+    static PassRefPtr<CoordinatedImageBacking> create(Client*, PassRefPtr<Image>);
     virtual ~CoordinatedImageBacking();
 
     static CoordinatedImageBackingID getCoordinatedImageBackingID(Image*);
@@ -68,13 +68,13 @@ public:
     void update();
 
 private:
-    CoordinatedImageBacking(Coordinator*, PassRefPtr<Image>);
+    CoordinatedImageBacking(Client*, PassRefPtr<Image>);
 
     void releaseSurfaceIfNeeded();
     void updateVisibilityIfNeeded(bool& changedToVisible);
     void clearContentsTimerFired(Timer<CoordinatedImageBacking>*);
 
-    Coordinator* m_coordinator;
+    Client* m_client;
     RefPtr<Image> m_image;
     NativeImagePtr m_nativeImagePtr;
     CoordinatedImageBackingID m_id;

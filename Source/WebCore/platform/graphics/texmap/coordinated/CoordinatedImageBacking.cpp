@@ -39,13 +39,13 @@ CoordinatedImageBackingID CoordinatedImageBacking::getCoordinatedImageBackingID(
     return reinterpret_cast<CoordinatedImageBackingID>(image);
 }
 
-PassRefPtr<CoordinatedImageBacking> CoordinatedImageBacking::create(Coordinator* client, PassRefPtr<Image> image)
+PassRefPtr<CoordinatedImageBacking> CoordinatedImageBacking::create(Client* client, PassRefPtr<Image> image)
 {
     return adoptRef(new CoordinatedImageBacking(client, image));
 }
 
-CoordinatedImageBacking::CoordinatedImageBacking(Coordinator* client, PassRefPtr<Image> image)
-    : m_coordinator(client)
+CoordinatedImageBacking::CoordinatedImageBacking(Client* client, PassRefPtr<Image> image)
+    : m_client(client)
     , m_image(image)
     , m_id(getCoordinatedImageBackingID(m_image.get()))
     , m_clearContentsTimer(this, &CoordinatedImageBacking::clearContentsTimerFired)
@@ -55,7 +55,7 @@ CoordinatedImageBacking::CoordinatedImageBacking(Coordinator* client, PassRefPtr
     // FIXME: We would need to decode a small image directly into a GraphicsSurface.
     // http://webkit.org/b/101426
 
-    m_coordinator->createImageBacking(id());
+    m_client->createImageBacking(id());
 }
 
 CoordinatedImageBacking::~CoordinatedImageBacking()
@@ -75,7 +75,7 @@ void CoordinatedImageBacking::removeHost(Host* host)
     m_hosts.remove(position);
 
     if (m_hosts.isEmpty())
-        m_coordinator->removeImageBacking(id());
+        m_client->removeImageBacking(id());
 }
 
 void CoordinatedImageBacking::markDirty()
@@ -114,7 +114,7 @@ void CoordinatedImageBacking::update()
 
     m_nativeImagePtr = m_image->nativeImageForCurrentFrame();
 
-    m_coordinator->updateImageBacking(id(), m_surface);
+    m_client->updateImageBacking(id(), m_surface);
     m_isDirty = false;
 }
 
@@ -156,7 +156,7 @@ void CoordinatedImageBacking::updateVisibilityIfNeeded(bool& changedToVisible)
 
 void CoordinatedImageBacking::clearContentsTimerFired(Timer<CoordinatedImageBacking>*)
 {
-    m_coordinator->clearImageBackingContents(id());
+    m_client->clearImageBackingContents(id());
 }
 
 } // namespace WebCore

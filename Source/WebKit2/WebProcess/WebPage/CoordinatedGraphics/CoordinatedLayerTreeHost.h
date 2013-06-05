@@ -48,8 +48,8 @@ class WebPage;
 
 class CoordinatedLayerTreeHost : public LayerTreeHost, WebCore::GraphicsLayerClient
     , public WebCore::CoordinatedGraphicsLayerClient
-    , public WebCore::CoordinatedImageBacking::Coordinator
-    , public WebCore::UpdateAtlasClient
+    , public WebCore::CoordinatedImageBacking::Client
+    , public WebCore::UpdateAtlas::Client
     , public WebCore::GraphicsLayerFactory
 #if ENABLE(CSS_SHADERS)
     , WebCustomFilterProgramProxyClient
@@ -111,7 +111,7 @@ private:
     virtual float deviceScaleFactor() const OVERRIDE;
     virtual float pageScaleFactor() const OVERRIDE;
 
-    // CoordinatedImageBacking::Coordinator
+    // CoordinatedImageBacking::Client
     virtual void createImageBacking(WebCore::CoordinatedImageBackingID) OVERRIDE;
     virtual void updateImageBacking(WebCore::CoordinatedImageBackingID, PassRefPtr<WebCore::CoordinatedSurface>) OVERRIDE;
     virtual void clearImageBackingContents(WebCore::CoordinatedImageBackingID) OVERRIDE;
@@ -127,9 +127,9 @@ private:
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& atlasID, WebCore::IntPoint&);
     virtual void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&);
 
-    // UpdateAtlasClient
+    // UpdateAtlas::Client
     virtual void createUpdateAtlas(uint32_t atlasID, PassRefPtr<WebCore::CoordinatedSurface>) OVERRIDE;
-    virtual void removeUpdateAtlas(uint32_t atlasID);
+    virtual void removeUpdateAtlas(uint32_t atlasID) OVERRIDE;
 
     // GraphicsLayerFactory
     virtual PassOwnPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;

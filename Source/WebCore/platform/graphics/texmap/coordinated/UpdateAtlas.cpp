@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-UpdateAtlas::UpdateAtlas(UpdateAtlasClient* client, int dimension, CoordinatedSurface::Flags flags)
+UpdateAtlas::UpdateAtlas(Client* client, int dimension, CoordinatedSurface::Flags flags)
     : m_client(client)
     , m_inactivityInSeconds(0)
 {
