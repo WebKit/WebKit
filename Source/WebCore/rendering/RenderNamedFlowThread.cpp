@@ -30,6 +30,7 @@
 #include "FlowThreadController.h"
 #include "InlineTextBox.h"
 #include "InspectorInstrumentation.h"
+#include "NodeRenderingContext.h"
 #include "NodeTraversal.h"
 #include "Position.h"
 #include "Range.h"
@@ -399,6 +400,22 @@ void RenderNamedFlowThread::unregisterNamedFlowContentNode(Node* contentNode)
 const AtomicString& RenderNamedFlowThread::flowThreadName() const
 {
     return m_namedFlow->name();
+}
+
+bool RenderNamedFlowThread::isChildAllowed(RenderObject* child, RenderStyle* style) const
+{
+    ASSERT(child);
+    ASSERT(style);
+
+    if (!child->node())
+        return true;
+
+    ASSERT(child->node()->isElementNode());
+    RenderObject* parentRenderer = NodeRenderingContext(child->node()).parentRenderer();
+    if (!parentRenderer)
+        return true;
+
+    return parentRenderer->isChildAllowed(child, style);
 }
 
 void RenderNamedFlowThread::dispatchRegionLayoutUpdateEvent()

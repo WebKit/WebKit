@@ -1,5 +1,18 @@
 2013-06-05  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        [CSSRegions] Respect renderer creation constraints when element is part of named flow
+        https://bugs.webkit.org/show_bug.cgi?id=116790
+
+        Reviewed by David Hyatt.
+
+        The test needs to be xhtml so that br element, child of frame set, remains
+        child of the frame set when the document is parsed.
+
+        * fast/regions/br-content-node-crash-expected.txt: Added.
+        * fast/regions/br-content-node-crash.xhtml: Added.
+
+2013-06-05  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [CSS Regions] REGRESSION Incorrect layer clipping inside flow thread
         https://bugs.webkit.org/show_bug.cgi?id=117074
 

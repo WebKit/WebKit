@@ -1,3 +1,21 @@
+2013-06-05  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Respect renderer creation constraints when element is part of named flow
+        https://bugs.webkit.org/show_bug.cgi?id=116790
+
+        Reviewed by David Hyatt.
+
+        Before adding a child to a named flow, we have to make sure that the rules for
+        creation are properly checked.
+
+        Test: fast/regions/br-content-node-crash.xhtml
+
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::isChildAllowed):
+        Call isChildAllowed on the original parent renderer, before reparenting to
+        named flow.
+        * rendering/RenderNamedFlowThread.h:
+
 2013-06-05  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GStreamer 0.10 build fix after r151175.
