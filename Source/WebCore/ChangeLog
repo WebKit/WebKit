@@ -1,3 +1,23 @@
+2013-06-05  Oliver Hunt  <oliver@apple.com>
+
+        Don't throttle timers if a page is doing something that might be interesting
+        https://bugs.webkit.org/show_bug.cgi?id=117273
+
+        Reviewed by Gavin Barraclough.
+
+        Make the decision about whether or not to throttle timers be
+        determined by the PageThrottler
+
+        * page/Page.cpp:
+        (WebCore::Page::throttleTimers):
+        (WebCore::Page::unthrottleTimers):
+        (WebCore::Page::setVisibilityState):
+        (WebCore::Page::hiddenPageDOMTimerThrottlingStateChanged):
+        * page/Page.h:
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::throttlePage):
+        (WebCore::PageThrottler::unthrottlePage):
+
 2013-06-05  Mark Salisbury  <mark.salisbury@hp.com>
 
         [WinCE,WinCairo] RenderThemeWin.cpp needs to include FrameSelection.h.

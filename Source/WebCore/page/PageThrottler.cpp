@@ -77,6 +77,8 @@ void PageThrottler::throttlePage()
         if (frame->document())
             frame->document()->scriptedAnimationControllerSetThrottled(true);
     }
+
+    m_page->throttleTimers();
 }
 
 void PageThrottler::unthrottlePage()
@@ -96,6 +98,8 @@ void PageThrottler::unthrottlePage()
         if (frame->document())
             frame->document()->scriptedAnimationControllerSetThrottled(false);
     }
+
+    m_page->unthrottleTimers();
 }
 
 void PageThrottler::setThrottled(bool isThrottled)

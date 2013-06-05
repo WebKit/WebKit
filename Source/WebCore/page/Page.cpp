@@ -1250,6 +1250,22 @@ void Page::checkSubframeCountConsistency() const
 }
 #endif
 
+void Page::throttleTimers()
+{
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    if (m_settings->hiddenPageDOMTimerThrottlingEnabled())
+        setTimerAlignmentInterval(Settings::hiddenPageDOMTimerAlignmentInterval());
+#endif
+}
+
+void Page::unthrottleTimers()
+{
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    if (m_settings->hiddenPageDOMTimerThrottlingEnabled())
+        setTimerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval());
+#endif
+}
+
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
 void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitialState)
 {
@@ -1265,17 +1281,12 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
 #endif
 
     if (visibilityState == WebCore::PageVisibilityStateHidden) {
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-        if (m_settings->hiddenPageDOMTimerThrottlingEnabled())
-            setTimerAlignmentInterval(Settings::hiddenPageDOMTimerAlignmentInterval());
-#endif
+        if (m_pageThrottler->shouldThrottleTimers())
+            throttleTimers();
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame()->animation()->suspendAnimations();
     } else {
-#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-        if (m_settings->hiddenPageDOMTimerThrottlingEnabled())
-            setTimerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval());
-#endif
+        unthrottleTimers();
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame()->animation()->resumeAnimations();
     }
@@ -1525,7 +1536,7 @@ void Page::hiddenPageDOMTimerThrottlingStateChanged()
 {
     if (m_settings->hiddenPageDOMTimerThrottlingEnabled()) {
 #if ENABLE(PAGE_VISIBILITY_API)
-        if (m_visibilityState == WebCore::PageVisibilityStateHidden)
+        if (m_pageThrottler->shouldThrottleTimers())
             setTimerAlignmentInterval(Settings::hiddenPageDOMTimerAlignmentInterval());
 #endif
     } else

@@ -431,6 +431,9 @@ private:
 
     void collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases);
 
+    void throttleTimers();
+    void unthrottleTimers();
+
     const OwnPtr<Chrome> m_chrome;
     OwnPtr<DragCaretController> m_dragCaretController;
 
