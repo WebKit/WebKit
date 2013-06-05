@@ -1,5 +1,5 @@
 
-stamp-webkittestrunner-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_WebKitTestRunner_SOURCES)
+stamp-webkittestrunner-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_WebKitTestRunner_SOURCES) $(Libraries_libTestRunnerInjectedBundle_la_SOURCES)
 	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/WebKitTestRunner $(GENSOURCES_WEBKIT2)/include gtk \
 	&& echo timestamp > $(@F)
 

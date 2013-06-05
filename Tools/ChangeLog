@@ -1,3 +1,12 @@
+2013-06-05  Wojciech Bielawski  <w.bielawski@samsung.com>
+
+        [GTK] Forwarding headers not generated for incremental build
+        https://bugs.webkit.org/show_bug.cgi?id=117198
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/GNUmakefile.am: libTestRunnerInjectedBundle added to dependencies.
+
 2013-06-05  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Fix layout testing with Qt 5.1
