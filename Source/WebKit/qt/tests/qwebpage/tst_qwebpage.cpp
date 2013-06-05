@@ -2322,6 +2322,20 @@ void tst_QWebPage::inputMethods()
     inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
     QCOMPARE(inputValue2, QString("\n\nthird line"));
 
+    // Return Key without key text
+    page->mainFrame()->evaluateJavaScript("var inputEle = document.getElementById('input5'); inputEle.value = ''; inputEle.focus(); inputEle.select();");
+    inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
+    QCOMPARE(inputValue2, QString(""));
+
+    QKeyEvent keyReturn(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier);
+    page->event(&keyReturn);
+    page->event(&eventText);
+    page->event(&eventText2);
+    qApp->processEvents();
+
+    inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
+    QCOMPARE(inputValue2, QString("\n\nthird line"));
+
     // END - Newline test for textarea
 
     delete container;

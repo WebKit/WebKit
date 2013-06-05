@@ -587,6 +587,7 @@ static String keyTextForKeyEvent(const QKeyEvent* event)
         if (event->text().isNull())
             return ASCIILiteral("\t");
         break;
+    case Qt::Key_Return:
     case Qt::Key_Enter:
         if (event->text().isNull())
             return ASCIILiteral("\r");
