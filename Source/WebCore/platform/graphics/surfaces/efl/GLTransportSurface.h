@@ -62,18 +62,16 @@ protected:
 class GLTransportSurfaceClient {
 
 public:
-    static PassOwnPtr<GLTransportSurfaceClient> createTransportSurfaceClient(const PlatformBufferHandle);
+    static PassOwnPtr<GLTransportSurfaceClient> createTransportSurfaceClient(const PlatformBufferHandle, const IntSize&, bool);
     virtual ~GLTransportSurfaceClient();
     virtual void prepareTexture();
     virtual void destroy();
     GLuint texture() const { return m_texture; }
-    bool hasAlpha() const { return m_hasAlpha; }
 
 protected:
-    GLTransportSurfaceClient(const PlatformBufferHandle);
+    GLTransportSurfaceClient();
     void createTexture();
     GLuint m_texture;
-    bool m_hasAlpha;
 };
 
 }

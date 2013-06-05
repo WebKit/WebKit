@@ -68,7 +68,7 @@ private:
 class GLXTransportSurfaceClient : public GLTransportSurfaceClient {
 
 public:
-    GLXTransportSurfaceClient(const PlatformBufferHandle);
+    GLXTransportSurfaceClient(const PlatformBufferHandle, bool);
     virtual ~GLXTransportSurfaceClient();
     virtual void prepareTexture() OVERRIDE;
     virtual void destroy() OVERRIDE;

@@ -195,8 +195,8 @@ void GLXOffScreenSurface::freeResources()
     m_drawable = 0;
 }
 
-GLXTransportSurfaceClient::GLXTransportSurfaceClient(const PlatformBufferHandle handle)
-    : GLTransportSurfaceClient(handle)
+GLXTransportSurfaceClient::GLXTransportSurfaceClient(const PlatformBufferHandle handle, bool hasAlpha)
+    : GLTransportSurfaceClient()
 {
     if (!resolveGLMethods())
         return;
@@ -213,7 +213,6 @@ GLXTransportSurfaceClient::GLXTransportSurfaceClient(const PlatformBufferHandle 
     ScopedXPixmapCreationErrorHandler handler;
 
     XRenderPictFormat* format = XRenderFindVisualFormat(display, attr.visual);
-    bool hasAlpha = (format->type == PictTypeDirect && format->direct.alphaMask);
     m_xPixmap = XCompositeNameWindowPixmap(display, handle);
 
     if (!m_xPixmap)
@@ -223,10 +222,8 @@ GLXTransportSurfaceClient::GLXTransportSurfaceClient(const PlatformBufferHandle 
 
     GLPlatformSurface::SurfaceAttributes sharedSurfaceAttributes = GLPlatformSurface::Default;
 
-    if (hasAlpha) {
+    if (hasAlpha)
         sharedSurfaceAttributes = GLPlatformSurface::SupportAlpha;
-        m_hasAlpha = true;
-    }
 
     GLXConfigSelector configSelector(sharedSurfaceAttributes);
 

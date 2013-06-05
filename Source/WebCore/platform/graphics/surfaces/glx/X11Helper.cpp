@@ -183,7 +183,7 @@ void X11Helper::destroyPixmap(const uint32_t pixmapId)
 
 void X11Helper::createOffScreenWindow(uint32_t* handleId, const XVisualInfo& visInfo, const IntSize& size)
 {
-#if USE(GRAPHICS_SURFACE) && USE(GLX)
+#if USE(GRAPHICS_SURFACE)
     Display* display = nativeDisplay();
     if (!display)
         return;
@@ -202,7 +202,9 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const XVisualInfo& vis
     attribute.background_pixel = WhitePixel(display, 0);
     attribute.border_pixel = BlackPixel(display, 0);
     attribute.colormap = cmap;
+#if USE(GLX)
     attribute.event_mask = ResizeRedirectMask;
+#endif
     uint32_t tempHandleId = XCreateWindow(display, xWindow, 0, 0, size.width(), size.height(), 0, visInfo.depth, InputOutput, visInfo.visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
 
     if (!tempHandleId) {
@@ -211,7 +213,9 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const XVisualInfo& vis
     }
 
     XSetWindowBackgroundPixmap(display, tempHandleId, 0);
+#if USE(GLX)
     XCompositeRedirectWindow(display, tempHandleId, CompositeRedirectManual);
+#endif
     XMapWindow(display, tempHandleId);
     *handleId = tempHandleId;
 #else
@@ -243,7 +247,7 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const EGLint id, bool 
             XVisualInfo* temp = &matchingVisuals[i];
             int matchingdepth = supportsAlpha ? 32 : 24;
 
-            if (temp->depth == matchingdepth) {
+            if (temp->visualid == visualId && temp->depth == matchingdepth) {
                 foundVisual = temp;
                 break;
             }
@@ -257,6 +261,37 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const EGLint id, bool 
     UNUSED_PARAM(id);
     UNUSED_PARAM(size);
 #endif
+}
+
+void X11Helper::createPixmap(Pixmap* handleId, const EGLint id, bool hasAlpha, const IntSize& size)
+{
+    VisualID visualId = static_cast<VisualID>(id);
+
+    if (!visualId)
+        return;
+
+    // EGL has suggested a visual id, so get the rest of the visual info for that id.
+    XVisualInfo visualInfoTemplate;
+    memset(&visualInfoTemplate, 0, sizeof(XVisualInfo));
+    visualInfoTemplate.visualid = visualId;
+    int matchingCount = 0;
+    OwnPtrX11<XVisualInfo> matchingVisuals(XGetVisualInfo(nativeDisplay(), VisualIDMask, &visualInfoTemplate, &matchingCount));
+    XVisualInfo* foundVisual = 0;
+    int requiredDepth = hasAlpha ? 32 : 24;
+
+    if (matchingVisuals) {
+        for (int i = 0; i< matchingCount; i++) {
+            XVisualInfo* temp = &matchingVisuals[i];
+
+            if (temp->visualid == visualId && temp->depth == requiredDepth) {
+                foundVisual = temp;
+                break;
+            }
+        }
+
+        if (foundVisual)
+            createPixmap(handleId, *foundVisual, size);
+    }
 }
 #endif
 
@@ -306,4 +341,3 @@ Window X11Helper::offscreenRootWindow()
 }
 
 }
-

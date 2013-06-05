@@ -140,7 +140,7 @@ struct GraphicsSurfacePrivate {
 private:
     void initializeClient()
     {
-        m_client = GLTransportSurfaceClient::createTransportSurfaceClient(m_sharedHandle);
+        m_client = GLTransportSurfaceClient::createTransportSurfaceClient(m_sharedHandle, m_size, m_flags & TextureMapperGL::ShouldBlend);
 
         if (!m_client)
             return;

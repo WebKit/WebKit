@@ -207,27 +207,27 @@ void GLTransportSurface::initializeShaderProgram()
     updateTransformationMatrix();
 }
 
-PassOwnPtr<GLTransportSurfaceClient> GLTransportSurfaceClient::createTransportSurfaceClient(const PlatformBufferHandle handle)
+PassOwnPtr<GLTransportSurfaceClient> GLTransportSurfaceClient::createTransportSurfaceClient(const PlatformBufferHandle handle, const IntSize& size, bool hasAlpha)
 {
+    OwnPtr<GLTransportSurfaceClient> client;
 #if USE(GLX)
-    OwnPtr<GLTransportSurfaceClient> client = adoptPtr(new GLXTransportSurfaceClient(handle));
+    client = adoptPtr(new GLXTransportSurfaceClient(handle, hasAlpha));
+    UNUSED_PARAM(size);
+#else
+    client = EGLTransportSurface::createTransportSurfaceClient(handle, size, hasAlpha);
+#endif
 
-    if (!client->texture()) {
+    if (!client || !client->texture()) {
         LOG_ERROR("Failed to Create Transport Surface client.");
         return nullptr;
     }
 
     return client.release();
-
-#else
-    return nullptr;
-#endif
 }
 
 
-GLTransportSurfaceClient::GLTransportSurfaceClient(const PlatformBufferHandle)
+GLTransportSurfaceClient::GLTransportSurfaceClient()
     : m_texture(0)
-    , m_hasAlpha(true)
 {
 }
 

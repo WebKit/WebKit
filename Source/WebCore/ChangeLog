@@ -1,3 +1,30 @@
+2013-06-05  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL] Build fix with EGL and GLES2 backend.
+        https://bugs.webkit.org/show_bug.cgi?id=117246
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        r150958 added support for EGLTransportSurfaceClient.
+        This patch adds the missing changes.
+
+        * platform/graphics/surfaces/efl/GLTransportSurface.cpp:
+        (WebCore::GLTransportSurfaceClient::createTransportSurfaceClient):
+        (WebCore::GLTransportSurfaceClient::GLTransportSurfaceClient):
+        * platform/graphics/surfaces/efl/GLTransportSurface.h:
+        * platform/graphics/surfaces/efl/GraphicsSurfaceCommon.cpp:
+        (WebCore::GraphicsSurfacePrivate::initializeClient):
+        * platform/graphics/surfaces/egl/EGLXSurface.cpp:
+        (WebCore::EGLXTransportSurfaceClient::EGLXTransportSurfaceClient):
+        * platform/graphics/surfaces/egl/EGLXSurface.h:
+        * platform/graphics/surfaces/glx/GLXSurface.cpp:
+        (WebCore::GLXTransportSurfaceClient::GLXTransportSurfaceClient):
+        * platform/graphics/surfaces/glx/GLXSurface.h:
+        * platform/graphics/surfaces/glx/X11Helper.cpp:
+        (WebCore::X11Helper::createOffScreenWindow):
+        (WebCore::X11Helper::createPixmap):
+        * platform/graphics/surfaces/glx/X11Helper.h:
+
 2013-06-05  Jae Hyun Park  <jae.park@company100.net>
 
         [GTK] Support using GLContext from multiple threads
