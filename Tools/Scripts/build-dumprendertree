@@ -69,9 +69,6 @@ if (isAppleMacWebKit()) {
     $result = buildXCodeProject("DumpRenderTree", $clean, XcodeOptions(), @ARGV);
 } elsif (isAppleWinWebKit()) {
     my $drtSolutionPath = "DumpRenderTree.vcxproj/DumpRenderTree.sln";
-    if (visualStudioVersion() eq "8") {
-        $drtSolutionPath = "DumpRenderTree.sln";
-    }
     $result = buildVisualStudioProject($drtSolutionPath, $clean);
 } elsif (isQt() || isGtk() || isEfl()) {
     # Qt, Gtk and EFL build everything in one shot. No need to build anything here.

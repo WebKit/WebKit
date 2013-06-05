@@ -46,7 +46,7 @@ my $file = "WebKitSupportLibrary";
 my $zipFile = "$file.zip"; 
 my $zipDirectory = toUnixPath($ENV{'WEBKITSUPPORTLIBRARIESZIPDIR'}) || $sourceDir;
 my $pathToZip = File::Spec->catfile($zipDirectory, $zipFile);
-my $webkitLibrariesDir = toUnixPath($ENV{'WEBKITLIBRARIESDIR'}) || "$sourceDir/WebKitLibraries/win";
+my $webkitLibrariesDir = toUnixPath($ENV{'WEBKIT_LIBRARIES'}) || "$sourceDir/WebKitLibraries/win";
 my $versionFile = $file . "Version";
 my $pathToVersionFile = File::Spec->catfile($webkitLibrariesDir, $versionFile);
 my $tmpRelativeDir = File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1);

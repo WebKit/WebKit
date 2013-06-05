@@ -67,7 +67,7 @@ my $prefixInZip = shift;
 my $sourceDir = sourceDir();
 my $file = getLibraryName($libsURL);
 my $zipFile = "$file.zip"; 
-my $webkitLibrariesDir = toUnixPath($ENV{'WEBKITLIBRARIESDIR'}) || "$sourceDir/WebKitLibraries/win";
+my $webkitLibrariesDir = toUnixPath($ENV{'WEBKIT_LIBRARIES'}) || "$sourceDir/WebKitLibraries/win";
 my $tmpRelativeDir = File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1);
 my $tmpAbsDir = File::Spec->rel2abs($tmpRelativeDir);
 

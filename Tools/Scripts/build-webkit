@@ -339,9 +339,6 @@ for my $dir (@projects) {
     } elsif (isAppleWinWebKit()) {
         if ($project eq "WebKit") {
             my $webkitSolutionPath = "WebKit.vcxproj/WebKit.sln";
-            if (visualStudioVersion() eq "8") {
-                $webkitSolutionPath = "win/WebKit.vcproj/WebKit.sln";
-            }
             $result = buildVisualStudioProject($webkitSolutionPath, $clean);
             my $vsConfiguration = configurationForVisualStudio();
             if (usingVisualStudioExpress()) {

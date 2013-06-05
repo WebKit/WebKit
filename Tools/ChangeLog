@@ -1,3 +1,20 @@
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
+        Remove uses of VS2005 scripts, executables and associated environment variables from scripts.
+        <rdar://problem/14042021>.
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/build-api-tests:
+        * Scripts/build-dumprendertree:
+        * Scripts/build-webkit:
+        * Scripts/update-webkit-dependency:
+        * Scripts/update-webkit-support-libs:
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+        (setupAppleWinEnv):
+        (setupCygwinEnv):
+
 2013-06-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] NRWT is not putting crash logs in proper place (corrections)
