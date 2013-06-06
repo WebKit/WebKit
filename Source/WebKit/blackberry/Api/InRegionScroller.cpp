@@ -113,8 +113,7 @@ bool InRegionScrollerPrivate::isActive() const
 void InRegionScrollerPrivate::clearDocumentData(const Document* documentGoingAway)
 {
     InRegionScrollableArea* scrollableArea = static_cast<InRegionScrollableArea*>(m_selectionScrollView);
-    ASSERT(scrollableArea);
-    if (scrollableArea->document() == documentGoingAway)
+    if (scrollableArea && scrollableArea->document() == documentGoingAway)
         resetSelectionScrollView();
 
     if (m_needsActiveScrollableAreaCalculation) {

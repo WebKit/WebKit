@@ -1,3 +1,17 @@
+2013-06-06  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Crash in InRegionScrollerPrivate::clearDocumentData
+        https://bugs.webkit.org/show_bug.cgi?id=117317
+
+        Reviewed by Rob Buis.
+
+        PR #348994
+        Need to check the scrollableArea instead of asserting because in this case for the
+        selection subframe it is allowed to be null.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::clearDocumentData):
+
 2013-06-05  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
