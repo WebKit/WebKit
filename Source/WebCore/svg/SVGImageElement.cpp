@@ -199,9 +199,9 @@ bool SVGImageElement::haveLoadedRequiredResources()
     return !externalResourcesRequiredBaseValue() || !m_imageLoader.hasPendingActivity();
 }
 
-void SVGImageElement::attach()
+void SVGImageElement::attach(const AttachContext& context)
 {
-    SVGStyledTransformableElement::attach();
+    SVGStyledTransformableElement::attach(context);
 
     if (RenderSVGImage* imageObj = toRenderSVGImage(renderer())) {
         if (imageObj->imageResource()->hasImage())

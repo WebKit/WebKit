@@ -63,10 +63,10 @@ const AtomicString& SpinButtonElement::shadowPseudoId() const
     return innerPseudoId;
 }
 
-void SpinButtonElement::detach()
+void SpinButtonElement::detach(const AttachContext& context)
 {
     releaseCapture();
-    HTMLDivElement::detach();
+    HTMLDivElement::detach(context);
 }
 
 void SpinButtonElement::defaultEventHandler(Event* event)

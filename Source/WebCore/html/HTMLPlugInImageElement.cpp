@@ -234,7 +234,7 @@ bool HTMLPlugInImageElement::willRecalcStyle(StyleChange)
     return true;
 }
 
-void HTMLPlugInImageElement::attach()
+void HTMLPlugInImageElement::attach(const AttachContext& context)
 {
     PostAttachCallbackDisabler disabler(this);
 
@@ -243,7 +243,7 @@ void HTMLPlugInImageElement::attach()
     if (!isImage)
         queuePostAttachCallback(&HTMLPlugInImageElement::updateWidgetCallback, this);
 
-    HTMLPlugInElement::attach();
+    HTMLPlugInElement::attach(context);
 
     if (isImage && renderer() && !useFallbackContent()) {
         if (!m_imageLoader)
@@ -252,7 +252,7 @@ void HTMLPlugInImageElement::attach()
     }
 }
 
-void HTMLPlugInImageElement::detach()
+void HTMLPlugInImageElement::detach(const AttachContext& context)
 {
     // FIXME: Because of the insanity that is HTMLPlugInImageElement::recalcStyle,
     // we can end up detaching during an attach() call, before we even have a
@@ -260,7 +260,7 @@ void HTMLPlugInImageElement::detach()
     if (attached() && renderer() && !useFallbackContent())
         // Update the widget the next time we attach (detaching destroys the plugin).
         setNeedsWidgetUpdate(true);
-    HTMLPlugInElement::detach();
+    HTMLPlugInElement::detach(context);
 }
 
 void HTMLPlugInImageElement::updateWidgetIfNecessary()

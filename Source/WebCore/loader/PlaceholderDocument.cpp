@@ -28,12 +28,12 @@
 
 namespace WebCore {
 
-void PlaceholderDocument::attach()
+void PlaceholderDocument::attach(const AttachContext& context)
 {
     ASSERT(!attached());
 
     // Skipping Document::attach().
-    ContainerNode::attach();
+    ContainerNode::attach(context);
 }
 
 } // namespace WebCore

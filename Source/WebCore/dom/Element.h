@@ -409,8 +409,8 @@ public:
 
     virtual void copyNonAttributePropertiesFromElement(const Element&) { }
 
-    virtual void attach();
-    virtual void detach();
+    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
+    virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     void recalcStyle(StyleChange = NoChange);
@@ -756,7 +756,7 @@ private:
     void detachAllAttrNodesFromElement();
     void detachAttrNodeFromElementWithValue(Attr*, const AtomicString& value);
 
-    void createRendererIfNeeded();
+    void createRendererIfNeeded(const AttachContext&);
 
     bool isJavaScriptURLAttribute(const Attribute&) const;
 

@@ -850,9 +850,12 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
         }
         doSystemDrag(dragImage, dragLoc, mouseDraggedPoint, clipboard, src, true);
     } else if (state.type == DragSourceActionDHTML) {
-        ASSERT(m_dragSourceAction & DragSourceActionDHTML);
-        m_client->willPerformDragSourceAction(DragSourceActionDHTML, dragOrigin, clipboard);
-        doSystemDrag(dragImage, dragLoc, dragOrigin, clipboard, src, false);
+        if (dragImage) {
+            ASSERT(m_dragSourceAction & DragSourceActionDHTML);
+            m_client->willPerformDragSourceAction(DragSourceActionDHTML, dragOrigin, clipboard);
+            doSystemDrag(dragImage, dragLoc, dragOrigin, clipboard, src, false);
+        } else
+            startedDrag = false;
     } else {
         // draggableElement() determined an image or link node was draggable, but it turns out the
         // image or link had no URL, so there is nothing to drag.

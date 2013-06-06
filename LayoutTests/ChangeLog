@@ -1,3 +1,17 @@
+2013-06-06  Radu Stavila  <stavila@adobe.com>
+
+        :hover style not applied on hover if its display property is different from original style's
+        https://bugs.webkit.org/show_bug.cgi?id=7555
+
+        Reviewed by Antti Koivisto.
+
+        * fast/regions/hover-display-block-inline-expected.txt: Added.
+        * fast/regions/hover-display-block-inline.html: Added.
+        * fast/regions/hover-display-block-none-expected.txt: Added.
+        * fast/regions/hover-display-block-none.html: Added.
+        * fast/events/drag-display-none-element-expected.txt:
+        * fast/events/drag-display-none-element:
+
 2013-06-06  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Make positioned-object-inline-cb-crash.html output readable in browser

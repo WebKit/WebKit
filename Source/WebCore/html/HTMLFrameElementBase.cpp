@@ -172,9 +172,9 @@ void HTMLFrameElementBase::didNotifySubtreeInsertions(ContainerNode*)
     setNameAndOpenURL();
 }
 
-void HTMLFrameElementBase::attach()
+void HTMLFrameElementBase::attach(const AttachContext& context)
 {
-    HTMLFrameOwnerElement::attach();
+    HTMLFrameOwnerElement::attach(context);
 
     if (RenderPart* part = renderPart()) {
         if (Frame* frame = contentFrame())

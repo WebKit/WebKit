@@ -90,9 +90,9 @@ PassRefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document
     return element.release();
 }
 
-void HTMLOptionElement::attach()
+void HTMLOptionElement::attach(const AttachContext& context)
 {
-    HTMLElement::attach();
+    HTMLElement::attach(context);
     // If after attaching nothing called styleForRenderer() on this node we
     // manually cache the value. This happens if our parent doesn't have a
     // renderer like <optgroup> or if it doesn't allow children like <select>.
@@ -100,10 +100,10 @@ void HTMLOptionElement::attach()
         updateNonRenderStyle();
 }
 
-void HTMLOptionElement::detach()
+void HTMLOptionElement::detach(const AttachContext& context)
 {
     m_style.clear();
-    HTMLElement::detach();
+    HTMLElement::detach(context);
 }
 
 bool HTMLOptionElement::supportsFocus() const

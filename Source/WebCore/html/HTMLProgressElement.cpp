@@ -92,9 +92,9 @@ void HTMLProgressElement::parseAttribute(const QualifiedName& name, const Atomic
         LabelableElement::parseAttribute(name, value);
 }
 
-void HTMLProgressElement::attach()
+void HTMLProgressElement::attach(const AttachContext& context)
 {
-    LabelableElement::attach();
+    LabelableElement::attach(context);
     if (RenderProgress* render = renderProgress())
         render->updateFromElement();
 }

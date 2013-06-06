@@ -277,10 +277,10 @@ RenderText* Text::createTextRenderer(RenderArena* arena, RenderStyle* style)
     return new (arena) RenderText(this, dataImpl());
 }
 
-void Text::attach()
+void Text::attach(const AttachContext& context)
 {
     createTextRendererIfNeeded();
-    CharacterData::attach();
+    CharacterData::attach(context);
 }
 
 void Text::recalcTextStyle(StyleChange change)

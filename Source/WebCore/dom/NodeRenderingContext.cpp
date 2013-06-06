@@ -68,6 +68,14 @@ NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
 {
 }
 
+NodeRenderingContext::NodeRenderingContext(Node* node, const Node::AttachContext& context)
+    : m_node(node)
+    , m_style(context.resolvedStyle)
+    , m_parentFlowRenderer(0)
+{
+    m_renderingParent = NodeRenderingTraversal::parent(node, &m_parentDetails);
+}
+
 NodeRenderingContext::~NodeRenderingContext()
 {
 }

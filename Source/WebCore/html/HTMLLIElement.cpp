@@ -85,11 +85,11 @@ void HTMLLIElement::parseAttribute(const QualifiedName& name, const AtomicString
         HTMLElement::parseAttribute(name, value);
 }
 
-void HTMLLIElement::attach()
+void HTMLLIElement::attach(const AttachContext& context)
 {
     ASSERT(!attached());
 
-    HTMLElement::attach();
+    HTMLElement::attach(context);
 
     if (renderer() && renderer()->isListItem()) {
         RenderListItem* listItemRenderer = toRenderListItem(renderer());

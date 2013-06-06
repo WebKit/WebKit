@@ -1,3 +1,142 @@
+2013-06-06  Radu Stavila  <stavila@adobe.com>
+
+        :hover style not applied on hover if its display property is different from original style's
+        https://bugs.webkit.org/show_bug.cgi?id=7555
+
+        Properly apply the :hover pseudo-class when reattaching is required (e.g. when changing the display type)
+
+        A new AttachContext class was created to be passed along as an optional parameter to the attach/detach/reattach methods.
+        This new parameter is used to:
+            - prevent the element from being removed from the list of hovered/active elements upon detach when a reattach is in progress
+            - prevent the style from being incorrectly computed (due to the previous point)
+            - prevent the style from being computed twice (the attach() method used to recompute it)
+
+        Special care was required to the case when display:none is specified in the :hover class. Enabling the :hover style
+        was leaving the element without a renderer, which was causing it to remain stuck in the :hover state (subsequent mouseMove
+        events were not able to reset the element to its normal style due to the fact that it had no renderer).
+
+        The DragController::startDrag method was updated to properly handle the case when dragImage is NULL 
+        (for instance by setting display:none inside the -webkit-drag pseudo-class).
+
+        Reviewed by Antti Koivisto.
+
+        Tests: fast/regions/hover-display-block-inline.html
+               fast/regions/hover-display-block-none.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::attach):
+        (WebCore::ContainerNode::detach):
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::attach):
+        (WebCore::Document::detach):
+        (WebCore::Document::updateHoverActiveState):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::setHovered):
+        (WebCore::Element::createRendererIfNeeded):
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        (WebCore::Element::recalcStyle):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::AttachDetachContext::AttachDetachContext):
+        (WebCore::Node::AttachDetachContext::~AttachDetachContext):
+        (WebCore::Node::attach):
+        (WebCore::Node::detach):
+        * dom/Node.h:
+        (WebCore::Node::reattach):
+        (WebCore::Node::reattachIfAttached):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::attach):
+        * dom/PseudoElement.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::attach):
+        * dom/ShadowRoot.h:
+        * dom/Text.cpp:
+        (WebCore::Text::attach):
+        * dom/Text.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::attach):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::attach):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::attach):
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::attach):
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::attach):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::attach):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::attach):
+        (WebCore::HTMLInputElement::detach):
+        * html/HTMLInputElement.h:
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::attach):
+        * html/HTMLLIElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attach):
+        * html/HTMLMediaElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::attach):
+        (WebCore::HTMLOptGroupElement::detach):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::attach):
+        (WebCore::HTMLOptionElement::detach):
+        * html/HTMLOptionElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::detach):
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::attach):
+        (WebCore::HTMLPlugInImageElement::detach):
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::attach):
+        * html/HTMLProgressElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::attach):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::attach):
+        * html/HTMLVideoElement.h:
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocument::detach):
+        * html/PluginDocument.h:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::attach):
+        (WebCore::InsertionPoint::detach):
+        * html/shadow/InsertionPoint.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::detach):
+        * html/shadow/SliderThumbElement.h:
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::detach):
+        * html/shadow/SpinButtonElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::detach):
+        (WebCore::InputFieldSpeechButtonElement::attach):
+        (WebCore::InputFieldSpeechButtonElement::detach):
+        * html/shadow/TextControlInnerElements.h:
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::attach):
+        * loader/PlaceholderDocument.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::attach):
+        * svg/SVGImageElement.h:
+
 2013-06-06  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         ENABLE(PAN_SCROLLING) AutoscrollController::updateAutoscrollRenderer calls hitTestResultAtPoint with `true` for HitTestRequestType

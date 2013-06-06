@@ -524,9 +524,9 @@ HTMLElement* HTMLTextAreaElement::placeholderElement() const
     return m_placeholder;
 }
 
-void HTMLTextAreaElement::attach()
+void HTMLTextAreaElement::attach(const AttachContext& context)
 {
-    HTMLTextFormControlElement::attach();
+    HTMLTextFormControlElement::attach(context);
     fixPlaceholderRenderer(m_placeholder, innerTextElement());
 }
 

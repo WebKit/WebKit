@@ -56,7 +56,7 @@ public:
     virtual void defaultEventHandler(Event*);
     virtual bool willRespondToMouseMoveEvents() OVERRIDE;
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
-    virtual void detach();
+    virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
     virtual const AtomicString& shadowPseudoId() const;
     HTMLInputElement* hostInput() const;
     void setPositionFromPoint(const LayoutPoint&);

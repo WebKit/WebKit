@@ -172,9 +172,9 @@ bool HTMLImageElement::canStartSelection() const
     return false;
 }
 
-void HTMLImageElement::attach()
+void HTMLImageElement::attach(const AttachContext& context)
 {
-    HTMLElement::attach();
+    HTMLElement::attach(context);
 
     if (renderer() && renderer()->isImage() && !m_imageLoader.hasPendingBeforeLoadEvent()) {
         RenderImage* renderImage = toRenderImage(renderer());

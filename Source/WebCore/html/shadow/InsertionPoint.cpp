@@ -51,27 +51,27 @@ InsertionPoint::~InsertionPoint()
 {
 }
 
-void InsertionPoint::attach()
+void InsertionPoint::attach(const AttachContext& context)
 {
     if (ShadowRoot* shadowRoot = containingShadowRoot())
         ContentDistributor::ensureDistribution(shadowRoot);
     for (Node* current = firstDistributed(); current; current = nextDistributedTo(current)) {
         if (!current->attached())
-            current->attach();
+            current->attach(context);
     }
 
-    HTMLElement::attach();
+    HTMLElement::attach(context);
 }
 
-void InsertionPoint::detach()
+void InsertionPoint::detach(const AttachContext& context)
 {
     if (ShadowRoot* shadowRoot = containingShadowRoot())
         ContentDistributor::ensureDistribution(shadowRoot);
 
     for (Node* current = firstDistributed(); current; current = nextDistributedTo(current))
-        current->detach();
+        current->detach(context);
 
-    HTMLElement::detach();
+    HTMLElement::detach(context);
 }
 
 bool InsertionPoint::shouldUseFallbackElements() const

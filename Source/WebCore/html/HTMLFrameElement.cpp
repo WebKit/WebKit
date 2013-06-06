@@ -72,9 +72,9 @@ bool HTMLFrameElement::noResize() const
     return hasAttribute(noresizeAttr);
 }
 
-void HTMLFrameElement::attach()
+void HTMLFrameElement::attach(const AttachContext& context)
 {
-    HTMLFrameElementBase::attach();
+    HTMLFrameElementBase::attach(context);
     
     if (HTMLFrameSetElement* frameSetElement = containingFrameSetElement(this)) {
         if (!m_frameBorderSet)

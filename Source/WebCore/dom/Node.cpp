@@ -973,7 +973,7 @@ bool Node::containsIncludingHostElements(const Node* node) const
 #endif
 }
 
-void Node::attach()
+void Node::attach(const AttachContext&)
 {
     ASSERT(!attached());
     ASSERT(!renderer() || (renderer()->style() && renderer()->parent()));
@@ -1016,7 +1016,7 @@ bool Node::inDetach() const
 }
 #endif
 
-void Node::detach()
+void Node::detach(const AttachContext&)
 {
 #ifndef NDEBUG
     ASSERT(!detachingNode);

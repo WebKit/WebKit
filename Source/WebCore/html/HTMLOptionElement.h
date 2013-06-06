@@ -72,8 +72,8 @@ private:
     virtual bool supportsFocus() const OVERRIDE;
     virtual bool isFocusable() const OVERRIDE;
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
-    virtual void attach();
-    virtual void detach();
+    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
+    virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 

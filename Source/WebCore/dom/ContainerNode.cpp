@@ -787,17 +787,17 @@ void ContainerNode::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
         setNeedsStyleRecalc(changeType);
 }
 
-void ContainerNode::attach()
+void ContainerNode::attach(const AttachContext& context)
 {
     attachChildren();
-    Node::attach();
+    Node::attach(context);
 }
 
-void ContainerNode::detach()
+void ContainerNode::detach(const AttachContext& context)
 {
     detachChildren();
     clearChildNeedsStyleRecalc();
-    Node::detach();
+    Node::detach(context);
 }
 
 void ContainerNode::childrenChanged(bool changedByParser, Node*, Node*, int childCountDelta)

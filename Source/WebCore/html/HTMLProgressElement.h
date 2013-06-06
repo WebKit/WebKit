@@ -60,7 +60,7 @@ private:
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
-    virtual void attach();
+    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
 
     void didElementStateChange();
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;

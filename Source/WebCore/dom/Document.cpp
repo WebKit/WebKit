@@ -2038,7 +2038,7 @@ void Document::clearStyleResolver()
     m_styleResolver.clear();
 }
 
-void Document::attach()
+void Document::attach(const AttachContext& context)
 {
     ASSERT(!attached());
     ASSERT(!m_inPageCache);
@@ -2058,12 +2058,12 @@ void Document::attach()
     RenderObject* render = renderer();
     setRenderer(0);
 
-    ContainerNode::attach();
+    ContainerNode::attach(context);
 
     setRenderer(render);
 }
 
-void Document::detach()
+void Document::detach(const AttachContext& context)
 {
     ASSERT(attached());
     ASSERT(!m_inPageCache);
@@ -2114,7 +2114,7 @@ void Document::detach()
     m_focusedElement = 0;
     m_activeElement = 0;
 
-    ContainerNode::detach();
+    ContainerNode::detach(context);
 
     unscheduleStyleRecalc();
 
@@ -5892,6 +5892,14 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     }
 
     if (oldHoverObj != newHoverObj) {
+        // If the old hovered element is not nil but it's renderer is, it was probably detached as part of the :hover style
+        // (for instance by setting display:none in the :hover pseudo-class). In this case, the old hovered element
+        // must be updated, to ensure it's normal style is re-applied.
+        if (oldHoveredElement && !oldHoverObj) {
+            if (!mustBeInActiveChain || (oldHoveredElement->isElementNode() && oldHoveredElement->inActiveChain()))
+                nodesToRemoveFromChain.append(oldHoveredElement);
+        }
+
         // The old hover path only needs to be cleared up to (and not including) the common ancestor;
         for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = curr->hoverAncestor()) {
             if (!curr->node() || curr->isText())

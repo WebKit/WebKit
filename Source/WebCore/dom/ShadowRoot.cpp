@@ -165,11 +165,11 @@ void ShadowRoot::setResetStyleInheritance(bool value)
     }
 }
 
-void ShadowRoot::attach()
+void ShadowRoot::attach(const AttachContext& context)
 {
     StyleResolver* styleResolver = document()->ensureStyleResolver();
     styleResolver->pushParentShadowRoot(this);
-    DocumentFragment::attach();
+    DocumentFragment::attach(context);
     styleResolver->popParentShadowRoot(this);
 }
 

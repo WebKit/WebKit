@@ -74,9 +74,9 @@ RenderObject* HTMLVideoElement::createRenderer(RenderArena* arena, RenderStyle*)
 }
 #endif
 
-void HTMLVideoElement::attach()
+void HTMLVideoElement::attach(const AttachContext& context)
 {
-    HTMLMediaElement::attach();
+    HTMLMediaElement::attach(context);
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     updateDisplayState();

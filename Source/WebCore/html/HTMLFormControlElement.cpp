@@ -208,11 +208,11 @@ static void focusPostAttach(Node* element, unsigned)
     element->deref(); 
 }
 
-void HTMLFormControlElement::attach()
+void HTMLFormControlElement::attach(const AttachContext& context)
 {
     PostAttachCallbackDisabler disabler(this);
 
-    HTMLElement::attach();
+    HTMLElement::attach(context);
 
     // The call to updateFromElement() needs to go after the call through
     // to the base class's attach() because that can sometimes do a close

@@ -549,8 +549,17 @@ void Element::setHovered(bool flag)
     if (Document* document = this->document())
         document->userActionElements().setHovered(this, flag);
 
-    if (!renderer())
+    if (!renderer()) {
+        // When setting hover to false, the style needs to be recalc'd even when
+        // there's no renderer (imagine setting display:none in the :hover class,
+        // if a nil renderer would prevent this element from recalculating its
+        // style, it would never go back to its normal style and remain
+        // stuck in its hovered style).
+        if (!flag)
+            setNeedsStyleRecalc();
+
         return;
+    }
 
     if (renderer()->style()->affectedByHover() || childrenAffectedByHover())
         setNeedsStyleRecalc();
@@ -1405,18 +1414,18 @@ void Element::removedFrom(ContainerNode* insertionPoint)
 #endif
 }
 
-void Element::createRendererIfNeeded()
+void Element::createRendererIfNeeded(const AttachContext& context)
 {
-    NodeRenderingContext(this).createRendererForElementIfNeeded();
+    NodeRenderingContext(this, context).createRendererForElementIfNeeded();
 }
 
-void Element::attach()
+void Element::attach(const AttachContext& context)
 {
     PostAttachCallbackDisabler callbackDisabler(this);
     StyleResolverParentPusher parentPusher(this);
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-    createRendererIfNeeded();
+    createRendererIfNeeded(context);
 
     if (parentElement() && parentElement()->isInCanvasSubtree())
         setIsInCanvasSubtree(true);
@@ -1430,7 +1439,7 @@ void Element::attach()
     } else if (firstChild())
         parentPusher.push();
 
-    ContainerNode::attach();
+    ContainerNode::attach(context);
 
     updatePseudoElement(AFTER);
 
@@ -1450,7 +1459,7 @@ void Element::unregisterNamedFlowContentNode()
         document()->renderView()->flowThreadController()->unregisterNamedFlowContentNode(this);
 }
 
-void Element::detach()
+void Element::detach(const AttachContext& context)
 {
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
     unregisterNamedFlowContentNode();
@@ -1469,15 +1478,19 @@ void Element::detach()
         shadow->detach();
     }
 
-    if (isUserActionElement()) {
-        if (hovered())
-            document()->hoveredElementDidDetach(this);
-        if (inActiveChain())
-            document()->elementInActiveChainDidDetach(this);
-        document()->userActionElements().didDetach(this);
+    // Do not remove the element's hovered and active status
+    // if performing a reattach.
+    if (!context.performingReattach) {
+        if (isUserActionElement()) {
+            if (hovered())
+                document()->hoveredElementDidDetach(this);
+            if (inActiveChain())
+                document()->elementInActiveChainDidDetach(this);
+            document()->userActionElements().didDetach(this);
+        }
     }
 
-    ContainerNode::detach();
+    ContainerNode::detach(context);
 }
 
 bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle)
@@ -1553,8 +1566,10 @@ void Element::recalcStyle(StyleChange change)
             localChange = Node::diff(currentStyle.get(), newStyle.get(), document());
         }
         if (localChange == Detach) {
-            // FIXME: The style gets computed twice by calling attach. We could do better if we passed the style along.
-            reattach();
+            AttachContext reattachContext;
+            reattachContext.resolvedStyle = newStyle.get();
+            reattach(reattachContext);
+
             // attach recalculates the style for all children. No need to do it twice.
             clearNeedsStyleRecalc();
             clearChildNeedsStyleRecalc();

@@ -1,0 +1,2 @@
+PASS Setting display to none on hover processed OK.
+

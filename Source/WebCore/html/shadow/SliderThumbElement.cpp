@@ -387,13 +387,13 @@ bool SliderThumbElement::willRespondToMouseClickEvents()
     return HTMLDivElement::willRespondToMouseClickEvents();
 }
 
-void SliderThumbElement::detach()
+void SliderThumbElement::detach(const AttachContext& context)
 {
     if (m_inDragMode) {
         if (Frame* frame = document()->frame())
             frame->eventHandler()->setCapturingMouseEventsNode(0);
     }
-    HTMLDivElement::detach();
+    HTMLDivElement::detach(context);
 }
 
 HTMLInputElement* SliderThumbElement::hostInput() const

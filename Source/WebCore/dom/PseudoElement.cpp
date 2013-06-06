@@ -76,11 +76,11 @@ PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer()
     return parentOrShadowHostElement()->renderer()->getCachedPseudoStyle(m_pseudoId);
 }
 
-void PseudoElement::attach()
+void PseudoElement::attach(const AttachContext& context)
 {
     ASSERT(!renderer());
 
-    Element::attach();
+    Element::attach(context);
 
     RenderObject* renderer = this->renderer();
     if (!renderer || !renderer->style()->regionThread().isEmpty())

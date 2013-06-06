@@ -15,6 +15,7 @@ function runTest()
         if (window.testRunner)
             testRunner.notifyDone();
         document.getElementById('console').appendChild(document.createTextNode('PASS'));
+        dragme.style.display = "none";
     });
 
     if (!window.testRunner)
@@ -33,7 +34,7 @@ window.addEventListener('load', runTest);
 </script>
 </head>
 <body>
-<div id="dragme" draggable="true">To test, try dragging this div around. It shouldn't crash, and PASS should appear below when you end the drag.</div>
+<div id="dragme" draggable="true">To test, try dragging this div around. It shouldn't crash, the div should disappear and PASS should appear.</div>
 <div id="console"></div>
 </body>
 </html>
