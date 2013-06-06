@@ -1,3 +1,15 @@
+2013-06-06  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Make positioned-object-inline-cb-crash.html output readable in browser
+        https://bugs.webkit.org/show_bug.cgi?id=117291
+
+        Reviewed by Alexandru Chiculita.
+
+        Make the output in browser readable by setting the style only on the required p element.
+
+        * fast/regions/positioned-object-inline-cb-crash-expected.txt:
+        * fast/regions/positioned-object-inline-cb-crash.html:
+
 2013-06-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Removing accidentally added png files for ref tests.
