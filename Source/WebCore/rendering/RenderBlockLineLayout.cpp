@@ -1644,7 +1644,7 @@ static inline LayoutUnit adjustLogicalLineTop(ExclusionShapeInsideInfo* exclusio
     return exclusionShapeInsideInfo->shapeLogicalBottom();
 }
 
-void RenderBlock::updateLineBoundariesForExclusions(ExclusionShapeInsideInfo* exclusionShapeInsideInfo, LayoutUnit& absoluteLogicalTop, LineLayoutState& layoutState, bool& lineOverflowsFromShapeInside)
+void RenderBlock::updateShapeAndSegmentsForCurrentLine(ExclusionShapeInsideInfo* exclusionShapeInsideInfo, LayoutUnit& absoluteLogicalTop, LineLayoutState& layoutState, bool& lineOverflowsFromShapeInside)
 {
     LayoutUnit logicalHeight = this->logicalHeight();
     RenderRegion* currentRegion = regionAtBlockOffset(logicalHeight);
@@ -1769,7 +1769,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         FloatingObject* lastFloatFromPreviousLine = (containsFloats()) ? m_floatingObjects->set().last() : 0;
 
 #if ENABLE(CSS_SHAPES)
-        updateLineBoundariesForExclusions(exclusionShapeInsideInfo, absoluteLogicalTop, layoutState, lineOverflowsFromShapeInside);
+        updateShapeAndSegmentsForCurrentLine(exclusionShapeInsideInfo, absoluteLogicalTop, layoutState, lineOverflowsFromShapeInside);
 #endif
         WordMeasurements wordMeasurements;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);

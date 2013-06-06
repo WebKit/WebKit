@@ -1084,7 +1084,7 @@ private:
     void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
     void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines);
 #if ENABLE(CSS_SHAPES)
-    void updateLineBoundariesForExclusions(ExclusionShapeInsideInfo*, LayoutUnit&, LineLayoutState&, bool&);
+    void updateShapeAndSegmentsForCurrentLine(ExclusionShapeInsideInfo*, LayoutUnit&, LineLayoutState&, bool&);
     bool adjustLogicalLineTopAndLogicalHeightIfNeeded(ExclusionShapeInsideInfo*, LayoutUnit, LineLayoutState&, InlineBidiResolver&, FloatingObject*, InlineIterator&, WordMeasurements&);
 #endif
     const InlineIterator& restartLayoutRunsAndFloatsInRange(LayoutUnit oldLogicalHeight, LayoutUnit newLogicalHeight,  FloatingObject* lastFloatFromPreviousLine, InlineBidiResolver&,  const InlineIterator&);
