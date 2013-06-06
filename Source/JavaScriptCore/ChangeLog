@@ -1,3 +1,23 @@
+2013-06-05  Michael Saboff  <msaboff@apple.com>
+
+        JSC: Crash beneath cti_op_div @ http://gmailblog.blogspot.com
+        https://bugs.webkit.org/show_bug.cgi?id=117280
+
+        Reviewed by Filip Pizlo.
+
+        Updated the merging of VariableAccessData nodes in ArgumentPosition lists
+        to find the unified VariableAccessData node that is the root of the
+        current node instead of using the current node directly when merging
+        attributes.
+        Added new dump code to dump the ArgumentPosition list.
+
+        * dfg/DFGArgumentPosition.h:
+        (JSC::DFG::rgumentPosition::mergeArgumentPredictionAwareness):
+        (JSC::DFG::ArgumentPosition::mergeArgumentUnboxingAwareness):
+        (JSC::DFG::ArgumentPosition::dump):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+
 2013-06-05  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags

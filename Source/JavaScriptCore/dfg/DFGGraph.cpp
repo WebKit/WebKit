@@ -314,7 +314,14 @@ void Graph::dump(PrintStream& out)
 {
     dataLog("DFG for ", CodeBlockWithJITType(m_codeBlock, JITCode::DFGJIT), ":\n");
     dataLog("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
-    
+
+    out.print("  ArgumentPosition size: ", m_argumentPositions.size(), "\n");
+    for (size_t i = 0; i < m_argumentPositions.size(); ++i) {
+        out.print("    #", i, ": ");
+        ArgumentPosition& arguments = m_argumentPositions[i];
+        arguments.dump(out, this);
+    }
+
     Node* lastNode = 0;
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         BasicBlock* block = m_blocks[b].get();
