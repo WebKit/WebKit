@@ -100,14 +100,12 @@ bool RunLoop::TimerBase::timerFired(void* data)
 {
     RunLoop::TimerBase* timer = static_cast<RunLoop::TimerBase*>(data);
 
+    if (!timer->m_isRepeating)
+        timer->m_timer = 0;
+
     timer->fired();
 
-    if (!timer->m_isRepeating) {
-        timer->m_timer = 0;
-        return ECORE_CALLBACK_CANCEL;
-    }
-
-    return ECORE_CALLBACK_RENEW;
+    return timer->m_isRepeating ? ECORE_CALLBACK_RENEW : ECORE_CALLBACK_CANCEL;
 }
 
 void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)

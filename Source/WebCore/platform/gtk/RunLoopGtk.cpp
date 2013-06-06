@@ -136,9 +136,10 @@ gboolean RunLoop::TimerBase::timerFiredCallback(RunLoop::TimerBase* timer)
     GSource* currentTimerSource = timer->m_timerSource.get();
     bool isRepeating = timer->isRepeating();
     // This can change the timerSource by starting a new timer within the callback.
-    timer->fired();
     if (!isRepeating && currentTimerSource == timer->m_timerSource.get())
         timer->clearTimerSource();
+
+    timer->fired();
     return isRepeating;
 }
 
