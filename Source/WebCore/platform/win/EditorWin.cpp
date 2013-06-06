@@ -26,31 +26,15 @@
 #include "config.h"
 #include "Editor.h"
 
-#include "COMPtr.h"
 #include "Clipboard.h"
-#include "Document.h"
-#include "EditorClient.h"
-#include "Element.h"
 #include "Frame.h"
-#include "Pasteboard.h"
-#include "TextIterator.h"
-#include "VisibleUnits.h"
-#include "htmlediting.h"
-
-#include <windows.h>
 
 namespace WebCore {
 
+// FIXME: Delete this file when removing LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS.
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
 {
-    COMPtr<IDataObject> clipboardData;
-#if !OS(WINCE)
-    if (!SUCCEEDED(OleGetClipboard(&clipboardData)))
-        clipboardData = 0;
-#endif
-    RefPtr<Clipboard> clipboard = Clipboard::createForCopyAndPaste(policy);
-    const_cast<Pasteboard&>(clipboard->pasteboard()).setExternalDataObject(clipboardData.get());
-    return clipboard.release();
+    return Clipboard::createForCopyAndPaste(policy);
 }
 
 } // namespace WebCore

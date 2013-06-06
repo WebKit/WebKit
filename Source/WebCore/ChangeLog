@@ -1,3 +1,17 @@
+2013-06-05  Xueqing Huang  <huangxueqing@baidu.com>
+
+        Move OleGetClipboard to Pasteboard::createForCopyAndPaste.
+        https://bugs.webkit.org/show_bug.cgi?id=117064
+
+        Reviewed by Darin Adler.
+
+        No behavior change, no new tests.
+
+        * platform/win/EditorWin.cpp:
+        (WebCore::Editor::newGeneralClipboard): Editor should not create IDataObject explicitly then set it to Pasteboard.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::createForCopyAndPaste): Construct a Pasteboard and create IDataObject by "OleGetClipboard".
+
 2013-06-05  Benjamin Poulain  <bpoulain@apple.com>
 
         WebSQL forces 16-bit strings

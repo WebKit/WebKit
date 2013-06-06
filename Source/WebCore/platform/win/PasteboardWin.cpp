@@ -98,7 +98,14 @@ Pasteboard* Pasteboard::generalPasteboard()
 
 PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
-    return adoptPtr(new Pasteboard);
+    OwnPtr<Pasteboard> pasteboard = adoptPtr(new Pasteboard);
+    COMPtr<IDataObject> clipboardData;
+#if !OS(WINCE)
+    if (!SUCCEEDED(OleGetClipboard(&clipboardData)))
+        clipboardData = 0;
+#endif
+    pasteboard->setExternalDataObject(clipboardData.get());
+    return pasteboard.release();
 }
 
 PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
