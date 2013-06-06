@@ -1,3 +1,15 @@
+2013-06-06  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Parameter 'refChild' from function 'webkit_dom_node_insert_before' should be allowed to be NULL
+        https://bugs.webkit.org/show_bug.cgi?id=117303
+
+        Reviewed by Xan Lopez.
+
+        Add parameter 'refChild' to the list of parameters that are allowed to
+        be NULL.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2013-06-06  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Fix formatting in BasicShapes.cpp

@@ -47,7 +47,8 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
 
 # List of function parameters that are allowed to be NULL
 my $canBeNullParams = {
-    'webkit_dom_document_evaluate' => ['inResult', 'resolver']
+    'webkit_dom_document_evaluate' => ['inResult', 'resolver'],
+    'webkit_dom_node_insert_before' => ['refChild']
 };
 
 # Default constructor

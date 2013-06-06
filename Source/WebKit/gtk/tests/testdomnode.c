@@ -168,7 +168,32 @@ static void test_dom_node_insertion(DomNodeFixture* fixture, gconstpointer data)
     g_assert_cmpint(webkit_dom_node_list_get_length(list), ==, 0);
     g_object_unref(list);
 
-    /* TODO: insert_before, which does not seem to be working correctly */
+    /* Test insert_before */
+
+    /* If refChild is null, insert newChild as last element of parent */
+    div = webkit_dom_document_create_element(document, "DIV", NULL);
+    webkit_dom_node_insert_before(WEBKIT_DOM_NODE(body), WEBKIT_DOM_NODE(div), NULL, NULL);
+    g_assert(webkit_dom_node_has_child_nodes(WEBKIT_DOM_NODE(body)));
+    list = webkit_dom_node_get_child_nodes(WEBKIT_DOM_NODE(body));
+    g_assert_cmpint(webkit_dom_node_list_get_length(list), ==, 1);
+    node = webkit_dom_node_list_item(list, 0);
+    g_assert(node);
+    g_assert(webkit_dom_node_is_same_node(WEBKIT_DOM_NODE(div), node));
+    g_object_unref(list);
+
+    /* Now insert a 'p' before 'div' */
+    p = webkit_dom_document_create_element(document, "P", NULL);
+    webkit_dom_node_insert_before(WEBKIT_DOM_NODE(body), WEBKIT_DOM_NODE(p), WEBKIT_DOM_NODE(div), NULL);
+    g_assert(webkit_dom_node_has_child_nodes(WEBKIT_DOM_NODE(body)));
+    list = webkit_dom_node_get_child_nodes(WEBKIT_DOM_NODE(body));
+    g_assert_cmpint(webkit_dom_node_list_get_length(list), ==, 2);
+    node = webkit_dom_node_list_item(list, 0);
+    g_assert(node);
+    g_assert(webkit_dom_node_is_same_node(WEBKIT_DOM_NODE(p), node));
+    node = webkit_dom_node_list_item(list, 1);
+    g_assert(node);
+    g_assert(webkit_dom_node_is_same_node(WEBKIT_DOM_NODE(div), node));
+    g_object_unref(list);
 }
 
 int main(int argc, char** argv)

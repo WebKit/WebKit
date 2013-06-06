@@ -1,5 +1,17 @@
 2013-06-06  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Parameter 'refChild' from function 'webkit_dom_node_insert_before' should be allowed to be NULL
+        https://bugs.webkit.org/show_bug.cgi?id=117303
+
+        Reviewed by Xan Lopez.
+
+        Add test for function 'webkit_dom_node_insert_before'.
+
+        * tests/testdomnode.c: Checks function dom_document_node_insert_before
+        (test_dom_node_insertion):
+
+2013-06-06  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Parameters 'inResult' and 'resolver' from function 'webkit_dom_document_evaluate' should be allowed to be NULL
         https://bugs.webkit.org/show_bug.cgi?id=117129
 
