@@ -282,8 +282,8 @@ sub determineConfiguration
     }
 
     if ($configuration && isWinCairo()) {
-        unless ($configuration =~ /_Cairo_CFLite$/) {
-            $configuration .= "_Cairo_CFLite";
+        unless ($configuration =~ /_WinCairo$/) {
+            $configuration .= "_WinCairo";
         }
     }
 }
@@ -619,19 +619,19 @@ sub determinePassedConfiguration
         if ($opt =~ /^--debug$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Debug";
-            $passedConfiguration .= "_Cairo_CFLite" if (isWinCairo() && isCygwin());
+            $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
             return;
         }
         if ($opt =~ /^--release$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Release";
-            $passedConfiguration .= "_Cairo_CFLite" if (isWinCairo() && isCygwin());
+            $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
             return;
         }
         if ($opt =~ /^--profil(e|ing)$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Profiling";
-            $passedConfiguration .= "_Cairo_CFLite" if (isWinCairo() && isCygwin());
+            $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
             return;
         }
     }

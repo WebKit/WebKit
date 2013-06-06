@@ -1,3 +1,16 @@
+2013-06-06  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Fix build-webkit to build WinCairo under VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=117255
+
+        Reviewed by Daniel Bates.
+
+        Need to update configuration names according to solution file.
+
+        * Scripts/webkitdirs.pm:
+        (determineConfiguration):
+        (determinePassedConfiguration):
+
 2013-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove run-performance-tests
