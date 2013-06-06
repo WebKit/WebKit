@@ -1,3 +1,38 @@
+2013-06-03  Jer Noble  <jer.noble@apple.com>
+
+        Upstream iOS WebAudio behavior restrictions.
+        https://bugs.webkit.org/show_bug.cgi?id=117151
+
+        Reviewed by Eric Carlson.
+
+    2012-06-25  Jeffrey Pfau  <jpfau@apple.com>
+
+            <rdar://problem/11041007> WebAudio should restrict playback to user interaction on iOS
+
+            Added a bevahior restrictions field in AudioContext that behaviors similarly to
+            the one in HTMLMediaElement. Restrictions are lifted when JavaScript calls noteOn,
+            noteGrainOn or startRendering from a user gesture event.
+
+            Reviewed by Dean Jackson.
+
+            No new tests, testing framework doesn't support web audio.
+
+            * Modules/webaudio/AudioBufferSourceNode.cpp:
+            (WebCore::AudioBufferSourceNode::startGrain):
+            * Modules/webaudio/AudioContext.cpp:
+            (WebCore::AudioContext::AudioContext):
+            (WebCore::AudioContext::constructCommon):
+            (WebCore::AudioContext::lazyInitialize):
+            (WebCore::AudioContext::startRendering):
+            * Modules/webaudio/AudioContext.h:
+            (WebCore::AudioContext::userGestureRequiredForAudioStart):
+            (WebCore::AudioContext::addBehaviorRestriction):
+            (WebCore::AudioContext::removeBehaviorRestriction):
+            * Modules/webaudio/AudioDestinationNode.cpp:
+            (WebCore::AudioDestinationNode::render):
+            * Modules/webaudio/AudioScheduledSourceNode.cpp:
+            (WebCore::AudioScheduledSourceNode::start):
+
 2013-06-06  Ruth Fong  <ruth_fong@apple.com>
 
         Expose HTMLCanvasElement supportsContext

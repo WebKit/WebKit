@@ -54,6 +54,7 @@
 #include "OscillatorNode.h"
 #include "PannerNode.h"
 #include "ScriptCallStack.h"
+#include "ScriptController.h"
 #include "ScriptProcessorNode.h"
 #include "WaveShaperNode.h"
 #include "WaveTable.h"
@@ -131,6 +132,7 @@ AudioContext::AudioContext(Document* document)
     , m_graphOwnerThread(UndefinedThreadIdentifier)
     , m_isOfflineContext(false)
     , m_activeSourceCount(0)
+    , m_restrictions(NoRestrictions)
 {
     constructCommon();
 
@@ -156,6 +158,7 @@ AudioContext::AudioContext(Document* document, unsigned numberOfChannels, size_t
     , m_graphOwnerThread(UndefinedThreadIdentifier)
     , m_isOfflineContext(true)
     , m_activeSourceCount(0)
+    , m_restrictions(NoRestrictions)
 {
     constructCommon();
 
@@ -180,6 +183,13 @@ void AudioContext::constructCommon()
     FFTFrame::initialize();
     
     m_listener = AudioListener::create();
+
+#if PLATFORM(IOS)
+    if (!document()->settings() || document()->settings()->mediaPlaybackRequiresUserGesture())
+        addBehaviorRestriction(RequireUserGestureForAudioStartRestriction);
+    else
+        m_restrictions = NoRestrictions;
+#endif
 }
 
 AudioContext::~AudioContext()
@@ -213,7 +223,7 @@ void AudioContext::lazyInitialize()
                     // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
                     // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
                     // We may want to consider requiring it for symmetry with OfflineAudioContext.
-                    m_destinationNode->startRendering();                    
+                    m_destinationNode->startRendering();
                     ++s_hardwareContextCount;
                 }
 
@@ -943,6 +953,9 @@ ScriptExecutionContext* AudioContext::scriptExecutionContext() const
 
 void AudioContext::startRendering()
 {
+    if (ScriptController::processingUserGesture())
+        removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
+
     destination()->startRendering();
 }
 

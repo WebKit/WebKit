@@ -33,6 +33,7 @@
 #include "AudioUtilities.h"
 #include "FloatConversion.h"
 #include "ScriptCallStack.h"
+#include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include <algorithm>
 #include <wtf/MainThread.h>
@@ -381,6 +382,9 @@ void AudioBufferSourceNode::startGrain(double when, double grainOffset)
 void AudioBufferSourceNode::startGrain(double when, double grainOffset, double grainDuration)
 {
     ASSERT(isMainThread());
+
+    if (ScriptController::processingUserGesture())
+        context()->removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
 
     if (m_playbackState != UNSCHEDULED_STATE)
         return;

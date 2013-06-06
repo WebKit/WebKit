@@ -250,6 +250,19 @@ public:
     
     static unsigned s_hardwareContextCount;
 
+
+    // Restrictions to change default behaviors.
+    enum BehaviorRestrictionFlags {
+        NoRestrictions = 0,
+        RequireUserGestureForAudioStartRestriction = 1 << 0,
+    };
+    typedef unsigned BehaviorRestrictions;
+
+    bool userGestureRequiredForAudioStart() const { return m_restrictions & RequireUserGestureForAudioStartRestriction; }
+
+    void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
+    void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
+
 protected:
     explicit AudioContext(Document*);
     AudioContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
@@ -350,6 +363,8 @@ private:
 
     // Number of AudioBufferSourceNodes that are active (playing).
     int m_activeSourceCount;
+
+    BehaviorRestrictions m_restrictions;
 };
 
 } // WebCore

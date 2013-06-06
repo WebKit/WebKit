@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioUtilities.h"
 #include "Event.h"
+#include "ScriptController.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -137,6 +138,10 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize,
 void AudioScheduledSourceNode::start(double when)
 {
     ASSERT(isMainThread());
+
+    if (ScriptController::processingUserGesture())
+        context()->removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
+
     if (m_playbackState != UNSCHEDULED_STATE)
         return;
 
