@@ -259,6 +259,8 @@ void RenderSVGRoot::layout()
         m_needsBoundariesOrTransformUpdate = false;
     }
 
+    updateLayerTransform();
+
     repainter.repaintAfterLayout();
 
     setNeedsLayout(false);

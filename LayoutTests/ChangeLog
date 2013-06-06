@@ -1,3 +1,19 @@
+2013-06-06  Zalan Bujtas  <zalan@apple.com>
+
+        SVG objects are misplaced when SVG root has CSS transform.
+        https://bugs.webkit.org/show_bug.cgi?id=117252
+
+        Reviewed by Simon Fraser.
+
+        Update layer transforms for SVG if needed.
+
+        SVG root, similarly to RenderBlock needs to call RenderLayer
+        to get transforms updated after layout, in order to
+        position the transformed objects properly.
+
+        * fast/transforms/transform-svg-expected.html: Added.
+        * fast/transforms/transform-svg.html: Added.
+
 2013-06-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebaselining after r151205.

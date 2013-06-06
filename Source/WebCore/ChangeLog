@@ -1,3 +1,21 @@
+2013-06-06  Zalan Bujtas  <zalan@apple.com>
+
+        SVG objects are misplaced when SVG root has CSS transform.
+        https://bugs.webkit.org/show_bug.cgi?id=117252
+
+        Reviewed by Simon Fraser.
+
+        Update layer transforms for SVG if needed.
+
+        SVG root, similarly to RenderBlock needs to call RenderLayer
+        to get transforms updated after layout, in order to
+        position the transformed objects properly.
+
+        Test: fast/transforms/transform-svg.html
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+
 2013-06-06  Jae Hyun Park  <jae.park@company100.net>
 
         Coordinated Graphics : Refactor CoordinatedSurface to manage the lifecycle of GraphicsContext
