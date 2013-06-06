@@ -1,3 +1,13 @@
+2013-06-06  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS ignores ARIA progressbar elements
+        https://bugs.webkit.org/show_bug.cgi?id=116727
+
+        Reviewed by David Kilzer.
+
+        * platform/iphone-simulator/accessibility/progressbar-expected.txt: Added.
+        * platform/iphone-simulator/accessibility/progressbar.html: Added.
+
 2013-06-06  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed TestExpectation gardening.  Clean up some lint warnings.

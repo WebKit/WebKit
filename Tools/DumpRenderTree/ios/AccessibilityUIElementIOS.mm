@@ -77,6 +77,8 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (CGPoint)accessibilityClickPoint;
 - (void)accessibilityModifySelection:(WebCore::TextGranularity)granularity increase:(BOOL)increase;
 - (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context;
+- (CGFloat)_accessibilityMinValue;
+- (CGFloat)_accessibilityMaxValue;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -506,12 +508,12 @@ double AccessibilityUIElement::intValue() const
 
 double AccessibilityUIElement::minValue()
 {
-    return 0.0f;
+    return [m_element _accessibilityMinValue];
 }
 
 double AccessibilityUIElement::maxValue()
 {
-    return 0.0;
+    return [m_element _accessibilityMaxValue];
 }
 
 JSStringRef AccessibilityUIElement::valueDescription()

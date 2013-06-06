@@ -602,6 +602,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case MenuButtonRole:
         case ValueIndicatorRole:
         case ImageRole:
+        case ProgressIndicatorRole:
         case MenuItemRole:
         case IncrementorRole:
         case ComboBoxRole:
@@ -657,7 +658,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case RowRole:
         case ToolbarRole:
         case BusyIndicatorRole:
-        case ProgressIndicatorRole:
         case WindowRole:
         case DrawerRole:
         case SystemWideRole:
@@ -714,6 +714,16 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if ([result length])
         [result appendString:@", "];
     [result appendString:string];
+}
+
+- (CGFloat)_accessibilityMinValue
+{
+    return m_object->minValueForRange();
+}
+
+- (CGFloat)_accessibilityMaxValue
+{
+    return m_object->maxValueForRange();
 }
 
 - (NSString *)accessibilityLabel
