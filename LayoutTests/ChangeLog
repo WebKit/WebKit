@@ -1,5 +1,11 @@
 2013-06-06  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] More unreviewed TestExpectation gardening.
+
+        * platform/win/TestExpectations:
+
+2013-06-06  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Unreviewed TestExpectation cleanup.
 
         * platform/win/TestExpectations:

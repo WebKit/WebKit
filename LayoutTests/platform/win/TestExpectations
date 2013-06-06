@@ -2415,9 +2415,6 @@ mhtml
 # https://bugs.webkit.org/show_bug.cgi?id=98169
 http/tests/inspector/stacktraces
 
-# Requires rebaselining after https://bugs.webkit.org/show_bug.cgi?id=11645
-webkit.org/b/11645 fast/table/025.html [ Failure ]
-
 # HIDDEN_PAGE_DOM_TIMER_THROTTLING is disabled
 fast/dom/timer-throttling-hidden-page.html
 
@@ -2474,10 +2471,6 @@ fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 
 # CSS3_TEXT is disabled on Windows
 fast/css3-text
-
-# Needs rebaseline.
-webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Failure ]
-webkit.org/b/94198 tables/mozilla/collapsing_borders/bug41262-3.html [ Failure ]
 
 # ACCELERATED_OVERFLOW_SCROLLING is disabled on Windows
 compositing/overflow/scrolling-without-painting.html
@@ -2793,3 +2786,4 @@ webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html
 # Crashes
 webkit.org/b/117324 fast/css/fontloader-download-error.html
 webkit.org/b/117325 svg/as-image/svg-nested.html
+webkit.org/b/117325 svg/css/font-face-crash.html
