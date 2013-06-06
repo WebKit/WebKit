@@ -1,3 +1,9 @@
+2013-06-06  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Fix typo with winmm linker input.
+
+        * WTF.vcxproj/WTFCommon.props:
+
 2013-06-05  Benjamin Poulain  <bpoulain@apple.com>
 
         WebSQL forces 16-bit strings
