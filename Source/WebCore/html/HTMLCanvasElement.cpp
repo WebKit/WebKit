@@ -179,10 +179,10 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
     // before creating a new 2D context. Vice versa when requesting a WebGL canvas. Requesting a
     // context with any other type string will destroy any existing context.
     
-    // FIXME - The code depends on the context not going away once created, to prevent JS from
+    // FIXME: The code depends on the context not going away once created, to prevent JS from
     // seeing a dangling pointer. So for now we will disallow the context from being changed
-    // once it is created.
-    if (type == "2d") {
+    // once it is created. https://bugs.webkit.org/show_bug.cgi?id=117095
+    if (is2dType(type)) {
         if (m_context && !m_context->is2d())
             return 0;
         if (!m_context) {
@@ -201,10 +201,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
     }
 #if ENABLE(WEBGL)
     if (shouldEnableWebGL(document()->settings())) {
-        // Accept the legacy "webkit-3d" name as well as the provisional "experimental-webgl" name.
-        bool is3dContext = (type == "webkit-3d") || (type == "experimental-webgl");
 
-        if (is3dContext) {
+        if (is3dType(type)) {
             if (m_context && !m_context->is3d())
                 return 0;
             if (!m_context) {
@@ -222,6 +220,38 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 #endif
     return 0;
 }
+    
+bool HTMLCanvasElement::supportsContext(const String& type, CanvasContextAttributes*)
+{
+    // FIXME: Provide implementation that accounts for attributes. Bugzilla bug 117093
+    // https://bugs.webkit.org/show_bug.cgi?id=117093
+
+    // FIXME: The code depends on the context not going away once created (as getContext
+    // is implemented under this assumption) https://bugs.webkit.org/show_bug.cgi?id=117095
+    if (is2dType(type))
+        return !m_context || m_context->is2d();
+
+#if ENABLE(WEBGL)
+    if (shouldEnableWebGL(document()->settings())) {
+        if (is3dType(type))
+            return !m_context || m_context->is3d();
+    }
+#endif
+    return false;
+}
+
+bool HTMLCanvasElement::is2dType(const String& type)
+{
+    return type == "2d";
+}
+
+#if ENABLE(WEBGL)
+bool HTMLCanvasElement::is3dType(const String& type)
+{
+    // Accept the legacy "webkit-3d" name as well as the provisional "experimental-webgl" name.
+    return type == "webkit-3d" || type == "experimental-webgl";
+}
+#endif
 
 void HTMLCanvasElement::didDraw(const FloatRect& rect)
 {

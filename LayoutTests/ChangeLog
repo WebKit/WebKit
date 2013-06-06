@@ -1,3 +1,20 @@
+2013-06-06  Ruth Fong  <ruth_fong@apple.com>
+
+        Expose HTMLCanvasElement supportsContext
+        https://bugs.webkit.org/show_bug.cgi?id=70117
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/webgl/canvas-supports-context-expected.txt: Added.
+        * fast/canvas/webgl/canvas-supports-context.html: Added.
+        tests the supportsContext function for <canvas> elements, ensures that 
+        supportsContext's implementation is consistent with that of getContext, 
+        and tests that supportsContext and getContext behave appropriately when
+        malformed attributes are passed in.
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias-expected.txt: Updated.
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html: Updated.
+        Now also tests default values for context attributes (i.e. when attributes aren't explicitly set).
+
 2013-06-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] More unreviewed TestExpectation gardening.

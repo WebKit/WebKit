@@ -1,3 +1,28 @@
+2013-06-06  Ruth Fong  <ruth_fong@apple.com>
+
+        Expose HTMLCanvasElement supportsContext
+        https://bugs.webkit.org/show_bug.cgi?id=70117
+
+        Reviewed by Darin Adler.
+
+        Adds the supportsContext function for <canvas> elements as speced here:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#dom-canvas-supportscontext
+
+        Test: fast/canvas/webgl/canvas-supports-context.html
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::get3DContextAttributes): Added.
+        Refactored function from JSHTMLCanvasElement::getContext that parses attributes.
+        (WebCore::JSHTMLCanvasElement::getContext): Updated to use refactored function.
+        (WebCore::JSHTMLCanvasElement::supportsContext): Added.
+        Exposes JS function supportsContext.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext): Updated to use refactored functions.
+        (WebCore::HTMLCanvasElement::supportsContext): Added.
+        Implements supportsContext function based on contextId parameter (i.e. '2d').
+        * html/HTMLCanvasElement.h: Added refactored functions from HTMLCanvasElement::getContext.
+        * html/HTMLCanvasElement.idl:
+
 2013-06-06  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Rename updateLineBoundariesForExclusions to updateShapeAndSegmentsForCurrentLine

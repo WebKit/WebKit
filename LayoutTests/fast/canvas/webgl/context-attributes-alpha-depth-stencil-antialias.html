@@ -133,16 +133,26 @@ function drawAndReadPixel(gl, vertices, colors, x, y)
     return buf;
 }
 
-function testAlpha(alpha)
+function testAlpha(alpha, is_default_test)
 {
-    debug("Testing alpha = " + alpha);
-    if (alpha) {
-        shouldBeNonNull("gl = getWebGL(1, 1, { alpha: true, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
+    if (is_default_test) {
+        debug("Testing default alpha = true");
+        alpha = true;
+
+        shouldBeNonNull("gl = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
         shouldBeTrue("gl.getParameter(gl.ALPHA_BITS) >= 8");
     } else {
-        shouldBeNonNull("gl = getWebGL(1, 1, { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
-        shouldBeTrue("gl.getParameter(gl.ALPHA_BITS) == 0");
+        debug("Testing alpha = " + alpha);
+
+        if (alpha) {
+            shouldBeNonNull("gl = getWebGL(1, 1, { alpha: true, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
+            shouldBeTrue("gl.getParameter(gl.ALPHA_BITS) >= 8");
+        } else {
+            shouldBeNonNull("gl = getWebGL(1, 1, { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
+            shouldBeTrue("gl.getParameter(gl.ALPHA_BITS) == 0");
+        }
     }
+
     shouldBeTrue("gl.getParameter(gl.RED_BITS) >= 8");
     shouldBeTrue("gl.getParameter(gl.GREEN_BITS) >= 8");
     shouldBeTrue("gl.getParameter(gl.BLUE_BITS) >= 8");
@@ -175,15 +185,22 @@ function testAlpha(alpha)
     }
 }
 
-function testDepth(depth)
+function testDepth(depth, is_default_test)
 {
-    debug("Testing depth = " + depth);
-    if (depth) {
+    if (is_default_test) {
+        debug("Testing default depth = true");
+        depth = true;
         shouldBeNonNull("gl = getWebGL(1, 1, { stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
         shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) >= 16");
     } else {
-        shouldBeNonNull("gl = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
-        shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) == 0");
+        debug("Testing depth = " + depth);
+        if (depth) {
+            shouldBeNonNull("gl = getWebGL(1, 1, { depth: true, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+            shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) >= 16");
+        } else {
+            shouldBeNonNull("gl = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+            shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) == 0");
+        }
     }
     shouldBeTrue("gl.getParameter(gl.RED_BITS) >= 8");
     shouldBeTrue("gl.getParameter(gl.GREEN_BITS) >= 8");
@@ -230,12 +247,21 @@ function testDepth(depth)
     }
 }
 
-function testStencilAndDepth(stencil, depth)
+function testStencilAndDepth(stencil, depth, is_default_test)
 {
-    debug("Testing stencil = " + stencil + ", depth = " + depth);
-    var creationString =
-        "gl = getWebGL(1, 1, { depth: " + depth + ", stencil: " + stencil + ", antialias: false }, [ 0, 0, 0, 1 ], 1, 0)";
-    shouldBeNonNull(creationString);
+    if (is_default_test) {
+        debug("Testing default stencil = false and default depth = true");
+        stencil = false;
+        depth = true;
+        var creationString =
+            "gl = getWebGL(1, 1, { antialias: false }, [ 0, 0, 0, 1 ], 1, 0)";
+        shouldBeNonNull(creationString);
+    } else {
+        debug("Testing stencil = " + stencil + ", depth = " + depth);
+        var creationString =
+            "gl = getWebGL(1, 1, { depth: " + depth + ", stencil: " + stencil + ", antialias: false }, [ 0, 0, 0, 1 ], 1, 0)";
+        shouldBeNonNull(creationString);
+    }
 
     shouldBeTrue("gl.getParameter(gl.RED_BITS) >= 8");
     shouldBeTrue("gl.getParameter(gl.GREEN_BITS) >= 8");
@@ -304,13 +330,19 @@ function testStencilAndDepth(stencil, depth)
     }
 }
 
-function testAntialias(antialias)
+function testAntialias(antialias, is_default_test)
 {
-    debug("Testing antialias = " + antialias);
-    if (antialias)
-        shouldBeNonNull("gl = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: true }, [ 0, 0, 0, 1 ], 1, 0)");
-    else
-        shouldBeNonNull("gl = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+    if (is_default_test) {
+        debug("Testing default antialias = true");
+        antialias = true;
+        shouldBeNonNull("gl = getWebGL(2, 2, { depth: false, stencil: false, alpha: false }, [ 0, 0, 0, 1 ], 1, 0)");
+    } else {
+        debug("Testing antialias = " + antialias);
+        if (antialias)
+            shouldBeNonNull("gl = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: true }, [ 0, 0, 0, 1 ], 1, 0)");
+        else
+            shouldBeNonNull("gl = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+    }
     shouldBeNonNull("contextAttribs = gl.getContextAttributes()");
 
     var vertices = new Float32Array([
@@ -326,20 +358,32 @@ function testAntialias(antialias)
     shouldBe("pixel[0] != 255 && pixel[0] != 0", "contextAttribs.antialias");
 }
 
+function runDefaultTests(run_default_tests)
+{
+    if (run_default_tests) {
+        debug("Testing default values for attributes");
+        testAlpha(true, run_default_tests);
+        testDepth(true, run_default_tests);
+        testStencilAndDepth(true, true, run_default_tests);
+        testAntialias(true, run_default_tests);
+    } else {
+        testAlpha(true, run_default_tests);
+        testAlpha(false, run_default_tests);
+        testDepth(true, run_default_tests);
+        testDepth(false, run_default_tests);
+        testStencilAndDepth(true, false, run_default_tests);
+        testStencilAndDepth(false, false, run_default_tests);
+        testStencilAndDepth(true, true, run_default_tests);
+        testStencilAndDepth(false, true, run_default_tests);
+        testAntialias(true, run_default_tests);
+        testAntialias(false, run_default_tests);
+    }
+}
+
 function runTest()
 {
-
-    testAlpha(true);
-    testAlpha(false);
-    testDepth(true);
-    testDepth(false);
-    testStencilAndDepth(true, false);
-    testStencilAndDepth(false, false);
-    testStencilAndDepth(true, true);
-    testStencilAndDepth(false, true);
-    testAntialias(true);
-    testAntialias(false);
-
+    runDefaultTests(false);
+    runDefaultTests(true);
     finishTest();
 }
 
