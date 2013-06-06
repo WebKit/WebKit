@@ -193,10 +193,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 #endif
             m_context = CanvasRenderingContext2D::create(this, document()->inQuirksMode(), usesDashbardCompatibilityMode);
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || (ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING))
-            if (m_context) {
-                // Need to make sure a RenderLayer and compositing layer get created for the Canvas
-                setNeedsStyleRecalc(SyntheticStyleChange);
-            }
+            // Need to make sure a RenderLayer and compositing layer get created for the Canvas
+            setNeedsStyleRecalc(SyntheticStyleChange);
 #endif
         }
         return m_context.get();
@@ -211,10 +209,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
                 return 0;
             if (!m_context) {
                 m_context = WebGLRenderingContext::create(this, static_cast<WebGLContextAttributes*>(attrs));
-                if (m_context) {
-                    // Need to make sure a RenderLayer and compositing layer get created for the Canvas
-                    setNeedsStyleRecalc(SyntheticStyleChange);
-                }
+                // Need to make sure a RenderLayer and compositing layer get created for the Canvas
+                setNeedsStyleRecalc(SyntheticStyleChange);
             }
             return m_context.get();
         }

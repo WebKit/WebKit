@@ -1,3 +1,12 @@
+2013-06-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove unnecessary null check in HTMLCanvasElement.cpp.
+
+        Rubber-stamped by Benjamin Poulain.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+
 2013-06-05  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [curl] Add implementation for HTTP PUT method.
