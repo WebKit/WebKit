@@ -2,6 +2,1009 @@
 
         [Qt] Unreviewed gardening. Rebaselining after r151205.
 
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-frag-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-image-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-image-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-image-03-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-image-05-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-image-07-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-image-08-t-expected.png:
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-image-09-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-image-10-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-symbol-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-use-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-use-05-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/styling-css-04-f-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/styling-css-05-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/styling-css-06-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-align-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-align-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-align-06-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-intro-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-intro-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-intro-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-intro-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-path-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-text-06-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-tselect-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-ws-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/as-background-image/animated-svg-as-background-expected.png:
+        * platform/qt-5.0-wk2/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/as-background-image/svg-as-background-3-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/as-background-image/svg-as-background-5-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/as-background-image/svg-as-background-6-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/as-background-image/svg-background-partial-redraw-expected.png:
+        * platform/qt-5.0-wk2/svg/as-border-image/svg-as-border-image-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/qt-5.0-wk2/svg/as-image/animated-svg-as-image-expected.png:
+        * platform/qt-5.0-wk2/svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size-expected.png:
+        * platform/qt-5.0-wk2/svg/as-image/animated-svg-as-image-same-image-expected.png:
+        * platform/qt-5.0-wk2/svg/as-image/image-respects-pageScaleFactor-expected.png:
+        * platform/qt-5.0-wk2/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/qt-5.0-wk2/svg/as-image/img-preserveAspectRatio-support-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/as-image/svg-image-change-content-size-expected.png:
+        * platform/qt-5.0-wk2/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.png:
+        * platform/qt-5.0-wk2/svg/as-object/embedded-svg-size-changes-expected.png:
+        * platform/qt-5.0-wk2/svg/as-object/nested-embedded-svg-size-changes-expected.png:
+        * platform/qt-5.0-wk2/svg/batik/filters/feTile-expected.png:
+        * platform/qt-5.0-wk2/svg/batik/filters/filterRegions-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/masking/maskRegions-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/paints/patternPreserveAspectRatioA-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/paints/patternRegionA-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/paints/patternRegions-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/paints/patternRegions-positioned-objects-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/smallFonts-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textAnchor-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textAnchor2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textAnchor3-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textDecoration-expected.png:
+        * platform/qt-5.0-wk2/svg/batik/text/textDecoration2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textEffect2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textEffect3-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/batik/text/textGlyphOrientationHorizontal-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textLayout-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textLayout2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textLength-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textOnPath-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textOnPath2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textOnPath3-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textOnPathSpaces-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textPCDATA-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textPosition-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textPosition2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textProperties-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textProperties2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textStyles-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/verticalText-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/verticalTextOnPath-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/carto.net/button-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/carto.net/colourpicker-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/carto.net/slider-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/carto.net/textbox-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/carto.net/window-expected.png:
+        * platform/qt-5.0-wk2/svg/clip-path/clip-path-pixelation-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/clip-path/deep-nested-clip-in-mask-different-unitTypes-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/css/composite-shadow-text-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/css/text-shadow-multiple-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/SVGMatrix-interface-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/SVGPoint-matrixTransform-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/absolute-sized-content-with-resources-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/alignment-baseline-modes-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/bug45331-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/circle-move-invalidation-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/clip-mask-negative-scale-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/clip-path-referencing-use-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/clone-element-with-animated-svg-properties-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/container-opacity-clip-viewBox-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/coords-relative-units-transforms-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/dominant-baseline-hanging-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/dominant-baseline-modes-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/dynamic-svg-document-creation-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/embedding-external-svgs-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/empty-clip-path-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/feComponentTransfer-Discrete-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/feComponentTransfer-Gamma-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/feComponentTransfer-Linear-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/feComponentTransfer-Table-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/fill-SVGPaint-interface-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/fill-fallback-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/focus-ring-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/font-face-cascade-order-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/font-face-simple-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/foreignObject-crash-on-hover-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/getPresentationAttribute-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/getscreenctm-in-mixed-content-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/getsvgdocument-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/gradient-cycle-detection-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/gradient-deep-referencing-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/gradient-with-1d-boundingbox-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/hit-test-path-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/hit-test-path-stroke-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/hit-test-unclosed-subpaths-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/hit-test-with-br-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/image-parent-translation-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/image-rescale-clip-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/image-rescale-scroll-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/image-small-width-height-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/image-with-transform-clip-filter-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/invalid-css-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/invalid-fill-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/invalid-fill-hex-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/invalid-lengthlist-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/invalid-stroke-hex-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/invalid-uri-stroke-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/invisible-text-after-scrolling-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/js-update-stop-linked-gradient-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/junk-data-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/linking-a-03-b-preserveAspectRatio-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/linking-a-03-b-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/linking-a-03-b-viewBox-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/linking-a-03-b-viewBox-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/linking-a-03-b-viewTarget-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/linking-a-03-b-zoomAndPan-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/linking-uri-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/marker-default-width-height-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/marker-overflow-clip-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/missing-xlink-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/mouse-move-on-svg-container-standalone-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/no-inherited-dashed-stroke-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/object-sizing-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/path-bad-data-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/pattern-cycle-detection-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/pattern-deep-referencing-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/pattern-incorrect-tiling-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/pattern-rotate-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/pattern-rotate-gaps-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/pattern-userSpaceOnUse-userToBaseTransform-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/percentage-of-html-parent-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/pointer-events-image-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/pointer-events-path-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/pointer-events-text-css-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/pointer-events-text-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/preserve-aspect-ratio-syntax-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/recursive-filter-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/recursive-gradient-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/recursive-mask-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/recursive-pattern-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/relative-sized-content-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/relative-sized-content-with-resources-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/relative-sized-deep-shadow-tree-content-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/relative-sized-image-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/relative-sized-inner-svg-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/relative-sized-shadow-tree-content-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/relative-sized-use-on-symbol-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/rootmost-svg-xy-attrs-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/second-inline-text-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/shapes-supporting-markers-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/simple-text-double-shadow-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/simpleCDF-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/stroke-fallback-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/stroke-width-large-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/stroked-pattern-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/style-attribute-font-size-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/svg-curve-with-relative-cordinates-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/svg-float-border-padding-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/svg-fonts-in-html-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/svg-fonts-segmented-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/svg-fonts-without-missing-glyph-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/svg-fonts-word-spacing-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/svg-overflow-types-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-clip-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-decoration-visibility-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-dom-01-f-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-hit-test-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-image-opacity-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/text-letter-spacing-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-linking-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-rotated-gradient-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-rotation-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-tref-03-b-change-href-dom-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-tref-03-b-change-href-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-tref-03-b-referenced-element-removal-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-tref-03-b-tref-removal-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-whitespace-handling-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-x-dx-lists-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-x-dy-lists-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-x-override-in-tspan-child-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-xy-updates-SVGList-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/tref-own-content-removal-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/tref-update-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-detach-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/use-dynamic-append-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-elementInstance-event-target-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/use-instanceRoot-modifications-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-modify-target-container-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-modify-target-symbol-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-on-g-containing-symbol-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-on-g-containing-use-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-on-g-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-on-rect-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-on-symbol-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-on-text-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-on-use-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-property-changes-through-dom-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-property-changes-through-svg-dom-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-recursion-1-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-recursion-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-recursion-3-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-recursion-4-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/viewbox-syntax-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/viewport-em-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-appendItem-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-getItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-initialize-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-insertItemBefore-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-removeItem-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-replaceItem-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-xml-dom-modifications-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGLocatable-getCTM-svg-root-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-appendItem-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-clear-and-initialize-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-cloning-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-insertItemBefore-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-removeItem-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-replaceItem-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-segment-modification-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-xml-dom-synchronization-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-xml-dom-synchronization2-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/SVGRectElement/rect-modify-rx-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGStringList-basics-expected.png:
+        * platform/qt-5.0-wk2/svg/dom/css-transforms-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVG-dynamic-css-transform-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCircleElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGClipPath-influences-hitTesting-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCursorElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCursorElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCursorElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGCursorElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGEllipseElement-dom-cx-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGEllipseElement-dom-cy-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGEllipseElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGEllipseElement-dom-rx-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGEllipseElement-dom-ry-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGEllipseElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-bias-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-divisor-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMode-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelMatrix-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelUnitLength-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-order-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-surfaceScale-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-scale-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-xChannelSelector-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-yChannelSelector-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-scale-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-xChannelSelector-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-yChannelSelector-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-color-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-opacity-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMergeNodeElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMergeNodeElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-limitingConeAngle-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtY-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtZ-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-specularExponent-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-z-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-limitingConeAngle-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtX-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtY-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtZ-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularExponent-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETileElement-dom-in-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETileElement-svgdom-in-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-filterUnits-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-height-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-primitiveUnits-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-width-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-filterUnits-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-height-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-primitiveUnits-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-width-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-height-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-result-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-width-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-height-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-result-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-width-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGGElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGGElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-x1-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-x2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-y1-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-y2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-x1-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-x2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-y1-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-y2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientTransform-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-x1-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-x2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-y2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x1-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-orient-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-refX-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-refY-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-markerUnits-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-refX-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-refY-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-dom-height-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-dom-width-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-svgdom-height-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-svgdom-width-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMaskElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPathElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPathElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-dom-height-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-dom-patternTransform-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-dom-width-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-svgdom-height-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-svgdom-patternUnits-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-svgdom-width-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPatternElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPolygonElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPolygonElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPolylineElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGPolylineElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-dom-cx-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-dom-cy-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-dom-fx-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-dom-fy-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-dom-gradientTransform-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-dom-gradientUnits-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-dom-r-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-svgdom-cx-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-svgdom-cy-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-svgdom-fx-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-svgdom-fy-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientUnits-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRadialGradientElement-svgdom-r-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-dom-height-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-dom-width-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-svgdom-height-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-svgdom-width-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGRectElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGSVGElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGSVGElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTRefElement-dom-href-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-dom-dx-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-dom-dy-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-dom-rotate-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-dom-textLength-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-dom-transform-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-svgdom-dx-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-svgdom-dy-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-svgdom-transform-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGTextElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGUseElement-dom-href1-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGUseElement-dom-href2-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGUseElement-svgdom-href1-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGUseElement-svgdom-href2-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGUseElement-svgdom-requiredFeatures-expected.png:
+        * platform/qt-5.0-wk2/svg/filters/feComposite-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/filter-on-filter-for-text-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/filter-width-update-expected.png:
+        * platform/qt-5.0-wk2/svg/foreignObject/svg-document-in-html-document-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/data-types/002-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/error/003-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/error/010-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/error/011-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/error/012-expected.png:
+        * platform/qt-5.0-wk2/svg/hixie/error/013-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/intrinsic/001-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/intrinsic/002-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/mixed/003-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/mixed/006-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/mixed/008-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/mixed/009-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/mixed/010-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/mixed/011-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/perf/003-expected.png:
+        * platform/qt-5.0-wk2/svg/hixie/perf/007-expected.png:
+        * platform/qt-5.0-wk2/svg/hixie/rendering-model/003-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/rendering-model/004-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/text/003-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/viewbox/preserveAspectRatio/001-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/hixie/viewbox/preserveAspectRatio/002-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/in-html/circle-expected.png:
+        * platform/qt-5.0-wk2/svg/text/bidi-embedded-direction-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/ems-display-none-expected.png:
+        * platform/qt-5.0-wk2/svg/text/exs-display-none-expected.png:
+        * platform/qt-5.0-wk2/svg/text/font-size-below-point-five-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/font-size-below-point-five-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/foreignObject-repaint-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/kerning-expected.png:
+        * platform/qt-5.0-wk2/svg/text/multichar-glyph-expected.png:
+        * platform/qt-5.0-wk2/svg/text/scaled-font-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-textLength-spacing-squeeze-1-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-textLength-spacing-squeeze-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-textLength-spacing-squeeze-4-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-textLength-spacing-stretch-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-textLength-spacing-stretch-3-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-textLength-spacing-stretch-4-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-x-list-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-x-list-3-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-x-list-4-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-x-list-with-tspans-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-x-list-with-tspans-3-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/select-x-list-with-tspans-4-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/selection-background-color-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/selection-doubleclick-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/selection-styles-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/selection-tripleclick-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/small-fonts-2-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/small-fonts-3-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/small-fonts-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/small-fonts-in-html5-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-align-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-align-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-align-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-align-04-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-align-05-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-align-06-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-altglyph-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-deco-01-b-expected.png:
+        * platform/qt-5.0-wk2/svg/text/text-fill-opacity-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-fonts-02-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-gradient-positioning-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-midpoint-split-bug-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-overflow-ellipsis-svgfont-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-path-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-repaint-rects-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-rescale-expected.png:
+        * platform/qt-5.0-wk2/svg/text/text-spacing-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-text-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-text-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-text-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-text-05-t-expected.png:
+        * platform/qt-5.0-wk2/svg/text/text-text-06-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-text-07-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-tref-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-tselect-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-tspan-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-viewbox-rescale-expected.png:
+        * platform/qt-5.0-wk2/svg/text/text-ws-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/text-ws-02-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/tspan-dynamic-positioning-expected.png:
+        * platform/qt-5.0-wk2/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/qt-5.0-wk2/svg/transforms/svg-css-transforms-clip-path-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/transforms/svg-css-transforms-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/transforms/text-with-mask-with-svg-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/qt-5.0-wk2/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/qt-5.0-wk2/svg/wicd/rightsizing-grid-expected.png:
+        * platform/qt-5.0-wk2/svg/wicd/test-rightsizing-a-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/qt-5.0-wk2/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/qt-5.0-wk2/svg/wicd/test-scalable-background-image2-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-coords-viewattr-01-b-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-hixie-mixed-008-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-hixie-rendering-model-004-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-svg-float-border-padding-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/text/zoom-coords-viewattr-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/zoom/text/zoom-foreignObject-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/zoom/text/zoom-hixie-mixed-008-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/text/zoom-hixie-rendering-model-004-expected.png:
+        * platform/qt-5.0-wk2/svg/zoom/text/zoom-svg-float-border-padding-expected.png:
+        * platform/qt-5.0-wk2/tables/layering/paint-test-layering-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/layering/paint-test-layering-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/45621-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug10009-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug100334-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug10036-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug101201-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug102145-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug102145-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug102145-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug102145-4-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug10269-2-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug10296-1-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1055-1-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug10565-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug10633-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug106816-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug109043-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug11026-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug110566-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug113235-1-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug113235-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug113235-3-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug113424-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug11384q-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1163-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug11944-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug119786-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug12008-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug120364-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1224-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug12268-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug123862-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1261-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug126742-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug12709-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug127267-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug128229-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug12908-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1296-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1302-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug131020_iframe-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug13105-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug13118-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1318-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug13196-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug133756-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug133756-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug13484-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug139524-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug14159-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug14159-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1430-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug14323-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug149275-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug14929-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug15247-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug15544-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug157890-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug16012-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug16252-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug17130-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug17130-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug17138-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug17168-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug17587-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1800-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1802-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1802s-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1809-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1828-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug18359-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug18558-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug18664-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug18955-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug19061-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug19061-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug19356-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug194024-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug19599-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2050-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug20579-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug20804-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2123-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug21299-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug215629-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug22019-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug220536-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug22246-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug22246-2a-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug22246-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug22246-3a-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug222846-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2267-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug227123-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug23151-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug23235-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug23299-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug24200-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug24503-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug24627-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug24661-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2469-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2479-1-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2479-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2479-4-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug24880-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug25004-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug25086-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2509-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug25663-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2684-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug27038-2-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug275625-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2757-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2763-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2773-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug278266-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug27993-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug28341-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2886-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2886-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug28928-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug29058-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug29157-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug29429-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2947-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2962-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2973-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2981-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2981-2-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2997-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug30273-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug30332-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug30332-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug30418-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug30559-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug30692-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug30985-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug3103-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug3191-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug32205-2-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug32205-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug3260-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug32841-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug3309-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug33137-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug33855-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug3454-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug35662-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug3681-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug3681-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug38916-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug39209-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug3977-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug40828-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug41890-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug42187-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug42443-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug43039-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug43204-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4382-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4385-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug43854-1-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug43854-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug44505-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug44523-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4501-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug45055-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug45055-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4523-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug45486-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4576-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46268-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46268-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46268-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46268-5-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46268-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46368-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46368-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46480-1-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46480-2-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46623-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46623-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug46924-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug47432-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug48028-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug48028-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4803-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4849-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4849-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug48827-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug50695-1-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug51037-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug51140-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug51727-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug5188-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug52505-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug52506-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug53891-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug54450-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug5538-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug55527-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug55694-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug57300-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug57378-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug57828-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug57828-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug5798-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug5799-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug5835-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug5838-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug58402-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug59354-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug60013-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug60749-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug60804-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug60807-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug60992-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug6184-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug63785-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug6404-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug647-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug6674-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug67864-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug67915-1-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug68912-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug68998-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug69187-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug69382-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug69382-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug709-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug7112-1-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug7112-2-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug7121-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug72359-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug73321-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug7342-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug7471-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug75250-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug7714-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug78162-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug8032-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug80762-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug82946-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug82946-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug83786-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug8381-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug8411-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug86708-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug88035-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug88035-2-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug8858-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug8950-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug9123-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug9123-2-expected.png: Added.
+        * pwarning: inexact rename detection was skipped due to too many files.: Added.
+
+2013-06-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaselining after r151205.
+
         * platform/qt-5.0-wk2/fast/flexbox/025-expected.png: Added.
         * platform/qt-5.0-wk2/fast/flexbox/026-expected.png: Added.
         * platform/qt-5.0-wk2/fast/forms/003-expected.png: Added.
