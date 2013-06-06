@@ -1,3 +1,17 @@
+2013-06-06  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Parameters 'inResult' and 'resolver' from function 'webkit_dom_document_evaluate' should be allowed to be NULL
+        https://bugs.webkit.org/show_bug.cgi?id=117129
+
+        Reviewed by Xan Lopez.
+
+        Add test for function 'webkit_dom_document_evaluate'.
+
+        * tests/testdomdocument.c:
+        (test_dom_document_evaluate): Checks function dom_document_evaluate,
+        executes an XPath expression on a HTML document.
+        (main): 
+
 2013-06-05  Alberto Garcia  <agarcia@igalia.com>
 
         [GTK] AcceleratedCompositingContext: fix layerFlushTimerFiredCallback condition

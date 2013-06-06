@@ -1,3 +1,25 @@
+2013-06-06  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Parameters 'inResult' and 'resolver' from function 'webkit_dom_document_evaluate' should be allowed to be NULL
+        https://bugs.webkit.org/show_bug.cgi?id=117129
+
+        Reviewed by Xan Lopez.
+
+        At this moment there was a temporary fix that allowed parameter
+        'inResult' to be NULL (see: webk.it/42115). However, there was no fix
+        for parameter 'resolver'.
+        
+        This patch refactors the code of the previous fix, moving the code for
+        determine whether a parameter can be NULL or not to GetGReturnMacro.
+        The solution is quite general and will alow to add other parameters in
+        the future if needed. 
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetGReturnMacro): Pass functionName, as in some cases the code
+        generated depends on the paramName and the functionName
+        (ParamCanBeNull): Checks if a parameter is allowed to be NULL 
+        (GenerateFunction):
+
 2013-06-06  Zalan Bujtas  <zalan@apple.com>
 
         SVG objects are misplaced when SVG root has CSS transform.

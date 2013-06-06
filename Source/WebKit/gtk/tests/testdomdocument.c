@@ -32,6 +32,7 @@
 #define HTML_DOCUMENT_LINKS "<html><head><title>Title</title></head><body><a href=\"about:blank\">blank</a><a href=\"http://www.google.com\">google</a><a href=\"http://www.webkit.org\">webkit</a></body></html>"
 #define HTML_DOCUMENT_IFRAME "<html><head><title>IFrame</title></head><body><iframe id='iframe'></iframe><div id='test'></div></body></html>"
 #define HTML_DOCUMENT_TABLE "<html><body><table id=\"table\"></table></body></html>"
+#define HTML_DOCUMENT_EVALUATE "<html><head><title></title></head><body><div>First div</div><div>Second div</div></body></html>"
 
 typedef struct {
     GtkWidget* webView;
@@ -208,6 +209,36 @@ static void test_dom_document_insert_row(DomDocumentFixture* fixture, gconstpoin
     g_assert_cmpint(webkit_dom_html_collection_get_length(rows), ==, 1);
 }
 
+static void test_dom_document_evaluate(DomDocumentFixture* fixture, gconstpointer data)
+{
+    g_assert(fixture);
+    WebKitWebView* view = (WebKitWebView*)fixture->webView;
+    g_assert(view);
+    WebKitDOMDocument* document = webkit_web_view_get_dom_document(view);
+    g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+    WebKitDOMNodeList* list = webkit_dom_document_get_elements_by_tag_name(document, "html");
+    g_assert(list);
+    gulong length = webkit_dom_node_list_get_length(list);
+    g_assert_cmpint(length, ==, 1);
+    WebKitDOMNode* html = webkit_dom_node_list_item(list, 0);
+    g_assert(WEBKIT_DOM_IS_NODE(html));
+
+    WebKitDOMXPathResult* result = webkit_dom_document_evaluate(document, "//div", html, NULL, 0, NULL, NULL);
+    g_assert(WEBKIT_DOM_IS_XPATH_RESULT(result));
+
+    int i = 0;
+    WebKitDOMNode* node;
+    while ( (node = webkit_dom_xpath_result_iterate_next(result, NULL)) != NULL) {
+        g_assert(node);
+        WebKitDOMElement* element = (WebKitDOMElement*)node;
+        g_assert_cmpstr(webkit_dom_element_get_tag_name(element), ==, "DIV");
+        i++;
+    }
+    g_assert_cmpint(i, ==, 2);
+
+    g_object_unref(list);
+}
+
 static void weak_notify(gpointer data, GObject* zombie)
 {
     guint* count = (guint*)data;
@@ -378,6 +409,12 @@ int main(int argc, char** argv)
                DomDocumentFixture, HTML_DOCUMENT_TABLE,
                dom_document_fixture_setup,
                test_dom_document_insert_row,
+               dom_document_fixture_teardown);
+
+    g_test_add("/webkit/domdocument/test_document_evaluate",
+               DomDocumentFixture, HTML_DOCUMENT_EVALUATE,
+               dom_document_fixture_setup,
+               test_dom_document_evaluate,
                dom_document_fixture_teardown);
 
     g_test_add("/webkit/domdocument/test_garbage_collection",

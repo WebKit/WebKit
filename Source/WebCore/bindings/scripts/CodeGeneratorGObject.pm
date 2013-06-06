@@ -45,6 +45,11 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
                     "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1, "Blob" => 1, "DOMTokenList" => 1,
                     "HTMLCollection" => 1);
 
+# List of function parameters that are allowed to be NULL
+my $canBeNullParams = {
+    'webkit_dom_document_evaluate' => ['inResult', 'resolver']
+};
+
 # Default constructor
 sub new {
     my $object = shift;
@@ -845,7 +850,7 @@ EOF
 }
 
 sub GetGReturnMacro {
-    my ($paramName, $paramIDLType, $returnType) = @_;
+    my ($paramName, $paramIDLType, $returnType, $functionName) = @_;
 
     my $condition;
     if ($paramIDLType eq "GError") {
@@ -853,6 +858,9 @@ sub GetGReturnMacro {
     } elsif (IsGDOMClassType($paramIDLType)) {
         my $paramTypeCaps = uc(FixUpDecamelizedName(decamelize($paramIDLType)));
         $condition = "WEBKIT_DOM_IS_${paramTypeCaps}($paramName)";
+        if (ParamCanBeNull($functionName, $paramName)) {
+            $condition = "!$paramName || $condition";
+        }
     } else {
         $condition = "$paramName";
     }
@@ -866,6 +874,15 @@ sub GetGReturnMacro {
     }
 
     return $macro;
+}
+
+sub ParamCanBeNull {
+    my($functionName, $paramName) = @_;
+
+    if (defined($functionName)) {
+        return scalar(grep(/$paramName/, @{$canBeNullParams->{$functionName}}));
+    }
+    return 0;
 }
 
 sub GenerateFunction {
@@ -973,12 +990,8 @@ sub GenerateFunction {
         my $paramTypeIsPrimitive = $codeGenerator->IsPrimitiveType($paramIDLType);
         my $paramIsGDOMType = IsGDOMClassType($paramIDLType);
         if (!$paramTypeIsPrimitive) {
-            # FIXME: Temporary hack for generating a proper implementation
-            #        of the webkit_dom_document_evaluate function (Bug-ID: 42115)
-            if (!(($functionName eq "webkit_dom_document_evaluate") && ($paramIDLType eq "XPathResult"))) {
-                $gReturnMacro = GetGReturnMacro($paramName, $paramIDLType, $returnType);
-                push(@cBody, $gReturnMacro);
-            }
+            $gReturnMacro = GetGReturnMacro($paramName, $paramIDLType, $returnType, $functionName);
+            push(@cBody, $gReturnMacro);
         }
     }
 
