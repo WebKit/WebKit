@@ -70,8 +70,8 @@ my (
     $cssVariablesSupport,
     $customSchemeHandlerSupport,
     $dataTransferItemsSupport,
-    $datalistSupport,
-    $detailsSupport,
+    $datalistElementSupport,
+    $detailsElementSupport,
     $deviceOrientationSupport,
     $dialogElementSupport,
     $directoryUploadSupport,
@@ -108,7 +108,7 @@ my (
     $mediaSourceSupport,
     $mediaStatisticsSupport,
     $mediaStreamSupport,
-    $meterTagSupport,
+    $meterElementSupport,
     $mhtmlSupport,
     $microdataSupport,
     $mouseCursorScaleSupport,
@@ -119,7 +119,7 @@ my (
     $orientationEventsSupport,
     $pageVisibilityAPISupport,
     $performanceTimelineSupport,
-    $progressTagSupport,
+    $progressElementSupport,
     $proximityEventsSupport,
     $quotaSupport,
     $resolutionMediaQuerySupport,
@@ -236,19 +236,19 @@ my @features = (
     { option => "custom-scheme-handler", desc => "Toggle Custom Scheme Handler support",
       define => "ENABLE_CUSTOM_SCHEME_HANDLER", default => (isBlackBerry() || isEfl()), value => \$customSchemeHandlerSupport },
 
-    { option => "datalist", desc => "Toggle Datalist support",
-      define => "ENABLE_DATALIST_ELEMENT", default => isEfl(), value => \$datalistSupport },
+    { option => "datalist-element", desc => "Toggle Datalist Element support",
+      define => "ENABLE_DATALIST_ELEMENT", default => isEfl(), value => \$datalistElementSupport },
 
     { option => "data-transfer-items", desc => "Toggle Data Transfer Items support",
       define => "ENABLE_DATA_TRANSFER_ITEMS", default => 0, value => \$dataTransferItemsSupport },
 
-    { option => "details", desc => "Toggle Details support",
-      define => "ENABLE_DETAILS_ELEMENT", default => 1, value => \$detailsSupport },
+    { option => "details-element", desc => "Toggle Details Element support",
+      define => "ENABLE_DETAILS_ELEMENT", default => 1, value => \$detailsElementSupport },
 
     { option => "device-orientation", desc => "Toggle Device Orientation support",
       define => "ENABLE_DEVICE_ORIENTATION", default => isBlackBerry(), value => \$deviceOrientationSupport },
 
-    { option => "dialog", desc => "Toggle Dialog Element support",
+    { option => "dialog-element", desc => "Toggle Dialog Element support",
       define => "ENABLE_DIALOG_ELEMENT", default => 0, value => \$dialogElementSupport },
 
     { option => "directory-upload", desc => "Toggle Directory Upload support",
@@ -350,8 +350,8 @@ my @features = (
     { option => "media-stream", desc => "Toggle Media Stream support",
       define => "ENABLE_MEDIA_STREAM", default => isBlackBerry(), value => \$mediaStreamSupport },
 
-    { option => "meter-tag", desc => "Toggle Meter Tag support",
-      define => "ENABLE_METER_ELEMENT", default => !isAppleWinWebKit(), value => \$meterTagSupport },
+    { option => "meter-element", desc => "Toggle Meter Element support",
+      define => "ENABLE_METER_ELEMENT", default => !isAppleWinWebKit(), value => \$meterElementSupport },
 
     { option => "mhtml", desc => "Toggle MHTML support",
       define => "ENABLE_MHTML", default => (isGtk() || isEfl()), value => \$mhtmlSupport },
@@ -386,8 +386,8 @@ my @features = (
     { option => "performance-timeline", desc => "Toggle Performance Timeline support",
       define => "ENABLE_PERFORMANCE_TIMELINE", default => isGtk(), value => \$performanceTimelineSupport },
 
-    { option => "progress-tag", desc => "Toggle Progress Tag support",
-      define => "ENABLE_PROGRESS_ELEMENT", default => 1, value => \$progressTagSupport },
+    { option => "progress-element", desc => "Toggle Progress Element support",
+      define => "ENABLE_PROGRESS_ELEMENT", default => 1, value => \$progressElementSupport },
 
     { option => "proximity-events", desc => "Toggle Proximity Events support",
       define => "ENABLE_PROXIMITY_EVENTS", default => 0, value => \$proximityEventsSupport },
