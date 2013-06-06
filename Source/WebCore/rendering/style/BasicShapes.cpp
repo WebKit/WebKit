@@ -54,12 +54,13 @@ bool BasicShape::canBlend(const BasicShape* other) const
 void BasicShapeRectangle::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
-    path.addRoundedRect(FloatRect(floatValueForLength(
-        m_x,
-        boundingBox.width()) + boundingBox.x(),
-        floatValueForLength(m_y, boundingBox.height()) + boundingBox.y(),
-        floatValueForLength(m_width, boundingBox.width()),
-        floatValueForLength(m_height, boundingBox.height())),
+    path.addRoundedRect(
+        FloatRect(
+            floatValueForLength(m_x, boundingBox.width()) + boundingBox.x(),
+            floatValueForLength(m_y, boundingBox.height()) + boundingBox.y(),
+            floatValueForLength(m_width, boundingBox.width()),
+            floatValueForLength(m_height, boundingBox.height())
+        ),
         FloatSize(
             m_cornerRadiusX.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusX, boundingBox.width()),
             m_cornerRadiusY.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusY, boundingBox.height())
@@ -185,11 +186,13 @@ void BasicShapeInsetRectangle::path(Path& path, const FloatRect& boundingBox)
     ASSERT(path.isEmpty());
     float left = floatValueForLength(m_left, boundingBox.width());
     float top = floatValueForLength(m_top, boundingBox.height());
-    path.addRoundedRect(FloatRect(
-        left + boundingBox.x(),
-        top + boundingBox.y(),
-        std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
-        std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0)),
+    path.addRoundedRect(
+        FloatRect(
+            left + boundingBox.x(),
+            top + boundingBox.y(),
+            std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
+            std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0)
+        ),
         FloatSize(
             m_cornerRadiusX.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusX, boundingBox.width()),
             m_cornerRadiusY.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusY, boundingBox.height())

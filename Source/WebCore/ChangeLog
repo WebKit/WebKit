@@ -1,3 +1,20 @@
+2013-06-06  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Fix formatting in BasicShapes.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=117309
+
+        Reviewed by Alexandru Chiculita.
+
+        I reformatted the code in BasicShapes.cpp (bug 116734) to fix the
+        style issues, and I got some of the formatting wrong, which makes the
+        code much harder to read. This patch fixes that formatting.
+
+        No new tests, formatting clean up.
+
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeRectangle::path): Fix formatting.
+        (WebCore::BasicShapeInsetRectangle::path): Fix formatting.
+
 2013-06-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Clean up AddIncludesForType in JSC bindings generators
