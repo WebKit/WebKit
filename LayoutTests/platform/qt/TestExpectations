@@ -345,7 +345,6 @@ webkit.org/b/98696 plugins/snapshotting [ Skip ]
 fast/css/variables/border-width.html
 fast/css/variables/build-supports-variables.html
 fast/css/variables/calc.html
-fast/css/variables/case-insensitive.html
 fast/css/variables/colors-test.html
 fast/css/variables/computed-style.html
 fast/css/variables/inherited-values.html

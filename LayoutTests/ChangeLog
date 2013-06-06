@@ -1,3 +1,12 @@
+2013-06-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed TestExpectation gardening.  Clean up some lint warnings.
+
+        * platform/qt-mac/TestExpectations: Remove references to removed tests.
+        * platform/qt/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Remove 'skip' entries for (1) removed tests, and
+        (2) tests that have since been rebaselined and now pass.
+
 2013-06-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebaselining after r151205.

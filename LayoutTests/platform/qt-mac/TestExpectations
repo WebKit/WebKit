@@ -695,7 +695,6 @@ editing/deleting/smart-delete-004.html
 editing/deleting/table-cells.html
 editing/deleting/type-delete-after-quote.html
 editing/deleting/whitespace-pre-1.html
-editing/execCommand/4128080-2.html
 editing/input/emacs-ctrl-o.html
 editing/input/option-page-up-down.html
 editing/input/scroll-viewport-page-up-down.html
@@ -822,7 +821,6 @@ editing/pasteboard/5071074.html
 editing/pasteboard/5075944.html
 editing/pasteboard/5134759.html
 editing/pasteboard/5156401-1.html
-editing/pasteboard/5247341.html
 editing/pasteboard/5478250.html
 editing/pasteboard/5601583-1.html
 editing/pasteboard/5761530-1.html
@@ -856,7 +854,6 @@ editing/pasteboard/merge-end-table.html
 editing/pasteboard/merge-start-blockquote.html
 editing/pasteboard/merge-start-list.html
 editing/pasteboard/onpaste-text-html.html
-editing/pasteboard/paste-4035648-fix.html
 editing/pasteboard/paste-4038267-fix.html
 editing/pasteboard/paste-before-tab-span.html
 editing/pasteboard/paste-blockquote-1.html
@@ -1476,7 +1473,6 @@ fast/css/font_property_normal.html
 fast/css/hover-subselector.html
 fast/css/hsl-color.html
 fast/css/hsla-color.html
-fast/css/ignore-text-zoom.html
 fast/css/imageTileOpacity.html
 fast/css/import-rule-regression-11590.html
 fast/css/import_with_baseurl.html
@@ -4173,7 +4169,6 @@ editing/execCommand/nsresponder-indent.html
 editing/execCommand/nsresponder-outdent.html
 editing/execCommand/outdent-selection.html
 editing/execCommand/paste-1.html
-editing/execCommand/paste-2.html
 editing/execCommand/print.html
 editing/execCommand/remove-list-from-range-selection.html
 editing/execCommand/remove-list-item-1.html

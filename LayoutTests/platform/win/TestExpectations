@@ -2217,7 +2217,6 @@ platform/win/accessibility/single-select-children.html
 # Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
 fast/block/float/024.html
 fast/block/margin-collapse/empty-clear-blocks.html
-fast/block/margin-collapse/025.html
 fast/block/margin-collapse/block-inside-inline/025.html
 
 # referrer tests failing, problems connecting to address provided to iframe
@@ -2391,18 +2390,6 @@ http/tests/security/sandboxed-iframe-form-top.html
 #https://bugs.webkit.org/show_bug.cgi?id=95530
 http/tests/security/inactive-document-with-empty-security-origin.html
 
-webkit.org/b/98666 webkit.org/b/102993 fast/dom/HTMLInputElement/input-slider-update.html [ Failure ]
-webkit.org/b/98666 webkit.org/b/102993 fast/dom/HTMLInputElement/input-slider-update-styled.html [ Failure ]
-webkit.org/b/98666 webkit.org/b/102993 fast/forms/input-appearance-height.html [ Failure ]
-webkit.org/b/98666 webkit.org/b/102993 fast/forms/range/input-appearance-range.html [ Failure ]
-webkit.org/b/98666 webkit.org/b/102993 fast/forms/range/range-thumb-height-percentage.html [ Failure ]
-webkit.org/b/98666 webkit.org/b/102993 fast/forms/range/slider-padding.html [ Failure ]
-webkit.org/b/98666 webkit.org/b/102993 fast/forms/range/slider-thumb-shared-style.html [ Failure ]
-webkit.org/b/98666 webkit.org/b/102993 fast/forms/range/slider-thumb-stylability.html [ Failure ]
-webkit.org/b/98666 webkit.org/b/102993 fast/multicol/client-rects.html [ Failure ]
-webkit.org/b/98666 webkit.org/b/102993 fast/repaint/slider-thumb-drag-release.html [ Failure ]
-webkit.org/b/98666 webkit.org/b/102993 fast/repaint/slider-thumb-float.html [ Failure ]
-
 #https://bugs.webkit.org/show_bug.cgi?id=98079
 http/tests/security/cross-origin-local-storage-wk1.html
 
@@ -2490,10 +2477,6 @@ fast/css3-text
 
 # Needs rebaseline.
 webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Failure ]
-webkit.org/b/94198 fast/dom/HTMLInputElement/input-image-alt-text.html [ Failure ]
-webkit.org/b/94198 fast/encoding/utf-16-big-endian.html [ Failure ]
-webkit.org/b/94198 fast/encoding/utf-16-little-endian.html [ Failure ]
-webkit.org/b/94198 fast/forms/input-value.html [ Failure ]
 webkit.org/b/94198 tables/mozilla/collapsing_borders/bug41262-3.html [ Failure ]
 
 # ACCELERATED_OVERFLOW_SCROLLING is disabled on Windows
@@ -2556,10 +2539,6 @@ svg/dom/SVGViewSpec-invalid-ref-crash.html
 
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html
-
-# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=9221
-webkit.org/b/9221 fast/css/resize-corner-tracking.html [ Failure ]
-webkit.org/b/9221 fast/css/resize-corner-tracking-transformed-iframe.html [ Missing ]
 
 # Temporarily skip inspector tests which are now failing on the bots due to some configuration problem
 inspector
@@ -2635,14 +2614,6 @@ webkit.org/b/108370 editing/spelling/spellcheck-async-mutation.html
 webkit.org/b/108370 editing/spelling/spellcheck-async.html
 webkit.org/b/108370 editing/spelling/spellcheck-sequencenum.html
 webkit.org/b/108370 editing/style/iframe-onload-crash-mac.html
-
-# Need rebaseline for https://bugs.webkit.org/show_bug.cgi?id=109994
-webkit.org/b/109994 css2.1/20110323/replaced-elements-001.htm [ Failure ]
-webkit.org/b/109994 svg/custom/foreign-object-skew.svg [ Failure ]
-webkit.org/b/109994 tables/mozilla/bugs/bug92647-2.html [ Failure ]
-
-# New test
-webkit.org/b/110654 css3/flexbox/button.html [ Failure ]
 
 # Disable document.register tests, ENABLE_CUSTOM_ELEMENT disabled
 fast/dom/custom
