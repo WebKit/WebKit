@@ -133,7 +133,7 @@ void AutoscrollController::updateAutoscrollRenderer()
     RenderObject* renderer = m_autoscrollRenderer;
 
 #if ENABLE(PAN_SCROLLING)
-    HitTestResult hitTest = m_autoscrollRenderer->frame()->eventHandler()->hitTestResultAtPoint(m_panScrollStartPos, true);
+    HitTestResult hitTest = m_autoscrollRenderer->frame()->eventHandler()->hitTestResultAtPoint(m_panScrollStartPos, HitTestRequest::ReadOnly | HitTestRequest::Active);
 
     if (Node* nodeAtPoint = hitTest.innerNode())
         renderer = nodeAtPoint->renderer();

@@ -1,3 +1,15 @@
+2013-06-06  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        ENABLE(PAN_SCROLLING) AutoscrollController::updateAutoscrollRenderer calls hitTestResultAtPoint with `true` for HitTestRequestType
+        https://bugs.webkit.org/show_bug.cgi?id=116896
+
+        Reviewed by Andreas Kling.
+
+        Update hitTestResultAtPoint call to new API.
+
+        * page/AutoscrollController.cpp:
+        (WebCore::AutoscrollController::updateAutoscrollRenderer):
+
 2013-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         ResourceLoader::resourceData() should not return a PassRefPtr
