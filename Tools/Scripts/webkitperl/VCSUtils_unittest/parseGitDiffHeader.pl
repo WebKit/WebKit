@@ -45,13 +45,85 @@ index f5d5e74..3b6aa92 100644
 END
     expectedReturn => [
 {
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo.h
 index f5d5e74..3b6aa92 100644
---- foo.h
-+++ foo.h
+--- foo.h\t(revision 0)
++++ foo.h\t(working copy)
 END
     indexPath => "foo.h",
+},
+"@@ -1 +1 @@\n"],
+    expectedNextLine => "-file contents\n",
+},
+{
+    diffName => "Modified file using --src-prefix and --dst-prefix option",
+    inputText => <<'END',
+diff --git s/foo.h d/foo.h
+index f5d5e74..3b6aa92 100644
+--- s/foo.h
++++ d/foo.h
+@@ -1 +1 @@
+-file contents
++new file contents
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<"END",
+Index: foo.h
+index f5d5e74..3b6aa92 100644
+--- foo.h\t(revision 0)
++++ foo.h\t(working copy)
+END
+    indexPath => "foo.h",
+},
+"@@ -1 +1 @@\n"],
+    expectedNextLine => "-file contents\n",
+},
+{   # New test
+    diffName => "Modified file which have space characters in path",
+    inputText => <<'END',
+diff --git a/foo bar.h b/foo bar.h
+index f5d5e74..3b6aa92 100644
+--- a/foo bar.h
++++ b/foo bar.h
+@@ -1 +1 @@
+-file contents
++new file contents
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<"END",
+Index: foo bar.h
+index f5d5e74..3b6aa92 100644
+--- foo bar.h\t(revision 0)
++++ foo bar.h\t(working copy)
+END
+    indexPath => "foo bar.h",
+},
+"@@ -1 +1 @@\n"],
+    expectedNextLine => "-file contents\n",
+},
+{   # New test
+    diffName => "Modified file which have space characters in path using --no-prefix",
+    inputText => <<'END',
+diff --git directory/foo bar.h directory/foo bar.h
+index f5d5e74..3b6aa92 100644
+--- directory/foo bar.h
++++ directory/foo bar.h
+@@ -1 +1 @@
+-file contents
++new file contents
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<"END",
+Index: directory/foo bar.h
+index f5d5e74..3b6aa92 100644
+--- directory/foo bar.h\t(revision 0)
++++ directory/foo bar.h\t(working copy)
+END
+    indexPath => "directory/foo bar.h",
 },
 "@@ -1 +1 @@\n"],
     expectedNextLine => "-file contents\n",
@@ -69,12 +141,12 @@ index 0000000..3c9f114
 END
     expectedReturn => [
 {
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo.h
 new file mode 100644
 index 0000000..3c9f114
---- foo.h
-+++ foo.h
+--- foo.h\t(revision 0)
++++ foo.h\t(working copy)
 END
     indexPath => "foo.h",
     isNew => 1,
@@ -97,14 +169,42 @@ index d45dd40..3494526 100644
 END
     expectedReturn => [
 {
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo
 deleted file mode 100644
 index 1e50d1d..0000000
---- foo
-+++ foo
+--- foo\t(revision 0)
++++ foo\t(working copy)
 END
     indexPath => "foo",
+    isDeletion => 1,
+},
+"@@ -1,1 +0,0 @@\n"],
+    expectedNextLine => "-line1\n",
+},
+{
+    diffName => "delete file which have space characters in path using --no-prefix",
+    inputText => <<'END',
+diff --git directory/foo bar.h directory/foo bar.h
+deleted file mode 100644
+index 1e50d1d..0000000
+--- directory/foo bar.h
++++ /dev/null
+@@ -1,1 +0,0 @@
+-line1
+diff --git a/configure.ac b/configure.ac
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<"END",
+Index: directory/foo bar.h
+deleted file mode 100644
+index 1e50d1d..0000000
+--- directory/foo bar.h\t(revision 0)
++++ directory/foo bar.h\t(working copy)
+END
+    indexPath => "directory/foo bar.h",
     isDeletion => 1,
 },
 "@@ -1,1 +0,0 @@\n"],
@@ -122,11 +222,11 @@ index c925780..9e65c43 100644
 END
     expectedReturn => [
 {
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo.h
 index c925780..9e65c43 100644
---- foo.h
-+++ foo.h
+--- foo.h\t(revision 0)
++++ foo.h\t(working copy)
 END
     indexPath => "foo.h",
 },
@@ -156,6 +256,30 @@ copy to foo_new
 END
     copiedFromPath => "foo",
     indexPath => "foo_new",
+},
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
+},
+{
+    diffName => "copy file which have space characters in path using --no-prefix (with similarity index 100%)",
+    inputText => <<'END',
+diff --git directory/foo bar.h directory/foo baz.h
+similarity index 100%
+copy from directory/foo bar.h
+copy to directory/foo baz.h
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: directory/foo baz.h
+similarity index 100%
+copy from directory/foo bar.h
+copy to directory/foo baz.h
+END
+    copiedFromPath => "directory/foo bar.h",
+    indexPath => "directory/foo baz.h",
 },
 "diff --git a/bar b/bar\n"],
     expectedNextLine => "index d45dd40..3494526 100644\n",
@@ -210,6 +334,31 @@ END
 "diff --git a/bar b/bar\n"],
     expectedNextLine => "index d45dd40..3494526 100644\n",
 },
+{
+    diffName => "rename file which have space characters in path using --no-prefix (with similarity index 100%)",
+    inputText => <<'END',
+diff --git directory/foo bar.h directory/foo baz.h
+similarity index 100%
+rename from directory/foo bar.h
+rename to directory/foo baz.h
+diff --git a/bar b/bar
+index d45dd40..3494526 100644
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: directory/foo baz.h
+similarity index 100%
+rename from directory/foo bar.h
+rename to directory/foo baz.h
+END
+    copiedFromPath => "directory/foo bar.h",
+    indexPath => "directory/foo baz.h",
+    shouldDeleteSource => 1,
+},
+"diff --git a/bar b/bar\n"],
+    expectedNextLine => "index d45dd40..3494526 100644\n",
+},
 {   # New test
     diffName => "rename (with similarity index < 100%)",
     inputText => <<'END',
@@ -230,14 +379,14 @@ index d45dd40..3494526 100644
 END
     expectedReturn => [
 {
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo_new
 similarity index 99%
 rename from foo
 rename to foo_new
 index 1e50d1d..1459d21 100644
---- foo_new
-+++ foo_new
+--- foo_new\t(revision 0)
++++ foo_new\t(working copy)
 END
     copiedFromPath => "foo",
     indexPath => "foo_new",
@@ -359,11 +508,11 @@ index d03e242..435ad3a 100755
 END
     expectedReturn => [
 {
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo
 index d03e242..435ad3a 100755
---- foo
-+++ foo
+--- foo\t(revision 0)
++++ foo\t(working copy)
 END
     indexPath => "foo",
 },
@@ -429,12 +578,12 @@ index 0000000..d03e242
 END
     expectedReturn => [
 {
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo
 new file mode 100755
 index 0000000..d03e242
---- foo
-+++ foo
+--- foo\t(revision 0)
++++ foo\t(working copy)
 END
     executableBitDelta => 1,
     indexPath => "foo",
@@ -458,12 +607,12 @@ index d03e242..0000000
 END
     expectedReturn => [
 {
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo
 deleted file mode 100755
 index d03e242..0000000
---- foo
-+++ foo
+--- foo\t(revision 0)
++++ foo\t(working copy)
 END
     executableBitDelta => -1,
     indexPath => "foo",
@@ -471,6 +620,37 @@ END
 },
 "@@ -1 +0,0 @@\n"],
     expectedNextLine => "-file contents\n",
+},
+{
+    # svn-apply rejected https://bug-111042-attachments.webkit.org/attachment.cgi?id=190663
+    diffName => "Modified file which have space characters in path. svn-apply rejected attachment #190663.",
+    inputText => <<'END',
+diff --git a/WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme b/WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme
+index 72d60effb9bbba0520e520ec3c1aa43f348c6997..b7924b96d5978c1ad1053dca7e554023235d9a16 100644
+--- a/WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme
++++ b/WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme
+@@ -161,7 +161,7 @@
+       <EnvironmentVariables>
+          <EnvironmentVariable
+             key = "DYLD_INSERT_LIBRARIES"
+-            value = "$(BUILT_PRODUCTS_DIR)/WebProcessShim.dylib"
++            value = "$(BUILT_PRODUCTS_DIR)/SecItemShim.dylib"
+             isEnabled = "YES">
+          </EnvironmentVariable>
+       </EnvironmentVariables>
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<"END",
+Index: WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme
+index 72d60effb9bbba0520e520ec3c1aa43f348c6997..b7924b96d5978c1ad1053dca7e554023235d9a16 100644
+--- WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme\t(revision 0)
++++ WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme\t(working copy)
+END
+    indexPath => "WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme",
+},
+"@@ -161,7 +161,7 @@\n"],
+    expectedNextLine => "       <EnvironmentVariables>\n",
 },
 );
 

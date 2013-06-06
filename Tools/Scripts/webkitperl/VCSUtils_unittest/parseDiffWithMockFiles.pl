@@ -71,20 +71,20 @@ index 756e864..04d2ae1 100644
 @@ -1,3 +1,4 @@
 EOF
 
-my $svnConvertedGitDiffHeader = <<EOF;
+my $svnConvertedGitDiffHeader = <<"EOF";
 Index: Makefile
 index 756e864..04d2ae1 100644
---- Makefile
-+++ Makefile
+--- Makefile\t(revision 0)
++++ Makefile\t(working copy)
 @@ -1,3 +1,4 @@
 EOF
 
-my $svnConvertedGitDiffHeaderForNewFile = <<EOF;
+my $svnConvertedGitDiffHeaderForNewFile = <<"EOF";
 Index: Makefile
 new file mode 100644
 index 0000000..756e864
---- Makefile
-+++ Makefile
+--- Makefile\t(revision 0)
++++ Makefile\t(working copy)
 @@ -0,0 +1,17 @@
 EOF
 
@@ -354,8 +354,8 @@ EOF
     svnConvertedText => <<"EOF",
 Index: MakefileWithWindowsEOL
 index e7e8475..ae16fc3 100644
---- MakefileWithWindowsEOL
-+++ MakefileWithWindowsEOL
+--- MakefileWithWindowsEOL\t(revision 0)
++++ MakefileWithWindowsEOL\t(working copy)
 @@ -1,3 +1,4 @@\r
  MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKitTools\r
  \r
@@ -386,10 +386,10 @@ EOF
     expectedReturn => [
 [{
     # Same as input text
-    svnConvertedText => q(Index: MakefileWithMacEOL
+    svnConvertedText => qq(Index: MakefileWithMacEOL
 index e7e8475..ae16fc3 100644
---- MakefileWithMacEOL
-+++ MakefileWithMacEOL
+--- MakefileWithMacEOL\t(revision 0)
++++ MakefileWithMacEOL\t(working copy)
 @@ -1,3 +1,4 @@\r MODULES = JavaScriptCore JavaScriptGlue WebCore WebKit WebKitTools\r \r-all:
 \\ No newline at end of file
 +all:\r+\r),

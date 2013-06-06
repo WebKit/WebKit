@@ -980,11 +980,11 @@ index f5d5e74..3b6aa92 100644
 END
     expectedReturn => [
 [{
-    svnConvertedText =>  <<'END',
+    svnConvertedText =>  <<"END",
 Index: Makefile
 index f5d5e74..3b6aa92 100644
---- Makefile
-+++ Makefile
+--- Makefile\t(revision 0)
++++ Makefile\t(working copy)
 @@ -1,1 +1,1 @@ public:
 END
     indexPath => "Makefile",
@@ -1008,11 +1008,11 @@ index 863339f..db418b2 100644
 END
     expectedReturn => [
 [{
-    svnConvertedText =>  <<'END',
+    svnConvertedText =>  <<"END",
 Index: foo
 index 863339f..db418b2 100644
---- foo
-+++ foo
+--- foo\t(revision 0)
++++ foo\t(working copy)
 @@ -1 +1,2 @@
  Passed
 +
@@ -1039,12 +1039,12 @@ index d45dd40..3494526 100644
 END
     expectedReturn => [
 [{
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo.h
 new file mode 100644
 index 0000000..3c9f114
---- foo.h
-+++ foo.h
+--- foo.h\t(revision 0)
++++ foo.h\t(working copy)
 @@ -0,0 +1,34 @@
 +<html>
 END
@@ -1071,12 +1071,12 @@ index d45dd40..3494526 100644
 END
     expectedReturn => [
 [{
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo
 deleted file mode 100644
 index 1e50d1d..0000000
---- foo
-+++ foo
+--- foo\t(revision 0)
++++ foo\t(working copy)
 @@ -1,1 +0,0 @@
 -line1
 END
@@ -1103,11 +1103,11 @@ Index: Makefile_new
 END
     expectedReturn => [
 [{
-    svnConvertedText =>  <<'END',
+    svnConvertedText =>  <<"END",
 Index: Makefile
 index f5d5e74..3b6aa92 100644
---- Makefile
-+++ Makefile
+--- Makefile\t(revision 0)
++++ Makefile\t(working copy)
 @@ -1,1 +1,1 @@ public:
 Index: Makefile_new
 ===================================================================
@@ -1199,14 +1199,14 @@ END
     indexPath => "foo_new",
     isGit => 1,
     numTextChunks => 1,
-    svnConvertedText => <<'END',
+    svnConvertedText => <<"END",
 Index: foo_new
 similarity index 99%
 rename from foo
 rename to foo_new
 index 1e50d1d..1459d21 100644
---- foo_new
-+++ foo_new
+--- foo_new\t(revision 0)
++++ foo_new\t(working copy)
 @@ -15,3 +15,4 @@ release r deployment dep deploy:
  line1
  line2
