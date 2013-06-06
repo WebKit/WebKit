@@ -692,14 +692,14 @@ const String& defaultMIMEType()
     return defaultMIMEType;
 }
 
-#if !PLATFORM(QT) && !PLATFORM(BLACKBERRY)
+#if !PLATFORM(QT) && !PLATFORM(BLACKBERRY) && !USE(CURL)
 String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
 {
     return mimeType;
 }
 #endif
 
-#if PLATFORM(BLACKBERRY)
+#if PLATFORM(BLACKBERRY) || USE(CURL)
 typedef HashMap<String, String> MIMETypeAssociationMap;
 
 static const MIMETypeAssociationMap& mimeTypeAssociationMap()
