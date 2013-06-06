@@ -1,3 +1,13 @@
+2013-06-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Switch to NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=117200
+
+        Reviewed by Anders Carlsson.
+
+        * platform/win/TestExpectations: Skip MathML, which was not being tested under
+        old-run-webkit-tests.
+
 2013-06-05  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
