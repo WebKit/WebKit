@@ -1,3 +1,29 @@
+2013-06-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Removing accidentally added png files for ref tests.
+
+        * platform/qt-5.0-wk2/compositing/patterns/direct-pattern-compositing-contain-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/patterns/direct-pattern-compositing-contain-no-repeat-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/patterns/direct-pattern-compositing-cover-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/patterns/direct-pattern-compositing-position-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/patterns/direct-pattern-compositing-size-expected.png: Removed.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-collapse-clear-016-expected.png: Removed.
+        * platform/qt-5.0-wk2/css3/filters/custom/custom-filter-clamp-css-color-matrix-expected.png: Removed.
+        * platform/qt-5.0-wk2/css3/filters/custom/custom-filter-nonseparable-blend-mode-luminosity-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/css/sticky/sticky-left-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/css/sticky/sticky-side-margins-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/css/sticky/sticky-top-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/css/sticky/sticky-top-margins-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/css/sticky/sticky-writing-mode-horizontal-bt-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textarea-placeholder-set-attribute-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/regions/autosize-region-window-resize-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/regions/region-style-image-background-color-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/regions/region-style-inline-background-color-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/regions/render-region-custom-style-mark-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/animations/animateMotion-additive-2c-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/animations/animateMotion-additive-2d-expected.png: Removed.
+
 2013-06-06  Eugene Klyuchnikov  <eustas@chromium.org>
 
         selectionStart/selectionEnd return "obsolete" values when requested during "input" event
