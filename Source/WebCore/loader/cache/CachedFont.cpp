@@ -75,7 +75,7 @@ void CachedFont::didAddClient(CachedResourceClient* c)
         static_cast<CachedFontClient*>(c)->fontLoaded(this);
 }
 
-void CachedFont::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
+void CachedFont::data(ResourceBuffer* data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;

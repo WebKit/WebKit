@@ -40,7 +40,7 @@ public:
 
     virtual void setEncoding(const String&);
     virtual String encoding() const;
-    virtual void data(PassRefPtr<ResourceBuffer> data, bool allDataReceived);
+    virtual void data(ResourceBuffer*, bool allDataReceived);
 
 protected:
     RefPtr<SVGDocument> m_document;

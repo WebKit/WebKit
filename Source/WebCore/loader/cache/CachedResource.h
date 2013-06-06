@@ -101,7 +101,7 @@ public:
 
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
-    virtual void data(PassRefPtr<ResourceBuffer> data, bool allDataReceived);
+    virtual void data(ResourceBuffer*, bool allDataReceived);
     virtual void error(CachedResource::Status);
 
     void setResourceError(const ResourceError& error) { m_error = error; }

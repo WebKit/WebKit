@@ -60,7 +60,7 @@ const String& CachedShader::shaderString()
     return m_shaderString;
 }
 
-void CachedShader::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
+void CachedShader::data(ResourceBuffer* data, bool allDataReceived)
 {
     if (allDataReceived)
         m_data = data;

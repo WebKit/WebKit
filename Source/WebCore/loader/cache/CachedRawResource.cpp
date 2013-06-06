@@ -41,7 +41,7 @@ CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest, Type type
 {
 }
 
-void CachedRawResource::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
+void CachedRawResource::data(ResourceBuffer* data, bool allDataReceived)
 {
     CachedResourceHandle<CachedRawResource> protect(this);
     const char* incrementalData = 0;
@@ -68,7 +68,7 @@ void CachedRawResource::data(PassRefPtr<ResourceBuffer> data, bool allDataReceiv
         while (CachedRawResourceClient* c = w.next())
             c->dataReceived(this, incrementalData, incrementalDataLength);
     }
-    CachedResource::data(m_data, allDataReceived);
+    CachedResource::data(data, allDataReceived);
 
     if (dataBufferingPolicy == BufferData && m_options.dataBufferingPolicy == DoNotBufferData) {
         if (m_loader)

@@ -266,7 +266,7 @@ void SubresourceLoader::sendDataToResource(const char* data, int length)
     //     that all data has been received yet. 
     if (m_loadingMultipartContent || !resourceData()) { 
         RefPtr<ResourceBuffer> copiedData = ResourceBuffer::create(data, length); 
-        m_resource->data(copiedData.release(), m_loadingMultipartContent);
+        m_resource->data(copiedData.get(), m_loadingMultipartContent);
     } else 
         m_resource->data(resourceData(), false);
 }

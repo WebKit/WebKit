@@ -44,7 +44,7 @@ public:
     virtual ~CachedShader();
     
     const String& shaderString();
-    void data(PassRefPtr<ResourceBuffer>, bool allDataReceived);
+    void data(ResourceBuffer*, bool allDataReceived);
 
 private:
     virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }

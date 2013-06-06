@@ -1,3 +1,57 @@
+2013-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        ResourceLoader::resourceData() should not return a PassRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=117288
+
+        Reviewed by Darin Adler.
+
+        Change ResourceLoader::resourceData() to return a raw pointer
+        instead of a PassRefPtr since we don't want to transfer the
+        ownership of the resource data. Also pass a raw pointer to
+        CachedResource::data() so that the cached resource can decide
+        whether to take a reference of the data or not, for example,
+        CachedRawResource only takes a reference when buffering policy is
+        BufferData.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::appendBytes):
+        (WebCore::ImageDocumentParser::finish):
+        * loader/ResourceLoader.cpp:
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::resourceData):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::sendDataToResource):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::data):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::data):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::data):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::data):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::data):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::data):
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::data):
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedShader.cpp:
+        (WebCore::CachedShader::data):
+        * loader/cache/CachedShader.h:
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::data):
+        * loader/cache/CachedTextTrack.h:
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::data):
+        * loader/cache/CachedXSLStyleSheet.h:
+
 2013-06-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS ignores ARIA progressbar elements

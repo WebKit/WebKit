@@ -82,7 +82,7 @@ const String& CachedScript::script()
     return m_script;
 }
 
-void CachedScript::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
+void CachedScript::data(ResourceBuffer* data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;

@@ -53,7 +53,7 @@ String CachedSVGDocument::encoding() const
     return m_decoder->encoding().name();
 }
 
-void CachedSVGDocument::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
+void CachedSVGDocument::data(ResourceBuffer* data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;

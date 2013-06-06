@@ -38,7 +38,7 @@ public:
     CachedTextTrack(const ResourceRequest&);
     virtual ~CachedTextTrack();
 
-    virtual void data(PassRefPtr<ResourceBuffer> data, bool allDataReceived);
+    virtual void data(ResourceBuffer*, bool allDataReceived);
 
 private:
     virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }

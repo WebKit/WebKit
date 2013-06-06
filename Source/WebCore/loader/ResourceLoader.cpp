@@ -52,11 +52,6 @@
 
 namespace WebCore {
 
-PassRefPtr<ResourceBuffer> ResourceLoader::resourceData()
-{
-    return m_resourceData;
-}
-
 ResourceLoader::ResourceLoader(Frame* frame, ResourceLoaderOptions options)
     : m_frame(frame)
     , m_documentLoader(frame->loader()->activeDocumentLoader())

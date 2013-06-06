@@ -63,7 +63,7 @@ String CachedXSLStyleSheet::encoding() const
     return m_decoder->encoding().name();
 }
 
-void CachedXSLStyleSheet::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
+void CachedXSLStyleSheet::data(ResourceBuffer* data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;

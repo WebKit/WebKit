@@ -73,7 +73,7 @@ public:
     virtual void releaseResources();
     const ResourceResponse& response() const;
 
-    PassRefPtr<ResourceBuffer> resourceData();
+    ResourceBuffer* resourceData() const { return m_resourceData.get(); }
     void clearResourceData();
     
     virtual bool isSubresourceLoader();

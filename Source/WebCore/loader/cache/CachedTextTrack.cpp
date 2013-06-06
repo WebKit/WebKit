@@ -48,7 +48,7 @@ CachedTextTrack::~CachedTextTrack()
 {
 }
 
-void CachedTextTrack::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
+void CachedTextTrack::data(ResourceBuffer* data, bool allDataReceived)
 {
     m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);

@@ -93,7 +93,7 @@ const String CachedCSSStyleSheet::sheetText(bool enforceMIMEType, bool* hasValid
     return sheetText;
 }
 
-void CachedCSSStyleSheet::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
+void CachedCSSStyleSheet::data(ResourceBuffer* data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;
