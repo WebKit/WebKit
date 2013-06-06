@@ -432,7 +432,7 @@ transitions/change-values-during-transition.html
 fast/workers/storage/use-same-database-in-page-and-workers.html
 
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
-webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ]
+webkit.org/b/117326 fast/workers/worker-document-leak.html [ Crash ]
 webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
 # Times out on apple-windows-3 http://webkit.org/b/48750
@@ -2706,6 +2706,7 @@ webkit.org/b/116562 fast/js/large-expressions.html
 webkit.org/b/116562 fast/js/string-replace-exception-crash.html
 webkit.org/b/116562 fast/text/custom-font-data-crash.html
 webkit.org/b/116562 loader/go-back-cached-main-resource.html
+webkit.org/b/116562 media/video-beforeload-remove-source.html
 webkit.org/b/116562 svg/filters/feMorphology-crash.html
 
 # Test failures being investigated under https://bugs.webkit.org/show_bug.cgi?id=116564
@@ -2739,4 +2740,56 @@ webkit.org/b/116564 transitions/svg-text-shadow-transition.html
 # Enable storage tests, but exclude the websql tests (see https://webkit.org/b/116559).
 webkit.org/b/116559 storage/websql
 
+# Exclude mathml, which does not work properly under windows
 webkit.org/b/117200 mathml
+
+# After switching to NRWT, we find that some of the new image tests do not pass.
+webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnlyFailure ]
+webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-006.htm [ ImageOnlyFailure ]
+webkit.org/b/117322 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/text-indent-first-line-006.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/border-width.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/calc.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/colors-test.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/computed-style.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/inherited-values.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/inline-styles.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/redefinition.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/transform-test.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/use-before-defined.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/var-inside-box-reflect.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/var-inside-pair.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/var-inside-quad.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/var-inside-shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/variables/variable-chain.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
+webkit.org/b/117322 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
+webkit.org/b/117322 media/video-poster-background.html [ ImageOnlyFailure ]
+webkit.org/b/117322 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
+webkit.org/b/117322 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
+webkit.org/b/117322 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
+webkit.org/b/117322 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
+webkit.org/b/117322 svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
+
+# Text Test Failures
+webkit.org/b/117323 animations/animation-delay-changed.html
+webkit.org/b/117323 editing/inserting/insert-3907422-fix.html
+webkit.org/b/117323 fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml
+webkit.org/b/117323 fast/frames/sandboxed-iframe-about-blank.html
+webkit.org/b/117323 fast/frames/sandboxed-iframe-navigation-allowed.html
+webkit.org/b/117323 fast/frames/sandboxed-iframe-plugins.html
+webkit.org/b/117323 fast/replaced/invalid-object-with-fallback.html
+webkit.org/b/117323 fast/replaced/no-focus-ring-embed.html
+webkit.org/b/117323 fast/replaced/no-focus-ring-object.html
+webkit.org/b/117323 fast/replaced/object-with-embed-url-param.html
+webkit.org/b/117323 platform/win/plugins/call-javascript-that-destroys-plugin.html
+webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html
+
+# Crashes
+webkit.org/b/117324 fast/css/fontloader-download-error.html
+webkit.org/b/117325 svg/as-image/svg-nested.html

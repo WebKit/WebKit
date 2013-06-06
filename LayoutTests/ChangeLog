@@ -1,3 +1,9 @@
+2013-06-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed TestExpectation cleanup.
+
+        * platform/win/TestExpectations:
+
 2013-06-06  Radu Stavila  <stavila@adobe.com>
 
         :hover style not applied on hover if its display property is different from original style's
