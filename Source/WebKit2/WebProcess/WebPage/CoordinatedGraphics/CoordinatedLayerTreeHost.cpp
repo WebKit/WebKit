@@ -670,23 +670,21 @@ void CoordinatedLayerTreeHost::purgeBackingStores()
     m_updateAtlases.clear();
 }
 
-PassOwnPtr<GraphicsContext> CoordinatedLayerTreeHost::beginContentUpdate(const IntSize& size, CoordinatedSurface::Flags flags, uint32_t& atlasID, IntPoint& offset)
+bool CoordinatedLayerTreeHost::paintToSurface(const IntSize& size, CoordinatedSurface::Flags flags, uint32_t& atlasID, IntPoint& offset, CoordinatedSurface::Client* client)
 {
-    OwnPtr<GraphicsContext> graphicsContext;
     for (unsigned i = 0; i < m_updateAtlases.size(); ++i) {
         UpdateAtlas* atlas = m_updateAtlases[i].get();
         if (atlas->supportsAlpha() == (flags & CoordinatedSurface::SupportsAlpha)) {
-            // This will return null if there is no available buffer space.
-            graphicsContext = atlas->beginPaintingOnAvailableBuffer(atlasID, size, offset);
-            if (graphicsContext)
-                return graphicsContext.release();
+            // This will false if there is no available buffer space.
+            if (atlas->paintOnAvailableBuffer(size, atlasID, offset, client))
+                return true;
         }
     }
 
     static const int ScratchBufferDimension = 1024; // Should be a power of two.
     m_updateAtlases.append(adoptPtr(new UpdateAtlas(this, ScratchBufferDimension, flags)));
     scheduleReleaseInactiveAtlases();
-    return m_updateAtlases.last()->beginPaintingOnAvailableBuffer(atlasID, size, offset);
+    return m_updateAtlases.last()->paintOnAvailableBuffer(size, atlasID, offset, client);
 }
 
 const double ReleaseInactiveAtlasesTimerInterval = 0.5;

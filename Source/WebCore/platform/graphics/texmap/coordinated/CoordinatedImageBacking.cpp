@@ -33,6 +33,24 @@
 
 namespace WebCore {
 
+class ImageBackingSurfaceClient : public CoordinatedSurface::Client {
+public:
+    ImageBackingSurfaceClient(Image* image, const IntRect& rect)
+        : m_image(image)
+        , m_rect(rect)
+    {
+    }
+
+    virtual void paintToSurfaceContext(GraphicsContext* context) OVERRIDE
+    {
+        context->drawImage(m_image, ColorSpaceDeviceRGB, m_rect, m_rect);
+    }
+
+private:
+    Image* m_image;
+    IntRect m_rect;
+};
+
 CoordinatedImageBackingID CoordinatedImageBacking::getCoordinatedImageBackingID(Image* image)
 {
     // CoordinatedImageBacking keeps a RefPtr<Image> member, so the same Image pointer can not refer two different instances until CoordinatedImageBacking releases the member.
@@ -109,8 +127,9 @@ void CoordinatedImageBacking::update()
     }
 
     IntRect rect(IntPoint::zero(), m_image->size());
-    OwnPtr<GraphicsContext> context = m_surface->createGraphicsContext(rect);
-    context->drawImage(m_image.get(), ColorSpaceDeviceRGB, rect, rect);
+
+    ImageBackingSurfaceClient surfaceClient(m_image.get(), rect);
+    m_surface->paintToSurface(rect, &surfaceClient);
 
     m_nativeImagePtr = m_image->nativeImageForCurrentFrame();
 

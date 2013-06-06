@@ -73,17 +73,13 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
         return Vector<IntRect>();
 
     SurfaceUpdateInfo updateInfo;
-    OwnPtr<GraphicsContext> graphicsContext = m_client->beginContentUpdate(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset);
-    if (!graphicsContext)
+
+    if (!m_client->paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, this))
         return Vector<IntRect>();
-    graphicsContext->translate(-m_dirtyRect.x(), -m_dirtyRect.y());
-    graphicsContext->scale(FloatSize(m_tiledBackingStore->contentsScale(), m_tiledBackingStore->contentsScale()));
-    m_tiledBackingStore->client()->tiledBackingStorePaint(graphicsContext.get(), m_tiledBackingStore->mapToContents(m_dirtyRect));
 
     updateInfo.updateRect = m_dirtyRect;
     updateInfo.updateRect.move(-m_rect.x(), -m_rect.y());
     updateInfo.scaleFactor = m_tiledBackingStore->contentsScale();
-    graphicsContext.release();
 
     static uint32_t id = 1;
     if (m_ID == InvalidCoordinatedTileID) {
@@ -99,6 +95,13 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
     updatedRects.append(m_dirtyRect);
     m_dirtyRect = IntRect();
     return updatedRects;
+}
+
+void CoordinatedTile::paintToSurfaceContext(GraphicsContext* context)
+{
+    context->translate(-m_dirtyRect.x(), -m_dirtyRect.y());
+    context->scale(FloatSize(m_tiledBackingStore->contentsScale(), m_tiledBackingStore->contentsScale()));
+    m_tiledBackingStore->client()->tiledBackingStorePaint(context, m_tiledBackingStore->mapToContents(m_dirtyRect));
 }
 
 void CoordinatedTile::swapBackBufferToFront()

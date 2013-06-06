@@ -1,3 +1,28 @@
+2013-06-06  Jae Hyun Park  <jae.park@company100.net>
+
+        Coordinated Graphics : Refactor CoordinatedSurface to manage the lifecycle of GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=108899
+
+        Reviewed by Noam Rosenthal.
+
+        This is a preparation patch for Threaded Coordinated Graphics.
+
+        This patch changes CoordinatedSurface to be responsible for the
+        lifecycle of GraphicsContext used in Coordinated Graphics System.
+        CoordinatedImageBacking and UpdateAtlas do not ask for the ownership
+        of GraphicsContext anymore. Instead, those classes use client pattern to
+        ask the CoordiantedSurface to paint to the GraphicsContext.
+
+        This refactoring is needed to implement CoordinatedSurface for Threaded
+        Coordinated Graphics.
+
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::paintToSurface):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::paintToSurface):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2013-06-05  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK2] Fix test_ewk2_view unit test timed out issue

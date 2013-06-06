@@ -39,6 +39,12 @@ public:
     };
     typedef unsigned Flags;
 
+    class Client {
+    public:
+        virtual ~Client() { }
+        virtual void paintToSurfaceContext(GraphicsContext*) = 0;
+    };
+
     typedef PassRefPtr<CoordinatedSurface> Factory(const IntSize&, Flags);
     static void setFactory(Factory);
     static PassRefPtr<CoordinatedSurface> create(const IntSize&, Flags);
@@ -48,8 +54,7 @@ public:
     bool supportsAlpha() const { return flags() & SupportsAlpha; }
     virtual IntSize size() const = 0;
 
-    // Create a graphics context that can be used to paint into the backing store.
-    virtual PassOwnPtr<GraphicsContext> createGraphicsContext(const IntRect&) = 0;
+    virtual void paintToSurface(const IntRect&, Client*) = 0;
 
 #if USE(TEXTURE_MAPPER)
     virtual void copyToTexture(PassRefPtr<BitmapTexture>, const IntRect& target, const IntPoint& sourceOffset) = 0;

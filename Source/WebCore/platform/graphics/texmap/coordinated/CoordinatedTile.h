@@ -28,6 +28,7 @@
 
 #if USE(TILED_BACKING_STORE)
 
+#include "CoordinatedSurface.h"
 #include "IntRect.h"
 #include "Tile.h"
 #include "TiledBackingStore.h"
@@ -39,7 +40,7 @@ class ImageBuffer;
 class SurfaceUpdateInfo;
 class TiledBackingStore;
 
-class CoordinatedTile : public Tile {
+class CoordinatedTile : public Tile, public CoordinatedSurface::Client {
 public:
     static PassRefPtr<Tile> create(CoordinatedTileClient* client, TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate) { return adoptRef(new CoordinatedTile(client, tiledBackingStore, tileCoordinate)); }
     ~CoordinatedTile();
@@ -54,6 +55,8 @@ public:
     const Coordinate& coordinate() const { return m_coordinate; }
     const IntRect& rect() const { return m_rect; }
     void resize(const IntSize&);
+
+    virtual void paintToSurfaceContext(GraphicsContext*) OVERRIDE;
 
 private:
     CoordinatedTile(CoordinatedTileClient*, TiledBackingStore*, const Coordinate&);
@@ -75,7 +78,7 @@ public:
     virtual void createTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;
     virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;
     virtual void removeTile(uint32_t tileID) = 0;
-    virtual PassOwnPtr<GraphicsContext> beginContentUpdate(const IntSize&, uint32_t& atlasID, IntPoint&) = 0;
+    virtual bool paintToSurface(const IntSize&, uint32_t& atlasID, IntPoint&, CoordinatedSurface::Client*) = 0;
 };
 
 class CoordinatedTileBackend : public TiledBackingStoreBackend {

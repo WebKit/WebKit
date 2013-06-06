@@ -183,6 +183,14 @@ bool WebCoordinatedSurface::createHandle(Handle& handle)
     return true;
 }
 
+void WebCoordinatedSurface::paintToSurface(const IntRect& rect, CoordinatedSurface::Client* client)
+{
+    ASSERT(client);
+
+    OwnPtr<GraphicsContext> context = createGraphicsContext(rect);
+    client->paintToSurfaceContext(context.get());
+}
+
 #if USE(TEXTURE_MAPPER)
 void WebCoordinatedSurface::copyToTexture(PassRefPtr<WebCore::BitmapTexture> passTexture, const IntRect& target, const IntPoint& sourceOffset)
 {

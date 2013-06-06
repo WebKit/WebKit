@@ -1,3 +1,40 @@
+2013-06-06  Jae Hyun Park  <jae.park@company100.net>
+
+        Coordinated Graphics : Refactor CoordinatedSurface to manage the lifecycle of GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=108899
+
+        Reviewed by Noam Rosenthal.
+
+        This is a preparation patch for Threaded Coordinated Graphics.
+
+        This patch changes CoordinatedSurface to be responsible for the
+        lifecycle of GraphicsContext used in Coordinated Graphics System.
+        CoordinatedImageBacking and UpdateAtlas do not ask for the ownership
+        of GraphicsContext anymore. Instead, those classes use client pattern to
+        ask the CoordiantedSurface to paint to the GraphicsContext.
+
+        This refactoring is needed to implement CoordinatedSurface for Threaded
+        Coordinated Graphics.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::paintToSurface):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp:
+        (WebCore::ImageBackingSurfaceClient::ImageBackingSurfaceClient):
+        (WebCore::CoordinatedImageBacking::update):
+        * platform/graphics/texmap/coordinated/CoordinatedSurface.h:
+        (WebCore::CoordinatedSurface::Client::~Client):
+        * platform/graphics/texmap/coordinated/CoordinatedTile.cpp:
+        (WebCore::CoordinatedTile::updateBackBuffer):
+        (WebCore::CoordinatedTile::paintToSurfaceContext):
+        * platform/graphics/texmap/coordinated/CoordinatedTile.h:
+        * platform/graphics/texmap/coordinated/UpdateAtlas.cpp:
+        (WebCore::UpdateAtlasSurfaceClient::UpdateAtlasSurfaceClient):
+        (WebCore::UpdateAtlas::paintOnAvailableBuffer):
+        * platform/graphics/texmap/coordinated/UpdateAtlas.h:
+
 2013-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert the second half of r151257. WebGLRenderingContext::create can return null.

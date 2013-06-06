@@ -124,7 +124,7 @@ private:
     virtual WebCore::FloatRect visibleContentsRect() const;
     virtual PassRefPtr<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) OVERRIDE;
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& atlasID, WebCore::IntPoint&);
+    virtual bool paintToSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& /* atlasID */, WebCore::IntPoint&, WebCore::CoordinatedSurface::Client*) OVERRIDE;
     virtual void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&);
 
     // UpdateAtlas::Client

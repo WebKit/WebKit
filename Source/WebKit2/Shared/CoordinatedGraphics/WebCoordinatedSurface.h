@@ -73,7 +73,7 @@ public:
 
     virtual WebCore::IntSize size() const OVERRIDE { return m_size; }
 
-    virtual PassOwnPtr<WebCore::GraphicsContext> createGraphicsContext(const WebCore::IntRect&) OVERRIDE;
+    virtual void paintToSurface(const WebCore::IntRect&, WebCore::CoordinatedSurface::Client*) OVERRIDE;
 
 #if USE(TEXTURE_MAPPER)
     virtual void copyToTexture(PassRefPtr<WebCore::BitmapTexture>, const WebCore::IntRect& target, const WebCore::IntPoint& sourceOffset) OVERRIDE;
@@ -87,6 +87,7 @@ private:
     // Create a WebCoordinatedSurface referencing an existing ShareableBitmap.
     static PassRefPtr<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags, PassRefPtr<ShareableBitmap>);
 
+    PassOwnPtr<WebCore::GraphicsContext> createGraphicsContext(const WebCore::IntRect&);
 #if USE(GRAPHICS_SURFACE)
     WebCoordinatedSurface(const WebCore::IntSize&, Flags, PassRefPtr<WebCore::GraphicsSurface>);
     // Create a shareable bitmap backed by a graphics surface.

@@ -959,11 +959,11 @@ Color CoordinatedGraphicsLayer::tiledBackingStoreBackgroundColor() const
     return contentsOpaque() ? Color::white : Color::transparent;
 }
 
-PassOwnPtr<GraphicsContext> CoordinatedGraphicsLayer::beginContentUpdate(const IntSize& size, uint32_t& atlas, IntPoint& offset)
+bool CoordinatedGraphicsLayer::paintToSurface(const IntSize& size, uint32_t& atlas, IntPoint& offset, CoordinatedSurface::Client* client)
 {
     ASSERT(m_coordinator);
     ASSERT(m_coordinator->isFlushingLayerChanges());
-    return m_coordinator->beginContentUpdate(size, contentsOpaque() ? CoordinatedSurface::NoFlags : CoordinatedSurface::SupportsAlpha, atlas, offset);
+    return m_coordinator->paintToSurface(size, contentsOpaque() ? CoordinatedSurface::NoFlags : CoordinatedSurface::SupportsAlpha, atlas, offset, client);
 }
 
 void CoordinatedGraphicsLayer::createTile(uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& tileRect)

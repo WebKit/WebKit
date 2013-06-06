@@ -45,8 +45,8 @@ public:
 
     inline IntSize size() const { return m_surface->size(); }
 
-    // Returns a null pointer of there is no available buffer.
-    PassOwnPtr<GraphicsContext> beginPaintingOnAvailableBuffer(uint32_t& atlasID, const IntSize&, IntPoint& offset);
+    // Returns false if there is no available buffer.
+    bool paintOnAvailableBuffer(const IntSize&, uint32_t& atlasID, IntPoint& offset, CoordinatedSurface::Client*);
     void didSwapBuffers();
     bool supportsAlpha() const { return m_surface->supportsAlpha(); }
 
