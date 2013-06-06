@@ -2,6 +2,234 @@
 
         [Qt] Unreviewed gardening. Rebaselining after r151205.
 
+        * platform/qt-5.0-wk2/compositing/geometry/abs-position-inside-opacity-expected.png:
+        * platform/qt-5.0-wk2/css1/box_properties/border_right-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-002-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-non-replaced-max-height-010-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-width-015-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/background-intrinsic-003-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/block-non-replaced-height-011-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-fixed-reflected-layer-expected.png.
+        * platform/qt-5.0-wk2/css2.1/20110323/inline-replaced-height-007-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-applies-to-007-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/replaced-intrinsic-005-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-escapes-05-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t040103-escapes-06-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0510-c25-pseudo-elmnt-00-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t051202-c24-first-lttr-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0803-c5504-imrgn-l-05-b-ag-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-fixed-reflected-layer-expected.png.
+        * platform/qt-5.0-wk2/css2.1/t0804-c5507-padn-r-03-f-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5515-ibrdr-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5516-brdr-c-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5516-ibrdr-c-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5517-brdr-s-00-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5517-ibrdr-s-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5518-brdr-t-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5519-brdr-r-02-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5520-brdr-b-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5520-brdr-b-01-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5520-ibrdr-b-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5521-brdr-l-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5521-brdr-l-01-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5521-brdr-l-02-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5521-ibrdr-l-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5522-brdr-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5522-brdr-01-b-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5522-brdr-02-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5522-ibrdr-00-a-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t09-c5526c-display-00-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t090402-c42-ibx-pad-00-d-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c414-flt-01-d-g-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t0905-c414-flt-02-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c414-flt-03-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c414-flt-04-c-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c414-flt-fit-00-d-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c414-flt-fit-01-d-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c414-flt-wrap-00-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c414-flt-wrap-01-d-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltblck-01-d-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltclr-00-c-ag-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltcont-00-d-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c5525-flthw-00-c-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltinln-00-c-ag-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltmrgn-00-c-ag-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t0905-c5525-fltmult-00-d-g-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t1202-counter-00-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t1202-counter-06-b-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-03-d-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-04-d-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-55-d-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/selectors3/html/css3-modsel-41-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/selectors3/html/css3-modsel-42a-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/selectors3/html/css3-modsel-82b-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/selectors3/xhtml/css3-modsel-125b-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/selectors3/xhtml/css3-modsel-15-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/selectors3/xhtml/css3-modsel-29b-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/selectors3/xml/css3-modsel-44b-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/selectors3/xml/css3-modsel-45c-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-fixed-reflected-layer-expected.png.
+        * platform/qt-5.0-wk2/css3/selectors3/xml/css3-modsel-90-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/delete-3865854-fix-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/delete-at-paragraph-boundaries-004-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/delete-at-paragraph-boundaries-005-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/deleting/delete-first-list-item-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/execCommand/4580583-1-expected.png:
+        * platform/qt-5.0-wk2/editing/inserting/4840662-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/redo-expected.png:
+        * platform/qt-5.0-wk2/editing/inserting/return-key-with-selection-002-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/inserting/typing-001-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/5075944-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/4960116-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/5195166-2-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/6476-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/move-by-character-004-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/auto-height-with-top-and-bottom-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/background-color/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/body-propagation/overflow/006-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/before-with-first-letter-expected.png:
+        * platform/qt-5.0-wk2/fast/css/create_element_align-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/max-height-none-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/pendingStylesheetFontSize-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-fixed-reflected-layer-expected.png.
+        * platform/qt-5.0-wk2/fast/dom/children-nodes-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/flexbox/013-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/form-added-to-table-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-fixed-reflected-layer-expected.png.
+        * platform/qt-5.0-wk2/fast/forms/input-button-sizes-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline/25277-2-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline/inline-borders-with-bidi-override-expected.png:
+        * platform/qt-5.0-wk2/fast/multicol/float-avoidance-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/float-paginate-complex-expected.png:
+        * platform/qt-5.0-wk2/fast/overflow/007-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/overflow/hidden-scrollbar-resize-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/caret-with-transformation-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/dynamic-table-vertical-alignment-change-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/opacity-change-on-overflow-float-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/scroll-fixed-reflected-layer-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/table-extra-bottom-grow-expected.png:
+        * platform/qt-5.0-wk2/fast/selectors/010-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/selectors/015-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/selectors/060-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/selectors/160-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/041-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/empty-cells-expected.png:
+        * platform/qt-5.0-wk2/fast/text/whitespace/026-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-fixed-reflected-layer-expected.png.
+        * platform/qt-5.0-wk2/fast/text/whitespace/span-in-word-space-causes-overflow-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-fixed-reflected-layer-expected.png.
+        * platform/qt-5.0-wk2/ietestcenter/css3/text/textshadow-007-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/scroll-fixed-reflected-layer-expected.png.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-03-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-06-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-07-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-08-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-22-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-27-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-28-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-32-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-34-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-46-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-52-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-60-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-63-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-64-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-65-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-66-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-67-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-68-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-69-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-70-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-77-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-78-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-81-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/color-prop-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/coords-trans-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/coords-trans-05-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/coords-units-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/filters-color-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/linking-a-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/linking-a-05-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/masking-path-05-f-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/painting-fill-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/painting-fill-02-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/painting-fill-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/painting-stroke-02-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/painting-stroke-03-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/paths-data-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/paths-data-05-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/paths-data-14-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/render-elems-02-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/render-elems-03-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/render-elems-07-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/render-groups-03-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/script-handle-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/shapes-line-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-dom-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-dom-05-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-dom-06-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-frag-02-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-frag-06-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-group-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-group-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-image-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-use-03-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/styling-css-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/styling-css-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-fonts-03-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-spacing-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-text-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-text-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-text-05-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-text-07-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-text-08-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-tref-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-tspan-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-ws-02-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/textEffect-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/batik/text/xmlSpace-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/css/css-box-min-width-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/css/group-with-shadow-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/altglyph-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/recursive-clippath-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/shape-rendering-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-filter-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-modify-container-in-target-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug106158-1-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug11384s-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2509-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug27038-3-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug650-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/col_span-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/tables_bgcolor_blue_rgb-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/tables_cellspacing-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/tables_class-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/tables_row_th_nowrap-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/tables_th_align_right-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/tr_bgcolor_black-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_table_bgcolor_rgb-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_table_id-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_tbody_align_justify-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_th_valign_top-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_tr_align_right-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin/tables_caption_align_right-expected.png: Added.
+
+2013-06-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaselining after r151205.
+
         * platform/qt-5.0-wk2/tables/mozilla/bugs/bug92143-expected.png:
         * platform/qt-5.0-wk2/tables/mozilla/bugs/bug9271-1-expected.png: Added.
         * platform/qt-5.0-wk2/tables/mozilla/bugs/bug9271-2-expected.png: Added.
