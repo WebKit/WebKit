@@ -39,7 +39,6 @@ editing/selection/context-menu-on-text.html
 editing/selection/doubleclick-whitespace-crash.html
 editing/selection/doubleclick-whitespace-img-crash.html
 editing/selection/doubleclick-whitespace.html
-editing/selection/caret-after-keypress.html
 editing/selection/empty-cell-right-click.html
 editing/selection/move-begin-end.html
 editing/selection/select-out-of-editable.html

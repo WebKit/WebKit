@@ -1,3 +1,18 @@
+2013-06-06  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        selectionStart/selectionEnd return "obsolete" values when requested during "input" event
+        https://bugs.webkit.org/show_bug.cgi?id=117287
+
+        Reviewed by Darin Adler.
+
+        Qt-WK2 test crashes when eventSender.keyDown invocations are nested.
+
+        This patch unrolls recursion to avoid crash. 
+
+        * editing/selection/caret-after-keypress.html:
+        unroll recursive eventSender.keyDown invocations
+        * platform/qt-5.0-wk2/TestExpectations: Unskip test.
+
 2013-06-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS ignores ARIA progressbar elements
