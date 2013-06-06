@@ -1,3 +1,17 @@
+2013-06-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove unused HashValueForClassAndName() from JSC bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=117292
+
+        Reviewed by Kentaro Hara.
+
+        Remove HashValueForClassAndName() subroutine from JSC bindings generator
+        as it is dead code.
+
+        No new tests, code clean up.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2013-06-06  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         Cannot set a new timer inside of timer callback in RunLoopTimerGtk & RunLoopTimerEFL

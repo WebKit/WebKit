@@ -290,19 +290,6 @@ sub AddClassForwardIfNeeded
     }
 }
 
-sub HashValueForClassAndName
-{
-    my $class = shift;
-    my $name = shift;
-
-    # SVG Filter enums live in WebCore namespace (platform/graphics/)
-    if ($class =~ /^SVGFE*/ or $class =~ /^SVGComponentTransferFunctionElement$/) {
-        return "WebCore::$name";
-    }
-
-    return "${class}::$name";
-}
-
 sub hashTableAccessor
 {
     my $noStaticTables = shift;
