@@ -202,31 +202,43 @@ sub AddIncludesForTypeInHeader
     AddIncludesForType($type, $isCallback, \%headerIncludes);
 }
 
+my %typesWithoutHeader = (
+    "Array" => 1,
+    "DOMString" => 1,
+    "DOMTimeStamp" => 1,
+    "any" => 1
+);
+
+sub SkipIncludeHeader
+{
+    my $type = shift;
+
+    return 1 if $codeGenerator->SkipIncludeHeader($type);
+    return 1 if $codeGenerator->GetSequenceType($type) or $codeGenerator->GetArrayType($type);
+    return $typesWithoutHeader{$type};
+}
+
 sub AddIncludesForType
 {
     my $type = shift;
     my $isCallback = shift;
     my $includesRef = shift;
 
+    return if SkipIncludeHeader($type);
+
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
-    if ($codeGenerator->IsPrimitiveType($type) or $codeGenerator->SkipIncludeHeader($type)
-        or $type eq "DOMString" or $type eq "any" or $type eq "Array" or $type eq "DOMTimeStamp") {
-    } elsif ($type =~ /SVGPathSeg/) {
+    if ($type =~ /SVGPathSeg/) {
         my $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
         $includesRef->{"${joinedName}.h"} = 1;
     } elsif ($type eq "XPathNSResolver") {
         $includesRef->{"JSXPathNSResolver.h"} = 1;
         $includesRef->{"JSCustomXPathNSResolver.h"} = 1;
-    } elsif ($type eq "SerializedScriptValue") {
-        $includesRef->{"SerializedScriptValue.h"} = 1;
-    } elsif ($isCallback) {
+    } elsif ($isCallback && $codeGenerator->IsWrapperType($type)) {
         $includesRef->{"JS${type}.h"} = 1;
     } elsif ($codeGenerator->IsTypedArrayType($type)) {
         $includesRef->{"<wtf/${type}.h>"} = 1;
-    } elsif ($codeGenerator->GetSequenceType($type)) {
-    } elsif ($codeGenerator->GetArrayType($type)) {
     } else {
         # default, include the same named file
         $includesRef->{"${type}.h"} = 1;

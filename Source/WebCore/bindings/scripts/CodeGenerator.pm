@@ -332,9 +332,7 @@ sub SkipIncludeHeader
     my $object = shift;
     my $type = shift;
 
-    return 1 if $primitiveTypeHash{$type};
-    return 1 if $numericTypeHash{$type};
-    return 1 if $type eq "String";
+    return 1 if $object->IsPrimitiveType($type);
 
     # Special case: SVGPoint.h / SVGNumber.h do not exist.
     return 1 if $type eq "SVGPoint" or $type eq "SVGNumber";

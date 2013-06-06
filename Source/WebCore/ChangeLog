@@ -1,3 +1,30 @@
+2013-06-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Clean up AddIncludesForType in JSC bindings generators
+        https://bugs.webkit.org/show_bug.cgi?id=117297
+
+        Reviewed by Kentaro Hara.
+
+        Clean up AddIncludesForType in JSC bindings generators:
+        - Add JSC specific SkipIncludeHeader() subroutine and move
+        exceptions there.
+        - Remove special case for SerializedScriptValue by improving
+        the condition for callbacks: "JS" prefix is now only added to
+        headers in callbacks if they are wrapper types. Non-wrapper
+        types such as SerializedScriptValue do not have a JS*.h
+        header.
+
+        No new tests, code clean up.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (SkipIncludeHeader):
+        - Reuse IsPrimitiveType() to avoid code duplication.
+        - Remove special case for String as this is not a valid IDL type
+        and it is not currently used.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (SkipIncludeHeader):
+        (AddIncludesForType):
+
 2013-06-06  Radu Stavila  <stavila@adobe.com>
 
         :hover style not applied on hover if its display property is different from original style's
