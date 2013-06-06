@@ -1,3 +1,14 @@
+2013-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove run-performance-tests
+        https://bugs.webkit.org/show_bug.cgi?id=117285
+
+        Reviewed by Andreas Kling.
+        
+        Remove the script since it's not used anywhere.
+
+        * BuildSlaveSupport/run-performance-tests: Removed.
+
 2013-06-05  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
