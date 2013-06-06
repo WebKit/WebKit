@@ -42,6 +42,8 @@ public:
         ASSERT(workQueue);
     }
 
+    virtual ~EventSource() { }
+
     void performWork()
     {
         m_function();

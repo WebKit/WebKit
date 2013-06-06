@@ -1,3 +1,24 @@
+2013-06-06  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Gtk] Connection is leaking when WebProcess is terminated
+        https://bugs.webkit.org/show_bug.cgi?id=117293
+
+        Reviewed by Martin Robinson.
+
+        Connection is leaking because WorkQueue::SocketEventSource inherits from
+        WorkQueue::EventSource but when it is destroyed, the actual destructor running
+        is the one from base class; however, subclass contains a function binded from
+        Connection (m_closeFunction) and we need to do this extra cleanup, otherwise
+        WorkQueue will keep Connection alive. A better explanation of this fix is provided
+        on http://stackoverflow.com/questions/461203/when-to-use-virtual-destructors
+
+        A quick way to see the leak is to change WK2 test "ReloadPageAfterCrash" to terminate
+        WebProcess N times and add a printf on Connection destructor.
+
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::EventSource::~EventSource): Adds a virtual destructor to enable
+        the subclass to do its own cleanup.
+
 2013-06-06  Jae Hyun Park  <jae.park@company100.net>
 
         Coordinated Graphics : Refactor CoordinatedSurface to manage the lifecycle of GraphicsContext
