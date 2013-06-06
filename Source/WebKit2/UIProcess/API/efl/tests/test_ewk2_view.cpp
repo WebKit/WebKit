@@ -894,40 +894,53 @@ TEST_F(EWK2UnitTestBase, ewk_context_vibration_client_callbacks_set)
     ASSERT_FALSE(data.didReceiveCancelVibration);
 }
 
-static void onContentsSizeChanged(void* userData, Evas_Object*, void* eventInfo)
+static void onContentsSizeChangedPortrait(void* userData, Evas_Object*, void* eventInfo)
 {
     bool* result = static_cast<bool*>(userData);
     Ewk_CSS_Size* size = static_cast<Ewk_CSS_Size*>(eventInfo);
-
     if (size->w == 2000 && size->h == 3000)
+        *result = true;
+}
+
+static void onContentsSizeChangedLandscape(void* userData, Evas_Object*, void* eventInfo)
+{
+    bool* result = static_cast<bool*>(userData);
+    Ewk_CSS_Size* size = static_cast<Ewk_CSS_Size*>(eventInfo);
+    if (size->w == 3000 && size->h == 2000)
         *result = true;
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_contents_size_changed)
 {
-    const char contentsSizeHTML[] =
+    const char contentsSizeHTMLPortrait[] =
         "<!DOCTYPE html>"
         "<body style=\"margin:0px;width:2000px;height:3000px\"></body>";
+    const char contentsSizeHTMLLandscape[] =
+        "<!DOCTYPE html>"
+        "<body style=\"margin:0px;width:3000px;height:2000px\"></body>";
 
     bool sizeChanged = false;
-    evas_object_smart_callback_add(webView(), "contents,size,changed", onContentsSizeChanged, &sizeChanged);
-    ewk_view_html_string_load(webView(), contentsSizeHTML, 0, 0);
+    evas_object_smart_callback_add(webView(), "contents,size,changed", onContentsSizeChangedPortrait, &sizeChanged);
+    ewk_view_html_string_load(webView(), contentsSizeHTMLPortrait, 0, 0);
     while (!sizeChanged)
         ecore_main_loop_iterate();
+    evas_object_smart_callback_del(webView(), "contents,size,changed", onContentsSizeChangedPortrait);
 
+    evas_object_smart_callback_add(webView(), "contents,size,changed", onContentsSizeChangedLandscape, &sizeChanged);
     ewk_view_device_pixel_ratio_set(webView(), 2);
-    ewk_view_html_string_load(webView(), contentsSizeHTML, 0, 0);
+    ewk_view_html_string_load(webView(), contentsSizeHTMLLandscape, 0, 0);
     sizeChanged = false;
     while (!sizeChanged)
         ecore_main_loop_iterate();
+    evas_object_smart_callback_del(webView(), "contents,size,changed", onContentsSizeChangedLandscape);
 
+    evas_object_smart_callback_add(webView(), "contents,size,changed", onContentsSizeChangedPortrait, &sizeChanged);
     ewk_view_scale_set(webView(), 3, 0, 0);
-    ewk_view_html_string_load(webView(), contentsSizeHTML, 0, 0);
+    ewk_view_html_string_load(webView(), contentsSizeHTMLPortrait, 0, 0);
     sizeChanged = false;
     while (!sizeChanged)
         ecore_main_loop_iterate();
-
-    evas_object_smart_callback_del(webView(), "contents,size,changed", onContentsSizeChanged);
+    evas_object_smart_callback_del(webView(), "contents,size,changed", onContentsSizeChangedPortrait);
 }
 
 static bool obtainedPageContents = false;

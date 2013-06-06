@@ -1,3 +1,19 @@
+2013-06-05  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][WK2] Fix test_ewk2_view unit test timed out issue
+        https://bugs.webkit.org/show_bug.cgi?id=117251
+
+        Reviewed by Christophe Dumez.
+
+        'ewk_view_contents_size_changed' unit test case has been timed out since r150802 because
+        same size is filtered by WebView class. So create one different test html string that has
+        different size to continue unit tests.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (onContentsSizeChangedPortrait):
+        (onContentsSizeChangedLandscape):
+        (TEST_F):
+
 2013-06-05  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
