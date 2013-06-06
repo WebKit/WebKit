@@ -118,6 +118,8 @@
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
     else if ([menuItem action] == @selector(togglePaginationMode:))
         [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
+    else if ([menuItem action] == @selector(toggleTransparentWindow:))
+        [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
 
     return YES;
 }
@@ -266,9 +268,25 @@
     }
 }
 
+- (IBAction)toggleTransparentWindow:(id)sender
+{
+    BOOL isTransparent = _webView.drawsTransparentBackground;
+    isTransparent = !isTransparent;
+
+    [[self window] setOpaque:!isTransparent];
+    [[self window] setHasShadow:!isTransparent];
+
+    _webView.drawsTransparentBackground = isTransparent;
+
+    [[self window] display];    
+}
+
 - (IBAction)dumpSourceToConsole:(id)sender
 {
     WKPageGetSourceForFrame_b(_webView.pageRef, WKPageGetMainFrame(_webView.pageRef), ^(WKStringRef result, WKErrorRef error) {
+        if (!result)
+            return;
+
         CFStringRef cfResult = WKStringCopyCFString(0, result);
         LOG(@"Main frame source\n \"%@\"", (NSString *)cfResult);
         CFRelease(cfResult);

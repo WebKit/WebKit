@@ -26,6 +26,7 @@
 #import "WK1BrowserWindowController.h"
 
 #import <WebKit/WebKit.h>
+#import <WebKit/WebViewPrivate.h>
 #import "AppDelegate.h"
 
 @interface WK1BrowserWindowController ()
@@ -132,6 +133,8 @@
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
     else if ([menuItem action] == @selector(togglePaginationMode:))
         [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
+    else if ([menuItem action] == @selector(toggleTransparentWindow:))
+        [menuItem setState:[[self window] isOpaque] ? NSOffState : NSOnState];
 
     return YES;
 }
@@ -221,6 +224,22 @@
 
 - (IBAction)togglePaginationMode:(id)sender
 {
+}
+
+- (IBAction)toggleTransparentWindow:(id)sender
+{
+    BOOL isTransparent = ![[self window] isOpaque];
+    isTransparent = !isTransparent;
+    
+    [[self window] setOpaque:!isTransparent];
+    [[self window] setHasShadow:!isTransparent];
+
+    if (isTransparent)
+        [_webView setBackgroundColor:[NSColor clearColor]];
+    else
+        [_webView setBackgroundColor:[NSColor whiteColor]];
+
+    [[self window] display];
 }
 
 - (IBAction)find:(id)sender

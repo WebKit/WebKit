@@ -46,6 +46,8 @@
 - (IBAction)toggleZoomMode:(id)sender;
 - (IBAction)togglePaginationMode:(id)sender;
 
+- (IBAction)toggleTransparentWindow:(id)sender;
+
 - (IBAction)dumpSourceToConsole:(id)sender;
 
 - (IBAction)find:(id)sender;

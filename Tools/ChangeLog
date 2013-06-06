@@ -1,3 +1,25 @@
+2013-06-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a menu item to MiniBrowser to toggle Transparent windows
+        https://bugs.webkit.org/show_bug.cgi?id=117316
+
+        Reviewed by Anders Carlsson.
+        
+        Add a menu item that toggles "Transparent window" mode, which is exposed
+        via private WebKit API and WebKit2 API.
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController validateMenuItem:]):
+        (-[WK1BrowserWindowController toggleTransparentWindow:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController toggleTransparentWindow:]):
+        (-[WK2BrowserWindowController dumpSourceToConsole:]): Fix a crash that was seen
+        when testing.
+
 2013-06-06  Roger Fong  <roger_fong@apple.com>
 
         Stop copying AAS binaries into build folder.
