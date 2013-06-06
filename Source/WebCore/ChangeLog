@@ -1,5 +1,12 @@
 2013-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Revert the second half of r151257. WebGLRenderingContext::create can return null.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+
+2013-06-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove unnecessary null check in HTMLCanvasElement.cpp.
 
         Rubber-stamped by Benjamin Poulain.
