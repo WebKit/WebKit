@@ -525,8 +525,17 @@ private:
             m_arrayModes = 0;
         else if (!(m_type & ~SpecArray))
             m_arrayModes &= ALL_ARRAY_ARRAY_MODES;
-        else if (!(m_type & SpecArray))
-            m_arrayModes &= ALL_NON_ARRAY_ARRAY_MODES;
+
+        // NOTE: If m_type doesn't have SpecArray set, that doesn't mean that the
+        // array modes have to be a subset of ALL_NON_ARRAY_ARRAY_MODES, since
+        // in the speculated type type-system, RegExpMatchesArry and ArrayPrototype
+        // are Otherobj (since they are not *exactly* JSArray) but in the ArrayModes
+        // type system they are arrays (since they expose the magical length
+        // property and are otherwise allocated using array allocation). Hence the
+        // following would be wrong:
+        //
+        // if (!(m_type & SpecArray))
+        //    m_arrayModes &= ALL_NON_ARRAY_ARRAY_MODES;
     }
 };
 

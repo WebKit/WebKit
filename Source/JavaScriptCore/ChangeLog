@@ -1,3 +1,14 @@
+2013-06-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CFA shouldn't filter ArrayModes with ALL_NON_ARRAY_ARRAY_MODES if the speculated type is not SpecArray
+        https://bugs.webkit.org/show_bug.cgi?id=117279
+        <rdar://problem/14078025>        
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::filterArrayModesByType):
+
 2013-06-05  Michael Saboff  <msaboff@apple.com>
 
         JSC: Crash beneath cti_op_div @ http://gmailblog.blogspot.com
