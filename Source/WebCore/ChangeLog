@@ -1,5 +1,20 @@
 2013-06-05  Peter Gal  <galpeter@inf.u-szeged.hu>
 
+        [curl] Add implementation for HTTP PUT method.
+        https://bugs.webkit.org/show_bug.cgi?id=117256
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, covered by existing tests.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::getFormSize):
+        (WebCore::setupFormData):
+        (WebCore::ResourceHandleManager::setupPUT):
+        (WebCore::ResourceHandleManager::setupPOST):
+
+2013-06-05  Peter Gal  <galpeter@inf.u-szeged.hu>
+
         [curl] Normalize mime type information
         https://bugs.webkit.org/show_bug.cgi?id=117194
 

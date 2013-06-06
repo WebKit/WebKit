@@ -7,6 +7,7 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Appcelerator Inc.
  * Copyright (C) 2009 Brent Fulgham <bfulgham@webkit.org>
+ * Copyright (C) 2013 Peter Gal <galpeter@inf.u-szeged.hu>, University of Szeged
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -479,42 +480,23 @@ void ResourceHandleManager::removeFromCurl(ResourceHandle* job)
     job->deref();
 }
 
-void ResourceHandleManager::setupPUT(ResourceHandle*, struct curl_slist**)
+static inline size_t getFormElementsCount(ResourceHandle* job)
 {
-    notImplemented();
-}
-
-/* Calculate the length of the POST.
-   Force chunked data transfer if size of files can't be obtained.
- */
-void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** headers)
-{
-    ResourceHandleInternal* d = job->getInternal();
-    curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
-    curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, 0);
-
     if (!job->firstRequest().httpBody())
-        return;
+        return 0;
 
     Vector<FormDataElement> elements = job->firstRequest().httpBody()->elements();
+    return elements.size();
+}
+
+static void setupFormData(ResourceHandle* job, CURLoption sizeOption, struct curl_slist** headers)
+{
+    ResourceHandleInternal* d = job->getInternal();
+    Vector<FormDataElement> elements = job->firstRequest().httpBody()->elements();
     size_t numElements = elements.size();
-    if (!numElements)
-        return;
 
-    // Do not stream for simple POST data
-    if (numElements == 1) {
-        job->firstRequest().httpBody()->flatten(d->m_postBytes);
-        if (d->m_postBytes.size() != 0) {
-            curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
-            curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data());
-        }
-        return;
-    }
-
-    // Obtain the total size of the POST
     // The size of a curl_off_t could be different in WebKit and in cURL depending on
-    // compilation flags of both. For CURLOPT_POSTFIELDSIZE_LARGE we have to pass the
-    // right size or random data will be used as the size.
+    // compilation flags of both.
     static int expectedSizeOfCurlOffT = 0;
     if (!expectedSizeOfCurlOffT) {
         curl_version_info_data *infoData = curl_version_info(CURLVERSION_NOW);
@@ -530,6 +512,7 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** h
 #pragma warning(disable: 4307)
 #endif
     static const long long maxCurlOffT = (1LL << (expectedSizeOfCurlOffT * 8 - 1)) - 1;
+    // Obtain the total size of the form data
     curl_off_t size = 0;
     bool chunkedTransfer = false;
     for (size_t i = 0; i < numElements; i++) {
@@ -556,13 +539,52 @@ void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** h
         *headers = curl_slist_append(*headers, "Transfer-Encoding: chunked");
     else {
         if (sizeof(long long) == expectedSizeOfCurlOffT)
-          curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE_LARGE, (long long)size);
+            curl_easy_setopt(d->m_handle, sizeOption, (long long)size);
         else
-          curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE_LARGE, (int)size);
+            curl_easy_setopt(d->m_handle, sizeOption, (int)size);
     }
 
     curl_easy_setopt(d->m_handle, CURLOPT_READFUNCTION, readCallback);
     curl_easy_setopt(d->m_handle, CURLOPT_READDATA, job);
+}
+
+void ResourceHandleManager::setupPUT(ResourceHandle* job, struct curl_slist** headers)
+{
+    ResourceHandleInternal* d = job->getInternal();
+    curl_easy_setopt(d->m_handle, CURLOPT_UPLOAD, TRUE);
+    curl_easy_setopt(d->m_handle, CURLOPT_INFILESIZE, 0);
+
+    // Disable the Expect: 100 continue header
+    *headers = curl_slist_append(*headers, "Expect:");
+
+    size_t numElements = getFormElementsCount(job);
+    if (!numElements)
+        return;
+
+    setupFormData(job, CURLOPT_INFILESIZE_LARGE, headers);
+}
+
+void ResourceHandleManager::setupPOST(ResourceHandle* job, struct curl_slist** headers)
+{
+    ResourceHandleInternal* d = job->getInternal();
+    curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
+    curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, 0);
+
+    size_t numElements = getFormElementsCount(job);
+    if (!numElements)
+        return;
+
+    // Do not stream for simple POST data
+    if (numElements == 1) {
+        job->firstRequest().httpBody()->flatten(d->m_postBytes);
+        if (d->m_postBytes.size()) {
+            curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
+            curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data());
+        }
+        return;
+    }
+
+    setupFormData(job, CURLOPT_POSTFIELDSIZE_LARGE, headers);
 }
 
 void ResourceHandleManager::add(ResourceHandle* job)
