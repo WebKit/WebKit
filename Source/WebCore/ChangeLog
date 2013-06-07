@@ -1,3 +1,15 @@
+2013-06-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Unnecessary use of Layout types in GraphicsLayer::paintGraphicsLayerContents
+        https://bugs.webkit.org/show_bug.cgi?id=117340
+
+        Reviewed by Darin Adler.
+
+        There is no reason to use Layout types when copying from Int types to Int types.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents):
+
 2013-06-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL][GTK] TextCheckerEnchant uses deprecated enchant_dict_add_to_personal

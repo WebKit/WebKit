@@ -315,13 +315,13 @@ void GraphicsLayer::setBackgroundColor(const Color& color)
 void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const IntRect& clip)
 {
     if (m_client) {
-        LayoutSize offset = offsetFromRenderer();
+        IntSize offset = offsetFromRenderer();
         context.translate(-offset);
 
-        LayoutRect clipRect(clip);
+        IntRect clipRect(clip);
         clipRect.move(offset);
 
-        m_client->paintContents(this, context, m_paintingPhase, pixelSnappedIntRect(clipRect));
+        m_client->paintContents(this, context, m_paintingPhase, clipRect);
     }
 }
 
