@@ -60,7 +60,7 @@ void TextCheckerEnchant::ignoreWord(const String& word)
 void TextCheckerEnchant::learnWord(const String& word)
 {
     for (Vector<EnchantDict*>::const_iterator iter = m_enchantDictionaries.begin(); iter != m_enchantDictionaries.end(); ++iter)
-        enchant_dict_add_to_personal(*iter, word.utf8().data(), -1);
+        enchant_dict_add(*iter, word.utf8().data(), -1);
 }
 
 void TextCheckerEnchant::checkSpellingOfWord(const CString& word, int start, int end, int& misspellingLocation, int& misspellingLength)

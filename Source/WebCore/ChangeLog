@@ -1,3 +1,18 @@
+2013-06-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL][GTK] TextCheckerEnchant uses deprecated enchant_dict_add_to_personal
+        https://bugs.webkit.org/show_bug.cgi?id=117335
+
+        Reviewed by Christophe Dumez.
+
+        enchant_dict_add_to_personal has been deprecated at r22321 in Enchant repository.
+
+        No behavior change, no new tests needed.
+
+        * platform/text/enchant/TextCheckerEnchant.cpp:
+        (WebCore::TextCheckerEnchant::learnWord):
+        Use enchant_dict_add instead of enchant_dict_add_to_personal.
+
 2013-06-07  Zalan Bujtas  <zalan@apple.com>
 
         Frame flattening: crash when child iframe is removed during beforeload.
