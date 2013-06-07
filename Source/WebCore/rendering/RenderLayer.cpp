@@ -4021,6 +4021,8 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext* context
 
     for (size_t i = 0; i < list->size(); ++i) {
         RenderLayer* childLayer = list->at(i);
+        if (childLayer->isOutOfFlowRenderFlowThread())
+            continue;
         if (!childLayer->isPaginated())
             childLayer->paintLayer(context, paintingInfo, paintFlags);
         else
@@ -4858,6 +4860,8 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
     RenderLayer* resultLayer = 0;
     for (int i = list->size() - 1; i >= 0; --i) {
         RenderLayer* childLayer = list->at(i);
+        if (childLayer->isOutOfFlowRenderFlowThread())
+            continue;
         RenderLayer* hitLayer = 0;
         HitTestResult tempResult(result.hitTestLocation());
         if (childLayer->isPaginated())
@@ -5507,6 +5511,9 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
+            // RenderView will always return the size of the document, before reaching this point,
+            // so there's no way we could hit a RenderNamedFlowThread here.
+            ASSERT(!curLayer->isOutOfFlowRenderFlowThread());
             if (flags & IncludeCompositedDescendants || !curLayer->isComposited()) {
                 IntRect curAbsBounds = curLayer->calculateLayerBounds(this, 0, descendantFlags);
                 unionBounds.unite(curAbsBounds);
@@ -5838,7 +5845,7 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, CollectLayersBehavior 
     bool isStacking = behavior == StopAtStackingContexts ? isStackingContext() : isStackingContainer();
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
     bool includeHiddenLayer = includeHiddenLayers || (m_hasVisibleContent || (m_hasVisibleDescendant && isStacking));
-    if (includeHiddenLayer && !isNormalFlowOnly() && !isOutOfFlowRenderFlowThread()) {
+    if (includeHiddenLayer && !isNormalFlowOnly()) {
         // Determine which buffer the child should be in.
         OwnPtr<Vector<RenderLayer*> >& buffer = (zIndex() >= 0) ? posBuffer : negBuffer;
 

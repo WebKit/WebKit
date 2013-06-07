@@ -770,14 +770,22 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     }
 
     if (Vector<RenderLayer*>* posList = l->posZOrderList()) {
-        int currIndent = indent;
-        if (behavior & RenderAsTextShowLayerNesting) {
-            writeIndent(ts, indent);
-            ts << " positive z-order list(" << posList->size() << ")\n";
-            ++currIndent;
-        }
+        size_t layerCount = 0;
         for (unsigned i = 0; i != posList->size(); ++i)
-            writeLayers(ts, rootLayer, posList->at(i), paintDirtyRect, currIndent, behavior);
+            if (!posList->at(i)->isOutOfFlowRenderFlowThread())
+                ++layerCount;
+        if (layerCount) {
+            int currIndent = indent;
+            if (behavior & RenderAsTextShowLayerNesting) {
+                writeIndent(ts, indent);
+                ts << " positive z-order list(" << layerCount << ")\n";
+                ++currIndent;
+            }
+            for (unsigned i = 0; i != posList->size(); ++i) {
+                if (!posList->at(i)->isOutOfFlowRenderFlowThread())
+                    writeLayers(ts, rootLayer, posList->at(i), paintDirtyRect, currIndent, behavior);
+            }
+        }
     }
     
     // Altough the RenderFlowThread requires a layer, it is not collected by its parent,

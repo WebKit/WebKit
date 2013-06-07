@@ -1,3 +1,32 @@
+2013-06-07  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Regions] Layers inside the RenderFlowThread should be collected by the layer of RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=117270
+
+        Reviewed by David Hyatt.
+
+        RenderNamedFlowThreads are attached to the RenderView, but they are painted 
+        and hit-tested through their regions. The easiest way to prevent the RenderView 
+        from seeing the RenderNamedFlowThreads as its own children was to avoid collecting
+        the layers of the RenderNamedFlowThreads as children layers of the RenderView.
+
+        However, most of the code is analyzing the layers tree starting from the root,
+        so having the RenderNamedFlowThread participate in the layer tree is needed
+        in order to enable compositing for layers inside the flow thread.
+
+        This patch makes the RenderNamedFlowThread visible to the RenderView, but
+        ignores it when iterates the children of the RenderView in paint and hit-test methods.
+
+        No new tests, no visible changes.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintList):
+        (WebCore::RenderLayer::hitTestList):
+        (WebCore::RenderLayer::calculateLayerBounds):
+        (WebCore::RenderLayer::collectLayers):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
 2013-06-07  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions][CSS Shapes] Incorrect compile flag in LayoutState.h
