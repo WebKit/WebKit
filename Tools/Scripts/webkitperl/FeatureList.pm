@@ -159,7 +159,7 @@ my (
 
 my @features = (
     { option => "3d-rendering", desc => "Toggle 3D Rendering support",
-      define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() || isQt() || isGtk() || isEfl()), value => \$threeDRenderingSupport },
+      define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() || isGtk() || isEfl()), value => \$threeDRenderingSupport },
 
     { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2DCanvasSupport },
@@ -264,7 +264,7 @@ my @features = (
       define => "ENABLE_FILE_SYSTEM", default => isBlackBerry(), value => \$fileSystemSupport },
 
     { option => "filters", desc => "Toggle Filters support",
-      define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl() || isBlackBerry()), value => \$filtersSupport },
+      define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isEfl() || isBlackBerry()), value => \$filtersSupport },
 
     { option => "font-load-events", desc => "Toggle Font Load Events support",
       define => "ENABLE_FONT_LOAD_EVENTS", default => 0, value => \$fontLoadEventsSupport },
@@ -273,10 +273,10 @@ my @features = (
       define => "ENABLE_FTPDIR", default => !isWinCE(), value => \$ftpDirSupport },
 
     { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
-      define => "ENABLE_FULLSCREEN_API", default => (isAppleMacWebKit() || isEfl() || isGtk() || isBlackBerry() || isQt()), value => \$fullscreenAPISupport },
+      define => "ENABLE_FULLSCREEN_API", default => (isAppleMacWebKit() || isEfl() || isGtk() || isBlackBerry()), value => \$fullscreenAPISupport },
 
     { option => "gamepad", desc => "Toggle Gamepad support",
-      define => "ENABLE_GAMEPAD", default => (isEfl() || isGtk() || isQt()), value => \$gamepadSupport },
+      define => "ENABLE_GAMEPAD", default => (isEfl() || isGtk()), value => \$gamepadSupport },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$geolocationSupport },
@@ -297,7 +297,7 @@ my @features = (
       define => "ENABLE_INPUT_SPEECH", default => 0, value => \$inputSpeechSupport },
 
     { option => "input-type-color", desc => "Toggle Input Type Color support",
-      define => "ENABLE_INPUT_TYPE_COLOR", default => (isBlackBerry() || isEfl() || isQt()), value => \$inputTypeColorSupport },
+      define => "ENABLE_INPUT_TYPE_COLOR", default => (isBlackBerry() || isEfl()), value => \$inputTypeColorSupport },
 
     { option => "input-type-date", desc => "Toggle Input Type Date support",
       define => "ENABLE_INPUT_TYPE_DATE", default => 0, value => \$inputTypeDateSupport },
@@ -396,7 +396,7 @@ my @features = (
       define => "ENABLE_QUOTA", default => 0, value => \$quotaSupport },
 
     { option => "resolution-media-query", desc => "Toggle resolution media query support",
-      define => "ENABLE_RESOLUTION_MEDIA_QUERY", default => (isEfl() || isQt()), value => \$resolutionMediaQuerySupport },
+      define => "ENABLE_RESOLUTION_MEDIA_QUERY", default => isEfl(), value => \$resolutionMediaQuerySupport },
 
     { option => "resource-timing", desc => "Toggle Resource Timing support",
       define => "ENABLE_RESOURCE_TIMING", default => isGtk(), value => \$resourceTimingSupport },
@@ -441,13 +441,13 @@ my @features = (
       define => "ENABLE_TEXT_AUTOSIZING", default => isBlackBerry(), value => \$textAutosizingSupport },
 
     { option => "tiled-backing-store", desc => "Toggle Tiled Backing Store support",
-      define => "WTF_USE_TILED_BACKING_STORE", default => (isQt() || isEfl()), value => \$tiledBackingStoreSupport },
+      define => "WTF_USE_TILED_BACKING_STORE", default => isEfl(), value => \$tiledBackingStoreSupport },
 
     { option => "threaded-html-parser", desc => "Toggle threaded HTML parser support",
       define => "ENABLE_THREADED_HTML_PARSER", default => 0, value => \$threadedHTMLParserSupport },
 
     { option => "touch-events", desc => "Toggle Touch Events support",
-      define => "ENABLE_TOUCH_EVENTS", default => (isQt() || isBlackBerry() || isEfl()), value => \$touchEventsSupport },
+      define => "ENABLE_TOUCH_EVENTS", default => (isBlackBerry() || isEfl()), value => \$touchEventsSupport },
 
     { option => "touch-slider", desc => "Toggle Touch Slider support",
       define => "ENABLE_TOUCH_SLIDER", default => isBlackBerry(), value => \$touchSliderSupport },

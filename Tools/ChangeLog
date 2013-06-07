@@ -1,3 +1,15 @@
+2013-06-07  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [Qt] Remove Qt bits from Scripts/webkitperl/FeatureList.pm
+        https://bugs.webkit.org/show_bug.cgi?id=117315
+
+        Reviewed by Benjamin Poulain.
+
+        Qt doesn't use the default values specified on FeatureList since r44681,
+        this patch just remove a bit of noise.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-06-07  Jungsik Tae  <davidtlay88@gmail.com>
 
         [EFL] Implement colorpicker for HTML5 input type color on Minibrowser
