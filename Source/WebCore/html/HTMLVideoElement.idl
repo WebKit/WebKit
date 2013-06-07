@@ -36,11 +36,11 @@
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 
-    void webkitEnterFullscreen() raises (DOMException);
+    [RaisesException] void webkitEnterFullscreen();
     void webkitExitFullscreen();
 
     // Note the different capitalization of the "S" in FullScreen.
-    void webkitEnterFullScreen() raises (DOMException);
+    [RaisesException] void webkitEnterFullScreen();
     void webkitExitFullScreen();
 
     // The number of frames that have been decoded and made available for

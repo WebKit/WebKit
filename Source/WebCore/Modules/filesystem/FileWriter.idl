@@ -44,11 +44,11 @@
     readonly attribute unsigned short readyState;
 
     // async write/modify methods
-    void write(Blob data) raises (FileException);
-    void seek(long long position) raises (FileException);
-    void truncate(long long size) raises (FileException);
+    [RaisesException] void write(Blob data);
+    [RaisesException] void seek(long long position);
+    [RaisesException] void truncate(long long size);
 
-    void abort() raises (FileException);
+    [RaisesException] void abort();
 
     readonly attribute FileError error;
     readonly attribute long long position;
@@ -68,6 +68,5 @@
     void removeEventListener(DOMString type,
                              EventListener listener,
                              optional boolean useCapture);
-    boolean dispatchEvent(Event evt)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event evt);
 };

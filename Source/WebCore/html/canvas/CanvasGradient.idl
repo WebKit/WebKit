@@ -26,9 +26,8 @@
     ImplementationLacksVTable
 ] interface CanvasGradient {
 
-    void addColorStop([Default=Undefined] optional float offset, 
-                      [Default=Undefined] optional DOMString color)
-        raises (DOMException);
+    [RaisesException] void addColorStop([Default=Undefined] optional float offset, 
+                      [Default=Undefined] optional DOMString color);
 
 };
 

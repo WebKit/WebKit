@@ -42,11 +42,9 @@
     [StrictTypeChecking] attribute float valueInSpecifiedUnits;
     [TreatNullAs=NullString, StrictTypeChecking, SetterRaisesException] attribute DOMString valueAsString;
 
-    [StrictTypeChecking] void newValueSpecifiedUnits(unsigned short unitType, 
-                                                     float valueInSpecifiedUnits)
-        raises(DOMException);
+    [StrictTypeChecking, RaisesException] void newValueSpecifiedUnits(unsigned short unitType, 
+                                                     float valueInSpecifiedUnits);
 
-    [Custom, StrictTypeChecking] void convertToSpecifiedUnits(unsigned short unitType)
-        raises(DOMException);
+    [Custom, StrictTypeChecking, RaisesException] void convertToSpecifiedUnits(unsigned short unitType);
 };
 

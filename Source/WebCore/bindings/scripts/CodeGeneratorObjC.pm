@@ -1475,7 +1475,7 @@ sub GenerateImplementation
             my $functionName = $function->signature->name;
             my $returnType = GetObjCType($function->signature->type);
             my $hasParameters = @{$function->parameters};
-            my $raisesExceptions = @{$function->raisesExceptions};
+            my $raisesExceptions = $function->signature->extendedAttributes->{"RaisesException"};
 
             my @parameterNames = ();
             my @needsAssert = ();

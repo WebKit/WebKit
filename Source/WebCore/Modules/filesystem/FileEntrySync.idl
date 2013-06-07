@@ -35,6 +35,6 @@
     JSGenerateToJSObject,
     JSNoStaticTables
 ] interface FileEntrySync : EntrySync {
-    File file() raises (FileException);
-    FileWriterSync createWriter() raises (FileException);
+    [RaisesException] File file();
+    [RaisesException] FileWriterSync createWriter();
 };

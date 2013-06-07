@@ -28,5 +28,5 @@
     Conditional=WEBGL,
     GenerateIsReachable=ImplContext,
 ] interface WebGLDebugShaders {
-    [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString getTranslatedShaderSource(WebGLShader shader) raises(DOMException);
+    [StrictTypeChecking, TreatReturnedNullStringAs=Null, RaisesException] DOMString getTranslatedShaderSource(WebGLShader shader);
 };

@@ -808,7 +808,7 @@ sub GenerateImplementation
             my $functionName = $function->signature->name;
             my $returnType = GetCPPType($function->signature->type, 0);
             my $hasParameters = @{$function->parameters};
-            my $raisesExceptions = @{$function->raisesExceptions};
+            my $raisesExceptions = $function->signature->extendedAttributes->{"RaisesException"};
 
             my @parameterNames = ();
             my @needsAssert = ();

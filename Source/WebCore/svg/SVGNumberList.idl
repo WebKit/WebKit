@@ -29,19 +29,12 @@
 ] interface SVGNumberList {
     readonly attribute unsigned long numberOfItems;
 
-    void clear()
-        raises(DOMException);
-    [StrictTypeChecking] SVGNumber initialize(SVGNumber item)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGNumber getItem(unsigned long index)
-        raises(DOMException);
-    [StrictTypeChecking] SVGNumber insertItemBefore(SVGNumber item, unsigned long index)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGNumber replaceItem(SVGNumber item, unsigned long index)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGNumber removeItem(unsigned long index)
-        raises(DOMException);
-    [StrictTypeChecking] SVGNumber appendItem(SVGNumber item)
-        raises(DOMException, SVGException);
+    [RaisesException] void clear();
+    [StrictTypeChecking, RaisesException] SVGNumber initialize(SVGNumber item);
+    [StrictTypeChecking, RaisesException] SVGNumber getItem(unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGNumber insertItemBefore(SVGNumber item, unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGNumber replaceItem(SVGNumber item, unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGNumber removeItem(unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGNumber appendItem(SVGNumber item);
 };
 

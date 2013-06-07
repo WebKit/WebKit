@@ -30,20 +30,17 @@
 
     // DOM Level 2
 
-    [ObjCLegacyUnnamedParameters] DocumentType createDocumentType([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString qualifiedName,
+    [ObjCLegacyUnnamedParameters, RaisesException] DocumentType createDocumentType([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString qualifiedName,
                                                    [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString publicId,
-                                                   [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString systemId)
-        raises(DOMException);
-    [ObjCLegacyUnnamedParameters] Document createDocument([TreatNullAs=NullString, Default=Undefined] optional DOMString namespaceURI, 
+                                                   [TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString systemId);
+    [ObjCLegacyUnnamedParameters, RaisesException] Document createDocument([TreatNullAs=NullString, Default=Undefined] optional DOMString namespaceURI, 
                                            [TreatNullAs=NullString, Default=Undefined] optional DOMString qualifiedName, 
-                                           [TreatNullAs=NullString, Default=Undefined] optional DocumentType doctype)
-        raises(DOMException);
+                                           [TreatNullAs=NullString, Default=Undefined] optional DocumentType doctype);
 
     // DOMImplementationCSS interface from DOM Level 2 CSS
 
-    [ObjCLegacyUnnamedParameters] CSSStyleSheet createCSSStyleSheet([Default=Undefined] optional DOMString title,
-                                                     [Default=Undefined] optional DOMString media)
-        raises(DOMException);
+    [ObjCLegacyUnnamedParameters, RaisesException] CSSStyleSheet createCSSStyleSheet([Default=Undefined] optional DOMString title,
+                                                     [Default=Undefined] optional DOMString media);
 
     // HTMLDOMImplementation interface from DOM Level 2 HTML
 

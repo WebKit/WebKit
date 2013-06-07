@@ -33,14 +33,12 @@
     [StrictTypeChecking] attribute double f;
 
     [StrictTypeChecking] SVGMatrix multiply(SVGMatrix secondMatrix);
-    SVGMatrix inverse()
-        raises(SVGException);
+    [RaisesException] SVGMatrix inverse();
     [Immutable, StrictTypeChecking] SVGMatrix translate(float x, float y);
     [Immutable, StrictTypeChecking] SVGMatrix scale(float scaleFactor);
     [Immutable, StrictTypeChecking] SVGMatrix scaleNonUniform(float scaleFactorX, float scaleFactorY);
     [Immutable, StrictTypeChecking] SVGMatrix rotate(float angle);
-    [StrictTypeChecking] SVGMatrix rotateFromVector(float x, float y)
-        raises(SVGException);
+    [StrictTypeChecking, RaisesException] SVGMatrix rotateFromVector(float x, float y);
     [Immutable] SVGMatrix flipX();
     [Immutable] SVGMatrix flipY();
     [Immutable, StrictTypeChecking] SVGMatrix skewX(float angle);

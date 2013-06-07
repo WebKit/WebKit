@@ -31,8 +31,7 @@
     attribute long width;
     attribute long height;
 
-    [Custom] DOMString toDataURL([TreatNullAs=NullString, TreatUndefinedAs=NullString,Default=Undefined] optional DOMString type)
-        raises(DOMException);
+    [Custom, RaisesException] DOMString toDataURL([TreatNullAs=NullString, TreatUndefinedAs=NullString,Default=Undefined] optional DOMString type);
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C

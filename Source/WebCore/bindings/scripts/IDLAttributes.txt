@@ -94,6 +94,7 @@ ObjCPolymorphic
 ObjCProtocol
 PassContext
 PassThisToCallback=*
+RaisesException
 Reflect=*
 Replaceable
 ReplaceableConstructor

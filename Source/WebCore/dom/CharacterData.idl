@@ -23,28 +23,22 @@ interface CharacterData : Node {
 
     readonly attribute unsigned long length;
     
-    [TreatReturnedNullStringAs=Null, ObjCLegacyUnnamedParameters] DOMString substringData([IsIndex, Default=Undefined] optional unsigned long offset, 
-                                                                     [IsIndex, Default=Undefined] optional unsigned long length)
-        raises(DOMException);
+    [TreatReturnedNullStringAs=Null, ObjCLegacyUnnamedParameters, RaisesException] DOMString substringData([IsIndex, Default=Undefined] optional unsigned long offset, 
+                                                                     [IsIndex, Default=Undefined] optional unsigned long length);
 
-    void appendData([Default=Undefined] optional DOMString data)
-        raises(DOMException);
+    [RaisesException] void appendData([Default=Undefined] optional DOMString data);
 
-    [ObjCLegacyUnnamedParameters] void insertData([IsIndex, Default=Undefined] optional unsigned long offset, 
-                                   [Default=Undefined] optional DOMString data)
-        raises(DOMException);
+    [ObjCLegacyUnnamedParameters, RaisesException] void insertData([IsIndex, Default=Undefined] optional unsigned long offset, 
+                                   [Default=Undefined] optional DOMString data);
 
-    [ObjCLegacyUnnamedParameters] void deleteData([IsIndex, Default=Undefined] optional unsigned long offset, 
-                                   [IsIndex, Default=Undefined] optional unsigned long length)
-        raises(DOMException);
+    [ObjCLegacyUnnamedParameters, RaisesException] void deleteData([IsIndex, Default=Undefined] optional unsigned long offset, 
+                                   [IsIndex, Default=Undefined] optional unsigned long length);
 
-    [ObjCLegacyUnnamedParameters] void replaceData([IsIndex, Default=Undefined] optional unsigned long offset, 
+    [ObjCLegacyUnnamedParameters, RaisesException] void replaceData([IsIndex, Default=Undefined] optional unsigned long offset, 
                                     [IsIndex, Default=Undefined] optional unsigned long length,
-                                    [Default=Undefined] optional DOMString data)
-        raises(DOMException);
+                                    [Default=Undefined] optional DOMString data);
 
     // DOM 4
-    void remove()
-        raises(DOMException);
+    [RaisesException] void remove();
 };
 

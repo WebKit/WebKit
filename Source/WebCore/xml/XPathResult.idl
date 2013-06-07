@@ -44,9 +44,7 @@
     readonly attribute boolean         invalidIteratorState;
     [GetterRaisesException] readonly attribute unsigned long   snapshotLength;
         
-    Node iterateNext()
-        raises (DOMException);
-    Node snapshotItem([Default=Undefined] optional unsigned long index)
-        raises (DOMException);
+    [RaisesException] Node iterateNext();
+    [RaisesException] Node snapshotItem([Default=Undefined] optional unsigned long index);
 };
 

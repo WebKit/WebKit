@@ -30,26 +30,17 @@
     [GetterRaisesException] readonly attribute boolean collapsed;
     [GetterRaisesException] readonly attribute Node commonAncestorContainer;
 
-    [ObjCLegacyUnnamedParameters] void setStart([Default=Undefined] optional Node refNode, 
-                                 [Default=Undefined] optional long offset)
-        raises(RangeException, DOMException);
-    [ObjCLegacyUnnamedParameters] void setEnd([Default=Undefined] optional Node refNode, 
-                               [Default=Undefined] optional long offset)
-        raises(RangeException, DOMException);
-    void setStartBefore([Default=Undefined] optional Node refNode)
-        raises(RangeException, DOMException);
-    void setStartAfter([Default=Undefined] optional Node refNode)
-        raises(RangeException, DOMException);
-    void setEndBefore([Default=Undefined] optional Node refNode)
-        raises(RangeException, DOMException);
-    void setEndAfter([Default=Undefined] optional Node refNode)
-        raises(RangeException, DOMException);
-    void collapse([Default=Undefined] optional boolean toStart)
-        raises(DOMException);
-    void selectNode([Default=Undefined] optional Node refNode)
-        raises(RangeException, DOMException);
-    void selectNodeContents([Default=Undefined] optional Node refNode)
-        raises(RangeException, DOMException);
+    [ObjCLegacyUnnamedParameters, RaisesException] void setStart([Default=Undefined] optional Node refNode, 
+                                 [Default=Undefined] optional long offset);
+    [ObjCLegacyUnnamedParameters, RaisesException] void setEnd([Default=Undefined] optional Node refNode, 
+                               [Default=Undefined] optional long offset);
+    [RaisesException] void setStartBefore([Default=Undefined] optional Node refNode);
+    [RaisesException] void setStartAfter([Default=Undefined] optional Node refNode);
+    [RaisesException] void setEndBefore([Default=Undefined] optional Node refNode);
+    [RaisesException] void setEndAfter([Default=Undefined] optional Node refNode);
+    [RaisesException] void collapse([Default=Undefined] optional boolean toStart);
+    [RaisesException] void selectNode([Default=Undefined] optional Node refNode);
+    [RaisesException] void selectNodeContents([Default=Undefined] optional Node refNode);
 
     // CompareHow
     const unsigned short START_TO_START = 0;
@@ -57,27 +48,18 @@
     const unsigned short END_TO_END     = 2;
     const unsigned short END_TO_START   = 3;
 
-    [ObjCLegacyUnnamedParameters] short compareBoundaryPoints([Default=Undefined] optional CompareHow how,
-                                               [Default=Undefined] optional Range sourceRange)
-        raises(DOMException);
+    [ObjCLegacyUnnamedParameters, RaisesException] short compareBoundaryPoints([Default=Undefined] optional CompareHow how,
+                                               [Default=Undefined] optional Range sourceRange);
 
-    void deleteContents()
-        raises(DOMException);
-    DocumentFragment extractContents()
-        raises(DOMException);
-    DocumentFragment cloneContents()
-        raises(DOMException);
-    void insertNode([Default=Undefined] optional Node newNode)
-        raises(DOMException, RangeException);
-    void surroundContents([Default=Undefined] optional Node newParent)
-        raises(DOMException, RangeException);
-    Range cloneRange()
-        raises(DOMException);
-    DOMString toString()
-        raises(DOMException);
+    [RaisesException] void deleteContents();
+    [RaisesException] DocumentFragment extractContents();
+    [RaisesException] DocumentFragment cloneContents();
+    [RaisesException] void insertNode([Default=Undefined] optional Node newNode);
+    [RaisesException] void surroundContents([Default=Undefined] optional Node newParent);
+    [RaisesException] Range cloneRange();
+    [RaisesException] DOMString toString();
 
-    void detach()
-        raises(DOMException);
+    [RaisesException] void detach();
 
 #if defined(LANGUAGE_JAVASCRIPT) || LANGUAGE_JAVASCRIPT
     // CSSOM View Module API extensions
@@ -88,16 +70,13 @@
 
     // extensions
 
-    DocumentFragment createContextualFragment([Default=Undefined] optional DOMString html)
-        raises(DOMException);
+    [RaisesException] DocumentFragment createContextualFragment([Default=Undefined] optional DOMString html);
 
     // WebKit extensions
 
-    boolean intersectsNode([Default=Undefined] optional Node refNode)
-        raises(RangeException, DOMException);
+    [RaisesException] boolean intersectsNode([Default=Undefined] optional Node refNode);
 
-    short compareNode([Default=Undefined] optional Node refNode)
-        raises(RangeException, DOMException);
+    [RaisesException] short compareNode([Default=Undefined] optional Node refNode);
 
     // CompareResults
     const unsigned short NODE_BEFORE           = 0;
@@ -105,16 +84,13 @@
     const unsigned short NODE_BEFORE_AND_AFTER = 2;
     const unsigned short NODE_INSIDE           = 3;
 
-    short comparePoint([Default=Undefined] optional Node refNode, 
-                       [Default=Undefined] optional long offset)
-        raises(RangeException, DOMException);
+    [RaisesException] short comparePoint([Default=Undefined] optional Node refNode, 
+                       [Default=Undefined] optional long offset);
 
-    boolean isPointInRange([Default=Undefined] optional Node refNode, 
-                           [Default=Undefined] optional long offset)
-        raises(RangeException, DOMException);
+    [RaisesException] boolean isPointInRange([Default=Undefined] optional Node refNode, 
+                           [Default=Undefined] optional long offset);
 
-    void expand([Default=Undefined] optional DOMString unit)
-        raises(RangeException, DOMException);
+    [RaisesException] void expand([Default=Undefined] optional DOMString unit);
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
     readonly attribute DOMString text;

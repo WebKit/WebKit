@@ -28,8 +28,7 @@
     Constructor(DOMString keySystem),
     ConstructorRaisesException,
 ] interface MediaKeys {
-    [CallWith=ScriptExecutionContext] MediaKeySession createSession([Default=Undefined] optional DOMString type, [Default=Undefined] optional Uint8Array initData)
-        raises(DOMException);
+    [CallWith=ScriptExecutionContext, RaisesException] MediaKeySession createSession([Default=Undefined] optional DOMString type, [Default=Undefined] optional Uint8Array initData);
 
     readonly attribute DOMString keySystem;
 };

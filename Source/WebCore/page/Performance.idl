@@ -52,12 +52,10 @@
 
     // See http://www.w3.org/TR/2012/CR-user-timing-20120726/
 #if defined(ENABLE_USER_TIMING) && ENABLE_USER_TIMING
-    void webkitMark(DOMString markName)
-        raises(DOMException);
+    [RaisesException] void webkitMark(DOMString markName);
     void webkitClearMarks([Default=NullString] optional  DOMString markName);
 
-    void webkitMeasure(DOMString measureName, [Default=NullString] optional DOMString startMark, [Default=NullString] optional DOMString endMark)
-        raises(DOMException);
+    [RaisesException] void webkitMeasure(DOMString measureName, [Default=NullString] optional DOMString startMark, [Default=NullString] optional DOMString endMark);
     void webkitClearMeasures([Default=NullString] optional DOMString measureName);
 #endif
 

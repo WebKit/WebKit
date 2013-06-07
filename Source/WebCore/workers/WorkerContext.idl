@@ -62,8 +62,7 @@
     void removeEventListener(DOMString type, 
                              EventListener listener, 
                              optional boolean useCapture);
-    boolean dispatchEvent(Event evt)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event evt);
 
     // Additional constructors
     [Conditional=BLOB] attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.

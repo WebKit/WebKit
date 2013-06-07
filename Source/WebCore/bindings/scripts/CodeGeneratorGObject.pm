@@ -907,6 +907,7 @@ sub GenerateFunction {
     my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($function->signature->name);
     my $returnType = GetGlibTypeName($functionSigType);
     my $returnValueIsGDOMType = IsGDOMClassType($functionSigType);
+    my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     my $parentConditionalString = $codeGenerator->GenerateConditionalString($parentNode);
@@ -946,9 +947,7 @@ sub GenerateFunction {
         $implIncludes{"WebKitDOM${functionSigType}Private.h"} = 1;
     }
 
-    if (@{$function->raisesExceptions}) {
-        $functionSig .= ", GError** error";
-    }
+    $functionSig .= ", GError** error" if $raisesException;
 
     # Insert introspection annotations
     push(@hBody, "/**\n");
@@ -962,9 +961,7 @@ sub GenerateFunction {
         my $paramName = $param->name;
         push(@hBody, " * \@${paramName}: A #${paramType}\n");
     }
-    if(@{$function->raisesExceptions}) {
-        push(@hBody, " * \@error: #GError\n");
-    }
+    push(@hBody, " * \@error: #GError\n") if $raisesException;
     push(@hBody, " *\n");
     if (IsGDOMClassType($function->signature->type)) {
         push(@hBody, " * Returns: (transfer none):\n");
@@ -998,7 +995,7 @@ sub GenerateFunction {
         }
     }
 
-    if (@{$function->raisesExceptions}) {
+    if ($raisesException) {
         $gReturnMacro = GetGReturnMacro("error", "GError", $returnType);
         push(@cBody, $gReturnMacro);
     }
@@ -1051,7 +1048,7 @@ sub GenerateFunction {
         push(@callImplParams, "isNull");
     }
 
-    if (@{$function->raisesExceptions}) {
+    if ($raisesException) {
         push(@cBody, "    WebCore::ExceptionCode ec = 0;\n");
         push(@callImplParams, "ec");
     }
@@ -1066,7 +1063,7 @@ sub GenerateFunction {
 EOF
         push(@cBody, $customNodeAppendChild);
     
-        if(@{$function->raisesExceptions}) {
+        if($raisesException) {
             my $exceptionHandling = << "EOF";
 
     WebCore::ExceptionCodeDescription ecdesc(ec);
@@ -1143,7 +1140,7 @@ EOF
         }
         push(@cBody, "    ${contentHead}");
         
-        if(@{$function->raisesExceptions}) {
+        if($raisesException) {
             my $exceptionHandling = << "EOF";
     if (ec) {
         WebCore::ExceptionCodeDescription ecdesc(ec);
@@ -1243,8 +1240,9 @@ sub GenerateFunctions {
         # "get_foo" which calls a DOM class method named foo().
         my $function = new domFunction();
         $function->signature($attribute->signature);
+        $function->signature->extendedAttributes({%{$attribute->signature->extendedAttributes}});
         if ($attribute->signature->extendedAttributes->{"GetterRaisesException"}) {
-            $function->raisesExceptions(["DOMException"]);
+            $function->signature->extendedAttributes->{"RaisesException"} = "VALUE_IS_MISSING";
         }
         $object->GenerateFunction($interfaceName, $function, "get_", $interface);
 
@@ -1261,7 +1259,7 @@ sub GenerateFunctions {
         $function->signature(new domSignature());
         $function->signature->name($attribute->signature->name);
         $function->signature->type($attribute->signature->type);
-        $function->signature->extendedAttributes($attribute->signature->extendedAttributes);
+        $function->signature->extendedAttributes({%{$attribute->signature->extendedAttributes}});
         
         my $param = new domSignature();
         $param->name("value");
@@ -1272,7 +1270,9 @@ sub GenerateFunctions {
         push(@$arrayRef, $param);
         
         if ($attribute->signature->extendedAttributes->{"SetterRaisesException"}) {
-            $function->raisesExceptions(["DOMException"]);
+            $function->signature->extendedAttributes->{"RaisesException"} = "VALUE_IS_MISSING";
+        } else {
+            delete $function->signature->extendedAttributes->{"RaisesException"};
         }
         
         $object->GenerateFunction($interfaceName, $function, "set_", $interface);

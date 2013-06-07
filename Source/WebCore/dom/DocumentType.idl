@@ -34,7 +34,6 @@
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString internalSubset;        
 
     // DOM 4
-    void remove()
-        raises(DOMException);
+    [RaisesException] void remove();
 };
 

@@ -35,10 +35,8 @@
     readonly attribute unsigned long length;
 
     [TreatReturnedNullStringAs=Null] DOMString item([Default=Undefined] optional unsigned long index);
-    void deleteMedium([Default=Undefined] optional DOMString oldMedium)
-        raises(DOMException);
-    void appendMedium([Default=Undefined] optional DOMString newMedium)
-        raises(DOMException);
+    [RaisesException] void deleteMedium([Default=Undefined] optional DOMString oldMedium);
+    [RaisesException] void appendMedium([Default=Undefined] optional DOMString newMedium);
 
 };
 

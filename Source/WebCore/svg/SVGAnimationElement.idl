@@ -34,7 +34,6 @@
 
     float getStartTime();
     float getCurrentTime();
-    float getSimpleDuration()
-        raises(DOMException);
+    [RaisesException] float getSimpleDuration();
 };
 

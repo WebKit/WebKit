@@ -34,5 +34,5 @@
     [StrictTypeChecking] WebGLVertexArrayObjectOES createVertexArrayOES();
     [StrictTypeChecking] void         deleteVertexArrayOES([Default=Undefined] optional WebGLVertexArrayObjectOES arrayObject);
     [StrictTypeChecking] boolean      isVertexArrayOES([Default=Undefined] optional WebGLVertexArrayObjectOES arrayObject);
-    [StrictTypeChecking] void         bindVertexArrayOES([Default=Undefined] optional WebGLVertexArrayObjectOES arrayObject) raises(DOMException);
+    [StrictTypeChecking, RaisesException] void         bindVertexArrayOES([Default=Undefined] optional WebGLVertexArrayObjectOES arrayObject);
 };

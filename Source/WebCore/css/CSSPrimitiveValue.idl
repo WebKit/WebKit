@@ -55,21 +55,14 @@
     
     readonly attribute unsigned short primitiveType;
 
-    [ObjCLegacyUnnamedParameters] void setFloatValue([Default=Undefined] optional unsigned short unitType,
-                                      [Default=Undefined] optional float floatValue)
-        raises(DOMException);
-    float getFloatValue([Default=Undefined] optional unsigned short unitType)
-        raises(DOMException);
-    [ObjCLegacyUnnamedParameters] void setStringValue([Default=Undefined] optional unsigned short stringType, 
-                                       [Default=Undefined] optional DOMString stringValue)
-        raises(DOMException);
-    DOMString getStringValue()
-        raises(DOMException);
-    Counter getCounterValue()
-        raises(DOMException);
-    Rect getRectValue()
-        raises(DOMException);
-    RGBColor getRGBColorValue()
-        raises(DOMException);
+    [ObjCLegacyUnnamedParameters, RaisesException] void setFloatValue([Default=Undefined] optional unsigned short unitType,
+                                      [Default=Undefined] optional float floatValue);
+    [RaisesException] float getFloatValue([Default=Undefined] optional unsigned short unitType);
+    [ObjCLegacyUnnamedParameters, RaisesException] void setStringValue([Default=Undefined] optional unsigned short stringType, 
+                                       [Default=Undefined] optional DOMString stringValue);
+    [RaisesException] DOMString getStringValue();
+    [RaisesException] Counter getCounterValue();
+    [RaisesException] Rect getRectValue();
+    [RaisesException] RGBColor getRGBColorValue();
 };
 

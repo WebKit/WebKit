@@ -40,7 +40,7 @@ attribute [Reflect] long width;
 
 #if defined(ENABLE_SVG) && ENABLE_SVG
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-[CheckSecurityForNode] SVGDocument getSVGDocument() raises(DOMException);
+[CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
 #endif
 #endif
 };

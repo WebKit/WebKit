@@ -40,9 +40,9 @@
     [SetterRaisesException] attribute double timestampOffset;
 
     // Append segment data.
-    void append(Uint8Array data) raises (DOMException);
+    [RaisesException] void append(Uint8Array data);
 
     // Abort the current segment append sequence.
-    void abort() raises (DOMException);
+    [RaisesException] void abort();
 };
 

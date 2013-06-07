@@ -45,14 +45,10 @@
     readonly attribute unsigned short readyState;
 
     // async read methods
-    void readAsArrayBuffer(Blob blob)
-        raises(DOMException);
-    void readAsBinaryString(Blob blob)
-        raises(DOMException);
-    void readAsText(Blob blob, optional DOMString encoding)
-        raises(DOMException);
-    void readAsDataURL(Blob blob)
-        raises(DOMException);
+    [RaisesException] void readAsArrayBuffer(Blob blob);
+    [RaisesException] void readAsBinaryString(Blob blob);
+    [RaisesException] void readAsText(Blob blob, optional DOMString encoding);
+    [RaisesException] void readAsDataURL(Blob blob);
 
     void abort();
 
@@ -68,8 +64,7 @@
     void removeEventListener(DOMString type,
                              EventListener listener,
                              optional boolean useCapture);
-    boolean dispatchEvent(Event evt)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event evt);
 
     attribute EventListener onloadstart;
     attribute EventListener onprogress;

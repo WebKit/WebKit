@@ -30,6 +30,6 @@
     NoInterfaceObject,
     ImplementationLacksVTable
 ] interface Crypto {
-    [Custom] ArrayBufferView getRandomValues(ArrayBufferView array) raises(DOMException);
+    [Custom, RaisesException] ArrayBufferView getRandomValues(ArrayBufferView array);
 };
 

@@ -23,20 +23,16 @@ interface CSSStyleSheet : StyleSheet {
     readonly attribute CSSRule          ownerRule;
     readonly attribute CSSRuleList      cssRules;
 
-    [ObjCLegacyUnnamedParameters] unsigned long insertRule([Default=Undefined] optional DOMString rule, 
-                                            [Default=Undefined] optional unsigned long index)
-        raises(DOMException);
-    void               deleteRule([Default=Undefined] optional unsigned long index)
-        raises(DOMException);
+    [ObjCLegacyUnnamedParameters, RaisesException] unsigned long insertRule([Default=Undefined] optional DOMString rule, 
+                                            [Default=Undefined] optional unsigned long index);
+    [RaisesException] void               deleteRule([Default=Undefined] optional unsigned long index);
 
     // IE Extensions
     readonly attribute CSSRuleList      rules;
 
-    long addRule([Default=Undefined] optional DOMString selector,
+    [RaisesException] long addRule([Default=Undefined] optional DOMString selector,
                  [Default=Undefined] optional DOMString style,
-                 optional unsigned long index)
-        raises(DOMException);
-    void removeRule([Default=Undefined] optional unsigned long index)
-        raises(DOMException);
+                 optional unsigned long index);
+    [RaisesException] void removeRule([Default=Undefined] optional unsigned long index);
 };
 

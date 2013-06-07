@@ -28,9 +28,7 @@
     ImplementationLacksVTable
 ] interface TimeRanges {
     readonly attribute unsigned long length;
-    double start(unsigned long index)
-        raises (DOMException);
-    double end(unsigned long index)
-        raises (DOMException);
+    [RaisesException] double start(unsigned long index);
+    [RaisesException] double end(unsigned long index);
 };
 

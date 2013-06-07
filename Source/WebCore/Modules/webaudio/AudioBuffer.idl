@@ -38,6 +38,5 @@
 
     // Channel access
     readonly attribute unsigned long numberOfChannels;
-    Float32Array getChannelData(unsigned long channelIndex)
-        raises(DOMException);
+    [RaisesException] Float32Array getChannelData(unsigned long channelIndex);
 };

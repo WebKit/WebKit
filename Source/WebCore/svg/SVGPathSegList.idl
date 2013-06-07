@@ -29,19 +29,12 @@
 ] interface SVGPathSegList {
     readonly attribute unsigned long numberOfItems;
 
-    void clear()
-        raises(DOMException);
-    [StrictTypeChecking] SVGPathSeg initialize(SVGPathSeg newItem)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPathSeg getItem(unsigned long index)
-        raises(DOMException);
-    [StrictTypeChecking] SVGPathSeg insertItemBefore(SVGPathSeg newItem, unsigned long index)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPathSeg replaceItem(SVGPathSeg newItem, unsigned long index)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPathSeg removeItem(unsigned long index)
-        raises(DOMException);
-    [StrictTypeChecking] SVGPathSeg appendItem(SVGPathSeg newItem)
-        raises(DOMException, SVGException);
+    [RaisesException] void clear();
+    [StrictTypeChecking, RaisesException] SVGPathSeg initialize(SVGPathSeg newItem);
+    [StrictTypeChecking, RaisesException] SVGPathSeg getItem(unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGPathSeg insertItemBefore(SVGPathSeg newItem, unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGPathSeg replaceItem(SVGPathSeg newItem, unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGPathSeg removeItem(unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGPathSeg appendItem(SVGPathSeg newItem);
 };
 

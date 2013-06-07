@@ -34,45 +34,29 @@
     // We have to use custom code because our code generator does not support int8_t type.
     // int8_t getInt8(unsigned long byteOffset);
     // uint8_t getUint8(unsigned long byteOffset);
-    [Custom] any getInt8()
-        raises (DOMException);
-    [Custom] any getUint8()
-        raises (DOMException);
+    [Custom, RaisesException] any getInt8();
+    [Custom, RaisesException] any getUint8();
 
-    [StrictTypeChecking] short getInt16(unsigned long byteOffset, optional boolean littleEndian)
-        raises (DOMException);
-    [StrictTypeChecking] unsigned short getUint16(unsigned long byteOffset, optional boolean littleEndian)
-        raises (DOMException);
-    [StrictTypeChecking] long getInt32(unsigned long byteOffset, optional boolean littleEndian)
-        raises (DOMException);
-    [StrictTypeChecking] unsigned long getUint32(unsigned long byteOffset, optional boolean littleEndian)
-        raises (DOMException);
+    [StrictTypeChecking, RaisesException] short getInt16(unsigned long byteOffset, optional boolean littleEndian);
+    [StrictTypeChecking, RaisesException] unsigned short getUint16(unsigned long byteOffset, optional boolean littleEndian);
+    [StrictTypeChecking, RaisesException] long getInt32(unsigned long byteOffset, optional boolean littleEndian);
+    [StrictTypeChecking, RaisesException] unsigned long getUint32(unsigned long byteOffset, optional boolean littleEndian);
 
     // Use custom code to handle NaN case.
-    [Custom, StrictTypeChecking] float getFloat32(unsigned long byteOffset, optional boolean littleEndian)
-        raises (DOMException);
-    [Custom, StrictTypeChecking] double getFloat64(unsigned long byteOffset, optional boolean littleEndian)
-        raises (DOMException);
+    [Custom, StrictTypeChecking, RaisesException] float getFloat32(unsigned long byteOffset, optional boolean littleEndian);
+    [Custom, StrictTypeChecking, RaisesException] double getFloat64(unsigned long byteOffset, optional boolean littleEndian);
 
     // We have to use custom code because our code generator does not support uint8_t type.
     // void setInt8(unsigned long byteOffset, int8_t value);
     // void setUint8(unsigned long byteOffset, uint8_t value);
-    [Custom] void setInt8()
-        raises (DOMException);
-    [Custom] void setUint8()
-        raises (DOMException);
+    [Custom, RaisesException] void setInt8();
+    [Custom, RaisesException] void setUint8();
 
-    [StrictTypeChecking] void setInt16(unsigned long byteOffset, short value, optional boolean littleEndian)
-        raises (DOMException);
-    [StrictTypeChecking] void setUint16(unsigned long byteOffset, unsigned short value, optional boolean littleEndian)
-        raises (DOMException);
-    [StrictTypeChecking] void setInt32(unsigned long byteOffset, long value, optional boolean littleEndian)
-        raises (DOMException);
-    [StrictTypeChecking] void setUint32(unsigned long byteOffset, unsigned long value, optional boolean littleEndian)
-        raises (DOMException);
-    [StrictTypeChecking] void setFloat32(unsigned long byteOffset, float value, optional boolean littleEndian)
-        raises (DOMException);
-    [StrictTypeChecking] void setFloat64(unsigned long byteOffset, double value, optional boolean littleEndian)
-        raises (DOMException);
+    [StrictTypeChecking, RaisesException] void setInt16(unsigned long byteOffset, short value, optional boolean littleEndian);
+    [StrictTypeChecking, RaisesException] void setUint16(unsigned long byteOffset, unsigned short value, optional boolean littleEndian);
+    [StrictTypeChecking, RaisesException] void setInt32(unsigned long byteOffset, long value, optional boolean littleEndian);
+    [StrictTypeChecking, RaisesException] void setUint32(unsigned long byteOffset, unsigned long value, optional boolean littleEndian);
+    [StrictTypeChecking, RaisesException] void setFloat32(unsigned long byteOffset, float value, optional boolean littleEndian);
+    [StrictTypeChecking, RaisesException] void setFloat64(unsigned long byteOffset, double value, optional boolean littleEndian);
 };
 

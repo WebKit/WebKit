@@ -70,24 +70,19 @@ enum XMLHttpRequestResponseType {
 
     [SetterRaisesException] attribute boolean withCredentials;
 
-    [Custom] void open(DOMString method, DOMString url, optional boolean async, optional DOMString user, optional DOMString password)
-        raises(DOMException);
+    [Custom, RaisesException] void open(DOMString method, DOMString url, optional boolean async, optional DOMString user, optional DOMString password);
 
-    void setRequestHeader(DOMString header, DOMString value)
-        raises(DOMException);
+    [RaisesException] void setRequestHeader(DOMString header, DOMString value);
 
-    [Custom] void send()
-        raises(DOMException);
+    [Custom, RaisesException] void send();
 
     void abort();
 
     readonly attribute XMLHttpRequestUpload upload;
 
     // response
-    [TreatReturnedNullStringAs=Undefined] DOMString getAllResponseHeaders()
-        raises(DOMException);
-    [TreatReturnedNullStringAs=Null] DOMString getResponseHeader(DOMString header)
-        raises(DOMException);
+    [TreatReturnedNullStringAs=Undefined, RaisesException] DOMString getAllResponseHeaders();
+    [TreatReturnedNullStringAs=Null, RaisesException] DOMString getResponseHeader(DOMString header);
     [GetterRaisesException, CustomGetter] readonly attribute DOMString responseText; // The custom getter implements TreatReturnedNullStringAs=Null
     [GetterRaisesException] readonly attribute Document responseXML;
 
@@ -107,6 +102,5 @@ enum XMLHttpRequestResponseType {
     void removeEventListener(DOMString type, 
                              EventListener listener, 
                              optional boolean useCapture);
-    boolean dispatchEvent(Event evt)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event evt);
 };

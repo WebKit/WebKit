@@ -1,3 +1,177 @@
+2013-06-07  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Get rid of outdated raises() from Web IDL
+        https://bugs.webkit.org/show_bug.cgi?id=117350
+
+        Reviewed by Darin Adler.
+
+        Stop using "raises()" in the IDL as this is no longer part of the Web IDL
+        specification. Web IDL no longer specifies exceptions for operations. Instead
+        it is now explained in prose.
+
+        WebKit still needs to know if the method can throw an exception (but does not
+        need the exception name) so this patch adds a WebKit specific IDL extended
+        attribute: [RaisesException]. The naming is consistent with Blink.
+
+        This results in more standard and concise IDL. This also simplifies a lot
+        the code of the IDL parser.
+
+        No new tests, no behavior change.
+
+        * Modules/battery/BatteryManager.idl:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/filesystem/DirectoryEntrySync.idl:
+        * Modules/filesystem/DirectoryReaderSync.idl:
+        * Modules/filesystem/EntrySync.idl:
+        * Modules/filesystem/FileEntrySync.idl:
+        * Modules/filesystem/FileWriter.idl:
+        * Modules/filesystem/FileWriterSync.idl:
+        * Modules/filesystem/WorkerContextFileSystem.idl:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediasource/SourceBufferList.idl:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * Modules/mediastream/NavigatorMediaStream.idl:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/navigatorcontentutils/NavigatorContentUtils.idl:
+        * Modules/networkinfo/NetworkInfoConnection.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/notifications/NotificationCenter.idl:
+        * Modules/speech/SpeechRecognition.idl:
+        * Modules/vibration/NavigatorVibration.idl:
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * Modules/webdatabase/DatabaseSync.idl:
+        * Modules/webdatabase/WorkerContextWebDatabase.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction):
+        (GenerateFunctions):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        (GenerateImplementationFunctionCall):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/IDLParser.pm:
+        (parseOperationRest):
+        * bindings/scripts/test/TestEventTarget.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestSupplemental.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        * css/CSSHostRule.idl:
+        * css/CSSMediaRule.idl:
+        * css/CSSPrimitiveValue.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleSheet.idl:
+        * css/CSSSupportsRule.idl:
+        * css/FontLoader.idl:
+        * css/MediaList.idl:
+        * css/WebKitCSSMatrix.idl:
+        * dom/CharacterData.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DataTransferItemList.idl:
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+        * dom/EventTarget.idl:
+        * dom/MessagePort.idl:
+        * dom/MutationObserver.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/NodeIterator.idl:
+        * dom/Range.idl:
+        * dom/ShadowRoot.idl:
+        * dom/Text.idl:
+        * dom/WebKitNamedFlow.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderSync.idl:
+        * html/DOMTokenList.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLDialogElement.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLVideoElement.idl:
+        * html/MediaController.idl:
+        * html/TimeRanges.idl:
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/DOMPath.idl:
+        * html/canvas/DataView.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackCue.idl:
+        * html/track/TextTrackList.idl:
+        * html/track/VideoTrackList.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/Crypto.idl:
+        * page/DOMSelection.idl:
+        * page/DOMWindow.idl:
+        * page/EventSource.idl:
+        * page/History.idl:
+        * page/Performance.idl:
+        * storage/Storage.idl:
+        * svg/SVGAngle.idl:
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGColor.idl:
+        * svg/SVGDocument.idl:
+        * svg/SVGLength.idl:
+        * svg/SVGLengthList.idl:
+        * svg/SVGLocatable.idl:
+        * svg/SVGMatrix.idl:
+        * svg/SVGNumberList.idl:
+        * svg/SVGPaint.idl:
+        * svg/SVGPathSegList.idl:
+        * svg/SVGPointList.idl:
+        * svg/SVGStringList.idl:
+        * svg/SVGTextContentElement.idl:
+        * svg/SVGTransformList.idl:
+        * testing/InternalSettings.idl:
+        * testing/Internals.idl:
+        * workers/AbstractWorker.idl:
+        * workers/DedicatedWorkerContext.idl:
+        * workers/Worker.idl:
+        * workers/WorkerContext.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestUpload.idl:
+        * xml/XMLSerializer.idl:
+        * xml/XPathEvaluator.idl:
+        * xml/XPathExpression.idl:
+        * xml/XPathResult.idl:
+
 2013-06-07  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r151088): Crash navigating away from non-loaded main resources with non-loaded scripts.

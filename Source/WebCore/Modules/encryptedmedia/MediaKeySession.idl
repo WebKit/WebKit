@@ -35,8 +35,7 @@
     readonly attribute DOMString sessionId;
 
     // session operations
-    void update(Uint8Array key)
-        raises(DOMException);
+    [RaisesException] void update(Uint8Array key);
     void close();
     
     // EventListeners
@@ -51,6 +50,5 @@
     void removeEventListener(DOMString type, 
                              EventListener listener, 
                              optional boolean useCapture);
-    boolean dispatchEvent(Event evt)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event evt);
 };

@@ -67,8 +67,8 @@ interface HTMLInputElement : HTMLElement {
 #endif
     [SetterRaisesException] attribute double valueAsNumber;
 
-    void stepUp(optional long n) raises(DOMException);
-    void stepDown(optional long n) raises(DOMException);
+    [RaisesException] void stepUp(optional long n);
+    [RaisesException] void stepDown(optional long n);
 
     attribute unsigned long width;
     readonly attribute boolean willValidate;
@@ -84,11 +84,11 @@ interface HTMLInputElement : HTMLElement {
     [Custom] attribute long selectionEnd;
     [Custom] attribute DOMString selectionDirection;
 
-    void setRangeText(DOMString replacement) raises(DOMException);
-    void setRangeText(DOMString replacement,
+    [RaisesException] void setRangeText(DOMString replacement);
+    [RaisesException] void setRangeText(DOMString replacement,
                         unsigned long start,
                         unsigned long end,
-                        [Default=NullString] optional DOMString selectionMode) raises(DOMException);
+                        [Default=NullString] optional DOMString selectionMode);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [Custom] void setSelectionRange(long start, long end);

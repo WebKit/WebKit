@@ -36,7 +36,7 @@
     [TreatNullAs=NullString, SetterRaisesException] attribute DOMString innerHTML;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    Node cloneNode([Default=Undefined] optional boolean deep) raises(DOMException);
+    [RaisesException] Node cloneNode([Default=Undefined] optional boolean deep);
 #endif
     DOMSelection getSelection();
     Element getElementById([Default=Undefined] optional DOMString elementId);

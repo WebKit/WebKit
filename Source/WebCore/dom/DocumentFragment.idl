@@ -19,9 +19,7 @@
 
 interface DocumentFragment : Node {
     // NodeSelector - Selector API
-    Element querySelector(DOMString selectors)
-        raises(DOMException);
-    NodeList querySelectorAll(DOMString selectors)
-        raises(DOMException);
+    [RaisesException] Element querySelector(DOMString selectors);
+    [RaisesException] NodeList querySelectorAll(DOMString selectors);
 };
 

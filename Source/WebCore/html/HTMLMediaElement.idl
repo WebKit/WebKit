@@ -95,12 +95,9 @@ readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitAudioDecod
 readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitVideoDecodedByteCount;
 
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
-void webkitGenerateKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, optional Uint8Array initData)
-    raises (DOMException);
-void webkitAddKey([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, Uint8Array key, optional Uint8Array initData, [Default=NullString] optional DOMString sessionId)
-    raises (DOMException);
-void webkitCancelKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, [Default=NullString] optional DOMString sessionId)
-    raises (DOMException);
+[RaisesException] void webkitGenerateKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, optional Uint8Array initData);
+[RaisesException] void webkitAddKey([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, Uint8Array key, optional Uint8Array initData, [Default=NullString] optional DOMString sessionId);
+[RaisesException] void webkitCancelKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, [Default=NullString] optional DOMString sessionId);
 
     attribute EventListener onwebkitkeyadded;
     attribute EventListener onwebkitkeyerror;
@@ -112,8 +109,7 @@ void webkitCancelKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString
 #endif
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
-TextTrack addTextTrack(DOMString kind, optional DOMString label, optional DOMString language)
-    raises (DOMException);
+[RaisesException] TextTrack addTextTrack(DOMString kind, optional DOMString label, optional DOMString language);
 readonly attribute AudioTrackList audioTracks;
 readonly attribute TextTrackList textTracks;
 readonly attribute VideoTrackList videoTracks;

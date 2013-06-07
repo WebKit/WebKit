@@ -34,35 +34,20 @@
     readonly attribute IDBTransaction transaction;
     readonly attribute boolean autoIncrement;
 
-    [CallWith=ScriptState] IDBRequest put(any value, optional any key)
-        raises (DOMException);
-    [CallWith=ScriptState] IDBRequest add(any value, optional any key)
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(IDBKeyRange? keyRange)
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(any key)
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest clear()
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest get(IDBKeyRange? key)
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest get(any key)
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest openCursor(optional IDBKeyRange? range, optional DOMString direction)
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest openCursor(any key, optional DOMString direction)
-        raises (DOMException);
+    [CallWith=ScriptState, RaisesException] IDBRequest put(any value, optional any key);
+    [CallWith=ScriptState, RaisesException] IDBRequest add(any value, optional any key);
+    [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction, RaisesException] IDBRequest delete(IDBKeyRange? keyRange);
+    [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction, RaisesException] IDBRequest delete(any key);
+    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest clear();
+    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest get(IDBKeyRange? key);
+    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest get(any key);
+    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest openCursor(optional IDBKeyRange? range, optional DOMString direction);
+    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest openCursor(any key, optional DOMString direction);
 
-    [CallWith=ScriptExecutionContext, Custom] IDBIndex createIndex(DOMString name, sequence<DOMString> keyPath, optional Dictionary options)
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext, Custom] IDBIndex createIndex(DOMString name, DOMString keyPath, optional Dictionary options)
-        raises (DOMException);
-    IDBIndex index(DOMString name)
-        raises (DOMException);
-    void deleteIndex(DOMString name)
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest count(optional IDBKeyRange? range)
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest count(any key)
-        raises (DOMException);
+    [CallWith=ScriptExecutionContext, Custom, RaisesException] IDBIndex createIndex(DOMString name, sequence<DOMString> keyPath, optional Dictionary options);
+    [CallWith=ScriptExecutionContext, Custom, RaisesException] IDBIndex createIndex(DOMString name, DOMString keyPath, optional Dictionary options);
+    [RaisesException] IDBIndex index(DOMString name);
+    [RaisesException] void deleteIndex(DOMString name);
+    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest count(optional IDBKeyRange? range);
+    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest count(any key);
 };

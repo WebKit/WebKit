@@ -1,3 +1,14 @@
+2013-06-07  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Get rid of outdated raises() from Web IDL
+        https://bugs.webkit.org/show_bug.cgi?id=117350
+
+        Reviewed by Darin Adler.
+
+        Replace raises() by [RaisesException].
+
+        * Interfaces/DOMEvents.idl:
+
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
         Nuke VS2005 files from the tree.

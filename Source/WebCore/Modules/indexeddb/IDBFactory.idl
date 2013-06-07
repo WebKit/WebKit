@@ -28,15 +28,11 @@
     JSNoStaticTables,
     ImplementationLacksVTable
 ] interface IDBFactory {
-    [CallWith=ScriptExecutionContext, ImplementedAs=getDatabaseNames] IDBRequest webkitGetDatabaseNames()
-        raises (DOMException);
+    [CallWith=ScriptExecutionContext, ImplementedAs=getDatabaseNames, RaisesException] IDBRequest webkitGetDatabaseNames();
 
-    [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(DOMString name, [EnforceRange] optional unsigned long long version)
-        raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBOpenDBRequest deleteDatabase(DOMString name)
-        raises (DOMException);
+    [CallWith=ScriptExecutionContext, RaisesException] IDBOpenDBRequest open(DOMString name, [EnforceRange] optional unsigned long long version);
+    [CallWith=ScriptExecutionContext, RaisesException] IDBOpenDBRequest deleteDatabase(DOMString name);
 
-    [CallWith=ScriptExecutionContext] short cmp(any first, any second)
-        raises (DOMException);
+    [CallWith=ScriptExecutionContext, RaisesException] short cmp(any first, any second);
 };
 

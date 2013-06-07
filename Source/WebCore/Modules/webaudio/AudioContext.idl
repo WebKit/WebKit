@@ -46,49 +46,40 @@
     // Number of AudioBufferSourceNodes that are currently playing.
     readonly attribute unsigned long activeSourceCount;
     
-    AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate)
-        raises(DOMException);
-    AudioBuffer createBuffer(ArrayBuffer? buffer, boolean mixToMono)
-        raises(DOMException);
+    [RaisesException] AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate);
+    [RaisesException] AudioBuffer createBuffer(ArrayBuffer? buffer, boolean mixToMono);
 
     // Asynchronous audio file data decoding.
-    void decodeAudioData(ArrayBuffer audioData, AudioBufferCallback successCallback, optional AudioBufferCallback errorCallback)
-        raises(DOMException);
+    [RaisesException] void decodeAudioData(ArrayBuffer audioData, AudioBufferCallback successCallback, optional AudioBufferCallback errorCallback);
 
     // Sources
     AudioBufferSourceNode createBufferSource();
 
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement)
-        raises(DOMException);
+    [RaisesException] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
 #endif
 
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
-    MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream)
-        raises(DOMException);
+    [RaisesException] MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream);
     MediaStreamAudioDestinationNode createMediaStreamDestination();
 #endif
 
     // Processing nodes
     GainNode createGain();
-    DelayNode createDelay(optional double maxDelayTime) raises(DOMException);
+    [RaisesException] DelayNode createDelay(optional double maxDelayTime);
     BiquadFilterNode createBiquadFilter();
     WaveShaperNode createWaveShaper();
     PannerNode createPanner();
     ConvolverNode createConvolver();
     DynamicsCompressorNode createDynamicsCompressor();
     AnalyserNode createAnalyser();
-    ScriptProcessorNode createScriptProcessor(unsigned long bufferSize, optional unsigned long numberOfInputChannels, optional unsigned long numberOfOutputChannels)
-        raises(DOMException);
+    [RaisesException] ScriptProcessorNode createScriptProcessor(unsigned long bufferSize, optional unsigned long numberOfInputChannels, optional unsigned long numberOfOutputChannels);
     OscillatorNode createOscillator();
-    WaveTable createWaveTable(Float32Array real, Float32Array imag)
-        raises(DOMException);
+    [RaisesException] WaveTable createWaveTable(Float32Array real, Float32Array imag);
 
     // Channel splitting and merging
-    ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs)
-        raises(DOMException);
-    ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs)
-        raises(DOMException);
+    [RaisesException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs);
+    [RaisesException] ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs);
 
     // Offline rendering
     // void prepareOfflineBufferRendering(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate);
@@ -96,10 +87,8 @@
     void startRendering();
 
     [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createGain] GainNode createGainNode();
-    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createDelay] DelayNode createDelayNode(optional double maxDelayTime) 
-        raises(DOMException);
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createDelay, RaisesException] DelayNode createDelayNode(optional double maxDelayTime);
 
-    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createScriptProcessor] ScriptProcessorNode createJavaScriptNode(unsigned long bufferSize, optional unsigned long numberOfInputChannels, optional unsigned long numberOfOutputChannels)
-        raises(DOMException);
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createScriptProcessor, RaisesException] ScriptProcessorNode createJavaScriptNode(unsigned long bufferSize, optional unsigned long numberOfInputChannels, optional unsigned long numberOfOutputChannels);
 
 };

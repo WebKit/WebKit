@@ -31,9 +31,9 @@
     const unsigned short PERSISTENT = 1;
 
     void webkitRequestFileSystem(unsigned short type, long long size, optional FileSystemCallback successCallback, optional ErrorCallback errorCallback);
-    DOMFileSystemSync webkitRequestFileSystemSync(unsigned short type, long long size) raises (FileException);
+    [RaisesException] DOMFileSystemSync webkitRequestFileSystemSync(unsigned short type, long long size);
     void webkitResolveLocalFileSystemURL(DOMString url, EntryCallback successCallback, optional ErrorCallback errorCallback);
-    EntrySync webkitResolveLocalFileSystemSyncURL(DOMString url) raises (FileException);
+    [RaisesException] EntrySync webkitResolveLocalFileSystemSyncURL(DOMString url);
 
     attribute FileErrorConstructor FileError;
     attribute FileExceptionConstructor FileException;

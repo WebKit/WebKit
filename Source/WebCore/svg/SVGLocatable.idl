@@ -36,7 +36,6 @@
     SVGRect   getBBox();
     SVGMatrix getCTM();
     SVGMatrix getScreenCTM();
-    SVGMatrix getTransformToElement([Default=Undefined] optional SVGElement element)
-        raises(SVGException);
+    [RaisesException] SVGMatrix getTransformToElement([Default=Undefined] optional SVGElement element);
 };
 

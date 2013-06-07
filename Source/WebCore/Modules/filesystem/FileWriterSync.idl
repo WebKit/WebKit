@@ -34,9 +34,9 @@
     JSNoStaticTables
 ] interface FileWriterSync {
     // synchronous write/modify methods
-    void write(Blob data) raises (FileException);
-    void seek(long long position) raises (FileException);
-    void truncate(long long size) raises (FileException);
+    [RaisesException] void write(Blob data);
+    [RaisesException] void seek(long long position);
+    [RaisesException] void truncate(long long size);
 
     readonly attribute long long position;
     readonly attribute long long length;

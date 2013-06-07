@@ -54,13 +54,13 @@
     attribute double m43;
     attribute double m44;
 
-    void setMatrixValue([Default=Undefined] optional DOMString string) raises (DOMException);
+    [RaisesException] void setMatrixValue([Default=Undefined] optional DOMString string);
     
     // Multiply this matrix by secondMatrix, on the right (result = this * secondMatrix)
     [Immutable] WebKitCSSMatrix multiply([Default=Undefined] optional WebKitCSSMatrix secondMatrix);
     
     // Return the inverse of this matrix. Throw an exception if the matrix is not invertible
-    [Immutable] WebKitCSSMatrix inverse() raises (DOMException);
+    [Immutable, RaisesException] WebKitCSSMatrix inverse();
     
     // Return this matrix translated by the passed values.
     // Passing a NaN will use a value of 0. This allows the 3D form to used for 2D operations    

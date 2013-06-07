@@ -44,13 +44,12 @@
 
     [SetterRaisesException] attribute double duration;
 
-    SourceBuffer addSourceBuffer(DOMString type) raises (DOMException);
-    void removeSourceBuffer(SourceBuffer buffer) raises (DOMException);
+    [RaisesException] SourceBuffer addSourceBuffer(DOMString type);
+    [RaisesException] void removeSourceBuffer(SourceBuffer buffer);
 
     readonly attribute DOMString readyState;
     
-    void endOfStream([Default=NullString] optional DOMString error)
-        raises (DOMException);
+    [RaisesException] void endOfStream([Default=NullString] optional DOMString error);
 
     static boolean isTypeSupported (DOMString type);
 
@@ -61,7 +60,6 @@
     void removeEventListener(DOMString type,
                              EventListener listener,
                              optional boolean useCapture);
-    boolean dispatchEvent(Event event)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event event);
 };
 

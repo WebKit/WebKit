@@ -52,11 +52,11 @@
 
     [Immutable] SVGPOINT immutablePointFunction();
 
-    ARRAY_OF_STRINGS stringArrayFunction(ARRAY_OF_STRINGS values) raises(E);
-    STRING[] stringArrayFunction2(STRING[] values) raises(E);
+    [RaisesException] ARRAY_OF_STRINGS stringArrayFunction(ARRAY_OF_STRINGS values);
+    [RaisesException] STRING[] stringArrayFunction2(STRING[] values);
 
     // Exceptions
-    void methodWithException() raises(E);
+    [RaisesException] void methodWithException();
     [GetterRaisesException] attribute long attrWithGetterException;
     [SetterRaisesException] attribute long attrWithSetterException;
     [GetterRaisesException] attribute DOMString stringAttrWithGetterException;

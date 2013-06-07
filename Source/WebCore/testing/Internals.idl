@@ -29,140 +29,140 @@
 ] interface Internals {
     DOMString address(Node node);
 
-    DOMString elementRenderTreeAsText(Element element) raises(DOMException);
+    [RaisesException] DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
 
-    unsigned long numberOfScopedHTMLStyleChildren(Node scope) raises(DOMException);
-    CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node) raises(DOMException);
+    [RaisesException] unsigned long numberOfScopedHTMLStyleChildren(Node scope);
+    [RaisesException] CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node);
 
 #if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
-    ShadowRoot ensureShadowRoot(Element host) raises (DOMException);
-    ShadowRoot createShadowRoot(Element host) raises (DOMException);
-    ShadowRoot shadowRoot(Element host) raises (DOMException);
+    [RaisesException] ShadowRoot ensureShadowRoot(Element host);
+    [RaisesException] ShadowRoot createShadowRoot(Element host);
+    [RaisesException] ShadowRoot shadowRoot(Element host);
 #else
-    Node ensureShadowRoot(Element host) raises (DOMException);
-    Node createShadowRoot(Element host) raises (DOMException);
-    Node shadowRoot(Element host) raises (DOMException);
+    [RaisesException] Node ensureShadowRoot(Element host);
+    [RaisesException] Node createShadowRoot(Element host);
+    [RaisesException] Node shadowRoot(Element host);
 #endif
-    DOMString shadowRootType(Node root) raises (DOMException);
-    Element includerFor(Node node) raises (DOMException);
-    DOMString shadowPseudoId(Element element) raises (DOMException);
-    void setShadowPseudoId(Element element, DOMString id) raises (DOMException);
-    Element createContentElement() raises(DOMException);
-    boolean isValidContentSelect(Element contentElement) raises(DOMException);
-    Node treeScopeRootNode(Node node) raises (DOMException);
-    Node parentTreeScope(Node node) raises (DOMException);
+    [RaisesException] DOMString shadowRootType(Node root);
+    [RaisesException] Element includerFor(Node node);
+    [RaisesException] DOMString shadowPseudoId(Element element);
+    [RaisesException] void setShadowPseudoId(Element element, DOMString id);
+    [RaisesException] Element createContentElement();
+    [RaisesException] boolean isValidContentSelect(Element contentElement);
+    [RaisesException] Node treeScopeRootNode(Node node);
+    [RaisesException] Node parentTreeScope(Node node);
 
     // CSS Animation testing.
     unsigned long numberOfActiveAnimations();
-    void suspendAnimations(Document document) raises (DOMException);
-    void resumeAnimations(Document document) raises (DOMException);
-    boolean animationsAreSuspended(in Document document) raises (DOMException);
-    boolean pauseAnimationAtTimeOnElement(DOMString animationName, double pauseTime, Element element) raises (DOMException);
-    boolean pauseAnimationAtTimeOnPseudoElement(DOMString animationName, double pauseTime, Element element, DOMString pseudoId) raises (DOMException);
+    [RaisesException] void suspendAnimations(Document document);
+    [RaisesException] void resumeAnimations(Document document);
+    [RaisesException] boolean animationsAreSuspended(in Document document);
+    [RaisesException] boolean pauseAnimationAtTimeOnElement(DOMString animationName, double pauseTime, Element element);
+    [RaisesException] boolean pauseAnimationAtTimeOnPseudoElement(DOMString animationName, double pauseTime, Element element, DOMString pseudoId);
 
     // CSS Transition testing.
-    boolean pauseTransitionAtTimeOnElement(DOMString propertyName, double pauseTime, Element element) raises (DOMException);
-    boolean pauseTransitionAtTimeOnPseudoElement(DOMString property, double pauseTime, Element element, DOMString pseudoId) raises (DOMException);
+    [RaisesException] boolean pauseTransitionAtTimeOnElement(DOMString propertyName, double pauseTime, Element element);
+    [RaisesException] boolean pauseTransitionAtTimeOnPseudoElement(DOMString property, double pauseTime, Element element, DOMString pseudoId);
 
-    Node nextSiblingByWalker(Node node) raises(DOMException);
-    Node firstChildByWalker(Node node) raises(DOMException);
-    Node lastChildByWalker(Node node) raises(DOMException);
-    Node nextNodeByWalker(Node node) raises(DOMException);
-    Node previousNodeByWalker(Node node) raises(DOMException);
+    [RaisesException] Node nextSiblingByWalker(Node node);
+    [RaisesException] Node firstChildByWalker(Node node);
+    [RaisesException] Node lastChildByWalker(Node node);
+    [RaisesException] Node nextNodeByWalker(Node node);
+    [RaisesException] Node previousNodeByWalker(Node node);
 
-    boolean attached(Node node) raises(DOMException);
+    [RaisesException] boolean attached(Node node);
 
     DOMString visiblePlaceholder(Element element);
 #if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
     void selectColorInColorChooser(Element element, DOMString colorValue);
 #endif
-    DOMString[] formControlStateOfPreviousHistoryItem() raises(DOMException);
-    void setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values) raises(DOMException);
+    [RaisesException] DOMString[] formControlStateOfPreviousHistoryItem();
+    [RaisesException] void setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
 
-    ClientRect absoluteCaretBounds() raises(DOMException);
+    [RaisesException] ClientRect absoluteCaretBounds();
 
-    ClientRect boundingBox(Element element) raises(DOMException);
+    [RaisesException] ClientRect boundingBox(Element element);
 
-    ClientRectList inspectorHighlightRects(Document document) raises (DOMException);
+    [RaisesException] ClientRectList inspectorHighlightRects(Document document);
 
-    unsigned long markerCountForNode(Node node, DOMString markerType) raises(DOMException);
-    Range markerRangeForNode(Node node, DOMString markerType, unsigned long index) raises(DOMException);
-    DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index) raises(DOMException);
+    [RaisesException] unsigned long markerCountForNode(Node node, DOMString markerType);
+    [RaisesException] Range markerRangeForNode(Node node, DOMString markerType, unsigned long index);
+    [RaisesException] DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
     void addTextMatchMarker(Range range, boolean isActive);
 
-    void setScrollViewPosition(Document document, long x, long y) raises(DOMException);
+    [RaisesException] void setScrollViewPosition(Document document, long x, long y);
 
-    void setPagination(Document document, DOMString mode, long gap, optional long pageLength) raises(DOMException);
+    [RaisesException] void setPagination(Document document, DOMString mode, long gap, optional long pageLength);
 
-    DOMString configurationForViewport(Document document,
+    [RaisesException] DOMString configurationForViewport(Document document,
                                        float devicePixelRatio,
                                        long deviceWidth,
                                        long deviceHeight,
                                        long availableWidth,
-                                       long availableHeight) raises(DOMException);
+                                       long availableHeight);
 
-    boolean wasLastChangeUserEdit(Element textField) raises (DOMException);
-    boolean elementShouldAutoComplete(Element inputElement) raises (DOMException);
-    DOMString suggestedValue(Element inputElement) raises (DOMException);
-    void setSuggestedValue(Element inputElement, DOMString value) raises (DOMException);
-    void setEditingValue(Element inputElement, DOMString value) raises (DOMException);
-    void setAutofilled(Element inputElement, boolean enabled) raises(DOMException);
+    [RaisesException] boolean wasLastChangeUserEdit(Element textField);
+    [RaisesException] boolean elementShouldAutoComplete(Element inputElement);
+    [RaisesException] DOMString suggestedValue(Element inputElement);
+    [RaisesException] void setSuggestedValue(Element inputElement, DOMString value);
+    [RaisesException] void setEditingValue(Element inputElement, DOMString value);
+    [RaisesException] void setAutofilled(Element inputElement, boolean enabled);
 
-    void paintControlTints(Document document) raises (DOMException);
+    [RaisesException] void paintControlTints(Document document);
 
-    void scrollElementToRect(Element element, long x, long y, long w, long h) raises (DOMException);
+    [RaisesException] void scrollElementToRect(Element element, long x, long y, long w, long h);
 
-    Range rangeFromLocationAndLength(Element scope, long rangeLocation, long rangeLength) raises (DOMException);
-    unsigned long locationFromRange(Element scope, Range range) raises (DOMException);
-    unsigned long lengthFromRange(Element scope, Range range) raises (DOMException);
-    DOMString rangeAsText(Range range) raises (DOMException);
+    [RaisesException] Range rangeFromLocationAndLength(Element scope, long rangeLocation, long rangeLength);
+    [RaisesException] unsigned long locationFromRange(Element scope, Range range);
+    [RaisesException] unsigned long lengthFromRange(Element scope, Range range);
+    [RaisesException] DOMString rangeAsText(Range range);
 
-    void setDelegatesScrolling(boolean enabled, Document document) raises (DOMException);
+    [RaisesException] void setDelegatesScrolling(boolean enabled, Document document);
 #if defined(ENABLE_TOUCH_ADJUSTMENT) && ENABLE_TOUCH_ADJUSTMENT
-    WebKitPoint touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height, Document document) raises (DOMException);
-    Node touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height, Document document) raises (DOMException);
-    WebKitPoint touchPositionAdjustedToBestContextMenuNode(long x, long y, long width, long height, Document document) raises (DOMException);
-    Node touchNodeAdjustedToBestContextMenuNode(long x, long y, long width, long height, Document document) raises (DOMException);
-    ClientRect bestZoomableAreaForTouchPoint(long x, long y, long width, long height, Document document) raises (DOMException);
+    [RaisesException] WebKitPoint touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height, Document document);
+    [RaisesException] Node touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height, Document document);
+    [RaisesException] WebKitPoint touchPositionAdjustedToBestContextMenuNode(long x, long y, long width, long height, Document document);
+    [RaisesException] Node touchNodeAdjustedToBestContextMenuNode(long x, long y, long width, long height, Document document);
+    [RaisesException] ClientRect bestZoomableAreaForTouchPoint(long x, long y, long width, long height, Document document);
 #endif
 
-    long lastSpellCheckRequestSequence(Document document) raises (DOMException);
-    long lastSpellCheckProcessedSequence(Document document) raises (DOMException);
+    [RaisesException] long lastSpellCheckRequestSequence(Document document);
+    [RaisesException] long lastSpellCheckProcessedSequence(Document document);
 
     sequence<DOMString> userPreferredLanguages();
     void setUserPreferredLanguages(sequence<DOMString> languages);
 
-    unsigned long wheelEventHandlerCount(Document document) raises (DOMException);
-    unsigned long touchEventHandlerCount(Document document) raises (DOMException);
+    [RaisesException] unsigned long wheelEventHandlerCount(Document document);
+    [RaisesException] unsigned long touchEventHandlerCount(Document document);
 #if defined(ENABLE_TOUCH_EVENT_TRACKING) && ENABLE_TOUCH_EVENT_TRACKING
-    ClientRectList touchEventTargetClientRects(Document document) raises (DOMException);
+    [RaisesException] ClientRectList touchEventTargetClientRects(Document document);
 #endif
 
-    NodeList nodesFromRect(Document document, long x, long y,
+    [RaisesException] NodeList nodesFromRect(Document document, long x, long y,
         unsigned long topPadding, unsigned long rightPadding, unsigned long bottomPadding, unsigned long leftPadding,
-        boolean ignoreClipping, boolean allowShadowContent, boolean allowChildFrameContent) raises (DOMException);
+        boolean ignoreClipping, boolean allowShadowContent, boolean allowChildFrameContent);
 
     void emitInspectorDidBeginFrame();
     void emitInspectorDidCancelFrame();
 
-    boolean hasSpellingMarker(Document document, long from, long length) raises (DOMException);
-    boolean hasGrammarMarker(Document document, long from, long length) raises (DOMException);
-    boolean hasAutocorrectedMarker(Document document, long from, long length) raises (DOMException);
-    void setContinuousSpellCheckingEnabled(boolean enabled) raises (DOMException);
-    void setAutomaticQuoteSubstitutionEnabled(boolean enabled) raises (DOMException);
-    void setAutomaticLinkDetectionEnabled(boolean enabled) raises (DOMException);
-    void setAutomaticDashSubstitutionEnabled(boolean enabled) raises (DOMException);
-    void setAutomaticTextReplacementEnabled(boolean enabled) raises (DOMException);
-    void setAutomaticSpellingCorrectionEnabled(boolean enabled) raises (DOMException);
+    [RaisesException] boolean hasSpellingMarker(Document document, long from, long length);
+    [RaisesException] boolean hasGrammarMarker(Document document, long from, long length);
+    [RaisesException] boolean hasAutocorrectedMarker(Document document, long from, long length);
+    [RaisesException] void setContinuousSpellCheckingEnabled(boolean enabled);
+    [RaisesException] void setAutomaticQuoteSubstitutionEnabled(boolean enabled);
+    [RaisesException] void setAutomaticLinkDetectionEnabled(boolean enabled);
+    [RaisesException] void setAutomaticDashSubstitutionEnabled(boolean enabled);
+    [RaisesException] void setAutomaticTextReplacementEnabled(boolean enabled);
+    [RaisesException] void setAutomaticSpellingCorrectionEnabled(boolean enabled);
 
-    boolean isOverwriteModeEnabled(Document document) raises (DOMException);
-    void toggleOverwriteModeEnabled(Document document) raises (DOMException);
+    [RaisesException] boolean isOverwriteModeEnabled(Document document);
+    [RaisesException] void toggleOverwriteModeEnabled(Document document);
 
-    unsigned long numberOfScrollableAreas(Document document) raises (DOMException);
+    [RaisesException] unsigned long numberOfScrollableAreas(Document document);
 
-    boolean isPageBoxVisible(Document document, long pageNumber) raises (DOMException);
+    [RaisesException] boolean isPageBoxVisible(Document document, long pageNumber);
 
     readonly attribute InternalSettings settings;
     readonly attribute unsigned long workerThreadCount;
@@ -172,15 +172,15 @@
     const unsigned short LAYER_TREE_INCLUDES_TILE_CACHES = 2;
     const unsigned short LAYER_TREE_INCLUDES_REPAINT_RECTS = 4;
     const unsigned short LAYER_TREE_INCLUDES_PAINTING_PHASES = 8;
-    DOMString layerTreeAsText(Document document, optional unsigned short flags) raises (DOMException);
+    [RaisesException] DOMString layerTreeAsText(Document document, optional unsigned short flags);
 
-    DOMString scrollingStateTreeAsText(Document document) raises (DOMException);
-    DOMString mainThreadScrollingReasons(Document document) raises (DOMException);
-    ClientRectList nonFastScrollableRects(Document document) raises (DOMException);
+    [RaisesException] DOMString scrollingStateTreeAsText(Document document);
+    [RaisesException] DOMString mainThreadScrollingReasons(Document document);
+    [RaisesException] ClientRectList nonFastScrollableRects(Document document);
 
-    DOMString repaintRectsAsText(Document document) raises (DOMException);
+    [RaisesException] DOMString repaintRectsAsText(Document document);
 
-    void garbageCollectDocumentResources(Document document) raises (DOMException);
+    [RaisesException] void garbageCollectDocumentResources(Document document);
 
     void allowRoundingHacks();
 
@@ -188,15 +188,15 @@
     void insertUserCSS(Document document, DOMString css);
 
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS
-    void setBatteryStatus(Document document, DOMString eventType, boolean charging, double chargingTime, double dischargingTime, double level) raises (DOMException);
+    [RaisesException] void setBatteryStatus(Document document, DOMString eventType, boolean charging, double chargingTime, double dischargingTime, double level);
 #endif
 
 #if defined(ENABLE_NETWORK_INFO) && ENABLE_NETWORK_INFO
-    void setNetworkInformation(Document document, DOMString eventType, double bandwidth, boolean metered) raises (DOMException);
+    [RaisesException] void setNetworkInformation(Document document, DOMString eventType, double bandwidth, boolean metered);
 #endif
 
 #if defined(ENABLE_PROXIMITY_EVENTS) && ENABLE_PROXIMITY_EVENTS
-    void setDeviceProximity(Document document, DOMString eventType, double value, double min, double max) raises (DOMException);
+    [RaisesException] void setDeviceProximity(Document document, DOMString eventType, double value, double min, double max);
 #endif
 
     [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();
@@ -204,18 +204,18 @@
     [Conditional=INSPECTOR] sequence<DOMString> consoleMessageArgumentCounts(Document document);
     [Conditional=INSPECTOR] DOMWindow openDummyInspectorFrontend(DOMString url);
     [Conditional=INSPECTOR] void closeDummyInspectorFrontend();
-    [Conditional=INSPECTOR] void setInspectorResourcesDataSizeLimits(long maximumResourcesContentSize, long maximumSingleResourceContentSize) raises(DOMException);
-    [Conditional=INSPECTOR] void setJavaScriptProfilingEnabled(boolean creates) raises(DOMException);
+    [Conditional=INSPECTOR, RaisesException] void setInspectorResourcesDataSizeLimits(long maximumResourcesContentSize, long maximumSingleResourceContentSize);
+    [Conditional=INSPECTOR, RaisesException] void setJavaScriptProfilingEnabled(boolean creates);
 
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional float pageWidth, optional float pageHeight);
     DOMString[] shortcutIconURLs(Document document);
     DOMString[] allIconURLs(Document document);
     long numberOfPages(optional double pageWidthInPixels, optional double pageHeightInPixels);
-    DOMString pageProperty(DOMString propertyName, long pageNumber) raises (DOMException);
-    DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft) raises (DOMException);
+    [RaisesException] DOMString pageProperty(DOMString propertyName, long pageNumber);
+    [RaisesException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
 
-    void setPageScaleFactor(float scaleFactor, long x, long y) raises(DOMException);
+    [RaisesException] void setPageScaleFactor(float scaleFactor, long x, long y);
 
     void setHeaderHeight(Document document, float height);
     void setFooterHeight(Document document, float height);
@@ -238,13 +238,13 @@
 
     // These functions both reset the tracked repaint rects. They are inteded to be used in the following order:
     //  startTrackingRepaints, repaintRectsAsText, stopTrackingRepaints.
-    void startTrackingRepaints(Document document) raises (DOMException);
-    void stopTrackingRepaints(Document document) raises (DOMException);
+    [RaisesException] void startTrackingRepaints(Document document);
+    [RaisesException] void stopTrackingRepaints(Document document);
 
     // Returns a string with information about the mouse cursor used at the specified client location.
-    DOMString getCurrentCursorInfo(Document document) raises (DOMException);
+    [RaisesException] DOMString getCurrentCursorInfo(Document document);
 
-    DOMString markerTextForListItem(Element element) raises (DOMException);
+    [RaisesException] DOMString markerTextForListItem(Element element);
 
     SerializedScriptValue deserializeBuffer(ArrayBuffer buffer);
     ArrayBuffer serializeObject(SerializedScriptValue obj);
@@ -259,12 +259,12 @@
 
     [Conditional=SPEECH_SYNTHESIS] void enableMockSpeechSynthesizer();
 
-    DOMString getImageSourceURL(Element element) raises(DOMException);
+    [RaisesException] DOMString getImageSourceURL(Element element);
 
-    [Conditional=VIDEO_TRACK] DOMString captionsStyleSheetOverride() raises (DOMException);
-    [Conditional=VIDEO_TRACK] void setCaptionsStyleSheetOverride(DOMString override) raises (DOMException);
-    [Conditional=VIDEO_TRACK] void setPrimaryAudioTrackLanguageOverride(DOMString language) raises(DOMException);
-    [Conditional=VIDEO_TRACK] void setCaptionDisplayMode(DOMString mode) raises (DOMException);
+    [Conditional=VIDEO_TRACK, RaisesException] DOMString captionsStyleSheetOverride();
+    [Conditional=VIDEO_TRACK, RaisesException] void setCaptionsStyleSheetOverride(DOMString override);
+    [Conditional=VIDEO_TRACK, RaisesException] void setPrimaryAudioTrackLanguageOverride(DOMString language);
+    [Conditional=VIDEO_TRACK, RaisesException] void setCaptionDisplayMode(DOMString mode);
 
     [Conditional=VIDEO] TimeRanges createTimeRanges(Float32Array startTimes, Float32Array
      endTimes);
@@ -272,5 +272,5 @@
 
     boolean isSelectPopupVisible(Node node);
 
-    ClientRect selectionBounds() raises(DOMException);
+    [RaisesException] ClientRect selectionBounds();
 };

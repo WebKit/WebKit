@@ -32,15 +32,10 @@
     SkipVTableValidation
 ] interface Storage {
     [NotEnumerable, GetterRaisesException] readonly attribute unsigned long length;
-    [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString key(unsigned long index)
-        raises(DOMException);
-    [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString getItem(DOMString key)
-        raises(DOMException);
-    [NotEnumerable] void setItem(DOMString key, DOMString data) 
-        raises(DOMException);
-    [NotEnumerable] void removeItem(DOMString key)
-        raises(DOMException);
-    [NotEnumerable] void clear()
-        raises(DOMException);
+    [NotEnumerable, TreatReturnedNullStringAs=Null, RaisesException] DOMString key(unsigned long index);
+    [NotEnumerable, TreatReturnedNullStringAs=Null, RaisesException] DOMString getItem(DOMString key);
+    [NotEnumerable, RaisesException] void setItem(DOMString key, DOMString data);
+    [NotEnumerable, RaisesException] void removeItem(DOMString key);
+    [NotEnumerable, RaisesException] void clear();
 };
 

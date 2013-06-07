@@ -41,14 +41,12 @@
              attribute EventListener oncuechange;
 
     void addCue(TextTrackCue cue);
-    void removeCue(TextTrackCue cue)
-        raises (DOMException);
+    [RaisesException] void removeCue(TextTrackCue cue);
 
 #if defined(ENABLE_WEBVTT_REGIONS) && ENABLE_WEBVTT_REGIONS
     readonly attribute TextTrackRegionList regions;
     void addRegion(TextTrackRegion region);
-    void removeRegion(TextTrackRegion region)
-        raises (DOMException);
+    [RaisesException] void removeRegion(TextTrackRegion region);
 #endif
 
     // EventTarget interface
@@ -58,6 +56,5 @@
     void removeEventListener(DOMString type, 
                              EventListener listener, 
                              optional boolean useCapture);
-    boolean dispatchEvent(Event evt)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event evt);
 };

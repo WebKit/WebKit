@@ -37,7 +37,7 @@
     attribute boolean interimResults;
     attribute unsigned long maxAlternatives;
 
-    void start() raises (DOMException);
+    [RaisesException] void start();
     [ImplementedAs=stopFunction] void stop();
     void abort();
 
@@ -60,6 +60,5 @@
     void removeEventListener(DOMString type,
                              EventListener listener,
                              optional boolean useCapture);
-    boolean dispatchEvent(Event evt)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event evt);
 };

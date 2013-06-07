@@ -30,10 +30,8 @@
     readonly attribute Node referenceNode;
     readonly attribute boolean pointerBeforeReferenceNode;
 
-    [CallWith=ScriptState] Node nextNode() 
-        raises (DOMException);
-    [CallWith=ScriptState] Node previousNode()
-        raises (DOMException);
+    [CallWith=ScriptState, RaisesException] Node nextNode();
+    [CallWith=ScriptState, RaisesException] Node previousNode();
     void detach();
 };
 

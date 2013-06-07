@@ -37,8 +37,6 @@
     [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void forward();
     [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void go([Default=Undefined] optional long distance);
 
-    [Custom] void pushState(any data, DOMString title, optional DOMString url)
-        raises(DOMException);
-    [Custom] void replaceState(any data, DOMString title, optional DOMString url)
-        raises(DOMException);
+    [Custom, RaisesException] void pushState(any data, DOMString title, optional DOMString url);
+    [Custom, RaisesException] void replaceState(any data, DOMString title, optional DOMString url);
 };

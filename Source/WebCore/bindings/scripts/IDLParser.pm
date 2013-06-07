@@ -60,7 +60,6 @@ struct( domFunction => {
     isStatic => '$',
     signature => '$',    # Return type/Object name/extended attributes
     parameters => '@',    # List of 'domSignature'
-    raisesExceptions => '@',  # Possibly raised exceptions.
 });
 
 # Used to represent domInterface contents (name of attribute, signature)
@@ -1344,7 +1343,6 @@ sub parseOperationRest
         $self->assertTokenValue($self->getToken(), "(", $name, __LINE__);
         push(@{$newDataNode->parameters}, @{$self->parseArgumentList()});
         $self->assertTokenValue($self->getToken(), ")", __LINE__);
-        push(@{$newDataNode->raisesExceptions}, @{$self->parseRaises()});
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
         $newDataNode->signature->extendedAttributes($extendedAttributeList);
         return $newDataNode;
@@ -2047,31 +2045,6 @@ sub parseReturnType
         return $self->parseType();
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseExceptionList
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "(") {
-        my @exceptions = ();
-        $self->assertTokenValue($self->getToken(), "(", __LINE__);
-        push(@exceptions, @{$self->parseScopedNameList()});
-        $self->assertTokenValue($self->getToken(), ")", __LINE__);
-        return \@exceptions;
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseRaises
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "raises") {
-        $self->assertTokenValue($self->getToken(), "raises", __LINE__);
-        return $self->parseExceptionList();
-    }
-    return [];
 }
 
 sub parseDefinitionOld

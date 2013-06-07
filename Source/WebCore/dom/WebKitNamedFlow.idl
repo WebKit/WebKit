@@ -47,6 +47,5 @@
     void removeEventListener(DOMString type, 
                              EventListener listener, 
                              optional boolean useCapture);
-    boolean dispatchEvent(Event event)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event event);
 };

@@ -35,8 +35,8 @@
     JSGenerateToJSObject,
     JSNoStaticTables
 ] interface DirectoryEntrySync : EntrySync {
-    DirectoryReaderSync createReader() raises (FileException);
-    FileEntrySync getFile([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, Dictionary flags) raises (FileException);
-    DirectoryEntrySync getDirectory([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, Dictionary flags) raises (FileException);
-    void removeRecursively() raises (FileException);
+    [RaisesException] DirectoryReaderSync createReader();
+    [RaisesException] FileEntrySync getFile([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, Dictionary flags);
+    [RaisesException] DirectoryEntrySync getDirectory([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, Dictionary flags);
+    [RaisesException] void removeRecursively();
 };

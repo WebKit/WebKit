@@ -42,15 +42,12 @@
              [TreatNullAs=NullString, SetterRaisesException] attribute DOMString outerHTML;
              [TreatNullAs=NullString, SetterRaisesException] attribute DOMString outerText;
 
-    Element insertAdjacentElement([Default=Undefined] optional DOMString where,
-                                  [Default=Undefined] optional Element element)
-        raises(DOMException);
-    void insertAdjacentHTML([Default=Undefined] optional DOMString where,
-                            [Default=Undefined] optional DOMString html)
-        raises(DOMException);
-    void insertAdjacentText([Default=Undefined] optional DOMString where,
-                            [Default=Undefined] optional DOMString text)
-        raises(DOMException);
+    [RaisesException] Element insertAdjacentElement([Default=Undefined] optional DOMString where,
+                                  [Default=Undefined] optional Element element);
+    [RaisesException] void insertAdjacentHTML([Default=Undefined] optional DOMString where,
+                            [Default=Undefined] optional DOMString html);
+    [RaisesException] void insertAdjacentText([Default=Undefined] optional DOMString where,
+                            [Default=Undefined] optional DOMString text);
 
     readonly attribute HTMLCollection children;
 

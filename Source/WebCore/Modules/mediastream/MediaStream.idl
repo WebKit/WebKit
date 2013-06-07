@@ -40,10 +40,8 @@
     sequence<MediaStreamTrack> getAudioTracks();
     sequence<MediaStreamTrack> getVideoTracks();
 
-    void addTrack(MediaStreamTrack track)
-        raises(DOMException);
-    void removeTrack(MediaStreamTrack track)
-        raises(DOMException);
+    [RaisesException] void addTrack(MediaStreamTrack track);
+    [RaisesException] void removeTrack(MediaStreamTrack track);
     MediaStreamTrack getTrackById(DOMString trackId);
 
     readonly attribute boolean ended;
@@ -59,7 +57,6 @@
     void removeEventListener(DOMString type,
                              EventListener listener,
                              optional boolean useCapture);
-    boolean dispatchEvent(Event event)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event event);
 };
 

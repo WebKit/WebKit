@@ -60,8 +60,7 @@
     void removeEventListener(DOMString type, 
                              EventListener listener, 
                              optional boolean useCapture);
-    boolean dispatchEvent(Event evt)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event evt);
 
 #if defined(ENABLE_WEBVTT_REGIONS) && ENABLE_WEBVTT_REGIONS
     attribute DOMString regionId;

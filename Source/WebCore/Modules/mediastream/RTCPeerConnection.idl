@@ -37,27 +37,21 @@
     EventTarget,
     InterfaceName=webkitRTCPeerConnection
 ] interface RTCPeerConnection {
-    void createOffer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback, optional Dictionary mediaConstraints)
-        raises(DOMException);
+    [RaisesException] void createOffer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback, optional Dictionary mediaConstraints);
 
-    void createAnswer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback, optional Dictionary mediaConstraints)
-        raises(DOMException);
+    [RaisesException] void createAnswer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback, optional Dictionary mediaConstraints);
 
-    void setLocalDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback)
-        raises(DOMException);
+    [RaisesException] void setLocalDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback);
     [GetterRaisesException] readonly attribute RTCSessionDescription localDescription;
 
-    void setRemoteDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback)
-        raises(DOMException);
+    [RaisesException] void setRemoteDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback);
     [GetterRaisesException] readonly attribute RTCSessionDescription remoteDescription;
 
     readonly attribute DOMString signalingState;
 
-    void updateIce(optional Dictionary configuration, optional Dictionary mediaConstraints)
-        raises(DOMException);
+    [RaisesException] void updateIce(optional Dictionary configuration, optional Dictionary mediaConstraints);
 
-    void addIceCandidate(RTCIceCandidate candidate)
-        raises(DOMException);
+    [RaisesException] void addIceCandidate(RTCIceCandidate candidate);
 
     readonly attribute DOMString iceGatheringState;
     readonly attribute DOMString iceConnectionState;
@@ -66,21 +60,16 @@
     sequence<MediaStream> getRemoteStreams();
     MediaStream getStreamById(DOMString streamId);
 
-    [StrictTypeChecking] void addStream(MediaStream stream, optional Dictionary mediaConstraints)
-        raises(DOMException);
-    [StrictTypeChecking] void removeStream(MediaStream stream)
-        raises(DOMException);
+    [StrictTypeChecking, RaisesException] void addStream(MediaStream stream, optional Dictionary mediaConstraints);
+    [StrictTypeChecking, RaisesException] void removeStream(MediaStream stream);
 
     void getStats(RTCStatsCallback successCallback, [Default=Undefined] optional MediaStreamTrack selector);
 
-    RTCDataChannel createDataChannel([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString label, optional Dictionary options)
-         raises(DOMException);
+    [RaisesException] RTCDataChannel createDataChannel([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString label, optional Dictionary options);
 
-    RTCDTMFSender createDTMFSender(MediaStreamTrack track)
-         raises(DOMException);
+    [RaisesException] RTCDTMFSender createDTMFSender(MediaStreamTrack track);
 
-    void close()
-        raises(DOMException);
+    [RaisesException] void close();
 
     attribute EventListener onnegotiationneeded;
     attribute EventListener onicecandidate;
@@ -97,7 +86,6 @@
     void removeEventListener(DOMString type,
                              EventListener listener,
                              optional boolean useCapture);
-    boolean dispatchEvent(Event event)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event event);
 };
 

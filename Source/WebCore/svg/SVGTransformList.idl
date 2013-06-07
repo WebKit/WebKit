@@ -29,25 +29,16 @@
 ] interface SVGTransformList {
     readonly attribute unsigned long numberOfItems;
 
-    void clear()
-        raises(DOMException);
-    [StrictTypeChecking] SVGTransform initialize(SVGTransform item)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGTransform getItem(unsigned long index)
-        raises(DOMException);
-    [StrictTypeChecking] SVGTransform insertItemBefore(SVGTransform item, unsigned long index)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGTransform replaceItem(SVGTransform item, unsigned long index)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGTransform removeItem(unsigned long index)
-        raises(DOMException);
-    [StrictTypeChecking] SVGTransform appendItem(SVGTransform item)
-        raises(DOMException, SVGException);
+    [RaisesException] void clear();
+    [StrictTypeChecking, RaisesException] SVGTransform initialize(SVGTransform item);
+    [StrictTypeChecking, RaisesException] SVGTransform getItem(unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGTransform insertItemBefore(SVGTransform item, unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGTransform replaceItem(SVGTransform item, unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGTransform removeItem(unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGTransform appendItem(SVGTransform item);
 
-    [StrictTypeChecking] SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix)
-        raises(DOMException);
+    [StrictTypeChecking, RaisesException] SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix);
 
-    SVGTransform consolidate()
-        raises(DOMException);
+    [RaisesException] SVGTransform consolidate();
 };
 

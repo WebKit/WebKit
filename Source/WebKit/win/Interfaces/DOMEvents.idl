@@ -150,8 +150,7 @@ interface IDOMEventTarget : IUnknown
 ]
 interface IDOMDocumentEvent : IUnknown
 {
-    //Event              createEvent(DOMString eventType)
-    //    raises(DOMException);
+    //[RaisesException] Event              createEvent(DOMString eventType);
     HRESULT createEvent([in] BSTR eventType, [out, retval] IDOMEvent** result);
 }
 

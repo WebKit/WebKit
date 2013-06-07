@@ -2425,6 +2425,7 @@ sub GenerateImplementation
 
             my $isCustom = HasCustomMethod($function->signature->extendedAttributes);
             my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
+            my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
 
             next if $isCustom && $isOverloaded && $function->{overloadIndex} > 1;
 
@@ -2459,9 +2460,7 @@ sub GenerateImplementation
                 } else {
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                    if (@{$function->raisesExceptions}) {
-                        push(@implContent, "    ExceptionCode ec = 0;\n");
-                    }
+                    push(@implContent, "    ExceptionCode ec = 0;\n") if $raisesException;
 
                     my $numParameters = @{$function->parameters};
                     my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $numParameters, $interfaceName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
@@ -2520,12 +2519,10 @@ sub GenerateImplementation
                     } else {
                         GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                        if (@{$function->raisesExceptions}) {
-                            push(@implContent, "    ExceptionCode ec = 0;\n");
-                        }
+                        push(@implContent, "    ExceptionCode ec = 0;\n") if $raisesException;
 
                         if ($function->signature->extendedAttributes->{"CheckSecurityForNode"}) {
-                            push(@implContent, "    if (!shouldAllowAccessToNode(exec, impl->" . $function->signature->name . "(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
+                            push(@implContent, "    if (!shouldAllowAccessToNode(exec, impl->" . $function->signature->name . "(" . ($raisesException ? "ec" : "") .")))\n");
                             push(@implContent, "        return JSValue::encode(jsNull());\n");
                             $implIncludes{"JSDOMBinding.h"} = 1;
                         }
@@ -2891,6 +2888,7 @@ sub GenerateParametersCheck
 
     my $argsIndex = 0;
     my $hasOptionalArguments = 0;
+    my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
 
     my @arguments;
     my $functionName;
@@ -2931,9 +2929,7 @@ sub GenerateParametersCheck
             push(@$outputArray, "    if (argsCount <= $argsIndex) {\n");
 
             my @optionalCallbackArguments = @arguments;
-            if (@{$function->raisesExceptions}) {
-                push @optionalCallbackArguments, "ec";
-            }
+            push(@optionalCallbackArguments, "ec") if $raisesException;
             my $functionString = "$functionName(" . join(", ", @optionalCallbackArguments) . ")";
             GenerateImplementationFunctionCall($function, $functionString, "    " x 2, $svgPropertyType, $interfaceName);
             push(@$outputArray, "    }\n\n");
@@ -3073,9 +3069,8 @@ sub GenerateParametersCheck
         $argsIndex++;
     }
 
-    if (@{$function->raisesExceptions}) {
-        push @arguments, "ec";
-    }
+    push(@arguments, "ec") if $raisesException;
+
     return ("$functionName(" . join(", ", @arguments) . ")", scalar @arguments);
 }
 
@@ -3277,12 +3272,14 @@ sub GenerateImplementationFunctionCall()
     my $svgPropertyType = shift;
     my $interfaceName = shift;
 
+    my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
+
     if ($function->signature->type eq "void") {
         push(@implContent, $indent . "$functionString;\n");
-        push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
+        push(@implContent, $indent . "setDOMException(exec, ec);\n") if $raisesException;
 
         if ($svgPropertyType and !$function->isStatic) {
-            if (@{$function->raisesExceptions}) {
+            if ($raisesException) {
                 push(@implContent, $indent . "if (!ec)\n"); 
                 push(@implContent, $indent . "    impl->commitChange();\n");
             } else {
@@ -3294,7 +3291,7 @@ sub GenerateImplementationFunctionCall()
     } else {
         my $thisObject = $function->isStatic ? 0 : "castedThis";
         push(@implContent, "\n" . $indent . "JSC::JSValue result = " . NativeToJSValue($function->signature, 1, $interfaceName, $functionString, $thisObject) . ";\n");
-        push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
+        push(@implContent, $indent . "setDOMException(exec, ec);\n") if $raisesException;
 
         if ($codeGenerator->ExtendedAttributeContains($function->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
             push(@implContent, $indent . "if (exec->hadException())\n");
@@ -4137,7 +4134,7 @@ END
 
             GenerateArgumentsCountCheck($outputArray, $function, $interface);
 
-            if (@{$function->raisesExceptions} || $interface->extendedAttributes->{"ConstructorRaisesException"}) {
+            if ($function->signature->extendedAttributes->{"RaisesException"} || $interface->extendedAttributes->{"ConstructorRaisesException"}) {
                 $implIncludes{"ExceptionCode.h"} = 1;
                 push(@$outputArray, "    ExceptionCode ec = 0;\n");
             }

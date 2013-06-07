@@ -29,10 +29,10 @@
 ] interface DOMTokenList {
     readonly attribute unsigned long length;
     [TreatReturnedNullStringAs=Null] DOMString item(unsigned long index);
-    boolean contains(DOMString token) raises(DOMException);
-    void add(DOMString... tokens) raises(DOMException);
-    void remove(DOMString... tokens) raises(DOMException);
-    boolean toggle(DOMString token, optional boolean force) raises(DOMException);
+    [RaisesException] boolean contains(DOMString token);
+    [RaisesException] void add(DOMString... tokens);
+    [RaisesException] void remove(DOMString... tokens);
+    [RaisesException] boolean toggle(DOMString token, optional boolean force);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [NotEnumerable] DOMString toString();

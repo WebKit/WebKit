@@ -29,36 +29,25 @@
     readonly attribute DOMImplementation implementation;
     readonly attribute Element documentElement;
 
-    [ReturnNewObject]
-    Element createElement([TreatNullAs=NullString,Default=Undefined] optional DOMString tagName)
-        raises (DOMException);
+    [ReturnNewObject, RaisesException] Element createElement([TreatNullAs=NullString,Default=Undefined] optional DOMString tagName);
     DocumentFragment   createDocumentFragment();
     [ReturnNewObject] Text createTextNode([Default=Undefined] optional DOMString data);
     [ReturnNewObject] Comment createComment([Default=Undefined] optional DOMString data);
-    [ReturnNewObject] CDATASection createCDATASection([Default=Undefined] optional DOMString data)
-        raises(DOMException);
-    [ObjCLegacyUnnamedParameters, ReturnNewObject] ProcessingInstruction createProcessingInstruction([Default=Undefined] optional DOMString target,
-                                                                                 [Default=Undefined] optional DOMString data)
-        raises (DOMException);
-    [ReturnNewObject] Attr createAttribute([Default=Undefined] optional DOMString name)
-        raises (DOMException);
-    [ReturnNewObject] EntityReference createEntityReference([Default=Undefined] optional DOMString name)
-        raises(DOMException);
+    [ReturnNewObject, RaisesException] CDATASection createCDATASection([Default=Undefined] optional DOMString data);
+    [ObjCLegacyUnnamedParameters, ReturnNewObject, RaisesException] ProcessingInstruction createProcessingInstruction([Default=Undefined] optional DOMString target,
+                                                                                 [Default=Undefined] optional DOMString data);
+    [ReturnNewObject, RaisesException] Attr createAttribute([Default=Undefined] optional DOMString name);
+    [ReturnNewObject, RaisesException] EntityReference createEntityReference([Default=Undefined] optional DOMString name);
     NodeList getElementsByTagName([Default=Undefined] optional DOMString tagname);
 
     // Introduced in DOM Level 2:
 
-    [ObjCLegacyUnnamedParameters, ReturnNewObject]
-    Node importNode([Default=Undefined] optional Node importedNode,
-                    optional boolean deep)
-        raises (DOMException);
-    [ObjCLegacyUnnamedParameters, ReturnNewObject]
-    Element createElementNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
-                            [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName)
-        raises (DOMException);
-    [ObjCLegacyUnnamedParameters, ReturnNewObject] Attr createAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
-                                                                          [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName)
-        raises (DOMException);
+    [ObjCLegacyUnnamedParameters, ReturnNewObject, RaisesException] Node importNode([Default=Undefined] optional Node importedNode,
+                    optional boolean deep);
+    [ObjCLegacyUnnamedParameters, ReturnNewObject, RaisesException] Element createElementNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+                            [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
+    [ObjCLegacyUnnamedParameters, ReturnNewObject, RaisesException] Attr createAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+                                                                          [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
     [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                                                    [Default=Undefined] optional DOMString localName);
     Element getElementById([Default=Undefined] optional DOMString elementId);
@@ -71,8 +60,7 @@
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString xmlVersion;
     [SetterRaisesException] attribute boolean xmlStandalone;
 
-    Node               adoptNode([Default=Undefined] optional Node source)
-        raises (DOMException);
+    [RaisesException] Node               adoptNode([Default=Undefined] optional Node source);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
     // document.documentURI was writable in DOM3 Core, but is read-only in DOM4
@@ -86,8 +74,7 @@
 
     // DOM Level 2 Events (DocumentEvents interface)
 
-    Event              createEvent([Default=Undefined] optional DOMString eventType)
-        raises(DOMException);
+    [RaisesException] Event              createEvent([Default=Undefined] optional DOMString eventType);
 
     // DOM Level 2 Tranversal and Range (DocumentRange interface)
 
@@ -95,16 +82,14 @@
 
     // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
-    [ObjCLegacyUnnamedParameters] NodeIterator createNodeIterator([Default=Undefined] optional Node root,
+    [ObjCLegacyUnnamedParameters, RaisesException] NodeIterator createNodeIterator([Default=Undefined] optional Node root,
                                                    [Default=Undefined] optional unsigned long whatToShow,
                                                    [Default=Undefined] optional NodeFilter filter,
-                                                   [Default=Undefined] optional boolean expandEntityReferences)
-        raises(DOMException);
-    [ObjCLegacyUnnamedParameters] TreeWalker createTreeWalker([Default=Undefined] optional Node root,
+                                                   [Default=Undefined] optional boolean expandEntityReferences);
+    [ObjCLegacyUnnamedParameters, RaisesException] TreeWalker createTreeWalker([Default=Undefined] optional Node root,
                                                [Default=Undefined] optional unsigned long whatToShow,
                                                [Default=Undefined] optional NodeFilter filter,
-                                               [Default=Undefined] optional boolean expandEntityReferences)
-        raises(DOMException);
+                                               [Default=Undefined] optional boolean expandEntityReferences);
 
     // DOM Level 2 Abstract Views (DocumentView interface)
 
@@ -120,16 +105,14 @@
                                                         [Default=Undefined] optional DOMString pseudoElement);
 
     // DOM Level 3 XPath (XPathEvaluator interface)
-    [ObjCLegacyUnnamedParameters] XPathExpression createExpression([Default=Undefined] optional DOMString expression,
-                                                    [Default=Undefined] optional XPathNSResolver resolver)
-        raises(DOMException);
+    [ObjCLegacyUnnamedParameters, RaisesException] XPathExpression createExpression([Default=Undefined] optional DOMString expression,
+                                                    [Default=Undefined] optional XPathNSResolver resolver);
     XPathNSResolver    createNSResolver(Node nodeResolver);
-    [ObjCLegacyUnnamedParameters] XPathResult evaluate([Default=Undefined] optional DOMString expression,
+    [ObjCLegacyUnnamedParameters, RaisesException] XPathResult evaluate([Default=Undefined] optional DOMString expression,
                                                   [Default=Undefined] optional Node contextNode,
                                                   [Default=Undefined] optional XPathNSResolver resolver,
                                                   [Default=Undefined] optional unsigned short type,
-                                                  [Default=Undefined] optional XPathResult inResult)
-        raises(DOMException);
+                                                  [Default=Undefined] optional XPathResult inResult);
 
     // Common extensions
     boolean            execCommand([Default=Undefined] optional DOMString command,
@@ -233,10 +216,8 @@
     readonly attribute DOMString compatMode;
 
     // NodeSelector - Selector API
-    Element querySelector(DOMString selectors)
-        raises(DOMException);
-    NodeList querySelectorAll(DOMString selectors)
-        raises(DOMException);
+    [RaisesException] Element querySelector(DOMString selectors);
+    [RaisesException] NodeList querySelectorAll(DOMString selectors);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
     // Mozilla version
@@ -341,7 +322,7 @@
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-    [ReturnNewObject] Touch createTouch([Default=Undefined] optional DOMWindow window,
+    [ReturnNewObject, RaisesException] Touch createTouch([Default=Undefined] optional DOMWindow window,
                                                      [Default=Undefined] optional EventTarget target,
                                                      [Default=Undefined] optional long identifier,
                                                      [Default=Undefined] optional long pageX,
@@ -351,20 +332,15 @@
                                                      [Default=Undefined] optional long webkitRadiusX,
                                                      [Default=Undefined] optional long webkitRadiusY,
                                                      [Default=Undefined] optional float webkitRotationAngle,
-                                                     [Default=Undefined] optional float webkitForce)
-        raises (DOMException);
-    [ReturnNewObject, Custom] TouchList createTouchList()
-        raises (DOMException);
+                                                     [Default=Undefined] optional float webkitForce);
+    [ReturnNewObject, Custom, RaisesException] TouchList createTouchList();
 #endif
 
 #if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
-    [Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState]
-    CustomElementConstructor webkitRegister(DOMString name, optional Dictionary options) raises(DOMException);
-    [ReturnNewObject]
-    Element createElement(DOMString localName, [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
-    [ReturnNewObject]
-    Element createElementNS([TreatNullAs=NullString] DOMString namespaceURI, DOMString qualifiedName,
-                            [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
+    [Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState, RaisesException] CustomElementConstructor webkitRegister(DOMString name, optional Dictionary options);
+    [ReturnNewObject, RaisesException] Element createElement(DOMString localName, [TreatNullAs=NullString] DOMString typeExtension);
+    [ReturnNewObject, RaisesException] Element createElementNS([TreatNullAs=NullString] DOMString namespaceURI, DOMString qualifiedName,
+                            [TreatNullAs=NullString] DOMString typeExtension);
 #endif
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP

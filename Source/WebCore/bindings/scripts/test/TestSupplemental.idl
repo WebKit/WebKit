@@ -39,7 +39,7 @@
     attribute Node supplementalNode;
 
     void supplementalMethod1();
-    [CallWith=ScriptExecutionContext] TestObj supplementalMethod2(DOMString strArg, TestObj objArg) raises(DOMException);
+    [CallWith=ScriptExecutionContext, RaisesException] TestObj supplementalMethod2(DOMString strArg, TestObj objArg);
     [Custom] void supplementalMethod3();
     static void supplementalMethod4();
 

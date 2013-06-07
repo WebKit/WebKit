@@ -62,16 +62,12 @@
     readonly attribute Node             nextSibling;
     readonly attribute Document         ownerDocument;
 
-    [ObjCLegacyUnnamedParameters, Custom] Node insertBefore([CustomReturn] Node newChild,
-                                                            Node refChild)
-        raises(DOMException);
-    [ObjCLegacyUnnamedParameters, Custom] Node replaceChild(Node newChild,
-                                                            [CustomReturn] Node oldChild)
-        raises(DOMException);
-    [Custom] Node removeChild([CustomReturn] Node oldChild)
-        raises(DOMException);
-    [Custom] Node appendChild([CustomReturn] Node newChild)
-        raises(DOMException);
+    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node insertBefore([CustomReturn] Node newChild,
+                                                            Node refChild);
+    [ObjCLegacyUnnamedParameters, Custom, RaisesException] Node replaceChild(Node newChild,
+                                                            [CustomReturn] Node oldChild);
+    [Custom, RaisesException] Node removeChild([CustomReturn] Node oldChild);
+    [Custom, RaisesException] Node appendChild([CustomReturn] Node newChild);
 
     boolean            hasChildNodes();
     Node               cloneNode([Default=Undefined] optional boolean deep);
@@ -136,8 +132,7 @@
     void removeEventListener(DOMString type, 
                              EventListener listener, 
                              optional boolean useCapture);
-    boolean dispatchEvent(Event event)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event event);
 #endif
 #endif
 
@@ -148,8 +143,7 @@
     [Custom] void removeEventListener(DOMString type, 
                                          EventListener listener, 
                                          boolean useCapture);
-    boolean dispatchEvent(Event event)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event event);
 #endif
 
 };

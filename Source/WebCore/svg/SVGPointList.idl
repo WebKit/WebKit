@@ -28,19 +28,12 @@
 ] interface SVGPointList {
     readonly attribute unsigned long numberOfItems;
 
-    void clear()
-        raises(DOMException);
-    [StrictTypeChecking] SVGPoint initialize(SVGPoint item)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPoint getItem(unsigned long index)
-        raises(DOMException);
-    [StrictTypeChecking] SVGPoint insertItemBefore(SVGPoint item, unsigned long index)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPoint replaceItem(SVGPoint item, unsigned long index)
-        raises(DOMException, SVGException);
-    [StrictTypeChecking] SVGPoint removeItem(unsigned long index)
-        raises(DOMException);
-    [StrictTypeChecking] SVGPoint appendItem(SVGPoint item)
-        raises(DOMException, SVGException);
+    [RaisesException] void clear();
+    [StrictTypeChecking, RaisesException] SVGPoint initialize(SVGPoint item);
+    [StrictTypeChecking, RaisesException] SVGPoint getItem(unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGPoint insertItemBefore(SVGPoint item, unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGPoint replaceItem(SVGPoint item, unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGPoint removeItem(unsigned long index);
+    [StrictTypeChecking, RaisesException] SVGPoint appendItem(SVGPoint item);
 };
 

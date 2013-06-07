@@ -176,12 +176,10 @@
 
     // cross-document messaging
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [DoNotCheckSecurity, Custom] void postMessage(SerializedScriptValue message, DOMString targetOrigin, optional Array messagePorts)
-        raises(DOMException);
+    [DoNotCheckSecurity, Custom, RaisesException] void postMessage(SerializedScriptValue message, DOMString targetOrigin, optional Array messagePorts);
 #else
     // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.
-    [DoNotCheckSecurity, Custom] void postMessage(SerializedScriptValue message, optional MessagePort messagePort, DOMString targetOrigin)
-        raises(DOMException);
+    [DoNotCheckSecurity, Custom, RaisesException] void postMessage(SerializedScriptValue message, optional MessagePort messagePort, DOMString targetOrigin);
 #endif
 
 #if defined(ENABLE_WEB_TIMING) && ENABLE_WEB_TIMING
@@ -203,10 +201,8 @@
 #endif
 
     // Base64
-    DOMString atob([TreatNullAs=NullString,Default=Undefined] optional DOMString string)
-        raises(DOMException);
-    DOMString btoa([TreatNullAs=NullString,Default=Undefined] optional DOMString string)
-        raises(DOMException);
+    [RaisesException] DOMString atob([TreatNullAs=NullString,Default=Undefined] optional DOMString string);
+    [RaisesException] DOMString btoa([TreatNullAs=NullString,Default=Undefined] optional DOMString string);
 
     readonly attribute [Replaceable,Conditional=CSS3_CONDITIONAL_RULES] DOMWindowCSS CSS;
 
@@ -311,8 +307,7 @@
     [Custom] void removeEventListener(DOMString type,
                                       EventListener listener,
                                       optional boolean useCapture);
-    boolean dispatchEvent(Event evt)
-        raises(EventException);
+    [RaisesException] boolean dispatchEvent(Event evt);
 
     void captureEvents(/*in long eventFlags*/);
     void releaseEvents(/*in long eventFlags*/);

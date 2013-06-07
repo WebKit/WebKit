@@ -28,9 +28,8 @@
 
     Node namedItem([Default=Undefined] optional DOMString name);
 
-    [Custom] void add([Default=Undefined] optional HTMLOptionElement option, 
-                      optional unsigned long index)
-         raises (DOMException);
+    [Custom, RaisesException] void add([Default=Undefined] optional HTMLOptionElement option, 
+                      optional unsigned long index);
     [Custom] void remove([Default=Undefined] optional unsigned long index);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
