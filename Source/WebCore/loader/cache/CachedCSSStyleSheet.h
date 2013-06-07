@@ -36,27 +36,27 @@ namespace WebCore {
     class TextResourceDecoder;
     struct CSSParserContext;
 
-    class CachedCSSStyleSheet : public CachedResource {
+    class CachedCSSStyleSheet FINAL : public CachedResource {
     public:
         CachedCSSStyleSheet(const ResourceRequest&, const String& charset);
         virtual ~CachedCSSStyleSheet();
 
         const String sheetText(bool enforceMIMEType = true, bool* hasValidMIMEType = 0) const;
 
-        virtual void didAddClient(CachedResourceClient*);
-        
-        virtual void setEncoding(const String&);
-        virtual String encoding() const;
-        virtual void data(ResourceBuffer*, bool allDataReceived);
-        virtual void destroyDecodedData() OVERRIDE;
-
         PassRefPtr<StyleSheetContents> restoreParsedStyleSheet(const CSSParserContext&);
         void saveParsedStyleSheet(PassRefPtr<StyleSheetContents>);
 
     private:
         bool canUseSheet(bool enforceMIMEType, bool* hasValidMIMEType) const;
-        virtual PurgePriority purgePriority() const { return PurgeLast; }
+        virtual PurgePriority purgePriority() const OVERRIDE { return PurgeLast; }
         virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
+
+        virtual void didAddClient(CachedResourceClient*) OVERRIDE;
+
+        virtual void setEncoding(const String&) OVERRIDE;
+        virtual String encoding() const OVERRIDE;
+        virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
+        virtual void destroyDecodedData() OVERRIDE;
 
     protected:
         virtual void checkNotify();

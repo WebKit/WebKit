@@ -38,16 +38,16 @@ namespace WebCore {
 
 class TextResourceDecoder;
 
-class CachedShader : public CachedResource {
+class CachedShader FINAL : public CachedResource {
 public:
     CachedShader(const ResourceRequest&);
     virtual ~CachedShader();
     
     const String& shaderString();
-    void data(ResourceBuffer*, bool allDataReceived);
 
 private:
     virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
+    virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
 
     RefPtr<TextResourceDecoder> m_decoder;
     String m_shaderString;

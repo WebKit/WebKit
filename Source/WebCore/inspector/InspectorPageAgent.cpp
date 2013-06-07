@@ -545,12 +545,9 @@ static Vector<CachedResource*> cachedResourcesForFrame(Frame* frame)
         switch (cachedResource->type()) {
         case CachedResource::ImageResource:
             // Skip images that were not auto loaded (images disabled in the user agent).
-            if (static_cast<CachedImage*>(cachedResource)->stillNeedsLoad())
-                continue;
-            break;
         case CachedResource::FontResource:
             // Skip fonts that were referenced in CSS but never used/downloaded.
-            if (static_cast<CachedFont*>(cachedResource)->stillNeedsLoad())
+            if (cachedResource->stillNeedsLoad())
                 continue;
             break;
         default:

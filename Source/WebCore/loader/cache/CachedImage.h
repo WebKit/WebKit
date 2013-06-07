@@ -41,15 +41,13 @@ class MemoryCache;
 class RenderObject;
 struct Length;
 
-class CachedImage : public CachedResource, public ImageObserver {
+class CachedImage FINAL : public CachedResource, public ImageObserver {
     friend class MemoryCache;
 
 public:
     CachedImage(const ResourceRequest&);
     CachedImage(Image*);
     virtual ~CachedImage();
-    
-    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&);
 
     Image* image(); // Returns the nullImage() if the image is not available yet.
     Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
@@ -65,38 +63,18 @@ public:
     bool usesImageContainerSize() const;
     bool imageHasRelativeWidth() const;
     bool imageHasRelativeHeight() const;
-    
+
+    virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
+
     // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
     LayoutSize imageSizeForRenderer(const RenderObject*, float multiplier); // returns the size of the complete image.
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
-    virtual void didAddClient(CachedResourceClient*);
-    virtual void didRemoveClient(CachedResourceClient*);
-
-    virtual void allClientsRemoved();
-    virtual void destroyDecodedData();
-
-    virtual void data(ResourceBuffer*, bool allDataReceived);
-    virtual void error(CachedResource::Status);
-    virtual void responseReceived(const ResourceResponse&);
-    
-    // For compatibility, images keep loading even if there are HTTP errors.
-    virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return true; }
-
-    virtual bool isImage() const { return true; }
-    virtual bool stillNeedsLoad() const OVERRIDE { return !errorOccurred() && status() == Unknown && !isLoading(); }
-
-    // ImageObserver
-    virtual void decodedSizeChanged(const Image* image, int delta);
-    virtual void didDraw(const Image*);
-
-    virtual bool shouldPauseAnimation(const Image*);
-    virtual void animationAdvanced(const Image*);
-    virtual void changedInRect(const Image*, const IntRect&);
-
     static void resumeAnimatingImagesForLoader(CachedResourceLoader*);
 
 private:
+    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) OVERRIDE;
+
     void clear();
 
     void createImage();
@@ -104,11 +82,34 @@ private:
     size_t maximumDecodedImageSize();
     // If not null, changeRect is the changed part of the image.
     void notifyObservers(const IntRect* changeRect = 0);
-    virtual PurgePriority purgePriority() const { return PurgeFirst; }
+    virtual PurgePriority purgePriority() const OVERRIDE { return PurgeFirst; }
     void checkShouldPaintBrokenImage();
 
     virtual void switchClientsToRevalidatedResource() OVERRIDE;
     virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
+
+    virtual void didAddClient(CachedResourceClient*) OVERRIDE;
+    virtual void didRemoveClient(CachedResourceClient*) OVERRIDE;
+
+    virtual void allClientsRemoved() OVERRIDE;
+    virtual void destroyDecodedData() OVERRIDE;
+
+    virtual void error(CachedResource::Status) OVERRIDE;
+    virtual void responseReceived(const ResourceResponse&) OVERRIDE;
+
+    // For compatibility, images keep loading even if there are HTTP errors.
+    virtual bool shouldIgnoreHTTPStatusCodeErrors() const OVERRIDE { return true; }
+
+    virtual bool isImage() const OVERRIDE { return true; }
+    virtual bool stillNeedsLoad() const OVERRIDE { return !errorOccurred() && status() == Unknown && !isLoading(); }
+
+    // ImageObserver
+    virtual void decodedSizeChanged(const Image*, int delta) OVERRIDE;
+    virtual void didDraw(const Image*) OVERRIDE;
+
+    virtual bool shouldPauseAnimation(const Image*) OVERRIDE;
+    virtual void animationAdvanced(const Image*) OVERRIDE;
+    virtual void changedInRect(const Image*, const IntRect&) OVERRIDE;
 
     typedef pair<IntSize, float> SizeAndZoom;
     typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;

@@ -31,16 +31,12 @@
 
 namespace WebCore {
 
-class CachedSVGDocument : public CachedResource {
+class CachedSVGDocument FINAL : public CachedResource {
 public:
     explicit CachedSVGDocument(const ResourceRequest&);
     virtual ~CachedSVGDocument();
 
     SVGDocument* document() const { return m_document.get(); }
-
-    virtual void setEncoding(const String&);
-    virtual String encoding() const;
-    virtual void data(ResourceBuffer*, bool allDataReceived);
 
 protected:
     RefPtr<SVGDocument> m_document;
@@ -48,6 +44,9 @@ protected:
 
 private:
     virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
+    virtual void setEncoding(const String&) OVERRIDE;
+    virtual String encoding() const OVERRIDE;
+    virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
 };
 
 } // namespace WebCore

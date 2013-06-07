@@ -35,17 +35,11 @@ namespace WebCore {
     class TextResourceDecoder;
 
 #if ENABLE(XSLT)
-    class CachedXSLStyleSheet : public CachedResource {
+    class CachedXSLStyleSheet FINAL : public CachedResource {
     public:
         CachedXSLStyleSheet(const ResourceRequest&);
 
         const String& sheet() const { return m_sheet; }
-        
-        virtual void didAddClient(CachedResourceClient*);
-        
-        virtual void setEncoding(const String&);
-        virtual String encoding() const;
-        virtual void data(ResourceBuffer*, bool allDataReceived);
 
     protected:
         virtual void checkNotify();
@@ -55,6 +49,12 @@ namespace WebCore {
 
     private:
         virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
+
+        virtual void didAddClient(CachedResourceClient*) OVERRIDE;
+
+        virtual void setEncoding(const String&) OVERRIDE;
+        virtual String encoding() const OVERRIDE;
+        virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
     };
 
 #endif

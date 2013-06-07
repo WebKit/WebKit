@@ -40,17 +40,11 @@ class SVGDocument;
 class SVGFontElement;
 struct FontCustomPlatformData;
 
-class CachedFont : public CachedResource {
+class CachedFont FINAL : public CachedResource {
 public:
     CachedFont(const ResourceRequest&);
     virtual ~CachedFont();
-    
-    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&);
 
-    virtual void didAddClient(CachedResourceClient*);
-    virtual void data(ResourceBuffer*, bool allDataReceived);
-
-    virtual void allClientsRemoved();
     void beginLoadIfNeeded(CachedResourceLoader* dl);
     bool stillNeedsLoad() const { return !m_loadInitiated; }
 
@@ -65,6 +59,13 @@ public:
 private:
     virtual void checkNotify();
     virtual bool mayTryReplaceEncodedData() const OVERRIDE;
+
+    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) OVERRIDE;
+
+    virtual void didAddClient(CachedResourceClient*) OVERRIDE;
+    virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
+
+    virtual void allClientsRemoved() OVERRIDE;
 
     FontCustomPlatformData* m_fontData;
     bool m_loadInitiated;
