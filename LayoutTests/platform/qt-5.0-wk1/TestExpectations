@@ -170,3 +170,6 @@ webkit.org/b/116809 http/tests/globalhistory/history-delegate-basic-refresh-redi
 # [Qt][WK1][CSS Regions]  New test fast/regions/hover-on-child-parent-different-regions.html fails
 webkit.org/b/117035 fast/regions/hover-on-child-parent-different-regions.html [ Skip ]
 webkit.org/b/117035 fast/regions/hover-on-child-in-region.html [ Skip ]
+
+# [Qt] css3/filters/composited-during-animation-layertree.html flaky after r151110
+webkit.org/b/117336 css3/filters/composited-during-animation-layertree.html [ Skip ]

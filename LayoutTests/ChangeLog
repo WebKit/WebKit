@@ -1,3 +1,13 @@
+2013-06-07  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skipping failing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=117295
+        https://bugs.webkit.org/show_bug.cgi?id=117336
+        https://bugs.webkit.org/show_bug.cgi?id=117338
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2013-06-07  Zalan Bujtas  <zalan@apple.com>
 
         Frame flattening: crash when child iframe is removed during beforeload.
