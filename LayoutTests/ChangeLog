@@ -1,3 +1,22 @@
+2013-06-07  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] The presence of a flow-from declaration in a CSS rule using :hover effectively disables the rule
+        https://bugs.webkit.org/show_bug.cgi?id=111585
+
+        Created tests for changing flow-into and flow-from inside the :hover pseudo-class.
+        The actual problem was fixed along with https://bugs.webkit.org/show_bug.cgi?id=7555
+
+        Reviewed by Antti Koivisto.
+
+        * fast/regions/hover-single-flow-from-none-expected.html: Added.
+        * fast/regions/hover-single-flow-from-none.html: Added.
+        * fast/regions/hover-single-flow-from-other-expected.html: Added.
+        * fast/regions/hover-single-flow-from-other.html: Added.
+        * fast/regions/hover-single-flow-into-none-expected.html: Added.
+        * fast/regions/hover-single-flow-into-none.html: Added.
+        * fast/regions/hover-single-flow-into-other-expected.html: Added.
+        * fast/regions/hover-single-flow-into-other.html: Added.
+
 2013-06-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] getBoundingClientRect wrong for inline content nodes
