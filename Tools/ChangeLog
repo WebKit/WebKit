@@ -1,3 +1,12 @@
+2013-06-07  Roger Fong  <roger_fong@apple.com>
+
+        Get rid of not very helpful test that fails only on some machines because xcrun is not installed.
+
+        Rubberstamped by Ryousuke Niwa.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_build_check):
+
 2013-06-07  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [Qt] Remove Qt bits from Scripts/webkitperl/FeatureList.pm
