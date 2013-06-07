@@ -312,13 +312,17 @@ float Font::width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFo
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
+    HashSet<const SimpleFontData*> localFallbackFonts;
+    if (!fallbackFonts)
+        fallbackFonts = &localFallbackFonts;
+
     float result;
     if (codePathToUse == Complex)
         result = floatWidthForComplexText(run, fallbackFonts, glyphOverflow);
     else
         result = floatWidthForSimpleText(run, fallbackFonts, glyphOverflow);
 
-    if (cacheEntry && (!fallbackFonts || fallbackFonts->isEmpty()))
+    if (cacheEntry && fallbackFonts->isEmpty())
         *cacheEntry = result;
     return result;
 }
