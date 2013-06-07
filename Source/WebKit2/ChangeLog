@@ -1,3 +1,15 @@
+2013-06-07  Thomas Deniau  <deniau@apple.com>
+
+        Reproducible crash with triple-finger-tap "define word" gesture on a Netflix video
+        https://bugs.webkit.org/show_bug.cgi?id=117020
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        Don't invoke the Dictionary lookup when we failed to extract the range of the token
+        surrounding the tapped position.
+
 2013-06-07  Enrique Ocana Gonzalez  <eocanha@igalia.com>
 
         [GTK] Weird behaviour and no clues to the user when the shared memory file can't be opened

@@ -535,15 +535,25 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
             break;
         contextEnd = n;
     }
-    contextStart = startOfLine(contextStart);
-    contextEnd = endOfLine(contextEnd);
-    
+
+    VisiblePosition lineStart = startOfLine(contextStart);
+    if (!lineStart.isNull())
+        contextStart = lineStart;
+
+    VisiblePosition lineEnd = endOfLine(contextEnd);
+    if (!lineEnd.isNull())
+        contextEnd = lineEnd;
+
     NSRange rangeToPass = NSMakeRange(TextIterator::rangeLength(makeRange(contextStart, position).get()), 0);
 
     RefPtr<Range> fullCharacterRange = makeRange(contextStart, contextEnd);
     String fullPlainTextString = plainText(fullCharacterRange.get());
 
     NSRange extractedRange = WKExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, &options);
+
+    // This function sometimes returns {NSNotFound, 0} if it was unable to determine a good string.
+    if (extractedRange.location == NSNotFound)
+        return;
 
     RefPtr<Range> finalRange = TextIterator::subrange(fullCharacterRange.get(), extractedRange.location, extractedRange.length);
     if (!finalRange)
