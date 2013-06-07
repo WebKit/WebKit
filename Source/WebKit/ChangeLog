@@ -1,3 +1,10 @@
+2013-06-06  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build configuration fix. WebKitExportGenerator's include path should fall back to 
+        $(WebKit_Libraries)\include\WebCore if $(ConfigurationBuildDir)\include\WebCore doesn't exist.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorCommon.props:
+
 2013-06-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Attempting a build fix for the AppleWin port after r151199.

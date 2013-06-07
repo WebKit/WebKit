@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\Include\;$(ConfigurationBuildDir)\Include\private;$(ConfigurationBuildDir)\Include\WebCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(WebKit_Libraries)\Include;$(WebKit_Libraries)\Include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\Include\;$(ConfigurationBuildDir)\Include\private;$(ConfigurationBuildDir)\Include\WebCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(WebKit_Libraries\include\WebCore\ForwardingHeaders;$(WebKit_Libraries\include\WebCore;$(WebKit_Libraries)\Include;$(WebKit_Libraries)\Include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
