@@ -1,3 +1,16 @@
+2013-06-07  Enrique Ocana Gonzalez  <eocanha@igalia.com>
+
+        [GTK] Weird behaviour and no clues to the user when the shared memory file can't be opened
+        https://bugs.webkit.org/show_bug.cgi?id=117063
+
+        Reviewed by Anders Carlsson.
+
+        Log error message when the shared memory file can't be opened in
+        Unix platform using a release build
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::create):
+
 2013-06-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL][WK2] Context menu spellchecking items are not available when "Check Spelling While Typing" is off

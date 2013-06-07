@@ -109,8 +109,10 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
             fileDescriptor = shm_open(tempName.data(), O_CREAT | O_CLOEXEC | O_RDWR, S_IRUSR | S_IWUSR);
         } while (fileDescriptor == -1 && errno == EINTR);
     }
-    if (fileDescriptor == -1)
+    if (fileDescriptor == -1) {
+        WTFLogAlways("Failed to create shared memory file %s", tempName.data());
         return 0;
+    }
 
     while (ftruncate(fileDescriptor, size) == -1) {
         if (errno != EINTR) {
