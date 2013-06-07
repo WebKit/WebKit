@@ -1,3 +1,16 @@
+2013-06-07  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        REGRESSION: r149001 made proximity test fail.
+        https://bugs.webkit.org/show_bug.cgi?id=117343
+
+        Reviewed by Christophe Dumez.
+
+        Update window-property.html test cases for Device Proximity Event.
+        The global constructors are no longer enumerable after r149001.
+
+        * proximity/window-property-expected.txt:
+        * proximity/window-property.html:
+
 2013-06-07  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skipping failing tests.

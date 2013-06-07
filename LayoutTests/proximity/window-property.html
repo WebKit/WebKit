@@ -6,18 +6,9 @@
 <script>
 description('Tests that the window.DeviceProximityEvent and window.onwebkitdeviceproximity properties are present.');
 
-function hasDeviceProximityEventProperty()
-{
-    for (var property in window) {
-        if (property == 'DeviceProximityEvent')
-            return true;
-    }
-    return false;
-}
-
 shouldBeTrue("typeof window.DeviceProximityEvent == 'object'");
 shouldBeFalse("typeof window.DeviceProximityEvent == 'function'");
-shouldBeTrue("hasDeviceProximityEventProperty()");
+shouldBeFalse("window.propertyIsEnumerable('DeviceProximityEvent')");
 shouldBeTrue("'DeviceProximityEvent' in window");
 shouldBeTrue("window.hasOwnProperty('DeviceProximityEvent')");
 
