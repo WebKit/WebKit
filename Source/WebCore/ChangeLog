@@ -1,3 +1,22 @@
+2013-06-07  Andy Estes  <aestes@apple.com>
+
+        Compile WebCoreTestShimLibrary.cpp on iOS, but exclude the Carbon bits
+        https://bugs.webkit.org/show_bug.cgi?id=117360
+
+        Reviewed by Mark Rowe.
+
+        In r150114 we tried to make the WebCoreTestShim target build on iOS by
+        excluding its only source file from the build. While this allowed the
+        target to build, it prevented the target's product (WebCoreTestShim.dylib)
+        from being created. This causes xcodebuild to fail if you ask it to
+        install the target.
+
+        Fix this by building the target's product on iOS. Just use the
+        preprocessor to exclude the bits that won't build on iOS.
+
+        * Configurations/WebCoreTestShim.xcconfig:
+        * testing/WebCoreTestShimLibrary.cpp:
+
 2013-06-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: Lines jump up and down while typing Chinese or Japanese

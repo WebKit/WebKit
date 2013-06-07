@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <TargetConditionals.h>
+
+#if !defined(TARGET_OS_IPHONE) || !TARGET_OS_IPHONE
+
 #include "DynamicLinkerInterposing.h"
 #include <Carbon/Carbon.h>
 
@@ -50,3 +54,5 @@ static Boolean shimIsSecureEventInputEnabled()
 DYLD_INTERPOSE(shimEnableSecureEventInput, EnableSecureEventInput)
 DYLD_INTERPOSE(shimDisableSecureEventInput, DisableSecureEventInput)
 DYLD_INTERPOSE(shimIsSecureEventInputEnabled, IsSecureEventInputEnabled)
+
+#endif // !defined(TARGET_OS_IPHONE) || !TARGET_OS_IPHONE
