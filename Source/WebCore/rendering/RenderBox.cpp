@@ -1757,14 +1757,6 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
 
     mode &= ~ApplyContainerFlip;
 
-    if (o->isRenderFlowThread() && (o != repaintContainer)) {
-        // Transform from render flow coordinates into region coordinates.
-        RenderRegion* region = toRenderFlowThread(o)->mapFromFlowToRegion(transformState);
-        if (region)
-            region->mapLocalToContainer(region->containerForRepaint(), transformState, mode, wasFixed);
-        return;
-    }
-
     o->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
 
@@ -1790,9 +1782,6 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     bool offsetDependsOnPoint = false;
     LayoutSize containerOffset = offsetFromContainer(container, LayoutPoint(), &offsetDependsOnPoint);
 
-    if (container->isRenderFlowThread())
-        offsetDependsOnPoint = true;
-    
     bool preserve3D = container->style()->preserves3D() || style()->preserves3D();
     if (shouldUseTransformFromContainer(container)) {
         TransformationMatrix t;
@@ -1853,6 +1842,9 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
 
     if (style()->position() == AbsolutePosition && o->isInFlowPositioned() && o->isRenderInline())
         offset += toRenderInline(o)->offsetForInFlowPositionedInline(this);
+
+    if (offsetDependsOnPoint)
+        *offsetDependsOnPoint |= o->isRenderFlowThread();
 
     return offset;
 }

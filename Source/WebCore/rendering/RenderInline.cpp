@@ -1141,7 +1141,9 @@ LayoutSize RenderInline::offsetFromContainer(RenderObject* container, const Layo
         offset -= toRenderBox(container)->scrolledContentOffset();
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = container->hasColumns() || (container->isBox() && container->style()->isFlippedBlocksWritingMode());
+        *offsetDependsOnPoint = container->hasColumns()
+            || (container->isBox() && container->style()->isFlippedBlocksWritingMode())
+            || container->isRenderFlowThread();
 
     return offset;
 }

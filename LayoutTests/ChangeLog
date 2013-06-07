@@ -1,3 +1,15 @@
+2013-06-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] getBoundingClientRect wrong for inline content nodes
+        https://bugs.webkit.org/show_bug.cgi?id=117290
+
+        Reviewed by Alexandru Chiculita.
+
+        Add test for inline content nodes flowed in regions and in regions with transform.
+
+        * fast/regions/flowed-inline-content-bounding-client-rect-expected.txt: Added.
+        * fast/regions/flowed-inline-content-bounding-client-rect.html: Added.
+
 2013-06-06  Ruth Fong  <ruth_fong@apple.com>
 
         Expose HTMLCanvasElement supportsContext

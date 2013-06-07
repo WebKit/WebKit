@@ -1148,6 +1148,16 @@ void RenderFlowThread::RegionSearchAdapter::collectIfNeeded(const RegionInterval
         m_result = interval.data();
 }
 
+void RenderFlowThread::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
+{
+    if (this == repaintContainer)
+        return;
+
+    if (RenderRegion* region = mapFromFlowToRegion(transformState))
+        // FIXME: The cast below is probably not the best solution, we may need to find a better way.
+        static_cast<const RenderObject*>(region)->mapLocalToContainer(region->containerForRepaint(), transformState, mode, wasFixed);
+}
+
 CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)
     : m_renderFlowThread(renderFlowThread)
     , m_previousRenderFlowThread(0)
