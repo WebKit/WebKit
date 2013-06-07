@@ -1,3 +1,16 @@
+2013-06-06  Oliver Hunt  <oliver@apple.com>
+
+        Completely initialize ChildProcess state on launch
+        https://bugs.webkit.org/show_bug.cgi?id=117328
+
+        Reviewed by Sam Weinig.
+
+        Use setProcessSuppressionEnabledInternal to avoid setProcessSuppressionEnabled
+        "optimizing" our initialization away.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::platformInitialize):
+
 2013-06-06  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Gtk] Connection is leaking when WebProcess is terminated

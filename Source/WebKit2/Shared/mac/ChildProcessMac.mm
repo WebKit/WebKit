@@ -147,8 +147,11 @@ void ChildProcess::platformInitialize()
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     initializeTimerCoalescingPolicy();
 #endif
-    // Starting with process suppression disabled.  The proxy for this process will enable if appropriate from didFinishLaunching().
-    setProcessSuppressionEnabled(false);
+    // Starting with process suppression disabled.  The proxy for this process will
+    // enable if appropriate from didFinishLaunching().
+    // We use setProcessSuppressionEnabledInternal to avoid any short circuit logic
+    // that would prevent us from taking the suppression assertion.
+    setProcessSuppressionEnabledInternal(false);
 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
