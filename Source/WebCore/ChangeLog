@@ -1,3 +1,16 @@
+2013-06-06  Kangil Han  <kangil.han@samsung.com>
+
+        Minor code cleanup to remove unused header includes
+        https://bugs.webkit.org/show_bug.cgi?id=117283
+
+        Reviewed by Andreas Kling.
+
+        * loader/cache/CachedResourceClient.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderObject.cpp:
+
 2013-06-06  Jer Noble  <jer.noble@apple.com>
 
         Restrict WebAudio from playing when disallowed by page.

@@ -34,7 +34,6 @@
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HitTestLocation.h"
 #include "HitTestResult.h"
@@ -43,20 +42,17 @@
 #include "LayoutRepainter.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "OverflowEvent.h"
-#include "PODFreeListArena.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBoxRegionInfo.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
-#include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderMarquee.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
-#include "RenderReplica.h"
 #include "RenderTableCell.h"
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
@@ -65,13 +61,13 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "TransformState.h"
-#include <wtf/StdLibExtras.h>
+#include <wtf/StackStats.h>
+#include <wtf/TemporaryChange.h>
+
 #if ENABLE(CSS_SHAPES)
 #include "ExclusionShapeInsideInfo.h"
 #include "ExclusionShapeOutsideInfo.h"
 #endif
-#include <wtf/StackStats.h>
-#include <wtf/TemporaryChange.h>
 
 using namespace std;
 using namespace WTF;
