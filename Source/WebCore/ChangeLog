@@ -1,3 +1,27 @@
+2013-06-06  Jer Noble  <jer.noble@apple.com>
+
+        Restrict WebAudio from playing when disallowed by page.
+        https://bugs.webkit.org/show_bug.cgi?id=117310
+
+        Reviewed by Eric Carlson.
+
+        Add a new behavior restriction which would mute WebAudio
+        when media playback is disallowed by the page.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::constructCommon): Set the RequirePageConsentForAudioStartRestriction
+            restriction for the Mac port
+        (WebCore::AudioContext::document): Cast the execution context to a document.
+        (WebCore::AudioContext::lazyInitialize): Call startRendering() instead of
+            m_destinationNode->startRendering() directly.
+        (WebCore::AudioContext::startRendering): If media loading is disabled, add
+            a mediaCanStart listener.
+        (WebCore::AudioContext::mediaCanStart): Remove the RequirePageConsentForAudioStartRestriction.
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::pageConsentRequiredForAudioStart): Added; simple wrapper.
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::render): Mute output if pageConsentRequiredForAudioStart().
+
 2013-06-03  Jer Noble  <jer.noble@apple.com>
 
         Upstream iOS WebAudio behavior restrictions.

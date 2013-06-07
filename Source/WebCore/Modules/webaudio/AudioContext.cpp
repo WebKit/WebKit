@@ -52,6 +52,7 @@
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioDestinationNode.h"
 #include "OscillatorNode.h"
+#include "Page.h"
 #include "PannerNode.h"
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
@@ -190,6 +191,10 @@ void AudioContext::constructCommon()
     else
         m_restrictions = NoRestrictions;
 #endif
+
+#if PLATFORM(MAC)
+    addBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
+#endif
 }
 
 AudioContext::~AudioContext()
@@ -223,7 +228,7 @@ void AudioContext::lazyInitialize()
                     // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
                     // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
                     // We may want to consider requiring it for symmetry with OfflineAudioContext.
-                    m_destinationNode->startRendering();
+                    startRendering();
                     ++s_hardwareContextCount;
                 }
 
@@ -311,6 +316,12 @@ void AudioContext::stop()
     // ActiveDOMObjects so let's schedule uninitialize() to be called later.
     // FIXME: see if there's a more direct way to handle this issue.
     callOnMainThread(stopDispatch, this);
+}
+
+Document* AudioContext::document() const
+{
+    ASSERT(m_scriptExecutionContext && m_scriptExecutionContext->isDocument());
+    return static_cast<Document*>(m_scriptExecutionContext);
 }
 
 PassRefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)
@@ -956,7 +967,16 @@ void AudioContext::startRendering()
     if (ScriptController::processingUserGesture())
         removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
 
+    Page* page = document()->page();
+    if (pageConsentRequiredForAudioStart() && page && !page->canStartMedia())
+        document()->addMediaCanStartListener(this);
+
     destination()->startRendering();
+}
+
+void AudioContext::mediaCanStart()
+{
+    removeBehaviorRestriction(AudioContext::RequirePageConsentForAudioStartRestriction);
 }
 
 void AudioContext::fireCompletionEvent()

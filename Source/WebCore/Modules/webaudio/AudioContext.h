@@ -31,6 +31,7 @@
 #include "AudioDestinationNode.h"
 #include "EventListener.h"
 #include "EventTarget.h"
+#include "MediaCanStartListener.h"
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/OwnPtr.h>
@@ -72,7 +73,7 @@ class WaveTable;
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
 
-class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTarget {
+class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTarget, public MediaCanStartListener {
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static PassRefPtr<AudioContext> create(Document*, ExceptionCode&);
@@ -255,10 +256,12 @@ public:
     enum BehaviorRestrictionFlags {
         NoRestrictions = 0,
         RequireUserGestureForAudioStartRestriction = 1 << 0,
+        RequirePageConsentForAudioStartRestriction = 1 << 1,
     };
     typedef unsigned BehaviorRestrictions;
 
     bool userGestureRequiredForAudioStart() const { return m_restrictions & RequireUserGestureForAudioStartRestriction; }
+    bool pageConsentRequiredForAudioStart() const { return m_restrictions & RequirePageConsentForAudioStartRestriction; }
 
     void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
@@ -283,7 +286,9 @@ private:
 
     void scheduleNodeDeletion();
     static void deleteMarkedNodesDispatch(void* userData);
-    
+
+    virtual void mediaCanStart() OVERRIDE;
+
     bool m_isInitialized;
     bool m_isAudioThreadFinished;
 
