@@ -91,6 +91,12 @@ typedef struct _Tooltip_Information {
     Eina_Bool shown;
 } Tooltip_Information;
 
+typedef struct _Color_Selector {
+    Ewk_Color_Picker *ewk_picker;
+    Evas_Object *elm_selector;
+    Evas_Object *elm_selector_window;
+} Color_Selector;
+
 typedef struct _Browser_Window {
     Evas_Object *elm_window;
     Evas_Object *ewk_view;
@@ -109,6 +115,7 @@ typedef struct _Browser_Window {
     } search;
     int current_zoom_level; 
     Tooltip_Information tooltip;
+    Color_Selector color_selector;
     struct {
         Evas_Object *elm_menu;
         Ewk_Context_Menu *ewk_menu;
@@ -291,6 +298,9 @@ static void window_free(Browser_Window *window)
 
     if (window->tooltip.show_timer)
         ecore_timer_del(window->tooltip.show_timer);
+
+    if (window->color_selector.elm_selector_window)
+        evas_object_del(window->color_selector.elm_selector_window);
 
     free(window);
 }
@@ -622,6 +632,133 @@ static void
 on_download_failed(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
     info("Download failed!");
+}
+
+static void
+on_color_changed(void *data, Evas_Object *obj, void *event_info)
+{
+    int r, g, b, a;
+
+    elm_colorselector_color_get(obj, &r, &g, &b, &a);
+    evas_object_color_set(data, r, g, b, a);
+}
+
+static void
+on_color_item_selected(void *data, Evas_Object *obj, void *event_info)
+{
+    int r, g, b, a;
+    Elm_Object_Item *color_item = (Elm_Object_Item *)event_info;
+
+    elm_colorselector_palette_item_color_get(color_item, &r, &g, &b, &a);
+    evas_object_color_set(data, r, g, b, a);
+}
+
+static void
+on_color_picker_ok_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+    int r, g, b, a;
+    Color_Selector *color_selector = (Color_Selector *)data;
+
+    elm_colorselector_color_get(color_selector->elm_selector, &r, &g, &b, &a);
+    ewk_color_picker_color_set(color_selector->ewk_picker, r, g, b, a);
+}
+
+static void
+on_color_picker_cancel_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+    int r, g, b, a;
+
+    ewk_color_picker_color_get(data, &r, &g, &b, &a);
+    ewk_color_picker_color_set(data, r, g, b, a);
+}
+
+static Eina_Bool
+on_color_picker_dismiss(Ewk_View_Smart_Data *sd)
+{
+    Browser_Window *window = window_find_with_ewk_view(sd->self);
+
+    evas_object_del(window->color_selector.elm_selector_window);
+    window->color_selector.elm_selector_window = NULL;
+
+    return EINA_TRUE;
+}
+
+static Eina_Bool
+on_color_picker_request(Ewk_View_Smart_Data *sd, Ewk_Color_Picker *color_picker)
+{
+    int r, g, b, a;
+    Evas_Object *background, *rect, *box, *button_box, *rect_frame, *cs_frame, *ok_button, *cancel_button;
+
+    Browser_Window *window = window_find_with_ewk_view(sd->self);
+    window->color_selector.elm_selector_window = elm_win_add(window->elm_window, "color selector", ELM_WIN_BASIC);
+    window->color_selector.ewk_picker = color_picker;
+
+    elm_win_title_set(window->color_selector.elm_selector_window, "Color selector");
+
+    /* Show color view */
+    background = elm_bg_add(window->color_selector.elm_selector_window);
+    evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(window->color_selector.elm_selector_window, background);
+    evas_object_show(background);
+
+    box = elm_box_add(window->color_selector.elm_selector_window);
+    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(window->color_selector.elm_selector_window, box);
+    evas_object_show(box);
+
+    rect_frame = elm_frame_add(window->color_selector.elm_selector_window);
+    evas_object_size_hint_weight_set(rect_frame, EVAS_HINT_EXPAND, 0.3);
+    evas_object_size_hint_align_set(rect_frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_object_text_set(rect_frame, "Color View");
+    elm_box_pack_end(box, rect_frame);
+    evas_object_show(rect_frame);
+
+    rect = evas_object_rectangle_add(evas_object_evas_get(window->color_selector.elm_selector_window));
+    elm_object_content_set(rect_frame, rect);
+    ewk_color_picker_color_get(window->color_selector.ewk_picker, &r, &g, &b, &a);
+    evas_object_color_set(rect, r, g, b, a);
+    evas_object_show(rect);
+
+    /* Show color selector */
+    cs_frame = elm_frame_add(window->color_selector.elm_selector_window);
+    evas_object_size_hint_weight_set(cs_frame, EVAS_HINT_EXPAND, 0.7);
+    evas_object_size_hint_align_set(cs_frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_object_text_set(cs_frame, "Color Selector");
+    elm_box_pack_end(box, cs_frame);
+    evas_object_show(cs_frame);
+
+    window->color_selector.elm_selector = elm_colorselector_add(window->color_selector.elm_selector_window);
+    elm_object_content_set(cs_frame, window->color_selector.elm_selector);
+    evas_object_show(window->color_selector.elm_selector);
+
+    /* OK, Cancel Buttons */
+    button_box = elm_box_add(window->color_selector.elm_selector_window);
+    elm_box_horizontal_set(button_box, EINA_TRUE);
+    evas_object_size_hint_min_set(button_box, 200, 50);
+    elm_box_pack_end(box, button_box);
+    evas_object_show(button_box);
+
+    ok_button = elm_button_add(window->color_selector.elm_selector_window);
+    elm_object_text_set(ok_button, "OK");
+    elm_box_pack_end(button_box, ok_button);
+    evas_object_show(ok_button);
+
+    cancel_button = elm_button_add(window->color_selector.elm_selector_window);
+    elm_object_text_set(cancel_button, "Cancel");
+    elm_box_pack_end(button_box, cancel_button);
+    evas_object_show(cancel_button);
+
+    evas_object_smart_callback_add(ok_button, "clicked", on_color_picker_ok_clicked, &(window->color_selector));
+    evas_object_smart_callback_add(cancel_button, "clicked", on_color_picker_cancel_clicked, window->color_selector.ewk_picker);
+    evas_object_smart_callback_add(window->color_selector.elm_selector_window, "delete,request", on_color_picker_cancel_clicked, window->color_selector.ewk_picker);
+    evas_object_smart_callback_add(window->color_selector.elm_selector, "changed", on_color_changed, rect);
+    evas_object_smart_callback_add(window->color_selector.elm_selector, "color,item,selected", on_color_item_selected, rect);
+
+    elm_win_center(window->color_selector.elm_selector_window, EINA_TRUE, EINA_TRUE);
+    evas_object_resize(window->color_selector.elm_selector_window, 350, 500);
+    evas_object_show(window->color_selector.elm_selector_window);
+
+    return EINA_TRUE;
 }
 
 static void
@@ -1561,6 +1698,8 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     ewkViewClass->popup_menu_hide = on_popup_menu_hide;
     ewkViewClass->context_menu_show = on_context_menu_show;
     ewkViewClass->context_menu_hide = on_context_menu_hide;
+    ewkViewClass->input_picker_color_request = on_color_picker_request;
+    ewkViewClass->input_picker_color_dismiss = on_color_picker_dismiss;
 
     Evas *evas = evas_object_evas_get(window->elm_window);
     if (legacy_behavior_enabled) {
