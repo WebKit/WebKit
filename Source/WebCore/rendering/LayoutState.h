@@ -125,7 +125,7 @@ public:
     // The current line grid that we're snapping to and the offset of the start of the grid.
     RenderBlock* m_lineGrid;
     LayoutState* m_next;
-#if ENABLE(CSS_EXCLUSIONS)
+#if ENABLE(CSS_SHAPES)
     ExclusionShapeInsideInfo* m_exclusionShapeInsideInfo;
 #endif
 

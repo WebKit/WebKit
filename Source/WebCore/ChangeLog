@@ -1,3 +1,17 @@
+2013-06-07  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions][CSS Shapes] Incorrect compile flag in LayoutState.h
+        https://bugs.webkit.org/show_bug.cgi?id=117318
+
+        Reviewed by Alexandru Chiculita.
+
+        m_exclusionShapeInsideInfo should be guarded by the CSS_SHAPES flag,
+        not the CSS_EXCLUSIONS flag.
+
+        No tests required.
+
+        * rendering/LayoutState.h:
+
 2013-06-07  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of outdated raises() from Web IDL
