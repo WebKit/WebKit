@@ -1,3 +1,12 @@
+2013-06-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [regression] build failure WebKitFontFamilyNames.h missing
+        https://bugs.webkit.org/show_bug.cgi?id=117178
+
+        Reviewed by Sam Weinig.
+
+        * GNUmakefile.am: List platform_sources under the BUILT_SOURCES list.
+
 2013-06-05  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags

@@ -215,6 +215,7 @@ include Tools/TestWebKitAPI/GNUmakefile.am
 BUILT_SOURCES += \
 	$(javascriptcore_built_sources) \
 	$(javascriptcore_built_nosources) \
+	$(platform_built_sources) \
 	$(webcore_built_sources) \
 	$(webcore_built_nosources) \
 	$(webcore_svg_built_sources) \

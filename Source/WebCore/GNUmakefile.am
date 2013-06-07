@@ -433,7 +433,7 @@ DerivedSources/WebCore/JSInternalSettingsGenerated.h: DerivedSources/WebCore/Int
 # IDL generation takes a long time. The pipe represents an order-only dependency,
 # which means that GNUmake will only try to build the dependencies first, but
 # not rebuild all the targets if the dependencies change.
-$(webkitgtk_sources) $(webkit2_sources) $(webkit2_plugin_process_sources) $(webcore_sources) $(webcoregtk_sources) $(platformgtk_sources) : | $(supplemental_dependency_file) $(window_constructors_file) $(workercontext_constructors_file) $(webcore_built_sources)
+$(webkitgtk_sources) $(webkit2_sources) $(webkit2_plugin_process_sources) $(webcore_sources) $(webcoregtk_sources) $(platform_sources) $(platformgtk_sources) : | $(supplemental_dependency_file) $(window_constructors_file) $(workercontext_constructors_file) $(webcore_built_sources) $(platform_built_sources)
 
 noinst_LTLIBRARIES += \
 	libWebCorePlatform.la \
