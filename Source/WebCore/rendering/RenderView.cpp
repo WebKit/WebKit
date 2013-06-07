@@ -27,6 +27,7 @@
 #include "FloatQuad.h"
 #include "FlowThreadController.h"
 #include "Frame.h"
+#include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
@@ -68,6 +69,7 @@ RenderView::RenderView(Document* document)
     , m_layoutStateDisableCount(0)
     , m_renderQuoteHead(0)
     , m_renderCounterCount(0)
+    , m_selectionWasCaret(false)
 {
     // init RenderObject attributes
     setInline(false);
@@ -691,9 +693,11 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     if ((start && !end) || (end && !start))
         return;
 
+    bool caretChanged = m_selectionWasCaret != view()->frame()->selection()->isCaret();
+    m_selectionWasCaret = view()->frame()->selection()->isCaret();
     // Just return if the selection hasn't changed.
     if (m_selectionStart == start && m_selectionStartPos == startPos &&
-        m_selectionEnd == end && m_selectionEndPos == endPos)
+        m_selectionEnd == end && m_selectionEndPos == endPos && !caretChanged)
         return;
 
     if ((start && end) && (start->flowThreadContainingBlock() != end->flowThreadContainingBlock()))

@@ -1,3 +1,25 @@
+2013-06-07  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [rendering] Use foreground color to render the overtype caret
+        https://bugs.webkit.org/show_bug.cgi?id=117347
+
+        Reviewed by Darin Adler.
+
+        Currently, the overtype caret is rendered using the colors of
+        a normal selection, which is confusing. This patch enables RenderObject
+        to differentiate between a normal and a overtype caret selection,
+        in order to use a different color for the latter.
+
+        Also, let RenderView update the selection if this is unchanged
+        when going from a overtype caret to one character selection and
+        viceversa.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionBackgroundColor):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection):
+        * rendering/RenderView.h:
+
 2013-06-07  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of outdated getter / setter raises from Web IDL

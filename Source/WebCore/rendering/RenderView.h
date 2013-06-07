@@ -340,6 +340,8 @@ private:
 
     RenderQuote* m_renderQuoteHead;
     unsigned m_renderCounterCount;
+
+    bool m_selectionWasCaret;
 };
 
 inline RenderView* toRenderView(RenderObject* object)
