@@ -2040,7 +2040,7 @@ sub GenerateImplementation
                        AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{"Conditional"});
                        push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec, castedThis->globalObject());\n");
                     }
-                } elsif (!@{$attribute->getterExceptions}) {
+                } elsif (!$attribute->signature->extendedAttributes->{"GetterRaisesException"}) {
                     push(@implContent, "    UNUSED_PARAM(exec);\n") if !$attribute->signature->extendedAttributes->{"CallWith"};
                     push(@implContent, "    bool isNull = false;\n") if $isNullable;
 
@@ -2217,6 +2217,7 @@ sub GenerateImplementation
                         my $type = $attribute->signature->type;
                         my $putFunctionName = GetAttributeSetterName($interfaceName, $className, $attribute);
                         my $implSetterFunctionName = $codeGenerator->WK_ucfirst($name);
+                        my $setterRaisesException = $attribute->signature->extendedAttributes->{"SetterRaisesException"};
 
                         my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
                         push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
@@ -2279,7 +2280,7 @@ sub GenerateImplementation
                                     push(@implContent, "    $className* castedThis = jsCast<$className*>(thisObject);\n");
                                     push(@implContent, "    $implType* impl = static_cast<$implType*>(castedThis->impl());\n");
                                 }
-                                push(@implContent, "    ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
+                                push(@implContent, "    ExceptionCode ec = 0;\n") if $setterRaisesException;
 
                                 # If the "StrictTypeChecking" extended attribute is present, and the attribute's type is an
                                 # interface type, then if the incoming value does not implement that interface, a TypeError
@@ -2325,12 +2326,12 @@ sub GenerateImplementation
                                         push(@implContent, "    podImpl = nativeValue;\n");
                                     } else {
                                         push(@implContent, "    podImpl.set$implSetterFunctionName(nativeValue");
-                                        push(@implContent, ", ec") if @{$attribute->setterExceptions};
+                                        push(@implContent, ", ec") if $setterRaisesException;
                                         push(@implContent, ");\n");
-                                        push(@implContent, "    setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
+                                        push(@implContent, "    setDOMException(exec, ec);\n") if $setterRaisesException;
                                     }
                                     if ($svgPropertyType) {
-                                        if (@{$attribute->setterExceptions}) {
+                                        if ($setterRaisesException) {
                                             push(@implContent, "    if (!ec)\n");
                                             push(@implContent, "        impl->commitChange();\n");
                                         } else {
@@ -2353,9 +2354,9 @@ sub GenerateImplementation
 
                                     unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, ""));
 
-                                    push(@arguments, "ec") if @{$attribute->setterExceptions};
+                                    push(@arguments, "ec") if $setterRaisesException;
                                     push(@implContent, "    ${functionName}(" . join(", ", @arguments) . ");\n");
-                                    push(@implContent, "    setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
+                                    push(@implContent, "    setDOMException(exec, ec);\n") if $setterRaisesException;
                                 }
                             }
 

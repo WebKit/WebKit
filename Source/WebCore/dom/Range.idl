@@ -23,18 +23,12 @@
     ImplementationLacksVTable
 ] interface Range {
 
-    readonly attribute Node startContainer
-        getter raises(DOMException);
-    readonly attribute long startOffset
-        getter raises(DOMException);
-    readonly attribute Node endContainer
-        getter raises(DOMException);
-    readonly attribute long endOffset
-        getter raises(DOMException);
-    readonly attribute boolean collapsed
-        getter raises(DOMException);
-    readonly attribute Node commonAncestorContainer
-        getter raises(DOMException);
+    [GetterRaisesException] readonly attribute Node startContainer;
+    [GetterRaisesException] readonly attribute long startOffset;
+    [GetterRaisesException] readonly attribute Node endContainer;
+    [GetterRaisesException] readonly attribute long endOffset;
+    [GetterRaisesException] readonly attribute boolean collapsed;
+    [GetterRaisesException] readonly attribute Node commonAncestorContainer;
 
     [ObjCLegacyUnnamedParameters] void setStart([Default=Undefined] optional Node refNode, 
                                  [Default=Undefined] optional long offset)

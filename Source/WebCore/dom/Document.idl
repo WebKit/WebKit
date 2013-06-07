@@ -68,10 +68,8 @@
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString inputEncoding;
 
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString xmlEncoding;
-             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString xmlVersion
-                setter raises (DOMException);
-             attribute boolean xmlStandalone
-                setter raises (DOMException);
+    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString xmlVersion;
+    [SetterRaisesException] attribute boolean xmlStandalone;
 
     Node               adoptNode([Default=Undefined] optional Node source)
         raises (DOMException);
@@ -156,19 +154,15 @@
              [TreatNullAs=NullString] attribute DOMString title;
     readonly attribute DOMString referrer;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-             [TreatNullAs=NullString] attribute DOMString domain
-                 setter raises (DOMException);
+    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString domain;
 #else
     readonly attribute DOMString domain;
 #endif
     readonly attribute DOMString URL;
 
-             [TreatNullAs=NullString] attribute DOMString cookie
-                 setter raises (DOMException),
-                 getter raises (DOMException);
+    [TreatNullAs=NullString, GetterRaisesException, SetterRaisesException] attribute DOMString cookie;
 
-             attribute HTMLElement body
-                 setter raises (DOMException);
+    [SetterRaisesException] attribute HTMLElement body;
 
     readonly attribute HTMLHeadElement head;
     readonly attribute HTMLCollection images;

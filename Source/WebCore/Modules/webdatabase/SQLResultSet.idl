@@ -35,12 +35,10 @@
     readonly attribute SQLResultSetRowList rows;
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-    readonly attribute long insertId
-        getter raises(DOMException);
+    [GetterRaisesException] readonly attribute long insertId;
 #else
     // Explicitely choose 'long long' here to avoid a 64bit->32bit shortening warning for us.
-    readonly attribute long long insertId
-        getter raises(DOMException);
+    [GetterRaisesException] readonly attribute long long insertId;
 #endif
     readonly attribute long rowsAffected;
 };

@@ -27,8 +27,7 @@
     Conditional=SVG,
     SkipVTableValidation
 ] interface SVGAnimatedEnumeration {
-    [StrictTypeChecking] attribute unsigned short baseVal
-        setter raises(DOMException);
+    [StrictTypeChecking, SetterRaisesException] attribute unsigned short baseVal;
     readonly attribute unsigned short animVal;
 };
 

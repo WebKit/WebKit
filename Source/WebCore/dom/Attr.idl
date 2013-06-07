@@ -29,8 +29,7 @@
 
     readonly attribute boolean specified;
 
-             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString value 
-                 setter raises(DOMException);
+    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString value;
 
     // DOM Level 2
 

@@ -38,7 +38,7 @@
     // for compatibility we keep DOM Level 1 definition.
     readonly attribute long length;
 #else
-    attribute unsigned long length setter raises (DOMException);
+    [SetterRaisesException] attribute unsigned long length;
 #endif
     Node item([IsIndex,Default=Undefined] optional unsigned long index);
     Node namedItem([Default=Undefined] optional DOMString name);

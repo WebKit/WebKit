@@ -63,8 +63,7 @@ readonly attribute unsigned short readyState;
 readonly attribute boolean seeking;
 
 // playback state
-attribute double currentTime
-    setter raises (DOMException);
+[SetterRaisesException] attribute double currentTime;
 readonly attribute double initialTime;
 readonly attribute double startTime;
 readonly attribute double duration;
@@ -81,8 +80,7 @@ void pause();
 
 // controls
 attribute boolean controls;
-attribute double volume 
-    setter raises (DOMException);
+[SetterRaisesException] attribute double volume;
 attribute boolean muted;
 attribute [Reflect=muted] boolean defaultMuted;
 

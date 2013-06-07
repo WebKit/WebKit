@@ -26,8 +26,7 @@
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject
 ] interface AnalyserNode : AudioNode {
-    attribute unsigned long fftSize
-        setter raises(DOMException);
+    [SetterRaisesException] attribute unsigned long fftSize;
     readonly attribute unsigned long frequencyBinCount;
 
     // minDecibels / maxDecibels represent the range to scale the FFT analysis data for conversion to unsigned byte values.

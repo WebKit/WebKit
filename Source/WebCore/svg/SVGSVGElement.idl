@@ -36,10 +36,8 @@
     readonly attribute SVGAnimatedLength y;
     readonly attribute SVGAnimatedLength width;
     readonly attribute SVGAnimatedLength height;
-             attribute DOMString contentScriptType
-                 /*setter raises(DOMException)*/;
-             attribute DOMString contentStyleType
-                 /*setter raises(DOMException)*/;
+             attribute DOMString contentScriptType;
+             attribute DOMString contentStyleType;
     readonly attribute SVGRect viewport;
     readonly attribute float pixelUnitToMillimeterX;
     readonly attribute float pixelUnitToMillimeterY;
@@ -47,8 +45,7 @@
     readonly attribute float screenPixelToMillimeterY;
     readonly attribute boolean useCurrentView;
     readonly attribute SVGViewSpec currentView;
-             attribute float currentScale
-                 /*setter raises(DOMException)*/;
+             attribute float currentScale;
     readonly attribute SVGPoint currentTranslate;
 
     unsigned long suspendRedraw([Default=Undefined] optional unsigned long maxWaitMilliseconds);

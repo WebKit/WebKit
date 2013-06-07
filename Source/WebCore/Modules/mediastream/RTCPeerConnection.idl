@@ -45,13 +45,11 @@
 
     void setLocalDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback)
         raises(DOMException);
-    readonly attribute RTCSessionDescription localDescription
-        getter raises(DOMException);
+    [GetterRaisesException] readonly attribute RTCSessionDescription localDescription;
 
     void setRemoteDescription(RTCSessionDescription description, [Default=Undefined] optional VoidCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback)
         raises(DOMException);
-    readonly attribute RTCSessionDescription remoteDescription
-        getter raises(DOMException);
+    [GetterRaisesException] readonly attribute RTCSessionDescription remoteDescription;
 
     readonly attribute DOMString signalingState;
 

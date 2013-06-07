@@ -23,8 +23,7 @@ interface ProcessingInstruction : Node {
     // DOM Level 1
 
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString target;
-             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString data
-                 setter raises(DOMException);
+    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString data;
 
     // interface LinkStyle from DOM Level 2 Style Sheets
     readonly attribute StyleSheet sheet;

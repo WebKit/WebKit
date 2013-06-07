@@ -37,8 +37,7 @@
       readonly attribute DOMString viewTargetString;
 
       // SVGZoomAndPan
-      attribute unsigned short zoomAndPan
-          setter raises(DOMException);
+      [SetterRaisesException] attribute unsigned short zoomAndPan;
 
       // SVGFitToViewBox
       readonly attribute SVGAnimatedRect viewBox;

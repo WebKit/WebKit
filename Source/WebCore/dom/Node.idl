@@ -50,9 +50,8 @@
 
     readonly attribute [TreatReturnedNullStringAs=Null] DOMString        nodeName;
 
-             // FIXME: the spec says this can also raise on retrieval.
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        nodeValue
-                 setter raises(DOMException);
+    // FIXME: the spec says this can also raise on retrieval.
+    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString nodeValue;
 
     readonly attribute unsigned short   nodeType;
     readonly attribute Node             parentNode;
@@ -84,8 +83,7 @@
                                        [TreatNullAs=NullString,Default=Undefined] optional DOMString version);
 
     readonly attribute [TreatReturnedNullStringAs=Null] DOMString        namespaceURI;
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        prefix
-                 setter raises(DOMException);
+    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString prefix;
     readonly attribute [TreatReturnedNullStringAs=Null] DOMString        localName;
 
 #if defined(LANGUAGE_OBJECTIVE_C)
@@ -98,9 +96,8 @@
 
     readonly attribute [TreatReturnedNullStringAs=Null] DOMString       baseURI;
 
-             // FIXME: the spec says this can also raise on retrieval.
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString       textContent
-                 setter raises(DOMException);
+    // FIXME: the spec says this can also raise on retrieval.
+    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString textContent;
 
     boolean            isSameNode([Default=Undefined] optional Node other);
     boolean            isEqualNode([Default=Undefined] optional Node other);

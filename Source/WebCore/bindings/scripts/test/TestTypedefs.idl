@@ -57,10 +57,10 @@
 
     // Exceptions
     void methodWithException() raises(E);
-    attribute long attrWithGetterException getter raises(E);
-    attribute long attrWithSetterException setter raises(E);
-    attribute DOMString stringAttrWithGetterException getter raises(E);
-    attribute DOMString stringAttrWithSetterException setter raises(E);
+    [GetterRaisesException] attribute long attrWithGetterException;
+    [SetterRaisesException] attribute long attrWithSetterException;
+    [GetterRaisesException] attribute DOMString stringAttrWithGetterException;
+    [SetterRaisesException] attribute DOMString stringAttrWithSetterException;
 };
 
 typedef float                      DOUBLE;

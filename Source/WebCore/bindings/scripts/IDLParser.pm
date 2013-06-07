@@ -69,8 +69,6 @@ struct( domAttribute => {
     isStatic => '$',
     isReadOnly => '$',
     signature => '$',         # Attribute signature
-    getterExceptions => '@',  # Possibly raised exceptions.
-    setterExceptions => '@',  # Possibly raised exceptions.
 });
 
 # Used to represent a map of 'variable name' <-> 'variable type'
@@ -312,7 +310,6 @@ sub typeRemoveNullableSuffix
 my $nextAttributeOld_1 = '^(attribute|inherit|readonly)$';
 my $nextPrimitiveType_1 = '^(int|long|short|unsigned)$';
 my $nextPrimitiveType_2 = '^(double|float|unrestricted)$';
-my $nextSetGetRaises2_1 = '^(;|getraises|setraises)$';
 my $nextArgumentList_1 = '^(\(|::|ByteString|DOMString|Date|\[|any|boolean|byte|double|float|in|int|long|object|octet|optional|sequence|short|unrestricted|unsigned)$';
 my $nextNonAnyType_1 = '^(boolean|byte|double|float|int|long|octet|short|unrestricted|unsigned)$';
 my $nextInterfaceMemberOld_1 = '^(\(|::|ByteString|DOMString|Date|any|attribute|boolean|byte|creator|deleter|double|float|getter|inherit|int|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
@@ -329,7 +326,6 @@ my $nextExceptionMembers_1 = '^(\(|::|ByteString|DOMString|Date|\[|any|boolean|b
 my $nextAttributeRest_1 = '^(attribute|readonly)$';
 my $nextInterfaceMembers_1 = '^(\(|::|ByteString|DOMString|Date|any|attribute|boolean|byte|const|creator|deleter|double|float|getter|inherit|int|legacycaller|long|object|octet|readonly|sequence|serializer|setter|short|static|stringifier|unrestricted|unsigned|void)$';
 my $nextSingleType_1 = '^(::|ByteString|DOMString|Date|boolean|byte|double|float|int|long|object|octet|sequence|short|unrestricted|unsigned)$';
-my $nextGet_1 = '^(;|getraises|getter|setraises|setter)$';
 my $nextArgumentName_1 = '^(attribute|callback|const|creator|deleter|dictionary|enum|exception|getter|implements|inherit|interface|legacycaller|partial|serializer|setter|static|stringifier|typedef|unrestricted)$';
 my $nextConstValue_1 = '^(false|true)$';
 my $nextConstValue_2 = '^(-|Infinity|NaN)$';
@@ -1161,11 +1157,6 @@ sub parseAttributeRest
         my $token = $self->getToken();
         $self->assertTokenType($token, IdentifierToken);
         $newDataNode->signature->name($token->value());
-        my $getRef = $self->parseGet();
-        if (defined $getRef) {
-            push(@{$newDataNode->getterExceptions}, @{$getRef->{"getraises"}});
-            push(@{$newDataNode->setterExceptions}, @{$getRef->{"setraises"}});
-        }
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
         # CustomConstructor may also be used on attributes.
         if (defined $extendedAttributeList->{"CustomConstructors"}) {
@@ -2058,133 +2049,6 @@ sub parseReturnType
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
 
-sub parseGet
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "inherits") {
-        my $attr = {};
-        $self->parseInheritsGetter();
-        $attr->{"inherits"} = 1;
-        $attr->{"getraises"} = [];
-        $attr->{"setraises"} = $self->parseSetRaises();
-        return $attr;
-    }
-    if ($next->value() =~ /$nextGet_1/) {
-        return $self->parseSetGetRaises();
-    }
-}
-
-sub parseInheritsGetter
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "inherits") {
-        $self->assertTokenValue($self->getToken(), "inherits", __LINE__);
-        $self->assertTokenValue($self->getToken(), "getter", __LINE__);
-        return;
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseSetGetRaises
-{
-    my $self = shift;
-    my $attr = {};
-    $attr->{"inherits"} = 0;
-
-    my $next = $self->nextToken();
-    if ($next->value() eq "setter") {
-        $attr->{"setraises"} = $self->parseSetRaises();
-        $attr->{"getraises"} = $self->parseGetRaises2();
-        return $attr;
-    }
-    if ($next->value() eq "getter") {
-        $attr->{"setraises"} = [];
-        $attr->{"getraises"} = $self->parseGetRaises();
-        return $attr;
-    }
-    if ($next->value() =~ /$nextSetGetRaises2_1/) {
-        return $self->parseSetGetRaises2();
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseGetRaises
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-
-    if ($next->value() eq "getter") {
-        $self->assertTokenValue($self->getToken(), "getter", __LINE__);
-        $self->assertTokenValue($self->getToken(), "raises", __LINE__);
-        return $self->parseExceptionList();
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseGetRaises2
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-
-    if ($next->value() eq ",") {
-        $self->assertTokenValue($self->getToken(), ",", __LINE__);
-        $self->assertTokenValue($self->getToken(), "getter", __LINE__);
-        $self->assertTokenValue($self->getToken(), "raises", __LINE__);
-        return $self->parseExceptionList();
-    }
-    return [];
-}
-
-sub parseSetRaises
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "setter") {
-        $self->assertTokenValue($self->getToken(), "setter", __LINE__);
-        $self->assertTokenValue($self->getToken(), "raises", __LINE__);
-        return $self->parseExceptionList();
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseSetGetRaises2
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() =~ /$nextSetGetRaises2_1/) {
-        my $attr = {};
-        $attr->{"inherits"} = 0;
-        $attr->{"getraises"} = $self->parseGetRaises3();
-        $attr->{"setraises"} = $self->parseSetRaises3();
-        return $attr;
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseGetRaises3
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "getraises") {
-        $self->assertTokenValue($self->getToken(), "getraises", __LINE__);
-        return $self->parseExceptionList();
-    }
-    return [];
-}
-
-sub parseSetRaises3
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "setraises") {
-        $self->assertTokenValue($self->getToken(), "setraises", __LINE__);
-        return $self->parseExceptionList();
-    }
-    return [];
-}
-
 sub parseExceptionList
 {
     my $self = shift;
@@ -2450,11 +2314,6 @@ sub parseAttributeRestOld
         my $token = $self->getToken();
         $self->assertTokenType($token, IdentifierToken);
         $newDataNode->signature->name($token->value());
-        my $getRef = $self->parseGet();
-        if (defined $getRef) {
-            push(@{$newDataNode->getterExceptions}, @{$getRef->{"getraises"}});
-            push(@{$newDataNode->setterExceptions}, @{$getRef->{"setraises"}});
-        }
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
         return $newDataNode;
     }

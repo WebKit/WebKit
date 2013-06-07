@@ -37,13 +37,10 @@
     const unsigned short SVG_LENGTHTYPE_PC         = 10;
 
     readonly attribute unsigned short unitType;
-    [Custom, StrictTypeChecking] attribute float value
-        setter raises(DOMException),
-        getter raises(DOMException);
+    [GetterRaisesException, SetterRaisesException, Custom, StrictTypeChecking] attribute float value;
 
     [StrictTypeChecking] attribute float valueInSpecifiedUnits;
-    [TreatNullAs=NullString, StrictTypeChecking] attribute DOMString valueAsString
-        setter raises(DOMException);
+    [TreatNullAs=NullString, StrictTypeChecking, SetterRaisesException] attribute DOMString valueAsString;
 
     [StrictTypeChecking] void newValueSpecifiedUnits(unsigned short unitType, 
                                                      float valueInSpecifiedUnits)

@@ -29,8 +29,7 @@
     CustomEnumerateProperty,
     SkipVTableValidation
 ] interface CSSStyleDeclaration {
-             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString        cssText
-                 setter raises(DOMException);
+    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString cssText;
 
     [TreatReturnedNullStringAs=Null] DOMString          getPropertyValue([Default=Undefined] optional DOMString propertyName);
     [Custom] CSSValue           getPropertyCSSValue([Default=Undefined] optional DOMString propertyName);

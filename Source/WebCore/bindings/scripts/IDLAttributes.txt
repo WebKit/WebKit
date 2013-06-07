@@ -56,6 +56,7 @@ EnforceRange
 EventTarget
 ExtendsDOMGlobalObject
 GenerateIsReachable=|Impl|ImplContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot
+GetterRaisesException
 GlobalContext=WindowOnly|WorkerOnly|WindowAndWorker
 Immutable
 ImplementationLacksVTable
@@ -97,6 +98,7 @@ Reflect=*
 Replaceable
 ReplaceableConstructor
 ReturnNewObject
+SetterRaisesException
 SkipVTableValidation
 StrictTypeChecking
 SuppressToJSObject

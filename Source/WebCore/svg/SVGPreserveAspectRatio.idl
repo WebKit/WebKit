@@ -44,10 +44,8 @@
     const unsigned short SVG_MEETORSLICE_MEET = 1;
     const unsigned short SVG_MEETORSLICE_SLICE = 2;
 
-    [StrictTypeChecking] attribute unsigned short align
-        setter raises(DOMException);
+    [StrictTypeChecking, SetterRaisesException] attribute unsigned short align;
 
-    [StrictTypeChecking] attribute unsigned short meetOrSlice
-        setter raises(DOMException);
+    [StrictTypeChecking, SetterRaisesException] attribute unsigned short meetOrSlice;
 };
 

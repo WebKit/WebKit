@@ -33,21 +33,16 @@
     const unsigned short FIRST_ORDERED_NODE_TYPE        = 9;
 
     readonly attribute unsigned short  resultType;
-    readonly attribute double          numberValue
-        getter raises (DOMException);
+    [GetterRaisesException] readonly attribute double          numberValue;
         
-    readonly attribute DOMString       stringValue
-        getter raises (DOMException);
+    [GetterRaisesException] readonly attribute DOMString       stringValue;
 
-    readonly attribute boolean         booleanValue
-        getter raises (DOMException);
+    [GetterRaisesException] readonly attribute boolean         booleanValue;
 
-    readonly attribute Node            singleNodeValue
-        getter raises (DOMException);
+    [GetterRaisesException] readonly attribute Node            singleNodeValue;
 
     readonly attribute boolean         invalidIteratorState;
-    readonly attribute unsigned long   snapshotLength
-        getter raises (DOMException);
+    [GetterRaisesException] readonly attribute unsigned long   snapshotLength;
         
     Node iterateNext()
         raises (DOMException);

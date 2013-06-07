@@ -34,8 +34,7 @@
     [StrictTypeChecking] attribute float value;
     [StrictTypeChecking] attribute float valueInSpecifiedUnits;
 
-    [TreatNullAs=NullString] attribute DOMString valueAsString
-        setter raises(DOMException);
+    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString valueAsString;
 
     [StrictTypeChecking] void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
         raises(DOMException);

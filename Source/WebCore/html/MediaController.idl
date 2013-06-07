@@ -34,8 +34,7 @@
     readonly attribute TimeRanges seekable;
 
     readonly attribute double duration;
-    attribute double currentTime
-        setter raises (DOMException);
+    [SetterRaisesException] attribute double currentTime;
 
     readonly attribute boolean paused;
     readonly attribute TimeRanges played;
@@ -47,8 +46,7 @@
     attribute double defaultPlaybackRate;
     attribute double playbackRate;
 
-    attribute double volume
-        setter raises (DOMException);
+    [SetterRaisesException] attribute double volume;
     attribute boolean muted;
 
     // EventTarget interface

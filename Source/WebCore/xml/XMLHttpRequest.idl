@@ -65,12 +65,10 @@ enum XMLHttpRequestResponseType {
     const unsigned short LOADING = 3;
     const unsigned short DONE = 4;
 
-    [Conditional=XHR_TIMEOUT] attribute unsigned long timeout
-        setter raises(DOMException);
+    [Conditional=XHR_TIMEOUT, SetterRaisesException] attribute unsigned long timeout;
     readonly attribute unsigned short readyState;
 
-    attribute boolean withCredentials
-        setter raises(DOMException);
+    [SetterRaisesException] attribute boolean withCredentials;
 
     [Custom] void open(DOMString method, DOMString url, optional boolean async, optional DOMString user, optional DOMString password)
         raises(DOMException);
@@ -90,20 +88,14 @@ enum XMLHttpRequestResponseType {
         raises(DOMException);
     [TreatReturnedNullStringAs=Null] DOMString getResponseHeader(DOMString header)
         raises(DOMException);
-    [CustomGetter] readonly attribute DOMString responseText // The custom getter implements TreatReturnedNullStringAs=Null
-        getter raises(DOMException);
-    readonly attribute Document responseXML
-        getter raises(DOMException);
+    [GetterRaisesException, CustomGetter] readonly attribute DOMString responseText; // The custom getter implements TreatReturnedNullStringAs=Null
+    [GetterRaisesException] readonly attribute Document responseXML;
 
-    attribute XMLHttpRequestResponseType responseType
-        setter raises(DOMException);
-    [CustomGetter] readonly attribute Object response
-        getter raises(DOMException);
+    [SetterRaisesException] attribute XMLHttpRequestResponseType responseType;
+    [GetterRaisesException, CustomGetter] readonly attribute Object response;
 
-    readonly attribute unsigned short status
-        getter raises(DOMException);
-    readonly attribute DOMString statusText
-        getter raises(DOMException);
+    [GetterRaisesException] readonly attribute unsigned short status;
+    [GetterRaisesException] readonly attribute DOMString statusText;
 
     // Extension
     void overrideMimeType(DOMString override);

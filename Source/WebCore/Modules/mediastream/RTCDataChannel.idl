@@ -32,8 +32,7 @@
     readonly attribute DOMString readyState;
     readonly attribute unsigned long bufferedAmount;
 
-    attribute DOMString binaryType
-        setter raises(DOMException);
+    [SetterRaisesException] attribute DOMString binaryType;
 
     void send(ArrayBuffer data)
         raises(DOMException);

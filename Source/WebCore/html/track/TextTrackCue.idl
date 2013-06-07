@@ -36,23 +36,16 @@
     readonly attribute TextTrack track;
 
     attribute DOMString id;
-    attribute double startTime
-        setter raises (DOMException);
-    attribute double endTime
-        setter raises (DOMException);
+    [SetterRaisesException] attribute double startTime;
+    [SetterRaisesException] attribute double endTime;
     attribute boolean pauseOnExit;
 
-    attribute DOMString vertical
-        setter raises (DOMException);
+    [SetterRaisesException] attribute DOMString vertical;
     attribute boolean snapToLines;
-    attribute long line
-        setter raises (DOMException);
-    attribute long position
-        setter raises (DOMException);
-    attribute long size
-        setter raises (DOMException);
-    attribute DOMString align
-        setter raises (DOMException);
+    [SetterRaisesException] attribute long line;
+    [SetterRaisesException] attribute long position;
+    [SetterRaisesException] attribute long size;
+    [SetterRaisesException] attribute DOMString align;
 
     attribute DOMString text;
     DocumentFragment getCueAsHTML();

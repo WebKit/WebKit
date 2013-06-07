@@ -1,3 +1,102 @@
+2013-06-07  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Get rid of outdated getter / setter raises from Web IDL
+        https://bugs.webkit.org/show_bug.cgi?id=117346
+
+        Reviewed by Darin Adler.
+
+        Stop using "getter / setter raises" in the IDL as this is no longer part of
+        the Web IDL specification. Web IDL no longer specifies exceptions for
+        attribute getters or setters. Instead, it is now explained in prose.
+
+        WebKit still needs to know if the getter / setter can throw an exception
+        (but does not need the exception name) so this patch adds 2 WebKit specific
+        IDL extended attributes: [GetterRaisesException] / [SetterRaisesException].
+        The naming is consistent with Blink.
+
+        This results in more standard and concise IDL. This also simplifies a lot
+        the code of the IDL parser.
+
+        Note that this patch does not remove "raises()" from the IDL methods yet.
+        This should be replaced by [RaisesException] IDL extended attribute in a
+        later patch.
+
+        No new tests, no behavior change.
+
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * Modules/mediastream/RTCStatsResponse.idl:
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webdatabase/SQLResultSet.idl:
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateProperty):
+        (GenerateFunctions):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/IDLParser.pm:
+        (parseAttributeRest):
+        (parseAttributeRestOld):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        * css/CSSCharsetRule.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSValue.idl:
+        * css/MediaList.idl:
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/Document.idl:
+        * dom/Node.idl:
+        * dom/ProcessingInstruction.idl:
+        * dom/Range.idl:
+        * dom/ShadowRoot.idl:
+        * dom/TreeWalker.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLMarqueeElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLMeterElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLProgressElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/MediaController.idl:
+        * html/track/TextTrackCue.idl:
+        * html/track/TextTrackRegion.idl:
+        * page/DOMWindow.idl:
+        * storage/Storage.idl:
+        * svg/SVGAltGlyphElement.idl:
+        * svg/SVGAngle.idl:
+        * svg/SVGAnimatedBoolean.idl:
+        * svg/SVGAnimatedEnumeration.idl:
+        * svg/SVGAnimatedInteger.idl:
+        * svg/SVGAnimatedNumber.idl:
+        * svg/SVGAnimatedString.idl:
+        * svg/SVGElement.idl:
+        * svg/SVGGlyphRefElement.idl:
+        * svg/SVGLangSpace.idl:
+        * svg/SVGLength.idl:
+        * svg/SVGPreserveAspectRatio.idl:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGScriptElement.idl:
+        * svg/SVGStyleElement.idl:
+        * svg/SVGViewSpec.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XPathResult.idl:
+
 2013-06-07  Kangil Han  <kangil.han@samsung.com>
 
         Remove unused header includes in Document

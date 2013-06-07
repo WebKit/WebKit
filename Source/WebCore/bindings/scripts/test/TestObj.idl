@@ -90,10 +90,10 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     // Exceptions
     void methodWithException() raises(DOMException);
-    attribute long attrWithGetterException getter raises(DOMException);
-    attribute long attrWithSetterException setter raises(DOMException);
-    attribute DOMString stringAttrWithGetterException getter raises(DOMException);
-    attribute DOMString stringAttrWithSetterException setter raises(DOMException);
+    [GetterRaisesException] attribute long attrWithGetterException;
+    [SetterRaisesException] attribute long attrWithSetterException;
+    [GetterRaisesException] attribute DOMString stringAttrWithGetterException;
+    [SetterRaisesException] attribute DOMString stringAttrWithSetterException;
 
     // 'Custom' extended attribute
     [Custom] attribute long            customAttr;
@@ -123,13 +123,10 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     [CallWith=ScriptState] attribute long withScriptStateAttribute;
     [CallWith=ScriptExecutionContext] attribute TestObj withScriptExecutionContextAttribute;
-    [CallWith=ScriptState] attribute TestObj withScriptStateAttributeRaises
-        getter raises(DOMException);
-    [CallWith=ScriptExecutionContext] attribute TestObj withScriptExecutionContextAttributeRaises
-        getter raises(DOMException);
+    [CallWith=ScriptState, GetterRaisesException] attribute TestObj withScriptStateAttributeRaises;
+    [CallWith=ScriptExecutionContext, GetterRaisesException] attribute TestObj withScriptExecutionContextAttributeRaises;
     [CallWith=ScriptExecutionContext|ScriptState] attribute TestObj withScriptExecutionContextAndScriptStateAttribute;
-    [CallWith=ScriptExecutionContext|ScriptState] attribute TestObj withScriptExecutionContextAndScriptStateAttributeRaises
-        getter raises(DOMException);
+    [CallWith=ScriptExecutionContext|ScriptState,GetterRaisesException] attribute TestObj withScriptExecutionContextAndScriptStateAttributeRaises;
     [CallWith=  ScriptExecutionContext  |  ScriptState  ] attribute TestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute;
     [CallWith=ScriptArguments|CallStack] attribute TestObj withScriptArgumentsAndCallStackAttribute;
 
@@ -260,6 +257,5 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     attribute long? nullableLongSettableAttribute;
 
-    attribute long? nullableStringValue
-        getter raises(DOMException);
+    [GetterRaisesException] attribute long? nullableStringValue;
 };

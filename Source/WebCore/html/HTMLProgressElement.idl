@@ -20,10 +20,8 @@
 [
     Conditional=PROGRESS_ELEMENT
 ] interface HTMLProgressElement : HTMLElement {
-             attribute  double                value
-                 setter raises(DOMException);
-             attribute  double                max
-                 setter raises(DOMException);
+    [SetterRaisesException] attribute  double value;
+    [SetterRaisesException] attribute  double max;
     readonly attribute  double                position;
     readonly attribute  NodeList              labels;
 };

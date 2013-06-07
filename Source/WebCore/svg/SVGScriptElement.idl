@@ -28,7 +28,6 @@
 ] interface SVGScriptElement : SVGElement,
                                                SVGURIReference,
                                                SVGExternalResourcesRequired {
-             attribute [TreatNullAs=NullString] DOMString type
-                 /*setter raises(DOMException)*/;
+             attribute [TreatNullAs=NullString] DOMString type;
 };
 

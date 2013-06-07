@@ -452,6 +452,8 @@ sub GenerateProperty {
     my $camelPropName = $attribute->signature->name;
     my $setPropNameFunction = $codeGenerator->WK_ucfirst($camelPropName);
     my $getPropNameFunction = $codeGenerator->WK_lcfirst($camelPropName);
+    my $hasGetterException = $attribute->signature->extendedAttributes->{"GetterRaisesException"};
+    my $hasSetterException = $attribute->signature->extendedAttributes->{"SetterRaisesException"};
 
     my $propName = decamelize($camelPropName);
     my $propNameCaps = uc($propName);
@@ -503,14 +505,14 @@ sub GenerateProperty {
         $setterFunctionName = "coreSelf->$setterFunctionName";
     }
     push(@getterArguments, "isNull") if $attribute->signature->isNullable;
-    push(@getterArguments, "ec") if @{$attribute->getterExceptions};
-    push(@setterArguments, "ec") if @{$attribute->setterExceptions};
+    push(@getterArguments, "ec") if $hasGetterException;
+    push(@setterArguments, "ec") if $hasSetterException;
 
     if (grep {$_ eq $attribute} @writeableProperties) {
         push(@txtSetProps, "    case ${propEnum}: {\n");
         push(@txtSetProps, "#if ${parentConditionalString}\n") if $parentConditionalString;
         push(@txtSetProps, "#if ${conditionalString}\n") if $conditionalString;
-        push(@txtSetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
+        push(@txtSetProps, "        WebCore::ExceptionCode ec = 0;\n") if $hasSetterException;
         push(@txtSetProps, "        ${setterFunctionName}(" . join(", ", @setterArguments) . ");\n");
         push(@txtSetProps, "#else\n") if $conditionalString;
         push(@txtSetProps, @conditionalWarn) if scalar(@conditionalWarn);
@@ -525,7 +527,7 @@ sub GenerateProperty {
     push(@txtGetProps, "#if ${parentConditionalString}\n") if $parentConditionalString;
     push(@txtGetProps, "#if ${conditionalString}\n") if $conditionalString;
     push(@txtGetProps, "        bool isNull = false;\n") if $attribute->signature->isNullable;
-    push(@txtGetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->getterExceptions};
+    push(@txtGetProps, "        WebCore::ExceptionCode ec = 0;\n") if $hasGetterException;
 
     # FIXME: Should we return a default value when isNull == true?
 
@@ -1241,7 +1243,9 @@ sub GenerateFunctions {
         # "get_foo" which calls a DOM class method named foo().
         my $function = new domFunction();
         $function->signature($attribute->signature);
-        $function->raisesExceptions($attribute->getterExceptions);
+        if ($attribute->signature->extendedAttributes->{"GetterRaisesException"}) {
+            $function->raisesExceptions(["DOMException"]);
+        }
         $object->GenerateFunction($interfaceName, $function, "get_", $interface);
 
         # FIXME: We are not generating setters for 'Replaceable'
@@ -1267,7 +1271,9 @@ sub GenerateFunctions {
         my $arrayRef = $function->parameters;
         push(@$arrayRef, $param);
         
-        $function->raisesExceptions($attribute->setterExceptions);
+        if ($attribute->signature->extendedAttributes->{"SetterRaisesException"}) {
+            $function->raisesExceptions(["DOMException"]);
+        }
         
         $object->GenerateFunction($interfaceName, $function, "set_", $interface);
     }

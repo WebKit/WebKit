@@ -162,10 +162,8 @@
 
     readonly attribute DOMApplicationCache applicationCache;
 
-    readonly attribute Storage sessionStorage
-        getter raises(DOMException);
-    readonly attribute Storage localStorage
-        getter raises(DOMException);
+    [GetterRaisesException] readonly attribute Storage sessionStorage;
+    [GetterRaisesException] readonly attribute Storage localStorage;
 
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
     // This is the interface orientation in degrees. Some examples are:

@@ -31,7 +31,7 @@
     CustomNamedSetter,
     SkipVTableValidation
 ] interface Storage {
-    [NotEnumerable] readonly attribute unsigned long length getter raises(DOMException);
+    [NotEnumerable, GetterRaisesException] readonly attribute unsigned long length;
     [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString key(unsigned long index)
         raises(DOMException);
     [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString getItem(DOMString key)

@@ -39,7 +39,7 @@ interface HTMLInputElement : HTMLElement {
     attribute boolean indeterminate;
     [Conditional=DATALIST_ELEMENT] readonly attribute HTMLElement list;
     [Reflect] attribute DOMString max;
-    attribute long maxLength setter raises(DOMException);
+    [SetterRaisesException] attribute long maxLength;
     [Reflect] attribute DOMString min;
     [Reflect] attribute boolean multiple;
     [Reflect] attribute DOMString name;
@@ -50,7 +50,7 @@ interface HTMLInputElement : HTMLElement {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [ObjCImplementedAsUnsignedLong] attribute DOMString size; // DOM level 2 changed this to a long, but ObjC API is a string
 #else
-    attribute unsigned long size setter raises(DOMException); // Changed string -> long -> unsigned long
+    [SetterRaisesException] attribute unsigned long size; // Changed string -> long -> unsigned long
 #endif
     [Reflect, URL] attribute DOMString src;
     [Reflect] attribute DOMString step;
@@ -58,14 +58,14 @@ interface HTMLInputElement : HTMLElement {
     [TreatNullAs=NullString] attribute DOMString defaultValue;
     // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [TreatNullAs=NullString] attribute DOMString value setter raises(DOMException);
+    [TreatNullAs=NullString, SetterRaisesException] attribute DOMString value;
 #else
     [TreatNullAs=NullString] attribute DOMString value;
 #endif
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-    attribute Date valueAsDate setter raises(DOMException);
+    [SetterRaisesException] attribute Date valueAsDate;
 #endif
-    attribute double valueAsNumber setter raises(DOMException);
+    [SetterRaisesException] attribute double valueAsNumber;
 
     void stepUp(optional long n) raises(DOMException);
     void stepDown(optional long n) raises(DOMException);

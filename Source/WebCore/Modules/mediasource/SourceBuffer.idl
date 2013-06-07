@@ -34,12 +34,10 @@
 ] interface SourceBuffer {
 
     // Returns the time ranges buffered.
-    readonly attribute TimeRanges buffered
-        getter raises(DOMException);
+    [GetterRaisesException] readonly attribute TimeRanges buffered;
 
     // Applies an offset to media segment timestamps.
-    attribute double timestampOffset
-        setter raises(DOMException);
+    [SetterRaisesException] attribute double timestampOffset;
 
     // Append segment data.
     void append(Uint8Array data) raises (DOMException);

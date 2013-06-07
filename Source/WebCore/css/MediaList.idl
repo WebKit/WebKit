@@ -31,8 +31,7 @@
     ImplementationLacksVTable
 ] interface MediaList {
 
-             [TreatNullAs=NullString, TreatReturnedNullStringAs=Null] attribute DOMString mediaText
-                 setter raises(DOMException);
+    [TreatNullAs=NullString, TreatReturnedNullStringAs=Null, SetterRaisesException] attribute DOMString mediaText;
     readonly attribute unsigned long length;
 
     [TreatReturnedNullStringAs=Null] DOMString item([Default=Undefined] optional unsigned long index);
