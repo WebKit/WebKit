@@ -71,9 +71,6 @@ void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellChecki
 
     textCheckerState.isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
 
-    if (isContinuousSpellCheckingEnabled)
-        TextCheckerClientEfl::instance().ensureSpellCheckingLanguage();
-
     // Notify the client about the setting change.
     WebTextChecker::shared()->client().setContinuousSpellCheckingEnabled(isContinuousSpellCheckingEnabled);
 #else
@@ -93,9 +90,6 @@ void TextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
         return;
 
     textCheckerState.isContinuousSpellCheckingEnabled = enabled;
-
-    if (enabled)
-        TextCheckerClientEfl::instance().ensureSpellCheckingLanguage();
 #else
     UNUSED_PARAM(enabled);
 #endif

@@ -1,3 +1,37 @@
+2013-06-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL][WK2] Context menu spellchecking items are not available when "Check Spelling While Typing" is off
+        https://bugs.webkit.org/show_bug.cgi?id=117190
+
+        Reviewed by Christophe Dumez.
+
+        Context menu items (suggestions, learn and ignore word) are not available
+        due to missing dictionary. To get the suggestions for the misspelled word,
+        the dictionary has to be loaded first.
+
+        WebKit loads the default dictionary when check spelling while typing is being enabled.
+        However, context menu spellchecking items should be present even if this setting is off.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        Load the user's default dictionary to ensure context menu spellchecking items.
+        The dictionary is loaded asynchronously so it shouldn't delay application.
+
+        * UIProcess/API/efl/ewk_text_checker.h:
+        Update doc. Spelling suggestions, learn and ignore word should be available
+        independently of checking spelling while typing setting.
+
+        * UIProcess/API/efl/tests/test_ewk2_text_checker.cpp:
+        (onContextMenuShow):
+        (TEST_F):
+        Add two unit tests to check whether the default dictionary is loaded and
+        whether the context menu spelling items are available.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::continuousSpellCheckingEnabledStateChanged):
+        Not set the default dictionary while enabling the setting, it's already loaded.
+
 2013-06-07  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][WK2] Implement customContextMenuItemSelected

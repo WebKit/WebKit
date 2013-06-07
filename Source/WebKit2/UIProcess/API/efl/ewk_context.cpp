@@ -44,6 +44,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(SPELLCHECK)
+#include "TextCheckerClientEfl.h"
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -80,6 +84,12 @@ EwkContext::EwkContext(WKContextRef context)
         WKContextStartMemorySampler(context, adoptWK(WKDoubleCreate(0.0)).get());
         initializeMemorySampler = true;
     }
+#endif
+
+#if ENABLE(SPELLCHECK)
+    // Load the default dictionary to show context menu spellchecking items
+    // independently of checking spelling while typing setting.
+    TextCheckerClientEfl::instance().ensureSpellCheckingLanguage();
 #endif
 }
 

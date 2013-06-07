@@ -29,10 +29,10 @@
  *        and contains API to manipulate spellchecker settings.
  *
  * There is one spellchecker object per application.
- * It allows to check spelling in the editable areas.
+ * It allows to check spelling in the editable areas, get suggestions for the misspelled word,
+ * learn and ignore spelling.
  *
- * The feature is disabled by default.
- * If application wants to enable it, ewk_text_checker_continuous_spell_checking_enabled_set API
+ * If application wants to check spelling while typing, ewk_text_checker_continuous_spell_checking_enabled_set API
  * should be used.
  *
  * The default WebKit spellchecker implementation is based on the Enchant library.

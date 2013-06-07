@@ -45,6 +45,11 @@ static bool isSettingEnabled = false;
 static Ecore_Timer* timeoutTimer = 0;
 static double defaultTimeoutInSeconds = 0.5;
 
+static bool wasContextMenuShown = false;
+static const char noGuessesString[] = "No Guesses Found";
+static const char ignoreSpellingString[] = "Ignore Spelling";
+static const char learnSpellingString[] = "Learn Spelling";
+
 /**
  * Structure keeps information which callbacks were called.
  * Its values are reset before each test.
@@ -212,19 +217,42 @@ static void onWordIgnore(uint64_t tag, const char* word)
     callbacksExecutionStats.wordIgnore = true;
 }
 
-/**
- * Test setter/getter for the continuous spell checking:
- *  - ewk_text_checker_continuous_spell_checking_enabled_get
- *  - ewk_text_checker_continuous_spell_checking_enabled_set
- */
-TEST_F(EWK2UnitTestBase, ewk_text_checker_continuous_spell_checking_enabled)
+static Eina_Bool onContextMenuShow(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
 {
-    ewk_text_checker_continuous_spell_checking_enabled_set(true);
-#if ENABLE(SPELLCHECK)
-    EXPECT_TRUE(ewk_text_checker_continuous_spell_checking_enabled_get());
+    const Eina_List* contextMenuItems = ewk_context_menu_items_get(contextMenu);
 
-    // When the spell checking has been enabled, the default language is set (if the user
-    // didn't set any). The languages are being loaded on the idler, wait for them.
+    bool noGuessesAvailable = false;
+    bool isIgnoreSpellingAvailable = false;
+    bool isLearnSpellingAvailable = false;
+
+    const Eina_List* listIterator;
+    void* itemData;
+    EINA_LIST_FOREACH(contextMenuItems, listIterator, itemData) {
+        Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(itemData);
+        if (!strcmp(ewk_context_menu_item_title_get(item), noGuessesString))
+            noGuessesAvailable = true;
+        else if (!strcmp(ewk_context_menu_item_title_get(item), ignoreSpellingString))
+            isIgnoreSpellingAvailable = true;
+        else if (!strcmp(ewk_context_menu_item_title_get(item), learnSpellingString))
+            isLearnSpellingAvailable = true;
+    }
+
+    EXPECT_FALSE(noGuessesAvailable);
+    EXPECT_TRUE(isIgnoreSpellingAvailable);
+    EXPECT_TRUE(isLearnSpellingAvailable);
+
+    wasContextMenuShown = true;
+    return true;
+}
+
+/**
+ * Test whether the default language is loaded independently of
+ * continuous spell checking setting.
+ */
+TEST_F(EWK2UnitTestBase, ewk_text_checker_spell_checking_languages_get)
+{
+    ewk_text_checker_continuous_spell_checking_enabled_set(false);
+    // The language is being loaded on the idler, wait for it.
     timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
     ecore_main_loop_begin();
 
@@ -237,7 +265,49 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_continuous_spell_checking_enabled)
 
     void* data;
     EINA_LIST_FREE(loadedLanguages, data)
-        eina_stringshare_del(static_cast<const char*>(data));
+        eina_stringshare_del(static_cast<Eina_Stringshare*>(data));
+
+    // Repeat the checking when continuous spell checking setting is on.
+    ewk_text_checker_continuous_spell_checking_enabled_set(true);
+    timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
+    ecore_main_loop_begin();
+
+    loadedLanguages = ewk_text_checker_spell_checking_languages_get();
+    if (!loadedLanguages)
+        return;
+
+    EXPECT_EQ(1, eina_list_count(loadedLanguages));
+
+    EINA_LIST_FREE(loadedLanguages, data)
+        eina_stringshare_del(static_cast<Eina_Stringshare*>(data));
+}
+
+/**
+ * Test whether the context menu spelling items (suggestions, learn and ignore spelling)
+ * are available when continuous spell checking is off.
+ */
+TEST_F(EWK2UnitTestBase, context_menu_spelling_items_availability)
+{
+    ewk_text_checker_continuous_spell_checking_enabled_set(false);
+    ewkViewClass()->context_menu_show = onContextMenuShow;
+
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
+    mouseClick(10, 20, 3 /* Right button */);
+
+    while (!wasContextMenuShown)
+        ecore_main_loop_iterate();
+}
+
+/**
+ * Test setter/getter for the continuous spell checking:
+ *  - ewk_text_checker_continuous_spell_checking_enabled_get
+ *  - ewk_text_checker_continuous_spell_checking_enabled_set
+ */
+TEST_F(EWK2UnitTestBase, ewk_text_checker_continuous_spell_checking_enabled)
+{
+    ewk_text_checker_continuous_spell_checking_enabled_set(true);
+#if ENABLE(SPELLCHECK)
+    EXPECT_TRUE(ewk_text_checker_continuous_spell_checking_enabled_get());
 #else
     EXPECT_FALSE(ewk_text_checker_continuous_spell_checking_enabled_get());
 #endif
