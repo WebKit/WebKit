@@ -74,6 +74,7 @@
 #include "RenderListBox.h"
 #include "RenderListMarker.h"
 #include "RenderMathMLBlock.h"
+#include "RenderMathMLFraction.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMenuList.h"
 #include "RenderSVGShape.h"
@@ -3787,7 +3788,10 @@ void AccessibilityRenderObject::mathPostscripts(AccessibilityMathMultiscriptPair
 
 int AccessibilityRenderObject::mathLineThickness() const
 {
-    return getAttribute(MathMLNames::linethicknessAttr).toInt();
+    if (!isMathFraction())
+        return -1;
+    
+    return toRenderMathMLFraction(m_renderer)->lineThickness();
 }
 
 #endif

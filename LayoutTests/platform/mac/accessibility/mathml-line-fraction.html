@@ -19,6 +19,13 @@
 </mfrac>
 </math>
 
+<math id="math3">
+<mfrac>
+    <mi>n</mi>
+    <mi>k</mi>
+</mfrac>
+</math>
+
 </div>
 
 <div id="console"></div>
@@ -39,6 +46,10 @@ if (window.testRunner && window.accessibilityController) {
    shouldBe("fraction2.subrole", "'AXSubrole: AXMathFraction'");
    shouldBeTrue("fraction2.isAttributeSupported('AXMathLineThickness')");
    shouldBe("fraction2.numberAttributeValue('AXMathLineThickness')", "4");
+
+   debug("\nVerify missing line thickness returns default of 1 is reported correctly.");
+   var fraction3 = accessibilityController.accessibleElementById("math3").childAtIndex(0);
+   shouldBe("fraction3.numberAttributeValue('AXMathLineThickness')", "1");
 
    document.getElementById("content").style.visibility = 'hidden';
 }

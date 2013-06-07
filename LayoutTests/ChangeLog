@@ -1,3 +1,19 @@
+2013-06-07  Chris Fleizach  <cfleizach@apple.com>
+
+        MathML line fraction needs to parse number values
+        https://bugs.webkit.org/show_bug.cgi?id=117305
+
+        Reviewed by Darin Adler.
+
+        Math fractions test now encodes for an arbitrary thickness number.
+        Accessibility test handles the default line thickness.
+
+        * mathml/presentation/fractions.xhtml:
+        * platform/mac/accessibility/mathml-line-fraction-expected.txt:
+        * platform/mac/accessibility/mathml-line-fraction.html:
+        * platform/mac/mathml/presentation/fractions-expected.png:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+
 2013-06-07  Kihong Kwon  <kihong.kwon@samsung.com>
 
         REGRESSION: r149001 made proximity test fail.

@@ -70,7 +70,6 @@ void RenderMathMLFraction::updateFromElement()
     if (!denominatorWrapper)
         return;
     
-    // FIXME: parse units
     String thickness = fraction->getAttribute(MathMLNames::linethicknessAttr);
     m_lineThickness = gLineMedium;
     if (equalIgnoringCase(thickness, "thin"))
@@ -79,8 +78,12 @@ void RenderMathMLFraction::updateFromElement()
         m_lineThickness = gLineMedium;
     else if (equalIgnoringCase(thickness, "thick"))
         m_lineThickness = gLineThick;
-    else if (equalIgnoringCase(thickness, "0"))
-        m_lineThickness = 0;
+    else {
+        bool converted = false;
+        int thicknessIntValue = thickness.toIntStrict(&converted);
+        if (converted)
+            m_lineThickness = thicknessIntValue;
+    }
 
     // Update the style for the padding of the denominator for the line thickness
     lastChild()->style()->setPaddingTop(Length(static_cast<int>(m_lineThickness), Fixed));
