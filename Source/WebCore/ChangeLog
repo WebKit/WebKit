@@ -1,3 +1,17 @@
+2013-06-07  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r151088): Crash navigating away from non-loaded main resources with non-loaded scripts.
+        <rdar://problem/14052886> and https://bugs.webkit.org/show_bug.cgi?id=117278
+
+        Reviewed by Anders Carlsson.
+
+        Test: http/tests/navigation/slow-loading-page-with-slow-script.php
+
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::isPendingScriptReady): The script runner might be told about a script
+          after it has already been detached (the main resource load has finished/failed/cancelled).
+          Don't dereference a null document in that case.
+
 2013-06-07  Andy Estes  <aestes@apple.com>
 
         Compile WebCoreTestShimLibrary.cpp on iOS, but exclude the Carbon bits

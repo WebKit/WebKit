@@ -101,6 +101,8 @@ ScriptSourceCode HTMLScriptRunner::sourceFromPendingScript(const PendingScript& 
 
 bool HTMLScriptRunner::isPendingScriptReady(const PendingScript& script)
 {
+    if (!m_document)
+        return false;
     m_hasScriptsWaitingForStylesheets = !m_document->haveStylesheetsLoaded();
     if (m_hasScriptsWaitingForStylesheets)
         return false;
