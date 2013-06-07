@@ -114,6 +114,7 @@ struct Ewk_View_Smart_Class {
     Evas_Smart_Class sc; /**< all but 'data' is free to be changed. */
     unsigned long version;
 
+    Eina_Bool (*custom_item_selected)(Ewk_View_Smart_Data *sd, Ewk_Context_Menu_Item *item);
     Eina_Bool (*context_menu_show)(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Ewk_Context_Menu *menu);
     Eina_Bool (*context_menu_hide)(Ewk_View_Smart_Data *sd);
 
@@ -173,7 +174,7 @@ struct Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializer to zero a whole Ewk_View_Smart_Class structure.

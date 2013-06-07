@@ -51,6 +51,7 @@
 #include "WebPreferences.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_color_picker_private.h"
+#include "ewk_context_menu_item_private.h"
 #include "ewk_context_menu_private.h"
 #include "ewk_context_private.h"
 #include "ewk_favicon_database_private.h"
@@ -825,6 +826,19 @@ void EwkView::dismissColorPicker()
 
 COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, RTL);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, LTR);
+
+void EwkView::customContextMenuItemSelected(WKContextMenuItemRef contextMenuItem)
+{
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    if (!sd->api->custom_item_selected)
+        return;
+
+    OwnPtr<EwkContextMenuItem> item = EwkContextMenuItem::create(contextMenuItem, 0);
+
+    sd->api->custom_item_selected(sd, item.get());
+}
 
 void EwkView::showContextMenu(WKPoint position, WKArrayRef items)
 {

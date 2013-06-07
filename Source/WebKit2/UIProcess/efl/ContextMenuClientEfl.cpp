@@ -37,6 +37,11 @@ static inline ContextMenuClientEfl* toContextClientEfl(const void* clientInfo)
     return static_cast<ContextMenuClientEfl*>(const_cast<void*>(clientInfo));
 }
 
+static void customContextMenuItemSelected(WKPageRef, WKContextMenuItemRef contextMenuItem, const void* clientInfo)
+{
+    toContextClientEfl(clientInfo)->view()->customContextMenuItemSelected(contextMenuItem);
+}
+
 static void showContextMenu(WKPageRef, WKPoint menuLocation, WKArrayRef menuItems, const void* clientInfo)
 {
     toContextClientEfl(clientInfo)->view()->showContextMenu(menuLocation, menuItems);
@@ -58,7 +63,7 @@ ContextMenuClientEfl::ContextMenuClientEfl(EwkView* view)
     contextMenuClient.version = kWKPageContextMenuClientCurrentVersion;
     contextMenuClient.clientInfo = this;
     contextMenuClient.getContextMenuFromProposedMenu_deprecatedForUseWithV0 = 0;
-    contextMenuClient.customContextMenuItemSelected = 0;
+    contextMenuClient.customContextMenuItemSelected = customContextMenuItemSelected;
     contextMenuClient.contextMenuDismissed = 0;
     contextMenuClient.getContextMenuFromProposedMenu = 0;
     contextMenuClient.showContextMenu = showContextMenu;

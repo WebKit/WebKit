@@ -175,6 +175,7 @@ public:
     void requestPopupMenu(WKPopupMenuListenerRef, const WKRect&, WKPopupItemTextDirection, double pageScaleFactor, WKArrayRef items, int32_t selectedIndex);
     void closePopupMenu();
 
+    void customContextMenuItemSelected(WKContextMenuItemRef contextMenuItem);
     void showContextMenu(WKPoint position, WKArrayRef items);
     void hideContextMenu();
 

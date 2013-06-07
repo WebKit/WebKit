@@ -1,3 +1,22 @@
+2013-06-07  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][WK2] Implement customContextMenuItemSelected
+        https://bugs.webkit.org/show_bug.cgi?id=117298
+
+        Reviewed by Christophe Dumez.
+
+        When custom context menu item is selected using ewk API, the feedback is not
+        sent back to application, as customContextMenuItemSelected was unimplemented in
+        contextMenuClientEfl.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::customContextMenuItemSelected):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/ewk_view.h: added custom_item_selected callback.
+        * UIProcess/efl/ContextMenuClientEfl.cpp:
+        (customContextMenuItemSelected):
+        (ContextMenuClientEfl::ContextMenuClientEfl):
+
 2013-06-06  Oliver Hunt  <oliver@apple.com>
 
         Completely initialize ChildProcess state on launch
