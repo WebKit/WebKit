@@ -5,7 +5,6 @@
     <Import Project="$(WebKit_Libraries)\tools32\vsprops\common.props" />
     <Import Project="$(WebKit_Libraries)\tools32\vsprops\release.props" />
     <Import Project="WTFCommon.props" />
-    <Import Project="WTFCoreFoundation.props" />
   </ImportGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>

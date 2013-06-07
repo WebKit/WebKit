@@ -23,7 +23,7 @@
       <OutputFile>$(OutDir)\$(TargetName).bsc</OutputFile>
     </Bscmake>
     <Link>
-      <AdditionalDependencies>winmm.lib;libicuuc$(DebugSuffix).lib;libicuin$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;libicuuc$(DebugSuffix).lib;libicuin$(DebugSuffix).lib;CoreFoundation$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 </Project>
