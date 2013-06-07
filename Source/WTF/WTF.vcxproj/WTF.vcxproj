@@ -89,7 +89,10 @@
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp" />
     <ClCompile Include="..\wtf\win\OwnPtrWin.cpp" />
     <ClCompile Include="..\wtf\WTFThreadData.cpp" />
-    <ClCompile Include="..\wtf\SchedulePairCF.cpp" />
+    <ClCompile Include="..\wtf\SchedulePairCF.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\WTF\config.h" />
