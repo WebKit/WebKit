@@ -3,6 +3,16 @@
         MathML line fraction needs to parse number values
         https://bugs.webkit.org/show_bug.cgi?id=117305
 
+        Unreviewed. Rebaseline math fractions test on EFL.
+
+        * platform/efl/mathml/presentation/fractions-expected.png:
+        * platform/efl/mathml/presentation/fractions-expected.txt:
+
+2013-06-07  Chris Fleizach  <cfleizach@apple.com>
+
+        MathML line fraction needs to parse number values
+        https://bugs.webkit.org/show_bug.cgi?id=117305
+
         Unreviewed. Rebaseline math fractions test on GTK.
 
         * platform/gtk/mathml/presentation/fractions-expected.png:
