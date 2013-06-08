@@ -1607,7 +1607,6 @@ Bug(EFL) media/track/track-in-band-mode.html [ Skip ]
 webkit.org/b/56496 [ Debug ] fast/js/array-sort-modifying-tostring.html [ Crash Pass ]
 
 # Rendering failure, also missing expected results:
-webkit.org/b/105093 compositing/webgl/webgl-background-color.html [ Skip ]
 webkit.org/b/105093 compositing/webgl/webgl-nonpremultiplied-blend.html [ Skip ]
 
 # WebProcess timeouts
