@@ -6,7 +6,7 @@
   <ItemDefinitionGroup>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>CFLite.lib;WebKit.lib;JavaScriptCore.lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CFLite.lib;WebKit.lib;JavaScriptCore.lib;gtest.lib;WTF.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)..;$(ProjectDir)..\win;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\private\JavaScriptCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(ConfigurationBuildDir)\Include\private;..\..\..\Source\ThirdParty\gtest\include;$(WebKit_Libraries)\include;$(WebKit_Libraries)\Include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

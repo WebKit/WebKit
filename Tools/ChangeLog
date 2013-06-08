@@ -1,3 +1,14 @@
+2013-06-08  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] TestWebKitAPI fails to link.
+        https://bugs.webkit.org/show_bug.cgi?id=117345
+
+        Reviewed by Brent Fulgham.
+
+        Need to link with WTF.lib.
+
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPICommonWinCairo.props: Link with WTF.lib.
+
 2013-06-07  Roger Fong  <roger_fong@apple.com>
 
         Get rid of not very helpful test that fails only on some machines because xcrun is not installed.
