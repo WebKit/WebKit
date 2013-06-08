@@ -1,3 +1,17 @@
+2013-06-08  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [curl] Handling of blob elements is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=117301
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new tests, covered by existing ones:
+        http/tests/fileapi/xhr-send-form-data-filename-escaping.html
+        http/tests/fileapi/xhr-send-form-data-mimetype-normalization.html
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::getFormElementsCount): Resolve Blob elements.
+
 2013-06-07  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Regions] Layers inside the RenderFlowThread should be collected by the layer of RenderView
