@@ -761,8 +761,13 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
             String key = it->key;
             String value = it->value;
             String headerString(key);
-            headerString.append(": ");
-            headerString.append(value);
+            if (value.isEmpty())
+                // Insert the ; to tell curl that this header has an empty value.
+                headerString.append(";");
+            else {
+                headerString.append(": ");
+                headerString.append(value);
+            }
             CString headerLatin1 = headerString.latin1();
             headers = curl_slist_append(headers, headerLatin1.data());
         }
