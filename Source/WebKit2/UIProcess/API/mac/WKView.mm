@@ -216,6 +216,8 @@ struct WKViewInterpretKeyEventsParameters {
 
     BOOL _viewInWindowChangeWasDeferred;
 
+    BOOL _didScheduleWindowAndViewFrameUpdate;
+
     // Whether the containing window of the WKView has a valid backing store.
     // The window server invalidates the backing store whenever the window is resized or minimized.
     // We use this flag to determine when we need to paint the background (white or clear)
@@ -455,14 +457,23 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (void)_updateWindowAndViewFrames
 {
-    NSRect viewFrameInWindowCoordinates = [self convertRect:[self frame] toView:nil];
-    NSPoint accessibilityPosition = NSMakePoint(0, 0);
-    if (WebCore::AXObjectCache::accessibilityEnabled())
-        accessibilityPosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
-    
-    _data->_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
     if (_data->_clipsToVisibleRect)
         [self _updateViewExposedRect];
+
+    if (_data->_didScheduleWindowAndViewFrameUpdate)
+        return;
+
+    _data->_didScheduleWindowAndViewFrameUpdate = YES;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSRect viewFrameInWindowCoordinates = [self convertRect:[self frame] toView:nil];
+        NSPoint accessibilityPosition = NSMakePoint(0, 0);
+        if (WebCore::AXObjectCache::accessibilityEnabled())
+            accessibilityPosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
+
+        _data->_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
+        _data->_didScheduleWindowAndViewFrameUpdate = NO;
+    });
 }
 
 - (void)renewGState
