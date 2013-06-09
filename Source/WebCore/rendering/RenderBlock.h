@@ -554,6 +554,7 @@ protected:
 
 public:
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false);
+    void clearLayoutOverflow();
 protected:
     virtual void addOverflowFromChildren();
     void addOverflowFromFloats();

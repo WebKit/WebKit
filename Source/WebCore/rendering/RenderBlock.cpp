@@ -1391,6 +1391,7 @@ void RenderBlock::finishDelayUpdateScrollInfo()
             RenderBlock* block = *it;
             if (block->hasOverflowClip()) {
                 block->layer()->updateScrollInfoAfterLayout();
+                block->clearLayoutOverflow();
             }
         }
     }
@@ -1429,7 +1430,7 @@ void RenderBlock::layout()
     
     // It's safe to check for control clip here, since controls can never be table cells.
     // If we have a lightweight clip, there can never be any overflow from children.
-    if (hasControlClip() && m_overflow)
+    if (hasControlClip() && m_overflow && !gDelayUpdateScrollInfo)
         clearLayoutOverflow();
 
     invalidateBackgroundObscurationStatus();
@@ -1816,6 +1817,19 @@ void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeF
 
     if (isRenderFlowThread())
         toRenderFlowThread(this)->computeOverflowStateForRegions(oldClientAfterEdge);
+}
+
+void RenderBlock::clearLayoutOverflow()
+{
+    if (!m_overflow)
+        return;
+    
+    if (visualOverflowRect() == borderBoxRect()) {
+        m_overflow.clear();
+        return;
+    }
+    
+    m_overflow->setLayoutOverflow(borderBoxRect());
 }
 
 void RenderBlock::addOverflowFromBlockChildren()

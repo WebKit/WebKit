@@ -1,3 +1,27 @@
+2013-06-09  Roger Fong  <roger_fong@apple.com>
+
+        Layout info should never be cleared before delayed scroll information updates.
+        https://bugs.webkit.org/show_bug.cgi?id=116689.
+
+        Reviewed by Darin Adler.
+
+        Test: fast/flexbox/clear-overflow-before-scroll-update.html
+
+        Make sure that clearLayoutOverflow only gets called after layer()->updateScrollInfoAfterLayout().
+        Also move clearLayoutOverflow to RenderBlock so we can keep all the delayed scroll update logic in RenderBlock.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::finishDelayUpdateScrollInfo): Call clearLayoutOverflow here.
+        (WebCore::RenderBlock::layout): Only call clearLayoutOverflow here if scrolling isn't being delayed.
+        (WebCore::RenderBlock::clearLayoutOverflow): Remove clearLayoutOverflow, move into RenderBlock to keep delayed scrolling logic in the same file.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp: Should call updateScrollInfoAfterLayout, not layer()->updateScrollInfoAfterLayout(), so that it takes delayed scrolling logic into account.
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderGrid.cpp: Ditto
+        (WebCore::RenderGrid::layoutBlock):
+
 2013-06-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Split the 3 paths of SelectorDataList::execute() into 3 separate functions
