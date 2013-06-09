@@ -58,9 +58,12 @@ private:
     };
 
     bool selectorMatches(const SelectorData&, Element*, const Node*) const;
-    const CSSSelector* selectorForIdLookup(Node* rootNode) const;
     template <bool firstMatchOnly>
     void execute(Node* rootNode, Vector<RefPtr<Node> >&) const;
+
+    template <bool firstMatchOnly> void executeFastPathForIdSelector(const Node* rootNode, const SelectorData&, const CSSSelector* idSelector, Vector<RefPtr<Node> >&) const;
+    template <bool firstMatchOnly> void executeSingleSelectorData(const Node* rootNode, const SelectorData&, Vector<RefPtr<Node> >&) const;
+    template <bool firstMatchOnly> void executeSingleMultiSelectorData(const Node* rootNode, Vector<RefPtr<Node> >&) const;
 
     Vector<SelectorData> m_selectors;
 };

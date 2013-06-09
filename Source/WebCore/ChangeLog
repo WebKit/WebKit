@@ -1,5 +1,23 @@
 2013-06-09  Benjamin Poulain  <bpoulain@apple.com>
 
+        Split the 3 paths of SelectorDataList::execute() into 3 separate functions
+        https://bugs.webkit.org/show_bug.cgi?id=117378
+
+        Reviewed by Ryosuke Niwa.
+
+        Split those to have several small execute() fucntions instead of a giant one.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::selectorForIdLookup):
+        (WebCore::isTreeScopeRoot):
+        (WebCore::SelectorDataList::executeFastPathForIdSelector):
+        (WebCore::SelectorDataList::executeSingleSelectorData):
+        (WebCore::SelectorDataList::executeSingleMultiSelectorData):
+        (WebCore::SelectorDataList::execute):
+        * dom/SelectorQuery.h:
+
+2013-06-09  Benjamin Poulain  <bpoulain@apple.com>
+
         Scrolling with platformWidget and delegateScrolling is incorrectly clamped
         https://bugs.webkit.org/show_bug.cgi?id=117369
         <rdar://problem/13985064>
