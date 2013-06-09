@@ -156,7 +156,7 @@ PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const Handle& ha
             surfaceFlags |= GraphicsSurface::SupportsAlpha;
         RefPtr<GraphicsSurface> surface = GraphicsSurface::create(handle.m_size, surfaceFlags, handle.m_graphicsSurfaceToken);
         if (surface)
-            return adoptRef(new WebCoordinatedSurface(handle.m_size, handle.m_flags, PassRefPtr<GraphicsSurface>(surface)));
+            return adoptRef(new WebCoordinatedSurface(handle.m_size, handle.m_flags, surface.release()));
     }
 #endif
 

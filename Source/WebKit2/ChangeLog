@@ -1,3 +1,16 @@
+2013-06-08  Jae Hyun Park  <jae.park@company100.net>
+
+        [Coordinated Graphics] Pass the ownership of GraphicsSurface explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=117379
+
+        Reviewed by Noam Rosenthal.
+
+        When creating WebCoordinatedSurface with GraphicsSurface, it is clearer
+        to pass the ownership of the created GraphicsSurface explicitly.
+
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::create):
+
 2013-06-07  Anders Carlsson  <andersca@apple.com>
 
         Coalesce multiple calls to WebPageProxy::windowAndViewFramesChanged
