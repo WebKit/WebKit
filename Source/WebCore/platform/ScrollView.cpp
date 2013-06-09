@@ -425,6 +425,9 @@ void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
     if (newScrollPosition == scrollPosition())
         return;
 
+    if (requestScrollPositionUpdate(newScrollPosition))
+        return;
+
     updateScrollbars(IntSize(newScrollPosition.x(), newScrollPosition.y()));
 }
 
