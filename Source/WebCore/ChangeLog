@@ -1,3 +1,19 @@
+2013-06-08  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        before/after generated content is not working with HTMLSummaryElement and HTMLDetailsElement.
+        https://bugs.webkit.org/show_bug.cgi?id=117374
+
+        Allow before/after pseudo generated content be added in HTMLDetailsElement and HTMLSumamaryElement.
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/css-generated-content/details-summary-before-after.html
+
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::childShouldCreateRenderer):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::childShouldCreateRenderer):
+
 2013-06-08  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [curl] Allow headers with empty value

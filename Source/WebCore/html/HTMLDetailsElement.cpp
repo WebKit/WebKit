@@ -146,6 +146,9 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomicS
 
 bool HTMLDetailsElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
+    if (childContext.node()->isPseudoElement())
+        return HTMLElement::childShouldCreateRenderer(childContext);
+
     if (!childContext.isOnEncapsulationBoundary())
         return false;
 
