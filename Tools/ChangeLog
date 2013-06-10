@@ -1,3 +1,10 @@
+2013-06-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed test correction:  Prevent DumpRenderTree crashes
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::role): Prevent crashes when m_element is null. This
+        happends in some of the 'accessibility' test cases.
+
 2013-06-08  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] TestWebKitAPI fails to link.

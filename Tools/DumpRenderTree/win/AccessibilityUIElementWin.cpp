@@ -201,6 +201,9 @@ static VARIANT& self()
 
 JSStringRef AccessibilityUIElement::role()
 {
+    if (!m_element)
+        return JSStringCreateWithCharacters(0, 0);
+
     VARIANT vRole;
     if (FAILED(m_element->get_accRole(self(), &vRole)))
         return JSStringCreateWithCharacters(0, 0);
