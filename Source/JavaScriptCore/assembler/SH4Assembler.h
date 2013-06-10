@@ -1582,12 +1582,20 @@ public:
 
     static void cacheFlush(void* code, size_t size)
     {
-#if !OS(LINUX)
-#error "The cacheFlush support is missing on this platform."
-#elif defined CACHEFLUSH_D_L2
-        syscall(__NR_cacheflush, reinterpret_cast<unsigned>(code), size, CACHEFLUSH_D_WB | CACHEFLUSH_I | CACHEFLUSH_D_L2);
+#if OS(LINUX)
+        // Flush each page separately, otherwise the whole flush will fail if an uncommited page is in the area.
+        unsigned currentPage = reinterpret_cast<unsigned>(code) & ~(pageSize() - 1);
+        unsigned lastPage = (reinterpret_cast<unsigned>(code) + size) & ~(pageSize() - 1);
+        do {
+#if defined CACHEFLUSH_D_L2
+            syscall(__NR_cacheflush, currentPage, pageSize(), CACHEFLUSH_D_WB | CACHEFLUSH_I | CACHEFLUSH_D_L2);
 #else
-        syscall(__NR_cacheflush, reinterpret_cast<unsigned>(code), size, CACHEFLUSH_D_WB | CACHEFLUSH_I);
+            syscall(__NR_cacheflush, currentPage, pageSize(), CACHEFLUSH_D_WB | CACHEFLUSH_I);
+#endif
+            currentPage += pageSize();
+        } while (lastPage >= currentPage);
+#else
+#error "The cacheFlush support is missing on this platform."
 #endif
     }
 
