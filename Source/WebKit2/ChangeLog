@@ -1,3 +1,28 @@
+2013-05-11  Andreas Kling  <akling@apple.com>
+
+        When possible, terminate web processes immediately when closing their last page.
+        <http://webkit.org/b/115964>
+        <rdar://problem/13869266>
+
+        Reviewed by Geoffrey Garen.
+
+        When we're using a network process, there's no need for the UI process to wait for web processes
+        to clear resource caches and terminate nicely.
+
+        We can just kill them off right away in WebProcessProxy::removeWebPage() when the last page is closed.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::removeWebPage):
+
+            Terminate the child process immediately if possible.
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::canTerminateChildProcess):
+        (WebKit::WebProcessProxy::shouldTerminate):
+
+            Broke out the logic from the shouldTerminate() IPC message handler into a separate function
+            so we can call it from removeWebPage().
+
 2013-05-11  Anders Carlsson  <andersca@apple.com>
 
         Crash when terminating a process that has not been fully launched
