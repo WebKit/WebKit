@@ -30,6 +30,7 @@ SOURCES += \
     ReloadPageAfterCrash.cpp \
     ResizeWindowAfterCrash.cpp \
     ResponsivenessTimerDoesntFireEarly.cpp \
+    TerminateTwice.cpp \
     UserMessage.cpp \
     WillSendSubmitEvent.cpp \
     WKConnection.cpp \
