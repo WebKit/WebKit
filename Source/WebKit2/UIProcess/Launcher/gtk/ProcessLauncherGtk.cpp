@@ -62,14 +62,6 @@ static void childSetupFunction(gpointer userData)
     close(socket);
 }
 
-static void childFinishedFunction(GPid, gint status, gpointer userData)
-{
-    if (WIFEXITED(status) && !WEXITSTATUS(status))
-        return;
-
-    close(GPOINTER_TO_INT(userData));
-}
-
 void ProcessLauncher::launchProcess()
 {
     GPid pid = 0;
@@ -100,18 +92,13 @@ void ProcessLauncher::launchProcess()
     argv[3] = 0;
 
     GOwnPtr<GError> error;
-    int spawnFlags = G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_DO_NOT_REAP_CHILD;
-    if (!g_spawn_async(0, argv, 0, static_cast<GSpawnFlags>(spawnFlags), childSetupFunction, GINT_TO_POINTER(sockets[1]), &pid, &error.outPtr())) {
+    if (!g_spawn_async(0, argv, 0, G_SPAWN_LEAVE_DESCRIPTORS_OPEN, childSetupFunction, GINT_TO_POINTER(sockets[1]), &pid, &error.outPtr())) {
         g_printerr("Unable to fork a new WebProcess: %s.\n", error->message);
         ASSERT_NOT_REACHED();
     }
 
     close(sockets[0]);
     m_processIdentifier = pid;
-
-    // Monitor the child process, it calls waitpid to prevent the child process from becomming a zombie,
-    // and it allows us to close the socket when the child process crashes.
-    g_child_watch_add(m_processIdentifier, childFinishedFunction, GINT_TO_POINTER(sockets[1]));
 
     // We've finished launching the process, message back to the main run loop.
     RunLoop::main()->dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, m_processIdentifier, sockets[1]));
