@@ -1,3 +1,17 @@
+2013-06-10  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Store ParsedCookies as RefPtrs instead of PassRefPtrs in CookieDatabaseBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=117411
+
+        JIRA388672
+        BRWSR-11465
+        Reviewed by Rob Buis.
+
+        When we queue up ParsedCookie objects for modification, we should be storing them as a refptr instead
+        of a PassRefPtr.
+
+        * platform/blackberry/CookieDatabaseBackingStore/CookieDatabaseBackingStore.h:
+
 2013-06-10  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] ASSERTION FAILED: roundedIntPoint(rendererMappedResult) == roundedIntPoint(result) in RenderGeometryMap::mapToContainer

@@ -91,7 +91,7 @@ private:
 
     void close();
 
-    typedef pair<const PassRefPtr<ParsedCookie>, UpdateParameter> CookieAction;
+    typedef pair<const RefPtr<ParsedCookie>, UpdateParameter> CookieAction;
     Vector<CookieAction> m_changedCookies;
     Mutex m_mutex;
 
