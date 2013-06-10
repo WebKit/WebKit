@@ -1,3 +1,14 @@
+2013-06-10  Roger Fong  <roger_fong@apple.com>
+
+        Change WebKitLibraries/win folder structure around.
+        <rdar://problem/14097829>
+
+        Reviewed by Lucas Forschler.
+
+        * win/WinTools.make: Copied from win/tools32/WinTools.make.
+        * win/tools32/WinTools.make: Removed.
+        * win/tools64: Copied from win/tools32.
+
 2013-06-05  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
