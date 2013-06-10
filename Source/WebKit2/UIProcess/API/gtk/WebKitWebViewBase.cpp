@@ -438,6 +438,8 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
         cairo_paint(cr);
     }
 
+    GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->draw(widget, cr);
+
     return FALSE;
 }
 
