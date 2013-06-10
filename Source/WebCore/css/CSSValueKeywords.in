@@ -944,7 +944,7 @@ nonzero
 evenodd
 outside-shape
 
-// -webkit-region-overflow
+// -webkit-region-fragment
 // auto
 break
 

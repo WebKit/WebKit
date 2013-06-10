@@ -11,10 +11,10 @@ PASS testWebKitFlowFrom("-webkit-flow-from: first-flow") is ""
 PASS testWebKitFlowFrom("-webkit-flow-from: none") is ""
 PASS testComputedStyleWebKitFlowFrom("first-flow") is "none"
 PASS testComputedStyleWebKitFlowFrom("none") is "none"
-PASS testWebKitRegionOverflow("-webkit-region-overflow: auto") is ""
-PASS testWebKitRegionOverflow("-webkit-region-overflow: break") is ""
-PASS testComputedStyleWebKitRegionOverflow("auto") is "auto"
-PASS testComputedStyleWebKitRegionOverflow("break") is "auto"
+PASS testWebKitRegionFragment("-webkit-region-fragment: auto") is ""
+PASS testWebKitRegionFragment("-webkit-region-fragment: break") is ""
+PASS testComputedStyleWebKitRegionFragment("auto") is "auto"
+PASS testComputedStyleWebKitRegionFragment("break") is "auto"
 PASS webkitRegionRuleIndex is -1
 PASS successfullyParsed is true
 

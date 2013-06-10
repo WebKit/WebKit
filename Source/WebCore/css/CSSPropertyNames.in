@@ -415,7 +415,7 @@ z-index
 #if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
 -webkit-flow-into
 -webkit-flow-from
--webkit-region-overflow
+-webkit-region-fragment
 -webkit-region-break-after
 -webkit-region-break-before
 -webkit-region-break-inside

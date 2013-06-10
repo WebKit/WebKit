@@ -1,3 +1,31 @@
+2013-06-10  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Rename region-overflow to region-fragment
+        https://bugs.webkit.org/show_bug.cgi?id=117397
+
+        Renamed -webkit-region-overflow to -webkit-region-fragment and 
+        webkitRegionOverflow to webkitRegionFragment according to the new working draft
+        at http://www.w3.org/TR/2013/WD-css3-regions-20130528/#the-region-fragment-property
+
+        Reviewed by Alexander Pavlov.
+
+        * fast/regions/autoheight-breakafteralways-maxheight.html:
+        * fast/regions/autoheight-breakbeforealways.html:
+        * fast/regions/autoheight-singleregion-breakafteralways-maxheight.html:
+        * fast/regions/autoheight-singleregion-breakafteralways.html:
+        * fast/regions/autoheight-singleregion-breakaftermargin.html:
+        * fast/regions/autoheight-singleregion-breakbeforealways-minheight.html:
+        * fast/regions/autoheight-singleregion-breakbeforealways.html:
+        * fast/regions/autoheight-singleregion-multiplebreaks.html:
+        * fast/regions/css-regions-disabled-expected.txt:
+        * fast/regions/region-overflow-auto-overflow-hidden.html:
+        * fast/regions/region-overflow-auto-overflow-visible.html:
+        * fast/regions/region-overflow-break.html:
+        * fast/regions/regions-widows-and-orphans.html:
+        * fast/regions/script-tests/css-regions-disabled.js:
+        * fast/regions/script-tests/webkit-region-overflow-parsing.js:
+        * fast/regions/webkit-region-overflow-parsing-expected.txt:
+
 2013-06-10  Mátyás Mustoha  <mmatyas@inf.u-szeged.hu>
 
         Web Inspector: refactor statusBarItems getter in front-end.

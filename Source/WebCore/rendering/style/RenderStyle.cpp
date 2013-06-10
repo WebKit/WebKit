@@ -397,7 +397,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             || rareNonInheritedData->textOverflow != other->rareNonInheritedData->textOverflow)
             return true;
 
-        if (rareNonInheritedData->m_regionOverflow != other->rareNonInheritedData->m_regionOverflow)
+        if (rareNonInheritedData->m_regionFragment != other->rareNonInheritedData->m_regionFragment)
             return true;
 
         if (rareNonInheritedData->m_wrapFlow != other->rareNonInheritedData->m_wrapFlow

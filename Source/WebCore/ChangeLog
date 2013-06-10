@@ -1,3 +1,44 @@
+2013-06-10  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Rename region-overflow to region-fragment
+        https://bugs.webkit.org/show_bug.cgi?id=117397
+
+        Renamed -webkit-region-overflow to -webkit-region-fragment and 
+        webkitRegionOverflow to webkitRegionFragment according to the new working draft
+        at http://www.w3.org/TR/2013/WD-css3-regions-20130528/#the-region-fragment-property
+
+        Reviewed by Alexander Pavlov.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator RegionFragment):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hasNextPage):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::overflowRectForFlowThreadPortion):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2013-06-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Replace [ConstructorRaisesException] with [RaisesException]

@@ -158,7 +158,7 @@ public:
 
     AtomicString m_flowThread;
     AtomicString m_regionThread;
-    unsigned m_regionOverflow : 1; // RegionOverflow
+    unsigned m_regionFragment : 1; // RegionFragment
 
     unsigned m_regionBreakAfter : 2; // EPageBreak
     unsigned m_regionBreakBefore : 2; // EPageBreak

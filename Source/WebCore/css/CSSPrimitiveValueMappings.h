@@ -1945,31 +1945,31 @@ template<> inline CSSPrimitiveValue::operator EMarqueeBehavior() const
     return MNONE;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(RegionOverflow e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(RegionFragment e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (e) {
-    case AutoRegionOverflow:
+    case AutoRegionFragment:
         m_value.ident = CSSValueAuto;
         break;
-    case BreakRegionOverflow:
+    case BreakRegionFragment:
         m_value.ident = CSSValueBreak;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator RegionOverflow() const
+template<> inline CSSPrimitiveValue::operator RegionFragment() const
 {
     switch (m_value.ident) {
     case CSSValueAuto:
-        return AutoRegionOverflow;
+        return AutoRegionFragment;
     case CSSValueBreak:
-        return BreakRegionOverflow;
+        return BreakRegionFragment;
     }
 
     ASSERT_NOT_REACHED();
-    return AutoRegionOverflow;
+    return AutoRegionFragment;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EMarqueeDirection e)

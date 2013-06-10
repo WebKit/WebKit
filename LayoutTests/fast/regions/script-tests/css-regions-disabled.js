@@ -15,10 +15,10 @@ function testWebKitFlowFrom(declaration) {
     return div.style.webkitFlowFrom;
 }
 
-function testWebKitRegionOverflow(declaration) {
+function testWebKitRegionFragment(declaration) {
     var div = document.createElement("div");
     div.setAttribute("style", declaration);
-    return div.style.webkitRegionOverflow;
+    return div.style.webkitRegionFragment;
 }
 
 function testComputedStyleWebKitFlowInto(value) {
@@ -39,11 +39,11 @@ function testComputedStyleWebKitFlowFrom(value) {
     return computedValue;
 }
 
-function testComputedStyleWebKitRegionOverflow(value) {
+function testComputedStyleWebKitRegionFragment(value) {
     var div = document.createElement("div");
     document.body.appendChild(div);
-    div.style.setProperty("-webkit-region-overflow", value);
-    var computedValue = getComputedStyle(div).getPropertyValue("-webkit-region-overflow");
+    div.style.setProperty("-webkit-region-fragment", value);
+    var computedValue = getComputedStyle(div).getPropertyValue("-webkit-region-fragment");
     document.body.removeChild(div);
     return computedValue;
 }
@@ -58,10 +58,10 @@ shouldBeEqualToString('testWebKitFlowFrom("-webkit-flow-from: none")', "");
 shouldBeEqualToString('testComputedStyleWebKitFlowFrom("first-flow")', "none");
 shouldBeEqualToString('testComputedStyleWebKitFlowFrom("none")', "none");
 
-shouldBeEqualToString('testWebKitRegionOverflow("-webkit-region-overflow: auto")', "");
-shouldBeEqualToString('testWebKitRegionOverflow("-webkit-region-overflow: break")', "");
-shouldBeEqualToString('testComputedStyleWebKitRegionOverflow("auto")', "auto");
-shouldBeEqualToString('testComputedStyleWebKitRegionOverflow("break")', "auto");
+shouldBeEqualToString('testWebKitRegionFragment("-webkit-region-fragment: auto")', "");
+shouldBeEqualToString('testWebKitRegionFragment("-webkit-region-fragment: break")', "");
+shouldBeEqualToString('testComputedStyleWebKitRegionFragment("auto")', "auto");
+shouldBeEqualToString('testComputedStyleWebKitRegionFragment("break")', "auto");
 
 // Test that region styling rules are not parsed.
 var styleElement = document.createElement("style");
