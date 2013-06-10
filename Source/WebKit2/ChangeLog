@@ -1,3 +1,17 @@
+2013-06-10  Anders Carlsson  <andersca@apple.com>
+
+        Crash in StorageAreaMap::applyChange when clearing local storage in another web process
+        https://bugs.webkit.org/show_bug.cgi?id=117440
+        <rdar://problem/13961548>
+
+        Reviewed by Tim Horton.
+
+        Add an early return so we won't try to look up a null key in the m_pendingValueChanges map.
+        Also, fix an assertion - it's fine for m_storageMap to be null in applyChange.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::applyChange):
+
 2013-06-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         [WK2][CoordinatedGraphics] Add default case to switches to fix strict build

@@ -240,7 +240,7 @@ bool StorageAreaMap::shouldApplyChangeForKey(const String& key) const
 
 void StorageAreaMap::applyChange(const String& key, const String& newValue)
 {
-    ASSERT(m_storageMap->hasOneRef());
+    ASSERT(!m_storageMap || m_storageMap->hasOneRef());
 
     // There's a clear pending or getValues pending we don't want to apply any changes until we get the corresponding DidClear/DidGetValues messages.
     if (m_hasPendingClear || m_hasPendingGetValues)
@@ -265,6 +265,7 @@ void StorageAreaMap::applyChange(const String& key, const String& newValue)
         }
 
         m_storageMap = newStorageMap.release();
+        return;
     }
 
     if (!shouldApplyChangeForKey(key))
