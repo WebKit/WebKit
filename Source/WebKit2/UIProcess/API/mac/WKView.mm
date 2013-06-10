@@ -62,7 +62,9 @@
 #import "WebEventFactory.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPage.h"
+#import "WebPageGroup.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
 #import <QuartzCore/QuartzCore.h>
@@ -216,6 +218,7 @@ struct WKViewInterpretKeyEventsParameters {
 
     BOOL _viewInWindowChangeWasDeferred;
 
+    BOOL _needsViewFrameInWindowCoordinates;
     BOOL _didScheduleWindowAndViewFrameUpdate;
 
     // Whether the containing window of the WKView has a valid backing store.
@@ -466,13 +469,21 @@ struct WKViewInterpretKeyEventsParameters {
     _data->_didScheduleWindowAndViewFrameUpdate = YES;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSRect viewFrameInWindowCoordinates = [self convertRect:[self frame] toView:nil];
-        NSPoint accessibilityPosition = NSMakePoint(0, 0);
+        _data->_didScheduleWindowAndViewFrameUpdate = NO;
+
+        if (!_data->_needsViewFrameInWindowCoordinates && !WebCore::AXObjectCache::accessibilityEnabled())
+            return;
+
+        NSRect viewFrameInWindowCoordinates = NSZeroRect;
+        NSPoint accessibilityPosition = NSZeroPoint;
+
+        if (_data->_needsViewFrameInWindowCoordinates)
+            viewFrameInWindowCoordinates = [self convertRect:self.frame toView:nil];
+
         if (WebCore::AXObjectCache::accessibilityEnabled())
             accessibilityPosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
 
         _data->_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
-        _data->_didScheduleWindowAndViewFrameUpdate = NO;
     });
 }
 
@@ -2424,6 +2435,18 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [self _accessibilityRegisterUIProcessTokens];
 }
 
+- (void)_preferencesDidChange
+{
+    BOOL needsViewFrameInWindowCoordinates = _data->_page->pageGroup()->preferences()->pluginsEnabled();
+
+    if (!!needsViewFrameInWindowCoordinates == !!_data->_needsViewFrameInWindowCoordinates)
+        return;
+
+    _data->_needsViewFrameInWindowCoordinates = needsViewFrameInWindowCoordinates;
+    if ([self window])
+        [self _updateWindowAndViewFrames];
+}
+
 - (void)_setCursor:(NSCursor *)cursor
 {
     if ([NSCursor currentCursor] == cursor)
@@ -3127,6 +3150,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_windowOcclusionDetectionEnabled = YES;
 #endif
 
+    _data->_needsViewFrameInWindowCoordinates = _data->_page->pageGroup()->preferences()->pluginsEnabled();
     _data->_frameOrigin = NSZeroPoint;
     _data->_contentAnchor = WKContentAnchorTopLeft;
     

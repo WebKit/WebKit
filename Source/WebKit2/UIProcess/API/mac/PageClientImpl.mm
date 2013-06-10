@@ -258,6 +258,11 @@ void PageClientImpl::didRelaunchProcess()
     [m_wkView _didRelaunchProcess];
 }
 
+void PageClientImpl::preferencesDidChange()
+{
+    [m_wkView _preferencesDidChange];
+}
+
 void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newToolTip)
 {
     [m_wkView _toolTipChangedFrom:nsStringFromWebCoreString(oldToolTip) to:nsStringFromWebCoreString(newToolTip)];

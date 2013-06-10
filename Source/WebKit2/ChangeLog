@@ -1,3 +1,34 @@
+2013-06-10  Anders Carlsson  <andersca@apple.com>
+
+        -[WKView _updateWindowAndViewFrames] should avoid updating the view frame in window coordinates if we don't have plugins
+        https://bugs.webkit.org/show_bug.cgi?id=117420
+        <rdar://problem/14073034>
+
+        Reviewed by Tim Horton.
+
+        If plug-ins are disabled there's no need for the web process to know about the view frame in window coordinates so only
+        send it when plug-ins are enabled. In addition, if accessibility is disabled we don't need to send a message at all.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::preferencesDidChange):
+        Call through to -[WKView _preferencesDidChange].
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateWindowAndViewFrames]):
+        Don't compute viewFrameInWindowCoordinates or accessibilityPosition unless they're required. If neither are required,
+        don't even send a message to the web process.
+
+        (-[WKView _preferencesDidChange]):
+        Update _needsViewFrameInWindowCoordinates and call -[WKView _updateWindowAndViewFrames] if needed.
+
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        Set _needsViewFrameInWindowCoordinates based on whether plug-ins are enabled or not.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::preferencesDidChange):
+        Call the page client.
+
 2013-06-10  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes][CSS Exclusions] Split CSS Exclusions and CSS Shapes code

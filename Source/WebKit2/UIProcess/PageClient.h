@@ -112,6 +112,8 @@ public:
     virtual void didRelaunchProcess() = 0;
     virtual void pageClosed() = 0;
 
+    virtual void preferencesDidChange() = 0;
+
     virtual void toolTipChanged(const String&, const String&) = 0;
 
 #if USE(TILED_BACKING_STORE)

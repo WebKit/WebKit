@@ -55,6 +55,7 @@ namespace WebKit {
 - (void)_processDidCrash;
 - (void)_pageClosed;
 - (void)_didRelaunchProcess;
+- (void)_preferencesDidChange;
 - (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip;
 - (void)_setCursor:(NSCursor *)cursor;
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
