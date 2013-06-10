@@ -1,3 +1,41 @@
+2013-06-10  Iago Toral Quiroga  <itoral@igalia.com>
+
+        Use Cairo implementation of the WidgetBackingStore instead of X11 when running on Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=116717
+
+        Reviewed by Martin Robinson.
+
+        Refactored WidgetBackingStore to be an abstract base class and make
+        GtkWidgetBackingStoreX11 and WidgetBackingStoreCairo inherit from it.
+        GtkWidgetBackingStoreX11 renamed to WidgetBackingStoreGtkX11.
+
+        * GNUmakefile.list.am:
+        * platform/cairo/WidgetBackingStore.h:
+        (WebCore):
+        (WidgetBackingStore):
+        (WebCore::WidgetBackingStore::WidgetBackingStore):
+        (WebCore::WidgetBackingStore::~WidgetBackingStore):
+        * platform/cairo/WidgetBackingStoreCairo.cpp:
+        (WebCore::WidgetBackingStoreCairo::create):
+        (WebCore):
+        (WebCore::WidgetBackingStoreCairo::WidgetBackingStoreCairo):
+        (WebCore::WidgetBackingStoreCairo::~WidgetBackingStoreCairo):
+        (WebCore::WidgetBackingStoreCairo::cairoSurface):
+        (WebCore::WidgetBackingStoreCairo::scroll):
+        * platform/cairo/WidgetBackingStoreCairo.h: Added.
+        (WebCore):
+        (WidgetBackingStoreCairo):
+        * platform/gtk/GtkWidgetBackingStoreX11.cpp:
+        (WebCore::WidgetBackingStoreGtkX11::create):
+        (WebCore):
+        (WebCore::WidgetBackingStoreGtkX11::WidgetBackingStoreGtkX11):
+        (WebCore::WidgetBackingStoreGtkX11::~WidgetBackingStoreGtkX11):
+        (WebCore::WidgetBackingStoreGtkX11::cairoSurface):
+        (WebCore::WidgetBackingStoreGtkX11::scroll):
+        * platform/gtk/GtkWidgetBackingStoreX11.h: Added.
+        (WebCore):
+        (WidgetBackingStoreGtkX11):
+
 2013-06-10  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Store ParsedCookies as RefPtrs instead of PassRefPtrs in CookieDatabaseBackingStore

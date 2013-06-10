@@ -1,3 +1,19 @@
+2013-06-10  Iago Toral Quiroga  <itoral@igalia.com>
+
+        Use Cairo implementation of the WidgetBackingStore instead of X11 when running on Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=116717
+
+        Reviewed by Martin Robinson.
+
+        Decide which implementation of WidgetBackingStore to use (X11 or Cairo)
+        depending on whether we are running on X11 or not. Select Cairo
+        implementation when not running in X11.
+
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit):
+        (WebKit::createBackingStoreForGTK):
+        (WebKit::BackingStore::incorporateUpdate):
+
 2013-06-09  Jae Hyun Park  <jae.park@company100.net>
 
         [CoordinatedGraphics] Typo in argument decoder for CoordinatedGraphicsState

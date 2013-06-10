@@ -31,7 +31,13 @@
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/WidgetBackingStoreCairo.h>
 #include <cairo.h>
+
+#if PLATFORM(GTK) && defined(GDK_WINDOWING_X11)
+#include <WebCore/GtkWidgetBackingStoreX11.h>
+#include <gdk/gdkx.h>
+#endif
 
 #if PLATFORM(EFL)
 #include "EwkView.h"
@@ -40,6 +46,18 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+#if PLATFORM(GTK)
+static OwnPtr<WidgetBackingStore> createBackingStoreForGTK(GtkWidget* widget, const IntSize& size)
+{
+#ifdef GDK_WINDOWING_X11
+    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
+    if (GDK_IS_X11_DISPLAY(display))
+        return WebCore::WidgetBackingStoreGtkX11::create(widget, size);
+#endif
+    return WebCore::WidgetBackingStoreCairo::create(widget, size);
+}
+#endif
 
 void BackingStore::paint(cairo_t* context, const IntRect& rect)
 {
@@ -55,9 +73,9 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
 {
     if (!m_backingStore)
 #if PLATFORM(EFL)
-        m_backingStore = WidgetBackingStore::create(EwkView::toEvasObject(toAPI(m_webPageProxy)), size());
+        m_backingStore = WidgetBackingStoreCairo::create(EwkView::toEvasObject(toAPI(m_webPageProxy)), size());
 #else
-        m_backingStore = WidgetBackingStore::create(m_webPageProxy->viewWidget(), size());
+        m_backingStore = createBackingStoreForGTK(m_webPageProxy->viewWidget(), size());
 #endif
 
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);

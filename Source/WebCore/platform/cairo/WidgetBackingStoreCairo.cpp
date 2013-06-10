@@ -18,15 +18,11 @@
  */
 
 #include "config.h"
-#include "WidgetBackingStore.h"
+#include "WidgetBackingStoreCairo.h"
 
 #include "CairoUtilities.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
-
-#if PLATFORM(GTK)
-#include "GtkVersioning.h"
-#endif
 
 namespace WebCore {
 
@@ -40,51 +36,32 @@ static PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(PlatformWidget w
 #endif
 }
 
-class WidgetBackingStorePrivate {
-    WTF_MAKE_NONCOPYABLE(WidgetBackingStorePrivate);
-    WTF_MAKE_FAST_ALLOCATED;
-
-public:
-    RefPtr<cairo_surface_t> m_surface;
-    RefPtr<cairo_surface_t> m_scrollSurface;
-
-    static PassOwnPtr<WidgetBackingStorePrivate> create(PlatformWidget widget, const IntSize& size)
-    {
-        return adoptPtr(new WidgetBackingStorePrivate(widget, size));
-    }
-
-private:
-    // We keep two copies of the surface here, which will double the memory usage, but increase
-    // scrolling performance since we do not have to keep reallocating a memory region during
-    // quick scrolling requests.
-    WidgetBackingStorePrivate(PlatformWidget widget, const IntSize& size)
-        : m_surface(createSurfaceForBackingStore(widget, size))
-        , m_scrollSurface(createSurfaceForBackingStore(widget, size))
-    {
-    }
-};
-
-PassOwnPtr<WidgetBackingStore> WidgetBackingStore::create(PlatformWidget widget, const IntSize& size)
+PassOwnPtr<WidgetBackingStore> WidgetBackingStoreCairo::create(PlatformWidget widget, const IntSize& size)
 {
-    return adoptPtr(new WidgetBackingStore(widget, size));
+    return adoptPtr(new WidgetBackingStoreCairo(widget, size));
 }
 
-WidgetBackingStore::WidgetBackingStore(PlatformWidget widget, const IntSize& size)
-    : m_private(WidgetBackingStorePrivate::create(widget, size))
-    , m_size(size)
+// We keep two copies of the surface here, which will double the memory usage, but increase
+// scrolling performance since we do not have to keep reallocating a memory region during
+// quick scrolling requests.
+WidgetBackingStoreCairo::WidgetBackingStoreCairo(PlatformWidget widget, const IntSize& size)
+    : WidgetBackingStore(size)
+    , m_surface(createSurfaceForBackingStore(widget, size))
+    , m_scrollSurface(createSurfaceForBackingStore(widget, size))
+
 {
 }
 
-WidgetBackingStore::~WidgetBackingStore()
+WidgetBackingStoreCairo::~WidgetBackingStoreCairo()
 {
 }
 
-cairo_surface_t* WidgetBackingStore::cairoSurface()
+cairo_surface_t* WidgetBackingStoreCairo::cairoSurface()
 {
-    return m_private->m_surface.get();
+    return m_surface.get();
 }
 
-void WidgetBackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
+void WidgetBackingStoreCairo::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
     IntRect targetRect(scrollRect);
     targetRect.move(scrollOffset);
@@ -93,9 +70,9 @@ void WidgetBackingStore::scroll(const IntRect& scrollRect, const IntSize& scroll
     if (targetRect.isEmpty())
         return;
 
-    copyRectFromOneSurfaceToAnother(m_private->m_surface.get(), m_private->m_scrollSurface.get(),
+    copyRectFromOneSurfaceToAnother(m_surface.get(), m_scrollSurface.get(),
                                     scrollOffset, targetRect);
-    copyRectFromOneSurfaceToAnother(m_private->m_scrollSurface.get(), m_private->m_surface.get(),
+    copyRectFromOneSurfaceToAnother(m_scrollSurface.get(), m_surface.get(),
                                     IntSize(), targetRect);
 }
 

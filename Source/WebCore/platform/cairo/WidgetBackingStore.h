@@ -35,8 +35,6 @@ typedef struct _cairo_surface cairo_surface_t;
 
 namespace WebCore {
 
-class WidgetBackingStorePrivate;
-
 #if PLATFORM(GTK)
 typedef GtkWidget* PlatformWidget;
 #elif PLATFORM(EFL)
@@ -48,17 +46,13 @@ class WidgetBackingStore {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static PassOwnPtr<WidgetBackingStore> create(PlatformWidget, const IntSize&);
-
-    ~WidgetBackingStore();
-    cairo_surface_t* cairoSurface();
-    void scroll(const IntRect& scrollRect, const IntSize& scrollOffset);
+    virtual cairo_surface_t* cairoSurface() = 0;
+    virtual void scroll(const IntRect& scrollRect, const IntSize& scrollOffset) = 0;
     const IntSize& size() { return m_size; }
+    WidgetBackingStore(const IntSize& size) : m_size(size) { }
+    virtual ~WidgetBackingStore() { }
 
 private:
-    WidgetBackingStore(PlatformWidget, const IntSize&);
-
-    OwnPtr<WidgetBackingStorePrivate> m_private;
     IntSize m_size;
 };
 
