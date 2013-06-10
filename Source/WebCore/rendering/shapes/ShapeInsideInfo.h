@@ -27,12 +27,12 @@
  * SUCH DAMAGE.
  */
 
-#ifndef ExclusionShapeInsideInfo_h
-#define ExclusionShapeInsideInfo_h
+#ifndef ShapeInsideInfo_h
+#define ShapeInsideInfo_h
 
 #if ENABLE(CSS_SHAPES)
 
-#include "ExclusionShapeInfo.h"
+#include "ShapeInfo.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
@@ -62,16 +62,16 @@ struct LineSegmentRange {
 
 typedef Vector<LineSegmentRange> SegmentRangeList;
 
-class ExclusionShapeInsideInfo : public ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &ExclusionShape::getIncludedIntervals> {
+class ShapeInsideInfo : public ShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &Shape::getIncludedIntervals> {
 public:
-    static PassOwnPtr<ExclusionShapeInsideInfo> createInfo(const RenderBlock* renderer) { return adoptPtr(new ExclusionShapeInsideInfo(renderer)); }
+    static PassOwnPtr<ShapeInsideInfo> createInfo(const RenderBlock* renderer) { return adoptPtr(new ShapeInsideInfo(renderer)); }
 
     static bool isEnabledFor(const RenderBlock* renderer);
 
     virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE
     {
         m_segmentRanges.clear();
-        return ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &ExclusionShape::getIncludedIntervals>::computeSegmentsForLine(lineTop, lineHeight);
+        return ShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &Shape::getIncludedIntervals>::computeSegmentsForLine(lineTop, lineHeight);
     }
 
     bool hasSegments() const
@@ -101,8 +101,8 @@ protected:
     virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapePaddingLogicalBoundingBox(); }
 
 private:
-    ExclusionShapeInsideInfo(const RenderBlock* renderer)
-    : ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &ExclusionShape::getIncludedIntervals> (renderer)
+    ShapeInsideInfo(const RenderBlock* renderer)
+    : ShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &Shape::getIncludedIntervals> (renderer)
     , m_needsLayout(false)
     { }
 

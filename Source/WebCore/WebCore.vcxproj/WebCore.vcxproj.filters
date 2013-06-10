@@ -2432,23 +2432,23 @@
     </ClCompile>
     <ClCompile Include="..\rendering\EllipsisBox.cpp">
       <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\ExclusionInterval.cpp">
+    <ClCompile Include="..\rendering\shapes\PolygonShape.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\ExclusionPolygon.cpp">
+    <ClCompile Include="..\rendering\shapes\RectangleShape.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\ExclusionRectangle.cpp">
+    <ClCompile Include="..\rendering\shapes\Shape.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\ExclusionShape.cpp">
+    <ClCompile Include="..\rendering\shapes\ShapeInsideInfo.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\ExclusionShapeInsideInfo.cpp">
+    </ClCompile>
+    <ClCompile Include="..\rendering\shapes\ShapeInterval.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\ExclusionShapeOutsideInfo.cpp">
+    <ClCompile Include="..\rendering\shapes\ShapeOutsideInfo.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\FilterEffectRenderer.cpp">
@@ -9120,19 +9120,22 @@
     <ClInclude Include="..\rendering\EllipsisBox.h">
       <Filter>rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\ExclusionInterval.h">
+    <ClInclude Include="..\rendering\shapes\PolygonShape.h">
       <Filter>rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\ExclusionPolygon.h">
+    <ClInclude Include="..\rendering\shapes\RectangleShape.h">
       <Filter>rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\ExclusionShape.h">
+    <ClInclude Include="..\rendering\shapes\Shape.h">
       <Filter>rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\ExclusionShapeInsideInfo.h">
+    <ClInclude Include="..\rendering\shapes\ShapeInsideInfo.h">
       <Filter>rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\ExclusionShapeOutsideInfo.h">
+    <ClInclude Include="..\rendering\shapes\ShapeInterval.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\ShapeOutsideInfo.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\FilterEffectRenderer.h">
@@ -9588,9 +9591,6 @@
     <ClInclude Include="..\rendering\style\DataRef.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\style\ExclusionShapeValue.h">
-      <Filter>rendering\style</Filter>
-    </ClInclude>
     <ClInclude Include="..\rendering\style\FillLayer.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
@@ -9619,6 +9619,9 @@
       <Filter>rendering\style</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\style\ShadowData.h">
+      <Filter>rendering\style</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\style\ShapeValue.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\style\StyleBackgroundData.h">

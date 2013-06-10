@@ -27,7 +27,7 @@
 #include "RenderOverflow.h"
 #include "ScrollTypes.h"
 #if ENABLE(CSS_SHAPES)
-#include "ExclusionShapeOutsideInfo.h"
+#include "ShapeOutsideInfo.h"
 #endif
 
 namespace WebCore {
@@ -576,9 +576,9 @@ public:
     bool hasSameDirectionAs(const RenderBox* object) const { return style()->direction() == object->style()->direction(); }
 
 #if ENABLE(CSS_SHAPES)
-    ExclusionShapeOutsideInfo* exclusionShapeOutsideInfo() const
+    ShapeOutsideInfo* shapeOutsideInfo() const
     {
-        return isFloatingWithShapeOutside() && ExclusionShapeOutsideInfo::isEnabledFor(this) ? ExclusionShapeOutsideInfo::info(this) : 0;
+        return isFloatingWithShapeOutside() && ShapeOutsideInfo::isEnabledFor(this) ? ShapeOutsideInfo::info(this) : 0;
     }
 #endif
 
@@ -623,7 +623,7 @@ protected:
  
 private:
 #if ENABLE(CSS_SHAPES)
-    void updateExclusionShapeOutsideInfoAfterStyleChange(const ExclusionShapeValue* shapeOutside, const ExclusionShapeValue* oldShapeOutside);
+    void updateShapeOutsideInfoAfterStyleChange(const ShapeValue* shapeOutside, const ShapeValue* oldShapeOutside);
 #endif
 
     bool fixedElementLaysOutRelativeToFrame(Frame*, FrameView*) const;

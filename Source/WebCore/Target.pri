@@ -1145,13 +1145,6 @@ SOURCES += \
     rendering/BidiRun.cpp \
     rendering/CounterNode.cpp \
     rendering/EllipsisBox.cpp \
-    rendering/ExclusionInterval.cpp \
-    rendering/ExclusionPolygon.cpp \
-    rendering/ExclusionRectangle.cpp \
-    rendering/ExclusionShape.cpp \
-    rendering/ExclusionShapeInfo.cpp \
-    rendering/ExclusionShapeInsideInfo.cpp \
-    rendering/ExclusionShapeOutsideInfo.cpp \
     rendering/FilterEffectRenderer.cpp \
     rendering/FixedTableLayout.cpp \
     rendering/FlowThreadController.cpp \
@@ -1245,6 +1238,13 @@ SOURCES += \
     rendering/RenderWordBreak.cpp \
     rendering/RootInlineBox.cpp \
     rendering/ScrollBehavior.cpp \
+    rendering/shapes/PolygonShape.cpp \
+    rendering/shapes/RectangleShape.cpp \
+    rendering/shapes/Shape.cpp \
+    rendering/shapes/ShapeInfo.cpp \
+    rendering/shapes/ShapeInsideInfo.cpp \
+    rendering/shapes/ShapeInterval.cpp \
+    rendering/shapes/ShapeOutsideInfo.cpp \
     rendering/style/BasicShapes.cpp \
     rendering/style/ContentData.cpp \
     rendering/style/CounterDirectives.cpp \
@@ -2403,13 +2403,6 @@ HEADERS += \
     rendering/break_lines.h \
     rendering/CounterNode.h \
     rendering/EllipsisBox.h \
-    rendering/ExclusionInterval.h \
-    rendering/ExclusionPolygon.h \
-    rendering/ExclusionRectangle.h \
-    rendering/ExclusionShape.h \
-    rendering/ExclusionShapeInfo.h \
-    rendering/ExclusionShapeInsideInfo.h \
-    rendering/ExclusionShapeOutsideInfo.h \
     rendering/FilterEffectRenderer.h \
     rendering/FixedTableLayout.h \
     rendering/HitTestingTransformState.h \
@@ -2513,18 +2506,25 @@ HEADERS += \
     rendering/RenderWordBreak.h \
     rendering/RootInlineBox.h \
     rendering/ScrollBehavior.h \
+    rendering/shapes/PolygonShape.h \
+    rendering/shapes/RectangleShape.h \
+    rendering/shapes/Shape.h \
+    rendering/shapes/ShapeInfo.h \
+    rendering/shapes/ShapeInsideInfo.h \
+    rendering/shapes/ShapeInterval.h \
+    rendering/shapes/ShapeOutsideInfo.h \
     rendering/style/BasicShapes.h \
     rendering/style/ContentData.h \
     rendering/style/CounterDirectives.h \
     rendering/style/CursorData.h \
     rendering/style/CursorList.h \
-    rendering/style/ExclusionShapeValue.h \
     rendering/style/FillLayer.h \
     rendering/style/KeyframeList.h \
     rendering/style/NinePieceImage.h \
     rendering/style/QuotesData.h \
     rendering/style/RenderStyle.h \
     rendering/style/ShadowData.h \
+    rendering/style/ShapeValue.h \
     rendering/style/StyleBackgroundData.h \
     rendering/style/StyleBoxData.h \
     rendering/style/StyleCachedImage.h \

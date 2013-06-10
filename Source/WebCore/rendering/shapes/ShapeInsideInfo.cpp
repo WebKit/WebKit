@@ -27,41 +27,48 @@
  * SUCH DAMAGE.
  */
 
-#ifndef ExclusionShapeOutsideInfo_h
-#define ExclusionShapeOutsideInfo_h
+#include "config.h"
+#include "ShapeInsideInfo.h"
 
 #if ENABLE(CSS_SHAPES)
 
-#include "ExclusionShapeInfo.h"
-#include "LayoutSize.h"
+#include "InlineIterator.h"
+#include "RenderBlock.h"
 
 namespace WebCore {
 
-class RenderBox;
+LineSegmentRange::LineSegmentRange(const InlineIterator& start, const InlineIterator& end)
+    : start(start.root(), start.object(), start.offset())
+    , end(end.root(), end.object(), end.offset())
+    {
+    }
 
-class ExclusionShapeOutsideInfo : public ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside, &ExclusionShape::getExcludedIntervals>, public MappedInfo<RenderBox, ExclusionShapeOutsideInfo> {
-public:
-    LayoutSize shapeLogicalOffset() const { return LayoutSize(shapeLogicalLeft(), shapeLogicalTop()); }
+bool ShapeInsideInfo::isEnabledFor(const RenderBlock* renderer)
+{
+    ShapeValue* shapeValue = renderer->style()->resolvedShapeInside();
+    if (!shapeValue || shapeValue->type() != ShapeValue::Shape)
+        return false;
 
-    LayoutUnit leftSegmentShapeBoundingBoxDelta() const { return m_leftSegmentShapeBoundingBoxDelta; }
-    LayoutUnit rightSegmentShapeBoundingBoxDelta() const { return m_rightSegmentShapeBoundingBoxDelta; }
+    BasicShape* shape = shapeValue->shape();
+    return shape && shape->type() != BasicShape::BasicShapeInsetRectangleType;
+}
 
-    virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE;
+bool ShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)
+{
+    const Shape* shape = computedShape();
+    if (!shape || m_lineHeight <= 0 || logicalLineTop() > shapeLogicalBottom())
+        return false;
 
-    static PassOwnPtr<ExclusionShapeOutsideInfo> createInfo(const RenderBox* renderer) { return adoptPtr(new ExclusionShapeOutsideInfo(renderer)); }
-    static bool isEnabledFor(const RenderBox*);
+    LayoutUnit newLineTop;
+    if (shape->firstIncludedIntervalLogicalTop(m_shapeLineTop, LayoutSize(minSegmentWidth, m_lineHeight), newLineTop)) {
+        if (newLineTop > m_shapeLineTop) {
+            m_shapeLineTop = newLineTop;
+            return true;
+        }
+    }
 
-protected:
-    virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapeMarginLogicalBoundingBox(); }
-
-private:
-    ExclusionShapeOutsideInfo(const RenderBox* renderer) : ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside, &ExclusionShape::getExcludedIntervals>(renderer) { }
-
-    LayoutUnit m_leftSegmentShapeBoundingBoxDelta;
-    LayoutUnit m_rightSegmentShapeBoundingBoxDelta;
-    LayoutUnit m_lineTop;
-};
+    return false;
+}
 
 }
-#endif
 #endif

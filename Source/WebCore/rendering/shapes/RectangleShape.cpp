@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "ExclusionRectangle.h"
+#include "RectangleShape.h"
 
 #include <wtf/MathExtras.h>
 
@@ -83,7 +83,7 @@ FloatPoint FloatRoundedRect::cornerInterceptForWidth(float widthAtIntercept) con
     return FloatPoint(xi, yi);
 }
 
-FloatRoundedRect ExclusionRectangle::shapePaddingBounds() const
+FloatRoundedRect RectangleShape::shapePaddingBounds() const
 {
     if (!m_haveInitializedPaddingBounds) {
         m_haveInitializedPaddingBounds = true;
@@ -92,7 +92,7 @@ FloatRoundedRect ExclusionRectangle::shapePaddingBounds() const
     return m_paddingBounds;
 }
 
-FloatRoundedRect ExclusionRectangle::shapeMarginBounds() const
+FloatRoundedRect RectangleShape::shapeMarginBounds() const
 {
     if (!m_haveInitializedMarginBounds) {
         m_haveInitializedMarginBounds = true;
@@ -101,7 +101,7 @@ FloatRoundedRect ExclusionRectangle::shapeMarginBounds() const
     return m_marginBounds;
 }
 
-void ExclusionRectangle::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
+void RectangleShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
     const FloatRoundedRect& bounds = shapeMarginBounds();
     if (bounds.isEmpty())
@@ -133,7 +133,7 @@ void ExclusionRectangle::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit 
     result.append(LineSegment(x1, x2));
 }
 
-void ExclusionRectangle::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
+void RectangleShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
     const FloatRoundedRect& bounds = shapePaddingBounds();
     if (bounds.isEmpty())
@@ -178,7 +178,7 @@ void ExclusionRectangle::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit 
     result.append(LineSegment(x1, x2));
 }
 
-bool ExclusionRectangle::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const
+bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const
 {
     float minIntervalTop = minLogicalIntervalTop;
     float minIntervalHeight = minLogicalIntervalSize.height();

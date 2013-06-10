@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "ExclusionPolygon.h"
+#include "PolygonShape.h"
 
 #include <wtf/MathExtras.h>
 
@@ -177,7 +177,7 @@ static inline PassOwnPtr<FloatPolygon> computeShapeMarginBounds(const FloatPolyg
     return adoptPtr(new FloatPolygon(marginVertices.release(), fillRule));
 }
 
-const FloatPolygon& ExclusionPolygon::shapePaddingBounds() const
+const FloatPolygon& PolygonShape::shapePaddingBounds() const
 {
     ASSERT(shapePadding() >= 0);
     if (!shapePadding())
@@ -189,7 +189,7 @@ const FloatPolygon& ExclusionPolygon::shapePaddingBounds() const
     return *m_paddingBounds;
 }
 
-const FloatPolygon& ExclusionPolygon::shapeMarginBounds() const
+const FloatPolygon& PolygonShape::shapeMarginBounds() const
 {
     ASSERT(shapeMargin() >= 0);
     if (!shapeMargin())
@@ -224,10 +224,10 @@ static inline bool getVertexIntersectionVertices(const EdgeIntersection& interse
     return true;
 }
 
-static inline bool appendIntervalX(float x, bool inside, Vector<ExclusionInterval>& result)
+static inline bool appendIntervalX(float x, bool inside, Vector<ShapeInterval>& result)
 {
     if (!inside)
-        result.append(ExclusionInterval(x));
+        result.append(ShapeInterval(x));
     else
         result[result.size() - 1].x2 = x;
 
@@ -241,7 +241,7 @@ static bool compareEdgeIntersectionX(const EdgeIntersection& intersection1, cons
     return (x1 == x2) ? intersection1.type < intersection2.type : x1 < x2;
 }
 
-static void computeXIntersections(const FloatPolygon& polygon, float y, bool isMinY, Vector<ExclusionInterval>& result)
+static void computeXIntersections(const FloatPolygon& polygon, float y, bool isMinY, Vector<ShapeInterval>& result)
 {
     Vector<const FloatPolygonEdge*> edges;
     if (!polygon.overlappingEdges(y, y, edges))
@@ -311,7 +311,7 @@ static void computeXIntersections(const FloatPolygon& polygon, float y, bool isM
     }
 }
 
-static void computeOverlappingEdgeXProjections(const FloatPolygon& polygon, float y1, float y2, Vector<ExclusionInterval>& result)
+static void computeOverlappingEdgeXProjections(const FloatPolygon& polygon, float y1, float y2, Vector<ShapeInterval>& result)
 {
     Vector<const FloatPolygonEdge*> edges;
     if (!polygon.overlappingEdges(y1, y2, edges))
@@ -339,13 +339,13 @@ static void computeOverlappingEdgeXProjections(const FloatPolygon& polygon, floa
             std::swap(x1, x2);
 
         if (x2 > x1)
-            result.append(ExclusionInterval(x1, x2));
+            result.append(ShapeInterval(x1, x2));
     }
 
-    sortExclusionIntervals(result);
+    sortShapeIntervals(result);
 }
 
-void ExclusionPolygon::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
+void PolygonShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
     const FloatPolygon& polygon = shapeMarginBounds();
     if (polygon.isEmpty())
@@ -354,26 +354,26 @@ void ExclusionPolygon::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit lo
     float y1 = logicalTop;
     float y2 = logicalTop + logicalHeight;
 
-    Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
+    Vector<ShapeInterval> y1XIntervals, y2XIntervals;
     computeXIntersections(polygon, y1, true, y1XIntervals);
     computeXIntersections(polygon, y2, false, y2XIntervals);
 
-    Vector<ExclusionInterval> mergedIntervals;
-    mergeExclusionIntervals(y1XIntervals, y2XIntervals, mergedIntervals);
+    Vector<ShapeInterval> mergedIntervals;
+    mergeShapeIntervals(y1XIntervals, y2XIntervals, mergedIntervals);
 
-    Vector<ExclusionInterval> edgeIntervals;
+    Vector<ShapeInterval> edgeIntervals;
     computeOverlappingEdgeXProjections(polygon, y1, y2, edgeIntervals);
 
-    Vector<ExclusionInterval> excludedIntervals;
-    mergeExclusionIntervals(mergedIntervals, edgeIntervals, excludedIntervals);
+    Vector<ShapeInterval> excludedIntervals;
+    mergeShapeIntervals(mergedIntervals, edgeIntervals, excludedIntervals);
 
     for (unsigned i = 0; i < excludedIntervals.size(); ++i) {
-        ExclusionInterval interval = excludedIntervals[i];
+        ShapeInterval interval = excludedIntervals[i];
         result.append(LineSegment(interval.x1, interval.x2));
     }
 }
 
-void ExclusionPolygon::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
+void PolygonShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
     const FloatPolygon& polygon = shapePaddingBounds();
     if (polygon.isEmpty())
@@ -382,21 +382,21 @@ void ExclusionPolygon::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit lo
     float y1 = logicalTop;
     float y2 = logicalTop + logicalHeight;
 
-    Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
+    Vector<ShapeInterval> y1XIntervals, y2XIntervals;
     computeXIntersections(polygon, y1, true, y1XIntervals);
     computeXIntersections(polygon, y2, false, y2XIntervals);
 
-    Vector<ExclusionInterval> commonIntervals;
-    intersectExclusionIntervals(y1XIntervals, y2XIntervals, commonIntervals);
+    Vector<ShapeInterval> commonIntervals;
+    intersectShapeIntervals(y1XIntervals, y2XIntervals, commonIntervals);
 
-    Vector<ExclusionInterval> edgeIntervals;
+    Vector<ShapeInterval> edgeIntervals;
     computeOverlappingEdgeXProjections(polygon, y1, y2, edgeIntervals);
 
-    Vector<ExclusionInterval> includedIntervals;
-    subtractExclusionIntervals(commonIntervals, edgeIntervals, includedIntervals);
+    Vector<ShapeInterval> includedIntervals;
+    subtractShapeIntervals(commonIntervals, edgeIntervals, includedIntervals);
 
     for (unsigned i = 0; i < includedIntervals.size(); ++i) {
-        ExclusionInterval interval = includedIntervals[i];
+        ShapeInterval interval = includedIntervals[i];
         result.append(LineSegment(interval.x1, interval.x2));
     }
 }
@@ -425,7 +425,7 @@ static inline bool aboveOrToTheLeft(const FloatRect& r1, const FloatRect& r2)
     return false;
 }
 
-bool ExclusionPolygon::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const
+bool PolygonShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const
 {
     float minIntervalTop = minLogicalIntervalTop;
     float minIntervalHeight = minLogicalIntervalSize.height();

@@ -27,13 +27,13 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ExclusionRectangle_h
-#define ExclusionRectangle_h
+#ifndef RectangleShape_h
+#define RectangleShape_h
 
-#include "ExclusionShape.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
+#include "Shape.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
@@ -58,10 +58,10 @@ private:
     FloatSize m_radii;
 };
 
-class ExclusionRectangle : public ExclusionShape {
+class RectangleShape : public Shape {
 public:
-    ExclusionRectangle(const FloatRect& bounds, const FloatSize& radii)
-        : ExclusionShape()
+    RectangleShape(const FloatRect& bounds, const FloatSize& radii)
+        : Shape()
         , m_bounds(bounds, radii)
         , m_haveInitializedMarginBounds(false)
         , m_haveInitializedPaddingBounds(false)
@@ -88,4 +88,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ExclusionRectangle_h
+#endif // RectangleShape_h

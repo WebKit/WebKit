@@ -40,7 +40,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
     , m_lineGrid(0)
     , m_next(prev)
 #if ENABLE(CSS_SHAPES)
-    , m_exclusionShapeInsideInfo(0)
+    , m_shapeInsideInfo(0)
 #endif
 #ifndef NDEBUG
     , m_renderer(renderer)
@@ -113,9 +113,9 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
 #if ENABLE(CSS_SHAPES)
     if (renderer->isRenderBlock()) {
         const RenderBlock* renderBlock = toRenderBlock(renderer);
-        m_exclusionShapeInsideInfo = renderBlock->exclusionShapeInsideInfo();
-        if (!m_exclusionShapeInsideInfo && m_next->m_exclusionShapeInsideInfo && renderBlock->allowsExclusionShapeInsideInfoSharing())
-            m_exclusionShapeInsideInfo = m_next->m_exclusionShapeInsideInfo;
+        m_shapeInsideInfo = renderBlock->shapeInsideInfo();
+        if (!m_shapeInsideInfo && m_next->m_shapeInsideInfo && renderBlock->allowsShapeInsideInfoSharing())
+            m_shapeInsideInfo = m_next->m_shapeInsideInfo;
     }
 #endif
 
@@ -149,7 +149,7 @@ LayoutState::LayoutState(RenderObject* root)
     , m_lineGrid(0)
     , m_next(0)
 #if ENABLE(CSS_SHAPES)
-    , m_exclusionShapeInsideInfo(0)
+    , m_shapeInsideInfo(0)
 #endif
     , m_pageLogicalHeight(0)
 #ifndef NDEBUG

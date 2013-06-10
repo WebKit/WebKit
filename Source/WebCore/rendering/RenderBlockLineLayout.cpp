@@ -48,7 +48,7 @@
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(CSS_SHAPES)
-#include "ExclusionShapeInsideInfo.h"
+#include "ShapeInsideInfo.h"
 #endif
 
 #if ENABLE(SVG)
@@ -77,16 +77,16 @@ static LayoutUnit logicalHeightForLine(const RenderBlock* block, bool isFirstLin
 }
 
 #if ENABLE(CSS_SHAPES)
-ExclusionShapeInsideInfo* RenderBlock::layoutExclusionShapeInsideInfo() const
+ShapeInsideInfo* RenderBlock::layoutShapeInsideInfo() const
 {
-    ExclusionShapeInsideInfo* shapeInsideInfo = view()->layoutState()->exclusionShapeInsideInfo();
+    ShapeInsideInfo* shapeInsideInfo = view()->layoutState()->shapeInsideInfo();
 
-    if (!shapeInsideInfo && flowThreadContainingBlock() && allowsExclusionShapeInsideInfoSharing()) {
+    if (!shapeInsideInfo && flowThreadContainingBlock() && allowsShapeInsideInfoSharing()) {
         // regionAtBlockOffset returns regions like an array first={0,N-1}, second={N,M-1}, ...
         LayoutUnit offset = logicalHeight() + logicalHeightForLine(this, false) - LayoutUnit(1);
         RenderRegion* region = regionAtBlockOffset(offset);
         if (region)
-            shapeInsideInfo = region->exclusionShapeInsideInfo();
+            shapeInsideInfo = region->shapeInsideInfo();
     }
 
     return shapeInsideInfo;
@@ -114,9 +114,8 @@ public:
     {
         ASSERT(block);
 #if ENABLE(CSS_SHAPES)
-        ExclusionShapeInsideInfo* exclusionShapeInsideInfo = m_block->layoutExclusionShapeInsideInfo();
-        if (exclusionShapeInsideInfo)
-            m_segment = exclusionShapeInsideInfo->currentSegment();
+        if (ShapeInsideInfo* shapeInsideInfo = m_block->layoutShapeInsideInfo())
+            m_segment = shapeInsideInfo->currentSegment();
 #endif
         updateAvailableWidth();
     }
@@ -196,21 +195,21 @@ inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::Floa
     // when we add a subsequent float on the same line, we need to undo the shape delta in order to position
     // based on the bounding box. In order to do this, we need to walk back through the floating object list to find
     // the first previous float that is on the same side as our newFloat.
-    ExclusionShapeOutsideInfo* lastShapeOutsideInfo = 0;
+    ShapeOutsideInfo* lastShapeOutsideInfo = 0;
     const RenderBlock::FloatingObjectSet& floatingObjectSet = m_block->m_floatingObjects->set();
     RenderBlock::FloatingObjectSetIterator it = floatingObjectSet.end();
     RenderBlock::FloatingObjectSetIterator begin = floatingObjectSet.begin();
     for (--it; it != begin; --it) {
         RenderBlock::FloatingObject* lastFloat = *it;
         if (lastFloat != newFloat && lastFloat->type() == newFloat->type()) {
-            lastShapeOutsideInfo = lastFloat->renderer()->exclusionShapeOutsideInfo();
+            lastShapeOutsideInfo = lastFloat->renderer()->shapeOutsideInfo();
             if (lastShapeOutsideInfo)
                 lastShapeOutsideInfo->computeSegmentsForLine(m_block->logicalHeight() - m_block->logicalTopForFloat(lastFloat) + lastShapeOutsideInfo->shapeLogicalTop(), logicalHeightForLine(m_block, m_isFirstLine));
             break;
         }
     }
 
-    ExclusionShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer()->exclusionShapeOutsideInfo();
+    ShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer()->shapeOutsideInfo();
     if (shapeOutsideInfo)
         shapeOutsideInfo->computeSegmentsForLine(m_block->logicalHeight() - m_block->logicalTopForFloat(newFloat) + shapeOutsideInfo->shapeLogicalTop(), logicalHeightForLine(m_block, m_isFirstLine));
 #endif
@@ -1037,10 +1036,10 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     updateLogicalInlinePositions(this, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, 0);
     bool needsWordSpacing;
 #if ENABLE(CSS_SHAPES)
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo();
-    if (exclusionShapeInsideInfo && exclusionShapeInsideInfo->hasSegments()) {
+    ShapeInsideInfo* shapeInsideInfo = layoutShapeInsideInfo();
+    if (shapeInsideInfo && shapeInsideInfo->hasSegments()) {
         BidiRun* segmentStart = firstRun;
-        const SegmentList& segments = exclusionShapeInsideInfo->segments();
+        const SegmentList& segments = shapeInsideInfo->segments();
         float logicalLeft = max<float>(roundToInt(segments[0].logicalLeft), lineLogicalLeft);
         float logicalRight = min<float>(floorToInt(segments[0].logicalRight), lineLogicalRight);
         float startLogicalLeft = logicalLeft;
@@ -1361,13 +1360,13 @@ static inline void constructBidiRunsForLine(const RenderBlock* block, InlineBidi
     UNUSED_PARAM(block);
     constructBidiRunsForSegment(topResolver, bidiRuns, endOfLine, override, previousLineBrokeCleanly);
 #else
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = block->layoutExclusionShapeInsideInfo();
-    if (!exclusionShapeInsideInfo || !exclusionShapeInsideInfo->hasSegments()) {
+    ShapeInsideInfo* shapeInsideInfo = block->layoutShapeInsideInfo();
+    if (!shapeInsideInfo || !shapeInsideInfo->hasSegments()) {
         constructBidiRunsForSegment(topResolver, bidiRuns, endOfLine, override, previousLineBrokeCleanly);
         return;
     }
 
-    const SegmentRangeList& segmentRanges = exclusionShapeInsideInfo->segmentRanges();
+    const SegmentRangeList& segmentRanges = shapeInsideInfo->segmentRanges();
     ASSERT(segmentRanges.size());
 
     for (size_t i = 0; i < segmentRanges.size(); i++) {
@@ -1633,26 +1632,26 @@ static inline float firstPositiveWidth(const WordMeasurements& wordMeasurements)
     return 0;
 }
 
-static inline LayoutUnit adjustLogicalLineTop(ExclusionShapeInsideInfo* exclusionShapeInsideInfo, InlineIterator start, InlineIterator end, const WordMeasurements& wordMeasurements)
+static inline LayoutUnit adjustLogicalLineTop(ShapeInsideInfo* shapeInsideInfo, InlineIterator start, InlineIterator end, const WordMeasurements& wordMeasurements)
 {
-    if (!exclusionShapeInsideInfo || end != start)
+    if (!shapeInsideInfo || end != start)
         return 0;
 
     float minWidth = firstPositiveWidth(wordMeasurements);
     ASSERT(minWidth || wordMeasurements.isEmpty());
-    if (minWidth > 0 && exclusionShapeInsideInfo->adjustLogicalLineTop(minWidth))
-        return exclusionShapeInsideInfo->logicalLineTop();
+    if (minWidth > 0 && shapeInsideInfo->adjustLogicalLineTop(minWidth))
+        return shapeInsideInfo->logicalLineTop();
 
-    return exclusionShapeInsideInfo->shapeLogicalBottom();
+    return shapeInsideInfo->shapeLogicalBottom();
 }
 
-void RenderBlock::updateShapeAndSegmentsForCurrentLine(ExclusionShapeInsideInfo* exclusionShapeInsideInfo, LayoutUnit& absoluteLogicalTop, LineLayoutState& layoutState, bool& lineOverflowsFromShapeInside)
+void RenderBlock::updateShapeAndSegmentsForCurrentLine(ShapeInsideInfo* shapeInsideInfo, LayoutUnit& absoluteLogicalTop, LineLayoutState& layoutState, bool& lineOverflowsFromShapeInside)
 {
     LayoutUnit logicalHeight = this->logicalHeight();
     RenderRegion* currentRegion = regionAtBlockOffset(logicalHeight);
     if (currentRegion)
-        exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo();
-    if (!exclusionShapeInsideInfo)
+        shapeInsideInfo = layoutShapeInsideInfo();
+    if (!shapeInsideInfo)
         return;
 
     LayoutUnit lineTop = logicalHeight + absoluteLogicalTop;
@@ -1660,18 +1659,18 @@ void RenderBlock::updateShapeAndSegmentsForCurrentLine(ExclusionShapeInsideInfo*
 
     if (layoutState.flowThread()) {
         RenderRegion* nextRegion = regionAtBlockOffset(logicalHeight + lineHeight - LayoutUnit(1));
-        lineTop += exclusionShapeInsideInfo->owner()->borderAndPaddingBefore();
+        lineTop += shapeInsideInfo->owner()->borderAndPaddingBefore();
         // Content in a flow thread is relative to the beginning of the thread, but the shape calculation should be relative to the current region.
         if (currentRegion == nextRegion)
             lineTop -= currentRegion->logicalTopForFlowThreadContent();
     }
 
     // FIXME: Bug 95361: It is possible for a line to grow beyond lineHeight, in which case these segments may be incorrect.
-    exclusionShapeInsideInfo->computeSegmentsForLine(lineTop, lineHeight);
+    shapeInsideInfo->computeSegmentsForLine(lineTop, lineHeight);
 
     // The overflow should be pushed below the content box
-    LayoutUnit shapeContainingBlockHeight = exclusionShapeInsideInfo->shapeContainingBlockHeight();
-    if (!exclusionShapeInsideInfo->lineWithinShapeBounds() && !lineOverflowsFromShapeInside && shapeContainingBlockHeight) {
+    LayoutUnit shapeContainingBlockHeight = shapeInsideInfo->shapeContainingBlockHeight();
+    if (!shapeInsideInfo->lineWithinShapeBounds() && !lineOverflowsFromShapeInside && shapeContainingBlockHeight) {
         lineOverflowsFromShapeInside = true;
         LayoutUnit newLogicalHeight = shapeContainingBlockHeight;
 
@@ -1683,9 +1682,9 @@ void RenderBlock::updateShapeAndSegmentsForCurrentLine(ExclusionShapeInsideInfo*
             newLogicalHeight = logicalHeight + shapeContainingBlockHeight - lineTop - currentRegion->borderAndPaddingBefore();
 
             RenderRegion* nextRegion = regionAtBlockOffset(newLogicalHeight);
-            ExclusionShapeInsideInfo* nextShapeInfo = 0;
+            ShapeInsideInfo* nextShapeInfo = 0;
             if (nextRegion)
-                nextShapeInfo = nextRegion->exclusionShapeInsideInfo();
+                nextShapeInfo = nextRegion->shapeInsideInfo();
 
             // The overflow flows into another region with shape-inside
             if (currentRegion != nextRegion && nextShapeInfo) {
@@ -1694,7 +1693,7 @@ void RenderBlock::updateShapeAndSegmentsForCurrentLine(ExclusionShapeInsideInfo*
                 LayoutUnit offset = nextShapeInfo->shapeLogicalTop() - nextRegion->borderAndPaddingBefore();
                 nextShapeInfo->computeSegmentsForLine(offset, lineHeight);
 
-                exclusionShapeInsideInfo = nextShapeInfo;
+                shapeInsideInfo = nextShapeInfo;
                 lineOverflowsFromShapeInside = false;
             }
         }
@@ -1702,9 +1701,9 @@ void RenderBlock::updateShapeAndSegmentsForCurrentLine(ExclusionShapeInsideInfo*
     }
 }
 
-bool RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded(ExclusionShapeInsideInfo* exclusionShapeInsideInfo, LayoutUnit absoluteLogicalTop, LineLayoutState& layoutState, InlineBidiResolver& resolver, FloatingObject* lastFloatFromPreviousLine, InlineIterator& end, WordMeasurements& wordMeasurements)
+bool RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded(ShapeInsideInfo* shapeInsideInfo, LayoutUnit absoluteLogicalTop, LineLayoutState& layoutState, InlineBidiResolver& resolver, FloatingObject* lastFloatFromPreviousLine, InlineIterator& end, WordMeasurements& wordMeasurements)
 {
-    LayoutUnit adjustedLogicalLineTop = adjustLogicalLineTop(exclusionShapeInsideInfo, resolver.position(), end, wordMeasurements);
+    LayoutUnit adjustedLogicalLineTop = adjustLogicalLineTop(shapeInsideInfo, resolver.position(), end, wordMeasurements);
     if (!adjustedLogicalLineTop)
         return false;
 
@@ -1731,19 +1730,19 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 
 #if ENABLE(CSS_SHAPES)
     LayoutUnit absoluteLogicalTop;
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo();
-    if (exclusionShapeInsideInfo) {
-        ASSERT(exclusionShapeInsideInfo->owner() == this || allowsExclusionShapeInsideInfoSharing());
-        if (exclusionShapeInsideInfo != this->exclusionShapeInsideInfo()) {
+    ShapeInsideInfo* shapeInsideInfo = layoutShapeInsideInfo();
+    if (shapeInsideInfo) {
+        ASSERT(shapeInsideInfo->owner() == this || allowsShapeInsideInfoSharing());
+        if (shapeInsideInfo != this->shapeInsideInfo()) {
             // FIXME Bug 100284: If subsequent LayoutStates are pushed, we will have to add
             // their offsets from the original shape-inside container.
             absoluteLogicalTop = logicalTop();
         }
         // Begin layout at the logical top of our shape inside.
-        if (logicalHeight() + absoluteLogicalTop < exclusionShapeInsideInfo->shapeLogicalTop()) {
-            LayoutUnit logicalHeight = exclusionShapeInsideInfo->shapeLogicalTop() - absoluteLogicalTop;
+        if (logicalHeight() + absoluteLogicalTop < shapeInsideInfo->shapeLogicalTop()) {
+            LayoutUnit logicalHeight = shapeInsideInfo->shapeLogicalTop() - absoluteLogicalTop;
             if (layoutState.flowThread())
-                logicalHeight -= exclusionShapeInsideInfo->owner()->borderAndPaddingBefore();
+                logicalHeight -= shapeInsideInfo->owner()->borderAndPaddingBefore();
             setLogicalHeight(logicalHeight);
         }
     }
@@ -1771,7 +1770,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         FloatingObject* lastFloatFromPreviousLine = (containsFloats()) ? m_floatingObjects->set().last() : 0;
 
 #if ENABLE(CSS_SHAPES)
-        updateShapeAndSegmentsForCurrentLine(exclusionShapeInsideInfo, absoluteLogicalTop, layoutState, lineOverflowsFromShapeInside);
+        updateShapeAndSegmentsForCurrentLine(shapeInsideInfo, absoluteLogicalTop, layoutState, lineOverflowsFromShapeInside);
 #endif
         WordMeasurements wordMeasurements;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
@@ -1787,7 +1786,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         }
 
 #if ENABLE(CSS_SHAPES)
-        if (adjustLogicalLineTopAndLogicalHeightIfNeeded(exclusionShapeInsideInfo, absoluteLogicalTop, layoutState, resolver, lastFloatFromPreviousLine, end, wordMeasurements))
+        if (adjustLogicalLineTopAndLogicalHeightIfNeeded(shapeInsideInfo, absoluteLogicalTop, layoutState, resolver, lastFloatFromPreviousLine, end, wordMeasurements))
             continue;
 #endif
         ASSERT(end != resolver.position());
@@ -2741,29 +2740,29 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 #if !ENABLE(CSS_SHAPES)
     return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
 #else
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = m_block->layoutExclusionShapeInsideInfo();
+    ShapeInsideInfo* shapeInsideInfo = m_block->layoutShapeInsideInfo();
 
-    if (!exclusionShapeInsideInfo || !exclusionShapeInsideInfo->lineOverlapsShapeBounds())
+    if (!shapeInsideInfo || !shapeInsideInfo->lineOverlapsShapeBounds())
         return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
 
     // In layoutRunsAndFloatsInRange we have to use lineOverlapsShapeBounds() to determine the line segments since shape-outside's codepaths uses the same code to determine its segments. The line containing is not a requirement for shape-outside,
     // so in this case we can end up with some extra segments for the overflowing content, but we don't want to apply the segments for the overflowing content, so we need to reset it.
-    if (!m_block->flowThreadContainingBlock() && !exclusionShapeInsideInfo->lineWithinShapeBounds()) {
-        exclusionShapeInsideInfo->clearSegments();
+    if (!m_block->flowThreadContainingBlock() && !shapeInsideInfo->lineWithinShapeBounds()) {
+        shapeInsideInfo->clearSegments();
         return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
     }
 
     InlineIterator end = resolver.position();
     InlineIterator oldEnd = end;
 
-    if (!exclusionShapeInsideInfo->hasSegments()) {
+    if (!shapeInsideInfo->hasSegments()) {
         end = nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
         resolver.setPositionIgnoringNestedIsolates(oldEnd);
         return oldEnd;
     }
 
-    const SegmentList& segments = exclusionShapeInsideInfo->segments();
-    SegmentRangeList& segmentRanges = exclusionShapeInsideInfo->segmentRanges();
+    const SegmentList& segments = shapeInsideInfo->segments();
+    SegmentRangeList& segmentRanges = shapeInsideInfo->segmentRanges();
 
     for (unsigned i = 0; i < segments.size() && !end.atEnd(); i++) {
         InlineIterator segmentStart = resolver.position();
@@ -3410,7 +3409,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
 
  end:
 #if ENABLE(CSS_SHAPES)
-    ExclusionShapeInsideInfo* shapeInfo = m_block->layoutExclusionShapeInsideInfo();
+    ShapeInsideInfo* shapeInfo = m_block->layoutShapeInsideInfo();
     bool segmentAllowsOverflow = !shapeInfo || !shapeInfo->hasSegments();
 #else
     bool segmentAllowsOverflow = true;

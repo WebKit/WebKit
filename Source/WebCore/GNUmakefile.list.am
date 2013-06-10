@@ -4385,20 +4385,6 @@ webcore_sources += \
 	Source/WebCore/rendering/CounterNode.h \
 	Source/WebCore/rendering/EllipsisBox.cpp \
 	Source/WebCore/rendering/EllipsisBox.h \
-	Source/WebCore/rendering/ExclusionInterval.cpp \
-	Source/WebCore/rendering/ExclusionInterval.h \
-	Source/WebCore/rendering/ExclusionPolygon.cpp \
-	Source/WebCore/rendering/ExclusionPolygon.h \
-	Source/WebCore/rendering/ExclusionRectangle.cpp \
-	Source/WebCore/rendering/ExclusionRectangle.h \
-	Source/WebCore/rendering/ExclusionShape.cpp \
-	Source/WebCore/rendering/ExclusionShape.h \
-	Source/WebCore/rendering/ExclusionShapeInfo.cpp \
-	Source/WebCore/rendering/ExclusionShapeInfo.h \
-	Source/WebCore/rendering/ExclusionShapeInsideInfo.cpp \
-	Source/WebCore/rendering/ExclusionShapeInsideInfo.h \
-	Source/WebCore/rendering/ExclusionShapeOutsideInfo.cpp \
-	Source/WebCore/rendering/ExclusionShapeOutsideInfo.h \
 	Source/WebCore/rendering/FilterEffectRenderer.cpp \
 	Source/WebCore/rendering/FilterEffectRenderer.h \
 	Source/WebCore/rendering/FixedTableLayout.cpp \
@@ -4633,6 +4619,20 @@ webcore_sources += \
 	Source/WebCore/rendering/mathml/RenderMathMLSubSup.h \
 	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.h \
+	Source/WebCore/rendering/shapes/PolygonShape.cpp \
+	Source/WebCore/rendering/shapes/PolygonShape.h \
+	Source/WebCore/rendering/shapes/RectangleShape.cpp \
+	Source/WebCore/rendering/shapes/RectangleShape.h \
+	Source/WebCore/rendering/shapes/Shape.cpp \
+	Source/WebCore/rendering/shapes/Shape.h \
+	Source/WebCore/rendering/shapes/ShapeInfo.cpp \
+	Source/WebCore/rendering/shapes/ShapeInfo.h \
+	Source/WebCore/rendering/shapes/ShapeInsideInfo.cpp \
+	Source/WebCore/rendering/shapes/ShapeInsideInfo.h \
+	Source/WebCore/rendering/shapes/ShapeInterval.cpp \
+	Source/WebCore/rendering/shapes/ShapeInterval.h \
+	Source/WebCore/rendering/shapes/ShapeOutsideInfo.cpp \
+	Source/WebCore/rendering/shapes/ShapeOutsideInfo.h \
 	Source/WebCore/rendering/style/BasicShapes.cpp \
 	Source/WebCore/rendering/style/BasicShapes.h \
 	Source/WebCore/rendering/style/BorderData.h \
@@ -4646,7 +4646,6 @@ webcore_sources += \
 	Source/WebCore/rendering/style/CursorData.h \
 	Source/WebCore/rendering/style/CursorList.h \
 	Source/WebCore/rendering/style/DataRef.h \
-	Source/WebCore/rendering/style/ExclusionShapeValue.h \
 	Source/WebCore/rendering/style/FillLayer.cpp \
 	Source/WebCore/rendering/style/FillLayer.h \
 	Source/WebCore/rendering/style/GridPosition.h \
@@ -4663,6 +4662,7 @@ webcore_sources += \
 	Source/WebCore/rendering/style/RenderStyle.h \
 	Source/WebCore/rendering/style/ShadowData.cpp \
 	Source/WebCore/rendering/style/ShadowData.h \
+	Source/WebCore/rendering/style/ShapeValue.h \
 	Source/WebCore/rendering/style/StyleBackgroundData.cpp \
 	Source/WebCore/rendering/style/StyleBackgroundData.h \
 	Source/WebCore/rendering/style/StyleBoxData.cpp \

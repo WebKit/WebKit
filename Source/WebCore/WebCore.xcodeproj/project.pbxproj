@@ -1835,14 +1835,6 @@
 		6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E67D2A41280E8A4008758F7 /* Extensions3DOpenGL.cpp */; };
 		6E67D2A71280E8A4008758F7 /* Extensions3DOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E67D2A51280E8A4008758F7 /* Extensions3DOpenGL.h */; };
 		6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E67D2A81280E8BD008758F7 /* Extensions3D.h */; };
-		6E8798BA15F81E4A00BFE4AA /* ExclusionInterval.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E8798B415F81E4A00BFE4AA /* ExclusionInterval.cpp */; };
-		6E8798BB15F81E4A00BFE4AA /* ExclusionInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E8798B515F81E4A00BFE4AA /* ExclusionInterval.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6E8798BC15F81E4A00BFE4AA /* ExclusionRectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E8798B615F81E4A00BFE4AA /* ExclusionRectangle.cpp */; };
-		6E8798BD15F81E4A00BFE4AA /* ExclusionRectangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E8798B715F81E4A00BFE4AA /* ExclusionRectangle.h */; };
-		6E8798BE15F81E4A00BFE4AA /* ExclusionShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E8798B815F81E4A00BFE4AA /* ExclusionShape.cpp */; };
-		6E8798BF15F81E4A00BFE4AA /* ExclusionShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E8798B915F81E4A00BFE4AA /* ExclusionShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6EAF340F1613869A00859625 /* ExclusionPolygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EAF340D1613869A00859625 /* ExclusionPolygon.cpp */; };
-		6EAF34101613869A00859625 /* ExclusionPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EAF340E1613869A00859625 /* ExclusionPolygon.h */; };
 		6EBC5EAF138B50F200A0CF8A /* JSFloat64Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBC5EAD138B50F200A0CF8A /* JSFloat64Array.cpp */; };
 		6EBC5EB0138B50F200A0CF8A /* JSFloat64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBC5EAE138B50F200A0CF8A /* JSFloat64Array.h */; };
 		6EBF0E4812A8926100DB1709 /* OESTextureFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */; };
@@ -3263,8 +3255,6 @@
 		98CE432A129E00E5005821DC /* LinkLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 98CE4329129E00E5005821DC /* LinkLoader.h */; };
 		98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */ = {isa = PBXBuildFile; fileRef = 98EB1F941313FE0500D0E1EA /* NotImplemented.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A1B6F97158869C80011A8C4 /* JSDOMStringListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */; };
-		9A9CEF8D163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9CEF8B163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.cpp */; };
-		9A9CEF8E163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9CEF8C163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B1AB07C1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B1AB07B1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp */; };
 		9B24DE8E15194B9500C59C27 /* HTMLBDIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */; };
 		9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2D8A7814997CCF00ECEF3E /* UndoStep.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5739,7 +5729,7 @@
 		FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */; };
 		FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD06DFA4134A4DEF006F5D7D /* DefaultAudioDestinationNode.h */; };
 		FD1660A513787C6D001FFA7B /* DenormalDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = FD1660A413787C6D001FFA7B /* DenormalDisabler.h */; };
-		FD1AF1501656F15100C6D4F7 /* ExclusionShapeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = FD1AF14E1656F12100C6D4F7 /* ExclusionShapeValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = FD1AF14E1656F12100C6D4F7 /* ShapeValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FD23A12513F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD23A12313F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp */; };
 		FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */; };
 		FD2DBF1212B048A300ED98C6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */; };
@@ -5856,6 +5846,20 @@
 		FD3160C012B0272A00C1A359 /* FFTFrameMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD3160BA12B0272A00C1A359 /* FFTFrameMac.cpp */; };
 		FD35918F138DB22000E1EBEC /* AudioParamTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD35918D138DB22000E1EBEC /* AudioParamTimeline.cpp */; };
 		FD359190138DB22000E1EBEC /* AudioParamTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = FD35918E138DB22000E1EBEC /* AudioParamTimeline.h */; };
+		FD45A94F175D3F3E00C21EC8 /* Shape.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A87F175D3926002CD360 /* Shape.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD45A950175D3F3E00C21EC8 /* ShapeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A881175D3926002CD360 /* ShapeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD45A951175D3F3E00C21EC8 /* ShapeInsideInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A883175D3926002CD360 /* ShapeInsideInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A887175D3926002CD360 /* ShapeOutsideInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD45A953175D3FB800C21EC8 /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A87E175D3926002CD360 /* Shape.cpp */; };
+		FD45A954175D3FB800C21EC8 /* ShapeInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A880175D3926002CD360 /* ShapeInfo.cpp */; };
+		FD45A955175D3FB800C21EC8 /* ShapeInsideInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A882175D3926002CD360 /* ShapeInsideInfo.cpp */; };
+		FD45A956175D3FB800C21EC8 /* ShapeOutsideInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A886175D3926002CD360 /* ShapeOutsideInfo.cpp */; };
+		FD45A957175D414C00C21EC8 /* PolygonShape.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A87B175D3926002CD360 /* PolygonShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A87D175D3926002CD360 /* RectangleShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD45A959175D417100C21EC8 /* PolygonShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A87A175D3926002CD360 /* PolygonShape.cpp */; };
+		FD45A95A175D417100C21EC8 /* RectangleShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A87C175D3926002CD360 /* RectangleShape.cpp */; };
+		FD45A95B175D41EE00C21EC8 /* ShapeInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = FD08A885175D3926002CD360 /* ShapeInterval.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD45A95C175D420D00C21EC8 /* ShapeInterval.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD08A884175D3926002CD360 /* ShapeInterval.cpp */; };
 		FD537352137B651800008DCE /* ZeroPole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD537350137B651800008DCE /* ZeroPole.cpp */; };
 		FD537353137B651800008DCE /* ZeroPole.h in Headers */ = {isa = PBXBuildFile; fileRef = FD537351137B651800008DCE /* ZeroPole.h */; };
 		FD537356137B653B00008DCE /* DynamicsCompressorKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD537354137B653B00008DCE /* DynamicsCompressorKernel.cpp */; };
@@ -5878,8 +5882,6 @@
 		FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C6136B8E66003CF072 /* DynamicsCompressor.h */; };
 		FD6F252C13F5EF0E0065165F /* MediaElementAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6F252913F5EF0E0065165F /* MediaElementAudioSourceNode.cpp */; };
 		FD6F252D13F5EF0E0065165F /* MediaElementAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */; };
-		FD748ABF15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD748ABD15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp */; };
-		FD748AC015BF74ED0059CF0D /* ExclusionShapeInsideInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FD748ABE15BF74ED0059CF0D /* ExclusionShapeInsideInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FD7868B9136B999200D403DF /* JSDynamicsCompressorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */; };
 		FD7868BA136B999200D403DF /* JSDynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */; };
 		FD7F299113D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */; };
@@ -5940,8 +5942,6 @@
 		FDB052E01561A42C00B500D6 /* AudioSummingJunction.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */; };
 		FDB1700514A2BAB200A2B5D9 /* MultiChannelResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */; };
 		FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */; };
-		FDB8D1DA16B0C0D700340F10 /* ExclusionShapeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB8D1D916B0C0D700340F10 /* ExclusionShapeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FDB8D1E516B0CC9700340F10 /* ExclusionShapeInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDB8D1DB16B0C0F600340F10 /* ExclusionShapeInfo.cpp */; };
 		FDBD1DFC167FE27D0051A11E /* JSOscillatorNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDBD1DFB167FE27D0051A11E /* JSOscillatorNodeCustom.cpp */; };
 		FDBD480C159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */; };
 		FDBD480D159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */; };
@@ -8228,14 +8228,6 @@
 		6E67D2A41280E8A4008758F7 /* Extensions3DOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Extensions3DOpenGL.cpp; sourceTree = "<group>"; };
 		6E67D2A51280E8A4008758F7 /* Extensions3DOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions3DOpenGL.h; sourceTree = "<group>"; };
 		6E67D2A81280E8BD008758F7 /* Extensions3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions3D.h; sourceTree = "<group>"; };
-		6E8798B415F81E4A00BFE4AA /* ExclusionInterval.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionInterval.cpp; sourceTree = "<group>"; };
-		6E8798B515F81E4A00BFE4AA /* ExclusionInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionInterval.h; sourceTree = "<group>"; };
-		6E8798B615F81E4A00BFE4AA /* ExclusionRectangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionRectangle.cpp; sourceTree = "<group>"; };
-		6E8798B715F81E4A00BFE4AA /* ExclusionRectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionRectangle.h; sourceTree = "<group>"; };
-		6E8798B815F81E4A00BFE4AA /* ExclusionShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionShape.cpp; sourceTree = "<group>"; };
-		6E8798B915F81E4A00BFE4AA /* ExclusionShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionShape.h; sourceTree = "<group>"; };
-		6EAF340D1613869A00859625 /* ExclusionPolygon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionPolygon.cpp; sourceTree = "<group>"; };
-		6EAF340E1613869A00859625 /* ExclusionPolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionPolygon.h; sourceTree = "<group>"; };
 		6EBC5D80138B4C4E00A0CF8A /* Float64Array.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Float64Array.idl; path = canvas/Float64Array.idl; sourceTree = "<group>"; };
 		6EBC5EAD138B50F200A0CF8A /* JSFloat64Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloat64Array.cpp; sourceTree = "<group>"; };
 		6EBC5EAE138B50F200A0CF8A /* JSFloat64Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFloat64Array.h; sourceTree = "<group>"; };
@@ -9706,8 +9698,6 @@
 		98CE4329129E00E5005821DC /* LinkLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkLoader.h; sourceTree = "<group>"; };
 		98EB1F941313FE0500D0E1EA /* NotImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotImplemented.h; sourceTree = "<group>"; };
 		9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringListCustom.cpp; sourceTree = "<group>"; };
-		9A9CEF8B163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionShapeOutsideInfo.cpp; sourceTree = "<group>"; };
-		9A9CEF8C163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionShapeOutsideInfo.h; sourceTree = "<group>"; };
 		9B1AB0791648C69D0051F3F2 /* HTMLFormControlsCollection.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLFormControlsCollection.idl; sourceTree = "<group>"; };
 		9B1AB07B1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormControlsCollectionCustom.cpp; sourceTree = "<group>"; };
 		9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLBDIElement.h; sourceTree = "<group>"; };
@@ -12580,8 +12570,22 @@
 		FD00D7A314A3F61900734011 /* SincResampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SincResampler.h; sourceTree = "<group>"; };
 		FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultAudioDestinationNode.cpp; sourceTree = "<group>"; };
 		FD06DFA4134A4DEF006F5D7D /* DefaultAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultAudioDestinationNode.h; sourceTree = "<group>"; };
+		FD08A87A175D3926002CD360 /* PolygonShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolygonShape.cpp; sourceTree = "<group>"; };
+		FD08A87B175D3926002CD360 /* PolygonShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolygonShape.h; sourceTree = "<group>"; };
+		FD08A87C175D3926002CD360 /* RectangleShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectangleShape.cpp; sourceTree = "<group>"; };
+		FD08A87D175D3926002CD360 /* RectangleShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectangleShape.h; sourceTree = "<group>"; };
+		FD08A87E175D3926002CD360 /* Shape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shape.cpp; sourceTree = "<group>"; };
+		FD08A87F175D3926002CD360 /* Shape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shape.h; sourceTree = "<group>"; };
+		FD08A880175D3926002CD360 /* ShapeInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeInfo.cpp; sourceTree = "<group>"; };
+		FD08A881175D3926002CD360 /* ShapeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeInfo.h; sourceTree = "<group>"; };
+		FD08A882175D3926002CD360 /* ShapeInsideInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeInsideInfo.cpp; sourceTree = "<group>"; };
+		FD08A883175D3926002CD360 /* ShapeInsideInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeInsideInfo.h; sourceTree = "<group>"; };
+		FD08A884175D3926002CD360 /* ShapeInterval.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeInterval.cpp; sourceTree = "<group>"; };
+		FD08A885175D3926002CD360 /* ShapeInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeInterval.h; sourceTree = "<group>"; };
+		FD08A886175D3926002CD360 /* ShapeOutsideInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeOutsideInfo.cpp; sourceTree = "<group>"; };
+		FD08A887175D3926002CD360 /* ShapeOutsideInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeOutsideInfo.h; sourceTree = "<group>"; };
 		FD1660A413787C6D001FFA7B /* DenormalDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DenormalDisabler.h; sourceTree = "<group>"; };
-		FD1AF14E1656F12100C6D4F7 /* ExclusionShapeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExclusionShapeValue.h; path = style/ExclusionShapeValue.h; sourceTree = "<group>"; };
+		FD1AF14E1656F12100C6D4F7 /* ShapeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShapeValue.h; path = style/ShapeValue.h; sourceTree = "<group>"; };
 		FD23A12313F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaElementAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaElementAudioSourceNode.h; sourceTree = "<group>"; };
 		FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
@@ -12742,8 +12746,6 @@
 		FD6F252913F5EF0E0065165F /* MediaElementAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaElementAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaElementAudioSourceNode.h; sourceTree = "<group>"; };
 		FD6F252B13F5EF0E0065165F /* MediaElementAudioSourceNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaElementAudioSourceNode.idl; sourceTree = "<group>"; };
-		FD748ABD15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionShapeInsideInfo.cpp; sourceTree = "<group>"; };
-		FD748ABE15BF74ED0059CF0D /* ExclusionShapeInsideInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionShapeInsideInfo.h; sourceTree = "<group>"; };
 		FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDynamicsCompressorNode.cpp; sourceTree = "<group>"; };
 		FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDynamicsCompressorNode.h; sourceTree = "<group>"; };
 		FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveShaperDSPKernel.cpp; sourceTree = "<group>"; };
@@ -12807,8 +12809,6 @@
 		FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSummingJunction.h; sourceTree = "<group>"; };
 		FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiChannelResampler.cpp; sourceTree = "<group>"; };
 		FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiChannelResampler.h; sourceTree = "<group>"; };
-		FDB8D1D916B0C0D700340F10 /* ExclusionShapeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionShapeInfo.h; sourceTree = "<group>"; };
-		FDB8D1DB16B0C0F600340F10 /* ExclusionShapeInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionShapeInfo.cpp; sourceTree = "<group>"; };
 		FDBD1DFB167FE27D0051A11E /* JSOscillatorNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOscillatorNodeCustom.cpp; sourceTree = "<group>"; };
 		FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamAudioSourceNode.h; sourceTree = "<group>"; };
@@ -18922,7 +18922,6 @@
 				BC2272A10E82E87C00E7F975 /* CursorData.h */,
 				BC2272AC0E82E8F300E7F975 /* CursorList.h */,
 				BC22746E0E83664500E7F975 /* DataRef.h */,
-				FD1AF14E1656F12100C6D4F7 /* ExclusionShapeValue.h */,
 				BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */,
 				BC5EB69D0E81DAEB00B25965 /* FillLayer.h */,
 				A12705C21656BD6500C2E27C /* GridPosition.h */,
@@ -18940,6 +18939,7 @@
 				BC5EB6670E81CB7100B25965 /* RenderStyleConstants.h */,
 				BC5EB8C10E82031B00B25965 /* ShadowData.cpp */,
 				BC5EB8C20E82031B00B25965 /* ShadowData.h */,
+				FD1AF14E1656F12100C6D4F7 /* ShapeValue.h */,
 				BC5EB6A00E81DC4F00B25965 /* StyleBackgroundData.cpp */,
 				BC5EB6A10E81DC4F00B25965 /* StyleBackgroundData.h */,
 				BC5EB67C0E81D42000B25965 /* StyleBoxData.cpp */,
@@ -19872,6 +19872,7 @@
 			isa = PBXGroup;
 			children = (
 				439046C212DA25CE00AF80A2 /* mathml */,
+				FD08A879175D3926002CD360 /* shapes */,
 				BC8C8FAA0DDCD2F200B592F4 /* style */,
 				088C2F7412390080003D65CE /* svg */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
@@ -19885,20 +19886,6 @@
 				9392F14B0AD1861B00691BD4 /* CounterNode.h */,
 				A8CFF6CA0A1561CD000A4234 /* EllipsisBox.cpp */,
 				A8CFF6BD0A156118000A4234 /* EllipsisBox.h */,
-				6E8798B415F81E4A00BFE4AA /* ExclusionInterval.cpp */,
-				6E8798B515F81E4A00BFE4AA /* ExclusionInterval.h */,
-				6EAF340D1613869A00859625 /* ExclusionPolygon.cpp */,
-				6EAF340E1613869A00859625 /* ExclusionPolygon.h */,
-				6E8798B615F81E4A00BFE4AA /* ExclusionRectangle.cpp */,
-				6E8798B715F81E4A00BFE4AA /* ExclusionRectangle.h */,
-				6E8798B815F81E4A00BFE4AA /* ExclusionShape.cpp */,
-				6E8798B915F81E4A00BFE4AA /* ExclusionShape.h */,
-				FDB8D1DB16B0C0F600340F10 /* ExclusionShapeInfo.cpp */,
-				FDB8D1D916B0C0D700340F10 /* ExclusionShapeInfo.h */,
-				FD748ABD15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp */,
-				FD748ABE15BF74ED0059CF0D /* ExclusionShapeInsideInfo.h */,
-				9A9CEF8B163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.cpp */,
-				9A9CEF8C163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.h */,
 				31313F631443B35E006E2A90 /* FilterEffectRenderer.cpp */,
 				31313F641443B35E006E2A90 /* FilterEffectRenderer.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
@@ -20550,6 +20537,27 @@
 				96ABA42214BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp */,
 			);
 			path = opengl;
+			sourceTree = "<group>";
+		};
+		FD08A879175D3926002CD360 /* shapes */ = {
+			isa = PBXGroup;
+			children = (
+				FD08A87A175D3926002CD360 /* PolygonShape.cpp */,
+				FD08A87B175D3926002CD360 /* PolygonShape.h */,
+				FD08A87C175D3926002CD360 /* RectangleShape.cpp */,
+				FD08A87D175D3926002CD360 /* RectangleShape.h */,
+				FD08A87E175D3926002CD360 /* Shape.cpp */,
+				FD08A87F175D3926002CD360 /* Shape.h */,
+				FD08A880175D3926002CD360 /* ShapeInfo.cpp */,
+				FD08A881175D3926002CD360 /* ShapeInfo.h */,
+				FD08A882175D3926002CD360 /* ShapeInsideInfo.cpp */,
+				FD08A883175D3926002CD360 /* ShapeInsideInfo.h */,
+				FD08A884175D3926002CD360 /* ShapeInterval.cpp */,
+				FD08A885175D3926002CD360 /* ShapeInterval.h */,
+				FD08A886175D3926002CD360 /* ShapeOutsideInfo.cpp */,
+				FD08A887175D3926002CD360 /* ShapeOutsideInfo.h */,
+			);
+			path = shapes;
 			sourceTree = "<group>";
 		};
 		FD315FA212B025B100C1A359 /* webaudio */ = {
@@ -21716,14 +21724,6 @@
 				148AFDA50AF58360008CC700 /* ExceptionHandlers.h in Headers */,
 				9767CE0B145ABC13005E64DB /* ExceptionHeaders.h in Headers */,
 				9767CE0C145ABC13005E64DB /* ExceptionInterfaces.h in Headers */,
-				6E8798BB15F81E4A00BFE4AA /* ExclusionInterval.h in Headers */,
-				6EAF34101613869A00859625 /* ExclusionPolygon.h in Headers */,
-				6E8798BD15F81E4A00BFE4AA /* ExclusionRectangle.h in Headers */,
-				6E8798BF15F81E4A00BFE4AA /* ExclusionShape.h in Headers */,
-				FDB8D1DA16B0C0D700340F10 /* ExclusionShapeInfo.h in Headers */,
-				FD748AC015BF74ED0059CF0D /* ExclusionShapeInsideInfo.h in Headers */,
-				9A9CEF8E163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.h in Headers */,
-				FD1AF1501656F15100C6D4F7 /* ExclusionShapeValue.h in Headers */,
 				A024575216CEAA27000E5671 /* EXTDrawBuffers.h in Headers */,
 				6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */,
 				6E67D2A71280E8A4008758F7 /* Extensions3DOpenGL.h in Headers */,
@@ -22987,6 +22987,7 @@
 				84730D921248F0B300D3A9C9 /* PointLightSource.h in Headers */,
 				97059978107D975200A50A7C /* PolicyCallback.h in Headers */,
 				9705997A107D975200A50A7C /* PolicyChecker.h in Headers */,
+				FD45A957175D414C00C21EC8 /* PolygonShape.h in Headers */,
 				5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */,
 				0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */,
 				ABC128770B33AA6D00C693D5 /* PopupMenuClient.h in Headers */,
@@ -23028,6 +23029,7 @@
 				A84D827C11D333ED00972990 /* RawDataDocumentParser.h in Headers */,
 				FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
+				FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */,
 				A72EA3BB1585CF55004FAA26 /* RefCountedSupplement.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,
 				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
@@ -23298,6 +23300,12 @@
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
 				A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */,
+				FD45A94F175D3F3E00C21EC8 /* Shape.h in Headers */,
+				FD45A950175D3F3E00C21EC8 /* ShapeInfo.h in Headers */,
+				FD45A951175D3F3E00C21EC8 /* ShapeInsideInfo.h in Headers */,
+				FD45A95B175D41EE00C21EC8 /* ShapeInterval.h in Headers */,
+				FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */,
+				FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
@@ -24342,6 +24350,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD45A95C175D420D00C21EC8 /* ShapeInterval.cpp in Sources */,
+				FD45A959175D417100C21EC8 /* PolygonShape.cpp in Sources */,
+				FD45A95A175D417100C21EC8 /* RectangleShape.cpp in Sources */,
+				FD45A953175D3FB800C21EC8 /* Shape.cpp in Sources */,
+				FD45A954175D3FB800C21EC8 /* ShapeInfo.cpp in Sources */,
+				FD45A955175D3FB800C21EC8 /* ShapeInsideInfo.cpp in Sources */,
+				FD45A956175D3FB800C21EC8 /* ShapeOutsideInfo.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
 				0F29C16E1300C2E2002D794E /* AccessibilityAllInOne.cpp in Sources */,
 				76CDD2F21103DA6600680521 /* AccessibilityMenuList.cpp in Sources */,
@@ -24917,13 +24932,6 @@
 				973DC63F145A9409002842C2 /* ExceptionCodeDescription.cpp in Sources */,
 				A7CACDB113CE875C00BBBE3F /* ExceptionCodePlaceholder.cpp in Sources */,
 				148AFDA60AF58360008CC700 /* ExceptionHandlers.mm in Sources */,
-				6E8798BA15F81E4A00BFE4AA /* ExclusionInterval.cpp in Sources */,
-				6EAF340F1613869A00859625 /* ExclusionPolygon.cpp in Sources */,
-				6E8798BC15F81E4A00BFE4AA /* ExclusionRectangle.cpp in Sources */,
-				6E8798BE15F81E4A00BFE4AA /* ExclusionShape.cpp in Sources */,
-				FDB8D1E516B0CC9700340F10 /* ExclusionShapeInfo.cpp in Sources */,
-				FD748ABF15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp in Sources */,
-				9A9CEF8D163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.cpp in Sources */,
 				A024575116CEAA27000E5671 /* EXTDrawBuffers.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,
 				44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */,

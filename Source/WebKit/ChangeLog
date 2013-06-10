@@ -1,3 +1,14 @@
+2013-06-10  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes][CSS Exclusions] Split CSS Exclusions and CSS Shapes code
+        https://bugs.webkit.org/show_bug.cgi?id=117162
+
+        Reviewed by Alexandru Chiculita.
+
+        Adding the WebCore/rendering/shapes directory to the include list.
+
+        * CMakeLists.txt:
+
 2013-06-06  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Build configuration fix. WebKitExportGenerator's include path should fall back to 

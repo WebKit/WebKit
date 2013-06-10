@@ -28,20 +28,20 @@
  */
 
 #include "config.h"
-#include "ExclusionInterval.h"
+#include "ShapeInterval.h"
 
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
 struct IntervalX1Comparator {
-    bool operator() (const ExclusionInterval& i1, const ExclusionInterval& i2) const
+    bool operator() (const ShapeInterval& i1, const ShapeInterval& i2) const
     {
         return i1.x1 < i2.x1;
     }
 };
 
-bool ExclusionInterval::intersect(const ExclusionInterval& i, ExclusionInterval& rv) const
+bool ShapeInterval::intersect(const ShapeInterval& i, ShapeInterval& rv) const
 {
     if (x2 < i.x1 || x1 > i.x2)
         return false;
@@ -50,20 +50,20 @@ bool ExclusionInterval::intersect(const ExclusionInterval& i, ExclusionInterval&
     return true;
 }
 
-void sortExclusionIntervals(Vector<ExclusionInterval>& v)
+void sortShapeIntervals(Vector<ShapeInterval>& v)
 {
     std::sort(v.begin(), v.end(), IntervalX1Comparator());
 }
 
-void mergeExclusionIntervals(const Vector<ExclusionInterval>& v1, const Vector<ExclusionInterval>& v2, Vector<ExclusionInterval>& rv)
+void mergeShapeIntervals(const Vector<ShapeInterval>& v1, const Vector<ShapeInterval>& v2, Vector<ShapeInterval>& rv)
 {
     if (!v1.size())
         rv.appendRange(v2.begin(), v2.end());
     else if (!v2.size())
         rv.appendRange(v1.begin(), v1.end());
     else {
-        Vector<ExclusionInterval> v(v1.size() + v2.size());
-        ExclusionInterval* interval = 0;
+        Vector<ShapeInterval> v(v1.size() + v2.size());
+        ShapeInterval* interval = 0;
 
         std::merge(v1.begin(), v1.end(), v2.begin(), v2.end(), v.begin(), IntervalX1Comparator());
 
@@ -83,7 +83,7 @@ void mergeExclusionIntervals(const Vector<ExclusionInterval>& v1, const Vector<E
     }
 }
 
-void intersectExclusionIntervals(const Vector<ExclusionInterval>& v1, const Vector<ExclusionInterval>& v2, Vector<ExclusionInterval>& rv)
+void intersectShapeIntervals(const Vector<ShapeInterval>& v1, const Vector<ShapeInterval>& v2, Vector<ShapeInterval>& rv)
 {
     size_t v1Size = v1.size();
     size_t v2Size = v2.size();
@@ -91,13 +91,13 @@ void intersectExclusionIntervals(const Vector<ExclusionInterval>& v1, const Vect
     if (!v1Size || !v2Size)
         return;
 
-    ExclusionInterval interval;
+    ShapeInterval interval;
     bool overlap = false;
     size_t i1 = 0;
     size_t i2 = 0;
 
     while (i1 < v1Size && i2 < v2Size) {
-        ExclusionInterval v12;
+        ShapeInterval v12;
         if (v1[i1].intersect(v2[i2], v12)) {
             if (!overlap || !v12.intersect(interval, interval)) {
                 if (overlap)
@@ -124,7 +124,7 @@ void intersectExclusionIntervals(const Vector<ExclusionInterval>& v1, const Vect
         rv.append(interval);
 }
 
-void subtractExclusionIntervals(const Vector<ExclusionInterval>& v1, const Vector<ExclusionInterval>& v2, Vector<ExclusionInterval>& rv)
+void subtractShapeIntervals(const Vector<ShapeInterval>& v1, const Vector<ShapeInterval>& v2, Vector<ShapeInterval>& rv)
 {
     size_t v1Size = v1.size();
     size_t v2Size = v2.size();
@@ -139,8 +139,8 @@ void subtractExclusionIntervals(const Vector<ExclusionInterval>& v1, const Vecto
         rv.appendRange(v1.begin(), v1.end());
 
         while (i1 < rv.size() && i2 < v2Size) {
-            ExclusionInterval& interval1 = rv[i1];
-            const ExclusionInterval& interval2 = v2[i2];
+            ShapeInterval& interval1 = rv[i1];
+            const ShapeInterval& interval2 = v2[i2];
 
             if (interval2.x1 <= interval1.x1 && interval2.x2 >= interval1.x2)
                 rv.remove(i1);
@@ -149,7 +149,7 @@ void subtractExclusionIntervals(const Vector<ExclusionInterval>& v1, const Vecto
             else if (interval2.x1 > interval1.x2)
                 i1 += 1;
             else if (interval2.x1 > interval1.x1 && interval2.x2 < interval1.x2) {
-                rv.insert(i1, ExclusionInterval(interval1.x1, interval2.x1));
+                rv.insert(i1, ShapeInterval(interval1.x1, interval2.x1));
                 interval1.x1 = interval2.x2;
                 i2 += 1;
             } else if (interval2.x1 <= interval1.x1) {

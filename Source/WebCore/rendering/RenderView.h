@@ -249,8 +249,8 @@ private:
         if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer->hasColumns() || renderer->flowThreadContainingBlock()
             || m_layoutState->lineGrid() || (renderer->style()->lineGrid() != RenderStyle::initialLineGrid() && renderer->isBlockFlow())
 #if ENABLE(CSS_SHAPES)
-            || (renderer->isRenderBlock() && toRenderBlock(renderer)->exclusionShapeInsideInfo())
-            || (m_layoutState->exclusionShapeInsideInfo() && renderer->isRenderBlock() && !toRenderBlock(renderer)->allowsExclusionShapeInsideInfoSharing())
+            || (renderer->isRenderBlock() && toRenderBlock(renderer)->shapeInsideInfo())
+            || (m_layoutState->shapeInsideInfo() && renderer->isRenderBlock() && !toRenderBlock(renderer)->allowsShapeInsideInfoSharing())
 #endif
             ) {
             pushLayoutStateForCurrentFlowThread(renderer);

@@ -27,32 +27,32 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ExclusionInterval_h
-#define ExclusionInterval_h
+#ifndef ShapeInterval_h
+#define ShapeInterval_h
 
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-struct ExclusionInterval {
+struct ShapeInterval {
 public:
     float x1;
     float x2;
 
-    ExclusionInterval(float x1 = 0, float x2 = 0)
+    ShapeInterval(float x1 = 0, float x2 = 0)
         : x1(x1)
         , x2(x2)
     {
     }
 
-    bool intersect(const ExclusionInterval&, ExclusionInterval&) const;
+    bool intersect(const ShapeInterval&, ShapeInterval&) const;
 };
 
-void sortExclusionIntervals(Vector<ExclusionInterval>&);
-void mergeExclusionIntervals(const Vector<ExclusionInterval>&, const Vector<ExclusionInterval>&, Vector<ExclusionInterval>&);
-void intersectExclusionIntervals(const Vector<ExclusionInterval>&, const Vector<ExclusionInterval>&, Vector<ExclusionInterval>&);
-void subtractExclusionIntervals(const Vector<ExclusionInterval>&, const Vector<ExclusionInterval>&, Vector<ExclusionInterval>&);
+void sortShapeIntervals(Vector<ShapeInterval>&);
+void mergeShapeIntervals(const Vector<ShapeInterval>&, const Vector<ShapeInterval>&, Vector<ShapeInterval>&);
+void intersectShapeIntervals(const Vector<ShapeInterval>&, const Vector<ShapeInterval>&, Vector<ShapeInterval>&);
+void subtractShapeIntervals(const Vector<ShapeInterval>&, const Vector<ShapeInterval>&, Vector<ShapeInterval>&);
 
 } // namespace WebCore
 
-#endif // ExclusionInterval_h
+#endif // ShapeInterval_h

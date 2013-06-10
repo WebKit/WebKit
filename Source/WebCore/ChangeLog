@@ -1,3 +1,220 @@
+2013-06-10  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes][CSS Exclusions] Split CSS Exclusions and CSS Shapes code
+        https://bugs.webkit.org/show_bug.cgi?id=117162
+
+        Reviewed by Alexandru Chiculita.
+
+        With the split between the CSS Exclusions and CSS Shapes specifications,
+        some renaming is necessary. In general, this patch removes 'Exclusion' from
+        any Shapes code, while organizing the rendering shapes code into a 'shapes'
+        folder.
+
+        Renames:
+        ExclusionShape -> Shape
+        Exclusion[Rectangle|Polygon] -> [Rectangle|Polygon]Shape
+        Exclusion -> Shape
+
+        Refactoring, no new tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSPrimitiveValue.h:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyShape::setValue):
+        (WebCore::ApplyPropertyShape::applyValue):
+        (WebCore::ApplyPropertyShape::createHandler):
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::PropertyWrapperShape::PropertyWrapperShape):
+        (WebCore::CSSPropertyAnimation::ensurePropertyMap):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::shapeInsideInfo):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::updateShapeInsideInfoAfterStyleChange):
+        (WebCore::shapeInfoRequiresRelayout):
+        (WebCore::RenderBlock::updateRegionsAndExclusionsBeforeChildLayout):
+        (WebCore::RenderBlock::computeShapeSize):
+        (WebCore::RenderBlock::updateRegionsAndExclusionsAfterChildLayout):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::computeLogicalLocationForFloat):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::ensureShapeInsideInfo):
+        (WebCore::RenderBlock::shapeInsideInfo):
+        (WebCore::RenderBlock::setShapeInsideInfo):
+        (WebCore::RenderBlock::allowsShapeInsideInfoSharing):
+        (WebCore::RenderBlock::xPositionForFloatIncludingMargin):
+        (WebCore::RenderBlock::yPositionForFloatIncludingMargin):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutShapeInsideInfo):
+        (WebCore::LineWidth::LineWidth):
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::constructBidiRunsForLine):
+        (WebCore::adjustLogicalLineTop):
+        (WebCore::RenderBlock::updateLineBoundariesForShapes):
+        (WebCore::RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded):
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::updateShapeOutsideInfoAfterStyleChange):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::shapeOutsideInfo):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintOffset):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pushLayoutState):
+        * rendering/shapes/PolygonShape.cpp: Renamed from Source/WebCore/rendering/ExclusionPolygon.cpp.
+        (WebCore::leftSide):
+        (WebCore::isReflexVertex):
+        (WebCore::computeXIntersection):
+        (WebCore::inwardEdgeNormal):
+        (WebCore::outwardEdgeNormal):
+        (WebCore::appendArc):
+        (WebCore::snapVerticesToLayoutUnitGrid):
+        (WebCore::computeShapePaddingBounds):
+        (WebCore::computeShapeMarginBounds):
+        (WebCore::PolygonShape::shapePaddingBounds):
+        (WebCore::PolygonShape::shapeMarginBounds):
+        (WebCore::getVertexIntersectionVertices):
+        (WebCore::appendIntervalX):
+        (WebCore::compareEdgeIntersectionX):
+        (WebCore::computeXIntersections):
+        (WebCore::computeOverlappingEdgeXProjections):
+        (WebCore::PolygonShape::getExcludedIntervals):
+        (WebCore::PolygonShape::getIncludedIntervals):
+        (WebCore::firstFitRectInPolygon):
+        (WebCore::aboveOrToTheLeft):
+        (WebCore::PolygonShape::firstIncludedIntervalLogicalTop):
+        * rendering/shapes/PolygonShape.h: Renamed from Source/WebCore/rendering/ExclusionPolygon.h.
+        (WebCore::OffsetPolygonEdge::OffsetPolygonEdge):
+        (WebCore::OffsetPolygonEdge::edgeIndex):
+        (WebCore::OffsetPolygonEdge::basis):
+        (WebCore::PolygonShape::PolygonShape):
+        * rendering/shapes/RectangleShape.cpp: Renamed from Source/WebCore/rendering/ExclusionRectangle.cpp.
+        (WebCore::ellipseXIntercept):
+        (WebCore::ellipseYIntercept):
+        (WebCore::FloatRoundedRect::paddingBounds):
+        (WebCore::FloatRoundedRect::marginBounds):
+        (WebCore::FloatRoundedRect::cornerInterceptForWidth):
+        (WebCore::RectangleShape::shapePaddingBounds):
+        (WebCore::RectangleShape::shapeMarginBounds):
+        (WebCore::RectangleShape::getExcludedIntervals):
+        (WebCore::RectangleShape::getIncludedIntervals):
+        (WebCore::RectangleShape::firstIncludedIntervalLogicalTop):
+        * rendering/shapes/RectangleShape.h: Renamed from Source/WebCore/rendering/ExclusionRectangle.h.
+        (WebCore::FloatRoundedRect::FloatRoundedRect):
+        (WebCore::FloatRoundedRect::rx):
+        (WebCore::FloatRoundedRect::ry):
+        (WebCore::RectangleShape::RectangleShape):
+        * rendering/shapes/Shape.cpp: Renamed from Source/WebCore/rendering/ExclusionShape.cpp.
+        (WebCore::createRectangleShape):
+        (WebCore::createShapeCircle):
+        (WebCore::createShapeEllipse):
+        (WebCore::createPolygonShape):
+        (WebCore::physicalRectToLogical):
+        (WebCore::physicalPointToLogical):
+        (WebCore::physicalSizeToLogical):
+        (WebCore::Shape::createShape):
+        * rendering/shapes/Shape.h: Renamed from Source/WebCore/rendering/ExclusionShape.h.
+        (WebCore::LineSegment::LineSegment):
+        (WebCore::Shape::~Shape):
+        (WebCore::Shape::shapeMargin):
+        (WebCore::Shape::shapePadding):
+        * rendering/shapes/ShapeInfo.cpp: Renamed from Source/WebCore/rendering/ExclusionShapeInfo.cpp.
+        (WebCore::::computedShape):
+        (WebCore::::computeSegmentsForLine):
+        * rendering/shapes/ShapeInfo.h: Renamed from Source/WebCore/rendering/ExclusionShapeInfo.h.
+        (WebCore::MappedInfo::ensureInfo):
+        (WebCore::MappedInfo::removeInfo):
+        (WebCore::MappedInfo::info):
+        (WebCore::MappedInfo::infoMap):
+        (WebCore::ShapeInfo::~ShapeInfo):
+        (WebCore::ShapeInfo::setShapeSize):
+        (WebCore::ShapeInfo::clearSegments):
+        (WebCore::ShapeInfo::shapeLogicalTop):
+        (WebCore::ShapeInfo::shapeLogicalBottom):
+        (WebCore::ShapeInfo::shapeLogicalLeft):
+        (WebCore::ShapeInfo::shapeLogicalRight):
+        (WebCore::ShapeInfo::shapeLogicalWidth):
+        (WebCore::ShapeInfo::shapeLogicalHeight):
+        (WebCore::ShapeInfo::logicalLineTop):
+        (WebCore::ShapeInfo::logicalLineBottom):
+        (WebCore::ShapeInfo::shapeContainingBlockHeight):
+        (WebCore::ShapeInfo::lineOverlapsShapeBounds):
+        (WebCore::ShapeInfo::lineWithinShapeBounds):
+        (WebCore::ShapeInfo::dirtyShapeSize):
+        (WebCore::ShapeInfo::shapeSizeDirty):
+        (WebCore::ShapeInfo::owner):
+        (WebCore::ShapeInfo::ShapeInfo):
+        (WebCore::ShapeInfo::logicalTopOffset):
+        (WebCore::ShapeInfo::logicalLeftOffset):
+        * rendering/shapes/ShapeInsideInfo.cpp: Renamed from Source/WebCore/rendering/ExclusionShapeInsideInfo.cpp.
+        (WebCore::LineSegmentRange::LineSegmentRange):
+        (WebCore::ShapeInsideInfo::isEnabledFor):
+        (WebCore::ShapeInsideInfo::adjustLogicalLineTop):
+        * rendering/shapes/ShapeInsideInfo.h: Renamed from Source/WebCore/rendering/ExclusionShapeInsideInfo.h.
+        (WebCore::LineSegmentIterator::LineSegmentIterator):
+        (WebCore::ShapeInsideInfo::createInfo):
+        (WebCore::ShapeInsideInfo::hasSegments):
+        (WebCore::ShapeInsideInfo::segments):
+        (WebCore::ShapeInsideInfo::segmentRanges):
+        (WebCore::ShapeInsideInfo::currentSegment):
+        (WebCore::ShapeInsideInfo::setNeedsLayout):
+        (WebCore::ShapeInsideInfo::needsLayout):
+        (WebCore::ShapeInsideInfo::ShapeInsideInfo):
+        * rendering/shapes/ShapeInterval.cpp: Renamed from Source/WebCore/rendering/ExclusionInterval.cpp.
+        (WebCore::IntervalX1Comparator::operator()):
+        (WebCore::ShapeInterval::intersect):
+        (WebCore::sortShapeIntervals):
+        (WebCore::mergeShapeIntervals):
+        (WebCore::intersectShapeIntervals):
+        (WebCore::subtractShapeIntervals):
+        * rendering/shapes/ShapeInterval.h: Renamed from Source/WebCore/rendering/ExclusionInterval.h.
+        (WebCore::ShapeInterval::ShapeInterval):
+        * rendering/shapes/ShapeOutsideInfo.cpp: Renamed from Source/WebCore/rendering/ExclusionShapeOutsideInfo.cpp.
+        (WebCore::ShapeOutsideInfo::isEnabledFor):
+        (WebCore::ShapeOutsideInfo::computeSegmentsForLine):
+        * rendering/shapes/ShapeOutsideInfo.h: Renamed from Source/WebCore/rendering/ExclusionShapeOutsideInfo.h.
+        (WebCore::ShapeOutsideInfo::shapeLogicalOffset):
+        (WebCore::ShapeOutsideInfo::leftSegmentShapeBoundingBoxDelta):
+        (WebCore::ShapeOutsideInfo::rightSegmentShapeBoundingBoxDelta):
+        (WebCore::ShapeOutsideInfo::createInfo):
+        (WebCore::ShapeOutsideInfo::ShapeOutsideInfo):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::initialShapeInside):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/ShapeValue.h: Renamed from Source/WebCore/rendering/style/ExclusionShapeValue.h.
+        (WebCore::ShapeValue::createShapeValue):
+        (WebCore::ShapeValue::createOutsideValue):
+        (WebCore::ShapeValue::createImageValue):
+        (WebCore::ShapeValue::type):
+        (WebCore::ShapeValue::shape):
+        (WebCore::ShapeValue::image):
+        (WebCore::ShapeValue::setImage):
+        (WebCore::ShapeValue::operator==):
+        (WebCore::ShapeValue::ShapeValue):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2013-06-10  Iago Toral Quiroga  <itoral@igalia.com>
 
         Use Cairo implementation of the WidgetBackingStore instead of X11 when running on Wayland

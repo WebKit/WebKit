@@ -39,7 +39,7 @@ class RenderBox;
 class RenderObject;
 class RenderFlowThread;
 #if ENABLE(CSS_SHAPES)
-class ExclusionShapeInsideInfo;
+class ShapeInsideInfo;
 #endif
 
 class LayoutState {
@@ -57,7 +57,7 @@ public:
         , m_lineGrid(0)
         , m_next(0)
 #if ENABLE(CSS_SHAPES)
-        , m_exclusionShapeInsideInfo(0)
+        , m_shapeInsideInfo(0)
 #endif
         , m_pageLogicalHeight(0)
 #ifndef NDEBUG
@@ -99,7 +99,7 @@ public:
     bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
 
 #if ENABLE(CSS_SHAPES)
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const { return m_exclusionShapeInsideInfo; }
+    ShapeInsideInfo* shapeInsideInfo() const { return m_shapeInsideInfo; }
 #endif
 private:
     // The normal operator new is disallowed.
@@ -126,7 +126,7 @@ public:
     RenderBlock* m_lineGrid;
     LayoutState* m_next;
 #if ENABLE(CSS_SHAPES)
-    ExclusionShapeInsideInfo* m_exclusionShapeInsideInfo;
+    ShapeInsideInfo* m_shapeInsideInfo;
 #endif
 
     // FIXME: Distinguish between the layout clip rect and the paint clip rect which may be larger,

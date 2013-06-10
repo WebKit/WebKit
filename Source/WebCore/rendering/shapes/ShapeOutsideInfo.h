@@ -27,36 +27,41 @@
  * SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef ShapeOutsideInfo_h
+#define ShapeOutsideInfo_h
 
 #if ENABLE(CSS_SHAPES)
 
-#include "ExclusionShapeOutsideInfo.h"
-
-#include "RenderBox.h"
+#include "LayoutSize.h"
+#include "ShapeInfo.h"
 
 namespace WebCore {
-bool ExclusionShapeOutsideInfo::isEnabledFor(const RenderBox* box)
-{
-    ExclusionShapeValue* value = box->style()->shapeOutside();
-    return box->isFloatingWithShapeOutside() && value->type() == ExclusionShapeValue::Shape && value->shape();
-}
 
-bool ExclusionShapeOutsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
-{
-    if (shapeSizeDirty() || m_lineTop != lineTop || m_lineHeight != lineHeight) {
-        if (ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside, &ExclusionShape::getExcludedIntervals>::computeSegmentsForLine(lineTop, lineHeight)) {
-            m_leftSegmentShapeBoundingBoxDelta = m_segments[0].logicalLeft - shapeLogicalLeft();
-            m_rightSegmentShapeBoundingBoxDelta = m_segments[m_segments.size()-1].logicalRight - shapeLogicalRight();
-        } else {
-            m_leftSegmentShapeBoundingBoxDelta = 0;
-            m_rightSegmentShapeBoundingBoxDelta = 0;
-        }
-        m_lineTop = lineTop;
-    }
+class RenderBox;
 
-    return m_segments.size();
-}
+class ShapeOutsideInfo : public ShapeInfo<RenderBox, &RenderStyle::shapeOutside, &Shape::getExcludedIntervals>, public MappedInfo<RenderBox, ShapeOutsideInfo> {
+public:
+    LayoutSize shapeLogicalOffset() const { return LayoutSize(shapeLogicalLeft(), shapeLogicalTop()); }
+
+    LayoutUnit leftSegmentShapeBoundingBoxDelta() const { return m_leftSegmentShapeBoundingBoxDelta; }
+    LayoutUnit rightSegmentShapeBoundingBoxDelta() const { return m_rightSegmentShapeBoundingBoxDelta; }
+
+    virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE;
+
+    static PassOwnPtr<ShapeOutsideInfo> createInfo(const RenderBox* renderer) { return adoptPtr(new ShapeOutsideInfo(renderer)); }
+    static bool isEnabledFor(const RenderBox*);
+
+protected:
+    virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapeMarginLogicalBoundingBox(); }
+
+private:
+    ShapeOutsideInfo(const RenderBox* renderer) : ShapeInfo<RenderBox, &RenderStyle::shapeOutside, &Shape::getExcludedIntervals>(renderer) { }
+
+    LayoutUnit m_leftSegmentShapeBoundingBoxDelta;
+    LayoutUnit m_rightSegmentShapeBoundingBoxDelta;
+    LayoutUnit m_lineTop;
+};
 
 }
+#endif
 #endif

@@ -27,8 +27,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef ExclusionShapeValue_h
-#define ExclusionShapeValue_h
+#ifndef ShapeValue_h
+#define ShapeValue_h
 
 #include "BasicShapes.h"
 #include "StyleImage.h"
@@ -36,31 +36,31 @@
 
 namespace WebCore {
 
-class ExclusionShapeValue : public RefCounted<ExclusionShapeValue> {
+class ShapeValue : public RefCounted<ShapeValue> {
 public:
-    enum ExclusionShapeValueType {
-        // The Auto value is defined by a null ExclusionShapeValue*
+    enum ShapeValueType {
+        // The Auto value is defined by a null ShapeValue*
         Shape,
         Outside,
         Image
     };
 
-    static PassRefPtr<ExclusionShapeValue> createShapeValue(PassRefPtr<BasicShape> shape)
+    static PassRefPtr<ShapeValue> createShapeValue(PassRefPtr<BasicShape> shape)
     {
-        return adoptRef(new ExclusionShapeValue(shape));
+        return adoptRef(new ShapeValue(shape));
     }
 
-    static PassRefPtr<ExclusionShapeValue> createOutsideValue()
+    static PassRefPtr<ShapeValue> createOutsideValue()
     {
-        return adoptRef(new ExclusionShapeValue(Outside));
+        return adoptRef(new ShapeValue(Outside));
     }
 
-    static PassRefPtr<ExclusionShapeValue> createImageValue(PassRefPtr<StyleImage> image)
+    static PassRefPtr<ShapeValue> createImageValue(PassRefPtr<StyleImage> image)
     {
-        return adoptRef(new ExclusionShapeValue(image));
+        return adoptRef(new ShapeValue(image));
     }
 
-    ExclusionShapeValueType type() const { return m_type; }
+    ShapeValueType type() const { return m_type; }
     BasicShape* shape() const { return m_shape.get(); }
     StyleImage* image() const { return m_image.get(); }
     void setImage(PassRefPtr<StyleImage> image)
@@ -68,24 +68,24 @@ public:
         if (m_image != image)
             m_image = image;
     }
-    bool operator==(const ExclusionShapeValue& other) const { return type() == other.type(); }
+    bool operator==(const ShapeValue& other) const { return type() == other.type(); }
 
 private:
-    ExclusionShapeValue(PassRefPtr<BasicShape> shape)
+    ShapeValue(PassRefPtr<BasicShape> shape)
         : m_type(Shape)
         , m_shape(shape)
     {
     }
-    ExclusionShapeValue(ExclusionShapeValueType type)
+    ShapeValue(ShapeValueType type)
         : m_type(type)
     {
     }
-    ExclusionShapeValue(PassRefPtr<StyleImage> image)
+    ShapeValue(PassRefPtr<StyleImage> image)
         : m_type(Image)
         , m_image(image)
     {
     }
-    ExclusionShapeValueType m_type;
+    ShapeValueType m_type;
     RefPtr<BasicShape> m_shape;
     RefPtr<StyleImage> m_image;
 };

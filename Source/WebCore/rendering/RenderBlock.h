@@ -35,8 +35,8 @@
 #include <wtf/ListHashSet.h>
 
 #if ENABLE(CSS_SHAPES)
-#include "ExclusionShapeInsideInfo.h"
-#include "ExclusionShapeValue.h"
+#include "ShapeInsideInfo.h"
+#include "ShapeValue.h"
 #endif
 
 namespace WebCore {
@@ -446,28 +446,28 @@ public:
 #endif
 
 #if ENABLE(CSS_SHAPES)
-    ExclusionShapeInsideInfo* ensureExclusionShapeInsideInfo()
+    ShapeInsideInfo* ensureShapeInsideInfo()
     {
         if (!m_rareData || !m_rareData->m_shapeInsideInfo)
-            setExclusionShapeInsideInfo(ExclusionShapeInsideInfo::createInfo(this));
+            setShapeInsideInfo(ShapeInsideInfo::createInfo(this));
         return m_rareData->m_shapeInsideInfo.get();
     }
 
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const
+    ShapeInsideInfo* shapeInsideInfo() const
     {
         if (!m_rareData || !m_rareData->m_shapeInsideInfo)
             return 0;
-        return ExclusionShapeInsideInfo::isEnabledFor(this) ? m_rareData->m_shapeInsideInfo.get() : 0;
+        return ShapeInsideInfo::isEnabledFor(this) ? m_rareData->m_shapeInsideInfo.get() : 0;
     }
-    void setExclusionShapeInsideInfo(PassOwnPtr<ExclusionShapeInsideInfo> value)
+    void setShapeInsideInfo(PassOwnPtr<ShapeInsideInfo> value)
     {
         if (!m_rareData)
             m_rareData = adoptPtr(new RenderBlockRareData(this));
         m_rareData->m_shapeInsideInfo = value;
     }
     void markShapeInsideDescendantsForLayout();
-    ExclusionShapeInsideInfo* layoutExclusionShapeInsideInfo() const;
-    bool allowsExclusionShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
+    ShapeInsideInfo* layoutShapeInsideInfo() const;
+    bool allowsShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
 #endif
 
 protected:
@@ -586,8 +586,8 @@ protected:
 
 private:
 #if ENABLE(CSS_SHAPES)
-    void computeExclusionShapeSize();
-    void updateExclusionShapeInsideInfoAfterStyleChange(const ExclusionShapeValue*, const ExclusionShapeValue* oldExclusionShape);
+    void computeShapeSize();
+    void updateShapeInsideInfoAfterStyleChange(const ShapeValue*, const ShapeValue* oldShape);
 #endif
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
@@ -790,7 +790,7 @@ private:
     LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
 #if ENABLE(CSS_SHAPES)
-        ExclusionShapeOutsideInfo *shapeOutside = child->renderer()->exclusionShapeOutsideInfo();
+        ShapeOutsideInfo *shapeOutside = child->renderer()->shapeOutsideInfo();
         if (shapeOutside)
             return child->x();
 #endif
@@ -804,7 +804,7 @@ private:
     LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
 #if ENABLE(CSS_SHAPES)
-        ExclusionShapeOutsideInfo *shapeOutside = child->renderer()->exclusionShapeOutsideInfo();
+        ShapeOutsideInfo *shapeOutside = child->renderer()->shapeOutsideInfo();
         if (shapeOutside)
             return child->y();
 #endif
@@ -1085,8 +1085,8 @@ private:
     void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
     void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines);
 #if ENABLE(CSS_SHAPES)
-    void updateShapeAndSegmentsForCurrentLine(ExclusionShapeInsideInfo*, LayoutUnit&, LineLayoutState&, bool&);
-    bool adjustLogicalLineTopAndLogicalHeightIfNeeded(ExclusionShapeInsideInfo*, LayoutUnit, LineLayoutState&, InlineBidiResolver&, FloatingObject*, InlineIterator&, WordMeasurements&);
+    void updateShapeAndSegmentsForCurrentLine(ShapeInsideInfo*, LayoutUnit&, LineLayoutState&, bool&);
+    bool adjustLogicalLineTopAndLogicalHeightIfNeeded(ShapeInsideInfo*, LayoutUnit, LineLayoutState&, InlineBidiResolver&, FloatingObject*, InlineIterator&, WordMeasurements&);
 #endif
     const InlineIterator& restartLayoutRunsAndFloatsInRange(LayoutUnit oldLogicalHeight, LayoutUnit newLogicalHeight,  FloatingObject* lastFloatFromPreviousLine, InlineBidiResolver&,  const InlineIterator&);
     void linkToEndLineIfNeeded(LineLayoutState&);
@@ -1293,7 +1293,7 @@ public:
 
         RootInlineBox* m_lineBreakToAvoidWidow;
 #if ENABLE(CSS_SHAPES)
-        OwnPtr<ExclusionShapeInsideInfo> m_shapeInsideInfo;
+        OwnPtr<ShapeInsideInfo> m_shapeInsideInfo;
 #endif
         bool m_shouldBreakAtLineToAvoidWidow : 1;
         bool m_discardMarginBefore : 1;

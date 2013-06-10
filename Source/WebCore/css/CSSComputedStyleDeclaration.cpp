@@ -66,7 +66,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CSS_SHAPES)
-#include "ExclusionShapeValue.h"
+#include "ShapeValue.h"
 #endif
 
 #if ENABLE(CSS_SHADERS)
@@ -2699,24 +2699,24 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitShapeInside:
             if (!style->shapeInside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
-            if (style->shapeInside()->type() == ExclusionShapeValue::Outside)
+            if (style->shapeInside()->type() == ShapeValue::Outside)
                 return cssValuePool().createIdentifierValue(CSSValueOutsideShape);
-            if (style->shapeInside()->type() == ExclusionShapeValue::Image) {
+            if (style->shapeInside()->type() == ShapeValue::Image) {
                 if (style->shapeInside()->image())
                     return style->shapeInside()->image()->cssValue();
                 return cssValuePool().createIdentifierValue(CSSValueNone);
             }
-            ASSERT(style->shapeInside()->type() == ExclusionShapeValue::Shape);
+            ASSERT(style->shapeInside()->type() == ShapeValue::Shape);
             return valueForBasicShape(style->shapeInside()->shape());
         case CSSPropertyWebkitShapeOutside:
             if (!style->shapeOutside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
-            if (style->shapeOutside()->type() == ExclusionShapeValue::Image) {
+            if (style->shapeOutside()->type() == ShapeValue::Image) {
                 if (style->shapeOutside()->image())
                     return style->shapeOutside()->image()->cssValue();
                 return cssValuePool().createIdentifierValue(CSSValueNone);
             }
-            ASSERT(style->shapeOutside()->type() == ExclusionShapeValue::Shape);
+            ASSERT(style->shapeOutside()->type() == ShapeValue::Shape);
             return valueForBasicShape(style->shapeOutside()->shape());
 #endif
 #if ENABLE(CSS_FILTERS)

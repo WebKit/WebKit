@@ -28,46 +28,34 @@
  */
 
 #include "config.h"
-#include "ExclusionShapeInsideInfo.h"
 
 #if ENABLE(CSS_SHAPES)
 
-#include "InlineIterator.h"
-#include "RenderBlock.h"
+#include "ShapeOutsideInfo.h"
+
+#include "RenderBox.h"
 
 namespace WebCore {
-
-LineSegmentRange::LineSegmentRange(const InlineIterator& start, const InlineIterator& end)
-    : start(start.root(), start.object(), start.offset())
-    , end(end.root(), end.object(), end.offset())
-    {
-    }
-
-bool ExclusionShapeInsideInfo::isEnabledFor(const RenderBlock* renderer)
+bool ShapeOutsideInfo::isEnabledFor(const RenderBox* box)
 {
-    ExclusionShapeValue* shapeValue = renderer->style()->resolvedShapeInside();
-    if (!shapeValue || shapeValue->type() != ExclusionShapeValue::Shape)
-        return false;
-
-    BasicShape* shape = shapeValue->shape();
-    return shape && shape->type() != BasicShape::BasicShapeInsetRectangleType;
+    ShapeValue* value = box->style()->shapeOutside();
+    return box->isFloatingWithShapeOutside() && value->type() == ShapeValue::Shape && value->shape();
 }
 
-bool ExclusionShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)
+bool ShapeOutsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
 {
-    const ExclusionShape* shape = computedShape();
-    if (!shape || m_lineHeight <= 0 || logicalLineTop() > shapeLogicalBottom())
-        return false;
-
-    LayoutUnit newLineTop;
-    if (shape->firstIncludedIntervalLogicalTop(m_shapeLineTop, LayoutSize(minSegmentWidth, m_lineHeight), newLineTop)) {
-        if (newLineTop > m_shapeLineTop) {
-            m_shapeLineTop = newLineTop;
-            return true;
+    if (shapeSizeDirty() || m_lineTop != lineTop || m_lineHeight != lineHeight) {
+        if (ShapeInfo<RenderBox, &RenderStyle::shapeOutside, &Shape::getExcludedIntervals>::computeSegmentsForLine(lineTop, lineHeight)) {
+            m_leftSegmentShapeBoundingBoxDelta = m_segments[0].logicalLeft - shapeLogicalLeft();
+            m_rightSegmentShapeBoundingBoxDelta = m_segments[m_segments.size()-1].logicalRight - shapeLogicalRight();
+        } else {
+            m_leftSegmentShapeBoundingBoxDelta = 0;
+            m_rightSegmentShapeBoundingBoxDelta = 0;
         }
+        m_lineTop = lineTop;
     }
 
-    return false;
+    return m_segments.size();
 }
 
 }

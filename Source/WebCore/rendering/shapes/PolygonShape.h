@@ -27,12 +27,12 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ExclusionPolygon_h
-#define ExclusionPolygon_h
+#ifndef PolygonShape_h
+#define PolygonShape_h
 
-#include "ExclusionInterval.h"
-#include "ExclusionShape.h"
 #include "FloatPolygon.h"
+#include "Shape.h"
+#include "ShapeInterval.h"
 
 namespace WebCore {
 
@@ -80,11 +80,11 @@ private:
     Basis m_basis;
 };
 
-class ExclusionPolygon : public ExclusionShape {
-    WTF_MAKE_NONCOPYABLE(ExclusionPolygon);
+class PolygonShape : public Shape {
+    WTF_MAKE_NONCOPYABLE(PolygonShape);
 public:
-    ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, WindRule fillRule)
-        : ExclusionShape()
+    PolygonShape(PassOwnPtr<Vector<FloatPoint> > vertices, WindRule fillRule)
+        : Shape()
         , m_polygon(vertices, fillRule)
         , m_marginBounds(nullptr)
         , m_paddingBounds(nullptr)
@@ -109,4 +109,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ExclusionPolygon_h
+#endif // PolygonShape_h

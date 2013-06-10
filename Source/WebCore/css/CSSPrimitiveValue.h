@@ -121,7 +121,7 @@ public:
         // This is used internally for counter names (as opposed to counter values)
         CSS_COUNTER_NAME = 110,
 
-        // This is used by the CSS Exclusions draft
+        // This is used by the CSS Shapes draft
         CSS_SHAPE = 111,
 
         // Used by border images.
