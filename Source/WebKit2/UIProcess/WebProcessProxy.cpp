@@ -637,6 +637,9 @@ void WebProcessProxy::pagePreferencesChanged(WebKit::WebPageProxy *page)
 
 void WebProcessProxy::requestTermination()
 {
+    if (!isValid())
+        return;
+
     ChildProcessProxy::terminate();
 
     if (webConnection())
