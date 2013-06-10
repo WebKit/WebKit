@@ -168,12 +168,12 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
         // prefixed by a content-type meta tag.
         CString markup = String(gMarkupPrefix + dataObject->markup()).utf8();
         gtk_selection_data_set(selectionData, markupAtom, 8,
-            reinterpret_cast<const guchar*>(markup.data()), markup.length() + 1);
+            reinterpret_cast<const guchar*>(markup.data()), markup.length());
 
     } else if (info == TargetTypeURIList) {
         CString uriList = dataObject->uriList().utf8();
         gtk_selection_data_set(selectionData, uriListAtom, 8,
-            reinterpret_cast<const guchar*>(uriList.data()), uriList.length() + 1);
+            reinterpret_cast<const guchar*>(uriList.data()), uriList.length());
 
     } else if (info == TargetTypeNetscapeURL && dataObject->hasURL()) {
         String url(dataObject->url());
@@ -187,7 +187,7 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
 
         GOwnPtr<gchar> resultData(g_strdup(result.utf8().data()));
         gtk_selection_data_set(selectionData, netscapeURLAtom, 8,
-            reinterpret_cast<const guchar*>(resultData.get()), strlen(resultData.get()) + 1);
+            reinterpret_cast<const guchar*>(resultData.get()), strlen(resultData.get()));
 
     } else if (info == TargetTypeImage)
         gtk_selection_data_set_pixbuf(selectionData, dataObject->image());
