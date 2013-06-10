@@ -21,7 +21,7 @@
 [
     JSGenerateToNativeObject,
     NamedConstructor=Option([Default=NullString] optional DOMString data, [Default=NullString] optional DOMString value, [Default=Undefined] optional boolean defaultSelected, [Default=Undefined] optional boolean selected),
-    ConstructorRaisesException
+    RaisesException
 ] interface HTMLOptionElement : HTMLElement {
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;

@@ -34,7 +34,7 @@
     ActiveDOMObject,
     Constructor(DOMString url, optional Dictionary eventSourceInit),
     CallWith=ScriptExecutionContext,
-    ConstructorRaisesException,
+    RaisesException,
     EventTarget,
     JSNoStaticTables
 ] interface EventSource {

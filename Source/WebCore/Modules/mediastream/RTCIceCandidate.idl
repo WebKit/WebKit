@@ -31,7 +31,7 @@
 [
     Conditional=MEDIA_STREAM,
     Constructor(Dictionary dictionary),
-    ConstructorRaisesException
+    RaisesException
 ] interface RTCIceCandidate {
     readonly attribute DOMString candidate;
     readonly attribute DOMString sdpMid;

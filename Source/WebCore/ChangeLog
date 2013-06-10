@@ -1,3 +1,39 @@
+2013-06-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Replace [ConstructorRaisesException] with [RaisesException]
+        https://bugs.webkit.org/show_bug.cgi?id=117400
+
+        Reviewed by Kentaro Hara.
+
+        Replace [ConstructorRaisesException] with [RaisesException] IDL extended
+        attribute and drop [ConstructorRaisesException]. It makes little sense
+        to have 2 extended attributes with the same meaning.
+
+        [RaisesException] can now be used on IDL operations to indicate that the
+        method may throw exceptions or on interfaces to indicate that the
+        constructor may throw exceptions.
+
+        From Blink r148027 by Kentaro Hara <haraken@chromium.org>.
+
+        No new tests, no behavior change.
+
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestNamedConstructor.idl:
+        * css/WebKitCSSMatrix.idl:
+        * html/HTMLOptionElement.idl:
+        * page/EventSource.idl:
+        * workers/SharedWorker.idl:
+        * workers/Worker.idl:
+
 2013-06-10  Mátyás Mustoha  <mmatyas@inf.u-szeged.hu>
 
         Web Inspector: refactor statusBarItems getter in front-end.
