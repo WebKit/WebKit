@@ -1,3 +1,23 @@
+2013-06-10  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r150633): Find on page non-focused text highlight color is bright yellow.
+        <rdar://problem/14098882>
+        <http://webkit.org/b/117371>
+
+        Reviewed by Anders Carlsson.
+
+        There was a mistake in the parameter ordering which still compiled because of
+        implicit bool/unsigned conversion.
+        Changed the interface of Page::findMatchesForText() to use enums instead of bools.
+
+        No test because the color of the highlighted matches is not available through APIs.
+
+        * page/Page.h:
+        * page/Page.cpp:
+        (WebCore::Page::findMatchesForText):
+        (WebCore::Page::markAllMatchesForText):
+        (WebCore::Page::countFindMatches):
+
 2013-06-10  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes][CSS Exclusions] Split CSS Exclusions and CSS Shapes code

@@ -419,7 +419,10 @@ private:
     void checkSubframeCountConsistency() const;
 #endif
 
-    unsigned findMatchesForText(const String&, FindOptions, unsigned maxMatchCount, bool shouldHighlight, bool markMatches);
+    enum ShouldHighlightMatches { DoNotHighlightMatches, HighlightMatches };
+    enum ShouldMarkMatches { DoNotMarkMatches, MarkMatches };
+
+    unsigned findMatchesForText(const String&, FindOptions, unsigned maxMatchCount, ShouldHighlightMatches, ShouldMarkMatches);
 
     MediaCanStartListener* takeAnyMediaCanStartListener();
 

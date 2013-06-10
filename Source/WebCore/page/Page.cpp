@@ -648,7 +648,7 @@ PassRefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRang
     return 0;
 }
 
-unsigned Page::findMatchesForText(const String& target, FindOptions options, unsigned maxMatchCount, bool shouldHighlight, bool markMatches)
+unsigned Page::findMatchesForText(const String& target, FindOptions options, unsigned maxMatchCount, ShouldHighlightMatches shouldHighlightMatches, ShouldMarkMatches shouldMarkMatches)
 {
     if (target.isEmpty() || !mainFrame())
         return 0;
@@ -657,9 +657,9 @@ unsigned Page::findMatchesForText(const String& target, FindOptions options, uns
 
     Frame* frame = mainFrame();
     do {
-        if (markMatches)
-            frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlight);
-        matchCount += frame->editor().countMatchesForText(target, 0, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, markMatches, 0);
+        if (shouldMarkMatches == MarkMatches)
+            frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlightMatches == HighlightMatches);
+        matchCount += frame->editor().countMatchesForText(target, 0, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, shouldMarkMatches == MarkMatches, 0);
         frame = incrementFrame(frame, true, false);
     } while (frame);
 
@@ -668,12 +668,12 @@ unsigned Page::findMatchesForText(const String& target, FindOptions options, uns
 
 unsigned Page::markAllMatchesForText(const String& target, FindOptions options, bool shouldHighlight, unsigned maxMatchCount)
 {
-    return findMatchesForText(target, options, shouldHighlight, maxMatchCount, /*markMatches*/ true);
+    return findMatchesForText(target, options, maxMatchCount, shouldHighlight ? HighlightMatches : DoNotHighlightMatches, MarkMatches);
 }
 
 unsigned Page::countFindMatches(const String& target, FindOptions options, unsigned maxMatchCount)
 {
-    return findMatchesForText(target, options, /*shouldHighlight*/ false, maxMatchCount, /*markMatches*/ false);
+    return findMatchesForText(target, options, maxMatchCount, DoNotHighlightMatches, DoNotMarkMatches);
 }
 
 void Page::unmarkAllTextMatches()
