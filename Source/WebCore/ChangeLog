@@ -1,3 +1,68 @@
+2013-06-10  Mátyás Mustoha  <mmatyas@inf.u-szeged.hu>
+
+        Web Inspector: refactor statusBarItems getter in front-end.
+        https://bugs.webkit.org/show_bug.cgi?id=110114
+
+        Reviewed by Noam Rosenthal.
+
+        Refactored "statusBarItems" methods from getters into functions and
+        moved default implementation from Panel.js to View.js.
+
+        Patch created by Andrey Lushnikov.
+
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.SearchView.prototype.statusBarItems):
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView.prototype.statusBarItems):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype.statusBarItems):
+        * inspector/front-end/CPUProfileView.js:
+        (WebInspector.CPUProfileView.prototype.statusBarItems):
+        * inspector/front-end/CSSSelectorProfileView.js:
+        (WebInspector.CSSSelectorProfileView.prototype.statusBarItems):
+        * inspector/front-end/CanvasProfileView.js:
+        (WebInspector.CanvasProfileView.prototype.statusBarItems):
+        (WebInspector.CanvasProfileType.prototype.statusBarItems):
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel.prototype.statusBarItems):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.statusBarItems):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype.statusBarItems):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype.statusBarItems):
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype.statusBarItems):
+        * inspector/front-end/Drawer.js:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.statusBarItems):
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionPanel.prototype.statusBarItems):
+        * inspector/front-end/FileSystemView.js:
+        (WebInspector.FileSystemView.prototype.statusBarItems):
+        * inspector/front-end/HeapSnapshotView.js:
+        * inspector/front-end/IndexedDBViews.js:
+        (WebInspector.IDBDataView.prototype.statusBarItems):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype.statusBarItems):
+        (WebInspector.NetworkPanel.prototype.statusBarItems):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.wasShown):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfileType.prototype.statusBarItems):
+        (WebInspector.ProfilesPanel.prototype.statusBarItems):
+        (WebInspector.ProfilesPanel.prototype._updateProfileTypeSpecificUI):
+        (WebInspector.ProfilesPanel.prototype._showProfile):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.statusBarItems):
+        (WebInspector.ResourcesPanel.prototype._innerShowView):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.statusBarItems):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.statusBarItems):
+        * inspector/front-end/View.js:
+        (WebInspector.View.prototype.statusBarItems):
+
 2013-06-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Add special tree walking for the single tag or class CSS query selectors

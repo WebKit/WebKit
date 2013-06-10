@@ -134,7 +134,7 @@ WebInspector.ConsoleView.Events = {
 }
 
 WebInspector.ConsoleView.prototype = {
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this._clearConsoleButton.element, this._frameSelector.element, this._contextSelector.element, this._filterBarElement];
     },

@@ -362,7 +362,7 @@ WebInspector.IDBDataView.prototype = {
         this._model.clearObjectStore(this._databaseId, this._objectStore.name, cleared.bind(this));
     },
 
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this._refreshButton.element, this._clearButton.element];
     },

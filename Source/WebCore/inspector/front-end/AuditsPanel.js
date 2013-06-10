@@ -64,7 +64,7 @@ WebInspector.AuditsPanel = function()
 }
 
 WebInspector.AuditsPanel.prototype = {
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this.clearResultsButton.element];
     },

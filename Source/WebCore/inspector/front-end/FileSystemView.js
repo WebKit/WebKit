@@ -61,9 +61,9 @@ WebInspector.FileSystemView = function(fileSystem)
 
 WebInspector.FileSystemView.prototype = {
     /**
-     * @type {Array.<Element>}
+     * @return {Array.<Element>}
      */
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this._refreshButton.element, this._deleteButton.element];
     },

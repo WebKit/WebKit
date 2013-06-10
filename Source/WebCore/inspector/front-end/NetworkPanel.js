@@ -121,7 +121,7 @@ WebInspector.NetworkLogView.prototype = {
         this.switchToDetailedView();
     },
 
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this._largerRequestsButton.element, this._preserveLogToggle.element, this._clearButton.element, this._filterBarElement, this._progressBarContainer];
     },
@@ -1499,9 +1499,9 @@ WebInspector.NetworkPanel = function()
 }
 
 WebInspector.NetworkPanel.prototype = {
-    get statusBarItems()
+    statusBarItems: function()
     {
-        return this._networkLogView.statusBarItems;
+        return this._networkLogView.statusBarItems();
     },
 
     elementsToRestoreScrollPositionsFor: function()

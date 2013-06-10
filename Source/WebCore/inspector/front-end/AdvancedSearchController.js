@@ -230,7 +230,7 @@ WebInspector.SearchView.prototype = {
     /**
      * @return {Array.<Element>}
      */
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this._searchStatusBarElement, this._searchResultsMessageElement];
     },

@@ -136,7 +136,7 @@ WebInspector.CPUProfileView.prototype = {
             this.flameChart.update();
     },
 
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this.viewSelectComboBox.element, this.percentButton.element, this.focusButton.element, this.excludeButton.element, this.resetButton.element];
     },

@@ -116,7 +116,7 @@ WebInspector.CSSSelectorProfileView = function(profile)
 }
 
 WebInspector.CSSSelectorProfileView.prototype = {
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this.percentButton.element];
     },

@@ -221,7 +221,7 @@ WebInspector.TimelinePanel.prototype = {
         return this._calculator;
     },
 
-    get statusBarItems()
+    statusBarItems: function()
     {
         return this._statusBarItems.select("element").concat([
             this._miscStatusBarItems

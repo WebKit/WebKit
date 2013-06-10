@@ -76,7 +76,7 @@ WebInspector.ApplicationCacheItemsView = function(model, frameId)
 }
 
 WebInspector.ApplicationCacheItemsView.prototype = {
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [
             this.deleteButton.element,

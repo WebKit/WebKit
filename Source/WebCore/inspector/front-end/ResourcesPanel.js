@@ -118,7 +118,7 @@ WebInspector.ResourcesPanel = function(database)
 }
 
 WebInspector.ResourcesPanel.prototype = {
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this.storageViewStatusBarItemsContainer];
     },
@@ -557,7 +557,7 @@ WebInspector.ResourcesPanel.prototype = {
         this.visibleView = view;
 
         this.storageViewStatusBarItemsContainer.removeChildren();
-        var statusBarItems = view.statusBarItems || [];
+        var statusBarItems = view.statusBarItems() || [];
         for (var i = 0; i < statusBarItems.length; ++i)
             this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },

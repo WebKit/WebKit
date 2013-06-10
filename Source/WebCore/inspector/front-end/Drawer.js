@@ -80,7 +80,7 @@ WebInspector.Drawer.prototype = {
 
         this._view = view;
 
-        var statusBarItems = this._view.statusBarItems || [];
+        var statusBarItems = this._view.statusBarItems() || [];
         this._viewStatusBar.removeChildren();
         for (var i = 0; i < statusBarItems.length; ++i)
             this._viewStatusBar.appendChild(statusBarItems[i]);

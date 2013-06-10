@@ -22,7 +22,7 @@ function initialize_extensionsPanelTest()
     InspectorTest.dumpStatusBarButtons = function()
     {
         var panel = WebInspector.inspectorView.currentPanel();
-        var items = panel.statusBarItems;
+        var items = panel.statusBarItems();
         InspectorTest.addResult("Status bar buttons state:");
         for (var i = 0; i < items.length; ++i) {
             var item = items[i];
@@ -39,7 +39,7 @@ function initialize_extensionsPanelTest()
     InspectorTest.clickButton = function(index)
     {
         var panel = WebInspector.inspectorView.currentPanel();
-        panel.statusBarItems[index].click();
+        panel.statusBarItems()[index].click();
     }
 
     InspectorTest.clickOnURL = function()

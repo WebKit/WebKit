@@ -62,7 +62,7 @@ WebInspector.Panel.prototype = {
     {
         var panelStatusBar = document.getElementById("panel-status-bar")
         var drawerViewAnchor = document.getElementById("drawer-view-anchor");
-        var statusBarItems = this.statusBarItems;
+        var statusBarItems = this.statusBarItems();
         if (statusBarItems) {
             this._statusBarItemContainer = document.createElement("div");
             for (var i = 0; i < statusBarItems.length; ++i)
@@ -204,12 +204,6 @@ WebInspector.Panel.prototype = {
     _sidebarWidthSettingName: function()
     {
         return this._panelName + "SidebarWidth";
-    },
-
-    // Should be implemented by ancestors.
-
-    get statusBarItems()
-    {
     },
 
     /**

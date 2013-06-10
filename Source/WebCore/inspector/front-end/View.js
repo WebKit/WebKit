@@ -45,7 +45,15 @@ WebInspector.View._cssFileToVisibleViewCount = {};
 WebInspector.View._cssFileToStyleElement = {};
 
 WebInspector.View.prototype = {
-    /**
+     /**
+      * @return {Array.<Element>}
+      */
+     statusBarItems: function()
+     {
+         return [];
+     },
+
+     /**
      * @return {?Element}
      */
     statusBarText: function()

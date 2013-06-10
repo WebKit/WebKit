@@ -97,7 +97,7 @@ WebInspector.CanvasProfileView.prototype = {
         this._linkifier.reset();
     },
 
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [];
     },
@@ -538,7 +538,7 @@ WebInspector.CanvasProfileType = function()
 WebInspector.CanvasProfileType.TypeId = "CANVAS_PROFILE";
 
 WebInspector.CanvasProfileType.prototype = {
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this._capturingModeSelector.element, this._frameSelector.element];
     },

@@ -50,7 +50,7 @@ WebInspector.ExtensionPanel.prototype = {
         return WebInspector.View.prototype.defaultFocusedElement.call(this);
     },
 
-    get statusBarItems()
+    statusBarItems: function()
     {
         return this._statusBarItems;
     },

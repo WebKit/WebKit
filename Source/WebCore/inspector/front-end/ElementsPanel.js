@@ -113,7 +113,7 @@ WebInspector.ElementsPanel = function()
 }
 
 WebInspector.ElementsPanel.prototype = {
-    get statusBarItems()
+    statusBarItems: function()
     {
         return [this.crumbsElement];
     },

@@ -171,7 +171,7 @@ WebInspector.HeapSnapshotView.prototype = {
         this.retainmentDataGrid.dispose();
     },
 
-    get statusBarItems()
+    statusBarItems: function()
     {
         /**
          * @param {boolean=} hidden
