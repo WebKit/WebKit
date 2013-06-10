@@ -618,4 +618,11 @@ void WebProcessProxy::pagePreferencesChanged(WebKit::WebPageProxy *page)
 #endif
 }
 
+void WebProcessProxy::requestTermination()
+{
+    ChildProcessProxy::terminate();
+    webConnection()->didClose();
+    disconnect();
+}
+
 } // namespace WebKit
