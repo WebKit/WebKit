@@ -115,6 +115,8 @@ public:
     void updateProcessSuppressionState();
 #endif
 
+    void requestTermination();
+
 private:
     explicit WebProcessProxy(PassRefPtr<WebContext>);
 
