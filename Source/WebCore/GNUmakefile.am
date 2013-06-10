@@ -734,7 +734,7 @@ dist_webinspectorimages_DATA = \
 
 # It seems that $(shell) does not expand when it is a rule dependency, so
 # we must redefine this list of copied files with traditional dependency wildcards.
-noinst_DATA = ${GENSOURCES_INSPECTOR}/inspector.html
+noinst_DATA += ${GENSOURCES_INSPECTOR}/inspector.html
 ${GENSOURCES_INSPECTOR}/inspector.html: $(WebCore)/inspector/front-end/*.html \
 		$(WebCore)/inspector/front-end/*.js \
 		$(WebCore)/inspector/front-end/UglifyJS/*.js \

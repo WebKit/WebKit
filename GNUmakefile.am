@@ -49,6 +49,7 @@ libwebkitgtkincludedir := $(prefix)/include/webkitgtk-@WEBKITGTK_API_VERSION@
 bin_PROGRAMS :=
 noinst_PROGRAMS :=
 libexec_PROGRAMS :=
+noinst_DATA :=
 noinst_HEADERS :=
 noinst_LTLIBRARIES :=
 lib_LTLIBRARIES :=
