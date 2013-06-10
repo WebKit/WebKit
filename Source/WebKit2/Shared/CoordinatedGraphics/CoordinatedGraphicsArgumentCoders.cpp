@@ -1184,7 +1184,7 @@ bool ArgumentCoder<CoordinatedGraphicsState>::decode(ArgumentDecoder& decoder, C
         state.customFiltersToCreate.append(std::make_pair(filterID, filterInfo));
     }
 
-    if (!decoder.decode(state.updateAtlasesToRemove))
+    if (!decoder.decode(state.customFiltersToRemove))
         return false;
 #endif
 
