@@ -3616,6 +3616,9 @@ void WebPageProxy::processDidCrash()
 
 void WebPageProxy::resetStateAfterProcessExited()
 {
+    if (!isValid())
+        return;
+
     ASSERT(m_pageClient);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
