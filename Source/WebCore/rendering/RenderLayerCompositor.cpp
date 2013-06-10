@@ -921,13 +921,16 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
 void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer* layer, OverlapMap* overlapMap, CompositingState& compositingState, bool& layersChanged, bool& descendantHas3DTransform)
 {
     layer->updateLayerListsIfNeeded();
-    
+
+    if (layer->isOutOfFlowRenderFlowThread())
+        return;
+
     if (overlapMap)
         overlapMap->geometryMap().pushMappingsToAncestor(layer, ancestorLayer);
     
     // Clear the flag
     layer->setHasCompositingDescendant(false);
-    
+
     RenderLayer::IndirectCompositingReason compositingReason = compositingState.m_subtreeIsCompositing ? RenderLayer::IndirectCompositingForStacking : RenderLayer::NoIndirectCompositingReason;
 
     bool haveComputedBounds = false;
@@ -1155,6 +1158,9 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
     // Make the layer compositing if necessary, and set up clipping and content layers.
     // Note that we can only do work here that is independent of whether the descendant layers
     // have been processed. computeCompositingRequirements() will already have done the repaint if necessary.
+
+    if (layer->isOutOfFlowRenderFlowThread())
+        return;
     
     RenderLayerBacking* layerBacking = layer->backing();
     if (layerBacking) {

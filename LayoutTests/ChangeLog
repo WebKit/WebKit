@@ -1,3 +1,13 @@
+2013-06-10  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] ASSERTION FAILED: roundedIntPoint(rendererMappedResult) == roundedIntPoint(result) in RenderGeometryMap::mapToContainer
+        https://bugs.webkit.org/show_bug.cgi?id=117395
+
+        Reviewed by Alexandru Chiculita.
+
+        * fast/regions/assert-flow-thread-compositing-expected.txt: Added.
+        * fast/regions/assert-flow-thread-compositing.html: Added.
+
 2013-06-10  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Rename region-overflow to region-fragment
