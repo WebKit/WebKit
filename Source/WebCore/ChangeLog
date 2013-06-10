@@ -1,3 +1,28 @@
+2013-06-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add special tree walking for the single tag or class CSS query selectors
+        https://bugs.webkit.org/show_bug.cgi?id=117388
+
+        Reviewed by Ryosuke Niwa.
+
+        Queries for a single tag name or a single class name are the most common
+        input of querySelector.
+
+        This patch adds a simplified tree walking in those cases, only checking that particular
+        case instead of a full selector.
+
+        With the change, the balanced query selector benchmarks become 11% faster.
+
+        * css/SelectorCheckerFastPath.cpp:
+        (WebCore::HTMLNames::checkClassValue):
+        * dom/SelectorQuery.cpp:
+        (WebCore::isSingleTagNameSelector):
+        (WebCore::SelectorDataList::executeSingleTagNameSelectorData):
+        (WebCore::isSingleClassNameSelector):
+        (WebCore::SelectorDataList::executeSingleClassNameSelectorData):
+        (WebCore::SelectorDataList::execute):
+        * dom/SelectorQuery.h:
+
 2013-06-09  Roger Fong  <roger_fong@apple.com>
 
         Layout info should never be cleared before delayed scroll information updates.

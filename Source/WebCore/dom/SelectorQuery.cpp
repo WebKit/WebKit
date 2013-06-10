@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,6 +149,48 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Node* ro
         matchedElements.append(element);
 }
 
+static bool isSingleTagNameSelector(const CSSSelector* selector)
+{
+    return selector->isLastInTagHistory() && selector->m_match == CSSSelector::Tag;
+}
+
+template <bool firstMatchOnly>
+ALWAYS_INLINE void SelectorDataList::executeSingleTagNameSelectorData(const Node* rootNode, const SelectorData& selectorData, Vector<RefPtr<Node> >& matchedElements) const
+{
+    ASSERT(m_selectors.size() == 1);
+    ASSERT(isSingleTagNameSelector(selectorData.selector));
+
+    const QualifiedName& tagQualifiedName = selectorData.selector->tagQName();
+    for (Element* element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::next(element, rootNode)) {
+        if (SelectorChecker::tagMatches(element, tagQualifiedName)) {
+            matchedElements.append(element);
+            if (firstMatchOnly)
+                return;
+        }
+    }
+}
+
+static bool isSingleClassNameSelector(const CSSSelector* selector)
+{
+    return selector->isLastInTagHistory() && selector->m_match == CSSSelector::Class;
+}
+
+template <bool firstMatchOnly>
+ALWAYS_INLINE void SelectorDataList::executeSingleClassNameSelectorData(const Node* rootNode, const SelectorData& selectorData, Vector<RefPtr<Node> >& matchedElements) const
+{
+    ASSERT(m_selectors.size() == 1);
+    ASSERT(isSingleClassNameSelector(selectorData.selector));
+
+    const AtomicString& className = selectorData.selector->value();
+    for (Element* element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::next(element, rootNode)) {
+        if (element->hasClass() && static_cast<const StyledElement*>(element)->classNames().contains(className)) {
+            matchedElements.append(element);
+            if (firstMatchOnly)
+                return;
+        }
+    }
+}
+
 template <bool firstMatchOnly>
 ALWAYS_INLINE void SelectorDataList::executeSingleSelectorData(const Node* rootNode, const SelectorData& selectorData, Vector<RefPtr<Node> >& matchedElements) const
 {
@@ -186,6 +228,10 @@ ALWAYS_INLINE void SelectorDataList::execute(Node* rootNode, Vector<RefPtr<Node>
         const SelectorData& selectorData = m_selectors[0];
         if (const CSSSelector* idSelector = selectorForIdLookup(rootNode, selectorData.selector))
             executeFastPathForIdSelector<firstMatchOnly>(rootNode, selectorData, idSelector, matchedElements);
+        else if (isSingleTagNameSelector(selectorData.selector))
+            executeSingleTagNameSelectorData<firstMatchOnly>(rootNode, selectorData, matchedElements);
+        else if (isSingleClassNameSelector(selectorData.selector))
+            executeSingleClassNameSelectorData<firstMatchOnly>(rootNode, selectorData, matchedElements);
         else
             executeSingleSelectorData<firstMatchOnly>(rootNode, selectorData, matchedElements);
         return;
