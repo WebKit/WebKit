@@ -2603,6 +2603,9 @@ void FrameView::performPostLayoutTasks()
     if (renderView)
         renderView->updateWidgetPositions();
     
+    // layout() protects FrameView, but it still can get destroyed when updateWidgets()
+    // is called through the post layout timer.
+    RefPtr<FrameView> protector(this);
     for (unsigned i = 0; i < maxUpdateWidgetsIterations; i++) {
         if (updateWidgets())
             break;
