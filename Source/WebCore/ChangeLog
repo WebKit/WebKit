@@ -1,3 +1,20 @@
+2013-06-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        Refactor CALCFUNCTION rules in the CSS grammar
+        https://bugs.webkit.org/show_bug.cgi?id=117401
+
+        Reviewed by Andreas Kling.
+
+        From Blink r149862 by <serya@chromium.org>.
+
+        Reduce the number of CALCFUNCTION rules by refactoring the closing
+        parenthesis handling code.
+
+        No new tests required as this is a refactoring, no new functionality
+        added.
+
+        * css/CSSGrammar.y.in:
+
 2013-06-10  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Rename region-overflow to region-fragment

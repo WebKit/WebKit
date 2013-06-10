@@ -1799,22 +1799,21 @@ calc_func_operator:
     | WHITESPACE '-' WHITESPACE {
         $$ = '-';
     }
-    | WHITESPACE '*' maybe_space {
+    | calc_maybe_space '*' maybe_space {
         $$ = '*';
     }
-    | WHITESPACE '/' maybe_space {
-        $$ = '/';
-    }
-    | '*' maybe_space {
-        $$ = '*';
-    }
-    | '/' maybe_space {
+    | calc_maybe_space '/' maybe_space {
         $$ = '/';
     }
   ;
 
+calc_maybe_space:
+    /* empty */
+    | WHITESPACE
+  ;
+
 calc_func_paren_expr:
-    '(' maybe_space calc_func_expr calc_closing_paren {
+    '(' maybe_space calc_func_expr calc_maybe_space ')' {
         if ($3) {
             $$ = $3;
             CSSParserValue v;
@@ -1827,10 +1826,7 @@ calc_func_paren_expr:
         } else
             $$ = 0;
     }
-
-calc_closing_paren:
-    WHITESPACE ')'
-    | ')'
+  ;
 
 calc_func_expr:
     calc_func_term {
@@ -1869,13 +1865,10 @@ calc_func_expr:
   ;
 
 calc_func_expr_list:
-    calc_func_expr WHITESPACE {
-        $$ = $1;
-    }    
-    | calc_func_expr {
+    calc_func_expr calc_maybe_space {
         $$ = $1;
     }
-    | calc_func_expr_list ',' maybe_space calc_func_expr WHITESPACE {
+    | calc_func_expr_list ',' maybe_space calc_func_expr calc_maybe_space {
         if ($1 && $4) {
             $$ = $1;
             CSSParserValue v;
@@ -1887,22 +1880,10 @@ calc_func_expr_list:
         } else
             $$ = 0;
     }
-    | calc_func_expr_list ',' maybe_space calc_func_expr {
-        if ($1 && $4) {
-            $$ = $1;
-            CSSParserValue v;
-            v.id = 0;
-            v.unit = CSSParserValue::Operator;
-            v.iValue = ',';
-            $$->addValue(v);
-            $$->extend(*($4));
-        } else
-            $$ = 0;
-    }
-    
+  ;
 
 calc_function:
-    CALCFUNCTION maybe_space calc_func_expr calc_closing_paren maybe_space {
+    CALCFUNCTION maybe_space calc_func_expr calc_maybe_space ')' maybe_space {
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = parser->sinkFloatingValueList($3);
