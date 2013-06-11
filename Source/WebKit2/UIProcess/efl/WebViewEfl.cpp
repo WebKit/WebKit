@@ -29,6 +29,7 @@
 #include "DownloadManagerEfl.h"
 #include "EwkView.h"
 #include "InputMethodContextEfl.h"
+#include "NotImplemented.h"
 #include "WebContextMenuProxyEfl.h"
 #include "WebPopupMenuListenerEfl.h"
 #include "ewk_context_private.h"
@@ -110,6 +111,11 @@ void WebViewEfl::handleDownloadRequest(DownloadProxy* download)
 void WebViewEfl::setThemePath(const String& theme)
 {
     m_page->setThemePath(theme);
+}
+
+void WebViewEfl::preferencesDidChange()
+{
+    notImplemented();
 }
 
 } // namespace WebKit

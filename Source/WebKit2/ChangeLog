@@ -1,3 +1,13 @@
+2013-06-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL Build fix after r151403.
+
+        Added preferencesDidChange to WebViewEfl.
+
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebViewEfl::preferencesDidChange):
+        * UIProcess/efl/WebViewEfl.h:
+
 2013-06-10  Anders Carlsson  <andersca@apple.com>
 
         Crash in StorageAreaMap::applyChange when clearing local storage in another web process
