@@ -168,7 +168,7 @@ class MacPort(ApplePort):
         _log.info("%s unique leaks found!" % unique_leaks)
 
     def _check_port_build(self):
-        return self._build_java_test_support()
+        return self.get_option('nojava') or self._build_java_test_support()
 
     def _path_to_webcore_library(self):
         return self._build_path('WebCore.framework/Versions/A/WebCore')

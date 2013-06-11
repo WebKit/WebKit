@@ -1,3 +1,15 @@
+2013-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an option to run-webkit-tests to skip java dependency check
+        https://bugs.webkit.org/show_bug.cgi?id=117516
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort._check_port_build):
+
 2013-06-11  Alex Christensen  <achristensen@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=117514

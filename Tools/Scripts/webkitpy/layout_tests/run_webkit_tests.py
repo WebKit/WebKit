@@ -196,7 +196,9 @@ def parse_args(args):
         optparse.make_option("--nocheck-sys-deps", action="store_true",
             default=False,
             help="Don't check the system dependencies (themes)"),
-
+        optparse.make_option("--nojava", action="store_true",
+            default=False,
+            help="Don't build java support files"),
     ]))
 
     option_group_definitions.append(("Testing Options", [
