@@ -1,3 +1,24 @@
+2013-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Test editing/execCommand/indent-paragraphs.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=117235
+
+        Reviewed by Rob Buis.
+
+        PR 346414.
+
+        After r150224 ResourceHandle::start() can fail returning false so
+        that the ResourceHandle is destroyed and the error not
+        handled. Handle the errors by scheduling a InvalidURLFailure and
+        returning true when startJob fails to make sure the ResourceHandle
+        is not destroyed and the error is handled and notified to the
+        client.
+
+        Fixes timeout in editing/execCommand/indent-paragraphs.html.
+
+        * platform/network/blackberry/ResourceHandleBlackBerry.cpp:
+        (WebCore::ResourceHandle::start):
+
 2013-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove IntRect::pixelSnapped* and its enclosingRect since they are no longer used

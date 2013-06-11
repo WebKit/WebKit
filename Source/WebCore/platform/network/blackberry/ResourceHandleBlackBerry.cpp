@@ -117,7 +117,9 @@ bool ResourceHandle::start()
     if (!frame || !frame->loader() || !frame->loader()->client() || !client())
         return false;
     int playerId = static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client())->playerId();
-    return NetworkManager::instance()->startJob(playerId, this, frame, d->m_defersLoading) == BlackBerry::Platform::FilterStream::StatusSuccess;
+    if (NetworkManager::instance()->startJob(playerId, this, frame, d->m_defersLoading) != BlackBerry::Platform::FilterStream::StatusSuccess)
+        scheduleFailure(InvalidURLFailure);
+    return true;
 }
 
 void ResourceHandle::pauseLoad(bool pause)
