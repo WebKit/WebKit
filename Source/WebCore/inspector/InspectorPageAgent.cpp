@@ -83,8 +83,6 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace std;
-
 namespace WebCore {
 
 namespace PageAgentState {

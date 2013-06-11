@@ -56,8 +56,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-using namespace std;
-
 namespace WebCore {
 
 namespace InspectorAgentState {

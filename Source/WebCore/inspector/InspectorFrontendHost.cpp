@@ -56,8 +56,6 @@
 #include "UserGestureIndicator.h"
 #include <wtf/StdLibExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 #if ENABLE(CONTEXT_MENUS)

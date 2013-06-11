@@ -1,3 +1,19 @@
+2013-06-11  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: Remove 'using namespace std'
+        https://bugs.webkit.org/show_bug.cgi?id=117498
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, no behavior change.
+
+        * inspector/InspectorAgent.cpp: Remove unneeded 'using namespace std'.
+        * inspector/InspectorFrontendClientLocal.cpp: Use explicit std:: qualifiers instead.
+        (WebCore::InspectorFrontendClientLocal::constrainedAttachedWindowHeight):
+        (WebCore::InspectorFrontendClientLocal::constrainedAttachedWindowWidth):
+        * inspector/InspectorFrontendHost.cpp: Remove unneeded 'using namespace std'.
+        * inspector/InspectorPageAgent.cpp: Remove unneeded 'using namespace std'.
+
 2013-06-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Support latest Web IDL named property getters

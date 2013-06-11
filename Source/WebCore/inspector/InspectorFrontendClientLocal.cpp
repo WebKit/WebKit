@@ -324,14 +324,12 @@ void InspectorFrontendClientLocal::showMainResourceForFrame(Frame* frame)
 
 unsigned InspectorFrontendClientLocal::constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight)
 {
-    using namespace std;
-    return roundf(max(minimumAttachedHeight, min<float>(preferredHeight, totalWindowHeight * maximumAttachedHeightRatio)));
+    return roundf(std::max(minimumAttachedHeight, std::min<float>(preferredHeight, totalWindowHeight * maximumAttachedHeightRatio)));
 }
 
 unsigned InspectorFrontendClientLocal::constrainedAttachedWindowWidth(unsigned preferredWidth, unsigned totalWindowWidth)
 {
-    using namespace std;
-    return roundf(max(minimumAttachedWidth, min<float>(preferredWidth, totalWindowWidth - minimumAttachedInspectedWidth)));
+    return roundf(std::max(minimumAttachedWidth, std::min<float>(preferredWidth, totalWindowWidth - minimumAttachedInspectedWidth)));
 }
 
 void InspectorFrontendClientLocal::sendMessageToBackend(const String& message)
