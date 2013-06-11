@@ -1,3 +1,12 @@
+2013-06-11  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Remove leftover wxWebkit code
+        https://bugs.webkit.org/show_bug.cgi?id=117471
+
+        Reviewed by Andreas Kling.
+
+        * Source/cmake/WebKitPackaging.cmake:
+
 2013-06-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [regression] build failure WebKitFontFamilyNames.h missing
