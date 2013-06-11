@@ -1,3 +1,13 @@
+2013-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use HTMLElementFactory to create equivalent elements in WebVTTElement
+        https://bugs.webkit.org/show_bug.cgi?id=117423
+
+        Reviewed by Eric Carlson.
+
+        * media/track/getCueAsHTMLCrash-expected.txt: Added.
+        * media/track/getCueAsHTMLCrash.html: Added.
+
 2013-06-11  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Update text track menu

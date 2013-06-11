@@ -29,6 +29,7 @@
 
 #include "WebVTTElement.h"
 
+#include "HTMLElementFactory.h"
 #include "TextTrack.h"
 
 namespace WebCore {
@@ -93,24 +94,24 @@ PassRefPtr<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document* doc
     case WebVTTNodeTypeClass:
     case WebVTTNodeTypeLanguage:
     case WebVTTNodeTypeVoice:
-        htmlElement = HTMLElement::create(HTMLNames::spanTag, document);
+        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::spanTag, document);
         htmlElement.get()->setAttribute(HTMLNames::titleAttr, getAttribute(voiceAttributeName()));
         htmlElement.get()->setAttribute(HTMLNames::langAttr, getAttribute(langAttributeName()));
         break;
     case WebVTTNodeTypeItalic:
-        htmlElement = HTMLElement::create(HTMLNames::iTag, document);
+        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::iTag, document);
         break;
     case WebVTTNodeTypeBold:
-        htmlElement = HTMLElement::create(HTMLNames::bTag, document);
+        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::bTag, document);
         break;
     case WebVTTNodeTypeUnderline:
-        htmlElement = HTMLElement::create(HTMLNames::uTag, document);
+        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::uTag, document);
         break;
     case WebVTTNodeTypeRuby:
-        htmlElement = HTMLElement::create(HTMLNames::rubyTag, document);
+        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::rubyTag, document);
         break;
     case WebVTTNodeTypeRubyText:
-        htmlElement = HTMLElement::create(HTMLNames::rtTag, document);
+        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::rtTag, document);
         break;
     default:
         ASSERT_NOT_REACHED();
