@@ -155,19 +155,62 @@ static bool isSingleTagNameSelector(const CSSSelector* selector)
 }
 
 template <bool firstMatchOnly>
+static inline void elementsForLocalName(const Node* rootNode, const AtomicString& localName, Vector<RefPtr<Node> >& matchedElements)
+{
+    for (Element* element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::next(element, rootNode)) {
+        if (element->localName() == localName) {
+            matchedElements.append(element);
+            if (firstMatchOnly)
+                return;
+        }
+    }
+}
+
+template <bool firstMatchOnly>
+static inline void anyElement(const Node* rootNode, Vector<RefPtr<Node> >& matchedElements)
+{
+    for (Element* element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::next(element, rootNode)) {
+        matchedElements.append(element);
+        if (firstMatchOnly)
+            return;
+    }
+}
+
+
+template <bool firstMatchOnly>
 ALWAYS_INLINE void SelectorDataList::executeSingleTagNameSelectorData(const Node* rootNode, const SelectorData& selectorData, Vector<RefPtr<Node> >& matchedElements) const
 {
     ASSERT(m_selectors.size() == 1);
     ASSERT(isSingleTagNameSelector(selectorData.selector));
 
     const QualifiedName& tagQualifiedName = selectorData.selector->tagQName();
-    for (Element* element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::next(element, rootNode)) {
-        if (SelectorChecker::tagMatches(element, tagQualifiedName)) {
-            matchedElements.append(element);
-            if (firstMatchOnly)
-                return;
+    const AtomicString& selectorLocalName = tagQualifiedName.localName();
+    const AtomicString& selectorNamespaceURI = tagQualifiedName.namespaceURI();
+
+    if (selectorNamespaceURI == starAtom) {
+        if (selectorLocalName != starAtom) {
+            // Common case: name defined, selectorNamespaceURI is a wildcard.
+            elementsForLocalName<firstMatchOnly>(rootNode, selectorLocalName, matchedElements);
+        } else {
+            // Other fairly common case: both are wildcards.
+            anyElement<firstMatchOnly>(rootNode, matchedElements);
+        }
+    } else {
+        // Fallback: NamespaceURI is set, selectorLocalName may be starAtom.
+        for (Element* element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::next(element, rootNode)) {
+            if (element->namespaceURI() == selectorNamespaceURI && (selectorLocalName == starAtom || element->localName() == selectorLocalName)) {
+                matchedElements.append(element);
+                if (firstMatchOnly)
+                    break;
+            }
         }
     }
+#if !ASSERT_DISABLED
+    for (size_t i = 0; i < matchedElements.size(); ++i) {
+        ASSERT(matchedElements[i]->isElementNode());
+        ASSERT(SelectorChecker::tagMatches(static_cast<const Element*>(matchedElements[i].get()), tagQualifiedName));
+    }
+#endif
 }
 
 static bool isSingleClassNameSelector(const CSSSelector* selector)

@@ -1,3 +1,16 @@
+2013-06-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Split SelectorDataList::executeSingleTagNameSelectorData() into the 4 kinds of traversal
+        https://bugs.webkit.org/show_bug.cgi?id=117486
+
+        Reviewed by Ryosuke Niwa.
+
+        Since this is pretty common, split the name selector to have the constant conditions
+        outside the traversal.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::executeSingleTagNameSelectorData):
+
 2013-06-11  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Update text track menu
