@@ -5,11 +5,11 @@ This test validates the values of the window.performance.redirectCount and the w
 
 
 
-FAIL Starting document.location.hostname is correct (127.0.0.1:8000) assert_equals: Starting document.location.hostname is correct (127.0.0.1:8000) expected "127.0.0.1:8000" but got "127.0.0.1"(stack: assert@http://127.0.0.1:8000/w3c/resources/testharness.js:1646:72
-assert_equals@http://127.0.0.1:8000/w3c/resources/testharness.js:567:14
+FAIL Starting document.location.hostname is correct (127.0.0.1:8000) assert_equals: Starting document.location.hostname is correct (127.0.0.1:8000) expected "127.0.0.1:8000" but got "127.0.0.1"(stack: assert@http://127.0.0.1:8000/w3c/resources/testharness.js:1945:72
+assert_equals@http://127.0.0.1:8000/w3c/resources/testharness.js:649:14
 http://127.0.0.1:8000/w3c/webperf/resources/webperftestharness.js:145:39
-step@http://127.0.0.1:8000/w3c/resources/testharness.js:876:22
-test@http://127.0.0.1:8000/w3c/resources/testharness.js:338:21
+step@http://127.0.0.1:8000/w3c/resources/testharness.js:1044:22
+test@http://127.0.0.1:8000/w3c/resources/testharness.js:405:21
 wp_test@http://127.0.0.1:8000/w3c/webperf/resources/webperftestharness.js:67:12
 test_equals@http://127.0.0.1:8000/w3c/webperf/resources/webperftestharness.js:145:11
 global code@http://127.0.0.1:8000/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html:78:23)

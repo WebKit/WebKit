@@ -1,3 +1,18 @@
+2013-06-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining various tests that are at the moment failing and need the new baseline.
+
+        * platform/gtk/editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-019-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-020-expected.txt:
+        * platform/gtk/editing/pasteboard/4944770-2-expected.txt:
+        * platform/gtk/editing/pasteboard/8145-2-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-line-endings-006-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-at-tabspan-003-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-xml-expected.txt:
+        * platform/gtk/http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect-expected.txt:
+
 2013-05-27  Robert Hogan  <robert@webkit.org>
 
         Positioned Replaced Elements That Aren't RenderReplaced get Incorrect Width
