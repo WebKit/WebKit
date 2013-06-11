@@ -1,4 +1,27 @@
 ==================
+WebKitGTK+   2.0.3
+==================
+
+What's new in WebKitGTK+ 2.0.3?
+
+  - Fix rendering of WebKitWebView child widgets with recent GTK+.
+  - Use the inner node frame instead of the target frame to calculate
+    the point of a hit test result in WebKit1.
+  - Fix a crash when terminating a process that has not been fully
+    launched.
+  - Fix race conditions closing the socket descriptor when the web
+    process crashes.
+  - Fix a crash when a web page is closed.
+  - Fix a crash when child iframe is removed during beforeload.
+  - Fix parallel build when gtk-doc is enabled.
+  - Fix build with MinGW compiler because of invalid cast.
+  - Fix the build with WebAudio enabled.
+  - Respect PKG_CONFIG env variable when generating gtk-doc.
+  - Fix memory leak in WebKitBackForwardList.
+  - Fix memory leak when web process is terminated.
+  - Translation updates: Hindi, Telugu, Odia, Kannada, as-IN.
+
+==================
 WebKitGTK+   2.0.2
 ==================
 
