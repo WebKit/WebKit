@@ -1,3 +1,17 @@
+2013-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        There are unused variables in ApplyStyleCommand::mergeEndWithNextIfIdentical and ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds
+        https://bugs.webkit.org/show_bug.cgi?id=117475
+
+        Reviewed by Andreas Kling.
+
+        Removed.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds):
+
 2013-06-11  Robert Hogan  <robert@webkit.org>
 
         Fix typo in r151445

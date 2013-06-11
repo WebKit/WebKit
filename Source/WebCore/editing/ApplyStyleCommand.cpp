@@ -1303,18 +1303,13 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start,
 bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position& start, const Position& end)
 {
     Node* endNode = end.containerNode();
-    int endOffset = end.computeOffsetInContainerNode();
 
     if (isAtomicNode(endNode)) {
-        if (offsetIsBeforeLastNodeOffset(endOffset, endNode))
-            return false;
-
-        unsigned parentLastOffset = end.deprecatedNode()->parentNode()->childNodeCount() - 1;
-        if (end.deprecatedNode()->nextSibling())
+        int endOffset = end.computeOffsetInContainerNode();
+        if (offsetIsBeforeLastNodeOffset(endOffset, endNode) || end.deprecatedNode()->nextSibling())
             return false;
 
         endNode = end.deprecatedNode()->parentNode();
-        endOffset = parentLastOffset;
     }
 
     if (!endNode->isElementNode() || endNode->hasTagName(brTag))
