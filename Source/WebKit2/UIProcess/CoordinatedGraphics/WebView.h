@@ -135,6 +135,8 @@ protected:
     virtual void didRelaunchProcess() OVERRIDE;
     virtual void pageClosed() OVERRIDE;
 
+    virtual void preferencesDidChange() OVERRIDE;
+
     virtual void toolTipChanged(const String&, const String&) OVERRIDE;
 
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) OVERRIDE;

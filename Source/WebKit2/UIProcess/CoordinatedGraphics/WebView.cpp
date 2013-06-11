@@ -325,6 +325,11 @@ void WebView::pageClosed()
     notImplemented();
 }
 
+void WebView::preferencesDidChange()
+{
+    notImplemented();
+}
+
 void WebView::toolTipChanged(const String&, const String& newToolTip)
 {
     m_client.didChangeTooltip(this, newToolTip);
@@ -384,7 +389,7 @@ void WebView::doneWithTouchEvent(const NativeWebTouchEvent&, bool /*wasEventHand
 }
 #endif
 
-PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy* page)
+PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy*)
 {
     notImplemented();
     return 0;
