@@ -1,5 +1,11 @@
 2013-06-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL gardening. Fix wrong expectation result on 151416.
+
+        * platform/efl-wk2/TestExpectations:
+
+2013-06-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL gardening. Manage tests which need to implement repaint rect. 
 
         * platform/efl-wk2/TestExpectations:
