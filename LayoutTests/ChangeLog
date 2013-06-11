@@ -1,3 +1,16 @@
+2013-06-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Update text track menu
+        https://bugs.webkit.org/show_bug.cgi?id=117351
+
+        Reviewed by Darin Adler.
+
+        * media/video-controls-captions-trackmenu-localized.html:
+        * media/video-controls-captions-trackmenu-sorted.html:
+        * platform/mac-lion/media/video-controls-captions-trackmenu-localized-expected.txt:
+        * platform/mac/media/video-controls-captions-trackmenu-localized-expected.txt:
+        * platform/mac/media/video-controls-captions-trackmenu-sorted-expected.txt:
+
 2013-06-11  Robert Hogan  <robert@webkit.org>
 
         Rebaseline results after r151451

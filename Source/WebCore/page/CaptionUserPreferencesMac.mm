@@ -539,10 +539,8 @@ static String trackDisplayName(TextTrack* track)
 {
     if (track == TextTrack::captionMenuOffItem())
         return textTrackOffMenuItemText();
-    if (track == TextTrack::captionMenuAutomaticItem()) {
-        String preferredLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(defaultLanguage()));
-        return textTrackAutomaticMenuItemText(preferredLanguageDisplayName);
-    }
+    if (track == TextTrack::captionMenuAutomaticItem())
+        return textTrackAutomaticMenuItemText();
 
     StringBuilder displayName;
     String label = track->label();

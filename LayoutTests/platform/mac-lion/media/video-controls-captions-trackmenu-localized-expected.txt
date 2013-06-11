@@ -10,8 +10,8 @@ EXPECTED (trackListSection.textContent == 'Subtitles') OK
 First item in captions menu should be labelled 'Off'
 EXPECTED (item.textContent == 'Off') OK
 
-Second item in captions menu should be labelled 'Automatic (English)'
-EXPECTED (item.textContent == 'Automatic (English)') OK
+Second item in captions menu should be labelled 'Auto (Recommended)'
+EXPECTED (item.textContent == 'Auto (Recommended)') OK
 
 Third item in captions menu should be labelled 'English CC'
 EXPECTED (item.textContent == 'English CC') OK

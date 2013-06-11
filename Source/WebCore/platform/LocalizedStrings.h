@@ -238,7 +238,7 @@ namespace WebCore {
 #if ENABLE(VIDEO_TRACK)
     String textTrackSubtitlesText();
     String textTrackOffMenuItemText();
-    String textTrackAutomaticMenuItemText(const String& language);
+    String textTrackAutomaticMenuItemText();
     String textTrackNoLabelText();
 #if PLATFORM(MAC)
     String textTrackCountryAndLanguageMenuItemText(const String& title, const String& country, const String& language);
