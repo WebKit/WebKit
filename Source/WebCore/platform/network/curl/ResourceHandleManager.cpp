@@ -773,14 +773,19 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
         }
     }
 
-    if ("GET" == job->firstRequest().httpMethod())
+    String method = job->firstRequest().httpMethod();
+    if ("GET" == method)
         curl_easy_setopt(d->m_handle, CURLOPT_HTTPGET, TRUE);
-    else if ("POST" == job->firstRequest().httpMethod())
+    else if ("POST" == method)
         setupPOST(job, &headers);
-    else if ("PUT" == job->firstRequest().httpMethod())
+    else if ("PUT" == method)
         setupPUT(job, &headers);
-    else if ("HEAD" == job->firstRequest().httpMethod())
+    else if ("HEAD" == method)
         curl_easy_setopt(d->m_handle, CURLOPT_NOBODY, TRUE);
+    else {
+        curl_easy_setopt(d->m_handle, CURLOPT_CUSTOMREQUEST, method.latin1().data());
+        setupPUT(job, &headers);
+    }
 
     if (headers) {
         curl_easy_setopt(d->m_handle, CURLOPT_HTTPHEADER, headers);

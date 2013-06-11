@@ -1,3 +1,17 @@
+2013-06-11  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [curl] Custom HTTP method support
+        https://bugs.webkit.org/show_bug.cgi?id=117302
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new tests, already covered by existing ones like:
+        http/tests/xmlhttprequest/workers/methods.html
+        http/tests/xmlhttprequest/workers/methods-async.html
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2013-06-11  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Remove 'using namespace std'
