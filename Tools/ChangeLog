@@ -1,3 +1,22 @@
+2013-06-11  Alex Christensen  <achristensen@apple.com>
+
+        Removed old broken code coverage tool.
+        https://bugs.webkit.org/show_bug.cgi?id=117520
+
+        Reviewed by Sam Weinig.
+
+        * CodeCoverage: Removed.
+        * CodeCoverage/README: Removed.
+        * CodeCoverage/amber.png: Removed.
+        * CodeCoverage/cov.py: Removed.
+        * CodeCoverage/emerald.png: Removed.
+        * CodeCoverage/gcov.css: Removed.
+        * CodeCoverage/glass.png: Removed.
+        * CodeCoverage/regenerate-coverage-display: Removed.
+        * CodeCoverage/ruby.png: Removed.
+        * CodeCoverage/run-generate-coverage-data: Removed.
+        * CodeCoverage/snow.png: Removed.
+
 2013-06-11  Timothy Hatcher  <timothy@apple.com>
 
         Have build-webkit build the WebInspectorUI project.
