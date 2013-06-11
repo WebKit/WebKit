@@ -1,3 +1,19 @@
+2013-06-10  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r151302): Many broken webaudio/ tests on Mac port.
+        https://bugs.webkit.org/show_bug.cgi?id=117446
+
+        Reviewed by Chris Rogers.
+
+        Re-enable the tests on mac-wk2 and add new baselines for codec and audiobuffersource tests.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/webaudio/audiobuffersource-loop-points-expected.wav: Added.
+        * platform/mac-wk2/webaudio/audiobuffersource-playbackrate-expected.wav: Added.
+        * platform/mac-wk2/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav: Added.
+        * platform/mac-wk2/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav: Added.
+        * platform/mac-wk2/webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav: Added.
+
 2013-06-10  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] ASSERTION FAILED: roundedIntPoint(rendererMappedResult) == roundedIntPoint(result) in RenderGeometryMap::mapToContainer

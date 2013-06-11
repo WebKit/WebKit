@@ -379,6 +379,13 @@ plugins/snapshotting [ Skip ]
 # This test fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Pass ]
 
+# WebAudio tests are supported in WK2
+webaudio/ [ Pass ]
+# Except for these
+webaudio/mediastreamaudiodestinationnode.html
+webaudio/mediastreamaudiosourcenode.html
+webaudio/codec-tests/vorbis/
+
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################
 

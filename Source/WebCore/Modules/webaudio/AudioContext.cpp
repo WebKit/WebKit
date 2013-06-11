@@ -967,10 +967,13 @@ void AudioContext::startRendering()
     if (ScriptController::processingUserGesture())
         removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
 
-    Page* page = document()->page();
-    if (pageConsentRequiredForAudioStart() && page && !page->canStartMedia())
-        document()->addMediaCanStartListener(this);
-
+    if (pageConsentRequiredForAudioStart()) {
+        Page* page = document()->page();
+        if (page && !page->canStartMedia())
+            document()->addMediaCanStartListener(this);
+        else
+            removeBehaviorRestriction(AudioContext::RequirePageConsentForAudioStartRestriction);
+    }
     destination()->startRendering();
 }
 

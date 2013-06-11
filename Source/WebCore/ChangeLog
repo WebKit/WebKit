@@ -1,3 +1,16 @@
+2013-06-10  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r151302): Many broken webaudio/ tests on Mac port.
+        https://bugs.webkit.org/show_bug.cgi?id=117446
+
+        Reviewed by Chris Rogers.
+
+        The new "pageConsentRequiredForAudioStart()" restriction was blocking playback event
+        even when page consent was given. Remvoe the restriction immediately in that case.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::startRendering):
+
 2013-06-10  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r150633): Find on page non-focused text highlight color is bright yellow.
