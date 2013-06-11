@@ -48,6 +48,8 @@ public:
     const char* title() const;
     const char* originalURL() const;
 
+    WKBackForwardListItemRef wkItem() const { return m_wkItem.get(); }
+
 private:
     explicit EwkBackForwardListItem(WKBackForwardListItemRef itemRef);
 

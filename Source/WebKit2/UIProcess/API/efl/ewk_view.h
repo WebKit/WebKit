@@ -490,6 +490,16 @@ EAPI Eina_Bool    ewk_view_forward_possible(Evas_Object *o);
 EAPI Ewk_Back_Forward_List *ewk_view_back_forward_list_get(const Evas_Object *o);
 
 /**
+ * Navigates to specified back-forward list item.
+ *
+ * @param o view object to navigate in the history
+ * @param item the back-forward list item
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_navigate_to(Evas_Object *o, const Ewk_Back_Forward_List_Item *item);
+
+/**
  * Gets the current title of the main frame.
  *
  * It returns an internal string and should not

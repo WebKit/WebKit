@@ -1,3 +1,20 @@
+2013-06-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add ewk_view_navigate API
+        https://bugs.webkit.org/show_bug.cgi?id=117467
+
+        Reviewed by Christophe Dumez.
+
+        The applications will use this API to navigate history more than one step.
+
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h:
+        (EwkBackForwardListItem::wkItem): Return WKBackForwardListItemRef for page to navigate.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_navigate_to): Added new API.
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F): Added more test case for navigation.
+
 2013-06-10  Jae Hyun Park  <jae.park@company100.net>
 
         [CoordinatedGraphics] Typos in custom shader support

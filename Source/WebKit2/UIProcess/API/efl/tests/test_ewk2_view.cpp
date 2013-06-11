@@ -131,6 +131,26 @@ TEST_F(EWK2UnitTestBase, ewk_view_navigation)
     ASSERT_STREQ("Page2", ewk_view_title_get(webView()));
     ASSERT_TRUE(ewk_view_back_possible(webView()));
     ASSERT_FALSE(ewk_view_forward_possible(webView()));
+
+    // Visit Page3
+    ewk_view_url_set(webView(), httpServer->getURLForPath("/Page3").data());
+    ASSERT_TRUE(waitUntilTitleChangedTo("Page3"));
+    ASSERT_STREQ("Page3", ewk_view_title_get(webView()));
+    ASSERT_TRUE(ewk_view_back_possible(webView()));
+    ASSERT_FALSE(ewk_view_forward_possible(webView()));
+
+    Ewk_Back_Forward_List* list = ewk_view_back_forward_list_get(webView());
+    ASSERT_EQ(3, ewk_back_forward_list_count(list));
+
+    // Navigate to Page1
+    ewk_view_navigate_to(webView(), ewk_back_forward_list_item_at_index_get(list, -2));
+    ASSERT_TRUE(waitUntilTitleChangedTo("Page1"));
+    ASSERT_STREQ("Page1", ewk_view_title_get(webView()));
+
+    // Navigate to Page3
+    ewk_view_navigate_to(webView(), ewk_back_forward_list_item_at_index_get(list, 2));
+    ASSERT_TRUE(waitUntilTitleChangedTo("Page3"));
+    ASSERT_STREQ("Page3", ewk_view_title_get(webView()));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_custom_encoding)

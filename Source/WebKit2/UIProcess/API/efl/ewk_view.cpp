@@ -311,6 +311,16 @@ Ewk_Back_Forward_List* ewk_view_back_forward_list_get(const Evas_Object* ewkView
     return impl->backForwardList();
 }
 
+Eina_Bool ewk_view_navigate_to(Evas_Object* ewkView, const Ewk_Back_Forward_List_Item* item)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkBackForwardListItem, item, itemImpl, false);
+
+    WKPageGoToBackForwardListItem(impl->wkPage(), itemImpl->wkItem());
+
+    return true;
+}
+
 Eina_Bool ewk_view_html_string_load(Evas_Object* ewkView, const char* html, const char* baseUrl, const char* unreachableUrl)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
