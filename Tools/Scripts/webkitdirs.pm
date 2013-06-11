@@ -601,9 +601,6 @@ sub XcodeCoverageSupportOptions()
     my @coverageSupportOptions = ();
     push @coverageSupportOptions, "GCC_GENERATE_TEST_COVERAGE_FILES=YES";
     push @coverageSupportOptions, "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES";
-    push @coverageSupportOptions, "EXTRA_LINK= \$(EXTRA_LINK) -ftest-coverage -fprofile-arcs";
-    push @coverageSupportOptions, "OTHER_CFLAGS= \$(OTHER_CFLAGS) -DCOVERAGE -MD";
-    push @coverageSupportOptions, "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -ftest-coverage -fprofile-arcs -lgcov";
     return @coverageSupportOptions;
 }
 

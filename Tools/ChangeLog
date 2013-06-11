@@ -1,3 +1,13 @@
+2013-06-11  Alex Christensen  <achristensen@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=117514
+        Removed extra Xcode code coverage flags.
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitdirs.pm:
+        (XcodeCoverageSupportOptions):
+
 2013-06-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Implement 'attributeValue' accessor to support testing
