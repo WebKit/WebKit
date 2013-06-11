@@ -1,3 +1,15 @@
+2013-06-11  Jer Noble  <jer.noble@apple.com>
+
+        Set the font size for in-band captions on the display box, not the :cue.
+        https://bugs.webkit.org/show_bug.cgi?id=117515
+
+        Reviewed by Eric Carlson.
+
+        Make the in-band font size behavior match the out-of-band behavior.
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGeneric::setFontSize):
+
 2013-06-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Implement 'attributeValue' accessor to support testing.
