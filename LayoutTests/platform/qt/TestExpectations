@@ -330,7 +330,6 @@ webkit.org/b/82886 inspector/styles/override-screen-size.html [ Skip ]
 
 # LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 webkit.org/b/85463 editing/inserting/typing-space-to-trigger-smart-link.html
-webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.html
 
 # gestureTwoFingerTap not implemented by this platform (introduced in r132406)
 touchadjustment/touch-links-two-finger-tap.html
@@ -1377,7 +1376,6 @@ svg/custom/use-on-symbol-inside-pattern.svg
 svg/batik/text/longTextOnPath.svg
 svg/carto.net/tabgroup.svg
 webkit.org/b/112680 jquery/manipulation.html [ Skip ]
-webkit.org/b/112106 fast/js/regress/string-repeat-arith.html [ Skip ]
 
 # [Qt] New inspector/console/console-filter-test.html fails on 32bit since r141269.
 # https://bugs.webkit.org/show_bug.cgi?id=108481
@@ -2465,9 +2463,6 @@ webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailur
 # failing new tests
 webkit.org/b/86441 fast/borders/border-antialiasing.html [ Skip ]
 
-# Paletted PNG with ICC color profiles not working.
-webkit.org/b/86722 fast/images/paletted-png-with-color-profile.html
-
 # Disable webaudio codec tests, including proprietary codecs.
 webkit.org/b/88794 webaudio/codec-tests
 
@@ -2476,8 +2471,6 @@ webkit.org/b/90951 fast/text/shaping
 
 # Flaky tests
 webkit.org/b/91376 http/tests/security/sandboxed-iframe-modify-self.html [ Failure Pass ]
-webkit.org/b/91379 http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html [ Failure Pass ]
-webkit.org/b/91379 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure Pass ]
 
 # This has always failed on Qt - exposed by bug 89826
 webkit.org/b/94004 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]

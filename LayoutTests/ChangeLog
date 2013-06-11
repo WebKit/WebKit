@@ -1,3 +1,13 @@
+2013-06-11  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Unskipping passing tests. Generate new baseline where needed.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/fast/images/paletted-png-with-color-profile-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/images/paletted-png-with-color-profile-expected.txt: Added.
+        * platform/qt/TestExpectations:
+
 2013-06-11  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [Qt][EFL][GTK]fast/regions/overflow-size-change-with-stacking-context-rtl.html fails after r151202

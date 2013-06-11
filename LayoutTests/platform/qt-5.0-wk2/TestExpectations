@@ -729,3 +729,6 @@ webkit.org/b/116668 fast/events/touch/frame-hover-update.html [ Skip ]
 
 # [Qt] Newly addded test in r150234 fast/frames/flattening/scrolling-in-object.html fails
 webkit.org/b/116810 fast/frames/flattening/scrolling-in-object.html [ Skip ]
+
+# [Qt][WK2] LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
+webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.html
