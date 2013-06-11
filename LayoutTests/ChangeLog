@@ -1,3 +1,14 @@
+2013-06-03  Robert Hogan  <robert@webkit.org>
+
+        Painting collapsed borders during scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=85658
+
+        Reviewed by David Hyatt.
+
+        * fast/repaint/table-cell-collapsed-border-scroll-expected.txt: Added.
+        * fast/repaint/table-cell-collapsed-border-scroll.html: Added.
+        * platform/qt/fast/repaint/table-cell-collapsed-border-scroll-expected.png: Added.
+
 2013-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         editing/undo/undo-after-event-edited.html can be flaky

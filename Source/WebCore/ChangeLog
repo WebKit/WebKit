@@ -1,3 +1,18 @@
+2013-06-03  Robert Hogan  <robert@webkit.org>
+
+        Painting collapsed borders during scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=85658
+
+        Reviewed by David Hyatt.
+
+        Test: fast/repaint/table-cell-collapsed-border-scroll.html
+
+        WHen painting collapsed borders we need to paint the borders of the row above
+        the topmost dirtied row so that we compute the correct value for the dirtied row's collapsed border.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintObject):
+
 2013-06-11  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [curl] Custom HTTP method support

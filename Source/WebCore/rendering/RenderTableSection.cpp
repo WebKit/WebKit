@@ -1118,8 +1118,10 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
         if (!m_hasMultipleCellLevels && !m_overflowingCells.size()) {
             if (paintInfo.phase == PaintPhaseCollapsedTableBorders) {
                 // Collapsed borders are painted from the bottom right to the top left so that precedence
-                // due to cell position is respected.
-                for (unsigned r = dirtiedRows.end(); r > dirtiedRows.start(); r--) {
+                // due to cell position is respected. We need to paint one row beyond the topmost dirtied
+                // row to calculate its collapsed border value.
+                unsigned startRow = dirtiedRows.start() ? dirtiedRows.start() - 1 : 0;
+                for (unsigned r = dirtiedRows.end(); r > startRow; r--) {
                     unsigned row = r - 1;
                     for (unsigned c = dirtiedColumns.end(); c > dirtiedColumns.start(); c--) {
                         unsigned col = c - 1;
