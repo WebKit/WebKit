@@ -287,7 +287,7 @@ WebKitHitTestResult* kit(const WebCore::HitTestResult& result)
     GOwnPtr<char> imageURI(0);
     GOwnPtr<char> mediaURI(0);
     WebKitDOMNode* node = 0;
-    WebCore::Frame* targetFrame;
+    WebCore::Frame* innerNodeFrame;
     WebCore::IntPoint point;
 
     if (!result.absoluteLinkURL().isEmpty()) {
@@ -314,14 +314,14 @@ WebKitHitTestResult* kit(const WebCore::HitTestResult& result)
     if (result.innerNonSharedNode())
         node = kit(result.innerNonSharedNode());
 
-    // FIXME: This should probably use innerNodeFrame, as targetFrame is the potentially different frame the link opens in.
-    targetFrame = result.targetFrame();
-    if (targetFrame && targetFrame->view()) {
+    innerNodeFrame = result.innerNodeFrame();
+    if (innerNodeFrame && innerNodeFrame->view()) {
         // Convert document coords to widget coords.
-        point = targetFrame->view()->contentsToWindow(result.roundedPointInInnerNodeFrame());
+        point = innerNodeFrame->view()->contentsToWindow(result.roundedPointInInnerNodeFrame());
     } else {
-        // FIXME: This should probably use roundedPointInMainFrame and translate from the mainframe.
-        point = result.roundedPointInInnerNodeFrame();
+        // FIXME: Main frame coords is not the same as window coords,
+        // but we do not have pointer to  mainframe view here.
+        point = result.roundedPointInMainFrame();
     }
 
     return WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
