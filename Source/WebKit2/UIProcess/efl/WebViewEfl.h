@@ -48,7 +48,6 @@ private:
     PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) OVERRIDE;
     void updateTextInputState() OVERRIDE;
     void handleDownloadRequest(DownloadProxy*) OVERRIDE;
-    void preferencesDidChange() OVERRIDE;
 
 private:
     EwkView* m_ewkView;
