@@ -417,9 +417,6 @@ static void swizzleNSFontManagerMethods()
 
 static void activateTestingFonts()
 {
-    // Work around <rdar://problem/6698023> by activating fonts from disk
-    // FIXME: This code can be removed once <rdar://problem/6698023> is addressed.
-
     static const char* fontFileNames[] = {
         "AHEM____.TTF",
         "WebKitWeightWatcher100.ttf",

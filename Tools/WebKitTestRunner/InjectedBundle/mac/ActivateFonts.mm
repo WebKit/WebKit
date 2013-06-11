@@ -223,8 +223,6 @@ static void swizzleNSFontManagerMethods()
 
 void activateFonts()
 {
-    // Work around <rdar://problem/6698023> by activating fonts from disk
-
     static const char* fontFileNames[] = {
         "AHEM____.TTF",
         "WebKitWeightWatcher100.ttf",
