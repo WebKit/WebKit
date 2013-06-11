@@ -1,3 +1,18 @@
+2013-06-11  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [Qt][EFL][GTK]fast/regions/overflow-size-change-with-stacking-context-rtl.html fails after r151202
+        https://bugs.webkit.org/show_bug.cgi?id=117295
+
+        Reviewed by Alexandru Chiculita.
+
+        Both test specify margins auto, which means that they can be computed to floats.
+        I changed the tests so that the margins are computed to integer values, to avoid
+        possible differences on platforms that enable subpixel layout.
+
+        * fast/regions/overflow-size-change-with-stacking-context-rtl-expected.html:
+        * fast/regions/overflow-size-change-with-stacking-context-rtl.html:
+        * platform/qt/TestExpectations: Unskip the skipped test
+
 2013-06-11  Sergio Villar Senin  <svillar@igalia.com>
 
         Autoclose braces and parentheses at the end of style sheet

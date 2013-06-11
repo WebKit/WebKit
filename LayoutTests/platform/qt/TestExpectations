@@ -1468,10 +1468,6 @@ css3/filters/effect-reference-hw.html
 # failing fast tests
 # ============================================================================= #
 
-# [Qt][EFL][GTK]fast/regions/overflow-size-change-with-stacking-context-rtl.html fails after r151202
-# https://bugs.webkit.org/show_bug.cgi?id=117295
-fast/regions/overflow-size-change-with-stacking-context-rtl.html
-
 # [Qt] Two new test in fast/regions/ flaky after r151282
 # https://bugs.webkit.org/show_bug.cgi?id=117338
 fast/regions/hover-display-block-none.html
