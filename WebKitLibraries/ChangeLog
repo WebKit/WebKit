@@ -1,3 +1,40 @@
+2013-06-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r151408.
+        http://trac.webkit.org/changeset/151408
+        https://bugs.webkit.org/show_bug.cgi?id=117519
+
+        Opting for a different approach (Requested by rfong on
+        #webkit).
+
+        * win/WinTools.make: Removed.
+        * win/tools32/WinTools.make: Renamed from WebKitLibraries/win/tools64/WinTools.make.
+        * win/tools64/scripts/COPYRIGHT-END-YEAR: Removed.
+        * win/tools64/scripts/VERSION: Removed.
+        * win/tools64/scripts/auto-version.sh: Removed.
+        * win/tools64/scripts/feature-defines.sh: Removed.
+        * win/tools64/vsprops/FeatureDefines.props: Removed.
+        * win/tools64/vsprops/FeatureDefines.vsprops: Removed.
+        * win/tools64/vsprops/FeatureDefinesCairo.props: Removed.
+        * win/tools64/vsprops/FeatureDefinesCairo.vsprops: Removed.
+        * win/tools64/vsprops/WinCairo.props: Removed.
+        * win/tools64/vsprops/WinCairo.vsprops: Removed.
+        * win/tools64/vsprops/cURL.props: Removed.
+        * win/tools64/vsprops/cURL.vsprops: Removed.
+        * win/tools64/vsprops/common.props: Removed.
+        * win/tools64/vsprops/common.vsprops: Removed.
+        * win/tools64/vsprops/debug.props: Removed.
+        * win/tools64/vsprops/debug.vsprops: Removed.
+        * win/tools64/vsprops/debug_all.vsprops: Removed.
+        * win/tools64/vsprops/debug_wincairo.props: Removed.
+        * win/tools64/vsprops/debug_wincairo.vsprops: Removed.
+        * win/tools64/vsprops/debugsuffix.props: Removed.
+        * win/tools64/vsprops/production.props: Removed.
+        * win/tools64/vsprops/production.vsprops: Removed.
+        * win/tools64/vsprops/release.props: Removed.
+        * win/tools64/vsprops/release.vsprops: Removed.
+        * win/tools64/vsprops/releaseproduction.vsprops: Removed.
+
 2013-06-10  Roger Fong  <roger_fong@apple.com>
 
         Change WebKitLibraries/win folder structure around.
