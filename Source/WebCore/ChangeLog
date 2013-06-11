@@ -1,3 +1,16 @@
+2013-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Have to invalidate the mute button when changing the volume
+        https://bugs.webkit.org/show_bug.cgi?id=117464
+
+        Reviewed by Darin Adler.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/c4c685c82908449526fd8c251cc551e729ebed08
+        but without a test since the test doesn't work in WebKit.
+
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::changedVolume):
+
 2013-06-11  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Regions] Regions don't create a stacking context for their contents
