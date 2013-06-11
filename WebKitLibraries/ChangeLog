@@ -1,5 +1,13 @@
 2013-06-11  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Another part of rollout of r151408.
+
+        * win/tools64: Removed.
+        * win/tools64/scripts: Removed.
+        * win/tools64/vsprops: Removed.
+
+2013-06-11  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. WinTools makefile fix.
 
         * win/tools32/WinTools.make:
