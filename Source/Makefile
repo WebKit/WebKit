@@ -1,4 +1,4 @@
-MODULES = WTF JavaScriptCore ThirdParty/ANGLE WebCore WebKit WebKit2
+MODULES = WTF JavaScriptCore ThirdParty/ANGLE WebCore WebKit WebKit2 WebInspectorUI
 
 ifneq (,$(findstring iphoneos,$(SDKROOT)))
 	MODULES = WTF JavaScriptCore ThirdParty/ANGLE WebCore WebKit

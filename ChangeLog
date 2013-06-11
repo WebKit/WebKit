@@ -1,3 +1,11 @@
+2013-06-06  Timothy Hatcher  <timothy@apple.com>
+
+        Add WebInspectorUI to the Makefile.
+
+        Reviewed by Mark Rowe.
+
+        * Source/Makefile:
+
 2013-06-11  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Remove leftover wxWebkit code
