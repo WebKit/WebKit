@@ -1,3 +1,37 @@
+2013-06-11  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Regions] Regions don't create a stacking context for their contents
+        https://bugs.webkit.org/show_bug.cgi?id=114268
+
+        Reviewed by Alexandru Chiculita.
+
+        Paint the region content (from RenderFlowThread) during the background phase instead of the
+        foreground phase.
+
+        Let's assume there is a region and a sibling element. The sibling partially overlaps the
+        region and appears after the region in DOM order.
+
+        Before this patch, we would paint in this order:
+        1) Region background
+        2) Sibling background
+        3) Region content
+        4) Sibling content
+
+        As a result, the sibling background would incorrectly paint between the region
+        background and the region content. Instead, the sibling background should paint over the
+        region background and the region content.
+
+        After this patch, we paint in this order:
+        1) Region background
+        2) Region content
+        3) Sibling background
+        4) Sibling content
+
+        Test: fast/regions/region-sibling-paint-order.html
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::paintObject):
+
 2013-06-11  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION: (r149232) videos on disney.com are initially scrambled on load

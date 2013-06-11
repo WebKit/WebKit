@@ -158,11 +158,14 @@ void RenderRegion::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOff
 
     RenderBlock::paintObject(paintInfo, paintOffset);
 
+    if (!isValid())
+        return;
+
     // Delegate painting of content in region to RenderFlowThread.
     // RenderFlowThread is a self painting layer (being a positioned object) who is painting its children, the collected objects.
     // Since we do not want to paint the flow thread content multiple times (for each painting phase of the region object),
-    // we allow the flow thread painting only for the selection and the foreground phase.
-    if (!isValid() || (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection))
+    // we allow the flow thread painting only for the selection and the background phase.
+    if (paintInfo.phase != PaintPhaseBlockBackground && paintInfo.phase != PaintPhaseChildBlockBackground && paintInfo.phase != PaintPhaseSelection)
         return;
 
     setRegionObjectsRegionStyle();
