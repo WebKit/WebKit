@@ -96,7 +96,7 @@ shouldBe("rules2.item(2).cssText", "'100% { left: 20px; }'");
 
 debug("");
 
-shouldBe("typeof(rules2.item(0).style)", "typeof(CSSStyleDeclaration)");
+shouldBeType("rules2.item(0).style", "CSSStyleDeclaration");
 shouldBe("rules2.item(0).style.length", "1");
 
 debug("");

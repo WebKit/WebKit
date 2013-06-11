@@ -36,7 +36,7 @@ PASS rules2.item(0).cssText is '0% { left: 10px; }'
 PASS rules2.item(1).cssText is '50% { left: 30px; }'
 PASS rules2.item(2).cssText is '100% { left: 20px; }'
 
-PASS typeof(rules2.item(0).style) is typeof(CSSStyleDeclaration)
+PASS rules2.item(0).style is an instance of CSSStyleDeclaration
 PASS rules2.item(0).style.length is 1
 
 Find a rule
