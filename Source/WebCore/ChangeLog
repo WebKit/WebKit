@@ -1,3 +1,51 @@
+2013-06-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Support latest Web IDL named property getters
+        https://bugs.webkit.org/show_bug.cgi?id=117403
+
+        Reviewed by Kentaro Hara.
+
+        Add support for the latest Web IDL named property getters to the JSC
+        bindings generator:
+        http://www.w3.org/TR/WebIDL/#idl-named-properties
+
+        Drop support for outdated [NamedGetter] IDL extended attribute.
+
+        Support for other kinds of named properties will be added in later
+        patches. This patch only brings named property getters.
+
+        This patch is based on Blink r149247 by kojih@chromium.org.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GetSpecialAccessorFunctionForType):
+        (GetNamedGetterFunction):
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/IDLParser.pm:
+        (applyTypedefs):
+        (parseSpecialOperation):
+        (parseSpecials):
+        (applyMemberList):
+        * bindings/scripts/test/TestEventTarget.idl:
+        * css/StyleSheetList.idl:
+        * dom/DOMNamedFlowCollection.idl:
+        * dom/DOMStringMap.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/NodeList.idl:
+        * html/HTMLAllCollection.idl:
+        * html/HTMLCollection.idl:
+        * html/HTMLFormControlsCollection.idl:
+        * html/HTMLPropertiesCollection.idl:
+        * plugins/DOMMimeTypeArray.idl:
+        * plugins/DOMPlugin.idl:
+        * plugins/DOMPluginArray.idl:
+        * storage/Storage.idl:
+
 2013-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Test editing/execCommand/indent-paragraphs.html times out

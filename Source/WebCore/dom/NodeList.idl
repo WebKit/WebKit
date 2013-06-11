@@ -21,11 +21,11 @@
 [
     CustomIsReachable,
     IndexedGetter,
-    NamedGetter,
     SkipVTableValidation
 ] interface NodeList {
 
     Node item([IsIndex,Default=Undefined] optional unsigned long index);
+    getter (Node or unsigned long) (DOMString name);
 
     readonly attribute unsigned long length;
 

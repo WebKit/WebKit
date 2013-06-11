@@ -352,6 +352,7 @@ sub GenerateGetOwnPropertySlotBody
     my ($interface, $interfaceName, $className, $hasAttributes, $inlined) = @_;
 
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
+    my $namedGetterFunction = GetNamedGetterFunction($interface);
 
     my @getOwnPropertySlotImpl = ();
 
@@ -362,7 +363,7 @@ sub GenerateGetOwnPropertySlotBody
     }
 
     my $manualLookupGetterGeneration = sub {
-        my $requiresManualLookup = $interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NamedGetter"};
+        my $requiresManualLookup = $interface->extendedAttributes->{"IndexedGetter"} || $namedGetterFunction;
         if ($requiresManualLookup) {
             push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = getStaticValueSlotEntryWithoutCaching<$className>(exec, propertyName);\n");
             push(@getOwnPropertySlotImpl, "    if (entry) {\n");
@@ -395,7 +396,7 @@ sub GenerateGetOwnPropertySlotBody
         push(@getOwnPropertySlotImpl, "    }\n");
     }
 
-    if ($interface->extendedAttributes->{"NamedGetter"} || $interface->extendedAttributes->{"CustomNamedGetter"}) {
+    if ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}) {
         push(@getOwnPropertySlotImpl, "    if (canGetItemsForName(exec, static_cast<$interfaceName*>(thisObject->impl()), propertyName)) {\n");
         push(@getOwnPropertySlotImpl, "        slot.setCustom(thisObject, thisObject->nameGetter);\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
@@ -435,6 +436,7 @@ sub GenerateGetOwnPropertyDescriptorBody
     my ($interface, $interfaceName, $className, $hasAttributes, $inlined) = @_;
     
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
+    my $namedGetterFunction = GetNamedGetterFunction($interface);
     
     my @getOwnPropertyDescriptorImpl = ();
     if ($interface->extendedAttributes->{"CheckSecurity"}) {
@@ -454,7 +456,7 @@ sub GenerateGetOwnPropertyDescriptorBody
     }
     
     my $manualLookupGetterGeneration = sub {
-        my $requiresManualLookup = $interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NamedGetter"};
+        my $requiresManualLookup = $interface->extendedAttributes->{"IndexedGetter"} || $namedGetterFunction;
         if ($requiresManualLookup) {
             push(@getOwnPropertyDescriptorImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
             push(@getOwnPropertyDescriptorImpl, "    if (entry) {\n");
@@ -494,7 +496,7 @@ sub GenerateGetOwnPropertyDescriptorBody
         push(@getOwnPropertyDescriptorImpl, "    }\n");
     }
 
-    if ($interface->extendedAttributes->{"NamedGetter"} || $interface->extendedAttributes->{"CustomNamedGetter"}) {
+    if ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}) {
         push(@getOwnPropertyDescriptorImpl, "    if (canGetItemsForName(exec, static_cast<$interfaceName*>(thisObject->impl()), propertyName)) {\n");
         push(@getOwnPropertyDescriptorImpl, "        ${namespaceMaybe}PropertySlot slot;\n");
         push(@getOwnPropertyDescriptorImpl, "        slot.setCustom(thisObject, nameGetter);\n");
@@ -609,6 +611,31 @@ sub GetFunctionName
     my ($className, $function) = @_;
     my $kind = $function->isStatic ? "Constructor" : "Prototype";
     return $codeGenerator->WK_lcfirst($className) . $kind . "Function" . $codeGenerator->WK_ucfirst($function->signature->name);
+}
+
+sub GetSpecialAccessorFunctionForType
+{
+    my $interface = shift;
+    my $special = shift;
+    my $firstParameterType = shift;
+    my $numberOfParameters = shift;
+
+    foreach my $function (@{$interface->functions}, @{$interface->anonymousFunctions}) {
+        my $specials = $function->signature->specials;
+        my $specialExists = grep { $_ eq $special } @$specials;
+        my $parameters = $function->parameters;
+        if ($specialExists and scalar(@$parameters) == $numberOfParameters and $parameters->[0]->type eq $firstParameterType) {
+            return $function;
+        }
+    }
+
+    return 0;
+}
+
+sub GetNamedGetterFunction
+{
+    my $interface = shift;
+    return GetSpecialAccessorFunctionForType($interface, "getter", "DOMString", 1);
 }
 
 sub GenerateHeader
@@ -745,8 +772,10 @@ sub GenerateHeader
 
     $implIncludes{"${className}Custom.h"} = 1 if !$interface->extendedAttributes->{"JSCustomHeader"} && ($interface->extendedAttributes->{"CustomPutFunction"} || $interface->extendedAttributes->{"CustomNamedSetter"});
 
+    my $namedGetterFunction = GetNamedGetterFunction($interface);
+
     my $hasImpureNamedGetter =
-        $interface->extendedAttributes->{"NamedGetter"}
+        $namedGetterFunction
         || $interface->extendedAttributes->{"CustomNamedGetter"}
         || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
 
@@ -983,7 +1012,7 @@ sub GenerateHeader
         push(@headerContent, "    void indexSetter(JSC::ExecState*, unsigned index, JSC::JSValue);\n");
     }
     # Name getter
-    if ($interface->extendedAttributes->{"NamedGetter"} || $interface->extendedAttributes->{"CustomNamedGetter"}) {
+    if ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}) {
         push(@headerContent, "private:\n");
         push(@headerContent, "    static bool canGetItemsForName(JSC::ExecState*, $interfaceName*, JSC::PropertyName);\n");
         push(@headerContent, "    static JSC::JSValue nameGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);\n");
@@ -1577,6 +1606,8 @@ sub GenerateImplementation
     my $numConstants = @{$interface->constants};
     my $numFunctions = @{$interface->functions};
 
+    my $namedGetterFunction = GetNamedGetterFunction($interface);
+
     # - Add all constants
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         my $hashSize = $numConstants;
@@ -1892,7 +1923,7 @@ sub GenerateImplementation
                  || $interface->extendedAttributes->{"NumericIndexedGetter"}
                  || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
                  || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
-                 || $interface->extendedAttributes->{"NamedGetter"}
+                 || $namedGetterFunction
                  || $interface->extendedAttributes->{"CustomNamedGetter"};
 
     # Attributes
@@ -1913,7 +1944,7 @@ sub GenerateImplementation
         }
 
         if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}
-                || $interface->extendedAttributes->{"NamedGetter"} || $interface->extendedAttributes->{"CustomNamedGetter"}
+                || $namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}
                 || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
             push(@implContent, "bool ${className}::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned index, PropertySlot& slot)\n");
             push(@implContent, "{\n");
@@ -1946,7 +1977,7 @@ sub GenerateImplementation
                 push(@implContent, "    }\n");
             }
 
-            if ($interface->extendedAttributes->{"NamedGetter"} || $interface->extendedAttributes->{"CustomNamedGetter"}) {
+            if ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}) {
                 &$propertyNameGeneration();
                 push(@implContent, "    if (canGetItemsForName(exec, static_cast<$interfaceName*>(thisObject->impl()), propertyName)) {\n");
                 push(@implContent, "        slot.setCustom(thisObject, thisObject->nameGetter);\n");
@@ -2633,7 +2664,7 @@ sub GenerateImplementation
     }
 
     if ($interfaceName eq "HTMLPropertiesCollection" or $interfaceName eq "DOMNamedFlowCollection") {
-        if ($interface->extendedAttributes->{"NamedGetter"}) {
+        if ($namedGetterFunction) {
             push(@implContent, "bool ${className}::canGetItemsForName(ExecState*, $interfaceName* collection, PropertyName propertyName)\n");
             push(@implContent, "{\n");
             push(@implContent, "    return collection->hasNamedItem(propertyNameToAtomicString(propertyName));\n");

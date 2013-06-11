@@ -25,14 +25,13 @@
 
 [
     IndexedGetter,
-    NamedGetter,
     CustomCall,
     MasqueradesAsUndefined,
     GenerateIsReachable=ImplOwnerNodeRoot,
 ] interface HTMLAllCollection {
     readonly attribute unsigned long length;
     [Custom] Node item([Default=Undefined] optional unsigned long index);
-    [Custom] Node namedItem(DOMString name);
+    [Custom] getter Node namedItem(DOMString name);
     // FIXME: This should return an HTMLAllCollection.
     NodeList tags(DOMString name);
 };

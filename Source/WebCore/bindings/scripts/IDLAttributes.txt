@@ -83,7 +83,6 @@ JSNoStaticTables
 JSWindowEventListener
 MasqueradesAsUndefined
 NamedConstructor=*
-NamedGetter
 NoInterfaceObject
 NotEnumerable
 NumericIndexedGetter

@@ -25,11 +25,11 @@
 
 [
     GenerateIsReachable=ImplElementRoot,
-    NamedGetter,
     CustomDeleteProperty,
     CustomEnumerateProperty,
     CustomNamedSetter,
     SkipVTableValidation
 ] interface DOMStringMap {
+    getter DOMString (DOMString name);
 };
 

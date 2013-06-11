@@ -22,10 +22,10 @@
 [
     GenerateIsReachable=ImplDocument,
     IndexedGetter,
-    NamedGetter,
     ImplementationLacksVTable
 ] interface StyleSheetList {
     readonly attribute unsigned long    length;
     StyleSheet         item([Default=Undefined] optional unsigned long index);
+    getter CSSStyleSheet (DOMString name);
 };
 

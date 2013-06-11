@@ -20,12 +20,11 @@
 
 [
     GenerateIsReachable=ImplFrame,
-    NamedGetter,
     IndexedGetter,
     InterfaceName=MimeTypeArray
 ] interface DOMMimeTypeArray {
     readonly attribute unsigned long length;
     DOMMimeType item([Default=Undefined] optional unsigned long index);
-    DOMMimeType namedItem([Default=Undefined] optional DOMString name);
+    getter DOMMimeType namedItem([Default=Undefined] optional DOMString name);
 };
 
