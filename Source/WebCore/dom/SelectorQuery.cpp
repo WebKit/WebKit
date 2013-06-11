@@ -183,7 +183,7 @@ ALWAYS_INLINE void SelectorDataList::executeSingleClassNameSelectorData(const No
 
     const AtomicString& className = selectorData.selector->value();
     for (Element* element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::next(element, rootNode)) {
-        if (element->hasClass() && static_cast<const StyledElement*>(element)->classNames().contains(className)) {
+        if (element->hasClass() && element->classNames().contains(className)) {
             matchedElements.append(element);
             if (firstMatchOnly)
                 return;

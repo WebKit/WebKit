@@ -75,7 +75,7 @@ inline bool fastCheckSingleSelector(const CSSSelector*& selector, const Element*
 
 inline bool checkClassValue(const Element* element, const CSSSelector* selector)
 {
-    return element->hasClass() && static_cast<const StyledElement*>(element)->classNames().contains(selector->value());
+    return element->hasClass() && element->classNames().contains(selector->value());
 }
 
 inline bool checkIDValue(const Element* element, const CSSSelector* selector)
