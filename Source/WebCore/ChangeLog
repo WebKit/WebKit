@@ -1,3 +1,40 @@
+2013-05-27  Robert Hogan  <robert@webkit.org>
+
+        Positioned Replaced Elements That Aren't RenderReplaced get Incorrect Width
+        https://bugs.webkit.org/show_bug.cgi?id=93735
+
+        Reviewed by Darin Adler.
+
+        Replaced elements that aren't RenderReplaced aren't |isReplaced| and don't have an 
+        intrinsic height or width. This causes them to go down the wrong height and width computation
+        path in RenderBox when they are absolute positioned. 
+        
+        The notion of |isReplaced| is entwined with the notion of being |isInline| so it isn't really 
+        possible to make them isReplaced without re-wiring a lot of code. So instead use an ad-hoc definition
+        of isReplacedElement in RenderBox to bring all replaced elements into the height and width calculation.
+        To make sure we get the right height and width in there, give non-RenderReplaced replaced renderers
+        the helpers for returning their approximation of intrinsic height and width.
+
+        Test: fast/replaced/width-and-height-of-positioned-replaced-elements.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::isReplacedElement):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::intrinsicSize):
+        * rendering/RenderButton.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::computeLogicalHeight):
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderReplaced.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        (WebCore::RenderTextControl::computeLogicalHeight):
+        * rendering/RenderTextControl.h:
+
 2013-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         There are unused variables in ApplyStyleCommand::mergeEndWithNextIfIdentical and ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds

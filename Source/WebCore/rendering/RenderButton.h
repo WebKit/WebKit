@@ -67,6 +67,8 @@ private:
 
     void timerFired(Timer<RenderButton>*);
 
+    virtual LayoutSize intrinsicSize() const OVERRIDE FINAL { return LayoutSize(maxPreferredLogicalWidth(), LayoutUnit()); }
+
     RenderTextFragment* m_buttonText;
     RenderBlock* m_inner;
 

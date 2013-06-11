@@ -43,7 +43,7 @@ protected:
 
     virtual void layout();
 
-    virtual LayoutSize intrinsicSize() const OVERRIDE { return m_intrinsicSize; }
+    virtual LayoutSize intrinsicSize() const OVERRIDE FINAL { return m_intrinsicSize; }
     virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
 
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
