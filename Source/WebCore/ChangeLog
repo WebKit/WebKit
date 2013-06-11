@@ -1,5 +1,17 @@
 2013-06-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        text-transform: capitalize shouldn't upconvert
+        https://bugs.webkit.org/show_bug.cgi?id=117485
+
+        Reviewed by Adam Barth.
+
+        Avoid the upconversion. Merge https://chromium.googlesource.com/chromium/blink/+/c5a221d6da2443df0639c01c40aac6040908ec79.
+
+        * rendering/RenderText.cpp:
+        (WebCore::makeCapitalized):
+
+2013-06-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         DocType strings should be 8 bit wide
         https://bugs.webkit.org/show_bug.cgi?id=117487
 
