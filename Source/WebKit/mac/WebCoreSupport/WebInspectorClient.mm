@@ -54,7 +54,7 @@
 #import <WebKitSystemInterface.h>
 #import <wtf/PassOwnPtr.h>
 
-SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspector, PrivateFrameworks, A)
+SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspectorUI, PrivateFrameworks, A)
 
 // The margin from the top and right of the dock button (same as the full screen button).
 static const CGFloat dockButtonMargin = 3;
@@ -221,9 +221,9 @@ void WebInspectorFrontendClient::frontendLoaded()
 static bool useWebKitWebInspector()
 {
     // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
-    WebInspectorLibrary();
+    WebInspectorUILibrary();
 
-    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"])
+    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"])
         return true;
 
     if (![[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"])
@@ -234,7 +234,7 @@ static bool useWebKitWebInspector()
 
 String WebInspectorFrontendClient::localizedStringsURL()
 {
-    NSBundle *bundle = useWebKitWebInspector() ? [NSBundle bundleWithIdentifier:@"com.apple.WebCore"] : [NSBundle bundleWithIdentifier:@"com.apple.WebInspector"]; 
+    NSBundle *bundle = useWebKitWebInspector() ? [NSBundle bundleWithIdentifier:@"com.apple.WebCore"] : [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
     NSString *path = [bundle pathForResource:@"localizedStrings" ofType:@"js"];
     if ([path length])
         return [[NSURL fileURLWithPath:path] absoluteString];
@@ -430,7 +430,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     if (useWebKitWebInspector())
         path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
     else
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"];
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"];
 
     ASSERT([path length]);
     return path;

@@ -1,3 +1,17 @@
+2013-06-06  Timothy Hatcher  <timothy@apple.com>
+
+        Update the framework bundle identifier for the Web Inspector.
+
+        Reviewed by Mark Rowe.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::inspectorReallyUsesWebKitUserInterface):
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        * WebProcess/WebPage/mac/WebInspectorMac.mm:
+        (WebKit::inspectorReallyUsesWebKitUserInterface):
+        (WebKit::WebInspector::localizedStringsURL):
+
 2013-06-11  Jer Noble  <jer.noble@apple.com>
 
         Do not filter cookies requested through the CookieStorageShim.

@@ -50,7 +50,7 @@
 #import <WebCore/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
-SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspector, PrivateFrameworks, A)
+SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspectorUI, PrivateFrameworks, A)
 
 using namespace WebCore;
 using namespace WebKit;
@@ -195,9 +195,9 @@ static bool inspectorReallyUsesWebKitUserInterface(WebPreferences* preferences)
     // This matches a similar check in WebInspectorMac.mm. Keep them in sync.
 
     // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
-    WebInspectorLibrary();
+    WebInspectorUILibrary();
 
-    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"])
+    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"])
         return true;
 
     if (![[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"])
@@ -759,7 +759,7 @@ String WebInspectorProxy::inspectorPageURL() const
     if (inspectorReallyUsesWebKitUserInterface(page()->pageGroup()->preferences()))
         path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
     else
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"];
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"];
 
     ASSERT([path length]);
 
@@ -772,7 +772,7 @@ String WebInspectorProxy::inspectorBaseURL() const
     if (inspectorReallyUsesWebKitUserInterface(page()->pageGroup()->preferences()))
         path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] resourcePath];
     else
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] resourcePath];
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] resourcePath];
 
     ASSERT([path length]);
 

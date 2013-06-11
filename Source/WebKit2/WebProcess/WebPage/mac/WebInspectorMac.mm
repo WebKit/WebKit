@@ -28,7 +28,7 @@
 
 #import <WebCore/SoftLinking.h>
 
-SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspector, PrivateFrameworks, A)
+SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspectorUI, PrivateFrameworks, A)
 
 namespace WebKit {
 
@@ -37,9 +37,9 @@ static bool inspectorReallyUsesWebKitUserInterface(bool preference)
     // This matches a similar check in WebInspectorProxyMac.mm. Keep them in sync.
 
     // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
-    WebInspectorLibrary();
+    WebInspectorUILibrary();
 
-    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"])
+    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"])
         return true;
 
     if (![[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"])
@@ -65,7 +65,7 @@ bool WebInspector::canSave() const
 String WebInspector::localizedStringsURL() const
 {
     if (!m_hasLocalizedStringsURL) {
-        NSString *bundleIdentifier = inspectorReallyUsesWebKitUserInterface(m_usesWebKitUserInterface) ? @"com.apple.WebCore" : @"com.apple.WebInspector";
+        NSString *bundleIdentifier = inspectorReallyUsesWebKitUserInterface(m_usesWebKitUserInterface) ? @"com.apple.WebCore" : @"com.apple.WebInspectorUI";
         NSString *path = [[NSBundle bundleWithIdentifier:bundleIdentifier] pathForResource:@"localizedStrings" ofType:@"js"];
         if ([path length])
             m_localizedStringsURL = [[NSURL fileURLWithPath:path] absoluteString];

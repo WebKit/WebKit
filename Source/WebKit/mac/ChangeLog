@@ -1,3 +1,14 @@
+2013-06-06  Timothy Hatcher  <timothy@apple.com>
+
+        Update the framework bundle identifier for the Web Inspector.
+
+        Reviewed by Mark Rowe.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (useWebKitWebInspector):
+        (WebInspectorFrontendClient::localizedStringsURL):
+        (-[WebInspectorWindowController inspectorPagePath]):
+
 2013-06-05  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions][CSS Shapes] Split CSS Exclusions & Shapes compile & runtime flags
