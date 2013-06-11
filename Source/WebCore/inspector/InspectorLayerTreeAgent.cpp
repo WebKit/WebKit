@@ -178,7 +178,7 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
     RefPtr<TypeBuilder::LayerTree::Layer> layerObject = TypeBuilder::LayerTree::Layer::create()
         .setLayerId(bind(renderLayer))
         .setNodeId(idForNode(errorString, node))
-        .setBounds(buildObjectForIntRect(enclosingIntRect(renderer->absoluteBoundingBoxRect())))
+        .setBounds(buildObjectForIntRect(renderer->absoluteBoundingBoxRect()))
         .setMemory(backing->backingStoreMemoryEstimate())
         .setCompositedBounds(buildObjectForIntRect(backing->compositedBounds()))
         .setPaintCount(backing->graphicsLayer()->repaintCount());
