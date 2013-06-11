@@ -6195,8 +6195,8 @@ void RenderBlock::computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidt
                 // Add in text-indent.  This is added in only once.
                 if (!addedTextIndent && !child->isFloating()) {
                     LayoutUnit ceiledIndent = textIndent.ceilToFloat();
-                    childMin += cailedIndent;
-                    childMax += cailedIndent;
+                    childMin += ceiledIndent;
+                    childMax += ceiledIndent;
 
                     if (childMin < 0)
                         textIndent = adjustFloatForSubPixelLayout(childMin);
