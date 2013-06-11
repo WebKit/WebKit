@@ -1,3 +1,18 @@
+2013-06-11  Jer Noble  <jer.noble@apple.com>
+
+        Do not filter cookies requested through the CookieStorageShim.
+        https://bugs.webkit.org/show_bug.cgi?id=117511
+        <rdar://problem/13603433>
+
+        Reviewed by Beth Dakin.
+
+        Since the shim function is called when the underlying media engine is
+        creating an HTTPRequest, use CookieRequestHeaderFieldValue (which does
+        not filter out HTTP-only cookies) rather than CookiesForDOM (which does).
+
+        * Shared/mac/CookieStorageShim.cpp:
+        (WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL):
+
 2013-06-11  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Remove leftover wxWebkit code
