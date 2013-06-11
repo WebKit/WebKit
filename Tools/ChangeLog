@@ -1,3 +1,9 @@
+2013-06-11  Timothy Hatcher  <timothy@apple.com>
+
+        Have build-webkit build the WebInspectorUI project.
+
+        * Scripts/build-webkit:
+
 2013-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an option to run-webkit-tests to skip java dependency check
