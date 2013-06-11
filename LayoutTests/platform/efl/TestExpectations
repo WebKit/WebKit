@@ -1796,26 +1796,6 @@ webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ 
 # New accessibility test added in r149155 is failing.
 webkit.org/b/115659 accessibility/meter-element.html [ Failure ]
 
-# Regression(r149292): Missing repaint rects.
-webkit.org/b/114611 fast/box-shadow/shadow-repaint.html [ Failure ]
-webkit.org/b/114611 fast/css-grid-layout/grid-element-change-columns-repaint.html [ Failure ]
-webkit.org/b/114611 fast/css-grid-layout/grid-element-change-rows-repaint.html [ Failure ]
-webkit.org/b/114611 fast/css-grid-layout/grid-item-change-column-repaint.html [ Failure ]
-webkit.org/b/114611 fast/css-grid-layout/grid-item-change-row-repaint.html [ Failure ]
-webkit.org/b/114611 fast/images/repaint-subrect-grid.html [ Failure ]
-webkit.org/b/114611 fast/repaint/background-shorthand-with-gradient-and-height-changes.html [ Failure ]
-webkit.org/b/114611 fast/repaint/layer-full-repaint.html [ Failure ]
-webkit.org/b/114611 fast/repaint/overflow-flipped-writing-mode-table.html [ Failure ]
-webkit.org/b/114611 fast/repaint/reflection-table-layout.html [ Failure ]
-webkit.org/b/114611 fast/repaint/selection-gap-absolute-child.html [ Failure ]
-webkit.org/b/114611 fast/repaint/selection-gap-fixed-child.html [ Failure ]
-webkit.org/b/114611 fast/repaint/selection-gap-flipped-absolute-child.html [ Failure ]
-webkit.org/b/114611 fast/repaint/selection-gap-flipped-fixed-child.html [ Failure ]
-webkit.org/b/114611 fast/repaint/selection-gap-transformed-absolute-child.html [ Failure ]
-webkit.org/b/114611 fast/repaint/selection-gap-transformed-fixed-child.html [ Failure ]
-webkit.org/b/114611 fast/repaint/transform-table-layout.html [ Failure ]
-webkit.org/b/114611 svg/repaint/repaint-webkit-svg-shadow-container.html [ Failure ]
-
 # Newly added test in r148131 is failing.
 webkit.org/b/114876 media/click-volume-bar-not-pausing.html [ Failure ]
 

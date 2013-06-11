@@ -66,6 +66,26 @@ webkit.org/b/109945 webgl/conformance/glsl/misc/shader-with-non-reserved-words.h
 webkit.org/b/109945 webgl/conformance/uniforms/gl-uniform-arrays.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/uniforms/uniform-default-values.html [ Crash ]
 
+# Regression(r149292): Missing repaint rects.
+webkit.org/b/117460 fast/box-shadow/shadow-repaint.html [ Crash ]
+webkit.org/b/117460 fast/css-grid-layout/grid-element-change-columns-repaint.html [ Crash ]
+webkit.org/b/117460 fast/css-grid-layout/grid-element-change-rows-repaint.html [ Crash ]
+webkit.org/b/117460 fast/css-grid-layout/grid-item-change-column-repaint.html [ Crash ]
+webkit.org/b/117460 fast/css-grid-layout/grid-item-change-row-repaint.html [ Crash ]
+webkit.org/b/117460 fast/images/repaint-subrect-grid.html [ Crash ]
+webkit.org/b/117460 fast/repaint/background-shorthand-with-gradient-and-height-changes.html [ Crash ]
+webkit.org/b/117460 fast/repaint/layer-full-repaint.html [ Crash ]
+webkit.org/b/117460 fast/repaint/overflow-flipped-writing-mode-table.html [ Crash ]
+webkit.org/b/117460 fast/repaint/reflection-table-layout.html [ Crash ]
+webkit.org/b/117460 fast/repaint/selection-gap-absolute-child.html [ Crash ]
+webkit.org/b/117460 fast/repaint/selection-gap-fixed-child.html [ Crash ]
+webkit.org/b/117460 fast/repaint/selection-gap-flipped-absolute-child.html [ Crash ]
+webkit.org/b/117460 fast/repaint/selection-gap-flipped-fixed-child.html [ Crash ]
+webkit.org/b/117460 fast/repaint/selection-gap-transformed-absolute-child.html [ Crash ]
+webkit.org/b/117460 fast/repaint/selection-gap-transformed-fixed-child.html [ Crash ]
+webkit.org/b/117460 fast/repaint/transform-table-layout.html [ Crash ]
+webkit.org/b/117460 svg/repaint/repaint-webkit-svg-shadow-container.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,10 @@
+2013-06-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Manage tests which need to implement repaint rect. 
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2013-06-10  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r151302): Many broken webaudio/ tests on Mac port.
