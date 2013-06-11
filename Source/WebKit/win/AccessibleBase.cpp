@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -635,11 +635,13 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::SliderRole:
             return ROLE_SYSTEM_SLIDER;
         case WebCore::TabGroupRole:
+        case WebCore::TabListRole:
             return ROLE_SYSTEM_PAGETABLIST;
         case WebCore::TextFieldRole:
         case WebCore::TextAreaRole:
         case WebCore::EditableTextRole:
             return ROLE_SYSTEM_TEXT;
+        case WebCore::HeadingRole:
         case WebCore::ListMarkerRole:
         case WebCore::StaticTextRole:
             return ROLE_SYSTEM_STATICTEXT;
@@ -650,13 +652,18 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::RowRole:
             return ROLE_SYSTEM_ROW;
         case WebCore::GroupRole:
+        case WebCore::RadioGroupRole:
             return ROLE_SYSTEM_GROUPING;
+        case WebCore::DescriptionListRole:
+        case WebCore::DirectoryRole:
         case WebCore::ListRole:
         case WebCore::ListBoxRole:
         case WebCore::MenuListPopupRole:
             return ROLE_SYSTEM_LIST;
+        case WebCore::GridRole:
         case WebCore::TableRole:
             return ROLE_SYSTEM_TABLE;
+        case WebCore::ImageMapLinkRole:
         case WebCore::LinkRole:
         case WebCore::WebCoreLinkRole:
             return ROLE_SYSTEM_LINK;
@@ -664,23 +671,34 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::ImageMapRole:
         case WebCore::ImageRole:
             return ROLE_SYSTEM_GRAPHIC;
-        case WebCore::MenuListOptionRole:
+        // Note: ListItemRole seems like it should map to ROLE_SYSTEM_LISTITEM, but Mac OS maps
+        // this to the equivalent of ROLE_SYSTEM_GROUPING. To provide consistent behavior on both
+        // platforms we will follow that mapping:
         case WebCore::ListItemRole:
+            return ROLE_SYSTEM_GROUPING;
         case WebCore::ListBoxOptionRole:
-            return ROLE_SYSTEM_LISTITEM;
+        case WebCore::MenuListOptionRole:
+            return ROLE_SYSTEM_STATICTEXT;
+        case WebCore::ComboBoxRole:
         case WebCore::PopUpButtonRole:
             return ROLE_SYSTEM_COMBOBOX;
         case WebCore::DivRole:
+        case WebCore::FooterRole:
         case WebCore::FormRole:
         case WebCore::LabelRole:
         case WebCore::ParagraphRole:
             return ROLE_SYSTEM_GROUPING;
         case WebCore::HorizontalRuleRole:
+        case WebCore::SplitterRole:
             return ROLE_SYSTEM_SEPARATOR;
         case WebCore::ApplicationAlertRole:
+        case WebCore::ApplicationAlertDialogRole:
             return ROLE_SYSTEM_ALERT;
-        case WebCore::ComboBoxRole:
-            return ROLE_SYSTEM_COMBOBOX;
+        case WebCore::DisclosureTriangleRole:
+            return ROLE_SYSTEM_BUTTONDROPDOWN;
+        case WebCore::SeamlessWebAreaRole:
+            return ROLE_SYSTEM_GROUPING;
+        case WebCore::IncrementorRole:
         case WebCore::SpinButtonRole:
             return ROLE_SYSTEM_SPINBUTTON;
         case WebCore::SpinButtonPartRole:
@@ -696,10 +714,69 @@ static long MSAARole(AccessibilityRole role)
             return ROLE_SYSTEM_OUTLINE;
         case WebCore::TreeItemRole:
             return ROLE_SYSTEM_OUTLINEITEM;
-        case WebCore::TabListRole:
-            return ROLE_SYSTEM_PAGETABLIST;
         case WebCore::TabPanelRole:
-            return ROLE_SYSTEM_PROPERTYPAGE;
+            return ROLE_SYSTEM_GROUPING;
+        // Note: TabRole seems like it should map to ROLE_SYSTEM_PAGETAB, but Mac OS maps
+        // this to the equivalent of ROLE_SYSTEM_RADIOBUTTON. To provide consistent behavior
+        // on both platforms we will follow that mapping:
+        case WebCore::TabRole:
+            return ROLE_SYSTEM_RADIOBUTTON;
+        case WebCore::ApplicationRole:
+            return ROLE_SYSTEM_APPLICATION;
+        case WebCore::ApplicationDialogRole:
+            return ROLE_SYSTEM_DIALOG;
+        case WebCore::ApplicationLogRole:
+        case WebCore::ApplicationMarqueeRole:
+            return ROLE_SYSTEM_GROUPING;
+        case WebCore::ApplicationStatusRole:
+            return ROLE_SYSTEM_STATUSBAR;
+        case WebCore::ApplicationTimerRole:
+            return ROLE_SYSTEM_CLOCK;
+        case WebCore::CellRole:
+            return ROLE_SYSTEM_CELL;
+        case WebCore::ColumnHeaderRole:
+            return ROLE_SYSTEM_COLUMNHEADER;
+        case WebCore::DefinitionRole:
+        case WebCore::DescriptionListDetailRole:
+        case WebCore::DescriptionListTermRole:
+        case WebCore::DocumentRole:
+        case WebCore::DocumentArticleRole:
+        case WebCore::DocumentNoteRole:
+        case WebCore::DocumentRegionRole:
+            return ROLE_SYSTEM_GROUPING;
+        case WebCore::DocumentMathRole:
+        case WebCore::MathElementRole:
+            return ROLE_SYSTEM_EQUATION;
+        case WebCore::HelpTagRole:
+            return ROLE_SYSTEM_HELPBALLOON;
+        case WebCore::LandmarkApplicationRole:
+        case WebCore::LandmarkBannerRole:
+        case WebCore::LandmarkComplementaryRole:
+        case WebCore::LandmarkContentInfoRole:
+        case WebCore::LandmarkMainRole:
+        case WebCore::LandmarkNavigationRole:
+        case WebCore::LandmarkSearchRole:
+        case WebCore::LegendRole:
+            return ROLE_SYSTEM_GROUPING;
+        case WebCore::MenuRole:
+            return ROLE_SYSTEM_MENUPOPUP;
+        case WebCore::MenuItemRole:
+        case WebCore::MenuButtonRole:
+            return ROLE_SYSTEM_MENUITEM;
+        case WebCore::MenuBarRole:
+            return ROLE_SYSTEM_MENUBAR;
+        case WebCore::ProgressIndicatorRole:
+            return ROLE_SYSTEM_PROGRESSBAR;
+        case WebCore::RowHeaderRole:
+            return ROLE_SYSTEM_ROWHEADER;
+        case WebCore::ScrollBarRole:
+            return ROLE_SYSTEM_SCROLLBAR;
+        case WebCore::SVGRootRole:
+            return ROLE_SYSTEM_GROUPING;
+        case WebCore::TableHeaderContainerRole:
+            return ROLE_SYSTEM_GROUPING;
+        case WebCore::WindowRole:
+            return ROLE_SYSTEM_WINDOW;
         default:
             // This is the default role for MSAA.
             return ROLE_SYSTEM_CLIENT;

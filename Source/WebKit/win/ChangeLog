@@ -1,3 +1,13 @@
+2013-06-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Provide MSAA mappings for more WebCore roles.
+        https://bugs.webkit.org/show_bug.cgi?id=117389
+
+        Reviewed by Chris Fleizach.
+
+        * AccessibleBase.cpp:
+        (MSAARole): Add additional mappings between WebCore roles and MSAA roles.
+
 2013-06-07  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of outdated raises() from Web IDL
