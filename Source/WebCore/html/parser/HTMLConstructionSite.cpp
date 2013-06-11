@@ -355,8 +355,8 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken* token)
 {
     ASSERT(token->type() == HTMLToken::DOCTYPE);
 
-    const String& publicId = String::adopt(token->publicIdentifier());
-    const String& systemId = String::adopt(token->systemIdentifier());
+    const String& publicId = StringImpl::create8BitIfPossible(token->publicIdentifier());
+    const String& systemId = StringImpl::create8BitIfPossible(token->systemIdentifier());
     RefPtr<DocumentType> doctype = DocumentType::create(m_document, token->name(), publicId, systemId);
     attachLater(m_attachmentRoot, doctype.release());
 
