@@ -1,3 +1,12 @@
+2013-06-11  Robert Hogan  <robert@webkit.org>
+
+        Add baselines for test added in r151444
+
+        Unreviewed.
+
+        * platform/gtk/fast/repaint/table-cell-collapsed-border-scroll-expected.txt: Added.
+        * platform/win/fast/repaint/table-cell-collapsed-border-scroll-expected.txt: Added.
+
 2013-06-03  Robert Hogan  <robert@webkit.org>
 
         Painting collapsed borders during scrolling
