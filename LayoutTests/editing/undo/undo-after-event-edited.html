@@ -33,11 +33,11 @@ document.addEventListener("DOMCharacterDataModified", function () {
     document.execCommand('InsertParagraph',false,false);
 }, false);
 
-setTimeout(function() {
+window.addEventListener("load", function() {
   document.execCommand("SelectAll", false)
   var documentFragment = getSelection().getRangeAt(0).extractContents();
   document.execCommand('Undo', false);
-}, 1);
+});
 
 </script>
 </head>

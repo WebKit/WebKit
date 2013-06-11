@@ -1,3 +1,14 @@
+2013-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        editing/undo/undo-after-event-edited.html can be flaky
+        https://bugs.webkit.org/show_bug.cgi?id=117461
+
+        Reviewed by Andreas Kling.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/515de860730b34289df5805b40adb2535a9a8ba1
+
+        * editing/undo/undo-after-event-edited.html:
+
 2013-06-11  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Unskipping passing tests. Generate new baseline where needed.
