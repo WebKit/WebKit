@@ -1,3 +1,18 @@
+2013-06-11  Robert Hogan  <robert@webkit.org>
+
+        Rebaseline results after r151451
+
+        Unreviewed, gardening.
+
+        * platform/efl/fast/forms/button-positioned-expected.txt:
+        * platform/efl/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/efl/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.txt: Added.
+        * platform/gtk/fast/forms/button-positioned-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-preventDefault-expected.png:
+        * platform/gtk/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/gtk/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.txt: Added.
+        * platform/win/fast/forms/onselect-textfield-expected.txt: Added.
+
 2013-06-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening. Rebaselining various tests that are at the moment failing and need the new baseline.

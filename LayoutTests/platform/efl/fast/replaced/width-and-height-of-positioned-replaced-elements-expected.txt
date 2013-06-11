@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x50
+  RenderBlock {HTML} at (0,0) size 800x50
+    RenderBody {BODY} at (8,16) size 784x18
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 608x17
+          text run at (0,0) width 608: "webkit.org/b/93735: Use the replaced height and width computation for positioned form controls"
+layer at (7,32) size 414x40
+  RenderTextControl {INPUT} at (7,32) size 414x40 [bgcolor=#FFFFFF]
+layer at (11,43) size 407x20
+  RenderBlock {DIV} at (4,11) size 407x20
+layer at (7,82) size 148x22
+  RenderButton {INPUT} at (7,82) size 148x22 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+    RenderBlock (anonymous) at (17,10) size 114x20
+      RenderText at (17,0) size 80x20
+        text run at (17,0) width 80: "text"
+layer at (7,132) size 192x60
+  RenderMenuList {SELECT} at (7,132) size 192x60 [bgcolor=#FFFFFF]
+    RenderBlock (anonymous) at (15,20) size 136x20
+      RenderText at (0,0) size 80x20
+        text run at (0,0) width 80: "test"
+layer at (7,182) size 427x52 clip at (8,183) size 425x50
+  RenderTextControl {TEXTAREA} at (7,182) size 427x52 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 421x20
