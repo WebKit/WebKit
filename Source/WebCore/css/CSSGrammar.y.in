@@ -854,7 +854,7 @@ keyframes_rule:
     ;
 
 keyframe_rule:
-    key_list maybe_space '{' maybe_space declaration_list '}' {
+    key_list maybe_space '{' maybe_space declaration_list closing_brace {
         $$ = parser->createKeyframe($1);
     }
     ;
@@ -1692,7 +1692,7 @@ term:
   | UNICODERANGE maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_UNICODE_RANGE; }
   | HEX maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; }
   | '#' maybe_space { $$.id = 0; $$.string = CSSParserString(); $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; } /* Handle error case: "color: #;" */
-  | VARFUNCTION maybe_space IDENT ')' maybe_space {
+  | VARFUNCTION maybe_space IDENT closing_parenthesis maybe_space {
 #if ENABLE_CSS_VARIABLES
       $$.id = 0;
       $$.string = $3;
@@ -1782,7 +1782,7 @@ function:
 
 calc_func_term:
   unary_term { $$ = $1; }
-  | VARFUNCTION maybe_space IDENT ')' {
+  | VARFUNCTION maybe_space IDENT closing_parenthesis {
 #if ENABLE_CSS_VARIABLES
       $$.id = 0;
       $$.string = $3;
@@ -1813,7 +1813,7 @@ calc_maybe_space:
   ;
 
 calc_func_paren_expr:
-    '(' maybe_space calc_func_expr calc_maybe_space ')' {
+    '(' maybe_space calc_func_expr calc_maybe_space closing_parenthesis {
         if ($3) {
             $$ = $3;
             CSSParserValue v;
@@ -1883,7 +1883,7 @@ calc_func_expr_list:
   ;
 
 calc_function:
-    CALCFUNCTION maybe_space calc_func_expr calc_maybe_space ')' maybe_space {
+    CALCFUNCTION maybe_space calc_func_expr calc_maybe_space closing_parenthesis maybe_space {
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = parser->sinkFloatingValueList($3);
@@ -1907,7 +1907,7 @@ min_or_max:
     ;
 
 min_or_max_function:
-    min_or_max maybe_space calc_func_expr_list ')' maybe_space {
+    min_or_max maybe_space calc_func_expr_list closing_parenthesis maybe_space {
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = parser->sinkFloatingValueList($3);

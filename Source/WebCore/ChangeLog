@@ -1,3 +1,22 @@
+2013-06-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        Autoclose braces and parentheses at the end of style sheet
+        https://bugs.webkit.org/show_bug.cgi?id=117414
+
+        Reviewed by Andreas Kling.
+
+        From Blink r150202 by <serya@chromium.org>
+
+        Use closing_parenthesis and closing_brace instead of the literals
+        '}' and ')'. This allows the parser to treat expressions with
+        unmatched closing braces/parenthesis as if all of them were
+        actually closed.
+
+        Tests: animations/keyframe-autoclose-brace.html
+               css3/autoclose-braces-and-parentheses.html
+
+        * css/CSSGrammar.y.in:
+
 2013-06-10  Jae Hyun Park  <jae.park@company100.net>
 
         [CoordinatedGraphics] Typos in custom shader support
