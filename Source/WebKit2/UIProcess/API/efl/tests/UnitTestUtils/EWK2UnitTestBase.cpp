@@ -50,9 +50,10 @@ void EWK2UnitTestBase::SetUp()
 #if defined(WTF_USE_ACCELERATED_COMPOSITING) && defined(HAVE_ECORE_X)
     const char* engine = "opengl_x11";
     m_ecoreEvas = ecore_evas_new(engine, 0, 0, width, height, 0);
-#else
-    m_ecoreEvas = ecore_evas_new(0, 0, 0, width, height, 0);
+    // Graceful fallback to software rendering if evas_gl engine is not available.
+    if (!m_ecoreEvas)
 #endif
+    m_ecoreEvas = ecore_evas_new(0, 0, 0, width, height, 0);
 
     ecore_evas_show(m_ecoreEvas);
     Evas* evas = ecore_evas_get(m_ecoreEvas);

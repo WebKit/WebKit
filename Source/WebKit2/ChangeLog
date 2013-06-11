@@ -1,3 +1,16 @@
+2013-06-11  Changhyup Jwa  <ch.jwa@samsung.com>
+
+        [EFL][WK2] Add fallback for EWK2UnitTestBase if opengl is not available.
+        https://bugs.webkit.org/show_bug.cgi?id=117504
+
+        Reviewed by Christophe Dumez.
+
+        There're many fails on efl webkit2 unit test if opengl is not available.
+        So, add fallback to non-opengl evas engine.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+
 2013-06-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Make WTR use its own temporary directory for application cache
