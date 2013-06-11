@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,6 +94,7 @@ public:
 
     // IAccessibleComparable
     virtual HRESULT STDMETHODCALLTYPE isSameObject(IAccessibleComparable* other, BOOL* result);
+    virtual HRESULT STDMETHODCALLTYPE attributeValue(BSTR key, BSTR* value);
 
 protected:
     AccessibleBase(WebCore::AccessibilityObject*);

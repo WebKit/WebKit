@@ -3882,6 +3882,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\accessibility\win\AccessibilityObjectWrapperWin.cpp" />
     <ClCompile Include="..\accessibility\win\AccessibilityObjectWin.cpp" />
     <ClCompile Include="..\accessibility\win\AXObjectCacheWin.cpp" />
     <ClCompile Include="..\page\animation\AnimationBase.cpp" />

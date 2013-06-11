@@ -46,6 +46,7 @@
 #include <WebCore/RenderFrame.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/RenderView.h>
+#include <comutil.h>
 #include <oleacc.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringBuilder.h>
@@ -834,5 +835,18 @@ HRESULT AccessibleBase::isSameObject(IAccessibleComparable* other, BOOL* result)
 {
     COMPtr<AccessibleBase> otherAccessibleBase(Query, other);
     *result = (otherAccessibleBase == this || otherAccessibleBase->m_object == m_object);
+    return S_OK;
+}
+
+HRESULT AccessibleBase::attributeValue(BSTR key, BSTR* value)
+{
+    if (!value)
+        return E_POINTER;
+
+    AtomicString keyAtomic(_com_util::ConvertBSTRToString(key));
+    AtomicString valueAtomic = accessibilityAttributeValue(keyAtomic);
+
+    *value = BString(valueAtomic).release();
+
     return S_OK;
 }

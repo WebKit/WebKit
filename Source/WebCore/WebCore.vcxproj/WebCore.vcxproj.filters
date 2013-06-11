@@ -687,6 +687,9 @@
     <ClCompile Include="..\accessibility\AXObjectCache.cpp">
       <Filter>accessibility</Filter>
     </ClCompile>
+    <ClCompile Include="..\accessibility\win\AccessibilityObjectWrapperWin.cpp">
+      <Filter>accessibility\win</Filter>
+    </ClCompile>
     <ClCompile Include="..\accessibility\win\AccessibilityObjectWin.cpp">
       <Filter>accessibility\win</Filter>
     </ClCompile>
@@ -2432,6 +2435,7 @@
     </ClCompile>
     <ClCompile Include="..\rendering\EllipsisBox.cpp">
       <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\shapes\PolygonShape.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
@@ -2443,7 +2447,6 @@
     </ClCompile>
     <ClCompile Include="..\rendering\shapes\ShapeInsideInfo.cpp">
       <Filter>rendering</Filter>
-    </ClCompile>
     </ClCompile>
     <ClCompile Include="..\rendering\shapes\ShapeInterval.cpp">
       <Filter>rendering</Filter>

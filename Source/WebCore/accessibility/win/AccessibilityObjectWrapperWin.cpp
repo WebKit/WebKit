@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DO_NO_IMPORTS
-import "oaidl.idl";
-import "ocidl.idl";
-#endif
+#include "config.h"
+#include "AccessibilityObjectWrapperWin.h"
 
-import "oleacc.idl";
+#if HAVE(ACCESSIBILITY)
 
-cpp_quote("extern const GUID  __declspec(selectany) SID_AccessibleComparable = { 0x62b8cb5f, 0xfb7a, 0x4faf, 0x81, 0xe8, 0x52, 0xb6, 0x5f, 0x12, 0x8b, 0x31 };")
+#include "AXObjectCache.h"
+#include "AccessibilityObject.h"
+#include "HTMLNames.h"
+#include "QualifiedName.h"
 
-[
-    object,
-    uuid(4f0381ad-dab3-42ad-9ca2-a85b0ae041c0),
-    hidden,
-    dual,
-    pointer_default(unique)
-]
-interface IAccessibleComparable : IAccessible
+namespace WebCore {
+
+AtomicString AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomicString& attributeName)
 {
-    HRESULT isSameObject([in] IAccessibleComparable* other, [out, retval] BOOL* result);
-    HRESULT attributeValue([in] BSTR key, [out, retval] BSTR* value);
+    // FIXME: This should be fleshed out to match the Mac version
+    
+    // Used by DRT to find an accessible node by its element id.
+    if (attributeName == "AXDRTElementIdAttribute")
+        return m_object->getAttribute(WebCore::HTMLNames::idAttr);
+    
+    return emptyString();
 }
+
+
+} // namespace WebCore
+
+#endif // HAVE(ACCESSIBILITY)

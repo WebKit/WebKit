@@ -1,3 +1,15 @@
+2013-06-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Implement 'attributeValue' accessor to support testing.
+        https://bugs.webkit.org/show_bug.cgi?id=117513
+
+        Reviewed by Anders Carlsson.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::attributeValue): Added.
+        * AccessibleBase.h: Added method declaration.
+        * Interfaces/AccessibleComparable.idl: New accessor interface.
+
 2013-06-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Provide MSAA mappings for more WebCore roles.

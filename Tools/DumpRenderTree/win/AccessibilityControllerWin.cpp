@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,14 @@
 #include "FrameLoadDelegate.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/JSStringRefBSTR.h>
+#include <WebCore/AccessibilityObjectWrapperWin.h>
 #include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
 #include <oleacc.h>
 #include <string>
 #include <wtf/Assertions.h>
+#include <wtf/text/AtomicString.h>
 
 using namespace std;
 
@@ -67,9 +70,63 @@ AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
     return 0;
 }
 
+static COMPtr<IAccessibleComparable> comparableObject(const COMPtr<IServiceProvider>& serviceProvider)
+{
+    COMPtr<IAccessibleComparable> comparable;
+    serviceProvider->QueryService(SID_AccessibleComparable, __uuidof(IAccessibleComparable), reinterpret_cast<void**>(&comparable));
+    return comparable;
+}
+
+static COMPtr<IAccessible> findAccessibleObjectById(AccessibilityUIElement parentObject, BSTR idAttribute)
+{
+    COMPtr<IAccessible> parentIAccessible = parentObject.platformUIElement();
+
+    COMPtr<IServiceProvider> serviceProvider(Query, parentIAccessible);
+    if (!serviceProvider)
+        return 0;
+
+    COMPtr<IAccessibleComparable> comparable = comparableObject(serviceProvider);
+    if (!comparable)
+        return 0;
+
+    BSTR value;
+    if (SUCCEEDED(comparable->attributeValue(L"AXDRTElementIdAttribute", &value))) {
+        if (VARCMP_EQ == ::VarBstrCmp(value, idAttribute, LOCALE_USER_DEFAULT, 0)) {
+            ::SysFreeString(value);
+            return parentIAccessible;
+        }
+    }
+    ::SysFreeString(value);
+
+    long childCount = parentObject.childrenCount();
+    if (!childCount)
+        return 0;
+
+    COMPtr<IAccessible> result;
+    for (long i = 0; i < childCount; ++i) {
+        AccessibilityUIElement childAtIndex = parentObject.getChildAtIndex(i);
+
+        result = findAccessibleObjectById(childAtIndex, idAttribute);
+        if (result)
+            return result;
+    }
+
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRef id)
 {
-    // FIXME: implement
+    AccessibilityUIElement rootAccessibilityUIElement = rootElement();
+
+    BSTR idAttribute = JSStringCopyBSTR(id);
+
+    COMPtr<IAccessible> result = findAccessibleObjectById(rootAccessibilityUIElement, idAttribute);
+
+    ::SysFreeString(idAttribute);
+
+    if (result)
+        return AccessibilityUIElement(result);
+
     return 0;
 }
 
@@ -278,13 +335,6 @@ static void CALLBACK notificationListenerProc(HWINEVENTHOOK, DWORD event, HWND h
     sharedFrameLoadDelegate->accessibilityController()->winNotificationReceived(childAccessible, stringEvent(event));
 
     VariantClear(&vChild);
-}
-
-static COMPtr<IAccessibleComparable> comparableObject(const COMPtr<IServiceProvider>& serviceProvider)
-{
-    COMPtr<IAccessibleComparable> comparable;
-    serviceProvider->QueryService(SID_AccessibleComparable, __uuidof(IAccessibleComparable), reinterpret_cast<void**>(&comparable));
-    return comparable;
 }
 
 bool AccessibilityController::addNotificationListener(JSObjectRef functionCallback)

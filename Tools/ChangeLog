@@ -1,3 +1,15 @@
+2013-06-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Implement 'attributeValue' accessor to support testing
+        https://bugs.webkit.org/show_bug.cgi?id=117513
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (comparableObject): Move earlier in file.
+        (findAccessibleObjectById): New implemenation.
+        (AccessibilityController::accessibleElementById): New implementation.
+
 2013-06-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Make WTR use its own temporary directory for application cache
