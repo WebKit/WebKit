@@ -1,3 +1,17 @@
+2013-06-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Clean up the initializer mess in Document
+        https://bugs.webkit.org/show_bug.cgi?id=117448
+
+        Reviewed by Ryosuke Niwa.
+
+        Basic cleaning from
+        https://chromium.googlesource.com/chromium/blink/+/e54ba8d3b62b0245ecdf2f3ec11cd33b4035a4d7
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+
 2013-06-11  Jer Noble  <jer.noble@apple.com>
 
         Set the font size for in-band captions on the display box, not the :cue.

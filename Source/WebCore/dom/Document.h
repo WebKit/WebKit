@@ -875,8 +875,6 @@ public:
 
     Document* parentDocument() const;
     Document* topDocument() const;
-
-    int docID() const { return m_docID; }
     
     ScriptRunner* scriptRunner() { return m_scriptRunner.get(); }
 
@@ -1280,7 +1278,6 @@ private:
 
     OwnPtr<StyleResolver> m_styleResolver;
     bool m_didCalculateStyleResolver;
-    bool m_hasDirtyStyleResolver;
     bool m_hasNodesWithPlaceholderStyle;
     bool m_needsNotifyRemoveAllPendingStylesheet;
     // But sometimes you need to ignore pending stylesheet count to
@@ -1362,7 +1359,6 @@ private:
     Color m_activeLinkColor;
     OwnPtr<VisitedLinkState> m_visitedLinkState;
 
-    bool m_loadingSheet;
     bool m_visuallyOrdered;
     ReadyState m_readyState;
     bool m_bParsing;
@@ -1413,8 +1409,6 @@ private:
     OwnPtr<TransformSource> m_transformSource;
     RefPtr<Document> m_transformSourceDocument;
 #endif
-
-    int m_docID; // A unique document identifier used for things like document-specific mapped attributes.
 
     String m_xmlEncoding;
     String m_xmlVersion;
