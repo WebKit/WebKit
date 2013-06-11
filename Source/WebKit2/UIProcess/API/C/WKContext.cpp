@@ -294,6 +294,11 @@ void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef contextRef, WKCe
     toImpl(contextRef)->allowSpecificHTTPSCertificateForHost(toImpl(certificateRef), toImpl(hostRef)->string());
 }
 
+WK_EXPORT void WKContextSetApplicationCacheDirectory(WKContextRef contextRef, WKStringRef applicationCacheDirectory)
+{
+    toImpl(contextRef)->setApplicationCacheDirectory(toImpl(applicationCacheDirectory)->string());
+}
+
 void WKContextSetDatabaseDirectory(WKContextRef contextRef, WKStringRef databaseDirectory)
 {
     toImpl(contextRef)->setDatabaseDirectory(toImpl(databaseDirectory)->string());

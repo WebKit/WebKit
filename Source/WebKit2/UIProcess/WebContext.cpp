@@ -1016,6 +1016,14 @@ void WebContext::stopMemorySampler()
     sendToAllProcesses(Messages::WebProcess::StopMemorySampler());
 }
 
+String WebContext::applicationCacheDirectory() const
+{
+    if (!m_overrideApplicationCacheDirectory.isEmpty())
+        return m_overrideApplicationCacheDirectory;
+
+    return platformDefaultApplicationCacheDirectory();
+}
+
 String WebContext::databaseDirectory() const
 {
     if (!m_overrideDatabaseDirectory.isEmpty())

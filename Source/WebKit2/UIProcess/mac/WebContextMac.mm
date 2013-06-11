@@ -254,25 +254,20 @@ void WebContext::platformInitialize()
     enableOcclusionNotifications();
 }
 
-String WebContext::applicationCacheDirectory()
+String WebContext::platformDefaultApplicationCacheDirectory() const
 {
     NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
     if (!appName)
         appName = [[NSProcessInfo processInfo] processName];
-    
+
     ASSERT(appName);
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *cacheDir = [defaults objectForKey:WebKitLocalCacheDefaultsKey];
 
-    if (!cacheDir || ![cacheDir isKindOfClass:[NSString class]]) {
-        char cacheDirectory[MAXPATHLEN];
-        size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
-    
-        if (cacheDirectoryLen)
-            cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
-    }
+    char cacheDirectory[MAXPATHLEN];
+    size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
+    if (!cacheDirectoryLen)
+        return String();
 
+    NSString *cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
     return [cacheDir stringByAppendingPathComponent:appName];
 }
 

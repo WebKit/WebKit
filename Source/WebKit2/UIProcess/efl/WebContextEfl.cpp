@@ -80,7 +80,7 @@ static void initializeInspectorServer()
 #endif
 }
 
-String WebContext::applicationCacheDirectory()
+String WebContext::platformDefaultApplicationCacheDirectory() const
 {
     return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl/Applications";
 }

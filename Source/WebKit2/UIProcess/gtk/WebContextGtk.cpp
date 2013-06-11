@@ -78,7 +78,7 @@ static void initInspectorServer()
 #endif
 }
 
-WTF::String WebContext::applicationCacheDirectory()
+WTF::String WebContext::platformDefaultApplicationCacheDirectory() const
 {
     GOwnPtr<gchar> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", "applications", NULL));
     return WebCore::filenameToString(cacheDirectory.get());

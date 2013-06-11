@@ -170,7 +170,6 @@ public:
 
     PluginInfoStore& pluginInfoStore() { return m_pluginInfoStore; }
 #endif
-    String applicationCacheDirectory();
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
@@ -222,6 +221,7 @@ public:
     };
     static Statistics& statistics();    
 
+    void setApplicationCacheDirectory(const String& dir) { m_overrideApplicationCacheDirectory = dir; }
     void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
     void setIconDatabasePath(const String&);
     String iconDatabasePath() const;
@@ -348,6 +348,9 @@ private:
     static void languageChanged(void* context);
     void languageChanged();
 
+    String applicationCacheDirectory() const;
+    String platformDefaultApplicationCacheDirectory() const;
+
     String databaseDirectory() const;
     String platformDefaultDatabaseDirectory() const;
 
@@ -459,6 +462,7 @@ private:
 #endif
 #endif
 
+    String m_overrideApplicationCacheDirectory;
     String m_overrideDatabaseDirectory;
     String m_overrideIconDatabasePath;
     String m_overrideLocalStorageDirectory;
