@@ -672,11 +672,8 @@ static long MSAARole(AccessibilityRole role)
         case WebCore::ImageMapRole:
         case WebCore::ImageRole:
             return ROLE_SYSTEM_GRAPHIC;
-        // Note: ListItemRole seems like it should map to ROLE_SYSTEM_LISTITEM, but Mac OS maps
-        // this to the equivalent of ROLE_SYSTEM_GROUPING. To provide consistent behavior on both
-        // platforms we will follow that mapping:
         case WebCore::ListItemRole:
-            return ROLE_SYSTEM_GROUPING;
+            return ROLE_SYSTEM_LISTITEM;
         case WebCore::ListBoxOptionRole:
         case WebCore::MenuListOptionRole:
             return ROLE_SYSTEM_STATICTEXT;
