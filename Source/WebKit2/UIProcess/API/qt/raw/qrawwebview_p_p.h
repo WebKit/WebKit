@@ -37,6 +37,8 @@ public:
 
     virtual void pageClosed() { }
 
+    virtual void preferencesDidChange() { }
+
     virtual void setFindIndicator(PassRefPtr<WebKit::FindIndicator>, bool fadeOut, bool animate) { }
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation) { }
     virtual void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&) { }

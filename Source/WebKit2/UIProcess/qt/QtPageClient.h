@@ -70,6 +70,7 @@ public:
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
 #endif // USE(ACCELERATED_COMPOSITING)
     virtual void pageClosed() { }
+    virtual void preferencesDidChange() { }
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);

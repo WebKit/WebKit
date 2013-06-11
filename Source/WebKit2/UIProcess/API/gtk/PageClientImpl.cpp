@@ -284,6 +284,11 @@ void PageClientImpl::pageClosed()
     notImplemented();
 }
 
+void PageClientImpl::preferencesDidChange()
+{
+    notImplemented();
+}
+
 void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
 {
     notImplemented();
