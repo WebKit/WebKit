@@ -142,7 +142,7 @@ public:
     void fitBelowFloats();
     void setTrailingWhitespaceWidth(float width) { m_trailingWhitespaceWidth = width; }
 
-    bool shouldIndentText() { return m_shouldIndentText == IndentText; }
+    bool shouldIndentText() const { return m_shouldIndentText == IndentText; }
 
 private:
     void computeAvailableWidthFromLeftAndRight()

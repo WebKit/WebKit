@@ -196,7 +196,7 @@ namespace {
         }
 
     private:
-        bool hasMoreCharacters()
+        bool hasMoreCharacters() const
         {
             return (m_position < m_length);
         }
@@ -213,7 +213,7 @@ namespace {
 
         void process(UChar);
 
-        bool peek(UChar& character)
+        bool peek(UChar& character) const
         {
             if (m_position + 1 >= m_length)
                 return false;
@@ -221,7 +221,7 @@ namespace {
             return true;
         }
 
-        UChar current()
+        UChar current() const
         {
             ASSERT_WITH_SECURITY_IMPLICATION(m_position < m_length);
             return m_sourceString[m_position];
@@ -232,7 +232,7 @@ namespace {
             ++m_position;
         }
 
-        bool isNewline(UChar character)
+        bool isNewline(UChar character) const
         {
             // Don't attempt to canonicalize newline related characters.
             return (character == '\n' || character == '\r');
