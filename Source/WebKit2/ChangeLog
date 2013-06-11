@@ -1,3 +1,26 @@
+2013-06-11  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][WK2] Fix test_ewk2_context_menu
+        https://bugs.webkit.org/show_bug.cgi?id=116601
+
+        Reviewed by Gyuyoung Kim.
+
+        test_ewk2_context_menu is always passing, it does not test any context menu feature
+        as it ends before context menu is called.
+        One single test was divided into two tests: testing WebKit2 created context menu and
+        testing menus and items created by application.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilTrue): added function introducing internal loop until boolean value is changed to true
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        * UIProcess/API/efl/tests/test_ewk2_context_menu.cpp:
+        (customItemSelected):
+        (showContextMenu):
+        (showContextMenuForRemoveAndAppend):
+        (showContextMenuForSubmenu):
+        (hideContextMenu):
+        (TEST_F):
+
 2013-06-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add ewk_view_navigate API

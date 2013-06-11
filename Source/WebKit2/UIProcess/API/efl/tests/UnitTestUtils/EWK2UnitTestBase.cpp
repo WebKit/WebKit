@@ -224,6 +224,16 @@ bool EWK2UnitTestBase::waitUntilURLChangedTo(const char* expectedURL, double tim
     return !data.didTimeOut();
 }
 
+bool EWK2UnitTestBase::waitUntilTrue(bool &flag, double timeoutSeconds)
+{
+    CallbackDataExpectedValue<bool> data(true, timeoutSeconds);
+
+    while (!data.isDone() && !flag)
+        ecore_main_loop_iterate();
+
+    return !data.didTimeOut();
+}
+
 void EWK2UnitTestBase::mouseClick(int x, int y, int button)
 {
     Evas* evas = evas_object_evas_get(m_webView);
