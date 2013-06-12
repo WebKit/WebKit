@@ -1,3 +1,24 @@
+2013-06-12  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Use RefPtr for HTMLInputElement inside CredentialTransformData
+        https://bugs.webkit.org/show_bug.cgi?id=117553
+
+        Reviewed by Carlos Garcia Campos.
+
+        In CredentialTransformData we should use RefPtr for
+        m_userNameElement, m_passwordElement and m_oldPasswordElement
+        because otherwise the elements could go away when the form
+        elements get destroyed.
+
+        Also add *const* for the parameter of CredentialTransformData::findPasswordFormFields().
+
+        No functionalities changed no new tests.
+
+        * WebCoreSupport/CredentialTransformData.cpp:
+        (WebCore::CredentialTransformData::findPasswordFormFields):
+        (WebCore::CredentialTransformData::locateSpecificPasswords):
+        * WebCoreSupport/CredentialTransformData.h:
+
 2013-06-12  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Remove dead WebDOM code

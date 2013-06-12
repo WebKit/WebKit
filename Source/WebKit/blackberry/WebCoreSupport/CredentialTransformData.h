@@ -21,8 +21,11 @@
 
 #include "Credential.h"
 #include "HTMLFormElement.h"
+#include "HTMLInputElement.h"
 #include "KURL.h"
 #include "ProtectionSpace.h"
+
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -41,14 +44,15 @@ struct CredentialTransformData {
     void setCredential(const Credential&);
 
 private:
-    bool findPasswordFormFields(HTMLFormElement*);
+    bool findPasswordFormFields(const HTMLFormElement*);
+    bool locateSpecificPasswords(const Vector<HTMLInputElement*>& passwords);
 
     KURL m_action;
     ProtectionSpace m_protectionSpace;
     mutable Credential m_credential;
-    HTMLInputElement* m_userNameElement;
-    HTMLInputElement* m_passwordElement;
-    HTMLInputElement* m_oldPasswordElement;
+    RefPtr<HTMLInputElement> m_userNameElement;
+    RefPtr<HTMLInputElement> m_passwordElement;
+    RefPtr<HTMLInputElement> m_oldPasswordElement;
     bool m_isValid;
 };
 
