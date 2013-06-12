@@ -89,86 +89,6 @@ static DivisorList divisors(unsigned n)
     return divisors;
 }
 
-static bool divisorIsPerfectWidth(Divisor divisor, Platform::IntSize size, int tileWidth)
-{
-    return size.width() <= divisor.first * tileWidth && abs(size.width() - divisor.first * tileWidth) < tileWidth;
-}
-
-static bool divisorIsPerfectHeight(Divisor divisor, Platform::IntSize size, int tileHeight)
-{
-    return size.height() <= divisor.second * tileHeight && abs(size.height() - divisor.second * tileHeight) < tileHeight;
-}
-
-static bool divisorIsPreferredDirection(Divisor divisor, BackingStorePrivate::TileMatrixDirection direction)
-{
-    if (direction == BackingStorePrivate::Vertical)
-        return divisor.second > divisor.first;
-    return divisor.first > divisor.second;
-}
-
-// Compute best divisor given the ratio determined by size.
-static Divisor bestDivisor(Platform::IntSize size, int tileWidth, int tileHeight,
-    int minimumNumberOfTilesWide, int minimumNumberOfTilesHigh,
-    BackingStorePrivate::TileMatrixDirection direction)
-{
-    // The point of this function is to determine the number of tiles in each
-    // dimension. We do this by looking to match the tile matrix width/height
-    // ratio as closely as possible with the width/height ratio of the contents.
-    // We also look at the direction passed to give preference to one dimension
-    // over another. This method could probably be made faster, but it gets the
-    // job done.
-    SurfacePool* surfacePool = SurfacePool::globalSurfacePool();
-    ASSERT(!surfacePool->isEmpty());
-
-    // Store a static list of possible divisors.
-    static DivisorList divisorList = divisors(surfacePool->numberOfBackingStoreFrontBuffers());
-
-    // The ratio we're looking to best imitate.
-    float ratio = static_cast<float>(size.width()) / static_cast<float>(size.height());
-
-    Divisor bestDivisor;
-    for (size_t i = 0; i < divisorList.size(); ++i) {
-        Divisor divisor = divisorList[i];
-
-        const bool isPerfectWidth = divisorIsPerfectWidth(divisor, size, tileWidth);
-        const bool isPerfectHeight = divisorIsPerfectHeight(divisor, size, tileHeight);
-        const bool isValidWidth = divisor.first >= minimumNumberOfTilesWide || isPerfectWidth;
-        const bool isValidHeight = divisor.second >= minimumNumberOfTilesHigh || isPerfectHeight;
-        if (!isValidWidth || !isValidHeight)
-            continue;
-
-        if (isPerfectWidth || isPerfectHeight) {
-            bestDivisor = divisor; // Found a perfect fit!
-#if DEBUG_TILEMATRIX
-            Platform::logAlways(Platform::LogLevelCritical,
-                "bestDivisor found perfect size isPerfectWidth=%s isPerfectHeight=%s",
-                isPerfectWidth ? "true" : "false",
-                isPerfectHeight ? "true" : "false");
-#endif
-            break;
-        }
-
-        // Store basis of comparison.
-        if (!bestDivisor.first || !bestDivisor.second) {
-            bestDivisor = divisor;
-            continue;
-        }
-
-        // If the current best divisor agrees with the preferred tile matrix direction,
-        // then continue if the current candidate does not.
-        if (divisorIsPreferredDirection(bestDivisor, direction) && !divisorIsPreferredDirection(divisor, direction))
-            continue;
-
-        // Compare ratios.
-        float diff1 = fabs((static_cast<float>(divisor.first) / static_cast<float>(divisor.second)) - ratio);
-        float diff2 = fabs((static_cast<float>(bestDivisor.first) / static_cast<float>(bestDivisor.second)) - ratio);
-        if (diff1 < diff2)
-            bestDivisor = divisor;
-    }
-
-    return bestDivisor;
-}
-
 Platform::IntRect BackingStoreGeometry::backingStoreRect() const
 {
     return Platform::IntRect(backingStoreOffset(), backingStoreSize());
@@ -203,7 +123,6 @@ BackingStorePrivate::BackingStorePrivate()
     , m_renderQueue(adoptPtr(new RenderQueue(this)))
     , m_hasBlitJobs(false)
     , m_webPageBackgroundColor(WebCore::Color::white)
-    , m_preferredTileMatrixDimension(Vertical)
 {
     m_frontState = reinterpret_cast<unsigned>(new BackingStoreGeometry);
 }
@@ -584,6 +503,12 @@ void BackingStorePrivate::renderJob()
         dispatchRenderJob();
 }
 
+Platform::IntSize BackingStorePrivate::expandedContentsSize() const
+{
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->webkitThreadViewportAccessor();
+    return m_client->transformedViewportSize().expandedTo(viewportAccessor->pixelContentsSize());
+}
+
 Platform::IntRect BackingStorePrivate::expandedContentsRect() const
 {
     return Platform::IntRect(Platform::IntPoint(0, 0), expandedContentsSize());
@@ -595,135 +520,6 @@ Platform::IntRect BackingStorePrivate::visibleContentsRect() const
     Platform::IntRect rect = viewportAccessor->pixelViewportRect();
     rect.intersect(viewportAccessor->pixelContentsRect());
     return rect;
-}
-
-Platform::IntRect BackingStorePrivate::unclippedVisibleContentsRect() const
-{
-    const Platform::ViewportAccessor* viewportAccessor = m_webPage->webkitThreadViewportAccessor();
-    return viewportAccessor->pixelViewportRect();
-}
-
-bool BackingStorePrivate::shouldMoveLeft(const Platform::IntRect& backingStoreRect) const
-{
-    return canMoveX(backingStoreRect)
-        && backingStoreRect.x() > visibleContentsRect().x()
-        && backingStoreRect.x() > expandedContentsRect().x();
-}
-
-bool BackingStorePrivate::shouldMoveRight(const Platform::IntRect& backingStoreRect) const
-{
-    return canMoveX(backingStoreRect)
-        && backingStoreRect.right() < visibleContentsRect().right()
-        && backingStoreRect.right() < expandedContentsRect().right();
-}
-
-bool BackingStorePrivate::shouldMoveUp(const Platform::IntRect& backingStoreRect) const
-{
-    return canMoveY(backingStoreRect)
-        && backingStoreRect.y() > visibleContentsRect().y()
-        && backingStoreRect.y() > expandedContentsRect().y();
-}
-
-bool BackingStorePrivate::shouldMoveDown(const Platform::IntRect& backingStoreRect) const
-{
-    return canMoveY(backingStoreRect)
-        && backingStoreRect.bottom() < visibleContentsRect().bottom()
-        && backingStoreRect.bottom() < expandedContentsRect().bottom();
-}
-
-bool BackingStorePrivate::canMoveX(const Platform::IntRect& backingStoreRect) const
-{
-    return backingStoreRect.width() > visibleContentsRect().width();
-}
-
-bool BackingStorePrivate::canMoveY(const Platform::IntRect& backingStoreRect) const
-{
-    return backingStoreRect.height() > visibleContentsRect().height();
-}
-
-bool BackingStorePrivate::canMoveLeft(const Platform::IntRect& rect) const
-{
-    Platform::IntRect backingStoreRect = rect;
-    Platform::IntRect visibleContentsRect = this->visibleContentsRect();
-    Platform::IntRect contentsRect = this->expandedContentsRect();
-    backingStoreRect.move(-tileWidth(), 0);
-    return backingStoreRect.right() >= visibleContentsRect.right()
-        && backingStoreRect.x() >= contentsRect.x();
-}
-
-bool BackingStorePrivate::canMoveRight(const Platform::IntRect& rect) const
-{
-    Platform::IntRect backingStoreRect = rect;
-    Platform::IntRect visibleContentsRect = this->visibleContentsRect();
-    Platform::IntRect contentsRect = this->expandedContentsRect();
-    backingStoreRect.move(tileWidth(), 0);
-    return backingStoreRect.x() <= visibleContentsRect.x()
-        && (backingStoreRect.right() <= contentsRect.right()
-        || (backingStoreRect.right() - contentsRect.right()) < tileWidth());
-}
-
-bool BackingStorePrivate::canMoveUp(const Platform::IntRect& rect) const
-{
-    Platform::IntRect backingStoreRect = rect;
-    Platform::IntRect visibleContentsRect = this->visibleContentsRect();
-    Platform::IntRect contentsRect = this->expandedContentsRect();
-    backingStoreRect.move(0, -tileHeight());
-    return backingStoreRect.bottom() >= visibleContentsRect.bottom()
-        && backingStoreRect.y() >= contentsRect.y();
-}
-
-bool BackingStorePrivate::canMoveDown(const Platform::IntRect& rect) const
-{
-    Platform::IntRect backingStoreRect = rect;
-    Platform::IntRect visibleContentsRect = this->visibleContentsRect();
-    Platform::IntRect contentsRect = this->expandedContentsRect();
-    backingStoreRect.move(0, tileHeight());
-    return backingStoreRect.y() <= visibleContentsRect.y()
-        && (backingStoreRect.bottom() <= contentsRect.bottom()
-        || (backingStoreRect.bottom() - contentsRect.bottom()) < tileHeight());
-}
-
-Platform::IntRect BackingStorePrivate::backingStoreRectForScroll(int deltaX, int deltaY, const Platform::IntRect& rect) const
-{
-    // The current rect.
-    Platform::IntRect backingStoreRect = rect;
-
-    // This method uses the delta values to describe the backingstore rect
-    // given the current scroll direction and the viewport position. However,
-    // this method can be called with no deltas whatsoever for instance when
-    // the contents size changes or the orientation changes. In this case, we
-    // want to use the previous scroll direction to describe the backingstore
-    // rect. This will result in less checkerboard.
-    if (!deltaX && !deltaY) {
-        deltaX = m_previousDelta.width();
-        deltaY = m_previousDelta.height();
-    }
-    m_previousDelta = Platform::IntSize(deltaX, deltaY);
-
-    // Return to origin if need be.
-    if (!canMoveX(backingStoreRect) && backingStoreRect.x())
-        backingStoreRect.setX(0);
-
-    if (!canMoveY(backingStoreRect) && backingStoreRect.y())
-        backingStoreRect.setY(0);
-
-    // Move the rect left.
-    while (shouldMoveLeft(backingStoreRect) || (deltaX > 0 && canMoveLeft(backingStoreRect)))
-        backingStoreRect.move(-tileWidth(), 0);
-
-    // Move the rect right.
-    while (shouldMoveRight(backingStoreRect) || (deltaX < 0 && canMoveRight(backingStoreRect)))
-        backingStoreRect.move(tileWidth(), 0);
-
-    // Move the rect up.
-    while (shouldMoveUp(backingStoreRect) || (deltaY > 0 && canMoveUp(backingStoreRect)))
-        backingStoreRect.move(0, -tileHeight());
-
-    // Move the rect down.
-    while (shouldMoveDown(backingStoreRect) || (deltaY < 0 && canMoveDown(backingStoreRect)))
-        backingStoreRect.move(0, tileHeight());
-
-    return backingStoreRect;
 }
 
 void BackingStorePrivate::setBackingStoreRect(const Platform::IntRect& backingStoreRect, double scale)
@@ -944,6 +740,302 @@ bool BackingStorePrivate::isCurrentVisibleJob(const TileIndex& index, BackingSto
         || m_renderQueue->isCurrentRegularRenderJob(index, geometry);
 }
 
+Platform::IntRect BackingStorePrivate::nonOverscrolled(const Platform::IntRect& viewportRect, const Platform::IntRect& contentsRect)
+{
+    const Platform::IntPoint maximumReasonableViewportLocation(
+        contentsRect.right() - viewportRect.width(),
+        contentsRect.bottom() - viewportRect.height());
+
+    const Platform::IntPoint minimumRectLocation(
+        std::max(0, std::min(maximumReasonableViewportLocation.x(), viewportRect.x())),
+        std::max(0, std::min(maximumReasonableViewportLocation.y(), viewportRect.y())));
+
+    return Platform::IntRect(minimumRectLocation, viewportRect.size());
+}
+
+Platform::IntRect BackingStorePrivate::enclosingTileRect(const Platform::IntRect& pixelContentsRect)
+{
+    Platform::IntPoint location(
+        tileWidth() * (pixelContentsRect.x() / tileWidth()),
+        tileHeight() * (pixelContentsRect.y() / tileHeight()));
+
+    return Platform::IntRect(location, Platform::IntSize(
+        tileWidth() * ((pixelContentsRect.right() - location.x() - 1) / tileWidth() + 1),
+        tileHeight() * ((pixelContentsRect.bottom() - location.y() - 1) / tileHeight() + 1)));
+}
+
+Platform::IntRect BackingStorePrivate::desiredBackingStoreRect(const Platform::IntRect& pixelViewportRect, const Platform::IntRect& maximumReasonableRect, int deltaX, int deltaY)
+{
+    const int scrollDeltaCutoff = 30;
+    const float multiplierDownAtStandstill = 2.0f;
+
+    Platform::IntRect desiredRect = pixelViewportRect;
+    desiredRect.inflate(tileWidth() / 2, tileHeight() / 2);
+    desiredRect.intersect(maximumReasonableRect);
+
+    // Get a picture of the scrolling momentum, limited to between -1.0 and 1.0 on both x and y axes.
+    const float expandX = std::max(-scrollDeltaCutoff, std::min(scrollDeltaCutoff, -deltaX)) / static_cast<float>(scrollDeltaCutoff);
+    const float expandY = std::max(-scrollDeltaCutoff, std::min(scrollDeltaCutoff, -deltaY)) / static_cast<float>(scrollDeltaCutoff);
+    const float momentum = std::max(expandX, expandY);
+
+    // If no scrolling occurs, use the viewport ratio as default proportion.
+    // At maximum momentum (1.0), disregard the viewport ratio completely (multiply by 1.0).
+    // In between, interpolate.
+    const float viewportRatio = pixelViewportRect.isEmpty() ? 1.0f : (pixelViewportRect.width() / static_cast<float>(pixelViewportRect.height()));
+    const float viewportRatioMultiplier = viewportRatio + momentum * (1.0f - viewportRatio);
+
+    // In the same manner, we prioritize the "down" direction if no other
+    // momentum overpowers it, because the user will most likely scroll
+    // in that direction.
+    const float multiplierDown = multiplierDownAtStandstill + momentum * (1.0f - multiplierDownAtStandstill);
+
+    // The stronger the momentum is of one axis, the lesser importance will be
+    // placed on the other one. Also, if the rectangle already covers the whole
+    // width or height then we don't have to increase it on that axis.
+    float importanceX = desiredRect.width() == maximumReasonableRect.width() ? 0.0f : (1.0f - fabs(expandY));
+    float importanceY = desiredRect.height() == maximumReasonableRect.height() ? 0.0f : (1.0f - fabs(expandX));
+    if (importanceX <= FLT_EPSILON && importanceY <= FLT_EPSILON) {
+        importanceX = 1.0f;
+        importanceY = 1.0f;
+    }
+    importanceX *= viewportRatioMultiplier;
+
+    // We use axis importance to calculate the ratio between x and y axes.
+    // If the importance of one axis is 0 and the other is positive, one multiplier will be 0 and the other will be 1.
+    const float multiplierX = importanceY ? (importanceX / importanceY) : 1.0f;
+    const float multiplierY = importanceX ? (importanceY / importanceX) : 1.0f;
+
+    // Try to assign proportional values for extending the desired
+    // backingstore rect into the four directions. It doesn't matter how big
+    // these values are as long as they're proportional and >= 0. Rationale:
+    // * Allocate more tile space for the axis that is being scrolled.
+    // * Allocate almost all space of one axis if scrolling in one direction hits the cutoff value, leave the rest for the opposite direction.
+    float expandRight = (0.5f + (0.4f * expandX)) * multiplierX;
+    float expandLeft = (0.5f + (-0.4f * expandX)) * multiplierX;
+    float expandDown = (0.5f + (0.4f * expandY)) * multiplierY * multiplierDown;
+    float expandUp = (0.5f + (-0.4f * expandY)) * multiplierY;
+
+    // Calculate how many pixels we have left to spare and how many of these
+    // we ideally want to allocate in any given direction.
+    int remainingNumberOfTilePixels =
+        SurfacePool::globalSurfacePool()->numberOfBackingStoreFrontBuffers() * tileWidth() * tileHeight()
+        - desiredRect.area();
+
+    while (expandRight > FLT_EPSILON || expandLeft > FLT_EPSILON || expandDown > FLT_EPSILON || expandUp > FLT_EPSILON) {
+        int previousRemainingNumberOfTilePixels = remainingNumberOfTilePixels;
+
+        // Excursion into mathematical formulas to be solved.
+        // We now have proportional factors for how much far the ideal
+        // tile geometry rect extends into each direction, what we need is to find
+        // a constant "c" that translates these factors into actual pixel values.
+        //
+        // pxRight == c * expandRight
+        // pxLeft  == c * expandLeft
+        // pxDown  == c * expandDown
+        // pxUp    == c * expandUp
+        //
+        // remainingNumberOfTilePixels ==
+        //       pxUp   * (pxLeft + initialWidth + pxRight)
+        //     + pxDown * (pxLeft + initialWidth + pxRight)
+        //     + initialHeight * (pxLeft + pxRight)
+        //
+        // Wolfram Alpha: solve p = c * u * (c * l + w + c * r) + c * d * (c * l + w + c * r) + h * (c * l + c * r) for c
+        // leads to the following resolution (discounting the negative one):
+        // (d+u)(l+r) != 0 and c = (sqrt((d w + h l + h r + u w)^2 + 4 p (d l + d r + l u + r u)) - d w - h l - h r - u w) / (2 (d+u) (l+r))
+        //
+        // [multiplierX == 0]: remainingNumberOfTilePixels == initialWidth * (pxUp + pxDown)
+        //   solve p = w * c * (u + d) for c  =>  w (d+u) != 0 and c = p / (w (d+u))
+        // [multiplierY == 0]: remainingNumberOfTilePixels == initialHeight * (pxLeft + pxRight)
+        //   solve p = h * c * (l + r) for c  =>  h (l+r) != 0 and c = p / (h (l+r))
+
+        const int p = remainingNumberOfTilePixels;
+        const int w = desiredRect.width();
+        const int h = desiredRect.height();
+        const float r = expandRight;
+        const float l = expandLeft;
+        const float d = expandDown;
+        const float u = expandUp;
+        int pxLeft = 0;
+        int pxRight = 0;
+        int pxDown = 0;
+        int pxUp = 0;
+
+        if (l + r <= FLT_EPSILON) { // multiplierX == 0
+            ASSERT(d + u > FLT_EPSILON);
+            const float c = p / (w * (d + u));
+            pxDown = static_cast<int>(c * expandDown);
+            pxUp = static_cast<int>(c * expandUp);
+        } else if (u + d <= FLT_EPSILON) { // multiplierY == 0
+            ASSERT(l + r > FLT_EPSILON);
+            const float c = p / (h * (l + r));
+            pxLeft = static_cast<int>(c * expandLeft);
+            pxRight = static_cast<int>(c * expandRight);
+        } else {
+            const float c = (sqrt(pow(w * (d + u) + h * (l + r), 2.0) + 4.0f * p * (d + u) * (l + r)) - w * (d + u) - h * (l + r)) / (2.0f * (d + u) * (l + r));
+            pxRight = static_cast<int>(c * expandRight);
+            pxLeft = static_cast<int>(c * expandLeft);
+            pxDown = static_cast<int>(c * expandDown);
+            pxUp = static_cast<int>(c * expandUp);
+        }
+
+        desiredRect.setX(desiredRect.x() - pxLeft);
+        desiredRect.setWidth(desiredRect.width() + pxLeft + pxRight);
+        desiredRect.setY(desiredRect.y() - pxUp);
+        desiredRect.setHeight(desiredRect.height() + pxUp + pxDown);
+
+        // If we have enough pixels left for another loop, ignore directions
+        // that can't reasonably expand any further.
+        if (desiredRect.right() >= maximumReasonableRect.right())
+            expandRight = 0.0f;
+        if (desiredRect.x() >= maximumReasonableRect.x())
+            expandLeft = 0.0f;
+        if (desiredRect.bottom() >= maximumReasonableRect.bottom())
+            expandDown = 0.0f;
+        if (desiredRect.y() >= maximumReasonableRect.y())
+            expandUp = 0.0f;
+
+        desiredRect.intersect(maximumReasonableRect);
+
+        remainingNumberOfTilePixels =
+            SurfacePool::globalSurfacePool()->numberOfBackingStoreFrontBuffers() * tileWidth() * tileHeight()
+            - desiredRect.area();
+
+        // If we don't have enough pixels left to expand the rectangle anymore,
+        // just leave it and stick with the current one.
+        if (previousRemainingNumberOfTilePixels == remainingNumberOfTilePixels)
+            break;
+    }
+
+    return desiredRect;
+}
+
+void BackingStorePrivate::mergeDesiredBackingStoreRect(const Platform::IntRect& desiredRect, const Platform::IntRect& pixelViewportForDesiredRect)
+{
+    double currentScale = m_webPage->d->currentScale();
+
+    if (m_desiredBackingStoreRect.isEmpty() || m_desiredBackingStoreRectScale != currentScale)
+        m_desiredBackingStoreRect = desiredRect;
+    else {
+        // Average out sudden spikes in scrolling deltas by taking half of the
+        // previous desired rect's shape.
+        Platform::IntRect previousRectAtCurrentLocation = m_desiredBackingStoreRect;
+        previousRectAtCurrentLocation.move(
+            -m_desiredBackingStoreRectViewportLocation.x() + pixelViewportForDesiredRect.x(),
+            -m_desiredBackingStoreRectViewportLocation.y() + pixelViewportForDesiredRect.y());
+
+        // Round up because we're more likely to scroll down and right, in general.
+        Platform::IntPoint location(
+            (desiredRect.x() + previousRectAtCurrentLocation.x() + 1) / 2,
+            (desiredRect.y() + previousRectAtCurrentLocation.y() + 1) / 2);
+        Platform::IntPoint bottomRight(
+            (desiredRect.right() + previousRectAtCurrentLocation.right() + 1) / 2,
+            (desiredRect.bottom() + previousRectAtCurrentLocation.bottom() + 1) / 2);
+
+        m_desiredBackingStoreRect = Platform::IntRect(location,
+            Platform::IntSize(bottomRight.x() - location.x(), bottomRight.y() - location.y()));
+    }
+
+    m_desiredBackingStoreRectScale = currentScale;
+    m_desiredBackingStoreRectViewportLocation = pixelViewportForDesiredRect.location();
+}
+
+Platform::IntRect BackingStorePrivate::largestTileRectForDesiredRect(const Platform::IntRect& minimumRect, const Platform::IntRect& desiredRect)
+{
+    // Store a static list of possible divisors.
+    SurfacePool* surfacePool = SurfacePool::globalSurfacePool();
+    ASSERT(!surfacePool->isEmpty());
+    static DivisorList divisorList = divisors(surfacePool->numberOfBackingStoreFrontBuffers());
+
+    const Platform::IntRect minimumTileRect = enclosingTileRect(minimumRect);
+    const Divisor minimumTileRectDivisor(minimumTileRect.width() / tileWidth(), minimumTileRect.height() / tileHeight());
+
+    Divisor bestRectDivisor;
+    bool bestRectContainsMinimumRect = false;
+    int bestRectArea = 0;
+    int bestRectDistanceFromMinimumRect = 0;
+    Platform::IntRect bestBackingStoreRect;
+
+    for (size_t i = 0; i < divisorList.size(); ++i) {
+        Divisor divisor = divisorList[i];
+
+        int remainingTilesX = std::max(0, divisor.first - minimumTileRectDivisor.first);
+        int remainingTilesY = std::max(0, divisor.second - minimumTileRectDivisor.second);
+
+        Platform::IntSize divisorBackingStoreRectSize(divisor.first * tileWidth(), divisor.second * tileHeight());
+
+        for (int dy = 0; dy <= remainingTilesY; ++dy) {
+            for (int dx = 0; dx <= remainingTilesX; ++dx) {
+                const Platform::IntRect possibleBackingStoreRect(
+                    Platform::IntPoint(minimumTileRect.x() - dx * tileWidth(), minimumTileRect.y() - dy * tileHeight()),
+                    divisorBackingStoreRectSize);
+
+                Platform::IntRect relevantRect = possibleBackingStoreRect;
+                relevantRect.intersect(desiredRect);
+                int area = relevantRect.area();
+
+                bool betterThanPreviousRect = false;
+                bool containsMinimumRect = possibleBackingStoreRect.contains(minimumRect);
+                int distanceFromMinimumRect = bestRectDistanceFromMinimumRect - 1;
+
+                // Pick the best divisor based on the following criteria, in order of importance:
+                // 1. Completely contains minimumTileRect.
+                // 2. Covers the largest area within desiredRect.
+                // 3. The closest border is farthest from the corresponding border of minimumRect.
+                // 4. Random preference of rectangles in the following directions, in order: down, right, left, up.
+
+                if (!bestRectArea) // bestBackingStoreRect is uninitialized
+                    betterThanPreviousRect = true;
+                if (!bestRectContainsMinimumRect && containsMinimumRect)
+                    betterThanPreviousRect = true;
+                if (bestRectContainsMinimumRect && area > bestRectArea)
+                    betterThanPreviousRect = true;
+                if (bestRectContainsMinimumRect && area == bestRectArea) {
+                    // Left/up distance.
+                    distanceFromMinimumRect = std::min(
+                        minimumRect.x() - possibleBackingStoreRect.x(),
+                        minimumRect.y() - possibleBackingStoreRect.y());
+                    // Right/down distance.
+                    distanceFromMinimumRect = std::min(distanceFromMinimumRect, std::min(
+                        possibleBackingStoreRect.right() - minimumRect.right(),
+                        possibleBackingStoreRect.bottom() - minimumRect.bottom()));
+
+                    if (distanceFromMinimumRect > bestRectDistanceFromMinimumRect)
+                        betterThanPreviousRect = true;
+                }
+                if (bestRectContainsMinimumRect && area == bestRectArea && distanceFromMinimumRect == bestRectDistanceFromMinimumRect) {
+                    if (possibleBackingStoreRect.y() > bestBackingStoreRect.y())
+                        betterThanPreviousRect = true;
+                    else if (possibleBackingStoreRect.y() == bestBackingStoreRect.y() && possibleBackingStoreRect.x() > bestBackingStoreRect.x())
+                        betterThanPreviousRect = true;
+                }
+
+#if DEBUG_TILEMATRIX
+                Platform::logAlways(Platform::LogLevelCritical,
+                    "Desired rect %s: Potential rect %s (%dx%d) is %s than previous best rect %s (%dx%d). Area: %d vs. %d. Distance: %d vs. %d.",
+                    desiredRect.toString().c_str(),
+                    possibleBackingStoreRect.toString().c_str(),
+                    divisor.first, divisor.second,
+                    betterThanPreviousRect ? "better" : "worse",
+                    bestBackingStoreRect.toString().c_str(),
+                    bestRectDivisor.first, bestRectDivisor.second,
+                    area, bestRectArea,
+                    distanceFromMinimumRect, bestRectDistanceFromMinimumRect);
+#endif
+
+                if (betterThanPreviousRect) {
+                    bestRectDivisor = divisor;
+                    bestRectContainsMinimumRect = containsMinimumRect;
+                    bestRectArea = area;
+                    bestRectDistanceFromMinimumRect = distanceFromMinimumRect;
+                    bestBackingStoreRect = possibleBackingStoreRect;
+                }
+            }
+        }
+    }
+
+    return bestBackingStoreRect;
+}
+
 void BackingStorePrivate::scrollBackingStore(int deltaX, int deltaY)
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
@@ -956,31 +1048,32 @@ void BackingStorePrivate::scrollBackingStore(int deltaX, int deltaY)
         return;
     }
 
-    // Calculate our new preferred matrix dimension.
-    if (deltaX || deltaY)
-        m_preferredTileMatrixDimension = abs(deltaX) > abs(deltaY) ? Horizontal : Vertical;
+    Platform::ViewportAccessor* viewportAccessor = m_webPage->webkitThreadViewportAccessor();
 
-    // Calculate our preferred matrix geometry.
-    Divisor divisor = bestDivisor(expandedContentsSize(),
-        tileWidth(), tileHeight(),
-        minimumNumberOfTilesWide(), minimumNumberOfTilesHigh(),
-        m_preferredTileMatrixDimension);
+    Platform::IntRect pixelContentsRect = expandedContentsRect();
+    Platform::IntRect nonOverscrolledPixelViewportRect = nonOverscrolled(viewportAccessor->pixelViewportRect(), pixelContentsRect);
+
+    // Expand the minimal rect so that it includes the whole set of tiles covering that area.
+    const Platform::IntRect maximumReasonableRect = enclosingTileRect(pixelContentsRect);
+    Platform::IntRect desiredRect = desiredBackingStoreRect(nonOverscrolledPixelViewportRect, maximumReasonableRect, deltaX, deltaY);
+
+    mergeDesiredBackingStoreRect(desiredRect, nonOverscrolledPixelViewportRect);
+
+    const Platform::IntRect backingStoreRect = largestTileRectForDesiredRect(nonOverscrolledPixelViewportRect, m_desiredBackingStoreRect);
 
 #if DEBUG_TILEMATRIX
     Platform::logAlways(Platform::LogLevelCritical,
-        "BackingStorePrivate::scrollBackingStore divisor %dx%d",
-        divisor.first, divisor.second);
+        "BackingStorePrivate::scrollBackingStore nonOverscrolledPixelViewportRect=%s, desiredRect=%s, pixelContentsRect=%s, maximumReasonableRect=%s, backingStoreRect=%s",
+        nonOverscrolledPixelViewportRect.toString().c_str(),
+        m_desiredBackingStoreRect.toString().c_str(),
+        pixelContentsRect.toString().c_str(),
+        maximumReasonableRect.toString().c_str(),
+        backingStoreRect.toString().c_str());
 #endif
-
-    // Initialize a rect with that new geometry.
-    Platform::IntRect backingStoreRect(0, 0, divisor.first * tileWidth(), divisor.second * tileHeight());
-
-    // Scroll that rect so that it fits our contents and viewport and scroll delta.
-    backingStoreRect = backingStoreRectForScroll(deltaX, deltaY, backingStoreRect);
 
     ASSERT(!backingStoreRect.isEmpty());
 
-    setBackingStoreRect(backingStoreRect, m_webPage->d->currentScale());
+    setBackingStoreRect(backingStoreRect, m_desiredBackingStoreRectScale);
 }
 
 TileIndexList BackingStorePrivate::render(const TileIndexList& tileIndexList)
@@ -1709,7 +1802,9 @@ void BackingStorePrivate::createSurfaces()
     if (surfacePool->isEmpty()) // Settings specify 0 tiles / no backing store.
         return;
 
-    const Divisor divisor = bestDivisor(expandedContentsSize(), tileWidth(), tileHeight(), minimumNumberOfTilesWide(), minimumNumberOfTilesHigh(), m_preferredTileMatrixDimension);
+    // Pick a random divisor to initialize the tile map.
+    DivisorList divisorList = divisors(surfacePool->numberOfBackingStoreFrontBuffers());
+    const Divisor divisor = divisorList[0];
 
     int numberOfTilesWide = divisor.first;
     int numberOfTilesHigh = divisor.second;
@@ -1735,24 +1830,6 @@ Platform::IntPoint BackingStoreGeometry::originOfTile(const TileIndex& index) co
 {
     return Platform::IntPoint(backingStoreRect().x() + (index.i() * BackingStorePrivate::tileWidth()),
         backingStoreRect().y() + (index.j() * BackingStorePrivate::tileHeight()));
-}
-
-int BackingStorePrivate::minimumNumberOfTilesWide() const
-{
-    // The minimum number of tiles wide required to fill the viewport + 1 tile extra to allow scrolling.
-    return static_cast<int>(ceilf(m_client->transformedViewportSize().width() / static_cast<float>(tileWidth()))) + 1;
-}
-
-int BackingStorePrivate::minimumNumberOfTilesHigh() const
-{
-    // The minimum number of tiles high required to fill the viewport + 1 tile extra to allow scrolling.
-    return static_cast<int>(ceilf(m_client->transformedViewportSize().height() / static_cast<float>(tileHeight()))) + 1;
-}
-
-Platform::IntSize BackingStorePrivate::expandedContentsSize() const
-{
-    const Platform::ViewportAccessor* viewportAccessor = m_webPage->webkitThreadViewportAccessor();
-    return m_client->transformedViewportSize().expandedTo(viewportAccessor->pixelContentsSize());
 }
 
 int BackingStorePrivate::tileWidth()

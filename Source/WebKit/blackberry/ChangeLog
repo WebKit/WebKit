@@ -1,3 +1,71 @@
+2013-06-12  Jakob Petsovits  <jpetsovits@blackberry.com>
+
+        [BlackBerry] Smarter algorithm to determine the backingstore rect
+        https://bugs.webkit.org/show_bug.cgi?id=117451
+
+        JIRA115644
+        https://jira.bbqnx.net/browse/BRWSR-7028
+
+        Reviewed by Rob Buis.
+
+        So far, the backingstore tile geometry allocation was
+        pretty straightforward: We would start off from the
+        current viewport and append all available tiles into
+        the current scrolling direction from there.
+
+        This will usually work well enough, but has the downside
+        of discarding all the tiles in the opposite direction.
+        Also, tiles very close to the viewport will often get
+        discarded even if the user only scrolls very slowly.
+
+        This patch completely revamps the algorithm for
+        determining where the backingstore should be positioned.
+
+        The general idea is that we construct a "desired rect"
+        based on the viewport and inflate it into all four
+        directions according to the current scroll momentum.
+        This rectangle will be similarly large as a backingstore
+        tile geometry rectangle might be, by using the
+        approximate number of pixels that are available in the
+        given number of tiles.
+
+        The proportions for extending the rectangle from the
+        viewport are influenced by different factors, including
+        scroll momentum, viewport ratio, available space in the
+        overall contents rectangle, and natural bias for the
+        "down" direction.
+
+        In practice, this results in a backingstore that is
+        roughly evenly distributed around the viewport when no
+        movement is happening, and will gradually narrow down
+        and extend into the scroll direction at a higher momentum.
+
+        The final tile geometry is constructed by trying fit
+        the tiles into the desired rect in a way that maximizes
+        the area of its intersection. There are a few parameters
+        that can be tweaked, the ones in this patch seem to
+        handle most cases well enough to minimize checkerboarding.
+
+        As an additional bonus, a rectangle-based tiling strategy
+        can more easily be adopted for accelerated compositing,
+        which currently operates on a simpler algorithm that also
+        inflates the viewport but does not take scrolling into
+        account.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::expandedContentsSize):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::nonOverscrolled):
+        (BlackBerry::WebKit::BackingStorePrivate::enclosingTileRect):
+        (BlackBerry::WebKit::BackingStorePrivate::desiredBackingStoreRect):
+        (BlackBerry::WebKit::BackingStorePrivate::mergeDesiredBackingStoreRect):
+        (BlackBerry::WebKit::BackingStorePrivate::largestTileRectForDesiredRect):
+        (BlackBerry::WebKit::BackingStorePrivate::scrollBackingStore):
+        (BlackBerry::WebKit::BackingStorePrivate::createSurfaces):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+
 2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove memoryInfoEnabled, quantizedMemoryInfoEnabled settings

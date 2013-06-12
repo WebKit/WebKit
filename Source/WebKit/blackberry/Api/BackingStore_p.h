@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -138,23 +138,11 @@ public:
     void dispatchRenderJob();
     void renderJob();
 
-    // Set of helper methods for the scrollBackingStore() method.
-    Platform::IntRect contentsRect() const;
+    // Various calculations of quantities relevant to backing store.
+    Platform::IntSize expandedContentsSize() const;
     Platform::IntRect expandedContentsRect() const;
     Platform::IntRect visibleContentsRect() const;
-    Platform::IntRect unclippedVisibleContentsRect() const;
-    bool shouldMoveLeft(const Platform::IntRect&) const;
-    bool shouldMoveRight(const Platform::IntRect&) const;
-    bool shouldMoveUp(const Platform::IntRect&) const;
-    bool shouldMoveDown(const Platform::IntRect&) const;
-    bool canMoveX(const Platform::IntRect&) const;
-    bool canMoveY(const Platform::IntRect&) const;
-    bool canMoveLeft(const Platform::IntRect&) const;
-    bool canMoveRight(const Platform::IntRect&) const;
-    bool canMoveUp(const Platform::IntRect&) const;
-    bool canMoveDown(const Platform::IntRect&) const;
 
-    Platform::IntRect backingStoreRectForScroll(int deltaX, int deltaY, const Platform::IntRect&) const;
     void setBackingStoreRect(const Platform::IntRect&, double scale);
     void updateTilesAfterBackingStoreRectChange();
 
@@ -170,6 +158,11 @@ public:
 
     // Responsible for scrolling the backing store and updating the
     // tile matrix geometry.
+    Platform::IntRect nonOverscrolled(const Platform::IntRect& viewportRect, const Platform::IntRect& contentsRect);
+    Platform::IntRect enclosingTileRect(const Platform::IntRect& pixelContentsRect);
+    Platform::IntRect desiredBackingStoreRect(const Platform::IntRect& pixelViewportRect, const Platform::IntRect& maximumReasonableRect, int deltaX, int deltaY);
+    void mergeDesiredBackingStoreRect(const Platform::IntRect& desiredRect, const Platform::IntRect& pixelViewportForDesiredRect);
+    Platform::IntRect largestTileRectForDesiredRect(const Platform::IntRect& minimumRect, const Platform::IntRect& desiredRect);
     void scrollBackingStore(int deltaX, int deltaY);
 
     // Render the given tiles if enough back buffers are available.
@@ -263,11 +256,6 @@ public:
     // Create the surfaces of the backing store.
     void createSurfaces();
 
-    // Various calculations of quantities relevant to backing store.
-    int minimumNumberOfTilesWide() const;
-    int minimumNumberOfTilesHigh() const;
-    Platform::IntSize expandedContentsSize() const;
-
     // The tile geometry methods are all static function.
     static int tileWidth();
     static int tileHeight();
@@ -315,7 +303,6 @@ public:
     WebPage* m_webPage;
     BackingStoreClient* m_client;
     OwnPtr<RenderQueue> m_renderQueue;
-    mutable Platform::IntSize m_previousDelta;
 
     bool m_hasBlitJobs;
 
@@ -323,9 +310,9 @@ public:
 
     mutable unsigned m_frontState;
 
-    TileMatrixDirection m_preferredTileMatrixDimension;
-
-    Platform::IntRect m_visibleTileBufferRect;
+    Platform::IntRect m_desiredBackingStoreRect;
+    Platform::IntPoint m_desiredBackingStoreRectViewportLocation;
+    double m_desiredBackingStoreRectScale;
 
 #if USE(ACCELERATED_COMPOSITING)
     mutable bool m_needsDrawLayersOnCommit; // Not thread safe, WebKit thread only
