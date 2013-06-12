@@ -433,13 +433,22 @@ int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad)
         // VK_BROWSER_SEARCH (AA) Windows 2000/XP: Browser Search key
         // VK_BROWSER_FAVORITES (AB) Windows 2000/XP: Browser Favorites key
         // VK_BROWSER_HOME (AC) Windows 2000/XP: Browser Start and Home key
-        // VK_VOLUME_MUTE (AD) Windows 2000/XP: Volume Mute key
-        // VK_VOLUME_DOWN (AE) Windows 2000/XP: Volume Down key
-        // VK_VOLUME_UP (AF) Windows 2000/XP: Volume Up key
-        // VK_MEDIA_NEXT_TRACK (B0) Windows 2000/XP: Next Track key
-        // VK_MEDIA_PREV_TRACK (B1) Windows 2000/XP: Previous Track key
-        // VK_MEDIA_STOP (B2) Windows 2000/XP: Stop Media key
-        // VK_MEDIA_PLAY_PAUSE (B3) Windows 2000/XP: Play/Pause Media key
+
+    case Qt::Key_VolumeMute:
+        return VK_VOLUME_MUTE; // (AD) Windows 2000/XP: Volume Mute key
+    case Qt::Key_VolumeDown:
+        return VK_VOLUME_DOWN; // (AE) Windows 2000/XP: Volume Down key
+    case Qt::Key_VolumeUp:
+        return VK_VOLUME_UP; // (AF) Windows 2000/XP: Volume Up key
+    case Qt::Key_MediaNext:
+        return VK_MEDIA_NEXT_TRACK; // (B0) Windows 2000/XP: Next Track key
+    case Qt::Key_MediaPrevious:
+        return VK_MEDIA_PREV_TRACK; // (B1) Windows 2000/XP: Previous Track key
+    case Qt::Key_MediaStop:
+        return VK_MEDIA_STOP; // (B2) Windows 2000/XP: Stop Media key
+    case Qt::Key_MediaTogglePlayPause:
+        return VK_MEDIA_PLAY_PAUSE; // (B3) Windows 2000/XP: Play/Pause Media key
+
         // VK_LAUNCH_MAIL (B4) Windows 2000/XP: Start Mail key
         // VK_LAUNCH_MEDIA_SELECT (B5) Windows 2000/XP: Select Media key
         // VK_LAUNCH_APP1 (B6) Windows 2000/XP: Start Application 1 key
