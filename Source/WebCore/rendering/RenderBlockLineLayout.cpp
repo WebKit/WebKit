@@ -103,6 +103,7 @@ public:
         , m_committedWidth(0)
         , m_overhangWidth(0)
         , m_trailingWhitespaceWidth(0)
+        , m_trailingCollapsedWhitespaceWidth(0)
         , m_left(0)
         , m_right(0)
         , m_availableWidth(0)
@@ -119,16 +120,15 @@ public:
 #endif
         updateAvailableWidth();
     }
-    bool fitsOnLine() const { return currentWidth() <= m_availableWidth; }
-    bool fitsOnLine(float extra) const { return currentWidth() + extra <= m_availableWidth; }
-    bool fitsOnLine(float extra, bool excludeWhitespace) const { return currentWidth() - (excludeWhitespace ? trailingWhitespaceWidth() : 0) + extra <= m_availableWidth; }
+    bool fitsOnLine(float extra = 0) const { return currentWidth() + extra <= m_availableWidth; }
+    bool fitsOnLineExcludingTrailingWhitespace(float extra = 0) const { return currentWidth() - m_trailingWhitespaceWidth + extra <= m_availableWidth; }
+    bool fitsOnLineExcludingTrailingCollapsedWhitespace(float extra = 0) const { return currentWidth() - m_trailingCollapsedWhitespaceWidth + extra <= m_availableWidth; }
     float currentWidth() const { return m_committedWidth + m_uncommittedWidth; }
 
     // FIXME: We should eventually replace these three functions by ones that work on a higher abstraction.
     float uncommittedWidth() const { return m_uncommittedWidth; }
     float committedWidth() const { return m_committedWidth; }
     float availableWidth() const { return m_availableWidth; }
-    float trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
 
     void updateAvailableWidth(LayoutUnit minimumHeight = 0);
     void shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::FloatingObject*);
@@ -140,7 +140,7 @@ public:
     }
     void applyOverhang(RenderRubyRun*, RenderObject* startRenderer, RenderObject* endRenderer);
     void fitBelowFloats();
-    void setTrailingWhitespaceWidth(float width) { m_trailingWhitespaceWidth = width; }
+    void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0) { m_trailingCollapsedWhitespaceWidth = collapsedWhitespace; m_trailingWhitespaceWidth =  collapsedWhitespace + borderPaddingMargin; }
 
     bool shouldIndentText() const { return m_shouldIndentText == IndentText; }
 
@@ -156,6 +156,7 @@ private:
     float m_committedWidth;
     float m_overhangWidth; // The amount by which |m_availableWidth| has been inflated to account for possible contraction due to ruby overhang.
     float m_trailingWhitespaceWidth;
+    float m_trailingCollapsedWhitespaceWidth;
     float m_left;
     float m_right;
     float m_availableWidth;
@@ -2930,7 +2931,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             // If it does, position it now, otherwise, position
             // it after moving to next line (in newLine() func)
             // FIXME: Bug 110372: Properly position multiple stacked floats with non-rectangular shape outside.
-            if (floatsFitOnLine && width.fitsOnLine(m_block->logicalWidthForFloat(f), true)) {
+            if (floatsFitOnLine && width.fitsOnLineExcludingTrailingWhitespace(m_block->logicalWidthForFloat(f))) {
                 m_block->positionNewFloatOnLine(f, lastFloatFromPreviousLine, lineInfo, width);
                 if (lBreak.m_obj == current.m_obj) {
                     ASSERT(!lBreak.m_pos);
@@ -3021,6 +3022,13 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
 #if ENABLE(SVG)
             bool isSVGText = t->isSVGInlineText();
 #endif
+
+            // If we have left a no-wrap inline and entered an autowrap inline while ignoring spaces
+            // then we need to mark the start of the autowrap inline as a potential linebreak now. 
+            if (autoWrap && !RenderStyle::autoWrap(lastWS) && ignoringSpaces) {
+                width.commit();
+                lBreak.moveToStartOf(current.m_obj);
+            }
 
             if (t->style()->hasTextCombine() && current.m_obj->isCombineText() && !toRenderCombineText(current.m_obj)->isCombined()) {
                 RenderCombineText* combineRenderer = toRenderCombineText(current.m_obj);
@@ -3322,7 +3330,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             fallbackFonts.clear();
 
             if (collapseWhiteSpace && currentCharacterIsSpace && additionalTempWidth)
-                width.setTrailingWhitespaceWidth(additionalTempWidth + inlineLogicalTempWidth);
+                width.setTrailingWhitespaceWidth(additionalTempWidth, inlineLogicalTempWidth);
 
             includeEndWidth = false;
 
@@ -3340,7 +3348,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             ASSERT_NOT_REACHED();
 
         bool checkForBreak = autoWrap;
-        if (width.committedWidth() && !width.fitsOnLine() && lBreak.m_obj && currWS == NOWRAP)
+        if (width.committedWidth() && !width.fitsOnLineExcludingTrailingCollapsedWhitespace() && lBreak.m_obj && currWS == NOWRAP)
             checkForBreak = true;
         else if (next && current.m_obj->isText() && next->isText() && !next->isBR() && (autoWrap || next->style()->autoWrap())) {
             if (autoWrap && currentCharacterIsSpace)
@@ -3404,7 +3412,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
         atStart = false;
     }
 
-    if (width.fitsOnLine() || lastWS == NOWRAP)
+    if (width.fitsOnLineExcludingTrailingCollapsedWhitespace() || lastWS == NOWRAP)
         lBreak.clear();
 
  end:

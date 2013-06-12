@@ -1,3 +1,13 @@
+2013-06-12  Robert Hogan  <robert@webkit.org>
+
+        Whitespace between inlines with nowrap and a shrink-to-fit parent line-break incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=117370
+
+        Reviewed by David Hyatt.
+
+        * fast/text/whitespace/inline-whitespace-wrapping-8-expected.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-8.html: Added.
+
 2013-06-12  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] rectangle and inset-rectangle do not properly handle rx and ry
