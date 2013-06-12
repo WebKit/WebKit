@@ -418,7 +418,6 @@ _WKAppVersionCheckLessThan
 -[WebPreferences(WebPrivate) paginateDuringLayoutEnabled]
 -[WebPreferences(WebPrivate) fullScreenEnabled]
 -[WebPreferences(WebPrivate) asynchronousSpellCheckingEnabled]
--[WebPreferences(WebPrivate) memoryInfoEnabled]
 -[WebPreferences(WebPrivate) hyperlinkAuditingEnabled]
 -[WebView(WebPrivate) _needsPreHTML5ParserQuirks]
 -[WebPreferences(WebPrivate) usePreHTML5ParserQuirks]

@@ -1,3 +1,13 @@
+2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove memoryInfoEnabled, quantizedMemoryInfoEnabled settings
+        https://bugs.webkit.org/show_bug.cgi?id=117512
+
+        Reviewed by Darin Adler.
+
+        * page/Settings.in: Remove the memoryInfoEnabled and the quantizedMemoryInfoEnabled settings. These are not used
+        anywhere anymore after r151199 which simplified and moved the MemoryInfo interface under window.internals.
+
 2013-06-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Parameter 'pseudoElement' from function 'webkit_dom_dom_window_get_computed_style' should be allowed to be NULL

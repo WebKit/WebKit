@@ -453,9 +453,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setDNSPrefetchingEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE isDNSPrefetchingEnabled(BOOL*);
 
-    virtual HRESULT STDMETHODCALLTYPE setMemoryInfoEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE memoryInfoEnabled(BOOL*);
-
     virtual HRESULT STDMETHODCALLTYPE hyperlinkAuditingEnabled(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setHyperlinkAuditingEnabled(BOOL);
 

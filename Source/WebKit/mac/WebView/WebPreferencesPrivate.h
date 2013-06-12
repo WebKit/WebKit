@@ -217,9 +217,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)paginateDuringLayoutEnabled;
 - (void)setPaginateDuringLayoutEnabled:(BOOL)flag;
 
-- (BOOL)memoryInfoEnabled;
-- (void)setMemoryInfoEnabled:(BOOL)enabled;
-
 - (BOOL)hyperlinkAuditingEnabled;
 - (void)setHyperlinkAuditingEnabled:(BOOL)enabled;
 

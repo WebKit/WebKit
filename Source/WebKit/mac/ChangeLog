@@ -1,3 +1,18 @@
+2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove memoryInfoEnabled, quantizedMemoryInfoEnabled settings
+        https://bugs.webkit.org/show_bug.cgi?id=117512
+
+        Reviewed by Darin Adler.
+
+        * WebKit.order: Remove the memoryInfoEnabled entry.
+        * WebView/WebPreferenceKeysPrivate.h: Remove WebKitMemoryInfoEnabledPreferenceKey.
+        * WebView/WebPreferences.mm: Remove memoryInfoEnabled, setMemoryInfoEnabled methods.
+        (+[WebPreferences initialize]): Don't set the default value for the WebKitMemoryInfoEnabledPreferenceKey, the preference is being removed.
+        * WebView/WebPreferencesPrivate.h: Remove memoryInfoEnabled, setMemoryInfoEnabled method declarations.
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Remove the call to Settings::setMemoryInfoEnabled, the setting is being removed.
+
 2013-06-06  Timothy Hatcher  <timothy@apple.com>
 
         Update the framework bundle identifier for the Web Inspector.

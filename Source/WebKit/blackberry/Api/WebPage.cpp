@@ -645,10 +645,6 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
     m_page->windowScreenDidChange((PlatformDisplayID)0);
 #endif
 
-#if ENABLE(WEB_TIMING)
-    m_page->settings()->setMemoryInfoEnabled(true);
-#endif
-
 #if ENABLE(FILE_SYSTEM)
     static bool localFileSystemInitialized = false;
     if (!localFileSystemInitialized) {

@@ -118,8 +118,6 @@ loadDeferringEnabled initial=true
 paginateDuringLayoutEnabled initial=false
 fullScreenEnabled initial=false, conditional=FULLSCREEN_API
 asynchronousSpellCheckingEnabled initial=false
-memoryInfoEnabled initial=false
-quantizedMemoryInfoEnabled initial=false
 
 # This feature requires an implementation of ValidationMessageClient.
 interactiveFormValidationEnabled initial=false

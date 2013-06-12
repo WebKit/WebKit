@@ -1,3 +1,18 @@
+2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove memoryInfoEnabled, quantizedMemoryInfoEnabled settings
+        https://bugs.webkit.org/show_bug.cgi?id=117512
+
+        Reviewed by Darin Adler.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Remove memoryInfoEnabled, setMemoryInfoEnabled entries.
+        * WebPreferenceKeysPrivate.h: Remove the WebKitMemoryInfoEnabledPreferenceKey definition.
+        * WebPreferences.cpp: Remove the memoryInfo, setMemoryInfoEnabled methods.
+        (WebPreferences::initializeDefaultSettings): Remove the WebKitMemoryInfoEnabledPreferenceKey entry initialization.
+        * WebPreferences.h: Remove the memoryInfo, setMemoryInfoEnabled method declarations.
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Remove the Settings::setMemoryInfoEnabled call, the method is being removed.
+
 2013-06-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction after r151440.

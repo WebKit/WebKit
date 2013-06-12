@@ -387,7 +387,6 @@ public:
         [NSNumber numberWithBool:NO],  WebKitDNSPrefetchingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFullScreenEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAsynchronousSpellCheckingEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
@@ -1490,16 +1489,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setPaginateDuringLayoutEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitPaginateDuringLayoutEnabledPreferenceKey];
-}
-
-- (BOOL)memoryInfoEnabled
-{
-    return [self _boolValueForKey:WebKitMemoryInfoEnabledPreferenceKey];
-}
-
-- (void)setMemoryInfoEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitMemoryInfoEnabledPreferenceKey];
 }
 
 - (BOOL)hyperlinkAuditingEnabled

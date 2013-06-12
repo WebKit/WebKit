@@ -116,9 +116,6 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT isDNSPrefetchingEnabled([out, retval] BOOL *enabled);
     HRESULT setDNSPrefetchingEnabled([in] BOOL enabled);
 
-    HRESULT memoryInfoEnabled([out, retval] BOOL *enabled);
-    HRESULT setMemoryInfoEnabled([in] BOOL enabled);
-
     HRESULT hyperlinkAuditingEnabled(BOOL *hyperlinkAuditingEnabled);
     HRESULT setHyperlinkAuditingEnabled(BOOL hyperlinkAuditingEnabled);
 

@@ -4935,11 +4935,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setDNSPrefetchingEnabled(enabled);
 
-    hr = prefsPrivate->memoryInfoEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setMemoryInfoEnabled(enabled);
-    
     hr = prefsPrivate->hyperlinkAuditingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
