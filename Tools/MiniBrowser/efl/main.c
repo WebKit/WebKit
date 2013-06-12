@@ -282,6 +282,10 @@ on_window_resize(void *user_data, Evas *e, Evas_Object *elm_window, void *event_
 
     if (window->context_menu.ewk_menu)
         ewk_context_menu_hide(window->context_menu.ewk_menu);
+    if (window->popup.ewk_menu)
+        ewk_popup_menu_close(window->popup.ewk_menu);
+    if (window->popup.elm_menu)
+        elm_menu_close(window->popup.elm_menu);
 }
 
 static void window_free(Browser_Window *window)
