@@ -1,3 +1,9 @@
+2013-06-12  Kwang Yul Seo  <skyul@company100.net>
+
+        Unreviewed gardening. Unskipping passing tests.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2013-06-12  Sergio Villar Senin  <svillar@igalia.com>
 
         Add CSS parsing recovery to functions
