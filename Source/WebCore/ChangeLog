@@ -1,3 +1,23 @@
+2013-06-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Soup] Use ResourceLoadPriority
+        https://bugs.webkit.org/show_bug.cgi?id=112902
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use the ResourceLoadPriority from the ResourceRequest to set the
+        correnpondent priority to each SoupMessage.
+
+        No new tests required as there is no change in functionality,
+        we're just enabling a new feature in the underlying network stack.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::createSoupMessageForHandleAndRequest):
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore):
+        (WebCore::toSoupMessagePriority): Translates ResourceLoadPriority
+        to SoupMessagePriority.
+
 2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove memoryInfoEnabled, quantizedMemoryInfoEnabled settings

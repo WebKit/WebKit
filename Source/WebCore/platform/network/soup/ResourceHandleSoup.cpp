@@ -985,6 +985,10 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     g_signal_connect(d->m_soupMessage.get(), "wrote-body", G_CALLBACK(wroteBodyCallback), handle);
 #endif
 
+#if SOUP_CHECK_VERSION(2, 43, 1)
+    soup_message_set_priority(d->m_soupMessage.get(), toSoupMessagePriority(request.priority()));
+#endif
+
     return true;
 }
 

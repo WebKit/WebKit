@@ -97,6 +97,29 @@ namespace WebCore {
     struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
     };
 
+#if SOUP_CHECK_VERSION(2, 43, 1)
+inline SoupMessagePriority toSoupMessagePriority(ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriorityUnresolved:
+        return SOUP_MESSAGE_PRIORITY_NORMAL;
+    case ResourceLoadPriorityVeryLow:
+        return SOUP_MESSAGE_PRIORITY_VERY_LOW;
+    case ResourceLoadPriorityLow:
+        return SOUP_MESSAGE_PRIORITY_LOW;
+    case ResourceLoadPriorityMedium:
+        return SOUP_MESSAGE_PRIORITY_NORMAL;
+    case ResourceLoadPriorityHigh:
+        return SOUP_MESSAGE_PRIORITY_HIGH;
+    case ResourceLoadPriorityVeryHigh:
+        return SOUP_MESSAGE_PRIORITY_VERY_HIGH;
+    }
+
+    ASSERT_NOT_REACHED();
+    return SOUP_MESSAGE_PRIORITY_VERY_LOW;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ResourceRequest_h
