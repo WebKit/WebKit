@@ -60,9 +60,6 @@
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "TouchEventHandler.h"
-#if ENABLE(WEBDOM)
-#include "WebDOMDocument.h"
-#endif
 #include "WebPageClient.h"
 
 #include <BlackBerryPlatformExecutableMessage.h>

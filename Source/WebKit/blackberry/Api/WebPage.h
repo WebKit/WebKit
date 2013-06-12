@@ -302,15 +302,6 @@ public:
 
     void addVisitedLink(const unsigned short* url, unsigned length);
 
-#if defined(ENABLE_WEBDOM) && ENABLE_WEBDOM
-    WebDOMDocument document() const;
-    WebDOMNode nodeAtDocumentPoint(const Platform::IntPoint&);
-    bool getNodeRect(const WebDOMNode&, Platform::IntRect& result);
-    bool setNodeFocus(const WebDOMNode&, bool on);
-    bool setNodeHovered(const WebDOMNode&, bool on);
-    bool nodeHasHover(const WebDOMNode&);
-#endif
-
     bool defersLoading() const;
 
     bool isEnableLocalAccessToAllCookies() const;

@@ -1,3 +1,18 @@
+2013-06-12  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] Remove dead WebDOM code
+        https://bugs.webkit.org/show_bug.cgi?id=113370
+
+        Reviewed by Anders Carlsson.
+
+        BlackBerry PR 347565
+        Internally reviewed by Charles Wei.
+
+        * Api/WebPage.cpp:
+        * Api/WebPage.h:
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+
 2013-06-12  Jakob Petsovits  <jpetsovits@blackberry.com>
 
         [BlackBerry] Smarter algorithm to determine the backingstore rect
