@@ -1,3 +1,22 @@
+2013-06-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Parameter 'pseudoElement' from function 'webkit_dom_dom_window_get_computed_style' should be allowed to be NULL
+        https://bugs.webkit.org/show_bug.cgi?id=117332
+
+        Reviewed by Xan Lopez.
+
+        Add test for function 'webkit_dom_dom_window_get_computed_style'.
+
+        * tests/testdomdomwindow.c:
+        (dom_dom_window_fixture_setup): Test setup for function
+        'dom_dom_window_get_computed_style'.
+        (dom_dom_window_fixture_teardown): Test teardown for function
+        'dom_dom_window_get_computed_style'.
+        (loadedCallback):
+        (test_dom_dom_window_get_computed_style): Checks function
+        'dom_dom_window_get_computed_style'.
+        (main):
+
 2013-06-10  Iago Toral Quiroga  <itoral@igalia.com>
 
         Use Cairo implementation of the WidgetBackingStore instead of X11 when running on Wayland
