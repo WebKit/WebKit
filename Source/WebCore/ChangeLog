@@ -1,3 +1,16 @@
+2013-06-12  Dean Jackson  <dino@apple.com>
+
+        [Mac] Change default Simplified Chinese serif font on 10.9
+        https://bugs.webkit.org/show_bug.cgi?id=117567
+
+        Reviewed by Alexey Proskuryakov.
+
+        Change default font on newer versions of OS X.
+
+        * page/mac/SettingsMac.mm:
+        (WebCore::Settings::initializeDefaultFontFamilies): Use 'Songti SC'
+        instead of 'STSong' on newer systems.
+
 2013-06-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix crashes due to failed ImageBuffer allocation
