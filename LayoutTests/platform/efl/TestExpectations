@@ -633,10 +633,6 @@ webkit.org/b/104809 media/video-src-change.html [ Crash Pass ]
 webkit.org/b/104809 media/remove-from-document.html [ Crash Pass ]
 webkit.org/b/104809 media/video-timeupdate-during-playback.html [ Crash Pass ]
 
-# ASSERTION FAILED: m_tokenizer->state() == HTMLTokenizer::DataState.
-webkit.org/b/110546 fast/parser/document-write-partial-entity-before-load.html [ Crash ]
-webkit.org/b/110546 fast/parser/document-write-fighting-eof.html [ Crash ]
-
 webkit.org/b/111521 editing/selection/selection-invalid-offset.html [ Crash Pass ]
 
 # ASSERTION FAILED: static_cast<unsigned>(m_start + length) <= string.length().

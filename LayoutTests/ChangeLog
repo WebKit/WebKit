@@ -1,3 +1,12 @@
+2013-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Unskip passing tests for new EFL bots.
+
+        fast/parser/document-write-fighting-eof.html
+        fast/parser/document-write-partial-entity-before-load.html
+
+        * platform/efl/TestExpectations:
+
 2013-06-11  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Regions] Regions don't create a stacking context for their contents
