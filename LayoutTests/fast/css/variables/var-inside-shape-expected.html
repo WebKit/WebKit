@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html>
+<script>
+if (window.internals)
+    internals.settings.setCSSExclusionsEnabled(true);
+</script>
 <style>
 .a {
     -webkit-shape-inside: ellipse(100px, 100px, 100px, 100px);
@@ -8,22 +12,23 @@
     -webkit-shape-inside: circle(100px, 100px, 100px);
 }
 .c {
-    -webkit-shape-inside: rectange(100px);
+    -webkit-shape-inside: rectangle(100px, 100px, 100px, 100px);
 }
 .d {
-    -webkit-shape-inside: polygon(100px, 100px, 100px, 100px, 100px);
+    height: 100px;
+    -webkit-shape-inside: polygon(10% 100%, 100% 50%, 50% 10%);
 }
 </style>
 <div class="a">
-Some text.
+Some text inside an area inside which inline content can flow.
 </div>
 <div class="b">
-Some text.
+Some text inside an area inside which inline content can flow.
 </div>
 <div class="c">
-Some text.
+Some text inside an area inside which inline content can flow.
 </div>
 <div class="d">
-Some text.
+Some text inside an area inside which inline content can flow.
 </div>
 </html>

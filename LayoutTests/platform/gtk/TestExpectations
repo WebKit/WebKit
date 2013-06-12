@@ -1389,8 +1389,6 @@ webkit.org/b/115441 media/video-poster-background.html [ ImageOnlyFailure ]
 
 webkit.org/b/115633 accessibility/meter-element.html [ Failure ]
 
-webkit.org/b/116059 fast/css/variables/var-inside-shape.html [ ImageOnlyFailure ]
-
 webkit.org/b/116153 fast/css/text-overflow-ellipsis-full-truncate-rtl.html [ ImageOnlyFailure ]
 
 webkit.org/b/90589 fast/css/user-drag-none.html [ Failure ]

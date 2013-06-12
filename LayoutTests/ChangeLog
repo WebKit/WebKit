@@ -1,3 +1,23 @@
+2013-06-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css exclusions] fast/css/variables/var-inside-shape.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=116059
+
+        Reviewed by Alexandru Chiculita.
+
+        Some shapes were incorrectly defined, there was a "rectange"
+        instead of a "rectangle" and also the number of parameters and
+        their types was wrong. Apart from that, both the CSS exclusions
+        and CSS variables settings were not enabled at runtime.
+
+        Some extra text was also added to the divs in order to verify that
+        the CSS exclusions are working properly.
+
+        * fast/css/variables/var-inside-shape-expected.html:
+        * fast/css/variables/var-inside-shape.html:
+        * platform/efl/TestExpectations: Removed var-inside-shape.html.
+        * platform/gtk/TestExpectations: Ditto.
+
 2013-06-12  Daniel Bates  <dabates@apple.com>
 
         window.find() case-insensitive search doesn't match diacritical marks

@@ -1796,9 +1796,6 @@ webkit.org/b/114877 accessibility/link-inside-button-accessible-text.html [ Fail
 
 webkit.org/b/114612 editing/style/block-style-005.html [ Failure ]
 
-# Regression(r150025).
-webkit.org/b/115919 fast/css/variables/var-inside-shape.html [ ImageOnlyFailure ]
-
 # Unidentified failing media tests
 webkit.org/b/115419 http/tests/media/reload-after-dialog.html [ Failure ]
 webkit.org/b/115419 http/tests/media/remove-while-loading.html [ Failure ]

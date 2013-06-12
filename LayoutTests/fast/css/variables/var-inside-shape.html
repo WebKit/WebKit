@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html>
 <script>
-if (window.internals)
+if (window.internals) {
     internals.settings.setCSSVariablesEnabled(true);
+    internals.settings.setCSSExclusionsEnabled(true);
+}
 </script>
 <style>
 :root {
     -webkit-var-a: 100px;
+    -webkit-var-b: 100%;
+    -webkit-var-c: 50%;
+    -webkit-var-d: 10%;
 }
 .a {
     -webkit-shape-inside: ellipse(-webkit-var(a), -webkit-var(a), -webkit-var(a), -webkit-var(a));
 }
 .b {
-    -webkit-shape-inside: circle(-webkit-var(a), -webkit-var(a), -webkit-var(a)));
+    -webkit-shape-inside: circle(-webkit-var(a), -webkit-var(a), -webkit-var(a));
 }
 .c {
-    -webkit-shape-inside: rectange(-webkit-var(a));
+    -webkit-shape-inside: rectangle(-webkit-var(a), -webkit-var(a), -webkit-var(a), -webkit-var(a));
 }
 .d {
-    -webkit-shape-inside: polygon(-webkit-var(a), -webkit-var(a), -webkit-var(a), -webkit-var(a));
+    height: -webkit-var(a);
+    -webkit-shape-inside: polygon(-webkit-var(d) -webkit-var(b), -webkit-var(b) -webkit-var(c), -webkit-var(c) -webkit-var(d));
 }
 </style>
 <div class="a">
-Some text.
+Some text inside an area inside which inline content can flow.
 </div>
 <div class="b">
-Some text.
+Some text inside an area inside which inline content can flow.
 </div>
 <div class="c">
-Some text.
+Some text inside an area inside which inline content can flow.
 </div>
 <div class="d">
-Some text.
+Some text inside an area inside which inline content can flow.
 </div>
 </html>
