@@ -432,21 +432,11 @@ JSStringRef AccessibilityUIElement::language()
     if (!m_element)
         return JSStringCreateWithCharacters(0, 0);
 
-    // In ATK, the document language is exposed as the document's locale.
-    if (atk_object_get_role(ATK_OBJECT(m_element)) == ATK_ROLE_DOCUMENT_FRAME)
-        return JSStringCreateWithUTF8CString(g_strdup_printf("AXLanguage: %s", atk_document_get_locale(ATK_DOCUMENT(m_element))));
-
-    // For all other objects, the language is exposed as an AtkText attribute.
-    if (!ATK_IS_TEXT(m_element))
+    const gchar* locale = atk_object_get_object_locale(ATK_OBJECT(m_element));
+    if (!locale)
         return JSStringCreateWithCharacters(0, 0);
 
-    for (GSList* textAttributes = atk_text_get_default_attributes(ATK_TEXT(m_element)); textAttributes; textAttributes = textAttributes->next) {
-        AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(textAttributes->data);
-        if (!strcmp(atkAttribute->name, atk_text_attribute_get_name(ATK_TEXT_ATTR_LANGUAGE)))
-            return JSStringCreateWithUTF8CString(g_strdup_printf("AXLanguage: %s", atkAttribute->value));
-    }
-
-    return JSStringCreateWithCharacters(0, 0);
+    return JSStringCreateWithUTF8CString(g_strdup_printf("AXLanguage: %s", locale));
 }
 
 double AccessibilityUIElement::x()

@@ -792,6 +792,38 @@ static void webkitAccessibleInit(AtkObject* object, gpointer data)
     accessible->priv = WEBKIT_ACCESSIBLE_GET_PRIVATE(accessible);
 }
 
+static const gchar* webkitAccessibleGetObjectLocale(AtkObject* object)
+{
+    if (ATK_IS_DOCUMENT(object)) {
+        AccessibilityObject* coreObject = core(object);
+        if (!coreObject)
+            return 0;
+
+        // TODO: Should we fall back on lang xml:lang when the following comes up empty?
+        String language = coreObject->language();
+        if (!language.isEmpty())
+            return cacheAndReturnAtkProperty(object, AtkCachedDocumentLocale, language);
+
+    } else if (ATK_IS_TEXT(object)) {
+        const gchar* locale = 0;
+
+        AtkAttributeSet* textAttributes = atk_text_get_default_attributes(ATK_TEXT(object));
+        for (GSList* attributes = textAttributes; attributes; attributes = attributes->next) {
+            AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
+            if (!strcmp(atkAttribute->name, atk_text_attribute_get_name(ATK_TEXT_ATTR_LANGUAGE))) {
+                locale = cacheAndReturnAtkProperty(object, AtkCachedDocumentLocale, String::fromUTF8(atkAttribute->value));
+                break;
+            }
+        }
+
+        atk_attribute_set_free(textAttributes);
+
+        return locale;
+    }
+
+    return 0;
+}
+
 static void webkitAccessibleFinalize(GObject* object)
 {
     G_OBJECT_CLASS(webkitAccessibleParentClass)->finalize(object);
@@ -816,6 +848,7 @@ static void webkitAccessibleClassInit(AtkObjectClass* klass)
     klass->get_index_in_parent = webkitAccessibleGetIndexInParent;
     klass->get_attributes = webkitAccessibleGetAttributes;
     klass->ref_relation_set = webkitAccessibleRefRelationSet;
+    klass->get_object_locale = webkitAccessibleGetObjectLocale;
 
     g_type_class_add_private(klass, sizeof(WebKitAccessiblePrivate));
 }

@@ -1,3 +1,28 @@
+2013-06-12  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [atk] Replace deprecated call to atk_document_get_locale() in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=115647
+
+        Reviewed by Martin Robinson.
+
+        Override the get_object_locale() method of WebkitAccessibleWrapperAtk's internal
+        AtkObject, to include custom implementations for AtkDocument and AtkText objects,
+        taking the logic as-is from AtkDocument::get_document_locale() and DumpRenderTree's
+        AccessibilityUIElementAtk::language(), respectively.
+
+        Apart from improving encapsulation, this avoids calling deprecated get_document_locale()
+        method.
+
+        No new functionality, no new tests.
+
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.cpp:
+        (webkitAccessibleDocumentInterfaceInit): Chains implementation of
+        AtkDocument::get_document_locale() to AtkObject::get_object_locale().
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetObjectLocale): Add implementation of locale resolution for
+        objects of type AtkDocument and AtkText.
+        (webkitAccessibleClassInit): Override AtkObject::get_object_locale() method.
+
 2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Move more build targets for source code that's free of layer violations into libPlatform
