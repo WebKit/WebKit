@@ -1,3 +1,12 @@
+2013-06-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Unreviewed gardening, unskip now passing tests and try to paint the bot green.
+
+        * platform/qt-arm/TestExpectations:
+        * platform/qt-arm/svg/W3C-SVG-1.1/paths-data-05-t-expected.txt: Removed.
+        * platform/qt-arm/svg/W3C-SVG-1.1/paths-data-09-t-expected.txt: Removed.
+        * platform/qt-arm/svg/batik/text/textOnPath3-expected.txt: Removed.
+
 2013-06-12  Sergio Villar Senin  <svillar@igalia.com>
 
         Skipping {}, () and [] blocks while error recovering in CSS
