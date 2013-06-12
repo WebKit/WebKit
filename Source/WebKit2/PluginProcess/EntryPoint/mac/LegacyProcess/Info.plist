@@ -30,5 +30,7 @@
 	<string>PluginProcessMain</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
+	<key>NSSupportsAppNap</key>
+	<true/>
 </dict>
 </plist>

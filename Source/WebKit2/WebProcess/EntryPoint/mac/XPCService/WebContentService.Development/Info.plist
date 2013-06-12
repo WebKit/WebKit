@@ -34,6 +34,8 @@
 	<true/>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
+	<key>NSSupportsAppNap</key>
+	<true/>
 	<key>XPCService</key>
 	<dict>
 		<key>JoinExistingSession</key>
