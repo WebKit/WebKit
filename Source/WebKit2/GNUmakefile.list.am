@@ -1273,6 +1273,8 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/PluginProcess/unix/PluginProcessMainUnix.h \
 	Source/WebKit2/PluginProcess/unix/PluginProcessMainUnix.cpp \
 	Source/WebKit2/PluginProcess/unix/PluginProcessUnix.cpp \
+	Source/WebKit2/Shared/ActivityAssertion.cpp \
+	Source/WebKit2/Shared/ActivityAssertion.h \
 	Source/WebKit2/Shared/ChildProcess.cpp \
 	Source/WebKit2/Shared/ChildProcess.h \
 	Source/WebKit2/Shared/ChildProcessProxy.cpp \
