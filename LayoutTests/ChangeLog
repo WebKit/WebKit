@@ -1,5 +1,15 @@
 2013-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL Gardening.
+
+        EFL WK2 supports fast/canvas/webgl/read-pixels-test.html because Ubuntu 13.04 solves issues related to xvfb.
+        However, EFL WK1 doesn't support webgl yet. So, it is moved to efl-wk1 TestExpectations.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2013-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL gardening. Unskip passing tests for new EFL bots.
 
         fast/parser/document-write-fighting-eof.html

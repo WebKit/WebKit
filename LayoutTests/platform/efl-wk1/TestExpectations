@@ -339,6 +339,7 @@ webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed.ht
 webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 webkit.org/b/77219 inspector/profiler/webgl [ Skip ]
 webkit.org/b/77219 fast/canvas/webgl/oes-vertex-array-object.html [ Skip ]
+webkit.org/b/105092 fast/canvas/webgl/read-pixels-test.html [ Skip ]
 
 # The timeout is caused apparently by the whole process hanging; probably a bug in soup,
 # needs further investigation.
