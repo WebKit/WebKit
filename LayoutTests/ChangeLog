@@ -1,5 +1,14 @@
 2013-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL Gardening. Unskip fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
+        for efl-wk2. Because Ubuntu 13.04 solves issues related to xvfb. However, EFL WK1 doesn't support
+        webgl yet. So, it needs to be moved to efl-wk1 TestExpectations.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2013-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL Gardening.
 
         EFL WK2 supports fast/canvas/webgl/read-pixels-test.html because Ubuntu 13.04 solves issues related to xvfb.

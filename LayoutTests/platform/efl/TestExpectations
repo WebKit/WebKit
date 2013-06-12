@@ -1609,9 +1609,6 @@ webkit.org/b/105093 compositing/webgl/webgl-nonpremultiplied-blend.html [ Skip ]
 webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/106547 fast/canvas/webgl/type-conversion-test.html [ Crash ]
 
-# pixel differences, need to investigate.
-webkit.org/b/105090 fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html [ Failure ]
-
 # shader errors, fails to render.
 webkit.org/b/105031 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
 
