@@ -30,8 +30,16 @@ platform_webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/geoclue \
 	-I$(srcdir)/Source/WebCore/platform/graphics \
 	-I$(srcdir)/Source/WebCore/platform/graphics/cairo \
+	-I$(srcdir)/Source/WebCore/platform/graphics/cpu/arm \
+	-I$(srcdir)/Source/WebCore/platform/graphics/cpu/arm/filters \
+	-I$(srcdir)/Source/WebCore/platform/graphics/egl \
+	-I$(srcdir)/Source/WebCore/platform/graphics/filters \
+	-I$(srcdir)/Source/WebCore/platform/graphics/glx \
+	-I$(srcdir)/Source/WebCore/platform/graphics/gpu \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gstreamer \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gtk \
+	-I$(srcdir)/Source/WebCore/platform/graphics/harfbuzz \
+	-I$(srcdir)/Source/WebCore/platform/graphics/texmap \
 	-I$(srcdir)/Source/WebCore/platform/graphics/transforms \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
 	-I$(srcdir)/Source/WebCore/platform/image-decoders \
@@ -45,7 +53,8 @@ platform_webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/network \
 	-I$(srcdir)/Source/WebCore/platform/network/gtk \
 	-I$(srcdir)/Source/WebCore/platform/network/soup \
-	-I$(srcdir)/Source/WebCore/platform/text
+	-I$(srcdir)/Source/WebCore/platform/text \
+	-I$(srcdir)/Source/WebCore/platform/text/transcoder
 
 noinst_LTLIBRARIES += \
 	libPlatform.la \
@@ -80,6 +89,8 @@ libPlatform_la_CPPFLAGS = \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
 	$(CAIRO_CFLAGS) \
+	$(ENCHANT_CFLAGS) \
+	$(FREETYPE_CFLAGS) \
 	$(GEOCLUE_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
@@ -103,6 +114,7 @@ libPlatformGtk_la_CPPFLAGS = \
 	$(platform_webcore_cppflags) \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
+	$(GSTREAMER_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSECRET_CFLAGS) \
 	$(LIBSOUP_CFLAGS)

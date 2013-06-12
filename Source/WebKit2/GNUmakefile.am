@@ -520,6 +520,7 @@ libPlatformGtk2_la_CPPFLAGS = \
 	$(platform_webcore_cppflags) \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
+	$(GSTREAMER_CFLAGS) \
 	$(GTK2_CFLAGS) \
 	$(LIBSECRET_CFLAGS) \
 	$(LIBSOUP_CFLAGS)

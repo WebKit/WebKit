@@ -1,3 +1,15 @@
+2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move more build targets for source code that's free of layer violations into libPlatform
+        https://bugs.webkit.org/show_bug.cgi?id=115936
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add additional Source/WebCore/platform subdirectories to the list of the directories
+        that are specific to the platform layer but still located in WebCore. Add Enchant and Freetype dependencies'
+        CFLAGS to the list of libPlatform CPPFLAGS. Add GStreamer dependency's CFLAGS to the list of libPlatformGtk
+        CPPFLAGS.
+
 2013-05-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Move generated ColorData.cpp, WebKitFontFamilyNames.(cpp|h) build targets into libPlatform

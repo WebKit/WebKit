@@ -1,3 +1,16 @@
+2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move more build targets for source code that's free of layer violations into libPlatform
+        https://bugs.webkit.org/show_bug.cgi?id=115936
+
+        Reviewed by Martin Robinson.
+
+        No new tests - no new functionality.
+
+        * GNUmakefile.list.am: Move more build targets under the platform_sources and platformgtk_sources listing.
+        These build targets represent source files that are already free of platform layer violations and are as such
+        ready to be pushed down from the WebCore layer into the Platform layer.
+
 2013-06-12  Ruth Fong  <ruth_fong@apple.com>
 
         "Open Video in New Window" doesn't make sense in fullscreen
