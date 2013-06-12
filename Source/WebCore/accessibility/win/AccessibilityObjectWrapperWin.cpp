@@ -30,20 +30,39 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
+#include "BString.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
 
 namespace WebCore {
 
-AtomicString AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomicString& attributeName)
+void AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomicString& attributeName, VARIANT* result)
 {
     // FIXME: This should be fleshed out to match the Mac version
-    
+
+    // Not a real concept on Windows, but used heavily in WebKit accessibility testing.
+    if (attributeName == "AXTitleUIElementAttribute") {
+        if (!m_object->exposesTitleUIElement())
+            return;
+
+        AccessibilityObject* obj = m_object->titleUIElement();
+        if (obj) {
+            ASSERT(V_VT(result) == VT_EMPTY);
+            V_VT(result) = VT_UNKNOWN;
+            V_UNKNOWN(result) = obj->wrapper();
+            obj->wrapper()->AddRef();
+        }
+        return;
+    }
+
     // Used by DRT to find an accessible node by its element id.
-    if (attributeName == "AXDRTElementIdAttribute")
-        return m_object->getAttribute(WebCore::HTMLNames::idAttr);
-    
-    return emptyString();
+    if (attributeName == "AXDRTElementIdAttribute") {
+        ASSERT(V_VT(result) == VT_EMPTY);
+
+        V_VT(result) = VT_BSTR;
+        V_BSTR(result) = WebCore::BString(m_object->getAttribute(WebCore::HTMLNames::idAttr)).release();
+        return;
+    }
 }
 
 

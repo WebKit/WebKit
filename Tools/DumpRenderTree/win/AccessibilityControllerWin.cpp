@@ -35,6 +35,7 @@
 #include <WebCore/AccessibilityObjectWrapperWin.h>
 #include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
+#include <comutil.h>
 #include <oleacc.h>
 #include <string>
 #include <wtf/Assertions.h>
@@ -77,6 +78,8 @@ static COMPtr<IAccessibleComparable> comparableObject(const COMPtr<IServiceProvi
     return comparable;
 }
 
+static const _bstr_t s_AXDRTElementIdAttribute(L"AXDRTElementIdAttribute");
+
 static COMPtr<IAccessible> findAccessibleObjectById(AccessibilityUIElement parentObject, BSTR idAttribute)
 {
     COMPtr<IAccessible> parentIAccessible = parentObject.platformUIElement();
@@ -89,14 +92,17 @@ static COMPtr<IAccessible> findAccessibleObjectById(AccessibilityUIElement paren
     if (!comparable)
         return 0;
 
-    BSTR value;
-    if (SUCCEEDED(comparable->attributeValue(L"AXDRTElementIdAttribute", &value))) {
-        if (VARCMP_EQ == ::VarBstrCmp(value, idAttribute, LOCALE_USER_DEFAULT, 0)) {
-            ::SysFreeString(value);
+    VARIANT value;
+    ::VariantInit(&value);
+
+    if (SUCCEEDED(comparable->attributeValue(s_AXDRTElementIdAttribute, &value))) {
+        ASSERT(V_VT(&value) == VT_BSTR);
+        if (VARCMP_EQ == ::VarBstrCmp(value.bstrVal, idAttribute, LOCALE_USER_DEFAULT, 0)) {
+            ::VariantClear(&value);
             return parentIAccessible;
         }
     }
-    ::SysFreeString(value);
+    ::VariantClear(&value);
 
     long childCount = parentObject.childrenCount();
     if (!childCount)

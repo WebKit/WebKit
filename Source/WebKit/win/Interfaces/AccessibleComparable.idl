@@ -42,5 +42,5 @@ cpp_quote("extern const GUID  __declspec(selectany) SID_AccessibleComparable = {
 interface IAccessibleComparable : IAccessible
 {
     HRESULT isSameObject([in] IAccessibleComparable* other, [out, retval] BOOL* result);
-    HRESULT attributeValue([in] BSTR key, [out, retval] BSTR* value);
+    HRESULT attributeValue([in] BSTR key, [out, retval] VARIANT* value);
 }

@@ -835,15 +835,14 @@ HRESULT AccessibleBase::isSameObject(IAccessibleComparable* other, BOOL* result)
     return S_OK;
 }
 
-HRESULT AccessibleBase::attributeValue(BSTR key, BSTR* value)
+HRESULT AccessibleBase::attributeValue(BSTR key, VARIANT* value)
 {
     if (!value)
         return E_POINTER;
 
-    AtomicString keyAtomic(_com_util::ConvertBSTRToString(key));
-    AtomicString valueAtomic = accessibilityAttributeValue(keyAtomic);
+    AtomicString keyAtomic(key, ::SysStringLen(key));
 
-    *value = BString(valueAtomic).release();
+    accessibilityAttributeValue(keyAtomic, value);
 
     return S_OK;
 }

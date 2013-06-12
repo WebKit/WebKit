@@ -94,7 +94,7 @@ public:
 
     // IAccessibleComparable
     virtual HRESULT STDMETHODCALLTYPE isSameObject(IAccessibleComparable* other, BOOL* result);
-    virtual HRESULT STDMETHODCALLTYPE attributeValue(BSTR key, BSTR* value);
+    virtual HRESULT STDMETHODCALLTYPE attributeValue(BSTR key, VARIANT* value);
 
 protected:
     AccessibleBase(WebCore::AccessibilityObject*);

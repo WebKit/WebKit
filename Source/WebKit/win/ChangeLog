@@ -1,3 +1,15 @@
+2013-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Support Title UI Element Accessibility Attribute
+        https://bugs.webkit.org/show_bug.cgi?id=117530
+
+        Reviewed by Anders Carlsson.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::attributeValue): Extend to handle Title UI Element.
+        * AccessibleBase.h: Revise signature to use a variant argument.
+        * Interfaces/AccessibleComparable.idl:  Revise interface to use variant
+
 2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove memoryInfoEnabled, quantizedMemoryInfoEnabled settings
