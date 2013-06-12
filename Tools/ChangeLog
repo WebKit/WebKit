@@ -1,5 +1,15 @@
 2013-06-12  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
+        Remove last bits of GYP from build-webkit and update-webkit scripts
+        https://bugs.webkit.org/show_bug.cgi?id=117557
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/build-webkit:
+        * Scripts/update-webkit:
+
+2013-06-12  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
         Remove forgotten unused Tools/Script/make-gypi script
         https://bugs.webkit.org/show_bug.cgi?id=117558
 

@@ -51,7 +51,6 @@ chdirWebKit();
 
 my $showHelp = 0;
 my $clean = 0;
-my $useGYP = 0;
 my $minimal = 0;
 my $installHeaders;
 my $installLibs;
@@ -113,7 +112,6 @@ Usage: $programName [options] [options to pass to build system]
   --sdk=<sdk>                       Use a specific Xcode SDK (iOS and Mac only)
   --device                          Use the current iphoneos.internal SDK (iOS only)
   --simulator                       Use the current iphonesimulator SDK (iOS only)
-  --gyp                             Use GYP-generated project files
   --coverage                        Enable Code Coverage support (Mac only)
 
   --blackberry                      Build the BlackBerry port on Mac/Linux
@@ -144,7 +142,6 @@ EOF
 my %options = (
     'help' => \$showHelp,
     'clean' => \$clean,
-    'gyp' => \$useGYP,
     'install-headers=s' => \$installHeaders,
     'install-libs=s' => \$installLibs,
     'prefix=s' => \$prefixPath,
@@ -205,11 +202,6 @@ for my $dir (@projects) {
 
 if (!isQt() && !-d "WebKitLibraries") {
     die "Error: No WebKitLibraries directory found. Please do a fresh checkout.\n";
-}
-
-# Generate the generate project files from .gyp files
-if ($useGYP) {
-    system("perl", "Tools/Scripts/generate-project-files") == 0 or die "Failed to run generate-project-files";
 }
 
 my @options = ();
@@ -334,9 +326,7 @@ for my $dir (@projects) {
     } elsif (isAppleMacWebKit()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";
-        my $useGYPProject = $useGYP && ($project =~ "WebCore|JavaScriptCore");
-        my $projectPath = $useGYPProject ? "gyp/$project" : $project;
-        $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
+        my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit()) {
         if ($project eq "WebKit") {
