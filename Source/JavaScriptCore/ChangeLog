@@ -1,3 +1,13 @@
+2013-06-12  Conrad Shultz  <conrad_shultz@apple.com>
+
+        JSExport header documentation substitutes "semicolon" for "colon"
+        https://bugs.webkit.org/show_bug.cgi?id=117552
+
+        Reviewed by Mark Hahnenberg.
+
+        * API/JSExport.h:
+        Fix a couple typos.
+
 2013-06-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [JSC] Remove a vestige of wxWidgets support.
