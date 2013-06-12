@@ -494,6 +494,11 @@ String contextMenuItemTagEnterVideoFullscreen()
     return WEB_UI_STRING("Enter Fullscreen", "Video Enter Fullscreen context menu item");
 }
 
+String contextMenuItemTagExitVideoFullscreen()
+{
+    return WEB_UI_STRING("Exit Fullscreen", "Video Exit Fullscreen context menu item");
+}
+
 String contextMenuItemTagMediaPlay()
 {
     return WEB_UI_STRING("Play", "Media Play context menu item");

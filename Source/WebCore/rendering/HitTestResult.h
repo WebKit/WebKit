@@ -112,6 +112,8 @@ public:
     bool isContentEditable() const;
     void toggleMediaControlsDisplay() const;
     void toggleMediaLoopPlayback() const;
+    bool mediaIsInFullscreen() const;
+    void toggleMediaFullscreenState() const;
     void enterFullscreenForVideo() const;
     bool mediaControlsEnabled() const;
     bool mediaLoopEnabled() const;

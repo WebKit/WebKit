@@ -468,6 +468,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagToggleMediaControls;
     case WebCore::ContextMenuItemTagToggleMediaLoop:
         return kWKContextMenuItemTagToggleMediaLoop;
+    case WebCore::ContextMenuItemTagToggleVideoFullscreen:
+        return kWKContextMenuItemTagToggleVideoFullscreen;
     case WebCore::ContextMenuItemTagEnterVideoFullscreen:
         return kWKContextMenuItemTagEnterVideoFullscreen;
     case WebCore::ContextMenuItemTagMediaPlayPause:
@@ -658,6 +660,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagToggleMediaControls;
     case kWKContextMenuItemTagToggleMediaLoop:
         return WebCore::ContextMenuItemTagToggleMediaLoop;
+    case kWKContextMenuItemTagToggleVideoFullscreen:
+        return WebCore::ContextMenuItemTagToggleVideoFullscreen;
     case kWKContextMenuItemTagEnterVideoFullscreen:
         return WebCore::ContextMenuItemTagEnterVideoFullscreen;
     case kWKContextMenuItemTagMediaPlayPause:

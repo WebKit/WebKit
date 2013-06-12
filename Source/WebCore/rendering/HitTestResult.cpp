@@ -399,6 +399,27 @@ void HitTestResult::toggleMediaLoopPlayback() const
 #endif
 }
 
+bool HitTestResult::mediaIsInFullscreen() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElement = this->mediaElement())
+        return mediaElement->isVideo() && mediaElement->isFullscreen();
+#endif
+    return false;
+}
+
+void HitTestResult::toggleMediaFullscreenState() const
+{
+#if ENABLE(VIDEO)
+    if (HTMLMediaElement* mediaElement = this->mediaElement()) {
+        if (mediaElement->isVideo() && mediaElement->supportsFullscreen()) {
+            UserGestureIndicator indicator(DefinitelyProcessingNewUserGesture);
+            mediaElement->toggleFullscreenState();
+        }
+    }
+#endif
+}
+
 void HitTestResult::enterFullscreenForVideo() const
 {
 #if ENABLE(VIDEO)

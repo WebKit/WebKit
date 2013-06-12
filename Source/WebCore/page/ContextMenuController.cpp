@@ -263,6 +263,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     case ContextMenuItemTagToggleMediaLoop:
         m_hitTestResult.toggleMediaLoopPlayback();
         break;
+    case ContextMenuItemTagToggleVideoFullscreen:
+        m_hitTestResult.toggleMediaFullscreenState();
+        break;
     case ContextMenuItemTagEnterVideoFullscreen:
         m_hitTestResult.enterFullscreenForVideo();
         break;
@@ -732,6 +735,12 @@ static bool selectionContainsPossibleWord(Frame* frame)
 #endif
 #endif
 
+#if PLATFORM(MAC)
+#define SUPPORTS_TOGGLE_VIDEO_FULLSCREEN 1
+#else
+#define SUPPORTS_TOGGLE_VIDEO_FULLSCREEN 0
+#endif
+
 void ContextMenuController::populate()
 {
     ContextMenuItem OpenLinkItem(ActionType, ContextMenuItemTagOpenLink, contextMenuItemTagOpenLink());
@@ -762,7 +771,9 @@ void ContextMenuController::populate()
         contextMenuItemTagToggleMediaControls());
     ContextMenuItem ToggleMediaLoop(CheckableActionType, ContextMenuItemTagToggleMediaLoop, 
         contextMenuItemTagToggleMediaLoop());
-    ContextMenuItem EnterVideoFullscreen(ActionType, ContextMenuItemTagEnterVideoFullscreen, 
+    ContextMenuItem EnterVideoFullscreen(ActionType, ContextMenuItemTagEnterVideoFullscreen,
+        contextMenuItemTagEnterVideoFullscreen());
+    ContextMenuItem ToggleVideoFullscreen(ActionType, ContextMenuItemTagToggleVideoFullscreen,
         contextMenuItemTagEnterVideoFullscreen());
 #if PLATFORM(MAC)
     ContextMenuItem SearchSpotlightItem(ActionType, ContextMenuItemTagSearchInSpotlight, 
@@ -845,8 +856,11 @@ void ContextMenuController::populate()
             appendItem(MediaMute, m_contextMenu.get());
             appendItem(ToggleMediaControls, m_contextMenu.get());
             appendItem(ToggleMediaLoop, m_contextMenu.get());
+#if SUPPORTS_TOGGLE_VIDEO_FULLSCREEN
+            appendItem(ToggleVideoFullscreen, m_contextMenu.get());
+#else
             appendItem(EnterVideoFullscreen, m_contextMenu.get());
-
+#endif
             appendItem(*separatorItem(), m_contextMenu.get());
             appendItem(CopyMediaLinkItem, m_contextMenu.get());
             appendItem(OpenMediaInNewWindowItem, m_contextMenu.get());
@@ -1342,6 +1356,11 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagToggleMediaLoop:
             shouldCheck = m_hitTestResult.mediaLoopEnabled();
             break;
+        case ContextMenuItemTagToggleVideoFullscreen:
+#if SUPPORTS_TOGGLE_VIDEO_FULLSCREEN
+            item.setTitle(m_hitTestResult.mediaIsInFullscreen() ? contextMenuItemTagExitVideoFullscreen() : contextMenuItemTagEnterVideoFullscreen());
+            break;
+#endif
         case ContextMenuItemTagEnterVideoFullscreen:
             shouldEnable = m_hitTestResult.mediaSupportsFullscreen();
             break;

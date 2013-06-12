@@ -137,6 +137,7 @@ namespace WebCore {
     String contextMenuItemTagToggleMediaControls();
     String contextMenuItemTagToggleMediaLoop();
     String contextMenuItemTagEnterVideoFullscreen();
+    String contextMenuItemTagExitVideoFullscreen();
     String contextMenuItemTagMediaPlay();
     String contextMenuItemTagMediaPause();
     String contextMenuItemTagMediaMute();

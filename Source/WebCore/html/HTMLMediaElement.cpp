@@ -4362,6 +4362,16 @@ bool HTMLMediaElement::isFullscreen() const
     return false;
 }
 
+void HTMLMediaElement::toggleFullscreenState()
+{
+    LOG(Media, "HTMLMediaElement::toggleFullscreenState - isFullscreen() is %s", boolString(isFullscreen()));
+    
+    if (isFullscreen())
+        exitFullscreen();
+    else
+        enterFullscreen();
+}
+
 void HTMLMediaElement::enterFullscreen()
 {
     LOG(Media, "HTMLMediaElement::enterFullscreen");
