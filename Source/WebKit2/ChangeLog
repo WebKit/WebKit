@@ -1,3 +1,15 @@
+2013-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Invalidate the ProcessLauncher when the process is terminated before it has finished launching
+        https://bugs.webkit.org/show_bug.cgi?id=117412
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::terminateProcess): If process is still
+        launching just invalidate the launcher. Reset the process
+        identifier after killing the process.
+
 2013-06-12  Jae Hyun Park  <jae.park@company100.net>
 
         [Coordinated Graphics] Remove unused headers in CoordinatedLayerTreeHostProxy
