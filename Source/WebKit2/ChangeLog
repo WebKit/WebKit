@@ -1,3 +1,29 @@
+2013-06-11  Oliver Hunt  <oliver@apple.com>
+
+        Make sure we aren't throttling plugin timers during initialisation and destruction
+        https://bugs.webkit.org/show_bug.cgi?id=117522
+
+        Reviewed by Darin Adler.
+
+        Add a new ActivityAssertion RAII class to handle allowing/disallowing
+        timer throttling.  Then make use of it during plugin initialisation
+        and destruction, as well as any synchronous messages (on the basis
+        that if another process is waiting for the plugin we shouldn't be
+        throttling timers).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        (WebKit::WebProcessConnection::destroyPlugin):
+        (WebKit::WebProcessConnection::createPlugin):
+        * Shared/ActivityAssertion.cpp: Added.
+        (WebKit::ActivityAssertion::ActivityAssertion):
+        (WebKit::ActivityAssertion::~ActivityAssertion):
+        * Shared/ActivityAssertion.h: Added.
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-06-06  Timothy Hatcher  <timothy@apple.com>
 
         Update the framework bundle identifier for the Web Inspector.

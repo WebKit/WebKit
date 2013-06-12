@@ -28,6 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "ActivityAssertion.h"
 #include "ArgumentCoders.h"
 #include "ConnectionStack.h"
 #include "NPObjectMessageReceiverMessages.h"
@@ -140,6 +141,9 @@ void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, Co
 
 void WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
+    // Force all timers to run at full speed when processing a synchronous message
+    ActivityAssertion activityAssertion(PluginProcess::shared());
+
     ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), connection);
 
     uint64_t destinationID = decoder.destinationID();
@@ -176,6 +180,9 @@ void WebProcessConnection::didClose(CoreIPC::Connection*)
 
 void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete)
 {
+    // Ensure we don't clamp any timers during destruction
+    ActivityAssertion activityAssertion(PluginProcess::shared());
+
     PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(pluginInstanceID);
     
     // If there is no PluginControllerProxy then this plug-in doesn't exist yet and we probably have nothing to do.
@@ -222,6 +229,9 @@ void WebProcessConnection::createPluginInternal(const PluginCreationParameters& 
 
 void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> reply)
 {
+    // Ensure we don't clamp any timers during initialization
+    ActivityAssertion activityAssertion(PluginProcess::shared());
+
     PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(creationParameters.pluginInstanceID);
 
     // The controller proxy for the plug-in we're being asked to create synchronously might already exist if it was requested asynchronously before.

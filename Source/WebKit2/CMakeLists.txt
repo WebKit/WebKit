@@ -154,6 +154,7 @@ set(WebKit2_SOURCES
 
     Shared/APIClientTraits.cpp
     Shared/APIObject.cpp
+    Shared/ActivityAssertion.cpp
     Shared/CacheModel.cpp
     Shared/ChildProcess.cpp
     Shared/ChildProcessProxy.cpp

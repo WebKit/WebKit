@@ -626,6 +626,8 @@
 		9FB5F394169E6A80002C25BF /* WKContextPrivateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */; };
 		9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7D792D61767CB6E00881CBE /* ActivityAssertion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */; };
+		A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D792D41767CB0900881CBE /* ActivityAssertion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B62E7310143047A60069EC35 /* WKHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B62E730F143047A60069EC35 /* WKHitTestResult.cpp */; };
 		B62E7312143047B00069EC35 /* WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = B62E7311143047B00069EC35 /* WKHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B63403F914910D57001070B5 /* APIObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63403F814910D57001070B5 /* APIObject.cpp */; };
@@ -2113,6 +2115,8 @@
 		9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = mac/WKContextPrivateMac.h; sourceTree = "<group>"; };
 		A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageVisibilityTypes.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSerializedScriptValue.h; sourceTree = "<group>"; };
+		A7D792D41767CB0900881CBE /* ActivityAssertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActivityAssertion.h; sourceTree = "<group>"; };
+		A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActivityAssertion.cpp; sourceTree = "<group>"; };
 		B396EA5512E0ED2D00F4FEB7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		B62E730F143047A60069EC35 /* WKHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKHitTestResult.cpp; sourceTree = "<group>"; };
 		B62E7311143047B00069EC35 /* WKHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKHitTestResult.h; sourceTree = "<group>"; };
@@ -3243,6 +3247,8 @@
 				51A8A60D1627F2AC000D90E9 /* Network */,
 				BCAF35E516CA253B00D4E9FC /* OfflineStorage */,
 				1AAE058C1279DCD400852418 /* Plugins */,
+				A7D792D41767CB0900881CBE /* ActivityAssertion.h */,
+				A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */,
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
 				5D51845313BCF9CC00C7FF4A /* APIClientTraits.cpp */,
 				5D51845413BCF9CC00C7FF4A /* APIClientTraits.h */,
@@ -5578,6 +5584,7 @@
 				BC1BE1E012D54A410004A228 /* WebGeolocationClient.h in Headers */,
 				BC0E5FE512D697160012A72A /* WebGeolocationManager.h in Headers */,
 				1AC5FFC2174BFD1B0001483D /* PluginProcessAttributes.h in Headers */,
+				A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */,
 				BC0E606212D6BA910012A72A /* WebGeolocationManagerMessages.h in Headers */,
 				BC54CACB12D64291005C67B0 /* WebGeolocationManagerProxy.h in Headers */,
 				BC0E618312D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h in Headers */,
@@ -6565,6 +6572,7 @@
 				5136183D163126DA00A99DDE /* ConnectionStack.cpp in Sources */,
 				B878B616133428DC006888E9 /* CorrectionPanel.mm in Sources */,
 				2989A411167D1834004F96D2 /* CustomProtocolManagerMac.mm in Sources */,
+				A7D792D61767CB6E00881CBE /* ActivityAssertion.cpp in Sources */,
 				2984F588164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp in Sources */,
 				29AD3096164B4C930072DEA9 /* CustomProtocolManagerProxyMac.mm in Sources */,
 				2984F57C164B915F004BC0C6 /* CustomProtocolManagerProxyMessageReceiver.cpp in Sources */,

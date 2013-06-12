@@ -74,6 +74,7 @@ HEADERS += \
     Shared/Authentication/AuthenticationManager.h \
     Shared/ShareableBitmap.h \
     Shared/CacheModel.h \
+    Shared/ActivityAssertion.h \
     Shared/ChildProcess.h \
     Shared/ChildProcessProxy.h \
     Shared/ConnectionStack.h \
@@ -431,6 +432,7 @@ SOURCES += \
     Shared/API/c/qt/WKImageQt.cpp \
     Shared/APIClientTraits.cpp \
     Shared/APIObject.cpp \
+    Shared/ActivityAssertion.cpp \
     Shared/Authentication/AuthenticationManager.cpp \
     Shared/Plugins/Netscape/PluginInformation.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
