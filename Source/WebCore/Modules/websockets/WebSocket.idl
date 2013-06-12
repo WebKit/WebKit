@@ -37,7 +37,7 @@
     Constructor(DOMString url),
     Constructor(DOMString url, sequence<DOMString> protocols),
     Constructor(DOMString url, DOMString protocol),
-    RaisesException,
+    ConstructorRaisesException,
     CallWith=ScriptExecutionContext,
     EventTarget,
     JSNoStaticTables,

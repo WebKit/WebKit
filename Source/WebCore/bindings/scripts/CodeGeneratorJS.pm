@@ -4165,7 +4165,7 @@ END
 
             GenerateArgumentsCountCheck($outputArray, $function, $interface);
 
-            if ($function->signature->extendedAttributes->{"RaisesException"} || $interface->extendedAttributes->{"RaisesException"}) {
+            if ($function->signature->extendedAttributes->{"RaisesException"} || $interface->extendedAttributes->{"ConstructorRaisesException"}) {
                 $implIncludes{"ExceptionCode.h"} = 1;
                 push(@$outputArray, "    ExceptionCode ec = 0;\n");
             }
@@ -4192,7 +4192,7 @@ END
                 $index++;
             }
 
-            if ($interface->extendedAttributes->{"RaisesException"}) {
+            if ($interface->extendedAttributes->{"ConstructorRaisesException"}) {
                 push(@constructorArgList, "ec");
             }
             my $constructorArg = join(", ", @constructorArgList);
@@ -4202,7 +4202,7 @@ END
                 push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::create(${constructorArg});\n");
             }
 
-            if ($interface->extendedAttributes->{"RaisesException"}) {
+            if ($interface->extendedAttributes->{"ConstructorRaisesException"}) {
                 push(@$outputArray, "    if (ec) {\n");
                 push(@$outputArray, "        setDOMException(exec, ec);\n");
                 push(@$outputArray, "        return JSValue::encode(JSValue());\n");

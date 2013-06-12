@@ -1,3 +1,28 @@
+2013-06-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed, rolling out r151378.
+        http://trac.webkit.org/changeset/151378
+        https://bugs.webkit.org/show_bug.cgi?id=117400
+
+        Decreased IDL readability a bit.
+
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestNamedConstructor.idl:
+        * css/WebKitCSSMatrix.idl:
+        * html/HTMLOptionElement.idl:
+        * page/EventSource.idl:
+        * workers/SharedWorker.idl:
+        * workers/Worker.idl:
+
 2013-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Have to invalidate the mute button when changing the volume
