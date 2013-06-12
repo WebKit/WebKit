@@ -1,5 +1,17 @@
 2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Remove the WebCoreLayer(Gtk2).a archives before regenerating them
+        https://bugs.webkit.org/show_bug.cgi?id=116723
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: When generating the WebCoreLayerGtk2.a archive from all the dependency archives, remove the
+        current archive (if any). Updating an existent archive in an incremental build is not bulletproof and can lead
+        to corrupt archives and subsequent build failures. On the other hand, the archive generation is not expensive
+        and produces a working archive without problems even on incremental builds.
+
+2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK build fix.
 
         * GNUmakefile.list.am: Adding missing build targets to the plugin process after r151480.
