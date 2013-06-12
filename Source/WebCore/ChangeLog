@@ -1,3 +1,22 @@
+2013-06-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Skipping {}, () and [] blocks while error recovering in CSS
+        https://bugs.webkit.org/show_bug.cgi?id=116071
+
+        Reviewed by Darin Adler.
+
+        From Blink r150201 and r150755 by <serya@chromium.org>
+
+        Test: fast/css/parsing-expr-error-recovery.html
+
+        The CSS parser should properly recover from invalid {}, () and []
+        blocks skipping them instead of discarding the whole declaration
+        as invalid. This merge is actually made of two different changes
+        from Blink, the original one that fixes the bug and another one
+        which refactors a bit the code making it more legible.
+
+        * css/CSSGrammar.y.in:
+
 2013-06-12  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Remove dead WebDOM code

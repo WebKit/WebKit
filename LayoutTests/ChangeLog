@@ -1,5 +1,17 @@
 2013-06-12  Sergio Villar Senin  <svillar@igalia.com>
 
+        Skipping {}, () and [] blocks while error recovering in CSS
+        https://bugs.webkit.org/show_bug.cgi?id=116071
+
+        Reviewed by Darin Adler.
+
+        From Blink r150201 and r150755 by <serya@chromium.org>
+
+        * fast/css/parsing-expr-error-recovery-expected.txt: Added.
+        * fast/css/parsing-expr-error-recovery.html: Added.
+
+2013-06-12  Sergio Villar Senin  <svillar@igalia.com>
+
         [css exclusions] fast/css/variables/var-inside-shape.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=116059
 
