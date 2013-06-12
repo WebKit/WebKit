@@ -1,3 +1,24 @@
+2013-06-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add new Web Inspector images for a blog post.
+
+        * blog-files/new-inspector/activity-viewer.png: Added.
+        * blog-files/new-inspector/codemirror.png: Added.
+        * blog-files/new-inspector/console.png: Added.
+        * blog-files/new-inspector/hero-labeled.png: Added.
+        * blog-files/new-inspector/hero.png: Added.
+        * blog-files/new-inspector/layer-borders.png: Added.
+        * blog-files/new-inspector/layers.png: Added.
+        * blog-files/new-inspector/navigation-bar.png: Added.
+        * blog-files/new-inspector/open-sign.png: Added.
+        * blog-files/new-inspector/reasons.png: Added.
+        * blog-files/new-inspector/save.png: Added.
+        * blog-files/new-inspector/source-map.png: Added.
+        * blog-files/new-inspector/styles.png: Added.
+        * blog-files/new-inspector/toolbar-context-menu.png: Added.
+        * blog-files/new-inspector/toolbar-docked.png: Added.
+        * blog-files/new-inspector/toolbar.png: Added.
+
 2013-05-25  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Broken link to committers list on contributing web page
