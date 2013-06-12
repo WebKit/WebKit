@@ -1,3 +1,13 @@
+2013-06-12  Jae Hyun Park  <jae.park@company100.net>
+
+        [Coordinated Graphics] Remove unused headers in CoordinatedLayerTreeHostProxy
+        https://bugs.webkit.org/show_bug.cgi?id=117539
+
+        Reviewed by Noam Rosenthal.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+
 2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Remove the WebCoreLayer(Gtk2).a archives before regenerating them

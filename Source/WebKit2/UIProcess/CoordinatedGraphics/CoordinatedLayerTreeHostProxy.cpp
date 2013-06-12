@@ -25,16 +25,10 @@
 
 #include "CoordinatedLayerTreeHostMessages.h"
 #include "CoordinatedLayerTreeHostProxyMessages.h"
-#include "WebCoreArgumentCoders.h"
+#include "DrawingAreaProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/CoordinatedGraphicsState.h>
-#include <WebCore/GraphicsSurface.h>
-#include <WebCore/SurfaceUpdateInfo.h>
-
-#if ENABLE(CSS_SHADERS)
-#include "CustomFilterProgramInfo.h"
-#endif
 
 namespace WebKit {
 

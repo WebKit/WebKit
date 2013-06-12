@@ -23,31 +23,19 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "BackingStore.h"
 #include "CoordinatedGraphicsArgumentCoders.h"
-#include "DrawingAreaProxy.h"
-#include "Region.h"
-#include "WebCoordinatedSurface.h"
+#include "MessageReceiver.h"
 #include <WebCore/CoordinatedGraphicsScene.h>
-#include <WebCore/GraphicsContext.h>
-#include <WebCore/GraphicsLayer.h>
-#include <WebCore/GraphicsLayerAnimation.h>
-#include <WebCore/GraphicsSurfaceToken.h>
-#include <WebCore/IntRect.h>
-#include <WebCore/IntSize.h>
-#include <WebCore/RunLoop.h>
-#include <WebCore/Timer.h>
 #include <wtf/Functional.h>
-#include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
-struct CoordinatedGraphicsLayerState;
 class CoordinatedGraphicsState;
-class SurfaceUpdateInfo;
+class IntSize;
 }
 
 namespace WebKit {
+
+class DrawingAreaProxy;
 
 class CoordinatedLayerTreeHostProxy : public WebCore::CoordinatedGraphicsSceneClient, public CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(CoordinatedLayerTreeHostProxy);
