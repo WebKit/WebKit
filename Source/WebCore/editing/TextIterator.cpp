@@ -1966,13 +1966,26 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     UStringSearch* searcher = WebCore::searcher();
     UCollator* collator = usearch_getCollator(searcher);
 
-    UCollationStrength strength = m_options & CaseInsensitive ? UCOL_PRIMARY : UCOL_TERTIARY;
+    UCollationStrength strength;
+    USearchAttributeValue comparator;
+    if (m_options & CaseInsensitive) {
+        // Without loss of generality, have 'e' match {'e', 'E', 'é', 'É'} and 'é' match {'é', 'É'}.
+        strength = UCOL_SECONDARY;
+        comparator = USEARCH_PATTERN_BASE_WEIGHT_IS_WILDCARD;
+    } else {
+        // Without loss of generality, have 'e' match {'e'} and 'é' match {'é'}.
+        strength = UCOL_TERTIARY;
+        comparator = USEARCH_STANDARD_ELEMENT_COMPARISON;
+    }
     if (ucol_getStrength(collator) != strength) {
         ucol_setStrength(collator, strength);
         usearch_reset(searcher);
     }
 
     UErrorCode status = U_ZERO_ERROR;
+    usearch_setAttribute(searcher, USEARCH_ELEMENT_COMPARISON, comparator, &status);
+    ASSERT(status == U_ZERO_ERROR);
+
     usearch_setPattern(searcher, m_target.characters(), targetLength, &status);
     ASSERT(status == U_ZERO_ERROR);
 

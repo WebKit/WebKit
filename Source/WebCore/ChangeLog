@@ -1,3 +1,24 @@
+2013-06-12  Daniel Bates  <dabates@apple.com>
+
+        window.find() case-insensitive search doesn't match diacritical marks
+        https://bugs.webkit.org/show_bug.cgi?id=117353
+        <rdar://problem/8535227>
+
+        Reviewed by Darin Adler.
+
+        Currently, a case-insensitive window.find() search will return true for a word w
+        (e.g. café) with diacritical characters when w appears on the page without
+        diacritical marks (e.g. cafe). This leads to bad results, especially when
+        searching for a non-English word (e.g. qué) where the presence of an accented
+        character(s) may change the meaning of the word. Instead window.find() should
+        return false when case-insensitively matching a word with diacritical marks to
+        the same word without diacritical marks.
+
+        Test: fast/text/find-diacritical-mark.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::SearchBuffer):
+
 2013-06-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Support latest Web IDL indexed property getters

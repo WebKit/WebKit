@@ -19,7 +19,7 @@ var softHyphen = String.fromCharCode(0x00AD);
 
 shouldBe('canFind("ab", "a" + softHyphen + "b")', 'true');
 shouldBe('canFind("ab", "a" + softHyphen + softHyphen + "b")', 'true');
-shouldBe('canFind("a\u0300b", "a" + softHyphen + "b")', 'true');
+shouldBe('canFind("a\u0300b", "a" + softHyphen + "b")', 'false');
 shouldBe('canFind("ab", "a" + softHyphen + "\u0300b")', 'true');
 shouldBe('canFind("ab", "a\u0300" + softHyphen + "b")', 'true');
 shouldBe('canFind("a" + softHyphen + "b", "a" + softHyphen + "b")', 'true');

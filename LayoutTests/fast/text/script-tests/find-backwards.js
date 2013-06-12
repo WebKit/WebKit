@@ -1,42 +1,5 @@
 description("Tests find going both forward and backwards in small and large documents.");
 
-var selection = getSelection();
-
-function testFind(subjectString, pattern, backwards)
-{
-    var textNode = document.createTextNode(subjectString);
-    document.body.appendChild(textNode);
-    selection.removeAllRanges();
-    if (backwards) {
-        var afterTextNodeRange = document.createRange();
-        afterTextNodeRange.setStartAfter(textNode);
-        afterTextNodeRange.setEndAfter(textNode);
-        selection.addRange(afterTextNodeRange);
-    } else {
-        var beforeTextNodeRange = document.createRange();
-        beforeTextNodeRange.setStartBefore(textNode);
-        beforeTextNodeRange.setEndBefore(textNode);
-        selection.addRange(beforeTextNodeRange);
-    }
-    var result;
-    if (!find(pattern, false, backwards))
-        result = "not found"
-    else if (selection.rangeCount != 1)
-        result = "internal inconsistency";
-    else {
-        var resultRange = selection.getRangeAt(0);
-        if (resultRange.startContainer !== textNode || resultRange.endContainer !== textNode)
-            result = "not found";
-        else
-            result = resultRange.startOffset + ", " + resultRange.endOffset;
-    }
-    document.body.removeChild(textNode);
-    return result;
-}
-
-var forward = false;
-var backward = true;
-
 var manyCharacters = "1234567890"
 for (i = 0; i < 10; ++i)
     manyCharacters += manyCharacters;

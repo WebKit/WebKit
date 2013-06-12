@@ -1,1 +1,1 @@
-SUCCESS: Found all the variants of Strasse.
+FAILURE: Cannot find ss when searching for small sharp s.

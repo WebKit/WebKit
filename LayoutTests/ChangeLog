@@ -1,3 +1,36 @@
+2013-06-12  Daniel Bates  <dabates@apple.com>
+
+        window.find() case-insensitive search doesn't match diacritical marks
+        https://bugs.webkit.org/show_bug.cgi?id=117353
+        <rdar://problem/8535227>
+
+        Reviewed by Darin Adler.
+
+        Added test to use window.find() to find a search string in text, where either
+        the search string or text (or both) contain diacritical characters.
+
+        Additionally, updated tests LayoutTests/fast/text/find-soft-hyphen.html
+        and LayoutTests/editing/execCommand/findString-diacriticals.html based on the
+        new behavior of window.find(). Moved function testFind() from LayoutTests/fast/text/script-tests/find-backwards.js
+        to its own file, LayoutTests/fast/text/resources/test-find.js, so that this function can
+        be used by both tests LayoutTests/fast/text/find-{backwards, diacritical-mark}.html.
+
+        * LayoutTests/editing/execCommand/findString-diacriticals.html: Update test based on the new
+        behavior of window.find().
+        * fast/text/find-backwards.html: Include external JavaScript file test-find.js.
+        * fast/text/find-case-folding-expected.txt: Rebase result; expected failure.
+        * fast/text/find-case-folding.html: Add comment to see bug #117548 with regards to expected failure.
+        * fast/text/find-diacritical-mark-expected.txt: Added.
+        * fast/text/find-diacritical-mark.html: Copied from LayoutTests/fast/text/find-backwards.html.
+        * fast/text/find-soft-hyphen-expected.txt: Rebase result.
+        * fast/text/resources/test-find.js: Added.
+        (testFind):
+        * fast/text/script-tests/find-backwards.js: Moved function testFind() from here to
+        file fast/text/resources/test-find.js and modified it to take an additional argument to
+        toggle search case sensitivity.
+        * fast/text/script-tests/find-diacritical-mark.js: Added.
+        * fast/text/script-tests/find-soft-hyphen.js: Update test based on the new behavior of window.find().
+
 2013-06-12  Javier Fernandez  <jfernandez@igalia.com>
 
         [Qt][CSS Regions] fast/regions/overflow-size-change-with-stacking-context.html fails
