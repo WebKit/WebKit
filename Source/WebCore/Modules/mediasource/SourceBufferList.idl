@@ -30,12 +30,11 @@
  
 [
     Conditional=MEDIA_SOURCE,
-    IndexedGetter,
     EventTarget,
     InterfaceName=WebKitSourceBufferList
 ] interface SourceBufferList {
     readonly attribute unsigned long length;
-    SourceBuffer item(unsigned long index);
+    getter SourceBuffer item(unsigned long index);
 
     // EventTarget interface
     void addEventListener(DOMString type,

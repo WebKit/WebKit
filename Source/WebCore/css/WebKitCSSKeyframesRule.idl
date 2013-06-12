@@ -27,9 +27,7 @@
  */
 
 // Introduced in DOM Level ?:
-[
-    IndexedGetter
-] interface WebKitCSSKeyframesRule : CSSRule {
+interface WebKitCSSKeyframesRule : CSSRule {
 
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString name;
     readonly attribute CSSRuleList cssRules;
@@ -37,5 +35,7 @@
     void insertRule([Default=Undefined] optional DOMString rule);
     void deleteRule([Default=Undefined] optional DOMString key);
     WebKitCSSKeyframeRule findRule([Default=Undefined] optional DOMString key);
+
+    getter WebKitCSSKeyframeRule (unsigned long index);
 };
 

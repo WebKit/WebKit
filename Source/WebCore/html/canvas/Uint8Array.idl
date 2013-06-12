@@ -27,7 +27,6 @@
 [
     GlobalContext=WindowAndWorker,
     ConstructorTemplate=TypedArray,
-    NumericIndexedGetter,
     CustomIndexedSetter,
     JSGenerateToNativeObject,
     JSNoStaticTables,
@@ -40,6 +39,8 @@
 
     readonly attribute unsigned long length;
     Uint8Array subarray([Default=Undefined] optional long start, optional long end);
+
+    getter octet (unsigned long index);
 
     // void set(Uint8Array array, optional unsigned long offset);
     // void set(sequence<long> array, optional unsigned long offset);

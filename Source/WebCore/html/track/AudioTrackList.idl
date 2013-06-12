@@ -27,12 +27,11 @@
     NoInterfaceObject,
     Conditional=VIDEO_TRACK,
     GenerateIsReachable=ImplElementRoot,
-    IndexedGetter,
     EventTarget,
     JSCustomMarkFunction
 ] interface AudioTrackList {
     readonly attribute unsigned long length;
-    AudioTrack item(unsigned long index);
+    getter AudioTrack item(unsigned long index);
     AudioTrack getTrackById(DOMString id);
 
     attribute EventListener onchange;

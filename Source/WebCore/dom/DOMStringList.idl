@@ -24,13 +24,12 @@
  */
 
 [
-    IndexedGetter,
     JSCustomToNativeObject,
     JSNoStaticTables,
     ImplementationLacksVTable
 ] interface DOMStringList {
     readonly attribute unsigned long length;
-    [TreatReturnedNullStringAs=Null] DOMString item([Default=Undefined] optional unsigned long index);
+    [TreatReturnedNullStringAs=Null] getter DOMString item([Default=Undefined] optional unsigned long index);
     boolean contains([Default=Undefined] optional DOMString string);
 };
 

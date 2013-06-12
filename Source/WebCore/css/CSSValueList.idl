@@ -25,10 +25,9 @@
 
 // Introduced in DOM Level 2:
 [
-    IndexedGetter,
     ImplementationLacksVTable
 ] interface CSSValueList : CSSValue {
     readonly attribute unsigned long    length;
-    CSSValue           item([Default=Undefined] optional unsigned long index);
+    getter CSSValue           item([Default=Undefined] optional unsigned long index);
 };
 

@@ -25,13 +25,12 @@
 
 [
     Conditional=SCRIPTED_SPEECH,
-    IndexedGetter,
     Constructor,
     ImplementationLacksVTable,
     InterfaceName=webkitSpeechGrammarList
 ] interface SpeechGrammarList {
     readonly attribute unsigned long length;
-    SpeechGrammar item([IsIndex] unsigned long index);
+    getter SpeechGrammar item([IsIndex] unsigned long index);
     [CallWith=ScriptExecutionContext] void addFromUri(DOMString src, optional float weight);
     void addFromString(DOMString string, optional float weight);
 };

@@ -24,9 +24,8 @@
  */
 
 [
-        Conditional=CSS_FILTERS,
-        IndexedGetter,
-        DoNotCheckConstants,
+    Conditional=CSS_FILTERS,
+    DoNotCheckConstants,
     ImplementationLacksVTable
 ] interface WebKitCSSFilterValue : CSSValueList {
 
@@ -49,4 +48,6 @@
 #endif
 
     readonly attribute unsigned short operationType;
+
+    getter CSSValue ([Default=Undefined] optional unsigned long index);
 };

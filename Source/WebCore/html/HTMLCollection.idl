@@ -19,13 +19,12 @@
  */
 
 [
-    IndexedGetter,
     CustomToJSObject,
     GenerateIsReachable=ImplOwnerNodeRoot,
     ObjCPolymorphic,
 ] interface HTMLCollection {
     readonly attribute unsigned long length;
-    Node item([Default=Undefined] optional unsigned long index);
+    getter Node item([Default=Undefined] optional unsigned long index);
     getter Node namedItem([Default=Undefined] optional DOMString name);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

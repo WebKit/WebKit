@@ -353,6 +353,8 @@ sub GenerateGetOwnPropertySlotBody
 
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
     my $namedGetterFunction = GetNamedGetterFunction($interface);
+    my $indexedGetterFunction = GetIndexedGetterFunction($interface);
+    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
 
     my @getOwnPropertySlotImpl = ();
 
@@ -363,7 +365,7 @@ sub GenerateGetOwnPropertySlotBody
     }
 
     my $manualLookupGetterGeneration = sub {
-        my $requiresManualLookup = $interface->extendedAttributes->{"IndexedGetter"} || $namedGetterFunction;
+        my $requiresManualLookup = ($indexedGetterFunction && !$hasNumericIndexedGetter) || $namedGetterFunction;
         if ($requiresManualLookup) {
             push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = getStaticValueSlotEntryWithoutCaching<$className>(exec, propertyName);\n");
             push(@getOwnPropertySlotImpl, "    if (entry) {\n");
@@ -377,7 +379,7 @@ sub GenerateGetOwnPropertySlotBody
         &$manualLookupGetterGeneration();
     }
 
-    if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) {
+    if ($indexedGetterFunction) {
         push(@getOwnPropertySlotImpl, "    unsigned index = propertyName.asIndex();\n");
 
         # If the item function returns a string then we let the TreatReturnedNullStringAs handle the cases
@@ -387,7 +389,7 @@ sub GenerateGetOwnPropertySlotBody
         } else {
             push(@getOwnPropertySlotImpl, "    if (index != PropertyName::NotAnIndex && index < static_cast<$interfaceName*>(thisObject->impl())->length()) {\n");
         }
-        if ($interface->extendedAttributes->{"NumericIndexedGetter"}) {
+        if ($hasNumericIndexedGetter) {
             push(@getOwnPropertySlotImpl, "        slot.setValue(thisObject->getByIndex(exec, index));\n");
         } else {
             push(@getOwnPropertySlotImpl, "        slot.setCustomIndex(thisObject, index, indexGetter);\n");
@@ -437,6 +439,9 @@ sub GenerateGetOwnPropertyDescriptorBody
     
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
     my $namedGetterFunction = GetNamedGetterFunction($interface);
+    my $indexedGetterFunction = GetIndexedGetterFunction($interface);
+    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
+
     
     my @getOwnPropertyDescriptorImpl = ();
     if ($interface->extendedAttributes->{"CheckSecurity"}) {
@@ -456,7 +461,7 @@ sub GenerateGetOwnPropertyDescriptorBody
     }
     
     my $manualLookupGetterGeneration = sub {
-        my $requiresManualLookup = $interface->extendedAttributes->{"IndexedGetter"} || $namedGetterFunction;
+        my $requiresManualLookup = ($indexedGetterFunction && !$hasNumericIndexedGetter) || $namedGetterFunction;
         if ($requiresManualLookup) {
             push(@getOwnPropertyDescriptorImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
             push(@getOwnPropertyDescriptorImpl, "    if (entry) {\n");
@@ -472,10 +477,10 @@ sub GenerateGetOwnPropertyDescriptorBody
         &$manualLookupGetterGeneration();
     }
 
-    if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) {
+    if ($indexedGetterFunction) {
         push(@getOwnPropertyDescriptorImpl, "    unsigned index = propertyName.asIndex();\n");
         push(@getOwnPropertyDescriptorImpl, "    if (index != PropertyName::NotAnIndex && index < static_cast<$interfaceName*>(thisObject->impl())->length()) {\n");
-        if ($interface->extendedAttributes->{"NumericIndexedGetter"}) {
+        if ($hasNumericIndexedGetter) {
             # Assume that if there's a setter, the index will be writable
             if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
                 push(@getOwnPropertyDescriptorImpl, "        descriptor.setDescriptor(thisObject->getByIndex(exec, index), ${namespaceMaybe}DontDelete);\n");
@@ -632,6 +637,12 @@ sub GetSpecialAccessorFunctionForType
     return 0;
 }
 
+sub GetIndexedGetterFunction
+{
+    my $interface = shift;
+    return GetSpecialAccessorFunctionForType($interface, "getter", "unsigned long", 1);
+}
+
 sub GetNamedGetterFunction
 {
     my $interface = shift;
@@ -773,6 +784,8 @@ sub GenerateHeader
     $implIncludes{"${className}Custom.h"} = 1 if !$interface->extendedAttributes->{"JSCustomHeader"} && ($interface->extendedAttributes->{"CustomPutFunction"} || $interface->extendedAttributes->{"CustomNamedSetter"});
 
     my $namedGetterFunction = GetNamedGetterFunction($interface);
+    my $indexedGetterFunction = GetIndexedGetterFunction($interface);
+    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
 
     my $hasImpureNamedGetter =
         $namedGetterFunction
@@ -780,8 +793,7 @@ sub GenerateHeader
         || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"};
 
     my $hasComplexGetter =
-        $interface->extendedAttributes->{"IndexedGetter"}
-        || $interface->extendedAttributes->{"NumericIndexedGetter"}
+        $indexedGetterFunction
         || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
         || $hasImpureNamedGetter;
     
@@ -865,7 +877,7 @@ sub GenerateHeader
     }
 
     # Custom getOwnPropertyNames function
-    if ($interface->extendedAttributes->{"CustomEnumerateProperty"} || $interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) {
+    if ($interface->extendedAttributes->{"CustomEnumerateProperty"} || $indexedGetterFunction) {
         push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\n");
         $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;       
     }
@@ -1000,11 +1012,12 @@ sub GenerateHeader
     push(@headerContent, "Base::StructureFlags;\n");
 
     # Index getter
-    if ($interface->extendedAttributes->{"IndexedGetter"}) {
-        push(@headerContent, "    static JSC::JSValue indexGetter(JSC::ExecState*, JSC::JSValue, unsigned);\n");
-    }
-    if ($interface->extendedAttributes->{"NumericIndexedGetter"}) {
-        push(@headerContent, "    JSC::JSValue getByIndex(JSC::ExecState*, unsigned index);\n");
+    if ($indexedGetterFunction) {
+        if ($hasNumericIndexedGetter) {
+            push(@headerContent, "    JSC::JSValue getByIndex(JSC::ExecState*, unsigned index);\n");
+        } else {
+            push(@headerContent, "    static JSC::JSValue indexGetter(JSC::ExecState*, JSC::JSValue, unsigned);\n");
+        }
     }
 
     # Index setter
@@ -1588,11 +1601,15 @@ sub GenerateImplementation
     my $eventTarget = $interface->extendedAttributes->{"EventTarget"} || ($codeGenerator->InheritsInterface($interface, "EventTarget") && $interface->name ne "EventTarget");
     my $needsMarkChildren = $interface->extendedAttributes->{"JSCustomMarkFunction"} || $interface->extendedAttributes->{"EventTarget"} || $interface->name eq "EventTarget";
 
+    my $namedGetterFunction = GetNamedGetterFunction($interface);
+    my $indexedGetterFunction = GetIndexedGetterFunction($interface);
+    my $hasNumericIndexedGetter = $indexedGetterFunction ? $codeGenerator->IsNumericType($indexedGetterFunction->signature->type) : 0;
+
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($interface));
 
     $implIncludes{"<wtf/GetPtr.h>"} = 1;
-    $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"};
+    $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $indexedGetterFunction;
 
     AddIncludesForTypeInImpl($interfaceName);
 
@@ -1605,8 +1622,6 @@ sub GenerateImplementation
 
     my $numConstants = @{$interface->constants};
     my $numFunctions = @{$interface->functions};
-
-    my $namedGetterFunction = GetNamedGetterFunction($interface);
 
     # - Add all constants
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
@@ -1919,8 +1934,7 @@ sub GenerateImplementation
 
     my $hasGetter = $numAttributes > 0
                  || !$interface->extendedAttributes->{"NoInterfaceObject"}
-                 || $interface->extendedAttributes->{"IndexedGetter"}
-                 || $interface->extendedAttributes->{"NumericIndexedGetter"}
+                 || $indexedGetterFunction
                  || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
                  || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
                  || $namedGetterFunction
@@ -1943,8 +1957,8 @@ sub GenerateImplementation
             push(@implContent, "}\n\n");
         }
 
-        if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}
-                || $namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}
+        if ($indexedGetterFunction || $namedGetterFunction
+                || $interface->extendedAttributes->{"CustomNamedGetter"}
                 || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
             push(@implContent, "bool ${className}::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned index, PropertySlot& slot)\n");
             push(@implContent, "{\n");
@@ -1962,13 +1976,13 @@ sub GenerateImplementation
                 $generatedPropertyName = 1;
             };
 
-            if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) {
+            if ($indexedGetterFunction) {
                 if (IndexGetterReturnsStrings($interfaceName)) {
                     push(@implContent, "    if (index <= MAX_ARRAY_INDEX) {\n");
                 } else {
                     push(@implContent, "    if (index < static_cast<$interfaceName*>(thisObject->impl())->length()) {\n");
                 }
-                if ($interface->extendedAttributes->{"NumericIndexedGetter"}) {
+                if ($hasNumericIndexedGetter) {
                     push(@implContent, "        slot.setValue(thisObject->getByIndex(exec, index));\n");
                 } else {
                     push(@implContent, "        slot.setCustomIndex(thisObject, index, thisObject->indexGetter);\n");
@@ -2425,15 +2439,13 @@ sub GenerateImplementation
         }
     }
 
-    if (($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) && !$interface->extendedAttributes->{"CustomEnumerateProperty"}) {
+    if ($indexedGetterFunction && !$interface->extendedAttributes->{"CustomEnumerateProperty"}) {
         push(@implContent, "void ${className}::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
-        if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) {
-            push(@implContent, "    for (unsigned i = 0; i < static_cast<${interfaceName}*>(thisObject->impl())->length(); ++i)\n");
-            push(@implContent, "        propertyNames.add(Identifier::from(exec, i));\n");
-        }
+        push(@implContent, "    for (unsigned i = 0; i < static_cast<${interfaceName}*>(thisObject->impl())->length(); ++i)\n");
+        push(@implContent, "        propertyNames.add(Identifier::from(exec, i));\n");
         push(@implContent, "     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);\n");
         push(@implContent, "}\n\n");
     }
@@ -2629,7 +2641,7 @@ sub GenerateImplementation
         }
     }
 
-    if ($interface->extendedAttributes->{"IndexedGetter"}) {
+    if ($indexedGetterFunction && !$hasNumericIndexedGetter) {
         push(@implContent, "\nJSValue ${className}::indexGetter(ExecState* exec, JSValue slotBase, unsigned index)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObj = jsCast<$className*>(asObject(slotBase));\n");
@@ -2647,7 +2659,7 @@ sub GenerateImplementation
         }
     }
 
-    if ($interface->extendedAttributes->{"NumericIndexedGetter"}) {
+    if ($hasNumericIndexedGetter) {
         push(@implContent, "\nJSValue ${className}::getByIndex(ExecState*, unsigned index)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");

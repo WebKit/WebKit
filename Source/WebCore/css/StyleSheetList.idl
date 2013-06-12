@@ -21,11 +21,10 @@
 // Introduced in DOM Level 2:
 [
     GenerateIsReachable=ImplDocument,
-    IndexedGetter,
     ImplementationLacksVTable
 ] interface StyleSheetList {
     readonly attribute unsigned long    length;
-    StyleSheet         item([Default=Undefined] optional unsigned long index);
+    getter StyleSheet         item([Default=Undefined] optional unsigned long index);
     getter CSSStyleSheet (DOMString name);
 };
 

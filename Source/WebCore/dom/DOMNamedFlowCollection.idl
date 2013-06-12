@@ -32,10 +32,9 @@
     Conditional=CSS_REGIONS,
     InterfaceName=WebKitNamedFlowCollection,
     JSGenerateToJSObject,
-    IndexedGetter,
     ImplementationLacksVTable
 ] interface DOMNamedFlowCollection {
     readonly attribute unsigned long length;
-    WebKitNamedFlow item(unsigned long index);
+    getter WebKitNamedFlow item(unsigned long index);
     getter WebKitNamedFlow namedItem(DOMString name);
 };

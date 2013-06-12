@@ -20,7 +20,6 @@
 
 [
     GenerateIsReachable=ImplElementRoot,
-    IndexedGetter,
     ImplementationLacksVTable
 ] interface NamedNodeMap {
 
@@ -30,7 +29,7 @@
 
     [RaisesException] Node removeNamedItem([Default=Undefined] optional DOMString name);
 
-    Node item([Default=Undefined] optional unsigned long index);
+    getter Node item([Default=Undefined] optional unsigned long index);
     
     readonly attribute unsigned long length;
 

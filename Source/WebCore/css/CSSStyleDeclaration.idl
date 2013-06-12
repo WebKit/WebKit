@@ -25,7 +25,6 @@
     GenerateIsReachable,
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomNamedSetter,
-    IndexedGetter,
     CustomEnumerateProperty,
     SkipVTableValidation
 ] interface CSSStyleDeclaration {
@@ -40,7 +39,7 @@
                                     [Default=Undefined] optional DOMString priority);
 
     readonly attribute unsigned long    length;
-    DOMString          item([Default=Undefined] optional unsigned long index);
+    getter DOMString          item([Default=Undefined] optional unsigned long index);
     readonly attribute CSSRule          parentRule;
 
     // Extensions

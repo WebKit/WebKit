@@ -26,11 +26,10 @@
 [
     NoInterfaceObject,
     Conditional=VIDEO_TRACK & WEBVTT_REGIONS,
-    IndexedGetter,
     ImplementationLacksVTable
 ] interface TextTrackRegionList {
     readonly attribute unsigned long length;
-    TextTrackRegion item(unsigned long index);
+    getter TextTrackRegion item(unsigned long index);
     TextTrackRegion getRegionById(DOMString id);
 };
 

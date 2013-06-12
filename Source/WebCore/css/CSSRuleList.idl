@@ -26,10 +26,9 @@
 // Introduced in DOM Level 2:
 [
     CustomIsReachable,
-    IndexedGetter,
     SkipVTableValidation
 ] interface CSSRuleList {
     readonly attribute unsigned long    length;
-    CSSRule           item([Default=Undefined] optional unsigned long index);
+    getter CSSRule item([Default=Undefined] optional unsigned long index);
 };
 

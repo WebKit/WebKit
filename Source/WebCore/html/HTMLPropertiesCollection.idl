@@ -31,10 +31,9 @@
 [
     Conditional=MICRODATA,
     JSGenerateToJSObject,
-    IndexedGetter
 ] interface HTMLPropertiesCollection : HTMLCollection {
     readonly attribute unsigned long length;
-    Node item(unsigned long index);
+    getter Node item(unsigned long index);
 
     readonly attribute DOMStringList names;
     [ImplementedAs=propertyNodeList] getter PropertyNodeList namedItem(DOMString name);

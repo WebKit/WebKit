@@ -25,11 +25,10 @@
  */
 
 [
-    IndexedGetter,
     ImplementationLacksVTable
 ] interface ClientRectList {
     readonly attribute unsigned long length;
-    ClientRect item([IsIndex, Default=Undefined] optional unsigned long index);
+    getter ClientRect item([IsIndex, Default=Undefined] optional unsigned long index);
     // FIXME: Fix list behavior to allow custom exceptions to be thrown.
 };
 

@@ -19,14 +19,13 @@
 */
 
 [
-    IndexedGetter,
     InterfaceName=Plugin
 ] interface DOMPlugin {
     readonly attribute DOMString name;
     readonly attribute DOMString filename;
     readonly attribute DOMString description;
     readonly attribute unsigned long length;
-    DOMMimeType item([Default=Undefined] optional unsigned long index);
+    getter DOMMimeType item([Default=Undefined] optional unsigned long index);
     getter DOMMimeType namedItem([Default=Undefined] optional DOMString name);
 };
 

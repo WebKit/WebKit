@@ -24,11 +24,10 @@
 
 [
     GenerateIsReachable=ImplElementRoot,
-    IndexedGetter,
     SkipVTableValidation
 ] interface DOMTokenList {
     readonly attribute unsigned long length;
-    [TreatReturnedNullStringAs=Null] DOMString item(unsigned long index);
+    [TreatReturnedNullStringAs=Null] getter DOMString item(unsigned long index);
     [RaisesException] boolean contains(DOMString token);
     [RaisesException] void add(DOMString... tokens);
     [RaisesException] void remove(DOMString... tokens);

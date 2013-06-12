@@ -1,5 +1,88 @@
 2013-06-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Support latest Web IDL indexed property getters
+        https://bugs.webkit.org/show_bug.cgi?id=117507
+
+        Reviewed by Kentaro Hara.
+
+        Support latest Web IDL indexed property getters:
+        http://www.w3.org/TR/WebIDL/#dfn-support-indexed-properties
+
+        Drop support for outdated [IndexedGetter] and [NumericIndexedGetter]
+        IDL extended attributes. Since the new getter format specifies the
+        return type, the bindings generator is now smart enough to know if
+        the indexed getter is numeric or not on its own.
+
+        Based on Blink r149564 by <kojih@chromium.org>.
+
+        No new tests, no behavior change.
+
+        * Modules/filesystem/EntryArray.idl:
+        * Modules/filesystem/EntryArraySync.idl:
+        * Modules/gamepad/GamepadList.idl:
+        * Modules/mediasource/SourceBufferList.idl:
+        * Modules/speech/SpeechGrammarList.idl:
+        * Modules/speech/SpeechRecognitionResult.idl:
+        * Modules/speech/SpeechRecognitionResultList.idl:
+        * bindings/scripts/CodeGenerator.pm:
+        (IsNumericType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GetIndexedGetterFunction):
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/TestEventTarget.idl:
+        * bindings/scripts/test/TestTypedArray.idl:
+        * css/CSSRuleList.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSValueList.idl:
+        * css/MediaList.idl:
+        * css/StyleSheetList.idl:
+        * css/WebKitCSSFilterValue.idl:
+        * css/WebKitCSSKeyframesRule.idl:
+        * css/WebKitCSSTransformValue.idl:
+        * dom/ClientRectList.idl:
+        * dom/DOMNamedFlowCollection.idl:
+        * dom/DOMStringList.idl:
+        * dom/DataTransferItemList.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/NodeList.idl:
+        * dom/PropertyNodeList.idl:
+        * dom/TouchList.idl:
+        * fileapi/FileList.idl:
+        * html/DOMSettableTokenList.idl:
+        * html/DOMTokenList.idl:
+        * html/HTMLAllCollection.idl:
+        * html/HTMLCollection.idl:
+        * html/HTMLFormControlsCollection.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLPropertiesCollection.idl:
+        * html/HTMLSelectElement.idl:
+        * html/RadioNodeList.idl:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Float64Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/Uint8ClampedArray.idl:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrackCueList.idl:
+        * html/track/TextTrackList.idl:
+        * html/track/TextTrackRegionList.idl:
+        * html/track/VideoTrackList.idl:
+        * page/PerformanceEntryList.idl:
+        * page/SpeechInputResultList.idl:
+        * plugins/DOMMimeTypeArray.idl:
+        * plugins/DOMPlugin.idl:
+        * plugins/DOMPluginArray.idl:
+
+2013-06-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Rename [CallWith] to [ConstructorCallWith] for IDL interfaces
         https://bugs.webkit.org/show_bug.cgi?id=117531
 

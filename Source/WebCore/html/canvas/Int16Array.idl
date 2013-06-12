@@ -26,7 +26,6 @@
 [
     GlobalContext=WindowAndWorker,
     ConstructorTemplate=TypedArray,
-    NumericIndexedGetter,
     CustomIndexedSetter,
     JSGenerateToNativeObject,
     JSNoStaticTables,
@@ -40,6 +39,8 @@
     readonly attribute unsigned long length;
     Int16Array subarray([Default=Undefined] optional long start, 
                         optional long end);
+
+    getter short (unsigned long index);
 
     // void set(Int16Array array, optional unsigned long offset);
     // void set(sequence<long> array, optional unsigned long offset);

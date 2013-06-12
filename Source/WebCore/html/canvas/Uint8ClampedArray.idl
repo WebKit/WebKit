@@ -27,7 +27,6 @@
 [
     GlobalContext=WindowAndWorker,
     ConstructorTemplate=TypedArray,
-    NumericIndexedGetter,
     CustomIndexedSetter,
     JSGenerateToNativeObject,
     JSNoStaticTables,
@@ -40,6 +39,8 @@
 
     readonly attribute unsigned long length;
     Uint8ClampedArray subarray([Default=Undefined] optional long start, optional long end);
+
+    getter octet (unsigned long index);
 
     // FIXME: Missing other setters!
     // void set(Uint8ClampedArray array, optional unsigned long offset);

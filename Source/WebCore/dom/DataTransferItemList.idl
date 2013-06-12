@@ -31,12 +31,11 @@
 [
     NoInterfaceObject,
     Conditional=DATA_TRANSFER_ITEMS,
-    IndexedGetter,
     JSGenerateToNativeObject,
     ImplementationLacksVTable
 ] interface DataTransferItemList {
     readonly attribute long length;
-    DataTransferItem item([Default=Undefined] optional unsigned long index);
+    getter DataTransferItem item([Default=Undefined] optional unsigned long index);
 
     void clear();
     void add(File? file);

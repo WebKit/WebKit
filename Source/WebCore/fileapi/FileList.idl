@@ -24,11 +24,10 @@
  */
 
 [
-    IndexedGetter,
     JSNoStaticTables,
     ImplementationLacksVTable
 ] interface FileList {
     readonly attribute unsigned long length;
-    File item(unsigned long index);
+    getter File item(unsigned long index);
 };
 

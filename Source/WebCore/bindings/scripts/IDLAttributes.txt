@@ -63,7 +63,6 @@ Immutable
 ImplementationLacksVTable
 ImplementationNamespace=*
 ImplementedAs=*
-IndexedGetter
 InitializedByEventConstructor
 InterfaceName=*
 IsIndex
@@ -87,7 +86,6 @@ MasqueradesAsUndefined
 NamedConstructor=*
 NoInterfaceObject
 NotEnumerable
-NumericIndexedGetter
 ObjCCustomImplementation
 ObjCLegacyUnnamedParameters
 ObjCPolymorphic
