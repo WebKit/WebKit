@@ -1,3 +1,19 @@
+2013-06-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Add CSS parsing recovery to functions
+        https://bugs.webkit.org/show_bug.cgi?id=117500
+
+        Reviewed by Andreas Kling.
+
+        From Blink r150205 by <serya@chromium.org>
+
+        Add parsing recovery capabilities to functions. Errors were
+        correctly detected without this change but then the whole
+        declaration was invalidated. By using expr_recovery to handle them
+        we can recover from those errors and go on with the parsing.
+
+        * css/CSSGrammar.y.in:
+
 2013-06-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed, rolling out r151378.

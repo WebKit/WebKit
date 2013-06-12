@@ -88,9 +88,9 @@ static inline bool isCSSTokenAString(int yytype)
 %}
 
 #if ENABLE_SHADOW_DOM
-%expect 33
-#else
 %expect 32
+#else
+%expect 31
 #endif
 
 %nonassoc LOWEST_PREC
@@ -1700,13 +1700,13 @@ term:
 #endif
   }
   /* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
-  | function {
+  | function maybe_space {
       $$ = $1;
   }
-  | calc_function {
+  | calc_function maybe_space {
       $$ = $1;
   }
-  | min_or_max_function {
+  | min_or_max_function maybe_space {
       $$ = $1;
   }
   | '%' maybe_space { /* Handle width: %; */
@@ -1753,7 +1753,7 @@ unary_term:
   ;
 
 function:
-    FUNCTION maybe_space expr closing_parenthesis maybe_space {
+    FUNCTION maybe_space expr closing_parenthesis {
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = parser->sinkFloatingValueList($3);
@@ -1761,7 +1761,7 @@ function:
         $$.unit = CSSParserValue::Function;
         $$.function = f;
     } |
-    FUNCTION maybe_space closing_parenthesis maybe_space {
+    FUNCTION maybe_space closing_parenthesis {
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         CSSParserValueList* valueList = parser->createFloatingValueList();
@@ -1770,7 +1770,7 @@ function:
         $$.unit = CSSParserValue::Function;
         $$.function = f;
     } |
-    FUNCTION maybe_space error {
+    FUNCTION maybe_space expr_recovery closing_parenthesis {
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = nullptr;
@@ -1883,7 +1883,7 @@ calc_func_expr_list:
   ;
 
 calc_function:
-    CALCFUNCTION maybe_space calc_func_expr calc_maybe_space closing_parenthesis maybe_space {
+    CALCFUNCTION maybe_space calc_func_expr calc_maybe_space closing_parenthesis {
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = parser->sinkFloatingValueList($3);
@@ -1891,7 +1891,7 @@ calc_function:
         $$.unit = CSSParserValue::Function;
         $$.function = f;
     }
-    | CALCFUNCTION maybe_space error {
+    | CALCFUNCTION maybe_space expr_recovery closing_parenthesis {
         YYERROR;
     }
     ;
@@ -1907,7 +1907,7 @@ min_or_max:
     ;
 
 min_or_max_function:
-    min_or_max maybe_space calc_func_expr_list closing_parenthesis maybe_space {
+    min_or_max maybe_space calc_func_expr_list closing_parenthesis {
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = parser->sinkFloatingValueList($3);
@@ -1915,7 +1915,7 @@ min_or_max_function:
         $$.unit = CSSParserValue::Function;
         $$.function = f;
     } 
-    | min_or_max maybe_space error {
+    | min_or_max maybe_space expr_recovery closing_parenthesis {
         YYERROR;
     }
     ;

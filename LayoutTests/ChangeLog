@@ -1,3 +1,15 @@
+2013-06-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Add CSS parsing recovery to functions
+        https://bugs.webkit.org/show_bug.cgi?id=117500
+
+        Reviewed by Andreas Kling.
+
+        From Blink r150205 by <serya@chromium.org>
+
+        * fast/css/parsing-error-recovery.html: added some test cases for
+        parsing recovery inside functions.
+
 2013-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL Gardening. Unskip fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
