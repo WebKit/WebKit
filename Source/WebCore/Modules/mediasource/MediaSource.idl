@@ -33,7 +33,7 @@
     ActiveDOMObject,
     EventTarget,
     Constructor,
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     InterfaceName=WebKitMediaSource
 ] interface MediaSource {
     // All the source buffers created by this object.

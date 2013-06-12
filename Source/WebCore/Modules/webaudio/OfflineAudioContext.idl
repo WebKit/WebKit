@@ -28,7 +28,7 @@
     JSGenerateToJSObject,
     Constructor(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate),
     ConstructorRaisesException,
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     InterfaceName=webkitOfflineAudioContext
 ] interface OfflineAudioContext : AudioContext {
 

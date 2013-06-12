@@ -27,7 +27,7 @@
     Conditional=SCRIPTED_SPEECH,
     ActiveDOMObject,
     Constructor,
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
     InterfaceName=webkitSpeechRecognition
 ] interface SpeechRecognition {

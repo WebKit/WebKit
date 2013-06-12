@@ -27,6 +27,7 @@ CheckSecurityForNode
 Clamp
 Conditional=*
 Constructor
+ConstructorCallWith=ScriptExecutionContext
 ConstructorConditional=*
 ConstructorRaisesException
 ConstructorTemplate=Event|TypedArray

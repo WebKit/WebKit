@@ -40,7 +40,7 @@ enum XMLHttpRequestResponseType {
     GlobalContext=WindowAndWorker,
     ActiveDOMObject,
     Constructor,
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     JSCustomMarkFunction,
     EventTarget,
     JSNoStaticTables

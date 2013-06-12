@@ -33,7 +33,7 @@
     ActiveDOMObject,
     Constructor(Dictionary rtcIceServers, optional Dictionary mediaConstraints),
     ConstructorRaisesException,
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
     InterfaceName=webkitRTCPeerConnection
 ] interface RTCPeerConnection {

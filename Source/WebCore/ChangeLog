@@ -1,3 +1,43 @@
+2013-06-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Rename [CallWith] to [ConstructorCallWith] for IDL interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=117531
+
+        Reviewed by Kentaro Hara.
+
+        Rename [CallWith] to [ConstructorCallWith] for IDL interfaces as the
+        meaning is slightly different when [CallWith] is used for IDL operations
+        or attributes. This improves IDL readability a bit and makes it more
+        directly understandable.
+
+        Also removed [ConstructorCallWith] statements from interfaces with custom
+        constructors or no constructor, as this does not have any effect.
+
+        No new tests, no behavior change.
+
+        * Modules/filesystem/FileWriter.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBufferList.idl:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/speech/SpeechRecognition.idl:
+        * Modules/speech/SpeechSynthesisUtterance.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/TestInterface.idl:
+        * dom/MessageChannel.idl:
+        * fileapi/FileReader.idl:
+        * html/MediaController.idl:
+        * html/track/TextTrackCue.idl:
+        * page/EventSource.idl:
+        * workers/SharedWorker.idl:
+        * workers/Worker.idl:
+        * xml/XMLHttpRequest.idl:
+
 2013-06-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Set windows key-code for multimedia keys

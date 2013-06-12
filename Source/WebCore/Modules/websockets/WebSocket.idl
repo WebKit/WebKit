@@ -38,7 +38,7 @@
     Constructor(DOMString url, sequence<DOMString> protocols),
     Constructor(DOMString url, DOMString protocol),
     ConstructorRaisesException,
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
     JSNoStaticTables,
 ] interface WebSocket {

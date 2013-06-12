@@ -34,7 +34,7 @@
     Conditional=BLOB,
     ActiveDOMObject,
     Constructor,
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
     JSNoStaticTables
 ] interface FileReader {

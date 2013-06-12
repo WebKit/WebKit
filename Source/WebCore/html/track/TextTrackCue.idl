@@ -27,7 +27,7 @@
     Conditional=VIDEO_TRACK,
     JSGenerateToNativeObject,
     Constructor(double startTime, double endTime, DOMString text),
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
     JSCustomMarkFunction,
     CustomIsReachable,

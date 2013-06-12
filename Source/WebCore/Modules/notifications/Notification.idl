@@ -35,7 +35,7 @@
     EventTarget,
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
     Constructor(DOMString title, [Default=Undefined] optional Dictionary options),
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
 #else
 #endif
 ] interface Notification {

@@ -32,7 +32,6 @@
     Conditional=MEDIA_SOURCE,
     IndexedGetter,
     EventTarget,
-    CallWith=ScriptExecutionContext,
     InterfaceName=WebKitSourceBufferList
 ] interface SourceBufferList {
     readonly attribute unsigned long length;

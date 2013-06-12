@@ -32,7 +32,7 @@
     ActiveDOMObject,
     CustomNamedSetter,
     Conditional=Condition1|Condition2,
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     Constructor(DOMString str1, [Default=Undefined] optional DOMString str2),
     ConstructorRaisesException,
     ConstructorConditional=TEST_INTERFACE,

@@ -28,7 +28,7 @@
     Constructor,
     Constructor(MediaStream stream),
     Constructor(MediaStreamTrack[] tracks),
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     SkipVTableValidation,
     InterfaceName=webkitMediaStream
 ] interface MediaStream {

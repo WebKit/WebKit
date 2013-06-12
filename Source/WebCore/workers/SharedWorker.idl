@@ -33,8 +33,6 @@
     EnabledAtRuntime,
     Conditional=SHARED_WORKERS,
     CustomConstructor(DOMString scriptURL, [Default=NullString] optional DOMString name),
-    CallWith=ScriptExecutionContext,
-    ConstructorRaisesException,
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
     JSGenerateToJSObject

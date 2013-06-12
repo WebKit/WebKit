@@ -28,7 +28,7 @@
     GlobalContext=WindowAndWorker,
     Conditional=CHANNEL_MESSAGING,
     Constructor,
-    CallWith=ScriptExecutionContext,
+    ConstructorCallWith=ScriptExecutionContext,
     JSCustomMarkFunction,
     JSNoStaticTables,
     ImplementationLacksVTable
