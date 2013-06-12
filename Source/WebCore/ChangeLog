@@ -1,3 +1,19 @@
+2013-06-12  Ralph Thomas  <ralpht@gmail.com>
+
+        [CSS Shaders] Animations and transitions should use validated custom programs
+        https://bugs.webkit.org/show_bug.cgi?id=117550
+
+        Run filters used for animations and transitions through RenderLayer::computeFilterOperations
+        in order to validate custom filter operations.
+
+        Reviewed by Alexandru Chiculita.
+
+        No new tests as no platform can run custom filters with accelerated animations yet.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+
 2013-06-12  Ruth Fong  <ruth_fong@apple.com>
 
         Allow for toggling fullscreen on <video> elements
