@@ -30,6 +30,12 @@ function scanConvertRoundedRectangleOutside(r, height, lineHeight)
 
 function genLeftRightRoundedRectFloatShapeOutsideRefTest(args)
 {
+    genLeftRoundedRectFloatShapeOutsideRefTest(args);
+    genRightRoundedRectFloatShapeOutsideRefTest(args);
+}
+
+function genLeftRoundedRectFloatShapeOutsideRefTest(args)
+{
     var leftRoundedRect = args.roundedRect;
     var leftRoundedRectIntervals = scanConvertRoundedRectangleOutside(leftRoundedRect, args.containerHeight, args.lineHeight);
     var leftFloatDivs = leftRoundedRectIntervals.map(function(interval) { 
@@ -38,7 +44,10 @@ function genLeftRightRoundedRectFloatShapeOutsideRefTest(args)
         return '<div class="' + cls + '" style="width:' + width + 'px"></div>'; 
     });
     document.getElementById("left-" + args.insertElementIdSuffix).insertAdjacentHTML('afterend', leftFloatDivs.join("\n"));
+}
 
+function genRightRoundedRectFloatShapeOutsideRefTest(args)
+{
     var rightRoundedRect = Object.create(args.roundedRect);
     rightRoundedRect.x = args.containerWidth - args.roundedRect.width;
     var rightRoundedRectIntervals = scanConvertRoundedRectangleOutside(rightRoundedRect, args.containerHeight, args.lineHeight);

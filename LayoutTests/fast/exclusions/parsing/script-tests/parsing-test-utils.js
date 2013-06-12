@@ -1,13 +1,17 @@
 // Valid values for both shape-inside and shape-outside. Two values are specified when the shape property value 
-// differs from the specified value.
+// differs from the specified value. Three values are specified when the computed shape property value differs
+// from the specified value.
+// eg: "specified value/CSS Text value/computed style value"
+// or: ["specified value", "CSS Text value/computed style value"]
+// or: ["specified value", "CSS Text value", "Computed style value"]
 var validShapeValues = [
     "auto",
-    "rectangle(10px, 20px, 30px, 40px)", 
-    "rectangle(10px, 20px, 30px, 40px, 5px)", 
+    ["rectangle(10px, 20px, 30px, 40px)", "rectangle(10px, 20px, 30px, 40px)", "rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
+    ["rectangle(10px, 20px, 30px, 40px, 5px)", "rectangle(10px, 20px, 30px, 40px, 5px)", "rectangle(10px, 20px, 30px, 40px, 5px, 5px)"],
     "rectangle(10px, 20px, 30px, 40px, 5px, 10px)",
 
-    "inset-rectangle(10px, 20px, 30px, 40px)",
-    "inset-rectangle(10px, 20px, 30px, 40px, 5px)",
+    ["inset-rectangle(10px, 20px, 30px, 40px)", "inset-rectangle(10px, 20px, 30px, 40px)", "inset-rectangle(10px, 20px, 30px, 40px, 0px, 0px)"],
+    ["inset-rectangle(10px, 20px, 30px, 40px, 5px)", "inset-rectangle(10px, 20px, 30px, 40px, 5px)", "inset-rectangle(10px, 20px, 30px, 40px, 5px, 5px)"],
     "inset-rectangle(10px, 20px, 30px, 40px, 5px, 10px)",
 
     "circle(10px, 20px, 30px)",

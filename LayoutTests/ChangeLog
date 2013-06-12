@@ -1,3 +1,39 @@
+2013-06-12  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] rectangle and inset-rectangle do not properly handle rx and ry
+        https://bugs.webkit.org/show_bug.cgi?id=116745
+
+        Reviewed by Dirk Schulze.
+
+        Update tests to check for the rx and ry conditions.
+
+        * fast/exclusions/parsing/parsing-shape-inside-expected.txt: New results.
+        * fast/exclusions/parsing/parsing-shape-outside-expected.txt: New results.
+        * fast/exclusions/parsing/script-tests/parsing-shape-inside.js: Update
+            to reflect that the computed value now always has rx and ry.
+        * fast/exclusions/parsing/script-tests/parsing-shape-outside.js: Ditto.
+        * fast/exclusions/parsing/script-tests/parsing-test-utils.js: Ditto.
+        * fast/exclusions/resources/rounded-rectangle.js:
+        (genLeftRightRoundedRectFloatShapeOutsideRefTest): Factor out left and
+            right into separate methods so that they can be used in tests that
+            only have left floats or only right floats.
+        (genLeftRoundedRectFloatShapeOutsideRefTest): Ditto.
+        (genRightRoundedRectFloatShapeOutsideRefTest): Ditto.
+        * fast/exclusions/shape-inside/shape-inside-animation-expected.txt: New results.
+        * fast/exclusions/shape-inside/shape-inside-animation.html: Change to
+            reflect new computed style value.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-large-radius-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-large-radius.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-rounded-rectangle-large-radius-expected.html: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-rounded-rectangle-large-radius.html: Added.
+            Note that the expected test here uses shape-inside, because we
+            really are just testing that the behavior is the same as a
+            shape-inside with rx and ry set to 50%, and it turned out to be
+            very hard to construct an expected result that didn't use
+            shape-inside and wasn't off by a pixel.
+        * css3/masking/clip-path-animation.html: Update expected value.
+        * css3/masking/clip-path-animation-expected.txt: New results.
+
 2013-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Unreviewed gardening, unskip now passing tests and try to paint the bot green.

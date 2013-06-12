@@ -50,11 +50,8 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         rectangleValue->setY(cssValuePool().createValue(rectangle->y()));
         rectangleValue->setWidth(cssValuePool().createValue(rectangle->width()));
         rectangleValue->setHeight(cssValuePool().createValue(rectangle->height()));
-        if (!rectangle->cornerRadiusX().isUndefined()) {
-            rectangleValue->setRadiusX(cssValuePool().createValue(rectangle->cornerRadiusX()));
-            if (!rectangle->cornerRadiusY().isUndefined())
-                rectangleValue->setRadiusY(cssValuePool().createValue(rectangle->cornerRadiusY()));
-        }
+        rectangleValue->setRadiusX(cssValuePool().createValue(rectangle->cornerRadiusX()));
+        rectangleValue->setRadiusY(cssValuePool().createValue(rectangle->cornerRadiusY()));
 
         basicShapeValue = rectangleValue.release();
         break;
@@ -102,11 +99,8 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         rectangleValue->setRight(cssValuePool().createValue(rectangle->right()));
         rectangleValue->setBottom(cssValuePool().createValue(rectangle->bottom()));
         rectangleValue->setLeft(cssValuePool().createValue(rectangle->left()));
-        if (!rectangle->cornerRadiusX().isUndefined()) {
-            rectangleValue->setRadiusX(cssValuePool().createValue(rectangle->cornerRadiusX()));
-            if (!rectangle->cornerRadiusY().isUndefined())
-                rectangleValue->setRadiusY(cssValuePool().createValue(rectangle->cornerRadiusY()));
-        }
+        rectangleValue->setRadiusX(cssValuePool().createValue(rectangle->cornerRadiusX()));
+        rectangleValue->setRadiusY(cssValuePool().createValue(rectangle->cornerRadiusY()));
 
         basicShapeValue = rectangleValue.release();
         break;
@@ -136,9 +130,15 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         rect->setWidth(convertToLength(style, rootStyle, rectValue->width()));
         rect->setHeight(convertToLength(style, rootStyle, rectValue->height()));
         if (rectValue->radiusX()) {
-            rect->setCornerRadiusX(convertToLength(style, rootStyle, rectValue->radiusX()));
+            Length radiusX = convertToLength(style, rootStyle, rectValue->radiusX());
+            rect->setCornerRadiusX(radiusX);
             if (rectValue->radiusY())
                 rect->setCornerRadiusY(convertToLength(style, rootStyle, rectValue->radiusY()));
+            else
+                rect->setCornerRadiusY(radiusX);
+        } else {
+            rect->setCornerRadiusX(Length(0, Fixed));
+            rect->setCornerRadiusY(Length(0, Fixed));
         }
         basicShape = rect.release();
         break;
@@ -187,9 +187,15 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         rect->setBottom(convertToLength(style, rootStyle, rectValue->bottom()));
         rect->setLeft(convertToLength(style, rootStyle, rectValue->left()));
         if (rectValue->radiusX()) {
-            rect->setCornerRadiusX(convertToLength(style, rootStyle, rectValue->radiusX()));
+            Length radiusX = convertToLength(style, rootStyle, rectValue->radiusX());
+            rect->setCornerRadiusX(radiusX);
             if (rectValue->radiusY())
                 rect->setCornerRadiusY(convertToLength(style, rootStyle, rectValue->radiusY()));
+            else
+                rect->setCornerRadiusY(radiusX);
+        } else {
+            rect->setCornerRadiusX(Length(0, Fixed));
+            rect->setCornerRadiusY(Length(0, Fixed));
         }
         basicShape = rect.release();
         break;

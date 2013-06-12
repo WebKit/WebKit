@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            if (window.internals)
+                window.internals.settings.setCSSExclusionsEnabled(true);
+        </script>
+        <style>
+        .container {
+            font: 10px/1 Ahem, sans-serif;
+            width: 80px;
+            height: 40px;
+            border: 1px solid black;
+        }
+        .float {
+            float: left;
+            width: 40px;
+            height: 40px;
+            border: 1px solid blue;
+            border-radius: 50%;
+        }
+        .fixed-units {
+            -webkit-shape-outside: rectangle(0px, 0px, 40px, 40px, 40px, 40px);
+        }
+        .different-units {
+            -webkit-shape-outside: rectangle(0px, 0px, 40px, 40px, 100%, 100%);
+        }
+        .relative-units {
+            -webkit-shape-outside: rectangle(0px, 0px, 100%, 100%, 700em, 700em);
+        }
+        .edge-case {
+            -webkit-shape-outside: rectangle(0px, 0px, 100%, 100%, 50%, 50%);
+        }
+        </style>
+    </head>
+    <body>
+        <h1>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=116745">116745</a>: [CSS Shapes] rectangle and inset-rectangle do not properly handle rx and ry</h1>
+        <h2>Test that if rx > 50% width and ry > %50 height, they are properly clamped to 50% of the respective dimension when doing layout on the shape. All of the following tests should look identical, and the black blocks should wrap around the blue circle.</h2>
+        <div class="container">
+            <div class="float fixed-units"></div>
+            X<br/>
+            X<br/>
+            X<br/>
+            X
+        </div>
+        <div class="container">
+            <div class="float relative-units"></div>
+            X<br/>
+            X<br/>
+            X<br/>
+            X
+        </div>
+        <div class="container">
+            <div class="float different-units"></div>
+            X<br/>
+            X<br/>
+            X<br/>
+            X
+        </div>
+        <div class="container">
+            <div class="float edge-case"></div>
+            X<br/>
+            X<br/>
+            X<br/>
+            X
+        </div>
+    </body>
+</html>

@@ -79,18 +79,23 @@ public:
     void setY(Length y) { m_y = y; }
     void setWidth(Length width) { m_width = width; }
     void setHeight(Length height) { m_height = height; }
-    void setCornerRadiusX(Length radiusX) { m_cornerRadiusX = radiusX; }
-    void setCornerRadiusY(Length radiusY) { m_cornerRadiusY = radiusY; }
+    void setCornerRadiusX(Length radiusX)
+    {
+        ASSERT(!radiusX.isUndefined());
+        m_cornerRadiusX = radiusX;
+    }
+    void setCornerRadiusY(Length radiusY)
+    {
+        ASSERT(!radiusY.isUndefined());
+        m_cornerRadiusY = radiusY;
+    }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
     virtual Type type() const { return BasicShapeRectangleType; }
 private:
-    BasicShapeRectangle()
-        : m_cornerRadiusX(Undefined)
-        , m_cornerRadiusY(Undefined)
-    { }
+    BasicShapeRectangle() { }
 
     Length m_y;
     Length m_x;
@@ -192,18 +197,23 @@ public:
     void setRight(Length right) { m_right = right; }
     void setBottom(Length bottom) { m_bottom = bottom; }
     void setLeft(Length left) { m_left = left; }
-    void setCornerRadiusX(Length radiusX) { m_cornerRadiusX = radiusX; }
-    void setCornerRadiusY(Length radiusY) { m_cornerRadiusY = radiusY; }
+    void setCornerRadiusX(Length radiusX)
+    {
+        ASSERT(!radiusX.isUndefined());
+        m_cornerRadiusX = radiusX;
+    }
+    void setCornerRadiusY(Length radiusY)
+    {
+        ASSERT(!radiusY.isUndefined());
+        m_cornerRadiusY = radiusY;
+    }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
     virtual Type type() const { return BasicShapeInsetRectangleType; }
 private:
-    BasicShapeInsetRectangle()
-        : m_cornerRadiusX(Undefined)
-        , m_cornerRadiusY(Undefined)
-    { }
+    BasicShapeInsetRectangle() { }
 
     Length m_right;
     Length m_top;

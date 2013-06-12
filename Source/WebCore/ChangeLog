@@ -1,3 +1,51 @@
+2013-06-12  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] rectangle and inset-rectangle do not properly handle rx and ry
+        https://bugs.webkit.org/show_bug.cgi?id=116745
+
+        Reviewed by Dirk Schulze.
+
+        If ry is not supplied, it now defaults to the rx value. Also, if rx
+        and ry are not supplied, they default to 0px. This also has the effect
+        that the computed style for any rectangle or inset-rectangle now
+        contains all six parameters.
+
+        If rx > width/2 then it is clamped to width/2, and if ry > height/2,
+        then it is clamped to height/2. This happens at layout time because
+        given mixed units and relative units, that is the only time this
+        determination can be made.
+
+        Tests: fast/exclusions/shape-inside/shape-inside-rounded-rectangle-large-radius.html
+               fast/exclusions/shape-outside-floats/shape-outside-floats-rounded-rectangle-large-radius.html
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape): Remove checks for undefined, since rx
+            and ry cannot be undefined in BasicShapes anymore.
+        (WebCore::basicShapeForValue): If radii are undefined in CSS, set
+            default values in the BasicShape, per the spec.
+        * rendering/ExclusionShape.cpp:
+        (WebCore::ensureRadiiDoNotOverlap): Utility method to ensure radii
+            don't overlap.
+        (WebCore::ExclusionShape::createExclusionShape): Remove defaulting to
+            zero, clamp radii per the spec.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeRectangle::path): Remove defaulting.
+        (WebCore::BasicShapeRectangle::blend): Ditto.
+        (WebCore::BasicShapeInsetRectangle::path): Ditto.
+        (WebCore::BasicShapeInsetRectangle::blend): Ditto.
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShapeRectangle::BasicShapeRectangle): Remove defaulting
+            to undefined for radii.
+        (WebCore::BasicShapeRectangle::setCornerRadiusX): Add assert to
+            prevent undefined.
+       (WebCore::BasicShapeRectangle::setCornerRadiusY): Add assert to
+            prevent undefined.
+        (WebCore::BasicShapeInsetRectangle::BasicShapeInsetRectangle): Ditto.
+        (WebCore::BasicShapeInsetRectangle::setCornerRadiusX): Add assert to
+            prevent undefined.
+       (WebCore::BasicShapeInsetRectangle::setCornerRadiusY): Add assert to
+            prevent undefined.
+
 2013-06-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Support Title UI Element Accessibility Attribute

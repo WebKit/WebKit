@@ -90,6 +90,17 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
+static inline void ensureRadiiDoNotOverlap(FloatRect &bounds, FloatSize &radii)
+{
+    float widthRatio = bounds.width() / (2 * radii.width());
+    float heightRatio = bounds.height() / (2 * radii.height());
+    float reductionRatio = std::min<float>(widthRatio, heightRatio);
+    if (reductionRatio < 1) {
+        radii.setWidth(reductionRatio * radii.width());
+        radii.setHeight(reductionRatio * radii.height());
+    }
+}
+
 PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutSize& logicalBoxSize, WritingMode writingMode, Length margin, Length padding)
 {
     ASSERT(basicShape);
@@ -108,11 +119,10 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
             floatValueForLength(rectangle->y(), boxHeight),
             floatValueForLength(rectangle->width(), boxWidth),
             floatValueForLength(rectangle->height(), boxHeight));
-        Length radiusXLength = rectangle->cornerRadiusX();
-        Length radiusYLength = rectangle->cornerRadiusY();
         FloatSize cornerRadii(
-            radiusXLength.isUndefined() ? 0 : floatValueForLength(radiusXLength, boxWidth),
-            radiusYLength.isUndefined() ? 0 : floatValueForLength(radiusYLength, boxHeight));
+            floatValueForLength(rectangle->cornerRadiusX(), boxWidth),
+            floatValueForLength(rectangle->cornerRadiusY(), boxHeight));
+        ensureRadiiDoNotOverlap(bounds, cornerRadii);
         FloatRect logicalBounds = physicalRectToLogical(bounds, logicalBoxSize.height(), writingMode);
 
         shape = createRectangleShape(logicalBounds, physicalSizeToLogical(cornerRadii, writingMode));
@@ -169,11 +179,10 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
             top,
             boxWidth - left - floatValueForLength(rectangle->right(), boxWidth),
             boxHeight - top - floatValueForLength(rectangle->bottom(), boxHeight));
-        Length radiusXLength = rectangle->cornerRadiusX();
-        Length radiusYLength = rectangle->cornerRadiusY();
         FloatSize cornerRadii(
-            radiusXLength.isUndefined() ? 0 : floatValueForLength(radiusXLength, boxWidth),
-            radiusYLength.isUndefined() ? 0 : floatValueForLength(radiusYLength, boxHeight));
+            floatValueForLength(rectangle->cornerRadiusX(), boxWidth),
+            floatValueForLength(rectangle->cornerRadiusY(), boxHeight));
+        ensureRadiiDoNotOverlap(bounds, cornerRadii);
         FloatRect logicalBounds = physicalRectToLogical(bounds, logicalBoxSize.height(), writingMode);
 
         shape = createRectangleShape(logicalBounds, physicalSizeToLogical(cornerRadii, writingMode));
