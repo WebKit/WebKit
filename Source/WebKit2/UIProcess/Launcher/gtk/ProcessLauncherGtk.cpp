@@ -35,6 +35,7 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RunLoop.h>
 #include <errno.h>
+#include <glib.h>
 #include <locale.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
