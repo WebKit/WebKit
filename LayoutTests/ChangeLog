@@ -1,3 +1,14 @@
+2013-06-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        [Qt][CSS Regions] fast/regions/overflow-size-change-with-stacking-context.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=97199
+
+        Unreviewed, Qt Gardening.
+
+        Unskip test that is now passing on the bots.
+
+        * platform/qt/TestExpectations:
+
 2013-06-12  Kwang Yul Seo  <skyul@company100.net>
 
         Unreviewed gardening. Unskipping passing tests.
