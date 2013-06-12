@@ -98,6 +98,11 @@ String InjectedBundleHitTestResult::absoluteMediaURL() const
     return m_hitTestResult.absoluteMediaURL().string();
 }
 
+bool InjectedBundleHitTestResult::mediaIsInFullscreen() const
+{
+    return m_hitTestResult.mediaIsInFullscreen();
+}
+
 String InjectedBundleHitTestResult::linkLabel() const
 {
     return m_hitTestResult.textContent();

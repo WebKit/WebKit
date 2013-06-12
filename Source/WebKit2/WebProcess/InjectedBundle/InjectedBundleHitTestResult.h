@@ -51,6 +51,7 @@ public:
     String absolutePDFURL() const;
     String absoluteLinkURL() const;
     String absoluteMediaURL() const;
+    bool mediaIsInFullscreen() const;
 
     String linkLabel() const;
     String linkTitle() const;

@@ -1,3 +1,14 @@
+2013-06-12  Ruth Fong  <ruth_fong@apple.com>
+
+        "Open Video in New Window" doesn't make sense in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=117556
+
+        Reviewed by Beth Dakin.
+
+        No new tests needed.
+
+        * WebCore.exp.in: Added WebKit2 hook for mediaIsInFullscreen() method.
+
 2013-06-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Accessibility code assumes an area element's parent is a map element

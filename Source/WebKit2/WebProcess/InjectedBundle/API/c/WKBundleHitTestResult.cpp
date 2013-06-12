@@ -74,6 +74,11 @@ WKURLRef WKBundleHitTestResultCopyAbsoluteMediaURL(WKBundleHitTestResultRef hitT
     return toCopiedURLAPI(toImpl(hitTestResultRef)->absoluteMediaURL());
 }
 
+bool WKBundleHitTestResultMediaIsInFullscreen(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toImpl(hitTestResultRef)->mediaIsInFullscreen();
+}
+
 WKRect WKBundleHitTestResultGetImageRect(WKBundleHitTestResultRef hitTestResultRef)
 {
     return toAPI(toImpl(hitTestResultRef)->imageRect());
