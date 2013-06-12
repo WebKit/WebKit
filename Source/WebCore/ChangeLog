@@ -1,5 +1,18 @@
 2013-06-12  Dean Jackson  <dino@apple.com>
 
+        [Mac] Change default Traditional Chinese serif font on 10.9
+        https://bugs.webkit.org/show_bug.cgi?id=117568
+
+        Reviewed by Alexey Proskuryakov.
+
+        Change default font on newer versions of OS X.
+
+        * page/mac/SettingsMac.mm:
+        (WebCore::Settings::initializeDefaultFontFamilies): Use 'Songti TC'
+        on 10.9 and above.
+
+2013-06-12  Dean Jackson  <dino@apple.com>
+
         [Mac] Change default Simplified Chinese serif font on 10.9
         https://bugs.webkit.org/show_bug.cgi?id=117567
 
