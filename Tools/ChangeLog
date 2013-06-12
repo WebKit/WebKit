@@ -1,3 +1,14 @@
+2013-06-12  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        Remove forgotten unused Tools/Script/make-gypi script
+        https://bugs.webkit.org/show_bug.cgi?id=117558
+
+        Reviewed by Ryosuke Niwa.
+
+        This script isn't used since the GYP removal from WebKit.
+
+        * Scripts/make-gypi: Removed.
+
 2013-06-12  Andres Gomez  <agomez@igalia.com>
 
         [GTK] MiniBrowser to automatically download "non-showable" documents when left click in link
