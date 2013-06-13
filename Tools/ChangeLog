@@ -1,3 +1,9 @@
+2013-06-12  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Turn on WinEWS test now that AppleWin port uses new-run-webkit-tests.
+
+        * Scripts/webkitpy/common/config/ews.json:
+
 2013-06-12  Eduardo Lima Mitev  <elima@igalia.com>
 
         [atk] Replace deprecated call to atk_document_get_locale() in DumpRenderTree
