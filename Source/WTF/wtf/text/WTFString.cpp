@@ -912,29 +912,20 @@ String String::fromUTF8(const LChar* stringStart, size_t length)
     if (!length)
         return emptyString();
 
-    // We'll use a StringImpl as a buffer; if the source string only contains ascii this should be
-    // the right length, if there are any multi-byte sequences this buffer will be too large.
-    UChar* buffer;
-    String stringBuffer(StringImpl::createUninitialized(length, buffer));
-    UChar* bufferEnd = buffer + length;
+    if (charactersAreAllASCII(stringStart, length))
+        return StringImpl::create(stringStart, length);
+
+    Vector<UChar, 1024> buffer(length);
+    UChar* bufferStart = buffer.data();
  
-    // Try converting into the buffer.
+    UChar* bufferCurrent = bufferStart;
     const char* stringCurrent = reinterpret_cast<const char*>(stringStart);
-    bool isAllASCII;
-    if (convertUTF8ToUTF16(&stringCurrent, reinterpret_cast<const char *>(stringStart + length), &buffer, bufferEnd, &isAllASCII) != conversionOK)
+    if (convertUTF8ToUTF16(&stringCurrent, reinterpret_cast<const char *>(stringStart + length), &bufferCurrent, bufferCurrent + buffer.size()) != conversionOK)
         return String();
 
-    if (isAllASCII)
-        return String(stringStart, length);
-
-    // stringBuffer is full (the input must have been all ascii) so just return it!
-    if (buffer == bufferEnd)
-        return stringBuffer;
-
-    // stringBuffer served its purpose as a buffer, copy the contents out into a new string.
-    unsigned utf16Length = buffer - stringBuffer.characters();
+    unsigned utf16Length = bufferCurrent - bufferStart;
     ASSERT(utf16Length < length);
-    return String(stringBuffer.characters(), utf16Length);
+    return StringImpl::create(bufferStart, utf16Length);
 }
 
 String String::fromUTF8(const LChar* string)

@@ -1,3 +1,19 @@
+2013-06-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Optimize String::fromUTF8 for ASCII
+        https://bugs.webkit.org/show_bug.cgi?id=117586
+
+        Reviewed by Brent Fulgham.
+
+        From Blink r152243 by <abarth@chromium.org>
+
+        Current String::fromUTF8() implementation converts 8 bit ASCII character into 16 bit.
+        Instead of always trying to convert into a 16 bit buffer, we can add a call to charactersAreAllASCII.
+        In the common case when characters are ASCII, we directly copy it into an 8 bit string buffer.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::fromUTF8):
+
 2013-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Activate supported C++11 Features for VS2010
