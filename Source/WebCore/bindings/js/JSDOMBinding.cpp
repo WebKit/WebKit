@@ -309,7 +309,7 @@ static double enforceRange(ExecState* exec, double x, double minimum, double max
 int32_t toInt32EnforceRange(ExecState* exec, JSValue value)
 {
     if (value.isInt32())
-        return value.toInt32(exec);
+        return value.asInt32();
 
     double x = value.toNumber(exec);
     if (exec->hadException())
@@ -321,7 +321,7 @@ int32_t toInt32EnforceRange(ExecState* exec, JSValue value)
 uint32_t toUInt32EnforceRange(ExecState* exec, JSValue value)
 {
     if (value.isUInt32())
-        return value.toUInt32(exec);
+        return value.asUInt32();
 
     double x = value.toNumber(exec);
     if (exec->hadException())
@@ -333,7 +333,7 @@ uint32_t toUInt32EnforceRange(ExecState* exec, JSValue value)
 int64_t toInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
 {
     if (value.isInt32())
-        return value.toInt32(exec);
+        return value.asInt32();
 
     double x = value.toNumber(exec);
     if (exec->hadException())
@@ -352,7 +352,7 @@ int64_t toInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration c
 uint64_t toUInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
 {
     if (value.isUInt32())
-        return value.toUInt32(exec);
+        return value.asUInt32();
 
     double x = value.toNumber(exec);
     if (exec->hadException())
