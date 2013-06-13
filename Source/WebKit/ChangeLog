@@ -1,3 +1,13 @@
+2013-06-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Revise WebKit project to show generated export definition file.
+        https://bugs.webkit.org/show_bug.cgi?id=109629
+
+        Reviewed by Mark Rowe.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Add generated file.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters: Ditto
+
 2013-06-13  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build correction.

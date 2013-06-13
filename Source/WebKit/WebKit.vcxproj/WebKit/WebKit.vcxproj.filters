@@ -14,6 +14,9 @@
     <Filter Include="Sources">
       <UniqueIdentifier>{0a3a0baa-eab1-4cb5-a90d-c40c2eb7d0f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Generated">
+      <UniqueIdentifier>{1a00610c-29e3-4979-a7a2-ef6c92c4bb71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\win\WebCoreSupport\EmbeddedWidget.cpp">
@@ -615,6 +618,9 @@
     </None>
     <None Include="..\..\win\WebKit.resources\zoomOutCursor.png">
       <Filter>Resources</Filter>
+    </None>
+    <None Include="$(ConfigurationBuildDir)\obj32\WebKitExportGenerator\WebKitExports.def">
+      <Filter>Generated</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
