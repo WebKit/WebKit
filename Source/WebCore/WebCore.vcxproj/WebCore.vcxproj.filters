@@ -265,9 +265,6 @@
     <Filter Include="storage">
       <UniqueIdentifier>{e5121f0f-9548-4aa4-b23c-23d197118a0d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="strings">
-      <UniqueIdentifier>{b2a2dc67-76eb-4715-b580-e99e294fcdb6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="bridge">
       <UniqueIdentifier>{8e29630e-9293-4240-921c-7e97c22828a6}</UniqueIdentifier>
     </Filter>
@@ -5197,7 +5194,7 @@
       <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\FontGenericFamilies.cpp">
-        <Filter>platform\graphics</Filter>
+      <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\FontGlyphs.cpp">
       <Filter>platform\graphics</Filter>
@@ -12677,7 +12674,7 @@
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\FontGenericFamilies.h">
-        <Filter>platform\graphics</Filter>
+      <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\FontGlyphs.h">
       <Filter>platform\graphics</Filter>

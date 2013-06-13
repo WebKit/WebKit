@@ -1,3 +1,10 @@
+2013-06-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed gardening.  Remove dangling 'strings' folder from solution.
+
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Get rid of 'strings' that was orphaned by
+        recent file reorganization.
+
 2013-06-13  Praveen R Jadhav  <praveen.j@samsung.com>
 
         Avoid unwanted thread hops in ScriptProcessorNode when 'onaudioprocess' listener is not set.
