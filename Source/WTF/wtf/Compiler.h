@@ -89,7 +89,13 @@
 #define WTF_COMPILER_QUIRK_FINAL_IS_CALLED_SEALED 1
 #endif
 
+/* Check for VS2010 or newer */
+#if _MSC_VER >= 1600
+#define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES 1
+#define WTF_COMPILER_SUPPORTS_CXX_STATIC_ASSERT 1
 #endif
+
+#endif /* defined(_MSC_VER) */
 
 /* COMPILER(RVCT) - ARM RealView Compilation Tools */
 #if defined(__CC_ARM) || defined(__ARMCC__)

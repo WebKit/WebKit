@@ -1,3 +1,13 @@
+2013-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Activate supported C++11 Features for VS2010
+        https://bugs.webkit.org/show_bug.cgi?id=117569
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Compiler.h: Turn on rvalue references and static_assert
+        when compiling with VS2010 (or newer)
+
 2013-06-07  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Makefile fix. Copy WTF.dll over as well.
