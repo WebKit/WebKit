@@ -1,3 +1,10 @@
+2013-06-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed gardening.
+
+        * WTF.vcxproj/WTF.vcxproj: Add FeatureDefines.h to visible files.
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+
 2013-06-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Optimize String::fromUTF8 for ASCII

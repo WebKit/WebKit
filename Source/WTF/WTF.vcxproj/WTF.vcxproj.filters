@@ -692,6 +692,9 @@
     </ClInclude>
     <ClInclude Include="..\WTF\config.h" />
     <ClInclude Include="..\wtf\FunctionDispatcher.h" />
+    <ClInclude Include="..\wtf\FeatureDefines.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="WTFPostBuild.cmd" />

@@ -137,6 +137,7 @@
     <ClInclude Include="..\wtf\FastAllocBase.h" />
     <ClInclude Include="..\wtf\FastBitVector.h" />
     <ClInclude Include="..\wtf\FastMalloc.h" />
+    <ClInclude Include="..\wtf\FeatureDefines.h" />
     <ClInclude Include="..\wtf\FilePrintStream.h" />
     <ClInclude Include="..\wtf\FixedArray.h" />
     <ClInclude Include="..\wtf\Float32Array.h" />
