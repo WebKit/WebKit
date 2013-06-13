@@ -1,3 +1,19 @@
+2013-06-13  Beth Dakin  <bdakin@apple.com>
+
+        Headers and footers should be pinned to the left edge of the window when scrolling 
+        horizontally, even when zoomed
+        https://bugs.webkit.org/show_bug.cgi?id=117562
+        -and corresponding-
+        <rdar://problem/14006745>
+
+        Reviewed by Sam Weinig.
+
+        We really want to use the width value from scrollOffsetForFixedPosition() for the 
+        banner with a scaled factor of 1. So if there is a different scale factor, re-
+        compute this value specifically for the banners. 
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+
 2013-06-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Support byte and octet types in bindings generators
