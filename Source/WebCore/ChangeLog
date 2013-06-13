@@ -1,3 +1,10 @@
+2013-06-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build correction.
+
+        * WebCore.vcxproj/WebCoreCairo.props: Use proper WebKit_Libraries
+        environment variable, rather than older WebKitLibraries.
+
 2013-06-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Avoid duplicate isInt32() / isUInt32() checks in JSDOMBindings
