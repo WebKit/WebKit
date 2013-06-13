@@ -229,6 +229,10 @@
 #define ENABLE_WEB_ARCHIVE 1
 #endif
 
+#if !defined(ENABLE_VIEW_MODE_CSS_MEDIA)
+#define ENABLE_VIEW_MODE_CSS_MEDIA 0
+#endif
+
 #endif /* PLATFORM(WIN_CAIRO) */
 
 /* --------- EFL port (Unix) --------- */
