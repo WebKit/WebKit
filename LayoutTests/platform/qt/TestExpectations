@@ -914,9 +914,6 @@ fast/forms/menulist-width-change.html
 # https://bugs.webkit.org/show_bug.cgi?id=63518
 http/tests/misc/link-rel-icon-beforeload.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=64002
-fast/selectors/unqualified-hover-strict.html
-
 # http/tests/websocket/tests/hybi/workers/close.html is flaky
 # https://bugs.webkit.org/show_bug.cgi?id=89153
 http/tests/websocket/tests/hybi/workers/close.html
@@ -1346,7 +1343,6 @@ webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure Pass ]
 
 # [Qt] svg/animations/animate-path-nested-transforms.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=48987
-svg/animations/animate-path-nested-transforms.html
 svg/animations/animate-text-nested-transforms.html
 
 # [Qt] fontCache related assertion revealed by r105143
@@ -2356,11 +2352,6 @@ webkit.org/b/104696 fast/block/float/floats-wrap-inside-inline-007.html
 # [Qt] css3/filters/huge-region-composited.html makes css3/filters/huge-region.html crash
 # https://bugs.webkit.org/show_bug.cgi?id=90165
 css3/filters/huge-region-composited.html
-
-# [Qt] REGRESSION(r122768, r122771): They broke jquery/data.html and inspector/elements/edit-dom-actions.html
-# https://bugs.webkit.org/show_bug.cgi?id=91476
-inspector/elements/edit-dom-actions.html
-jquery/data.html
 
 # [Qt] svg/zoom/{page,text}/zoom-hixie-mixed-009.xml fails
 # https://bugs.webkit.org/show_bug.cgi?id=92018

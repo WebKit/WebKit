@@ -732,3 +732,15 @@ webkit.org/b/116810 fast/frames/flattening/scrolling-in-object.html [ Skip ]
 
 # [Qt][WK2] LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.html
+
+# [Qt] REGRESSION(r122768, r122771): They broke jquery/data.html and inspector/elements/edit-dom-actions.html
+# https://bugs.webkit.org/show_bug.cgi?id=91476
+inspector/elements/edit-dom-actions.html
+jquery/data.html
+
+# [Qt] svg/animations/animate-path-nested-transforms.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=48987
+svg/animations/animate-path-nested-transforms.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=64002
+fast/selectors/unqualified-hover-strict.html
