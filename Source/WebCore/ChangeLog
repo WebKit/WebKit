@@ -1,3 +1,19 @@
+2013-06-13  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Regions] Selection dragged from a region paints its background
+        https://bugs.webkit.org/show_bug.cgi?id=117607
+
+        Reviewed by Alexandru Chiculita.
+
+        When a RenderFlowThread is in the selection paint phase, tell its layer to paint with the
+        selection only behavior. This way, only foregrounds and not backgrounds will be painted in
+        the dragged selection.
+
+        Manual test: ManualTests/regions/drag-selection-painting.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::paintFlowThreadPortionInRegion):
+
 2013-06-13  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes][CSS Regions] Respect bottom positioned shapes and content adjustment inside shapes

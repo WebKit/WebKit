@@ -1,3 +1,16 @@
+2013-06-13  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Regions] Selection dragged from a region paints its background
+        https://bugs.webkit.org/show_bug.cgi?id=117607
+
+        Reviewed by Alexandru Chiculita.
+
+        Add a manual test for the painting of a dragged selection from a region. We don't have an
+        automated way to test this yet. This test is similar to the other manual selection dragging
+        tests (e.g. ManualTests/drag-image.html).
+
+        * ManualTests/regions/drag-selection-painting.html: Added.
+
 2013-06-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] [WK2] Found missing symbol when running some tests
