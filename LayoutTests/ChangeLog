@@ -1,3 +1,11 @@
+2013-06-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+        Adding failure expectations for most of the current failures.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2013-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Unreviewed gardening, skip one more test to paint the bot green.

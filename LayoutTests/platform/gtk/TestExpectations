@@ -644,6 +644,8 @@ webkit.org/b/116976 media/video-played-collapse.html [ Failure Pass ]
 
 webkit.org/b/116977 media/event-attributes.html [ Failure Timeout Pass ]
 
+webkit.org/b/117583 http/tests/media/video-load-twice.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1396,6 +1398,12 @@ webkit.org/b/90589 fast/css/user-drag-none.html [ Failure ]
 webkit.org/b/116806 fast/css/text-overflow-ellipsis-behind-floats.html [ ImageOnlyFailure ]
 
 webkit.org/b/116808 fast/regions/offsetLeft-offsetTop-in-multiple-regions.html [ Failure ]
+
+webkit.org/b/117580 media/video-seek-multiple.html [ Failure ]
+
+webkit.org/b/117581 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
+
+webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
