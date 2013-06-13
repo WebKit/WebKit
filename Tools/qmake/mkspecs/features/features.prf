@@ -105,24 +105,14 @@ defineTest(detectFeatures) {
     # and used for layout tests)
     have?(qtsensors)|!production_build: WEBKIT_CONFIG += orientation_events device_orientation
 
-    # HTML5 Media Support
-    mac {
-        QMAKE_MAC_SDK_VERSION = $$system("xcodebuild -sdk $$QMAKE_MAC_SDK -version SDKVersion 2>/dev/null")
-        haveQt(5,1):!equals(QMAKE_MACOSX_DEPLOYMENT_TARGET, $$QMAKE_MAC_SDK_VERSION) {
-            CONFIGURE_WARNINGS += "Deployment target ($$QMAKE_MACOSX_DEPLOYMENT_TARGET) doesn't match SDK ($$QMAKE_MAC_SDK_VERSION), disabling media element support"
-        } else {
-            DARWIN_VERSION = $$split(QMAKE_HOST.version, ".")
-            DARWIN_MAJOR_VERSION = $$first(DARWIN_VERSION)
-            # QTKIT support requires 10.7 or newer
-            greaterThan(DARWIN_MAJOR_VERSION, 10) {
-                WEBKIT_CONFIG += video use_qtkit
+    # HTML5 Media Support for non-Mac builds
+    !mac {
+        !contains(QT_CONFIG, no-pkg-config) {
+            packagesExist("glib-2.0 gio-2.0 gstreamer-1.0 gstreamer-plugins-base-1.0") {
+                WEBKIT_CONFIG += video use_gstreamer
+            } else: packagesExist("glib-2.0 gio-2.0 \'gstreamer-0.10 >= 0.10.30\' \'gstreamer-plugins-base-0.10 >= 0.10.30\'") {
+                WEBKIT_CONFIG += video use_gstreamer use_gstreamer010
             }
-        }
-    } else: !contains(QT_CONFIG, no-pkg-config) {
-        packagesExist("glib-2.0 gio-2.0 gstreamer-1.0 gstreamer-plugins-base-1.0") {
-            WEBKIT_CONFIG += video use_gstreamer
-        } else: packagesExist("glib-2.0 gio-2.0 \'gstreamer-0.10 >= 0.10.30\' \'gstreamer-plugins-base-0.10 >= 0.10.30\'") {
-            WEBKIT_CONFIG += video use_gstreamer use_gstreamer010
         }
     }
 

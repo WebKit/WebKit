@@ -1,3 +1,18 @@
+2013-06-13  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt][Mac] Disable QTKit video on OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=117591
+
+        Reviewed by Tor Arne Vestbø.
+
+        Deployment of the same Qt binaries to different
+        Mac OS X version makes it impossible to link against
+        the correct WebKitSystemInterface version at build time.
+
+        No new tests, no behavioural change.
+
+        * WebCore.pri:
+
 2013-06-13  Morten Stenshorne  <mstensho@opera.com>
 
         Column balancing support in the region based multicol implementation

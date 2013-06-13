@@ -1,3 +1,17 @@
+2013-06-13  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt][Mac] Disable QTKit video on OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=117591
+
+        Reviewed by Tor Arne Vestbø.
+
+        Deployment of Qt binaries to different Mac OS X
+        platform version makes it impossible to link against
+        the correct version of the WebKitSystemInterface library,
+        so we need to disable QTKit for media elements.
+
+        * qmake/mkspecs/features/features.prf:
+
 2013-06-13  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][WK2] Wrong context menu and popup menu positions when scroll is applied

@@ -180,41 +180,7 @@ use?(GSTREAMER) {
 }
 
 enable?(VIDEO) {
-    use?(QTKIT) {
-        INCLUDEPATH += $$SOURCE_DIR/platform/graphics/mac
-
-        LIBS += -framework AppKit -framework AudioUnit \
-                -framework AudioToolbox -framework CoreAudio \
-                -framework QuartzCore -framework QTKit \
-                -framework Security -framework IOKit
-
-        DARWIN_VERSION = $$split(QMAKE_HOST.version, ".")
-        DARWIN_MAJOR_VERSION = $$first(DARWIN_VERSION)
-
-        haveQt(5,1) {
-            equals(QMAKE_MAC_SDK_VERSION, 10.7): \
-                SYSTEM_LIBRARY_PATH = $${ROOT_WEBKIT_DIR}/WebKitLibraries/libWebKitSystemInterfaceLion.a
-            else:equals(QMAKE_MAC_SDK_VERSION, 10.8): \
-                SYSTEM_LIBRARY_PATH = $${ROOT_WEBKIT_DIR}/WebKitLibraries/libWebKitSystemInterfaceMountainLion.a
-        } else {
-            # We first check if a specific SDK is set to be used for the build.
-            contains(QMAKE_MAC_SDK, ".*MacOSX10.7.sdk.*") {
-                SYSTEM_LIBRARY_PATH = $${ROOT_WEBKIT_DIR}/WebKitLibraries/libWebKitSystemInterfaceLion.a
-            } else:contains(QMAKE_MAC_SDK, ".*MacOSX10.8.sdk.*") {
-                SYSTEM_LIBRARY_PATH = $${ROOT_WEBKIT_DIR}/WebKitLibraries/libWebKitSystemInterfaceMountainLion.a
-            }
-
-            # If the previous check did not yield a result, we resort to the Darwin version.
-            isEmpty(SYSTEM_LIBRARY_PATH) {
-                equals(DARWIN_MAJOR_VERSION, "11") {
-                    SYSTEM_LIBRARY_PATH = $${ROOT_WEBKIT_DIR}/WebKitLibraries/libWebKitSystemInterfaceLion.a
-                } else:equals(DARWIN_MAJOR_VERSION, "12") {
-                    SYSTEM_LIBRARY_PATH = $${ROOT_WEBKIT_DIR}/WebKitLibraries/libWebKitSystemInterfaceMountainLion.a
-                }
-            }
-        }
-        LIBS += $$SYSTEM_LIBRARY_PATH
-    } else:use?(GSTREAMER) {
+    use?(GSTREAMER) {
         INCLUDEPATH += $$SOURCE_DIR/platform/graphics/gstreamer
     } else:use?(QT_MULTIMEDIA) {
         QT *= multimedia
