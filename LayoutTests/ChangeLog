@@ -1,3 +1,15 @@
+2013-06-13  Mihai Tica  <mitica@adobe.com>
+
+        Updating the -webkit-background-blend-mode property dynamically does not trigger a redraw of the element.
+
+        Adding test that sets background blend modes from script, after the page is loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=117223
+
+        Reviewed by Dirk Schulze.
+
+        * fast/repaint/background-blend-mode-image-color-dynamic-expected.html: Added.
+        * fast/repaint/background-blend-mode-image-color-dynamic.html: Added.
+
 2013-06-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Support byte and octet types in bindings generators

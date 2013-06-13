@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+
+<style>
+    div {
+        margin: 5px;
+        width: 130px;
+        height: 130px;
+        background: url('resources/ducky.png') no-repeat 0 0 /100% 100%, green;
+        -webkit-background-blend-mode: normal, normal;
+        float: left;
+    }
+</style>
+<!-- This file should contain a duck with multiply blending set from script. -->
+<body>
+    <script>
+
+        function repaintTest() {
+            document.getElementById('blender').style.webkitBackgroundBlendMode = "multiply, normal";
+        }
+    </script>
+    <div id="blender"></div>
+</body>

@@ -1,3 +1,17 @@
+2013-06-13  Mihai Tica  <mitica@adobe.com>
+
+        Updating the -webkit-background-blend-mode property dynamically does not trigger a redraw of the element.
+
+        Adding krit's fix: actual blending values should be compared, not the sets.
+        https://bugs.webkit.org/show_bug.cgi?id=117223
+
+        Reviewed by Dirk Schulze.
+
+        Test: css3/compositing/background-blend-mode-image-color-dynamic.html
+
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::operator==):
+
 2013-06-13  Beth Dakin  <bdakin@apple.com>
 
         Headers and footers should be pinned to the left edge of the window when scrolling 
