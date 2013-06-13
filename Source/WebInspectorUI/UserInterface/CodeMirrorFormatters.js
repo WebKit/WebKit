@@ -67,6 +67,8 @@ CodeMirror.extendMode("javascript", {
                 return true;
             if (lastContent === "finally")
                 return true;
+            if (lastContent === "do")
+                return true;
             return false;
         }
 

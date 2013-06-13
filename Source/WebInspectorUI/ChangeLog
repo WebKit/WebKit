@@ -1,5 +1,13 @@
 2013-06-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        <http://webkit.org/b/117615> Web Inspector: JS PrettyPrinting Should have space between "do" and "{"
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/CodeMirrorFormatters.js:
+
+2013-06-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         <http://webkit.org/b/117612> Web Inspector: "Search Resource Content" should cancel when I remove all text search text
 
         Reviewed by Timothy Hatcher.
