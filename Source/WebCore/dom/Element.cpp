@@ -269,6 +269,11 @@ bool Element::isMouseFocusable() const
     return isFocusable();
 }
 
+bool Element::shouldUseInputMethod()
+{
+    return isContentEditable(UserSelectAllIsAlwaysNonEditable);
+}
+
 void Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions eventOptions, SimulatedClickVisualOptions visualOptions)
 {
     EventDispatcher::dispatchSimulatedClick(this, underlyingEvent, eventOptions, visualOptions);

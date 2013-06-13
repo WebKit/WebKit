@@ -733,11 +733,6 @@ bool Node::isEditableToAccessibility(EditableLevel editableLevel) const
     return false;
 }
 
-bool Node::shouldUseInputMethod()
-{
-    return isContentEditable(UserSelectAllIsAlwaysNonEditable);
-}
-
 RenderBox* Node::renderBox() const
 {
     RenderObject* renderer = this->renderer();

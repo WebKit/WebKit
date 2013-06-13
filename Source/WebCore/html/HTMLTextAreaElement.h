@@ -110,7 +110,7 @@ private:
 
     virtual void accessKeyAction(bool sendMouseEvents);
 
-    virtual bool shouldUseInputMethod();
+    virtual bool shouldUseInputMethod() OVERRIDE;
     virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
     virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
     virtual bool matchesReadWritePseudoClass() const OVERRIDE;

@@ -1,3 +1,20 @@
+2013-06-13  Andreas Kling  <akling@apple.com>
+
+        Move Node::shouldUseInputMethod() to Element.
+        <http://webkit.org/b/117603>
+
+        Reviewed by Antti Koivisto.
+
+        This method is only ever called on Elements, so move it off of Node.
+
+        * dom/Element.cpp:
+        (WebCore::Element::shouldUseInputMethod):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.h:
+
 2013-06-13  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Regions] Selection dragged from a region paints its background

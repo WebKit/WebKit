@@ -442,6 +442,8 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
+    virtual bool shouldUseInputMethod();
+
     virtual short tabIndex() const;
     virtual Element* focusDelegate();
 
