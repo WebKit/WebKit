@@ -1,3 +1,48 @@
+2013-06-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Support byte and octet types in bindings generators
+        https://bugs.webkit.org/show_bug.cgi?id=117547
+
+        Reviewed by Kentaro Hara.
+
+        Add support for byte and octet IDL types to the bindings
+        generator:
+        http://dev.w3.org/2006/webapi/WebIDL/#idl-byte
+        http://dev.w3.org/2006/webapi/WebIDL/#idl-octet
+
+        No new tests, covered by existing layout tests and by new
+        bindings tests.
+
+        No new tests, covered by bindings tests and:
+        fast/js/webidl-type-mapping.html
+
+        * WebCore.exp.in: Export new symbols for mac port.
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h: Add toInt8() / toUInt8()
+        methods to convert from JSValue to int8_t / uint8_t as
+        specified by Web IDL.
+
+        * bindings/js/JSDataViewCustom.cpp: Remove custom code for
+        getInt8, getUInt8, setInt8, setUInt8 now that byte and octet
+        types are supported by the bindings generator.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        * bindings/scripts/test/TestObj.idl: Add tests for byte and octet types.
+        * html/canvas/DataView.idl: Remove [Custom] extended attribute for
+        getInt8, getUInt8, setInt8, setUInt8 and use newly supported byte / octet
+        types.
+
 2013-06-13  Timothy Hatcher  <timothy@apple.com>
 
         Revert r150339 since it causes a hang while paused in the Web Inspector in other apps.

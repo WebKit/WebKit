@@ -161,6 +161,10 @@ protected:
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(JSC::ExecState*);
@@ -239,6 +243,10 @@ void setJSTestObjConstructorStaticStringAttr(JSC::ExecState*, JSC::JSObject*, JS
 JSC::JSValue jsTestObjConstructorTestSubObj(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 JSC::JSValue jsTestObjEnumAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 void setJSTestObjEnumAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjByteAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+void setJSTestObjByteAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+JSC::JSValue jsTestObjOctetAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+void setJSTestObjOctetAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjShortAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 void setJSTestObjShortAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjUnsignedShortAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);

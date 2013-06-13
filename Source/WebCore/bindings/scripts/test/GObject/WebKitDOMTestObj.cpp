@@ -79,6 +79,8 @@ enum {
     PROP_READ_ONLY_LONG_ATTR,
     PROP_READ_ONLY_STRING_ATTR,
     PROP_READ_ONLY_TEST_OBJ_ATTR,
+    PROP_BYTE_ATTR,
+    PROP_OCTET_ATTR,
     PROP_SHORT_ATTR,
     PROP_UNSIGNED_SHORT_ATTR,
     PROP_LONG_ATTR,
@@ -148,6 +150,14 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
     WebCore::TestObj* coreSelf = WebKit::core(self);
 
     switch (propertyId) {
+    case PROP_BYTE_ATTR: {
+        coreSelf->setByteAttr((g_value_get_int8(value)));
+        break;
+    }
+    case PROP_OCTET_ATTR: {
+        coreSelf->setOctetAttr((g_value_get_uint8(value)));
+        break;
+    }
     case PROP_UNSIGNED_SHORT_ATTR: {
         coreSelf->setUnsignedShortAttr((g_value_get_uint(value)));
         break;
@@ -301,6 +311,14 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
     case PROP_READ_ONLY_TEST_OBJ_ATTR: {
         RefPtr<WebCore::TestObj> ptr = coreSelf->readOnlyTestObjAttr();
         g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_BYTE_ATTR: {
+        g_value_set_int8(value, coreSelf->byteAttr());
+        break;
+    }
+    case PROP_OCTET_ATTR: {
+        g_value_set_uint8(value, coreSelf->octetAttr());
         break;
     }
     case PROP_SHORT_ATTR: {
@@ -591,6 +609,24 @@ G_MAXLONG, /* max */
                                                            "read-only  WebKitDOMTestObj* TestObj.read-only-test-obj-attr", /* longer - could do with some extra doc stuff here */
                                                            WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
                                                            WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_BYTE_ATTR,
+                                    g_param_spec_int8("byte-attr", /* name */
+                                                           "test_obj_byte-attr", /* short description */
+                                                           "read-write  gint8 TestObj.byte-attr", /* longer - could do with some extra doc stuff here */
+                                                           G_MININT8, /* min */
+G_MAXINT8, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_OCTET_ATTR,
+                                    g_param_spec_uint8("octet-attr", /* name */
+                                                           "test_obj_octet-attr", /* short description */
+                                                           "read-write  guint8 TestObj.octet-attr", /* longer - could do with some extra doc stuff here */
+                                                           0, /* min */
+G_MAXUINT8, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
                                     PROP_SHORT_ATTR,
                                     g_param_spec_int("short-attr", /* name */
@@ -1008,6 +1044,54 @@ webkit_dom_test_obj_void_method_with_args(WebKitDOMTestObj* self, glong longArg,
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
     item->voidMethodWithArgs(longArg, convertedStrArg, convertedObjArg);
+}
+
+gint8
+webkit_dom_test_obj_byte_method(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    gint8 result = item->byteMethod();
+    return result;
+}
+
+gint8
+webkit_dom_test_obj_byte_method_with_args(WebKitDOMTestObj* self, gint8 byteArg, const gchar* strArg, WebKitDOMTestObj* objArg)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    g_return_val_if_fail(strArg, 0);
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(objArg), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
+    WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
+    gint8 result = item->byteMethodWithArgs(byteArg, convertedStrArg, convertedObjArg);
+    return result;
+}
+
+guint8
+webkit_dom_test_obj_octet_method(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    guint8 result = item->octetMethod();
+    return result;
+}
+
+guint8
+webkit_dom_test_obj_octet_method_with_args(WebKitDOMTestObj* self, guint8 octetArg, const gchar* strArg, WebKitDOMTestObj* objArg)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    g_return_val_if_fail(strArg, 0);
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(objArg), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
+    WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
+    guint8 result = item->octetMethodWithArgs(octetArg, convertedStrArg, convertedObjArg);
+    return result;
 }
 
 glong
@@ -1530,6 +1614,44 @@ webkit_dom_test_obj_get_read_only_test_obj_attr(WebKitDOMTestObj* self)
     WebCore::TestObj* item = WebKit::core(self);
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->readOnlyTestObjAttr());
     return WebKit::kit(gobjectResult.get());
+}
+
+gint8
+webkit_dom_test_obj_get_byte_attr(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    gint8 result = item->byteAttr();
+    return result;
+}
+
+void
+webkit_dom_test_obj_set_byte_attr(WebKitDOMTestObj* self, gint8 value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->setByteAttr(value);
+}
+
+guint8
+webkit_dom_test_obj_get_octet_attr(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    guint8 result = item->octetAttr();
+    return result;
+}
+
+void
+webkit_dom_test_obj_set_octet_attr(WebKitDOMTestObj* self, guint8 value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->setOctetAttr(value);
 }
 
 gshort

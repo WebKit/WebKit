@@ -302,6 +302,8 @@ sub GetClassName
     return "NSString" if $codeGenerator->IsStringType($name) or $name eq "SerializedScriptValue";
     return "NS$name" if IsNativeObjCType($name);
     return "BOOL" if $name eq "boolean";
+    return "unsigned char" if $name eq "octet";
+    return "char" if $name eq "byte";
     return "unsigned" if $name eq "unsigned long";
     return "int" if $name eq "long";
     return "NSTimeInterval" if $name eq "Date";

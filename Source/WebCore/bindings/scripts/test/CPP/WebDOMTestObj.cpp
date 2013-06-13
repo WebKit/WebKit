@@ -116,6 +116,38 @@ WebDOMTestObj WebDOMTestObj::readOnlyTestObjAttr() const
     return toWebKit(WTF::getPtr(impl()->readOnlyTestObjAttr()));
 }
 
+char WebDOMTestObj::byteAttr() const
+{
+    if (!impl())
+        return char();
+
+    return impl()->byteAttr();
+}
+
+void WebDOMTestObj::setByteAttr(char newByteAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setByteAttr(newByteAttr);
+}
+
+unsigned char WebDOMTestObj::octetAttr() const
+{
+    if (!impl())
+        return unsigned char();
+
+    return impl()->octetAttr();
+}
+
+void WebDOMTestObj::setOctetAttr(unsigned char newOctetAttr)
+{
+    if (!impl())
+        return;
+
+    impl()->setOctetAttr(newOctetAttr);
+}
+
 short WebDOMTestObj::shortAttr() const
 {
     if (!impl())
@@ -747,6 +779,38 @@ void WebDOMTestObj::voidMethodWithArgs(int longArg, const WebDOMString& strArg, 
         return;
 
     impl()->voidMethodWithArgs(longArg, strArg, toWebCore(objArg));
+}
+
+char WebDOMTestObj::byteMethod()
+{
+    if (!impl())
+        return char();
+
+    return impl()->byteMethod();
+}
+
+char WebDOMTestObj::byteMethodWithArgs(char byteArg, const WebDOMString& strArg, const WebDOMTestObj& objArg)
+{
+    if (!impl())
+        return char();
+
+    return impl()->byteMethodWithArgs(byteArg, strArg, toWebCore(objArg));
+}
+
+unsigned char WebDOMTestObj::octetMethod()
+{
+    if (!impl())
+        return unsigned char();
+
+    return impl()->octetMethod();
+}
+
+unsigned char WebDOMTestObj::octetMethodWithArgs(unsigned char octetArg, const WebDOMString& strArg, const WebDOMTestObj& objArg)
+{
+    if (!impl())
+        return unsigned char();
+
+    return impl()->octetMethodWithArgs(octetArg, strArg, toWebCore(objArg));
 }
 
 int WebDOMTestObj::longMethod()

@@ -111,6 +111,30 @@
     return kit(WTF::getPtr(IMPL->readOnlyTestObjAttr()));
 }
 
+- (char)byteAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->byteAttr();
+}
+
+- (void)setByteAttr:(char)newByteAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setByteAttr(newByteAttr);
+}
+
+- (unsigned char)octetAttr
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->octetAttr();
+}
+
+- (void)setOctetAttr:(unsigned char)newOctetAttr
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setOctetAttr(newOctetAttr);
+}
+
 - (short)shortAttr
 {
     WebCore::JSMainThreadNullState state;
@@ -773,6 +797,30 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->voidMethodWithArgs(longArg, strArg, core(objArg));
+}
+
+- (char)byteMethod
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->byteMethod();
+}
+
+- (char)byteMethodWithArgs:(char)byteArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->byteMethodWithArgs(byteArg, strArg, core(objArg));
+}
+
+- (unsigned char)octetMethod
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->octetMethod();
+}
+
+- (unsigned char)octetMethodWithArgs:(unsigned char)octetArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->octetMethodWithArgs(octetArg, strArg, core(objArg));
 }
 
 - (int)longMethod

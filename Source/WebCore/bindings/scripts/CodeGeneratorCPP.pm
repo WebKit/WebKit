@@ -236,6 +236,8 @@ sub GetCPPType
     my $useConstReference = shift;
     my $name = GetClassName($type);
 
+    return "char" if $type eq "byte";
+    return "unsigned char" if $type eq "octet";
     return "int" if $type eq "long";
     return "unsigned" if $name eq "unsigned long";
     return "unsigned short" if $type eq "CompareHow";

@@ -80,6 +80,8 @@ static const HashTableValue JSTestObjTableValues[] =
     { "readOnlyStringAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyStringAttr), (intptr_t)0, NoIntrinsic },
     { "readOnlyTestObjAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyTestObjAttr), (intptr_t)0, NoIntrinsic },
     { "enumAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjEnumAttr), (intptr_t)setJSTestObjEnumAttr, NoIntrinsic },
+    { "byteAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjByteAttr), (intptr_t)setJSTestObjByteAttr, NoIntrinsic },
+    { "octetAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjOctetAttr), (intptr_t)setJSTestObjOctetAttr, NoIntrinsic },
     { "shortAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjShortAttr), (intptr_t)setJSTestObjShortAttr, NoIntrinsic },
     { "unsignedShortAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjUnsignedShortAttr), (intptr_t)setJSTestObjUnsignedShortAttr, NoIntrinsic },
     { "longAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjLongAttr), (intptr_t)setJSTestObjLongAttr, NoIntrinsic },
@@ -152,7 +154,7 @@ static const HashTableValue JSTestObjTableValues[] =
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestObjTable = { 145, 127, JSTestObjTableValues, 0 };
+static const HashTable JSTestObjTable = { 265, 255, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestObjConstructorTableValues[] =
@@ -268,6 +270,10 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "CONST_JAVASCRIPT", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_JAVASCRIPT), (intptr_t)0, NoIntrinsic },
     { "voidMethod", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t)0, NoIntrinsic },
     { "voidMethodWithArgs", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t)3, NoIntrinsic },
+    { "byteMethod", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionByteMethod), (intptr_t)0, NoIntrinsic },
+    { "byteMethodWithArgs", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionByteMethodWithArgs), (intptr_t)3, NoIntrinsic },
+    { "octetMethod", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOctetMethod), (intptr_t)0, NoIntrinsic },
+    { "octetMethodWithArgs", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOctetMethodWithArgs), (intptr_t)3, NoIntrinsic },
     { "longMethod", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionLongMethod), (intptr_t)0, NoIntrinsic },
     { "longMethodWithArgs", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionLongMethodWithArgs), (intptr_t)3, NoIntrinsic },
     { "objMethod", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionObjMethod), (intptr_t)0, NoIntrinsic },
@@ -330,7 +336,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestObjPrototypeTable = { 266, 255, JSTestObjPrototypeTableValues, 0 };
+static const HashTable JSTestObjPrototypeTable = { 267, 255, JSTestObjPrototypeTableValues, 0 };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
 JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
@@ -455,6 +461,26 @@ JSValue jsTestObjEnumAttr(ExecState* exec, JSValue slotBase, PropertyName)
     UNUSED_PARAM(exec);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     JSValue result = jsStringWithCache(exec, impl->enumAttr());
+    return result;
+}
+
+
+JSValue jsTestObjByteAttr(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(impl->byteAttr());
+    return result;
+}
+
+
+JSValue jsTestObjOctetAttr(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(impl->octetAttr());
     return result;
 }
 
@@ -1094,6 +1120,30 @@ void setJSTestObjEnumAttr(ExecState* exec, JSObject* thisObject, JSValue value)
 }
 
 
+void setJSTestObjByteAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    UNUSED_PARAM(exec);
+    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    int8_t nativeValue(toInt8(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setByteAttr(nativeValue);
+}
+
+
+void setJSTestObjOctetAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    UNUSED_PARAM(exec);
+    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    uint8_t nativeValue(toUInt8(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setOctetAttr(nativeValue);
+}
+
+
 void setJSTestObjShortAttr(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     UNUSED_PARAM(exec);
@@ -1706,6 +1756,80 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
         return JSValue::encode(jsUndefined());
     impl->voidMethodWithArgs(longArg, strArg, objArg);
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+
+    JSC::JSValue result = jsNumber(impl->byteMethod());
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 3)
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    int8_t byteArg(toInt8(exec, exec->argument(0), NormalConversion));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    const String& strArg(exec->argument(1).isEmpty() ? String() : exec->argument(1).toString(exec)->value(exec));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    TestObj* objArg(toTestObj(exec->argument(2)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSC::JSValue result = jsNumber(impl->byteMethodWithArgs(byteArg, strArg, objArg));
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+
+    JSC::JSValue result = jsNumber(impl->octetMethod());
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 3)
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    uint8_t octetArg(toUInt8(exec, exec->argument(0), NormalConversion));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    const String& strArg(exec->argument(1).isEmpty() ? String() : exec->argument(1).toString(exec)->value(exec));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    TestObj* objArg(toTestObj(exec->argument(2)));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSC::JSValue result = jsNumber(impl->octetMethodWithArgs(octetArg, strArg, objArg));
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(ExecState* exec)

@@ -1,3 +1,16 @@
+2013-06-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Support byte and octet types in bindings generators
+        https://bugs.webkit.org/show_bug.cgi?id=117547
+
+        Reviewed by Kentaro Hara.
+
+        Update fast/js/webidl-type-mapping.html to cover byte and octet
+        Web IDL types with and without [EnforceRange].
+
+        * fast/js/webidl-type-mapping-expected.txt:
+        * fast/js/webidl-type-mapping.html:
+
 2013-06-13  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Regions] -webkit-background-clip: text; does not clip the background in regions

@@ -71,6 +71,10 @@ public:
     int readOnlyLongAttr() const;
     WebDOMString readOnlyStringAttr() const;
     WebDOMTestObj readOnlyTestObjAttr() const;
+    char byteAttr() const;
+    void setByteAttr(char);
+    unsigned char octetAttr() const;
+    void setOctetAttr(unsigned char);
     short shortAttr() const;
     void setShortAttr(short);
     unsigned short unsignedShortAttr() const;
@@ -154,6 +158,10 @@ public:
 
     void voidMethod();
     void voidMethodWithArgs(int longArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
+    char byteMethod();
+    char byteMethodWithArgs(char byteArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
+    unsigned char octetMethod();
+    unsigned char octetMethodWithArgs(unsigned char octetArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     int longMethod();
     int longMethodWithArgs(int longArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     WebDOMTestObj objMethod();

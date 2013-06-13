@@ -54,6 +54,15 @@ public:
     unsigned long long testEnforceRangeUnsignedLongLong() { return m_unsignedLongLong; }
     void setTestEnforceRangeUnsignedLongLong(unsigned long long value) { m_unsignedLongLong = value; }
 
+    int8_t testByte() { return m_byte; }
+    void setTestByte(int8_t value) { m_byte = value; }
+    int8_t testEnforceRangeByte() { return m_byte; }
+    void setTestEnforceRangeByte(int8_t value) { m_byte = value; }
+
+    uint8_t testOctet() { return m_octet; }
+    void setTestOctet(uint8_t value) { m_octet = value; }
+    uint8_t testEnforceRangeOctet() { return m_octet; }
+    void setTestEnforceRangeOctet(uint8_t value) { m_octet = value; }
 private:
     TypeConversions()
     {
@@ -63,6 +72,8 @@ private:
     unsigned long m_unsignedLong;
     long long m_longLong;
     unsigned long long m_unsignedLongLong;
+    int8_t m_byte;
+    uint8_t m_octet;
 };
 
 } // namespace WebCore

@@ -73,6 +73,52 @@ WEBKIT_API void
 webkit_dom_test_obj_void_method_with_args(WebKitDOMTestObj* self, glong longArg, const gchar* strArg, WebKitDOMTestObj* objArg);
 
 /**
+ * webkit_dom_test_obj_byte_method:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gint8
+webkit_dom_test_obj_byte_method(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_byte_method_with_args:
+ * @self: A #WebKitDOMTestObj
+ * @byteArg: A #gint8
+ * @strArg: A #gchar
+ * @objArg: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gint8
+webkit_dom_test_obj_byte_method_with_args(WebKitDOMTestObj* self, gint8 byteArg, const gchar* strArg, WebKitDOMTestObj* objArg);
+
+/**
+ * webkit_dom_test_obj_octet_method:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API guint8
+webkit_dom_test_obj_octet_method(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_octet_method_with_args:
+ * @self: A #WebKitDOMTestObj
+ * @octetArg: A #guint8
+ * @strArg: A #gchar
+ * @objArg: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API guint8
+webkit_dom_test_obj_octet_method_with_args(WebKitDOMTestObj* self, guint8 octetArg, const gchar* strArg, WebKitDOMTestObj* objArg);
+
+/**
  * webkit_dom_test_obj_long_method:
  * @self: A #WebKitDOMTestObj
  *
@@ -554,6 +600,48 @@ webkit_dom_test_obj_get_read_only_string_attr(WebKitDOMTestObj* self);
 **/
 WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_get_read_only_test_obj_attr(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_get_byte_attr:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gint8
+webkit_dom_test_obj_get_byte_attr(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_byte_attr:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #gint8
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_byte_attr(WebKitDOMTestObj* self, gint8 value);
+
+/**
+ * webkit_dom_test_obj_get_octet_attr:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API guint8
+webkit_dom_test_obj_get_octet_attr(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_octet_attr:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #guint8
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_octet_attr(WebKitDOMTestObj* self, guint8 value);
 
 /**
  * webkit_dom_test_obj_get_short_attr:

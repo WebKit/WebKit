@@ -267,6 +267,9 @@ class DOMStringList;
     int32_t toInt32EnforceRange(JSC::ExecState*, JSC::JSValue);
     uint32_t toUInt32EnforceRange(JSC::ExecState*, JSC::JSValue);
 
+    int8_t toInt8(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
+    uint8_t toUInt8(JSC::ExecState*, JSC::JSValue, IntegerConversionConfiguration);
+
     /*
         Convert a value to an integer as per <http://www.w3.org/TR/WebIDL/>.
         The conversion fails if the value cannot be converted to a number or,

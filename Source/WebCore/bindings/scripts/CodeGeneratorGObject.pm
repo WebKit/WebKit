@@ -328,6 +328,8 @@ sub GetGValueTypeName {
                  "char", "char",
                  "long", "long",
                  "long long", "int64",
+                 "byte", "int8",
+                 "octet", "uint8",
                  "short", "int",
                  "uchar", "uchar",
                  "unsigned", "uint",
@@ -354,6 +356,8 @@ sub GetGlibTypeName {
                  "char", "gchar",
                  "long", "glong",
                  "long long", "gint64",
+                 "byte", "gint8",
+                 "octet", "guint8",
                  "short", "gshort",
                  "uchar", "guchar",
                  "unsigned", "guint",
@@ -396,8 +400,9 @@ sub GetWriteableProperties {
         my $gtype = GetGValueTypeName($property->signature->type);
         my $hasGtypeSignature = ($gtype eq "boolean" || $gtype eq "float" || $gtype eq "double" ||
                                  $gtype eq "uint64" || $gtype eq "ulong" || $gtype eq "long" || 
-                                 $gtype eq "uint" || $gtype eq "ushort" || $gtype eq "uchar" ||
-                                 $gtype eq "char" || $gtype eq "string");
+                                 $gtype eq "uint" || $gtype eq "ushort" || $gtype eq "int8" ||
+                                 $gtype eq "uint8" || $gtype eq "uchar" || $gtype eq "char" ||
+                                 $gtype eq "string");
         # FIXME: We are not generating setters for 'Replaceable'
         # attributes now, but we should somehow.
         my $replaceable = $property->signature->extendedAttributes->{"Replaceable"};
@@ -568,6 +573,7 @@ sub GenerateProperty {
     push(@txtGetProps, "        break;\n    }\n");
 
     my %param_spec_options = ("int", "G_MININT, /* min */\nG_MAXINT, /* max */\n0, /* default */",
+                              "int8", "G_MININT8, /* min */\nG_MAXINT8, /* max */\n0, /* default */",
                               "boolean", "FALSE, /* default */",
                               "float", "-G_MAXFLOAT, /* min */\nG_MAXFLOAT, /* max */\n0.0, /* default */",
                               "double", "-G_MAXDOUBLE, /* min */\nG_MAXDOUBLE, /* max */\n0.0, /* default */",
@@ -576,6 +582,7 @@ sub GenerateProperty {
                               "int64", "G_MININT64, /* min */\nG_MAXINT64, /* max */\n0, /* default */",
                               "ulong", "0, /* min */\nG_MAXULONG, /* max */\n0, /* default */",
                               "uint", "0, /* min */\nG_MAXUINT, /* max */\n0, /* default */",
+                              "uint8", "0, /* min */\nG_MAXUINT8, /* max */\n0, /* default */",
                               "ushort", "0, /* min */\nG_MAXUINT16, /* max */\n0, /* default */",
                               "uchar", "G_MININT8, /* min */\nG_MAXINT8, /* max */\n0, /* default */",
                               "char", "0, /* min */\nG_MAXUINT8, /* max */\n0, /* default */",

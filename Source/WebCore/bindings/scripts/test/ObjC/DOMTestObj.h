@@ -66,6 +66,8 @@ enum {
 @property(readonly) int readOnlyLongAttr;
 @property(readonly, copy) NSString *readOnlyStringAttr;
 @property(readonly, retain) DOMTestObj *readOnlyTestObjAttr;
+@property char byteAttr;
+@property unsigned char octetAttr;
 @property short shortAttr;
 @property unsigned short unsignedShortAttr;
 @property int longAttr;
@@ -122,6 +124,10 @@ enum {
 
 - (void)voidMethod;
 - (void)voidMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (char)byteMethod;
+- (char)byteMethodWithArgs:(char)byteArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (unsigned char)octetMethod;
+- (unsigned char)octetMethodWithArgs:(unsigned char)octetArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (int)longMethod;
 - (int)longMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (DOMTestObj *)objMethod;

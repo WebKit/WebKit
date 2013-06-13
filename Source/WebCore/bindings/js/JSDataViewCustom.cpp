@@ -36,8 +36,6 @@ using namespace JSC;
 namespace WebCore {
 
 enum DataViewAccessType {
-    AccessDataViewMemberAsInt8,
-    AccessDataViewMemberAsUint8,
     AccessDataViewMemberAsFloat32,
     AccessDataViewMemberAsFloat64
 };
@@ -80,12 +78,6 @@ static JSValue getDataViewMember(ExecState* exec, DataView* imp, DataViewAccessT
 
     JSC::JSValue result;
     switch (type) {
-    case AccessDataViewMemberAsInt8:
-        result = jsNumber(imp->getInt8(byteOffset, ec));
-        break;
-    case AccessDataViewMemberAsUint8:
-        result = jsNumber(imp->getUint8(byteOffset, ec));
-        break;
     case AccessDataViewMemberAsFloat32:
     case AccessDataViewMemberAsFloat64: {
         double value = (type == AccessDataViewMemberAsFloat32) ? imp->getFloat32(byteOffset, littleEndian, ec) : imp->getFloat64(byteOffset, littleEndian, ec);
@@ -99,16 +91,6 @@ static JSValue getDataViewMember(ExecState* exec, DataView* imp, DataViewAccessT
     return result;
 }
 
-JSValue JSDataView::getInt8(ExecState* exec)
-{
-    return getDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsInt8);
-}
-
-JSValue JSDataView::getUint8(ExecState* exec)
-{
-    return getDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsUint8);
-}
-
 JSValue JSDataView::getFloat32(ExecState* exec)
 {
     return getDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsFloat32);
@@ -117,43 +99,6 @@ JSValue JSDataView::getFloat32(ExecState* exec)
 JSValue JSDataView::getFloat64(ExecState* exec)
 {
     return getDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsFloat64);
-}
-
-static JSValue setDataViewMember(ExecState* exec, DataView* imp, DataViewAccessType type)
-{
-    if (exec->argumentCount() < 2)
-        return throwError(exec, createNotEnoughArgumentsError(exec));
-    ExceptionCode ec = 0;
-    unsigned byteOffset = exec->argument(0).toUInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-    int value = exec->argument(1).toInt32(exec);
-    if (exec->hadException())
-        return jsUndefined();
-        
-    switch (type) {
-    case AccessDataViewMemberAsInt8:
-        imp->setInt8(byteOffset, static_cast<int8_t>(value), ec);
-        break;
-    case AccessDataViewMemberAsUint8:
-        imp->setUint8(byteOffset, static_cast<uint8_t>(value), ec);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    setDOMException(exec, ec);
-    return jsUndefined();
-}
-
-JSValue JSDataView::setInt8(ExecState* exec)
-{
-    return setDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsInt8);
-}
-
-JSValue JSDataView::setUint8(ExecState* exec)
-{
-    return setDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsUint8);
 }
 
 } // namespace WebCore

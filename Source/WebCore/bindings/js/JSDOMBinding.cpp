@@ -39,6 +39,7 @@
 #include <runtime/Error.h>
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSFunction.h>
+#include <wtf/MathExtras.h>
 
 using namespace JSC;
 
@@ -286,6 +287,9 @@ Structure* cacheDOMStructure(JSDOMGlobalObject* globalObject, Structure* structu
     return structures.set(classInfo, WriteBarrier<Structure>(globalObject->vm(), globalObject, structure)).iterator->value.get();
 }
 
+static const int8_t kMaxInt8 = 127;
+static const int8_t kMinInt8 = -128;
+static const uint8_t kMaxUInt8 = 255;
 static const int32_t kMaxInt32 = 0x7fffffff;
 static const int32_t kMinInt32 = -kMaxInt32 - 1;
 static const uint32_t kMaxUInt32 = 0xffffffffU;
@@ -303,6 +307,67 @@ static double enforceRange(ExecState* exec, double x, double minimum, double max
         return 0;
     }
     return x;
+}
+
+// http://www.w3.org/TR/WebIDL/#es-byte
+int8_t toInt8(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+{
+    // Fast path if the value is already a 32-bit signed integer in the right range.
+    if (value.isInt32()) {
+        int32_t d = value.asInt32();
+        if (d >= kMinInt8 && d <= kMaxInt8)
+            return static_cast<int8_t>(d);
+        if (configuration == EnforceRange) {
+            throwTypeError(exec);
+            return 0;
+        }
+        d %= 256;
+        return static_cast<int8_t>(d > kMaxInt8 ? d - 256 : d);
+    }
+
+    double x = value.toNumber(exec);
+    if (exec->hadException())
+        return 0;
+
+    if (configuration == EnforceRange)
+        return enforceRange(exec, x, kMinInt8, kMaxInt8);
+
+    if (std::isnan(x) || std::isinf(x) || !x)
+        return 0;
+
+    x = x < 0 ? -floor(abs(x)) : floor(abs(x));
+    x = fmod(x, 256); // 2^8.
+
+    return static_cast<int8_t>(x > kMaxInt8 ? x - 256 : x);
+}
+
+// http://www.w3.org/TR/WebIDL/#es-octet
+uint8_t toUInt8(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+{
+    // Fast path if the value is already a 32-bit unsigned integer in the right range.
+    if (value.isUInt32()) {
+        uint32_t d = value.asUInt32();
+        if (d <= kMaxUInt8)
+            return static_cast<uint8_t>(d);
+        if (configuration == EnforceRange) {
+            throwTypeError(exec);
+            return 0;
+        }
+        return static_cast<uint8_t>(d % 256); // 2^8.
+    }
+
+    double x = value.toNumber(exec);
+    if (exec->hadException())
+        return 0;
+
+    if (configuration == EnforceRange)
+        return enforceRange(exec, x, 0, kMaxUInt8);
+
+    if (std::isnan(x) || std::isinf(x) || !x)
+        return 0;
+
+    x = x < 0 ? -floor(abs(x)) : floor(abs(x));
+    return static_cast<uint8_t>(fmod(x, 256)); // 2^8.
 }
 
 // http://www.w3.org/TR/WebIDL/#es-long

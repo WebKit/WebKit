@@ -3375,6 +3375,8 @@ my %nativeType = (
     "unsigned short" => "unsigned short",
     "long long" => "long long",
     "unsigned long long" => "unsigned long long",
+    "byte" => "int8_t",
+    "octet" => "uint8_t",
     "MediaQueryListListener" => "RefPtr<MediaQueryListListener>",
     "DOMTimeStamp" => "DOMTimeStamp",    
 );
@@ -3479,6 +3481,8 @@ sub JSValueToNative
     return "$value.toFloat(exec)" if $type eq "float";
 
     my $intConversion = $signature->extendedAttributes->{"EnforceRange"} ? "EnforceRange" : "NormalConversion";
+    return "toInt8(exec, $value, $intConversion)" if $type eq "byte";
+    return "toUInt8(exec, $value, $intConversion)" if $type eq "octet";
     return "toInt32(exec, $value, $intConversion)" if $type eq "long" or $type eq "short";
     return "toUInt32(exec, $value, $intConversion)" if $type eq "unsigned long" or $type eq "unsigned short";
     return "toInt64(exec, $value, $intConversion)" if $type eq "long long";
