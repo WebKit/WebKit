@@ -32,10 +32,10 @@
 
 namespace WebCore {
 
-void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode)
+void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode blendMode)
 {
     GraphicsContextStateSaver stateSaver(*destContext);
-    destContext->setCompositeOperation(compositeOp);
+    destContext->setCompositeOperation(compositeOp, blendMode);
     destContext->clip(destRect);
     destContext->translate(destRect.x(), destRect.y());
     if (destRect.size() != srcRect.size())

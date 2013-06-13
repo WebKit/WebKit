@@ -1,3 +1,23 @@
+2013-06-13  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Background Blending] Gradients don't blend with any of the layers behind.
+        First, allow the layers behind opaque gradients to be drawn, then add the blending filters
+        when working with gradients.
+
+        https://bugs.webkit.org/show_bug.cgi?id=117532
+
+        Reviewed by Dirk Schulze.
+
+        Tests: css3/compositing/background-blend-mode-gradient-color.html
+               css3/compositing/background-blend-mode-gradient-gradient.html
+               css3/compositing/background-blend-mode-gradient-image.html
+               css3/compositing/background-blend-mode-multiple-background-layers.html
+
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::draw):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayers):
+
 2013-06-13  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt][Mac] Disable QTKit video on OS X.

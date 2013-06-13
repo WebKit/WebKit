@@ -1,3 +1,25 @@
+2013-06-13  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Background Blending] Gradients don't blend with any of the layers behind.
+        First, allow the layers behind opaque gradients to be drawn, then add the blending filters
+        when working with gradients.
+
+        https://bugs.webkit.org/show_bug.cgi?id=117532
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/background-blend-mode-gradient-color-expected.txt: Added.
+        * css3/compositing/background-blend-mode-gradient-color.html: Added.
+        * css3/compositing/background-blend-mode-gradient-gradient-expected.txt: Added.
+        * css3/compositing/background-blend-mode-gradient-gradient.html: Added.
+        * css3/compositing/background-blend-mode-gradient-image-expected.txt: Added.
+        * css3/compositing/background-blend-mode-gradient-image.html: Added.
+        * css3/compositing/background-blend-mode-multiple-background-layers-expected.txt: Added.
+        * css3/compositing/background-blend-mode-multiple-background-layers.html: Added.
+        * platform/mac/css3/compositing/background-blend-mode-gradient-color-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-gradient-gradient-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-gradient-image-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-multiple-background-layers-expected.png: Added.
+
 2013-06-13  Morten Stenshorne  <mstensho@opera.com>
 
         Column balancing support in the region based multicol implementation
