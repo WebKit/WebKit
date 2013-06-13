@@ -56,6 +56,8 @@ public:
 protected:
     void ensureLayer();
 
+    bool shouldUseClipForRepaint(RenderObject* container) const;
+
     virtual void willBeDestroyed() OVERRIDE;
 
 private:
