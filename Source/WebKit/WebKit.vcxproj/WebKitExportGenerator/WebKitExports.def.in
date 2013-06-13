@@ -441,6 +441,8 @@ EXPORTS
         ?captionPreferences@PageGroup@WebCore@@QAEPAVCaptionUserPreferences@2@XZ
 #endif
         ?initGroup@Page@WebCore@@AAEXXZ
+        ?toInt8@WebCore@@YACPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z
+        ?toUInt8@WebCore@@YAEPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z
         ?toInt32EnforceRange@WebCore@@YAHPAVExecState@JSC@@VJSValue@3@@Z
         ?toInt64@WebCore@@YA_JPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z
         ?toUInt32EnforceRange@WebCore@@YAIPAVExecState@JSC@@VJSValue@3@@Z

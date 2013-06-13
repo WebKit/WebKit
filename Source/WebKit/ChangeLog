@@ -1,3 +1,11 @@
+2013-06-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed build fix after rr151563.
+
+        Export needed symbols for Windows.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-06-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Revise WebKit project to show generated export definition file.
