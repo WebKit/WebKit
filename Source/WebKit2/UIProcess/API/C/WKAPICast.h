@@ -414,8 +414,6 @@ inline WKPluginLoadPolicy toWKPluginLoadPolicy(PluginModuleLoadPolicy pluginModu
         return kWKPluginLoadPolicyLoadUnsandboxed;
     case PluginModuleBlocked:
         return kWKPluginLoadPolicyBlocked;
-    case PluginModuleInactive:
-        return kWKPluginLoadPolicyInactive;
     }
     
     ASSERT_NOT_REACHED();
@@ -429,8 +427,6 @@ inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy plugin
         return PluginModuleLoadNormally;
     case kWKPluginLoadPolicyBlocked:
         return PluginModuleBlocked;
-    case kWKPluginLoadPolicyInactive:
-        return PluginModuleInactive;
     case kWKPluginLoadPolicyLoadUnsandboxed:
         return PluginModuleLoadUnsandboxed;
     }

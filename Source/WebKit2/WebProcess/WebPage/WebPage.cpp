@@ -555,11 +555,6 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 
         send(Messages::WebPageProxy::DidBlockInsecurePluginVersion(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString));
         return 0;
-
-    case PluginModuleInactive:
-        if (pluginElement->renderer()->isEmbeddedObject())
-            toRenderEmbeddedObject(pluginElement->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginInactive);
-        return 0;
     }
 
     if (!pluginProcessToken) {

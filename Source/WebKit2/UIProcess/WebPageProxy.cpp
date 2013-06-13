@@ -1439,7 +1439,6 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
         break;
 
     case PluginModuleBlocked:
-    case PluginModuleInactive:
         pluginProcessToken = 0;
         return;
     }
@@ -2761,17 +2760,6 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
     case RenderEmbeddedObject::PluginCrashed:
         pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginCrashed;
         break;
-
-    case RenderEmbeddedObject::PluginInactive: {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        if (!plugin.path.isEmpty() && PluginInfoStore::reactivateInactivePlugin(plugin)) {
-            // The plug-in has been reactivated now; reload the page so it'll be instantiated.
-            reload(false);
-        }
-        return;
-#endif
-    }
-
     case RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy:
         ASSERT_NOT_REACHED();
     }

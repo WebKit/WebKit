@@ -1645,19 +1645,6 @@ private:
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-static bool isOracleJavaPlugIn(NSString *bundleIdentifier)
-{
-    return [bundleIdentifier isEqualToString:@"com.oracle.java.JavaAppletPlugin"];
-}
-
-static bool isPlugInInactive(NSString *bundleIdentifier)
-{
-    if (isOracleJavaPlugIn(bundleIdentifier) && !WKIsJavaPlugInActive())
-        return true;
-
-    return false;
-}
-
 PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElement* element, const KURL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
@@ -1733,10 +1720,6 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
             errorCode = WebKitErrorBlockedPlugInVersion;
             if (element->renderer()->isEmbeddedObject())
                 toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
-        } else if (isPlugInInactive([pluginPackage bundleIdentifier])) {
-            if (element->renderer()->isEmbeddedObject())
-                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginInactive);
-            return 0;
         } else {
             if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
                 view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys, kit(paramValues), baseURL, kit(element), loadManually);
@@ -1840,10 +1823,6 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
             errorCode = WebKitErrorBlockedPlugInVersion;
             if (element->renderer()->isEmbeddedObject())
                 toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
-        } else if (isPlugInInactive([pluginPackage bundleIdentifier])) {
-            if (element->renderer()->isEmbeddedObject())
-                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginInactive);
-            return 0;
         } else {
     #if ENABLE(NETSCAPE_PLUGIN_API)
             if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {

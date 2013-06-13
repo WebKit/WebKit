@@ -72,7 +72,6 @@ public:
     PluginModuleInfo infoForPluginWithPath(const String& pluginPath) const;
 
     static PluginModuleLoadPolicy defaultLoadPolicyForPlugin(const PluginModuleInfo&);
-    static bool reactivateInactivePlugin(const PluginModuleInfo&);
 
     void setClient(PluginInfoStoreClient* client) { m_client = client; }
     PluginInfoStoreClient* client() const { return m_client; }

@@ -1,3 +1,31 @@
+2013-06-12  Anders Carlsson  <andersca@apple.com>
+
+        Remove the notion of inactive plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=117570
+        <rdar://problem/13484213>
+
+        Reviewed by Tim Horton.
+
+        Remove code that deals with inactive plug-ins. We still keep around the kWKPluginLoadPolicyInactive API enum for now.
+
+        * Shared/Plugins/PluginModuleInfo.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toWKPluginLoadPolicy):
+        (WebKit::toPluginModuleLoadPolicy):
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        (WebKit::PluginInfoStore::defaultLoadPolicyForPlugin):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldUnavailablePluginMessageBeButton):
+        (WebKit::WebChromeClient::unavailablePluginButtonClicked):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+
 2013-06-12  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [GTK] Explicit include glib.h to avoid compilation errors if libsoup isn't used.

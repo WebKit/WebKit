@@ -588,9 +588,6 @@ void WebChromeClient::scrollRectIntoView(const IntRect& r) const
 
 bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
-    if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginInactive)
-        return true;
-
     if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing)
         return [[m_webView UIDelegate] respondsToSelector:@selector(webView:didPressMissingPluginButton:)];
 
@@ -601,28 +598,7 @@ void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmb
 {
     ASSERT(element->hasTagName(objectTag) || element->hasTagName(embedTag) || element->hasTagName(appletTag));
 
-    if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginInactive) {
-        HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(element);
-
-        WebBasePluginPackage *pluginPackage = nil;
-        if (!pluginElement->serviceType().isEmpty())
-            pluginPackage = [m_webView _pluginForMIMEType:pluginElement->serviceType()];
-
-        NSURL *url = pluginElement->document()->completeURL(pluginElement->url());
-        NSString *extension = [[url path] pathExtension];
-        if (!pluginPackage && [extension length])
-            pluginPackage = [m_webView _pluginForExtension:extension];
-
-        if (pluginPackage && [pluginPackage bundleIdentifier] == "com.oracle.java.JavaAppletPlugin") {
-            // Reactivate the plug-in and reload the page so the plug-in will be instantiated correctly.
-            WKActivateJavaPlugIn();
-            [m_webView reload:nil];
-        }
-
-        return;
-    }
-
-    ASSERT(pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing || pluginUnavailabilityReason == RenderEmbeddedObject::PluginInactive);
+    ASSERT(pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing);
     CallUIDelegate(m_webView, @selector(webView:didPressMissingPluginButton:), kit(element));
 }
 

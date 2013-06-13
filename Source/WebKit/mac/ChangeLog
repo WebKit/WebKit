@@ -1,3 +1,19 @@
+2013-06-12  Anders Carlsson  <andersca@apple.com>
+
+        Remove the notion of inactive plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=117570
+        <rdar://problem/13484213>
+
+        Reviewed by Tim Horton.
+
+        Remove code that deals with inactive plug-ins.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::shouldUnavailablePluginMessageBeButton):
+        (WebChromeClient::unavailablePluginButtonClicked):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+
 2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove memoryInfoEnabled, quantizedMemoryInfoEnabled settings

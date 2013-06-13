@@ -186,11 +186,6 @@ PluginModuleLoadPolicy PluginInfoStore::defaultLoadPolicyForPlugin(const PluginM
     return PluginModuleLoadNormally;
 }
 
-bool PluginInfoStore::reactivateInactivePlugin(const PluginModuleInfo&)
-{
-    return false;
-}
-
 String PluginInfoStore::getMIMETypeForExtension(const String& extension)
 {
     return MIMETypeRegistry::getMIMETypeForExtension(extension);
