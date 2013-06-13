@@ -151,6 +151,14 @@ bool RenderRegion::isLastRegion() const
     return m_flowThread->lastRegion() == this;
 }
 
+static bool shouldPaintRegionContentsInPhase(PaintPhase phase)
+{
+    return phase == PaintPhaseBlockBackground
+        || phase == PaintPhaseChildBlockBackground
+        || phase == PaintPhaseSelection
+        || phase == PaintPhaseTextClip;
+}
+
 void RenderRegion::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE)
@@ -161,13 +169,14 @@ void RenderRegion::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOff
     if (!isValid())
         return;
 
-    // Delegate painting of content in region to RenderFlowThread.
-    // RenderFlowThread is a self painting layer (being a positioned object) who is painting its children, the collected objects.
-    // Since we do not want to paint the flow thread content multiple times (for each painting phase of the region object),
-    // we allow the flow thread painting only for the selection and the background phase.
-    if (paintInfo.phase != PaintPhaseBlockBackground && paintInfo.phase != PaintPhaseChildBlockBackground && paintInfo.phase != PaintPhaseSelection)
+    // We do not want to paint a region's contents multiple times (for each paint phase of the region object).
+    // Thus, we only paint the region's contents in certain phases.
+    if (!shouldPaintRegionContentsInPhase(paintInfo.phase))
         return;
 
+    // Delegate the painting of a region's contents to RenderFlowThread.
+    // RenderFlowThread is a self painting layer because it's a positioned object.
+    // RenderFlowThread paints its children, the collected objects.
     setRegionObjectsRegionStyle();
     m_flowThread->paintFlowThreadPortionInRegion(paintInfo, this, flowThreadPortionRect(), flowThreadPortionOverflowRect(), LayoutPoint(paintOffset.x() + borderLeft() + paddingLeft(), paintOffset.y() + borderTop() + paddingTop()));
     restoreRegionObjectsOriginalStyle();

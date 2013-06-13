@@ -1,3 +1,13 @@
+2013-06-13  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Regions] -webkit-background-clip: text; does not clip the background in regions
+        https://bugs.webkit.org/show_bug.cgi?id=117566
+
+        Reviewed by Alexandru Chiculita.
+
+        * fast/regions/webkit-background-clip-text-expected.html: Added.
+        * fast/regions/webkit-background-clip-text.html: Added.
+
 2013-06-13  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
 
         Setting overflow:hidden on position:absolute does not repaint hidden content

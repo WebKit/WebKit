@@ -1,3 +1,28 @@
+2013-06-13  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Regions] -webkit-background-clip: text; does not clip the background in regions
+        https://bugs.webkit.org/show_bug.cgi?id=117566
+
+        Reviewed by Alexandru Chiculita.
+
+        This patch enables -webkit-background-clip: text; on regions.
+
+        Test: fast/regions/webkit-background-clip-text.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::paintFlowThreadPortionInRegion):
+            Force black text if we're in the text clip paint phase. This makes sure the text's alpha
+            channel does not affect the final opacity of the background clipping result. Rather,
+            the text's alpha channel affects the amount of blending between the text color
+            and the background.
+        * rendering/RenderRegion.cpp:
+        (WebCore::shouldPaintRegionContentsInPhase):
+            Factor out a function to check if we should paint the region contents in a particular
+            phase. Add "PaintPhaseTextClip" so that we draw the contents in the text clipping phase.
+        (WebCore::RenderRegion::paintObject):
+            Call shouldPaintRegionContentsInPhase instead of doing the phase checks directly in this
+            function. Move, update, and clarify the surrounding comments.
+
 2013-06-13  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [CSS Regions] Regions auto-height and absolute positioning bug

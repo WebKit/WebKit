@@ -303,7 +303,11 @@ void RenderFlowThread::paintFlowThreadPortionInRegion(PaintInfo& paintInfo, Rend
         context->translate(adjustedPaintOffset.x(), adjustedPaintOffset.y());
         info.rect.moveBy(-adjustedPaintOffset);
         
-        layer()->paint(context, info.rect, 0, 0, region, RenderLayer::PaintLayerTemporaryClipRects);
+        PaintBehavior paintBehavior = 0;
+        if (info.phase == PaintPhaseTextClip)
+            paintBehavior |= PaintBehaviorForceBlackText;
+
+        layer()->paint(context, info.rect, paintBehavior, 0, region, RenderLayer::PaintLayerTemporaryClipRects);
 
         context->restore();
     }
