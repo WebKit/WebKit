@@ -89,17 +89,9 @@ static void _ewk_view_tiled_smart_add(Evas_Object* ewkView)
 
 static Eina_Bool _ewk_view_tiled_smart_scrolls_process(Ewk_View_Smart_Data* smartData)
 {
-    const Ewk_Scroll_Request* scrollRequest;
-    const Ewk_Scroll_Request* endOfScrollRequest;
-    size_t count;
-    Evas_Coord contentsWidth, contentsHeight;
-
-    ewk_frame_contents_size_get(smartData->main_frame, &contentsWidth, &contentsHeight);
-
-    scrollRequest = ewk_view_scroll_requests_get(smartData->_priv, &count);
-    endOfScrollRequest = scrollRequest + count;
-    for (; scrollRequest < endOfScrollRequest; scrollRequest++)
-        ewk_tiled_backing_store_scroll_full_offset_add(smartData->backing_store, scrollRequest->dx, scrollRequest->dy);
+    const WTF::Vector<WebCore::IntSize>& scrollOffset = ewk_view_scroll_offsets_get(smartData->_priv);
+    for (size_t i = 0; i < scrollOffset.size(); ++i)
+        ewk_tiled_backing_store_scroll_full_offset_add(smartData->backing_store, scrollOffset[i].width(), scrollOffset[i].height());
 
     return true;
 }

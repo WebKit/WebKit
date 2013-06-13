@@ -338,13 +338,6 @@ struct _Ewk_View_Redirection_Data {
     const char *source_url;  /**< Redirect source URL. */
     const char *destination_url;  /**< Redirect destination URL. */ 
 };
-/// Creates a type name for @a _Ewk_Scroll_Request.
-typedef struct _Ewk_Scroll_Request Ewk_Scroll_Request;
-/// Contains the scroll request that should be processed by subclass implementations.
-struct _Ewk_Scroll_Request {
-    Evas_Coord dx, dy;
-    Evas_Coord x, y, w, h, x2, y2;
-};
 
 /// Creates a type name for @a _Ewk_Color.
 typedef struct _Ewk_Color Ewk_Color;

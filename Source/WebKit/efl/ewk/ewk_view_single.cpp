@@ -129,22 +129,17 @@ static inline void _ewk_view_screen_move(uint32_t* image, size_t destinationX, s
     }
 }
 
-static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* smartData, void* pixels, Evas_Coord width, Evas_Coord height, const Ewk_Scroll_Request* scrollRequest)
+static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* smartData, void* pixels, Evas_Coord width, Evas_Coord height, const WebCore::IntSize& scrollOffset, const WebCore::IntRect& rectToScroll)
 {
-    Evas_Coord scrollX, scrollY, scrollWidth, scrollHeight;
+    int scrollX = rectToScroll.x();
+    int scrollY = rectToScroll.y();
+    int scrollWidth = rectToScroll.width();
+    int scrollHeight = rectToScroll.height();
 
     DBG("%d,%d + %d,%d %+03d,%+03d, store: %p %dx%d",
-        scrollRequest->x, scrollRequest->y, scrollRequest->w, scrollRequest->h, scrollRequest->dx, scrollRequest->dy, pixels, width, height);
+        scrollX, scrollY, scrollWidth, scrollHeight, scrollOffset.width(), scrollOffset.height(), pixels, width, height);
 
-    scrollX = scrollRequest->x;
-    scrollY = scrollRequest->y;
-    scrollWidth = scrollRequest->w;
-    scrollHeight = scrollRequest->h;
-
-    if (abs(scrollRequest->dx) >= scrollWidth || abs(scrollRequest->dy) >= scrollHeight) {
-        /* doubt webkit would be so stupid... */
-        DBG("full page scroll %+03d,%+03d. convert to repaint %d,%d + %dx%d",
-            scrollRequest->dx, scrollRequest->dy, scrollX, scrollY, scrollWidth, scrollHeight);
+    if (abs(scrollOffset.width()) >= scrollWidth || abs(scrollOffset.height()) >= scrollHeight) {
         ewk_view_repaint_add(smartData->_priv, scrollX, scrollY, scrollWidth, scrollHeight);
         return;
     }
@@ -163,20 +158,16 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
     if (scrollY + scrollHeight > height)
         scrollHeight = height - scrollY;
 
-    if (scrollWidth < 0)
-        scrollWidth = 0;
-    if (scrollHeight < 0)
-        scrollHeight = 0;
+    if (scrollWidth <= 0 || scrollHeight <= 0)
+        return;
 
-    EINA_SAFETY_ON_TRUE_RETURN(!scrollWidth || !scrollHeight);
-
-    int sourceX = scrollRequest->dx < 0 ? abs(scrollRequest->dx) : 0;
-    int sourceY = scrollRequest->dy < 0 ? abs(scrollRequest->dy) : 0;
-    int destinationX = scrollRequest->dx < 0 ? 0 : scrollRequest->dx;
-    int destinationY = scrollRequest->dy < 0 ? 0 : scrollRequest->dy;
-    int copyWidth = scrollWidth - abs(scrollRequest->dx);
-    int copyHeight = scrollHeight - abs(scrollRequest->dy);
-    if (scrollRequest->dx || scrollRequest->dy) {
+    int sourceX = scrollOffset.width() < 0 ? abs(scrollOffset.width()) : 0;
+    int sourceY = scrollOffset.height() < 0 ? abs(scrollOffset.height()) : 0;
+    int destinationX = scrollOffset.width() < 0 ? 0 : scrollOffset.width();
+    int destinationY = scrollOffset.height() < 0 ? 0 : scrollOffset.height();
+    int copyWidth = scrollWidth - abs(scrollOffset.width());
+    int copyHeight = scrollHeight - abs(scrollOffset.height());
+    if (scrollOffset.width() || scrollOffset.height()) {
         _ewk_view_screen_move(static_cast<uint32_t*>(pixels), destinationX, destinationY, sourceX, sourceY, copyWidth, copyHeight, width);
         evas_object_image_data_update_add(smartData->backing_store, destinationX, destinationY, copyWidth, copyHeight);
     }
@@ -184,7 +175,7 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
     Eina_Rectangle verticalUpdate;
     verticalUpdate.x = destinationX ? 0 : copyWidth - 1;
     verticalUpdate.y = 0;
-    verticalUpdate.w = abs(scrollRequest->dx);
+    verticalUpdate.w = abs(scrollOffset.width());
     verticalUpdate.h = scrollHeight;
     if (verticalUpdate.w && verticalUpdate.h)
         ewk_view_repaint_add(smartData->_priv, verticalUpdate.x, verticalUpdate.y, verticalUpdate.w, verticalUpdate.h);
@@ -193,24 +184,21 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
     horizontalUpdate.x = destinationX;
     horizontalUpdate.y = destinationY ? 0 : copyHeight - 1;
     horizontalUpdate.w = copyWidth;
-    horizontalUpdate.h = abs(scrollRequest->dy);
+    horizontalUpdate.h = abs(scrollOffset.height());
     if (horizontalUpdate.w && horizontalUpdate.h)
         ewk_view_repaint_add(smartData->_priv, horizontalUpdate.x, horizontalUpdate.y, horizontalUpdate.w, horizontalUpdate.h);
 }
 
 static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data* smartData)
 {
-    const Ewk_Scroll_Request* sr;
-    const Ewk_Scroll_Request* sr_end;
-    Evas_Coord ow, oh;
-    size_t count;
+    Evas_Coord imageWidth, imageHeight;
     void* pixels = evas_object_image_data_get(smartData->backing_store, 1);
-    evas_object_image_size_get(smartData->backing_store, &ow, &oh);
+    evas_object_image_size_get(smartData->backing_store, &imageWidth, &imageHeight);
 
-    sr = ewk_view_scroll_requests_get(smartData->_priv, &count);
-    sr_end = sr + count;
-    for (; sr < sr_end; sr++)
-        _ewk_view_single_scroll_process_single(smartData, pixels, ow, oh, sr);
+    const WTF::Vector<WebCore::IntSize>& scrollOffset = ewk_view_scroll_offsets_get(smartData->_priv);
+    const WTF::Vector<WebCore::IntRect>& rectsToScroll = ewk_view_scroll_rects_get(smartData->_priv);
+    for (size_t i = 0; i < scrollOffset.size(); ++i)
+        _ewk_view_single_scroll_process_single(smartData, pixels, imageWidth, imageHeight, scrollOffset[i], rectsToScroll[i]);
 
     evas_object_image_data_set(smartData->backing_store, pixels);
 
