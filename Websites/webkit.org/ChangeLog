@@ -1,3 +1,20 @@
+2013-06-12  Roger Fong  <roger_fong@apple.com>
+
+        Update webkit.org build instructions for Apple Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=117563.
+
+        Reviewed by Brent Fulgham.
+
+        * building/build.html:
+        * building/debug.html:
+        * building/launch-debugger-vs2005.png: Removed.
+        * building/launch-debugger-vs2010.png: Copied from webkit.org/building/launch-debugger-vs2005.png.
+        * building/set-as-startup-project-vs2005.png: Removed.
+        * building/set-as-startup-project-vs2010.png: Copied from webkit.org/building/set-as-startup-project-vs2005.png.
+        * building/set-debugging-properties-vs2005.png: Removed.
+        * building/set-debugging-properties-vs2010.png: Copied from webkit.org/building/set-debugging-properties-vs2005.png.
+        * building/tools.html:
+
 2013-06-12  Timothy Hatcher  <timothy@apple.com>
 
         Add new Web Inspector images for a blog post.

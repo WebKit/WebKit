@@ -23,35 +23,27 @@
 <div class="windows-instructions">
 <h2>Debugging on Windows</h2>
 <ol>
-<li><p>Open <code>WebKit/WebKit/win/WebKit.vcproj/WebKit.sln</code></p>
-<p>You can open it in either Visual Studio 2005, or Visual C++ Express 2005.
-If you get errors about not being able to find <code>.vsprops</code> files, run
+<li><p>Open <code>Source/WebKit/WebKit.vcxproj/WebKit.sln</code></p>
+<p>You can open it in either Visual Studio 2010, or Visual C++ Express 2010.
+If you get errors about not being able to find <code>.props</code> files, run
 update-webkit, then close and relaunch Cygwin and Visual Studio or Visual C++
 Express.</p>
 </li>
-<li><p>Set WebKit.vcproj as the solution's StartUp project</p>
-<p>Select the WebKit project in the Solution Explorer, then choose Project >
+<li><p>Set WinLauncher as the solution's StartUp project</p>
+<p>Select the WinLauncher project in the Solution Explorer, then choose Project >
 Set as StartUp Project. This will cause the project to turn bold in the
 Solution Explorer.</p>
-<img src="set-as-startup-project-vs2005.png">
-</li>
-<li><p>Set WebKit.vcproj's Debugging properties</p>
-<p>With the WebKit project selected, choose Project > Properties, then navigate
-to Configuration Properties > Debugging. Set the following options:</p>
-<dl>
-    <dt>Command</dt>
-    <dd><code>$(PROGRAMFILES)\Safari\Safari.exe</code></dd>
-    <dt>Environment</dt>
-    <dd><code>WEBKITNIGHTLY=$(OutDir)</code></dd>
-</dl>
-<p>Then click <code>OK</code> to close the properties dialog.</p>
-<img src="set-debugging-properties-vs2005.png">
+<img src="set-as-startup-project-vs2010.png">
 </li>
 <li><p>Launch the debugger</p>
 <p>Choose Debug > Start Debugging.</p>
-<img src="launch-debugger-vs2005.png">
+<img src="launch-debugger-vs2010.png">
+<li><p>Alternatively, you can debug layout tests with DumpRenderTree</p>
+<p>Set DumpRenderTreeLauncher as your startup project, set the layout test as a command argument, and launch the debugger.</p>
+<p>In DumpRenderTreeLauncher's properties, go to Configuration Properties->Debugging and set the Command Arguments field to the full path of the layout test you want to debug, see below: </p>
+<img src="set-debugging-properties-vs2010.png">
+</li>
 </ol>
-<p>It is also recommended that you follow <a href="http://developer.apple.com/internet/safari/windows_symbols_agree.html">the instructions to configure Visual Studio to use Apple's Safari for Windows symbol server</a>. This will give Visual Studio the information it needs to provide reliable backtraces when pausing in the debugger or when a crash occurs.</p>
 </div>
 
 <?php
