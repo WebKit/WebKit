@@ -1,3 +1,13 @@
+2013-06-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] [WK2] Found missing symbol when running some tests
+        https://bugs.webkit.org/show_bug.cgi?id=117598
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/symbols.filter: Added missing
+        _ZN7WebCore28notImplementedLoggingChannelEv.
+
 2013-06-12  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Remove dead WebDOM code
