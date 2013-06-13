@@ -1,3 +1,25 @@
+2013-06-13  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes][CSS Regions] Respect bottom positioned shapes and content adjustment inside shapes
+        https://bugs.webkit.org/show_bug.cgi?id=117599
+
+        Reviewed by David Hyatt.
+
+        In r150478 I added support for multiple positioned shape-insides on regions, this patch covers the cases when a shape
+        is positioned to the bottom of the region or the region contains a shape which forces the content to be adjusted inside
+        the shape (e.g. we have a triangle shape and the first line needs to be started at the first position where it fits).
+        I introduced a new helper function to update the current shape and the current line segments in the flow thread cases. With
+        this new helper function all the logic which calculates the segments for shape-inside on regions is located in one function.
+
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-bottom-positioned-multiple-shapes-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-bottom-positioned-multiple-shapes.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-polygon-with-adjustment-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-polygon-with-adjustment.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-overflow-bottom-positioned-multiple-shapes-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-overflow-bottom-positioned-multiple-shapes.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-polygon-with-adjustment-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-polygon-with-adjustment.html: Added.
+
 2013-06-13  Mihai Tica  <mitica@adobe.com>
 
         Add tests to validate CSS Background Blending

@@ -1458,6 +1458,7 @@ public:
         , m_isFullLayout(fullLayout)
         , m_repaintLogicalTop(repaintLogicalTop)
         , m_repaintLogicalBottom(repaintLogicalBottom)
+        , m_adjustedLogicalLineTop(0)
         , m_usesRepaintBounds(false)
         , m_flowThread(flowThread)
     { }
@@ -1503,6 +1504,9 @@ public:
     unsigned floatIndex() const { return m_floatIndex; }
     void setFloatIndex(unsigned floatIndex) { m_floatIndex = floatIndex; }
     
+    LayoutUnit adjustedLogicalLineTop() const { return m_adjustedLogicalLineTop; }
+    void setAdjustedLogicalLineTop(LayoutUnit value) { m_adjustedLogicalLineTop = value; }
+
     RenderFlowThread* flowThread() const { return m_flowThread; }
     void setFlowThread(RenderFlowThread* thread) { m_flowThread = thread; }
 
@@ -1521,6 +1525,8 @@ private:
     // FIXME: Should this be a range object instead of two ints?
     LayoutUnit& m_repaintLogicalTop;
     LayoutUnit& m_repaintLogicalBottom;
+
+    LayoutUnit m_adjustedLogicalLineTop;
 
     bool m_usesRepaintBounds;
     
@@ -1646,58 +1652,98 @@ static inline LayoutUnit adjustLogicalLineTop(ShapeInsideInfo* shapeInsideInfo, 
     return shapeInsideInfo->shapeLogicalBottom();
 }
 
-void RenderBlock::updateShapeAndSegmentsForCurrentLine(ShapeInsideInfo* shapeInsideInfo, LayoutUnit& absoluteLogicalTop, LineLayoutState& layoutState, bool& lineOverflowsFromShapeInside)
+void RenderBlock::updateShapeAndSegmentsForCurrentLine(ShapeInsideInfo*& shapeInsideInfo, LayoutUnit& absoluteLogicalTop, LineLayoutState& layoutState, bool& lineOverflowsFromShapeInside)
 {
-    LayoutUnit logicalHeight = this->logicalHeight();
-    RenderRegion* currentRegion = regionAtBlockOffset(logicalHeight);
-    if (currentRegion)
-        shapeInsideInfo = layoutShapeInsideInfo();
+    if (layoutState.flowThread())
+        return updateShapeAndSegmentsForCurrentLineInFlowThread(shapeInsideInfo, layoutState, lineOverflowsFromShapeInside);
+
     if (!shapeInsideInfo)
         return;
 
-    LayoutUnit lineTop = logicalHeight + absoluteLogicalTop;
-    LayoutUnit lineHeight = this->lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-
-    if (layoutState.flowThread()) {
-        RenderRegion* nextRegion = regionAtBlockOffset(logicalHeight + lineHeight - LayoutUnit(1));
-        lineTop += shapeInsideInfo->owner()->borderAndPaddingBefore();
-        // Content in a flow thread is relative to the beginning of the thread, but the shape calculation should be relative to the current region.
-        if (currentRegion == nextRegion)
-            lineTop -= currentRegion->logicalTopForFlowThreadContent();
-    }
-
+    LayoutUnit lineTop = logicalHeight() + absoluteLogicalTop;
     // FIXME: Bug 95361: It is possible for a line to grow beyond lineHeight, in which case these segments may be incorrect.
-    shapeInsideInfo->computeSegmentsForLine(lineTop, lineHeight);
+    shapeInsideInfo->computeSegmentsForLine(lineTop, lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 
     // The overflow should be pushed below the content box
     LayoutUnit shapeContainingBlockHeight = shapeInsideInfo->shapeContainingBlockHeight();
     if (!shapeInsideInfo->lineWithinShapeBounds() && !lineOverflowsFromShapeInside && shapeContainingBlockHeight) {
         lineOverflowsFromShapeInside = true;
-        LayoutUnit newLogicalHeight = shapeContainingBlockHeight;
+        setLogicalHeight(shapeContainingBlockHeight);
+    }
+}
 
-        if (layoutState.flowThread()) {
-            // If block contents flown across multiple regions and the shape-inside was applied on the second region we can end up with negative lineTop
-            if (lineTop < 0)
-                return;
+void RenderBlock::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsideInfo*& shapeInsideInfo, LineLayoutState& layoutState, bool& lineOverflowsFromShapeInside)
+{
+    ASSERT(layoutState.flowThread());
 
-            newLogicalHeight = logicalHeight + shapeContainingBlockHeight - lineTop - currentRegion->borderAndPaddingBefore();
+    LayoutUnit lineHeight = this->lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
 
-            RenderRegion* nextRegion = regionAtBlockOffset(newLogicalHeight);
-            ShapeInsideInfo* nextShapeInfo = 0;
-            if (nextRegion)
-                nextShapeInfo = nextRegion->shapeInsideInfo();
+    RenderRegion* currentRegion = regionAtBlockOffset(logicalHeight());
+    if (!currentRegion)
+        return;
 
-            // The overflow flows into another region with shape-inside
-            if (currentRegion != nextRegion && nextShapeInfo) {
-                newLogicalHeight += nextShapeInfo->shapeLogicalTop() - nextRegion->borderAndPaddingBefore();
+    shapeInsideInfo = currentRegion->shapeInsideInfo();
 
-                LayoutUnit offset = nextShapeInfo->shapeLogicalTop() - nextRegion->borderAndPaddingBefore();
-                nextShapeInfo->computeSegmentsForLine(offset, lineHeight);
+    LayoutUnit logicalLineTopInFlowThread = logicalHeight() + offsetFromLogicalTopOfFirstPage();
+    LayoutUnit logicalLineBottomInFlowThread = logicalLineTopInFlowThread + lineHeight;
+    LayoutUnit logicalRegionTopInFlowThread = currentRegion->logicalTopForFlowThreadContent();
+    LayoutUnit logicalRegionBottomInFlowThread = logicalRegionTopInFlowThread + currentRegion->logicalHeight() - currentRegion->borderAndPaddingBefore() - currentRegion->borderAfter() - currentRegion->paddingAfter();
 
-                shapeInsideInfo = nextShapeInfo;
-                lineOverflowsFromShapeInside = false;
-            }
-        }
+    // We only want to deal regions with shapes, so we look up for the next region whether it has a shape
+    if (!shapeInsideInfo && !currentRegion->isLastRegion()) {
+        LayoutUnit deltaToNextRegion = logicalHeight() + logicalRegionBottomInFlowThread - logicalLineTopInFlowThread;
+        RenderRegion* lookupForNextRegion = regionAtBlockOffset(logicalHeight() + deltaToNextRegion);
+        if (!lookupForNextRegion->shapeInsideInfo())
+            return;
+    }
+
+    LayoutUnit shapeBottomInFlowThread = LayoutUnit::max();
+    if (shapeInsideInfo)
+        shapeBottomInFlowThread = shapeInsideInfo->shapeLogicalBottom() + currentRegion->logicalTopForFlowThreadContent();
+
+    // If the line is between two shapes/regions we position the line to the top of the next shape/region
+    RenderRegion* nextRegion = regionAtBlockOffset(logicalHeight() + lineHeight);
+    if ((currentRegion != nextRegion && (logicalLineBottomInFlowThread > logicalRegionBottomInFlowThread)) || (!currentRegion->isLastRegion() && shapeBottomInFlowThread < logicalLineBottomInFlowThread)) {
+        LayoutUnit deltaToNextRegion = logicalRegionBottomInFlowThread - logicalLineTopInFlowThread;
+        nextRegion = regionAtBlockOffset(logicalHeight() + deltaToNextRegion);
+
+        ASSERT(currentRegion != nextRegion);
+
+        shapeInsideInfo = nextRegion->shapeInsideInfo();
+        setLogicalHeight(logicalHeight() + deltaToNextRegion);
+
+        currentRegion = nextRegion;
+
+        logicalLineTopInFlowThread = logicalHeight() + offsetFromLogicalTopOfFirstPage();
+        logicalLineBottomInFlowThread = logicalLineTopInFlowThread + lineHeight;
+        logicalRegionTopInFlowThread = currentRegion->logicalTopForFlowThreadContent();
+        logicalRegionBottomInFlowThread = logicalRegionTopInFlowThread + currentRegion->logicalHeight() - currentRegion->borderAndPaddingBefore() - currentRegion->borderAfter() - currentRegion->paddingAfter();
+    }
+
+    if (!shapeInsideInfo)
+        return;
+
+    // We position the first line to the top of the shape in the region or to the previously adjusted position in the shape
+    if (logicalLineBottomInFlowThread <= (logicalRegionTopInFlowThread + lineHeight) || (logicalLineTopInFlowThread - logicalRegionTopInFlowThread) < (layoutState.adjustedLogicalLineTop() - currentRegion->borderAndPaddingBefore())) {
+        LayoutUnit shapeTopOffset = layoutState.adjustedLogicalLineTop();
+        if (!shapeTopOffset)
+            shapeTopOffset = shapeInsideInfo->shapeLogicalTop();
+
+        LayoutUnit shapePositionInFlowThread = currentRegion->logicalTopForFlowThreadContent() + shapeTopOffset;
+        LayoutUnit shapeTopLineTopDelta = shapePositionInFlowThread - logicalLineTopInFlowThread - currentRegion->borderAndPaddingBefore();
+
+        setLogicalHeight(logicalHeight() + shapeTopLineTopDelta);
+        logicalLineTopInFlowThread += shapeTopLineTopDelta;
+        layoutState.setAdjustedLogicalLineTop(0);
+    }
+
+    LayoutUnit lineTop = logicalLineTopInFlowThread - currentRegion->logicalTopForFlowThreadContent() + currentRegion->borderAndPaddingBefore();
+    shapeInsideInfo->computeSegmentsForLine(lineTop, lineHeight);
+
+    // Overflow from last shape on last region should be pushed below the content box
+    if (currentRegion->isLastRegion() && !lineOverflowsFromShapeInside && (lineTop + lineHeight) > shapeInsideInfo->shapeLogicalBottom()) {
+        lineOverflowsFromShapeInside = true;
+        LayoutUnit newLogicalHeight = this->logicalHeight() + (shapeInsideInfo->shapeContainingBlockHeight() - (lineTop + currentRegion->borderAfter() + currentRegion->paddingAfter()));
         setLogicalHeight(newLogicalHeight);
     }
 }
@@ -1709,8 +1755,12 @@ bool RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded(ShapeInsideInfo* 
         return false;
 
     LayoutUnit newLogicalHeight = adjustedLogicalLineTop - absoluteLogicalTop;
-    if (layoutState.flowThread())
+
+    if (layoutState.flowThread()) {
+        layoutState.setAdjustedLogicalLineTop(adjustedLogicalLineTop);
         newLogicalHeight = logicalHeight();
+    }
+
 
     end = restartLayoutRunsAndFloatsInRange(logicalHeight(), newLogicalHeight, lastFloatFromPreviousLine, resolver, end);
     return true;

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script>
+        if (window.internals)
+            window.internals.settings.setCSSShapesEnabled(true);
+    </script>
+    <style>
+        #rectangle {
+            font: 20px Ahem, sans-serif;
+            line-height: 20px;
+            -webkit-flow-into: flow;
+        }
+        .region {
+            -webkit-flow-from: flow;
+            width: 200px;
+            height: 200px;
+            border: 2px solid green;
+        }
+        #region1 { -webkit-shape-inside: rectangle(50px, 100px, 100px, 100px); }
+        #region2 {
+            margin-top: 10px;
+            -webkit-shape-inside: rectangle(25px, 100px, 140px, 100px);
+        }
+        #border1 {
+            position: absolute;
+            top: 108px;
+            left: 58px;
+            width: 100px;
+            height: 100px;
+            border: 2px solid blue;
+        }
+        #border2 {
+            position: absolute;
+            top: 322px;
+            left: 33px;
+            width: 140px;
+            height: 100px;
+            border: 2px solid blue;
+        }
+    </style>
+</head>
+<body>
+    <div id="rectangle">
+       X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X
+    </div>
+
+    <div id="page">
+        <div id="border1"></div>
+        <div id="region1" class="region"></div>
+        <div id="border2"></div>
+        <div id="region2" class="region"></div>
+    </div>
+    <p style="margin-top: 50px;">Requires Ahem font. There are two regions with two ractangle shape-insides, the shape-insides are smaller and have top and left offsets inside the content box. The rectangular shapes boundaries are represented by the blue rectangles. The inline content should flow inside the blue ractangles, the overflow should be pushed down below the last region's content box</p>
+    <p>Bug <a href="http://webkit.org/b/117599">117599</a>[CSS Shapes][CSS Regions] Respect bottom positioned shapes and content adjustment inside shapes</p>
+</body>
+</html>
