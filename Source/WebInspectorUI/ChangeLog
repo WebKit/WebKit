@@ -1,1 +1,11 @@
+2013-06-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        <http://webkit.org/b/117612> Web Inspector: "Search Resource Content" should cancel when I remove all text search text
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype._searchFieldInput):
+
 == Rolled over to ChangeLog-2013-06-11 ==
