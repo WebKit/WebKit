@@ -1,5 +1,33 @@
 2013-06-13  Mihai Tica  <mitica@adobe.com>
 
+        Add tests to validate CSS Background Blending
+
+        This patch set removes the test case of adding bg blend mode through script, as it
+        is now part of bug#117223
+
+        https://bugs.webkit.org/show_bug.cgi?id=117537
+
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/background-blend-mode-default-value.html: Added.
+        * css3/compositing/background-blend-mode-different-image-formats.html: Added.
+        * css3/compositing/background-blend-mode-image-color.html: Added.
+        * css3/compositing/background-blend-mode-image-image.html: Added.
+        * css3/compositing/background-blend-mode-single-layer-no-blending.html: Added.
+        * css3/compositing/resources/ducky.jpg: Added.
+        * platform/mac/css3/compositing/background-blend-mode-default-value-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-default-value-expected.txt: Added.
+        * platform/mac/css3/compositing/background-blend-mode-different-image-formats-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-different-image-formats-expected.txt: Added.
+        * platform/mac/css3/compositing/background-blend-mode-image-color-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-image-color-expected.txt: Added.
+        * platform/mac/css3/compositing/background-blend-mode-image-image-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-image-image-expected.txt: Added.
+        * platform/mac/css3/compositing/background-blend-mode-single-layer-no-blending-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-single-layer-no-blending-expected.txt: Added.
+
+2013-06-13  Mihai Tica  <mitica@adobe.com>
+
         [CSS Background Blending] Enable CSS Background blending for layers with SVGs.
 
         Adding tests for SVGs over simple background colors and images blending with SVGs.
