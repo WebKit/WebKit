@@ -1,3 +1,12 @@
+2013-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove irrelevant blog from Planet WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=117572
+
+        Reviewed by Mark Rowe.
+
+        * config.ini: Remove Chromium blog from planet.webkit.org
+
 2013-05-11  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove irrelevant blogs from Planet WebKit
