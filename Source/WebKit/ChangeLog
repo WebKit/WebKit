@@ -1,3 +1,10 @@
+2013-06-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build correction.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add
+        missing symbols needed by TestWebKitAPI on WinCairo build.
+
 2013-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Implement Accessibility2 APIs in Windows.
