@@ -1,3 +1,14 @@
+2013-06-13  Timothy Hatcher  <timothy@apple.com>
+
+        Revert r150339 since it causes a hang while paused in the Web Inspector in other apps.
+
+        https://bugs.webkit.org/show_bug.cgi?id=117596
+
+        Reviewed by Joseph Pecoraro.
+
+        * platform/mac/EventLoopMac.mm:
+        (WebCore::EventLoop::cycle):
+
 2013-06-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed gardening.  Remove dangling 'strings' folder from solution.

@@ -30,8 +30,8 @@ namespace WebCore {
 
 void EventLoop::cycle()
 {
-    CFTimeInterval timeInterval = 0.05;
-    CFRunLoopRunInMode(kCFRunLoopDefaultMode, timeInterval, true);
+    [NSApp setWindowsNeedUpdate:YES];
+    [NSApp sendEvent:[NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate dateWithTimeIntervalSinceNow:0.05] inMode:NSDefaultRunLoopMode dequeue:YES]];
 }
 
 } // namespace WebCore
