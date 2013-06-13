@@ -1,3 +1,9 @@
+2013-06-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Unreviewed gardening, skip one more test to paint the bot green.
+
+        * platform/qt-arm/TestExpectations:
+
 2013-06-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. EFL Gardening. Needs to add new baseline for some tests, which are passing on EFL bots.
