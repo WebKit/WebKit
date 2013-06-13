@@ -1,3 +1,12 @@
+2013-06-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build correction.
+
+        * win/tools32/vsprops/WinCairo.props: Switch from using the
+          $WebKitLibraries environment variable to the newer
+          $WebKit_Libraries.
+        * win/tools32/vsprops/debug_wincairo.props: Ditto.
+
 2013-06-11  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Another part of rollout of r151408.
