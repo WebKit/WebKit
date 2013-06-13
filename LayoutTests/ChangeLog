@@ -1,3 +1,39 @@
+2013-06-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. EFL Gardening. Needs to add new baseline for some tests, which are passing on EFL bots.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/selection/3690703-2-expected.png: Added.
+        * platform/efl/editing/selection/3690703-2-expected.txt: Added.
+        * platform/efl/editing/selection/3690703-expected.png: Added.
+        * platform/efl/editing/selection/3690703-expected.txt: Added.
+        * platform/efl/editing/selection/3690719-expected.png: Added.
+        * platform/efl/editing/selection/3690719-expected.txt: Added.
+        * platform/efl/editing/selection/4397952-expected.png: Added.
+        * platform/efl/editing/selection/4397952-expected.txt: Added.
+        * platform/efl/editing/selection/4895428-3-expected.png: Added.
+        * platform/efl/editing/selection/4895428-3-expected.txt: Added.
+        * platform/efl/editing/selection/4975120-expected.png: Added.
+        * platform/efl/editing/selection/4975120-expected.txt: Added.
+        * platform/efl/editing/selection/5007143-2-expected.png: Added.
+        * platform/efl/editing/selection/5007143-2-expected.txt: Added.
+        * platform/efl/editing/selection/5007143-expected.png: Added.
+        * platform/efl/editing/selection/5007143-expected.txt: Added.
+        * platform/efl/editing/selection/5057506-expected.png: Added.
+        * platform/efl/editing/selection/5057506-expected.txt: Added.
+        * platform/efl/editing/selection/5195166-1-expected.txt: Added.
+        * platform/efl/editing/selection/7152-2-expected.png: Added.
+        * platform/efl/editing/selection/7152-2-expected.txt: Added.
+        * platform/efl/editing/selection/caret-before-select-expected.png: Added.
+        * platform/efl/editing/selection/caret-before-select-expected.txt: Added.
+        * platform/efl/editing/selection/caret-ltr-right-expected.png: Added.
+        * platform/efl/editing/selection/caret-ltr-right-expected.txt: Added.
+        * platform/efl/editing/selection/caret-rtl-2-left-expected.png: Added.
+        * platform/efl/editing/selection/caret-rtl-2-left-expected.txt: Added.
+        * platform/efl/editing/selection/caret-rtl-right-expected.png: Added.
+        * platform/efl/editing/selection/caret-rtl-right-expected.txt: Added.
+
 2013-06-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Accessibility code assumes an area element's parent is a map element
