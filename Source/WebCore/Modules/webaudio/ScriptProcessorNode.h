@@ -65,7 +65,8 @@ public:
 
     size_t bufferSize() const { return m_bufferSize; }
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(audioprocess);
+    EventListener* onaudioprocess() { return getAttributeEventListener(eventNames().audioprocessEvent); }
+    void setOnaudioprocess(PassRefPtr<EventListener>);
     
 private:
     virtual double tailTime() const OVERRIDE;
@@ -92,6 +93,7 @@ private:
     unsigned m_numberOfOutputChannels;
 
     RefPtr<AudioBus> m_internalInputBus;
+    bool m_hasAudioProcessListener;
 };
 
 } // namespace WebCore
