@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008,2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 
 class AccessibleDocument : public AccessibleBase {
 public:
-    AccessibleDocument(WebCore::Document*);
+    AccessibleDocument(WebCore::Document*, HWND);
     WebCore::Document* document() const;
 
 protected:

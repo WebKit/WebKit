@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,8 @@
 using namespace WebCore;
 
 // AccessibleDocument
-AccessibleDocument::AccessibleDocument(Document* doc)
-    : AccessibleBase(doc->axObjectCache()->rootObject())
+AccessibleDocument::AccessibleDocument(Document* doc, HWND window)
+    : AccessibleBase(doc->axObjectCache()->rootObject(), window)
 {
 }
 

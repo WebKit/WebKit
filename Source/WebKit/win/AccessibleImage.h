@@ -31,7 +31,7 @@
 class AccessibleImage : public AccessibleBase
 {
 public:
-    AccessibleImage(WebCore::AccessibilityObject*);
+    AccessibleImage(WebCore::AccessibilityObject*, HWND);
     virtual ~AccessibleImage() { }
 
 private:

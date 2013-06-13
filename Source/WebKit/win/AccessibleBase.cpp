@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008, 2009, 2010, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012 Serotek Corporation. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +43,7 @@
 #include <WebCore/HTMLFrameElementBase.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformEvent.h>
 #include <WebCore/RenderFrame.h>
 #include <WebCore/RenderObject.h>
@@ -53,8 +55,9 @@
 
 using namespace WebCore;
 
-AccessibleBase::AccessibleBase(AccessibilityObject* obj)
+AccessibleBase::AccessibleBase(AccessibilityObject* obj, HWND window)
     : AccessibilityObjectWrapper(obj)
+    , m_window(window)
     , m_refCount(0)
 {
     ASSERT_ARG(obj, obj);
@@ -69,19 +72,23 @@ AccessibleBase::~AccessibleBase()
     gClassNameCount.remove("AccessibleBase");
 }
 
-AccessibleBase* AccessibleBase::createInstance(AccessibilityObject* obj)
+AccessibleBase* AccessibleBase::createInstance(AccessibilityObject* obj, HWND window)
 {
     ASSERT_ARG(obj, obj);
 
     if (obj->isImage())
-        return new AccessibleImage(obj);
+        return new AccessibleImage(obj, window);
 
-    return new AccessibleBase(obj);
+    return new AccessibleBase(obj, window);
 }
 
 HRESULT AccessibleBase::QueryService(REFGUID guidService, REFIID riid, void **ppvObject)
 {
-    if (!IsEqualGUID(guidService, SID_AccessibleComparable)) {
+    if (!IsEqualGUID(guidService, SID_AccessibleComparable)
+        && !IsEqualGUID(guidService, IID_IAccessible2_2)
+        && !IsEqualGUID(guidService, IID_IAccessible2)
+        && !IsEqualGUID(guidService, IID_IAccessibleApplication)
+        && !IsEqualGUID(guidService, IID_IAccessible)) {
         *ppvObject = 0;
         return E_INVALIDARG;
     }
@@ -97,6 +104,10 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::QueryInterface(REFIID riid, void** ppv
         *ppvObject = static_cast<IAccessible*>(this);
     else if (IsEqualGUID(riid, __uuidof(IUnknown)))
         *ppvObject = static_cast<IAccessible*>(this);
+    else if (IsEqualGUID(riid, __uuidof(IAccessible2_2)))
+        *ppvObject = static_cast<IAccessible2_2*>(this);
+    else if (IsEqualGUID(riid, __uuidof(IAccessible2)))
+        *ppvObject = static_cast<IAccessible2*>(this);
     else if (IsEqualGUID(riid, __uuidof(IAccessibleComparable)))
         *ppvObject = static_cast<IAccessibleComparable*>(this);
     else if (IsEqualGUID(riid, __uuidof(IServiceProvider)))
@@ -120,8 +131,195 @@ ULONG STDMETHODCALLTYPE AccessibleBase::Release(void)
     return 0;
 }
 
+// IAccessible2_2
+HRESULT AccessibleBase::get_attribute(BSTR key, VARIANT* value)
+{
+    if (!value)
+        return E_POINTER;
+
+    AtomicString keyAtomic(key, ::SysStringLen(key));
+
+    accessibilityAttributeValue(keyAtomic, value);
+
+    return S_OK;
+}
+
+HRESULT AccessibleBase::get_accessibleWithCaret(IUnknown** accessible, long* caretOffset)
+{
+    notImplemented();
+    return E_NOTIMPL;
+}
+
+HRESULT AccessibleBase::get_relationTargetsOfType(BSTR type, long maxTargets, IUnknown*** targets, long* nTargets)
+{
+    notImplemented();
+    return E_NOTIMPL;
+}
+
+// IAccessible2
+HRESULT AccessibleBase::get_nRelations(long* nRelations)
+{
+    if (!nRelations)
+        return E_POINTER;
+
+    if (!m_object)
+        return E_FAIL;
+    notImplemented();
+    *nRelations = 0;
+    return S_OK;
+}
+
+HRESULT AccessibleBase::get_relation(long relationIndex, IAccessibleRelation** relation)
+{
+    if (!relation)
+        return E_POINTER;
+
+    notImplemented();
+    return E_NOTIMPL;
+}
+
+HRESULT AccessibleBase::get_relations(long maxRelations, IAccessibleRelation** relations, long* nRelations)
+{
+    if (!relations || !nRelations)
+        return E_POINTER;
+
+    notImplemented();
+    return E_NOTIMPL;
+}
+
+HRESULT AccessibleBase::role(long* role)
+{
+    if (!role)
+        return E_POINTER;
+
+    if (!m_object)
+        return E_FAIL;
+
+    *role = wrapper(m_object)->role();
+    return S_OK;
+}
+
+HRESULT AccessibleBase::scrollTo(IA2ScrollType scrollType)
+{
+    if (!m_object)
+        return E_FAIL;
+    return S_FALSE;
+}
+
+HRESULT AccessibleBase::scrollToPoint(IA2CoordinateType coordinateType, long x, long y)
+{
+    if (!m_object)
+        return E_FAIL;
+    return S_FALSE;
+}
+
+HRESULT AccessibleBase::get_groupPosition(long* groupLevel, long* similarItemsInGroup, long* positionInGroup)
+{
+    notImplemented();
+    return E_NOTIMPL;
+}
+
+HRESULT AccessibleBase::get_states(AccessibleStates* states)
+{
+    if (!states)
+        return E_POINTER;
+
+    if (!m_object)
+        return E_FAIL;
+
+    *states = 0;
+    notImplemented();
+    return S_OK;
+}
+
+HRESULT AccessibleBase::get_extendedRole(BSTR* extendedRole)
+{
+    if (!extendedRole)
+        return E_POINTER;
+
+    if (!m_object)
+        return E_FAIL;
+
+    notImplemented();
+    return S_FALSE;
+}
+
+HRESULT AccessibleBase::get_localizedExtendedRole(BSTR* localizedExtendedRole)
+{
+    if (!localizedExtendedRole)
+        return E_POINTER;
+
+    if (!m_object)
+        return E_FAIL;
+
+    notImplemented();
+    return S_FALSE;
+}
+
+HRESULT AccessibleBase::get_nExtendedStates(long* nExtendedStates)
+{
+    if (!nExtendedStates)
+        return E_POINTER;
+
+    if (!m_object)
+        return E_FAIL;
+
+    notImplemented();
+    *nExtendedStates = 0;
+    return S_OK;
+}
+
+HRESULT AccessibleBase::get_extendedStates(long maxExtendedStates, BSTR** extendedStates, long* nExtendedStates)
+{
+    notImplemented();
+    return E_NOTIMPL;
+}
+
+HRESULT AccessibleBase::get_localizedExtendedStates(long maxLocalizedExtendedStates, BSTR** localizedExtendedStates, long* nLocalizedExtendedStates)
+{
+    notImplemented();
+    return E_NOTIMPL;
+}
+
+HRESULT AccessibleBase::get_uniqueID(long* uniqueID)
+{
+    if (!uniqueID)
+        return E_POINTER;
+
+    if (!m_object)
+        return E_FAIL;
+
+    *uniqueID = static_cast<long>(m_object->axObjectID());
+    return S_OK;
+}
+
+HRESULT AccessibleBase::get_windowHandle(HWND* windowHandle)
+{
+    *windowHandle = m_window;
+    return S_OK;
+}
+
+HRESULT AccessibleBase::get_indexInParent(long* indexInParent)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT AccessibleBase::get_locale(IA2Locale* locale)
+{
+    notImplemented();
+    return E_NOTIMPL;
+}
+
+HRESULT AccessibleBase::get_attributes(BSTR* attributes)
+{
+    if (!m_object)
+        return E_FAIL;
+    notImplemented();
+    return S_FALSE;
+}
+
 // IAccessible
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accParent(IDispatch** parent)
+HRESULT AccessibleBase::get_accParent(IDispatch** parent)
 {
     *parent = 0;
 
@@ -135,10 +333,10 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accParent(IDispatch** parent)
         return S_OK;
     }
 
-    if (!m_object->topDocumentFrameView())
+    if (!m_window)
         return E_FAIL;
 
-    return WebView::AccessibleObjectFromWindow(m_object->topDocumentFrameView()->hostWindow()->platformPageClient(),
+    return WebView::AccessibleObjectFromWindow(m_window,
         OBJID_WINDOW, __uuidof(IAccessible), reinterpret_cast<void**>(parent));
 }
 
@@ -250,7 +448,71 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accRole(VARIANT vChild, VARIANT* p
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE AccessibleBase::get_accState(VARIANT vChild, VARIANT* pvState)
+long AccessibleBase::state() const
+{
+    long state = 0;
+    if (m_object->isLinked())
+        state |= STATE_SYSTEM_LINKED;
+
+    if (m_object->isHovered())
+        state |= STATE_SYSTEM_HOTTRACKED;
+
+    if (!m_object->isEnabled())
+        state |= STATE_SYSTEM_UNAVAILABLE;
+
+    if (m_object->isReadOnly())
+        state |= STATE_SYSTEM_READONLY;
+
+    if (m_object->isOffScreen())
+        state |= STATE_SYSTEM_OFFSCREEN;
+
+    if (m_object->isPasswordField())
+        state |= STATE_SYSTEM_PROTECTED;
+
+    if (m_object->isIndeterminate())
+        state |= STATE_SYSTEM_INDETERMINATE;
+
+    if (m_object->isChecked())
+        state |= STATE_SYSTEM_CHECKED;
+
+    if (m_object->isPressed())
+        state |= STATE_SYSTEM_PRESSED;
+
+    if (m_object->isFocused())
+        state |= STATE_SYSTEM_FOCUSED;
+
+    if (m_object->isVisited())
+        state |= STATE_SYSTEM_TRAVERSED;
+
+    if (m_object->canSetFocusAttribute())
+        state |= STATE_SYSTEM_FOCUSABLE;
+
+    if (m_object->isSelected())
+        state |= STATE_SYSTEM_SELECTED;
+
+    if (m_object->canSetSelectedAttribute())
+        state |= STATE_SYSTEM_SELECTABLE;
+
+    if (m_object->isMultiSelectable())
+        state |= STATE_SYSTEM_EXTSELECTABLE | STATE_SYSTEM_MULTISELECTABLE;
+
+    if (!m_object->isVisible())
+        state |= STATE_SYSTEM_INVISIBLE;
+
+    if (m_object->isCollapsed())
+        state |= STATE_SYSTEM_COLLAPSED;
+
+    if (m_object->roleValue() == PopUpButtonRole) {
+        state |= STATE_SYSTEM_HASPOPUP;
+
+        if (!m_object->isCollapsed())
+            state |= STATE_SYSTEM_EXPANDED;
+    }
+
+    return state;
+}
+
+HRESULT AccessibleBase::get_accState(VARIANT vChild, VARIANT* pvState)
 {
     if (!pvState)
         return E_POINTER;
@@ -264,65 +526,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accState(VARIANT vChild, VARIANT* 
         return hr;
 
     pvState->vt = VT_I4;
-    pvState->lVal = 0;
-
-    if (childObj->isLinked())
-        pvState->lVal |= STATE_SYSTEM_LINKED;
-
-    if (childObj->isHovered())
-        pvState->lVal |= STATE_SYSTEM_HOTTRACKED;
-
-    if (!childObj->isEnabled())
-        pvState->lVal |= STATE_SYSTEM_UNAVAILABLE;
-
-    if (childObj->isReadOnly())
-        pvState->lVal |= STATE_SYSTEM_READONLY;
-
-    if (childObj->isOffScreen())
-        pvState->lVal |= STATE_SYSTEM_OFFSCREEN;
-
-    if (childObj->isPasswordField())
-        pvState->lVal |= STATE_SYSTEM_PROTECTED;
-
-    if (childObj->isIndeterminate())
-        pvState->lVal |= STATE_SYSTEM_INDETERMINATE;
-
-    if (childObj->isChecked())
-        pvState->lVal |= STATE_SYSTEM_CHECKED;
-
-    if (childObj->isPressed())
-        pvState->lVal |= STATE_SYSTEM_PRESSED;
-
-    if (childObj->isFocused())
-        pvState->lVal |= STATE_SYSTEM_FOCUSED;
-
-    if (childObj->isVisited())
-        pvState->lVal |= STATE_SYSTEM_TRAVERSED;
-
-    if (childObj->canSetFocusAttribute())
-        pvState->lVal |= STATE_SYSTEM_FOCUSABLE;
-
-    if (childObj->isSelected())
-        pvState->lVal |= STATE_SYSTEM_SELECTED;
-
-    if (childObj->canSetSelectedAttribute())
-        pvState->lVal |= STATE_SYSTEM_SELECTABLE;
-
-    if (childObj->isMultiSelectable())
-        pvState->lVal |= STATE_SYSTEM_EXTSELECTABLE | STATE_SYSTEM_MULTISELECTABLE;
-
-    if (!childObj->isVisible())
-        pvState->lVal |= STATE_SYSTEM_INVISIBLE;
-
-    if (childObj->isCollapsed())
-        pvState->lVal |= STATE_SYSTEM_COLLAPSED;
-
-    if (childObj->roleValue() == PopUpButtonRole) {
-        pvState->lVal |= STATE_SYSTEM_HASPOPUP;
-
-        if (!childObj->isCollapsed())
-            pvState->lVal |= STATE_SYSTEM_EXPANDED;
-    }
+    pvState->lVal = wrapper(childObj)->state();
 
     return S_OK;
 }
@@ -820,11 +1024,11 @@ HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, Accessibi
     return S_OK;
 }
 
-AccessibleBase* AccessibleBase::wrapper(AccessibilityObject* obj)
+AccessibleBase* AccessibleBase::wrapper(AccessibilityObject* obj) const
 {
     AccessibleBase* result = static_cast<AccessibleBase*>(obj->wrapper());
     if (!result)
-        result = createInstance(obj);
+        result = createInstance(obj, m_window);
     return result;
 }
 
@@ -832,17 +1036,5 @@ HRESULT AccessibleBase::isSameObject(IAccessibleComparable* other, BOOL* result)
 {
     COMPtr<AccessibleBase> otherAccessibleBase(Query, other);
     *result = (otherAccessibleBase == this || otherAccessibleBase->m_object == m_object);
-    return S_OK;
-}
-
-HRESULT AccessibleBase::attributeValue(BSTR key, VARIANT* value)
-{
-    if (!value)
-        return E_POINTER;
-
-    AtomicString keyAtomic(key, ::SysStringLen(key));
-
-    accessibilityAttributeValue(keyAtomic, value);
-
     return S_OK;
 }

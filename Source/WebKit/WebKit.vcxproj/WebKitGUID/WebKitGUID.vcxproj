@@ -141,6 +141,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebKit\Interfaces\WebKit_i.c" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebKit\Interfaces\Accessible2_i.c" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebKit\Interfaces\Accessible2_2_i.c" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebKit\Interfaces\AccessibleApplication_i.c" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebKit\Interfaces\AccessibleRelation_i.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

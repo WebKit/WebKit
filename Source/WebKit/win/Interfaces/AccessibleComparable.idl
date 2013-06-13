@@ -29,6 +29,7 @@ import "ocidl.idl";
 #endif
 
 import "oleacc.idl";
+import "Accessible2_2.idl";
 
 cpp_quote("extern const GUID  __declspec(selectany) SID_AccessibleComparable = { 0x62b8cb5f, 0xfb7a, 0x4faf, 0x81, 0xe8, 0x52, 0xb6, 0x5f, 0x12, 0x8b, 0x31 };")
 
@@ -39,8 +40,7 @@ cpp_quote("extern const GUID  __declspec(selectany) SID_AccessibleComparable = {
     dual,
     pointer_default(unique)
 ]
-interface IAccessibleComparable : IAccessible
+interface IAccessibleComparable : IAccessible2_2
 {
     HRESULT isSameObject([in] IAccessibleComparable* other, [out, retval] BOOL* result);
-    HRESULT attributeValue([in] BSTR key, [out, retval] VARIANT* value);
 }

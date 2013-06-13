@@ -55,6 +55,8 @@ cpp_quote(" */")
 import "oaidl.idl";
 import "ocidl.idl";
 
+import "AccessibleApplication.idl";
+
 #include "AccessibleComparable.idl"
 #include "WebScrollbarTypes.idl"
 #include "JavaScriptCoreAPITypes.idl"

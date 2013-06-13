@@ -256,6 +256,24 @@
     <Midl Include="..\..\win\Interfaces\WebKit.idl">
       <Filter>IDL</Filter>
     </Midl>
+    <Midl Include="..\..\win\Interfaces\Accessible2\IA2CommonTypes.idl">
+      <Filter>IDL\Accessibility2</Filter>
+    </Midl>
+    <Midl Include="..\..\win\Interfaces\Accessible2\Accessible2.idl">
+      <Filter>IDL\Accessibility2</Filter>
+    </Midl>
+    <Midl Include="..\..\win\Interfaces\Accessible2\Accessible2_2.idl">
+      <Filter>IDL\Accessibility2</Filter>
+    </Midl>
+    <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleRelation.idl">
+      <Filter>IDL\Accessibility2</Filter>
+    </Midl>
+    <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleStates.idl">
+      <Filter>IDL\Accessibility2</Filter>
+    </Midl>
+    <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleApplication.idl">
+      <Filter>IDL\Accessibility2</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <None Include="InterfacesPostBuild.cmd" />
@@ -265,6 +283,9 @@
   <ItemGroup>
     <Filter Include="IDL">
       <UniqueIdentifier>{51652c01-e301-4b72-9d96-5d50491d258c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IDL\Accessibility2">
+      <UniqueIdentifier>{2e15fc38-df6f-470f-b201-272e8d2d91a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -32,8 +32,8 @@
 using namespace WebCore;
 using namespace WebCore::HTMLNames;
 
-AccessibleImage::AccessibleImage(AccessibilityObject* obj)
-    : AccessibleBase(obj)
+AccessibleImage::AccessibleImage(AccessibilityObject* obj, HWND window)
+    : AccessibleBase(obj, window)
 {
     ASSERT_ARG(obj, obj->isImage());
     ASSERT_ARG(obj, obj->isAccessibilityRenderObject());

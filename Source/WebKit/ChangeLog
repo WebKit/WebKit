@@ -1,3 +1,16 @@
+2013-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Implement Accessibility2 APIs in Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=117561
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj: Add new IAccessible2 IDL files.
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj.filters: Ditto.
+        * WebKit.vcxproj/Interfaces/InterfacesCommon.props: Reference new Accessible2 folder.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj: Build IAccessible2 symbols.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj.filters: Ditto.
+
 2013-06-10  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes][CSS Exclusions] Split CSS Exclusions and CSS Shapes code

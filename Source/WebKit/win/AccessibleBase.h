@@ -32,7 +32,7 @@
 
 class DECLSPEC_UUID("3dbd565b-db22-4d88-8e0e-778bde54524a") AccessibleBase : public IAccessibleComparable, public IServiceProvider, public WebCore::AccessibilityObjectWrapper {
 public:
-    static AccessibleBase* createInstance(WebCore::AccessibilityObject*);
+    static AccessibleBase* createInstance(WebCore::AccessibilityObject*, HWND);
 
     // IServiceProvider
     virtual HRESULT STDMETHODCALLTYPE QueryService(REFGUID guidService, REFIID riid, void **ppv);
@@ -41,6 +41,31 @@ public:
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef(void) { return ++m_refCount; }
     virtual ULONG STDMETHODCALLTYPE Release(void);
+
+    // IAccessible2_2
+    virtual HRESULT STDMETHODCALLTYPE get_attribute(BSTR name, VARIANT* attribute);
+    virtual HRESULT STDMETHODCALLTYPE get_accessibleWithCaret(IUnknown** accessible, long* caretOffset);
+    virtual HRESULT STDMETHODCALLTYPE get_relationTargetsOfType(BSTR type, long maxTargets, IUnknown*** targets, long* nTargets);
+
+    // IAccessible2
+    virtual HRESULT STDMETHODCALLTYPE get_nRelations(long*);
+    virtual HRESULT STDMETHODCALLTYPE get_relation(long relationIndex, IAccessibleRelation**);
+    virtual HRESULT STDMETHODCALLTYPE get_relations(long maxRelations, IAccessibleRelation** relations, long* nRelations);
+    virtual HRESULT STDMETHODCALLTYPE role(long*);
+    virtual HRESULT STDMETHODCALLTYPE scrollTo(IA2ScrollType);
+    virtual HRESULT STDMETHODCALLTYPE scrollToPoint(IA2CoordinateType, long x, long y);
+    virtual HRESULT STDMETHODCALLTYPE get_groupPosition(long* groupLevel, long* similarItemsInGroup, long* positionInGroup);
+    virtual HRESULT STDMETHODCALLTYPE get_states(AccessibleStates*);
+    virtual HRESULT STDMETHODCALLTYPE get_extendedRole(BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_localizedExtendedRole(BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE get_nExtendedStates(long*);
+    virtual HRESULT STDMETHODCALLTYPE get_extendedStates(long maxExtendedStates, BSTR** extendedStates, long* nExtendedStates);
+    virtual HRESULT STDMETHODCALLTYPE get_localizedExtendedStates(long maxLocalizedExtendedStates, BSTR** localizedExtendedStates, long* nLocalizedExtendedStates);
+    virtual HRESULT STDMETHODCALLTYPE get_uniqueID(long*);
+    virtual HRESULT STDMETHODCALLTYPE get_windowHandle(HWND*);
+    virtual HRESULT STDMETHODCALLTYPE get_indexInParent(long*);
+    virtual HRESULT STDMETHODCALLTYPE get_locale(IA2Locale*);
+    virtual HRESULT STDMETHODCALLTYPE get_attributes(BSTR*);
 
     // IAccessible
     virtual HRESULT STDMETHODCALLTYPE get_accParent(IDispatch**);
@@ -94,20 +119,21 @@ public:
 
     // IAccessibleComparable
     virtual HRESULT STDMETHODCALLTYPE isSameObject(IAccessibleComparable* other, BOOL* result);
-    virtual HRESULT STDMETHODCALLTYPE attributeValue(BSTR key, VARIANT* value);
 
 protected:
-    AccessibleBase(WebCore::AccessibilityObject*);
+    AccessibleBase(WebCore::AccessibilityObject*, HWND);
     virtual ~AccessibleBase();
 
     virtual WTF::String name() const;
     virtual WTF::String value() const;
     virtual long role() const;
+    virtual long state() const;
 
     HRESULT getAccessibilityObjectForChild(VARIANT vChild, WebCore::AccessibilityObject*&) const;
 
-    static AccessibleBase* wrapper(WebCore::AccessibilityObject*);
+    AccessibleBase* wrapper(WebCore::AccessibilityObject*) const;
 
+    HWND m_window;
     int m_refCount;
 
 private:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2009, 2011, 2013 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2590,7 +2590,7 @@ COMPtr<IAccessible> WebFrame::accessible() const
         // the Document renderer was destroyed and its wrapper was detached, or
         // the previous Document is in the page cache, and the current document
         // needs to be wrapped.
-        m_accessible = new AccessibleDocument(currentDocument);
+        m_accessible = new AccessibleDocument(currentDocument, webView()->viewWindow());
     }
     return m_accessible.get();
 }

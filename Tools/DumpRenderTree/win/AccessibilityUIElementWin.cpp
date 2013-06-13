@@ -30,6 +30,7 @@
 #include "DumpRenderTree.h"
 #include "FrameLoadDelegate.h"
 #include <JavaScriptCore/JSStringRef.h>
+#include <comutil.h>
 #include <tchar.h>
 #include <string>
 
@@ -172,7 +173,9 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 
     VARIANT value;
     ::VariantInit(&value);
-    if (FAILED(comparable->attributeValue(L"AXTitleUIElementAttribute", &value))) {
+
+    _bstr_t titleUIElementAttributeKey(L"AXTitleUIElementAttribute");
+    if (FAILED(comparable->get_attribute(titleUIElementAttributeKey, &value))) {
         ::VariantClear(&value);
         return 0;
     }

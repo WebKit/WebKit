@@ -1,5 +1,31 @@
 2013-06-12  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Implement Accessibility2 APIs in Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=117561
+
+        Reviewed by Anders Carlsson.
+
+        * AccessibleBase.cpp: Add stubs for IAccessible2 interface, replace attributeValue
+        method with get_attribute from IAccessible2 API.
+        * AccessibleBase.h: Ditto.
+        * AccessibleDocument.cpp: Revise signatures for IAccessible2.
+        * AccessibleDocument.h: Ditto.
+        * AccessibleImage.cpp: Revise signatures for IAccessible2.
+        * AccessibleImage.h: Ditto.
+        * Interfaces/Accessible2: Added.
+        * Interfaces/Accessible2/Accessible2.idl: Added.
+        * Interfaces/Accessible2/Accessible2_2.idl: Added.
+        * Interfaces/Accessible2/AccessibleApplication.idl: Added.
+        * Interfaces/Accessible2/AccessibleRelation.idl: Added.
+        * Interfaces/Accessible2/AccessibleStates.idl: Added.
+        * Interfaces/Accessible2/IA2CommonTypes.idl: Added.
+        * Interfaces/AccessibleComparable.idl:
+        * Interfaces/WebKit.idl: Reference IAccessible2 types.
+        * WebFrame.cpp: 
+        (WebFrame::accessible): Pass window handle to IAccessible types.
+
+2013-06-12  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Support Title UI Element Accessibility Attribute
         https://bugs.webkit.org/show_bug.cgi?id=117530
 

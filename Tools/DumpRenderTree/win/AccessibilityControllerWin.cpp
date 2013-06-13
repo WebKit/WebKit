@@ -78,8 +78,6 @@ static COMPtr<IAccessibleComparable> comparableObject(const COMPtr<IServiceProvi
     return comparable;
 }
 
-static const _bstr_t s_AXDRTElementIdAttribute(L"AXDRTElementIdAttribute");
-
 static COMPtr<IAccessible> findAccessibleObjectById(AccessibilityUIElement parentObject, BSTR idAttribute)
 {
     COMPtr<IAccessible> parentIAccessible = parentObject.platformUIElement();
@@ -95,7 +93,8 @@ static COMPtr<IAccessible> findAccessibleObjectById(AccessibilityUIElement paren
     VARIANT value;
     ::VariantInit(&value);
 
-    if (SUCCEEDED(comparable->attributeValue(s_AXDRTElementIdAttribute, &value))) {
+    _bstr_t elementIdAttributeKey(L"AXDRTElementIdAttribute");
+    if (SUCCEEDED(comparable->get_attribute(elementIdAttributeKey, &value))) {
         ASSERT(V_VT(&value) == VT_BSTR);
         if (VARCMP_EQ == ::VarBstrCmp(value.bstrVal, idAttribute, LOCALE_USER_DEFAULT, 0)) {
             ::VariantClear(&value);
