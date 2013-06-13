@@ -120,6 +120,11 @@ IntPoint WebView::userViewportToScene(const WebCore::IntPoint& point) const
     return m_userViewportTransform.mapPoint(point);
 }
 
+IntPoint WebView::contentsToUserViewport(const IntPoint& point) const
+{
+    return transformToScene().mapPoint(point);
+}
+
 void WebView::paintToCurrentGLContext()
 {
     CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();

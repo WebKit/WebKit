@@ -72,6 +72,7 @@ public:
     void setUserViewportTranslation(double tx, double ty);
     WebCore::IntPoint userViewportToContents(const WebCore::IntPoint&) const;
     WebCore::IntPoint userViewportToScene(const WebCore::IntPoint&) const;
+    WebCore::IntPoint contentsToUserViewport(const WebCore::IntPoint&) const;
 
     void paintToCurrentGLContext();
 

@@ -853,6 +853,8 @@ void EwkView::showContextMenu(WKPoint position, WKArrayRef items)
 
     m_contextMenu = EwkContextMenu::create(this, items);
 
+    position = WKViewContentsToUserViewport(wkView(), position);
+
     sd->api->context_menu_show(sd, position.x, position.y, m_contextMenu.get());
 }
 
@@ -888,8 +890,10 @@ void EwkView::requestPopupMenu(WKPopupMenuListenerRef popupMenuListener, const W
 
     m_popupMenu = EwkPopupMenu::create(this, popupMenuListener, items, selectedIndex);
 
+    WKPoint popupMenuPosition = WKViewContentsToUserViewport(wkView(), rect.origin);
+
     Eina_Rectangle einaRect;
-    EINA_RECTANGLE_SET(&einaRect, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    EINA_RECTANGLE_SET(&einaRect, popupMenuPosition.x, popupMenuPosition.y, rect.size.width, rect.size.height);
 
     sd->api->popup_menu_show(sd, einaRect, static_cast<Ewk_Text_Direction>(textDirection), pageScaleFactor, m_popupMenu.get());
 }

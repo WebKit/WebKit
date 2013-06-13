@@ -1350,11 +1350,6 @@ on_context_menu_show(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Ewk_Co
 
     context_menu_populate(window->context_menu.elm_menu, menu, NULL);
 
-    Evas_Coord ewk_x, ewk_y;
-    evas_object_geometry_get(window->ewk_view, &ewk_x, &ewk_y, NULL, NULL);
-    x += ewk_x;
-    y += ewk_y;
-
     info("Showing context menu at (%d, %d).", x, y);
     elm_menu_move(window->context_menu.elm_menu, x, y);
     evas_object_show(window->context_menu.elm_menu);
