@@ -1,5 +1,22 @@
 2013-06-13  Mihai Tica  <mitica@adobe.com>
 
+        [CSS Background Blending] Enable CSS Background blending for layers with SVGs.
+
+        Adding tests for SVGs over simple background colors and images blending with SVGs.
+        https://bugs.webkit.org/show_bug.cgi?id=117588
+
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/background-blend-mode-image-svg-expected.txt: Added.
+        * css3/compositing/background-blend-mode-image-svg.html: Added.
+        * css3/compositing/background-blend-mode-svg-color-expected.txt: Added.
+        * css3/compositing/background-blend-mode-svg-color.html: Added.
+        * css3/compositing/resources/red-circle.svg: Added.
+        * platform/mac/css3/compositing/background-blend-mode-image-svg-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-svg-color-expected.png: Added.
+
+2013-06-13  Mihai Tica  <mitica@adobe.com>
+
         Updating the -webkit-background-blend-mode property dynamically does not trigger a redraw of the element.
 
         Adding test that sets background blend modes from script, after the page is loaded.
