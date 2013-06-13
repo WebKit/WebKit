@@ -37,15 +37,14 @@ class RenderMultiColumnBlock : public RenderBlock {
 public:
     RenderMultiColumnBlock(Element*);
 
-    LayoutUnit columnHeight() const { return m_columnHeight; }
-    void setColumnHeight(LayoutUnit columnHeight) { m_columnHeight = columnHeight; }
+    LayoutUnit columnHeightAvailable() const { return m_columnHeightAvailable; }
 
     LayoutUnit columnWidth() const { return m_columnWidth; }
     unsigned columnCount() const { return m_columnCount; }
 
     RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }
 
-    bool requiresBalancing() const { return m_requiresBalancing; }
+    bool requiresBalancing() const { return !m_columnHeightAvailable; }
 
 private:
     virtual bool isRenderMultiColumnBlock() const { return true; }
@@ -70,8 +69,8 @@ private:
     unsigned m_columnCount;   // The default column count/width that are based off our containing block width. These values represent only the default,
     LayoutUnit m_columnWidth; // since a multi-column block that is split across variable width pages or regions will have different column counts and widths in each.
                               // These values will be cached (eventually) for multi-column blocks.
-    LayoutUnit m_columnHeight; // The current column height.
-    bool m_requiresBalancing; // Whether or not the block specified any kind of logical height. We have to balance by default if it didn't.
+    LayoutUnit m_columnHeightAvailable; // Total height available to columns, or 0 if auto.
+    bool m_inBalancingPass; // Set when relayouting for column balancing.
 };
 
 inline RenderMultiColumnBlock* toRenderMultiColumnBlock(RenderObject* object)

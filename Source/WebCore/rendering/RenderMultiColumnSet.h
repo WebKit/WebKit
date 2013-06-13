@@ -56,10 +56,8 @@ public:
         m_computedColumnWidth = width;
         m_computedColumnCount = count;
     }
-    void setComputedColumnHeight(LayoutUnit height)
-    {
-        m_computedColumnHeight = height;
-    }
+
+    LayoutUnit heightAdjustedForSetOffset(LayoutUnit height) const;
 
     void updateMinimumColumnHeight(LayoutUnit height) { m_minimumColumnHeight = std::max(height, m_minimumColumnHeight); }
     LayoutUnit minimumColumnHeight() const { return m_minimumColumnHeight; }
@@ -84,12 +82,21 @@ public:
         m_forcedBreakOffset = offsetFromFirstPage;
     }
 
-    bool requiresBalancing() const { return m_requiresBalancing; }
-    void setRequiresBalancing(bool balancing) { m_requiresBalancing = balancing; }
+    // Calculate the column height when contents are supposed to be balanced. If 'initial' is set,
+    // guess an initial column height; otherwise, stretch the column height a tad. Return true if
+    // column height changed and another layout pass is required.
+    bool calculateBalancedHeight(bool initial);
+
+    // Record space shortage (the amount of space that would have been enough to prevent some
+    // element from being moved to the next column) at a column break. The smallest amount of space
+    // shortage we find is the amount with which we will stretch the column height, if it turns out
+    // after layout that the columns weren't tall enough.
+    void recordSpaceShortage(LayoutUnit spaceShortage);
 
     virtual void updateLogicalWidth() OVERRIDE;
-    virtual void updateLogicalHeight() OVERRIDE;
-    
+
+    void prepareForLayout();
+
 private:
     RenderMultiColumnSet(RenderFlowThread*);
 
@@ -123,15 +130,22 @@ private:
 
     LayoutRect flowThreadPortionRectAt(unsigned index) const;
     LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, LayoutUnit colGap) const;
-    
-    unsigned columnIndexAtOffset(LayoutUnit) const;
-    
+
+    enum ColumnIndexCalculationMode {
+        ClampToExistingColumns, // Stay within the range of already existing columns.
+        AssumeNewColumns // Allow column indices outside the range of already existing columns.
+    };
+    unsigned columnIndexAtOffset(LayoutUnit, ColumnIndexCalculationMode = ClampToExistingColumns) const;
+
+    void setAndConstrainColumnHeight(LayoutUnit);
+
     unsigned m_computedColumnCount;
     LayoutUnit m_computedColumnWidth;
     LayoutUnit m_computedColumnHeight;
     
     // The following variables are used when balancing the column set.
-    bool m_requiresBalancing; // Whether or not the columns in the column set have to be balanced, i.e., made to be similar logical heights.
+    LayoutUnit m_maxColumnHeight; // Maximum column height allowed.
+    LayoutUnit m_minSpaceShortage; // The smallest amout of space shortage that caused a column break.
     LayoutUnit m_minimumColumnHeight;
     unsigned m_forcedBreaksCount; // FIXME: We will ultimately need to cache more information to balance around forced breaks properly.
     LayoutUnit m_maximumDistanceBetweenForcedBreaks;

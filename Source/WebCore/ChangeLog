@@ -1,3 +1,102 @@
+2013-06-13  Morten Stenshorne  <mstensho@opera.com>
+
+        Column balancing support in the region based multicol implementation
+        https://bugs.webkit.org/show_bug.cgi?id=116033
+
+        Start by setting the column height to the flow thread's height divided
+        by the number of columns. Then stretch the column height until
+        contents fits without creating overflowing columns, or until the
+        maximum allowed column height is reached, whichever comes first. This
+        may require several layout iterations (but normally only a
+        couple). For each time we stretch, stretch by the least amount
+        required to make a difference to which box goes where.
+
+        Also make sure that the columns get tall enough to honor orphans
+        and widows settings.
+
+        This change takes some tiny steps in preparing for multiple column
+        set support. There is also some minor cleanup and bugfixing; see
+        details below.
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/multicol/newmulticol/balance-images.html
+               fast/multicol/newmulticol/balance-maxheight1.html
+               fast/multicol/newmulticol/balance-maxheight2.html
+               fast/multicol/newmulticol/balance1.html
+               fast/multicol/newmulticol/balance2.html
+               fast/multicol/newmulticol/balance3.html
+               fast/multicol/newmulticol/balance4.html
+               fast/multicol/newmulticol/balance5.html
+               fast/multicol/newmulticol/balance6.html
+               fast/multicol/newmulticol/balance7.html
+               fast/multicol/newmulticol/balance8.html
+               fast/multicol/newmulticol/balance9.html
+               fast/multicol/newmulticol/cell-shrinkback.html
+               fast/multicol/newmulticol/columns-shorthand-parsing.html
+               fast/multicol/newmulticol/orphans-and-widows-balance.html
+               fast/multicol/newmulticol/single-line.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        (WebCore::RenderBlock::setPageBreak):
+        (WebCore):
+        (WebCore::RenderBlock::updateMinimumPageHeight):
+        (WebCore::calculateMinimumPageHeight):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        (WebCore::RenderBlock::adjustBlockChildForPagination): If no lines
+        cross the boundaries, we need to report where blocks cross
+        instead, so that the column balancer knows how much to stretch
+        columns if necessary.
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::RenderMultiColumnBlock):
+        (WebCore::RenderMultiColumnBlock::checkForPaginationLogicalHeightChange):
+        (WebCore::RenderMultiColumnBlock::relayoutForPagination):
+        (WebCore::RenderMultiColumnBlock::layoutSpecialExcludedChild):
+        * rendering/RenderMultiColumnBlock.h:
+        (WebCore::RenderMultiColumnBlock::columnHeightAvailable):
+        (WebCore::RenderMultiColumnBlock::requiresBalancing):
+        (RenderMultiColumnBlock):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset):
+        (WebCore::RenderMultiColumnFlowThread::setPageBreak):
+        (WebCore):
+        (WebCore::RenderMultiColumnFlowThread::updateMinimumPageHeight):
+        * rendering/RenderMultiColumnFlowThread.h:
+        (RenderMultiColumnFlowThread):
+        * rendering/RenderMultiColumnSet.cpp: Get rid of
+        RenderMultiColumnSet::updateLogicalHeight() override. Make
+        RenderMultiColumnSet behave more like normal blocks, by having
+        computeLogicalHeight() calculate logical top in addition to
+        height, just like any other block.
+        (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::heightAdjustedForSetOffset): This
+        method will become more meaningful once we add support for
+        multiple column sets.
+        (WebCore):
+        (WebCore::RenderMultiColumnSet::pageLogicalTopForOffset):
+        (WebCore::RenderMultiColumnSet::setAndConstrainColumnHeight):
+        (WebCore::RenderMultiColumnSet::calculateBalancedHeight):
+        (WebCore::RenderMultiColumnSet::recordSpaceShortage):
+        (WebCore::RenderMultiColumnSet::updateLogicalWidth):
+        (WebCore::RenderMultiColumnSet::prepareForLayout):
+        (WebCore::RenderMultiColumnSet::computeLogicalHeight):
+        (WebCore::RenderMultiColumnSet::columnCount):
+        (WebCore::RenderMultiColumnSet::columnIndexAtOffset):
+        repaintFlowThreadContent() could end up in an infinite loop
+        because columnIndexAtOffset() could return UINT_MAX
+        (subtracting 1 from unsigned 0, which columnCount() could return),
+        which an unsigned integer obviously can never become larger
+        than. Also always call columnIndexAtOffset() if we want to get the
+        column index for some offset, rather than doing it on our own
+        sometimes. To make this work also during layout, we cannot just
+        return the last column created so far if we're past it, since
+        adding new columns is exactly what we want to do at this point.
+        * rendering/RenderMultiColumnSet.h:
+        (RenderMultiColumnSet):
+
 2013-06-12  Anders Carlsson  <andersca@apple.com>
 
         Remove the notion of inactive plug-ins

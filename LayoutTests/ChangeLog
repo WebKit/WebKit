@@ -1,3 +1,43 @@
+2013-06-13  Morten Stenshorne  <mstensho@opera.com>
+
+        Column balancing support in the region based multicol implementation
+        https://bugs.webkit.org/show_bug.cgi?id=116033
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/newmulticol/balance-images-expected.txt: Added.
+        * fast/multicol/newmulticol/balance-images.html: Added.
+        * fast/multicol/newmulticol/balance-maxheight1-expected.txt: Added.
+        * fast/multicol/newmulticol/balance-maxheight1.html: Added.
+        * fast/multicol/newmulticol/balance-maxheight2-expected.txt: Added.
+        * fast/multicol/newmulticol/balance-maxheight2.html: Added.
+        * fast/multicol/newmulticol/balance1-expected.txt: Added.
+        * fast/multicol/newmulticol/balance1.html: Added.
+        * fast/multicol/newmulticol/balance2-expected.txt: Added.
+        * fast/multicol/newmulticol/balance2.html: Added.
+        * fast/multicol/newmulticol/balance3-expected.txt: Added.
+        * fast/multicol/newmulticol/balance3.html: Added.
+        * fast/multicol/newmulticol/balance4-expected.txt: Added.
+        * fast/multicol/newmulticol/balance4.html: Added.
+        * fast/multicol/newmulticol/balance5-expected.txt: Added.
+        * fast/multicol/newmulticol/balance5.html: Added.
+        * fast/multicol/newmulticol/balance6-expected.txt: Added.
+        * fast/multicol/newmulticol/balance6.html: Added.
+        * fast/multicol/newmulticol/balance7-expected.txt: Added.
+        * fast/multicol/newmulticol/balance7.html: Added.
+        * fast/multicol/newmulticol/balance8-expected.txt: Added.
+        * fast/multicol/newmulticol/balance8.html: Added.
+        * fast/multicol/newmulticol/balance9-expected.txt: Added.
+        * fast/multicol/newmulticol/balance9.html: Added.
+        * fast/multicol/newmulticol/cell-shrinkback-expected.html: Added.
+        * fast/multicol/newmulticol/cell-shrinkback.html: Added.
+        * fast/multicol/newmulticol/columns-shorthand-parsing-expected.html: Added.
+        * fast/multicol/newmulticol/columns-shorthand-parsing.html: Added.
+        * fast/multicol/newmulticol/orphans-and-widows-balance-expected.txt: Added.
+        * fast/multicol/newmulticol/orphans-and-widows-balance.html: Added.
+        * fast/multicol/newmulticol/single-line-expected.html: Added.
+        * fast/multicol/newmulticol/single-line.html: Added.
+
 2013-06-13  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Unskipping passing test and move to the right place.

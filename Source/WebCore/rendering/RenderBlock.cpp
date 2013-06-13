@@ -7517,11 +7517,9 @@ LayoutUnit RenderBlock::adjustForUnsplittableChild(RenderBox* child, LayoutUnit 
     if (!isUnsplittable)
         return logicalOffset;
     LayoutUnit childLogicalHeight = logicalHeightForChild(child) + (includeMargins ? marginBeforeForChild(child) + marginAfterForChild(child) : LayoutUnit());
-    LayoutState* layoutState = view()->layoutState();
-    if (layoutState->m_columnInfo)
-        layoutState->m_columnInfo->updateMinimumColumnHeight(childLogicalHeight);
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
     bool hasUniformPageLogicalHeight = !flowThread || flowThread->regionsHaveUniformLogicalHeight();
+    updateMinimumPageHeight(logicalOffset, childLogicalHeight);
     if (!pageLogicalHeight || (hasUniformPageLogicalHeight && childLogicalHeight > pageLogicalHeight)
         || !hasNextPage(logicalOffset))
         return logicalOffset;
@@ -7549,6 +7547,38 @@ bool RenderBlock::pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment,
     return !checkRegion;
 }
 
+void RenderBlock::setPageBreak(LayoutUnit offset, LayoutUnit spaceShortage)
+{
+    if (RenderFlowThread* flowThread = flowThreadContainingBlock())
+        flowThread->setPageBreak(offsetFromLogicalTopOfFirstPage() + offset, spaceShortage);
+}
+
+void RenderBlock::updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeight)
+{
+    if (RenderFlowThread* flowThread = flowThreadContainingBlock())
+        flowThread->updateMinimumPageHeight(offsetFromLogicalTopOfFirstPage() + offset, minHeight);
+    else if (ColumnInfo* colInfo = view()->layoutState()->m_columnInfo)
+        colInfo->updateMinimumColumnHeight(minHeight);
+}
+
+static inline LayoutUnit calculateMinimumPageHeight(RenderStyle* renderStyle, RootInlineBox* lastLine, LayoutUnit lineTop, LayoutUnit lineBottom)
+{
+    // We may require a certain minimum number of lines per page in order to satisfy
+    // orphans and widows, and that may affect the minimum page height.
+    unsigned lineCount = max<unsigned>(renderStyle->hasAutoOrphans() ? 1 : renderStyle->orphans(), renderStyle->hasAutoWidows() ? 1 : renderStyle->widows());
+    if (lineCount > 1) {
+        RootInlineBox* line = lastLine;
+        for (unsigned i = 1; i < lineCount && line->prevRootBox(); i++)
+            line = line->prevRootBox();
+
+        // FIXME: Paginating using line overflow isn't all fine. See FIXME in
+        // adjustLinePositionForPagination() for more details.
+        LayoutRect overflow = line->logicalVisualOverflowRect(line->lineTop(), line->lineBottom());
+        lineTop = min(line->lineTopWithLeading(), overflow.y());
+    }
+    return lineBottom - lineTop;
+}
+
 void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, LayoutUnit& delta, RenderFlowThread* flowThread)
 {
     // FIXME: For now we paginate using line overflow.  This ensures that lines don't overlap at all when we
@@ -7572,11 +7602,9 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
     // line and all following lines.
     LayoutRect logicalVisualOverflow = lineBox->logicalVisualOverflowRect(lineBox->lineTop(), lineBox->lineBottom());
     LayoutUnit logicalOffset = min(lineBox->lineTopWithLeading(), logicalVisualOverflow.y());
-    LayoutUnit lineHeight = max(lineBox->lineBottomWithLeading(), logicalVisualOverflow.maxY()) - logicalOffset;
-    RenderView* renderView = view();
-    LayoutState* layoutState = renderView->layoutState();
-    if (layoutState->m_columnInfo)
-        layoutState->m_columnInfo->updateMinimumColumnHeight(lineHeight);
+    LayoutUnit logicalBottom = max(lineBox->lineBottomWithLeading(), logicalVisualOverflow.maxY());
+    LayoutUnit lineHeight = logicalBottom - logicalOffset;
+    updateMinimumPageHeight(logicalOffset, calculateMinimumPageHeight(style(), lineBox, logicalOffset, logicalBottom));
     logicalOffset += delta;
     lineBox->setPaginationStrut(0);
     lineBox->setIsFirstAfterPageBreak(false);
@@ -7601,6 +7629,7 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
         }
         LayoutUnit totalLogicalHeight = lineHeight + max<LayoutUnit>(0, logicalOffset);
         LayoutUnit pageLogicalHeightAtNewOffset = hasUniformPageLogicalHeight ? pageLogicalHeight : pageLogicalHeightForOffset(logicalOffset + remainingLogicalHeight);
+        setPageBreak(logicalOffset, lineHeight - remainingLogicalHeight);
         if (((lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset) || (!style()->hasAutoOrphans() && style()->orphans() >= lineCount(lineBox)))
             && !isOutOfFlowPositioned() && !isTableCell())
             setPaginationStrut(remainingLogicalHeight + max<LayoutUnit>(0, logicalOffset));
@@ -7646,6 +7675,21 @@ LayoutUnit RenderBlock::adjustBlockChildForPagination(LayoutUnit logicalTopAfter
 
     // If the object has a page or column break value of "before", then we should shift to the top of the next page.
     LayoutUnit result = applyBeforeBreak(child, logicalTopAfterClear);
+
+    if (pageLogicalHeightForOffset(result)) {
+        LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(result, ExcludePageBoundary);
+        LayoutUnit spaceShortage = child->logicalHeight() - remainingLogicalHeight;
+        if (spaceShortage > 0) {
+            // If the child crosses a column boundary, report a break, in case nothing inside it has already
+            // done so. The column balancer needs to know how much it has to stretch the columns to make more
+            // content fit. If no breaks are reported (but do occur), the balancer will have no clue. FIXME:
+            // This should be improved, though, because here we just pretend that the child is
+            // unsplittable. A splittable child, on the other hand, has break opportunities at every position
+            // where there's no child content, border or padding. In other words, we risk stretching more
+            // than necessary.
+            setPageBreak(result, spaceShortage);
+        }
+    }
 
     // For replaced elements and scrolled elements, we want to shift them to the next page if they don't fit on the current one.
     LayoutUnit logicalTopBeforeUnsplittableAdjustment = result;

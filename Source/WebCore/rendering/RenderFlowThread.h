@@ -102,7 +102,10 @@ public:
     LayoutUnit pageLogicalWidthForOffset(LayoutUnit);
     LayoutUnit pageLogicalHeightForOffset(LayoutUnit);
     LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit, PageBoundaryRule = IncludePageBoundary);
-    
+
+    virtual void setPageBreak(LayoutUnit /*offset*/, LayoutUnit /*spaceShortage*/) { }
+    virtual void updateMinimumPageHeight(LayoutUnit /*offset*/, LayoutUnit /*minHeight*/) { }
+
     enum RegionAutoGenerationPolicy {
         AllowRegionAutoGeneration,
         DisallowRegionAutoGeneration,

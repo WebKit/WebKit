@@ -95,14 +95,25 @@ void RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset(LayoutUnit /*
     firstSet = RenderMultiColumnSet::createAnonymous(this);
     firstSet->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parentBlock->style(), BLOCK));
     parentBlock->RenderBlock::addChild(firstSet);
-    
-    // Even though we aren't placed yet, we can go ahead and set up our size.
-    firstSet->updateLogicalWidth();
-    firstSet->updateLogicalHeight();
 
-    firstSet->setRequiresBalancing(parentBlock->requiresBalancing());
-    
+    // Even though we aren't placed yet, we can go ahead and set up our size. At this point we're
+    // typically in the middle of laying out the thread, attempting to paginate, and we need to do
+    // some rudimentary "layout" of the set now, so that pagination will work.
+    firstSet->prepareForLayout();
+
     validateRegions();
+}
+
+void RenderMultiColumnFlowThread::setPageBreak(LayoutUnit offset, LayoutUnit spaceShortage)
+{
+    if (RenderMultiColumnSet* multicolSet = toRenderMultiColumnSet(regionAtBlockOffset(offset)))
+        multicolSet->recordSpaceShortage(spaceShortage);
+}
+
+void RenderMultiColumnFlowThread::updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeight)
+{
+    if (RenderMultiColumnSet* multicolSet = toRenderMultiColumnSet(regionAtBlockOffset(offset)))
+        multicolSet->updateMinimumColumnHeight(minHeight);
 }
 
 }
