@@ -1,3 +1,20 @@
+2013-06-13  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [CSS Regions] Regions auto-height and absolute positioning bug
+        https://bugs.webkit.org/show_bug.cgi?id=111092
+
+        Reviewed by David Hyatt.
+
+        During last layout that should update the auto-height regions new auto-height region height
+        is calculated correctly based on the text content, but it requires extra step 
+        to reposition the render block after new logical height is set (correct logical height becomes
+        available only during last layout). 
+
+        Tests: fast/regions/autoheight-abspos-bottom-align.html
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::updateLogicalHeight):
+
 2013-06-13  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build correction.
