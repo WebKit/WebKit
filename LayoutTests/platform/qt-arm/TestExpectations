@@ -72,6 +72,7 @@ http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overrides.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overrides.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html
