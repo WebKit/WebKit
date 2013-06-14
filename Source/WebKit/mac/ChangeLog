@@ -1,3 +1,15 @@
+2013-06-13  Jer Noble  <jer.noble@apple.com>
+
+        Add support for AVFoundation-backed HTMLMediaElements in the WebVideoFullScreenController.
+        https://bugs.webkit.org/show_bug.cgi?id=117597
+
+        Reviewed by Eric Carlson.
+
+        Allow AVFoundation to be enabled even when the FullScreen API is disabled.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): 
+
 2013-06-12  Anders Carlsson  <andersca@apple.com>
 
         Remove the notion of inactive plug-ins

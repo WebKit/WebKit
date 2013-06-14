@@ -1,3 +1,27 @@
+2013-06-13  Jer Noble  <jer.noble@apple.com>
+
+        Add support for AVFoundation-backed HTMLMediaElements in the WebVideoFullScreenController.
+        https://bugs.webkit.org/show_bug.cgi?id=117597
+
+        Reviewed by Eric Carlson.
+
+        Check for media elements with AVFoundation media types and create a AVPlayerLayer
+        rather than a QTMovieLayer.
+
+        * platform/mac/WebVideoFullscreenController.h:
+        * platform/mac/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController setupVideoOverlay:]): Take a CALayer rather than a
+            QTMovieLayer. Move the code which connects the layer with it's media source into
+            setMediaElement.
+        (-[WebVideoFullscreenController windowDidLoad]): Give the window's contentView a generic
+            CALayer instaead of a QTMovieLayer.
+        (-[WebVideoFullscreenController setMediaElement:]): Test whether the incoming media 
+            element is backed by a QTMovie or an AVPlayer, and create the appropriate layer.
+        (-[WebVideoFullscreenController windowDidExitFullscreen]): Remove the observer of
+            AVPlayer's rate property.
+        (-[WebVideoFullscreenController observeValueForKeyPath:ofObject:change:context:]):
+            If the keyPath is "rate", call rateChanged.
+
 2013-06-14  Enrica Casucci  <enrica@apple.com>
 
         WKPageFindStringMatches ignores the kWKFindOptionsBackwards option.

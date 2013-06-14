@@ -1523,11 +1523,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setInteractiveFormValidationEnabled([self interactiveFormValidationEnabled]);
     settings->setValidationMessageTimerMagnification([self validationMessageTimerMagnification]);
 #if USE(AVFOUNDATION)
-#if ENABLE(FULLSCREEN_API)
-    settings->setAVFoundationEnabled([preferences isAVFoundationEnabled] && [preferences fullScreenEnabled]);
-#else
-    settings->setAVFoundationEnabled(false);
-#endif
+    settings->setAVFoundationEnabled([preferences isAVFoundationEnabled]);
 #endif
 #if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
     settings->setQTKitEnabled([preferences isQTKitEnabled]);

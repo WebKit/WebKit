@@ -31,6 +31,7 @@
 
 #import "WebVideoFullscreenHUDWindowController.h"
 #import "WebWindowAnimation.h"
+#import <AVFoundation/AVFoundation.h>
 #import <Carbon/Carbon.h>
 #import <QTKit/QTKit.h>
 #import <WebCore/DisplaySleepDisabler.h>
@@ -50,6 +51,9 @@ SOFT_LINK_CLASS(QTKit, QTMovieLayer)
 SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 
 #define QTMovieRateDidChangeNotification getQTMovieRateDidChangeNotification()
+
+SOFT_LINK_FRAMEWORK(AVFoundation)
+SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 
 @interface WebVideoFullscreenWindow : NSWindow<NSAnimationDelegate>
 {
@@ -95,7 +99,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     return (WebVideoFullscreenWindow *)[super window];
 }
 
-- (void)setupVideoOverlay:(QTMovieLayer*)layer
+- (void)setupVideoOverlay:(CALayer *)layer
 {
     WebVideoFullscreenWindow *window = [self fullscreenWindow];
 #if USE(GSTREAMER)
@@ -107,8 +111,6 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 #else
     [[window contentView] setLayer:layer];
     [[window contentView] setWantsLayer:YES];
-    if (_mediaElement && _mediaElement->platformMedia().type == PlatformMedia::QTMovieType)
-        [layer setMovie:_mediaElement->platformMedia().media.qtMovie];
 #endif
 }
 
@@ -117,10 +119,8 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     WebVideoFullscreenWindow *window = [self fullscreenWindow];
     [window setHasShadow:YES]; // This is nicer with a shadow.
     [window setLevel:NSPopUpMenuWindowLevel-1];
-
-    QTMovieLayer *layer = [[getQTMovieLayerClass() alloc] init];
-    [self setupVideoOverlay:layer];
-    [layer release];
+    [[window contentView] setLayer:[CALayer layer]];
+    [[window contentView] setWantsLayer:YES];
 
 #if !USE(GSTREAMER)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
@@ -136,18 +136,32 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 - (void)setMediaElement:(HTMLMediaElement*)mediaElement
 {
     _mediaElement = mediaElement;
-    if ([self isWindowLoaded]) {
-        QTMovieLayer *movieLayer = (QTMovieLayer *)[[[self fullscreenWindow] contentView] layer];
 
-        ASSERT(movieLayer && [movieLayer isKindOfClass:[getQTMovieLayerClass() class]]);
-        [self setupVideoOverlay:movieLayer];
+    if (!_mediaElement)
+        return;
+
+    if ([self isWindowLoaded]) {
+        if (_mediaElement->platformMedia().type == PlatformMedia::QTMovieType) {
+            QTMovie *movie = _mediaElement->platformMedia().media.qtMovie;
+            QTMovieLayer *layer = [[getQTMovieLayerClass() alloc] init];
+            [layer setMovie:movie];
+            [self setupVideoOverlay:layer];
+
 #if !USE(GSTREAMER)
-        ASSERT([movieLayer movie]);
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(rateChanged:) 
-                                                     name:QTMovieRateDidChangeNotification 
-                                                   object:[movieLayer movie]];
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(rateChanged:)
+                                                         name:QTMovieRateDidChangeNotification
+                                                       object:movie];
 #endif
+
+        } else if (_mediaElement->platformMedia().type == PlatformMedia::AVFoundationMediaPlayerType) {
+            AVPlayer *player = _mediaElement->platformMedia().media.avfMediaPlayer;
+            AVPlayerLayer *layer = [[getAVPlayerLayerClass() alloc] init];
+            [self setupVideoOverlay:layer];
+            [layer setPlayer:player];
+
+            [player addObserver:self forKeyPath:@"rate" options:nil context:NULL];
+        }
     }
 }
 
@@ -177,6 +191,10 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
     if (_mediaElement && _mediaElement->platformMedia().type == PlatformMedia::GStreamerGWorldType)
         _mediaElement->platformMedia().media.gstreamerGWorld->exitFullscreen();
 #endif
+    CALayer *layer = [[[self window] contentView] layer];
+    if ([layer isKindOfClass:getAVPlayerLayerClass()])
+        [[(AVPlayerLayer*)layer player] removeObserver:self forKeyPath:@"rate"];
+
     [self clearFadeAnimation];
     [[self window] close];
     [self setWindow:nil];
@@ -400,8 +418,15 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     [_hudController fadeWindowIn];
 }
 
-// MARK: -
-// MARK: QTMovie callbacks
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(change);
+    UNUSED_PARAM(context);
+
+    if ([keyPath isEqualTo:@"rate"])
+        [self rateChanged:nil];
+}
 
 - (void)rateChanged:(NSNotification *)unusedNotification
 {
