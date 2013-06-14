@@ -1,3 +1,13 @@
+2013-06-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][WK1] Missing symbols
+        https://bugs.webkit.org/show_bug.cgi?id=117629
+
+        Unreviewed GTK+ build fix.
+
+        * Source/autotools/symbols.filter: Added missing symbols needed when
+        compiling WK1.
+
 2013-06-13  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Regions] Selection dragged from a region paints its background
