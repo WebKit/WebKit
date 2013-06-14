@@ -51,6 +51,7 @@ namespace TestWebKitAPI {
 static bool didFinishLoad = false;
 static bool didCallFindStringMatches = false;
 static bool didCallGetImage = false;
+static WKFindOptions findOptions = kWKFindOptionsAtWordStarts;
 
 RetainPtr<WebView> webkit1View;
 
@@ -61,22 +62,32 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
 
 static void didFindStringMatches(WKPageRef page, WKStringRef string, WKArrayRef matches, int firstIndex, const void* clientInfo)
 {
-    EXPECT_WK_STREQ("Hello", string);
-    size_t numMatches = WKArrayGetSize(matches);
-    EXPECT_EQ(3u, numMatches);
+    if (WKStringIsEqualToUTF8CString(string, "Hello")) {
+        size_t numMatches = WKArrayGetSize(matches);
+        EXPECT_EQ(3u, numMatches);
 
-    for (size_t i = 0; i < numMatches; ++i) {
-        WKTypeRef items = WKArrayGetItemAtIndex(matches, i);
-        WKTypeID type = WKGetTypeID(items);
-        EXPECT_EQ(type, WKArrayGetTypeID());
-        WKArrayRef rects = reinterpret_cast<WKArrayRef>(items);
-        size_t numRects = WKArrayGetSize(rects);
-        EXPECT_EQ(1u, numRects);
-        items = WKArrayGetItemAtIndex(rects, 0);
-        type = WKGetTypeID(items);
-        EXPECT_EQ(type, WKRectGetTypeID());
-        WKRect rect = WKRectGetValue(reinterpret_cast<WKRectRef>(items));
-        rect = rect;
+        if (findOptions & kWKFindOptionsBackwards)
+            EXPECT_EQ(1, firstIndex);
+        else
+            EXPECT_EQ(2, firstIndex);
+
+        for (size_t i = 0; i < numMatches; ++i) {
+            WKTypeRef items = WKArrayGetItemAtIndex(matches, i);
+            WKTypeID type = WKGetTypeID(items);
+            EXPECT_EQ(type, WKArrayGetTypeID());
+            WKArrayRef rects = reinterpret_cast<WKArrayRef>(items);
+            size_t numRects = WKArrayGetSize(rects);
+            EXPECT_EQ(1u, numRects);
+            items = WKArrayGetItemAtIndex(rects, 0);
+            type = WKGetTypeID(items);
+            EXPECT_EQ(type, WKRectGetTypeID());
+            WKRect rect = WKRectGetValue(reinterpret_cast<WKRectRef>(items));
+            rect = rect;
+        }
+    } else if (WKStringIsEqualToUTF8CString(string, "crazy")) {
+        size_t numMatches = WKArrayGetSize(matches);
+        EXPECT_EQ(1u, numMatches);
+        EXPECT_EQ(kWKFindResultNoMatchAfterUserSelection, firstIndex);
     }
     didCallFindStringMatches = true;
 }
@@ -117,14 +128,21 @@ TEST(WebKit2, FindMatches)
 
     WKPageSetPageFindMatchesClient(webView.page(), &findMatchesClient);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("find", "html"));
+    // This HTML file contains 3 occurrences of the word Hello and has the second occurence of the word 'world' selected.
+    // It contains 1 occurrence of the word 'crazy' that is before the selected word.
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("findRanges", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&didFinishLoad);
 
     WKRetainPtr<WKStringRef> findString(AdoptWK, WKStringCreateWithUTF8CString("Hello"));
- 
-    WKPageFindStringMatches(webView.page(), findString.get(), true, 100);
+
+    WKPageFindStringMatches(webView.page(), findString.get(), findOptions, 100);
+    Util::run(&didCallFindStringMatches);
+
+    didCallFindStringMatches = false;
+    findOptions |= kWKFindOptionsBackwards;
+    WKPageFindStringMatches(webView.page(), findString.get(), findOptions, 100);
     Util::run(&didCallFindStringMatches);
 
     webkit1View = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
@@ -137,6 +155,12 @@ TEST(WebKit2, FindMatches)
 
     WKPageGetImageForFindMatch(webView.page(), 0);
     Util::run(&didCallGetImage);
+
+    didCallFindStringMatches = false;
+    findOptions &= ~kWKFindOptionsBackwards;
+    WKRetainPtr<WKStringRef> findOtherString(AdoptWK, WKStringCreateWithUTF8CString("crazy"));
+    WKPageFindStringMatches(webView.page(), findOtherString.get(), findOptions, 100);
+    Util::run(&didCallFindStringMatches);
 
     WKPageHideFindUI(webView.page());
 }

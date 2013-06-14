@@ -195,6 +195,7 @@
 		C2CF975B16CEC71B0054E99D /* JSContextBackForwardCache1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C2CF975816CEC69E0054E99D /* JSContextBackForwardCache1.html */; };
 		C2EB2DD316CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = C2EB2DD116CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm */; };
 		C507E8A714C6545B005D6B3B /* InspectorBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = C507E8A614C6545B005D6B3B /* InspectorBar.mm */; };
+		C5101C4F176B8D9200EE9B15 /* findRanges.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C5101C4E176B8BB900EE9B15 /* findRanges.html */; };
 		C51AFB99169F49FF009CCF66 /* FindMatches.mm in Sources */ = {isa = PBXBuildFile; fileRef = C51AFB98169F49FF009CCF66 /* FindMatches.mm */; };
 		C540F776152E4DA000A40C8C /* SimplifyMarkup.mm in Sources */ = {isa = PBXBuildFile; fileRef = C540F775152E4DA000A40C8C /* SimplifyMarkup.mm */; };
 		C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C540F783152E5A7800A40C8C /* verboseMarkup.html */; };
@@ -265,6 +266,7 @@
 				37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */,
 				C5E1AFFE16B221F1006CC1F2 /* execCopy.html in Copy Resources */,
 				BC2D006412AA04CE00E732A3 /* file-with-anchor.html in Copy Resources */,
+				C5101C4F176B8D9200EE9B15 /* findRanges.html in Copy Resources */,
 				1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */,
 				9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */,
 				9B26FCCA159D16DE00CC3765 /* HTMLFormCollectionNamedItem.html in Copy Resources */,
@@ -502,6 +504,7 @@
 		C2CF975916CEC69E0054E99D /* JSContextBackForwardCache2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = JSContextBackForwardCache2.html; sourceTree = "<group>"; };
 		C2EB2DD116CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewDidCreateJavaScriptContext.mm; sourceTree = "<group>"; };
 		C507E8A614C6545B005D6B3B /* InspectorBar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InspectorBar.mm; sourceTree = "<group>"; };
+		C5101C4E176B8BB900EE9B15 /* findRanges.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = findRanges.html; sourceTree = "<group>"; };
 		C51AFB98169F49FF009CCF66 /* FindMatches.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindMatches.mm; sourceTree = "<group>"; };
 		C540F775152E4DA000A40C8C /* SimplifyMarkup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimplifyMarkup.mm; sourceTree = "<group>"; };
 		C540F783152E5A7800A40C8C /* verboseMarkup.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = verboseMarkup.html; sourceTree = "<group>"; };
@@ -797,6 +800,7 @@
 				C5E1AFFD16B22179006CC1F2 /* execCopy.html */,
 				BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */,
 				1A02C84B125D4A5E00E3F4BD /* find.html */,
+				C5101C4E176B8BB900EE9B15 /* findRanges.html */,
 				BCBD372E125ABBE600D2C29F /* icon.png */,
 				378E647816326FDF00B6C676 /* link-with-title.html */,
 				9361002814DC957B0061379D /* lots-of-iframes.html */,
@@ -1006,6 +1010,8 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "TestWebKitAPI" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;

@@ -1,3 +1,20 @@
+2013-06-14  Enrica Casucci  <enrica@apple.com>
+
+        WKPageFindStringMatches ignores the kWKFindOptionsBackwards option.
+        https://bugs.webkit.org/show_bug.cgi?id=117647
+        <rdar://problem/13881024>
+
+        Reviewed by Darin Adler.
+        
+        The test now uses content with a selection and tests both
+        forwards and backward find as well as the case of a find
+        that has no matches after the user selection.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/FindMatches.mm:
+        (TestWebKitAPI::didFindStringMatches):
+        * TestWebKitAPI/Tests/WebKit2/findRanges.html: Added.
+
 2013-06-14  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
 
         Remove myself from Qt build system watchlist

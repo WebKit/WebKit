@@ -246,8 +246,8 @@ public:
     // Upon return, indexForSelection will be one of the following:
     // 0 if there is no user selection
     // the index of the first range after the user selection
-    // NoMatchBeforeUserSelection if there is no matching text after the user selection.
-    enum { NoMatchBeforeUserSelection = -1 };
+    // NoMatchAfterUserSelection if there is no matching text after the user selection.
+    enum { NoMatchAfterUserSelection = -1 };
     void findStringMatchingRanges(const String&, FindOptions, int maxCount, Vector<RefPtr<Range> >*, int& indexForSelection);
 #if PLATFORM(MAC)
     void addSchedulePair(PassRefPtr<SchedulePair>);

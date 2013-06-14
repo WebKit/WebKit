@@ -42,6 +42,8 @@ enum {
 };
 typedef uint32_t WKFindOptions;
 
+enum { kWKFindResultNoMatchAfterUserSelection = -1 };
+
 #ifdef __cplusplus
 }
 #endif

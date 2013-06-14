@@ -609,12 +609,21 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
         return;
 
     if (frameWithSelection) {
-        indexForSelection = NoMatchBeforeUserSelection;
+        indexForSelection = NoMatchAfterUserSelection;
         RefPtr<Range> selectedRange = frameWithSelection->selection()->selection().firstRange();
-        for (size_t i = 0; i < matchRanges->size(); ++i) {
-            if (selectedRange->compareBoundaryPoints(Range::START_TO_END, matchRanges->at(i).get(), IGNORE_EXCEPTION) < 0) {
-                indexForSelection = i;
-                break;
+        if (options & Backwards) {
+            for (size_t i = matchRanges->size(); i > 0; --i) {
+                if (selectedRange->compareBoundaryPoints(Range::START_TO_END, matchRanges->at(i - 1).get(), IGNORE_EXCEPTION) > 0) {
+                    indexForSelection = i - 1;
+                    break;
+                }
+            }
+        } else {
+            for (size_t i = 0; i < matchRanges->size(); ++i) {
+                if (selectedRange->compareBoundaryPoints(Range::START_TO_END, matchRanges->at(i).get(), IGNORE_EXCEPTION) < 0) {
+                    indexForSelection = i;
+                    break;
+                }
             }
         }
     }

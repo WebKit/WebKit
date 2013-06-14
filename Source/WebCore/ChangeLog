@@ -1,3 +1,21 @@
+2013-06-14  Enrica Casucci  <enrica@apple.com>
+
+        WKPageFindStringMatches ignores the kWKFindOptionsBackwards option.
+        https://bugs.webkit.org/show_bug.cgi?id=117647
+        <rdar://problem/13881024>
+
+        Reviewed by Darin Adler.
+        
+        The API returns the matched ranges in the DOM order regardless of the
+        find direction, but the index of the first match after the user selection
+        should take the find direction into account.
+
+        Extended existing test in TestWebKitAPI.
+
+        * page/Page.cpp:
+        (WebCore::Page::findStringMatchingRanges): Added handling of the Backwards case.
+        * page/Page.h: Fixed incorrect name of the enum.
+
 2013-06-14  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r150651): Web Audio doesn't work at all (silence or squawks) on Mountain Lion
