@@ -47,14 +47,14 @@ public:
 
     FloatPoint origin() const { return FloatPoint(m_size.width() / 2.0f, m_size.height() / 2.0f); }
 
-    void setDrawTransform(const TransformationMatrix& matrix) { m_drawTransform = matrix; }
+    void setDrawTransform(const TransformationMatrix& matrix, const TransformationMatrix& projectionMatrix) { m_drawTransform = projectionMatrix * matrix; }
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
-    void setReplicaDrawTransform(const TransformationMatrix& matrix) { m_replicaDrawTransform = matrix; }
+    void setReplicaDrawTransform(const TransformationMatrix& matrix, const TransformationMatrix& projectionMatrix) { m_replicaDrawTransform = projectionMatrix * matrix; }
     const TransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
 
     // These use normalized device coordinates
     FloatRect boundingBox() const;
-    FloatQuad transformedBounds() const;
+    Vector<FloatPoint, 4> transformedBounds() const;
 
     bool ensureTexture();
     void releaseTexture();

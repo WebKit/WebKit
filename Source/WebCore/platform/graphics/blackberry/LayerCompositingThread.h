@@ -164,7 +164,7 @@ public:
     // The draw transform expects the origin to be located at the center of the layer.
     FloatPoint origin() const { return FloatPoint(m_bounds.width() / 2.0f, m_bounds.height() / 2.0f); }
 
-    void setDrawTransform(double scale, const TransformationMatrix&);
+    void setDrawTransform(double scale, const TransformationMatrix& modelViewMatrix, const TransformationMatrix& projectionMatrix);
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
 
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
@@ -182,8 +182,18 @@ public:
 
     // These use normalized device coordinates
     FloatRect boundingBox() const { return m_boundingBox; }
-    const FloatQuad& transformedBounds() const { return m_transformedBounds; }
+    // The bounds are processed according to http://www.w3.org/TR/css3-transforms paragraph 6.2, which can result in a polygon with more than 4 sides.
+    const Vector<FloatPoint, 4>& transformedBounds() const { return m_transformedBounds; }
+    const Vector<float, 4>& ws() const { return m_ws; }
+
+    enum TextureCoordinateOrientation {
+        RightSideUp = 0,
+        UpsideDown
+    };
+
+    const Vector<FloatPoint>& textureCoordinates(TextureCoordinateOrientation = RightSideUp) const;
     FloatQuad transformedHolePunchRect() const;
+    float centerW() const { return m_centerW; }
 
     void deleteTextures();
 
@@ -249,8 +259,10 @@ private:
     LayerCompositingThread* m_superlayer;
 
     // Vertex data for the bounds of this layer
-    FloatQuad m_transformedBounds;
-    // The bounding rectangle of the transformed layer
+    Vector<FloatPoint, 4> m_transformedBounds;
+    Vector<float, 4> m_ws;
+    Vector<FloatPoint> m_textureCoordinates; // Only used when a 3D layer is clipped against z = 0
+    float m_centerW;
     FloatRect m_boundingBox;
 
     OwnPtr<LayerRendererSurface> m_layerRendererSurface;

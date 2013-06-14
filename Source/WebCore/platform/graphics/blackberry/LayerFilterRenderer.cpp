@@ -682,8 +682,6 @@ Vector<RefPtr<LayerFilterRendererAction> > LayerFilterRenderer::actionsForOperat
     return ret;
 }
 
-static float texcoords[4 * 2] = { 0, 0,  1, 0,  1, 1,  0, 1 };
-
 void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* layer, Vector<RefPtr<LayerFilterRendererAction> > actions)
 {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -709,9 +707,16 @@ void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* la
 
     LayerRendererSurface* surface = layer->layerRendererSurface();
 
-    glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &layer->transformedBounds());
+    // From the code in LayerRenderer, we see that the layer will have a trivial transform that will
+    // result in the transformed bounds being a polygon with 4 vertices, i.e. a quad.
+    // The LayerFilterRenderer depends on the layer being a quad, so assert to make sure.
+    ASSERT(layer->transformedBounds().size() == 4);
+    if (layer->transformedBounds().size() != 4)
+        return;
+
+    glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, layer->transformedBounds().data());
     glEnableVertexAttribArray(m_positionLocation);
-    glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
+    glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, layer->textureCoordinates().data());
     glEnableVertexAttribArray(m_texCoordLocation);
 
     m_texture->protect(surface->texture()->size(), BlackBerry::Platform::Graphics::AlwaysBacked);
@@ -764,9 +769,9 @@ void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* la
 
         actions[i]->restoreState();
 
-        glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &layer->transformedBounds());
+        glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, layer->transformedBounds().data());
         glEnableVertexAttribArray(m_positionLocation);
-        glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
+        glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, layer->textureCoordinates().data());
         glEnableVertexAttribArray(m_texCoordLocation);
     }
 

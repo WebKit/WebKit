@@ -50,6 +50,7 @@
 
 namespace WebCore {
 
+class Color;
 class LayerCompositingThread;
 class LayerRendererClient;
 class LayerRendererSurface;
@@ -133,12 +134,14 @@ public:
     // If the layer has already been drawed on a surface.
     bool layerAlreadyOnSurface(LayerCompositingThread*) const;
 
+    void drawDebugBorder(const Vector<FloatPoint>&, const Color&, float borderWidth);
+
     static GLuint loadShader(GLenum type, const char* shaderSource);
     static GLuint loadShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
 
 private:
     void prepareFrameRecursive(LayerCompositingThread*, double animationTime, bool isContextCurrent);
-    void updateLayersRecursive(LayerCompositingThread*, const TransformationMatrix& parentMatrix, Vector<RefPtr<LayerCompositingThread> >& surfaceLayers, float opacity, FloatRect clipRect);
+    void updateLayersRecursive(LayerCompositingThread*, const TransformationMatrix& parentMatrix, const TransformationMatrix& projectionMatrix, Vector<RefPtr<LayerCompositingThread> >& surfaceLayers, float opacity, FloatRect clipRect);
     void compositeLayersRecursive(LayerCompositingThread*, int stencilValue, FloatRect clipRect);
     void updateScissorIfNeeded(const FloatRect& clipRect);
 

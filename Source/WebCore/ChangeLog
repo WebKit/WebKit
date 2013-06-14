@@ -1,3 +1,78 @@
+2013-06-14  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Accelerated compositing layers that intersect the image plane are incorrectly transformed
+        https://bugs.webkit.org/show_bug.cgi?id=117067
+
+        Reviewed by Carlos Garcia Campos.
+
+        PR 273550
+
+        The BlackBerry port used to mathematically project each corner of each
+        layer bounds rectangle, which gives the wrong results when the layer
+        intersects the image plane.
+
+        For display lists, we still got the correct appearance of the layer
+        contents, since the display list results in geometry that's transformed
+        in the vertex shader, on the GPU.
+
+        However, the transformed bounds are used for drawing the debug border,
+        performing visibility calculations on the CPU and drawing of WebGL,
+        masks/reflections and filters. Using the mathematical projection of
+        points that lie behind the image plane gives the wrong results.
+
+        The most important consequence of this bug was that the wrong area of
+        the layer would be considered visible, so a tiled layer would not
+        populate the right tiles (or any tiles at all).
+
+        Fixed by implementing something along the lines of the recipe in
+        section 6.2 of http://www.w3.org/TR/css3-transforms.
+
+        No new tests, manually testable by enabling debug border on
+        https://developer.mozilla.org/en-US/demos/detail/the-box/launch.
+
+        * platform/graphics/blackberry/EGLImageLayerCompositingThreadClient.cpp:
+        (WebCore::EGLImageLayerCompositingThreadClient::drawTextures):
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::LayerCompositingThread):
+        (WebCore::LayerCompositingThread::setDrawTransform):
+        (WebCore):
+        (WebCore::LayerCompositingThread::textureCoordinates):
+        (WebCore::LayerCompositingThread::drawTextures):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (LayerCompositingThread):
+        (WebCore::LayerCompositingThread::transformedBounds):
+        (WebCore::LayerCompositingThread::ws):
+        (WebCore::LayerCompositingThread::centerW):
+        * platform/graphics/blackberry/LayerFilterRenderer.cpp:
+        (WebCore::LayerFilterRenderer::applyActions):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::compareLayerW):
+        (WebCore::LayerRenderer::compositeLayers):
+        (WebCore::LayerRenderer::drawDebugBorder):
+        (WebCore):
+        (WebCore::LayerRenderer::updateLayersRecursive):
+        (WebCore::LayerRenderer::compositeLayersRecursive):
+        * platform/graphics/blackberry/LayerRenderer.h:
+        (WebCore):
+        (LayerRenderer):
+        * platform/graphics/blackberry/LayerRendererSurface.cpp:
+        (WebCore::LayerRendererSurface::boundingBox):
+        (WebCore::LayerRendererSurface::transformedBounds):
+        * platform/graphics/blackberry/LayerRendererSurface.h:
+        (WebCore::LayerRendererSurface::setDrawTransform):
+        (WebCore::LayerRendererSurface::setReplicaDrawTransform):
+        (LayerRendererSurface):
+        * platform/graphics/blackberry/LayerUtilities.h: Added.
+        (WebCore):
+        (LayerClipPlane):
+        (WebCore::LayerClipPlane::LayerClipPlane):
+        (WebCore::LayerClipPlane::isPointInside):
+        (WebCore::LayerClipPlane::computeIntersection):
+        (WebCore::intersect):
+        (WebCore::boundingBox):
+        (WebCore::multVecMatrix):
+        (WebCore::toVector):
+
 2013-06-14  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Map rewind and fast forward keys to match GoogleTV

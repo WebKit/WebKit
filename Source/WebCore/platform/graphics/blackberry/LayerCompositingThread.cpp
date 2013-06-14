@@ -40,12 +40,14 @@
 #include "LayerMessage.h"
 #include "LayerRenderer.h"
 #include "LayerRendererClient.h"
+#include "LayerUtilities.h"
 #include "LayerWebKitThread.h"
 #if ENABLE(VIDEO)
 #include "MediaPlayer.h"
 #include "MediaPlayerPrivateBlackBerry.h"
 #endif
 #include "PluginView.h"
+#include "StdLibExtras.h"
 #include "TextureCacheCompositingThread.h"
 
 #include <BlackBerryPlatformGLES2ContextState.h>
@@ -76,6 +78,7 @@ LayerCompositingThread::LayerCompositingThread(LayerType type, LayerCompositingT
     : LayerData(type)
     , m_layerRenderer(0)
     , m_superlayer(0)
+    , m_centerW(0)
     , m_pluginBuffer(0)
     , m_drawOpacity(0)
     , m_visible(false)
@@ -127,17 +130,92 @@ void LayerCompositingThread::deleteTextures()
         m_client->deleteTextures(this);
 }
 
-void LayerCompositingThread::setDrawTransform(double scale, const TransformationMatrix& matrix)
+void LayerCompositingThread::setDrawTransform(double scale, const TransformationMatrix& matrix, const TransformationMatrix& projectionMatrix)
 {
-    m_drawTransform = matrix;
+    m_drawTransform = projectionMatrix * matrix;
 
     FloatRect boundsRect(-origin(), bounds());
 
     if (sizeIsScaleInvariant())
         boundsRect.scale(1 / scale);
 
-    m_transformedBounds = matrix.mapQuad(boundsRect);
-    m_boundingBox = m_transformedBounds.boundingBox();
+    m_centerW = 0;
+    m_transformedBounds.clear();
+    m_ws.clear();
+    m_textureCoordinates.clear();
+    if (matrix.hasPerspective() && !m_layerRendererSurface) {
+        // Perform processing according to http://www.w3.org/TR/css3-transforms 6.2
+        // If w < 0 for all four corners of the transformed box, the box is not rendered.
+        // If w < 0 for one to three corners of the transformed box, the box
+        // must be replaced by a polygon that has any parts with w < 0 cut out.
+        // If w = 0, (x′, y′, z′) = (x ⋅ n, y ⋅ n, z ⋅ n)
+        // We implement this by intersecting with the image plane, i.e. the last row of the column-major matrix.
+        // To avoid problems with w close to 0, we use w = epsilon as the near plane by subtracting epsilon from matrix.m44().
+        const float epsilon = 1e-3;
+        Vector<FloatPoint3D, 4> quad = toVector<FloatPoint3D, 4>(boundsRect);
+        Vector<FloatPoint3D, 4> polygon = intersect(quad, LayerClipPlane(FloatPoint3D(matrix.m14(), matrix.m24(), matrix.m34()), matrix.m44() - epsilon));
+
+        // Compute the clipped texture coordinates.
+        if (polygon != quad) {
+            for (size_t i = 0; i < polygon.size(); ++i) {
+                FloatPoint3D& p = polygon[i];
+                m_textureCoordinates.append(FloatPoint(p.x() / boundsRect.width() + 0.5f, p.y() / boundsRect.height() + 0.5f));
+            }
+        }
+
+        // If w > 0, (x′, y′, z′) = (x/w, y/w, z/w)
+        for (size_t i = 0; i < polygon.size(); ++i) {
+            float w;
+            FloatPoint3D p = multVecMatrix(matrix, polygon[i], w);
+            if (w != 1) {
+                p.setX(p.x() / w);
+                p.setY(p.y() / w);
+                p.setZ(p.z() / w);
+            }
+
+            FloatPoint3D q = projectionMatrix.mapPoint(p);
+            m_transformedBounds.append(FloatPoint(q.x(), q.y()));
+            m_ws.append(w);
+        }
+
+        m_centerW = matrix.m44();
+    } else
+        m_transformedBounds = toVector<FloatPoint, 4>(m_drawTransform.mapQuad(boundsRect));
+
+    m_boundingBox = WebCore::boundingBox(m_transformedBounds);
+}
+
+const Vector<FloatPoint>& LayerCompositingThread::textureCoordinates(TextureCoordinateOrientation orientation) const
+{
+    if (m_textureCoordinates.size()) {
+        if (orientation == UpsideDown) {
+            static Vector<FloatPoint> upsideDownCoordinates;
+            upsideDownCoordinates = m_textureCoordinates;
+            for (size_t i = 0; i < upsideDownCoordinates.size(); ++i)
+                upsideDownCoordinates[i].setY(1 - upsideDownCoordinates[i].y());
+            return upsideDownCoordinates;
+        }
+
+        return m_textureCoordinates;
+    }
+
+    if (orientation == UpsideDown) {
+        static FloatPoint data[4] = { FloatPoint(0, 1),  FloatPoint(1, 1),  FloatPoint(1, 0),  FloatPoint(0, 0) };
+        static Vector<FloatPoint>* upsideDownCoordinates = 0;
+        if (!upsideDownCoordinates) {
+            upsideDownCoordinates = new Vector<FloatPoint>();
+            upsideDownCoordinates->append(data, 4);
+        }
+        return *upsideDownCoordinates;
+    }
+
+    static FloatPoint data[4] = { FloatPoint(0, 0),  FloatPoint(1, 0),  FloatPoint(1, 1),  FloatPoint(0, 1) };
+    static Vector<FloatPoint>* coordinates = 0;
+    if (!coordinates) {
+        coordinates = new Vector<FloatPoint>();
+        coordinates->append(data, 4);
+    }
+    return *coordinates;
 }
 
 FloatQuad LayerCompositingThread::transformedHolePunchRect() const
@@ -149,8 +227,6 @@ FloatQuad LayerCompositingThread::transformedHolePunchRect() const
 
 void LayerCompositingThread::drawTextures(double scale, const GLES2Program& program, const FloatRect& visibleRect)
 {
-    static float texcoords[4 * 2] = { 0, 0,  1, 0,  1, 1,  0, 1 };
-
     if (m_pluginView) {
         if (m_isVisible) {
             // The layer contains Flash, video, or other plugin contents.
@@ -169,9 +245,9 @@ void LayerCompositingThread::drawTextures(double scale, const GLES2Program& prog
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             glUniform1f(program.opacityLocation(), drawOpacity());
-            glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &m_transformedBounds);
-            glVertexAttribPointer(program.texCoordLocation(), 2, GL_FLOAT, GL_FALSE, 0, texcoords);
-            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+            glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, m_transformedBounds.data());
+            glVertexAttribPointer(program.texCoordLocation(), 2, GL_FLOAT, GL_FALSE, 0, textureCoordinates().data());
+            glDrawArrays(GL_TRIANGLE_FAN, 0, m_transformedBounds.size());
         }
         return;
     }
@@ -185,8 +261,8 @@ void LayerCompositingThread::drawTextures(double scale, const GLES2Program& prog
                 // normalized device coordinates [-1, 1] to the 'visibleRect'.
                 float vrw2 = visibleRect.width() / 2.0;
                 float vrh2 = visibleRect.height() / 2.0;
-                FloatPoint p(m_transformedBounds.p1().x() * vrw2 + vrw2 + visibleRect.x(),
-                    -m_transformedBounds.p1().y() * vrh2 + vrh2 + visibleRect.y());
+                FloatPoint p(m_transformedBounds[0].x() * vrw2 + vrw2 + visibleRect.x(),
+                    -m_transformedBounds[0].y() * vrh2 + vrh2 + visibleRect.y());
                 paintRect = IntRect(roundedIntPoint(p), m_bounds);
             } else
                 paintRect = m_layerRenderer->toWindowCoordinates(m_boundingBox);

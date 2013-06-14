@@ -201,12 +201,9 @@ void LayerRenderer::releaseLayerResources()
     }
 }
 
-static inline bool compareLayerZ(const LayerCompositingThread* a, const LayerCompositingThread* b)
+static inline bool compareLayerW(const LayerCompositingThread* a, const LayerCompositingThread* b)
 {
-    const TransformationMatrix& transformA = a->drawTransform();
-    const TransformationMatrix& transformB = b->drawTransform();
-
-    return transformA.m43() < transformB.m43();
+    return a->centerW() > b->centerW();
 }
 
 void LayerRenderer::prepareFrame(double animationTime, LayerCompositingThread* rootLayer)
@@ -313,7 +310,7 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
     for (size_t i = 0; i < sublayers.size(); i++) {
         float opacity = 1;
         FloatRect clipRect(m_clipRect);
-        updateLayersRecursive(sublayers[i].get(), matrix, surfaceLayers, opacity, clipRect);
+        updateLayersRecursive(sublayers[i].get(), TransformationMatrix(), matrix, surfaceLayers, opacity, clipRect);
     }
 
     // Decompose the dirty rect into a set of non-overlaping rectangles
@@ -580,6 +577,22 @@ IntRect LayerRenderer::toDocumentViewportCoordinates(const FloatRect& rect) cons
     return enclosingIntRect(result);
 }
 
+void LayerRenderer::drawDebugBorder(const Vector<FloatPoint>& transformedBounds, const Color& borderColor, float borderWidth)
+{
+    if (borderColor.alpha() < 255) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    } else
+        glDisable(GL_BLEND);
+
+    const GLES2Program& program = useProgram(ColorProgram);
+    glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, transformedBounds.data());
+    glUniform4f(m_colorColorLocation, borderColor.red() / 255.0, borderColor.green() / 255.0, borderColor.blue() / 255.0, borderColor.alpha() / 255.0);
+
+    glLineWidth(borderWidth);
+    glDrawArrays(GL_LINE_LOOP, 0, transformedBounds.size());
+}
+
 // Draws a debug border around the layer's bounds.
 void LayerRenderer::drawDebugBorder(LayerCompositingThread* layer)
 {
@@ -593,28 +606,17 @@ void LayerRenderer::drawDebugBorder(LayerCompositingThread* layer)
     if (!borderColor.alpha())
         return;
 
-    if (borderColor.alpha() < 255) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    } else
-        glDisable(GL_BLEND);
-
     // If we're rendering to a surface, don't include debug border inside the surface.
     if (m_currentLayerRendererSurface)
         return;
 
-    FloatQuad transformedBounds;
+    Vector<FloatPoint> transformedBounds;
     if (layerAlreadyOnSurface(layer))
         transformedBounds = layer->layerRendererSurface()->transformedBounds();
     else
         transformedBounds = layer->transformedBounds();
 
-    const GLES2Program& program = useProgram(ColorProgram);
-    glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &transformedBounds);
-    glUniform4f(m_colorColorLocation, borderColor.red() / 255.0, borderColor.green() / 255.0, borderColor.blue() / 255.0, 1);
-
-    glLineWidth(std::max(1.0f, layer->borderWidth()));
-    glDrawArrays(GL_LINE_LOOP, 0, 4);
+    drawDebugBorder(transformedBounds, borderColor, std::max(1.0f, layer->borderWidth()));
 }
 
 // Clears a rectangle inside the layer's bounds.
@@ -657,7 +659,7 @@ void LayerRenderer::prepareFrameRecursive(LayerCompositingThread* layer, double 
         prepareFrameRecursive(sublayers[i].get(), animationTime, isContextCurrent);
 }
 
-void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const TransformationMatrix& matrix, Vector<RefPtr<LayerCompositingThread> >& surfaceLayers, float opacity, FloatRect clipRect)
+void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const TransformationMatrix& matrix, const TransformationMatrix& projectionMatrix, Vector<RefPtr<LayerCompositingThread> >& surfaceLayers, float opacity, FloatRect clipRect)
 {
     // The contract for LayerCompositingThread::setLayerRenderer is it must be set if the layer has been rendered.
     // So do it now, before we render it in compositeLayersRecursive.
@@ -768,6 +770,7 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
     // Calculate the layer's opacity.
     opacity *= layer->opacity();
 
+    TransformationMatrix localProjectionMatrix = projectionMatrix;
 #if ENABLE(CSS_FILTERS)
     bool useLayerRendererSurface = layer->maskLayer() || layer->replicaLayer() || layer->filters().size();
 #else
@@ -785,30 +788,30 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
         layer->setDrawOpacity(1.0);
         surface->setDrawOpacity(opacity);
 
-        surface->setDrawTransform(localMatrix);
+        surface->setDrawTransform(localMatrix, projectionMatrix);
         if (layer->replicaLayer()) {
             TransformationMatrix replicaMatrix = localMatrix;
             replicaMatrix.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
             replicaMatrix.translate3d(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y(), 0);
             replicaMatrix.multiply(layer->replicaLayer()->transform());
             replicaMatrix.translate3d(centerOffsetX, centerOffsetY, 0);
-            surface->setReplicaDrawTransform(replicaMatrix);
+            surface->setReplicaDrawTransform(replicaMatrix, projectionMatrix);
         }
 
         IntRect contentRect = enclosingIntRect(FloatRect(FloatPoint::zero(), bounds));
         surface->setContentRect(contentRect);
 
-        TransformationMatrix projectionMatrix = orthoMatrix(contentRect.x(), contentRect.maxX(), contentRect.y(), contentRect.maxY(), -1000, 1000);
+        localProjectionMatrix = orthoMatrix(contentRect.x(), contentRect.maxX(), contentRect.y(), contentRect.maxY(), -1000, 1000);
         // The origin of the new surface is the upper left corner of the layer.
         TransformationMatrix drawTransform;
         drawTransform.translate3d(0.5 * bounds.width(), 0.5 * bounds.height(), 0);
         // This layer will start using new transformation.
-        localMatrix = projectionMatrix * drawTransform;
+        localMatrix = drawTransform;
 
         surfaceLayers.append(layer);
     }
 
-    layer->setDrawTransform(m_scale, localMatrix);
+    layer->setDrawTransform(m_scale, localMatrix, localProjectionMatrix);
 
 #if ENABLE(VIDEO)
     bool layerVisible = clipRect.intersects(layer->boundingBox()) || layer->mediaPlayer();
@@ -830,8 +833,7 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
         localMatrix.setM23(0);
         localMatrix.setM31(0);
         localMatrix.setM32(0);
-        // This corresponds to the depth range specified in the original orthographic projection matrix
-        localMatrix.setM33(0.001);
+        localMatrix.setM33(1);
         localMatrix.setM34(0);
         localMatrix.setM43(0);
     }
@@ -847,7 +849,7 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
 
     const Vector<RefPtr<LayerCompositingThread> >& sublayers = layer->sublayers();
     for (size_t i = 0; i < sublayers.size(); i++)
-        updateLayersRecursive(sublayers[i].get(), localMatrix, surfaceLayers, opacity, clipRect);
+        updateLayersRecursive(sublayers[i].get(), localMatrix, localProjectionMatrix, surfaceLayers, opacity, clipRect);
 }
 
 static bool hasRotationalComponent(const TransformationMatrix& m)
@@ -965,8 +967,8 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         updateScissorIfNeeded(clipRect);
         const GLES2Program& program = useProgram(ColorProgram);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->transformedBounds());
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, layer->transformedBounds().data());
+        glDrawArrays(GL_TRIANGLE_FAN, 0, layer->transformedBounds().size());
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     }
 
@@ -986,7 +988,7 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
     // children, so bail.
     if (preserves3D && !superlayerPreserves3D) {
         collect3DPreservingLayers(sublayers);
-        std::stable_sort(sublayers.begin(), sublayers.end(), compareLayerZ);
+        std::stable_sort(sublayers.begin(), sublayers.end(), compareLayerW);
     }
 
     int newStencilValue = stencilClip ? stencilValue+1 : stencilValue;
@@ -1008,8 +1010,8 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         updateScissorIfNeeded(clipRect);
         const GLES2Program& program = useProgram(ColorProgram);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->transformedBounds());
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, layer->transformedBounds().data());
+        glDrawArrays(GL_TRIANGLE_FAN, 0, layer->transformedBounds().size());
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
         if (!stencilValue)

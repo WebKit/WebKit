@@ -24,6 +24,7 @@
 
 #include "LayerCompositingThread.h"
 #include "LayerRenderer.h"
+#include "LayerUtilities.h"
 #include "TextureCacheCompositingThread.h"
 
 namespace WebCore {
@@ -47,7 +48,7 @@ void LayerRendererSurface::setContentRect(const IntRect& contentRect)
 
 FloatRect LayerRendererSurface::boundingBox() const
 {
-    FloatRect rect = transformedBounds().boundingBox();
+    FloatRect rect = WebCore::boundingBox(transformedBounds());
 
     if (m_ownerLayer->replicaLayer())
         rect.unite(m_replicaDrawTransform.mapQuad(FloatRect(-origin(), size())).boundingBox());
@@ -55,9 +56,9 @@ FloatRect LayerRendererSurface::boundingBox() const
     return rect;
 }
 
-FloatQuad LayerRendererSurface::transformedBounds() const
+Vector<FloatPoint, 4> LayerRendererSurface::transformedBounds() const
 {
-    return m_drawTransform.mapQuad(FloatRect(-origin(), size()));
+    return toVector<FloatPoint, 4>(m_drawTransform.mapQuad(FloatRect(-origin(), size())));
 }
 
 bool LayerRendererSurface::ensureTexture()
