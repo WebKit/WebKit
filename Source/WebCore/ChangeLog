@@ -1,3 +1,17 @@
+2013-06-14  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r150651): Web Audio doesn't work at all (silence or squawks) on Mountain Lion
+        https://bugs.webkit.org/show_bug.cgi?id=117652
+
+        Reviewed by Eric Carlson.
+
+        r150651 disabled setting the buffer size to a large value, but in so doing, also
+        disabled setting the buffer size to a small value for Web Audio. Narrow the Mountain
+        Lion protection to just the <video> element case.
+        
+        * platform/audio/mac/AudioSessionManagerMac.cpp:
+        (AudioSessionManager::updateSessionState):
+
 2013-06-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Function names on Object.prototype should be common identifiers
