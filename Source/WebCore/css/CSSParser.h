@@ -240,7 +240,7 @@ public:
 #endif
 
 #if ENABLE(CSS_IMAGE_SET)
-    PassRefPtr<CSSValue> parseImageSet(CSSParserValueList*);
+    PassRefPtr<CSSValue> parseImageSet();
 #endif
 
 #if ENABLE(CSS_FILTERS)
