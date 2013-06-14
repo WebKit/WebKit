@@ -317,6 +317,15 @@ void InsertParagraphSeparatorCommand::doApply()
     // before we walk the DOM tree.
     insertionPosition = positionOutsideTabSpan(VisiblePosition(insertionPosition).deepEquivalent());
 
+    // If the returned position lies either at the end or at the start of an element that is ignored by editing
+    // we should move to its upstream or downstream position.
+    if (editingIgnoresContent(insertionPosition.deprecatedNode())) {
+        if (insertionPosition.atLastEditingPositionForNode())
+            insertionPosition = insertionPosition.downstream();
+        else if (insertionPosition.atFirstEditingPositionForNode())
+            insertionPosition = insertionPosition.upstream();
+    }
+
     // Make sure we do not cause a rendered space to become unrendered.
     // FIXME: We need the affinity for pos, but pos.downstream() does not give it
     Position leadingWhitespace = insertionPosition.leadingWhitespacePosition(VP_DEFAULT_AFFINITY);

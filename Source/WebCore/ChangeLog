@@ -1,3 +1,38 @@
+2013-06-14  Arpita Bahuguna  <a.bah@samsung.com>
+
+        Editing: wrong text position when you click enter on the text behind the image
+        https://bugs.webkit.org/show_bug.cgi?id=115023
+
+        Reviewed by Ryosuke Niwa.
+
+        When trying to break a line after an image followed by some text, contrary
+        to the expected behavior the text doesn't move to a new line, instead, the
+        caret position just shifts to the end of line.
+
+        As per the existing implementation for inserting a paragraph separator,
+        the insertion position obtained corresponds to the point after the image
+        element.
+        Since the insertion position doesn't resolve to being offset in the
+        following text node (0 offset), no splitting of text occurs and the block
+        to be inserted is placed after the containing (start) block (thereby
+        causing the caret position to shift).
+
+        If the computed insertionPosition points to an element that shall be
+        ignored for editing purposes (i.e. cannot have a VisiblePosition inside
+        it), and the position lies either at the start or at the end of such
+        an element, we should move our Position either upstream or
+        downstream (respectively) so as to obtain a valid position which can
+        be used further for splitting of the text.
+        
+        Test: editing/inserting/insert-paragraph-after-non-editable-node-before-text.html
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        Moving the insertionPosition either upstream or downstream, if the point
+        lies either at the start or at the end of the anchor node.
+        The ensuing position, if a text node, can then be used for splitting of
+        the text correctly.
+
 2013-06-14  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Remove implementation of ContextMenu classes

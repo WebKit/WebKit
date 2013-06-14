@@ -1,3 +1,15 @@
+2013-06-14  Arpita Bahuguna  <a.bah@samsung.com>
+
+        Editing: wrong text position when you click enter on the text behind the image
+        https://bugs.webkit.org/show_bug.cgi?id=115023
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/inserting/insert-paragraph-after-non-editable-node-before-text-expected.txt: Added.
+        * editing/inserting/insert-paragraph-after-non-ediatble-node-before-text.html: Added.
+        Layout test added for verifying the insert paragraph behavior between an inline node
+        which is ignored for editing purposes and some text.
+
 2013-06-14  Eric Carlson  <eric.carlson@apple.com>
 
         Potential use-after-free with an event fired at a HTMLMediaElement which is currently being deleted
