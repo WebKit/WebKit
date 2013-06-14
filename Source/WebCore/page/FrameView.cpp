@@ -3504,7 +3504,8 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (needsLayout())
         return;
 
-    InspectorInstrumentation::willPaint(renderView);
+    if (!p->paintingDisabled())
+        InspectorInstrumentation::willPaint(renderView);
 
     bool isTopLevelPainter = !sCurrentPaintTimeStamp;
     if (isTopLevelPainter)
@@ -3568,8 +3569,11 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (isTopLevelPainter)
         sCurrentPaintTimeStamp = 0;
 
-    InspectorInstrumentation::didPaint(renderView, p, rect);
-    firePaintRelatedMilestones();
+    if (!p->paintingDisabled()) {
+        InspectorInstrumentation::didPaint(renderView, p, rect);
+        // FIXME: should probably not fire milestones for snapshot painting. https://bugs.webkit.org/show_bug.cgi?id=117623
+        firePaintRelatedMilestones();
+    }
 }
 
 void FrameView::setPaintBehavior(PaintBehavior behavior)

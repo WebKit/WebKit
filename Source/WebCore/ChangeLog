@@ -1,3 +1,18 @@
+2013-06-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Should not call firePaintRelatedMilestones() for "update control tints" paint pass
+        https://bugs.webkit.org/show_bug.cgi?id=117624
+
+        Reviewed by Sam Weinig.
+
+        When window activation changes, we do a fake paint pass that is just used to
+        invalidate controls that change their appearance in background windows. This fake
+        paint should not be recorded in the inspector, and it should not cause paint-related
+        milestones to fire.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+
 2013-06-13  Dean Jackson  <dino@apple.com>
 
         Clicking on snapshotting plug-ins does not restart them
