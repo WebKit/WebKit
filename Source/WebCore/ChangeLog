@@ -1,3 +1,18 @@
+2013-06-14  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Dropdown button UX updates.
+        https://bugs.webkit.org/show_bug.cgi?id=117642.
+
+        Reviewed by Rob Buis.
+
+        JIRA 388652
+        Internally Reviewed by Jeff Rogers.
+
+        Change arrow assert.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::paintMenuList):
+
 2013-06-14  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] LayerTiler fails to tile really big layers

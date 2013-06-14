@@ -586,13 +586,13 @@ bool RenderThemeBlackBerry::paintMenuList(RenderObject* object, const PaintInfo&
     info.context->save();
     GraphicsContext* context = info.context;
 
-    static RefPtr<Image> disabled, inactive, pressed, arrowUp, arrowUpPressed;
+    static RefPtr<Image> disabled, inactive, pressed, arrowUp, arrowUpDisabled;
     if (!disabled) {
         disabled = loadImage("core_button_disabled");
         inactive = loadImage("core_button_inactive");
         pressed = loadImage("core_button_pressed");
         arrowUp = loadImage("core_dropdown_button_arrowup");
-        arrowUpPressed = loadImage("core_dropdown_button_arrowup_pressed");
+        arrowUpDisabled = loadImage("core_dropdown_button_arrowup_disabled");
     }
 
     FloatRect arrowButtonRectangle(computeMenuListArrowButtonRect(rect));
@@ -606,10 +606,10 @@ bool RenderThemeBlackBerry::paintMenuList(RenderObject* object, const PaintInfo&
     if (!isEnabled(object)) {
         drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
         drawNineSlice(context, rect, ctm.xScale(), disabled.get(), largeSlice);
-        drawControl(context, tmpRect, arrowUp.get()); // FIXME: should have a disabled image.
+        drawControl(context, tmpRect, arrowUpDisabled.get());
     } else if (isPressed(object)) {
         drawNineSlice(context, rect, ctm.xScale(), pressed.get(), largeSlice);
-        drawControl(context, tmpRect, arrowUpPressed.get());
+        drawControl(context, tmpRect, arrowUp.get());
     } else {
         drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
         drawControl(context, tmpRect, arrowUp.get());
