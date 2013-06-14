@@ -499,6 +499,12 @@ int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad)
         return VK_OEM_7; // case '\'': case '"': return 0xDE;
         // VK_OEM_8 (DF) Used for miscellaneous characters; it can vary by keyboard.
         // VK_OEM_102 (E2) Windows 2000/XP: Either the angle bracket key or the backslash key on the RT 102-key keyboard
+
+    case Qt::Key_AudioRewind:
+        return 0xE3; // (E3) Android/GoogleTV: Rewind media key (Windows: VK_ICO_HELP Help key on 1984 Olivetti M24 deluxe keyboard)
+    case Qt::Key_AudioForward:
+        return 0xE4; // (E4) Android/GoogleTV: Fast forward media key  (Windows: VK_ICO_00 '00' key on 1984 Olivetti M24 deluxe keyboard)
+
         // VK_PROCESSKEY (E5) Windows 95/98/Me, Windows NT 4.0, Windows 2000/XP: IME PROCESS key
         // VK_PACKET (E7) Windows 2000/XP: Used to pass Unicode characters as if they were keystrokes. The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods. For more information, see Remark in KEYBDINPUT,SendInput, WM_KEYDOWN, and WM_KEYUP
         // VK_ATTN (F6) Attn key
