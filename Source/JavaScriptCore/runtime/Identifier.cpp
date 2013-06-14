@@ -96,19 +96,12 @@ PassRefPtr<StringImpl> Identifier::add(VM* vm, const char* c)
         return add(vm, vm->smallStrings.singleCharacterStringRep(c[0]));
 
     IdentifierTable& identifierTable = *vm->identifierTable;
-    LiteralIdentifierTable& literalIdentifierTable = identifierTable.literalTable();
-
-    const LiteralIdentifierTable::iterator& iter = literalIdentifierTable.find(c);
-    if (iter != literalIdentifierTable.end())
-        return iter->value;
 
     HashSet<StringImpl*>::AddResult addResult = identifierTable.add<const LChar*, IdentifierASCIIStringTranslator>(reinterpret_cast<const LChar*>(c));
 
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
     RefPtr<StringImpl> addedString = addResult.isNewEntry ? adoptRef(*addResult.iterator) : *addResult.iterator;
-
-    literalIdentifierTable.add(c, addedString.get());
 
     return addedString.release();
 }

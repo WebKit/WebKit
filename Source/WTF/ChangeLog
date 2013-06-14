@@ -1,3 +1,14 @@
+2013-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove LiteralIdentifierTable
+        https://bugs.webkit.org/show_bug.cgi?id=117613
+
+        Reviewed by Geoffrey Garen.
+
+        Removed LiteralIdentifierTable since it doesn't seem to have any perf. impact now.
+
+        * wtf/WTFThreadData.h:
+
 2013-06-13  Brent Fulgham  <bfulgham@apple.com>
 
         [WinCairo] Correct FeatureDefines.h Default for ENABLE_VIEW_MODE_CSS_MEDIA
