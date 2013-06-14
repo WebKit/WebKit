@@ -1,3 +1,40 @@
+2013-06-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Added new baselines for some tests as r151533 on EFL port.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/selection/select-across-readonly-input-1-expected.png: Added.
+        * platform/efl/editing/selection/select-across-readonly-input-1-expected.txt: Added.
+        * platform/efl/editing/selection/select-across-readonly-input-2-expected.png: Added.
+        * platform/efl/editing/selection/select-across-readonly-input-2-expected.txt: Added.
+        * platform/efl/editing/selection/select-across-readonly-input-3-expected.png: Added.
+        * platform/efl/editing/selection/select-across-readonly-input-3-expected.txt: Added.
+        * platform/efl/editing/selection/select-across-readonly-input-4-expected.png: Added.
+        * platform/efl/editing/selection/select-across-readonly-input-4-expected.txt: Added.
+        * platform/efl/editing/selection/select-across-readonly-input-5-expected.png: Added.
+        * platform/efl/editing/selection/select-across-readonly-input-5-expected.txt: Added.
+        * platform/efl/editing/selection/select-all-002-expected.png: Added.
+        * platform/efl/editing/selection/select-all-002-expected.txt: Added.
+        * platform/efl/editing/selection/select-all-003-expected.png: Added.
+        * platform/efl/editing/selection/select-all-003-expected.txt: Added.
+        * platform/efl/editing/selection/select-all-004-expected.png: Added.
+        * platform/efl/editing/selection/select-all-004-expected.txt: Added.
+        * platform/efl/editing/selection/select-all-005-expected.png: Added.
+        * platform/efl/editing/selection/select-all-005-expected.txt: Added.
+        * platform/efl/editing/selection/select-all-006-expected.png: Added.
+        * platform/efl/editing/selection/select-all-006-expected.txt: Added.
+        * platform/efl/editing/selection/select-box-expected.png: Added.
+        * platform/efl/editing/selection/select-box-expected.txt: Added.
+        * platform/efl/editing/selection/select-element-paragraph-boundary-expected.png: Added.
+        * platform/efl/editing/selection/select-element-paragraph-boundary-expected.txt: Added.
+        * platform/efl/editing/selection/select-from-textfield-outwards-expected.png: Added.
+        * platform/efl/editing/selection/select-from-textfield-outwards-expected.txt: Added.
+        * platform/efl/editing/selection/selection-actions-expected.png: Added.
+        * platform/efl/editing/selection/selection-actions-expected.txt: Added.
+        * platform/efl/editing/selection/selection-button-text-expected.png: Added.
+        * platform/efl/editing/selection/selection-button-text-expected.txt: Added.
+
 2013-06-13  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes][CSS Regions] Respect bottom positioned shapes and content adjustment inside shapes
