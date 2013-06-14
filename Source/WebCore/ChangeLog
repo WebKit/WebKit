@@ -1,3 +1,22 @@
+2013-06-14  Dean Jackson  <dino@apple.com>
+
+        Clicking on snapshotting plug-ins does not restart them
+        https://bugs.webkit.org/show_bug.cgi?id=117620
+        <rdar://problem/13821729>
+
+        Follow-up review comments from Darin Adler, with some
+        discussion on IRC.
+
+        Sprinkle OVERRIDE on virtual functions where needed. Also
+        make sure that the Event is a MouseEvent before casting to it.
+
+        * html/HTMLPlugInElement.h: Move defaultEventHandler back to protected and add OVERRIDE.
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::defaultEventHandler): Check for MouseEvent and
+        use toMouseEvent().
+        * html/HTMLPlugInImageElement.h: Sprinkle some OVERRIDEs, and move defaultEventHandler
+        to private.
+
 2013-06-14  Timothy Hatcher  <timothy@apple.com>
 
         Remove front-end from the WebCore Xcode project.

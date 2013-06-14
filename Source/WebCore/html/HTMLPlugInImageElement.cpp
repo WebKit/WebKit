@@ -713,8 +713,8 @@ void HTMLPlugInImageElement::defaultEventHandler(Event* event)
 {
     RenderObject* r = renderer();
     if (r && r->isEmbeddedObject()) {
-        if (isPlugInImageElement() && displayState() == WaitingForSnapshot && event->type() == eventNames().clickEvent) {
-            MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
+        if (isPlugInImageElement() && displayState() == WaitingForSnapshot && event->isMouseEvent() && event->type() == eventNames().clickEvent) {
+            MouseEvent* mouseEvent = toMouseEvent(event);
             if (mouseEvent->button() == LeftButton) {
                 userDidClickSnapshot(mouseEvent, true);
                 event->setDefaultHandled();
@@ -724,5 +724,5 @@ void HTMLPlugInImageElement::defaultEventHandler(Event* event)
     }
     HTMLPlugInElement::defaultEventHandler(event);
 }
-    
+
 } // namespace WebCore
