@@ -1,3 +1,44 @@
+2013-06-14  Adam Barth  <abarth@webkit.org>
+
+        Threaded HTML parser can ASSERT in some situations
+        https://bugs.webkit.org/show_bug.cgi?id=117662
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch merges https://chromium.googlesource.com/chromium/blink/+/3c0a112b42d72c7623f78463166dd7f04d680b4c
+
+        --->8---
+        The parser is supposed to stop processing data when there's a pending
+        location change, but before this CL we would actually process the first
+        token from every chunk when there was a pending location change.
+
+        If the first token in a chunk was a "script" start tag, that would put
+        the tree builder into TextMode, which can only process character
+        tokens. If the next chunk starts with another start tag token, the tree
+        builder would be sad and hit an ASSERT.
+
+        This CL reorders a couple lines in HTMLDocumentParser so that we check
+        for pending location changes before processing any tokens. This change
+        stops us from processing the first token from each chunk while there is
+        a pending location change.
+
+        This issue can reproduce on any platform, but it reproduced often on
+        Android because mobile markup often elides spaces between consecutive
+        script tags. If there are space characters between the script tags,
+        then those space characters will be the first ones processes in the
+        chunk, which doesn't trigger the ASSERT.
+        ---8<---
+
+        Since we landed this patch in Blink, we've been able to reproduce this
+        issue on desktops as well. I spoke with rniwa in #webkit and he said
+        that WebKit doesn't have any current plans to enable the threaded
+        parser but that it was probably worth merging this patch anyway.
+
+        Test: http/tests/navigation/pending-location-change-assert.html
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::processParsedChunkFromBackgroundParser):
+
 2013-06-14  Patrick Gansterer  <paroga@webkit.org>
 
         Introduce USE(WINGDI) for the Windows port

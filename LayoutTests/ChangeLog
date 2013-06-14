@@ -1,3 +1,14 @@
+2013-06-14  Adam Barth  <abarth@webkit.org>
+
+        Threaded HTML parser can ASSERT in some situations
+        https://bugs.webkit.org/show_bug.cgi?id=117662
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/tests/navigation/pending-location-change-assert-expected.txt: Added.
+        * http/tests/navigation/pending-location-change-assert.html: Added.
+        * http/tests/resources/slow-notify-done.php: Added.
+
 2013-06-14  Arpita Bahuguna  <a.bah@samsung.com>
 
         Editing: wrong text position when you click enter on the text behind the image
