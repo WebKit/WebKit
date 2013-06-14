@@ -1,3 +1,10 @@
+2013-06-14  Timothy Hatcher  <timothy@apple.com>
+
+        Shrink larger images to fit the width of the blog.
+
+        * blog-files/new-inspector/hero-labeled.png:
+        * blog-files/new-inspector/hero.png:
+
 2013-06-12  Roger Fong  <roger_fong@apple.com>
 
         Update webkit.org build instructions for Apple Windows port.
