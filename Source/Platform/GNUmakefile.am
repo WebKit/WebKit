@@ -114,6 +114,7 @@ libPlatformGtk_la_CPPFLAGS = \
 	$(platform_webcore_cppflags) \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
+	$(FREETYPE_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSECRET_CFLAGS) \

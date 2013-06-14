@@ -1,3 +1,10 @@
+2013-06-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix.
+
+        * GNUmakefile.am: Add the Freetype CFLAGS to the list of libPlatformGtk's CPPFLAGS. These are required as there are
+        specific build targets that end up including the HarfBuzz headers which are included in the Freetype CFLAGS variable.
+
 2013-06-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Move more build targets for source code that's free of layer violations into libPlatform
