@@ -1,3 +1,15 @@
+2013-06-14  Patrick Gansterer  <paroga@webkit.org>
+
+        Introduce USE(WINGDI) for the Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=116138
+
+        Reviewed by Ryosuke Niwa.
+
+        Using USE(WINGDI) instead of OS(WINCE) will allow us to
+        compile the GDI based Windows port on WinNT too.
+
+        * Source/cmake/OptionsWinCE.cmake:
+
 2013-06-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WK1] Missing symbols

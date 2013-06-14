@@ -592,7 +592,7 @@ void PluginView::paintIntoTransformedContext(HDC hdc)
 
 void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const IntRect& rect)
 {
-#if !OS(WINCE)
+#if !USE(WINGDI)
     ASSERT(m_isWindowed);
     ASSERT(context->shouldIncludeChildWindows());
 
@@ -642,7 +642,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         setNPWindowRect(frameRect());
 
     if (m_isWindowed) {
-#if !OS(WINCE)
+#if !USE(WINGDI)
         if (context->shouldIncludeChildWindows())
             paintWindowedPluginIntoContext(context, rect);
 #endif
@@ -1067,7 +1067,7 @@ void PluginView::platformDestroy()
 
 PassRefPtr<Image> PluginView::snapshot()
 {
-#if !PLATFORM(GTK) && !OS(WINCE)
+#if !PLATFORM(GTK) && !USE(WINGDI)
     OwnPtr<HDC> hdc = adoptPtr(CreateCompatibleDC(0));
 
     if (!m_isWindowed) {

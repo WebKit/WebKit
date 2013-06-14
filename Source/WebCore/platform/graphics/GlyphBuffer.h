@@ -49,7 +49,7 @@ class SimpleFontData;
 #if USE(CAIRO)
 // FIXME: Why does Cairo use such a huge struct instead of just an offset into an array?
 typedef cairo_glyph_t GlyphBufferGlyph;
-#elif OS(WINCE)
+#elif USE(WINGDI)
 typedef wchar_t GlyphBufferGlyph;
 #elif PLATFORM(QT)
 typedef quint32 GlyphBufferGlyph;
@@ -170,7 +170,7 @@ public:
 #endif
     }
     
-#if !OS(WINCE)
+#if !USE(WINGDI)
     void add(Glyph glyph, const SimpleFontData* font, GlyphBufferAdvance advance)
     {
         m_fontData.append(font);

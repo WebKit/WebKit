@@ -27,7 +27,7 @@
 #include "harfbuzz/FontPlatformDataHarfBuzz.h"
 #elif PLATFORM(QT)
 #include "qt/FontPlatformData.h"
-#elif PLATFORM(WIN) && OS(WINCE)
+#elif USE(WINGDI)
 #include "wince/FontPlatformData.h"
 #elif PLATFORM(EFL) || PLATFORM(GTK)
 #include "freetype/FontPlatformData.h"

@@ -42,7 +42,7 @@ namespace WebCore {
 class CairoPath;
 }
 typedef WebCore::CairoPath PlatformPath;
-#elif OS(WINCE)
+#elif USE(WINGDI)
 namespace WebCore {
     class PlatformPath;
 }

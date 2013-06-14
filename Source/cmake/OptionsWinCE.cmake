@@ -4,6 +4,7 @@ set(WTF_USE_WCHAR_UNICODE 1)
 
 add_definitions(-D_CE_CRT_ALLOW_WIN_MINMAX)
 add_definitions(-DWTF_USE_WCHAR_UNICODE=1)
+add_definitions(-DWTF_USE_WINGDI=1)
 add_definitions(-DWTF_USE_WININET=1)
 add_definitions(-DWINCEBASIC)
 add_definitions(-DJS_NO_EXPORT)

@@ -1,3 +1,36 @@
+2013-06-14  Patrick Gansterer  <paroga@webkit.org>
+
+        Introduce USE(WINGDI) for the Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=116138
+
+        Reviewed by Ryosuke Niwa.
+
+        Using USE(WINGDI) instead of OS(WINCE) will allow us to
+        compile the GDI based Windows port on WinNT too.
+
+        * config.h:
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore):
+        (GlyphBuffer):
+        * platform/graphics/Gradient.h:
+        (Gradient):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore):
+        (GraphicsContext):
+        * platform/graphics/ImageBufferData.h:
+        * platform/graphics/NativeImagePtr.h:
+        (WebCore):
+        * platform/graphics/Path.h:
+        * platform/graphics/Pattern.h:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paintWindowedPluginIntoContext):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::snapshot):
+
 2013-06-13  Jer Noble  <jer.noble@apple.com>
 
         Report the memory cost of HTMLMediaElements to GC.
