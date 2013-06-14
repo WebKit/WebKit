@@ -1,3 +1,16 @@
+2013-06-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Function names on Object.prototype should be common identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=117614
+
+        Reviewed by Darin Adler.
+
+        Use the added common identifiers.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::finishCreation):
+        (WebCore::JSDOMWindowBase::updateDocument):
+
 2013-06-14  Arpita Bahuguna  <a.bah@samsung.com>
 
         Editing: wrong text position when you click enter on the text behind the image

@@ -1,3 +1,23 @@
+2013-06-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Function names on Object.prototype should be common identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=117614
+
+        Reviewed by Darin Adler.
+
+        Patch written by Sam Weinig. Make Object's prototype function names common identififers since they're used frequently.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSObject.h:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2013-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove LiteralIdentifierTable

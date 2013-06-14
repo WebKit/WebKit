@@ -297,31 +297,31 @@ void JSGlobalObject::reset(JSValue prototype)
     m_errorPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, m_errorConstructor.get(), DontEnum);
 
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().Object, objectConstructor, DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "Function"), functionConstructor, DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Function, functionConstructor, DontEnum);
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().Array, arrayConstructor, DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "Boolean"), booleanConstructor, DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "String"), stringConstructor, DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "Number"), numberConstructor, DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "Date"), dateConstructor, DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "RegExp"), m_regExpConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "Error"), m_errorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "EvalError"), m_evalErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "RangeError"), m_rangeErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "ReferenceError"), m_referenceErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "SyntaxError"), m_syntaxErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "TypeError"), m_typeErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "URIError"), m_URIErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Boolean, booleanConstructor, DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().String, stringConstructor, DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Number, numberConstructor, DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Date, dateConstructor, DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().RegExp, m_regExpConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Error, m_errorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().EvalError, m_evalErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().RangeError, m_rangeErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().ReferenceError, m_referenceErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().SyntaxError, m_syntaxErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().TypeError, m_typeErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().URIError, m_URIErrorConstructor.get(), DontEnum);
 
     m_evalFunction.set(exec->vm(), this, JSFunction::create(exec, this, 1, exec->propertyNames().eval.string(), globalFuncEval));
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().eval, m_evalFunction.get(), DontEnum);
 
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "JSON"), JSONObject::create(exec, this, JSONObject::createStructure(exec->vm(), this, m_objectPrototype.get())), DontEnum);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "Math"), MathObject::create(exec, this, MathObject::createStructure(exec->vm(), this, m_objectPrototype.get())), DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().JSON, JSONObject::create(exec, this, JSONObject::createStructure(exec->vm(), this, m_objectPrototype.get())), DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Math, MathObject::create(exec, this, MathObject::createStructure(exec->vm(), this, m_objectPrototype.get())), DontEnum);
 
     GlobalPropertyInfo staticGlobals[] = {
-        GlobalPropertyInfo(Identifier(exec, "NaN"), jsNaN(), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(Identifier(exec, "Infinity"), jsNumber(std::numeric_limits<double>::infinity()), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(Identifier(exec, "undefined"), jsUndefined(), DontEnum | DontDelete | ReadOnly)
+        GlobalPropertyInfo(exec->propertyNames().NaN, jsNaN(), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(exec->propertyNames().Infinity, jsNumber(std::numeric_limits<double>::infinity()), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(exec->propertyNames().undefinedKeyword, jsUndefined(), DontEnum | DontDelete | ReadOnly)
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
     

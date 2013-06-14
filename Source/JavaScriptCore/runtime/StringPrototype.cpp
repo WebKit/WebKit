@@ -97,8 +97,8 @@ void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObje
     Base::finishCreation(vm, nameAndMessage);
     ASSERT(inherits(&s_info));
 
-    JSC_NATIVE_INTRINSIC_FUNCTION("toString", stringProtoFuncToString, DontEnum, 0, StringPrototypeValueOfIntrinsic);
-    JSC_NATIVE_INTRINSIC_FUNCTION("valueOf", stringProtoFuncToString, DontEnum, 0, StringPrototypeValueOfIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->toString, stringProtoFuncToString, DontEnum, 0, StringPrototypeValueOfIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->valueOf, stringProtoFuncToString, DontEnum, 0, StringPrototypeValueOfIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION("charAt", stringProtoFuncCharAt, DontEnum, 1, CharAtIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION("charCodeAt", stringProtoFuncCharCodeAt, DontEnum, 1, CharCodeAtIntrinsic);
     JSC_NATIVE_FUNCTION("concat", stringProtoFuncConcat, DontEnum, 1);

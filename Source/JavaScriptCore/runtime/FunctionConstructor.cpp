@@ -124,7 +124,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState* exec, JSGlobalObj
 // ECMA 15.3.2 The Function Constructor
 JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args)
 {
-    return constructFunction(exec, globalObject, args, Identifier(exec, "anonymous"), String(), TextPosition::minimumPosition());
+    return constructFunction(exec, globalObject, args, exec->propertyNames().anonymous, String(), TextPosition::minimumPosition());
 }
 
 } // namespace JSC
