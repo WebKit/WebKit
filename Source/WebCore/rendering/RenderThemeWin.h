@@ -1,7 +1,7 @@
 /*
  * This file is part of the WebKit project.
  *
- * Copyright (C) 2006, 2008 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008, 2013 Apple Computer, Inc.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -144,6 +144,13 @@ public:
     virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const OVERRIDE;
 #endif
 
+#if ENABLE(METER_ELEMENT)
+    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const OVERRIDE;
+    virtual bool supportsMeter(ControlPart) const OVERRIDE;
+    virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
+    virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+#endif
+
     virtual bool shouldShowPlaceholderWhenFocused() const { return true; }
 
 private:
@@ -154,7 +161,7 @@ private:
     };
 
     RenderThemeWin();
-    ~RenderThemeWin();
+    virtual ~RenderThemeWin();
 
     void addIntrinsicMargins(RenderStyle*) const;
     void close();
@@ -175,12 +182,14 @@ private:
     HANDLE menuListTheme() const;
     HANDLE sliderTheme() const;
     HANDLE spinButtonTheme() const;
+    HANDLE progressBarTheme() const;
 
     mutable HANDLE m_buttonTheme;
     mutable HANDLE m_textFieldTheme;
     mutable HANDLE m_menuListTheme;
     mutable HANDLE m_sliderTheme;
     mutable HANDLE m_spinButtonTheme;
+    mutable HANDLE m_progressBarTheme;
 };
 
 };

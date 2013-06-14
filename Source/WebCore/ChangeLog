@@ -1,3 +1,28 @@
+2013-06-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Provide simple <meter> drawing logic for testing.
+        https://bugs.webkit.org/show_bug.cgi?id=117645.
+
+        Reviewed by Anders Carlsson.
+
+        accessbility/meter-element.html
+
+        * rendering/RenderThemeSafari.cpp: Simple test implementation
+        (WebCore::RenderThemeSafari::adjustMeterStyle): Added.
+        (WebCore::RenderThemeSafari::supportsMeter): Added.
+        (WebCore::RenderThemeSafari::meterSizeForBounds): Added.
+        (WebCore::RenderThemeSafari::paintMeter): Added.
+        * rendering/RenderThemeSafari.h:
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::progressBarTheme): Added.
+        (WebCore::RenderThemeWin::getClassicThemeData): Support meters.
+        (WebCore::RenderThemeWin::getThemeData): Support meter theme.
+        (WebCore::RenderThemeWin::adjustMeterStyle): Added.
+        (WebCore::RenderThemeWin::supportsMeter): Added.
+        (WebCore::RenderThemeWin::meterSizeForBounds): Added.
+        (WebCore::RenderThemeWin::paintMeter): Added.
+        * rendering/RenderThemeWin.h:
+
 2013-06-14  Eric Carlson  <eric.carlson@apple.com>
 
         Potential use-after-free with an event fired at a HTMLMediaElement which is currently being deleted

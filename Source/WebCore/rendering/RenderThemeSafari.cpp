@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc.
+ * Copyright (C) 2007, 2008, 2009, 2013 Apple Inc.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -35,9 +35,11 @@
 #include "GraphicsContextCG.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
+#include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "PaintInfo.h"
 #include "RenderMediaControls.h"
+#include "RenderMeter.h"
 #include "RenderSlider.h"
 #include "RenderView.h"
 #include "SoftLinking.h"
@@ -1200,6 +1202,52 @@ bool RenderThemeSafari::paintMediaSliderThumb(RenderObject* o, const PaintInfo& 
 {
     return RenderMediaControls::paintMediaControlsPart(MediaSliderThumb, o, paintInfo, r);
 }
+#endif
+
+#if ENABLE(METER_ELEMENT)
+void RenderThemeSafari::adjustMeterStyle(StyleResolver*, RenderStyle* style, Element*) const
+{
+    style->setBoxShadow(nullptr);
+}
+
+bool RenderThemeSafari::supportsMeter(ControlPart part) const
+{
+    switch (part) {
+    case MeterPart:
+        return true;
+    default:
+        return false;
+    }
+}
+
+IntSize RenderThemeSafari::meterSizeForBounds(const RenderMeter*, const IntRect& bounds) const
+{
+    return bounds.size();
+}
+
+bool RenderThemeSafari::paintMeter(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    // NOTE: This routine is for testing only. It should be fleshed out with a real CG-based implementation.
+    // Right now it uses a slider, with the thumb positioned at the meter point.
+    if (!renderObject->isMeter())
+        return true;
+
+    HTMLMeterElement* element = toRenderMeter(renderObject)->meterElement();
+
+    int remaining = static_cast<int>((1.0 - element->valueRatio()) * static_cast<double>(rect.size().width()));
+
+    // Draw the background
+    paintSliderTrack(renderObject, paintInfo, rect);
+
+    // Draw the progress portion
+    IntRect completedRect(rect);
+    completedRect.contract(remaining, 0);
+
+    paintSliderThumb(renderObject, paintInfo, completedRect);
+
+    return true;
+}
+
 #endif
 
 } // namespace WebCore

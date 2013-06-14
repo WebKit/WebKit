@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007, 2013 Apple Inc.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -109,6 +109,36 @@
 #define UPS_PRESSED     3
 #define UPS_DISABLED    4
 
+// Progress bar parts
+#define PP_BAR          1
+#define PP_BARVERT      2
+#define PP_CHUNK        3
+#define PP_CHUNKVERT    4
+#define PP_FILL         5
+#define PP_FILLVERT     6
+#define PP_PULSEOVERLAY 7
+#define PP_MOVEOVERLAY  8
+#define PP_PULSEOVERLAYVERT 9
+#define PP_MOVEOVERLAYVERT  10
+#define PP_TRANSPARENTBAR   11
+#define PP_TRANSPARENTBARVERT 12
+
+// Progress bar states
+#define PBBS_NORMAL     1
+#define PBBS_PARTIAL    2
+#define PBBVS_NORMAL    1 // Vertical
+#define PBBVS_PARTIAL   2
+
+// Progress bar fill states
+#define PBFS_NORMAL     1
+#define PBFS_ERROR      2
+#define PBFS_PAUSED     3
+#define PBFS_PARTIAL    4
+#define PBFVS_NORMAL    1 // Vertical
+#define PBFVS_ERROR     2
+#define PBFVS_PAUSED    3
+#define PBFVS_PARTIAL   4
+
 
 SOFT_LINK_LIBRARY(uxtheme)
 SOFT_LINK(uxtheme, OpenThemeData, HANDLE, WINAPI, (HWND hwnd, LPCWSTR pszClassList), (hwnd, pszClassList))
@@ -173,6 +203,7 @@ RenderThemeWin::RenderThemeWin()
     , m_menuListTheme(0)
     , m_sliderTheme(0)
     , m_spinButtonTheme(0)
+    , m_progressBarTheme(0)
 {
     haveTheme = uxthemeLibrary() && IsThemeActive();
 }
@@ -220,6 +251,13 @@ HANDLE RenderThemeWin::spinButtonTheme() const
     return m_spinButtonTheme;
 }
 
+HANDLE RenderThemeWin::progressBarTheme() const
+{
+    if (haveTheme && !m_progressBarTheme)
+        m_progressBarTheme = OpenThemeData(0, L"Progress");
+    return m_progressBarTheme;
+}
+
 void RenderThemeWin::close()
 {
     // This method will need to be called when the OS theme changes to flush our cached themes.
@@ -233,7 +271,9 @@ void RenderThemeWin::close()
         CloseThemeData(m_sliderTheme);
     if (m_spinButtonTheme)
         CloseThemeData(m_spinButtonTheme);
-    m_buttonTheme = m_textFieldTheme = m_menuListTheme = m_sliderTheme = m_spinButtonTheme = 0;
+    if (m_progressBarTheme)
+        CloseThemeData(m_progressBarTheme);
+    m_buttonTheme = m_textFieldTheme = m_menuListTheme = m_sliderTheme = m_spinButtonTheme = m_progressBarTheme = 0;
 
     haveTheme = uxthemeLibrary() && IsThemeActive();
 }
@@ -523,6 +563,10 @@ ThemeData RenderThemeWin::getClassicThemeData(RenderObject* o, ControlSubPart su
             result.m_part = DFC_SCROLL;
             result.m_state = determineClassicState(o);
             break;
+        case MeterPart:
+            result.m_part = PP_BAR;
+            result.m_state = determineState(o);
+            break;
         case SearchFieldPart:
         case TextFieldPart:
         case TextAreaPart:
@@ -584,6 +628,10 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o, ControlSubPart subPart)
                 result.m_state = determineState(o);
             break;
         }
+        case MeterPart:
+            result.m_part = PP_BAR;
+            result.m_state = determineState(o);
+            break;
         case RadioPart:
             result.m_part = BP_RADIO;
             result.m_state = determineState(o);
@@ -1120,7 +1168,54 @@ IntPoint RenderThemeWin::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonB
     return RenderMediaControls::volumeSliderOffsetFromMuteButton(muteButtonBox, size);
 }
 
+#endif
+
+#if ENABLE(METER_ELEMENT)
+void RenderThemeWin::adjustMeterStyle(StyleResolver*, RenderStyle* style, Element*) const
+{
+    style->setBoxShadow(nullptr);
+}
+
+bool RenderThemeWin::supportsMeter(ControlPart part) const
+{
+    switch (part) {
+    case MeterPart:
+        return true;
+    default:
+        return false;
+    }
+}
+
+IntSize RenderThemeWin::meterSizeForBounds(const RenderMeter*, const IntRect& bounds) const
+{
+    return bounds.size();
+}
+
+bool RenderThemeWin::paintMeter(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!renderObject->isMeter())
+        return true;
+
+    HTMLMeterElement* element = toRenderMeter(renderObject)->meterElement();
+
+    ThemeData theme = getThemeData(renderObject);
+
+    int remaining = static_cast<int>((1.0 - element->valueRatio()) * static_cast<double>(rect.size().width()));
+
+    // Draw the background
+    drawControl(paintInfo.context, renderObject, progressBarTheme(), theme, rect);
+
+    // Draw the progress portion
+    IntRect completedRect(rect);
+    completedRect.contract(remaining, 0);
+
+    theme.m_part = PP_FILL;
+    drawControl(paintInfo.context, renderObject, progressBarTheme(), theme, completedRect);
+
+    return true;
+}
 
 #endif
+
 
 }

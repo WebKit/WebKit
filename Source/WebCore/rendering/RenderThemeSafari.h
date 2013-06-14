@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc.
+ * Copyright (C) 2007, 2008, 2013 Apple Inc.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -136,6 +136,13 @@ protected:
     virtual bool paintMediaSeekForwardButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+#endif
+
+#if ENABLE(METER_ELEMENT)
+    virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const OVERRIDE;
+    virtual bool supportsMeter(ControlPart) const OVERRIDE;
+    virtual void adjustMeterStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
+    virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
 #endif
 
     virtual bool shouldShowPlaceholderWhenFocused() const { return true; }
