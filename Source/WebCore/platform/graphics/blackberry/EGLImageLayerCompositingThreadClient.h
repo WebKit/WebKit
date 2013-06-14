@@ -55,7 +55,7 @@ public:
     virtual void layerVisibilityChanged(LayerCompositingThread*, bool visible) { }
 
     virtual void uploadTexturesIfNeeded(LayerCompositingThread*);
-    virtual void drawTextures(LayerCompositingThread*, double scale, const BlackBerry::Platform::Graphics::GLES2Program&);
+    virtual void drawTextures(LayerCompositingThread*, const BlackBerry::Platform::Graphics::GLES2Program&, double scale, const FloatRect& clipRect);
     virtual void deleteTextures(LayerCompositingThread*);
 
     virtual void bindContentsTexture(LayerCompositingThread*);

@@ -41,7 +41,7 @@ public:
     void layerVisibilityChanged(LayerCompositingThread*, bool) { }
     void uploadTexturesIfNeeded(LayerCompositingThread*) { }
 
-    void drawTextures(LayerCompositingThread*, double scale, const GLES2Program&);
+    void drawTextures(LayerCompositingThread*, const GLES2Program&, double scale, const FloatRect& clipRect);
     void deleteTextures(LayerCompositingThread*);
 
     void commitPendingTextureUploads(LayerCompositingThread*);
@@ -59,7 +59,7 @@ CanvasLayerCompositingThreadClient::CanvasLayerCompositingThreadClient(BlackBerr
 {
 }
 
-void CanvasLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double, const GLES2Program&)
+void CanvasLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, const GLES2Program&, double, const FloatRect& /*clipRect*/)
 {
     if (!m_buffer)
         return;

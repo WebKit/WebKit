@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class LayerCompositingThread;
+class LayerVisibility;
 class LayerWebKitThread;
 
 class LayerTiler : public ThreadSafeRefCounted<LayerTiler>, public LayerCompositingThreadClient {
@@ -67,14 +68,14 @@ public:
     virtual void layerVisibilityChanged(LayerCompositingThread*, bool visible);
     virtual void uploadTexturesIfNeeded(LayerCompositingThread*);
     virtual LayerTexture* contentsTexture(LayerCompositingThread*);
-    virtual void drawTextures(LayerCompositingThread*, double scale, const BlackBerry::Platform::Graphics::GLES2Program&);
+    virtual void drawTextures(LayerCompositingThread*, const BlackBerry::Platform::Graphics::GLES2Program&, double scale, const FloatRect& clipRect);
     virtual void deleteTextures(LayerCompositingThread*);
     static void willCommit();
     virtual void commitPendingTextureUploads(LayerCompositingThread*);
 
 private:
     struct TextureJob {
-        enum Type { Unknown, SetContents, UpdateContents, DiscardContents, ResizeContents, DirtyContents };
+        enum Type { Unknown, SetContents, UpdateContents, ResizeContents, DirtyContents };
 
         TextureJob()
             : m_type(Unknown)
@@ -95,7 +96,7 @@ private:
             , m_contents(0)
             , m_dirtyRect(dirtyRect)
         {
-            ASSERT(type == DiscardContents || type == DirtyContents);
+            ASSERT(type == DirtyContents);
         }
 
         TextureJob(Type type, BlackBerry::Platform::Graphics::Buffer* contents, const IntRect& dirtyRect)
@@ -112,7 +113,6 @@ private:
             return TextureJob(SetContents, contents, contentsRect);
         }
         static TextureJob updateContents(BlackBerry::Platform::Graphics::Buffer* contents, const IntRect& dirtyRect) { return TextureJob(UpdateContents, contents, dirtyRect); }
-        static TextureJob discardContents(const IntRect& dirtyRect) { return TextureJob(DiscardContents, dirtyRect); }
         static TextureJob resizeContents(const IntSize& newSize) { return TextureJob(ResizeContents, newSize); }
         static TextureJob dirtyContents(const IntRect& dirtyRect) { return TextureJob(DirtyContents, dirtyRect); }
 
@@ -127,26 +127,27 @@ private:
     typedef HashMap<TileIndex, LayerTile*> TileMap;
     typedef HashMap<TileIndex, const TextureJob*> TileJobsMap;
 
-    void updateTileSize();
-
     LayerTiler(LayerWebKitThread*);
 
+    // Swaps in a new front visibility and returns the current one, atomically.
+    LayerVisibility* swapFrontVisibility(LayerVisibility*);
+
     // WebKit thread
+    void updateTileSize();
     void addTextureJob(const TextureJob&);
     void clearTextureJobs();
     BlackBerry::Platform::Graphics::Buffer* createBuffer(const IntSize&);
+    LayerVisibility* takeFrontVisibility() { return swapFrontVisibility(0); }
 
     // Compositing thread
     void updateTileContents(const TextureJob&, const IntRect&);
     void addTileJob(const TileIndex&, const TextureJob&, TileJobsMap&);
-    void performTileJob(LayerTile*, const TextureJob&);
+    void performTileJob(LayerCompositingThread*, LayerTile*, const TextureJob&);
     void processTextureJob(const TextureJob&, TileJobsMap&);
     void pruneTextures();
     void visibilityChanged(bool needsDisplay);
-    bool drawTile(LayerCompositingThread*, double scale, const TileIndex&, const FloatRect& dst, const BlackBerry::Platform::Graphics::GLES2Program&);
-
-    // Threadsafe
-    int needsRender() const { return static_cast<int const volatile &>(m_needsRenderCount); }
+    bool drawTile(LayerCompositingThread*, LayerTile*, const TileIndex&, double scale, const FloatRect& dst, const FloatRect& dstClip);
+    void setFrontVisibility(const FloatRect& visibleRect, HashSet<TileIndex>& tilesNeedingRender);
 
     // Clear all pending update content texture jobs
     template<typename T>
@@ -165,9 +166,7 @@ private:
 
     LayerWebKitThread* m_layer;
 
-    Mutex m_tilesMutex;
-    TileMap m_tiles; // Protected by m_tilesMutex
-    int m_needsRenderCount; // atomic
+    TileMap m_tiles;
 
     bool m_needsBacking;
 
@@ -182,7 +181,8 @@ private:
     Vector<TextureJob> m_pendingTextureJobs; // Added, but not committed yet.
     Deque<TextureJob> m_textureJobs;
 
-    double m_contentsScale;
+    LayerVisibility* m_frontVisibility;
+    LayerVisibility* m_backVisibility;
 };
 
 }

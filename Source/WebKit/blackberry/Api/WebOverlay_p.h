@@ -197,7 +197,7 @@ public:
     virtual void layerCompositingThreadDestroyed(WebCore::LayerCompositingThread*);
     virtual void layerVisibilityChanged(WebCore::LayerCompositingThread*, bool visible);
     virtual void uploadTexturesIfNeeded(WebCore::LayerCompositingThread*);
-    virtual void drawTextures(WebCore::LayerCompositingThread*, double scale, const Platform::Graphics::GLES2Program&);
+    virtual void drawTextures(WebCore::LayerCompositingThread*, const Platform::Graphics::GLES2Program&, double scale, const WebCore::FloatRect& clipRect);
     virtual void deleteTextures(WebCore::LayerCompositingThread*);
 
 private:

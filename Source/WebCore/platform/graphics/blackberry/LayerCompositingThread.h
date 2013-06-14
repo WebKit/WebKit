@@ -197,8 +197,8 @@ public:
 
     void deleteTextures();
 
-    void drawTextures(double scale, const BlackBerry::Platform::Graphics::GLES2Program&, const FloatRect& visibleRect);
-    void drawSurface(const TransformationMatrix&, LayerCompositingThread* mask, const BlackBerry::Platform::Graphics::GLES2Program&);
+    void drawTextures(const BlackBerry::Platform::Graphics::GLES2Program&, double scale, const FloatRect& visibleRect, const FloatRect& clipRect);
+    void drawSurface(const BlackBerry::Platform::Graphics::GLES2Program&, const TransformationMatrix&, LayerCompositingThread* mask);
 
     void releaseTextureResources();
 

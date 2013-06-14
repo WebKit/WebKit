@@ -1,3 +1,110 @@
+2013-06-14  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] LayerTiler fails to tile really big layers
+        https://bugs.webkit.org/show_bug.cgi?id=117211
+
+        Reviewed by Carlos Garcia Campos.
+
+        PR 273550
+
+        The cause for this bug was that LayerTiler computed which tiles are
+        visible by exhaustively mapping every tile to normalized device
+        coordinates and checking if it intersected the viewport. If there was a
+        lot of tiles, it would get stuck in this loop, iterating over all
+        tiles, for a very long time. Also, the visibility information was
+        transferred to the WebKit thread using mutexes, which added unnecessary
+        mutex contention to the mix.
+
+        Fixed by doing the reverse calculation, unprojecting the visible part
+        of the layer to layer coordinate space to find which tiles are visible.
+        Instead of doing a traditional unprojection of point to line and see
+        where the line intersects the layer, this patch uses the w-coordinates
+        of triangle vertices to perform "perspective correct texturing" of the
+        intersection points in device space, which is equivalent to
+        unprojection since perspective correct texturing computes a 2D
+        coordinate in (normalized) layer coordinate space which is easily
+        scaled up to the layer bounds and get the visible region expressed in
+        layer coordinate space.
+
+        The visible area is approximated by a rectangle, and a set of tiles
+        needing render are added to the mix, and  we have a swappable data
+        structure so visbility can be transferred to WebKit thread without
+        mutexes, but instead using atomic swap.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/blackberry/CanvasLayerWebKitThread.cpp:
+        (CanvasLayerCompositingThreadClient):
+        (WebCore::CanvasLayerCompositingThreadClient::drawTextures):
+        * platform/graphics/blackberry/EGLImageLayerCompositingThreadClient.cpp:
+        (WebCore::EGLImageLayerCompositingThreadClient::drawTextures):
+        * platform/graphics/blackberry/EGLImageLayerCompositingThreadClient.h:
+        (EGLImageLayerCompositingThreadClient):
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::drawTextures):
+        (WebCore::LayerCompositingThread::drawSurface):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (LayerCompositingThread):
+        * platform/graphics/blackberry/LayerCompositingThreadClient.h:
+        (WebCore):
+        (LayerCompositingThreadClient):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::compositeLayersRecursive):
+        * platform/graphics/blackberry/LayerTile.cpp:
+        (WebCore::LayerTile::LayerTile):
+        (WebCore::LayerTile::setContents):
+        (WebCore::LayerTile::updateContents):
+        (WebCore::LayerTile::discardContents):
+        * platform/graphics/blackberry/LayerTile.h:
+        (LayerTile):
+        (WebCore::LayerTile::contentsScale):
+        (WebCore::LayerTile::setContentsDirty):
+        * platform/graphics/blackberry/LayerTiler.cpp:
+        (LayerVisibility):
+        (WebCore::LayerVisibility::LayerVisibility):
+        (WebCore::LayerVisibility::visibleRect):
+        (WebCore::LayerVisibility::setVisibleRect):
+        (WebCore::LayerVisibility::needsRender):
+        (WebCore::LayerVisibility::tileNeedsRender):
+        (WebCore::LayerVisibility::willRenderTile):
+        (WebCore::LayerVisibility::swapTilesNeedingRender):
+        (WebCore::LayerVisibility::merge):
+        (WebCore):
+        (WebCore::LayerTiler::LayerTiler):
+        (WebCore::LayerTiler::~LayerTiler):
+        (WebCore::LayerTiler::updateTextureContentsIfNeeded):
+        (WebCore::LayerTiler::swapFrontVisibility):
+        (WebCore::LayerTiler::setFrontVisibility):
+        (WebCore::LayerTiler::layerVisibilityChanged):
+        (WebCore::LayerTiler::uploadTexturesIfNeeded):
+        (WebCore::LayerTiler::processTextureJob):
+        (WebCore::LayerTiler::addTileJob):
+        (WebCore::LayerTiler::performTileJob):
+        (WebCore::LayerTiler::drawTile):
+        (WebCore::inflateViewport):
+        (WebCore::LayerTiler::drawTextures):
+        (WebCore::LayerTiler::pruneTextures):
+        (WebCore::LayerTiler::rectForTile):
+        * platform/graphics/blackberry/LayerTiler.h:
+        (WebCore):
+        (LayerTiler):
+        (WebCore::LayerTiler::TextureJob::TextureJob):
+        (WebCore::LayerTiler::takeFrontVisibility):
+        * platform/graphics/blackberry/LayerUtilities.h:
+        (WebCore):
+        (WebCore::det):
+        (WebCore::dot):
+        (LayerClipEdge):
+        (WebCore::LayerClipEdge::LayerClipEdge):
+        (WebCore::LayerClipEdge::isPointInside):
+        (WebCore::LayerClipEdge::computeIntersection):
+        (WebCore::intersectPolygonWithRect):
+        (WebCore::computeBarycentricCoordinates):
+        (WebCore::manhattanDistanceToViewport):
+        (UnprojectionVertex):
+        (WebCore::compareManhattanDistanceToViewport):
+        (WebCore::unproject):
+
 2013-06-14  Antoine Quint  <graouts@apple.com>
 
         [Mac] clicking caption track glyph should dismiss menu

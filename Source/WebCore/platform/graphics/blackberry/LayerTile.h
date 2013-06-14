@@ -46,29 +46,23 @@ public:
     bool hasTexture() const { return m_texture && m_texture->buffer(); }
 
     void setContents(BlackBerry::Platform::Graphics::Buffer*);
-    void updateContents(BlackBerry::Platform::Graphics::Buffer*);
+    void updateContents(BlackBerry::Platform::Graphics::Buffer*, double scale);
     void discardContents();
 
-    // The current texture is an accurate preview of this layer, but a more
-    // detailed texture could be obtained by repainting the layer. Used when
-    // zoom level changes.
-    void setContentsDirty() { m_contentsDirty = true; }
+    // Returns 0 if contents are resolution independent or scale is simply unknown.
+    double contentsScale() const { return m_scale; }
 
-    enum RenderState { DoesNotNeedRender = 0, NeedsRender = 1, RenderPending = 2 };
-    RenderState renderState() const { return static_cast<RenderState>(m_needsRender); }
-    bool needsRender() { return m_needsRender == NeedsRender; }
-    void setNeedsRender(bool needsRender) { m_needsRender = needsRender; }
-    void setRenderPending() { m_needsRender = RenderPending; }
-    void setRenderDone() { m_needsRender = DoesNotNeedRender; }
+    // The texture contents are dirty due to appearance of page changing, or a change in contents scale.
+    void setContentsDirty() { m_contentsDirty = true; }
 
 private:
     void setTexture(PassRefPtr<LayerTexture>);
 
     // Never assign to m_texture directly, use setTexture() above.
     RefPtr<LayerTexture> m_texture;
+    double m_scale;
     bool m_contentsDirty : 1;
     bool m_visible : 1;
-    unsigned m_needsRender : 2;
 };
 
 }

@@ -501,7 +501,7 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
     m_texture->updateContents(textureContents);
 }
 
-void WebOverlayLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double scale, const GLES2Program&)
+void WebOverlayLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, const GLES2Program&, double scale, const FloatRect& /*clipRect*/)
 {
     if (!m_texture || !m_texture->buffer())
         return;

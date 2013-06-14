@@ -919,7 +919,7 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
 
         if (!drawSurface) {
             const GLES2Program& program = useLayerProgram(layerProgram);
-            layer->drawTextures(m_scale, program, m_visibleRect);
+            layer->drawTextures(program, m_scale, m_visibleRect, clipRect);
         } else {
             // Draw the reflection if it exists.
             if (layer->replicaLayer()) {
@@ -931,11 +931,11 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
                     mask = layer->replicaLayer()->maskLayer();
 
                 const GLES2Program& program = useLayerProgram(layerProgram, mask);
-                layer->drawSurface(layer->layerRendererSurface()->replicaDrawTransform(), mask, program);
+                layer->drawSurface(program, layer->layerRendererSurface()->replicaDrawTransform(), mask);
             }
 
             const GLES2Program& program = useLayerProgram(layerProgram, layer->maskLayer());
-            layer->drawSurface(layer->layerRendererSurface()->drawTransform(), layer->maskLayer(), program);
+            layer->drawSurface(program, layer->layerRendererSurface()->drawTransform(), layer->maskLayer());
         }
     }
 

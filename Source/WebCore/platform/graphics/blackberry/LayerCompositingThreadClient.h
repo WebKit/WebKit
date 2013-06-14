@@ -30,6 +30,7 @@ class GLES2Program;
 }
 namespace WebCore {
 
+class FloatRect;
 class LayerCompositingThread;
 class LayerTexture;
 
@@ -42,7 +43,7 @@ public:
     virtual void layerVisibilityChanged(LayerCompositingThread*, bool visible) = 0;
 
     virtual void uploadTexturesIfNeeded(LayerCompositingThread*) = 0;
-    virtual void drawTextures(LayerCompositingThread*, double scale, const BlackBerry::Platform::Graphics::GLES2Program&) = 0;
+    virtual void drawTextures(LayerCompositingThread*, const BlackBerry::Platform::Graphics::GLES2Program&, double scale, const FloatRect& clipRect) = 0;
     virtual void deleteTextures(LayerCompositingThread*) = 0;
 
     // Optional. Allows layers to serve as a mask for other layers

@@ -27,9 +27,9 @@
 namespace WebCore {
 
 LayerTile::LayerTile()
-    : m_contentsDirty(false)
+    : m_scale(0)
+    , m_contentsDirty(false)
     , m_visible(false)
-    , m_needsRender(false)
 {
 }
 
@@ -41,16 +41,19 @@ LayerTile::~LayerTile()
 
 void LayerTile::setContents(BlackBerry::Platform::Graphics::Buffer* contents)
 {
+    m_scale = 0; // Resolution independent
     setTexture(textureCacheCompositingThread()->textureForContents(contents));
 }
 
-void LayerTile::updateContents(BlackBerry::Platform::Graphics::Buffer* contents)
+void LayerTile::updateContents(BlackBerry::Platform::Graphics::Buffer* contents, double scale)
 {
+    m_scale = scale;
     setTexture(textureCacheCompositingThread()->updateContents(m_texture, contents));
 }
 
 void LayerTile::discardContents()
 {
+    m_scale = 0; // Unknown scale
     setTexture(0);
 }
 

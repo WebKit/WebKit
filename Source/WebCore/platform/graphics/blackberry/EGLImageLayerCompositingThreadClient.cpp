@@ -45,7 +45,7 @@ void EGLImageLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerCompositi
 {
 }
 
-void EGLImageLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double /*scale*/, const GLES2Program& program)
+void EGLImageLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, const GLES2Program& program, double /*scale*/, const FloatRect& /*clipRect*/)
 {
     if (!m_textureAccessor || !m_textureAccessor->textureID())
         return;

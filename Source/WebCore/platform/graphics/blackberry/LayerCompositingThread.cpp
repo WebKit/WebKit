@@ -225,7 +225,7 @@ FloatQuad LayerCompositingThread::transformedHolePunchRect() const
     return m_drawTransform.mapQuad(holePunchRect);
 }
 
-void LayerCompositingThread::drawTextures(double scale, const GLES2Program& program, const FloatRect& visibleRect)
+void LayerCompositingThread::drawTextures(const GLES2Program& program, double scale, const FloatRect& visibleRect, const FloatRect& clipRect)
 {
     if (m_pluginView) {
         if (m_isVisible) {
@@ -276,10 +276,10 @@ void LayerCompositingThread::drawTextures(double scale, const GLES2Program& prog
 #endif
 
     if (m_client)
-        m_client->drawTextures(this, scale, program);
+        m_client->drawTextures(this, program, scale, clipRect);
 }
 
-void LayerCompositingThread::drawSurface(const TransformationMatrix& drawTransform, LayerCompositingThread* mask, const GLES2Program& program)
+void LayerCompositingThread::drawSurface(const GLES2Program& program, const TransformationMatrix& drawTransform, LayerCompositingThread* mask)
 {
     using namespace BlackBerry::Platform::Graphics;
 
