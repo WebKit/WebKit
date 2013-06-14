@@ -1,3 +1,12 @@
+2013-06-14  Timothy Hatcher  <timothy@apple.com>
+
+        Remove front-end from the WebCore Xcode project.
+        https://bugs.webkit.org/show_bug.cgi?id=117640
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-06-14  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         CSSParser::parseImageSet() doesn't need a parameter.
