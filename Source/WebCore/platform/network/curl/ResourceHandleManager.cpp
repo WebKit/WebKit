@@ -236,6 +236,48 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
     return totalSize;
 }
 
+static bool isAppendableHeader(const String &key)
+{
+    static const char* appendableHeaders[] = {
+        "access-control-allow-headers",
+        "access-control-allow-methods",
+        "access-control-allow-origin",
+        "access-control-expose-headers",
+        "allow",
+        "cache-control",
+        "connection",
+        "content-encoding",
+        "content-language",
+        "if-match",
+        "if-none-match",
+        "keep-alive",
+        "pragma",
+        "proxy-authenticate",
+        "public",
+        "server",
+        "te",
+        "trailer",
+        "transfer-encoding",
+        "upgrade",
+        "user-agent",
+        "vary",
+        "via",
+        "warning",
+        "www-authenticate",
+        0
+    };
+
+    // Custom headers start with 'X-', and need no further checking.
+    if (key.startsWith("x-", /* caseSensitive */ false))
+        return true;
+
+    for (unsigned i = 0; appendableHeaders[i]; ++i)
+        if (equalIgnoringCase(key, appendableHeaders[i]))
+            return true;
+
+    return false;
+}
+
 /*
  * This is being called for each HTTP header in the response. This includes '\r\n'
  * for the last line of the header.
@@ -316,8 +358,15 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 
     } else {
         int splitPos = header.find(":");
-        if (splitPos != -1)
-            d->m_response.setHTTPHeaderField(header.left(splitPos), header.substring(splitPos+1).stripWhiteSpace());
+        if (splitPos != -1) {
+            String key = header.left(splitPos).stripWhiteSpace();
+            String value = header.substring(splitPos + 1).stripWhiteSpace();
+
+            if (isAppendableHeader(key))
+                d->m_response.addHTTPHeaderField(key, value);
+            else
+                d->m_response.setHTTPHeaderField(key, value);
+        }
     }
 
     return totalSize;

@@ -1,3 +1,17 @@
+2013-06-13  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [curl] Merge http response header values
+        https://bugs.webkit.org/show_bug.cgi?id=117342
+
+        Reviewed by Brent Fulgham.
+
+        According to the HTTP RFC some HTTP header values should be
+        merged if multiple entries for the same header exists.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::isAppendableHeader):
+        (WebCore::headerCallback):
+
 2013-06-13  Simon Fraser  <simon.fraser@apple.com>
 
         Should not call firePaintRelatedMilestones() for "update control tints" paint pass
