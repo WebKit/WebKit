@@ -1,3 +1,11 @@
+2013-06-14  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
+
+        Remove myself from Qt build system watchlist
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-06-13  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt][Mac] Disable QTKit video on OS X.

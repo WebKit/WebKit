@@ -362,7 +362,7 @@
         "NetworkInfo": [ "gyuyoung.kim@samsung.com", "dchris@gmail.com" ],
         "OpenGL" : [ "noam@webkit.org", "dino@apple.com" ],
         "PerformanceTests": [ "rniwa@webkit.org" ],
-        "QtBuildSystem" : [ "vestbo@webkit.org", "abecsi@webkit.org" ],
+        "QtBuildSystem" : [ "abecsi@webkit.org" ],
         "QtGraphics" : [ "noam@webkit.org" ],
         "QtWebKit2PlatformSpecific": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "QtWebKit2PublicAPI": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
