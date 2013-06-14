@@ -1,3 +1,83 @@
+2013-06-14  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Some more rebaselining after r151205 and r150798.
+
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-004-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/20110323/absolute-replaced-height-022-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t0805-c5518-brdr-t-01-e-expected.png: Added.
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-09-d-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/selectors3/html/css3-modsel-70-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/selectors3/xhtml/css3-modsel-131b-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/unicode-bidi-isolate-basic-expected.png:
+        * platform/qt-5.0-wk2/editing/deleting/delete-image-002-expected.png:
+        * platform/qt-5.0-wk2/editing/deleting/smart-delete-004-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/caret-rtl-2-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/caret-rtl-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/caret-rtl-right-expected.png: Added.
+        * platform/qt-5.0-wk2/editing/selection/extend-selection-bidi-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.png:
+        * platform/qt-5.0-wk2/fast/block/positioning/auto/vertical-rl/001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/rtl-border-05-expected.png:
+        * platform/qt-5.0-wk2/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/qt-5.0-wk2/fast/css/error-in-last-decl-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/font-size-negative-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/namespaces/004-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/table-text-align-strict-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/dom/34176-expected.png:
+        * platform/qt-5.0-wk2/fast/dom/inner-text-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/HTMLOptionElement_label06-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/HTMLOptionElement_label07-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/button-cannot-be-nested-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/form-element-geometry-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-default-bkcolor-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/listbox-bidi-align-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/search-rtl-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/select-baseline-expected.png:
+        * platform/qt-5.0-wk2/fast/inline/inline-box-background-expected.png:
+        * platform/qt-5.0-wk2/fast/inline/inline-box-background-long-image-expected.png:
+        * platform/qt-5.0-wk2/fast/inline/inline-box-background-repeat-x-expected.png:
+        * platform/qt-5.0-wk2/fast/inline/inline-box-background-repeat-y-expected.png:
+        * platform/qt-5.0-wk2/fast/invalid/014-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/overflow/childFocusRingClip-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/overflow/hit-test-overflow-controls-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/float-in-new-block-with-layout-delta-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/runin/generated-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/multiple-captions-display-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/remove-td-display-none-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/international/bidi-ignored-for-first-child-inline-expected.png:
+        * platform/qt-5.0-wk2/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png:
+        * platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-017-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-16-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-23-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-85-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/coords-trans-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/coords-units-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/painting-marker-01-f-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/paths-data-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/pservers-grad-16-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/script-handle-01-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/shapes-rect-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-cond-03-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-defs-01-t-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-align-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-align-08-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/text-text-03-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/text-ctm-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/use-instanceRoot-event-listeners-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug81934-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/tables_bgcolor_red-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/tfoot_align_left-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_td_align_right-expected.png: Added.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/x_th_class-expected.png: Added.
+
 2013-06-14  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [Qt] Unreviewed TestExpectation cleanup
