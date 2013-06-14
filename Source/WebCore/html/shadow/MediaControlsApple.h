@@ -89,6 +89,7 @@ public:
     virtual void closedCaptionTracksChanged() OVERRIDE;
 
     bool shouldClosedCaptionsContainerPreventPageScrolling(int wheelDeltaY);
+    void handleClickEvent(Event*);
 
 private:
     MediaControlsApple(Document*);

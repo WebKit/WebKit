@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 #include "MediaControlsApple.h"
 
+#include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLMediaElement.h"
@@ -515,9 +516,21 @@ void MediaControlsApple::showClosedCaptionTrackList()
 
     m_closedCaptionsContainer->show();
 
+    // Ensure the controls panel does not receive any events while the captions
+    // track list is visible as all events now need to be captured by the
+    // track list.
+    m_panel->setInlineStyleProperty(CSSPropertyPointerEvents, CSSValueNone);
+
     RefPtr<EventListener> listener = eventListener();
     m_closedCaptionsContainer->addEventListener(eventNames().mousewheelEvent, listener, true);
+
+    // Track click events in the capture phase at two levels, first at the document level
+    // such that a click outside of the <video> may dismiss the track list, second at the
+    // media controls level such that a click anywhere outside of the track list hides the
+    // track list. These two levels are necessary since it would not be possible to get a
+    // reference to the track list when handling the event outside of the shadow tree.
     document()->addEventListener(eventNames().clickEvent, listener, true);
+    addEventListener(eventNames().clickEvent, listener, true);
 }
 
 void MediaControlsApple::hideClosedCaptionTrackList()
@@ -527,9 +540,13 @@ void MediaControlsApple::hideClosedCaptionTrackList()
 
     m_closedCaptionsContainer->hide();
 
+    // Buttons in the controls panel may now be interactive.
+    m_panel->removeInlineStyleProperty(CSSPropertyPointerEvents);
+
     EventListener* listener = eventListener().get();
     m_closedCaptionsContainer->removeEventListener(eventNames().mousewheelEvent, listener, true);
     document()->removeEventListener(eventNames().clickEvent, listener, true);
+    removeEventListener(eventNames().clickEvent, listener, true);
 }
 
 bool MediaControlsApple::shouldClosedCaptionsContainerPreventPageScrolling(int wheelDeltaY)
@@ -542,6 +559,18 @@ bool MediaControlsApple::shouldClosedCaptionsContainerPreventPageScrolling(int w
     if (wheelDeltaY > 0 && scrollTop <= 0)
         return true;
     return false;
+}
+
+void MediaControlsApple::handleClickEvent(Event* event)
+{
+    Node* currentTarget = event->currentTarget()->toNode();
+    Node* target = event->target()->toNode();
+
+    if ((currentTarget == document() && !shadowHost()->contains(target)) || (currentTarget == this && !m_closedCaptionsContainer->contains(target))) {
+        hideClosedCaptionTrackList();
+        event->stopImmediatePropagation();
+        event->setDefaultHandled();
+    }
 }
 
 void MediaControlsApple::closedCaptionTracksChanged()
@@ -565,10 +594,10 @@ PassRefPtr<MediaControlsAppleEventListener> MediaControlsApple::eventListener()
 
 void MediaControlsAppleEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
-    if (event->type() == eventNames().clickEvent && !m_mediaControls->contains(event->target()->toNode()))
-        m_mediaControls->toggleClosedCaptionTrackList();
+    if (event->type() == eventNames().clickEvent)
+        m_mediaControls->handleClickEvent(event);
 
-    if (event->type() == eventNames().mousewheelEvent && event->hasInterface(eventNames().interfaceForWheelEvent)) {
+    else if (event->type() == eventNames().mousewheelEvent && event->hasInterface(eventNames().interfaceForWheelEvent)) {
         WheelEvent* wheelEvent = static_cast<WheelEvent*>(event);
         if (m_mediaControls->shouldClosedCaptionsContainerPreventPageScrolling(wheelEvent->wheelDeltaY()))
             event->preventDefault();

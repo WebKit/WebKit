@@ -1,3 +1,38 @@
+2013-06-14  Antoine Quint  <graouts@apple.com>
+
+        [Mac] clicking caption track glyph should dismiss menu
+        https://bugs.webkit.org/show_bug.cgi?id=117621
+
+        We now correctly capture all click events while the captions track menu
+        is showing, and ensure that no other control in the media player can be
+        activated as the track list gets dismissed by clicking anywhere but on
+        itself.
+
+        Reviewed by Eric Carlson.
+
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::showClosedCaptionTrackList):
+        Make the controls panel non-interactive and track click events in the
+        capture phase also on the controls container itself such that we can
+        identify correctly whether a click in the <video> shadow tree is on
+        the track list or another element (the target could only be resolved
+        to a shadow tree node if the event is handled within the shadow tree).
+
+        (WebCore::MediaControlsApple::hideClosedCaptionTrackList):
+        Make the controls panel interactive again and remove the new click
+        event handler on the controls container.
+
+        (WebCore::MediaControlsApple::handleClickEvent):
+        Capture any click event that targets a node anywhere outside of the track
+        list container and its subtree and hide the track list in this condition.
+
+        (WebCore::MediaControlsAppleEventListener::handleEvent):
+        Call handleClickEvent() on the media controls when a click event is handled.
+
+        * html/shadow/MediaControlsApple.h:
+        New public handleClickEvent() API such that it can be called from
+        MediaControlsAppleEventListener::handleEvent().
+
 2013-06-14  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Accelerated compositing layers that intersect the image plane are incorrectly transformed
