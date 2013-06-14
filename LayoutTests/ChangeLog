@@ -1,3 +1,13 @@
+2013-06-14  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [Qt] Unreviewed TestExpectation cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=117626
+
+        Unreviewed gardening.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2013-06-14  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebaselining after r151205.

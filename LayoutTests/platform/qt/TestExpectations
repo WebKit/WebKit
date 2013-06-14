@@ -981,7 +981,6 @@ media/controls-without-preload.html
 # and https://bugs.webkit.org/show_bug.cgi?id=45021
 media/context-menu-actions.html
 
-media/audio-controls-rendering.html
 media/video-currentTime.html
 media/audio-data-url.html
 media/audio-delete-while-slider-thumb-clicked.html
@@ -989,10 +988,8 @@ media/audio-delete-while-step-button-clicked.html
 media/audio-mpeg-supported.html
 media/audio-mpeg4-supported.html
 media/audio-no-installed-engines.html
-media/controls-after-reload.html
 media/controls-drag-timebar.html
 media/controls-right-click-on-timebar.html
-media/controls-strict.html
 media/controls-styling.html
 media/event-attributes.html
 media/media-captions.html
@@ -1005,13 +1002,11 @@ media/video-autoplay.html
 media/video-canvas-source.html
 media/video-canvas-alpha.html
 media/video-click-dblckick-standalone.html
-media/video-controls-rendering.html
 media/video-controls-transformed.html
 media/video-controls-visible-audio-only.html
 media/video-controls-zoomed.html
 media/video-currentTime-set.html
 media/video-display-aspect-ratio.html
-media/video-display-toggle.html
 media/video-document-types.html
 media/video-duration-known-after-eos.html
 media/video-element-other-namespace-crash.html
@@ -1884,8 +1879,6 @@ webkit.org/b/109224 fast/forms/number/number-l10n-input.html [ Skip ]
 # [Qt] New fast/flexbox/line-clamp-link-after-ellipsis.html layout test is failing since r142335.
 webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Skip ]
 
-webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Skip ]
-
 webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Skip ]
 
 webkit.org/b/111290 fast/regions/seamless-iframe-flowed-into-regions.html [ Skip ]
@@ -2568,13 +2561,9 @@ webkit.org/b/106016 fast/workers/worker-document-leak.html
 # [Qt] New fast/regions/full-screen-video-from-region.html times out
 webkit.org/b/106095 fast/regions/full-screen-video-from-region.html
 
-# [Qt][EFL] New fast/events/drag-and-drop-autoscroll.html fails
-webkit.org/b/106318 fast/events/drag-and-drop-autoscroll.html
-
 # REGRESSION(r139145): A couple of fast/workers tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=106415
 fast/workers/worker-close-more.html
-fast/workers/worker-document-leak.html
 fast/workers/worker-lifecycle.html
 fast/workers/storage/interrupt-database.html
 
@@ -2599,7 +2588,6 @@ webkit.org/b/109775 media/audio-controls-rendering.html [ Failure ]
 webkit.org/b/109775 media/controls-after-reload.html [ Failure ]
 webkit.org/b/109775 media/controls-strict.html [ Failure ]
 webkit.org/b/109775 media/controls-styling-strict.html [ Failure ]
-webkit.org/b/109775 media/controls-without-preload.html [ Failure ]
 webkit.org/b/109775 media/video-controls-rendering.html [ Failure ]
 webkit.org/b/109775 media/video-display-toggle.html [ Failure ]
 webkit.org/b/109775 media/video-playing-and-pause.html [ Failure ]
