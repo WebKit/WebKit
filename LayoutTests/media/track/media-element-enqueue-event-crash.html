@@ -1,0 +1,59 @@
+<!DOCTYPE  html>
+<html>
+    <head>
+        <script src=../video-test.js></script>
+        <script src=../../resources/gc.js></script>
+
+        <script>
+        if (window.testRunner)
+        {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function startTest()
+        {
+            if (localStorage.testRuns)
+                localStorage.testRuns = Number(localStorage.testRuns) + 1;
+            else {
+                localStorage.testRuns = 1;
+                localStorage.totalRuns = 5;
+            }
+
+            document.getElementsByTagName('track')[0].track.mode = 'showing';
+            setTimeout(CFcrash, 100);
+        }
+
+        function forceGC() {
+            gc();
+
+            // End the test only if it ran at least totalRuns.
+            if (window.testRunner && localStorage.testRuns == localStorage.totalRuns) {
+                consoleWrite("** No crash. Pass **");
+                testRunner.notifyDone();
+            } else
+                window.location.reload();
+        }
+
+        function CFcrash()
+        {
+            document1 = document.implementation.createDocument("", null);
+            document1.appendChild(videoElement);
+            delete document1;
+
+            setTimeout(forceGC, 0);
+        }
+
+        document.addEventListener("DOMContentLoaded", startTest, false);
+        </script>
+    </head>
+
+    <body>
+        <p>Tests that appending events for dispatching doesn't crash</p>
+        <video autoplay id="videoElement">
+            <source src="../content/test.ogv">
+            <source src="../content/test.mp4">
+            <track src="captions-webvtt/captions-fast.vtt" default>
+        </video>
+    </body>
+</html>

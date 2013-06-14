@@ -1,3 +1,36 @@
+2013-06-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Potential use-after-free with an event fired at a HTMLMediaElement which is currently being deleted
+        https://bugs.webkit.org/show_bug.cgi?id=117466
+
+        Reviewed by Oliver Hunt.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/f4200a0093b3d9376f703961615359ec7fb712b4
+        
+        If an event is created using as target an HTMLMediaElement which is
+        currently being deleted it becomes a heap-use-after free situation.
+
+        The GenericEventQueue instance is already owned by the HTMLMediaElement,
+        and there already is an underlying mechanism to set the target of the
+        event to NULL, if their target is owner of the queue.
+
+        In order to avoid creating this reference in the first place, we enqueue
+        the event with a NULL target to defer the refcount increment until the
+        timer for dispatching the event happens (which won't happen at all if
+        garbage collection is already destroying the objects).
+
+        Test: media/track/media-element-enqueue-event-crash.html
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::enqueueEvent): Don't ASSERT if the event has no target.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Close the event queue so it won't try to
+            dispatch any pending events.
+        (WebCore::HTMLMediaElement::scheduleEvent): Don't set the event target, it will happen just
+            prior to event dispatch.
+        (WebCore::HTMLMediaElement::stop): Close the event queue.
+
 2013-06-14  Dean Jackson  <dino@apple.com>
 
         Clicking on snapshotting plug-ins does not restart them

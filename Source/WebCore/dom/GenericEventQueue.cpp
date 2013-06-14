@@ -52,7 +52,6 @@ bool GenericEventQueue::enqueueEvent(PassRefPtr<Event> event)
     if (m_isClosed)
         return false;
 
-    ASSERT(event->target());
     if (event->target() == m_owner)
         event->setTarget(0);
 
