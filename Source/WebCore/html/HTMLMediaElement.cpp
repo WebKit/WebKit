@@ -324,6 +324,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
 #if USE(AUDIO_SESSION)
     , m_audioSessionManagerToken(AudioSessionManagerToken::create(tagName == videoTag ? AudioSessionManager::Video : AudioSessionManager::Audio))
 #endif
+    , m_reportedExtraMemoryCost(0)
 {
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
     document->registerForMediaVolumeCallbacks(this);
@@ -613,6 +614,18 @@ void HTMLMediaElement::removedFrom(ContainerNode* insertionPoint)
             pause();
         if (m_isFullscreen)
             exitFullscreen();
+
+        if (m_player) {
+            JSC::VM* vm = JSDOMWindowBase::commonVM();
+            JSC::JSLockHolder lock(vm);
+
+            size_t extraMemoryCost = m_player->extraMemoryCost();
+            size_t extraMemoryCostDelta = extraMemoryCost - m_reportedExtraMemoryCost;
+            m_reportedExtraMemoryCost = extraMemoryCost;
+
+            if (extraMemoryCostDelta > 0)
+                vm->heap.reportExtraMemoryCost(extraMemoryCostDelta);
+        }
     }
 
     HTMLElement::removedFrom(insertionPoint);

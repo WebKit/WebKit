@@ -205,6 +205,8 @@ public:
 #endif
     
     virtual String languageOfPrimaryAudioTrack() const { return emptyString(); }
+
+    virtual size_t extraMemoryCost() const { return 0; }
 };
 
 }

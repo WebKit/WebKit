@@ -480,6 +480,8 @@ public:
 
     String languageOfPrimaryAudioTrack() const;
 
+    size_t extraMemoryCost() const;
+
 private:
     MediaPlayer(MediaPlayerClient*);
     void loadWithNextMediaEngine(MediaPlayerFactory*);

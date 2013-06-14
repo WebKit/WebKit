@@ -776,6 +776,7 @@ private:
 #endif
 
     OwnPtr<PageActivityAssertionToken> m_activityToken;
+    size_t m_reportedExtraMemoryCost;
 };
 
 #if ENABLE(VIDEO_TRACK)

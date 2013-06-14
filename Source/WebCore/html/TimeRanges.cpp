@@ -186,3 +186,11 @@ double TimeRanges::nearest(double time) const
     }
     return closestTime;
 }
+
+double TimeRanges::totalDuration() const
+{
+    double total = 0;
+    for (unsigned n = 0; n < length(); n++)
+        total += fabs(end(n, IGNORE_EXCEPTION) - start(n, IGNORE_EXCEPTION));
+    return total;
+}

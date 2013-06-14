@@ -1,5 +1,36 @@
 2013-06-13  Jer Noble  <jer.noble@apple.com>
 
+        Report the memory cost of HTMLMediaElements to GC.
+        https://bugs.webkit.org/show_bug.cgi?id=117608
+
+        Reviewed by Darin Adler.
+
+        Report the extra memory cost of a HTMLMediaElement to the VM, in order to
+        encourage GC to occur after a media element is removed from the DOM.
+
+        Because we cannot know for sure the memory cost of our underlying media
+        framework objects, use the worst case scenario for the media memory cost:
+        the buffered percentage of movie * the total data length of the movie.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_reportedExtraMemoryCost.
+        (WebCore::HTMLMediaElement::removedFrom): Report the extra memory cost.
+        * html/HTMLMediaElement.h:
+        * html/TimeRanges.cpp:
+        (TimeRanges::totalDuration): Added convenience function.
+        * html/TimeRanges.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::extraMemoryCost): Pass to MediaPlayerPrivate.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::extraMemoryCost): Default to 0.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::extraMemoryCost): Return the percentage
+            loaded * total data length.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
+2013-06-13  Jer Noble  <jer.noble@apple.com>
+
         Add support for AVFoundation-backed HTMLMediaElements in the WebVideoFullScreenController.
         https://bugs.webkit.org/show_bug.cgi?id=117597
 

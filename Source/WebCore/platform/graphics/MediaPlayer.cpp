@@ -1196,6 +1196,15 @@ String MediaPlayer::languageOfPrimaryAudioTrack() const
     
     return m_private->languageOfPrimaryAudioTrack();
 }
+
+size_t MediaPlayer::extraMemoryCost() const
+{
+    if (!m_private)
+        return 0;
+
+    return m_private->extraMemoryCost();
+}
+
 }
 
 #endif

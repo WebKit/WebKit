@@ -874,6 +874,15 @@ void MediaPlayerPrivateAVFoundation::trackModeChanged()
 }
 #endif
 
+size_t MediaPlayerPrivateAVFoundation::extraMemoryCost() const
+{
+    double duration = this->duration();
+    if (!duration)
+        return 0;
+
+    return totalBytes() * buffered()->totalDuration() / duration;
+}
+
 } // namespace WebCore
 
 #endif

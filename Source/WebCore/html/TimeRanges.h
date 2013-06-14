@@ -61,6 +61,8 @@ public:
     
     double nearest(double time) const;
 
+    double totalDuration() const;
+
 private:
     TimeRanges() { }
     TimeRanges(double start, double end);
