@@ -125,6 +125,8 @@ protected:
 
     virtual bool isRestartedPlugin() const OVERRIDE { return m_isRestartedPlugin; }
 
+    virtual void defaultEventHandler(Event*);
+
 private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool willRecalcStyle(StyleChange);

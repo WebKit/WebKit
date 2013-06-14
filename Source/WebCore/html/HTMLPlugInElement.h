@@ -80,6 +80,8 @@ public:
 
     virtual bool isPlugInImageElement() const { return false; }
 
+    virtual void defaultEventHandler(Event*);
+
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
 
@@ -98,8 +100,6 @@ private:
     bool dispatchBeforeLoadEvent(const String& sourceURL); // Not implemented, generates a compile error if subclasses call this by mistake.
 
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
-
-    virtual void defaultEventHandler(Event*);
 
     virtual RenderWidget* renderWidgetForJSBindings() const = 0;
 

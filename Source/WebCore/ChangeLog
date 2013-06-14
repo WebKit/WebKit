@@ -1,3 +1,23 @@
+2013-06-13  Dean Jackson  <dino@apple.com>
+
+        Clicking on snapshotting plug-ins does not restart them
+        https://bugs.webkit.org/show_bug.cgi?id=117620
+        <rdar://problem/13821729>
+
+        Reviewed by Simon Fraser.
+
+        HTMLPlugInElement has an event handler which would return
+        immediately if the element was not snapshotted, restarting
+        or playing. There is a case it missed, which was snapshotting
+        (WaitingForSnapshot to be precise). If we get a click in this
+        state then it should immediately restart.
+
+        * html/HTMLPlugInElement.h: Move defaultEventHandler to public (we call it from the child class).
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::defaultEventHandler): If there is a click on a snapshotting
+        plug-in, then call restart.
+        * html/HTMLPlugInImageElement.h: Virtual defaultEventHandler declaration.
+
 2013-06-13  Zoltan Horvath  <zoltan@webkit.org>
 
         Use borderAndPadding[Before,After]() instead of border[Before,After]() + padding[Before,After]()
