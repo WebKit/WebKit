@@ -33,10 +33,12 @@ DragImageRef Clipboard::createDragImage(IntPoint&) const
     return 0;
 }
 
+#if ENABLE(DRAG_SUPPORT)
 void Clipboard::declareAndWriteDragImage(Element*, const KURL&, const String&, Frame*)
 {
     notImplemented();
 }
+#endif
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 PassRefPtr<DataTransferItemList> Clipboard::items()

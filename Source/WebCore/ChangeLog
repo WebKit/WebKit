@@ -1,3 +1,14 @@
+2013-06-14  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Fix build when DRAG_SUPPORT is set OFF
+        https://bugs.webkit.org/show_bug.cgi?id=117628
+
+        Reviewed by Gyuyoung Kim.
+
+        Add guard around Clipboard::declareAndWriteDragImage.
+
+        * platform/efl/ClipboardEfl.cpp:
+
 2013-06-13  Simon Fraser  <simon.fraser@apple.com>
 
         Sometimes we stick in slow scrolling mode even after leaving a page
