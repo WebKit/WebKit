@@ -64,7 +64,8 @@ public:
     bool imageHasRelativeWidth() const;
     bool imageHasRelativeHeight() const;
 
-    virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
+    virtual void addDataBuffer(ResourceBuffer*) OVERRIDE;
+    virtual void finishLoading(ResourceBuffer*) OVERRIDE;
 
     // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
     LayoutSize imageSizeForRenderer(const RenderObject*, float multiplier); // returns the size of the complete image.
@@ -79,7 +80,7 @@ private:
 
     void createImage();
     void clearImage();
-    size_t maximumDecodedImageSize();
+    bool canBeDrawn() const;
     // If not null, changeRect is the changed part of the image.
     void notifyObservers(const IntRect* changeRect = 0);
     virtual PurgePriority purgePriority() const OVERRIDE { return PurgeFirst; }
@@ -94,6 +95,7 @@ private:
     virtual void allClientsRemoved() OVERRIDE;
     virtual void destroyDecodedData() OVERRIDE;
 
+    virtual void addData(const char* data, unsigned length) OVERRIDE;
     virtual void error(CachedResource::Status) OVERRIDE;
     virtual void responseReceived(const ResourceResponse&) OVERRIDE;
 
@@ -110,6 +112,8 @@ private:
     virtual bool shouldPauseAnimation(const Image*) OVERRIDE;
     virtual void animationAdvanced(const Image*) OVERRIDE;
     virtual void changedInRect(const Image*, const IntRect&) OVERRIDE;
+
+    void addIncrementalDataBuffer(ResourceBuffer*);
 
     typedef pair<IntSize, float> SizeAndZoom;
     typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;

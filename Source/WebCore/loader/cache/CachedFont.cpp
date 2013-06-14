@@ -75,11 +75,8 @@ void CachedFont::didAddClient(CachedResourceClient* c)
         static_cast<CachedFontClient*>(c)->fontLoaded(this);
 }
 
-void CachedFont::data(ResourceBuffer* data, bool allDataReceived)
+void CachedFont::finishLoading(ResourceBuffer* data)
 {
-    if (!allDataReceived)
-        return;
-
     m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
     setLoading(false);

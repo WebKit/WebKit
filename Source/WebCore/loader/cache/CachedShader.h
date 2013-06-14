@@ -47,7 +47,7 @@ public:
 
 private:
     virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
-    virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
+    virtual void finishLoading(ResourceBuffer*) OVERRIDE;
 
     RefPtr<TextResourceDecoder> m_decoder;
     String m_shaderString;

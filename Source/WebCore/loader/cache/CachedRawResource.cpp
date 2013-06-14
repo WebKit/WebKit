@@ -41,40 +41,73 @@ CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest, Type type
 {
 }
 
-void CachedRawResource::data(ResourceBuffer* data, bool allDataReceived)
+const char* CachedRawResource::calculateIncrementalDataChunk(ResourceBuffer* data, unsigned& incrementalDataLength)
+{
+    incrementalDataLength = 0;
+    if (!data)
+        return 0;
+
+    unsigned previousDataLength = encodedSize();
+    ASSERT(data->size() >= previousDataLength);
+    incrementalDataLength = data->size() - previousDataLength;
+    return data->data() + previousDataLength;
+}
+
+void CachedRawResource::addDataBuffer(ResourceBuffer* data)
 {
     CachedResourceHandle<CachedRawResource> protect(this);
-    const char* incrementalData = 0;
-    size_t incrementalDataLength = 0;
-    if (data) {
-        // If we are buffering data, then we are saving the buffer in m_data and need to manually
-        // calculate the incremental data. If we are not buffering, then m_data will be null and
-        // the buffer contains only the incremental data.
-        size_t previousDataLength = (m_options.dataBufferingPolicy == BufferData) ? encodedSize() : 0;
-        ASSERT(data->size() >= previousDataLength);
-        incrementalData = data->data() + previousDataLength;
-        incrementalDataLength = data->size() - previousDataLength;
-    }
+    ASSERT(m_options.dataBufferingPolicy == BufferData);
+    m_data = data;
 
-    if (m_options.dataBufferingPolicy == BufferData) {
+    unsigned incrementalDataLength;
+    const char* incrementalData = calculateIncrementalDataChunk(data, incrementalDataLength);
+    if (data)
+        setEncodedSize(data->size());
+    notifyClientsDataWasReceived(incrementalData, incrementalDataLength);
+    if (m_options.dataBufferingPolicy == DoNotBufferData) {
+        if (m_loader)
+            m_loader->setDataBufferingPolicy(DoNotBufferData);
+        clear();
+    }
+}
+
+void CachedRawResource::addData(const char* data, unsigned length)
+{
+    ASSERT(m_options.dataBufferingPolicy == DoNotBufferData);
+    notifyClientsDataWasReceived(data, length);
+}
+
+void CachedRawResource::finishLoading(ResourceBuffer* data)
+{
+    CachedResourceHandle<CachedRawResource> protect(this);
+    DataBufferingPolicy dataBufferingPolicy = m_options.dataBufferingPolicy;
+    if (dataBufferingPolicy == BufferData) {
+        m_data = data;
+
+        unsigned incrementalDataLength;
+        const char* incrementalData = calculateIncrementalDataChunk(data, incrementalDataLength);
         if (data)
             setEncodedSize(data->size());
-        m_data = data;
+        notifyClientsDataWasReceived(incrementalData, incrementalDataLength);
     }
 
-    DataBufferingPolicy dataBufferingPolicy = m_options.dataBufferingPolicy;
-    if (incrementalDataLength) {
-        CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
-        while (CachedRawResourceClient* c = w.next())
-            c->dataReceived(this, incrementalData, incrementalDataLength);
-    }
-    CachedResource::data(data, allDataReceived);
-
+    CachedResource::finishLoading(data);
     if (dataBufferingPolicy == BufferData && m_options.dataBufferingPolicy == DoNotBufferData) {
         if (m_loader)
             m_loader->setDataBufferingPolicy(DoNotBufferData);
         clear();
     }
+}
+
+void CachedRawResource::notifyClientsDataWasReceived(const char* data, unsigned length)
+{
+    if (!length)
+        return;
+
+    CachedResourceHandle<CachedRawResource> protect(this);
+    CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
+    while (CachedRawResourceClient* c = w.next())
+        c->dataReceived(this, data, length);
 }
 
 void CachedRawResource::didAddClient(CachedResourceClient* c)

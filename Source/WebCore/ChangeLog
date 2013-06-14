@@ -1,3 +1,102 @@
+2013-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Avoid unnecessary data copies when loading subresources with DoNotBufferData option
+        https://bugs.webkit.org/show_bug.cgi?id=115804
+
+        Reviewed by Darin Adler.
+
+        When DoNotBufferData option is used to load a resource its data
+        is always copied before sending it to the CachedResource. Most
+        of the cached resources ignore the incremental data and wait
+        until all data has been received to save the ResourceBuffer,
+        that will be NULL anyway when DoNotBufferData is used.
+        CachedRawResource notifies its clients about the incremental
+        data, but it doesn't save the data when DoNotBufferData option
+        is present. In those cases we are unnecessary copying the data.
+
+        CachedResource::data has been split into
+        CachedResource::addDataBuffer() used for incremental data chunks
+        when buffering data, CachedResource::addData() used for
+        incremental data chunks when not buffering and
+        CachedResource::finishLoading() used to finish the loading. This
+        way we get rid of the allDataReceived boolean parameter and cached
+        resources not interested in incremenetal data chunks only have to
+        implement finishLoading() without having to check if all data have
+        been received or not.
+
+        SubresourceLoader::sendDataToResource was always called after
+        checking if loading multipart content, and then it was checked
+        again to decided whether to copy the data or not. It has been
+        removed in favor of calling directly the resource methods,
+        finishLoading for multipart content, addDataBuffer for data chunks
+        when buffering and addData for data chunks when not buffering.
+
+        No new functionality, covered by existing tests.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::appendBytes): Update to API changes.
+        (WebCore::ImageDocumentParser::finish): Ditto.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse): Call
+        finishLoading() for multipart content.
+        (WebCore::SubresourceLoader::didReceiveDataOrBuffer): Add data to
+        the resource using addDataBuffer or addData depending on whether
+        we are buffering or not.
+        (WebCore::SubresourceLoader::didFinishLoading): Call
+        finishLoading() for the cached resource instead of data.
+        * loader/SubresourceLoader.h:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::finishLoading):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::finishLoading):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::isValidDecodedImageSize): Helper function
+        to check if the image size is valid.
+        (WebCore::CachedImage::addIncrementalDataBuffer): Helper function
+        to add incremental data buffer.
+        (WebCore::CachedImage::addDataBuffer): Call
+        addIncrementalDataBuffer().
+        (WebCore::CachedImage::addData): Create a ResourceBuffer and call
+        addIncrementalDataBuffer().
+        (WebCore::CachedImage::finishLoading):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::calculateIncrementalDataChunk):
+        Returns a pointer to the data corresponding to the current chunk
+        and its length.
+        (WebCore::CachedRawResource::addDataBuffer): Assert to make sure
+        this is only called when BufferData option is present. Use
+        calculateIncrementalDataChunk().
+        (WebCore::CachedRawResource::addData): Assert to make sure this is
+        only called when DoNotBufferData option is present.
+        (WebCore::CachedRawResource::finishLoading):
+        (WebCore::CachedRawResource::notifyClientsDataWasReceived): Helper
+        private function to notify the clients about data received.
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::addDataBuffer):
+        (WebCore::CachedResource::addData):
+        (WebCore::CachedResource::finishLoading):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::finishLoading):
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::finishLoading):
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedShader.cpp:
+        (WebCore::CachedShader::finishLoading):
+        * loader/cache/CachedShader.h:
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::addDataBuffer):
+        (WebCore::CachedTextTrack::finishLoading):
+        * loader/cache/CachedTextTrack.h:
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::finishLoading):
+        * loader/cache/CachedXSLStyleSheet.h:
+
 2013-06-14  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Fix build when DRAG_SUPPORT is set OFF

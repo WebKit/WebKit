@@ -362,11 +362,18 @@ void CachedResource::checkNotify()
         c->notifyFinished(this);
 }
 
-void CachedResource::data(ResourceBuffer*, bool allDataReceived)
+void CachedResource::addDataBuffer(ResourceBuffer*)
 {
-    if (!allDataReceived)
-        return;
-    
+    ASSERT(m_options.dataBufferingPolicy == BufferData);
+}
+
+void CachedResource::addData(const char*, unsigned)
+{
+    ASSERT(m_options.dataBufferingPolicy == DoNotBufferData);
+}
+
+void CachedResource::finishLoading(ResourceBuffer*)
+{
     setLoading(false);
     checkNotify();
 }

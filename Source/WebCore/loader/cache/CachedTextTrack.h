@@ -40,7 +40,8 @@ public:
 
 private:
     virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
-    virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
+    virtual void addDataBuffer(ResourceBuffer*) OVERRIDE;
+    virtual void finishLoading(ResourceBuffer*) OVERRIDE;
 };
 
 }

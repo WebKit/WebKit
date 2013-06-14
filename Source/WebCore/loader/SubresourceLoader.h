@@ -74,7 +74,6 @@ private:
     virtual void releaseResources() OVERRIDE;
 
     bool checkForHTTPStatusCodeError();
-    void sendDataToResource(const char*, int);
 
     void didReceiveDataOrBuffer(const char*, int, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
 

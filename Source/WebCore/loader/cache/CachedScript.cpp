@@ -82,15 +82,11 @@ const String& CachedScript::script()
     return m_script;
 }
 
-void CachedScript::data(ResourceBuffer* data, bool allDataReceived)
+void CachedScript::finishLoading(ResourceBuffer* data)
 {
-    if (!allDataReceived)
-        return;
-
     m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
-    setLoading(false);
-    checkNotify();
+    CachedResource::finishLoading(data);
 }
 
 void CachedScript::destroyDecodedData()

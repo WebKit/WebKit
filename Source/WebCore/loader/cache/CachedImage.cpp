@@ -344,56 +344,88 @@ inline void CachedImage::clearImage()
     m_image.clear();
 }
 
-size_t CachedImage::maximumDecodedImageSize()
+bool CachedImage::canBeDrawn() const
 {
+    if (!m_image || m_image->isNull())
+        return false;
+
     if (!m_loader || m_loader->reachedTerminalState())
-        return 0;
+        return true;
+
     Settings* settings = m_loader->frameLoader()->frame()->settings();
-    return settings ? settings->maximumDecodedImageSize() : 0;
+    if (!settings)
+        return true;
+
+    size_t estimatedDecodedImageSize = m_image->width() * m_image->height() * 4; // no overflow check
+    return estimatedDecodedImageSize <= settings->maximumDecodedImageSize();
 }
 
-void CachedImage::data(ResourceBuffer* data, bool allDataReceived)
+void CachedImage::addIncrementalDataBuffer(ResourceBuffer* data)
 {
     m_data = data;
+    if (!data)
+        return;
 
-    if (m_data)
-        createImage();
-
-    bool sizeAvailable = false;
+    createImage();
 
     // Have the image update its data from its internal buffer.
-    // It will not do anything now, but will delay decoding until 
+    // It will not do anything now, but will delay decoding until
     // queried for info (like size or specific image frames).
+    bool sizeAvailable = m_image->setData(m_data->sharedBuffer(), false);
+    if (!sizeAvailable)
+        return;
+
+    if (!canBeDrawn()) {
+        // There's no image to draw or its decoded size is bigger than the maximum allowed.
+        error(errorOccurred() ? status() : DecodeError);
+        if (inCache())
+            memoryCache()->remove(this);
+        return;
+    }
+
+    // Go ahead and tell our observers to try to draw.
+    // Each chunk from the network causes observers to repaint, which will
+    // force that chunk to decode.
+    // It would be nice to only redraw the decoded band of the image, but with the current design
+    // (decoding delayed until painting) that seems hard.
+    notifyObservers();
+
+    setEncodedSize(m_image->data() ? m_image->data()->size() : 0);
+}
+
+void CachedImage::addDataBuffer(ResourceBuffer* data)
+{
+    ASSERT(m_options.dataBufferingPolicy == BufferData);
+    addIncrementalDataBuffer(data);
+}
+
+void CachedImage::addData(const char* data, unsigned length)
+{
+    ASSERT(m_options.dataBufferingPolicy == DoNotBufferData);
+    addIncrementalDataBuffer(ResourceBuffer::create(data, length).get());
+}
+
+void CachedImage::finishLoading(ResourceBuffer* data)
+{
+    m_data = data;
+    if (!m_image && data)
+        createImage();
+
     if (m_image)
-        sizeAvailable = m_image->setData(m_data ? m_data->sharedBuffer() : 0, allDataReceived);
+        m_image->setData(m_data->sharedBuffer(), true);
 
-    // Go ahead and tell our observers to try to draw if we have either
-    // received all the data or the size is known.  Each chunk from the
-    // network causes observers to repaint, which will force that chunk
-    // to decode.
-    if (sizeAvailable || allDataReceived) {
-        size_t maxDecodedImageSize = maximumDecodedImageSize();
-        IntSize s = m_image ? m_image->size() : IntSize();
-        size_t estimatedDecodedImageSize = s.width() * s.height() * 4; // no overflow check
-        if (!m_image || m_image->isNull() || (maxDecodedImageSize > 0 && estimatedDecodedImageSize > maxDecodedImageSize)) {
-            error(errorOccurred() ? status() : DecodeError);
-            if (inCache())
-                memoryCache()->remove(this);
-            return;
-        }
-        
-        // It would be nice to only redraw the decoded band of the image, but with the current design
-        // (decoding delayed until painting) that seems hard.
-        notifyObservers();
+    if (!canBeDrawn()) {
+        // There's no image to draw or its decoded size is bigger than the maximum allowed.
+        error(errorOccurred() ? status() : DecodeError);
+        if (inCache())
+            memoryCache()->remove(this);
+        return;
+    }
 
-        if (m_image)
-            setEncodedSize(m_image->data() ? m_image->data()->size() : 0);
-    }
-    
-    if (allDataReceived) {
-        setLoading(false);
-        checkNotify();
-    }
+    notifyObservers();
+    if (m_image)
+        setEncodedSize(m_image->data() ? m_image->data()->size() : 0);
+    CachedResource::finishLoading(data);
 }
 
 void CachedImage::error(CachedResource::Status status)

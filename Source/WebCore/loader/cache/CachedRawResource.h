@@ -48,7 +48,9 @@ public:
 
 private:
     virtual void didAddClient(CachedResourceClient*) OVERRIDE;
-    virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
+    virtual void addDataBuffer(ResourceBuffer*) OVERRIDE;
+    virtual void addData(const char* data, unsigned length) OVERRIDE;
+    virtual void finishLoading(ResourceBuffer*) OVERRIDE;
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const OVERRIDE { return true; }
     virtual void allClientsRemoved() OVERRIDE;
@@ -61,6 +63,9 @@ private:
     virtual bool mayTryReplaceEncodedData() const OVERRIDE { return true; }
 
     virtual bool canReuse(const ResourceRequest&) const OVERRIDE;
+
+    const char* calculateIncrementalDataChunk(ResourceBuffer*, unsigned& incrementalDataLength);
+    void notifyClientsDataWasReceived(const char* data, unsigned length);
 
     unsigned long m_identifier;
 

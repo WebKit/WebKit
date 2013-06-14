@@ -53,11 +53,8 @@ String CachedSVGDocument::encoding() const
     return m_decoder->encoding().name();
 }
 
-void CachedSVGDocument::data(ResourceBuffer* data, bool allDataReceived)
+void CachedSVGDocument::finishLoading(ResourceBuffer* data)
 {
-    if (!allDataReceived)
-        return;
-
     if (data) {
         StringBuilder decodedText;
         decodedText.append(m_decoder->decode(data->data(), data->size()));
@@ -66,9 +63,7 @@ void CachedSVGDocument::data(ResourceBuffer* data, bool allDataReceived)
         m_document = SVGDocument::create(0, response().url());
         m_document->setContent(decodedText.toString());
     }
-
-    setLoading(false);
-    checkNotify();
+    CachedResource::finishLoading(data);
 }
 
 }

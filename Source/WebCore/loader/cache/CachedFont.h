@@ -63,7 +63,7 @@ private:
     virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) OVERRIDE;
 
     virtual void didAddClient(CachedResourceClient*) OVERRIDE;
-    virtual void data(ResourceBuffer*, bool allDataReceived) OVERRIDE;
+    virtual void finishLoading(ResourceBuffer*) OVERRIDE;
 
     virtual void allClientsRemoved() OVERRIDE;
 

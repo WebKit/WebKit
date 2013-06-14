@@ -205,7 +205,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
 
     RefPtr<ResourceBuffer> buffer = resourceData();
     if (m_loadingMultipartContent && buffer && buffer->size()) {
-        sendDataToResource(buffer->data(), buffer->size());
+        m_resource->finishLoading(buffer.get());
         clearResourceData();
         // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.        
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
@@ -240,8 +240,12 @@ void SubresourceLoader::didReceiveDataOrBuffer(const char* data, int length, Pas
     
     ResourceLoader::didReceiveDataOrBuffer(data, length, buffer, encodedDataLength, dataPayloadType);
 
-    if (!m_loadingMultipartContent)
-        sendDataToResource(buffer ? buffer->data() : data, buffer ? buffer->size() : length);
+    if (!m_loadingMultipartContent) {
+        if (ResourceBuffer* resourceData = this->resourceData())
+            m_resource->addDataBuffer(resourceData);
+        else
+            m_resource->addData(buffer ? buffer->data() : data, buffer ? buffer->size() : length);
+    }
 }
 
 bool SubresourceLoader::checkForHTTPStatusCodeError()
@@ -254,21 +258,6 @@ bool SubresourceLoader::checkForHTTPStatusCodeError()
     m_resource->error(CachedResource::LoadError);
     cancel();
     return true;
-}
-
-void SubresourceLoader::sendDataToResource(const char* data, int length)
-{
-    // There are two cases where we might need to create our own SharedBuffer instead of copying the one in ResourceLoader. 
-    // (1) Multipart content: The loader delivers the data in a multipart section all at once, then sends eof. 
-    //     The resource data will change as the next part is loaded, so we need to make a copy. 
-    // (2) Our client requested that the data not be buffered at the ResourceLoader level via ResourceLoaderOptions. In this case, 
-    //     ResourceLoader::resourceData() will be null. However, unlike the multipart case, we don't want to tell the CachedResource 
-    //     that all data has been received yet. 
-    if (m_loadingMultipartContent || !resourceData()) { 
-        RefPtr<ResourceBuffer> copiedData = ResourceBuffer::create(data, length); 
-        m_resource->data(copiedData.get(), m_loadingMultipartContent);
-    } else 
-        m_resource->data(resourceData(), false);
 }
 
 void SubresourceLoader::didFinishLoading(double finishTime)
@@ -285,7 +274,7 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     m_state = Finishing;
     m_activityAssertion.clear();
     m_resource->setLoadFinishTime(finishTime);
-    m_resource->data(resourceData(), true);
+    m_resource->finishLoading(resourceData());
 
     if (wasCancelled())
         return;

@@ -60,11 +60,10 @@ const String& CachedShader::shaderString()
     return m_shaderString;
 }
 
-void CachedShader::data(ResourceBuffer* data, bool allDataReceived)
+void CachedShader::finishLoading(ResourceBuffer* data)
 {
-    if (allDataReceived)
-        m_data = data;
-    CachedResource::data(data, allDataReceived);
+    m_data = data;
+    CachedResource::finishLoading(0);
 }
 
 } // namespace WebCore
