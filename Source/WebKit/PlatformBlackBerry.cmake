@@ -86,7 +86,6 @@ list(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/BackForwardListBlackBerry.cpp
     blackberry/WebCoreSupport/CacheClientBlackBerry.cpp
     blackberry/WebCoreSupport/ChromeClientBlackBerry.cpp
-    blackberry/WebCoreSupport/ContextMenuClientBlackBerry.cpp
     blackberry/WebCoreSupport/CredentialManager.cpp
     blackberry/WebCoreSupport/CredentialTransformData.cpp
     blackberry/WebCoreSupport/DeviceMotionClientBlackBerry.cpp

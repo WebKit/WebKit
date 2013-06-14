@@ -1,3 +1,17 @@
+2013-06-14  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] Remove implementation of ContextMenu classes
+        https://bugs.webkit.org/show_bug.cgi?id=114860
+
+        Reviewed by Rob Buis.
+
+        This code is not being used so we can safely remove it.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * WebCoreSupport/ContextMenuClientBlackBerry.cpp: Removed.
+        * WebCoreSupport/ContextMenuClientBlackBerry.h: Removed.
+
 2013-06-14  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] LayerTiler fails to tile really big layers

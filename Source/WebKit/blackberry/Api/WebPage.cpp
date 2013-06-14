@@ -33,7 +33,6 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClientBlackBerry.h"
-#include "ContextMenuClientBlackBerry.h"
 #include "CookieManager.h"
 #include "CredentialManager.h"
 #include "CredentialStorage.h"
@@ -520,10 +519,6 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
     m_webSettings->setUserAgentString(defaultUserAgent());
 
     ChromeClientBlackBerry* chromeClient = new ChromeClientBlackBerry(this);
-#if ENABLE(CONTEXT_MENUS)
-    ContextMenuClientBlackBerry* contextMenuClient = 0;
-    contextMenuClient = new ContextMenuClientBlackBerry();
-#endif
     EditorClientBlackBerry* editorClient = new EditorClientBlackBerry(this);
     DragClientBlackBerry* dragClient = 0;
 #if ENABLE(DRAG_SUPPORT)
@@ -537,9 +532,6 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
 
     Page::PageClients pageClients;
     pageClients.chromeClient = chromeClient;
-#if ENABLE(CONTEXT_MENUS)
-    pageClients.contextMenuClient = contextMenuClient;
-#endif
     pageClients.editorClient = editorClient;
     pageClients.dragClient = dragClient;
     pageClients.inspectorClient = m_inspectorClient;

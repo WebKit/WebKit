@@ -1,3 +1,17 @@
+2013-06-14  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] Remove implementation of ContextMenu classes
+        https://bugs.webkit.org/show_bug.cgi?id=114860
+
+        Reviewed by Rob Buis.
+
+        This code is not being used so we can safely remove it.
+
+        * PlatformBlackBerry.cmake:
+        * platform/blackberry/ContextMenuBlackBerry.cpp: Removed.
+        * platform/blackberry/ContextMenuItemBlackBerry.cpp: Removed.
+        * platform/blackberry/LocalizedStringsBlackBerry.cpp:
+
 2013-06-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Provide simple <meter> drawing logic for testing.
