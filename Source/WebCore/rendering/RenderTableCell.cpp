@@ -195,7 +195,7 @@ void RenderTableCell::computeIntrinsicPadding(int rowHeight)
     case LENGTH:
     case BASELINE: {
         LayoutUnit baseline = cellBaselinePosition();
-        if (baseline > borderBefore() + paddingBefore())
+        if (baseline > borderAndPaddingBefore())
             intrinsicPaddingBefore = section()->rowBaseline(rowIndex()) - (baseline - oldIntrinsicPaddingBefore);
         break;
     }
@@ -391,7 +391,7 @@ LayoutUnit RenderTableCell::cellBaselinePosition() const
     LayoutUnit firstLineBaseline = firstLineBoxBaseline();
     if (firstLineBaseline != -1)
         return firstLineBaseline;
-    return paddingBefore() + borderBefore() + contentLogicalHeight();
+    return borderAndPaddingBefore() + contentLogicalHeight();
 }
 
 void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

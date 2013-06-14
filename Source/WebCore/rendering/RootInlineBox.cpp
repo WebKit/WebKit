@@ -430,7 +430,7 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     if (layoutState->isPaginated() && layoutState->pageLogicalHeight()) {
         pageLogicalTop = block()->pageLogicalTopForOffset(lineTopWithLeading() + delta);
         if (pageLogicalTop > firstLineTopWithLeading)
-            firstTextTop = pageLogicalTop + lineGridBox->logicalTop() - lineGrid->borderBefore() - lineGrid->paddingBefore() + lineGridPaginationOrigin;
+            firstTextTop = pageLogicalTop + lineGridBox->logicalTop() - lineGrid->borderAndPaddingBefore() + lineGridPaginationOrigin;
     }
 
     if (block()->style()->lineSnap() == LineSnapContain) {
@@ -581,7 +581,7 @@ LayoutUnit RootInlineBox::selectionTop() const
     if (renderer()->style()->isFlippedLinesWritingMode())
         return selectionTop;
 
-    LayoutUnit prevBottom = prevRootBox() ? prevRootBox()->selectionBottom() : block()->borderBefore() + block()->paddingBefore();
+    LayoutUnit prevBottom = prevRootBox() ? prevRootBox()->selectionBottom() : block()->borderAndPaddingBefore();
     if (prevBottom < selectionTop && block()->containsFloats()) {
         // This line has actually been moved further down, probably from a large line-height, but possibly because the
         // line was forced to clear floats.  If so, let's check the offsets, and only be willing to use the previous
@@ -868,8 +868,8 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
         LayoutUnit ascentWithMargin = box->renderer()->style(isFirstLineStyle())->fontMetrics().ascent(baselineType());
         LayoutUnit descentWithMargin = box->renderer()->style(isFirstLineStyle())->fontMetrics().descent(baselineType());
         if (box->parent() && !box->renderer()->isText()) {
-            ascentWithMargin += box->boxModelObject()->borderBefore() + box->boxModelObject()->paddingBefore() + box->boxModelObject()->marginBefore();
-            descentWithMargin += box->boxModelObject()->borderAfter() + box->boxModelObject()->paddingAfter() + box->boxModelObject()->marginAfter();
+            ascentWithMargin += box->boxModelObject()->borderAndPaddingBefore() + box->boxModelObject()->marginBefore();
+            descentWithMargin += box->boxModelObject()->borderAndPaddingAfter() + box->boxModelObject()->marginAfter();
         }
         setAscentAndDescent(ascent, descent, ascentWithMargin, descentWithMargin, ascentDescentSet);
         

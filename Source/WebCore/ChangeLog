@@ -1,3 +1,54 @@
+2013-06-13  Zoltan Horvath  <zoltan@webkit.org>
+
+        Use borderAndPadding[Before,After]() instead of border[Before,After]() + padding[Before,After]()
+        https://bugs.webkit.org/show_bug.cgi?id=117611
+
+        Reviewed by Dirk Schulze.
+
+        I added a new function called borderAndPaddingAfter(), since we already had borderAndPaddingBefore(). I changed
+        every separate additions to the old/new function. This change makes the code shorter and more straightforward.
+
+        Behavior hasn't changed, no new tests were needed.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::marginBeforeEstimateForChild):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::columnRectAt):
+        (WebCore::RenderBlock::relayoutForPagination):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::flipForWritingModeIncludingColumns):
+        (WebCore::RenderBlock::adjustStartEdgeForWritingModeIncludingColumns):
+        (WebCore::RenderBlock::adjustForColumns):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::updateShapeAndSegmentsForCurrentLineInFlowThread):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::borderAndPaddingStart):
+        (WebCore::RenderBoxModelObject::borderAndPaddingBefore):
+        (WebCore::RenderBoxModelObject::borderAndPaddingAfter):
+        (WebCore::RenderBoxModelObject::borderAndPaddingLogicalHeight):
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::layoutSpecialExcludedChild):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::heightAdjustedForSetOffset):
+        (WebCore::RenderMultiColumnSet::prepareForLayout):
+        (WebCore::RenderMultiColumnSet::columnRectAt):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeIntrinsicPadding):
+        (WebCore::RenderTableCell::cellBaselinePosition):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::firstLineBoxBaseline):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::lineSnapAdjustment):
+        (WebCore::RootInlineBox::selectionTop):
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+
 2013-06-13  Andreas Kling  <akling@apple.com>
 
         Move Node::shouldUseInputMethod() to Element.

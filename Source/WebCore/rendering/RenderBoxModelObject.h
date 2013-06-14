@@ -122,14 +122,16 @@ public:
     virtual int borderStart() const { return style()->borderStartWidth(); }
     virtual int borderEnd() const { return style()->borderEndWidth(); }
 
+    LayoutUnit borderAndPaddingStart() const { return borderStart() + paddingStart(); }
+    LayoutUnit borderAndPaddingBefore() const { return borderBefore() + paddingBefore(); }
+    LayoutUnit borderAndPaddingAfter() const { return borderAfter() + paddingAfter(); }
+
     LayoutUnit borderAndPaddingHeight() const { return borderTop() + borderBottom() + paddingTop() + paddingBottom(); }
     LayoutUnit borderAndPaddingWidth() const { return borderLeft() + borderRight() + paddingLeft() + paddingRight(); }
-    LayoutUnit borderAndPaddingLogicalHeight() const { return borderBefore() + borderAfter() + paddingBefore() + paddingAfter(); }
+    LayoutUnit borderAndPaddingLogicalHeight() const { return borderAndPaddingBefore() + borderAndPaddingAfter(); }
     LayoutUnit borderAndPaddingLogicalWidth() const { return borderStart() + borderEnd() + paddingStart() + paddingEnd(); }
     LayoutUnit borderAndPaddingLogicalLeft() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
 
-    LayoutUnit borderAndPaddingStart() const { return borderStart() + paddingStart(); }
-    LayoutUnit borderAndPaddingBefore() const { return borderBefore() + paddingBefore(); }
     LayoutUnit borderLogicalLeft() const { return style()->isHorizontalWritingMode() ? borderLeft() : borderTop(); }
     LayoutUnit borderLogicalRight() const { return style()->isHorizontalWritingMode() ? borderRight() : borderBottom(); }
 

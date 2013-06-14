@@ -60,7 +60,7 @@ RenderMultiColumnSet* RenderMultiColumnSet::createAnonymous(RenderFlowThread* fl
 LayoutUnit RenderMultiColumnSet::heightAdjustedForSetOffset(LayoutUnit height) const
 {
     RenderMultiColumnBlock* multicolBlock = toRenderMultiColumnBlock(parent());
-    LayoutUnit contentLogicalTop = logicalTop() - multicolBlock->borderBefore() - multicolBlock->paddingBefore();
+    LayoutUnit contentLogicalTop = logicalTop() - multicolBlock->borderAndPaddingBefore();
 
     height -= contentLogicalTop;
     return max(height, LayoutUnit(1)); // Let's avoid zero height, as that would probably cause an infinite amount of columns to be created.
@@ -163,7 +163,7 @@ void RenderMultiColumnSet::prepareForLayout()
 
     // Set box logical top.
     ASSERT(!previousSiblingBox() || !previousSiblingBox()->isRenderMultiColumnSet()); // FIXME: multiple set not implemented; need to examine previous set to calculate the correct logical top.
-    setLogicalTop(multicolBlock->borderBefore() + multicolBlock->paddingBefore());
+    setLogicalTop(multicolBlock->borderAndPaddingBefore());
 
     // Set box width.
     updateLogicalWidth();
@@ -221,7 +221,7 @@ LayoutRect RenderMultiColumnSet::columnRectAt(unsigned index) const
 {
     LayoutUnit colLogicalWidth = computedColumnWidth();
     LayoutUnit colLogicalHeight = computedColumnHeight();
-    LayoutUnit colLogicalTop = borderBefore() + paddingBefore();
+    LayoutUnit colLogicalTop = borderAndPaddingBefore();
     LayoutUnit colLogicalLeft = borderAndPaddingLogicalLeft();
     LayoutUnit colGap = columnGap();
     if (style()->isLeftToRightDirection())

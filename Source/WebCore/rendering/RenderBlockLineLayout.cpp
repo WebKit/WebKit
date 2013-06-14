@@ -1687,7 +1687,7 @@ void RenderBlock::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsideIn
     LayoutUnit logicalLineTopInFlowThread = logicalHeight() + offsetFromLogicalTopOfFirstPage();
     LayoutUnit logicalLineBottomInFlowThread = logicalLineTopInFlowThread + lineHeight;
     LayoutUnit logicalRegionTopInFlowThread = currentRegion->logicalTopForFlowThreadContent();
-    LayoutUnit logicalRegionBottomInFlowThread = logicalRegionTopInFlowThread + currentRegion->logicalHeight() - currentRegion->borderAndPaddingBefore() - currentRegion->borderAfter() - currentRegion->paddingAfter();
+    LayoutUnit logicalRegionBottomInFlowThread = logicalRegionTopInFlowThread + currentRegion->logicalHeight() - currentRegion->borderAndPaddingBefore() - currentRegion->borderAndPaddingAfter();
 
     // We only want to deal regions with shapes, so we look up for the next region whether it has a shape
     if (!shapeInsideInfo && !currentRegion->isLastRegion()) {
@@ -1717,7 +1717,7 @@ void RenderBlock::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsideIn
         logicalLineTopInFlowThread = logicalHeight() + offsetFromLogicalTopOfFirstPage();
         logicalLineBottomInFlowThread = logicalLineTopInFlowThread + lineHeight;
         logicalRegionTopInFlowThread = currentRegion->logicalTopForFlowThreadContent();
-        logicalRegionBottomInFlowThread = logicalRegionTopInFlowThread + currentRegion->logicalHeight() - currentRegion->borderAndPaddingBefore() - currentRegion->borderAfter() - currentRegion->paddingAfter();
+        logicalRegionBottomInFlowThread = logicalRegionTopInFlowThread + currentRegion->logicalHeight() - currentRegion->borderAndPaddingBefore() - currentRegion->borderAndPaddingAfter();
     }
 
     if (!shapeInsideInfo)
@@ -1743,7 +1743,7 @@ void RenderBlock::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsideIn
     // Overflow from last shape on last region should be pushed below the content box
     if (currentRegion->isLastRegion() && !lineOverflowsFromShapeInside && (lineTop + lineHeight) > shapeInsideInfo->shapeLogicalBottom()) {
         lineOverflowsFromShapeInside = true;
-        LayoutUnit newLogicalHeight = this->logicalHeight() + (shapeInsideInfo->shapeContainingBlockHeight() - (lineTop + currentRegion->borderAfter() + currentRegion->paddingAfter()));
+        LayoutUnit newLogicalHeight = this->logicalHeight() + (shapeInsideInfo->shapeContainingBlockHeight() - (lineTop + currentRegion->borderAndPaddingAfter()));
         setLogicalHeight(newLogicalHeight);
     }
 }
@@ -2091,7 +2091,7 @@ void RenderBlock::repaintDirtyFloats(Vector<FloatWithRect>& floats)
 
 void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    setLogicalHeight(borderBefore() + paddingBefore());
+    setLogicalHeight(borderAndPaddingBefore());
     
     // Lay out our hypothetical grid line as though it occurs at the top of the block.
     if (view()->layoutState() && view()->layoutState()->lineGrid() == this)
@@ -2182,7 +2182,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repain
     }
 
     // Now add in the bottom border/padding.
-    setLogicalHeight(logicalHeight() + lastLineAnnotationsAdjustment + borderAfter() + paddingAfter() + scrollbarLogicalHeight());
+    setLogicalHeight(logicalHeight() + lastLineAnnotationsAdjustment + borderAndPaddingAfter() + scrollbarLogicalHeight());
 
     if (!firstLineBox() && hasLineIfEmpty())
         setLogicalHeight(logicalHeight() + lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));

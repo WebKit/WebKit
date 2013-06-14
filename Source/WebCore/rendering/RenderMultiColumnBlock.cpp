@@ -172,7 +172,7 @@ RenderObject* RenderMultiColumnBlock::layoutSpecialExcludedChild(bool relayoutCh
     if (relayoutChildren)
         m_flowThread->setChildNeedsLayout(true, MarkOnlyThis);
     
-    setLogicalTopForChild(m_flowThread, borderBefore() + paddingBefore());
+    setLogicalTopForChild(m_flowThread, borderAndPaddingBefore());
     m_flowThread->layoutIfNeeded();
     determineLogicalLeftPositionForChild(m_flowThread);
     
