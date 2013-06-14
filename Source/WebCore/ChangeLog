@@ -1,3 +1,42 @@
+2013-06-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Sometimes we stick in slow scrolling mode even after leaving a page
+        https://bugs.webkit.org/show_bug.cgi?id=117622
+
+        Reviewed by Sam Weinig.
+        
+        ScrollingCoordinator, and thus the scrolling state tree, is owned by Page,
+        and so persists when navigating between cached pages. We do give the ScrollingStateTree
+        a new ScrollingStateScrollingNode on navigation, however the ScrollingStateScrollingNode
+        would not have dirty flags set for, say, WheelEventHandlerCount if the document had
+        no wheel handlers. And because that dirty flag wasn't set, ScrollingTree::commitNewTreeState()
+        would fail to update m_hasWheelEventHandlers, so we'd remain in slow scrolling.
+        
+        Fix by having ScrollingStateTree remember if it's been given a new root ScrollingStateScrollingNode,
+        and making ScrollingTree::commitNewTreeState() to the right thing in that case.
+        
+        Also fix a couple of issues with the tiled scrolling indicator. First, on cached page
+        navigation, the indicator color would show the state for the old page, because
+        ScrollingCoordinatorMac::commitTreeState() checked scrollingTree()->hasWheelEventHandlers()
+        before the scrolling thread has committed the new scrolling tree.
+        
+        Second, the color change would animate, so stop that.
+
+        Not testable, since tests can only dump the scrolling state tree.
+
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::ScrollingStateTree):
+        (WebCore::ScrollingStateTree::attachNode):
+        (WebCore::ScrollingStateTree::commit):
+        * page/scrolling/ScrollingStateTree.h:
+        (WebCore::ScrollingStateTree::hasNewRootStateNode):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitNewTreeState):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::commitTreeState):
+        * platform/graphics/ca/mac/TileController.mm:
+        (-[WebTiledScrollingIndicatorLayer init]): Turn off borderColor implicit animations.
+
 2013-06-13  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [curl] Merge http response header values

@@ -63,7 +63,7 @@ using namespace std;
         [self setStyle:[NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSNull null], @"bounds", [NSNull null], @"position", [NSNull null], @"contents", nil] forKey:@"actions"]];
 
         _visibleRectFrameLayer = [CALayer layer];
-        [_visibleRectFrameLayer setStyle:[NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSNull null], @"bounds", [NSNull null], @"position", nil] forKey:@"actions"]];
+        [_visibleRectFrameLayer setStyle:[NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSNull null], @"bounds", [NSNull null], @"position", [NSNull null], @"borderColor", nil] forKey:@"actions"]];
         [self addSublayer:_visibleRectFrameLayer];
         [_visibleRectFrameLayer setBorderColor:WebCore::cachedCGColor(WebCore::Color(255, 0, 0), WebCore::ColorSpaceDeviceRGB)];
         [_visibleRectFrameLayer setBorderWidth:2];

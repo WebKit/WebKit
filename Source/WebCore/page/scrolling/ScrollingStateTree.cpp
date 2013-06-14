@@ -41,6 +41,7 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::create()
 
 ScrollingStateTree::ScrollingStateTree()
     : m_hasChangedProperties(false)
+    , m_hasNewRootStateNode(false)
 {
 }
 
@@ -70,6 +71,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
 
         setRootStateNode(ScrollingStateScrollingNode::create(this, newNodeID));
         newNode = rootStateNode();
+        m_hasNewRootStateNode = true;
     } else {
         ScrollingStateNode* parent = stateNodeForID(parentID);
         if (!parent)
@@ -135,6 +137,9 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit()
     // Now the clone tree has changed properties, and the original tree does not.
     treeStateClone->m_hasChangedProperties = true;
     m_hasChangedProperties = false;
+
+    treeStateClone->m_hasNewRootStateNode = m_hasNewRootStateNode;
+    m_hasNewRootStateNode = false;
 
     return treeStateClone.release();
 }

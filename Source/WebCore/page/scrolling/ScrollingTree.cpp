@@ -132,18 +132,21 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingS
 {
     ASSERT(ScrollingThread::isCurrentThread());
 
+    bool rootStateNodeChanged = scrollingStateTree->hasNewRootStateNode();
+    
     ScrollingStateScrollingNode* rootNode = scrollingStateTree->rootStateNode();
     if (rootNode
-        && (rootNode->hasChangedProperty(ScrollingStateScrollingNode::WheelEventHandlerCount)
+        && (rootStateNodeChanged
+            || rootNode->hasChangedProperty(ScrollingStateScrollingNode::WheelEventHandlerCount)
             || rootNode->hasChangedProperty(ScrollingStateScrollingNode::NonFastScrollableRegion)
             || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))) {
         MutexLocker lock(m_mutex);
 
-        if (rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
+        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
             m_mainFrameScrollPosition = IntPoint();
-        if (rootNode->hasChangedProperty(ScrollingStateScrollingNode::WheelEventHandlerCount))
+        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateScrollingNode::WheelEventHandlerCount))
             m_hasWheelEventHandlers = scrollingStateTree->rootStateNode()->wheelEventHandlerCount();
-        if (rootNode->hasChangedProperty(ScrollingStateScrollingNode::NonFastScrollableRegion))
+        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateScrollingNode::NonFastScrollableRegion))
             m_nonFastScrollableRegion = scrollingStateTree->rootStateNode()->nonFastScrollableRegion();
     }
     
