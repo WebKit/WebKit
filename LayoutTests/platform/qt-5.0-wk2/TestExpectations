@@ -742,5 +742,5 @@ jquery/data.html
 # https://bugs.webkit.org/show_bug.cgi?id=48987
 svg/animations/animate-path-nested-transforms.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=64002
-fast/selectors/unqualified-hover-strict.html
+# Mouse-move SVG tests failing
+webkit.org/b/45475 svg/custom/mouse-move-on-svg-root-standalone.svg [ Skip ]

@@ -1,3 +1,36 @@
+2013-06-14  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Generate new baseline to some tests and bot greening.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/animations/3d/change-transform-in-end-event-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-left-right-same-bottom-different-color-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-radius-percent-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-radius-wide-border-05-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-radius-with-box-shadow-01-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-radius-with-box-shadow-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/details-summary-before-after-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/details-summary-before-after-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/zoomed-controls-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-color-stop-units-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-generated-gradients-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-linear-angle-gradients-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-linear-right-angle-gradients-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-list-item-gradient-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-radial-gradients-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-radial-gradients3-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-repeating-end-fill-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-repeating-linear-gradient-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-repeating-radial-gradients-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/gradients/unprefixed-zero-range-repeating-gradient-hang-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/marker-orient-auto-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/marker-orient-auto-expected.txt: Added.
+        * platform/qt-5.0-wk2/svg/filters/feDropShadow-zero-deviation-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feDropShadow-zero-deviation-expected.txt: Added.
+        * platform/qt-5.0-wk2/svg/filters/feGaussianBlur-zero-deviation-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feGaussianBlur-zero-deviation-expected.txt: Added.
+        * platform/qt/TestExpectations:
+
 2013-06-14  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Some more rebaselining after r151205 and r150798.

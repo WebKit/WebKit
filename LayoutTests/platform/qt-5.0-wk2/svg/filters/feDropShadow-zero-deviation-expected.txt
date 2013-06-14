@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (49,19) size 12x32
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="f1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feDropShadow stdDeviation="0.00, 1.00" dx="2.00" dy="2.00" flood-color="#000000" flood-opacity="1.00]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="f2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feDropShadow stdDeviation="1.00, 0.00" dx="2.00" dy="2.00" flood-color="#000000" flood-opacity="1.00]
+          [SourceGraphic]
+    RenderSVGRect {rect} at (49,19) size 12x12 [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=20.00] [width=10.00] [height=10.00]
+      [filter="f1"] RenderSVGResourceFilter {filter} at (49,19) size 12x12
+    RenderSVGRect {rect} at (49,39) size 12x12 [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=40.00] [width=10.00] [height=10.00]
+      [filter="f2"] RenderSVGResourceFilter {filter} at (49,39) size 12x12

@@ -1898,6 +1898,12 @@ webkit.org/b/116711 fast/frames/detach-frame-during-focus.html [ Skip ]
 
 webkit.org/b/116608 fast/css/text-overflow-ellipsis-full-truncate-rtl.html [ Skip ]
 
+# [Qt] fast/selectors/unqualified-hover-strict.html fails
+webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Skip ]
+
+# [GTK][Qt] fast/flexbox/clear-overflow-before-scroll-update.html is failing
+webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Skip ]
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
