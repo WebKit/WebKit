@@ -1,3 +1,18 @@
+2013-06-14  Lukasz Gajowy  <l.gajowy@samsung.com>
+
+        background-color is not preserved when inserting a new paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=117138
+
+        Reviewed by Ryosuke Niwa.
+
+        The style isn't copied because background-color isn't defined as inheritable property.
+
+        Test: editing/inserting/insert-paragraph-not-preserving-background-color.html
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion):
+        Passing EditingPropertiesInEffect instead of implicit parameter OnlyEditingInheritableProperties.
+
 2013-06-14  Adam Barth  <abarth@webkit.org>
 
         Threaded HTML parser can ASSERT in some situations
