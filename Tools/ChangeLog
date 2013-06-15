@@ -1,3 +1,10 @@
+2013-06-15  Bruno de Oliveira Abinader  <brunoabinader@gmail.com>
+
+        Unreviewed. Reorder my email addresses.
+        https://bugs.webkit.org/show_bug.cgi?id=100122
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-06-14  Enrica Casucci  <enrica@apple.com>
 
         WKPageFindStringMatches ignores the kWKFindOptionsBackwards option.
