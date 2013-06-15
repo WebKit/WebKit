@@ -1,3 +1,19 @@
+2013-06-14  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION (r148367): Facebook and Twitter icons at macworld.com are stacked vertically, obscuring Twitter one
+        https://bugs.webkit.org/show_bug.cgi?id=117284
+
+        Reviewed by David Hyatt.
+
+        Test: fast/text/whitespace/inline-whitespace-wrapping-7.html
+
+        We were looking for line breaks in trailing collapsed whitespace even when inside a nowrap inline.
+        It's wrong to do this as we don't know yet if we will want or need to break - that decision has to
+        be deferred until we enter a part of the line that is autowrap.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak):
+
 2013-06-14  Lukasz Gajowy  <l.gajowy@samsung.com>
 
         background-color is not preserved when inserting a new paragraph

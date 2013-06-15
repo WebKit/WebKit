@@ -1,3 +1,13 @@
+2013-06-14  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION (r148367): Facebook and Twitter icons at macworld.com are stacked vertically, obscuring Twitter one
+        https://bugs.webkit.org/show_bug.cgi?id=117284
+
+        Reviewed by David Hyatt.
+
+        * fast/text/whitespace/inline-whitespace-wrapping-7-expected.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-7.html: Added.
+
 2013-06-14  Lukasz Gajowy  <l.gajowy@samsung.com>
 
         background-color is not preserved when inserting a new paragraph
