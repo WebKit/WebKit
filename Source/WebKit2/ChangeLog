@@ -1,3 +1,22 @@
+2013-06-14  Dean Jackson  <dino@apple.com>
+
+        Crash in supportsSnapshotting
+        https://bugs.webkit.org/show_bug.cgi?id=117670
+        <rdar://problem/14059711>
+
+        Reviewed by Darin Adler.
+
+        Speculative fix for deferencing a null RefPtr in supportsSnapshotting.
+        It seems like it was possible to get in a state where the plugin machinery
+        would fire up and attempt to get a screenshot before there was an active
+        connection to the plugin process (usually under periods of high load, such
+        as opening a lot of tabs at once). In this case we're now returning false
+        from supportsSnapshotting, which will trigger the plugin to restart, but
+        that's better than requesting a snapshot on something that doesn't yet exist.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::supportsSnapshotting): Guard for an empty connection object.
+
 2013-06-14  Enrica Casucci  <enrica@apple.com>
 
         WKPageFindStringMatches ignores the kWKFindOptionsBackwards option.
