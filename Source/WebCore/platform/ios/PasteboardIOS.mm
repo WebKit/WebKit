@@ -153,8 +153,8 @@ void Pasteboard::writeSelection(Range* selectedRange, bool /*canSmartCopyOrDelet
 
     // Put plain string on the pasteboard.
     String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard
-        ? frame->editor().stringSelectionForPasteboardWithImageAltText()
-        : frame->editor().stringSelectionForPasteboard();
+        ? frame->editor().selectedTextForClipboard() : frame->editor().selectedText();
+    text.replace(noBreakSpace, ' ');
     [representations.get() setValue:text forKey:(NSString *)kUTTypeText];
 
     frame->editor().client()->writeDataToPasteboard(representations.get());

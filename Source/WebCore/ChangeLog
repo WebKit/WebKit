@@ -1,5 +1,13 @@
 2013-06-15  Darin Adler  <darin@apple.com>
 
+        Try to fix iOS after last Pasteboard change.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::writeSelection): Put the new code inline here because the
+        stringSelectionForPasteboard function is currently Mac-only.
+
+2013-06-15  Darin Adler  <darin@apple.com>
+
         Move Pasteboard::getStringSelection to Editor, fixing a layering violation
         https://bugs.webkit.org/show_bug.cgi?id=117673
 
