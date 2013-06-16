@@ -665,7 +665,7 @@ public:
     void markContainingBlocksForLayout(bool scheduleRelayout = true, RenderObject* newRoot = 0);
     void setNeedsLayout(bool needsLayout, MarkingBehavior = MarkContainingBlockChain);
     void setChildNeedsLayout(bool childNeedsLayout, MarkingBehavior = MarkContainingBlockChain);
-    void setNeedsPositionedMovementLayout();
+    void setNeedsPositionedMovementLayout(const RenderStyle* oldStyle);
     void setNeedsSimplifiedNormalFlowLayout();
     void setPreferredLogicalWidthsDirty(bool, MarkingBehavior = MarkContainingBlockChain);
     void invalidateContainerPreferredLogicalWidths();
@@ -1244,15 +1244,19 @@ inline void RenderObject::setChildNeedsLayout(bool childNeedsLayout, MarkingBeha
     }
 }
 
-inline void RenderObject::setNeedsPositionedMovementLayout()
+inline void RenderObject::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle)
 {
     bool alreadyNeededLayout = needsPositionedMovementLayout();
     setNeedsPositionedMovementLayout(true);
     ASSERT(!isSetNeedsLayoutForbidden());
     if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();
-        if (hasLayer())
-            setLayerNeedsFullRepaintForPositionedMovementLayout();
+        if (hasLayer()) {
+            if (oldStyle && m_style->diffRequiresRepaint(oldStyle))
+                setLayerNeedsFullRepaint();
+            else
+                setLayerNeedsFullRepaintForPositionedMovementLayout();
+        }
     }
 }
 

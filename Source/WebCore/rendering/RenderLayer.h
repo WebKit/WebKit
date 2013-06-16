@@ -79,9 +79,9 @@ enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForB
 enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
 
 enum RepaintStatus {
-    NeedsNormalRepaint = 0,
-    NeedsFullRepaint = 1 << 0,
-    NeedsFullRepaintForPositionedMovementLayout = 1 << 1
+    NeedsNormalRepaint,
+    NeedsFullRepaint,
+    NeedsFullRepaintForPositionedMovementLayout
 };
 
 class ClipRect {

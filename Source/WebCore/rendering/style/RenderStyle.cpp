@@ -767,8 +767,6 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         return svgChange;
 #endif
 
-    // FIXME: we need to also check for repaint changes after a PositionedMovementOnly change
-    // on a composited layer: https://bugs.webkit.org/show_bug.cgi?id=116319
     if (changeRequiresPositionedLayoutOnly(other, changedContextSensitiveProperties))
         return StyleDifferenceLayoutPositionedMovementOnly;
 
@@ -792,6 +790,12 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
     // Animations don't need to be checked either.  We always set the new style on the RenderObject, so we will get a chance to fire off
     // the resulting transition properly.
     return StyleDifferenceEqual;
+}
+
+bool RenderStyle::diffRequiresRepaint(const RenderStyle* style) const
+{
+    unsigned changedContextSensitiveProperties = 0;
+    return changeRequiresRepaint(style, changedContextSensitiveProperties);
 }
 
 void RenderStyle::setClip(Length top, Length right, Length bottom, Length left)

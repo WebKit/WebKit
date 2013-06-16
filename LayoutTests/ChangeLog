@@ -1,3 +1,16 @@
+2013-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        webkit-backface-visibility on a parent element stops background-position from updating
+        https://bugs.webkit.org/show_bug.cgi?id=116319
+
+        Reviewed by Darin Adler.
+        
+        Test that does a positioned-movement-only layout and dumps a layer tree with
+        repaint rects.
+
+        * compositing/repaint/positioned-movement-expected.txt: Added.
+        * compositing/repaint/positioned-movement.html: Added.
+
 2013-06-14  Robert Hogan  <robert@webkit.org>
 
         REGRESSION (r148367): Facebook and Twitter icons at macworld.com are stacked vertically, obscuring Twitter one

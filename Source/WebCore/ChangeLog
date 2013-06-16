@@ -1,3 +1,31 @@
+2013-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        webkit-backface-visibility on a parent element stops background-position from updating
+        https://bugs.webkit.org/show_bug.cgi?id=116319
+
+        Reviewed by Darin Adler.
+
+        The optimization added in r102952 was incorrect in the case where a style change
+        resulted in a positioned-movement-only layout but also required a repaint; it assumed
+        that a composited layer did not need to be repainted for a a positioned-movement-only layout.
+        
+        Fix by making RenderObject::setNeedsLayoutForPositionedMovement() check whether the
+        style change requires a repaint, and calling setLayerNeedsFullRepaint() in that situation.
+
+        Test: compositing/repaint/positioned-movement.html
+
+        * rendering/RenderLayer.h: RepaintStatus values do not need to be bit flags.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle): Pass the old style to setNeedsPositionedMovementLayout().
+        (WebCore::RenderObject::styleDidChange): Ditto.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setNeedsPositionedMovementLayout): Now takes a const RenderStyle*.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff): Remove a comment now that this bug is fixed.
+        (WebCore::RenderStyle::diffRequiresRepaint): Public wrapper for changeRequiresRepaint().
+        That function never uses contextSensitiveProperties so we can safely ignore them.
+        * rendering/style/RenderStyle.h: Expose a way to call changeRequiresRepaint().
+
 2013-06-15  Darin Adler  <darin@apple.com>
 
         Try to fix iOS after last Pasteboard change.
