@@ -212,9 +212,10 @@ public:
     bool isOverlappedIncludingAncestors() const;
     void setContentIsOpaque(bool);
 
-    void addSlowRepaintObject();
-    void removeSlowRepaintObject();
-    bool hasSlowRepaintObjects() const { return m_slowRepaintObjectCount; }
+    void addSlowRepaintObject(RenderObject*);
+    void removeSlowRepaintObject(RenderObject*);
+    bool hasSlowRepaintObject(RenderObject* o) const { return m_slowRepaintObjects && m_slowRepaintObjects->contains(o); }
+    bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && m_slowRepaintObjects->size(); }
 
     // Includes fixed- and sticky-position objects.
     typedef HashSet<RenderObject*> ViewportConstrainedObjectSet;
@@ -435,6 +436,8 @@ public:
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
+    
+    void repaintSlowRepaintObjects();
 
     virtual bool isVerticalDocument() const;
     virtual bool isFlippedDocument() const;
@@ -540,13 +543,15 @@ private:
     OwnPtr<RenderObjectSet> m_widgetUpdateSet;
     RefPtr<Frame> m_frame;
 
+    OwnPtr<RenderObjectSet> m_slowRepaintObjects;
+
     bool m_doFullRepaint;
     
     bool m_canHaveScrollbars;
     bool m_cannotBlitToWindow;
     bool m_isOverlapped;
     bool m_contentIsOpaque;
-    unsigned m_slowRepaintObjectCount;
+
     int m_borderX;
     int m_borderY;
 

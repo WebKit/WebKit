@@ -1973,10 +1973,10 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
 #endif
         if (oldStyleSlowScroll != newStyleSlowScroll) {
             if (oldStyleSlowScroll)
-                frameView->removeSlowRepaintObject();
+                frameView->removeSlowRepaintObject(this);
 
             if (newStyleSlowScroll)
-                frameView->addSlowRepaintObject();
+                frameView->addSlowRepaintObject(this);
         }
     }
 }
@@ -2443,6 +2443,8 @@ void RenderObject::willBeDestroyed()
 
     animation()->cancelAnimations(this);
 
+    ASSERT(documentBeingDestroyed() || !frame()->view()->hasSlowRepaintObject(this));
+
     // For accessibility management, notify the parent of the imminent change to its child set.
     // We do it now, before remove(), while the parent pointer is still available.
     if (AXObjectCache* cache = document()->existingAXObjectCache())
@@ -2523,7 +2525,7 @@ void RenderObject::willBeRemovedFromTree()
         if (FrameView* frameView = view()->frameView()) {
             bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(frameView);
             if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
-                frameView->removeSlowRepaintObject();
+                frameView->removeSlowRepaintObject(this);
         }
     }
 

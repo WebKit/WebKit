@@ -1,3 +1,48 @@
+2013-06-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed backgrounds in composited layers not repainted on scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=117684
+
+        Reviewed by Tim Horton.
+        
+        FrameView is aware that "slow-repaint objects" (i.e. renderers with 
+        background-attachment:fixed) require a slow-scrolling path. However,
+        it was ignorant of the fact that such objects could be painting into
+        compositing layers; it simply dirtied the main tiles, and nothing else.
+        
+        Fix by having FrameView track the slow-repaints objects explicitly, as we
+        do for position:fixed, and repaint each of them on scrolling.
+
+        Test: compositing/repaint/fixed-background-scroll.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView): No need to initialize m_slowRepaintObjectCount,
+        which is now an OwnPtr<RenderObjectSet>.
+        (WebCore::FrameView::useSlowRepaints): Use hasSlowRepaintObjects() now.
+        (WebCore::FrameView::addSlowRepaintObject): Now adds the object to a set,
+        allocating the set if necessary.
+        (WebCore::FrameView::removeSlowRepaintObject): Remove the object from the set,
+        and deallocate the set if empty.
+        (WebCore::FrameView::scrollContentsSlowPath): Call repaintSlowRepaintObjects();
+        this is the change that fixes the bug for always-composited implementations (e.g.
+        tile cache). This is a conservative change; we still invalidate the tile cache
+        as well. This could be optimized later.
+        (WebCore::FrameView::repaintSlowRepaintObjects): Repaint each object in the set.
+        Their appropriate compositing ancestor will be repainted.
+        (WebCore::FrameView::scrollPositionChangedViaPlatformWidget): Call
+        repaintSlowRepaintObjects() so that fixed backgrounds in composited layers are
+        correctly repainted; this fixes the bug for WebKit1.
+        * page/FrameView.h: Replace m_slowRepaintObjectCount with a HashSet of
+        RenderObjects.
+        (WebCore::FrameView::hasSlowRepaintObject): Takes a RenderObject* now.
+        (WebCore::FrameView::hasSlowRepaintObjects): Ditto.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange): Pass the RenderObject.
+        (WebCore::RenderObject::willBeDestroyed): Assert that this RenderObject
+        has been removed from FrameView's set of slow-repaint objects already, if
+        the document is not being destroyed.
+        (WebCore::RenderObject::willBeRemovedFromTree): Pass the RenderObject.
+
 2013-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Painting of fixed background images is wrong in composited layers

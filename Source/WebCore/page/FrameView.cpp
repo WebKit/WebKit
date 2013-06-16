@@ -172,7 +172,6 @@ Pagination::Mode paginationModeForRenderStyle(RenderStyle* style)
 FrameView::FrameView(Frame* frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
-    , m_slowRepaintObjectCount(0)
     , m_layoutTimer(this, &FrameView::layoutTimerFired)
     , m_layoutRoot(0)
     , m_inSynchronousPostLayout(false)
@@ -1482,7 +1481,7 @@ void FrameView::adjustMediaTypeForPrinting(bool printing)
 
 bool FrameView::useSlowRepaints(bool considerOverlap) const
 {
-    bool mustBeSlow = m_slowRepaintObjectCount > 0 || (platformWidget() && hasViewportConstrainedObjects());
+    bool mustBeSlow = hasSlowRepaintObjects() || (platformWidget() && hasViewportConstrainedObjects());
 
     // FIXME: WidgetMac.mm makes the assumption that useSlowRepaints ==
     // m_contentIsOpaque, so don't take the fast path for composited layers
@@ -1534,9 +1533,16 @@ void FrameView::setCannotBlitToWindow()
     updateCanBlitOnScrollRecursively();
 }
 
-void FrameView::addSlowRepaintObject()
+void FrameView::addSlowRepaintObject(RenderObject* o)
 {
-    if (!m_slowRepaintObjectCount++) {
+    bool hadSlowRepaintObjects = hasSlowRepaintObjects();
+
+    if (!m_slowRepaintObjects)
+        m_slowRepaintObjects = adoptPtr(new RenderObjectSet);
+
+    m_slowRepaintObjects->add(o);
+
+    if (!hadSlowRepaintObjects) {
         updateCanBlitOnScrollRecursively();
 
         if (Page* page = m_frame->page()) {
@@ -1546,11 +1552,14 @@ void FrameView::addSlowRepaintObject()
     }
 }
 
-void FrameView::removeSlowRepaintObject()
+void FrameView::removeSlowRepaintObject(RenderObject* o)
 {
-    ASSERT(m_slowRepaintObjectCount > 0);
-    m_slowRepaintObjectCount--;
-    if (!m_slowRepaintObjectCount) {
+    ASSERT(m_slowRepaintObjects);
+    ASSERT(m_slowRepaintObjects->contains(o));
+
+    m_slowRepaintObjects->remove(o);
+    if (m_slowRepaintObjects->isEmpty()) {
+        m_slowRepaintObjects = nullptr;
         updateCanBlitOnScrollRecursively();
 
         if (Page* page = m_frame->page()) {
@@ -1734,6 +1743,9 @@ void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
         ASSERT(renderView());
         renderView()->layer()->setBackingNeedsRepaintInRect(updateRect);
     }
+
+    repaintSlowRepaintObjects();
+
     if (RenderPart* frameRenderer = m_frame->ownerRenderer()) {
         if (isEnclosedInCompositingLayer()) {
             LayoutRect rect(frameRenderer->borderLeft() + frameRenderer->paddingLeft(),
@@ -1746,6 +1758,20 @@ void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
 #endif
 
     ScrollView::scrollContentsSlowPath(updateRect);
+}
+
+void FrameView::repaintSlowRepaintObjects()
+{
+    if (!m_slowRepaintObjects)
+        return;
+
+    // Renderers with fixed backgrounds may be in compositing layers, so we need to explicitly
+    // repaint them after scrolling.
+    RenderObjectSet::const_iterator end = m_slowRepaintObjects->end();
+    for (RenderObjectSet::const_iterator it = m_slowRepaintObjects->begin(); it != end; ++it) {
+        RenderObject* renderer = *it;
+        renderer->repaint();
+    }
 }
 
 // Note that this gets called at painting time.
@@ -1951,11 +1977,11 @@ void FrameView::setViewportConstrainedObjectsNeedLayout()
     }
 }
 
-
 void FrameView::scrollPositionChangedViaPlatformWidget()
 {
     repaintFixedElementsAfterScrolling();
     updateFixedElementsAfterScrolling();
+    repaintSlowRepaintObjects();
     scrollPositionChanged();
 }
 
@@ -1972,6 +1998,7 @@ void FrameView::scrollPositionChanged()
 #endif
 }
 
+// FIXME: this function is misnamed; its primary purpose is to update RenderLayer positions.
 void FrameView::repaintFixedElementsAfterScrolling()
 {
     // For fixed position elements, update widget positions and compositing layers after scrolling,
