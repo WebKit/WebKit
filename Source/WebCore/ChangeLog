@@ -1,5 +1,59 @@
 2013-06-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Painting of fixed background images is wrong in composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=65793
+
+        Reviewed by Sam Weinig.
+        
+        The code that computed background image geometry for background-attachment:fixed
+        images was unaware of compositing, so often painting the image at the wrong location.
+        
+        Fix by having RenderBoxModelObject::calculateBackgroundImageGeometry() do the correct
+        math for fixed backgrounds in composited layer by offsetting the viewport rect by
+        the paint container's absolute position.
+
+        Tests: compositing/backgrounds/fixed-background-on-descendant.html
+               compositing/backgrounds/fixed-backgrounds.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::getBackgroundPaintedExtent): Now returns a bool indicating
+        whether it is returning a reliable extent rect. It can return false in the case where
+        a background is fixed, since computing the correct extent would require finding
+        the appropriate composited ancestor to pass to calculateBackgroundImageGeometry().
+        This is OK since this function is used for "background opaque" optimizations.
+        (WebCore::RenderBox::computeBackgroundIsKnownToBeObscured): If getBackgroundPaintedExtent()
+        returns false, return false.
+        (WebCore::RenderBox::maskClipRect): We removed mask-attachment, so we never need to
+        compute the composited ancestor here and can pass null.
+        (WebCore::RenderBox::repaintLayerRectsForImage): Unwrap a comment.
+        If the changed image is related to a fixed background, geometry.hasNonLocalGeometry()
+        will be true. In that cause, just repaint the entire renderer rather than groveling
+        around for a composited ancestor.
+        * rendering/RenderBox.h: Changed name and signature of backgroundPaintedExtent.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): calculateBackgroundImageGeometry()
+        now needs to know the painting container.
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry): Now takes a painting
+        container, that is required to correctly compute the viewport-relative offset for fixed
+        backgrounds. geometry.setHasNonLocalGeometry() is set for fixed backgrounds to indicate
+        to callers that, if they didn't pass a paint container, the destRect is not accurate.
+        The main bug fix is also here: we move the viewportRect by the absolute location of
+        paint container, which is equivalent to the composited layer offset.
+        (WebCore::RenderBoxModelObject::getGeometryForBackgroundImage): calculateBackgroundImageGeometry()
+        takes a paint container.
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::BackgroundImageGeometry):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setHasNonLocalGeometry):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::hasNonLocalGeometry):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeBackgroundIsKnownToBeObscured): If getBackgroundPaintedExtent()
+        can't cheaply give an accurate answer, return false.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage): Pass the paint container,
+        which is our own renderer.
+
+2013-06-15  Simon Fraser  <simon.fraser@apple.com>
+
         webkit-backface-visibility on a parent element stops background-position from updating
         https://bugs.webkit.org/show_bug.cgi?id=116319
 

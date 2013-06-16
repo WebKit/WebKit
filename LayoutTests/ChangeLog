@@ -1,5 +1,20 @@
 2013-06-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Fixed background images behave strangely with webkit transitions
+        https://bugs.webkit.org/show_bug.cgi?id=65793
+
+        Reviewed by Sam Weinig.
+        
+        Ref tests that compare fixed background rendering after a scroll, with and
+        without compositing, with a couple of layer configurations.
+
+        * compositing/backgrounds/fixed-background-on-descendant-expected.html: Added.
+        * compositing/backgrounds/fixed-background-on-descendant.html: Added.
+        * compositing/backgrounds/fixed-backgrounds-expected.html: Added.
+        * compositing/backgrounds/fixed-backgrounds.html: Added.
+
+2013-06-15  Simon Fraser  <simon.fraser@apple.com>
+
         webkit-backface-visibility on a parent element stops background-position from updating
         https://bugs.webkit.org/show_bug.cgi?id=116319
 

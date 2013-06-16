@@ -510,7 +510,11 @@ bool RenderImage::computeBackgroundIsKnownToBeObscured()
 {
     if (!hasBackground())
         return false;
-    return foregroundIsKnownToBeOpaqueInRect(backgroundPaintedExtent(), 0);
+    
+    LayoutRect paintedExtent;
+    if (!getBackgroundPaintedExtent(paintedExtent))
+        return false;
+    return foregroundIsKnownToBeOpaqueInRect(paintedExtent, 0);
 }
 
 LayoutUnit RenderImage::minimumReplacedHeight() const

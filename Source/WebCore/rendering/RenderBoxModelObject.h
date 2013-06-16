@@ -177,7 +177,7 @@ public:
 
     bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !hasColumns() && !isTableCell() && isBlockFlow(); }
 
-    void getGeometryForBackgroundImage(IntRect& destRect, IntPoint& phase, IntSize& tileSize);
+    void getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, IntRect& destRect, IntPoint& phase, IntSize& tileSize) const;
 #if USE(ACCELERATED_COMPOSITING)
     void contentChanged(ContentChangeType);
     bool hasAcceleratedCompositing() const;
@@ -198,6 +198,9 @@ protected:
 
     class BackgroundImageGeometry {
     public:
+        BackgroundImageGeometry()
+            : m_hasNonLocalGeometry(false)
+        { }
         IntPoint destOrigin() const { return m_destOrigin; }
         void setDestOrigin(const IntPoint& destOrigin)
         {
@@ -234,16 +237,21 @@ protected:
         void useFixedAttachment(const IntPoint& attachmentPoint);
         
         void clip(const IntRect&);
+        
+        void setHasNonLocalGeometry(bool hasNonLocalGeometry = true) { m_hasNonLocalGeometry = hasNonLocalGeometry; }
+        bool hasNonLocalGeometry() const { return m_hasNonLocalGeometry; }
+
     private:
         IntRect m_destRect;
         IntPoint m_destOrigin;
         IntPoint m_phase;
         IntSize m_tileSize;
+        bool m_hasNonLocalGeometry; // Has background-attachment: fixed. Implies that we can't always cheaply compute destRect.
     };
 
     LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
 
-    void calculateBackgroundImageGeometry(const FillLayer*, const LayoutRect& paintRect, BackgroundImageGeometry&, RenderObject* = 0);
+    void calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer*, const LayoutRect& paintRect, BackgroundImageGeometry&, RenderObject* = 0) const;
     void getBorderEdgeInfo(class BorderEdge[], const RenderStyle*, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
     bool borderObscuresBackground() const;

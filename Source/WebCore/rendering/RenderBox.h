@@ -588,7 +588,8 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateFromStyle() OVERRIDE;
 
-    LayoutRect backgroundPaintedExtent() const;
+    // Returns false if it could not cheaply compute the extent (e.g. fixed background), in which case the returned rect may be incorrect.
+    bool getBackgroundPaintedExtent(LayoutRect&) const;
     virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const;
     virtual bool computeBackgroundIsKnownToBeObscured() OVERRIDE;
 

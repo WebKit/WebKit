@@ -1140,19 +1140,26 @@ void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& pa
     paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect, bleedAvoidance);
 }
 
-LayoutRect RenderBox::backgroundPaintedExtent() const
+bool RenderBox::getBackgroundPaintedExtent(LayoutRect& paintedExtent) const
 {
     ASSERT(hasBackground());
     LayoutRect backgroundRect = pixelSnappedIntRect(borderBoxRect());
 
     Color backgroundColor = style()->visitedDependentColor(CSSPropertyBackgroundColor);
-    if (backgroundColor.isValid() && backgroundColor.alpha())
-        return backgroundRect;
-    if (!style()->backgroundLayers()->image() || style()->backgroundLayers()->next())
-        return backgroundRect;
+    if (backgroundColor.isValid() && backgroundColor.alpha()) {
+        paintedExtent = backgroundRect;
+        return true;
+    }
+
+    if (!style()->backgroundLayers()->image() || style()->backgroundLayers()->next()) {
+        paintedExtent =  backgroundRect;
+        return true;
+    }
+
     BackgroundImageGeometry geometry;
-    const_cast<RenderBox*>(this)->calculateBackgroundImageGeometry(style()->backgroundLayers(), backgroundRect, geometry);
-    return geometry.destRect();
+    calculateBackgroundImageGeometry(0, style()->backgroundLayers(), backgroundRect, geometry);
+    paintedExtent = geometry.destRect();
+    return !geometry.hasNonLocalGeometry();
 }
 
 bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const
@@ -1259,7 +1266,9 @@ bool RenderBox::computeBackgroundIsKnownToBeObscured()
     if (isTable() || isRoot())
         return false;
 
-    LayoutRect backgroundRect = backgroundPaintedExtent();
+    LayoutRect backgroundRect;
+    if (!getBackgroundPaintedExtent(backgroundRect))
+        return false;
     return foregroundIsKnownToBeOpaqueInRect(backgroundRect, backgroundObscurationTestMaxDepth);
 }
 
@@ -1347,7 +1356,8 @@ LayoutRect RenderBox::maskClipRect()
     for (const FillLayer* maskLayer = style()->maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
         if (maskLayer->image()) {
             BackgroundImageGeometry geometry;
-            calculateBackgroundImageGeometry(maskLayer, borderBox, geometry);
+            // Masks should never have fixed attachment, so it's OK for paintContainer to be null.
+            calculateBackgroundImageGeometry(0, maskLayer, borderBox, geometry);
             result.unite(geometry.destRect());
         }
     }
@@ -1445,8 +1455,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
 
     for (const FillLayer* curLayer = layers; curLayer; curLayer = curLayer->next()) {
         if (curLayer->image() && image == curLayer->image()->data() && curLayer->image()->canRender(this, style()->effectiveZoom())) {
-            // Now that we know this image is being used, compute the renderer and the rect
-            // if we haven't already
+            // Now that we know this image is being used, compute the renderer and the rect if we haven't already.
             if (!layerRenderer) {
                 bool drawingRootBackground = drawingBackground && (isRoot() || (isBody() && !document()->documentElement()->renderer()->hasBackground()));
                 if (drawingRootBackground) {
@@ -1473,7 +1482,14 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
             }
 
             BackgroundImageGeometry geometry;
-            layerRenderer->calculateBackgroundImageGeometry(curLayer, rendererRect, geometry);
+            layerRenderer->calculateBackgroundImageGeometry(0, curLayer, rendererRect, geometry);
+            if (geometry.hasNonLocalGeometry()) {
+                // Rather than incur the costs of computing the paintContainer for renderers with fixed backgrounds
+                // in order to get the right destRect, just repaint the entire renderer.
+                layerRenderer->repaint();
+                return true;
+            }
+            
             layerRenderer->repaintRectangle(geometry.destRect());
             if (geometry.destRect() == rendererRect)
                 return true;

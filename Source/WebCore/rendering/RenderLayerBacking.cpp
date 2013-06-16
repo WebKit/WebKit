@@ -1464,7 +1464,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     IntSize tileSize;
 
     RefPtr<Image> image = style->backgroundLayers()->image()->cachedImage()->image();
-    toRenderBox(renderer())->getGeometryForBackgroundImage(destRect, phase, tileSize);
+    toRenderBox(renderer())->getGeometryForBackgroundImage(m_owningLayer->renderer(), destRect, phase, tileSize);
     m_graphicsLayer->setContentsTileSize(tileSize);
     m_graphicsLayer->setContentsTilePhase(phase);
     m_graphicsLayer->setContentsRect(destRect);
