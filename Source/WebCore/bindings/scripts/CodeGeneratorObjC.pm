@@ -220,6 +220,8 @@ sub ReadPublicInterfaces
         $gccLocation = $ENV{CC};
     } elsif (($Config::Config{'osname'}) =~ /solaris/i) {
         $gccLocation = "/usr/sfw/bin/gcc";
+    } elsif (-x "/usr/bin/clang") {
+        $gccLocation = "/usr/bin/clang";
     } else {
         $gccLocation = "/usr/bin/gcc";
     }
