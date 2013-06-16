@@ -1,5 +1,29 @@
 2013-06-15  Darin Adler  <darin@apple.com>
 
+        Move Pasteboard::getStringSelection to Editor, fixing a layering violation
+        https://bugs.webkit.org/show_bug.cgi?id=117673
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/Editor.h: Added stringSelectionForPasteboardWithImageAltText.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::stringSelectionForPasteboard): Moved code here from the Pasteboard
+        class, since all the Pasteboard class did really was turn around and call back here.
+        (WebCore::Editor::stringSelectionForPasteboardWithImageAltText): Added. Variant of
+        the function above that includes image alt text. Separate named functions are often
+        the best pattern for something like this unless there are many different combinations.
+
+        * platform/Pasteboard.h: Remove the Mac-only Pasteboard::getStringSelectioon.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::writeSelection):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelectionForTypes):
+        Call the two new functions instead of the old Pasteboard::getStringSelection.
+
+2013-06-15  Darin Adler  <darin@apple.com>
+
         Support using clang instead of gcc for bindings preprocessing
         https://bugs.webkit.org/show_bug.cgi?id=117674
 

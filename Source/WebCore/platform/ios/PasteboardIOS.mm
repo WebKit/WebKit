@@ -114,13 +114,6 @@ void Pasteboard::clear()
 {
 }
 
-String Pasteboard::getStringSelection(Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
-{
-    String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor().selectedTextForClipboard() : frame->editor().selectedText();
-    text.replace(noBreakSpace, ' ');
-    return text;
-}
-
 void Pasteboard::writeSelection(Range* selectedRange, bool /*canSmartCopyOrDelete*/, Frame *frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
     ASSERT(selectedRange);
@@ -159,7 +152,10 @@ void Pasteboard::writeSelection(Range* selectedRange, bool /*canSmartCopyOrDelet
     }
 
     // Put plain string on the pasteboard.
-    [representations.get() setValue:getStringSelection(frame, shouldSerializeSelectedTextForClipboard) forKey:(NSString *)kUTTypeText];
+    String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard
+        ? frame->editor().stringSelectionForPasteboardWithImageAltText()
+        : frame->editor().stringSelectionForPasteboard();
+    [representations.get() setValue:text forKey:(NSString *)kUTTypeText];
 
     frame->editor().client()->writeDataToPasteboard(representations.get());
 }

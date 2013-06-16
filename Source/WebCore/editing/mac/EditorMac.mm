@@ -274,9 +274,20 @@ void Editor::readSelectionFromPasteboard(const String& pasteboardName)
         pasteAsPlainTextWithPasteboard(&pasteboard);   
 }
 
+// FIXME: Makes no sense that selectedTextForClipboard always includes alt text, but stringSelectionForPasteboard does not.
+// This was left in a bad state when selectedTextForClipboard was added. Need to look over clients and fix this.
 String Editor::stringSelectionForPasteboard()
 {
-    return Pasteboard::getStringSelection(m_frame, DefaultSelectedTextType);
+    String text = selectedText();
+    text.replace(noBreakSpace, ' ');
+    return text;
+}
+
+String Editor::stringSelectionForPasteboardWithImageAltText()
+{
+    String text = selectedTextForClipboard();
+    text.replace(noBreakSpace, ' ');
+    return text;
 }
 
 PassRefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboardType)

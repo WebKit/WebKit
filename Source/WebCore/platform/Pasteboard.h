@@ -98,10 +98,6 @@ public:
     static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType);
 #endif
 
-#if PLATFORM(MAC)
-    static String getStringSelection(Frame*, ShouldSerializeSelectedTextForClipboard);
-#endif
-
 #if PLATFORM(GTK)
     static PassOwnPtr<Pasteboard> create(PassRefPtr<DataObjectGtk>);
     static PassOwnPtr<Pasteboard> create(GtkClipboard*);
