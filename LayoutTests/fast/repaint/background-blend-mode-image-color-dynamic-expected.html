@@ -7,10 +7,15 @@
         width: 130px;
         height: 130px;
         background: url('resources/ducky.png') no-repeat 0 0 /100% 100%, green;
-        float: left;
     }
 </style>
 <!-- This file should contain a duck with multiply blending. -->
-<body>
-    <div style="-webkit-background-blend-mode: multiply, normal"></div>
+<script src="resources/repaint.js" type="text/javascript"></script>
+<script>
+    function repaintTest() {
+        document.getElementById('blender').style.webkitBackgroundBlendMode = 'multiply, normal';
+    }
+</script>
+<body onload="runRepaintTest()">
+    <div id="blender"></div>
 </body>
