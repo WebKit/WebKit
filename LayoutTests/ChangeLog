@@ -1,3 +1,24 @@
+2013-06-17  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Consider bottom borders when calculating the position of the overflow
+        https://bugs.webkit.org/show_bug.cgi?id=117663
+
+        Reviewed by Alexandru Chiculita.
+
+        When you have a shape and the content overflows from the shape we need to push the overflow below the content box,
+        not below the border box. We didn't consider the bottom borders of the content box, now I fixed it too and the overflow
+        just starts after the content box. I added a new helper function called pushShapeContentOverflowBelowTheContentBox. Now
+        both the shape in flow thread and the shape overflow use the same function. I added a new test and modified the existing
+        tests to cover all the affected cases.
+
+        * fast/exclusions/shape-inside/shape-inside-empty-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions-block-content-expected.html: Copied from LayoutTests/fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions-expected.html.
+        * fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions-block-content.html: Copied from LayoutTests/fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions.html.
+        * fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-overflow-fixed-dimensions.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-multiple-shapes-expected.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-multiple-shapes.html:
+
 2013-06-17  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Implement text alignment for shape-inside

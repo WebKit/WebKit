@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-    if (window.internals)
-        window.internals.settings.setCSSShapesEnabled(true);
-</script>
 <style>
 #container {
     font: 20px Ahem, sans-serif;
@@ -16,30 +12,32 @@
     height: 200px;
     margin-bottom: 60px;
 }
-#shape-inside {
-    width: 200px;
-    height: 200px;
-    border-bottom: 30px solid yellow;
-    -webkit-shape-inside: rectangle(50px, 0px, 100px, 50px);
-}
 #border {
     position: absolute;
     margin-top: -2px;
     left: 48px;
     width: 100px;
-    height: 40px;
+    height: 60px;
     border: 2px solid green;
+}
+.spacer {
+    width: 50px;
+    height: 40px;
 }
 </style>
 </head>
 <body>
     <div id="container">
-        <div id="border"></div>
-        <div id="shape-inside">
-            X X X X X X X X X X X X X X X X
+        <div id="border">
+            X X <p>X X X</p>
+            <div class="spacer" style="float:left"></div>
+            <div class="spacer" style="float:right"></div>
+        </div>
+        <div style="padding-top: 200px;">
+            X X X X X X X X X X
         </div>
     </div>
-    <p>Requires Ahem font. The inline content should start inside the green rectangle (shape-inside) and the overflow should be pushed below the content box. The overflow should start where the yellow bottom border starts. <br/>
+    <p>Requires Ahem font. The block content should start inside the green rectangle (shape-inside) and the overflow should be pushed below the content box. The overflow should start where the yellow bottom border starts. <br/>
     <p>Bug <a href="http://webkit.org/b/114526">114526</a>: [CSS Exclusions] shape-inside overflow should be pushed to the outside of the content box</p>
 </body>
 </html>
