@@ -1,3 +1,10 @@
+2013-06-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk-wk1/TestExpectations: Add a crashing expectation for a test that most likely regressed with r151021.
+        * platform/gtk/TestExpectations: Add failure expectations for a couple of tests failing due to stack size misbehavior.
+
 2013-06-16  Mihai Tica  <mitica@adobe.com>
 
         [CSS Blending] Update the background-blend-mode-image-color-dynamic test to use the repaint test logic

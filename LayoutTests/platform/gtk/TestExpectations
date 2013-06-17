@@ -1405,6 +1405,10 @@ webkit.org/b/117581 accessibility/text-role-with-aria-hidden-inside.html [ Failu
 
 webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 
+webkit.org/b/113168 fast/dom/Window/window-postmessage-clone-deep-array.html [ Failure ]
+webkit.org/b/113168 fast/js/large-expressions.html [ Failure ]
+webkit.org/b/113168 fast/js/toString-stack-overflow.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

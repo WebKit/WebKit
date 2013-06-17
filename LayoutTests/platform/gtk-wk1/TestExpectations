@@ -116,6 +116,8 @@ webkit.org/b/67187 inspector-protocol/nmi-webaudio-leak-test.html [ Skip ]
 
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-getProperty.html [ Crash ]
 
+webkit.org/b/117688 http/tests/security/video-poster-cross-origin-crash.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
