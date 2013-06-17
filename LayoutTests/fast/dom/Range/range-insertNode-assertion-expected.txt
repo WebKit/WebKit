@@ -1,0 +1,10 @@
+No assertion failures even if a DOM mutation event handler updates nodes in a Range during Range::insertNode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS if this did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

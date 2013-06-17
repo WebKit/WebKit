@@ -1,3 +1,34 @@
+2013-06-16  Kent Tamura  <tkent@chromium.org>
+
+        Fix two assertion failures in Range::insertNode
+        https://bugs.webkit.org/show_bug.cgi?id=116511
+
+        Reviewed by Ryosuke Niwa.
+
+        > ASSERTION FAILED: childBefore == (offset ? container->childNode(offset - 1) : 0)
+        > third_party/WebKit/Source/WebCore/dom/RangeBoundaryPoint.h(115) : void WebCore::RangeBoundaryPoint::set(PassRefPtr<WebCore::Node>, int, WebCore::Node *)
+
+        > ASSERTION FAILED: child->parentNode()
+        > ../../third_party/WebKit/Source/core/dom/RangeBoundaryPoint.h(133) : void WebCore::RangeBoundaryPoint::setToBeforeChild(WebCore::Node *)
+        >  1   0x87594b2 WebCore::RangeBoundaryPoint::setToBeforeChild(WebCore::Node*)
+        >  2   0x87534a9 WebCore::Range::insertNode(WTF::PassRefPtr<WebCore::Node>, int&)
+
+        Range::insertNode calls Node::insertBefore, in which an event handler
+        can update the DOM structure so that RangeBoundaryPoint don't like. We
+        postpone event dispatching by EventQueueScope.
+
+        Also, remove old comments about Acid3. The behavior is standardized.
+        (Step 9 of http://dom.spec.whatwg.org/#dom-range-insertnode)
+
+        This patch imports http://src.chromium.org/viewvc/blink?view=revision&revision=150470 .
+
+        Test: fast/dom/Range/range-insertNode-assertion.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode):
+         - Add EventQueueScope
+         - Remove obsolete comments
+
 2013-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fixed backgrounds in composited layers not repainted on scrolling

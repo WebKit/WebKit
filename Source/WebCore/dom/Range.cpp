@@ -42,6 +42,7 @@
 #include "RangeException.h"
 #include "RenderBoxModelObject.h"
 #include "RenderText.h"
+#include "ScopedEventQueue.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
@@ -1021,6 +1022,7 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
         break;
     }
 
+    EventQueueScope scope;
     bool collapsed = m_start == m_end;
     RefPtr<Node> container;
     if (startIsText) {
@@ -1034,8 +1036,6 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
         if (ec)
             return;
 
-        // This special case doesn't seem to match the DOM specification, but it's currently required
-        // to pass Acid3. We might later decide to remove this.
         if (collapsed)
             m_end.setToBeforeChild(newText.get());
     } else {
@@ -1049,8 +1049,6 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
         if (ec)
             return;
 
-        // This special case doesn't seem to match the DOM specification, but it's currently required
-        // to pass Acid3. We might later decide to remove this.
         if (collapsed && numNewChildren)
             m_end.set(m_start.container(), startOffset + numNewChildren, lastChild.get());
     }

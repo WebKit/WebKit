@@ -1,3 +1,25 @@
+2013-06-16  Kent Tamura  <tkent@chromium.org>
+
+        Fix two assertion failures in Range::insertNode
+        https://bugs.webkit.org/show_bug.cgi?id=116511
+
+        Reviewed by Ryosuke Niwa.
+
+        We need to update fast/dom/insertBefore-refChild-crash.html because the
+        test caused recursive calls to the event handler. container.innerHTML=''
+        did nothing before this CL. Now container has the newChild because
+        DOMNodeRemoved event dispatching is delayed until Range::insertNode
+        completion.
+
+        We need to update fast/text/split-text-crash.xhtml so that it doesn't
+        stop when the event handler is called twice. I'm not sure why the test
+        worked before this CL.
+
+        * fast/dom/Range/range-insertNode-assertion-expected.txt: Added.
+        * fast/dom/Range/range-insertNode-assertion.html: Added.
+        * fast/dom/insertBefore-refChild-crash.html:
+        * fast/text/split-text-crash.xhtml:
+
 2013-06-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Added new baselines for some of editing/style tests, which works on EFL port.

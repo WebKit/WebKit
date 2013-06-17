@@ -8,10 +8,12 @@ if (window.testRunner)
 
 var container = document.getElementById('container');
 var newChild = document.getElementById('newChild');
-newChild.addEventListener('DOMNodeRemoved', function() {
+function handleNodeRemoved() {
+    newChild.removeEventListener('DOMNodeRemoved', handleNodeRemoved);
     container.innerHTML = '';
     gc();
-}, false);
+}
+newChild.addEventListener('DOMNodeRemoved', handleNodeRemoved, false);
 var range = document.createRange();
 range.selectNodeContents(container);
 range.insertNode(newChild);

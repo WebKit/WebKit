@@ -12,7 +12,8 @@ function crash() {
     var range = document.createRange();
     range.setStart(textNode, 0);
     document.addEventListener("DOMNodeInserted", function () {
-        document.body.removeChild(textNode);
+        if (textNode)
+            document.body.removeChild(textNode);
         textNode = null;
 
         if (window.testRunner) {
