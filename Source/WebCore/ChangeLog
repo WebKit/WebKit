@@ -1,3 +1,10 @@
+2013-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Remove non existent files from compilation
+        and add a missing header file.
+
 2013-06-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Context menu grammar checking items are available when GRAMMAR_CHECKING macro is off
