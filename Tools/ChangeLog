@@ -1,3 +1,10 @@
+2013-06-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Skip three WebKit2APITests suites that are currently timing out.
+
 2013-06-15  Bruno de Oliveira Abinader  <brunoabinader@gmail.com>
 
         Unreviewed. Reorder my email addresses.
