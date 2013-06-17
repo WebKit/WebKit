@@ -1,3 +1,13 @@
+2013-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Rename gobject_introspection_required variable.
+
+        As gobject_introspection_required_version for consistency with all
+        other required_version variables.
+
+        * Source/autotools/FindDependencies.m4:
+        * Source/autotools/Versions.m4:
+
 2013-06-14  Patrick Gansterer  <paroga@webkit.org>
 
         Introduce USE(WINGDI) for the Windows port

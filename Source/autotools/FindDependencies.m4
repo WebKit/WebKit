@@ -346,7 +346,7 @@ GIRDIR=
 GIRTYPELIBDIR=
 
 if test "$enable_introspection" = "yes"; then
-    PKG_CHECK_MODULES([INTROSPECTION],[gobject-introspection-1.0 >= gobject_introspection_required])
+    PKG_CHECK_MODULES([INTROSPECTION],[gobject-introspection-1.0 >= gobject_introspection_required_version])
 
     G_IR_SCANNER="$($PKG_CONFIG --variable=g_ir_scanner gobject-introspection-1.0)"
     G_IR_COMPILER="$($PKG_CONFIG --variable=g_ir_compiler gobject-introspection-1.0)"
