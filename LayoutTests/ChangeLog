@@ -1,5 +1,12 @@
 2013-06-17  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
+        [Qt] Unreviewed gardening. Correcting rebaselining after r151634.
+
+        * platform/qt-5.0-wk2/compositing/repaint/fixed-background-scroll-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/fast/repaint/fixed-background-scroll-expected.txt.
+        * platform/qt-5.0-wk2/compositing/repaint/positioned-movement-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/fast/repaint/positioned-movement-expected.txt.
+
+2013-06-17  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
         [Qt] Unreviewed gardening. Rebaselining repaint tests, see bug 115372.
 
         * platform/qt-5.0-wk2/fast/repaint/change-overflow-and-display-of-relative-expected.txt: Rebaselining after r151549.
