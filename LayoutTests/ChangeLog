@@ -1,3 +1,11 @@
+2013-06-17  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaselining repaint tests, see bug 115372.
+
+        * platform/qt-5.0-wk2/fast/repaint/change-overflow-and-display-of-relative-expected.txt: Rebaselining after r151549.
+        * platform/qt-5.0-wk2/fast/repaint/fixed-background-scroll-expected.txt: Rebaselining after r151624.
+        * platform/qt-5.0-wk2/fast/repaint/positioned-movement-expected.txt: Rebaselining after r151622.
+
 2013-06-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
