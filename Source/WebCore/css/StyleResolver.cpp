@@ -3622,7 +3622,9 @@ PassRefPtr<CustomFilterProgram> StyleResolver::lookupCustomFilterProgram(WebKitC
 
 void StyleResolver::loadPendingShaders()
 {
-    if (!m_state.style()->hasFilter() || !m_state.hasPendingShaders())
+    // FIXME: We shouldn't have to check that style is non-null. This is a speculative fix for:
+    // https://bugs.webkit.org/show_bug.cgi?id=117665
+    if (!m_state.hasPendingShaders() || !m_state.style() || !m_state.style()->hasFilter())
         return;
 
     CachedResourceLoader* cachedResourceLoader = m_state.document()->cachedResourceLoader();

@@ -1,3 +1,20 @@
+2013-06-17  Max Vujovic  <mvujovic@adobe.com>
+
+        Crash in loadPendingShaders
+        https://bugs.webkit.org/show_bug.cgi?id=117665
+
+        Reviewed by Dean Jackson.
+
+        Speculative fix because the crash reports do not contain a test case.
+
+        Rearrange the conditions to check m_state.hasPendingShaders() first. Additionally, check if
+        m_state.style() is non-null.
+
+        No new tests. We don't know how to reproduce this crash yet.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingShaders):
+
 2013-06-17  Ruth Fong  <ruth_fong@apple.com>
 
         REGRESSION: Important controls are missing from <video> element UI, when compared to QuickTime
