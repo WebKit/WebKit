@@ -1767,8 +1767,11 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         }
     }
     
+#if !USE(GRAMMAR_CHECKING)
+    ASSERT(badGrammarPhrase.isEmpty());
+    UNUSED_PARAM(grammarPhraseOffset);
+#else
     if (!badGrammarPhrase.isEmpty()) {
-        ASSERT(WTF_USE_GRAMMAR_CHECKING);
         // We found bad grammar. Since we only searched for bad grammar up to the first misspelled word, the bad grammar
         // takes precedence and we ignore any potential misspelled word. Select the grammar detail, update the spelling
         // panel, and store a marker so we draw the green squiggle later.
@@ -1783,7 +1786,9 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         
         client()->updateSpellingUIWithGrammarString(badGrammarPhrase, grammarDetail);
         frame()->document()->markers()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, grammarDetail.userDescription);
-    } else if (!misspelledWord.isEmpty()) {
+    } else
+#endif
+    if (!misspelledWord.isEmpty()) {
         // We found a misspelling, but not any earlier bad grammar. Select the misspelling, update the spelling panel, and store
         // a marker so we draw the red squiggle later.
         
@@ -2064,9 +2069,12 @@ void Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, boo
     if (checkSpelling)
         checker.markAllMisspellings(firstMisspellingRange);
     else {
-        ASSERT(WTF_USE_GRAMMAR_CHECKING);
+#if USE(GRAMMAR_CHECKING)
         if (isGrammarCheckingEnabled())
             checker.markAllBadGrammar();
+#else
+        ASSERT_NOT_REACHED();
+#endif
     }    
 }
 
@@ -2092,9 +2100,12 @@ void Editor::markMisspellings(const VisibleSelection& selection, RefPtr<Range>& 
     
 void Editor::markBadGrammar(const VisibleSelection& selection)
 {
-    ASSERT(WTF_USE_GRAMMAR_CHECKING);
+#if USE(GRAMMAR_CHECKING)
     RefPtr<Range> firstMisspellingRange;
     markMisspellingsOrBadGrammar(selection, false, firstMisspellingRange);
+#else
+    ASSERT_NOT_REACHED();
+#endif
 }
 
 void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textCheckingOptions, Range* spellingRange, Range* grammarRange)

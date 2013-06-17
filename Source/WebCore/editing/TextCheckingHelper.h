@@ -85,12 +85,13 @@ public:
 
     String findFirstMisspelling(int& firstMisspellingOffset, bool markAll, RefPtr<Range>& firstMisspellingRange);
     String findFirstMisspellingOrBadGrammar(bool checkGrammar, bool& outIsSpelling, int& outFirstFoundOffset, GrammarDetail& outGrammarDetail);
+    void markAllMisspellings(RefPtr<Range>& firstMisspellingRange);
+#if USE(GRAMMAR_CHECKING)
     String findFirstBadGrammar(GrammarDetail& outGrammarDetail, int& outGrammarPhraseOffset, bool markAll);
     int findFirstGrammarDetail(const Vector<GrammarDetail>& grammarDetails, int badGrammarPhraseLocation, int badGrammarPhraseLength, int startOffset, int endOffset, bool markAll);
-    void markAllMisspellings(RefPtr<Range>& firstMisspellingRange);
     void markAllBadGrammar();
-
     bool isUngrammatical(Vector<String>& guessesVector) const;
+#endif
     Vector<String> guessesForMisspelledOrUngrammaticalRange(bool checkGrammar, bool& misspelled, bool& ungrammatical) const;
 private:
     EditorClient* m_client;

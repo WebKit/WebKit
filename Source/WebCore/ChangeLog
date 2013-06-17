@@ -1,3 +1,25 @@
+2013-06-17  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        REGRESSSION(r151632) : Build error on ASSERT(WTF_USE_GRAMMAR_CHECKING)
+        https://bugs.webkit.org/show_bug.cgi?id=117692
+
+        Reviewed by Jocelyn Turcotte.
+
+        Ifdef the feature-depending code and fix the assertions to check runtime conditions.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::markMisspellingsOrBadGrammar):
+        (WebCore::Editor::markBadGrammar):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::findBadGrammars):
+        (WebCore::TextCheckingHelper::findFirstGrammarDetail):
+        (WebCore::TextCheckingHelper::findFirstBadGrammar):
+        (WebCore::TextCheckingHelper::isUngrammatical):
+        (WebCore::TextCheckingHelper::markAllBadGrammar):
+        (WebCore::checkTextOfParagraph):
+        * editing/TextCheckingHelper.h:
+
 2013-06-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Unreviewed, rolling out r151632.
