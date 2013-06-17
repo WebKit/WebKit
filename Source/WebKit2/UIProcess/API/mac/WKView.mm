@@ -2117,7 +2117,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (!_data->_windowOcclusionDetectionEnabled)
         return;
 
-    [self _setIsWindowOccluded:[self.window occlusionState] != NSWindowOcclusionStateVisible];
+    [self _setIsWindowOccluded:([self.window occlusionState] & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible];
 }
 #endif
 
@@ -3415,7 +3415,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         // When enabling window occlusion detection, update the view's current occluded state
         // immediately, as the notification only fires when it changes.
         if (self.window)
-            [self _setIsWindowOccluded:[self.window occlusionState] != NSWindowOcclusionStateVisible];
+            [self _setIsWindowOccluded:([self.window occlusionState] & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible];
     } else {
         // When disabling window occlusion detection, force the view to think it is not occluded,
         // as it may already be occluded at the time of calling.
