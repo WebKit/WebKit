@@ -133,6 +133,16 @@ String contextMenuItemTagOpenAudioInNewWindow()
     return QCoreApplication::translate("QWebPage", "Open Audio", "Open Audio in New Window");
 }
 
+String contextMenuItemTagDownloadVideoToDisk()
+{
+    return QCoreApplication::translate("QWebPage", "Download Video", "Download Video context menu item");
+}
+
+String contextMenuItemTagDownloadAudioToDisk()
+{
+    return QCoreApplication::translate("QWebPage", "Download Audio", "Download Audio context menu item");
+}
+
 String contextMenuItemTagCopyVideoLinkToClipboard()
 {
     return QCoreApplication::translate("QWebPage", "Copy Video", "Copy Video Link Location");

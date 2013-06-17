@@ -153,6 +153,7 @@ namespace WebCore {
         ContextMenuItemTagChangeBack,
 #endif
         ContextMenuItemTagOpenMediaInNewWindow,
+        ContextMenuItemTagDownloadMediaToDisk,
         ContextMenuItemTagCopyMediaLinkToClipboard,
         ContextMenuItemTagToggleMediaControls,
         ContextMenuItemTagToggleMediaLoop,

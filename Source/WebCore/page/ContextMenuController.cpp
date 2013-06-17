@@ -228,7 +228,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         openNewWindow(m_hitTestResult.absoluteLinkURL(), frame);
         break;
     case ContextMenuItemTagDownloadLinkToDisk:
-        // FIXME: Some day we should be able to do this from within WebCore.
+        // FIXME: Some day we should be able to do this from within WebCore. (Bug 117709)
         m_client->downloadURL(m_hitTestResult.absoluteLinkURL());
         break;
     case ContextMenuItemTagCopyLinkToClipboard:
@@ -238,7 +238,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         openNewWindow(m_hitTestResult.absoluteImageURL(), frame);
         break;
     case ContextMenuItemTagDownloadImageToDisk:
-        // FIXME: Some day we should be able to do this from within WebCore.
+        // FIXME: Some day we should be able to do this from within WebCore. (Bug 117709)
         m_client->downloadURL(m_hitTestResult.absoluteImageURL());
         break;
     case ContextMenuItemTagCopyImageToClipboard:
@@ -253,6 +253,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 #endif
     case ContextMenuItemTagOpenMediaInNewWindow:
         openNewWindow(m_hitTestResult.absoluteMediaURL(), frame);
+        break;
+    case ContextMenuItemTagDownloadMediaToDisk:
+        // FIXME: Some day we should be able to do this from within WebCore. (Bug 117709)
+        m_client->downloadURL(m_hitTestResult.absoluteMediaURL());
         break;
     case ContextMenuItemTagCopyMediaLinkToClipboard:
         frame->editor().copyURL(m_hitTestResult.absoluteMediaURL(), m_hitTestResult.textContent());
@@ -761,8 +765,8 @@ void ContextMenuController::populate()
         contextMenuItemTagCopyImageUrlToClipboard());
 #endif
     ContextMenuItem OpenMediaInNewWindowItem(ActionType, ContextMenuItemTagOpenMediaInNewWindow, String());
-    ContextMenuItem CopyMediaLinkItem(ActionType, ContextMenuItemTagCopyMediaLinkToClipboard, 
-        String());
+    ContextMenuItem DownloadMediaItem(ActionType, ContextMenuItemTagDownloadMediaToDisk, String());
+    ContextMenuItem CopyMediaLinkItem(ActionType, ContextMenuItemTagCopyMediaLinkToClipboard, String());
     ContextMenuItem MediaPlayPause(ActionType, ContextMenuItemTagMediaPlayPause, 
         contextMenuItemTagMediaPlay());
     ContextMenuItem MediaMute(ActionType, ContextMenuItemTagMediaMute, 
@@ -864,6 +868,8 @@ void ContextMenuController::populate()
             appendItem(*separatorItem(), m_contextMenu.get());
             appendItem(CopyMediaLinkItem, m_contextMenu.get());
             appendItem(OpenMediaInNewWindowItem, m_contextMenu.get());
+            if (loader->client()->canHandleRequest(ResourceRequest(mediaURL)))
+                appendItem(DownloadMediaItem, m_contextMenu.get());
         }
 
         if (imageURL.isEmpty() && linkURL.isEmpty() && mediaURL.isEmpty()) {
@@ -1343,6 +1349,12 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
                 item.setTitle(contextMenuItemTagOpenVideoInNewWindow());
             else
                 item.setTitle(contextMenuItemTagOpenAudioInNewWindow());
+            break;
+        case ContextMenuItemTagDownloadMediaToDisk:
+            if (m_hitTestResult.mediaIsVideo())
+                item.setTitle(contextMenuItemTagDownloadVideoToDisk());
+            else
+                item.setTitle(contextMenuItemTagDownloadAudioToDisk());
             break;
         case ContextMenuItemTagCopyMediaLinkToClipboard:
             if (m_hitTestResult.mediaIsVideo())

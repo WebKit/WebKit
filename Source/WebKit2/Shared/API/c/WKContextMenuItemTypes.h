@@ -107,6 +107,7 @@ enum {
     kWKContextMenuItemTagCapitalize,
     kWKContextMenuItemTagChangeBack,
     kWKContextMenuItemTagOpenMediaInNewWindow,
+    kWKContextMenuItemTagDownloadMediaToDisk,
     kWKContextMenuItemTagCopyMediaLinkToClipboard,
     kWKContextMenuItemTagToggleMediaControls,
     kWKContextMenuItemTagToggleMediaLoop,

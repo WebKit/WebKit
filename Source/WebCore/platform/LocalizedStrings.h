@@ -132,6 +132,8 @@ namespace WebCore {
 #endif
     String contextMenuItemTagOpenVideoInNewWindow();
     String contextMenuItemTagOpenAudioInNewWindow();
+    String contextMenuItemTagDownloadVideoToDisk();
+    String contextMenuItemTagDownloadAudioToDisk();
     String contextMenuItemTagCopyVideoLinkToClipboard();
     String contextMenuItemTagCopyAudioLinkToClipboard();
     String contextMenuItemTagToggleMediaControls();

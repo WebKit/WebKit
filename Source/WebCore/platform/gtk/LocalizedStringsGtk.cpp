@@ -141,6 +141,16 @@ String contextMenuItemTagOpenAudioInNewWindow()
     return String::fromUTF8(_("Open _Audio in New Window"));
 }
 
+String contextMenuItemTagDownloadVideoToDisk()
+{
+    return String::fromUTF8(_("Download _Video"));
+}
+
+String contextMenuItemTagDownloadAudioToDisk()
+{
+    return String::fromUTF8(_("Download _Audio"));
+}
+
 String contextMenuItemTagCopyVideoLinkToClipboard()
 {
     return String::fromUTF8(_("Cop_y Video Link Location"));

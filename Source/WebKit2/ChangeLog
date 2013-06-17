@@ -1,3 +1,29 @@
+2013-06-17  Ruth Fong  <ruth_fong@apple.com>
+
+        REGRESSION: Important controls are missing from <video> element UI, when compared to QuickTime
+        https://bugs.webkit.org/show_bug.cgi?id=20599
+
+        Add a "Download Video"/"Download Audio" context menu item to download media
+        elements.
+
+        Reviewed by Beth Dakin.
+
+        * Shared/API/c/WKContextMenuItemTypes.h: Updated to include
+        an enum type for the "Download Video/Audio" context menu item.
+
+        * Shared/API/c/WKSharedAPICast.h: Updated to associate
+        the enums in WebKit and WebCore that handle the "Download Video/Audio"
+        context menu item.
+
+        * UIProcess/API/efl/ewk_context_menu.cpp:
+        * UIProcess/API/efl/ewk_context_menu_item.cpp:
+        * UIProcess/API/efl/ewk_context_menu_item.h:
+        Updated to include new EWK enum type for "Download Video/Audio" context menu item.
+
+        * UIProcess/WebPageProxy.cpp: Updated to 
+        handle the "Download Video/Audio" context menu item mouse click
+        and download the media item in the UI process.
+
 2013-06-17  Ralph Thomas  <ralpht@gmail.com>
 
         [CoordinatedGraphics][CSS Shaders] Use forwarding header for TextureMapperPlatformCompiledProgram.h

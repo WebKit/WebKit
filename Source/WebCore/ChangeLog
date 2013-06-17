@@ -1,3 +1,31 @@
+2013-06-17  Ruth Fong  <ruth_fong@apple.com>
+
+        REGRESSION: Important controls are missing from <video> element UI, when compared to QuickTime
+        https://bugs.webkit.org/show_bug.cgi?id=20599
+
+        Add a "Download Video"/"Download Audio" context menu item to download media
+        elements.
+
+        Reviewed by Beth Dakin.
+
+        No new tests. media/context-menu-action.html,
+        which has been disabled by bug 116651, is used to test context menus.
+
+        * English.lproj/Localizable.strings: Updated to
+        include localizable strings for "Download Video" and "Download Audio".
+
+        * page/ContextMenuController.cpp: Updated to 
+        include and handle a "Download Video/Audio" context menu item.
+
+        * platform/ContextMenuItem.h:
+
+        * platform/LocalizedStrings.cpp: 
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        * platform/qt/LocalizedStringsQt.cpp: 
+        Updated to include localizable strings for "Download Video" and "Download Audio".
+
 2013-06-17  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Consider bottom borders when calculating the position of the overflow

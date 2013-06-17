@@ -307,6 +307,8 @@ static WKContextMenuItemTag getWKTagFromEwkAction(Ewk_Context_Menu_Item_Action a
         return kWKContextMenuItemTagTextDirectionRightToLeft;
     case EWK_CONTEXT_MENU_ITEM_OPEN_MEDIA_IN_NEW_WINDOW:
         return kWKContextMenuItemTagOpenMediaInNewWindow;
+    case EWK_CONTEXT_MENU_ITEM_TAG_DOWNLOAD_MEDIA_TO_DISK:
+        return kWKContextMenuItemTagDownloadMediaToDisk;
     case EWK_CONTEXT_MENU_ITEM_TAG_COPY_MEDIA_LINK_TO_CLIPBOARD:
         return kWKContextMenuItemTagCopyMediaLinkToClipboard;
     case EWK_CONTEXT_MENU_ITEM_TAG_TOGGLE_MEDIA_CONTROLS:

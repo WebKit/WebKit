@@ -3344,6 +3344,10 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         m_process->context()->download(this, KURL(KURL(), m_activeContextMenuHitTestResultData.absoluteLinkURL));
         return;
     }
+    if (item.action() == ContextMenuItemTagDownloadMediaToDisk) {
+        m_process->context()->download(this, KURL(KURL(), m_activeContextMenuHitTestResultData.absoluteMediaURL));
+        return;
+    }
     if (item.action() == ContextMenuItemTagCheckSpellingWhileTyping) {
         TextChecker::setContinuousSpellCheckingEnabled(!TextChecker::state().isContinuousSpellCheckingEnabled);
         m_process->updateTextCheckerState();

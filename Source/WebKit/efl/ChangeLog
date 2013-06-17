@@ -1,3 +1,17 @@
+2013-06-17  Ruth Fong  <ruth_fong@apple.com>
+
+        REGRESSION: Important controls are missing from <video> element UI, when compared to QuickTime
+        https://bugs.webkit.org/show_bug.cgi?id=20599
+
+        Add a "Download Video"/"Download Audio" context menu item to download media
+        elements.
+
+        Reviewed by Beth Dakin.
+
+        * WebCoreSupport/AssertMatchingEnums.cpp:
+        * ewk/ewk_contextmenu.h:
+        Updated to include new EWK enum type for "Download Video/Audio" context menu item.
+
 2013-06-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Refactor ewk_view_scroll to remove internal structure.

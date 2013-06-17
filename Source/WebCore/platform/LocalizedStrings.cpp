@@ -469,6 +469,16 @@ String contextMenuItemTagOpenAudioInNewWindow()
     return WEB_UI_STRING("Open Audio in New Window", "Open Audio in New Window context menu item");
 }
 
+String contextMenuItemTagDownloadVideoToDisk()
+{
+    return WEB_UI_STRING("Download Video", "Download Video To Disk context menu item");
+}
+
+String contextMenuItemTagDownloadAudioToDisk()
+{
+    return WEB_UI_STRING("Download Audio", "Download Audio To Disk context menu item");
+}
+
 String contextMenuItemTagCopyVideoLinkToClipboard()
 {
     return WEB_UI_STRING("Copy Video Address", "Copy Video Address Location context menu item");

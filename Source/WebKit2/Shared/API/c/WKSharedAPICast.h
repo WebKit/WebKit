@@ -462,6 +462,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagTextDirectionRightToLeft;
     case WebCore::ContextMenuItemTagOpenMediaInNewWindow:
         return kWKContextMenuItemTagOpenMediaInNewWindow;
+    case WebCore::ContextMenuItemTagDownloadMediaToDisk:
+        return kWKContextMenuItemTagDownloadMediaToDisk;
     case WebCore::ContextMenuItemTagCopyMediaLinkToClipboard:
         return kWKContextMenuItemTagCopyMediaLinkToClipboard;
     case WebCore::ContextMenuItemTagToggleMediaControls:
@@ -654,6 +656,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagTextDirectionRightToLeft;
     case kWKContextMenuItemTagOpenMediaInNewWindow:
         return WebCore::ContextMenuItemTagOpenMediaInNewWindow;
+    case kWKContextMenuItemTagDownloadMediaToDisk:
+        return WebCore::ContextMenuItemTagDownloadMediaToDisk;
     case kWKContextMenuItemTagCopyMediaLinkToClipboard:
         return WebCore::ContextMenuItemTagCopyMediaLinkToClipboard;
     case kWKContextMenuItemTagToggleMediaControls:
