@@ -1,3 +1,18 @@
+2013-06-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Remove invalid checks from block-cursor-overtype-mode.html
+        https://bugs.webkit.org/show_bug.cgi?id=117587
+
+        Reviewed by Darin Adler.
+
+        The test uses an array of ">" "<" symbols to perform comparisons
+        between consecutive positions of the block cursor. Since those
+        checks are done for each pair of consecutive characters the total
+        amount of checks is lengthOfTheWord - 1. We were adding an extra
+        symbol that was not used at all in the test.
+
+        * editing/selection/block-cursor-overtype-mode.html:
+
 2013-06-17  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Correcting rebaselining after r151634.

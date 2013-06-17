@@ -57,10 +57,10 @@ if (window.testRunner) {
 
     internals.toggleOverwriteModeEnabled(document);
 
-    verifyBlockCursorLeftPositionAndWidth("ltrtext", ["<", "<", "<"]);
-    verifyBlockCursorLeftPositionAndWidth("ltrtext-rtl", ["<", "<", "<"]);
-    verifyBlockCursorLeftPositionAndWidth("rtltext", [">", ">", ">"]);
-    verifyBlockCursorLeftPositionAndWidth("rtltext-rtl", [">", ">", ">"]);
+    verifyBlockCursorLeftPositionAndWidth("ltrtext", ["<", "<"]);
+    verifyBlockCursorLeftPositionAndWidth("ltrtext-rtl", ["<", "<"]);
+    verifyBlockCursorLeftPositionAndWidth("rtltext", [">", ">"]);
+    verifyBlockCursorLeftPositionAndWidth("rtltext-rtl", [">", ">"]);
     verifyBlockCursorLeftPositionAndWidth("mixed", [">", ">", "<", "<", "<"]);
     verifyBlockCursorLeftPositionAndWidth("mixed-rtl", [">", ">", ">", "<", "<"]);
 }
