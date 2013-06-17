@@ -1,3 +1,9 @@
+2013-06-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Added new baselines for some of editing/selection tests as r151533 on EFL port.
+
+        * platform/efl/TestExpectations:
+
 2013-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fixed backgrounds in composited layers not repainted on scrolling
