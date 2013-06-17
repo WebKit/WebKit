@@ -34,7 +34,7 @@ function createOrInsert(elementId) {
 
     var div = document.createElement('div');
     if (document.body.childNodes.length)
-        docuemnt.body.insertBefore(div, document.body.childNodes[0]);
+        document.body.insertBefore(div, document.body.childNodes[0]);
     else
         document.body.appendChild(div);
     return div;
