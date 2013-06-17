@@ -41,6 +41,7 @@ public:
     void sendClickAtFatFingersPoint(unsigned modifiers = 0);
 
     const FatFingersResult& lastFatFingersResult() const { return m_lastFatFingersResult; }
+    void cacheTextResult(FatFingersResult result) { m_lastTextResult = result; }
     void resetLastFatFingersResult() { m_lastFatFingersResult.reset(); }
 
     void playSoundIfAnchorIsTarget() const;
@@ -59,6 +60,7 @@ private:
     WebCore::TouchEventMode m_existingTouchMode;
     WebCore::IntPoint m_lastScreenPoint; // Screen Position
     FatFingersResult m_lastFatFingersResult;
+    FatFingersResult m_lastTextResult;
     imf_sp_text_t m_spellCheckOptionRequest;
     bool m_shouldRequestSpellCheckOptions;
 

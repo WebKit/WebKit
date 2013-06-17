@@ -1,3 +1,21 @@
+2013-06-17  Tiancheng Jiang  <tijiang@rim.com>
+
+        Cache FatFinger Text Result.
+        https://bugs.webkit.org/show_bug.cgi?id=107403.
+
+        Reviewed by Rob Buis.
+
+        Internally Reviewed by Genevieve Mak.
+        Cache the FatFinger text result for later use in TouchEventHandler.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::contextNode):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectAtPoint):
+        * WebKitSupport/TouchEventHandler.h:
+        (BlackBerry::WebKit::TouchEventHandler::cacheTextResult):
+        (TouchEventHandler):
+
 2013-06-14  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Remove implementation of ContextMenu classes

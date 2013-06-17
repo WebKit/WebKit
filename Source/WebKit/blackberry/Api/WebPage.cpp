@@ -2572,6 +2572,8 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
 
     if (strategy == RectBased) {
         FatFingersResult result = FatFingers(this, lastFatFingersResult.adjustedPosition(), FatFingers::Text).findBestPoint();
+        // Cache text result for later use.
+        m_touchEventHandler->cacheTextResult(result);
         return result.node(FatFingersResult::ShadowContentNotAllowed);
     }
     if (strategy == FocusBased)
