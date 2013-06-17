@@ -27,6 +27,7 @@
 #include "Connection.h"
 
 #include "DataReference.h"
+#include "ImportanceAssertion.h"
 #include "MachPort.h"
 #include "MachUtilities.h"
 #include <WebCore/RunLoop.h>
@@ -132,6 +133,10 @@ bool Connection::open()
 
         // Create the receive port.
         mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &m_receivePort);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        mach_port_set_attributes(mach_task_self(), m_receivePort, MACH_PORT_IMPORTANCE_RECEIVER, (mach_port_info_t)0, 0);
+#endif
 
         m_isConnected = true;
         
@@ -404,6 +409,10 @@ void Connection::receiveSourceEventHandler()
 
     OwnPtr<MessageDecoder> decoder = createMessageDecoder(header);
     ASSERT(decoder);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    decoder->setImportanceAssertion(ImportanceAssertion::create(header));
+#endif
 
     if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "InitializeConnection") {
         ASSERT(m_isServer);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MessageDecoder_h
-#define MessageDecoder_h
+#ifndef ImportanceAssertion_h
+#define ImportanceAssertion_h
 
-#include "ArgumentDecoder.h"
-#include "StringReference.h"
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+
+#include <wtf/PassOwnPtr.h>
+
+#if __has_include(<libproc_internal.h>)
+#include <libproc_internal.h>
+#endif
+
+extern "C" int proc_importance_assertion_begin_with_msg(mach_msg_header_t*, mach_msg_trailer_t*, uint64_t*);
+extern "C" int proc_importance_assertion_complete(uint64_t assertion_handle);
 
 namespace CoreIPC {
 
-class DataReference;
-class ImportanceAssertion;
+class ImportanceAssertion {
+    WTF_MAKE_NONCOPYABLE(ImportanceAssertion);
 
-class MessageDecoder : public ArgumentDecoder {
 public:
-    static PassOwnPtr<MessageDecoder> create(const DataReference& buffer);
-    static PassOwnPtr<MessageDecoder> create(const DataReference& buffer, Vector<Attachment>&);
-    virtual ~MessageDecoder();
+    static PassOwnPtr<ImportanceAssertion> create(mach_msg_header_t* header)
+    {
+        return adoptPtr(new ImportanceAssertion(header));
+    }
 
-    StringReference messageReceiverName() const { return m_messageReceiverName; }
-    StringReference messageName() const { return m_messageName; }
-
-    bool isSyncMessage() const;
-    bool shouldDispatchMessageWhenWaitingForSyncReply() const;
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    void setImportanceAssertion(PassOwnPtr<ImportanceAssertion>);
-#endif
+    ~ImportanceAssertion()
+    {
+        proc_importance_assertion_complete(m_assertion);
+    }
 
 private:
-    MessageDecoder(const DataReference& buffer, Vector<Attachment>&);
+    ImportanceAssertion(mach_msg_header_t* header)
+        : m_assertion(0)
+    {
+        proc_importance_assertion_begin_with_msg(header, 0, &m_assertion);
+    }
 
-    uint8_t m_messageFlags;
-    StringReference m_messageReceiverName;
-    StringReference m_messageName;
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    OwnPtr<ImportanceAssertion> m_importanceAssertion;
-#endif
+    uint64_t m_assertion;
 };
 
-} // namespace CoreIPC
+}
 
-#endif // MessageDecoder_h
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+
+#endif // ImportanceAssertion_h

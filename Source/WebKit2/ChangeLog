@@ -1,5 +1,33 @@
 2013-06-17  Mark Rowe  <mrowe@apple.com>
 
+        <rdar://problem/13145014> Allow CoreIPC messages to transmit importance boosts
+
+        Transmitting the importance boost from the UI process to the web process is particularly
+        important when disabling process suppression on a web process, as it will minimize the
+        delays that can occur before the message instructing process suppression to be disabled
+        is processed by the web process.
+
+        We keep the importance boost alive for the duration of the CoreIPC message handler. We
+        achieve this by having an ImportanceAssertion object that owns the assertion, and whose
+        lifetime is tied to that of the MessageDecoder.
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/MessageDecoder.cpp:
+        (CoreIPC::MessageDecoder::setImportanceAssertion): Associate an importance assertion
+        with this message.
+        * Platform/CoreIPC/MessageDecoder.h:
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::open): Mark our receive port as allowing importance boosts to be received.
+        (CoreIPC::Connection::receiveSourceEventHandler):
+        * Platform/CoreIPC/mac/ImportanceAssertion.h:
+        (CoreIPC::ImportanceAssertion::create):
+        (CoreIPC::ImportanceAssertion::~ImportanceAssertion): Release the assertion.
+        (CoreIPC::ImportanceAssertion::ImportanceAssertion): Take an assertion if a boost was present in
+        the Mach message.
+
+2013-06-17  Mark Rowe  <mrowe@apple.com>
+
         <rdar://problem/14051357> Web processes sometimes remain in a suppressed
         state after their window is unoccluded.
 
