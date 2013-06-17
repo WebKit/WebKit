@@ -3349,13 +3349,11 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         m_process->updateTextCheckerState();
         return;
     }
-#if USE(GRAMMAR_CHECKING)
     if (item.action() == ContextMenuItemTagCheckGrammarWithSpelling) {
         TextChecker::setGrammarCheckingEnabled(!TextChecker::state().isGrammarCheckingEnabled);
         m_process->updateTextCheckerState();
         return;
     }
-#endif
     if (item.action() == ContextMenuItemTagShowSpellingPanel) {
         if (!TextChecker::spellingUIIsShowing())
             advanceToNextMisspelling(true);

@@ -279,34 +279,19 @@ String contextMenuItemTagOpenLink()
     return String::fromUTF8(_("_Open Link"));
 }
 
-#if USE(GRAMMAR_CHECKING)
 String contextMenuItemTagIgnoreGrammar()
 {
     return String::fromUTF8(_("Ignore _Grammar"));
 }
 
-String contextMenuItemTagCheckGrammarWithSpelling()
-{
-    return String::fromUTF8(_("Check _Grammar With Spelling"));
-}
-#endif
-
 String contextMenuItemTagSpellingMenu()
 {
-#if USE(GRAMMAR_CHECKING)
     return String::fromUTF8(_("Spelling and _Grammar"));
-#else
-    return String::fromUTF8(_("Spelling"));
-#endif
 }
 
 String contextMenuItemTagShowSpellingPanel(bool show)
 {
-#if USE(GRAMMAR_CHECKING)
     return String::fromUTF8(show ? _("_Show Spelling and Grammar") : _("_Hide Spelling and Grammar"));
-#else
-    return String::fromUTF8(show ? _("_Show Spelling") : _("_Hide Spelling"));
-#endif
 }
 
 String contextMenuItemTagCheckSpelling()
@@ -317,6 +302,11 @@ String contextMenuItemTagCheckSpelling()
 String contextMenuItemTagCheckSpellingWhileTyping()
 {
     return String::fromUTF8(_("Check Spelling While _Typing"));
+}
+
+String contextMenuItemTagCheckGrammarWithSpelling()
+{
+    return String::fromUTF8(_("Check _Grammar With Spelling"));
 }
 
 String contextMenuItemTagFontMenu()

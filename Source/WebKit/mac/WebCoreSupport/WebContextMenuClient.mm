@@ -165,12 +165,8 @@ static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutab
             NSString *title = [item title];
             if ([title isEqualToString:contextMenuItemTagOpenLink()])
                 modernTag = WebMenuItemTagOpenLink;
-#if USE(GRAMMAR_CHECKING)
             else if ([title isEqualToString:contextMenuItemTagIgnoreGrammar()])
                 modernTag = WebMenuItemTagIgnoreGrammar;
-            else if ([title isEqualToString:contextMenuItemTagCheckGrammarWithSpelling()])
-                modernTag = WebMenuItemTagCheckGrammarWithSpelling;
-#endif
             else if ([title isEqualToString:contextMenuItemTagSpellingMenu()])
                 modernTag = WebMenuItemTagSpellingMenu;
             else if ([title isEqualToString:contextMenuItemTagShowSpellingPanel(true)]
@@ -180,6 +176,8 @@ static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutab
                 modernTag = WebMenuItemTagCheckSpelling;
             else if ([title isEqualToString:contextMenuItemTagCheckSpellingWhileTyping()])
                 modernTag = WebMenuItemTagCheckSpellingWhileTyping;
+            else if ([title isEqualToString:contextMenuItemTagCheckGrammarWithSpelling()])
+                modernTag = WebMenuItemTagCheckGrammarWithSpelling;
             else if ([title isEqualToString:contextMenuItemTagFontMenu()])
                 modernTag = WebMenuItemTagFontMenu;
             else if ([title isEqualToString:contextMenuItemTagShowFonts()])

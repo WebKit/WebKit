@@ -428,10 +428,8 @@ WebKitContextMenuAction webkit_context_menu_item_get_action(GtkMenuItem* item)
         return WEBKIT_CONTEXT_MENU_ACTION_IGNORE_SPELLING;
     case ContextMenuItemTagLearnSpelling:
         return WEBKIT_CONTEXT_MENU_ACTION_LEARN_SPELLING;
-#if USE(GRAMMAR_CHECKING)
     case ContextMenuItemTagIgnoreGrammar:
         return WEBKIT_CONTEXT_MENU_ACTION_IGNORE_GRAMMAR;
-#endif
     case ContextMenuItemTagFontMenu:
         return WEBKIT_CONTEXT_MENU_ACTION_FONT_MENU;
     case ContextMenuItemTagBold:

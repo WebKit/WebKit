@@ -92,10 +92,8 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
         return ContextMenuItemTagIgnoreSpelling;
     case WEBKIT_CONTEXT_MENU_ACTION_LEARN_SPELLING:
         return ContextMenuItemTagLearnSpelling;
-#if USE(GRAMMAR_CHECKING)
     case WEBKIT_CONTEXT_MENU_ACTION_IGNORE_GRAMMAR:
         return ContextMenuItemTagIgnoreGrammar;
-#endif
     case WEBKIT_CONTEXT_MENU_ACTION_FONT_MENU:
         return ContextMenuItemTagFontMenu;
     case WEBKIT_CONTEXT_MENU_ACTION_BOLD:
@@ -185,10 +183,8 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(ContextMenu
         return WEBKIT_CONTEXT_MENU_ACTION_IGNORE_SPELLING;
     case ContextMenuItemTagLearnSpelling:
         return WEBKIT_CONTEXT_MENU_ACTION_LEARN_SPELLING;
-#if USE(GRAMMAR_CHECKING)
     case ContextMenuItemTagIgnoreGrammar:
         return WEBKIT_CONTEXT_MENU_ACTION_IGNORE_GRAMMAR;
-#endif
     case ContextMenuItemTagFontMenu:
         return WEBKIT_CONTEXT_MENU_ACTION_FONT_MENU;
     case ContextMenuItemTagBold:
@@ -276,10 +272,8 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
         return contextMenuItemTagIgnoreSpelling();
     case WEBKIT_CONTEXT_MENU_ACTION_LEARN_SPELLING:
         return contextMenuItemTagLearnSpelling();
-#if USE(GRAMMAR_CHECKING)
     case WEBKIT_CONTEXT_MENU_ACTION_IGNORE_GRAMMAR:
         return contextMenuItemTagIgnoreGrammar();
-#endif
     case WEBKIT_CONTEXT_MENU_ACTION_FONT_MENU:
         return contextMenuItemTagFontMenu();
     case WEBKIT_CONTEXT_MENU_ACTION_BOLD:

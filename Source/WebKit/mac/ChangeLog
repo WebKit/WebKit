@@ -1,3 +1,15 @@
+2013-06-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Unreviewed, rolling out r151632.
+        http://trac.webkit.org/changeset/151632
+        https://bugs.webkit.org/show_bug.cgi?id=117585
+
+        Debug build error ASSERT(WTF_USE_GRAMMAR_CHECKING) for non MAC
+        platforms
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusReceivedFromOldClients):
+
 2013-06-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Context menu grammar checking items are available when GRAMMAR_CHECKING macro is off

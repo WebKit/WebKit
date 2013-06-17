@@ -400,12 +400,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagPDFPreviousPage;
     case WebCore::ContextMenuItemTagOpenLink:
         return kWKContextMenuItemTagOpenLink;
-#if USE(GRAMMAR_CHECKING)
     case WebCore::ContextMenuItemTagIgnoreGrammar:
         return kWKContextMenuItemTagIgnoreGrammar;
-    case WebCore::ContextMenuItemTagCheckGrammarWithSpelling:
-        return kWKContextMenuItemTagCheckGrammarWithSpelling;
-#endif
     case WebCore::ContextMenuItemTagSpellingMenu:
         return kWKContextMenuItemTagSpellingMenu;
     case WebCore::ContextMenuItemTagShowSpellingPanel:
@@ -414,6 +410,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagCheckSpelling;
     case WebCore::ContextMenuItemTagCheckSpellingWhileTyping:
         return kWKContextMenuItemTagCheckSpellingWhileTyping;
+    case WebCore::ContextMenuItemTagCheckGrammarWithSpelling:
+        return kWKContextMenuItemTagCheckGrammarWithSpelling;
     case WebCore::ContextMenuItemTagFontMenu:
         return kWKContextMenuItemTagFontMenu;
     case WebCore::ContextMenuItemTagShowFonts:
@@ -594,12 +592,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemPDFPreviousPage;
     case kWKContextMenuItemTagOpenLink:
         return WebCore::ContextMenuItemTagOpenLink;
-#if USE(GRAMMAR_CHECKING)
     case kWKContextMenuItemTagIgnoreGrammar:
         return WebCore::ContextMenuItemTagIgnoreGrammar;
-    case kWKContextMenuItemTagCheckGrammarWithSpelling:
-        return WebCore::ContextMenuItemTagCheckGrammarWithSpelling;
-#endif
     case kWKContextMenuItemTagSpellingMenu:
         return WebCore::ContextMenuItemTagSpellingMenu;
     case kWKContextMenuItemTagShowSpellingPanel:
@@ -608,6 +602,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagCheckSpelling;
     case kWKContextMenuItemTagCheckSpellingWhileTyping:
         return WebCore::ContextMenuItemTagCheckSpellingWhileTyping;
+    case kWKContextMenuItemTagCheckGrammarWithSpelling:
+        return WebCore::ContextMenuItemTagCheckGrammarWithSpelling;
     case kWKContextMenuItemTagFontMenu:
         return WebCore::ContextMenuItemTagFontMenu;
     case kWKContextMenuItemTagShowFonts:

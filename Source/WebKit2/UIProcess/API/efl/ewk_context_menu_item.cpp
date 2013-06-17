@@ -242,12 +242,8 @@ static Ewk_Context_Menu_Item_Action getEwkActionFromWKTag(WKContextMenuItemTag a
         return EWK_CONTEXT_MENU_ITEM_PDFPREVIOUS_PAGE;
     case kWKContextMenuItemTagOpenLink:
         return EWK_CONTEXT_MENU_ITEM_TAG_OPEN_LINK;
-#if USE(GRAMMAR_CHECKING)
     case kWKContextMenuItemTagIgnoreGrammar:
         return EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_GRAMMAR;
-    case kWKContextMenuItemTagCheckGrammarWithSpelling:
-        return EWK_CONTEXT_MENU_ITEM_TAG_CHECK_GRAMMAR_WITH_SPELLING;
-#endif
     case kWKContextMenuItemTagSpellingMenu:
         return EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_MENU;
     case kWKContextMenuItemTagShowSpellingPanel:
@@ -256,6 +252,8 @@ static Ewk_Context_Menu_Item_Action getEwkActionFromWKTag(WKContextMenuItemTag a
         return EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING;
     case kWKContextMenuItemTagCheckSpellingWhileTyping:
         return EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING_WHILE_TYPING;
+    case kWKContextMenuItemTagCheckGrammarWithSpelling:
+        return EWK_CONTEXT_MENU_ITEM_TAG_CHECK_GRAMMAR_WITH_SPELLING;
     case kWKContextMenuItemTagFontMenu:
         return EWK_CONTEXT_MENU_ITEM_TAG_FONT_MENU;
     case kWKContextMenuItemTagShowFonts:

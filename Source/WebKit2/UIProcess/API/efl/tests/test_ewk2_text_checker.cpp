@@ -217,7 +217,7 @@ static void onWordIgnore(uint64_t tag, const char* word)
     callbacksExecutionStats.wordIgnore = true;
 }
 
-static Eina_Bool checkSpellingItemsAvailability(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
+static Eina_Bool onContextMenuShow(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
 {
     const Eina_List* contextMenuItems = ewk_context_menu_items_get(contextMenu);
 
@@ -240,63 +240,6 @@ static Eina_Bool checkSpellingItemsAvailability(Ewk_View_Smart_Data*, Evas_Coord
     EXPECT_FALSE(noGuessesAvailable);
     EXPECT_TRUE(isIgnoreSpellingAvailable);
     EXPECT_TRUE(isLearnSpellingAvailable);
-
-    wasContextMenuShown = true;
-    return true;
-}
-
-static Eina_Bool checkSpellingAndGrammarSubmenuAvailability(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
-{
-    const Eina_List* contextMenuItems = ewk_context_menu_items_get(contextMenu);
-    bool isSpellingAndGrammarSubMenuAvailable = false;
-
-    const Eina_List* listIterator;
-    void* itemData;
-    EINA_LIST_FOREACH(contextMenuItems, listIterator, itemData) {
-        Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(itemData);
-        if (ewk_context_menu_item_type_get(item) == EWK_SUBMENU_TYPE
-            && ewk_context_menu_item_action_get(item) == EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_MENU) {
-                isSpellingAndGrammarSubMenuAvailable = true;
-                break;
-        }
-    }
-
-    EXPECT_TRUE(isSpellingAndGrammarSubMenuAvailable);
-
-    wasContextMenuShown = true;
-    return true;
-}
-
-static Eina_Bool checkGrammarWithSpellingItemAvailability(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
-{
-    const Eina_List* contextMenuItems = ewk_context_menu_items_get(contextMenu);
-    bool isGrammarWtihSpellingItemAvailable = false;
-
-    const Eina_List* menuIterator;
-    void* itemData;
-    EINA_LIST_FOREACH(contextMenuItems, menuIterator, itemData) {
-        Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(itemData);
-        if (ewk_context_menu_item_type_get(item) == EWK_SUBMENU_TYPE
-            && ewk_context_menu_item_action_get(item) == EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_MENU) {
-                Ewk_Context_Menu* spellingAndGrammarSubmenu = ewk_context_menu_item_submenu_get(item);
-                const Eina_List* spellingAndGrammarSubmenuItems = ewk_context_menu_items_get(spellingAndGrammarSubmenu);
-                const Eina_List* submenuIterator;
-
-                EINA_LIST_FOREACH(spellingAndGrammarSubmenuItems, submenuIterator, itemData) {
-                    Ewk_Context_Menu_Item* submenuItem = static_cast<Ewk_Context_Menu_Item*>(itemData);
-                    if (ewk_context_menu_item_action_get(submenuItem) == EWK_CONTEXT_MENU_ITEM_TAG_CHECK_GRAMMAR_WITH_SPELLING) {
-                        isGrammarWtihSpellingItemAvailable = true;
-                        break;
-                    }
-                }
-        }
-    }
-
-#if USE(GRAMMAR_CHECKING)
-    EXPECT_TRUE(isGrammarWtihSpellingItemAvailable);
-#else
-    EXPECT_FALSE(isGrammarWtihSpellingItemAvailable);
-#endif
 
     wasContextMenuShown = true;
     return true;
@@ -346,42 +289,13 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_spell_checking_languages_get)
 TEST_F(EWK2UnitTestBase, context_menu_spelling_items_availability)
 {
     ewk_text_checker_continuous_spell_checking_enabled_set(false);
-    ewkViewClass()->context_menu_show = checkSpellingItemsAvailability;
+    ewkViewClass()->context_menu_show = onContextMenuShow;
 
     ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
     mouseClick(10, 20, 3 /* Right button */);
 
     while (!wasContextMenuShown)
         ecore_main_loop_iterate();
-}
-
-/**
- * Test whether "Spelling and Grammar" sub menu is available.
- */
-TEST_F(EWK2UnitTestBase, context_menu_spelling_submenu_availability)
-{
-    wasContextMenuShown = false;
-    ewkViewClass()->context_menu_show = checkSpellingAndGrammarSubmenuAvailability;
-
-    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
-    mouseClick(10, 20, 3 /* Right button */);
-
-    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
-}
-
-/**
- * Test whether "Check Grammar wth Spelling" is available
- * only when GRAMMAR_CHECKING is enabled.
- */
-TEST_F(EWK2UnitTestBase, context_menu_grammar_item_availability)
-{
-    wasContextMenuShown = false;
-    ewkViewClass()->context_menu_show = checkGrammarWithSpellingItemAvailability;
-
-    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
-    mouseClick(10, 20, 3 /* Right button */);
-
-    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
 }
 
 /**

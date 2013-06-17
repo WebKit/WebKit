@@ -1,3 +1,35 @@
+2013-06-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Unreviewed, rolling out r151632.
+        http://trac.webkit.org/changeset/151632
+        https://bugs.webkit.org/show_bug.cgi?id=117585
+
+        Debug build error ASSERT(WTF_USE_GRAMMAR_CHECKING) for non MAC
+        platforms
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::createAndAppendSpellingAndGrammarSubMenu):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::contextMenuItemTagSpellingMenu):
+        (WebCore::contextMenuItemTagShowSpellingPanel):
+        (WebCore::contextMenuItemTagCheckGrammarWithSpelling):
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::contextMenuItemTagSpellingMenu):
+        (WebCore::contextMenuItemTagShowSpellingPanel):
+        (WebCore::contextMenuItemTagCheckGrammarWithSpelling):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::contextMenuItemTagSpellingMenu):
+        (WebCore::contextMenuItemTagShowSpellingPanel):
+        (WebCore::contextMenuItemTagCheckGrammarWithSpelling):
+        * platform/qt/LocalizedStringsQt.cpp:
+        (WebCore::contextMenuItemTagSpellingMenu):
+        (WebCore::contextMenuItemTagShowSpellingPanel):
+        (WebCore::contextMenuItemTagCheckGrammarWithSpelling):
+
 2013-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

@@ -448,11 +448,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     case ContextMenuItemTagCheckSpellingWhileTyping:
         frame->editor().toggleContinuousSpellChecking();
         break;
-#if USE(GRAMMAR_CHECKING)
     case ContextMenuItemTagCheckGrammarWithSpelling:
         frame->editor().toggleGrammarChecking();
         break;
-#endif
 #if PLATFORM(MAC)
     case ContextMenuItemTagShowFonts:
         frame->editor().showFontPanel();
@@ -569,10 +567,8 @@ void ContextMenuController::createAndAppendSpellingAndGrammarSubMenu(ContextMenu
         contextMenuItemTagCheckSpelling());
     ContextMenuItem checkAsYouType(CheckableActionType, ContextMenuItemTagCheckSpellingWhileTyping, 
         contextMenuItemTagCheckSpellingWhileTyping());
-#if USE(GRAMMAR_CHECKING)
     ContextMenuItem grammarWithSpelling(CheckableActionType, ContextMenuItemTagCheckGrammarWithSpelling, 
         contextMenuItemTagCheckGrammarWithSpelling());
-#endif
 #if PLATFORM(MAC)
     ContextMenuItem correctSpelling(CheckableActionType, ContextMenuItemTagCorrectSpellingAutomatically, 
         contextMenuItemTagCorrectSpellingAutomatically());
@@ -584,9 +580,7 @@ void ContextMenuController::createAndAppendSpellingAndGrammarSubMenu(ContextMenu
     appendItem(*separatorItem(), &spellingAndGrammarMenu);
 #endif
     appendItem(checkAsYouType, &spellingAndGrammarMenu);
-#if USE(GRAMMAR_CHECKING)
     appendItem(grammarWithSpelling, &spellingAndGrammarMenu);
-#endif
 #if PLATFORM(MAC)
     appendItem(correctSpelling, &spellingAndGrammarMenu);
 #endif
@@ -801,10 +795,8 @@ void ContextMenuController::populate()
         contextMenuItemTagIgnoreSpelling());
     ContextMenuItem LearnSpellingItem(ActionType, ContextMenuItemTagLearnSpelling, 
         contextMenuItemTagLearnSpelling());
-#if USE(GRAMMAR_CHECKING)
     ContextMenuItem IgnoreGrammarItem(ActionType, ContextMenuItemTagIgnoreGrammar, 
         contextMenuItemTagIgnoreGrammar());
-#endif
     ContextMenuItem CutItem(ActionType, ContextMenuItemTagCut, contextMenuItemTagCut());
     ContextMenuItem PasteItem(ActionType, ContextMenuItemTagPaste, contextMenuItemTagPaste());
 #if PLATFORM(GTK)
@@ -974,12 +966,8 @@ void ContextMenuController::populate()
                     if (misspelling) {
                         appendItem(IgnoreSpellingItem, m_contextMenu.get());
                         appendItem(LearnSpellingItem, m_contextMenu.get());
-                    }
-#if USE(GRAMMAR_CHECKING)
-                    else
+                    } else
                         appendItem(IgnoreGrammarItem, m_contextMenu.get());
-#endif
-
                     appendItem(*separatorItem(), m_contextMenu.get());
                     haveContextMenuItemsForMisspellingOrGrammer = true;
 #if PLATFORM(MAC)
@@ -1242,13 +1230,11 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagLookUpInDictionary:
             shouldEnable = frame->selection()->isRange();
             break;
-#if USE(GRAMMAR_CHECKING)
         case ContextMenuItemTagCheckGrammarWithSpelling:
             if (frame->editor().isGrammarCheckingEnabled())
                 shouldCheck = true;
             shouldEnable = true;
             break;
-#endif
         case ContextMenuItemTagItalic: {
             shouldCheck = frame->editor().selectionHasStyle(CSSPropertyFontStyle, "italic") != FalseTriState;
             shouldEnable = frame->editor().canEditRichly();
@@ -1394,9 +1380,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemPDFNextPage:
         case ContextMenuItemPDFPreviousPage:
         case ContextMenuItemTagOpenLink:
-#if USE(GRAMMAR_CHECKING)
         case ContextMenuItemTagIgnoreGrammar:
-#endif
         case ContextMenuItemTagSpellingMenu:
         case ContextMenuItemTagShowFonts:
         case ContextMenuItemTagStyles:
@@ -1425,8 +1409,6 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagMediaMute:
             shouldEnable = m_hitTestResult.mediaHasAudio();
             shouldCheck = shouldEnable &&  m_hitTestResult.mediaMuted();
-            break;
-        default:
             break;
     }
 
