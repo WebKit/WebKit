@@ -32,7 +32,7 @@
 
 #if USE(COORDINATED_GRAPHICS) && ENABLE(CSS_SHADERS)
 
-#include "TextureMapperPlatformCompiledProgram.h"
+#include <WebCore/TextureMapperPlatformCompiledProgram.h>
 #include <wtf/RefCounted.h>
 
 namespace WebKit {
