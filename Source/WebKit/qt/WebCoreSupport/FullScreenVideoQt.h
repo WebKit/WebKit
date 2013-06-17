@@ -38,9 +38,6 @@ class Node;
 #if USE(QT_MULTIMEDIA)
 class MediaPlayerPrivateQt;
 #endif
-#if USE(QTKIT)
-class QTKitFullScreenVideoHandler;
-#endif
 
 // We do not use ENABLE or USE because moc does not expand these macros.
 #if defined(WTF_USE_GSTREAMER) && WTF_USE_GSTREAMER && defined(WTF_USE_NATIVE_FULLSCREEN_VIDEO) && WTF_USE_NATIVE_FULLSCREEN_VIDEO
@@ -92,9 +89,6 @@ private:
 #endif
 #if USE(GSTREAMER) && USE(NATIVE_FULLSCREEN_VIDEO)
     GStreamerFullScreenVideoHandler* m_FullScreenVideoHandlerGStreamer;
-#endif
-#if USE(QTKIT)
-    QTKitFullScreenVideoHandler* m_FullScreenVideoHandlerQTKit;
 #endif
 };
 

@@ -149,7 +149,7 @@ INCLUDEPATH += \
     $$PWD/qt/WebCoreSupport
 
 enable?(VIDEO) {
-    !use?(QTKIT):!use?(GSTREAMER):use?(QT_MULTIMEDIA) {
+    !use?(GSTREAMER):use?(QT_MULTIMEDIA) {
         HEADERS += $$PWD/WebKit/qt/WidgetSupport/FullScreenVideoWidget.h
         SOURCES += $$PWD/WebKit/qt/WidgetSupport/FullScreenVideoWidget.cpp
     }

@@ -1,3 +1,33 @@
+2013-06-17  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt] Remove Qt specific QTKIT flagged code.
+        https://bugs.webkit.org/show_bug.cgi?id=117635
+
+        Reviewed by Simon Hausmann.
+
+        Due to disabling QTKIT for Qt in r151546, the
+        code the flags that are not taken into account
+        anymore and the code that has been rendered
+        unreachable by this are removed.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::~ChromeClientQt):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/FullScreenVideoQt.cpp:
+        (WebCore::FullScreenVideoQt::FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::~FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::enterFullScreenForNode):
+        (WebCore::FullScreenVideoQt::exitFullScreenForNode):
+        (WebCore::FullScreenVideoQt::isValid):
+        * WebCoreSupport/FullScreenVideoQt.h:
+        * WebCoreSupport/InitWebCoreQt.cpp:
+        (WebCore::initializeWebCoreQt):
+        * WebCoreSupport/QTKitFullScreenVideoHandler.h: Removed.
+        * WebCoreSupport/QTKitFullScreenVideoHandler.mm: Removed.
+        * WebCoreSupport/WebSystemInterface.h: Removed.
+        * WebCoreSupport/WebSystemInterface.mm: Removed.
+
 2013-06-05  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Handle Return key without key text

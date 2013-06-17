@@ -1,3 +1,43 @@
+2013-06-17  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt] Remove Qt specific QTKIT flagged code.
+        https://bugs.webkit.org/show_bug.cgi?id=117635
+
+        Reviewed by Simon Hausmann.
+
+        Due to disabling QTKIT for Qt in r151546, the
+        code the flags that are not taken into account
+        anymore and the code that has been rendered
+        unreachable by this are removed.
+
+        No new tests, no behavioural change.
+
+        * Target.pri:
+        * WebCore.exp.in:
+        * page/Settings.cpp:
+        * page/Settings.h:
+        * platform/KURL.h:
+        * platform/SharedBuffer.h:
+        * platform/cf/KURLCFNet.cpp:
+        (WebCore::KURL::fileSystemPath):
+        * platform/cf/SharedBufferCF.cpp:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines):
+        * platform/graphics/cg/FloatSizeCG.cpp:
+        * platform/graphics/cg/IntRectCG.cpp:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovieLayer):
+        (WebCore::MediaPlayerPrivateQTKit::preferredRenderingMode):
+        (WebCore::MediaPlayerPrivateQTKit::paint):
+        (-[WebCoreMovieObserver layerHostChanged:]):
+        * platform/mac/SharedBufferMac.mm:
+        (+[WebCoreSharedBufferData initialize]):
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+
 2013-06-17  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         REGRESSSION(r151632) : Build error on ASSERT(WTF_USE_GRAMMAR_CHECKING)

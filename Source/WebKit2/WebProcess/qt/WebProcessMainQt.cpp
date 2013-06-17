@@ -39,10 +39,6 @@
 #include <WebCore/RunLoop.h>
 #include <errno.h>
 
-#if USE(QTKIT)
-#include "WebSystemInterface.h"
-#endif
-
 #ifndef NDEBUG
 #if !OS(WINDOWS)
 #include <unistd.h>
@@ -212,10 +208,6 @@ Q_DECL_EXPORT int WebProcessMainQt(QGuiApplication* app)
     initializeProxy();
 
     InitializeWebKit2();
-
-#if USE(QTKIT)
-    InitWebCoreSystemInterfaceForWK2();
-#endif
 
     // Create the connection.
     if (app->arguments().size() <= 1) {

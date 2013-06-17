@@ -47,7 +47,7 @@ KURL::KURL(CFURLRef url)
     parse(urlBytes.data());
 }
 
-#if !PLATFORM(MAC) && !(PLATFORM(QT) && USE(QTKIT))
+#if !PLATFORM(MAC)
 RetainPtr<CFURLRef> KURL::createCFURL() const
 {
     // FIXME: What should this return for invalid URLs?
@@ -59,7 +59,6 @@ RetainPtr<CFURLRef> KURL::createCFURL() const
 }
 #endif
 
-#if !(PLATFORM(QT) && USE(QTKIT))
 String KURL::fileSystemPath() const
 {
     RetainPtr<CFURLRef> cfURL = createCFURL();
@@ -73,6 +72,5 @@ String KURL::fileSystemPath() const
 #endif
     return adoptCF(CFURLCopyFileSystemPath(cfURL.get(), pathStyle)).get();
 }
-#endif
 
 }

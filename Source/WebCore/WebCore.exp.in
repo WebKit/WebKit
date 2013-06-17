@@ -2371,7 +2371,7 @@ __ZN7WebCore8Settings20gAVFoundationEnabledE
 __ZN7WebCore8Settings22setAVFoundationEnabledEb
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+#if PLATFORM(MAC)
 __ZN7WebCore8Settings13gQTKitEnabledE
 __ZN7WebCore8Settings15setQTKitEnabledEb
 #endif

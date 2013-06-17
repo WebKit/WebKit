@@ -1,3 +1,17 @@
+2013-06-17  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt] Remove Qt specific QTKIT flagged code.
+        https://bugs.webkit.org/show_bug.cgi?id=117635
+
+        Reviewed by Simon Hausmann.
+
+        Due to disabling QTKIT for Qt in r151546, the
+        code the flags that are not taken into account
+        anymore and the code that has been rendered
+        unreachable by this are removed.
+
+        * Source/widgetsapi.pri:
+
 2013-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Rename gobject_introspection_required variable.

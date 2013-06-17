@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IntRect.h"
 
-#if USE(CG) || (PLATFORM(QT) && USE(QTKIT))
+#if USE(CG)
 
 #include <ApplicationServices/ApplicationServices.h>
 

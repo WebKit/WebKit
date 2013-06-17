@@ -37,7 +37,7 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+#if PLATFORM(MAC)
 OBJC_CLASS NSData;
 #endif
 
@@ -62,7 +62,7 @@ public:
     
     ~SharedBuffer();
     
-#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+#if PLATFORM(MAC)
     NSData *createNSData();
     static PassRefPtr<SharedBuffer> wrapNSData(NSData *data);
 #endif

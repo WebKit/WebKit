@@ -214,7 +214,7 @@ namespace WebCore {
         static bool isAVFoundationEnabled() { return gAVFoundationEnabled; }
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+#if PLATFORM(MAC)
         static void setQTKitEnabled(bool flag);
         static bool isQTKitEnabled() { return gQTKitEnabled; }
 #endif
@@ -323,7 +323,7 @@ namespace WebCore {
         static bool gAVFoundationEnabled;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+#if PLATFORM(MAC)
         static bool gQTKitEnabled;
 #endif
         

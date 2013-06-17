@@ -1,3 +1,25 @@
+2013-06-17  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt] Remove Qt specific QTKIT flagged code.
+        https://bugs.webkit.org/show_bug.cgi?id=117635
+
+        Reviewed by Simon Hausmann.
+
+        Due to disabling QTKIT for Qt in r151546, the
+        code the flags that are not taken into account
+        anymore and the code that has been rendered
+        unreachable by this are removed.
+
+        * Target.pri:
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/WebCoreSupport/qt/WebSystemInterface.h: Removed.
+        * WebProcess/WebCoreSupport/qt/WebSystemInterface.mm: Removed.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+
 2013-06-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Unreviewed, rolling out r151632.

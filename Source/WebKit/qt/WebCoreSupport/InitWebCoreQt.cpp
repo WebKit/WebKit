@@ -43,9 +43,6 @@
 #include "ScriptController.h"
 #include "ScrollbarThemeQStyle.h"
 #include "SecurityPolicy.h"
-#if USE(QTKIT)
-#include "WebSystemInterface.h"
-#endif
 
 #include "qwebelement_p.h"
 #include <JavaScriptCore/runtime/InitializeThreading.h>
@@ -107,9 +104,6 @@ Q_DECL_EXPORT void initializeWebCoreQt()
     PlatformStrategiesQt::initialize();
     QtWebElementRuntime::initialize();
 
-#if USE(QTKIT)
-    InitWebCoreSystemInterface();
-#endif
     if (!WebCore::memoryCache()->disabled())
         WebCore::memoryCache()->setDeadDecodedDataDeletionInterval(60);
 

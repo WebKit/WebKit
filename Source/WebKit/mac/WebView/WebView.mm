@@ -1525,7 +1525,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if USE(AVFOUNDATION)
     settings->setAVFoundationEnabled([preferences isAVFoundationEnabled]);
 #endif
-#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+#if PLATFORM(MAC)
     settings->setQTKitEnabled([preferences isQTKitEnabled]);
 #endif
     settings->setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);

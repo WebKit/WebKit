@@ -77,7 +77,7 @@ bool Settings::gShouldPaintNativeControls = true;
 bool Settings::gAVFoundationEnabled = false;
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+#if PLATFORM(MAC)
 bool Settings::gQTKitEnabled = true;
 #endif
 
@@ -537,7 +537,7 @@ void Settings::setAVFoundationEnabled(bool enabled)
 }
 #endif
 
-#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
+#if PLATFORM(MAC)
 void Settings::setQTKitEnabled(bool enabled)
 {
     if (gQTKitEnabled == enabled)
