@@ -1,3 +1,16 @@
+2013-06-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix test assertion after r151624
+
+        An assertion was hit in RenderObject::willBeDestroyed()
+        for fast/css/getComputedStyle/getComputedStyle-background-shorthand.html
+        because the code asserted that the RenderObject had been removed from
+        the FrameView's slowRepaintObject set before remove() was called,
+        so move the assertion to after that call.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+
 2013-06-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove a redundant virtual call to hostWindow() in FrameView::invalidateRect()

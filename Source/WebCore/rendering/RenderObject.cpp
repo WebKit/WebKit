@@ -2443,14 +2443,14 @@ void RenderObject::willBeDestroyed()
 
     animation()->cancelAnimations(this);
 
-    ASSERT(documentBeingDestroyed() || !frame()->view()->hasSlowRepaintObject(this));
-
     // For accessibility management, notify the parent of the imminent change to its child set.
     // We do it now, before remove(), while the parent pointer is still available.
     if (AXObjectCache* cache = document()->existingAXObjectCache())
         cache->childrenChanged(this->parent());
 
     remove();
+
+    ASSERT(documentBeingDestroyed() || !frame()->view()->hasSlowRepaintObject(this));
 
     // The remove() call above may invoke axObjectCache()->childrenChanged() on the parent, which may require the AX render
     // object for this renderer. So we remove the AX render object now, after the renderer is removed.
