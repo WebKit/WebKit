@@ -1,5 +1,21 @@
 2013-06-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed. Added new baselines for some of editing/style tests, which works on EFL port.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/style/5017613-1-expected.png: Added.
+        * platform/efl/editing/style/5017613-1-expected.txt: Added.
+        * platform/efl/editing/style/5046875-1-expected.png: Added.
+        * platform/efl/editing/style/5046875-1-expected.txt: Added.
+        * platform/efl/editing/style/5065910-expected.png: Added.
+        * platform/efl/editing/style/5065910-expected.txt: Added.
+        * platform/efl/editing/style/5228141-expected.png: Added.
+        * platform/efl/editing/style/5228141-expected.txt: Added.
+        * platform/efl/editing/style/5279521-expected.png: Added.
+        * platform/efl/editing/style/5279521-expected.txt: Added.
+
+2013-06-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed. Added new baselines for some of editing/selection tests as r151533 on EFL port.
 
         * platform/efl/TestExpectations:
