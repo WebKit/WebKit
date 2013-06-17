@@ -271,21 +271,38 @@ String contextMenuItemTagOpenLink()
     return WEB_UI_STRING("Open Link", "Open Link context menu item");
 }
 
+#if USE(GRAMMAR_CHECKING)
 String contextMenuItemTagIgnoreGrammar()
 {
     return WEB_UI_STRING("Ignore Grammar", "Ignore Grammar context menu item");
 }
 
+String contextMenuItemTagCheckGrammarWithSpelling()
+{
+    return WEB_UI_STRING("Check Grammar With Spelling", "Check grammar with spelling context menu item");
+}
+#endif
+
 String contextMenuItemTagSpellingMenu()
 {
+#if USE(GRAMMAR_CHECKING)
     return WEB_UI_STRING("Spelling and Grammar", "Spelling and Grammar context sub-menu item");
+#else
+    return WEB_UI_STRING("Spelling", "Spelling context sub-menu item");
+#endif
 }
 
 String contextMenuItemTagShowSpellingPanel(bool show)
 {
+#if USE(GRAMMAR_CHECKING)
     if (show)
         return WEB_UI_STRING("Show Spelling and Grammar", "menu item title");
     return WEB_UI_STRING("Hide Spelling and Grammar", "menu item title");
+#else
+    if (show)
+        return WEB_UI_STRING("Show Spelling", "menu item title");
+    return WEB_UI_STRING("Hide Spelling", "menu item title");
+#endif
 }
 
 String contextMenuItemTagCheckSpelling()
@@ -296,11 +313,6 @@ String contextMenuItemTagCheckSpelling()
 String contextMenuItemTagCheckSpellingWhileTyping()
 {
     return WEB_UI_STRING("Check Spelling While Typing", "Check spelling while typing context menu item");
-}
-
-String contextMenuItemTagCheckGrammarWithSpelling()
-{
-    return WEB_UI_STRING("Check Grammar With Spelling", "Check grammar with spelling context menu item");
 }
 
 String contextMenuItemTagFontMenu()

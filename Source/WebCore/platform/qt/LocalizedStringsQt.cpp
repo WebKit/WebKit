@@ -248,20 +248,36 @@ String contextMenuItemTagOpenLink()
     return QCoreApplication::translate("QWebPage", "Open Link", "Open Link context menu item");
 }
 
+#if USE(GRAMMAR_CHECKING)
 String contextMenuItemTagIgnoreGrammar()
 {
     return QCoreApplication::translate("QWebPage", "Ignore", "Ignore Grammar context menu item");
 }
 
+String contextMenuItemTagCheckGrammarWithSpelling()
+{
+    return QCoreApplication::translate("QWebPage", "Check Grammar With Spelling", "Check grammar with spelling context menu item");
+}
+#endif
+
 String contextMenuItemTagSpellingMenu()
 {
+#if USE(GRAMMAR_CHECKING)
     return QCoreApplication::translate("QWebPage", "Spelling", "Spelling and Grammar context sub-menu item");
+#else
+    return QCoreApplication::translate("QWebPage", "Spelling", "Spelling context sub-menu item");
+#endif
 }
 
 String contextMenuItemTagShowSpellingPanel(bool show)
 {
+#if USE(GRAMMAR_CHECKING)
     return show ? QCoreApplication::translate("QWebPage", "Show Spelling and Grammar", "menu item title") :
-                  QCoreApplication::translate("QWebPage", "Hide Spelling and Grammar", "menu item title");
+        QCoreApplication::translate("QWebPage", "Hide Spelling and Grammar", "menu item title");
+#else
+    return show ? QCoreApplication::translate("QWebPage", "Show Spelling", "menu item title") :
+        QCoreApplication::translate("QWebPage", "Hide Spelling", "menu item title");
+#endif
 }
 
 String contextMenuItemTagCheckSpelling()
@@ -272,11 +288,6 @@ String contextMenuItemTagCheckSpelling()
 String contextMenuItemTagCheckSpellingWhileTyping()
 {
     return QCoreApplication::translate("QWebPage", "Check Spelling While Typing", "Check spelling while typing context menu item");
-}
-
-String contextMenuItemTagCheckGrammarWithSpelling()
-{
-    return QCoreApplication::translate("QWebPage", "Check Grammar With Spelling", "Check grammar with spelling context menu item");
 }
 
 String contextMenuItemTagFontMenu()

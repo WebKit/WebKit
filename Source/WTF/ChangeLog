@@ -1,3 +1,14 @@
+2013-06-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Context menu grammar checking items are available when GRAMMAR_CHECKING macro is off
+        https://bugs.webkit.org/show_bug.cgi?id=117585
+
+        Reviewed by Anders Carlsson.
+
+        Enable GRAMMAR_CHECKING for WebKit ports that use/implement it.
+
+        * wtf/Platform.h:
+
 2013-06-14  Patrick Gansterer  <paroga@webkit.org>
 
         Introduce USE(WINGDI) for the Windows port

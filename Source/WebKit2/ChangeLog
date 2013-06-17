@@ -1,3 +1,33 @@
+2013-06-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Context menu grammar checking items are available when GRAMMAR_CHECKING macro is off
+        https://bugs.webkit.org/show_bug.cgi?id=117585
+
+        Reviewed by Anders Carlsson.
+
+        Add GRAMMAR_CHECKING guard to the context menu grammar items.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * UIProcess/API/efl/ewk_context_menu_item.cpp:
+        (getEwkActionFromWKTag):
+        * UIProcess/API/efl/tests/test_ewk2_text_checker.cpp:
+        (checkSpellingItemsAvailability):
+        Change callback name, to be consistent with a newly added.
+
+        (checkSpellingAndGrammarSubmenuAvailability):
+        (checkGrammarWithSpellingItemAvailability):
+        Add two unit tests for EFL to check whether context menu grammar items are
+        available only when GRAMMAR_CHECKING macro is enabled.
+
+        * UIProcess/API/gtk/WebKitContextMenuActions.cpp:
+        (webkitContextMenuActionGetActionTag):
+        (webkitContextMenuActionGetForContextMenuItem):
+        (webkitContextMenuActionGetLabel):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+
 2013-06-14  Dean Jackson  <dino@apple.com>
 
         Crash in supportsSnapshotting

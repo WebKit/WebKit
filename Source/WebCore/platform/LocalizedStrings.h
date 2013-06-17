@@ -92,12 +92,14 @@ namespace WebCore {
     String contextMenuItemTagSearchWeb();
     String contextMenuItemTagLookUpInDictionary(const String& selectedString);
     String contextMenuItemTagOpenLink();
+#if USE(GRAMMAR_CHECKING)
     String contextMenuItemTagIgnoreGrammar();
+    String contextMenuItemTagCheckGrammarWithSpelling();
+#endif
     String contextMenuItemTagSpellingMenu();
     String contextMenuItemTagShowSpellingPanel(bool show);
     String contextMenuItemTagCheckSpelling();
     String contextMenuItemTagCheckSpellingWhileTyping();
-    String contextMenuItemTagCheckGrammarWithSpelling();
     String contextMenuItemTagFontMenu();
     String contextMenuItemTagBold();
     String contextMenuItemTagItalic();

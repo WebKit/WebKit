@@ -1,3 +1,15 @@
+2013-06-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Context menu grammar checking items are available when GRAMMAR_CHECKING macro is off
+        https://bugs.webkit.org/show_bug.cgi?id=117585
+
+        Reviewed by Anders Carlsson.
+
+        Add GRAMMAR_CHECKING guard to the context menu grammar items.
+
+        * webkit/webkitglobals.cpp:
+        (webkit_context_menu_item_get_action):
+
 2013-06-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Parameter 'pseudoElement' from function 'webkit_dom_dom_window_get_computed_style' should be allowed to be NULL
