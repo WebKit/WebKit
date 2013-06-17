@@ -1,3 +1,19 @@
+2013-06-17  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        [CSS Regions] ::before and ::after pseudo-elements are not displayed for regions
+        https://bugs.webkit.org/show_bug.cgi?id=80163
+
+        Add two simple tests verifying if region works with before/after generated content.
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/region-dynamic-after-before.html: Added.
+        * fast/regions/region-generated-content-before-after.html: Added.
+        * platform/mac/fast/regions/region-dynamic-after-before-expected.png: Added.
+        * platform/mac/fast/regions/region-dynamic-after-before-expected.txt: Added.
+        * platform/mac/fast/regions/region-generated-content-before-after-expected.png: Added.
+        * platform/mac/fast/regions/region-generated-content-before-after-expected.txt: Added.
+
 2013-06-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Remove invalid checks from block-cursor-overtype-mode.html

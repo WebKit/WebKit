@@ -1,3 +1,23 @@
+2013-06-17  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        [CSS Regions] ::before and ::after pseudo-elements are not displayed for regions
+        https://bugs.webkit.org/show_bug.cgi?id=80163
+
+        When the implementation of the before/after was moved to the DOM, before/after generated
+        content stoppped to work with css regions. The problem happens when:
+        1. RenderRegion can not have children and when the PseudoElement::attach tries to create a renderer for the
+        generated content, it fails.
+        2. RenderRegion::canHaveGeneratedChildren should not be false because regions can have generated content.
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/regions/region-dynamic-after-before.html
+               fast/regions/region-generated-content-before-after.html
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        * rendering/RenderRegion.h:
+
 2013-06-17  Michael Brüning  <michael.bruning@digia.com>
 
         [Mac] Remove unmaintained GStreamer specific video code.

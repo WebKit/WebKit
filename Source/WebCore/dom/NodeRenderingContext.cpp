@@ -194,7 +194,8 @@ bool NodeRenderingContext::shouldCreateRenderer()
     RenderObject* parentRenderer = this->parentRenderer();
     if (!parentRenderer)
         return false;
-    if (!parentRenderer->canHaveChildren()) {
+    if (!parentRenderer->canHaveChildren()
+        && !(m_node->isPseudoElement() && parentRenderer->isRenderRegion())) {
         if (parentRenderer->canDOMChildrenHaveRenderParent()) {
             // In a region, only the children that need to be in a flow thread should have a renderer.
             bool shouldBeInNamedFlow = m_node->isElementNode() && toElement(m_node)->moveToFlowThreadIsNeeded(m_style);
