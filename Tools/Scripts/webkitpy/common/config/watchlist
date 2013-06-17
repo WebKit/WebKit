@@ -337,7 +337,7 @@
         "ContentSecurityPolicyFiles|ContentSecurityPolicyUsage" : [ "mkwst@chromium.org" ],
         "CoreAnimation" : [ "simon.fraser@apple.com" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "esprehn+autocc@chromium.org", "glenn@skynav.com" ],
-        "DOM": [ "esprehn+autocc@chromium.org" ],
+        "DOM": [ "esprehn+autocc@chromium.org", "kangil.han@samsung.com" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
         "EFL": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com", "dchris@gmail.com" ],
         "EFLWebKit2PlatformSpecific": [ "gyuyoung.kim@samsung.com", "rakuco@webkit.org", "dchris@gmail.com" ],

@@ -1,3 +1,9 @@
+2013-06-17  Kangil Han  <kangil.han@samsung.com>
+
+        Unreviewed. Add my email to a DOM watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-06-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
