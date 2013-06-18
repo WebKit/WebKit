@@ -676,6 +676,7 @@ Bug(GTK) css3/flexbox/multiline-justify-content.html [ Pass Slow ]
 Bug(GTK) [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/css/visited-link-hang.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/js/array-sort-modifying-tostring.html [ Pass Slow ]
+Bug(GTK) fast/js/create-lots-of-workers.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/js/dfg-double-vote-fuzz.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/js/dfg-float32array.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/js/dfg-float64array.html [ Pass Slow ]
@@ -719,6 +720,8 @@ webkit.org/b/73003 editing/spelling/spellcheck-async-mutation.html [ Failure Slo
 webkit.org/b/73003 editing/spelling/spellcheck-paste.html [ Pass Slow ]
 webkit.org/b/73003 editing/spelling/spellcheck-sequencenum.html [ Failure Slow ]
 webkit.org/b/50740 editing/spelling/spellcheck-queue.html [ Failure Slow ]
+
+Bug(GTK) http/tests/media/video-preload.html [ Pass Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests

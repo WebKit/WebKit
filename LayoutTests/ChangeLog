@@ -1,3 +1,9 @@
+2013-06-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Mark two tests that are flakily timing out as slow.
+
 2013-06-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed AX gardening of windows-specific results.
