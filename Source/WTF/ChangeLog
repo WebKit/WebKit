@@ -1,3 +1,21 @@
+2013-06-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION (r149184): Build errors in RefPtr.h when building with Clang, C++98 standard
+        https://bugs.webkit.org/show_bug.cgi?id=116352
+
+        Reviewed by Anders Carlsson.
+
+        Use the __has_feature macro instead of the __has_extension one when detecting what features the Clang compiler
+        that's being used is capable to provide. With the project moving onto using C++11 throughout its components,
+        there currently exist cases where C++11-specific functionality (for instance std::move) is used despite being
+        guarded by compiler-specific feature guards that still get enabled even when compiling in C++98 with Clang.
+        The problematic features are enabled because they're available as C++98 language extensions by Clang.
+
+        Using __has_feature instead enables the feature guard only if the tested feature is actually standardized in
+        the currently used language standard.
+
+        * wtf/Compiler.h:
+
 2013-06-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Initialize AtomicStringTable in WTFThreadData's constructor

@@ -41,30 +41,26 @@
 #if defined(__clang__)
 #define WTF_COMPILER_CLANG 1
 
-#ifndef __has_extension
-#define __has_extension __has_feature /* Compatibility with older versions of clang */
-#endif
-
 #define CLANG_PRAGMA(PRAGMA) _Pragma(PRAGMA)
 
 /* Specific compiler features */
-#define WTF_COMPILER_SUPPORTS_CXX_VARIADIC_TEMPLATES __has_extension(cxx_variadic_templates)
+#define WTF_COMPILER_SUPPORTS_CXX_VARIADIC_TEMPLATES __has_feature(cxx_variadic_templates)
 
 /* There is a bug in clang that comes with Xcode 4.2 where AtomicStrings can't be implicitly converted to Strings
    in the presence of move constructors and/or move assignment operators. This bug has been fixed in Xcode 4.3 clang, so we
    check for both cxx_rvalue_references as well as the unrelated cxx_nonstatic_member_init feature which we know was added in 4.3 */
-#define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES __has_extension(cxx_rvalue_references) && __has_extension(cxx_nonstatic_member_init)
+#define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES __has_feature(cxx_rvalue_references) && __has_feature(cxx_nonstatic_member_init)
 
-#define WTF_COMPILER_SUPPORTS_CXX_DELETED_FUNCTIONS __has_extension(cxx_deleted_functions)
+#define WTF_COMPILER_SUPPORTS_CXX_DELETED_FUNCTIONS __has_feature(cxx_deleted_functions)
 #define WTF_COMPILER_SUPPORTS_CXX_NULLPTR __has_feature(cxx_nullptr)
 #define WTF_COMPILER_SUPPORTS_CXX_EXPLICIT_CONVERSIONS __has_feature(cxx_explicit_conversions)
 #define WTF_COMPILER_SUPPORTS_BLOCKS __has_feature(blocks)
-#define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT __has_extension(c_static_assert)
-#define WTF_COMPILER_SUPPORTS_CXX_STATIC_ASSERT __has_extension(cxx_static_assert)
-#define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL __has_extension(cxx_override_control)
-#define WTF_COMPILER_SUPPORTS_HAS_TRIVIAL_DESTRUCTOR __has_extension(has_trivial_destructor)
-#define WTF_COMPILER_SUPPORTS_CXX_STRONG_ENUMS __has_extension(cxx_strong_enums)
-#define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS __has_extension(cxx_reference_qualified_functions)
+#define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT __has_feature(c_static_assert)
+#define WTF_COMPILER_SUPPORTS_CXX_STATIC_ASSERT __has_feature(cxx_static_assert)
+#define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL __has_feature(cxx_override_control)
+#define WTF_COMPILER_SUPPORTS_HAS_TRIVIAL_DESTRUCTOR __has_feature(has_trivial_destructor)
+#define WTF_COMPILER_SUPPORTS_CXX_STRONG_ENUMS __has_feature(cxx_strong_enums)
+#define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS __has_feature(cxx_reference_qualified_functions)
 #endif
 
 #ifndef CLANG_PRAGMA
