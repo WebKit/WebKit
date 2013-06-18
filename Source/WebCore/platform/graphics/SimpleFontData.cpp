@@ -229,6 +229,18 @@ PassRefPtr<SimpleFontData> SimpleFontData::brokenIdeographFontData() const
     return m_derivedFontData->brokenIdeograph;
 }
 
+PassRefPtr<SimpleFontData> SimpleFontData::nonSyntheticItalicFontData() const
+{
+    if (!m_derivedFontData)
+        m_derivedFontData = DerivedFontData::create(isCustomFont());
+    if (!m_derivedFontData->nonSyntheticItalic) {
+        FontPlatformData nonSyntheticItalicFontPlatformData(m_platformData);
+        nonSyntheticItalicFontPlatformData.m_syntheticOblique = false;
+        m_derivedFontData->nonSyntheticItalic = create(nonSyntheticItalicFontPlatformData, isCustomFont(), false, true);
+    }
+    return m_derivedFontData->nonSyntheticItalic;
+}
+
 #ifndef NDEBUG
 String SimpleFontData::description() const
 {

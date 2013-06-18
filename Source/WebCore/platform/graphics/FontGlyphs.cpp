@@ -199,6 +199,19 @@ static bool shouldIgnoreRotation(UChar32 character)
 
     return false;
 }
+
+static inline std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCJKCharacterWithoutSyntheticItalic(UChar32 character, GlyphData& data, GlyphPage* page, unsigned pageNumber)
+{
+    RefPtr<SimpleFontData> nonItalicFontData = data.fontData->nonSyntheticItalicFontData();
+    GlyphPageTreeNode* nonItalicNode = GlyphPageTreeNode::getRootChild(nonItalicFontData.get(), pageNumber);
+    GlyphPage* nonItalicPage = nonItalicNode->page();
+    if (nonItalicPage) {
+        GlyphData nonItalicData = nonItalicPage->glyphDataForCharacter(character);
+        if (nonItalicData.fontData)
+            return std::make_pair(nonItalicData, nonItalicPage);
+    }
+    return std::make_pair(data, page);
+}
     
 static inline std::pair<GlyphData, GlyphPage*> glyphDataAndPageForNonCJKCharacterWithGlyphOrientation(UChar32 character, NonCJKGlyphOrientation orientation, GlyphData& data, GlyphPage* page, unsigned pageNumber)
 {
@@ -282,6 +295,10 @@ std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForCharacter(const 
                             variant = BrokenIdeographVariant;
                             break;
                         }
+#if PLATFORM(MAC)
+                        else if (data.fontData->platformData().syntheticOblique())
+                            return glyphDataAndPageForCJKCharacterWithoutSyntheticItalic(c, data, page, pageNumber);
+#endif
                     } else
                         return glyphDataAndPageForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), data, page, pageNumber);
 

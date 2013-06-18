@@ -106,6 +106,7 @@ public:
     PassRefPtr<SimpleFontData> smallCapsFontData(const FontDescription&) const;
     PassRefPtr<SimpleFontData> emphasisMarkFontData(const FontDescription&) const;
     PassRefPtr<SimpleFontData> brokenIdeographFontData() const;
+    PassRefPtr<SimpleFontData> nonSyntheticItalicFontData() const;
 
     PassRefPtr<SimpleFontData> variantFontData(const FontDescription& description, FontDataVariant variant) const
     {
@@ -292,6 +293,7 @@ private:
         RefPtr<SimpleFontData> brokenIdeograph;
         RefPtr<SimpleFontData> verticalRightOrientation;
         RefPtr<SimpleFontData> uprightOrientation;
+        RefPtr<SimpleFontData> nonSyntheticItalic;
 #if PLATFORM(MAC)
         mutable RetainPtr<CFMutableDictionaryRef> compositeFontReferences;
 #endif

@@ -1,3 +1,39 @@
+2013-06-18  Dean Jackson  <dino@apple.com>
+
+        Synthesized vertical italics on rotated glyphs are transformed incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=117726
+
+        Reviewed by Enrica Casucci.
+
+        If a font does not have italic glyphs, and is in a vertical flow, then
+        the synthesis of italics was skewing in the wrong direction. While here,
+        ensure that no CJK text will get italics in vertical layout.
+
+        This is a topic under discussion in the CSS Working Group. The resolution
+        at the June 2013 face-to-face was that:
+        - italics in Japanese (and Chinese) text are rare in vertical layout
+        - most people wanted Latin text to italicize in the direction of the line flow
+
+        The final behaviour was left undefined, but we consider the change here
+        to be sufficient for now. In all cases, the best solution is to avoid
+        synthesized italics by specifying a font that includes such forms.
+
+        Tests: fast/text/international/synthesized-italic-vertical-latin.html
+               fast/text/international/synthesized-italic-vertical.html
+
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::glyphDataAndPageForCJKCharacterWithoutSyntheticItalic): New function
+            that makes a new glyph data pair that is marked as NOT using a synthesized italic.
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter): If this is a CJK character and
+            has a synthesized oblique, then run it through the function above to make a new glyph data pair.
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::nonSyntheticItalicFontData): Creates/returns a new SimpleFontData that will
+            not synthesize italics.
+        * platform/graphics/SimpleFontData.h: New method nonSyntheticItalicFontData.
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs): This is the actual bug fix. If you are in a vertical flow, the
+            skew direction should be downwards, not leftwards.
+
 2013-06-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r151549.

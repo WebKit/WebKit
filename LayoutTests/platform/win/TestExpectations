@@ -2787,3 +2787,7 @@ webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html
 webkit.org/b/117324 fast/css/fontloader-download-error.html
 webkit.org/b/117325 svg/as-image/svg-nested.html
 webkit.org/b/117325 svg/css/font-face-crash.html
+
+# Synthesized italics not supported
+fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
+

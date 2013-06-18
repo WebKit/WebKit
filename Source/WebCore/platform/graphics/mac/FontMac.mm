@@ -29,6 +29,7 @@
 #import "SimpleFontData.h"
 #import "WebCoreSystemInterface.h"
 #import <AppKit/AppKit.h>
+#import <wtf/MathExtras.h>
 
 #define SYNTHETIC_OBLIQUE_ANGLE 14
 
@@ -201,8 +202,13 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         memcpy(&matrix, [drawFont matrix], sizeof(matrix));
     matrix.b = -matrix.b;
     matrix.d = -matrix.d;
-    if (platformData.m_syntheticOblique)
-        matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
+    if (platformData.m_syntheticOblique) {
+        static float obliqueSkew = tanf(SYNTHETIC_OBLIQUE_ANGLE * piFloat / 180);
+        if (font->platformData().orientation() == Vertical)
+            matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, obliqueSkew, 0, 1, 0, 0));
+        else
+            matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -obliqueSkew, 1, 0, 0));
+    }
     CGContextSetTextMatrix(cgContext, matrix);
 
 #if PLATFORM(MAC)

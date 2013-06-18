@@ -2660,3 +2660,7 @@ webkit.org/b/117141 fast/js/custom-constructors.html [ Skip ]
 
 # REGRESSION(r151146) fast/forms/control-clip-overflow.html fails
 webkit.org/b/117185 fast/forms/control-clip-overflow.html [ Skip ]
+
+# Synthesized italics not supported
+fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
+
