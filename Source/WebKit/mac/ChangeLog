@@ -1,3 +1,14 @@
+2013-06-18  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13174821> Remove files with an incorrect license.
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        This will break the build, stay tuned for a fix coming soon.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h: Removed.
+        * WebCoreSupport/WebFrameNetworkingContext.mm: Removed.
+
 2013-06-17  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt] Remove Qt specific QTKIT flagged code.
