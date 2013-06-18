@@ -366,6 +366,25 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
                 d->m_response.addHTTPHeaderField(key, value);
             else
                 d->m_response.setHTTPHeaderField(key, value);
+        } else if (header.startsWith("HTTP", false)) {
+            // This is the first line of the response.
+            // Extract the http status text from this.
+            //
+            // If the FOLLOWLOCATION option is enabled for the curl handle then
+            // curl will follow the redirections internally. Thus this header callback
+            // will be called more than one time with the line starting "HTTP" for one job.
+            long httpCode = 0;
+            curl_easy_getinfo(d->m_handle, CURLINFO_RESPONSE_CODE, &httpCode);
+
+            String httpCodeString = String::number(httpCode);
+            int statusCodePos = header.find(httpCodeString);
+
+            if (statusCodePos != -1) {
+                // The status text is after the status code.
+                String status = header.substring(statusCodePos + httpCodeString.length());
+                d->m_response.setHTTPStatusText(status.stripWhiteSpace());
+            }
+
         }
     }
 
