@@ -863,7 +863,8 @@ void HTMLMediaElement::prepareForLoad()
     // The spec doesn't say to block the load event until we actually run the asynchronous section
     // algorithm, but do it now because we won't start that until after the timer fires and the 
     // event may have already fired by then.
-    setShouldDelayLoadEvent(true);
+    if (m_preload != MediaPlayer::None)
+        setShouldDelayLoadEvent(true);
 
     configureMediaControls();
 }
