@@ -1,3 +1,14 @@
+2013-06-18  Ruth Fong  <ruth_fong@apple.com>
+
+        Expose a getMediaType method in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=117667
+
+        Reviewed by Brady Eidson.
+
+        * WebCore.exp.in: Updated to add a symbol for 
+        HitTestResult::mediaIsVideo method
+        and alphabetize the list of exposed methods.
+
 2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove unused bool argument from ReplacementFragment's constructor

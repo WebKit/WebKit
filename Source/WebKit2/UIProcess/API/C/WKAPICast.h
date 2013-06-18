@@ -30,9 +30,11 @@
 #include "CacheModel.h"
 #include "FontSmoothingLevel.h"
 #include "HTTPCookieAcceptPolicy.h"
+#include "InjectedBundleHitTestResultMediaType.h"
 #include "PluginModuleInfo.h"
 #include "ProcessModel.h"
 #include "ResourceCachesToClear.h"
+#include "WKBundleHitTestResult.h"
 #include "WKContext.h"
 #include "WKCookieManager.h"
 #include "WKCredentialTypes.h"
@@ -103,6 +105,7 @@ WK_ADD_API_MAPPING(WKBackForwardListItemRef, WebBackForwardListItem)
 WK_ADD_API_MAPPING(WKBackForwardListRef, WebBackForwardList)
 WK_ADD_API_MAPPING(WKBatteryManagerRef, WebBatteryManagerProxy)
 WK_ADD_API_MAPPING(WKBatteryStatusRef, WebBatteryStatus)
+WK_ADD_API_MAPPING(WKBundleHitTestResultMediaType, BundleHitTestResultMediaType)
 WK_ADD_API_MAPPING(WKResourceCacheManagerRef, WebResourceCacheManagerProxy)
 WK_ADD_API_MAPPING(WKColorPickerResultListenerRef, WebColorPickerResultListenerProxy)
 WK_ADD_API_MAPPING(WKContextRef, WebContext)
@@ -143,6 +146,36 @@ WK_ADD_API_MAPPING(WKViewportAttributesRef, WebViewportAttributes)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
 
 /* Enum conversions */
+
+inline BundleHitTestResultMediaType toBundleHitTestResultMediaType(WKBundleHitTestResultMediaType wkMediaType)
+{
+    switch (wkMediaType) {
+    case kWKBundleHitTestResultMediaTypeNone:
+        return BundleHitTestResultMediaTypeNone;
+    case kWKBundleHitTestResultMediaTypeAudio:
+        return BundleHitTestResultMediaTypeAudio;
+    case kWKBundleHitTestResultMediaTypeVideo:
+        return BundleHitTestResultMediaTypeVideo;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return BundleHitTestResultMediaTypeNone;
+}
+    
+inline WKBundleHitTestResultMediaType toAPI(BundleHitTestResultMediaType mediaType)
+{
+    switch (mediaType) {
+    case BundleHitTestResultMediaTypeNone:
+        return kWKBundleHitTestResultMediaTypeNone;
+    case BundleHitTestResultMediaTypeAudio:
+        return kWKBundleHitTestResultMediaTypeAudio;
+    case BundleHitTestResultMediaTypeVideo:
+        return kWKBundleHitTestResultMediaTypeVideo;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return kWKBundleHitTestResultMediaTypeNone;
+}
 
 inline CacheModel toCacheModel(WKCacheModel wkCacheModel)
 {

@@ -1,3 +1,38 @@
+2013-06-18  Ruth Fong  <ruth_fong@apple.com>
+
+        Expose a getMediaType method in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=117667
+
+        Reviewed by Brady Eidson.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        Updated to include the added header file InjectedBundleHitTestResultMediaType.h
+        
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toBundleHitTestResultMediaType):
+        (WebKit::toAPI):
+        Added methods to convert between BundleHitTestResultMediaType
+        and WKBundleHitTestResultMediaType.
+
+        * WebKit2.xcodeproj/project.pbxproj: Updated to include
+        InjectedBundleHitTestResultMediaType.h in the WebKit2 project.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        (WKBundleHitTestResultGetMediaType): Exposes the method getMediaType and
+        hooks into InjectedBundleHitTestResult::getMediaType.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::getMediaType): Added to return 
+        what type, if any, a media element is.
+
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResultMediaType.h: Added
+        to contain new BundleHitTestResultMediaType enums.
+
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
         Re-implement WebFrameNetworkingContext.

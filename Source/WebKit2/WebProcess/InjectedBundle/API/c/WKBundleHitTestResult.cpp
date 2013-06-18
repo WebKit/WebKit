@@ -79,6 +79,11 @@ bool WKBundleHitTestResultMediaIsInFullscreen(WKBundleHitTestResultRef hitTestRe
     return toImpl(hitTestResultRef)->mediaIsInFullscreen();
 }
 
+WKBundleHitTestResultMediaType WKBundleHitTestResultGetMediaType(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toAPI(toImpl(hitTestResultRef)->getMediaType());
+}
+
 WKRect WKBundleHitTestResultGetImageRect(WKBundleHitTestResultRef hitTestResultRef)
 {
     return toAPI(toImpl(hitTestResultRef)->imageRect());

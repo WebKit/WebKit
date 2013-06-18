@@ -310,6 +310,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundleClient.h \
     WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.h \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.h \
+    WebProcess/InjectedBundle/InjectedBundleHitTestResultMediaType.h \
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.h \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.h \
