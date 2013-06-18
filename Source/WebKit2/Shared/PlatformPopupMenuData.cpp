@@ -63,7 +63,7 @@ bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder& decoder, PlatformPo
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(data);
 #endif
-    
+
     return true;
 }
 
