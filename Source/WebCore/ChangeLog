@@ -1,3 +1,39 @@
+2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r147602): Search text field doesn't render selection when it has some :focus rules
+        https://bugs.webkit.org/show_bug.cgi?id=117747
+
+        Reviewed by Kent Tamura.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/7ff656c8239ce3b125246abcc8b149a603fcff28
+
+        r147612 added setNeedsLayout(true, MarkOnlyThis) for
+        TextControlInnerTextElement renderer. It's ok for input[type=text]
+        because RenderTextControlSingleLine also has needsLayout flag, and it
+        has only the inner text renderer as a child.
+
+        As for input[type=search], it doesn't work. Renderer structure for
+        input[type=search] is:
+
+        RenderTextControlSingleLine
+        └Renderer for TextControlInnerContainer
+          └Renderer for TextControlInnerElement
+            └Renderer for TextControlInnerTextElement
+
+        After r147612, there is a case that only RenderTextControlSingleLine
+        and TextControlInnerTextElement renderer have needsLayout flag, and
+        others don't.  It won't trigger layout for
+        TextControlInnerTextElement renderer.
+
+        We should set needsLayout flags of TextControlInnerContainer renderer
+        and TextControlInnerElement renderer by MarkContainingBlockChain.
+
+        Manual Tests: search-select-all-with-focus-style.html
+        (I tried but couldn't make a test that works in DRT)
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+
 2013-06-18  Dean Jackson  <dino@apple.com>
 
         Attempted build fix for non-Mac.
