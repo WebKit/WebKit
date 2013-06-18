@@ -587,13 +587,13 @@ static String trackDisplayName(TextTrack* track)
     if (track->isEasyToRead())
         return easyReaderTrackMenuItemText(displayName.toString());
     
-    if (track->kind() != track->captionsKeyword())
-        return displayName.toString();
-    
     if (track->isClosedCaptions())
         return closedCaptionTrackMenuItemText(displayName.toString());
-    
-    return sdhTrackMenuItemText(displayName.toString());
+
+    if (track->isSDH())
+        return sdhTrackMenuItemText(displayName.toString());
+
+    return displayName.toString();
 }
 
 String CaptionUserPreferencesMac::displayNameForTrack(TextTrack* track) const

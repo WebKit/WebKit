@@ -1,3 +1,15 @@
+2013-06-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Not all subtitle tracks are SDH
+        https://bugs.webkit.org/show_bug.cgi?id=117738
+
+        Reviewed by Dean Jackson.
+
+        * media/video-controls-captions-trackmenu-localized.html:
+        * media/video-controls-captions-trackmenu-sorted.html:
+        * platform/mac/media/video-controls-captions-trackmenu-localized-expected.txt:
+        * platform/mac/media/video-controls-captions-trackmenu-sorted-expected.txt:
+
 2013-06-18  Dean Jackson  <dino@apple.com>
 
         Synthesized vertical italics on rotated glyphs are transformed incorrectly

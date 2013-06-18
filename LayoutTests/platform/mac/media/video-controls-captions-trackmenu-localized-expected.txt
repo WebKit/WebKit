@@ -19,7 +19,7 @@ EXPECTED (item.textContent == 'English CC') OK
 Fourth item in captions menu should be labelled 'Laugh Track (English-United States)'
 EXPECTED (item.textContent == 'Laugh Track (English-United States)') OK
 
-Fifth item in captions menu should be labelled 'Unknown SDH'
-EXPECTED (item.textContent == 'Unknown SDH') OK
+Fifth item in captions menu should be labelled 'Unknown'
+EXPECTED (item.textContent == 'Unknown') OK
 END OF TEST
 

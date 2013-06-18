@@ -67,6 +67,7 @@ public:
     };
     virtual Kind kind() const { return Subtitles; }
     virtual bool isClosedCaptions() const { return false; }
+    virtual bool isSDH() const { return false; }
     virtual bool containsOnlyForcedSubtitles() const { return false; }
     virtual bool isMainProgramContent() const { return true; }
     virtual bool isEasyToRead() const { return false; }

@@ -1,3 +1,30 @@
+2013-06-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Not all subtitle tracks are SDH
+        https://bugs.webkit.org/show_bug.cgi?id=117738
+
+        Reviewed by Dean Jackson.
+
+        No new tests, existing tests updated.
+
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::isSDH): New.
+
+        * html/track/InbandTextTrack.h: Add isSDH override.
+        * html/track/TextTrack.h:
+
+        * page/CaptionUserPreferencesMac.mm:
+        (WebCore::trackDisplayName): Only add "SDH" label if a track claims to be SDH.
+
+        * platform/graphics/InbandTextTrackPrivate.h:
+        (WebCore::InbandTextTrackPrivate::isSDH): New.
+
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateAVFObjC::isSDH): Return true if track has both "transcribes
+            spoken dialog for accessibility" and "describes music and sound for accessibility" 
+            characteristics.
+
 2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Simplify FormKeyGenerator::willDeleteForm

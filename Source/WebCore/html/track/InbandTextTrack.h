@@ -67,6 +67,7 @@ public:
     virtual ~InbandTextTrack();
 
     virtual bool isClosedCaptions() const OVERRIDE;
+    virtual bool isSDH() const OVERRIDE;
     virtual bool containsOnlyForcedSubtitles() const OVERRIDE;
     virtual bool isMainProgramContent() const OVERRIDE;
     virtual bool isEasyToRead() const OVERRIDE;

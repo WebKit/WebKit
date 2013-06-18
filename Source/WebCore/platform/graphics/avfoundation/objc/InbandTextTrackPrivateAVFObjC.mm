@@ -126,6 +126,20 @@ bool InbandTextTrackPrivateAVFObjC::isClosedCaptions() const
     return [[m_mediaSelectionOption mediaType] isEqualToString:AVMediaTypeClosedCaption];
 }
 
+bool InbandTextTrackPrivateAVFObjC::isSDH() const
+{
+    if (!m_mediaSelectionOption)
+        return false;
+    
+    if (![[m_mediaSelectionOption mediaType] isEqualToString:AVMediaTypeSubtitle])
+        return false;
+
+    if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility] && [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicDescribesMusicAndSoundForAccessibility])
+        return true;
+
+    return false;
+}
+    
 bool InbandTextTrackPrivateAVFObjC::containsOnlyForcedSubtitles() const
 {
     if (!m_mediaSelectionOption)

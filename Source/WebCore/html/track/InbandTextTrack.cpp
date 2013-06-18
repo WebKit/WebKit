@@ -148,6 +148,14 @@ bool InbandTextTrack::isClosedCaptions() const
     return m_private->isClosedCaptions();
 }
 
+bool InbandTextTrack::isSDH() const
+{
+    if (!m_private)
+        return false;
+    
+    return m_private->isSDH();
+}
+
 bool InbandTextTrack::containsOnlyForcedSubtitles() const
 {
     if (!m_private)
