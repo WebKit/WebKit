@@ -1,5 +1,17 @@
 2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Simplify FormKeyGenerator::willDeleteForm
+        https://bugs.webkit.org/show_bug.cgi?id=117751
+
+        Reviewed by Antti Koivisto.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/c6399efb9da863eb1d1fc98b17ef925998b985ac
+
+        * html/FormController.cpp:
+        (WebCore::FormKeyGenerator::willDeleteForm):
+
+2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r147602): Search text field doesn't render selection when it has some :focus rules
         https://bugs.webkit.org/show_bug.cgi?id=117747
 

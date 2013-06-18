@@ -368,12 +368,7 @@ AtomicString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& co
 void FormKeyGenerator::willDeleteForm(HTMLFormElement* form)
 {
     ASSERT(form);
-    if (m_formToKeyMap.isEmpty())
-        return;
-    FormToKeyMap::iterator it = m_formToKeyMap.find(form);
-    if (it == m_formToKeyMap.end())
-        return;
-    m_formToKeyMap.remove(it);
+    m_formToKeyMap.remove(form);
 }
 
 // ----------------------------------------------------------------------------
