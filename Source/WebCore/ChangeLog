@@ -1,3 +1,17 @@
+2013-06-17  Beth Dakin  <bdakin@apple.com>
+
+        PageBanners appear over HTML5 video when media element is in full screen mode
+        https://bugs.webkit.org/show_bug.cgi?id=117721
+        -and corresponding-
+        <rdar://problem/13686998>
+
+        Reviewed by Sam Weinig.
+
+        Update the scrolling tree when a header/footer has been removed.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+
 2013-06-17  Roger Fong  <roger_fong@apple.com>
 
         Modify Windows makefiles to copy some bin output into Program Files.

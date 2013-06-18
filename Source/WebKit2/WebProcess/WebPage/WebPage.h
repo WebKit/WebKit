@@ -384,6 +384,8 @@ public:
     void setFooterPageBanner(PassRefPtr<PageBanner>);
     PageBanner* footerPageBanner();
 
+    void hidePageBanners();
+    void showPageBanners();
 
     WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
     WebCore::IntRect windowToScreen(const WebCore::IntRect&);

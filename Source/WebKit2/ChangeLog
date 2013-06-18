@@ -1,3 +1,33 @@
+2013-06-17  Beth Dakin  <bdakin@apple.com>
+
+        PageBanners appear over HTML5 video when media element is in full screen mode
+        https://bugs.webkit.org/show_bug.cgi?id=117721
+        -and corresponding-
+        <rdar://problem/13686998>
+
+        Reviewed by Sam Weinig.
+
+        When an element enters fullscreen, hide the banners. Show them again when the 
+        element exits fullscreen.
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::willEnterFullScreen):
+        (WebKit::WebFullScreenManager::willExitFullScreen):
+
+        Handle hiding and showing by removing or re-creating a parent layer for m_layer.
+        * WebProcess/WebPage/PageBanner.cpp:
+        (WebKit::PageBanner::hide):
+        (WebKit::PageBanner::showIfHidden):
+        * WebProcess/WebPage/PageBanner.h:
+        * WebProcess/WebPage/mac/PageBannerMac.mm:
+        (WebKit::PageBanner::PageBanner):
+        (WebKit::PageBanner::hide):
+        (WebKit::PageBanner::showIfHidden):
+        (WebKit::PageBanner::mouseEvent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::hidePageBanners):
+        (WebKit::WebPage::showPageBanners):
+        * WebProcess/WebPage/WebPage.h:
+
 2013-06-17  Ruth Fong  <ruth_fong@apple.com>
 
         REGRESSION: Important controls are missing from <video> element UI, when compared to QuickTime

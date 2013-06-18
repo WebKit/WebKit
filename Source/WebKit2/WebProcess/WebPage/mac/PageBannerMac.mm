@@ -44,6 +44,7 @@ PageBanner::PageBanner(CALayer *layer, int height, Client* client)
     , m_client(client)
     , m_webPage(0)
     , m_mouseDownInBanner(false)
+    , m_isHidden(false)
     , m_layer(layer)
     , m_height(height)
 {
@@ -84,6 +85,28 @@ void PageBanner::detachFromPage()
     m_webPage = 0;
 }
 
+void PageBanner::hide()
+{
+    // We can hide the banner by removing the parent layer that hosts it.
+    if (m_type == Header)
+        m_webPage->corePage()->addHeaderWithHeight(0);
+    else if (m_type == Footer)
+        m_webPage->corePage()->addFooterWithHeight(0);
+
+    m_isHidden = true;
+}
+
+void PageBanner::showIfHidden()
+{
+    if (!m_isHidden)
+        return;
+    m_isHidden = false;
+
+    // This will re-create a parent layer in the WebCore layer tree, and we will re-add
+    // m_layer as a child of it. 
+    addToPage(m_type, m_webPage);
+}
+
 void PageBanner::didChangeDeviceScaleFactor(float scaleFactor)
 {
     m_layer.get().contentsScale = scaleFactor;
@@ -92,6 +115,9 @@ void PageBanner::didChangeDeviceScaleFactor(float scaleFactor)
 
 bool PageBanner::mouseEvent(const WebMouseEvent& mouseEvent)
 {
+    if (m_isHidden)
+        return false;
+
     FrameView* frameView = m_webPage->mainFrameView();
     if (!frameView)
         return false;

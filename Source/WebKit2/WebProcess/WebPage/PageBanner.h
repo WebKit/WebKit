@@ -70,6 +70,9 @@ public:
     void addToPage(Type, WebPage*);
     void detachFromPage();
 
+    void hide();
+    void showIfHidden();
+
     bool mouseEvent(const WebMouseEvent&);
     void didChangeDeviceScaleFactor(float scaleFactor);
 
@@ -85,6 +88,7 @@ private:
     WebPage* m_webPage;
 
     bool m_mouseDownInBanner;
+    bool m_isHidden;
 
 #if PLATFORM(MAC)
     RetainPtr<CALayer> m_layer;

@@ -2572,6 +2572,11 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
         if (m_layerForHeader) {
             m_layerForHeader->removeFromParent();
             m_layerForHeader = nullptr;
+
+            // The ScrollingTree knows about the header layer, and the position of the root layer is affected
+            // by the header layer, so if we remove the header, we need to tell the scrolling tree.
+            if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+                scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
         }
         return 0;
     }
@@ -2607,6 +2612,11 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
         if (m_layerForFooter) {
             m_layerForFooter->removeFromParent();
             m_layerForFooter = nullptr;
+
+            // The ScrollingTree knows about the footer layer, and the total scrollable size is affected
+            // by the footer layer, so if we remove the footer, we need to tell the scrolling tree.
+            if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+                scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
         }
         return 0;
     }

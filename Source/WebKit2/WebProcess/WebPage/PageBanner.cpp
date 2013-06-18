@@ -46,6 +46,14 @@ void PageBanner::detachFromPage()
 {
 }
 
+void PageBanner::hide()
+{
+}
+
+void PageBanner::showIfHidden()
+{
+}
+
 void PageBanner::didChangeDeviceScaleFactor(float)
 {
 }
