@@ -78,7 +78,7 @@ namespace WTF {
             : m_ptr(ptr)
         {
 #ifdef __OBJC__
-            static_assert(!std::is_convertible<T, id>::value, "Don't use adoptCF with Objective-C pointer types, use adoptNS.");
+            static_assert((!std::is_convertible<T, id>::value), "Don't use adoptCF with Objective-C pointer types, use adoptNS.");
 #endif
         }
 

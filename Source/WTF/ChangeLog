@@ -1,3 +1,16 @@
+2013-06-17  Andy Estes  <aestes@apple.com>
+
+        A static_assert() in RetainPtr.h sometimes causes the build to fail.
+
+        Wrap the first argument to a static_assert() in parentheses since it
+        contains a comma, which sometimes tricks the preprocessor into thinking
+        the macro is being passed three arguments rather than two.
+
+        Reviewed by Brian Weinstein.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::RetainPtr):
+
 2013-06-17  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION (r149184): Build errors in RefPtr.h when building with Clang, C++98 standard
