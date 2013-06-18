@@ -1,3 +1,16 @@
+2013-06-18  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        PackedIntVector: check template arguments at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=117737
+
+        Use 'COMPILE_ASSERT' instead of 'ASSERT' in PackedIntVector class
+        constructor.
+
+        Reviewed by Sam Weinig.
+
+        * wtf/PackedIntVector.h:
+        (WTF::PackedIntVector::PackedIntVector):
+
 2013-06-17  Andy Estes  <aestes@apple.com>
 
         A static_assert() in RetainPtr.h sometimes causes the build to fail.
