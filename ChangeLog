@@ -1,3 +1,16 @@
+2013-06-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK][GStreamer] Fullscreen option in video element context menu not working
+        https://bugs.webkit.org/show_bug.cgi?id=105191
+
+        Fullscreen with native controls is outdated and even broken in
+        [GTK][WK2], so they are deactivated for now.
+
+        Reviewed by Philippe Normand.
+
+        * Source/autotools/SetupAutoconfHeader.m4: Removed the use of
+        fullscreen native media controls.
+
 2013-06-17  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt] Remove Qt specific QTKIT flagged code.

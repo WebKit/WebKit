@@ -646,6 +646,8 @@ webkit.org/b/116977 media/event-attributes.html [ Failure Timeout Pass ]
 
 webkit.org/b/117583 http/tests/media/video-load-twice.html [ Failure Pass ]
 
+webkit.org/b/105191 media/video-playing-and-pause.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

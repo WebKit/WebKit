@@ -1,3 +1,17 @@
+2013-06-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK][GStreamer] Fullscreen option in video element context menu not working
+        https://bugs.webkit.org/show_bug.cgi?id=105191
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk-wk1/TestExpectations:
+        fullscreen/video-controls-drag.html does not time out anymore.
+        * platform/gtk-wk2/TestExpectations:
+        media/video-display-aspect-ratio.html crashes sometimes.
+        * platform/gtk/TestExpectations:
+        media/video-playing-and-pause.html was already flaky.
+
 2013-06-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.

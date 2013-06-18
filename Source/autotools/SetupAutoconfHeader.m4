@@ -56,10 +56,6 @@ if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
     if test "$enable_debug" = "yes"; then
         AC_DEFINE([GST_DISABLE_DEPRECATED], [1], [ ])
     fi
-
-    if test "$enable_video" = "yes"; then
-        AC_DEFINE([WTF_USE_NATIVE_FULLSCREEN_VIDEO], [1], [ ])
-    fi
 fi
 
 if test "$enable_web_audio" = "yes"; then
