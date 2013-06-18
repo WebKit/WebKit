@@ -601,7 +601,15 @@ bool NetworkJob::shouldReleaseClientResource()
 
 bool NetworkJob::shouldNotifyClientFailed() const
 {
-    return m_extendedStatusCode < 0 || (isError(m_extendedStatusCode) && !m_dataReceived && !m_isHeadMethod && m_handle->firstRequest().targetType() != ResourceRequest::TargetIsXHR);
+    ResourceRequest request = m_handle->firstRequest();
+    if (request.forceDownload())
+        return false;
+    if (m_extendedStatusCode < 0)
+        return true;
+    if (isError(m_extendedStatusCode) && !m_dataReceived && !m_isHeadMethod && request.targetType() != ResourceRequest::TargetIsXHR)
+        return true;
+
+    return false;
 }
 
 bool NetworkJob::retryAsFTPDirectory()

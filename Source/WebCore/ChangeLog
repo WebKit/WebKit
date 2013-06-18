@@ -1,3 +1,17 @@
+2013-06-18  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] only notify download client when download error
+        https://bugs.webkit.org/show_bug.cgi?id=117687
+
+        Reviewed by Rob Buis.
+
+        When met network error in downloading, we notify the error to download
+        client through download stream, we shouldn't notify page client the error.
+        RIM JIRA 419985
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::shouldNotifyClientFailed):
+
 2013-06-18  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Shader compiler not properly configured for GLES on cairo based ports
