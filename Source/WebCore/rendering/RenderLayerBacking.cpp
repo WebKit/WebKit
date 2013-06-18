@@ -2121,7 +2121,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
 
 #if ENABLE(CSS_FILTERS)
         if ((hasFilter && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyWebkitFilter))
-            filterVector.insert(FilterAnimationValue::create(key, owningLayer()->computeFilterOperations(keyframeStyle), tf));
+            filterVector.insert(FilterAnimationValue::create(key, keyframeStyle->filter(), tf));
 #endif
     }
 
@@ -2191,8 +2191,8 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
         const Animation* filterAnim = toStyle->transitionForProperty(CSSPropertyWebkitFilter);
         if (filterAnim && !filterAnim->isEmptyOrZeroDuration()) {
             KeyframeValueList filterVector(AnimatedPropertyWebkitFilter);
-            filterVector.insert(FilterAnimationValue::create(0, owningLayer()->computeFilterOperations(fromStyle)));
-            filterVector.insert(FilterAnimationValue::create(1, owningLayer()->computeFilterOperations(toStyle)));
+            filterVector.insert(FilterAnimationValue::create(0, fromStyle->filter()));
+            filterVector.insert(FilterAnimationValue::create(1, toStyle->filter()));
             if (m_graphicsLayer->addAnimation(filterVector, IntSize(), filterAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitFilter), timeOffset)) {
                 // To ensure that the correct filter is visible when the animation ends, also set the final filter.
                 updateFilters(toStyle);
