@@ -1,5 +1,21 @@
 2013-06-18  Timothy Hatcher  <timothy@apple.com>
 
+        If the tree outline is processing a selection currently, then don't change the selection.
+
+        This is needed to allow breakpoints tree elements to be selected without jumping back to
+        selecting the resource tree element.
+
+        https://bugs.webkit.org/show_bug.cgi?id=117746
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.js:
+        (WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar):
+        * UserInterface/TreeOutline.js:
+        (TreeElement.prototype.select):
+
+2013-06-18  Timothy Hatcher  <timothy@apple.com>
+
         Update breakpoints to match Xcode 5.
 
         This updates the breakpoint images, line colors, and moves breakpoints toggle button

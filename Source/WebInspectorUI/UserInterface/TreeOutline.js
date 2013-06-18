@@ -949,6 +949,8 @@ TreeElement.prototype.select = function(omitFocus, selectedByUser, suppressOnSel
     if (!this.treeOutline)
         return;
 
+    this.treeOutline.processingSelectionChange = true;
+
     if (!this.selected) {
         if (this.treeOutline.selectedTreeElement)
             this.treeOutline.selectedTreeElement.deselect(suppressOnDeselect);
@@ -965,6 +967,8 @@ TreeElement.prototype.select = function(omitFocus, selectedByUser, suppressOnSel
 
     if (this.treeOutline.onselect && !suppressOnSelect)
         this.treeOutline.onselect(this, selectedByUser);
+
+    delete this.treeOutline.processingSelectionChange;
 }
 
 /**

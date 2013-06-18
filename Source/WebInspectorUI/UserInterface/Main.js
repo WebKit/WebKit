@@ -827,6 +827,13 @@ WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar = function(rep
         return;
 
     var selectedSidebarPanel = this.navigationSidebar.selectedSidebarPanel;
+
+    // If the tree outline is processing a selection currently then we can assume the selection does not
+    // need to be changed. This is needed to allow breakpoints tree elements to be selected without jumping
+    // back to selecting the resource tree element.
+    if (selectedSidebarPanel.contentTreeOutline.processingSelectionChange)
+        return;
+
     var treeElement = selectedSidebarPanel.treeElementForRepresentedObject(representedObject);
     if (treeElement)
         treeElement.revealAndSelect(true, false, true, true);
