@@ -1,3 +1,15 @@
+2013-06-17  Roger Fong  <roger_fong@apple.com>
+
+        Add some UNUSED_PARAMs to RenderBlock.cpp so that it builds properly if CSS_EXCLUSIONS is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=117722.
+
+        Rubberstamped by Jon Lee.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateRegionsAndExclusionsAfterChildLayout):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+
 2013-06-17  Beth Dakin  <bdakin@apple.com>
 
         PageBanners appear over HTML5 video when media element is in full screen mode

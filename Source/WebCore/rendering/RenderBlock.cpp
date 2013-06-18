@@ -1530,6 +1530,8 @@ void RenderBlock::updateRegionsAndExclusionsAfterChildLayout(RenderFlowThread* f
     ShapeInsideInfo* shapeInsideInfo = layoutShapeInsideInfo();
     if (heightChanged && shapeInsideInfo)
         shapeInsideInfo->dirtyShapeSize();
+#else
+    UNUSED_PARAM(heightChanged);
 #endif
     computeRegionRangeForBlock(flowThread);
 }
@@ -4431,6 +4433,9 @@ LayoutUnit RenderBlock::logicalRightOffsetForContent(RenderRegion* region) const
 
 LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode offsetMode) const
 {
+#if !ENABLE(CSS_EXCLUSIONS)
+    UNUSED_PARAM(offsetMode);
+#endif
     LayoutUnit left = fixedOffset;
     if (m_floatingObjects && m_floatingObjects->hasLeftObjects()) {
         if (heightRemaining)
@@ -4488,6 +4493,9 @@ LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUn
 
 LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode offsetMode) const
 {
+#if !ENABLE(CSS_EXCLUSIONS)
+    UNUSED_PARAM(offsetMode);
+#endif
     LayoutUnit right = fixedOffset;
     if (m_floatingObjects && m_floatingObjects->hasRightObjects()) {
         if (heightRemaining)
