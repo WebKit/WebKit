@@ -1,3 +1,25 @@
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Re-implement WebFrameNetworkingContext.
+        <rdar://problem/13174821>.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h: Added.
+        (WebKit::WebFrameNetworkingContext::create):
+        (WebKit::WebFrameNetworkingContext::WebFrameNetworkingContext):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm: Added.
+        (WebKit::WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase):
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::destroyPrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        (WebKit::WebFrameNetworkingContext::needsSiteSpecificQuirks):
+        (WebKit::WebFrameNetworkingContext::localFileContentSniffingEnabled):
+        (WebKit::WebFrameNetworkingContext::scheduledRunLoopPairs):
+        (WebKit::WebFrameNetworkingContext::sourceApplicationAuditData):
+        (WebKit::WebFrameNetworkingContext::blockedError):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+
 2013-06-18  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13174821> Remove files with an incorrect license.

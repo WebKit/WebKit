@@ -1,3 +1,22 @@
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Re-implement WebFrameNetworkingContext.
+        <rdar://problem/13174821>.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/WebFrameNetworkingContext.cpp: Added.
+        (WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        (WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase):
+        (WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebFrameNetworkingContext::destroyPrivateBrowsingSession):
+        (WebFrameNetworkingContext::blockedError):
+        (WebFrameNetworkingContext::referrer):
+        (WebFrameNetworkingContext::storageSession):
+        * WebCoreSupport/WebFrameNetworkingContext.h: Added.
+        (WebFrameNetworkingContext::create):
+        (WebFrameNetworkingContext::WebFrameNetworkingContext):
+
 2013-06-18  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13174821> Remove files with an incorrect license.
