@@ -2037,7 +2037,7 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
     rect.setLocation(topLeft);
-    if (shouldUseClipForRepaint(o)) {
+    if (o->hasOverflowClip()) {
         RenderBox* containerBox = toRenderBox(o);
         containerBox->applyCachedClipAndScrollOffsetForRepaint(rect);
         if (rect.isEmpty())

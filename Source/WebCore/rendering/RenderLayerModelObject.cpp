@@ -73,16 +73,6 @@ bool RenderLayerModelObject::hasSelfPaintingLayer() const
     return m_layer && m_layer->isSelfPaintingLayer();
 }
 
-// If this has a self painting layer, visual overflow rects of the container doesn't contain this rect.
-// If hasOverflowClip() of the container is changed, the container requests repainting visual overflow rects.
-// Since the overflow rects doesn't contain this rect, the container doesn't request repainting this rect.
-// Therefore, this should request repainting overflowed portion.
-bool RenderLayerModelObject::shouldUseClipForRepaint(RenderObject* container) const
-{
-    ASSERT(container == this->container());
-    return !hasSelfPaintingLayer() && container->hasOverflowClip();
-}
-    
 void RenderLayerModelObject::willBeDestroyed()
 {
     if (isPositioned()) {
