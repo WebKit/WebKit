@@ -1,4 +1,25 @@
 =================
+WebKitGTK+  2.1.2
+=================
+
+What's new in WebKitGTK+ 2.1.2?
+
+  - Set the subresources load priority using new libsoup API available
+    in 2.43.
+  - Do not use X11 WidgetBackingStore implementation in Wayland.
+  - Support using GLContext from multiple threads.
+  - Make sure gstreamer source element is thread-safe.
+  - Prevent race condition when pad caps is set on gstreamer player.
+  - Invalidate the ProcessLauncher when the process is terminated
+    before it has finished launching
+  - Use custom cairo code instead of Pango API for highlighting
+    misspelled words.
+  - Respect PKG_CONFIG env variable when generating gtk-doc.
+  - Fix a crash due to an assert in gstreamer backend when seeking.
+  - Fix memory leak when web process is terminated.
+  - Translation updates: Telugu, Hindi, Kannada, Odia.
+
+=================
 WebKitGTK+  2.1.1
 =================
 

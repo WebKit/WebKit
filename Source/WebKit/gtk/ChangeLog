@@ -1,3 +1,9 @@
+2013-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.1.2 release.
+
+        * NEWS: Added release notes for 2.1.2.
+
 2013-06-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Unreviewed, rolling out r151632.
