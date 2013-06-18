@@ -1,3 +1,13 @@
+2013-06-17  Roger Fong  <roger_fong@apple.com>
+
+        Modify Windows makefiles to copy some bin output into Program Files.
+        https://bugs.webkit.org/show_bug.cgi?id=117714.
+        <rdar://problem/14179054>
+
+        Reviewed by Brent Fulgham.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.make:
+
 2013-06-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Function names on Object.prototype should be common identifiers
