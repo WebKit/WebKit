@@ -1,3 +1,13 @@
+2013-06-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        Rebaseline after system update
+
+        Unreviewed.
+
+        * http/tests/cache/partitioned-cache-expected.txt:
+        * http/tests/cache/partitioned-cache-iframe-expected.txt:
+        System fix, the tests pass.
+
 2013-06-18  Zalan Bujtas  <zalan@apple.com>
 
         widthMediaFeatureEval ends up with null FrameView during iframe unload.

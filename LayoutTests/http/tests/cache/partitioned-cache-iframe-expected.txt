@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 18: The cache is not properly partitioned
+CONSOLE MESSAGE: line 20: PASS
 
