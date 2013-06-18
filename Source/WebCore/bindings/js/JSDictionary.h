@@ -50,6 +50,10 @@ class Storage;
 class TrackBase;
 class VoidCallback;
 
+#if ENABLE(SCRIPTED_SPEECH)
+class SpeechRecognitionResultList;
+#endif
+
 class JSDictionary {
 public:
     JSDictionary(JSC::ExecState* exec, JSC::JSObject* initializerObject)
@@ -126,6 +130,9 @@ private:
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<CSSFontFaceRule>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<DOMError>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<VoidCallback>& result);
+#endif
+#if ENABLE(SCRIPTED_SPEECH)
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<SpeechRecognitionResultList>&);
 #endif
 
     JSC::ExecState* m_exec;

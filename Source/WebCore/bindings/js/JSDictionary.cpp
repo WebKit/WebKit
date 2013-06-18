@@ -52,6 +52,10 @@
 #include "JSMediaStream.h"
 #endif
 
+#if ENABLE(SCRIPTED_SPEECH)
+#include "JSSpeechRecognitionResultList.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -246,6 +250,13 @@ void JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, RefPtr
         return;
 
     result = JSVoidCallback::create(asObject(value), jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()));
+}
+#endif
+
+#if ENABLE(SCRIPTED_SPEECH)
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<SpeechRecognitionResultList>& result)
+{
+    result = toSpeechRecognitionResultList(value);
 }
 #endif
 
