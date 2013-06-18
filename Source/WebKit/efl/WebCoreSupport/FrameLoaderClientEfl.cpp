@@ -66,8 +66,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-using namespace WebCore;
-
 namespace WebCore {
 
 FrameLoaderClientEfl::FrameLoaderClientEfl(Evas_Object* view)
