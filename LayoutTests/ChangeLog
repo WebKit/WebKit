@@ -1,3 +1,10 @@
+2013-06-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac rebaseline.
+
+        * fast/repaint/table-cell-collapsed-border-scroll-expected.png:
+        * fast/repaint/table-cell-collapsed-border-scroll-expected.txt:
+
 2013-06-17  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Consider bottom borders when calculating the position of the overflow
