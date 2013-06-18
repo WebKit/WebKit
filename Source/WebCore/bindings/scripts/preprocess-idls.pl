@@ -60,7 +60,7 @@ my $windowConstructorsCode = "";
 my $workerContextConstructorsCode = "";
 # Get rid of duplicates in idlFiles array.
 my %idlFileHash = map { $_, 1 } @idlFiles;
-foreach my $idlFile (keys %idlFileHash) {
+foreach my $idlFile (sort keys %idlFileHash) {
     my $fullPath = Cwd::realpath($idlFile);
     my $idlFileContents = getFileContents($fullPath);
     my $partialInterfaceName = getPartialInterfaceNameFromIDL($idlFileContents);
@@ -108,32 +108,45 @@ foreach my $idlFile (keys %supplementalDependencies) {
 # The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
 # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
 # The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
-
-open FH, "> $supplementalDependencyFile" or die "Cannot open $supplementalDependencyFile\n";
-
+my $dependencies = "";
 foreach my $idlFile (sort keys %supplementals) {
-    print FH $idlFile, " @{$supplementals{$idlFile}}\n";
+    $dependencies .= "$idlFile @{$supplementals{$idlFile}}\n";
 }
-close FH;
-
+WriteFileIfChanged($supplementalDependencyFile, $dependencies);
 
 if ($supplementalMakefileDeps) {
-    open MAKE_FH, "> $supplementalMakefileDeps" or die "Cannot open $supplementalMakefileDeps\n";
-    my @all_dependencies = [];
+    my $makefileDeps = "";
     foreach my $idlFile (sort keys %supplementals) {
         my $basename = $idlFileToInterfaceName{$idlFile};
 
         my @dependencies = map { basename($_) } @{$supplementals{$idlFile}};
 
-        print MAKE_FH "JS${basename}.h: @{dependencies}\n";
-        print MAKE_FH "DOM${basename}.h: @{dependencies}\n";
-        print MAKE_FH "WebDOM${basename}.h: @{dependencies}\n";
+        $makefileDeps .= "JS${basename}.h: @{dependencies}\n";
+        $makefileDeps .= "DOM${basename}.h: @{dependencies}\n";
+        $makefileDeps .= "WebDOM${basename}.h: @{dependencies}\n";
         foreach my $dependency (@dependencies) {
-            print MAKE_FH "${dependency}:\n";
+            $makefileDeps .= "${dependency}:\n";
         }
     }
 
-    close MAKE_FH;
+    WriteFileIfChanged($supplementalMakefileDeps, $makefileDeps);
+}
+
+sub WriteFileIfChanged
+{
+    my $fileName = shift;
+    my $contents = shift;
+
+    if (-f $fileName) {
+        open FH, "<", $fileName or die "Couldn't open $fileName: $!\n";
+        my @lines = <FH>;
+        my $oldContents = join "", @lines;
+        close FH;
+        return if $contents eq $oldContents;
+    }
+    open FH, ">", $fileName or die "Couldn't open $fileName: $!\n";
+    print FH $contents;
+    close FH;
 }
 
 sub GeneratePartialInterface
@@ -142,12 +155,9 @@ sub GeneratePartialInterface
     my $attributesCode = shift;
     my $destinationFile = shift;
 
-    # Generate partial interface for global constructors.
-    open PARTIAL_INTERFACE_FH, "> $destinationFile" or die "Cannot open $destinationFile\n";
-    print PARTIAL_INTERFACE_FH "partial interface ${interfaceName} {\n";
-    print PARTIAL_INTERFACE_FH $attributesCode;
-    print PARTIAL_INTERFACE_FH "};\n";
-    close PARTIAL_INTERFACE_FH;
+    my $contents = "partial interface ${interfaceName} {\n$attributesCode};\n";
+    WriteFileIfChanged($destinationFile, $contents);
+
     my $fullPath = Cwd::realpath($destinationFile);
     $supplementalDependencies{$fullPath} = $interfaceName if $interfaceNameToIdlFile{$interfaceName};
 }

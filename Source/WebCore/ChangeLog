@@ -1,3 +1,25 @@
+2013-06-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        touching any idl rebuilds all derived sources
+        https://bugs.webkit.org/show_bug.cgi?id=117708
+
+        Reviewed by Kentaro Hara.
+
+        Fix preprocess-idls.pl script to update the following files only
+        if they have changed:
+        DerivedSources/WebCore/supplemental_dependency.tmp
+        DerivedSources/WebCore/DOMWindowConstructors.idl
+        DerivedSources/WebCore/WorkerContextConstructors.idl
+
+        This avoids triggering uselessly bindings generation for all IDL
+        files whenever an IDL file is touched.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (WriteFileIfChanged):
+        (GeneratePartialInterface):
+
 2013-06-18  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GStreamer] [texmap] upload a video buffer into the video texture
