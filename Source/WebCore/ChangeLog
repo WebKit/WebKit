@@ -1,3 +1,16 @@
+2013-06-18  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Shader compiler not properly configured for GLES on cairo based ports
+        https://bugs.webkit.org/show_bug.cgi?id=117705
+
+        Reviewed by Martin Robinson.
+
+        Configure the shader compiler with SH_ESSL_OUTPUT for GLESv2
+        compliant platforms, and with SH_GLSL_OUTPUT otherwise.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2013-06-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         touching any idl rebuilds all derived sources
