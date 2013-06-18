@@ -65,8 +65,6 @@ WebInspector.Size = function(width, height)
     this.height = height || 0;
 };
 
-WebInspector.Size.ZERO_SIZE = new WebInspector.Size(0, 0);
-
 WebInspector.Size.prototype = {
     constructor: WebInspector.Size,
 
@@ -86,13 +84,14 @@ WebInspector.Size.prototype = {
     }
 };
 
+WebInspector.Size.ZERO_SIZE = new WebInspector.Size(0, 0);
+
+
 WebInspector.Rect = function(x, y, width, height)
 {
     this.origin = new WebInspector.Point(x || 0, y || 0);
     this.size = new WebInspector.Size(width || 0, height || 0);
 };
-
-WebInspector.Rect.ZERO_RECT = new WebInspector.Rect(0, 0, 0, 0);
 
 WebInspector.Rect.rectFromClientRect = function(clientRect)
 {
@@ -175,6 +174,9 @@ WebInspector.Rect.prototype = {
         return intersection;
     }
 };
+
+WebInspector.Rect.ZERO_RECT = new WebInspector.Rect(0, 0, 0, 0);
+
 
 WebInspector.EdgeInsets = function(top, right, bottom, left)
 {

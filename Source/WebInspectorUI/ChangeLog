@@ -1,3 +1,19 @@
+2013-06-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Infrequent uncaught exception with debugger popovers breaks inspector
+        https://bugs.webkit.org/show_bug.cgi?id=117755
+
+        Create the ZERO_SIZE and ZERO_RECT objects after we've setup the Size
+        and Rect prototypes, so they get the expected methods. We then need to
+        handle the ZERO_RECT case better, and not attempt to draw a background
+        in a canvas with a 0 size, which would produce an exception.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Geometry.js:
+        * UserInterface/Popover.js:
+        (WebInspector.Popover.prototype._update):
+
 2013-06-18  Timothy Hatcher  <timothy@apple.com>
 
         If the tree outline is processing a selection currently, then don't change the selection.

@@ -217,37 +217,43 @@ WebInspector.Popover.prototype = {
 
         var anchorPoint;
         var bestFrame = bestMetrics.frame;
-        switch (bestEdge) {
-        case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
-            anchorPoint = new WebInspector.Point(bestFrame.size.width - WebInspector.Popover.ShadowPadding, targetFrame.midY() - bestFrame.minY());
-            break;
-        case WebInspector.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
-            anchorPoint = new WebInspector.Point(WebInspector.Popover.ShadowPadding, targetFrame.midY() - bestFrame.minY());
-            break;
-        case WebInspector.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
-            anchorPoint = new WebInspector.Point(targetFrame.midX() - bestFrame.minX(), bestFrame.size.height - WebInspector.Popover.ShadowPadding);
-            break;
-        case WebInspector.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
-            anchorPoint = new WebInspector.Point(targetFrame.midX() - bestFrame.minX(), WebInspector.Popover.ShadowPadding);
-            break;
-        }
 
         var needsToDrawBackground = !this._frame.size.equals(bestFrame.size) || this._edge !== bestEdge;
 
         this.frame = bestFrame;
         this._edge = bestEdge;
 
-        this._element.classList.add(this._cssClassNameForEdge());
+        if (this.frame === WebInspector.Rect.ZERO_RECT) {
+            // The target for the popover is offscreen.
+            this.dismiss();
+        } else {
+            switch (bestEdge) {
+            case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
+                anchorPoint = new WebInspector.Point(bestFrame.size.width - WebInspector.Popover.ShadowPadding, targetFrame.midY() - bestFrame.minY());
+                break;
+            case WebInspector.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
+                anchorPoint = new WebInspector.Point(WebInspector.Popover.ShadowPadding, targetFrame.midY() - bestFrame.minY());
+                break;
+            case WebInspector.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
+                anchorPoint = new WebInspector.Point(targetFrame.midX() - bestFrame.minX(), bestFrame.size.height - WebInspector.Popover.ShadowPadding);
+                break;
+            case WebInspector.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
+                anchorPoint = new WebInspector.Point(targetFrame.midX() - bestFrame.minX(), WebInspector.Popover.ShadowPadding);
+                break;
+            }
 
-        if (needsToDrawBackground)
-            this._drawBackground(bestEdge, anchorPoint);
+            this._element.classList.add(this._cssClassNameForEdge());
 
-        // Make sure content is centered in case either of the dimension is smaller than the minimal bounds.
-        if (this._preferredSize.width < WebInspector.Popover.MinWidth || this._preferredSize.height < WebInspector.Popover.MinHeight)
-            this._container.classList.add("center");
-        else
-            this._container.classList.remove("center");
-        
+            if (needsToDrawBackground)
+                this._drawBackground(bestEdge, anchorPoint);
+
+            // Make sure content is centered in case either of the dimension is smaller than the minimal bounds.
+            if (this._preferredSize.width < WebInspector.Popover.MinWidth || this._preferredSize.height < WebInspector.Popover.MinHeight)
+                this._container.classList.add("center");
+            else
+                this._container.classList.remove("center");
+        }
+
         // Wrap the content in the container so that it's located correctly.
         if (this._contentNeedsUpdate) {
             this._container.textContent = "";
