@@ -1,3 +1,36 @@
+2013-06-18  Timothy Hatcher  <timothy@apple.com>
+
+        Update breakpoints to match Xcode 5.
+
+        This updates the breakpoint images, line colors, and moves breakpoints toggle button
+        to the Debugger sidebar navigation bar.
+
+        https://bugs.webkit.org/show_bug.cgi?id=117723
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+        * UserInterface/DebuggerSidebarPanel.css: Removed custom toggle button rules.
+        * UserInterface/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointsToggleButtonClicked):
+        * UserInterface/Images/Breakpoint.png: Updated.
+        * UserInterface/Images/Breakpoints.pdf: Added.
+        * UserInterface/Images/Breakpoint@2x.png: Updated.
+        * UserInterface/Images/BreakpointButton.pdf: Updated.
+        * UserInterface/Images/BreakpointInactive.png: Updated.
+        * UserInterface/Images/BreakpointInactive@2x.png: Updated.
+        * UserInterface/Images/BreakpointInactiveButton.pdf: Updated.
+        * UserInterface/Images/InstructionPointer.png: Updated.
+        * UserInterface/Images/InstructionPointer@2x.png: Updated.
+        * UserInterface/SourceCodeTextEditor.css:
+        (.source-code.text-editor > .CodeMirror .error): Updated background-color and removed box-shadow.
+        (.source-code.text-editor > .CodeMirror .warning): Ditto.
+        * UserInterface/TextEditor.css:
+        (.text-editor > .CodeMirror .has-breakpoint .CodeMirror-linenumber::before): Changed left position to 0.
+        (.text-editor > .CodeMirror .execution-line .CodeMirror-linenumber::after): Updated position.
+        (.text-editor > .CodeMirror .execution-line): Updated background-color and removed box-shadow.
+
 2013-06-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         <http://webkit.org/b/117615> Web Inspector: JS PrettyPrinting Should have space between "do" and "{"

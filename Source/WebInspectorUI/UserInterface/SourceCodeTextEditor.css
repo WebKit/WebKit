@@ -24,13 +24,11 @@
  */
 
 .source-code.text-editor > .CodeMirror .error {
-    box-shadow: inset rgb(237, 212, 207) 0 1px 0, inset rgb(237, 212, 207) 0 -1px 0;
-    background-color: rgb(245, 222, 217);
+    background-color: rgb(255, 220, 208);
 }
 
 .source-code.text-editor > .CodeMirror .warning {
-    box-shadow: inset rgb(247, 237, 201) 0 1px 0, inset rgb(247, 237, 201) 0 -1px 0;
-    background-color: rgb(247, 242, 217);
+    background-color: rgb(253, 249, 226);
 }
 
 .popover .debugger-popover-content {

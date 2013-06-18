@@ -33,15 +33,3 @@
     left: 0;
     right: 0;
 }
-
-.sidebar > .panel.debugger .breakpoint-toggle {
-    width: 21px;
-    height: 12px;
-    content: url(Images/BreakpointInactiveButton.pdf);
-    margin-top: 1px;
-    float: right;
-}
-
-.sidebar > .panel.debugger .breakpoint-toggle.enabled {
-    content: url(Images/BreakpointButton.pdf);
-}

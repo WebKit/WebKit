@@ -49,7 +49,7 @@
 .text-editor > .CodeMirror .has-breakpoint .CodeMirror-linenumber::before {
     position: absolute;
     top: 0;
-    left: 1px;
+    left: 0;
     bottom: 0;
     right: -7px;
 
@@ -82,7 +82,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    right: -7px;
+    right: -9px;
     width: 9px;
 
     content: "";
@@ -95,8 +95,7 @@
 }
 
 .text-editor > .CodeMirror .execution-line {
-    box-shadow: inset rgb(216, 225, 203) 0 1px 0, inset rgb(216, 225, 203) 0 -1px 0 !important;
-    background: -webkit-linear-gradient(top, rgb(238, 243, 231), rgb(234, 239, 227) 50%, rgb(231, 236, 224) 50%, rgb(231, 236, 224)) !important;
+    background-color: rgb(217, 234, 208) !important;
 }
 
 .text-editor .bouncy-highlight {

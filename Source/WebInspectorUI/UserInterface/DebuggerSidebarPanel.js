@@ -51,8 +51,16 @@ WebInspector.DebuggerSidebarPanel = function()
     this._navigationBar = new WebInspector.NavigationBar;
     this.element.appendChild(this._navigationBar.element);
 
-    var toolTip = WebInspector.UIString("Pause script execution (%s or %s)").format(this._pauseOrResumeKeyboardShortcut.displayName, this._pauseOrResumeAlternateKeyboardShortcut.displayName);
-    var altToolTip = WebInspector.UIString("Continue script execution (%s or %s)").format(this._pauseOrResumeKeyboardShortcut.displayName, this._pauseOrResumeAlternateKeyboardShortcut.displayName);
+    var toolTip = WebInspector.UIString("Enable all breakpoints");
+    var altToolTip = WebInspector.UIString("Disable all breakpoints");
+
+    this._debuggerBreakpointsButtonItem = new WebInspector.ActivateButtonNavigationItem("debugger-breakpoints", toolTip, altToolTip, "Images/Breakpoints.pdf", 16, 16);
+    this._debuggerBreakpointsButtonItem.activated = WebInspector.debuggerManager.breakpointsEnabled;
+    this._debuggerBreakpointsButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._breakpointsToggleButtonClicked, this);
+    this._navigationBar.addNavigationItem(this._debuggerBreakpointsButtonItem);
+
+    toolTip = WebInspector.UIString("Pause script execution (%s or %s)").format(this._pauseOrResumeKeyboardShortcut.displayName, this._pauseOrResumeAlternateKeyboardShortcut.displayName);
+    altToolTip = WebInspector.UIString("Continue script execution (%s or %s)").format(this._pauseOrResumeKeyboardShortcut.displayName, this._pauseOrResumeAlternateKeyboardShortcut.displayName);
 
     this._debuggerPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("debugger-pause-resume", toolTip, altToolTip, "Images/Pause.pdf", "Images/Resume.pdf", 16, 16);
     this._debuggerPauseResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._debuggerPauseResumeButtonClicked, this);
@@ -92,14 +100,8 @@ WebInspector.DebuggerSidebarPanel = function()
     var breakpointsRow = new WebInspector.DetailsSectionRow;
     breakpointsRow.element.appendChild(this._breakpointsContentTreeOutline.element);
 
-    this._breakpointsToggleElement = document.createElement("img");
-    this._breakpointsToggleElement.className = WebInspector.DebuggerSidebarPanel.BreakpointToggleStyleClassName;
-    if (WebInspector.debuggerManager.breakpointsEnabled)
-        this._breakpointsToggleElement.classList.add(WebInspector.DebuggerSidebarPanel.BreakpointToggleEnabledStyleClassName);
-    this._breakpointsToggleElement.addEventListener("click", this._breakpointsToggleButtonClicked.bind(this));
-
     var breakpointsGroup = new WebInspector.DetailsSectionGroup([breakpointsRow]);
-    var breakpointsSection = new WebInspector.DetailsSection("breakpoints", WebInspector.UIString("Breakpoints"), [breakpointsGroup], this._breakpointsToggleElement);
+    var breakpointsSection = new WebInspector.DetailsSection("breakpoints", WebInspector.UIString("Breakpoints"), [breakpointsGroup]);
     this.contentElement.appendChild(breakpointsSection.element);
 
     this._callStackContentTreeOutline = this.createContentTreeOutline(true);
@@ -116,8 +118,6 @@ WebInspector.DebuggerSidebarPanel = function()
 
 WebInspector.DebuggerSidebarPanel.OffsetSectionsStyleClassName = "offset-sections";
 WebInspector.DebuggerSidebarPanel.ExceptionIconStyleClassName = "breakpoint-exception-icon";
-WebInspector.DebuggerSidebarPanel.BreakpointToggleStyleClassName = "breakpoint-toggle";
-WebInspector.DebuggerSidebarPanel.BreakpointToggleEnabledStyleClassName = "enabled";
 
 WebInspector.DebuggerSidebarPanel.prototype = {
     constructor: WebInspector.DebuggerSidebarPanel,
@@ -173,7 +173,8 @@ WebInspector.DebuggerSidebarPanel.prototype = {
 
     _breakpointsToggleButtonClicked: function(event)
     {
-        WebInspector.debuggerManager.breakpointsEnabled = this._breakpointsToggleElement.classList.toggle(WebInspector.DebuggerSidebarPanel.BreakpointToggleEnabledStyleClassName);
+        this._debuggerBreakpointsButtonItem.activated = !this._debuggerBreakpointsButtonItem.activated;
+        WebInspector.debuggerManager.breakpointsEnabled = this._debuggerBreakpointsButtonItem.activated;
     },
 
     _addBreakpoint: function(breakpoint, sourceCode)
