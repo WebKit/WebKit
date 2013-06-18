@@ -1,3 +1,23 @@
+2013-06-18  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Remove lineOverflowsFromShapeInside boolean from RenderBlock::layoutRunsAndFloatsInRange function
+        https://bugs.webkit.org/show_bug.cgi?id=117757
+
+        Reviewed by David Hyatt.
+
+        We don't need keep lineOverflowsFromShapeInside boolean in RenderBlock::layoutRunsAndFloatsInRange and in its
+        helpers because it's easy to decide whether we are in an shape content overflow state or not, so I got rid of
+        lineOverflowsFromShapeInside's occurences and updated the affected functions.
+
+        Covered by existing overflow tests in fast/exclusions/shape-inside and fast/regions/shape-inside.
+
+        * rendering/RenderBlock.h: Update helper's definition.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::pushShapeContentOverflowBelowTheContentBox): Add condition when overflow is already positioned.
+        (WebCore::RenderBlock::updateShapeAndSegmentsForCurrentLine): Remove lineOverflowsFromShapeInside.
+        (WebCore::RenderBlock::updateShapeAndSegmentsForCurrentLineInFlowThread):  Remove lineOverflowsFromShapeInside.
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):  Remove lineOverflowsFromShapeInside.
+
 2013-06-18  Zalan Bujtas  <zalan@apple.com>
 
         widthMediaFeatureEval ends up with null FrameView during iframe unload.
