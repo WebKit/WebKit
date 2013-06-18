@@ -2437,7 +2437,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
             return ImageMapRole;
         return WebCoreLinkRole;
     }
-    if (cssBox && cssBox->isListItem())
+    if ((cssBox && cssBox->isListItem()) || (node && node->hasTagName(liTag)))
         return ListItemRole;
     if (m_renderer->isListMarker())
         return ListMarkerRole;

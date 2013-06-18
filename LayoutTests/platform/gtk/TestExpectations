@@ -1409,6 +1409,8 @@ webkit.org/b/113168 fast/dom/Window/window-postmessage-clone-deep-array.html [ F
 webkit.org/b/113168 fast/js/large-expressions.html [ Failure ]
 webkit.org/b/113168 fast/js/toString-stack-overflow.html [ Failure ]
 
+webkit.org/b/117706 accessibility/box-styled-lists.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

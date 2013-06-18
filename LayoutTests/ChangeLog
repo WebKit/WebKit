@@ -1,3 +1,17 @@
+2013-06-17  Brent Fulgham  <bfulgham@apple.com>
+
+        AX: Correct accessibility role when -webkit-box:display is used.
+        https://bugs.webkit.org/show_bug.cgi?id=117706
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/box-styled-lists.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/accessibility/box-styled-lists-expected.txt: Added.
+        * platform/win/TestExpectations:
+        * platform/win/accessibility/box-styled-lists-expected.txt: Added.
+
 2013-06-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac rebaseline.

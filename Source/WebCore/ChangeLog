@@ -1,3 +1,17 @@
+2013-06-14  Brent Fulgham  <bfulgham@apple.com>
+
+        AX: Correct accessibility role when -webkit-box:display is used.
+        https://bugs.webkit.org/show_bug.cgi?id=117706
+
+        Reviewed by Chris Fleizach.
+
+        accessibility/box-styled-lists.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole): If HTML token is
+        of the list element type, treat it as a ListItemRole accessibility role, regardless
+        of what specific renderer is being used.
+
 2013-06-17  Roger Fong  <roger_fong@apple.com>
 
         Add some UNUSED_PARAMs to RenderBlock.cpp so that it builds properly if CSS_EXCLUSIONS is disabled.
