@@ -89,7 +89,7 @@ struct WebPageCreationParameters {
     float mediaVolume;
     bool mayStartMediaWhenInWindow;
 
-    float minimumLayoutWidth;
+    WebCore::IntSize minimumLayoutSize;
 
 #if PLATFORM(MAC)
     LayerHostingMode layerHostingMode;

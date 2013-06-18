@@ -1237,10 +1237,11 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout,
         defaultScrollbarMode, /* lock */ shouldHideScrollbars, defaultScrollbarMode, /* lock */ shouldHideScrollbars);
 
-    int minimumLayoutWidth = webPage->minimumLayoutWidth();
-    int maximumSize = std::numeric_limits<int>::max();
-    if (minimumLayoutWidth)
-        m_frame->coreFrame()->view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, 1), IntSize(maximumSize, maximumSize));
+    if (int minimumLayoutWidth = webPage->minimumLayoutSize().width()) {
+        int minimumLayoutHeight = std::max(webPage->minimumLayoutSize().height(), 1);
+        int maximumSize = std::numeric_limits<int>::max();
+        m_frame->coreFrame()->view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, minimumLayoutHeight), IntSize(maximumSize, maximumSize));
+    }
 
     m_frame->coreFrame()->view()->setProhibitsScrolling(shouldDisableScrolling);
     m_frame->coreFrame()->view()->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());

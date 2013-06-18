@@ -307,7 +307,6 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
     , m_suppressVisibilityUpdates(false)
-    , m_minimumLayoutWidth(0)
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
     , m_waitingForDidUpdateInWindowState(false)
@@ -3990,7 +3989,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.deviceScaleFactor = deviceScaleFactor();
     parameters.mediaVolume = m_mediaVolume;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
-    parameters.minimumLayoutWidth = m_minimumLayoutWidth;
+    parameters.minimumLayoutSize = m_minimumLayoutSize;
 
 #if PLATFORM(MAC)
     parameters.layerHostingMode = m_layerHostingMode;
@@ -4370,21 +4369,21 @@ void WebPageProxy::linkClicked(const String& url, const WebMouseEvent& event)
     m_process->send(Messages::WebPage::LinkClicked(url, event), m_pageID, 0);
 }
 
-void WebPageProxy::setMinimumLayoutWidth(double minimumLayoutWidth)
+void WebPageProxy::setMinimumLayoutSize(const IntSize& minimumLayoutSize)
 {
-    if (m_minimumLayoutWidth == minimumLayoutWidth)
+    if (m_minimumLayoutSize == minimumLayoutSize)
         return;
 
-    m_minimumLayoutWidth = minimumLayoutWidth;
+    m_minimumLayoutSize = minimumLayoutSize;
 
     if (!isValid())
         return;
 
-    m_process->send(Messages::WebPage::SetMinimumLayoutWidth(minimumLayoutWidth), m_pageID, 0);
-    m_drawingArea->minimumLayoutWidthDidChange();
+    m_process->send(Messages::WebPage::SetMinimumLayoutSize(minimumLayoutSize), m_pageID, 0);
+    m_drawingArea->minimumLayoutSizeDidChange();
 
 #if PLATFORM(MAC)
-    if (m_minimumLayoutWidth <= 0)
+    if (m_minimumLayoutSize.width() <= 0)
         intrinsicContentSizeDidChange(IntSize(-1, -1));
 #endif
 }

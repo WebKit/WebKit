@@ -757,8 +757,8 @@ public:
 
     const WebLoaderClient& loaderClient() { return m_loaderClient; }
 
-    double minimumLayoutWidth() const { return m_minimumLayoutWidth; }
-    void setMinimumLayoutWidth(double);
+    WebCore::IntSize minimumLayoutSize() const { return m_minimumLayoutSize; }
+    void setMinimumLayoutSize(const WebCore::IntSize&);
 
     bool mainFrameInViewSourceMode() const { return m_mainFrameInViewSourceMode; }
     void setMainFrameInViewSourceMode(bool);
@@ -1261,7 +1261,7 @@ private:
     bool m_shouldSendEventsSynchronously;
 
     bool m_suppressVisibilityUpdates;
-    float m_minimumLayoutWidth;
+    WebCore::IntSize m_minimumLayoutSize;
 
     float m_mediaVolume;
     bool m_mayStartMediaWhenInWindow;

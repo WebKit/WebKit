@@ -253,7 +253,7 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
 
 void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize&)
 {
-    if (!m_webPage->minimumLayoutWidth())
+    if (!m_webPage->minimumLayoutSize().width())
         return;
 
     if (m_inUpdateGeometry)
@@ -424,12 +424,12 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, cons
     IntSize size = viewSize;
     IntSize contentSize = IntSize(-1, -1);
 
-    if (!m_webPage->minimumLayoutWidth())
+    if (!m_webPage->minimumLayoutSize().width())
         m_webPage->setSize(size);
 
     m_webPage->layoutIfNeeded();
 
-    if (m_webPage->minimumLayoutWidth()) {
+    if (m_webPage->minimumLayoutSize().width()) {
         contentSize = m_webPage->mainWebFrame()->contentBounds().size();
         size = contentSize;
     }
@@ -457,7 +457,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, cons
 
     m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 
-    if (m_webPage->minimumLayoutWidth() && !m_updateIntrinsicContentSizeTimer.isActive())
+    if (m_webPage->minimumLayoutSize().width() && !m_updateIntrinsicContentSizeTimer.isActive())
         m_updateIntrinsicContentSizeTimer.startOneShot(0);
 
     m_inUpdateGeometry = false;

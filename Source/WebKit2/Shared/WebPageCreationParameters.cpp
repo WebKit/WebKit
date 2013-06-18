@@ -59,7 +59,7 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << deviceScaleFactor;
     encoder << mediaVolume;
     encoder << mayStartMediaWhenInWindow;
-    encoder << minimumLayoutWidth;
+    encoder << minimumLayoutSize;
 
 #if PLATFORM(MAC)
     encoder.encodeEnum(layerHostingMode);
@@ -121,7 +121,7 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, WebPag
         return false;
     if (!decoder.decode(parameters.mayStartMediaWhenInWindow))
         return false;
-    if (!decoder.decode(parameters.minimumLayoutWidth))
+    if (!decoder.decode(parameters.minimumLayoutSize))
         return false;
     
 #if PLATFORM(MAC)

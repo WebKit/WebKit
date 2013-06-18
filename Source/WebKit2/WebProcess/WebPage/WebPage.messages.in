@@ -290,7 +290,7 @@ messages -> WebPage LegacyReceiver {
     InsertDictatedText(WTF::String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, WTF::Vector<WebCore::DictationAlternative> dictationAlternatives) -> (bool handled, WebKit::EditorState newState)
 #endif
 
-    SetMinimumLayoutWidth(double minimumLayoutWidth)
+    SetMinimumLayoutSize(WebCore::IntSize minimumLayoutSize)
 
 #if PLATFORM(EFL)
     ConfirmComposition(WTF::String compositionString)

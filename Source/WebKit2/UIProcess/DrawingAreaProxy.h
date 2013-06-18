@@ -71,7 +71,7 @@ public:
     virtual void waitForPossibleGeometryUpdate(double = didUpdateBackingStoreStateTimeout) { }
 
     virtual void colorSpaceDidChange() { }
-    virtual void minimumLayoutWidthDidChange() { }
+    virtual void minimumLayoutSizeDidChange() { }
 
 #if USE(COORDINATED_GRAPHICS)
     virtual void updateViewport();

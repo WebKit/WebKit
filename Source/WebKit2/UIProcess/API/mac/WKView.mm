@@ -3035,7 +3035,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     // so that autolayout will know to provide space for us.
 
     NSSize intrinsicContentSizeAcknowledgingFlexibleWidth = intrinsicContentSize;
-    if (intrinsicContentSize.width < _data->_page->minimumLayoutWidth())
+    if (intrinsicContentSize.width < _data->_page->minimumLayoutSize().width())
         intrinsicContentSizeAcknowledgingFlexibleWidth.width = NSViewNoInstrinsicMetric;
 
     _data->_intrinsicContentSize = intrinsicContentSizeAcknowledgingFlexibleWidth;
@@ -3277,11 +3277,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     static BOOL loggedDeprecationWarning = NO;
 
     if (!loggedDeprecationWarning) {
-        NSLog(@"Please use minimumWidthForAutoLayout instead of minimumLayoutWidth.");
+        NSLog(@"Please use minimumSizeForAutoLayout instead of minimumLayoutWidth.");
         loggedDeprecationWarning = YES;
     }
 
-    return _data->_page->minimumLayoutWidth();
+    return self.minimumSizeForAutoLayout.width;
 }
 
 - (void)setMinimumLayoutWidth:(CGFloat)minimumLayoutWidth
@@ -3289,7 +3289,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     static BOOL loggedDeprecationWarning = NO;
 
     if (!loggedDeprecationWarning) {
-        NSLog(@"Please use minimumWidthForAutoLayout instead of minimumLayoutWidth.");
+        NSLog(@"Please use setMinimumSizeForAutoLayout: instead of setMinimumLayoutWidth:.");
         loggedDeprecationWarning = YES;
     }
 
@@ -3298,14 +3298,38 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (CGFloat)minimumWidthForAutoLayout
 {
-    return _data->_page->minimumLayoutWidth();
+    static BOOL loggedDeprecationWarning = NO;
+
+    if (!loggedDeprecationWarning) {
+        NSLog(@"Please use minimumSizeForAutoLayout instead of minimumWidthForAutoLayout.");
+        loggedDeprecationWarning = YES;
+    }
+
+    return self.minimumSizeForAutoLayout.width;
 }
 
 - (void)setMinimumWidthForAutoLayout:(CGFloat)minimumLayoutWidth
 {
-    BOOL expandsToFit = minimumLayoutWidth > 0;
+    static BOOL loggedDeprecationWarning = NO;
 
-    _data->_page->setMinimumLayoutWidth(minimumLayoutWidth);
+    if (!loggedDeprecationWarning) {
+        NSLog(@"Please use setMinimumSizeForAutoLayout: instead of setMinimumWidthForAutoLayout:");
+        loggedDeprecationWarning = YES;
+    }
+
+    self.minimumSizeForAutoLayout = NSMakeSize(minimumLayoutWidth, self.minimumSizeForAutoLayout.height);
+}
+
+- (NSSize)minimumSizeForAutoLayout
+{
+    return _data->_page->minimumLayoutSize();
+}
+
+- (void)setMinimumSizeForAutoLayout:(NSSize)minimumSizeForAutoLayout
+{
+    BOOL expandsToFit = minimumSizeForAutoLayout.width > 0;
+
+    _data->_page->setMinimumLayoutSize(IntSize(minimumSizeForAutoLayout.width, minimumSizeForAutoLayout.height));
 
     [self setShouldClipToVisibleRect:expandsToFit];
 }

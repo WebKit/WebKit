@@ -1,3 +1,54 @@
+2013-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Make it possible to set a minimum height for auto-layout
+        https://bugs.webkit.org/show_bug.cgi?id=117758
+        <rdar://problem/12849080>
+
+        Reviewed by Tim Horton.
+
+        Change a bunch of minimumLayoutWidth declarations to minimumLayoutSize and add a new minimumLayoutSize property.
+        If minimumLayoutSize.height is greater than zero, use it to set the minimum layout size on the frame view.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setIntrinsicContentSize:]):
+        (-[WKView minimumLayoutWidth]):
+        (-[WKView setMinimumLayoutWidth:]):
+        (-[WKView minimumWidthForAutoLayout]):
+        (-[WKView setMinimumWidthForAutoLayout:]):
+        (-[WKView minimumSizeForAutoLayout]):
+        (-[WKView setMinimumSizeForAutoLayout:]):
+        * UIProcess/API/mac/WKViewPrivate.h:
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::minimumLayoutSizeDidChange):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setMinimumLayoutSize):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::minimumLayoutSize):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::minimumLayoutSizeDidChange):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::intrinsicContentSizeDidChange):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setMinimumLayoutSize):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::minimumLayoutSize):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged):
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+
 2013-06-18  Simon Cooper  <scooper@apple.com>
 
         sandbox violation when Flash runs for the first time

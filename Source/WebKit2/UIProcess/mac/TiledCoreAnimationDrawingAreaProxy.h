@@ -48,7 +48,7 @@ private:
     virtual void sizeDidChange() OVERRIDE;
     virtual void waitForPossibleGeometryUpdate(double timeout = didUpdateBackingStoreStateTimeout) OVERRIDE;
     virtual void colorSpaceDidChange() OVERRIDE;
-    virtual void minimumLayoutWidthDidChange() OVERRIDE;
+    virtual void minimumLayoutSizeDidChange() OVERRIDE;
 
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) OVERRIDE;
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) OVERRIDE;
@@ -67,8 +67,8 @@ private:
     WebCore::IntSize m_lastSentSize;
     WebCore::IntSize m_lastSentLayerPosition;
 
-    // The last minimum layout width we sent to the web process.
-    double m_lastSentMinimumLayoutWidth;
+    // The last minimum layout size we sent to the web process.
+    WebCore::IntSize m_lastSentMinimumLayoutSize;
 };
 
 } // namespace WebKit
