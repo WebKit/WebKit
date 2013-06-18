@@ -1,3 +1,17 @@
+2013-06-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Remove comment about possibility of handling ObjCPolymorphic (it's used by ObjC bindings only)
+        https://bugs.webkit.org/show_bug.cgi?id=117546
+
+        Reviewed by Xan Lopez.
+
+        According to the WebKit IDL spec the modifier ObjCPolymorphic only
+        applies to the Objective-C bindings generator
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (IsPolymorphic): Remove comment. Search parameter 'type' in array, instead of
+        concatening a series of 'or' conditionals.
+
 2013-06-18  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         Fix after r151673

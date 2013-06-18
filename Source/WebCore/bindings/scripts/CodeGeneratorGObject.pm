@@ -1382,9 +1382,7 @@ sub GenerateEndHeader {
 sub IsPolymorphic {
     my $type = shift;
 
-    # FIXME: should we use ObjCPolymorphic attribute? or is it specific to ObjC bindings?
-    return 1 if $type eq "Node" or $type eq "Event" or $type eq "HTMLCollection" or $type eq "StyleSheet" or $type eq "Blob";
-    return 0;
+    return scalar(grep {$_ eq $type} qw(Blob Event HTMLCollection Node StyleSheet));
 }
 
 sub GenerateEventTargetIface {
