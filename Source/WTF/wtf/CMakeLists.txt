@@ -126,6 +126,7 @@ set(WTF_HEADERS
 
     text/AtomicString.h
     text/AtomicStringImpl.h
+    text/AtomicStringTable.h
     text/Base64.h
     text/CString.h
     text/IntegerToStringConversion.h
@@ -192,6 +193,7 @@ set(WTF_SOURCES
     dtoa/strtod.cc
 
     text/AtomicString.cpp
+    text/AtomicStringTable.cpp
     text/Base64.cpp
     text/CString.cpp
     text/StringBuilder.cpp

@@ -24,6 +24,7 @@
 
 #include "AtomicString.h"
 
+#include "AtomicStringTable.h"
 #include "StringHash.h"
 #include <wtf/HashSet.h>
 #include <wtf/Threading.h>
@@ -64,57 +65,9 @@ public:
 };
 #endif // USE(WEB_THREAD)
 
-class AtomicStringTable {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static AtomicStringTable* create(WTFThreadData& data)
-    {
-#if USE(WEB_THREAD)
-        // On iOS, one AtomicStringTable is shared between the main UI thread and the WebThread.
-        static AtomicStringTable* sharedStringTable = new AtomicStringTable;
-
-        bool currentThreadIsWebThread = isWebThread();
-        if (currentThreadIsWebThread || isUIThread())
-            data.m_atomicStringTable = sharedStringTable;
-        else
-            data.m_atomicStringTable = new AtomicStringTable;
-
-        // We do the following so that its destruction happens only
-        // once - on the main UI thread.
-        if (!currentThreadIsWebThread)
-            data.m_atomicStringTableDestructor = AtomicStringTable::destroy;
-#else
-        data.m_atomicStringTable = new AtomicStringTable;
-        data.m_atomicStringTableDestructor = AtomicStringTable::destroy;
-#endif // USE(WEB_THREAD)
-        return data.m_atomicStringTable;
-    }
-
-    HashSet<StringImpl*>& table()
-    {
-        return m_table;
-    }
-
-private:
-    static void destroy(AtomicStringTable* table)
-    {
-        HashSet<StringImpl*>::iterator end = table->m_table.end();
-        for (HashSet<StringImpl*>::iterator iter = table->m_table.begin(); iter != end; ++iter)
-            (*iter)->setIsAtomic(false);
-        delete table;
-    }
-
-    HashSet<StringImpl*> m_table;
-};
-
-static inline HashSet<StringImpl*>& stringTable()
+static ALWAYS_INLINE HashSet<StringImpl*>& stringTable()
 {
-    // Once possible we should make this non-lazy (constructed in WTFThreadData's constructor).
-    WTFThreadData& data = wtfThreadData();
-    AtomicStringTable* table = data.atomicStringTable();
-    if (UNLIKELY(!table))
-        table = AtomicStringTable::create(data);
-    return table->table();
+    return wtfThreadData().atomicStringTable()->table();
 }
 
 template<typename T, typename HashTranslator>

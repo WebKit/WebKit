@@ -261,6 +261,9 @@
     <ClInclude Include="..\wtf\text\AtomicStringImpl.h">
       <Filter>text</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\text\AtomicStringTable.h">
+      <Filter>text</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\text\Base64.h">
       <Filter>text</Filter>
     </ClInclude>

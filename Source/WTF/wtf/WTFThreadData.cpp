@@ -27,6 +27,8 @@
 #include "config.h"
 #include "WTFThreadData.h"
 
+#include <wtf/text/AtomicStringTable.h>
+
 namespace WTF {
 
 ThreadSpecific<WTFThreadData>* WTFThreadData::staticData;
@@ -42,6 +44,7 @@ WTFThreadData::WTFThreadData()
     , m_stackStats()
 #endif
 {
+    AtomicStringTable::create(*this);
 }
 
 WTFThreadData::~WTFThreadData()

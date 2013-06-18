@@ -1,3 +1,31 @@
+2013-06-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Initialize AtomicStringTable in WTFThreadData's constructor
+        https://bugs.webkit.org/show_bug.cgi?id=117671
+
+        Reviewed by Geoffrey Garen.
+
+        Extracted AtomicStringTable from AtomicString.cpp into AtomicStringTable.h/cpp
+        and made WTFThreadDada::WTFThreadData create the atomic string table for the thread.
+
+        This eliminates a branch from stringTable() in AtomicString.cpp.
+
+        * GNUmakefile.list.am:
+        * WTF.pro:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/text/AtomicString.cpp:
+        (WTF::stringTable):
+        * wtf/text/AtomicStringTable.cpp: Added.
+        (WTF::AtomicStringTable::create):
+        (WTF::AtomicStringTable::destroy):
+        * wtf/text/AtomicStringTable.h: Added.
+        (WTF::AtomicStringTable::table):
+
 2013-06-17  Roger Fong  <roger_fong@apple.com>
 
         Modify Windows makefiles to copy some bin output into Program Files.

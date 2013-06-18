@@ -72,6 +72,7 @@
     <ClCompile Include="..\wtf\StringPrintStream.cpp" />
     <ClCompile Include="..\wtf\TCSystemAlloc.cpp" />
     <ClCompile Include="..\wtf\text\AtomicString.cpp" />
+    <ClCompile Include="..\wtf\text\AtomicStringTable.cpp" />
     <ClCompile Include="..\wtf\text\Base64.cpp" />
     <ClCompile Include="..\wtf\text\CString.cpp" />
     <ClCompile Include="..\wtf\text\StringBuilder.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="..\wtf\text\AtomicString.h" />
     <ClInclude Include="..\wtf\text\AtomicStringHash.h" />
     <ClInclude Include="..\wtf\text\AtomicStringImpl.h" />
+    <ClInclude Include="..\wtf\text\AtomicStringTable.h" />
     <ClInclude Include="..\wtf\text\Base64.h" />
     <ClInclude Include="..\wtf\text\CString.h" />
     <ClInclude Include="..\wtf\text\IntegerToStringConversion.h" />
