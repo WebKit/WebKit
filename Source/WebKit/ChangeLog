@@ -1,3 +1,37 @@
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Replace tools32 folder with tools and update WebKit Windows solution accordingly.
+        <rdar://problem/14118143>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj:
+        * WebKit.vcxproj/Interfaces/InterfacesDebug.props:
+        * WebKit.vcxproj/Interfaces/InterfacesDebugWinCairo.props:
+        * WebKit.vcxproj/Interfaces/InterfacesPreBuild.cmd:
+        * WebKit.vcxproj/Interfaces/InterfacesProduction.props:
+        * WebKit.vcxproj/Interfaces/InterfacesRelease.props:
+        * WebKit.vcxproj/Interfaces/InterfacesReleaseWinCairo.props:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        * WebKit.vcxproj/WebKit/WebKitDebug.props:
+        * WebKit.vcxproj/WebKit/WebKitDebugWinCairo.props:
+        * WebKit.vcxproj/WebKit/WebKitPreBuild.cmd:
+        * WebKit.vcxproj/WebKit/WebKitProduction.props:
+        * WebKit.vcxproj/WebKit/WebKitRelease.props:
+        * WebKit.vcxproj/WebKit/WebKitReleaseWinCairo.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorDebug.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorDebugWinCairo.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorProduction.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorRelease.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorReleaseWinCairo.props:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDDebug.props:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDDebugWinCairo.props:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDProduction.props:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDRelease.props:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDReleaseWinCairo.props:
+
 2013-06-17  Roger Fong  <roger_fong@apple.com>
 
         Modify Windows makefiles to copy some bin output into Program Files.

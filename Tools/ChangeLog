@@ -1,3 +1,56 @@
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Replace tools32 folder with tools and update WebKit Windows solution accordingly.
+        <rdar://problem/14118143>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTree.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeDebug.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeDebugWinCairo.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncher.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherDebug.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherProduction.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherRelease.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeProduction.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeRelease.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeReleaseWinCairo.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiff.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffDebug.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffDebugWinCairo.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncher.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherDebug.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherProduction.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherRelease.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffProduction.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffRelease.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffReleaseWinCairo.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginDebug.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginProduction.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginRelease.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIDebug.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIDebugWinCairo.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIProduction.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIRelease.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIReleaseWinCairo.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherDebug.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibDebug.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibProduction.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibRelease.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherProduction.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherRelease.props:
+        * win/AssembleBuildLogs/AssembleBuildLogs.vcxproj:
+        * win/record-memory/record-memory.vcxproj:
+        * win/record-memory/record-memoryDebug.props:
+        * win/record-memory/record-memoryDebugWinCairo.props:
+        * win/record-memory/record-memoryProduction.props:
+        * win/record-memory/record-memoryRelease.props:
+        * win/record-memory/record-memoryReleaseWinCairo.props:
+
 2013-06-17  Kangil Han  <kangil.han@samsung.com>
 
         Unreviewed. Add my email to a DOM watchlist.

@@ -1,3 +1,44 @@
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Replace tools32 folder with tools and update WebKit Windows solution accordingly.
+        <rdar://problem/14118143>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * win/tools: Copied from win/tools32.
+        * win/tools/WinTools.make:
+        * win/tools/scripts/auto-version.sh:
+        * win/tools/scripts/feature-defines.sh:
+        * win/tools32: Removed.
+        * win/tools32/WinTools.make: Removed.
+        * win/tools32/scripts: Removed.
+        * win/tools32/scripts/COPYRIGHT-END-YEAR: Removed.
+        * win/tools32/scripts/VERSION: Removed.
+        * win/tools32/scripts/auto-version.sh: Removed.
+        * win/tools32/scripts/feature-defines.sh: Removed.
+        * win/tools32/vsprops: Removed.
+        * win/tools32/vsprops/FeatureDefines.props: Removed.
+        * win/tools32/vsprops/FeatureDefines.vsprops: Removed.
+        * win/tools32/vsprops/FeatureDefinesCairo.props: Removed.
+        * win/tools32/vsprops/FeatureDefinesCairo.vsprops: Removed.
+        * win/tools32/vsprops/WinCairo.props: Removed.
+        * win/tools32/vsprops/WinCairo.vsprops: Removed.
+        * win/tools32/vsprops/cURL.props: Removed.
+        * win/tools32/vsprops/cURL.vsprops: Removed.
+        * win/tools32/vsprops/common.props: Removed.
+        * win/tools32/vsprops/common.vsprops: Removed.
+        * win/tools32/vsprops/debug.props: Removed.
+        * win/tools32/vsprops/debug.vsprops: Removed.
+        * win/tools32/vsprops/debug_all.vsprops: Removed.
+        * win/tools32/vsprops/debug_wincairo.props: Removed.
+        * win/tools32/vsprops/debug_wincairo.vsprops: Removed.
+        * win/tools32/vsprops/debugsuffix.props: Removed.
+        * win/tools32/vsprops/production.props: Removed.
+        * win/tools32/vsprops/production.vsprops: Removed.
+        * win/tools32/vsprops/release.props: Removed.
+        * win/tools32/vsprops/release.vsprops: Removed.
+        * win/tools32/vsprops/releaseproduction.vsprops: Removed.
+
 2013-06-12  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build correction.

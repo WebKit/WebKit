@@ -1,3 +1,42 @@
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Replace tools32 folder with tools and update WebKit Windows solution accordingly.
+        <rdar://problem/14118143>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreDebug.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreDebugCFLite.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedDebug.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedProduction.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedRelease.props:
+        * JavaScriptCore.vcxproj/JavaScriptCorePostBuild.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCoreProduction.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreRelease.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreReleaseCFLite.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorDebug.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorProduction.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorRelease.props:
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj:
+        * JavaScriptCore.vcxproj/jsc/jscDebug.props:
+        * JavaScriptCore.vcxproj/jsc/jscProduction.props:
+        * JavaScriptCore.vcxproj/jsc/jscRelease.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpDebug.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpProduction.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpRelease.props:
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+        * JavaScriptCore.vcxproj/testapi/testapiDebug.props:
+        * JavaScriptCore.vcxproj/testapi/testapiDebugCFLite.props:
+        * JavaScriptCore.vcxproj/testapi/testapiProduction.props:
+        * JavaScriptCore.vcxproj/testapi/testapiRelease.props:
+        * JavaScriptCore.vcxproj/testapi/testapiReleaseCFLite.props:
+
 2013-06-17  Roger Fong  <roger_fong@apple.com>
 
         Modify Windows makefiles to copy some bin output into Program Files.

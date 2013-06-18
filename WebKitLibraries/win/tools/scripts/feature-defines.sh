@@ -23,9 +23,9 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 if [ "$2" = "cairo" ]; then
-    FeatureDefines=$1/tools32/vsprops/FeatureDefinesCairo.props
+    FeatureDefines=$1/tools/vsprops/FeatureDefinesCairo.props
 else
-    FeatureDefines=$1/tools32/vsprops/FeatureDefines.props
+    FeatureDefines=$1/tools/vsprops/FeatureDefines.props
 fi
 
 grep "<ENABLE_" $FeatureDefines | sed '/\/>/d' | sed 's/<\/.*>//' | sed 's/<.*>//' | tr -d '\n'

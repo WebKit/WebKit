@@ -1,3 +1,12 @@
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Replace tools32 folder with tools and update WebKit Windows solution accordingly.
+        <rdar://problem/14118143>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
 2013-06-03  Roger Fong  <roger_fong@apple.com>
 
         Nuke VS2005 files from the tree.
