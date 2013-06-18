@@ -1,3 +1,14 @@
+2013-06-18  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        The page title of technical-articles.html is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=117727
+
+        Reviewed by Ryosuke Niwa.
+
+        Changed the page title of technical-articles.html to "WebKit Technical Articles".
+
+        * coding/technical-articles.html:
+
 2013-06-14  Timothy Hatcher  <timothy@apple.com>
 
         Shrink larger images to fit the width of the blog.
