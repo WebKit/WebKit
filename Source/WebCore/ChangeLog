@@ -1,3 +1,26 @@
+2013-06-18  Zalan Bujtas  <zalan@apple.com>
+
+        widthMediaFeatureEval ends up with null FrameView during iframe unload.
+        https://bugs.webkit.org/show_bug.cgi?id=117754
+
+        Reviewed by Geoffrey Garen.
+
+        Ensure that MediaQueryEvaluator checks against NULL FrameView.
+
+        While frames are being unloaded, the Frame object does not necessarily have valid
+        FrameView anymore. Layout on the main frame can end up querying media values on such child
+        frames, while detaching.
+
+        Test: fast/frames/crash-when-child-iframe-forces-layout-during-unload-and-sibling-frame-has-mediaquery.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::orientationMediaFeatureEval):
+        (WebCore::aspect_ratioMediaFeatureEval):
+        (WebCore::evalResolution):
+        (WebCore::heightMediaFeatureEval):
+        (WebCore::widthMediaFeatureEval):
+        (WebCore::MediaQueryEvaluator::eval):
+
 2013-06-18  Ruth Fong  <ruth_fong@apple.com>
 
         Expose a getMediaType method in WebKit
