@@ -1,5 +1,13 @@
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Build fix for Mac.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::create):
+        (WebFrameNetworkingContext::WebFrameNetworkingContext):
+
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
         Re-implement WebFrameNetworkingContext.
         <rdar://problem/13174821>.
 

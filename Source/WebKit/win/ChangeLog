@@ -1,5 +1,14 @@
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Build fix for Apple Windows.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::create):
+        (WebFrameNetworkingContext::WebFrameNetworkingContext):
+        (WebFrameNetworkingContext::userAgent):
+
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
         Re-implement WebFrameNetworkingContext.
         <rdar://problem/13174821>.
 

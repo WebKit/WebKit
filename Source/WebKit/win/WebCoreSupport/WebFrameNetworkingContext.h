@@ -22,7 +22,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #ifndef WebFrameNetworkingContext_h
 #define WebFrameNetworkingContext_h
 
@@ -30,28 +29,30 @@
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(WebCore::Frame* frame)
+    static PassRefPtr<WebFrameNetworkingContext> create(WebCore::Frame* frame, const String& useragent)
     {
-        return adoptRef(new WebFrameNetworkingContext(frame));
+        return adoptRef(new WebFrameNetworkingContext(frame, useragent));
     }
 
+#if USE(CFNETWORK)
+    static void setCookieAcceptPolicyForAllContexts(WebKitCookieStorageAcceptPolicy);
+#endif
+    static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
     static void ensurePrivateBrowsingSession();
     static void destroyPrivateBrowsingSession();
 
 private:
-
-    WebFrameNetworkingContext(WebCore::Frame* frame)
-        : WebCore::FrameNetworkingContext(frame)
+    WebFrameNetworkingContext(WebCore::Frame* frame, const String& userAgent)
+        : WebCore::FrameNetworkingContext(frame), m_userAgent(userAgent)
     {
     }
 
-    virtual bool needsSiteSpecificQuirks() const OVERRIDE;
-    virtual bool localFileContentSniffingEnabled() const OVERRIDE;
-    virtual SchedulePairHashSet* scheduledRunLoopPairs() const OVERRIDE;
-    virtual RetainPtr<CFDataRef> sourceApplicationAuditData() const OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
     virtual WebCore::NetworkStorageSession& storageSession() const OVERRIDE;
+    virtual String referrer() const OVERRIDE;
+    virtual String userAgent() const { return m_userAgent; }
 
+    String m_userAgent;
 };
 
 #endif
