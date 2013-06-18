@@ -8,7 +8,7 @@
     (home-library-literal "/Caches")
     (home-library-preferences-literal "/"))
 
-(allow file-read* file-write-create file-write-mode
+(allow file-read* file-write-create file-write-mode file-write-owner
     (home-library-literal "/Caches/Adobe")
     (home-library-preferences-literal "/Macromedia"))
 
