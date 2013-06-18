@@ -1,3 +1,11 @@
+2013-06-18  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaseline and skipping some tests.
+
+        * platform/qt-5.0-wk2/fast/repaint/table-cell-collapsed-border-scroll-expected.png: Added.
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/repaint/table-cell-collapsed-border-scroll-expected.txt: Added.
+
 2013-06-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK][GStreamer] Fullscreen option in video element context menu not working

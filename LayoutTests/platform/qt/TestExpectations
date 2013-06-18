@@ -1079,6 +1079,15 @@ media/media-document-audio-repaint.html
 # https://bugs.webkit.org/show_bug.cgi?id=57476
 media/video-playbackrate.html
 
+# [Qt] media tests are flaky
+webkit.org/b/57983 media/audio-controls-rendering.html [ Skip ]
+webkit.org/b/57983 media/controls-after-reload.html [ Skip ]
+webkit.org/b/57983 media/controls-strict.html [ Skip ]
+webkit.org/b/57983 media/controls-styling-strict.html [ Skip ]
+webkit.org/b/57983 media/video-controls-rendering.html [ Skip ]
+webkit.org/b/57983 media/video-display-toggle.html [ Skip ]
+webkit.org/b/57983 media/video-playing-and-pause.html [ Skip ]
+
 # ============================================================================= #
 # Crashing tests due to re-enabled Phonon support in Buildbot's Qt              #
 # Skip these until a proper solution for the Phonon related crashes found.      #
@@ -2589,15 +2598,6 @@ inspector/editor/text-editor-smart-braces.html
 # [Qt] different result from other platforms
 webkit.org/b/108676 svg/custom/svg-fonts-in-text-controls.html [ Skip ]
 
-# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=109775
-webkit.org/b/109775 media/audio-controls-rendering.html [ Failure ]
-webkit.org/b/109775 media/controls-after-reload.html [ Failure ]
-webkit.org/b/109775 media/controls-strict.html [ Failure ]
-webkit.org/b/109775 media/controls-styling-strict.html [ Failure ]
-webkit.org/b/109775 media/video-controls-rendering.html [ Failure ]
-webkit.org/b/109775 media/video-display-toggle.html [ Failure ]
-webkit.org/b/109775 media/video-playing-and-pause.html [ Failure ]
-
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
 
 # New test introduced in r143073 that never passed on Qt and EFL.
@@ -2657,8 +2657,6 @@ webkit.org/b/117036 http/tests/uri/curly-braces-escaping.html [ Skip ]
 
 # [Qt] REGRESSION(r151020): fast/js/custom-constructors.html makes next test crashing
 webkit.org/b/117141 fast/js/custom-constructors.html [ Skip ]
-
-
 
 # REGRESSION(r151146) fast/forms/control-clip-overflow.html fails
 webkit.org/b/117185 fast/forms/control-clip-overflow.html [ Skip ]
