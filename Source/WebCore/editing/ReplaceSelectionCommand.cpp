@@ -72,7 +72,7 @@ enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
 class ReplacementFragment {
     WTF_MAKE_NONCOPYABLE(ReplacementFragment);
 public:
-    ReplacementFragment(Document*, DocumentFragment*, bool matchStyle, const VisibleSelection&);
+    ReplacementFragment(Document*, DocumentFragment*, const VisibleSelection&);
 
     Node* firstChild() const;
     Node* lastChild() const;
@@ -139,7 +139,7 @@ static Position positionAvoidingPrecedingNodes(Position pos)
     return pos;
 }
 
-ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* fragment, bool, const VisibleSelection& selection)
+ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* fragment, const VisibleSelection& selection)
     : m_document(document),
       m_fragment(fragment),
       m_hasInterchangeNewlineAtStart(false), 
@@ -891,7 +891,7 @@ void ReplaceSelectionCommand::doApply()
     if (!selection.rootEditableElement())
         return;
 
-    ReplacementFragment fragment(document(), m_documentFragment.get(), m_matchStyle, selection);
+    ReplacementFragment fragment(document(), m_documentFragment.get(), selection);
     if (performTrivialReplace(fragment))
         return;
     

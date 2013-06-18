@@ -1,3 +1,16 @@
+2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove unused bool argument from ReplacementFragment's constructor
+        https://bugs.webkit.org/show_bug.cgi?id=117752
+
+        Reviewed by Antti Koivisto.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/265586d9f154a9dff657511d09926429b8e1b53d.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2013-06-18  Eric Carlson  <eric.carlson@apple.com>
 
         Not all subtitle tracks are SDH
