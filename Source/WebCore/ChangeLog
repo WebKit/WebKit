@@ -1,3 +1,31 @@
+2013-06-18  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GStreamer] [texmap] upload a video buffer into the video texture
+        https://bugs.webkit.org/show_bug.cgi?id=116042
+
+        Reviewed by Philippe Normand.
+
+        This patch prepares more quickly the texture when the video frame is
+        already in the GPU memory.
+
+        It is done using a new buffer's metadata available in GStreamer 1.2,
+        and its purpose is to upload buffers into a OpenGL texture.
+
+        If the decoder provides buffers with this metadata, the buffer will be
+        uploaded into the texture used for the video display and it will be
+        rendered, avoiding a expensive mem copies. This is particularly useful
+        for Full HD videos, where all the processing and display will be done
+        in the GPU.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkProposeAllocation):
+
 2013-06-17  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [curl] Set the http response status text

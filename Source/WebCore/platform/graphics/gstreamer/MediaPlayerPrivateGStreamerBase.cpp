@@ -51,6 +51,10 @@
 #include <gst/interfaces/streamvolume.h>
 #endif
 
+#if GST_CHECK_VERSION(1, 1, 0) && USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+#include "TextureMapperGL.h"
+#endif
+
 GST_DEBUG_CATEGORY(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
@@ -339,6 +343,21 @@ void MediaPlayerPrivateGStreamerBase::updateTexture(GstBuffer* buffer)
     if (m_texture->size() != size)
         m_texture->reset(size);
 
+#if GST_CHECK_VERSION(1, 1, 0)
+    GstVideoGLTextureUploadMeta* meta;
+    if ((meta = gst_buffer_get_video_gl_texture_upload_meta(buffer))) {
+        if (meta->n_textures == 1) { // BRGx & BGRA formats use only one texture.
+            const BitmapTextureGL* textureGL = static_cast<const BitmapTextureGL*>(m_texture.get());
+            guint ids[4] = { textureGL->id(), 0, 0, 0 };
+
+            if (gst_video_gl_texture_upload_meta_upload(meta, ids)) {
+                client()->setPlatformLayerNeedsDisplay();
+                return;
+            }
+        }
+    }
+#endif
+
 #ifdef GST_API_VERSION_1
     GstMapInfo srcInfo;
     gst_buffer_map(buffer, &srcInfo, GST_MAP_READ);
@@ -347,7 +366,6 @@ void MediaPlayerPrivateGStreamerBase::updateTexture(GstBuffer* buffer)
     srcData = GST_BUFFER_DATA(buffer);
 #endif
 
-    // @TODO: support cropping
     m_texture->updateContents(srcData, WebCore::IntRect(WebCore::IntPoint(0, 0), size), WebCore::IntPoint(0, 0), size.width() * 4, BitmapTexture::UpdateCannotModifyOriginalImageData);
 
 #ifdef GST_API_VERSION_1
