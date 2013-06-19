@@ -1,3 +1,31 @@
+2013-06-19  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL][WK2] Implement unit test callback: onSettingChange.
+        https://bugs.webkit.org/show_bug.cgi?id=117728
+
+        Reviewed by Christophe Dumez.
+
+        It is finally possible to implement missing unit tests as WebKit2-EFL
+        has delivered sub menu (r150254).
+        Add two unit tests for checking onSettingChange callback behaviour,
+        when toggling "Check Spelling While Typing" in context menu.
+
+        Changed types inside callbacksExecutionStats struct from bit field to bool,
+        because casting from bit field to &bool is invalid (in using waitUntilTrue method).
+
+        * UIProcess/API/efl/tests/test_ewk2_text_checker.cpp:
+        (resetCallbacksExecutionStats):
+        (onSettingChange):
+        (findContextMenuItem):
+        Get determined option from context menu.
+
+        (checkCorrectnessOfSpellingItems):
+        Changed the name of onContextMenuShow method to be consistent with new methods.
+
+        (toogleCheckSpellingWhileTyping):
+        Select "Check Spelling While Typing" in context menu to test whether
+        onSettingChange is called.
+
 2013-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][SOUP] Migrate SoupRequestManager to GTask

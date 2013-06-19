@@ -55,16 +55,18 @@ static const char learnSpellingString[] = "Learn Spelling";
  * Its values are reset before each test.
  */
 static struct {
-    bool spellDocumentTag : 1;
-    bool spellDocumentTagClose : 1;
-    bool spellingCheck : 1;
-    bool wordGuesses : 1;
-    bool wordLearn : 1;
-    bool wordIgnore : 1;
+    bool settingChange;
+    bool spellDocumentTag;
+    bool spellDocumentTagClose;
+    bool spellingCheck;
+    bool wordGuesses;
+    bool wordLearn;
+    bool wordIgnore;
 } callbacksExecutionStats;
 
 static void resetCallbacksExecutionStats()
 {
+    callbacksExecutionStats.settingChange = false;
     callbacksExecutionStats.spellDocumentTag = false;
     callbacksExecutionStats.spellDocumentTagClose = false;
     callbacksExecutionStats.spellingCheck = false;
@@ -100,10 +102,7 @@ static Eina_Bool onTimeout(void*)
 static void onSettingChange(Eina_Bool flag)
 {
     EXPECT_EQ(isSettingEnabled, flag);
-
-    ecore_timer_del(timeoutTimer);
-    timeoutTimer = 0;
-    ecore_main_loop_quit();
+    callbacksExecutionStats.settingChange = true;
 }
 
 /**
@@ -217,7 +216,33 @@ static void onWordIgnore(uint64_t tag, const char* word)
     callbacksExecutionStats.wordIgnore = true;
 }
 
-static Eina_Bool onContextMenuShow(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
+/**
+ * Helper, get required item from context menu.
+ *
+ * @param contextMenu the context menu object
+ * @param itemAction action of item to get
+ * @param itemType type of item to get
+ *
+ * @return required item
+ */
+static Ewk_Context_Menu_Item* findContextMenuItem(const Ewk_Context_Menu* contextMenu, Ewk_Context_Menu_Item_Action itemAction, Ewk_Context_Menu_Item_Type itemType)
+{
+    const Eina_List* contextMenuItems = ewk_context_menu_items_get(contextMenu);
+
+    void* itemData;
+    const Eina_List* listIterator;
+    EINA_LIST_FOREACH(contextMenuItems, listIterator, itemData) {
+        Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(itemData);
+        if (ewk_context_menu_item_action_get(item) == itemAction
+            && ewk_context_menu_item_type_get(item) == itemType)
+            return item;
+    }
+
+    ADD_FAILURE();
+    return 0;
+}
+
+static Eina_Bool checkCorrectnessOfSpellingItems(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
 {
     const Eina_List* contextMenuItems = ewk_context_menu_items_get(contextMenu);
 
@@ -243,6 +268,15 @@ static Eina_Bool onContextMenuShow(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord,
 
     wasContextMenuShown = true;
     return true;
+}
+
+static Eina_Bool toogleCheckSpellingWhileTyping(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
+{
+    Ewk_Context_Menu_Item* spellingAndGrammarItem = findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_MENU, EWK_SUBMENU_TYPE);
+    Ewk_Context_Menu* spellingAndGrammarSubmenu = ewk_context_menu_item_submenu_get(spellingAndGrammarItem);
+    Ewk_Context_Menu_Item* checkSpellingWhileTypingItem = findContextMenuItem(spellingAndGrammarSubmenu, EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING_WHILE_TYPING, EWK_CHECKABLE_ACTION_TYPE);
+
+    return ewk_context_menu_item_select(spellingAndGrammarSubmenu, checkSpellingWhileTypingItem);
 }
 
 /**
@@ -289,7 +323,7 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_spell_checking_languages_get)
 TEST_F(EWK2UnitTestBase, context_menu_spelling_items_availability)
 {
     ewk_text_checker_continuous_spell_checking_enabled_set(false);
-    ewkViewClass()->context_menu_show = onContextMenuShow;
+    ewkViewClass()->context_menu_show = checkCorrectnessOfSpellingItems;
 
     ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
     mouseClick(10, 20, 3 /* Right button */);
@@ -317,12 +351,42 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_continuous_spell_checking_enabled)
 }
 
 /**
- * Test whether the callback is called when the spell checking setting was changed by WebKit.
- * Changing of this setting at the WebKit level can be made as a result of modifying
- * options in a Context Menu by a user.
+ * Test whether the onSettingChange callback is called when "Check Spelling While Typing" setting was changed in context menu.
+ * Two cases are tested:
+ *  - "Check Spelling While Typing" is enabled,
+ *  - "Check Spelling While Typing" is disabled.
+ */
+TEST_F(EWK2UnitTestBase, ewk_text_checker_check_spelling_while_typing_toggle)
+{
+    resetCallbacksExecutionStats();
+    ewkViewClass()->context_menu_show = toogleCheckSpellingWhileTyping;
+
+    ewk_text_checker_continuous_spell_checking_change_cb_set(onSettingChange);
+    isSettingEnabled = !ewk_text_checker_continuous_spell_checking_enabled_get();
+
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
+
+    EWK2UnitTestBase::mouseClick(10, 20, /*Right button*/ 3);
+    ASSERT_TRUE(waitUntilTrue(callbacksExecutionStats.settingChange));
+
+    resetCallbacksExecutionStats();
+
+    // Test case, when "Check Spelling While Typing" is in reverse to the previous one.
+    isSettingEnabled = !isSettingEnabled;
+
+    EWK2UnitTestBase::mouseClick(10, 20, /*Right button*/ 3);
+    ASSERT_TRUE(waitUntilTrue(callbacksExecutionStats.settingChange));
+
+    ewk_text_checker_continuous_spell_checking_change_cb_set(0);
+}
+
+/**
+ * Test whether the onSettingChange callback is not called when the spell checking setting was changed by client.
  */
 TEST_F(EWK2UnitTestBase, ewk_text_checker_continuous_spell_checking_change_cb_set)
 {
+    resetCallbacksExecutionStats();
+
     ewk_text_checker_continuous_spell_checking_change_cb_set(onSettingChange);
 
     isSettingEnabled = ewk_text_checker_continuous_spell_checking_enabled_get();
@@ -331,31 +395,25 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_continuous_spell_checking_change_cb_se
     // on the client's request (public API).
     ewk_text_checker_continuous_spell_checking_enabled_set(isSettingEnabled);
 
-    timeoutTimer = ecore_timer_add(defaultTimeoutInSeconds, onTimeout, 0);
+    // The notification about the change of the spell checking setting is called on idler.
+    ASSERT_FALSE(waitUntilTrue(callbacksExecutionStats.settingChange, /*Timeout*/ 0));
 
-    // Start proccesing Ecore events, the notification about the change of the spell
-    // checking setting is called on idler.
-    // We can't call ecore_main_loop_iterate because it doesn't process the idlers.
-    ecore_main_loop_begin();
+    ewk_text_checker_continuous_spell_checking_change_cb_set(0);
+}
 
-    EXPECT_TRUE(timeoutTimer);
+/**
+ * Test whether the onSettingChange callback is not called, if the client does not set it.
+ * "Check Spelling While Typing" option is toggled in context menu.
+ */
+TEST_F(EWK2UnitTestBase, ewk_text_checker_continuous_spell_checking_change_cb_unset)
+{
+    resetCallbacksExecutionStats();
+    ewkViewClass()->context_menu_show = toogleCheckSpellingWhileTyping;
 
-    /* The callback should be called if the context menu "Check Spelling While Typing" option
-       was toggled by the user.
-    FIXME:
-    1) Invoke the context menu on the input field.
-    2) Choose the sub menu "Spelling and Grammar" option (not implemented for WK2).
-    3) Toggle "Check Spelling While Typing" option.
-    4) Check whether the callback is called. */
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
 
-    /* The callback shouldn't be called if the user has invalidated it.
-    FIXME:
-    1) Call ewk_text_checker_continuous_spell_checking_change_cb_set(0) to notify the WebKit that
-       the client is not interested in the setting change.
-    2) Invoke the context menu on the input field.
-    3) Choose the sub menu "Spelling and Grammar" option (not implemented for WK2).
-    4) Toggle "Check Spelling While Typing" option.
-    5) Check whether the callback was called. */
+    EWK2UnitTestBase::mouseClick(10, 20, /*Right button*/ 3);
+    ASSERT_FALSE(waitUntilTrue(callbacksExecutionStats.settingChange, /*Timeout*/ 0));
 }
 
 /**
