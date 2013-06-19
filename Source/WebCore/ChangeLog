@@ -1,3 +1,32 @@
+2013-06-19  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GStreamer] Potential race condition when getting the video sink caps.
+        https://bugs.webkit.org/show_bug.cgi?id=117736
+
+        Reviewed by Philippe Normand.
+
+        There is a potential race condition with the pad setting caps, as the
+        buffer and the caps won't match when renegotiation happens, and might
+        cause a crash.
+
+        This patch keeps an instance of the current caps in the video sink,
+        and it is accessible through a getter method. Hence the player can ask
+        for the current caps without running into a race condition.
+
+        No new tests. No change in behaviour.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSize):
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::currentVideoSinkCaps):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSink):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkGetProperty):
+        (webkitVideoSinkStop):
+        (webkitVideoSinkSetCaps):
+        (webkit_video_sink_class_init):
+
 2013-06-19  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Vibration can be canceled even if page visibility status is hidden

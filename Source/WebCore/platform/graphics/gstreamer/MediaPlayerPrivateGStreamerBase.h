@@ -114,6 +114,7 @@ protected:
     GstElement* createVideoSink(GstElement* pipeline);
     void setStreamVolumeElement(GstStreamVolume*);
     virtual GstElement* audioSink() const { return 0; }
+    GRefPtr<GstCaps> currentVideoSinkCaps() const;
 
     MediaPlayer* m_player;
     GRefPtr<GstStreamVolume> m_volumeElement;
@@ -134,7 +135,6 @@ protected:
     unsigned long m_repaintHandler;
     unsigned long m_volumeSignalHandler;
     unsigned long m_muteSignalHandler;
-    GRefPtr<GstPad> m_videoSinkPad;
     mutable IntSize m_videoSize;
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
     void updateTexture(GstBuffer*);

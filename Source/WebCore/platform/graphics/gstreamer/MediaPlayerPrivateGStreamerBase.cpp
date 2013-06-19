@@ -176,11 +176,7 @@ IntSize MediaPlayerPrivateGStreamerBase::naturalSize() const
         return m_videoSize;
 
 #ifdef GST_API_VERSION_1
-    /* FIXME this has a race with the pad setting caps as the buffer (m_buffer)
-     * and the caps won't match and might cause a crash. (In case a
-     * renegotiation happens)
-     */
-    GRefPtr<GstCaps> caps = webkitGstGetPadCaps(m_videoSinkPad.get());
+    GRefPtr<GstCaps> caps = currentVideoSinkCaps();
 #else
     g_mutex_lock(m_bufferMutex);
     GRefPtr<GstCaps> caps = m_buffer ? GST_BUFFER_CAPS(m_buffer) : 0;
@@ -418,11 +414,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
     }
 
 #ifdef GST_API_VERSION_1
-    /* FIXME this has a race with the pad setting caps as the buffer (m_buffer)
-     * and the caps won't match and might cause a crash. (In case a
-     * renegotiation happens)
-     */
-    GRefPtr<GstCaps> caps = webkitGstGetPadCaps(m_videoSinkPad.get());
+    GRefPtr<GstCaps> caps = currentVideoSinkCaps();
 #else
     GRefPtr<GstCaps> caps = GST_BUFFER_CAPS(m_buffer);
 #endif
@@ -503,6 +495,16 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamerBase::movieLoadType() cons
     return MediaPlayer::Download;
 }
 
+GRefPtr<GstCaps> MediaPlayerPrivateGStreamerBase::currentVideoSinkCaps() const
+{
+    if (!m_webkitVideoSink)
+        return 0;
+
+    GstCaps* currentCaps = 0;
+    g_object_get(G_OBJECT(m_webkitVideoSink.get()), "current-caps", &currentCaps, NULL);
+    return adoptGRef(currentCaps);
+}
+
 // This function creates and initializes some internal variables, and returns a
 // pointer to the element that should receive the data flow first
 GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink(GstElement* pipeline)
@@ -517,7 +519,6 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink(GstElement* pipelin
     UNUSED_PARAM(pipeline);
     m_webkitVideoSink = webkitVideoSinkNew();
 #endif
-    m_videoSinkPad = adoptGRef(gst_element_get_static_pad(m_webkitVideoSink.get(), "sink"));
 
     m_repaintHandler = g_signal_connect(m_webkitVideoSink.get(), "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
 

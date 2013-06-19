@@ -76,7 +76,8 @@ enum {
 };
 
 enum {
-    PROP_0
+    PROP_0,
+    PROP_CAPS
 };
 
 static guint webkitVideoSinkSignals[LAST_SIGNAL] = { 0, };
@@ -94,6 +95,8 @@ struct _WebKitVideoSinkPrivate {
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     WebCore::GStreamerGWorld* gstGWorld;
 #endif
+
+    GstCaps* currentCaps;
 
     // If this is TRUE all processing should finish ASAP
     // This is necessary because there could be a race between
@@ -296,6 +299,24 @@ static void webkitVideoSinkDispose(GObject* object)
     G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
+static void webkitVideoSinkGetProperty(GObject* object, guint propertyId, GValue* value, GParamSpec* parameterSpec)
+{
+    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(object);
+    WebKitVideoSinkPrivate* priv = sink->priv;
+
+    switch (propertyId) {
+    case PROP_CAPS: {
+        GstCaps* caps = priv->currentCaps;
+        if (caps)
+            gst_caps_ref(caps);
+        g_value_take_boxed(value, caps);
+        break;
+    }
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, parameterSpec);
+    }
+}
+
 static void unlockBufferMutex(WebKitVideoSinkPrivate* priv)
 {
     g_mutex_lock(priv->bufferMutex);
@@ -333,7 +354,15 @@ static gboolean webkitVideoSinkUnlockStop(GstBaseSink* baseSink)
 
 static gboolean webkitVideoSinkStop(GstBaseSink* baseSink)
 {
-    unlockBufferMutex(WEBKIT_VIDEO_SINK(baseSink)->priv);
+    WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
+
+    unlockBufferMutex(priv);
+
+    if (priv->currentCaps) {
+        gst_caps_unref(priv->currentCaps);
+        priv->currentCaps = 0;
+    }
+
     return TRUE;
 }
 
@@ -344,6 +373,14 @@ static gboolean webkitVideoSinkStart(GstBaseSink* baseSink)
     g_mutex_lock(priv->bufferMutex);
     priv->unlocked = false;
     g_mutex_unlock(priv->bufferMutex);
+    return TRUE;
+}
+
+static gboolean webkitVideoSinkSetCaps(GstBaseSink* baseSink, GstCaps* caps)
+{
+    WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
+
+    gst_caps_replace(&priv->currentCaps, caps);
     return TRUE;
 }
 
@@ -403,6 +440,7 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
     g_type_class_add_private(klass, sizeof(WebKitVideoSinkPrivate));
 
     gobjectClass->dispose = webkitVideoSinkDispose;
+    gobjectClass->get_property = webkitVideoSinkGetProperty;
 
     baseSinkClass->unlock = webkitVideoSinkUnlock;
     baseSinkClass->unlock_stop = webkitVideoSinkUnlockStop;
@@ -410,9 +448,13 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
     baseSinkClass->preroll = webkitVideoSinkRender;
     baseSinkClass->stop = webkitVideoSinkStop;
     baseSinkClass->start = webkitVideoSinkStart;
+    baseSinkClass->set_caps = webkitVideoSinkSetCaps;
 #ifdef GST_API_VERSION_1
     baseSinkClass->propose_allocation = webkitVideoSinkProposeAllocation;
 #endif
+
+    g_object_class_install_property(gobjectClass, PROP_CAPS,
+        g_param_spec_boxed("current-caps", "Current-Caps", "Current caps", GST_TYPE_CAPS, G_PARAM_READABLE));
 
     webkitVideoSinkSignals[REPAINT_REQUESTED] = g_signal_new("repaint-requested",
             G_TYPE_FROM_CLASS(klass),
