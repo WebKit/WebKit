@@ -1,3 +1,30 @@
+2013-06-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Remove the SegmentedVector inline segment to shrink CodeBlock by 6X
+        https://bugs.webkit.org/show_bug.cgi?id=117808
+
+        Reviewed by Geoffrey Garen.
+
+        SegmentedVector allocation isn't super hot, but we do tend to have many
+        live SegmentedVectors at runtime, particularly in CodeBlocks, so the
+        right tradeoff is to allocate segments out-of-line as needed.
+
+        This reduces startup memory usage @ google.com by about 6MB.
+
+        No regression on SunSpider.
+
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVector::SegmentedVector):
+        (WTF::SegmentedVector::at):
+        (WTF::SegmentedVector::append):
+        (WTF::SegmentedVector::removeLast):
+        (WTF::SegmentedVector::clear):
+        (WTF::SegmentedVector::deleteAllSegments): No more inline segment.
+
+        (WTF::SegmentedVector::ensureSegmentsFor): This code used to assume
+        that there was always a 0 segment, so the math would underflow if there
+        were no 0 segment. I udpated the math to account for having no segments.
+
 2013-06-19  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r151663): Fix build for iOS WebKit
