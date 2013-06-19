@@ -1,3 +1,11 @@
+2013-06-19  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r151663): Fix build for iOS WebKit
+
+        * wtf/text/AtomicStringTable.cpp: Include MainThread.h.
+        (WTF::AtomicStringTable::create): Use AtomicStringTable::destroy
+        instead of non-existent destroyAtomicStringTable function.
+
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
         Replace tools32 folder with tools and update WebKit Windows solution accordingly.

@@ -24,6 +24,7 @@
 #include "AtomicStringTable.h"
 
 #include <wtf/HashSet.h>
+#include <wtf/MainThread.h>
 #include <wtf/WTFThreadData.h>
 
 namespace WTF {
@@ -43,7 +44,7 @@ void AtomicStringTable::create(WTFThreadData& data)
     // We do the following so that its destruction happens only
     // once - on the main UI thread.
     if (!currentThreadIsWebThread)
-        data.m_atomicStringTableDestructor = destroyAtomicStringTable;
+        data.m_atomicStringTableDestructor = AtomicStringTable::destroy;
 #else
     data.m_atomicStringTable = new AtomicStringTable;
     data.m_atomicStringTableDestructor = AtomicStringTable::destroy;
