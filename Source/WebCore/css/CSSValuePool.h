@@ -29,6 +29,7 @@
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/HashMap.h>
@@ -46,7 +47,8 @@ public:
     PassRefPtr<CSSInheritedValue> createInheritedValue() { return m_inheritedValue; }
     PassRefPtr<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue; }
     PassRefPtr<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue; }
-    PassRefPtr<CSSPrimitiveValue> createIdentifierValue(int identifier);
+    PassRefPtr<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
+    PassRefPtr<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
     PassRefPtr<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
     PassRefPtr<CSSPrimitiveValue> createValue(double value, CSSPrimitiveValue::UnitTypes);
     PassRefPtr<CSSPrimitiveValue> createValue(const String& value, CSSPrimitiveValue::UnitTypes type) { return CSSPrimitiveValue::create(value, type); }

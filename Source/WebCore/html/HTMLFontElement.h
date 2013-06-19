@@ -32,7 +32,7 @@ class HTMLFontElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLFontElement> create(const QualifiedName&, Document*);
     
-    static bool cssValueFromFontSizeNumber(const String&, int&);
+    static bool cssValueFromFontSizeNumber(const String&, CSSValueID&);
 
 private:
     HTMLFontElement(const QualifiedName&, Document*);

@@ -874,9 +874,9 @@ key_list:
     ;
 
 key:
-    maybe_unary_operator PERCENTAGE { $$.id = 0; $$.isInt = false; $$.fValue = $1 * $2; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
+    maybe_unary_operator PERCENTAGE { $$.id = CSSValueInvalid; $$.isInt = false; $$.fValue = $1 * $2; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
     | IDENT {
-        $$.id = 0; $$.isInt = false; $$.unit = CSSPrimitiveValue::CSS_NUMBER;
+        $$.id = CSSValueInvalid; $$.isInt = false; $$.unit = CSSPrimitiveValue::CSS_NUMBER;
         CSSParserString& str = $1;
         if (str.equalIgnoringCase("from"))
             $$.fValue = 0;
@@ -1654,7 +1654,7 @@ valid_expr:
         if ($$) {
             if ($2) {
                 CSSParserValue v;
-                v.id = 0;
+                v.id = CSSValueInvalid;
                 v.unit = CSSParserValue::Operator;
                 v.iValue = $2;
                 $$->addValue(v);
@@ -1683,22 +1683,22 @@ operator:
 term:
   unary_term maybe_space { $$ = $1; }
   | unary_operator unary_term maybe_space { $$ = $2; $$.fValue *= $1; }
-  | STRING maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_STRING; }
+  | STRING maybe_space { $$.id = CSSValueInvalid; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_STRING; }
   | IDENT maybe_space {
       $$.id = cssValueKeywordID($1);
       $$.unit = CSSPrimitiveValue::CSS_IDENT;
       $$.string = $1;
   }
   /* We might need to actually parse the number from a dimension, but we can't just put something that uses $$.string into unary_term. */
-  | DIMEN maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_DIMENSION; }
-  | unary_operator DIMEN maybe_space { $$.id = 0; $$.string = $2; $$.unit = CSSPrimitiveValue::CSS_DIMENSION; }
-  | URI maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_URI; }
-  | UNICODERANGE maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_UNICODE_RANGE; }
-  | HEX maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; }
-  | '#' maybe_space { $$.id = 0; $$.string = CSSParserString(); $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; } /* Handle error case: "color: #;" */
+  | DIMEN maybe_space { $$.id = CSSValueInvalid; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_DIMENSION; }
+  | unary_operator DIMEN maybe_space { $$.id = CSSValueInvalid; $$.string = $2; $$.unit = CSSPrimitiveValue::CSS_DIMENSION; }
+  | URI maybe_space { $$.id = CSSValueInvalid; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_URI; }
+  | UNICODERANGE maybe_space { $$.id = CSSValueInvalid; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_UNICODE_RANGE; }
+  | HEX maybe_space { $$.id = CSSValueInvalid; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; }
+  | '#' maybe_space { $$.id = CSSValueInvalid; $$.string = CSSParserString(); $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; } /* Handle error case: "color: #;" */
   | VARFUNCTION maybe_space IDENT closing_parenthesis maybe_space {
 #if ENABLE_CSS_VARIABLES
-      $$.id = 0;
+      $$.id = CSSValueInvalid;
       $$.string = $3;
       $$.unit = CSSPrimitiveValue::CSS_VARIABLE_NAME;
 #endif
@@ -1714,46 +1714,46 @@ term:
       $$ = $1;
   }
   | '%' maybe_space { /* Handle width: %; */
-      $$.id = 0; $$.unit = 0;
+      $$.id = CSSValueInvalid; $$.unit = 0;
   }
   ;
 
 unary_term:
-  INTEGER { $$.id = 0; $$.isInt = true; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
-  | FLOATTOKEN { $$.id = 0; $$.isInt = false; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
-  | PERCENTAGE { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_PERCENTAGE; }
-  | PXS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_PX; }
-  | CMS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_CM; }
-  | MMS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_MM; }
-  | INS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_IN; }
-  | PTS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_PT; }
-  | PCS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_PC; }
-  | DEGS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DEG; }
-  | RADS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_RAD; }
-  | GRADS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_GRAD; }
-  | TURNS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_TURN; }
-  | MSECS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_MS; }
-  | SECS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_S; }
-  | HERTZ { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_HZ; }
-  | KHERTZ { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_KHZ; }
-  | EMS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_EMS; }
-  | QEMS { $$.id = 0; $$.fValue = $1; $$.unit = CSSParserValue::Q_EMS; }
-  | EXS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_EXS; }
+  INTEGER { $$.id = CSSValueInvalid; $$.isInt = true; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
+  | FLOATTOKEN { $$.id = CSSValueInvalid; $$.isInt = false; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
+  | PERCENTAGE { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_PERCENTAGE; }
+  | PXS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_PX; }
+  | CMS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_CM; }
+  | MMS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_MM; }
+  | INS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_IN; }
+  | PTS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_PT; }
+  | PCS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_PC; }
+  | DEGS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DEG; }
+  | RADS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_RAD; }
+  | GRADS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_GRAD; }
+  | TURNS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_TURN; }
+  | MSECS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_MS; }
+  | SECS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_S; }
+  | HERTZ { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_HZ; }
+  | KHERTZ { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_KHZ; }
+  | EMS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_EMS; }
+  | QEMS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSParserValue::Q_EMS; }
+  | EXS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_EXS; }
   | REMS {
-      $$.id = 0;
+      $$.id = CSSValueInvalid;
       $$.fValue = $1;
       $$.unit = CSSPrimitiveValue::CSS_REMS;
       if (parser->m_styleSheet)
           parser->m_styleSheet->parserSetUsesRemUnits(true);
   }
-  | CHS { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_CHS; }
-  | VW { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VW; }
-  | VH { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VH; }
-  | VMIN { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VMIN; }
-  | VMAX { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VMAX; }
-  | DPPX { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPPX; }
-  | DPI { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPI; }
-  | DPCM { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPCM; }
+  | CHS { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_CHS; }
+  | VW { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VW; }
+  | VH { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VH; }
+  | VMIN { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VMIN; }
+  | VMAX { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VMAX; }
+  | DPPX { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPPX; }
+  | DPI { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPI; }
+  | DPCM { $$.id = CSSValueInvalid; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPCM; }
   ;
 
 function:
@@ -1761,7 +1761,7 @@ function:
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = parser->sinkFloatingValueList($3);
-        $$.id = 0;
+        $$.id = CSSValueInvalid;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
     } |
@@ -1770,7 +1770,7 @@ function:
         f->name = $1;
         CSSParserValueList* valueList = parser->createFloatingValueList();
         f->args = parser->sinkFloatingValueList(valueList);
-        $$.id = 0;
+        $$.id = CSSValueInvalid;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
     } |
@@ -1778,7 +1778,7 @@ function:
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = nullptr;
-        $$.id = 0;
+        $$.id = CSSValueInvalid;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
   }
@@ -1788,7 +1788,7 @@ calc_func_term:
   unary_term { $$ = $1; }
   | VARFUNCTION maybe_space IDENT closing_parenthesis {
 #if ENABLE_CSS_VARIABLES
-      $$.id = 0;
+      $$.id = CSSValueInvalid;
       $$.string = $3;
       $$.unit = CSSPrimitiveValue::CSS_VARIABLE_NAME;
 #endif
@@ -1821,7 +1821,7 @@ calc_func_paren_expr:
         if ($3) {
             $$ = $3;
             CSSParserValue v;
-            v.id = 0;
+            v.id = CSSValueInvalid;
             v.unit = CSSParserValue::Operator;
             v.iValue = '(';
             $$->insertValueAt(0, v);
@@ -1846,7 +1846,7 @@ valid_calc_func_expr:
         if ($1 && $2) {
             $$ = $1;
             CSSParserValue v;
-            v.id = 0;
+            v.id = CSSValueInvalid;
             v.unit = CSSParserValue::Operator;
             v.iValue = $2;
             $$->addValue(v);
@@ -1859,7 +1859,7 @@ valid_calc_func_expr:
         if ($1 && $2 && $3) {
             $$ = $1;
             CSSParserValue v;
-            v.id = 0;
+            v.id = CSSValueInvalid;
             v.unit = CSSParserValue::Operator;
             v.iValue = $2;
             $$->addValue(v);
@@ -1878,7 +1878,7 @@ calc_func_expr_list:
         if ($1 && $4) {
             $$ = $1;
             CSSParserValue v;
-            v.id = 0;
+            v.id = CSSValueInvalid;
             v.unit = CSSParserValue::Operator;
             v.iValue = ',';
             $$->addValue(v);
@@ -1893,7 +1893,7 @@ calc_function:
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = parser->sinkFloatingValueList($3);
-        $$.id = 0;
+        $$.id = CSSValueInvalid;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
     }
@@ -1917,7 +1917,7 @@ min_or_max_function:
         CSSParserFunction* f = parser->createFloatingFunction();
         f->name = $1;
         f->args = parser->sinkFloatingValueList($3);
-        $$.id = 0;
+        $$.id = CSSValueInvalid;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
     } 

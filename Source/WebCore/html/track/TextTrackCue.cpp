@@ -1126,12 +1126,12 @@ NextSetting:
 #endif
 }
 
-int TextTrackCue::getCSSWritingDirection() const
+CSSValueID TextTrackCue::getCSSWritingDirection() const
 {
     return m_displayDirection;
 }
 
-int TextTrackCue::getCSSWritingMode() const
+CSSValueID TextTrackCue::getCSSWritingMode() const
 {
     return m_displayWritingMode;
 }

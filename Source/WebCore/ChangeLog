@@ -1,3 +1,80 @@
+2013-06-19  Alexis Menard  <alexis@webkit.org>
+
+        Make sure to use CSSValueID and CSSPropertyID rather than integers
+        https://bugs.webkit.org/show_bug.cgi?id=117481
+
+        Reviewed by Benjamin Poulain.
+
+        This will ensure that types are enforced when passing arguments in various
+        css functions. Having a compile time check make sure that no mistakes
+        will be done over the type.
+
+        The parser was also patched to directly use CSSValueID over integers.
+        This patch also fixes various call sites abusing the usage of integers.
+        This is part 1 of 2.
+
+        No new tests : existing ones should cover.
+
+        * WebCore.xcodeproj/project.pbxproj: copy CSSValueKeywords.h as it could be used in WebKit/ for example.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForRepeatRule):
+        (WebCore::cssIdentifierForFontSizeKeyword):
+        (WebCore::identifierForFamily):
+        (WebCore::valueForFamily):
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::parseColorValue):
+        (WebCore::parseKeywordValue):
+        (WebCore::CSSParser::parseValidPrimitive):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseBackgroundColor):
+        (WebCore::CSSParser::parseFillPositionComponent):
+        (WebCore::CSSParser::parse3ValuesFillPosition):
+        (WebCore::CSSParser::parseFillRepeat):
+        (WebCore::CSSParser::parseAnimationProperty):
+        (WebCore::CSSParser::parseCounterContent):
+        (WebCore::CSSParser::parseLineHeight):
+        (WebCore::CSSParser::parseFontSize):
+        (WebCore::CSSParser::createFontWeightValueKeyword):
+        (WebCore::CSSParser::parseFontWeight):
+        (WebCore::parseDeprecatedGradientColorStop):
+        (WebCore::parseGradientColorOrKeyword):
+        (WebCore::CSSParser::parseDeprecatedRadialGradient):
+        (WebCore::CSSParser::rewriteSpecifiers):
+        * css/CSSParser.h:
+        * css/CSSParserValues.h:
+        * css/CSSPrimitiveValue.h:
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createIdentifierValue):
+        * css/CSSValuePool.h:
+        * css/StylePropertySet.cpp:
+        (WebCore::MutableStylePropertySet::setProperty):
+        * css/StylePropertySet.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::addPropertyToPresentationAttributeStyle):
+        * dom/StyledElement.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::HTMLFontSizeEquivalent::attributeValueAsCSSValue):
+        (WebCore::EditingStyle::prepareToApplyAt):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeApplyStyle):
+        (WebCore::executeFontSize):
+        * html/HTMLElement.cpp:
+        (WebCore::unicodeBidiAttributeForDirAuto):
+        (WebCore::HTMLElement::applyAlignmentAttributeToStyle):
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::cssValueFromFontSizeNumber):
+        (WebCore::HTMLFontElement::collectStyleForPresentationAttribute):
+        * html/HTMLFontElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::leakBorderStyle):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::getCSSWritingDirection):
+        (WebCore::TextTrackCue::getCSSWritingMode):
+        * html/track/TextTrackCue.h:
+
 2013-06-19  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Fix a few missed renames from Exclusions -> Shapes

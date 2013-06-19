@@ -727,7 +727,13 @@ void MutableStylePropertySet::setPrefixingVariantProperty(const CSSProperty& pro
         *toReplace = CSSProperty(prefixingVariant, property.value(), property.isImportant(), property.shorthandID(), property.metadata().m_implicit);
 }
 
-bool MutableStylePropertySet::setProperty(CSSPropertyID propertyID, int identifier, bool important)
+bool MutableStylePropertySet::setProperty(CSSPropertyID propertyID, CSSValueID identifier, bool important)
+{
+    setProperty(CSSProperty(propertyID, cssValuePool().createIdentifierValue(identifier), important));
+    return true;
+}
+
+bool MutableStylePropertySet::setProperty(CSSPropertyID propertyID, CSSPropertyID identifier, bool important)
 {
     setProperty(CSSProperty(propertyID, cssValuePool().createIdentifierValue(identifier), important));
     return true;

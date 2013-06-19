@@ -144,7 +144,7 @@ static bool parseFontSize(const String& input, int& size)
     return parseFontSize(input.characters16(), input.length(), size);
 }
 
-bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, int& size)
+bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, CSSValueID& size)
 {
     int num = 0;
     if (!parseFontSize(s, num))
@@ -189,7 +189,7 @@ bool HTMLFontElement::isPresentationAttribute(const QualifiedName& name) const
 void HTMLFontElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
     if (name == sizeAttr) {
-        int size = 0;
+        CSSValueID size = CSSValueInvalid;
         if (cssValueFromFontSizeNumber(value, size))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyFontSize, size);
     } else if (name == colorAttr)
