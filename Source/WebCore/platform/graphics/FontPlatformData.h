@@ -103,10 +103,9 @@ public:
     FontPlatformData(HFONT, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
 #if USE(CG)
     FontPlatformData(HFONT, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
+#elif USE(CAIRO)
+    FontPlatformData(HFONT, cairo_font_face_t*, float size, bool bold, bool italic);
 #endif
-#endif
-#if USE(CAIRO)
-    FontPlatformData(cairo_font_face_t*, float size, bool bold, bool italic);
 #endif
 
     ~FontPlatformData();

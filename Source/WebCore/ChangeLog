@@ -1,3 +1,25 @@
+2013-06-19  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Webfont rendering is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=117695
+
+        Reviewed by Brent Fulgham.
+
+        The native font handle created from webfont data is invalid.
+        In much the same way it's done in WinApple, we first need to install the webfont,
+        create a native font handle from the new font name,
+        and pass the font handle to the FontPlatformData object, where it's needed to get the glyphs.
+
+        * platform/graphics/FontPlatformData.h: Added HFONT parameter to constructor.
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Release installed webfont.
+        (WebCore::FontCustomPlatformData::fontPlatformData): Create valid HFONT handle for webfont.
+        (WebCore::createUniqueFontName): Added method to create webfont name.
+        (WebCore::createFontCustomPlatformData): Install font from webfont data.
+        * platform/graphics/win/FontCustomPlatformDataCairo.h: Removed.
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Added HFONT parameter to constructor.
+
 2013-06-19  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Implement WebIDL implements
