@@ -1,3 +1,10 @@
+2013-06-19  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed rebaselining after 151705.
+
+        * platform/qt/http/tests/cache/partitioned-cache-expected.txt: Added.
+        * platform/qt/http/tests/cache/partitioned-cache-iframe-expected.txt: Added.
+
 2013-06-19  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] TestExpectation sorting on Qt WK2.
