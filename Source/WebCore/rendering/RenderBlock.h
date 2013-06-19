@@ -576,8 +576,8 @@ protected:
     }
 #endif
 
-    bool updateRegionsAndExclusionsBeforeChildLayout(RenderFlowThread*);
-    void updateRegionsAndExclusionsAfterChildLayout(RenderFlowThread*, bool heightChanged = false);
+    bool updateRegionsAndShapesBeforeChildLayout(RenderFlowThread*);
+    void updateRegionsAndShapesAfterChildLayout(RenderFlowThread*, bool heightChanged = false);
     void computeRegionRangeForBlock(RenderFlowThread*);
 
     void updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox*);

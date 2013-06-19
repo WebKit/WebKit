@@ -1481,7 +1481,7 @@ static inline bool shapeInfoRequiresRelayout(const RenderBlock* block)
 #endif
 }
 
-bool RenderBlock::updateRegionsAndExclusionsBeforeChildLayout(RenderFlowThread* flowThread)
+bool RenderBlock::updateRegionsAndShapesBeforeChildLayout(RenderFlowThread* flowThread)
 {
 #if ENABLE(CSS_SHAPES)
     if (!flowThread && !shapeInsideInfo())
@@ -1523,7 +1523,7 @@ void RenderBlock::computeShapeSize()
 }
 #endif
 
-void RenderBlock::updateRegionsAndExclusionsAfterChildLayout(RenderFlowThread* flowThread, bool heightChanged)
+void RenderBlock::updateRegionsAndShapesAfterChildLayout(RenderFlowThread* flowThread, bool heightChanged)
 {
 #if ENABLE(CSS_SHAPES)
     // A previous sibling has changed dimension, so we need to relayout the shape with the content
@@ -1621,7 +1621,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     if (logicalWidthChangedInRegions(flowThread))
         relayoutChildren = true;
-    if (updateRegionsAndExclusionsBeforeChildLayout(flowThread))
+    if (updateRegionsAndShapesBeforeChildLayout(flowThread))
         relayoutChildren = true;
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
@@ -1691,7 +1691,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
 
     layoutPositionedObjects(relayoutChildren || isRoot());
 
-    updateRegionsAndExclusionsAfterChildLayout(flowThread, heightChanged);
+    updateRegionsAndShapesAfterChildLayout(flowThread, heightChanged);
 
     // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
     computeOverflow(oldClientAfterEdge);
@@ -4433,7 +4433,7 @@ LayoutUnit RenderBlock::logicalRightOffsetForContent(RenderRegion* region) const
 
 LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode offsetMode) const
 {
-#if !ENABLE(CSS_EXCLUSIONS)
+#if !ENABLE(CSS_SHAPES)
     UNUSED_PARAM(offsetMode);
 #endif
     LayoutUnit left = fixedOffset;
@@ -4493,7 +4493,7 @@ LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUn
 
 LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode offsetMode) const
 {
-#if !ENABLE(CSS_EXCLUSIONS)
+#if !ENABLE(CSS_SHAPES)
     UNUSED_PARAM(offsetMode);
 #endif
     LayoutUnit right = fixedOffset;
