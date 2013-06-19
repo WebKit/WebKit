@@ -1,5 +1,37 @@
 2013-06-19  Robert Hogan  <robert@webkit.org>
 
+        Rebaseline results on GTK and EFL after r151737
+
+        Unreviewed, gardening. 
+
+        * platform/efl/fast/css/word-space-extra-expected.txt:
+        * platform/efl/fast/replaced/width100percent-image-expected.png:
+        * platform/efl/fast/replaced/width100percent-image-expected.txt:
+        * platform/efl/fast/replaced/width100percent-menulist-expected.png:
+        * platform/efl/fast/replaced/width100percent-menulist-expected.txt:
+        * platform/efl/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/efl/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/efl/fast/replaced/width100percent-textarea-expected.png:
+        * platform/efl/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/efl/fast/replaced/width100percent-textfield-expected.png:
+        * platform/efl/fast/replaced/width100percent-textfield-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug57828-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug57828-expected.txt:
+        * platform/gtk/fast/css/word-space-extra-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-image-expected.png:
+        * platform/gtk/fast/replaced/width100percent-image-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-menulist-expected.png:
+        * platform/gtk/fast/replaced/width100percent-menulist-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/gtk/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-textarea-expected.png:
+        * platform/gtk/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-textfield-expected.png:
+        * platform/gtk/fast/replaced/width100percent-textfield-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug57828-expected.txt:
+
+2013-06-19  Robert Hogan  <robert@webkit.org>
+
         Incorrect computation of shrink-to-fit width for block with white-space:nowrap and floating children
         https://bugs.webkit.org/show_bug.cgi?id=114879
 
