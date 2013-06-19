@@ -1,3 +1,13 @@
+2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Input type range slider is not updated when min or max are changed
+        https://bugs.webkit.org/show_bug.cgi?id=117778
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/range/range-change-min-max-expected.html: Added.
+        * fast/forms/range/range-change-min-max.html: Added.
+
 2013-06-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Media elements never fail to load
