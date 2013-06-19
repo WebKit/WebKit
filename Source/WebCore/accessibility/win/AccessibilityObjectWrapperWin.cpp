@@ -49,8 +49,10 @@ void AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomicString&
         if (obj) {
             ASSERT(V_VT(result) == VT_EMPTY);
             V_VT(result) = VT_UNKNOWN;
-            V_UNKNOWN(result) = obj->wrapper();
-            obj->wrapper()->AddRef();
+            AccessibilityObjectWrapper* wrapper = obj->wrapper();
+            V_UNKNOWN(result) = wrapper;
+            if (wrapper)
+                wrapper->AddRef();
         }
         return;
     }

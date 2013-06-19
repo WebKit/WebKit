@@ -1,3 +1,22 @@
+2013-06-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] AX: Extend notification handling
+        https://bugs.webkit.org/show_bug.cgi?id=117761.
+
+        Reviewed by Anders Carlsson.
+
+        accessibility/press-works-on-control-types.html
+
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification): Add handlers for more event notifications.
+        * accessibility/win/AccessibilityObjectWrapperWin.cpp:
+        (WebCore::AccessibilityObjectWrapper::accessibilityAttributeValue): Protect against null
+        pointer dereference found during testing.
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose): Execute notification handler for Windows as well as Mac.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Ditto.
+
 2013-06-19  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Webfont rendering is broken.

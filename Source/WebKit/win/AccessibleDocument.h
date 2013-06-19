@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008,2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,8 @@ public:
     WebCore::Document* document() const;
 
 protected:
-    virtual long role() const;
+    virtual long role() const OVERRIDE;
+    virtual long state() const OVERRIDE;
 };
 
 #endif // AccessibleDocument_h
