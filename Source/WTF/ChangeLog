@@ -3,7 +3,7 @@
         Remove the SegmentedVector inline segment to shrink CodeBlock by 6X
         https://bugs.webkit.org/show_bug.cgi?id=117808
 
-        Reviewed by Geoffrey Garen.
+        Reviewed by Oliver Hunt.
 
         SegmentedVector allocation isn't super hot, but we do tend to have many
         live SegmentedVectors at runtime, particularly in CodeBlocks, so the
