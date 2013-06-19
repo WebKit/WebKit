@@ -1,3 +1,11 @@
+2013-06-19  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] TestExpectation sorting on Qt WK2.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2013-06-19  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Vibration can be canceled even if page visibility status is hidden
