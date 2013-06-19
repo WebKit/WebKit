@@ -1,3 +1,14 @@
+2013-06-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Added new baselines for some of editing/delete
+        tests after system upgrade.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/deleting/smart-delete-003-expected.png: Added.
+        * platform/efl/editing/deleting/smart-delete-003-expected.txt: Added.
+        * platform/efl/editing/deleting/smart-delete-004-expected.png: Added.
+        * platform/efl/editing/deleting/smart-delete-004-expected.txt: Added.
+
 2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Input type range slider is not updated when min or max are changed

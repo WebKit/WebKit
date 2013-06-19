@@ -463,8 +463,6 @@ webkit.org/b/102486 editing/pasteboard/line-feed-between-br-and-b-should-not-reo
 webkit.org/b/102486 editing/pasteboard/paste-table-cells.html [ Failure ]
 
 # Needs baselines
-editing/deleting/smart-delete-003.html [ Missing ]
-editing/deleting/smart-delete-004.html [ Missing ]
 editing/inserting/before-after-input-element.html [ Missing ]
 editing/inserting/break-blockquote-after-delete.html [ Missing ]
 editing/selection/contains-boundaries.html [ Missing ]
