@@ -1,3 +1,13 @@
+2013-06-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Rebaseline 24bit-22khz-resample on Mac
+
+        The result did not match the expectation after a system update.
+
+        * platform/mac-wk2/webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav:
+        Comparing the files, they have the exact same length, sample rate, bit per sample and binary size.
+        I cannot ear a difference in the files.
+
 2013-06-19  Robert Hogan  <robert@webkit.org>
 
         Rebaseline results on GTK and EFL after r151737
