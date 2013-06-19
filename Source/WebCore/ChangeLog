@@ -1,3 +1,11 @@
+2013-06-18  Jessie Berlin  <jberlin@apple.com>
+
+        Let the script to update the Localizable.strings file do the reordering it wants to do.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * English.lproj/Localizable.strings:
+
 2013-06-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed gardening -- show missing AccessibilityNodeObject source
