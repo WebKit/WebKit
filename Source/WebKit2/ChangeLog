@@ -1,5 +1,17 @@
 2013-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Migrate WebKitFaviconDatabase to GTask
+        https://bugs.webkit.org/show_bug.cgi?id=117156
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (processPendingIconsForPageURL):
+        (webkit_favicon_database_get_favicon):
+        (webkit_favicon_database_get_favicon_finish):
+
+2013-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Migrate WebKitWebView to GTask
         https://bugs.webkit.org/show_bug.cgi?id=117154
 
