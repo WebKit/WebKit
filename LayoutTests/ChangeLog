@@ -1,5 +1,11 @@
 2013-06-19  Benjamin Poulain  <bpoulain@apple.com>
 
+        Unskip two canvas tests that only fail on Lion
+
+        * platform/mac/TestExpectations:
+
+2013-06-19  Benjamin Poulain  <bpoulain@apple.com>
+
         Rebaseline 24bit-22khz-resample on Mac
 
         The result did not match the expectation after a system update.

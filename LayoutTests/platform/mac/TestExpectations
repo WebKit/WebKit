@@ -529,8 +529,8 @@ webkit.org/b/78801 touchadjustment
 # canvas/philip/tests/2d.line.cap.round.html fails on Mac Lion WK1
 # <rdar://problem/11059777>
 webkit.org/b/81289 canvas/philip/tests/2d.line.cap.round.html [ Failure ]
-webkit.org/b/81289 canvas/philip/tests/2d.shadow.canvas.transparent.2.html [ Failure ]
-webkit.org/b/81289 canvas/philip/tests/2d.shadow.image.transparent.2.html [ Failure ]
+webkit.org/b/81289 [ Lion ] canvas/philip/tests/2d.shadow.canvas.transparent.2.html [ Failure ]
+webkit.org/b/81289 [ Lion ] canvas/philip/tests/2d.shadow.image.transparent.2.html [ Failure ]
 
 # Needs BatteryClient implementation.
 webkit.org/b/62698 batterystatus/
