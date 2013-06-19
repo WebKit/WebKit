@@ -1,3 +1,17 @@
+2013-06-18  Oliver Hunt  <oliver@apple.com>
+
+        Going to google.com/trends causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=117602
+
+        Reviewed by Geoffrey Garen.
+
+        When handling op_throw, etc we need to flush the variables and arguments
+        for the entire inline stack, not just the top frame.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushAllArgumentsAndCapturedVariablesInInlineStack):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
         Replace tools32 folder with tools and update WebKit Windows solution accordingly.

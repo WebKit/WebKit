@@ -154,6 +154,8 @@ public:
     bool parse();
     
 private:
+    struct InlineStackEntry;
+
     // Just parse from m_currentIndex to the end of the current CodeBlock.
     void parseCodeBlock();
 
@@ -446,21 +448,32 @@ private:
         if (argumentPosition)
             argumentPosition->addVariable(variable);
     }
-    
-    void flushArgumentsAndCapturedVariables()
+
+    void flush(InlineStackEntry* inlineStackEntry)
     {
         int numArguments;
-        if (inlineCallFrame())
-            numArguments = inlineCallFrame()->arguments.size();
+        if (InlineCallFrame* inlineCallFrame = inlineStackEntry->m_inlineCallFrame)
+            numArguments = inlineCallFrame->arguments.size();
         else
-            numArguments = m_inlineStackTop->m_codeBlock->numParameters();
+            numArguments = inlineStackEntry->m_codeBlock->numParameters();
         for (unsigned argument = numArguments; argument-- > 1;)
-            flush(argumentToOperand(argument));
-        for (int local = 0; local < m_inlineStackTop->m_codeBlock->m_numVars; ++local) {
-            if (!m_inlineStackTop->m_codeBlock->isCaptured(local))
+            flushDirect(inlineStackEntry->remapOperand(argumentToOperand(argument)));
+        for (int local = 0; local < inlineStackEntry->m_codeBlock->m_numVars; ++local) {
+            if (!inlineStackEntry->m_codeBlock->isCaptured(local))
                 continue;
-            flush(local);
+            flushDirect(inlineStackEntry->remapOperand(local));
         }
+    }
+
+    void flushAllArgumentsAndCapturedVariablesInInlineStack()
+    {
+        for (InlineStackEntry* inlineStackEntry = m_inlineStackTop; inlineStackEntry; inlineStackEntry = inlineStackEntry->m_caller)
+            flush(inlineStackEntry);
+    }
+
+    void flushArgumentsAndCapturedVariables()
+    {
+        flush(m_inlineStackTop);
     }
 
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
@@ -3011,12 +3024,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_end);
 
         case op_throw:
-            flushArgumentsAndCapturedVariables();
+            flushAllArgumentsAndCapturedVariablesInInlineStack();
             addToGraph(Throw, get(currentInstruction[1].u.operand));
             LAST_OPCODE(op_throw);
             
         case op_throw_static_error:
-            flushArgumentsAndCapturedVariables();
+            flushAllArgumentsAndCapturedVariablesInInlineStack();
             addToGraph(ThrowReferenceError);
             LAST_OPCODE(op_throw_static_error);
             

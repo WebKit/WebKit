@@ -1,3 +1,20 @@
+2013-06-18  Oliver Hunt  <oliver@apple.com>
+
+        Going to google.com/trends causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=117602
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure we correctly initialise the appropriate argument registers,
+        and make sure we perform the tearoff correctly.
+
+        * fast/js/inline-arguments-tear-off-expected.txt: Added.
+        * fast/js/inline-arguments-tear-off.html: Added.
+        * fast/js/script-tests/inline-arguments-tear-off.js: Added.
+        (g):
+        (f):
+        (doStuff):
+
 2013-06-18  Benjamin Poulain  <bpoulain@apple.com>
 
         Rebaseline after system update
