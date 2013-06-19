@@ -310,6 +310,12 @@ webkit.org/b/116684 [ Lion ] compositing/overflow/overflow-compositing-descendan
 # Only fails on WK1
 webkit.org/b/82805 [ Lion Debug ] fast/canvas/webgl/object-deletion-behaviour.html [ Pass ]
 
+# [WK2] Media elements never fail to load
+webkit.org/b/117767 media/W3C/audio/error/error_onerror_called_on_bogus_source.html [ Failure ]
+webkit.org/b/117767 media/W3C/video/error/error_onerror_called_on_bogus_source.html [ Failure ]
+webkit.org/b/117767 media/broken-video.html [ Failure ]
+webkit.org/b/117767 media/event-attributes.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
