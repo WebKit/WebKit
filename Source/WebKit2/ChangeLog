@@ -1,3 +1,30 @@
+2013-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Migrate WebKitWebView to GTask
+        https://bugs.webkit.org/show_bug.cgi?id=117154
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (didValidateCommand):
+        (webkit_web_view_can_execute_editing_command):
+        (webkit_web_view_can_execute_editing_command_finish):
+        (webkitWebViewRunJavaScriptCallback):
+        (webkit_web_view_run_javascript):
+        (webkit_web_view_run_javascript_finish):
+        (resourcesStreamReadCallback):
+        (webkit_web_view_run_javascript_from_gresource):
+        (webkit_web_view_run_javascript_from_gresource_finish):
+        (fileReplaceContentsCallback):
+        (getContentsAsMHTMLDataCallback):
+        (webkit_web_view_save):
+        (webkit_web_view_save_finish):
+        (webkit_web_view_save_to_file):
+        (webkit_web_view_save_to_file_finish):
+        (webKitWebViewDidReceiveSnapshot):
+        (webkit_web_view_get_snapshot):
+        (webkit_web_view_get_snapshot_finish):
+
 2013-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Migrate WebKitCookieManager to GTask

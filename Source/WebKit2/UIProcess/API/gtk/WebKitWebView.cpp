@@ -137,7 +137,7 @@ enum {
 };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
-typedef HashMap<uint64_t, GRefPtr<GSimpleAsyncResult> > SnapshotResultsMap;
+typedef HashMap<uint64_t, GRefPtr<GTask> > SnapshotResultsMap;
 
 struct _WebKitWebViewPrivate {
     ~_WebKitWebViewPrivate()
@@ -2360,22 +2360,10 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
     return zoomTextOnly ? page->textZoomFactor() : page->pageZoomFactor();
 }
 
-struct ValidateEditingCommandAsyncData {
-    bool isEnabled;
-    GRefPtr<GCancellable> cancellable;
-};
-WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ValidateEditingCommandAsyncData)
-
 static void didValidateCommand(WKStringRef command, bool isEnabled, int32_t state, WKErrorRef, void* context)
 {
-    GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
-    ValidateEditingCommandAsyncData* data = static_cast<ValidateEditingCommandAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
-    GError* error = 0;
-    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
-        g_simple_async_result_take_error(result.get(), error);
-    else
-        data->isEnabled = isEnabled;
-    g_simple_async_result_complete(result.get());
+    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
+    g_task_return_boolean(task.get(), isEnabled);
 }
 
 /**
@@ -2396,13 +2384,8 @@ void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const c
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(command);
 
-    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(webView), callback, userData,
-                                                           reinterpret_cast<gpointer>(webkit_web_view_can_execute_editing_command));
-    ValidateEditingCommandAsyncData* data = createValidateEditingCommandAsyncData();
-    data->cancellable = cancellable;
-    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyValidateEditingCommandAsyncData));
-
-    getPage(webView)->validateCommand(String::fromUTF8(command), ValidateCommandCallback::create(result, didValidateCommand));
+    GTask* task = g_task_new(webView, cancellable, callback, userData);
+    getPage(webView)->validateCommand(String::fromUTF8(command), ValidateCommandCallback::create(task, didValidateCommand));
 }
 
 /**
@@ -2418,16 +2401,9 @@ void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const c
 gboolean webkit_web_view_can_execute_editing_command_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
-    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), FALSE);
+    g_return_val_if_fail(g_task_is_valid(result, webView), FALSE);
 
-    GSimpleAsyncResult* simple = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simple) == webkit_web_view_can_execute_editing_command);
-
-    if (g_simple_async_result_propagate_error(simple, error))
-        return FALSE;
-
-    ValidateEditingCommandAsyncData* data = static_cast<ValidateEditingCommandAsyncData*>(g_simple_async_result_get_op_res_gpointer(simple));
-    return data->isEnabled;
+    return g_task_propagate_boolean(G_TASK(result), error);
 }
 
 /**
@@ -2486,33 +2462,21 @@ JSGlobalContextRef webkit_web_view_get_javascript_global_context(WebKitWebView* 
     return webView->priv->javascriptGlobalContext;
 }
 
-struct RunJavaScriptAsyncData {
-    ~RunJavaScriptAsyncData()
-    {
-        if (scriptResult)
-            webkit_javascript_result_unref(scriptResult);
-    }
-
-    WebKitJavascriptResult* scriptResult;
-    GRefPtr<GCancellable> cancellable;
-};
-WEBKIT_DEFINE_ASYNC_DATA_STRUCT(RunJavaScriptAsyncData)
-
 static void webkitWebViewRunJavaScriptCallback(WKSerializedScriptValueRef wkSerializedScriptValue, WKErrorRef, void* context)
 {
-    GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
-    RunJavaScriptAsyncData* data = static_cast<RunJavaScriptAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
-    GError* error = 0;
-    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
-        g_simple_async_result_take_error(result.get(), error);
-    else if (wkSerializedScriptValue) {
-        GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_async_result_get_source_object(G_ASYNC_RESULT(result.get()))));
-        data->scriptResult = webkitJavascriptResultCreate(webView.get(), toImpl(wkSerializedScriptValue));
-    } else {
-        g_set_error_literal(&error, WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, _("An exception was raised in JavaScript"));
-        g_simple_async_result_take_error(result.get(), error);
+    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
+    if (g_task_return_error_if_cancelled(task.get()))
+        return;
+
+    if (!wkSerializedScriptValue) {
+        g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED,
+            _("An exception was raised in JavaScript"));
+        return;
     }
-    g_simple_async_result_complete(result.get());
+
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
+    g_task_return_pointer(task.get(), webkitJavascriptResultCreate(webView, toImpl(wkSerializedScriptValue)),
+        reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
 }
 
 /**
@@ -2534,14 +2498,8 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(webView), callback, userData,
-                                                           reinterpret_cast<gpointer>(webkit_web_view_run_javascript));
-    RunJavaScriptAsyncData* data = createRunJavaScriptAsyncData();
-    data->cancellable = cancellable;
-    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyRunJavaScriptAsyncData));
-
-    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script),
-                                               ScriptValueCallback::create(result, webkitWebViewRunJavaScriptCallback));
+    GTask* task = g_task_new(webView, cancellable, callback, userData);
+    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), ScriptValueCallback::create(task, webkitWebViewRunJavaScriptCallback));
 }
 
 /**
@@ -2611,35 +2569,26 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
 WebKitJavascriptResult* webkit_web_view_run_javascript_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+    g_return_val_if_fail(g_task_is_valid(result, webView), 0);
 
-    GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkit_web_view_run_javascript);
-
-    if (g_simple_async_result_propagate_error(simpleResult, error))
-        return 0;
-
-    RunJavaScriptAsyncData* data = static_cast<RunJavaScriptAsyncData*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
-    return data->scriptResult ? webkit_javascript_result_ref(data->scriptResult) : 0;
+    return static_cast<WebKitJavascriptResult*>(g_task_propagate_pointer(G_TASK(result), error));
 }
 
 static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, gpointer userData)
 {
-    GOutputStream* outputStream = G_OUTPUT_STREAM(object);
-    GRefPtr<GSimpleAsyncResult> runJavascriptResult = adoptGRef(G_SIMPLE_ASYNC_RESULT(userData));
+    GRefPtr<GTask> task = adoptGRef(G_TASK(userData));
 
     GError* error = 0;
-    g_output_stream_splice_finish(outputStream, result, &error);
+    g_output_stream_splice_finish(G_OUTPUT_STREAM(object), result, &error);
     if (error) {
-        g_simple_async_result_take_error(runJavascriptResult.get(), error);
-        g_simple_async_result_complete(runJavascriptResult.get());
+        g_task_return_error(task.get(), error);
         return;
     }
 
-    GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_async_result_get_source_object(G_ASYNC_RESULT(runJavascriptResult.get()))));
-    gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(outputStream));
-    getPage(webView.get())->runJavaScriptInMainFrame(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
-                                                     ScriptValueCallback::create(runJavascriptResult.leakRef(), webkitWebViewRunJavaScriptCallback));
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
+    gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
+    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
+        ScriptValueCallback::create(task.leakRef(), webkitWebViewRunJavaScriptCallback));
 }
 
 /**
@@ -2662,25 +2611,18 @@ void webkit_web_view_run_javascript_from_gresource(WebKitWebView* webView, const
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(resource);
 
-    GRefPtr<GSimpleAsyncResult> result = adoptGRef(g_simple_async_result_new(G_OBJECT(webView), callback, userData,
-                                                                             reinterpret_cast<gpointer>(webkit_web_view_run_javascript_from_gresource)));
-    RunJavaScriptAsyncData* data = createRunJavaScriptAsyncData();
-    data->cancellable = cancellable;
-    g_simple_async_result_set_op_res_gpointer(result.get(), data, reinterpret_cast<GDestroyNotify>(destroyRunJavaScriptAsyncData));
-
     GError* error = 0;
     GRefPtr<GInputStream> inputStream = adoptGRef(g_resources_open_stream(resource, G_RESOURCE_LOOKUP_FLAGS_NONE, &error));
     if (error) {
-        g_simple_async_result_take_error(result.get(), error);
-        g_simple_async_result_complete_in_idle(result.get());
+        g_task_report_error(webView, callback, userData, 0, error);
         return;
     }
 
+    GTask* task = g_task_new(webView, cancellable, callback, userData);
     GRefPtr<GOutputStream> outputStream = adoptGRef(g_memory_output_stream_new(0, 0, fastRealloc, fastFree));
     g_output_stream_splice_async(outputStream.get(), inputStream.get(),
-                                 static_cast<GOutputStreamSpliceFlags>(G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE | G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET),
-                                 G_PRIORITY_DEFAULT,
-                                 cancellable, resourcesStreamReadCallback, result.leakRef());
+        static_cast<GOutputStreamSpliceFlags>(G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE | G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET),
+        G_PRIORITY_DEFAULT, cancellable, resourcesStreamReadCallback, task);
 }
 
 /**
@@ -2699,16 +2641,9 @@ void webkit_web_view_run_javascript_from_gresource(WebKitWebView* webView, const
 WebKitJavascriptResult* webkit_web_view_run_javascript_from_gresource_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+    g_return_val_if_fail(g_task_is_valid(result, webView), 0);
 
-    GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkit_web_view_run_javascript_from_gresource);
-
-    if (g_simple_async_result_propagate_error(simpleResult, error))
-        return 0;
-
-    RunJavaScriptAsyncData* data = static_cast<RunJavaScriptAsyncData*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
-    return data->scriptResult ? webkit_javascript_result_ref(data->scriptResult) : 0;
+    return static_cast<WebKitJavascriptResult*>(g_task_propagate_pointer(G_TASK(result), error));
 }
 
 /**
@@ -2765,46 +2700,42 @@ gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const char* 
 struct ViewSaveAsyncData {
     RefPtr<WebData> webData;
     GRefPtr<GFile> file;
-    GRefPtr<GCancellable> cancellable;
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ViewSaveAsyncData)
 
 static void fileReplaceContentsCallback(GObject* object, GAsyncResult* result, gpointer data)
 {
-    GFile* file = G_FILE(object);
-    GRefPtr<GSimpleAsyncResult> savedToFileResult = adoptGRef(G_SIMPLE_ASYNC_RESULT(data));
-
+    GRefPtr<GTask> task = adoptGRef(G_TASK(data));
     GError* error = 0;
-    if (!g_file_replace_contents_finish(file, result, 0, &error))
-        g_simple_async_result_take_error(savedToFileResult.get(), error);
+    if (!g_file_replace_contents_finish(G_FILE(object), result, 0, &error)) {
+        g_task_return_error(task.get(), error);
+        return;
+    }
 
-    g_simple_async_result_complete(savedToFileResult.get());
+    g_task_return_boolean(task.get(), TRUE);
 }
 
 static void getContentsAsMHTMLDataCallback(WKDataRef wkData, WKErrorRef, void* context)
 {
-    GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
-    ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
-    GError* error = 0;
+    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
+    if (g_task_return_error_if_cancelled(task.get()))
+        return;
 
-    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
-        g_simple_async_result_take_error(result.get(), error);
-    else {
-        // We need to retain the data until the asyncronous process
-        // initiated by the user has finished completely.
-        data->webData = toImpl(wkData);
+    ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_task_get_task_data(task.get()));
+    // We need to retain the data until the asyncronous process
+    // initiated by the user has finished completely.
+    data->webData = toImpl(wkData);
 
-        // If we are saving to a file we need to write the data on disk before finishing.
-        if (g_simple_async_result_get_source_tag(result.get()) == webkit_web_view_save_to_file) {
-            ASSERT(G_IS_FILE(data->file.get()));
-            g_file_replace_contents_async(data->file.get(), reinterpret_cast<const gchar*>(data->webData->bytes()), data->webData->size(),
-                                          0, FALSE, G_FILE_CREATE_REPLACE_DESTINATION, data->cancellable.get(), fileReplaceContentsCallback,
-                                          g_object_ref(result.get()));
-            return;
-        }
+    // If we are saving to a file we need to write the data on disk before finishing.
+    if (g_task_get_source_tag(task.get()) == webkit_web_view_save_to_file) {
+        ASSERT(G_IS_FILE(data->file.get()));
+        GCancellable* cancellable = g_task_get_cancellable(task.get());
+        g_file_replace_contents_async(data->file.get(), reinterpret_cast<const gchar*>(data->webData->bytes()), data->webData->size(),
+            0, FALSE, G_FILE_CREATE_REPLACE_DESTINATION, cancellable, fileReplaceContentsCallback, task.leakRef());
+        return;
     }
 
-    g_simple_async_result_complete(result.get());
+    g_task_return_boolean(task.get(), TRUE);
 }
 
 /**
@@ -2830,13 +2761,10 @@ void webkit_web_view_save(WebKitWebView* webView, WebKitSaveMode saveMode, GCanc
     // We only support MHTML at the moment.
     g_return_if_fail(saveMode == WEBKIT_SAVE_MODE_MHTML);
 
-    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(webView), callback, userData,
-                                                           reinterpret_cast<gpointer>(webkit_web_view_save));
-    ViewSaveAsyncData* data = createViewSaveAsyncData();
-    data->cancellable = cancellable;
-    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
-
-    getPage(webView)->getContentsAsMHTMLData(DataCallback::create(result, getContentsAsMHTMLDataCallback), false);
+    GTask* task = g_task_new(webView, cancellable, callback, userData);
+    g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save));
+    g_task_set_task_data(task, createViewSaveAsyncData(), reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
+    getPage(webView)->getContentsAsMHTMLData(DataCallback::create(task, getContentsAsMHTMLDataCallback), false);
 }
 
 /**
@@ -2853,16 +2781,14 @@ void webkit_web_view_save(WebKitWebView* webView, WebKitSaveMode saveMode, GCanc
 GInputStream* webkit_web_view_save_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+    g_return_val_if_fail(g_task_is_valid(result, webView), 0);
 
-    GSimpleAsyncResult* simple = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simple) == webkit_web_view_save);
-
-    if (g_simple_async_result_propagate_error(simple, error))
+    GTask* task = G_TASK(result);
+    if (!g_task_propagate_boolean(task, error))
         return 0;
 
     GInputStream* dataStream = g_memory_input_stream_new();
-    ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_simple_async_result_get_op_res_gpointer(simple));
+    ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_task_get_task_data(task));
     gsize length = data->webData->size();
     if (length)
         g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(dataStream), g_memdup(data->webData->bytes(), length), length, g_free);
@@ -2895,14 +2821,13 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
     // We only support MHTML at the moment.
     g_return_if_fail(saveMode == WEBKIT_SAVE_MODE_MHTML);
 
-    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(webView), callback, userData,
-                                                           reinterpret_cast<gpointer>(webkit_web_view_save_to_file));
+    GTask* task = g_task_new(webView, cancellable, callback, userData);
+    g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save_to_file));
     ViewSaveAsyncData* data = createViewSaveAsyncData();
     data->file = file;
-    data->cancellable = cancellable;
-    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
+    g_task_set_task_data(task, data, reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
 
-    getPage(webView)->getContentsAsMHTMLData(DataCallback::create(result, getContentsAsMHTMLDataCallback), false);
+    getPage(webView)->getContentsAsMHTMLData(DataCallback::create(task, getContentsAsMHTMLDataCallback), false);
 }
 
 /**
@@ -2918,15 +2843,9 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
 gboolean webkit_web_view_save_to_file_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
-    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), FALSE);
+    g_return_val_if_fail(g_task_is_valid(result, webView), FALSE);
 
-    GSimpleAsyncResult* simple = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simple) == webkit_web_view_save_to_file);
-
-    if (g_simple_async_result_propagate_error(simple, error))
-        return FALSE;
-
-    return TRUE;
+    return g_task_propagate_boolean(G_TASK(result), error);
 }
 
 /**
@@ -3021,28 +2940,22 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
     return !!certificateInfo.certificate();
 }
 
-struct GetSnapshotAsyncData {
-    GRefPtr<GCancellable> cancellable;
-    RefPtr<cairo_surface_t> snapshot;
-};
-WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GetSnapshotAsyncData)
-
 void webKitWebViewDidReceiveSnapshot(WebKitWebView* webView, uint64_t callbackID, WebImage* webImage)
 {
-    GRefPtr<GSimpleAsyncResult> result = webView->priv->snapshotResultsMap.take(callbackID);
-    GetSnapshotAsyncData* data = static_cast<GetSnapshotAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
-    GError* error = 0;
-    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
-        g_simple_async_result_take_error(result.get(), error);
-    else if (webImage) {
-        if (RefPtr<ShareableBitmap> image = webImage->bitmap())
-            data->snapshot = image->createCairoSurface();
-    } else {
-        g_set_error_literal(&error, WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE, _("There was an error creating the snapshot"));
-        g_simple_async_result_take_error(result.get(), error);
+    GRefPtr<GTask> task = webView->priv->snapshotResultsMap.take(callbackID);
+    if (g_task_return_error_if_cancelled(task.get()))
+        return;
+
+    if (!webImage) {
+        g_task_return_new_error(task.get(), WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE,
+            _("There was an error creating the snapshot"));
+        return;
     }
 
-    g_simple_async_result_complete(result.get());
+    if (RefPtr<ShareableBitmap> image = webImage->bitmap())
+        g_task_return_pointer(task.get(), image->createCairoSurface().leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
+    else
+        g_task_return_pointer(task.get(), 0, 0);
 }
 
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_SNAPSHOT_REGION_VISIBLE, SnapshotRegionVisible);
@@ -3084,19 +2997,13 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    GRefPtr<GSimpleAsyncResult> result = adoptGRef(g_simple_async_result_new(G_OBJECT(webView), callback, userData,
-        reinterpret_cast<gpointer>(webkit_web_view_get_snapshot)));
-    GetSnapshotAsyncData* data = createGetSnapshotAsyncData();
-    data->cancellable = cancellable;
-    g_simple_async_result_set_op_res_gpointer(result.get(), data, reinterpret_cast<GDestroyNotify>(destroyGetSnapshotAsyncData));
-
     ImmutableDictionary::MapType message;
     uint64_t callbackID = generateSnapshotCallbackID();
     message.set(String::fromUTF8("SnapshotOptions"), WebUInt64::create(static_cast<uint64_t>(webKitSnapshotOptionsToSnapshotOptions(options))));
     message.set(String::fromUTF8("SnapshotRegion"), WebUInt64::create(static_cast<uint64_t>(region)));
     message.set(String::fromUTF8("CallbackID"), WebUInt64::create(callbackID));
 
-    webView->priv->snapshotResultsMap.set(callbackID, result.get());
+    webView->priv->snapshotResultsMap.set(callbackID, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
     getPage(webView)->postMessageToInjectedBundle(String::fromUTF8("GetSnapshot"), ImmutableDictionary::adopt(message).get());
 }
 
@@ -3113,15 +3020,9 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
 cairo_surface_t* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+    g_return_val_if_fail(g_task_is_valid(result, webView), 0);
 
-    GSimpleAsyncResult* simple = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simple) == webkit_web_view_get_snapshot);
-
-    if (g_simple_async_result_propagate_error(simple, error))
-        return 0;
-
-    return cairo_surface_reference(static_cast<GetSnapshotAsyncData*>(g_simple_async_result_get_op_res_gpointer(simple))->snapshot.get());
+    return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
 }
 
 void webkitWebViewWebProcessCrashed(WebKitWebView* webView)
