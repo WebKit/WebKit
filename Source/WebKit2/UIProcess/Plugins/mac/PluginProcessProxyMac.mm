@@ -33,6 +33,7 @@
 #import "PluginProcessMessages.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
+#import <WebCore/KURL.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <spawn.h>
 #import <wtf/text/CString.h>
@@ -394,6 +395,40 @@ void PluginProcessProxy::launchProcess(const String& launchPath, const Vector<St
         [argumentsArray addObject:(NSString *)arguments[i]];
 
     [NSTask launchedTaskWithLaunchPath:launchPath arguments:argumentsArray.get()];
+}
+
+static bool isSilverlightPreferencesURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
+{
+    NSURL *silverlightPreferencesURL = [NSURL fileURLWithPathComponents:[NSArray arrayWithObjects:(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources/Silverlight Preferences.app", nil]];
+
+    return [[NSURL URLWithString:urlString] isEqual:silverlightPreferencesURL];
+}
+
+static bool shouldOpenURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
+{
+    if (pluginProcessAttributes.moduleInfo.bundleIdentifier == "com.microsoft.SilverlightPlugin")
+        return isSilverlightPreferencesURL(pluginProcessAttributes, urlString);
+
+    return false;
+}
+
+void PluginProcessProxy::openURL(const String& urlString, bool& result, int32_t& status, String& launchedURLString)
+{
+    if (!shouldOpenURL(m_pluginProcessAttributes, urlString)) {
+        result = false;
+        return;
+    }
+
+    result = true;
+    CFURLRef launchedURL;
+    status = LSOpenCFURLRef(KURL(ParsedURLString, urlString).createCFURL().get(), &launchedURL);
+
+    if (launchedURL) {
+        launchedURLString = KURL(launchedURL).string();
+        CFRelease(launchedURL);
+    }
+
+    result = false;
 }
 
 } // namespace WebKit

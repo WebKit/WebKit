@@ -37,6 +37,9 @@ messages -> PluginProcessProxy {
 
     # Returns true if the UI process launched the process.
     LaunchProcess(WTF::String launchPath, Vector<WTF::String> arguments) -> (bool result)
+
+    # Returns true if the UI process did open the URL.
+    OpenURL(WTF::String urlString) -> (bool result, int32_t status, WTF::String launchedURLString)
 #endif
 }
 

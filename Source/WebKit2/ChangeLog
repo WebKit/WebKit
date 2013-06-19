@@ -1,3 +1,29 @@
+2013-06-19  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION: Cannot open Silverlight preferences via context menu
+        https://bugs.webkit.org/show_bug.cgi?id=117806
+        <rdar://problem/14166644>
+
+        Reviewed by Beth Dakin.
+
+        Hook the LSOpenCFURLRef function and make the UI process open the URL if it's the URL for the
+        Silverlight Preferences application. This is what we do for the Flash updater.
+
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::openCFURLRef):
+        (WebKit::initializeShim):
+        (WebKit::PluginProcess::openURL):
+        * PluginProcess/mac/PluginProcessShim.h:
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit::shimLSOpenCFURLRef):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::isSilverlightPreferencesURL):
+        (WebKit::shouldOpenURL):
+        (WebKit::PluginProcessProxy::openURL):
+
 2013-06-19  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL][WK2] Implement unit test callback: onSettingChange.
