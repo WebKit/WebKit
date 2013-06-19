@@ -1,3 +1,16 @@
+2013-06-19  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Does not compile.
+        https://bugs.webkit.org/show_bug.cgi?id=117798
+
+        Reviewed by Brent Fulgham.
+
+        Add USE(CFNETWORK) guards.
+
+        * WebCoreSupport/WebFrameNetworkingContext.cpp: Add USE(CFNETWORK) guard.
+        (WebFrameNetworkingContext::ensurePrivateBrowsingSession): Change USE(CF_NETWORK) to USE(CFNETWORK).
+        * WebCoreSupport/WebFrameNetworkingContext.h: Add USE(CFNETWORK) guard.
+
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Build fix for Apple Windows.

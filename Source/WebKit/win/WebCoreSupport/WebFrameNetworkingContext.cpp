@@ -35,7 +35,9 @@
 #include <WebCore/Page.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/Settings.h>
+#if USE(CFNETWORK)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 using namespace WebCore;
 
@@ -64,7 +66,7 @@ void WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(c
 
 void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
-#if USE(CF_NETWORK)
+#if USE(CFNETWORK)
     ASSERT(isMainThread());
 
     if (privateSession)
@@ -98,6 +100,7 @@ String WebFrameNetworkingContext::referrer() const
     return frame()->loader()->referrer();
 }
 
+#if USE(CFNETWORK)
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     ASSERT(isMainThread());
@@ -107,3 +110,4 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 
     return NetworkStorageSession::defaultStorageSession();
 }
+#endif

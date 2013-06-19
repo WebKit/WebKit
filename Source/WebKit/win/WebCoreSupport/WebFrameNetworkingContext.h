@@ -48,7 +48,9 @@ private:
     }
 
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
+#if USE(CFNETWORK)
     virtual WebCore::NetworkStorageSession& storageSession() const OVERRIDE;
+#endif
     virtual String referrer() const OVERRIDE;
     virtual String userAgent() const { return m_userAgent; }
 
