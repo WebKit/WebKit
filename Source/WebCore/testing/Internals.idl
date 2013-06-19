@@ -272,5 +272,9 @@
 
     boolean isSelectPopupVisible(Node node);
 
+#if defined(ENABLE_VIBRATION) && ENABLE_VIBRATION
+    boolean isVibrating();
+#endif
+
     [RaisesException] ClientRect selectionBounds();
 };

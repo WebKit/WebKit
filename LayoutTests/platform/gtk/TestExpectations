@@ -273,7 +273,7 @@ webkit.org/b/71849 webgl [ Skip ]
 Bug(GTK) compositing/visible-rect [ Skip ]
 
 # Vibration API support not yet.
-webkit.org/b/99029 fast/dom/navigator-vibration.html [ Failure ]
+webkit.org/b/99029 vibration [ Failure ]
 
 # DumpRenderTree code to enable Java is currently a no-op
 webkit.org/b/99031 java [ Skip ]

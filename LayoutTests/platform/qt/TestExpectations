@@ -436,7 +436,7 @@ fast/canvas/webgl
 fast/parser/pre-html5-parser-quirks.html
 
 #Vibration API is not implemented.
-fast/dom/navigator-vibration.html
+vibration
 
 #Battery Status API is not implemented.
 batterystatus

@@ -521,7 +521,7 @@ media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 
 # Needs PageClients::vibrationClient() implementation.
-webkit.org/b/72010 fast/dom/navigator-vibration.html
+webkit.org/b/72010 vibration
 
 # Touch adjustment not enabled
 webkit.org/b/78801 touchadjustment

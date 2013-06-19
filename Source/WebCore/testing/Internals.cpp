@@ -145,6 +145,10 @@
 #include "SpeechSynthesis.h"
 #endif
 
+#if ENABLE(VIBRATION)
+#include "Vibration.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2160,5 +2164,15 @@ PassRefPtr<ClientRect> Internals::selectionBounds(ExceptionCode& ec)
 
     return ClientRect::create(document->frame()->selection()->bounds());
 }
+
+#if ENABLE(VIBRATION)
+bool Internals::isVibrating()
+{
+    Page* page = contextDocument()->page();
+    ASSERT(page);
+
+    return Vibration::from(page)->isVibrating();
+}
+#endif
 
 }

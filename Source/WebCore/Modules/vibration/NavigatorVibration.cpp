@@ -45,7 +45,7 @@ void NavigatorVibration::vibrate(Navigator* navigator, unsigned time, ExceptionC
         return;
 
 #if ENABLE(PAGE_VISIBILITY_API)
-    if (navigator->frame()->page()->visibilityState() == PageVisibilityStateHidden)
+    if (navigator->frame()->page()->visibilityState() == PageVisibilityStateHidden && time)
         return;
 #endif
 

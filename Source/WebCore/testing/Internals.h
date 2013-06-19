@@ -321,6 +321,10 @@ public:
 
     PassRefPtr<ClientRect> selectionBounds(ExceptionCode&);
 
+#if ENABLE(VIBRATION)
+    bool isVibrating();
+#endif
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

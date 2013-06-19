@@ -1,3 +1,24 @@
+2013-06-19  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Vibration can be canceled even if page visibility status is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=117333
+
+        Reviewed by Gyuyoung Kim.
+
+        vibration can be canceled in the onvisibilitychange listener even if page visibility is changed to hidden status.
+        Therefore cancelVibration needs to work when page visibility is hidden.
+
+        Tests: vibration/cancelVibration-after-pagevisibility-changed-to-hidden.html
+
+        * Modules/vibration/NavigatorVibration.cpp:
+        (WebCore::NavigatorVibration::vibrate):
+        * Modules/vibration/Vibration.h:
+        (WebCore::Vibration::isVibrating):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isVibrating):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Input type range slider is not updated when min or max are changed

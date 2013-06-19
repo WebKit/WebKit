@@ -53,6 +53,8 @@ public:
     static Vibration* from(Page* page) { return static_cast<Vibration*>(Supplement<Page>::from(page, supplementName())); }
     static bool isActive(Page*);
 
+    bool isVibrating() { return m_isVibrating; }
+
 private:
     VibrationClient* m_vibrationClient;
     Timer<Vibration> m_timerStart;
