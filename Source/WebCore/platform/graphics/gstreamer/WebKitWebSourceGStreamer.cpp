@@ -1011,6 +1011,12 @@ void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, i
     if (priv->requestedOffset == priv->offset)
         priv->requestedOffset += length;
     priv->offset += length;
+    // priv->size == 0 if received length on didReceiveResponse < 0.
+    if (priv->size > 0 && priv->offset > priv->size) {
+        GST_DEBUG_OBJECT(m_src, "Updating internal size from %" G_GUINT64_FORMAT " to %" G_GUINT64_FORMAT, priv->size, priv->offset);
+        gst_app_src_set_size(priv->appsrc, priv->offset);
+        priv->size = priv->offset;
+    }
     GST_BUFFER_OFFSET_END(priv->buffer.get()) = priv->offset;
 
     GST_OBJECT_UNLOCK(m_src);
