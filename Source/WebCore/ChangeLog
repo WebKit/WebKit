@@ -1,3 +1,44 @@
+2013-06-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Move IDL extended attributes to their correct location
+        https://bugs.webkit.org/show_bug.cgi?id=117732
+
+        Reviewed by Kentaro Hara.
+
+        Move IDL extended attributes to their correct location according to the
+        latest Web IDL specification. We used to be inconsistent in the positioning
+        of the extended attributes. This simplifies a lot the code of the IDL parser
+        and makes our IDL files more standard.
+
+        Based on Blink r148345 by Kentaro Hara <haraken@chromium.org>.
+
+        No new tests, no behavior change.
+
+        * Modules/encryptedmedia/MediaKeyMessageEvent.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/speech/SpeechSynthesisVoice.idl:
+        * bindings/scripts/IDLParser.pm:
+        (parseDefinitions):
+        (parseInterfaceMembers):
+        (parseInterfaceMember):
+        (parseDictionaryMembers):
+        (parseAttributeOrOperationOrIterator):
+        (parseAttribute):
+        * css/CSSFontFaceLoadEvent.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Node.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFrameSetElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLSourceElement.idl:
+        * page/DOMWindow.idl:
+        * svg/SVGElementInstance.idl:
+        * svg/SVGScriptElement.idl:
+        * testing/TypeConversions.idl:
+
 2013-06-18  Jessie Berlin  <jberlin@apple.com>
 
         Let the script to update the Localizable.strings file do the reordering it wants to do.

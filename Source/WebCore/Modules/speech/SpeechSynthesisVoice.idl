@@ -31,5 +31,5 @@
     readonly attribute DOMString name;
     readonly attribute DOMString lang;
     readonly attribute boolean localService;
-    readonly attribute [ImplementedAs=isDefault] boolean default;
+    [ImplementedAs=isDefault] readonly attribute boolean default;
 };

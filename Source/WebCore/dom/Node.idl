@@ -48,7 +48,7 @@
     const unsigned short      DOCUMENT_FRAGMENT_NODE         = 11;
     const unsigned short      NOTATION_NODE                  = 12;
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        nodeName;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        nodeName;
 
     // FIXME: the spec says this can also raise on retrieval.
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString nodeValue;
@@ -78,9 +78,9 @@
     [ObjCLegacyUnnamedParameters] boolean isSupported([Default=Undefined] optional DOMString feature, 
                                        [TreatNullAs=NullString,Default=Undefined] optional DOMString version);
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        namespaceURI;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        namespaceURI;
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString prefix;
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        localName;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        localName;
 
 #if defined(LANGUAGE_OBJECTIVE_C)
     readonly attribute NamedNodeMap     attributes;
@@ -90,7 +90,7 @@
 
     // Introduced in DOM Level 3:
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString       baseURI;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString       baseURI;
 
     // FIXME: the spec says this can also raise on retrieval.
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString textContent;

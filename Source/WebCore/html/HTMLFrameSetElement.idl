@@ -45,10 +45,10 @@
     [NotEnumerable, JSWindowEventListener] attribute EventListener onload;
 
     // Not implemented yet.
-    // attribute [NotEnumerable, JSWindowEventListener] EventListener onafterprint;
-    // attribute [NotEnumerable, JSWindowEventListener] EventListener onbeforeprint;
-    // attribute [NotEnumerable, JSWindowEventListener] EventListener onredo;
-    // attribute [NotEnumerable, JSWindowEventListener] EventListener onundo;
+    // [NotEnumerable, JSWindowEventListener] attribute EventListener onafterprint;
+    // [NotEnumerable, JSWindowEventListener] attribute EventListener onbeforeprint;
+    // [NotEnumerable, JSWindowEventListener] attribute EventListener onredo;
+    // [NotEnumerable, JSWindowEventListener] attribute EventListener onundo;
 #endif
 };
 

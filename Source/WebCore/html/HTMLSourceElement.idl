@@ -26,7 +26,7 @@
 [
     Conditional=VIDEO,
 ] interface HTMLSourceElement : HTMLElement {
-attribute [Reflect, URL] DOMString src;
+[Reflect, URL] attribute DOMString src;
 attribute DOMString type;
 attribute DOMString media;
 };

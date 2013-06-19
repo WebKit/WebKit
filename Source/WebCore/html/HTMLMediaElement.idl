@@ -33,8 +33,8 @@
 readonly attribute MediaError error;
 
 // network state
-attribute [Reflect, URL] DOMString src;
-readonly attribute [URL] DOMString currentSrc;
+[Reflect, URL] attribute DOMString src;
+[URL] readonly attribute DOMString currentSrc;
 
 const unsigned short NETWORK_EMPTY = 0;
 const unsigned short NETWORK_IDLE = 1;
@@ -73,8 +73,8 @@ attribute double playbackRate;
 readonly attribute TimeRanges played;
 readonly attribute TimeRanges seekable;
 readonly attribute boolean ended;
-attribute [Reflect] boolean autoplay;
-attribute [Reflect] boolean loop;
+[Reflect] attribute boolean autoplay;
+[Reflect] attribute boolean loop;
 void play();
 void pause();
 
@@ -82,7 +82,7 @@ void pause();
 attribute boolean controls;
 [SetterRaisesException] attribute double volume;
 attribute boolean muted;
-attribute [Reflect=muted] boolean defaultMuted;
+[Reflect=muted] attribute boolean defaultMuted;
 
 // WebKit extensions
 attribute boolean webkitPreservesPitch;
@@ -91,8 +91,8 @@ readonly attribute boolean webkitHasClosedCaptions;
 attribute boolean webkitClosedCaptionsVisible;
 
 // The number of bytes consumed by the media decoder.
-readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitAudioDecodedByteCount;
-readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitVideoDecodedByteCount;
+[Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
+[Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
 
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
 [RaisesException] void webkitGenerateKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, optional Uint8Array initData);
@@ -103,7 +103,7 @@ readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitVideoDecod
     attribute EventListener onwebkitkeyerror;
     attribute EventListener onwebkitkeymessage;
 #endif
-    attribute [Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] EventListener onwebkitneedkey;
+    [Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] attribute EventListener onwebkitneedkey;
 #if defined(ENABLE_ENCRYPTED_MEDIA_V2) && ENABLE_ENCRYPTED_MEDIA_V2
     attribute MediaKeys mediaKeys;
 #endif
@@ -116,5 +116,5 @@ readonly attribute VideoTrackList videoTracks;
 #endif
 
 [Reflect, TreatNullAs=NullString] attribute DOMString mediaGroup;
-attribute [CustomSetter] MediaController controller;
+[CustomSetter] attribute MediaController controller;
 };

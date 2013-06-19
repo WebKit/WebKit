@@ -25,9 +25,7 @@
 
 [
     Conditional=SVG
-] interface SVGScriptElement : SVGElement,
-                                               SVGURIReference,
-                                               SVGExternalResourcesRequired {
-             attribute [TreatNullAs=NullString] DOMString type;
+] interface SVGScriptElement : SVGElement, SVGURIReference, SVGExternalResourcesRequired {
+    [TreatNullAs=NullString] attribute DOMString type;
 };
 

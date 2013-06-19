@@ -277,27 +277,27 @@
     [NotEnumerable] attribute EventListener onselect;
     [NotEnumerable] attribute EventListener onsubmit;
 
-    // attribute [NotEnumerable] EventListener oncanplay;
-    // attribute [NotEnumerable] EventListener oncanplaythrough;
-    // attribute [NotEnumerable] EventListener ondurationchange;
-    // attribute [NotEnumerable] EventListener onemptied;
-    // attribute [NotEnumerable] EventListener onended;
-    // attribute [NotEnumerable] EventListener onloadeddata;
-    // attribute [NotEnumerable] EventListener onloadedmetadata;
-    // attribute [NotEnumerable] EventListener onloadstart;
-    // attribute [NotEnumerable] EventListener onpause;
-    // attribute [NotEnumerable] EventListener onplay;
-    // attribute [NotEnumerable] EventListener onplaying;
-    // attribute [NotEnumerable] EventListener onprogress;
-    // attribute [NotEnumerable] EventListener onratechange;
-    // attribute [NotEnumerable] EventListener onseeked;
-    // attribute [NotEnumerable] EventListener onseeking;
-    // attribute [NotEnumerable] EventListener onshow;
-    // attribute [NotEnumerable] EventListener onstalled;
-    // attribute [NotEnumerable] EventListener onsuspend;
-    // attribute [NotEnumerable] EventListener ontimeupdate;
-    // attribute [NotEnumerable] EventListener onvolumechange;
-    // attribute [NotEnumerable] EventListener onwaiting;
+    // [NotEnumerable] attribute EventListener oncanplay;
+    // [NotEnumerable] attribute EventListener oncanplaythrough;
+    // [NotEnumerable] attribute EventListener ondurationchange;
+    // [NotEnumerable] attribute EventListener onemptied;
+    // [NotEnumerable] attribute EventListener onended;
+    // [NotEnumerable] attribute EventListener onloadeddata;
+    // [NotEnumerable] attribute EventListener onloadedmetadata;
+    // [NotEnumerable] attribute EventListener onloadstart;
+    // [NotEnumerable] attribute EventListener onpause;
+    // [NotEnumerable] attribute EventListener onplay;
+    // [NotEnumerable] attribute EventListener onplaying;
+    // [NotEnumerable] attribute EventListener onprogress;
+    // [NotEnumerable] attribute EventListener onratechange;
+    // [NotEnumerable] attribute EventListener onseeked;
+    // [NotEnumerable] attribute EventListener onseeking;
+    // [NotEnumerable] attribute EventListener onshow;
+    // [NotEnumerable] attribute EventListener onstalled;
+    // [NotEnumerable] attribute EventListener onsuspend;
+    // [NotEnumerable] attribute EventListener ontimeupdate;
+    // [NotEnumerable] attribute EventListener onvolumechange;
+    // [NotEnumerable] attribute EventListener onwaiting;
 
     // WebKit extensions
     [NotEnumerable] attribute EventListener onbeforecut;

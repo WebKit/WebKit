@@ -53,13 +53,13 @@
     [Replaceable] readonly attribute Navigator clientInformation;
     readonly attribute Crypto crypto;
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-    attribute [DoNotCheckSecurity, CustomSetter] Location location;
+    [DoNotCheckSecurity, CustomSetter] attribute Location location;
 #endif
     [Replaceable, CustomGetter] readonly attribute Event event;
 
     DOMSelection getSelection();
 
-    readonly attribute [CheckSecurityForNode] Element frameElement;
+    [CheckSecurityForNode] readonly attribute Element frameElement;
 
     [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void focus();
     [DoNotCheckSecurity] void blur();
@@ -112,7 +112,7 @@
     void resizeBy([Default=Undefined] optional float x, [Default=Undefined] optional float y); // FIXME: this should take longs not floats.
     void resizeTo([Default=Undefined] optional float width, [Default=Undefined] optional float height); // FIXME: this should take longs not floats.
 
-    readonly attribute [DoNotCheckSecurity] boolean closed;
+    [DoNotCheckSecurity] readonly attribute boolean closed;
 
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute unsigned long length;
 
@@ -204,7 +204,7 @@
     [RaisesException] DOMString atob([TreatNullAs=NullString,Default=Undefined] optional DOMString string);
     [RaisesException] DOMString btoa([TreatNullAs=NullString,Default=Undefined] optional DOMString string);
 
-    readonly attribute [Replaceable,Conditional=CSS3_CONDITIONAL_RULES] DOMWindowCSS CSS;
+    [Replaceable,Conditional=CSS3_CONDITIONAL_RULES] readonly attribute DOMWindowCSS CSS;
 
     // Events
     attribute EventListener onabort;
@@ -290,15 +290,15 @@
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
     attribute EventListener onorientationchange;
 #endif
-    attribute [Conditional=TOUCH_EVENTS] EventListener ontouchstart;
-    attribute [Conditional=TOUCH_EVENTS] EventListener ontouchmove;
-    attribute [Conditional=TOUCH_EVENTS] EventListener ontouchend;
-    attribute [Conditional=TOUCH_EVENTS] EventListener ontouchcancel;
+    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchstart;
+    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchmove;
+    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchend;
+    [Conditional=TOUCH_EVENTS] attribute EventListener ontouchcancel;
 
-    attribute [Conditional=DEVICE_ORIENTATION] EventListener ondevicemotion;
-    attribute [Conditional=DEVICE_ORIENTATION] EventListener ondeviceorientation;
+    [Conditional=DEVICE_ORIENTATION] attribute EventListener ondevicemotion;
+    [Conditional=DEVICE_ORIENTATION] attribute EventListener ondeviceorientation;
 
-    attribute [Conditional=PROXIMITY_EVENTS] EventListener onwebkitdeviceproximity;
+    [Conditional=PROXIMITY_EVENTS] attribute EventListener onwebkitdeviceproximity;
 
     // EventTarget interface
     [Custom] void addEventListener(DOMString type,

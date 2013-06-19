@@ -28,6 +28,6 @@
     ConstructorTemplate=Event 
 ] interface MediaKeyMessageEvent : Event {
     readonly attribute Uint8Array message;
-    readonly attribute [InitializedByEventConstructor] DOMString destinationURL;
+    [InitializedByEventConstructor] readonly attribute DOMString destinationURL;
 };
 

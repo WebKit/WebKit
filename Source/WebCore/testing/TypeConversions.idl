@@ -28,17 +28,17 @@
     ImplementationLacksVTable
 ] interface TypeConversions {
     attribute long testLong;
-    attribute [EnforceRange] long testEnforceRangeLong;
+    [EnforceRange] attribute long testEnforceRangeLong;
     attribute unsigned long testUnsignedLong;
-    attribute [EnforceRange] unsigned long testEnforceRangeUnsignedLong;
+    [EnforceRange] attribute unsigned long testEnforceRangeUnsignedLong;
 
     attribute long long testLongLong;
-    attribute [EnforceRange] long long testEnforceRangeLongLong;
+    [EnforceRange] attribute long long testEnforceRangeLongLong;
     attribute unsigned long long testUnsignedLongLong;
-    attribute [EnforceRange] unsigned long long testEnforceRangeUnsignedLongLong;
+    [EnforceRange] attribute unsigned long long testEnforceRangeUnsignedLongLong;
 
     attribute byte testByte;
-    attribute [EnforceRange] byte testEnforceRangeByte;
+    [EnforceRange] attribute byte testEnforceRangeByte;
     attribute octet testOctet;
-    attribute [EnforceRange] octet testEnforceRangeOctet;
+    [EnforceRange] attribute octet testEnforceRangeOctet;
 };

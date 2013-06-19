@@ -21,12 +21,12 @@
 [
     CustomIndexedSetter,
 ] interface HTMLSelectElement : HTMLElement {
-    attribute [Reflect] boolean autofocus;
-    attribute [Reflect] boolean disabled;
+    [Reflect] attribute boolean autofocus;
+    [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
     attribute boolean multiple;
-    attribute [Reflect] DOMString name;
-    attribute [Reflect] boolean required;
+    [Reflect] attribute DOMString name;
+    [Reflect] attribute boolean required;
     attribute long size;
 
     readonly attribute DOMString type;

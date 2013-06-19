@@ -34,6 +34,6 @@
     JSNoStaticTables,
     ConstructorTemplate=Event
 ] interface CSSFontFaceLoadEvent : Event {
-    readonly attribute [InitializedByEventConstructor] CSSFontFaceRule fontface;
-    readonly attribute [InitializedByEventConstructor] DOMError error;
+    [InitializedByEventConstructor] readonly attribute CSSFontFaceRule fontface;
+    [InitializedByEventConstructor] readonly attribute DOMError error;
 };

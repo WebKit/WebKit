@@ -23,19 +23,19 @@
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomCall,
 ] interface HTMLEmbedElement : HTMLElement {
-attribute [Reflect] DOMString align;
+[Reflect] attribute DOMString align;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-attribute [Reflect] DOMString height;
+[Reflect] attribute DOMString height;
 #else
-attribute [Reflect] long height;
+[Reflect] attribute long height;
 #endif
-attribute [Reflect] DOMString name;
-attribute [Reflect, URL] DOMString src;
-attribute [Reflect] DOMString type;
+[Reflect] attribute DOMString name;
+[Reflect, URL] attribute DOMString src;
+[Reflect] attribute DOMString type;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-attribute [Reflect] DOMString width;
+[Reflect] attribute DOMString width;
 #else
-attribute [Reflect] long width;
+[Reflect] attribute long width;
 #endif
 
 #if defined(ENABLE_SVG) && ENABLE_SVG
