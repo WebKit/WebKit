@@ -1,3 +1,16 @@
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Disable some feature flags.
+        <rdar://problem/14171207>.
+
+        Rubberstamped by Jon Lee.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateRegionsAndExclusionsAfterChildLayout):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+
 2013-06-18  Darin Adler  <darin@apple.com>
 
         Improve style of null checks in FrameView::setFrameRect

@@ -1,3 +1,12 @@
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Disable some feature flags.
+        <rdar://problem/14171207>.
+
+        Rubberstamped by Jon Lee.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-06-18  Oliver Hunt  <oliver@apple.com>
 
         Going to google.com/trends causes a crash
