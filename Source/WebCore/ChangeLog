@@ -1,3 +1,21 @@
+2013-06-19  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GStreamer] [texmap] the bytesPerLine is wrong when updating the texture
+        https://bugs.webkit.org/show_bug.cgi?id=117551
+
+        Reviewed by Philippe Normand.
+
+        The bytesPerLine (or stride) is wrong when updating the texture
+        content. This is because the naturalSize() is not updated to the
+        current buffer. This patch extracts the current value of the size and
+        the stride.
+
+        No tests required.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::paintToTextureMapper):
+
 2013-06-19  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         Adjust internal size on gstreamer source element when receiving data if necessary

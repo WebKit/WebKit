@@ -334,7 +334,19 @@ void MediaPlayerPrivateGStreamerBase::updateTexture(GstBuffer* buffer)
         return;
 
     const void* srcData = 0;
-    IntSize size = naturalSize();
+#ifdef GST_API_VERSION_1
+    GRefPtr<GstCaps> caps = currentVideoSinkCaps();
+#else
+    GRefPtr<GstCaps> caps = GST_BUFFER_CAPS(buffer);
+#endif
+    if (!caps)
+        return;
+
+    IntSize size;
+    GstVideoFormat format;
+    int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
+    if (!getVideoSizeAndFormatFromCaps(caps.get(), size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride))
+        return;
 
     if (m_texture->size() != size)
         m_texture->reset(size);
@@ -362,7 +374,7 @@ void MediaPlayerPrivateGStreamerBase::updateTexture(GstBuffer* buffer)
     srcData = GST_BUFFER_DATA(buffer);
 #endif
 
-    m_texture->updateContents(srcData, WebCore::IntRect(WebCore::IntPoint(0, 0), size), WebCore::IntPoint(0, 0), size.width() * 4, BitmapTexture::UpdateCannotModifyOriginalImageData);
+    m_texture->updateContents(srcData, WebCore::IntRect(WebCore::IntPoint(0, 0), size), WebCore::IntPoint(0, 0), stride, BitmapTexture::UpdateCannotModifyOriginalImageData);
 
 #ifdef GST_API_VERSION_1
     gst_buffer_unmap(buffer, &srcInfo);
@@ -438,6 +450,9 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
 void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     if (textureMapper->accelerationMode() != TextureMapper::OpenGLMode)
+        return;
+
+    if (!m_player->visible())
         return;
 
     if (!m_texture) {
