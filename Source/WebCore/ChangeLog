@@ -1,3 +1,19 @@
+2013-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Several tests crash due to an assert when creating an ImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=117793
+
+        Reviewed by Rob Buis.
+
+        JIRA 388741
+
+        Fixes a crash in several layout tests due to an assert when
+        creating an ImageBuffer with an empty size.
+
+        * platform/graphics/blackberry/ImageBufferBlackBerry.cpp:
+        (WebCore::ImageBuffer::ImageBuffer): Return early if the given
+        size is empty.
+
 2013-06-19  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GStreamer] [texmap] the bytesPerLine is wrong when updating the texture

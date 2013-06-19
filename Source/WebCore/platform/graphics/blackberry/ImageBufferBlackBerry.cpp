@@ -168,6 +168,9 @@ ImageBuffer::ImageBuffer(const IntSize& size, float, ColorSpace, RenderingMode r
     m_data.m_platformLayer = nullptr;
     m_data.m_window = 0;
 
+    if (m_size.isEmpty())
+        return;
+
     // anything bigger then defaultTileSize is just a problem for the HW.
     const int maxTileSize = BlackBerry::Platform::Graphics::TiledImage::defaultTileSize();
     if (maxTileSize <= size.width() || maxTileSize <= size.height()) {
