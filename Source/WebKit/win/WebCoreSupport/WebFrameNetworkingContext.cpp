@@ -73,8 +73,7 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
         return;
 
     String base;
-    if (!identifierBase)
-    {
+    if (!identifierBase) {
         if (CFTypeRef bundleValue = CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleIdentifierKey))
             if (CFGetTypeID(bundleValue) == CFStringGetTypeID())
                 base = reinterpret_cast<CFStringRef>(bundleValue);

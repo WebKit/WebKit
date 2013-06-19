@@ -1,5 +1,14 @@
 2013-06-19  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Correct style on last patch.
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        (WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+
+2013-06-19  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Unreviewed build correction.
 
         * WebCoreSupport/WebFrameNetworkingContext.cpp:
