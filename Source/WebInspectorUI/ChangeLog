@@ -1,3 +1,44 @@
+2013-06-19  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: Copying array or object output does not contain values
+        https://bugs.webkit.org/show_bug.cgi?id=117669
+
+        ConsoleCommandResult was overriding toClipboardString() but wasn't using the complex code
+        in ConsoleMessageImpl's toClipboardString() to provide a nicely formatted output for objects.
+        We now use a "clipboarPrefixString" property to customize the prefix used in the clipboard
+        and, additionally, only use that prefix if we're copying more than a single message since it's
+        the only situation where it's useful to have the ">" or "<" prefix shown. Console messages with
+        a log level always print the level and when saving the console log using Cmd+S, all messages
+        contain their prefix as well.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/ConsoleCommand.js:
+        (WebInspector.ConsoleCommand.prototype.toClipboardString):
+        Handle the new isPrefixOptional argument.
+
+        * UserInterface/ConsoleCommandResult.js:
+        (WebInspector.ConsoleCommandResult.prototype.get clipboarPrefixString):
+        Provide a custom "< " prefix and set "enforcesClipboardPrefixString" to false such that
+        the prefix isn't printed out in situations when it may not.
+
+        * UserInterface/ConsoleMessageImpl.js:
+        Set "enforcesClipboardPrefixString" to true since we always want to log the log level
+        prefix in all situations.
+
+        (WebInspector.ConsoleMessageImpl.prototype.get clipboarPrefixString):
+        Implement this new getter to return our clipboard string such that subclasses may
+        customize it.
+
+        (WebInspector.ConsoleMessageImpl.prototype.toClipboardString):
+        Take into account both isPrefixOptional and the "enforcesClipboardPrefixString" property
+        to only log the prefix if necessary.
+
+        * UserInterface/LogContentView.js:
+        (WebInspector.LogContentView.prototype._formatMessagesAsData):
+        Make the logging of prefix optional when we have a single message selected and we're
+        not saving via Cmd+S.
+
 2013-06-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Infrequent uncaught exception with debugger popovers breaks inspector

@@ -89,9 +89,9 @@ WebInspector.ConsoleCommand.prototype = {
         this._formattedCommand.textContent = this.command;
     },
     
-    toClipboardString: function()
+    toClipboardString: function(isPrefixOptional)
     {
-        return "> " + this.command;
+        return (isPrefixOptional ? "" : "> ") + this.command;
     }
 };
 
