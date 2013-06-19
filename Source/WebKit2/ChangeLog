@@ -1,3 +1,10 @@
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Fix a typo that may be causing some test failures.
+
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::scheduledRunLoopPairs):
+
 2013-06-18  Anders Carlsson  <andersca@apple.com>
 
         Make it possible to set a minimum height for auto-layout

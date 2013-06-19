@@ -99,8 +99,8 @@ bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
 SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
 {
     if (!frame() || !frame()->page())
-        return frame()->page()->scheduledRunLoopPairs();
-    return 0;
+        return 0;
+    return frame()->page()->scheduledRunLoopPairs();
 }
 
 RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() const
