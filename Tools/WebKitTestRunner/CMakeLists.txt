@@ -40,6 +40,8 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBKIT2_DIR}/UIProcess
     ${WEBKIT2_DIR}/UIProcess/API/C/efl
     ${WEBKIT2_DIR}/UIProcess/API/C/soup
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c
     ${WTF_DIR}
     ${DERIVED_SOURCES_WEBCORE_DIR}
     ${DERIVED_SOURCES_WEBCORE_DIR}/include

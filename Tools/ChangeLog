@@ -1,3 +1,11 @@
+2013-06-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix after r151699.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * WebKitTestRunner/CMakeLists.txt:
+        Added include dir for InjectedBundleHitTestResultMediaType.h and WKBundleHitTestResult.h
+
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
         Replace tools32 folder with tools and update WebKit Windows solution accordingly.
