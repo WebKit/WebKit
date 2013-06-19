@@ -5889,7 +5889,6 @@ void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Lay
     maxLogicalWidth = max(minLogicalWidth, maxLogicalWidth);
 
     if (!style()->autoWrap() && childrenInline()) {
-        minLogicalWidth = maxLogicalWidth;
         // A horizontal marquee with inline children has no minimum width.
         if (layer() && layer()->marquee() && layer()->marquee()->isHorizontal())
             minLogicalWidth = 0;
