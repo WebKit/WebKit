@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "JSLocationCustom.h"
+#include "JSLocation.h"
 
 #include "Location.h"
 #include <runtime/JSFunction.h>

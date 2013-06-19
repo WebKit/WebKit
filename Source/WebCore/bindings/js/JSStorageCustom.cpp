@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSStorageCustom.h"
+#include "JSStorage.h"
 
 #include "Storage.h"
 #include <runtime/PropertyNameArray.h>

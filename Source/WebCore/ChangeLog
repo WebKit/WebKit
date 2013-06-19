@@ -1,3 +1,45 @@
+2013-06-19  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Do not require JS*Custom.h header if [CustomPutFunction] / [CustomNamedSetter] is used
+        https://bugs.webkit.org/show_bug.cgi?id=117795
+
+        Reviewed by Kentaro Hara.
+
+        Fix the JS bindings generator so that it stops including JS*Custom.h header whenever
+        [CustomPutFunction] or [CustomNamedSetter] IDL extended attributes are used. We don't
+        really need this custom header and this forces the developer to create dummy custom
+        headers so that it builds.
+
+        If the developer really needs such custom header to be included, he can still use
+        [JSCustomHeader] IDL extended attribute to do so.
+
+        This patch also remove the dummy custom headers that were created but are no longer
+        required to build.
+
+        No new tests, no behavior change. Already covered by the following bindings test:
+        TestInterface.idl
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMStringMapCustom.h: Removed.
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        * bindings/js/JSHTMLAppletElementCustom.h: Removed.
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        * bindings/js/JSHTMLEmbedElementCustom.h: Removed.
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        * bindings/js/JSHTMLObjectElementCustom.h: Removed.
+        * bindings/js/JSHistoryCustom.cpp:
+        * bindings/js/JSHistoryCustom.h: Removed.
+        * bindings/js/JSLocationCustom.cpp:
+        * bindings/js/JSLocationCustom.h: Removed.
+        * bindings/js/JSStorageCustom.cpp:
+        * bindings/js/JSStorageCustom.h: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+
 2013-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Several tests crash due to an assert when creating an ImageBuffer

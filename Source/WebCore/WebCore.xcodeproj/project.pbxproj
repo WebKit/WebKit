@@ -5402,10 +5402,7 @@
 		E1AD12D61295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1AD12D51295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp */; };
 		E1AD139B1295D92600ACA989 /* JSHTMLLinkElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1AD139A1295D92600ACA989 /* JSHTMLLinkElementCustom.cpp */; };
 		E1AD139E1295D96100ACA989 /* JSHTMLStyleElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1AD139D1295D96100ACA989 /* JSHTMLStyleElementCustom.cpp */; };
-		E1AD141E1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AD141D1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h */; };
-		E1AD14211295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AD14201295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h */; };
 		E1AD14231295EA7F00ACA989 /* JSHTMLInputElementCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AD14221295EA7F00ACA989 /* JSHTMLInputElementCustom.h */; };
-		E1AD14251295EA9500ACA989 /* JSHTMLObjectElementCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = E1AD14241295EA9500ACA989 /* JSHTMLObjectElementCustom.h */; };
 		E1AD147C1297307E00ACA989 /* JSCSSImportRuleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1AD147B1297307E00ACA989 /* JSCSSImportRuleCustom.cpp */; };
 		E1AD14911297337400ACA989 /* JSCSSFontFaceRuleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1AD14901297337400ACA989 /* JSCSSFontFaceRuleCustom.cpp */; };
 		E1AD14A31297345300ACA989 /* JSCSSMediaRuleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1AD14A21297345300ACA989 /* JSCSSMediaRuleCustom.cpp */; };
@@ -12195,10 +12192,7 @@
 		E1AD12D51295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSProcessingInstructionCustom.cpp; sourceTree = "<group>"; };
 		E1AD139A1295D92600ACA989 /* JSHTMLLinkElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLLinkElementCustom.cpp; sourceTree = "<group>"; };
 		E1AD139D1295D96100ACA989 /* JSHTMLStyleElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLStyleElementCustom.cpp; sourceTree = "<group>"; };
-		E1AD141D1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAppletElementCustom.h; sourceTree = "<group>"; };
-		E1AD14201295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLEmbedElementCustom.h; sourceTree = "<group>"; };
 		E1AD14221295EA7F00ACA989 /* JSHTMLInputElementCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLInputElementCustom.h; sourceTree = "<group>"; };
-		E1AD14241295EA9500ACA989 /* JSHTMLObjectElementCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLObjectElementCustom.h; sourceTree = "<group>"; };
 		E1AD147B1297307E00ACA989 /* JSCSSImportRuleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSImportRuleCustom.cpp; sourceTree = "<group>"; };
 		E1AD14901297337400ACA989 /* JSCSSFontFaceRuleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSFontFaceRuleCustom.cpp; sourceTree = "<group>"; };
 		E1AD14A21297345300ACA989 /* JSCSSMediaRuleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSMediaRuleCustom.cpp; sourceTree = "<group>"; };
@@ -18823,13 +18817,11 @@
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */,
 				BC4EDEF30C08F3FB007EDD49 /* JSHTMLAppletElementCustom.cpp */,
-				E1AD141D1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h */,
 				9392262C1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp */,
 				BCCBAD3A0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp */,
 				BC51580A0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp */,
 				BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */,
 				BC6D44BD0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp */,
-				E1AD14201295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h */,
 				9B1AB07B1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp */,
 				A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */,
 				BC2ED7A40C6C0F3600920BFF /* JSHTMLFrameElementCustom.cpp */,
@@ -18839,7 +18831,6 @@
 				E1AD139A1295D92600ACA989 /* JSHTMLLinkElementCustom.cpp */,
 				CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */,
 				BC305CA30C0781BB00CD20F0 /* JSHTMLObjectElementCustom.cpp */,
-				E1AD14241295EA9500ACA989 /* JSHTMLObjectElementCustom.h */,
 				448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */,
 				BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */,
 				AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */,
@@ -22308,7 +22299,6 @@
 				BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */,
 				1A4A2DF00A1B852A00C807F8 /* JSHTMLAnchorElement.h in Headers */,
 				1A4A2DF20A1B852A00C807F8 /* JSHTMLAppletElement.h in Headers */,
-				E1AD141E1295EA4F00ACA989 /* JSHTMLAppletElementCustom.h in Headers */,
 				1AE2AA1F0A1CDAB400B42B25 /* JSHTMLAreaElement.h in Headers */,
 				E44614380CD689C500FADA75 /* JSHTMLAudioElement.h in Headers */,
 				A80E7B110A19D606007FB8C5 /* JSHTMLBaseElement.h in Headers */,
@@ -22330,7 +22320,6 @@
 				1A494BFB0A122F4400FDAFC1 /* JSHTMLElement.h in Headers */,
 				938E65F109F09840008A48EC /* JSHTMLElementWrapperFactory.h in Headers */,
 				BC6D44ED0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h in Headers */,
-				E1AD14211295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h in Headers */,
 				1AE2AA270A1CDAB400B42B25 /* JSHTMLFieldSetElement.h in Headers */,
 				1AE2AA290A1CDAB400B42B25 /* JSHTMLFontElement.h in Headers */,
 				9BF9A8811648DD2F001C6B23 /* JSHTMLFormControlsCollection.h in Headers */,
@@ -22358,7 +22347,6 @@
 				A7BBE26711AFB3F20005EA03 /* JSHTMLMeterElement.h in Headers */,
 				1AE2AB2A0A1CE63B00B42B25 /* JSHTMLModElement.h in Headers */,
 				BC305C7A0C076BB300CD20F0 /* JSHTMLObjectElement.h in Headers */,
-				E1AD14251295EA9500ACA989 /* JSHTMLObjectElementCustom.h in Headers */,
 				1A85B1EB0A1B240500D8C87C /* JSHTMLOListElement.h in Headers */,
 				A80E7E9B0A1A83E3007FB8C5 /* JSHTMLOptGroupElement.h in Headers */,
 				A80E7E990A1A83E3007FB8C5 /* JSHTMLOptionElement.h in Headers */,

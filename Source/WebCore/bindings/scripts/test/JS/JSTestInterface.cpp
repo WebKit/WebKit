@@ -26,7 +26,6 @@
 
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
-#include "JSTestInterfaceCustom.h"
 #include "JSTestObj.h"
 #include "TestInterface.h"
 #include "TestObj.h"

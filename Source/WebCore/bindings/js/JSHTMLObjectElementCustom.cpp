@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSHTMLObjectElementCustom.h"
+#include "JSHTMLObjectElement.h"
 
 #include "HTMLObjectElement.h"
 #include "JSPluginElementFunctions.h"

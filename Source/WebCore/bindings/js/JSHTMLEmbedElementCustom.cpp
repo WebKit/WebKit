@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSHTMLEmbedElementCustom.h"
+#include "JSHTMLEmbedElement.h"
 
 #include "HTMLEmbedElement.h"
 #include "JSPluginElementFunctions.h"
