@@ -1,3 +1,14 @@
+2013-06-18  Darin Adler  <darin@apple.com>
+
+        Improve style of null checks in FrameView::setFrameRect
+        https://bugs.webkit.org/show_bug.cgi?id=117681
+
+        Reviewed by Sam Weinig.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect): Used nested if statements and local variables
+        to tighten this code up a little.
+
 2013-06-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Move IDL extended attributes to their correct location
