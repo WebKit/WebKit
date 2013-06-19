@@ -1,3 +1,11 @@
+2013-06-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction.
+
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        (WebFrameNetworkingContext::ensurePrivateBrowsingSession): Make sure returned generic
+        type is a CFStringRef before casting.
+
 2013-06-19  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed build fix for Apple Windows port.
