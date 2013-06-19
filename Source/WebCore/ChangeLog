@@ -1,3 +1,17 @@
+2013-06-19  Oliver Hunt  <oliver@apple.com>
+
+        Incorrect use of jsCast in a finalizer
+        https://bugs.webkit.org/show_bug.cgi?id=117807
+
+        Reviewed by Geoffrey Garen.
+
+        We can't use jsCast in a finalizer as it checks an object's structure,
+        and the structure may already have been swept by that point.  Use a
+        static_cast instead.
+
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::destroy):
+
 2013-06-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] AX: Extend notification handling

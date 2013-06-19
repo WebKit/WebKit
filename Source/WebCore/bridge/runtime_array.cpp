@@ -57,7 +57,7 @@ RuntimeArray::~RuntimeArray()
 
 void RuntimeArray::destroy(JSCell* cell)
 {
-    jsCast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
+    static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
 }
 
 JSValue RuntimeArray::lengthGetter(ExecState*, JSValue slotBase, PropertyName)
