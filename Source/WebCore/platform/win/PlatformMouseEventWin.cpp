@@ -28,6 +28,7 @@
 #include "PlatformMouseEvent.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/CurrentTime.h>
 #include <windows.h>
 #include <windowsx.h>
 
@@ -79,7 +80,7 @@ static PlatformEvent::Type messageToEventType(UINT message)
 }
 
 PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView)
-    : PlatformEvent(messageToEventType(message), wParam & MK_SHIFT, wParam & MK_CONTROL, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, ::GetTickCount() * 0.001)
+    : PlatformEvent(messageToEventType(message), wParam & MK_SHIFT, wParam & MK_CONTROL, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, currentTime())
     , m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
     , m_clickCount(0)

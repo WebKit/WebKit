@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,7 @@ IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
 // FIXME: WebKit2 has a lot of code copy/pasted from PlatformEventFactoryMac in WebEventFactory. It should be carefully shared with WebCore.
 int windowsKeyCodeForKeyEvent(NSEvent*);
 String keyIdentifierForKeyEvent(NSEvent*);
+double eventTimeStampSince1970(NSEvent*);
 
 #endif
 

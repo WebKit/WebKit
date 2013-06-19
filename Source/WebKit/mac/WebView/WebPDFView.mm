@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <wtf/Assertions.h>
+#import <wtf/CurrentTime.h>
 
 using namespace WebCore;
 
@@ -962,15 +963,13 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
         case NSKeyDown: {
             PlatformKeyboardEvent pe = PlatformEventFactory::createPlatformKeyboardEvent(nsEvent);
             pe.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
-            event = KeyboardEvent::create(eventNames().keydownEvent, true, true, 0,
-                pe.keyIdentifier(), pe.windowsVirtualKeyCode(),
-                pe.ctrlKey(), pe.altKey(), pe.shiftKey(), pe.metaKey(), false);
+            event = KeyboardEvent::create(pe, 0);
         }
         default:
             break;
     }
     if (button != noButton) {
-        event = MouseEvent::create(eventNames().clickEvent, true, true, 0, [nsEvent clickCount], 0, 0, 0, 0,
+        event = MouseEvent::create(eventNames().clickEvent, true, true, currentTime(), 0, [nsEvent clickCount], 0, 0, 0, 0,
             [nsEvent modifierFlags] & NSControlKeyMask,
             [nsEvent modifierFlags] & NSAlternateKeyMask,
             [nsEvent modifierFlags] & NSShiftKeyMask,

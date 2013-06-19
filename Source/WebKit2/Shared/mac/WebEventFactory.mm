@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +29,11 @@
 #if USE(APPKIT)
 
 #import "WebKitSystemInterface.h"
-#import <wtf/ASCIICType.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WindowsKeyboardCodes.h>
+#import <wtf/ASCIICType.h>
+
 
 using namespace WebCore;
 
@@ -362,7 +363,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSView *windo
     float deltaZ                            = [event deltaZ];
     int clickCount                          = clickCountForEvent(event);
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
-    double timestamp                        = [event timestamp];
+    double timestamp                        = eventTimeStampSince1970(event);
 
     return WebMouseEvent(type, button, IntPoint(position), IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp);
 }
@@ -417,7 +418,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     }
 
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
-    double timestamp                        = [event timestamp];
+    double timestamp                        = eventTimeStampSince1970(event);
     
     return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas, scrollCount, unacceleratedScrollingDelta, modifiers, timestamp);
 }
@@ -435,7 +436,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, NSView 
     bool isKeypad                   = isKeypadEvent(event);
     bool isSystemKey                = false; // SystemKey is always false on the Mac.
     WebEvent::Modifiers modifiers   = modifiersForEvent(event);
-    double timestamp                = [event timestamp];
+    double timestamp                = eventTimeStampSince1970(event);
 
     // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
     if (windowsVirtualKeyCode == VK_RETURN) {
@@ -465,7 +466,7 @@ WebGestureEvent WebEventFactory::createWebGestureEvent(NSEvent *event, NSView *w
     NSPoint position                = pointForEvent(event, windowView);
     NSPoint globalPosition          = globalPointForEvent(event);
     WebEvent::Modifiers modifiers   = modifiersForEvent(event);
-    double timestamp                = [event timestamp];
+    double timestamp                = eventTimeStampSince1970(event);
 
     return WebGestureEvent(type, IntPoint(position), IntPoint(globalPosition), modifiers, timestamp);
 }

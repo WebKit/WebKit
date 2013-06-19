@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +64,7 @@ PassRefPtr<GestureEvent> GestureEvent::create(PassRefPtr<AbstractView> view, con
     default:
         return 0;
     }
-    return adoptRef(new GestureEvent(eventType, view, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y(), event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.deltaX(), event.deltaY()));
+    return adoptRef(new GestureEvent(eventType, event.timestamp(), view, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y(), event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.deltaX(), event.deltaY()));
 }
 
 void GestureEvent::initGestureEvent(const AtomicString& type, PassRefPtr<AbstractView> view, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, float deltaX, float deltaY)
@@ -96,8 +97,8 @@ GestureEvent::GestureEvent()
 {
 }
 
-GestureEvent::GestureEvent(const AtomicString& type, PassRefPtr<AbstractView> view, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, float deltaX, float deltaY)
-    : MouseRelatedEvent(type, true, true, view, 0, IntPoint(screenX, screenY), IntPoint(clientX, clientY),
+GestureEvent::GestureEvent(const AtomicString& type, double timestamp, PassRefPtr<AbstractView> view, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, float deltaX, float deltaY)
+    : MouseRelatedEvent(type, true, true, timestamp, view, 0, IntPoint(screenX, screenY), IntPoint(clientX, clientY),
 #if ENABLE(POINTER_LOCK)
                         IntPoint(0, 0),
 #endif

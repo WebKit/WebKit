@@ -2,7 +2,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +27,7 @@
 #include "UIEvent.h"
 
 namespace WebCore {
-    
+
     class UIEventWithKeyState : public UIEvent {
     public:
         bool ctrlKey() const { return m_ctrlKey; }
@@ -43,10 +43,20 @@ namespace WebCore {
             , m_metaKey(false)
         {
         }
-        
+
         UIEventWithKeyState(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
                             int detail, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
             : UIEvent(type, canBubble, cancelable, view, detail)
+            , m_ctrlKey(ctrlKey)
+            , m_altKey(altKey)
+            , m_shiftKey(shiftKey)
+            , m_metaKey(metaKey)
+        {
+        }
+
+        UIEventWithKeyState(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView> view,
+                            int detail, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+            : UIEvent(type, canBubble, cancelable, timestamp, view, detail)
             , m_ctrlKey(ctrlKey)
             , m_altKey(altKey)
             , m_shiftKey(shiftKey)

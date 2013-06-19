@@ -1,3 +1,16 @@
+2013-06-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Use the PlatformEvent timestamp when creating a DOM Event
+        https://bugs.webkit.org/show_bug.cgi?id=117179
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        (WebKit::WebEventFactory::createWebGestureEvent):
+
 2013-06-19  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION: Cannot open Silverlight preferences via context menu

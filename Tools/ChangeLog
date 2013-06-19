@@ -1,3 +1,16 @@
+2013-06-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Use the PlatformEvent timestamp when creating a DOM Event
+        https://bugs.webkit.org/show_bug.cgi?id=117179
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::keyDown):
+
 2013-06-18  Alex Christensen  <achristensen@apple.com>
 
         Working on coverage script, added xml to json data extraction script.

@@ -2,7 +2,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +31,7 @@
 #include "FrameView.h"
 #include "HTMLIFrameElement.h"
 #include "PlatformMouseEvent.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -61,16 +62,16 @@ PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& eventType, PassRef
     bool isCancelable = eventType != eventNames().mousemoveEvent && !isMouseEnterOrLeave;
     bool canBubble = !isMouseEnterOrLeave;
 
-    return MouseEvent::create(eventType, canBubble, isCancelable, view,
+    return MouseEvent::create(eventType, canBubble, isCancelable, event.timestamp(), view,
         detail, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y(),
 #if ENABLE(POINTER_LOCK)
         event.movementDelta().x(), event.movementDelta().y(),
 #endif
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.button(),
-        relatedTarget, 0, false);
+        relatedTarget);
 }
 
-PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
+PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView> view,
     int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
     int movementX, int movementY,
@@ -79,7 +80,7 @@ PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubb
     PassRefPtr<EventTarget> relatedTarget)
 
 {
-    return MouseEvent::create(type, canBubble, cancelable, view,
+    return MouseEvent::create(type, canBubble, cancelable, timestamp, view,
         detail, screenX, screenY, pageX, pageY,
 #if ENABLE(POINTER_LOCK)
         movementX, movementY,
@@ -87,7 +88,7 @@ PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubb
         ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, 0, false);
 }
 
-PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
+PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView> view,
     int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
     int movementX, int movementY,
@@ -95,7 +96,7 @@ PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubb
     bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
     PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard> clipboard, bool isSimulated)
 {
-    return adoptRef(new MouseEvent(type, canBubble, cancelable, view,
+    return adoptRef(new MouseEvent(type, canBubble, cancelable, timestamp, view,
         detail, screenX, screenY, pageX, pageY,
 #if ENABLE(POINTER_LOCK)
         movementX, movementY,
@@ -109,7 +110,7 @@ MouseEvent::MouseEvent()
 {
 }
 
-MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
+MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, double timestamp, PassRefPtr<AbstractView> view,
                        int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
                        int movementX, int movementY,
@@ -117,7 +118,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
                        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
                        unsigned short button, PassRefPtr<EventTarget> relatedTarget,
                        PassRefPtr<Clipboard> clipboard, bool isSimulated)
-    : MouseRelatedEvent(eventType, canBubble, cancelable, view, detail, IntPoint(screenX, screenY),
+    : MouseRelatedEvent(eventType, canBubble, cancelable, timestamp, view, detail, IntPoint(screenX, screenY),
                         IntPoint(pageX, pageY),
 #if ENABLE(POINTER_LOCK)
                         IntPoint(movementX, movementY),
@@ -131,7 +132,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
 }
 
 MouseEvent::MouseEvent(const AtomicString& eventType, const MouseEventInit& initializer)
-    : MouseRelatedEvent(eventType, initializer.bubbles, initializer.cancelable, initializer.view, initializer.detail, IntPoint(initializer.screenX, initializer.screenY),
+    : MouseRelatedEvent(eventType, initializer.bubbles, initializer.cancelable, currentTime(), initializer.view, initializer.detail, IntPoint(initializer.screenX, initializer.screenY),
         IntPoint(0 /* pageX */, 0 /* pageY */),
 #if ENABLE(POINTER_LOCK)
         IntPoint(0 /* movementX */, 0 /* movementY */),
@@ -259,7 +260,7 @@ SimulatedMouseEvent::~SimulatedMouseEvent()
 }
 
 SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<AbstractView> view, PassRefPtr<Event> underlyingEvent)
-    : MouseEvent(eventType, true, true, view, 0, 0, 0, 0, 0,
+    : MouseEvent(eventType, true, true, underlyingEvent ? underlyingEvent->timeStamp() : currentTime(), view, 0, 0, 0, 0, 0,
 #if ENABLE(POINTER_LOCK)
                  0, 0,
 #endif

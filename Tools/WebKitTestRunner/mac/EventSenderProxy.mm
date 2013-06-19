@@ -31,6 +31,7 @@
 #import "StringFunctions.h"
 #import "TestController.h"
 #import <wtf/RetainPtr.h>
+#import <Carbon/Carbon.h>
 #import <WebKit2/WKString.h>
 
 namespace WTR {
@@ -105,6 +106,11 @@ static int buildModifierFlags(WKEventModifiers modifiers)
     return flags;
 }
 
+static NSTimeInterval absoluteTimeForEventTime(double currentEventTime)
+{
+    return GetCurrentEventTime() + currentEventTime;
+}
+
 EventSenderProxy::EventSenderProxy(TestController* testController)
     : m_testController(testController)
     , m_time(0)
@@ -144,7 +150,7 @@ void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifie
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:NSMakePoint(m_position.x, m_position.y)
                                    modifierFlags:buildModifierFlags(modifiers)
-                                       timestamp:currentEventTime()
+                                       timestamp:absoluteTimeForEventTime(currentEventTime())
                                     windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
@@ -165,7 +171,7 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
     NSEvent *event = [NSEvent mouseEventWithType:eventType
                                         location:NSMakePoint(m_position.x, m_position.y)
                                    modifierFlags:buildModifierFlags(modifiers)
-                                       timestamp:currentEventTime()
+                                       timestamp:absoluteTimeForEventTime(currentEventTime())
                                     windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
@@ -178,7 +184,7 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
     [targetView mouseUp:event];
     if (buttonNumber == LeftMouseButton)
         m_leftMouseButtonDown = false;
-    m_clickTime = [event timestamp];
+    m_clickTime = currentEventTime();
     m_clickPosition = m_position;
 }
 
@@ -191,7 +197,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     NSEvent *event = [NSEvent mouseEventWithType:(m_leftMouseButtonDown ? NSLeftMouseDragged : NSMouseMoved)
                                         location:position
                                    modifierFlags:0 
-                                       timestamp:currentEventTime()
+                                       timestamp:absoluteTimeForEventTime(currentEventTime())
                                     windowNumber:[[view window] windowNumber] 
                                          context:[NSGraphicsContext currentContext] 
                                      eventNumber:++eventNumber 
@@ -391,7 +397,7 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
     NSEvent *event = [NSEvent keyEventWithType:NSKeyDown
                         location:NSMakePoint(5, 5)
                         modifierFlags:modifierFlags
-                        timestamp:currentEventTime()
+                        timestamp:absoluteTimeForEventTime(currentEventTime())
                         windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
                         context:[NSGraphicsContext currentContext]
                         characters:eventCharacter
@@ -404,7 +410,7 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
     event = [NSEvent keyEventWithType:NSKeyUp
                         location:NSMakePoint(5, 5)
                         modifierFlags:modifierFlags
-                        timestamp:currentEventTime()
+                        timestamp:absoluteTimeForEventTime(currentEventTime())
                         windowNumber:[m_testController->mainWebView()->platformWindow() windowNumber]
                         context:[NSGraphicsContext currentContext]
                         characters:eventCharacter
