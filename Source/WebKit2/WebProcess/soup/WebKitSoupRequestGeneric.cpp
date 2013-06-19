@@ -48,19 +48,13 @@ static void webkit_soup_request_generic_init(WebKitSoupRequestGeneric* request)
 
 static void webkitSoupRequestGenericSendAsync(SoupRequest* request, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
-    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(request), callback, userData, reinterpret_cast<void*>(webkitSoupRequestGenericSendAsync));
-    WebProcess::shared().supplement<WebSoupRequestManager>()->send(result, cancellable);
+    WebProcess::shared().supplement<WebSoupRequestManager>()->send(g_task_new(request, cancellable, callback, userData));
 }
 
-static GInputStream* webkitSoupRequestGenericSendFinish(SoupRequest*, GAsyncResult* result, GError** error)
+static GInputStream* webkitSoupRequestGenericSendFinish(SoupRequest* request, GAsyncResult* result, GError** error)
 {
-    GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkitSoupRequestGenericSendAsync);
-
-    if (g_simple_async_result_propagate_error(simpleResult, error))
-        return 0;
-
-    return WebProcess::shared().supplement<WebSoupRequestManager>()->finish(simpleResult);
+    g_return_val_if_fail(g_task_is_valid(result, request), 0);
+    return WebProcess::shared().supplement<WebSoupRequestManager>()->finish(G_TASK(result), error);
 }
 
 static goffset webkitSoupRequestGenericGetContentLength(SoupRequest* request)

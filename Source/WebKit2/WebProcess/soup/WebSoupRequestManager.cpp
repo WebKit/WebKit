@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2013 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,10 +42,10 @@ static uint64_t generateSoupRequestID()
 }
 
 struct WebSoupRequestAsyncData {
-    WebSoupRequestAsyncData(GSimpleAsyncResult* result, WebKitSoupRequestGeneric* requestGeneric, GCancellable* cancellable)
-        : result(result)
+    WebSoupRequestAsyncData(GTask* task, WebKitSoupRequestGeneric* requestGeneric)
+        : task(task)
         , request(requestGeneric)
-        , cancellable(cancellable)
+        , cancellable(g_task_get_cancellable(task))
     {
         // If the struct contains a null request, it is because the request failed.
         g_object_add_weak_pointer(G_OBJECT(request), reinterpret_cast<void**>(&request));
@@ -62,14 +62,14 @@ struct WebSoupRequestAsyncData {
         return g_cancellable_is_cancelled(cancellable.get()) || !request;
     }
 
-    GRefPtr<GSimpleAsyncResult> releaseResult()
+    GRefPtr<GTask> releaseTask()
     {
-        GSimpleAsyncResult* returnValue = result;
-        result = 0;
+        GTask* returnValue = task;
+        task = 0;
         return adoptGRef(returnValue);
     }
 
-    GSimpleAsyncResult* result;
+    GTask* task;
     WebKitSoupRequestGeneric* request;
     GRefPtr<GCancellable> cancellable;
     GRefPtr<GInputStream> stream;
@@ -108,12 +108,12 @@ void WebSoupRequestManager::didHandleURIRequest(const CoreIPC::DataReference& re
 {
     WebSoupRequestAsyncData* data = m_requestMap.get(requestID);
     ASSERT(data);
-    GRefPtr<GSimpleAsyncResult> result = data->releaseResult();
-    ASSERT(result.get());
+    GRefPtr<GTask> task = data->releaseTask();
+    ASSERT(task.get());
 
-    GRefPtr<WebKitSoupRequestGeneric> request = adoptGRef(WEBKIT_SOUP_REQUEST_GENERIC(g_async_result_get_source_object(G_ASYNC_RESULT(result.get()))));
-    webkitSoupRequestGenericSetContentLength(request.get(), contentLength ? contentLength : -1);
-    webkitSoupRequestGenericSetContentType(request.get(), !mimeType.isEmpty() ? mimeType.utf8().data() : 0);
+    WebKitSoupRequestGeneric* request = WEBKIT_SOUP_REQUEST_GENERIC(g_task_get_source_object(task.get()));
+    webkitSoupRequestGenericSetContentLength(request, contentLength ? contentLength : -1);
+    webkitSoupRequestGenericSetContentType(request, !mimeType.isEmpty() ? mimeType.utf8().data() : 0);
 
     GInputStream* dataStream;
     if (!requestData.size()) {
@@ -130,8 +130,7 @@ void WebSoupRequestManager::didHandleURIRequest(const CoreIPC::DataReference& re
         data->stream = dataStream;
         webkitSoupRequestInputStreamAddData(WEBKIT_SOUP_REQUEST_INPUT_STREAM(dataStream), requestData.data(), requestData.size());
     }
-    g_simple_async_result_set_op_res_gpointer(result.get(), dataStream, g_object_unref);
-    g_simple_async_result_complete(result.get());
+    g_task_return_pointer(task.get(), dataStream, g_object_unref);
 }
 
 void WebSoupRequestManager::didReceiveURIRequestData(const CoreIPC::DataReference& requestData, uint64_t requestID)
@@ -164,34 +163,31 @@ void WebSoupRequestManager::didFailURIRequest(const WebCore::ResourceError& erro
 {
     WebSoupRequestAsyncData* data = m_requestMap.get(requestID);
     ASSERT(data);
-    GRefPtr<GSimpleAsyncResult> result = data->releaseResult();
-    ASSERT(result.get());
+    GRefPtr<GTask> task = data->releaseTask();
+    ASSERT(task.get());
 
-    g_simple_async_result_take_error(result.get(),
-        g_error_new_literal(g_quark_from_string(error.domain().utf8().data()),
-            error.errorCode(),
-            error.localizedDescription().utf8().data()));
-    g_simple_async_result_complete(result.get());
-
+    g_task_return_new_error(task.get(), g_quark_from_string(error.domain().utf8().data()),
+        error.errorCode(), "%s", error.localizedDescription().utf8().data());
     m_requestMap.remove(requestID);
 }
 
-void WebSoupRequestManager::send(GSimpleAsyncResult* result, GCancellable* cancellable)
+void WebSoupRequestManager::send(GTask* task)
 {
-    GRefPtr<WebKitSoupRequestGeneric> request = adoptGRef(WEBKIT_SOUP_REQUEST_GENERIC(g_async_result_get_source_object(G_ASYNC_RESULT(result))));
-    SoupRequest* soupRequest = SOUP_REQUEST(request.get());
+    WebKitSoupRequestGeneric* request = WEBKIT_SOUP_REQUEST_GENERIC(g_task_get_source_object(task));
+    SoupRequest* soupRequest = SOUP_REQUEST(request);
     GOwnPtr<char> uriString(soup_uri_to_string(soup_request_get_uri(soupRequest), FALSE));
 
     uint64_t requestID = generateSoupRequestID();
-    m_requestMap.set(requestID, adoptPtr(new WebSoupRequestAsyncData(result, request.get(), cancellable)));
+    m_requestMap.set(requestID, adoptPtr(new WebSoupRequestAsyncData(task, request)));
 
     uint64_t initiatingPageID = WebCore::ResourceHandle::getSoupRequestInitiatingPageID(soupRequest);
     m_process->parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveURIRequest(String::fromUTF8(uriString.get()), requestID), initiatingPageID);
 }
 
-GInputStream* WebSoupRequestManager::finish(GSimpleAsyncResult* result)
+GInputStream* WebSoupRequestManager::finish(GTask* task, GError** error)
 {
-    return G_INPUT_STREAM(g_object_ref(g_simple_async_result_get_op_res_gpointer(result)));
+    gpointer inputStream = g_task_propagate_pointer(task, error);
+    return inputStream ? G_INPUT_STREAM(inputStream) : 0;
 }
 
 } // namespace WebKit

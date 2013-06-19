@@ -31,7 +31,7 @@
 #include <wtf/text/WTFString.h>
 
 typedef struct _GInputStream GInputStream;
-typedef struct _GSimpleAsyncResult GSimpleAsyncResult;
+typedef struct _GTask GTask;
 
 namespace WebKit {
 
@@ -46,8 +46,8 @@ public:
 
     static const char* supplementName();
 
-    void send(GSimpleAsyncResult*, GCancellable*);
-    GInputStream* finish(GSimpleAsyncResult*);
+    void send(GTask*);
+    GInputStream* finish(GTask*, GError**);
 
     void registerURIScheme(const String& scheme);
 
