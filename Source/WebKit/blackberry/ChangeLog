@@ -1,3 +1,24 @@
+2013-06-19  Jakob Petsovits  <jpetsovits@blackberry.com>
+
+        [BlackBerry] Prevent loss of tile buffers in BackingStorePrivate::render()
+        https://bugs.webkit.org/show_bug.cgi?id=117799
+        https://jira.bbqnx.net/browse/BRWSR-11712
+        JIRA413289
+
+        Reviewed by Carlos Garcia Campos.
+
+        Discovered by Xuefei Ren.
+
+        If, in rare cases, renderContents() returns false,
+        the for() loop in render() will take a tile buffer from
+        the surface pool but due to aborting the iteration early,
+        won't put it into the new tile map. In order to prevent
+        losing the buffer, we need to put it back into the
+        surface pool before continuing.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+
 2013-06-17  Tiancheng Jiang  <tijiang@rim.com>
 
         Cache FatFinger Text Result.

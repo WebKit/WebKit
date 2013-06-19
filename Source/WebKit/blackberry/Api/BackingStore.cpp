@@ -1171,8 +1171,11 @@ TileIndexList BackingStorePrivate::render(const TileIndexList& tileIndexList)
         const Platform::FloatPoint documentDirtyRectOrigin = viewportAccessor->toDocumentContents(dirtyRect.location(), currentScale);
         const Platform::IntRect dstRect(dirtyRect.location() - tileOrigin, dirtyRect.size());
 
-        if (!renderContents(nativeBuffer, dstRect, currentScale, documentDirtyRectOrigin, RenderRootLayer))
+        if (!renderContents(nativeBuffer, dstRect, currentScale, documentDirtyRectOrigin, RenderRootLayer)) {
+            // Put the buffer back into the surface pool so it doesn't get lost.
+            SurfacePool::globalSurfacePool()->addBackBuffer(backBuffer);
             continue;
+        }
 
         // Add the newly rendered region to the tile so it can keep track for blits.
         backBuffer->addRenderedRegion(dirtyRect);
