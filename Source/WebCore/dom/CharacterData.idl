@@ -37,8 +37,5 @@ interface CharacterData : Node {
     [ObjCLegacyUnnamedParameters, RaisesException] void replaceData([IsIndex, Default=Undefined] optional unsigned long offset, 
                                     [IsIndex, Default=Undefined] optional unsigned long length,
                                     [Default=Undefined] optional DOMString data);
-
-    // DOM 4
-    [RaisesException] void remove();
 };
 

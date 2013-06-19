@@ -226,6 +226,7 @@ IDL_BINDINGS += \
     $$PWD/dom/Attr.idl \
     $$PWD/dom/BeforeLoadEvent.idl \
     $$PWD/dom/CharacterData.idl \
+    $$PWD/dom/ChildNode.idl \
     $$PWD/dom/ClientRect.idl \
     $$PWD/dom/ClientRectList.idl \
     $$PWD/dom/Clipboard.idl \

@@ -216,6 +216,7 @@ BINDING_IDLS = \
     $(WebCore)/dom/BeforeLoadEvent.idl \
     $(WebCore)/dom/CDATASection.idl \
     $(WebCore)/dom/CharacterData.idl \
+    $(WebCore)/dom/ChildNode.idl \
     $(WebCore)/dom/ClientRect.idl \
     $(WebCore)/dom/ClientRectList.idl \
     $(WebCore)/dom/Clipboard.idl \

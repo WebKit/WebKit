@@ -139,7 +139,7 @@ foreach my $idlFile (@supplementedIdlFiles) {
     my $document = $parser->Parse($idlFile, $defines, $preprocessor);
 
     foreach my $interface (@{$document->interfaces}) {
-        if ($interface->isPartial and $interface->name eq $targetInterfaceName) {
+        if (!$interface->isPartial || $interface->name eq $targetInterfaceName) {
             my $targetDataNode;
             foreach my $interface (@{$targetDocument->interfaces}) {
                 if ($interface->name eq $targetInterfaceName) {
@@ -152,7 +152,7 @@ foreach my $idlFile (@supplementedIdlFiles) {
             # Support for attributes of partial interfaces.
             foreach my $attribute (@{$interface->attributes}) {
                 # Record that this attribute is implemented by $interfaceName.
-                $attribute->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName;
+                $attribute->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
                 # Add interface-wide extended attributes to each attribute.
                 foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
@@ -164,7 +164,7 @@ foreach my $idlFile (@supplementedIdlFiles) {
             # Support for methods of partial interfaces.
             foreach my $function (@{$interface->functions}) {
                 # Record that this method is implemented by $interfaceName.
-                $function->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName;
+                $function->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
                 # Add interface-wide extended attributes to each method.
                 foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
@@ -176,7 +176,7 @@ foreach my $idlFile (@supplementedIdlFiles) {
             # Support for constants of partial interfaces.
             foreach my $constant (@{$interface->constants}) {
                 # Record that this constant is implemented by $interfaceName.
-                $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName;
+                $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
                 # Add interface-wide extended attributes to each constant.
                 foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {

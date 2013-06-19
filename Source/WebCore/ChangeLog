@@ -1,3 +1,97 @@
+2013-06-19  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Implement WebIDL implements
+        https://bugs.webkit.org/show_bug.cgi?id=117785
+
+        Reviewed by Kentaro Hara.
+
+        Add support for Web IDL 'implements' statements to the bindings generator:
+        http://www.w3.org/TR/WebIDL/#dfn-implements-statement
+
+        Introduce ChildNode IDL interface and have Element, DocumentType and
+        CharacterData implement it, to match the specification:
+        http://dom.spec.whatwg.org/#childnode
+
+        There is no change in behavior, merely refactoring to match the
+        specification by leveraging support for Web IDL implements statements.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * bindings/scripts/generate-bindings.pl:
+        * bindings/scripts/preprocess-idls.pl:
+        (GeneratePartialInterface):
+        (getImplementersFromIDL):
+        * bindings/scripts/test/CPP/WebDOMTestImplements.cpp: Added.
+        * bindings/scripts/test/CPP/WebDOMTestImplements.h: Added.
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp:
+        (WebDOMTestInterface::implementsStr1):
+        (WebDOMTestInterface::implementsStr2):
+        (WebDOMTestInterface::setImplementsStr2):
+        (WebDOMTestInterface::implementsNode):
+        (WebDOMTestInterface::setImplementsNode):
+        (WebDOMTestInterface::implementsMethod1):
+        (WebDOMTestInterface::implementsMethod4):
+        * bindings/scripts/test/CPP/WebDOMTestInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestImplements.cpp: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestImplements.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (webkit_dom_test_interface_set_property):
+        (webkit_dom_test_interface_get_property):
+        (webkit_dom_test_interface_class_init):
+        (webkit_dom_test_interface_implements_method1):
+        (webkit_dom_test_interface_implements_method2):
+        (webkit_dom_test_interface_implements_method4):
+        (webkit_dom_test_interface_get_implements_str1):
+        (webkit_dom_test_interface_get_implements_str2):
+        (webkit_dom_test_interface_set_implements_str2):
+        (webkit_dom_test_interface_get_implements_node):
+        (webkit_dom_test_interface_set_implements_node):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h:
+        * bindings/scripts/test/JS/JSTestImplements.cpp: Added.
+        * bindings/scripts/test/JS/JSTestImplements.h: Added.
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfaceConstructorImplementsStaticReadOnlyAttr):
+        (WebCore::jsTestInterfaceConstructorImplementsStaticAttr):
+        (WebCore::jsTestInterfaceImplementsStr1):
+        (WebCore::jsTestInterfaceImplementsStr2):
+        (WebCore::jsTestInterfaceImplementsStr3):
+        (WebCore::jsTestInterfaceImplementsNode):
+        (WebCore::setJSTestInterfaceConstructorImplementsStaticAttr):
+        (WebCore::setJSTestInterfaceImplementsStr2):
+        (WebCore::setJSTestInterfaceImplementsStr3):
+        (WebCore::setJSTestInterfaceImplementsNode):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod1):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod3):
+        (WebCore::jsTestInterfaceConstructorFunctionImplementsMethod4):
+        (WebCore::jsTestInterfaceIMPLEMENTSCONSTANT1):
+        (WebCore::jsTestInterfaceIMPLEMENTSCONSTANT2):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestImplements.cpp: Added.
+        * bindings/scripts/test/ObjC/DOMTestImplements.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestInterface.h:
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm:
+        (-[DOMTestInterface implementsStr1]):
+        (-[DOMTestInterface implementsStr2]):
+        (-[DOMTestInterface setImplementsStr2:]):
+        (-[DOMTestInterface implementsStr3]):
+        (-[DOMTestInterface setImplementsStr3:]):
+        (-[DOMTestInterface implementsNode]):
+        (-[DOMTestInterface setImplementsNode:]):
+        (-[DOMTestInterface implementsMethod1]):
+        (-[DOMTestInterface implementsMethod2:objArg:]):
+        (-[DOMTestInterface implementsMethod3]):
+        (-[DOMTestInterface implementsMethod4]):
+        * bindings/scripts/test/TestImplements.idl: Added.
+        * dom/CharacterData.idl:
+        * dom/ChildNode.idl: Copied from Source/WebCore/dom/DocumentType.idl.
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+
 2013-06-19  Robert Hogan  <robert@webkit.org>
 
         Incorrect computation of shrink-to-fit width for block with white-space:nowrap and floating children

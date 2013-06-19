@@ -33,6 +33,12 @@
 @class NSString;
 
 enum {
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    DOM_IMPLEMENTSCONSTANT1 = 1,
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    DOM_IMPLEMENTSCONSTANT2 = 2,
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     DOM_SUPPLEMENTALCONSTANT1 = 1,
 #endif
@@ -43,11 +49,27 @@ enum {
 };
 
 @interface DOMTestInterface : DOMObject
+@property(readonly, copy) NSString *implementsStr1;
+@property(copy) NSString *implementsStr2;
+@property(copy) NSString *implementsStr3;
+@property(retain) DOMNode *implementsNode;
 @property(readonly, copy) NSString *supplementalStr1;
 @property(copy) NSString *supplementalStr2;
 @property(copy) NSString *supplementalStr3;
 @property(retain) DOMNode *supplementalNode;
 
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (void)implementsMethod1;
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (DOMTestObj *)implementsMethod2:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (void)implementsMethod3;
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (void)implementsMethod4;
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
 - (void)supplementalMethod1;
 #endif

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,20 +18,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// DOM 4
 [
-    JSGenerateToNativeObject
-] interface DocumentType : Node {
+    NoInterfaceObject
+] interface ChildNode {
+    // readonly attribute Element? previousElementSibling;
+    // readonly attribute Element? nextElementSibling;
 
-    // DOM Level 1
-
-    readonly attribute DOMString name;
-    readonly attribute NamedNodeMap entities;
-    readonly attribute NamedNodeMap notations;
-
-    // DOM Level 2
-
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString publicId;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString systemId;
-    [TreatReturnedNullStringAs=Null] readonly attribute DOMString internalSubset;        
+    // void before((Node or DOMString)... nodes);
+    // void after((Node or DOMString)... nodes);
+    // void replace((Node or DOMString)... nodes);
+    [RaisesException] void remove();
 };
 
+DocumentType implements ChildNode;
+Element implements ChildNode;
+CharacterData implements ChildNode;

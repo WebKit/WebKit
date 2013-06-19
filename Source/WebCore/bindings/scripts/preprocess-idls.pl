@@ -63,12 +63,23 @@ my %idlFileHash = map { $_, 1 } @idlFiles;
 foreach my $idlFile (sort keys %idlFileHash) {
     my $fullPath = Cwd::realpath($idlFile);
     my $idlFileContents = getFileContents($fullPath);
+    # Handle partial interfaces.
     my $partialInterfaceName = getPartialInterfaceNameFromIDL($idlFileContents);
     if ($partialInterfaceName) {
-        $supplementalDependencies{$fullPath} = $partialInterfaceName;
+        $supplementalDependencies{$fullPath} = [$partialInterfaceName];
         next;
     }
     my $interfaceName = fileparse(basename($idlFile), ".idl");
+    # Handle implements statements.
+    my $implementers = getImplementersFromIDL($idlFileContents, $interfaceName);
+    foreach my $implementer (@{$implementers}) {
+        if ($supplementalDependencies{$fullPath}) {
+            push(@{$supplementalDependencies{$fullPath}}, $implementer);
+        } else {
+            $supplementalDependencies{$fullPath} = [$implementer];
+        }
+    }
+    # Handle [NoInterfaceObject].
     unless (isCallbackInterfaceFromIDL($idlFileContents)) {
         my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFileContents);
         unless ($extendedAttributes->{"NoInterfaceObject"}) {
@@ -89,11 +100,13 @@ GeneratePartialInterface("DOMWindow", $windowConstructorsCode, $windowConstructo
 # Generate WorkerContext Constructors partial interface.
 GeneratePartialInterface("WorkerContext", $workerContextConstructorsCode, $workerContextConstructorsFile);
 
-# Resolves partial interfaces dependencies.
+# Resolves partial interfaces and implements dependencies.
 foreach my $idlFile (keys %supplementalDependencies) {
-    my $baseFile = $supplementalDependencies{$idlFile};
-    my $targetIdlFile = $interfaceNameToIdlFile{$baseFile};
-    push(@{$supplementals{$targetIdlFile}}, $idlFile);
+    my $baseFiles = $supplementalDependencies{$idlFile};
+    foreach my $baseFile (@{$baseFiles}) {
+        my $targetIdlFile = $interfaceNameToIdlFile{$baseFile};
+        push(@{$supplementals{$targetIdlFile}}, $idlFile);
+    }
     delete $supplementals{$idlFile};
 }
 
@@ -159,7 +172,7 @@ sub GeneratePartialInterface
     WriteFileIfChanged($destinationFile, $contents);
 
     my $fullPath = Cwd::realpath($destinationFile);
-    $supplementalDependencies{$fullPath} = $interfaceName if $interfaceNameToIdlFile{$interfaceName};
+    $supplementalDependencies{$fullPath} = [$interfaceName] if $interfaceNameToIdlFile{$interfaceName};
 }
 
 sub GenerateConstructorAttribute
@@ -214,6 +227,21 @@ sub getPartialInterfaceNameFromIDL
     if ($fileContents =~ /partial\s+interface\s+(\w+)/gs) {
         return $1;
     }
+}
+
+# identifier-A implements identifier-B;
+# http://www.w3.org/TR/WebIDL/#idl-implements-statements
+sub getImplementersFromIDL
+{
+    my $fileContents = shift;
+    my $interfaceName = shift;
+
+    my @implementers = ();
+    while ($fileContents =~ /(\w+)\s+implements\s+(\w+)\s*;/gs) {
+        die "The identifier on the right side of the implements statement must be the current interface" if $2 ne $interfaceName;
+        push(@implementers, $1);
+    }
+    return \@implementers
 }
 
 sub isCallbackInterfaceFromIDL

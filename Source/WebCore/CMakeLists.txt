@@ -332,6 +332,7 @@ set(WebCore_IDL_FILES
     dom/BeforeLoadEvent.idl
     dom/CDATASection.idl
     dom/CharacterData.idl
+    dom/ChildNode.idl
     dom/ClientRect.idl
     dom/ClientRectList.idl
     dom/Clipboard.idl

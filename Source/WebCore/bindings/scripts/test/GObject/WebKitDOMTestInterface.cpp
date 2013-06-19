@@ -76,6 +76,9 @@ G_DEFINE_TYPE(WebKitDOMTestInterface, webkit_dom_test_interface, WEBKIT_TYPE_DOM
 
 enum {
     PROP_0,
+    PROP_IMPLEMENTS_STR1,
+    PROP_IMPLEMENTS_STR2,
+    PROP_IMPLEMENTS_NODE,
     PROP_SUPPLEMENTAL_STR1,
     PROP_SUPPLEMENTAL_STR2,
     PROP_SUPPLEMENTAL_NODE,
@@ -99,6 +102,20 @@ static void webkit_dom_test_interface_set_property(GObject* object, guint proper
     WebCore::TestInterface* coreSelf = WebKit::core(self);
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
     switch (propertyId) {
+    case PROP_IMPLEMENTS_STR2: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+        coreSelf->setImplementsStr2(WTF::String::fromUTF8(g_value_get_string(value)));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+        break;
+    }
     case PROP_SUPPLEMENTAL_STR2: {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition11) || ENABLE(Condition12)
@@ -127,6 +144,49 @@ static void webkit_dom_test_interface_get_property(GObject* object, guint proper
     WebCore::TestInterface* coreSelf = WebKit::core(self);
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
     switch (propertyId) {
+    case PROP_IMPLEMENTS_STR1: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+        g_value_take_string(value, convertToUTF8String(coreSelf->implementsStr1()));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+        break;
+    }
+    case PROP_IMPLEMENTS_STR2: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+        g_value_take_string(value, convertToUTF8String(coreSelf->implementsStr2()));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+        break;
+    }
+    case PROP_IMPLEMENTS_NODE: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+        RefPtr<WebCore::Node> ptr = coreSelf->implementsNode();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+        break;
+    }
     case PROP_SUPPLEMENTAL_STR1: {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition11) || ENABLE(Condition12)
@@ -197,6 +257,27 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
     gobjectClass->get_property = webkit_dom_test_interface_get_property;
 
     g_object_class_install_property(gobjectClass,
+                                    PROP_IMPLEMENTS_STR1,
+                                    g_param_spec_string("implements-str1", /* name */
+                                                           "test_interface_implements-str1", /* short description */
+                                                           "read-only  gchar* TestInterface.implements-str1", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_IMPLEMENTS_STR2,
+                                    g_param_spec_string("implements-str2", /* name */
+                                                           "test_interface_implements-str2", /* short description */
+                                                           "read-write  gchar* TestInterface.implements-str2", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_IMPLEMENTS_NODE,
+                                    g_param_spec_object("implements-node", /* name */
+                                                           "test_interface_implements-node", /* short description */
+                                                           "read-write  WebKitDOMNode* TestInterface.implements-node", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_NODE, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
                                     PROP_SUPPLEMENTAL_STR1,
                                     g_param_spec_string("supplemental-str1", /* name */
                                                            "test_interface_supplemental-str1", /* short description */
@@ -223,6 +304,76 @@ static void webkit_dom_test_interface_init(WebKitDOMTestInterface* request)
 {
     WebKitDOMTestInterfacePrivate* priv = WEBKIT_DOM_TEST_INTERFACE_GET_PRIVATE(request);
     new (priv) WebKitDOMTestInterfacePrivate();
+}
+
+void
+webkit_dom_test_interface_implements_method1(WebKitDOMTestInterface* self)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
+    WebCore::TestInterface* item = WebKit::core(self);
+    item->implementsMethod1();
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+WebKitDOMTestObj*
+webkit_dom_test_interface_implements_method2(WebKitDOMTestInterface* self, const gchar* strArg, WebKitDOMTestObj* objArg, GError** error)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self), 0);
+    g_return_val_if_fail(strArg, 0);
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(objArg), 0);
+    g_return_val_if_fail(!error || !*error, 0);
+    WebCore::TestInterface* item = WebKit::core(self);
+    WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
+    WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
+    WebCore::ExceptionCode ec = 0;
+    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->implementsMethod2(convertedStrArg, convertedObjArg, ec));
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc(ec);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+    return WebKit::kit(gobjectResult.get());
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+    return 0;
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+    return 0;
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+void
+webkit_dom_test_interface_implements_method4(WebKitDOMTestInterface* self)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
+    WebCore::TestInterface* item = WebKit::core(self);
+    item->implementsMethod4();
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
 
 void
@@ -289,6 +440,114 @@ webkit_dom_test_interface_supplemental_method4(WebKitDOMTestInterface* self)
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition11")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition12")
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+gchar*
+webkit_dom_test_interface_get_implements_str1(WebKitDOMTestInterface* self)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self), 0);
+    WebCore::TestInterface* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->implementsStr1());
+    return result;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+    return 0;
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+    return 0;
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+gchar*
+webkit_dom_test_interface_get_implements_str2(WebKitDOMTestInterface* self)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self), 0);
+    WebCore::TestInterface* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->implementsStr2());
+    return result;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+    return 0;
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+    return 0;
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+void
+webkit_dom_test_interface_set_implements_str2(WebKitDOMTestInterface* self, const gchar* value)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
+    g_return_if_fail(value);
+    WebCore::TestInterface* item = WebKit::core(self);
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setImplementsStr2(convertedValue);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+WebKitDOMNode*
+webkit_dom_test_interface_get_implements_node(WebKitDOMTestInterface* self)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self), 0);
+    WebCore::TestInterface* item = WebKit::core(self);
+    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->implementsNode());
+    return WebKit::kit(gobjectResult.get());
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+    return 0;
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+    return 0;
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
+}
+
+void
+webkit_dom_test_interface_set_implements_node(WebKitDOMTestInterface* self, WebKitDOMNode* value)
+{
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
+    g_return_if_fail(WEBKIT_DOM_IS_NODE(value));
+    WebCore::TestInterface* item = WebKit::core(self);
+    WebCore::Node* convertedValue = WebKit::core(value);
+    item->setImplementsNode(convertedValue);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
+#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")

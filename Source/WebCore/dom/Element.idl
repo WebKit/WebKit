@@ -120,9 +120,6 @@
     [ImplementedAs=insertionParentForBinding] readonly attribute Node webkitInsertionParent;
 #endif
 
-    // DOM 4
-    [RaisesException] void remove();
-
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // CSSOM View Module API
     ClientRectList getClientRects();

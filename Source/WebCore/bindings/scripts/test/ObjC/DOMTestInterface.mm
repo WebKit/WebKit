@@ -73,6 +73,58 @@
     [super finalize];
 }
 
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (NSString *)implementsStr1
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->implementsStr1();
+}
+#endif
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (NSString *)implementsStr2
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->implementsStr2();
+}
+
+- (void)setImplementsStr2:(NSString *)newImplementsStr2
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setImplementsStr2(newImplementsStr2);
+}
+#endif
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (NSString *)implementsStr3
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->implementsStr3();
+}
+
+- (void)setImplementsStr3:(NSString *)newImplementsStr3
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setImplementsStr3(newImplementsStr3);
+}
+#endif
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (DOMNode *)implementsNode
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->implementsNode()));
+}
+
+- (void)setImplementsNode:(DOMNode *)newImplementsNode
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newImplementsNode);
+
+    IMPL->setImplementsNode(core(newImplementsNode));
+}
+#endif
+
 #if ENABLE(Condition11) || ENABLE(Condition12)
 - (NSString *)supplementalStr1
 {
@@ -123,6 +175,49 @@
 
     TestSupplemental::setSupplementalNode(IMPL, core(newSupplementalNode));
 }
+#endif
+
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (void)implementsMethod1
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->implementsMethod1();
+}
+
+#endif
+
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (DOMTestObj *)implementsMethod2:(NSString *)strArg objArg:(DOMTestObj *)objArg
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    DOMTestObj *result = kit(WTF::getPtr(IMPL->implementsMethod2(strArg, core(objArg), ec)));
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
+#endif
+
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (void)implementsMethod3
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->implementsMethod3();
+}
+
+#endif
+
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+- (void)implementsMethod4
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->implementsMethod4();
+}
+
 #endif
 
 

@@ -59,6 +59,12 @@ public:
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
 
     // Custom attributes
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    JSC::JSValue implementsStr3(JSC::ExecState*) const;
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    void setImplementsStr3(JSC::ExecState*, JSC::JSValue);
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     JSC::JSValue supplementalStr3(JSC::ExecState*) const;
 #endif
@@ -67,6 +73,9 @@ public:
 #endif
 
     // Custom functions
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    JSC::JSValue implementsMethod3(JSC::ExecState*);
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     JSC::JSValue supplementalMethod3(JSC::ExecState*);
 #endif
@@ -165,6 +174,18 @@ protected:
 
 // Functions
 
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(JSC::ExecState*);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(JSC::ExecState*);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(JSC::ExecState*);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4(JSC::ExecState*);
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(JSC::ExecState*);
 #endif
@@ -179,6 +200,28 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplemental
 #endif
 // Attributes
 
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::JSValue jsTestInterfaceConstructorImplementsStaticAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+void setJSTestInterfaceConstructorImplementsStaticAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::JSValue jsTestInterfaceImplementsStr1(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::JSValue jsTestInterfaceImplementsStr2(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+void setJSTestInterfaceImplementsStr2(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::JSValue jsTestInterfaceImplementsStr3(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+void setJSTestInterfaceImplementsStr3(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::JSValue jsTestInterfaceImplementsNode(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+void setJSTestInterfaceImplementsNode(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 #endif
@@ -204,6 +247,12 @@ void setJSTestInterfaceSupplementalNode(JSC::ExecState*, JSC::JSObject*, JSC::JS
 JSC::JSValue jsTestInterfaceConstructor(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 // Constants
 
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::JSValue jsTestInterfaceIMPLEMENTSCONSTANT1(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+JSC::JSValue jsTestInterfaceIMPLEMENTSCONSTANT2(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::JSValue jsTestInterfaceSUPPLEMENTALCONSTANT1(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 #endif

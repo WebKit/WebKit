@@ -43,6 +43,12 @@ public:
     virtual ~WebDOMTestInterface();
 
     enum {
+#if ENABLE(Condition22) || ENABLE(Condition23)
+        WEBDOM_IMPLEMENTSCONSTANT1 = 1,
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+        WEBDOM_IMPLEMENTSCONSTANT2 = 2,
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
         WEBDOM_SUPPLEMENTALCONSTANT1 = 1,
 #endif
@@ -52,6 +58,17 @@ public:
 
     };
 
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebDOMString implementsStr1() const;
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebDOMString implementsStr2() const;
+    void setImplementsStr2(const WebDOMString&);
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    WebDOMNode implementsNode() const;
+    void setImplementsNode(const WebDOMNode&);
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     WebDOMString supplementalStr1() const;
 #endif
@@ -64,6 +81,12 @@ public:
     void setSupplementalNode(const WebDOMNode&);
 #endif
 
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    void implementsMethod1();
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    void implementsMethod4();
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     void supplementalMethod1();
 #endif

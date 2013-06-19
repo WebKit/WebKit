@@ -80,6 +80,52 @@ WebDOMTestInterface::~WebDOMTestInterface()
     m_impl = 0;
 }
 
+#if ENABLE(Condition22) || ENABLE(Condition23)
+WebDOMString WebDOMTestInterface::implementsStr1() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return static_cast<const WTF::String&>(impl()->implementsStr1());
+}
+
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+WebDOMString WebDOMTestInterface::implementsStr2() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return static_cast<const WTF::String&>(impl()->implementsStr2());
+}
+
+void WebDOMTestInterface::setImplementsStr2(const WebDOMString& newImplementsStr2)
+{
+    if (!impl())
+        return;
+
+    impl()->setImplementsStr2(newImplementsStr2);
+}
+
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+WebDOMNode WebDOMTestInterface::implementsNode() const
+{
+    if (!impl())
+        return WebDOMNode();
+
+    return toWebKit(WTF::getPtr(impl()->implementsNode()));
+}
+
+void WebDOMTestInterface::setImplementsNode(const WebDOMNode& newImplementsNode)
+{
+    if (!impl())
+        return;
+
+    impl()->setImplementsNode(toWebCore(newImplementsNode));
+}
+
+#endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
 WebDOMString WebDOMTestInterface::supplementalStr1() const
 {
@@ -126,6 +172,30 @@ void WebDOMTestInterface::setSupplementalNode(const WebDOMNode& newSupplementalN
 }
 
 #endif
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+void WebDOMTestInterface::implementsMethod1()
+{
+    if (!impl())
+        return;
+
+    impl()->implementsMethod1();
+}
+
+#endif
+
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+void WebDOMTestInterface::implementsMethod4()
+{
+    if (!impl())
+        return;
+
+    impl()->implementsMethod4();
+}
+
+#endif
+
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void WebDOMTestInterface::supplementalMethod1()
