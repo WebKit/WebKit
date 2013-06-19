@@ -74,7 +74,7 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 
     String base;
     if (!identifierBase)
-        base = CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleIdentifierKey);
+        base = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleIdentifierKey);
     else
         base = *identifierBase;
 

@@ -1,3 +1,10 @@
+2013-06-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix for Apple Windows port.
+
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        (WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+
 2013-06-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] AX: Extend notification support.
