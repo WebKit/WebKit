@@ -1,3 +1,21 @@
+2013-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Migrate WebKitCookieManager to GTask
+        https://bugs.webkit.org/show_bug.cgi?id=117150
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Don't use helper structs for async data since the cancellable is
+        now accessible from the GTask.
+
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        (webkitCookieManagerGetAcceptPolicyCallback):
+        (webkit_cookie_manager_get_accept_policy):
+        (webkit_cookie_manager_get_accept_policy_finish):
+        (webkitCookieManagerGetDomainsWithCookiesCallback):
+        (webkit_cookie_manager_get_domains_with_cookies):
+        (webkit_cookie_manager_get_domains_with_cookies_finish):
+
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Fix a typo that may be causing some test failures.

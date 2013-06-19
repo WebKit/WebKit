@@ -149,22 +149,10 @@ void webkit_cookie_manager_set_accept_policy(WebKitCookieManager* manager, WebKi
     manager->priv->webCookieManager->setHTTPCookieAcceptPolicy(policy);
 }
 
-struct GetAcceptPolicyAsyncData {
-    WKHTTPCookieAcceptPolicy policy;
-    GRefPtr<GCancellable> cancellable;
-};
-WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GetAcceptPolicyAsyncData)
-
 static void webkitCookieManagerGetAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef, void* context)
 {
-    GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
-    GetAcceptPolicyAsyncData* data = static_cast<GetAcceptPolicyAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
-    GError* error = 0;
-    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
-        g_simple_async_result_take_error(result.get(), error);
-    else
-        data->policy = policy;
-    g_simple_async_result_complete(result.get());
+    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
+    g_task_return_int(task.get(), policy);
 }
 
 /**
@@ -183,13 +171,8 @@ void webkit_cookie_manager_get_accept_policy(WebKitCookieManager* manager, GCanc
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
-    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(manager), callback, userData,
-                                                           reinterpret_cast<gpointer>(webkit_cookie_manager_get_accept_policy));
-    GetAcceptPolicyAsyncData* data = createGetAcceptPolicyAsyncData();
-    data->cancellable = cancellable;
-    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyGetAcceptPolicyAsyncData));
-
-    manager->priv->webCookieManager->getHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyCallback::create(result, webkitCookieManagerGetAcceptPolicyCallback));
+    GTask* task = g_task_new(manager, cancellable, callback, userData);
+    manager->priv->webCookieManager->getHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyCallback::create(task, webkitCookieManagerGetAcceptPolicyCallback));
 }
 
 /**
@@ -205,44 +188,29 @@ void webkit_cookie_manager_get_accept_policy(WebKitCookieManager* manager, GCanc
 WebKitCookieAcceptPolicy webkit_cookie_manager_get_accept_policy_finish(WebKitCookieManager* manager, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager), WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY);
-    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY);
+    g_return_val_if_fail(g_task_is_valid(result, manager), WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY);
 
-    GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkit_cookie_manager_get_accept_policy);
-
-    if (g_simple_async_result_propagate_error(simpleResult, error))
-        return WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY;
-
-    GetAcceptPolicyAsyncData* data = static_cast<GetAcceptPolicyAsyncData*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
-    return static_cast<WebKitCookieAcceptPolicy>(data->policy);
+    gssize returnValue = g_task_propagate_int(G_TASK(result), error);
+    return returnValue == -1 ? WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY : static_cast<WebKitCookieAcceptPolicy>(returnValue);
 }
-
-struct GetDomainsWithCookiesAsyncData {
-    GRefPtr<GPtrArray> domains;
-    GRefPtr<GCancellable> cancellable;
-};
-WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GetDomainsWithCookiesAsyncData)
 
 static void webkitCookieManagerGetDomainsWithCookiesCallback(WKArrayRef wkDomains, WKErrorRef, void* context)
 {
-    GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
-    GetDomainsWithCookiesAsyncData* data = static_cast<GetDomainsWithCookiesAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
-    GError* error = 0;
-    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
-        g_simple_async_result_take_error(result.get(), error);
-    else {
-        ImmutableArray* domains = toImpl(wkDomains);
-        data->domains = adoptGRef(g_ptr_array_new_with_free_func(g_free));
-        for (size_t i = 0; i < domains->size(); ++i) {
-            WebString* domainString = static_cast<WebString*>(domains->at(i));
-            String domain = domainString->string();
-            if (domain.isEmpty())
-                continue;
-            g_ptr_array_add(data->domains.get(), g_strdup(domain.utf8().data()));
-        }
-        g_ptr_array_add(data->domains.get(), 0);
+    GRefPtr<GTask> task = adoptGRef(G_TASK(context));
+    if (g_task_return_error_if_cancelled(task.get()))
+        return;
+
+    ImmutableArray* domains = toImpl(wkDomains);
+    GPtrArray* returnValue = g_ptr_array_sized_new(domains->size());
+    for (size_t i = 0; i < domains->size(); ++i) {
+        WebString* domainString = static_cast<WebString*>(domains->at(i));
+        String domain = domainString->string();
+        if (domain.isEmpty())
+            continue;
+        g_ptr_array_add(returnValue, g_strdup(domain.utf8().data()));
     }
-    g_simple_async_result_complete(result.get());
+    g_ptr_array_add(returnValue, 0);
+    g_task_return_pointer(task.get(), g_ptr_array_free(returnValue, FALSE), reinterpret_cast<GDestroyNotify>(g_strfreev));
 }
 
 /**
@@ -261,12 +229,8 @@ void webkit_cookie_manager_get_domains_with_cookies(WebKitCookieManager* manager
 {
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
-    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(manager), callback, userData,
-                                                           reinterpret_cast<gpointer>(webkit_cookie_manager_get_domains_with_cookies));
-    GetDomainsWithCookiesAsyncData* data = createGetDomainsWithCookiesAsyncData();
-    data->cancellable = cancellable;
-    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyGetDomainsWithCookiesAsyncData));
-    manager->priv->webCookieManager->getHostnamesWithCookies(ArrayCallback::create(result, webkitCookieManagerGetDomainsWithCookiesCallback));
+    GTask* task = g_task_new(manager, cancellable, callback, userData);
+    manager->priv->webCookieManager->getHostnamesWithCookies(ArrayCallback::create(task, webkitCookieManagerGetDomainsWithCookiesCallback));
 }
 
 /**
@@ -285,16 +249,9 @@ void webkit_cookie_manager_get_domains_with_cookies(WebKitCookieManager* manager
 gchar** webkit_cookie_manager_get_domains_with_cookies_finish(WebKitCookieManager* manager, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager), 0);
-    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+    g_return_val_if_fail(g_task_is_valid(result, manager), 0);
 
-    GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkit_cookie_manager_get_domains_with_cookies);
-
-    if (g_simple_async_result_propagate_error(simpleResult, error))
-        return 0;
-
-    GetDomainsWithCookiesAsyncData* data = static_cast<GetDomainsWithCookiesAsyncData*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
-    return reinterpret_cast<char**>(g_ptr_array_free(data->domains.leakRef(), FALSE));
+    return reinterpret_cast<char**>(g_task_propagate_pointer(G_TASK(result), error));
 }
 
 /**
