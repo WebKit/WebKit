@@ -55,11 +55,6 @@ bool HTMLOptGroupElement::isDisabledFormControl() const
     return fastHasAttribute(disabledAttr);
 }
 
-bool HTMLOptGroupElement::supportsFocus() const
-{
-    return HTMLElement::supportsFocus();
-}
-
 bool HTMLOptGroupElement::isFocusable() const
 {
     // Optgroup elements do not have a renderer so we check the renderStyle instead.

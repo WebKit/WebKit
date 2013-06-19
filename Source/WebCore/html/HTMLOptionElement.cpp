@@ -106,11 +106,6 @@ void HTMLOptionElement::detach(const AttachContext& context)
     HTMLElement::detach(context);
 }
 
-bool HTMLOptionElement::supportsFocus() const
-{
-    return HTMLElement::supportsFocus();
-}
-
 bool HTMLOptionElement::isFocusable() const
 {
     // Option elements do not have a renderer so we check the renderStyle instead.

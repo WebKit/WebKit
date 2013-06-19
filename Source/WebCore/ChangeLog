@@ -1,3 +1,17 @@
+2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove two superfluous overrides of supportsFocus
+        https://bugs.webkit.org/show_bug.cgi?id=117770
+
+        Reviewed by Benjamin Poulain.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/4228964a63e3a889a40efce0d01866629fdcd9b9.
+
+        * html/HTMLOptGroupElement.cpp:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLOptionElement.h:
+
 2013-06-18  Darin Adler  <darin@apple.com>
 
         Improve style of null checks in FrameView::setFrameRect

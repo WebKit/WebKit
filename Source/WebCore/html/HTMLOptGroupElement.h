@@ -43,7 +43,6 @@ private:
     HTMLOptGroupElement(const QualifiedName&, Document*);
 
     virtual const AtomicString& formControlType() const;
-    virtual bool supportsFocus() const OVERRIDE;
     virtual bool isFocusable() const OVERRIDE;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
