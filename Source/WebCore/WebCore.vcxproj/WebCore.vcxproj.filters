@@ -6784,6 +6784,9 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\XPathGrammar.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
+    <ClCompile Include="..\accessibility\AccessibilityNodeObject.cpp">
+      <Filter>accessibility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -14242,6 +14245,9 @@
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\XMLViewerJS.h">
       <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\accessibility\AccessibilityNodeObject.h">
+      <Filter>accessibility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
