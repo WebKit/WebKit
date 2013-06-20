@@ -2007,7 +2007,7 @@ void FrameView::repaintFixedElementsAfterScrolling()
 {
     // For fixed position elements, update widget positions and compositing layers after scrolling,
     // but only if we're not inside of layout.
-    if (!m_nestedLayoutCount && hasViewportConstrainedObjects()) {
+    if (m_nestedLayoutCount <= 1 && hasViewportConstrainedObjects()) {
         if (RenderView* renderView = this->renderView()) {
             renderView->updateWidgetPositions();
             renderView->layer()->updateLayerPositionsAfterDocumentScroll();
