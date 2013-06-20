@@ -1,3 +1,18 @@
+2013-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Handle testRunner.setWillSendRequestReturnsNull() in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=117827
+
+        Reviewed by Rob Buis.
+
+        Reset the passed in request if willSendRequestReturnsNull() is
+        true or willSendRequestReturnsNullOnRedirect() is true and it's a
+        redirection.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::willSendRequestForFrame):
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h:
+
 2013-06-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Commit queue shouldn't reopen unrelated bugs because of flakiness

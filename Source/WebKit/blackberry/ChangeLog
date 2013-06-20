@@ -1,3 +1,21 @@
+2013-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Handle testRunner.setWillSendRequestReturnsNull() in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=117827
+
+        Reviewed by Rob Buis.
+
+        Add DumpRenderTreeClient::willSendRequestForFrame() to handle
+        dispatchWillSendRequest() in DRT.
+
+        Fixes tests
+        fast/loader/onload-willSendRequest-null-for-script.html and
+        fast/loader/willSendRequest-null-for-preload.html.
+
+        * Api/DumpRenderTreeClient.h:
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendRequest):
+
 2013-06-19  Jakob Petsovits  <jpetsovits@blackberry.com>
 
         [BlackBerry] Prevent loss of tile buffers in BackingStorePrivate::render()

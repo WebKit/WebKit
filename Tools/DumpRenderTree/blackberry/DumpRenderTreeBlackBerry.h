@@ -63,6 +63,7 @@ public:
     bool loadFinished() const { return m_loadFinished; }
 
     // FrameLoaderClient delegates
+    bool willSendRequestForFrame(WebCore::Frame*, WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void didStartProvisionalLoadForFrame(WebCore::Frame*);
     void didCommitLoadForFrame(WebCore::Frame*);
     void didFailProvisionalLoadForFrame(WebCore::Frame*);

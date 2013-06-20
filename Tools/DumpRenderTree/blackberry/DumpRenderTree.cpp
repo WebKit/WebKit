@@ -617,6 +617,16 @@ void DumpRenderTree::locationChangeForFrame(WebCore::Frame* frame)
 }
 
 // FrameLoadClient delegates.
+bool DumpRenderTree::willSendRequestForFrame(WebCore::Frame* frame, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
+{
+    if (!testDone && (gTestRunner->willSendRequestReturnsNull() || (gTestRunner->willSendRequestReturnsNullOnRedirect() && !redirectResponse.isNull()))) {
+        request = WebCore::ResourceRequest();
+        return false;
+    }
+
+    return true;
+}
+
 void DumpRenderTree::didStartProvisionalLoadForFrame(WebCore::Frame* frame)
 {
     if (!testDone && gTestRunner->dumpFrameLoadCallbacks())
