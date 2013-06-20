@@ -149,10 +149,7 @@ void RenderTextControl::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, 
     ASSERT(innerText);
     if (RenderBox* innerTextBox = innerText->renderBox()) {
         LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingHeight() + innerTextBox->marginHeight();
-        m_intrinsicLogicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight);
-        // The positioned height computation will add in border and padding.
-        if (!isOutOfFlowPositioned())
-            m_intrinsicLogicalHeight += borderAndPaddingHeight();
+        m_intrinsicLogicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight) + borderAndPaddingHeight();
 
         // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
         if ((isHorizontalWritingMode() && (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && innerText->renderer()->style()->overflowWrap() == NormalOverflowWrap)))
@@ -295,13 +292,10 @@ void RenderTextControl::computePreferredLogicalWidths()
         m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->logicalMaxWidth().value()));
     }
 
+    LayoutUnit toAdd = borderAndPaddingLogicalWidth();
 
-    // The positioned height computation will add in border and padding.
-    if (!isOutOfFlowPositioned()) {
-        LayoutUnit toAdd = borderAndPaddingLogicalWidth();
-        m_minPreferredLogicalWidth += toAdd;
-        m_maxPreferredLogicalWidth += toAdd;
-    }
+    m_minPreferredLogicalWidth += toAdd;
+    m_maxPreferredLogicalWidth += toAdd;
 
     setPreferredLogicalWidthsDirty(false);
 }

@@ -1,3 +1,21 @@
+2013-06-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r151788.
+        http://trac.webkit.org/changeset/151788
+        https://bugs.webkit.org/show_bug.cgi?id=117847
+
+        "This is the wrong fix" (Requested by rhogan on #webkit).
+
+        * fast/forms/onselect-textfield-expected.txt:
+        * fast/replaced/height-of-positioned-text-control-expected.html: Removed.
+        * fast/replaced/height-of-positioned-text-control.html: Removed.
+        * fast/replaced/width-and-height-of-positioned-replaced-elements-expected.txt:
+        * platform/mac/fast/forms/input-appearance-preventDefault-expected.png:
+        * platform/mac/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/mac/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.png:
+        * platform/mac/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.txt:
+        * platform/qt/fast/forms/input-appearance-preventDefault-expected.txt:
+
 2013-05-24  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Gstreamer] cleanup buffering and state updates
