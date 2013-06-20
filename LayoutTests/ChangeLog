@@ -1,3 +1,17 @@
+2013-06-20  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        Rebselining after r151761, see bug 115372.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/fast/repaint/horizontal-bt-overflow-child-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/horizontal-bt-overflow-parent-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/horizontal-bt-overflow-same-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/vertical-overflow-child-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/vertical-overflow-parent-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/repaint/vertical-overflow-same-expected.txt: Added.
+
 2013-06-20  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         background-color and text-decoration are not preserved when merging paragraphs
