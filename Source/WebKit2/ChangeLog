@@ -1,3 +1,28 @@
+2013-06-20  Brady Eidson  <beidson@apple.com>
+
+        WebProcess hangs loading eff.org (Waiting forever on a sync XHR, NetworkProcess unable to service it).
+        <rdar://problem/14112329> and https://bugs.webkit.org/show_bug.cgi?id=117842
+
+        Reviewed by Alexey Proskuryakov.
+
+        * NetworkProcess/HostRecord.cpp:
+        (WebKit::removeLoaderFromQueue): Utility to clear a Loader out of a LoaderQueue.
+        (WebKit::HostRecord::removeLoader): Use removeLoaderFromQueue, and also try to clear the loader from m_syncLoadersPending.
+        (WebKit::HostRecord::servePendingRequestsForQueue): Small refactoring/cleanup.
+        (WebKit::HostRecord::limitsRequests): Change so that if the number of loaders in flight is exactly equal to the limit, then
+          allow serving a synchronous loader to go exactly one beyond the limit.
+        * NetworkProcess/HostRecord.h:
+
+        Make the static maxRequestsInFlightPerHost a member of the NetworkResourceLoadScheduler, instead:
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::NetworkResourceLoadScheduler):
+        (WebKit::NetworkResourceLoadScheduler::hostForURL):
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+
+        * NetworkProcess/mac/NetworkResourceLoadSchedulerMac.mm:
+        (WebKit::NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountPerHost): Tell CFNetwork to allow
+          7 connections per host instead of 6, but tell the scheduler that 6 is still the normal limit.
+
 2013-06-20  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL][WK2] Update text checker documentation.

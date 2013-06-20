@@ -17,14 +17,13 @@ using namespace WebCore;
 namespace WebKit {
 
 static const unsigned maxRequestsInFlightForNonHTTPProtocols = 20;
-static unsigned maxRequestsInFlightPerHost;
 
 NetworkResourceLoadScheduler::NetworkResourceLoadScheduler()
     : m_nonHTTPProtocolHost(HostRecord::create(String(), maxRequestsInFlightForNonHTTPProtocols))
     , m_requestTimer(this, &NetworkResourceLoadScheduler::requestTimerFired)
 
 {
-    maxRequestsInFlightPerHost = platformInitializeMaximumHTTPConnectionCountPerHost();
+    platformInitializeMaximumHTTPConnectionCountPerHost();
 }
 
 void NetworkResourceLoadScheduler::scheduleServePendingRequests()
@@ -68,7 +67,7 @@ HostRecord* NetworkResourceLoadScheduler::hostForURL(const WebCore::KURL& url, C
     String hostName = url.host();
     HostRecord* host = m_hosts.get(hostName);
     if (!host && createHostPolicy == CreateIfNotFound) {
-        RefPtr<HostRecord> newHost = HostRecord::create(hostName, maxRequestsInFlightPerHost);
+        RefPtr<HostRecord> newHost = HostRecord::create(hostName, m_maxRequestsInFlightPerHost);
         host = newHost.get();
         m_hosts.add(hostName, newHost.release());
     }
