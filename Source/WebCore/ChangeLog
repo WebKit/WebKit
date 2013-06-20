@@ -1,3 +1,133 @@
+2013-06-20  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        HashSet: reverse the order of the template arguments at alternate 'find', 'contains' and 'add' methods
+        https://bugs.webkit.org/show_bug.cgi?id=117830
+
+        Reviewed by Anders Carlsson.
+
+        The order of the template arguments at HashSet alternate 'find', 'contains' and
+        'add' methods is reversed so that callers can just pass the translator
+        and let the compiler deduce input argument type.
+
+        No new tests. No new functionality.
+
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::QualifiedName):
+        * platform/graphics/cg/SubimageCacheWithTimer.cpp:
+        (WebCore::SubimageCacheWithTimer::getSubimage):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::isSupportedAttribute):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::isSupportedAttribute):
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::isSupportedAttribute):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::isSupportedAttribute):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::isSupportedAttribute):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::isSupportedAttribute):
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::isSupportedAttribute):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::isSupportedAttribute):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::isSupportedAttribute):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::isSupportedAttribute):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::isSupportedAttribute):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::isSupportedAttribute):
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::isSupportedAttribute):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::isSupportedAttribute):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::isSupportedAttribute):
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::isSupportedAttribute):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::isSupportedAttribute):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::isSupportedAttribute):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::isSupportedAttribute):
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::isSupportedAttribute):
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::isSupportedAttribute):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::isSupportedAttribute):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::isSupportedAttribute):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::isSupportedAttribute):
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::isSupportedAttribute):
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::isSupportedAttribute):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::isSupportedAttribute):
+        (WebCore::SVGFilterElement::childShouldCreateRenderer):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::isSupportedAttribute):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::isSupportedAttribute):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::isSupportedAttribute):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::isSupportedAttribute):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::isSupportedAttribute):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::isSupportedAttribute):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::isSupportedAttribute):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::isSupportedAttribute):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::isSupportedAttribute):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::isSupportedAttribute):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::isSupportedAttribute):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::isSupportedAttribute):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::isSupportedAttribute):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::isSupportedAttribute):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::isSupportedAttribute):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::isSupportedAttribute):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::isSupportedAttribute):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::isSupportedAttribute):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::isSupportedAttribute):
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::isSupportedAttribute):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::isSupportedAttribute):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::isSupportedAttribute):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::isSupportedAttribute):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::isSupportedAttribute):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::isSupportedAttribute):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::isSupportedAttribute):
+        (WebCore::isDisallowedElement):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::isSupportedAttribute):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::isSupportedAttribute):
+
 2013-06-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r151451.

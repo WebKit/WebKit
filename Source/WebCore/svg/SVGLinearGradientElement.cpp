@@ -80,7 +80,7 @@ bool SVGLinearGradientElement::isSupportedAttribute(const QualifiedName& attrNam
         supportedAttributes.add(SVGNames::y1Attr);
         supportedAttributes.add(SVGNames::y2Attr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGLinearGradientElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

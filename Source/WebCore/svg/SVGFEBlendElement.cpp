@@ -64,7 +64,7 @@ bool SVGFEBlendElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::inAttr);
         supportedAttributes.add(SVGNames::in2Attr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEBlendElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

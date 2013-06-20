@@ -85,7 +85,7 @@ bool SVGFEMorphologyElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::operatorAttr);
         supportedAttributes.add(SVGNames::radiusAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

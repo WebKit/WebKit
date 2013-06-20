@@ -95,7 +95,7 @@ bool SVGStyledTransformableElement::isSupportedAttribute(const QualifiedName& at
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         supportedAttributes.add(SVGNames::transformAttr);
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGStyledTransformableElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

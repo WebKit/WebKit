@@ -78,7 +78,7 @@ bool SVGLineElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::y1Attr);
         supportedAttributes.add(SVGNames::y2Attr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

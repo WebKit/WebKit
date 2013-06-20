@@ -57,7 +57,7 @@ bool SVGAnimateTransformElement::isSupportedAttribute(const QualifiedName& attrN
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
         supportedAttributes.add(SVGNames::typeAttr);
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGAnimateTransformElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

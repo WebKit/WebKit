@@ -66,7 +66,7 @@ bool SVGViewElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGZoomAndPan::addSupportedAttributes(supportedAttributes);
         supportedAttributes.add(SVGNames::viewTargetAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

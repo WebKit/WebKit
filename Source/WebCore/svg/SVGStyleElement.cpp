@@ -107,7 +107,7 @@ bool SVGStyleElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         supportedAttributes.add(SVGNames::titleAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

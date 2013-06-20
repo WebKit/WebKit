@@ -75,7 +75,7 @@ static inline PassRefPtr<StringImpl> addToStringTable(const T& value)
 {
     AtomicStringTableLocker locker;
 
-    HashSet<StringImpl*>::AddResult addResult = stringTable().add<T, HashTranslator>(value);
+    HashSet<StringImpl*>::AddResult addResult = stringTable().add<HashTranslator>(value);
 
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
@@ -393,7 +393,7 @@ template<typename CharacterType>
 static inline HashSet<StringImpl*>::iterator findString(const StringImpl* stringImpl)
 {
     HashAndCharacters<CharacterType> buffer = { stringImpl->existingHash(), stringImpl->getCharacters<CharacterType>(), stringImpl->length() };
-    return stringTable().find<HashAndCharacters<CharacterType>, HashAndCharactersTranslator<CharacterType> >(buffer);
+    return stringTable().find<HashAndCharactersTranslator<CharacterType> >(buffer);
 }
 
 AtomicStringImpl* AtomicString::find(const StringImpl* stringImpl)

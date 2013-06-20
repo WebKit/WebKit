@@ -156,7 +156,7 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::toAttr);
         supportedAttributes.add(SVGNames::byAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

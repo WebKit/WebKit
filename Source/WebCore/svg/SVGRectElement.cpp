@@ -86,7 +86,7 @@ bool SVGRectElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::rxAttr);
         supportedAttributes.add(SVGNames::ryAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGRectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

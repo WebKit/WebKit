@@ -123,7 +123,7 @@ bool SVGMarkerElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::markerHeightAttr);
         supportedAttributes.add(SVGNames::orientAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

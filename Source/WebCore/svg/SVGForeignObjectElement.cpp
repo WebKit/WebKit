@@ -82,7 +82,7 @@ bool SVGForeignObjectElement::isSupportedAttribute(const QualifiedName& attrName
         supportedAttributes.add(SVGNames::widthAttr);
         supportedAttributes.add(SVGNames::heightAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

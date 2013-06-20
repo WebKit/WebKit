@@ -91,7 +91,7 @@ bool SVGMaskElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::widthAttr);
         supportedAttributes.add(SVGNames::heightAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

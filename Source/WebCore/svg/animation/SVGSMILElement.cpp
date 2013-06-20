@@ -457,7 +457,7 @@ bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::attributeNameAttr);
         supportedAttributes.add(XLinkNames::hrefAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGSMILElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

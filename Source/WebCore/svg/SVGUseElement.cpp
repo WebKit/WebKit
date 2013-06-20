@@ -145,7 +145,7 @@ bool SVGUseElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::widthAttr);
         supportedAttributes.add(SVGNames::heightAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -375,7 +375,7 @@ static bool isDisallowedElement(Node* node)
         allowedElementTags.add(SVGNames::tspanTag);
         allowedElementTags.add(SVGNames::useTag);
     }
-    return !allowedElementTags.contains<QualifiedName, SVGAttributeHashTranslator>(element->tagQName());
+    return !allowedElementTags.contains<SVGAttributeHashTranslator>(element->tagQName());
 }
 
 static bool subtreeContainsDisallowedElement(Node* start)

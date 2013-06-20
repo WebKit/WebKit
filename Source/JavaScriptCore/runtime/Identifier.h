@@ -251,7 +251,7 @@ namespace JSC {
     template<typename U, typename V>
     HashSet<StringImpl*>::AddResult IdentifierTable::add(U value)
     {
-        HashSet<StringImpl*>::AddResult result = m_table.add<U, V>(value);
+        HashSet<StringImpl*>::AddResult result = m_table.add<V>(value);
         (*result.iterator)->setIsIdentifier(true);
         return result;
     }

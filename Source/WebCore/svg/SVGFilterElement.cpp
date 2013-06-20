@@ -118,7 +118,7 @@ bool SVGFilterElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::heightAttr);
         supportedAttributes.add(SVGNames::filterResAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -229,7 +229,7 @@ bool SVGFilterElement::childShouldCreateRenderer(const NodeRenderingContext& chi
         allowedChildElementTags.add(SVGNames::feTurbulenceTag);
     }
 
-    return allowedChildElementTags.contains<QualifiedName, SVGAttributeHashTranslator>(svgElement->tagQName());
+    return allowedChildElementTags.contains<SVGAttributeHashTranslator>(svgElement->tagQName());
 }
 
 bool SVGFilterElement::selfHasRelativeLengths() const

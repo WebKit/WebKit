@@ -85,7 +85,7 @@ bool SVGFETurbulenceElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::stitchTilesAttr);
         supportedAttributes.add(SVGNames::typeAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

@@ -63,7 +63,7 @@ bool SVGFEOffsetElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::dxAttr);
         supportedAttributes.add(SVGNames::dyAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEOffsetElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

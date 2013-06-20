@@ -110,7 +110,7 @@ bool SVGMPathElement::isSupportedAttribute(const QualifiedName& attrName)
         SVGURIReference::addSupportedAttributes(supportedAttributes);
         SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGMPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

@@ -223,7 +223,7 @@ bool SVGTextContentElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::lengthAdjustAttr);
         supportedAttributes.add(SVGNames::textLengthAttr);
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 bool SVGTextContentElement::isPresentationAttribute(const QualifiedName& name) const

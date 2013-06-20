@@ -68,10 +68,8 @@ namespace WTF {
         // must have the following function members:
         //   static unsigned hash(const T&);
         //   static bool equal(const ValueType&, const T&);
-        // FIXME: We should reverse the order of the template arguments so that callers
-        // can just pass the translator and let the compiler deduce T.
-        template<typename T, typename HashTranslator> iterator find(const T&) const;
-        template<typename T, typename HashTranslator> bool contains(const T&) const;
+        template<typename HashTranslator, typename T> iterator find(const T&) const;
+        template<typename HashTranslator, typename T> bool contains(const T&) const;
 
         // The return value is a pair of an interator to the new value's location, 
         // and a bool that is true if an new entry was added.
@@ -83,9 +81,7 @@ namespace WTF {
         //   static unsigned hash(const T&);
         //   static bool equal(const ValueType&, const T&);
         //   static translate(ValueType&, const T&, unsigned hashCode);
-        // FIXME: We should reverse the order of the template arguments so that callers
-        // can just pass the translator and let the compiler deduce T.
-        template<typename T, typename HashTranslator> AddResult add(const T&);
+        template<typename HashTranslator, typename T> AddResult add(const T&);
 
         void remove(const ValueType&);
         void remove(iterator);
@@ -162,7 +158,7 @@ namespace WTF {
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
-    template<typename T, typename HashTranslator>
+    template<typename HashTranslator, typename T>
     typename HashSet<Value, HashFunctions, Traits>::iterator
     inline HashSet<Value, HashFunctions, Traits>::find(const T& value) const
     {
@@ -170,7 +166,7 @@ namespace WTF {
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
-    template<typename T, typename HashTranslator>
+    template<typename HashTranslator, typename T>
     inline bool HashSet<Value, HashFunctions, Traits>::contains(const T& value) const
     {
         return m_impl.template contains<HashSetTranslatorAdapter<HashTranslator> >(value);
@@ -183,7 +179,7 @@ namespace WTF {
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
-    template<typename T, typename HashTranslator>
+    template<typename HashTranslator, typename T>
     inline typename HashSet<Value, HashFunctions, Traits>::AddResult
     HashSet<Value, HashFunctions, Traits>::add(const T& value)
     {

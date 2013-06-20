@@ -87,7 +87,7 @@ bool SVGFEDiffuseLightingElement::isSupportedAttribute(const QualifiedName& attr
         supportedAttributes.add(SVGNames::kernelUnitLengthAttr);
         supportedAttributes.add(SVGNames::lighting_colorAttr); // Even though it's a SVG-CSS property, we override its handling here.
     }
-    return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
+    return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
 void SVGFEDiffuseLightingElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

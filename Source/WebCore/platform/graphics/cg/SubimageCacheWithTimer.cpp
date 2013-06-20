@@ -81,7 +81,7 @@ RetainPtr<CGImageRef> SubimageCacheWithTimer::getSubimage(CGImageRef image, cons
     }
 
     ASSERT(m_cache.size() < maxSubimageCacheSize);
-    SubimageCache::AddResult result = m_cache.add<SubimageRequest, SubimageCacheAdder>(SubimageRequest(image, rect));
+    SubimageCache::AddResult result = m_cache.add<SubimageCacheAdder>(SubimageRequest(image, rect));
     if (result.isNewEntry)
         m_images.add(image);
 
