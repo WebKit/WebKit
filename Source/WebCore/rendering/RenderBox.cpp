@@ -816,17 +816,21 @@ LayoutSize RenderBox::cachedSizeForOverflowClip() const
 
 void RenderBox::applyCachedClipAndScrollOffsetForRepaint(LayoutRect& paintRect) const
 {
+    flipForWritingMode(paintRect);
     paintRect.move(-scrolledContentOffset()); // For overflow:auto/scroll/hidden.
 
     // Do not clip scroll layer contents to reduce the number of repaints while scrolling.
-    if (usesCompositedScrolling())
+    if (usesCompositedScrolling()) {
+        flipForWritingMode(paintRect);
         return;
+    }
 
     // height() is inaccurate if we're in the middle of a layout of this RenderBox, so use the
     // layer's size instead. Even if the layer's size is wrong, the layer itself will repaint
     // anyway if its size does change.
     LayoutRect clipRect(LayoutPoint(), cachedSizeForOverflowClip());
     paintRect = intersection(paintRect, clipRect);
+    flipForWritingMode(paintRect);
 }
 
 void RenderBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const

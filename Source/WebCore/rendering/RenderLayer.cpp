@@ -2855,7 +2855,9 @@ void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& r
         scrollRect.move(verticalScrollbarStart(0, box->width()), box->borderTop());
     else
         scrollRect.move(horizontalScrollbarStart(0), box->height() - box->borderBottom() - scrollbar->height());
-    renderer()->repaintRectangle(scrollRect);
+    LayoutRect repaintRect = scrollRect;
+    renderBox()->flipForWritingMode(repaintRect);
+    renderer()->repaintRectangle(repaintRect);
 }
 
 void RenderLayer::invalidateScrollCornerRect(const IntRect& rect)
