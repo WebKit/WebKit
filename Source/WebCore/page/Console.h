@@ -64,7 +64,6 @@ public:
     void trace(ScriptState*, PassRefPtr<ScriptArguments>);
     void assertCondition(ScriptState*, PassRefPtr<ScriptArguments>, bool condition);
     void count(ScriptState*, PassRefPtr<ScriptArguments>);
-    void markTimeline(PassRefPtr<ScriptArguments>);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     const ProfilesArray& profiles() const { return m_profiles; }
     void profile(const String&, ScriptState*);

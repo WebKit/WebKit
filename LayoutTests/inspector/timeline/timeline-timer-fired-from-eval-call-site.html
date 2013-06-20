@@ -7,7 +7,7 @@
 function performActions()
 {
     var content = "" + 
-        "var fn2 = function() {console.markTimeline(\"Script evaluated\");};\\n" +
+        "var fn2 = function() {console.timeStamp(\"Script evaluated\");};\\n" +
         "var fn1 = function() {window.setTimeout(fn2, 1);};\\n" +
         "window.setTimeout(fn1, 1);\\n"
     content = "eval('" + content + "//@ sourceURL=fromEval.js" + "');";

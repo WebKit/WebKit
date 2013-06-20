@@ -1,3 +1,19 @@
+2013-06-20  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: Use console.timeStamp instead of console.markTimeline
+        https://bugs.webkit.org/show_bug.cgi?id=117810
+
+        Reviewed by Joseph Pecoraro.
+
+        Use 'console.timeStamp' instead of 'console.markTimeline' in LayoutTests.
+        And remove inspector/timeline/timeline-mark-timeline.html.
+
+        * inspector/console/console-messages-stack-traces-expected.txt:
+        * inspector/console/console-messages-stack-traces.html:
+        * inspector/timeline/timeline-mark-timeline-expected.txt: Removed.
+        * inspector/timeline/timeline-mark-timeline.html: Removed.
+        * inspector/timeline/timeline-timer-fired-from-eval-call-site.html:
+
 2013-06-20  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

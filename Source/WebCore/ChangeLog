@@ -1,3 +1,21 @@
+2013-06-20  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: Use console.timeStamp instead of console.markTimeline
+        https://bugs.webkit.org/show_bug.cgi?id=117810
+
+        Reviewed by Joseph Pecoraro.
+
+        Webkit supports both console.timeStamp and console.markTimeline.
+        And they do the exact same thing.
+        This patch gets rid of console.markTimeline for Chrome/Firebug compatibility.
+
+        No new functionality, no new tests.
+
+        * WebCore.order:
+        * page/Console.cpp:
+        * page/Console.h:
+        * page/Console.idl:
+
 2013-06-20  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         background-color and text-decoration are not preserved when merging paragraphs
