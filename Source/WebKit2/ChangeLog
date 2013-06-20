@@ -1,3 +1,13 @@
+2013-06-20  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL][WK2] Update text checker documentation.
+        https://bugs.webkit.org/show_bug.cgi?id=117828
+
+        Reviewed by Christophe Dumez.
+
+        * UIProcess/API/efl/ewk_text_checker.h:
+        The client is not responsible for destroying the memory.
+
 2013-06-19  Sam Weinig  <sam@webkit.org>
 
         Expose plug-ins CFBundleShortVersionString in the WKPluginInformation dictionary

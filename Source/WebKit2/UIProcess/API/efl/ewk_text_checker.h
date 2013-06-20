@@ -96,8 +96,8 @@ typedef void (*Ewk_Text_Checker_String_Spelling_Check_Cb)(uint64_t tag, const ch
  * @param tag unique tag to notify the spell checker which document that @a text is associated,
  *        @c 0 can be passed for text not associated with a particular document
  * @param word the word to get guesses
- * @return a list of dynamically allocated strings (as char*) and
- *         caller is responsible for destroying them.
+ * @return a list of dynamically allocated strings (as char*),
+ *         the list and its items will be freed by WebKit.
  */
 typedef Eina_List *(*Ewk_Text_Checker_Word_Guesses_Get_Cb)(uint64_t tag, const char *word);
 
