@@ -1,3 +1,15 @@
+2013-06-19  Jer Noble  <jer.noble@apple.com>
+
+        Roll-on in-band captions are displayed bottom-to-top rather than top-to-bottom.
+        https://bugs.webkit.org/show_bug.cgi?id=117811
+
+        Reviewed by Eric Carlson.
+
+        When comparing Generic cues, we should check that their type is Generic, not WebVTT.
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGeneric::isOrderedBefore):
+
 2013-06-20  Ralph Thomas  <ralpht@gmail.com>
 
         [CMake][CSS Shaders] Add WebCore files for CSS Shaders to CMakeLists.txt

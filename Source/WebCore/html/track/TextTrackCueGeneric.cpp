@@ -178,7 +178,7 @@ bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
     if (TextTrackCue::isOrderedBefore(that))
         return true;
 
-    if (that->cueType() == WebVTT && startTime() == that->startTime() && endTime() == that->endTime()) {
+    if (that->cueType() == Generic && startTime() == that->startTime() && endTime() == that->endTime()) {
         // Further order generic cues by their calculated line value.
         std::pair<double, double> thisPosition = getPositionCoordinates();
         std::pair<double, double> thatPosition = that->getPositionCoordinates();
