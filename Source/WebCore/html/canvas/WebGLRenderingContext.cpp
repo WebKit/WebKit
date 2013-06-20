@@ -79,6 +79,7 @@
 #include <wtf/PassOwnArrayPtr.h>
 #include <wtf/Uint16Array.h>
 #include <wtf/Uint32Array.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(QT)
