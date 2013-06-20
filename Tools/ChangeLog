@@ -1,3 +1,14 @@
+2013-06-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] AX: Expand notification support.
+        https://bugs.webkit.org/show_bug.cgi?id=117761
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::isPressActionSupported): Provide implementation.
+        (AccessibilityUIElement::press): Provide implementation.
+
 2013-06-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Use the PlatformEvent timestamp when creating a DOM Event

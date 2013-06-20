@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "DumpRenderTree.h"
 #include "FrameLoadDelegate.h"
 #include <JavaScriptCore/JSStringRef.h>
+#include <wtf/text/WTFString.h>
 #include <comutil.h>
 #include <tchar.h>
 #include <string>
@@ -434,7 +435,14 @@ double AccessibilityUIElement::maxValue()
 
 bool AccessibilityUIElement::isPressActionSupported()
 {
-    return false;
+    BSTR valueBSTR;
+    if (FAILED(m_element->get_accDefaultAction(self(), &valueBSTR) || !valueBSTR))
+        return false;
+
+    if (!::SysStringLen(valueBSTR))
+        return false;
+
+    return true;
 }
 
 bool AccessibilityUIElement::isIncrementActionSupported()
@@ -597,7 +605,10 @@ void AccessibilityUIElement::showMenu()
 
 void AccessibilityUIElement::press()
 {
-    // FIXME: implement
+    if (!m_element)
+        return;
+
+    m_element->accDoDefaultAction(self());
 }
 
 AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
