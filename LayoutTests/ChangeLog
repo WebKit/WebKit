@@ -1,3 +1,9 @@
+2013-06-19  Beth Dakin  <bdakin@apple.com>
+
+        Adding a Mac pixel result.
+
+        * platform/mac/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.png: Added.
+
 2013-06-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed AX test expecation gardening.
