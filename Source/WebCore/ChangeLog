@@ -1,3 +1,14 @@
+2013-06-20  Ralph Thomas  <ralpht@gmail.com>
+
+        [CMake][CSS Shaders] Add WebCore files for CSS Shaders to CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=117711
+
+        Reviewed by Laszlo Gombos.
+
+        No new tests, no CMake platforms currently enable this functionality.
+
+        * CMakeLists.txt:
+
 2013-06-20  Alexis Menard  <alexis@webkit.org>
 
         Cleanup usage of CSSPropertyID and CSSValueID inside WebKit.

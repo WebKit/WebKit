@@ -1095,11 +1095,14 @@ set(WebCore_SOURCES
     css/SVGCSSStyleSelector.cpp
     css/TransformFunctions.cpp
     css/ViewportStyleResolver.cpp
+    css/WebKitCSSArrayFunctionValue.cpp
     css/WebKitCSSFilterRule.cpp
     css/WebKitCSSFilterValue.cpp
     css/WebKitCSSKeyframeRule.cpp
     css/WebKitCSSKeyframesRule.cpp
     css/WebKitCSSMatrix.cpp
+    css/WebKitCSSMatFunctionValue.cpp
+    css/WebKitCSSMixFunctionValue.cpp
     css/WebKitCSSRegionRule.cpp
     css/WebKitCSSSVGDocumentValue.cpp
     css/WebKitCSSShaderValue.cpp
@@ -1934,12 +1937,14 @@ set(WebCore_SOURCES
     platform/graphics/filters/CustomFilterCompiledProgram.cpp
     platform/graphics/filters/CustomFilterGlobalContext.cpp
     platform/graphics/filters/CustomFilterMesh.cpp
+    platform/graphics/filters/CustomFilterMeshGenerator.cpp
     platform/graphics/filters/CustomFilterOperation.cpp
     platform/graphics/filters/CustomFilterParameterList.cpp
     platform/graphics/filters/ValidatedCustomFilterOperation.cpp
     platform/graphics/filters/CustomFilterProgram.cpp
     platform/graphics/filters/CustomFilterProgramInfo.cpp
     platform/graphics/filters/CustomFilterRenderer.cpp
+    platform/graphics/filters/CustomFilterValidatedProgram.cpp
     platform/graphics/filters/DistantLightSource.cpp
     platform/graphics/filters/FEBlend.cpp
     platform/graphics/filters/FEColorMatrix.cpp
@@ -2230,6 +2235,9 @@ set(WebCore_SOURCES
     rendering/style/StyleBoxData.cpp
     rendering/style/StyleCachedImage.cpp
     rendering/style/StyleCachedImageSet.cpp
+    rendering/style/StyleCachedShader.cpp
+    rendering/style/StyleCustomFilterProgram.cpp
+    rendering/style/StyleCustomFilterProgramCache.cpp
     rendering/style/StyleDeprecatedFlexibleBoxData.cpp
     rendering/style/StyleFilterData.cpp
     rendering/style/StyleFlexibleBoxData.cpp
