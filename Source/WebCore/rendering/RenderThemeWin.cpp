@@ -1037,34 +1037,34 @@ bool RenderThemeWin::paintSearchFieldResultsButton(RenderObject* o, const PaintI
 static CSSValueID cssValueIdToSysColorIndex(int cssValueId)
 {
     switch (cssValueId) {
-    case CSSValueActiveborder: return COLOR_ACTIVEBORDER;
-    case CSSValueActivecaption: return COLOR_ACTIVECAPTION;
-    case CSSValueAppworkspace: return COLOR_APPWORKSPACE;
-    case CSSValueBackground: return COLOR_BACKGROUND;
-    case CSSValueButtonface: return COLOR_BTNFACE;
-    case CSSValueButtonhighlight: return COLOR_BTNHIGHLIGHT;
-    case CSSValueButtonshadow: return COLOR_BTNSHADOW;
-    case CSSValueButtontext: return COLOR_BTNTEXT;
-    case CSSValueCaptiontext: return COLOR_CAPTIONTEXT;
-    case CSSValueGraytext: return COLOR_GRAYTEXT;
-    case CSSValueHighlight: return COLOR_HIGHLIGHT;
-    case CSSValueHighlighttext: return COLOR_HIGHLIGHTTEXT;
-    case CSSValueInactiveborder: return COLOR_INACTIVEBORDER;
-    case CSSValueInactivecaption: return COLOR_INACTIVECAPTION;
-    case CSSValueInactivecaptiontext: return COLOR_INACTIVECAPTIONTEXT;
-    case CSSValueInfobackground: return COLOR_INFOBK;
-    case CSSValueInfotext: return COLOR_INFOTEXT;
-    case CSSValueMenu: return COLOR_MENU;
-    case CSSValueMenutext: return COLOR_MENUTEXT;
-    case CSSValueScrollbar: return COLOR_SCROLLBAR;
-    case CSSValueThreeddarkshadow: return COLOR_3DDKSHADOW;
-    case CSSValueThreedface: return COLOR_3DFACE;
-    case CSSValueThreedhighlight: return COLOR_3DHIGHLIGHT;
-    case CSSValueThreedlightshadow: return COLOR_3DLIGHT;
-    case CSSValueThreedshadow: return COLOR_3DSHADOW;
-    case CSSValueWindow: return COLOR_WINDOW;
-    case CSSValueWindowframe: return COLOR_WINDOWFRAME;
-    case CSSValueWindowtext: return COLOR_WINDOWTEXT;
+    case CSSValueActiveborder: return static_cast<CSSValueID>(COLOR_ACTIVEBORDER);
+    case CSSValueActivecaption: return static_cast<CSSValueID>(COLOR_ACTIVECAPTION);
+    case CSSValueAppworkspace: return static_cast<CSSValueID>(COLOR_APPWORKSPACE);
+    case CSSValueBackground: return static_cast<CSSValueID>(COLOR_BACKGROUND);
+    case CSSValueButtonface: return static_cast<CSSValueID>(COLOR_BTNFACE);
+    case CSSValueButtonhighlight: return static_cast<CSSValueID>(COLOR_BTNHIGHLIGHT);
+    case CSSValueButtonshadow: return static_cast<CSSValueID>(COLOR_BTNSHADOW);
+    case CSSValueButtontext: return static_cast<CSSValueID>(COLOR_BTNTEXT);
+    case CSSValueCaptiontext: return static_cast<CSSValueID>(COLOR_CAPTIONTEXT);
+    case CSSValueGraytext: return static_cast<CSSValueID>(COLOR_GRAYTEXT);
+    case CSSValueHighlight: return static_cast<CSSValueID>(COLOR_HIGHLIGHT);
+    case CSSValueHighlighttext: return static_cast<CSSValueID>(COLOR_HIGHLIGHTTEXT);
+    case CSSValueInactiveborder: return static_cast<CSSValueID>(COLOR_INACTIVEBORDER);
+    case CSSValueInactivecaption: return static_cast<CSSValueID>(COLOR_INACTIVECAPTION);
+    case CSSValueInactivecaptiontext: return static_cast<CSSValueID>(COLOR_INACTIVECAPTIONTEXT);
+    case CSSValueInfobackground: return static_cast<CSSValueID>(COLOR_INFOBK);
+    case CSSValueInfotext: return static_cast<CSSValueID>(COLOR_INFOTEXT);
+    case CSSValueMenu: return static_cast<CSSValueID>(COLOR_MENU);
+    case CSSValueMenutext: return static_cast<CSSValueID>(COLOR_MENUTEXT);
+    case CSSValueScrollbar: return static_cast<CSSValueID>(COLOR_SCROLLBAR);
+    case CSSValueThreeddarkshadow: return static_cast<CSSValueID>(COLOR_3DDKSHADOW);
+    case CSSValueThreedface: return static_cast<CSSValueID>(COLOR_3DFACE);
+    case CSSValueThreedhighlight: return static_cast<CSSValueID>(COLOR_3DHIGHLIGHT);
+    case CSSValueThreedlightshadow: return static_cast<CSSValueID>(COLOR_3DLIGHT);
+    case CSSValueThreedshadow: return static_cast<CSSValueID>(COLOR_3DSHADOW);
+    case CSSValueWindow: return static_cast<CSSValueID>(COLOR_WINDOW);
+    case CSSValueWindowframe: return static_cast<CSSValueID>(COLOR_WINDOWFRAME);
+    case CSSValueWindowtext: return static_cast<CSSValueID>(COLOR_WINDOWTEXT);
     default: return CSSValueInvalid; // Unsupported CSSValue
     }
 }
