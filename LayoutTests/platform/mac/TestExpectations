@@ -659,7 +659,7 @@ webkit.org/b/88672 [ Lion ] svg/filters/color-space-conversion.svg [ ImageOnlyFa
 webkit.org/b/89680 [ Lion ] fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Failure ]
 
 webkit.org/b/89528 [ Lion ] svg/filters/container-with-filters.svg [ ImageOnlyFailure ]
-webkit.org/b/89528 svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
+webkit.org/b/89528 [ Lion ] svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
 
 # Implement textInputController.setComposition()
 webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]

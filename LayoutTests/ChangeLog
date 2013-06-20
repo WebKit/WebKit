@@ -1,3 +1,10 @@
+2013-06-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Unskip feSpecularLight-premultiplied.svg on Mountain Lion
+
+        * platform/mac/TestExpectations:
+        The test is failing on Lion exclusively.
+
 2013-06-19  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
 
         Incomplete repaint of input elements in writing-mode overflow
