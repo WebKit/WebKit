@@ -1,5 +1,30 @@
 2013-06-20  Commit Queue  <commit-queue@webkit.org>
 
+        Unreviewed, rolling out r151451.
+        http://trac.webkit.org/changeset/151451
+        https://bugs.webkit.org/show_bug.cgi?id=117848
+
+        "Broke quite a lot of sites" (Requested by rhogan on #webkit).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::intrinsicSize):
+        * rendering/RenderButton.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::computeLogicalHeight):
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderReplaced.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        (WebCore::RenderTextControl::computeLogicalHeight):
+        * rendering/RenderTextControl.h:
+
+2013-06-20  Commit Queue  <commit-queue@webkit.org>
+
         Unreviewed, rolling out r151788.
         http://trac.webkit.org/changeset/151788
         https://bugs.webkit.org/show_bug.cgi?id=117847
