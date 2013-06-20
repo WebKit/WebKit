@@ -1,3 +1,15 @@
+2013-05-24  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Gstreamer] cleanup buffering and state updates
+        https://bugs.webkit.org/show_bug.cgi?id=116642
+
+        Reviewed by Philippe Normand.
+
+        Remove failure expectations from tests that started to pass.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2013-06-20  Eric Carlson  <eric.carlson@apple.com>
 
         ASSERT removing then adding a <track> element

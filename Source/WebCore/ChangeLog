@@ -1,3 +1,48 @@
+2013-05-24  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Gstreamer] cleanup buffering and state updates
+        https://bugs.webkit.org/show_bug.cgi?id=116642
+
+        Reviewed by Philippe Normand.
+
+        Covered by existing media tests, especially the ones that have been unskipped.
+
+        Always do download buffering. It should not differ if preload is "none" because
+        it's about when to start buffering, not about how. Fix a bunch other subtle issues
+        to make this change go smoothly with the tests. As a bonus some tests that were
+        failing so far started to pass.
+        It is possible to further tweak the buffering in a way that will enable us to support
+        a different and appropriate behavior for preload="metadata" but it should be managed
+        a bit differently. I will implement it in a follow-up.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::load): Don't call setDownloadBuffering
+        yet. Now it also responsible for starting the fill timer and it turned out that
+        setting the download flag before the pipeline is set to a state has negative
+        effect on some tests. Most probably GStreamer starts buffering too early if
+        we set the download flag.
+        (WebCore::MediaPlayerPrivateGStreamer::commitLoad): Call setDownloadBuffering now.
+        (WebCore::MediaPlayerPrivateGStreamer::play): Ditto, plus set m_delayingLoad to false
+        because otherwise setPreload will wrongly assume that the load has not been committed
+        yet if prepareToPlay is not called before play.
+        (WebCore::MediaPlayerPrivateGStreamer::pause): Make sure we don't commit a load here
+        if it was not committed yet by looking in the pipeline state.
+        (WebCore::MediaPlayerPrivateGStreamer::processBufferingStats): No need to observe the
+        type of buffering.
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired): Introduced m_downloadFinished to update
+        ready and network states in updateStates based on it. The previously used condition
+        - (maxTimeLoaded() == duration()) - was not correct in the case when duration is not known.
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeLoaded): Removed a lie. If the fill timer is not active
+        it does not necesarily means that download has been finished. This lie was actually ensuring
+        a lot of tests to pass because it made the condition (maxTimeLoaded() == duration()) true.
+        Now that state updates has been cleaned up we don't need to lie.
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates): Merge all the parts that takes part in updating
+        ready and network states. It was untrackable. Unset download buffering for for live streams early so
+        we don't need to restart them.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (MediaPlayerPrivateGStreamer): Removed m_startedBuffering because there is no need for it now.
+
 2013-06-20  Eric Carlson  <eric.carlson@apple.com>
 
         ASSERT removing then adding a <track> element

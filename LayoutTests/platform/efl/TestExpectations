@@ -1751,16 +1751,7 @@ webkit.org/b/114877 accessibility/link-inside-button-accessible-text.html [ Fail
 webkit.org/b/114612 editing/style/block-style-005.html [ Failure ]
 
 # Unidentified failing media tests
-webkit.org/b/115419 http/tests/media/reload-after-dialog.html [ Failure ]
-webkit.org/b/115419 http/tests/media/remove-while-loading.html [ Failure ]
-webkit.org/b/115419 http/tests/media/video-cancel-load.html [ Failure ]
-webkit.org/b/115419 http/tests/media/video-error-abort.html [ Failure ]
-webkit.org/b/115419 http/tests/media/video-load-suspend.html [ Failure ]
-webkit.org/b/115419 http/tests/media/video-load-twice.html [ Failure ]
-webkit.org/b/115419 http/tests/media/video-play-progress.html [ Failure ]
 webkit.org/b/115419 http/tests/media/video-redirect.html [ Failure ]
-webkit.org/b/115419 http/tests/media/video-served-as-text.html [ Failure ]
-webkit.org/b/115419 http/tests/media/video-throttled-load-metadata.html [ Failure ]
 webkit.org/b/115419 media/media-can-play-ogg.html [ Failure ]
 webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
 webkit.org/b/115419 media/video-poster-background.html [ ImageOnlyFailure ]
