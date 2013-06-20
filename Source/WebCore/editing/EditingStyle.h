@@ -63,6 +63,8 @@ class EditingStyle : public RefCounted<EditingStyle> {
 public:
 
     enum PropertiesToInclude { AllProperties, OnlyEditingInheritableProperties, EditingPropertiesInEffect };
+    enum EditingPropertiesToInclude { OnlyInheritableEditingProperties, AllEditingProperties };
+
     enum ShouldPreserveWritingDirection { PreserveWritingDirection, DoNotPreserveWritingDirection };
     enum ShouldExtractMatchingStyle { ExtractMatchingStyle, DoNotExtractMatchingStyle };
     static float NoFontDelta;
@@ -106,7 +108,7 @@ public:
     void removeBlockProperties();
     void removeStyleAddedByNode(Node*);
     void removeStyleConflictingWithStyleOfNode(Node*);
-    void removeNonEditingProperties();
+    void removeAllButEditingProperties(EditingPropertiesToInclude = OnlyInheritableEditingProperties);
     void collapseTextDecorationProperties();
     enum ShouldIgnoreTextOnlyProperties { IgnoreTextOnlyProperties, DoNotIgnoreTextOnlyProperties };
     TriState triStateOfStyle(EditingStyle*) const;

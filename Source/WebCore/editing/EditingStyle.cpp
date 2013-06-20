@@ -83,12 +83,10 @@ static const CSSPropertyID editingProperties[] = {
     CSSPropertyWebkitTextStrokeWidth,
 };
 
-enum EditingPropertiesType { OnlyInheritableEditingProperties, AllEditingProperties };
-
 template <class StyleDeclarationType>
-static PassRefPtr<MutableStylePropertySet> copyEditingProperties(StyleDeclarationType* style, EditingPropertiesType type = OnlyInheritableEditingProperties)
+static PassRefPtr<MutableStylePropertySet> copyEditingProperties(StyleDeclarationType* style, EditingStyle::EditingPropertiesToInclude type = EditingStyle::OnlyInheritableEditingProperties)
 {
-    if (type == AllEditingProperties)
+    if (type == EditingStyle::AllEditingProperties)
         return style->copyPropertiesInSet(editingProperties, WTF_ARRAY_LENGTH(editingProperties));
     return style->copyPropertiesInSet(editingProperties + 2, WTF_ARRAY_LENGTH(editingProperties) - 2);
 }
@@ -102,7 +100,7 @@ static inline bool isEditingProperty(int id)
     return false;
 }
 
-static PassRefPtr<MutableStylePropertySet> editingStyleFromComputedStyle(PassRefPtr<Node> node, EditingPropertiesType type = OnlyInheritableEditingProperties)
+static PassRefPtr<MutableStylePropertySet> editingStyleFromComputedStyle(PassRefPtr<Node> node, EditingStyle::EditingPropertiesToInclude type = EditingStyle::OnlyInheritableEditingProperties)
 {
     ComputedStyleExtractor computedStyle(node);
     return copyEditingProperties(&computedStyle, type);
@@ -116,6 +114,20 @@ static PassRefPtr<CSSValue> extractPropertyValue(const StylePropertySet* style, 
 static PassRefPtr<CSSValue> extractPropertyValue(ComputedStyleExtractor* computedStyle, CSSPropertyID propertyID)
 {
     return computedStyle->propertyValue(propertyID);
+}
+
+static inline EditingStyle::EditingPropertiesToInclude toEditingProperties(EditingStyle::PropertiesToInclude properties)
+{
+    switch (properties) {
+    case EditingStyle::AllProperties:
+    case EditingStyle::EditingPropertiesInEffect:
+        return EditingStyle::AllEditingProperties;
+    case EditingStyle::OnlyEditingInheritableProperties:
+        return EditingStyle::OnlyInheritableEditingProperties;
+    }
+
+    ASSERT_NOT_REACHED();
+    return EditingStyle::OnlyInheritableEditingProperties;
 }
 
 template<typename T>
@@ -608,10 +620,10 @@ void EditingStyle::removeStyleConflictingWithStyleOfNode(Node* node)
         m_mutableStyle->removeProperty(nodeStyle->propertyAt(i).id());
 }
 
-void EditingStyle::removeNonEditingProperties()
+void EditingStyle::removeAllButEditingProperties(EditingPropertiesToInclude propertiesToInclude)
 {
     if (m_mutableStyle)
-        m_mutableStyle = copyEditingProperties(m_mutableStyle.get());
+        m_mutableStyle = copyEditingProperties(m_mutableStyle.get(), propertiesToInclude);
 }
 
 void EditingStyle::collapseTextDecorationProperties()
@@ -974,7 +986,7 @@ void EditingStyle::mergeInlineAndImplicitStyleOfElement(StyledElement* element, 
 {
     RefPtr<EditingStyle> styleFromRules = EditingStyle::create();
     styleFromRules->mergeStyleFromRulesForSerialization(element);
-    styleFromRules->removeNonEditingProperties();
+    styleFromRules->removeAllButEditingProperties(toEditingProperties(propertiesToInclude));
     mergeStyle(styleFromRules->m_mutableStyle.get(), mode);
 
     mergeInlineStyleOfElement(element, mode, propertiesToInclude);

@@ -1,3 +1,19 @@
+2013-06-20  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        background-color and text-decoration are not preserved when merging paragraphs
+        https://bugs.webkit.org/show_bug.cgi?id=116215
+
+        Reviewed by Ryosuke Niwa.
+
+        Added tests for verifying merge of paragraph/div from span with non-inline styles.
+
+        * editing/deleting/merge-div-from-span-with-style-expected.txt: Added.
+        * editing/deleting/merge-div-from-span-with-style.html: Added.
+        * editing/deleting/merge-paragraph-from-span-with-multiple-text-decoration-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-span-with-multiple-text-decoration.html: Added.
+        * editing/deleting/merge-paragraph-from-span-with-style-expected.txt: Added.
+        * editing/deleting/merge-paragraph-from-span-with-style.html: Added.
+
 2013-06-19  Beth Dakin  <bdakin@apple.com>
 
         Adding a Mac pixel result.
