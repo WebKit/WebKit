@@ -1,3 +1,23 @@
+2013-06-19  Brent Fulgham  <bfulgham@apple.com>
+
+        AX: List Items should support a default action
+        https://bugs.webkit.org/show_bug.cgi?id=117812
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::actionVerb): Provide a "select" verb
+        for use in ListItemRole objects.
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXListItemActionVerb): Added.
+        * platform/LocalizedStrings.h:
+        * platform/blackberry/LocalizedStringsBlackBerry.cpp:
+        (WebCore::AXListItemActionVerb):
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::AXListItemActionVerb):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::AXListItemActionVerb):
+
 2013-06-20  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Add new regionOversetChange event

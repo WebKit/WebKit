@@ -643,6 +643,12 @@ String AXMenuListActionVerb()
     notImplemented();
     return "select";
 }
+
+String AXListItemActionVerb()
+{
+    notImplemented();
+    return "select";
+}
 #endif // !PLATFORM(IOS)
 
 #if PLATFORM(MAC) || PLATFORM(IOS)

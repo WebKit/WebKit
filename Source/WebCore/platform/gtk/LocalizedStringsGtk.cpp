@@ -481,6 +481,11 @@ String AXMenuListActionVerb()
 {
     return String();
 }
+
+String AXListItemActionVerb()
+{
+    return String();
+}
     
 String missingPluginText()
 {

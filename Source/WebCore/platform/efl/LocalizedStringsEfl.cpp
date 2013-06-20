@@ -434,6 +434,12 @@ String imageTitle(const String&, const IntSize&)
     return String();
 }
 
+String AXListItemActionVerb()
+{
+    notImplemented();
+    return String();
+}
+
 #if ENABLE(VIDEO)
 String localizedMediaControlElementString(const String&)
 {

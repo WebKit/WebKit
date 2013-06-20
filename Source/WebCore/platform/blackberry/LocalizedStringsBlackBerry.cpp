@@ -187,6 +187,12 @@ String AXMenuListActionVerb()
     return String();
 }
 
+String AXListItemActionVerb()
+{
+    notImplemented();
+    return String();
+}
+
 String unknownFileSizeText()
 {
     notImplemented();
