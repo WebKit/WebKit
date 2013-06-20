@@ -1,3 +1,59 @@
+2013-06-20  Mark Lam  <mark.lam@apple.com>
+
+        Change stack capacity requirement to be more reasonable.
+        https://bugs.webkit.org/show_bug.cgi?id=117801.
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, the requiredStack in StackPolicy::StackPolicy() was set to
+        to a high value like 256K to reduce the chances of encountering an
+        undetected stack overflow in a scenario where we have a combination of
+        deeply nested divs and a large amount recursive re-entries into the VM.
+
+        However, this high value of requiredStack still does not completely
+        ensure that we will never encounter an undetected stack overflow. It
+        only lessens the probability of encountering it.
+
+        Secondly, on some platforms, the total stack size can be less than 256K
+        to start with. Hence, this high value requiredStack renders the VM
+        unuseable on those platforms.
+
+        This patch will fix the requiredStack to be more reasonable based on
+        real world stack usage by the VM. We won't (and cannot) try to prevent
+        undetected stack overflows outside of JSC as well. External code that
+        do deep recursion (e.g. Documnet::updateLayout()) should do their own
+        stack checks.
+
+        From a previous experiment, we measured the following:
+
+        On a debug build on OSX:
+        1. Stack usage different between recursive calls to interpreter entry:
+           7744 bytes
+        On a release build on OSX:
+        2. Stack usage difference between recursive calls to interpreter entry:
+           6352 bytes
+
+        Using these as a guide, we'll pick the following values for the
+        StackPolicy:
+           requiredStack: 32K
+           errorModeRequiredStack: 16K
+
+        The requiredStack is chosen to be 4x the measured usage above. The
+        additional 3x is a conservative estimate to account for stack space
+        that may be needed by other native functions called while in the
+        interpreter.
+
+        The errorModeRequiredStack has to be less than the requiredStack or we
+        won't be able to reenter the interpreter to do error handling work when
+        an imminent stack overflow is detected. It is assumed that the error
+        handling code will only do minimal work to allocate an exception and its
+        stack trace, and not run any arbitrary JS code. As such, it is safe to
+        allow re-entry into the interpreter with only 2x the measured usage in
+        this case.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::StackPolicy::StackPolicy):
+
 2013-06-20  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         HashSet: reverse the order of the template arguments at alternate 'find', 'contains' and 'add' methods

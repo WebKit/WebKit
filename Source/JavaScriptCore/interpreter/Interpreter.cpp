@@ -126,12 +126,12 @@ Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBound
     //
     // These sizes were derived from the stack usage of a number of sites when
     // layout occurs when we've already consumed most of the C stack.
-    const size_t requiredStack = 256 * KB;
-    const size_t errorModeRequiredStack = 64 * KB;
+    const size_t requiredStack = 32 * KB;
+    const size_t errorModeRequiredStack = 16 * KB;
 
     size_t requiredCapacity = m_interpreter.m_errorHandlingModeReentry ? errorModeRequiredStack : requiredStack;
 
-    RELEASE_ASSERT(size > requiredCapacity);
+    RELEASE_ASSERT(size >= requiredCapacity);
     
     m_requiredCapacity = requiredCapacity;    
 }
