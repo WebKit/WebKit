@@ -1,5 +1,24 @@
 2013-06-20  Simon Fraser  <simon.fraser@apple.com>
 
+        FrameView needs to initialize paintsEntireContents on creation
+        https://bugs.webkit.org/show_bug.cgi?id=117844
+
+        Reviewed by Anders Carlsson.
+
+        In WebKit1, if the WebView is layer-backed, WebHTMLView gets a layer.
+        In this mode, FrameView::paintsEntireContents() is true. However,
+        we would only call setPaintsEntireContents(true) on the FrameView
+        when the view's layer-backed status changes. FrameView also needs
+        to fetch this state when it is initialized, because we may be creating
+        a new FrameView for an already layer-backed WebHTMLView.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::shouldPaintEntireContents):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::init):
+
+2013-06-20  Simon Fraser  <simon.fraser@apple.com>
+
         Sticky elements are missing or misplaced sometimes when reloading a page that scrolls to a named anchor
         https://bugs.webkit.org/show_bug.cgi?id=117819
 
