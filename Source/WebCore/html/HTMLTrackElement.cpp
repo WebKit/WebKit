@@ -79,8 +79,10 @@ Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(ContainerNode*
 
     HTMLElement::insertedInto(insertionPoint);
     HTMLMediaElement* parent = mediaElement();
-    if (insertionPoint == parent)
+    if (insertionPoint == parent) {
+        ensureTrack();
         parent->didAddTextTrack(this);
+    }
     return InsertionDone;
 }
 
@@ -173,7 +175,9 @@ LoadableTextTrack* HTMLTrackElement::ensureTrack()
         if (!TextTrack::isValidKindKeyword(kind))
             kind = TextTrack::subtitlesKeyword();
         m_track = LoadableTextTrack::create(this, kind, label(), srclang());
-    }
+    } else
+        m_track->setTrackElement(this);
+
     return m_track.get();
 }
 

@@ -1,3 +1,13 @@
+2013-06-20  Eric Carlson  <eric.carlson@apple.com>
+
+        ASSERT removing then adding a <track> element
+        https://bugs.webkit.org/show_bug.cgi?id=117814
+
+        Reviewed by Jer Noble.
+
+        * media/track/add-and-remove-track-expected.txt: Added.
+        * media/track/add-and-remove-track.html: Added.
+
 2013-06-20  Benjamin Poulain  <bpoulain@apple.com>
 
         Mark compositing/repaint/positioned-movement.html as flaky on Mountain Lion Debug
