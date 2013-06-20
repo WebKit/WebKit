@@ -1709,7 +1709,10 @@ NSArray* itemKVOProperties()
     if (!m_callback)
         return;
 
-    return m_callback->didCancelLoadingRequest(loadingRequest);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (m_callback)
+            m_callback->didCancelLoadingRequest(loadingRequest);
+    });
 }
 
 - (void)setCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
