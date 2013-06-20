@@ -1,3 +1,23 @@
+2013-06-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Improper deallocation of JSManagedValue causes crashes during autorelease pool draining
+        https://bugs.webkit.org/show_bug.cgi?id=117840
+
+        Reviewed by Geoffrey Garen.
+
+        Improperly managing a JSManagedValue can cause a crash when the JSC::Weak inside the 
+        JSManagedValue is destroyed upon deallocation. We would rather have improperly maintained 
+        JSManagedValues cause memory leaks than take down the whole app. 
+
+        The fix is to use the callback to the JSC::Weak on the destruction of the VM so that we 
+        can safely null it out. This will prevent ~Weak from crashing.
+
+        * API/JSManagedValue.mm:
+        (-[JSManagedValue JSC::JSC::]):
+        (JSManagedValueHandleOwner::finalize):
+        * API/tests/testapi.mm: Added a test that crashed prior to this fix due to a leaked 
+        managed reference. Also fixed a small style nit I noticed in another test.
+
 2013-06-18  Oliver Hunt  <oliver@apple.com>
 
         Going to google.com/trends causes a crash
