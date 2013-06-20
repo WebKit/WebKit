@@ -1,3 +1,20 @@
+2013-06-18  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION (r151451): Text not vertically centered correctly on icloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=117744
+
+        Reviewed by David Hyatt.
+
+        * fast/forms/onselect-textfield-expected.txt:
+        * fast/replaced/height-of-positioned-text-control-expected.html: Added.
+        * fast/replaced/height-of-positioned-text-control.html: Added.
+        * fast/replaced/width-and-height-of-positioned-replaced-elements-expected.txt:
+        * platform/mac/fast/forms/input-appearance-preventDefault-expected.png:
+        * platform/mac/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/mac/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.png: Added.
+        * platform/mac/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.txt:
+        * platform/qt/fast/forms/input-appearance-preventDefault-expected.txt:
+
 2013-06-20  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Add new regionOversetChange event

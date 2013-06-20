@@ -9,11 +9,11 @@ After setSelectionRange(3, 5): text field selection start: 3 end: 5
 
 Double clicking to make selection for text field
 onselect fired for text field
-After double clicking: text field selection start: 0 end: 5
+After double clicking: text field selection start: 6 end: 10
 
 Calling blur on text field
-After blur: text field selection start: 0 end: 5
+After blur: text field selection start: 6 end: 10
 
 Calling focus on text field
-After focus: text field selection start: 0 end: 5
+After focus: text field selection start: 6 end: 10
 

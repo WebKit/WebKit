@@ -1,3 +1,20 @@
+2013-06-18  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION (r151451): Text not vertically centered correctly on icloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=117744
+
+        Reviewed by David Hyatt.
+
+        The positioned height and width computation adds in the element's border and padding so 
+        don't add it to the intrinsic height and preferred widths of text controls that are
+        absolutely positioned.
+
+        Test: fast/replaced/height-of-positioned-text-control.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeLogicalHeight):
+        (WebCore::RenderTextControl::computePreferredLogicalWidths):
+
 2013-06-20  Roger Fong  <roger_fong@apple.com>
 
         Make Windows makefile copy build output to a different folder.
