@@ -1,3 +1,11 @@
+2013-06-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed AX test expecation gardening.
+
+        * platform/win/accessibility/aria-labelledby-on-input-expected.txt: Added.
+        * platform/win/accessibility/aria-list-and-listitem-expected.txt: Added.
+        * platform/win/accessibility/aria-roles-expected.txt: Added.
+
 2013-06-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Unskip feSpecularLight-premultiplied.svg on Mountain Lion
