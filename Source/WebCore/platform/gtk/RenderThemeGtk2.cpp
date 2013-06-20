@@ -719,7 +719,7 @@ Color RenderThemeGtk::inactiveListBoxSelectionForegroundColor() const
     return gtk_widget_get_style(widget)->text[GTK_STATE_ACTIVE];
 }
 
-Color RenderThemeGtk::systemColor(int cssValueId) const
+Color RenderThemeGtk::systemColor(CSSValueID cssValueId) const
 {
     switch (cssValueId) {
     case CSSValueButtontext:

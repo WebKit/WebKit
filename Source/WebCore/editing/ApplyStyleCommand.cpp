@@ -58,7 +58,7 @@ using namespace HTMLNames;
 
 static int toIdentifier(PassRefPtr<CSSValue> value)
 {
-    return (value && value->isPrimitiveValue()) ? static_pointer_cast<CSSPrimitiveValue>(value)->getIdent() : 0;
+    return (value && value->isPrimitiveValue()) ? static_pointer_cast<CSSPrimitiveValue>(value)->getValueID() : 0;
 }
 
 static String& styleSpanClassString()

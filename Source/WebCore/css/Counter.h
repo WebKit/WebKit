@@ -37,7 +37,7 @@ public:
     String listStyle() const { return m_listStyle ? m_listStyle->getStringValue() : String(); }
     String separator() const { return m_separator ? m_separator->getStringValue() : String(); }
 
-    int listStyleIdent() const { return m_listStyle ? m_listStyle->getIdent() : 0; }
+    CSSValueID listStyleIdent() const { return m_listStyle ? m_listStyle->getValueID() : CSSValueInvalid; }
 
     void setIdentifier(PassRefPtr<CSSPrimitiveValue> identifier) { m_identifier = identifier; }
     void setListStyle(PassRefPtr<CSSPrimitiveValue> listStyle) { m_listStyle = listStyle; }

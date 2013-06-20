@@ -249,7 +249,7 @@ static bool orientationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fr
     int width = view->layoutWidth();
     int height = view->layoutHeight();
     if (value && value->isPrimitiveValue()) {
-        const int id = static_cast<CSSPrimitiveValue*>(value)->getIdent();
+        const CSSValueID id = static_cast<CSSPrimitiveValue*>(value)->getValueID();
         if (width > height) // Square viewport is portrait.
             return CSSValueLandscape == id;
         return CSSValuePortrait == id;
@@ -603,7 +603,7 @@ static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fram
     if (!value)
         return true;
 
-    const int viewModeCSSKeywordID = static_cast<CSSPrimitiveValue*>(value)->getIdent();
+    const int viewModeCSSKeywordID = static_cast<CSSPrimitiveValue*>(value)->getValueID();
     const Page::ViewMode viewMode = frame->page()->viewMode();
     bool result = false;
     switch (viewMode) {
@@ -685,7 +685,7 @@ static bool pointerMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame,
     if (!value->isPrimitiveValue())
         return false;
 
-    const int id = static_cast<CSSPrimitiveValue*>(value)->getIdent();
+    const CSSValueID id = static_cast<CSSPrimitiveValue*>(value)->getValueID();
     return (pointer == NoPointer && id == CSSValueNone)
         || (pointer == TouchPointer && id == CSSValueCoarse)
         || (pointer == MousePointer && id == CSSValueFine);

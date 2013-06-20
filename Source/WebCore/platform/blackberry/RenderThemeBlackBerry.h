@@ -41,7 +41,7 @@ public:
 
     virtual double caretBlinkInterval() const;
 
-    virtual void systemFont(int cssValueId, FontDescription&) const;
+    virtual void systemFont(CSSValueID, FontDescription&) const;
     virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);
     virtual void setCheckboxSize(RenderStyle*) const;
     virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&);

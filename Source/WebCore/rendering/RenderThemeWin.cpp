@@ -337,7 +337,7 @@ static void fillFontDescription(FontDescription& fontDescription, LOGFONT& logFo
     fillFontDescription(fontDescription, logFont, abs(logFont.lfHeight));
 }
 
-void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) const
+void RenderThemeWin::systemFont(CSSValueID valueID, FontDescription& fontDescription) const
 {
     static FontDescription captionFont;
     static FontDescription controlFont;
@@ -357,65 +357,65 @@ void RenderThemeWin::systemFont(int propId, FontDescription& fontDescription) co
         ::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(ncm), &ncm, 0);
     }
  
-    switch (propId) {
-        case CSSValueIcon: {
-            if (!iconFont.isAbsoluteSize()) {
+    switch (valueID) {
+    case CSSValueIcon: {
+        if (!iconFont.isAbsoluteSize()) {
+            LOGFONT logFont;
+            ::SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(logFont), &logFont, 0);
+            fillFontDescription(iconFont, logFont);
+        }
+        fontDescription = iconFont;
+        break;
+    }
+    case CSSValueMenu:
+        if (!menuFont.isAbsoluteSize())
+            fillFontDescription(menuFont, ncm.lfMenuFont);
+        fontDescription = menuFont;
+        break;
+    case CSSValueMessageBox:
+        if (!messageBoxFont.isAbsoluteSize())
+            fillFontDescription(messageBoxFont, ncm.lfMessageFont);
+        fontDescription = messageBoxFont;
+        break;
+    case CSSValueStatusBar:
+        if (!statusBarFont.isAbsoluteSize())
+            fillFontDescription(statusBarFont, ncm.lfStatusFont);
+        fontDescription = statusBarFont;
+        break;
+    case CSSValueCaption:
+        if (!captionFont.isAbsoluteSize())
+            fillFontDescription(captionFont, ncm.lfCaptionFont);
+        fontDescription = captionFont;
+        break;
+    case CSSValueSmallCaption:
+        if (!smallCaptionFont.isAbsoluteSize())
+            fillFontDescription(smallCaptionFont, ncm.lfSmCaptionFont);
+        fontDescription = smallCaptionFont;
+        break;
+    case CSSValueWebkitSmallControl:
+    case CSSValueWebkitMiniControl: // Just map to small.
+    case CSSValueWebkitControl: // Just map to small.
+        if (!controlFont.isAbsoluteSize()) {
+            HGDIOBJ hGDI = ::GetStockObject(DEFAULT_GUI_FONT);
+            if (hGDI) {
                 LOGFONT logFont;
-                ::SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(logFont), &logFont, 0);
-                fillFontDescription(iconFont, logFont);
+                if (::GetObject(hGDI, sizeof(logFont), &logFont) > 0)
+                    fillFontDescription(controlFont, logFont, defaultControlFontPixelSize);
             }
-            fontDescription = iconFont;
-            break;
         }
-        case CSSValueMenu:
-            if (!menuFont.isAbsoluteSize())
-                fillFontDescription(menuFont, ncm.lfMenuFont);
-            fontDescription = menuFont;
-            break;
-        case CSSValueMessageBox:
-            if (!messageBoxFont.isAbsoluteSize())
-                fillFontDescription(messageBoxFont, ncm.lfMessageFont);
-            fontDescription = messageBoxFont;
-            break;
-        case CSSValueStatusBar:
-            if (!statusBarFont.isAbsoluteSize())
-                fillFontDescription(statusBarFont, ncm.lfStatusFont);
-            fontDescription = statusBarFont;
-            break;
-        case CSSValueCaption:
-            if (!captionFont.isAbsoluteSize())
-                fillFontDescription(captionFont, ncm.lfCaptionFont);
-            fontDescription = captionFont;
-            break;
-        case CSSValueSmallCaption:
-            if (!smallCaptionFont.isAbsoluteSize())
-                fillFontDescription(smallCaptionFont, ncm.lfSmCaptionFont);
-            fontDescription = smallCaptionFont;
-            break;
-        case CSSValueWebkitSmallControl:
-        case CSSValueWebkitMiniControl: // Just map to small.
-        case CSSValueWebkitControl: // Just map to small.
-            if (!controlFont.isAbsoluteSize()) {
-                HGDIOBJ hGDI = ::GetStockObject(DEFAULT_GUI_FONT);
-                if (hGDI) {
-                    LOGFONT logFont;
-                    if (::GetObject(hGDI, sizeof(logFont), &logFont) > 0)
-                        fillFontDescription(controlFont, logFont, defaultControlFontPixelSize);
-                }
+        fontDescription = controlFont;
+        break;
+    default: { // Everything else uses the stock GUI font.
+        if (!systemFont.isAbsoluteSize()) {
+            HGDIOBJ hGDI = ::GetStockObject(DEFAULT_GUI_FONT);
+            if (hGDI) {
+                LOGFONT logFont;
+                if (::GetObject(hGDI, sizeof(logFont), &logFont) > 0)
+                    fillFontDescription(systemFont, logFont);
             }
-            fontDescription = controlFont;
-            break;
-        default: { // Everything else uses the stock GUI font.
-            if (!systemFont.isAbsoluteSize()) {
-                HGDIOBJ hGDI = ::GetStockObject(DEFAULT_GUI_FONT);
-                if (hGDI) {
-                    LOGFONT logFont;
-                    if (::GetObject(hGDI, sizeof(logFont), &logFont) > 0)
-                        fillFontDescription(systemFont, logFont);
-                }
-            }
-            fontDescription = systemFont;
         }
+        fontDescription = systemFont;
+    }
     }
 }
 
@@ -1034,45 +1034,45 @@ bool RenderThemeWin::paintSearchFieldResultsButton(RenderObject* o, const PaintI
 }
 
 // Map a CSSValue* system color to an index understood by GetSysColor
-static int cssValueIdToSysColorIndex(int cssValueId)
+static CSSValueID cssValueIdToSysColorIndex(int cssValueId)
 {
     switch (cssValueId) {
-        case CSSValueActiveborder: return COLOR_ACTIVEBORDER;
-        case CSSValueActivecaption: return COLOR_ACTIVECAPTION;
-        case CSSValueAppworkspace: return COLOR_APPWORKSPACE;
-        case CSSValueBackground: return COLOR_BACKGROUND;
-        case CSSValueButtonface: return COLOR_BTNFACE;
-        case CSSValueButtonhighlight: return COLOR_BTNHIGHLIGHT;
-        case CSSValueButtonshadow: return COLOR_BTNSHADOW;
-        case CSSValueButtontext: return COLOR_BTNTEXT;
-        case CSSValueCaptiontext: return COLOR_CAPTIONTEXT;
-        case CSSValueGraytext: return COLOR_GRAYTEXT;
-        case CSSValueHighlight: return COLOR_HIGHLIGHT;
-        case CSSValueHighlighttext: return COLOR_HIGHLIGHTTEXT;
-        case CSSValueInactiveborder: return COLOR_INACTIVEBORDER;
-        case CSSValueInactivecaption: return COLOR_INACTIVECAPTION;
-        case CSSValueInactivecaptiontext: return COLOR_INACTIVECAPTIONTEXT;
-        case CSSValueInfobackground: return COLOR_INFOBK;
-        case CSSValueInfotext: return COLOR_INFOTEXT;
-        case CSSValueMenu: return COLOR_MENU;
-        case CSSValueMenutext: return COLOR_MENUTEXT;
-        case CSSValueScrollbar: return COLOR_SCROLLBAR;
-        case CSSValueThreeddarkshadow: return COLOR_3DDKSHADOW;
-        case CSSValueThreedface: return COLOR_3DFACE;
-        case CSSValueThreedhighlight: return COLOR_3DHIGHLIGHT;
-        case CSSValueThreedlightshadow: return COLOR_3DLIGHT;
-        case CSSValueThreedshadow: return COLOR_3DSHADOW;
-        case CSSValueWindow: return COLOR_WINDOW;
-        case CSSValueWindowframe: return COLOR_WINDOWFRAME;
-        case CSSValueWindowtext: return COLOR_WINDOWTEXT;
-        default: return -1; // Unsupported CSSValue
+    case CSSValueActiveborder: return COLOR_ACTIVEBORDER;
+    case CSSValueActivecaption: return COLOR_ACTIVECAPTION;
+    case CSSValueAppworkspace: return COLOR_APPWORKSPACE;
+    case CSSValueBackground: return COLOR_BACKGROUND;
+    case CSSValueButtonface: return COLOR_BTNFACE;
+    case CSSValueButtonhighlight: return COLOR_BTNHIGHLIGHT;
+    case CSSValueButtonshadow: return COLOR_BTNSHADOW;
+    case CSSValueButtontext: return COLOR_BTNTEXT;
+    case CSSValueCaptiontext: return COLOR_CAPTIONTEXT;
+    case CSSValueGraytext: return COLOR_GRAYTEXT;
+    case CSSValueHighlight: return COLOR_HIGHLIGHT;
+    case CSSValueHighlighttext: return COLOR_HIGHLIGHTTEXT;
+    case CSSValueInactiveborder: return COLOR_INACTIVEBORDER;
+    case CSSValueInactivecaption: return COLOR_INACTIVECAPTION;
+    case CSSValueInactivecaptiontext: return COLOR_INACTIVECAPTIONTEXT;
+    case CSSValueInfobackground: return COLOR_INFOBK;
+    case CSSValueInfotext: return COLOR_INFOTEXT;
+    case CSSValueMenu: return COLOR_MENU;
+    case CSSValueMenutext: return COLOR_MENUTEXT;
+    case CSSValueScrollbar: return COLOR_SCROLLBAR;
+    case CSSValueThreeddarkshadow: return COLOR_3DDKSHADOW;
+    case CSSValueThreedface: return COLOR_3DFACE;
+    case CSSValueThreedhighlight: return COLOR_3DHIGHLIGHT;
+    case CSSValueThreedlightshadow: return COLOR_3DLIGHT;
+    case CSSValueThreedshadow: return COLOR_3DSHADOW;
+    case CSSValueWindow: return COLOR_WINDOW;
+    case CSSValueWindowframe: return COLOR_WINDOWFRAME;
+    case CSSValueWindowtext: return COLOR_WINDOWTEXT;
+    default: return CSSValueInvalid; // Unsupported CSSValue
     }
 }
 
-Color RenderThemeWin::systemColor(int cssValueId) const
+Color RenderThemeWin::systemColor(CSSValueID cssValueId) const
 {
-    int sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
-    if (sysColorIndex == -1)
+    CSSValueID sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
+    if (sysColorIndex == CSSValueInvalid)
         return RenderTheme::systemColor(cssValueId);
 
     COLORREF color = GetSysColor(sysColorIndex);

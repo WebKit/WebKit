@@ -2969,9 +2969,9 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
         m_node->document()->updateLayoutIgnorePendingStylesheets();
         RenderStyle* style = m_node->computedStyle(m_pseudoElementSpecifier);
         if (style && style->fontDescription().keywordSize()) {
-            int sizeValue = cssIdentifierForFontSizeKeyword(style->fontDescription().keywordSize());
+            CSSValueID sizeValue = cssIdentifierForFontSizeKeyword(style->fontDescription().keywordSize());
             const CSSPrimitiveValue* primitiveValue = static_cast<const CSSPrimitiveValue*>(value);
-            if (primitiveValue->isIdent() && primitiveValue->getIdent() == sizeValue)
+            if (primitiveValue->isValueID() && primitiveValue->getValueID() == sizeValue)
                 return true;
         }
     }

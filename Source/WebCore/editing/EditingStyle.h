@@ -33,6 +33,7 @@
 #define EditingStyle_h
 
 #include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "WritingDirection.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>

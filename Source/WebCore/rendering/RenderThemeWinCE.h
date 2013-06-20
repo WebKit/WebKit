@@ -62,8 +62,8 @@ namespace WebCore {
         virtual Color platformInactiveSelectionForegroundColor() const;
 
         // System fonts.
-        virtual void systemFont(int propId, FontDescription&) const;
-        virtual Color systemColor(int cssValueId) const;
+        virtual void systemFont(CSSValueID, FontDescription&) const;
+        virtual Color systemColor(CSSValueID) const;
 
         virtual bool paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& r)
         { return paintButton(o, i, r); }

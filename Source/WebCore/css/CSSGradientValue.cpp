@@ -408,7 +408,7 @@ static float positionFromValue(CSSPrimitiveValue* value, RenderStyle* style, Ren
     if (value->isCalculatedPercentageWithLength())
         return value->cssCalcValue()->toCalcValue(style, rootStyle, style->effectiveZoom())->evaluate(edgeDistance);
 
-    switch (value->getIdent()) {
+    switch (value->getValueID()) {
     case CSSValueTop:
         ASSERT(!isHorizontal);
         return 0;
@@ -421,6 +421,8 @@ static float positionFromValue(CSSPrimitiveValue* value, RenderStyle* style, Ren
     case CSSValueRight:
         ASSERT(isHorizontal);
         return size.width();
+    default:
+        break;
     }
 
     return value->computeLength<float>(style, rootStyle, zoomFactor);
@@ -540,7 +542,7 @@ String CSSLinearGradientValue::customCssText() const
         if (m_angle && m_angle->computeDegrees() != 180) {
             result.append(m_angle->cssText());
             wroteSomething = true;
-        } else if ((m_firstX || m_firstY) && !(!m_firstX && m_firstY && m_firstY->getIdent() == CSSValueBottom)) {
+        } else if ((m_firstX || m_firstY) && !(!m_firstX && m_firstY && m_firstY->getValueID() == CSSValueBottom)) {
             result.appendLiteral("to ");
             if (m_firstX && m_firstY) {
                 result.append(m_firstX->cssText());
@@ -677,9 +679,9 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderObject* render
                 // "Magic" corners, so the 50% line touches two corners.
                 float rise = size.width();
                 float run = size.height();
-                if (m_firstX && m_firstX->getIdent() == CSSValueLeft)
+                if (m_firstX && m_firstX->getValueID() == CSSValueLeft)
                     run *= -1;
-                if (m_firstY && m_firstY->getIdent() == CSSValueBottom)
+                if (m_firstY && m_firstY->getValueID() == CSSValueBottom)
                     rise *= -1;
                 // Compute angle, and flip it back to "bearing angle" degrees.
                 float angle = 90 - rad2deg(atan2(rise, run));
@@ -833,12 +835,12 @@ String CSSRadialGradientValue::customCssText() const
 
         // The only ambiguous case that needs an explicit shape to be provided
         // is when a sizing keyword is used (or all sizing is omitted).
-        if (m_shape && m_shape->getIdent() != CSSValueEllipse && (m_sizingBehavior || (!m_sizingBehavior && !m_endHorizontalSize))) {
+        if (m_shape && m_shape->getValueID() != CSSValueEllipse && (m_sizingBehavior || (!m_sizingBehavior && !m_endHorizontalSize))) {
             result.appendLiteral("circle");
             wroteSomething = true;
         }
 
-        if (m_sizingBehavior && m_sizingBehavior->getIdent() != CSSValueFarthestCorner) {
+        if (m_sizingBehavior && m_sizingBehavior->getValueID() != CSSValueFarthestCorner) {
             if (wroteSomething)
                 result.append(' ');
             result.append(m_sizingBehavior->cssText());
@@ -1018,14 +1020,14 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderObject* render
     } else {
         enum GradientShape { Circle, Ellipse };
         GradientShape shape = Ellipse;
-        if ((m_shape && m_shape->getIdent() == CSSValueCircle)
+        if ((m_shape && m_shape->getValueID() == CSSValueCircle)
             || (!m_shape && !m_sizingBehavior && m_endHorizontalSize && !m_endVerticalSize))
             shape = Circle;
 
         enum GradientFill { ClosestSide, ClosestCorner, FarthestSide, FarthestCorner };
         GradientFill fill = FarthestCorner;
 
-        switch (m_sizingBehavior ? m_sizingBehavior->getIdent() : 0) {
+        switch (m_sizingBehavior ? m_sizingBehavior->getValueID() : 0) {
         case CSSValueContain:
         case CSSValueClosestSide:
             fill = ClosestSide;
@@ -1039,6 +1041,8 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderObject* render
         case CSSValueCover:
         case CSSValueFarthestCorner:
             fill = FarthestCorner;
+            break;
+        default:
             break;
         }
 

@@ -437,7 +437,7 @@ double RenderThemeGtk::getScreenDPI()
     return dpi;
 }
 
-void RenderThemeGtk::systemFont(int, FontDescription& fontDescription) const
+void RenderThemeGtk::systemFont(CSSValueID, FontDescription& fontDescription) const
 {
     GtkSettings* settings = gtk_settings_get_default();
     if (!settings)

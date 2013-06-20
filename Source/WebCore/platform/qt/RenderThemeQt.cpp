@@ -256,12 +256,12 @@ Color RenderThemeQt::platformFocusRingColor() const
     return colorPalette().brush(QPalette::Active, QPalette::Highlight).color();
 }
 
-void RenderThemeQt::systemFont(int, FontDescription&) const
+void RenderThemeQt::systemFont(CSSValueID, FontDescription&) const
 {
     // no-op
 }
 
-Color RenderThemeQt::systemColor(int cssValueId) const
+Color RenderThemeQt::systemColor(CSSValueID cssValueId) const
 {
     QPalette pal = colorPalette();
     switch (cssValueId) {

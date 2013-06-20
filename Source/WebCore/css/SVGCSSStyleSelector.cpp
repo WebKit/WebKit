@@ -137,8 +137,8 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             if (!primitiveValue)
                 break;
 
-            if (primitiveValue->getIdent()) {
-                switch (primitiveValue->getIdent()) {
+            if (primitiveValue->getValueID()) {
+                switch (primitiveValue->getValueID()) {
                 case CSSValueBaseline:
                     svgstyle->setBaselineShift(BS_BASELINE);
                     break;
@@ -539,7 +539,7 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 ASSERT(orientation != -1);
 
                 svgstyle->setGlyphOrientationVertical((EGlyphOrientation) orientation);
-            } else if (primitiveValue->getIdent() == CSSValueAuto)
+            } else if (primitiveValue->getValueID() == CSSValueAuto)
                 svgstyle->setGlyphOrientationVertical(GO_AUTO);
 
             break;

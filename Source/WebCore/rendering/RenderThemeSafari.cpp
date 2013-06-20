@@ -189,7 +189,7 @@ static float systemFontSizeForControlSize(NSControlSize controlSize)
     return sizes[controlSize];
 }
 
-void RenderThemeSafari::systemFont(int propId, FontDescription& fontDescription) const
+void RenderThemeSafari::systemFont(CSSValueID valueID, FontDescription& fontDescription) const
 {
     static FontDescription systemFont;
     static FontDescription smallSystemFont;
@@ -201,41 +201,41 @@ void RenderThemeSafari::systemFont(int propId, FontDescription& fontDescription)
 
     FontDescription* cachedDesc;
     float fontSize = 0;
-    switch (propId) {
-        case CSSValueSmallCaption:
-            cachedDesc = &smallSystemFont;
-            if (!smallSystemFont.isAbsoluteSize())
-                fontSize = systemFontSizeForControlSize(NSSmallControlSize);
-            break;
-        case CSSValueMenu:
-            cachedDesc = &menuFont;
-            if (!menuFont.isAbsoluteSize())
-                fontSize = systemFontSizeForControlSize(NSRegularControlSize);
-            break;
-        case CSSValueStatusBar:
-            cachedDesc = &labelFont;
-            if (!labelFont.isAbsoluteSize())
-                fontSize = 10.0f;
-            break;
-        case CSSValueWebkitMiniControl:
-            cachedDesc = &miniControlFont;
-            if (!miniControlFont.isAbsoluteSize())
-                fontSize = systemFontSizeForControlSize(NSMiniControlSize);
-            break;
-        case CSSValueWebkitSmallControl:
-            cachedDesc = &smallControlFont;
-            if (!smallControlFont.isAbsoluteSize())
-                fontSize = systemFontSizeForControlSize(NSSmallControlSize);
-            break;
-        case CSSValueWebkitControl:
-            cachedDesc = &controlFont;
-            if (!controlFont.isAbsoluteSize())
-                fontSize = systemFontSizeForControlSize(NSRegularControlSize);
-            break;
-        default:
-            cachedDesc = &systemFont;
-            if (!systemFont.isAbsoluteSize())
-                fontSize = 13.0f;
+    switch (valueID) {
+    case CSSValueSmallCaption:
+        cachedDesc = &smallSystemFont;
+        if (!smallSystemFont.isAbsoluteSize())
+            fontSize = systemFontSizeForControlSize(NSSmallControlSize);
+        break;
+    case CSSValueMenu:
+        cachedDesc = &menuFont;
+        if (!menuFont.isAbsoluteSize())
+            fontSize = systemFontSizeForControlSize(NSRegularControlSize);
+        break;
+    case CSSValueStatusBar:
+        cachedDesc = &labelFont;
+        if (!labelFont.isAbsoluteSize())
+            fontSize = 10.0f;
+        break;
+    case CSSValueWebkitMiniControl:
+        cachedDesc = &miniControlFont;
+        if (!miniControlFont.isAbsoluteSize())
+            fontSize = systemFontSizeForControlSize(NSMiniControlSize);
+        break;
+    case CSSValueWebkitSmallControl:
+        cachedDesc = &smallControlFont;
+        if (!smallControlFont.isAbsoluteSize())
+            fontSize = systemFontSizeForControlSize(NSSmallControlSize);
+        break;
+    case CSSValueWebkitControl:
+        cachedDesc = &controlFont;
+        if (!controlFont.isAbsoluteSize())
+            fontSize = systemFontSizeForControlSize(NSRegularControlSize);
+        break;
+    default:
+        cachedDesc = &systemFont;
+        if (!systemFont.isAbsoluteSize())
+            fontSize = 13.0f;
     }
 
     if (fontSize) {

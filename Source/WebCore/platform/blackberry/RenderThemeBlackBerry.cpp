@@ -259,12 +259,12 @@ double RenderThemeBlackBerry::caretBlinkInterval() const
     return 0; // Turn off caret blinking.
 }
 
-void RenderThemeBlackBerry::systemFont(int propId, FontDescription& fontDescription) const
+void RenderThemeBlackBerry::systemFont(CSSValueID valueID, FontDescription& fontDescription) const
 {
     float fontSize = defaultFontSize;
 
     // Both CSSValueWebkitControl and CSSValueWebkitSmallControl should use default font size which looks better on the controls.
-    if (propId == CSSValueWebkitMiniControl) {
+    if (valueID == CSSValueWebkitMiniControl) {
         // Why 2 points smaller? Because that's what Gecko does. Note that we
         // are assuming a 96dpi screen, which is the default value we use on Windows.
         static const float pointsPerInch = 72.0f;

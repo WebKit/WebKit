@@ -981,7 +981,7 @@ Color RenderThemeGtk::inactiveListBoxSelectionForegroundColor() const
     return gdkRGBAColor;
 }
 
-Color RenderThemeGtk::systemColor(int cssValueId) const
+Color RenderThemeGtk::systemColor(CSSValueID cssValueId) const
 {
     GdkRGBA gdkRGBAColor;
 

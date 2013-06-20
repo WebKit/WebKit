@@ -257,7 +257,7 @@ bool RenderThemeWinCE::paintMenuListButton(RenderObject* o, const PaintInfo& i, 
     return true;
 }
 
-void RenderThemeWinCE::systemFont(int propId, FontDescription& fontDescription) const
+void RenderThemeWinCE::systemFont(CSSValueID, FontDescription& fontDescription) const
 {
     notImplemented();
 }
@@ -284,7 +284,7 @@ bool RenderThemeWinCE::supportsHover(const RenderStyle*) const
 }
 
 // Map a CSSValue* system color to an index understood by GetSysColor
-static int cssValueIdToSysColorIndex(int cssValueId)
+static CSSValueID cssValueIdToSysColorIndex(CSSValueID cssValueId)
 {
     switch (cssValueId) {
     case CSSValueActiveborder: return COLOR_ACTIVEBORDER;
@@ -315,14 +315,14 @@ static int cssValueIdToSysColorIndex(int cssValueId)
     case CSSValueWindow: return COLOR_WINDOW;
     case CSSValueWindowframe: return COLOR_WINDOWFRAME;
     case CSSValueWindowtext: return COLOR_WINDOWTEXT;
-    default: return -1; // Unsupported CSSValue
+    default: return CSSValueInvalid; // Unsupported CSSValue
     }
 }
 
-Color RenderThemeWinCE::systemColor(int cssValueId) const
+Color RenderThemeWinCE::systemColor(CSSValueID cssValueId) const
 {
-    int sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
-    if (sysColorIndex == -1)
+    CSSValueID sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
+    if (sysColorIndex == CSSValueInvalid)
         return RenderTheme::systemColor(cssValueId);
 
     COLORREF color = GetSysColor(sysColorIndex);

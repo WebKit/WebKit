@@ -420,8 +420,8 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
                     else
                         yValue = nextValue;
 
-                    int xId = static_cast<CSSPrimitiveValue*>(value.get())->getIdent();
-                    int yId = static_cast<CSSPrimitiveValue*>(yValue.get())->getIdent();
+                    CSSValueID xId = static_cast<CSSPrimitiveValue*>(value.get())->getValueID();
+                    CSSValueID yId = static_cast<CSSPrimitiveValue*>(yValue.get())->getValueID();
                     if (xId != yId) {
                         if (xId == CSSValueRepeat && yId == CSSValueNoRepeat) {
                             useRepeatXShorthand = true;

@@ -1127,7 +1127,7 @@ void RenderTheme::platformColorsDidChange()
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
-Color RenderTheme::systemColor(int cssValueId) const
+Color RenderTheme::systemColor(CSSValueID cssValueId) const
 {
     switch (cssValueId) {
     case CSSValueActiveborder:
@@ -1188,6 +1188,8 @@ Color RenderTheme::systemColor(int cssValueId) const
         return 0xFFCCCCCC;
     case CSSValueWindowtext:
         return 0xFF000000;
+    default:
+        break;
     }
     return Color();
 }

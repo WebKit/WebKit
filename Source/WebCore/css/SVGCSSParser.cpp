@@ -42,7 +42,7 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
     if (!value)
         return false;
 
-    int id = value->id;
+    CSSValueID id = value->id;
 
     bool valid_primitive = false;
     RefPtr<CSSValue> parsedValue;

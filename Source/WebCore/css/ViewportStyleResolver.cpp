@@ -139,7 +139,7 @@ float ViewportStyleResolver::getViewportArgumentValue(CSSPropertyID id) const
         }
     }
 
-    switch (primitiveValue->getIdent()) {
+    switch (primitiveValue->getValueID()) {
     case CSSValueAuto:
         return defaultValue;
     case CSSValueDeviceHeight:

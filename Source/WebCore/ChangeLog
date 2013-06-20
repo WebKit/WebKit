@@ -1,3 +1,304 @@
+2013-06-20  Alexis Menard  <alexis@webkit.org>
+
+        Cleanup usage of CSSPropertyID and CSSValueID inside WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=117829
+
+        Reviewed by Andreas Kling.
+
+        A lot of call sites were using integers to represent them. While it's
+        not incorrect per se, it's not ideal for various reason such as type
+        safety or to remove ambiguity.
+
+        This patch eradicate the wrong usage by not letting any integer based
+        API for getting CSSValueIDs or CSSPropertyIDs from CSSPrimitiveValues.
+
+        Instead we use new but typed functions to construct the values as well
+        as getting them. Two customs and internal types were added to CSSPrimitiveValue
+        to handle correctly the new APIs.
+
+        It's good to note that in order to preserve compatibility on the
+        CSSPrimitiveValue type whenever CSSPrimitiveValue handles a CSSValueID
+        or a CSSPropertyID the return type for the public API will be CSS_IDENT
+        despite it is a separate internal type.
+
+        No new tests: refactor, existing tests should cover.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyMatches):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSGradientValue.cpp:
+        (WebCore::positionFromValue):
+        (WebCore::CSSLinearGradientValue::customCssText):
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSRadialGradientValue::customCssText):
+        (WebCore::CSSRadialGradientValue::createGradient):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSystemColor):
+        (WebCore::isFillPositionKeyword):
+        (WebCore::CSSParser::parse4ValuesFillPosition):
+        (WebCore::CSSParser::parse3ValuesFillPosition):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillRepeat):
+        (WebCore::CSSParser::parseRadialGradient):
+        (WebCore::CSSParser::isBlendMode):
+        (WebCore::CSSParser::isCompositeOperator):
+        * css/CSSParser.h:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::CSSPrimitiveValue::primitiveType):
+        (WebCore::propertyName):
+        (WebCore::valueName):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::customCssText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        (WebCore::CSSPrimitiveValue::equals):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isFontRelativeLength):
+        (WebCore::CSSPrimitiveValue::isValueID):
+        (WebCore::CSSPrimitiveValue::createIdentifier):
+        (WebCore::CSSPrimitiveValue::createParserOperator):
+        (WebCore::CSSPrimitiveValue::getPropertyID):
+        (WebCore::CSSPrimitiveValue::getValueID):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator CSSReflectionDirection):
+        (WebCore::CSSPrimitiveValue::operator ColumnSpan):
+        (WebCore::CSSPrimitiveValue::operator PrintColorAdjust):
+        (WebCore::CSSPrimitiveValue::operator EBorderStyle):
+        (WebCore::CSSPrimitiveValue::operator OutlineIsAuto):
+        (WebCore::CSSPrimitiveValue::operator CompositeOperator):
+        (WebCore::CSSPrimitiveValue::operator ControlPart):
+        (WebCore::CSSPrimitiveValue::operator EBackfaceVisibility):
+        (WebCore::CSSPrimitiveValue::operator EFillAttachment):
+        (WebCore::CSSPrimitiveValue::operator EFillBox):
+        (WebCore::CSSPrimitiveValue::operator EFillRepeat):
+        (WebCore::CSSPrimitiveValue::operator EBoxPack):
+        (WebCore::CSSPrimitiveValue::operator EBoxAlignment):
+        (WebCore::CSSPrimitiveValue::operator EBoxDecorationBreak):
+        (WebCore::CSSPrimitiveValue::operator BackgroundEdgeOrigin):
+        (WebCore::CSSPrimitiveValue::operator EBoxSizing):
+        (WebCore::CSSPrimitiveValue::operator EBoxDirection):
+        (WebCore::CSSPrimitiveValue::operator EBoxLines):
+        (WebCore::CSSPrimitiveValue::operator EBoxOrient):
+        (WebCore::CSSPrimitiveValue::operator ECaptionSide):
+        (WebCore::CSSPrimitiveValue::operator EClear):
+        (WebCore::CSSPrimitiveValue::operator ECursor):
+        (WebCore::CSSPrimitiveValue::operator CursorVisibility):
+        (WebCore::CSSPrimitiveValue::operator EDisplay):
+        (WebCore::CSSPrimitiveValue::operator EEmptyCell):
+        (WebCore::CSSPrimitiveValue::operator EAlignItems):
+        (WebCore::CSSPrimitiveValue::operator EJustifyContent):
+        (WebCore::CSSPrimitiveValue::operator EFlexDirection):
+        (WebCore::CSSPrimitiveValue::operator EAlignContent):
+        (WebCore::CSSPrimitiveValue::operator EFlexWrap):
+        (WebCore::CSSPrimitiveValue::operator EFloat):
+        (WebCore::CSSPrimitiveValue::operator LineBreak):
+        (WebCore::CSSPrimitiveValue::operator EListStylePosition):
+        (WebCore::CSSPrimitiveValue::operator EListStyleType):
+        (WebCore::CSSPrimitiveValue::operator EMarginCollapse):
+        (WebCore::CSSPrimitiveValue::operator EMarqueeBehavior):
+        (WebCore::CSSPrimitiveValue::operator RegionFragment):
+        (WebCore::CSSPrimitiveValue::operator EMarqueeDirection):
+        (WebCore::CSSPrimitiveValue::operator ENBSPMode):
+        (WebCore::CSSPrimitiveValue::operator EOverflow):
+        (WebCore::CSSPrimitiveValue::operator EPageBreak):
+        (WebCore::CSSPrimitiveValue::operator EPosition):
+        (WebCore::CSSPrimitiveValue::operator EResize):
+        (WebCore::CSSPrimitiveValue::operator ETableLayout):
+        (WebCore::CSSPrimitiveValue::operator ETextAlign):
+        (WebCore::CSSPrimitiveValue::operator TextAlignLast):
+        (WebCore::CSSPrimitiveValue::operator TextJustify):
+        (WebCore::CSSPrimitiveValue::operator TextDecoration):
+        (WebCore::CSSPrimitiveValue::operator TextDecorationStyle):
+        (WebCore::CSSPrimitiveValue::operator TextUnderlinePosition):
+        (WebCore::CSSPrimitiveValue::operator ETextSecurity):
+        (WebCore::CSSPrimitiveValue::operator ETextTransform):
+        (WebCore::CSSPrimitiveValue::operator EUnicodeBidi):
+        (WebCore::CSSPrimitiveValue::operator EUserDrag):
+        (WebCore::CSSPrimitiveValue::operator EUserModify):
+        (WebCore::CSSPrimitiveValue::operator EUserSelect):
+        (WebCore::CSSPrimitiveValue::operator EVerticalAlign):
+        (WebCore::CSSPrimitiveValue::operator EVisibility):
+        (WebCore::CSSPrimitiveValue::operator EWhiteSpace):
+        (WebCore::CSSPrimitiveValue::operator EWordBreak):
+        (WebCore::CSSPrimitiveValue::operator EOverflowWrap):
+        (WebCore::CSSPrimitiveValue::operator TextDirection):
+        (WebCore::CSSPrimitiveValue::operator WritingMode):
+        (WebCore::CSSPrimitiveValue::operator TextCombine):
+        (WebCore::CSSPrimitiveValue::operator RubyPosition):
+        (WebCore::CSSPrimitiveValue::operator TextEmphasisPosition):
+        (WebCore::CSSPrimitiveValue::operator TextOverflow):
+        (WebCore::CSSPrimitiveValue::operator TextEmphasisFill):
+        (WebCore::CSSPrimitiveValue::operator TextEmphasisMark):
+        (WebCore::CSSPrimitiveValue::operator TextOrientation):
+        (WebCore::CSSPrimitiveValue::operator EPointerEvents):
+        (WebCore::CSSPrimitiveValue::operator FontDescription::Kerning):
+        (WebCore::CSSPrimitiveValue::operator FontSmoothingMode):
+        (WebCore::CSSPrimitiveValue::operator FontWeight):
+        (WebCore::CSSPrimitiveValue::operator FontItalic):
+        (WebCore::CSSPrimitiveValue::operator FontSmallCaps):
+        (WebCore::CSSPrimitiveValue::operator TextRenderingMode):
+        (WebCore::CSSPrimitiveValue::operator ColorSpace):
+        (WebCore::CSSPrimitiveValue::operator Hyphens):
+        (WebCore::CSSPrimitiveValue::operator LineSnap):
+        (WebCore::CSSPrimitiveValue::operator LineAlign):
+        (WebCore::CSSPrimitiveValue::operator Order):
+        (WebCore::CSSPrimitiveValue::operator ESpeak):
+        (WebCore::CSSPrimitiveValue::operator BlendMode):
+        (WebCore::CSSPrimitiveValue::operator LineCap):
+        (WebCore::CSSPrimitiveValue::operator LineJoin):
+        (WebCore::CSSPrimitiveValue::operator WindRule):
+        (WebCore::CSSPrimitiveValue::operator EAlignmentBaseline):
+        (WebCore::CSSPrimitiveValue::operator EBorderCollapse):
+        (WebCore::CSSPrimitiveValue::operator EBorderFit):
+        (WebCore::CSSPrimitiveValue::operator EImageRendering):
+        (WebCore::CSSPrimitiveValue::operator ETransformStyle3D):
+        (WebCore::CSSPrimitiveValue::operator ColumnAxis):
+        (WebCore::CSSPrimitiveValue::operator ColumnProgression):
+        (WebCore::CSSPrimitiveValue::operator WrapFlow):
+        (WebCore::CSSPrimitiveValue::operator WrapThrough):
+        (WebCore::CSSPrimitiveValue::operator GridAutoFlow):
+        (WebCore::CSSPrimitiveValue::convertToLength):
+        (WebCore::CSSPrimitiveValue::operator EBufferedRendering):
+        (WebCore::CSSPrimitiveValue::operator EColorInterpolation):
+        (WebCore::CSSPrimitiveValue::operator EColorRendering):
+        (WebCore::CSSPrimitiveValue::operator EDominantBaseline):
+        (WebCore::CSSPrimitiveValue::operator EShapeRendering):
+        (WebCore::CSSPrimitiveValue::operator ETextAnchor):
+        (WebCore::CSSPrimitiveValue::operator SVGWritingMode):
+        (WebCore::CSSPrimitiveValue::operator EVectorEffect):
+        (WebCore::CSSPrimitiveValue::operator EMaskType):
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillAttachment):
+        (WebCore::CSSToStyleMap::mapFillSize):
+        (WebCore::CSSToStyleMap::mapAnimationDirection):
+        (WebCore::CSSToStyleMap::mapAnimationFillMode):
+        (WebCore::CSSToStyleMap::mapAnimationIterationCount):
+        (WebCore::CSSToStyleMap::mapAnimationName):
+        (WebCore::CSSToStyleMap::mapAnimationPlayState):
+        (WebCore::CSSToStyleMap::mapAnimationProperty):
+        (WebCore::CSSToStyleMap::mapAnimationTimingFunction):
+        (WebCore::CSSToStyleMap::mapNinePieceImageQuad):
+        (WebCore::CSSToStyleMap::mapNinePieceImageRepeat):
+        * css/Counter.h:
+        (WebCore::Counter::listStyleIdent):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyNumber::applyValue):
+        (WebCore::ApplyPropertyAuto::applyValue):
+        (WebCore::ApplyPropertyClip::applyValue):
+        (WebCore::ApplyPropertyColor::applyValue):
+        (WebCore::ApplyPropertyLength::applyValue):
+        (WebCore::ApplyPropertyString::applyValue):
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+        (WebCore::ApplyPropertyFontFamily::applyValue):
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        (WebCore::ApplyPropertyFontWeight::applyValue):
+        (WebCore::ApplyPropertyFontVariantLigatures::applyValue):
+        (WebCore::ApplyPropertyCounter::applyValue):
+        (WebCore::ApplyPropertyCursor::applyValue):
+        (WebCore::ApplyPropertyTextAlign::applyValue):
+        (WebCore::ApplyPropertyMarqueeIncrement::applyValue):
+        (WebCore::ApplyPropertyMarqueeRepetition::applyValue):
+        (WebCore::ApplyPropertyMarqueeSpeed::applyValue):
+        (WebCore::ApplyPropertyLineHeight::applyValue):
+        (WebCore::ApplyPropertyPageSize::getPageSizeFromName):
+        (WebCore::ApplyPropertyPageSize::applyValue):
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyValue):
+        (WebCore::ApplyPropertyResize::applyValue):
+        (WebCore::ApplyPropertyVerticalAlign::applyValue):
+        (WebCore::ApplyPropertyZoom::applyValue):
+        (WebCore::ApplyPropertyClipPath::applyValue):
+        (WebCore::ApplyPropertyShape::applyValue):
+        (WebCore::ApplyPropertyImageResolution::applyValue):
+        (WebCore::ApplyPropertyTextIndent::applyValue):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::orientationMediaFeatureEval):
+        (WebCore::view_modeMediaFeatureEval):
+        (WebCore::pointerMediaFeatureEval):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getLayeredShorthandValue):
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackBreadth):
+        (WebCore::createGridTrackList):
+        (WebCore::createGridPosition):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::colorForCSSValue):
+        (WebCore::StyleResolver::colorFromPrimitiveValueIsDerivedFromElement):
+        (WebCore::StyleResolver::colorFromPrimitiveValue):
+        (WebCore::StyleResolver::createCustomFilterOperationWithInlineSyntax):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/ViewportStyleResolver.cpp:
+        (WebCore::ViewportStyleResolver::getViewportArgumentValue):
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::toIdentifier):
+        * editing/EditingStyle.cpp:
+        (WebCore::identifierForStyleProperty):
+        (WebCore::HTMLElementEquivalent::create):
+        (WebCore::HTMLElementEquivalent::HTMLElementEquivalent):
+        (WebCore::HTMLElementEquivalent::valueIsPresentInStyle):
+        (WebCore::HTMLTextDecorationEquivalent::create):
+        (WebCore::HTMLTextDecorationEquivalent::HTMLTextDecorationEquivalent):
+        (WebCore::EditingStyle::textDirection):
+        (WebCore::EditingStyle::prepareToApplyAt):
+        (WebCore::EditingStyle::textDirectionForSelection):
+        (WebCore::fontWeightIsBold):
+        (WebCore::legacyFontSizeFromCSSValue):
+        (WebCore::isTransparentColorValue):
+        * editing/EditingStyle.h:
+        * editing/markup.cpp:
+        (WebCore::propertyMissingOrEqualToNone):
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::systemFont):
+        * platform/blackberry/RenderThemeBlackBerry.h:
+        (WebCore::RenderThemeBlackBerry::systemFont):
+        * platform/blackberry/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::systemFont):
+        * platform/blackberry/RenderThemeEfl.h:
+        (WebCore::RenderThemeEfl::systemFont):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::systemFont):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::systemColor):
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::systemColor):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::systemFont):
+        (WebCore::RenderThemeQt::systemColor):
+        * platform/qt/RenderThemeQt.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::systemColor):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemFont):
+        (WebCore::RenderThemeMac::systemColor):
+        * rendering/RenderThemeSafari.h:
+        (WebCore::RenderThemeSafari::systemFont):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::systemFont):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::systemFont):
+        (WebCore::cssValueIdToSysColorIndex):
+        (WebCore::RenderThemeWin::systemColor):
+        * rendering/RenderThemeWin.h:
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::RenderThemeWinCE::systemFont):
+        (WebCore::cssValueIdToSysColorIndex):
+        (WebCore::RenderThemeWinCE::systemColor):
+        * rendering/RenderThemeWinCE.h:
+
 2013-06-19  Brent Fulgham  <bfulgham@apple.com>
 
         AX: List Items should support a default action

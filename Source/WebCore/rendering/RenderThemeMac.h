@@ -61,7 +61,7 @@ public:
     virtual void platformColorsDidChange();
 
     // System fonts.
-    virtual void systemFont(int cssValueId, FontDescription&) const;
+    virtual void systemFont(CSSValueID, FontDescription&) const;
 
     virtual int minimumMenuListSize(RenderStyle*) const;
 
@@ -94,7 +94,7 @@ public:
     virtual double animationDurationForProgressBar(RenderProgress*) const;
 #endif
 
-    virtual Color systemColor(int cssValueId) const;
+    virtual Color systemColor(CSSValueID) const;
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
     virtual bool usesTestModeFocusRingColor() const;
     // A view associated to the contained document. Subclasses may not have such a view and return a fake.

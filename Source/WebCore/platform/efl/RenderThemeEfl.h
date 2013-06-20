@@ -118,7 +118,7 @@ public:
     void adjustSizeConstraints(RenderStyle*, FormType) const;
 
     // System fonts.
-    virtual void systemFont(int propId, FontDescription&) const;
+    virtual void systemFont(CSSValueID, FontDescription&) const;
 
     virtual void adjustCheckboxStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);

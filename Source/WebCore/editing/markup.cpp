@@ -472,7 +472,7 @@ static bool propertyMissingOrEqualToNone(StylePropertySet* style, CSSPropertyID 
         return true;
     if (!value->isPrimitiveValue())
         return false;
-    return static_cast<CSSPrimitiveValue*>(value.get())->getIdent() == CSSValueNone;
+    return static_cast<CSSPrimitiveValue*>(value.get())->getValueID() == CSSValueNone;
 }
 
 static bool needInterchangeNewlineAfter(const VisiblePosition& v)
