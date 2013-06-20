@@ -1,3 +1,9 @@
+2013-06-20  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Roll out part of r150618.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+
 2013-06-20  Enrica Casucci  <enrica@apple.com>
 
         Initial advance on the first glyph of the run is not correctly set for rtl text.

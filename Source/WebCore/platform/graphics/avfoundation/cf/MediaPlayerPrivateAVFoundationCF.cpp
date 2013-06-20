@@ -1301,7 +1301,7 @@ void LayerClient::platformCALayerLayoutSublayersOfLayer(PlatformCALayer* wrapper
 #else
 // AVFoundation should always be enabled for Apple production builds.
 #if __PRODUCTION__ && !USE(AVFOUNDATION)
-// #error AVFoundation is not enabled!
+#error AVFoundation is not enabled!
 #endif // __PRODUCTION__ && !USE(AVFOUNDATION)
 #endif // USE(AVFOUNDATION)
 #endif // PLATFORM(WIN) && ENABLE(VIDEO)
