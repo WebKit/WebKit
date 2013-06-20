@@ -467,6 +467,7 @@ public:
     virtual bool isUnvisited() const { return false; }
     virtual bool isVisited() const { return false; }
     virtual bool isRequired() const { return false; }
+    virtual bool supportsRequiredAttribute() const { return false; }
     virtual bool isLinked() const { return false; }
     virtual bool isExpanded() const;
     virtual bool isVisible() const { return true; }

@@ -98,6 +98,7 @@ public:
     virtual bool isPressed() const;
     virtual bool isReadOnly() const;
     virtual bool isRequired() const;
+    virtual bool supportsRequiredAttribute() const;
 
     void setNode(Node*);
     virtual Node* node() const { return m_node; }

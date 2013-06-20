@@ -9,6 +9,26 @@
 <input type="text" aria-required="false" id="textfield2">
 <input type="text" id="textfield3">
 
+<div id="toBeHidden">
+
+  <div tabindex="0" aria-required="true" role="listbox" id="lb1">text</div>
+  <div tabindex="0" aria-required="false" role="listbox" id="lb2">text</div>
+  <div tabindex="0" role="listbox" id="lb3">text</div>
+
+  <div tabindex="0" aria-required="true" role="radiogroup" id="rg1">text</div>
+  <div tabindex="0" aria-required="false" role="radiogroup" id="rg2">text</div>
+  <div tabindex="0" role="radiogroup" id="rg3">text</div>
+
+  <div tabindex="0" aria-required="true" role="spinbutton" id="sb1">text</div>
+  <div tabindex="0" aria-required="false" role="spinbutton" id="sb2">text</div>
+  <div tabindex="0" role="spinbutton" id="sb3">text</div>
+
+  <div tabindex="0" aria-required="true" role="tree" id="t1">text</div>
+  <div tabindex="0" aria-required="false" role="tree" id="t2">text</div>
+  <div tabindex="0" role="tree" id="t3">text</div>
+
+</div>
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -16,29 +36,77 @@
 
     description("This tests that aria-required is a usable attribute.");
 
+    function $(id){
+      return document.getElementById(id);
+    }
+
     if (window.accessibilityController) {
 
-          // this text field should be required.
-          document.getElementById("textfield1").focus();
-          var obj = accessibilityController.focusedElement;
+          var succeeded = false;
 
-          var succeeded = obj.isRequired;
+          // textfield 1 is required
+          $("textfield1").focus();
+          succeeded = accessibilityController.focusedElement.isRequired;
+          shouldBe("succeeded", "true");
+          // textfield 2 and 3 are not required
+          $("textfield2").focus();
+          succeeded = !(accessibilityController.focusedElement.isRequired);
+          shouldBe("succeeded", "true");
+          $("textfield3").focus();
+          succeeded = !(accessibilityController.focusedElement.isRequired);
           shouldBe("succeeded", "true");
 
-          // this text field should not be required
-          document.getElementById("textfield2").focus();
-          var obj = accessibilityController.focusedElement;
-
-          var succeeded = !obj.isRequired;
+          // listbox 1 is required
+          $("lb1").focus();
+          succeeded = accessibilityController.focusedElement.isRequired;
+          shouldBe("succeeded", "true");
+          // listbox 2 and 3 are not required
+          $("lb2").focus();
+          succeeded = !(accessibilityController.focusedElement.isRequired);
+          shouldBe("succeeded", "true");
+          $("lb3").focus();
+          succeeded = !(accessibilityController.focusedElement.isRequired);
           shouldBe("succeeded", "true");
 
-          // this text field should not be required
-          document.getElementById("textfield3").focus();
-          var obj = accessibilityController.focusedElement;
-
-          var succeeded = !obj.isRequired;
+          // radiogroup 1 is required
+          $("rg1").focus();
+          succeeded = accessibilityController.focusedElement.isRequired;
           shouldBe("succeeded", "true");
+          // radiogroup 2 and 3 are not required
+          $("rg2").focus();
+          succeeded = !(accessibilityController.focusedElement.isRequired);
+          shouldBe("succeeded", "true");
+          $("rg3").focus();
+          succeeded = !(accessibilityController.focusedElement.isRequired);
+          shouldBe("succeeded", "true");
+
+          // spinbutton 1 is required
+          $("sb1").focus();
+          succeeded = accessibilityController.focusedElement.isRequired;
+          shouldBe("succeeded", "true");
+          // spinbutton 2 and 3 are not required
+          $("sb2").focus();
+          succeeded = !(accessibilityController.focusedElement.isRequired);
+          shouldBe("succeeded", "true");
+          $("sb3").focus();
+          succeeded = !(accessibilityController.focusedElement.isRequired);
+          shouldBe("succeeded", "true");
+
+          // tree 1 is required
+          $("t1").focus();
+          succeeded = accessibilityController.focusedElement.isRequired;
+          shouldBe("succeeded", "true");
+          // tree 2 and 3 are not required
+          $("t2").focus();
+          succeeded = !(accessibilityController.focusedElement.isRequired);
+          shouldBe("succeeded", "true");
+          $("t3").focus();
+          succeeded = !(accessibilityController.focusedElement.isRequired);
+          shouldBe("succeeded", "true");
+
     }
+
+    $('toBeHidden').hidden = true; // hide this to avoid text diffs when adding more elements to the test
 
 </script>
 
