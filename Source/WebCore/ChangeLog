@@ -1,3 +1,13 @@
+2013-06-19  Alex Christensen  <alex.christensen@flexsim.com>
+
+        Added WebGL files to Windows build without enabling them.
+        https://bugs.webkit.org/show_bug.cgi?id=117809
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Added WebGL source files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Added platform\graphics\opengl and platform\graphics\gpu filters.
+
 2013-06-19  Alex Christensen  <achristensen@apple.com>
 
         Windows build should include WebGL generated files if WebGL is enabled.
