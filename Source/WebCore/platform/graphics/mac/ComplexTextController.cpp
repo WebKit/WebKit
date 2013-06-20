@@ -496,7 +496,10 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
         if (fallbackFonts && complexTextRun.fontData() != m_font.primaryFont())
             fallbackFonts->add(complexTextRun.fontData());
 
-        if (glyphBuffer && glyphBuffer->isEmpty())
+        // We must store the initial advance for the first glyph we are going to draw.
+        // When leftmostGlyph is 0, it represents the first glyph to draw, taking into
+        // account the text direction.
+        if (glyphBuffer && !leftmostGlyph)
             glyphBuffer->setInitialAdvance(complexTextRun.initialAdvance());
 
         while (m_glyphInCurrentRun < glyphCount) {

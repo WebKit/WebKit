@@ -1,3 +1,14 @@
+2013-06-20  Enrica Casucci  <enrica@apple.com>
+
+        Initial advance on the first glyph of the run is not correctly set for rtl text.
+        https://bugs.webkit.org/show_bug.cgi?id=117839
+        <rdar://problem/13860717>
+
+        Reviewed by Sam Weinig.
+
+        * fast/text/complex-first-glyph-with-initial-advance-expected.html: Added.
+        * fast/text/complex-first-glyph-with-initial-advance.html: Added.
+
 2013-06-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r151463.

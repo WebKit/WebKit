@@ -1,3 +1,20 @@
+2013-06-20  Enrica Casucci  <enrica@apple.com>
+
+        Initial advance on the first glyph of the run is not correctly set for rtl text.
+        https://bugs.webkit.org/show_bug.cgi?id=117839
+        <rdar://problem/13860717>
+
+        Reviewed by Sam Weinig.
+
+        We need to set the initial advance to the glyphBuffer, using the
+        initial advance of the complex run that will be drawn first.
+        In order to choose the run correctly we must consider the text direction.
+
+        Test: fast/text/complex-first-glyph-with-initial-advance.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::advance):
+
 2013-06-20  Alex Christensen  <achristensen@apple.com>
 
         Fixed WebGL compile errors on Windows.
