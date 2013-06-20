@@ -1,3 +1,10 @@
+2013-06-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Mark compositing/repaint/positioned-movement.html as flaky on Mountain Lion Debug
+
+        * platform/mac-wk2/TestExpectations:
+        The test fails regularly in Debug on Mountain Lion.
+
 2013-06-20  Robert Hogan  <robert@webkit.org>
 
         [Qt][WK2] REGRESSION(r151737): fast/replaced/width100percent-image.html fails
