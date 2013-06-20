@@ -100,7 +100,7 @@ if ($supplementalDependencyFile) {
         my ($idlFile, @followingIdlFiles) = split(/\s+/, $line);
         if ($idlFile and basename($idlFile) eq basename($targetIdlFile)) {
             $idlFound = 1;
-            @supplementedIdlFiles = @followingIdlFiles;
+            @supplementedIdlFiles = sort @followingIdlFiles;
         }
     }
     close FH;

@@ -1,3 +1,17 @@
+2013-06-19  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        The order of the generated supplemental code is not guaranteed
+        https://bugs.webkit.org/show_bug.cgi?id=117820
+
+        Reviewed by Kentaro Hara.
+
+        Sort the supplemental idl files before generating the code so that it is
+        generated in a consistent order.
+
+        No new tests, covered by existing bindings tests.
+
+        * bindings/scripts/generate-bindings.pl:
+
 2013-06-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r151769.
