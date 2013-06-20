@@ -1,3 +1,14 @@
+2013-06-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] remove bashism from configure
+        https://bugs.webkit.org/show_bug.cgi?id=117796
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/autotools/FindDependencies.m4: Perform string appending by redeclaring the base string to the value
+        of the base string followed by the string that's being appended. This replaces the use of the '+=' operator
+        that works under bash but is not supported by other shells.
+
 2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r147602): Search text field doesn't render selection when it has some :focus rules

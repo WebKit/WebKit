@@ -379,8 +379,8 @@ fi
 # Since we support earlier HarfBuzz versions we keep this conditional for now.
 if $PKG_CONFIG --atleast-version 0.9.18 harfbuzz; then
     PKG_CHECK_MODULES(HARFBUZZ_ICU, harfbuzz-icu >= $harfbuzz_required_version)
-    FREETYPE_CFLAGS+=" $HARFBUZZ_ICU_CFLAGS"
-    FREETYPE_LIBS+=" $HARFBUZZ_ICU_LIBS"
+    FREETYPE_CFLAGS="$FREETYPE_CFLAGS $HARFBUZZ_ICU_CFLAGS"
+    FREETYPE_LIBS="$FREETYPE_LIBS $HARFBUZZ_ICU_LIBS"
 fi
 AC_SUBST([FREETYPE_CFLAGS])
 AC_SUBST([FREETYPE_LIBS])
@@ -449,18 +449,18 @@ fi
 
 if test "$with_acceleration_backend" = "opengl"; then
     if test "$enable_gles2" = "yes"; then
-        acceleration_backend_description+="(gles2"
+        acceleration_backend_description="$acceleration_backend_description (gles2"
         OPENGL_LIBS="-lGLESv2"
     else
-        acceleration_backend_description+="(gl"
+        acceleration_backend_description="$acceleration_backend_description (gl"
         OPENGL_LIBS="-lGL"
     fi
     if test "$enable_egl" = "yes"; then
-        acceleration_backend_description+=", egl"
-        OPENGL_LIBS+=" -lEGL"
+        acceleration_backend_description="$acceleration_backend_description, egl"
+        OPENGL_LIBS="$OPENGL_LIBS -lEGL"
     fi
     if test "$enable_glx" = "yes"; then
-        acceleration_backend_description+=", glx"
+        acceleration_backend_description="$acceleration_backend_description, glx"
     fi
 
     # Check whether dlopen() is in the core libc like on FreeBSD, or in a separate
@@ -468,8 +468,8 @@ if test "$with_acceleration_backend" = "opengl"; then
     AC_CHECK_FUNC([dlopen], [], [AC_CHECK_LIB([dl], [dlopen], [DLOPEN_LIBS="-ldl"])])
     AC_SUBST([DLOPEN_LIBS])
 
-    OPENGL_LIBS+=" $DLOPEN_LIBS"
-    acceleration_backend_description+=")"
+    OPENGL_LIBS="$OPENGL_LIBS $DLOPEN_LIBS"
+    acceleration_backend_description="$acceleration_backend_description)"
 fi
 AC_SUBST([OPENGL_LIBS])
 
@@ -477,10 +477,10 @@ enable_accelerated_canvas=no
 if test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "opengl"; then
     CAIRO_GL_LIBS="cairo-gl"
     if test "$enable_glx" = "yes"; then
-        CAIRO_GL_LIBS+=" cairo-glx"
+        CAIRO_GL_LIBS="$CAIRO_GL_LIBS cairo-glx"
     fi
     if test "$enable_egl" = "yes"; then
-        CAIRO_GL_LIBS+=" cairo-egl"
+        CAIRO_GL_LIBS="$CAIRO_GL_LIBS cairo-egl"
     fi
 
     # At the moment CairoGL does not add any extra cflags and libraries, so we can
