@@ -27,24 +27,25 @@
         <div id="region">
         </div>
         <script>
-        description("Test for https://bugs.webkit.org/show_bug.cgi?id=102944 [CSS Regions] Crash when dispatching regionlayoutupdate. The test passes if there is no crash or assert.");
+        description("The test passes if there is no crash or assert.");
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
         }
 
         function dummyHandler (evt) {
-            evt.target.removeEventListener("webkitregionlayoutupdate", dummyHandler);
+            evt.target.removeEventListener("webkitregionoversetchange", dummyHandler);
+            debug("This line should not appear!");
         }
 
         setTimeout(function() {
             var namedFlows = document.webkitGetNamedFlows();
-            namedFlows["flow"].addEventListener("webkitregionlayoutupdate", dummyHandler);
+            namedFlows["flow"].addEventListener("webkitregionoversetchange", dummyHandler);
             var content = document.getElementById("content");
             var region = document.getElementById("region");
             content.style.height = "600px";
 
-            // Schedule a regionlayoutupdate event.
+            // Schedule a regionoversetchange event.
             document.body.offsetTop;
 
             // Transition the flow to the "NULL" state.

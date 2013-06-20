@@ -87,6 +87,7 @@ private:
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
 
     virtual void dispatchRegionLayoutUpdateEvent() OVERRIDE;
+    virtual void dispatchRegionOversetChangeEvent() OVERRIDE;
 
     bool dependsOn(RenderNamedFlowThread* otherRenderFlowThread) const;
     void addDependencyOnFlowThread(RenderNamedFlowThread*);
@@ -98,6 +99,7 @@ private:
 
     bool canBeDestroyed() const { return m_invalidRegionList.isEmpty() && m_regionList.isEmpty() && m_contentNodes.isEmpty(); }
     void regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>*);
+    void regionOversetChangeEventTimerFired(Timer<RenderNamedFlowThread>*);
     void clearContentNodes();
 
 private:
@@ -123,6 +125,7 @@ private:
     RefPtr<WebKitNamedFlow> m_namedFlow;
 
     Timer<RenderNamedFlowThread> m_regionLayoutUpdateEventTimer;
+    Timer<RenderNamedFlowThread> m_regionOversetChangeEventTimer;
 };
 
 inline RenderNamedFlowThread* toRenderNamedFlowThread(RenderObject* object)

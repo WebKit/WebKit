@@ -60,6 +60,9 @@ public:
     bool isInCanvasSubtree() const { return m_isInCanvasSubtree; }
     void setIsInCanvasSubtree(bool value) { m_isInCanvasSubtree = value; }
 
+    RegionOversetState regionOversetState() const { return m_regionOversetState; }
+    void setRegionOversetState(RegionOversetState state) { m_regionOversetState = state; }
+
 #if ENABLE(FULLSCREEN_API)
     bool containsFullScreenElement() { return m_containsFullScreenElement; }
     void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
@@ -156,6 +159,8 @@ private:
     unsigned m_childrenAffectedByForwardPositionalRules : 1;
     unsigned m_childrenAffectedByBackwardPositionalRules : 1;
 
+    RegionOversetState m_regionOversetState;
+
     LayoutSize m_minimumSizeForResizing;
     IntSize m_savedLayerScrollOffset;
     RefPtr<RenderStyle> m_computedStyle;
@@ -202,6 +207,7 @@ inline ElementRareData::ElementRareData(RenderObject* renderer)
     , m_childrenAffectedByDirectAdjacentRules(false)
     , m_childrenAffectedByForwardPositionalRules(false)
     , m_childrenAffectedByBackwardPositionalRules(false)
+    , m_regionOversetState(RegionUndefined)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
 }

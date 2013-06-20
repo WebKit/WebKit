@@ -36,7 +36,7 @@
 
 <script>
 
-description("Tests regionLayoutEvent being dispatched when the content is removed");
+description("Tests regionOversetChange event being dispatched when the content is removed");
 
 if (window.testRunner) {
         testRunner.dumpAsText();
@@ -52,12 +52,12 @@ if (window.testRunner) {
     }
     
     var count = 0;
-    var layoutUpdateDispatchedForNullFlow = false;
-    function regionLayoutUpdated(event) {
+    var regionOversetDispatchedForNullFlow = false;
+    function regionOversetChanged(event) {
         shouldBeEqualToString("event.target.name", "article");
         if (++count > 1) {
-           event.target.removeEventListener("webkitregionlayoutupdate", regionLayoutUpdated);
-           layoutUpdateDispatchedForNullFlow = true;
+           event.target.removeEventListener("webkitregionoversetchange", regionOversetChanged);
+           regionOversetDispatchedForNullFlow = true;
            return;
         }
         
@@ -71,17 +71,17 @@ if (window.testRunner) {
         debug("Removing article from flow");
         el.style.webkitFlowInto = "none";
 
-        setTimeout(checkIfEventDispatched, 500);
+        setTimeout(checkIfEventDispatched, 200);
     }
 
     function checkIfEventDispatched() {
-        shouldBeFalse("layoutUpdateDispatchedForNullFlow");
+        shouldBeFalse("regionOversetDispatchedForNullFlow");
         finishJSTest();
     }
     
     function startTest() {
         var flow = getFlowByName("article");
-        flow.addEventListener("webkitregionlayoutupdate", regionLayoutUpdated);
+        flow.addEventListener("webkitregionoversetchange", regionOversetChanged);
         
         debug("Flow content");
         flowContent("article");

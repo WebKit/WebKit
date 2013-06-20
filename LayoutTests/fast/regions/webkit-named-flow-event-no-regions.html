@@ -35,7 +35,7 @@
 </div>
 
 <script>
-    description("Tests regionLayoutEvent being dispatched when the region chain is removed");
+    description("Tests regionOversetChange being dispatched when the region chain is removed");
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
@@ -49,12 +49,17 @@
         r.style.webkitFlowFrom = flowName;
     }
 
-    var count = 0;
-    function regionLayoutUpdated(event) {
+    function finishTest() {
+        shouldBe("eventCount", "2");
+        finishJSTest();
+    }
+
+    var eventCount = 0;
+    function regionOversetChanged(event) {
         shouldBeEqualToString("event.target.name", "article");
-        if (++count > 1) {
-           event.target.removeEventListener("webkitregionlayoutupdate", regionLayoutUpdated);
-           finishJSTest();
+        if (++eventCount > 1) {
+           event.target.removeEventListener("webkitregionoversetchange", regionOversetChanged);
+           finishTest();
            return;
         }
 
@@ -68,7 +73,7 @@
 
     function startTest() {
         var flow = getFlowByName("article");
-        flow.addEventListener("webkitregionlayoutupdate", regionLayoutUpdated);
+        flow.addEventListener("webkitregionoversetchange", regionOversetChanged);
 
         debug("Flow content");
         flowContent("article");

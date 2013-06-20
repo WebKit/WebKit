@@ -101,7 +101,7 @@ int WebKitNamedFlow::firstEmptyRegionIndex() const
     RenderRegionList::const_iterator iter = regionList.begin();
     for (int index = 0; iter != regionList.end(); ++index, ++iter) {
         const RenderRegion* renderRegion = *iter;
-        if (renderRegion->regionState() == RenderRegion::RegionEmpty)
+        if (renderRegion->regionOversetState() == RegionEmpty)
             return index;
     }
     return -1;
@@ -212,6 +212,19 @@ void WebKitNamedFlow::dispatchRegionLayoutUpdateEvent()
 
     RefPtr<Event> event = UIEvent::create(eventNames().webkitregionlayoutupdateEvent, false, false, m_flowManager->document()->defaultView(), 0);
 
+    dispatchEvent(event);
+}
+    
+void WebKitNamedFlow::dispatchRegionOversetChangeEvent()
+{
+    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    
+    // If the flow is in the "NULL" state the event should not be dispatched any more.
+    if (flowState() == FlowStateNull)
+        return;
+    
+    RefPtr<Event> event = UIEvent::create(eventNames().webkitregionoversetchangeEvent, false, false, m_flowManager->document()->defaultView(), 0);
+    
     dispatchEvent(event);
 }
 

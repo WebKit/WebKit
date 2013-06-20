@@ -29,6 +29,7 @@
 #include "CollectionType.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "RegionOversetState.h"
 #include "ScrollTypes.h"
 #include "SpaceSplitString.h"
 
@@ -477,6 +478,9 @@ public:
 
     void setIsInCanvasSubtree(bool);
     bool isInCanvasSubtree() const;
+
+    void setRegionOversetState(RegionOversetState);
+    RegionOversetState regionOversetState() const;
 
     AtomicString computeInheritedLanguage() const;
     Locale& locale() const;

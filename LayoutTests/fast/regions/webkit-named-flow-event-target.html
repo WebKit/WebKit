@@ -19,7 +19,7 @@
 .block {
    display:block;
 }
-#region_1, #region_2 { height:110px; width:200px}
+#region_1, #region_2 { height:110px; width:200px; border: 1px solid red;}
 </style>
 </head>
 <body>
@@ -75,17 +75,20 @@ function makeFlowCreated() {
 }
 
 var updatedCount = 0;
+function finishTest() {
+    shouldBe("updatedCount", "2");
+    finishJSTest();
+}
+
 function flowThreadUpdated(event) {
 	++updatedCount;
     shouldBeEqualToString("event.target.name", "article");
 
-    shouldBeGreaterThanOrEqual("2", "updatedCount");
-
     if (updatedCount == 2) {
     	shouldBeTrue("recreated");
-    	event.target.removeEventListener("webkitregionlayoutupdate", flowThreadUpdated);
+    	event.target.removeEventListener("webkitregionoversetchange", flowThreadUpdated);
     	makeFlowNull();
-    	finishJSTest();
+    	setTimeout("finishTest()", 200);
     	return;
     }
 
@@ -98,7 +101,7 @@ function flowThreadUpdated(event) {
 
 function startTest() {    
     var flowThread = getFlowByName("article");
-    flowThread.addEventListener("webkitregionlayoutupdate", flowThreadUpdated);
+    flowThread.addEventListener("webkitregionoversetchange", flowThreadUpdated);
     
     debug("Flow content");
     flowContent("article");

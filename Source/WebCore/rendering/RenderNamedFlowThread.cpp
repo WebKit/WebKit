@@ -54,6 +54,7 @@ RenderNamedFlowThread* RenderNamedFlowThread::createAnonymous(Document* document
 RenderNamedFlowThread::RenderNamedFlowThread(PassRefPtr<WebKitNamedFlow> namedFlow)
     : m_namedFlow(namedFlow)
     , m_regionLayoutUpdateEventTimer(this, &RenderNamedFlowThread::regionLayoutUpdateEventTimerFired)
+    , m_regionOversetChangeEventTimer(this, &RenderNamedFlowThread::regionOversetChangeEventTimerFired)
 {
 }
 
@@ -427,11 +428,26 @@ void RenderNamedFlowThread::dispatchRegionLayoutUpdateEvent()
         m_regionLayoutUpdateEventTimer.startOneShot(0);
 }
 
+void RenderNamedFlowThread::dispatchRegionOversetChangeEvent()
+{
+    RenderFlowThread::dispatchRegionOversetChangeEvent();
+    
+    if (!m_regionOversetChangeEventTimer.isActive() && m_namedFlow->hasEventListeners())
+        m_regionOversetChangeEventTimer.startOneShot(0);
+}
+
 void RenderNamedFlowThread::regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>*)
 {
     ASSERT(m_namedFlow);
 
     m_namedFlow->dispatchRegionLayoutUpdateEvent();
+}
+
+void RenderNamedFlowThread::regionOversetChangeEventTimerFired(Timer<RenderNamedFlowThread>*)
+{
+    ASSERT(m_namedFlow);
+    
+    m_namedFlow->dispatchRegionOversetChangeEvent();
 }
 
 void RenderNamedFlowThread::setMarkForDestruction()

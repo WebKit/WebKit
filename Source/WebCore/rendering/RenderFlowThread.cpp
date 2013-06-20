@@ -50,6 +50,7 @@ namespace WebCore {
 
 RenderFlowThread::RenderFlowThread()
     : RenderBlock(0)
+    , m_previousRegionCount(0)
     , m_autoLogicalHeightRegionsCount(0)
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
@@ -57,6 +58,7 @@ RenderFlowThread::RenderFlowThread()
     , m_overset(true)
     , m_hasRegionsWithStyling(false)
     , m_dispatchRegionLayoutUpdateEvent(false)
+    , m_dispatchRegionOversetChangeEvent(false)
     , m_pageLogicalSizeChanged(false)
     , m_inConstrainedLayoutPhase(false)
     , m_needsTwoPhasesLayout(false)
@@ -219,6 +221,9 @@ void RenderFlowThread::layout()
 
     if (shouldDispatchRegionLayoutUpdateEvent())
         dispatchRegionLayoutUpdateEvent();
+    
+    if (shouldDispatchRegionOversetChangeEvent())
+        dispatchRegionOversetChangeEvent();
 }
 
 void RenderFlowThread::updateLogicalWidth()
@@ -735,7 +740,7 @@ void RenderFlowThread::applyBreakAfterContent(LayoutUnit clientHeight)
     addForcedRegionBreak(clientHeight, this, false);
 }
 
-void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterEdge)
+void RenderFlowThread::computeOversetStateForRegions(LayoutUnit oldClientAfterEdge)
 {
     LayoutUnit height = oldClientAfterEdge;
 
@@ -753,25 +758,34 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
         RenderRegion* region = *iter;
         LayoutUnit flowMin = height - (isHorizontalWritingMode() ? region->flowThreadPortionRect().y() : region->flowThreadPortionRect().x());
         LayoutUnit flowMax = height - (isHorizontalWritingMode() ? region->flowThreadPortionRect().maxY() : region->flowThreadPortionRect().maxX());
-        RenderRegion::RegionState previousState = region->regionState();
-        RenderRegion::RegionState state = RenderRegion::RegionFit;
+        RegionOversetState previousState = region->regionOversetState();
+        RegionOversetState state = RegionFit;
         if (flowMin <= 0)
-            state = RenderRegion::RegionEmpty;
+            state = RegionEmpty;
         if (flowMax > 0 && region == lastReg)
-            state = RenderRegion::RegionOverset;
-        region->setRegionState(state);
+            state = RegionOverset;
+        region->setRegionOversetState(state);
         // determine whether the NamedFlow object should dispatch a regionLayoutUpdate event
         // FIXME: currently it cannot determine whether a region whose regionOverset state remained either "fit" or "overset" has actually
         // changed, so it just assumes that the NamedFlow should dispatch the event
         if (previousState != state
-            || state == RenderRegion::RegionFit
-            || state == RenderRegion::RegionOverset)
+            || state == RegionFit
+            || state == RegionOverset)
             setDispatchRegionLayoutUpdateEvent(true);
+        
+        if (previousState != state)
+            setDispatchRegionOversetChangeEvent(true);
+    }
+    
+    // If the number of regions has changed since we last computed the overset property, schedule the regionOversetChange event.
+    if (previousRegionCountChanged()) {
+        setDispatchRegionOversetChangeEvent(true);
+        updatePreviousRegionCount();
     }
 
     // With the regions overflow state computed we can also set the overset flag for the named flow.
     // If there are no valid regions in the chain, overset is true.
-    m_overset = lastReg ? lastReg->regionState() == RenderRegion::RegionOverset : true;
+    m_overset = lastReg ? lastReg->regionOversetState() == RegionOverset : true;
 }
 
 bool RenderFlowThread::regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const

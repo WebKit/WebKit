@@ -34,7 +34,7 @@
 <div id="console" class="block"></div>
 
 <script>
-    description("Tests regionLayoutEvent")
+    description("Tests regionOversetChange event")
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
@@ -49,19 +49,18 @@
     
     function flowThreadUpdated(event) {
         shouldBeEqualToString("event.target.name", "article");
-        event.target.removeEventListener("webkitregionlayoutupdate", flowThreadUpdated);
+        event.target.removeEventListener("webkitregionoversetchange", flowThreadUpdated);
         
         finishJSTest();
     }
     
     function startTest() {    
         var flowThread = getFlowByName("article");
-        flowThread.addEventListener("webkitregionlayoutupdate", flowThreadUpdated);
+        flowThread.addEventListener("webkitregionoversetchange", flowThreadUpdated);
         
         debug("Flow content");
         flowContent("article");
     }
-    //startTest();
     window.addEventListener("load", startTest);
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

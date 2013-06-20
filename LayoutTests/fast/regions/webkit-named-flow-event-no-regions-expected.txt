@@ -1,4 +1,4 @@
-Tests regionLayoutEvent being dispatched when the region chain is removed
+Tests regionOversetChange being dispatched when the region chain is removed
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -8,6 +8,7 @@ PASS event.target.name is "article"
 Removing region 1
 Removing region 2
 PASS event.target.name is "article"
+PASS eventCount is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

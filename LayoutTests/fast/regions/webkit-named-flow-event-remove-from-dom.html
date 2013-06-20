@@ -17,7 +17,7 @@
 .block {
    display:block;
 }
-#region_1, #region_2 { height:110px; width:200px; margin: 5px;}
+#region_1, #region_2 { height:110px; width:200px; margin: 5px; border: 1px solid red;}
 </style>
 </head>
 <body>
@@ -36,7 +36,7 @@
 <div id="console" class="block"></div>
 
 <script>
-    description("Tests regionLayoutEvent")
+    description("Tests regionOversetChange event")
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
@@ -49,14 +49,19 @@
         r = document.getElementById("region_2");
         r.style.webkitFlowFrom = flowName;
     }
-    
-    var count = 0;
-    function regionLayoutUpdated(event) {
+
+    var eventCount = 0;
+    function finishTest() {
+        shouldBe("eventCount", "2");
+        finishJSTest();
+    }
+
+    function regionOversetChanged(event) {
         shouldBeEqualToString("event.target.name", "article");
-        if (++count > 1) {
-           event.target.removeEventListener("webkitregionlayoutupdate", regionLayoutUpdated);
+        if (++eventCount > 1) {
+           event.target.removeEventListener("webkitregionoversetchange", regionOversetChanged);
            // this should be reached after region_2 is removed from DOM
-           finishJSTest();
+           finishTest();
            return;
         }
         
@@ -67,7 +72,7 @@
     
     function startTest() {
         var flow = getFlowByName("article");
-        flow.addEventListener("webkitregionlayoutupdate", regionLayoutUpdated);
+        flow.addEventListener("webkitregionoversetchange", regionOversetChanged);
         
         debug("Flow content");
         flowContent("article");

@@ -1,3 +1,35 @@
+2013-06-20  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Add new regionOversetChange event
+        https://bugs.webkit.org/show_bug.cgi?id=117508
+
+        Changed regionLayoutUpdate tests to regionOversetChange and added new tests for regionOversetChange.
+
+        Reviewed by Antti Koivisto.
+
+        * fast/regions/webkit-named-flow-event-add-to-flow-expected.txt:
+        * fast/regions/webkit-named-flow-event-add-to-flow.html:
+        * fast/regions/webkit-named-flow-event-auto-height-expected.txt:
+        * fast/regions/webkit-named-flow-event-auto-height.html: Added.
+        * fast/regions/webkit-named-flow-event-crash-expected.txt:
+        * fast/regions/webkit-named-flow-event-crash.html:
+        * fast/regions/webkit-named-flow-event-expected.txt:
+        * fast/regions/webkit-named-flow-event-no-regions-expected.txt:
+        * fast/regions/webkit-named-flow-event-no-regions.html:
+        * fast/regions/webkit-named-flow-event-region-in-flexbox-no-overset-change-expected.txt:
+        * fast/regions/webkit-named-flow-event-region-in-flexbox-no-overset-change.html: Added.
+        * fast/regions/webkit-named-flow-event-region-in-flexbox-overset-change-expected.txt:
+        * fast/regions/webkit-named-flow-event-region-in-flexbox-overset-change.html: Added.
+        * fast/regions/webkit-named-flow-event-remove-from-dom-expected.txt:
+        * fast/regions/webkit-named-flow-event-remove-from-dom.html:
+        * fast/regions/webkit-named-flow-event-remove-from-flow-expected.txt:
+        * fast/regions/webkit-named-flow-event-remove-from-flow.html:
+        * fast/regions/webkit-named-flow-event-target-expected.txt:
+        * fast/regions/webkit-named-flow-event-target.html:
+        * fast/regions/webkit-named-flow-event-to-null-expected.txt:
+        * fast/regions/webkit-named-flow-event-to-null.html:
+        * fast/regions/webkit-named-flow-event.html:
+
 2013-06-20  James Craig  <james@cookiecrook.com>
 
         AX: aria-required is not exposed on all expected roles

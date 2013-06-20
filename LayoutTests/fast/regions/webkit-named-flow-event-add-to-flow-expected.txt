@@ -1,10 +1,11 @@
-Tests regionLayoutEvent
+Tests regionOversetChange event
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
  Flow content
 PASS event.target.name is "article"
 PASS event.target.name is "article"
+PASS eventCount is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1285,17 +1285,17 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::Region> > InspectorCSSAgent::bui
     for (unsigned i = 0; i < regionList->length(); ++i) {
         TypeBuilder::CSS::Region::RegionOverset::Enum regionOverset;
 
-        switch (toElement(regionList->item(i))->renderRegion()->regionState()) {
-        case RenderRegion::RegionFit:
+        switch (toElement(regionList->item(i))->renderRegion()->regionOversetState()) {
+        case RegionFit:
             regionOverset = TypeBuilder::CSS::Region::RegionOverset::Fit;
             break;
-        case RenderRegion::RegionEmpty:
+        case RegionEmpty:
             regionOverset = TypeBuilder::CSS::Region::RegionOverset::Empty;
             break;
-        case RenderRegion::RegionOverset:
+        case RegionOverset:
             regionOverset = TypeBuilder::CSS::Region::RegionOverset::Overset;
             break;
-        case RenderRegion::RegionUndefined:
+        case RegionUndefined:
             continue;
         default:
             ASSERT_NOT_REACHED();

@@ -246,6 +246,8 @@ namespace WebCore {
     \
     macro(webkitregionlayoutupdate) \
     \
+    macro(webkitregionoversetchange) \
+    \
     macro(webkitnetworkinfochange) \
     \
     macro(webkitresourcetimingbufferfull) \

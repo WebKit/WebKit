@@ -1,3 +1,70 @@
+2013-06-20  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Add new regionOversetChange event
+        https://bugs.webkit.org/show_bug.cgi?id=117508
+
+        Added regionOversetChange event and tests for it. The overset value of the region has been moved to the ElementRareData
+        object instead of the RenderRegion object. This was needed for the case when a reattach is performed (for instance by changing
+        the display type of the region's containing block) and the RenderRegion object is destroyed. When computing the overset again,
+        there would be no "previous" value to compare it to and decide whether the regionOversetChange event must be dispatched.
+
+        Reviewed by Antti Koivisto.
+
+        Tests:  fast/regions/webkit-named-flow-event-add-to-flow.html:
+                fast/regions/webkit-named-flow-event-auto-height.html:
+                fast/regions/webkit-named-flow-event-crash.html:
+                fast/regions/webkit-named-flow-event-no-regions.html:
+                fast/regions/webkit-named-flow-event-region-in-flexbox-no-overset-change.html: Added.
+                fast/regions/webkit-named-flow-event-region-in-flexbox-overset-change.html: Added.
+                fast/regions/webkit-named-flow-event-remove-from-dom.html:
+                fast/regions/webkit-named-flow-event-remove-from-flow.html:
+                fast/regions/webkit-named-flow-event-target.html:
+                fast/regions/webkit-named-flow-event-to-null.html:
+                fast/regions/webkit-named-flow-event.html:
+
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp:
+        (WebCore::Element::setRegionOversetState):
+        (WebCore::Element::regionOversetState):
+        (WebCore::Element::webkitRegionOverset):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::regionOversetState):
+        (WebCore::ElementRareData::setRegionOversetState):
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/EventNames.h:
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::firstEmptyRegionIndex):
+        (WebCore::WebKitNamedFlow::dispatchRegionOversetChangeEvent):
+        * dom/WebKitNamedFlow.h:
+        (WebCore::ChangeRegionOversetTask::ChangeRegionOversetTask):
+        (WebCore::ChangeRegionOversetTask::scheduleFor):
+        (WebCore::ChangeRegionOversetTask::unschedule):
+        (WebCore::ChangeRegionOversetTask::reset):
+        (WebCore::ChangeRegionOversetTask::onTimer):
+        * rendering/RegionOversetState.h: Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::computeOversetStateForRegions):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::dispatchRegionOversetChangeEvent):
+        (WebCore::RenderNamedFlowThread::regionOversetChangeEventTimerFired):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::regionOversetState):
+        (WebCore::RenderRegion::setRegionOversetState):
+        * rendering/RenderRegion.h:
+
 2013-06-20  James Craig  <james@cookiecrook.com>
 
         AX: aria-required is not exposed on all expected roles

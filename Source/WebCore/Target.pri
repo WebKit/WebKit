@@ -2421,6 +2421,7 @@ HEADERS += \
     rendering/PaintInfo.h \
     rendering/PaintPhase.h \
     rendering/PointerEventsHitRules.h \
+    rendering/RegionOversetState.h \
     rendering/RenderApplet.h \
     rendering/RenderArena.h \
     rendering/RenderBlock.h \
