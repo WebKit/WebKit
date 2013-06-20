@@ -1,3 +1,21 @@
+2013-06-20  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Downloaded file name encoding is incorrect when download link opens in a new window
+        https://bugs.webkit.org/show_bug.cgi?id=117818
+        <rdar://problem/14212635>
+
+        Reviewed by Brady Eidson.
+
+        No tests added. The machinery we have for logging downloaded file name is very
+        far from being able to work in a secondary window.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::addExtraFieldsToRequest):
+        Made a targeted fix - don't update encoding fallback array if we already have one,
+        there is no chance for it to be more correct. In this case, it's incorrect because
+        it comes from a new blank window, instead of original referer.
+        We have a lot of code in addExtraFieldsToRequest() to struggle with this, and we have
+        a FIXME to try not calling it from policy delegate.
+
 2013-06-18  Robert Hogan  <robert@webkit.org>
 
         REGRESSION (r151451): Text not vertically centered correctly on icloud.com
