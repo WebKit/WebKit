@@ -1,3 +1,14 @@
+2013-06-20  Mark Lam  <mark.lam@apple.com>
+
+        [Windows] Undoing r150621 to roll r150600 back in as the jsc test
+        failures have been fixed in r151808.
+        https://bugs.webkit.org/show_bug.cgi?id=116661.
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::initialize):
+
 2013-06-20  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         HashSet: reverse the order of the template arguments at alternate 'find', 'contains' and 'add' methods
