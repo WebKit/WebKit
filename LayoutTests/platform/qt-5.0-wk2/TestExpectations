@@ -658,9 +658,6 @@ http/tests/xmlhttprequest/logout.html
 platform/qt/plugins/application-plugin-plugins-disabled.html
 platform/qt/plugins/qt-qwidget-plugin.html
 
-[Qt][WK2] REGRESSION(r151737)
-webkit.org/b/117824 fast/replaced/width100percent-image.html [ Skip ]
-
 # =========================================================================== #
 # Printing tests.                                                             #
 # =========================================================================== #
