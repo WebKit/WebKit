@@ -827,18 +827,21 @@ void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOp
     // If we are only moving the dialog, we don't need to provide startTextPosition and endTextPosition so this logic can be skipped.
     if (!shouldMoveDialog) {
         // Calculate the offset for contentEditable since the marker offsets are relative to the node.
-        // Get caret position. Though the spelling markers might no longer exist, if this method is called we can assume the caret was placed on top of a marker earlier.
-        VisiblePosition caretPosition = m_currentFocusElement->document()->frame()->selection()->selection().visibleStart();
+        // Get caret selection. Though the spelling markers might no longer exist, if this method is called we can assume the caret was placed on top of a marker earlier.
+        VisibleSelection caretSelection = m_currentFocusElement->document()->frame()->selection()->selection();
+        caretSelection = DOMSupport::visibleSelectionForClosestActualWordStart(caretSelection);
+        VisiblePosition wordStart = caretSelection.visibleStart();
+        VisiblePosition wordEnd = endOfWord(caretSelection.visibleStart());
 
         if (HTMLTextFormControlElement* controlElement = DOMSupport::toTextControlElement(m_currentFocusElement.get())) {
-            spellCheckingOptionRequest.startTextPosition = controlElement->indexForVisiblePosition(startOfWord(caretPosition));
-            spellCheckingOptionRequest.endTextPosition = controlElement->indexForVisiblePosition(endOfWord(caretPosition));
+            spellCheckingOptionRequest.startTextPosition = controlElement->indexForVisiblePosition(wordStart);
+            spellCheckingOptionRequest.endTextPosition = controlElement->indexForVisiblePosition(wordEnd);
         } else {
             unsigned location = 0;
             unsigned length = 0;
 
             // Create a range from the start to end of word.
-            RefPtr<Range> rangeSelection = VisibleSelection(startOfWord(caretPosition), endOfWord(caretPosition)).toNormalizedRange();
+            RefPtr<Range> rangeSelection = VisibleSelection(wordStart, wordEnd).toNormalizedRange();
             if (!rangeSelection)
                 return;
 

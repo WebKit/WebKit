@@ -1,3 +1,22 @@
+2013-06-20  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        [BlackBerry] Send the correct offsets for misspelled words.
+        https://bugs.webkit.org/show_bug.cgi?id=117846
+
+        JIRA116916.
+        When the caret is placed after a word, the offsets were calculated around
+        the proceeding space. As such, words that end a sentence worked correctly, but
+        midsentence words did not. The 'startOfWord' was calculated for the space ahead
+        and not for the word before it. Now finding the start of the word correctly and
+        calculating the end from there.
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Genevieve Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestSpellingCheckingOptions):
+
 2013-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Handle testRunner.setWillSendRequestReturnsNull() in DRT
