@@ -46,6 +46,11 @@ String pluginInformationBundleVersionKey()
     return ASCIILiteral("PluginInformationBundleVersion");
 }
 
+String pluginInformationBundleShortVersionKey()
+{
+    return ASCIILiteral("PluginInformationBundleShortVersion");
+}
+
 String pluginInformationPathKey()
 {
     return ASCIILiteral("PluginInformationPath");

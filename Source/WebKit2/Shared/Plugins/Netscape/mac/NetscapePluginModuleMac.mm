@@ -378,6 +378,11 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
             plugin.versionString = static_cast<CFStringRef>(versionTypeRef);
     }
 
+    if (CFTypeRef shortVersionTypeRef = CFBundleGetValueForInfoDictionaryKey(bundle.get(), CFSTR("CFBundleShortVersionString"))) {
+        if (CFGetTypeID(shortVersionTypeRef) == CFStringGetTypeID())
+            plugin.shortVersionString = static_cast<CFStringRef>(shortVersionTypeRef);
+    }
+
     if (CFTypeRef preferencePathTypeRef = CFBundleGetValueForInfoDictionaryKey(bundle.get(), CFSTR("WebPluginPreferencePanePath"))) {
         if (CFGetTypeID(preferencePathTypeRef) == CFStringGetTypeID())
             plugin.preferencePanePath = static_cast<CFStringRef>(preferencePathTypeRef);

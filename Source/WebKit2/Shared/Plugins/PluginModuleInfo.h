@@ -54,6 +54,7 @@ struct PluginModuleInfo {
     cpu_type_t pluginArchitecture;
     String bundleIdentifier;
     String versionString;
+    String shortVersionString;
     String preferencePanePath;
 #endif
 };

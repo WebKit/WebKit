@@ -36,6 +36,7 @@ struct PluginModuleInfo;
 // Plug-in module information keys
 String pluginInformationBundleIdentifierKey();
 String pluginInformationBundleVersionKey();
+String pluginInformationBundleShortVersionKey();
 String pluginInformationPathKey();
 String pluginInformationDisplayNameKey();
 String pluginInformationDefaultLoadPolicyKey();

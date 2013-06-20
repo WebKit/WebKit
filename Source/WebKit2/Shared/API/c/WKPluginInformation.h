@@ -41,6 +41,9 @@ WK_EXPORT WKStringRef WKPluginInformationBundleIdentifierKey();
 WK_EXPORT WKStringRef WKPluginInformationBundleVersionKey();
 
 /* Value type: WKStringRef */
+WKStringRef WKPluginInformationBundleShortVersionKey();
+
+/* Value type: WKStringRef */
 WK_EXPORT WKStringRef WKPluginInformationPathKey();
 
 /* Value type: WKStringRef */
