@@ -53,7 +53,7 @@ public:
     String absoluteLinkURL() const;
     String absoluteMediaURL() const;
     bool mediaIsInFullscreen() const;
-    BundleHitTestResultMediaType getMediaType() const;
+    BundleHitTestResultMediaType mediaType() const;
 
     String linkLabel() const;
     String linkTitle() const;
