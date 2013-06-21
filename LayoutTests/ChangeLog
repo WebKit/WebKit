@@ -1,3 +1,17 @@
+2013-06-21  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Added support for aria-required attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=117730
+
+        Reviewed by Chris Fleizach.
+
+        Moving specific platform accessibility tests.
+
+        * accessibility/aria-required-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/aria-required-expected.txt.
+        * accessibility/aria-required.html: Renamed from LayoutTests/platform/mac/accessibility/aria-required.html.
+        * accessibility/html5-required-attribute-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/html5-required-attribute-expected.txt.
+        * accessibility/html5-required-attribute.html: Renamed from LayoutTests/platform/mac/accessibility/html5-required-attribute.html.
+
 2013-06-21  Chris Fleizach  <cfleizach@apple.com>
 
         IndieUI: Add basic IndieUI infrastructure

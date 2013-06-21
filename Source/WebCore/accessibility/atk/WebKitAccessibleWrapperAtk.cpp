@@ -712,6 +712,9 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     if (coreObject->isPressed())
         atk_state_set_add_state(stateSet, ATK_STATE_PRESSED);
 
+    if (coreObject->isRequired())
+        atk_state_set_add_state(stateSet, ATK_STATE_REQUIRED);
+
     // TODO: ATK_STATE_SELECTABLE_TEXT
 
     if (coreObject->canSetSelectedAttribute()) {

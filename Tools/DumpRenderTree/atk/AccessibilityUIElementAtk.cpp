@@ -581,8 +581,7 @@ bool AccessibilityUIElement::isDecrementActionSupported()
 
 bool AccessibilityUIElement::isRequired() const
 {
-    // FIXME: implement
-    return false;
+    return checkElementState(m_element, ATK_STATE_REQUIRED);
 }
 
 bool AccessibilityUIElement::isFocused() const

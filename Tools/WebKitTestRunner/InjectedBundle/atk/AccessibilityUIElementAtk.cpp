@@ -761,8 +761,7 @@ bool AccessibilityUIElement::isEnabled()
 
 bool AccessibilityUIElement::isRequired() const
 {
-    // FIXME: implement
-    return false;
+    return checkElementState(m_element.get(), ATK_STATE_REQUIRED);
 }
 
 bool AccessibilityUIElement::isFocused() const
