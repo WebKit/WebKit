@@ -1,3 +1,14 @@
+2013-06-21  Alex Christensen  <achristensen@apple.com>
+
+        Added glext.h from http://www.opengl.org/registry/oldspecs/glext.h for Windows
+        This file does not meet WebKit style guidelines.
+        Part of https://bugs.webkit.org/show_bug.cgi?id=117853
+        
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/win/GL: Added.
+        * platform/graphics/win/GL/glext.h: Added.
+
 2013-06-21  Ruth Fong  <ruth_fong@apple.com>
 
         Fix TextTrackCue::cueIndex() to handle the null case of TextTrack::cues(() properly
