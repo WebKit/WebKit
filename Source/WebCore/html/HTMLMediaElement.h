@@ -88,7 +88,11 @@ typedef CueIntervalTree::IntervalType CueInterval;
 typedef Vector<CueInterval> CueList;
 #endif
 
-class HTMLMediaElement : public HTMLElement, private MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface
+// FIXME: The inheritance from MediaPlayerClient here should be private inheritance.
+// But it can't be until the Chromium WebMediaPlayerClientImpl class is fixed so it
+// no longer depends on typecasting a MediaPlayerClient to an HTMLMediaElement.
+
+class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, public MediaPlayerSupportsTypeClient, private MediaCanStartListener, public ActiveDOMObject, public MediaControllerInterface
 #if ENABLE(VIDEO_TRACK)
     , private AudioTrackClient
     , private TextTrackClient
