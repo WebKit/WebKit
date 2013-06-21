@@ -45,6 +45,7 @@
 #import "DOMTestObjectAConstructorInternal.h"
 #import "DOMTestObjectBConstructorInternal.h"
 #import "DOMTestObjectCConstructorInternal.h"
+#import "DOMTestSubObjConstructorInternal.h"
 #import "DOManyInternal.h"
 #import "DOMboolInternal.h"
 #import "Dictionary.h"
@@ -65,6 +66,7 @@
 #import "TestObjectAConstructor.h"
 #import "TestObjectBConstructor.h"
 #import "TestObjectCConstructor.h"
+#import "TestSubObjConstructor.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
@@ -109,6 +111,20 @@
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->readOnlyTestObjAttr()));
+}
+
+- (DOMTestSubObjConstructor *)TestSubObjEnabledBySetting
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->testSubObjEnabledBySetting()));
+}
+
+- (void)setTestSubObjEnabledBySetting:(DOMTestSubObjConstructor *)newTestSubObjEnabledBySetting
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newTestSubObjEnabledBySetting);
+
+    IMPL->setTestSubObjEnabledBySetting(core(newTestSubObjEnabledBySetting));
 }
 
 - (char)byteAttr

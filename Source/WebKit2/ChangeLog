@@ -1,3 +1,17 @@
+2013-06-21  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        REGRESSION (r150663): Using webkitAudioContext in Inspector makes it undefined everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=117825
+
+        Reviewed by Kentaro Hara.
+
+        Use Settings to enable Web Audio instead of RuntimeEnabledFeatures.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2013-06-21  Sergio Correia  <sergio.correia@openbossa.org>
 
         [WK2][EFL]: Invalidate the ProcessLauncher when the process is terminated before it has finished launching

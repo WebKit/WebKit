@@ -2023,18 +2023,27 @@ sub GenerateImplementation
                 push(@implContent, "JSValue ${getFunctionName}(ExecState* exec, JSValue slotBase, PropertyName)\n");
                 push(@implContent, "{\n");
 
-                # Global constructors can be disabled at runtime.
-                if ($attribute->signature->extendedAttributes->{"EnabledAtRuntime"} && $attribute->signature->type =~ /Constructor$/) {
-                    AddToImplIncludes("RuntimeEnabledFeatures.h");
-                    my $enable_function = GetRuntimeEnableFunctionName($attribute->signature);
-                    push(@implContent, "    if (!${enable_function}())\n");
-                    push(@implContent, "        return jsUndefined();\n");
-                }
-
                 if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
                     push(@implContent, "    ${className}* castedThis = jsCast<$className*>(asObject(slotBase));\n");
                 } else {
                     push(@implContent, "    UNUSED_PARAM(slotBase);\n");
+                }
+
+                # Global constructors can be disabled at runtime.
+                if ($attribute->signature->type =~ /Constructor$/) {
+                    if ($attribute->signature->extendedAttributes->{"EnabledAtRuntime"}) {
+                        AddToImplIncludes("RuntimeEnabledFeatures.h");
+                        my $enable_function = GetRuntimeEnableFunctionName($attribute->signature);
+                        push(@implContent, "    if (!${enable_function}())\n");
+                        push(@implContent, "        return jsUndefined();\n");
+                    } elsif ($attribute->signature->extendedAttributes->{"EnabledBySetting"}) {
+                        AddToImplIncludes("Frame.h");
+                        AddToImplIncludes("Settings.h");
+                        my $enable_function = ToMethodName($attribute->signature->extendedAttributes->{"EnabledBySetting"}) . "Enabled";
+                        push(@implContent, "    Settings* settings = castedThis->impl()->frame() ? castedThis->impl()->frame()->settings() : 0;\n");
+                        push(@implContent, "    if (!settings || !settings->$enable_function())\n");
+                        push(@implContent, "        return jsUndefined();\n");
+                    }
                 }
 
                 if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
