@@ -1,3 +1,19 @@
+2013-06-21  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [MediaStream]: Remove ``>= 0'' assertion from a size_t variable
+        https://bugs.webkit.org/show_bug.cgi?id=117890
+
+        Reviewed by Adam Barth.
+
+        This patch fixes a strict build by removing the ``>= 0'' assertion from
+        a size_t (unsigned type) variable in RTCStatsResponse.cpp.
+
+        No new tests; build fix.
+
+        * Modules/mediastream/RTCStatsResponse.cpp:
+        (WebCore::RTCStatsResponse::addStatistic): Remove ``>=0''assertion,
+        since the variable is unsigned and is always >= 0.
+
 2013-06-21  Alex Christensen  <achristensen@apple.com>
 
         GraphicsContext3DNEON.h cannot be found on Windows and does not need to be found.

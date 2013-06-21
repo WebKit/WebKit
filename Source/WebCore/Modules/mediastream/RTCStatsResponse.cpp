@@ -55,7 +55,7 @@ size_t RTCStatsResponse::addReport(String id, String type, double timestamp)
 
 void RTCStatsResponse::addStatistic(size_t report, String name, String value)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(report >= 0 && report < m_result.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(report < m_result.size());
     m_result[report]->addStatistic(name, value);
 }
 
