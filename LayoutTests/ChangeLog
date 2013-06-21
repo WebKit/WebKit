@@ -1,3 +1,14 @@
+2013-06-21  Brent Fulgham  <bfulgham@apple.com>
+
+        AX: Title for ListItemRole should consist of concatenated child text elements.
+        https://bugs.webkit.org/show_bug.cgi?id=117892
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/listitem-title.html: Added.
+        * platform/mac/accessibility/listitem-title-expected.txt: Added.
+        * platform/win/accessibility/listitem-title-expected.txt: Added.
+
 2013-06-21  Robert Hogan  <robert@webkit.org>
 
         Ignoring padding-right of inline elements in containers with undefined width

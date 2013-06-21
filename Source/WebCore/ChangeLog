@@ -1,3 +1,17 @@
+2013-06-21  Brent Fulgham  <bfulgham@apple.com>
+
+        AX: Title for ListItemRole should consist of concatenated child text elements.
+        https://bugs.webkit.org/show_bug.cgi?id=117892
+
+        Reviewed by Chris Fleizach.
+
+        accessibility/listitem-title.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::visibleText): Add ListItemRole to set of
+        elements that concatenate their children for display purposes.
+        (WebCore::AccessibilityNodeObject::title): Ditto.
+
 2013-06-21  Sergio Correia  <sergio.correia@openbossa.org>
 
         [MediaStream]: Remove ``>= 0'' assertion from a size_t variable

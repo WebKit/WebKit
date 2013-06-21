@@ -1261,6 +1261,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     case ToggleButtonRole:
     case CheckBoxRole:
     case ListBoxOptionRole:
+    case ListItemRole:
     case MenuButtonRole:
     case MenuItemRole:
     case RadioButtonRole:
@@ -1605,6 +1606,7 @@ String AccessibilityNodeObject::title() const
     case ToggleButtonRole:
     case CheckBoxRole:
     case ListBoxOptionRole:
+    case ListItemRole:
     case MenuButtonRole:
     case MenuItemRole:
     case RadioButtonRole:
