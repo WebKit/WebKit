@@ -1,3 +1,13 @@
+2013-06-21  Alex Christensen  <achristensen@apple.com>
+
+        GraphicsContext3DNEON.h cannot be found on Windows and does not need to be found.
+        https://bugs.webkit.org/show_bug.cgi?id=117894
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        Added #if HAVE(ARM_NEON_INTRINSICS) around #include "GraphicsContext3DNEON.h"
+
 2013-06-21  Robert Hogan  <robert@webkit.org>
 
         Ignoring padding-right of inline elements in containers with undefined width
