@@ -100,7 +100,7 @@ public:
     static PassRefPtr<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaTimeDisplay() { }
 
-    virtual AccessibilityRole roleValue() const { return StaticTextRole; }
+    virtual AccessibilityRole roleValue() const { return ApplicationTimerRole; }
 
     virtual String stringValue() const;
     virtual String accessibilityDescription() const;

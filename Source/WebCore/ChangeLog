@@ -1,3 +1,15 @@
+2013-06-21  James Craig  <james@cookiecrook.com>
+
+        AX: audio/video playback control timers (elapsed and remaining) should be exposed as ApplicationTimerRole
+        https://bugs.webkit.org/show_bug.cgi?id=117883
+
+        Reviewed by Chris Fleizach.
+
+        Some of the media controls were returning the wrong role. Updated existing test coverage.
+
+        * accessibility/AccessibilityMediaControls.h:
+        (WebCore::AccessibilityMediaTimeDisplay::roleValue):
+
 2013-06-21  Alex Christensen  <achristensen@apple.com>
 
         Added glext.h from http://www.opengl.org/registry/oldspecs/glext.h for Windows

@@ -1,3 +1,15 @@
+2013-06-21  James Craig  <james@cookiecrook.com>
+
+        AX: audio/video playback control timers (elapsed and remaining) should be exposed as ApplicationTimerRole
+        https://bugs.webkit.org/show_bug.cgi?id=117883
+
+        Reviewed by Chris Fleizach.
+
+        Some of the media controls were returning the wrong role. Updated existing test coverage.
+
+        * accessibility/media-element.html:
+        * platform/mac/accessibility/media-element-expected.txt:
+
 2013-06-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] AX: Radio buttons with "tab" role should describe themselves as tabs.
