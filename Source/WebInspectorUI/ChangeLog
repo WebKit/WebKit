@@ -1,3 +1,21 @@
+2013-06-21  Timothy Hatcher  <timothy@apple.com>
+
+        Stop removing and re-adding breakpoints from the backend on reload.
+
+        On reload the sourceCode for breakpoints are nulled out, which fires DisplayLocationDidChange.
+        Then the sourceCode is reassociated, firing DisplayLocationDidChange again. In these cases we
+        don't need to update the backend, since nothing really changed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=117877
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._breakpointDisplayLocationDidChange): Return early when
+        _ignoreBreakpointDisplayLocationDidChangeEvent is true.
+        (WebInspector.DebuggerManager.prototype.reset): Set _ignoreBreakpointDisplayLocationDidChangeEvent.
+        (WebInspector.DebuggerManager.prototype._associateBreakpointsWithSourceCode): Ditto.
+
 2013-06-19  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Copying array or object output does not contain values

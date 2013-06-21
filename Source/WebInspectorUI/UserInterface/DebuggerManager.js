@@ -301,6 +301,8 @@ WebInspector.DebuggerManager.prototype = {
         this._scriptIdMap = {};
         this._scriptURLMap = {};
 
+        this._ignoreBreakpointDisplayLocationDidChangeEvent = true;
+
         // Mark all the breakpoints as unresolved. They will be reported as resolved when
         // breakpointResolved is called as the page loads.
         for (var i = 0; i < this._breakpoints.length; ++i) {
@@ -309,6 +311,8 @@ WebInspector.DebuggerManager.prototype = {
             if (breakpoint.sourceCodeLocation.sourceCode)
                 breakpoint.sourceCodeLocation.sourceCode = null;
         }
+
+        delete this._ignoreBreakpointDisplayLocationDidChangeEvent;
 
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ScriptsCleared);
 
@@ -511,6 +515,9 @@ WebInspector.DebuggerManager.prototype = {
 
     _breakpointDisplayLocationDidChange: function(event)
     {
+        if (this._ignoreBreakpointDisplayLocationDidChangeEvent)
+            return;
+
         var breakpoint = event.target;
         if (!breakpoint.id || breakpoint.disabled)
             return;
@@ -620,6 +627,8 @@ WebInspector.DebuggerManager.prototype = {
 
     _associateBreakpointsWithSourceCode: function(breakpoints, sourceCode)
     {
+        this._ignoreBreakpointDisplayLocationDidChangeEvent = true;
+
         for (var i = 0; i < breakpoints.length; ++i) {
             var breakpoint = breakpoints[i];
             if (breakpoint.sourceCodeLocation.sourceCode === null)
@@ -627,6 +636,8 @@ WebInspector.DebuggerManager.prototype = {
             // SourceCodes can be unequal if the SourceCodeLocation is associated with a Script and we are looking at the Resource.
             console.assert(breakpoint.sourceCodeLocation.sourceCode === sourceCode || breakpoint.sourceCodeLocation.sourceCode.url === sourceCode.url);
         }
+
+        delete this._ignoreBreakpointDisplayLocationDidChangeEvent;
     }
 };
 
