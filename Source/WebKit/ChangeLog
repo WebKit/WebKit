@@ -1,3 +1,9 @@
+2013-06-21  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Fix a missing parenthesis in include directory path.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorCommon.props:
+
 2013-06-20  Roger Fong  <roger_fong@apple.com>
 
         Make Windows makefile copy build output to a different folder.
