@@ -289,6 +289,12 @@ void InspectorInstrumentation::didUpdateRegionLayoutImpl(InstrumentingAgents* in
         cssAgent->didUpdateRegionLayout(document, namedFlow);
 }
 
+void InspectorInstrumentation::didChangeRegionOversetImpl(InstrumentingAgents* instrumentingAgents, Document* document, WebKitNamedFlow* namedFlow)
+{
+    if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
+        cssAgent->didChangeRegionOverset(document, namedFlow);
+}
+
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents* instrumentingAgents, const HitTestResult& result, unsigned modifierFlags)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())

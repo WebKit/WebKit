@@ -133,6 +133,7 @@ public:
     static void didCreateNamedFlow(Document*, WebKitNamedFlow*);
     static void willRemoveNamedFlow(Document*, WebKitNamedFlow*);
     static void didUpdateRegionLayout(Document*, WebKitNamedFlow*);
+    static void didChangeRegionOverset(Document*, WebKitNamedFlow*);
 
     static void mouseDidMoveOverElement(Page*, const HitTestResult&, unsigned modifierFlags);
     static bool handleMousePress(Page*);
@@ -337,6 +338,7 @@ private:
     static void didCreateNamedFlowImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
     static void willRemoveNamedFlowImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
     static void didUpdateRegionLayoutImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
+    static void didChangeRegionOversetImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
 
     static void mouseDidMoveOverElementImpl(InstrumentingAgents*, const HitTestResult&, unsigned modifierFlags);
     static bool handleTouchEventImpl(InstrumentingAgents*, Node*);
@@ -713,6 +715,18 @@ inline void InspectorInstrumentation::didUpdateRegionLayout(Document* document, 
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         didUpdateRegionLayoutImpl(instrumentingAgents, document, namedFlow);
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(namedFlow);
+#endif
+}
+
+inline void InspectorInstrumentation::didChangeRegionOverset(Document* document, WebKitNamedFlow* namedFlow)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        didChangeRegionOversetImpl(instrumentingAgents, document, namedFlow);
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(namedFlow);

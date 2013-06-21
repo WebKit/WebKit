@@ -290,6 +290,54 @@ void UpdateRegionLayoutTask::onTimer(Timer<UpdateRegionLayoutTask>*)
     if (!m_namedFlows.isEmpty() && !m_timer.isActive())
         m_timer.startOneShot(0);
 }
+    
+class ChangeRegionOversetTask {
+public:
+    ChangeRegionOversetTask(InspectorCSSAgent*);
+    void scheduleFor(WebKitNamedFlow*, int documentNodeId);
+    void unschedule(WebKitNamedFlow*);
+    void reset();
+    void onTimer(Timer<ChangeRegionOversetTask>*);
+    
+private:
+    InspectorCSSAgent* m_cssAgent;
+    Timer<ChangeRegionOversetTask> m_timer;
+    HashMap<WebKitNamedFlow*, int> m_namedFlows;
+};
+
+ChangeRegionOversetTask::ChangeRegionOversetTask(InspectorCSSAgent* cssAgent)
+    : m_cssAgent(cssAgent)
+    , m_timer(this, &ChangeRegionOversetTask::onTimer)
+{
+}
+
+void ChangeRegionOversetTask::scheduleFor(WebKitNamedFlow* namedFlow, int documentNodeId)
+{
+    m_namedFlows.add(namedFlow, documentNodeId);
+    
+    if (!m_timer.isActive())
+        m_timer.startOneShot(0);
+}
+
+void ChangeRegionOversetTask::unschedule(WebKitNamedFlow* namedFlow)
+{
+    m_namedFlows.remove(namedFlow);
+}
+
+void ChangeRegionOversetTask::reset()
+{
+    m_timer.stop();
+    m_namedFlows.clear();
+}
+
+void ChangeRegionOversetTask::onTimer(Timer<ChangeRegionOversetTask>*)
+{
+    // The timer is stopped on m_cssAgent destruction, so this method will never be called after m_cssAgent has been destroyed.
+    for (HashMap<WebKitNamedFlow*, int>::iterator it = m_namedFlows.begin(), end = m_namedFlows.end(); it != end; ++it)
+        m_cssAgent->regionOversetChanged(it->key, it->value);
+
+    m_namedFlows.clear();
+}
 
 class InspectorCSSAgent::StyleSheetAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(StyleSheetAction);
@@ -634,6 +682,8 @@ void InspectorCSSAgent::resetNonPersistentData()
     m_namedFlowCollectionsRequested.clear();
     if (m_updateRegionLayoutTask)
         m_updateRegionLayoutTask->reset();
+    if (m_changeRegionOversetTask)
+        m_changeRegionOversetTask->reset();
     resetPseudoStates();
 }
 
@@ -673,6 +723,9 @@ void InspectorCSSAgent::willRemoveNamedFlow(Document* document, WebKitNamedFlow*
 
     if (m_updateRegionLayoutTask)
         m_updateRegionLayoutTask->unschedule(namedFlow);
+    
+    if (m_changeRegionOversetTask)
+        m_changeRegionOversetTask->unschedule(namedFlow);
 
     m_frontend->namedFlowRemoved(documentNodeId, namedFlow->name().string());
 }
@@ -697,6 +750,28 @@ void InspectorCSSAgent::regionLayoutUpdated(WebKitNamedFlow* namedFlow, int docu
     RefPtr<WebKitNamedFlow> protector(namedFlow);
 
     m_frontend->regionLayoutUpdated(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
+}
+
+void InspectorCSSAgent::didChangeRegionOverset(Document* document, WebKitNamedFlow* namedFlow)
+{
+    int documentNodeId = documentNodeWithRequestedFlowsId(document);
+    if (!documentNodeId)
+        return;
+    
+    if (!m_changeRegionOversetTask)
+        m_changeRegionOversetTask = adoptPtr(new ChangeRegionOversetTask(this));
+    m_changeRegionOversetTask->scheduleFor(namedFlow, documentNodeId);
+}
+
+void InspectorCSSAgent::regionOversetChanged(WebKitNamedFlow* namedFlow, int documentNodeId)
+{
+    if (namedFlow->flowState() == WebKitNamedFlow::FlowStateNull)
+        return;
+    
+    ErrorString errorString;
+    RefPtr<WebKitNamedFlow> protector(namedFlow);
+    
+    m_frontend->regionOversetChanged(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
 }
 
 bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoType pseudoType)

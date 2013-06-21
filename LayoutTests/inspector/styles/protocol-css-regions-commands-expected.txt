@@ -4,7 +4,7 @@ getNamedFlowCollection Bug 91607
 getFlowByName Bug 91855
 namedFlowCreated Bug 92739
 namedFlowRemoved Bug 92739
-regionLayoutUpdated Bug 93443
+regionOversetChanged Bug 117833
 This text is from CSS Named Flow "flow3".
 
 
@@ -18,7 +18,7 @@ Content Elements: 1
 Regions: 2
 * Named Flow "flow3"
 Content Elements: 1
-Regions: 1
+Regions: 0
 
 Running: testGetNamedFlowCollectionWithInvalidDocument
 === CSS Named Flows in #fake-document ===
@@ -37,8 +37,8 @@ There is no Named Flow "flow4" in the main document
 Running: testNamedFlowCreated
 NamedFlowCreated: "tmpNamedFlow"
 
-Running: testRegionLayoutUpdated
-RegionLayoutUpdated: "flow3"
+Running: testRegionOversetChanged
+RegionOversetChanged: "flow3"
 
 Running: testNamedFlowRemoved
 NamedFlowRemoved: "tmpNamedFlow"

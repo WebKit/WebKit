@@ -59,6 +59,7 @@ class SelectorProfile;
 class StyleResolver;
 class StyleRule;
 class UpdateRegionLayoutTask;
+class ChangeRegionOversetTask;
 
 #if ENABLE(INSPECTOR)
 
@@ -107,6 +108,8 @@ public:
     void willRemoveNamedFlow(Document*, WebKitNamedFlow*);
     void didUpdateRegionLayout(Document*, WebKitNamedFlow*);
     void regionLayoutUpdated(WebKitNamedFlow*, int documentNodeId);
+    void didChangeRegionOverset(Document*, WebKitNamedFlow*);
+    void regionOversetChanged(WebKitNamedFlow*, int documentNodeId);
 
     virtual void getComputedStyleForNode(ErrorString*, int nodeId, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSComputedStyleProperty> >&);
     virtual void getInlineStylesForNode(ErrorString*, int nodeId, RefPtr<TypeBuilder::CSS::CSSStyle>& inlineStyle, RefPtr<TypeBuilder::CSS::CSSStyle>& attributes);
@@ -189,6 +192,7 @@ private:
     NodeIdToForcedPseudoState m_nodeIdToForcedPseudoState;
     HashSet<int> m_namedFlowCollectionsRequested;
     OwnPtr<UpdateRegionLayoutTask> m_updateRegionLayoutTask;
+    OwnPtr<ChangeRegionOversetTask> m_changeRegionOversetTask;
 
     int m_lastStyleSheetId;
 

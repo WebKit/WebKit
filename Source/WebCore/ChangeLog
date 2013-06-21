@@ -1,3 +1,41 @@
+2013-06-21  Radu Stavila  <stavila@adobe.com>
+
+        Web Inspector: Integrate new regionOversetChange event into inspector
+        https://bugs.webkit.org/show_bug.cgi?id=117833
+
+        Added the new regionOversetChange event to the WebInspector.
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests:  inspector/styles/protocol-css-regions-commands.html:
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::ChangeRegionOversetTask::ChangeRegionOversetTask):
+        (WebCore::ChangeRegionOversetTask::scheduleFor):
+        (WebCore::ChangeRegionOversetTask::unschedule):
+        (WebCore::ChangeRegionOversetTask::reset):
+        (WebCore::ChangeRegionOversetTask::onTimer):
+        (WebCore::InspectorCSSAgent::resetNonPersistentData):
+        (WebCore::InspectorCSSAgent::willRemoveNamedFlow):
+        (WebCore::InspectorCSSAgent::didChangeRegionOverset):
+        (WebCore::InspectorCSSAgent::regionOversetChanged):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didChangeRegionOversetImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didChangeRegionOverset):
+        * inspector/front-end/CSSNamedFlowCollectionsView.js:
+        (WebInspector.CSSNamedFlowCollectionsView.prototype._regionOversetChanged):
+        (WebInspector.CSSNamedFlowCollectionsView.prototype.wasShown):
+        (WebInspector.CSSNamedFlowCollectionsView.prototype.willHide):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype._regionOversetChanged):
+        (WebInspector.CSSDispatcher.prototype.regionLayoutUpdated):
+        (WebInspector.CSSDispatcher.prototype.regionOversetChanged):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::dispatchRegionOversetChangeEvent):
+
 2013-06-21  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL] NetworkStateNotifierEfl: Use closeWithRetry instead of looping for EINTR on close

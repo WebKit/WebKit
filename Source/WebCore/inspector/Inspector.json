@@ -2546,6 +2546,13 @@
                     { "name": "namedFlow", "$ref": "NamedFlow", "description": "The Named Flow whose layout may have changed." }
                 ],
                 "description": "Fires when a Named Flow's layout may have changed."
+            },
+            {
+                "name": "regionOversetChanged",
+                "parameters": [
+                    { "name": "namedFlow", "$ref": "NamedFlow", "description": "The Named Flow containing the regions whose regionOverset values changed." }
+                ],
+                "description": "Fires if any of the regionOverset values changed in a Named Flow's region chain."
             }
         ]
     },

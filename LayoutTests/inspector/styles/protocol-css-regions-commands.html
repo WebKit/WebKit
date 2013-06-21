@@ -176,19 +176,19 @@ function test()
             }
         },
 
-        function testRegionLayoutUpdated(next)
+        function testRegionOversetChanged(next)
         {
-            WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.RegionLayoutUpdated, callback, this);
-            InspectorTest.evaluateInPage("window.document.getElementById(\"region3\").style[\"width\"] = \"200px\"");
+            WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.RegionOversetChanged, callback, this);
+            InspectorTest.evaluateInPage("window.document.getElementById(\"region3\").style.webkitFlowFrom=\"flow3\"");
 
             function callback(event)
             {
                 if (event.data.name !== "flow3")
                     return;
 
-                WebInspector.cssModel.removeEventListener(WebInspector.CSSStyleModel.Events.RegionLayoutUpdated, callback, this);
+                WebInspector.cssModel.removeEventListener(WebInspector.CSSStyleModel.Events.RegionOversetChanged, callback, this);
 
-                InspectorTest.addResult("RegionLayoutUpdated: \"flow3\"");
+                InspectorTest.addResult("RegionOversetChanged: \"flow3\"");
                 next();
             }
         },
@@ -229,7 +229,7 @@ Tests the following commands and events:
     <li>getFlowByName <a href="https://bugs.webkit.org/show_bug.cgi?id=91855">Bug 91855</a></li>
     <li>namedFlowCreated <a href="https://bugs.webkit.org/show_bug.cgi?id=92739">Bug 92739</a></li>
     <li>namedFlowRemoved <a href="https://bugs.webkit.org/show_bug.cgi?id=92739">Bug 92739</a></li>
-    <li>regionLayoutUpdated <a href="https://bugs.webkit.org/show_bug.cgi?id=93443">Bug 93443</a></li>
+    <li>regionOversetChanged <a href="https://bugs.webkit.org/show_bug.cgi?id=117833">Bug 117833</a></li>
 </ul>
 </p>
 
@@ -245,7 +245,7 @@ Tests the following commands and events:
 <article style="-webkit-flow-into: flow3">
     This text is from CSS Named Flow "flow3".
 </article>
-<div id="region3" style="-webkit-flow-from: flow3; height: 20px; width: 5px"></div>
+<div id="region3" style="-webkit-flow-from: none; height: 20px; width: 5px"></div>
 
 <div id="fake-document"></div>
 
