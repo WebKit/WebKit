@@ -1,3 +1,15 @@
+2013-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Migrate WebKitWebResource to GTask
+        https://bugs.webkit.org/show_bug.cgi?id=117152
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (resourceDataCallback):
+        (webkit_web_resource_get_data):
+        (webkit_web_resource_get_data_finish):
+
 2013-06-20  Sergio Correia  <sergio.correia@openbossa.org>
 
         [WK2] Looping for EINTR on close() is incorrect for Linux, at least
