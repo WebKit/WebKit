@@ -153,42 +153,61 @@ void StackBounds::initialize()
 
 void StackBounds::initialize()
 {
-    SYSTEM_INFO systemInfo;
-    GetSystemInfo(&systemInfo);
-    DWORD pageSize = systemInfo.dwPageSize;
-
     MEMORY_BASIC_INFORMATION stackOrigin;
     VirtualQuery(&stackOrigin, &stackOrigin, sizeof(stackOrigin));
     // stackOrigin.AllocationBase points to the reserved stack memory base address.
 
     m_origin = static_cast<char*>(stackOrigin.BaseAddress) + stackOrigin.RegionSize;
 #if OS(WINCE)
+    SYSTEM_INFO systemInfo;
+    GetSystemInfo(&systemInfo);
+    DWORD pageSize = systemInfo.dwPageSize;
+
     MEMORY_BASIC_INFORMATION stackMemory;
     VirtualQuery(m_origin, &stackMemory, sizeof(stackMemory));
 
     m_bound = static_cast<char*>(m_origin) - stackMemory.RegionSize + pageSize;
 #else
-    // The stack on Windows consists out of three parts (reserved memory, a guard page and initially committed memory),
-    // which need to me queried seperately to get the full size of the stack.
+    // The stack on Windows consists out of three parts (uncommitted memory, a guard page and present
+    // committed memory). The 3 regions have different BaseAddresses but all have the same AllocationBase
+    // since they are all from the same VirtualAlloc. The 3 regions are laid out in memory (from high to
+    // low) as follows:
+    //
+    //    High |-------------------|  -----
+    //         | committedMemory   |    ^
+    //         |-------------------|    |
+    //         | guardPage         | reserved memory for the stack
+    //         |-------------------|    |
+    //         | uncommittedMemory |    v
+    //    Low  |-------------------|  ----- <--- stackOrigin.AllocationBase
+    //
     // See http://msdn.microsoft.com/en-us/library/ms686774%28VS.85%29.aspx for more information.
 
-    MEMORY_BASIC_INFORMATION reservedMemory;
-    VirtualQuery(stackOrigin.AllocationBase, &reservedMemory, sizeof(reservedMemory));
-    ASSERT(reservedMemory.State == MEM_RESERVE);
-    // reservedMemory.BaseAddress and reservedMemory.RegionSize describe reserved (uncommitted) portion of the stack.
+    MEMORY_BASIC_INFORMATION uncommittedMemory;
+    VirtualQuery(stackOrigin.AllocationBase, &uncommittedMemory, sizeof(uncommittedMemory));
+    ASSERT(uncommittedMemory.State == MEM_RESERVE);
 
     MEMORY_BASIC_INFORMATION guardPage;
-    VirtualQuery(static_cast<char*>(reservedMemory.BaseAddress) + reservedMemory.RegionSize, &guardPage, sizeof(guardPage));
+    VirtualQuery(static_cast<char*>(uncommittedMemory.BaseAddress) + uncommittedMemory.RegionSize, &guardPage, sizeof(guardPage));
     ASSERT(guardPage.Protect & PAGE_GUARD);
-    // guardPage.BaseAddress and guardPage.RegionSize describe the guard page.
 
+    void* endOfStack = stackOrigin.AllocationBase;
+
+#ifndef NDEBUG
     MEMORY_BASIC_INFORMATION committedMemory;
     VirtualQuery(static_cast<char*>(guardPage.BaseAddress) + guardPage.RegionSize, &committedMemory, sizeof(committedMemory));
     ASSERT(committedMemory.State == MEM_COMMIT);
-    // committedMemory.BaseAddress, committedMemory.RegionSize describe the committed (i.e. accessed) portion of the stack.
 
-    m_bound = static_cast<char*>(m_origin) - (reservedMemory.RegionSize - guardPage.RegionSize + committedMemory.RegionSize) + pageSize;
-#endif
+    void* computedEnd = static_cast<char*>(m_origin) - (uncommittedMemory.RegionSize + guardPage.RegionSize + committedMemory.RegionSize);
+
+    ASSERT(stackOrigin.AllocationBase == uncommittedMemory.AllocationBase);
+    ASSERT(stackOrigin.AllocationBase == guardPage.AllocationBase);
+    ASSERT(stackOrigin.AllocationBase == committedMemory.AllocationBase);
+    ASSERT(stackOrigin.AllocationBase == uncommittedMemory.BaseAddress);
+    ASSERT(endOfStack == computedEnd);
+#endif // NDEBUG
+    m_bound = static_cast<char*>(endOfStack) + guardPage.RegionSize;
+#endif // OS(WINCE)
 }
 
 #else

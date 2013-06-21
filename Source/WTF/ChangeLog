@@ -1,5 +1,15 @@
 2013-06-20  Mark Lam  <mark.lam@apple.com>
 
+        Refine the StackBounds computation for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=117854.
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::initialize):
+
+2013-06-20  Mark Lam  <mark.lam@apple.com>
+
         [Windows] Undoing r150621 to roll r150600 back in as the jsc test
         failures have been fixed in r151808.
         https://bugs.webkit.org/show_bug.cgi?id=116661.
