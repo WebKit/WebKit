@@ -779,8 +779,8 @@ WebInspector.SourceCodeTextEditor.prototype = {
             for (var i = 0; i < scripts.length; ++i)
                 scripts[i].formatterSourceMap = this.formatterSourceMap;
         } else if (this._sourceCode instanceof WebInspector.Script) {
-            if (script.resource)
-                script.resource.formatterSourceMap = this.formatterSourceMap;
+            if (this._sourceCode.resource)
+                this._sourceCode.resource.formatterSourceMap = this.formatterSourceMap;
         }
 
         // Some breakpoints may have moved, some might not have. Just go through
