@@ -3,6 +3,15 @@
         IndieUI: Add basic IndieUI infrastructure
         https://bugs.webkit.org/show_bug.cgi?id=117367
 
+        Unreviewed. Revert erroneous file that was included accidentally.
+
+        * accessibility/AccessibilityNodeObject.h:
+
+2013-06-21  Chris Fleizach  <cfleizach@apple.com>
+
+        IndieUI: Add basic IndieUI infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=117367
+
         Reviewed by Ryosuke Niwa.
 
         IndieUI is a new W3C spec that aims to abstract the connection between input and action, so that

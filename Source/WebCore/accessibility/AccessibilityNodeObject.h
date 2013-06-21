@@ -198,11 +198,6 @@ private:
     String alternativeTextForWebArea() const;
     void ariaLabeledByText(Vector<AccessibilityText>&) const;
     virtual bool computeAccessibilityIsIgnored() const;
-    
-#if ENABLE(INDIE_UI)
-    const AtomicString& uiActionNameForRequestEvent(const AtomicString&);
-    Node* receiverForUIRequestEvent(const AtomicString&);
-#endif
 };
 
 inline AccessibilityNodeObject* toAccessibilityNodeObject(AccessibilityObject* object)
