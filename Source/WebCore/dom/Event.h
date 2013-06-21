@@ -41,7 +41,8 @@ class HTMLIFrameElement;
 
 struct EventInit {
     EventInit();
-     
+    EventInit(bool bubbles, bool cancelable);
+
     bool bubbles;
     bool cancelable;
 };

@@ -28,10 +28,11 @@
 
 VPATH = \
     $(WebCore) \
-	$(WebCore)/Modules/encryptedmedia \
+    $(WebCore)/Modules/encryptedmedia \
     $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
+    $(WebCore)/Modules/indieui \
     $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/notifications \
     $(WebCore)/Modules/quota \
@@ -110,6 +111,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/IDBTransaction.idl \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
     $(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $(WebCore)/Modules/indieui/UIRequestEvent.idl \
     $(WebCore)/Modules/mediasource/MediaSource.idl \
     $(WebCore)/Modules/mediasource/SourceBuffer.idl \
     $(WebCore)/Modules/mediasource/SourceBufferList.idl \

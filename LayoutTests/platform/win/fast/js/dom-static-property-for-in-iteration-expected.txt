@@ -58,11 +58,10 @@ PASS a["previousElementSibling"] is [object HTMLDivElement]
 PASS a["childElementCount"] is 0
 PASS a["scrollLeft"] is 0
 PASS a["firstElementChild"] is null
-PASS a["uiactions"] is 
 PASS a["clientLeft"] is 0
 PASS a["offsetHeight"] is 18
 PASS a["clientHeight"] is 0
-PASS a["offsetTop"] is 969
+PASS a["offsetTop"] is 954
 PASS a["scrollTop"] is 0
 PASS a["scrollHeight"] is 0
 PASS a["previousSibling"] is [object Text]

@@ -124,6 +124,10 @@
 #include "GestureEvent.h"
 #endif
 
+#if ENABLE(INDIE_UI)
+#include "UIRequestEvent.h"
+#endif
+
 #if ENABLE(INSPECTOR)
 #include "InspectorController.h"
 #endif
@@ -2276,6 +2280,13 @@ bool Node::dispatchTouchEvent(PassRefPtr<TouchEvent> event)
 }
 #endif
 
+#if ENABLE(INDIE_UI)
+bool Node::dispatchUIRequestEvent(PassRefPtr<UIRequestEvent> event)
+{
+    return EventDispatcher::dispatchEvent(this, UIRequestEventDispatchMediator::create(event));
+}
+#endif
+    
 bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
 {
     if (!document()->hasListenerType(Document::BEFORELOAD_LISTENER))

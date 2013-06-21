@@ -5,6 +5,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/gamepad"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
+    "${WEBCORE_DIR}/Modules/indieui"
     "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
@@ -118,6 +119,7 @@ set(WebCore_IDL_INCLUDES
     Modules/gamepad
     Modules/geolocation
     Modules/indexeddb
+    Modules/indieui
     Modules/mediastream
     Modules/networkinfo
     Modules/notifications

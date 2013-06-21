@@ -36,6 +36,14 @@ UIEventInit::UIEventInit()
 {
 }
 
+UIEventInit::UIEventInit(bool bubbles, bool cancelable)
+    : EventInit(bubbles, cancelable)
+    , view(0)
+    , detail(0)
+{
+}
+
+    
 UIEvent::UIEvent()
     : m_detail(0)
 {

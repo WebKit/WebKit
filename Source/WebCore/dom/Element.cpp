@@ -2654,6 +2654,19 @@ void Element::setUnsignedIntegralAttribute(const QualifiedName& attributeName, u
     setAttribute(attributeName, String::number(value));
 }
 
+#if ENABLE(INDIE_UI)
+void Element::setUIActions(const AtomicString& actions)
+{
+    setAttribute(uiactionsAttr, actions);
+}
+
+const AtomicString& Element::UIActions() const
+{
+    return getAttribute(uiactionsAttr);
+}
+#endif
+
+    
 #if ENABLE(SVG)
 bool Element::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {

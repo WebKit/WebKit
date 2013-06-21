@@ -1,3 +1,24 @@
+2013-06-20  Chris Fleizach  <cfleizach@apple.com>
+
+        IndieUI: Add basic IndieUI infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=117367
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/js/dom-static-property-for-in-iteration-expected.txt:
+        * fast/js/global-constructors-attributes-expected.txt:
+        * indieui: Added.
+        * indieui/create-uirequestevent-expected.txt: Added.
+        * indieui/create-uirequestevent.html: Added.
+        * indieui/uiactions-expected.txt: Added.
+        * indieui/uiactions.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/js/dom-static-property-for-in-iteration-expected.txt: Added.
+        * platform/win/TestExpectations:
+        * platform/win/fast/js/dom-static-property-for-in-iteration-expected.txt: Added.
+
 2013-06-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r151808): fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html fails

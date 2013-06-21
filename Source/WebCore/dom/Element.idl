@@ -140,6 +140,10 @@
     void webkitRequestFullscreen();
 #endif
 
+#if defined(ENABLE_INDIE_UI) && ENABLE_INDIE_UI
+    [Reflect] attribute DOMString uiactions;
+#endif
+
     [Conditional=POINTER_LOCK] void webkitRequestPointerLock();
 
     // CSS Regions API

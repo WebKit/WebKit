@@ -622,6 +622,11 @@ public:
     void webkitRequestPointerLock();
 #endif
 
+#if ENABLE(INDIE_UI)
+    void setUIActions(const AtomicString&);
+    const AtomicString& UIActions() const;
+#endif
+    
     virtual bool isSpellCheckingEnabled() const;
 
     PassRefPtr<RenderStyle> styleForRenderer();

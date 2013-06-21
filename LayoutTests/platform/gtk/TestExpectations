@@ -180,6 +180,9 @@ webkit.org/b/98937 gamepad [ Skip ]
 webkit.org/b/98938 fast/speech [ Skip ]
 webkit.org/b/98938 fast/events/constructors/speech-recognition-event-constructor.html [ Skip ]
 
+# Requires INDIE_UI support
+webkit.org/b/111446 indieui [ Skip ]
+
 # FileSystem API is not supported.
 webkit.org/b/58443 fast/filesystem [ Skip ]
 webkit.org/b/58443 http/tests/filesystem [ Skip ]

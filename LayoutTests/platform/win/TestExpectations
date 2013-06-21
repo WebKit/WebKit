@@ -586,6 +586,9 @@ svg/custom/gradient-stop-style-change.svg
 # Application cache
 http/tests/appcache
 
+# ENABLE(INDIE_UI) required
+indieui
+
 # <rdar://problem/5961006> LayoutTests that send an OPTIONS request don't work on Windows due to Apache 1.3
 http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
 http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html

@@ -89,6 +89,10 @@ class TagNodeList;
 class PlatformGestureEvent;
 #endif
 
+#if ENABLE(INDIE_UI)
+class UIRequestEvent;
+#endif
+    
 #if ENABLE(TOUCH_EVENTS)
 class TouchEvent;
 #endif
@@ -596,6 +600,9 @@ public:
 #endif
 #if ENABLE(TOUCH_EVENTS)
     bool dispatchTouchEvent(PassRefPtr<TouchEvent>);
+#endif
+#if ENABLE(INDIE_UI)
+    bool dispatchUIRequestEvent(PassRefPtr<UIRequestEvent>);
 #endif
 
     bool dispatchBeforeLoadEvent(const String& sourceURL);

@@ -34,6 +34,7 @@ typedef DOMWindow AbstractView;
 
 struct UIEventInit : public EventInit {
     UIEventInit();
+    UIEventInit(bool bubbles, bool cancelable);
 
     RefPtr<AbstractView> view;
     int detail;

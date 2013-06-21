@@ -38,6 +38,11 @@ EventInit::EventInit()
 {
 }
 
+EventInit::EventInit(bool b, bool c)
+    : bubbles(b)
+    , cancelable(c)
+{
+}
 
 Event::Event()
     : m_canBubble(false)

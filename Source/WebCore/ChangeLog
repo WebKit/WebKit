@@ -1,3 +1,58 @@
+2013-06-21  Chris Fleizach  <cfleizach@apple.com>
+
+        IndieUI: Add basic IndieUI infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=117367
+
+        Reviewed by Ryosuke Niwa.
+
+        IndieUI is a new W3C spec that aims to abstract the connection between input and action, so that
+        a user (possibly using assistive technologies like a screen reader) does not need a specific kind
+        of device (like a mouse) to interact with an object.
+        http://www.w3.org/WAI/IndieUI/
+
+        This initial patch adds in the basic support for UIRequestEvent and the uiactions attribute.
+        It modifies the config files to enable and build this feature.
+
+        Tests: indieui/create-uirequestevent.html
+               indieui/uiactions.html
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * Modules/indieui: Added.
+        * Modules/indieui/UIRequestEvent.cpp: Added.
+        (WebCore::UIRequestEventInit::UIRequestEventInit):
+        (WebCore::UIRequestEvent::create):
+        (WebCore::UIRequestEvent::UIRequestEvent):
+        (WebCore::UIRequestEvent::~UIRequestEvent):
+        (WebCore::UIRequestEvent::interfaceName):
+        (WebCore::UIRequestEventDispatchMediator::UIRequestEventDispatchMediator):
+        (WebCore::UIRequestEventDispatchMediator::event):
+        (WebCore::UIRequestEventDispatchMediator::dispatchEvent):
+        * Modules/indieui/UIRequestEvent.h: Added.
+        (WebCore::UIRequestEvent::receiver):
+        (WebCore::UIRequestEventDispatchMediator::create):
+        * Modules/indieui/UIRequestEvent.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityNodeObject.h:
+        * dom/Element.cpp:
+        (WebCore::Element::setUIActions):
+        (WebCore::Element::UIActions):
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/Event.cpp:
+        (WebCore::EventInit::EventInit):
+        * dom/Event.h:
+        * dom/EventNames.in:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchUIRequestEvent):
+        * dom/Node.h:
+        * dom/UIEvent.cpp:
+        (WebCore::UIEventInit::UIEventInit):
+        * dom/UIEvent.h:
+        * html/HTMLAttributeNames.in:
+
 2013-06-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r145788): mouse drag on canvas shouldn't start selection
