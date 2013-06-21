@@ -127,6 +127,21 @@ void HTMLCanvasElement::attach(const AttachContext& context)
     HTMLElement::attach(context);
 }
 
+bool HTMLCanvasElement::areAuthorShadowsAllowed() const
+{
+    return false;
+}
+
+bool HTMLCanvasElement::canContainRangeEndPoint() const
+{
+    return false;
+}
+
+bool HTMLCanvasElement::canStartSelection() const
+{
+    return false;
+}
+
 void HTMLCanvasElement::addObserver(CanvasObserver* observer)
 {
     m_observers.add(observer);

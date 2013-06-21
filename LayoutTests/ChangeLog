@@ -1,5 +1,18 @@
 2013-06-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION(r145788): mouse drag on canvas shouldn't start selection
+        https://bugs.webkit.org/show_bug.cgi?id=117860
+
+        Reviewed by Benjamin Poulain.
+
+        Add a regression test for dragging mouse inside a canvas.
+        The canvas should not be selected and mouseup event should fire.
+
+        * fast/events/mosuedrag-on-canvas-should-not-start-selection-expected.txt: Added.
+        * fast/events/mosuedrag-on-canvas-should-not-start-selection.html: Added.
+
+2013-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r149652): accessing items in .children via id doesn't work when element is not rooted in DOM tree
         https://bugs.webkit.org/show_bug.cgi?id=117836
 

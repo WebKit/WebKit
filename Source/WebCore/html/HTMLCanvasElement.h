@@ -142,15 +142,16 @@ public:
 
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
-    virtual bool canContainRangeEndPoint() const { return false; }
-
 private:
     HTMLCanvasElement(const QualifiedName&, Document*);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
-    virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
+    virtual bool areAuthorShadowsAllowed() const OVERRIDE;
+
+    virtual bool canContainRangeEndPoint() const OVERRIDE;
+    virtual bool canStartSelection() const OVERRIDE;
 
     void reset();
 
