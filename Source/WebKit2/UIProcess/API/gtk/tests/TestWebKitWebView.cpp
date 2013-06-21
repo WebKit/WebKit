@@ -478,7 +478,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
         " <input style='position:absolute; left:1; top:30' size='10'></input>"
         " <div style='position:absolute; left:1; top:50; width:30; height:30; overflow:scroll'>&nbsp;</div>"
-        " <video style='position:absolute; left:1; top:100' width='300' height='300' controls='controls'><source src='movie.ogg' type='video/ogg' /></video>"
+        " <video style='position:absolute; left:1; top:100' width='300' height='300' controls='controls' preload='none'><source src='movie.ogg' type='video/ogg' /></video>"
         "</body></html>";
 
     test->loadHtml(linksHoveredHTML, "file:///");

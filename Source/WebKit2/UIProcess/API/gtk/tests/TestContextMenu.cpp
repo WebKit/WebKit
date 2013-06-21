@@ -355,7 +355,7 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
         " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
         " <input style='position:absolute; left:1; top:30' size='10'></input>"
-        " <video style='position:absolute; left:1; top:50' width='300' height='300' controls='controls'><source src='movie.ogg' type='video/ogg' /></video>"
+        " <video style='position:absolute; left:1; top:50' width='300' height='300' controls='controls' preload='none'><source src='movie.ogg' type='video/ogg' /></video>"
         "</body></html>";
     test->loadHtml(linksHTML, "file:///");
     test->waitUntilLoadFinished();
