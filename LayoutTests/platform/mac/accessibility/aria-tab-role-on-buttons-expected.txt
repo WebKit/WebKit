@@ -1,0 +1,16 @@
+Tab A  Tab B  Tab C
+This tests that the aria roles for tab and tablist work as expected for buttons.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+tabList.role = AXRole: AXTabGroup
+tab1.role = AXRole: AXRadioButton
+tab1.title = AXTitle: Tab A
+PASS tab1.childrenCount is 0
+tab2.role = AXRole: AXRadioButton
+tab2.title = AXTitle: Tab B
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,13 @@
+2013-06-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] AX: Radio buttons with "tab" role should describe themselves as tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=117837
+
+        Reviewed by Chris Fleizach.
+
+        * AccessibleBase.cpp:
+        (MSAARole): Don't expose TabRole as a radio button to satisfy buggy screen readers.
+
 2013-06-21  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         REGRESSION (r150663): Using webkitAudioContext in Inspector makes it undefined everywhere

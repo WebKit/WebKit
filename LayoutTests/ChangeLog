@@ -1,3 +1,14 @@
+2013-06-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] AX: Radio buttons with "tab" role should describe themselves as tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=117837
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-tab-role-on-buttons.html: Added.
+        * accessibility/aria-tab-role-on-buttons-expected.txt: Added.
+        * platform/win/aria-tab-role-on-buttons-expected.txt: Added.
+
 2013-06-21  Radu Stavila  <stavila@adobe.com>
 
         Improve the reattaching process while applying the :hover style

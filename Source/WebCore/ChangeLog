@@ -1,3 +1,17 @@
+2013-06-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] AX: Radio buttons with "tab" role should describe themselves as tabs
+        https://bugs.webkit.org/show_bug.cgi?id=117837
+
+        Reviewed by Chris Fleizach.
+
+        accessibility/aria-tab-role-on-buttons.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canSetSelectedAttribute): Indicate that certain accessibility
+        types (such as Tabs) can be selected.
+        * accessibility/AccessibilityNodeObject.h: Signature for canSelectAttribute override.
+
 2013-06-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Remove unused GesturePinch events
