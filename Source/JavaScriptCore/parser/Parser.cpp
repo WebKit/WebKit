@@ -66,7 +66,7 @@ template <typename LexerType>
 Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode)
     : m_vm(vm)
     , m_source(&source)
-    , m_stack(wtfThreadData().stack())
+    , m_stack(*vm, wtfThreadData().stack())
     , m_hasStackOverflow(false)
     , m_allowsIn(true)
     , m_lastLine(0)

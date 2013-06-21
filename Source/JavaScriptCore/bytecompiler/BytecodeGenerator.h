@@ -44,6 +44,7 @@
 #include "Nodes.h"
 #include "StaticPropertyAnalyzer.h"
 #include "UnlinkedCodeBlock.h"
+#include "VMStackBounds.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
@@ -825,7 +826,7 @@ namespace JSC {
         size_t m_lastOpcodePosition;
 #endif
 
-        StackBounds m_stack;
+        VMStackBounds m_stack;
 
         bool m_usesExceptions;
         bool m_expressionTooDeep;

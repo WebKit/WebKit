@@ -216,6 +216,8 @@ namespace JSC {
         
         SamplingTool* sampler() { return m_sampler.get(); }
 
+        bool isInErrorHandlingMode() { return m_errorHandlingModeReentry; }
+
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine, int column);
         static const String getTraceLine(CallFrame*, StackFrameCodeType, const String&, int);
@@ -229,16 +231,6 @@ namespace JSC {
         JS_EXPORT_PRIVATE void dumpCallFrame(CallFrame*);
 
     private:
-        class StackPolicy {
-        public:
-            StackPolicy(Interpreter&, const StackBounds&);
-            inline size_t requiredCapacity() { return m_requiredCapacity; }
-
-        private:
-            Interpreter& m_interpreter;
-            size_t m_requiredCapacity;
-        };
-
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
         CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, JSFunction*, int argumentCountIncludingThis, JSScope*);

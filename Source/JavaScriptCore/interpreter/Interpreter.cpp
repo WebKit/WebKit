@@ -64,6 +64,7 @@
 #include "SamplingTool.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
+#include "VMStackBounds.h"
 #include <limits.h>
 #include <stdio.h>
 #include <wtf/StackStats.h>
@@ -97,45 +98,6 @@ Interpreter::ErrorHandlingMode::~ErrorHandlingMode()
     if (!m_interpreter.m_errorHandlingModeReentry)
         m_interpreter.stack().disableErrorStackReserve();
 }
-
-
-// The Interpreter::StackPolicy class is used to compute a stack capacity
-// requirement to ensure that we have enough room on the native stack for:
-// 1. the max cumulative stack used by the interpreter and all code
-//    paths sub of it up till leaf functions.
-// 2. the max cumulative stack used by the interpreter before it reaches
-//    the next checkpoint (execute...() function) in the interpreter.
-// 
-// The interpreter can be run on different threads and hence, different
-// native stacks (with different sizes) before exiting out of the first
-// frame. Hence, the required capacity needs to be re-computed on every
-// entry into the interpreter.
-//
-// Currently the requiredStack is computed based on a policy. See comments
-// in StackPolicy::StackPolicy() for details.
-
-Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBounds& stack)
-    : m_interpreter(interpreter)
-{
-    const size_t size = stack.size();
-
-    // We have two separate stack limits, one for regular JS execution, and one
-    // for when we're handling errors. We need the error stack to be smaller
-    // otherwise there would obviously not be any stack left to execute JS in when
-    // there's a stack overflow.
-    //
-    // These sizes were derived from the stack usage of a number of sites when
-    // layout occurs when we've already consumed most of the C stack.
-    const size_t requiredStack = 32 * KB;
-    const size_t errorModeRequiredStack = 16 * KB;
-
-    size_t requiredCapacity = m_interpreter.m_errorHandlingModeReentry ? errorModeRequiredStack : requiredStack;
-
-    RELEASE_ASSERT(size >= requiredCapacity);
-    
-    m_requiredCapacity = requiredCapacity;    
-}
-
 
 static CallFrame* getCallerInfo(VM*, CallFrame*, unsigned& bytecodeOffset, CodeBlock*& callerOut);
 
@@ -829,9 +791,8 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
         return jsNull();
 
     StackStats::CheckPoint stackCheckPoint;
-    const StackBounds& nativeStack = wtfThreadData().stack();
-    StackPolicy policy(*this, nativeStack);
-    if (!nativeStack.isSafeToRecurse(policy.requiredCapacity()))
+    const VMStackBounds vmStackBounds(vm, wtfThreadData().stack());
+    if (!vmStackBounds.isSafeToRecurse())
         return checkedReturn(throwStackOverflowError(callFrame));
 
     // First check if the "program" is actually just a JSON object. If so,
@@ -995,9 +956,8 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         return jsNull();
 
     StackStats::CheckPoint stackCheckPoint;
-    const StackBounds& nativeStack = wtfThreadData().stack();
-    StackPolicy policy(*this, nativeStack);
-    if (!nativeStack.isSafeToRecurse(policy.requiredCapacity()))
+    const VMStackBounds vmStackBounds(vm, wtfThreadData().stack());
+    if (!vmStackBounds.isSafeToRecurse())
         return checkedReturn(throwStackOverflowError(callFrame));
 
     bool isJSCall = (callType == CallTypeJS);
@@ -1073,9 +1033,8 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         return checkedReturn(throwStackOverflowError(callFrame));
 
     StackStats::CheckPoint stackCheckPoint;
-    const StackBounds& nativeStack = wtfThreadData().stack();
-    StackPolicy policy(*this, nativeStack);
-    if (!nativeStack.isSafeToRecurse(policy.requiredCapacity()))
+    const VMStackBounds vmStackBounds(vm, wtfThreadData().stack());
+    if (!vmStackBounds.isSafeToRecurse())
         return checkedReturn(throwStackOverflowError(callFrame));
 
     bool isJSConstruct = (constructType == ConstructTypeJS);
@@ -1154,9 +1113,8 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
         return CallFrameClosure();
 
     StackStats::CheckPoint stackCheckPoint;
-    const StackBounds& nativeStack = wtfThreadData().stack();
-    StackPolicy policy(*this, nativeStack);
-    if (!nativeStack.isSafeToRecurse(policy.requiredCapacity())) {
+    const VMStackBounds vmStackBounds(vm, wtfThreadData().stack());
+    if (!vmStackBounds.isSafeToRecurse()) {
         throwStackOverflowError(callFrame);
         return CallFrameClosure();
     }
@@ -1257,9 +1215,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     DynamicGlobalObjectScope globalObjectScope(vm, scope->globalObject());
 
     StackStats::CheckPoint stackCheckPoint;
-    const StackBounds& nativeStack = wtfThreadData().stack();
-    StackPolicy policy(*this, nativeStack);
-    if (!nativeStack.isSafeToRecurse(policy.requiredCapacity()))
+    const VMStackBounds vmStackBounds(vm, wtfThreadData().stack());
+    if (!vmStackBounds.isSafeToRecurse())
         return checkedReturn(throwStackOverflowError(callFrame));
 
     // Compile the callee:

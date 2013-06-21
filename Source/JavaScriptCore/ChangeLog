@@ -1,3 +1,38 @@
+2013-06-21  Mark Lam  <mark.lam@apple.com>
+
+        Introducing the VMStackBounds class.
+        https://bugs.webkit.org/show_bug.cgi?id=117862.
+
+        Reviewed by Geoffrey Garen.
+
+        - Removed Interpreter::StackPolicy.
+        - The new VMStackBounds will take over choosing the appropriate stack
+          size requirements, and invoking the underlying WTF::StackBounds to
+          to the real bounds check.
+        - VMStackBounds will now be used universally throughout JSC instead of
+          WTF::StackBounds.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::isInErrorHandlingMode):
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        * parser/Parser.h:
+        * runtime/StringRecursionChecker.h:
+        (JSC::StringRecursionChecker::performCheck):
+        * runtime/VMStackBounds.h: Added.
+        (JSC::VMStackBounds::VMStackBounds):
+        (JSC::VMStackBounds::isSafeToRecurse):
+        (JSC::VMStackBounds::requiredCapacity):
+
 2013-06-20  Mark Lam  <mark.lam@apple.com>
 
         Change stack capacity requirement to be more reasonable.

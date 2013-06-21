@@ -871,6 +871,7 @@
 		FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE4A331F15BD2E07006F54F3 /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */; };
 		FE4A332015BD2E07006F54F3 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4A331E15BD2E07006F54F3 /* VMInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE6617281774E03500495B00 /* VMStackBounds.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6617271774E03500495B00 /* VMStackBounds.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = FED287B115EC9A5700DA8161 /* LLIntOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */; };
 		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1817,6 +1818,7 @@
 		FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntCLoop.h; path = llint/LLIntCLoop.h; sourceTree = "<group>"; };
 		FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 		FE4A331E15BD2E07006F54F3 /* VMInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspector.h; sourceTree = "<group>"; };
+		FE6617271774E03500495B00 /* VMStackBounds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMStackBounds.h; sourceTree = "<group>"; };
 		FED287B115EC9A5700DA8161 /* LLIntOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntOpcode.h; path = llint/LLIntOpcode.h; sourceTree = "<group>"; };
 		FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watchdog.cpp; sourceTree = "<group>"; };
 		FED94F2C171E3E2300BE77A4 /* Watchdog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchdog.h; sourceTree = "<group>"; };
@@ -2618,6 +2620,7 @@
 				5D53726E0E1C54880021E549 /* Tracing.h */,
 				0FEB3ECB16237F4700AB67AD /* TypedArrayDescriptor.h */,
 				866739D113BFDE710023D87C /* Uint16WithFraction.h */,
+				FE6617271774E03500495B00 /* VMStackBounds.h */,
 				FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */,
 				FED94F2C171E3E2300BE77A4 /* Watchdog.h */,
 				FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */,
@@ -2994,6 +2997,7 @@
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
 				C2DF44301707AC0100A5CA96 /* SuperRegion.h in Headers */,
 				C20B25991706536200C21F4E /* Region.h in Headers */,
+				FE6617281774E03500495B00 /* VMStackBounds.h in Headers */,
 				C283190016FE4B7D00157BFD /* HandleBlock.h in Headers */,
 				BC18C41D0E16F5CD00B34460 /* JSClassRef.h in Headers */,
 				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,

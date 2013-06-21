@@ -21,6 +21,7 @@
 #define StringRecursionChecker_h
 
 #include "Interpreter.h"
+#include "VMStackBounds.h"
 #include <wtf/StackStats.h>
 #include <wtf/WTFThreadData.h>
 
@@ -49,10 +50,11 @@ private:
 
 inline JSValue StringRecursionChecker::performCheck()
 {
-    const StackBounds& nativeStack = wtfThreadData().stack();
+    VM& vm = m_exec->vm();
+    const VMStackBounds nativeStack(vm, wtfThreadData().stack());
     if (!nativeStack.isSafeToRecurse())
         return throwStackOverflowError();
-    bool alreadyVisited = !m_exec->vm().stringRecursionCheckVisitedObjects.add(m_thisObject).isNewEntry;
+    bool alreadyVisited = !vm.stringRecursionCheckVisitedObjects.add(m_thisObject).isNewEntry;
     if (alreadyVisited)
         return emptyString(); // Return empty string to avoid infinite recursion.
     return JSValue(); // Indicate success.

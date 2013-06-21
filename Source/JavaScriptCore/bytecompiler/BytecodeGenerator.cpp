@@ -179,7 +179,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, JSScope*, ProgramNode* programNode,
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
-    , m_stack(wtfThreadData().stack())
+    , m_stack(vm, wtfThreadData().stack())
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
@@ -228,7 +228,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, JSScope* scope, FunctionBodyNode* f
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
-    , m_stack(wtfThreadData().stack())
+    , m_stack(vm, wtfThreadData().stack())
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
@@ -425,7 +425,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, JSScope* scope, EvalNode* evalNode,
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
-    , m_stack(wtfThreadData().stack())
+    , m_stack(vm, wtfThreadData().stack())
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
