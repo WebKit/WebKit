@@ -89,7 +89,6 @@ RenderListBox::RenderListBox(Element* element)
     , m_inAutoscroll(false)
     , m_optionsWidth(0)
     , m_indexOffset(0)
-    , m_intrinsicLogicalHeight(0)
 {
     ASSERT(element);
     ASSERT(element->isHTMLElement());
@@ -270,8 +269,8 @@ LayoutUnit RenderListBox::listHeight() const
 
 void RenderListBox::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    m_intrinsicLogicalHeight = itemHeight() * size() - rowSpacing + borderAndPaddingHeight();
-    RenderBox::computeLogicalHeight(m_intrinsicLogicalHeight, logicalTop, computedValues);
+    LayoutUnit height = itemHeight() * size() - rowSpacing + borderAndPaddingHeight();
+    RenderBox::computeLogicalHeight(height, logicalTop, computedValues);
 }
 
 int RenderListBox::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
