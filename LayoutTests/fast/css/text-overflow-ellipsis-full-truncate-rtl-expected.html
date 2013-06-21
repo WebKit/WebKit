@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html dir='rtl'>
+<html>
 <head>
 <style>
   div {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    width: 200px;
+    direction: rtl;
   }
 
-  input {
+  span {
+    width: 100px;
+    height: 20px;
     float: left;
   }
 </style>
 <body>
-<p dir='ltr'>This tests that ellipsis is placed correctly, when full truncation takes over in an rtl flow.</p>
-<div style='width:582px;'><input type="text" size='74'>consectetur adipisicing elitconsectetur adipisicing elitconsectetur adipisicing elitconsectetur adipisicing elitconsectetur adipisicing elitconsectetur adipisicing elit, sed do eiusmod</div>
+<p>This tests that ellipsis is placed correctly, when full truncation takes over in an rtl flow.</p>
+<span></span><div>Lorem ipsum dolor sit consectetur adipisicing elitconsectetur adipisicing elitconsectetur</div>
 </body>
 </div>
 

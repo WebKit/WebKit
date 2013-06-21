@@ -1,3 +1,16 @@
+2013-06-21  Zalan Bujtas  <zalan@apple.com>
+
+        Rollout r150602: Restoring text-overflow vs. floating rendering behaviour.
+        https://bugs.webkit.org/show_bug.cgi?id=117871
+
+        Unreviewed. Rolling out r150602.
+        Undesirable rendering behaviour.
+
+        * fast/css/text-overflow-ellipsis-behind-floats-expected.html:
+        * fast/css/text-overflow-ellipsis-behind-floats.html:
+        * fast/css/text-overflow-ellipsis-full-truncate-rtl-expected.html:
+        * fast/css/text-overflow-ellipsis-full-truncate-rtl.html:
+
 2013-06-21  Radu Stavila  <stavila@adobe.com>
 
         Web Inspector: Integrate new regionOversetChange event into inspector
