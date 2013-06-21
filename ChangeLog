@@ -1,3 +1,14 @@
+2013-06-20  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE][EFL] Enable DOM4 Events Constructor
+        https://bugs.webkit.org/show_bug.cgi?id=117858
+
+        Reviewed by Laszlo Gombos.
+
+        * Source/cmake/OptionsEfl.cmake: Enabled ENABLE_DOM4_EVENTS_CONSTRUCTOR.
+        * Source/cmake/WebKitFeatures.cmake: Added ENABLE_DOM4_EVENTS_CONSTRUCTOR.
+        * Source/cmakeconfig.h.cmake: Ditto.
+
 2013-06-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] remove bashism from configure
