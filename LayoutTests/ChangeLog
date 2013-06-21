@@ -1,3 +1,24 @@
+2013-06-21  Radu Stavila  <stavila@adobe.com>
+
+        Improve the reattaching process while applying the :hover style
+        https://bugs.webkit.org/show_bug.cgi?id=117590
+
+        Reviewed by Andreas Kling.
+
+        Moved hover-display-block-inline.html and hover-display-block-none.html from fast/regions to fast/css.
+        Updated hover-display-block-none.html and hover-single-flow-into-other.html to ensure the outcome won't be affected by the machine's speed.
+        Updated input-file-re-render.html to stop it from failing on windows and linux machines (a more detailed description can be found inside the test itself).
+
+        * fast/css/hover-display-block-inline-expected.txt: Renamed from LayoutTests/fast/regions/hover-display-block-inline-expected.txt.
+        * fast/css/hover-display-block-inline.html: Renamed from LayoutTests/fast/regions/hover-display-block-inline.html.
+        * fast/css/hover-display-block-none-expected.txt: Renamed from LayoutTests/fast/regions/hover-display-block-none-expected.txt.
+        * fast/css/hover-display-block-none.html: Added.
+        * fast/css/hover-update-expected.txt:
+        * fast/css/hover-update.html:
+        * fast/forms/file/input-file-re-render.html:
+        * fast/regions/hover-display-block-none.html: Removed.
+        * fast/regions/hover-single-flow-into-other.html:
+
 2013-06-21  Zalan Bujtas  <zalan@apple.com>
 
         Rollout r150602: Restoring text-overflow vs. floating rendering behaviour.

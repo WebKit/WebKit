@@ -118,10 +118,10 @@ public:
     // node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
     virtual void childrenChanged(bool createdByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-    void attachChildren();
+    void attachChildren(const AttachContext& = AttachContext());
     void attachChildrenLazily();
-    void detachChildren();
-    void detachChildrenIfNeeded();
+    void detachChildren(const AttachContext& = AttachContext());
+    void detachChildrenIfNeeded(const AttachContext& = AttachContext());
 
     void disconnectDescendantFrames();
 
@@ -184,12 +184,15 @@ inline ContainerNode::ContainerNode(Document* document, ConstructionType type)
 {
 }
 
-inline void ContainerNode::attachChildren()
+inline void ContainerNode::attachChildren(const AttachContext& context)
 {
+    AttachContext childrenContext(context);
+    childrenContext.resolvedStyle = 0;
+
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         ASSERT(!child->attached() || childAttachedAllowedWhenAttachingChildren(this));
         if (!child->attached())
-            child->attach();
+            child->attach(childrenContext);
     }
 }
 
@@ -200,18 +203,24 @@ inline void ContainerNode::attachChildrenLazily()
             child->lazyAttach();
 }
 
-inline void ContainerNode::detachChildrenIfNeeded()
+inline void ContainerNode::detachChildrenIfNeeded(const AttachContext& context)
 {
+    AttachContext childrenContext(context);
+    childrenContext.resolvedStyle = 0;
+
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->attached())
-            child->detach();
+            child->detach(childrenContext);
     }
 }
 
-inline void ContainerNode::detachChildren()
+inline void ContainerNode::detachChildren(const AttachContext& context)
 {
+    AttachContext childrenContext(context);
+    childrenContext.resolvedStyle = 0;
+
     for (Node* child = firstChild(); child; child = child->nextSibling())
-        child->detach();
+        child->detach(childrenContext);
 }
 
 inline unsigned Node::childNodeCount() const

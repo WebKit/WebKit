@@ -29,6 +29,7 @@ function finish()
         return;
     }
     shouldBeEqualToString("window.getComputedStyle(document.getElementById('b'), null).backgroundColor", expectedBackgroundColor);
+    shouldBeEqualToString("window.getComputedStyle(document.getElementById('a'), null).backgroundColor", expectedBackgroundColor);
 
     if (window.testRunner)
         testRunner.notifyDone();

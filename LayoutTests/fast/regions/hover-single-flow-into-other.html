@@ -59,10 +59,18 @@
 	}
 </script>
 
+<script type="text/javascript">
+	function elementHovered() {
+		if (window.testRunner)
+			document.getElementById("content").style.webkitFlowInto = "flow2";
+	}
+</script>
+
+
 <body onload="beginTest()">
 	<p>When hovering the <span style="color:blue"><b>blue box</b></span>, it should move to the <span style="color:darkred"><b>second region</b></span> (it's <b>flow-into</b> will change to the 2nd thread)</p>
 	<div id="region1"></div>
 	<div id="region2"></div>
-	<div id="content" class="box">This box is flowed into the <span style="color:green"><b>first region</b></span> when it is <b>not</b> hovered and into the <span style="color:darkred"><b>second region</b></span> when it <b>is</b></div>
+	<div id="content" class="box" onmouseover="elementHovered()">This box is flowed into the <span style="color:green"><b>first region</b></span> when it is <b>not</b> hovered and into the <span style="color:darkred"><b>second region</b></span> when it <b>is</b></div>
 </body>
 </html>

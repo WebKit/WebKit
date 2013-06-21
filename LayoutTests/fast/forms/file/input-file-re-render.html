@@ -16,6 +16,13 @@ function startTest()
     eventSender.mouseMoveTo(10, 10);
     eventSender.mouseUp();
 
+    // Move the mouse away before moving on. This is done because landing the patch for bug 117590
+    // would cause this test to fail. That patch fixes a hover problem which causes this test
+    // to actually perform correctly (after switching back to display: inline-block, the style of 
+    // the file control would be 'hovered', since it's under the mouse). However, the 'expected'
+    // PNG files were created when this was not working properly, and the control is in its un-hovered state.
+    eventSender.mouseMoveTo(300, 300);
+
     // Delete the renderer.
     input.style.display = 'none';
     input.offsetWidth; // Force to do layout

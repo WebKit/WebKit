@@ -5,4 +5,5 @@ To run manually, move your mouse over the black box. You should see a green box.
 Only green now
 Hover color before test: rgb(255, 255, 0)
 PASS window.getComputedStyle(document.getElementById('b'), null).backgroundColor is "rgb(0, 128, 0)"
+PASS window.getComputedStyle(document.getElementById('a'), null).backgroundColor is "rgb(0, 128, 0)"
 

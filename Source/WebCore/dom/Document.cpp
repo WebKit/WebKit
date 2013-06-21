@@ -1834,6 +1834,12 @@ void Document::recalcStyle(StyleChange change)
     }
 
     InspectorInstrumentation::didRecalculateStyle(cookie);
+
+    // As a result of the style recalculation, the currently hovered element might have been
+    // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
+    // to check if any other elements ended up under the mouse pointer due to re-layout.
+    if (m_hoveredElement && !m_hoveredElement->renderer() && frame())
+        frame()->eventHandler()->dispatchFakeMouseMoveEventSoon();
 }
 
 void Document::updateStyleIfNeeded()
@@ -5859,11 +5865,13 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
     if (oldHoverObj != newHoverObj) {
         // If the old hovered element is not nil but it's renderer is, it was probably detached as part of the :hover style
-        // (for instance by setting display:none in the :hover pseudo-class). In this case, the old hovered element
+        // (for instance by setting display:none in the :hover pseudo-class). In this case, the old hovered element (and its ancestors)
         // must be updated, to ensure it's normal style is re-applied.
         if (oldHoveredElement && !oldHoverObj) {
-            if (!mustBeInActiveChain || (oldHoveredElement->isElementNode() && oldHoveredElement->inActiveChain()))
-                nodesToRemoveFromChain.append(oldHoveredElement);
+            for (Node* node = oldHoveredElement.get(); node; node = node->parentNode()) {
+                if (!mustBeInActiveChain || (node->isElementNode() && toElement(node)->inActiveChain()))
+                    nodesToRemoveFromChain.append(node);
+            }
         }
 
         // The old hover path only needs to be cleared up to (and not including) the common ancestor;

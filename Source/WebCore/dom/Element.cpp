@@ -1440,7 +1440,7 @@ void Element::attach(const AttachContext& context)
     // When a shadow root exists, it does the work of attaching the children.
     if (ElementShadow* shadow = this->shadow()) {
         parentPusher.push();
-        shadow->attach();
+        shadow->attach(context);
     } else if (firstChild())
         parentPusher.push();
 
@@ -1479,8 +1479,8 @@ void Element::detach(const AttachContext& context)
     }
 
     if (ElementShadow* shadow = this->shadow()) {
-        detachChildrenIfNeeded();
-        shadow->detach();
+        detachChildrenIfNeeded(context);
+        shadow->detach(context);
     }
 
     // Do not remove the element's hovered and active status

@@ -789,13 +789,13 @@ void ContainerNode::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
 
 void ContainerNode::attach(const AttachContext& context)
 {
-    attachChildren();
+    attachChildren(context);
     Node::attach(context);
 }
 
 void ContainerNode::detach(const AttachContext& context)
 {
-    detachChildren();
+    detachChildren(context);
     clearChildNeedsStyleRecalc();
     Node::detach(context);
 }

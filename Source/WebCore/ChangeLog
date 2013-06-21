@@ -1,3 +1,39 @@
+2013-06-21  Radu Stavila  <stavila@adobe.com>
+
+        Improve the reattaching process while applying the :hover style
+        https://bugs.webkit.org/show_bug.cgi?id=117590
+
+        Reviewed by Andreas Kling.
+
+        Changes made:
+            - context is properly propagated to the element's children and to Shadow DOM elements.
+            - context is properly set on the lazyReattach method.
+            - another hit-testing is triggered when needed.
+            - when a hovered element is detached, it's ancestors are also removed from the hovered state.
+
+        Tests: fast/css/hover-display-block-inline.html
+               fast/css/hover-display-block-none.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::attach):
+        (WebCore::ContainerNode::detach):
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::attachChildren):
+        (WebCore::ContainerNode::detachChildrenIfNeeded):
+        (WebCore::ContainerNode::detachChildren):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateHoverActiveState):
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::attach):
+        (WebCore::ElementShadow::detach):
+        * dom/ElementShadow.h:
+        * dom/Node.h:
+        (WebCore::Node::lazyReattach):
+
 2013-06-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         HTMLMediaElement should inherit from MediaPlayerClient privately

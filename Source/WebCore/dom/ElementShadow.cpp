@@ -77,21 +77,27 @@ void ElementShadow::removeShadowRoot()
     m_distributor.invalidateDistribution(shadowHost);
 }
 
-void ElementShadow::attach()
+void ElementShadow::attach(const Node::AttachContext& context)
 {
     ContentDistributor::ensureDistribution(shadowRoot());
 
+    Node::AttachContext childrenContext(context);
+    childrenContext.resolvedStyle = 0;
+
     if (ShadowRoot* root = shadowRoot()) {
         if (!root->attached())
-            root->attach();
+            root->attach(childrenContext);
     }
 }
 
-void ElementShadow::detach()
+void ElementShadow::detach(const Node::AttachContext& context)
 {
+    Node::AttachContext childrenContext(context);
+    childrenContext.resolvedStyle = 0;
+
     if (ShadowRoot* root = shadowRoot()) {
         if (root->attached())
-            root->detach();
+            root->detach(childrenContext);
     }
 }
 
