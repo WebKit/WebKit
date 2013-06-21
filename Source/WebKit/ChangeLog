@@ -1,5 +1,15 @@
 2013-06-21  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151847
+
+    2013-06-21  Roger Fong  <roger_fong@apple.com>
+
+            Unreviewed. Fix a missing parenthesis in include directory path.
+
+            * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorCommon.props:
+
+2013-06-21  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151787
 
     2013-06-20  Roger Fong  <roger_fong@apple.com>
