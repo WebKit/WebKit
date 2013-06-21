@@ -136,10 +136,6 @@ public:
     void clearRenderObjectCustomStyle(const RenderObject*,
         const RenderRegion* oldStartRegion = 0, const RenderRegion* oldEndRegion = 0,
         const RenderRegion* newStartRegion = 0, const RenderRegion* newEndRegion = 0);
-    
-    void computeOversetStateForRegions(LayoutUnit oldClientAfterEdge);
-
-    bool overset() const { return m_overset; }
 
     // Check if the object is in region and the region is part of this flow thread.
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
@@ -279,7 +275,6 @@ protected:
     bool m_regionsInvalidated : 1;
     bool m_regionsHaveUniformLogicalWidth : 1;
     bool m_regionsHaveUniformLogicalHeight : 1;
-    bool m_overset : 1;
     bool m_hasRegionsWithStyling : 1;
     bool m_dispatchRegionLayoutUpdateEvent : 1;
     bool m_dispatchRegionOversetChangeEvent : 1;

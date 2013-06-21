@@ -68,6 +68,9 @@ public:
     virtual void addRegionToThread(RenderRegion*) OVERRIDE;
     virtual void removeRegionFromThread(RenderRegion*) OVERRIDE;
 
+    bool overset() const { return m_overset; }
+    void computeOversetStateForRegions(LayoutUnit oldClientAfterEdge);
+
     void registerNamedFlowContentNode(Node*);
     void unregisterNamedFlowContentNode(Node*);
     const NamedFlowContentNodes& contentNodes() const { return m_contentNodes; }
@@ -120,6 +123,8 @@ private:
     NamedFlowContentNodes m_contentNodes;
 
     RenderRegionList m_invalidRegionList;
+
+    bool m_overset : 1;
 
     // The DOM Object that represents a named flow.
     RefPtr<WebKitNamedFlow> m_namedFlow;
