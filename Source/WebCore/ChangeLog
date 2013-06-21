@@ -1,3 +1,19 @@
+2013-06-21  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [EFL] NetworkStateNotifierEfl: Use closeWithRetry instead of looping for EINTR on close
+        https://bugs.webkit.org/show_bug.cgi?id=117872
+
+        Reviewed by Christophe Dumez.
+
+        closeWithRetry works around the Linux behavior of closing the file descriptor
+        unconditionally even if the close() call is interrupted.
+
+        No new tests, no behavior change.
+
+        * platform/network/efl/NetworkStateNotifierEfl.cpp:
+        (WebCore::NetworkStateNotifier::~NetworkStateNotifier): Use closeWithRetry instead of
+        looping for EINTR on close.
+
 2013-06-21  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         REGRESSION (r150663): Using webkitAudioContext in Inspector makes it undefined everywhere

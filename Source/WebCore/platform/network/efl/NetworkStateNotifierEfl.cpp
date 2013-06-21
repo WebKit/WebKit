@@ -34,7 +34,7 @@
 #include <asm/types.h>
 #include <string.h>
 #include <sys/socket.h>
-#include <unistd.h>
+#include <wtf/UniStdExtras.h>
 
 // Must come at the end so that sys/socket.h is included first.
 #include <linux/netlink.h>
@@ -149,12 +149,8 @@ NetworkStateNotifier::~NetworkStateNotifier()
 {
     if (m_fdHandler)
         ecore_main_fd_handler_del(m_fdHandler);
-    if (m_netlinkSocket != -1) {
-        int rv = 0;
-        do {
-            rv = close(m_netlinkSocket);
-        } while (rv == -1 && errno == EINTR);
-    }
+    if (m_netlinkSocket != -1)
+        closeWithRetry(m_netlinkSocket);
     eeze_shutdown();
 }
 
