@@ -1,3 +1,17 @@
+2013-06-21  Ruth Fong  <ruth_fong@apple.com>
+
+        Fix TextTrackCue::cueIndex() to handle the null case of TextTrack::cues(() properly
+        https://bugs.webkit.org/show_bug.cgi?id=117815
+        <rdar://problem/14211041> 
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds assert statements to try to catch when 
+        track()->cues() returns a null pointer.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::cueIndex):
+
 2013-06-21  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Hang drawing captions after pressing the home button while playing a video

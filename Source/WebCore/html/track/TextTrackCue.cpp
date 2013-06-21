@@ -483,8 +483,11 @@ void TextTrackCue::setText(const String& text)
 
 int TextTrackCue::cueIndex()
 {
-    if (m_cueIndex == invalidCueIndex)
+    if (m_cueIndex == invalidCueIndex) {
+        ASSERT(track());
+        ASSERT(track()->cues());
         m_cueIndex = track()->cues()->getCueIndex(this);
+    }
 
     return m_cueIndex;
 }
