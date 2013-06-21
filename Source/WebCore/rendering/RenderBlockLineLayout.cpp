@@ -120,11 +120,14 @@ public:
 #endif
         updateAvailableWidth();
     }
-    bool fitsOnLine(float extra = 0) const { return currentWidth() + extra <= m_availableWidth; }
-    bool fitsOnLineExcludingTrailingWhitespace(float extra = 0) const { return currentWidth() - m_trailingWhitespaceWidth + extra <= m_availableWidth; }
-    bool fitsOnLineExcludingTrailingCollapsedWhitespace(float extra = 0) const { return currentWidth() - m_trailingCollapsedWhitespaceWidth + extra <= m_availableWidth; }
-    float currentWidth() const { return m_committedWidth + m_uncommittedWidth; }
+    bool fitsOnLine(bool ignoringTrailingSpace = false)
+    {
+        return ignoringTrailingSpace ? fitsOnLineExcludingTrailingCollapsedWhitespace() : fitsOnLineIncludingExtraWidth(0);
+    }
+    bool fitsOnLineIncludingExtraWidth(float extra) const { return currentWidth() + extra <= m_availableWidth; }
+    bool fitsOnLineExcludingTrailingWhitespace(float extra) const { return currentWidth() - m_trailingWhitespaceWidth + extra <= m_availableWidth; }
 
+    float currentWidth() const { return m_committedWidth + m_uncommittedWidth; }
     // FIXME: We should eventually replace these three functions by ones that work on a higher abstraction.
     float uncommittedWidth() const { return m_uncommittedWidth; }
     float committedWidth() const { return m_committedWidth; }
@@ -149,6 +152,7 @@ private:
     {
         m_availableWidth = max(0.0f, m_right - m_left) + m_overhangWidth;
     }
+    bool fitsOnLineExcludingTrailingCollapsedWhitespace() const { return currentWidth() - m_trailingCollapsedWhitespaceWidth <= m_availableWidth; }
 
 private:
     RenderBlock* m_block;
@@ -3241,7 +3245,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                             // If the line needs the extra whitespace to be too long,
                             // then move the line break to the space and skip all
                             // additional whitespace.
-                            if (!width.fitsOnLine(charWidth)) {
+                            if (!width.fitsOnLineIncludingExtraWidth(charWidth)) {
                                 lineWasTooWide = true;
                                 lBreak.moveTo(current.m_obj, current.m_pos, current.m_nextBreakablePosition);
                                 skipTrailingWhitespace(lBreak, lineInfo);
@@ -3405,7 +3409,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             ASSERT_NOT_REACHED();
 
         bool checkForBreak = autoWrap;
-        if (width.committedWidth() && !width.fitsOnLineExcludingTrailingCollapsedWhitespace() && lBreak.m_obj && currWS == NOWRAP)
+        if (width.committedWidth() && !width.fitsOnLine(currentCharacterIsSpace) && lBreak.m_obj && currWS == NOWRAP)
             checkForBreak = true;
         else if (next && current.m_obj->isText() && next->isText() && !next->isBR() && (autoWrap || next->style()->autoWrap())) {
             if (autoWrap && currentCharacterIsSpace)
@@ -3431,7 +3435,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             }
         }
 
-        if (checkForBreak && !width.fitsOnLine()) {
+        if (checkForBreak && !width.fitsOnLine(ignoringSpaces)) {
             // if we have floats, try to get below them.
             if (currentCharacterIsSpace && !ignoringSpaces && currentStyle->collapseWhiteSpace())
                 trailingObjects.clear();
@@ -3444,7 +3448,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             // |width| may have been adjusted because we got shoved down past a float (thus
             // giving us more room), so we need to retest, and only jump to
             // the end label if we still don't fit on the line. -dwh
-            if (!width.fitsOnLine())
+            if (!width.fitsOnLine(ignoringSpaces))
                 goto end;
         } else if (blockStyle->autoWrap() && !width.fitsOnLine() && !width.committedWidth()) {
             // If the container autowraps but the current child does not then we still need to ensure that it
@@ -3469,7 +3473,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
         atStart = false;
     }
 
-    if (width.fitsOnLineExcludingTrailingCollapsedWhitespace() || lastWS == NOWRAP)
+    if (width.fitsOnLine(true) || lastWS == NOWRAP)
         lBreak.clear();
 
  end:

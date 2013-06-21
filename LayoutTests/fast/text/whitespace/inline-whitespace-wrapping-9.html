@@ -1,0 +1,18 @@
+﻿<!doctype html>
+<html>
+<head>
+    <style>
+    body {padding: 0; margin: 0; height: 100%;}
+    #cont {position: absolute;}
+    #outer {background-color: blue; padding-right: 20px}
+    </style>
+</head>
+<body>
+    <p>webkit.org/b/76451: Don't allow collapsed trailing space to force a line break and thus ignore padding after 'Text' in the 'inside' span.</p>
+    <div id="cont">
+        <span id="outer">
+            <span id="inside">Text</span>
+        </span>
+    </div>
+</body>
+</html>

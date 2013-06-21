@@ -1,3 +1,13 @@
+2013-06-21  Robert Hogan  <robert@webkit.org>
+
+        Ignoring padding-right of inline elements in containers with undefined width
+        https://bugs.webkit.org/show_bug.cgi?id=76451
+
+        Reviewed by David Hyatt.
+
+        * fast/text/whitespace/inline-whitespace-wrapping-9-expected.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-9.html: Added.
+
 2013-06-21  James Craig  <james@cookiecrook.com>
 
         AX: audio/video playback control timers (elapsed and remaining) should be exposed as ApplicationTimerRole

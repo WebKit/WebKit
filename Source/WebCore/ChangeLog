@@ -1,3 +1,26 @@
+2013-06-21  Robert Hogan  <robert@webkit.org>
+
+        Ignoring padding-right of inline elements in containers with undefined width
+        https://bugs.webkit.org/show_bug.cgi?id=76451
+
+        Reviewed by David Hyatt.
+
+        Collapsed trailing space on a normal wrap line should not cause a line-break 
+        if it is the difference between fitting on the line and breaking. Likewise, on a line that
+        has a mix of auto-wrap and no-wrap inlines we don't want a trailing space at the end of a no-wrap inline
+        to be the difference between that no-wrap inline fitting or breaking the line. This latter
+        scenario is covered already by inline-whitespace-wrapping-8.html.
+
+        Test: fast/text/whitespace/inline-whitespace-wrapping-9.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::fitsOnLine):
+        (WebCore::LineWidth::fitsOnLineIncludingExtraWidth):
+        (WebCore::LineWidth::fitsOnLineExcludingTrailingWhitespace):
+        (WebCore::LineWidth::currentWidth):
+        (WebCore::LineWidth::fitsOnLineExcludingTrailingCollapsedWhitespace):
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak):
+
 2013-06-21  Alex Christensen  <achristensen@apple.com>
 
         Added WebGL source files to Windows build and made Windows build successfully with them.
