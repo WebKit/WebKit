@@ -581,7 +581,10 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
             frame()->document()->enforceSandboxFlags(SandboxOrigin);
             if (HTMLFrameOwnerElement* ownerElement = frame()->ownerElement())
                 ownerElement->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
-            cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
+
+            // The load event might have detached this frame. In that case, the load will already have been cancelled during detach.
+            if (frameLoader())
+                cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
             return;
         }
     }

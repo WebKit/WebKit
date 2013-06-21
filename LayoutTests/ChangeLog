@@ -1,3 +1,13 @@
+2013-06-20  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=116495
+        Fix null-pointer deref in DocumentLoader::responseReceived()
+
+        Patch by Nate Chapin, reviewed by Mike West and myself.
+
+        * http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html: Added.
+
 2013-06-20  Enrica Casucci  <enrica@apple.com>
 
         Initial advance on the first glyph of the run is not correctly set for rtl text.
