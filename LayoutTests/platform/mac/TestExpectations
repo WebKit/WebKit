@@ -1336,3 +1336,5 @@ webkit.org/b/116388 fast/js/post-message-numeric-property.html
 webkit.org/b/116582 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Pass Crash ]
 
 webkit.org/b/116592 inspector/geolocation-error.html [ Pass Failure ]
+
+webkit.org/b/117862 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Failure ]
