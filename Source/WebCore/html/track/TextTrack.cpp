@@ -527,6 +527,8 @@ bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
 #if USE(PLATFORM_TEXT_TRACK_MENU)
 PassRefPtr<PlatformTextTrack> TextTrack::platformTextTrack()
 {
+    static int uniqueId = 0;
+
     if (m_platformTextTrack)
         return m_platformTextTrack;
 
@@ -552,7 +554,7 @@ PassRefPtr<PlatformTextTrack> TextTrack::platformTextTrack()
     else if (m_trackType == InBand)
         type = PlatformTextTrack::InBand;
 
-    m_platformTextTrack = PlatformTextTrack::create(this, label(), language(), platformKind, type);
+    m_platformTextTrack = PlatformTextTrack::create(this, label(), language(), platformKind, type, ++uniqueId);
 
     return m_platformTextTrack;
 }

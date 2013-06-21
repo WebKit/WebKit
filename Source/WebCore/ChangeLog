@@ -1,3 +1,21 @@
+2013-06-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Update platform text track menu
+        https://bugs.webkit.org/show_bug.cgi?id=117884
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setSelectedTextTrack):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::platformTextTrack):
+        * platform/graphics/PlatformTextTrack.h:
+        (WebCore::PlatformTextTrack::create): 
+        (WebCore::PlatformTextTrack::uniqueId):
+        (WebCore::PlatformTextTrack::captionMenuOffItem):
+        (WebCore::PlatformTextTrack::captionMenuAutomaticItem):
+        (WebCore::PlatformTextTrack::PlatformTextTrack):
+
 2013-06-21  James Craig  <james@cookiecrook.com>
 
         AX: audio/video playback control timers (elapsed and remaining) should be exposed as ApplicationTimerRole

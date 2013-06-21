@@ -60,9 +60,9 @@ public:
         Script = 2
     };
 
-    static PassRefPtr<PlatformTextTrack> create(PlatformTextTrackClient* client, const String& label, const String& language, TrackKind kind, TrackType type)
+    static PassRefPtr<PlatformTextTrack> create(PlatformTextTrackClient* client, const String& label, const String& language, TrackKind kind, TrackType type, int uniqueId)
     {
-        return adoptRef(new PlatformTextTrack(client, label, language, kind, type));
+        return adoptRef(new PlatformTextTrack(client, label, language, kind, type, uniqueId));
     }
 
     virtual ~PlatformTextTrack() { }
@@ -72,14 +72,28 @@ public:
     String label() const { return m_label; }
     String language() const { return m_language; }
     PlatformTextTrackClient* client() const { return m_client; }
-    
+    int uniqueId() const { return m_uniqueId; }
+
+    static PlatformTextTrack* captionMenuOffItem()
+    {
+        DEFINE_STATIC_LOCAL(RefPtr<PlatformTextTrack>, off, (PlatformTextTrack::create(0, "off menu item", "", Subtitle, InBand, 0)));
+        return off.get();
+    }
+
+    static PlatformTextTrack* captionMenuAutomaticItem()
+    {
+        DEFINE_STATIC_LOCAL(RefPtr<PlatformTextTrack>, automatic, (PlatformTextTrack::create(0, "automatic menu item", "", Subtitle, InBand, 0)));
+        return automatic.get();
+    }
+
 protected:
-    PlatformTextTrack(PlatformTextTrackClient* client, const String& label, const String& language, TrackKind kind, TrackType type)
+    PlatformTextTrack(PlatformTextTrackClient* client, const String& label, const String& language, TrackKind kind, TrackType type, int uniqueId)
         : m_label(label)
         , m_language(language)
         , m_kind(kind)
         , m_type(type)
         , m_client(client)
+        , m_uniqueId(uniqueId)
     {
     }
 
@@ -88,6 +102,7 @@ protected:
     TrackKind m_kind;
     TrackType m_type;
     PlatformTextTrackClient* m_client;
+    int m_uniqueId;
 };
 
 }

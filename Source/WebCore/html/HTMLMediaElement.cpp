@@ -2948,21 +2948,27 @@ void HTMLMediaElement::setSelectedTextTrack(PassRefPtr<PlatformTextTrack> platfo
     TrackDisplayUpdateScope scope(this);
 
     if (!platformTrack) {
-        setSelectedTextTrack(0);
+        setSelectedTextTrack(TextTrack::captionMenuOffItem());
         return;
     }
 
     TextTrack* textTrack;
-    size_t i;
-    for (i = 0; i < m_textTracks->length(); ++i) {
-        textTrack = m_textTracks->item(i);
-        
-        if (textTrack->platformTextTrack() == platformTrack)
-            break;
+    if (platformTrack == PlatformTextTrack::captionMenuOffItem())
+        textTrack = TextTrack::captionMenuOffItem();
+    else if (platformTrack == PlatformTextTrack::captionMenuAutomaticItem())
+        textTrack = TextTrack::captionMenuAutomaticItem();
+    else {
+        size_t i;
+        for (i = 0; i < m_textTracks->length(); ++i) {
+            textTrack = m_textTracks->item(i);
+            
+            if (textTrack->platformTextTrack() == platformTrack)
+                break;
+        }
+        if (i == m_textTracks->length())
+            return;
     }
 
-    if (i == m_textTracks->length())
-        return;
     setSelectedTextTrack(textTrack);
 }
 
