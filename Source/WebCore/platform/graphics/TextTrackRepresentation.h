@@ -35,13 +35,14 @@
 namespace WebCore {
 
 class GraphicsContext;
+class Image;
 class IntRect;
 
 class TextTrackRepresentationClient {
 public:
     virtual ~TextTrackRepresentationClient() { }
 
-    virtual void paintTextTrackRepresentation(GraphicsContext*, const IntRect&) = 0;
+    virtual PassRefPtr<Image> createTextTrackRepresentationImage() = 0;
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) = 0;
 };
 

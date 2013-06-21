@@ -228,7 +228,6 @@ public:
     virtual void mediaPlayerDidRemoveVideoTrack(PassRefPtr<VideoTrackPrivate>) { }
 
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) { }
-    virtual void paintTextTrackRepresentation(GraphicsContext*, const IntRect&) { }
 #endif
 };
 

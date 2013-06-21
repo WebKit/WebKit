@@ -455,7 +455,7 @@ private:
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    virtual void paintTextTrackRepresentation(GraphicsContext*, const IntRect&) OVERRIDE;
+    virtual PassRefPtr<Image> createTextTrackRepresentationImage() OVERRIDE;
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) OVERRIDE;
     OwnPtr<TextTrackRepresentation> m_textTrackRepresentation;
 

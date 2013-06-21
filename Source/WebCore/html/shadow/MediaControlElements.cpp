@@ -41,6 +41,7 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLVideoElement.h"
+#include "ImageBuffer.h"
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include "MediaControls.h"
@@ -1367,40 +1368,48 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
     m_updateTimer.startOneShot(0);
 }
 
-void MediaControlTextTrackContainerElement::paintTextTrackRepresentation(GraphicsContext* context, const IntRect& contextRect)
+PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentationImage()
 {
     if (!hasChildNodes())
-        return;
+        return 0;
 
     RenderObject* renderer = this->renderer();
     if (!renderer)
-        return;
+        return 0;
 
     Frame* frame = document()->frame();
     if (!frame)
-        return;
+        return 0;
 
     document()->updateLayout();
 
     LayoutRect topLevelRect;
     IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 
+    float deviceScaleFactor = 1;
+    if (Page* page = document()->page())
+        deviceScaleFactor = page->deviceScaleFactor();
+
+    OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
+    if (!buffer)
+        return 0;
+
     // Translate the renderer painting rect into graphics context coordinates.
     FloatSize translation(-paintingRect.x(), -paintingRect.y());
 
-    // But anchor to the bottom of the graphics context rect.
-    translation.expand(max(0, contextRect.width() - paintingRect.width()), max(0, contextRect.height() - paintingRect.height()));
-
-    context->translate(translation);
+    buffer->context()->translate(translation);
 
     RenderLayer* layer = frame->contentRenderer()->layer();
-    layer->paint(context, paintingRect, PaintBehaviorFlattenCompositingLayers, renderer, 0, RenderLayer::PaintLayerPaintingCompositingAllPhases);
+    layer->paint(buffer->context(), paintingRect, PaintBehaviorFlattenCompositingLayers, renderer, 0, RenderLayer::PaintLayerPaintingCompositingAllPhases);
+
+    return buffer->copyImage();
 }
 
 void MediaControlTextTrackContainerElement::textTrackRepresentationBoundsChanged(const IntRect&)
 {
     updateSizes();
 }
+
 #endif // ENABLE(VIDEO_TRACK)
 
 // ----------------------------
