@@ -114,9 +114,15 @@ void ProcessLauncher::launchProcess()
 
 void ProcessLauncher::terminateProcess()
 {
+    if (m_isLaunching) {
+        invalidate();
+        return;
+    }
+
     if (!m_processIdentifier)
         return;
     kill(m_processIdentifier, SIGKILL);
+    m_processIdentifier = 0;
 }
 
 void ProcessLauncher::platformInvalidate()
