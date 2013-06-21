@@ -1,3 +1,20 @@
+2013-06-21  Alex Christensen  <achristensen@apple.com>
+
+        Added WebGL source files to Windows build and made Windows build successfully with them.
+        https://bugs.webkit.org/show_bug.cgi?id=117853
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Added WebGL source files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Added platform\graphics\opengl and platform\graphics\gpu filters.
+        * WebCore.vcxproj/WebCorePreBuild.cmd: Copy ANGLE headers and glext.h before building WebCore (which now uses them).
+        * platform/graphics/ANGLEWebKitBridge.h: Look in newly copied directory for ShaderLang.h.
+        * platform/graphics/OpenGLShims.h: Include GL/glext.h.
+        * platform/graphics/gpu/LoopBlinnShader.cpp: 
+        (WebCore::LoopBlinnShader::use): Fixed parameter ordering in call to uniformMatrix4fv.
+        * platform/graphics/opengl/GLPlatformSurface.cpp:
+        (WebCore::GLPlatformSurface::createOffScreenSurface): Added notImplemented for non-EGL builds for now.
+
 2013-06-21  Eric Carlson  <eric.carlson@apple.com>
 
         Update platform text track menu

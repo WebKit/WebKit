@@ -283,6 +283,12 @@
     <Filter Include="html\canvas">
       <UniqueIdentifier>{70b0bcb3-8703-4b6e-81d2-e8aa9ef31af0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform\graphics\opengl">
+      <UniqueIdentifier>{0977a226-d119-42ef-9cd6-c6413fd9e5cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\graphics\gpu">
+      <UniqueIdentifier>{c2332ff9-436e-4c07-b692-fb4b9db40ffd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DerivedSources.cpp">
@@ -6864,6 +6870,168 @@
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSOESVertexArrayObject.cpp">
       <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLBuffer.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLCompressedTextureATC.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLCompressedTexturePVRTC.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLCompressedTextureS3TC.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLContextAttributes.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLContextEvent.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLContextGroup.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLContextObject.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLDebugRendererInfo.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLDebugShaders.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLDepthTexture.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLExtension.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLFramebuffer.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLGetInfo.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLLoseContext.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLObject.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLProgram.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLRenderbuffer.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLRenderingContext.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLShader.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLShaderPrecisionFormat.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLSharedObject.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLTexture.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLUniformLocation.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\WebGLVertexArrayObjectOES.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\OESElementIndexUint.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\OESStandardDerivatives.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\OESTextureFloat.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\OESTextureHalfFloat.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\OESVertexArrayObject.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\EXTDrawBuffers.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\EXTTextureFilterAnisotropic.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\ANGLEWebKitBridge.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\GraphicsContext3D.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\OpenGLShims.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\DrawingBuffer.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnClassifier.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnLocalTriangulator.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnMathUtils.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnPathCache.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnShader.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnSolidFillShader.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\LoopBlinnTextureCoords.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\Shader.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\SharedGraphicsContext3D.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\Texture.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gpu\TilingData.cpp">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opengl\Extensions3DOpenGL.cpp">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opengl\Extensions3DOpenGLCommon.cpp">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opengl\Extensions3DOpenGLES.cpp">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opengl\GLPlatformContext.cpp">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opengl\GLPlatformSurface.cpp">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLCommon.cpp">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLES.cpp">
+      <Filter>platform\graphics\opengl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -14383,6 +14551,174 @@
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSOESVertexArrayObject.h">
       <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLActiveInfo.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLBuffer.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLCompressedTextureATC.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLCompressedTexturePVRTC.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLCompressedTextureS3TC.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLContextAttributes.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLContextEvent.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLContextGroup.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLContextObject.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLDebugRendererInfo.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLDebugShaders.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLDepthTexture.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLExtension.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLFramebuffer.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLGetInfo.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLLoseContext.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLObject.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLProgram.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLRenderbuffer.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLRenderingContext.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLShader.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLShaderPrecisionFormat.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLSharedObject.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLTexture.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLUniformLocation.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\WebGLVertexArrayObjectOES.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\OESElementIndexUint.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\OESStandardDerivatives.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\OESTextureFloat.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\OESTextureHalfFloat.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\OESVertexArrayObject.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\EXTDrawBuffers.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\EXTTextureFilterAnisotropic.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\ANGLEWebKitBridge.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\GraphicsContext3D.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\OpenGLShims.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\DrawingBuffer.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnClassifier.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnConstants.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnLocalTriangulator.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnMathUtils.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnPathCache.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnPathProcessor.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnShader.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnSolidFillShader.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\LoopBlinnTextureCoords.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\Shader.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\SharedGraphicsContext3D.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\Texture.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gpu\TilingData.h">
+      <Filter>platform\graphics\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGL.h">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGLCommon.h">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGLES.h">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opengl\GLDefs.h">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opengl\GLPlatformContext.h">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opengl\GLPlatformSurface.h">
+      <Filter>platform\graphics\opengl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -31,6 +31,8 @@
 
 #if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(BLACKBERRY) && !PLATFORM(QT) && !PLATFORM(WIN)
 #include "ANGLE/ShaderLang.h"
+#elif PLATFORM(WIN)
+#include "GLSLANG/ShaderLang.h"
 #else
 #include "ShaderLang.h"
 #endif

@@ -45,7 +45,7 @@ void LoopBlinnShader::use(unsigned vertexOffset, unsigned klmOffset, const Affin
 
     float matrix[16];
     affineTo4x4(transform, matrix);
-    m_context->uniformMatrix4fv(m_worldViewProjectionLocation, false /*transpose*/, matrix, 1 /*count*/);
+    m_context->uniformMatrix4fv(m_worldViewProjectionLocation, 1 /*count*/, false /*transpose*/, matrix);
 
     m_context->vertexAttribPointer(m_positionLocation, 2, GraphicsContext3D::FLOAT, false, 0, vertexOffset);
     m_context->enableVertexAttribArray(m_positionLocation);

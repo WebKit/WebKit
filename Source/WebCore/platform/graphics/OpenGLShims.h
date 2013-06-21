@@ -27,6 +27,7 @@
 #include <QSurface>
 #else
 #include <GL/gl.h>
+#include <GL/glext.h>
 #endif
 
 #if defined(GL_ES_VERSION_2_0)
