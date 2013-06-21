@@ -1,3 +1,20 @@
+2013-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r149652): accessing items in .children via id doesn't work when element is not rooted in DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=117836
+
+        Reviewed by Benjamin Poulain.
+
+        When the root node of a HTML collection is not in the document or in a shadow tree,
+        we shouldn't use its tree scope's id and name maps to find name getters.
+
+        Always use the slow path in such cases.
+
+        Test: fast/dom/htmlallcollection-detached-node-children.html
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::namedItem):
+
 2013-06-20  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=116495

@@ -1,3 +1,15 @@
+2013-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r149652): accessing items in .children via id doesn't work when element is not rooted in DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=117836
+
+        Reviewed by Benjamin Poulain.
+
+        Add a regression test for named getter for a detached element.
+
+        * fast/dom/htmlallcollection-detached-node-children-expected.txt: Added.
+        * fast/dom/htmlallcollection-detached-node-children.html: Added.
+
 2013-06-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE][EFL] Enable DOM4 Events Constructor
