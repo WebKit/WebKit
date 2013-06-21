@@ -41,6 +41,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/RandomNumber.h>
+#include <wtf/UniStdExtras.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -54,7 +55,7 @@ SharedMemory::Handle::Handle()
 SharedMemory::Handle::~Handle()
 {
     if (!isNull())
-        while (close(m_fileDescriptor) == -1 && errno == EINTR) { }
+        closeWithRetry(m_fileDescriptor);
 }
 
 bool SharedMemory::Handle::isNull() const
@@ -116,7 +117,7 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 
     while (ftruncate(fileDescriptor, size) == -1) {
         if (errno != EINTR) {
-            while (close(fileDescriptor) == -1 && errno == EINTR) { }
+            closeWithRetry(fileDescriptor);
             shm_unlink(tempName.data());
             return 0;
         }
@@ -124,7 +125,7 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 
     void* data = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0);
     if (data == MAP_FAILED) {
-        while (close(fileDescriptor) == -1 && errno == EINTR) { }
+        closeWithRetry(fileDescriptor);
         shm_unlink(tempName.data());
         return 0;
     }
@@ -170,7 +171,7 @@ PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection p
 SharedMemory::~SharedMemory()
 {
     munmap(m_data, m_size);
-    while (close(m_fileDescriptor) == -1 && errno == EINTR) { }
+    closeWithRetry(m_fileDescriptor);
 }
 
 static inline int accessModeFile(SharedMemory::Protection protection)
@@ -202,7 +203,7 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
     while ((fcntl(duplicatedHandle, F_SETFD, FD_CLOEXEC | accessModeFile(protection)) == -1)) {
         if (errno != EINTR) {
             ASSERT_NOT_REACHED();
-            while (close(duplicatedHandle) == -1 && errno == EINTR) { }
+            closeWithRetry(duplicatedHandle);
             return false;
         }
     }

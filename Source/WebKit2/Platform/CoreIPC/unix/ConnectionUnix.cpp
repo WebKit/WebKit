@@ -37,6 +37,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Functional.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/UniStdExtras.h>
 
 #if PLATFORM(QT)
 #include <QPointer>
@@ -136,7 +137,7 @@ void Connection::platformInvalidate()
     // In GTK+ platform the socket is closed by the work queue.
 #if !PLATFORM(GTK)
     if (m_socketDescriptor != -1)
-        while (close(m_socketDescriptor) == -1 && errno == EINTR) { }
+        closeWithRetry(m_socketDescriptor);
 #endif
 
     if (!m_isConnected)

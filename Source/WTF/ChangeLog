@@ -1,3 +1,18 @@
+2013-06-20  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [WK2] Looping for EINTR on close() is incorrect for Linux, at least
+        https://bugs.webkit.org/show_bug.cgi?id=117266
+
+        Reviewed by Darin Adler.
+
+        Added file UniStdExtras with a closeWithRetry() function that works around
+        the EINTR behavior on Linux during a close() call: it closes the descriptor
+        unconditionally even when the call is interrupted.
+
+        * wtf/UniStdExtras.h: Added.
+        (WTF::closeWithRetry): Wrapper around POSIX close() that handles EINTR
+        correctly.
+
 2013-06-20  Mark Lam  <mark.lam@apple.com>
 
         Refine the StackBounds computation for Windows.

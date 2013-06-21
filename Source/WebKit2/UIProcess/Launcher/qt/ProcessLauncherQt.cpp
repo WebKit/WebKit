@@ -50,6 +50,7 @@
 #include <sys/resource.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <wtf/UniStdExtras.h>
 #endif
 
 #if defined(Q_OS_LINUX)
@@ -162,8 +163,8 @@ void ProcessLauncher::launchProcess()
     while (fcntl(sockets[1], F_SETFD, FD_CLOEXEC)  == -1) {
         if (errno != EINTR) {
             ASSERT_NOT_REACHED();
-            while (close(sockets[0]) == -1 && errno == EINTR) { }
-            while (close(sockets[1]) == -1 && errno == EINTR) { }
+            closeWithRetry(sockets[0]);
+            closeWithRetry(sockets[1]);
             return;
         }
     }

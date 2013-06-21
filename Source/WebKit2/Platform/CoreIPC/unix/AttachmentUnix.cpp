@@ -27,8 +27,7 @@
 #include "config.h"
 #include "Attachment.h"
 
-#include <unistd.h>
-#include <errno.h>
+#include <wtf/UniStdExtras.h>
 
 namespace CoreIPC {
 
@@ -49,7 +48,7 @@ Attachment::Attachment(int fileDescriptor)
 void Attachment::dispose()
 {
     if (m_fileDescriptor != -1)
-        while (close(m_fileDescriptor) == -1 && (errno == EINTR)) { }
+        closeWithRetry(m_fileDescriptor);
 }
 
 } // namespace CoreIPC

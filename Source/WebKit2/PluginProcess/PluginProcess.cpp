@@ -50,6 +50,7 @@
 #include <sys/resource.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <wtf/UniStdExtras.h>
 
 #ifdef SOCK_SEQPACKET
 #define SOCKET_TYPE SOCK_SEQPACKET
@@ -192,8 +193,8 @@ void PluginProcess::createWebProcessConnection()
     while (fcntl(sockets[1], F_SETFD, FD_CLOEXEC)  == -1) {
         if (errno != EINTR) {
             ASSERT_NOT_REACHED();
-            while (close(sockets[0]) == -1 && errno == EINTR) { }
-            while (close(sockets[1]) == -1 && errno == EINTR) { }
+            closeWithRetry(sockets[0]);
+            closeWithRetry(sockets[1]);
             return;
         }
     }
@@ -202,8 +203,8 @@ void PluginProcess::createWebProcessConnection()
     while (fcntl(sockets[0], F_SETFD, FD_CLOEXEC) == -1) {
         if (errno != EINTR) {
             ASSERT_NOT_REACHED();
-            while (close(sockets[0]) == -1 && errno == EINTR) { }
-            while (close(sockets[1]) == -1 && errno == EINTR) { }
+            closeWithRetry(sockets[0]);
+            closeWithRetry(sockets[1]);
             return;
         }
     }

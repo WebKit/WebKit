@@ -1,3 +1,31 @@
+2013-06-20  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [WK2] Looping for EINTR on close() is incorrect for Linux, at least
+        https://bugs.webkit.org/show_bug.cgi?id=117266
+
+        Reviewed by Darin Adler.
+
+        Call closeWithRetry() to work around a difference in how the retry needs to
+        be done on Linux.
+
+        * Platform/CoreIPC/unix/AttachmentUnix.cpp:
+        (CoreIPC::Attachment::dispose):
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::platformInvalidate):
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::~Handle):
+        (WebKit::SharedMemory::create):
+        (WebKit::SharedMemory::~SharedMemory):
+        (WebKit::SharedMemory::createHandle):
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::createWebProcessConnection):
+        * SharedWorkerProcess/SharedWorkerProcess.cpp:
+        (WebKit::SharedWorkerProcess::createWebProcessConnection):
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::launchProcess): All these places had
+        ``close-followed-by-EINTR-handling'' replaced with the new closeWithRetry()
+        function added in this commit.
+
 2013-06-20  Brady Eidson  <beidson@apple.com>
 
         WebProcess hangs loading eff.org (Waiting forever on a sync XHR, NetworkProcess unable to service it).
