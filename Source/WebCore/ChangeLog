@@ -1,3 +1,15 @@
+2013-06-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Crashes due to NULL dereference beneath WebCore::StyleResolver::loadPendingSVGDocuments and related functions
+        https://bugs.webkit.org/show_bug.cgi?id=117903
+
+        Reviewed by Darin Adler.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingSVGDocuments): Add a NULL check for
+        RenderStyle here...
+        (WebCore::StyleResolver::loadPendingResources): ...and here.
+
 2013-06-21  Simon Fraser  <simon.fraser@apple.com>
 
         Occasional crash swiping between pages
