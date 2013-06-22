@@ -1,3 +1,16 @@
+2013-06-22  Dean Jackson  <dino@apple.com>
+
+        Slightly reduce width threshold on detection of primary snapshotted Plug-In
+        https://bugs.webkit.org/show_bug.cgi?id=117914
+        <rdar://problem/14136687>
+
+        Reviewed by Simon Fraser.
+
+        We've noticed some content that should be detected as the primary snapshotted plug-in,
+        but is just a bit smaller than our 450x300 minimum threshold. Reduce the width to 400.
+
+        * WebProcess/WebPage/WebPage.cpp: Change primarySnapshottedPlugInMinimumWidth from 450 to 400.
+
 2013-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         screen.availWidth always returns width of primary display
