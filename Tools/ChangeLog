@@ -1,3 +1,10 @@
+2013-06-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed crash protection for DRT
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp: Check for null elements in routines
+        to avoid crashing during test runs.
+
 2013-06-21  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         REGRESSION (r150663): Using webkitAudioContext in Inspector makes it undefined everywhere

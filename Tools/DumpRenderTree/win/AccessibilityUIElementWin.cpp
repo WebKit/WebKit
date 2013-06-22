@@ -83,6 +83,9 @@ void AccessibilityUIElement::getDocumentLinks(Vector<AccessibilityUIElement>&)
 
 void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& children)
 {
+    if (!m_element)
+        return;
+
     long childCount;
     if (FAILED(m_element->get_accChildCount(&childCount)))
         return;
@@ -92,6 +95,9 @@ void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& childre
 
 void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>& elementVector, unsigned location, unsigned length)
 {
+    if (!m_element)
+        return;
+
     long childCount;
     unsigned appendedCount = 0;
     if (FAILED(m_element->get_accChildCount(&childCount)))
@@ -102,6 +108,9 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>
 
 int AccessibilityUIElement::childrenCount()
 {
+    if (!m_element)
+        return 0;
+
     long childCount;
     m_element->get_accChildCount(&childCount);
     return childCount;
@@ -132,6 +141,9 @@ AccessibilityUIElement AccessibilityUIElement::linkedUIElementAtIndex(unsigned i
 
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
+    if (!m_element)
+        return 0;
+
     COMPtr<IDispatch> child;
     VARIANT vChild;
     ::VariantInit(&vChild);
@@ -203,6 +215,9 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 
 AccessibilityUIElement AccessibilityUIElement::parentElement()
 {
+    if (!m_element)
+        return 0;
+
     COMPtr<IDispatch> parent;
     m_element->get_accParent(&parent);
 
@@ -273,6 +288,9 @@ JSStringRef AccessibilityUIElement::roleDescription()
 
 JSStringRef AccessibilityUIElement::title()
 {
+    if (!m_element)
+        return JSStringCreateWithCharacters(0, 0);
+
     BSTR titleBSTR;
     if (FAILED(m_element->get_accName(self(), &titleBSTR)) || !titleBSTR)
         return JSStringCreateWithCharacters(0, 0);
@@ -283,6 +301,9 @@ JSStringRef AccessibilityUIElement::title()
 
 JSStringRef AccessibilityUIElement::description()
 {
+    if (!m_element)
+        return JSStringCreateWithCharacters(0, 0);
+
     BSTR descriptionBSTR;
     if (FAILED(m_element->get_accDescription(self(), &descriptionBSTR)) || !descriptionBSTR)
         return JSStringCreateWithCharacters(0, 0);
@@ -308,6 +329,9 @@ JSStringRef AccessibilityUIElement::helpText() const
 
 double AccessibilityUIElement::x()
 {
+    if (!m_element)
+        return 0;
+
     long x, y, width, height;
     if (FAILED(m_element->accLocation(&x, &y, &width, &height, self())))
         return 0;
@@ -316,6 +340,9 @@ double AccessibilityUIElement::x()
 
 double AccessibilityUIElement::y()
 {
+    if (!m_element)
+        return 0;
+
     long x, y, width, height;
     if (FAILED(m_element->accLocation(&x, &y, &width, &height, self())))
         return 0;
@@ -324,6 +351,9 @@ double AccessibilityUIElement::y()
 
 double AccessibilityUIElement::width()
 {
+    if (!m_element)
+        return 0;
+
     long x, y, width, height;
     if (FAILED(m_element->accLocation(&x, &y, &width, &height, self())))
         return 0;
@@ -332,6 +362,9 @@ double AccessibilityUIElement::width()
 
 double AccessibilityUIElement::height()
 {
+    if (!m_element)
+        return 0;
+
     long x, y, width, height;
     if (FAILED(m_element->accLocation(&x, &y, &width, &height, self())))
         return 0;
@@ -400,6 +433,9 @@ bool AccessibilityUIElement::isExpanded() const
 
 bool AccessibilityUIElement::isChecked() const
 {
+    if (!m_element)
+        return false;
+
     VARIANT vState;
     if (FAILED(m_element->get_accState(self(), &vState)))
         return false;
@@ -414,6 +450,9 @@ JSStringRef AccessibilityUIElement::orientation() const
 
 double AccessibilityUIElement::intValue() const
 {
+    if (!m_element)
+        return 0;
+
     BSTR valueBSTR;
     if (FAILED(m_element->get_accValue(self(), &valueBSTR)) || !valueBSTR)
         return 0;
@@ -435,6 +474,9 @@ double AccessibilityUIElement::maxValue()
 
 bool AccessibilityUIElement::isPressActionSupported()
 {
+    if (!m_element)
+        return 0;
+
     BSTR valueBSTR;
     if (FAILED(m_element->get_accDefaultAction(self(), &valueBSTR) || !valueBSTR))
         return false;
@@ -599,6 +641,9 @@ void AccessibilityUIElement::decrement()
 
 void AccessibilityUIElement::showMenu()
 {
+    if (!m_element)
+        return;
+
     ASSERT(hasPopup());
     m_element->accDoDefaultAction(self());
 }
@@ -643,6 +688,9 @@ AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
 
 JSStringRef AccessibilityUIElement::accessibilityValue() const
 {
+    if (!m_element)
+        return JSStringCreateWithCharacters(0, 0);
+
     BSTR valueBSTR;
     if (FAILED(m_element->get_accValue(self(), &valueBSTR)) || !valueBSTR)
         return JSStringCreateWithCharacters(0, 0);
@@ -741,21 +789,33 @@ bool AccessibilityUIElement::hasPopup() const
 
 void AccessibilityUIElement::takeFocus()
 {
+    if (!m_element)
+        return;
+
     m_element->accSelect(SELFLAG_TAKEFOCUS, self());
 }
 
 void AccessibilityUIElement::takeSelection()
 {
+    if (!m_element)
+        return;
+
     m_element->accSelect(SELFLAG_TAKESELECTION, self());
 }
 
 void AccessibilityUIElement::addSelection()
 {
+    if (!m_element)
+        return;
+
     m_element->accSelect(SELFLAG_ADDSELECTION, self());
 }
 
 void AccessibilityUIElement::removeSelection()
 {
+    if (!m_element)
+        return;
+
     m_element->accSelect(SELFLAG_REMOVESELECTION, self());
 }
 
