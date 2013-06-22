@@ -136,7 +136,7 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
             memoryCache()->revalidationFailed(m_resource);
         }
         
-        if (!m_documentLoader->cachedResourceLoader()->canRequest(m_resource->type(), newRequest.url())) {
+        if (!m_documentLoader->cachedResourceLoader()->canRequest(m_resource->type(), newRequest.url(), options())) {
             cancel();
             return;
         }

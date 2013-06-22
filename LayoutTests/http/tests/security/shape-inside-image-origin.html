@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<style>
+    #shape {
+        -webkit-shape-inside: rectangle(0, 0, 0, 0);
+        -webkit-shape-outside: rectangle(0, 0, 0, 0);
+    }
+</style>
+</head>
+<body>
+  <p>Verify that shape-inside and shape-outside can not be set to a URL with a different origin
+  and that the result of doing so sets the property to "none". This test should generate two error
+  messages about unsafe attempts to load a URL.</p>
+  <p id="console"></p>
+
+  <div id="shape"></div>
+
+<script>
+  var shapeElement = document.getElementById("shape");
+  shouldBeEqualToString('window.getComputedStyle(shapeElement).webkitShapeInside', "rectangle(0px, 0px, 0px, 0px, 0px, 0px)");
+  shouldBeEqualToString('window.getComputedStyle(shapeElement).webkitShapeOutside', "rectangle(0px, 0px, 0px, 0px, 0px, 0px)");
+
+  // The image URL's port does not match this document's origin. We expect a pair of console warnings.
+  shapeElement.style.webkitShapeInside = 'url("http://localhost:8080/security/resources/square100.png")';
+  shapeElement.style.webkitShapeOutside = 'url("http://localhost:8080/security/resources/square100.png")';
+
+  shouldBeEqualToString('window.getComputedStyle(shapeElement).webkitShapeInside', "none");
+  shouldBeEqualToString('window.getComputedStyle(shapeElement).webkitShapeOutside', "none");
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

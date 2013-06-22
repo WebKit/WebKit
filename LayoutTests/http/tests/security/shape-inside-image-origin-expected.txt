@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Unsafe attempt to load URL http://localhost:8080/security/resources/square100.png from frame with URL http://127.0.0.1:8000/security/shape-inside-image-origin.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Unsafe attempt to load URL http://localhost:8080/security/resources/square100.png from frame with URL http://127.0.0.1:8000/security/shape-inside-image-origin.html. Domains, protocols and ports must match.
+
+Verify that shape-inside and shape-outside can not be set to a URL with a different origin and that the result of doing so sets the property to "none". This test should generate two error messages about unsafe attempts to load a URL.
+
+PASS window.getComputedStyle(shapeElement).webkitShapeInside is "rectangle(0px, 0px, 0px, 0px, 0px, 0px)"
+PASS window.getComputedStyle(shapeElement).webkitShapeOutside is "rectangle(0px, 0px, 0px, 0px, 0px, 0px)"
+PASS window.getComputedStyle(shapeElement).webkitShapeInside is "none"
+PASS window.getComputedStyle(shapeElement).webkitShapeOutside is "none"
+
+

@@ -1,3 +1,51 @@
+2013-06-22  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] limit shape image values to same origin
+        https://bugs.webkit.org/show_bug.cgi?id=117610
+
+        Reviewed by Alexey Proskuryakov.
+
+        Restrict the image URL values for shape-inside and shape-outside to
+        the same origin as the document. The alpha channel of image shape values
+        will be thresholded to produce the shape's boundaries (see bug 116643)
+        so normal image access rules aren't secure enough.
+
+        Added a RequestOriginPolicy ResourceLoaderOption which is used by
+        StyleResolver::loadPendingShapeImage() to request the additional restriction.
+        The change should have no other effect although it does enable one to apply
+        the same restriction to other resources which can currently be loaded from
+        any origin - see CachedResourceLoader::canRequest().
+
+        Test: http/tests/security/shape-inside-image-origin.html
+
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage): Add an effectively optional ResourceLoaderOptions parameter.
+        * css/CSSImageValue.h:
+        (WebCore::CSSImageValue::cachedImage): Ditto.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingShapeImage): Load the image with the default CachedResourceLoader options plus RestrictToSameOrigin.
+        (WebCore::StyleResolver::loadPendingImages): Call loadPendingShapeImage().
+        * css/StyleResolver.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource): Update the ResourceLoaderOptions static variable.
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader): Ditto.
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::options):
+        * loader/ResourceLoaderOptions.h: Add RequestOriginPolicy enum.
+        (WebCore::ResourceLoaderOptions::ResourceLoaderOptions):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest): Pass ResourceLoaderOptions along to revised CachedResourceLoader::canRequest().
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet): Update load() ResourceLoaderOptions.
+        (WebCore::CachedResourceLoader::canRequest): Replaced ContentSecurityPolicyCheck parameter with ResourceLoaderOptions.
+        (WebCore::CachedResourceLoader::requestResource): Pass ResourceLoaderOptions along to revised CachedResourceLoader::canRequest().
+        (WebCore::CachedResourceLoader::defaultCachedResourceOptions): Added UseDefaultOriginRestrictionsForType initializer.
+        * loader/cache/CachedResourceLoader.h:
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading): Added UseDefaultOriginRestrictionsForType intializer.
+
 2013-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         screen.availWidth always returns width of primary display

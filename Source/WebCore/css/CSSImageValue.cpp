@@ -63,14 +63,14 @@ StyleImage* CSSImageValue::cachedOrPendingImage()
     return m_image.get();
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
+StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const ResourceLoaderOptions& options)
 {
     ASSERT(loader);
 
     if (!m_accessedImage) {
         m_accessedImage = true;
 
-        CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(m_url)));
+        CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(m_url)), options);
         if (m_initiatorName.isEmpty())
             request.setInitiator(cachedResourceRequestInitiators().css);
         else
@@ -80,6 +80,11 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
     }
 
     return (m_image && m_image->isCachedImage()) ? static_cast<StyleCachedImage*>(m_image.get()) : 0;
+}
+
+StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
+{
+    return cachedImage(loader, CachedResourceLoader::defaultCachedResourceOptions());
 }
 
 bool CSSImageValue::hasFailedOrCanceledSubresources() const

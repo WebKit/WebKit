@@ -581,6 +581,9 @@ private:
 
     PassRefPtr<StyleImage> loadPendingImage(StylePendingImage*);
     void loadPendingImages();
+#if ENABLE(CSS_SHAPES)
+    void loadPendingShapeImage(ShapeValue*);
+#endif
 
     static unsigned computeMatchedPropertiesHash(const MatchedProperties*, unsigned size);
     struct MatchedPropertiesCacheItem {

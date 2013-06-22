@@ -62,7 +62,7 @@ void IconLoader::startLoading()
     if (m_resource || !m_frame->document())
         return;
 
-    CachedResourceRequest request(ResourceRequest(m_frame->loader()->icon()->url()), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForAnyCredentials, DoSecurityCheck));
+    CachedResourceRequest request(ResourceRequest(m_frame->loader()->icon()->url()), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForAnyCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
 
 #if PLATFORM(BLACKBERRY)
     request.mutableResourceRequest().setTargetType(ResourceRequest::TargetIsFavicon);

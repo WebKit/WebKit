@@ -1,3 +1,17 @@
+2013-06-22  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] limit shape image values to same origin
+        https://bugs.webkit.org/show_bug.cgi?id=117610
+
+        Reviewed by Alexey Proskuryakov.
+
+        Verify that a non same-origin image URL specified for shape-inside or
+        shape-outside will not load and the shape property will be reset to "none".
+
+        * http/tests/resources/square100.png: Added.
+        * http/tests/security/shape-inside-image-origin-expected.txt: Added.
+        * http/tests/security/shape-inside-image-origin.html: Added.
+
 2013-06-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed gardening.

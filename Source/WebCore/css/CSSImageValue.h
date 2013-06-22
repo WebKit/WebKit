@@ -31,6 +31,7 @@ class Element;
 class StyleCachedImage;
 class StyleImage;
 class RenderObject;
+struct ResourceLoaderOptions;
 
 class CSSImageValue : public CSSValue {
 public:
@@ -38,6 +39,7 @@ public:
     static PassRefPtr<CSSImageValue> create(const String& url, StyleImage* image) { return adoptRef(new CSSImageValue(url, image)); }
     ~CSSImageValue();
 
+    StyleCachedImage* cachedImage(CachedResourceLoader*, const ResourceLoaderOptions&);
     StyleCachedImage* cachedImage(CachedResourceLoader*);
     // Returns a StyleCachedImage if the image is cached already, otherwise a StylePendingImage.
     StyleImage* cachedOrPendingImage();

@@ -55,15 +55,31 @@ enum SecurityCheckPolicy {
     DoSecurityCheck
 };
 
+enum RequestOriginPolicy {
+    UseDefaultOriginRestrictionsForType,
+    RestrictToSameOrigin
+};
+
 struct ResourceLoaderOptions {
-    ResourceLoaderOptions() : sendLoadCallbacks(DoNotSendCallbacks), sniffContent(DoNotSniffContent), dataBufferingPolicy(BufferData), allowCredentials(DoNotAllowStoredCredentials), clientCredentialPolicy(DoNotAskClientForAnyCredentials), securityCheck(DoSecurityCheck) { }
-    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentials allowCredentials, ClientCredentialPolicy credentialPolicy, SecurityCheckPolicy securityCheck)
+    ResourceLoaderOptions()
+        : sendLoadCallbacks(DoNotSendCallbacks)
+        , sniffContent(DoNotSniffContent)
+        , dataBufferingPolicy(BufferData)
+        , allowCredentials(DoNotAllowStoredCredentials)
+        , clientCredentialPolicy(DoNotAskClientForAnyCredentials)
+        , securityCheck(DoSecurityCheck)
+        , requestOriginPolicy(UseDefaultOriginRestrictionsForType)
+    {
+    }
+
+    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentials allowCredentials, ClientCredentialPolicy credentialPolicy, SecurityCheckPolicy securityCheck, RequestOriginPolicy requestOriginPolicy)
         : sendLoadCallbacks(sendLoadCallbacks)
         , sniffContent(sniffContent)
         , dataBufferingPolicy(dataBufferingPolicy)
         , allowCredentials(allowCredentials)
         , clientCredentialPolicy(credentialPolicy)
         , securityCheck(securityCheck)
+        , requestOriginPolicy(requestOriginPolicy)
     {
     }
     SendCallbackPolicy sendLoadCallbacks;
@@ -72,6 +88,7 @@ struct ResourceLoaderOptions {
     StoredCredentials allowCredentials; // Whether HTTP credentials and cookies are sent with the request.
     ClientCredentialPolicy clientCredentialPolicy; // When we should ask the client for credentials (if we allow credentials at all).
     SecurityCheckPolicy securityCheck;
+    RequestOriginPolicy requestOriginPolicy;
 };
 
 } // namespace WebCore    

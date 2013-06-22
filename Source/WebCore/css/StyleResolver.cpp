@@ -52,6 +52,9 @@
 #include "CSSVariableValue.h"
 #endif
 #include "CachedImage.h"
+#if ENABLE(CSS_SHAPES)
+#include "CachedResourceLoader.h"
+#endif
 #include "CalculationValue.h"
 #include "ContentData.h"
 #include "ContextFeatures.h"
@@ -4106,6 +4109,28 @@ PassRefPtr<StyleImage> StyleResolver::loadPendingImage(StylePendingImage* pendin
     return 0;
 }
 
+
+#if ENABLE(CSS_SHAPES)
+void StyleResolver::loadPendingShapeImage(ShapeValue* shapeValue)
+{
+    if (!shapeValue)
+        return;
+
+    StyleImage* image = shapeValue->image();
+    if (!image || !image->isPendingImage())
+        return;
+
+    StylePendingImage* pendingImage = static_cast<StylePendingImage*>(image);
+    CSSImageValue* cssImageValue =  pendingImage->cssImageValue();
+    CachedResourceLoader* cachedResourceLoader = m_state.document()->cachedResourceLoader();
+
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.requestOriginPolicy = RestrictToSameOrigin;
+
+    shapeValue->setImage(cssImageValue->cachedImage(cachedResourceLoader, options));
+}
+#endif
+
 void StyleResolver::loadPendingImages()
 {
     if (m_state.pendingImageProperties().isEmpty())
@@ -4182,12 +4207,10 @@ void StyleResolver::loadPendingImages()
         }
 #if ENABLE(CSS_SHAPES)
         case CSSPropertyWebkitShapeInside:
-            if (m_state.style()->shapeInside() && m_state.style()->shapeInside()->image() && m_state.style()->shapeInside()->image()->isPendingImage())
-                m_state.style()->shapeInside()->setImage(loadPendingImage(static_cast<StylePendingImage*>(m_state.style()->shapeInside()->image())));
+            loadPendingShapeImage(m_state.style()->shapeInside());
             break;
         case CSSPropertyWebkitShapeOutside:
-            if (m_state.style()->shapeOutside() && m_state.style()->shapeOutside()->image() && m_state.style()->shapeOutside()->image()->isPendingImage())
-                m_state.style()->shapeOutside()->setImage(loadPendingImage(static_cast<StylePendingImage*>(m_state.style()->shapeOutside()->image())));
+            loadPendingShapeImage(m_state.style()->shapeOutside());
             break;
 #endif
         default:
