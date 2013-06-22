@@ -1,3 +1,11 @@
+2013-06-22  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r151878.
+
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading): Pass the new UseDefaultOriginRestrictionsForType
+        argument to the ResourceLoaderOptions constructor.
+
 2013-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         Followup from r151877 .

@@ -68,7 +68,7 @@ void WebCoreAVFResourceLoader::startLoading()
 
     KURL requestURL = [[m_avRequest.get() request] URL];
 
-    CachedResourceRequest request(ResourceRequest(requestURL), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck));
+    CachedResourceRequest request(ResourceRequest(requestURL), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
 
     request.mutableResourceRequest().setPriority(ResourceLoadPriorityLow);
     CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader();
