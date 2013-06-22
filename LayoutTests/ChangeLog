@@ -1,3 +1,9 @@
+2013-06-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed gardening.
+
+        * platform/win/accessibility/aria-menubar-menuitems-expected.txt: Added.
+
 2013-06-21  Mark Lam  <mark.lam@apple.com>
 
         Reverting failure expectation for fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html.
