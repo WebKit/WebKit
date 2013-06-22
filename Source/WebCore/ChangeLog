@@ -1,3 +1,16 @@
+2013-06-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Occasional crash swiping between pages
+        https://bugs.webkit.org/show_bug.cgi?id=117902
+
+        Reviewed by Beth Dakin.
+
+        m_scrollingStateTree->rootStateNode() can be null when quickly swiping between pages,
+        so check this in ScrollingCoordinatorMac::commitTreeState().
+
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::commitTreeState):
+
 2013-06-21  Brent Fulgham  <bfulgham@apple.com>
 
         AX: Title for ListItemRole should consist of concatenated child text elements.
