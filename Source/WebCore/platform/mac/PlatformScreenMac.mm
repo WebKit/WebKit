@@ -75,7 +75,7 @@ static NSScreen *screenForWidget(Widget* widget, NSWindow *window)
         return screenForWindow(window);
     
     // Didn't get an NSWindow; probably WebKit2. Try using the Widget's display ID.
-    if (NSScreen *screen = [NSScreen screenForDislayID:widget->windowDisplayID()])
+    if (NSScreen *screen = widget ? [NSScreen screenForDislayID:widget->windowDisplayID()] : nil)
         return screen;
     
     // Widget's window is offscreen, or no screens. Fall back to the first screen if available.

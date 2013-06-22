@@ -1,3 +1,11 @@
+2013-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Followup from r151877 .
+        Fix crash in fast/frames/iframe-access-screen-of-deleted.html by null-checking the widget.
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenForWidget):
+
 2013-06-22  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] limit shape image values to same origin
