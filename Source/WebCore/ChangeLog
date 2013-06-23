@@ -1,3 +1,17 @@
+2013-06-22  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant helper from RenderRegion.
+        https://bugs.webkit.org/show_bug.cgi?id=117915
+
+        Reviewed by Andreas Kling.
+
+        Minor code cleanup.
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::regionOversetState):
+        (WebCore::RenderRegion::setRegionOversetState):
+        * rendering/RenderRegion.h:
+
 2013-06-22  Mark Rowe  <mrowe@apple.com>
 
         Build fix after r151878.
