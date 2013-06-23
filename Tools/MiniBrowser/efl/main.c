@@ -22,6 +22,7 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_Getopt.h>
+#include <Eet.h>
 #include <Eina.h>
 #include <Elementary.h>
 #include <Evas.h>
@@ -178,6 +179,7 @@ static const Ecore_Getopt options = {
     }
 };
 
+static Eina_Stringshare *show_file_entry_dialog(Browser_Window *window, const char *label_tag, const char *default_text);
 static Browser_Window *window_create(Evas_Object* opener, const char *url, int width, int height, Eina_Bool view_mode);
 
 static Browser_Window *window_find_with_elm_window(Evas_Object *elm_window)
@@ -349,6 +351,34 @@ search_box_hide(Browser_Window *window)
     evas_object_focus_set(window->ewk_view, EINA_TRUE);
 }
 
+static void save_page_contents_callback(Ewk_Page_Contents_Type type, const char *data, void *user_data)
+{
+    Eet_File *ef;
+    Eina_Stringshare *fileName = (Eina_Stringshare *)user_data;
+
+    if (!eina_str_has_extension(fileName, ".mht")) {
+        Eina_Strbuf *fileNameWithMht = eina_strbuf_new();
+        eina_strbuf_append_printf(fileNameWithMht, "%s.mht", fileName);
+        ef = eet_open(eina_strbuf_string_get(fileNameWithMht), EET_FILE_MODE_WRITE);
+        info("Saving file to: %s", eina_strbuf_string_get(fileNameWithMht));
+        eina_strbuf_free(fileNameWithMht);
+    } else {
+        ef = eet_open(fileName, EET_FILE_MODE_WRITE);
+        info("Saving file to: %s", fileName);
+    }
+
+    if (!ef) {
+        info("ERROR: Could not create File");
+        return;
+    }
+
+    eet_write(ef, "MHTML data", data, strlen(data), 0 /* compress */);
+    eet_close(ef);
+    info("SUCCESS: saved.");
+
+    eina_stringshare_del(fileName);
+}
+
 static void
 on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
 {
@@ -423,6 +453,28 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
         if (zoom_level_set(ewk_view, DEFAULT_ZOOM_LEVEL))
             window->current_zoom_level = DEFAULT_ZOOM_LEVEL;
         info("Zoom to default (Ctrl + '0') was pressed, zoom level became %.2f", zoomLevels[window->current_zoom_level]);
+    } else if (ctrlPressed && !strcmp(ev->key, "s")) {
+        Eina_Strbuf *default_file = eina_strbuf_new();
+        const char *home_path = getenv("HOME");
+        const char *title = ewk_view_title_get(window->ewk_view);
+        eina_strbuf_append_printf(default_file, "%s/%s.mht", home_path ? home_path : "/home", title ? title : "title");
+        info("Pressed (CTRL + S) : Saving Current Page.");
+        Eina_Stringshare *save_file_name = show_file_entry_dialog(window, "SAVE", eina_strbuf_string_get(default_file));
+        if (!save_file_name)
+            return;
+        ewk_view_page_contents_get(ewk_view, EWK_PAGE_CONTENTS_TYPE_MHTML, save_page_contents_callback, (void *)save_file_name);
+        eina_strbuf_free(default_file);
+    } else if (ctrlPressed && !strcmp(ev->key, "l")) {
+        const char *home_path =  getenv("HOME");
+        Eina_Stringshare *open_file_name = show_file_entry_dialog(window, "LOAD", home_path ? home_path : "/home");
+        if (!open_file_name)
+            return;
+        Eina_Strbuf *uri_path = eina_strbuf_new();
+        eina_strbuf_append_printf(uri_path, "file://%s", open_file_name);
+        info("pressed (CTRL + L) : Loading Page %s", eina_strbuf_string_get(uri_path));
+        ewk_view_url_set(ewk_view, eina_strbuf_string_get(uri_path));
+        eina_strbuf_free(uri_path);
+        eina_stringshare_del(open_file_name);
     }
 }
 
@@ -945,6 +997,62 @@ on_ok_clicked(void *user_data, Evas_Object *obj, void *event_info)
     *confirmed = EINA_TRUE;
 
     ecore_main_loop_quit();
+}
+
+static Eina_Stringshare *
+show_file_entry_dialog(Browser_Window *window, const char *label_tag, const char *default_text)
+{
+    Evas_Object *file_popup = elm_popup_add(window->elm_window);
+    evas_object_size_hint_weight_set(file_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_show(file_popup);
+
+    Evas_Object *vbox = elm_box_add(file_popup);
+    evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(vbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_object_content_set(file_popup, vbox);
+    evas_object_show(vbox);
+
+    Evas_Object *label = elm_label_add(window->elm_window);
+    elm_object_text_set(label, label_tag);
+    evas_object_size_hint_weight_set(label, EVAS_HINT_EXPAND, 0.0);
+    evas_object_size_hint_align_set(label, EVAS_HINT_FILL, 0.5);
+    evas_object_color_set(label, 23, 45, 67, 142);
+    elm_box_pack_end(vbox, label);
+    evas_object_show(label);
+
+    Evas_Object *fs_entry = elm_fileselector_entry_add(file_popup);
+    elm_fileselector_entry_is_save_set(fs_entry, EINA_TRUE);
+    evas_object_size_hint_align_set(fs_entry, EVAS_HINT_FILL, 0);
+    elm_fileselector_entry_path_set(fs_entry, default_text);
+    elm_object_text_set(fs_entry, "FileChooser");
+    elm_box_pack_end(vbox, fs_entry);
+    evas_object_show(fs_entry);
+
+    Evas_Object *hbox = elm_box_add(file_popup);
+    evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_box_horizontal_set(hbox, EINA_TRUE);
+    evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_box_pack_end(vbox, hbox);
+    evas_object_show(hbox);
+
+    Eina_Bool ok = EINA_FALSE;
+    Evas_Object *ok_button = elm_button_add(file_popup);
+    elm_object_text_set(ok_button, "OK");
+    evas_object_smart_callback_add(ok_button, "clicked", on_ok_clicked, &ok);
+    elm_box_pack_end(hbox, ok_button);
+    evas_object_show(ok_button);
+
+    Evas_Object *cancel_button = elm_button_add(file_popup);
+    elm_object_text_set(cancel_button, "Cancel");
+    evas_object_smart_callback_add(cancel_button, "clicked", quit_event_loop, NULL);
+    elm_box_pack_end(hbox, cancel_button);
+    evas_object_show(cancel_button);
+
+    ecore_main_loop_begin();
+
+    Eina_Stringshare *file_path = ok ? eina_stringshare_add(elm_fileselector_entry_path_get(fs_entry)) : NULL;
+    evas_object_del(file_popup);
+    return file_path;
 }
 
 static void
