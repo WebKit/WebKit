@@ -1,3 +1,20 @@
+2013-06-24  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] WTF.dll is linking with CoreFoundation.lib in VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=117294
+
+        Reviewed by Brent Fulgham.
+
+        WinCairo build should not use CoreFoundation.
+
+        * WTF.vcxproj/WTFCFLite.props: Added.
+        * WTF.vcxproj/WTFCommon.props: Remove CoreFoundation.lib from depencency list.
+        * WTF.vcxproj/WTFCoreFoundation.props: Added.
+        * WTF.vcxproj/WTFDebug.props: Import WTFCoreFoundation.props for WinApple.
+        * WTF.vcxproj/WTFDebugWinCairo.props: Import WTFCFLite.props for WinCairo.
+        * WTF.vcxproj/WTFRelease.props: Import WTFCoreFoundation.props for WinApple.
+        * WTF.vcxproj/WTFReleaseWinCairo.props: Import WTFCFLite.props for WinCairo.
+
 2013-06-17  Darin Adler  <darin@apple.com>
 
         Sort all the Xcode project files
