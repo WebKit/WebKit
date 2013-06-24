@@ -1,3 +1,11 @@
+2013-06-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Unreviewed build correction after r151868
+        New test expecation had been placed in the wrong directory.
+
+        * platform/mac/accessibility/listitem-title-expected.txt: Copied from platform/mac/listitem-title-actual.txt.
+        * platform/mac/listitem-title-actual.txt: Removed.
+
 2013-06-24  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skipping the crashing tests on debug bots.
