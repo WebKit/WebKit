@@ -50,6 +50,8 @@ static const char noGuessesString[] = "No Guesses Found";
 static const char ignoreSpellingString[] = "Ignore Spelling";
 static const char learnSpellingString[] = "Learn Spelling";
 
+static const char* clientSuggestionsForWord[] = { "clientSuggestion1", "clientSuggestion2", "clientSuggestion3" };
+
 /**
  * Structure keeps information which callbacks were called.
  * Its values are reset before each test.
@@ -180,9 +182,11 @@ static Eina_List* onWordGuesses(uint64_t tag, const char* word)
     EXPECT_STREQ(expectedMisspelledWord, word);
 
     Eina_List* suggestionsForWord = 0;
-    // FIXME: Fill the Eina_List with suggestions for the misspelled word.
-    callbacksExecutionStats.wordGuesses = true;
+    size_t numberOfSuggestions = WTF_ARRAY_LENGTH(clientSuggestionsForWord);
+    for (size_t i = 0; i < numberOfSuggestions; ++i)
+        suggestionsForWord = eina_list_append(suggestionsForWord, strdup(clientSuggestionsForWord[i]));
 
+    callbacksExecutionStats.wordGuesses = true;
     return suggestionsForWord;
 }
 
@@ -277,6 +281,27 @@ static Eina_Bool toogleCheckSpellingWhileTyping(Ewk_View_Smart_Data*, Evas_Coord
     Ewk_Context_Menu_Item* checkSpellingWhileTypingItem = findContextMenuItem(spellingAndGrammarSubmenu, EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING_WHILE_TYPING, EWK_CHECKABLE_ACTION_TYPE);
 
     return ewk_context_menu_item_select(spellingAndGrammarSubmenu, checkSpellingWhileTypingItem);
+}
+
+static Eina_Bool checkClientSuggestionsForWord(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
+{
+    const Eina_List* contextMenuItems = ewk_context_menu_items_get(contextMenu);
+
+    size_t numberOfSuggestions = WTF_ARRAY_LENGTH(clientSuggestionsForWord);
+    // contextMenuItems should contain suggestions and another options.
+    if (numberOfSuggestions > eina_list_count(contextMenuItems)) {
+        ADD_FAILURE();
+        return true;
+    }
+    // Verify suggestions from the top of context menu list.
+    for (size_t i = 0; i < numberOfSuggestions; ++i) {
+        Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(eina_list_data_get(contextMenuItems));
+        EXPECT_STREQ(clientSuggestionsForWord[i], ewk_context_menu_item_title_get(item));
+        contextMenuItems = eina_list_next(contextMenuItems);
+    }
+
+    wasContextMenuShown = true;
+    return true;
 }
 
 /**
@@ -598,19 +623,20 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_string_spelling_check_cb_set)
 TEST_F(EWK2UnitTestBase, ewk_text_checker_word_guesses_get_cb_set)
 {
     resetCallbacksExecutionStats();
+    wasContextMenuShown = false;
     defaultView = webView();
-    ewk_text_checker_continuous_spell_checking_enabled_set(true);
-
+    ewkViewClass()->context_menu_show = checkClientSuggestionsForWord;
     ewk_text_checker_word_guesses_get_cb_set(onWordGuesses);
 
     ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
 
-    /* FIXME:
-        1) Invoke the context menu on the misspelled word (not implemented for WK2),
-           the word has to be selected first.
-        2) Fill the suggestion list in the onWordGuesses callback.
-        3) Compare context menu suggestions to the suggestion list.
-        4) Check whether the callback was called. */    
+    EWK2UnitTestBase::mouseClick(10, 20, /*Right button*/ 3);
+    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
+
+    // Check whether the callback is called.
+    ASSERT_TRUE(callbacksExecutionStats.wordGuesses);
+
+    ewk_text_checker_word_guesses_get_cb_set(0);
 }
 
 /**
