@@ -1,3 +1,35 @@
+2013-06-24  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r151021.
+        http://trac.webkit.org/changeset/151021
+        https://bugs.webkit.org/show_bug.cgi?id=117924
+
+        caused regressions on Qt and GTK (#117141 and #117688)
+        (Requested by philn on #webkit).
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init):
+        (webKitWebSrcFinalize):
+        (webKitWebSrcSetProperty):
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcStop):
+        (webKitWebSrcStart):
+        (webKitWebSrcChangeState):
+        (webKitWebSrcQueryWithParent):
+        (webKitWebSrcGetUri):
+        (webKitWebSrcSetUri):
+        (webKitWebSrcNeedDataMainCb):
+        (webKitWebSrcEnoughDataMainCb):
+        (webKitWebSrcSeekMainCb):
+        (webKitWebSrcSeekDataCb):
+        (StreamingClient::StreamingClient):
+        (StreamingClient::~StreamingClient):
+        (StreamingClient::didReceiveResponse):
+        (StreamingClient::didReceiveData):
+        (StreamingClient::didFinishLoading):
+        (StreamingClient::wasBlocked):
+        (StreamingClient::cannotShowURL):
+
 2013-06-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Move IDL implements statements to IDL files that implement the interface
