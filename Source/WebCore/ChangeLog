@@ -1,3 +1,16 @@
+2013-06-24  Patrick Gansterer  <paroga@webkit.org>
+
+        Use SetFilePointer instead of SetFilePointerEx in FileSystemWin
+        https://bugs.webkit.org/show_bug.cgi?id=116205
+
+        Reviewed by Ryosuke Niwa.
+
+        SetFilePointerEx is not available on Windows CE, so use SetFilePointer.
+        Also add a extra return for the case of an failure.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::seekFile):
+
 2013-06-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Introduce WindowTimers IDL interface

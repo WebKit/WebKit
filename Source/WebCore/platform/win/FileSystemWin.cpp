@@ -359,12 +359,12 @@ long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin o
     LARGE_INTEGER largeOffset;
     largeOffset.QuadPart = offset;
 
-    LARGE_INTEGER newOffset;
-    newOffset.QuadPart = 0;
+    largeOffset.LowPart = SetFilePointer(handle, largeOffset.LowPart, &largeOffset.HighPart, moveMethod);
 
-    SetFilePointerEx(handle, largeOffset, &newOffset, moveMethod);
+    if (largeOffset.LowPart == INVALID_SET_FILE_POINTER && GetLastError() != NO_ERROR)
+        return -1;
 
-    return newOffset.QuadPart;
+    return largeOffset.QuadPart;
 }
 
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
