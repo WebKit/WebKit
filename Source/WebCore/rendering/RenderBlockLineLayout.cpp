@@ -2863,6 +2863,12 @@ static inline bool iteratorIsBeyondEndOfRenderCombineText(const InlineIterator& 
     return iter.m_obj == renderer && iter.m_pos >= renderer->textLength();
 }
 
+static inline void commitLineBreakAtCurrentWidth(LineWidth& width, InlineIterator& lBreak, RenderObject* object, unsigned offset = 0, int nextBreak = -1)
+{
+    width.commit();
+    lBreak.moveTo(object, offset, nextBreak);
+}
+
 InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
 {
     reset();
@@ -3041,10 +3047,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 width.updateAvailableWidth(replacedBox->logicalHeight());
 
             // Break on replaced elements if either has normal white-space.
-            if ((autoWrap || RenderStyle::autoWrap(lastWS)) && (!current.m_obj->isImage() || allowImagesToBreak)) {
-                width.commit();
-                lBreak.moveToStartOf(current.m_obj);
-            }
+            if ((autoWrap || RenderStyle::autoWrap(lastWS)) && (!current.m_obj->isImage() || allowImagesToBreak))
+                commitLineBreakAtCurrentWidth(width, lBreak, current.m_obj);
 
             if (ignoringSpaces)
                 stopIgnoringSpaces(lineMidpointState, InlineIterator(0, current.m_obj, 0));
@@ -3086,10 +3090,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
 
             // If we have left a no-wrap inline and entered an autowrap inline while ignoring spaces
             // then we need to mark the start of the autowrap inline as a potential linebreak now. 
-            if (autoWrap && !RenderStyle::autoWrap(lastWS) && ignoringSpaces) {
-                width.commit();
-                lBreak.moveToStartOf(current.m_obj);
-            }
+            if (autoWrap && !RenderStyle::autoWrap(lastWS) && ignoringSpaces)
+                commitLineBreakAtCurrentWidth(width, lBreak, current.m_obj);
 
             if (t->style()->hasTextCombine() && current.m_obj->isCombineText() && !toRenderCombineText(current.m_obj)->isCombined()) {
                 RenderCombineText* combineRenderer = toRenderCombineText(current.m_obj);
@@ -3129,8 +3131,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
 #endif
 
             if (t->isWordBreak()) {
-                width.commit();
-                lBreak.moveToStartOf(current.m_obj);
+                commitLineBreakAtCurrentWidth(width, lBreak, current.m_obj);
                 ASSERT(current.m_pos == t->textLength());
             }
 
@@ -3296,9 +3297,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                     }
 
                     if (autoWrap && betweenWords) {
-                        width.commit();
                         wrapW = 0;
-                        lBreak.moveTo(current.m_obj, current.m_pos, current.m_nextBreakablePosition);
+                        commitLineBreakAtCurrentWidth(width, lBreak, current.m_obj, current.m_pos, current.m_nextBreakablePosition);
                         // Auto-wrapping text should not wrap in the middle of a word once it has had an
                         // opportunity to break after a word.
                         breakWords = false;
@@ -3426,10 +3426,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                     width.fitBelowFloats();
 
                 bool canPlaceOnLine = width.fitsOnLine() || !autoWrapWasEverTrueOnLine;
-                if (canPlaceOnLine && checkForBreak) {
-                    width.commit();
-                    lBreak.moveToStartOf(next);
-                }
+                if (canPlaceOnLine && checkForBreak)
+                    commitLineBreakAtCurrentWidth(width, lBreak, next);
             }
         }
 
@@ -3456,10 +3454,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
 
         if (!current.m_obj->isFloatingOrOutOfFlowPositioned()) {
             last = current.m_obj;
-            if (last->isReplaced() && autoWrap && (!last->isImage() || allowImagesToBreak) && (!last->isListMarker() || toRenderListMarker(last)->isInside())) {
-                width.commit();
-                lBreak.moveToStartOf(next);
-            }
+            if (last->isReplaced() && autoWrap && (!last->isImage() || allowImagesToBreak) && (!last->isListMarker() || toRenderListMarker(last)->isInside()))
+                commitLineBreakAtCurrentWidth(width, lBreak, next);
         }
 
         // Clear out our character space bool, since inline <pre>s don't collapse whitespace
