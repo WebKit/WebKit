@@ -1,3 +1,9 @@
+2013-06-24  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Makefile build fix for AppleWindows.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.make:
+
 2013-06-17  Darin Adler  <darin@apple.com>
 
         Sort all the Xcode project files

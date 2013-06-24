@@ -15,10 +15,10 @@ install:
     xcopy "%WebKit_Libraries%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y
     devenv "JavaScriptCore.submit.sln" /clean $(BUILDSTYLE)
     devenv "JavaScriptCore.submit.sln" /build $(BUILDSTYLE)
-    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore.dll" "$(DSTROOT)\%ProgramFilesAAS%" /e/v/i/h/y
-    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore_debug.dll" "$(DSTROOT)\%ProgramFilesAAS%" /e/v/i/h/y
-    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore.pdb" "$(DSTROOT)\%ProgramFilesAAS%" /e/v/i/h/y
-    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore_debug.pdb" "$(DSTROOT)\%ProgramFilesAAS%" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore.dll" "$(DSTROOT)\%ProgramFilesAAS%\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore_debug.dll" "$(DSTROOT)\%ProgramFilesAAS%\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore.pdb" "$(DSTROOT)\%ProgramFilesAAS%\" /e/v/i/h/y
+    -xcopy "%ConfigurationBuildDir%\bin32\JavaScriptCore_debug.pdb" "$(DSTROOT)\%ProgramFilesAAS%\" /e/v/i/h/y
     -xcopy "%ConfigurationBuildDir%\bin32\jsc.exe" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
     -xcopy "%ConfigurationBuildDir%\bin32\jsc_debug.exe" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
     -xcopy "%ConfigurationBuildDir%\bin32\jsc.pdb" "$(DSTROOT)\AppleInternal\bin32\" /e/v/i/h/y
