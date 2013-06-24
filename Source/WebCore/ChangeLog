@@ -1,3 +1,17 @@
+2013-06-24  Andreas Kling  <akling@apple.com>
+
+        Don't create Document's selector query cache just to invalidate it.
+        <http://webkit.org/b/117942>
+
+        Reviewed by Anders Carlsson.
+
+        If Document::m_selectorQueryCache is null, there's nothing to invalidate,
+        so don't go through the trouble of creating a query cache.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setCompatibilityMode):
+        (WebCore::Document::updateBaseURL):
+
 2013-06-24  Robert Hogan  <robert@webkit.org>
 
         Refactor adding a line break

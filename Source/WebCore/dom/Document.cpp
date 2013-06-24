@@ -715,7 +715,10 @@ void Document::setCompatibilityMode(CompatibilityMode mode)
         return;
     bool wasInQuirksMode = inQuirksMode();
     m_compatibilityMode = mode;
-    selectorQueryCache()->invalidate();
+
+    if (m_selectorQueryCache)
+        m_selectorQueryCache->invalidate();
+
     if (inQuirksMode() != wasInQuirksMode) {
         // All user stylesheets have to reparse using the different mode.
         m_styleSheetCollection->clearPageUserSheet();
@@ -2631,7 +2634,9 @@ void Document::updateBaseURL()
         // and DOM 3 Core does not specify how it should be resolved.
         m_baseURL = KURL(ParsedURLString, documentURI());
     }
-    selectorQueryCache()->invalidate();
+
+    if (m_selectorQueryCache)
+        m_selectorQueryCache->invalidate();
 
     if (!m_baseURL.isValid())
         m_baseURL = KURL();
