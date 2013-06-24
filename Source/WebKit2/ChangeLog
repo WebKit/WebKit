@@ -1,3 +1,17 @@
+2013-06-24  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r147591): can't type in Adobe Connect
+        https://bugs.webkit.org/show_bug.cgi?id=117947
+        <rdar://problem/14223539>
+
+        Reviewed by Andreas Kling.
+
+        With the change in r147591, it is now possible for a plug-in element to be focused before the plug-in
+        starts. Handle this by focusing the plug-in right after it's started if necessary.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::didInitializePlugin):
+
 2013-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         Move displayID stuff from Widget to Chrome
