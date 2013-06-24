@@ -1,3 +1,11 @@
+2013-06-24  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r151783.
+
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::cssValueIdToSysColorIndex):
+        (WebCore::RenderThemeWinCE::systemColor):
+
 2013-06-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r151021.

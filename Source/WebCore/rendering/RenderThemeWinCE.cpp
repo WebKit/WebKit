@@ -284,7 +284,7 @@ bool RenderThemeWinCE::supportsHover(const RenderStyle*) const
 }
 
 // Map a CSSValue* system color to an index understood by GetSysColor
-static CSSValueID cssValueIdToSysColorIndex(CSSValueID cssValueId)
+static int cssValueIdToSysColorIndex(CSSValueID cssValueId)
 {
     switch (cssValueId) {
     case CSSValueActiveborder: return COLOR_ACTIVEBORDER;
@@ -315,14 +315,14 @@ static CSSValueID cssValueIdToSysColorIndex(CSSValueID cssValueId)
     case CSSValueWindow: return COLOR_WINDOW;
     case CSSValueWindowframe: return COLOR_WINDOWFRAME;
     case CSSValueWindowtext: return COLOR_WINDOWTEXT;
-    default: return CSSValueInvalid; // Unsupported CSSValue
+    default: return -1; // Unsupported CSSValue
     }
 }
 
 Color RenderThemeWinCE::systemColor(CSSValueID cssValueId) const
 {
-    CSSValueID sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
-    if (sysColorIndex == CSSValueInvalid)
+    int sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
+    if (sysColorIndex == -1)
         return RenderTheme::systemColor(cssValueId);
 
     COLORREF color = GetSysColor(sysColorIndex);
