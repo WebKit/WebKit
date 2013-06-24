@@ -525,6 +525,26 @@ plugin_process_for_dep_list += \
 endif
 $(plugin_process_for_dep): $(plugin_process_for_dep_list)
 
+webcore_layer_gtk2_deps = \
+	libWebCorePlatform.la \
+	libWebCoreGtk2.la \
+	libWebCore.la \
+	libWebCoreModules.la
+if ENABLE_SVG
+webcore_layer_gtk2_deps += \
+	libWebCoreSVG.la
+endif
+if ENABLE_INDEXED_DATABASE
+webcore_layer_gtk2_deps += \
+	libLevelDB.la
+endif
+
+webcore_layer_gtk2_archives = $(foreach lib, $(webcore_layer_gtk2_deps), $(shell echo $(lib) | sed "s/\(.*\)\.la/.libs\/\1.a/"))
+
+WebCoreLayerGtk2.a: $(webcore_layer_gtk2_deps)
+	$(AM_V_GEN)
+	$(AM_V_at)$(foreach archive, $(webcore_layer_gtk2_archives), $(shell ar t $(archive) | xargs -n50 ar cruT $@))
+
 Programs_WebKitPluginProcess_CPPFLAGS = \
 	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \
 	-I$(srcdir)/Source/WebKit2 \
@@ -582,18 +602,10 @@ Programs_WebKitPluginProcess_SOURCES = \
 Programs_WebKitPluginProcess_LDADD = \
 	-lpthread \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	libWebCore.la
-
-#if ENABLE_SVG
-Programs_WebKitPluginProcess_LDADD += \
-	libWebCoreSVG.la
-#endif
-
-Programs_WebKitPluginProcess_LDADD += \
-	libWebCorePlatform.la \
-	libWebCoreGtk2.la \
+	WebCoreLayerGtk2.a \
 	$(CAIRO_LIBS) \
 	$(COVERAGE_LDFLAGS) \
+	$(FREETYPE_LIBS) \
 	$(GEOCLUE_LIBS) \
 	$(GLIB_LIBS) \
 	$(GSTREAMER_LIBS) \
@@ -616,13 +628,6 @@ Programs_WebKitPluginProcess_LDADD += \
 	$(XT_LIBS) \
 	$(WINMM_LIBS) \
 	$(ZLIB_LIBS)
-
-# libWebCore and libWebCoreModules have circular dependencies that only seem to
-# be a problem when linking the plugin process; we don't really care about
-# modules for the plugin process, though, so to work around that we ignore
-# internal unresolved symbols
-Programs_WebKitPluginProcess_LDFLAGS = \
-	-Wl,--unresolved-symbols=ignore-in-object-files
 
 Programs_WebKitPluginProcess_CXXFLAGS = \
 	-fvisibility-inlines-hidden \
