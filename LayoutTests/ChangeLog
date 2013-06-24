@@ -1,3 +1,12 @@
+2013-06-23  Brent Fulgham  <bfulgham@gmail.com>
+
+        AX: Rebaseline test after r151868
+        https://bugs.webkit.org/show_bug.cgi?id=117892
+
+        Rubber stamped by Chris Fleizach.
+
+        * platform/mac/accessibility/lists-expected.txt:
+
 2013-06-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening. Unskip two media tests because there is no crash after system update.
