@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
+#include "HTMLStyleElement.h"
 #include "MediaList.h"
 #include "Node.h"
 #include "SVGNames.h"
@@ -64,7 +65,7 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
     return !parentNode
         || parentNode->isDocumentNode()
         || parentNode->hasTagName(HTMLNames::linkTag)
-        || parentNode->hasTagName(HTMLNames::styleTag)
+        || isHTMLStyleElement(parentNode)
 #if ENABLE(SVG)
         || parentNode->hasTagName(SVGNames::styleTag)
 #endif

@@ -330,7 +330,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
                 sheet = static_cast<HTMLLinkElement*>(n)->sheet();
             else
                 // <STYLE> element
-                sheet = static_cast<HTMLStyleElement*>(n)->sheet();
+                sheet = toHTMLStyleElement(n)->sheet();
             // Check to see if this sheet belongs to a styleset
             // (thus making it PREFERRED or ALTERNATE rather than
             // PERSISTENT).

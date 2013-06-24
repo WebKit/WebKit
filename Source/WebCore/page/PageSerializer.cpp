@@ -243,9 +243,8 @@ void PageSerializer::serializeFrame(Frame* frame)
                 serializeCSSStyleSheet(sheet, url);
                 ASSERT(m_resourceURLs.contains(url));
             }
-        } else if (element->hasTagName(HTMLNames::styleTag)) {
-            HTMLStyleElement* styleElement = static_cast<HTMLStyleElement*>(element);
-            if (CSSStyleSheet* sheet = styleElement->sheet())
+        } else if (isHTMLStyleElement(element)) {
+            if (CSSStyleSheet* sheet = toHTMLStyleElement(element)->sheet())
                 serializeCSSStyleSheet(sheet, KURL());
         }
     }

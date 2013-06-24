@@ -1,3 +1,35 @@
+2013-06-24  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLStyleElement for minor code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=117917
+
+        Reviewed by Antti Koivisto.
+
+        This patch refers to http://src.chromium.org/viewvc/blink?view=revision&revision=152853
+
+        There are some usages of static_cast to HTMLStyleElement so this patch creates toHTMLStyleElement
+        function for code cleanup. Plus, isHTMLStyleElement is also made for same purpose.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::isAcceptableCSSStyleSheetParent):
+        * css/StyleScopeResolver.cpp:
+        (WebCore::StyleScopeResolver::scopeFor):
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::getNamedItem):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::collectActiveStyleSheets):
+        * dom/Node.cpp:
+        (WebCore::Node::numberOfScopedHTMLStyleChildren):
+        * html/HTMLStyleElement.h:
+        (WebCore::isHTMLStyleElement):
+        (WebCore::toHTMLStyleElement):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::viaInspectorStyleSheet):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::inlineStyleSheetText):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+
 2013-06-24  Patrick Gansterer  <paroga@webkit.org>
 
         Cleanup RenderThemeWin after r151783 and r151794.

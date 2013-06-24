@@ -46,6 +46,7 @@
 #include "HTMLHeadElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLStyleElement.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorValues.h"
@@ -1400,7 +1401,7 @@ bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
         return false;
     Element* ownerElement = toElement(ownerNode);
 
-    if (!ownerElement->hasTagName(HTMLNames::styleTag)
+    if (!isHTMLStyleElement(ownerElement)
 #if ENABLE(SVG)
         && !ownerElement->hasTagName(SVGNames::styleTag)
 #endif
