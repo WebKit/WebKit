@@ -1,3 +1,15 @@
+2013-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix various crashes on sites with fixed backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=117959
+
+        Reviewed by Andy Estes.
+        
+        Test that does a document.write on a page with a fixed background on the body.
+
+        * platform/mac-wk2/tiled-drawing/fixed-background/fixed-background-removal-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/fixed-background/fixed-background-removal.html: Added.
+
 2013-06-24  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] split test shape-inside-first-fit-001.html into 800x600 parts
