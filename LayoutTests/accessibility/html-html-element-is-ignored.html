@@ -13,10 +13,10 @@
 
             var startElement = accessibilityController.accessibleElementById("description");
             debug("The start element should be a button.");
-            shouldBe("startElement.role", "'AXRole: AXButton'");
+            debug("startElement.role is " + startElement.role);
 
             debug("\nThe parent should be the web area.");
-            shouldBe("startElement.parentElement().role", "'AXRole: AXWebArea'");
+            debug("startElement.parentElement().role is " + startElement.parentElement().role);
         } else {
             debug("This test requires accessibilityController.")
         }

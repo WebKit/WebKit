@@ -21,7 +21,7 @@
 
             var body = document.getElementById("body").focus();
             var imgUIElement = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
-            shouldBe("imgUIElement.description", "'AXDescription: alternate'");
+            debug("imgUIElement.description is " + imgUIElement.description);
         }
     </script>
     

@@ -1,3 +1,47 @@
+2013-06-24  Brent Fulgham  <bfulgham@apple.com>
+
+        AX: Make tests usable on Mac and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=117901
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-checkbox-text.html:
+        * accessibility/aria-hidden-expected.txt:
+        * accessibility/aria-hidden-with-elements-expected.txt:
+        * accessibility/aria-hidden-with-elements.html:
+        * accessibility/aria-hidden.html:
+        * accessibility/aria-labelledby-overrides-label-expected.txt:
+        * accessibility/aria-labelledby-overrides-label.html:
+        * accessibility/aria-option-role.html:
+        * accessibility/aria-presentational-role-expected.txt:
+        * accessibility/aria-presentational-role.html:
+        * accessibility/aria-tab-roles-expected.txt:
+        * accessibility/aria-tab-roles.html:
+        * accessibility/empty-image-with-title-expected.txt:
+        * accessibility/empty-image-with-title.html:
+        * accessibility/html-html-element-is-ignored-expected.txt:
+        * accessibility/html-html-element-is-ignored.html:
+        * accessibility/img-aria-button-alt-tag-expected.txt:
+        * accessibility/img-aria-button-alt-tag.html:
+        * accessibility/input-image-alt-expected.txt:
+        * accessibility/input-image-alt.html:
+        * platform/mac/accessibility/aria-checkbox-text-expected.txt:
+        * platform/mac/accessibility/aria-option-role-expected.txt:
+        * platform/win/accessibility/aria-checkbox-text-expected.txt: Added.
+        * platform/win/accessibility/aria-hidden-expected.txt: Added.
+        * platform/win/accessibility/aria-hidden-with-elements-expected.txt: Added.
+        * platform/win/accessibility/aria-labelledby-overrides-label-expected.txt: Added.
+        * platform/win/accessibility/aria-option-role-expected.txt: Added.
+        * platform/win/accessibility/aria-presentational-role-expected.txt: Added.
+        * platform/win/accessibility/aria-tab-roles-expected.txt: Added.
+        * platform/win/accessibility/empty-image-with-title-expected.txt: Added.
+        * platform/win/accessibility/html-html-element-is-ignored-expected.txt: Added.
+        * platform/win/accessibility/img-aria-button-alt-tag-expected.txt: Added.
+        * platform/win/accessibility/input-image-alt-expected.txt: Added.
+        * platform/win/aria-labelledby-on-input-expected.txt: Removed.
+        * platform/win/aria-menubar-menuitems-expected.txt: Removed.
+        * platform/win/aria-roles-expected.txt: Removed.
+
 2013-06-24  Chris Rogers  <crogers@google.com>
 
         WaveTable name has changed to PeriodicWave

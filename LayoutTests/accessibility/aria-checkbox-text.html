@@ -23,17 +23,17 @@
           var checkbox = document.getElementById("check1");
           checkbox.focus();
           checkbox = accessibilityController.focusedElement;
-          shouldBe("checkbox.title", "'AXTitle: One'");
+          debug("checkbox.title is " + checkbox.title);
 
           checkbox = document.getElementById("check2");
           checkbox.focus();
           checkbox = accessibilityController.focusedElement;
-          shouldBe("checkbox.title", "'AXTitle: Two'");
+          debug("checkbox.title is " + checkbox.title);
 
           checkbox = document.getElementById("check3");
           checkbox.focus();
           checkbox = accessibilityController.focusedElement;
-          shouldBe("checkbox.title", "'AXTitle: Three'");
+          debug("checkbox.title is " + checkbox.title);
     }
 
 </script>
