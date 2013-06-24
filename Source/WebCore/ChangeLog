@@ -1,5 +1,19 @@
 2013-06-24  Patrick Gansterer  <paroga@webkit.org>
 
+        Cleanup RenderThemeWin after r151783 and r151794.
+        https://bugs.webkit.org/show_bug.cgi?id=117936
+
+        Reviewed by Alexis Menard.
+
+        GetSysColor() takes an integer as argument. Let cssValueIdToSysColorIndex()
+        return an int instead of casting the values to the CSSValueID type.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::cssValueIdToSysColorIndex):
+        (WebCore::RenderThemeWin::systemColor):
+
+2013-06-24  Patrick Gansterer  <paroga@webkit.org>
+
         Use SetFilePointer instead of SetFilePointerEx in FileSystemWin
         https://bugs.webkit.org/show_bug.cgi?id=116205
 
