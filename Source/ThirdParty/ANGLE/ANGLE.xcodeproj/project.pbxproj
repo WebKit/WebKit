@@ -370,8 +370,8 @@
 		FB39D0841200EDEB00088E69 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				A08C3CD816D6CB35003F0B83 /* third_party */,
 				FB39D2201200F35A00088E69 /* compiler */,
+				A08C3CD816D6CB35003F0B83 /* third_party */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -525,6 +525,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A08C3CDD16D6CB61003F0B83 /* ArrayBoundsClamper.h in Headers */,
 				49951C0A14B7AAD80060E96E /* BuiltInFunctionEmulator.h in Headers */,
 				A265683A159C23E100398539 /* DependencyGraph.h in Headers */,
 				A265683C159C23E100398539 /* DependencyGraphBuilder.h in Headers */,
@@ -568,7 +569,6 @@
 				90D9B11812E11DD6002D4255 /* VariableInfo.h in Headers */,
 				A264F8CA16974E2A006FAA5A /* VariablePacker.h in Headers */,
 				90D9B11A12E11DD6002D4255 /* VersionGLSL.h in Headers */,
-				A08C3CDD16D6CB61003F0B83 /* ArrayBoundsClamper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -626,6 +626,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */,
 				49951C0914B7AAD80060E96E /* BuiltInFunctionEmulator.cpp in Sources */,
 				FB39D2711200F35A00088E69 /* CodeGenGLSL.cpp in Sources */,
 				90D9B10212E11DCB002D4255 /* Compiler.cpp in Sources */,
@@ -680,7 +681,6 @@
 				90D9B11712E11DD6002D4255 /* VariableInfo.cpp in Sources */,
 				A264F8C916974E2A006FAA5A /* VariablePacker.cpp in Sources */,
 				90D9B11912E11DD6002D4255 /* VersionGLSL.cpp in Sources */,
-				A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

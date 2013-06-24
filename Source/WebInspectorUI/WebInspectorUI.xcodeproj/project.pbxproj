@@ -52,8 +52,8 @@
 		1C60FFE014E79B0F006CD77D /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.sh */,
 				1C60FF1914E73C64006CD77D /* combine-resources.pl */,
+				1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.sh */,
 				1C435CAC14E7B287004E10EA /* cssmin.py */,
 				1C435CAD14E7B287004E10EA /* jsmin.py */,
 				1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */,
@@ -64,12 +64,12 @@
 		A54C224B148B23DE00373FA3 = {
 			isa = PBXGroup;
 			children = (
-				1C78EE1617611340002F6AA5 /* WebInspectorUI.c */,
-				1C60FF1014E6D992006CD77D /* UserInterface */,
-				1C60FF1514E6E39B006CD77D /* Resources */,
-				1C60FFE014E79B0F006CD77D /* Scripts */,
 				1C60FE2E14E5F3CD006CD77D /* Configurations */,
 				A54C2258148B23DF00373FA3 /* Products */,
+				1C60FF1514E6E39B006CD77D /* Resources */,
+				1C60FFE014E79B0F006CD77D /* Scripts */,
+				1C60FF1014E6D992006CD77D /* UserInterface */,
+				1C78EE1617611340002F6AA5 /* WebInspectorUI.c */,
 			);
 			sourceTree = "<group>";
 		};

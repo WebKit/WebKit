@@ -90,8 +90,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4024D189113D7D7A00C7059E /* libgtest_main.a in Frameworks */,
 				4024D188113D7D7800C7059E /* libgtest.a in Frameworks */,
+				4024D189113D7D7A00C7059E /* libgtest_main.a in Frameworks */,
 				3B7EB1480E5AF3B400C7F239 /* Widget.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,8 +109,8 @@
 		034768DDFF38A45A11DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D07F2C80486CC7A007CD1D0 /* Widget.framework */,
 				3B07BDEA0E3F3F9E00647869 /* WidgetFrameworkTest */,
+				8D07F2C80486CC7A007CD1D0 /* Widget.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -131,8 +131,8 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				4024D183113D7D5500C7059E /* libgtest_main.a */,
 				4024D185113D7D5500C7059E /* libgtest.a */,
+				4024D183113D7D5500C7059E /* libgtest_main.a */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";

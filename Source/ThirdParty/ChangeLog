@@ -1,3 +1,13 @@
+2013-06-17  Darin Adler  <darin@apple.com>
+
+        Sort all the Xcode project files
+        https://bugs.webkit.org/show_bug.cgi?id=117696
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/Samples/FrameworkSample/WidgetFramework.xcodeproj/project.pbxproj: Ran the sort-Xcode-project-file script.
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Ran the sort-Xcode-project-file script.
+
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
         Replace tools32 folder with tools and update WebKit Windows solution accordingly.
