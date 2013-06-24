@@ -1,3 +1,16 @@
+2013-06-24  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: WebInspector.displayNameForURL() failure prevents DOM inspection
+        https://bugs.webkit.org/show_bug.cgi?id=117927
+
+        Handle possible mis-encoded URI fragments passed to decodeURIComponent() which
+        could prevent inspection of the DOM.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Main.js:
+        (WebInspector.displayNameForURL):
+
 2013-06-17  Darin Adler  <darin@apple.com>
 
         Sort all the Xcode project files
