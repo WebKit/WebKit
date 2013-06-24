@@ -39,3 +39,6 @@
     ImplementationLacksVTable
 ] interface TestInterface {
 };
+
+TestInterface implements TestImplements;
+

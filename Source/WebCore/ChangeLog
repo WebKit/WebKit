@@ -1,3 +1,27 @@
+2013-06-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Move IDL implements statements to IDL files that implement the interface
+        https://bugs.webkit.org/show_bug.cgi?id=117921
+
+        Reviewed by Kentaro Hara.
+
+        Move IDL implements statements to IDL files that implement the interface
+        so that we can more easily know that a given IDL interface implements
+        another.
+
+        The generator now enforces this as well for consistency.
+
+        No new tests, covered by TestImplements.idl.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (getImplementedInterfacesFromIDL):
+        * bindings/scripts/test/TestImplements.idl:
+        * bindings/scripts/test/TestInterface.idl:
+        * dom/CharacterData.idl:
+        * dom/ChildNode.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+
 2013-06-24  Zalan Bujtas  <zalan@apple.com>
 
         Hittest finds the truncated text instead of the floating input, when the input is clicked.

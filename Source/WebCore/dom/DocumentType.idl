@@ -34,3 +34,5 @@
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString internalSubset;        
 };
 
+DocumentType implements ChildNode;
+

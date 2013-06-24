@@ -49,4 +49,3 @@
     [Reflect=CONST_IMPL] const unsigned short IMPLEMENTSCONSTANT2 = 2;
 };
 
-TestInterface implements TestImplements;

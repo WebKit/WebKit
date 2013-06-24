@@ -227,3 +227,5 @@
 #endif
 };
 
+Element implements ChildNode;
+

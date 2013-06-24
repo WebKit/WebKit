@@ -51,15 +51,25 @@ my @idlFiles = <FH>;
 chomp(@idlFiles);
 close FH;
 
-# Parse all IDL files.
 my %interfaceNameToIdlFile;
 my %idlFileToInterfaceName;
 my %supplementalDependencies;
 my %supplementals;
 my $windowConstructorsCode = "";
 my $workerContextConstructorsCode = "";
+
 # Get rid of duplicates in idlFiles array.
 my %idlFileHash = map { $_, 1 } @idlFiles;
+
+# Populate $idlFileToInterfaceName and $interfaceNameToIdlFile.
+foreach my $idlFile (keys %idlFileHash) {
+    my $fullPath = Cwd::realpath($idlFile);
+    my $interfaceName = fileparse(basename($idlFile), ".idl");
+    $idlFileToInterfaceName{$fullPath} = $interfaceName;
+    $interfaceNameToIdlFile{$interfaceName} = $fullPath;
+}
+
+# Parse all IDL files.
 foreach my $idlFile (sort keys %idlFileHash) {
     my $fullPath = Cwd::realpath($idlFile);
     my $idlFileContents = getFileContents($fullPath);
@@ -71,12 +81,14 @@ foreach my $idlFile (sort keys %idlFileHash) {
     }
     my $interfaceName = fileparse(basename($idlFile), ".idl");
     # Handle implements statements.
-    my $implementers = getImplementersFromIDL($idlFileContents, $interfaceName);
-    foreach my $implementer (@{$implementers}) {
-        if ($supplementalDependencies{$fullPath}) {
-            push(@{$supplementalDependencies{$fullPath}}, $implementer);
+    my $implementedInterfaces = getImplementedInterfacesFromIDL($idlFileContents, $interfaceName);
+    foreach my $implementedInterface (@{$implementedInterfaces}) {
+        my $implementedIdlFile = $interfaceNameToIdlFile{$implementedInterface};
+        die "Could not find a the IDL file where the following implemented interface is defined: $implementedInterface" unless $implementedIdlFile;
+        if ($supplementalDependencies{$implementedIdlFile}) {
+            push(@{$supplementalDependencies{$implementedIdlFile}}, $interfaceName);
         } else {
-            $supplementalDependencies{$fullPath} = [$implementer];
+            $supplementalDependencies{$implementedIdlFile} = [$interfaceName];
         }
     }
     # Handle [NoInterfaceObject].
@@ -89,8 +101,6 @@ foreach my $idlFile (sort keys %idlFileHash) {
             $workerContextConstructorsCode .= $attributeCode unless $globalContext eq "WindowOnly"
         }
     }
-    $interfaceNameToIdlFile{$interfaceName} = $fullPath;
-    $idlFileToInterfaceName{$fullPath} = $interfaceName;
     $supplementals{$fullPath} = [];
 }
 
@@ -231,17 +241,17 @@ sub getPartialInterfaceNameFromIDL
 
 # identifier-A implements identifier-B;
 # http://www.w3.org/TR/WebIDL/#idl-implements-statements
-sub getImplementersFromIDL
+sub getImplementedInterfacesFromIDL
 {
     my $fileContents = shift;
     my $interfaceName = shift;
 
-    my @implementers = ();
+    my @implementedInterfaces = ();
     while ($fileContents =~ /(\w+)\s+implements\s+(\w+)\s*;/gs) {
-        die "The identifier on the right side of the implements statement must be the current interface" if $2 ne $interfaceName;
-        push(@implementers, $1);
+        die "Identifier on the left of the 'implements' statement should be $interfaceName in $interfaceName.idl, but found $1" if $1 ne $interfaceName;
+        push(@implementedInterfaces, $2);
     }
-    return \@implementers
+    return \@implementedInterfaces
 }
 
 sub isCallbackInterfaceFromIDL
