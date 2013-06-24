@@ -225,9 +225,6 @@ public:
     virtual IntRect convertFromContainingView(const IntRect&) const;
     virtual IntPoint convertToContainingView(const IntPoint&) const;
     virtual IntPoint convertFromContainingView(const IntPoint&) const;
-    
-    // Return the displayID of the screen that this widget's window is primarily on.
-    virtual PlatformDisplayID windowDisplayID() const;
 
 private:
     void init(PlatformWidget); // Must be called by all Widget constructors to initialize cross-platform data.

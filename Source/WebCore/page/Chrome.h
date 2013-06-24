@@ -88,6 +88,9 @@ public:
     virtual void scheduleAnimation() OVERRIDE;
 #endif
 
+    virtual PlatformDisplayID displayID() const OVERRIDE;
+    virtual void windowScreenDidChange(PlatformDisplayID) OVERRIDE;
+
     void scrollRectIntoView(const IntRect&) const;
 
     void contentsSizeChanged(Frame*, const IntSize&) const;
@@ -186,6 +189,7 @@ private:
 
     Page* m_page;
     ChromeClient* m_client;
+    PlatformDisplayID m_displayID;
     Vector<PopupOpeningObserver*> m_popupOpeningObservers;
 };
 

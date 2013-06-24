@@ -65,6 +65,7 @@ using namespace std;
 Chrome::Chrome(Page* page, ChromeClient* client)
     : m_page(page)
     , m_client(client)
+    , m_displayID(0)
 {
     ASSERT(m_client);
 }
@@ -528,6 +529,24 @@ void Chrome::scheduleAnimation()
 #endif
 }
 #endif
+
+PlatformDisplayID Chrome::displayID() const
+{
+    return m_displayID;
+}
+
+void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
+{
+    if (displayID == m_displayID)
+        return;
+
+    m_displayID = displayID;
+
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document())
+            frame->document()->windowScreenDidChange(displayID);
+    }
+}
 
 // --------
 

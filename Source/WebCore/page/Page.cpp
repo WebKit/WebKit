@@ -176,7 +176,6 @@ Page::Page(PageClients& pageClients)
 #if ENABLE(PAGE_VISIBILITY_API)
     , m_visibilityState(PageVisibilityStateVisible)
 #endif
-    , m_displayID(0)
     , m_requestedLayoutMilestones(0)
     , m_headerHeight(0)
     , m_footerHeight(0)
@@ -939,16 +938,6 @@ void Page::setIsInWindow(bool isInWindow)
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (FrameView* frameView = frame->view())
             frameView->setIsInWindow(isInWindow);
-    }
-}
-
-void Page::windowScreenDidChange(PlatformDisplayID displayID)
-{
-    m_displayID = displayID;
-    
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (frame->document())
-            frame->document()->windowScreenDidChange(displayID);
     }
 }
 

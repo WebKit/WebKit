@@ -37,7 +37,6 @@
 #import "NotImplemented.h"
 #import "Page.h"
 #import "PlatformMouseEvent.h"
-#import "PlatformScreenMac.h"
 #import "ScrollView.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
@@ -354,11 +353,6 @@ void Widget::setPlatformWidget(NSView *widget)
 
     m_widget = widget;
     m_data->previousVisibleRect = NSZeroRect;
-}
-
-PlatformDisplayID Widget::windowDisplayID() const
-{
-    return [[[platformWidget() window] screen] displayID];
 }
 
 } // namespace WebCore

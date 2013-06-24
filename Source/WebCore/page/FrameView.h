@@ -482,8 +482,6 @@ private:
     virtual IntPoint convertToContainingView(const IntPoint&) const OVERRIDE;
     virtual IntPoint convertFromContainingView(const IntPoint&) const OVERRIDE;
 
-    virtual PlatformDisplayID windowDisplayID() const OVERRIDE;
-
     // ScrollableArea interface
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) OVERRIDE;
     virtual void getTickmarks(Vector<IntRect>&) const OVERRIDE;

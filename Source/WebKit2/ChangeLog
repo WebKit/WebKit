@@ -1,3 +1,17 @@
+2013-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Move displayID stuff from Widget to Chrome
+        https://bugs.webkit.org/show_bug.cgi?id=117944
+
+        Reviewed by Anders Carlsson.
+
+        In r151877 I polluted Widget with displayID-related stuff. This would
+        be better on HostWindow, so move it there. This is a net code reduction,
+        and eliminates PlatformScreenMac.h, and the NSScreen category.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowScreenDidChange): Go via chrome().
+
 2013-06-24  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL][WK2] Implement unit test callback: onWordGuesses.

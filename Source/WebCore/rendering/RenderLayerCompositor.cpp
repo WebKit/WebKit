@@ -421,7 +421,7 @@ void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*
     if (!m_layerUpdater) {
         PlatformDisplayID displayID = 0;
         if (Page* page = this->page())
-            displayID = page->displayID();
+            displayID = page->chrome().displayID();
 
         m_layerUpdater = adoptPtr(new GraphicsLayerUpdater(this, displayID));
     }

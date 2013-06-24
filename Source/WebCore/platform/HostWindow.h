@@ -73,6 +73,9 @@ public:
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void scheduleAnimation() = 0;
 #endif
+
+    virtual PlatformDisplayID displayID() const = 0;
+    virtual void windowScreenDidChange(PlatformDisplayID) = 0;
 };
 
 } // namespace WebCore
