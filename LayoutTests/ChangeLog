@@ -1,3 +1,17 @@
+2013-06-24  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] split test shape-inside-first-fit-001.html into 800x600 parts
+        https://bugs.webkit.org/show_bug.cgi?id=117939
+
+        Reviewed by Dirk Schulze.
+
+        Split the test into two parts, to ensure that it first within the 800x600 limit.
+
+        * fast/exclusions/shape-inside/shape-inside-first-fit-001-horizontal-expected.html: Copied from LayoutTests/fast/exclusions/shape-inside/shape-inside-first-fit-001-expected.html.
+        * fast/exclusions/shape-inside/shape-inside-first-fit-001-horizontal.html: Copied from LayoutTests/fast/exclusions/shape-inside/shape-inside-first-fit-001.html.
+        * fast/exclusions/shape-inside/shape-inside-first-fit-001-vertical-expected.html: Renamed from LayoutTests/fast/exclusions/shape-inside/shape-inside-first-fit-001-expected.html.
+        * fast/exclusions/shape-inside/shape-inside-first-fit-001-vertical.html: Renamed from LayoutTests/fast/exclusions/shape-inside/shape-inside-first-fit-001.html.
+
 2013-06-24  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Remove setCSSShapesEnabled(true) from shape-inside-empty-expected.html since it isn't using shapes 
