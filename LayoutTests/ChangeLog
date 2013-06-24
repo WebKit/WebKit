@@ -1,3 +1,12 @@
+2013-06-24  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Remove setCSSShapesEnabled(true) from shape-inside-empty-expected.html since it isn't using shapes 
+        https://bugs.webkit.org/show_bug.cgi?id=117945
+
+        Reviewed by Dirk Schulze.
+
+        * fast/exclusions/shape-inside/shape-inside-empty-expected.html:
+
 2013-06-24  Brent Fulgham  <bfulgham@apple.com>
 
         AX: Make tests usable on Mac and Windows
