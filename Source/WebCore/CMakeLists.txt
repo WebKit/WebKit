@@ -577,6 +577,7 @@ set(WebCore_IDL_FILES
     page/SpeechInputResult.idl
     page/SpeechInputResultList.idl
     page/WebKitPoint.idl
+    page/WindowTimers.idl
     page/WorkerNavigator.idl
 
     plugins/DOMMimeType.idl

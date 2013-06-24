@@ -48,13 +48,6 @@
     [Custom] void importScripts(/*[Variadic] DOMString urls */);
              [Replaceable] readonly attribute WorkerNavigator navigator;
 
-    // Timers
-    [Custom] long setTimeout(any handler, [Default=Undefined] optional long timeout);
-    void clearTimeout([Default=Undefined] optional long handle);
-    [Custom] long setInterval(any handler, [Default=Undefined] optional long timeout);
-    void clearInterval([Default=Undefined] optional long handle);
-
-
     // EventTarget interface
     void addEventListener(DOMString type, 
                           EventListener listener, 
@@ -68,3 +61,4 @@
     [Conditional=BLOB] attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
 };
 
+WorkerContext implements WindowTimers;

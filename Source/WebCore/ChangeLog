@@ -1,3 +1,25 @@
+2013-06-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Introduce WindowTimers IDL interface
+        https://bugs.webkit.org/show_bug.cgi?id=117929
+
+        Reviewed by Kentaro Hara.
+
+        Introduce WindowTimers IDL interface and have both DOMWindow and WorkerContext
+        implement it to match the latest specification and avoid IDL duplication:
+        - http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#windowtimers
+        - http://dev.w3.org/html5/workers/#apis-available-to-workers
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * page/DOMWindow.idl:
+        * page/WindowTimers.idl:
+        * workers/WorkerContext.idl:
+
 2013-06-24  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r151563.
