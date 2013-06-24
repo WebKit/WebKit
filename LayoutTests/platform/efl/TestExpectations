@@ -580,7 +580,6 @@ webkit.org/b/105879 editing/pasteboard/4806874.html [ Pass Crash ]
 webkit.org/b/105879 editing/spelling/spelling-insert-html.html [ Pass Crash ]
 
 # Media regressions after updating to gstreamer 1.0.
-webkit.org/b/104809 media/adopt-node-crash.html [ Crash ]
 webkit.org/b/104809 media/video-src.html [ Crash Pass ]
 webkit.org/b/104809 media/video-src-blob.html [ Crash Failure ]
 webkit.org/b/104809 media/video-src-change.html [ Crash Pass ]
@@ -1750,7 +1749,6 @@ webkit.org/b/115419 http/tests/media/video-redirect.html [ Failure ]
 webkit.org/b/115419 media/media-can-play-ogg.html [ Failure ]
 webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
 webkit.org/b/115419 media/video-poster-background.html [ ImageOnlyFailure ]
-webkit.org/b/115419 media/track/track-text-track-cue-list.html [ Crash Failure ]
 
 webkit.org/b/115439 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]

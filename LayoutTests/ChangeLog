@@ -1,3 +1,9 @@
+2013-06-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. Unskip two media tests because there is no crash after system update.
+
+        * platform/efl/TestExpectations:
+
 2013-06-22  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] limit shape image values to same origin
