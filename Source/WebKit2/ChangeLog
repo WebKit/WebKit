@@ -1,3 +1,14 @@
+2013-06-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Merge r150008 into the webkit-2.0 branch
+        https://bugs.webkit.org/show_bug.cgi?id=117889
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Merge r150008 with some changes, for instance not listing libPlatform.la, libPlatformGtk2.la
+        and libANGLE.la among the webcore layer dependencies as these libtool archives were created after the 2.0 branching.
+        * GNUmakefile.list.am: Merge r150008.
+
 2013-05-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Fix memory leak in WebKitBackForwardList
