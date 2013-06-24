@@ -1,3 +1,17 @@
+2013-06-24  David Kilzer  <ddkilzer@apple.com>
+
+        bisect-builds: improve heuristic for choosing the next build after a broken build
+        <http://webkit.org/b/117918>
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/bisect-builds: When a build is broken, use a heuristic
+        that "bisects" the left side or the right side of the remaining
+        revisions to pick a revision that's sufficiently different from
+        the revision of the broken build.  This heuristic assumes there
+        is a sequential range of broken builds whenever one broken build
+        is found.
+
 2013-06-24  Chris Rogers  <crogers@google.com>
 
         WaveTable name has changed to PeriodicWave
