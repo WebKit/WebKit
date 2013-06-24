@@ -1,3 +1,9 @@
+2013-05-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add WebCoreLayerGtk2.a to DISTCLEANFILES.
+
 2013-06-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Merge r150008 into the webkit-2.0 branch
