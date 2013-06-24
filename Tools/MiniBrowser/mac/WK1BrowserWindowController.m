@@ -109,11 +109,6 @@
     [_webView goForward:sender];
 }
 
-- (BOOL)isPaginated
-{
-    return NO;
-}
-
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
     SEL action = [menuItem action];
@@ -222,8 +217,20 @@
     _zoomTextOnly = !_zoomTextOnly;
 }
 
+- (BOOL)isPaginated
+{
+    return [_webView _paginationMode] != WebPaginationModeUnpaginated;
+}
+
 - (IBAction)togglePaginationMode:(id)sender
 {
+    if ([self isPaginated]) {
+        [_webView _setPaginationMode:WebPaginationModeUnpaginated];
+    } else {
+        [_webView _setPaginationMode:WebPaginationModeRightToLeft];
+        [_webView _setPageLength:_webView.bounds.size.width / 2];
+        [_webView _setGapBetweenPages:10];
+    }
 }
 
 - (IBAction)toggleTransparentWindow:(id)sender
