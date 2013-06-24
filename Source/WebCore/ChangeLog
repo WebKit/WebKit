@@ -1,3 +1,17 @@
+2013-06-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Potential crash when in-band track is removed
+        https://bugs.webkit.org/show_bug.cgi?id=117938
+        <rdar://problem/14246763>
+
+        Reviewed by Jer Noble.
+
+        This is timing dependent and I was unable to come up with a reliable test.
+
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::willRemoveTextTrackPrivate): Early return if the media element
+            has been cleared.
+
 2013-06-24  Chris Rogers  <crogers@google.com>
 
         WaveTable name has changed to PeriodicWave
