@@ -79,6 +79,11 @@ bool WKBundleHitTestResultMediaIsInFullscreen(WKBundleHitTestResultRef hitTestRe
     return toImpl(hitTestResultRef)->mediaIsInFullscreen();
 }
 
+bool WKBundleHitTestResultMediaHasAudio(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toImpl(hitTestResultRef)->mediaHasAudio();
+}
+
 WKBundleHitTestResultMediaType WKBundleHitTestResultGetMediaType(WKBundleHitTestResultRef hitTestResultRef)
 {
     return toAPI(toImpl(hitTestResultRef)->mediaType());

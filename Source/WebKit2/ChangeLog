@@ -1,3 +1,21 @@
+2013-06-24  Ruth Fong  <ruth_fong@apple.com>
+
+        Expose the mediaHasAudio() function in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=117946
+        <rdar://problem/14250527>
+
+        Reviewed by Beth Dakin.
+
+        Exposes the WebCore::HTMLMediaElement::mediaHasAudio() function
+        in WK2.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        (WKBundleHitTestResultMediaHasAudio): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::mediaHasAudio): Added.
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+
 2013-06-24  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION (r147591): can't type in Adobe Connect

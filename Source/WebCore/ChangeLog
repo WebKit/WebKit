@@ -1,3 +1,14 @@
+2013-06-24  Ruth Fong  <ruth_fong@apple.com>
+
+        Expose the mediaHasAudio() function in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=117946
+        <rdar://problem/14250527>
+
+        Reviewed by Beth Dakin.
+
+        * WebCore.exp.in: Updated to include symbol for
+        HTMLMediaElement::mediaHasAudio() function.
+
 2013-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         Move displayID stuff from Widget to Chrome

@@ -104,6 +104,11 @@ bool InjectedBundleHitTestResult::mediaIsInFullscreen() const
     return m_hitTestResult.mediaIsInFullscreen();
 }
 
+bool InjectedBundleHitTestResult::mediaHasAudio() const
+{
+    return m_hitTestResult.mediaHasAudio();
+}
+
 BundleHitTestResultMediaType InjectedBundleHitTestResult::mediaType() const
 {
 #if !ENABLE(VIDEO)
