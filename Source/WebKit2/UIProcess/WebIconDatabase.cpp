@@ -228,7 +228,8 @@ void WebIconDatabase::checkIntegrityBeforeOpening()
 
 void WebIconDatabase::close()
 {
-    m_iconDatabaseImpl->close();
+    if (m_iconDatabaseImpl)
+        m_iconDatabaseImpl->close();
 }
 
 void WebIconDatabase::initializeIconDatabaseClient(const WKIconDatabaseClient* client)

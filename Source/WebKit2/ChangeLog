@@ -1,3 +1,21 @@
+2013-06-24  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Make sure m_iconDatabaseImpl is not null before closing it
+        https://bugs.webkit.org/show_bug.cgi?id=117943
+
+        Reviewed by Simon Fraser.
+
+        Since r150474 WebIconDatabase is closed unconditionally in
+        TestController destructor, in that case WebKitTestRunner crashes
+        when no icon database path is set. This misbehavior was observed in
+        ports such as efl and nix.
+        In this patch, WebIconDatabase::close() calls m_iconDatabaseImpl->close()
+        only if m_iconDatabaseImpl is not null, as it's already being done in other
+        WebIconDatabase's methods, such as isOpen().
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::close):
+
 2013-06-24  Ruth Fong  <ruth_fong@apple.com>
 
         Expose the mediaHasAudio() function in WK2
