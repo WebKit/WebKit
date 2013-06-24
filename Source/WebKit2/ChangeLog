@@ -1,3 +1,16 @@
+2013-04-12  Hanyee Kim  <choco@company100.net>
+
+        [GTK] Webkit fails to build webkit2gtk-tests-resources.gresource.
+        https://bugs.webkit.org/show_bug.cgi?id=114485
+
+        Reviewed by Martin Robinson.
+
+        Generating webkit2gtk-tests-resources.gresource can be failed due to
+        the non-existing target directory.
+        We need to make target directory before generating it.
+
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+
 2013-04-10  Tobias Mueller  <tobiasmue@gnome.org>
 
         Fixed build failure in Plugin.h: FloatPoint was not in namespace WebCore
