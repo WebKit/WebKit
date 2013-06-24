@@ -335,7 +335,7 @@ int8_t toInt8(ExecState* exec, JSValue value, IntegerConversionConfiguration con
     if (std::isnan(x) || std::isinf(x) || !x)
         return 0;
 
-    x = x < 0 ? -floor(abs(x)) : floor(abs(x));
+    x = x < 0 ? -floor(fabs(x)) : floor(fabs(x));
     x = fmod(x, 256); // 2^8.
 
     return static_cast<int8_t>(x > kMaxInt8 ? x - 256 : x);
@@ -366,7 +366,7 @@ uint8_t toUInt8(ExecState* exec, JSValue value, IntegerConversionConfiguration c
     if (std::isnan(x) || std::isinf(x) || !x)
         return 0;
 
-    x = x < 0 ? -floor(abs(x)) : floor(abs(x));
+    x = x < 0 ? -floor(fabs(x)) : floor(fabs(x));
     return static_cast<uint8_t>(fmod(x, 256)); // 2^8.
 }
 

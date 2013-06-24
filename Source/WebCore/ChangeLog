@@ -1,5 +1,13 @@
 2013-06-24  Patrick Gansterer  <paroga@webkit.org>
 
+        Build fix for WinCE after r151563.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::toInt8): Use fabs() instead of abs().
+        (WebCore::toUInt8): Ditto.
+
+2013-06-24  Patrick Gansterer  <paroga@webkit.org>
+
         Build fix for WinCE after r151783.
 
         * rendering/RenderThemeWinCE.cpp:
