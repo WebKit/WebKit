@@ -247,7 +247,7 @@ sub getImplementedInterfacesFromIDL
     my $interfaceName = shift;
 
     my @implementedInterfaces = ();
-    while ($fileContents =~ /(\w+)\s+implements\s+(\w+)\s*;/gs) {
+    while ($fileContents =~ /^\s*(\w+)\s+implements\s+(\w+)\s*;/mg) {
         die "Identifier on the left of the 'implements' statement should be $interfaceName in $interfaceName.idl, but found $1" if $1 ne $interfaceName;
         push(@implementedInterfaces, $2);
     }

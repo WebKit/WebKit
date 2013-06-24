@@ -260,3 +260,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     [GetterRaisesException] attribute long? nullableStringValue;
 };
+
+// The following comment should not generate any code.
+// TestObj implements TestImplements;
+

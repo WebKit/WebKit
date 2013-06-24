@@ -1,3 +1,19 @@
+2013-06-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Commented IDL implements statements should not impact code generation
+        https://bugs.webkit.org/show_bug.cgi?id=117932
+
+        Reviewed by Kentaro Hara.
+
+        Fix regular expression in preprocess-idls.pl script so that commented
+        IDL implements statements no longer cause any code to be generated.
+
+        No new tests, covered by TestObj.idl.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (getImplementedInterfacesFromIDL):
+        * bindings/scripts/test/TestObj.idl:
+
 2013-06-24  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLStyleElement for minor code cleanup
