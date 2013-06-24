@@ -1,3 +1,10 @@
+2013-06-24  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skipping the crashing tests on debug bots.
+        https://bugs.webkit.org/show_bug.cgi?id=94458
+
+        * platform/qt/TestExpectations:
+
 2013-06-24  Zalan Bujtas  <zalan@apple.com>
 
         Hittest finds the truncated text instead of the floating input, when the input is clicked.
