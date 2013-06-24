@@ -1,3 +1,19 @@
+2013-06-24  Robert Hogan  <robert@webkit.org>
+
+        Remove unnecessary check in RenderBlockLineLayout::nextSegmentBreak()
+        https://bugs.webkit.org/show_bug.cgi?id=117713
+
+        Reviewed by David Hyatt.
+
+        Changeset r151613 should have done this instead. Since r151518 changed
+        nextSegmentBreak() to detect line-break opportunities between no-wrap
+        inlines there is no need to force the break later.
+
+        No new tests, covered by existing tests.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak):
+
 2013-06-24  Eric Carlson  <eric.carlson@apple.com>
 
         Potential crash when in-band track is removed

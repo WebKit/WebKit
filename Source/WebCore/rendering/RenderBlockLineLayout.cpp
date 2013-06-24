@@ -3418,9 +3418,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 RenderText* nextText = toRenderText(next);
                 if (nextText->textLength()) {
                     UChar c = nextText->characterAt(0);
-                    // If we allow whitespace collapsing, 'word  ' and 'word' are equivalent before a whitespace
-                    // character, so treat both as a potential linebreak.
-                    checkForBreak = autoWrap && (ignoringSpaces || !currentCharacterIsSpace) && (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()));
+                    checkForBreak = !currentCharacterIsSpace && (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()));
                 } else if (nextText->isWordBreak())
                     checkForBreak = true;
 
