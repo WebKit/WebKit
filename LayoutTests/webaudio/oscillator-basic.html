@@ -62,10 +62,10 @@ function runTest()
     // Now set a custom oscillator
     var coeffA = new Float32Array([0, 1, 0.5]);
     var coeffB = new Float32Array([0, 0, 0]);        
-    var wavetable = context.createWaveTable(coeffA, coeffB);
-    osc.setWaveTable(wavetable);
+    var wave = context.createPeriodicWave(coeffA, coeffB);
+    osc.setPeriodicWave(wave);
     if (osc.type == "custom")
-        testPassed("Oscillator correctly set to CUSTOM type using setWaveTable.");
+        testPassed("Oscillator correctly set to CUSTOM type using setPeriodicWave.");
     else
         testFailed("Oscillator set to CUSTOM type, but returns " + oscTypes[osc.type].name + " type.");
 

@@ -5873,8 +5873,8 @@
 		FD5686CC13AC181400B69C68 /* AudioBufferCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FD5686CB13AC181400B69C68 /* AudioBufferCallback.h */; };
 		FD581FAE1520F91F003A7A75 /* OscillatorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD581FAB1520F91F003A7A75 /* OscillatorNode.cpp */; };
 		FD581FAF1520F91F003A7A75 /* OscillatorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD581FAC1520F91F003A7A75 /* OscillatorNode.h */; };
-		FD581FB41520F93B003A7A75 /* WaveTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD581FB11520F93B003A7A75 /* WaveTable.cpp */; };
-		FD581FB51520F93B003A7A75 /* WaveTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FD581FB21520F93B003A7A75 /* WaveTable.h */; };
+		FD581FB41520F93B003A7A75 /* PeriodicWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD581FB11520F93B003A7A75 /* PeriodicWave.cpp */; };
+		FD581FB51520F93B003A7A75 /* PeriodicWave.h in Headers */ = {isa = PBXBuildFile; fileRef = FD581FB21520F93B003A7A75 /* PeriodicWave.h */; };
 		FD629EA3154B47160006D026 /* AudioBasicInspectorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD629EA1154B47160006D026 /* AudioBasicInspectorNode.h */; };
 		FD629EA4154B47160006D026 /* AudioBasicInspectorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD629EA2154B47160006D026 /* AudioBasicInspectorNode.cpp */; };
 		FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */; };
@@ -5954,8 +5954,8 @@
 		FDE2D55B159E66EB00DCCCF8 /* AudioIOCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FDE2D55A159E66EB00DCCCF8 /* AudioIOCallback.h */; };
 		FDEA6242152102E200479DF0 /* JSOscillatorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6240152102E200479DF0 /* JSOscillatorNode.cpp */; };
 		FDEA6243152102E200479DF0 /* JSOscillatorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6241152102E200479DF0 /* JSOscillatorNode.h */; };
-		FDEA6246152102FC00479DF0 /* JSWaveTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */; };
-		FDEA6247152102FC00479DF0 /* JSWaveTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6245152102FC00479DF0 /* JSWaveTable.h */; };
+		FDEA6246152102FC00479DF0 /* JSPeriodicWave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6244152102FC00479DF0 /* JSPeriodicWave.cpp */; };
+		FDEA6247152102FC00479DF0 /* JSPeriodicWave.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6245152102FC00479DF0 /* JSPeriodicWave.h */; };
 		FDEAAAF312B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */; };
 		FDEAAAF412B02EE400DCF33B /* JSAudioContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */; };
 		FDF09DC81399B62200688E5B /* JSBiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */; };
@@ -12737,9 +12737,9 @@
 		FD581FAB1520F91F003A7A75 /* OscillatorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscillatorNode.cpp; sourceTree = "<group>"; };
 		FD581FAC1520F91F003A7A75 /* OscillatorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscillatorNode.h; sourceTree = "<group>"; };
 		FD581FAD1520F91F003A7A75 /* OscillatorNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OscillatorNode.idl; sourceTree = "<group>"; };
-		FD581FB11520F93B003A7A75 /* WaveTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveTable.cpp; sourceTree = "<group>"; };
-		FD581FB21520F93B003A7A75 /* WaveTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveTable.h; sourceTree = "<group>"; };
-		FD581FB31520F93B003A7A75 /* WaveTable.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WaveTable.idl; sourceTree = "<group>"; };
+		FD581FB11520F93B003A7A75 /* PeriodicWave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PeriodicWave.cpp; sourceTree = "<group>"; };
+		FD581FB21520F93B003A7A75 /* PeriodicWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeriodicWave.h; sourceTree = "<group>"; };
+		FD581FB31520F93B003A7A75 /* PeriodicWave.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PeriodicWave.idl; sourceTree = "<group>"; };
 		FD629EA1154B47160006D026 /* AudioBasicInspectorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBasicInspectorNode.h; sourceTree = "<group>"; };
 		FD629EA2154B47160006D026 /* AudioBasicInspectorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBasicInspectorNode.cpp; sourceTree = "<group>"; };
 		FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSourceProviderClient.h; sourceTree = "<group>"; };
@@ -12826,8 +12826,8 @@
 		FDE2D55A159E66EB00DCCCF8 /* AudioIOCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioIOCallback.h; sourceTree = "<group>"; };
 		FDEA6240152102E200479DF0 /* JSOscillatorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOscillatorNode.cpp; sourceTree = "<group>"; };
 		FDEA6241152102E200479DF0 /* JSOscillatorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOscillatorNode.h; sourceTree = "<group>"; };
-		FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWaveTable.cpp; sourceTree = "<group>"; };
-		FDEA6245152102FC00479DF0 /* JSWaveTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWaveTable.h; sourceTree = "<group>"; };
+		FDEA6244152102FC00479DF0 /* JSPeriodicWave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPeriodicWave.cpp; sourceTree = "<group>"; };
+		FDEA6245152102FC00479DF0 /* JSPeriodicWave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPeriodicWave.h; sourceTree = "<group>"; };
 		FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNodeCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioContextCustom.cpp; sourceTree = "<group>"; };
 		FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBiquadFilterNode.cpp; sourceTree = "<group>"; };
@@ -20698,9 +20698,9 @@
 				FD7F298E13D4C0CB00AD9535 /* WaveShaperNode.idl */,
 				FD7F298F13D4C0CB00AD9535 /* WaveShaperProcessor.cpp */,
 				FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */,
-				FD581FB11520F93B003A7A75 /* WaveTable.cpp */,
-				FD581FB21520F93B003A7A75 /* WaveTable.h */,
-				FD581FB31520F93B003A7A75 /* WaveTable.idl */,
+				FD581FB11520F93B003A7A75 /* PeriodicWave.cpp */,
+				FD581FB21520F93B003A7A75 /* PeriodicWave.h */,
+				FD581FB31520F93B003A7A75 /* PeriodicWave.idl */,
 			);
 			name = webaudio;
 			path = Modules/webaudio;
@@ -20857,8 +20857,8 @@
 				FDA15ECC12B03F61003A583A /* JSScriptProcessorNode.h */,
 				FD82D7F513D4C8BD004E4372 /* JSWaveShaperNode.cpp */,
 				FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */,
-				FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */,
-				FDEA6245152102FC00479DF0 /* JSWaveTable.h */,
+				FDEA6244152102FC00479DF0 /* JSPeriodicWave.cpp */,
+				FDEA6245152102FC00479DF0 /* JSPeriodicWave.h */,
 			);
 			name = WebAudio;
 			sourceTree = "<group>";
@@ -22697,7 +22697,7 @@
 				BE8EF04B171C9014009B48C3 /* JSVideoTrack.h in Headers */,
 				BE8EF04D171C9014009B48C3 /* JSVideoTrackList.h in Headers */,
 				FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */,
-				FDEA6247152102FC00479DF0 /* JSWaveTable.h in Headers */,
+				FDEA6247152102FC00479DF0 /* JSPeriodicWave.h in Headers */,
 				A7D20F63107F406900A80392 /* JSWebGLActiveInfo.h in Headers */,
 				49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */,
 				7EA30F6A16DFFE7500257D0B /* JSWebGLCompressedTextureATC.h in Headers */,
@@ -23847,7 +23847,7 @@
 				FD7F299213D4C0CB00AD9535 /* WaveShaperDSPKernel.h in Headers */,
 				FD7F299413D4C0CB00AD9535 /* WaveShaperNode.h in Headers */,
 				FD7F299713D4C0CB00AD9535 /* WaveShaperProcessor.h in Headers */,
-				FD581FB51520F93B003A7A75 /* WaveTable.h in Headers */,
+				FD581FB51520F93B003A7A75 /* PeriodicWave.h in Headers */,
 				29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h in Headers */,
 				AAA728F716D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.h in Headers */,
 				AA478A7F16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h in Headers */,
@@ -25898,7 +25898,7 @@
 				BE6DF70D171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp in Sources */,
 				9703E1BF15DC4E37001F24C8 /* JSVoidCallback.cpp in Sources */,
 				FD82D7F713D4C8BD004E4372 /* JSWaveShaperNode.cpp in Sources */,
-				FDEA6246152102FC00479DF0 /* JSWaveTable.cpp in Sources */,
+				FDEA6246152102FC00479DF0 /* JSPeriodicWave.cpp in Sources */,
 				A7D20F62107F406900A80392 /* JSWebGLActiveInfo.cpp in Sources */,
 				49C7B9931042D2D30009D447 /* JSWebGLBuffer.cpp in Sources */,
 				7EA30F6916DFFE7500257D0B /* JSWebGLCompressedTextureATC.cpp in Sources */,
@@ -26835,7 +26835,7 @@
 				FD7F299113D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp in Sources */,
 				FD7F299313D4C0CB00AD9535 /* WaveShaperNode.cpp in Sources */,
 				FD7F299613D4C0CB00AD9535 /* WaveShaperProcessor.cpp in Sources */,
-				FD581FB41520F93B003A7A75 /* WaveTable.cpp in Sources */,
+				FD581FB41520F93B003A7A75 /* PeriodicWave.cpp in Sources */,
 				29A8124A0FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.mm in Sources */,
 				AAA728F816D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.mm in Sources */,
 				AA478A8016CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm in Sources */,

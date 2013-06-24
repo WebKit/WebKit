@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WaveTable_h
-#define WaveTable_h
+#ifndef PeriodicWave_h
+#define PeriodicWave_h
 
 #include "AudioArray.h"
 #include <wtf/Float32Array.h>
@@ -39,20 +39,20 @@
 
 namespace WebCore {
 
-class WaveTable : public RefCounted<WaveTable> {
+class PeriodicWave : public RefCounted<PeriodicWave> {
 public:
-    static PassRefPtr<WaveTable> createSine(float sampleRate);
-    static PassRefPtr<WaveTable> createSquare(float sampleRate);
-    static PassRefPtr<WaveTable> createSawtooth(float sampleRate);
-    static PassRefPtr<WaveTable> createTriangle(float sampleRate);
+    static PassRefPtr<PeriodicWave> createSine(float sampleRate);
+    static PassRefPtr<PeriodicWave> createSquare(float sampleRate);
+    static PassRefPtr<PeriodicWave> createSawtooth(float sampleRate);
+    static PassRefPtr<PeriodicWave> createTriangle(float sampleRate);
 
-    // Creates an arbitrary wavetable given the frequency components (Fourier coefficients).
-    static PassRefPtr<WaveTable> create(float sampleRate, Float32Array* real, Float32Array* imag);
+    // Creates an arbitrary wave given the frequency components (Fourier coefficients).
+    static PassRefPtr<PeriodicWave> create(float sampleRate, Float32Array* real, Float32Array* imag);
 
-    // Returns pointers to the lower and higher wavetable data for the pitch range containing
+    // Returns pointers to the lower and higher wave data for the pitch range containing
     // the given fundamental frequency. These two tables are in adjacent "pitch" ranges
     // where the higher table will have the maximum number of partials which won't alias when played back
-    // at this fundamental frequency. The lower wavetable is the next range containing fewer partials than the higher wavetable.
+    // at this fundamental frequency. The lower wave is the next range containing fewer partials than the higher wave.
     // Interpolation between these two tables can be made according to tableInterpolationFactor.
     // Where values from 0 -> 1 interpolate between lower -> higher.
     void waveDataForFundamentalFrequency(float, float* &lowerWaveData, float* &higherWaveData, float& tableInterpolationFactor);
@@ -60,16 +60,16 @@ public:
     // Returns the scalar multiplier to the oscillator frequency to calculate wave table phase increment.
     float rateScale() const { return m_rateScale; }
 
-    unsigned waveTableSize() const { return m_waveTableSize; }
+    unsigned periodicWaveSize() const { return m_periodicWaveSize; }
     float sampleRate() const { return m_sampleRate; }
 
 private:
-    explicit WaveTable(float sampleRate);
+    explicit PeriodicWave(float sampleRate);
 
     void generateBasicWaveform(int);
 
     float m_sampleRate;
-    unsigned m_waveTableSize;
+    unsigned m_periodicWaveSize;
     unsigned m_numberOfRanges;
     float m_centsPerRange;
 
@@ -94,4 +94,4 @@ private:
 
 } // namespace WebCore
 
-#endif // WaveTable_h
+#endif // PeriodicWave_h

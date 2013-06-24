@@ -782,8 +782,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSVideoTrackList.h \
 	DerivedSources/WebCore/JSWaveShaperNode.cpp \
 	DerivedSources/WebCore/JSWaveShaperNode.h \
-	DerivedSources/WebCore/JSWaveTable.cpp \
-	DerivedSources/WebCore/JSWaveTable.h \
+	DerivedSources/WebCore/JSPeriodicWave.cpp \
+	DerivedSources/WebCore/JSPeriodicWave.h \
 	DerivedSources/WebCore/JSWebGLActiveInfo.cpp \
 	DerivedSources/WebCore/JSWebGLActiveInfo.h \
 	DerivedSources/WebCore/JSWebGLBuffer.cpp \
@@ -1329,7 +1329,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webaudio/OscillatorNode.idl \
 	$(WebCore)/Modules/webaudio/AnalyserNode.idl \
 	$(WebCore)/Modules/webaudio/WaveShaperNode.idl \
-	$(WebCore)/Modules/webaudio/WaveTable.idl \
+	$(WebCore)/Modules/webaudio/PeriodicWave.idl \
 	$(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
 	$(WebCore)/Modules/webdatabase/Database.idl \
 	$(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
@@ -2148,8 +2148,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/WaveShaperDSPKernel.h \
 	Source/WebCore/Modules/webaudio/WaveShaperProcessor.cpp \
 	Source/WebCore/Modules/webaudio/WaveShaperNode.h \
-	Source/WebCore/Modules/webaudio/WaveTable.cpp \
-	Source/WebCore/Modules/webaudio/WaveTable.h \
+	Source/WebCore/Modules/webaudio/PeriodicWave.cpp \
+	Source/WebCore/Modules/webaudio/PeriodicWave.h \
 	Source/WebCore/Modules/webdatabase/AbstractDatabaseServer.h \
 	Source/WebCore/Modules/webdatabase/AbstractSQLStatement.h \
 	Source/WebCore/Modules/webdatabase/AbstractSQLStatementBackend.h \

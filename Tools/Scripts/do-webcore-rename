@@ -96,13 +96,7 @@ sub wanted
 my $isDOMTypeRename = 1;
 my %renames = (
     # Renames go here in the form of:
-    "JavaScriptAudioNode" => "ScriptProcessorNode",
-    "RealtimeAnalyserNode" => "AnalyserNode",
-    "AudioGainNode" => "GainNode",
-    "AudioPannerNode" => "PannerNode",
-    "AudioChannelSplitter" => "ChannelSplitterNode",
-    "AudioChannelMerger" => "ChannelMergerNode",
-    "Oscillator" => "OscillatorNode",
+    "WaveTable" => "PeriodicWave",
 );
 
 my %renamesContemplatedForTheFuture = (

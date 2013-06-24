@@ -1,3 +1,52 @@
+2013-06-24  Chris Rogers  <crogers@google.com>
+
+        WaveTable name has changed to PeriodicWave
+        https://bugs.webkit.org/show_bug.cgi?id=117748
+
+        Reviewed by Jer Noble.
+
+        See related Web Audio bug and spec change:
+        https://www.w3.org/Bugs/Public/show_bug.cgi?id=19561
+        https://dvcs.w3.org/hg/audio/rev/7c4a40a9bb57
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createPeriodicWave):
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::OscillatorNode):
+        (WebCore::OscillatorNode::setType):
+        (WebCore::OscillatorNode::calculateSampleAccuratePhaseIncrements):
+        (WebCore::OscillatorNode::process):
+        (WebCore::OscillatorNode::setPeriodicWave):
+        (WebCore::OscillatorNode::propagatesSilence):
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/webaudio/PeriodicWave.cpp: Renamed from Source/WebCore/Modules/webaudio/WaveTable.cpp.
+        (WebCore::PeriodicWave::create):
+        (WebCore::PeriodicWave::createSine):
+        (WebCore::PeriodicWave::createSquare):
+        (WebCore::PeriodicWave::createSawtooth):
+        (WebCore::PeriodicWave::createTriangle):
+        (WebCore::PeriodicWave::PeriodicWave):
+        (WebCore::PeriodicWave::waveDataForFundamentalFrequency):
+        (WebCore::PeriodicWave::maxNumberOfPartials):
+        (WebCore::PeriodicWave::numberOfPartialsForRange):
+        (WebCore::PeriodicWave::createBandLimitedTables):
+        (WebCore::PeriodicWave::generateBasicWaveform):
+        * Modules/webaudio/PeriodicWave.h: Renamed from Source/WebCore/Modules/webaudio/WaveTable.h.
+        (WebCore::PeriodicWave::rateScale):
+        (WebCore::PeriodicWave::periodicWaveSize):
+        (WebCore::PeriodicWave::sampleRate):
+        (WebCore::PeriodicWave::numberOfRanges):
+        * Modules/webaudio/PeriodicWave.idl: Renamed from Source/WebCore/Modules/webaudio/WaveTable.idl.
+        * Target.pri:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-06-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Commented IDL implements statements should not impact code generation

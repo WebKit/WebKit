@@ -75,7 +75,7 @@
     AnalyserNode createAnalyser();
     [RaisesException] ScriptProcessorNode createScriptProcessor(unsigned long bufferSize, optional unsigned long numberOfInputChannels, optional unsigned long numberOfOutputChannels);
     OscillatorNode createOscillator();
-    [RaisesException] WaveTable createWaveTable(Float32Array real, Float32Array imag);
+    [RaisesException] PeriodicWave createPeriodicWave(Float32Array real, Float32Array imag);
 
     // Channel splitting and merging
     [RaisesException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs);

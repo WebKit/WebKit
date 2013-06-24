@@ -30,7 +30,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "WaveTable.h"
+#include "PeriodicWave.h"
 
 #include "FFTFrame.h"
 #include "OscillatorNode.h"
@@ -38,20 +38,20 @@
 #include <algorithm>
 #include <wtf/OwnPtr.h>
 
-const unsigned WaveTableSize = 4096; // This must be a power of two.
-const unsigned NumberOfRanges = 36; // There should be 3 * log2(WaveTableSize) 1/3 octave ranges.
+const unsigned PeriodicWaveSize = 4096; // This must be a power of two.
+const unsigned NumberOfRanges = 36; // There should be 3 * log2(PeriodicWaveSize) 1/3 octave ranges.
 const float CentsPerRange = 1200 / 3; // 1/3 Octave.
 
 namespace WebCore {
     
 using namespace VectorMath;
 
-PassRefPtr<WaveTable> WaveTable::create(float sampleRate, Float32Array* real, Float32Array* imag)
+PassRefPtr<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array* real, Float32Array* imag)
 {
     bool isGood = real && imag && real->length() == imag->length();
     ASSERT(isGood);
     if (isGood) {
-        RefPtr<WaveTable> waveTable = adoptRef(new WaveTable(sampleRate));
+        RefPtr<PeriodicWave> waveTable = adoptRef(new PeriodicWave(sampleRate));
         size_t numberOfComponents = real->length();
         waveTable->createBandLimitedTables(real->data(), imag->data(), numberOfComponents);
         return waveTable;
@@ -59,46 +59,46 @@ PassRefPtr<WaveTable> WaveTable::create(float sampleRate, Float32Array* real, Fl
     return 0;
 }
 
-PassRefPtr<WaveTable> WaveTable::createSine(float sampleRate)
+PassRefPtr<PeriodicWave> PeriodicWave::createSine(float sampleRate)
 {
-    RefPtr<WaveTable> waveTable = adoptRef(new WaveTable(sampleRate));
+    RefPtr<PeriodicWave> waveTable = adoptRef(new PeriodicWave(sampleRate));
     waveTable->generateBasicWaveform(OscillatorNode::SINE);
     return waveTable;
 }
 
-PassRefPtr<WaveTable> WaveTable::createSquare(float sampleRate)
+PassRefPtr<PeriodicWave> PeriodicWave::createSquare(float sampleRate)
 {
-    RefPtr<WaveTable> waveTable = adoptRef(new WaveTable(sampleRate));
+    RefPtr<PeriodicWave> waveTable = adoptRef(new PeriodicWave(sampleRate));
     waveTable->generateBasicWaveform(OscillatorNode::SQUARE);
     return waveTable;
 }
 
-PassRefPtr<WaveTable> WaveTable::createSawtooth(float sampleRate)
+PassRefPtr<PeriodicWave> PeriodicWave::createSawtooth(float sampleRate)
 {
-    RefPtr<WaveTable> waveTable = adoptRef(new WaveTable(sampleRate));
+    RefPtr<PeriodicWave> waveTable = adoptRef(new PeriodicWave(sampleRate));
     waveTable->generateBasicWaveform(OscillatorNode::SAWTOOTH);
     return waveTable;
 }
 
-PassRefPtr<WaveTable> WaveTable::createTriangle(float sampleRate)
+PassRefPtr<PeriodicWave> PeriodicWave::createTriangle(float sampleRate)
 {
-    RefPtr<WaveTable> waveTable = adoptRef(new WaveTable(sampleRate));
+    RefPtr<PeriodicWave> waveTable = adoptRef(new PeriodicWave(sampleRate));
     waveTable->generateBasicWaveform(OscillatorNode::TRIANGLE);
     return waveTable;
 }
 
-WaveTable::WaveTable(float sampleRate)
+PeriodicWave::PeriodicWave(float sampleRate)
     : m_sampleRate(sampleRate)
-    , m_waveTableSize(WaveTableSize)
+    , m_periodicWaveSize(PeriodicWaveSize)
     , m_numberOfRanges(NumberOfRanges)
     , m_centsPerRange(CentsPerRange)
 {
     float nyquist = 0.5 * m_sampleRate;
     m_lowestFundamentalFrequency = nyquist / maxNumberOfPartials();
-    m_rateScale = m_waveTableSize / m_sampleRate;
+    m_rateScale = m_periodicWaveSize / m_sampleRate;
 }
 
-void WaveTable::waveDataForFundamentalFrequency(float fundamentalFrequency, float* &lowerWaveData, float* &higherWaveData, float& tableInterpolationFactor)
+void PeriodicWave::waveDataForFundamentalFrequency(float fundamentalFrequency, float* &lowerWaveData, float* &higherWaveData, float& tableInterpolationFactor)
 {
     // Negative frequencies are allowed, in which case we alias to the positive frequency.
     fundamentalFrequency = fabsf(fundamentalFrequency);
@@ -126,12 +126,12 @@ void WaveTable::waveDataForFundamentalFrequency(float fundamentalFrequency, floa
     tableInterpolationFactor = pitchRange - rangeIndex1;
 }
 
-unsigned WaveTable::maxNumberOfPartials() const
+unsigned PeriodicWave::maxNumberOfPartials() const
 {
-    return m_waveTableSize / 2;
+    return m_periodicWaveSize / 2;
 }
 
-unsigned WaveTable::numberOfPartialsForRange(unsigned rangeIndex) const
+unsigned PeriodicWave::numberOfPartialsForRange(unsigned rangeIndex) const
 {
     // Number of cents below nyquist where we cull partials.
     float centsToCull = rangeIndex * m_centsPerRange;
@@ -148,11 +148,11 @@ unsigned WaveTable::numberOfPartialsForRange(unsigned rangeIndex) const
 // Convert into time-domain wave tables.
 // One table is created for each range for non-aliasing playback at different playback rates.
 // Thus, higher ranges have more high-frequency partials culled out.
-void WaveTable::createBandLimitedTables(const float* realData, const float* imagData, unsigned numberOfComponents)
+void PeriodicWave::createBandLimitedTables(const float* realData, const float* imagData, unsigned numberOfComponents)
 {
     float normalizationScale = 1;
 
-    unsigned fftSize = m_waveTableSize;
+    unsigned fftSize = m_periodicWaveSize;
     unsigned halfSize = fftSize / 2;
     unsigned i;
     
@@ -198,7 +198,7 @@ void WaveTable::createBandLimitedTables(const float* realData, const float* imag
         realP[0] = 0;
 
         // Create the band-limited table.
-        OwnPtr<AudioFloatArray> table = adoptPtr(new AudioFloatArray(m_waveTableSize));
+        OwnPtr<AudioFloatArray> table = adoptPtr(new AudioFloatArray(m_periodicWaveSize));
         m_bandLimitedTables.append(table.release());
 
         // Apply an inverse FFT to generate the time-domain table data.
@@ -208,20 +208,20 @@ void WaveTable::createBandLimitedTables(const float* realData, const float* imag
         // For the first range (which has the highest power), calculate its peak value then compute normalization scale.
         if (!rangeIndex) {
             float maxValue;
-            vmaxmgv(data, 1, &maxValue, m_waveTableSize);
+            vmaxmgv(data, 1, &maxValue, m_periodicWaveSize);
 
             if (maxValue)
                 normalizationScale = 1.0f / maxValue;
         }
 
         // Apply normalization scale.
-        vsmul(data, 1, &normalizationScale, data, 1, m_waveTableSize);          
+        vsmul(data, 1, &normalizationScale, data, 1, m_periodicWaveSize);          
     }
 }
 
-void WaveTable::generateBasicWaveform(int shape)
+void PeriodicWave::generateBasicWaveform(int shape)
 {
-    unsigned fftSize = waveTableSize();
+    unsigned fftSize = periodicWaveSize();
     unsigned halfSize = fftSize / 2;
 
     AudioFloatArray real(halfSize);

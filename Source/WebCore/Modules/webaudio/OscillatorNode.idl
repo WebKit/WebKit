@@ -54,7 +54,7 @@
     [Conditional=LEGACY_WEB_AUDIO] void noteOn(double when);
     [Conditional=LEGACY_WEB_AUDIO] void noteOff(double when);
 
-    void setWaveTable(WaveTable waveTable);
+    void setPeriodicWave(PeriodicWave wave);
 
     attribute EventListener onended;
 };

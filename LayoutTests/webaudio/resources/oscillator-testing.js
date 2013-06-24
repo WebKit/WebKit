@@ -35,8 +35,8 @@ function generateExponentialOscillatorSweep(oscillatorType) {
         // Note the first values are expected to be zero (DC for coeffA and Nyquist for coeffB).
         var coeffA = new Float32Array([0, 1, 0.5]);
         var coeffB = new Float32Array([0, 0, 0]);        
-        var wavetable = context.createWaveTable(coeffA, coeffB);
-        osc.setWaveTable(wavetable);
+        var wave = context.createPeriodicWave(coeffA, coeffB);
+        osc.setPeriodicWave(wave);
     } else {
         osc.type = oscillatorType;
     }

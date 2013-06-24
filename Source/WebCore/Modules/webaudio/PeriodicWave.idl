@@ -22,10 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// WaveTable represents a periodic audio waveform given by its Fourier coefficients.
+// PeriodicWave represents a periodic audio waveform given by its Fourier coefficients.
 [
     Conditional=WEB_AUDIO,
     ImplementationLacksVTable
-] interface WaveTable {
+] interface PeriodicWave {
 
 };

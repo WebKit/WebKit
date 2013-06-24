@@ -32,8 +32,8 @@
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
 #include "ExceptionCode.h"
+#include "PeriodicWave.h"
 #include "VectorMath.h"
-#include "WaveTable.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -43,10 +43,10 @@ namespace WebCore {
 
 using namespace VectorMath;
 
-WaveTable* OscillatorNode::s_waveTableSine = 0;
-WaveTable* OscillatorNode::s_waveTableSquare = 0;
-WaveTable* OscillatorNode::s_waveTableSawtooth = 0;
-WaveTable* OscillatorNode::s_waveTableTriangle = 0;
+PeriodicWave* OscillatorNode::s_periodicWaveSine = 0;
+PeriodicWave* OscillatorNode::s_periodicWaveSquare = 0;
+PeriodicWave* OscillatorNode::s_periodicWaveSawtooth = 0;
+PeriodicWave* OscillatorNode::s_periodicWaveTriangle = 0;
 
 PassRefPtr<OscillatorNode> OscillatorNode::create(AudioContext* context, float sampleRate)
 {
@@ -68,7 +68,7 @@ OscillatorNode::OscillatorNode(AudioContext* context, float sampleRate)
     // Default to no detuning.
     m_detune = AudioParam::create(context, "detune", 0, -4800, 4800);
 
-    // Sets up default wavetable.
+    // Sets up default wave.
     setType(m_type);
 
     // An oscillator is always mono.
@@ -117,38 +117,38 @@ void OscillatorNode::setType(const String& type)
 
 bool OscillatorNode::setType(unsigned type)
 {
-    WaveTable* waveTable = 0;
+    PeriodicWave* periodicWave = 0;
     float sampleRate = this->sampleRate();
 
     switch (type) {
     case SINE:
-        if (!s_waveTableSine)
-            s_waveTableSine = WaveTable::createSine(sampleRate).leakRef();
-        waveTable = s_waveTableSine;
+        if (!s_periodicWaveSine)
+            s_periodicWaveSine = PeriodicWave::createSine(sampleRate).leakRef();
+        periodicWave = s_periodicWaveSine;
         break;
     case SQUARE:
-        if (!s_waveTableSquare)
-            s_waveTableSquare = WaveTable::createSquare(sampleRate).leakRef();
-        waveTable = s_waveTableSquare;
+        if (!s_periodicWaveSquare)
+            s_periodicWaveSquare = PeriodicWave::createSquare(sampleRate).leakRef();
+        periodicWave = s_periodicWaveSquare;
         break;
     case SAWTOOTH:
-        if (!s_waveTableSawtooth)
-            s_waveTableSawtooth = WaveTable::createSawtooth(sampleRate).leakRef();
-        waveTable = s_waveTableSawtooth;
+        if (!s_periodicWaveSawtooth)
+            s_periodicWaveSawtooth = PeriodicWave::createSawtooth(sampleRate).leakRef();
+        periodicWave = s_periodicWaveSawtooth;
         break;
     case TRIANGLE:
-        if (!s_waveTableTriangle)
-            s_waveTableTriangle = WaveTable::createTriangle(sampleRate).leakRef();
-        waveTable = s_waveTableTriangle;
+        if (!s_periodicWaveTriangle)
+            s_periodicWaveTriangle = PeriodicWave::createTriangle(sampleRate).leakRef();
+        periodicWave = s_periodicWaveTriangle;
         break;
     case CUSTOM:
     default:
-        // Return error for invalid types, including CUSTOM since setWaveTable() method must be
+        // Return error for invalid types, including CUSTOM since setPeriodicWave() method must be
         // called explicitly.
         return false;
     }
 
-    setWaveTable(waveTable);
+    setPeriodicWave(periodicWave);
     m_type = type;
     return true;
 }
@@ -170,7 +170,7 @@ bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProce
     bool hasFrequencyChanges = false;
     float* phaseIncrements = m_phaseIncrements.data();
 
-    float finalScale = m_waveTable->rateScale();
+    float finalScale = m_periodicWave->rateScale();
 
     if (m_frequency->hasSampleAccurateValues()) {
         hasSampleAccurateValues = true;
@@ -212,7 +212,7 @@ bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProce
     }
 
     if (hasSampleAccurateValues) {
-        // Convert from frequency to wavetable increment.
+        // Convert from frequency to wave increment.
         vsmul(phaseIncrements, 1, &finalScale, phaseIncrements, 1, framesToProcess);
     }
 
@@ -240,8 +240,8 @@ void OscillatorNode::process(size_t framesToProcess)
         return;
     }
 
-    // We must access m_waveTable only inside the lock.
-    if (!m_waveTable.get()) {
+    // We must access m_periodicWave only inside the lock.
+    if (!m_periodicWave.get()) {
         outputBus->zero();
         return;
     }
@@ -256,8 +256,8 @@ void OscillatorNode::process(size_t framesToProcess)
         return;
     }
 
-    unsigned waveTableSize = m_waveTable->waveTableSize();
-    double invWaveTableSize = 1.0 / waveTableSize;
+    unsigned periodicWaveSize = m_periodicWave->periodicWaveSize();
+    double invPeriodicWaveSize = 1.0 / periodicWaveSize;
 
     float* destP = outputBus->channel(0)->mutableData();
 
@@ -266,7 +266,7 @@ void OscillatorNode::process(size_t framesToProcess)
     // We keep virtualReadIndex double-precision since we're accumulating values.
     double virtualReadIndex = m_virtualReadIndex;
 
-    float rateScale = m_waveTable->rateScale();
+    float rateScale = m_periodicWave->rateScale();
     float invRateScale = 1 / rateScale;
     bool hasSampleAccurateValues = calculateSampleAccuratePhaseIncrements(framesToProcess);
 
@@ -280,13 +280,13 @@ void OscillatorNode::process(size_t framesToProcess)
         float detune = m_detune->smoothedValue();
         float detuneScale = powf(2, detune / 1200);
         frequency *= detuneScale;
-        m_waveTable->waveDataForFundamentalFrequency(frequency, lowerWaveData, higherWaveData, tableInterpolationFactor);
+        m_periodicWave->waveDataForFundamentalFrequency(frequency, lowerWaveData, higherWaveData, tableInterpolationFactor);
     }
 
     float incr = frequency * rateScale;
     float* phaseIncrements = m_phaseIncrements.data();
 
-    unsigned readIndexMask = waveTableSize - 1;
+    unsigned readIndexMask = periodicWaveSize - 1;
 
     // Start rendering at the correct offset.
     destP += quantumFrameOffset;
@@ -304,7 +304,7 @@ void OscillatorNode::process(size_t framesToProcess)
             incr = *phaseIncrements++;
 
             frequency = invRateScale * incr;
-            m_waveTable->waveDataForFundamentalFrequency(frequency, lowerWaveData, higherWaveData, tableInterpolationFactor);
+            m_periodicWave->waveDataForFundamentalFrequency(frequency, lowerWaveData, higherWaveData, tableInterpolationFactor);
         }
 
         float sample1Lower = lowerWaveData[readIndex];
@@ -322,9 +322,9 @@ void OscillatorNode::process(size_t framesToProcess)
 
         *destP++ = sample;
 
-        // Increment virtual read index and wrap virtualReadIndex into the range 0 -> waveTableSize.
+        // Increment virtual read index and wrap virtualReadIndex into the range 0 -> periodicWaveSize.
         virtualReadIndex += incr;
-        virtualReadIndex -= floor(virtualReadIndex * invWaveTableSize) * waveTableSize;
+        virtualReadIndex -= floor(virtualReadIndex * invPeriodicWaveSize) * periodicWaveSize;
     }
 
     m_virtualReadIndex = virtualReadIndex;
@@ -337,19 +337,19 @@ void OscillatorNode::reset()
     m_virtualReadIndex = 0;
 }
 
-void OscillatorNode::setWaveTable(WaveTable* waveTable)
+void OscillatorNode::setPeriodicWave(PeriodicWave* periodicWave)
 {
     ASSERT(isMainThread());
 
     // This synchronizes with process().
     MutexLocker processLocker(m_processLock);
-    m_waveTable = waveTable;
+    m_periodicWave = periodicWave;
     m_type = CUSTOM;
 }
 
 bool OscillatorNode::propagatesSilence() const
 {
-    return !isPlayingOrScheduled() || hasFinished() || !m_waveTable.get();
+    return !isPlayingOrScheduled() || hasFinished() || !m_periodicWave.get();
 }
 
 } // namespace WebCore

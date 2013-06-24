@@ -68,7 +68,7 @@ class AnalyserNode;
 class WaveShaperNode;
 class ScriptProcessorNode;
 class OscillatorNode;
-class WaveTable;
+class PeriodicWave;
 
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
@@ -141,7 +141,7 @@ public:
     PassRefPtr<ChannelMergerNode> createChannelMerger(ExceptionCode&);
     PassRefPtr<ChannelMergerNode> createChannelMerger(size_t numberOfInputs, ExceptionCode&);
     PassRefPtr<OscillatorNode> createOscillator();
-    PassRefPtr<WaveTable> createWaveTable(Float32Array* real, Float32Array* imag, ExceptionCode&);
+    PassRefPtr<PeriodicWave> createPeriodicWave(Float32Array* real, Float32Array* imag, ExceptionCode&);
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
     void notifyNodeFinishedProcessing(AudioNode*);

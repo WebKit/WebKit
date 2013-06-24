@@ -3376,7 +3376,7 @@ enable?(WEB_AUDIO) {
         Modules/webaudio/WaveShaperDSPKernel.h \
         Modules/webaudio/WaveShaperNode.h \
         Modules/webaudio/WaveShaperProcessor.h \
-        Modules/webaudio/WaveTable.h \
+        Modules/webaudio/PeriodicWave.h \
         platform/audio/AudioArray.h \
         platform/audio/AudioBus.h \
         platform/audio/AudioChannel.h \
@@ -3466,7 +3466,7 @@ enable?(WEB_AUDIO) {
         Modules/webaudio/WaveShaperDSPKernel.cpp \
         Modules/webaudio/WaveShaperNode.cpp \
         Modules/webaudio/WaveShaperProcessor.cpp \
-        Modules/webaudio/WaveTable.cpp \
+        Modules/webaudio/PeriodicWave.cpp \
         platform/audio/AudioBus.cpp \
         platform/audio/AudioChannel.cpp \
         platform/audio/AudioDSPKernelProcessor.cpp \

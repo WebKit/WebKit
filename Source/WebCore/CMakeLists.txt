@@ -273,7 +273,7 @@ set(WebCore_IDL_FILES
     Modules/webaudio/OscillatorNode.idl
     Modules/webaudio/AnalyserNode.idl
     Modules/webaudio/WaveShaperNode.idl
-    Modules/webaudio/WaveTable.idl
+    Modules/webaudio/PeriodicWave.idl
 
     Modules/webdatabase/Database.idl
     Modules/webdatabase/DatabaseCallback.idl
@@ -923,7 +923,7 @@ set(WebCore_SOURCES
     Modules/webaudio/WaveShaperDSPKernel.cpp
     Modules/webaudio/WaveShaperNode.cpp
     Modules/webaudio/WaveShaperProcessor.cpp
-    Modules/webaudio/WaveTable.cpp
+    Modules/webaudio/PeriodicWave.cpp
 
     Modules/webdatabase/ChangeVersionWrapper.cpp
     Modules/webdatabase/DOMWindowWebDatabase.cpp
