@@ -1,3 +1,14 @@
+2013-06-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Clear unused cmakedefines
+        https://bugs.webkit.org/show_bug.cgi?id=117931
+
+        Reviewed by Christophe Dumez.
+
+        * Source/cmakeconfig.h.cmake:
+        Removed ENABLE_AS_IMAGE, ENABLE_LEGACY_WEBKIT_BLOB_BUILDER and
+        ENABLE_CLIENT_BASED_GEOLOCATION cmakedefines which already removed.
+
 2013-06-20  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE][EFL] Enable DOM4 Events Constructor
