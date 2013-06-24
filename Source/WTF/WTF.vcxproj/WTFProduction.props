@@ -5,6 +5,7 @@
     <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
     <Import Project="$(WebKit_Libraries)\tools\vsprops\production.props" />
     <Import Project="WTFCommon.props" />
+    <Import Project="WTFCoreFoundation.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />

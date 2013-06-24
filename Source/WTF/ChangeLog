@@ -1,3 +1,9 @@
+2013-06-24  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. AppleWin build fix, followup to r151915.
+
+        * WTF.vcxproj/WTFProduction.props:
+
 2013-06-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         HashMap: reverse the order of the template arguments at alternate 'find', 'contains' and 'add' methods
