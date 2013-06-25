@@ -1,5 +1,17 @@
 2013-06-24  Simon Cooper  <scooper@apple.com>
 
+        com.oracle.javadeployment.plist is not correctly specified in the JavaApplet plugin profile
+        https://bugs.webkit.org/show_bug.cgi?id=117961
+        <rdar://problem/14223823>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove the trailing extraneous .plist from the preference file rule
+
+        * Resources/PlugInSandboxProfiles/com.oracle.java.JavaAppletPlugin.sb:
+
+2013-06-24  Simon Cooper  <scooper@apple.com>
+
         PluginProcess sandbox violations on com.apple.networkConnect.plist when resetting Safari
         https://bugs.webkit.org/show_bug.cgi?id=117958
         <rdar://problem/13938149>
