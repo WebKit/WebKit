@@ -6,6 +6,7 @@ EVENT(canplay)
 Test 1 OK
 
 Test playing when there are no ranges
+EVENT(seeked)
 RUN(video.play())
 RUN(video.pause())
 EVENT(pause)
@@ -14,6 +15,7 @@ Test 3 OK
 Test 4 OK
 
 Create a new range
+EVENT(seeked)
 RUN(video.play())
 RUN(video.pause())
 EVENT(pause)
@@ -24,6 +26,7 @@ Test 8 OK
 Test 9 OK
 
 Test playing from one range into another, should collapse the two ranges
+EVENT(seeked)
 RUN(video.play())
 RUN(video.pause())
 EVENT(pause)
@@ -33,6 +36,7 @@ Test 12 OK
 
 Test looping
 RUN(video.loop = true)
+EVENT(seeked)
 RUN(video.play())
 RUN(video.pause())
 EVENT(pause)

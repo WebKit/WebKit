@@ -30,7 +30,8 @@
                 runSilently("video.currentTime = 0.5");
 
                 currentTimeRange++;
-                startPlayingInNewRange();
+
+                waitForEventOnce("seeked", startPlayingInNewRange);
             }
     
 
@@ -44,7 +45,7 @@
                 willPauseInExistingRange = false;
                 willExtendAnExistingRange = false;
 
-                startPlayingInNewRange();
+                waitForEventOnce("seeked", startPlayingInNewRange);
             }
 
             function JumpAndCollapseTwoRanges()
@@ -61,7 +62,9 @@
                 willExtendAnExistingRange = false;
                 runSilently("video.currentTime = " + startTime);
 
-                playForMillisecs(secToMilli(expectedEndTimes[1] - startTime + 0.1)); // Triggers pause()
+                waitForEventOnce("seeked", function() {
+                    playForMillisecs(secToMilli(expectedEndTimes[1] - startTime + 0.1)); // Triggers pause()
+                });
             }
 
             function TestLoopingAndPassToTheEnd()
@@ -89,7 +92,10 @@
 
                 // Playback restarts from beginning, so expect the beginning of first time range to be 0.
                 expectedStartTimes[0] = 0;
-                playForMillisecs(secToMilli(playDuration)); // Triggers pause()
+
+                waitForEventOnce("seeked", function() {
+                    playForMillisecs(secToMilli(playDuration)); // Triggers pause()
+                });
             }
 
         </script>

@@ -1,3 +1,26 @@
+2013-06-24  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] media/video-played-collapse.html is flakey on certain platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=117034
+
+        Reviewed by Beth Dakin.
+
+        This test does not wait until a seek completes before issuing a play()
+        command during its subtests. This can cause flakiness on some platforms
+        where playback will begin from the pre-seek currentTime. Wait for the seek
+        to complete before continuing the sub-tests.
+
+        Additionally, a 2s watchdog timeout is present to catch stalled tests. This
+        timeout is fine for short-duration sub-tests, but longer tests' durations
+        approach this 2s timeout period. Make the timeout the test duration + 2s.
+
+        * media/video-played-collapse-expected.txt:
+        * media/video-played-collapse.html:
+        * media/video-played.js:
+        (playForMillisecs.callPauseIfTimeIsReached):
+        (playForMillisecs):
+        * platform/mac-wk2/TestExpectations:
+
 2013-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         Fix various crashes on sites with fixed backgrounds
