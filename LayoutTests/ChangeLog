@@ -1,3 +1,9 @@
+2013-06-24  Brent Fulgham  <bfulgham@gmail.com>
+
+        [Mac] Build correction.
+
+        * platform/mac/accessibility/aria-tab-roles-expected.txt:
+
 2013-06-24  Kangil Han  <kangil.han@samsung.com>
 
         Add support for document.currentScript
