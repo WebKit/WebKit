@@ -1,3 +1,18 @@
+2013-06-25  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL] Add a script to install dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=117968
+
+        Reviewed by Christophe Dumez.
+
+        Add a script which installs basic dependencies for building WebKit EFL.
+
+        The dependencies are from the current EFLWebKit wiki page.
+        After this patch is landed, the wiki page will be updated to use
+        this script.
+
+        * efl/install-dependencies: Added.
+
 2013-06-24  Dean Jackson  <dino@apple.com>
 
         [Mac] Update font used for Chinese in test systems
