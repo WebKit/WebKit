@@ -1,3 +1,19 @@
+2013-06-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        HTMLMediaElement should inherit from MediaPlayerClient privately
+        https://bugs.webkit.org/show_bug.cgi?id=117874
+
+        Reviewed by Andreas Kling.
+
+        Fixing FIXME: HTMLMediaElement was stuck with public inheritance from
+        MediaPlayerClient due to the Chromium and Qt port.
+
+        The Qt port is changed to not cast from MediaPlayerClient to HTMLMediaElement.
+
+        * html/HTMLMediaElement.h:
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::commitLoad):
+
 2013-06-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Checking if frame is complete and access duration doesn't need a decode

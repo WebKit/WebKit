@@ -195,17 +195,12 @@ void MediaPlayerPrivateQt::commitLoad(const String& url)
     const QUrl rUrl = kUrl;
     const QString scheme = rUrl.scheme().toLower();
 
-    // Grab the client media element
-    HTMLMediaElement* element = static_cast<HTMLMediaElement*>(m_webCorePlayer->mediaPlayerClient());
-
     // Construct the media content with a network request if the resource is http[s]
     if (scheme == QString::fromLatin1("http") || scheme == QString::fromLatin1("https")) {
         QNetworkRequest request = QNetworkRequest(rUrl);
 
         // Grab the current document
-        Document* document = element->document();
-        if (!document)
-            document = element->ownerDocument();
+        Document* document = m_webCorePlayer->mediaPlayerClient()->mediaPlayerOwningDocument();
 
         // Grab the frame and network manager
         Frame* frame = document ? document->frame() : 0;
@@ -241,15 +236,15 @@ void MediaPlayerPrivateQt::commitLoad(const String& url)
     // We get these from the element, rather than the player, in case we have
     // transitioned from a media engine which doesn't support muting, to a media
     // engine which does.
-    m_mediaPlayer->setMuted(element->muted());
-    m_mediaPlayer->setVolume(static_cast<int>(element->volume() * 100.0));
+    m_mediaPlayer->setMuted(m_webCorePlayer->muted());
+    m_mediaPlayer->setVolume(static_cast<int>(m_webCorePlayer->volume() * 100.0));
 
     // Don't send PlaybackChanged notification for pre-roll.
     m_suppressNextPlaybackChanged = true;
 
     // Setting a media source will start loading the media, but we need
     // to pre-roll as well to get video size-hints and buffer-status
-    if (element->paused())
+    if (m_webCorePlayer->paused())
         m_mediaPlayer->pause();
     else
         m_mediaPlayer->play();
