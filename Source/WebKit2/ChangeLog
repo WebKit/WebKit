@@ -1,5 +1,17 @@
 2013-06-24  Simon Cooper  <scooper@apple.com>
 
+        Java sandbox violation ipc-posix-shm-read-data /tmp/com.apple.csseed.67
+        https://bugs.webkit.org/show_bug.cgi?id=117954
+        <rdar://problem/14166577>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Permit read access to this shared memory segment
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
+2013-06-24  Simon Cooper  <scooper@apple.com>
+
         Plugin Sandbox violation in /Library/Audio/Sounds/Banks
         https://bugs.webkit.org/show_bug.cgi?id=117957
         <rdar://problem/14163582>
