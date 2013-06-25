@@ -40,7 +40,6 @@
 #include "HTMLTreeBuilderSimulator.h"
 #include "ScriptableDocumentParser.h"
 #include "SegmentedString.h"
-#include "Timer.h"
 #include "XSSAuditor.h"
 #include "XSSAuditorDelegate.h"
 #include <wtf/Deque.h>

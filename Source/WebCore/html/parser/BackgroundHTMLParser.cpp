@@ -30,7 +30,6 @@
 #include "BackgroundHTMLParser.h"
 
 #include "HTMLDocumentParser.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLParserThread.h"
 #include "HTMLTokenizer.h"
 #include "XSSAuditor.h"

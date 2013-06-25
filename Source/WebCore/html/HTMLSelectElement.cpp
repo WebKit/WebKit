@@ -56,8 +56,6 @@
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
-#include <wtf/text/StringBuilder.h>
-#include <wtf/unicode/Unicode.h>
 
 using namespace std;
 using namespace WTF::Unicode;

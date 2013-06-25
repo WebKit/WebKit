@@ -33,7 +33,6 @@
 #include "QualifiedName.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 

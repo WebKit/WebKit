@@ -25,7 +25,6 @@
 
 #include "Document.h"
 #include "HTMLNames.h"
-#include "NodeRenderingContext.h"
 #include "RenderStyle.h"
 #include "StyleInheritedData.h"
 #include "Text.h"

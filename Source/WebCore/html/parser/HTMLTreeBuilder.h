@@ -41,7 +41,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

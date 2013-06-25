@@ -1,3 +1,119 @@
+2013-06-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Remove unneeded include header files from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=117926
+
+        Reviewed by Andreas Kling.
+
+        Merge from https://chromiumcodereview.appspot.com/17388003. 
+
+        Cleanup unused includes from WebCore.
+
+        * editing/CompositeEditCommand.cpp:
+        * editing/DeleteSelectionCommand.cpp:
+        * editing/EditingStyle.cpp:
+        * editing/Editor.cpp:
+        * editing/FrameSelection.cpp:
+        * editing/HTMLInterchange.cpp:
+        * editing/IndentOutdentCommand.cpp:
+        * editing/InsertListCommand.cpp:
+        * editing/InsertTextCommand.cpp:
+        * editing/SpellChecker.h:
+        * editing/VisibleUnits.cpp:
+        * editing/VisibleUnits.h:
+        * editing/markup.cpp:
+        * fileapi/Blob.h:
+        * fileapi/File.h:
+        * fileapi/WebKitBlobBuilder.h:
+        * history/HistoryItem.cpp:
+        * history/HistoryItem.h:
+        * html/BaseDateAndTimeInputType.cpp:
+        * html/BaseDateAndTimeInputType.h:
+        * html/ClassList.cpp:
+        * html/ClassList.h:
+        * html/DOMSettableTokenList.h:
+        * html/DOMURL.cpp:
+        * html/DateInputType.h:
+        * html/FormController.h:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLCollection.cpp:
+        * html/HTMLCollection.h:
+        * html/HTMLDocument.h:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLIFrameElement.cpp:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLLegendElement.cpp:
+        * html/HTMLLinkElement.h:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMeterElement.cpp:
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLOutputElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLProgressElement.cpp:
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLTableElement.cpp:
+        * html/HTMLTitleElement.cpp:
+        * html/HTMLTrackElement.cpp:
+        * html/ImageInputType.h:
+        * html/InputType.h:
+        * html/MediaController.h:
+        * html/MediaFragmentURIParser.h:
+        * html/NumberInputType.cpp:
+        * html/RadioNodeList.h:
+        * html/TextFieldInputType.h:
+        * html/TypeAhead.cpp:
+        * html/ValidityState.cpp:
+        * html/canvas/CanvasPathMethods.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/OESVertexArrayObject.h:
+        * html/canvas/WebGLBuffer.cpp:
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLCompressedTextureATC.h:
+        * html/canvas/WebGLCompressedTextureS3TC.cpp:
+        * html/canvas/WebGLCompressedTextureS3TC.h:
+        * html/canvas/WebGLContextObject.h:
+        * html/canvas/WebGLDebugShaders.cpp:
+        * html/canvas/WebGLObject.h:
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLShader.h:
+        * html/canvas/WebGLTexture.h:
+        * html/canvas/WebGLUniformLocation.h:
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+        * html/parser/BackgroundHTMLParser.cpp:
+        * html/parser/BackgroundHTMLParser.h:
+        * html/parser/CSSPreloadScanner.cpp:
+        * html/parser/HTMLConstructionSite.cpp:
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLElementStack.h:
+        * html/parser/HTMLParserIdioms.cpp:
+        * html/parser/HTMLParserIdioms.h:
+        * html/parser/HTMLParserScheduler.h:
+        * html/parser/HTMLPreloadScanner.cpp:
+        * html/parser/HTMLSourceTracker.h:
+        * html/parser/HTMLTreeBuilder.h:
+        * html/parser/HTMLTreeBuilderSimulator.h:
+        * html/parser/XSSAuditor.cpp:
+        * html/parser/XSSAuditorDelegate.h:
+        * html/shadow/HTMLContentElement.cpp:
+        * html/shadow/HTMLContentElement.h:
+        * html/shadow/MediaControlElements.cpp:
+        * html/shadow/MediaControls.h:
+        * html/shadow/SliderThumbElement.cpp:
+        * html/shadow/SliderThumbElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        * html/track/InbandTextTrack.h:
+        * html/track/LoadableTextTrack.cpp:
+        * html/track/LoadableTextTrack.h:
+        * html/track/TextTrackCueGeneric.h:
+
 2013-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         Don't crash if renderName() is called on a renderer with no style

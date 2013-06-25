@@ -30,7 +30,6 @@
 
 #include "KeyboardEvent.h"
 #include <wtf/unicode/CharacterNames.h>
-#include <wtf/unicode/Unicode.h>
 
 using namespace WTF::Unicode;
 

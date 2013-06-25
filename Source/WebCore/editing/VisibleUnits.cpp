@@ -41,7 +41,6 @@
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
 #include "htmlediting.h"
-#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 

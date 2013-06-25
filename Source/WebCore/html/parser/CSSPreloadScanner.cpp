@@ -28,7 +28,6 @@
 #include "config.h"
 #include "CSSPreloadScanner.h"
 
-#include "CachedResourceRequestInitiators.h"
 #include "HTMLIdentifier.h"
 #include "HTMLParserIdioms.h"
 

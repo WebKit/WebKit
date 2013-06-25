@@ -26,7 +26,6 @@
 #ifndef WebGLCompressedTextureATC_h
 #define WebGLCompressedTextureATC_h
 
-#include "ExceptionCode.h"
 #include "WebGLExtension.h"
 #include <wtf/PassOwnPtr.h>
 

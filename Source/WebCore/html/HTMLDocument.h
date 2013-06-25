@@ -26,7 +26,6 @@
 #include "CachedResourceClient.h"
 #include "Document.h"
 #include <wtf/HashCountedSet.h>
-#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 

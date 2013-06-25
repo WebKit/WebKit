@@ -51,7 +51,6 @@
 #include "StyledElement.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 

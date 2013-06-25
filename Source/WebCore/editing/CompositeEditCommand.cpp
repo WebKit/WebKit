@@ -66,7 +66,6 @@
 #include "WrapContentsInDummySpanCommand.h"
 #include "htmlediting.h"
 #include "markup.h"
-#include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(DELETION_UI)
 #include "DeleteButtonController.h"

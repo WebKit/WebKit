@@ -26,17 +26,14 @@
 
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
-#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "HTMLDocument.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
 #include "PluginDocument.h"
 #include "RenderEmbeddedObject.h"
-#include "RenderImage.h"
 #include "RenderWidget.h"
 #include "Settings.h"
 

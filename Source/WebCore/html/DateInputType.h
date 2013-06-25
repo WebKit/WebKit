@@ -33,7 +33,6 @@
 
 #if ENABLE(INPUT_TYPE_DATE)
 #include "BaseChooserOnlyDateAndTimeInputType.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

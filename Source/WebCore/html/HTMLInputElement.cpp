@@ -32,7 +32,6 @@
 #include "AXObjectCache.h"
 #include "BeforeTextInsertedEvent.h"
 #include "CSSPropertyNames.h"
-#include "CSSValueKeywords.h"
 #include "DateTimeChooser.h"
 #include "Document.h"
 #include "Editor.h"
@@ -60,7 +59,6 @@
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
-#include "PlatformLocale.h"
 #include "PlatformMouseEvent.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
@@ -71,7 +69,6 @@
 #include "ScriptEventListener.h"
 #include "StyleResolver.h"
 #include <wtf/MathExtras.h>
-#include <wtf/StdLibExtras.h>
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorInputType.h"

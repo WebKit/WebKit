@@ -28,7 +28,6 @@
 
 #include "GraphicsTypes3D.h"
 #include "WebGLExtension.h"
-#include "WebGLVertexArrayObjectOES.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

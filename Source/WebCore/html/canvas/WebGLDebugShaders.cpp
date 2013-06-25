@@ -33,8 +33,6 @@
 #include "WebGLRenderingContext.h"
 #include "WebGLShader.h"
 
-#include <wtf/OwnArrayPtr.h>
-
 namespace WebCore {
 
 WebGLDebugShaders::WebGLDebugShaders(WebGLRenderingContext* context)

@@ -38,7 +38,6 @@
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 

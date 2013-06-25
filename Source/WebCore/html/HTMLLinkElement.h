@@ -33,7 +33,6 @@
 #include "LinkLoader.h"
 #include "LinkLoaderClient.h"
 #include "LinkRelAttribute.h"
-#include "Timer.h"
 
 namespace WebCore {
 

@@ -25,7 +25,6 @@
 
 #include "RenderStyle.h"
 #include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

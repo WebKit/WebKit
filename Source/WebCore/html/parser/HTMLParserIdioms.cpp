@@ -32,7 +32,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

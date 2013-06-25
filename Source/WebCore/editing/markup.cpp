@@ -32,9 +32,6 @@
 #include "CDATASection.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
-#include "CSSRule.h"
-#include "CSSRuleList.h"
-#include "CSSStyleRule.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 #include "ChildListMutationScope.h"
@@ -43,7 +40,6 @@
 #include "DeleteButtonController.h"
 #endif
 #include "DocumentFragment.h"
-#include "DocumentType.h"
 #include "Editor.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
@@ -58,17 +54,13 @@
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RenderObject.h"
-#include "Settings.h"
 #include "StylePropertySet.h"
-#include "StyleResolver.h"
 #include "TextIterator.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
-#include "XMLNSNames.h"
 #include "htmlediting.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
 

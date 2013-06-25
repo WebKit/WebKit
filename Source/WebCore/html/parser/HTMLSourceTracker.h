@@ -28,7 +28,6 @@
 
 #include "HTMLToken.h"
 #include "SegmentedString.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

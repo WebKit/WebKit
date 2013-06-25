@@ -33,7 +33,6 @@
 
 #include "InputType.h"
 #include "SpinButtonElement.h"
-#include "TextControlInnerElements.h"
 
 namespace WebCore {
 

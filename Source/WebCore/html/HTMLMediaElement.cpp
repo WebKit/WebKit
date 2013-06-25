@@ -75,7 +75,6 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ScriptEventListener.h"
-#include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "ShadowRoot.h"

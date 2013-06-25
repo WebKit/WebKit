@@ -38,8 +38,6 @@
 #include "HTMLTreeBuilderSimulator.h"
 #include "XSSAuditorDelegate.h"
 #include <wtf/PassOwnPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

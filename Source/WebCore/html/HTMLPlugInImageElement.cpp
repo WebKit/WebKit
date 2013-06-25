@@ -29,7 +29,6 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
-#include "HTMLDivElement.h"
 #include "HTMLImageLoader.h"
 #include "Image.h"
 #include "JSDocumentFragment.h"
@@ -38,8 +37,6 @@
 #include "MouseEvent.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
-#include "NodeRenderingContext.h"
-#include "Page.h"
 #include "PlugInClient.h"
 #include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
@@ -51,10 +48,8 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
-#include "Text.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSBase.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 

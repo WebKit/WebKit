@@ -32,7 +32,6 @@
 #include "CanvasStyle.h"
 #include "Color.h"
 #include "ColorSpace.h"
-#include "DashArray.h"
 #include "FloatSize.h"
 #include "Font.h"
 #include "GraphicsTypes.h"

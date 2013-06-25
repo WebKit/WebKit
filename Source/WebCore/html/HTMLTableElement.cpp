@@ -28,7 +28,6 @@
 #include "Attribute.h"
 #include "CSSImageValue.h"
 #include "CSSPropertyNames.h"
-#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
 #include "ExceptionCode.h"
@@ -41,7 +40,6 @@
 #include "HTMLTableSectionElement.h"
 #include "RenderTable.h"
 #include "StylePropertySet.h"
-#include "Text.h"
 
 namespace WebCore {
 

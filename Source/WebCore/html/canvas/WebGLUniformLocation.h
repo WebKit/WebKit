@@ -27,7 +27,6 @@
 #ifndef WebGLUniformLocation_h
 #define WebGLUniformLocation_h
 
-#include "WebGLObject.h"
 #include "WebGLProgram.h"
 
 #include <wtf/PassRefPtr.h>

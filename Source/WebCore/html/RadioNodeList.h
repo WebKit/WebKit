@@ -28,8 +28,6 @@
 
 #include "LiveNodeList.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

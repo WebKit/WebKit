@@ -30,7 +30,6 @@
 #include "WebGLContextObject.h"
 
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

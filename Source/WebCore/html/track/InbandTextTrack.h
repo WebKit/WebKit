@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "InbandTextTrackPrivate.h"
 #include "InbandTextTrackPrivateClient.h"
 #include "TextTrack.h"
 #include "TextTrackCueGeneric.h"

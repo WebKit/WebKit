@@ -33,7 +33,6 @@
 
 #include "DOMSettableTokenList.h"
 #include "HTMLFormControlElement.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

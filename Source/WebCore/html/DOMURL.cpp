@@ -40,7 +40,6 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ThreadableBlobRegistry.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/MainThread.h>
 
 #if ENABLE(MEDIA_SOURCE)

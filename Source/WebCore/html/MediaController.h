@@ -28,9 +28,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "ActiveDOMObject.h"
 #include "Event.h"
-#include "EventListener.h"
 #include "EventTarget.h"
 #include "MediaControllerInterface.h"
 #include "Timer.h"

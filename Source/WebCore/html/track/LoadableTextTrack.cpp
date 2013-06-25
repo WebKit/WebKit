@@ -34,7 +34,6 @@
 #include "ScriptEventListener.h"
 #include "ScriptExecutionContext.h"
 #include "TextTrackCueList.h"
-#include "TextTrackRegionList.h"
 
 namespace WebCore {
 

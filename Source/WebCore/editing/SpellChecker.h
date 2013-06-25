@@ -31,7 +31,6 @@
 #include "TextChecking.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>

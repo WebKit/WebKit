@@ -30,7 +30,6 @@
 
 #include "HTMLParserOptions.h"
 #include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

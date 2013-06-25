@@ -30,7 +30,6 @@
 
 #include "TextTrack.h"
 #include "TextTrackLoader.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -29,7 +29,6 @@
 #include "RenderObject.h"
 #include "Text.h"
 #include "TextIterator.h"
-#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 

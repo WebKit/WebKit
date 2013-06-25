@@ -34,7 +34,6 @@
 #include "Text.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
-#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 

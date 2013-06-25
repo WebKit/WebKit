@@ -42,7 +42,6 @@
 #include "ScriptElement.h"
 #include "StyleResolver.h"
 #include "Text.h"
-#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 

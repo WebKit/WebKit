@@ -47,7 +47,6 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include <math.h>
-#include <stdio.h>
 
 #include <runtime/JSLock.h>
 #include <runtime/Operations.h>

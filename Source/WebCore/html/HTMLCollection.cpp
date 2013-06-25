@@ -39,8 +39,6 @@
 #include "PropertyNodeList.h"
 #endif
 
-#include <utility>
-
 namespace WebCore {
 
 using namespace HTMLNames;

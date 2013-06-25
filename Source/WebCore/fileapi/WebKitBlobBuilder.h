@@ -33,7 +33,6 @@
 
 #include "BlobData.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

@@ -32,7 +32,6 @@
 #include "CheckedInt.h"
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContext.h"
-#include <wtf/ArrayBufferView.h>
 
 namespace WebCore {
 

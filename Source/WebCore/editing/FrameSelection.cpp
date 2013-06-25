@@ -64,7 +64,6 @@
 #include "TypingCommand.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
-#include <limits.h>
 #include <stdio.h>
 #include <wtf/text/CString.h>
 

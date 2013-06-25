@@ -46,7 +46,6 @@
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
 #include "StepRange.h"
-#include <wtf/MathExtras.h>
 
 using namespace std;
 

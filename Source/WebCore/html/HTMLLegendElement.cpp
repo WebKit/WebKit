@@ -29,7 +29,6 @@
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 

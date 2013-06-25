@@ -26,7 +26,6 @@
 #ifndef WebGLContextObject_h
 #define WebGLContextObject_h
 
-#include "GraphicsContext3D.h"
 #include "WebGLObject.h"
 
 namespace WebCore {
