@@ -1,3 +1,16 @@
+2013-06-24  Simon Cooper  <scooper@apple.com>
+
+        PluginProcess deny file-read-data /Network/Library under addVolumeTracker
+        https://bugs.webkit.org/show_bug.cgi?id=117965
+        <rdar://problem/14121247>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Silently deny reading /Network/Applications and 
+        /Network/Library.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
 2013-06-24  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLFormElement for code cleanup
