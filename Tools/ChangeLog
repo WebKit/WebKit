@@ -1,3 +1,18 @@
+2013-06-24  Dean Jackson  <dino@apple.com>
+
+        [Mac] Update font used for Chinese in test systems
+        https://bugs.webkit.org/show_bug.cgi?id=117970
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add "Songti TC" and "Songti SC" to the list of allowed fonts
+        in DRT and WKTR.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+        (WTR::allowedFontFamilySet):
+
 2013-06-24  Tim Horton  <timothy_horton@apple.com>
 
         Make MiniBrowser paginated mode work with WebKit1
