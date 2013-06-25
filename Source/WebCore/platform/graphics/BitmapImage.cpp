@@ -305,16 +305,16 @@ PassNativeImagePtr BitmapImage::frameAtIndex(size_t index)
 
 bool BitmapImage::frameIsCompleteAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index))
-        return false;
-    return m_frames[index].m_isComplete;
+    if (index < m_frames.size() && m_frames[index].m_haveMetadata && m_frames[index].m_isComplete)
+        return true;
+    return m_source.frameIsCompleteAtIndex(index);
 }
 
 float BitmapImage::frameDurationAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index))
-        return 0;
-    return m_frames[index].m_duration;
+    if (index < m_frames.size() && m_frames[index].m_haveMetadata)
+        return m_frames[index].m_duration;
+    return m_source.frameDurationAtIndex(index);
 }
 
 PassNativeImagePtr BitmapImage::nativeImageForCurrentFrame()

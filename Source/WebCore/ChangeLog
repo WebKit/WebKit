@@ -1,3 +1,48 @@
+2013-06-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Checking if frame is complete and access duration doesn't need a decode
+        https://bugs.webkit.org/show_bug.cgi?id=116041
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        This change is to avoid image decoding for these two operations:
+        1. frameIsCompleteAtIndex
+        2. frameDurationAtIndex
+        These two operations are moved to ImageDecoder interface and are now const
+        to prevent future regression.
+
+        We are now able to check if a frame is complete by parsing the entire GIF file
+        without decoding. This also provides information like frame duration such that
+        controller the animation doesn't require any decoding.
+
+        Based on the Blink patch by Hin-Chung Lam <hclam@google.com>
+        https://src.chromium.org/viewvc/blink?revision=149883&view=revision
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::frameIsCompleteAtIndex):
+        (WebCore::BitmapImage::frameDurationAtIndex):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        * platform/graphics/ImageSource.h:
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::frameHasAlphaAtIndex):
+        (WebCore::ImageDecoder::frameIsCompleteAtIndex):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::frameDurationAtIndex):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameIsCompleteAtIndex):
+        (WebCore::GIFImageDecoder::frameDurationAtIndex):
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        (WebCore::GIFImageDecoder::gifComplete):
+        (WebCore::GIFImageDecoder::decode):
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.h:
+        (GIFImageReader::frameContext):
+        (GIFImageReader::parseCompleted):
+
 2013-06-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Update AbstractWorker, Worker and SharedWorker to match the specification
