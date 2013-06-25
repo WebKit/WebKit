@@ -417,7 +417,7 @@ webkit.org/b/115374 fast/dom/shadow [ Skip ]
 Bug(GTK) editing/secure-input [ Failure ]
 
 # Synthesized italics not supported
-fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
+webkit.org/b/117975 fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
