@@ -91,6 +91,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLPlugInElement.h"
+#include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
 #include "HTTPParsers.h"
@@ -4217,6 +4218,18 @@ KURL Document::openSearchDescriptionURL()
     }
 
     return KURL();
+}
+
+void Document::pushCurrentScript(PassRefPtr<HTMLScriptElement> newCurrentScript)
+{
+    ASSERT(newCurrentScript);
+    m_currentScriptStack.append(newCurrentScript);
+}
+
+void Document::popCurrentScript()
+{
+    ASSERT(!m_currentScriptStack.isEmpty());
+    m_currentScriptStack.removeLast();
 }
 
 #if ENABLE(XSLT)

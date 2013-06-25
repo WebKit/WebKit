@@ -29,6 +29,7 @@
 #include "CachedResourceRequest.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
+#include "CurrentScriptIncrementer.h"
 #include "Document.h"
 #include "DocumentParser.h"
 #include "Event.h"
@@ -307,6 +308,8 @@ void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
     if (Frame* frame = document->frame()) {
         {
             IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(m_isExternalScript ? document.get() : 0);
+            CurrentScriptIncrementer currentScriptIncrementer(document.get(), m_element);
+
             // Create a script from the script element node, using the script
             // block's source and the script block's type.
             // Note: This is where the script is compiled and actually executed.
@@ -417,12 +420,12 @@ String ScriptElement::scriptContent() const
 
 ScriptElement* toScriptElementIfPossible(Element* element)
 {
-    if (element->isHTMLElement() && element->hasTagName(HTMLNames::scriptTag))
-        return static_cast<HTMLScriptElement*>(element);
+    if (isHTMLScriptElement(element))
+        return toHTMLScriptElement(element);
 
 #if ENABLE(SVG)
-    if (element->isSVGElement() && element->hasTagName(SVGNames::scriptTag))
-        return static_cast<SVGScriptElement*>(element);
+    if (isSVGScriptElement(element))
+        return toSVGScriptElement(element);
 #endif
 
     return 0;

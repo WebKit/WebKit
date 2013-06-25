@@ -26,6 +26,7 @@
 #include "SVGAnimatedString.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGNames.h"
 #include "SVGURIReference.h"
 #include "ScriptElement.h"
 
@@ -85,6 +86,17 @@ private:
     String m_type;
     Timer<SVGElement> m_svgLoadEventTimer;
 };
+
+inline bool isSVGScriptElement(Node* node)
+{
+    return node->hasTagName(SVGNames::scriptTag);
+}
+
+inline SVGScriptElement* toSVGScriptElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::scriptTag));
+    return static_cast<SVGScriptElement*>(node);
+}
 
 } // namespace WebCore
 

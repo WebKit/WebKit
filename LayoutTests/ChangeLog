@@ -1,3 +1,25 @@
+2013-06-24  Kangil Han  <kangil.han@samsung.com>
+
+        Add support for document.currentScript
+        https://bugs.webkit.org/show_bug.cgi?id=104221
+
+        Reviewed by Ryosuke Niwa.
+
+        Merge http://src.chromium.org/viewvc/blink?view=revision&revision=152230
+        document.currentScript reflects the script that is currently being executed.
+
+        Merge http://src.chromium.org/viewvc/blink?view=revision&revision=152237
+        Following up patch for code clean-up.
+
+        * fast/dom/Document/document-current-script-async-expected.txt: Added.
+        * fast/dom/Document/document-current-script-async.html: Added.
+        * fast/dom/Document/document-current-script-expected.txt: Added.
+        * fast/dom/Document/document-current-script.html: Added.
+        * fast/dom/Document/resources/log-current-script-b.js: Added.
+        * fast/dom/Document/resources/log-current-script-d.js: Added.
+        * fast/dom/Document/resources/log-current-script-f.js: Added.
+        * fast/dom/Document/resources/log-current-script.js: Added.
+
 2013-06-24  Jer Noble  <jer.noble@apple.com>
 
         [Mac] media/video-played-collapse.html is flakey on certain platforms.
