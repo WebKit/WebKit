@@ -1,3 +1,19 @@
+2013-06-25  Krzysztof Czech  <k.czech@samsung.com>
+
+        [AX][ATK] Update accessibility baselines after r151953
+        https://bugs.webkit.org/show_bug.cgi?id=117983
+
+        Reviewed by Chris Fleizach.
+
+        Updating aria-option-role-expected.txt for EFL and GTK after the changes in aria-option-role.html test (r151953).
+        Moving platform aria-checkbox-text.html to LayoutTests/accessibility. Baseline is the same for mac, gtk, efl. Windows port has it's own specific version.
+
+        * accessibility/aria-checkbox-text-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/aria-checkbox-text-expected.txt.
+        * platform/efl/accessibility/aria-checkbox-text-expected.txt: Removed.
+        * platform/efl/accessibility/aria-option-role-expected.txt:
+        * platform/gtk/accessibility/aria-checkbox-text-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-option-role-expected.txt:
+
 2013-06-25  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] Add bug report into TestExpectations for fast/text/international/synthesized-italic-vertical-latin.html

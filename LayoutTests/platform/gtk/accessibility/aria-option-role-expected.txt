@@ -6,9 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 firstChild.role is AXRole: list item
-PASS firstChild.title is 'AXTitle: option 1'
+firstChild.title is AXTitle: option 1
 secondChild.role is AXRole: list item
-PASS secondChild.description is 'AXDescription: label 2'
+secondChild.description is AXDescription: label 2
 PASS firstChild.childrenCount is 0
 PASS secondChild.childrenCount is 0
 PASS successfullyParsed is true
