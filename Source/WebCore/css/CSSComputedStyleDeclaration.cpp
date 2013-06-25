@@ -1351,7 +1351,7 @@ static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecorati
 
     if (!list->length())
         return cssValuePool().createIdentifierValue(CSSValueNone);
-    return list;
+    return list.release();
 }
 
 #if ENABLE(CSS3_TEXT)
