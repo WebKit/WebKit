@@ -1,3 +1,16 @@
+2013-06-25  Santosh Mahto  <santosh.ma@samsung.com>
+
+        "application/x-mimearchive" should be included in finding remoteWebArchive while document loading
+        https://bugs.webkit.org/show_bug.cgi?id=117734
+
+        Reviewed by Alexey Proskuryakov.
+
+        "application/x-mimearchive" is also used  while checking for
+         RemoteArchive.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+
 2013-06-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         HTMLMediaElement should inherit from MediaPlayerClient privately
