@@ -1,3 +1,23 @@
+2013-06-25  Alex Christensen  <achristensen@apple.com>
+
+        Added PLATFORM(WIN) to many places where it was missing for compiling WebGL for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=117955
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        * platform/graphics/OpenGLShims.cpp:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp: Include new location of ShaderLang.h on Windows as of r151854.
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::createVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::deleteVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::isVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::bindVertexArrayOES):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp: Added PLATFORM(WIN) when necessary to each file.
+
 2013-06-25  Bruno de Oliveira Abinader  <brunoabinader@gmail.com>
 
         Fixes a typo in renderTextDecorationFlagsToCSSValue

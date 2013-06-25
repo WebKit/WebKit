@@ -22,7 +22,7 @@
 #define DISABLE_SHIMS
 #include "OpenGLShims.h"
 
-#if !PLATFORM(QT)
+#if !PLATFORM(QT) && !PLATFORM(WIN)
 #include <dlfcn.h>
 #endif
 

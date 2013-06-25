@@ -36,11 +36,16 @@
 #include "NotImplemented.h"
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
-#include "ShaderLang.h"
 #include <cairo.h>
 #include <wtf/NotFound.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+
+#if PLATFORM(WIN)
+#include "GLSLANG/ShaderLang.h"
+#else
+#include "ShaderLang.h"
+#endif
 
 #if USE(OPENGL_ES_2)
 #include "Extensions3DOpenGLES.h"
