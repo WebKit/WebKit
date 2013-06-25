@@ -1,5 +1,18 @@
 2013-06-24  Simon Cooper  <scooper@apple.com>
 
+        deny file-read-data /Library/CoreMediaIO/Plug-Ins/DAL
+        https://bugs.webkit.org/show_bug.cgi?id=117964
+        <rdar://problem/14036864>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Permit reading of the /Library/CoreMediaIO/Plug-Ins/DAL
+        subdirectory.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
+2013-06-24  Simon Cooper  <scooper@apple.com>
+
         Repeating sandbox violations when playing Amazon Prime videos with Flash
         https://bugs.webkit.org/show_bug.cgi?id=117953
         <rdar://problem/14193693>
