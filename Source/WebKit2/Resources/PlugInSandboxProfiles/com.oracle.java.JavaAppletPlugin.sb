@@ -28,6 +28,7 @@
     (home-library-literal "/Application Support/Oracle/Java"))
 
 (allow network-bind network-outbound (subpath (param "DARWIN_USER_TEMP_DIR")))
+(allow network-bind (local ip))
 
 (deny mach-lookup (with no-log)
     (global-name "com.apple.ls.boxd")
