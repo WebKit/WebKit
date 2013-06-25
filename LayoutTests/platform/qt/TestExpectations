@@ -489,6 +489,9 @@ http/tests/security/contentTypeOptions
 # No concept of secure text input other than on Mac; support not yet implemented on Mac.
 editing/secure-input [ Failure ]
 
+# CSS.regionOversetChanged is not implemented.
+webkit.org/b/117833 inspector/styles/protocol-css-regions-commands.html [ Skip ]
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

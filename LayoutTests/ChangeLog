@@ -1,3 +1,9 @@
+2013-06-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip failing inspector test.
+
+        * platform/qt/TestExpectations:
+
 2013-06-24  Brent Fulgham  <bfulgham@gmail.com>
 
         [Mac] Build correction.
