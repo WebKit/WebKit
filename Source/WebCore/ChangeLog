@@ -1,3 +1,20 @@
+2013-06-25  Dean Jackson  <dino@apple.com>
+
+        Don't snapshot plug-ins that come from the same host as the page
+        https://bugs.webkit.org/show_bug.cgi?id=117969
+        <rdar://problem/12885400>
+
+        Reviewed by Tim Horton.
+
+        If a page is serving plug-in content directly, then that content
+        is typically very important to the page. For example, embedding
+        a video or audio player. In this case, don't snapshot the plug-ins.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn): Add a test
+        that compares the plug-in's URL against the main page's URL and don't snapshot
+        if they are the same.
+
 2013-06-25  Alex Christensen  <achristensen@apple.com>
 
         Added PLATFORM(WIN) to many places where it was missing for compiling WebGL for Windows.

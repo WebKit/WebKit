@@ -649,6 +649,12 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
+    if (!SchemeRegistry::shouldTreatURLSchemeAsLocal(m_loadedUrl.protocol()) && !m_loadedUrl.host().isEmpty() && m_loadedUrl.host() == document()->page()->mainFrame()->document()->baseURL().host()) {
+        LOG(Plugins, "%p Plug-in is served from page's domain, set to play", this);
+        m_snapshotDecision = NeverSnapshot;
+        return;
+    }
+
     RenderBox* renderEmbeddedObject = toRenderBox(renderer());
     Length styleWidth = renderEmbeddedObject->style()->width();
     Length styleHeight = renderEmbeddedObject->style()->height();
