@@ -23,6 +23,7 @@
 #include "RadioInputType.h"
 
 #include "Frame.h"
+#include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -87,7 +88,7 @@ void RadioInputType::handleKeydownEvent(KeyboardEvent* event)
     Node* node = element();
     while ((node = (forward ? NodeTraversal::next(node) : NodeTraversal::previous(node)))) {
         // Once we encounter a form element, we know we're through.
-        if (node->hasTagName(formTag))
+        if (isHTMLFormElement(node))
             break;
         // Look for more radio buttons.
         if (!node->hasTagName(inputTag))

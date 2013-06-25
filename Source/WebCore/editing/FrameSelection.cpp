@@ -1969,8 +1969,8 @@ static HTMLFormElement* scanForForm(Node* start)
         return 0;
     Element* element = start->isElementNode() ? toElement(start) : ElementTraversal::next(start);
     for (; element; element = ElementTraversal::next(element)) {
-        if (element->hasTagName(formTag))
-            return static_cast<HTMLFormElement*>(element);
+        if (isHTMLFormElement(element))
+            return toHTMLFormElement(element);
         if (element->isHTMLElement() && toHTMLElement(element)->isFormControlElement())
             return static_cast<HTMLFormControlElement*>(element)->form();
         if (element->hasTagName(frameTag) || element->hasTagName(iframeTag)) {
@@ -1993,8 +1993,8 @@ HTMLFormElement* FrameSelection::currentForm() const
     // Try walking up the node tree to find a form element.
     Node* node;
     for (node = start; node; node = node->parentNode()) {
-        if (node->hasTagName(formTag))
-            return static_cast<HTMLFormElement*>(node);
+        if (isHTMLFormElement(node))
+            return toHTMLFormElement(node);
         if (node->isHTMLElement() && toHTMLElement(node)->isFormControlElement())
             return static_cast<HTMLFormControlElement*>(node)->form();
     }

@@ -1,3 +1,56 @@
+2013-06-24  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLFormElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=117937
+
+        Reviewed by Andreas Kling.
+
+        This refers to http://src.chromium.org/viewvc/blink?view=revision&revision=152859
+
+        To enhance readibility, this patch adopts is/toHTMLFormElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * bindings/js/JSDOMFormDataCustom.cpp:
+        (WebCore::toHTMLFormElement):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * editing/FrameSelection.cpp:
+        (WebCore::scanForForm):
+        (WebCore::FrameSelection::currentForm):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::findAssociatedForm):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::findFormAncestor):
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::HTMLFormControlsCollection):
+        (WebCore::HTMLFormControlsCollection::formControlElements):
+        (WebCore::HTMLFormControlsCollection::formImageElements):
+        (WebCore::HTMLFormControlsCollection::updateNameCache):
+        * html/HTMLFormElement.h:
+        (WebCore::isHTMLFormElement):
+        (WebCore::toHTMLFormElement):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::insertedInto):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::WindowNameCollection::nodeMatchesIfNameAttributeMatch):
+        (WebCore::DocumentNameCollection::nodeMatchesIfNameAttributeMatch):
+        (WebCore::DocumentNameCollection::nodeMatches):
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::handleKeydownEvent):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+        (WebCore::RadioNodeList::checkElementMatchesRadioNodeListFilter):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::closestFormAncestor):
+        * page/Frame.cpp:
+        (WebCore::Frame::searchForLabelsBeforeElement):
+
 2013-06-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Remove unneeded include header files from WebCore

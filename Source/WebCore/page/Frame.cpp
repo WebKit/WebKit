@@ -414,12 +414,11 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
     int unsigned lengthSearched = 0;
     Node* n;
     for (n = NodeTraversal::previous(element); n && lengthSearched < charsSearchedThreshold; n = NodeTraversal::previous(n)) {
-        if (n->hasTagName(formTag)
-            || (n->isHTMLElement() && toElement(n)->isFormControlElement()))
-        {
-            // We hit another form element or the start of the form - bail out
+        // We hit another form element or the start of the form - bail out
+        if (isHTMLFormElement(n) || (n->isHTMLElement() && toElement(n)->isFormControlElement()))
             break;
-        } else if (n->hasTagName(tdTag) && !startingTableCell) {
+
+        if (n->hasTagName(tdTag) && !startingTableCell) {
             startingTableCell = static_cast<HTMLTableCellElement*>(n);
         } else if (n->hasTagName(trTag) && startingTableCell) {
             String result = searchForLabelsAboveCell(regExp.get(), startingTableCell, resultDistance);

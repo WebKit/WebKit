@@ -25,6 +25,7 @@
 
 #include "Element.h"
 #include "HTMLDocument.h"
+#include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "NodeRareData.h"
@@ -51,7 +52,7 @@ HTMLNameCollection::~HTMLNameCollection()
 
 bool WindowNameCollection::nodeMatchesIfNameAttributeMatch(Element* element)
 {
-    return element->hasTagName(imgTag) || element->hasTagName(formTag) || element->hasTagName(appletTag)
+    return element->hasTagName(imgTag) || isHTMLFormElement(element) || element->hasTagName(appletTag)
         || element->hasTagName(embedTag) || element->hasTagName(objectTag);
 }
 
@@ -72,7 +73,7 @@ bool DocumentNameCollection::nodeMatchesIfIdAttributeMatch(Element* element)
 
 bool DocumentNameCollection::nodeMatchesIfNameAttributeMatch(Element* element)
 {
-    return element->hasTagName(formTag) || element->hasTagName(embedTag) || element->hasTagName(iframeTag)
+    return isHTMLFormElement(element) || element->hasTagName(embedTag) || element->hasTagName(iframeTag)
         || element->hasTagName(appletTag) || (element->hasTagName(objectTag) && toHTMLObjectElement(element)->isDocNamedItem())
         || element->hasTagName(imgTag);
 }
@@ -81,7 +82,7 @@ bool DocumentNameCollection::nodeMatches(Element* element, const AtomicString& n
 {
     // Find images, forms, applets, embeds, objects and iframes by name, applets and object by id, and images by id
     // but only if they have a name attribute (this very strange rule matches IE)
-    if (element->hasTagName(formTag) || element->hasTagName(embedTag) || element->hasTagName(iframeTag))
+    if (isHTMLFormElement(element) || element->hasTagName(embedTag) || element->hasTagName(iframeTag))
         return element->getNameAttribute() == name;
     if (element->hasTagName(appletTag))
         return element->getNameAttribute() == name || element->getIdAttribute() == name;

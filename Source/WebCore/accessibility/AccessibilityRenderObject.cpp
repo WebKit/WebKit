@@ -2557,7 +2557,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(divTag))
         return DivRole;
 
-    if (node && node->hasTagName(formTag))
+    if (node && isHTMLFormElement(node))
         return FormRole;
 
     if (node && node->hasTagName(articleTag))

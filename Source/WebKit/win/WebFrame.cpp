@@ -204,8 +204,8 @@ static HTMLFormElement *formElementFromDOMElement(IDOMElement *element)
         Element* ele;
         hr = elePriv->coreElement((void**)&ele);
         elePriv->Release();
-        if (SUCCEEDED(hr) && ele && ele->hasTagName(formTag))
-            return static_cast<HTMLFormElement*>(ele);
+        if (SUCCEEDED(hr) && ele && isHTMLFormElement(ele))
+            return toHTMLFormElement(ele);
     }
     return 0;
 }

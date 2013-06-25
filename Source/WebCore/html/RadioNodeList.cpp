@@ -38,7 +38,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RadioNodeList::RadioNodeList(Node* rootNode, const AtomicString& name)
-    : LiveNodeList(rootNode, RadioNodeListType, InvalidateForFormControls, rootNode->hasTagName(formTag) ? NodeListIsRootedAtDocument : NodeListIsRootedAtNode)
+    : LiveNodeList(rootNode, RadioNodeListType, InvalidateForFormControls, isHTMLFormElement(rootNode) ? NodeListIsRootedAtDocument : NodeListIsRootedAtNode)
     , m_name(name)
 {
 }
@@ -84,7 +84,7 @@ void RadioNodeList::setValue(const String& value)
 bool RadioNodeList::checkElementMatchesRadioNodeListFilter(Element* testElement) const
 {
     ASSERT(testElement->hasTagName(objectTag) || testElement->isFormControlElement());
-    if (ownerNode()->hasTagName(formTag)) {
+    if (isHTMLFormElement(ownerNode())) {
         HTMLFormElement* formElement = 0;
         if (testElement->hasTagName(objectTag))
             formElement = static_cast<HTMLObjectElement*>(testElement)->form();

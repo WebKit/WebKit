@@ -48,6 +48,7 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
@@ -597,7 +598,7 @@ bool WebFrame::containsAnyFormElements() const
     for (Node* node = document->documentElement(); node; node = NodeTraversal::next(node)) {
         if (!node->isElementNode())
             continue;
-        if (toElement(node)->hasTagName(HTMLNames::formTag))
+        if (isHTMLFormElement(node))
             return true;
     }
     return false;

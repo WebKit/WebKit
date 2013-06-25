@@ -559,8 +559,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setAcceptCharset(
 HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::action( 
         /* [retval][out] */ BSTR* result)
 {
-    ASSERT(m_element && m_element->hasTagName(formTag));
-    WTF::String actionString = static_cast<HTMLFormElement*>(m_element)->action();
+    ASSERT(m_element && isHTMLFormElement(m_element));
+    WTF::String actionString = toHTMLFormElement(m_element)->action();
     *result = BString(actionString.characters(), actionString.length()).release();
     return S_OK;
 }
@@ -589,8 +589,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::setEnctype(
 HRESULT STDMETHODCALLTYPE DOMHTMLFormElement::method( 
         /* [retval][out] */ BSTR* result)
 {
-    ASSERT(m_element && m_element->hasTagName(formTag));
-    WTF::String methodString = static_cast<HTMLFormElement*>(m_element)->method();
+    ASSERT(m_element && isHTMLFormElement(m_element));
+    WTF::String methodString = toHTMLFormElement(m_element)->method();
     *result = BString(methodString.characters(), methodString.length()).release();
     return S_OK;
 }

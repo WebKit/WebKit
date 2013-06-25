@@ -59,7 +59,7 @@ void CredentialManager::autofillPasswordForms(PassRefPtr<HTMLCollection> docForm
     for (size_t i = 0; i < sourceLength; ++i) {
         Node* node = forms->item(i);
         if (node && node->isHTMLElement()) {
-            CredentialTransformData data(static_cast<HTMLFormElement*>(node));
+            CredentialTransformData data(toHTMLFormElement(node));
             if (!data.isValid() || !credentialBackingStore().hasLogin(data.protectionSpace()))
                 continue;
             Credential savedCredential = credentialBackingStore().getLogin(data.protectionSpace());

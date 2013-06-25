@@ -39,7 +39,7 @@ using namespace HTMLNames;
 HTMLFormControlsCollection::HTMLFormControlsCollection(Node* ownerNode)
     : HTMLCollection(ownerNode, FormControls, OverridesItemAfter)
 {
-    ASSERT(ownerNode->hasTagName(formTag) || ownerNode->hasTagName(fieldsetTag));
+    ASSERT(isHTMLFormElement(ownerNode) || ownerNode->hasTagName(fieldsetTag));
 }
 
 PassRefPtr<HTMLFormControlsCollection> HTMLFormControlsCollection::create(Node* ownerNode, CollectionType)
@@ -54,17 +54,17 @@ HTMLFormControlsCollection::~HTMLFormControlsCollection()
 const Vector<FormAssociatedElement*>& HTMLFormControlsCollection::formControlElements() const
 {
     ASSERT(ownerNode());
-    ASSERT(ownerNode()->hasTagName(formTag) || ownerNode()->hasTagName(fieldsetTag));
-    if (ownerNode()->hasTagName(formTag))
-        return static_cast<HTMLFormElement*>(ownerNode())->associatedElements();
+    ASSERT(isHTMLFormElement(ownerNode()) || ownerNode()->hasTagName(fieldsetTag));
+    if (isHTMLFormElement(ownerNode()))
+        return toHTMLFormElement(ownerNode())->associatedElements();
     return static_cast<HTMLFieldSetElement*>(ownerNode())->associatedElements();
 }
 
 const Vector<HTMLImageElement*>& HTMLFormControlsCollection::formImageElements() const
 {
     ASSERT(ownerNode());
-    ASSERT(ownerNode()->hasTagName(formTag));
-    return static_cast<HTMLFormElement*>(ownerNode())->imageElements();
+    ASSERT(isHTMLFormElement(ownerNode()));
+    return toHTMLFormElement(ownerNode())->imageElements();
 }
 
 Element* HTMLFormControlsCollection::virtualItemAfter(unsigned& offset, Element* previousItem) const
@@ -144,7 +144,7 @@ void HTMLFormControlsCollection::updateNameCache() const
         }
     }
 
-    if (ownerNode()->hasTagName(formTag)) {
+    if (isHTMLFormElement(ownerNode())) {
         const Vector<HTMLImageElement*>& imageElementsArray = formImageElements();
         for (unsigned i = 0; i < imageElementsArray.size(); ++i) {
             HTMLImageElement* element = imageElementsArray[i];
