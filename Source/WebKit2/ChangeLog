@@ -1,3 +1,15 @@
+2013-06-24  Simon Cooper  <scooper@apple.com>
+
+        Plugin Sandbox violation in /Library/Audio/Sounds/Banks
+        https://bugs.webkit.org/show_bug.cgi?id=117957
+        <rdar://problem/14163582>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Permit read access to subdirectories under /Library/Audio/Sounds
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
 2013-06-24  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Make sure m_iconDatabaseImpl is not null before closing it
