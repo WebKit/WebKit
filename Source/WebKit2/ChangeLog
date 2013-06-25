@@ -1,5 +1,17 @@
 2013-06-24  Simon Cooper  <scooper@apple.com>
 
+        PluginProcess sandbox violations on com.apple.networkConnect.plist when resetting Safari
+        https://bugs.webkit.org/show_bug.cgi?id=117958
+        <rdar://problem/13938149>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow reading the com.apple.networkConnect plist.
+
+        * Resources/PlugInSandboxProfiles/com.apple.ist.ds.appleconnect.webplugin.sb:
+
+2013-06-24  Simon Cooper  <scooper@apple.com>
+
         Java sandbox violation ipc-posix-shm-read-data /tmp/com.apple.csseed.67
         https://bugs.webkit.org/show_bug.cgi?id=117954
         <rdar://problem/14166577>
