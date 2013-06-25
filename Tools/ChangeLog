@@ -1,3 +1,9 @@
+2013-06-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, change my email address for watch list.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-06-25  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL] Add a script to install dependencies.
