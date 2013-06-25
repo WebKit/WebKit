@@ -1,3 +1,25 @@
+2013-06-24  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Update AbstractWorker, Worker and SharedWorker to match the specification
+        https://bugs.webkit.org/show_bug.cgi?id=117930
+
+        Reviewed by Kentaro Hara.
+
+        Update AbstractWorker, Worker and SharedWorker to match the spec:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#abstractworker
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#worker
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#sharedworker
+
+        Worker and SharedWorker no longer inherit from AbstractWorker. Web IDL 'implements'
+        statements are used instead. Worker and SharedWorker can now inherit from EventTarget
+        as per the specification.
+
+        No new tests, no behavior change.
+
+        * workers/AbstractWorker.idl:
+        * workers/SharedWorker.idl:
+        * workers/Worker.idl:
+
 2013-06-24  Andy Estes  <aestes@apple.com>
 
         DerivedSources.make should optionally include SupplementalDependencies.dep

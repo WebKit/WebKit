@@ -29,8 +29,9 @@
     Conditional=WORKERS,
     CustomConstructor(DOMString scriptUrl),
     JSGenerateToNativeObject,
-    JSGenerateToJSObject
-] interface Worker : AbstractWorker {
+    JSGenerateToJSObject,
+    ActiveDOMObject
+] interface Worker : EventTarget {
 
     attribute EventListener onmessage;
 
@@ -43,4 +44,6 @@
 
     void terminate();
 };
+
+Worker implements AbstractWorker;
 

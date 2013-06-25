@@ -35,8 +35,11 @@
     CustomConstructor(DOMString scriptURL, [Default=NullString] optional DOMString name),
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
-    JSGenerateToJSObject
-] interface SharedWorker : AbstractWorker {
+    JSGenerateToJSObject,
+    ActiveDOMObject
+] interface SharedWorker : EventTarget {
     readonly attribute MessagePort port;
 };
+
+SharedWorker implements AbstractWorker;
 
