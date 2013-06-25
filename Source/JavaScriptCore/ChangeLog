@@ -1,3 +1,13 @@
+2013-06-25  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r151923
+
+    2013-06-24  Roger Fong  <roger_fong@apple.com>
+
+            Unreviewed. Makefile build fix for AppleWindows.
+
+            * JavaScriptCore.vcxproj/JavaScriptCore.make:
+
 2013-06-21  Lucas Forschler  <lforschler@apple.com>
 
         Merge r151787
