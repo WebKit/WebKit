@@ -401,8 +401,7 @@ public:
     void syncDestroyCompositorOnCompositingThread();
     void releaseLayerResources();
     void releaseLayerResourcesCompositingThread();
-    void suspendRootLayerCommit();
-    void resumeRootLayerCommit();
+    void updateRootLayerCommitEnabled();
 
     void scheduleCompositingRun();
 #endif

@@ -3162,14 +3162,14 @@ void WebPage::setVisible(bool visible)
 #if USE(ACCELERATED_COMPOSITING)
         // Root layer commit is not necessary for invisible tabs.
         // And release layer resources can reduce memory consumption.
-        d->suspendRootLayerCommit();
+        d->updateRootLayerCommitEnabled();
 #endif
 
         return;
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    d->resumeRootLayerCommit();
+    d->updateRootLayerCommitEnabled();
 #endif
 
     // We want to become visible but not get backing store ownership.
@@ -4932,10 +4932,7 @@ void WebPagePrivate::notifyAppActivationStateChange(ActivationStateType activati
     m_activationState = activationState;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (activationState == ActivationActive)
-        resumeRootLayerCommit();
-    else
-        suspendRootLayerCommit();
+    updateRootLayerCommitEnabled();
 #endif
 
 #if ENABLE(PAGE_VISIBILITY_API)
@@ -5565,25 +5562,22 @@ void WebPagePrivate::releaseLayerResourcesCompositingThread()
     m_compositor->releaseLayerResources();
 }
 
-void WebPagePrivate::suspendRootLayerCommit()
+void WebPagePrivate::updateRootLayerCommitEnabled()
 {
-    if (m_suspendRootLayerCommit)
+    bool shouldSuspend = !m_visible || m_activationState != ActivationActive;
+
+    if (m_suspendRootLayerCommit == shouldSuspend)
         return;
 
-    m_suspendRootLayerCommit = true;
+    m_suspendRootLayerCommit = shouldSuspend;
 
-    if (!m_compositor)
+    if (m_suspendRootLayerCommit) {
+        if (m_compositor)
+            releaseLayerResources();
+
         return;
+    }
 
-    releaseLayerResources();
-}
-
-void WebPagePrivate::resumeRootLayerCommit()
-{
-    if (!m_suspendRootLayerCommit)
-        return;
-
-    m_suspendRootLayerCommit = false;
     m_needsCommit = true;
     // PR 330917, explicitly start root layer commit timer, so that there's a commit
     // even if BackingStore got disabled/removed.

@@ -1,3 +1,33 @@
+2013-06-24  Jakob Petsovits  <jpetsovits@blackberry.com>
+
+        [BlackBerry] Only resume root layer commits for visible WebPages
+        https://bugs.webkit.org/show_bug.cgi?id=117956
+        https://jira.bbqnx.net/browse/BRWSR-12047
+        JIRA428381
+
+        Reviewed by George Staikos.
+
+        In r150629, the code from that change introduced to
+        suspend and resume root layer commits would not take into
+        account whether the page is actually visible.
+
+        Because application activation state is usually conveyed
+        to all or any WebPages, this would mean on transitioning
+        into an active application state, we were resuming
+        root layer commits that might have previously been
+        disabled for visibility reasons.
+
+        Fix this by going through a single function that knows
+        by itself whether to suspend or resume root layer commits,
+        so the calling code doesn't have a chance to get it wrong.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::setVisible):
+        (BlackBerry::WebKit::WebPagePrivate::notifyAppActivationStateChange):
+        (BlackBerry::WebKit::WebPagePrivate::updateRootLayerCommitEnabled):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2013-06-20  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
         [BlackBerry] Send the correct offsets for misspelled words.
