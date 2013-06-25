@@ -7958,11 +7958,11 @@ const char* RenderBlock::renderName() const
         return "RenderBlock (floating)";
     if (isOutOfFlowPositioned())
         return "RenderBlock (positioned)";
-    if (isAnonymousColumnsBlock())
+    if (style() && isAnonymousColumnsBlock())
         return "RenderBlock (anonymous multi-column)";
-    if (isAnonymousColumnSpanBlock())
+    if (style() && isAnonymousColumnSpanBlock())
         return "RenderBlock (anonymous multi-column span)";
-    if (isAnonymousBlock())
+    if (style() && isAnonymousBlock())
         return "RenderBlock (anonymous)";
     // FIXME: Temporary hack while the new generated content system is being implemented.
     if (isPseudoElement())
@@ -7973,7 +7973,7 @@ const char* RenderBlock::renderName() const
         return "RenderBlock (relative positioned)";
     if (isStickyPositioned())
         return "RenderBlock (sticky positioned)";
-    if (isRunIn())
+    if (style() && isRunIn())
         return "RenderBlock (run-in)";
     return "RenderBlock";
 }

@@ -756,7 +756,7 @@ const char* RenderInline::renderName() const
         return "RenderInline (generated)";
     if (isAnonymous())
         return "RenderInline (generated)";
-    if (isRunIn())
+    if (style() && isRunIn())
         return "RenderInline (run-in)";
     return "RenderInline";
 }

@@ -1,3 +1,19 @@
+2013-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't crash if renderName() is called on a renderer with no style
+        https://bugs.webkit.org/show_bug.cgi?id=117960
+
+        Reviewed by Dave Hyatt.
+
+        Calling renderName() at the top of RenderObject::willChangeStyle() when
+        adding debug logging would often crash because various functions called
+        from renderName() assume style is non-null. Fix this.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::renderName):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::renderName):
+
 2013-06-24  Alex Christensen  <achristensen@apple.com>
 
         Added /d option to xcopy to prevent unnecessary copying and compiling.
