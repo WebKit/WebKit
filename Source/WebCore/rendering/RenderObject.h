@@ -478,6 +478,8 @@ public:
     virtual bool isSVGResourceFilter() const { return false; }
     virtual bool isSVGResourceFilterPrimitive() const { return false; }
 
+    bool hasAspectRatio() const { return isReplaced() && (isImage() || isVideo() || isCanvas()); }
+    
     virtual RenderSVGResourceContainer* toRenderSVGResourceContainer();
 
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)

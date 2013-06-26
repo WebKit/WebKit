@@ -1,3 +1,17 @@
+2013-06-25  David Hyatt  <hyatt@apple.com>
+
+        Flex boxes (both old and new) don't handle max-height images correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=118000
+
+        Reviewed by Beth Dakin.
+
+        * css3/flexbox/image-percent-max-height-expected.html: Added.
+        * css3/flexbox/image-percent-max-height.html: Added.
+        * css3/flexbox/resources/hero.png: Added.
+        * fast/flexbox/image-percent-max-height-expected.html: Added.
+        * fast/flexbox/image-percent-max-height.html: Added.
+        * fast/flexbox/resources/hero.png: Added.
+
 2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         editing/selection/doubleclick-crash.html can be flaky

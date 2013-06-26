@@ -349,6 +349,8 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     RenderBlock::startDelayUpdateScrollInfo();
 
+    dirtyForLayoutFromPercentageHeightDescendants();
+
     Vector<LineContext> lineContexts;
     OrderHashSet orderValues;
     computeMainAxisPreferredSizes(orderValues);

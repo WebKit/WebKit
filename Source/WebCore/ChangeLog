@@ -1,3 +1,56 @@
+2013-06-25  David Hyatt  <hyatt@apple.com>
+
+        Flex boxes (both old and new) don't handle max-height images correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=118000
+
+        Reviewed by Beth Dakin.
+
+        Tests: css3/flexbox/image-percent-max-height.html
+               fast/flexbox/image-percent-max-height.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::dirtyForLayoutFromPercentageHeightDescendants):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        Pull the percentage height descendant code that dirties those descendants
+        out of layoutBlockChildren and into a protected helper function,
+        dirtyForLayoutFromPercentageHeightDescendants, that can be called from the 
+        flex box code.
+        
+        Also patch dirtyForLayoutFromPercentageHeightDescendants so that it will dirty
+        preferred logical widths when a child has an aspect ratio, since we know that
+        percentage height changes will potentially affect the preferred widths of the image and
+        its ancestor blocks.
+
+        * rendering/RenderBlock.h:
+        Declaration of the new dirtyForLayoutFromPercentageHeightDescendants function.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        Make the old flex box code call dirtyForLayoutFromPercentageHeightDescendants so
+        that everything is dirtied properly.
+
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        Remove the isReplaced()/percentage height/width dirtying now that the old flexible
+        box is using the same dirtying mechanism as RenderBlock.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        Patch the new flexible box code to use the dirtying mechanism that RenderBlock
+        uses for percentage heights/widths on replaced descendants.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasAspectRatio):
+        Pulled the static helper function from RenderReplaced into a full-blown method
+        on RenderObject, so that dirtyForLayoutFromPercentageHeightDescendants can call
+        it to check if an object has an aspect ratio.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeAspectRatioInformationForRenderBox):
+        (WebCore::RenderReplaced::computeIntrinsicRatioInformation):
+        Patch the call sites of the static helper function to use hasAspectRatio instead
+        and get rid of the static in the cpp file.
+
 2013-06-26  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLAreaElement for code cleanup

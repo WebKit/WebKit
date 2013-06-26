@@ -2519,25 +2519,40 @@ void RenderBlock::updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, R
         child->setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
 }
 
-void RenderBlock::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom)
+void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
 {
-    if (gPercentHeightDescendantsMap) {
-        if (TrackedRendererListHashSet* descendants = gPercentHeightDescendantsMap->get(this)) {
-            TrackedRendererListHashSet::iterator end = descendants->end();
-            for (TrackedRendererListHashSet::iterator it = descendants->begin(); it != end; ++it) {
-                RenderBox* box = *it;
-                while (box != this) {
-                    if (box->normalChildNeedsLayout())
-                        break;
-                    box->setChildNeedsLayout(true, MarkOnlyThis);
-                    box = box->containingBlock();
-                    ASSERT(box);
-                    if (!box)
-                        break;
-                }
-            }
+    if (!gPercentHeightDescendantsMap)
+        return;
+
+    TrackedRendererListHashSet* descendants = gPercentHeightDescendantsMap->get(this);
+    if (!descendants)
+        return;
+    
+    TrackedRendererListHashSet::iterator end = descendants->end();
+    for (TrackedRendererListHashSet::iterator it = descendants->begin(); it != end; ++it) {
+        RenderBox* box = *it;
+        while (box != this) {
+            if (box->normalChildNeedsLayout())
+                break;
+            box->setChildNeedsLayout(true, MarkOnlyThis);
+            
+            // If the width of an image is affected by the height of a child (e.g., an image with an aspect ratio),
+            // then we have to dirty preferred widths, since even enclosing blocks can become dirty as a result.
+            // (A horizontal flexbox that contains an inline image wrapped in an anonymous block for example.)
+            if (box->hasAspectRatio()) 
+                box->setPreferredLogicalWidthsDirty(true);
+            
+            box = box->containingBlock();
+            ASSERT(box);
+            if (!box)
+                break;
         }
     }
+}
+
+void RenderBlock::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom)
+{
+    dirtyForLayoutFromPercentageHeightDescendants();
 
     LayoutUnit beforeEdge = borderAndPaddingBefore();
     LayoutUnit afterEdge = borderAndPaddingAfter() + scrollbarLogicalHeight();
