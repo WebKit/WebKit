@@ -53,6 +53,7 @@ public:
     String absoluteLinkURL() const;
     String absoluteMediaURL() const;
     bool mediaIsInFullscreen() const;
+    bool mediaHasAudio() const;
     BundleHitTestResultMediaType mediaType() const;
 
     String linkLabel() const;
