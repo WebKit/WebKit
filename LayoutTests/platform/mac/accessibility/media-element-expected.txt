@@ -17,11 +17,21 @@ State at 'canplaythrough' event:
 
 
         description: AXDescription: elapsed time
-        role: AXRole: AXStaticText
+        role: AXRole: AXGroup
+        subrole: AXSubrole: AXApplicationTimer
+
+
+            description: AXDescription: 
+            role: AXRole: AXGroup
+
+
+                description: AXDescription: 
+                role: AXRole: AXStaticText
 
 
         description: AXDescription: 
         role: AXRole: AXSlider
+        subrole: AXSubrole: AXTimeline
 
 
             description: AXDescription: 
@@ -29,7 +39,16 @@ State at 'canplaythrough' event:
 
 
         description: AXDescription: remaining time
-        role: AXRole: AXStaticText
+        role: AXRole: AXGroup
+        subrole: AXSubrole: AXApplicationTimer
+
+
+            description: AXDescription: 
+            role: AXRole: AXGroup
+
+
+                description: AXDescription: 
+                role: AXRole: AXStaticText
 
 
         description: AXDescription: enter fullscreen

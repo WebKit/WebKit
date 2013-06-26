@@ -1,5 +1,21 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151852
+
+    2013-06-21  James Craig  <james@cookiecrook.com>
+
+            AX: audio/video playback control timers (elapsed and remaining) should be exposed as ApplicationTimerRole
+            https://bugs.webkit.org/show_bug.cgi?id=117883
+
+            Reviewed by Chris Fleizach.
+
+            Some of the media controls were returning the wrong role. Updated existing test coverage.
+
+            * accessibility/media-element.html:
+            * platform/mac/accessibility/media-element-expected.txt:
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151836
 
     2013-06-21  Zalan Bujtas  <zalan@apple.com>
