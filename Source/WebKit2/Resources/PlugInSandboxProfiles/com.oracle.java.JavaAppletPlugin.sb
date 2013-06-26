@@ -16,7 +16,7 @@
 (shared-preferences-read
     "com.apple.java.JavaPreferences"
     "com.apple.java.util.prefs")
-(shared-preferences-read-write "com.oracle.javadeployment.plist")
+(shared-preferences-read-write "com.oracle.javadeployment")
 
 (allow file-read* file-write*
     (home-library-subpath "/Saved Application State/net.java.openjdk.cmd.savedState")
