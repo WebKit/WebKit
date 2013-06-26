@@ -1,5 +1,22 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151881
+
+    2013-06-22  Dean Jackson  <dino@apple.com>
+
+            Slightly reduce width threshold on detection of primary snapshotted Plug-In
+            https://bugs.webkit.org/show_bug.cgi?id=117914
+            <rdar://problem/14136687>
+
+            Reviewed by Simon Fraser.
+
+            We've noticed some content that should be detected as the primary snapshotted plug-in,
+            but is just a bit smaller than our 450x300 minimum threshold. Reduce the width to 400.
+
+            * WebProcess/WebPage/WebPage.cpp: Change primarySnapshottedPlugInMinimumWidth from 450 to 400.
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151832
 
     2013-06-21  Christophe Dumez  <ch.dumez@sisa.samsung.com>
