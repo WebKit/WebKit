@@ -72,6 +72,16 @@ private:
         m_sizeInBytes = 0;
     }
 
+    void copyTo(ArrayBufferContents& other)
+    {
+        ASSERT(!other.m_data);
+        ArrayBufferContents::tryAllocate(m_sizeInBytes, sizeof(char), ArrayBufferContents::DontInitialize, other);
+        if (!other.m_data)
+            return;
+        memcpy(other.m_data, m_data, m_sizeInBytes);
+        other.m_sizeInBytes = m_sizeInBytes;
+    }
+
     void* m_data;
     unsigned m_sizeInBytes;
 };

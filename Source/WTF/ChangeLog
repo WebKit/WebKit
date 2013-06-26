@@ -1,3 +1,25 @@
+2013-06-26  Jer Noble  <jer.noble@apple.com>
+
+        Potential use-after-free after neutering AudioBuffer's underlying ArrayBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=118040
+
+        Reviewed by Filip Pizlo.
+
+        Add support for 'unneuterable' ArrayBufferViews. Views marked as such will have their underlying
+        ArrayBuffer objects copied rather than transferred to a new view.
+
+        * wtf/ArrayBuffer.cpp:
+        (WTF::ArrayBuffer::transfer): Check whether the associated views are neuterable, and if not
+                clone the ArrayBuffer rather than transferring it.
+        * wtf/ArrayBuffer.h:
+        (WTF::ArrayBufferContents::copyTo): Added. Utility function.
+        * wtf/ArrayBufferView.cpp:
+        (WTF::ArrayBufferView::ArrayBufferView):
+        (WTF::ArrayBufferView::neuter):
+        * wtf/ArrayBufferView.h:
+        (WTF::ArrayBufferView::setNeuterable):
+        (WTF::ArrayBufferView::isNeuterable):
+
 2013-06-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Enable CaptionUserPreferenceMediaAF on Windows.
