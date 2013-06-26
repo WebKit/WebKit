@@ -146,6 +146,7 @@
     (subpath "/Library/Audio/Plug-Ins/Components")
     (home-library-subpath "/Audio/Plug-Ins/Components")
     (subpath "/Library/Audio/Plug-Ins/HAL")
+    (subpath "/Library/CoreMediaIO/Plug-Ins/DAL")
     (subpath "/Library/QuickTime")
     (home-library-subpath "/QuickTime")
     (subpath "/Library/Video/Plug-Ins")

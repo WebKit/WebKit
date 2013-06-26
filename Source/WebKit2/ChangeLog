@@ -1,5 +1,22 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151948
+
+    2013-06-24  Simon Cooper  <scooper@apple.com>
+
+            deny file-read-data /Library/CoreMediaIO/Plug-Ins/DAL
+            https://bugs.webkit.org/show_bug.cgi?id=117964
+            <rdar://problem/14036864>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Permit reading of the /Library/CoreMediaIO/Plug-Ins/DAL
+            subdirectory.
+
+            * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151944
 
     2013-06-24  Simon Cooper  <scooper@apple.com>
