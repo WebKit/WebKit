@@ -1,3 +1,13 @@
+2013-06-26  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r151981): Include HTMLAudioElement.h for ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+
+        * css/StyleResolver.cpp:
+        - Include HTMLAudioElement.h.
+        - Sort headers.
+        * rendering/RenderLayerCompositor.cpp:
+        - Include HTMLAudioElement.h.
+
 2013-06-26  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
 
         getComputedStyle().width wrong after text changed

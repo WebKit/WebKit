@@ -63,6 +63,7 @@
 #include <wtf/TemporaryChange.h>
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#include "HTMLAudioElement.h"
 #include "HTMLMediaElement.h"
 #endif
 
