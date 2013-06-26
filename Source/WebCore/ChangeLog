@@ -1,3 +1,34 @@
+2013-06-26  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLAreaElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=117980
+
+        Reviewed by Antonio Gomes.
+
+        To enhance readibility, this patch adopts is/toHTMLAreaElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest):
+        (WebCore::AccessibilityRenderObject::addImageMapChildren):
+        * html/HTMLAreaElement.h:
+        (WebCore::isHTMLAreaElement):
+        (WebCore::toHTMLAreaElement):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::mapMouseEvent):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusDirectionally):
+        * page/SpatialNavigation.cpp:
+        (WebCore::FocusCandidate::FocusCandidate):
+        (WebCore::areElementsOnSameLine):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteLinkURL):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+
 2013-06-26  Brady Eidson  <beidson@apple.com>
 
         [Mac] Document URL is not updated by HSTS

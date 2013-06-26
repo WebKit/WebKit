@@ -1,3 +1,18 @@
+2013-06-26  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLAreaElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=117980
+
+        Reviewed by Antonio Gomes.
+
+        To enhance readibility, this patch adopts is/toHTMLAreaElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::elementForTapHighlight):
+
 2013-06-26  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] ASSERT(!m_tileMatrixNeedsUpdate) in BackingStorePrivate::render()

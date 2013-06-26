@@ -2163,8 +2163,8 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
 
         if (node->hasTagName(HTMLNames::imgTag))
             imageElement = static_cast<HTMLImageElement*>(node.get());
-        else if (node->hasTagName(HTMLNames::areaTag))
-            imageElement = static_cast<HTMLAreaElement*>(node.get())->imageElement();
+        else if (isHTMLAreaElement(node))
+            imageElement = toHTMLAreaElement(node.get())->imageElement();
 
         if (static_cast<HTMLElement*>(node.get())->isMediaElement())
             mediaElement = static_cast<HTMLMediaElement*>(node.get());

@@ -1735,9 +1735,9 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
                 result.append(axobj);
         } else {
             Node* parent = curr->parentNode();
-            if (parent && curr->hasTagName(areaTag) && parent->hasTagName(mapTag)) {
+            if (parent && isHTMLAreaElement(curr) && parent->hasTagName(mapTag)) {
                 AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
-                areaObject->setHTMLAreaElement(static_cast<HTMLAreaElement*>(curr));
+                areaObject->setHTMLAreaElement(toHTMLAreaElement(curr));
                 areaObject->setHTMLMapElement(static_cast<HTMLMapElement*>(parent));
                 areaObject->setParent(accessibilityParentForImageMap(static_cast<HTMLMapElement*>(parent)));
 
@@ -2205,8 +2205,8 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
         return 0;
     Node* node = hitTestResult.innerNode()->deprecatedShadowAncestorNode();
 
-    if (node->hasTagName(areaTag)) 
-        return accessibilityImageMapHitTest(static_cast<HTMLAreaElement*>(node), point);
+    if (isHTMLAreaElement(node))
+        return accessibilityImageMapHitTest(toHTMLAreaElement(node), point);
     
     if (node->hasTagName(optionTag))
         node = static_cast<HTMLOptionElement*>(node)->ownerSelectElement();
@@ -2746,9 +2746,9 @@ void AccessibilityRenderObject::addImageMapChildren()
 
     for (Element* current = ElementTraversal::firstWithin(map); current; current = ElementTraversal::next(current, map)) {
         // add an <area> element for this child if it has a link
-        if (current->hasTagName(areaTag) && current->isLink()) {
+        if (isHTMLAreaElement(current) && current->isLink()) {
             AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
-            areaObject->setHTMLAreaElement(static_cast<HTMLAreaElement*>(current));
+            areaObject->setHTMLAreaElement(toHTMLAreaElement(current));
             areaObject->setHTMLMapElement(map);
             areaObject->setParent(this);
             if (!areaObject->accessibilityIsIgnored())

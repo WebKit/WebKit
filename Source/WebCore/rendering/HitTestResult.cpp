@@ -29,6 +29,7 @@
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLAreaElement.h"
 #include "HTMLAudioElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -511,7 +512,7 @@ KURL HitTestResult::absoluteLinkURL() const
         return KURL();
 
     AtomicString urlString;
-    if (isHTMLAnchorElement(m_innerURLElement.get()) || m_innerURLElement->hasTagName(areaTag) || m_innerURLElement->hasTagName(linkTag))
+    if (isHTMLAnchorElement(m_innerURLElement.get()) || isHTMLAreaElement(m_innerURLElement.get()) || m_innerURLElement->hasTagName(linkTag))
         urlString = m_innerURLElement->getAttribute(hrefAttr);
 #if ENABLE(SVG)
     else if (m_innerURLElement->hasTagName(SVGNames::aTag))
