@@ -22,7 +22,7 @@
           text.focus();
           text = accessibilityController.focusedElement;
 
-          shouldBe("text.description", "'AXDescription: Shut down computer after 10 minutes'");
+          debug("text.description is " + text.description);
 
           // There should be no title UI element.
           shouldBe("text.titleUIElement() != null && text.titleUIElement().isValid", "false");

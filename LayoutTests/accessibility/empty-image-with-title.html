@@ -16,8 +16,8 @@
     if (window.accessibilityController) {
 
           var image1 = accessibilityController.accessibleElementById("image1");
-          shouldBe("image1.role", "'AXRole: AXImage'");
-          shouldBe("image1.description", "'AXDescription: baz'");
+          debug("image1.role is " + image1.role);
+          debug("image1.description is " + image1.description);
     }
 
 </script>
