@@ -277,6 +277,9 @@ void InbandTextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
 
 void InbandTextTrack::willRemoveTextTrackPrivate(InbandTextTrackPrivate* trackPrivate)
 {
+    if (!mediaElement())
+        return;
+
     UNUSED_PARAM(trackPrivate);
     ASSERT(trackPrivate == m_private);
     mediaElement()->removeTextTrack(this);
