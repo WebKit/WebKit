@@ -76,6 +76,12 @@ Element* LoadableTextTrack::element()
 {
     return m_trackElement;
 }
+    
+void LoadableTextTrack::setTrackElement(HTMLTrackElement* element)
+{
+    ASSERT(!m_trackElement || m_trackElement == element);
+    m_trackElement = element;
+}
 
 void LoadableTextTrack::loadTimerFired(Timer<LoadableTextTrack>*)
 {

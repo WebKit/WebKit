@@ -60,6 +60,7 @@ public:
 
     size_t trackElementIndex();
     HTMLTrackElement* trackElement() { return m_trackElement; }
+    void setTrackElement(HTMLTrackElement*);
     virtual Element* element() OVERRIDE;
 
     virtual bool isDefault() const OVERRIDE { return m_isDefault; }
