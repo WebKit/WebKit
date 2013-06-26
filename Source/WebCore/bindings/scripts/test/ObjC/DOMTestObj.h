@@ -39,6 +39,7 @@
 @class DOMTestObjectAConstructor;
 @class DOMTestObjectBConstructor;
 @class DOMTestObjectCConstructor;
+@class DOMTestSubObjConstructor;
 @class DOMany;
 @class DOMbool;
 @class NSString;
@@ -66,6 +67,7 @@ enum {
 @property(readonly) int readOnlyLongAttr;
 @property(readonly, copy) NSString *readOnlyStringAttr;
 @property(readonly, retain) DOMTestObj *readOnlyTestObjAttr;
+@property(retain) DOMTestSubObjConstructor *TestSubObjEnabledBySetting;
 @property char byteAttr;
 @property unsigned char octetAttr;
 @property short shortAttr;

@@ -3572,7 +3572,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #endif
 
 #if ENABLE(WEB_AUDIO)
-    WebCore::RuntimeEnabledFeatures::setWebAudioEnabled(settingsPrivate->enableWebAudio);
+    coreSettings->setWebAudioEnabled(settingsPrivate->enableWebAudio);
 #endif
 
 #if ENABLE(SMOOTH_SCROLLING)
@@ -3718,7 +3718,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
 
 #if ENABLE(WEB_AUDIO)
     else if (name == g_intern_string("enable-webaudio"))
-        RuntimeEnabledFeatures::setWebAudioEnabled(g_value_get_boolean(&value));
+        settings->setWebAudioEnabled(g_value_get_boolean(&value));
 #endif
 
 #if ENABLE(SMOOTH_SCROLLING)

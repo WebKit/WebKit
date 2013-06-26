@@ -759,7 +759,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setUsesPageCache(true);
     priv->pageSettings->setUsesEncodingDetector(false);
 #if ENABLE(WEB_AUDIO)
-    WebCore::RuntimeEnabledFeatures::setWebAudioEnabled(false);
+    priv->pageSettings->setWebAudioEnabled(false);
 #endif
     priv->pageSettings->setWebGLEnabled(true);
     priv->pageSettings->setXSSAuditorEnabled(true);

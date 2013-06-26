@@ -115,6 +115,7 @@ privilegedWebGLExtensionsEnabled initial=false
 accelerated2dCanvasEnabled initial=false
 antialiased2dCanvasEnabled initial=true
 loadDeferringEnabled initial=true
+webAudioEnabled initial=false
 paginateDuringLayoutEnabled initial=false
 fullScreenEnabled initial=false, conditional=FULLSCREEN_API
 asynchronousSpellCheckingEnabled initial=false

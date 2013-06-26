@@ -26,6 +26,7 @@
 #include "Dictionary.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "HTMLNames.h"
 #include "JSDOMBinding.h"
 #include "JSDOMStringList.h"
@@ -48,6 +49,7 @@
 #include "ScriptCallStackFactory.h"
 #include "ScriptProfile.h"
 #include "SerializedScriptValue.h"
+#include "Settings.h"
 #include "TestObj.h"
 #include "bool.h"
 #include <runtime/Error.h>
@@ -79,6 +81,7 @@ static const HashTableValue JSTestObjTableValues[] =
     { "readOnlyLongAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyLongAttr), (intptr_t)0, NoIntrinsic },
     { "readOnlyStringAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyStringAttr), (intptr_t)0, NoIntrinsic },
     { "readOnlyTestObjAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyTestObjAttr), (intptr_t)0, NoIntrinsic },
+    { "TestSubObjEnabledBySetting", DontEnum, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestSubObjEnabledBySettingConstructor), (intptr_t)setJSTestObjTestSubObjEnabledBySettingConstructor, NoIntrinsic },
     { "enumAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjEnumAttr), (intptr_t)setJSTestObjEnumAttr, NoIntrinsic },
     { "byteAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjByteAttr), (intptr_t)setJSTestObjByteAttr, NoIntrinsic },
     { "octetAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjOctetAttr), (intptr_t)setJSTestObjOctetAttr, NoIntrinsic },
@@ -451,6 +454,16 @@ JSValue jsTestObjConstructorStaticStringAttr(ExecState* exec, JSValue slotBase, 
 JSValue jsTestObjConstructorTestSubObj(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    return JSTestSubObj::getConstructor(exec, castedThis->globalObject());
+}
+
+
+JSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    Settings* settings = castedThis->impl()->frame() ? castedThis->impl()->frame()->settings() : 0;
+    if (!settings || !settings->testSettingEnabled())
+        return jsUndefined();
     return JSTestSubObj::getConstructor(exec, castedThis->globalObject());
 }
 
@@ -1103,6 +1116,14 @@ void setJSTestObjConstructorStaticStringAttr(ExecState* exec, JSObject*, JSValue
     if (exec->hadException())
         return;
     TestObj::setStaticStringAttr(nativeValue);
+}
+
+
+void setJSTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    UNUSED_PARAM(exec);
+    // Shadowing a built-in constructor
+    jsCast<JSTestObj*>(thisObject)->putDirect(exec->vm(), Identifier(exec, "TestSubObjEnabledBySetting"), value);
 }
 
 

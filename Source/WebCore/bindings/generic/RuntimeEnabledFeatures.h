@@ -152,12 +152,6 @@ public:
     static bool openDatabaseSyncEnabled();
 #endif
 
-#if ENABLE(WEB_AUDIO)
-    static void setWebAudioEnabled(bool isEnabled) { isWebAudioEnabled = isEnabled; }
-    static bool webkitAudioContextEnabled() { return isWebAudioEnabled; }
-    static bool webkitOfflineAudioContextEnabled() { return isWebAudioEnabled; }
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
     static bool touchEnabled() { return isTouchEnabled; }
     static void setTouchEnabled(bool isEnabled) { isTouchEnabled = isEnabled; }
@@ -317,7 +311,6 @@ private:
     static bool isDataTransferItemsEnabled;
     static bool isGeolocationEnabled;
     static bool isIndexedDBEnabled;
-    static bool isWebAudioEnabled;
     static bool isTouchEnabled;
     static bool isDeviceMotionEnabled;
     static bool isDeviceOrientationEnabled;

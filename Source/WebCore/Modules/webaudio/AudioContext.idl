@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime,
+    EnabledBySetting=WebAudio,
     Conditional=WEB_AUDIO,
     ActiveDOMObject,
     CustomConstructor,

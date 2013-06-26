@@ -324,11 +324,14 @@ void DumpRenderTreeSupportEfl::setSeamlessIFramesEnabled(bool enabled)
 #endif
 }
 
-void DumpRenderTreeSupportEfl::setWebAudioEnabled(bool enabled)
+void DumpRenderTreeSupportEfl::setWebAudioEnabled(Evas_Object* ewkView, bool enabled)
 {
 #if ENABLE(WEB_AUDIO)
-    WebCore::RuntimeEnabledFeatures::setWebAudioEnabled(enabled);
+    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
+
+    page->settings()->setWebAudioEnabled(enabled);
 #else
+    UNUSED_PARAM(ewkView);
     UNUSED_PARAM(enabled);
 #endif
 }

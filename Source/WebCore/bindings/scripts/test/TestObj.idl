@@ -43,6 +43,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     static readonly attribute long     staticReadOnlyLongAttr;
     static attribute DOMString         staticStringAttr;
     static readonly attribute TestSubObjConstructor TestSubObj;
+    [EnabledBySetting=TestSetting] attribute TestSubObjConstructor TestSubObjEnabledBySetting;
     attribute TestEnumType             enumAttr;
     attribute byte                     byteAttr;
     attribute octet                    octetAttr;
