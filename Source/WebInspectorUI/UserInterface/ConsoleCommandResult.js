@@ -40,16 +40,18 @@ WebInspector.ConsoleCommandResult.prototype = {
 
     // Public
 
+    enforcesClipboardPrefixString: false,
+
     toMessageElement: function()
     {
         var element = WebInspector.ConsoleMessageImpl.prototype.toMessageElement.call(this);
         element.classList.add("console-user-command-result");
         return element;
     },
-    
-    toClipboardString: function()
+
+    get clipboarPrefixString ()
     {
-        return "< " + this._parameters[0].description;
+        return "< ";
     }
 };
 

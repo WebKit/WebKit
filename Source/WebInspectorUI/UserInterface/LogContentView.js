@@ -264,6 +264,7 @@ WebInspector.LogContentView.prototype = {
 
         var data = "";
 
+        var isPrefixOptional = messages.length <= 1 && onlySelected;
         messages.forEach(function (messageElement, index) {
             var messageObject = messageElement.message;
             if (!messageObject)
@@ -273,7 +274,7 @@ WebInspector.LogContentView.prototype = {
 
             if (index > 0)
                 data += "\n"
-            data += messageObject.toClipboardString();
+            data += messageObject.toClipboardString(isPrefixOptional);
         });
 
         return data;

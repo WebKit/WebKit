@@ -48,6 +48,9 @@ WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, ty
 }
 
 WebInspector.ConsoleMessageImpl.prototype = {
+
+    enforcesClipboardPrefixString: true,
+
     _formatMessage: function()
     {
         this._formattedMessage = document.createElement("span");
@@ -656,7 +659,12 @@ WebInspector.ConsoleMessageImpl.prototype = {
         }
     },
 
-    toClipboardString: function()
+    get clipboarPrefixString ()
+    {
+        return "[" + this.levelString + "] ";
+    },
+
+    toClipboardString: function(isPrefixOptional)
     {
         var isTrace = this._shouldDumpStackTrace();
         
@@ -666,7 +674,8 @@ WebInspector.ConsoleMessageImpl.prototype = {
         else
             clipboardString = this.type === WebInspector.ConsoleMessage.MessageType.Trace ? "console.trace()" : this._message || this._messageText;
 
-        clipboardString = "[" + this.levelString + "] " + clipboardString;
+        if (!isPrefixOptional || this.enforcesClipboardPrefixString)
+            clipboardString = this.clipboarPrefixString + clipboardString;
 
         if (isTrace) {
             this._stackTrace.forEach(function(frame) {
