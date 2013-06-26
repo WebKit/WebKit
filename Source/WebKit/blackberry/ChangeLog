@@ -1,3 +1,21 @@
+2013-06-26  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] ASSERT(!m_tileMatrixNeedsUpdate) in BackingStorePrivate::render()
+        https://bugs.webkit.org/show_bug.cgi?id=118062
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Jakob Petsovits.
+
+        JIRA426949
+        requestLayoutIfNeeded() can cause zoomAboutPoint() when the layout
+        is finished and make the tile matrix stale. We need requestLayoutIfNeeded()
+        before we updateTileMatrixIfNeeded() so that we can fix the ASSERT and
+        also pass the valid TileIndexList to render().
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+
 2013-06-25  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLAnchorElement for code cleanup

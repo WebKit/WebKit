@@ -284,6 +284,9 @@ void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperatio
 
     // Render visible contents if necessary.
     if (op == BackingStore::RenderAndBlit) {
+        if (m_webPage->isVisible())
+            requestLayoutIfNeeded();
+
         updateTileMatrixIfNeeded();
         TileIndexList visibleTiles = visibleTileIndexes(frontState());
         TileIndexList renderedTiles = render(visibleTiles);
@@ -1080,8 +1083,6 @@ TileIndexList BackingStorePrivate::render(const TileIndexList& tileIndexList)
 {
     if (!m_webPage->isVisible())
         return TileIndexList();
-
-    requestLayoutIfNeeded();
 
     // If no tiles available for us to draw to, someone else has to render the root layer.
     if (!isActive())
