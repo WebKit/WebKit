@@ -1,3 +1,23 @@
+2013-06-26  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] fast/regions/seamless-iframe-flowed-into-regions.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=117797
+
+        Reviewed by Antti Koivisto.
+
+        The seamless iframes inherit the current RenderFlowThread during layout. This means getting
+        the LayoutState object from the flow thread RenderView object is not always correct.
+        For RenderObjects inside the seamless iframes the view()/LayoutState object is different than the one
+        of the RenderFlowThread. The patch changes the code to use the correct LayoutState object during
+        layout when pushing a new state.
+
+        Tests: covered by fast/regions/seamless-iframe-flowed-into-regions.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::currentActiveRenderBox):
+        (WebCore::RenderFlowThread::pushFlowThreadLayoutState):
+        (WebCore::RenderFlowThread::popFlowThreadLayoutState):
+
 2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove many static_casts to Element types from AccessibilityNodeObject

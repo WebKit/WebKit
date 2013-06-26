@@ -1037,21 +1037,22 @@ void RenderFlowThread::clearOffsetFromLogicalTopOfFirstRegion(const RenderBox* b
 
 const RenderBox* RenderFlowThread::currentActiveRenderBox() const
 {
-    const RenderObject* currentObject = m_activeObjectsStack.isEmpty() ? 0 : m_activeObjectsStack.last();
-    if (currentObject && currentObject->isBox())
-        return toRenderBox(currentObject);
+    if (m_activeObjectsStack.isEmpty())
+        return 0;
 
-    return 0;
+    const RenderObject* currentObject = m_activeObjectsStack.last();
+    return currentObject->isBox() ? toRenderBox(currentObject) : 0;
 }
 
 void RenderFlowThread::pushFlowThreadLayoutState(const RenderObject* object)
 {
-    const RenderBox* currentBoxDescendant = currentActiveRenderBox();
-    LayoutState* layoutState = view()->layoutState();
-    if (currentBoxDescendant && layoutState && layoutState->isPaginated()) {
-        ASSERT(layoutState->m_renderer == currentBoxDescendant);
-        LayoutSize offsetDelta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
-        setOffsetFromLogicalTopOfFirstRegion(currentBoxDescendant, currentBoxDescendant->isHorizontalWritingMode() ? offsetDelta.height() : offsetDelta.width());
+    if (const RenderBox* currentBoxDescendant = currentActiveRenderBox()) {
+        LayoutState* layoutState = currentBoxDescendant->view()->layoutState();
+        if (layoutState && layoutState->isPaginated()) {
+            ASSERT(layoutState->m_renderer == currentBoxDescendant);
+            LayoutSize offsetDelta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
+            setOffsetFromLogicalTopOfFirstRegion(currentBoxDescendant, currentBoxDescendant->isHorizontalWritingMode() ? offsetDelta.height() : offsetDelta.width());
+        }
     }
 
     m_activeObjectsStack.add(object);
@@ -1061,10 +1062,11 @@ void RenderFlowThread::popFlowThreadLayoutState()
 {
     m_activeObjectsStack.removeLast();
 
-    const RenderBox* currentBoxDescendant = currentActiveRenderBox();
-    LayoutState* layoutState = view()->layoutState();
-    if (currentBoxDescendant && layoutState && layoutState->isPaginated())
-        clearOffsetFromLogicalTopOfFirstRegion(currentBoxDescendant);
+    if (const RenderBox* currentBoxDescendant = currentActiveRenderBox()) {
+        LayoutState* layoutState = currentBoxDescendant->view()->layoutState();
+        if (layoutState && layoutState->isPaginated())
+            clearOffsetFromLogicalTopOfFirstRegion(currentBoxDescendant);
+    }
 }
 
 LayoutUnit RenderFlowThread::offsetFromLogicalTopOfFirstRegion(const RenderBlock* currentBlock) const
