@@ -579,6 +579,9 @@ void PluginView::didInitializePlugin()
 
     viewGeometryDidChange();
 
+    if (m_pluginElement->document()->focusedElement() == m_pluginElement)
+        m_plugin->setFocus(true);
+
     redeliverManualStream();
 
 #if PLATFORM(MAC)
