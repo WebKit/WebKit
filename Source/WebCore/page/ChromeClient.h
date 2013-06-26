@@ -238,6 +238,8 @@ public:
         
     virtual void elementDidFocus(const Node*) { };
     virtual void elementDidBlur(const Node*) { };
+    
+    virtual bool shouldPaintEntireContents() const { return false; }
 
 #if USE(ACCELERATED_COMPOSITING)
     // Allows ports to customize the type of graphics layers created by this page.

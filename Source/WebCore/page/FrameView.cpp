@@ -356,6 +356,10 @@ void FrameView::init()
         if (marginHeight != -1)
             setMarginHeight(marginHeight);
     }
+
+    Page* page = frame() ? frame()->page() : 0;
+    if (page && page->chrome().client()->shouldPaintEntireContents())
+        setPaintsEntireContents(true);
 }
     
 void FrameView::prepareForDetach()

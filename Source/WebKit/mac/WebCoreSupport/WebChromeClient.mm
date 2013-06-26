@@ -843,6 +843,12 @@ PassRefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebC
     return adoptRef(new SearchPopupMenuMac(client));
 }
 
+bool WebChromeClient::shouldPaintEntireContents() const
+{
+    NSView *documentView = [[[m_webView mainFrame] frameView] documentView];
+    return [documentView layer];
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 
 void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)

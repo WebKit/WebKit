@@ -145,6 +145,8 @@ public:
     virtual void elementDidFocus(const WebCore::Node*) OVERRIDE;
     virtual void elementDidBlur(const WebCore::Node*) OVERRIDE;
 
+    virtual bool shouldPaintEntireContents() const OVERRIDE;
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) OVERRIDE;
     virtual void setNeedsOneShotDrawingSynchronization() OVERRIDE;
