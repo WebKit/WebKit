@@ -109,6 +109,8 @@ using namespace WebCore;
     ASSERT(!isMainThread());
     UNUSED_PARAM(connection);
 
+    redirectResponse = synthesizeRedirectResponseIfNecessary(connection, newRequest, redirectResponse);
+
     // See <rdar://problem/5380697>. This is a workaround for a behavior change in CFNetwork where willSendRequest gets called more often.
     if (!redirectResponse)
         return newRequest;

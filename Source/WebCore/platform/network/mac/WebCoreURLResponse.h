@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,15 @@ typedef struct _CFURLResponse* CFURLResponseRef;
 - (CFURLResponseRef)_CFURLResponse;
 - (void)_setMIMEType:(NSString *)type;
 @end
-#endif
+
+@class NSURLConnection;
+@class NSURLRequest;
+@class NSURLResponse;
+
+namespace WebCore {
+NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLConnection *, NSURLRequest *newRequest, NSURLResponse *redirectResponse);
+}
+#endif // __OBJC__
 
 namespace WebCore {
 void adjustMIMETypeIfNecessary(CFURLResponseRef);
