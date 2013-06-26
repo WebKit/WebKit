@@ -3221,11 +3221,6 @@ void Document::setActiveElement(PassRefPtr<Element> newActiveElement)
     m_activeElement = newActiveElement;
 }
 
-void Document::focusedNodeRemoved()
-{
-    setFocusedElement(0);
-}
-
 void Document::removeFocusedNodeOfSubtree(Node* node, bool amongChildrenOnly)
 {
     if (!m_focusedElement || this->inPageCache()) // If the document is in the page cache, then we don't need to clear out the focused node.
@@ -3242,7 +3237,7 @@ void Document::removeFocusedNodeOfSubtree(Node* node, bool amongChildrenOnly)
         nodeInSubtree = (focusedElement == node) || focusedElement->isDescendantOf(node);
     
     if (nodeInSubtree)
-        document()->focusedNodeRemoved();
+        setFocusedElement(0);
 }
 
 void Document::hoveredElementDidDetach(Element* element)

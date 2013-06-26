@@ -1,3 +1,16 @@
+2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Refactoring: Fold Document::focusedNodeRemoved into Document::removeFocusedNodeOfSubtree
+        https://bugs.webkit.org/show_bug.cgi?id=118036
+
+        Reviewed by Kent Tamura.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/3391beabe75548cc638a6c88982f913621a4410f.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeFocusedNodeOfSubtree):
+        * dom/Document.h:
+
 2013-06-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         JSString should remember AtomicString
