@@ -135,6 +135,7 @@
 
     (home-library-literal "/Caches/com.apple.coreaudio.components.plist")
 
+    (subpath "/Library/Audio/Sounds")
     (subpath "/Library/Audio/Plug-Ins/Components")
     (home-library-subpath "/Audio/Plug-Ins/Components")
     (subpath "/Library/Audio/Plug-Ins/HAL")
