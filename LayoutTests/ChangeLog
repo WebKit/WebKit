@@ -1,3 +1,17 @@
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r151719
+
+    2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Input type range slider is not updated when min or max are changed
+            https://bugs.webkit.org/show_bug.cgi?id=117778
+
+            Reviewed by Kent Tamura.
+
+            * fast/forms/range/range-change-min-max-expected.html: Added.
+            * fast/forms/range/range-change-min-max.html: Added.
+
 2013-06-21  Lucas Forschler  <lforschler@apple.com>
 
         Rollout r151801 after 151451 was rolled out.
