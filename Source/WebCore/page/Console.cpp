@@ -174,11 +174,6 @@ void Console::count(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
     InspectorInstrumentation::consoleCount(page(), state, arguments);
 }
 
-void Console::markTimeline(PassRefPtr<ScriptArguments> arguments)
-{
-    InspectorInstrumentation::consoleTimeStamp(m_frame, arguments);
-}
-
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
 void Console::profile(const String& title, ScriptState* state)
