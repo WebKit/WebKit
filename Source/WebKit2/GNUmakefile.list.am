@@ -1268,11 +1268,13 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Platform/CoreIPC/StringReference.h \
 	Source/WebKit2/Platform/CoreIPC/unix/AttachmentUnix.cpp \
 	Source/WebKit2/Platform/CoreIPC/unix/ConnectionUnix.cpp \
+	Source/WebKit2/Platform/Logging.cpp \
 	Source/WebKit2/Platform/Module.cpp \
 	Source/WebKit2/Platform/Module.h \
 	Source/WebKit2/Platform/WorkQueue.cpp \
 	Source/WebKit2/Platform/WorkQueue.h \
 	Source/WebKit2/Platform/SharedMemory.h \
+	Source/WebKit2/Platform/gtk/LoggingGtk.cpp \
 	Source/WebKit2/Platform/gtk/ModuleGtk.cpp \
 	Source/WebKit2/Platform/gtk/WorkQueueGtk.cpp \
 	Source/WebKit2/Platform/unix/SharedMemoryUnix.cpp \
