@@ -39,6 +39,7 @@ void getPlatformPluginModuleInformation(const PluginModuleInfo& plugin, Immutabl
 {
     map.set(pluginInformationBundleIdentifierKey(), WebString::create(plugin.bundleIdentifier));
     map.set(pluginInformationBundleVersionKey(), WebString::create(plugin.versionString));
+    map.set(pluginInformationBundleShortVersionKey(), WebString::create(plugin.shortVersionString));
     map.set(pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey(), WebBoolean::create(WKIsPluginUpdateAvailable(nsStringFromWebCoreString(plugin.bundleIdentifier))));
     map.set(pluginInformationHasSandboxProfileKey(), WebBoolean::create(pluginHasSandboxProfile(plugin.bundleIdentifier)));
 }
