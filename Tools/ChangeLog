@@ -1,3 +1,15 @@
+2013-06-25  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        gdb: Remove the webcore.py pretty printer.
+        https://bugs.webkit.org/show_bug.cgi?id=117992
+
+        Reviewed by Jochen Eisinger.
+
+        webcore.py has been only a placeholder for backwards compatibility
+        for almost 3 years. It should be safe enough to remove it now.
+
+        * gdb/webcore.py: Removed.
+
 2013-05-26  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         Creating cURL watchlist and adding myself to it.
