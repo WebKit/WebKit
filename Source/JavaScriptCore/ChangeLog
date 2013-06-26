@@ -1,3 +1,28 @@
+2013-06-26  Anders Carlsson  <andersca@apple.com>
+
+        Add JSStringCreateWithCharactersNoCopy SPI
+        https://bugs.webkit.org/show_bug.cgi?id=118074
+        <rdar://problem/14279905>
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithCharactersNoCopy):
+        Create a new OpaqueJSString, using the newly added StringImpl::createWithoutCopying function.
+
+        * API/JSStringRefPrivate.h: Added.
+        Add a home for the JSStringCreateWithCharactersNoCopy function.
+
+        * API/OpaqueJSString.h:
+        (OpaqueJSString::OpaqueJSString):
+        Just call isolatedCopy on the passed in string.
+
+        * API/tests/testapi.c:
+        Add an API test for JSStringCreateWithCharactersNoCopy.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add new files.
+
 2013-06-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         JSString should remember AtomicString

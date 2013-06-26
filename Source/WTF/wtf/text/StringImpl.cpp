@@ -158,15 +158,28 @@ PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters, uns
 {
     ASSERT_WITH_MESSAGE(length, "Use StringImpl::empty() to create an empty string");
     ASSERT(charactersAreAllASCII<LChar>(reinterpret_cast<const LChar*>(characters), length));
-    return adoptRef(new StringImpl(characters, length, ConstructFromLiteral));
+    return adoptRef(new StringImpl(reinterpret_cast<const LChar*>(characters), length, DoesHaveTerminatingNullCharacter, ConstructWithoutCopying));
 }
 
 PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters)
 {
-    size_t length = strlen(characters);
-    ASSERT_WITH_MESSAGE(length, "Use StringImpl::empty() to create an empty string");
-    ASSERT(charactersAreAllASCII<LChar>(reinterpret_cast<const LChar*>(characters), length));
-    return adoptRef(new StringImpl(characters, length, ConstructFromLiteral));
+    return createFromLiteral(characters, strlen(characters));
+}
+
+PassRefPtr<StringImpl> StringImpl::createWithoutCopying(const UChar* characters, unsigned length, HasTerminatingNullCharacter hasTerminatingNullCharacter)
+{
+    if (!length)
+        return empty();
+
+    return adoptRef(new StringImpl(characters, length, hasTerminatingNullCharacter, ConstructWithoutCopying));
+}
+
+PassRefPtr<StringImpl> StringImpl::createWithoutCopying(const LChar* characters, unsigned length, HasTerminatingNullCharacter hasTerminatingNullCharacter)
+{
+    if (!length)
+        return empty();
+
+    return adoptRef(new StringImpl(characters, length, hasTerminatingNullCharacter, ConstructWithoutCopying));
 }
 
 PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& data)

@@ -68,7 +68,16 @@ struct SubstringTranslator;
 struct UCharBufferTranslator;
 template<typename> class RetainPtr;
 
-enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
+enum TextCaseSensitivity {
+    TextCaseSensitive,
+    TextCaseInsensitive
+};
+
+enum HasTerminatingNullCharacter {
+    DoesNotHaveTerminatingNullCharacter,
+    DoesHaveTerminatingNullCharacter,
+};
+
 
 typedef bool (*CharacterMatchFunctionPtr)(UChar);
 typedef bool (*IsWhiteSpaceFunctionPtr)(UChar);
@@ -239,17 +248,31 @@ private:
         STRING_STATS_ADD_8BIT_STRING(m_length);
     }
 
-    enum ConstructFromLiteralTag { ConstructFromLiteral };
-    StringImpl(const char* characters, unsigned length, ConstructFromLiteralTag)
+    enum ConstructWithoutCopyingTag { ConstructWithoutCopying };
+    StringImpl(const UChar* characters, unsigned length, HasTerminatingNullCharacter hasTerminatingNullCharacter, ConstructWithoutCopyingTag)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
-        , m_data8(reinterpret_cast<const LChar*>(characters))
+        , m_data16(characters)
         , m_buffer(0)
-        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferInternal | s_hashFlagHasTerminatingNullCharacter)
+        , m_hashAndFlags(BufferInternal | (hasTerminatingNullCharacter ? s_hashFlagHasTerminatingNullCharacter : 0))
+    {
+        ASSERT(m_data16);
+        ASSERT(m_length);
+        ASSERT(!(m_hashAndFlags & s_hashFlagHasTerminatingNullCharacter) || !characters[length]);
+
+        STRING_STATS_ADD_16BIT_STRING(0);
+    }
+
+    StringImpl(const LChar* characters, unsigned length, HasTerminatingNullCharacter hasTerminatingNullCharacter, ConstructWithoutCopyingTag)
+        : m_refCount(s_refCountIncrement)
+        , m_length(length)
+        , m_data8(characters)
+        , m_buffer(0)
+        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferInternal | (hasTerminatingNullCharacter ? s_hashFlagHasTerminatingNullCharacter : 0))
     {
         ASSERT(m_data8);
         ASSERT(m_length);
-        ASSERT(!characters[length]);
+        ASSERT(!(m_hashAndFlags & s_hashFlagHasTerminatingNullCharacter) || !characters[length]);
 
         STRING_STATS_ADD_8BIT_STRING(0);
     }
@@ -392,16 +415,21 @@ public:
         return adoptRef(new StringImpl(rep->m_data16 + offset, length, ownerRep));
     }
 
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createFromLiteral(const char* characters, unsigned length);
     template<unsigned charactersCount>
     ALWAYS_INLINE static PassRefPtr<StringImpl> createFromLiteral(const char (&characters)[charactersCount])
     {
         COMPILE_ASSERT(charactersCount > 1, StringImplFromLiteralNotEmpty);
         COMPILE_ASSERT((charactersCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), StringImplFromLiteralCannotOverflow);
 
-        return createFromLiteral(characters, charactersCount - 1);
+        return createWithoutCopying(reinterpret_cast<const LChar*>(characters), charactersCount - 1, DoesHaveTerminatingNullCharacter);
     }
+
+    // FIXME: Transition off of these functions to createWithoutCopying instead.
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createFromLiteral(const char* characters, unsigned length);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createFromLiteral(const char* characters);
+
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createWithoutCopying(const UChar* characters, unsigned length, HasTerminatingNullCharacter);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createWithoutCopying(const LChar* characters, unsigned length, HasTerminatingNullCharacter);
 
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createUninitialized(unsigned length, LChar*& data);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createUninitialized(unsigned length, UChar*& data);
@@ -736,10 +764,14 @@ public:
 #endif
 
 private:
-
-    bool isASCIILiteral() const
+    bool requiresCopy() const
     {
-        return is8Bit() && bufferOwnership() == BufferInternal && reinterpret_cast<const void*>(m_data8) != reinterpret_cast<const void*>(this + 1);
+        if (bufferOwnership() != BufferInternal)
+            return true;
+
+        if (is8Bit())
+            return reinterpret_cast<const void*>(m_data8) == reinterpret_cast<const void*>(this + 1);
+        return reinterpret_cast<const void*>(m_data16) == reinterpret_cast<const void*>(this + 1);
     }
 
     // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.
@@ -1328,8 +1360,12 @@ inline unsigned lengthOfNullTerminatedString(const CharacterType* string)
 
 inline PassRefPtr<StringImpl> StringImpl::isolatedCopy() const
 {
-    if (isASCIILiteral())
-        return StringImpl::createFromLiteral(reinterpret_cast<const char*>(m_data8), m_length);
+    if (!requiresCopy()) {
+        if (is8Bit())
+            return StringImpl::createWithoutCopying(m_data8, m_length, hasTerminatingNullCharacter() ? DoesHaveTerminatingNullCharacter : DoesNotHaveTerminatingNullCharacter);
+        return StringImpl::createWithoutCopying(m_data16, m_length, hasTerminatingNullCharacter() ? DoesHaveTerminatingNullCharacter : DoesNotHaveTerminatingNullCharacter);
+    }
+
     if (is8Bit())
         return create(m_data8, m_length);
     return create(m_data16, m_length);

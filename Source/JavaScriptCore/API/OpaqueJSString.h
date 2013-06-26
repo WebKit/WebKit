@@ -70,12 +70,8 @@ private:
     }
 
     OpaqueJSString(const String& string)
+        : m_string(string.isolatedCopy())
     {
-        // Make a copy of the source string.
-        if (string.is8Bit())
-            m_string = String(string.characters8(), string.length());
-        else
-            m_string = String(string.characters16(), string.length());
     }
 
     OpaqueJSString(const LChar* characters, unsigned length)

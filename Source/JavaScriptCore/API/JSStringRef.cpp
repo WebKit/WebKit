@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "JSStringRef.h"
+#include "JSStringRefPrivate.h"
 
 #include "InitializeThreading.h"
 #include "OpaqueJSString.h"
@@ -57,6 +58,12 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
 
     // Null string.
     return OpaqueJSString::create().leakRef();
+}
+
+JSStringRef JSStringCreateWithCharactersNoCopy(const JSChar* chars, size_t numChars)
+{
+    initializeThreading();
+    return OpaqueJSString::create(StringImpl::createWithoutCopying(chars, numChars, WTF::DoesNotHaveTerminatingNullCharacter)).leakRef();
 }
 
 JSStringRef JSStringRetain(JSStringRef string)

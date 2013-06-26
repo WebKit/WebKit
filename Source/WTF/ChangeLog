@@ -1,3 +1,33 @@
+2013-06-26  Anders Carlsson  <andersca@apple.com>
+
+        Add JSStringCreateWithCharactersNoCopy SPI
+        https://bugs.webkit.org/show_bug.cgi?id=118074
+        <rdar://problem/14279905>
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createFromLiteral):
+        Use the new ConstructWithoutCopying constructor, passing DoesHaveTerminatingNullCharacter to it.
+        Change the other createFromLiteral overload to just call the first.
+
+        (WTF::StringImpl::createWithoutCopying):
+        Add helper functions for creating strings that shouldn't copy their underlying data.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        Rename the ConstructFromLiteralTag constructor enum to ConstructWithoutCopyingTag. Change the constructor
+        to take an enum that states whether the string has a terminating null character or not.
+
+        (WTF::StringImpl::createFromLiteral):
+        Call createWithoutCopying.
+
+        (WTF::StringImpl::requiresCopy):
+        Rename this from isASCIILiteral() and make it more generic so it can handle 16-bit strings as well.
+
+        (WTF::StringImpl::isolatedCopy):
+        If this string doesn't have to be copied, just create a new StringImpl object that references the current data.
+
 2013-06-26  Jer Noble  <jer.noble@apple.com>
 
         Potential use-after-free after neutering AudioBuffer's underlying ArrayBuffer.
