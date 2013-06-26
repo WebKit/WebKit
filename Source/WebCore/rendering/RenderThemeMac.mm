@@ -30,6 +30,7 @@
 #import "FileList.h"
 #import "FrameView.h"
 #import "GraphicsContextCG.h"
+#import "HTMLAudioElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLMediaElement.h"
 #import "HTMLNames.h"
@@ -289,7 +290,7 @@ bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const PaintInfo& pain
 {
     Node* node = o->node();
     Node* mediaNode = node ? node->shadowHost() : 0;
-    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !isHTMLAudioElement(mediaNode)))
         return false;
 
     if (node->isMediaControlElement()) {
@@ -303,7 +304,7 @@ bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const PaintInfo& pain
 {
     Node* node = o->node();
     Node* mediaNode = node ? node->shadowHost() : 0;
-    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !isHTMLAudioElement(mediaNode)))
         return false;
 
     if (node->isMediaControlElement()) {

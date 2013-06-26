@@ -247,7 +247,7 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const S
 PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const KURL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    ASSERT(node->hasTagName(videoTag) || node->hasTagName(audioTag));
+    ASSERT(node->hasTagName(videoTag) || isHTMLAudioElement(node));
 
     KURL completedURL;
     if (!url.isEmpty())

@@ -45,6 +45,17 @@ private:
     virtual bool isVideo() const { return false; }
 };
 
+inline bool isHTMLAudioElement(Node* node)
+{
+    return node->hasTagName(HTMLNames::audioTag);
+}
+
+inline HTMLAudioElement* toHTMLAudioElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLAudioElement(node));
+    return static_cast<HTMLAudioElement*>(node);
+}
+
 } //namespace
 
 #endif
