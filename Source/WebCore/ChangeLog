@@ -1,3 +1,35 @@
+2013-06-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        JSString should remember AtomicString
+        https://bugs.webkit.org/show_bug.cgi?id=117386
+
+        Reviewed by Geoffrey Garen.
+
+        Added "Atomic" attribute as a WebKit extension to WebIDL, and deployed it in Element.idl and Node.idl so that
+        the binding code can use newly added JSValue::toAtomic to update JSString's m_value.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::valueToAtomicStringWithNullCheck): Added.
+        (WebCore::valueToAtomicStringWithUndefinedOrNullCheck): Added.
+
+        * bindings/js/JSDOMBinding.h:
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetNativeTypeFromSignature): Return const AtomicString& when either Atomic attribute is specified or the type is
+        Reflect. Note that setAttribute and getAttribute both use AtomicString for all arguments.
+        (JSValueToNative): Use AtomicString equivalents when possible when converting DOMString to a WebCore object.
+
+        * bindings/scripts/IDLAttributes.txt: Added "Atomic" attribute.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Baselined test cases.
+        (WebCore::setJSTestObjReflectedStringAttr):
+        (WebCore::setJSTestObjReflectedURLAttr):
+        (WebCore::setJSTestObjReflectedCustomURLAttr):
+
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Node.idl:
+
 2013-06-25  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLAnchorElement for code cleanup

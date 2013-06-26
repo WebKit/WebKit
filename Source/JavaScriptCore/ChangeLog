@@ -1,3 +1,19 @@
+2013-06-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        JSString should remember AtomicString
+        https://bugs.webkit.org/show_bug.cgi?id=117386
+
+        Reviewed by Geoffrey Garen.
+
+        Added JSValue::toAtomicString and JSString::atomicString. These two functions allow WebCore to update
+        JSString's m_value to set isAtomic flag and avoid the AtomicStringTable lookups in subsequent attempts
+        to obtain the AtomicString of the same value.
+
+        * runtime/JSCJSValue.h:
+        * runtime/JSString.h:
+        (JSC::JSString::atomicString):
+        (JSC::JSValue::toAtomicString):
+
 2013-06-24  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Makefile build fix for AppleWindows.
