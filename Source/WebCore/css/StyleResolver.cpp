@@ -3562,7 +3562,12 @@ static FilterOperation::OperationType filterOperationForType(WebKitCSSFilterValu
 void StyleResolver::loadPendingSVGDocuments()
 {
     State& state = m_state;
-    if (!state.style()->hasFilter() || state.pendingSVGDocuments().isEmpty())
+
+    // Crash reports indicate that we've seen calls to this function when our
+    // style is NULL. We don't know exactly why this happens. Our guess is
+    // reentering styleForElement().
+    ASSERT(state.style());
+    if (!state.style() || !state.style()->hasFilter() || state.pendingSVGDocuments().isEmpty())
         return;
 
     CachedResourceLoader* cachedResourceLoader = state.document()->cachedResourceLoader();
@@ -4195,6 +4200,13 @@ void StyleResolver::loadPendingImages()
 
 void StyleResolver::loadPendingResources()
 {
+    // We've seen crashes in all three of the functions below. Some of them
+    // indicate that style() is NULL. This NULL check will cut down on total
+    // crashes, while the ASSERT will help us find the cause in debug builds.
+    ASSERT(style());
+    if (!style())
+        return;
+
     // Start loading images referenced by this style.
     loadPendingImages();
 
