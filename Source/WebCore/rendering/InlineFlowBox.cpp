@@ -1051,6 +1051,26 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     }
 
     // Now check ourselves. Pixel snap hit testing.
+    if (!visibleToHitTesting())
+        return false;
+
+    // Do not hittest content beyond the ellipsis box.
+    if (isRootInlineBox() && hasEllipsisBox()) {
+        const EllipsisBox* ellipsisBox = root()->ellipsisBox();
+        LayoutRect boundsRect(roundedFrameRect());
+
+        if (isHorizontal())
+            renderer()->style()->isLeftToRightDirection() ? boundsRect.shiftXEdgeTo(ellipsisBox->right()) : boundsRect.setWidth(ellipsisBox->left() - left());
+        else
+            boundsRect.shiftYEdgeTo(ellipsisBox->right());
+
+        flipForWritingMode(boundsRect);
+        boundsRect.moveBy(accumulatedOffset);
+        // We are beyond the ellipsis box.
+        if (locationInContainer.intersects(boundsRect))
+            return false;
+    }
+
     LayoutRect frameRect = roundedFrameRect();
     LayoutUnit minX = frameRect.x();
     LayoutUnit minY = frameRect.y();
@@ -1073,7 +1093,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     flipForWritingMode(rect);
     rect.moveBy(accumulatedOffset);
 
-    if (visibleToHitTesting() && locationInContainer.intersects(rect)) {
+    if (locationInContainer.intersects(rect)) {
         renderer()->updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - toLayoutSize(accumulatedOffset))); // Don't add in m_x or m_y here, we want coords in the containing block's space.
         if (!result.addNodeToRectBasedTestResult(renderer()->node(), request, locationInContainer, rect))
             return true;

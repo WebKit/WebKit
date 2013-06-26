@@ -1,5 +1,23 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151894
+
+    2013-06-24  Zalan Bujtas  <zalan@apple.com>
+
+            Hittest finds the truncated text instead of the floating input, when the input is clicked.
+            https://bugs.webkit.org/show_bug.cgi?id=115675
+
+            Reviewed by David Hyatt.
+
+            Ignore truncated text on inline textbox and everything beyond the ellipsis box on
+            the root inlinebox while hittesting. (provided that nodeAtPoint finds no hit for any of
+            the root inline's children.)
+
+            * fast/css/text-overflow-ellipsis-and-floating-input-hittest-expected.txt: Added.
+            * fast/css/text-overflow-ellipsis-and-floating-input-hittest.html: Added.
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151852
 
     2013-06-21  James Craig  <james@cookiecrook.com>
