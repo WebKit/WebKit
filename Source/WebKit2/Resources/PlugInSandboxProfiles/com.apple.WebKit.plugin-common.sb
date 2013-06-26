@@ -81,6 +81,7 @@
 (shared-preferences-read
     ".GlobalPreferences"
     "com.apple.Bluetooth"
+    "com.apple.CoreGraphics"
     "com.apple.QuickTime"
     "com.apple.HIToolbox"
     "com.apple.ATS"

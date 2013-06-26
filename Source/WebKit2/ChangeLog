@@ -1,5 +1,21 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151943
+
+    2013-06-24  Simon Cooper  <scooper@apple.com>
+
+            Plug-in sandbox violations attempting to access com.apple.CoreGraphics.plist
+            https://bugs.webkit.org/show_bug.cgi?id=117963
+            <rdar://problem/14084234>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Permit the reading of the com.apple.CoreGraphics preference file
+
+            * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151941
 
     2013-06-24  Simon Cooper  <scooper@apple.com>
