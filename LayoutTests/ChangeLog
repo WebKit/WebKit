@@ -1,3 +1,15 @@
+2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Set Attr.ownerDocument in Element#setAttributeNode()
+        https://bugs.webkit.org/show_bug.cgi?id=118031
+
+        Reviewed by Andreas Kling.
+
+        Add a regression test.
+
+        * fast/dom/Attr/set-attribute-node-from-iframe-expected.txt: Added.
+        * fast/dom/Attr/set-attribute-node-from-iframe.html: Added.
+
 2013-06-25  David Hyatt  <hyatt@apple.com>
 
         Flex boxes (both old and new) don't handle max-height images correctly.
