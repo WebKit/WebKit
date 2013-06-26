@@ -40,8 +40,8 @@ class KURL;
 
 namespace WebKit {
 
-class SchedulableLoader;
 class HostRecord;
+class SchedulableLoader;
 
 class NetworkResourceLoadScheduler {
     WTF_MAKE_NONCOPYABLE(NetworkResourceLoadScheduler); WTF_MAKE_FAST_ALLOCATED;
@@ -78,7 +78,7 @@ private:
     void scheduleServePendingRequests();
     void requestTimerFired(WebCore::Timer<NetworkResourceLoadScheduler>*);
 
-    unsigned platformInitializeMaximumHTTPConnectionCountPerHost();
+    void platformInitializeMaximumHTTPConnectionCountPerHost();
 
     static void removeScheduledLoaders(void* context);
     void removeScheduledLoaders();
@@ -97,6 +97,8 @@ private:
     
     Mutex m_loadersToRemoveMutex;
     Vector<RefPtr<SchedulableLoader>> m_loadersToRemove;
+
+    unsigned m_maxRequestsInFlightPerHost;
 };
 
 } // namespace WebKit

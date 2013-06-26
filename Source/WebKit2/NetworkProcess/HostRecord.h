@@ -39,6 +39,8 @@ namespace WebKit {
 class NetworkResourceLoader;
 class SchedulableLoader;
 class SyncNetworkResourceLoader;
+
+typedef Deque<RefPtr<SchedulableLoader>> LoaderQueue;
 typedef uint64_t ResourceLoadIdentifier;
 
 class HostRecord : public RefCounted<HostRecord> {
@@ -64,10 +66,8 @@ public:
 private:
     HostRecord(const String& name, int maxRequestsInFlight);
 
-    typedef Deque<RefPtr<SchedulableLoader>> LoaderQueue;
-
     void servePendingRequestsForQueue(LoaderQueue&, WebCore::ResourceLoadPriority);
-    bool limitsRequests(WebCore::ResourceLoadPriority, bool serialLoadingEnabled) const;
+    bool limitsRequests(WebCore::ResourceLoadPriority, SchedulableLoader*) const;
 
     LoaderQueue m_loadersPending[WebCore::ResourceLoadPriorityHighest + 1];
     LoaderQueue m_syncLoadersPending;
