@@ -1,5 +1,22 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151873
+
+    2013-06-21  Simon Fraser  <simon.fraser@apple.com>
+
+            Occasional crash swiping between pages
+            https://bugs.webkit.org/show_bug.cgi?id=117902
+
+            Reviewed by Beth Dakin.
+
+            m_scrollingStateTree->rootStateNode() can be null when quickly swiping between pages,
+            so check this in ScrollingCoordinatorMac::commitTreeState().
+
+            * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+            (WebCore::ScrollingCoordinatorMac::commitTreeState):
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151852
 
     2013-06-21  James Craig  <james@cookiecrook.com>
