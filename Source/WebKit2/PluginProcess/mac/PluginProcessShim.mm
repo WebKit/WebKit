@@ -100,6 +100,16 @@ static void shimHideWindow(WindowRef window)
     HideWindow(window);
 }
 
+static OSStatus
+shimLSOpenCFURLRef(CFURLRef url, CFURLRef* launchedURL)
+{
+    int32_t returnValue;
+    if (pluginProcessShimCallbacks.openCFURLRef(url, returnValue, launchedURL))
+        return returnValue;
+
+    return LSOpenCFURLRef(url, launchedURL);
+}
+
 DYLD_INTERPOSE(shimDebugger, Debugger);
 DYLD_INTERPOSE(shimGetCurrentEventButtonState, GetCurrentEventButtonState);
 DYLD_INTERPOSE(shimIsWindowActive, IsWindowActive);
@@ -107,6 +117,7 @@ DYLD_INTERPOSE(shimModalDialog, ModalDialog);
 DYLD_INTERPOSE(shimAlert, Alert);
 DYLD_INTERPOSE(shimShowWindow, ShowWindow);
 DYLD_INTERPOSE(shimHideWindow, HideWindow);
+DYLD_INTERPOSE(shimLSOpenCFURLRef, LSOpenCFURLRef);
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop

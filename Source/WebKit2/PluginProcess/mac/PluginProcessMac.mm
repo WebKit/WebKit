@@ -186,6 +186,17 @@ static void carbonWindowHidden(WindowRef window)
 #endif
 }
 
+static bool openCFURLRef(CFURLRef url, int32_t& status, CFURLRef* launchedURL)
+{
+    String launchedURLString;
+    if (!PluginProcess::shared().openURL(KURL(url).string(), status, launchedURLString))
+        return false;
+
+    if (!launchedURLString.isNull() && launchedURL)
+        *launchedURL = KURL(ParsedURLString, launchedURLString).createCFURL().leakRef();
+    return true;
+}
+
 #endif
 
 static void setModal(bool modalWindowIsShowing)
@@ -243,6 +254,7 @@ static void initializeShim()
         carbonWindowShown,
         carbonWindowHidden,
         setModal,
+        openCFURLRef,
     };
 
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));
@@ -310,6 +322,15 @@ bool PluginProcess::launchProcess(const String& launchPath, const Vector<String>
 {
     bool result;
     if (!parentProcessConnection()->sendSync(Messages::PluginProcessProxy::LaunchProcess(launchPath, arguments), Messages::PluginProcessProxy::LaunchProcess::Reply(result), 0))
+        return false;
+
+    return result;
+}
+
+bool PluginProcess::openURL(const String& urlString, int32_t& status, String& launchedURLString)
+{
+    bool result;
+    if (!parentProcessConnection()->sendSync(Messages::PluginProcessProxy::OpenURL(urlString), Messages::PluginProcessProxy::OpenURL::Reply(result, status, launchedURLString), 0))
         return false;
 
     return result;
