@@ -1,0 +1,12 @@
+ownerDocument of Attr should be set on setAttributeNode
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS attr = iframeDocument.createAttribute("foo"); attr.ownerDocument is iframeDocument
+PASS elementToBeMoved.setAttributeNode(attr); attr.ownerDocument is document
+PASS iframeDocument.documentElement.appendChild(elementToBeMoved); attr.ownerDocument is iframeDocument
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

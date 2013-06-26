@@ -1,5 +1,25 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151998
+
+    2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Set Attr.ownerDocument in Element#setAttributeNode()
+            https://bugs.webkit.org/show_bug.cgi?id=118031
+
+            Reviewed by Andreas Kling.
+
+            Merge https://chromium.googlesource.com/chromium/blink/+/fa739fe5369f55bbdcb3fa123cb64df36b8ae414.
+
+            Adopt Attr node as needed.
+
+            Test: fast/dom/Attr/set-attribute-node-from-iframe.html
+
+            * dom/Element.cpp:
+            (WebCore::Element::setAttributeNode):
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151997
 
     2013-06-25  David Hyatt  <hyatt@apple.com>
