@@ -695,7 +695,7 @@ bool AccessibilityNodeObject::isReadOnly() const
         return true;
 
     if (node->hasTagName(textareaTag))
-        return static_cast<HTMLTextAreaElement*>(node)->isReadOnly();
+        return toHTMLFormControlElement(node)->isReadOnly();
 
     if (node->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
@@ -1374,10 +1374,10 @@ String AccessibilityNodeObject::alternativeTextForWebArea() const
     Node* owner = document->ownerElement();
     if (owner) {
         if (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag)) {
-            const AtomicString& title = static_cast<HTMLFrameElementBase*>(owner)->getAttribute(titleAttr);
+            const AtomicString& title = toElement(owner)->getAttribute(titleAttr);
             if (!title.isEmpty())
                 return title;
-            return static_cast<HTMLFrameElementBase*>(owner)->getNameAttribute();
+            return toElement(owner)->getNameAttribute();
         }
         if (owner->isHTMLElement())
             return toHTMLElement(owner)->getNameAttribute();
@@ -1643,12 +1643,8 @@ String AccessibilityNodeObject::text() const
     if (!node)
         return String();
 
-    if (isNativeTextControl()) {
-        if (node->hasTagName(textareaTag))
-            return static_cast<HTMLTextAreaElement*>(node)->value();
-        if (node->hasTagName(inputTag))
-            return node->toInputElement()->value();
-    }
+    if (isNativeTextControl() && (node->hasTagName(textareaTag) || node->hasTagName(inputTag)))
+        return toHTMLTextFormControlElement(node)->value();
 
     if (!node->isElementNode())
         return String();
