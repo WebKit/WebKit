@@ -1,5 +1,21 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151986
+
+    2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Use-after-free in RadioInputType::handleKeydownEvent
+            https://bugs.webkit.org/show_bug.cgi?id=118035
+
+            Reviewed by Kent Tamura.
+
+            Use RefPtr for inputElement since setFocusedNode could blow it away.
+
+            * html/RadioInputType.cpp:
+            (WebCore::RadioInputType::handleKeydownEvent):
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151971
 
     2013-06-25  Dean Jackson  <dino@apple.com>
