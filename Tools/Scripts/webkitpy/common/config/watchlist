@@ -319,6 +319,9 @@
         "BindingsScripts": {
             "filename": r"Source/WebCore/bindings/scripts/",
         },
+        "cURLNetwork": {
+            "filename": r"Source/WebCore/platform/network/curl/",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -337,6 +340,7 @@
         "ContentSecurityPolicyFiles|ContentSecurityPolicyUsage" : [ "mkwst@chromium.org" ],
         "CoreAnimation" : [ "simon.fraser@apple.com" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "esprehn+autocc@chromium.org", "glenn@skynav.com" ],
+        "cURLNetwork": [ "galpeter@inf.u-szeged.hu" ],
         "DOM": [ "esprehn+autocc@chromium.org", "kangil.han@samsung.com" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
         "EFL": [ "rakuco@webkit.org", "gyuyoung.kim@webkit.org", "dchris@gmail.com" ],

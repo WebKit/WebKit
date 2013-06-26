@@ -1,3 +1,11 @@
+2013-05-26  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Creating cURL watchlist and adding myself to it.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-06-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, change my email address for watch list.
