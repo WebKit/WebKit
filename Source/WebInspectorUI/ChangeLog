@@ -1,5 +1,22 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151861
+
+    2013-06-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Uncaught exception when pretty printing WebInspector.Script
+            https://bugs.webkit.org/show_bug.cgi?id=117893
+
+            This was an issue with an earlier refactoring. The sourceCode is a Script,
+            so replace the non-existent local variable "script" with "this._sourceCode".
+
+            Reviewed by Timothy Hatcher.
+
+            * UserInterface/SourceCodeTextEditor.js:
+            (WebInspector.SourceCodeTextEditor.prototype.textEditorUpdatedFormatting):
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151846
 
     2013-06-21  Timothy Hatcher  <timothy@apple.com>
