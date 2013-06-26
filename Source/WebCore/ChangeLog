@@ -1,3 +1,25 @@
+2013-06-26  Brady Eidson  <beidson@apple.com>
+
+        [Mac] Document URL is not updated by HSTS
+        <rdar://problem/14241270> and https://bugs.webkit.org/show_bug.cgi?id=118003
+        
+        Patch started by Alexey Proskuryakov, finished by Brady Eidson.
+
+        Reviewed by Brady Eidson and then Alexey Proskuryakov.
+
+        Synthesize a response and properly handle willSendRequest when the URL changes in a way that's typical for HSTS.
+
+        * platform/network/mac/WebCoreURLResponse:
+        * platform/network/mac/WebCoreURLResponse:
+        (WebCore::synthesizeRedirectResponseIfNecessary): Synthesize a redirect response and when the URL changes in a way that's
+          typical for HSTS connections.
+
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]): Call synthesizeRedirectResponseIfNecessary.
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]): Ditto.
+
 2013-06-26  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] fast/regions/seamless-iframe-flowed-into-regions.html asserts

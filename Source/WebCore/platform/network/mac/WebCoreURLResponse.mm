@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -321,6 +321,26 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
 
     if (result != originalResult)
         wkSetCFURLResponseMIMEType(cfResponse, result.get());
+}
+
+NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLConnection *connection, NSURLRequest *newRequest, NSURLResponse *redirectResponse)
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (redirectResponse)
+        return redirectResponse;
+
+    if ([[[newRequest URL] scheme] isEqualToString:[[[connection currentRequest] URL] scheme]])
+        return nil;
+
+    // If the new request is a different protocol than the current request, synthesize a redirect response.
+    // This is critical for HSTS (<rdar://problem/14241270>).
+    NSDictionary *synthesizedResponseHeaderFields = @{ @"Location": [[newRequest URL] absoluteString], @"Cache-Control": @"no-store" };
+    return [[[NSHTTPURLResponse alloc] initWithURL:[[connection currentRequest] URL] statusCode:302 HTTPVersion:(NSString *)kCFHTTPVersion1_1 headerFields:synthesizedResponseHeaderFields] autorelease];
+#else
+    UNUSED_PARAM(connection);
+    UNUSED_PARAM(newRequest);
+    return redirectResponse;
+#endif
 }
 
 }
