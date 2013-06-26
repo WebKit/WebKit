@@ -1,5 +1,24 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151952
+
+    2013-06-24  Simon Cooper  <scooper@apple.com>
+
+            Silverlight triggers sandbox violations: deny network-bind 0.0.0.0:0
+            https://bugs.webkit.org/show_bug.cgi?id=117966
+            <rdar://problem/13927918>
+
+            Reviewed by Sam Weinig.
+
+            Allow assigning (via bind) an ephemeral port before connecting
+
+            * Resources/PlugInSandboxProfiles/com.apple.QuickTime Plugin.plugin.sb:
+            * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player.plugin.sb:
+            * Resources/PlugInSandboxProfiles/com.microsoft.SilverlightPlugin.sb:
+            * Resources/PlugInSandboxProfiles/com.oracle.java.JavaAppletPlugin.sb:
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151950
 
     2013-06-24  Simon Cooper  <scooper@apple.com>

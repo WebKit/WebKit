@@ -21,4 +21,6 @@
 (allow ipc-posix-shm*
     (ipc-posix-name-regex #"^CoreCLR_"))
 
+(allow network-bind (local ip))
+
 (webkit-printing)

@@ -26,5 +26,7 @@
 (allow file-read* file-write*
     (mount-relative-regex #"^/\.TemporaryItems/"))
 
+(allow network-bind (local ip))
+
 (webkit-powerbox)
 (webkit-printing)
