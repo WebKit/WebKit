@@ -615,7 +615,7 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
     if (name.isEmpty() || !root)
         return 0;
 
-    if (!overridesItemAfter()) {
+    if (!overridesItemAfter() && root->isInTreeScope()) {
         TreeScope* treeScope = root->treeScope();
         Element* candidate = 0;
         if (treeScope->hasElementWithId(name.impl())) {
