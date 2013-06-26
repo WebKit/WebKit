@@ -1,3 +1,13 @@
+2013-06-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Enable CaptionUserPreferenceMediaAF on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=118076
+
+        Reviewed by Eric Carlson.
+
+        * wtf/Platform.h: Enable Media Accessibility Framework in Windows build environments
+          that support it.
+
 2013-06-24  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. AppleWin build fix, followup to r151915.
