@@ -1,3 +1,16 @@
+2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mark SVG(Circle|Path|Rect)Element::createRenderer() with OVERRIDE
+        https://bugs.webkit.org/show_bug.cgi?id=118037
+
+        Reviewed by Philip Rogers.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/e8196920e769ab0786b2b4b21d3fdc2d87afef0d.
+
+        * svg/SVGCircleElement.h:
+        * svg/SVGPathElement.h:
+        * svg/SVGRectElement.h:
+
 2013-06-26  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLAudioElement for code cleanup
