@@ -1,3 +1,25 @@
+2013-06-26  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
+
+        getComputedStyle().width wrong after text changed
+        https://bugs.webkit.org/show_bug.cgi?id=106611
+
+        Reviewed by Dean Jackson.
+
+        When a new RenderText is created, NodeRenderingContext::createRendererForTextIfNeeded() sets a style to the RenderText.
+        If a font in the new style needs transcode (e.g. Meiryo), styleDidChange() calls transformText().
+        It sets a preferredLogicalWidthsDirty flag.
+        After that, createRendererForTextIfNeeded() inserts the RenderText to its parent renderer.
+        However, RenderObjectChildList::insertChildNode() doesn't set a preferredLogicalWidthsDirty flag of owner
+        because a preferredLogicalWidthsDirty flag of the RenderText is already true.
+
+        Inserting new child should always sets a preferredLogicalWidthsDirty flag.
+        Therefore, this patch called setPreferredLogicalWidthsDirty() of owner.
+
+        Test: fast/dynamic/empty-absolute-innerhtml-transcoding-text.html
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::insertChildNode):
+
 2013-06-26  Brent Fulgham  <bfulgham@apple.com>
 
         Prepare CaptionUserPreferencesMac for use on Windows port.

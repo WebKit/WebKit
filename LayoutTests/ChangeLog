@@ -1,3 +1,13 @@
+2013-06-26  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
+
+        getComputedStyle().width wrong after text changed
+        https://bugs.webkit.org/show_bug.cgi?id=106611
+
+        Reviewed by Dean Jackson.
+
+        * fast/dynamic/empty-absolute-innerhtml-transcoding-text-expected.html: Added.
+        * fast/dynamic/empty-absolute-innerhtml-transcoding-text.html: Added.
+
 2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Set Attr.ownerDocument in Element#setAttributeNode()
