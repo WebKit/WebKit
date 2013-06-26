@@ -1,3 +1,16 @@
+2013-06-26  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: stepping through while paused in debugger makes a popover appear
+        https://bugs.webkit.org/show_bug.cgi?id=117994
+
+        There is no obvious need to call tokenTrackingControllerNewHighlightCandidate when the
+        active call frame changes and it leads to an extraneous display of the popover.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._activeCallFrameDidChange):
+
 2013-06-24  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: WebInspector.displayNameForURL() failure prevents DOM inspection
