@@ -1,5 +1,19 @@
 2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove unneccesary cast to Node* in MediaControlTextTrackContainerElement::updateDisplay
+        https://bugs.webkit.org/show_bug.cgi?id=118020
+
+        Reviewed by Christophe Dumez.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/2de89f61bb316f5e166b45ce71bb2b293dbf575d
+
+        TextTrackCue is a Node, there's no reason to static_cast from it to Node*.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+
+2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         RenderBox::hasRenderOverflow should return bool instead of RenderOverflow*
         https://bugs.webkit.org/show_bug.cgi?id=118041
 
