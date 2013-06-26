@@ -286,6 +286,7 @@
     (ipc-posix-name "_CS_DSHMEMLOCK"))
 
 (allow ipc-posix-shm-read*
+    (ipc-posix-name-regex #"^/tmp/com\.apple\.csseed\.")
     (ipc-posix-name "FNetwork.defaultStorageSession")
     (ipc-posix-name "apple.shm.notification_center"))
 

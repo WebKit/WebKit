@@ -1,5 +1,21 @@
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r151939
+
+    2013-06-24  Simon Cooper  <scooper@apple.com>
+
+            Java sandbox violation ipc-posix-shm-read-data /tmp/com.apple.csseed.67
+            https://bugs.webkit.org/show_bug.cgi?id=117954
+            <rdar://problem/14166577>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Permit read access to this shared memory segment
+
+            * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
+2013-06-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151938
 
     2013-06-24  Simon Cooper  <scooper@apple.com>
