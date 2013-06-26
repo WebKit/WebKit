@@ -15,6 +15,7 @@
     "com.apple.ist.ds.appleconnect2.production"
     "com.apple.ist.ds.appleconnect2.uat"
     "com.apple.Kerberos"
+    "com.apple.networkConnect"
     "edu.mit.Kerberos")
 
 (allow file-read*
