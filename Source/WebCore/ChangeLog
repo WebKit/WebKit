@@ -1,5 +1,12 @@
 2013-06-26  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Unreviewed build correction after r152035.
+
+        * page/CaptionUserPreferencesMediaAF.cpp: Don't attempt to include CoreText.h
+          if we do not have MediaAccessibility Framework.
+
+2013-06-26  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Enable CaptionUserPreferencesMediaAF on Windows.
         https://bugs.webkit.org/show_bug.cgi?id=118076
 
