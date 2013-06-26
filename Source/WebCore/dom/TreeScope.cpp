@@ -343,8 +343,8 @@ Element* TreeScope::findAnchor(const String& name)
     if (Element* element = getElementById(name))
         return element;
     for (Element* element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::next(element)) {
-        if (element->hasTagName(aTag)) {
-            HTMLAnchorElement* anchor = static_cast<HTMLAnchorElement*>(element);
+        if (isHTMLAnchorElement(element)) {
+            HTMLAnchorElement* anchor = toHTMLAnchorElement(element);
             if (rootNode()->document()->inQuirksMode()) {
                 // Quirks mode, case insensitive comparison of names.
                 if (equalIgnoringCase(anchor->name(), name))

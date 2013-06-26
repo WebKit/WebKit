@@ -38,6 +38,7 @@
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
@@ -2890,8 +2891,7 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
         curr = curr->parent();
         if (curr && curr->isAnonymousBlock() && toRenderBlock(curr)->continuation())
             curr = toRenderBlock(curr)->continuation();
-    } while (curr && decorations && (!quirksMode || !curr->node() ||
-                                     (!curr->node()->hasTagName(aTag) && !curr->node()->hasTagName(fontTag))));
+    } while (curr && decorations && (!quirksMode || !curr->node() || (!isHTMLAnchorElement(curr->node()) && !curr->node()->hasTagName(fontTag))));
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (decorations && curr) {

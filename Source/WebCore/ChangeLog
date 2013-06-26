@@ -1,3 +1,43 @@
+2013-06-25  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLAnchorElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=117973
+
+        Reviewed by Andreas Kling.
+
+        To enhance readibility, this patch adopts is/toHTMLAnchorElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::anchorElement):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::internalLinkElement):
+        (WebCore::AccessibilityRenderObject::url):
+        (WebCore::AccessibilityRenderObject::stringValueForMSAA):
+        (WebCore::AccessibilityRenderObject::isLinked):
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::elementCanUseSimpleDefaultStyle):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * dom/Document.cpp:
+        (WebCore::Document::updateBaseURL):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::findAnchor):
+        * dom/VisitedLinkState.cpp:
+        (WebCore::linkHashForElement):
+        (WebCore::VisitedLinkState::determineLinkStateSlowCase):
+        * html/HTMLAnchorElement.h:
+        (WebCore::isHTMLAnchorElement):
+        (WebCore::toHTMLAnchorElement):
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteLinkURL):
+        (WebCore::HitTestResult::isLiveLink):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTextDecorationColors):
+
 2013-06-25  Dean Jackson  <dino@apple.com>
 
         Don't snapshot plug-ins that come from the same host as the page

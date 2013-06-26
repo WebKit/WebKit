@@ -1,3 +1,16 @@
+2013-06-25  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLAnchorElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=117973
+
+        Reviewed by Andreas Kling.
+
+        To enhance readibility, this patch adopts is/toHTMLAnchorElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::isElementClickable):
+
 2013-06-24  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLFormElement for code cleanup

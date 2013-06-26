@@ -920,7 +920,7 @@ Element* AccessibilityNodeObject::anchorElement() const
     // search up the DOM tree for an anchor element
     // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElement
     for ( ; node; node = node->parentNode()) {
-        if (node->hasTagName(aTag) || (node->renderer() && cache->getOrCreate(node->renderer())->isAnchor()))
+        if (isHTMLAnchorElement(node) || (node->renderer() && cache->getOrCreate(node->renderer())->isAnchor()))
             return toElement(node);
     }
 

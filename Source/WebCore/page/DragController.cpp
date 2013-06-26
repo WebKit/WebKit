@@ -666,8 +666,8 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
                     return toElement(node);
                 }
                 if ((m_dragSourceAction & DragSourceActionLink)
-                    && node->hasTagName(HTMLNames::aTag)
-                    && static_cast<HTMLAnchorElement*>(node)->isLiveLink()) {
+                    && isHTMLAnchorElement(node)
+                    && toHTMLAnchorElement(node)->isLiveLink()) {
                     state.type = static_cast<DragSourceAction>(state.type | DragSourceActionLink);
                     return toElement(node);
                 }
