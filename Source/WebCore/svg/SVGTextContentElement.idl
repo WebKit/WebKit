@@ -27,8 +27,7 @@
     Conditional=SVG
 ] interface SVGTextContentElement : SVGStyledElement,
                                                     SVGTests,
-                                                    SVGLangSpace,
-                                                    SVGExternalResourcesRequired {
+                                                    SVGLangSpace {
     // lengthAdjust Types
     const unsigned short LENGTHADJUST_UNKNOWN          = 0;
     const unsigned short LENGTHADJUST_SPACING          = 1;
@@ -50,3 +49,4 @@
                          [Default=Undefined,IsIndex] optional unsigned long length);
 };
 
+SVGTextContentElement implements SVGExternalResourcesRequired;

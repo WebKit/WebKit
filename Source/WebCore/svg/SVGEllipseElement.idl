@@ -28,7 +28,6 @@
 ] interface SVGEllipseElement : SVGStyledElement,
                                                 SVGTests,
                                                 SVGLangSpace,
-                                                SVGExternalResourcesRequired,
                                                 SVGTransformable {
     readonly attribute SVGAnimatedLength cx;
     readonly attribute SVGAnimatedLength cy;
@@ -36,3 +35,4 @@
     readonly attribute SVGAnimatedLength ry;
 };
 
+SVGEllipseElement implements SVGExternalResourcesRequired;

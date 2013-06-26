@@ -1,3 +1,50 @@
+2013-06-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Stop inheriting SVGExternalResourcesRequired, SVGFitToViewBox and SVGZoomAndPan
+        https://bugs.webkit.org/show_bug.cgi?id=118029
+
+        Reviewed by Kentaro Hara.
+
+        Stop inheriting SVGExternalResourcesRequired, SVGFitToViewBox and SVGZoomAndPan
+        in the IDL and use implements statements instead.
+
+        This is one step towards getting rid of multiple inheritance in the SVG code
+        and matching the latest specification:
+        http://www.w3.org/TR/SVG2/types.html#BasicDOMInterfaces
+
+        There is no webexposed behavior change.
+
+        No new tests, no behavior change.
+
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGCircleElement.idl:
+        * svg/SVGClipPathElement.idl:
+        * svg/SVGCursorElement.idl:
+        * svg/SVGDefsElement.idl:
+        * svg/SVGEllipseElement.idl:
+        * svg/SVGFEImageElement.idl:
+        * svg/SVGFilterElement.idl:
+        * svg/SVGForeignObjectElement.idl:
+        * svg/SVGGElement.idl:
+        * svg/SVGGradientElement.idl:
+        * svg/SVGImageElement.idl:
+        * svg/SVGLineElement.idl:
+        * svg/SVGMPathElement.idl:
+        * svg/SVGMarkerElement.idl:
+        * svg/SVGMaskElement.idl:
+        * svg/SVGPathElement.idl:
+        * svg/SVGPatternElement.idl:
+        * svg/SVGPolygonElement.idl:
+        * svg/SVGPolylineElement.idl:
+        * svg/SVGRectElement.idl:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGScriptElement.idl:
+        * svg/SVGSwitchElement.idl:
+        * svg/SVGSymbolElement.idl:
+        * svg/SVGTextContentElement.idl:
+        * svg/SVGUseElement.idl:
+        * svg/SVGViewSpec.idl:
+
 2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use-after-free in RadioInputType::handleKeydownEvent

@@ -26,10 +26,7 @@
 [
     Conditional=SVG,
     DoNotCheckConstants
-] interface SVGGradientElement : SVGStyledElement,
-                       SVGURIReference,
-                       SVGExternalResourcesRequired
-                       /* SVGUnitTypes */ {
+] interface SVGGradientElement : SVGStyledElement, SVGURIReference {
     // Spread Method Types
     const unsigned short SVG_SPREADMETHOD_UNKNOWN = 0;
     const unsigned short SVG_SPREADMETHOD_PAD     = 1;
@@ -41,3 +38,4 @@
     readonly attribute SVGAnimatedEnumeration   spreadMethod;
 };
 
+SVGGradientElement implements SVGExternalResourcesRequired;

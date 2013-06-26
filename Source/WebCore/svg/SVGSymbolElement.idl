@@ -25,9 +25,8 @@
 
 [
     Conditional=SVG
-] interface SVGSymbolElement : SVGStyledElement,
-                                               SVGLangSpace,
-                                               SVGExternalResourcesRequired,
-                                               SVGFitToViewBox {
+] interface SVGSymbolElement : SVGStyledElement, SVGLangSpace {
 };
 
+SVGSymbolElement implements SVGExternalResourcesRequired;
+SVGSymbolElement implements SVGFitToViewBox;

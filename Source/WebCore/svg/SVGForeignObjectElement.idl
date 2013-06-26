@@ -28,7 +28,6 @@
 ] interface SVGForeignObjectElement : SVGStyledElement,
                                                       SVGTests,
                                                       SVGLangSpace,
-                                                      SVGExternalResourcesRequired,
                                                       SVGTransformable {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
@@ -36,3 +35,4 @@
     readonly attribute SVGAnimatedLength height;
 };
 
+SVGForeignObjectElement implements SVGExternalResourcesRequired;

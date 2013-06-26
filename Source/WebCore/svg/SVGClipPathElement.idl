@@ -29,9 +29,9 @@
 ] interface SVGClipPathElement : SVGStyledElement,
                                                  SVGTests,
                                                  SVGLangSpace,
-                                                 SVGExternalResourcesRequired,
                                                  SVGTransformable
                                               /* SVGUnitTypes */ { 
     readonly attribute SVGAnimatedEnumeration clipPathUnits;
 };
 
+SVGClipPathElement implements SVGExternalResourcesRequired;

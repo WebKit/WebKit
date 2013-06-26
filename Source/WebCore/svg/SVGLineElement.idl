@@ -28,7 +28,6 @@
 ] interface SVGLineElement : SVGStyledElement,
                                              SVGTests,
                                              SVGLangSpace,
-                                             SVGExternalResourcesRequired,
                                              SVGTransformable {
     readonly attribute SVGAnimatedLength x1;
     readonly attribute SVGAnimatedLength y1;
@@ -36,3 +35,4 @@
     readonly attribute SVGAnimatedLength y2;
 };
 
+SVGLineElement implements SVGExternalResourcesRequired;

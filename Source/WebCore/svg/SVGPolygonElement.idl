@@ -28,9 +28,9 @@
 ] interface SVGPolygonElement : SVGStyledElement,
                                                 SVGTests,
                                                 SVGLangSpace,
-                                                SVGExternalResourcesRequired,
                                                 SVGTransformable {
     readonly attribute SVGPointList points;
     readonly attribute SVGPointList animatedPoints;
 };
 
+SVGPolygonElement implements SVGExternalResourcesRequired;

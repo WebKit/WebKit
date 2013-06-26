@@ -38,9 +38,6 @@
 
       // SVGZoomAndPan
       [SetterRaisesException] attribute unsigned short zoomAndPan;
-
-      // SVGFitToViewBox
-      readonly attribute SVGAnimatedRect viewBox;
-      readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 };
 
+SVGViewSpec implements SVGFitToViewBox;

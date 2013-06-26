@@ -29,7 +29,6 @@
                                             SVGURIReference,
                                             SVGTests,
                                             SVGLangSpace,
-                                            SVGExternalResourcesRequired,
                                             SVGTransformable {
     readonly attribute SVGAnimatedLength   x;
     readonly attribute SVGAnimatedLength   y;
@@ -40,3 +39,4 @@
     readonly attribute SVGElementInstance animatedInstanceRoot;
 };
 
+SVGUseElement implements SVGExternalResourcesRequired;

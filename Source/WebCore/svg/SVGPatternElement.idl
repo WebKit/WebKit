@@ -28,10 +28,7 @@
 ] interface SVGPatternElement : SVGStyledElement,
                                                 SVGURIReference,
                                                 SVGTests,
-                                                SVGLangSpace,
-                                                SVGExternalResourcesRequired,
-                                                SVGFitToViewBox
-                                             /* SVGUnitTypes */ {
+                                                SVGLangSpace {
     readonly attribute SVGAnimatedEnumeration   patternUnits;
     readonly attribute SVGAnimatedEnumeration   patternContentUnits;
     readonly attribute SVGAnimatedTransformList patternTransform;
@@ -41,3 +38,5 @@
     readonly attribute SVGAnimatedLength        height;
 };
 
+SVGPatternElement implements SVGExternalResourcesRequired;
+SVGPatternElement implements SVGFitToViewBox;

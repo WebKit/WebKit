@@ -27,9 +27,9 @@
     Conditional=SVG
 ] interface SVGCursorElement : SVGElement,
                                                SVGURIReference,
-                                               SVGTests,
-                                               SVGExternalResourcesRequired {
+                                               SVGTests {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
 };
 
+SVGCursorElement implements SVGExternalResourcesRequired;

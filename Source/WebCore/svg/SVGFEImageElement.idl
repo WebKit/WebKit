@@ -28,8 +28,8 @@
 ] interface SVGFEImageElement : SVGStyledElement,
                                                         SVGURIReference,
                                                         SVGLangSpace,
-                                                        SVGExternalResourcesRequired,
                                                         SVGFilterPrimitiveStandardAttributes {
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 };
 
+SVGFEImageElement implements SVGExternalResourcesRequired;

@@ -28,7 +28,6 @@
     Conditional=SVG,
 ] interface SVGAnimationElement : SVGElement,
                                                   SVGTests,
-                                                  SVGExternalResourcesRequired,
                                                   ElementTimeControl {
     readonly attribute SVGElement targetElement;
 
@@ -37,3 +36,4 @@
     [RaisesException] float getSimpleDuration();
 };
 
+SVGAnimationElement implements SVGExternalResourcesRequired;

@@ -28,10 +28,7 @@
 ] interface SVGSVGElement : SVGStyledElement,
                                             SVGTests,
                                             SVGLangSpace,
-                                            SVGExternalResourcesRequired,
-                                            SVGTransformable,
-                                            SVGFitToViewBox,
-                                            SVGZoomAndPan {
+                                            SVGTransformable {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
     readonly attribute SVGAnimatedLength width;
@@ -78,3 +75,6 @@
     Element getElementById([Default=Undefined] optional DOMString elementId);
 };
 
+SVGSVGElement implements SVGExternalResourcesRequired;
+SVGSVGElement implements SVGFitToViewBox;
+SVGSVGElement implements SVGZoomAndPan;

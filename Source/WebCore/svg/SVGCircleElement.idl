@@ -29,10 +29,10 @@
 ] interface SVGCircleElement : SVGStyledElement,
                                                SVGTests,
                                                SVGLangSpace,
-                                               SVGExternalResourcesRequired,
                                                SVGTransformable {
     readonly attribute SVGAnimatedLength cx;
     readonly attribute SVGAnimatedLength cy;
     readonly attribute SVGAnimatedLength r;
 };
 
+SVGCircleElement implements SVGExternalResourcesRequired;
