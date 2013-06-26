@@ -1,3 +1,14 @@
+2013-06-25  Alberto Garcia  <agarcia@igalia.com>
+
+        [GTK] [WK2] Cannot make debug builds of the stable branch
+        https://bugs.webkit.org/show_bug.cgi?id=117979
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add missing source files to WebKitPluginProcess.
+
+        * GNUmakefile.list.am:
+
 2013-04-12  Hanyee Kim  <choco@company100.net>
 
         [GTK] Webkit fails to build webkit2gtk-tests-resources.gresource.
