@@ -300,6 +300,8 @@
 
 ;; Silently block access to some resources
 (deny file-read* file-write* (with no-log)
+    (subpath "/Network/Library")
+    (subpath "/Network/Applications")
     (home-library-preferences-regex #"/com\.apple\.internetconfig(priv)?\.plist")
 
     ;; FIXME: Should be removed after <rdar://problem/9422957> is fixed.
