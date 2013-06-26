@@ -718,6 +718,30 @@ bool AccessibilityNodeObject::isRequired() const
     return false;
 }
 
+bool AccessibilityNodeObject::supportsRequiredAttribute() const
+{
+    switch (roleValue()) {
+    case CheckBoxRole:
+    case ComboBoxRole:
+    case GridRole:
+    case IncrementorRole:
+    case ListBoxRole:
+    case PopUpButtonRole:
+    case RadioButtonRole:
+    case RadioGroupRole:
+    case RowHeaderRole:
+    case SliderRole:
+    case SpinButtonRole:
+    case TableHeaderContainerRole:
+    case TextAreaRole:
+    case TextFieldRole:
+    case ToggleButtonRole:
+        return true;
+    default:
+        return false;
+    }
+}
+
 int AccessibilityNodeObject::headingLevel() const
 {
     // headings can be in block flow and non-block flow
