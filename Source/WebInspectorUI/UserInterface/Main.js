@@ -353,7 +353,13 @@ WebInspector.displayNameForURL = function(url, urlComponents)
 {
     if (!urlComponents)
         urlComponents = parseURL(url);
-    return decodeURIComponent(urlComponents.lastPathComponent || "") || WebInspector.displayNameForHost(urlComponents.host) || url;
+    var displayName;
+    try {
+        displayName = decodeURIComponent(urlComponents.lastPathComponent || "");
+    } catch (e) {
+        displayName = urlComponents.lastPathComponent;
+    }
+    return displayName || WebInspector.displayNameForHost(urlComponents.host) || url;
 }
 
 WebInspector.displayNameForHost = function(host)
