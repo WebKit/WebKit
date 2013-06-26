@@ -1,3 +1,31 @@
+2013-06-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Get rid of multiple inheritence for SVGViewElement interface
+        https://bugs.webkit.org/show_bug.cgi?id=118014
+
+        Reviewed by Kentaro Hara.
+
+        Update / Rebaseline several SVG test cases now that SVGZoomAndPan interface
+        is no longer exposed.
+
+        * fast/js/global-constructors-attributes-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt:
+        * svg/custom/global-constructors-expected.txt:
+        * svg/custom/js-svg-constructors-expected.txt:
+        * svg/custom/js-svg-constructors.svg:
+        * svg/custom/script-tests/global-constructors.js:
+        * svg/dom/SVGViewSpec-defaults-expected.txt:
+        * svg/dom/SVGViewSpec-expected.txt:
+        * svg/dom/resources/viewspec-parser.js:
+        (zoomAndPanToString):
+        (viewSpecToString):
+        * svg/dom/script-tests/SVGViewSpec-defaults.js:
+        * svg/dom/script-tests/SVGViewSpec.js:
+        (continueTesting):
+
 2013-06-25  Krzysztof Czech  <k.czech@samsung.com>
 
         [AX][ATK] Update accessibility baselines after r151953

@@ -649,6 +649,7 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGElementInstanceList.idl
     svg/SVGEllipseElement.idl
     svg/SVGException.idl
+    svg/SVGExternalResourcesRequired.idl
     svg/SVGFEBlendElement.idl
     svg/SVGFEColorMatrixElement.idl
     svg/SVGFEComponentTransferElement.idl
@@ -675,6 +676,7 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGFETileElement.idl
     svg/SVGFETurbulenceElement.idl
     svg/SVGFilterElement.idl
+    svg/SVGFitToViewBox.idl
     svg/SVGFontElement.idl
     svg/SVGFontFaceElement.idl
     svg/SVGFontFaceFormatElement.idl

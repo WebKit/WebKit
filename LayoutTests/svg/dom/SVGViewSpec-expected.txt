@@ -32,7 +32,7 @@ PASS currentView.viewTargetString is "blub"
 PASS currentView.viewTarget is null
 
 Check zoomAndPan value
-PASS currentView.zoomAndPan is SVGZoomAndPan.SVG_ZOOMANDPAN_DISABLE
+PASS currentView.zoomAndPan is SVGViewElement.SVG_ZOOMANDPAN_DISABLE
 
 Check viewBox value
 PASS currentView.viewBox.baseVal.x is 0

@@ -29,9 +29,9 @@ var characters = [
 
 function zoomAndPanToString(zoomAndPan)
 {
-    if (zoomAndPan == SVGZoomAndPan.SVG_ZOOMANDPAN_MAGNIFY)
+    if (zoomAndPan == SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY)
         return "magnify";
-    if (zoomAndPan == SVGZoomAndPan.SVG_ZOOMANDPAN_DISABLE)
+    if (zoomAndPan == SVGViewElement.SVG_ZOOMANDPAN_DISABLE)
         return "disable";
     return "unknown";
 }
@@ -48,7 +48,7 @@ function viewSpecToString(viewSpec)
         attributes.push("viewBox(" + viewSpec.viewBoxString + ")");
     if (viewSpec.preserveAspectRatioString && viewSpec.preserveAspectRatioString != "xMidYMid meet")
         attributes.push("preserveAspectRatio(" + viewSpec.preserveAspectRatioString + ")");
-    if (viewSpec.zoomAndPan && viewSpec.zoomAndPan != SVGZoomAndPan.SVG_ZOOMANDPAN_MAGNIFY)
+    if (viewSpec.zoomAndPan && viewSpec.zoomAndPan != SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY)
         attributes.push("zoomAndPan(" + zoomAndPanToString(viewSpec.zoomAndPan) + ")");
     if (viewSpec.viewTargetString)
         attributes.push("viewTarget(" + viewSpec.viewTargetString + ")");

@@ -7,7 +7,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Check initial SVGSVGElement.currentView values on a SVGSVGElement
 PASS currentView.transform.numberOfItems is 0
 PASS currentView.viewTarget is null
-PASS currentView.zoomAndPan is SVGZoomAndPan.SVG_ZOOMANDPAN_MAGNIFY
+PASS currentView.zoomAndPan is SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY
 PASS currentView.viewBox.baseVal.x is 0
 PASS currentView.viewBox.baseVal.y is 0
 PASS currentView.viewBox.baseVal.width is 0
@@ -18,11 +18,11 @@ PASS currentView.viewBoxString is "0 0 0 0"
 PASS currentView.preserveAspectRatioString is "xMidYMid meet"
 PASS currentView.transformString is ""
 PASS currentView.viewTargetString is ""
-PASS currentView.zoomAndPan is SVGZoomAndPan.SVG_ZOOMANDPAN_MAGNIFY
+PASS currentView.zoomAndPan is SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY
 
 Try changing zoomAndPan - none of these will work, as SVGViewSpec is fully readonly - even the animated properties it inherits from parent classes like SVGZoomAndPan/SVGFitToViewBox
-PASS currentView.zoomAndPan = SVGZoomAndPan.SVG_ZOOMANDPAN_DISABLE threw exception Error: NoModificationAllowedError: DOM Exception 7.
-PASS currentView.zoomAndPan is SVGZoomAndPan.SVG_ZOOMANDPAN_MAGNIFY
+PASS currentView.zoomAndPan = SVGViewElement.SVG_ZOOMANDPAN_DISABLE threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS currentView.zoomAndPan is SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY
 
 Try changing viewBox - this has no affect on the SVGSVGElement the viewSpec belongs to - it exposed all its properties as read-only
 PASS currentView.viewBox.baseVal.x = 10 threw exception Error: NoModificationAllowedError: DOM Exception 7.

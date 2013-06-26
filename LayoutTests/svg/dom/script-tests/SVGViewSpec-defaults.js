@@ -11,7 +11,7 @@ debug("");
 debug("Check initial SVGSVGElement.currentView values on a SVGSVGElement");
 shouldBe("currentView.transform.numberOfItems", "0");
 shouldBeNull("currentView.viewTarget");
-shouldBe("currentView.zoomAndPan", "SVGZoomAndPan.SVG_ZOOMANDPAN_MAGNIFY");
+shouldBe("currentView.zoomAndPan", "SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY");
 shouldBe("currentView.viewBox.baseVal.x", "0");
 shouldBe("currentView.viewBox.baseVal.y", "0");
 shouldBe("currentView.viewBox.baseVal.width", "0");
@@ -22,12 +22,12 @@ shouldBeEqualToString("currentView.viewBoxString", "0 0 0 0");
 shouldBeEqualToString("currentView.preserveAspectRatioString", "xMidYMid meet");
 shouldBeEqualToString("currentView.transformString", "");
 shouldBeEqualToString("currentView.viewTargetString", "");
-shouldBe("currentView.zoomAndPan", "SVGZoomAndPan.SVG_ZOOMANDPAN_MAGNIFY");
+shouldBe("currentView.zoomAndPan", "SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY");
 
 debug("");
 debug("Try changing zoomAndPan - none of these will work, as SVGViewSpec is fully readonly - even the animated properties it inherits from parent classes like SVGZoomAndPan/SVGFitToViewBox");
-shouldThrow("currentView.zoomAndPan = SVGZoomAndPan.SVG_ZOOMANDPAN_DISABLE");
-shouldBe("currentView.zoomAndPan", "SVGZoomAndPan.SVG_ZOOMANDPAN_MAGNIFY");
+shouldThrow("currentView.zoomAndPan = SVGViewElement.SVG_ZOOMANDPAN_DISABLE");
+shouldBe("currentView.zoomAndPan", "SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY");
 
 debug("");
 debug("Try changing viewBox - this has no affect on the SVGSVGElement the viewSpec belongs to - it exposed all its properties as read-only");

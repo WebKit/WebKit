@@ -71,7 +71,7 @@ function continueTesting() {
 
     debug("");
     debug("Check zoomAndPan value");
-    shouldBe("currentView.zoomAndPan", "SVGZoomAndPan.SVG_ZOOMANDPAN_DISABLE");
+    shouldBe("currentView.zoomAndPan", "SVGViewElement.SVG_ZOOMANDPAN_DISABLE");
 
     debug("");
     debug("Check viewBox value");

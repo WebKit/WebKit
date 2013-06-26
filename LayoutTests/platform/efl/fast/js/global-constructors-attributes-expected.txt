@@ -1743,11 +1743,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'SVGViewSpec').hasOwnProperty('get'
 PASS Object.getOwnPropertyDescriptor(global, 'SVGViewSpec').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGViewSpec').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGViewSpec').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'SVGZoomAndPan').value is SVGZoomAndPan
-PASS Object.getOwnPropertyDescriptor(global, 'SVGZoomAndPan').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGZoomAndPan').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGZoomAndPan').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGZoomAndPan').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SVGZoomEvent').value is SVGZoomEvent
 PASS Object.getOwnPropertyDescriptor(global, 'SVGZoomEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGZoomEvent').hasOwnProperty('set') is false

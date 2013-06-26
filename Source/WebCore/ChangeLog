@@ -1,3 +1,31 @@
+2013-06-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Get rid of multiple inheritence for SVGViewElement interface
+        https://bugs.webkit.org/show_bug.cgi?id=118014
+
+        Reviewed by Kentaro Hara.
+
+        Web IDL no longer supports multiple inheritence. As per the latest
+        specification SVGViewElement should only inherit from SVGElement.
+        'implements' statements are used for the rest. This patch refactors
+        the IDL files to match the latest specification:
+        http://www.w3.org/TR/SVG2/linking.html#InterfaceSVGViewElement
+
+        Note that there is a WebExposed change as SVGZoomAndPan used to be
+        exposed on the Window and it is not anymore. SVGZoomAndPan merely
+        supplements SVGViewElement and should not be exposed to JavaScript
+        according to the latest specification.
+
+        No new tests, covered by existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * svg/SVGExternalResourcesRequired.idl:
+        * svg/SVGFitToViewBox.idl:
+        * svg/SVGViewElement.idl:
+        * svg/SVGZoomAndPan.idl:
+
 2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mark SVG(Circle|Path|Rect)Element::createRenderer() with OVERRIDE

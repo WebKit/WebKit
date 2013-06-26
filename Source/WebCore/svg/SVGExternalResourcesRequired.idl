@@ -28,7 +28,6 @@
     NoInterfaceObject,
     Conditional=SVG,
     ObjCProtocol,
-    SuppressToJSObject,
 ] interface SVGExternalResourcesRequired { 
     readonly attribute SVGAnimatedBoolean externalResourcesRequired;
 };

@@ -532,6 +532,7 @@ enable?(SVG) {
     $$PWD/svg/SVGElementInstanceList.idl \
     $$PWD/svg/SVGEllipseElement.idl \
     $$PWD/svg/SVGException.idl \
+    $$PWD/svg/SVGExternalResourcesRequired.idl \
     $$PWD/svg/SVGFEBlendElement.idl \
     $$PWD/svg/SVGFEColorMatrixElement.idl \
     $$PWD/svg/SVGFEComponentTransferElement.idl \
@@ -558,6 +559,7 @@ enable?(SVG) {
     $$PWD/svg/SVGFETileElement.idl \
     $$PWD/svg/SVGFETurbulenceElement.idl \
     $$PWD/svg/SVGFilterElement.idl \
+    $$PWD/svg/SVGFitToViewBox.idl \
     $$PWD/svg/SVGFontElement.idl \
     $$PWD/svg/SVGFontFaceElement.idl \
     $$PWD/svg/SVGFontFaceFormatElement.idl \
