@@ -1981,6 +1981,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // update the active state.
     if ([self window]) {
         _data->_windowHasValidBackingStore = NO;
+        [self doWindowDidChangeScreen];
         [self _updateWindowVisibility];
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
 
@@ -2037,9 +2038,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [self _updateSecureInputState];
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
     }
-
-    // Send a change screen to make sure the initial displayID is set
-    [self doWindowDidChangeScreen];
 }
 
 - (void)_windowDidChangeScreen:(NSNotification *)notification

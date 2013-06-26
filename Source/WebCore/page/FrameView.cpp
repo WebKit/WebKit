@@ -3975,6 +3975,14 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
     return parentPoint;
 }
 
+PlatformDisplayID FrameView::windowDisplayID() const
+{
+    if (Page* page = m_frame->page())
+        return page->displayID();
+    
+    return Widget::windowDisplayID();
+}
+
 // Normal delay
 void FrameView::setRepaintThrottlingDeferredRepaintDelay(double p)
 {

@@ -161,6 +161,11 @@ IntPoint Widget::convertFromContainingWindowToRoot(const Widget*, const IntPoint
 {
     return point;
 }
+
+PlatformDisplayID Widget::windowDisplayID() const
+{
+    return 0;
+}
 #endif
 
 IntRect Widget::convertToContainingView(const IntRect& localRect) const
