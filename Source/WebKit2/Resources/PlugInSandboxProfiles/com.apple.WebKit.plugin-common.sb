@@ -108,6 +108,12 @@
 ;; Read-only data
 (allow file-read*
     (literal "/")
+    (literal "/private/etc/hosts")
+    (literal "/private/etc/protocols")
+    (literal "/private/etc/services")
+    (literal "/private/etc/resolv.conf")
+    (literal "/private/var/run/resolv.conf")
+
     (subpath "/Library/Frameworks")
     (subpath "/private/var/db/mds")
 
