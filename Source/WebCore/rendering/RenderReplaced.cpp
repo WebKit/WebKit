@@ -248,12 +248,6 @@ bool RenderReplaced::hasReplacedLogicalHeight() const
     return false;
 }
 
-static inline bool rendererHasAspectRatio(const RenderObject* renderer)
-{
-    ASSERT(renderer);
-    return renderer->isImage() || renderer->isCanvas() || renderer->isVideo();
-}
-
 void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* contentRenderer, FloatSize& constrainedSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const
 {
     FloatSize intrinsicSize;
@@ -266,7 +260,7 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
         if (!isPercentageIntrinsicSize)
             intrinsicSize.scale(style()->effectiveZoom());
 
-        if (rendererHasAspectRatio(this) && isPercentageIntrinsicSize)
+        if (hasAspectRatio() && isPercentageIntrinsicSize)
             intrinsicRatio = 1;
             
         // Update our intrinsic size to match what the content renderer has computed, so that when we
@@ -312,7 +306,7 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
     intrinsicSize = FloatSize(intrinsicLogicalWidth(), intrinsicLogicalHeight());
 
     // Figure out if we need to compute an intrinsic ratio.
-    if (intrinsicSize.isEmpty() || !rendererHasAspectRatio(this))
+    if (intrinsicSize.isEmpty() || !hasAspectRatio())
         return;
 
     intrinsicRatio = intrinsicSize.width() / intrinsicSize.height();

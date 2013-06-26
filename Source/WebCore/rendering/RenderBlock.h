@@ -1094,6 +1094,8 @@ private:
     static void repaintDirtyFloats(Vector<FloatWithRect>& floats);
 
 protected:
+    void dirtyForLayoutFromPercentageHeightDescendants();
+    
     void determineLogicalLeftPositionForChild(RenderBox* child, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
 
     // Pagination routines.
