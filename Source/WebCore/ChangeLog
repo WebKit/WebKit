@@ -1,3 +1,20 @@
+2013-06-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Prepare CaptionUserPreferencesMac for use on Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=118069
+
+        Reviewed by Eric Carlson.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add new files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Update for new file name.
+        * page/CaptionUserPreferencesMac.h: Removed.
+        * page/CaptionUserPreferencesMac.mm: Removed.
+        * page/CaptionUserPreferencesMediaAF.cpp: Copied from page/CaptionUserPreferencesMac.mm.
+        * page/CaptionUserPreferencesMediaAF.h: Copied from page/CaptionUserPreferencesMac.h.
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::captionPreferences): Updated to new class name.
+
 2013-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove unneccesary cast to Node* in MediaControlTextTrackContainerElement::updateDisplay

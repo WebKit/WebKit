@@ -20,11 +20,11 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CaptionUserPreferencesMac_h
-#define CaptionUserPreferencesMac_h
+#ifndef CaptionUserPreferencesMediaAF_h
+#define CaptionUserPreferencesMediaAF_h
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -35,10 +35,10 @@
 
 namespace WebCore {
 
-class CaptionUserPreferencesMac : public CaptionUserPreferences {
+class CaptionUserPreferencesMediaAF : public CaptionUserPreferences {
 public:
-    static PassOwnPtr<CaptionUserPreferencesMac> create(PageGroup* group) { return adoptPtr(new CaptionUserPreferencesMac(group)); }
-    virtual ~CaptionUserPreferencesMac();
+    static PassOwnPtr<CaptionUserPreferencesMediaAF> create(PageGroup* group) { return adoptPtr(new CaptionUserPreferencesMediaAF(group)); }
+    virtual ~CaptionUserPreferencesMediaAF();
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     virtual CaptionDisplayMode captionDisplayMode() const OVERRIDE;
@@ -46,7 +46,7 @@ public:
 
     virtual bool userPrefersCaptions() const OVERRIDE;
     virtual bool userPrefersSubtitles() const OVERRIDE;
-    
+
     virtual float captionFontSizeScaleAndImportance(bool&) const OVERRIDE;
 
     virtual void setInterestedInCaptionPreferenceChanges() OVERRIDE;
@@ -67,7 +67,7 @@ public:
     virtual String displayNameForTrack(TextTrack*) const OVERRIDE;
 
 private:
-    CaptionUserPreferencesMac(PageGroup*);
+    CaptionUserPreferencesMediaAF(PageGroup*);
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     String captionsWindowCSS() const;
@@ -84,7 +84,7 @@ private:
     bool m_listeningForPreferenceChanges;
 #endif
 };
-    
+
 }
 #endif
 

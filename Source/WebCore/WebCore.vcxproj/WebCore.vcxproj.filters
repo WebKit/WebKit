@@ -7033,6 +7033,9 @@
     <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLES.cpp">
       <Filter>platform\graphics\opengl</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\CaptionUserPreferencesMediaAF.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -14719,6 +14722,12 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\opengl\GLPlatformSurface.h">
       <Filter>platform\graphics\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\CaptionUserPreferences.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\CaptionUserPreferencesMediaAF.h">
+      <Filter>page</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

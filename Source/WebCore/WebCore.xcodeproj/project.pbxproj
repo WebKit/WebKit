@@ -121,8 +121,8 @@
 		07941792166E855F009416C2 /* InbandTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07941790166E855F009416C2 /* InbandTextTrack.h */; };
 		07941794166EA04E009416C2 /* InbandTextTrackPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07941793166EA04E009416C2 /* InbandTextTrackPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		079D0868162F20E800DB8658 /* CaptionUserPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 079D0867162F20E800DB8658 /* CaptionUserPreferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		079D086B162F21F900DB8658 /* CaptionUserPreferencesMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 079D0869162F21F900DB8658 /* CaptionUserPreferencesMac.h */; };
-		079D086C162F21F900DB8658 /* CaptionUserPreferencesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 079D086A162F21F900DB8658 /* CaptionUserPreferencesMac.mm */; };
+		079D086B162F21F900DB8658 /* CaptionUserPreferencesMediaAF.h in Headers */ = {isa = PBXBuildFile; fileRef = 079D0869162F21F900DB8658 /* CaptionUserPreferencesMediaAF.h */; };
+		079D086C162F21F900DB8658 /* CaptionUserPreferencesMediaAF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 079D086A162F21F900DB8658 /* CaptionUserPreferencesMediaAF.cpp */; };
 		07A6D1EB1491137700051D0C /* MediaFragmentURIParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07A6D1E91491137700051D0C /* MediaFragmentURIParser.cpp */; };
 		07A6D1EC1491137700051D0C /* MediaFragmentURIParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A6D1EA1491137700051D0C /* MediaFragmentURIParser.h */; };
 		07AA6B6B166D2C0700D45671 /* InbandTextTrackPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */; };
@@ -6323,8 +6323,8 @@
 		07941790166E855F009416C2 /* InbandTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrack.h; sourceTree = "<group>"; };
 		07941793166EA04E009416C2 /* InbandTextTrackPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivate.h; sourceTree = "<group>"; };
 		079D0867162F20E800DB8658 /* CaptionUserPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptionUserPreferences.h; sourceTree = "<group>"; };
-		079D0869162F21F900DB8658 /* CaptionUserPreferencesMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptionUserPreferencesMac.h; sourceTree = "<group>"; };
-		079D086A162F21F900DB8658 /* CaptionUserPreferencesMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CaptionUserPreferencesMac.mm; sourceTree = "<group>"; };
+		079D0869162F21F900DB8658 /* CaptionUserPreferencesMediaAF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptionUserPreferencesMediaAF.h; sourceTree = "<group>"; };
+		079D086A162F21F900DB8658 /* CaptionUserPreferencesMediaAF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CaptionUserPreferencesMediaAF.cpp; sourceTree = "<group>"; };
 		079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivate.h; sourceTree = "<group>"; };
 		07A6D1E91491137700051D0C /* MediaFragmentURIParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFragmentURIParser.cpp; sourceTree = "<group>"; };
 		07A6D1EA1491137700051D0C /* MediaFragmentURIParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaFragmentURIParser.h; sourceTree = "<group>"; };
@@ -14664,8 +14664,8 @@
 				BC124EE60C2641CD009E2349 /* BarProp.idl */,
 				072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */,
 				079D0867162F20E800DB8658 /* CaptionUserPreferences.h */,
-				079D0869162F21F900DB8658 /* CaptionUserPreferencesMac.h */,
-				079D086A162F21F900DB8658 /* CaptionUserPreferencesMac.mm */,
+				079D0869162F21F900DB8658 /* CaptionUserPreferencesMediaAF.h */,
+				079D086A162F21F900DB8658 /* CaptionUserPreferencesMediaAF.cpp */,
 				14D8238A0AF92DF60004F057 /* Chrome.cpp */,
 				14D823500AF92A790004F057 /* Chrome.h */,
 				14D824060AF93AEB0004F057 /* ChromeClient.h */,
@@ -21082,7 +21082,7 @@
 				49484FCB102CF23C00187DD3 /* CanvasRenderingContext2D.h in Headers */,
 				49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */,
 				079D0868162F20E800DB8658 /* CaptionUserPreferences.h in Headers */,
-				079D086B162F21F900DB8658 /* CaptionUserPreferencesMac.h in Headers */,
+				079D086B162F21F900DB8658 /* CaptionUserPreferencesMediaAF.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				E1A8E56717552B2A007488E7 /* CFURLExtras.h in Headers */,
 				FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */,
@@ -24517,7 +24517,7 @@
 				49484FCA102CF23C00187DD3 /* CanvasRenderingContext2D.cpp in Sources */,
 				49484FCD102CF23C00187DD3 /* CanvasStyle.cpp in Sources */,
 				072CA86116CB4DC3008AE131 /* CaptionUserPreferences.cpp in Sources */,
-				079D086C162F21F900DB8658 /* CaptionUserPreferencesMac.mm in Sources */,
+				079D086C162F21F900DB8658 /* CaptionUserPreferencesMediaAF.cpp in Sources */,
 				6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */,
 				CDA98E0B1603CD6000FEA3B1 /* CDM.cpp in Sources */,
 				CD47B3FC16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm in Sources */,
