@@ -93,7 +93,7 @@ void RadioInputType::handleKeydownEvent(KeyboardEvent* event)
         // Look for more radio buttons.
         if (!node->hasTagName(inputTag))
             continue;
-        HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node);
+        RefPtr<HTMLInputElement> inputElement = static_cast<HTMLInputElement*>(node);
         if (inputElement->form() != element()->form())
             break;
         if (inputElement->isRadioButton() && inputElement->name() == element()->name() && inputElement->isFocusable()) {
