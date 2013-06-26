@@ -1562,8 +1562,8 @@ void FrameView::addSlowRepaintObject(RenderObject* o)
 
 void FrameView::removeSlowRepaintObject(RenderObject* o)
 {
-    ASSERT(m_slowRepaintObjects);
-    ASSERT(m_slowRepaintObjects->contains(o));
+    if (!m_slowRepaintObjects)
+        return;
 
     m_slowRepaintObjects->remove(o);
     if (m_slowRepaintObjects->isEmpty()) {
