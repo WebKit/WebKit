@@ -1,3 +1,14 @@
+2013-06-26  Alex Christensen  <achristensen@apple.com>
+
+        Added a code coverage report.
+        https://bugs.webkit.org/show_bug.cgi?id=117941
+
+        Reviewed by Joseph Pecoraro.
+
+        * CodeCoverage: Added.
+        * CodeCoverage/results-template.html: Added.
+        * Scripts/generate-coverage-data: Generate and open the new report.
+
 2013-06-25  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         gdb: Remove the webcore.py pretty printer.

@@ -70,9 +70,20 @@ system("mkdir WebKitBuild/Coverage") if ! -d "WebKitBuild/Coverage";
 system("python Tools/Scripts/webkitpy/tool/gcovr --xml --output=WebKitBuild/Coverage/" . $resultName . ".xml") == 0 or die "Cannot run gcovr";
 
 # Collect useful data from xml to json format
-open my $jsonFile, ">", "WebKitBuild/Coverage/$resultName.json" or die "Cannot open $resultName.json";
-print $jsonFile encode_json(parseGcovrOutput("WebKitBuild/Coverage/$resultName.xml"));
-close $jsonFile;
+my $jsonData = encode_json(parseGcovrOutput("WebKitBuild/Coverage/$resultName.xml"));
+open my $templateFile, "<", "Tools/CodeCoverage/results-template.html" or die "Cannot open Tools/CodeCoverage/results-template.html";
+my $templateHtml = join("", <$templateFile>);
+close $templateFile;
+$templateHtml =~ s/%CoverageDataJSON%/$jsonData/;
+
+my $reportFilename = "WebKitBuild/Coverage/$resultName.html";
+open my $reportFile, ">", $reportFilename or die "Cannot open $reportFilename";
+print $reportFile $templateHtml;
+close $reportFile;
+
+# Open the report
+my $url = "file://" . sourceDir() . "/WebKitBuild/Coverage/$resultName.html";
+system "open \"$url\"";
 
 print "Done\n";
 
