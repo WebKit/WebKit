@@ -1,3 +1,26 @@
+2013-06-27  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        [BlackBerry] We should clear all markers when input changes a word
+        https://bugs.webkit.org/show_bug.cgi?id=118136
+        JIRA115313.
+
+        For the case where a letter is added to the middle of a misspelled word, we were
+        sending incorrect offsets to clear spelling markers. However, since this
+        expanded the current word, it overlaps entirely the previous spelling marker so
+        no issue is found. However, if the keypress is backspace, the incorrect range
+        is smaller, causing an overlap which recreates the marker over the last character.
+        Setting shouldEraseMarkersAfterChangeSelection to follow continuous spell checking,
+        which will clear all markers regardless of overlap.
+        This patch also sustains spelling markers after the user taps to move the caret onto
+        the word, which is a nice gain as it was asked for previously.
+
+        Reviewed by Rob Buis.
+
+        Internally Reviewed by Mike Fenton
+
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::shouldEraseMarkersAfterChangeSelection):
+
 2013-06-26  Carlos Garcia Campos  <cargarcia@blackberry.com>
 
         [BlackBerry] Handle testRunner.setCustomPolicyDelegate()

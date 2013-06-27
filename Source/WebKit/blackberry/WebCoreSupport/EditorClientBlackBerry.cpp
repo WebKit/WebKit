@@ -550,7 +550,8 @@ void EditorClientBlackBerry::textDidChangeInTextArea(Element*)
 
 bool EditorClientBlackBerry::shouldEraseMarkersAfterChangeSelection(TextCheckingType) const
 {
-    return true;
+    const Frame* frame = m_webPagePrivate->focusedOrMainFrame();
+    return !frame || !frame->settings() || (!frame->settings()->asynchronousSpellCheckingEnabled() && !frame->settings()->unifiedTextCheckerEnabled());
 }
 
 void EditorClientBlackBerry::ignoreWordInSpellDocument(const WTF::String&)
