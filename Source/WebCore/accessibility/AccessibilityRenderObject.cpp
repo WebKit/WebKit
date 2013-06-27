@@ -855,7 +855,7 @@ bool AccessibilityRenderObject::supportsPath() const
 Path AccessibilityRenderObject::elementPath() const
 {
 #if ENABLE(SVG)
-    if (m_renderer && m_renderer->isSVGShape())
+    if (m_renderer && m_renderer->isSVGShape() && toRenderSVGShape(m_renderer)->hasPath())
         return toRenderSVGShape(m_renderer)->path();
 #endif
     

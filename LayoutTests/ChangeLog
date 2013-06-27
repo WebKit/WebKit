@@ -1,3 +1,13 @@
+2013-06-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: IOS: crash while navigating with SVG
+        https://bugs.webkit.org/show_bug.cgi?id=118101
+
+        Reviewed by Stephen Chenney.
+
+        * platform/iphone-simulator/accessibility/svg-path-crash-expected.txt: Added.
+        * platform/iphone-simulator/accessibility/svg-path-crash.html: Added.
+
 2013-06-27  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Unskip tests no longer timing out.

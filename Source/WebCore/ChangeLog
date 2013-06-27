@@ -1,3 +1,19 @@
+2013-06-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: IOS: crash while navigating with SVG
+        https://bugs.webkit.org/show_bug.cgi?id=118101
+
+        Need to check if the SVG path exists before copying it.
+
+        Reviewed by Stephen Chenney.
+
+        Test: platform/iphone-simulator/accessibility/svg-path-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::elementPath):
+        * rendering/svg/RenderSVGShape.h:
+        (WebCore::RenderSVGShape::hasPath):
+
 2013-06-27  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Removing the redundant checks after r152078

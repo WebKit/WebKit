@@ -77,6 +77,7 @@ public:
     virtual void fillShape(GraphicsContext*) const;
     virtual void strokeShape(GraphicsContext*) const;
 
+    bool hasPath() const { return m_path.get(); }
     Path& path() const
     {
         ASSERT(m_path);
@@ -89,7 +90,6 @@ protected:
     virtual bool shapeDependentStrokeContains(const FloatPoint&);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
-    bool hasPath() const { return m_path.get(); }
     bool hasSmoothStroke() const;
 
     bool hasNonScalingStroke() const { return style()->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE; }
