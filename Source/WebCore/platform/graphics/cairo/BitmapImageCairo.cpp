@@ -147,7 +147,7 @@ void BitmapImage::checkForSolidColor()
     if (width != 1 || height != 1)
         return;
 
-    unsigned* pixelColor = reinterpret_cast<unsigned*>(cairo_image_surface_get_data(surface.get()));
+    unsigned* pixelColor = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(surface.get()));
     m_solidColor = colorFromPremultipliedARGB(*pixelColor);
 
     m_isSolidColor = true;

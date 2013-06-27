@@ -1,3 +1,17 @@
+2013-06-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix cast-align warnings in WebCore/platform/graphics/cairo
+        https://bugs.webkit.org/show_bug.cgi?id=117990
+
+        Reviewed by Rob Buis.
+
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::putByteArray):
+
 2013-06-27  Szabolcs Dávid  <davidsz@inf.u-szeged.hu>
 
         [curl] Add "set-cookie" to appendable headers

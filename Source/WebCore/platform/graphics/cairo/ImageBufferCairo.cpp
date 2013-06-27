@@ -166,7 +166,7 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
     unsigned char* dataSrc = cairo_image_surface_get_data(m_data.m_surface.get());
     int stride = cairo_image_surface_get_stride(m_data.m_surface.get());
     for (int y = 0; y < m_size.height(); ++y) {
-        unsigned* row = reinterpret_cast<unsigned*>(dataSrc + stride * y);
+        unsigned* row = reinterpret_cast_ptr<unsigned*>(dataSrc + stride * y);
         for (int x = 0; x < m_size.width(); x++) {
             unsigned* pixel = row + x;
             Color pixelColor = colorFromPremultipliedARGB(*pixel);
@@ -252,7 +252,7 @@ PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBuffe
 
     unsigned char* destRows = dataDst + desty * destBytesPerRow + destx * 4;
     for (int y = 0; y < numRows; ++y) {
-        unsigned* row = reinterpret_cast<unsigned*>(dataSrc + stride * (y + originy));
+        unsigned* row = reinterpret_cast_ptr<unsigned*>(dataSrc + stride * (y + originy));
         for (int x = 0; x < numColumns; x++) {
             int basex = x * 4;
             unsigned* pixel = row + x + originx;
@@ -330,7 +330,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
 
     unsigned char* srcRows = source->data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {
-        unsigned* row = reinterpret_cast<unsigned*>(dataDst + stride * (y + desty));
+        unsigned* row = reinterpret_cast_ptr<unsigned*>(dataDst + stride * (y + desty));
         for (int x = 0; x < numColumns; x++) {
             int basex = x * 4;
             unsigned* pixel = row + x + destx;
