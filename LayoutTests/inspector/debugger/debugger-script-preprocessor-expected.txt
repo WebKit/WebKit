@@ -5,6 +5,7 @@ Page reloaded.
 inspector-test.js
 debugger-test.js
 debugger-script-preprocessor.html
+debugger-script-preprocessor.html
 
 
 Page reloaded.
