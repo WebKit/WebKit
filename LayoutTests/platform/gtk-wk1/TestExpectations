@@ -71,19 +71,8 @@ webkit.org/b/87951 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 
 webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Timeout ]
 
-webkit.org/b/107534 fast/js/regress/object-closure-call.html [ Timeout ]
-webkit.org/b/107534 fast/js/regress/cell-argument.html [ Timeout ]
-
 # Misses setMediaType() implementation
 Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Timeout ]
-
-webkit.org/b/108363 fast/regions/full-screen-video-from-region.html [ Timeout ]
-
-webkit.org/b/108363 fullscreen/full-screen-crash-offsetLeft.html [ Timeout ]
-webkit.org/b/108363 fullscreen/full-screen-no-style-sharing.html [ Timeout ]
-webkit.org/b/108363 fullscreen/full-screen-stacking-context.html [ Timeout ]
-webkit.org/b/108363 fullscreen/video-controls-override.html [ Timeout ]
-webkit.org/b/108363 fullscreen/video-specified-size.html [ Timeout ]
 
 # Needs further investigating.
 webkit.org/b/107962 webkit.org/b/108380 http/tests/cache/iframe-304-crash.html [ Failure ]
@@ -132,6 +121,8 @@ webkit.org/b/117688 http/tests/security/video-poster-cross-origin-crash.html [ C
 #////////////////////////////////////////////////////////////////////////////////////////
 # Slow tests
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/108363 fullscreen/video-specified-size.html [ Pass Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests

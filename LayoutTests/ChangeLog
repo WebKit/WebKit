@@ -1,3 +1,13 @@
+2013-06-27  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Unskip tests no longer timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=118135
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove [NoInterfaceObject] from WorkerGlobalScope
