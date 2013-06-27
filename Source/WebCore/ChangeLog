@@ -1,3 +1,24 @@
+2013-06-27  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [curl] Fix unused variable/parameter warnings
+        https://bugs.webkit.org/show_bug.cgi?id=118050
+
+        Reviewed by Christophe Dumez.
+
+        Commented out unused parameters and removed an unused variable in the curl backend.
+
+        No tests required.
+
+        * platform/network/curl/CredentialStorageCurl.cpp:
+        (WebCore::CredentialStorage::getFromPersistentStorage):
+        * platform/network/curl/DNSCurl.cpp:
+        (WebCore::prefetchDNS):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::curl_lock_callback):
+        (WebCore::curl_unlock_callback):
+        (WebCore::headerCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+
 2013-06-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix cast-align warnings in WebCore/platform/graphics/cairo

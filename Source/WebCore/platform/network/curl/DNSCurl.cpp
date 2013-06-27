@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-void prefetchDNS(const String& hostname)
+void prefetchDNS(const String& /* hostname */)
 {
     notImplemented();
 }

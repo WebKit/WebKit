@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& protectionSpace)
+Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& /* protectionSpace */)
 {
     notImplemented();
     return Credential();
