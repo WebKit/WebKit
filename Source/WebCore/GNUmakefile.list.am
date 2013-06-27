@@ -1775,6 +1775,7 @@ dom_binding_idls += \
 	$(WebCore)/svg/SVGSymbolElement.idl \
 	$(WebCore)/svg/SVGTRefElement.idl \
 	$(WebCore)/svg/SVGTSpanElement.idl \
+	$(WebCore)/svg/SVGTests.idl \
 	$(WebCore)/svg/SVGTextContentElement.idl \
 	$(WebCore)/svg/SVGTextElement.idl \
 	$(WebCore)/svg/SVGTextPathElement.idl \
@@ -1782,6 +1783,7 @@ dom_binding_idls += \
 	$(WebCore)/svg/SVGTitleElement.idl \
 	$(WebCore)/svg/SVGTransform.idl \
 	$(WebCore)/svg/SVGTransformList.idl \
+	$(WebCore)/svg/SVGURIReference.idl \
 	$(WebCore)/svg/SVGUnitTypes.idl \
 	$(WebCore)/svg/SVGUseElement.idl \
 	$(WebCore)/svg/SVGVKernElement.idl \

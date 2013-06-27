@@ -27,8 +27,7 @@
 [
     Conditional=SVG&FILTERS
 ] interface SVGFilterElement : SVGStyledElement,
-                                               SVGURIReference,
-                                               SVGLangSpace {
+                               SVGLangSpace {
     readonly attribute SVGAnimatedEnumeration filterUnits;
     readonly attribute SVGAnimatedEnumeration primitiveUnits;
     readonly attribute SVGAnimatedLength      x;
@@ -43,3 +42,4 @@
 };
 
 SVGFilterElement implements SVGExternalResourcesRequired;
+SVGFilterElement implements SVGURIReference;

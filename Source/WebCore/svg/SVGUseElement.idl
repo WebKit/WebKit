@@ -26,10 +26,8 @@
 [
     Conditional=SVG
 ] interface SVGUseElement : SVGStyledElement,
-                                            SVGURIReference,
-                                            SVGTests,
-                                            SVGLangSpace,
-                                            SVGTransformable {
+                            SVGLangSpace,
+                            SVGTransformable {
     readonly attribute SVGAnimatedLength   x;
     readonly attribute SVGAnimatedLength   y;
     readonly attribute SVGAnimatedLength   width;
@@ -40,3 +38,5 @@
 };
 
 SVGUseElement implements SVGExternalResourcesRequired;
+SVGUseElement implements SVGTests;
+SVGUseElement implements SVGURIReference;

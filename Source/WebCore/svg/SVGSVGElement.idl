@@ -26,9 +26,8 @@
 [
     Conditional=SVG
 ] interface SVGSVGElement : SVGStyledElement,
-                                            SVGTests,
-                                            SVGLangSpace,
-                                            SVGTransformable {
+                            SVGLangSpace,
+                            SVGTransformable {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
     readonly attribute SVGAnimatedLength width;
@@ -77,4 +76,5 @@
 
 SVGSVGElement implements SVGExternalResourcesRequired;
 SVGSVGElement implements SVGFitToViewBox;
+SVGSVGElement implements SVGTests;
 SVGSVGElement implements SVGZoomAndPan;

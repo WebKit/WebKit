@@ -27,11 +27,10 @@
 [
     Conditional=SVG
 ] interface SVGClipPathElement : SVGStyledElement,
-                                                 SVGTests,
-                                                 SVGLangSpace,
-                                                 SVGTransformable
-                                              /* SVGUnitTypes */ { 
+                                 SVGLangSpace,
+                                 SVGTransformable {
     readonly attribute SVGAnimatedEnumeration clipPathUnits;
 };
 
 SVGClipPathElement implements SVGExternalResourcesRequired;
+SVGClipPathElement implements SVGTests;

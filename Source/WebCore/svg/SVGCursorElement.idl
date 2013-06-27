@@ -25,11 +25,11 @@
 
 [
     Conditional=SVG
-] interface SVGCursorElement : SVGElement,
-                                               SVGURIReference,
-                                               SVGTests {
+] interface SVGCursorElement : SVGElement {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;
 };
 
 SVGCursorElement implements SVGExternalResourcesRequired;
+SVGCursorElement implements SVGTests;
+SVGCursorElement implements SVGURIReference;

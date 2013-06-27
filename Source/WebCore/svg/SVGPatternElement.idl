@@ -26,9 +26,7 @@
 [
     Conditional=SVG
 ] interface SVGPatternElement : SVGStyledElement,
-                                                SVGURIReference,
-                                                SVGTests,
-                                                SVGLangSpace {
+                                SVGLangSpace {
     readonly attribute SVGAnimatedEnumeration   patternUnits;
     readonly attribute SVGAnimatedEnumeration   patternContentUnits;
     readonly attribute SVGAnimatedTransformList patternTransform;
@@ -40,3 +38,5 @@
 
 SVGPatternElement implements SVGExternalResourcesRequired;
 SVGPatternElement implements SVGFitToViewBox;
+SVGPatternElement implements SVGTests;
+SVGPatternElement implements SVGURIReference;

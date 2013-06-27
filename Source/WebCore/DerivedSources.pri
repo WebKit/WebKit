@@ -627,6 +627,7 @@ enable?(SVG) {
     $$PWD/svg/SVGSVGElement.idl \
     $$PWD/svg/SVGSwitchElement.idl \
     $$PWD/svg/SVGSymbolElement.idl \
+    $$PWD/svg/SVGTests.idl \
     $$PWD/svg/SVGTextContentElement.idl \
     $$PWD/svg/SVGTextElement.idl \
     $$PWD/svg/SVGTextPathElement.idl \
@@ -636,6 +637,7 @@ enable?(SVG) {
     $$PWD/svg/SVGTransformList.idl \
     $$PWD/svg/SVGTRefElement.idl \
     $$PWD/svg/SVGTSpanElement.idl \
+    $$PWD/svg/SVGURIReference.idl \
     $$PWD/svg/SVGUnitTypes.idl \
     $$PWD/svg/SVGUseElement.idl \
     $$PWD/svg/SVGViewElement.idl \

@@ -27,12 +27,12 @@
 [
     Conditional=SVG
 ] interface SVGCircleElement : SVGStyledElement,
-                                               SVGTests,
-                                               SVGLangSpace,
-                                               SVGTransformable {
+                               SVGLangSpace,
+                               SVGTransformable {
     readonly attribute SVGAnimatedLength cx;
     readonly attribute SVGAnimatedLength cy;
     readonly attribute SVGAnimatedLength r;
 };
 
 SVGCircleElement implements SVGExternalResourcesRequired;
+SVGCircleElement implements SVGTests;

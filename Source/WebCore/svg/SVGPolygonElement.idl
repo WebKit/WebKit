@@ -26,11 +26,11 @@
 [
     Conditional=SVG
 ] interface SVGPolygonElement : SVGStyledElement,
-                                                SVGTests,
-                                                SVGLangSpace,
-                                                SVGTransformable {
+                                SVGLangSpace,
+                                SVGTransformable {
     readonly attribute SVGPointList points;
     readonly attribute SVGPointList animatedPoints;
 };
 
 SVGPolygonElement implements SVGExternalResourcesRequired;
+SVGPolygonElement implements SVGTests;

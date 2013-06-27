@@ -25,8 +25,7 @@
 
 [
     Conditional=SVG
-] interface SVGTextPathElement : SVGTextContentElement,
-                                                 SVGURIReference {    
+] interface SVGTextPathElement : SVGTextContentElement {
     // textPath Method Types
     const unsigned short TEXTPATH_METHODTYPE_UNKNOWN   = 0;
     const unsigned short TEXTPATH_METHODTYPE_ALIGN     = 1;
@@ -42,3 +41,4 @@
     readonly attribute SVGAnimatedEnumeration spacing;
 };
 
+SVGTextPathElement implements SVGURIReference;

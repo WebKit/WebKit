@@ -746,6 +746,7 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGSymbolElement.idl
     svg/SVGTRefElement.idl
     svg/SVGTSpanElement.idl
+    svg/SVGTests.idl
     svg/SVGTextContentElement.idl
     svg/SVGTextElement.idl
     svg/SVGTextPathElement.idl
@@ -753,6 +754,7 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGTitleElement.idl
     svg/SVGTransform.idl
     svg/SVGTransformList.idl
+    svg/SVGURIReference.idl
     svg/SVGUnitTypes.idl
     svg/SVGUseElement.idl
     svg/SVGViewElement.idl
