@@ -443,9 +443,6 @@ WebInspector.SourceCodeTextEditor.prototype = {
             return;
         }
 
-        if (this.tokenTrackingController.tracking && this.tokenTrackingController.candidate)
-            this.tokenTrackingControllerNewHighlightCandidate(this.tokenTrackingController, this.tokenTrackingController.candidate);
-
         this._dismissPopover();
 
         this._activeCallFrameSourceCodeLocation = activeCallFrame.sourceCodeLocation;
