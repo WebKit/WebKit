@@ -680,9 +680,11 @@ http/tests/cookies/js-get-and-set-http-only-cookie.html
 # https://bugs.webkit.org/show_bug.cgi?id=109799
 webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Skip ]
 
-# Assertion failure in MessagePort::contextDestroyed
-webkit.org/b/94458 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html [ Skip ]
-webkit.org/b/94458 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny.html [ Skip ]
+# Assertion failure in MessagePort::contextDestroyed in http/tests/security/MessagePort/event-listener-context.html, usually attributed to later tests
+webkit.org/b/94458 [ DEBUG ] http/tests/security/MessagePort/event-listener-context.html [ Skip ]
+
+# Layout Test fast/repaint/fixed-right-in-page-scale.html and others in same path are flaky
+webkit.org/b/84720 [ DEBUG ] fast/repaint/fixed-right-in-page-scale.html [ Skip ]
 
 # =========================================================================== #
 #       Failing xmlhttprequest tests                                          #

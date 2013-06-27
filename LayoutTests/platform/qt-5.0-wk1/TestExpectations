@@ -158,3 +158,6 @@ webkit.org/b/117035 fast/regions/hover-on-child-in-region.html [ Skip ]
 
 # [Qt] css3/filters/composited-during-animation-layertree.html flaky after r151110
 webkit.org/b/117336 css3/filters/composited-during-animation-layertree.html [ Skip ]
+
+# [EFL][GTK][Qt] css3/flexbox/image-percent-max-height.html ref test fail after r151997
+webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ Skip ]
