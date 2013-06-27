@@ -32,17 +32,13 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
 
-namespace WebCore {
-
-#if SQLITE_VERSION_NUMBER < 3003009
-
-// FIXME: This overload helps us compile with older versions of SQLite 3, but things like quotas will not work.
-static inline int sqlite3_prepare16_v2(sqlite3* db, const void* zSql, int nBytes, sqlite3_stmt** ppStmt, const void** pzTail)
-{
-    return sqlite3_prepare16(db, zSql, nBytes, ppStmt, pzTail);
-}
-
+// SQLite 3.6.16 makes sqlite3_prepare_v2 automatically retry preparing the statement
+// once if the database scheme has changed. We rely on this behavior.
+#if SQLITE_VERSION_NUMBER < 3006016
+#error SQLite version 3.6.16 or newer is required
 #endif
+
+namespace WebCore {
 
 SQLiteStatement::SQLiteStatement(SQLiteDatabase& db, const String& sql)
     : m_database(db)
@@ -67,25 +63,23 @@ int SQLiteStatement::prepare()
     if (m_database.isInterrupted())
         return SQLITE_INTERRUPT;
 
-    const void* tail = 0;
-    LOG(SQLDatabase, "SQL - prepare - %s", m_query.ascii().data());
-    String strippedQuery = m_query.stripWhiteSpace();
-    const UChar* nullTermed = strippedQuery.deprecatedCharactersWithNullTermination();
-    int error = sqlite3_prepare16_v2(m_database.sqlite3Handle(), nullTermed, -1, &m_statement, &tail);
+    CString query = m_query.stripWhiteSpace().utf8();
+    
+    LOG(SQLDatabase, "SQL - prepare - %s", query.data());
 
-    // Starting with version 3.6.16, sqlite has a patch (http://www.sqlite.org/src/ci/256ec3c6af)
-    // that should make sure sqlite3_prepare16_v2 doesn't return a SQLITE_SCHEMA error.
-    // If we're using an older sqlite version, try to emulate the patch.
-    if (error == SQLITE_SCHEMA) {
-      sqlite3_finalize(m_statement);
-      error = sqlite3_prepare16_v2(m_database.sqlite3Handle(), m_query.deprecatedCharactersWithNullTermination(), -1, &m_statement, &tail);
-    }
+    // Pass the length of the string including the null character to sqlite3_prepare_v2;
+    // this lets SQLite avoid an extra string copy.
+    size_t lengthIncludingNullCharacter = query.length() + 1;
+
+    const char* tail;
+    int error = sqlite3_prepare_v2(m_database.sqlite3Handle(), query.data(), lengthIncludingNullCharacter, &m_statement, &tail);
 
     if (error != SQLITE_OK)
-        LOG(SQLDatabase, "sqlite3_prepare16 failed (%i)\n%s\n%s", error, m_query.ascii().data(), sqlite3_errmsg(m_database.sqlite3Handle()));
-    const UChar* ch = static_cast<const UChar*>(tail);
-    if (ch && *ch)
+        LOG(SQLDatabase, "sqlite3_prepare16 failed (%i)\n%s\n%s", error, query.data(), sqlite3_errmsg(m_database.sqlite3Handle()));
+
+    if (tail && *tail)
         error = SQLITE_ERROR;
+
 #ifndef NDEBUG
     m_isPrepared = error == SQLITE_OK;
 #endif

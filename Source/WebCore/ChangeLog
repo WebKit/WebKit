@@ -1,3 +1,29 @@
+2013-06-27  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecatedCharactersWithNullTermination in SQLite code
+        https://bugs.webkit.org/show_bug.cgi?id=118146
+
+        Reviewed by Filip Pizlo.
+
+        Turns out SQLite uses UTF-8 internally so we might just as well use the SQLite functions
+        that take UTF-8 strings and do the conversion ourselves. This has the added advantage that we can
+        use String::utf8() which returns a null-terminated string.
+
+        Require a version of SQLite newer than 3.6.16 so we can remove two workarounds. 3.6.16 was released
+        4 years ago so supported port is likely to have it.
+
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+        Use sqlite3_open instead of sqlite3_open16.
+
+        * platform/sql/SQLiteFileSystem.h:
+        Fix parameter name capitalization.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare):
+        Use sqlite3_prepare_v2. Also, pass the length of the string (including the null character), since
+        that lets SQLite avoid a buffer copy. Remove a workaround for versions of SQLite older than 3.6.16.
+
 2013-06-27  Andrew Lo  <anlo@blackberry.com>
 
         [BlackBerry] Unnecessary root layer commits occur during html5 video playback
