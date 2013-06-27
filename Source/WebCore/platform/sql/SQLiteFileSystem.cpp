@@ -48,7 +48,7 @@ int SQLiteFileSystem::openDatabase(const String& fileName, sqlite3** database, b
 {
     // SQLite expects a null terminator on its UTF-16 strings.
     String path = fileName;
-    return sqlite3_open16(path.charactersWithNullTermination(), database);
+    return sqlite3_open16(path.deprecatedCharactersWithNullTermination(), database);
 }
 
 String SQLiteFileSystem::getFileNameForNewDatabase(const String& dbDir, const String&,

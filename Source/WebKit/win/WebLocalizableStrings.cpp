@@ -88,7 +88,7 @@ private:
 LocalizedString::operator LPCTSTR() const
 {
     if (!m_string.isEmpty())
-        return m_string.charactersWithNullTermination();
+        return m_string.deprecatedCharactersWithNullTermination();
 
     m_string = m_cfString;
 
@@ -96,7 +96,7 @@ LocalizedString::operator LPCTSTR() const
         if (m_string[i] == '@' && (m_string[i - 1] == '%' || (i > 2 && m_string[i - 1] == '$' && m_string[i - 2] >= '1' && m_string[i - 2] <= '9' && m_string[i - 3] == '%')))
             m_string.replace(i, 1, "s");
 
-    return m_string.charactersWithNullTermination();
+    return m_string.deprecatedCharactersWithNullTermination();
 }
 
 static CFBundleRef createWebKitBundle()

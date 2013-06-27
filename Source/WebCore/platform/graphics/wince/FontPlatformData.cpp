@@ -336,7 +336,7 @@ public:
 FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const AtomicString& desiredFamily, bool useDefaultFontIfNotPresent)
 {
     String family(desiredFamily);
-    if (!equalIgnoringCase(family, defaultFontFamily()) && !FontFamilyChecker(family.charactersWithNullTermination()).isSupported()) {
+    if (!equalIgnoringCase(family, defaultFontFamily()) && !FontFamilyChecker(family.deprecatedCharactersWithNullTermination()).isSupported()) {
         if (equalIgnoringCase(family, String(heiTiStr)) && isSongTiSupported())
             family = String(songTiStr);
         else if (useDefaultFontIfNotPresent)

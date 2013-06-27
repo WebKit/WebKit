@@ -41,7 +41,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
 {
     LOGFONT logFont;
     memset(&logFont, 0, sizeof(LOGFONT));
-    wcsncpy(logFont.lfFaceName, m_name.charactersWithNullTermination(), LF_FACESIZE - 1);
+    wcsncpy(logFont.lfFaceName, m_name.deprecatedCharactersWithNullTermination(), LF_FACESIZE - 1);
 
     logFont.lfHeight = -size;
     if (renderingMode == NormalRenderingMode)

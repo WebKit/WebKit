@@ -394,7 +394,7 @@ bool String::percentage(int& result) const
     return true;
 }
 
-const UChar* String::charactersWithNullTermination()
+const UChar* String::deprecatedCharactersWithNullTermination()
 {
     if (!m_impl)
         return 0;

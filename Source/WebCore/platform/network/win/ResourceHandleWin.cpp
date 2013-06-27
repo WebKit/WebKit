@@ -49,7 +49,7 @@ namespace WebCore {
 static inline HINTERNET createInternetHandle(const String& userAgent, bool asynchronous)
 {
     String userAgentString = userAgent;
-    HINTERNET internetHandle = InternetOpenW(userAgentString.charactersWithNullTermination(), INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, asynchronous ? INTERNET_FLAG_ASYNC : 0);
+    HINTERNET internetHandle = InternetOpenW(userAgentString.deprecatedCharactersWithNullTermination(), INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, asynchronous ? INTERNET_FLAG_ASYNC : 0);
 
     if (asynchronous)
         InternetSetStatusCallback(internetHandle, &ResourceHandle::internetStatusCallback);
@@ -287,7 +287,7 @@ bool ResourceHandle::start()
         | INTERNET_FLAG_DONT_CACHE
         | INTERNET_FLAG_RELOAD;
 
-    d->m_connectHandle = InternetConnectW(d->m_internetHandle, firstRequest().url().host().charactersWithNullTermination(), firstRequest().url().port(),
+    d->m_connectHandle = InternetConnectW(d->m_internetHandle, firstRequest().url().host().deprecatedCharactersWithNullTermination(), firstRequest().url().port(),
                                           0, 0, INTERNET_SERVICE_HTTP, flags, reinterpret_cast<DWORD_PTR>(this));
 
     if (!d->m_connectHandle)
@@ -306,8 +306,8 @@ bool ResourceHandle::start()
 
     LPCWSTR httpAccept[] = { L"*/*", 0 };
 
-    d->m_requestHandle = HttpOpenRequestW(d->m_connectHandle, httpMethod.charactersWithNullTermination(), urlStr.charactersWithNullTermination(),
-                                          0, httpReferrer.charactersWithNullTermination(), httpAccept, flags, reinterpret_cast<DWORD_PTR>(this));
+    d->m_requestHandle = HttpOpenRequestW(d->m_connectHandle, httpMethod.deprecatedCharactersWithNullTermination(), urlStr.deprecatedCharactersWithNullTermination(),
+                                          0, httpReferrer.deprecatedCharactersWithNullTermination(), httpAccept, flags, reinterpret_cast<DWORD_PTR>(this));
 
     if (!d->m_requestHandle) {
         InternetCloseHandle(d->m_connectHandle);
@@ -364,7 +364,7 @@ void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>*)
     }
 
     String fileName = firstRequest().url().fileSystemPath();
-    HANDLE fileHandle = CreateFileW(fileName.charactersWithNullTermination(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+    HANDLE fileHandle = CreateFileW(fileName.deprecatedCharactersWithNullTermination(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
     if (fileHandle == INVALID_HANDLE_VALUE) {
         client()->didFail(this, ResourceError());

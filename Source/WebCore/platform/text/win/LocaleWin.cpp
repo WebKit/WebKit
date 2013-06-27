@@ -125,7 +125,7 @@ static LCID LCIDFromLocaleInternal(LCID userDefaultLCID, const String& userDefau
     String localeLanguageCode = extractLanguageCode(locale);
     if (equalIgnoringCase(localeLanguageCode, userDefaultLanguageCode))
         return userDefaultLCID;
-    return localeNameToLCID(locale.charactersWithNullTermination(), 0);
+    return localeNameToLCID(locale.deprecatedCharactersWithNullTermination(), 0);
 }
 
 static LCID LCIDFromLocale(const AtomicString& locale)

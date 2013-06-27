@@ -921,7 +921,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
         return 0;
     }
     extension.insert(".", 0);
-    fsPath = filesystemPathFromUrlOrTitle(url, preferredTitle, extension.charactersWithNullTermination(), false);
+    fsPath = filesystemPathFromUrlOrTitle(url, preferredTitle, extension.deprecatedCharactersWithNullTermination(), false);
 
     if (fsPath.length() <= 0) {
         GlobalUnlock(memObj);
@@ -963,7 +963,7 @@ static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, Share
         // windows does not enjoy a leading slash on paths
         if (localPath[0] == '/')
             localPath = localPath.substring(1);
-        LPCWSTR localPathStr = localPath.charactersWithNullTermination();
+        LPCWSTR localPathStr = localPath.deprecatedCharactersWithNullTermination();
         if (wcslen(localPathStr) + 1 < MAX_PATH)
             wcscpy_s(filePath, MAX_PATH, localPathStr);
         else
@@ -977,7 +977,7 @@ static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, Share
         WCHAR extension[MAX_PATH];
         if (!::GetTempPath(WTF_ARRAY_LENGTH(tempPath), tempPath))
             return 0;
-        if (!::PathAppend(tempPath, fileName.charactersWithNullTermination()))
+        if (!::PathAppend(tempPath, fileName.deprecatedCharactersWithNullTermination()))
             return 0;
         LPCWSTR foundExtension = ::PathFindExtension(tempPath);
         if (foundExtension) {

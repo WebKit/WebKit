@@ -61,7 +61,7 @@ bool appendResumeData(CFDataRef resumeData, const String& bundlePath)
 
     String nullifiedPath = bundlePath;
     FILE* bundle = 0;
-    if (_wfopen_s(&bundle, nullifiedPath.charactersWithNullTermination(), TEXT("ab")) || !bundle) {
+    if (_wfopen_s(&bundle, nullifiedPath.deprecatedCharactersWithNullTermination(), TEXT("ab")) || !bundle) {
         LOG_ERROR("Failed to open file %s to append resume data", bundlePath.ascii().data());
         return false;
     }
@@ -110,7 +110,7 @@ CFDataRef extractResumeData(const String& bundlePath)
     // Open a handle to the bundle file
     String nullifiedPath = bundlePath;
     FILE* bundle = 0;
-    if (_wfopen_s(&bundle, nullifiedPath.charactersWithNullTermination(), TEXT("r+b")) || !bundle) {
+    if (_wfopen_s(&bundle, nullifiedPath.deprecatedCharactersWithNullTermination(), TEXT("r+b")) || !bundle) {
         LOG_ERROR("Failed to open file %s to get resume data", bundlePath.ascii().data());
         return 0;
     }

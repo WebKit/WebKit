@@ -33,7 +33,7 @@ namespace WebCore {
 PathWalker::PathWalker(const String& directory, const String& pattern)
 {
     String path = directory + "\\" + pattern;
-    m_handle = ::FindFirstFileW(path.charactersWithNullTermination(), &m_data);
+    m_handle = ::FindFirstFileW(path.deprecatedCharactersWithNullTermination(), &m_data);
 }
 
 PathWalker::~PathWalker()

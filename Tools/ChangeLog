@@ -1,3 +1,17 @@
+2013-06-26  Anders Carlsson  <andersca@apple.com>
+
+        Deprecate StringImpl::charactersWithNullTermination
+        https://bugs.webkit.org/show_bug.cgi?id=118108
+
+        Reviewed by Beth Dakin.
+
+        Rename calls to charactersWithNullTermination to deprecatedCharactersWithNullTermination.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (findFontFallback):
+        (addFontFallbackIfPresent):
+        (removeFontFallbackIfPresent):
+
 2013-06-26  Nico Weber  <thakis@chromium.org>
 
         Remove detect-mismached-virtual-const.

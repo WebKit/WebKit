@@ -964,7 +964,7 @@ static String findFontFallback(const char* pathOrUrl)
     String pathToFontFallback = WebCore::directoryName(pathOrUrl);
 
     wchar_t fullPath[_MAX_PATH];
-    if (!_wfullpath(fullPath, pathToFontFallback.charactersWithNullTermination(), _MAX_PATH))
+    if (!_wfullpath(fullPath, pathToFontFallback.deprecatedCharactersWithNullTermination(), _MAX_PATH))
         return emptyString();
 
     if (!::PathIsDirectoryW(fullPath))
@@ -995,7 +995,7 @@ static String findFontFallback(const char* pathOrUrl)
     for (Vector<String>::iterator pos = possiblePaths.begin(); pos != possiblePaths.end(); ++pos) {
         pathToFontFallback = WebCore::pathByAppendingComponent(*pos, "resources\\"); 
 
-        if (::PathIsDirectoryW(pathToFontFallback.charactersWithNullTermination()))
+        if (::PathIsDirectoryW(pathToFontFallback.deprecatedCharactersWithNullTermination()))
             return pathToFontFallback;
     }
 
@@ -1009,7 +1009,7 @@ static void addFontFallbackIfPresent(const String& fontFallbackPath)
 
     String fontFallback = WebCore::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css");
 
-    if (!::PathFileExistsW(fontFallback.charactersWithNullTermination()))
+    if (!::PathFileExistsW(fontFallback.deprecatedCharactersWithNullTermination()))
         return;
 
     ::setPersistentUserStyleSheetLocation(fontFallback.createCFString().get());
@@ -1022,7 +1022,7 @@ static void removeFontFallbackIfPresent(const String& fontFallbackPath)
 
     String fontFallback = WebCore::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css");
 
-    if (!::PathFileExistsW(fontFallback.charactersWithNullTermination()))
+    if (!::PathFileExistsW(fontFallback.deprecatedCharactersWithNullTermination()))
         return;
 
     ::setPersistentUserStyleSheetLocation(0);

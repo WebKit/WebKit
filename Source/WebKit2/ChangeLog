@@ -1,3 +1,15 @@
+2013-06-26  Anders Carlsson  <andersca@apple.com>
+
+        Deprecate StringImpl::charactersWithNullTermination
+        https://bugs.webkit.org/show_bug.cgi?id=118108
+
+        Reviewed by Beth Dakin.
+
+        Rename calls to charactersWithNullTermination to deprecatedCharactersWithNullTermination.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::createServerAndClientIdentifiers):
+
 2013-06-26  Simon Cooper  <scooper@apple.com>
 
         QuickTime plug-in cannot update com.apple.quicktime.plugin.preferences.plist file

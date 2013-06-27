@@ -307,7 +307,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::setUpCookiesForQuickTime(const St
             cookieURL = movieURL;
 
         String string = cookieBuilder.toString();
-        InternetSetCookieExW(cookieURL.charactersWithNullTermination(), 0, string.charactersWithNullTermination(), 0, 0);
+        InternetSetCookieExW(cookieURL.deprecatedCharactersWithNullTermination(), 0, string.deprecatedCharactersWithNullTermination(), 0, 0);
     }
 }
 

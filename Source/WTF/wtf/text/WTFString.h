@@ -281,7 +281,7 @@ public:
     size_t reverseFind(const String& str, unsigned start, bool caseSensitive) const
         { return caseSensitive ? reverseFind(str, start) : reverseFindIgnoringCase(str, start); }
 
-    WTF_EXPORT_STRING_API const UChar* charactersWithNullTermination();
+    WTF_EXPORT_STRING_API const UChar* deprecatedCharactersWithNullTermination();
     
     WTF_EXPORT_STRING_API UChar32 characterStartingAt(unsigned) const; // Ditto.
     

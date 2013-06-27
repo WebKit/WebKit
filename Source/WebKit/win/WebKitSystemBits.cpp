@@ -45,7 +45,7 @@ unsigned long long WebVolumeFreeSize(CFStringRef cfstringPath)
 {
     WTF::String path(cfstringPath);
     ULARGE_INTEGER freeBytesToCaller;
-    BOOL result = GetDiskFreeSpaceExW((LPCWSTR)path.charactersWithNullTermination(), &freeBytesToCaller, 0, 0);
+    BOOL result = GetDiskFreeSpaceExW((LPCWSTR)path.deprecatedCharactersWithNullTermination(), &freeBytesToCaller, 0, 0);
     if (!result)
         return 0;
 

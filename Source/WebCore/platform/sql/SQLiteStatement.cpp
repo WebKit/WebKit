@@ -70,7 +70,7 @@ int SQLiteStatement::prepare()
     const void* tail = 0;
     LOG(SQLDatabase, "SQL - prepare - %s", m_query.ascii().data());
     String strippedQuery = m_query.stripWhiteSpace();
-    const UChar* nullTermed = strippedQuery.charactersWithNullTermination();
+    const UChar* nullTermed = strippedQuery.deprecatedCharactersWithNullTermination();
     int error = sqlite3_prepare16_v2(m_database.sqlite3Handle(), nullTermed, -1, &m_statement, &tail);
 
     // Starting with version 3.6.16, sqlite has a patch (http://www.sqlite.org/src/ci/256ec3c6af)
@@ -78,7 +78,7 @@ int SQLiteStatement::prepare()
     // If we're using an older sqlite version, try to emulate the patch.
     if (error == SQLITE_SCHEMA) {
       sqlite3_finalize(m_statement);
-      error = sqlite3_prepare16_v2(m_database.sqlite3Handle(), m_query.charactersWithNullTermination(), -1, &m_statement, &tail);
+      error = sqlite3_prepare16_v2(m_database.sqlite3Handle(), m_query.deprecatedCharactersWithNullTermination(), -1, &m_statement, &tail);
     }
 
     if (error != SQLITE_OK)

@@ -897,13 +897,13 @@ NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32_t len, const
 
     // Get file info
     WIN32_FILE_ATTRIBUTE_DATA attrs;
-    if (GetFileAttributesExW(filename.charactersWithNullTermination(), GetFileExInfoStandard, &attrs) == 0)
+    if (GetFileAttributesExW(filename.deprecatedCharactersWithNullTermination(), GetFileExInfoStandard, &attrs) == 0)
         return NPERR_FILE_NOT_FOUND;
 
     if (attrs.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
         return NPERR_FILE_NOT_FOUND;
 
-    HANDLE fileHandle = CreateFileW(filename.charactersWithNullTermination(), FILE_READ_DATA, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+    HANDLE fileHandle = CreateFileW(filename.deprecatedCharactersWithNullTermination(), FILE_READ_DATA, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
     
     if (fileHandle == INVALID_HANDLE_VALUE)
         return NPERR_FILE_NOT_FOUND;

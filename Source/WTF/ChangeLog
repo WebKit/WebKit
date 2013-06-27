@@ -1,5 +1,23 @@
 2013-06-26  Anders Carlsson  <andersca@apple.com>
 
+        Deprecate StringImpl::charactersWithNullTermination
+        https://bugs.webkit.org/show_bug.cgi?id=118108
+
+        Reviewed by Beth Dakin.
+
+        The optimization in String and StringImpl to keep track of whether a string
+        has a null terminator isn't worth it; in most cases we call charactersWithNullTermination() on
+        temporary strings which ends up copying strings anyway.
+        
+        A better solution is to have a charactersWithNullTermination() function that returns a Vector<UChar>,
+        which is similar to what we have for String::utf8() and String::ascii(). This will be done in a follow-up patch.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::deprecatedCharactersWithNullTermination):
+        * wtf/text/WTFString.h:
+
+2013-06-26  Anders Carlsson  <andersca@apple.com>
+
         Add JSStringCreateWithCharactersNoCopy SPI
         https://bugs.webkit.org/show_bug.cgi?id=118074
         <rdar://problem/14279905>

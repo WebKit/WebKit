@@ -1,3 +1,97 @@
+2013-06-26  Anders Carlsson  <andersca@apple.com>
+
+        Deprecate StringImpl::charactersWithNullTermination
+        https://bugs.webkit.org/show_bug.cgi?id=118108
+
+        Reviewed by Beth Dakin.
+
+        Rename calls to charactersWithNullTermination to deprecatedCharactersWithNullTermination.
+
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::cacheActiveAttribLocations):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::getLinkedFonts):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::setUpCookiesForQuickTime):
+        * platform/graphics/wince/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/network/curl/CurlDownload.cpp:
+        (CurlDownload::moveFileToDestination):
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookiesForDOM):
+        * platform/network/win/DownloadBundleWin.cpp:
+        (WebCore::DownloadBundle::appendResumeData):
+        (WebCore::DownloadBundle::extractResumeData):
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::createInternetHandle):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::fileLoadTimer):
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare):
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::LCIDFromLocaleInternal):
+        * platform/text/win/TextCodecWin.cpp:
+        (WebCore::TextCodecWin::enumerateSupportedEncodings):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::getWebLocData):
+        (WebCore::createGlobalData):
+        (WebCore::setFileDescriptorData):
+        (WebCore::getURL):
+        (WebCore::setCFData):
+        * platform/win/ContextMenuWin.cpp:
+        (WebCore::ContextMenu::createPlatformContextMenuFromItems):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageIconForCachedImageFilename):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::getFindData):
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::makeAllDirectories):
+        (WebCore::pathGetFileName):
+        (WebCore::openTemporaryFile):
+        (WebCore::openFile):
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::mimeTypeForExtension):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::createGlobalImageFileDescriptor):
+        (WebCore::createGlobalHDropContent):
+        * platform/win/PathWalker.cpp:
+        (WebCore::PathWalker::PathWalker):
+        * platform/win/SSLKeyGeneratorWin.cpp:
+        (WebCore::WebCore::signedPublicKeyAndChallengeString):
+        * platform/win/SharedBufferWin.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/wince/FileSystemWinCE.cpp:
+        (WebCore::getFileInfo):
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::makeAllDirectories):
+        (WebCore::openTemporaryFile):
+        (WebCore::openFile):
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabase::getPluginPathsInDirectories):
+        (WebCore::addMozillaPluginDirectories):
+        (WebCore::addAdobeAcrobatPluginDirectory):
+        (WebCore::addJavaPluginDirectory):
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::getVersionInfo):
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::handlePostReadFile):
+
 2013-06-26  Roger Fong  <roger_fong@apple.com>
 
         Add an accessibility delegate interface to AppleWin port.

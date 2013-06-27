@@ -68,7 +68,7 @@ String WebCore::signedPublicKeyAndChallengeString(unsigned index, const String& 
         String localChallenge = challenge;
 
         // Windows API won't write to our buffer, although it's not declared with const.
-        requestInfo.pwszChallengeString = const_cast<wchar_t*>(localChallenge.charactersWithNullTermination());
+        requestInfo.pwszChallengeString = const_cast<wchar_t*>(localChallenge.deprecatedCharactersWithNullTermination());
 
         CRYPT_ALGORITHM_IDENTIFIER signAlgo = { 0 };
         signAlgo.pszObjId = szOID_RSA_SHA1RSA;

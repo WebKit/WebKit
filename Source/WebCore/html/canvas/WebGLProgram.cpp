@@ -170,7 +170,7 @@ void WebGLProgram::cacheActiveAttribLocations(GraphicsContext3D* context3d)
     for (int i = 0; i < numAttribs; ++i) {
         ActiveInfo info;
         context3d->getActiveAttrib(object(), i, info);
-        m_activeAttribLocations[i] = context3d->getAttribLocation(object(), info.name.charactersWithNullTermination());
+        m_activeAttribLocations[i] = context3d->getAttribLocation(object(), info.name.deprecatedCharactersWithNullTermination());
     }
 }
 

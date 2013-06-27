@@ -57,7 +57,7 @@ static size_t reverseFindPathSeparator(const String& path, unsigned start = UINT
 static bool getFileInfo(const String& path, BY_HANDLE_FILE_INFORMATION& fileInfo)
 {
     String filename = path;
-    HANDLE hFile = CreateFile(filename.charactersWithNullTermination(), GENERIC_READ, FILE_SHARE_READ, 0
+    HANDLE hFile = CreateFile(filename.deprecatedCharactersWithNullTermination(), GENERIC_READ, FILE_SHARE_READ, 0
         , OPEN_EXISTING, FILE_FLAG_NO_BUFFERING, 0);
 
     if (hFile == INVALID_HANDLE_VALUE)
@@ -124,7 +124,7 @@ bool getFileMetadata(const String& path, FileMetadata& metadata)
 bool fileExists(const String& path) 
 {
     String filename = path;
-    HANDLE hFile = CreateFile(filename.charactersWithNullTermination(), 0, FILE_SHARE_READ | FILE_SHARE_WRITE
+    HANDLE hFile = CreateFile(filename.deprecatedCharactersWithNullTermination(), 0, FILE_SHARE_READ | FILE_SHARE_WRITE
         , 0, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING, 0);
 
     CloseHandle(hFile);
@@ -135,14 +135,14 @@ bool fileExists(const String& path)
 bool deleteFile(const String& path)
 {
     String filename = path;
-    return !!DeleteFileW(filename.charactersWithNullTermination());
+    return !!DeleteFileW(filename.deprecatedCharactersWithNullTermination());
 }
 
 
 bool deleteEmptyDirectory(const String& path)
 {
     String filename = path;
-    return !!RemoveDirectoryW(filename.charactersWithNullTermination());
+    return !!RemoveDirectoryW(filename.deprecatedCharactersWithNullTermination());
 }
 
 String pathByAppendingComponent(const String& path, const String& component)
@@ -183,9 +183,9 @@ bool makeAllDirectories(const String& path)
     }
 
     String folder(path.substring(0, endPos));
-    CreateDirectory(folder.charactersWithNullTermination(), 0);
+    CreateDirectory(folder.deprecatedCharactersWithNullTermination(), 0);
 
-    DWORD fileAttr = GetFileAttributes(folder.charactersWithNullTermination());
+    DWORD fileAttr = GetFileAttributes(folder.deprecatedCharactersWithNullTermination());
     return fileAttr != 0xFFFFFFFF && (fileAttr & FILE_ATTRIBUTE_DIRECTORY);
 }
 
@@ -243,7 +243,7 @@ String openTemporaryFile(const String&, PlatformFileHandle& handle)
         proposedPath = pathByAppendingComponent(String(tempPath), String(tempFile));
 
         // use CREATE_NEW to avoid overwriting an existing file with the same name
-        handle = CreateFile(proposedPath.charactersWithNullTermination(), GENERIC_READ | GENERIC_WRITE, 0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
+        handle = CreateFile(proposedPath.deprecatedCharactersWithNullTermination(), GENERIC_READ | GENERIC_WRITE, 0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
         if (!isHandleValid(handle) && GetLastError() == ERROR_ALREADY_EXISTS)
             continue;
 
@@ -274,7 +274,7 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode)
     }
 
     String destination = path;
-    return CreateFile(destination.charactersWithNullTermination(), desiredAccess, 0, 0, creationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
+    return CreateFile(destination.deprecatedCharactersWithNullTermination(), desiredAccess, 0, 0, creationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
 }
 
 void closeFile(PlatformFileHandle& handle)

@@ -41,7 +41,7 @@ void setCookiesFromDOM(const NetworkStorageSession&, const KURL&, const KURL& ur
     // FIXME: Deal with firstParty argument.
     String str = url.string();
     String val = value;
-    InternetSetCookie(str.charactersWithNullTermination(), 0, val.charactersWithNullTermination());
+    InternetSetCookie(str.deprecatedCharactersWithNullTermination(), 0, val.deprecatedCharactersWithNullTermination());
 }
 
 String cookiesForDOM(const NetworkStorageSession&, const KURL&, const KURL& url)
@@ -51,14 +51,14 @@ String cookiesForDOM(const NetworkStorageSession&, const KURL&, const KURL& url)
     String str = url.string();
 
     DWORD count = 0;
-    if (!InternetGetCookie(str.charactersWithNullTermination(), 0, 0, &count))
+    if (!InternetGetCookie(str.deprecatedCharactersWithNullTermination(), 0, 0, &count))
         return String();
 
     if (count <= 1) // Null terminator counts as 1.
         return String();
 
     Vector<UChar> buffer(count);
-    if (!InternetGetCookie(str.charactersWithNullTermination(), 0, buffer.data(), &count))
+    if (!InternetGetCookie(str.deprecatedCharactersWithNullTermination(), 0, buffer.data(), &count))
         return String();
 
     buffer.shrink(count - 1); // Ignore the null terminator.

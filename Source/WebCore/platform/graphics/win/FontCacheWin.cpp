@@ -100,9 +100,9 @@ static const Vector<String>* getLinkedFonts(String& family)
         return result;
 
     DWORD linkedFontsBufferSize = 0;
-    RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination(), 0, NULL, NULL, &linkedFontsBufferSize);
+    RegQueryValueEx(fontLinkKey, family.deprecatedCharactersWithNullTermination(), 0, NULL, NULL, &linkedFontsBufferSize);
     WCHAR* linkedFonts = reinterpret_cast<WCHAR*>(malloc(linkedFontsBufferSize));
-    if (SUCCEEDED(RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination(), 0, NULL, reinterpret_cast<BYTE*>(linkedFonts), &linkedFontsBufferSize))) {
+    if (SUCCEEDED(RegQueryValueEx(fontLinkKey, family.deprecatedCharactersWithNullTermination(), 0, NULL, reinterpret_cast<BYTE*>(linkedFonts), &linkedFontsBufferSize))) {
         unsigned i = 0;
         unsigned length = linkedFontsBufferSize / sizeof(*linkedFonts);
         while (i < length) {
