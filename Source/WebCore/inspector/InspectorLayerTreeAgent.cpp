@@ -253,14 +253,11 @@ void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString* errorStrin
 
     if (reasonsBitmask & CompositingReasonVideo)
         compositingReasons->setVideo(true);
-
-    if (reasonsBitmask & CompositingReasonCanvas)
+    else if (reasonsBitmask & CompositingReasonCanvas)
         compositingReasons->setCanvas(true);
-
-    if (reasonsBitmask & CompositingReasonPlugin)
+    else if (reasonsBitmask & CompositingReasonPlugin)
         compositingReasons->setPlugin(true);
-
-    if (reasonsBitmask & CompositingReasonIFrame)
+    else if (reasonsBitmask & CompositingReasonIFrame)
         compositingReasons->setIFrame(true);
     
     if (reasonsBitmask & CompositingReasonBackfaceVisibilityHidden)

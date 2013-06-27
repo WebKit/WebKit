@@ -1911,14 +1911,11 @@ const char* RenderLayerCompositor::logReasonsForCompositing(const RenderLayer* l
 
     if (reasons & CompositingReasonVideo)
         return "video";
-
-    if (reasons & CompositingReasonCanvas)
+    else if (reasons & CompositingReasonCanvas)
         return "canvas";
-
-    if (reasons & CompositingReasonPlugin)
+    else if (reasons & CompositingReasonPlugin)
         return "plugin";
-
-    if (reasons & CompositingReasonIFrame)
+    else if (reasons & CompositingReasonIFrame)
         return "iframe";
     
     if (reasons & CompositingReasonBackfaceVisibilityHidden)

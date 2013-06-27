@@ -1,3 +1,19 @@
+2013-06-27  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Removing the redundant checks after r152078
+        https://bugs.webkit.org/show_bug.cgi?id=118117
+
+        Reviewed by Simon Fraser.
+
+        Avoided redundant checks in RenderLayerCompositor::reasonsForCompositing() after r152078.
+
+        No new tests as no functionality change.
+
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::reasonsForCompositingLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logReasonsForCompositing):
+
 2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove [NoInterfaceObject] from WorkerGlobalScope
