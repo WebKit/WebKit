@@ -497,8 +497,8 @@ void FrameView::setFrameRect(const IntRect& newRect)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 bool FrameView::scheduleAnimation()
 {
-    if (hostWindow()) {
-        hostWindow()->scheduleAnimation();
+    if (HostWindow* window = hostWindow()) {
+        window->scheduleAnimation();
         return true;
     }
     return false;
