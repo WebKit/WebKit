@@ -918,11 +918,8 @@ static long MSAARole(AccessibilityRole role)
             return ROLE_SYSTEM_OUTLINEITEM;
         case WebCore::TabPanelRole:
             return ROLE_SYSTEM_GROUPING;
-        // Note: TabRole seems like it should map to ROLE_SYSTEM_PAGETAB, but Mac OS maps
-        // this to the equivalent of ROLE_SYSTEM_RADIOBUTTON. To provide consistent behavior
-        // on both platforms we will follow that mapping:
         case WebCore::TabRole:
-            return ROLE_SYSTEM_RADIOBUTTON;
+            return ROLE_SYSTEM_PAGETAB;
         case WebCore::ApplicationRole:
             return ROLE_SYSTEM_APPLICATION;
         case WebCore::ApplicationDialogRole:

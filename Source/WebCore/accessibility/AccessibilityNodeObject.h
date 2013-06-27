@@ -100,6 +100,8 @@ public:
     virtual bool isRequired() const;
     virtual bool supportsRequiredAttribute() const;
 
+    virtual bool canSetSelectedAttribute() const OVERRIDE;
+
     void setNode(Node*);
     virtual Node* node() const { return m_node; }
     virtual Document* document() const;

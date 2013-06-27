@@ -1902,4 +1902,23 @@ bool AccessibilityNodeObject::hasContentEditableAttributeSet() const
     return contentEditableValue.isEmpty() || equalIgnoringCase(contentEditableValue, "true");
 }
 
+bool AccessibilityNodeObject::canSetSelectedAttribute() const
+{
+    // Elements that can be selected
+    switch (roleValue()) {
+    case CellRole:
+    case RadioButtonRole:
+    case RowHeaderRole:
+    case RowRole:
+    case TabListRole:
+    case TabRole:
+    case TreeGridRole:
+    case TreeItemRole:
+    case TreeRole:
+        return isEnabled();
+    default:
+        return false;
+    }
+}
+
 } // namespace WebCore
