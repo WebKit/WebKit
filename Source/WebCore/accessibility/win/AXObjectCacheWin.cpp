@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012 Serotek Corporation. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,9 @@
 #include "Document.h"
 #include "Page.h"
 #include "RenderObject.h"
+
+// Provided by IAccessibleEventID.idl
+#define IA2_EVENT_DOCUMENT_LOAD_COMPLETE    261
 
 using namespace std;
 
@@ -74,6 +78,10 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
 
     DWORD msaaEvent;
     switch (notification) {
+        case AXCheckedStateChanged:
+            msaaEvent = EVENT_OBJECT_STATECHANGE;
+            break;
+
         case AXFocusedUIElementChanged:
         case AXActiveDescendantChanged:
             msaaEvent = EVENT_OBJECT_FOCUS;
@@ -81,6 +89,14 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
 
         case AXScrolledToAnchor:
             msaaEvent = EVENT_SYSTEM_SCROLLINGSTART;
+            break;
+
+        case AXLayoutComplete:
+            msaaEvent = EVENT_OBJECT_REORDER;
+            break;
+
+        case AXLoadComplete:
+            msaaEvent = IA2_EVENT_DOCUMENT_LOAD_COMPLETE;
             break;
 
         case AXValueChanged:
