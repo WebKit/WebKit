@@ -1,5 +1,19 @@
 2013-06-27  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152038
+
+    2013-06-26  Jer Noble  <jer.noble@apple.com>
+
+            Potential use-after-free after neutering AudioBuffer's underlying ArrayBuffer.
+            https://bugs.webkit.org/show_bug.cgi?id=118040
+
+            Reviewed by Filip Pizlo.
+
+            * webaudio/audiobuffer-neuter.html: Added.
+            * webaudio/audiobuffer-neuter-expected.txt: Added.
+
+2013-06-27  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151868
 
     2013-06-21  Brent Fulgham  <bfulgham@apple.com>
