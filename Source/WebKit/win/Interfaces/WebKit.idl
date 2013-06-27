@@ -58,6 +58,7 @@ import "ocidl.idl";
 import "AccessibleApplication.idl";
 
 #include "AccessibleComparable.idl"
+#include "AccessibilityDelegate.idl"
 #include "WebScrollbarTypes.idl"
 #include "JavaScriptCoreAPITypes.idl"
 #include "IWebScriptObject.idl"

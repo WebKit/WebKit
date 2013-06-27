@@ -227,6 +227,22 @@ interface IWebView : IUnknown
     HRESULT initWithFrame([in] RECT frame, [in] BSTR frameName, [in] BSTR groupName);
 
     /*!
+        @method accessibilityDelegate:
+        @abstract Return the WebView's accessibilityDelegate.
+        @param delegate The WebUIDelegate to set as the delegate.
+        - (void)setUIDelegate:(id)delegate;
+    */
+    HRESULT setAccessibilityDelegate([in] IAccessibilityDelegate *d);
+
+    /*!
+        @method setAccessibilityDelegate:
+        @abstract Set the WebView's accessibilityDelegate.
+        @result The WebView's WebUIDelegate.
+        - (id)UIDelegate;
+    */
+    HRESULT accessibilityDelegate([out][retval] IAccessibilityDelegate **d);
+
+    /*!
         @method setUIDelegate:
         @abstract Set the WebView's WebUIDelegate.
         @param delegate The WebUIDelegate to set as the delegate.

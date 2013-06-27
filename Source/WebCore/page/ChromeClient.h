@@ -310,6 +310,8 @@ public:
 
 #if PLATFORM(WIN)
     virtual void setLastSetCursorToCurrentCursor() = 0;
+    virtual void AXStartFrameLoad() = 0;
+    virtual void AXFinishFrameLoad() = 0;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

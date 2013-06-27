@@ -1,3 +1,13 @@
+2013-06-26  Roger Fong  <roger_fong@apple.com>
+
+        Add an accessibility delegate interface to AppleWin port.
+        https://bugs.webkit.org/show_bug.cgi?id=118094.
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj:
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj.filters:
+
 2013-06-24  Alex Christensen  <achristensen@apple.com>
 
         Windows build links to opengl32.lib to allow WebGL compiling.

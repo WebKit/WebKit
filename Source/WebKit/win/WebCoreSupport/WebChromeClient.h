@@ -174,6 +174,9 @@ public:
 
     WebView* webView() { return m_webView; }
 
+    virtual void AXStartFrameLoad();
+    virtual void AXFinishFrameLoad();
+
 private:
     COMPtr<IWebUIDelegate> uiDelegate();
 

@@ -857,4 +857,20 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
     m_webView->fullScreenController()->exitFullScreen();
 }
 
+void WebChromeClient::AXStartFrameLoad()
+{
+    COMPtr<IAccessibilityDelegate> delegate;
+    m_webView->accessibilityDelegate(&delegate);
+    if (delegate)
+        delegate->fireFrameLoadStartedEvents();
+}
+
+void WebChromeClient::AXFinishFrameLoad()
+{
+    COMPtr<IAccessibilityDelegate> delegate;
+    m_webView->accessibilityDelegate(&delegate);
+    if (delegate)
+        delegate->fireFrameLoadFinishedEvents();
+}
+
 #endif

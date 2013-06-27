@@ -1,3 +1,23 @@
+2013-06-26  Roger Fong  <roger_fong@apple.com>
+
+        Add an accessibility delegate interface to AppleWin port.
+        https://bugs.webkit.org/show_bug.cgi?id=118094.
+
+        Reviewed by Brent Fulgham.
+
+        * Interfaces/AccessibilityDelegate.idl: Added.
+        * Interfaces/IWebView.idl:
+        * Interfaces/WebKit.idl:
+        * WebCoreSupport/WebChromeClient.cpp: Add methods that call into the AccessibilityDelegate.
+        (WebChromeClient::AXStartFrameLoad):
+        (WebChromeClient::AXFinishFrameLoad):
+        * WebCoreSupport/WebChromeClient.h:
+        * WebView.cpp: Add support for setting and getting the AccessibilityDelegate from the WebView.
+        (WebView::close):
+        (WebView::setAccessibilityDelegate):
+        (WebView::accessibilityDelegate):
+        * WebView.h:
+
 2013-06-24  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLFormElement for code cleanup

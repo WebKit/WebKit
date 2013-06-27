@@ -139,6 +139,12 @@ public:
         /* [in] */ BSTR frameName,
         /* [in] */ BSTR groupName);
 
+    virtual HRESULT STDMETHODCALLTYPE setAccessibilityDelegate(
+        /* [in] */ IAccessibilityDelegate *d);
+
+    virtual HRESULT STDMETHODCALLTYPE accessibilityDelegate(
+        /* [out][retval] */ IAccessibilityDelegate **d);
+
     virtual HRESULT STDMETHODCALLTYPE setUIDelegate( 
         /* [in] */ IWebUIDelegate *d);
     
@@ -1079,6 +1085,7 @@ protected:
     SIZE m_backingStoreSize;
     RefPtr<RefCountedHRGN> m_backingStoreDirtyRegion;
 
+    COMPtr<IAccessibilityDelegate> m_accessibilityDelegate;
     COMPtr<IWebEditingDelegate> m_editingDelegate;
     COMPtr<IWebFrameLoadDelegate> m_frameLoadDelegate;
     COMPtr<IWebFrameLoadDelegatePrivate> m_frameLoadDelegatePrivate;

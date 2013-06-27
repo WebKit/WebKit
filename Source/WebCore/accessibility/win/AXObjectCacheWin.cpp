@@ -30,6 +30,7 @@
 
 #include "AccessibilityObject.h"
 #include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "Page.h"
 #include "RenderObject.h"
@@ -127,8 +128,23 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXT
 {
 }
 
-void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent)
+void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* obj, AXLoadingEvent notification)
 {
+    if (!obj)
+        return;
+    
+    Document* document = obj->document();
+    if (!document)
+        return;
+
+    Page* page = document->page();
+    if (!page)
+        return;
+
+    if (notification == AXLoadingStarted)
+        page->chrome().client()->AXStartFrameLoad();
+    else if (notification == AXLoadingFinished)
+        page->chrome().client()->AXFinishFrameLoad();
 }
 
 AXID AXObjectCache::platformGenerateAXID() const
