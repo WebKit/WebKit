@@ -146,49 +146,49 @@ void ArgumentEncoder::encode(uint16_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
 
-    *reinterpret_cast<uint16_t*>(buffer) = n;
+    *reinterpret_cast_ptr<uint16_t*>(buffer) = n;
 }
 
 void ArgumentEncoder::encode(uint32_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
-    *reinterpret_cast<uint32_t*>(buffer) = n;
+    *reinterpret_cast_ptr<uint32_t*>(buffer) = n;
 }
 
 void ArgumentEncoder::encode(uint64_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
-    *reinterpret_cast<uint64_t*>(buffer) = n;
+    *reinterpret_cast_ptr<uint64_t*>(buffer) = n;
 }
 
 void ArgumentEncoder::encode(int32_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
-    *reinterpret_cast<int32_t*>(buffer) = n;
+    *reinterpret_cast_ptr<int32_t*>(buffer) = n;
 }
 
 void ArgumentEncoder::encode(int64_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
-    *reinterpret_cast<int64_t*>(buffer) = n;
+    *reinterpret_cast_ptr<int64_t*>(buffer) = n;
 }
 
 void ArgumentEncoder::encode(float n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
 
-    *reinterpret_cast<float*>(buffer) = n;
+    *reinterpret_cast_ptr<float*>(buffer) = n;
 }
 
 void ArgumentEncoder::encode(double n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
 
-    *reinterpret_cast<double*>(buffer) = n;
+    *reinterpret_cast_ptr<double*>(buffer) = n;
 }
 
 void ArgumentEncoder::addAttachment(const Attachment& attachment)

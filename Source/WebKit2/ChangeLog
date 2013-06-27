@@ -1,3 +1,15 @@
+2013-06-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix cast-align warnings in WebKit2/Platform/CoreIPC
+        https://bugs.webkit.org/show_bug.cgi?id=117987
+
+        Reviewed by Rob Buis, WK2 signed-off by Anders Carlsson.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::decode):
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::encode):
+
 2013-06-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r152074.

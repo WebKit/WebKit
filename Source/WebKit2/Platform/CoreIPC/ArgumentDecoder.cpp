@@ -154,7 +154,7 @@ bool ArgumentDecoder::decode(uint16_t& result)
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
 
-    result = *reinterpret_cast<uint16_t*>(m_bufferPos);
+    result = *reinterpret_cast_ptr<uint16_t*>(m_bufferPos);
     m_bufferPos += sizeof(result);
     return true;
 }
@@ -164,7 +164,7 @@ bool ArgumentDecoder::decode(uint32_t& result)
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
-    result = *reinterpret_cast<uint32_t*>(m_bufferPos);
+    result = *reinterpret_cast_ptr<uint32_t*>(m_bufferPos);
     m_bufferPos += sizeof(result);
     return true;
 }
@@ -174,7 +174,7 @@ bool ArgumentDecoder::decode(uint64_t& result)
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
-    result = *reinterpret_cast<uint64_t*>(m_bufferPos);
+    result = *reinterpret_cast_ptr<uint64_t*>(m_bufferPos);
     m_bufferPos += sizeof(result);
     return true;
 }
@@ -184,7 +184,7 @@ bool ArgumentDecoder::decode(int32_t& result)
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
-    result = *reinterpret_cast<uint32_t*>(m_bufferPos);
+    result = *reinterpret_cast_ptr<uint32_t*>(m_bufferPos);
     m_bufferPos += sizeof(result);
     return true;
 }
@@ -194,7 +194,7 @@ bool ArgumentDecoder::decode(int64_t& result)
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
-    result = *reinterpret_cast<uint64_t*>(m_bufferPos);
+    result = *reinterpret_cast_ptr<uint64_t*>(m_bufferPos);
     m_bufferPos += sizeof(result);
     return true;
 }
@@ -204,7 +204,7 @@ bool ArgumentDecoder::decode(float& result)
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
-    result = *reinterpret_cast<float*>(m_bufferPos);
+    result = *reinterpret_cast_ptr<float*>(m_bufferPos);
     m_bufferPos += sizeof(result);
     return true;
 }
@@ -214,7 +214,7 @@ bool ArgumentDecoder::decode(double& result)
     if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
-    result = *reinterpret_cast<double*>(m_bufferPos);
+    result = *reinterpret_cast_ptr<double*>(m_bufferPos);
     m_bufferPos += sizeof(result);
     return true;
 }
