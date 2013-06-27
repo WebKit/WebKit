@@ -1,5 +1,18 @@
 2013-06-26  Simon Cooper  <scooper@apple.com>
 
+        Silverlight deny ipc-posix-sem LC_Mutex playing Amazon Prime videos
+        https://bugs.webkit.org/show_bug.cgi?id=118102
+        <rdar://problem/14194077>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow same-sandbox scoped semaphores on Mavericks. Permit the
+        named semaphore for older releases.
+
+        * Resources/PlugInSandboxProfiles/com.microsoft.SilverlightPlugin.sb:
+
+2013-06-26  Simon Cooper  <scooper@apple.com>
+
         Update ColorSync shared memory names in plug-in sandbox profile
         https://bugs.webkit.org/show_bug.cgi?id=118099
 
