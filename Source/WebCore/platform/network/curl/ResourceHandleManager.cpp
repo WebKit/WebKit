@@ -255,6 +255,7 @@ static bool isAppendableHeader(const String &key)
         "proxy-authenticate",
         "public",
         "server",
+        "set-cookie",
         "te",
         "trailer",
         "transfer-encoding",
