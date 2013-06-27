@@ -228,13 +228,13 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitAnimationTimingFunction,
     CSSPropertyWebkitAppearance,
     CSSPropertyWebkitBackfaceVisibility,
+    CSSPropertyWebkitBackgroundBlendMode,
     CSSPropertyWebkitBackgroundClip,
     CSSPropertyWebkitBackgroundComposite,
     CSSPropertyWebkitBackgroundOrigin,
     CSSPropertyWebkitBackgroundSize,
 #if ENABLE(CSS_COMPOSITING)
     CSSPropertyWebkitBlendMode,
-    CSSPropertyWebkitBackgroundBlendMode,
 #endif
     CSSPropertyWebkitBorderFit,
     CSSPropertyWebkitBorderHorizontalSpacing,
@@ -2726,7 +2726,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 #if ENABLE(CSS_COMPOSITING)
         case CSSPropertyWebkitBlendMode:
             return cssValuePool().createValue(style->blendMode());
-            
+#endif
         case CSSPropertyWebkitBackgroundBlendMode: {
             const FillLayer* layers = style->backgroundLayers();
             if (!layers->next())
@@ -2738,7 +2738,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 
             return list.release();
         }
-#endif
         case CSSPropertyBackground:
             return getBackgroundShorthandValue();
         case CSSPropertyBorder: {

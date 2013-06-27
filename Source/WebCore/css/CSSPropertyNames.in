@@ -221,6 +221,7 @@ z-index
 -webkit-appearance
 -webkit-aspect-ratio
 -webkit-backface-visibility
+-webkit-background-blend-mode
 -webkit-background-clip
 -webkit-background-composite
 -webkit-background-origin
@@ -282,7 +283,6 @@ z-index
 #endif
 #if defined(ENABLE_CSS_COMPOSITING) && ENABLE_CSS_COMPOSITING
 -webkit-blend-mode
--webkit-background-blend-mode
 #endif
 #if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
 -webkit-filter

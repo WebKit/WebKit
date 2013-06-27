@@ -516,6 +516,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitAnimationTimingFunction:
     case CSSPropertyWebkitAppearance:
     case CSSPropertyWebkitBackfaceVisibility:
+    case CSSPropertyWebkitBackgroundBlendMode:
     case CSSPropertyWebkitBackgroundClip:
     case CSSPropertyWebkitBackgroundComposite:
     case CSSPropertyWebkitBackgroundOrigin:
@@ -571,7 +572,6 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 #endif
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyWebkitBlendMode:
-    case CSSPropertyWebkitBackgroundBlendMode:
 #endif
     case CSSPropertyWebkitAlignContent:
     case CSSPropertyWebkitAlignItems:

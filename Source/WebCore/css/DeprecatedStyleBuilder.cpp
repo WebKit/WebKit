@@ -2217,13 +2217,13 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitAppearance, ApplyPropertyDefault<ControlPart, &RenderStyle::appearance, ControlPart, &RenderStyle::setAppearance, ControlPart, &RenderStyle::initialAppearance>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAspectRatio, ApplyPropertyAspectRatio::createHandler());
     setPropertyHandler(CSSPropertyWebkitBackfaceVisibility, ApplyPropertyDefault<EBackfaceVisibility, &RenderStyle::backfaceVisibility, EBackfaceVisibility, &RenderStyle::setBackfaceVisibility, EBackfaceVisibility, &RenderStyle::initialBackfaceVisibility>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitBackgroundBlendMode, ApplyPropertyFillLayer<BlendMode, CSSPropertyWebkitBackgroundBlendMode, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers, &FillLayer::isBlendModeSet, &FillLayer::blendMode, &FillLayer::setBlendMode, &FillLayer::clearBlendMode, &FillLayer::initialFillBlendMode, &CSSToStyleMap::mapFillBlendMode>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBackgroundClip, CSSPropertyBackgroundClip);
     setPropertyHandler(CSSPropertyWebkitBackgroundComposite, ApplyPropertyFillLayer<CompositeOperator, CSSPropertyWebkitBackgroundComposite, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers, &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSToStyleMap::mapFillComposite>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundOrigin);
     setPropertyHandler(CSSPropertyWebkitBackgroundSize, CSSPropertyBackgroundSize);
 #if ENABLE(CSS_COMPOSITING)
     setPropertyHandler(CSSPropertyWebkitBlendMode, ApplyPropertyDefault<BlendMode, &RenderStyle::blendMode, BlendMode, &RenderStyle::setBlendMode, BlendMode, &RenderStyle::initialBlendMode>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitBackgroundBlendMode, ApplyPropertyFillLayer<BlendMode, CSSPropertyWebkitBackgroundBlendMode, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers, &FillLayer::isBlendModeSet, &FillLayer::blendMode, &FillLayer::setBlendMode, &FillLayer::clearBlendMode, &FillLayer::initialFillBlendMode, &CSSToStyleMap::mapFillBlendMode>::createHandler());
 #endif
     setPropertyHandler(CSSPropertyWebkitBorderFit, ApplyPropertyDefault<EBorderFit, &RenderStyle::borderFit, EBorderFit, &RenderStyle::setBorderFit, EBorderFit, &RenderStyle::initialBorderFit>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBorderHorizontalSpacing, ApplyPropertyComputeLength<short, &RenderStyle::horizontalBorderSpacing, &RenderStyle::setHorizontalBorderSpacing, &RenderStyle::initialHorizontalBorderSpacing>::createHandler());

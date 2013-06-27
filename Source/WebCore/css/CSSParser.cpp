@@ -2098,6 +2098,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #endif
 
     case CSSPropertyBackgroundAttachment:
+    case CSSPropertyWebkitBackgroundBlendMode:
     case CSSPropertyBackgroundClip:
     case CSSPropertyWebkitBackgroundClip:
     case CSSPropertyWebkitBackgroundComposite:
@@ -2123,9 +2124,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitMaskRepeat:
     case CSSPropertyWebkitMaskRepeatX:
     case CSSPropertyWebkitMaskRepeatY:
-#if ENABLE(CSS_COMPOSITING)
-    case CSSPropertyWebkitBackgroundBlendMode:
-#endif
     {
         RefPtr<CSSValue> val1;
         RefPtr<CSSValue> val2;
@@ -4379,7 +4377,6 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                         m_valueList->next();
                     }
                     break;
-#if ENABLE(CSS_COMPOSITING)
                 case CSSPropertyWebkitBackgroundBlendMode:
                     if (cssCompositingEnabled() && (val->id == CSSValueNormal || val->id == CSSValueMultiply
                         || val->id == CSSValueScreen || val->id == CSSValueOverlay || val->id == CSSValueDarken
@@ -4391,7 +4388,6 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                         m_valueList->next();
                     }
                     break;
-#endif
                 case CSSPropertyBackgroundRepeat:
                 case CSSPropertyWebkitMaskRepeat:
                     parseFillRepeat(currValue, currValue2);

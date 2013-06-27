@@ -1,3 +1,15 @@
+2013-06-27  Horia Iosif Olaru  <olaru@adobe.com>
+
+        Add an extra test to check if tiled background images get blended as expected. This test passed before this change. The tests for this change are the existing background-blend-mode tests.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=117619
+
+        Reviewed by Dean Jackson.
+
+        * css3/compositing/effect-background-blend-mode-tiled-expected.txt: Added.
+        * css3/compositing/effect-background-blend-mode-tiled.html: Added.
+        * platform/mac/css3/compositing/effect-background-blend-mode-tiled-expected.png: Added.
+
 2013-06-26  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Vibration cannot be canceled during pattern vibration.
