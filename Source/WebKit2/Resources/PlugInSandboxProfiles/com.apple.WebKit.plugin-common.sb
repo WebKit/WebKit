@@ -238,9 +238,12 @@
              (socket-domain AF_ROUTE))))
 
 (allow network-outbound
-    ;; Local mDNSResponder for DNS, arbitrary outbound TCP
+    ;; Local mDNSResponder for DNS, arbitrary outbound TCP and UDP
     (literal "/private/var/run/mDNSResponder")
-    (remote tcp))
+    (remote tcp)
+    (remote udp))
+(allow network-inbound
+    (local udp))
 
 
 ;; Open and Save panels

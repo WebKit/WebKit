@@ -1,5 +1,19 @@
 2013-06-26  Simon Cooper  <scooper@apple.com>
 
+        Sometimes the Flash Player plugin cannot make outgoing connections
+        https://bugs.webkit.org/show_bug.cgi?id=118110
+        <rdar://problem/14270933>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow outgoing and incoming UDP data. Tidy up the QuickTime
+        profile as it gets the UDP ability from the common profile.
+
+        * Resources/PlugInSandboxProfiles/com.apple.QuickTime Plugin.plugin.sb:
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+
+2013-06-26  Simon Cooper  <scooper@apple.com>
+
         Flash Player: deny ipc-posix-sem 59918130
         https://bugs.webkit.org/show_bug.cgi?id=118107
         <rdar://problem/14271105>

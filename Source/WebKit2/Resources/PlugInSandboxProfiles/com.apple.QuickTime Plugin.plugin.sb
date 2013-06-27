@@ -5,6 +5,4 @@
     (home-library-subpath "/Caches/QuickTime")
     (home-library-preferences-literal "/QuickTime Preferences"))
 
-(allow network-inbound (local udp))
-(allow network-outbound (remote udp))
 (allow network-bind (local ip))
