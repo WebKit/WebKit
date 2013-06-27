@@ -759,8 +759,8 @@ HTMLLabelElement* AccessibilityRenderObject::labelElementContainer() const
     
     // find if this has a parent that is a label
     for (Node* parentNode = m_renderer->node(); parentNode; parentNode = parentNode->parentNode()) {
-        if (parentNode->hasTagName(labelTag))
-            return static_cast<HTMLLabelElement*>(parentNode);
+        if (isHTMLLabelElement(parentNode))
+            return toHTMLLabelElement(parentNode);
     }
     
     return 0;
@@ -1198,7 +1198,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 
     // don't ignore labels, because they serve as TitleUIElements
     Node* node = m_renderer->node();
-    if (node && node->hasTagName(labelTag))
+    if (node && isHTMLLabelElement(node))
         return false;
     
     // Anything that is content editable should not be ignored.
@@ -2548,7 +2548,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(pTag))
         return ParagraphRole;
 
-    if (node && node->hasTagName(labelTag))
+    if (node && isHTMLLabelElement(node))
         return LabelRole;
 
     if (node && node->hasTagName(dfnTag))

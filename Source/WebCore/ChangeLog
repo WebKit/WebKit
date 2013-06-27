@@ -1,3 +1,35 @@
+2013-06-27  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLLabelElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118113
+
+        Reviewed by Andreas Kling.
+
+        To enhance readability, this patch adopts is/toHTMLLabelElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleAttributeChanged):
+        (WebCore::AXObjectCache::labelChanged):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        (WebCore::AccessibilityNodeObject::labelForElement):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::labelElementContainer):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesLabelForAttribute):
+        * dom/Element.cpp:
+        (WebCore::Element::updateLabel):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::labelElementForId):
+        * html/HTMLLabelElement.h:
+        (WebCore::isHTMLLabelElement):
+        (WebCore::toHTMLLabelElement):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::nodeMatches):
+
 2013-06-27  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [curl] Fix unused variable/parameter warnings

@@ -2986,9 +2986,9 @@ void Element::updateLabel(TreeScope* scope, const AtomicString& oldForAttributeV
         return;
 
     if (!oldForAttributeValue.isEmpty())
-        scope->removeLabel(oldForAttributeValue, static_cast<HTMLLabelElement*>(this));
+        scope->removeLabel(oldForAttributeValue, toHTMLLabelElement(this));
     if (!newForAttributeValue.isEmpty())
-        scope->addLabel(newForAttributeValue, static_cast<HTMLLabelElement*>(this));
+        scope->addLabel(newForAttributeValue, toHTMLLabelElement(this));
 }
 
 void Element::willModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)

@@ -299,8 +299,8 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
         // Populate the map on first access.
         m_labelsByForAttribute = adoptPtr(new DocumentOrderedMap);
         for (Element* element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::next(element)) {
-            if (element->hasTagName(labelTag)) {
-                HTMLLabelElement* label = static_cast<HTMLLabelElement*>(element);
+            if (isHTMLLabelElement(element)) {
+                HTMLLabelElement* label = toHTMLLabelElement(element);
                 const AtomicString& forValue = label->fastGetAttribute(forAttr);
                 if (!forValue.isEmpty())
                     addLabel(forValue, label);
@@ -308,7 +308,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
         }
     }
 
-    return static_cast<HTMLLabelElement*>(m_labelsByForAttribute->getElementByLabelForAttribute(forAttributeValue.impl(), this));
+    return toHTMLLabelElement(m_labelsByForAttribute->getElementByLabelForAttribute(forAttributeValue.impl(), this));
 }
 
 DOMSelection* TreeScope::getSelection() const

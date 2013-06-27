@@ -809,7 +809,7 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
         handleAriaRoleChanged(element);
     else if (attrName == altAttr || attrName == titleAttr)
         textChanged(element);
-    else if (attrName == forAttr && element->hasTagName(labelTag))
+    else if (attrName == forAttr && isHTMLLabelElement(element))
         labelChanged(element);
 
     if (!attrName.localName().string().startsWith("aria-"))
@@ -837,8 +837,8 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
 
 void AXObjectCache::labelChanged(Element* element)
 {
-    ASSERT(element->hasTagName(labelTag));
-    HTMLElement* correspondingControl = static_cast<HTMLLabelElement*>(element)->control();
+    ASSERT(isHTMLLabelElement(element));
+    HTMLElement* correspondingControl = toHTMLLabelElement(element)->control();
     textChanged(correspondingControl);
 }
 
