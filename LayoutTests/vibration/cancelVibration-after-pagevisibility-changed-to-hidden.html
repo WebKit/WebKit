@@ -6,10 +6,13 @@
 <script>
 description('Tests the cancelVibration after changing the value of pageVisibility to hidden.');
 
+var visibilityState = document.visibilityState;
+
 document.addEventListener('visibilitychange', function(e) {
     if (document.visibilityState == 'hidden')
         navigator.vibrate(0);
         shouldBeFalse('internals.isVibrating()');
+        testRunner.setPageVisibility(visibilityState);
         finishJSTest();
     });
 

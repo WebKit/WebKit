@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Tests the cancelVibration during pattern vibration is working.');
+
+var count = 0;
+var cancelingTime = 80;
+
+if (window.testRunner) {
+    function vibrate() {
+        navigator.vibrate([100, 100, 100, 100, 100]);
+        shouldBeTrue('internals.isVibrating()');
+        cancelVibration(cancelingTime + count * 100);
+    }
+
+    function cancelVibration(time) {
+        setTimeout(function() {
+            navigator.vibrate(0);
+            shouldBeFalse('internals.isVibrating()');
+            if (count++ == 2)
+                finishJSTest();
+            vibrate();
+        }, time);
+    }
+
+    shouldBeFalse('internals.isVibrating()');
+    vibrate();
+    window.jsTestIsAsync = true;
+} else
+    debug('This test can not be run without the TestRunner');
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

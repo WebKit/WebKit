@@ -1,3 +1,17 @@
+2013-06-26  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Vibration cannot be canceled during pattern vibration.
+        https://bugs.webkit.org/show_bug.cgi?id=117822
+
+        Reviewed by Gyuyoung Kim.
+
+        Add a test case for vibration cancelation during pattern vibration.
+        In addition, restore visibilityState before executing cancelVibration-after-pagevisibility-changed-to-hidden.html.
+
+        * vibration/cancelVibration-after-pagevisibility-changed-to-hidden.html:
+        * vibration/cancelVibration-during-pattern-vibrating-expected.txt: Added.
+        * vibration/cancelVibration-during-pattern-vibrating.html: Added.
+
 2013-06-26  Jer Noble  <jer.noble@apple.com>
 
         Potential use-after-free after neutering AudioBuffer's underlying ArrayBuffer.

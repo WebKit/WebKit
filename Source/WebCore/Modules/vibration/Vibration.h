@@ -56,6 +56,8 @@ public:
     bool isVibrating() { return m_isVibrating; }
 
 private:
+    void stopVibration();
+
     VibrationClient* m_vibrationClient;
     Timer<Vibration> m_timerStart;
     Timer<Vibration> m_timerStop;

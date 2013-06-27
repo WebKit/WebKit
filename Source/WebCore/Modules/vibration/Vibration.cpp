@@ -52,6 +52,7 @@ void Vibration::vibrate(const unsigned& time)
     }
     m_pattern.append(time);
     m_timerStart.startOneShot(0);
+    m_isVibrating = true;
 }
 
 void Vibration::vibrate(const VibrationPattern& pattern)
@@ -72,16 +73,14 @@ void Vibration::vibrate(const VibrationPattern& pattern)
 
     m_pattern = pattern;
     m_timerStart.startOneShot(0);
+    m_isVibrating = true;
 }
 
 void Vibration::cancelVibration()
 {
     m_pattern.clear();
-    if (m_isVibrating) {
-        m_vibrationClient->cancelVibration();
-        m_isVibrating = false;
-        m_timerStop.stop();
-    }
+    if (m_isVibrating)
+        stopVibration();
 }
 
 void Vibration::suspendVibration()
@@ -90,13 +89,21 @@ void Vibration::suspendVibration()
         return;
 
     m_pattern.insert(0, m_timerStop.nextFireInterval());
-    m_timerStop.stop();
-    cancelVibration();
+    stopVibration();
 }
 
 void Vibration::resumeVibration()
 {
     m_timerStart.startOneShot(0);
+    m_isVibrating = true;
+}
+
+void Vibration::stopVibration()
+{
+    m_timerStart.stop();
+    m_timerStop.stop();
+    m_vibrationClient->cancelVibration();
+    m_isVibrating = false;
 }
 
 void Vibration::timerStartFired(Timer<Vibration>* timer)
@@ -105,8 +112,7 @@ void Vibration::timerStartFired(Timer<Vibration>* timer)
 
     m_timerStart.stop();
 
-    if (m_pattern.size()) {
-        m_isVibrating = true;
+    if (!m_pattern.isEmpty()) {
         m_vibrationClient->vibrate(m_pattern[0]);
         m_timerStop.startOneShot(m_pattern[0] / 1000.0);
         m_pattern.remove(0);
@@ -118,11 +124,12 @@ void Vibration::timerStopFired(Timer<Vibration>* timer)
     ASSERT_UNUSED(timer, timer == &m_timerStop);
 
     m_timerStop.stop();
-    m_isVibrating = false;
 
-    if (m_pattern.size()) {
+    if (!m_pattern.isEmpty()) {
         m_timerStart.startOneShot(m_pattern[0] / 1000.0);
         m_pattern.remove(0);
+        if (m_pattern.isEmpty())
+            m_isVibrating = false;
     }
 }
 
