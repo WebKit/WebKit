@@ -15,3 +15,32 @@ webkit.org/b/116473 editing/selection/user-drag-element-and-user-select-none.htm
 
 # media/W3C/video/networkState/networkState_during_progress.html is flaky
 webkit.org/b/76280 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
+
+# The CSS Shapes spec has changed the positioning model for floats with shape-outside.
+# Thus all of the tests need to be rewitten to work as the implementation of
+# the new model is completed.
+webkit.org/b/118088 fast/exclusions/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html [ Skip ]
+webkit.org/b/118088 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-bottom.html [ Skip ]
+webkit.org/b/118088 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html [ Skip ]
+webkit.org/b/118088 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html [ Skip ]
+webkit.org/b/118088 fast/exclusions/shape-outside-floats/shape-outside-floats-left-margin-polygon.html [ Skip ]
+webkit.org/b/118088 fast/exclusions/shape-outside-floats/shape-outside-floats-right-margin-polygon.html [ Skip ]
+
+webkit.org/b/118084 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html [ Skip ]
+webkit.org/b/118084 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html [ Skip ]
+
+webkit.org/b/118085 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-polygon.html [ Skip ]
+
+webkit.org/b/118086 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-percentage.html [ Skip ]
+webkit.org/b/118086 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-inset-rectangle-percentage.html [ Skip ]
+
+webkit.org/b/118083 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-inset-rectangle.html [ Skip ]
+webkit.org/b/118083 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-inset-rectangle.html [ Skip ]
+
+webkit.org/b/118081 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-001.html [ Skip ]
+webkit.org/b/118081 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-002.html [ Skip ]
+webkit.org/b/118081 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-003.html [ Skip ]
+webkit.org/b/118081 fast/exclusions/shape-outside-floats/shape-outside-floats-rounded-rectangle-large-radius.html [ Skip ]
+
+webkit.org/b/118087 fast/exclusions/shape-outside-floats/shape-outside-floats-stacked.html [ Skip ]
+webkit.org/b/118087 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple.html [ Skip ]

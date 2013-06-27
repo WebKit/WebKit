@@ -1,3 +1,80 @@
+2013-06-27  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: basic support for rectangle shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=118080
+
+        Reviewed by David Hyatt.
+
+        With the latest Editor's Draft of the CSS Shapes specification,
+        shape-outside no longer affects the positioning of floats. This is the
+        first step in changing the implementation to reflect this
+        specification change. The bulk of this change is reverting the code
+        that was needed to position floats based on the bounding box of the
+        shape.
+
+        Tests: csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-000.html
+               csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-001.html
+               csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-002.html
+               csswg/submitted/shapes/shape-outside/shape-outside-floats-square-000.html
+               csswg/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-000.html
+               csswg/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-001.html
+               csswg/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-002.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState): Revert changes to support float
+            positioning from shape-outside.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::blockSelectionGaps): Ditto.
+        (WebCore::RenderBlock::insertFloatingObject): Ditto.
+        (WebCore::RenderBlock::positionNewFloats): Ditto.
+        (WebCore::RenderBlock::logicalLeftOffsetForLine): Instead of
+            converting to shape bounding box coordinates, convert to the
+            float's margin box coordinates.
+        (WebCore::RenderBlock::logicalRightOffsetForLine): Ditto.
+        (WebCore::positionForPointRespectingEditingBoundaries): Revert changes
+            to support float positioning from shape-outside.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::xPositionForFloatIncludingMargin): Ditto.
+        (WebCore::RenderBlock::yPositionForFloatIncludingMargin): Ditto.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded): Instead
+            of converting to shape bounding box coordinates, convert to the
+            float's margin box coordinates.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer): Revert changes to support
+            float positioning from shape-outside.
+        (WebCore::RenderBox::offsetFromContainer): Ditto.
+        (WebCore::RenderBox::computeRectForRepaint): Ditto.
+        (WebCore::RenderBox::layoutOverflowRectForPropagation): Ditto.
+        * rendering/RenderBoxModelObject.cpp: Ditto.
+        * rendering/RenderBoxModelObject.h: Ditto.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint): Ditto.
+        (WebCore::RenderInline::computeRectForRepaint): Ditto.
+        (WebCore::RenderInline::mapLocalToContainer): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition): Ditto.
+        (WebCore::RenderLayer::calculateClipRects): Ditto.
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly): Ditto.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::offsetForInFlowPosition): Ditto.
+        * rendering/RenderObject.h: Ditto.
+        * rendering/shapes/ShapeInfo.h: Make m_renderer protected, since we
+            now need it in the subclass to compute the segments.
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computeSegmentsForLine): Update segment
+            computation to use the float's margin box instead of the shape's
+            bounding box for computing the deltas.
+        (WebCore::ShapeOutsideInfo::leftSegmentMarginBoxDelta): This used to
+            be leftSegmentShapeBoundingBoxDelta, which has been renamed in the
+            obvious way.
+        (WebCore::ShapeOutsideInfo::rightSegmentMarginBoxDelta): This used to
+            be rightSegmentShapeBoundingBoxDelta, which has been renamed in the
+            obvious way.
+        * rendering/shapes/ShapeOutsideInfo.h: Revert changes to support float
+            positioning from shape-outside.
+        * rendering/style/RenderStyle.h: Ditto.
+
 2013-06-27  Antti Koivisto  <antti@apple.com>
 
         RenderLayerCompositor destructor is fragile

@@ -620,19 +620,6 @@ LayoutSize RenderBoxModelObject::offsetForInFlowPosition() const
     return LayoutSize();
 }
 
-LayoutSize RenderBoxModelObject::paintOffset() const
-{
-    LayoutSize offset = offsetForInFlowPosition();
-
-#if ENABLE(CSS_SHAPES)
-    if (isBox() && isFloating())
-        if (ShapeOutsideInfo* shapeOutside = toRenderBox(this)->shapeOutsideInfo())
-            offset -= shapeOutside->shapeLogicalOffset();
-#endif
-
-    return offset;
-}
-
 LayoutUnit RenderBoxModelObject::offsetLeft() const
 {
     // Note that RenderInline and RenderBox override this to pass a different

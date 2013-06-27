@@ -1,3 +1,51 @@
+2013-06-27  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: basic support for rectangle shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=118080
+
+        Reviewed by David Hyatt.
+
+        Added new tests for the new model. These tests are also spec tests, so
+        their canonical location is now in the CSS WG's repository. They have
+        been imported to WebKit using the import-w3c-tests script, and that's
+        why they live under the csswg directory.
+
+        The new tests replace the shape-outside-floats-simple-rectangle.html
+        test, which was anything but simple.
+
+        Tests that have not been rewritten yet have been marked as skipped.
+        Tests for the old positioning behavior that are not applicable to the
+        new behavior have been deleted.
+
+        * TestExpectations: Skip all the tests that need to be rewritten.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-000-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-000.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-001-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-001.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-002-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-002.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-square-000-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-square-000.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-000-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-000.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-001-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-001.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-002-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-002.html: Added.
+        * csswg/submitted/shapes/shape-outside/w3c-import.log: Added.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-margin-is-ignored-expected.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-margin-is-ignored.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-non-zero-y-expected.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-non-zero-y.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-overflow-hidden-expected.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-overflow-hidden.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-overhang-expected.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-overhang.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-positioning-expected.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-positioning.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-expected.html: Removed.
+        * fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle.html: Removed.
+
 2013-06-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: IOS: crash while navigating with SVG

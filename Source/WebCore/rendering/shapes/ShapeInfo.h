@@ -119,12 +119,13 @@ protected:
     LayoutUnit m_lineHeight;
     SegmentList m_segments;
 
+    const RenderType* m_renderer;
+
 private:
     mutable OwnPtr<Shape> m_shape;
 
     LayoutUnit m_shapeLogicalWidth;
     LayoutUnit m_shapeLogicalHeight;
-    const RenderType* m_renderer;
 };
 }
 #endif

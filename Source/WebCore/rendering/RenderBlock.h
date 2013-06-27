@@ -72,7 +72,7 @@ typedef Vector<WordMeasurement, 64> WordMeasurements;
 
 enum CaretType { CursorCaret, DragCaret };
 enum ContainingBlockState { NewContainingBlock, SameContainingBlock };
-enum ShapeOutsideFloatOffsetMode { ShapeOutsideFloatShapeOffset, ShapeOutsideFloatBoundingBoxOffset };
+enum ShapeOutsideFloatOffsetMode { ShapeOutsideFloatShapeOffset, ShapeOutsideFloatMarginBoxOffset };
 
 enum TextRunFlag {
     DefaultTextRunFlags = 0,
@@ -789,12 +789,6 @@ private:
 
     LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
-#if ENABLE(CSS_SHAPES)
-        ShapeOutsideInfo *shapeOutside = child->renderer()->shapeOutsideInfo();
-        if (shapeOutside)
-            return child->x();
-#endif
-
         if (isHorizontalWritingMode())
             return child->x() + child->renderer()->marginLeft();
         else
@@ -803,12 +797,6 @@ private:
         
     LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
-#if ENABLE(CSS_SHAPES)
-        ShapeOutsideInfo *shapeOutside = child->renderer()->shapeOutsideInfo();
-        if (shapeOutside)
-            return child->y();
-#endif
-
         if (isHorizontalWritingMode())
             return child->y() + marginBeforeForChild(child->renderer());
         else
@@ -1197,9 +1185,9 @@ protected:
         // When computing the offset caused by the floats on a given line, if
         // the outermost float on that line has a shape-outside, the inline
         // content that butts up against that float must be positioned using
-        // the contours of the shape, not the shape's bounding box. We save the
-        // last float encountered so that the offset can be computed correctly
-        // by the code using this adapter.
+        // the contours of the shape, not the margin box of the float.
+        // We save the last float encountered so that the offset can be
+        // computed correctly by the code using this adapter.
         const FloatingObject* lastFloat() const { return m_last; }
 #endif
 

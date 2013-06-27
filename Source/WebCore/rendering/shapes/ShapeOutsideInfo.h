@@ -41,10 +41,8 @@ class RenderBox;
 
 class ShapeOutsideInfo : public ShapeInfo<RenderBox, &RenderStyle::shapeOutside, &Shape::getExcludedIntervals>, public MappedInfo<RenderBox, ShapeOutsideInfo> {
 public:
-    LayoutSize shapeLogicalOffset() const { return LayoutSize(shapeLogicalLeft(), shapeLogicalTop()); }
-
-    LayoutUnit leftSegmentShapeBoundingBoxDelta() const { return m_leftSegmentShapeBoundingBoxDelta; }
-    LayoutUnit rightSegmentShapeBoundingBoxDelta() const { return m_rightSegmentShapeBoundingBoxDelta; }
+    LayoutUnit leftSegmentMarginBoxDelta() const { return m_leftSegmentMarginBoxDelta; }
+    LayoutUnit rightSegmentMarginBoxDelta() const { return m_rightSegmentMarginBoxDelta; }
 
     virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE;
 
@@ -57,8 +55,8 @@ protected:
 private:
     ShapeOutsideInfo(const RenderBox* renderer) : ShapeInfo<RenderBox, &RenderStyle::shapeOutside, &Shape::getExcludedIntervals>(renderer) { }
 
-    LayoutUnit m_leftSegmentShapeBoundingBoxDelta;
-    LayoutUnit m_rightSegmentShapeBoundingBoxDelta;
+    LayoutUnit m_leftSegmentMarginBoxDelta;
+    LayoutUnit m_rightSegmentMarginBoxDelta;
     LayoutUnit m_lineTop;
 };
 

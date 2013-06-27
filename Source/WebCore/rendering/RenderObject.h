@@ -543,16 +543,6 @@ public:
 
     bool isOutOfFlowPositioned() const { return m_bitfields.isOutOfFlowPositioned(); } // absolute or fixed positioning
     bool isInFlowPositioned() const { return m_bitfields.isRelPositioned() || m_bitfields.isStickyPositioned(); } // relative or sticky positioning
-    bool hasPaintOffset() const
-    {
-        bool positioned = isInFlowPositioned();
-#if ENABLE(CSS_SHAPES)
-        // Shape outside on a float can reposition the float in much the
-        // same way as relative positioning, so treat it as such.
-        positioned = positioned || isFloatingWithShapeOutside();
-#endif
-        return positioned;
-    }
     bool isRelPositioned() const { return m_bitfields.isRelPositioned(); } // relative positioning
     bool isStickyPositioned() const { return m_bitfields.isStickyPositioned(); }
     bool isPositioned() const { return m_bitfields.isPositioned(); }
