@@ -3650,7 +3650,7 @@ void ewk_view_repaint(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y, Evas_Coo
 void ewk_view_scroll(Evas_Object* ewkView, const WebCore::IntSize& delta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect&)
 {
     ASSERT(!rectToScroll.isEmpty());
-    ASSERT(!delta.width() && !delta.height());
+    ASSERT(delta.width() || delta.height());
 
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);

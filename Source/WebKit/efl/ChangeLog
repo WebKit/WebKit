@@ -1,3 +1,13 @@
+2013-06-26  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][REGRESSION] Crash after r151540 with debug build
+        https://bugs.webkit.org/show_bug.cgi?id=118111
+
+        Reviewed by Gyuyoung Kim.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_scroll): Fixed ASSERT conditions wrongly refactored.
+
 2013-06-21  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         REGRESSION (r150663): Using webkitAudioContext in Inspector makes it undefined everywhere
