@@ -225,6 +225,9 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
 
 RenderLayerCompositor::~RenderLayerCompositor()
 {
+    // Take care that the owned GraphicsLayers are deleted first as their destructors may call back here.
+    m_clipLayer = nullptr;
+    m_scrollLayer = nullptr;
     ASSERT(m_rootLayerAttachment == RootLayerUnattached);
 }
 

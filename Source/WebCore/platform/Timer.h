@@ -95,6 +95,7 @@ private:
 
 #ifndef NDEBUG
     ThreadIdentifier m_thread;
+    bool m_wasDeleted;
 #endif
 
     friend class ThreadTimers;

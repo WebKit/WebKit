@@ -1,3 +1,30 @@
+2013-06-27  Antti Koivisto  <antti@apple.com>
+
+        RenderLayerCompositor destructor is fragile
+        https://bugs.webkit.org/show_bug.cgi?id=118143
+
+        Reviewed by Simon Fraser.
+
+        With iOS tile cache implementation deleting RenderLayerCompositor may end up starting a deleted timer. 
+        This corrupts the timer heap and leads to a crash later. This happens because GraphicsLayers destructor 
+        calls back to the RenderLayerCompositor that is being deleted. This is pretty fragile in general.
+        
+        No test as there is no known way to repro this with plain webkit.
+
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::TimerBase):
+        (WebCore::TimerBase::~TimerBase):
+        (WebCore::TimerBase::setNextFireTime):
+        * platform/Timer.h:
+        
+            Assert that the timer is alive before starting it. This turns bugs like this into clear crash stacks
+            instead of hard-to-debug timer heap corruptions.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::~RenderLayerCompositor):
+        
+            Take care to delete owned GraphicsLayers before proceeding with the rest of the destructor.
+
 2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Update SVG interfaces to stop inheriting from SVGURIReference and SVGTests

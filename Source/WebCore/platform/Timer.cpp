@@ -195,6 +195,7 @@ TimerBase::TimerBase()
     , m_cachedThreadGlobalTimerHeap(0)
 #ifndef NDEBUG
     , m_thread(currentThread())
+    , m_wasDeleted(false)
 #endif
 {
 }
@@ -203,6 +204,9 @@ TimerBase::~TimerBase()
 {
     stop();
     ASSERT(!inHeap());
+#ifndef NDEBUG
+    m_wasDeleted = true;
+#endif
 }
 
 void TimerBase::start(double nextFireInterval, double repeatInterval)
@@ -367,6 +371,7 @@ void TimerBase::updateHeapIfNeeded(double oldTime)
 void TimerBase::setNextFireTime(double newUnalignedTime)
 {
     ASSERT(m_thread == currentThread());
+    ASSERT(!m_wasDeleted);
 
     if (m_unalignedNextFireTime != newUnalignedTime)
         m_unalignedNextFireTime = newUnalignedTime;
