@@ -64,9 +64,9 @@ Those lines would prevent picking up the Windows TMP and TEMP environment variab
 <p>If you are behind a proxy you need to do the following to allow cygwin svn to get through the proxy (similar steps are available for your Windows svn):
 <ul><li>In bash (Cygwin) run: <code>svn help</code>. This will create in your cygwin home directory the file .subversion/servers.</li>
 <li>Edit the file mentioned above and follow the instructions in the file to set up your proxy settings.</li></ul></p>
-<li><p>Install QuickTime SDK</p>
+<li><p>Install QuickTime SDK and QuickTime</p>
 <p>Download QuickTime SDK for Windows from <a href="http://developer.apple.com/quicktime/download/">http://developer.apple.com/quicktime/download/</a> and install it to the default location (\Program Files\QuickTime SDK). This is needed for media support.
-
+<p>You'll also want quicktime itself. You don't need it to build but without it media fallbacks won't work. </p>
 <li><p>Install DirectX SDK</p>
 <p>Download the <a href="http://www.microsoft.com/en-us/download/details.aspx?id=6812">June 2010 DirectX SDK</a>  This is needed for accelerated compositing.</p>
 </p>

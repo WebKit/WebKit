@@ -1,3 +1,9 @@
+2013-06-27  Roger Fong  <roger_fong@apple.com>
+
+        Update required tools for Windows instructions.
+
+        * building/tools.html:
+
 2013-06-18  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         The page title of technical-articles.html is incorrect.
