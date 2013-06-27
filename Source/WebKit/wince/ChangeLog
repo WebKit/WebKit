@@ -1,3 +1,12 @@
+2013-06-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix after r152065.
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        (WebKit::ChromeClientWinCE::AXStartFrameLoad):
+        (WebKit::ChromeClientWinCE::AXFinishFrameLoad):
+        * WebCoreSupport/ChromeClientWinCE.h:
+
 2013-05-19  Anders Carlsson  <andersca@apple.com>
 
         Remove ChromeClient::webView()

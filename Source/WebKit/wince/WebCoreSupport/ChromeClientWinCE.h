@@ -154,6 +154,8 @@ public:
 #endif
 
     virtual void setLastSetCursorToCurrentCursor();
+    virtual void AXStartFrameLoad();
+    virtual void AXFinishFrameLoad();
 
 #if ENABLE(TOUCH_EVENTS)
     virtual void needTouchEvents(bool);

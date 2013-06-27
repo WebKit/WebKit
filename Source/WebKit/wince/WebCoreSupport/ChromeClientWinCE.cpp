@@ -364,6 +364,16 @@ void ChromeClientWinCE::setLastSetCursorToCurrentCursor()
     notImplemented();
 }
 
+void ChromeClientWinCE::AXStartFrameLoad()
+{
+    notImplemented();
+}
+
+void ChromeClientWinCE::AXFinishFrameLoad()
+{
+    notImplemented();
+}
+
 void ChromeClientWinCE::formStateDidChange(const Node*)
 {
     notImplemented();
