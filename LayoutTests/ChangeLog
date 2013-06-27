@@ -1,3 +1,13 @@
+2013-06-27  Jessie Berlin  <jberlin@apple.com>
+
+        [Mac WK2] compositing/repaint/positioned-movement.html flaky, missing repaint
+        https://bugs.webkit.org/show_bug.cgi?id=118153
+
+        Update the expectation to reflect that the test is also flakey on release and other
+        platforms
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-06-27  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: basic support for rectangle shape-outside
