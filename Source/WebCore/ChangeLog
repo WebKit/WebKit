@@ -1,5 +1,22 @@
 2013-06-27  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152035
+
+    2013-06-26  Brent Fulgham  <bfulgham@apple.com>
+
+            [Windows] Enable CaptionUserPreferencesMediaAF on Windows.
+            https://bugs.webkit.org/show_bug.cgi?id=118076
+
+            Reviewed by Eric Carlson.
+
+            * WebCore.vcxproj/WebCore.vcxproj: Enable building the CaptionUserPreferencesMediaAF source file.
+            * page/CaptionUserPreferencesMediaAF.cpp: Add soft-link commands for CoreText symbols needed in
+              the implementation for Windows.
+            * platform/LocalizedStrings.cpp: Enable Text Track-related strings on Windows.
+            * platform/LocalizedStrings.h: Ditto.
+
+2013-06-27  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152004
 
     2013-06-26  Brent Fulgham  <bfulgham@apple.com>
