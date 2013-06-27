@@ -1,3 +1,16 @@
+2013-06-26  Simon Cooper  <scooper@apple.com>
+
+        Flash Player: deny ipc-posix-sem 59918130
+        https://bugs.webkit.org/show_bug.cgi?id=118107
+        <rdar://problem/14271105>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow same-sandbox scoped semaphores on Mavericks. Permit the
+        named semaphore for older releases.
+
+        * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player.plugin.sb:
+
 2013-06-26  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         Coordinated Graphics: Separate CoordinatedLayerTreeHost into CoordinatedLayerTreeHost and CompositingCoordinator
