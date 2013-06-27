@@ -166,6 +166,16 @@ String contextMenuItemTagToggleMediaControls()
     return String::fromUTF8(_("_Toggle Media Controls"));
 }
 
+String contextMenuItemTagShowMediaControls()
+{
+    return String::fromUTF8(_("_Show Media Controls"));
+}
+
+String contextMenuItemTagHideMediaControls()
+{
+    return String::fromUTF8(_("_Hide Media Controls"));
+}
+
 String contextMenuItemTagToggleMediaLoop()
 {
     return String::fromUTF8(_("Toggle Media _Loop Playback"));

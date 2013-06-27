@@ -1,3 +1,29 @@
+2013-06-27  Ruth Fong  <ruth_fong@apple.com>
+
+        Polish context menus for media elements
+        https://bugs.webkit.org/show_bug.cgi?id=118078
+        <rdar://problem/14278960>
+
+        Reviewed by Eric Carlson.
+
+        No new tests: media/context-menu-action.html,
+        which has been disabled by bug 116651, is used to test context menus.
+
+        * English.lproj/Localizable.strings: Changed "Fullscreen" to "Full Screen"
+        and added strings "Show Controls" and "Hide Controls".
+
+        * page/ContextMenuController.cpp: Updated to include a new context menu item 
+        that toggles betweeen "Show Controls" and "Hide Controls".
+
+        * platform/ContextMenuItem.h:
+
+        * platform/LocalizedStrings.cpp:
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        * platform/qt/LocalizedStringsQt.cpp:
+        Added equivalents of localized strings "Show Controls" and "Hide Controls".
+
 2013-06-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: IOS: crash while navigating with SVG
