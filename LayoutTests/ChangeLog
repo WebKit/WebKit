@@ -1,3 +1,14 @@
+2013-06-27  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [Qt] Unreviewed gardening
+        https://bugs.webkit.org/show_bug.cgi?id=118100
+
+        Unreviewed Qt gardening.
+
+        Moved hover-display-block-none.html from fast/regions to fast/css.
+
+        * platform/qt/TestExpectations:
+
 2013-06-27  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebase the previous test.
