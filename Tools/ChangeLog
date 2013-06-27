@@ -1,3 +1,58 @@
+2013-06-27  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Sync up w3c import script with changes in Blink
+        https://bugs.webkit.org/show_bug.cgi?id=118149
+
+        Reviewed by Dirk Pranke.
+
+        This is a port of the following blink changes:
+
+        https://codereview.chromium.org/15366004
+        https://chromiumcodereview.appspot.com/15592005
+        https://codereview.chromium.org/16021006
+        https://codereview.chromium.org/15590004
+        https://codereview.chromium.org/15901008
+        https://codereview.chromium.org/16171009
+        https://codereview.chromium.org/16465007
+        https://codereview.chromium.org/15981013
+
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (setUp):
+        (test_commit_message_for_this_commit):
+        * Scripts/webkitpy/port/base.py:
+        (Port):
+        * Scripts/webkitpy/port/test.py:
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (W3CTestConverter.__init__):
+        (W3CTestConverter.read_webkit_prefixed_css_property_list):
+        (W3CTestConverter.convert_for_webkit):
+        (W3CTestConverter.convert_css):
+        (W3CTestConverter.convert_html):
+        (W3CTestConverter.convert_testharness_paths):
+        (W3CTestConverter.convert_prefixed_properties):
+        (W3CTestConverter.add_webkit_prefix_to_unprefixed_properties):
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (main):
+        (configure_logging):
+        (configure_logging.LogHandler):
+        (configure_logging.LogHandler.format):
+        (parse_args):
+        (TestImporter.__init__):
+        (TestImporter.find_importable_tests):
+        (TestImporter.import_tests):
+        (TestImporter.setup_destination_directory):
+        (TestImporter.remove_deleted_files):
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_import_dir_with_no_tests_and_no_hg):
+        (TestImporterTest.test_import_dir_with_no_tests):
+        (TestImporterTest):
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.load_file):
+        (TestParser.analyze_test):
+        (TestParser.support_files):
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+
 2013-06-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [webkitpy] AbstractPatchSequencingCommand should have _prepare_state

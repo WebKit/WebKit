@@ -69,7 +69,7 @@ class TestParserTest(unittest.TestCase):
             parser = TestParser(options, test_path + 'somefile.html')
             test_info = parser.analyze_test(test_contents=test_html)
         finally:
-            output, _, _ = oc.restore_output()
+            _, _, logs = oc.restore_output()
 
         self.assertNotEqual(test_info, None, 'did not find a test')
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
@@ -78,7 +78,7 @@ class TestParserTest(unittest.TestCase):
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
-        self.assertTrue(output.startswith('Warning'), 'no warning about multiple matches')
+        self.assertEqual(logs, 'Multiple references are not supported. Importing the first ref defined in somefile.html\n')
 
     def test_analyze_test_reftest_match_and_mismatch(self):
         test_html = """<head>
@@ -95,7 +95,7 @@ class TestParserTest(unittest.TestCase):
             parser = TestParser(options, test_path + 'somefile.html')
             test_info = parser.analyze_test(test_contents=test_html)
         finally:
-            output, _, _ = oc.restore_output()
+            _, _, logs = oc.restore_output()
 
         self.assertNotEqual(test_info, None, 'did not find a test')
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
@@ -104,8 +104,7 @@ class TestParserTest(unittest.TestCase):
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
-        warnings = output.splitlines()
-        self.assertEquals(warnings, ["Warning: Webkit does not support multiple references. Importing the first ref defined in somefile.html"])
+        self.assertEqual(logs, 'Multiple references are not supported. Importing the first ref defined in somefile.html\n')
 
     def test_analyze_test_reftest_with_ref_support_Files(self):
         """ Tests analyze_test() using a reftest that has refers to a reference file outside of the tests directory and the reference file has paths to other support files """

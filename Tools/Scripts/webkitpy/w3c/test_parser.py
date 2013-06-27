@@ -27,10 +27,14 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import logging
 import re
 
 from webkitpy.common.host import Host
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup as Parser
+
+
+_log = logging.getLogger(__name__)
 
 
 class TestParser(object):
@@ -46,9 +50,17 @@ class TestParser(object):
         self.load_file(filename)
 
     def load_file(self, filename):
-        if self.filesystem.exists(filename):
-            self.test_doc = Parser(self.filesystem.read_text_file(filename))
+        if self.filesystem.isfile(filename):
+            try:
+                self.test_doc = Parser(self.filesystem.read_binary_file(filename))
+            except:
+                # FIXME: Figure out what to do if we can't parse the file.
+                _log.error("Failed to parse %s", filename)
+                self.test_doc is None
         else:
+            if self.filesystem.isdir(filename):
+                # FIXME: Figure out what is triggering this and what to do about it.
+                _log.error("Trying to load %s, which is a directory", filename)
             self.test_doc = None
         self.ref_doc = None
 
@@ -71,9 +83,17 @@ class TestParser(object):
         matches = self.reference_links_of_type('match') + self.reference_links_of_type('mismatch')
         if matches:
             if len(matches) > 1:
-                print 'Warning: Webkit does not support multiple references. Importing the first ref defined in ' + self.filesystem.basename(self.filename)
+                # FIXME: Is this actually true? We should fix this.
+                _log.warning('Multiple references are not supported. Importing the first ref defined in %s',
+                             self.filesystem.basename(self.filename))
 
-            ref_file = self.filesystem.join(self.filesystem.dirname(self.filename), matches[0]['href'])
+            try:
+                ref_file = self.filesystem.join(self.filesystem.dirname(self.filename), matches[0]['href'])
+            except KeyError as e:
+                # FIXME: Figure out what to do w/ invalid test files.
+                _log.error('%s has a reference link but is missing the "href"', self.filesystem)
+                return None
+
             if self.ref_doc is None:
                 self.ref_doc = self.load_file(ref_file)
 
@@ -92,7 +112,7 @@ class TestParser(object):
             # support files.
             #
             # *But*, there is exactly one case in the entire css2.1 suite where
-            # at test depends on a file that lives in a different directory,
+            # a test depends on a file that lives in a different directory,
             # which depends on another file that lives outside of its
             # directory. This code covers that case :)
             if matches[0]['href'].startswith('..'):
@@ -127,8 +147,8 @@ class TestParser(object):
         urls = []
         for url in doc.findAll(text=url_pattern):
             url = re.search(url_pattern, url)
-            url = re.sub('url\([\'\"]', '', url.group(0))
-            url = re.sub('[\'\"]\)', '', url)
+            url = re.sub('url\([\'\"]?', '', url.group(0))
+            url = re.sub('[\'\"]?\)', '', url)
             urls.append(url)
 
         src_paths = [src_tag['src'] for src_tag in elements_with_src_attributes]

@@ -32,22 +32,29 @@ import shutil
 import tempfile
 import unittest2 as unittest
 
-from webkitpy.common.host import Host
+from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.w3c.test_importer import TestImporter
 
 
+FAKE_SOURCE_DIR = '/blink/w3c'
+FAKE_REPO_DIR = '/blink'
+
+FAKE_FILES = {
+    '/blink/w3c/empty_dir/README.txt': '',
+    '/mock-checkout/LayoutTests/w3c/README.txt': '',
+}
+
 class TestImporterTest(unittest.TestCase):
 
     def test_import_dir_with_no_tests_and_no_hg(self):
-        # FIXME: Use MockHosts instead.
-        host = Host()
+        host = MockHost()
         host.executive = MockExecutive2(exception=OSError())
+        host.filesystem = MockFileSystem(files=FAKE_FILES)
 
-        importer = TestImporter(host, None, optparse.Values({"overwrite": False}))
-        importer.source_directory = importer.path_from_webkit_root("Tools", "Scripts", "webkitpy", "w3c")
-        importer.destination_directory = tempfile.mkdtemp(prefix='csswg')
+        importer = TestImporter(host, FAKE_SOURCE_DIR, FAKE_REPO_DIR, optparse.Values({"overwrite": False}))
 
         oc = OutputCapture()
         oc.capture_output()
@@ -55,23 +62,18 @@ class TestImporterTest(unittest.TestCase):
             importer.do_import()
         finally:
             oc.restore_output()
-            shutil.rmtree(importer.destination_directory, ignore_errors=True)
 
     def test_import_dir_with_no_tests(self):
-        # FIXME: Use MockHosts instead.
-        host = Host()
+        host = MockHost()
         host.executive = MockExecutive2(exception=ScriptError("abort: no repository found in '/Volumes/Source/src/wk/Tools/Scripts/webkitpy/w3c' (.hg not found)!"))
+        host.filesystem = MockFileSystem(files=FAKE_FILES)
 
-        importer = TestImporter(host, None, optparse.Values({"overwrite": False}))
-        importer.source_directory = importer.path_from_webkit_root("Tools", "Scripts", "webkitpy", "w3c")
-        importer.destination_directory = tempfile.mkdtemp(prefix='csswg')
-
+        importer = TestImporter(host, FAKE_SOURCE_DIR, FAKE_REPO_DIR, optparse.Values({"overwrite": False}))
         oc = OutputCapture()
         oc.capture_output()
         try:
             importer.do_import()
         finally:
             oc.restore_output()
-            shutil.rmtree(importer.destination_directory, ignore_errors=True)
 
-    # FIXME: Need more tests, but need to add a mock filesystem w/ sample data.
+    # FIXME: Needs more tests.

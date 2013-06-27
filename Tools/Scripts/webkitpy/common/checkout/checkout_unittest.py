@@ -36,6 +36,7 @@ from .checkout import Checkout
 from .changelog import ChangeLogEntry
 from .scm import CommitMessage, SCMDetector
 from .scm.scm_mock import MockSCM
+from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem import FileSystem  # FIXME: This should not be needed.
 from webkitpy.common.system.filesystem_mock import MockFileSystem
@@ -102,6 +103,7 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
         self.temp_dir = str(self.filesystem.mkdtemp(suffix="changelogs"))
         self.old_cwd = self.filesystem.getcwd()
         self.filesystem.chdir(self.temp_dir)
+        self.webkit_base = WebKitFinder(self.filesystem).webkit_base()
 
         # Trick commit-log-editor into thinking we're in a Subversion working copy so it won't
         # complain about not being able to figure out what SCM is in use.
@@ -130,7 +132,7 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
             return executive.run_command(*args, **kwargs)
 
         detector = SCMDetector(self.filesystem, executive)
-        real_scm = detector.detect_scm_system(self.old_cwd)
+        real_scm = detector.detect_scm_system(self.webkit_base)
 
         mock_scm = MockSCM()
         mock_scm.run = mock_run

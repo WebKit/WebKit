@@ -36,6 +36,8 @@ from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 from webkitpy.w3c.test_converter import W3CTestConverter
 
 
+DUMMY_FILENAME = 'dummy.html'
+
 class W3CTestConverterTest(unittest.TestCase):
 
     def fake_dir_path(self, converter, dirname):
@@ -77,7 +79,7 @@ CONTENT OF TEST
         oc = OutputCapture()
         oc.capture_output()
         try:
-            converted = converter.convert_html('/nothing/to/convert', test_html)
+            converted = converter.convert_html('/nothing/to/convert', test_html, DUMMY_FILENAME)
         finally:
             oc.restore_output()
 
@@ -94,7 +96,7 @@ CONTENT OF TEST
         converter = W3CTestConverter()
         fake_dir_path = self.fake_dir_path(converter, "harnessonly")
 
-        converted = converter.convert_html(fake_dir_path, test_html)
+        converted = converter.convert_html(fake_dir_path, test_html, DUMMY_FILENAME)
 
         self.verify_conversion_happened(converted)
         self.verify_test_harness_paths(converter, converted[1], fake_dir_path, 1, 1)
@@ -125,7 +127,7 @@ CONTENT OF TEST
         oc = OutputCapture()
         oc.capture_output()
         try:
-            converted = converter.convert_html(fake_dir_path, test_content[1])
+            converted = converter.convert_html(fake_dir_path, test_content[1], DUMMY_FILENAME)
         finally:
             oc.restore_output()
 
@@ -160,7 +162,7 @@ CONTENT OF TEST
         oc.capture_output()
         try:
             test_content = self.generate_test_content(converter.prefixed_properties, 2, test_html)
-            converted = converter.convert_html(fake_dir_path, test_content[1])
+            converted = converter.convert_html(fake_dir_path, test_content[1], DUMMY_FILENAME)
         finally:
             oc.restore_output()
 
@@ -185,7 +187,7 @@ CONTENT OF TEST
         oc = OutputCapture()
         oc.capture_output()
         try:
-            converted = converter.convert_testharness_paths(doc, fake_dir_path)
+            converted = converter.convert_testharness_paths(doc, fake_dir_path, DUMMY_FILENAME)
         finally:
             oc.restore_output()
 
@@ -262,7 +264,7 @@ CONTENT OF TEST
         oc = OutputCapture()
         oc.capture_output()
         try:
-            converted = converter.convert_prefixed_properties(BeautifulSoup(test_content[1]))
+            converted = converter.convert_prefixed_properties(BeautifulSoup(test_content[1]), DUMMY_FILENAME)
         finally:
             oc.restore_output()
 
