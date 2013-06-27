@@ -6787,6 +6787,9 @@
     <ClCompile Include="..\accessibility\AccessibilityNodeObject.cpp">
       <Filter>accessibility</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\CaptionUserPreferencesMediaAF.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -14248,6 +14251,12 @@
     </ClInclude>
     <ClInclude Include="..\accessibility\AccessibilityNodeObject.h">
       <Filter>accessibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\CaptionUserPreferences.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\CaptionUserPreferencesMediaAF.h">
+      <Filter>page</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

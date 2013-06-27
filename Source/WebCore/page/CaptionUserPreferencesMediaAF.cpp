@@ -23,41 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
+#include "config.h"
 
 #if ENABLE(VIDEO_TRACK)
 
-#import "CaptionUserPreferencesMac.h"
+#include "CaptionUserPreferencesMediaAF.h"
 
-#import "ColorMac.h"
-#import "CoreText/CoreText.h"
-#import "DOMWrapperWorld.h"
-#import "FloatConversion.h"
-#import "HTMLMediaElement.h"
-#import "KURL.h"
-#import "Language.h"
-#import "LocalizedStrings.h"
-#import "Logging.h"
-#import "MediaControlElements.h"
-#import "PageGroup.h"
-#import "SoftLinking.h"
-#import "TextTrackCue.h"
-#import "TextTrackList.h"
-#import "UserStyleSheetTypes.h"
-#import <wtf/NonCopyingSort.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/text/StringBuilder.h>
+#include "CoreText/CoreText.h"
+#include "DOMWrapperWorld.h"
+#include "FloatConversion.h"
+#include "HTMLMediaElement.h"
+#include "KURL.h"
+#include "Language.h"
+#include "LocalizedStrings.h"
+#include "Logging.h"
+#include "MediaControlElements.h"
+#include "PageGroup.h"
+#include "SoftLinking.h"
+#include "TextTrackCue.h"
+#include "TextTrackList.h"
+#include "UserStyleSheetTypes.h"
+#include <wtf/NonCopyingSort.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS)
 #import "WebCoreThreadRun.h"
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#import "MediaAccessibility/MediaAccessibility.h"
+#include "MediaAccessibility/MediaAccessibility.h"
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-
+#if !PLATFORM(WIN)
 SOFT_LINK_FRAMEWORK_OPTIONAL(MediaAccessibility)
 
 SOFT_LINK(MediaAccessibility, MACaptionAppearanceGetDisplayType, MACaptionAppearanceDisplayType, (MACaptionAppearanceDomain domain), (domain))
@@ -79,6 +78,62 @@ SOFT_LINK(MediaAccessibility, MACaptionAppearanceCopyPreferredCaptioningMediaCha
 SOFT_LINK_POINTER(MediaAccessibility, kMAXCaptionAppearanceSettingsChangedNotification, CFStringRef)
 #define kMAXCaptionAppearanceSettingsChangedNotification getkMAXCaptionAppearanceSettingsChangedNotification()
 
+#else
+SOFT_LINK_LIBRARY(MediaAccessibility)
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceGetDisplayType, MACaptionAppearanceDisplayType, __cdecl, (MACaptionAppearanceDomain domain), (domain))
+#define MACaptionAppearanceGetDisplayType softLink_MACaptionAppearanceGetDisplayType
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceSetDisplayType, void, __cdecl, (MACaptionAppearanceDomain domain, MACaptionAppearanceDisplayType displayType), (domain, displayType))
+#define MACaptionAppearanceSetDisplayType softLink_MACaptionAppearanceSetDisplayType
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceCopyForegroundColor, CGColorRef, __cdecl, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+#define MACaptionAppearanceCopyForegroundColor softLink_MACaptionAppearanceCopyForegroundColor
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceCopyBackgroundColor, CGColorRef, __cdecl, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+#define MACaptionAppearanceCopyBackgroundColor softLink_MACaptionAppearanceCopyBackgroundColor
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceCopyWindowColor, CGColorRef, __cdecl, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+#define MACaptionAppearanceCopyWindowColor softLink_MACaptionAppearanceCopyWindowColor
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceGetForegroundOpacity, CGFloat, __cdecl, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+#define MACaptionAppearanceGetForegroundOpacity softLink_MACaptionAppearanceGetForegroundOpacity
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceGetBackgroundOpacity, CGFloat, __cdecl, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+#define MACaptionAppearanceGetBackgroundOpacity softLink_MACaptionAppearanceGetBackgroundOpacity
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceGetWindowOpacity, CGFloat, __cdecl, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+#define MACaptionAppearanceGetWindowOpacity softLink_MACaptionAppearanceGetWindowOpacity
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceGetWindowRoundedCornerRadius, CGFloat, __cdecl, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+#define MACaptionAppearanceGetWindowRoundedCornerRadius softLink_MACaptionAppearanceGetWindowRoundedCornerRadius
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceCopyFontDescriptorForStyle, CTFontDescriptorRef, __cdecl, (MACaptionAppearanceDomain domain,  MACaptionAppearanceBehavior *behavior, MACaptionAppearanceFontStyle fontStyle), (domain, behavior, fontStyle))
+#define MACaptionAppearanceCopyFontDescriptorForStyle softLink_MACaptionAppearanceCopyFontDescriptorForStyle
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceGetRelativeCharacterSize, CGFloat, __cdecl, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+#define MACaptionAppearanceGetRelativeCharacterSize softLink_MACaptionAppearanceGetRelativeCharacterSize
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceGetTextEdgeStyle, MACaptionAppearanceTextEdgeStyle, __cdecl, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
+#define MACaptionAppearanceGetTextEdgeStyle softLink_MACaptionAppearanceGetTextEdgeStyle
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceAddSelectedLanguage, bool, __cdecl, (MACaptionAppearanceDomain domain, CFStringRef language), (domain, language));
+#define MACaptionAppearanceAddSelectedLanguage softLink_MACaptionAppearanceAddSelectedLanguage
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceCopySelectedLanguages, CFArrayRef, __cdecl, (MACaptionAppearanceDomain domain), (domain));
+#define MACaptionAppearanceCopySelectedLanguages softLink_MACaptionAppearanceCopySelectedLanguages
+
+SOFT_LINK_DLL_IMPORT(MediaAccessibility, MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics,  CFArrayRef, __cdecl, (MACaptionAppearanceDomain domain), (domain));
+#define MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics softLink_MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics
+
+SOFT_LINK_VARIABLE_DLL_IMPORT(MediaAccessibility, kMAXCaptionAppearanceSettingsChangedNotification, CFStringRef)
+#define kMAXCaptionAppearanceSettingsChangedNotification get_kMAXCaptionAppearanceSettingsChangedNotification()
+
+SOFT_LINK_LIBRARY(CoreText)
+
+
+#endif
+
 #endif
 
 using namespace std;
@@ -89,16 +144,16 @@ namespace WebCore {
 static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
 #if !PLATFORM(IOS)
-    static_cast<CaptionUserPreferencesMac*>(observer)->captionPreferencesChanged();
+    static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionPreferencesChanged();
 #else
     WebThreadRun(^{
-        static_cast<CaptionUserPreferencesMac*>(observer)->captionPreferencesChanged();
+        static_cast<CaptionUserPreferencesMediaAF*>(observer)->captionPreferencesChanged();
     });
 #endif
 }
 #endif
 
-CaptionUserPreferencesMac::CaptionUserPreferencesMac(PageGroup* group)
+CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup* group)
     : CaptionUserPreferences(group)
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     , m_listeningForPreferenceChanges(false)
@@ -106,17 +161,17 @@ CaptionUserPreferencesMac::CaptionUserPreferencesMac(PageGroup* group)
 {
 }
 
-CaptionUserPreferencesMac::~CaptionUserPreferencesMac()
+CaptionUserPreferencesMediaAF::~CaptionUserPreferencesMediaAF()
 {
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     if (kMAXCaptionAppearanceSettingsChangedNotification)
-        CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kMAXCaptionAppearanceSettingsChangedNotification, NULL);
+        CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kMAXCaptionAppearanceSettingsChangedNotification, 0);
 #endif
 }
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
-CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferencesMac::captionDisplayMode() const
+CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferencesMediaAF::captionDisplayMode() const
 {
     if (testingMode() || !MediaAccessibilityLibrary())
         return CaptionUserPreferences::captionDisplayMode();
@@ -140,7 +195,7 @@ CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferencesMac::captionDis
     return ForcedOnly;
 }
     
-void CaptionUserPreferencesMac::setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode mode)
+void CaptionUserPreferencesMediaAF::setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode mode)
 {
     if (testingMode() || !MediaAccessibilityLibrary()) {
         CaptionUserPreferences::setCaptionDisplayMode(mode);
@@ -149,24 +204,24 @@ void CaptionUserPreferencesMac::setCaptionDisplayMode(CaptionUserPreferences::Ca
 
     MACaptionAppearanceDisplayType displayType = kMACaptionAppearanceDisplayTypeForcedOnly;
     switch (mode) {
-        case Automatic:
-            displayType = kMACaptionAppearanceDisplayTypeAutomatic;
-            break;
-        case ForcedOnly:
-            displayType = kMACaptionAppearanceDisplayTypeForcedOnly;
-            break;
-        case AlwaysOn:
-            displayType = kMACaptionAppearanceDisplayTypeAlwaysOn;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
+    case Automatic:
+        displayType = kMACaptionAppearanceDisplayTypeAutomatic;
+        break;
+    case ForcedOnly:
+        displayType = kMACaptionAppearanceDisplayTypeForcedOnly;
+        break;
+    case AlwaysOn:
+        displayType = kMACaptionAppearanceDisplayTypeAlwaysOn;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     MACaptionAppearanceSetDisplayType(kMACaptionAppearanceDomainUser, displayType);
 }
 
-bool CaptionUserPreferencesMac::userPrefersCaptions() const
+bool CaptionUserPreferencesMediaAF::userPrefersCaptions() const
 {
     bool captionSetting = CaptionUserPreferences::userPrefersCaptions();
     if (captionSetting || testingMode() || !MediaAccessibilityLibrary())
@@ -176,7 +231,7 @@ bool CaptionUserPreferencesMac::userPrefersCaptions() const
     return captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get());
 }
 
-bool CaptionUserPreferencesMac::userPrefersSubtitles() const
+bool CaptionUserPreferencesMediaAF::userPrefersSubtitles() const
 {
     bool subtitlesSetting = CaptionUserPreferences::userPrefersSubtitles();
     if (subtitlesSetting || testingMode() || !MediaAccessibilityLibrary())
@@ -186,7 +241,7 @@ bool CaptionUserPreferencesMac::userPrefersSubtitles() const
     return !(captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get()));
 }
 
-void CaptionUserPreferencesMac::setInterestedInCaptionPreferenceChanges()
+void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
 {
     if (!MediaAccessibilityLibrary())
         return;
@@ -196,13 +251,13 @@ void CaptionUserPreferencesMac::setInterestedInCaptionPreferenceChanges()
 
     if (!m_listeningForPreferenceChanges) {
         m_listeningForPreferenceChanges = true;
-        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, NULL, CFNotificationSuspensionBehaviorCoalesce);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
     }
     
     updateCaptionStyleSheetOveride();
 }
 
-void CaptionUserPreferencesMac::captionPreferencesChanged()
+void CaptionUserPreferencesMediaAF::captionPreferencesChanged()
 {
     if (m_listeningForPreferenceChanges)
         updateCaptionStyleSheetOveride();
@@ -210,7 +265,7 @@ void CaptionUserPreferencesMac::captionPreferencesChanged()
     CaptionUserPreferences::captionPreferencesChanged();
 }
 
-String CaptionUserPreferencesMac::captionsWindowCSS() const
+String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
 {
     MACaptionAppearanceBehavior behavior;
     RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyWindowColor(kMACaptionAppearanceDomainUser, &behavior));
@@ -236,7 +291,7 @@ String CaptionUserPreferencesMac::captionsWindowCSS() const
     return builder.toString();
 }
 
-String CaptionUserPreferencesMac::captionsBackgroundCSS() const
+String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
 {
     // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-past-nodes
     // and webkit-media-text-track-future-nodes.
@@ -256,7 +311,7 @@ String CaptionUserPreferencesMac::captionsBackgroundCSS() const
     return colorPropertyCSS(CSSPropertyBackgroundColor, Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), static_cast<int>(opacity * 255)), important);
 }
 
-Color CaptionUserPreferencesMac::captionsTextColor(bool& important) const
+Color CaptionUserPreferencesMediaAF::captionsTextColor(bool& important) const
 {
     MACaptionAppearanceBehavior behavior;
     RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior));
@@ -272,7 +327,7 @@ Color CaptionUserPreferencesMac::captionsTextColor(bool& important) const
     return Color(textColor.red(), textColor.green(), textColor.blue(), static_cast<int>(opacity * 255));
 }
     
-String CaptionUserPreferencesMac::captionsTextColorCSS() const
+String CaptionUserPreferencesMediaAF::captionsTextColorCSS() const
 {
     bool important;
     Color textColor = captionsTextColor(important);
@@ -283,7 +338,7 @@ String CaptionUserPreferencesMac::captionsTextColorCSS() const
     return colorPropertyCSS(CSSPropertyColor, textColor, important);
 }
     
-String CaptionUserPreferencesMac::windowRoundedCornerRadiusCSS() const
+String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
 {
     MACaptionAppearanceBehavior behavior;
     CGFloat radius = MACaptionAppearanceGetWindowRoundedCornerRadius(kMACaptionAppearanceDomainUser, &behavior);
@@ -300,7 +355,7 @@ String CaptionUserPreferencesMac::windowRoundedCornerRadiusCSS() const
     return builder.toString();
 }
     
-Color CaptionUserPreferencesMac::captionsEdgeColorForTextColor(const Color& textColor) const
+Color CaptionUserPreferencesMediaAF::captionsEdgeColorForTextColor(const Color& textColor) const
 {
     int distanceFromWhite = differenceSquared(textColor, Color::white);
     int distanceFromBlack = differenceSquared(textColor, Color::black);
@@ -311,7 +366,7 @@ Color CaptionUserPreferencesMac::captionsEdgeColorForTextColor(const Color& text
     return textColor.light();
 }
 
-String CaptionUserPreferencesMac::cssPropertyWithTextEdgeColor(CSSPropertyID id, const String& value, const Color& textColor, bool important) const
+String CaptionUserPreferencesMediaAF::cssPropertyWithTextEdgeColor(CSSPropertyID id, const String& value, const Color& textColor, bool important) const
 {
     StringBuilder builder;
     
@@ -327,7 +382,7 @@ String CaptionUserPreferencesMac::cssPropertyWithTextEdgeColor(CSSPropertyID id,
     return builder.toString();
 }
 
-String CaptionUserPreferencesMac::colorPropertyCSS(CSSPropertyID id, const Color& color, bool important) const
+String CaptionUserPreferencesMediaAF::colorPropertyCSS(CSSPropertyID id, const Color& color, bool important) const
 {
     StringBuilder builder;
     
@@ -341,7 +396,7 @@ String CaptionUserPreferencesMac::colorPropertyCSS(CSSPropertyID id, const Color
     return builder.toString();
 }
 
-String CaptionUserPreferencesMac::captionsTextEdgeCSS() const
+String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
 {
     DEFINE_STATIC_LOCAL(const String, edgeStyleRaised, (" -.05em -.05em 0 ", String::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const String, edgeStyleDepressed, (" .05em .05em 0 ", String::ConstructFromLiteral));
@@ -357,28 +412,28 @@ String CaptionUserPreferencesMac::captionsTextEdgeCSS() const
     MACaptionAppearanceBehavior behavior;
     MACaptionAppearanceTextEdgeStyle textEdgeStyle = MACaptionAppearanceGetTextEdgeStyle(kMACaptionAppearanceDomainUser, &behavior);
     switch (textEdgeStyle) {
-        case kMACaptionAppearanceTextEdgeStyleUndefined:
-        case kMACaptionAppearanceTextEdgeStyleNone:
-            return emptyString();
+    case kMACaptionAppearanceTextEdgeStyleUndefined:
+    case kMACaptionAppearanceTextEdgeStyleNone:
+        return emptyString();
             
-        case kMACaptionAppearanceTextEdgeStyleRaised:
-            return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleRaised, color, behavior == kMACaptionAppearanceBehaviorUseValue);
-        case kMACaptionAppearanceTextEdgeStyleDepressed:
-            return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDepressed, color, behavior == kMACaptionAppearanceBehaviorUseValue);
-        case kMACaptionAppearanceTextEdgeStyleDropShadow:
-            return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDropShadow, color, behavior == kMACaptionAppearanceBehaviorUseValue);
-        case kMACaptionAppearanceTextEdgeStyleUniform:
-            return cssPropertyWithTextEdgeColor(CSSPropertyWebkitTextStroke, edgeStyleUniform, color, behavior == kMACaptionAppearanceBehaviorUseValue);
+    case kMACaptionAppearanceTextEdgeStyleRaised:
+        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleRaised, color, behavior == kMACaptionAppearanceBehaviorUseValue);
+    case kMACaptionAppearanceTextEdgeStyleDepressed:
+        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDepressed, color, behavior == kMACaptionAppearanceBehaviorUseValue);
+    case kMACaptionAppearanceTextEdgeStyleDropShadow:
+        return cssPropertyWithTextEdgeColor(CSSPropertyTextShadow, edgeStyleDropShadow, color, behavior == kMACaptionAppearanceBehaviorUseValue);
+    case kMACaptionAppearanceTextEdgeStyleUniform:
+        return cssPropertyWithTextEdgeColor(CSSPropertyWebkitTextStroke, edgeStyleUniform, color, behavior == kMACaptionAppearanceBehaviorUseValue);
             
-        default:
-            ASSERT_NOT_REACHED();
-            break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
     }
     
     return emptyString();
 }
 
-String CaptionUserPreferencesMac::captionsDefaultFontCSS() const
+String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
 {
     MACaptionAppearanceBehavior behavior;
     
@@ -403,7 +458,7 @@ String CaptionUserPreferencesMac::captionsDefaultFontCSS() const
     return builder.toString();
 }
 
-float CaptionUserPreferencesMac::captionFontSizeScaleAndImportance(bool& important) const
+float CaptionUserPreferencesMediaAF::captionFontSizeScaleAndImportance(bool& important) const
 {
     if (testingMode() || !MediaAccessibilityLibrary())
         return CaptionUserPreferences::captionFontSizeScaleAndImportance(important);
@@ -423,7 +478,7 @@ float CaptionUserPreferencesMac::captionFontSizeScaleAndImportance(bool& importa
 #endif
 }
 
-void CaptionUserPreferencesMac::setPreferredLanguage(const String& language)
+void CaptionUserPreferencesMediaAF::setPreferredLanguage(const String& language)
 {
     if (testingMode() || !MediaAccessibilityLibrary()) {
         CaptionUserPreferences::setPreferredLanguage(language);
@@ -433,7 +488,7 @@ void CaptionUserPreferencesMac::setPreferredLanguage(const String& language)
     MACaptionAppearanceAddSelectedLanguage(kMACaptionAppearanceDomainUser, language.createCFString().get());
 }
 
-Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
+Vector<String> CaptionUserPreferencesMediaAF::preferredLanguages() const
 {
     if (testingMode() || !MediaAccessibilityLibrary())
         return CaptionUserPreferences::preferredLanguages();
@@ -466,9 +521,9 @@ Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
 
     return userPreferredLanguages;
 }
-#endif  // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
-String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
+String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
 {
     if (testingMode())
         return CaptionUserPreferences::captionsStyleSheetOverride();
@@ -514,9 +569,9 @@ String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
         
         captionsOverrideStyleSheet.append('}');
     }
-#endif  // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
-    LOG(Media, "CaptionUserPreferencesMac::captionsStyleSheetOverrideSetting sytle to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());
+    LOG(Media, "CaptionUserPreferencesMediaAF::captionsStyleSheetOverrideSetting sytle to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());
 
     return captionsOverrideStyleSheet.toString();
 }
@@ -596,12 +651,12 @@ static String trackDisplayName(TextTrack* track)
     return displayName.toString();
 }
 
-String CaptionUserPreferencesMac::displayNameForTrack(TextTrack* track) const
+String CaptionUserPreferencesMediaAF::displayNameForTrack(TextTrack* track) const
 {
     return trackDisplayName(track);
 }
 
-int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMediaElement* mediaElement) const
+int CaptionUserPreferencesMediaAF::textTrackSelectionScore(TextTrack* track, HTMLMediaElement* mediaElement) const
 {
     CaptionDisplayMode displayMode = captionDisplayMode();
     bool legacyOverride = mediaElement->webkitClosedCaptionsVisible();
@@ -721,7 +776,7 @@ static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>
     return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
 }
 
-Vector<RefPtr<TextTrack> > CaptionUserPreferencesMac::sortedTrackListForMenu(TextTrackList* trackList)
+Vector<RefPtr<TextTrack> > CaptionUserPreferencesMediaAF::sortedTrackListForMenu(TextTrackList* trackList)
 {
     ASSERT(trackList);
 
@@ -749,17 +804,17 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferencesMac::sortedTrackListForMenu(Tex
             if (prefersAccessibilityTracks) {
                 // In the first pass, include only caption tracks if the user prefers accessibility tracks.
                 if (!isAccessibilityTrack && filterTrackList) {
-                    LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is NOT an accessibility track", track->kind().string().utf8().data(), language.utf8().data());
+                    LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is NOT an accessibility track", track->kind().string().utf8().data(), language.utf8().data());
                     continue;
                 }
             } else {
                 // In the first pass, only include the first non-CC or SDH track with each language if the user prefers translation tracks.
                 if (isAccessibilityTrack && filterTrackList) {
-                    LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is an accessibility track", track->kind().string().utf8().data(), language.utf8().data());
+                    LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is an accessibility track", track->kind().string().utf8().data(), language.utf8().data());
                     continue;
                 }
                 if (languagesIncluded.contains(language)  && filterTrackList) {
-                    LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is not the first with this language", track->kind().string().utf8().data(), language.utf8().data());
+                    LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - skipping '%s' track with language '%s' because it is not the first with this language", track->kind().string().utf8().data(), language.utf8().data());
                     continue;
                 }
             }
@@ -781,11 +836,11 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferencesMac::sortedTrackListForMenu(Tex
 
         if (track->containsOnlyForcedSubtitles())
             continue;
- 
+
         if (!languagesIncluded.contains(language) && track->isMainProgramContent()) {
             languagesIncluded.add(language);
             tracksForMenu.append(track);
-            LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - adding '%s' track with language '%s' because it is the only track with this language", track->kind().string().utf8().data(), language.utf8().data());
+            LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s' because it is the only track with this language", track->kind().string().utf8().data(), language.utf8().data());
         }
     }
 
