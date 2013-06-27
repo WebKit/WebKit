@@ -1,3 +1,15 @@
+2013-06-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Fixing some compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=117791
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Silenced format warning.
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache_Bundle.cpp:
+        (TestWebKitAPI::DOMWindowExtensionNoCache::globalObjectIsAvailableForFrame):
+        Solved warning about uninitialized variable.
+
 2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Fix bindings tests after r152080

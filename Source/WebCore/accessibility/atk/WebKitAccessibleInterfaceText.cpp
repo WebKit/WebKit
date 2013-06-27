@@ -619,14 +619,13 @@ static gchar* webkitAccessibleTextGetTextForOffset(AtkText* text, gint offset, A
 #if PLATFORM(GTK)
     // FIXME: Get rid of the code below once every single get_text_*_offset
     // function has been properly implemented without using Pango/Cairo.
-    GailOffsetType offsetType;
+    GailOffsetType offsetType = GAIL_AT_OFFSET;
     switch (textPosition) {
     case GetTextPositionBefore:
         offsetType = GAIL_BEFORE_OFFSET;
         break;
 
     case GetTextPositionAt:
-        offsetType = GAIL_AT_OFFSET;
         break;
 
     case GetTextPositionAfter:

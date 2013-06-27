@@ -254,7 +254,8 @@ TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
 	-I$(srcdir)/Tools/DumpRenderTree/TestNetscapePlugIn \
 	-I$(srcdir)/Tools/DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders \
 	$(global_cppflags) \
-	$(javascriptcore_cppflags)
+	$(javascriptcore_cppflags) \
+	-Wno-missing-format-attribute
 
 # For the Gtk port we want to use XP_UNIX both on X11 and Mac
 if !TARGET_WIN32

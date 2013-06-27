@@ -204,7 +204,7 @@ void DOMWindowExtensionNoCache::globalObjectIsAvailableForFrame(WKBundleFrameRef
 {
     WKBundleDOMWindowExtensionRef extension = WKBundleDOMWindowExtensionCreate(frame, world);
 
-    int index;
+    int index = 0;
     bool standard;
     standard = world == WKBundleScriptWorldNormalWorld();
 

@@ -311,6 +311,8 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
         0, // registerIntentServiceForFrame_unavailable
         0, // didLayout
         0, // featuresUsedInPage
+        0, // willLoadURLRequest;
+        0, // willLoadDataRequest;
     };
     WKBundlePageSetPageLoaderClient(toAPI(webPage), &loaderClient);
 

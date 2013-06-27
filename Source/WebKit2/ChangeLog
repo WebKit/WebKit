@@ -1,3 +1,16 @@
+2013-06-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Fixing some compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=117791
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/tests/WebExtensionTest.cpp: Properly
+        initialized GDBusInterfaceVTable.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitWebPageCreate): Added missing fields to the
+        WKBundlePageLoaderClient.
+
 2013-06-27  Iago Toral Quiroga  <itoral@igalia.com>
 
         Use consistent file names for WidgetBackingStoreGtkX11 class

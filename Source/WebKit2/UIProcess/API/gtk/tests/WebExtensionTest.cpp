@@ -121,7 +121,7 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
 }
 
 static const GDBusInterfaceVTable interfaceVirtualTable = {
-    methodCallCallback, 0, 0
+    methodCallCallback, 0, 0, { 0, }
 };
 
 static void busAcquiredCallback(GDBusConnection* connection, const char* name, gpointer userData)
