@@ -177,7 +177,7 @@ bool MediaPlayerPrivateAVFoundation::hasSetUpVideoRendering() const
 void MediaPlayerPrivateAVFoundation::load(const String& url)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::load(%p)", this);
-
+    fprintf(stderr, "USING AVCF");
     if (m_networkState != MediaPlayer::Loading) {
         m_networkState = MediaPlayer::Loading;
         m_player->networkStateChanged();

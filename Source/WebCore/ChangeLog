@@ -1,3 +1,12 @@
+2013-06-27  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Temporarily add some stderr output to Media Engine load methods to determine which engine buildbots are using for layout tests.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::load):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::load):
+
 2013-06-27  Anders Carlsson  <andersca@apple.com>
 
         Stop using deprecatedCharactersWithNullTermination in SQLite code
