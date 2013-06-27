@@ -1,3 +1,72 @@
+2013-06-26  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        Coordinated Graphics: Separate CoordinatedLayerTreeHost into CoordinatedLayerTreeHost and CompositingCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=104360
+
+        Reviewed by Noam Rosenthal.
+
+        The CoordinatedLayerTreeHost has too many responsibilities. It
+        implements LayerTreeHost, GraphicsLayerClient,
+        CoordinatedGraphicsLayerClient, CoordinatedImageBacking::Client,
+        UpdateAtlas::Client, GraphicsLayerFactory and
+        WebCustomFilterProgramProxyClient.
+
+        This refactoring reduces the responsibilities of CoordinatedLayerTreeHost.
+
+        This patch introduces a new class called CompositingCoordinator, which
+        takes the responsibility of managing compositing resources in
+        WebProcess.
+
+        CoordinatedLayerTreeHost is responsible only for the scheduling and
+        IPC-specific stuff, which are relevant only for WebKit2.
+
+        No new tests, covered by existing tests.
+
+        * CMakeLists.txt:
+        * Target.pri:
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp: Added.
+        (WebCore::CompositingCoordinator::create):
+        (WebCore::CompositingCoordinator::~CompositingCoordinator):
+        (WebCore::CompositingCoordinator::CompositingCoordinator):
+        (WebCore::CompositingCoordinator::setRootCompositingLayer):
+        (WebCore::CompositingCoordinator::sizeDidChange):
+        (WebCore::CompositingCoordinator::flushPendingLayerChanges):
+        (WebCore::CompositingCoordinator::syncDisplayState):
+        (WebCore::CompositingCoordinator::nextAnimationServiceTime):
+        (WebCore::CompositingCoordinator::clearPendingStateChanges):
+        (WebCore::CompositingCoordinator::initializeRootCompositingLayerIfNeeded):
+        (WebCore::CompositingCoordinator::createRootLayer):
+        (WebCore::CompositingCoordinator::syncLayerState):
+        (WebCore::CompositingCoordinator::createImageBackingIfNeeded):
+        (WebCore::CompositingCoordinator::createImageBacking):
+        (WebCore::CompositingCoordinator::updateImageBacking):
+        (WebCore::CompositingCoordinator::clearImageBackingContents):
+        (WebCore::CompositingCoordinator::removeImageBacking):
+        (WebCore::CompositingCoordinator::flushPendingImageBackingChanges):
+        (WebCore::CompositingCoordinator::notifyAnimationStarted):
+        (WebCore::CompositingCoordinator::notifyFlushRequired):
+        (WebCore::CompositingCoordinator::paintContents):
+        (WebCore::CompositingCoordinator::createGraphicsLayer):
+        (WebCore::CompositingCoordinator::deviceScaleFactor):
+        (WebCore::CompositingCoordinator::pageScaleFactor):
+        (WebCore::CompositingCoordinator::createUpdateAtlas):
+        (WebCore::CompositingCoordinator::removeUpdateAtlas):
+        (WebCore::CompositingCoordinator::visibleContentsRect):
+        (WebCore::CompositingCoordinator::mainContentsLayer):
+        (WebCore::CompositingCoordinator::setVisibleContentsRect):
+        (WebCore::CompositingCoordinator::deviceOrPageScaleFactorChanged):
+        (WebCore::CompositingCoordinator::detachLayer):
+        (WebCore::CompositingCoordinator::commitScrollOffset):
+        (WebCore::CompositingCoordinator::renderNextFrame):
+        (WebCore::CompositingCoordinator::purgeBackingStores):
+        (WebCore::CompositingCoordinator::paintToSurface):
+        (WebCore::CompositingCoordinator::scheduleReleaseInactiveAtlases):
+        (WebCore::CompositingCoordinator::releaseInactiveAtlasesTimerFired):
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.h: Added.
+        (WebCore::CompositingCoordinator::clearRootLayer):
+        (WebCore::CompositingCoordinator::rootLayer):
+        (WebCore::CompositingCoordinator::state):
+
 2013-06-26  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Vibration cannot be canceled during pattern vibration.

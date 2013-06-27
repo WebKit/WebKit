@@ -4089,6 +4089,7 @@ use?(3D_GRAPHICS) {
         platform/graphics/texmap/TextureMapperGL.h \
         platform/graphics/texmap/TextureMapperShaderProgram.h \
         platform/graphics/texmap/coordinated/AreaAllocator.h \
+        platform/graphics/texmap/coordinated/CompositingCoordinator.h \
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h \
         platform/graphics/texmap/coordinated/CoordinatedCustomFilterOperation.h \
         platform/graphics/texmap/coordinated/CoordinatedCustomFilterProgram.h \
@@ -4124,6 +4125,7 @@ use?(3D_GRAPHICS) {
         platform/graphics/texmap/TextureMapperGL.cpp \
         platform/graphics/texmap/TextureMapperShaderProgram.cpp \
         platform/graphics/texmap/coordinated/AreaAllocator.cpp \
+        platform/graphics/texmap/coordinated/CompositingCoordinator.cpp \
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp \
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp \
         platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp \
