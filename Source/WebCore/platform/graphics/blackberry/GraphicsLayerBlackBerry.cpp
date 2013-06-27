@@ -569,8 +569,11 @@ void GraphicsLayerBlackBerry::setContentsToMedia(PlatformLayer* layer)
             m_contentsLayerPurpose = ContentsLayerForVideo;
             childrenChanged = true;
         }
-        layer->setOwner(this);
-        layer->setNeedsDisplay();
+
+        if (layer->owner() != this) {
+            layer->setOwner(this);
+            layer->setNeedsDisplay();
+        }
         updateContentsRect();
     } else {
         if (m_contentsLayer) {
@@ -854,8 +857,11 @@ void GraphicsLayerBlackBerry::updateContentsRect()
     if (!m_contentsLayer)
         return;
 
-    m_contentsLayer->setPosition(m_contentsRect.location());
-    m_contentsLayer->setBounds(m_contentsRect.size());
+    if (m_contentsLayer->position() != m_contentsRect.location())
+        m_contentsLayer->setPosition(m_contentsRect.location());
+
+    if (m_contentsLayer->bounds() != m_contentsRect.size())
+        m_contentsLayer->setBounds(m_contentsRect.size());
 }
 
 void GraphicsLayerBlackBerry::setupContentsLayer(LayerWebKitThread* contentsLayer)

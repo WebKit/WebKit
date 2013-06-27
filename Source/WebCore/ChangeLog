@@ -1,3 +1,20 @@
+2013-06-27  Andrew Lo  <anlo@blackberry.com>
+
+        [BlackBerry] Unnecessary root layer commits occur during html5 video playback
+        https://bugs.webkit.org/show_bug.cgi?id=118147
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson, John Griggs.
+
+        Only request layer commits when layer properties change in
+        GraphicsLayerBlackBerry::updateContentsRect and
+        GraphicsLayerBlackBerry::setContentsToMedia.
+        JIRA112749.
+
+        * platform/graphics/blackberry/GraphicsLayerBlackBerry.cpp:
+        (WebCore::GraphicsLayerBlackBerry::setContentsToMedia):
+        (WebCore::GraphicsLayerBlackBerry::updateContentsRect):
+
 2013-06-27  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: basic support for rectangle shape-outside
