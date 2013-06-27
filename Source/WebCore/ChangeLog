@@ -1,3 +1,18 @@
+2013-06-26  Sanjoy Pal  <sanjoy.pal@samsung.com>
+
+        Avoid redundant checks for Compositing reasons in RenderLayerCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=118114
+
+        Reviewed by Anders Carlsson.
+
+        A RenderObject can be any one of the Video, Canvas, Plugin or Iframe.
+        Hence removing the redundant checks.
+
+        No new tests as no functionality change.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::reasonsForCompositing):
+
 2013-06-26  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         Coordinated Graphics: Separate CoordinatedLayerTreeHost into CoordinatedLayerTreeHost and CompositingCoordinator
