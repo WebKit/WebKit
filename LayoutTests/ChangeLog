@@ -1,3 +1,12 @@
+2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Rebaseline fast/js/global-constructors-attributes.html for EFL port
+        after r151914. WaveTable was renamed to PeriodicWave.
+
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+
 2013-06-27  Horia Iosif Olaru  <olaru@adobe.com>
 
         Add an extra test to check if tiled background images get blended as expected. This test passed before this change. The tests for this change are the existing background-blend-mode tests.
