@@ -24,38 +24,38 @@
  *
  */
 
-#ifndef WorkerContextNotifications_h
-#define WorkerContextNotifications_h
+#ifndef WorkerGlobalScopeIndexedDatabase_h
+#define WorkerGlobalScopeIndexedDatabase_h
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(WORKERS) && ENABLE(INDEXED_DATABASE)
 
 #include "Supplementable.h"
 
 namespace WebCore {
 
-class NotificationCenter;
+class IDBFactory;
+class IDBFactoryBackendInterface;
 class ScriptExecutionContext;
-class WorkerContext;
 
-class WorkerContextNotifications : public Supplement<ScriptExecutionContext> {
+class WorkerGlobalScopeIndexedDatabase : public Supplement<ScriptExecutionContext> {
 public:
-    virtual ~WorkerContextNotifications();
+    virtual ~WorkerGlobalScopeIndexedDatabase();
+    static WorkerGlobalScopeIndexedDatabase* from(ScriptExecutionContext*);
 
-    static NotificationCenter* webkitNotifications(WorkerContext*);
-    static WorkerContextNotifications* from(WorkerContext*);
+    static IDBFactory* indexedDB(ScriptExecutionContext*);
 
 private:
-    explicit WorkerContextNotifications(WorkerContext*);
+    WorkerGlobalScopeIndexedDatabase();
 
-    NotificationCenter* webkitNotifications();
+    IDBFactory* indexedDB();
     static const char* supplementName();
 
-    WorkerContext* m_context;
-    RefPtr<NotificationCenter> m_notificationCenter;
+    RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
+    RefPtr<IDBFactory> m_idbFactory;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#endif // ENABLE(WORKERS) && ENABLE(INDEXED_DATABASE)
 
-#endif // WorkerContextNotifications_h
+#endif // WorkerGlobalScopeIndexedDatabase_h

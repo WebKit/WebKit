@@ -24,7 +24,7 @@
 #include "AsyncFileWriterClient.h"
 #include "CrossThreadTask.h"
 #include "FileError.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 
@@ -69,7 +69,7 @@ void WorkerPlatformFileWriterClient::postTaskToWorkerThreadIfNeeded(PassOwnPtr<S
     if (!m_context)
         return;
 
-    m_context->thread()->workerLoaderProxy().postTaskForModeToWorkerContext(task, m_mode);
+    m_context->thread()->workerLoaderProxy().postTaskForModeToWorkerGlobalScope(task, m_mode);
 }
 
 }

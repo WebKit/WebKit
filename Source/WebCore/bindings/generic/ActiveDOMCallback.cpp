@@ -35,7 +35,7 @@
 #include "ScriptExecutionContext.h"
 
 #if ENABLE(WORKERS)
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #endif
 
 namespace WebCore {

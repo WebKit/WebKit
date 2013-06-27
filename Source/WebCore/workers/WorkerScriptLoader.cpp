@@ -36,7 +36,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
 #include <wtf/OwnPtr.h>
@@ -64,14 +64,14 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     if (!request)
         return;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext->isWorkerContext());
+    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext->isWorkerGlobalScope());
 
     ThreadableLoaderOptions options;
     options.allowCredentials = AllowStoredCredentials;
     options.crossOriginRequestPolicy = crossOriginRequestPolicy;
     options.sendLoadCallbacks = SendCallbacks;
 
-    WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(scriptExecutionContext), *request, *this, options);
+    WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerGlobalScope*>(scriptExecutionContext), *request, *this, options);
 }
     
 void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const KURL& url, CrossOriginRequestPolicy crossOriginRequestPolicy, WorkerScriptLoaderClient* client)

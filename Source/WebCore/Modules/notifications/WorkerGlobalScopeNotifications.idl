@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,41 +24,11 @@
  *
  */
 
-#ifndef WorkerContextFileSystem_h
-#define WorkerContextFileSystem_h
-
-#if ENABLE(FILE_SYSTEM)
-
-#include "DOMFileSystemSync.h"
-#include <wtf/PassRefPtr.h>
-
-namespace WebCore {
-
-class EntryCallback;
-class EntrySync;
-class ErrorCallback;
-class FileSystemCallback;
-class WorkerContext;
-
-class WorkerContextFileSystem {
-public:
-    enum {
-        TEMPORARY,
-        PERSISTENT,
-    };
-
-    static void webkitRequestFileSystem(WorkerContext*, int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback>);
-    static PassRefPtr<DOMFileSystemSync> webkitRequestFileSystemSync(WorkerContext*, int type, long long size, ExceptionCode&);
-    static void webkitResolveLocalFileSystemURL(WorkerContext*, const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback>);
-    static PassRefPtr<EntrySync> webkitResolveLocalFileSystemSyncURL(WorkerContext*, const String& url, ExceptionCode&);
-
-private:
-    WorkerContextFileSystem();
-    ~WorkerContextFileSystem();    
+[
+    Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
+] partial interface WorkerGlobalScope {
+#if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
+    readonly attribute NotificationCenter webkitNotifications;
+#endif
 };
 
-} // namespace WebCore
-
-#endif // ENABLE(FILE_SYSTEM)
-
-#endif // WorkerContextFileSystem_h

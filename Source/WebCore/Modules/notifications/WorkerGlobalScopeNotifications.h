@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,15 +20,42 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
-[
-    Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
-] partial interface WorkerContext {
-#if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-    readonly attribute NotificationCenter webkitNotifications;
-#endif
+#ifndef WorkerGlobalScopeNotifications_h
+#define WorkerGlobalScopeNotifications_h
+
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+
+#include "Supplementable.h"
+
+namespace WebCore {
+
+class NotificationCenter;
+class ScriptExecutionContext;
+class WorkerGlobalScope;
+
+class WorkerGlobalScopeNotifications : public Supplement<ScriptExecutionContext> {
+public:
+    virtual ~WorkerGlobalScopeNotifications();
+
+    static NotificationCenter* webkitNotifications(WorkerGlobalScope*);
+    static WorkerGlobalScopeNotifications* from(WorkerGlobalScope*);
+
+private:
+    explicit WorkerGlobalScopeNotifications(WorkerGlobalScope*);
+
+    NotificationCenter* webkitNotifications();
+    static const char* supplementName();
+
+    WorkerGlobalScope* m_context;
+    RefPtr<NotificationCenter> m_notificationCenter;
 };
 
+} // namespace WebCore
+
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+
+#endif // WorkerGlobalScopeNotifications_h

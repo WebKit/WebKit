@@ -48,8 +48,8 @@
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
 #include "WorkerConsoleAgent.h"
-#include "WorkerContext.h"
 #include "WorkerDebuggerAgent.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerReportingProxy.h"
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
@@ -62,55 +62,55 @@ namespace {
 class PageInspectorProxy : public InspectorFrontendChannel {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit PageInspectorProxy(WorkerContext* workerContext) : m_workerContext(workerContext) { }
+    explicit PageInspectorProxy(WorkerGlobalScope* workerGlobalScope) : m_workerGlobalScope(workerGlobalScope) { }
     virtual ~PageInspectorProxy() { }
 private:
     virtual bool sendMessageToFrontend(const String& message)
     {
-        m_workerContext->thread()->workerReportingProxy().postMessageToPageInspector(message);
+        m_workerGlobalScope->thread()->workerReportingProxy().postMessageToPageInspector(message);
         return true;
     }
-    WorkerContext* m_workerContext;
+    WorkerGlobalScope* m_workerGlobalScope;
 };
 
 class WorkerStateClient : public InspectorStateClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerStateClient(WorkerContext* context) : m_workerContext(context) { }
+    WorkerStateClient(WorkerGlobalScope* context) : m_workerGlobalScope(context) { }
     virtual ~WorkerStateClient() { }
 
 private:
     virtual bool supportsInspectorStateUpdates() const { return true; }
     virtual void updateInspectorStateCookie(const String& cookie)
     {
-        m_workerContext->thread()->workerReportingProxy().updateInspectorStateCookie(cookie);
+        m_workerGlobalScope->thread()->workerReportingProxy().updateInspectorStateCookie(cookie);
     }
 
-    WorkerContext* m_workerContext;
+    WorkerGlobalScope* m_workerGlobalScope;
 };
 
 }
 
-WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContext)
-    : m_workerContext(workerContext)
-    , m_stateClient(adoptPtr(new WorkerStateClient(workerContext)))
+WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope* workerGlobalScope)
+    : m_workerGlobalScope(workerGlobalScope)
+    , m_stateClient(adoptPtr(new WorkerStateClient(workerGlobalScope)))
     , m_state(adoptPtr(new InspectorCompositeState(m_stateClient.get())))
     , m_instrumentingAgents(InstrumentingAgents::create())
     , m_injectedScriptManager(InjectedScriptManager::createForWorker())
     , m_runtimeAgent(0)
 {
-    OwnPtr<InspectorRuntimeAgent> runtimeAgent = WorkerRuntimeAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), workerContext);
+    OwnPtr<InspectorRuntimeAgent> runtimeAgent = WorkerRuntimeAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), workerGlobalScope);
     m_runtimeAgent = runtimeAgent.get();
     m_agents.append(runtimeAgent.release());
 
     OwnPtr<InspectorConsoleAgent> consoleAgent = WorkerConsoleAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get());
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    OwnPtr<InspectorDebuggerAgent> debuggerAgent = WorkerDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), workerContext, m_injectedScriptManager.get());
+    OwnPtr<InspectorDebuggerAgent> debuggerAgent = WorkerDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), workerGlobalScope, m_injectedScriptManager.get());
     InspectorDebuggerAgent* debuggerAgentPtr = debuggerAgent.get();
     m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
     m_agents.append(debuggerAgent.release());
 
-    m_agents.append(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent.get(), workerContext, m_state.get(), m_injectedScriptManager.get()));
+    m_agents.append(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent.get(), workerGlobalScope, m_state.get(), m_injectedScriptManager.get()));
     m_agents.append(InspectorHeapProfilerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get()));
 #endif
     m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), 0, 0, m_state.get(), InspectorTimelineAgent::WorkerInspector, 0));
@@ -139,7 +139,7 @@ void WorkerInspectorController::connectFrontend()
 {
     ASSERT(!m_frontend);
     m_state->unmute();
-    m_frontendChannel = adoptPtr(new PageInspectorProxy(m_workerContext));
+    m_frontendChannel = adoptPtr(new PageInspectorProxy(m_workerGlobalScope));
     m_frontend = adoptPtr(new InspectorFrontend(m_frontendChannel.get()));
     m_backendDispatcher = InspectorBackendDispatcher::create(m_frontendChannel.get());
     m_agents.registerInDispatcher(m_backendDispatcher.get());

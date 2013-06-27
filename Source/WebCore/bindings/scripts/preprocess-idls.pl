@@ -29,7 +29,7 @@ my $preprocessor;
 my $idlFilesList;
 my $supplementalDependencyFile;
 my $windowConstructorsFile;
-my $workerContextConstructorsFile;
+my $workerGlobalScopeConstructorsFile;
 my $supplementalMakefileDeps;
 
 GetOptions('defines=s' => \$defines,
@@ -37,13 +37,13 @@ GetOptions('defines=s' => \$defines,
            'idlFilesList=s' => \$idlFilesList,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
            'windowConstructorsFile=s' => \$windowConstructorsFile,
-           'workerContextConstructorsFile=s' => \$workerContextConstructorsFile,
+           'workerGlobalScopeConstructorsFile=s' => \$workerGlobalScopeConstructorsFile,
            'supplementalMakefileDeps=s' => \$supplementalMakefileDeps);
 
 die('Must specify #define macros using --defines.') unless defined($defines);
 die('Must specify an output file using --supplementalDependencyFile.') unless defined($supplementalDependencyFile);
 die('Must specify an output file using --windowConstructorsFile.') unless defined($windowConstructorsFile);
-die('Must specify an output file using --workerContextConstructorsFile.') unless defined($workerContextConstructorsFile);
+die('Must specify an output file using --workerGlobalScopeConstructorsFile.') unless defined($workerGlobalScopeConstructorsFile);
 die('Must specify the file listing all IDLs using --idlFilesList.') unless defined($idlFilesList);
 
 open FH, "< $idlFilesList" or die "Cannot open $idlFilesList\n";
@@ -56,7 +56,7 @@ my %idlFileToInterfaceName;
 my %supplementalDependencies;
 my %supplementals;
 my $windowConstructorsCode = "";
-my $workerContextConstructorsCode = "";
+my $workerGlobalScopeConstructorsCode = "";
 
 # Get rid of duplicates in idlFiles array.
 my %idlFileHash = map { $_, 1 } @idlFiles;
@@ -98,7 +98,7 @@ foreach my $idlFile (sort keys %idlFileHash) {
             my $globalContext = $extendedAttributes->{"GlobalContext"} || "WindowOnly";
             my $attributeCode = GenerateConstructorAttribute($interfaceName, $extendedAttributes);
             $windowConstructorsCode .= $attributeCode unless $globalContext eq "WorkerOnly";
-            $workerContextConstructorsCode .= $attributeCode unless $globalContext eq "WindowOnly"
+            $workerGlobalScopeConstructorsCode .= $attributeCode unless $globalContext eq "WindowOnly"
         }
     }
     $supplementals{$fullPath} = [];
@@ -107,8 +107,8 @@ foreach my $idlFile (sort keys %idlFileHash) {
 # Generate DOMWindow Constructors partial interface.
 GeneratePartialInterface("DOMWindow", $windowConstructorsCode, $windowConstructorsFile);
 
-# Generate WorkerContext Constructors partial interface.
-GeneratePartialInterface("WorkerContext", $workerContextConstructorsCode, $workerContextConstructorsFile);
+# Generate WorkerGlobalScope Constructors partial interface.
+GeneratePartialInterface("WorkerGlobalScope", $workerGlobalScopeConstructorsCode, $workerGlobalScopeConstructorsFile);
 
 # Resolves partial interfaces and implements dependencies.
 foreach my $idlFile (keys %supplementalDependencies) {

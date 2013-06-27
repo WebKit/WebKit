@@ -48,7 +48,7 @@ class InspectorObject;
 class InspectorValue;
 class InstrumentingAgents;
 class ScriptDebugServer;
-class WorkerContext;
+class WorkerGlobalScope;
 
 typedef String ErrorString;
 

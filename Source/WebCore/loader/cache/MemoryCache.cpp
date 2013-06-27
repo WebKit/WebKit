@@ -35,7 +35,7 @@
 #include "PublicSuffix.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <stdio.h>
@@ -710,9 +710,9 @@ void MemoryCache::removeUrlFromCache(ScriptExecutionContext* context, const Stri
 void MemoryCache::removeRequestFromCache(ScriptExecutionContext* context, const ResourceRequest& request)
 {
 #if ENABLE(WORKERS)
-    if (context->isWorkerContext()) {
-        WorkerContext* workerContext = static_cast<WorkerContext*>(context);
-        workerContext->thread()->workerLoaderProxy().postTaskToLoader(createCallbackTask(&crossThreadRemoveRequestFromCache, request));
+    if (context->isWorkerGlobalScope()) {
+        WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
+        workerGlobalScope->thread()->workerLoaderProxy().postTaskToLoader(createCallbackTask(&crossThreadRemoveRequestFromCache, request));
         return;
     }
 #endif

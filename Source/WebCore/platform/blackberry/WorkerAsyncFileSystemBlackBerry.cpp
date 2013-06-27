@@ -25,7 +25,7 @@
 #include "AsyncFileWriterClient.h"
 #include "CrossThreadTask.h"
 #include "WorkerAsyncFileWriterBlackBerry.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerPlatformAsyncFileSystemCallbacks.h"
 #include "WorkerThread.h"
@@ -41,7 +41,7 @@ using BlackBerry::Platform::webKitThreadMessageClient;
 
 namespace WebCore {
 
-WorkerAsyncFileSystemBlackBerry::WorkerAsyncFileSystemBlackBerry(WorkerContext* context, const String& mode, PassOwnPtr<WebFileSystem> platformFileSystem)
+WorkerAsyncFileSystemBlackBerry::WorkerAsyncFileSystemBlackBerry(WorkerGlobalScope* context, const String& mode, PassOwnPtr<WebFileSystem> platformFileSystem)
     : AsyncFileSystemBlackBerry(platformFileSystem)
     , m_context(context)
     , m_mode(mode)
@@ -129,13 +129,13 @@ void WorkerAsyncFileSystemBlackBerry::createSnapshotFileAndReadMetadataOnMainThr
     platformFileSystem->createSnapshotFileAndReadMetadata(fileSystemURLToPath(path), callbacks);
 }
 
-void WorkerAsyncFileSystemBlackBerry::openFileSystem(WorkerContext* context, const KURL& rootURL, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType type, long long size, bool create, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void WorkerAsyncFileSystemBlackBerry::openFileSystem(WorkerGlobalScope* context, const KURL& rootURL, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType type, long long size, bool create, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     ASSERT(context);
     postTaskToMainThread(createCallbackTask(&WorkerAsyncFileSystemBlackBerry::openFileSystemOnMainThread, basePath, storageIdentifier, type, size, create, new WorkerPlatformAsyncFileSystemCallbacks(callbacks, context, mode, rootURL)));
 }
 
-void WorkerAsyncFileSystemBlackBerry::deleteFileSystem(WorkerContext* context, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void WorkerAsyncFileSystemBlackBerry::deleteFileSystem(WorkerGlobalScope* context, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     ASSERT(context);
     postTaskToMainThread(createCallbackTask(&WorkerAsyncFileSystemBlackBerry::deleteFileSystemOnMainThread, basePath, storageIdentifier, type, new WorkerPlatformAsyncFileSystemCallbacks(callbacks, context, mode)));

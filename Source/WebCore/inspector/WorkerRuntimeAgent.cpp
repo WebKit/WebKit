@@ -37,16 +37,16 @@
 #include "InjectedScript.h"
 #include "InstrumentingAgents.h"
 #include "ScriptState.h"
-#include "WorkerContext.h"
 #include "WorkerDebuggerAgent.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
 
 namespace WebCore {
 
-WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InjectedScriptManager* injectedScriptManager, WorkerContext* workerContext)
+WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InjectedScriptManager* injectedScriptManager, WorkerGlobalScope* workerGlobalScope)
     : InspectorRuntimeAgent(instrumentingAgents, state, injectedScriptManager)
-    , m_workerContext(workerContext)
+    , m_workerGlobalScope(workerGlobalScope)
     , m_paused(false)
 {
     m_instrumentingAgents->setWorkerRuntimeAgent(this);
@@ -63,7 +63,7 @@ InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString* error, con
         *error = "Execution context id is not supported for workers as there is only one execution context.";
         return InjectedScript();
     }
-    ScriptState* scriptState = scriptStateFromWorkerContext(m_workerContext);
+    ScriptState* scriptState = scriptStateFromWorkerGlobalScope(m_workerGlobalScope);
     return injectedScriptManager()->injectedScriptFor(scriptState);
 }
 
@@ -83,7 +83,7 @@ void WorkerRuntimeAgent::run(ErrorString*)
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-void WorkerRuntimeAgent::pauseWorkerContext(WorkerContext* context)
+void WorkerRuntimeAgent::pauseWorkerGlobalScope(WorkerGlobalScope* context)
 {
     m_paused = true;
     MessageQueueWaitResult result;

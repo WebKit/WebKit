@@ -25,17 +25,40 @@
  */
 
 [
-    Conditional=FILE_SYSTEM,
-] partial interface WorkerContext {
-    const unsigned short TEMPORARY = 0;
-    const unsigned short PERSISTENT = 1;
+    NoInterfaceObject,
+    Conditional=WORKERS,
+    JSCustomMarkFunction,
+    JSCustomGetOwnPropertySlotAndDescriptor,
+    EventTarget,
+    ExtendsDOMGlobalObject,
+    IsWorkerGlobalScope,
+    JSLegacyParent=JSWorkerGlobalScopeBase,
+    JSNoStaticTables,
+] interface WorkerGlobalScope {
 
-    void webkitRequestFileSystem(unsigned short type, long long size, optional FileSystemCallback successCallback, optional ErrorCallback errorCallback);
-    [RaisesException] DOMFileSystemSync webkitRequestFileSystemSync(unsigned short type, long long size);
-    void webkitResolveLocalFileSystemURL(DOMString url, EntryCallback successCallback, optional ErrorCallback errorCallback);
-    [RaisesException] EntrySync webkitResolveLocalFileSystemSyncURL(DOMString url);
+    // WorkerGlobalScope
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+             [Replaceable] readonly attribute  WorkerGlobalScope self;
+#endif
+             [Replaceable] readonly attribute WorkerLocation location;
+    void close();
+             attribute EventListener onerror;
 
-    attribute FileErrorConstructor FileError;
-    attribute FileExceptionConstructor FileException;
+    // WorkerUtils
+    [Custom] void importScripts(/*[Variadic] DOMString urls */);
+             [Replaceable] readonly attribute WorkerNavigator navigator;
+
+    // EventTarget interface
+    void addEventListener(DOMString type, 
+                          EventListener listener, 
+                          optional boolean useCapture);
+    void removeEventListener(DOMString type, 
+                             EventListener listener, 
+                             optional boolean useCapture);
+    [RaisesException] boolean dispatchEvent(Event evt);
+
+    // Additional constructors
+    [Conditional=BLOB] attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
 };
 
+WorkerGlobalScope implements WindowTimers;

@@ -91,7 +91,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/filesystem/FileWriterSync.idl \
     $(WebCore)/Modules/filesystem/Metadata.idl \
     $(WebCore)/Modules/filesystem/MetadataCallback.idl \
-    $(WebCore)/Modules/filesystem/WorkerContextFileSystem.idl \
+    $(WebCore)/Modules/filesystem/WorkerGlobalScopeFileSystem.idl \
     $(WebCore)/Modules/geolocation/Coordinates.idl \
     $(WebCore)/Modules/geolocation/Geolocation.idl \
     $(WebCore)/Modules/geolocation/Geoposition.idl \
@@ -110,7 +110,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/IDBRequest.idl \
     $(WebCore)/Modules/indexeddb/IDBTransaction.idl \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
-    $(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $(WebCore)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
     $(WebCore)/Modules/indieui/UIRequestEvent.idl \
     $(WebCore)/Modules/mediasource/MediaSource.idl \
     $(WebCore)/Modules/mediasource/SourceBuffer.idl \
@@ -119,7 +119,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/notifications/Notification.idl \
     $(WebCore)/Modules/notifications/NotificationCenter.idl \
     $(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
-    $(WebCore)/Modules/notifications/WorkerContextNotifications.idl \
+    $(WebCore)/Modules/notifications/WorkerGlobalScopeNotifications.idl \
     $(WebCore)/Modules/quota/DOMWindowQuota.idl \
     $(WebCore)/Modules/quota/NavigatorStorageQuota.idl \
     $(WebCore)/Modules/quota/StorageInfo.idl \
@@ -174,7 +174,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $(WebCore)/Modules/webdatabase/SQLTransactionSync.idl \
     $(WebCore)/Modules/webdatabase/SQLTransactionSyncCallback.idl \
-    $(WebCore)/Modules/webdatabase/WorkerContextWebDatabase.idl \
+    $(WebCore)/Modules/webdatabase/WorkerGlobalScopeWebDatabase.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
     $(WebCore)/css/CSSCharsetRule.idl \
@@ -631,11 +631,11 @@ BINDING_IDLS = \
     $(WebCore)/testing/MemoryInfo.idl \
     $(WebCore)/testing/TypeConversions.idl \
     $(WebCore)/workers/AbstractWorker.idl \
-    $(WebCore)/workers/DedicatedWorkerContext.idl \
+    $(WebCore)/workers/DedicatedWorkerGlobalScope.idl \
     $(WebCore)/workers/SharedWorker.idl \
-    $(WebCore)/workers/SharedWorkerContext.idl \
+    $(WebCore)/workers/SharedWorkerGlobalScope.idl \
     $(WebCore)/workers/Worker.idl \
-    $(WebCore)/workers/WorkerContext.idl \
+    $(WebCore)/workers/WorkerGlobalScope.idl \
     $(WebCore)/workers/WorkerLocation.idl \
     $(WebCore)/xml/DOMParser.idl \
     $(WebCore)/xml/XMLHttpRequest.idl \
@@ -663,7 +663,7 @@ WEB_DOM_HEADERS :=
 all : \
     $(SUPPLEMENTAL_DEPENDENCY_FILE) \
     $(WINDOW_CONSTRUCTORS_FILE) \
-    $(WORKERCONTEXT_CONSTRUCTORS_FILE) \
+    $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
     $(JS_DOM_HEADERS) \
     $(WEB_DOM_HEADERS) \
     \
@@ -1009,7 +1009,7 @@ JS_BINDINGS_SCRIPTS = $(GENERATE_SCRIPTS) bindings/scripts/CodeGeneratorJS.pm
 SUPPLEMENTAL_DEPENDENCY_FILE = ./SupplementalDependencies.txt
 SUPPLEMENTAL_MAKEFILE_DEPS = ./SupplementalDependencies.dep
 WINDOW_CONSTRUCTORS_FILE = ./DOMWindowConstructors.idl
-WORKERCONTEXT_CONSTRUCTORS_FILE = ./WorkerContextConstructors.idl
+WORKERGLOBALSCOPE_CONSTRUCTORS_FILE = ./WorkerGlobalScopeConstructors.idl
 IDL_FILES_TMP = ./idl_files.tmp
 ADDITIONAL_IDLS = $(WebCore)/inspector/JavaScriptCallFrame.idl
 IDL_ATTRIBUTES_FILE = $(WebCore)/bindings/scripts/IDLAttributes.txt
@@ -1021,10 +1021,10 @@ space +=
 
 $(SUPPLEMENTAL_MAKEFILE_DEPS) : $(PREPROCESS_IDLS_SCRIPTS) $(BINDING_IDLS) $(ADDITIONAL_IDLS) $(PLATFORM_FEATURE_DEFINES)
 	printf "$(subst $(space),,$(patsubst %,%\n,$(BINDING_IDLS) $(ADDITIONAL_IDLS)))" > $(IDL_FILES_TMP)
-	$(call preprocess_idls_script, $(PREPROCESS_IDLS_SCRIPTS)) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerContextConstructorsFile $(WORKERCONTEXT_CONSTRUCTORS_FILE) --supplementalMakefileDeps $@
+	$(call preprocess_idls_script, $(PREPROCESS_IDLS_SCRIPTS)) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $@
 	rm -f $(IDL_FILES_TMP)
 
-JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(WINDOW_CONSTRUCTORS_FILE) $(WORKERCONTEXT_CONSTRUCTORS_FILE) $(PLATFORM_FEATURE_DEFINES)
+JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(WINDOW_CONSTRUCTORS_FILE) $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) $(PLATFORM_FEATURE_DEFINES)
 	$(call generator_script, $(JS_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
 
 -include $(SUPPLEMENTAL_MAKEFILE_DEPS)

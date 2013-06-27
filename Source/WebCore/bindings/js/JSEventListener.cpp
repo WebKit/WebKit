@@ -27,7 +27,7 @@
 #include "JSEventTarget.h"
 #include "JSMainThreadExecState.h"
 #include "ScriptController.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -134,10 +134,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         globalObject->setCurrentEvent(savedEvent);
 
 #if ENABLE(WORKERS)
-        if (scriptExecutionContext->isWorkerContext()) {
+        if (scriptExecutionContext->isWorkerGlobalScope()) {
             bool terminatorCausedException = (exec->hadException() && isTerminatedExecutionException(exec->exception()));
             if (terminatorCausedException || vm.watchdog.didFire())
-                static_cast<WorkerContext*>(scriptExecutionContext)->script()->forbidExecution();
+                static_cast<WorkerGlobalScope*>(scriptExecutionContext)->script()->forbidExecution();
         }
 #endif
 

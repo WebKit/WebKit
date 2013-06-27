@@ -41,7 +41,7 @@
 namespace WebCore {
 
     class ModePredicate;
-    class WorkerContext;
+    class WorkerGlobalScope;
     class WorkerSharedTimer;
 
     class WorkerRunLoop {
@@ -50,12 +50,12 @@ namespace WebCore {
         ~WorkerRunLoop();
         
         // Blocking call. Waits for tasks and timers, invokes the callbacks.
-        void run(WorkerContext*);
+        void run(WorkerGlobalScope*);
 
         enum WaitMode { WaitForMessage, DontWaitForMessage };
 
         // Waits for a single task and returns.
-        MessageQueueWaitResult runInMode(WorkerContext*, const String& mode, WaitMode = WaitForMessage);
+        MessageQueueWaitResult runInMode(WorkerGlobalScope*, const String& mode, WaitMode = WaitForMessage);
 
         void terminate();
         bool terminated() const { return m_messageQueue.killed(); }
@@ -85,11 +85,11 @@ namespace WebCore {
 
     private:
         friend class RunLoopSetup;
-        MessageQueueWaitResult runInMode(WorkerContext*, const ModePredicate&, WaitMode);
+        MessageQueueWaitResult runInMode(WorkerGlobalScope*, const ModePredicate&, WaitMode);
 
         // Runs any clean up tasks that are currently in the queue and returns.
         // This should only be called when the context is closed or loop has been terminated.
-        void runCleanupTasks(WorkerContext*);
+        void runCleanupTasks(WorkerGlobalScope*);
 
         MessageQueue<Task> m_messageQueue;
         OwnPtr<WorkerSharedTimer> m_sharedTimer;

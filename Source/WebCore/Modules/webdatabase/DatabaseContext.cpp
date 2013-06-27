@@ -210,7 +210,7 @@ bool DatabaseContext::allowDatabaseAccess() const
             return false;
         return true;
     }
-    ASSERT(m_scriptExecutionContext->isWorkerContext());
+    ASSERT(m_scriptExecutionContext->isWorkerGlobalScope());
     // allowDatabaseAccess is not yet implemented for workers.
     return true;
 }
@@ -223,7 +223,7 @@ void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails 
             page->chrome().client()->exceededDatabaseQuota(document->frame(), name, details);
         return;
     }
-    ASSERT(m_scriptExecutionContext->isWorkerContext());
+    ASSERT(m_scriptExecutionContext->isWorkerGlobalScope());
     // FIXME: This needs a real implementation; this is a temporary solution for testing.
     const unsigned long long defaultQuota = 5 * 1024 * 1024;
     DatabaseManager::manager().setQuota(m_scriptExecutionContext->securityOrigin(), defaultQuota);

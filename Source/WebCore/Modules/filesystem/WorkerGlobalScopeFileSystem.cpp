@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "WorkerContextFileSystem.h"
+#include "WorkerGlobalScopeFileSystem.h"
 
 #if ENABLE(FILE_SYSTEM)
 
@@ -44,11 +44,11 @@
 #include "LocalFileSystem.h"
 #include "SecurityOrigin.h"
 #include "SyncCallbackHelper.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
-void WorkerContextFileSystem::webkitRequestFileSystem(WorkerContext* worker, int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void WorkerGlobalScopeFileSystem::webkitRequestFileSystem(WorkerGlobalScope* worker, int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     ScriptExecutionContext* secureContext = worker->scriptExecutionContext();
     if (!AsyncFileSystem::isAvailable() || !secureContext->securityOrigin()->canAccessFileSystem()) {
@@ -65,7 +65,7 @@ void WorkerContextFileSystem::webkitRequestFileSystem(WorkerContext* worker, int
     LocalFileSystem::localFileSystem().requestFileSystem(worker, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, worker, fileSystemType), AsynchronousFileSystem);
 }
 
-PassRefPtr<DOMFileSystemSync> WorkerContextFileSystem::webkitRequestFileSystemSync(WorkerContext* worker, int type, long long size, ExceptionCode& ec)
+PassRefPtr<DOMFileSystemSync> WorkerGlobalScopeFileSystem::webkitRequestFileSystemSync(WorkerGlobalScope* worker, int type, long long size, ExceptionCode& ec)
 {
     ec = 0;
     ScriptExecutionContext* secureContext = worker->scriptExecutionContext();
@@ -85,7 +85,7 @@ PassRefPtr<DOMFileSystemSync> WorkerContextFileSystem::webkitRequestFileSystemSy
     return helper.getResult(ec);
 }
 
-void WorkerContextFileSystem::webkitResolveLocalFileSystemURL(WorkerContext* worker, const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void WorkerGlobalScopeFileSystem::webkitResolveLocalFileSystemURL(WorkerGlobalScope* worker, const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     KURL completedURL = worker->completeURL(url);
     ScriptExecutionContext* secureContext = worker->scriptExecutionContext();
@@ -104,7 +104,7 @@ void WorkerContextFileSystem::webkitResolveLocalFileSystemURL(WorkerContext* wor
     LocalFileSystem::localFileSystem().readFileSystem(worker, type, ResolveURICallbacks::create(successCallback, errorCallback, worker, type, filePath));
 }
 
-PassRefPtr<EntrySync> WorkerContextFileSystem::webkitResolveLocalFileSystemSyncURL(WorkerContext* worker, const String& url, ExceptionCode& ec)
+PassRefPtr<EntrySync> WorkerGlobalScopeFileSystem::webkitResolveLocalFileSystemSyncURL(WorkerGlobalScope* worker, const String& url, ExceptionCode& ec)
 {
     ec = 0;
     KURL completedURL = worker->completeURL(url);
@@ -134,8 +134,8 @@ PassRefPtr<EntrySync> WorkerContextFileSystem::webkitResolveLocalFileSystemSyncU
     return entry.release();
 }
 
-COMPILE_ASSERT(static_cast<int>(WorkerContextFileSystem::TEMPORARY) == static_cast<int>(FileSystemTypeTemporary), enum_mismatch);
-COMPILE_ASSERT(static_cast<int>(WorkerContextFileSystem::PERSISTENT) == static_cast<int>(FileSystemTypePersistent), enum_mismatch);
+COMPILE_ASSERT(static_cast<int>(WorkerGlobalScopeFileSystem::TEMPORARY) == static_cast<int>(FileSystemTypeTemporary), enum_mismatch);
+COMPILE_ASSERT(static_cast<int>(WorkerGlobalScopeFileSystem::PERSISTENT) == static_cast<int>(FileSystemTypePersistent), enum_mismatch);
 
 } // namespace WebCore
 

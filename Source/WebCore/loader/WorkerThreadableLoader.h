@@ -48,7 +48,7 @@ namespace WebCore {
 
     class ResourceError;
     class ResourceRequest;
-    class WorkerContext;
+    class WorkerGlobalScope;
     class WorkerLoaderProxy;
     struct CrossThreadResourceResponseData;
     struct CrossThreadResourceRequestData;
@@ -56,10 +56,10 @@ namespace WebCore {
     class WorkerThreadableLoader : public RefCounted<WorkerThreadableLoader>, public ThreadableLoader {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static void loadResourceSynchronously(WorkerContext*, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
-        static PassRefPtr<WorkerThreadableLoader> create(WorkerContext* workerContext, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, const ThreadableLoaderOptions& options)
+        static void loadResourceSynchronously(WorkerGlobalScope*, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
+        static PassRefPtr<WorkerThreadableLoader> create(WorkerGlobalScope* workerGlobalScope, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, const ThreadableLoaderOptions& options)
         {
-            return adoptRef(new WorkerThreadableLoader(workerContext, client, taskMode, request, options));
+            return adoptRef(new WorkerThreadableLoader(workerGlobalScope, client, taskMode, request, options));
         }
 
         ~WorkerThreadableLoader();
@@ -87,7 +87,7 @@ namespace WebCore {
         //
         // case 1. worker.terminate is called.
         //    In this case, no more tasks are posted from the worker object's thread to the worker
-        //    context's thread -- WorkerContextProxy implementation enforces this.
+        //    context's thread -- WorkerGlobalScopeProxy implementation enforces this.
         //
         // case 2. xhr gets aborted and the worker context continues running.
         //    The ThreadableLoaderClientWrapper has the underlying client cleared, so no more calls
@@ -134,9 +134,9 @@ namespace WebCore {
             String m_taskMode;
         };
 
-        WorkerThreadableLoader(WorkerContext*, ThreadableLoaderClient*, const String& taskMode, const ResourceRequest&, const ThreadableLoaderOptions&);
+        WorkerThreadableLoader(WorkerGlobalScope*, ThreadableLoaderClient*, const String& taskMode, const ResourceRequest&, const ThreadableLoaderOptions&);
 
-        RefPtr<WorkerContext> m_workerContext;
+        RefPtr<WorkerGlobalScope> m_workerGlobalScope;
         RefPtr<ThreadableLoaderClientWrapper> m_workerClientWrapper;
         MainThreadBridge& m_bridge;
     };

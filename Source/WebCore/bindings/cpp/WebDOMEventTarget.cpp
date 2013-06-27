@@ -23,13 +23,13 @@
 
 #include "DOMApplicationCache.h"
 #include "DOMWindow.h"
-#include "DedicatedWorkerContext.h"
+#include "DedicatedWorkerGlobalScope.h"
 #include "EventSource.h"
 #include "MessagePort.h"
 #include "Node.h"
 #include "Notification.h"
 #include "SharedWorker.h"
-#include "SharedWorkerContext.h"
+#include "SharedWorkerGlobalScope.h"
 #include "ThreadCheck.h"
 #include "WebDOMDOMApplicationCache.h"
 #include "WebDOMDOMWindow.h"
@@ -47,13 +47,13 @@
 #include <wtf/RefPtr.h>
 
 #if ENABLE(WORKERS)
-#include "WebDOMDedicatedWorkerContext.h"
+#include "WebDOMDedicatedWorkerGlobalScope.h"
 #include "WebDOMWorker.h"
 #endif
 
 #if ENABLE(SHARED_WORKERS)
 #include "WebDOMSharedWorker.h"
-#include "WebDOMSharedWorkerContext.h"
+#include "WebDOMSharedWorkerGlobalScope.h"
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -114,12 +114,12 @@ ConvertTo(DOMWindow)
 
 #if ENABLE(WORKERS) && 0
 ConvertTo(Worker)
-ConvertTo(DedicatedWorkerContext)
+ConvertTo(DedicatedWorkerGlobalScope)
 #endif
 
 #if ENABLE(SHARED_WORKERS)
 ConvertTo(SharedWorker)
-ConvertTo(SharedWorkerContext)
+ConvertTo(SharedWorkerGlobalScope)
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -154,16 +154,16 @@ WebDOMEventTarget toWebKit(WebCore::EventTarget* value)
     if (WebCore::Worker* worker = value->toWorker())
         return toWebKit(worker);
 
-    if (WebCore::DedicatedWorkerContext* workerContext = value->toDedicatedWorkerContext())
-        return toWebKit(workerContext);
+    if (WebCore::DedicatedWorkerGlobalScope* workerGlobalScope = value->toDedicatedWorkerGlobalScope())
+        return toWebKit(workerGlobalScope);
 #endif
 
 #if ENABLE(SHARED_WORKERS)
     if (WebCore::SharedWorker* sharedWorker = value->toSharedWorker())
         return toWebKit(sharedWorker);
 
-    if (WebCore::SharedWorkerContext* workerContext = value->toSharedWorkerContext())
-        return toWebKit(workerContext);
+    if (WebCore::SharedWorkerGlobalScope* workerGlobalScope = value->toSharedWorkerGlobalScope())
+        return toWebKit(workerGlobalScope);
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

@@ -52,7 +52,7 @@ class InstrumentingAgents;
 class Page;
 class ScriptHeapSnapshot;
 class ScriptProfile;
-class WorkerContext;
+class WorkerGlobalScope;
 
 typedef String ErrorString;
 
@@ -61,7 +61,7 @@ class InspectorProfilerAgent : public InspectorBaseAgent<InspectorProfilerAgent>
 public:
     static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, Page*, InspectorCompositeState*, InjectedScriptManager*);
 #if ENABLE(WORKERS)
-    static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, WorkerContext*, InspectorCompositeState*, InjectedScriptManager*);
+    static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, WorkerGlobalScope*, InspectorCompositeState*, InjectedScriptManager*);
 #endif
     virtual ~InspectorProfilerAgent();
 

@@ -1,3 +1,18 @@
+2013-06-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Rename WorkerContext to WorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=118059
+
+        Reviewed by Kentaro Hara.
+
+        Update calls to ScriptExecutionContext::isWorkerContext() as it was
+        renamed to ScriptExecutionContext::isWorkerGlobalScope().
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::show):
+        (WebCore::NotificationPresenterClientQt::toPage):
+        (WebCore::NotificationPresenterClientQt::toFrame):
+
 2013-06-21  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         REGRESSION (r150663): Using webkitAudioContext in Inspector makes it undefined everywhere

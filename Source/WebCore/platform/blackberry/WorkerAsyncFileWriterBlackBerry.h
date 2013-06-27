@@ -32,11 +32,11 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
-class WorkerContext;
+class WorkerGlobalScope;
 
 class WorkerAsyncFileWriterBlackBerry: public AsyncFileWriterBlackBerry {
 public:
-    static PassOwnPtr<WorkerAsyncFileWriterBlackBerry> create(WorkerContext* context, const String& mode, PassOwnPtr<BlackBerry::Platform::WebFileWriter> platformWriter, AsyncFileWriterClient* client)
+    static PassOwnPtr<WorkerAsyncFileWriterBlackBerry> create(WorkerGlobalScope* context, const String& mode, PassOwnPtr<BlackBerry::Platform::WebFileWriter> platformWriter, AsyncFileWriterClient* client)
     {
         return adoptPtr(new WorkerAsyncFileWriterBlackBerry(context, mode, platformWriter, client));
     }
@@ -48,7 +48,7 @@ public:
     virtual PlatformFileWriterClient* platformWriterClient();
 
 private:
-    WorkerAsyncFileWriterBlackBerry(WorkerContext* context, const String& mode, PassOwnPtr<BlackBerry::Platform::WebFileWriter> platformWriter, AsyncFileWriterClient* client)
+    WorkerAsyncFileWriterBlackBerry(WorkerGlobalScope* context, const String& mode, PassOwnPtr<BlackBerry::Platform::WebFileWriter> platformWriter, AsyncFileWriterClient* client)
         : AsyncFileWriterBlackBerry(platformWriter, client)
         , m_context(context)
         , m_mode(mode)
@@ -59,7 +59,7 @@ private:
     static void truncateOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileWriter* platformWriter, long long length);
     static void abortOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileWriter* platformWriter);
 
-    WorkerContext* m_context;
+    WorkerGlobalScope* m_context;
     String m_mode;
 };
 

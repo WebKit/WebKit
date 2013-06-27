@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef WorkerContextWebDatabase_h
-#define WorkerContextWebDatabase_h
+#ifndef WorkerGlobalScopeWebDatabase_h
+#define WorkerGlobalScopeWebDatabase_h
 
 #if ENABLE(SQL_DATABASE)
 
@@ -40,20 +40,20 @@ namespace WebCore {
 class Database;
 class DatabaseCallback;
 class DatabaseSync;
-class WorkerContext;
+class WorkerGlobalScope;
 
-class WorkerContextWebDatabase {
+class WorkerGlobalScopeWebDatabase {
 public:
-    static PassRefPtr<Database> openDatabase(WorkerContext*, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
-    static PassRefPtr<DatabaseSync> openDatabaseSync(WorkerContext*, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
+    static PassRefPtr<Database> openDatabase(WorkerGlobalScope*, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
+    static PassRefPtr<DatabaseSync> openDatabaseSync(WorkerGlobalScope*, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
 
 private:
-    WorkerContextWebDatabase() { };
-    ~WorkerContextWebDatabase() { };
+    WorkerGlobalScopeWebDatabase() { };
+    ~WorkerGlobalScopeWebDatabase() { };
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SQL_DATABASE)
 
-#endif // WorkerContextWebDatabase_h
+#endif // WorkerGlobalScopeWebDatabase_h

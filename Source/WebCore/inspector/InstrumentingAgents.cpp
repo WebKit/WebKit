@@ -36,7 +36,7 @@
 
 #include "InspectorController.h"
 #include "Page.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
 #include <wtf/MainThread.h>
 
@@ -119,9 +119,9 @@ InstrumentingAgents* instrumentationForPage(Page* page)
 }
 
 #if ENABLE(WORKERS)
-InstrumentingAgents* instrumentationForWorkerContext(WorkerContext* workerContext)
+InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
 {
-    if (WorkerInspectorController* controller = workerContext->workerInspectorController())
+    if (WorkerInspectorController* controller = workerGlobalScope->workerInspectorController())
         return controller->m_instrumentingAgents.get();
     return 0;
 }

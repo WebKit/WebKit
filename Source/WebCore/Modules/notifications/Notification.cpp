@@ -49,7 +49,7 @@
 #include "ResourceResponse.h"
 #include "ThreadableLoader.h"
 #include "WindowFocusAllowedIndicator.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 

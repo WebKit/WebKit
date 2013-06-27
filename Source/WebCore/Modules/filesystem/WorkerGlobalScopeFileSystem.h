@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,32 +24,41 @@
  *
  */
 
-[
-    Conditional=INDEXED_DATABASE,
-] partial interface WorkerContext {
-    [ImplementedAs=indexedDB] readonly attribute IDBFactory webkitIndexedDB;
+#ifndef WorkerGlobalScopeFileSystem_h
+#define WorkerGlobalScopeFileSystem_h
 
-    attribute IDBCursorConstructor webkitIDBCursor;
-    attribute IDBDatabaseConstructor webkitIDBDatabase;
-    attribute IDBFactoryConstructor webkitIDBFactory;
-    attribute IDBIndexConstructor webkitIDBIndex;
-    attribute IDBKeyRangeConstructor webkitIDBKeyRange;
-    attribute IDBObjectStoreConstructor webkitIDBObjectStore;
-    attribute IDBRequestConstructor webkitIDBRequest;
-    attribute IDBTransactionConstructor webkitIDBTransaction;
+#if ENABLE(FILE_SYSTEM)
 
-    readonly attribute IDBFactory indexedDB;
+#include "DOMFileSystemSync.h"
+#include <wtf/PassRefPtr.h>
 
-    attribute IDBCursorConstructor IDBCursor;
-    attribute IDBCursorWithValueConstructor IDBCursorWithValue;
-    attribute IDBDatabaseConstructor IDBDatabase;
-    attribute IDBFactoryConstructor IDBFactory;
-    attribute IDBIndexConstructor IDBIndex;
-    attribute IDBKeyRangeConstructor IDBKeyRange;
-    attribute IDBObjectStoreConstructor IDBObjectStore;
-    attribute IDBOpenDBRequestConstructor IDBOpenDBRequest;
-    attribute IDBRequestConstructor IDBRequest;
-    attribute IDBTransactionConstructor IDBTransaction;
-    attribute IDBVersionChangeEventConstructor IDBVersionChangeEvent;
+namespace WebCore {
+
+class EntryCallback;
+class EntrySync;
+class ErrorCallback;
+class FileSystemCallback;
+class WorkerGlobalScope;
+
+class WorkerGlobalScopeFileSystem {
+public:
+    enum {
+        TEMPORARY,
+        PERSISTENT,
+    };
+
+    static void webkitRequestFileSystem(WorkerGlobalScope*, int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback>);
+    static PassRefPtr<DOMFileSystemSync> webkitRequestFileSystemSync(WorkerGlobalScope*, int type, long long size, ExceptionCode&);
+    static void webkitResolveLocalFileSystemURL(WorkerGlobalScope*, const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback>);
+    static PassRefPtr<EntrySync> webkitResolveLocalFileSystemSyncURL(WorkerGlobalScope*, const String& url, ExceptionCode&);
+
+private:
+    WorkerGlobalScopeFileSystem();
+    ~WorkerGlobalScopeFileSystem();
 };
 
+} // namespace WebCore
+
+#endif // ENABLE(FILE_SYSTEM)
+
+#endif // WorkerGlobalScopeFileSystem_h

@@ -27,7 +27,7 @@
 
 #if ENABLE(WORKERS)
 
-#include "JSWorkerContext.h"
+#include "JSWorkerGlobalScope.h"
 
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
@@ -40,7 +40,7 @@
 #include "JSWorkerNavigator.h"
 #include "JSXMLHttpRequest.h"
 #include "ScheduledAction.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include <interpreter/Interpreter.h>
@@ -53,9 +53,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSWorkerContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void JSWorkerGlobalScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSWorkerContext* thisObject = jsCast<JSWorkerContext*>(cell);
+    JSWorkerGlobalScope* thisObject = jsCast<JSWorkerGlobalScope*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -69,7 +69,7 @@ void JSWorkerContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->impl()->visitJSEventListeners(visitor);
 }
 
-bool JSWorkerContext::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSWorkerGlobalScope::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     // Look for overrides before looking at any of our own properties.
     if (JSGlobalObject::getOwnPropertySlot(this, exec, propertyName, slot))
@@ -77,7 +77,7 @@ bool JSWorkerContext::getOwnPropertySlotDelegate(ExecState* exec, PropertyName p
     return false;
 }
 
-bool JSWorkerContext::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
+bool JSWorkerGlobalScope::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     // Look for overrides before looking at any of our own properties.
     if (JSGlobalObject::getOwnPropertyDescriptor(this, exec, propertyName, descriptor))
@@ -85,7 +85,7 @@ bool JSWorkerContext::getOwnPropertyDescriptorDelegate(ExecState* exec, Property
     return false;
 }
 
-JSValue JSWorkerContext::importScripts(ExecState* exec)
+JSValue JSWorkerGlobalScope::importScripts(ExecState* exec)
 {
     if (!exec->argumentCount())
         return jsUndefined();
@@ -103,7 +103,7 @@ JSValue JSWorkerContext::importScripts(ExecState* exec)
     return jsUndefined();
 }
 
-JSValue JSWorkerContext::setTimeout(ExecState* exec)
+JSValue JSWorkerGlobalScope::setTimeout(ExecState* exec)
 {
     OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl()->contentSecurityPolicy());
     if (exec->hadException())
@@ -114,7 +114,7 @@ JSValue JSWorkerContext::setTimeout(ExecState* exec)
     return jsNumber(impl()->setTimeout(action.release(), delay));
 }
 
-JSValue JSWorkerContext::setInterval(ExecState* exec)
+JSValue JSWorkerGlobalScope::setInterval(ExecState* exec)
 {
     OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl()->contentSecurityPolicy());
     if (exec->hadException())

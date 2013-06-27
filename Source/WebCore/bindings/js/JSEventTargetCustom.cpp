@@ -48,12 +48,12 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 
     // FIXME: Why can't we use toJS for these cases?
 #if ENABLE(WORKERS)
-    if (eventNames().interfaceForDedicatedWorkerContext == desiredInterface)
-        return toJSDOMGlobalObject(static_cast<DedicatedWorkerContext*>(target), exec);
+    if (eventNames().interfaceForDedicatedWorkerGlobalScope == desiredInterface)
+        return toJSDOMGlobalObject(static_cast<DedicatedWorkerGlobalScope*>(target), exec);
 #endif
 #if ENABLE(SHARED_WORKERS)
-    if (eventNames().interfaceForSharedWorkerContext == desiredInterface)
-        return toJSDOMGlobalObject(static_cast<SharedWorkerContext*>(target), exec);
+    if (eventNames().interfaceForSharedWorkerGlobalScope == desiredInterface)
+        return toJSDOMGlobalObject(static_cast<SharedWorkerGlobalScope*>(target), exec);
 #endif
 
     DOM_EVENT_TARGET_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)

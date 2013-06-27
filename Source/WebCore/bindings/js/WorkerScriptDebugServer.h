@@ -37,12 +37,12 @@
 
 namespace WebCore {
 
-class WorkerContext;
+class WorkerGlobalScope;
 
 class WorkerScriptDebugServer : public ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
 public:
-    WorkerScriptDebugServer(WorkerContext*, const String&);
+    WorkerScriptDebugServer(WorkerGlobalScope*, const String&);
     ~WorkerScriptDebugServer() { }
 
     void addListener(ScriptDebugListener*);
@@ -63,7 +63,7 @@ private:
 
     virtual void runEventLoopWhilePaused();
 
-    WorkerContext* m_workerContext;
+    WorkerGlobalScope* m_workerGlobalScope;
     ListenerSet m_listeners;
     String m_debuggerTaskMode;
 };

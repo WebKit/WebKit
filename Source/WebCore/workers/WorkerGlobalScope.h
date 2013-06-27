@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef WorkerContext_h
-#define WorkerContext_h
+#ifndef WorkerGlobalScope_h
+#define WorkerGlobalScope_h
 
 #if ENABLE(WORKERS)
 
@@ -55,16 +55,16 @@ namespace WebCore {
     class WorkerNavigator;
     class WorkerThread;
 
-    class WorkerContext : public RefCounted<WorkerContext>, public ScriptExecutionContext, public EventTarget {
+    class WorkerGlobalScope : public RefCounted<WorkerGlobalScope>, public ScriptExecutionContext, public EventTarget {
     public:
-        virtual ~WorkerContext();
+        virtual ~WorkerGlobalScope();
 
-        virtual bool isWorkerContext() const OVERRIDE { return true; }
+        virtual bool isWorkerGlobalScope() const OVERRIDE { return true; }
 
         virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
-        virtual bool isSharedWorkerContext() const { return false; }
-        virtual bool isDedicatedWorkerContext() const { return false; }
+        virtual bool isSharedWorkerGlobalScope() const { return false; }
+        virtual bool isDedicatedWorkerGlobalScope() const { return false; }
 
         const KURL& url() const { return m_url; }
         KURL completeURL(const String&) const;
@@ -87,7 +87,7 @@ namespace WebCore {
         virtual void postTask(PassOwnPtr<Task>) OVERRIDE; // Executes the task on context's thread asynchronously.
 
         // WorkerGlobalScope
-        WorkerContext* self() { return this; }
+        WorkerGlobalScope* self() { return this; }
         WorkerLocation* location() const;
         void close();
 
@@ -112,13 +112,13 @@ namespace WebCore {
 #if ENABLE(INSPECTOR)
         WorkerInspectorController* workerInspectorController() { return m_workerInspectorController.get(); }
 #endif
-        // These methods are used for GC marking. See JSWorkerContext::visitChildrenVirtual(SlotVisitor&) in
-        // JSWorkerContextCustom.cpp.
+        // These methods are used for GC marking. See JSWorkerGlobalScope::visitChildrenVirtual(SlotVisitor&) in
+        // JSWorkerGlobalScopeCustom.cpp.
         WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
         WorkerLocation* optionalLocation() const { return m_location.get(); }
 
-        using RefCounted<WorkerContext>::ref;
-        using RefCounted<WorkerContext>::deref;
+        using RefCounted<WorkerGlobalScope>::ref;
+        using RefCounted<WorkerGlobalScope>::deref;
 
         bool isClosing() { return m_closing; }
 
@@ -126,12 +126,12 @@ namespace WebCore {
         class Observer {
             WTF_MAKE_NONCOPYABLE(Observer);
         public:
-            Observer(WorkerContext*);
+            Observer(WorkerGlobalScope*);
             virtual ~Observer();
             virtual void notifyStop() = 0;
             void stopObserving();
         private:
-            WorkerContext* m_context;
+            WorkerGlobalScope* m_context;
         };
         friend class Observer;
         void registerObserver(Observer*);
@@ -141,7 +141,7 @@ namespace WebCore {
         virtual SecurityOrigin* topOrigin() const OVERRIDE { return m_topOrigin.get(); }
 
     protected:
-        WorkerContext(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, WorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
+        WorkerGlobalScope(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, WorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
         void applyContentSecurityPolicyFromString(const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 
         virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<ScriptCallStack>) OVERRIDE;
@@ -194,4 +194,4 @@ namespace WebCore {
 
 #endif // ENABLE(WORKERS)
 
-#endif // WorkerContext_h
+#endif // WorkerGlobalScope_h

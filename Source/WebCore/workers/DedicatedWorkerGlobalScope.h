@@ -28,26 +28,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DedicatedWorkerContext_h
-#define DedicatedWorkerContext_h
+#ifndef DedicatedWorkerGlobalScope_h
+#define DedicatedWorkerGlobalScope_h
 
 #if ENABLE(WORKERS)
 
 #include "ContentSecurityPolicy.h"
 #include "MessagePort.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
     class DedicatedWorkerThread;
 
-    class DedicatedWorkerContext : public WorkerContext {
+    class DedicatedWorkerGlobalScope : public WorkerGlobalScope {
     public:
-        typedef WorkerContext Base;
-        static PassRefPtr<DedicatedWorkerContext> create(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, DedicatedWorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType, PassRefPtr<SecurityOrigin> topOrigin);
-        virtual ~DedicatedWorkerContext();
+        typedef WorkerGlobalScope Base;
+        static PassRefPtr<DedicatedWorkerGlobalScope> create(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, DedicatedWorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType, PassRefPtr<SecurityOrigin> topOrigin);
+        virtual ~DedicatedWorkerGlobalScope();
 
-        virtual bool isDedicatedWorkerContext() const OVERRIDE { return true; }
+        virtual bool isDedicatedWorkerGlobalScope() const OVERRIDE { return true; }
 
         // Overridden to allow us to check our pending activity after executing imported script.
         virtual void importScripts(const Vector<String>& urls, ExceptionCode&) OVERRIDE;
@@ -64,11 +64,11 @@ namespace WebCore {
         DedicatedWorkerThread* thread();
 
     private:
-        DedicatedWorkerContext(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, DedicatedWorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
+        DedicatedWorkerGlobalScope(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, DedicatedWorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)
 
-#endif // DedicatedWorkerContext_h
+#endif // DedicatedWorkerGlobalScope_h

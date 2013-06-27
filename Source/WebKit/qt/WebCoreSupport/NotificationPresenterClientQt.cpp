@@ -172,7 +172,7 @@ void NotificationPresenterClientQt::removeClient()
 bool NotificationPresenterClientQt::show(Notification* notification)
 {
     // FIXME: workers based notifications are not supported yet.
-    if (notification->scriptExecutionContext()->isWorkerContext())
+    if (notification->scriptExecutionContext()->isWorkerGlobalScope())
         return false;
     notification->setPendingActivity(notification);
     if (!notification->tag().isEmpty())
@@ -477,7 +477,7 @@ void NotificationPresenterClientQt::dumpShowText(Notification* notification)
 
 QWebPageAdapter* NotificationPresenterClientQt::toPage(ScriptExecutionContext* context)
 {
-    if (!context || context->isWorkerContext())
+    if (!context || context->isWorkerGlobalScope())
         return 0;
 
     Document* document = static_cast<Document*>(context);
@@ -491,7 +491,7 @@ QWebPageAdapter* NotificationPresenterClientQt::toPage(ScriptExecutionContext* c
 
 QWebFrameAdapter* NotificationPresenterClientQt::toFrame(ScriptExecutionContext* context)
 {
-    if (!context || context->isWorkerContext())
+    if (!context || context->isWorkerGlobalScope())
         return 0;
 
     Document* document = static_cast<Document*>(context);

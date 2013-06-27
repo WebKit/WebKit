@@ -49,7 +49,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 
@@ -69,13 +69,13 @@ IDBFactory::~IDBFactory()
 namespace {
 static bool isContextValid(ScriptExecutionContext* context)
 {
-    ASSERT(context->isDocument() || context->isWorkerContext());
+    ASSERT(context->isDocument() || context->isWorkerGlobalScope());
     if (context->isDocument()) {
         Document* document = toDocument(context);
         return document->frame() && document->page();
     }
 #if !ENABLE(WORKERS)
-    if (context->isWorkerContext())
+    if (context->isWorkerGlobalScope())
         return false;
 #endif
     return true;
@@ -89,8 +89,8 @@ static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
         return document->page()->group().groupSettings()->indexedDBDatabasePath();
     }
 #if ENABLE(WORKERS)
-    WorkerContext* workerContext = static_cast<WorkerContext*>(context);
-    const GroupSettings* groupSettings = workerContext->groupSettings();
+    WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
+    const GroupSettings* groupSettings = workerGlobalScope->groupSettings();
     if (groupSettings)
         return groupSettings->indexedDBDatabasePath();
 #endif

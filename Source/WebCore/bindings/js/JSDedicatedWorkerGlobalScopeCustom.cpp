@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Apple, Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,17 +29,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    NoInterfaceObject,
-    Conditional=SHARED_WORKERS,
-    ExtendsDOMGlobalObject,
-    IsWorkerContext,
-    JSGenerateToNativeObject,
-    JSNoStaticTables,
-] interface SharedWorkerContext : WorkerContext {
+#include "config.h"
 
-    readonly attribute DOMString name;
-             attribute EventListener onconnect;
+#if ENABLE(WORKERS)
 
-};
+#include "JSDedicatedWorkerGlobalScope.h"
 
+#include "JSDOMBinding.h"
+#include "JSMessagePortCustom.h"
+
+using namespace JSC;
+
+namespace WebCore {
+
+JSC::JSValue JSDedicatedWorkerGlobalScope::postMessage(JSC::ExecState* exec)
+{
+    return handlePostMessage(exec, impl());
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WORKERS)

@@ -4,7 +4,7 @@ AudioNode conditional=WEB_AUDIO
 AudioContext conditional=WEB_AUDIO
 AudioTrackList conditional=VIDEO_TRACK
 BatteryManager conditional=BATTERY_STATUS
-DedicatedWorkerContext conditional=WORKERS
+DedicatedWorkerGlobalScope conditional=WORKERS
 DOMApplicationCache
 DOMWindow
 EventSource
@@ -30,7 +30,7 @@ RTCDataChannel conditional=MEDIA_STREAM
 RTCDTMFSender conditional=MEDIA_STREAM
 RTCPeerConnection conditional=MEDIA_STREAM
 SharedWorker conditional=SHARED_WORKERS
-SharedWorkerContext conditional=SHARED_WORKERS
+SharedWorkerGlobalScope conditional=SHARED_WORKERS
 SourceBufferList conditional=MEDIA_SOURCE
 SpeechRecognition conditional=SCRIPTED_SPEECH
 SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS

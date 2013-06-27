@@ -219,7 +219,7 @@ SecurityOrigin* XMLHttpRequest::securityOrigin() const
 #if ENABLE(DASHBOARD_SUPPORT)
 bool XMLHttpRequest::usesDashboardBackwardCompatibilityMode() const
 {
-    if (scriptExecutionContext()->isWorkerContext())
+    if (scriptExecutionContext()->isWorkerGlobalScope())
         return false;
     Settings* settings = document()->settings();
     return settings && settings->usesDashboardBackwardCompatibilityMode();
@@ -257,7 +257,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
         // If it is text/html, then the responseType of "document" must have been supplied explicitly.
         if ((m_response.isHTTP() && !responseIsXML() && !isHTML)
             || (isHTML && m_responseTypeCode == ResponseTypeDefault)
-            || scriptExecutionContext()->isWorkerContext()) {
+            || scriptExecutionContext()->isWorkerGlobalScope()) {
             m_responseDocument = 0;
         } else {
             if (isHTML)

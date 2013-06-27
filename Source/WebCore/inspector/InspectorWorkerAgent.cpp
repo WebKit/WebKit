@@ -40,7 +40,7 @@
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "KURL.h"
-#include "WorkerContextProxy.h"
+#include "WorkerGlobalScopeProxy.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -51,10 +51,10 @@ static const char workerInspectionEnabled[] = "workerInspectionEnabled";
 static const char autoconnectToWorkers[] = "autoconnectToWorkers";
 };
 
-class InspectorWorkerAgent::WorkerFrontendChannel : public WorkerContextProxy::PageInspector {
+class InspectorWorkerAgent::WorkerFrontendChannel : public WorkerGlobalScopeProxy::PageInspector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WorkerFrontendChannel(InspectorFrontend* frontend, WorkerContextProxy* proxy)
+    explicit WorkerFrontendChannel(InspectorFrontend* frontend, WorkerGlobalScopeProxy* proxy)
         : m_frontend(frontend)
         , m_proxy(proxy)
         , m_id(s_nextId++)
@@ -63,13 +63,13 @@ public:
     }
     virtual ~WorkerFrontendChannel()
     {
-        disconnectFromWorkerContext();
+        disconnectFromWorkerGlobalScope();
     }
 
     int id() const { return m_id; }
-    WorkerContextProxy* proxy() const { return m_proxy; }
+    WorkerGlobalScopeProxy* proxy() const { return m_proxy; }
 
-    void connectToWorkerContext()
+    void connectToWorkerGlobalScope()
     {
         if (m_connected)
             return;
@@ -77,7 +77,7 @@ public:
         m_proxy->connectToInspector(this);
     }
 
-    void disconnectFromWorkerContext()
+    void disconnectFromWorkerGlobalScope()
     {
         if (!m_connected)
             return;
@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    // WorkerContextProxy::PageInspector implementation
+    // WorkerGlobalScopeProxy::PageInspector implementation
     virtual void dispatchMessageFromWorker(const String& message)
     {
         RefPtr<InspectorValue> value = InspectorValue::parseJSON(message);
@@ -99,7 +99,7 @@ private:
     }
 
     InspectorFrontend* m_frontend;
-    WorkerContextProxy* m_proxy;
+    WorkerGlobalScopeProxy* m_proxy;
     int m_id;
     bool m_connected;
     static int s_nextId;
@@ -171,7 +171,7 @@ void InspectorWorkerAgent::connectToWorker(ErrorString* error, int workerId)
 {
     WorkerFrontendChannel* channel = m_idToChannel.get(workerId);
     if (channel)
-        channel->connectToWorkerContext();
+        channel->connectToWorkerGlobalScope();
     else
         *error = "Worker is gone";
 }
@@ -180,7 +180,7 @@ void InspectorWorkerAgent::disconnectFromWorker(ErrorString* error, int workerId
 {
     WorkerFrontendChannel* channel = m_idToChannel.get(workerId);
     if (channel)
-        channel->disconnectFromWorkerContext();
+        channel->disconnectFromWorkerGlobalScope();
     else
         *error = "Worker is gone";
 }
@@ -204,14 +204,14 @@ bool InspectorWorkerAgent::shouldPauseDedicatedWorkerOnStart()
     return m_state->getBoolean(WorkerAgentState::autoconnectToWorkers);
 }
 
-void InspectorWorkerAgent::didStartWorkerContext(WorkerContextProxy* workerContextProxy, const KURL& url)
+void InspectorWorkerAgent::didStartWorkerGlobalScope(WorkerGlobalScopeProxy* workerGlobalScopeProxy, const KURL& url)
 {
-    m_dedicatedWorkers.set(workerContextProxy, url.string());
+    m_dedicatedWorkers.set(workerGlobalScopeProxy, url.string());
     if (m_inspectorFrontend && m_state->getBoolean(WorkerAgentState::workerInspectionEnabled))
-        createWorkerFrontendChannel(workerContextProxy, url.string());
+        createWorkerFrontendChannel(workerGlobalScopeProxy, url.string());
 }
 
-void InspectorWorkerAgent::workerContextTerminated(WorkerContextProxy* proxy)
+void InspectorWorkerAgent::workerGlobalScopeTerminated(WorkerGlobalScopeProxy* proxy)
 {
     m_dedicatedWorkers.remove(proxy);
     for (WorkerChannels::iterator it = m_idToChannel.begin(); it != m_idToChannel.end(); ++it) {
@@ -233,21 +233,21 @@ void InspectorWorkerAgent::createWorkerFrontendChannelsForExistingWorkers()
 void InspectorWorkerAgent::destroyWorkerFrontendChannels()
 {
     for (WorkerChannels::iterator it = m_idToChannel.begin(); it != m_idToChannel.end(); ++it) {
-        it->value->disconnectFromWorkerContext();
+        it->value->disconnectFromWorkerGlobalScope();
         delete it->value;
     }
     m_idToChannel.clear();
 }
 
-void InspectorWorkerAgent::createWorkerFrontendChannel(WorkerContextProxy* workerContextProxy, const String& url)
+void InspectorWorkerAgent::createWorkerFrontendChannel(WorkerGlobalScopeProxy* workerGlobalScopeProxy, const String& url)
 {
-    WorkerFrontendChannel* channel = new WorkerFrontendChannel(m_inspectorFrontend, workerContextProxy);
+    WorkerFrontendChannel* channel = new WorkerFrontendChannel(m_inspectorFrontend, workerGlobalScopeProxy);
     m_idToChannel.set(channel->id(), channel);
 
     ASSERT(m_inspectorFrontend);
     bool autoconnectToWorkers = m_state->getBoolean(WorkerAgentState::autoconnectToWorkers);
     if (autoconnectToWorkers)
-        channel->connectToWorkerContext();
+        channel->connectToWorkerGlobalScope();
     m_inspectorFrontend->worker()->workerCreated(channel->id(), url, autoconnectToWorkers);
 }
 

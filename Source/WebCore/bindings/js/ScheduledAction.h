@@ -37,7 +37,7 @@ namespace WebCore {
     class Document;
     class ContentSecurityPolicy;
     class ScriptExecutionContext;
-    class WorkerContext;
+    class WorkerGlobalScope;
 
    /* An action (either function or string) to be executed after a specified
     * time interval, either once or repeatedly. Used for window.setTimeout()
@@ -62,7 +62,7 @@ namespace WebCore {
         void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValue thisValue, ScriptExecutionContext*);
         void execute(Document*);
 #if ENABLE(WORKERS)
-        void execute(WorkerContext*);
+        void execute(WorkerGlobalScope*);
 #endif
 
         JSC::Strong<JSC::Unknown> m_function;

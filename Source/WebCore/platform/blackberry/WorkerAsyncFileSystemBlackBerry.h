@@ -32,17 +32,17 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 class WorkerPlatformAsyncFileSystemCallbacks;
-class WorkerContext;
+class WorkerGlobalScope;
 
 class WorkerAsyncFileSystemBlackBerry : public AsyncFileSystemBlackBerry {
 public:
-    static PassOwnPtr<WorkerAsyncFileSystemBlackBerry> create(WorkerContext* context, const String& mode, PassOwnPtr<BlackBerry::Platform::WebFileSystem> platformFileSystem)
+    static PassOwnPtr<WorkerAsyncFileSystemBlackBerry> create(WorkerGlobalScope* context, const String& mode, PassOwnPtr<BlackBerry::Platform::WebFileSystem> platformFileSystem)
     {
         return adoptPtr(new WorkerAsyncFileSystemBlackBerry(context, mode, platformFileSystem));
     }
 
-    static void openFileSystem(WorkerContext*, const KURL& rootURL, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType, long long size, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
-    static void deleteFileSystem(WorkerContext*, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType, PassOwnPtr<AsyncFileSystemCallbacks>);
+    static void openFileSystem(WorkerGlobalScope*, const KURL& rootURL, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType, long long size, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
+    static void deleteFileSystem(WorkerGlobalScope*, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual ~WorkerAsyncFileSystemBlackBerry();
     virtual bool waitForOperationToComplete();
     virtual void move(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
@@ -59,7 +59,7 @@ public:
     virtual void createSnapshotFileAndReadMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 private:
-    WorkerAsyncFileSystemBlackBerry(WorkerContext*, const String& mode, PassOwnPtr<BlackBerry::Platform::WebFileSystem> platformFileSystem);
+    WorkerAsyncFileSystemBlackBerry(WorkerGlobalScope*, const String& mode, PassOwnPtr<BlackBerry::Platform::WebFileSystem> platformFileSystem);
     static void openFileSystemOnMainThread(ScriptExecutionContext*, const String& basePath, const String& storageIdentifier, FileSystemType, long long size, bool create, WorkerPlatformAsyncFileSystemCallbacks*);
     static void deleteFileSystemOnMainThread(ScriptExecutionContext*, const String& basePath, const String& storageIdentifier, FileSystemType, WorkerPlatformAsyncFileSystemCallbacks*);
     static void moveOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& sourcePath, const KURL& destinationPath, WorkerPlatformAsyncFileSystemCallbacks*);
@@ -75,7 +75,7 @@ private:
     static void createWriterOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, AsyncFileWriterClient*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks*);
     static void createSnapshotFileAndReadMetadataOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks*);
 
-    WorkerContext* m_context;
+    WorkerGlobalScope* m_context;
     String m_mode;
 };
 

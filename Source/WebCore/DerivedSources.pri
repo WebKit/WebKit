@@ -112,7 +112,7 @@ IDL_BINDINGS += \
     $$PWD/Modules/filesystem/FileWriterCallback.idl \
     $$PWD/Modules/filesystem/Metadata.idl \
     $$PWD/Modules/filesystem/MetadataCallback.idl \
-    $$PWD/Modules/filesystem/WorkerContextFileSystem.idl \
+    $$PWD/Modules/filesystem/WorkerGlobalScopeFileSystem.idl \
     $$PWD/Modules/geolocation/Coordinates.idl \
     $$PWD/Modules/geolocation/Geolocation.idl \
     $$PWD/Modules/geolocation/Geoposition.idl \
@@ -130,12 +130,12 @@ IDL_BINDINGS += \
     $$PWD/Modules/indexeddb/IDBObjectStore.idl \
     $$PWD/Modules/indexeddb/IDBRequest.idl \
     $$PWD/Modules/indexeddb/IDBTransaction.idl \
-    $$PWD/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $$PWD/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
     $$PWD/Modules/notifications/DOMWindowNotifications.idl \
     $$PWD/Modules/notifications/Notification.idl \
     $$PWD/Modules/notifications/NotificationCenter.idl \
     $$PWD/Modules/notifications/NotificationPermissionCallback.idl \
-    $$PWD/Modules/notifications/WorkerContextNotifications.idl \
+    $$PWD/Modules/notifications/WorkerGlobalScopeNotifications.idl \
     $$PWD/Modules/quota/DOMWindowQuota.idl \
     $$PWD/Modules/quota/NavigatorStorageQuota.idl \
     $$PWD/Modules/quota/StorageInfo.idl \
@@ -185,7 +185,7 @@ IDL_BINDINGS += \
     $$PWD/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $$PWD/Modules/webdatabase/SQLTransactionSync.idl \
     $$PWD/Modules/webdatabase/SQLTransactionSyncCallback.idl \
-    $$PWD/Modules/webdatabase/WorkerContextWebDatabase.idl \
+    $$PWD/Modules/webdatabase/WorkerGlobalScopeWebDatabase.idl \
     $$PWD/Modules/websockets/CloseEvent.idl \
     $$PWD/Modules/websockets/WebSocket.idl \
     $$PWD/css/Counter.idl \
@@ -476,11 +476,11 @@ IDL_BINDINGS += \
     $$PWD/testing/MemoryInfo.idl \
     $$PWD/testing/TypeConversions.idl \
     $$PWD/workers/AbstractWorker.idl \
-    $$PWD/workers/DedicatedWorkerContext.idl \
+    $$PWD/workers/DedicatedWorkerGlobalScope.idl \
     $$PWD/workers/SharedWorker.idl \
-    $$PWD/workers/SharedWorkerContext.idl \
+    $$PWD/workers/SharedWorkerGlobalScope.idl \
     $$PWD/workers/Worker.idl \
-    $$PWD/workers/WorkerContext.idl \
+    $$PWD/workers/WorkerGlobalScope.idl \
     $$PWD/workers/WorkerLocation.idl \
     $$PWD/xml/DOMParser.idl \
     $$PWD/xml/XMLHttpRequest.idl \
@@ -734,7 +734,7 @@ IDL_BINDINGS += generated/$$INTERNAL_SETTINGS_GENERATED_IDL
 # GENERATOR 0: Resolve [Supplemental] dependency in IDLs
 SUPPLEMENTAL_DEPENDENCY_FILE = supplemental_dependency.tmp
 WINDOW_CONSTRUCTORS_FILE = DOMWindowConstructors.idl
-WORKERCONTEXT_CONSTRUCTORS_FILE = WorkerContextConstructors.idl
+WORKERGLOBALSCOPE_CONSTRUCTORS_FILE = WorkerGlobalScopeConstructors.idl
 IDL_FILES_TMP = ${QMAKE_FUNC_FILE_OUT_PATH}/idl_files.tmp
 PREPROCESS_IDLS_SCRIPT = $$PWD/bindings/scripts/preprocess-idls.pl
 IDL_ATTRIBUTES_FILE = $$PWD/bindings/scripts/IDLAttributes.txt
@@ -754,8 +754,8 @@ preprocessIdls.commands += perl -I$$PWD/bindings/scripts $$preprocessIdls.script
                                --idlFilesList $$IDL_FILES_TMP \
                                --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
                                --windowConstructorsFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$WINDOW_CONSTRUCTORS_FILE \
-                               --workerContextConstructorsFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$WORKERCONTEXT_CONSTRUCTORS_FILE
-preprocessIdls.output = $$SUPPLEMENTAL_DEPENDENCY_FILE $$WINDOW_CONSTRUCTORS_FILE $$WORKERCONTEXT_CONSTRUCTORS_FILE
+                               --workerGlobalScopeConstructorsFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$WORKERGLOBALSCOPE_CONSTRUCTORS_FILE
+preprocessIdls.output = $$SUPPLEMENTAL_DEPENDENCY_FILE $$WINDOW_CONSTRUCTORS_FILE $$WORKERGLOBALSCOPE_CONSTRUCTORS_FILE
 preprocessIdls.add_output_to_sources = false
 preprocessIdls.depends = $$IDL_BINDINGS
 GENERATORS += preprocessIdls

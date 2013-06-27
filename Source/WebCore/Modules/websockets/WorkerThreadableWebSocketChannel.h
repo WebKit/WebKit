@@ -35,7 +35,7 @@
 
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannelClient.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -48,16 +48,16 @@ namespace WebCore {
 class KURL;
 class ScriptExecutionContext;
 class ThreadableWebSocketChannelClientWrapper;
-class WorkerContext;
+class WorkerGlobalScope;
 class WorkerLoaderProxy;
 class WorkerRunLoop;
 
 class WorkerThreadableWebSocketChannel : public RefCounted<WorkerThreadableWebSocketChannel>, public ThreadableWebSocketChannel {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<ThreadableWebSocketChannel> create(WorkerContext* workerContext, WebSocketChannelClient* client, const String& taskMode)
+    static PassRefPtr<ThreadableWebSocketChannel> create(WorkerGlobalScope* workerGlobalScope, WebSocketChannelClient* client, const String& taskMode)
     {
-        return adoptRef(new WorkerThreadableWebSocketChannel(workerContext, client, taskMode));
+        return adoptRef(new WorkerThreadableWebSocketChannel(workerGlobalScope, client, taskMode));
     }
     virtual ~WorkerThreadableWebSocketChannel();
 
@@ -126,9 +126,9 @@ private:
     // Bridge for Peer.  Running on the worker thread.
     class Bridge : public RefCounted<Bridge> {
     public:
-        static PassRefPtr<Bridge> create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerContext> workerContext, const String& taskMode)
+        static PassRefPtr<Bridge> create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerGlobalScope> workerGlobalScope, const String& taskMode)
         {
-            return adoptRef(new Bridge(workerClientWrapper, workerContext, taskMode));
+            return adoptRef(new Bridge(workerClientWrapper, workerGlobalScope, taskMode));
         }
         ~Bridge();
         void initialize();
@@ -147,7 +147,7 @@ private:
         using RefCounted<Bridge>::deref;
 
     private:
-        Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, PassRefPtr<WorkerContext>, const String& taskMode);
+        Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, PassRefPtr<WorkerGlobalScope>, const String& taskMode);
 
         static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
 
@@ -161,13 +161,13 @@ private:
         void waitForMethodCompletion();
 
         RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
-        RefPtr<WorkerContext> m_workerContext;
+        RefPtr<WorkerGlobalScope> m_workerGlobalScope;
         WorkerLoaderProxy& m_loaderProxy;
         String m_taskMode;
         Peer* m_peer;
     };
 
-    WorkerThreadableWebSocketChannel(WorkerContext*, WebSocketChannelClient*, const String& taskMode);
+    WorkerThreadableWebSocketChannel(WorkerGlobalScope*, WebSocketChannelClient*, const String& taskMode);
 
     static void mainThreadConnect(ScriptExecutionContext*, Peer*, const KURL&, const String& protocol);
     static void mainThreadSend(ScriptExecutionContext*, Peer*, const String& message);
@@ -180,9 +180,9 @@ private:
     static void mainThreadSuspend(ScriptExecutionContext*, Peer*);
     static void mainThreadResume(ScriptExecutionContext*, Peer*);
 
-    class WorkerContextDidInitializeTask;
+    class WorkerGlobalScopeDidInitializeTask;
 
-    RefPtr<WorkerContext> m_workerContext;
+    RefPtr<WorkerGlobalScope> m_workerGlobalScope;
     RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
     RefPtr<Bridge> m_bridge;
 };

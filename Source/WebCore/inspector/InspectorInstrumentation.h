@@ -87,8 +87,8 @@ class StorageArea;
 class StyleResolver;
 class StyleRule;
 class ThreadableLoaderClient;
-class WorkerContext;
-class WorkerContextProxy;
+class WorkerGlobalScope;
+class WorkerGlobalScopeProxy;
 class XMLHttpRequest;
 
 #define FAST_RETURN_IF_NO_FRONTENDS(value) if (LIKELY(!hasFrontends())) return value;
@@ -234,8 +234,8 @@ public:
     static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, ScriptState* = 0, unsigned long requestIdentifier = 0);
 #if ENABLE(WORKERS)
     // FIXME: Convert to ScriptArguments to match non-worker context.
-    static void addMessageToConsole(WorkerContext*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
-    static void addMessageToConsole(WorkerContext*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, ScriptState* = 0, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, ScriptState* = 0, unsigned long requestIdentifier = 0);
 #endif
     static void consoleCount(Page*, ScriptState*, PassRefPtr<ScriptArguments>);
     static void startConsoleTiming(Frame*, const String& title);
@@ -262,9 +262,9 @@ public:
 
 #if ENABLE(WORKERS)
     static bool shouldPauseDedicatedWorkerOnStart(ScriptExecutionContext*);
-    static void didStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*, const KURL&);
-    static void workerContextTerminated(ScriptExecutionContext*, WorkerContextProxy*);
-    static void willEvaluateWorkerScript(WorkerContext*, int workerThreadStartMode);
+    static void didStartWorkerGlobalScope(ScriptExecutionContext*, WorkerGlobalScopeProxy*, const KURL&);
+    static void workerGlobalScopeTerminated(ScriptExecutionContext*, WorkerGlobalScopeProxy*);
+    static void willEvaluateWorkerScript(WorkerGlobalScope*, int workerThreadStartMode);
 #endif
 
 #if ENABLE(WEB_SOCKETS)
@@ -463,8 +463,8 @@ private:
 
 #if ENABLE(WORKERS)
     static bool shouldPauseDedicatedWorkerOnStartImpl(InstrumentingAgents*);
-    static void didStartWorkerContextImpl(InstrumentingAgents*, WorkerContextProxy*, const KURL&);
-    static void workerContextTerminatedImpl(InstrumentingAgents*, WorkerContextProxy*);
+    static void didStartWorkerGlobalScopeImpl(InstrumentingAgents*, WorkerGlobalScopeProxy*, const KURL&);
+    static void workerGlobalScopeTerminatedImpl(InstrumentingAgents*, WorkerGlobalScopeProxy*);
 #endif
 
 #if ENABLE(WEB_SOCKETS)
@@ -487,7 +487,7 @@ private:
     static InstrumentingAgents* instrumentingAgentsForRenderer(RenderObject*);
 
 #if ENABLE(WORKERS)
-    static InstrumentingAgents* instrumentingAgentsForWorkerContext(WorkerContext*);
+    static InstrumentingAgents* instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope*);
     static InstrumentingAgents* instrumentingAgentsForNonDocumentContext(ScriptExecutionContext*);
 #endif
 
@@ -1819,11 +1819,11 @@ inline bool InspectorInstrumentation::shouldPauseDedicatedWorkerOnStart(ScriptEx
     return false;
 }
 
-inline void InspectorInstrumentation::didStartWorkerContext(ScriptExecutionContext* context, WorkerContextProxy* proxy, const KURL& url)
+inline void InspectorInstrumentation::didStartWorkerGlobalScope(ScriptExecutionContext* context, WorkerGlobalScopeProxy* proxy, const KURL& url)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didStartWorkerContextImpl(instrumentingAgents, proxy, url);
+        didStartWorkerGlobalScopeImpl(instrumentingAgents, proxy, url);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(proxy);
@@ -1831,11 +1831,11 @@ inline void InspectorInstrumentation::didStartWorkerContext(ScriptExecutionConte
 #endif
 }
 
-inline void InspectorInstrumentation::workerContextTerminated(ScriptExecutionContext* context, WorkerContextProxy* proxy)
+inline void InspectorInstrumentation::workerGlobalScopeTerminated(ScriptExecutionContext* context, WorkerGlobalScopeProxy* proxy)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        workerContextTerminatedImpl(instrumentingAgents, proxy);
+        workerGlobalScopeTerminatedImpl(instrumentingAgents, proxy);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(proxy);

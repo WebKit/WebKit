@@ -29,7 +29,7 @@
 
 #if ENABLE(WORKERS) && ENABLE(INDEXED_DATABASE)
 
-#include "WorkerContextIndexedDatabase.h"
+#include "WorkerGlobalScopeIndexedDatabase.h"
 
 #include "IDBFactory.h"
 #include "IDBFactoryBackendInterface.h"
@@ -38,35 +38,35 @@
 
 namespace WebCore {
 
-WorkerContextIndexedDatabase::WorkerContextIndexedDatabase()
+WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase()
 {
 }
 
-WorkerContextIndexedDatabase::~WorkerContextIndexedDatabase()
+WorkerGlobalScopeIndexedDatabase::~WorkerGlobalScopeIndexedDatabase()
 {
 }
 
-const char* WorkerContextIndexedDatabase::supplementName()
+const char* WorkerGlobalScopeIndexedDatabase::supplementName()
 {
-    return "WorkerContextIndexedDatabase";
+    return "WorkerGlobalScopeIndexedDatabase";
 }
 
-WorkerContextIndexedDatabase* WorkerContextIndexedDatabase::from(ScriptExecutionContext* context)
+WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(ScriptExecutionContext* context)
 {
-    WorkerContextIndexedDatabase* supplement = static_cast<WorkerContextIndexedDatabase*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
+    WorkerGlobalScopeIndexedDatabase* supplement = static_cast<WorkerGlobalScopeIndexedDatabase*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
     if (!supplement) {
-        supplement = new WorkerContextIndexedDatabase();
+        supplement = new WorkerGlobalScopeIndexedDatabase();
         provideTo(context, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }
 
-IDBFactory* WorkerContextIndexedDatabase::indexedDB(ScriptExecutionContext* context)
+IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB(ScriptExecutionContext* context)
 {
     return from(context)->indexedDB();
 }
 
-IDBFactory* WorkerContextIndexedDatabase::indexedDB()
+IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB()
 {
     if (!m_factoryBackend)
         m_factoryBackend = IDBFactoryBackendInterface::create();

@@ -360,7 +360,7 @@
     <ClCompile Include="..\Modules\filesystem\LocalFileSystem.cpp">
       <Filter>Modules\filesystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\WorkerContextFileSystem.cpp">
+    <ClCompile Include="..\Modules\filesystem\WorkerGlobalScopeFileSystem.cpp">
       <Filter>Modules\filesystem</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\geolocation\Coordinates.cpp">
@@ -426,7 +426,7 @@
     <ClCompile Include="..\Modules\indexeddb\PageGroupIndexedDatabase.cpp">
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\WorkerContextIndexedDatabase.cpp">
+    <ClCompile Include="..\Modules\indexeddb\WorkerGlobalScopeIndexedDatabase.cpp">
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\navigatorcontentutils\NavigatorContentUtils.cpp">
@@ -465,7 +465,7 @@
     <ClCompile Include="..\Modules\notifications\NotificationCenter.cpp">
       <Filter>Modules\notifications</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\notifications\WorkerContextNotifications.cpp">
+    <ClCompile Include="..\Modules\notifications\WorkerGlobalScopeNotifications.cpp">
       <Filter>Modules\notifications</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\ChangeVersionWrapper.cpp">
@@ -558,7 +558,7 @@
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionSync.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\webdatabase\WorkerContextWebDatabase.cpp">
+    <ClCompile Include="..\Modules\webdatabase\WorkerGlobalScopeWebDatabase.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\websockets\ThreadableWebSocketChannel.cpp">
@@ -3537,7 +3537,7 @@
     <ClCompile Include="..\workers\AbstractWorker.cpp">
       <Filter>workers</Filter>
     </ClCompile>
-    <ClCompile Include="..\workers\DedicatedWorkerContext.cpp">
+    <ClCompile Include="..\workers\DedicatedWorkerGlobalScope.cpp">
       <Filter>workers</Filter>
     </ClCompile>
     <ClCompile Include="..\workers\DedicatedWorkerThread.cpp">
@@ -3549,7 +3549,7 @@
     <ClCompile Include="..\workers\SharedWorker.cpp">
       <Filter>workers</Filter>
     </ClCompile>
-    <ClCompile Include="..\workers\SharedWorkerContext.cpp">
+    <ClCompile Include="..\workers\SharedWorkerGlobalScope.cpp">
       <Filter>workers</Filter>
     </ClCompile>
     <ClCompile Include="..\workers\SharedWorkerThread.cpp">
@@ -3558,7 +3558,7 @@
     <ClCompile Include="..\workers\Worker.cpp">
       <Filter>workers</Filter>
     </ClCompile>
-    <ClCompile Include="..\workers\WorkerContext.cpp">
+    <ClCompile Include="..\workers\WorkerGlobalScope.cpp">
       <Filter>workers</Filter>
     </ClCompile>
     <ClCompile Include="..\workers\WorkerEventQueue.cpp">
@@ -4470,7 +4470,7 @@
     <ClCompile Include="..\bindings\js\JSCustomXPathNSResolver.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSDedicatedWorkerContextCustom.cpp">
+    <ClCompile Include="..\bindings\js\JSDedicatedWorkerGlobalScopeCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSDeviceMotionEventCustom.cpp">
@@ -4680,10 +4680,10 @@
     <ClCompile Include="..\bindings\js\JSWebKitPointCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSWorkerContextBase.cpp">
+    <ClCompile Include="..\bindings\js\JSWorkerGlobalScopeBase.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSWorkerContextCustom.cpp">
+    <ClCompile Include="..\bindings\js\JSWorkerGlobalScopeCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSWorkerCustom.cpp">
@@ -5578,7 +5578,7 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSDataTransferItemList.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDedicatedWorkerContext.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDedicatedWorkerGlobalScope.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDeviceMotionEvent.cpp">
@@ -6178,7 +6178,7 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorker.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorkerContext.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorkerGlobalScope.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSQLError.cpp">
@@ -6721,7 +6721,7 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorker.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerContext.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerGlobalScope.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerLocation.cpp">
@@ -7146,7 +7146,7 @@
     <ClInclude Include="..\Modules\filesystem\SyncCallbackHelper.h">
       <Filter>Modules\filesystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\WorkerContextFileSystem.h">
+    <ClInclude Include="..\Modules\filesystem\WorkerGlobalScopeFileSystem.h">
       <Filter>Modules\filesystem</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -7251,7 +7251,7 @@
     <ClInclude Include="..\Modules\indexeddb\PageGroupIndexedDatabase.h">
       <Filter>Modules\indexeddb</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\indexeddb\WorkerContextIndexedDatabase.h">
+    <ClInclude Include="..\Modules\indexeddb\WorkerGlobalScopeIndexedDatabase.h">
       <Filter>Modules\indexeddb</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\navigatorcontentutils\NavigatorContentUtils.h">
@@ -7311,7 +7311,7 @@
     <ClInclude Include="..\Modules\notifications\NotificationClient.h">
       <Filter>Modules\notifications</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\notifications\WorkerContextNotifications.h">
+    <ClInclude Include="..\Modules\notifications\WorkerGlobalScopeNotifications.h">
       <Filter>Modules\notifications</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\AbstractDatabaseServer.h">
@@ -7449,7 +7449,7 @@
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionSyncCallback.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\WorkerContextWebDatabase.h">
+    <ClInclude Include="..\Modules\webdatabase\WorkerGlobalScopeWebDatabase.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\websockets\CloseEvent.h">
@@ -10590,7 +10590,7 @@
     <ClInclude Include="..\workers\AbstractWorker.h">
       <Filter>workers</Filter>
     </ClInclude>
-    <ClInclude Include="..\workers\DedicatedWorkerContext.h">
+    <ClInclude Include="..\workers\DedicatedWorkerGlobalScope.h">
       <Filter>workers</Filter>
     </ClInclude>
     <ClInclude Include="..\workers\DedicatedWorkerThread.h">
@@ -10602,7 +10602,7 @@
     <ClInclude Include="..\workers\SharedWorker.h">
       <Filter>workers</Filter>
     </ClInclude>
-    <ClInclude Include="..\workers\SharedWorkerContext.h">
+    <ClInclude Include="..\workers\SharedWorkerGlobalScope.h">
       <Filter>workers</Filter>
     </ClInclude>
     <ClInclude Include="..\workers\SharedWorkerRepository.h">
@@ -10617,10 +10617,10 @@
     <ClInclude Include="..\workers\Worker.h">
       <Filter>workers</Filter>
     </ClInclude>
-    <ClInclude Include="..\workers\WorkerContext.h">
+    <ClInclude Include="..\workers\WorkerGlobalScope.h">
       <Filter>workers</Filter>
     </ClInclude>
-    <ClInclude Include="..\workers\WorkerContextProxy.h">
+    <ClInclude Include="..\workers\WorkerGlobalScopeProxy.h">
       <Filter>workers</Filter>
     </ClInclude>
     <ClInclude Include="..\workers\WorkerEventQueue.h">
@@ -11595,7 +11595,7 @@
     <ClInclude Include="..\bindings\js\JSPluginElementFunctions.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
-    <ClInclude Include="..\bindings\js\JSWorkerContextBase.h">
+    <ClInclude Include="..\bindings\js\JSWorkerGlobalScopeBase.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\PageScriptDebugServer.h">
@@ -13262,7 +13262,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSDataTransferItemList.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDedicatedWorkerContext.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDedicatedWorkerGlobalScope.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDeviceMotionEvent.h">
@@ -13856,7 +13856,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorker.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorkerContext.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorkerGlobalScope.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSQLError.h">
@@ -14399,7 +14399,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorker.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerContext.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerGlobalScope.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerLocation.h">

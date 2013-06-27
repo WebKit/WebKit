@@ -723,7 +723,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDedicatedWorkerContext.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDedicatedWorkerGlobalScope.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -2246,7 +2246,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorkerContext.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorkerGlobalScope.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -3652,7 +3652,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerContext.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerGlobalScope.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -3873,7 +3873,7 @@
     <ClCompile Include="..\Modules\filesystem\FileWriterBase.cpp" />
     <ClCompile Include="..\Modules\filesystem\FileWriterSync.cpp" />
     <ClCompile Include="..\Modules\filesystem\LocalFileSystem.cpp" />
-    <ClCompile Include="..\Modules\filesystem\WorkerContextFileSystem.cpp" />
+    <ClCompile Include="..\Modules\filesystem\WorkerGlobalScopeFileSystem.cpp" />
     <ClCompile Include="..\Modules\geolocation\Coordinates.cpp" />
     <ClCompile Include="..\Modules\geolocation\Geolocation.cpp" />
     <ClCompile Include="..\Modules\geolocation\GeolocationController.cpp" />
@@ -3895,7 +3895,7 @@
     <ClCompile Include="..\Modules\indexeddb\IDBRequest.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBTransaction.cpp" />
     <ClCompile Include="..\Modules\indexeddb\PageGroupIndexedDatabase.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\WorkerContextIndexedDatabase.cpp" />
+    <ClCompile Include="..\Modules\indexeddb\WorkerGlobalScopeIndexedDatabase.cpp" />
     <ClCompile Include="..\Modules\navigatorcontentutils\NavigatorContentUtils.cpp" />
     <ClCompile Include="..\Modules\proximity\DeviceProximityController.cpp" />
     <ClCompile Include="..\Modules\proximity\DeviceProximityEvent.cpp" />
@@ -3911,7 +3911,7 @@
     <ClCompile Include="..\Modules\notifications\DOMWindowNotifications.cpp" />
     <ClCompile Include="..\Modules\notifications\Notification.cpp" />
     <ClCompile Include="..\Modules\notifications\NotificationCenter.cpp" />
-    <ClCompile Include="..\Modules\notifications\WorkerContextNotifications.cpp" />
+    <ClCompile Include="..\Modules\notifications\WorkerGlobalScopeNotifications.cpp" />
     <ClCompile Include="..\Modules\webdatabase\ChangeVersionWrapper.cpp" />
     <ClCompile Include="..\Modules\webdatabase\Database.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseAuthorizer.cpp" />
@@ -3942,7 +3942,7 @@
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionCoordinator.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionStateMachine.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionSync.cpp" />
-    <ClCompile Include="..\Modules\webdatabase\WorkerContextWebDatabase.cpp" />
+    <ClCompile Include="..\Modules\webdatabase\WorkerGlobalScopeWebDatabase.cpp" />
     <ClCompile Include="..\Modules\websockets\ThreadableWebSocketChannel.cpp" />
     <ClCompile Include="..\Modules\websockets\ThreadableWebSocketChannelClientWrapper.cpp" />
     <ClCompile Include="..\Modules\websockets\WebSocket.cpp" />
@@ -8109,14 +8109,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\workers\AbstractWorker.cpp" />
-    <ClCompile Include="..\workers\DedicatedWorkerContext.cpp" />
+    <ClCompile Include="..\workers\DedicatedWorkerGlobalScope.cpp" />
     <ClCompile Include="..\workers\DedicatedWorkerThread.cpp" />
     <ClCompile Include="..\workers\DefaultSharedWorkerRepository.cpp" />
     <ClCompile Include="..\workers\SharedWorker.cpp" />
-    <ClCompile Include="..\workers\SharedWorkerContext.cpp" />
+    <ClCompile Include="..\workers\SharedWorkerGlobalScope.cpp" />
     <ClCompile Include="..\workers\SharedWorkerThread.cpp" />
     <ClCompile Include="..\workers\Worker.cpp" />
-    <ClCompile Include="..\workers\WorkerContext.cpp" />
+    <ClCompile Include="..\workers\WorkerGlobalScope.cpp" />
     <ClCompile Include="..\workers\WorkerEventQueue.cpp" />
     <ClCompile Include="..\workers\WorkerLocation.cpp" />
     <ClCompile Include="..\workers\WorkerMessagingProxy.cpp" />
@@ -9554,7 +9554,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSDedicatedWorkerContextCustom.cpp">
+    <ClCompile Include="..\bindings\js\JSDedicatedWorkerGlobalScopeCustom.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -10237,7 +10237,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSWorkerContextBase.cpp">
+    <ClCompile Include="..\bindings\js\JSWorkerGlobalScopeBase.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -10245,7 +10245,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSWorkerContextCustom.cpp">
+    <ClCompile Include="..\bindings\js\JSWorkerGlobalScopeCustom.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -10926,7 +10926,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSDatabaseSync.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSDataTransferItem.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSDataTransferItemList.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDedicatedWorkerContext.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDedicatedWorkerGlobalScope.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDeviceMotionEvent.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSDeviceOrientationEvent.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSDirectoryEntry.h" />
@@ -11132,7 +11132,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSScreen.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSShadowRoot.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorker.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorkerContext.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSSharedWorkerGlobalScope.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSQLError.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSQLResultSet.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSQLResultSetRowList.h" />
@@ -11313,7 +11313,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWebSocket.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSWheelEvent.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorker.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerContext.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerGlobalScope.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerLocation.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSWorkerNavigator.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSXMLHttpRequest.h" />
@@ -11492,7 +11492,7 @@
     <ClInclude Include="..\Modules\filesystem\Metadata.h" />
     <ClInclude Include="..\Modules\filesystem\MetadataCallback.h" />
     <ClInclude Include="..\Modules\filesystem\SyncCallbackHelper.h" />
-    <ClInclude Include="..\Modules\filesystem\WorkerContextFileSystem.h" />
+    <ClInclude Include="..\Modules\filesystem\WorkerGlobalScopeFileSystem.h" />
     <ClInclude Include="..\Modules\geolocation\Coordinates.h" />
     <ClInclude Include="..\Modules\geolocation\Geolocation.h" />
     <ClInclude Include="..\Modules\geolocation\GeolocationClient.h" />
@@ -11527,7 +11527,7 @@
     <ClInclude Include="..\Modules\indexeddb\IDBRequest.h" />
     <ClInclude Include="..\Modules\indexeddb\IDBTransaction.h" />
     <ClInclude Include="..\Modules\indexeddb\PageGroupIndexedDatabase.h" />
-    <ClInclude Include="..\Modules\indexeddb\WorkerContextIndexedDatabase.h" />
+    <ClInclude Include="..\Modules\indexeddb\WorkerGlobalScopeIndexedDatabase.h" />
     <ClInclude Include="..\Modules\navigatorcontentutils\NavigatorContentUtils.h" />
     <ClInclude Include="..\Modules\proximity\DeviceProximityClient.h" />
     <ClInclude Include="..\Modules\proximity\DeviceProximityController.h" />
@@ -11547,7 +11547,7 @@
     <ClInclude Include="..\Modules\notifications\Notification.h" />
     <ClInclude Include="..\Modules\notifications\NotificationCenter.h" />
     <ClInclude Include="..\Modules\notifications\NotificationClient.h" />
-    <ClInclude Include="..\Modules\notifications\WorkerContextNotifications.h" />
+    <ClInclude Include="..\Modules\notifications\WorkerGlobalScopeNotifications.h" />
     <ClInclude Include="..\Modules\webdatabase\AbstractDatabaseServer.h" />
     <ClInclude Include="..\Modules\webdatabase\AbstractSQLStatement.h" />
     <ClInclude Include="..\Modules\webdatabase\AbstractSQLStatementBackend.h" />
@@ -11593,7 +11593,7 @@
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionStateMachine.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionSync.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionSyncCallback.h" />
-    <ClInclude Include="..\Modules\webdatabase\WorkerContextWebDatabase.h" />
+    <ClInclude Include="..\Modules\webdatabase\WorkerGlobalScopeWebDatabase.h" />
     <ClInclude Include="..\Modules\websockets\CloseEvent.h" />
     <ClInclude Include="..\Modules\websockets\ThreadableWebSocketChannel.h" />
     <ClInclude Include="..\Modules\websockets\ThreadableWebSocketChannelClientWrapper.h" />
@@ -12882,17 +12882,17 @@
     <ClInclude Include="..\dom\WheelEvent.h" />
     <ClInclude Include="..\dom\WindowEventContext.h" />
     <ClInclude Include="..\workers\AbstractWorker.h" />
-    <ClInclude Include="..\workers\DedicatedWorkerContext.h" />
+    <ClInclude Include="..\workers\DedicatedWorkerGlobalScope.h" />
     <ClInclude Include="..\workers\DedicatedWorkerThread.h" />
     <ClInclude Include="..\workers\DefaultSharedWorkerRepository.h" />
     <ClInclude Include="..\workers\SharedWorker.h" />
-    <ClInclude Include="..\workers\SharedWorkerContext.h" />
+    <ClInclude Include="..\workers\SharedWorkerGlobalScope.h" />
     <ClInclude Include="..\workers\SharedWorkerRepository.h" />
     <ClInclude Include="..\workers\SharedWorkerStrategy.h" />
     <ClInclude Include="..\workers\SharedWorkerThread.h" />
     <ClInclude Include="..\workers\Worker.h" />
-    <ClInclude Include="..\workers\WorkerContext.h" />
-    <ClInclude Include="..\workers\WorkerContextProxy.h" />
+    <ClInclude Include="..\workers\WorkerGlobalScope.h" />
+    <ClInclude Include="..\workers\WorkerGlobalScopeProxy.h" />
     <ClInclude Include="..\workers\WorkerEventQueue.h" />
     <ClInclude Include="..\workers\WorkerLoaderProxy.h" />
     <ClInclude Include="..\workers\WorkerLocation.h" />
@@ -13230,7 +13230,7 @@
     <ClInclude Include="..\bindings\js\JSNodeCustom.h" />
     <ClInclude Include="..\bindings\js\JSNodeFilterCondition.h" />
     <ClInclude Include="..\bindings\js\JSPluginElementFunctions.h" />
-    <ClInclude Include="..\bindings\js\JSWorkerContextBase.h" />
+    <ClInclude Include="..\bindings\js\JSWorkerGlobalScopeBase.h" />
     <ClInclude Include="..\bindings\js\PageScriptDebugServer.h" />
     <ClInclude Include="..\bindings\js\ScheduledAction.h" />
     <ClInclude Include="..\bindings\js\ScriptCachedFrameData.h" />

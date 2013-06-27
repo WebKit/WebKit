@@ -42,7 +42,7 @@ class WrappedNodeVisitor;
 class Page;
 class ScriptObject;
 class ScriptValue;
-class WorkerContext;
+class WorkerGlobalScope;
 
 class ScriptProfiler {
     WTF_MAKE_NONCOPYABLE(ScriptProfiler);
@@ -62,12 +62,12 @@ public:
     static void start(ScriptState* state, const String& title);
     static void startForPage(Page*, const String& title);
 #if ENABLE(WORKERS)
-    static void startForWorkerContext(WorkerContext*, const String& title);
+    static void startForWorkerGlobalScope(WorkerGlobalScope*, const String& title);
 #endif
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
     static PassRefPtr<ScriptProfile> stopForPage(Page*, const String& title);
 #if ENABLE(WORKERS)
-    static PassRefPtr<ScriptProfile> stopForWorkerContext(WorkerContext*, const String& title);
+    static PassRefPtr<ScriptProfile> stopForWorkerGlobalScope(WorkerGlobalScope*, const String& title);
 #endif
     static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String&, HeapSnapshotProgress*) { return 0; }
     static bool causesRecompilation() { return true; }

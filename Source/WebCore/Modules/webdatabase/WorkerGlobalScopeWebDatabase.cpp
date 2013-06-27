@@ -29,18 +29,18 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "WorkerContextWebDatabase.h"
+#include "WorkerGlobalScopeWebDatabase.h"
 
 #include "Database.h"
 #include "DatabaseCallback.h"
 #include "DatabaseManager.h"
 #include "DatabaseSync.h"
 #include "SecurityOrigin.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
-PassRefPtr<Database> WorkerContextWebDatabase::openDatabase(WorkerContext* context, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
+PassRefPtr<Database> WorkerGlobalScopeWebDatabase::openDatabase(WorkerGlobalScope* context, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
     DatabaseManager& dbManager = DatabaseManager::manager();
     RefPtr<Database> database;
@@ -55,7 +55,7 @@ PassRefPtr<Database> WorkerContextWebDatabase::openDatabase(WorkerContext* conte
     return database.release();
 }
 
-PassRefPtr<DatabaseSync> WorkerContextWebDatabase::openDatabaseSync(WorkerContext* context, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
+PassRefPtr<DatabaseSync> WorkerGlobalScopeWebDatabase::openDatabaseSync(WorkerGlobalScope* context, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
     DatabaseManager& dbManager = DatabaseManager::manager();
     RefPtr<DatabaseSync> database;

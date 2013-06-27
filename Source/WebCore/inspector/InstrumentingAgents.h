@@ -59,7 +59,7 @@ class InspectorWorkerAgent;
 class Page;
 class PageDebuggerAgent;
 class PageRuntimeAgent;
-class WorkerContext;
+class WorkerGlobalScope;
 class WorkerRuntimeAgent;
 
 class InstrumentingAgents : public RefCounted<InstrumentingAgents> {
@@ -184,7 +184,7 @@ private:
 
 InstrumentingAgents* instrumentationForPage(Page*);
 #if ENABLE(WORKERS)
-InstrumentingAgents* instrumentationForWorkerContext(WorkerContext*);
+InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope*);
 #endif
 
 }

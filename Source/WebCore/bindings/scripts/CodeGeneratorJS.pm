@@ -723,7 +723,7 @@ sub GenerateHeader
         $headerIncludes{"$interfaceName.h"} = 1;
     } else {
         # Implementation class forward declaration
-        if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"IsWorkerContext"}) {
+        if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"IsWorkerGlobalScope"}) {
             AddClassForwardIfNeeded($interfaceName) unless $svgPropertyOrListPropertyType;
         }
     }
@@ -745,7 +745,7 @@ sub GenerateHeader
         push(@headerContent, "        vm.heap.addFinalizer(ptr, destroy);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
-    } elsif ($interface->extendedAttributes->{"IsWorkerContext"}) {
+    } elsif ($interface->extendedAttributes->{"IsWorkerGlobalScope"}) {
         push(@headerContent, "    static $className* create(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<$implType> impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm.heap)) ${className}(vm, structure, impl);\n");
@@ -772,7 +772,7 @@ sub GenerateHeader
         push(@headerContent, "    }\n\n");
     }
 
-    if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"IsWorkerContext"}) {
+    if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"IsWorkerGlobalScope"}) {
         push(@headerContent, "    static const bool needsDestruction = false;\n\n");
     }
 
@@ -851,7 +851,7 @@ sub GenerateHeader
     }
     push(@headerContent, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
     push(@headerContent, "    {\n");
-    if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"IsWorkerContext"}) {
+    if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"IsWorkerGlobalScope"}) {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);\n");
     } else {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n");
@@ -995,7 +995,7 @@ sub GenerateHeader
     # Constructor
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    $className(JSC::VM&, JSC::Structure*, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
-    } elsif ($interface->extendedAttributes->{"IsWorkerContext"}) {
+    } elsif ($interface->extendedAttributes->{"IsWorkerGlobalScope"}) {
         push(@headerContent, "    $className(JSC::VM&, JSC::Structure*, PassRefPtr<$implType>);\n");
     } else {
         push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<$implType>);\n");
@@ -1097,7 +1097,7 @@ sub GenerateHeader
     push(@headerContent, "class ${className}Prototype : public JSC::JSNonFinalObject {\n");
     push(@headerContent, "public:\n");
     push(@headerContent, "    typedef JSC::JSNonFinalObject Base;\n");
-    if ($interfaceName ne "DOMWindow" && !$interface->extendedAttributes->{"IsWorkerContext"}) {
+    if ($interfaceName ne "DOMWindow" && !$interface->extendedAttributes->{"IsWorkerGlobalScope"}) {
         push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);\n");
     }
 
@@ -1781,7 +1781,7 @@ sub GenerateImplementation
     } else {
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
-    if ($interfaceName ne "DOMWindow" && !$interface->extendedAttributes->{"IsWorkerContext"}) {
+    if ($interfaceName ne "DOMWindow" && !$interface->extendedAttributes->{"IsWorkerGlobalScope"}) {
         push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getDOMPrototype<${className}>(exec, globalObject);\n");
@@ -1867,7 +1867,7 @@ sub GenerateImplementation
         push(@implContent, "    : $parentClassName(vm, structure, impl, shell)\n");
         push(@implContent, "{\n");
         push(@implContent, "}\n\n");
-    } elsif ($interface->extendedAttributes->{"IsWorkerContext"}) {
+    } elsif ($interface->extendedAttributes->{"IsWorkerGlobalScope"}) {
         AddIncludesForTypeInImpl($interfaceName);
         push(@implContent, "${className}::$className(VM& vm, Structure* structure, PassRefPtr<$implType> impl)\n");
         push(@implContent, "    : $parentClassName(vm, structure, impl)\n");
@@ -2070,7 +2070,7 @@ sub GenerateImplementation
                     push(@implContent, "    $interfaceName* impl = static_cast<$interfaceName*>(castedThis->impl());\n");
                     push(@implContent, "    if (EventListener* listener = impl->$implGetterFunctionName()) {\n");
                     push(@implContent, "        if (const JSEventListener* jsListener = JSEventListener::cast(listener)) {\n");
-                    if ($interfaceName eq "Document" || $interfaceName eq "WorkerContext" || $interfaceName eq "SharedWorkerContext" || $interfaceName eq "DedicatedWorkerContext") {
+                    if ($interfaceName eq "Document" || $interfaceName eq "WorkerGlobalScope" || $interfaceName eq "SharedWorkerGlobalScope" || $interfaceName eq "DedicatedWorkerGlobalScope") {
                         push(@implContent, "            if (JSObject* jsFunction = jsListener->jsFunction(impl))\n");
                     } else {
                         push(@implContent, "            if (JSObject* jsFunction = jsListener->jsFunction(impl->scriptExecutionContext()))\n");
@@ -2302,7 +2302,7 @@ sub GenerateImplementation
                                     push(@implContent, "    JSDOMGlobalObject* globalObject = castedThis->globalObject();\n");
                                 }
                                 push(@implContent, "    $interfaceName* impl = static_cast<$interfaceName*>(castedThis->impl());\n");
-                                if ((($interfaceName eq "DOMWindow") or ($interfaceName eq "WorkerContext")) and $name eq "onerror") {
+                                if ((($interfaceName eq "DOMWindow") or ($interfaceName eq "WorkerGlobalScope")) and $name eq "onerror") {
                                     $implIncludes{"JSErrorHandler.h"} = 1;
                                     push(@implContent, "    impl->set$implSetterFunctionName(createJSErrorHandler(exec, value, thisObject));\n");
                                 } else {
@@ -2521,7 +2521,7 @@ sub GenerateImplementation
                     push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThisObject(exec));\n");
                     push(@implContent, "    if (!castedThis)\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
-                } elsif ($interface->extendedAttributes->{"IsWorkerContext"}) {
+                } elsif ($interface->extendedAttributes->{"IsWorkerGlobalScope"}) {
                     push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThisObject(exec));\n");
                     push(@implContent, "    if (!castedThis)\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");

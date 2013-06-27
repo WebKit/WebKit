@@ -26,7 +26,7 @@ namespace WebCore {
 class EventTarget;
 };
 
-class WebDOMDedicatedWorkerContext;
+class WebDOMDedicatedWorkerGlobalScope;
 class WebDOMDOMApplicationCache;
 class WebDOMDOMWindow;
 class WebDOMEventSource;
@@ -34,7 +34,7 @@ class WebDOMMessagePort;
 class WebDOMNode;
 class WebDOMNotification;
 class WebDOMSharedWorker;
-class WebDOMSharedWorkerContext;
+class WebDOMSharedWorkerGlobalScope;
 class WebDOMWebSocket;
 class WebDOMWorker;
 class WebDOMXMLHttpRequest;
@@ -52,9 +52,9 @@ public:
     WebDOMNode toNode();
     WebDOMDOMWindow toDOMWindow();
     WebDOMWorker toWorker();
-    WebDOMDedicatedWorkerContext toDedicatedWorkerContext();
+    WebDOMDedicatedWorkerGlobalScope toDedicatedWorkerGlobalScope();
     WebDOMSharedWorker toSharedWorker();
-    WebDOMSharedWorkerContext toSharedWorkerContext();
+    WebDOMSharedWorkerGlobalScope toSharedWorkerGlobalScope();
     WebDOMNotification toNotification();
     WebDOMWebSocket toWebSocket();
 

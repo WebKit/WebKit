@@ -29,7 +29,7 @@
 
 #if ENABLE(WORKERS)
 
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 
 #include "ActiveDOMObject.h"
 #include "ContentSecurityPolicy.h"
@@ -66,25 +66,25 @@
 
 namespace WebCore {
 
-class CloseWorkerContextTask : public ScriptExecutionContext::Task {
+class CloseWorkerGlobalScopeTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<CloseWorkerContextTask> create()
+    static PassOwnPtr<CloseWorkerGlobalScopeTask> create()
     {
-        return adoptPtr(new CloseWorkerContextTask);
+        return adoptPtr(new CloseWorkerGlobalScopeTask);
     }
 
     virtual void performTask(ScriptExecutionContext *context)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerContext());
-        WorkerContext* workerContext = static_cast<WorkerContext*>(context);
+        ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
+        WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
         // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
-        workerContext->thread()->workerReportingProxy().workerContextClosed();
+        workerGlobalScope->thread()->workerReportingProxy().workerGlobalScopeClosed();
     }
 
     virtual bool isCleanupTask() const { return true; }
 };
 
-WorkerContext::WorkerContext(const KURL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, WorkerThread* thread, PassRefPtr<SecurityOrigin> topOrigin)
+WorkerGlobalScope::WorkerGlobalScope(const KURL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, WorkerThread* thread, PassRefPtr<SecurityOrigin> topOrigin)
     : m_url(url)
     , m_userAgent(userAgent)
     , m_groupSettings(settings)
@@ -100,7 +100,7 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, PassOwnPt
     setSecurityOrigin(SecurityOrigin::create(url));
 }
 
-WorkerContext::~WorkerContext()
+WorkerGlobalScope::~WorkerGlobalScope()
 {
     ASSERT(currentThread() == thread()->threadID());
 
@@ -108,31 +108,31 @@ WorkerContext::~WorkerContext()
     notifyObserversOfStop();
 
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
-    thread()->workerReportingProxy().workerContextDestroyed();
+    thread()->workerReportingProxy().workerGlobalScopeDestroyed();
 }
 
-void WorkerContext::applyContentSecurityPolicyFromString(const String& policy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
+void WorkerGlobalScope::applyContentSecurityPolicyFromString(const String& policy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
 {
     setContentSecurityPolicy(ContentSecurityPolicy::create(this));
     contentSecurityPolicy()->didReceiveHeader(policy, contentSecurityPolicyType);
 }
 
-ScriptExecutionContext* WorkerContext::scriptExecutionContext() const
+ScriptExecutionContext* WorkerGlobalScope::scriptExecutionContext() const
 {
-    return const_cast<WorkerContext*>(this);
+    return const_cast<WorkerGlobalScope*>(this);
 }
 
-const KURL& WorkerContext::virtualURL() const
+const KURL& WorkerGlobalScope::virtualURL() const
 {
     return m_url;
 }
 
-KURL WorkerContext::virtualCompleteURL(const String& url) const
+KURL WorkerGlobalScope::virtualCompleteURL(const String& url) const
 {
     return completeURL(url);
 }
 
-KURL WorkerContext::completeURL(const String& url) const
+KURL WorkerGlobalScope::completeURL(const String& url) const
 {
     // Always return a null URL when passed a null string.
     // FIXME: Should we change the KURL constructor to have this behavior?
@@ -142,24 +142,24 @@ KURL WorkerContext::completeURL(const String& url) const
     return KURL(m_url, url);
 }
 
-String WorkerContext::userAgent(const KURL&) const
+String WorkerGlobalScope::userAgent(const KURL&) const
 {
     return m_userAgent;
 }
 
-void WorkerContext::disableEval(const String& errorMessage)
+void WorkerGlobalScope::disableEval(const String& errorMessage)
 {
     m_script->disableEval(errorMessage);
 }
 
-WorkerLocation* WorkerContext::location() const
+WorkerLocation* WorkerGlobalScope::location() const
 {
     if (!m_location)
         m_location = WorkerLocation::create(m_url);
     return m_location.get();
 }
 
-void WorkerContext::close()
+void WorkerGlobalScope::close()
 {
     if (m_closing)
         return;
@@ -168,17 +168,17 @@ void WorkerContext::close()
     // After m_closing is set, all the tasks in the queue continue to be fetched but only
     // tasks with isCleanupTask()==true will be executed.
     m_closing = true;
-    postTask(CloseWorkerContextTask::create());
+    postTask(CloseWorkerGlobalScopeTask::create());
 }
 
-WorkerNavigator* WorkerContext::navigator() const
+WorkerNavigator* WorkerGlobalScope::navigator() const
 {
     if (!m_navigator)
         m_navigator = WorkerNavigator::create(m_userAgent);
     return m_navigator.get();
 }
 
-bool WorkerContext::hasPendingActivity() const
+bool WorkerGlobalScope::hasPendingActivity() const
 {
     ActiveDOMObjectsSet::const_iterator activeObjectsEnd = activeDOMObjects().end();
     for (ActiveDOMObjectsSet::const_iterator iter = activeDOMObjects().begin(); iter != activeObjectsEnd; ++iter) {
@@ -195,39 +195,39 @@ bool WorkerContext::hasPendingActivity() const
     return false;
 }
 
-void WorkerContext::postTask(PassOwnPtr<Task> task)
+void WorkerGlobalScope::postTask(PassOwnPtr<Task> task)
 {
     thread()->runLoop().postTask(task);
 }
 
-int WorkerContext::setTimeout(PassOwnPtr<ScheduledAction> action, int timeout)
+int WorkerGlobalScope::setTimeout(PassOwnPtr<ScheduledAction> action, int timeout)
 {
     return DOMTimer::install(scriptExecutionContext(), action, timeout, true);
 }
 
-void WorkerContext::clearTimeout(int timeoutId)
+void WorkerGlobalScope::clearTimeout(int timeoutId)
 {
     DOMTimer::removeById(scriptExecutionContext(), timeoutId);
 }
 
 #if ENABLE(INSPECTOR)
-void WorkerContext::clearInspector()
+void WorkerGlobalScope::clearInspector()
 {
     m_workerInspectorController.clear();
 }
 #endif
 
-int WorkerContext::setInterval(PassOwnPtr<ScheduledAction> action, int timeout)
+int WorkerGlobalScope::setInterval(PassOwnPtr<ScheduledAction> action, int timeout)
 {
     return DOMTimer::install(scriptExecutionContext(), action, timeout, false);
 }
 
-void WorkerContext::clearInterval(int timeoutId)
+void WorkerGlobalScope::clearInterval(int timeoutId)
 {
     DOMTimer::removeById(scriptExecutionContext(), timeoutId);
 }
 
-void WorkerContext::importScripts(const Vector<String>& urls, ExceptionCode& ec)
+void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode& ec)
 {
     ASSERT(contentSecurityPolicy());
     ec = 0;
@@ -267,17 +267,17 @@ void WorkerContext::importScripts(const Vector<String>& urls, ExceptionCode& ec)
     }
 }
 
-EventTarget* WorkerContext::errorEventTarget()
+EventTarget* WorkerGlobalScope::errorEventTarget()
 {
     return this;
 }
 
-void WorkerContext::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<ScriptCallStack>)
+void WorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<ScriptCallStack>)
 {
     thread()->workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, columnNumber, sourceURL);
 }
 
-void WorkerContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
+void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask::create(source, level, message));
@@ -288,7 +288,7 @@ void WorkerContext::addConsoleMessage(MessageSource source, MessageLevel level, 
     addMessageToWorkerConsole(source, level, message, String(), 0, 0, 0, 0, requestIdentifier);
 }
 
-void WorkerContext::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
+void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask::create(source, level, message));
@@ -299,7 +299,7 @@ void WorkerContext::addMessage(MessageSource source, MessageLevel level, const S
     addMessageToWorkerConsole(source, level, message, sourceURL, lineNumber, columnNumber, callStack, state, requestIdentifier);
 }
 
-void WorkerContext::addMessageToWorkerConsole(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
+void WorkerGlobalScope::addMessageToWorkerConsole(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
 {
     ASSERT(isContextThread());
     if (callStack)
@@ -308,34 +308,34 @@ void WorkerContext::addMessageToWorkerConsole(MessageSource source, MessageLevel
         InspectorInstrumentation::addMessageToConsole(this, source, LogMessageType, level, message, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
 }
 
-bool WorkerContext::isContextThread() const
+bool WorkerGlobalScope::isContextThread() const
 {
     return currentThread() == thread()->threadID();
 }
 
-bool WorkerContext::isJSExecutionForbidden() const
+bool WorkerGlobalScope::isJSExecutionForbidden() const
 {
     return m_script->isExecutionForbidden();
 }
 
-EventTargetData* WorkerContext::eventTargetData()
+EventTargetData* WorkerGlobalScope::eventTargetData()
 {
     return &m_eventTargetData;
 }
 
-EventTargetData* WorkerContext::ensureEventTargetData()
+EventTargetData* WorkerGlobalScope::ensureEventTargetData()
 {
     return &m_eventTargetData;
 }
 
-WorkerContext::Observer::Observer(WorkerContext* context)
+WorkerGlobalScope::Observer::Observer(WorkerGlobalScope* context)
     : m_context(context)
 {
     ASSERT(m_context && m_context->isContextThread());
     m_context->registerObserver(this);
 }
 
-WorkerContext::Observer::~Observer()
+WorkerGlobalScope::Observer::~Observer()
 {
     if (!m_context)
         return;
@@ -343,7 +343,7 @@ WorkerContext::Observer::~Observer()
     m_context->unregisterObserver(this);
 }
 
-void WorkerContext::Observer::stopObserving()
+void WorkerGlobalScope::Observer::stopObserving()
 {
     if (!m_context)
         return;
@@ -352,30 +352,30 @@ void WorkerContext::Observer::stopObserving()
     m_context = 0;
 }
 
-void WorkerContext::registerObserver(Observer* observer)
+void WorkerGlobalScope::registerObserver(Observer* observer)
 {
     ASSERT(observer);
     m_workerObservers.add(observer);
 }
 
-void WorkerContext::unregisterObserver(Observer* observer)
+void WorkerGlobalScope::unregisterObserver(Observer* observer)
 {
     ASSERT(observer);
     m_workerObservers.remove(observer);
 }
 
-void WorkerContext::notifyObserversOfStop()
+void WorkerGlobalScope::notifyObserversOfStop()
 {
     HashSet<Observer*>::iterator iter = m_workerObservers.begin();
     while (iter != m_workerObservers.end()) {
-        WorkerContext::Observer* observer = *iter;
+        WorkerGlobalScope::Observer* observer = *iter;
         observer->stopObserving();
         observer->notifyStop();
         iter = m_workerObservers.begin();
     }
 }
 
-WorkerEventQueue* WorkerContext::eventQueue() const
+WorkerEventQueue* WorkerGlobalScope::eventQueue() const
 {
     return m_eventQueue.get();
 }

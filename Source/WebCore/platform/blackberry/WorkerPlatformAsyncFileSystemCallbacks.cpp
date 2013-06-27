@@ -24,7 +24,7 @@
 #include "CrossThreadTask.h"
 #include "WorkerAsyncFileSystemBlackBerry.h"
 #include "WorkerAsyncFileWriterBlackBerry.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 
@@ -190,7 +190,7 @@ void WorkerPlatformAsyncFileSystemCallbacks::deleteMe()
 
 void WorkerPlatformAsyncFileSystemCallbacks::postTaskToWorkerThread(PassOwnPtr<ScriptExecutionContext::Task> task)
 {
-    m_context->thread()->workerLoaderProxy().postTaskForModeToWorkerContext(task, m_mode);
+    m_context->thread()->workerLoaderProxy().postTaskForModeToWorkerGlobalScope(task, m_mode);
 }
 
 void WorkerPlatformAsyncFileSystemCallbacks::notifyOpenFileSystemOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks* callbacks, BlackBerry::Platform::WebFileSystem* platformFileSystem)

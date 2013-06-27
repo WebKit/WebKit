@@ -35,7 +35,7 @@
 #include "PublicURLManager.h"
 #include "ScriptCallStack.h"
 #include "Settings.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 
@@ -144,7 +144,7 @@ void ScriptExecutionContext::createdMessagePort(MessagePort* port)
     ASSERT(port);
 #if ENABLE(WORKERS)
     ASSERT((isDocument() && isMainThread())
-        || (isWorkerContext() && currentThread() == static_cast<WorkerContext*>(this)->thread()->threadID()));
+        || (isWorkerGlobalScope() && currentThread() == static_cast<WorkerGlobalScope*>(this)->thread()->threadID()));
 #endif
 
     m_messagePorts.add(port);
@@ -155,7 +155,7 @@ void ScriptExecutionContext::destroyedMessagePort(MessagePort* port)
     ASSERT(port);
 #if ENABLE(WORKERS)
     ASSERT((isDocument() && isMainThread())
-        || (isWorkerContext() && currentThread() == static_cast<WorkerContext*>(this)->thread()->threadID()));
+        || (isWorkerGlobalScope() && currentThread() == static_cast<WorkerGlobalScope*>(this)->thread()->threadID()));
 #endif
 
     m_messagePorts.remove(port);
@@ -395,8 +395,8 @@ JSC::VM* ScriptExecutionContext::vm()
         return JSDOMWindow::commonVM();
 
 #if ENABLE(WORKERS)
-    if (isWorkerContext())
-        return static_cast<WorkerContext*>(this)->script()->vm();
+    if (isWorkerGlobalScope())
+        return static_cast<WorkerGlobalScope*>(this)->script()->vm();
 #endif
 
     ASSERT_NOT_REACHED();

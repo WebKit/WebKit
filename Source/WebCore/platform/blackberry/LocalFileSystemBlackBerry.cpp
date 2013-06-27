@@ -40,7 +40,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WorkerAsyncFileSystemBlackBerry.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 
 #include <wtf/MainThread.h>
@@ -98,12 +98,12 @@ static void openFileSystem(ScriptExecutionContext* context, const String& basePa
         AsyncFileSystemBlackBerry::openFileSystem(rootURL, basePath, context->securityOrigin()->databaseIdentifier(), type, size, create, playerId, callbacks);
     } else {
 #if ENABLE(WORKERS)
-        WorkerContext* workerContext = static_cast<WorkerContext*>(context);
+        WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
         String mode = openFileSystemMode;
-        mode.append(String::number(workerContext->thread()->runLoop().createUniqueId()));
-        WorkerAsyncFileSystemBlackBerry::openFileSystem(workerContext, rootURL, mode, basePath, context->securityOrigin()->databaseIdentifier(), type, size, create, callbacks);
+        mode.append(String::number(workerGlobalScope->thread()->runLoop().createUniqueId()));
+        WorkerAsyncFileSystemBlackBerry::openFileSystem(workerGlobalScope, rootURL, mode, basePath, context->securityOrigin()->databaseIdentifier(), type, size, create, callbacks);
         if (synchronousType == SynchronousFileSystem)
-            workerContext->thread()->runLoop().runInMode(workerContext, mode);
+            workerGlobalScope->thread()->runLoop().runInMode(workerGlobalScope, mode);
 #else
         ASSERT_NOT_REACHED();
 #endif
@@ -123,10 +123,10 @@ void LocalFileSystem::deleteFileSystem(ScriptExecutionContext* context, FileSyst
         AsyncFileSystemBlackBerry::deleteFileSystem(fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), type, callbacks);
     else {
 #if ENABLE(WORKERS)
-        WorkerContext* workerContext = static_cast<WorkerContext*>(context);
+        WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
         String mode = deleteFileSystemMode;
-        mode.append(String::number(workerContext->thread()->runLoop().createUniqueId()));
-        WorkerAsyncFileSystemBlackBerry::deleteFileSystem(workerContext, mode, fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), type, callbacks);
+        mode.append(String::number(workerGlobalScope->thread()->runLoop().createUniqueId()));
+        WorkerAsyncFileSystemBlackBerry::deleteFileSystem(workerGlobalScope, mode, fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), type, callbacks);
 #else
         ASSERT_NOT_REACHED();
 #endif

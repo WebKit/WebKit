@@ -39,8 +39,8 @@
 #include <runtime/JSLock.h>
 
 #if ENABLE(WORKERS)
-#include "JSWorkerContext.h"
-#include "WorkerContext.h"
+#include "JSWorkerGlobalScope.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #endif
 
@@ -80,8 +80,8 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
         execute(toDocument(context));
 #if ENABLE(WORKERS)
     else {
-        ASSERT(context->isWorkerContext());
-        execute(static_cast<WorkerContext*>(context));
+        ASSERT(context->isWorkerGlobalScope());
+        execute(static_cast<WorkerGlobalScope*>(context));
     }
 #else
     ASSERT(context->isDocument());
@@ -135,18 +135,18 @@ void ScheduledAction::execute(Document* document)
 }
 
 #if ENABLE(WORKERS)
-void ScheduledAction::execute(WorkerContext* workerContext)
+void ScheduledAction::execute(WorkerGlobalScope* workerGlobalScope)
 {
     // In a Worker, the execution should always happen on a worker thread.
-    ASSERT(workerContext->thread()->threadID() == currentThread());
+    ASSERT(workerGlobalScope->thread()->threadID() == currentThread());
 
-    WorkerScriptController* scriptController = workerContext->script();
+    WorkerScriptController* scriptController = workerGlobalScope->script();
 
     if (m_function) {
-        JSWorkerContext* contextWrapper = scriptController->workerContextWrapper();
-        executeFunctionInContext(contextWrapper, contextWrapper, workerContext);
+        JSWorkerGlobalScope* contextWrapper = scriptController->workerGlobalScopeWrapper();
+        executeFunctionInContext(contextWrapper, contextWrapper, workerGlobalScope);
     } else {
-        ScriptSourceCode code(m_code, workerContext->url());
+        ScriptSourceCode code(m_code, workerGlobalScope->url());
         scriptController->evaluate(code);
     }
 }

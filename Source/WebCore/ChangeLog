@@ -1,3 +1,433 @@
+2013-06-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Rename WorkerContext to WorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=118059
+
+        Reviewed by Kentaro Hara.
+
+        Rename WorkerContext / SharedWorkerContext / DedicatedWorkerContext to
+        WorkerGlobalScope / SharedWorkerGlobalScope / DedicatedWorkerGlobalScope
+        to match the latest specification:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#workerglobalscope
+
+        Those interfaces have [NoInterfaceObject] IDL extended attribute so the
+        name did not matter much so far. However, the specification was updated
+        and [NoInterfaceObject] was removed. We should therefore rename those
+        interfaces as a preparation for this change.
+
+        No new tests, no behavior change as these interfaces are not exposed to
+        JavaScript yet.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Modules/filesystem/WorkerGlobalScopeFileSystem.cpp: Renamed from Source/WebCore/Modules/filesystem/WorkerContextFileSystem.cpp.
+        (WebCore::WorkerGlobalScopeFileSystem::webkitRequestFileSystem):
+        (WebCore::WorkerGlobalScopeFileSystem::webkitRequestFileSystemSync):
+        (WebCore::WorkerGlobalScopeFileSystem::webkitResolveLocalFileSystemURL):
+        (WebCore::WorkerGlobalScopeFileSystem::webkitResolveLocalFileSystemSyncURL):
+        * Modules/filesystem/WorkerGlobalScopeFileSystem.h: Renamed from Source/WebCore/Modules/filesystem/WorkerContextFileSystem.h.
+        * Modules/filesystem/WorkerGlobalScopeFileSystem.idl: Renamed from Source/WebCore/Modules/filesystem/WorkerContextFileSystem.idl.
+        * Modules/indexeddb/IDBFactory.cpp:
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp: Renamed from Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.cpp.
+        (WebCore::WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase):
+        (WebCore::WorkerGlobalScopeIndexedDatabase::~WorkerGlobalScopeIndexedDatabase):
+        (WebCore::WorkerGlobalScopeIndexedDatabase::supplementName):
+        (WebCore::WorkerGlobalScopeIndexedDatabase::from):
+        (WebCore::WorkerGlobalScopeIndexedDatabase::indexedDB):
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.h: Renamed from Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.h.
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl: Renamed from Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.idl.
+        * Modules/notifications/Notification.cpp:
+        * Modules/notifications/NotificationCenter.cpp:
+        * Modules/notifications/WorkerGlobalScopeNotifications.cpp: Renamed from Source/WebCore/Modules/notifications/WorkerContextNotifications.cpp.
+        (WebCore::WorkerGlobalScopeNotifications::WorkerGlobalScopeNotifications):
+        (WebCore::WorkerGlobalScopeNotifications::~WorkerGlobalScopeNotifications):
+        (WebCore::WorkerGlobalScopeNotifications::supplementName):
+        (WebCore::WorkerGlobalScopeNotifications::from):
+        (WebCore::WorkerGlobalScopeNotifications::webkitNotifications):
+        * Modules/notifications/WorkerGlobalScopeNotifications.h: Renamed from Source/WebCore/Modules/notifications/WorkerContextNotifications.h.
+        * Modules/notifications/WorkerGlobalScopeNotifications.idl: Renamed from Source/WebCore/Modules/notifications/WorkerContextNotifications.idl.
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::allowDatabaseAccess):
+        (WebCore::DatabaseContext::databaseExceededQuota):
+        * Modules/webdatabase/WorkerGlobalScopeWebDatabase.cpp: Renamed from Source/WebCore/Modules/webdatabase/WorkerContextWebDatabase.cpp.
+        (WebCore::WorkerGlobalScopeWebDatabase::openDatabase):
+        (WebCore::WorkerGlobalScopeWebDatabase::openDatabaseSync):
+        * Modules/webdatabase/WorkerGlobalScopeWebDatabase.h: Renamed from Source/WebCore/Modules/webdatabase/WorkerContextWebDatabase.h.
+        (WebCore::WorkerGlobalScopeWebDatabase::WorkerGlobalScopeWebDatabase):
+        (WebCore::WorkerGlobalScopeWebDatabase::~WorkerGlobalScopeWebDatabase):
+        * Modules/webdatabase/WorkerGlobalScopeWebDatabase.idl: Renamed from Source/WebCore/Modules/webdatabase/WorkerContextWebDatabase.idl.
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::create):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasksCallback):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel):
+        (WebCore::workerGlobalScopeDidSend):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::workerGlobalScopeDidGetBufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::bufferedAmount):
+        (WebCore::workerGlobalScopeDidConnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect):
+        (WebCore::workerGlobalScopeDidReceiveMessage):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessage):
+        (WebCore::workerGlobalScopeDidReceiveBinaryData):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        (WebCore::workerGlobalScopeDidUpdateBufferedAmount):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount):
+        (WebCore::workerGlobalScopeDidStartClosingHandshake):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake):
+        (WebCore::workerGlobalScopeDidClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose):
+        (WebCore::workerGlobalScopeDidReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::Bridge):
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask::create):
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask::~WorkerGlobalScopeDidInitializeTask):
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask::WorkerGlobalScopeDidInitializeTask):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::disconnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        (WebCore::WorkerThreadableWebSocketChannel::create):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::create):
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/cpp/WebDOMEventTarget.cpp:
+        (toWebKit):
+        * bindings/cpp/WebDOMEventTarget.h:
+        * bindings/generic/ActiveDOMCallback.cpp:
+        * bindings/js/DOMRequestState.h:
+        (WebCore::DOMRequestState::DOMRequestState):
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::scriptExecutionContext):
+        (WebCore::toJSDOMGlobalObject):
+        * bindings/js/JSDedicatedWorkerGlobalScopeCustom.cpp: Renamed from Source/WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp.
+        (WebCore::JSDedicatedWorkerGlobalScope::postMessage):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp: Renamed from Source/WebCore/bindings/js/JSWorkerContextBase.cpp.
+        (WebCore::JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase):
+        (WebCore::JSWorkerGlobalScopeBase::finishCreation):
+        (WebCore::JSWorkerGlobalScopeBase::destroy):
+        (WebCore::JSWorkerGlobalScopeBase::scriptExecutionContext):
+        (WebCore::toJS):
+        (WebCore::toJSDedicatedWorkerGlobalScope):
+        (WebCore::toJSSharedWorkerGlobalScope):
+        (WebCore::toJSWorkerGlobalScope):
+        * bindings/js/JSWorkerGlobalScopeBase.h: Renamed from Source/WebCore/bindings/js/JSWorkerContextBase.h.
+        (WebCore::JSWorkerGlobalScopeBase::impl):
+        (WebCore::JSWorkerGlobalScopeBase::createStructure):
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp: Renamed from Source/WebCore/bindings/js/JSWorkerContextCustom.cpp.
+        (WebCore::JSWorkerGlobalScope::visitChildren):
+        (WebCore::JSWorkerGlobalScope::getOwnPropertySlotDelegate):
+        (WebCore::JSWorkerGlobalScope::getOwnPropertyDescriptorDelegate):
+        (WebCore::JSWorkerGlobalScope::importScripts):
+        (WebCore::JSWorkerGlobalScope::setTimeout):
+        (WebCore::JSWorkerGlobalScope::setInterval):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::startForWorkerGlobalScope):
+        (WebCore::ScriptProfiler::stopForWorkerGlobalScope):
+        * bindings/js/ScriptProfiler.h:
+        * bindings/js/ScriptState.cpp:
+        (WebCore::scriptStateFromWorkerGlobalScope):
+        * bindings/js/ScriptState.h:
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+        (WebCore::WorkerScriptController::initScript):
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::setException):
+        (WebCore::WorkerScriptController::forbidExecution):
+        (WebCore::WorkerScriptController::isExecutionForbidden):
+        (WebCore::WorkerScriptController::disableEval):
+        (WebCore::WorkerScriptController::attachDebugger):
+        (WebCore::WorkerScriptController::detachDebugger):
+        * bindings/js/WorkerScriptController.h:
+        (WebCore::WorkerScriptController::workerGlobalScopeWrapper):
+        (WebCore::WorkerScriptController::initScriptIfNeeded):
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::WorkerScriptDebugServer):
+        (WebCore::WorkerScriptDebugServer::addListener):
+        (WebCore::WorkerScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::WorkerScriptDebugServer::removeListener):
+        (WebCore::WorkerScriptDebugServer::runEventLoopWhilePaused):
+        * bindings/js/WorkerScriptDebugServer.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/preprocess-idls.pl:
+        * dom/ActiveDOMObject.cpp:
+        * dom/EventTarget.h:
+        * dom/EventTargetFactory.in:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchMessages):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::createdMessagePort):
+        (WebCore::ScriptExecutionContext::destroyedMessagePort):
+        (WebCore::ScriptExecutionContext::vm):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::isWorkerGlobalScope):
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::createForWorker):
+        (WebCore::InjectedScriptManager::canAccessInspectedWorkerGlobalScope):
+        * inspector/InjectedScriptManager.h:
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didStartWorkerGlobalScopeImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateWorkerScript):
+        (WebCore::InspectorInstrumentation::workerGlobalScopeTerminatedImpl):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForNonDocumentContext):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didStartWorkerGlobalScope):
+        (WebCore::InspectorInstrumentation::workerGlobalScopeTerminated):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::WorkerProfilerAgent::WorkerProfilerAgent):
+        (WebCore::WorkerProfilerAgent::startProfiling):
+        (WebCore::WorkerProfilerAgent::stopProfiling):
+        (WebCore::InspectorProfilerAgent::create):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::WorkerFrontendChannel):
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::~WorkerFrontendChannel):
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::proxy):
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::connectToWorkerGlobalScope):
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::disconnectFromWorkerGlobalScope):
+        (WebCore::InspectorWorkerAgent::connectToWorker):
+        (WebCore::InspectorWorkerAgent::disconnectFromWorker):
+        (WebCore::InspectorWorkerAgent::didStartWorkerGlobalScope):
+        (WebCore::InspectorWorkerAgent::workerGlobalScopeTerminated):
+        (WebCore::InspectorWorkerAgent::destroyWorkerFrontendChannels):
+        (WebCore::InspectorWorkerAgent::createWorkerFrontendChannel):
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::instrumentationForWorkerGlobalScope):
+        * inspector/InstrumentingAgents.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::create):
+        (WebCore::WorkerDebuggerAgent::WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::~WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::interruptAndDispatchInspectorCommands):
+        (WebCore::WorkerDebuggerAgent::injectedScriptForEval):
+        * inspector/WorkerDebuggerAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::connectFrontend):
+        * inspector/WorkerInspectorController.h:
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::WorkerRuntimeAgent):
+        (WebCore::WorkerRuntimeAgent::injectedScriptForEval):
+        (WebCore::WorkerRuntimeAgent::pauseWorkerGlobalScope):
+        * inspector/WorkerRuntimeAgent.h:
+        (WebCore::WorkerRuntimeAgent::create):
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::create):
+        (WebCore::ThreadableLoader::loadResourceSynchronously):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously):
+        (WebCore::workerGlobalScopeDidSendData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didSendData):
+        (WebCore::workerGlobalScopeDidReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::workerGlobalScopeDidReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::workerGlobalScopeDidFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        (WebCore::workerGlobalScopeDidFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::workerGlobalScopeDidFailAccessControlCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailAccessControlCheck):
+        (WebCore::workerGlobalScopeDidFailRedirectCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck):
+        * loader/WorkerThreadableLoader.h:
+        (WebCore::WorkerThreadableLoader::create):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::removeRequestFromCache):
+        * platform/blackberry/LocalFileSystemBlackBerry.cpp:
+        (WebCore::openFileSystem):
+        (WebCore::LocalFileSystem::deleteFileSystem):
+        * platform/blackberry/WorkerAsyncFileSystemBlackBerry.cpp:
+        (WebCore::WorkerAsyncFileSystemBlackBerry::WorkerAsyncFileSystemBlackBerry):
+        (WebCore::WorkerAsyncFileSystemBlackBerry::openFileSystem):
+        (WebCore::WorkerAsyncFileSystemBlackBerry::deleteFileSystem):
+        * platform/blackberry/WorkerAsyncFileSystemBlackBerry.h:
+        (WebCore::WorkerAsyncFileSystemBlackBerry::create):
+        * platform/blackberry/WorkerAsyncFileWriterBlackBerry.h:
+        * platform/blackberry/WorkerPlatformAsyncFileSystemCallbacks.cpp:
+        (WebCore::WorkerPlatformAsyncFileSystemCallbacks::postTaskToWorkerThread):
+        * platform/blackberry/WorkerPlatformAsyncFileSystemCallbacks.h:
+        * platform/blackberry/WorkerPlatformFileWriterClient.cpp:
+        (WebCore::WorkerPlatformFileWriterClient::postTaskToWorkerThreadIfNeeded):
+        * platform/blackberry/WorkerPlatformFileWriterClient.h:
+        * workers/DedicatedWorkerGlobalScope.cpp: Renamed from Source/WebCore/workers/DedicatedWorkerContext.cpp.
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        (WebCore::DedicatedWorkerGlobalScope::~DedicatedWorkerGlobalScope):
+        (WebCore::DedicatedWorkerGlobalScope::interfaceName):
+        (WebCore::DedicatedWorkerGlobalScope::postMessage):
+        (WebCore::DedicatedWorkerGlobalScope::importScripts):
+        (WebCore::DedicatedWorkerGlobalScope::thread):
+        * workers/DedicatedWorkerGlobalScope.h: Renamed from Source/WebCore/workers/DedicatedWorkerContext.h.
+        * workers/DedicatedWorkerGlobalScope.idl: Renamed from Source/WebCore/workers/DedicatedWorkerContext.idl.
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        (WebCore::DedicatedWorkerThread::runEventLoop):
+        * workers/DedicatedWorkerThread.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::postTaskForModeToWorkerGlobalScope):
+        (WebCore::SharedWorkerProxy::workerGlobalScopeClosed):
+        (WebCore::SharedWorkerProxy::workerGlobalScopeDestroyed):
+        (WebCore::SharedWorkerConnectTask::performTask):
+        (WebCore::SharedWorkerScriptLoader::notifyFinished):
+        (WebCore::DefaultSharedWorkerRepository::workerScriptLoaded):
+        * workers/SharedWorkerGlobalScope.cpp: Renamed from Source/WebCore/workers/SharedWorkerContext.cpp.
+        (WebCore::createConnectEvent):
+        (WebCore::SharedWorkerGlobalScope::create):
+        (WebCore::SharedWorkerGlobalScope::SharedWorkerGlobalScope):
+        (WebCore::SharedWorkerGlobalScope::~SharedWorkerGlobalScope):
+        (WebCore::SharedWorkerGlobalScope::interfaceName):
+        (WebCore::SharedWorkerGlobalScope::thread):
+        (WebCore::SharedWorkerGlobalScope::logExceptionToConsole):
+        * workers/SharedWorkerGlobalScope.h: Renamed from Source/WebCore/workers/SharedWorkerContext.h.
+        (WebCore::SharedWorkerGlobalScope::name):
+        * workers/SharedWorkerGlobalScope.idl: Renamed from Source/WebCore/workers/SharedWorkerContext.idl.
+        * workers/SharedWorkerThread.cpp:
+        (WebCore::SharedWorkerThread::createWorkerGlobalScope):
+        * workers/SharedWorkerThread.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::postMessage):
+        (WebCore::Worker::terminate):
+        (WebCore::Worker::notifyFinished):
+        * workers/Worker.h:
+        * workers/WorkerGlobalScope.cpp: Renamed from Source/WebCore/workers/WorkerContext.cpp.
+        (WebCore::CloseWorkerGlobalScopeTask::create):
+        (WebCore::CloseWorkerGlobalScopeTask::performTask):
+        (WebCore::CloseWorkerGlobalScopeTask::isCleanupTask):
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::applyContentSecurityPolicyFromString):
+        (WebCore::WorkerGlobalScope::scriptExecutionContext):
+        (WebCore::WorkerGlobalScope::virtualURL):
+        (WebCore::WorkerGlobalScope::virtualCompleteURL):
+        (WebCore::WorkerGlobalScope::completeURL):
+        (WebCore::WorkerGlobalScope::userAgent):
+        (WebCore::WorkerGlobalScope::disableEval):
+        (WebCore::WorkerGlobalScope::location):
+        (WebCore::WorkerGlobalScope::close):
+        (WebCore::WorkerGlobalScope::navigator):
+        (WebCore::WorkerGlobalScope::hasPendingActivity):
+        (WebCore::WorkerGlobalScope::postTask):
+        (WebCore::WorkerGlobalScope::setTimeout):
+        (WebCore::WorkerGlobalScope::clearTimeout):
+        (WebCore::WorkerGlobalScope::clearInspector):
+        (WebCore::WorkerGlobalScope::setInterval):
+        (WebCore::WorkerGlobalScope::clearInterval):
+        (WebCore::WorkerGlobalScope::importScripts):
+        (WebCore::WorkerGlobalScope::errorEventTarget):
+        (WebCore::WorkerGlobalScope::logExceptionToConsole):
+        (WebCore::WorkerGlobalScope::addConsoleMessage):
+        (WebCore::WorkerGlobalScope::addMessage):
+        (WebCore::WorkerGlobalScope::addMessageToWorkerConsole):
+        (WebCore::WorkerGlobalScope::isContextThread):
+        (WebCore::WorkerGlobalScope::isJSExecutionForbidden):
+        (WebCore::WorkerGlobalScope::eventTargetData):
+        (WebCore::WorkerGlobalScope::ensureEventTargetData):
+        (WebCore::WorkerGlobalScope::Observer::Observer):
+        (WebCore::WorkerGlobalScope::Observer::~Observer):
+        (WebCore::WorkerGlobalScope::Observer::stopObserving):
+        (WebCore::WorkerGlobalScope::registerObserver):
+        (WebCore::WorkerGlobalScope::unregisterObserver):
+        (WebCore::WorkerGlobalScope::notifyObserversOfStop):
+        (WebCore::WorkerGlobalScope::eventQueue):
+        * workers/WorkerGlobalScope.h: Renamed from Source/WebCore/workers/WorkerContext.h.
+        (WebCore::WorkerGlobalScope::isSharedWorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::isDedicatedWorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::url):
+        (WebCore::WorkerGlobalScope::groupSettings):
+        (WebCore::WorkerGlobalScope::script):
+        (WebCore::WorkerGlobalScope::clearScript):
+        (WebCore::WorkerGlobalScope::thread):
+        (WebCore::WorkerGlobalScope::self):
+        (WebCore::WorkerGlobalScope::workerInspectorController):
+        (WebCore::WorkerGlobalScope::optionalNavigator):
+        (WebCore::WorkerGlobalScope::optionalLocation):
+        (WebCore::WorkerGlobalScope::isClosing):
+        * workers/WorkerGlobalScope.idl: Renamed from Source/WebCore/workers/WorkerContext.idl.
+        * workers/WorkerGlobalScopeProxy.h: Renamed from Source/WebCore/workers/WorkerContextProxy.h.
+        (WebCore::WorkerGlobalScopeProxy::~WorkerGlobalScopeProxy):
+        (WebCore::WorkerGlobalScopeProxy::PageInspector::~PageInspector):
+        (WebCore::WorkerGlobalScopeProxy::connectToInspector):
+        (WebCore::WorkerGlobalScopeProxy::disconnectFromInspector):
+        (WebCore::WorkerGlobalScopeProxy::sendMessageToInspector):
+        * workers/WorkerLoaderProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerGlobalScopeTask::create):
+        (WebCore::MessageWorkerGlobalScopeTask::MessageWorkerGlobalScopeTask):
+        (WebCore::MessageWorkerGlobalScopeTask::performTask):
+        (WebCore::WorkerGlobalScopeDestroyedTask::create):
+        (WebCore::WorkerGlobalScopeDestroyedTask::WorkerGlobalScopeDestroyedTask):
+        (WebCore::WorkerGlobalScopeDestroyedTask::performTask):
+        (WebCore::WorkerTerminateTask::performTask):
+        (WebCore::PostMessageToPageInspectorTask::performTask):
+        (WebCore::WorkerGlobalScopeProxy::create):
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+        (WebCore::WorkerMessagingProxy::~WorkerMessagingProxy):
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerGlobalScope):
+        (WebCore::WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope):
+        (WebCore::WorkerMessagingProxy::workerObjectDestroyedInternal):
+        (WebCore::connectToWorkerGlobalScopeInspectorTask):
+        (WebCore::WorkerMessagingProxy::connectToInspector):
+        (WebCore::disconnectFromWorkerGlobalScopeInspectorTask):
+        (WebCore::WorkerMessagingProxy::disconnectFromInspector):
+        (WebCore::dispatchOnInspectorBackendTask):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeDestroyed):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeClosed):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeDestroyedInternal):
+        (WebCore::WorkerMessagingProxy::terminateWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerObjectProxy.h:
+        * workers/WorkerReportingProxy.h:
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::run):
+        (WebCore::WorkerRunLoop::runInMode):
+        (WebCore::WorkerRunLoop::runCleanupTasks):
+        (WebCore::WorkerRunLoop::Task::performTask):
+        * workers/WorkerRunLoop.h:
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        (WebCore::WorkerThread::runEventLoop):
+        (WebCore::WorkerThreadShutdownFinishTask::performTask):
+        (WebCore::WorkerThreadShutdownStartTask::performTask):
+        (WebCore::WorkerThread::stop):
+        * workers/WorkerThread.h:
+        (WebCore::WorkerThread::workerGlobalScope):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::usesDashboardBackwardCompatibilityMode):
+        (WebCore::XMLHttpRequest::responseXML):
+
 2013-06-26  Sanjoy Pal  <sanjoy.pal@samsung.com>
 
         Avoid redundant checks for Compositing reasons in RenderLayerCompositor

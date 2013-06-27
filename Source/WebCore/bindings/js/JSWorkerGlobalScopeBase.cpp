@@ -29,90 +29,90 @@
 
 #if ENABLE(WORKERS)
 
-#include "JSWorkerContextBase.h"
+#include "JSWorkerGlobalScopeBase.h"
 
 #include "DOMWrapperWorld.h"
-#include "JSDedicatedWorkerContext.h"
-#include "JSWorkerContext.h"
-#include "WorkerContext.h"
+#include "JSDedicatedWorkerGlobalScope.h"
+#include "JSWorkerGlobalScope.h"
+#include "WorkerGlobalScope.h"
 
 #if ENABLE(SHARED_WORKERS)
-#include "JSSharedWorkerContext.h"
+#include "JSSharedWorkerGlobalScope.h"
 #endif
 
 using namespace JSC;
 
 namespace WebCore {
 
-const ClassInfo JSWorkerContextBase::s_info = { "WorkerContext", &JSDOMGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSWorkerContextBase) };
+const ClassInfo JSWorkerGlobalScopeBase::s_info = { "WorkerGlobalScope", &JSDOMGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSWorkerGlobalScopeBase) };
 
-JSWorkerContextBase::JSWorkerContextBase(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<WorkerContext> impl)
+JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<WorkerGlobalScope> impl)
     : JSDOMGlobalObject(vm, structure, normalWorld(vm))
     , m_impl(impl)
 {
 }
 
-void JSWorkerContextBase::finishCreation(VM& vm)
+void JSWorkerGlobalScopeBase::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 
-void JSWorkerContextBase::destroy(JSCell* cell)
+void JSWorkerGlobalScopeBase::destroy(JSCell* cell)
 {
-    static_cast<JSWorkerContextBase*>(cell)->JSWorkerContextBase::~JSWorkerContextBase();
+    static_cast<JSWorkerGlobalScopeBase*>(cell)->JSWorkerGlobalScopeBase::~JSWorkerGlobalScopeBase();
 }
 
-ScriptExecutionContext* JSWorkerContextBase::scriptExecutionContext() const
+ScriptExecutionContext* JSWorkerGlobalScopeBase::scriptExecutionContext() const
 {
     return m_impl.get();
 }
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkerContext* workerContext)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkerGlobalScope* workerGlobalScope)
 {
-    return toJS(exec, workerContext);
+    return toJS(exec, workerGlobalScope);
 }
 
-JSValue toJS(ExecState*, WorkerContext* workerContext)
+JSValue toJS(ExecState*, WorkerGlobalScope* workerGlobalScope)
 {
-    if (!workerContext)
+    if (!workerGlobalScope)
         return jsNull();
-    WorkerScriptController* script = workerContext->script();
+    WorkerScriptController* script = workerGlobalScope->script();
     if (!script)
         return jsNull();
-    JSWorkerContext* contextWrapper = script->workerContextWrapper();
+    JSWorkerGlobalScope* contextWrapper = script->workerGlobalScopeWrapper();
     ASSERT(contextWrapper);
     return contextWrapper;
 }
 
-JSDedicatedWorkerContext* toJSDedicatedWorkerContext(JSValue value)
+JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSValue value)
 {
     if (!value.isObject())
         return 0;
     const ClassInfo* classInfo = asObject(value)->classInfo();
-    if (classInfo == &JSDedicatedWorkerContext::s_info)
-        return jsCast<JSDedicatedWorkerContext*>(asObject(value));
+    if (classInfo == &JSDedicatedWorkerGlobalScope::s_info)
+        return jsCast<JSDedicatedWorkerGlobalScope*>(asObject(value));
     return 0;
 }
 
 #if ENABLE(SHARED_WORKERS)
-JSSharedWorkerContext* toJSSharedWorkerContext(JSValue value)
+JSSharedWorkerGlobalScope* toJSSharedWorkerGlobalScope(JSValue value)
 {
     if (!value.isObject())
         return 0;
     const ClassInfo* classInfo = asObject(value)->classInfo();
-    if (classInfo == &JSSharedWorkerContext::s_info)
-        return jsCast<JSSharedWorkerContext*>(asObject(value));
+    if (classInfo == &JSSharedWorkerGlobalScope::s_info)
+        return jsCast<JSSharedWorkerGlobalScope*>(asObject(value));
     return 0;
 }
 #endif
 
-JSWorkerContext* toJSWorkerContext(JSValue value)
+JSWorkerGlobalScope* toJSWorkerGlobalScope(JSValue value)
 {
-    JSWorkerContext* context = toJSDedicatedWorkerContext(value);
+    JSWorkerGlobalScope* context = toJSDedicatedWorkerGlobalScope(value);
 #if ENABLE(SHARED_WORKERS)
     if (!context)
-        context = toJSSharedWorkerContext(value);
+        context = toJSSharedWorkerGlobalScope(value);
 #endif
     return context;
 }

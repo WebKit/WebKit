@@ -38,7 +38,7 @@
 #include "Document.h"
 #include "NotificationClient.h"
 #include "SecurityOrigin.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 

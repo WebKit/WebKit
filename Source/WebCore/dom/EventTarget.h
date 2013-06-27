@@ -43,7 +43,7 @@ namespace WebCore {
     class AudioNode;
     class AudioContext;
     class AudioTrackList;
-    class DedicatedWorkerContext;
+    class DedicatedWorkerGlobalScope;
     class DOMApplicationCache;
     class DOMWindow;
     class Event;
@@ -65,7 +65,7 @@ namespace WebCore {
     class SVGElementInstance;
     class ScriptExecutionContext;
     class SharedWorker;
-    class SharedWorkerContext;
+    class SharedWorkerGlobalScope;
     class SourceBufferList;
     class TextTrack;
     class TextTrackCue;

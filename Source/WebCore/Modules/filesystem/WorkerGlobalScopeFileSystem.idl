@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,42 +20,22 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  */
 
-#ifndef WorkerContextIndexedDatabase_h
-#define WorkerContextIndexedDatabase_h
+[
+    Conditional=FILE_SYSTEM,
+] partial interface WorkerGlobalScope {
+    const unsigned short TEMPORARY = 0;
+    const unsigned short PERSISTENT = 1;
 
-#if ENABLE(WORKERS) && ENABLE(INDEXED_DATABASE)
+    void webkitRequestFileSystem(unsigned short type, long long size, optional FileSystemCallback successCallback, optional ErrorCallback errorCallback);
+    [RaisesException] DOMFileSystemSync webkitRequestFileSystemSync(unsigned short type, long long size);
+    void webkitResolveLocalFileSystemURL(DOMString url, EntryCallback successCallback, optional ErrorCallback errorCallback);
+    [RaisesException] EntrySync webkitResolveLocalFileSystemSyncURL(DOMString url);
 
-#include "Supplementable.h"
-
-namespace WebCore {
-
-class IDBFactory;
-class IDBFactoryBackendInterface;
-class ScriptExecutionContext;
-
-class WorkerContextIndexedDatabase : public Supplement<ScriptExecutionContext> {
-public:
-    virtual ~WorkerContextIndexedDatabase();
-    static WorkerContextIndexedDatabase* from(ScriptExecutionContext*);
-
-    static IDBFactory* indexedDB(ScriptExecutionContext*);
-
-private:
-    WorkerContextIndexedDatabase();
-
-    IDBFactory* indexedDB();
-    static const char* supplementName();
-
-    RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
-    RefPtr<IDBFactory> m_idbFactory;
+    attribute FileErrorConstructor FileError;
+    attribute FileExceptionConstructor FileException;
 };
 
-} // namespace WebCore
-
-#endif // ENABLE(WORKERS) && ENABLE(INDEXED_DATABASE)
-
-#endif // WorkerContextIndexedDatabase_h

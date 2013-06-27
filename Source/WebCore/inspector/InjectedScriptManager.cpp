@@ -50,7 +50,7 @@ PassOwnPtr<InjectedScriptManager> InjectedScriptManager::createForPage()
 
 PassOwnPtr<InjectedScriptManager> InjectedScriptManager::createForWorker()
 {
-    return adoptPtr(new InjectedScriptManager(&InjectedScriptManager::canAccessInspectedWorkerContext));
+    return adoptPtr(new InjectedScriptManager(&InjectedScriptManager::canAccessInspectedWorkerGlobalScope));
 }
 
 InjectedScriptManager::InjectedScriptManager(InspectedStateAccessCheck accessCheck)
@@ -144,7 +144,7 @@ void InjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
         m_scriptStateToId.remove(scriptStatesToRemove[i]);
 }
 
-bool InjectedScriptManager::canAccessInspectedWorkerContext(ScriptState*)
+bool InjectedScriptManager::canAccessInspectedWorkerGlobalScope(ScriptState*)
 {
     return true;
 }

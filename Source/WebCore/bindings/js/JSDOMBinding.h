@@ -77,7 +77,7 @@ class DOMStringList;
     };
 
     // Constructors using this base class depend on being in a Document and
-    // can never be used from a WorkerContext.
+    // can never be used from a WorkerGlobalScope.
     class DOMConstructorWithDocument : public DOMConstructorObject {
         typedef DOMConstructorObject Base;
     public:

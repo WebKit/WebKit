@@ -101,8 +101,8 @@ PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingA
 #if ENABLE(WORKERS)
 class WorkerProfilerAgent : public InspectorProfilerAgent {
 public:
-    WorkerProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, WorkerContext* workerContext, InspectorCompositeState* state, InjectedScriptManager* injectedScriptManager)
-        : InspectorProfilerAgent(instrumentingAgents, consoleAgent, state, injectedScriptManager), m_workerContext(workerContext) { }
+    WorkerProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, WorkerGlobalScope* workerGlobalScope, InspectorCompositeState* state, InjectedScriptManager* injectedScriptManager)
+        : InspectorProfilerAgent(instrumentingAgents, consoleAgent, state, injectedScriptManager), m_workerGlobalScope(workerGlobalScope) { }
     virtual ~WorkerProfilerAgent() { }
 
 private:
@@ -110,20 +110,20 @@ private:
 
     virtual void startProfiling(const String& title)
     {
-        ScriptProfiler::startForWorkerContext(m_workerContext, title);
+        ScriptProfiler::startForWorkerGlobalScope(m_workerGlobalScope, title);
     }
 
     virtual PassRefPtr<ScriptProfile> stopProfiling(const String& title)
     {
-        return ScriptProfiler::stopForWorkerContext(m_workerContext, title);
+        return ScriptProfiler::stopForWorkerGlobalScope(m_workerGlobalScope, title);
     }
 
-    WorkerContext* m_workerContext;
+    WorkerGlobalScope* m_workerGlobalScope;
 };
 
-PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, WorkerContext* workerContext, InspectorCompositeState* inspectorState, InjectedScriptManager* injectedScriptManager)
+PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, WorkerGlobalScope* workerGlobalScope, InspectorCompositeState* inspectorState, InjectedScriptManager* injectedScriptManager)
 {
-    return adoptPtr(new WorkerProfilerAgent(instrumentingAgents, consoleAgent, workerContext, inspectorState, injectedScriptManager));
+    return adoptPtr(new WorkerProfilerAgent(instrumentingAgents, consoleAgent, workerGlobalScope, inspectorState, injectedScriptManager));
 }
 #endif
 

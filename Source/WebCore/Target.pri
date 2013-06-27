@@ -38,7 +38,7 @@ SOURCES += \
     Modules/webdatabase/DatabaseContext.cpp \
     Modules/webdatabase/DatabaseServer.cpp \
     Modules/webdatabase/DatabaseSync.cpp \
-    Modules/webdatabase/WorkerContextWebDatabase.cpp \
+    Modules/webdatabase/WorkerGlobalScopeWebDatabase.cpp \
     accessibility/AccessibilityImageMapLink.cpp \
     accessibility/AccessibilityMediaControls.cpp \
     accessibility/AccessibilityMenuList.cpp \
@@ -242,13 +242,13 @@ SOURCES += \
     Modules/filesystem/FileWriterBase.cpp \
     Modules/filesystem/FileWriterSync.cpp \
     Modules/filesystem/LocalFileSystem.cpp \
-    Modules/filesystem/WorkerContextFileSystem.cpp \
+    Modules/filesystem/WorkerGlobalScopeFileSystem.cpp \
     Modules/navigatorcontentutils/NavigatorContentUtils.cpp \
     Modules/notifications/DOMWindowNotifications.cpp \
     Modules/notifications/Notification.cpp \
     Modules/notifications/NotificationCenter.cpp \
     Modules/notifications/NotificationController.cpp \
-    Modules/notifications/WorkerContextNotifications.cpp \
+    Modules/notifications/WorkerGlobalScopeNotifications.cpp \
     Modules/proximity/DeviceProximityController.cpp \
     Modules/proximity/DeviceProximityEvent.cpp \
     css/BasicShapeFunctions.cpp \
@@ -1369,7 +1369,7 @@ HEADERS += \
     bindings/js/JSNodeCustom.h \
     bindings/js/JSNodeFilterCondition.h \
     bindings/js/JSPluginElementFunctions.h \
-    bindings/js/JSWorkerContextBase.h \
+    bindings/js/JSWorkerGlobalScopeBase.h \
     bindings/js/JavaScriptCallFrame.h \
     bindings/js/PageScriptDebugServer.h \
     bindings/js/ScheduledAction.h \
@@ -1428,7 +1428,7 @@ HEADERS += \
     Modules/notifications/NotificationCenter.h \
     Modules/notifications/NotificationClient.h \
     Modules/notifications/NotificationController.h \
-    Modules/notifications/WorkerContextNotifications.h \
+    Modules/notifications/WorkerGlobalScopeNotifications.h \
     \
     Modules/proximity/DeviceProximityClient.h \
     Modules/proximity/DeviceProximityController.h \
@@ -1472,7 +1472,7 @@ HEADERS += \
     Modules/webdatabase/SQLTransactionStateMachine.h \
     Modules/webdatabase/SQLTransactionSync.h \
     Modules/webdatabase/SQLTransactionSyncCallback.h \
-    Modules/webdatabase/WorkerContextWebDatabase.h \
+    Modules/webdatabase/WorkerGlobalScopeWebDatabase.h \
     \
     css/BasicShapeFunctions.h \
     css/CSSAspectRatioValue.h \
@@ -2809,10 +2809,10 @@ HEADERS += \
     testing/MemoryInfo.h \
     testing/TypeConversions.h \
     workers/AbstractWorker.h \
-    workers/DedicatedWorkerContext.h \
+    workers/DedicatedWorkerGlobalScope.h \
     workers/DedicatedWorkerThread.h \
     workers/SharedWorker.h \
-    workers/WorkerContext.h \
+    workers/WorkerGlobalScope.h \
     workers/WorkerEventQueue.h \
     workers/Worker.h \
     workers/WorkerLocation.h \
@@ -3102,7 +3102,7 @@ enable?(INDEXED_DATABASE) {
         Modules/indexeddb/IDBRequest.cpp \
         Modules/indexeddb/IDBTransaction.cpp \
         Modules/indexeddb/PageGroupIndexedDatabase.cpp \
-        Modules/indexeddb/WorkerContextIndexedDatabase.cpp
+        Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
 }
 
 enable?(DATA_TRANSFER_ITEMS) {
@@ -3186,9 +3186,9 @@ enable?(ICONDATABASE) {
 
 enable?(WORKERS) {
     SOURCES += \
-        bindings/js/JSDedicatedWorkerContextCustom.cpp \
-        bindings/js/JSWorkerContextBase.cpp \
-        bindings/js/JSWorkerContextCustom.cpp \
+        bindings/js/JSDedicatedWorkerGlobalScopeCustom.cpp \
+        bindings/js/JSWorkerGlobalScopeBase.cpp \
+        bindings/js/JSWorkerGlobalScopeCustom.cpp \
         bindings/js/JSWorkerCustom.cpp \
         bindings/js/WorkerScriptController.cpp \
         bindings/js/WorkerScriptDebugServer.cpp
@@ -3197,10 +3197,10 @@ enable?(WORKERS) {
         loader/WorkerThreadableLoader.cpp \
         page/WorkerNavigator.cpp \
         workers/AbstractWorker.cpp \
-        workers/DedicatedWorkerContext.cpp \
+        workers/DedicatedWorkerGlobalScope.cpp \
         workers/DedicatedWorkerThread.cpp \
         workers/Worker.cpp \
-        workers/WorkerContext.cpp \
+        workers/WorkerGlobalScope.cpp \
         workers/WorkerEventQueue.cpp \
         workers/WorkerLocation.cpp \
         workers/WorkerMessagingProxy.cpp \
@@ -3216,7 +3216,7 @@ enable?(SHARED_WORKERS) {
     SOURCES += \
         workers/DefaultSharedWorkerRepository.cpp \
         workers/SharedWorker.cpp \
-        workers/SharedWorkerContext.cpp \
+        workers/SharedWorkerGlobalScope.cpp \
         workers/SharedWorkerRepository.cpp \
         workers/SharedWorkerThread.cpp
 }

@@ -33,8 +33,8 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
 #include "WorkerScriptDebugServer.h"
 
-#include "WorkerContext.h"
 #include "WorkerDebuggerAgent.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
 #include <runtime/VM.h>
@@ -42,9 +42,9 @@
 
 namespace WebCore {
 
-WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerContext* context, const String& mode)
+WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerGlobalScope* context, const String& mode)
     : ScriptDebugServer()
-    , m_workerContext(context)
+    , m_workerGlobalScope(context)
     , m_debuggerTaskMode(mode)
 {
 }
@@ -55,7 +55,7 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
         return;
 
     if (m_listeners.isEmpty())
-        m_workerContext->script()->attachDebugger(this);
+        m_workerGlobalScope->script()->attachDebugger(this);
     m_listeners.add(listener);
     recompileAllJSFunctions(0);
 }
@@ -68,7 +68,7 @@ void WorkerScriptDebugServer::willExecuteProgram(const JSC::DebuggerCallFrame& d
 
 void WorkerScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)
 {
-    JSC::VM* vm = m_workerContext->script()->vm();
+    JSC::VM* vm = m_workerGlobalScope->script()->vm();
 
     JSC::JSLockHolder lock(vm);
     // If JavaScript stack is not empty postpone recompilation.
@@ -85,14 +85,14 @@ void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener)
 
     m_listeners.remove(listener);
     if (m_listeners.isEmpty())
-        m_workerContext->script()->detachDebugger(this);
+        m_workerGlobalScope->script()->detachDebugger(this);
 }
 
 void WorkerScriptDebugServer::runEventLoopWhilePaused()
 {
     MessageQueueWaitResult result;
     do {
-        result = m_workerContext->thread()->runLoop().runInMode(m_workerContext, m_debuggerTaskMode);
+        result = m_workerGlobalScope->thread()->runLoop().runInMode(m_workerGlobalScope, m_debuggerTaskMode);
     // Keep waiting until execution is resumed.
     } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
 }

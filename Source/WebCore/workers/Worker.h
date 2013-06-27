@@ -44,7 +44,7 @@
 namespace WebCore {
 
     class ScriptExecutionContext;
-    class WorkerContextProxy;
+    class WorkerGlobalScopeProxy;
     class WorkerScriptLoader;
 
     typedef int ExceptionCode;
@@ -79,7 +79,7 @@ namespace WebCore {
         virtual void derefEventTarget() OVERRIDE { deref(); }
 
         RefPtr<WorkerScriptLoader> m_scriptLoader;
-        WorkerContextProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
+        WorkerGlobalScopeProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
     };
 
 } // namespace WebCore

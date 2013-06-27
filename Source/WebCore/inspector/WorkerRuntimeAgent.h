@@ -38,11 +38,11 @@
 
 namespace WebCore {
 
-class WorkerContext;
+class WorkerGlobalScope;
 
 class WorkerRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    static PassOwnPtr<WorkerRuntimeAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InjectedScriptManager* injectedScriptManager, WorkerContext* context)
+    static PassOwnPtr<WorkerRuntimeAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InjectedScriptManager* injectedScriptManager, WorkerGlobalScope* context)
     {
         return adoptPtr(new WorkerRuntimeAgent(instrumentingAgents, state, injectedScriptManager, context));
     }
@@ -52,15 +52,15 @@ public:
     virtual void run(ErrorString*);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    void pauseWorkerContext(WorkerContext*);
+    void pauseWorkerGlobalScope(WorkerGlobalScope*);
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 private:
-    WorkerRuntimeAgent(InstrumentingAgents*, InspectorCompositeState*, InjectedScriptManager*, WorkerContext*);
+    WorkerRuntimeAgent(InstrumentingAgents*, InspectorCompositeState*, InjectedScriptManager*, WorkerGlobalScope*);
     virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
     virtual void muteConsole();
     virtual void unmuteConsole();
-    WorkerContext* m_workerContext;
+    WorkerGlobalScope* m_workerGlobalScope;
     bool m_paused;
 };
 

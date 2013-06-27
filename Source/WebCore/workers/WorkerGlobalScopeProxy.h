@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,25 +28,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    NoInterfaceObject,
-    Conditional=WORKERS,
-    ExtendsDOMGlobalObject,
-    IsWorkerContext,
-    JSGenerateToNativeObject,
-    JSNoStaticTables,
-] interface DedicatedWorkerContext : WorkerContext {
+#ifndef WorkerGlobalScopeProxy_h
+#define WorkerGlobalScopeProxy_h
 
-#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [Custom, RaisesException] void postMessage(any message, optional Array messagePorts);
-#else
-    // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.
-    [RaisesException] void postMessage(DOMString message, optional MessagePort messagePort);
+#if ENABLE(WORKERS)
+
+#include "MessagePort.h"
+#include "WorkerThread.h"
+#include <wtf/Forward.h>
+#include <wtf/PassOwnPtr.h>
+
+namespace WebCore {
+
+    class KURL;
+    class Worker;
+
+    // A proxy to talk to the worker context.
+    class WorkerGlobalScopeProxy {
+    public:
+        static WorkerGlobalScopeProxy* create(Worker*);
+
+        virtual ~WorkerGlobalScopeProxy() { }
+
+        virtual void startWorkerGlobalScope(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode) = 0;
+
+        virtual void terminateWorkerGlobalScope() = 0;
+
+        virtual void postMessageToWorkerGlobalScope(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>) = 0;
+
+        virtual bool hasPendingActivity() const = 0;
+
+        virtual void workerObjectDestroyed() = 0;
+
+#if ENABLE(INSPECTOR)
+        class PageInspector {
+        public:
+            virtual ~PageInspector() { }
+            virtual void dispatchMessageFromWorker(const String&) = 0;
+        };
+        virtual void connectToInspector(PageInspector*) { }
+        virtual void disconnectFromInspector() { }
+        virtual void sendMessageToInspector(const String&) { }
 #endif
-#endif
+    };
 
-             attribute EventListener onmessage;
+} // namespace WebCore
 
-};
+#endif // ENABLE(WORKERS)
 
+#endif // WorkerGlobalScopeProxy_h

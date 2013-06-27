@@ -158,8 +158,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDataTransferItemList.h \
 	DerivedSources/WebCore/JSDataView.cpp \
 	DerivedSources/WebCore/JSDataView.h \
-	DerivedSources/WebCore/JSDedicatedWorkerContext.cpp \
-	DerivedSources/WebCore/JSDedicatedWorkerContext.h \
+	DerivedSources/WebCore/JSDedicatedWorkerGlobalScope.cpp \
+	DerivedSources/WebCore/JSDedicatedWorkerGlobalScope.h \
 	DerivedSources/WebCore/JSDelayNode.cpp \
 	DerivedSources/WebCore/JSDelayNode.h \
 	DerivedSources/WebCore/JSDeviceMotionEvent.cpp \
@@ -676,8 +676,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSecurityPolicyViolationEvent.h \
 	DerivedSources/WebCore/JSShadowRoot.cpp \
 	DerivedSources/WebCore/JSShadowRoot.h \
-	DerivedSources/WebCore/JSSharedWorkerContext.cpp \
-	DerivedSources/WebCore/JSSharedWorkerContext.h \
+	DerivedSources/WebCore/JSSharedWorkerGlobalScope.cpp \
+	DerivedSources/WebCore/JSSharedWorkerGlobalScope.h \
 	DerivedSources/WebCore/JSSharedWorker.cpp \
 	DerivedSources/WebCore/JSSharedWorker.h \
 	DerivedSources/WebCore/JSSourceBuffer.cpp \
@@ -854,8 +854,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebSocket.h \
 	DerivedSources/WebCore/JSWheelEvent.cpp \
 	DerivedSources/WebCore/JSWheelEvent.h \
-	DerivedSources/WebCore/JSWorkerContext.cpp \
-	DerivedSources/WebCore/JSWorkerContext.h \
+	DerivedSources/WebCore/JSWorkerGlobalScope.cpp \
+	DerivedSources/WebCore/JSWorkerGlobalScope.h \
 	DerivedSources/WebCore/JSWorker.cpp \
 	DerivedSources/WebCore/JSWorker.h \
 	DerivedSources/WebCore/JSWorkerLocation.cpp \
@@ -1239,7 +1239,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/filesystem/FileWriterSync.idl \
 	$(WebCore)/Modules/filesystem/Metadata.idl \
 	$(WebCore)/Modules/filesystem/MetadataCallback.idl \
-	$(WebCore)/Modules/filesystem/WorkerContextFileSystem.idl \
+	$(WebCore)/Modules/filesystem/WorkerGlobalScopeFileSystem.idl \
 	$(WebCore)/Modules/gamepad/Gamepad.idl \
 	$(WebCore)/Modules/gamepad/GamepadList.idl \
 	$(WebCore)/Modules/gamepad/NavigatorGamepad.idl \
@@ -1263,7 +1263,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/indexeddb/IDBRequest.idl \
 	$(WebCore)/Modules/indexeddb/IDBTransaction.idl \
 	$(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
-	$(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+	$(WebCore)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
 	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
@@ -1294,7 +1294,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/notifications/Notification.idl \
 	$(WebCore)/Modules/notifications/NotificationCenter.idl \
 	$(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
-	$(WebCore)/Modules/notifications/WorkerContextNotifications.idl \
+	$(WebCore)/Modules/notifications/WorkerGlobalScopeNotifications.idl \
 	$(WebCore)/Modules/proximity/DeviceProximityEvent.idl \
 	$(WebCore)/Modules/quota/DOMWindowQuota.idl \
 	$(WebCore)/Modules/quota/NavigatorStorageQuota.idl \
@@ -1345,7 +1345,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
 	$(WebCore)/Modules/webdatabase/SQLTransactionSync.idl \
 	$(WebCore)/Modules/webdatabase/SQLTransactionSyncCallback.idl \
-	$(WebCore)/Modules/webdatabase/WorkerContextWebDatabase.idl \
+	$(WebCore)/Modules/webdatabase/WorkerGlobalScopeWebDatabase.idl \
 	$(WebCore)/Modules/websockets/CloseEvent.idl \
 	$(WebCore)/Modules/websockets/WebSocket.idl \
 	$(WebCore)/css/CSSCharsetRule.idl \
@@ -1795,11 +1795,11 @@ dom_binding_idls += \
 	$(WebCore)/testing/MemoryInfo.idl \
 	$(WebCore)/testing/TypeConversions.idl \
 	$(WebCore)/workers/AbstractWorker.idl \
-	$(WebCore)/workers/DedicatedWorkerContext.idl \
+	$(WebCore)/workers/DedicatedWorkerGlobalScope.idl \
 	$(WebCore)/workers/SharedWorker.idl \
-	$(WebCore)/workers/SharedWorkerContext.idl \
+	$(WebCore)/workers/SharedWorkerGlobalScope.idl \
 	$(WebCore)/workers/Worker.idl \
-	$(WebCore)/workers/WorkerContext.idl \
+	$(WebCore)/workers/WorkerGlobalScope.idl \
 	$(WebCore)/workers/WorkerLocation.idl \
 	$(WebCore)/xml/DOMParser.idl \
 	$(WebCore)/xml/XMLHttpRequest.idl \
@@ -1879,8 +1879,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/filesystem/LocalFileSystem.h \
 	Source/WebCore/Modules/filesystem/MetadataCallback.h \
 	Source/WebCore/Modules/filesystem/Metadata.h \
-	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.cpp \
-	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.h \
+	Source/WebCore/Modules/filesystem/WorkerGlobalScopeFileSystem.cpp \
+	Source/WebCore/Modules/filesystem/WorkerGlobalScopeFileSystem.h \
 	Source/WebCore/Modules/gamepad/Gamepad.cpp \
 	Source/WebCore/Modules/gamepad/Gamepad.h \
 	Source/WebCore/Modules/gamepad/GamepadList.cpp \
@@ -1970,8 +1970,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IndexedDB.h \
 	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.cpp \
 	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.h \
-	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.cpp \
-	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.h \
+	Source/WebCore/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp \
+	Source/WebCore/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.h \
 	Source/WebCore/Modules/mediasource/MediaSource.cpp \
 	Source/WebCore/Modules/mediasource/MediaSource.h \
 	Source/WebCore/Modules/mediasource/MediaSourceRegistry.cpp \
@@ -2046,8 +2046,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/notifications/Notification.cpp \
 	Source/WebCore/Modules/notifications/Notification.h \
 	Source/WebCore/Modules/notifications/NotificationPermissionCallback.h \
-	Source/WebCore/Modules/notifications/WorkerContextNotifications.cpp \
-	Source/WebCore/Modules/notifications/WorkerContextNotifications.h \
+	Source/WebCore/Modules/notifications/WorkerGlobalScopeNotifications.cpp \
+	Source/WebCore/Modules/notifications/WorkerGlobalScopeNotifications.h \
 	Source/WebCore/Modules/proximity/DeviceProximityClient.h \
 	Source/WebCore/Modules/proximity/DeviceProximityController.cpp \
 	Source/WebCore/Modules/proximity/DeviceProximityController.h \
@@ -2231,8 +2231,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/SQLTransactionStateMachine.h \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSync.cpp \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSync.h \
-	Source/WebCore/Modules/webdatabase/WorkerContextWebDatabase.cpp \
-	Source/WebCore/Modules/webdatabase/WorkerContextWebDatabase.h \
+	Source/WebCore/Modules/webdatabase/WorkerGlobalScopeWebDatabase.cpp \
+	Source/WebCore/Modules/webdatabase/WorkerGlobalScopeWebDatabase.h \
 	Source/WebCore/Modules/websockets/CloseEvent.h \
 	Source/WebCore/Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp \
 	Source/WebCore/Modules/websockets/ThreadableWebSocketChannelClientWrapper.h \
@@ -2392,7 +2392,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSDOMWrapper.cpp \
 	Source/WebCore/bindings/js/JSDOMWrapper.h \
 	Source/WebCore/bindings/js/JSDataViewCustom.cpp \
-	Source/WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
+	Source/WebCore/bindings/js/JSDedicatedWorkerGlobalScopeCustom.cpp \
 	Source/WebCore/bindings/js/JSDeviceMotionEventCustom.cpp \
 	Source/WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \
 	Source/WebCore/bindings/js/JSDocumentCustom.cpp \
@@ -2497,9 +2497,9 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebGLRenderingContextCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitPointCustom.cpp \
-	Source/WebCore/bindings/js/JSWorkerContextBase.cpp \
-	Source/WebCore/bindings/js/JSWorkerContextBase.h \
-	Source/WebCore/bindings/js/JSWorkerContextCustom.cpp \
+	Source/WebCore/bindings/js/JSWorkerGlobalScopeBase.cpp \
+	Source/WebCore/bindings/js/JSWorkerGlobalScopeBase.h \
+	Source/WebCore/bindings/js/JSWorkerGlobalScopeCustom.cpp \
 	Source/WebCore/bindings/js/JSWorkerCustom.cpp \
 	Source/WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
 	Source/WebCore/bindings/js/JSXMLHttpRequestUploadCustom.cpp \
@@ -4731,14 +4731,14 @@ webcore_sources += \
 	Source/WebCore/WebCorePrefix.h \
 	Source/WebCore/workers/AbstractWorker.cpp \
 	Source/WebCore/workers/AbstractWorker.h \
-	Source/WebCore/workers/DedicatedWorkerContext.cpp \
-	Source/WebCore/workers/DedicatedWorkerContext.h \
+	Source/WebCore/workers/DedicatedWorkerGlobalScope.cpp \
+	Source/WebCore/workers/DedicatedWorkerGlobalScope.h \
 	Source/WebCore/workers/DedicatedWorkerThread.cpp \
 	Source/WebCore/workers/DedicatedWorkerThread.h \
 	Source/WebCore/workers/DefaultSharedWorkerRepository.cpp \
 	Source/WebCore/workers/DefaultSharedWorkerRepository.h \
-	Source/WebCore/workers/SharedWorkerContext.cpp \
-	Source/WebCore/workers/SharedWorkerContext.h \
+	Source/WebCore/workers/SharedWorkerGlobalScope.cpp \
+	Source/WebCore/workers/SharedWorkerGlobalScope.h \
 	Source/WebCore/workers/SharedWorker.cpp \
 	Source/WebCore/workers/SharedWorker.h \
 	Source/WebCore/workers/SharedWorkerRepository.cpp \
@@ -4746,9 +4746,9 @@ webcore_sources += \
 	Source/WebCore/workers/SharedWorkerStrategy.h \
 	Source/WebCore/workers/SharedWorkerThread.cpp \
 	Source/WebCore/workers/SharedWorkerThread.h \
-	Source/WebCore/workers/WorkerContext.cpp \
-	Source/WebCore/workers/WorkerContext.h \
-	Source/WebCore/workers/WorkerContextProxy.h \
+	Source/WebCore/workers/WorkerGlobalScope.cpp \
+	Source/WebCore/workers/WorkerGlobalScope.h \
+	Source/WebCore/workers/WorkerGlobalScopeProxy.h \
 	Source/WebCore/workers/WorkerEventQueue.cpp \
 	Source/WebCore/workers/WorkerEventQueue.h \
 	Source/WebCore/workers/Worker.cpp \

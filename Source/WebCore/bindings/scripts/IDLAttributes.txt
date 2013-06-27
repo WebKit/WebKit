@@ -68,7 +68,7 @@ ImplementedAs=*
 InitializedByEventConstructor
 InterfaceName=*
 IsIndex
-IsWorkerContext
+IsWorkerGlobalScope
 JSCustomDefineOwnProperty
 JSCustomDefineOwnPropertyOnPrototype
 JSCustomFinalize

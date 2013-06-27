@@ -218,7 +218,7 @@ void ThreadableWebSocketChannelClientWrapper::resume()
 
 void ThreadableWebSocketChannelClientWrapper::processPendingTasksCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
 {
-    ASSERT_UNUSED(context, context->isWorkerContext());
+    ASSERT_UNUSED(context, context->isWorkerGlobalScope());
     wrapper->processPendingTasks();
 }
 

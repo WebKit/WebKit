@@ -35,7 +35,7 @@
 #include "MessageEvent.h"
 #include "SecurityOrigin.h"
 #include "Timer.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -173,7 +173,7 @@ void MessagePort::dispatchMessages()
 
 #if ENABLE(WORKERS)
         // close() in Worker onmessage handler should prevent next message from dispatching.
-        if (m_scriptExecutionContext->isWorkerContext() && static_cast<WorkerContext*>(m_scriptExecutionContext)->isClosing())
+        if (m_scriptExecutionContext->isWorkerGlobalScope() && static_cast<WorkerGlobalScope*>(m_scriptExecutionContext)->isClosing())
             return;
 #endif
 

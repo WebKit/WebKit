@@ -24,7 +24,7 @@
 #include "CrossThreadCopier.h"
 #include "PlatformAsyncFileSystemCallbacks.h"
 #include "ScriptExecutionContext.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 
 #include <BlackBerryPlatformWebFileSystemFileWriter.h>
 #include <BlackBerryPlatformWebFileSystemPrimitives.h>
@@ -46,7 +46,7 @@ template<> struct CrossThreadCopierBase<false, false, WorkerPlatformAsyncFileSys
 template<> struct CrossThreadCopierBase<false, false, Blob*> : public CrossThreadCopierPassThrough<Blob*> {
 };
 
-template<> struct CrossThreadCopierBase<false, false, WorkerContext*> : public CrossThreadCopierPassThrough<WorkerContext*> {
+template<> struct CrossThreadCopierBase<false, false, WorkerGlobalScope*> : public CrossThreadCopierPassThrough<WorkerGlobalScope*> {
 };
 
 template<> struct CrossThreadCopierBase<false, false, AsyncFileWriterClient*> : public CrossThreadCopierPassThrough<AsyncFileWriterClient*> {
@@ -56,20 +56,20 @@ void postTaskToMainThread(PassOwnPtr<ScriptExecutionContext::Task>);
 
 class KURL;
 
-class WorkerPlatformAsyncFileSystemCallbacks: public PlatformAsyncFileSystemCallbacks, public WorkerContext::Observer {
+class WorkerPlatformAsyncFileSystemCallbacks: public PlatformAsyncFileSystemCallbacks, public WorkerGlobalScope::Observer {
 public:
-    WorkerPlatformAsyncFileSystemCallbacks(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, WorkerContext* context, const String& mode, const KURL& rootURL = KURL())
+    WorkerPlatformAsyncFileSystemCallbacks(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, WorkerGlobalScope* context, const String& mode, const KURL& rootURL = KURL())
         : PlatformAsyncFileSystemCallbacks(callbacks, rootURL)
-        , WorkerContext::Observer(context)
+        , WorkerGlobalScope::Observer(context)
         , m_context(context)
         , m_mode(mode)
     {
     }
 
     // For createWriter.
-    WorkerPlatformAsyncFileSystemCallbacks(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, AsyncFileWriterClient* client, WorkerContext* context, const String& mode)
+    WorkerPlatformAsyncFileSystemCallbacks(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, AsyncFileWriterClient* client, WorkerGlobalScope* context, const String& mode)
         : PlatformAsyncFileSystemCallbacks(callbacks, client)
-        , WorkerContext::Observer(context)
+        , WorkerGlobalScope::Observer(context)
         , m_context(context)
         , m_mode(mode)
     {
@@ -77,7 +77,7 @@ public:
 
     void postTaskToWorkerThread(PassOwnPtr<ScriptExecutionContext::Task>);
 
-    // From WorkerContext::Observer. This will be called on worker thread.
+    // From WorkerGlobalScope::Observer. This will be called on worker thread.
     virtual void notifyStop();
 
     virtual void notifyOpenFileSystem(BlackBerry::Platform::WebFileSystem* platformFileSystem);
@@ -102,7 +102,7 @@ private:
     static void notifyReadDirectoryEntryOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks*, const std::vector<BlackBerry::Platform::WebFileSystemEntry>& entries, bool hasMore);
     static void notifyCreateFileWriterOnWorkerThread(ScriptExecutionContext*, WorkerPlatformAsyncFileSystemCallbacks*, BlackBerry::Platform::WebFileWriter* platformWriter, long long length);
 
-    WorkerContext* m_context;
+    WorkerGlobalScope* m_context;
     String m_mode;
     WTF::Mutex m_mutex;
 };

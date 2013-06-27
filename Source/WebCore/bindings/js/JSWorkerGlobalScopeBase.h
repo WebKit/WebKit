@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef JSWorkerContextBase_h
-#define JSWorkerContextBase_h
+#ifndef JSWorkerGlobalScopeBase_h
+#define JSWorkerGlobalScopeBase_h
 
 #if ENABLE(WORKERS)
 
@@ -33,19 +33,19 @@
 
 namespace WebCore {
 
-    class JSDedicatedWorkerContext;
-    class JSSharedWorkerContext;
-    class JSWorkerContext;
-    class WorkerContext;
+    class JSDedicatedWorkerGlobalScope;
+    class JSSharedWorkerGlobalScope;
+    class JSWorkerGlobalScope;
+    class WorkerGlobalScope;
 
-    class JSWorkerContextBase : public JSDOMGlobalObject {
+    class JSWorkerGlobalScopeBase : public JSDOMGlobalObject {
         typedef JSDOMGlobalObject Base;
     public:
         static void destroy(JSC::JSCell*);
 
         static const JSC::ClassInfo s_info;
 
-        WorkerContext* impl() const { return m_impl.get(); }
+        WorkerGlobalScope* impl() const { return m_impl.get(); }
         ScriptExecutionContext* scriptExecutionContext() const;
 
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -54,27 +54,27 @@ namespace WebCore {
         }
 
     protected:
-        JSWorkerContextBase(JSC::VM&, JSC::Structure*, PassRefPtr<WorkerContext>);
+        JSWorkerGlobalScopeBase(JSC::VM&, JSC::Structure*, PassRefPtr<WorkerGlobalScope>);
         void finishCreation(JSC::VM&);
 
     private:
-        RefPtr<WorkerContext> m_impl;
+        RefPtr<WorkerGlobalScope> m_impl;
     };
 
-    // Returns a JSWorkerContext or jsNull()
-    // Always ignores the execState and passed globalObject, WorkerContext is itself a globalObject and will always use its own prototype chain.
-    JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, WorkerContext*);
-    JSC::JSValue toJS(JSC::ExecState*, WorkerContext*);
+    // Returns a JSWorkerGlobalScope or jsNull()
+    // Always ignores the execState and passed globalObject, WorkerGlobalScope is itself a globalObject and will always use its own prototype chain.
+    JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, WorkerGlobalScope*);
+    JSC::JSValue toJS(JSC::ExecState*, WorkerGlobalScope*);
 
-    JSDedicatedWorkerContext* toJSDedicatedWorkerContext(JSC::JSValue);
-    JSWorkerContext* toJSWorkerContext(JSC::JSValue);
+    JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSC::JSValue);
+    JSWorkerGlobalScope* toJSWorkerGlobalScope(JSC::JSValue);
 
 #if ENABLE(SHARED_WORKERS)
-    JSSharedWorkerContext* toJSSharedWorkerContext(JSC::JSValue);
+    JSSharedWorkerGlobalScope* toJSSharedWorkerGlobalScope(JSC::JSValue);
 #endif
 
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)
 
-#endif // JSWorkerContextBase_h
+#endif // JSWorkerGlobalScopeBase_h

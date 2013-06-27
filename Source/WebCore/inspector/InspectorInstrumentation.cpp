@@ -73,7 +73,7 @@
 #include "ScriptProfile.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
@@ -1128,29 +1128,29 @@ bool InspectorInstrumentation::shouldPauseDedicatedWorkerOnStartImpl(Instrumenti
     return false;
 }
 
-void InspectorInstrumentation::didStartWorkerContextImpl(InstrumentingAgents* instrumentingAgents, WorkerContextProxy* workerContextProxy, const KURL& url)
+void InspectorInstrumentation::didStartWorkerGlobalScopeImpl(InstrumentingAgents* instrumentingAgents, WorkerGlobalScopeProxy* workerGlobalScopeProxy, const KURL& url)
 {
     if (InspectorWorkerAgent* workerAgent = instrumentingAgents->inspectorWorkerAgent())
-        workerAgent->didStartWorkerContext(workerContextProxy, url);
+        workerAgent->didStartWorkerGlobalScope(workerGlobalScopeProxy, url);
 }
 
-void InspectorInstrumentation::willEvaluateWorkerScript(WorkerContext* workerContext, int workerThreadStartMode)
+void InspectorInstrumentation::willEvaluateWorkerScript(WorkerGlobalScope* workerGlobalScope, int workerThreadStartMode)
 {
-    if (workerThreadStartMode != PauseWorkerContextOnStart)
+    if (workerThreadStartMode != PauseWorkerGlobalScopeOnStart)
         return;
-    InstrumentingAgents* instrumentingAgents = instrumentationForWorkerContext(workerContext);
+    InstrumentingAgents* instrumentingAgents = instrumentationForWorkerGlobalScope(workerGlobalScope);
     if (!instrumentingAgents)
         return;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (WorkerRuntimeAgent* runtimeAgent = instrumentingAgents->workerRuntimeAgent())
-        runtimeAgent->pauseWorkerContext(workerContext);
+        runtimeAgent->pauseWorkerGlobalScope(workerGlobalScope);
 #endif
 }
 
-void InspectorInstrumentation::workerContextTerminatedImpl(InstrumentingAgents* instrumentingAgents, WorkerContextProxy* proxy)
+void InspectorInstrumentation::workerGlobalScopeTerminatedImpl(InstrumentingAgents* instrumentingAgents, WorkerGlobalScopeProxy* proxy)
 {
     if (InspectorWorkerAgent* workerAgent = instrumentingAgents->inspectorWorkerAgent())
-        workerAgent->workerContextTerminated(proxy);
+        workerAgent->workerGlobalScopeTerminated(proxy);
 }
 #endif
 
@@ -1336,17 +1336,17 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForRenderer(Re
 }
 
 #if ENABLE(WORKERS)
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWorkerContext(WorkerContext* workerContext)
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
 {
-    if (!workerContext)
+    if (!workerGlobalScope)
         return 0;
-    return instrumentationForWorkerContext(workerContext);
+    return instrumentationForWorkerGlobalScope(workerGlobalScope);
 }
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForNonDocumentContext(ScriptExecutionContext* context)
 {
-    if (context->isWorkerContext())
-        return instrumentationForWorkerContext(static_cast<WorkerContext*>(context));
+    if (context->isWorkerGlobalScope())
+        return instrumentationForWorkerGlobalScope(static_cast<WorkerGlobalScope*>(context));
     return 0;
 }
 #endif

@@ -36,14 +36,14 @@
 #include "Node.h"
 #include "Page.h"
 #include "ScriptController.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerScriptController.h"
 #include <heap/StrongInlines.h>
 #include <interpreter/CallFrame.h>
 #include <runtime/JSGlobalObject.h>
 
 #if ENABLE(WORKERS)
-#include "JSWorkerContext.h"
+#include "JSWorkerGlobalScope.h"
 #endif
 
 namespace WebCore {
@@ -93,9 +93,9 @@ ScriptState* scriptStateFromPage(DOMWrapperWorld* world, Page* page)
 }
 
 #if ENABLE(WORKERS)
-ScriptState* scriptStateFromWorkerContext(WorkerContext* workerContext)
+ScriptState* scriptStateFromWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
 {
-    return workerContext->script()->workerContextWrapper()->globalExec();
+    return workerGlobalScope->script()->workerGlobalScopeWrapper()->globalExec();
 }
 #endif
 

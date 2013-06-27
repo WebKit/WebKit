@@ -69,9 +69,9 @@ void ScriptProfiler::startForPage(Page* inspectedPage, const String& title)
 }
 
 #if ENABLE(WORKERS)
-void ScriptProfiler::startForWorkerContext(WorkerContext* context, const String& title)
+void ScriptProfiler::startForWorkerGlobalScope(WorkerGlobalScope* context, const String& title)
 {
-    start(scriptStateFromWorkerContext(context), title);
+    start(scriptStateFromWorkerGlobalScope(context), title);
 }
 #endif
 
@@ -88,9 +88,9 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stopForPage(Page* inspectedPage, const
 }
 
 #if ENABLE(WORKERS)
-PassRefPtr<ScriptProfile> ScriptProfiler::stopForWorkerContext(WorkerContext* context, const String& title)
+PassRefPtr<ScriptProfile> ScriptProfiler::stopForWorkerGlobalScope(WorkerGlobalScope* context, const String& title)
 {
-    return stop(scriptStateFromWorkerContext(context), title);
+    return stop(scriptStateFromWorkerGlobalScope(context), title);
 }
 #endif
 

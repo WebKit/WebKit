@@ -24,7 +24,7 @@
 #include "PlatformFileWriterClient.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerAsyncFileWriterBlackBerry.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-class WorkerContext;
+class WorkerGlobalScope;
 
-class WorkerPlatformFileWriterClient: public PlatformFileWriterClient, public WorkerContext::Observer {
+class WorkerPlatformFileWriterClient: public PlatformFileWriterClient, public WorkerGlobalScope::Observer {
 public:
-    static PassOwnPtr<WorkerPlatformFileWriterClient> create(WorkerContext* context, const String& mode, AsyncFileWriterClient* client, WorkerAsyncFileWriterBlackBerry* writer)
+    static PassOwnPtr<WorkerPlatformFileWriterClient> create(WorkerGlobalScope* context, const String& mode, AsyncFileWriterClient* client, WorkerAsyncFileWriterBlackBerry* writer)
     {
         return adoptPtr(new WorkerPlatformFileWriterClient(context, mode, client, writer));
     }
@@ -45,7 +45,7 @@ public:
     virtual void notifyTruncate();
     virtual void notifyFail(BlackBerry::Platform::WebFileError);
 
-    // From WorkerContext::Observer
+    // From WorkerGlobalScope::Observer
     virtual void notifyStop()
     {
         WTF::MutexLocker locker(m_mutex);
@@ -53,9 +53,9 @@ public:
     }
 
 private:
-    WorkerPlatformFileWriterClient(WorkerContext* context, const String& mode, AsyncFileWriterClient* client, WorkerAsyncFileWriterBlackBerry* writer)
+    WorkerPlatformFileWriterClient(WorkerGlobalScope* context, const String& mode, AsyncFileWriterClient* client, WorkerAsyncFileWriterBlackBerry* writer)
         : PlatformFileWriterClient(client, writer)
-        , WorkerContext::Observer(context)
+        , WorkerGlobalScope::Observer(context)
         , m_context(context)
         , m_mode(mode)
     { }
@@ -66,7 +66,7 @@ private:
     static void notifyFailOnWorkerThread(ScriptExecutionContext*, WorkerPlatformFileWriterClient* platformClient, BlackBerry::Platform::WebFileError);
     static void notifyTruncateOnWorkerThread(ScriptExecutionContext*, WorkerPlatformFileWriterClient* platformClient);
 
-    WorkerContext* m_context;
+    WorkerGlobalScope* m_context;
     String m_mode;
     WTF::Mutex m_mutex;
 };

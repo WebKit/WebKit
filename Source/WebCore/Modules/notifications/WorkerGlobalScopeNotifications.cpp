@@ -26,46 +26,46 @@
  */
 
 #include "config.h"
-#include "WorkerContextNotifications.h"
+#include "WorkerGlobalScopeNotifications.h"
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "NotificationCenter.h"
-#include "WorkerContext.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 
 namespace WebCore {
 
-WorkerContextNotifications::WorkerContextNotifications(WorkerContext* context)
+WorkerGlobalScopeNotifications::WorkerGlobalScopeNotifications(WorkerGlobalScope* context)
     : m_context(context)
 {
 }
 
-WorkerContextNotifications::~WorkerContextNotifications()
+WorkerGlobalScopeNotifications::~WorkerGlobalScopeNotifications()
 {
 }
 
-const char* WorkerContextNotifications::supplementName()
+const char* WorkerGlobalScopeNotifications::supplementName()
 {
-    return "WorkerContextNotifications";
+    return "WorkerGlobalScopeNotifications";
 }
 
-WorkerContextNotifications* WorkerContextNotifications::from(WorkerContext* context)
+WorkerGlobalScopeNotifications* WorkerGlobalScopeNotifications::from(WorkerGlobalScope* context)
 {
-    WorkerContextNotifications* supplement = static_cast<WorkerContextNotifications*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
+    WorkerGlobalScopeNotifications* supplement = static_cast<WorkerGlobalScopeNotifications*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
     if (!supplement) {
-        supplement = new WorkerContextNotifications(context);
+        supplement = new WorkerGlobalScopeNotifications(context);
         Supplement<ScriptExecutionContext>::provideTo(context, supplementName(), adoptPtr(supplement));
     }
     return supplement;
 }
 
-NotificationCenter* WorkerContextNotifications::webkitNotifications(WorkerContext* context)
+NotificationCenter* WorkerGlobalScopeNotifications::webkitNotifications(WorkerGlobalScope* context)
 {
-    return WorkerContextNotifications::from(context)->webkitNotifications();
+    return WorkerGlobalScopeNotifications::from(context)->webkitNotifications();
 }
 
-NotificationCenter* WorkerContextNotifications::webkitNotifications()
+NotificationCenter* WorkerGlobalScopeNotifications::webkitNotifications()
 {
     if (!m_notificationCenter)
         m_notificationCenter = NotificationCenter::create(m_context, m_context->thread()->getNotificationClient());
