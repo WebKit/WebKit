@@ -1,3 +1,16 @@
+2013-06-27  Anders Carlsson  <andersca@apple.com>
+
+        Remove call to deprecatedCharactersWithNullTermination() in WebGL code
+        https://bugs.webkit.org/show_bug.cgi?id=118154
+
+        Reviewed by Dean Jackson.
+
+        Remove an unneeded call to deprecatedCharactersWithNullTermination(). Ultimately, 
+        the string we used to call it on gets converted to an UTF-8 CString that has a null character anyway.
+
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::cacheActiveAttribLocations):
+
 2013-06-27  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Temporarily add some stderr output to Media Engine load methods to determine which engine buildbots are using for layout tests.
