@@ -1,3 +1,19 @@
+2013-06-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [webkitpy] AbstractPatchSequencingCommand should have _prepare_state
+        https://bugs.webkit.org/show_bug.cgi?id=118128
+
+        Reviewed by Ryosuke Niwa.
+
+        It is a preparation for a new webkit-patch command: run-tests-touched-by-attachment
+        https://bugs.webkit.org/show_bug.cgi?id=117831
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        (AbstractPatchSequencingCommand):
+        (AbstractPatchSequencingCommand._prepare_to_process): Call _prepare_state before prepare_steps.
+        (AbstractPatchSequencingCommand._process_patch): Use the same initial state for each patch.
+        (AbstractPatchSequencingCommand._prepare_state): Added.
+
 2013-06-27  Brendan Long  <b.long@cablelabs.com>
 
         [Qt] Build overrides -j when given --makeargs="-sj40"

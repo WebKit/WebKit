@@ -189,11 +189,21 @@ class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
         AbstractPatchProcessingCommand.__init__(self, options)
 
     def _prepare_to_process(self, options, args, tool):
-        self._prepare_sequence.run_and_handle_errors(tool, options)
+        try:
+            self.state = self._prepare_state(options, args, tool)
+        except ScriptError, e:
+            _log.error(e.message_with_output())
+            self._exit(e.exit_code or 2)
+        self._prepare_sequence.run_and_handle_errors(tool, options, self.state)
 
     def _process_patch(self, patch, options, args, tool):
-        state = { "patch" : patch }
+        state = {}
+        state.update(self.state or {})
+        state["patch"] = patch
         self._main_sequence.run_and_handle_errors(tool, options, state)
+
+    def _prepare_state(self, options, args, tool):
+        return None
 
 
 class ProcessAttachmentsMixin(object):
