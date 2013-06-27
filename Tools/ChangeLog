@@ -1,3 +1,18 @@
+2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Fix bindings tests after r152080
+        https://bugs.webkit.org/show_bug.cgi?id=118118
+
+        Reviewed by Gyuyoung Kim.
+
+        r152080 renamed argument to preprocess-idls.pl from --workerContextConstructorsFile
+        to --workerGlobalScopeConstructorsFile. This patch updates to bindings test script
+        accordingly.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_supplemental_dependency):
+        (BindingsTests.main):
+
 2013-06-26  Carlos Garcia Campos  <cargarcia@blackberry.com>
 
         [BlackBerry] Handle testRunner.setCustomPolicyDelegate()
