@@ -1,3 +1,22 @@
+2013-06-27  Iago Toral Quiroga  <itoral@igalia.com>
+
+        Use consistent file names for WidgetBackingStoreGtkX11 class
+        https://bugs.webkit.org/show_bug.cgi?id=118124
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * platform/gtk/GtkWidgetBackingStoreX11.cpp: Removed.
+        * platform/gtk/GtkWidgetBackingStoreX11.h: Removed.
+        * platform/gtk/WidgetBackingStoreGtkX11.cpp: Added.
+        (WebCore::WidgetBackingStoreGtkX11::create):
+        (WebCore::WidgetBackingStoreGtkX11::WidgetBackingStoreGtkX11):
+        (WebCore::WidgetBackingStoreGtkX11::~WidgetBackingStoreGtkX11):
+        (WebCore::WidgetBackingStoreGtkX11::cairoSurface):
+        (WebCore::WidgetBackingStoreGtkX11::scroll):
+        * platform/gtk/WidgetBackingStoreGtkX11.h: Added.
+
 2013-06-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         Buildfix for !ENABLE(SVG) builds.

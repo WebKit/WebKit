@@ -96,7 +96,7 @@
 #endif
 
 #ifdef GDK_WINDOWING_X11
-#include "GtkWidgetBackingStoreX11.h"
+#include "WidgetBackingStoreGtkX11.h"
 #endif
 #include "WidgetBackingStoreCairo.h"
 

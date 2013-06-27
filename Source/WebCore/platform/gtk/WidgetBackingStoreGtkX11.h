@@ -16,8 +16,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef GtkWidgetBackingStoreX11_h
-#define GtkWidgetBackingStoreX11_h
+#ifndef WidgetBackingStoreGtkX11_h
+#define WidgetBackingStoreGtkX11_h
 
 #include "WidgetBackingStore.h"
 

@@ -6269,8 +6269,8 @@ webcoregtk_sources += \
 	Source/WebCore/plugins/gtk/PluginViewGtk.cpp \
 	Source/WebCore/plugins/gtk/xembed.h
 platformgtk_sources += \
-	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.h \
-	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp \
+	Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.h \
+	Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.cpp \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.h \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp
 if USE_OPENGL

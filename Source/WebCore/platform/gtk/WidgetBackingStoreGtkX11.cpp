@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "GtkWidgetBackingStoreX11.h"
+#include "WidgetBackingStoreGtkX11.h"
 
 #include "GtkVersioning.h"
 #include "RefPtrCairo.h"
@@ -70,12 +70,12 @@ void WidgetBackingStoreGtkX11::scroll(const IntRect& scrollRect, const IntSize& 
 
     cairo_surface_flush(m_surface.get());
     XCopyArea(m_display, m_pixmap, m_pixmap, m_gc, 
-              targetRect.x() - scrollOffset.width(), targetRect.y() - scrollOffset.height(),
-              targetRect.width(), targetRect.height(),
-              targetRect.x(), targetRect.y());
+        targetRect.x() - scrollOffset.width(), targetRect.y() - scrollOffset.height(),
+        targetRect.width(), targetRect.height(),
+        targetRect.x(), targetRect.y());
     cairo_surface_mark_dirty_rectangle(m_surface.get(),
-                                       targetRect.x(), targetRect.y(),
-                                       targetRect.width(), targetRect.height());
+        targetRect.x(), targetRect.y(),
+        targetRect.width(), targetRect.height());
 }
 
 } // namespace WebCore

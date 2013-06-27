@@ -1,3 +1,12 @@
+2013-06-27  Iago Toral Quiroga  <itoral@igalia.com>
+
+        Use consistent file names for WidgetBackingStoreGtkX11 class
+        https://bugs.webkit.org/show_bug.cgi?id=118124
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+
 2013-06-27  Alberto Garcia  <agarcia@igalia.com>
 
         [GTK] [WK2] Check value of WEBKIT_INJECTED_BUNDLE_PATH

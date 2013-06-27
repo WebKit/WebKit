@@ -35,7 +35,7 @@
 #include <cairo.h>
 
 #if PLATFORM(GTK) && defined(GDK_WINDOWING_X11)
-#include <WebCore/GtkWidgetBackingStoreX11.h>
+#include <WebCore/WidgetBackingStoreGtkX11.h>
 #include <gdk/gdkx.h>
 #endif
 
