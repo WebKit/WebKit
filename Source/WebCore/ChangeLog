@@ -1,3 +1,14 @@
+2013-06-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        Buildfix for !ENABLE(SVG) builds.
+
+        Reviewed by Csaba Osztrogonác.
+
+        Moving RenderObject::hasAspectRatio() outside from ENABLE(SVG) guard.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasAspectRatio):
+
 2013-06-27  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLLabelElement for code cleanup
