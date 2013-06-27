@@ -1,3 +1,27 @@
+2013-06-27  James Craig  <james@cookiecrook.com>
+
+        Web Inspector: AX: Console log of the Inspector does not announce output for screen readers
+        https://bugs.webkit.org/show_bug.cgi?id=115976
+
+        Reviewed by Timothy Hatcher.
+
+        Main console log area (div.console-messages) is now an ARIA live region (role="log")
+        so screen readers speak plain text updates.
+        
+        Also added contextual labels (e.g. input/output) but speech output verification of
+        those is currently blocked by http://webkit.org/b/118096
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/ConsoleCommand.js:
+        (WebInspector.ConsoleCommand.prototype.toMessageElement):
+        * UserInterface/ConsoleCommandResult.js:
+        (WebInspector.ConsoleCommandResult.prototype.toMessageElement):
+        * UserInterface/LogContentView.css:
+        (@media reader):
+        * UserInterface/LogContentView.js:
+        (WebInspector.LogContentView):
+
+
 2013-06-27  Matthew Holden  <jftholden@yahoo.com>
 
         Web Inspector: Display color picker in popover on color swatch click

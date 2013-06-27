@@ -73,6 +73,7 @@ WebInspector.ConsoleCommand.prototype = {
             this._element = document.createElement("div");
             this._element.command = this;
             this._element.className = "console-user-command";
+            this._element.setAttribute("data-labelprefix", WebInspector.UIString("Input: "));
 
             this._formatCommand();
             this._element.appendChild(this._formattedCommand);

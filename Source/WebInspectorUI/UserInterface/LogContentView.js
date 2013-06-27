@@ -35,6 +35,7 @@ WebInspector.LogContentView = function(representedObject)
     this.messagesElement = document.createElement("div");
     this.messagesElement.className = "console-messages";
     this.messagesElement.tabIndex = 0;
+    this.messagesElement.setAttribute("role", "log");
     this.messagesElement.addEventListener("mousedown", this._mousedown.bind(this));
     this.messagesElement.addEventListener("focus", this._didFocus.bind(this));
     this.messagesElement.addEventListener("blur", this._didBlur.bind(this));
