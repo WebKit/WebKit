@@ -1,3 +1,18 @@
+2013-06-27  Alberto Garcia  <agarcia@igalia.com>
+
+        [GTK] [WK2] Check value of WEBKIT_INJECTED_BUNDLE_PATH
+        https://bugs.webkit.org/show_bug.cgi?id=118055
+
+        Reviewed by Carlos Garcia Campos.
+
+        If the directory pointed at by WEBKIT_INJECTED_BUNDLE_PATH does
+        not exist, fall back to the system directory.
+
+        This makes MiniBrowser work outside the build tree.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (injectedBundleDirectory):
+
 2013-06-26  Simon Cooper  <scooper@apple.com>
 
         Sometimes the Flash Player plugin cannot make outgoing connections
