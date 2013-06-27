@@ -1,3 +1,64 @@
+2013-06-27  Matthew Holden  <jftholden@yahoo.com>
+
+        Web Inspector: Display color picker in popover on color swatch click
+        https://bugs.webkit.org/show_bug.cgi?id=117919
+
+        Reviewed by Timothy Hatcher.
+
+        Includes fixes from second code review.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/CSSColorPicker.css: Added.
+        (.colorpicker-container):
+        (.colorpicker-fill-parent):
+        (.colorpicker-top):
+        (.colorpicker-color):
+        (.colorpicker-bottom span):
+        (.colorpicker-text):
+        (.colorpicker-color-text-value):
+        (.colorpicker-hue):
+        (.colorpicker-fill):
+        (.colorpicker-range-container):
+        (.colorpicker-range-container *):
+        (.colorpicker-range-container label):
+        (.colorpicker-range-container input):
+        (.colorpicker-saturation):
+        (.colorpicker-value):
+        (.colorpicker-dragger):
+        (.colorpicker-slider):
+        (.colorpicker-container .swatch):
+        (.colorpicker-container .swatch-inner):
+        * UserInterface/CSSColorPicker.js: Added.
+        (WebInspector.CSSColorPicker.consume):
+        (WebInspector.CSSColorPicker.move):
+        (WebInspector.CSSColorPicker.start):
+        (WebInspector.CSSColorPicker.stop):
+        (WebInspector.CSSColorPicker.makeDraggable):
+        (WebInspector.CSSColorPicker.hueDrag):
+        (WebInspector.CSSColorPicker.colorDragStart):
+        (WebInspector.CSSColorPicker.colorDrag):
+        (WebInspector.CSSColorPicker.alphaDrag):
+        (WebInspector.CSSColorPicker.colorSwatchClicked):
+        (WebInspector.CSSColorPicker):
+        (WebInspector.CSSColorPicker.prototype.get element):
+        (WebInspector.CSSColorPicker.prototype.set color):
+        (WebInspector.CSSColorPicker.prototype.get color):
+        (WebInspector.CSSColorPicker.prototype.get outputColorFormat):
+        (WebInspector.CSSColorPicker.prototype.get colorHueOnly):
+        (WebInspector.CSSColorPicker.prototype.set displayText):
+        (WebInspector.CSSColorPicker.prototype.shown):
+        (WebInspector.CSSColorPicker.prototype._updateHelperLocations):
+        (WebInspector.CSSColorPicker.prototype._updateDisplay):
+        (WebInspector.CSSColorPicker.hsvaToRGBA):
+        (WebInspector.CSSColorPicker.rgbaToHSVA):
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.didDismissPopover):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.event.newColorText.colorTextMarker):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.event.newColorText):
+        * UserInterface/Main.html:
+
 2013-06-26  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: stepping through while paused in debugger makes a popover appear
