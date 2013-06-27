@@ -29,7 +29,7 @@
  */
 
 [
-    GlobalContext=WindowAndWorker,
+    GlobalContext=DOMWindow&WorkerGlobalScope,
     GenerateIsReachable=Impl,
     CustomToJSObject,
     JSNoStaticTables,

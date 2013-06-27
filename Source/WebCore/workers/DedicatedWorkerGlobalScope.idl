@@ -29,7 +29,7 @@
  */
 
 [
-    NoInterfaceObject,
+    GlobalContext=DedicatedWorkerGlobalScope,
     Conditional=WORKERS,
     ExtendsDOMGlobalObject,
     IsWorkerGlobalScope,

@@ -37,7 +37,7 @@ enum XMLHttpRequestResponseType {
 };
 
 [
-    GlobalContext=WindowAndWorker,
+    GlobalContext=DOMWindow&WorkerGlobalScope,
     ActiveDOMObject,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,

@@ -25,7 +25,7 @@
  */
 
 [
-    NoInterfaceObject,
+    GlobalContext=WorkerGlobalScope,
     Conditional=WORKERS,
     JSCustomMarkFunction,
     JSCustomGetOwnPropertySlotAndDescriptor,

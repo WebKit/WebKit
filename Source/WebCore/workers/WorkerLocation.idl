@@ -27,7 +27,7 @@
  */
 
 [
-    GlobalContext=WorkerOnly,
+    GlobalContext=WorkerGlobalScope,
     Conditional=WORKERS,
     GenerateIsReachable=Impl,
     JSNoStaticTables,

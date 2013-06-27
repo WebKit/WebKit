@@ -24,7 +24,7 @@
  */
 
 [
-    GlobalContext=WindowAndWorker,
+    GlobalContext=DOMWindow&WorkerGlobalScope,
     GenerateIsReachable=Impl,
     CustomConstructor(unsigned long length),
     JSNoStaticTables,

@@ -24,7 +24,7 @@
  */
 
 [
-    GlobalContext=WindowAndWorker,
+    GlobalContext=DOMWindow&WorkerGlobalScope,
     ConstructorTemplate=TypedArray,
     CustomIndexedSetter,
     JSGenerateToNativeObject,

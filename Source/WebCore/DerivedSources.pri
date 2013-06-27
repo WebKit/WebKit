@@ -735,6 +735,8 @@ IDL_BINDINGS += generated/$$INTERNAL_SETTINGS_GENERATED_IDL
 SUPPLEMENTAL_DEPENDENCY_FILE = supplemental_dependency.tmp
 WINDOW_CONSTRUCTORS_FILE = DOMWindowConstructors.idl
 WORKERGLOBALSCOPE_CONSTRUCTORS_FILE = WorkerGlobalScopeConstructors.idl
+SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = SharedWorkerGlobalScopeConstructors.idl
+DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = DedicatedWorkerGlobalScopeConstructors.idl
 IDL_FILES_TMP = ${QMAKE_FUNC_FILE_OUT_PATH}/idl_files.tmp
 PREPROCESS_IDLS_SCRIPT = $$PWD/bindings/scripts/preprocess-idls.pl
 IDL_ATTRIBUTES_FILE = $$PWD/bindings/scripts/IDLAttributes.txt
@@ -754,8 +756,10 @@ preprocessIdls.commands += perl -I$$PWD/bindings/scripts $$preprocessIdls.script
                                --idlFilesList $$IDL_FILES_TMP \
                                --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
                                --windowConstructorsFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$WINDOW_CONSTRUCTORS_FILE \
-                               --workerGlobalScopeConstructorsFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$WORKERGLOBALSCOPE_CONSTRUCTORS_FILE
-preprocessIdls.output = $$SUPPLEMENTAL_DEPENDENCY_FILE $$WINDOW_CONSTRUCTORS_FILE $$WORKERGLOBALSCOPE_CONSTRUCTORS_FILE
+                               --workerGlobalScopeConstructorsFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$WORKERGLOBALSCOPE_CONSTRUCTORS_FILE \
+                               --sharedWorkerGlobalScopeConstructorsFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE \
+                               --dedicatedWorkerGlobalScopeConstructorsFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE
+preprocessIdls.output = $$SUPPLEMENTAL_DEPENDENCY_FILE $$WINDOW_CONSTRUCTORS_FILE $$WORKERGLOBALSCOPE_CONSTRUCTORS_FILE $$SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE $$DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE
 preprocessIdls.add_output_to_sources = false
 preprocessIdls.depends = $$IDL_BINDINGS
 GENERATORS += preprocessIdls

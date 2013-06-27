@@ -285,7 +285,7 @@ sub checkIfIDLAttributesExists
         if ($idlAttributes->{$name}{"*"}) {
             next;
         }
-        for my $rightValue (split /\s*\|\s*/, $extendedAttributes->{$name}) {
+        for my $rightValue (split /\s*[|&]\s*/, $extendedAttributes->{$name}) {
             if (!exists $idlAttributes->{$name}{$rightValue}) {
                 $error = "Unknown IDL attribute [$name=" . $extendedAttributes->{$name} . "] is found at $idlFile.";
                 last OUTER;

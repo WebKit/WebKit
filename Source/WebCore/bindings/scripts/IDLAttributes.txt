@@ -60,7 +60,7 @@ EventTarget
 ExtendsDOMGlobalObject
 GenerateIsReachable=|Impl|ImplContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot
 GetterRaisesException
-GlobalContext=WindowOnly|WorkerOnly|WindowAndWorker
+GlobalContext=DOMWindow|WorkerGlobalScope|SharedWorkerGlobalScope|DedicatedWorkerGlobalScope
 Immutable
 ImplementationLacksVTable
 ImplementationNamespace=*

@@ -1,3 +1,26 @@
+2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove [NoInterfaceObject] from WorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=118071
+
+        Reviewed by Kentaro Hara.
+
+        Split fast/js/global-constructors-attributes-worker.html test into 2 for both
+        shared and dedicated workers, as the output is now different.
+
+        * fast/js/global-constructors-attributes-dedicated-worker-expected.txt: Copied from LayoutTests/fast/js/global-constructors-attributes-worker-expected.txt.
+        * fast/js/global-constructors-attributes-dedicated-worker.html: Copied from LayoutTests/fast/js/global-constructors-attributes-worker.html.
+        * fast/js/global-constructors-attributes-shared-worker-expected.txt: Renamed from LayoutTests/fast/js/global-constructors-attributes-worker-expected.txt.
+        * fast/js/global-constructors-attributes-shared-worker.html: Renamed from LayoutTests/fast/js/global-constructors-attributes-worker.html.
+        * fast/js/script-tests/global-constructors-attributes.js:
+        (.self.postMessage):
+        (.self.onconnect.self.postMessage):
+        (.self.onconnect):
+        * platform/efl/fast/js/global-constructors-attributes-dedicated-worker-expected.txt: Copied from LayoutTests/platform/gtk/fast/js/global-constructors-attributes-worker-expected.txt.
+        * platform/efl/fast/js/global-constructors-attributes-shared-worker-expected.txt: Copied from LayoutTests/platform/gtk/fast/js/global-constructors-attributes-worker-expected.txt.
+        * platform/gtk/fast/js/global-constructors-attributes-dedicated-worker-expected.txt: Renamed from LayoutTests/platform/gtk/fast/js/global-constructors-attributes-worker-expected.txt.
+        * platform/gtk/fast/js/global-constructors-attributes-shared-worker-expected.txt: Renamed from LayoutTests/platform/efl/fast/js/global-constructors-attributes-worker-expected.txt.
+
 2013-06-27  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [Qt] Unreviewed gardening

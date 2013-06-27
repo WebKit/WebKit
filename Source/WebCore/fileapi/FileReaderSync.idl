@@ -29,7 +29,7 @@
  */
 
 [
-    GlobalContext=WorkerOnly,
+    GlobalContext=WorkerGlobalScope,
     Conditional=BLOB,
     Constructor,
     JSNoStaticTables

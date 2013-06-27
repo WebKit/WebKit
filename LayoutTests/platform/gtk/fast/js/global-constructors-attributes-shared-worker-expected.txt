@@ -1,4 +1,4 @@
-Test to ensure that global constructors have the right attributes in the worker context
+Test to ensure that global constructors have the right attributes in the shared worker context
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -124,6 +124,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageEvent').hasOwnProp
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageEvent').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageEvent').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'MessageEvent').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedWorkerGlobalScope').value is SharedWorkerGlobalScope
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedWorkerGlobalScope').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedWorkerGlobalScope').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedWorkerGlobalScope').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'SharedWorkerGlobalScope').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').value is URL
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('set') is false
@@ -154,6 +159,11 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WebSocket').hasOwnPropert
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WebSocket').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WebSocket').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WebSocket').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WorkerGlobalScope').value is WorkerGlobalScope
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WorkerGlobalScope').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WorkerGlobalScope').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WorkerGlobalScope').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WorkerGlobalScope').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WorkerLocation').value is WorkerLocation
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WorkerLocation').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'WorkerLocation').hasOwnProperty('set') is false

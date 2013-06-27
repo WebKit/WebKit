@@ -405,6 +405,8 @@ vpath %.idl $(IDL_PATH)
 supplemental_dependency_file = $(top_builddir)/DerivedSources/WebCore/idl_supplemental_dependencies
 window_constructors_file = $(top_builddir)/DerivedSources/WebCore/DOMWindowConstructors.idl
 workerglobalscope_constructors_file = $(top_builddir)/DerivedSources/WebCore/WorkerGlobalScopeConstructors.idl
+sharedworkerglobalscope_constructors_file = $(top_builddir)/DerivedSources/WebCore/SharedWorkerGlobalScopeConstructors.idl
+dedicatedworkerglobalscope_constructors_file = $(top_builddir)/DerivedSources/WebCore/DedicatedWorkerGlobalScopeConstructors.idl
 idl_files_list = $(top_builddir)/DerivedSources/WebCore/idl_files_list
 idl_attributes_file = $(WebCore)/bindings/scripts/IDLAttributes.txt
 
@@ -413,9 +415,9 @@ $(supplemental_dependency_file): $(SCRIPTS_FOR_PREPROCESS_IDLS) $(dom_binding_id
 	$(AM_V_GEN)
 	$(AM_V_at)echo -n > $(idl_files_list)
 	$(AM_V_at)($(foreach idl, $(dom_binding_idls), echo $(idl) &&) echo -n) >> $(idl_files_list)
-	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "LANGUAGE_JAVASCRIPT=1 $(feature_defines)" --idlFilesList $(idl_files_list) --windowConstructorsFile $(window_constructors_file) --workerGlobalScopeConstructorsFile $(workerglobalscope_constructors_file) --supplementalDependencyFile $@
+	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "LANGUAGE_JAVASCRIPT=1 $(feature_defines)" --idlFilesList $(idl_files_list) --windowConstructorsFile $(window_constructors_file) --workerGlobalScopeConstructorsFile $(workerglobalscope_constructors_file) --sharedWorkerGlobalScopeConstructorsFile $(sharedworkerglobalscope_constructors_file) --dedicatedWorkerGlobalScopeConstructorsFile $(dedicatedworkerglobalscope_constructors_file) --supplementalDependencyFile $@
 
-.PHONY: $(window_constructors_file) $(workerglobalscope_constructors_file)
+.PHONY: $(window_constructors_file) $(workerglobalscope_constructors_file) $(sharedworkerglobalscope_constructors_file) $(dedicatedworkerglobalscope_constructors_file)
 
 # This does not appear to work correctly with gnumake unless
 # it includes an empty command list (the semicolon).
@@ -435,7 +437,7 @@ DerivedSources/WebCore/JSInternalSettingsGenerated.h: DerivedSources/WebCore/Int
 # IDL generation takes a long time. The pipe represents an order-only dependency,
 # which means that GNUmake will only try to build the dependencies first, but
 # not rebuild all the targets if the dependencies change.
-$(webkitgtk_sources) $(webkit2_sources) $(webkit2_plugin_process_sources) $(webcore_sources) $(webcoregtk_sources) $(platform_sources) $(platformgtk_sources) : | $(supplemental_dependency_file) $(window_constructors_file) $(workerglobalscope_constructors_file) $(webcore_built_sources) $(platform_built_sources)
+$(webkitgtk_sources) $(webkit2_sources) $(webkit2_plugin_process_sources) $(webcore_sources) $(webcoregtk_sources) $(platform_sources) $(platformgtk_sources) : | $(supplemental_dependency_file) $(window_constructors_file) $(workerglobalscope_constructors_file) $(sharedworkerglobalscope_constructors_file) $(dedictedworkerglobalscope_constructors_file) $(webcore_built_sources) $(platform_built_sources)
 
 noinst_LTLIBRARIES += \
 	libWebCorePlatform.la \

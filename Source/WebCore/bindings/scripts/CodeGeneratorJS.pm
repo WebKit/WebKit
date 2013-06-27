@@ -4304,7 +4304,7 @@ sub GenerateConstructorHelperMethods
 
     push(@$outputArray, "void ${constructorClassName}::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "{\n");
-    if ($interfaceName eq "DOMWindow") {
+    if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"IsWorkerGlobalScope"}) {
         push(@$outputArray, "    Base::finishCreation(exec->vm());\n");
         push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
         push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().prototype, globalObject->prototype(), DontDelete | ReadOnly);\n");

@@ -1,3 +1,65 @@
+2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove [NoInterfaceObject] from WorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=118071
+
+        Reviewed by Kentaro Hara.
+
+        Expose WorkerGlobalScope interface in worker environment as per the latest
+        specification:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#the-workerglobalscope-common-interface
+
+        Also expose the SharedWorkerGlobalScope interface when the JavaScript global environment is a
+        shared worker environment, and the DedicatedWorkerGlobalScope interface when the JavaScript
+        global environment is a dedicated worker environment:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#sharedworkerglobalscope
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/workers.html#dedicatedworkerglobalscope
+
+        The semantics of the [GlobalContext] IDL extended attribute has changed to support this
+        use case. The value for the extended attribute is now the name of the interface to which the
+        Constructor attribute should be added (Window, WorkerGlobalScope, SharedWorkerGlobalScope...).
+        It is possible to specify several interface names by using '&' as separator. For e.g.
+        [GlobalContext=DOMWindow&WorkerGlobalScope].
+
+        Tests: fast/js/global-constructors-attributes-dedicated-worker.html
+               fast/js/global-constructors-attributes-shared-worker.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * Modules/websockets/WebSocket.idl:
+        * UseJSC.cmake:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/generate-bindings.pl:
+        (checkIfIDLAttributesExists):
+        * bindings/scripts/preprocess-idls.pl:
+        * dom/MessageChannel.idl:
+        * dom/MessageEvent.idl:
+        * fileapi/Blob.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderSync.idl:
+        * html/DOMURL.idl:
+        * html/canvas/ArrayBuffer.idl:
+        * html/canvas/DataView.idl:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Float64Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/Uint8ClampedArray.idl:
+        * page/EventSource.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/SharedWorkerGlobalScope.idl:
+        * workers/WorkerGlobalScope.idl:
+        * workers/WorkerLocation.idl:
+        * xml/XMLHttpRequest.idl:
+
 2013-06-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r152074.

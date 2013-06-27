@@ -1,3 +1,17 @@
+2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove [NoInterfaceObject] from WorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=118071
+
+        Reviewed by Kentaro Hara.
+
+        Update bindings test script to pass 2 additional parameters
+        now needed by the preprocess-idls.pl script.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_supplemental_dependency):
+        (BindingsTests.main):
+
 2013-06-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Fixing some compiler warnings
