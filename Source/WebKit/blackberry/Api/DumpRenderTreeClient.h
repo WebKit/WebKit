@@ -60,6 +60,8 @@ public:
     virtual void didDecidePolicyForResponse(const WebCore::ResourceResponse&) = 0;
     virtual void didDispatchWillPerformClientRedirect() = 0;
     virtual void didHandleOnloadEventsForFrame(WebCore::Frame*) = 0;
+    virtual bool policyDelegateIsPermissive() const = 0;
+    virtual bool policyDelegateEnabled() const = 0;
 
     // ChromeClient delegates
     virtual void addMessageToConsole(const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) = 0;

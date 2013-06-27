@@ -183,6 +183,7 @@ DumpRenderTree::DumpRenderTree(BlackBerry::WebKit::WebPage* page)
     , m_workTimer(this, &DumpRenderTree::processWork)
     , m_acceptsEditing(true)
     , m_policyDelegateEnabled(false)
+    , m_policyDelegateIsPermissive(false)
 {
     const char* workerNumber = getenv("WORKER_NUMBER") ? getenv("WORKER_NUMBER") : "0";
     String sdcardPath = SDCARD_PATH;
@@ -298,6 +299,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
     topLoadingFrame = 0;
     m_loadFinished = false;
     m_policyDelegateEnabled = false;
+    m_policyDelegateIsPermissive = false;
     waitForPolicy = false;
     testDone = false;
     WorkQueue::shared()->clear();
@@ -969,7 +971,7 @@ bool DumpRenderTree::didReceiveAuthenticationChallenge(WebCore::Credential& cred
 void DumpRenderTree::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     m_policyDelegateEnabled = setDelegate;
-    UNUSED_PARAM(permissive);
+    m_policyDelegateIsPermissive = permissive;
 }
 }
 }

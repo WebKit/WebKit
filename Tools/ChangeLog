@@ -1,3 +1,23 @@
+2013-06-26  Carlos Garcia Campos  <cargarcia@blackberry.com>
+
+        [BlackBerry] Handle testRunner.setCustomPolicyDelegate()
+        https://bugs.webkit.org/show_bug.cgi?id=117982
+
+        Reviewed by Rob Buis.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::DumpRenderTree): Initialize
+        m_policyDelegateIsPermissive.
+        (BlackBerry::WebKit::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        Reset m_policyDelegateIsPermissive.
+        (BlackBerry::WebKit::DumpRenderTree::setCustomPolicyDelegate): Set
+        m_policyDelegateIsPermissive.
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h:
+        (BlackBerry::WebKit::DumpRenderTree::policyDelegateEnabled):
+        Return whether custom policy is enabled.
+        (BlackBerry::WebKit::DumpRenderTree::policyDelegateIsPermissive):
+        Return whether custom policy is permissive.
+
 2013-06-26  Anders Carlsson  <andersca@apple.com>
 
         Deprecate StringImpl::charactersWithNullTermination

@@ -222,8 +222,11 @@ void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction(FrameP
     if (decision == PolicyIgnore)
         dispatchDidCancelClientRedirect();
 
-    if (m_webPagePrivate->m_dumpRenderTree)
+    if (m_webPagePrivate->m_dumpRenderTree) {
         m_webPagePrivate->m_dumpRenderTree->didDecidePolicyForNavigationAction(action, request, m_frame);
+        if (m_webPagePrivate->m_dumpRenderTree->policyDelegateEnabled())
+            decision = m_webPagePrivate->m_dumpRenderTree->policyDelegateIsPermissive() ? PolicyUse : PolicyIgnore;
+    }
 
     (m_frame->loader()->policyChecker()->*function)(decision);
 }

@@ -77,6 +77,8 @@ public:
     void didDispatchWillPerformClientRedirect();
     void didHandleOnloadEventsForFrame(WebCore::Frame*);
     void didReceiveResponseForFrame(WebCore::Frame*, const WebCore::ResourceResponse&);
+    bool policyDelegateEnabled() const { return m_policyDelegateEnabled; }
+    bool policyDelegateIsPermissive() const { return m_policyDelegateIsPermissive; }
 
     // ChromeClient delegates
     void addMessageToConsole(const String& message, unsigned lineNumber, const String& sourceID);
@@ -148,6 +150,7 @@ private:
     bool m_acceptsEditing;
     bool m_loadFinished;
     bool m_policyDelegateEnabled;
+    bool m_policyDelegateIsPermissive;
 };
 }
 }

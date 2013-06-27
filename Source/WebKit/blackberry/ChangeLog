@@ -1,3 +1,21 @@
+2013-06-26  Carlos Garcia Campos  <cargarcia@blackberry.com>
+
+        [BlackBerry] Handle testRunner.setCustomPolicyDelegate()
+        https://bugs.webkit.org/show_bug.cgi?id=117982
+
+        Reviewed by Rob Buis.
+
+        Take custom policy into account when deciding the policy for
+        navigation actions.
+
+        Fixes test fast/loader/onload-policy-ignore-for-frame.html.
+
+        * Api/DumpRenderTreeClient.h:
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction):
+        If custom policy is enabled ignore the navigation action when it's
+        not permissive.
+
 2013-06-26  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLAreaElement for code cleanup
