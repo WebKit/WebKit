@@ -2194,7 +2194,7 @@ sub buildQMakeProjects
     }
 
     # Automatically determine the number of CPUs for make only if this make argument haven't already been specified.
-    if ($make eq "make" && $makeargs !~ /-j\s*\d+/i && (!defined $ENV{"MAKEFLAGS"} || ($ENV{"MAKEFLAGS"} !~ /-j\s*\d+/i ))) {
+    if ($make eq "make" && $makeargs !~ /-[^\s]*?j\s*\d+/i && (!defined $ENV{"MAKEFLAGS"} || ($ENV{"MAKEFLAGS"} !~ /-[^\s]*?j\s*\d+/i ))) {
         $makeargs .= " -j" . numberOfCPUs();
     }
 
