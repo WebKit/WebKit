@@ -199,7 +199,7 @@ bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
 
 - (void)_setAutofilled:(BOOL)autofilled
 {
-    static_cast<HTMLInputElement*>(core((DOMElement *)self))->setAutofilled(autofilled);
+    toHTMLInputElement(core((DOMElement *)self))->setAutofilled(autofilled);
 }
 
 @end

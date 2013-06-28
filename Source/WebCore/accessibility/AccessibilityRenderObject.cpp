@@ -517,8 +517,8 @@ bool AccessibilityRenderObject::isAttachment() const
 
 bool AccessibilityRenderObject::isFileUploadButton() const
 {
-    if (m_renderer && m_renderer->node() && m_renderer->node()->hasTagName(inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_renderer->node());
+    if (m_renderer && m_renderer->node() && isHTMLInputElement(m_renderer->node())) {
+        HTMLInputElement* input = toHTMLInputElement(m_renderer->node());
         return input->isFileUpload();
     }
     
@@ -924,10 +924,10 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
         return;
     
     Node* node = m_renderer->node();
-    if (!node || !node->hasTagName(inputTag))
+    if (!node || !isHTMLInputElement(node))
         return;
     
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+    HTMLInputElement* input = toHTMLInputElement(node);
     // if there's a form, then this is easy
     if (input->form()) {
         Vector<RefPtr<Node> > formElements;
@@ -943,8 +943,8 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
         RefPtr<NodeList> list = node->document()->getElementsByTagName("input");
         unsigned len = list->length();
         for (unsigned i = 0; i < len; ++i) {
-            if (list->item(i)->hasTagName(inputTag)) {
-                HTMLInputElement* associateElement = static_cast<HTMLInputElement*>(list->item(i));
+            if (isHTMLInputElement(list->item(i))) {
+                HTMLInputElement* associateElement = toHTMLInputElement(list->item(i));
                 if (associateElement->isRadioButton() && associateElement->name() == input->name()) {
                     if (AccessibilityObject* object = axObjectCache()->getOrCreate(associateElement))
                         linkedUIElements.append(object);
@@ -1471,7 +1471,7 @@ KURL AccessibilityRenderObject::url() const
         return static_cast<HTMLImageElement*>(m_renderer->node())->src();
     
     if (isInputImage())
-        return static_cast<HTMLInputElement*>(m_renderer->node())->src();
+        return toHTMLInputElement(m_renderer->node())->src();
     
     return KURL();
 }
@@ -1641,7 +1641,7 @@ void AccessibilityRenderObject::setValue(const String& string)
     // FIXME: Do we want to do anything here for ARIA textboxes?
     if (renderer->isTextField()) {
         // FIXME: This is not safe!  Other elements could have a TextField renderer.
-        static_cast<HTMLInputElement*>(element)->setValue(string);
+        toHTMLInputElement(element)->setValue(string);
     } else if (renderer->isTextArea()) {
         // FIXME: This is not safe!  Other elements could have a TextArea renderer.
         static_cast<HTMLTextAreaElement*>(element)->setValue(string);
@@ -2448,7 +2448,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_renderer->isText())
         return StaticTextRole;
     if (cssBox && cssBox->isImage()) {
-        if (node && node->hasTagName(inputTag))
+        if (node && isHTMLInputElement(node))
             return ariaHasPopup() ? PopUpButtonRole : ButtonRole;
         if (isSVGImage())
             return SVGRootRole;
@@ -2471,8 +2471,8 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (cssBox && cssBox->isTextArea())
         return TextAreaRole;
 
-    if (node && node->hasTagName(inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+    if (node && isHTMLInputElement(node)) {
+        HTMLInputElement* input = toHTMLInputElement(node);
         if (input->isCheckbox())
             return CheckBoxRole;
         if (input->isRadioButton())
@@ -2770,10 +2770,10 @@ void AccessibilityRenderObject::updateChildrenIfNecessary()
 void AccessibilityRenderObject::addTextFieldChildren()
 {
     Node* node = this->node();
-    if (!node || !node->hasTagName(inputTag))
+    if (!node || !isHTMLInputElement(node))
         return;
     
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+    HTMLInputElement* input = toHTMLInputElement(node);
     HTMLElement* spinButtonElement = input->innerSpinButtonElement();
     if (!spinButtonElement || !spinButtonElement->isSpinButtonElement())
         return;

@@ -44,6 +44,7 @@
 #include "FrameView.h"
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "KeyboardEvent.h"
@@ -583,7 +584,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
                 return;
 
             if (Node* shadowAncestorNode = root->deprecatedShadowAncestorNode()) {
-                if (!shadowAncestorNode->hasTagName(inputTag) && !shadowAncestorNode->hasTagName(textareaTag))
+                if (!isHTMLInputElement(shadowAncestorNode) && !shadowAncestorNode->hasTagName(textareaTag))
                     return;
             }
         }

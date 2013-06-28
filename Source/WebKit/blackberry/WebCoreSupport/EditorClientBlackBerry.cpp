@@ -110,7 +110,7 @@ bool EditorClientBlackBerry::shouldSpellCheckFocusedField()
     // If the field does not support autocomplete, do not do spellchecking.
     if (node->isElementNode()) {
         const Element* element = toElement(node);
-        if (element->hasTagName(HTMLNames::inputTag) && !DOMSupport::elementSupportsAutocomplete(element))
+        if (isHTMLInputElement(element) && !DOMSupport::elementSupportsAutocomplete(element))
             return false;
     }
 

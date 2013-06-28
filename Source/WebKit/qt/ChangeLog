@@ -1,3 +1,18 @@
+2013-06-27  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLInputElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118130
+
+        Reviewed by Antti Koivisto.
+
+        To enhance readability, this patch adopts is/toHTMLInputElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::setInputMethodState):
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::inputMethodQuery):
+
 2013-06-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Rename WorkerContext to WorkerGlobalScope

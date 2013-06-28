@@ -866,7 +866,7 @@ bool RenderThemeQtMobile::paintSliderTrack(RenderObject* o, const PaintInfo& pi,
     if (!p.isValid())
         return true;
 
-    HTMLInputElement* slider = static_cast<HTMLInputElement*>(o->node());
+    HTMLInputElement* slider = toHTMLInputElement(o->node());
 
     const double min = slider->minimum();
     const double max = slider->maximum();

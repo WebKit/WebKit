@@ -300,10 +300,10 @@ void HTMLFormElement::getTextFieldValues(StringPairVector& fieldNamesAndValues) 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
         FormAssociatedElement* control = m_associatedElements[i];
         HTMLElement* element = toHTMLElement(control);
-        if (!element->hasLocalName(inputTag))
+        if (!isHTMLInputElement(element))
             continue;
 
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
+        HTMLInputElement* input = toHTMLInputElement(element);
         if (!input->isTextField())
             continue;
 

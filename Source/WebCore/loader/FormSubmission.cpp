@@ -189,8 +189,8 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
         HTMLElement* element = toHTMLElement(control);
         if (!element->isDisabledFormControl())
             control->appendFormData(*domFormData, isMultiPartForm);
-        if (element->hasLocalName(inputTag)) {
-            HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
+        if (isHTMLInputElement(element)) {
+            HTMLInputElement* input = toHTMLInputElement(element);
             if (input->isTextField()) {
                 formValues.append(pair<String, String>(input->name().string(), input->value()));
                 input->addSearchResult();

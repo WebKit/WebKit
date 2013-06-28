@@ -1697,7 +1697,7 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
 bool FrameSelection::isInPasswordField() const
 {
     HTMLTextFormControlElement* textControl = enclosingTextFormControl(start());
-    return textControl && textControl->hasTagName(inputTag) && static_cast<HTMLInputElement*>(textControl)->isPasswordField();
+    return textControl && isHTMLInputElement(textControl) && toHTMLInputElement(textControl)->isPasswordField();
 }
 
 void FrameSelection::focusedOrActiveStateChanged()

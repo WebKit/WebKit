@@ -2229,7 +2229,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
                     canStartSelection = nodeUnderFinger->canStartSelection();
             }
             context.setFlag(Platform::WebContext::IsInput);
-            if (element->hasTagName(HTMLNames::inputTag))
+            if (isHTMLInputElement(element))
                 context.setFlag(Platform::WebContext::IsSingleLine);
             if (DOMSupport::isPasswordElement(element))
                 context.setFlag(Platform::WebContext::IsPassword);
@@ -2831,7 +2831,7 @@ IntRect WebPagePrivate::blockZoomRectForNode(Node* node)
     double blockToPageRatio = static_cast<double>(pageArea - originalArea) / pageArea;
     double blockExpansionRatio = 5.0 * blockToPageRatio * blockToPageRatio;
 
-    if (!tnode->hasTagName(HTMLNames::imgTag) && !tnode->hasTagName(HTMLNames::inputTag) && !tnode->hasTagName(HTMLNames::textareaTag)) {
+    if (!tnode->hasTagName(HTMLNames::imgTag) && !isHTMLInputElement(tnode) && !tnode->hasTagName(HTMLNames::textareaTag)) {
         while ((tnode = tnode->parentNode())) {
             ASSERT(tnode);
             IntRect tRect = rectForNode(tnode);

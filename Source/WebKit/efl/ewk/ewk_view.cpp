@@ -2962,7 +2962,7 @@ void ewk_view_input_method_state_set(Evas_Object* ewkView, bool active)
     if (focusedFrame
         && focusedFrame->document()
         && focusedFrame->document()->focusedElement()
-        && focusedFrame->document()->focusedElement()->hasTagName(WebCore::HTMLNames::inputTag)) {
+        && isHTMLInputElement(focusedFrame->document()->focusedElement())) {
         WebCore::HTMLInputElement* inputElement;
 
         inputElement = static_cast<WebCore::HTMLInputElement*>(focusedFrame->document()->focusedElement());

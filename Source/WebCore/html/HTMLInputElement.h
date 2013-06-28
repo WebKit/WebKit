@@ -439,5 +439,16 @@ private:
 #endif
 };
 
+inline bool isHTMLInputElement(Node* node)
+{
+    return node->hasTagName(HTMLNames::inputTag);
+}
+
+inline HTMLInputElement* toHTMLInputElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLInputElement(node));
+    return static_cast<HTMLInputElement*>(node);
+}
+
 } //namespace
 #endif

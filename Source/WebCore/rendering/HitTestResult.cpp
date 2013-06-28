@@ -276,8 +276,8 @@ String HitTestResult::altDisplayString() const
         return displayString(image->getAttribute(altAttr), m_innerNonSharedNode.get());
     }
     
-    if (m_innerNonSharedNode->hasTagName(inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(m_innerNonSharedNode.get());
+    if (isHTMLInputElement(m_innerNonSharedNode.get())) {
+        HTMLInputElement* input = toHTMLInputElement(m_innerNonSharedNode.get());
         return displayString(input->alt(), m_innerNonSharedNode.get());
     }
 
@@ -317,8 +317,8 @@ KURL HitTestResult::absoluteImageURL() const
     AtomicString urlString;
     if (m_innerNonSharedNode->hasTagName(embedTag)
         || m_innerNonSharedNode->hasTagName(imgTag)
-        || m_innerNonSharedNode->hasTagName(inputTag)
-        || m_innerNonSharedNode->hasTagName(objectTag)    
+        || isHTMLInputElement(m_innerNonSharedNode.get())
+        || m_innerNonSharedNode->hasTagName(objectTag)
 #if ENABLE(SVG)
         || m_innerNonSharedNode->hasTagName(SVGNames::imageTag)
 #endif
@@ -571,8 +571,8 @@ bool HitTestResult::isContentEditable() const
     if (m_innerNonSharedNode->hasTagName(textareaTag))
         return true;
 
-    if (m_innerNonSharedNode->hasTagName(inputTag))
-        return static_cast<HTMLInputElement*>(m_innerNonSharedNode.get())->isTextField();
+    if (isHTMLInputElement(m_innerNonSharedNode.get()))
+        return toHTMLInputElement(m_innerNonSharedNode.get())->isTextField();
 
     return m_innerNonSharedNode->rendererIsEditable();
 }

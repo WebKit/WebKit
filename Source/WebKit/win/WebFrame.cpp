@@ -221,8 +221,8 @@ static HTMLInputElement* inputElementFromDOMElement(IDOMElement* element)
         Element* ele;
         hr = elePriv->coreElement((void**)&ele);
         elePriv->Release();
-        if (SUCCEEDED(hr) && ele && ele->hasTagName(inputTag))
-            return static_cast<HTMLInputElement*>(ele);
+        if (SUCCEEDED(hr) && ele && isHTMLInputElement(ele))
+            return toHTMLInputElement(ele);
     }
     return 0;
 }

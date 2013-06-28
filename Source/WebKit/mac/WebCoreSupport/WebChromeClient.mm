@@ -200,10 +200,10 @@ void WebChromeClient::focusedNodeChanged(Node* node)
 {
     if (!node)
         return;
-    if (!node->hasTagName(inputTag))
+    if (!isHTMLInputElement(node))
         return;
 
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node);
+    HTMLInputElement* inputElement = toHTMLInputElement(node);
     if (!inputElement->isText())
         return;
 

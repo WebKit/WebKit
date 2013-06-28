@@ -34,6 +34,7 @@
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestLocation.h"
 #include "HitTestResult.h"
@@ -6482,7 +6483,7 @@ bool RenderBlock::hasLineIfEmpty() const
     if (node()->isRootEditableElement())
         return true;
     
-    if (node()->isShadowRoot() && toShadowRoot(node())->host()->hasTagName(inputTag))
+    if (node()->isShadowRoot() && isHTMLInputElement(toShadowRoot(node())->host()))
         return true;
     
     return false;

@@ -410,7 +410,7 @@ WTF::String InputHandler::elementText()
 
 BlackBerryInputType InputHandler::elementType(Element* element) const
 {
-    if (const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(element->toInputElement()))
+    if (const HTMLInputElement* inputElement = toHTMLInputElement(element))
         return convertInputType(inputElement);
 
     if (element->hasTagName(HTMLNames::textareaTag))
@@ -1320,7 +1320,7 @@ void InputHandler::setInputValue(const WTF::String& value)
     if (!isActiveTextPopup())
         return;
 
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_currentFocusElement.get());
+    HTMLInputElement* inputElement = toHTMLInputElement(m_currentFocusElement.get());
     inputElement->setValue(value);
     clearCurrentFocusElement();
 }
@@ -2339,7 +2339,7 @@ extracted_text_t* InputHandler::extractedTextRequest(extracted_text_request_t*, 
 
     // selectionActive is not limited to inside the extracted text.
     bool selectionActive = extractedText->selection_start != extractedText->selection_end;
-    bool singleLine = m_currentFocusElement->hasTagName(HTMLNames::inputTag);
+    bool singleLine = isHTMLInputElement(m_currentFocusElement);
 
     // FIXME flags has two values in doc, enum not in header yet.
     extractedText->flags = selectionActive & singleLine;
@@ -2701,7 +2701,7 @@ void InputHandler::showTextInputTypeSuggestionBox(bool allowEmptyPrefix)
     if (!isActiveTextEdit())
         return;
 
-    HTMLInputElement* focusedInputElement = static_cast<HTMLInputElement*>(m_currentFocusElement->toInputElement());
+    HTMLInputElement* focusedInputElement = toHTMLInputElement(m_currentFocusElement->toInputElement());
     if (!focusedInputElement)
         return;
 

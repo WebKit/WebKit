@@ -107,7 +107,7 @@ PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
     if (isMultiline)
         static_cast<HTMLTextAreaElement*>(styledElement)->setValue(textAnnotation.stringValue);
     else
-        static_cast<HTMLInputElement*>(styledElement)->setValue(textAnnotation.stringValue);
+        toHTMLInputElement(styledElement)->setValue(textAnnotation.stringValue);
 
     return element;
 }

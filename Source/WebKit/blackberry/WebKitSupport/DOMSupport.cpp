@@ -109,8 +109,8 @@ bool isTextInputElement(Element* element)
 
 bool isPasswordElement(const Element* element)
 {
-    return element && element->hasTagName(HTMLNames::inputTag)
-        && static_cast<const HTMLInputElement*>(element)->isPasswordField();
+    return element && isHTMLInputElement(element)
+        && toHTMLInputElement(element)->isPasswordField();
 }
 
 WTF::String inputElementText(Element* element)
@@ -119,8 +119,8 @@ WTF::String inputElementText(Element* element)
         return WTF::String();
 
     WTF::String elementText;
-    if (element->hasTagName(HTMLNames::inputTag)) {
-        const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(element);
+    if (isHTMLInputElement(element)) {
+        const HTMLInputElement* inputElement = toHTMLInputElement(element);
         elementText = inputElement->value();
     } else if (element->hasTagName(HTMLNames::textareaTag)) {
         const HTMLTextAreaElement* inputElement = static_cast<const HTMLTextAreaElement*>(element);
@@ -180,10 +180,10 @@ bool isPopupInputField(const Element* element)
 
 bool isDateTimeInputField(const Element* element)
 {
-    if (!element->hasTagName(HTMLNames::inputTag))
+    if (!isHTMLInputElement(element))
         return false;
 
-    const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(element);
+    const HTMLInputElement* inputElement = toHTMLInputElement(element);
 
     // The following types have popup's.
     if (inputElement->isDateField()
@@ -198,10 +198,10 @@ bool isDateTimeInputField(const Element* element)
 
 bool isColorInputField(const Element* element)
 {
-    if (!element->hasTagName(HTMLNames::inputTag))
+    if (!isHTMLInputElement(element))
         return false;
 
-    const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(element);
+    const HTMLInputElement* inputElement = toHTMLInputElement(element);
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (inputElement->isColorControl())
@@ -394,7 +394,7 @@ static bool matchesReservedStringPreventingAutocomplete(const AtomicString& stri
 // login fields as input type=text and auto correction interfers with.
 bool elementIdOrNameIndicatesNoAutocomplete(const Element* element)
 {
-    if (!element->hasTagName(HTMLNames::inputTag))
+    if (!isHTMLInputElement(element))
         return false;
 
     AtomicString idAttribute = element->getIdAttribute();

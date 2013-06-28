@@ -741,10 +741,10 @@ bool RenderThemeQt::paintMediaVolumeSliderTrack(RenderObject *o, const PaintInfo
     p->painter->setBrush(scaleColor);
     p->painter->drawRect(left, top, width, height);
 
-    if (!o->node() || !o->node()->hasTagName(inputTag))
+    if (!o->node() || !isHTMLInputElement(o->node()))
         return false;
 
-    HTMLInputElement* slider = static_cast<HTMLInputElement*>(o->node());
+    HTMLInputElement* slider = toHTMLInputElement(o->node());
 
     // Position the inner rectangle
     height = height * slider->valueAsNumber();

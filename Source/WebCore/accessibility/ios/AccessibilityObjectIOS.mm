@@ -67,7 +67,7 @@ int AccessibilityObject::accessibilityPasswordFieldLength()
     if (!renderObject || !renderObject->node() || !renderObject->node()->isHTMLElement())
         return false;
     
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(renderObject->node());
+    HTMLInputElement* inputElement = toHTMLInputElement(renderObject->node());
     if (!inputElement)
         return false;
     

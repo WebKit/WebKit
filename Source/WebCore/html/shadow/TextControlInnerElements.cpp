@@ -155,7 +155,7 @@ const AtomicString& SearchFieldResultsButtonElement::shadowPseudoId() const
 void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
 {
     // On mousedown, bring up a menu, if needed
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
+    HTMLInputElement* input = toHTMLInputElement(shadowHost());
     if (input && event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         input->focus();
         input->select();
@@ -208,7 +208,7 @@ void SearchFieldCancelButtonElement::detach(const AttachContext& context)
 void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 {
     // If the element is visible, on mouseup, clear the value, and set selection
-    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
+    RefPtr<HTMLInputElement> input(toHTMLInputElement(shadowHost()));
     if (!input || input->isDisabledOrReadOnly()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
@@ -247,7 +247,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 
 bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
 {
-    const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
+    const HTMLInputElement* input = toHTMLInputElement(shadowHost());
     if (input && !input->isDisabledOrReadOnly())
         return true;
 
@@ -292,7 +292,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
     // The call to focus() below dispatches a focus event, and an event handler in the page might
     // remove the input element from DOM. To make sure it remains valid until we finish our work
     // here, we take a temporary reference.
-    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
+    RefPtr<HTMLInputElement> input(toHTMLInputElement(shadowHost()));
 
     if (!input || input->isDisabledOrReadOnly()) {
         if (!event->defaultHandled())
@@ -344,7 +344,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
 
 bool InputFieldSpeechButtonElement::willRespondToMouseClickEvents()
 {
-    const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
+    const HTMLInputElement* input = toHTMLInputElement(shadowHost());
     if (input && !input->isDisabledOrReadOnly())
         return true;
 
@@ -381,7 +381,7 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
     // The call to setValue() below dispatches an event, and an event handler in the page might
     // remove the input element from DOM. To make sure it remains valid until we finish our work
     // here, we take a temporary reference.
-    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
+    RefPtr<HTMLInputElement> input(toHTMLInputElement(shadowHost()));
     if (!input || input->isDisabledOrReadOnly())
         return;
 
@@ -434,7 +434,7 @@ void InputFieldSpeechButtonElement::startSpeechInput()
     if (m_state != Idle)
         return;
 
-    RefPtr<HTMLInputElement> input = static_cast<HTMLInputElement*>(shadowHost());
+    RefPtr<HTMLInputElement> input = toHTMLInputElement(shadowHost());
     AtomicString language = input->computeInheritedLanguage();
     String grammar = input->getAttribute(webkitgrammarAttr);
     IntRect rect = document()->view()->contentsToRootView(pixelSnappedBoundingBox());

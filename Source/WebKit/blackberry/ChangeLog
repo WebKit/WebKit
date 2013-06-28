@@ -1,3 +1,32 @@
+2013-06-27  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLInputElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118130
+
+        Reviewed by Antti Koivisto.
+
+        To enhance readability, this patch adopts is/toHTMLInputElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        (BlackBerry::WebKit::WebPagePrivate::blockZoomRectForNode):
+        * WebCoreSupport/CredentialTransformData.cpp:
+        (WebCore::CredentialTransformData::findPasswordFormFields):
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::shouldSpellCheckFocusedField):
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isPasswordElement):
+        (BlackBerry::WebKit::DOMSupport::inputElementText):
+        (BlackBerry::WebKit::DOMSupport::isDateTimeInputField):
+        (BlackBerry::WebKit::DOMSupport::isColorInputField):
+        (BlackBerry::WebKit::DOMSupport::elementIdOrNameIndicatesNoAutocomplete):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::elementType):
+        (BlackBerry::WebKit::InputHandler::setInputValue):
+        (BlackBerry::WebKit::InputHandler::extractedTextRequest):
+        (BlackBerry::WebKit::InputHandler::showTextInputTypeSuggestionBox):
+
 2013-06-27  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
         [BlackBerry] We should clear all markers when input changes a word

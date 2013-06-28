@@ -180,34 +180,34 @@ PassRefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions opt
 
 void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& value)
 {
-    if (!m_node->hasTagName(inputTag))
+    if (!isHTMLInputElement(m_node.get()))
         return;
 
-    static_cast<HTMLInputElement*>(m_node.get())->setValueForUser(value);
+    toHTMLInputElement(m_node.get())->setValueForUser(value);
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutofilled() const
 {
-    if (!m_node->hasTagName(inputTag))
+    if (!isHTMLInputElement(m_node.get()))
         return false;
     
-    return static_cast<HTMLInputElement*>(m_node.get())->isAutofilled();
+    return toHTMLInputElement(m_node.get())->isAutofilled();
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutofilled(bool filled)
 {
-    if (!m_node->hasTagName(inputTag))
+    if (!isHTMLInputElement(m_node.get()))
         return;
 
-    static_cast<HTMLInputElement*>(m_node.get())->setAutofilled(filled);
+    toHTMLInputElement(m_node.get())->setAutofilled(filled);
 }
 
 bool InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit()
 {
-    if (!m_node->hasTagName(inputTag))
+    if (!isHTMLInputElement(m_node.get()))
         return false;
 
-    return static_cast<HTMLInputElement*>(m_node.get())->lastChangeWasUserEdit();
+    return toHTMLInputElement(m_node.get())->lastChangeWasUserEdit();
 }
 
 bool InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit()

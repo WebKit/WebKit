@@ -143,7 +143,7 @@ void AccessibilitySlider::setValue(const String& value)
 
 HTMLInputElement* AccessibilitySlider::element() const
 {
-    return static_cast<HTMLInputElement*>(m_renderer->node());
+    return toHTMLInputElement(m_renderer->node());
 }
 
 

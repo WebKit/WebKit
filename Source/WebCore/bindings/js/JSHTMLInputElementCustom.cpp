@@ -35,7 +35,7 @@ namespace WebCore {
 
 JSValue JSHTMLInputElement::selectionStart(ExecState* exec) const
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    HTMLInputElement* input = toHTMLInputElement(impl());
     if (!input->canHaveSelection())
         return throwTypeError(exec);
 
@@ -44,7 +44,7 @@ JSValue JSHTMLInputElement::selectionStart(ExecState* exec) const
 
 void JSHTMLInputElement::setSelectionStart(ExecState* exec, JSValue value)
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    HTMLInputElement* input = toHTMLInputElement(impl());
     if (!input->canHaveSelection())
         throwTypeError(exec);
 
@@ -53,7 +53,7 @@ void JSHTMLInputElement::setSelectionStart(ExecState* exec, JSValue value)
 
 JSValue JSHTMLInputElement::selectionEnd(ExecState* exec) const
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    HTMLInputElement* input = toHTMLInputElement(impl());
     if (!input->canHaveSelection())
         return throwTypeError(exec);
 
@@ -62,7 +62,7 @@ JSValue JSHTMLInputElement::selectionEnd(ExecState* exec) const
 
 void JSHTMLInputElement::setSelectionEnd(ExecState* exec, JSValue value)
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    HTMLInputElement* input = toHTMLInputElement(impl());
     if (!input->canHaveSelection())
         throwTypeError(exec);
 
@@ -71,7 +71,7 @@ void JSHTMLInputElement::setSelectionEnd(ExecState* exec, JSValue value)
 
 JSValue JSHTMLInputElement::selectionDirection(ExecState* exec) const
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    HTMLInputElement* input = toHTMLInputElement(impl());
     if (!input->canHaveSelection())
         return throwTypeError(exec);
 
@@ -80,7 +80,7 @@ JSValue JSHTMLInputElement::selectionDirection(ExecState* exec) const
 
 void JSHTMLInputElement::setSelectionDirection(ExecState* exec, JSValue value)
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    HTMLInputElement* input = toHTMLInputElement(impl());
     if (!input->canHaveSelection()) {
         throwTypeError(exec);
         return;
@@ -91,7 +91,7 @@ void JSHTMLInputElement::setSelectionDirection(ExecState* exec, JSValue value)
 
 JSValue JSHTMLInputElement::setSelectionRange(ExecState* exec)
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    HTMLInputElement* input = toHTMLInputElement(impl());
     if (!input->canHaveSelection())
         return throwTypeError(exec);
 

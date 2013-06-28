@@ -1,3 +1,115 @@
+2013-06-27  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLInputElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118130
+
+        Reviewed by Antti Koivisto.
+
+        To enhance readability, this patch adopts is/toHTMLInputElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaTimeline::valueDescription):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        (WebCore::AccessibilityNodeObject::isNativeTextControl):
+        (WebCore::AccessibilityNodeObject::isNativeImage):
+        (WebCore::AccessibilityNodeObject::isInputImage):
+        (WebCore::AccessibilityNodeObject::isReadOnly):
+        (WebCore::AccessibilityNodeObject::valueForRange):
+        (WebCore::AccessibilityNodeObject::maxValueForRange):
+        (WebCore::AccessibilityNodeObject::minValueForRange):
+        (WebCore::AccessibilityNodeObject::actionElement):
+        (WebCore::AccessibilityNodeObject::titleElementText):
+        (WebCore::AccessibilityNodeObject::visibleText):
+        (WebCore::AccessibilityNodeObject::title):
+        (WebCore::AccessibilityNodeObject::text):
+        (WebCore::AccessibilityNodeObject::colorValue):
+        (WebCore::accessibleNameForNode):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isFileUploadButton):
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        (WebCore::AccessibilityRenderObject::url):
+        (WebCore::AccessibilityRenderObject::setValue):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::addTextFieldChildren):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::element):
+        * accessibility/ios/AccessibilityObjectIOS.mm:
+        (WebCore::AccessibilityObject::accessibilityPasswordFieldLength):
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::JSHTMLInputElement::selectionStart):
+        (WebCore::JSHTMLInputElement::setSelectionStart):
+        (WebCore::JSHTMLInputElement::selectionEnd):
+        (WebCore::JSHTMLInputElement::setSelectionEnd):
+        (WebCore::JSHTMLInputElement::selectionDirection):
+        (WebCore::JSHTMLInputElement::setSelectionDirection):
+        (WebCore::JSHTMLInputElement::setSelectionRange):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::isInPasswordField):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::shouldPerformSmartReplace):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::getTextFieldValues):
+        * html/HTMLInputElement.h:
+        (WebCore::isHTMLInputElement):
+        (WebCore::toHTMLInputElement):
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::handleKeydownEvent):
+        (WebCore::RadioInputType::isKeyboardFocusable):
+        * html/shadow/MediaControlElementTypes.cpp:
+        (WebCore::mediaControlElementType):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler):
+        (WebCore::SearchFieldCancelButtonElement::willRespondToMouseClickEvents):
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+        (WebCore::InputFieldSpeechButtonElement::willRespondToMouseClickEvents):
+        (WebCore::InputFieldSpeechButtonElement::setRecognitionResult):
+        (WebCore::InputFieldSpeechButtonElement::startSpeechInput):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip):
+        * page/EventHandler.cpp:
+        (WebCore::isSubmitImage):
+        (WebCore::EventHandler::handleMousePressEvent):
+        * page/FocusController.cpp:
+        (WebCore::clearSelectionIfNeeded):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::getURLForImageNode):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderTrack):
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::RenderThemeQtMobile::paintSliderTrack):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::altDisplayString):
+        (WebCore::HitTestResult::absoluteImageURL):
+        (WebCore::HitTestResult::isContentEditable):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hasLineIfEmpty):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updateFromElement):
+        (WebCore::RenderButton::canHaveGeneratedChildren):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::isOpen):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement):
+        (WebCore::RenderFileUploadControl::maxFilenameWidth):
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::uploadButton):
+        (WebCore::RenderFileUploadControl::fileTextValue):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::updateAltText):
+        * testing/Internals.cpp:
+        (WebCore::Internals::selectColorInColorChooser):
+
 2013-06-27  Antti Koivisto  <antti@apple.com>
 
         Use DeferrableOneShotTimer for deleting decoded data

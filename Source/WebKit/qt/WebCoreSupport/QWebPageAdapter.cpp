@@ -710,8 +710,8 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
     case Qt::ImMaximumTextLength: {
         if (frame->selection()->isContentEditable()) {
             if (frame->document() && frame->document()->focusedElement()) {
-                if (frame->document()->focusedElement()->hasTagName(HTMLNames::inputTag)) {
-                    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(frame->document()->focusedElement());
+                if (isHTMLInputElement(frame->document()->focusedElement())) {
+                    HTMLInputElement* inputElement = toHTMLInputElement(frame->document()->focusedElement());
                     return QVariant(inputElement->maxLength());
                 }
             }

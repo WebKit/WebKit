@@ -188,8 +188,8 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
 
     // FIXME: Should this set of hasTagName checks be replaced by a
     // virtual member function?
-    if (element->hasTagName(inputTag))
-        return !static_cast<HTMLInputElement*>(element)->isInputTypeHidden();
+    if (isHTMLInputElement(element))
+        return !toHTMLInputElement(element)->isInputTypeHidden();
     if (element->hasTagName(selectTag))
         return true;
     if (element->hasTagName(keygenTag))

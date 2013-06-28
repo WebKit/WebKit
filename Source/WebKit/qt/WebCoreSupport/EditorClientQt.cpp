@@ -619,8 +619,8 @@ void EditorClientQt::setInputMethodState(bool active)
         HTMLInputElement* inputElement = 0;
         Frame* frame = m_page->page->focusController()->focusedOrMainFrame();
         if (frame && frame->document() && frame->document()->focusedElement())
-            if (frame->document()->focusedElement()->hasTagName(HTMLNames::inputTag))
-                inputElement = static_cast<HTMLInputElement*>(frame->document()->focusedElement());
+            if (isHTMLInputElement(frame->document()->focusedElement()))
+                inputElement = toHTMLInputElement(frame->document()->focusedElement());
 
         if (inputElement) {
             // Set input method hints for "number", "tel", "email", "url" and "password" input elements.
