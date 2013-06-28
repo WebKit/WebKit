@@ -1,3 +1,20 @@
+2013-06-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2][GTK] 100% CPU usage rendering a page with animations
+        https://bugs.webkit.org/show_bug.cgi?id=117703
+
+        Reviewed by Martin Robinson.
+
+        Unconditionally update the value of m_lastFlushTime in
+        ::flushAndRenderLayers. By doing that we avoid a neverending
+        sequence of layer flushes that happened when m_lastFlushTime==0
+        and flushPendingLayerChanges() was false. In that situation the
+        value m_lastFlushTime was never updated so a new flush was always
+        rescheduled.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::flushAndRenderLayers):
+
 2013-06-28  Andres Gomez  <agomez@igalia.com>
 
         [GTK] MiniBrowser doesn't solve the saving location when there are no XDG settings

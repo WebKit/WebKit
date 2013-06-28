@@ -360,10 +360,10 @@ void LayerTreeHostGtk::flushAndRenderLayers()
     if (!context || !context->makeContextCurrent())
         return;
 
+    m_lastFlushTime = currentTime();
     if (!flushPendingLayerChanges())
         return;
 
-    m_lastFlushTime = currentTime();
     // Our model is very simple. We always composite and render the tree immediately after updating it.
     compositeLayersToContext();
 
