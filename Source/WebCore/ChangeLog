@@ -1,5 +1,11 @@
 2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Unreviewed, fix GTK build after r152156.
+
+        * GNUmakefile.list.am:
+
+2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Merge SVGLangSpace into SVGElement
         https://bugs.webkit.org/show_bug.cgi?id=118170
 

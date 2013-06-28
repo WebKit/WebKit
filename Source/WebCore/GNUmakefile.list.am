@@ -1067,7 +1067,6 @@ webcore_svg_built_sources += \
 	DerivedSources/WebCore/JSSVGHKernElement.h \
 	DerivedSources/WebCore/JSSVGImageElement.cpp \
 	DerivedSources/WebCore/JSSVGImageElement.h \
-	DerivedSources/WebCore/JSSVGLangSpace.h \
 	DerivedSources/WebCore/JSSVGLength.cpp \
 	DerivedSources/WebCore/JSSVGLength.h \
 	DerivedSources/WebCore/JSSVGLengthList.cpp \
