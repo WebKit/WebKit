@@ -31,8 +31,6 @@
 #include "config.h"
 #include "LayoutRect.h"
 
-#include "FloatRect.h"
-#include "LayoutUnit.h"
 #include <algorithm>
 
 using std::max;

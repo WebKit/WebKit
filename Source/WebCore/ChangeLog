@@ -1,3 +1,39 @@
+2013-06-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow some LayoutPoint and LayoutSize conversions to be inlined
+        https://bugs.webkit.org/show_bug.cgi?id=118167
+
+        Reviewed by Ryosuke Niwa.
+
+        Construction of FloatSize from LayoutSize, and FloatPoint's move(const LayoutSize&)
+        and moveBy(const LayoutPoint&) were not inlined, and showed up on some profiles.
+        
+        Make them inlined by removing the overloaded functions, and instead providing
+        conversion operators from LayoutSize to FloatSize, and LayoutPoint to FloatPoint.
+        Do the same to allow a LayoutRect to be converted to a FloatRect.
+        
+        This is nice because it removes pollution of FloatRect, FloatPoint and FloatSize with
+        Layout* entirely.
+        
+        Remove Qt-specific conversions on LayoutRect, LayoutPoint and LayoutSize. Qt can
+        convert via IntRect/FloatRect as necessary.
+
+        * platform/graphics/FloatPoint.cpp:
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::move):
+        (WebCore::FloatPoint::moveBy):
+        * platform/graphics/FloatRect.cpp:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.cpp:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::LayoutPoint::operator FloatPoint):
+        * platform/graphics/LayoutRect.cpp:
+        * platform/graphics/LayoutRect.h:
+        (WebCore::LayoutRect::operator FloatRect):
+        * platform/graphics/LayoutSize.h:
+        (WebCore::LayoutSize::operator FloatSize):
+
 2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of IsWorkerGlobalScope and ExtendsDOMGlobalObject extended attributes
