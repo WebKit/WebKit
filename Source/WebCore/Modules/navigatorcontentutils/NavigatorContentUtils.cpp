@@ -46,15 +46,20 @@ static void initProtocolHandlerWhitelist()
 #if !PLATFORM(BLACKBERRY)
     static const char* protocols[] = {
         "irc",
+        "geo",
         "mailto",
+        "magnet",
         "mms",
         "news",
         "nntp",
+        "sip",
         "sms",
         "smsto",
+        "ssh",
         "tel",
         "urn",
         "webcal",
+        "xmpp"
     };
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(protocols); ++i)
         protocolWhitelist->add(protocols[i]);

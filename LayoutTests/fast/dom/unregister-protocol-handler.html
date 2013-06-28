@@ -23,16 +23,16 @@ invalid_protocols.forEach(function (protocol) {
     try {
         window.navigator.unregisterProtocolHandler(protocol, "invalid protocol %s", "title");
     } catch (e) {
-        succeeded = 'SECURITY_ERR' == e.name;
+        succeeded = 'SecurityError' == e.name;
     }
 
     if (succeeded)
-        debug('Pass: Invalid protocol "' + protocol + '" threw SECURITY_ERR exception.');
+        debug('Pass: Invalid protocol "' + protocol + '" threw SecurityError exception.');
     else
         debug('Fail: Invalid protocol "' + protocol + '" allowed.');
 });
 
-var valid_protocols = ['irc', 'mailto', 'mms', 'news', 'nntp', 'sms', 'smsto', 'tel', 'urn', 'webcal'];
+var valid_protocols = ['irc', 'geo', 'mailto', 'magnet', 'mms', 'news', 'nntp', 'sip', 'sms', 'smsto', 'ssh', 'tel', 'urn', 'webcal', 'xmpp'];
 valid_protocols.forEach(function (protocol) {
     var succeeded = false;
     try {
@@ -54,11 +54,11 @@ invalid_urls.forEach(function (url) {
    try {
         window.navigator.unregisterProtocolHandler('web+myprotocol', url, 'title');
     } catch (e) {
-        succeeded = 'SYNTAX_ERR' == e.name;
+        succeeded = 'SyntaxError' == e.name;
     }
 
     if (succeeded)
-        debug('Pass: Invalid url "' + url + '" threw SYNTAX_ERR exception.');
+        debug('Pass: Invalid url "' + url + '" threw SyntaxError exception.');
     else
         debug('Fail: Invalid url "' + url + '" allowed.');
 });

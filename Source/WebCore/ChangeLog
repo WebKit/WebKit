@@ -1,3 +1,21 @@
+2013-06-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add new schemes to content utils.
+        https://bugs.webkit.org/show_bug.cgi?id=118181
+
+        Reviewed by Christophe Dumez.
+
+        According to latest content handler spec, new schemes are added to it.
+        Those are "geo, magnet, sip, ssh and xmpp".
+
+        http://www.w3.org/html/wg/drafts/html/master/webappapis.html#custom-handlers
+
+        Tests: fast/dom/register-protocol-handler.html
+               fast/dom/unregister-protocol-handler.html
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::initProtocolHandlerWhitelist):
+
 2013-06-28  Sanghyup Lee  <sh53.lee@samsung.com>
 
         Avoid duplicating hostWindow() call in ScrollView.cpp

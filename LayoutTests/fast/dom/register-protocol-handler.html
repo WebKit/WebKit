@@ -32,7 +32,7 @@ invalid_protocols.forEach(function (protocol) {
         debug('Fail: Invalid protocol "' + protocol + '" allowed.');
 });
 
-var valid_protocols = ['irc', 'mailto', 'mms', 'news', 'nntp', 'sms', 'smsto', 'tel', 'urn', 'webcal'];
+var valid_protocols = ['irc', 'geo', 'mailto', 'magnet', 'mms', 'news', 'nntp', 'sip', 'sms', 'smsto', 'ssh', 'tel', 'urn', 'webcal', 'xmpp'];
 valid_protocols.forEach(function (protocol) {
     var succeeded = false;
     try {

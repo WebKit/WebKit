@@ -1,3 +1,19 @@
+2013-06-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add new schemes to content utils.
+        https://bugs.webkit.org/show_bug.cgi?id=118181
+
+        Reviewed by Christophe Dumez.
+
+        Add new schemes as well as change SYNTAX_ERR, SECURITY_ERR.
+
+        * fast/dom/register-protocol-handler-expected.txt:
+        * fast/dom/register-protocol-handler.html:
+        * fast/dom/unregister-protocol-handler-expected.txt:
+        * fast/dom/unregister-protocol-handler.html:
+        * platform/efl/fast/dom/register-protocol-handler-expected.txt:
+        * platform/efl/fast/dom/unregister-protocol-handler-expected.txt:
+
 2013-06-28  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Unskip and reorganize tests no longer failing in GTK-WK and GTK-WK2
