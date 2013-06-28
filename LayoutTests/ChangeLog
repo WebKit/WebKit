@@ -1,3 +1,13 @@
+2013-06-28  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Unskip and reorganize tests no longer failing in GTK-WK and GTK-WK2
+        https://bugs.webkit.org/show_bug.cgi?id=118180
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2013-06-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL rebaseline.

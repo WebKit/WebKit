@@ -66,7 +66,7 @@ Bug(GTK) fast/css/draggable-region-parser.html [ Failure ]
 webkit.org/b/71851 http/tests/security/contentTypeOptions [ Skip ]
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
-inspector/styles/vendor-prefixes.html [ WontFix Failure ]
+inspector/styles/vendor-prefixes.html [ WontFix Pass ]
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]
@@ -103,6 +103,9 @@ fast/events/option-tab.html [ WontFix Failure ]
 # These pass while they're marked as WontFix - check it.
 fast/images/embed-image.html [ WontFix Pass ]
 fast/images/object-image.html [ WontFix Pass ]
+
+# This test requires Mac ObjC bindings, although it currently passes
+Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ WontFix Pass ]
 
 # Mac Safari under certain circumstances automatically places
 # a caret in editable document even when none was requested programatically.
@@ -654,6 +657,8 @@ webkit.org/b/117583 http/tests/media/video-load-twice.html [ Failure Pass ]
 
 webkit.org/b/105191 media/video-playing-and-pause.html [ Failure Pass ]
 
+webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1030,11 +1035,6 @@ Bug(GTK) http/tests/misc/bubble-drag-events.html [ Failure ]
 # Dragging images and links results in a DataTransfer object containing a non-empty files array
 webkit.org/b/52094 editing/pasteboard/files-during-page-drags.html [ Failure ]
 
-# Tests that seem to be Mac only, assume that smart drag-and-drop
-# is enabled or assume platform-dependent sizing.
-Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ Failure ]
-Bug(GTK) fast/events/ondragenter.html [ Failure ]
-
 # The following Sputnik tests fail on the 32bit release bot
 Bug(GTK) sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html [ Failure ]
 Bug(GTK) sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html [ Failure ]
@@ -1104,9 +1104,6 @@ webkit.org/b/62204 svg/custom/relative-sized-use-without-attributes-on-symbol.xh
 webkit.org/b/62204 svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
 webkit.org/b/62204 svg/W3C-SVG-1.1/animate-elem-04-t.svg [ Failure ]
 
-webkit.org/b/73409 fast/forms/textarea/textarea-placeholder-paint-order.html [ ImageOnlyFailure ]
-webkit.org/b/73409 fast/forms/input-placeholder-paint-order.html [ ImageOnlyFailure ]
-
 webkit.org/b/73653 fast/forms/range/slider-in-multi-column.html [ Failure ]
 
 webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
@@ -1117,8 +1114,6 @@ webkit.org/b/76048 fast/text/font-kerning.html [ ImageOnlyFailure ]
 Bug(GTK) http/tests/download [ Failure ]
 
 webkit.org/b/81320 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
-
-webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure ]
 
 # EditorClient::checkTextOfParagraph() is not implemented.
 Bug(GTK) editing/spelling/spelling-marker-description.html [ Failure ]
@@ -1173,8 +1168,6 @@ webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
 
 webkit.org/b/89205 editing/spelling/grammar-edit-word.html [ Failure ]
 
-webkit.org/b/83683 editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
-
 webkit.org/b/51027 [ Release ] plugins/refcount-leaks.html [ Failure ]
 
 webkit.org/b/57346 fast/text/justify-ideograph-leading-expansion.html [ Failure ]
@@ -1227,12 +1220,8 @@ webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-mul
 
 webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 
-webkit.org/b/98612 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
-
 webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
-
-webkit.org/b/99071 media/context-menu-actions.html [ Failure ]
 
 webkit.org/b/98950 transitions/blendmode-transitions.html [ Failure ]
 
@@ -1259,8 +1248,6 @@ webkit.org/b/102776 media/track/track-cue-rendering-horizontal.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
 
 webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure ]
-
-webkit.org/b/104680 http/tests/security/xss-DENIED-xml-external-entity.xhtml [ Failure ]
 
 webkit.org/b/104686 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Failure ]
 
@@ -1298,8 +1285,6 @@ webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure 
 webkit.org/b/108169 fast/dom/shadow/gesture-tap.html [ Failure ]
 webkit.org/b/108169 fast/dom/shadow/touch-event.html [ Failure ]
 webkit.org/b/108169 fast/dom/shadow/touch-event-retargeting.html [ Failure ]
-
-webkit.org/b/108363 fullscreen/full-screen-iframe-legacy.html [ Failure ]
 
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
@@ -1343,8 +1328,6 @@ webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure ]
 
 webkit.org/b/112109 fast/box-shadow/box-shadow-with-zero-radius.html [ ImageOnlyFailure ]
-
-webkit.org/b/112110 media/track/track-cue-container-rendering-position.html [ Failure ]
 
 webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
 
@@ -1408,8 +1391,6 @@ webkit.org/b/116153 fast/css/text-overflow-ellipsis-full-truncate-rtl.html [ Ima
 webkit.org/b/90589 fast/css/user-drag-none.html [ Failure ]
 
 webkit.org/b/116806 fast/css/text-overflow-ellipsis-behind-floats.html [ ImageOnlyFailure ]
-
-webkit.org/b/116808 fast/regions/offsetLeft-offsetTop-in-multiple-regions.html [ Failure ]
 
 webkit.org/b/117580 media/video-seek-multiple.html [ Failure ]
 

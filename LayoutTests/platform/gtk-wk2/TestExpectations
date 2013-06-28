@@ -214,6 +214,9 @@ svg/webarchive [ Skip ]
 svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
 http/tests/webarchive [ Skip ]
 
+# WTR needs an implementation of setAutomaticLinkDetectionEnabled.
+webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -225,6 +228,18 @@ http/tests/webarchive [ Skip ]
 Bug(GTK) plugins/document-open.html [ Crash ]
 
 webkit.org/b/116974 accessibility/title-ui-element-correctness.html [ Crash ]
+
+webkit.org/b/83683 [ Debug ] editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Crash ]
+
+webkit.org/b/108363 fullscreen/full-screen-iframe-legacy.html [ Crash ]
+
+# EventSender's contextClick should return objects that implements click() method
+webkit.org/b/98410 media/context-menu-actions.html [ Crash ]
+
+# Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces this regression
+webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Crash ]
+
+webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -466,16 +481,12 @@ Bug(GTK) plugins/npruntime/embed-property-equality.html [ Failure ]
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Failure ]
 Bug(GTK) plugins/resize-from-plugin.html [ Failure ]
 
-# Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces this regression
-webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Failure ]
-
 # Selection doesn't work properly.
 Bug(GTK) editing/selection/context-menu-text-selection.html [ Failure Pass ]
 Bug(GTK) editing/spelling/context-menu-suggestions.html [ Failure ]
 
 # EventSender's contextClick should return objects that implements click() method
 webkit.org/b/98410 editing/pasteboard/copy-standalone-image-crash.html [ Timeout ]
-webkit.org/b/98410 media/context-menu-actions.html [ Timeout ]
 
 # An oncontextmenu attribute is not called.
 Bug(GTK) editing/spelling/spellcheck-input-search-crash.html [ Failure ]
