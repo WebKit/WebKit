@@ -34,7 +34,7 @@
     <ClCompile Include="..\WinLauncher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AccessibilityDelegate.cpp">
+    <ClCompile Include="..\AccessibilityDelegate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,7 +54,7 @@
     <ClInclude Include="WinLauncherLibResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AccessibilityDelegate.h">
+    <ClInclude Include="..\AccessibilityDelegate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,3 +1,10 @@
+2013-06-28  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix for AppleWin port. Fix some file paths.
+
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj.filters:
+
 2013-06-27  Roger Fong  <roger_fong@apple.com>
 
         Add IAccessibilityDelegate implementation to WinLauncher for testing purposes.
