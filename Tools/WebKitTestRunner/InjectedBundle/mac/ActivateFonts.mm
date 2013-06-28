@@ -137,6 +137,8 @@ static NSSet *allowedFontFamilySet()
         @"Sathu",
         @"Silom",
         @"Skia",
+        @"Songti SC",
+        @"Songti TC",
         @"STFangsong",
         @"STHeiti",
         @"STIXGeneral",
