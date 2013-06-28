@@ -340,7 +340,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::resumeLoad()
 void MediaPlayerPrivateQuickTimeVisualContext::load(const String& url)
 {
     m_movieURL = url;
-    fprintf(stderr, "USING QT");
+
     if (m_preload == MediaPlayer::None) {
         m_delayingLoad = true;
         return;
