@@ -1,3 +1,27 @@
+2013-06-26  Dean Jackson  <dino@apple.com>
+
+        [Mac] Add Mavericks system font to Test systems
+        https://bugs.webkit.org/show_bug.cgi?id=118109
+
+        Reviewed by Simon Fraser.
+
+        OS X Mavericks uses a different font for system controls. Tell DRT and
+        WKTR about them otherwise they use a fallback font. Unfortunately the
+        fonts are hidden (not found in the list of available fonts) so I
+        had to add them manually.
+
+        Even though there is only one at the moment, I implemented this
+        as a set so it will be easier to add new fonts if necessary.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet): Fixed typo.
+        (systemHiddenFontFamilySet): New method that returns the system control font.
+        (drt_NSFontManager_availableFonts): Merge the hidden fonts.
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+        (WTR::allowedFontFamilySet): Fixed typo.
+        (WTR::systemHiddenFontFamilySet): As above.
+        (WTR::wtr_NSFontManager_availableFonts):
+
 2013-06-27  Anders Carlsson  <andersca@apple.com>
 
         Get rid of the last uses of deprecatedCharactersWithNullTermination()

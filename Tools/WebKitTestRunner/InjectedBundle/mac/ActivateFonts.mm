@@ -42,7 +42,7 @@ namespace WTR {
 
 static NSSet *allowedFontFamilySet()
 {
-    static NSSet *fontFamiliySet = [[NSSet setWithObjects:
+    static NSSet *fontFamilySet = [[NSSet setWithObjects:
         @"Ahem",
         @"Al Bayan",
         @"American Typewriter",
@@ -161,7 +161,16 @@ static NSSet *allowedFontFamilySet()
         @"Zapfino",
         nil] retain];
     
-    return fontFamiliySet;
+    return fontFamilySet;
+}
+
+static NSSet *systemHiddenFontFamilySet()
+{
+    static NSSet *fontFamilySet = [[NSSet setWithObjects:
+        @".LucidaGrandeUI",
+        nil] retain];
+
+    return fontFamilySet;
 }
 
 static IMP appKitAvailableFontFamiliesIMP;
@@ -197,7 +206,11 @@ static NSArray *wtr_NSFontManager_availableFonts(id self, SEL _cmd)
             [availableFontList addObject:[fontInfo objectAtIndex:0]];
         }
     }
-    
+
+    for (NSString *hiddenFontFamily in systemHiddenFontFamilySet()) {
+        [availableFontList addObject:hiddenFontFamily];
+    }
+
     availableFonts = availableFontList;
     return availableFonts;
 }
