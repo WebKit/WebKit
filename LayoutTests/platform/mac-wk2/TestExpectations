@@ -316,6 +316,8 @@ webkit.org/b/117767 media/W3C/video/error/error_onerror_called_on_bogus_source.h
 webkit.org/b/117767 media/broken-video.html [ Failure ]
 webkit.org/b/117767 media/event-attributes.html [ Failure ]
 
+webkit.org/b/117962 [ MountainLion ] media/video-played-collapse.html [ Skip ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

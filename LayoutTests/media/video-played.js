@@ -124,7 +124,7 @@ function playForMillisecs(milliseconds)
         }
 
         var elapsed = nowInSecs() - startTime;
-        if (elapsed > 2) {
+        if (elapsed > 2 + playDuration) {
             // Just in case something goes wrong.
             failTest("ERROR: test stalled, waited " + elapsed + " seconds for movie to play " + playedTime + " seconds");
             return;
