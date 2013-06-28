@@ -47,12 +47,11 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGEllipseElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(rx)
     REGISTER_LOCAL_ANIMATED_PROPERTY(ry)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledTransformableElement(tagName, document)
+    : SVGGraphicsElement(tagName, document)
     , m_cx(LengthModeWidth)
     , m_cy(LengthModeHeight)
     , m_rx(LengthModeWidth)
@@ -87,7 +86,7 @@ void SVGEllipseElement::parseAttribute(const QualifiedName& name, const AtomicSt
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(name))
-        SVGStyledTransformableElement::parseAttribute(name, value);
+        SVGGraphicsElement::parseAttribute(name, value);
     else if (name == SVGNames::cxAttr)
         setCxBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::cyAttr)
@@ -108,7 +107,7 @@ void SVGEllipseElement::parseAttribute(const QualifiedName& name, const AtomicSt
 void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        SVGGraphicsElement::svgAttributeChanged(attrName);
         return;
     }
 

@@ -25,9 +25,7 @@
 
 [
     Conditional=SVG
-] interface SVGDefsElement : SVGStyledElement,
-                             SVGTransformable {
+] interface SVGDefsElement : SVGGraphicsElement {
 };
 
 SVGDefsElement implements SVGExternalResourcesRequired;
-SVGDefsElement implements SVGTests;

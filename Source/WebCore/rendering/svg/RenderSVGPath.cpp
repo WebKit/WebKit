@@ -30,13 +30,13 @@
 #if ENABLE(SVG)
 #include "RenderSVGPath.h"
 
+#include "SVGGraphicsElement.h"
 #include "SVGPathElement.h"
-#include "SVGStyledTransformableElement.h"
 #include "SVGSubpathData.h"
 
 namespace WebCore {
 
-RenderSVGPath::RenderSVGPath(SVGStyledTransformableElement* node)
+RenderSVGPath::RenderSVGPath(SVGGraphicsElement* node)
     : RenderSVGShape(node)
 {
 }

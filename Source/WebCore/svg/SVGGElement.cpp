@@ -36,12 +36,11 @@ DEFINE_ANIMATED_BOOLEAN(SVGGElement, SVGNames::externalResourcesRequiredAttr, Ex
 
 BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGGElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 SVGGElement::SVGGElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
-    : SVGStyledTransformableElement(tagName, document, constructionType)
+    : SVGGraphicsElement(tagName, document, constructionType)
 {
     ASSERT(hasTagName(SVGNames::gTag));
     registerAnimatedPropertiesForSVGGElement();
@@ -66,7 +65,7 @@ bool SVGGElement::isSupportedAttribute(const QualifiedName& attrName)
 void SVGGElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (!isSupportedAttribute(name)) {
-        SVGStyledTransformableElement::parseAttribute(name, value);
+        SVGGraphicsElement::parseAttribute(name, value);
         return;
     }
 
@@ -83,7 +82,7 @@ void SVGGElement::parseAttribute(const QualifiedName& name, const AtomicString& 
 void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        SVGGraphicsElement::svgAttributeChanged(attrName);
         return;
     }
 

@@ -1,3 +1,19 @@
+2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Introduce SVGGraphicsElement IDL interface
+        https://bugs.webkit.org/show_bug.cgi?id=118178
+
+        Reviewed by Kentaro Hara.
+
+        Rebaseline js/global-constructors-attributes.html test case now that
+        SVGGraphicsElement is exposed on the global Window object.
+
+        * fast/js/global-constructors-attributes-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt:
+
 2013-06-28  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skipping failing tests, and mathml tests because not yet supported.

@@ -29,13 +29,13 @@
 
 #if ENABLE(SVG)
 #include "RenderSVGShape.h"
-#include "SVGStyledTransformableElement.h"
+#include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
 class RenderSVGEllipse : public RenderSVGShape {
 public:
-    explicit RenderSVGEllipse(SVGStyledTransformableElement*);
+    explicit RenderSVGEllipse(SVGGraphicsElement*);
     virtual ~RenderSVGEllipse();
 
 private:

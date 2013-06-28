@@ -50,12 +50,11 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGRectElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(rx)
     REGISTER_LOCAL_ANIMATED_PROPERTY(ry)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledTransformableElement(tagName, document)
+    : SVGGraphicsElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
     , m_width(LengthModeWidth)
@@ -94,7 +93,7 @@ void SVGRectElement::parseAttribute(const QualifiedName& name, const AtomicStrin
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(name))
-        SVGStyledTransformableElement::parseAttribute(name, value);
+        SVGGraphicsElement::parseAttribute(name, value);
     else if (name == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
@@ -119,7 +118,7 @@ void SVGRectElement::parseAttribute(const QualifiedName& name, const AtomicStrin
 void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        SVGGraphicsElement::svgAttributeChanged(attrName);
         return;
     }
 

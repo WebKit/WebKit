@@ -58,15 +58,14 @@ DEFINE_ANIMATED_STRING(SVGAElement, XLinkNames::hrefAttr, Href, href)
 DEFINE_ANIMATED_BOOLEAN(SVGAElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
 BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGAElement)
-     REGISTER_LOCAL_ANIMATED_PROPERTY(svgTarget)
-     REGISTER_LOCAL_ANIMATED_PROPERTY(href)
-     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
-     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(svgTarget)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(href)
+    REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledTransformableElement(tagName, document)
+    : SVGGraphicsElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::aTag));
     registerAnimatedPropertiesForSVGAElement();
@@ -104,7 +103,7 @@ bool SVGAElement::isSupportedAttribute(const QualifiedName& attrName)
 void SVGAElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (!isSupportedAttribute(name)) {
-        SVGStyledTransformableElement::parseAttribute(name, value);
+        SVGGraphicsElement::parseAttribute(name, value);
         return;
     }
 
@@ -128,7 +127,7 @@ void SVGAElement::parseAttribute(const QualifiedName& name, const AtomicString& 
 void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        SVGGraphicsElement::svgAttributeChanged(attrName);
         return;
     }
 
@@ -190,13 +189,13 @@ void SVGAElement::defaultEventHandler(Event* event)
         }
     }
 
-    SVGStyledTransformableElement::defaultEventHandler(event);
+    SVGGraphicsElement::defaultEventHandler(event);
 }
 
 bool SVGAElement::supportsFocus() const
 {
     if (rendererIsEditable())
-        return SVGStyledTransformableElement::supportsFocus();
+        return SVGGraphicsElement::supportsFocus();
     return true;
 }
 
@@ -210,7 +209,7 @@ bool SVGAElement::isFocusable() const
 
 bool SVGAElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute.name().localName() == hrefAttr || SVGStyledTransformableElement::isURLAttribute(attribute);
+    return attribute.name().localName() == hrefAttr || SVGGraphicsElement::isURLAttribute(attribute);
 }
 
 bool SVGAElement::isMouseFocusable() const

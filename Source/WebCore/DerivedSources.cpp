@@ -417,6 +417,7 @@
 #include "JSSVGGlyphElement.cpp"
 #include "JSSVGGlyphRefElement.cpp"
 #include "JSSVGGradientElement.cpp"
+#include "JSSVGGraphicsElement.cpp"
 #include "JSSVGHKernElement.cpp"
 #include "JSSVGImageElement.cpp"
 #include "JSSVGLength.cpp"

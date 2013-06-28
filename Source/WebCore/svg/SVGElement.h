@@ -59,7 +59,7 @@ public:
     SVGDocumentExtensions* accessDocumentSVGExtensions();
 
     virtual bool isSVGStyledElement() const { return false; }
-    virtual bool isStyledTransformable() const { return false; }
+    virtual bool isSVGGraphicsElement() const { return false; }
     virtual bool isStyledLocatable() const { return false; }
     virtual bool isSVGSVGElement() const { return false; }
     virtual bool isFilterEffect() const { return false; }

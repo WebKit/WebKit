@@ -1063,6 +1063,8 @@ webcore_svg_built_sources += \
 	DerivedSources/WebCore/JSSVGGlyphRefElement.h \
 	DerivedSources/WebCore/JSSVGGradientElement.cpp \
 	DerivedSources/WebCore/JSSVGGradientElement.h \
+	DerivedSources/WebCore/JSSVGGraphicsElement.cpp \
+	DerivedSources/WebCore/JSSVGGraphicsElement.h \
 	DerivedSources/WebCore/JSSVGHKernElement.cpp \
 	DerivedSources/WebCore/JSSVGHKernElement.h \
 	DerivedSources/WebCore/JSSVGImageElement.cpp \
@@ -1716,6 +1718,7 @@ dom_binding_idls += \
 	$(WebCore)/svg/SVGGlyphElement.idl \
 	$(WebCore)/svg/SVGGlyphRefElement.idl \
 	$(WebCore)/svg/SVGGradientElement.idl \
+	$(WebCore)/svg/SVGGraphicsElement.idl \
 	$(WebCore)/svg/SVGHKernElement.idl \
 	$(WebCore)/svg/SVGImageElement.idl \
 	$(WebCore)/svg/SVGLength.idl \
@@ -5184,6 +5187,8 @@ webcore_svg_sources += \
 	Source/WebCore/svg/SVGGlyphMap.h \
 	Source/WebCore/svg/SVGGradientElement.cpp \
 	Source/WebCore/svg/SVGGradientElement.h \
+	Source/WebCore/svg/SVGGraphicsElement.cpp \
+	Source/WebCore/svg/SVGGraphicsElement.h \
 	Source/WebCore/svg/SVGHKernElement.cpp \
 	Source/WebCore/svg/SVGHKernElement.h \
 	Source/WebCore/svg/SVGImageElement.cpp \
@@ -5295,8 +5300,6 @@ webcore_svg_sources += \
 	Source/WebCore/svg/SVGStyledElement.h \
 	Source/WebCore/svg/SVGStyledLocatableElement.cpp \
 	Source/WebCore/svg/SVGStyledLocatableElement.h \
-	Source/WebCore/svg/SVGStyledTransformableElement.cpp \
-	Source/WebCore/svg/SVGStyledTransformableElement.h \
 	Source/WebCore/svg/SVGSVGElement.cpp \
 	Source/WebCore/svg/SVGSVGElement.h \
 	Source/WebCore/svg/SVGSwitchElement.cpp \

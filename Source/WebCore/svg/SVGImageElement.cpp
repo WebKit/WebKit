@@ -53,12 +53,11 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGImageElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio)
     REGISTER_LOCAL_ANIMATED_PROPERTY(href)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledTransformableElement(tagName, document)
+    : SVGGraphicsElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
     , m_width(LengthModeWidth)
@@ -95,13 +94,13 @@ bool SVGImageElement::isPresentationAttribute(const QualifiedName& name) const
 {
     if (name == SVGNames::widthAttr || name == SVGNames::heightAttr)
         return true;
-    return SVGStyledTransformableElement::isPresentationAttribute(name);
+    return SVGGraphicsElement::isPresentationAttribute(name);
 }
 
 void SVGImageElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
     if (!isSupportedAttribute(name))
-        SVGStyledTransformableElement::collectStyleForPresentationAttribute(name, value, style);
+        SVGGraphicsElement::collectStyleForPresentationAttribute(name, value, style);
     else if (name == SVGNames::widthAttr)
         addPropertyToPresentationAttributeStyle(style, CSSPropertyWidth, value);
     else if (name == SVGNames::heightAttr)
@@ -113,7 +112,7 @@ void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomicStri
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(name))
-        SVGStyledTransformableElement::parseAttribute(name, value);
+        SVGGraphicsElement::parseAttribute(name, value);
     else if (name == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
@@ -139,7 +138,7 @@ void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomicStri
 void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        SVGGraphicsElement::svgAttributeChanged(attrName);
         return;
     }
 
@@ -201,7 +200,7 @@ bool SVGImageElement::haveLoadedRequiredResources()
 
 void SVGImageElement::attach(const AttachContext& context)
 {
-    SVGStyledTransformableElement::attach(context);
+    SVGGraphicsElement::attach(context);
 
     if (RenderSVGImage* imageObj = toRenderSVGImage(renderer())) {
         if (imageObj->imageResource()->hasImage())
@@ -213,7 +212,7 @@ void SVGImageElement::attach(const AttachContext& context)
 
 Node::InsertionNotificationRequest SVGImageElement::insertedInto(ContainerNode* rootParent)
 {
-    SVGStyledTransformableElement::insertedInto(rootParent);
+    SVGGraphicsElement::insertedInto(rootParent);
     if (!rootParent->inDocument())
         return InsertionDone;
     // Update image loader, as soon as we're living in the tree.
@@ -229,7 +228,7 @@ const AtomicString& SVGImageElement::imageSourceURL() const
 
 void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    SVGStyledTransformableElement::addSubresourceAttributeURLs(urls);
+    SVGGraphicsElement::addSubresourceAttributeURLs(urls);
 
     addSubresourceURL(urls, document()->completeURL(href()));
 }
@@ -237,7 +236,7 @@ void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 void SVGImageElement::didMoveToNewDocument(Document* oldDocument)
 {
     m_imageLoader.elementDidMoveToNewDocument();
-    SVGStyledTransformableElement::didMoveToNewDocument(oldDocument);
+    SVGGraphicsElement::didMoveToNewDocument(oldDocument);
 }
 
 }

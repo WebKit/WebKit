@@ -25,11 +25,9 @@
 
 [
     Conditional=SVG
-] interface SVGPolylineElement : SVGStyledElement,
-                                 SVGTransformable {
+] interface SVGPolylineElement : SVGGraphicsElement {
     readonly attribute SVGPointList points;
     readonly attribute SVGPointList animatedPoints;
 };
 
 SVGPolylineElement implements SVGExternalResourcesRequired;
-SVGPolylineElement implements SVGTests;

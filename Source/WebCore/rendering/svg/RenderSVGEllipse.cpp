@@ -31,12 +31,12 @@
 
 #include "SVGCircleElement.h"
 #include "SVGEllipseElement.h"
+#include "SVGGraphicsElement.h"
 #include "SVGNames.h"
-#include "SVGStyledTransformableElement.h"
 
 namespace WebCore {
 
-RenderSVGEllipse::RenderSVGEllipse(SVGStyledTransformableElement* node)
+RenderSVGEllipse::RenderSVGEllipse(SVGGraphicsElement* node)
     : RenderSVGShape(node)
     , m_usePathFallback(false)
 {

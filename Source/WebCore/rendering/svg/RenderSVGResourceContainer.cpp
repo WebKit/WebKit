@@ -25,9 +25,9 @@
 #include "RenderLayer.h"
 #include "RenderSVGRoot.h"
 #include "RenderView.h"
+#include "SVGGraphicsElement.h"
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
-#include "SVGStyledTransformableElement.h"
 #include <wtf/StackStats.h>
 
 namespace WebCore {
@@ -226,7 +226,7 @@ AffineTransform RenderSVGResourceContainer::transformOnNonScalingStroke(RenderOb
     if (!object->isSVGShape())
         return resourceTransform;
 
-    SVGStyledTransformableElement* element = toSVGStyledTransformableElement(object->node());
+    SVGGraphicsElement* element = toSVGGraphicsElement(object->node());
     AffineTransform transform = element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
     transform *= resourceTransform;
     return transform;

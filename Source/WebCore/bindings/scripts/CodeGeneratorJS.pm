@@ -1496,7 +1496,7 @@ sub GetGnuVTableOffsetForType
         || $typename eq "SVGRectElement"
         || $typename eq "SVGSVGElement"
         || $typename eq "SVGStyledLocatableElement"
-        || $typename eq "SVGStyledTransformableElement"
+        || $typename eq "SVGGraphicsElement"
         || $typename eq "SVGSwitchElement"
         || $typename eq "SVGTextElement"
         || $typename eq "SVGTransformable"

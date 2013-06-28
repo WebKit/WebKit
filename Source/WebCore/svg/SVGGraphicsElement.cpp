@@ -21,7 +21,7 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "SVGStyledTransformableElement.h"
+#include "SVGGraphicsElement.h"
 
 #include "AffineTransform.h"
 #include "Attribute.h"
@@ -34,34 +34,35 @@
 namespace WebCore {
 
 // Animated property definitions
-DEFINE_ANIMATED_TRANSFORM_LIST(SVGStyledTransformableElement, SVGNames::transformAttr, Transform, transform)
+DEFINE_ANIMATED_TRANSFORM_LIST(SVGGraphicsElement, SVGNames::transformAttr, Transform, transform)
 
-BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
+BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGGraphicsElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(transform)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledLocatableElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
 END_REGISTER_ANIMATED_PROPERTIES
 
-SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
+SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
     : SVGStyledLocatableElement(tagName, document, constructionType)
 {
-    registerAnimatedPropertiesForSVGStyledTransformableElement();
+    registerAnimatedPropertiesForSVGGraphicsElement();
 }
 
-SVGStyledTransformableElement::~SVGStyledTransformableElement()
+SVGGraphicsElement::~SVGGraphicsElement()
 {
 }
 
-AffineTransform SVGStyledTransformableElement::getCTM(StyleUpdateStrategy styleUpdateStrategy)
+AffineTransform SVGGraphicsElement::getCTM(StyleUpdateStrategy styleUpdateStrategy)
 {
     return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope, styleUpdateStrategy);
 }
 
-AffineTransform SVGStyledTransformableElement::getScreenCTM(StyleUpdateStrategy styleUpdateStrategy)
+AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdateStrategy)
 {
     return SVGLocatable::computeCTM(this, SVGLocatable::ScreenScope, styleUpdateStrategy);
 }
 
-AffineTransform SVGStyledTransformableElement::animatedLocalTransform() const
+AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
     AffineTransform matrix;
     RenderStyle* style = renderer() ? renderer()->style() : 0;
@@ -83,14 +84,14 @@ AffineTransform SVGStyledTransformableElement::animatedLocalTransform() const
     return matrix;
 }
 
-AffineTransform* SVGStyledTransformableElement::supplementalTransform()
+AffineTransform* SVGGraphicsElement::supplementalTransform()
 {
     if (!m_supplementalTransform)
         m_supplementalTransform = adoptPtr(new AffineTransform);
     return m_supplementalTransform.get();
 }
 
-bool SVGStyledTransformableElement::isSupportedAttribute(const QualifiedName& attrName)
+bool SVGGraphicsElement::isSupportedAttribute(const QualifiedName& attrName)
 {
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
     if (supportedAttributes.isEmpty())
@@ -98,7 +99,7 @@ bool SVGStyledTransformableElement::isSupportedAttribute(const QualifiedName& at
     return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGStyledTransformableElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (!isSupportedAttribute(name)) {
         SVGStyledLocatableElement::parseAttribute(name, value);
@@ -116,7 +117,7 @@ void SVGStyledTransformableElement::parseAttribute(const QualifiedName& name, co
     ASSERT_NOT_REACHED();
 }
 
-void SVGStyledTransformableElement::svgAttributeChanged(const QualifiedName& attrName)
+void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
         SVGStyledLocatableElement::svgAttributeChanged(attrName);
@@ -138,28 +139,28 @@ void SVGStyledTransformableElement::svgAttributeChanged(const QualifiedName& att
     ASSERT_NOT_REACHED();
 }
 
-SVGElement* SVGStyledTransformableElement::nearestViewportElement() const
+SVGElement* SVGGraphicsElement::nearestViewportElement() const
 {
     return SVGTransformable::nearestViewportElement(this);
 }
 
-SVGElement* SVGStyledTransformableElement::farthestViewportElement() const
+SVGElement* SVGGraphicsElement::farthestViewportElement() const
 {
     return SVGTransformable::farthestViewportElement(this);
 }
 
-FloatRect SVGStyledTransformableElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
+FloatRect SVGGraphicsElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 {
     return SVGTransformable::getBBox(this, styleUpdateStrategy);
 }
 
-RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SVGGraphicsElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     // By default, any subclass is expected to do path-based drawing
     return new (arena) RenderSVGPath(this);
 }
 
-void SVGStyledTransformableElement::toClipPath(Path& path)
+void SVGGraphicsElement::toClipPath(Path& path)
 {
     updatePathFromGraphicsElement(this, path);
     // FIXME: How do we know the element has done a layout?

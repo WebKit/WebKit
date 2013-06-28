@@ -25,15 +25,13 @@
 #if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGStyledTransformableElement.h"
-#include "SVGTests.h"
+#include "SVGGraphicsElement.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
 
-class SVGAElement FINAL : public SVGStyledTransformableElement,
+class SVGAElement FINAL : public SVGGraphicsElement,
                           public SVGURIReference,
-                          public SVGTests,
                           public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGAElement> create(const QualifiedName&, Document*);
@@ -69,11 +67,6 @@ private:
         DECLARE_ANIMATED_STRING(Href, href)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
-
-    // SVGTests
-    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
-    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
-    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
 
 } // namespace WebCore

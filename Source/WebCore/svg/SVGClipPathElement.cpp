@@ -41,12 +41,11 @@ DEFINE_ANIMATED_BOOLEAN(SVGClipPathElement, SVGNames::externalResourcesRequiredA
 BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGClipPathElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(clipPathUnits)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledTransformableElement(tagName, document)
+    : SVGGraphicsElement(tagName, document)
     , m_clipPathUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
 {
     ASSERT(hasTagName(SVGNames::clipPathTag));
@@ -73,7 +72,7 @@ bool SVGClipPathElement::isSupportedAttribute(const QualifiedName& attrName)
 void SVGClipPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (!isSupportedAttribute(name)) {
-        SVGStyledTransformableElement::parseAttribute(name, value);
+        SVGGraphicsElement::parseAttribute(name, value);
         return;
     }
 
@@ -97,7 +96,7 @@ void SVGClipPathElement::parseAttribute(const QualifiedName& name, const AtomicS
 void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        SVGGraphicsElement::svgAttributeChanged(attrName);
         return;
     }
 
@@ -109,7 +108,7 @@ void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
 void SVGClipPathElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    SVGStyledTransformableElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGGraphicsElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
     if (changedByParser)
         return;

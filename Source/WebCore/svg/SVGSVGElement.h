@@ -28,8 +28,7 @@
 #include "SVGAnimatedRect.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
-#include "SVGStyledTransformableElement.h"
-#include "SVGTests.h"
+#include "SVGGraphicsElement.h"
 #include "SVGZoomAndPan.h"
 
 namespace WebCore {
@@ -41,16 +40,15 @@ class SVGViewSpec;
 class SVGViewElement;
 class SMILTimeContainer;
 
-class SVGSVGElement FINAL : public SVGStyledTransformableElement,
-                            public SVGTests,
+class SVGSVGElement FINAL : public SVGGraphicsElement,
                             public SVGExternalResourcesRequired,
                             public SVGFitToViewBox,
                             public SVGZoomAndPan {
 public:
     static PassRefPtr<SVGSVGElement> create(const QualifiedName&, Document*);
 
-    using SVGStyledTransformableElement::ref;
-    using SVGStyledTransformableElement::deref;
+    using SVGGraphicsElement::ref;
+    using SVGGraphicsElement::deref;
 
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const OVERRIDE { return true; }
@@ -174,11 +172,6 @@ private:
         DECLARE_ANIMATED_RECT(ViewBox, viewBox)
         DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
     END_DECLARE_ANIMATED_PROPERTIES
-
-    // SVGTests
-    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
-    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
-    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 
     virtual void documentWillSuspendForPageCache();
     virtual void documentDidResumeFromPageCache();

@@ -79,12 +79,11 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGUseElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(height)
     REGISTER_LOCAL_ANIMATED_PROPERTY(href)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledTransformableElement)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* document, bool wasInsertedByParser)
-    : SVGStyledTransformableElement(tagName, document)
+    : SVGGraphicsElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
     , m_width(LengthModeWidth)
@@ -153,7 +152,7 @@ void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomicString
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(name))
-        SVGStyledTransformableElement::parseAttribute(name, value);
+        SVGGraphicsElement::parseAttribute(name, value);
     else if (name == SVGNames::xAttr)
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
@@ -182,7 +181,7 @@ static inline bool isWellFormedDocument(Document* document)
 Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode* rootParent)
 {
     // This functions exists to assure assumptions made in the code regarding SVGElementInstance creation/destruction are satisfied.
-    SVGStyledTransformableElement::insertedInto(rootParent);
+    SVGGraphicsElement::insertedInto(rootParent);
     if (!rootParent->inDocument())
         return InsertionDone;
     ASSERT(!m_targetElementInstance || !isWellFormedDocument(document()));
@@ -195,7 +194,7 @@ Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode* ro
 
 void SVGUseElement::removedFrom(ContainerNode* rootParent)
 {
-    SVGStyledTransformableElement::removedFrom(rootParent);
+    SVGGraphicsElement::removedFrom(rootParent);
     if (rootParent->inDocument())
         clearResourceReferences();
 }
@@ -222,7 +221,7 @@ Document* SVGUseElement::externalDocument() const
 void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        SVGGraphicsElement::svgAttributeChanged(attrName);
         return;
     }
 
@@ -562,12 +561,12 @@ void SVGUseElement::toClipPath(Path& path)
     if (!n)
         return;
 
-    if (n->isSVGElement() && toSVGElement(n)->isStyledTransformable()) {
+    if (n->isSVGElement() && toSVGElement(n)->isSVGGraphicsElement()) {
         if (!isDirectReference(n))
             // Spec: Indirect references are an error (14.3.5)
             document()->accessSVGExtensions()->reportError("Not allowed to use indirect reference in <clip-path>");
         else {
-            toSVGStyledTransformableElement(n)->toClipPath(path);
+            toSVGGraphicsElement(n)->toClipPath(path);
             // FIXME: Avoid manual resolution of x/y here. Its potentially harmful.
             SVGLengthContext lengthContext(this);
             path.translate(FloatSize(x().value(lengthContext), y().value(lengthContext)));
@@ -987,7 +986,7 @@ bool SVGUseElement::instanceTreeIsLoading(SVGElementInstance* targetElementInsta
 
 void SVGUseElement::finishParsingChildren()
 {
-    SVGStyledTransformableElement::finishParsingChildren();
+    SVGGraphicsElement::finishParsingChildren();
     SVGExternalResourcesRequired::finishParsingChildren();
     if (m_wasInsertedByParser) {
         buildPendingResource();

@@ -25,8 +25,7 @@
 
 [
     Conditional=SVG
-] interface SVGLineElement : SVGStyledElement,
-                             SVGTransformable {
+] interface SVGLineElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength x1;
     readonly attribute SVGAnimatedLength y1;
     readonly attribute SVGAnimatedLength x2;
@@ -34,4 +33,3 @@
 };
 
 SVGLineElement implements SVGExternalResourcesRequired;
-SVGLineElement implements SVGTests;

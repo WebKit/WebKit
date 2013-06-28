@@ -571,6 +571,7 @@ enable?(SVG) {
     $$PWD/svg/SVGGlyphElement.idl \
     $$PWD/svg/SVGGlyphRefElement.idl \
     $$PWD/svg/SVGGradientElement.idl \
+    $$PWD/svg/SVGGraphicsElement.idl \
     $$PWD/svg/SVGHKernElement.idl \
     $$PWD/svg/SVGImageElement.idl \
     $$PWD/svg/SVGLength.idl \

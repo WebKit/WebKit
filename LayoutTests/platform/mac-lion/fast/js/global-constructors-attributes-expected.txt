@@ -1308,6 +1308,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'SVGGradientElement').hasOwnPropert
 PASS Object.getOwnPropertyDescriptor(global, 'SVGGradientElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGGradientElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGGradientElement').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'SVGGraphicsElement').value is SVGGraphicsElement
+PASS Object.getOwnPropertyDescriptor(global, 'SVGGraphicsElement').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SVGGraphicsElement').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SVGGraphicsElement').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'SVGGraphicsElement').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SVGHKernElement').value is SVGHKernElement
 PASS Object.getOwnPropertyDescriptor(global, 'SVGHKernElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGHKernElement').hasOwnProperty('set') is false

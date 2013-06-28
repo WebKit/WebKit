@@ -62,7 +62,7 @@ bool SVGAnimateMotionElement::hasValidAttributeType()
         return false;
 
     // We don't have a special attribute name to verify the animation type. Check the element name instead.
-    if (!targetElement->isStyledTransformable() && !targetElement->hasTagName(SVGNames::textTag))
+    if (!targetElement->isSVGGraphicsElement() && !targetElement->hasTagName(SVGNames::textTag))
         return false;
     // Spec: SVG 1.1 section 19.2.15
     // FIXME: svgTag is missing. Needs to be checked, if transforming <svg> could cause problems.

@@ -2728,6 +2728,7 @@ HEADERS += \
     svg/SVGGlyphElement.h \
     svg/SVGGlyphRefElement.h \
     svg/SVGGradientElement.h \
+    svg/SVGGraphicsElement.h \
     svg/SVGHKernElement.h \
     svg/SVGImageElement.h \
     svg/SVGImageLoader.h \
@@ -2780,7 +2781,6 @@ HEADERS += \
     svg/SVGStyleElement.h \
     svg/SVGStyledElement.h \
     svg/SVGStyledLocatableElement.h \
-    svg/SVGStyledTransformableElement.h \
     svg/SVGSVGElement.h \
     svg/SVGSwitchElement.h \
     svg/SVGSymbolElement.h \
@@ -3797,6 +3797,7 @@ enable?(SVG) {
         svg/SVGGlyphElement.cpp \
         svg/SVGGlyphRefElement.cpp \
         svg/SVGGradientElement.cpp \
+        svg/SVGGraphicsElement.cpp \
         svg/SVGHKernElement.cpp \
         svg/SVGImageElement.cpp \
         svg/SVGImageLoader.cpp \
@@ -3844,7 +3845,6 @@ enable?(SVG) {
         svg/SVGStyleElement.cpp \
         svg/SVGStyledElement.cpp \
         svg/SVGStyledLocatableElement.cpp \
-        svg/SVGStyledTransformableElement.cpp \
         svg/SVGSwitchElement.cpp \
         svg/SVGSymbolElement.cpp \
         svg/SVGTRefElement.cpp \

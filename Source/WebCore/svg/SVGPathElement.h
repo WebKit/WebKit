@@ -25,11 +25,10 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGGraphicsElement.h"
 #include "SVGNames.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathSegList.h"
-#include "SVGStyledTransformableElement.h"
-#include "SVGTests.h"
 
 namespace WebCore {
 
@@ -54,8 +53,7 @@ class SVGPathSegCurvetoQuadraticSmoothAbs;
 class SVGPathSegCurvetoQuadraticSmoothRel;
 class SVGPathSegListPropertyTearOff;
 
-class SVGPathElement FINAL : public SVGStyledTransformableElement,
-                             public SVGTests,
+class SVGPathElement FINAL : public SVGGraphicsElement,
                              public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGPathElement> create(const QualifiedName&, Document*);
@@ -119,11 +117,6 @@ private:
         DECLARE_ANIMATED_NUMBER(PathLength, pathLength)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
-
-    // SVGTests
-    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
-    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
-    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
 

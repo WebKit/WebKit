@@ -1,3 +1,191 @@
+2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Introduce SVGGraphicsElement IDL interface
+        https://bugs.webkit.org/show_bug.cgi?id=118178
+
+        Reviewed by Kentaro Hara.
+
+        Introduce SVGGraphicsElement IDL interface as per the latest SVG
+        specification:
+        - https://svgwg.org/svg2-draft/types.html#InterfaceSVGGraphicsElement
+
+        SVGGraphicsElement is a merge of SVGLocatable and SVGTransformable.
+        This is one step towards simplifying inheritance in SVG and matching
+        the latest SVG2 specification.
+
+        No new tests, already covered by existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetGnuVTableOffsetForType):
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::RenderSVGEllipse):
+        * rendering/svg/RenderSVGEllipse.h:
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::RenderSVGPath):
+        * rendering/svg/RenderSVGPath.h:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::pathOnlyClipping):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::transformOnNonScalingStroke):
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::RenderSVGShape):
+        (WebCore::RenderSVGShape::updateShapeFromElement):
+        (WebCore::RenderSVGShape::layout):
+        (WebCore::RenderSVGShape::nonScalingStrokeTransform):
+        (WebCore::RenderSVGShape::shouldGenerateMarkerPositions):
+        * rendering/svg/RenderSVGShape.h:
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::RenderSVGTransformableContainer):
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/svg/RenderSVGTransformableContainer.h:
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::SVGAElement):
+        (WebCore::SVGAElement::parseAttribute):
+        (WebCore::SVGAElement::svgAttributeChanged):
+        (WebCore::SVGAElement::defaultEventHandler):
+        (WebCore::SVGAElement::supportsFocus):
+        (WebCore::SVGAElement::isURLAttribute):
+        * svg/SVGAElement.h:
+        * svg/SVGAElement.idl:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeType):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        (WebCore::SVGCircleElement::parseAttribute):
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGCircleElement.h:
+        * svg/SVGCircleElement.idl:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::SVGClipPathElement):
+        (WebCore::SVGClipPathElement::parseAttribute):
+        (WebCore::SVGClipPathElement::svgAttributeChanged):
+        (WebCore::SVGClipPathElement::childrenChanged):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGClipPathElement.idl:
+        * svg/SVGDefsElement.cpp:
+        (WebCore::SVGDefsElement::SVGDefsElement):
+        * svg/SVGDefsElement.h:
+        * svg/SVGDefsElement.idl:
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::isSVGGraphicsElement):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        (WebCore::SVGEllipseElement::parseAttribute):
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGEllipseElement.idl:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        (WebCore::SVGForeignObjectElement::parseAttribute):
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        (WebCore::SVGForeignObjectElement::rendererIsNeeded):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGForeignObjectElement.idl:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::SVGGElement):
+        (WebCore::SVGGElement::parseAttribute):
+        (WebCore::SVGGElement::svgAttributeChanged):
+        * svg/SVGGElement.h:
+        * svg/SVGGElement.idl:
+        * svg/SVGGraphicsElement.cpp: Renamed from Source/WebCore/svg/SVGStyledTransformableElement.cpp.
+        (WebCore::SVGGraphicsElement::SVGGraphicsElement):
+        (WebCore::SVGGraphicsElement::~SVGGraphicsElement):
+        (WebCore::SVGGraphicsElement::getCTM):
+        (WebCore::SVGGraphicsElement::getScreenCTM):
+        (WebCore::SVGGraphicsElement::animatedLocalTransform):
+        (WebCore::SVGGraphicsElement::supplementalTransform):
+        (WebCore::SVGGraphicsElement::isSupportedAttribute):
+        (WebCore::SVGGraphicsElement::parseAttribute):
+        (WebCore::SVGGraphicsElement::svgAttributeChanged):
+        (WebCore::SVGGraphicsElement::nearestViewportElement):
+        (WebCore::SVGGraphicsElement::farthestViewportElement):
+        (WebCore::SVGGraphicsElement::getBBox):
+        (WebCore::SVGGraphicsElement::createRenderer):
+        (WebCore::SVGGraphicsElement::toClipPath):
+        * svg/SVGGraphicsElement.h: Renamed from Source/WebCore/svg/SVGStyledTransformableElement.h.
+        (WebCore::SVGGraphicsElement::localCoordinateSpaceTransform):
+        (WebCore::SVGGraphicsElement::synchronizeRequiredFeatures):
+        (WebCore::SVGGraphicsElement::synchronizeRequiredExtensions):
+        (WebCore::SVGGraphicsElement::synchronizeSystemLanguage):
+        (WebCore::toSVGGraphicsElement):
+        * svg/SVGGraphicsElement.idl: Copied from Source/WebCore/svg/SVGForeignObjectElement.idl.
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        (WebCore::SVGImageElement::isPresentationAttribute):
+        (WebCore::SVGImageElement::collectStyleForPresentationAttribute):
+        (WebCore::SVGImageElement::parseAttribute):
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        (WebCore::SVGImageElement::attach):
+        (WebCore::SVGImageElement::insertedInto):
+        (WebCore::SVGImageElement::addSubresourceAttributeURLs):
+        (WebCore::SVGImageElement::didMoveToNewDocument):
+        * svg/SVGImageElement.h:
+        * svg/SVGImageElement.idl:
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::SVGLineElement):
+        (WebCore::SVGLineElement::parseAttribute):
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        * svg/SVGLineElement.h:
+        * svg/SVGLineElement.idl:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        (WebCore::SVGPathElement::parseAttribute):
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::insertedInto):
+        (WebCore::SVGPathElement::removedFrom):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathElement.idl:
+        * svg/SVGPatternElement.cpp:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        (WebCore::SVGPolyElement::parseAttribute):
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGPolyElement.h:
+        * svg/SVGPolygonElement.idl:
+        * svg/SVGPolylineElement.idl:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::SVGRectElement):
+        (WebCore::SVGRectElement::parseAttribute):
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGRectElement.h:
+        * svg/SVGRectElement.idl:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::didMoveToNewDocument):
+        (WebCore::SVGSVGElement::parseAttribute):
+        (WebCore::SVGSVGElement::insertedInto):
+        (WebCore::SVGSVGElement::removedFrom):
+        * svg/SVGSVGElement.h:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::localCoordinateSpaceTransform):
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::SVGSwitchElement):
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSwitchElement.idl:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        (WebCore::SVGUseElement::parseAttribute):
+        (WebCore::SVGUseElement::insertedInto):
+        (WebCore::SVGUseElement::removedFrom):
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::SVGUseElement::toClipPath):
+        (WebCore::SVGUseElement::finishParsingChildren):
+        * svg/SVGUseElement.h:
+        * svg/SVGUseElement.idl:
+
 2013-06-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add new schemes to content utils.

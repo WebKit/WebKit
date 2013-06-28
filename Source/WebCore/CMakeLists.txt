@@ -688,6 +688,7 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGGlyphElement.idl
     svg/SVGGlyphRefElement.idl
     svg/SVGGradientElement.idl
+    svg/SVGGraphicsElement.idl
     svg/SVGHKernElement.idl
     svg/SVGImageElement.idl
     svg/SVGLength.idl
@@ -2413,6 +2414,7 @@ set(WebCore_SOURCES
     svg/SVGGlyphElement.cpp
     svg/SVGGlyphRefElement.cpp
     svg/SVGGradientElement.cpp
+    svg/SVGGraphicsElement.cpp
     svg/SVGHKernElement.cpp
     svg/SVGImageElement.cpp
     svg/SVGImageLoader.cpp
@@ -2460,7 +2462,6 @@ set(WebCore_SOURCES
     svg/SVGStyleElement.cpp
     svg/SVGStyledElement.cpp
     svg/SVGStyledLocatableElement.cpp
-    svg/SVGStyledTransformableElement.cpp
     svg/SVGSwitchElement.cpp
     svg/SVGSymbolElement.cpp
     svg/SVGTRefElement.cpp

@@ -33,7 +33,7 @@ namespace WebCore {
 
 class RenderSVGPath : public RenderSVGShape {
 public:
-    explicit RenderSVGPath(SVGStyledTransformableElement*);
+    explicit RenderSVGPath(SVGGraphicsElement*);
     virtual ~RenderSVGPath();
 
 private:

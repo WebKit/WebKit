@@ -12099,7 +12099,7 @@
     <ClInclude Include="..\svg\SVGStyledLocatableElement.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
-    <ClInclude Include="..\svg\SVGStyledTransformableElement.h">
+    <ClInclude Include="..\svg\SVGGraphicsElement.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGStyleElement.h">
@@ -14121,6 +14121,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSVGGradientElement.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSVGGraphicsElement.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSVGHKernElement.h">

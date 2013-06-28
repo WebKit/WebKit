@@ -25,13 +25,11 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGStyledTransformableElement.h"
-#include "SVGTests.h"
+#include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
-class SVGRectElement FINAL : public SVGStyledTransformableElement,
-                             public SVGTests,
+class SVGRectElement FINAL : public SVGGraphicsElement,
                              public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGRectElement> create(const QualifiedName&, Document*);
@@ -59,11 +57,6 @@ private:
         DECLARE_ANIMATED_LENGTH(Ry, ry)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
-
-    // SVGTests
-    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
-    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
-    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
 
 } // namespace WebCore
