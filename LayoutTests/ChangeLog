@@ -1,3 +1,18 @@
+2013-06-28  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Update TestExpectations so new Shapes tests are skipped where the old ones were
+        https://bugs.webkit.org/show_bug.cgi?id=118192
+
+        Reviewed by Brent Fulgham.
+
+        Shapes still aren't enabled on some ports, so skip the tests there.
+        As part of this patch, it was discovered that they work on EFL, so the
+        skipping has been removed from there.
+
+        * platform/efl/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2013-06-28  Morten Stenshorne  <mstensho@opera.com>
 
         SVG relayout problem when displayed with different image box heights
