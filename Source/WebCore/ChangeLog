@@ -1,3 +1,21 @@
+2013-06-28  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        Avoid duplicating hostWindow() call in ScrollView.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=118168
+
+        Reviewed by Christophe Dumez.
+
+        Remove redundant hostWindow() calls in ScrollView.cpp.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::contentsToScreen):
+        (WebCore::ScrollView::screenToContents):
+        (WebCore::ScrollView::repaintContentRectangle):
+        (WebCore::ScrollView::updateOverhangAreas):
+        (WebCore::ScrollView::addPanScrollIcon):
+        (WebCore::ScrollView::removePanScrollIcon):
+
 2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed, fix GTK build after r152156.

@@ -658,7 +658,8 @@ IntRect ScrollView::rectToCopyOnScroll() const
 
 void ScrollView::scrollContents(const IntSize& scrollDelta)
 {
-    if (!hostWindow())
+    HostWindow* window = hostWindow();
+    if (!window)
         return;
 
     // Since scrolling is double buffered, we will be blitting the scroll view's intersection
@@ -669,7 +670,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     updateRect.intersect(scrollViewRect);
 
     // Invalidate the root view (not the backing store).
-    hostWindow()->invalidateRootView(updateRect, false /*immediate*/);
+    window->invalidateRootView(updateRect, false /*immediate*/);
 
     if (m_drawPanScrollIcon) {
         // FIXME: the pan icon is broken when accelerated compositing is on, since it will draw under the compositing layers.
@@ -678,7 +679,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
         IntPoint panIconDirtySquareLocation = IntPoint(m_panScrollIconPoint.x() - (panIconDirtySquareSizeLength / 2), m_panScrollIconPoint.y() - (panIconDirtySquareSizeLength / 2));
         IntRect panScrollIconDirtyRect = IntRect(panIconDirtySquareLocation, IntSize(panIconDirtySquareSizeLength, panIconDirtySquareSizeLength));
         panScrollIconDirtyRect.intersect(clipRect);
-        hostWindow()->invalidateContentsAndRootView(panScrollIconDirtyRect, false /*immediate*/);
+        window->invalidateContentsAndRootView(panScrollIconDirtyRect, false /*immediate*/);
     }
 
     if (canBlitOnScroll()) { // The main frame can just blit the WebView window
@@ -698,7 +699,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     frameRectsChanged();
 
     // Now blit the backingstore into the window which should be very fast.
-    hostWindow()->invalidateRootView(IntRect(), true);
+    window->invalidateRootView(IntRect(), true);
 }
 
 bool ScrollView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
@@ -784,20 +785,22 @@ IntRect ScrollView::contentsToWindow(const IntRect& contentsRect) const
 
 IntRect ScrollView::contentsToScreen(const IntRect& rect) const
 {
+    HostWindow* window = hostWindow();
     if (platformWidget())
         return platformContentsToScreen(rect);
-    if (!hostWindow())
+    if (!window)
         return IntRect();
-    return hostWindow()->rootViewToScreen(contentsToRootView(rect));
+    return window->rootViewToScreen(contentsToRootView(rect));
 }
 
 IntPoint ScrollView::screenToContents(const IntPoint& point) const
 {
+    HostWindow* window = hostWindow();
     if (platformWidget())
         return platformScreenToContents(point);
-    if (!hostWindow())
+    if (!window)
         return IntPoint();
-    return rootViewToContents(hostWindow()->screenToRootView(point));
+    return rootViewToContents(window->screenToRootView(point));
 }
 
 bool ScrollView::containsScrollbarsAvoidingResizer() const
@@ -967,8 +970,8 @@ void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
         return;
     }
 
-    if (hostWindow())
-        hostWindow()->invalidateContentsAndRootView(contentsToWindow(paintRect), now /*immediate*/);
+    if (HostWindow* window = hostWindow())
+        window->invalidateContentsAndRootView(contentsToWindow(paintRect), now /*immediate*/);
 }
 
 IntRect ScrollView::scrollCornerRect() const
@@ -1161,16 +1164,17 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
 
 void ScrollView::updateOverhangAreas()
 {
-    if (!hostWindow())
+    HostWindow* window = hostWindow();
+    if (!window)
         return;
 
     IntRect horizontalOverhangRect;
     IntRect verticalOverhangRect;
     calculateOverhangAreasForPainting(horizontalOverhangRect, verticalOverhangRect);
     if (!horizontalOverhangRect.isEmpty())
-        hostWindow()->invalidateContentsAndRootView(horizontalOverhangRect, false /*immediate*/);
+        window->invalidateContentsAndRootView(horizontalOverhangRect, false /*immediate*/);
     if (!verticalOverhangRect.isEmpty())
-        hostWindow()->invalidateContentsAndRootView(verticalOverhangRect, false /*immediate*/);
+        window->invalidateContentsAndRootView(verticalOverhangRect, false /*immediate*/);
 }
 
 void ScrollView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
@@ -1308,19 +1312,21 @@ bool ScrollView::isOffscreen() const
 
 void ScrollView::addPanScrollIcon(const IntPoint& iconPosition)
 {
-    if (!hostWindow())
+    HostWindow* window = hostWindow();
+    if (!window)
         return;
     m_drawPanScrollIcon = true;    
     m_panScrollIconPoint = IntPoint(iconPosition.x() - panIconSizeLength / 2 , iconPosition.y() - panIconSizeLength / 2) ;
-    hostWindow()->invalidateContentsAndRootView(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
+    window->invalidateContentsAndRootView(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
 }
 
 void ScrollView::removePanScrollIcon()
 {
-    if (!hostWindow())
+    HostWindow* window = hostWindow();
+    if (!window)
         return;
     m_drawPanScrollIcon = false; 
-    hostWindow()->invalidateContentsAndRootView(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
+    window->invalidateContentsAndRootView(IntRect(m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true /*immediate*/);
 }
 
 void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAll, bool updatePositionSynchronously)
