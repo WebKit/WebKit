@@ -280,7 +280,11 @@ void RenderView::layout()
                     || child->style()->logicalMaxHeight().isPercent()
                     || child->style()->logicalHeight().isViewportPercentage()
                     || child->style()->logicalMinHeight().isViewportPercentage()
-                    || child->style()->logicalMaxHeight().isViewportPercentage())
+                    || child->style()->logicalMaxHeight().isViewportPercentage()
+#if ENABLE(SVG)
+                    || child->isSVGRoot()
+#endif
+                )
                 child->setChildNeedsLayout(true, MarkOnlyThis);
         }
     }

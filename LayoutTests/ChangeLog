@@ -1,3 +1,13 @@
+2013-06-28  Morten Stenshorne  <mstensho@opera.com>
+
+        SVG relayout problem when displayed with different image box heights
+        https://bugs.webkit.org/show_bug.cgi?id=118140
+
+        Reviewed by Philip Rogers.
+
+        * svg/as-image/same-source-different-height-expected.html: Added.
+        * svg/as-image/same-source-different-height.html: Added.
+
 2013-06-28  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         accessibility/media-element.html does not support platforms without subroles
