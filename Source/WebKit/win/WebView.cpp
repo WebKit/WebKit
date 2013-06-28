@@ -2812,7 +2812,7 @@ void WebView::setToolTip(const String& toolTip)
         info.cbSize = sizeof(info);
         info.uFlags = TTF_IDISHWND;
         info.uId = reinterpret_cast<UINT_PTR>(m_viewWindow);
-        info.lpszText = const_cast<UChar*>(m_toolTip.deprecatedCharactersWithNullTermination());
+        info.lpszText = const_cast<UChar*>(m_toolTip.charactersWithNullTermination().data());
         ::SendMessage(m_toolTipHwnd, TTM_UPDATETIPTEXT, 0, reinterpret_cast<LPARAM>(&info));
     }
 

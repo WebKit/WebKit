@@ -964,7 +964,7 @@ static String findFontFallback(const char* pathOrUrl)
     String pathToFontFallback = WebCore::directoryName(pathOrUrl);
 
     wchar_t fullPath[_MAX_PATH];
-    if (!_wfullpath(fullPath, pathToFontFallback.deprecatedCharactersWithNullTermination(), _MAX_PATH))
+    if (!_wfullpath(fullPath, pathToFontFallback.charactersWithNullTermination().data(), _MAX_PATH))
         return emptyString();
 
     if (!::PathIsDirectoryW(fullPath))
@@ -995,7 +995,7 @@ static String findFontFallback(const char* pathOrUrl)
     for (Vector<String>::iterator pos = possiblePaths.begin(); pos != possiblePaths.end(); ++pos) {
         pathToFontFallback = WebCore::pathByAppendingComponent(*pos, "resources\\"); 
 
-        if (::PathIsDirectoryW(pathToFontFallback.deprecatedCharactersWithNullTermination()))
+        if (::PathIsDirectoryW(pathToFontFallback.charactersWithNullTermination().data()))
             return pathToFontFallback;
     }
 
