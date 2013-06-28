@@ -1,3 +1,15 @@
+2013-06-28  Jessie Berlin  <jberlin@apple.com>
+
+        WebKitTestRunner should disable automatic quote and dash substitution like DumpRenderTree does
+        https://bugs.webkit.org/show_bug.cgi?id=118201
+
+        Reviewed by Dean Jackson.
+
+        * WebKitTestRunner/mac/main.mm:
+        (main):
+        Modify NSUserDefaults directly since setAutomaticQuoteSubstitutionEnabled and
+        setAutomaticDashSubstitutionEnabled are not exposed on WKView.
+
 2013-06-28  David Farler  <dfarler@apple.com>
 
         Upstream WebKit Nightly’s WebKitLauncher
