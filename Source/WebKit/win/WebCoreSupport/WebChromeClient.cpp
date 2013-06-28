@@ -856,6 +856,7 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
     ASSERT(element == m_webView->fullScreenElement());
     m_webView->fullScreenController()->exitFullScreen();
 }
+#endif
 
 void WebChromeClient::AXStartFrameLoad()
 {
@@ -872,5 +873,3 @@ void WebChromeClient::AXFinishFrameLoad()
     if (delegate)
         delegate->fireFrameLoadFinishedEvents();
 }
-
-#endif

@@ -47,6 +47,7 @@ import "DOMCSS.idl";
 import "IWebUndoManager.idl";
 import "IWebEditingDelegate.idl";
 import "DOMRange.idl";
+import "AccessibilityDelegate.idl";
 #endif
 
 interface IDOMCSSStyleDeclaration;
@@ -73,6 +74,8 @@ interface IWebPolicyDelegate;
 interface IWebDocumentView;
 interface IWebDocumentRepresentation;
 interface IWebUndoManager;
+
+interface IAccessibilityDelegate;
 
 /* These are the keys for the WebElementPropertyBag */
 const LPCOLESTR WebElementDOMNodeKey = L"WebElementDOMNodeKey";

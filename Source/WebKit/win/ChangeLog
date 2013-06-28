@@ -1,3 +1,14 @@
+2013-06-28  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compilation error.
+        https://bugs.webkit.org/show_bug.cgi?id=118131
+
+        Reviewed by Brent Fulgham.
+
+        * Interfaces/IWebView.idl: Include needed accessibility interface.
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::AXFinishFrameLoad): Accessibility methods should not be inside FULLSCREEN_API ifdef.
+
 2013-06-27  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLInputElement for code cleanup
