@@ -1,3 +1,13 @@
+2013-06-28  Iago Toral Quiroga  <itoral@igalia.com>
+
+        Use gtk_widget_get_preferred_size instead of deprecated gtk_widget_get_requisition
+        https://bugs.webkit.org/show_bug.cgi?id=118177
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::contentsSizeChanged):
+
 2013-06-27  Iago Toral Quiroga  <itoral@igalia.com>
 
         Use consistent file names for WidgetBackingStoreGtkX11 class
