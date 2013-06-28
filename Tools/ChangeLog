@@ -1,5 +1,17 @@
 2013-06-28  Roger Fong  <roger_fong@apple.com>
 
+        Enable AVFoundation in Web Prefs for WinLauncher and DumpRenderTree on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=118194.
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dllLauncherEntryPoint):
+        * WinLauncher/WinLauncher.cpp:
+        (dllLauncherEntryPoint):
+
+2013-06-28  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed build fix for AppleWin port. Fix some file paths.
 
         * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj:

@@ -1349,6 +1349,7 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
     standardPreferences->setJavaScriptEnabled(TRUE);
     standardPreferences->setDefaultFontSize(16);
     standardPreferences->setAcceleratedCompositingEnabled(true);
+    standardPreferences->setAVFoundationEnabled(TRUE);
     standardPreferences->setContinuousSpellCheckingEnabled(TRUE);
 
     if (printSupportedFeatures) {
