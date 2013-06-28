@@ -37,6 +37,14 @@ WK_ADD_API_MAPPING(WKViewRef, WebView)
 WK_ADD_API_MAPPING(WKPopupItemRef, WebPopupItemEfl)
 WK_ADD_API_MAPPING(WKPopupMenuListenerRef, WebPopupMenuListenerEfl)
 
+#if ENABLE(TOUCH_EVENTS)
+class EwkTouchEvent;
+class EwkTouchPoint;
+
+WK_ADD_API_MAPPING(WKTouchEventRef, EwkTouchEvent)
+WK_ADD_API_MAPPING(WKTouchPointRef, EwkTouchPoint)
+#endif
+
 // Enum conversions.
 inline WKPopupItemTextDirection toAPI(WebCore::TextDirection direction)
 {

@@ -32,6 +32,10 @@ class EwkView;
 
 namespace WebKit {
 
+#if ENABLE(TOUCH_EVENTS)
+class EwkTouchEvent;
+#endif
+
 class WebViewEfl : public WebView {
 public:
     void setEwkView(EwkView*);
@@ -39,6 +43,10 @@ public:
 
     void paintToCairoSurface(cairo_surface_t*);
     void setThemePath(const String&);
+
+#if ENABLE(TOUCH_EVENTS)
+    void sendTouchEvent(EwkTouchEvent*);
+#endif
 
 private:
     WebViewEfl(WebContext*, WebPageGroup*);

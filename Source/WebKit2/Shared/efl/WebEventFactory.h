@@ -27,11 +27,14 @@
 #define WebEventFactory_h
 
 #include "WebEvent.h"
-#include "ewk_touch.h"
 #include <Evas.h>
 #include <WebCore/AffineTransform.h>
 
 namespace WebKit {
+
+#if ENABLE(TOUCH_EVENTS)
+class EwkTouchEvent;
+#endif
 
 class WebEventFactory {
 public:
@@ -42,7 +45,7 @@ public:
     static WebKeyboardEvent createWebKeyboardEvent(const Evas_Event_Key_Down*);
     static WebKeyboardEvent createWebKeyboardEvent(const Evas_Event_Key_Up*);
 #if ENABLE(TOUCH_EVENTS)
-    static WebTouchEvent createWebTouchEvent(Ewk_Touch_Event_Type, const Eina_List*, const Evas_Modifier*, const WebCore::AffineTransform&, const WebCore::AffineTransform&, double timestamp);
+    static WebTouchEvent createWebTouchEvent(const EwkTouchEvent*, const WebCore::AffineTransform&);
 #endif
 };
 

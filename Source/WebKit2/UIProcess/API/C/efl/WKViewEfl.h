@@ -40,6 +40,8 @@ WK_EXPORT WKImageRef WKViewCreateSnapshot(WKViewRef);
 
 WK_EXPORT void WKViewSetThemePath(WKViewRef, WKStringRef);
 
+WK_EXPORT void WKViewSendTouchEvent(WKViewRef, WKTouchEventRef);
+
 #ifdef __cplusplus
 }
 #endif

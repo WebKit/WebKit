@@ -39,6 +39,10 @@
 #include "WebFullScreenManagerProxy.h"
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+#include "EwkTouchEvent.h"
+#endif
+
 using namespace EwkViewCallbacks;
 using namespace WebCore;
 
@@ -111,5 +115,13 @@ void WebViewEfl::setThemePath(const String& theme)
 {
     m_page->setThemePath(theme);
 }
+
+#if ENABLE(TOUCH_EVENTS)
+void WebViewEfl::sendTouchEvent(EwkTouchEvent* touchEvent)
+{
+    ASSERT(touchEvent);
+    m_page->handleTouchEvent(NativeWebTouchEvent(touchEvent, transformFromScene()));
+}
+#endif
 
 } // namespace WebKit

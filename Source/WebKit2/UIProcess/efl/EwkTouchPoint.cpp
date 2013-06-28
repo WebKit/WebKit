@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,20 +24,23 @@
  */
 
 #include "config.h"
+#include "EwkTouchPoint.h"
 
 #if ENABLE(TOUCH_EVENTS)
-#include "NativeWebTouchEvent.h"
-
-#include "WebEventFactory.h"
 
 namespace WebKit {
 
-NativeWebTouchEvent::NativeWebTouchEvent(EwkTouchEvent* touchEvent, const WebCore::AffineTransform& toWebContent)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(touchEvent, toWebContent))
-    , m_nativeEvent(touchEvent)
+EwkTouchPoint::EwkTouchPoint(uint32_t id, WKTouchPointState state, const WKPoint& screenPosition, const WKPoint& position, const WKSize& radius, float rotationAngle, float forceFactor)
+    : m_id(id)
+    , m_state(state)
+    , m_screenPosition(screenPosition)
+    , m_position(position)
+    , m_radius(radius)
+    , m_rotationAngle(rotationAngle)
+    , m_forceFactor(forceFactor)
 {
 }
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(TOUCH_EVENTS)

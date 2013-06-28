@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,20 +24,41 @@
  */
 
 #include "config.h"
+#include "WKEventEfl.h"
 
-#if ENABLE(TOUCH_EVENTS)
-#include "NativeWebTouchEvent.h"
+#include "EwkTouchEvent.h"
+#include "EwkTouchPoint.h"
+#include "ImmutableArray.h"
+#include "WKAPICast.h"
+#include "WebEvent.h"
 
-#include "WebEventFactory.h"
+using namespace WebKit;
 
-namespace WebKit {
-
-NativeWebTouchEvent::NativeWebTouchEvent(EwkTouchEvent* touchEvent, const WebCore::AffineTransform& toWebContent)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(touchEvent, toWebContent))
-    , m_nativeEvent(touchEvent)
+WKTouchPointRef WKTouchPointCreate(int id, WKPoint position, WKPoint screenPosition, WKTouchPointState state, WKSize radius, float rotationAngle, float forceFactor)
 {
+#if ENABLE(TOUCH_EVENTS)
+    return toAPI(EwkTouchPoint::create(id, state, screenPosition, position, radius, rotationAngle, forceFactor).leakRef());
+#else
+    UNUSED_PARAM(id);
+    UNUSED_PARAM(position);
+    UNUSED_PARAM(screenPosition);
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(radius);
+    UNUSED_PARAM(rotationAngle);
+    UNUSED_PARAM(forceFactor);
+    return 0;
+#endif
 }
 
-} // namespace WebKit
-
+WKTouchEventRef WKTouchEventCreate(WKEventType type, WKArrayRef wkTouchPoints, WKEventModifiers modifiers, double timestamp)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toAPI(EwkTouchEvent::create(type, wkTouchPoints, modifiers, timestamp).leakRef());
+#else
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(wkTouchPoints);
+    UNUSED_PARAM(modifiers);
+    UNUSED_PARAM(timestamp);
+    return 0;
 #endif
+}

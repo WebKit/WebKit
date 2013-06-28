@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef EwkTouchEvent_h
+#define EwkTouchEvent_h
 
 #if ENABLE(TOUCH_EVENTS)
-#include "NativeWebTouchEvent.h"
 
-#include "WebEventFactory.h"
+#include "APIObject.h"
+#include "WKArray.h"
+#include "WKEventEfl.h"
+#include "WKRetainPtr.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 
-NativeWebTouchEvent::NativeWebTouchEvent(EwkTouchEvent* touchEvent, const WebCore::AffineTransform& toWebContent)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(touchEvent, toWebContent))
-    , m_nativeEvent(touchEvent)
-{
-}
+class EwkTouchEvent : public APIObject {
+public:
+    static const APIObject::Type APIType = TypeTouchEvent;
+
+    static PassRefPtr<EwkTouchEvent> create(WKEventType type, WKArrayRef touchPoints, WKEventModifiers modifiers, double timestamp)
+    {
+        return adoptRef(new EwkTouchEvent(type, touchPoints, modifiers, timestamp));
+    }
+
+    WKEventType eventType() const { return m_eventType; }
+    WKArrayRef touchPoints() const { return m_touchPoints.get(); }
+    WKEventModifiers modifiers() const { return m_modifiers; }
+    double timestamp() const { return m_timestamp; }
+
+private:
+    EwkTouchEvent(WKEventType, WKArrayRef, WKEventModifiers, double timestamp);
+
+    virtual APIObject::Type type() const { return APIType; }
+
+    WKEventType m_eventType;
+    WKRetainPtr<WKArrayRef> m_touchPoints;
+    WKEventModifiers m_modifiers;
+    double m_timestamp;
+};
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(TOUCH_EVENTS)
+
+#endif /* EwkTouchEvent_h */

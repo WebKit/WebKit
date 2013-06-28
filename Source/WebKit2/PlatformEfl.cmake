@@ -49,6 +49,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/CoordinatedGraphics/WKView.cpp
 
+    UIProcess/API/C/efl/WKEventEfl.cpp
     UIProcess/API/C/efl/WKPageEfl.cpp
     UIProcess/API/C/efl/WKPopupItem.cpp
     UIProcess/API/C/efl/WKPopupMenuListener.cpp
@@ -104,6 +105,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/ContextHistoryClientEfl.cpp
     UIProcess/efl/ContextMenuClientEfl.cpp
     UIProcess/efl/DownloadManagerEfl.cpp
+    UIProcess/efl/EwkTouchEvent.cpp
+    UIProcess/efl/EwkTouchPoint.cpp
     UIProcess/efl/FindClientEfl.cpp
     UIProcess/efl/FormClientEfl.cpp
     UIProcess/efl/InputMethodContextEfl.cpp

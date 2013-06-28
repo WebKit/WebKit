@@ -31,6 +31,13 @@
 #include <WebCore/AffineTransform.h>
 #include <WebCore/Scrollbar.h>
 
+#if ENABLE(TOUCH_EVENTS)
+#include "EwkTouchEvent.h"
+#include "EwkTouchPoint.h"
+#include "ImmutableArray.h"
+#include "WKAPICast.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -205,57 +212,70 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const Evas_Event_Key_Up
 }
 
 #if ENABLE(TOUCH_EVENTS)
-static inline WebEvent::Type typeForTouchEvent(Ewk_Touch_Event_Type type)
+static inline WebPlatformTouchPoint::TouchPointState toWebPlatformTouchPointState(WKTouchPointState state)
 {
-    if (type == EWK_TOUCH_START)
-        return WebEvent::TouchStart;
-    if (type == EWK_TOUCH_MOVE)
-        return WebEvent::TouchMove;
-    if (type == EWK_TOUCH_END)
-        return WebEvent::TouchEnd;
-    if (type == EWK_TOUCH_CANCEL)
-        return WebEvent::TouchCancel;
-
-    return WebEvent::NoType;
+    switch (state) {
+    case kWKTouchPointStateTouchReleased:
+        return WebPlatformTouchPoint::TouchReleased;
+    case kWKTouchPointStateTouchMoved:
+        return WebPlatformTouchPoint::TouchMoved;
+    case kWKTouchPointStateTouchPressed:
+        return WebPlatformTouchPoint::TouchPressed;
+    case kWKTouchPointStateTouchStationary:
+        return WebPlatformTouchPoint::TouchStationary;
+    case kWKTouchPointStateTouchCancelled:
+    default:
+        return WebPlatformTouchPoint::TouchCancelled;
+    }
 }
 
-WebTouchEvent WebEventFactory::createWebTouchEvent(Ewk_Touch_Event_Type type, const Eina_List* points, const Evas_Modifier* modifiers, const AffineTransform& toWebContent, const AffineTransform& toDeviceScreen, double timestamp)
+static inline WebEvent::Type toWebEventType(WKEventType type)
 {
-    Vector<WebPlatformTouchPoint> touchPoints;
-    touchPoints.reserveInitialCapacity(eina_list_count(points));
-
-    const Eina_List* list;
-    void* item;
-    EINA_LIST_FOREACH(points, list, item) {
-        Ewk_Touch_Point* point = static_cast<Ewk_Touch_Point*>(item);
-
-        WebPlatformTouchPoint::TouchPointState state;
-        switch (point->state) {
-        case EVAS_TOUCH_POINT_UP:
-            state = WebPlatformTouchPoint::TouchReleased;
-            break;
-        case EVAS_TOUCH_POINT_MOVE:
-            state = WebPlatformTouchPoint::TouchMoved;
-            break;
-        case EVAS_TOUCH_POINT_DOWN:
-            state = WebPlatformTouchPoint::TouchPressed;
-            break;
-        case EVAS_TOUCH_POINT_STILL:
-            state = WebPlatformTouchPoint::TouchStationary;
-            break;
-        case EVAS_TOUCH_POINT_CANCEL:
-            state = WebPlatformTouchPoint::TouchCancelled;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-
-        IntPoint pos(point->x, point->y);
-        touchPoints.uncheckedAppend(WebPlatformTouchPoint(point->id, state, toDeviceScreen.mapPoint(pos), toWebContent.mapPoint(pos)));
+    switch (type) {
+    case kWKEventTypeTouchStart:
+        return WebEvent::TouchStart;
+    case kWKEventTypeTouchMove:
+        return WebEvent::TouchMove;
+    case kWKEventTypeTouchEnd:
+        return WebEvent::TouchEnd;
+    case kWKEventTypeTouchCancel:
+        return WebEvent::TouchCancel;
+    default:
+        return WebEvent::NoType;
     }
 
-    return WebTouchEvent(typeForTouchEvent(type), touchPoints, modifiersForEvent(modifiers), timestamp);
+}
+
+static inline WebEvent::Modifiers toWebEventModifiers(unsigned modifiers)
+{
+    unsigned result = 0;
+
+    if (modifiers & kWKEventModifiersShiftKey)
+        result |= WebEvent::ShiftKey;
+    if (modifiers & kWKEventModifiersControlKey)
+        result |= WebEvent::ControlKey;
+    if (modifiers & kWKEventModifiersAltKey)
+        result |= WebEvent::AltKey;
+    if (modifiers & kWKEventModifiersMetaKey)
+        result |= WebEvent::MetaKey;
+
+    return static_cast<WebEvent::Modifiers>(result);
+}
+
+WebTouchEvent WebEventFactory::createWebTouchEvent(const EwkTouchEvent* event, const AffineTransform& toWebContent)
+{
+    ImmutableArray* touchPointsArray = toImpl(event->touchPoints());
+    size_t size = touchPointsArray->size();
+
+    Vector<WebPlatformTouchPoint> touchPoints;
+    touchPoints.reserveInitialCapacity(size);
+
+    for (size_t i = 0; i < size; ++i) {
+        if (EwkTouchPoint* point = touchPointsArray->at<EwkTouchPoint>(i))
+            touchPoints.uncheckedAppend(WebPlatformTouchPoint(point->id(), toWebPlatformTouchPointState(point->state()), toIntPoint(point->screenPosition()), toWebContent.mapPoint(toIntPoint(point->position())), toIntSize(point->radius()), point->rotationAngle(), point->forceFactor()));
+    }
+
+    return WebTouchEvent(toWebEventType(event->eventType()), touchPoints, toWebEventModifiers(event->modifiers()), event->timestamp());
 }
 #endif
 

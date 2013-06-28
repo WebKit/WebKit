@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2012-2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +24,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WKEventEfl_h
+#define WKEventEfl_h
 
-#if ENABLE(TOUCH_EVENTS)
-#include "NativeWebTouchEvent.h"
+#include <WebKit2/WKEvent.h>
+#include <WebKit2/WKGeometry.h>
 
-#include "WebEventFactory.h"
-
-namespace WebKit {
-
-NativeWebTouchEvent::NativeWebTouchEvent(EwkTouchEvent* touchEvent, const WebCore::AffineTransform& toWebContent)
-    : WebTouchEvent(WebEventFactory::createWebTouchEvent(touchEvent, toWebContent))
-    , m_nativeEvent(touchEvent)
-{
-}
-
-} // namespace WebKit
-
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+enum WKEventType {
+    kWKEventTypeNoType = -1,
+    kWKEventTypeTouchStart,
+    kWKEventTypeTouchMove,
+    kWKEventTypeTouchEnd,
+    kWKEventTypeTouchCancel
+};
+typedef enum WKEventType WKEventType;
+
+enum WKTouchPointState {
+    kWKTouchPointStateTouchReleased,
+    kWKTouchPointStateTouchPressed,
+    kWKTouchPointStateTouchMoved,
+    kWKTouchPointStateTouchStationary,
+    kWKTouchPointStateTouchCancelled
+};
+typedef enum WKTouchPointState WKTouchPointState;
+
+WK_EXPORT WKTouchPointRef WKTouchPointCreate(int id, WKPoint position, WKPoint screenPosition, WKTouchPointState, WKSize radius, float rotationAngle, float forceFactor);
+WK_EXPORT WKTouchEventRef WKTouchEventCreate(WKEventType, WKArrayRef, WKEventModifiers, double timestamp);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* WKEventEfl_h */

@@ -137,6 +137,10 @@ public:
 #endif
 #if PLATFORM(EFL)
         TypePopupMenuItem,
+#if ENABLE(TOUCH_EVENTS)
+        TypeTouchPoint,
+        TypeTouchEvent,
+#endif
 #endif
     };
 

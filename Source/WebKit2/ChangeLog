@@ -1,3 +1,77 @@
+2013-06-27  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Add WK2 C API to handle touch events.
+        https://bugs.webkit.org/show_bug.cgi?id=108915
+
+        Reviewed by Gyuyoung Kim.
+
+        Touch events for our target platforms differ (XInput2, Wayland, Tizen) so
+        for the EFL port we want to be able to feed events manually.
+
+        To keep our current API for desktop EFL/Enlightenment working, we convert
+        our currently limited EFL events to the new EFL specific C EwkTouchPoint
+        and EwkTouchEvent type.
+
+        EwkTouchPoint and EwkTouchEvent are exposed as WKTouchPointRef and
+        WKTouchEventRef, so they are opaque in the applications.
+
+        The WKViewSendTouchEvent can be used for any use-case (platform/product)
+        not involving the EFL events.
+
+        At the same time we make sure to avoid using WK2 internals in our EFL API
+        implementation.
+
+        * PlatformEfl.cmake:
+        * Shared/API/c/efl/WKBaseEfl.h:
+        * Shared/APIObject.h:
+        * Shared/NativeWebTouchEvent.h:
+        (WebKit::NativeWebTouchEvent::nativeEvent):
+        * Shared/efl/NativeWebTouchEventEfl.cpp:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::toWebPlatformTouchPointState):
+        (WebKit::toWebEventType):
+        (WebKit::toWebEventModifiers):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/efl/WebEventFactory.h:
+        * UIProcess/API/C/efl/WKAPICastEfl.h:
+        * UIProcess/API/C/efl/WKEventEfl.cpp: Added.
+        (WKTouchPointCreate):
+        (WKTouchEventCreate):
+        * UIProcess/API/C/efl/WKEventEfl.h: Added.
+        * UIProcess/API/C/efl/WKViewEfl.cpp:
+        (WKViewSendTouchEvent):
+        * UIProcess/API/C/efl/WKViewEfl.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (toWKTouchPointState):
+        (toWKEventModifiers):
+        (EwkView::feedTouchEvent):
+        (EwkView::feedTouchEvents):
+        * UIProcess/efl/EwkTouchEvent.cpp: Added.
+        (WebKit::EwkTouchEvent::EwkTouchEvent):
+        * UIProcess/efl/EwkTouchEvent.h: Added.
+        (WebKit::EwkTouchEvent::create):
+        (WebKit::EwkTouchEvent::eventType):
+        (WebKit::EwkTouchEvent::touchPoints):
+        (WebKit::EwkTouchEvent::modifiers):
+        (WebKit::EwkTouchEvent::timestamp):
+        (WebKit::EwkTouchEvent::type):
+        * UIProcess/efl/EwkTouchPoint.cpp: Added.
+        (WebKit::EwkTouchPoint::EwkTouchPoint):
+        * UIProcess/efl/EwkTouchPoint.h: Added.
+        (WebKit::EwkTouchPoint::create):
+        (WebKit::EwkTouchPoint::id):
+        (WebKit::EwkTouchPoint::state):
+        (WebKit::EwkTouchPoint::screenPosition):
+        (WebKit::EwkTouchPoint::position):
+        (WebKit::EwkTouchPoint::radius):
+        (WebKit::EwkTouchPoint::rotationAngle):
+        (WebKit::EwkTouchPoint::forceFactor):
+        (WebKit::EwkTouchPoint::type):
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebViewEfl::sendTouchEvent):
+        * UIProcess/efl/WebViewEfl.h:
+
 2013-06-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix cast-align warnings in WebKit2/Platform/CoreIPC

@@ -48,3 +48,13 @@ void WKViewSetThemePath(WKViewRef viewRef, WKStringRef theme)
 {
     static_cast<WebViewEfl*>(toImpl(viewRef))->setThemePath(toImpl(theme)->string());
 }
+
+void WKViewSendTouchEvent(WKViewRef viewRef, WKTouchEventRef touchEventRef)
+{
+#if ENABLE(TOUCH_EVENTS)
+    static_cast<WebViewEfl*>(toImpl(viewRef))->sendTouchEvent(toImpl(touchEventRef));
+#else
+    UNUSED_PARAM(viewRef);
+    UNUSED_PARAM(touchEventRef);
+#endif
+}
