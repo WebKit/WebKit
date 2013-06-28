@@ -57,6 +57,7 @@ namespace WebCore {
         virtual void finishLoading(ResourceBuffer*) OVERRIDE;
 
         virtual void destroyDecodedData() OVERRIDE;
+        virtual double decodedDataDeletionTimerDelay() const OVERRIDE;
 
         String m_script;
         RefPtr<TextResourceDecoder> m_decoder;

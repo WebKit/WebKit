@@ -77,7 +77,7 @@ const String& CachedScript::script()
         m_script.append(m_decoder->flush());
         setDecodedSize(m_script.sizeInBytes());
     }
-    m_decodedDataDeletionTimer.startOneShot(0);
+    m_decodedDataDeletionTimer.restart();
     
     return m_script;
 }
@@ -95,6 +95,11 @@ void CachedScript::destroyDecodedData()
     setDecodedSize(0);
     if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
         makePurgeable(true);
+}
+
+double CachedScript::decodedDataDeletionTimerDelay() const
+{
+    return 0;
 }
 
 #if ENABLE(NOSNIFF)

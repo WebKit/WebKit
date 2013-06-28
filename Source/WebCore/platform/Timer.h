@@ -148,8 +148,14 @@ public:
         startOneShot(m_delay);
     }
 
-    using TimerBase::stop;
+    void stop()
+    {
+        m_shouldRestartWhenTimerFires = false;
+        TimerBase::stop();
+    }
+
     using TimerBase::isActive;
+
 private:
     virtual void fired()
     {

@@ -188,7 +188,7 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type)
     : m_resourceRequest(request)
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(currentTime())
-    , m_decodedDataDeletionTimer(this, &CachedResource::decodedDataDeletionTimerFired)
+    , m_decodedDataDeletionTimer(this, &CachedResource::decodedDataDeletionTimerFired, decodedDataDeletionTimerDelay())
     , m_lastDecodedAccessTime(0)
     , m_loadFinishTime(0)
     , m_encodedSize(0)
@@ -560,12 +560,12 @@ void CachedResource::destroyDecodedDataIfNeeded()
 {
     if (!m_decodedSize)
         return;
-
-    if (double interval = memoryCache()->deadDecodedDataDeletionInterval())
-        m_decodedDataDeletionTimer.startOneShot(interval);
+    if (!memoryCache()->deadDecodedDataDeletionInterval())
+        return;
+    m_decodedDataDeletionTimer.restart();
 }
 
-void CachedResource::decodedDataDeletionTimerFired(Timer<CachedResource>*)
+void CachedResource::decodedDataDeletionTimerFired(DeferrableOneShotTimer<CachedResource>*)
 {
     destroyDecodedData();
 }
@@ -888,6 +888,10 @@ void CachedResource::setLoadPriority(ResourceLoadPriority loadPriority)
         m_loader->didChangePriority(loadPriority);
 }
 
+double CachedResource::decodedDataDeletionTimerDelay() const
+{
+    return memoryCache()->deadDecodedDataDeletionInterval();
+}
 
 CachedResource::CachedResourceCallback::CachedResourceCallback(CachedResource* resource, CachedResourceClient* client)
     : m_resource(resource)
