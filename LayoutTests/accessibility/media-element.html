@@ -20,7 +20,7 @@
             {
                 debug(indent(indentLevel) + "description: " + axObject.description); 
                 debug(indent(indentLevel) + "role: " + axObject.role); 
-                if (axObject.subrole != 'AXSubrole: ') debug(indent(indentLevel) + "subrole: " + axObject.subrole); 
+                if (axObject.subrole && axObject.subrole != 'AXSubrole: ') debug(indent(indentLevel) + "subrole: " + axObject.subrole);
                 debug("<br>");
             }
 

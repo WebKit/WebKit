@@ -1,3 +1,14 @@
+2013-06-28  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        accessibility/media-element.html does not support platforms without subroles
+        https://bugs.webkit.org/show_bug.cgi?id=118187
+
+        Reviewed by Chris Fleizach.
+
+        Update the test to be more friendly with platforms not supporting subroles.
+
+        * accessibility/media-element.html: Updated test.
+
 2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Introduce SVGGraphicsElement IDL interface
