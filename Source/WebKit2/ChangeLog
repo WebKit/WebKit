@@ -1,3 +1,25 @@
+2013-06-28  Anders Carlsson  <andersca@apple.com>
+
+        Make the UI process run the Java Updater
+        https://bugs.webkit.org/show_bug.cgi?id=118197
+        <rdar://problem/14255677>
+
+        Reviewed by Sam Weinig.
+
+        Patch the relevant NSWorkspace method and pipe through the request to launch the Java updater to the UI process.
+
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::replacedNSWorkspace_launchApplicationAtURL_options_configuration_error):
+        (WebKit::initializeCocoaOverrides):
+        (WebKit::PluginProcess::launchApplicationAtURL):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::isJavaUpdaterURL):
+        (WebKit::shouldLaunchApplicationAtURL):
+        (WebKit::PluginProcessProxy::launchApplicationAtURL):
+
 2013-06-28  Tim Horton  <timothy_horton@apple.com>
 
         WARN_UNUSED_RESULT can't be used in API headers, but WKBundlePageExtendIncrementalRenderingSuppression tries to

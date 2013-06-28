@@ -397,6 +397,38 @@ void PluginProcessProxy::launchProcess(const String& launchPath, const Vector<St
     [NSTask launchedTaskWithLaunchPath:launchPath arguments:argumentsArray.get()];
 }
 
+static bool isJavaUpdaterURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
+{
+    NSURL *javaUpdaterURL = [NSURL fileURLWithPathComponents:[NSArray arrayWithObjects:(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources/Java Updater.app", nil]];
+
+    return [[NSURL URLWithString:urlString] isEqual:javaUpdaterURL];
+}
+
+static bool shouldLaunchApplicationAtURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
+{
+    if (pluginProcessAttributes.moduleInfo.bundleIdentifier == "com.oracle.java.JavaAppletPlugin")
+        return isJavaUpdaterURL(pluginProcessAttributes, urlString);
+
+    return false;
+}
+
+void PluginProcessProxy::launchApplicationAtURL(const String& urlString, const Vector<String>& arguments, bool& result)
+{
+    if (!shouldLaunchApplicationAtURL(m_pluginProcessAttributes, urlString)) {
+        result = false;
+        return;
+    }
+
+    result = true;
+
+    RetainPtr<NSMutableArray> argumentsArray = adoptNS([[NSMutableArray alloc] initWithCapacity:arguments.size()]);
+    for (size_t i = 0; i < arguments.size(); ++i)
+        [argumentsArray addObject:(NSString *)arguments[i]];
+
+    NSDictionary *configuration = [NSDictionary dictionaryWithObject:argumentsArray.get() forKey:NSWorkspaceLaunchConfigurationArguments];
+    [[NSWorkspace sharedWorkspace] launchApplicationAtURL:[NSURL URLWithString:urlString] options:NSWorkspaceLaunchAsync configuration:configuration error:nullptr];
+}
+
 static bool isSilverlightPreferencesURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
 {
     NSURL *silverlightPreferencesURL = [NSURL fileURLWithPathComponents:[NSArray arrayWithObjects:(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources/Silverlight Preferences.app", nil]];

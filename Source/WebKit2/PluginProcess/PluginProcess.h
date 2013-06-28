@@ -58,6 +58,7 @@ public:
 #endif
 
     bool launchProcess(const String& launchPath, const Vector<String>& arguments);
+    bool launchApplicationAtURL(const String& urlString, const Vector<String>& arguments);
     bool openURL(const String& urlString, int32_t& status, String& launchedURLString);
 
 #endif
