@@ -57,7 +57,6 @@ EnabledAtRuntime=*
 EnabledBySetting=*
 EnforceRange
 EventTarget
-ExtendsDOMGlobalObject
 GenerateIsReachable=|Impl|ImplContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot
 GetterRaisesException
 GlobalContext=DOMWindow|WorkerGlobalScope|SharedWorkerGlobalScope|DedicatedWorkerGlobalScope
@@ -68,7 +67,6 @@ ImplementedAs=*
 InitializedByEventConstructor
 InterfaceName=*
 IsIndex
-IsWorkerGlobalScope
 JSCustomDefineOwnProperty
 JSCustomDefineOwnPropertyOnPrototype
 JSCustomFinalize

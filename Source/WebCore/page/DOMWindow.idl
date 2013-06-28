@@ -34,7 +34,6 @@
     JSCustomToNativeObject,
     CustomPutFunction,
     EventTarget,
-    ExtendsDOMGlobalObject,
     JSGenerateToNativeObject,
     ReplaceableConstructor,
     JSLegacyParent=JSDOMWindowBase,

@@ -31,8 +31,6 @@
 [
     GlobalContext=SharedWorkerGlobalScope,
     Conditional=SHARED_WORKERS,
-    ExtendsDOMGlobalObject,
-    IsWorkerGlobalScope,
     JSGenerateToNativeObject,
     JSNoStaticTables,
 ] interface SharedWorkerGlobalScope : WorkerGlobalScope {

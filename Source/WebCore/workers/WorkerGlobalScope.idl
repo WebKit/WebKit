@@ -30,8 +30,6 @@
     JSCustomMarkFunction,
     JSCustomGetOwnPropertySlotAndDescriptor,
     EventTarget,
-    ExtendsDOMGlobalObject,
-    IsWorkerGlobalScope,
     JSLegacyParent=JSWorkerGlobalScopeBase,
     JSNoStaticTables,
 ] interface WorkerGlobalScope {
