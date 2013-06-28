@@ -1,3 +1,25 @@
+2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Use & instead of | in the value of [CallWith]
+        https://bugs.webkit.org/show_bug.cgi?id=118054
+
+        Reviewed by Kentaro Hara.
+
+        [CallWith=ScriptExecutionContext|ScriptState] meant that both the
+        ScriptExecutionContext AND the ScriptState would be passed as
+        arguments to the implementation (not one OR the other).
+
+        This patch changes the semantics for those IDL extended attributes
+        to make it less confusing. Proper usage is now:
+        [CallWith=ScriptExecutionContext&ScriptState]
+
+        No new tests, covered by existing bindings tests.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ExtendedAttributeContains):
+        * bindings/scripts/test/TestObj.idl:
+        * page/Console.idl:
+
 2013-06-27  Kangil Han  <kangil.han@samsung.com>
 
         HTMLAudioElement doesn't have to know about isVideo function

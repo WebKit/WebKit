@@ -798,7 +798,7 @@ sub ExtendedAttributeContains
     return 0 unless $callWith;
     my $keyword = shift;
 
-    my @callWithKeywords = split /\s*\|\s*/, $callWith;
+    my @callWithKeywords = split /\s*\&\s*/, $callWith;
     return grep { $_ eq $keyword } @callWithKeywords;
 }
 

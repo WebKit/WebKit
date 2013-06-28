@@ -31,17 +31,17 @@
     GenerateIsReachable=ImplFrame,
 ] interface Console {
 
-    [CallWith=ScriptArguments|ScriptState] void debug();
-    [CallWith=ScriptArguments|ScriptState] void error();
-    [CallWith=ScriptArguments|ScriptState] void info();
-    [CallWith=ScriptArguments|ScriptState] void log();
-    [CallWith=ScriptArguments|ScriptState] void warn();
-    [CallWith=ScriptArguments|ScriptState] void dir();
-    [CallWith=ScriptArguments|ScriptState] void dirxml();
-    [CallWith=ScriptArguments|ScriptState] void table();
-    [CallWith=ScriptArguments|ScriptState] void trace();
-    [CallWith=ScriptArguments|ScriptState, ImplementedAs=assertCondition] void assert(boolean condition);
-    [CallWith=ScriptArguments|ScriptState] void count();
+    [CallWith=ScriptArguments&ScriptState] void debug();
+    [CallWith=ScriptArguments&ScriptState] void error();
+    [CallWith=ScriptArguments&ScriptState] void info();
+    [CallWith=ScriptArguments&ScriptState] void log();
+    [CallWith=ScriptArguments&ScriptState] void warn();
+    [CallWith=ScriptArguments&ScriptState] void dir();
+    [CallWith=ScriptArguments&ScriptState] void dirxml();
+    [CallWith=ScriptArguments&ScriptState] void table();
+    [CallWith=ScriptArguments&ScriptState] void trace();
+    [CallWith=ScriptArguments&ScriptState, ImplementedAs=assertCondition] void assert(boolean condition);
+    [CallWith=ScriptArguments&ScriptState] void count();
 
     // As per spec: http://www.w3.org/TR/WebIDL/#idl-sequence
     // "Sequences must not be used as the type of an attribute, constant or exception field."
@@ -53,9 +53,9 @@
     void time([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString title);
     [CallWith=ScriptState] void timeEnd([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString title);
     [CallWith=ScriptArguments] void timeStamp();
-    [CallWith=ScriptArguments|ScriptState] void group();
-    [CallWith=ScriptArguments|ScriptState] void groupCollapsed();
+    [CallWith=ScriptArguments&ScriptState] void group();
+    [CallWith=ScriptArguments&ScriptState] void groupCollapsed();
     void groupEnd();
-    [CallWith=ScriptArguments|ScriptState] void clear();
+    [CallWith=ScriptArguments&ScriptState] void clear();
 };
 
