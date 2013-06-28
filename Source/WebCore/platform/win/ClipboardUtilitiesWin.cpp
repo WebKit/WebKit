@@ -133,7 +133,7 @@ static bool getWebLocData(const DragDataMap* dataObject, String& url, String* ti
     if (!dataObject->contains(cfHDropFormat()->cfFormat))
         return false;
 
-    wcscpy(filename, dataObject->get(cfHDropFormat()->cfFormat)[0].deprecatedCharactersWithNullTermination());
+    wcscpy(filename, dataObject->get(cfHDropFormat()->cfFormat)[0].charactersWithNullTermination().data());
     if (_wcsicmp(PathFindExtensionW(filename), L".url"))
         return false;    
 
@@ -182,7 +182,7 @@ HGLOBAL createGlobalData(const KURL& url, const String& title)
 
     if (cbData) {
         PWSTR buffer = static_cast<PWSTR>(GlobalLock(cbData));
-        _snwprintf(buffer, size, L"%s\n%s", mutableURL.deprecatedCharactersWithNullTermination(), mutableTitle.deprecatedCharactersWithNullTermination());
+        _snwprintf(buffer, size, L"%s\n%s", mutableURL.charactersWithNullTermination().data(), mutableTitle.charactersWithNullTermination().data());
         GlobalUnlock(cbData);
     }
     return cbData;
@@ -434,7 +434,7 @@ void setFileDescriptorData(IDataObject* dataObject, int size, const String& pass
     fgd->fgd[0].nFileSizeLow = size;
 
     int maxSize = std::min<int>(pathname.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
-    CopyMemory(fgd->fgd[0].cFileName, pathname.deprecatedCharactersWithNullTermination(), maxSize * sizeof(UChar));
+    CopyMemory(fgd->fgd[0].cFileName, pathname.charactersWithNullTermination().data(), maxSize * sizeof(UChar));
     GlobalUnlock(medium.hGlobal);
 
     dataObject->SetData(fileDescriptorFormat(), &medium, TRUE);
@@ -521,9 +521,9 @@ String getURL(const DragDataMap* data, DragData::FilenameConversionPolicy filena
     if (!getDataMapItem(data, filenameWFormat(), stringData))
         getDataMapItem(data, filenameFormat(), stringData);
 
-    if (stringData.isEmpty() || (!PathFileExists(stringData.deprecatedCharactersWithNullTermination()) && !PathIsUNC(stringData.deprecatedCharactersWithNullTermination())))
+    if (stringData.isEmpty() || (!PathFileExists(stringData.charactersWithNullTermination().data()) && !PathIsUNC(stringData.charactersWithNullTermination().data())))
         return url;
-    RetainPtr<CFStringRef> pathAsCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar *)stringData.deprecatedCharactersWithNullTermination(), wcslen(stringData.deprecatedCharactersWithNullTermination())));
+    RetainPtr<CFStringRef> pathAsCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar *)stringData.charactersWithNullTermination().data(), wcslen(stringData.charactersWithNullTermination().data())));
     if (urlFromPath(pathAsCFString.get(), url) && title)
         *title = url;
 #endif
@@ -797,7 +797,7 @@ void setCFData(IDataObject* data, FORMATETC* format, const Vector<String>& dataS
     dropFiles->pFiles = sizeof(DROPFILES);
     dropFiles->fWide = TRUE;
     String filename = dataStrings.first();
-    wcscpy(reinterpret_cast<LPWSTR>(dropFiles + 1), filename.deprecatedCharactersWithNullTermination());    
+    wcscpy(reinterpret_cast<LPWSTR>(dropFiles + 1), filename.charactersWithNullTermination().data());    
     GlobalUnlock(medium.hGlobal);
     data->SetData(format, &medium, FALSE);
     ::GlobalFree(medium.hGlobal);

@@ -58,7 +58,7 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
         memset(&sfi, 0, sizeof(sfi));
 
         String tmpFilename = filenames[0];
-        if (!SHGetFileInfo(tmpFilename.deprecatedCharactersWithNullTermination(), 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_SHELLICONSIZE | SHGFI_SMALLICON))
+        if (!SHGetFileInfo(tmpFilename.charactersWithNullTermination().data(), 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_SHELLICONSIZE | SHGFI_SMALLICON))
             return 0;
 
         return adoptRef(new Icon(sfi.hIcon));

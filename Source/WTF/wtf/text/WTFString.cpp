@@ -394,6 +394,28 @@ bool String::percentage(int& result) const
     return true;
 }
 
+Vector<UChar> String::charactersWithNullTermination() const
+{
+    Vector<UChar> result;
+
+    if (m_impl) {
+        result.reserveInitialCapacity(length() + 1);
+
+        if (is8Bit()) {
+            const LChar* characters8 = m_impl->characters8();
+            for (size_t i = 0; i < length(); ++i)
+                result.uncheckedAppend(characters8[i]);
+        } else {
+            const UChar* characters16 = m_impl->characters16();
+            result.append(characters16, m_impl->length());
+        }
+
+        result.append(0);
+    }
+
+    return result;
+}
+
 const UChar* String::deprecatedCharactersWithNullTermination()
 {
     if (!m_impl)

@@ -71,7 +71,7 @@ DragImageRef createDragImageIconForCachedImageFilename(const String& filename)
 {
     SHFILEINFO shfi = {0};
     String fname = filename;
-    if (FAILED(SHGetFileInfo(static_cast<LPCWSTR>(fname.deprecatedCharactersWithNullTermination()), FILE_ATTRIBUTE_NORMAL,
+    if (FAILED(SHGetFileInfo(static_cast<LPCWSTR>(fname.charactersWithNullTermination().data()), FILE_ATTRIBUTE_NORMAL,
         &shfi, sizeof(shfi), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES)))
         return 0;
 

@@ -40,7 +40,7 @@ static String mimeTypeForExtension(const String& extension)
     DWORD contentTypeStrLen = sizeof(contentTypeStr);
     DWORD keyType;
 
-    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, ext.deprecatedCharactersWithNullTermination(), L"Content Type", &keyType, contentTypeStr, &contentTypeStrLen);
+    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, ext.charactersWithNullTermination().data(), L"Content Type", &keyType, contentTypeStr, &contentTypeStrLen);
 
     if (result == ERROR_SUCCESS && keyType == REG_SZ)
         return String(contentTypeStr, contentTypeStrLen / sizeof(contentTypeStr[0]) - 1);
@@ -55,7 +55,7 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
     DWORD extStrLen = sizeof(extStr);
     DWORD keyType;
 
-    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, path.deprecatedCharactersWithNullTermination(), L"Extension", &keyType, extStr, &extStrLen);
+    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, path.charactersWithNullTermination().data(), L"Extension", &keyType, extStr, &extStrLen);
 
     if (result == ERROR_SUCCESS && keyType == REG_SZ)
         return String(extStr + 1, extStrLen / sizeof(extStr[0]) - 2);

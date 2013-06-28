@@ -123,7 +123,7 @@ HMENU ContextMenu::createPlatformContextMenuFromItems(const Vector<ContextMenuIt
         if (item.type() != SeparatorType) {
             menuItem.fMask |= MIIM_STRING;
             menuItem.cch = itemTitle.length();
-            menuItem.dwTypeData = const_cast<LPWSTR>(itemTitle.deprecatedCharactersWithNullTermination());
+            menuItem.dwTypeData = const_cast<LPWSTR>(itemTitle.charactersWithNullTermination().data());
         }
 
         ::InsertMenuItem(menu, i, TRUE, &menuItem);
