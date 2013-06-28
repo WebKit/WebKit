@@ -391,14 +391,16 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
         NULL
     };
     static int currentEncoding = -1;
-    Eina_Bool ctrlPressed = evas_key_modifier_is_set(evas_key_modifier_get(e), "Control");
+    const Evas_Modifier *mod = evas_key_modifier_get(e);
+    Eina_Bool ctrlPressed = evas_key_modifier_is_set(mod, "Control");
+    Eina_Bool altPressed = evas_key_modifier_is_set(mod, "Alt");
 
-    if (!strcmp(ev->key, "F1")) {
-        info("Back (F1) was pressed");
+    if (!strcmp(ev->key, "Left") && altPressed) {
+        info("Back (Alt+Left) was pressed");
         if (!ewk_view_back(ewk_view))
             info("Back ignored: No back history");
-    } else if (!strcmp(ev->key, "F2")) {
-        info("Forward (F2) was pressed");
+    } else if (!strcmp(ev->key, "Right") && altPressed) {
+        info("Forward (Alt+Right) was pressed");
         if (!ewk_view_forward(ewk_view))
             info("Forward ignored: No forward history");
     } else if (!strcmp(ev->key, "F3")) {

@@ -494,12 +494,14 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         NULL
     };
     static int currentEncoding = -1;
-    Eina_Bool ctrlPressed = evas_key_modifier_is_set(evas_key_modifier_get(e), "Control");
+    const Evas_Modifier *mod = evas_key_modifier_get(e);
+    Eina_Bool ctrlPressed = evas_key_modifier_is_set(mod, "Control");
+    Eina_Bool altPressed = evas_key_modifier_is_set(mod, "Alt");
 
     if (!strcmp(ev->key, "Escape")) {
         closeWindow(app->ee);
-    } else if (!strcmp(ev->key, "F1")) {
-        info("Back (F1) was pressed");
+    } else if (!strcmp(ev->key, "Left") && altPressed) {
+        info("Back (Alt+Left) was pressed");
         if (ewk_view_back_possible(obj)) {
             Ewk_History *history = ewk_view_history_get(obj);
             Eina_List *list = ewk_history_back_list_get(history);
@@ -508,8 +510,8 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
             ewk_view_back(obj);
         } else
             info("Back ignored: No back history");
-    } else if (!strcmp(ev->key, "F2")) {
-        info("Forward (F2) was pressed");
+    } else if (!strcmp(ev->key, "Right") && altPressed) {
+        info("Forward (Alt+Right) was pressed");
         if (ewk_view_forward_possible(obj)) {
             Ewk_History *history = ewk_view_history_get(obj);
             Eina_List *list = ewk_history_forward_list_get(history);
