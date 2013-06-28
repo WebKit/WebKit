@@ -67,6 +67,7 @@ namespace WebCore {
 #if USE(ACCELERATED_COMPOSITING)
         bool shouldClearBackingStores() const { return m_shouldClearBackingStores; }
         void setShouldClearBackingStores(bool flag) { m_shouldClearBackingStores = flag; }
+        void markPagesForDeviceScaleChanged(Page*);
 #endif
 
     private:

@@ -406,6 +406,20 @@ void PageCache::markPagesForFullStyleRecalc(Page* page)
     }
 }
 
+
+#if USE(ACCELERATED_COMPOSITING)
+void PageCache::markPagesForDeviceScaleChanged(Page* page)
+{
+    Frame* mainFrame = page->mainFrame();
+
+    for (HistoryItem* current = m_head; current; current = current->m_next) {
+        CachedPage* cachedPage = current->m_cachedPage.get();
+        if (cachedPage->cachedMainFrame()->view()->frame() == mainFrame)
+            cachedPage->markForDeviceScaleChanged();
+    }
+}
+#endif
+
 #if ENABLE(VIDEO_TRACK)
 void PageCache::markPagesForCaptionPreferencesChanged()
 {
