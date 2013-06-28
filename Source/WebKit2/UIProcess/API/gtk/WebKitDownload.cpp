@@ -114,7 +114,12 @@ static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const 
         return FALSE;
 
     GOwnPtr<char> filename(g_strdelimit(g_strdup(suggestedFilename), G_DIR_SEPARATOR_S, '_'));
-    GOwnPtr<char> destination(g_build_filename(g_get_user_special_dir(G_USER_DIRECTORY_DOWNLOAD), filename.get(), NULL));
+    const gchar *downloadsDir = g_get_user_special_dir(G_USER_DIRECTORY_DOWNLOAD);
+    if (!downloadsDir) {
+        // If we don't have XDG user dirs info, set just to HOME.
+        downloadsDir = g_get_home_dir();
+    }
+    GOwnPtr<char> destination(g_build_filename(downloadsDir, filename.get(), NULL));
     GOwnPtr<char> destinationURI(g_filename_to_uri(destination.get(), 0, 0));
     download->priv->destinationURI = destinationURI.get();
     g_object_notify(G_OBJECT(download), "destination");
