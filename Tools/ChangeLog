@@ -1,3 +1,18 @@
+2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Clean up temporary files created by the bindings test script
+        https://bugs.webkit.org/show_bug.cgi?id=118189
+
+        Reviewed by Kentaro Hara.
+
+        Remove temporary files created by preprocess-idls.pl script after
+        the bindings tests are executed.
+
+        Based on Blink 153236 by Kentaro Hara <haraken@chromium.org>.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.main):
+
 2013-06-26  Dean Jackson  <dino@apple.com>
 
         [Mac] Add Mavericks system font to Test systems
