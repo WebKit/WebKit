@@ -1,3 +1,18 @@
+2013-06-28  Andreas Kling  <akling@apple.com>
+
+        Don't fire process-became-responsive callback when disconnecting it.
+        <http://webkit.org/b/118166>
+
+        Reviewed by Anders Carlsson.
+
+        When disconnecting from a web process, call ResponsivenessTimer::invalidate() instead of
+        stop() to avoid firing the didBecomeResponsive() callback.
+
+        This lets the UI process react faster to actually unresponsive processes.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::disconnect):
+
 2013-06-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2][GTK] 100% CPU usage rendering a page with animations

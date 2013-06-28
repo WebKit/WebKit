@@ -146,7 +146,7 @@ void WebProcessProxy::disconnect()
         m_webConnection = nullptr;
     }
 
-    m_responsivenessTimer.stop();
+    m_responsivenessTimer.invalidate();
 
     Vector<RefPtr<WebFrameProxy>> frames;
     copyValuesToVector(m_frameMap, frames);
