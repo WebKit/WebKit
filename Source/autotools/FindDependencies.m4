@@ -378,7 +378,7 @@ fi
 # HarfBuzz 0.9.18 splits harbuzz-icu into a separate library.
 # Since we support earlier HarfBuzz versions we keep this conditional for now.
 if $PKG_CONFIG --atleast-version 0.9.18 harfbuzz; then
-    PKG_CHECK_MODULES(HARFBUZZ_ICU, harfbuzz-icu >= $harfbuzz_required_version)
+    PKG_CHECK_MODULES([HARFBUZZ_ICU], [harfbuzz-icu >= harfbuzz_required_version])
     FREETYPE_CFLAGS="$FREETYPE_CFLAGS $HARFBUZZ_ICU_CFLAGS"
     FREETYPE_LIBS="$FREETYPE_LIBS $HARFBUZZ_ICU_LIBS"
 fi

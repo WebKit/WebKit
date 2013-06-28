@@ -1,3 +1,17 @@
+2013-06-28  Sean Bright  <sean@malleable.com>
+
+        [Autotools] Properly quote harfbuzz-icu pkg-config check
+        https://bugs.webkit.org/show_bug.cgi?id=118186
+
+        Reviewed by Carlos Garcia Campos.
+
+        A secondary test was added in r150963 to check for harfbuzz-icu
+        when it was split into two packages, but the test is not properly
+        quoted.  If the test fails you get an error about missing
+        version "./configure.9.8" instead of the expected "0.9.8."
+
+        * Source/autotools/FindDependencies.m4:
+
 2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove [NoInterfaceObject] from WorkerGlobalScope
