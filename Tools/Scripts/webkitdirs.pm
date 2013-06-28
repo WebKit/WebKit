@@ -1879,7 +1879,12 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
 
 sub getJhbuildPath()
 {
-    return join('/', baseProductDir(), "Dependencies");
+    my @jhbuildPath = File::Spec->splitdir(baseProductDir());
+    if (isGit() && isGitBranchBuild() && gitBranch()) {
+        pop(@jhbuildPath);
+    }
+    push(@jhbuildPath, "Dependencies");
+    return File::Spec->catdir(@jhbuildPath);
 }
 
 sub mustReRunAutogen($@)

@@ -1,3 +1,23 @@
+2013-06-28  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [Tools] Add support for "webKitBranchBuild" git option when calculating jhbuildPath
+        https://bugs.webkit.org/show_bug.cgi?id=118195
+
+        Reviewed by Daniel Bates.
+
+        Currently, ports that use jhbuild fail to determine jhbuild directory
+        when "webKitBranchBuild" git configuration property is enabled. To reproduce
+        that issue in Efl port, enable that flag in .git/config, switch to a git branch
+        other than "master" and try to build webkit. The build will fail to
+        locate dependencies due to lack of pkg-config paths which should be set
+        by jhbuild.
+
+        For more details about "webKitBranchBuild" option, see:
+        https://trac.webkit.org/wiki/UsingGitWithWebKit
+
+        * Scripts/webkitdirs.pm:
+        (getJhbuildPath):
+
 2013-06-28  Jessie Berlin  <jberlin@apple.com>
 
         WebKitTestRunner should disable automatic quote and dash substitution like DumpRenderTree does
