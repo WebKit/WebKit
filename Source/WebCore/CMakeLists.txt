@@ -1981,6 +1981,7 @@ set(WebCore_SOURCES
     platform/graphics/filters/SpotLightSource.cpp
 
     platform/graphics/texmap/coordinated/AreaAllocator.cpp
+    platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
     platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
     platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
     platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp

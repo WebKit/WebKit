@@ -1,3 +1,53 @@
+2013-06-28  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        Coordinated Graphics: Separate CoordinatedLayerTreeHost into CoordinatedLayerTreeHost and CompositingCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=104360
+
+        Reviewed by Noam Rosenthal.
+
+        The CoordinatedLayerTreeHost has too many responsibilities. It
+        implements LayerTreeHost, GraphicsLayerClient,
+        CoordinatedGraphicsLayerClient, CoordinatedImageBacking::Client,
+        UpdateAtlas::Client, GraphicsLayerFactory and
+        WebCustomFilterProgramProxyClient.
+
+        This refactoring reduces the responsibilities of CoordinatedLayerTreeHost.
+
+        This patch introduces a new class called CompositingCoordinator, which
+        takes the responsibility of managing compositing resources in
+        WebProcess.
+
+        CoordinatedLayerTreeHost is responsible only for the scheduling and
+        IPC-specific stuff, which are relevant only for WebKit2.
+
+        No new tests, covered by existing tests.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::setRootCompositingLayer):
+        (WebKit::CoordinatedLayerTreeHost::invalidate):
+        (WebKit::CoordinatedLayerTreeHost::forceRepaint):
+        (WebKit::CoordinatedLayerTreeHost::sizeDidChange):
+        (WebKit::CoordinatedLayerTreeHost::setVisibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHost::renderNextFrame):
+        (WebKit::CoordinatedLayerTreeHost::purgeBackingStores):
+        (WebKit::CoordinatedLayerTreeHost::willSyncLayerState):
+        (WebKit::CoordinatedLayerTreeHost::prepareCustomFilterProxiesForAnimations):
+        (WebKit::CoordinatedLayerTreeHost::checkCustomFilterProgramProxies):
+        (WebKit::CoordinatedLayerTreeHost::removeCustomFilterProgramProxy):
+        (WebKit::CoordinatedLayerTreeHost::didFlushRootLayer):
+        (WebKit::CoordinatedLayerTreeHost::performScheduledLayerFlush):
+        (WebKit::CoordinatedLayerTreeHost::createPageOverlayLayer):
+        (WebKit::CoordinatedLayerTreeHost::paintLayerContents):
+        (WebKit::CoordinatedLayerTreeHost::commitSceneState):
+        (WebKit::CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged):
+        (WebKit::CoordinatedLayerTreeHost::graphicsLayerFactory):
+        (WebKit::CoordinatedLayerTreeHost::scheduleAnimation):
+        (WebKit::CoordinatedLayerTreeHost::commitScrollOffset):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+
 2013-06-28  Anders Carlsson  <andersca@apple.com>
 
         Make the UI process run the Java Updater
