@@ -26,7 +26,7 @@
 WebInspector.DashboardManager = function() {
     WebInspector.Object.call(this);
 
-    this.toolbarItem = new WebInspector.NavigationItem("dashboard");
+    this.toolbarItem = new WebInspector.NavigationItem("dashboard", "group", WebInspector.UIString("Activity Viewer"));
     this._view = new WebInspector.DashboardView(this.toolbarItem.element);
 
     this._waitingForFirstMainResourceToStartTrackingSize = true;

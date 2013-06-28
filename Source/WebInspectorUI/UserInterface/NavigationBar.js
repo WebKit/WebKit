@@ -23,12 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NavigationBar = function(element, navigationItems) {
+WebInspector.NavigationBar = function(element, navigationItems, role, label) {
     WebInspector.Object.call(this);
 
     this._element = element || document.createElement("div");
     this._element.classList.add(this.constructor.StyleClassName || WebInspector.NavigationBar.StyleClassName);
     this._element.tabIndex = 0;
+    
+    if (role)
+        this._element.setAttribute("role", role);
+    if (label)
+        this._element.setAttribute("aria-label", label);
 
     this._element.addEventListener("focus", this._focus.bind(this), false);
     this._element.addEventListener("blur", this._blur.bind(this), false);

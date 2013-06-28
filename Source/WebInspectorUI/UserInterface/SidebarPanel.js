@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SidebarPanel = function(identifier, displayName, showToolTip, hideToolTip, image, element) {
+WebInspector.SidebarPanel = function(identifier, displayName, showToolTip, hideToolTip, image, element, role, label) {
     WebInspector.Object.call(this);
 
     this._identifier = identifier;
@@ -35,6 +35,10 @@ WebInspector.SidebarPanel = function(identifier, displayName, showToolTip, hideT
     this._element = element || document.createElement("div");
     this._element.classList.add(WebInspector.SidebarPanel.StyleClassName);
     this._element.classList.add(identifier);
+
+    this._element.setAttribute("role", role || "group");
+    this._element.setAttribute("aria-label", label || displayName);
+
 };
 
 WebInspector.SidebarPanel.StyleClassName = "panel";

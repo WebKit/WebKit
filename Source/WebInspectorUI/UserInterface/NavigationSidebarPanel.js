@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NavigationSidebarPanel = function(identifier, displayName, image, keyboardShortcutKey, autoPruneOldTopLevelResourceTreeElements, autoHideToolbarItemWhenEmpty, wantsTopOverflowShadow, element) {
+WebInspector.NavigationSidebarPanel = function(identifier, displayName, image, keyboardShortcutKey, autoPruneOldTopLevelResourceTreeElements, autoHideToolbarItemWhenEmpty, wantsTopOverflowShadow, element, role, label) {
     if (keyboardShortcutKey)
         this._keyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, keyboardShortcutKey, this.toggle.bind(this));
 
@@ -35,7 +35,7 @@ WebInspector.NavigationSidebarPanel = function(identifier, displayName, image, k
         var hideToolTip = WebInspector.UIString("Hide the %s navigation sidebar").format(displayName);
     }
 
-    WebInspector.SidebarPanel.call(this, identifier, displayName, showToolTip, hideToolTip, image, element);
+    WebInspector.SidebarPanel.call(this, identifier, displayName, showToolTip, hideToolTip, image, element, role, label || displayName);
 
     this.element.classList.add(WebInspector.NavigationSidebarPanel.StyleClassName);
 

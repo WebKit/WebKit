@@ -1,5 +1,29 @@
 2013-06-27  James Craig  <james@cookiecrook.com>
 
+        Web Inspector: AX: Add container ARIA roles (toolbar, main, labeled regions, etc.) 
+        so the layout is more discoverable to screen reader users
+        https://bugs.webkit.org/show_bug.cgi?id=118104
+
+        Reviewed by Timothy Hatcher.
+
+        Made the basic layout (toolbar, sidebars, main) of the Web Inspector understandable
+        and navigable with VoiceOver.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/ButtonNavigationItem.js:
+        * UserInterface/CSSStyleDetailsSidebarPanel.js:
+        * UserInterface/DashboardManager.js:
+        * UserInterface/Main.js:
+        * UserInterface/NavigationBar.js:
+        * UserInterface/NavigationItem.js:
+        * UserInterface/NavigationSidebarPanel.js:
+        * UserInterface/RadioButtonNavigationItem.js:
+        * UserInterface/Sidebar.js:
+        * UserInterface/SidebarPanel.js:
+        * UserInterface/Toolbar.js:
+
+2013-06-27  James Craig  <james@cookiecrook.com>
+
         Web Inspector: AX: Console log of the Inspector does not announce output for screen readers
         https://bugs.webkit.org/show_bug.cgi?id=115976
 

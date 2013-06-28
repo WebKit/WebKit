@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ButtonNavigationItem = function(identifier, toolTipOrLabel, image, imageWidth, imageHeight, suppressEmboss) {
+WebInspector.ButtonNavigationItem = function(identifier, toolTipOrLabel, image, imageWidth, imageHeight, suppressEmboss, role, label) {
     WebInspector.NavigationItem.call(this, identifier);
 
     console.assert(identifier);
@@ -32,6 +32,11 @@ WebInspector.ButtonNavigationItem = function(identifier, toolTipOrLabel, image, 
     this.toolTip = toolTipOrLabel;
 
     this._element.addEventListener("click", this._mouseClicked.bind(this));
+    
+    this._element.setAttribute("role", role || "button");
+    
+    if (label) 
+        this._element.setAttribute("aria-label", label);
 
     this._imageWidth = imageWidth || 16;
     this._imageHeight = imageHeight || 16;

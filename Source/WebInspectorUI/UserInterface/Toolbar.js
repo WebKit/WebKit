@@ -24,7 +24,7 @@
  */
 
 WebInspector.Toolbar = function(element, navigationItems) {
-    WebInspector.NavigationBar.call(this, element, navigationItems);
+    WebInspector.NavigationBar.call(this, element, navigationItems, "toolbar");
 
     this.displayMode = WebInspector.Toolbar.DisplayMode.IconAndLabelVertical;
     this.sizeMode = WebInspector.Toolbar.SizeMode.Normal;

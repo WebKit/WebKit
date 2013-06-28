@@ -23,12 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NavigationItem = function(identifier) {
+WebInspector.NavigationItem = function(identifier, role, label) {
     WebInspector.Object.call(this);
 
     this._identifier = identifier || null;
 
     this._element = document.createElement("div");
+    
+    if (role) 
+        this._element.setAttribute("role", role);
+    if (label)
+        this._element.setAttribute("aria-label", label);
 
     var classNames = this._classNames;
     for (var i = 0; i < classNames.length; ++i)
