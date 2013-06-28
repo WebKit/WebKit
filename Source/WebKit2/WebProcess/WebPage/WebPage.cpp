@@ -3106,9 +3106,10 @@ void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoo
 }
 #endif
 
-void WebPage::viewExposedRectChanged(const FloatRect& exposedRect)
+void WebPage::viewExposedRectChanged(const FloatRect& exposedRect, bool clipsToExposedRect)
 {
     m_drawingArea->setExposedRect(exposedRect);
+    m_drawingArea->setClipsToExposedRect(clipsToExposedRect);
 }
 
 void WebPage::setMainFrameIsScrollable(bool isScrollable)

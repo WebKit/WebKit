@@ -389,7 +389,7 @@ public:
 #if PLATFORM(MAC)
     void updateWindowIsVisible(bool windowIsVisible);
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
-    void viewExposedRectChanged(const WebCore::FloatRect& exposedRect);
+    void viewExposedRectChanged(const WebCore::FloatRect& exposedRect, bool);
     void exposedRectChangedTimerFired(WebCore::Timer<WebPageProxy>*);
     void setMainFrameIsScrollable(bool);
 
@@ -1272,6 +1272,8 @@ private:
     WebCore::Timer<WebPageProxy> m_exposedRectChangedTimer;
     WebCore::FloatRect m_exposedRect;
     WebCore::FloatRect m_lastSentExposedRect;
+    bool m_clipsToExposedRect;
+    bool m_lastSentClipsToExposedRect;
 #endif
 
 #if PLATFORM(QT)

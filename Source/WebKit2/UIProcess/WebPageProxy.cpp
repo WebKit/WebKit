@@ -312,6 +312,8 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_waitingForDidUpdateInWindowState(false)
 #if PLATFORM(MAC)
     , m_exposedRectChangedTimer(this, &WebPageProxy::exposedRectChangedTimerFired)
+    , m_clipsToExposedRect(false)
+    , m_lastSentClipsToExposedRect(false)
 #endif
 #if ENABLE(PAGE_VISIBILITY_API)
     , m_visibilityState(PageVisibilityStateVisible)

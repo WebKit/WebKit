@@ -1,3 +1,56 @@
+2013-06-28  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] WKView shouldn't force scrolling off if shouldClipToVisibleRect is set
+        https://bugs.webkit.org/show_bug.cgi?id=118174
+        <rdar://problem/14301175>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateViewExposedRect]):
+        Pass whether or not clips-to-visibleRect is enabled down to the WebPageProxy.
+
+        (-[WKView setMinimumSizeForAutoLayout:]):
+        Disable scrolling when using autolayout instead of when using clips-to-visibleRect.
+
+        (-[WKView setShouldClipToVisibleRect:]):
+        Clipping to the WKView's visibleRect does not strictly require scrolling to be disabled,
+        and in fact there are cases (RTL/TB pagination) where we *must* scroll, even when the view
+        is big enough to fit the content (the case clip-to-visibleRect was added for).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::viewExposedRectChanged):
+        (WebKit::WebPageProxy::exposedRectChangedTimerFired):
+        Keep track of and forward to the drawing area whether or not clips-to-visibleRect is enabled.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setClipsToExposedRect): Added.
+        (WebKit::DrawingArea::didChangeScrollOffsetForAnyFrame): Added a missing space.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::viewExposedRectChanged):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Forward clips-to-visibleRect enabled state to the drawing area.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        Add storage for m_clipsToExposedRect.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::setClipsToExposedRect):
+        (WebKit::TiledCoreAnimationDrawingArea::updateMainFrameClipsToExposedRect):
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::didCommitChangesForLayer):
+        Check m_clipsToExposedRect instead of the main-frame's isScrollable() to determine
+        whether we should tell our TiledBackings to clip to the exposed rect we provide.
+
+        We don't need to listen to mainFrameScrollabilityChanged anymore.
+
 2013-06-28  Gavin Barraclough  <barraclough@apple.com>
 
         Stale occlusion state after moving page back into window

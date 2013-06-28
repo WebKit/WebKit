@@ -76,7 +76,7 @@ private:
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) OVERRIDE;
 
     virtual void setExposedRect(const WebCore::FloatRect&) OVERRIDE;
-    virtual void mainFrameScrollabilityChanged(bool) OVERRIDE;
+    virtual void setClipsToExposedRect(bool) OVERRIDE;
 
     virtual void didChangeScrollOffsetForAnyFrame() OVERRIDE;
 
@@ -132,6 +132,7 @@ private:
     bool m_hasRootCompositingLayer;
 
     WebCore::FloatRect m_exposedRect;
+    bool m_clipsToExposedRect;
 
     WebCore::IntSize m_lastSentIntrinsicContentSize;
     WebCore::Timer<TiledCoreAnimationDrawingArea> m_updateIntrinsicContentSizeTimer;

@@ -415,7 +415,7 @@ struct WKViewInterpretKeyEventsParameters {
     if (_data->_useContentPreparationRectForVisibleRect)
         exposedRect = NSUnionRect(_data->_contentPreparationRect, exposedRect);
 
-    _data->_page->viewExposedRectChanged(exposedRect);
+    _data->_page->viewExposedRectChanged(exposedRect, _data->_clipsToVisibleRect);
 }
 
 - (void)setFrameSize:(NSSize)size
@@ -3332,6 +3332,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     BOOL expandsToFit = minimumSizeForAutoLayout.width > 0;
 
     _data->_page->setMinimumLayoutSize(IntSize(minimumSizeForAutoLayout.width, minimumSizeForAutoLayout.height));
+    _data->_page->setMainFrameIsScrollable(!expandsToFit);
 
     [self setShouldClipToVisibleRect:expandsToFit];
 }
@@ -3344,11 +3345,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)setShouldClipToVisibleRect:(BOOL)clipsToVisibleRect
 {
     _data->_clipsToVisibleRect = clipsToVisibleRect;
-
-    if (clipsToVisibleRect)
-        [self _updateViewExposedRect];
-
-    _data->_page->setMainFrameIsScrollable(!clipsToVisibleRect);
+    [self _updateViewExposedRect];
 }
 
 - (NSColor *)underlayColor

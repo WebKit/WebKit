@@ -86,9 +86,10 @@ public:
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
 
     virtual void setExposedRect(const WebCore::FloatRect&) { }
+    virtual void setClipsToExposedRect(bool) { }
     virtual void mainFrameScrollabilityChanged(bool) { }
 
-    virtual void didChangeScrollOffsetForAnyFrame() {}
+    virtual void didChangeScrollOffsetForAnyFrame() { }
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }
