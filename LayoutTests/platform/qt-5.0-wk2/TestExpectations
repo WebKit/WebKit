@@ -719,6 +719,9 @@ webkit.org/b/74505 css3/unicode-bidi-isolate-aharon-failing.html
 # [Qt][WK2] css3/filters/should-not-have-compositing-layer.html is failing since added in 104622
 webkit.org/b/76061 css3/filters/should-not-have-compositing-layer.html
 
+# [Qt][WK2] css3/flexbox/image-percent-max-height.html ref test fail after r151997
+webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ Skip ]
+
 # =========================================================================== #
 # Unidentified failures.                                                      #
 # =========================================================================== #
