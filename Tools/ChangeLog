@@ -1,3 +1,22 @@
+2013-06-28  Andy Estes  <aestes@apple.com>
+
+        [Mac] Newer versions of clang use a default template instantiation depth that is too small for TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=118208
+
+        Reviewed by Mark Rowe.
+
+        Newer versions of clang use a default template depth of 128, but this
+        is too small for Tests/WTF/HashSet.cpp. Use 256 instead, which was the
+        previous default.
+
+        Clang lowered the default to keep recursive template instantiation
+        from overflowing the stack (see <rdar://problem/13935016>), but
+        TestWebKitAPI's C++ files don't trigger a stack overflow even with the
+        higher limit. If for some reason this starts happening then we can
+        lower the limit back down.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig: Build TestWebKitAPI with -ftemplate-depth=256.
+
 2013-06-28  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [Tools] Add support for "webKitBranchBuild" git option when calculating jhbuildPath
