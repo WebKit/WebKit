@@ -25,7 +25,6 @@
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGLangSpace.h"
 #include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGUnitTypes.h"
@@ -34,7 +33,6 @@ namespace WebCore {
 
 class SVGMaskElement FINAL : public SVGStyledElement,
                              public SVGTests,
-                             public SVGLangSpace,
                              public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGMaskElement> create(const QualifiedName&, Document*);

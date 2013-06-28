@@ -25,7 +25,6 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
@@ -33,7 +32,6 @@ namespace WebCore {
 
 class SVGCircleElement FINAL : public SVGStyledTransformableElement,
                                public SVGTests,
-                               public SVGLangSpace,
                                public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGCircleElement> create(const QualifiedName&, Document*);

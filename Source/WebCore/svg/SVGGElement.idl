@@ -26,7 +26,6 @@
 [
     Conditional=SVG
 ] interface SVGGElement : SVGStyledElement,
-                          SVGLangSpace,
                           SVGTransformable {
 };
 

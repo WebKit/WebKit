@@ -550,7 +550,6 @@ BINDING_IDLS = \
     $(WebCore)/svg/SVGGradientElement.idl \
     $(WebCore)/svg/SVGHKernElement.idl \
     $(WebCore)/svg/SVGImageElement.idl \
-    $(WebCore)/svg/SVGLangSpace.idl \
     $(WebCore)/svg/SVGLength.idl \
     $(WebCore)/svg/SVGLengthList.idl \
     $(WebCore)/svg/SVGLineElement.idl \

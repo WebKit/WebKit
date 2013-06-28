@@ -27,7 +27,6 @@
 [
     Conditional=SVG
 ] interface SVGClipPathElement : SVGStyledElement,
-                                 SVGLangSpace,
                                  SVGTransformable {
     readonly attribute SVGAnimatedEnumeration clipPathUnits;
 };

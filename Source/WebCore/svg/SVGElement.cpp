@@ -338,7 +338,8 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
         setAttributeEventListener(eventNames().focusoutEvent, createAttributeEventListener(this, name, value));
     else if (name == SVGNames::onactivateAttr)
         setAttributeEventListener(eventNames().DOMActivateEvent, createAttributeEventListener(this, name, value));
-    else
+    else if (SVGLangSpace::parseAttribute(name, value)) {
+    } else
         StyledElement::parseAttribute(name, value);
 }
 

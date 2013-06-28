@@ -1,5 +1,77 @@
 2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Merge SVGLangSpace into SVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=118170
+
+        Reviewed by Kentaro Hara.
+
+        Remove SVGLangSpace IDL interface and move its attributes to SVGElement
+        to match the latest specification and simplify inheritance in SVG:
+        - https://svgwg.org/svg2-draft/types.html#InterfaceSVGElement
+
+        No new tests, no behavior change.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAElement.h:
+        * svg/SVGAElement.idl:
+        * svg/SVGCircleElement.h:
+        * svg/SVGCircleElement.idl:
+        * svg/SVGClipPathElement.h:
+        * svg/SVGClipPathElement.idl:
+        * svg/SVGDefsElement.h:
+        * svg/SVGDefsElement.idl:
+        * svg/SVGDescElement.h:
+        * svg/SVGDescElement.idl:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseAttribute):
+        * svg/SVGElement.h:
+        * svg/SVGElement.idl:
+        * svg/SVGEllipseElement.h:
+        * svg/SVGEllipseElement.idl:
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEImageElement.idl:
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterElement.idl:
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGForeignObjectElement.idl:
+        * svg/SVGGElement.h:
+        * svg/SVGGElement.idl:
+        * svg/SVGImageElement.h:
+        * svg/SVGImageElement.idl:
+        * svg/SVGLangSpace.idl: Removed.
+        * svg/SVGLineElement.h:
+        * svg/SVGLineElement.idl:
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMarkerElement.idl:
+        * svg/SVGMaskElement.h:
+        * svg/SVGMaskElement.idl:
+        * svg/SVGPathElement.h:
+        * svg/SVGPathElement.idl:
+        * svg/SVGPatternElement.h:
+        * svg/SVGPatternElement.idl:
+        * svg/SVGPolyElement.h:
+        * svg/SVGPolygonElement.idl:
+        * svg/SVGPolylineElement.idl:
+        * svg/SVGRectElement.h:
+        * svg/SVGRectElement.idl:
+        * svg/SVGSVGElement.h:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGStyleElement.h:
+        * svg/SVGStyleElement.idl:
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSwitchElement.idl:
+        * svg/SVGSymbolElement.h:
+        * svg/SVGSymbolElement.idl:
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextContentElement.idl:
+        * svg/SVGTitleElement.h:
+        * svg/SVGTitleElement.idl:
+        * svg/SVGUseElement.h:
+        * svg/SVGUseElement.idl:
+
+2013-06-28  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Use & instead of | in the value of [CallWith]
         https://bugs.webkit.org/show_bug.cgi?id=118054
 

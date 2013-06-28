@@ -30,7 +30,6 @@
 #include "SVGAnimatedRect.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
-#include "SVGLangSpace.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
@@ -96,7 +95,6 @@ struct SVGPropertyTraits<SVGMarkerOrientType> {
 };
 
 class SVGMarkerElement FINAL : public SVGStyledElement,
-                               public SVGLangSpace,
                                public SVGExternalResourcesRequired,
                                public SVGFitToViewBox {
 public:

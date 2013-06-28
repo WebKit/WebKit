@@ -23,6 +23,7 @@
 #define SVGElement_h
 
 #if ENABLE(SVG)
+#include "SVGLangSpace.h"
 #include "SVGLocatable.h"
 #include "SVGParsingError.h"
 #include "SVGPropertyInfo.h"
@@ -42,7 +43,7 @@ class SVGElementInstance;
 class SVGElementRareData;
 class SVGSVGElement;
 
-class SVGElement : public StyledElement {
+class SVGElement : public StyledElement, public SVGLangSpace {
 public:
     static PassRefPtr<SVGElement> create(const QualifiedName&, Document*);
     virtual ~SVGElement();

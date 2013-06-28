@@ -10612,7 +10612,6 @@
 		B22278980D00BF200071B782 /* SVGImageElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGImageElement.idl; sourceTree = "<group>"; };
 		B22278990D00BF200071B782 /* SVGLangSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLangSpace.cpp; sourceTree = "<group>"; };
 		B222789A0D00BF200071B782 /* SVGLangSpace.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGLangSpace.h; sourceTree = "<group>"; };
-		B222789B0D00BF200071B782 /* SVGLangSpace.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGLangSpace.idl; sourceTree = "<group>"; };
 		B222789C0D00BF200071B782 /* SVGLength.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLength.cpp; sourceTree = "<group>"; };
 		B222789D0D00BF200071B782 /* SVGLength.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGLength.h; sourceTree = "<group>"; };
 		B222789E0D00BF200071B782 /* SVGLength.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGLength.idl; sourceTree = "<group>"; };
@@ -17977,7 +17976,6 @@
 				B28C6A210D00C44800334AA4 /* SVGImageLoader.h */,
 				B22278990D00BF200071B782 /* SVGLangSpace.cpp */,
 				B222789A0D00BF200071B782 /* SVGLangSpace.h */,
-				B222789B0D00BF200071B782 /* SVGLangSpace.idl */,
 				B222789C0D00BF200071B782 /* SVGLength.cpp */,
 				B222789D0D00BF200071B782 /* SVGLength.h */,
 				B222789E0D00BF200071B782 /* SVGLength.idl */,

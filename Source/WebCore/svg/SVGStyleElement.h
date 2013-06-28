@@ -23,13 +23,11 @@
 
 #if ENABLE(SVG)
 #include "SVGElement.h"
-#include "SVGLangSpace.h"
 #include "StyleElement.h"
 
 namespace WebCore {
 
 class SVGStyleElement FINAL : public SVGElement
-                            , public SVGLangSpace
                             , public StyleElement {
 public:
     static PassRefPtr<SVGStyleElement> create(const QualifiedName&, Document*, bool createdByParser);

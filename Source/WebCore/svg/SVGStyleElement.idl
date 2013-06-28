@@ -26,8 +26,7 @@
 
 [
     Conditional=SVG
-] interface SVGStyleElement : SVGElement,
-                                              SVGLangSpace {
+] interface SVGStyleElement : SVGElement {
              attribute boolean disabled;
              [SetterRaisesException] attribute DOMString type;
              [SetterRaisesException] attribute DOMString media;

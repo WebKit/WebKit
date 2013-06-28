@@ -28,7 +28,6 @@
 #include "SVGAnimatedRect.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
-#include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 #include "SVGZoomAndPan.h"
@@ -44,7 +43,6 @@ class SMILTimeContainer;
 
 class SVGSVGElement FINAL : public SVGStyledTransformableElement,
                             public SVGTests,
-                            public SVGLangSpace,
                             public SVGExternalResourcesRequired,
                             public SVGFitToViewBox,
                             public SVGZoomAndPan {

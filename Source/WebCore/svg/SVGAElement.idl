@@ -26,7 +26,6 @@
 [
     Conditional=SVG
 ] interface SVGAElement : SVGStyledElement,
-                          SVGLangSpace,
                           SVGTransformable {
     readonly attribute SVGAnimatedString target;
 };

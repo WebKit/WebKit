@@ -30,14 +30,12 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFEImage.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SVGLangSpace.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
 
 class SVGFEImageElement FINAL : public SVGFilterPrimitiveStandardAttributes,
                                 public SVGURIReference,
-                                public SVGLangSpace,
                                 public SVGExternalResourcesRequired,
                                 public CachedImageClient {
 public:

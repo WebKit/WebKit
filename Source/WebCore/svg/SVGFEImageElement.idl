@@ -26,7 +26,6 @@
 [
     Conditional=SVG&FILTERS
 ] interface SVGFEImageElement : SVGStyledElement,
-                                SVGLangSpace,
                                 SVGFilterPrimitiveStandardAttributes {
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 };

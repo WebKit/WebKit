@@ -24,7 +24,6 @@
 #if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
@@ -32,7 +31,6 @@ namespace WebCore {
 
 class SVGSwitchElement FINAL : public SVGStyledTransformableElement,
                                public SVGTests,
-                               public SVGLangSpace,
                                public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGSwitchElement> create(const QualifiedName&, Document*);

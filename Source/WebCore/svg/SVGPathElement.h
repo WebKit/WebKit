@@ -25,7 +25,6 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGLangSpace.h"
 #include "SVGNames.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathSegList.h"
@@ -57,7 +56,6 @@ class SVGPathSegListPropertyTearOff;
 
 class SVGPathElement FINAL : public SVGStyledTransformableElement,
                              public SVGTests,
-                             public SVGLangSpace,
                              public SVGExternalResourcesRequired {
 public:
     static PassRefPtr<SVGPathElement> create(const QualifiedName&, Document*);

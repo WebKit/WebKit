@@ -25,7 +25,7 @@
 
 [
     Conditional=SVG
-] interface SVGSymbolElement : SVGStyledElement, SVGLangSpace {
+] interface SVGSymbolElement : SVGStyledElement {
 };
 
 SVGSymbolElement implements SVGExternalResourcesRequired;

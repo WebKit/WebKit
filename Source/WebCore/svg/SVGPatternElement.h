@@ -30,7 +30,6 @@
 #include "SVGAnimatedTransformList.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
-#include "SVGLangSpace.h"
 #include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
@@ -43,7 +42,6 @@ struct PatternAttributes;
 class SVGPatternElement FINAL : public SVGStyledElement,
                                 public SVGURIReference,
                                 public SVGTests,
-                                public SVGLangSpace,
                                 public SVGExternalResourcesRequired,
                                 public SVGFitToViewBox {
 public:

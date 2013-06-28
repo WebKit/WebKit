@@ -25,8 +25,7 @@
 
 [
     Conditional=SVG
-] interface SVGPatternElement : SVGStyledElement,
-                                SVGLangSpace {
+] interface SVGPatternElement : SVGStyledElement {
     readonly attribute SVGAnimatedEnumeration   patternUnits;
     readonly attribute SVGAnimatedEnumeration   patternContentUnits;
     readonly attribute SVGAnimatedTransformList patternTransform;

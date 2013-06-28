@@ -27,7 +27,6 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
@@ -39,7 +38,6 @@ class SVGElementInstance;
 
 class SVGUseElement FINAL : public SVGStyledTransformableElement,
                             public SVGTests,
-                            public SVGLangSpace,
                             public SVGExternalResourcesRequired,
                             public SVGURIReference,
                             public CachedSVGDocumentClient {

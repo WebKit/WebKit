@@ -25,7 +25,6 @@
 
 [
     Conditional=SVG
-] interface SVGTitleElement : SVGStyledElement,
-                                              SVGLangSpace {
+] interface SVGTitleElement : SVGStyledElement {
 };
 

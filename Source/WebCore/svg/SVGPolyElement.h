@@ -24,7 +24,6 @@
 #if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGLangSpace.h"
 #include "SVGNames.h"
 #include "SVGPointList.h"
 #include "SVGStyledTransformableElement.h"
@@ -34,7 +33,6 @@ namespace WebCore {
 
 class SVGPolyElement : public SVGStyledTransformableElement
                      , public SVGTests
-                     , public SVGLangSpace
                      , public SVGExternalResourcesRequired {
 public:
     SVGListPropertyTearOff<SVGPointList>* points();
