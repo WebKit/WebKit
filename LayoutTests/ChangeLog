@@ -1,3 +1,9 @@
+2013-06-27  Jessie Berlin  <jberlin@apple.com>
+
+        Merge a file from r151836 that was lost in the r152027 merge.
+
+        * fast/css/text-overflow-ellipsis-behind-floats-expected.html:
+
 2013-06-27  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152038
