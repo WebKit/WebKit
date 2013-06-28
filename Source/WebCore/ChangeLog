@@ -1,3 +1,22 @@
+2013-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        -webkit-line-break: after-white-space sometimes truncates DOM on copy & paste
+        https://bugs.webkit.org/show_bug.cgi?id=118164
+
+        Reviewed by Sam Weinig.
+
+        We can't assume that all subsequent ancestors contain exactly one child since they could have been
+        added in the first if statement matching: currentNode->parentNode() != rootNode && isRemovableBlock(currentNode)
+
+        Exit early when we encounter such an ancestor since removing its ancestor (that contains multiple children
+        some of which aren't in nodesToRemove) can clobber more nodes than we're allowed to remove.
+
+        Test: editing/pasteboard/simplfiying-markup-should-not-strip-content.html
+
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply):
+        (WebCore::SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove):
+
 2013-06-28  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         Coordinated Graphics: Separate CoordinatedLayerTreeHost into CoordinatedLayerTreeHost and CompositingCoordinator
