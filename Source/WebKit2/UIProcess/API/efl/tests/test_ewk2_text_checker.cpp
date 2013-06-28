@@ -51,6 +51,7 @@ static const char ignoreSpellingString[] = "Ignore Spelling";
 static const char learnSpellingString[] = "Learn Spelling";
 
 static const char* clientSuggestionsForWord[] = { "clientSuggestion1", "clientSuggestion2", "clientSuggestion3" };
+static unsigned contextMenuItemsNumber = 0;
 
 /**
  * Structure keeps information which callbacks were called.
@@ -302,6 +303,127 @@ static Eina_Bool checkClientSuggestionsForWord(Ewk_View_Smart_Data*, Evas_Coord,
 
     wasContextMenuShown = true;
     return true;
+}
+
+/**
+ * Count number of elements in context menu.
+ */
+static Eina_Bool countContextMenuItems(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
+{
+    contextMenuItemsNumber = eina_list_count(ewk_context_menu_items_get(contextMenu));
+    wasContextMenuShown = true;
+    return true;
+}
+
+/**
+ * Test whether there are spelling suggestions when misspelled word is directly context clicked.
+ */
+TEST_F(EWK2UnitTestBase, spelling_suggestion_for_context_click)
+{
+    wasContextMenuShown = false;
+
+    // Checking number of context menu items when element has no spellcheck suggestions.
+    ewkViewClass()->context_menu_show = countContextMenuItems;
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_selection_tests.html").data()));
+    mouseClick(10, 20, 3 /* Right button - invoke context menu */);
+
+    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
+    unsigned numberItemsWithoutSpellCheck = contextMenuItemsNumber;
+
+    wasContextMenuShown = false;
+
+    // Testing how many items are in context menu when spellcheck is enabled.
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_selection_tests.html").data()));
+    mouseClick(35, 35, 3 /* Right button - invoke context menu */);
+
+    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
+
+    EXPECT_LT(numberItemsWithoutSpellCheck, contextMenuItemsNumber);
+}
+
+/**
+ * Test whether there are no spelling suggestions when multiple words are selected (that are not a single misspelling).
+ */
+TEST_F(EWK2UnitTestBase, no_spelling_suggestion_for_multiword_selection)
+{
+    wasContextMenuShown = false;
+
+    // Checking number of context menu items when element has no spellcheck suggestions.
+    ewkViewClass()->context_menu_show = countContextMenuItems;
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_selection_tests.html").data()));
+    mouseClick(500, 60, 1 /* Left button - select all words in field without spellcheck */);
+    mouseClick(10, 20, 3 /* Right button - invoke context menu */);
+
+    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
+    unsigned numberItemsWithoutSpellCheck = contextMenuItemsNumber;
+
+    wasContextMenuShown = false;
+
+    // Testing how many items are in context menu when multiple words are selected.
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_selection_tests.html").data()));
+    mouseClick(60, 60, 1 /* Left button - select all words in field with spellcheck */);
+    mouseClick(35, 35, 3 /* Right button - invoke context menu */);
+
+    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
+
+    EXPECT_EQ(numberItemsWithoutSpellCheck, contextMenuItemsNumber);
+}
+
+/**
+ * Test whether there are no spelling suggestions when part of misspelled word are selected.
+ */
+TEST_F(EWK2UnitTestBase, no_spelling_suggestion_for_subword_selection)
+{
+    wasContextMenuShown = false;
+
+    // Checking number of context menu items when element has no spellcheck suggestions.
+    ewkViewClass()->context_menu_show = countContextMenuItems;
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_selection_tests.html").data()));
+    mouseClick(500, 60, 1 /* Left button - select all words in field without spellcheck */);
+    mouseClick(10, 20, 3 /* Right button - invoke context menu */);
+
+    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
+    unsigned numberItemsWithoutSpellCheck = contextMenuItemsNumber;
+
+    wasContextMenuShown = false;
+
+    // Testing how many items are in context menu when part of word is selected.
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_selection_tests.html").data()));
+    mouseClick(200, 60, 1 /* Left button - select part of word in field with spellcheck */);
+    mouseClick(35, 35, 3 /* Right button - invoke context menu */);
+
+    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
+
+    EXPECT_EQ(numberItemsWithoutSpellCheck, contextMenuItemsNumber);
+}
+
+/**
+ * Test whether context menu spelling items are available when misspelled word has selection as the double click.
+ */
+TEST_F(EWK2UnitTestBase, spelling_suggestion_for_double_clicked_word)
+{
+    wasContextMenuShown = false;
+
+    // Checking number of context menu items when element has no spell check suggestions.
+    ewkViewClass()->context_menu_show = countContextMenuItems;
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_selection_tests.html").data()));
+    mouseClick(500, 60, 1 /* Left button - select all words in field without spellcheck */);
+    mouseClick(10, 20, 3 /* Right button - invoke context menu */);
+
+    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
+    unsigned numberItemsWithoutSpellCheck = contextMenuItemsNumber;
+
+    wasContextMenuShown = false;
+
+    // Making double click on misspelled word to select it, and checking are there context menu spell check suggestions.
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_selection_tests.html").data()));
+    mouseClick(35, 35, 1 /* Left button - 1st click of doubleclick */);
+    mouseClick(35, 35, 1 /* Left button - 2nd click of doubleclick */);
+    mouseClick(35, 35, 3 /* Right button - invoke context menu */);
+
+    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
+
+    EXPECT_LT(numberItemsWithoutSpellCheck, contextMenuItemsNumber);
 }
 
 /**
