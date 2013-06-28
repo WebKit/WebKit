@@ -1,3 +1,16 @@
+2013-06-28  Jer Noble  <jer.noble@apple.com>
+
+        media/video-currentTime.html flakey
+        https://bugs.webkit.org/show_bug.cgi?id=118198
+
+        Reviewed by Jessie Berlin.
+
+        Update video-currentTime.html so that it listens for timeupdate events, and ends the test
+        after the first one with a >0 currentTime. Add a 3s watchdog for the failure case.
+
+        * media/video-currentTime-expected.txt:
+        * media/video-currentTime.html:
+
 2013-06-28  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Update TestExpectations so new Shapes tests are skipped where the old ones were
