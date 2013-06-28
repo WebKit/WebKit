@@ -102,19 +102,6 @@ static id updateAlertInitForAlertPanel(id self, SEL _cmd, id updateItem, id host
 
 @end
 
-#if __LP64__
-
-#define setMethodImplementation method_setImplementation
-
-#else
-
-static void setMethodImplementation(Method m, IMP imp)
-{
-    m->method_imp = imp;
-}
-
-#endif
-
 static NSString *userAgentStringForSparkle()
 {
     NSBundle *safariBundle = [NSBundle mainBundle];
@@ -130,10 +117,10 @@ void initializeSparkle()
 {
     // Override some Sparkle behaviour
     Method methodToPatch = class_getInstanceMethod(objc_getRequiredClass("SUUpdatePermissionPrompt"), @selector(promptDescription));
-    setMethodImplementation(methodToPatch, (IMP)updatePermissionPromptDescription);
+    method_setImplementation(methodToPatch, (IMP)updatePermissionPromptDescription);
 
     methodToPatch = class_getInstanceMethod(objc_getRequiredClass("SUUpdateAlert"), @selector(initWithAppcastItem:host:));
-    setMethodImplementation(methodToPatch, (IMP)updateAlertInitForAlertPanel);
+    method_setImplementation(methodToPatch, (IMP)updateAlertInitForAlertPanel);
 
     SUUpdater *updater = [SUUpdater updaterForBundle:webKitLauncherBundle()];
     [updater setUserAgentString:userAgentStringForSparkle()];

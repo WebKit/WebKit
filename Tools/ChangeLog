@@ -1,3 +1,30 @@
+2013-06-28  David Farler  <dfarler@apple.com>
+
+        Upstream WebKit Nightly’s WebKitLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=117418
+
+        Reviewed by Mark Rowe.
+
+        Literal patch from Nightly's OpenSource repo.
+
+        * WebKitLauncher/Configurations/Base.xcconfig:
+        * WebKitLauncher/Configurations/WebKitLauncher.xcconfig:
+        * WebKitLauncher/Info.plist:
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+        * WebKitLauncher/WebKitLauncherURLProtocol.m:
+        (+[WebKitLauncherURLProtocol load]):
+        (+[WebKitLauncherURLProtocol canInitWithRequest:]):
+        (-[WebKitLauncherURLProtocol startLoading]):
+        (-[WebKitLauncherURLProtocol handleWebKitVersionInformation]):
+        (-[WebKitLauncherURLProtocol resourceNotFound]):
+        * WebKitLauncher/WebKitNightlyEnablerSparkle.m:
+        (initializeSparkle):
+        * WebKitLauncher/main.m:
+        (determineExecutablePath):
+        (currentMacOSXVersion):
+        (main):
+        * WebKitLauncher/start.html:
+
 2013-06-28  Balazs Kelemen  <b.kelemen@samsung.com>
 
         [EFL] back/forward keyboard shortcuts are non-intuitive

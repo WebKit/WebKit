@@ -428,13 +428,9 @@
 	<array>
 		<string>x86_64</string>
 		<string>i386</string>
-		<string>ppc</string>
 	</array>
-	<key>LSMinimumSystemVersionByArchitecture</key>
-	<dict>
-		<key>x86_64</key>
-		<string>10.6</string>
-	</dict>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.6</string>
 	<key>SUFeedURL</key>
 	<string>http://nightly.webkit.org/builds/trunk/mac/rss</string>
 	<key>SUShowReleaseNotes</key>

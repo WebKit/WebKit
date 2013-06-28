@@ -1,31 +1,15 @@
 <html>
     <head>
         <title>Loading WebKit...</title>
-        <meta http-equiv="refresh" content="1;URL=http://nightly.webkit.org/start/" />
+        <meta http-equiv="refresh" content="1;URL=http://nightly.webkit.org/start/">
         <script type="text/javascript">
-            function getWebKitRevision()
-            {
-                var request = new XMLHttpRequest();
-                request.open("GET", "VERSION", false);
-                request.send();
-                var revision = parseInt(request.responseText);
-                if (isNaN(revision))
-                    return "";
-
-                return revision;
+            var script = document.createElement('script');
+            script.src = "x-webkit-launcher:webkit-version-information.js";
+            script.onload = function() {
+                if (webKitBranch && webKitRevision)
+                    document.location = "http://nightly.webkit.org/start/" + webKitBranch + "/" + webKitRevision;
             }
-
-            function getWebKitBranch()
-            {
-                var request = new XMLHttpRequest();
-                request.open("GET", "BRANCH", false);
-                request.send();
-                return (request.responseText || "trunk").replace(/\s/g, '')
-            }
-
-            var revision = getWebKitRevision();
-            var branch = getWebKitBranch();
-            document.location = "http://nightly.webkit.org/start/" + branch + "/" + revision;
+            document.documentElement.appendChild(script);
         </script>
     </head>
     <body>

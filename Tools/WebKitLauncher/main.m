@@ -157,13 +157,39 @@ static NSBundle *locateSafariBundle()
     return safariBundle;
 }
 
+static NSString *determineExecutablePath(NSBundle *bundle)
+{
+    NSString *safariExecutablePath = [bundle executablePath];
+
+    NSString *safariForWebKitDevelopmentExecutablePath = [bundle pathForAuxiliaryExecutable:@"SafariForWebKitDevelopment"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:safariForWebKitDevelopmentExecutablePath])
+        return safariExecutablePath;
+
+    SecStaticCodeRef staticCode;
+    if (SecStaticCodeCreateWithPath((CFURLRef)[bundle executableURL], kSecCSDefaultFlags, &staticCode) != noErr)
+        return [bundle executablePath];
+
+    NSDictionary *codeInformation;
+    if (SecCodeCopySigningInformation(staticCode, kSecCSRequirementInformation, (CFDictionaryRef*)&codeInformation) != noErr) {
+        CFRelease(staticCode);
+        return safariExecutablePath;
+    }
+    CFRelease(staticCode);
+    [codeInformation autorelease];
+
+    if ([codeInformation objectForKey:(id)kSecCodeInfoEntitlements])
+        return safariForWebKitDevelopmentExecutablePath;
+
+    return safariExecutablePath;
+}
+
 static NSString *currentMacOSXVersion()
 {
     SInt32 version;
     if (Gestalt(gestaltSystemVersion, &version) != noErr)
         return @"10.4";
 
-    return [NSString stringWithFormat:@"%x.%x", (version & 0xFF00) >> 8, (version & 0x00F0) >> 4];
+    return [NSString stringWithFormat:@"%lx.%lx", (long)(version & 0xFF00) >> 8, (long)(version & 0x00F0) >> 4l];
 }
 
 static NSString *fallbackMacOSXVersion(NSString *systemVersion)
@@ -209,13 +235,13 @@ int main(int argc, char *argv[])
     }
 
     if (!frameworkPathIsUsable)
-        displayErrorAndQuit([NSString stringWithFormat:@"Mac OS X %@ is not supported", systemVersion],
-                            [NSString stringWithFormat:@"Nightly builds of WebKit are not supported on Mac OS X %@ at this time.", systemVersion]);
+        displayErrorAndQuit([NSString stringWithFormat:@"OS X %@ is not supported", systemVersion],
+                            [NSString stringWithFormat:@"Nightly builds of WebKit are not supported on OS X %@ at this time.", systemVersion]);
 
     NSString *pathToEnablerLib = [[NSBundle mainBundle] pathForResource:@"WebKitNightlyEnabler" ofType:@"dylib"];
 
     NSBundle *safariBundle = locateSafariBundle();
-    NSString *executablePath = [safariBundle executablePath];
+    NSString *executablePath = determineExecutablePath(safariBundle);
 
     if (!checkSafariVersion(safariBundle)) {
         NSString *safariVersion = [[safariBundle localizedInfoDictionary] objectForKey:@"CFBundleShortVersionString"];

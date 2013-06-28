@@ -31,6 +31,10 @@
 #import <Sparkle/Sparkle.h>
 #endif
 
+@interface NSObject (WKBrowsingContextControllerMethods)
++ (void)registerSchemeForCustomProtocol:(NSString *)scheme;
+@end
+
 @interface WebKitLauncherURLProtocol (ImplementationDetails)
 -(void)handleIsWebKitLauncherAvailableJS;
 -(void)handleCheckForUpdates;
@@ -41,6 +45,7 @@
 
 +(void)load
 {
+    [NSClassFromString(@"WKBrowsingContextController") registerSchemeForCustomProtocol:@"x-webkit-launcher"];
     [NSURLProtocol registerClass:self];
 }
 
@@ -52,6 +57,9 @@
     NSURL *mainDocumentURL = [request mainDocumentURL];
     if (!mainDocumentURL)
         return NO;
+
+    if ([[mainDocumentURL scheme] isEqualToString:@"file"])
+        return YES;
 
     NSString *mainDocumentHost = [mainDocumentURL host];
     if (![mainDocumentHost isEqualToString:@"webkit.org"] && ![mainDocumentHost hasSuffix:@".webkit.org"])
@@ -71,6 +79,10 @@
     NSString *resourceSpecifier = [[request URL] resourceSpecifier];
     if ([resourceSpecifier isEqualToString:@"is-x-webkit-launcher-available.js"]) {
         [self handleIsWebKitLauncherAvailableJS];
+        return;
+    }
+    if ([resourceSpecifier isEqualToString:@"webkit-version-information.js"]) {
+        [self handleWebKitVersionInformation];
         return;
     }
 #if ENABLE_SPARKLE
@@ -98,6 +110,26 @@
     [client URLProtocolDidFinishLoading:self];
 }
 
+-(void)handleWebKitVersionInformation
+{
+    id client = [self client];
+    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[[self request] URL] MIMEType:@"text/javascript" expectedContentLength:0 textEncodingName:@"utf-8"];
+    [client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
+    [response release];
+
+    NSBundle *bundle = webKitLauncherBundle();
+    int revision = [[[bundle infoDictionary] valueForKey:(NSString *)kCFBundleVersionKey] intValue];
+    NSString *branch = [NSString stringWithContentsOfURL:[bundle URLForResource:@"BRANCH" withExtension:nil] encoding:NSUTF8StringEncoding error:0];
+    branch = [branch stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if (!branch)
+        branch = @"trunk";
+
+    NSString *script = [NSString stringWithFormat:@"var webKitRevision = %d; var webKitBranch = \"%@\";", revision, branch];
+    NSData *data = [script dataUsingEncoding:NSUTF8StringEncoding];
+    [client URLProtocol:self didLoadData:data];
+    [client URLProtocolDidFinishLoading:self];
+}
+
 #if ENABLE_SPARKLE
 -(void)handleCheckForUpdates
 {
@@ -115,7 +147,7 @@
 -(void)resourceNotFound
 {
     id client = [self client];
-    NSDictionary *infoDictionary = [NSDictionary dictionaryWithObject:NSErrorFailingURLStringKey forKey:[[self request] URL]];
+    NSDictionary *infoDictionary = [NSDictionary dictionaryWithObject:NSURLErrorFailingURLStringErrorKey forKey:[[self request] URL]];
     NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist userInfo:infoDictionary];
     [client URLProtocol:self didFailWithError:error];
 }
