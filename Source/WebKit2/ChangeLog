@@ -1,3 +1,13 @@
+2013-06-28  Tim Horton  <timothy_horton@apple.com>
+
+        WARN_UNUSED_RESULT can't be used in API headers, but WKBundlePageExtendIncrementalRenderingSuppression tries to
+        https://bugs.webkit.org/show_bug.cgi?id=118196
+        <rdar://problem/14303613>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2013-06-28  Andreas Kling  <akling@apple.com>
 
         Don't fire process-became-responsive callback when disconnecting it.
