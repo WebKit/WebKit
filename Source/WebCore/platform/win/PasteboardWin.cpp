@@ -677,7 +677,7 @@ void Pasteboard::writeURLToDataObject(const KURL& kurl, const String& titleStr, 
     fgd->fgd[0].dwFlags = FD_FILESIZE;
     fgd->fgd[0].nFileSizeLow = content.length();
 
-    unsigned maxSize = std::min(fsPath.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
+    unsigned maxSize = std::min<unsigned>(fsPath.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
     CopyMemory(fgd->fgd[0].cFileName, fsPath.characters(), maxSize * sizeof(UChar));
     GlobalUnlock(urlFileDescriptor);
 
@@ -929,7 +929,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
         return 0;
     }
 
-    int maxSize = std::min(fsPath.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
+    int maxSize = std::min<int>(fsPath.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
     CopyMemory(fgd->fgd[0].cFileName, (LPCWSTR)fsPath.characters(), maxSize * sizeof(UChar));
     GlobalUnlock(memObj);
 

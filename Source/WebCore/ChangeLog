@@ -1,5 +1,16 @@
 2013-06-28  Alex Christensen  <achristensen@apple.com>
 
+        Added template parameters to std::min to fix compile errors in Visual Studio x64.
+        https://bugs.webkit.org/show_bug.cgi?id=118204
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeURLToDataObject): Added <unsigned> to std::min.
+        (WebCore::createGlobalImageFileDescriptor): Added <int> to std::min.
+
+2013-06-28  Alex Christensen  <achristensen@apple.com>
+
         Added WebGL files to Windows build.
         https://bugs.webkit.org/show_bug.cgi?id=118200
 
