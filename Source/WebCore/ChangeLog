@@ -1,3 +1,25 @@
+2013-06-27  Frédéric Wang  <fred.wang@free.fr>
+
+        Implement parsing of MathML lengths.
+        https://bugs.webkit.org/show_bug.cgi?id=118053
+
+        Reviewed by Chris Fleizach.
+
+        A parsing function for MathML lengths, similar to Gecko's one, is
+        implemented. It is currently only used to parse mfrac@linethickness but
+        will be convenient to parse other MathML attributes in the future.
+
+        Tests: mathml/presentation/mfrac-linethickness1.html
+               mathml/presentation/mfrac-linethickness2.html
+               mathml/presentation/mfrac-linethickness3.html
+
+        * rendering/mathml/RenderMathMLBlock.cpp: add parsing functions
+        (WebCore::parseMathMLLength): parsing MathML Length (number unit)
+        (WebCore::parseNamedSpace): parsing MathML namedspaces
+        * rendering/mathml/RenderMathMLBlock.h: declare parsing functions
+        * rendering/mathml/RenderMathMLFraction.cpp: use the parsing function for linethickness
+        (WebCore::RenderMathMLFraction::updateFromElement):
+
 2013-06-27  Anders Carlsson  <andersca@apple.com>
 
         Remove call to deprecatedCharactersWithNullTermination() in WebGL code

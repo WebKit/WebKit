@@ -1,3 +1,21 @@
+2013-06-27  Frédéric Wang  <fred.wang@free.fr>
+
+        Implement parsing of MathML lengths.
+        https://bugs.webkit.org/show_bug.cgi?id=118053
+
+        Reviewed by Chris Fleizach.
+
+        Add some reftests for mfrac@linethickness. Better tests for the parsing
+        of MathML lengths will be provided when mspace is implemented
+        (bug 115610)
+
+        * mathml/presentation/mfrac-linethickness1-expected-mismatch.html: Added.
+        * mathml/presentation/mfrac-linethickness1.html: Added.
+        * mathml/presentation/mfrac-linethickness2-expected.html: Added.
+        * mathml/presentation/mfrac-linethickness2.html: Added.
+        * mathml/presentation/mfrac-linethickness3-expected-mismatch.html: Added.
+        * mathml/presentation/mfrac-linethickness3.html: Added.
+
 2013-06-27  Jessie Berlin  <jberlin@apple.com>
 
         [Mac WK2] compositing/repaint/positioned-movement.html flaky, missing repaint

@@ -127,6 +127,9 @@ private:
     virtual const char* renderName() const OVERRIDE { return "RenderMathMLTable"; }
 };
 
+// Parsing functions for MathML Length values
+bool parseMathMLLength(const String&, float&, const RenderStyle*, bool allowNegative = true);
+bool parseMathMLNamedSpace(const String&, float&, const RenderStyle*, bool allowNegative = true);
 }
 
 #endif // ENABLE(MATHML)

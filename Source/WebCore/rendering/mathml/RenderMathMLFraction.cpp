@@ -78,12 +78,11 @@ void RenderMathMLFraction::updateFromElement()
         m_lineThickness = gLineMedium;
     else if (equalIgnoringCase(thickness, "thick"))
         m_lineThickness = gLineThick;
-    else {
-        bool converted = false;
-        int thicknessIntValue = thickness.toIntStrict(&converted);
-        if (converted)
-            m_lineThickness = thicknessIntValue;
-    }
+    else
+        // This function parses the thickness attribute using gLineMedium as
+        // the default value. If the parsing fails, m_lineThickness will not be
+        // modified i.e. the default value will be used.
+        parseMathMLLength(thickness, m_lineThickness, style(), false);
 
     // Update the style for the padding of the denominator for the line thickness
     lastChild()->style()->setPaddingTop(Length(static_cast<int>(m_lineThickness), Fixed));
