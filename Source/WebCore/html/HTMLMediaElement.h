@@ -101,7 +101,7 @@ class HTMLMediaElement : public HTMLElement, private MediaPlayerClient, public M
 public:
     MediaPlayer* player() const { return m_player.get(); }
 
-    virtual bool isVideo() const = 0;
+    virtual bool isVideo() const { return false; }
     virtual bool hasVideo() const { return false; }
     virtual bool hasAudio() const;
 

@@ -1,5 +1,19 @@
 2013-06-27  Kangil Han  <kangil.han@samsung.com>
 
+        HTMLAudioElement doesn't have to know about isVideo function
+        https://bugs.webkit.org/show_bug.cgi?id=118116
+
+        Reviewed by Eric Carlson.
+
+        Minor code cleanup to remove isVideo function from HTMLAudioElement.
+        We can use default function in HTMLMediaElement as hasVideo does.
+
+        * html/HTMLAudioElement.h:
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::isVideo):
+
+2013-06-27  Kangil Han  <kangil.han@samsung.com>
+
         Adopt is/toHTMLInputElement for code cleanup
         https://bugs.webkit.org/show_bug.cgi?id=118130
 

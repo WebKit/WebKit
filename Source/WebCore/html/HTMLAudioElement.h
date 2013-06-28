@@ -41,8 +41,6 @@ public:
 
 private:
     HTMLAudioElement(const QualifiedName&, Document*, bool);
-
-    virtual bool isVideo() const { return false; }
 };
 
 inline bool isHTMLAudioElement(Node* node)
