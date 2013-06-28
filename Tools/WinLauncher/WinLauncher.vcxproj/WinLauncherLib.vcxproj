@@ -107,12 +107,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\WinLauncher.cpp" />
+    <ClCompile Include="AccessibilityDelegate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DOMDefaultImpl.h" />
     <ClInclude Include="..\PrintWebUIDelegate.h" />
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="..\WinLauncher.h" />
+    <ClInclude Include="AccessibilityDelegate.h" />
     <ClInclude Include="WinLauncherLibResource.h" />
   </ItemGroup>
   <ItemGroup>
