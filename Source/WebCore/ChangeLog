@@ -1,3 +1,15 @@
+2013-06-28  Alex Christensen  <achristensen@apple.com>
+
+        Added WebGL files to Windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=118200
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Added WebGL files, removed unused GraphicsContext3DOpenGLES.cpp.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Added WebGL files, removed unused GraphicsContext3DOpenGLES.cpp.
+        * platform/graphics/cairo/GLContext.cpp: Only include GLContextEGL.h or GLContextGLX.h if they're needed.
+        * platform/graphics/cg/GraphicsContext3DCG.cpp: Only include GraphicsContext3DNEON.h if it's needed.
+
 2013-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         -webkit-line-break: after-white-space sometimes truncates DOM on copy & paste

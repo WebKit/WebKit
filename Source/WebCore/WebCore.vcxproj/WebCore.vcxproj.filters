@@ -7030,11 +7030,32 @@
     <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLCommon.cpp">
       <Filter>platform\graphics\opengl</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLES.cpp">
-      <Filter>platform\graphics\opengl</Filter>
-    </ClCompile>
     <ClCompile Include="..\page\CaptionUserPreferencesMediaAF.cpp">
       <Filter>page</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGL.cpp">
+      <Filter>platform\graphics\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\cg\GraphicsContext3DCG.cpp">
+      <Filter>platform\graphics\cg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bindings\js\JSWebGLRenderingContextCustom.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\cairo\GraphicsContext3DCairo.cpp">
+      <Filter>platform\graphics\cairo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\cairo\GraphicsContext3DPrivate.cpp">
+      <Filter>platform\graphics\cairo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\canvas\CanvasContextAttributes.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\cairo\GLContext.cpp">
+      <Filter>platform\graphics\cairo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLES.cpp">
+      <Filter>platform\graphics\opengl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -14731,6 +14752,15 @@
     </ClInclude>
     <ClInclude Include="..\page\CaptionUserPreferencesMediaAF.h">
       <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\cairo\GraphicsContext3DPrivate.h">
+      <Filter>platform\graphics\cairo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\canvas\CanvasContextAttributes.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\cairo\GLContext.h">
+      <Filter>platform\graphics\cairo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

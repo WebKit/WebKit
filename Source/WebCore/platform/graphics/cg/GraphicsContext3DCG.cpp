@@ -31,9 +31,12 @@
 #include "GraphicsContext3D.h"
 
 #include "BitmapImage.h"
-#include "GraphicsContext3DNEON.h"
 #include "GraphicsContextCG.h"
 #include "Image.h"
+
+#if HAVE(ARM_NEON_INTRINSICS)
+#include "GraphicsContext3DNEON.h"
+#endif
 
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGContext.h>
