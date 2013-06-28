@@ -1,3 +1,16 @@
+2013-06-28  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Crash when loading is stopped from -didReceiveResponse
+        https://bugs.webkit.org/show_bug.cgi?id=118209
+        <rdar://problem/14259249>
+
+        Reviewed by Brady Eidson.
+
+        Test: TestWebKitAPI/Tests/mac/StopLoadingFromDidReceiveResponse.mm.
+
+        * loader/SubresourceLoader.cpp: (WebCore::SubresourceLoader::didReceiveResponse):
+        Added yet another check for reachedTerminalState().
+
 2013-06-28  Beth Dakin  <bdakin@apple.com>
 
         Cached pages don't update their backing scale factor when it changes
