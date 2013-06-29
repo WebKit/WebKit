@@ -332,7 +332,11 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "-webkit-control", "status-bar", "italic", "oblique", "small-caps", "normal", "bold", "bolder", "lighter",
         "100", "200", "300", "400", "500", "600", "700", "800", "900", "xx-small", "x-small", "small", "medium",
         "large", "x-large", "xx-large", "-webkit-xxx-large", "smaller", "larger", "serif", "sans-serif", "cursive",
-        "fantasy", "monospace", "-webkit-body", "-webkit-pictograph", "-webkit-system-font", "-apple-system-headline1", "-apple-system-headline2", "-apple-system-headline3", "-apple-system-emphasizedbody", "-apple-system-body", "-apple-system-subheadline", "-apple-system-footnote", "-apple-system-emphasizedcaption1", "-apple-system-caption1", "-apple-system-emphasizedcaption2", "-apple-system-caption2"
+        "fantasy", "monospace", "-webkit-body", "-webkit-pictograph", "-webkit-system-font", "-apple-system-headline",
+        "-apple-system-body", "-apple-system-subheadline", "-apple-system-footnote", "-apple-system-caption1",
+        "-apple-system-caption2", "-apple-system-short-headline", "-apple-system-short-body",
+        "-apple-system-short-subheadline", "-apple-system-short-footnote", "-apple-system-short-caption1",
+        "-apple-system-tall-body"
     ],
     "dominant-baseline": [
         "middle", "auto", "central", "text-before-edge", "text-after-edge", "ideographic", "alphabetic", "hanging",
