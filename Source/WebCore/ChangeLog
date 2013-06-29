@@ -1,3 +1,17 @@
+2013-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(151586): multipart/x-mixed-replace images are broken
+        https://bugs.webkit.org/show_bug.cgi?id=118169
+
+        Reviewed by Alexey Proskuryakov.
+
+        When loading multipart content the resource data will change as
+        the next part is loaded, so we need to make a copy of the data
+        before sending it to the resource.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+
 2013-06-28  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] adopt new AVFoundation caption API

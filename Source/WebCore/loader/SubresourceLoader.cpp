@@ -208,7 +208,9 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
 
     RefPtr<ResourceBuffer> buffer = resourceData();
     if (m_loadingMultipartContent && buffer && buffer->size()) {
-        m_resource->finishLoading(buffer.get());
+        // The resource data will change as the next part is loaded, so we need to make a copy.
+        RefPtr<ResourceBuffer> copiedData = ResourceBuffer::create(buffer->data(), buffer->size());
+        m_resource->finishLoading(copiedData.get());
         clearResourceData();
         // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.        
         // After the first multipart section is complete, signal to delegates that this load is "finished" 
