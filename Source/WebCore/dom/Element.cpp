@@ -1478,10 +1478,8 @@ void Element::detach(const AttachContext& context)
         data->resetDynamicRestyleObservations();
     }
 
-    if (ElementShadow* shadow = this->shadow()) {
-        detachChildrenIfNeeded(context);
+    if (ElementShadow* shadow = this->shadow())
         shadow->detach(context);
-    }
 
     // Do not remove the element's hovered and active status
     // if performing a reattach.

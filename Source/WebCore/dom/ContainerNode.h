@@ -118,11 +118,6 @@ public:
     // node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
     virtual void childrenChanged(bool createdByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-    void attachChildren(const AttachContext& = AttachContext());
-    void attachChildrenLazily();
-    void detachChildren(const AttachContext& = AttachContext());
-    void detachChildrenIfNeeded(const AttachContext& = AttachContext());
-
     void disconnectDescendantFrames();
 
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const { return true; }
@@ -146,6 +141,9 @@ protected:
 private:
     void removeBetween(Node* previousChild, Node* nextChild, Node* oldChild);
     void insertBeforeCommon(Node* nextChild, Node* oldChild);
+
+    void attachChildren(const AttachContext& = AttachContext());
+    void detachChildren(const AttachContext& = AttachContext());
 
     static void dispatchPostAttachCallbacks();
     void suspendPostAttachCallbacks();
@@ -193,24 +191,6 @@ inline void ContainerNode::attachChildren(const AttachContext& context)
         ASSERT(!child->attached() || childAttachedAllowedWhenAttachingChildren(this));
         if (!child->attached())
             child->attach(childrenContext);
-    }
-}
-
-inline void ContainerNode::attachChildrenLazily()
-{
-    for (Node* child = firstChild(); child; child = child->nextSibling())
-        if (!child->attached())
-            child->lazyAttach();
-}
-
-inline void ContainerNode::detachChildrenIfNeeded(const AttachContext& context)
-{
-    AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->attached())
-            child->detach(childrenContext);
     }
 }
 

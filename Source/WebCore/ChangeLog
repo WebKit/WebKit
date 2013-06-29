@@ -1,3 +1,27 @@
+2013-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove unused attachChildrenLazily method and make attach/detachChildren private
+        https://bugs.webkit.org/show_bug.cgi?id=118016
+
+        Reviewed by Darin Adler.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/009520dc31c9458e0cf71cf212fa5688c4ca68b0
+
+        No one should be manually trying to attach or detach all their children so there's
+        no reason for these methods to be public.
+        
+        In doing this I realized that attachChildrenLazily is not used and can be removed.
+        
+        I also realized that we were detaching all our children before the ShadowRoots which
+        is sad since the InsertionPoints will call detach() on them as well, and then when we
+        call ContainerNode::detach at the end of Element::detach we'll go detach them again!
+        This patch makes it so we only go through and detach them twice instead of three times.
+        In the future we should figure out a way to only do this once.
+
+        * dom/ContainerNode.h:
+        * dom/Element.cpp:
+        (WebCore::Element::detach):
+
 2013-06-28  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Crash when loading is stopped from -didReceiveResponse
