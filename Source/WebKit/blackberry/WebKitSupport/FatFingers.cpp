@@ -93,7 +93,7 @@ bool FatFingers::isElementClickable(Element* element) const
     if (element->webkitMatchesSelector("a[href],*:link,*:visited,*[role=button],button,input,select,label[for],area[href],textarea,embed,object", ec)
         || element->isMediaControlElement()
         || element->isContentEditable()
-        || (element->hasTagName(HTMLNames::imgTag) && element->parentNode() && isHTMLAnchorElement(element->parentNode())))
+        || (isHTMLImageElement(element) && element->parentNode() && isHTMLAnchorElement(element->parentNode())))
         return true;
 
     return hasMousePressListener(element)

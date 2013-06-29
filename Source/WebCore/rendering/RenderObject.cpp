@@ -40,6 +40,7 @@
 #include "GraphicsContext.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "LogicalSelectionOffsetCaches.h"
@@ -2328,7 +2329,7 @@ RespectImageOrientationEnum RenderObject::shouldRespectImageOrientation() const
         // This can only be enabled for ports which honor the orientation flag in their drawing code.
         document()->isImageDocument() ||
 #endif
-        (document()->settings() && document()->settings()->shouldRespectImageOrientation() && node() && node()->hasTagName(HTMLNames::imgTag)) ? RespectImageOrientation : DoNotRespectImageOrientation;
+        (document()->settings() && document()->settings()->shouldRespectImageOrientation() && node() && isHTMLImageElement(node())) ? RespectImageOrientation : DoNotRespectImageOrientation;
 }
 
 bool RenderObject::hasOutlineAnnotation() const

@@ -285,8 +285,8 @@ void Clipboard::setDragImage(Element* element, int x, int y)
     if (!canSetDragImage())
         return;
 
-    if (element && element->hasTagName(HTMLNames::imgTag) && !element->inDocument())
-        setDragImage(static_cast<HTMLImageElement*>(element)->cachedImage(), IntPoint(x, y));
+    if (element && isHTMLImageElement(element) && !element->inDocument())
+        setDragImage(toHTMLImageElement(element)->cachedImage(), IntPoint(x, y));
     else
         setDragImageElement(element, IntPoint(x, y));
 }
@@ -385,8 +385,8 @@ void Clipboard::setDragImage(Element* element, int x, int y)
         return;
 
     CachedImage* image;
-    if (element && element->hasTagName(HTMLNames::imgTag) && !element->inDocument())
-        image = static_cast<HTMLImageElement*>(element)->cachedImage();
+    if (element && isHTMLImageElement(element) && !element->inDocument())
+        image = toHTMLImageElement(element)->cachedImage();
     else
         image = 0;
 

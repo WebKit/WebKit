@@ -471,7 +471,7 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const LayoutRect& rect
     if (!img || img->isNull())
         return;
 
-    HTMLImageElement* imageElt = (node() && node()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(node()) : 0;
+    HTMLImageElement* imageElt = (node() && isHTMLImageElement(node())) ? toHTMLImageElement(node()) : 0;
     CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
     Image* image = m_imageResource->image().get();
     bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, alignedRect.size());
@@ -524,7 +524,7 @@ LayoutUnit RenderImage::minimumReplacedHeight() const
 
 HTMLMapElement* RenderImage::imageMap() const
 {
-    HTMLImageElement* i = node() && node()->hasTagName(imgTag) ? static_cast<HTMLImageElement*>(node()) : 0;
+    HTMLImageElement* i = node() && isHTMLImageElement(node()) ? toHTMLImageElement(node()) : 0;
     return i ? i->treeScope()->getImageMap(i->fastGetAttribute(usemapAttr)) : 0;
 }
 
@@ -559,8 +559,8 @@ void RenderImage::updateAltText()
 
     if (isHTMLInputElement(node()))
         m_altText = toHTMLInputElement(node())->altText();
-    else if (node()->hasTagName(imgTag))
-        m_altText = static_cast<HTMLImageElement*>(node())->altText();
+    else if (isHTMLImageElement(node()))
+        m_altText = toHTMLImageElement(node())->altText();
 }
 
 void RenderImage::layout()

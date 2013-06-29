@@ -1467,8 +1467,8 @@ KURL AccessibilityRenderObject::url() const
     if (isWebArea())
         return m_renderer->document()->url();
     
-    if (isImage() && m_renderer->node() && m_renderer->node()->hasTagName(imgTag))
-        return static_cast<HTMLImageElement*>(m_renderer->node())->src();
+    if (isImage() && m_renderer->node() && isHTMLImageElement(m_renderer->node()))
+        return toHTMLImageElement(m_renderer->node())->src();
     
     if (isInputImage())
         return toHTMLInputElement(m_renderer->node())->src();

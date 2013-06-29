@@ -488,7 +488,7 @@ bool AccessibilityNodeObject::isNativeImage() const
     if (!node)
         return false;
 
-    if (node->hasTagName(imgTag))
+    if (isHTMLImageElement(node))
         return true;
 
     if (node->hasTagName(appletTag) || node->hasTagName(embedTag) || node->hasTagName(objectTag))

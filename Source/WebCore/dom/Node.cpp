@@ -64,6 +64,7 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "InsertionPoint.h"
@@ -1949,7 +1950,7 @@ Node* Node::enclosingLinkEventParentOrSelf()
         // For imagemaps, the enclosing link node is the associated area element not the image itself.
         // So we don't let images be the enclosingLinkNode, even though isLink sometimes returns true
         // for them.
-        if (node->isLink() && !node->hasTagName(imgTag))
+        if (node->isLink() && !isHTMLImageElement(node))
             return node;
     }
 

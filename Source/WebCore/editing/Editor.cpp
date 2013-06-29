@@ -288,10 +288,10 @@ static HTMLImageElement* imageElementFromImageDocument(Document* document)
     
     Node* node = body->firstChild();
     if (!node)
-        return 0;    
-    if (!node->hasTagName(imgTag))
         return 0;
-    return static_cast<HTMLImageElement*>(node);
+    if (!isHTMLImageElement(node))
+        return 0;
+    return toHTMLImageElement(node);
 }
 
 bool Editor::canCopy() const

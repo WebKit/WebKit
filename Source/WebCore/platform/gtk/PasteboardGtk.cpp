@@ -25,6 +25,7 @@
 #include "DocumentFragment.h"
 #include "Editor.h"
 #include "Frame.h"
+#include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -199,7 +200,7 @@ static KURL getURLForImageNode(Node* node)
 {
     // FIXME: Later this code should be shared with Chromium somehow. Chances are all platforms want it.
     AtomicString urlString;
-    if (node->hasTagName(HTMLNames::imgTag) || isHTMLInputElement(node))
+    if (isHTMLImageElement(node) || isHTMLInputElement(node))
         urlString = toElement(node)->getAttribute(HTMLNames::srcAttr);
 #if ENABLE(SVG)
     else if (node->hasTagName(SVGNames::imageTag))

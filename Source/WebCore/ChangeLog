@@ -1,3 +1,58 @@
+2013-06-28  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLImageElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118182
+
+        Reviewed by Andreas Kling.
+
+        To enhance readability, this patch adopts is/toHTMLImageElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isNativeImage):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::url):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isReachableFromDOM):
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::assignToHTMLImageElement):
+        (JSC::Bindings::QtPixmapRuntime::toQt):
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::setDragImage):
+        * dom/Node.cpp:
+        (WebCore::Node::enclosingLinkEventParentOrSelf):
+        * editing/Editor.cpp:
+        (WebCore::imageElementFromImageDocument):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::appendServerMapMousePosition):
+        * html/HTMLImageElement.h:
+        (WebCore::isHTMLImageElement):
+        (WebCore::toHTMLImageElement):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::WindowNameCollection::nodeMatchesIfNameAttributeMatch):
+        (WebCore::DocumentNameCollection::nodeMatchesIfIdAttributeMatch):
+        (WebCore::DocumentNameCollection::nodeMatchesIfNameAttributeMatch):
+        (WebCore::DocumentNameCollection::nodeMatches):
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::getURLForImageNode):
+        * platform/mac/HTMLConverter.mm:
+        (+[WebHTMLConverter editingAttributedStringFromRange:]):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::altDisplayString):
+        (WebCore::HitTestResult::absoluteImageURL):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+        (WebCore::RenderImage::imageMap):
+        (WebCore::RenderImage::updateAltText):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldRespectImageOrientation):
+
 2013-06-28  Gavin Barraclough  <barraclough@apple.com>
 
         PageThrottler::shouldThrottleTimers is wrong.

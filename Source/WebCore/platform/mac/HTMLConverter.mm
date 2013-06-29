@@ -40,6 +40,7 @@
 #import "Font.h"
 #import "Frame.h"
 #import "FrameLoader.h"
+#import "HTMLImageElement.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
 #import "LoaderNSURLExtras.h"
@@ -1675,7 +1676,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
         
         if (startContainer == endContainer && (startOffset == endOffset - 1)) {
             Node* node = startContainer->childNode(startOffset);
-            if (node && node->hasTagName(imgTag)) {
+            if (node && isHTMLImageElement(node)) {
                 NSFileWrapper* fileWrapper = fileWrapperForElement(toElement(node));
                 NSTextAttachment* attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
                 [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];

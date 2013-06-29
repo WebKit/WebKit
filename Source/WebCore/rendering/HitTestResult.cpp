@@ -271,8 +271,8 @@ String HitTestResult::altDisplayString() const
     if (!m_innerNonSharedNode)
         return String();
     
-    if (m_innerNonSharedNode->hasTagName(imgTag)) {
-        HTMLImageElement* image = static_cast<HTMLImageElement*>(m_innerNonSharedNode.get());
+    if (isHTMLImageElement(m_innerNonSharedNode.get())) {
+        HTMLImageElement* image = toHTMLImageElement(m_innerNonSharedNode.get());
         return displayString(image->getAttribute(altAttr), m_innerNonSharedNode.get());
     }
     
@@ -316,7 +316,7 @@ KURL HitTestResult::absoluteImageURL() const
 
     AtomicString urlString;
     if (m_innerNonSharedNode->hasTagName(embedTag)
-        || m_innerNonSharedNode->hasTagName(imgTag)
+        || isHTMLImageElement(m_innerNonSharedNode.get())
         || isHTMLInputElement(m_innerNonSharedNode.get())
         || m_innerNonSharedNode->hasTagName(objectTag)
 #if ENABLE(SVG)
