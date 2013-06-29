@@ -1,3 +1,9 @@
+2013-06-29  Andreas Kling  <akling@apple.com>
+
+        Follow-up to r152206: also update HashFlags8BitBuffer in the LLInt.
+
+        * llint/LowLevelInterpreter.asm:
+
 2013-06-28  Andreas Kling  <akling@apple.com>
 
         Un-crashify JSC tests on debug bots after Anders had his way with StringImpl.
