@@ -1,3 +1,21 @@
+2013-06-28  Gavin Barraclough  <barraclough@apple.com>
+
+        PageThrottler::shouldThrottleTimers is wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=118210
+
+        Reviewed by Anders Carlson.
+
+        m_throttleState == PageNotThrottledState
+            -> page NOT throttled, so should NOT throttle timers
+        m_throttleState != PageNotThrottledState
+            -> page NOT NOT throttled, so should throttle timers
+
+        This needs cleaning up, but for now, 1 character fix.
+
+        * page/PageThrottler.h:
+        (WebCore::PageThrottler::shouldThrottleTimers):
+            == -> !=
+
 2013-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         An element with -webkit-user-select: all should be selected on single click

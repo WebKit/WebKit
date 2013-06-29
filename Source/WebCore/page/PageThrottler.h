@@ -44,7 +44,7 @@ public:
     }
 
     bool shouldThrottleAnimations() const { return m_throttleState != PageNotThrottledState; }
-    bool shouldThrottleTimers() const { return m_throttleState == PageNotThrottledState; }
+    bool shouldThrottleTimers() const { return m_throttleState != PageNotThrottledState; }
 
     void setThrottled(bool);
 
