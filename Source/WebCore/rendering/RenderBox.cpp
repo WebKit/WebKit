@@ -537,14 +537,16 @@ LayoutRect RenderBox::outlineBoundsForRepaint(const RenderLayerModelObject* repa
     LayoutRect box = borderBoundingBox();
     adjustRectForOutlineAndShadow(box);
 
-    FloatQuad containerRelativeQuad;
-    if (geometryMap)
-        containerRelativeQuad = geometryMap->mapToContainer(box, repaintContainer);
-    else
-        containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
+    if (repaintContainer != this) {
+        FloatQuad containerRelativeQuad;
+        if (geometryMap)
+            containerRelativeQuad = geometryMap->mapToContainer(box, repaintContainer);
+        else
+            containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
 
-    box = containerRelativeQuad.enclosingBoundingBox();
-
+        box = containerRelativeQuad.enclosingBoundingBox();
+    }
+    
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     box.move(view()->layoutDelta());

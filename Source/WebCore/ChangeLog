@@ -1,3 +1,19 @@
+2013-06-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid doing work in RenderBox::outlineBoundsForRepaint() when the repaintContainer is this
+        https://bugs.webkit.org/show_bug.cgi?id=118215
+
+        Reviewed by Tim Horton.
+
+        When the RenderGeometryMap code path was added, RenderBox::outlineBoundsForRepaint()
+        actually got slower if no coordinate mapping was needed. So avoid doing work when
+        we can, including avoiding the FloatQuad construction.
+        
+        Speeds up scrolling overflow:scroll areas with large numbers of layer children.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::outlineBoundsForRepaint):
+
 2013-06-29  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLOptGroupElement for code cleanup
