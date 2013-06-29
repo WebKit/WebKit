@@ -133,6 +133,7 @@ static int cOuterButtonOverlap = 2;
 static float gInitialButtonDelay = 0.5f;
 static float gAutoscrollButtonDelay = 0.05f;
 static bool gJumpOnTrackClick = false;
+static bool gUsesOverlayScrollbars = false;
 
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
 
@@ -226,6 +227,7 @@ void ScrollbarThemeMac::preferencesChanged()
     gInitialButtonDelay = [defaults floatForKey:@"NSScrollerButtonDelay"];
     gAutoscrollButtonDelay = [defaults floatForKey:@"NSScrollerButtonPeriod"];
     gJumpOnTrackClick = [defaults boolForKey:@"AppleScrollerPagingBehavior"];
+    usesOverlayScrollbarsChanged();
 }
 
 int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
@@ -241,10 +243,15 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 
 bool ScrollbarThemeMac::usesOverlayScrollbars() const
 {
+    return gUsesOverlayScrollbars;
+}
+
+void ScrollbarThemeMac::usesOverlayScrollbarsChanged()
+{
     if (isScrollbarOverlayAPIAvailable())
-        return recommendedScrollerStyle() == NSScrollerStyleOverlay;
+        gUsesOverlayScrollbars = recommendedScrollerStyle() == NSScrollerStyleOverlay;
     else
-        return false;
+        gUsesOverlayScrollbars = false;
 }
 
 void ScrollbarThemeMac::updateScrollbarOverlayStyle(ScrollbarThemeClient* scrollbar)

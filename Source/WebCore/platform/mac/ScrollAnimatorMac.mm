@@ -1212,6 +1212,8 @@ void ScrollAnimatorMac::updateScrollerStyle()
         m_needsScrollerStyleUpdate = false;
         return;
     }
+    
+    macTheme->usesOverlayScrollbarsChanged();
 
     NSScrollerStyle newStyle = [m_scrollbarPainterController.get() scrollerStyle];
 

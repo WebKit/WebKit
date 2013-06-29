@@ -1,5 +1,28 @@
 2013-06-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Avoid calling into Objective-C every time we get the scrollbar width
+        https://bugs.webkit.org/show_bug.cgi?id=118216
+
+        Reviewed by Geoffrey Garen.
+
+        Profiling shows that calling Scrollbar::isOverlayScrollbar() is somewhat
+        expensive, because it calls down into Objective-C. Fix by caching in
+        ScrollbarThemeMac whether we're using overlay scrollbars. We update this
+        cache on creation, and when preferences change; ScrollAnimatorMac::updateScrollerStyle()
+        is the function that gets called when the user changes the setting in System Preferences.
+
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::usesOverlayScrollbarsChanged):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::preferencesChanged):
+        (WebCore::ScrollbarThemeMac::usesOverlayScrollbars):
+        (WebCore::ScrollbarThemeMac::usesOverlayScrollbarsChanged):
+
+2013-06-29  Simon Fraser  <simon.fraser@apple.com>
+
         Avoid calling isSimpleContainerCompositingLayer() an extra time
         https://bugs.webkit.org/show_bug.cgi?id=118218
 
