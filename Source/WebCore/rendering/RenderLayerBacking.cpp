@@ -979,7 +979,7 @@ void RenderLayerBacking::updateDrawsContent(bool isSimpleContainer)
         return;
     }
 
-    bool hasPaintedContent = !isSimpleContainer && containsPaintedContent();
+    bool hasPaintedContent = containsPaintedContent(isSimpleContainer);
 
     // FIXME: we could refine this to only allocate backing for one of these layers if possible.
     m_graphicsLayer->setDrawsContent(hasPaintedContent);
@@ -1652,9 +1652,9 @@ bool RenderLayerBacking::hasVisibleNonCompositingDescendantLayers() const
     return hasVisibleNonCompositingDescendant(m_owningLayer);
 }
 
-bool RenderLayerBacking::containsPaintedContent() const
+bool RenderLayerBacking::containsPaintedContent(bool isSimpleContainer) const
 {
-    if (isSimpleContainerCompositingLayer() || paintsIntoWindow() || paintsIntoCompositedAncestor() || m_artificiallyInflatedBounds || m_owningLayer->isReflection())
+    if (isSimpleContainer || paintsIntoWindow() || paintsIntoCompositedAncestor() || m_artificiallyInflatedBounds || m_owningLayer->isReflection())
         return false;
 
     if (isDirectlyCompositedImage())

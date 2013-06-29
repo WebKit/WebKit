@@ -1,5 +1,21 @@
 2013-06-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Avoid calling isSimpleContainerCompositingLayer() an extra time
+        https://bugs.webkit.org/show_bug.cgi?id=118218
+
+        Reviewed by Tim Horton.
+
+        containsPaintedContent() called isSimpleContainerCompositingLayer(), which
+        is not particularly cheap. But the caller already has this information,
+        so pass it in.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDrawsContent):
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+        * rendering/RenderLayerBacking.h:
+
+2013-06-29  Simon Fraser  <simon.fraser@apple.com>
+
         Avoid doing work in RenderBox::outlineBoundsForRepaint() when the repaintContainer is this
         https://bugs.webkit.org/show_bug.cgi?id=118215
 
