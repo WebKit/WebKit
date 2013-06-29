@@ -1,3 +1,11 @@
+2013-06-28  Andreas Kling  <akling@apple.com>
+
+        Fix Windows builds after deprecatedCharactersWithNullTermination() removal.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (addFontFallbackIfPresent):
+        (removeFontFallbackIfPresent):
+
 2013-06-28  Anders Carlsson  <andersca@apple.com>
 
         Remove String::deprecatedCharactersWithNullTermination() and related code
