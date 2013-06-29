@@ -165,6 +165,7 @@ enum MediaPlayerAVFoundationObservationContext {
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context;
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 - (void)legibleOutput:(id)output didOutputAttributedStrings:(NSArray *)strings nativeSampleBuffers:(NSArray *)nativeSamples forItemTime:(CMTime)itemTime;
+- (void)outputSequenceWasFlushed:(id)output;
 #endif
 @end
 
@@ -1456,6 +1457,16 @@ void MediaPlayerPrivateAVFoundationObjC::processCue(NSArray *attributedStrings, 
 
     m_currentTrack->processCue(reinterpret_cast<CFArrayRef>(attributedStrings), time);
 }
+
+void MediaPlayerPrivateAVFoundationObjC::flushCues()
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::flushCues(%p)", this);
+
+    if (!m_currentTrack)
+        return;
+    
+    m_currentTrack->resetCueValues();
+}
 #endif // HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 
 void MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(InbandTextTrackPrivateAVF *track)
@@ -1669,6 +1680,20 @@ NSArray* itemKVOProperties()
         if (!m_callback)
             return;
         m_callback->processCue(strings, CMTimeGetSeconds(itemTime));
+    });
+}
+
+- (void)outputSequenceWasFlushed:(id)output
+{
+    UNUSED_PARAM(output);
+
+    if (!m_callback)
+        return;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!m_callback)
+            return;
+        m_callback->flushCues();
     });
 }
 #endif
