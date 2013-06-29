@@ -1,3 +1,26 @@
+2013-06-28  Anders Carlsson  <andersca@apple.com>
+
+        Remove String::deprecatedCharactersWithNullTermination() and related code
+        https://bugs.webkit.org/show_bug.cgi?id=118211
+
+        Reviewed by Benjamin Poulain.
+
+        Remove String::deprecatedCharactersWithNullTermination, StringImpl::createWithTerminatingNullCharacter
+        and the s_hashFlagHasTerminatingNullCharacter flag. We no longer care about whether strings have a
+        terminating null character.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createFromLiteral):
+        (WTF::StringImpl::createWithoutCopying):
+        (WTF::StringImpl::getData16SlowCase):
+        (WTF::StringImpl::sizeInBytes):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::createFromLiteral):
+        (WTF::StringImpl::isolatedCopy):
+        * wtf/text/WTFString.cpp:
+        * wtf/text/WTFString.h:
+
 2013-06-27  Anders Carlsson  <andersca@apple.com>
 
         Add a new String::charactersWithNullTermination() function that returns a vector

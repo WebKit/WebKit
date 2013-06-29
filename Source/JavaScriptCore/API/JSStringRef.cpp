@@ -63,7 +63,7 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
 JSStringRef JSStringCreateWithCharactersNoCopy(const JSChar* chars, size_t numChars)
 {
     initializeThreading();
-    return OpaqueJSString::create(StringImpl::createWithoutCopying(chars, numChars, WTF::DoesNotHaveTerminatingNullCharacter)).leakRef();
+    return OpaqueJSString::create(StringImpl::createWithoutCopying(chars, numChars)).leakRef();
 }
 
 JSStringRef JSStringRetain(JSStringRef string)

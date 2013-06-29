@@ -158,7 +158,7 @@ PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters, uns
 {
     ASSERT_WITH_MESSAGE(length, "Use StringImpl::empty() to create an empty string");
     ASSERT(charactersAreAllASCII<LChar>(reinterpret_cast<const LChar*>(characters), length));
-    return adoptRef(new StringImpl(reinterpret_cast<const LChar*>(characters), length, DoesHaveTerminatingNullCharacter, ConstructWithoutCopying));
+    return adoptRef(new StringImpl(reinterpret_cast<const LChar*>(characters), length, ConstructWithoutCopying));
 }
 
 PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters)
@@ -166,20 +166,20 @@ PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters)
     return createFromLiteral(characters, strlen(characters));
 }
 
-PassRefPtr<StringImpl> StringImpl::createWithoutCopying(const UChar* characters, unsigned length, HasTerminatingNullCharacter hasTerminatingNullCharacter)
+PassRefPtr<StringImpl> StringImpl::createWithoutCopying(const UChar* characters, unsigned length)
 {
     if (!length)
         return empty();
 
-    return adoptRef(new StringImpl(characters, length, hasTerminatingNullCharacter, ConstructWithoutCopying));
+    return adoptRef(new StringImpl(characters, length, ConstructWithoutCopying));
 }
 
-PassRefPtr<StringImpl> StringImpl::createWithoutCopying(const LChar* characters, unsigned length, HasTerminatingNullCharacter hasTerminatingNullCharacter)
+PassRefPtr<StringImpl> StringImpl::createWithoutCopying(const LChar* characters, unsigned length)
 {
     if (!length)
         return empty();
 
-    return adoptRef(new StringImpl(characters, length, hasTerminatingNullCharacter, ConstructWithoutCopying));
+    return adoptRef(new StringImpl(characters, length, ConstructWithoutCopying));
 }
 
 PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& data)
@@ -333,8 +333,6 @@ const UChar* StringImpl::getData16SlowCase() const
     STRING_STATS_ADD_UPCONVERTED_STRING(m_length);
     
     unsigned len = length();
-    if (hasTerminatingNullCharacter())
-        ++len;
 
     m_copyData16 = static_cast<UChar*>(fastMalloc(len * sizeof(UChar)));
 
@@ -1955,30 +1953,6 @@ PassRefPtr<StringImpl> StringImpl::adopt(QStringData* qStringData)
 }
 #endif
 
-PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const StringImpl& string)
-{
-    // Use createUninitialized instead of 'new StringImpl' so that the string and its buffer
-    // get allocated in a single memory block.
-    unsigned length = string.m_length;
-    if (length >= numeric_limits<unsigned>::max())
-        CRASH();
-    RefPtr<StringImpl> terminatedString;
-    if (string.is8Bit()) {
-        LChar* data;
-        terminatedString = createUninitialized(length + 1, data);
-        memcpy(data, string.m_data8, length * sizeof(LChar));
-        data[length] = 0;
-    } else {
-        UChar* data;
-        terminatedString = createUninitialized(length + 1, data);
-        memcpy(data, string.m_data16, length * sizeof(UChar));
-        data[length] = 0;
-    }
-    --(terminatedString->m_length);
-    terminatedString->m_hashAndFlags = (string.m_hashAndFlags & (~s_flagMask | s_hashFlag8BitBuffer)) | s_hashFlagHasTerminatingNullCharacter;
-    return terminatedString.release();
-}
-
 size_t StringImpl::sizeInBytes() const
 {
     // FIXME: support substrings
@@ -1986,8 +1960,6 @@ size_t StringImpl::sizeInBytes() const
     if (is8Bit()) {
         if (has16BitShadow()) {
             size += 2 * size;
-            if (hasTerminatingNullCharacter())
-                size += 2;
         }
     } else
         size *= 2;

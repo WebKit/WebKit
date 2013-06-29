@@ -35,14 +35,12 @@ TEST(WTF, AtomicStringCreationFromLiteral)
     ASSERT_EQ(strlen("Template Literal"), stringWithTemplate.length());
     ASSERT_TRUE(stringWithTemplate == "Template Literal");
     ASSERT_TRUE(stringWithTemplate.string().is8Bit());
-    ASSERT_TRUE(stringWithTemplate.impl()->hasTerminatingNullCharacter());
 
     const char* programmaticStringData = "Explicit Size Literal";
     AtomicString programmaticString(programmaticStringData, strlen(programmaticStringData), AtomicString::ConstructFromLiteral);
     ASSERT_EQ(strlen(programmaticStringData), programmaticString.length());
     ASSERT_TRUE(programmaticStringData == programmaticStringData);
     ASSERT_TRUE(programmaticString.string().is8Bit());
-    ASSERT_TRUE(programmaticString.impl()->hasTerminatingNullCharacter());
     ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString.string().characters8()));
 }
 

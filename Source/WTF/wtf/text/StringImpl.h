@@ -73,12 +73,6 @@ enum TextCaseSensitivity {
     TextCaseInsensitive
 };
 
-enum HasTerminatingNullCharacter {
-    DoesNotHaveTerminatingNullCharacter,
-    DoesHaveTerminatingNullCharacter,
-};
-
-
 typedef bool (*CharacterMatchFunctionPtr)(UChar);
 typedef bool (*IsWhiteSpaceFunctionPtr)(UChar);
 
@@ -249,30 +243,28 @@ private:
     }
 
     enum ConstructWithoutCopyingTag { ConstructWithoutCopying };
-    StringImpl(const UChar* characters, unsigned length, HasTerminatingNullCharacter hasTerminatingNullCharacter, ConstructWithoutCopyingTag)
+    StringImpl(const UChar* characters, unsigned length, ConstructWithoutCopyingTag)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters)
         , m_buffer(0)
-        , m_hashAndFlags(BufferInternal | (hasTerminatingNullCharacter ? s_hashFlagHasTerminatingNullCharacter : 0))
+        , m_hashAndFlags(BufferInternal)
     {
         ASSERT(m_data16);
         ASSERT(m_length);
-        ASSERT(!(m_hashAndFlags & s_hashFlagHasTerminatingNullCharacter) || !characters[length]);
 
         STRING_STATS_ADD_16BIT_STRING(0);
     }
 
-    StringImpl(const LChar* characters, unsigned length, HasTerminatingNullCharacter hasTerminatingNullCharacter, ConstructWithoutCopyingTag)
+    StringImpl(const LChar* characters, unsigned length, ConstructWithoutCopyingTag)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters)
         , m_buffer(0)
-        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferInternal | (hasTerminatingNullCharacter ? s_hashFlagHasTerminatingNullCharacter : 0))
+        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferInternal)
     {
         ASSERT(m_data8);
         ASSERT(m_length);
-        ASSERT(!(m_hashAndFlags & s_hashFlagHasTerminatingNullCharacter) || !characters[length]);
 
         STRING_STATS_ADD_8BIT_STRING(0);
     }
@@ -421,15 +413,15 @@ public:
         COMPILE_ASSERT(charactersCount > 1, StringImplFromLiteralNotEmpty);
         COMPILE_ASSERT((charactersCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), StringImplFromLiteralCannotOverflow);
 
-        return createWithoutCopying(reinterpret_cast<const LChar*>(characters), charactersCount - 1, DoesHaveTerminatingNullCharacter);
+        return createWithoutCopying(reinterpret_cast<const LChar*>(characters), charactersCount - 1);
     }
 
     // FIXME: Transition off of these functions to createWithoutCopying instead.
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createFromLiteral(const char* characters, unsigned length);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createFromLiteral(const char* characters);
 
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createWithoutCopying(const UChar* characters, unsigned length, HasTerminatingNullCharacter);
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createWithoutCopying(const LChar* characters, unsigned length, HasTerminatingNullCharacter);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createWithoutCopying(const UChar* characters, unsigned length);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createWithoutCopying(const LChar* characters, unsigned length);
 
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createUninitialized(unsigned length, LChar*& data);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createUninitialized(unsigned length, UChar*& data);
@@ -471,7 +463,6 @@ public:
     static unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
     static unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
-    static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
 
     template<typename CharType, size_t inlineCapacity, typename OverflowHandler>
     static PassRefPtr<StringImpl> adopt(Vector<CharType, inlineCapacity, OverflowHandler>& vector)
@@ -540,8 +531,6 @@ public:
     {
         return !length() && !isStatic();
     }
-
-    bool hasTerminatingNullCharacter() const { return m_hashAndFlags & s_hashFlagHasTerminatingNullCharacter; }
 
     bool isAtomic() const { return m_hashAndFlags & s_hashFlagIsAtomic; }
     void setIsAtomic(bool isAtomic)
@@ -788,14 +777,13 @@ private:
     static const unsigned s_refCountFlagIsStaticString = 0x1;
     static const unsigned s_refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static string flag.
 
-    // The bottom 8 bits in the hash are flags.
-    static const unsigned s_flagCount = 8;
+    // The bottom 7 bits in the hash are flags.
+    static const unsigned s_flagCount = 7;
     static const unsigned s_flagMask = (1u << s_flagCount) - 1;
-    COMPILE_ASSERT(s_flagCount == StringHasher::flagCount, StringHasher_reserves_enough_bits_for_StringImpl_flags);
+    COMPILE_ASSERT(s_flagCount <= StringHasher::flagCount, StringHasher_reserves_enough_bits_for_StringImpl_flags);
 
-    static const unsigned s_hashFlagHas16BitShadow = 1u << 7;
-    static const unsigned s_hashFlag8BitBuffer = 1u << 6;
-    static const unsigned s_hashFlagHasTerminatingNullCharacter = 1u << 5;
+    static const unsigned s_hashFlagHas16BitShadow = 1u << 6;
+    static const unsigned s_hashFlag8BitBuffer = 1u << 5;
     static const unsigned s_hashFlagIsAtomic = 1u << 4;
     static const unsigned s_hashFlagDidReportCost = 1u << 3;
     static const unsigned s_hashFlagIsIdentifier = 1u << 2;
@@ -816,7 +804,7 @@ public:
 
         // These values mimic ConstructFromLiteral.
         static const unsigned s_initialRefCount = s_refCountIncrement;
-        static const unsigned s_initialFlags = s_hashFlag8BitBuffer | BufferInternal | s_hashFlagHasTerminatingNullCharacter;
+        static const unsigned s_initialFlags = s_hashFlag8BitBuffer | BufferInternal;
         static const unsigned s_hashShift = s_flagCount;
     };
 
@@ -1362,8 +1350,8 @@ inline PassRefPtr<StringImpl> StringImpl::isolatedCopy() const
 {
     if (!requiresCopy()) {
         if (is8Bit())
-            return StringImpl::createWithoutCopying(m_data8, m_length, hasTerminatingNullCharacter() ? DoesHaveTerminatingNullCharacter : DoesNotHaveTerminatingNullCharacter);
-        return StringImpl::createWithoutCopying(m_data16, m_length, hasTerminatingNullCharacter() ? DoesHaveTerminatingNullCharacter : DoesNotHaveTerminatingNullCharacter);
+            return StringImpl::createWithoutCopying(m_data8, m_length);
+        return StringImpl::createWithoutCopying(m_data16, m_length);
     }
 
     if (is8Bit())

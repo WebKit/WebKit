@@ -37,7 +37,6 @@ TEST(WTF, StringImplCreationFromLiteral)
     ASSERT_EQ(strlen("Template Literal"), stringWithTemplate->length());
     ASSERT_TRUE(equal(stringWithTemplate.get(), "Template Literal"));
     ASSERT_TRUE(stringWithTemplate->is8Bit());
-    ASSERT_TRUE(stringWithTemplate->hasTerminatingNullCharacter());
 
     // Constructor taking the size explicitely.
     const char* programmaticStringData = "Explicit Size Literal";
@@ -46,7 +45,6 @@ TEST(WTF, StringImplCreationFromLiteral)
     ASSERT_TRUE(equal(programmaticString.get(), programmaticStringData));
     ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString->characters8()));
     ASSERT_TRUE(programmaticString->is8Bit());
-    ASSERT_TRUE(programmaticString->hasTerminatingNullCharacter());
 
     // Constructor without explicit size.
     const char* stringWithoutLengthLiteral = "No Size Literal";
@@ -55,7 +53,6 @@ TEST(WTF, StringImplCreationFromLiteral)
     ASSERT_TRUE(equal(programmaticStringNoLength.get(), stringWithoutLengthLiteral));
     ASSERT_EQ(stringWithoutLengthLiteral, reinterpret_cast<const char*>(programmaticStringNoLength->characters8()));
     ASSERT_TRUE(programmaticStringNoLength->is8Bit());
-    ASSERT_TRUE(programmaticStringNoLength->hasTerminatingNullCharacter());
 }
 
 TEST(WTF, StringImplFromLiteralLoop16BitConversion)

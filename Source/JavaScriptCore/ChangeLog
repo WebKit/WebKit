@@ -1,3 +1,14 @@
+2013-06-28  Anders Carlsson  <andersca@apple.com>
+
+        Remove String::deprecatedCharactersWithNullTermination() and related code
+        https://bugs.webkit.org/show_bug.cgi?id=118211
+
+        Reviewed by Benjamin Poulain.
+
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithCharactersNoCopy):
+        Update call to StringImpl::createWithoutCopying.
+
 2013-06-27  Timothy Hatcher  <timothy@apple.com>
 
         Notify the debugger about functions created from source code via new Function() or WebCore::JSLazyEventListener.

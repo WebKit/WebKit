@@ -416,16 +416,6 @@ Vector<UChar> String::charactersWithNullTermination() const
     return result;
 }
 
-const UChar* String::deprecatedCharactersWithNullTermination()
-{
-    if (!m_impl)
-        return 0;
-    if (m_impl->hasTerminatingNullCharacter())
-        return m_impl->characters();
-    m_impl = StringImpl::createWithTerminatingNullCharacter(*m_impl);
-    return m_impl->characters();
-}
-
 String String::format(const char *format, ...)
 {
 #if PLATFORM(QT)
