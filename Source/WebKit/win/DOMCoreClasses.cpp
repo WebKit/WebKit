@@ -1503,7 +1503,7 @@ IDOMElement* DOMElement::createInstance(WebCore::Element* e)
     } else if (isHTMLInputElement(e)) {
         DOMHTMLInputElement* newElement = new DOMHTMLInputElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
-    } else if (e->hasTagName(optionTag)) {
+    } else if (isHTMLOptionElement(e)) {
         DOMHTMLOptionElement* newElement = new DOMHTMLOptionElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->hasTagName(selectTag)) {

@@ -39,6 +39,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
 #include "HTMLStackItem.h"
@@ -63,7 +64,7 @@ static bool hasImpliedEndTag(const HTMLStackItem* item)
     return item->hasTagName(ddTag)
         || item->hasTagName(dtTag)
         || item->hasTagName(liTag)
-        || item->hasTagName(optionTag)
+        || isHTMLOptionElement(item->node())
         || item->hasTagName(optgroupTag)
         || item->hasTagName(pTag)
         || item->hasTagName(rpTag)

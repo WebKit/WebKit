@@ -124,7 +124,7 @@ void RenderListBox::updateFromElement()
             HTMLElement* element = listItems[i];
             String text;
             Font itemFont = style()->font();
-            if (element->hasTagName(optionTag))
+            if (isHTMLOptionElement(element))
                 text = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
             else if (element->hasTagName(optgroupTag)) {
                 text = static_cast<const HTMLOptGroupElement*>(element)->groupLabelText();
@@ -347,7 +347,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&
     const Vector<HTMLElement*>& listItems = select->listItems();
     for (int i = 0; i < size; ++i) {
         HTMLElement* element = listItems[i];
-        if (element->hasTagName(optionTag) && !element->isDisabledFormControl()) {
+        if (isHTMLOptionElement(element) && !element->isDisabledFormControl()) {
             rects.append(pixelSnappedIntRect(itemBoundingBoxRect(additionalOffset, i)));
             return;
         }
@@ -403,7 +403,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         return;
 
     String itemText;
-    bool isOptionElement = element->hasTagName(optionTag);
+    bool isOptionElement = isHTMLOptionElement(element);
     if (isOptionElement)
         itemText = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
     else if (element->hasTagName(optgroupTag))
@@ -444,7 +444,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
     HTMLElement* element = listItems[listIndex];
 
     Color backColor;
-    if (element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected()) {
+    if (isHTMLOptionElement(element) && toHTMLOptionElement(element)->selected()) {
         if (frame()->selection()->isFocusedAndActive() && document()->focusedElement() == node())
             backColor = theme()->activeListBoxSelectionBackgroundColor();
         else

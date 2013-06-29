@@ -1032,7 +1032,7 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     for (unsigned i = 0; Node* node = options->item(i); i++) {
-        ASSERT(node->hasTagName(optionTag));
+        ASSERT(isHTMLOptionElement(node));
         HTMLOptionElement* optionElement = toHTMLOptionElement(node);
         String value = optionElement->value();
         if (!input->isValidValue(value))

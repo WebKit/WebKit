@@ -1,3 +1,89 @@
+2013-06-29  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLOptionElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118212
+
+        Reviewed by Andreas Kling.
+
+        To enhance readability, this patch adopts is/toHTMLOptionElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::isSelected):
+        (WebCore::AccessibilityListBoxOption::canSetSelectedAttribute):
+        (WebCore::AccessibilityListBoxOption::stringValue):
+        (WebCore::AccessibilityListBoxOption::listBoxOptionParentNode):
+        * accessibility/AccessibilityMenuListOption.cpp:
+        (WebCore::AccessibilityMenuListOption::setElement):
+        (WebCore::AccessibilityMenuListOption::isEnabled):
+        (WebCore::AccessibilityMenuListOption::isSelected):
+        (WebCore::AccessibilityMenuListOption::setSelected):
+        (WebCore::AccessibilityMenuListOption::stringValue):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::menuListOptionAccessibilityObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        * html/HTMLCollection.cpp:
+        (WebCore::isMatchingElement):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::index):
+        * html/HTMLOptionElement.h:
+        (WebCore::isHTMLOptionElement):
+        (WebCore::toHTMLOptionElement):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::hasPlaceholderLabelOption):
+        (WebCore::HTMLSelectElement::value):
+        (WebCore::HTMLSelectElement::setValue):
+        (WebCore::HTMLSelectElement::childShouldCreateRenderer):
+        (WebCore::HTMLSelectElement::nextValidIndex):
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::recalcListItems):
+        (WebCore::HTMLSelectElement::selectedIndex):
+        (WebCore::HTMLSelectElement::selectOption):
+        (WebCore::HTMLSelectElement::optionToListIndex):
+        (WebCore::HTMLSelectElement::listToOptionIndex):
+        (WebCore::HTMLSelectElement::deselectItemsWithoutValidation):
+        (WebCore::HTMLSelectElement::saveFormControlState):
+        (WebCore::HTMLSelectElement::searchOptionsForValue):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::appendFormData):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::updateSelectedState):
+        (WebCore::HTMLSelectElement::lastSelectedListIndex):
+        (WebCore::HTMLSelectElement::optionAtIndex):
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex):
+        (WebCore::HTMLSelectElement::length):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::hasImpliedEndTag):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isSelectScopeMarker):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::addFocusRingRects):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        (WebCore::RenderMenuList::setTextFromOption):
+        (WebCore::RenderMenuList::itemText):
+        (WebCore::RenderMenuList::itemIsEnabled):
+        (WebCore::RenderMenuList::itemIsSelected):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintSliderTicks):
+
 2013-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(151586): multipart/x-mixed-replace images are broken

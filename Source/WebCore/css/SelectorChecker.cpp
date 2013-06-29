@@ -656,7 +656,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             }
             break;
         case CSSSelector::PseudoEnabled:
-            if (element->isFormControlElement() || element->hasTagName(optionTag) || element->hasTagName(optgroupTag))
+            if (element->isFormControlElement() || isHTMLOptionElement(element) || element->hasTagName(optgroupTag))
                 return !element->isDisabledFormControl();
             break;
         case CSSSelector::PseudoFullPageMedia:
@@ -665,7 +665,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
         case CSSSelector::PseudoDefault:
             return element->isDefaultButtonForForm();
         case CSSSelector::PseudoDisabled:
-            if (element->isFormControlElement() || element->hasTagName(optionTag) || element->hasTagName(optgroupTag))
+            if (element->isFormControlElement() || isHTMLOptionElement(element) || element->hasTagName(optgroupTag))
                 return element->isDisabledFormControl();
             break;
         case CSSSelector::PseudoReadOnly:
@@ -690,7 +690,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
                 HTMLInputElement* inputElement = element->toInputElement();
                 if (inputElement && inputElement->shouldAppearChecked() && !inputElement->shouldAppearIndeterminate())
                     return true;
-                if (element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected())
+                if (isHTMLOptionElement(element) && toHTMLOptionElement(element)->selected())
                     return true;
                 break;
             }

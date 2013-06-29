@@ -1985,7 +1985,7 @@ bool InputHandler::willOpenPopupForNode(Node* node)
 
     ASSERT(!node->isInShadowTree());
 
-    if (node->hasTagName(HTMLNames::selectTag) || node->hasTagName(HTMLNames::optionTag)) {
+    if (node->hasTagName(HTMLNames::selectTag) || isHTMLOptionElement(node)) {
         // We open list popups for options and selects.
         return true;
     }
@@ -2010,8 +2010,8 @@ bool InputHandler::didNodeOpenPopup(Node* node)
     if (node->hasTagName(HTMLNames::selectTag))
         return openSelectPopup(static_cast<HTMLSelectElement*>(node));
 
-    if (node->hasTagName(HTMLNames::optionTag)) {
-        HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(node);
+    if (isHTMLOptionElement(node)) {
+        HTMLOptionElement* optionElement = toHTMLOptionElement(node);
         return openSelectPopup(optionElement->ownerSelectElement());
     }
 
@@ -2056,8 +2056,8 @@ bool InputHandler::openSelectPopup(HTMLSelectElement* select)
         itemTypes = new int[size];
         selecteds = new bool[size];
         for (int i = 0; i < size; i++) {
-            if (listItems[i]->hasTagName(HTMLNames::optionTag)) {
-                HTMLOptionElement* option = static_cast<HTMLOptionElement*>(listItems[i]);
+            if (isHTMLOptionElement(listItems[i])) {
+                HTMLOptionElement* option = toHTMLOptionElement(listItems[i]);
                 labels[i] = option->textIndentedToRespectGroupLabel();
                 enableds[i] = option->isDisabledFormControl() ? 0 : 1;
                 selecteds[i] = option->selected();
@@ -2122,8 +2122,8 @@ void InputHandler::setPopupListIndexes(int size, const bool* selecteds)
 
     HTMLOptionElement* option;
     for (int i = 0; i < size; i++) {
-        if (items[i]->hasTagName(HTMLNames::optionTag)) {
-            option = static_cast<HTMLOptionElement*>(items[i]);
+        if (isHTMLOptionElement(items[i])) {
+            option = toHTMLOptionElement(items[i]);
             option->setSelectedState(selecteds[i]);
         }
     }

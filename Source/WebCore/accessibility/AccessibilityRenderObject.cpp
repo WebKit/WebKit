@@ -2208,8 +2208,8 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     if (isHTMLAreaElement(node))
         return accessibilityImageMapHitTest(toHTMLAreaElement(node), point);
     
-    if (node->hasTagName(optionTag))
-        node = static_cast<HTMLOptionElement*>(node)->ownerSelectElement();
+    if (isHTMLOptionElement(node))
+        node = toHTMLOptionElement(node)->ownerSelectElement();
     
     RenderObject* obj = node->renderer();
     if (!obj)

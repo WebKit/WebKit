@@ -155,8 +155,8 @@ void SelectPopupClient::setValueAndClosePopup(const String& stringValue)
 
         HTMLOptionElement* option;
         for (unsigned i = 0; i < m_size; i++) {
-            if (items[i]->hasTagName(HTMLNames::optionTag)) {
-                option = static_cast<HTMLOptionElement*>(items[i]);
+            if (isHTMLOptionElement(items[i])) {
+                option = toHTMLOptionElement(items[i]);
                 option->setSelectedState(selecteds[i]);
             }
         }

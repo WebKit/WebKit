@@ -862,8 +862,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::text(
     *result = 0;
 
     ASSERT(m_element);
-    ASSERT(m_element->hasTagName(optionTag));
-    HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(m_element);
+    ASSERT(isHTMLOptionElement(m_element));
+    HTMLOptionElement* optionElement = toHTMLOptionElement(m_element);
 
     *result = BString(optionElement->text()).release();
     return S_OK;
@@ -899,8 +899,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLOptionElement::label(
     *result = 0;
 
     ASSERT(m_element);
-    ASSERT(m_element->hasTagName(optionTag));
-    HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(m_element);
+    ASSERT(isHTMLOptionElement(m_element));
+    HTMLOptionElement* optionElement = toHTMLOptionElement(m_element);
 
     *result = BString(optionElement->label()).release();
     return S_OK;

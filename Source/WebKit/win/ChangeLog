@@ -1,3 +1,19 @@
+2013-06-29  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLOptionElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118212
+
+        Reviewed by Andreas Kling.
+
+        To enhance readability, this patch adopts is/toHTMLOptionElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::createInstance):
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLOptionElement::text):
+        (DOMHTMLOptionElement::label):
+
 2013-06-28  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compilation error.

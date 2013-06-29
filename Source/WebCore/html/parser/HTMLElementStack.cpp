@@ -30,6 +30,7 @@
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "HTMLNames.h"
+#include "HTMLOptionElement.h"
 #include "MathMLNames.h"
 #include "SVGNames.h"
 #include <wtf/PassOwnPtr.h>
@@ -122,8 +123,7 @@ inline bool isButtonScopeMarker(HTMLStackItem* item)
 
 inline bool isSelectScopeMarker(HTMLStackItem* item)
 {
-    return !item->hasTagName(optgroupTag)
-        && !item->hasTagName(optionTag);
+    return !item->hasTagName(optgroupTag) && !isHTMLOptionElement(item->node());
 }
 
 }
