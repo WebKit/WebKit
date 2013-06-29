@@ -32,7 +32,6 @@ WebInspector.ResourceSidebarPanel = function() {
 
     this._inputElement = document.createElement("input");
     this._inputElement.type = "search";
-    this._inputElement.required = true;
     this._inputElement.spellcheck = false;
     this._inputElement.addEventListener("search", this._searchFieldChanged.bind(this));
     this._inputElement.addEventListener("input", this._searchFieldInput.bind(this));

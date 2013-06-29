@@ -1,3 +1,27 @@
+2013-06-28  James Craig  <james@cookiecrook.com>
+
+        Web Inspector: AX: VoiceOver speaks all inspector search fields as 'required'
+        https://bugs.webkit.org/show_bug.cgi?id=118122
+
+        Reviewed by Timothy Hatcher.
+
+        Removed bogus "required" state, and switched :valid selector to use :not(:placeholder-shown)
+        so that screen readers will not indicate a bogus :required/:invalid state to the user.
+        Minor cosmetic difference blocked by http://webkit.org/b/118162
+
+        * UserInterface/FilterBar.css:
+        (.filter-bar > input[type="search"]:focus):
+        (.filter-bar > input[type="search"]:not(:placeholder-shown)):
+        * UserInterface/FilterBar.js:
+        (WebInspector.FilterBar):
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        * UserInterface/SearchBar.css:
+        (.search-bar > input[type="search"]:focus):
+        (.search-bar > input[type="search"]:not(:placeholder-shown)):
+        * UserInterface/SearchBar.js:
+        (WebInspector.SearchBar):
+
 2013-06-27  James Craig  <james@cookiecrook.com>
 
         Web Inspector: AX: Add container ARIA roles (toolbar, main, labeled regions, etc.) 
