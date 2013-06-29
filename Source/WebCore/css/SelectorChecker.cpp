@@ -39,6 +39,7 @@
 #include "HTMLFrameElementBase.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLProgressElement.h"
 #include "HTMLStyleElement.h"
@@ -656,7 +657,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             }
             break;
         case CSSSelector::PseudoEnabled:
-            if (element->isFormControlElement() || isHTMLOptionElement(element) || element->hasTagName(optgroupTag))
+            if (element->isFormControlElement() || isHTMLOptionElement(element) || isHTMLOptGroupElement(element))
                 return !element->isDisabledFormControl();
             break;
         case CSSSelector::PseudoFullPageMedia:
@@ -665,7 +666,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
         case CSSSelector::PseudoDefault:
             return element->isDefaultButtonForForm();
         case CSSSelector::PseudoDisabled:
-            if (element->isFormControlElement() || isHTMLOptionElement(element) || element->hasTagName(optgroupTag))
+            if (element->isFormControlElement() || isHTMLOptionElement(element) || isHTMLOptGroupElement(element))
                 return element->isDisabledFormControl();
             break;
         case CSSSelector::PseudoReadOnly:

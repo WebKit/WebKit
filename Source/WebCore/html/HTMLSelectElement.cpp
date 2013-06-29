@@ -350,7 +350,7 @@ bool HTMLSelectElement::childShouldCreateRenderer(const NodeRenderingContext& ch
     if (!HTMLFormControlElementWithState::childShouldCreateRenderer(childContext))
         return false;
     if (!usesMenuList())
-        return isHTMLOptionElement(childContext.node()) || childContext.node()->hasTagName(HTMLNames::optgroupTag) || validationMessageShadowTreeContains(childContext.node());
+        return isHTMLOptionElement(childContext.node()) || isHTMLOptGroupElement(childContext.node()) || validationMessageShadowTreeContains(childContext.node());
     return validationMessageShadowTreeContains(childContext.node());
 }
 
@@ -751,7 +751,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
         // optgroup tags may not nest. However, both FireFox and IE will
         // flatten the tree automatically, so we follow suit.
         // (http://www.w3.org/TR/html401/interact/forms.html#h-17.6)
-        if (current->hasTagName(optgroupTag)) {
+        if (isHTMLOptGroupElement(current)) {
             m_listItems.append(current);
             if (Element* nextElement = ElementTraversal::firstWithin(current)) {
                 currentElement = nextElement;

@@ -2061,9 +2061,9 @@ bool InputHandler::openSelectPopup(HTMLSelectElement* select)
                 labels[i] = option->textIndentedToRespectGroupLabel();
                 enableds[i] = option->isDisabledFormControl() ? 0 : 1;
                 selecteds[i] = option->selected();
-                itemTypes[i] = option->parentNode() && option->parentNode()->hasTagName(HTMLNames::optgroupTag) ? TypeOptionInGroup : TypeOption;
-            } else if (listItems[i]->hasTagName(HTMLNames::optgroupTag)) {
-                HTMLOptGroupElement* optGroup = static_cast<HTMLOptGroupElement*>(listItems[i]);
+                itemTypes[i] = option->parentNode() && isHTMLOptGroupElement(option->parentNode()) ? TypeOptionInGroup : TypeOption;
+            } else if (isHTMLOptGroupElement(listItems[i])) {
+                HTMLOptGroupElement* optGroup = toHTMLOptGroupElement(listItems[i]);
                 labels[i] = optGroup->groupLabelText();
                 enableds[i] = optGroup->isDisabledFormControl() ? 0 : 1;
                 selecteds[i] = false;

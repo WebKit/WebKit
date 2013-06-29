@@ -68,6 +68,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLProgressElement.h"
 #include "HTMLStyleElement.h"
@@ -659,7 +660,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     // FIXME: We should share style for option and optgroup whenever possible.
     // Before doing so, we need to resolve issues in HTMLSelectElement::recalcListItems
     // and RenderMenuList::setText. See also https://bugs.webkit.org/show_bug.cgi?id=88405
-    if (isHTMLOptionElement(element) || element->hasTagName(optgroupTag))
+    if (isHTMLOptionElement(element) || isHTMLOptGroupElement(element))
         return false;
 
     bool isControl = element->isFormControlElement();

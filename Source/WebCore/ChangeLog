@@ -1,3 +1,45 @@
+2013-06-29  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLOptGroupElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118213
+
+        Reviewed by Andreas Kling.
+
+        To enhance readability, this patch adopts is/toHTMLOptGroupElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::isEnabled):
+        (WebCore::AccessibilityListBoxOption::stringValue):
+        (WebCore::AccessibilityListBoxOption::listBoxOptionParentNode):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        * html/HTMLOptGroupElement.h:
+        (WebCore::isHTMLOptGroupElement):
+        (WebCore::toHTMLOptGroupElement):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::textIndentedToRespectGroupLabel):
+        (WebCore::HTMLOptionElement::isDisabledFormControl):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childShouldCreateRenderer):
+        (WebCore::HTMLSelectElement::recalcListItems):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::hasImpliedEndTag):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isSelectScopeMarker):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemText):
+        (WebCore::RenderMenuList::itemIsEnabled):
+        (WebCore::RenderMenuList::itemIsLabel):
+
 2013-06-29  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Build fix for unguarded SVGGraphicsElement

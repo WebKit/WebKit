@@ -32,6 +32,7 @@
 #include "ExceptionCode.h"
 #include "HTMLDataListElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptGroupElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
 #include "NodeRenderStyle.h"
@@ -335,7 +336,7 @@ void HTMLOptionElement::didRecalcStyle(StyleChange)
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
     ContainerNode* parent = parentNode();
-    if (parent && parent->hasTagName(optgroupTag))
+    if (parent && isHTMLOptGroupElement(parent))
         return "    " + text();
     return text();
 }
@@ -349,7 +350,7 @@ bool HTMLOptionElement::isDisabledFormControl() const
         return false;
 
     HTMLElement* parentElement = static_cast<HTMLElement*>(parentNode());
-    return parentElement->hasTagName(optgroupTag) && parentElement->isDisabledFormControl();
+    return isHTMLOptGroupElement(parentElement) && parentElement->isDisabledFormControl();
 }
 
 Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode* insertionPoint)
