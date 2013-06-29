@@ -120,7 +120,7 @@ void Data::performAssertions(VM& vm)
     ASSERT(bitwise_cast<int**>(&testVector)[0] == testVector.begin());
 #endif
 
-    ASSERT(StringImpl::s_hashFlag8BitBuffer == 64);
+    ASSERT(StringImpl::s_hashFlag8BitBuffer == 32);
 }
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop

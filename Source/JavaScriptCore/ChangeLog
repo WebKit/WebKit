@@ -1,3 +1,10 @@
+2013-06-28  Andreas Kling  <akling@apple.com>
+
+        Un-crashify JSC tests on debug bots after Anders had his way with StringImpl.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+
 2013-06-28  Anders Carlsson  <andersca@apple.com>
 
         Remove String::deprecatedCharactersWithNullTermination() and related code
