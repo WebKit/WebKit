@@ -69,8 +69,6 @@ Bug(GTK) fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
 
 webkit.org/b/87951 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 
-webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Timeout ]
-
 # Misses setMediaType() implementation
 Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Timeout ]
 

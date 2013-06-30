@@ -1,3 +1,15 @@
+2013-06-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining whatever can be rebaselined and adding failure expectations for other current failures.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/selection/user-select-all-image-with-single-click-expected.txt: Added.
+        * platform/gtk/editing/selection/user-select-all-with-single-click-expected.txt: Added.
+        * platform/gtk/fast/events/ondragenter-expected.txt: Added.
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+
 2013-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         An element with -webkit-user-select: all should be selected on single click

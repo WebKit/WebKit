@@ -1404,6 +1404,17 @@ webkit.org/b/113168 fast/js/toString-stack-overflow.html [ Failure ]
 
 webkit.org/b/117706 accessibility/box-styled-lists.html [ Failure ]
 
+webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
+
+webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Failure ]
+
+webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
+webkit.org/b/118220 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
+
+webkit.org/b/118221 fast/text/complex-first-glyph-with-initial-advance.html [ ImageOnlyFailure ]
+
+webkit.org/b/118222 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
