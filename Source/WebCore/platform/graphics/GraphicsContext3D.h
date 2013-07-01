@@ -59,8 +59,6 @@ OBJC_CLASS WebGLLayer;
 QT_BEGIN_NAMESPACE
 class QPainter;
 class QRect;
-class QGLWidget;
-class QGLContext;
 class QOpenGLContext;
 class QSurface;
 QT_END_NAMESPACE
