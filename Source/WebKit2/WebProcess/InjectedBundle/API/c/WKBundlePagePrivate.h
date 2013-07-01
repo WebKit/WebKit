@@ -83,7 +83,7 @@ WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef,
 
 // This only works if the SuppressesIncrementalRendering preference is set as well.
 typedef unsigned WKRenderingSuppressionToken;
-WK_EXPORT WKRenderingSuppressionToken WKBundlePageExtendIncrementalRenderingSuppression(WKBundlePageRef) WARN_UNUSED_RETURN;
+WK_EXPORT WKRenderingSuppressionToken WKBundlePageExtendIncrementalRenderingSuppression(WKBundlePageRef);
 WK_EXPORT void WKBundlePageStopExtendingIncrementalRenderingSuppression(WKBundlePageRef, WKRenderingSuppressionToken);
 
 #ifdef __cplusplus
