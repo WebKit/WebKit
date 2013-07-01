@@ -780,7 +780,7 @@ private:
     void drawPagesToPDFFromPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, uint32_t first, uint32_t count);
 #endif
 
-    void viewExposedRectChanged(const WebCore::FloatRect& exposedRect);
+    void viewExposedRectChanged(const WebCore::FloatRect& exposedRect, bool clipsToExposedRect);
     void setMainFrameIsScrollable(bool);
 
     void unapplyEditCommand(uint64_t commandID);

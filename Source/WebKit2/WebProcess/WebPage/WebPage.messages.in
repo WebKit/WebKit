@@ -267,7 +267,7 @@ messages -> WebPage LegacyReceiver {
 
     SetWindowIsVisible(bool windowIsVisible)
     WindowAndViewFramesChanged(WebCore::FloatRect windowFrameInScreenCoordinates, WebCore::FloatRect windowFrameInUnflippedScreenCoordinates, WebCore::FloatRect viewFrameInWindowCoordinates, WebCore::FloatPoint accessibilityViewCoordinates)
-    ViewExposedRectChanged(WebCore::FloatRect exposedRect)
+    ViewExposedRectChanged(WebCore::FloatRect exposedRect, bool clipsToExposedRect)
     SetMainFrameIsScrollable(bool isScrollable)
     RegisterUIProcessAccessibilityTokens(CoreIPC::DataReference elemenToken, CoreIPC::DataReference windowToken)
     GetStringSelectionForPasteboard() -> (WTF::String stringValue)
