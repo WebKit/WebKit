@@ -227,7 +227,7 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned 
 
     // Initialize the frame if necessary.
     ImageFrame& buffer = m_frameBufferCache[frameIndex];
-    if ((buffer.status() == ImageFrame::FrameEmpty) && !initFrameBuffer(frameIndex))
+    if (((buffer.status() == ImageFrame::FrameEmpty) && !initFrameBuffer(frameIndex)) || !buffer.hasPixelData())
         return false;
 
     ImageFrame::PixelData* currentAddress = buffer.getAddr(xBegin, yBegin);
