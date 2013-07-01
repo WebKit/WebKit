@@ -17,6 +17,12 @@
     (home-library-subpath "/Application Support/Microsoft/Silverlight")
     (home-library-subpath "/Caches/TemporaryItems"))
 
+(if (defined? 'semaphore-owner)
+    (allow ipc-posix-sem
+         (semaphore-owner same-sandbox))
+    (allow ipc-posix-sem
+         (ipc-posix-name "LC_Mutex")))
+
 ;; FIXME: <rdar://problem/13636078>
 (allow ipc-posix-shm*
     (ipc-posix-name-regex #"^CoreCLR_"))
