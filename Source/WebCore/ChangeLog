@@ -1,5 +1,23 @@
 2013-07-01  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152204
+
+    2013-06-28  Eric Carlson  <eric.carlson@apple.com>
+
+            [Mac] adopt new AVFoundation caption API
+            https://bugs.webkit.org/show_bug.cgi?id=118207
+
+            Reviewed by Dean Jackson.
+
+            No new tests, I was not able to come up with a reliable layout test.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::flushCues): New, call currentTrack->resetCueValues().
+            (-[WebCoreAVFMovieObserver outputSequenceWasFlushed:]): New delegate method.
+
+2013-07-01  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152185
 
     2013-06-28  Ryosuke Niwa  <rniwa@webkit.org>

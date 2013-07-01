@@ -71,6 +71,7 @@ public:
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     RetainPtr<AVPlayerItem> playerItem() const { return m_avPlayerItem; }
     void processCue(NSArray *, double);
+    void flushCues();
 #endif
     
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
