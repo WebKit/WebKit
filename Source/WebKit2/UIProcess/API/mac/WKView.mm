@@ -1980,6 +1980,10 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // update the active state first and then make it visible. If the view is about to be hidden, we hide it first and then
     // update the active state.
     if ([self window]) {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        if (_data->_windowOcclusionDetectionEnabled)
+            [self _setIsWindowOccluded:([[self window] occlusionState] & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible];
+#endif
         _data->_windowHasValidBackingStore = NO;
         [self doWindowDidChangeScreen];
         [self _updateWindowVisibility];
