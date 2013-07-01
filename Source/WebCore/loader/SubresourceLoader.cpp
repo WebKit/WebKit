@@ -188,7 +188,10 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
     m_resource->responseReceived(response);
     if (reachedTerminalState())
         return;
+
     ResourceLoader::didReceiveResponse(response);
+    if (reachedTerminalState())
+        return;
 
     // FIXME: Main resources have a different set of rules for multipart than images do.
     // Hopefully we can merge those 2 paths.
