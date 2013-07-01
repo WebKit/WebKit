@@ -258,6 +258,9 @@ namespace WebCore {
         void setHiddenPageCSSAnimationSuspensionEnabled(bool);
 #endif
 
+        static bool lowPowerVideoAudioBufferSizeEnabled() { return gLowPowerVideoAudioBufferSizeEnabled; }
+        static void setLowPowerVideoAudioBufferSizeEnabled(bool);
+
     private:
         explicit Settings(Page*);
 
@@ -315,7 +318,6 @@ namespace WebCore {
 #if ENABLE(PAGE_VISIBILITY_API)
         bool m_hiddenPageCSSAnimationSuspensionEnabled : 1;
 #endif
-
         static double gDefaultMinDOMTimerInterval;
         static double gDefaultDOMTimerAlignmentInterval;
 
@@ -339,6 +341,8 @@ namespace WebCore {
         static bool gShouldRespectPriorityInCSSAttributeSetters;
 
         static double gHiddenPageDOMTimerAlignmentInterval;
+
+        static bool gLowPowerVideoAudioBufferSizeEnabled;
     };
 
 } // namespace WebCore

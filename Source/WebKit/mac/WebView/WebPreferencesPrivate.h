@@ -335,4 +335,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)hiddenPageCSSAnimationSuspensionEnabled;
 - (void)setHiddenPageCSSAnimationSuspensionEnabled:(BOOL)flag;
 
+- (BOOL)lowPowerVideoAudioBufferSizeEnabled;
+- (void)setLowPowerVideoAudioBufferSizeEnabled:(BOOL)enabled;
+
+
 @end
