@@ -158,6 +158,16 @@ String contextMenuItemTagToggleMediaControls()
     return QCoreApplication::translate("QWebPage", "Toggle Controls", "Toggle Media Controls");
 }
 
+String contextMenuItemTagShowMediaControls()
+{
+    return QCoreApplication::translate("QWebPage", "Show Controls", "Show Media Controls");
+}
+
+String contextMenuItemTagHideMediaControls()
+{
+    return QCoreApplication::translate("QWebPage", "Hide Controls", "Hide Media Controls");
+}
+
 String contextMenuItemTagToggleMediaLoop()
 {
     return QCoreApplication::translate("QWebPage", "Toggle Loop", "Toggle Media Loop Playback");

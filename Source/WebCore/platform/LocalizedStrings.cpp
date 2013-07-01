@@ -494,6 +494,16 @@ String contextMenuItemTagToggleMediaControls()
     return WEB_UI_STRING("Controls", "Media Controls context menu item");
 }
 
+String contextMenuItemTagShowMediaControls()
+{
+    return WEB_UI_STRING("Show Controls", "Show Media Controls context menu item");
+}
+
+String contextMenuItemTagHideMediaControls()
+{
+    return WEB_UI_STRING("Hide Controls", "Hide Media Controls context menu item");
+}
+
 String contextMenuItemTagToggleMediaLoop()
 {
     return WEB_UI_STRING("Loop", "Media Loop context menu item");
@@ -501,12 +511,12 @@ String contextMenuItemTagToggleMediaLoop()
 
 String contextMenuItemTagEnterVideoFullscreen()
 {
-    return WEB_UI_STRING("Enter Fullscreen", "Video Enter Fullscreen context menu item");
+    return WEB_UI_STRING("Enter Full Screen", "Video Enter Fullscreen context menu item");
 }
 
 String contextMenuItemTagExitVideoFullscreen()
 {
-    return WEB_UI_STRING("Exit Fullscreen", "Video Exit Fullscreen context menu item");
+    return WEB_UI_STRING("Exit Full Screen", "Video Exit Fullscreen context menu item");
 }
 
 String contextMenuItemTagMediaPlay()

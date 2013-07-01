@@ -745,6 +745,12 @@ static bool selectionContainsPossibleWord(Frame* frame)
 #define SUPPORTS_TOGGLE_VIDEO_FULLSCREEN 0
 #endif
 
+#if PLATFORM(MAC)
+#define SUPPORTS_TOGGLE_SHOW_HIDE_MEDIA_CONTROLS 1
+#else
+#define SUPPORTS_TOGGLE_SHOW_HIDE_MEDIA_CONTROLS 0
+#endif
+
 void ContextMenuController::populate()
 {
     ContextMenuItem OpenLinkItem(ActionType, ContextMenuItemTagOpenLink, contextMenuItemTagOpenLink());
@@ -771,8 +777,13 @@ void ContextMenuController::populate()
         contextMenuItemTagMediaPlay());
     ContextMenuItem MediaMute(ActionType, ContextMenuItemTagMediaMute, 
         contextMenuItemTagMediaMute());
+#if SUPPORTS_TOGGLE_SHOW_HIDE_MEDIA_CONTROLS
+    ContextMenuItem ToggleMediaControls(ActionType, ContextMenuItemTagToggleMediaControls,
+        contextMenuItemTagHideMediaControls());
+#else
     ContextMenuItem ToggleMediaControls(CheckableActionType, ContextMenuItemTagToggleMediaControls, 
         contextMenuItemTagToggleMediaControls());
+#endif
     ContextMenuItem ToggleMediaLoop(CheckableActionType, ContextMenuItemTagToggleMediaLoop, 
         contextMenuItemTagToggleMediaLoop());
     ContextMenuItem EnterVideoFullscreen(ActionType, ContextMenuItemTagEnterVideoFullscreen,
@@ -1363,7 +1374,11 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
                 item.setTitle(contextMenuItemTagCopyAudioLinkToClipboard());
             break;
         case ContextMenuItemTagToggleMediaControls:
+#if SUPPORTS_TOGGLE_SHOW_HIDE_MEDIA_CONTROLS
+            item.setTitle(m_hitTestResult.mediaControlsEnabled() ? contextMenuItemTagHideMediaControls() : contextMenuItemTagShowMediaControls());
+#else
             shouldCheck = m_hitTestResult.mediaControlsEnabled();
+#endif
             break;
         case ContextMenuItemTagToggleMediaLoop:
             shouldCheck = m_hitTestResult.mediaLoopEnabled();

@@ -137,6 +137,8 @@ namespace WebCore {
     String contextMenuItemTagCopyVideoLinkToClipboard();
     String contextMenuItemTagCopyAudioLinkToClipboard();
     String contextMenuItemTagToggleMediaControls();
+    String contextMenuItemTagShowMediaControls();
+    String contextMenuItemTagHideMediaControls();
     String contextMenuItemTagToggleMediaLoop();
     String contextMenuItemTagEnterVideoFullscreen();
     String contextMenuItemTagExitVideoFullscreen();
