@@ -104,7 +104,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static OwnPtr<WidgetBackingStore> createBackingStore(GtkWidget* widget, const IntSize& size)
+static PassOwnPtr<WidgetBackingStore> createBackingStore(GtkWidget* widget, const IntSize& size)
 {
 #ifdef GDK_WINDOWING_X11
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
