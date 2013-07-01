@@ -1,3 +1,16 @@
+2013-07-01  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] WebDownload init method is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=118241
+
+        Reviewed by Brent Fulgham.
+
+        The WebDownload::init() method called when a normal load is changed to a download
+        because of a decision by the policy delegate, is not implemented for Curl.
+
+        * WebDownloadCurl.cpp:
+        (WebDownload::init): Implement init() method.
+
 2013-07-01  Kangil Han  <kangil.han@samsung.com>
 
         Adopt toHTMLTextAreaElement for code cleanup

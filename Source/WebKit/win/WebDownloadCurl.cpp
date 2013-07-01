@@ -57,7 +57,21 @@ using namespace WebCore;
 
 void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response, IWebDownloadDelegate* delegate)
 {
-   notImplemented();
+    if (!handle)
+        return;
+
+    // Stop previous request
+    handle->setDefersLoading(true);
+
+    m_request.adoptRef(WebMutableURLRequest::createInstance(request));
+
+    m_delegate = delegate;
+
+    KURL url(ParsedURLString, request.url());
+
+    m_download.init(this, url);
+
+    start();
 }
 
 void WebDownload::init(const KURL& url, IWebDownloadDelegate* delegate)
