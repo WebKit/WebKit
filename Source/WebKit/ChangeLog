@@ -1,3 +1,9 @@
+2013-07-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Need to export tag for textarea element.
+
 2013-06-26  Roger Fong  <roger_fong@apple.com>
 
         Add an accessibility delegate interface to AppleWin port.

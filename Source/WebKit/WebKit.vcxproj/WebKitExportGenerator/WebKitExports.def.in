@@ -306,6 +306,7 @@ EXPORTS
         ?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ
         ?target@HistoryItem@WebCore@@QBEABVString@WTF@@XZ
         ?text@Range@WebCore@@QBE?AVString@WTF@@XZ
+        ?textareaTag@HTMLNames@WebCore@@3VQualifiedName@2@B
         ?textContent@Node@WebCore@@QBE?AVString@WTF@@_N@Z
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toArrayBuffer@WebCore@@YAPAVArrayBuffer@WTF@@VJSValue@JSC@@@Z
