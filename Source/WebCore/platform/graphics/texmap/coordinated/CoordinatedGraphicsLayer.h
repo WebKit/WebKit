@@ -110,6 +110,7 @@ public:
     virtual void removeAnimation(const String&) OVERRIDE;
     virtual void suspendAnimations(double time) OVERRIDE;
     virtual void resumeAnimations() OVERRIDE;
+    virtual bool hasContentsLayer() const OVERRIDE { return m_canvasPlatformLayer || m_compositedImage; }
 
     void syncPendingStateChangesIncludingSubLayers();
     void updateContentBuffersIncludingSubLayers();

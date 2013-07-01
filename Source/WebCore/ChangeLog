@@ -1,3 +1,24 @@
+2013-07-01  Noam Rosenthal  <noam@webkit.org>
+
+        Avoid calling RenderLayerBacking::resetContentsRect() if possible
+        https://bugs.webkit.org/show_bug.cgi?id=118217
+
+        Reviewed by Simon Fraser.
+
+        Call resetContentsRect() only if the layer has a contentsLayer.
+        Otherwise the contentsRect is redundant for the GraphicsLayer.
+
+        No new tests - optimization only. This is covered by plenty of existing
+        tests in webgl/ and compositing/.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (WebCore::GraphicsLayerTextureMapper::hasContentsLayer):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+            Added hasContentsLayer calls for TextureMapper/CoordinatedGraphics
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2013-07-01  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Avoid creating a QWindow for offscreen GraphicsContext3D

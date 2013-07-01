@@ -861,7 +861,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     bool didUpdateContentsRect = false;
     updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
-    if (!didUpdateContentsRect)
+    if (!didUpdateContentsRect && m_graphicsLayer->hasContentsLayer())
         resetContentsRect();
 
     updateDrawsContent(isSimpleContainer);
