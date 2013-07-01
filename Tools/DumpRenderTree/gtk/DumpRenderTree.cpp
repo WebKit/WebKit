@@ -196,7 +196,7 @@ CString getTopLevelPath()
 
 CString getOutputDir()
 {
-    const char* webkitOutputDir = g_getenv("WEBKITOUTPUTDIR");
+    const char* webkitOutputDir = g_getenv("WEBKIT_OUTPUTDIR");
     if (webkitOutputDir)
         return webkitOutputDir;
 

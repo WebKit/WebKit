@@ -183,12 +183,7 @@ sub determineBaseProductDir
     determineSourceDir();
 
     my $setSharedPrecompsDir;
-
-    # FIXME: See https://bugs.webkit.org/show_bug.cgi?id=117249.
-    #        Once all ports have migrated to WEBKIT_OUTPUTDIR, we can stop
-    #        reading the WEBKITOUTPUTDIR environment variable.
     $baseProductDir = $ENV{"WEBKIT_OUTPUTDIR"};
-    $baseProductDir = $ENV{"WEBKITOUTPUTDIR"} if not $baseProductDir;
 
     if (!defined($baseProductDir) and isAppleMacWebKit()) {
         # Silently remove ~/Library/Preferences/xcodebuild.plist which can
@@ -465,9 +460,9 @@ sub usesPerConfigurationBuildDirectory
 {
     # [Gtk] We don't have Release/Debug configurations in straight
     # autotool builds (non build-webkit). In this case and if
-    # WEBKITOUTPUTDIR exist, use that as our configuration dir. This will
+    # WEBKIT_OUTPUTDIR exist, use that as our configuration dir. This will
     # allows us to run run-webkit-tests without using build-webkit.
-    return ($ENV{"WEBKITOUTPUTDIR"} && isGtk()) || isAppleWinWebKit();
+    return ($ENV{"WEBKIT_OUTPUTDIR"} && isGtk()) || isAppleWinWebKit();
 }
 
 sub determineConfigurationProductDir

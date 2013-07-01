@@ -89,10 +89,10 @@ static void addFontFiles(const Vector<CString>& fontFiles, FcConfig* config)
 
 static CString getCustomBuildDir()
 {
-    if (const char* userChosenBuildDir = getenv("WEBKITOUTPUTDIR")) {
+    if (const char* userChosenBuildDir = getenv("WEBKIT_OUTPUTDIR")) {
         if (ecore_file_is_dir(userChosenBuildDir))
             return userChosenBuildDir;
-        fprintf(stderr, "WEBKITOUTPUTDIR set to '%s', but path doesn't exist.\n", userChosenBuildDir);
+        fprintf(stderr, "WEBKIT_OUTPUTDIR set to '%s', but path doesn't exist.\n", userChosenBuildDir);
     }
 
     return CString();
@@ -104,7 +104,7 @@ static CString getPlatformFontsPath()
     if (!customBuildDir.isNull()) {
         CString fontsPath = buildPath(customBuildDir.data(), "Dependencies", "Root", "webkitgtk-test-fonts", 0);
         if (!ecore_file_exists(fontsPath.data()))
-            fprintf(stderr, "WEBKITOUTPUTDIR set to '%s', but could not local test fonts.\n", customBuildDir.data());
+            fprintf(stderr, "WEBKIT_OUTPUTDIR set to '%s', but could not local test fonts.\n", customBuildDir.data());
         return fontsPath;
     }
 
@@ -112,7 +112,7 @@ static CString getPlatformFontsPath()
     if (ecore_file_exists(fontsPath.data()))
         return fontsPath;
 
-    fprintf(stderr, "Could not locate tests fonts, try setting WEBKITOUTPUTDIR.\n");
+    fprintf(stderr, "Could not locate tests fonts, try setting WEBKIT_OUTPUTDIR.\n");
     return CString();
 }
 

@@ -14,8 +14,8 @@ def top_level_path(*args):
 
 
 def get_dependencies_path():
-    if 'WEBKITOUTPUTDIR' in os.environ:
-        return os.path.abspath(os.path.join(os.environ['WEBKITOUTPUTDIR'], 'Dependencies'))
+    if 'WEBKIT_OUTPUTDIR' in os.environ:
+        return os.path.abspath(os.path.join(os.environ['WEBKIT_OUTPUTDIR'], 'Dependencies'))
     else:
         return os.path.abspath(top_level_path('WebKitBuild', 'Dependencies'))
 

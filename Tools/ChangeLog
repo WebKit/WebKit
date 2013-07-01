@@ -1,3 +1,32 @@
+2013-07-01  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][GTK] Migrate from WEBKITOUTPUTDIR to WEBKIT_OUTPUTDIR
+        https://bugs.webkit.org/show_bug.cgi?id=117249
+
+        Reviewed by Brent Fulgham.
+
+        Finish converting all use cases of WEBKITOUTPUTDIR to
+        WEBKIT_OUTPUTDIR, which seems to be preferred these days.
+
+        * DumpRenderTree/efl/FontManagement.cpp:
+        (getCustomBuildDir):
+        (getPlatformFontsPath):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (getOutputDir):
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+        (usesPerConfigurationBuildDirectory):
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.setup_environ_for_server):
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::getOutputDir):
+        * jhbuild/jhbuildutils.py:
+        (get_dependencies_path):
+
 2013-07-01  Rafael Brandao  <rafael.lobo@webkit.org>
 
         Unreviewed change of my email address.

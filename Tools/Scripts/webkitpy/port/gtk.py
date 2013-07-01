@@ -73,7 +73,7 @@ class GtkPort(Port):
         environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('TestNetscapePlugin', '.libs')
         environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs', 'resources', 'inspector')
         environment['AUDIO_RESOURCES_PATH'] = self.path_from_webkit_base('Source', 'WebCore', 'platform', 'audio', 'resources')
-        self._copy_value_from_environ_if_set(environment, 'WEBKITOUTPUTDIR')
+        self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
         return environment
 
     def _generate_all_test_configurations(self):

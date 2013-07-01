@@ -896,7 +896,7 @@ class Port(object):
 
             # Most ports (?):
             'WEBKIT_TESTFONTS',
-            'WEBKITOUTPUTDIR',
+            'WEBKIT_OUTPUTDIR',
 
             # Chromium:
             'CHROME_DEVEL_SANDBOX',
