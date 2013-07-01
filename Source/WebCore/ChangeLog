@@ -1,5 +1,16 @@
 2013-07-01  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152231
+
+    2013-07-01  Roger Fong  <roger_fong@apple.com>
+
+            Unreviewed. Make WebCore.make copy over QTMovieWin DLL's and PDB's.
+            <rdar://problem/14321403>
+
+            * WebCore.vcxproj/WebCore.make:
+
+2013-07-01  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152207
 
     2013-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>

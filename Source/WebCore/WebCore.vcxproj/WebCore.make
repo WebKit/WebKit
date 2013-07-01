@@ -17,6 +17,8 @@ install:
 	xcopy "%ConfigurationBuildDir%\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y	
 	xcopy "%ConfigurationBuildDir%\lib32\*" "$(DSTROOT)\AppleInternal\lib32\" /e/v/i/h/y	
 	xcopy "%ConfigurationBuildDir%\bin32\WebKit.resources\*" "$(DSTROOT)\%ProgramFilesAAS%\WebKit.resources" /e/v/i/h/y
+    xcopy "%ConfigurationBuildDir%\bin32\*.dll" "$(DSTROOT)\%ProgramFilesAAS%\" /e/v/i/h/y
+    xcopy "%ConfigurationBuildDir%\bin32\*.pdb" "$(DSTROOT)\%ProgramFilesAAS%\" /e/v/i/h/y
 	xcopy "%ConfigurationBuildDir%\obj32\WebCore\scripts\*" "$(DSTROOT)\AppleInternal\tools\scripts" /e/v/i/h/y
 	-mkdir "$(DSTROOT)\AppleInternal\Sources32\WebCore"
 	xcopy "%ConfigurationBuildDir%\obj32\WebCore\DerivedSources\*" "$(DSTROOT)\AppleInternal\Sources32\WebCore" /e/v/i/h/y
