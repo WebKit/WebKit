@@ -4604,6 +4604,8 @@ webcore_sources += \
 	Source/WebCore/rendering/mathml/RenderMathMLRoot.h \
 	Source/WebCore/rendering/mathml/RenderMathMLRow.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLRow.h \
+	Source/WebCore/rendering/mathml/RenderMathMLSpace.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLSpace.h \
 	Source/WebCore/rendering/mathml/RenderMathMLSquareRoot.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLSquareRoot.h \
 	Source/WebCore/rendering/mathml/RenderMathMLSubSup.cpp \

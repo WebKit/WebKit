@@ -2414,6 +2414,7 @@ HEADERS += \
     rendering/mathml/RenderMathMLOperator.h \
     rendering/mathml/RenderMathMLRoot.h \
     rendering/mathml/RenderMathMLRow.h \
+    rendering/mathml/RenderMathMLSpace.h \
     rendering/mathml/RenderMathMLSquareRoot.h \
     rendering/mathml/RenderMathMLSubSup.h \
     rendering/mathml/RenderMathMLUnderOver.h \
@@ -3607,6 +3608,7 @@ enable?(MATHML) {
         rendering/mathml/RenderMathMLOperator.cpp \
         rendering/mathml/RenderMathMLRoot.cpp \
         rendering/mathml/RenderMathMLRow.cpp \
+        rendering/mathml/RenderMathMLSpace.cpp \
         rendering/mathml/RenderMathMLSquareRoot.cpp \
         rendering/mathml/RenderMathMLSubSup.cpp \
         rendering/mathml/RenderMathMLUnderOver.cpp

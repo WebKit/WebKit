@@ -32,6 +32,7 @@
 
 #include "MathMLNames.h"
 #include "RenderMathMLOperator.h"
+#include "RenderMathMLSpace.h"
 
 namespace WebCore {
     
@@ -51,6 +52,8 @@ RenderObject* MathMLTextElement::createRenderer(RenderArena* arena, RenderStyle*
 {
     if (hasLocalName(MathMLNames::moTag))
         return new (arena) RenderMathMLOperator(this);
+    if (hasLocalName(MathMLNames::mspaceTag))
+        return new (arena) RenderMathMLSpace(this);
 
     return MathMLElement::createRenderer(arena, style);
 }

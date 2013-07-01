@@ -1,3 +1,21 @@
+2013-07-01  Frédéric Wang  <fred.wang@free.fr>
+
+        Add Support for mspace element
+        https://bugs.webkit.org/show_bug.cgi?id=115610
+
+        Reviewed by Chris Fleizach.
+
+        Add a reftest for the mspace element (width, height and depth) and
+        the parsing of MathML lengths. Import a reftest from Gecko to check
+        positive namedspace values.
+
+        * mathml/presentation/mspace-expected.html: Added.
+        * mathml/presentation/mspace-units-expected.html: Added.
+        * mathml/presentation/mspace-units.html: Added.
+        * mathml/presentation/mspace.html: Added.
+        * mathml/presentation/positive-namedspace-expected.html: Added.
+        * mathml/presentation/positive-namedspace.html: Added.
+
 2013-07-01  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skipping unsupported tests.

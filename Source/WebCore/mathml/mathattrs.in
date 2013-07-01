@@ -10,11 +10,13 @@ color
 columnspan
 definitionURL
 denomalign
+depth
 encoding
 fontfamily
 fontsize
 fontstyle
 fontweight
+height
 linethickness
 mathbackground
 mathcolor
@@ -25,3 +27,4 @@ open
 rowspan
 separators
 stretchy
+width

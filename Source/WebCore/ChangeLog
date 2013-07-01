@@ -1,3 +1,46 @@
+2013-07-01  Frédéric Wang  <fred.wang@free.fr>
+
+        Add Support for mspace element
+        https://bugs.webkit.org/show_bug.cgi?id=115610
+
+        Reviewed by Chris Fleizach.
+
+        This patch adds basic support for the MathML mspace element. This is
+        important to let people control spacing of mathematical formulas.
+        Attributes width, height and depth are implemented. For the moment,
+        only nonnegative width are accepted.
+
+        * CMakeLists.txt: add references to the RenderMathMLSpace files.
+        * GNUmakefile.list.am: ditto.
+        * Target.pri: ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+        * css/mathml.css:
+        (mtable[columnlines="dashed"] > mtr > mtd + mtd): remove the obsolete linebreaking rule.
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::createRenderer): map mspaceTag to RenderMathMLSpace.
+        * mathml/mathattrs.in: add width, height and depth attributes
+        * mathml/mathtags.in: add mspace element
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::parseMathMLLength): fix int to float conversion.
+        * rendering/mathml/RenderMathMLBlock.h: declare isRenderMathMLSpace.
+        (WebCore::RenderMathMLBlock::isRenderMathMLSpace):
+        * rendering/mathml/RenderMathMLSpace.cpp: Added.
+        (WebCore::RenderMathMLSpace::RenderMathMLSpace):
+        (WebCore::RenderMathMLSpace::isChildAllowed):
+        (WebCore::RenderMathMLSpace::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLSpace::updateFromElement):
+        (WebCore::RenderMathMLSpace::updateLogicalWidth):
+        (WebCore::RenderMathMLSpace::updateLogicalHeight):
+        (WebCore::RenderMathMLSpace::layout):
+        (WebCore::RenderMathMLSpace::styleDidChange):
+        (WebCore::RenderMathMLSpace::firstLineBoxBaseline):
+        * rendering/mathml/RenderMathMLSpace.h: Added.
+        (WebCore::RenderMathMLSpace::isRenderMathMLSpace):
+        (WebCore::RenderMathMLSpace::renderName):
+        (WebCore::toRenderMathMLSpace):
+
 2013-06-27  Jer Noble  <jer.noble@apple.com>
 
         Audio in apps which embed WebViews is corrupted.

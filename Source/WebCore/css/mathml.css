@@ -237,7 +237,3 @@ mtable[columnlines="solid"] > mtr > mtd + mtd {
 mtable[columnlines="dashed"] > mtr > mtd + mtd {
     border-left: dashed thin;
 }
-
-mspace[linebreak="newline"] {
-    display: block;
-}

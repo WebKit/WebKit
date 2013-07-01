@@ -2865,6 +2865,9 @@
     <ClCompile Include="..\rendering\mathml\RenderMathMLRow.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\mathml\RenderMathMLSpace.cpp">
+      <Filter>rendering\mathml</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\mathml\RenderMathMLSquareRoot.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
@@ -9823,6 +9826,9 @@
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\mathml\RenderMathMLRow.h">
+      <Filter>rendering\mathml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\mathml\RenderMathMLSpace.h">
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\mathml\RenderMathMLSquareRoot.h">

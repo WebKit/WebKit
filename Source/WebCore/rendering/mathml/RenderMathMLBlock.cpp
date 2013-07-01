@@ -296,11 +296,11 @@ bool parseMathMLLength(const String& string, float& lengthValue, const RenderSty
         return true;
     }
     if (unit == "pt") {
-        lengthValue = 4 / 3 * floatValue;
+        lengthValue = 4 * (floatValue / 3);
         return true;
     }
     if (unit == "pc") {
-        lengthValue = (4 / 3 * floatValue) * 12;
+        lengthValue = 16 * floatValue;
         return true;
     }
     if (unit == "in") {
@@ -308,11 +308,11 @@ bool parseMathMLLength(const String& string, float& lengthValue, const RenderSty
         return true;
     }
     if (unit == "cm") {
-        lengthValue = 96 * floatValue / 2.54;
+        lengthValue = 96 * (floatValue / 2.54);
         return true;
     }
     if (unit == "mm") {
-        lengthValue = (96 * floatValue / 2.54) / 10;
+        lengthValue = 96 * (floatValue / 25.4);
         return true;
     }
 
