@@ -1,5 +1,18 @@
 2013-07-01  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Avoid creating a QWindow for offscreen GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=118244
+
+        Reviewed by Noam Rosenthal.
+
+        In Qt 5.0 we had to create invisible windows, but in Qt 5.1
+        we can now create specific offscreen surfaces.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+
+2013-07-01  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] Remove long unused Qt4 forward definitions
 
         Unreviewed cleanu-up.
