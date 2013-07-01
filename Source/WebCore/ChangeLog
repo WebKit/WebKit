@@ -1,3 +1,17 @@
+2013-07-01  Kwang Yul Seo  <skyul@company100.net>
+
+        Add missing string headers that are used when LOG_DISABLED is 0.
+        https://bugs.webkit.org/show_bug.cgi?id=118227
+
+        Reviewed by Andreas Kling.
+
+        Build fix for LOG_DISABLED=0.
+
+        No new tests, no behavior change.
+
+        * html/track/InbandTextTrack.cpp:
+        * rendering/RenderLayerCompositor.cpp:
+
 2013-06-29  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid calling into Objective-C every time we get the scrollbar width

@@ -61,6 +61,8 @@
 #include "TransformState.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLAudioElement.h"
