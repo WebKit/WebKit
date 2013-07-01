@@ -1,5 +1,21 @@
 2013-07-01  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152063
+
+    2013-06-26  Simon Cooper  <scooper@apple.com>
+
+            QuickTime plug-in cannot update com.apple.quicktime.plugin.preferences.plist file
+            https://bugs.webkit.org/show_bug.cgi?id=118098
+            <rdar://problem/13888138>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Allow the preference file to be written
+
+            * Resources/PlugInSandboxProfiles/com.apple.QuickTime Plugin.plugin.sb:
+
+2013-07-01  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152234
 
     2013-06-27  Jer Noble  <jer.noble@apple.com>
