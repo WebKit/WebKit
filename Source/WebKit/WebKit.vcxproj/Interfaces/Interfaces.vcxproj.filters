@@ -274,6 +274,9 @@
     <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleApplication.idl">
       <Filter>IDL\Accessibility2</Filter>
     </Midl>
+    <Midl Include="..\..\win\Interfaces\AccessibilityDelegate.idl">
+      <Filter>IDL</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <None Include="InterfacesPostBuild.cmd" />
