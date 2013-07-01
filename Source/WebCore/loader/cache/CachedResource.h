@@ -296,7 +296,6 @@ protected:
 private:
     bool addClientToSet(CachedResourceClient*);
 
-    virtual double decodedDataDeletionTimerDelay() const;
     void decodedDataDeletionTimerFired(DeferrableOneShotTimer<CachedResource>*);
 
     virtual PurgePriority purgePriority() const { return PurgeDefault; }

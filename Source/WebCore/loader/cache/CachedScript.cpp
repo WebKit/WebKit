@@ -97,11 +97,6 @@ void CachedScript::destroyDecodedData()
         makePurgeable(true);
 }
 
-double CachedScript::decodedDataDeletionTimerDelay() const
-{
-    return 0;
-}
-
 #if ENABLE(NOSNIFF)
 bool CachedScript::mimeTypeAllowedByNosniff() const
 {
