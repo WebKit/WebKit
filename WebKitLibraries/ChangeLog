@@ -1,3 +1,11 @@
+2013-07-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed correction to DEBUG_ALL target.  Target was undefining DEBUG_ALL and DEBUG_INTERNAL,
+        which prevented proper build operation.
+
+        * win/tools/vsprops/debugsuffix.props: We should DEFINE (not UNDEFINE) the DEBUG_ALL and DEBUG_INTERNAL
+        macros when building with 'debugsuffix' target.
+
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
         Replace tools32 folder with tools and update WebKit Windows solution accordingly.
