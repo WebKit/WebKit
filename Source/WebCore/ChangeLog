@@ -1,3 +1,41 @@
+2013-07-01  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt toHTMLTextAreaElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118226
+
+        Reviewed by Andreas Kling.
+
+        To enhance readability, this patch adopts toHTMLTextAreaElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        (WebCore::AccessibilityNodeObject::isNativeTextControl):
+        (WebCore::AccessibilityNodeObject::isReadOnly):
+        (WebCore::AccessibilityNodeObject::text):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendText):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus):
+        * html/HTMLTextAreaElement.h:
+        (WebCore::toHTMLTextAreaElement):
+        * page/FocusController.cpp:
+        (WebCore::clearSelectionIfNeeded):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::isContentEditable):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::~RenderTextControlMultiLine):
+        (WebCore::RenderTextControlMultiLine::preferredContentLogicalWidth):
+        (WebCore::RenderTextControlMultiLine::computeControlLogicalHeight):
+        * testing/Internals.cpp:
+        (WebCore::Internals::wasLastChangeUserEdit):
+
 2013-07-01  Kwang Yul Seo  <skyul@company100.net>
 
         Add missing string headers that are used when LOG_DISABLED is 0.

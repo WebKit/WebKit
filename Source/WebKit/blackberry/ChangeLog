@@ -1,3 +1,22 @@
+2013-07-01  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt toHTMLTextAreaElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118226
+
+        Reviewed by Andreas Kling.
+
+        To enhance readability, this patch adopts toHTMLTextAreaElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::blockZoomRectForNode):
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isTextInputElement):
+        (BlackBerry::WebKit::DOMSupport::inputElementText):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::elementType):
+        (BlackBerry::WebKit::InputHandler::boundingBoxForInputField):
+
 2013-06-29  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLOptGroupElement for code cleanup

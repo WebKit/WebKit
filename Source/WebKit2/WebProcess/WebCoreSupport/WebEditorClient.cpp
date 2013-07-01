@@ -355,14 +355,14 @@ void WebEditorClient::textDidChangeInTextField(Element* element)
 
 void WebEditorClient::textDidChangeInTextArea(Element* element)
 {
-    if (!element->hasTagName(textareaTag))
+    if (!isHTMLTextAreaElement(element))
         return;
 
     WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document()->frame()->loader()->client());
     WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, static_cast<HTMLTextAreaElement*>(element), webFrame);
+    m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, toHTMLTextAreaElement(element), webFrame);
 }
 
 static bool getActionTypeForKeyEvent(KeyboardEvent* event, WKInputFieldActionType& type)

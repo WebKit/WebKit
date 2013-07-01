@@ -103,7 +103,7 @@ bool isShadowHostTextInputElement(Node* node)
 bool isTextInputElement(Element* element)
 {
     return element->isTextFormControl()
-        || element->hasTagName(HTMLNames::textareaTag)
+        || isHTMLTextAreaElement(element)
         || element->isContentEditable();
 }
 
@@ -122,8 +122,8 @@ WTF::String inputElementText(Element* element)
     if (isHTMLInputElement(element)) {
         const HTMLInputElement* inputElement = toHTMLInputElement(element);
         elementText = inputElement->value();
-    } else if (element->hasTagName(HTMLNames::textareaTag)) {
-        const HTMLTextAreaElement* inputElement = static_cast<const HTMLTextAreaElement*>(element);
+    } else if (isHTMLTextAreaElement(element)) {
+        const HTMLTextAreaElement* inputElement = toHTMLTextAreaElement(element);
         elementText = inputElement->value();
     } else if (element->isContentEditable()) {
         RefPtr<Range> rangeForNode = rangeOfContents(element);

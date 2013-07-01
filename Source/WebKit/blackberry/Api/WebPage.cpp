@@ -68,6 +68,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLTextAreaElement.h"
 #include "HTTPParsers.h"
 #include "HistoryItem.h"
 #include "IconDatabaseClientBlackBerry.h"
@@ -2831,7 +2832,7 @@ IntRect WebPagePrivate::blockZoomRectForNode(Node* node)
     double blockToPageRatio = static_cast<double>(pageArea - originalArea) / pageArea;
     double blockExpansionRatio = 5.0 * blockToPageRatio * blockToPageRatio;
 
-    if (!isHTMLImageElement(tnode) && !isHTMLInputElement(tnode) && !tnode->hasTagName(HTMLNames::textareaTag)) {
+    if (!isHTMLImageElement(tnode) && !isHTMLInputElement(tnode) && !isHTMLTextAreaElement(tnode)) {
         while ((tnode = tnode->parentNode())) {
             ASSERT(tnode);
             IntRect tRect = rectForNode(tnode);

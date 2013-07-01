@@ -47,6 +47,7 @@
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "KURL.h"
 #include "MarkupAccumulator.h"
@@ -215,7 +216,7 @@ String StyledMarkupAccumulator::takeResults()
 
 void StyledMarkupAccumulator::appendText(StringBuilder& out, Text* text)
 {    
-    const bool parentIsTextarea = text->parentElement() && text->parentElement()->tagQName() == textareaTag;
+    const bool parentIsTextarea = text->parentElement() && isHTMLTextAreaElement(text->parentElement());
     const bool wrappingSpan = shouldApplyWrappingStyle(text) && !parentIsTextarea;
     if (wrappingSpan) {
         RefPtr<EditingStyle> wrappingStyle = m_wrappingStyle->copy();

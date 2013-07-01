@@ -36,6 +36,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLegendElement.h"
+#include "HTMLTextAreaElement.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
 #include "ScriptEventListener.h"
@@ -196,7 +197,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
         return true;
     if (element->hasTagName(buttonTag))
         return true;
-    if (element->hasTagName(textareaTag))
+    if (isHTMLTextAreaElement(element))
         return true;
 
     return false;

@@ -212,10 +212,10 @@ bool InjectedBundleNodeHandle::htmlInputElementLastChangeWasUserEdit()
 
 bool InjectedBundleNodeHandle::htmlTextAreaElementLastChangeWasUserEdit()
 {
-    if (!m_node->hasTagName(textareaTag))
+    if (!isHTMLTextAreaElement(m_node.get()))
         return false;
 
-    return static_cast<HTMLTextAreaElement*>(m_node.get())->lastChangeWasUserEdit();
+    return toHTMLTextAreaElement(m_node.get())->lastChangeWasUserEdit();
 }
 
 PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()

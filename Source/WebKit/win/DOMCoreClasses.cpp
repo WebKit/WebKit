@@ -1509,7 +1509,7 @@ IDOMElement* DOMElement::createInstance(WebCore::Element* e)
     } else if (e->hasTagName(selectTag)) {
         DOMHTMLSelectElement* newElement = new DOMHTMLSelectElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
-    } else if (e->hasTagName(textareaTag)) {
+    } else if (isHTMLTextAreaElement(e)) {
         DOMHTMLTextAreaElement* newElement = new DOMHTMLTextAreaElement(e);
         hr = newElement->QueryInterface(IID_IDOMElement, (void**)&domElement);
     } else if (e->isHTMLElement()) {

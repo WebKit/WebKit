@@ -711,10 +711,10 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* element)
 
 void WebEditorClient::textDidChangeInTextArea(Element* element)
 {
-    if (!element->hasTagName(textareaTag))
+    if (!isHTMLTextAreaElement(element))
         return;
 
-    DOMHTMLTextAreaElement* textAreaElement = kit(static_cast<HTMLTextAreaElement*>(element));
+    DOMHTMLTextAreaElement* textAreaElement = kit(toHTMLTextAreaElement(element));
     FormDelegateLog(textAreaElement);
     CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement, kit(element->document()->frame()));
 }

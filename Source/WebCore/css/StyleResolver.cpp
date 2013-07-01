@@ -1481,7 +1481,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         style->setZIndex(0);
 
     // Textarea considers overflow visible as auto.
-    if (e && e->hasTagName(textareaTag)) {
+    if (e && isHTMLTextAreaElement(e)) {
         style->setOverflowX(style->overflowX() == OVISIBLE ? OAUTO : style->overflowX());
         style->setOverflowY(style->overflowY() == OVISIBLE ? OAUTO : style->overflowY());
     }

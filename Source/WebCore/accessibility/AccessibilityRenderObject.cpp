@@ -1644,7 +1644,7 @@ void AccessibilityRenderObject::setValue(const String& string)
         toHTMLInputElement(element)->setValue(string);
     } else if (renderer->isTextArea()) {
         // FIXME: This is not safe!  Other elements could have a TextArea renderer.
-        static_cast<HTMLTextAreaElement*>(element)->setValue(string);
+        toHTMLTextAreaElement(element)->setValue(string);
     }
 }
 

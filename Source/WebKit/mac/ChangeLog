@@ -1,3 +1,16 @@
+2013-07-01  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt toHTMLTextAreaElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118226
+
+        Reviewed by Andreas Kling.
+
+        To enhance readability, this patch adopts toHTMLTextAreaElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::textDidChangeInTextArea):
+
 2013-06-27  Kangil Han  <kangil.han@samsung.com>
 
         Adopt is/toHTMLInputElement for code cleanup

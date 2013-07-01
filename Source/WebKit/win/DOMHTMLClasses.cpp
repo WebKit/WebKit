@@ -1430,8 +1430,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::form(
     if (!result)
         return E_POINTER;
     *result = 0;
-    ASSERT(m_element && m_element->hasTagName(textareaTag));
-    HTMLTextAreaElement* textareaElement = static_cast<HTMLTextAreaElement*>(m_element);
+    ASSERT(m_element && isHTMLTextAreaElement(m_element));
+    HTMLTextAreaElement* textareaElement = toHTMLTextAreaElement(m_element);
     COMPtr<IDOMElement> domElement;
     domElement.adoptRef(DOMHTMLElement::createInstance(textareaElement->form()));
     if (domElement)
@@ -1547,8 +1547,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::type(
 HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::value( 
         /* [retval][out] */ BSTR* result)
 {
-    ASSERT(m_element && m_element->hasTagName(textareaTag));
-    HTMLTextAreaElement* textareaElement = static_cast<HTMLTextAreaElement*>(m_element);
+    ASSERT(m_element && isHTMLTextAreaElement(m_element));
+    HTMLTextAreaElement* textareaElement = toHTMLTextAreaElement(m_element);
     WTF::String valueString = textareaElement->value();
     *result = BString(valueString.characters(), valueString.length()).release();
     if (valueString.length() && !*result)
@@ -1559,16 +1559,16 @@ HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::value(
 HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::setValue( 
         /* [in] */ BSTR value)
 {
-    ASSERT(m_element && m_element->hasTagName(textareaTag));
-    HTMLTextAreaElement* textareaElement = static_cast<HTMLTextAreaElement*>(m_element);
+    ASSERT(m_element && isHTMLTextAreaElement(m_element));
+    HTMLTextAreaElement* textareaElement = toHTMLTextAreaElement(m_element);
     textareaElement->setValue(String((UChar*) value, SysStringLen(value)));
     return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::select( void)
 {
-    ASSERT(m_element && m_element->hasTagName(textareaTag));
-    HTMLTextAreaElement* textareaElement = static_cast<HTMLTextAreaElement*>(m_element);
+    ASSERT(m_element && isHTMLTextAreaElement(m_element));
+    HTMLTextAreaElement* textareaElement = toHTMLTextAreaElement(m_element);
     textareaElement->select();
     return S_OK;
 }
@@ -1582,8 +1582,8 @@ HRESULT STDMETHODCALLTYPE DOMHTMLTextAreaElement::isUserEdited(
         return E_POINTER;
 
     *result = FALSE;
-    ASSERT(m_element && m_element->hasTagName(textareaTag));
-    if (static_cast<HTMLTextAreaElement*>(m_element)->lastChangeWasUserEdit())
+    ASSERT(m_element && isHTMLTextAreaElement(m_element));
+    if (toHTMLTextAreaElement(m_element)->lastChangeWasUserEdit())
         *result = TRUE;
     return S_OK;
 }

@@ -132,6 +132,12 @@ inline bool isHTMLTextAreaElement(Node* node)
     return node->hasTagName(HTMLNames::textareaTag);
 }
 
+inline HTMLTextAreaElement* toHTMLTextAreaElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTextAreaElement(node));
+    return static_cast<HTMLTextAreaElement*>(node);
+}
+
 } //namespace
 
 #endif

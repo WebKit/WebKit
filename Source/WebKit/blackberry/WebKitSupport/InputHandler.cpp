@@ -413,7 +413,7 @@ BlackBerryInputType InputHandler::elementType(Element* element) const
     if (const HTMLInputElement* inputElement = toHTMLInputElement(element))
         return convertInputType(inputElement);
 
-    if (element->hasTagName(HTMLNames::textareaTag))
+    if (isHTMLTextAreaElement(element))
         return InputTypeTextArea;
 
     // Default to InputTypeTextArea for content editable fields.
@@ -1354,7 +1354,7 @@ WebCore::IntRect InputHandler::boundingBoxForInputField()
         return m_currentFocusElement->renderer()->absoluteBoundingBoxRect();
     }
 
-    if (m_currentFocusElement->hasTagName(HTMLNames::textareaTag))
+    if (isHTMLTextAreaElement(m_currentFocusElement))
         return m_currentFocusElement->renderer()->absoluteBoundingBoxRect();
 
     // Content Editable can't rely on the bounding box since it isn't fixed.

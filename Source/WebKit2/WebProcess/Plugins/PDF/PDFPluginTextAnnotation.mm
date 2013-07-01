@@ -105,7 +105,7 @@ PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
     styledElement->setInlineStyleProperty(CSSPropertyTextAlign, cssAlignmentValueForNSTextAlignment(textAnnotation.alignment));
 
     if (isMultiline)
-        static_cast<HTMLTextAreaElement*>(styledElement)->setValue(textAnnotation.stringValue);
+        toHTMLTextAreaElement(styledElement)->setValue(textAnnotation.stringValue);
     else
         toHTMLInputElement(styledElement)->setValue(textAnnotation.stringValue);
 

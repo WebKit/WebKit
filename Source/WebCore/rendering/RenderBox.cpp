@@ -28,16 +28,16 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "FloatQuad.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HitTestResult.h"
-#include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "FloatQuad.h"
-#include "Frame.h"
+#include "HTMLTextAreaElement.h"
+#include "HitTestResult.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
@@ -52,6 +52,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "TransformState.h"
+#include "htmlediting.h"
 #include <algorithm>
 #include <math.h>
 #include <wtf/StackStats.h>
@@ -2305,7 +2306,7 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
     // stretching column flexbox.
     // FIXME: Think about block-flow here.
     // https://bugs.webkit.org/show_bug.cgi?id=46473
-    if (logicalWidth.type() == Auto && !isStretchingColumnFlexItem(this) && node() && (isHTMLInputElement(node()) || node()->hasTagName(selectTag) || node()->hasTagName(buttonTag) || node()->hasTagName(textareaTag) || node()->hasTagName(legendTag)))
+    if (logicalWidth.type() == Auto && !isStretchingColumnFlexItem(this) && node() && (isHTMLInputElement(node()) || node()->hasTagName(selectTag) || node()->hasTagName(buttonTag) || isHTMLTextAreaElement(node()) || node()->hasTagName(legendTag)))
         return true;
 
     if (isHorizontalWritingMode() != containingBlock()->isHorizontalWritingMode())
