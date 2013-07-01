@@ -87,25 +87,12 @@ PlatformLayer* DrawingBuffer::platformLayer()
     return 0;
 }
 
-void DrawingBuffer::prepareBackBuffer()
-{
-}
-
-bool DrawingBuffer::requiresCopyFromBackToFrontBuffer() const
-{
-    return false;
-}
-
 unsigned DrawingBuffer::frontColorBuffer() const
 {
     return colorBuffer();
 }
 
 void DrawingBuffer::paintCompositedResultsToCanvas(ImageBuffer*)
-{
-}
-
-void DrawingBuffer::clearPlatformLayer()
 {
 }
 #endif

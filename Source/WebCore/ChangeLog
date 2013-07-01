@@ -1,3 +1,27 @@
+2013-07-01  Alex Christensen  <achristensen@apple.com>
+
+        Removed all references to DrawingBuffer methods unused since the removal of Chromium:
+        DrawingBuffer::prepareBackBuffer,
+        DrawingBuffer::requiresCopyFromBackToFrontBuffer, and
+        DrawingBuffer::clearPlatformLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=118257
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/blackberry/DrawingBufferBlackBerry.cpp:
+        (WebCore::DrawingBuffer::platformLayer):
+        * platform/graphics/cairo/DrawingBufferCairo.cpp:
+        (WebCore::DrawingBuffer::paintCompositedResultsToCanvas):
+        * platform/graphics/clutter/DrawingBufferClutter.cpp:
+        (WebCore::DrawingBuffer::paintCompositedResultsToCanvas):
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::clear):
+        * platform/graphics/gpu/DrawingBuffer.h:
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        (WebCore::DrawingBuffer::frontColorBuffer):
+        * platform/graphics/gpu/qt/DrawingBufferQt.cpp:
+        (WebCore::DrawingBuffer::paintCompositedResultsToCanvas):
+
 2013-07-01  Jochen Eisinger  <jochen@chromium.org>
 
         Remove support for consumable user gestures

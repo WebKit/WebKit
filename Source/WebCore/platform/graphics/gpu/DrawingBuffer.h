@@ -122,11 +122,8 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer();
-    void prepareBackBuffer();
-    bool requiresCopyFromBackToFrontBuffer() const;
     unsigned frontColorBuffer() const;
     void paintCompositedResultsToCanvas(ImageBuffer*);
-    void clearPlatformLayer();
 #endif
 
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }

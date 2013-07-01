@@ -125,10 +125,6 @@ PlatformLayer* DrawingBuffer::platformLayer()
 {
     return m_internal->platformLayer.get();
 }
-
-void DrawingBuffer::clearPlatformLayer()
-{
-}
 #endif
 
 } // namespace WebCore

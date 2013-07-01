@@ -57,14 +57,6 @@ DrawingBuffer::~DrawingBuffer()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void DrawingBuffer::prepareBackBuffer()
-{
-}
-
-bool DrawingBuffer::requiresCopyFromBackToFrontBuffer() const
-{
-    return false;
-}
 
 unsigned DrawingBuffer::frontColorBuffer() const
 {
@@ -72,10 +64,6 @@ unsigned DrawingBuffer::frontColorBuffer() const
 }
 
 void DrawingBuffer::paintCompositedResultsToCanvas(ImageBuffer*)
-{
-}
-
-void DrawingBuffer::clearPlatformLayer()
 {
 }
 #endif
