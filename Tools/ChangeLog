@@ -1,3 +1,22 @@
+2013-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        Maximum scroll position can be negative in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=118175
+        <rdar://problem/14301217>
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/ResizeReversePaginatedWebView.cpp: Added.
+        (TestWebKitAPI::didRunJavaScript):
+        (TestWebKitAPI::didLayout):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/lots-of-text-vertical-lr.html: Added.
+        Add a test that loads a vertical-lr document, paginates it horizontally
+        from right to left, resizes the view to fit the entire document, and
+        verifies that the scroll position is negative, as it must be for the
+        document to be enclosed by the view.
+
 2013-07-01  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][GTK] Migrate from WEBKITOUTPUTDIR to WEBKIT_OUTPUTDIR

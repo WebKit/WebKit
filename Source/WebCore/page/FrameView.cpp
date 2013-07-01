@@ -1638,6 +1638,19 @@ IntSize FrameView::scrollOffsetForFixedPosition() const
     return scrollOffsetForFixedPosition(visibleContentRect, totalContentsSize, scrollPosition, scrollOrigin, frameScaleFactor, fixedElementsLayoutRelativeToFrame(), headerHeight(), footerHeight());
 }
 
+IntPoint FrameView::maximumScrollPosition() const
+{
+    IntPoint maximumOffset(contentsWidth() - visibleWidth() - scrollOrigin().x(), totalContentsSize().height() - visibleHeight() - scrollOrigin().y());
+
+    // With reverse pagination modes, we can have a negative maximum scroll position.
+    if (m_pagination.mode == Pagination::BottomToTopPaginated
+        || m_pagination.mode == Pagination::RightToLeftPaginated
+        || scrollOrigin() == IntPoint::zero())
+        maximumOffset.clampNegativeToZero();
+    
+    return maximumOffset;
+}
+
 bool FrameView::fixedElementsLayoutRelativeToFrame() const
 {
     ASSERT(m_frame);

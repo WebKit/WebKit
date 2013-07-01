@@ -1,3 +1,24 @@
+2013-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        Maximum scroll position can be negative in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=118175
+        <rdar://problem/14301217>
+
+        Reviewed by Anders Carlsson.
+
+        Test (API): WebKit2.ResizeReversePaginatedWebView
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::maximumScrollPosition):
+        * page/FrameView.h:
+        Override maximumScrollPosition() in FrameView and don't clamp to zero if
+        a reverse pagination mode is enabled, as it is possible (and common) to
+        have a negative maximum scroll position with reverse pagination.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        Drive-by adoption of toIntSize().
+
 2013-07-01  Alex Christensen  <achristensen@apple.com>
 
         Removed all references to DrawingBuffer methods unused since the removal of Chromium:
