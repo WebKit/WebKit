@@ -1,3 +1,10 @@
+2013-07-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add screenshot of the inspector color picker for the blog
+
+        * blog-files/last-week-in-webkit: Added.
+        * blog-files/last-week-in-webkit/Inspector_color_picker.png: Added.
+
 2013-06-27  Roger Fong  <roger_fong@apple.com>
 
         Update required tools for Windows instructions.
