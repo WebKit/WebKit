@@ -366,7 +366,9 @@ inspector/styles/variables/css-variables.html
 # MathML is disable.
 mathml/ [ Skip ]
 
-
+# ENABLE(USERSELECT_ALL) is disabled
+editing/selection/user-select-all-image-with-single-click.html [ Skip ]
+editing/selection/user-select-all-with-single-click.html [ Skip ]
 
 # =========================================================================== #
 #       Feature not yet supported.                                            #

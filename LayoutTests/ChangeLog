@@ -1,3 +1,9 @@
+2013-07-01  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skipping unsupported tests.
+
+        * platform/qt/TestExpectations:
+
 2013-06-30  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening. Rebaselining whatever can be rebaselined and adding failure expectations for other current failures.
