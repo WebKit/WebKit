@@ -139,6 +139,7 @@ public:
     const String& value(ExecState*) const;
     const String& tryGetValue() const;
     unsigned length() { return m_length; }
+    AtomicString atomicString(ExecState*) const;
 
     JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
     JS_EXPORT_PRIVATE bool toBoolean() const;
@@ -371,6 +372,19 @@ inline const String& JSString::value(ExecState* exec) const
     return m_value;
 }
 
+inline AtomicString JSString::atomicString(ExecState* exec) const
+{
+    if (isRope()) {
+        static_cast<const JSRopeString*>(this)->resolveRope(exec);
+        if (exec->hadException())
+            return nullAtom;
+    }
+    const AtomicString atomicValue(m_value);
+    if (atomicValue.impl() != m_value.impl())
+        m_value = atomicValue;
+    return atomicValue;
+}
+
 inline const String& JSString::tryGetValue() const
 {
     if (isRope())
@@ -514,6 +528,13 @@ inline JSString* JSValue::toString(ExecState* exec) const
     if (isString())
         return jsCast<JSString*>(asCell());
     return toStringSlowCase(exec);
+}
+
+inline AtomicString JSValue::toAtomicString(ExecState* exec) const
+{
+    if (isString())
+        return jsCast<JSString*>(asCell())->atomicString(exec);
+    return toStringSlowCase(exec)->value(exec);
 }
 
 inline String JSValue::toWTFString(ExecState* exec) const

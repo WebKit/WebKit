@@ -29,7 +29,7 @@
     readonly attribute DOMImplementation implementation;
     readonly attribute Element documentElement;
 
-    [ReturnNewObject, RaisesException] Element createElement([TreatNullAs=NullString,Default=Undefined] optional DOMString tagName);
+    [ReturnNewObject, RaisesException] Element createElement([TreatNullAs=NullString,Default=Undefined,Atomic] optional DOMString tagName);
     DocumentFragment   createDocumentFragment();
     [ReturnNewObject] Text createTextNode([Default=Undefined] optional DOMString data);
     [ReturnNewObject] Comment createComment([Default=Undefined] optional DOMString data);
@@ -38,7 +38,7 @@
                                                                                  [Default=Undefined] optional DOMString data);
     [ReturnNewObject, RaisesException] Attr createAttribute([Default=Undefined] optional DOMString name);
     [ReturnNewObject, RaisesException] EntityReference createEntityReference([Default=Undefined] optional DOMString name);
-    NodeList getElementsByTagName([Default=Undefined] optional DOMString tagname);
+    NodeList getElementsByTagName([Default=Undefined, Atomic] optional DOMString tagname);
 
     // Introduced in DOM Level 2:
 
@@ -48,9 +48,9 @@
                             [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
     [ObjCLegacyUnnamedParameters, ReturnNewObject, RaisesException] Attr createAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
                                                                           [TreatNullAs=NullString,Default=Undefined] optional DOMString qualifiedName);
-    [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
-                                                   [Default=Undefined] optional DOMString localName);
-    Element getElementById([Default=Undefined] optional DOMString elementId);
+    [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined,Atomic] optional DOMString namespaceURI,
+                                                   [Default=Undefined,Atomic] optional DOMString localName);
+    Element getElementById([Default=Undefined,Atomic] optional DOMString elementId);
 
     // DOM Level 3 Core
 
@@ -216,8 +216,8 @@
     readonly attribute DOMString compatMode;
 
     // NodeSelector - Selector API
-    [RaisesException] Element querySelector(DOMString selectors);
-    [RaisesException] NodeList querySelectorAll(DOMString selectors);
+    [RaisesException] Element querySelector([Atomic] DOMString selectors);
+    [RaisesException] NodeList querySelectorAll([Atomic] DOMString selectors);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
     // Mozilla version
@@ -338,9 +338,9 @@
 
 #if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
     [Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState, RaisesException] CustomElementConstructor webkitRegister(DOMString name, optional Dictionary options);
-    [ReturnNewObject, RaisesException] Element createElement(DOMString localName, [TreatNullAs=NullString] DOMString typeExtension);
-    [ReturnNewObject, RaisesException] Element createElementNS([TreatNullAs=NullString] DOMString namespaceURI, DOMString qualifiedName,
-                            [TreatNullAs=NullString] DOMString typeExtension);
+    [ReturnNewObject, RaisesException] Element createElement([Atomic] DOMString localName, [TreatNullAs=NullString, Atomic] DOMString typeExtension);
+    [ReturnNewObject, RaisesException] Element createElementNS([TreatNullAs=NullString, Atomic] DOMString namespaceURI, DOMString qualifiedName,
+                            [TreatNullAs=NullString, Atomic] DOMString typeExtension);
 #endif
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP
