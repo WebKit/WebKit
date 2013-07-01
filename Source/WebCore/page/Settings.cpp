@@ -89,6 +89,7 @@ bool Settings::gShouldUseHighResolutionTimers = true;
 #endif
     
 bool Settings::gShouldRespectPriorityInCSSAttributeSetters = false;
+bool Settings::gLowPowerVideoAudioBufferSizeEnabled = false;
 
 // NOTEs
 //  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well as QtWebKit when built on Mac;
@@ -610,5 +611,10 @@ void Settings::setHiddenPageCSSAnimationSuspensionEnabled(bool flag)
     m_page->hiddenPageCSSAnimationSuspensionStateChanged();
 }
 #endif
+
+void Settings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)
+{
+    gLowPowerVideoAudioBufferSizeEnabled = flag;
+}
 
 } // namespace WebCore

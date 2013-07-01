@@ -1548,6 +1548,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setRequestAnimationFrameEnabled([preferences requestAnimationFrameEnabled]);
     settings->setNeedsDidFinishLoadOrderQuirk(needsDidFinishLoadOrderQuirk());
     settings->setDiagnosticLoggingEnabled([preferences diagnosticLoggingEnabled]);
+    settings->setLowPowerVideoAudioBufferSizeEnabled([preferences lowPowerVideoAudioBufferSizeEnabled]);
 
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:

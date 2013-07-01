@@ -2572,6 +2572,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setHiddenPageCSSAnimationSuspensionEnabled(store.getBoolValueForKey(WebPreferencesKey::hiddenPageCSSAnimationSuspensionEnabledKey()));
 #endif
 
+    settings->setLowPowerVideoAudioBufferSizeEnabled(store.getBoolValueForKey(WebPreferencesKey::lowPowerVideoAudioBufferSizeEnabledKey()));
+
     platformPreferencesDidChange(store);
 
     if (m_drawingArea)

@@ -1,3 +1,23 @@
+2013-06-27  Jer Noble  <jer.noble@apple.com>
+
+        Audio in apps which embed WebViews is corrupted.
+        https://bugs.webkit.org/show_bug.cgi?id=118163
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a preference, which defaults to off, which controls whether the
+        AudioSessionManager will switch to a large audio buffer setting for
+        power-savings during <video> playback.
+
+        * WebCore.exp.in:
+        * page/Settings.cpp:
+        (WebCore::Settings::setLowPowerVideoAudioBufferSizeEnabled): Added.  Simple setter.
+        * page/Settings.h:
+        (WebCore::Settings::lowPowerVideoAudioBufferSizeEnabled): Added.  Simple getter.
+        * platform/audio/mac/AudioSessionManagerMac.cpp:
+        (AudioSessionManager::updateSessionState): Only set the large audio buffer
+            size if lowPowerVideoAudioBufferSize is enabled.
+
 2013-07-01  Brian Holt  <brian.holt@samsung.com>
 
         [ATK] Leak: leaks in WebKitAccessibleInterfaceText
