@@ -55,7 +55,7 @@ inline char* HandleBlock::payload()
 
 inline HandleNode* HandleBlock::nodes()
 {
-    return reinterpret_cast<HandleNode*>(payload());
+    return reinterpret_cast_ptr<HandleNode*>(payload());
 }
 
 inline HandleNode* HandleBlock::nodeAtIndex(unsigned i)
