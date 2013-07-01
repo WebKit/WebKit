@@ -1,3 +1,42 @@
+2013-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] TiledCoreAnimationDrawingArea should support scrolling its exposed rect
+        https://bugs.webkit.org/show_bug.cgi?id=118173
+        <rdar://problem/14301166>
+
+        Reviewed by Anders Carlsson.
+
+        Offset the exposed rect passed from the WKView by the main frame's current scroll position
+        before sending it to our TiledBackings, so that it is in the same coordinate space as their
+        ordinary visibleRects.
+
+        This has the side effect of making clips-to-exposed-rect testable (though useless) in Safari.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        Add updateScrolledExposedRect() and m_scrolledExposedRect.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scroll):
+        Call updateScrolledExposedRect when the main frame scrolls.
+
+        (WebKit::TiledCoreAnimationDrawingArea::setExposedRect):
+        Remove a FIXME about this change.
+        Call updateScrolledExposedRect instead of passing down the unscrolled rect.
+
+        (WebKit::TiledCoreAnimationDrawingArea::setClipsToExposedRect):
+        Call updateScrolledExposedRect, because that method will short-circuit if
+        setClipsToExposedRect is false, so we need to update here for correctness
+        if we get a setExposedRect(), setClipsToExposedRect(true) pair.
+
+        (WebKit::TiledCoreAnimationDrawingArea::updateScrolledExposedRect):
+        Update m_scrolledExposedRect and propagate it to our TiledBackings.
+
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::didCommitChangesForLayer):
+        Use the scrolled exposed rect.
+
 2013-07-01  Ada Chan  <adachan@apple.com>
 
         Properly hide the header and footer banners if they are set to null.
