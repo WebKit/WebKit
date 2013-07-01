@@ -640,10 +640,7 @@ static inline bool canMouseDownStartSelect(Node* node)
     if (!node || !node->renderer())
         return true;
 
-    if (!node->canStartSelection())
-        return false;
-
-    return true;
+    return node->canStartSelection() || Position::nodeIsUserSelectAll(node);
 }
 
 bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& event)
