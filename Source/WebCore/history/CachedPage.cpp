@@ -57,6 +57,7 @@ CachedPage::CachedPage(Page* page)
     , m_needStyleRecalcForVisitedLinks(false)
     , m_needsFullStyleRecalc(false)
     , m_needsCaptionPreferencesChanged(false)
+    , m_needsDeviceScaleChanged(false)
 {
 #ifndef NDEBUG
     cachedPageCounter.increment();
@@ -91,6 +92,13 @@ void CachedPage::restore(Page* page)
         for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
             frame->document()->visitedLinkState()->invalidateStyleForAllLinks();
     }
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_needsDeviceScaleChanged) {
+        if (Frame* frame = page->mainFrame())
+            frame->deviceOrPageScaleFactorChanged();
+    }
+#endif
 
     if (m_needsFullStyleRecalc)
         page->setNeedsRecalcStyleInAllFrames();
