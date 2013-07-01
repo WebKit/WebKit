@@ -873,7 +873,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     Strong<JSGlobalObject> globalObject(*pluginWorld()->vm(), frame->script()->globalObject(pluginWorld()));
     ExecState* exec = globalObject->globalExec();
 
-    UserGestureIndicator gestureIndicator(allowPopups ? DefinitelyProcessingNewUserGesture : PossiblyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(allowPopups ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     
     JSValue result = JSC::evaluate(exec, makeSource(script));
     

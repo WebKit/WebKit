@@ -457,7 +457,7 @@ void ScriptController::clearScriptObjects()
 
 ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture)
 {
-    UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingNewUserGesture : PossiblyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     ScriptSourceCode sourceCode(script, m_frame->document()->url());
 
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())

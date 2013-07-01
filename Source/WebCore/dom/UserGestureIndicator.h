@@ -27,55 +27,27 @@
 #define UserGestureIndicator_h
 
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class UserGestureIndicator;
-
 enum ProcessingUserGestureState {
-    DefinitelyProcessingNewUserGesture,
     DefinitelyProcessingUserGesture,
     PossiblyProcessingUserGesture,
     DefinitelyNotProcessingUserGesture
 };
 
-class UserGestureToken : public RefCounted<UserGestureToken> {
-public:
-    virtual ~UserGestureToken() { }
-    virtual bool hasGestures() const = 0;
-};
-
-class UserGestureIndicatorDisabler {
-    WTF_MAKE_NONCOPYABLE(UserGestureIndicatorDisabler);
-public:
-    UserGestureIndicatorDisabler();
-    ~UserGestureIndicatorDisabler();
-
-private:
-    ProcessingUserGestureState m_savedState;
-    UserGestureIndicator* m_savedIndicator;
-};
-
 class UserGestureIndicator {
     WTF_MAKE_NONCOPYABLE(UserGestureIndicator);
-    friend class UserGestureIndicatorDisabler;
 public:
-    static bool processingUserGesture();
-    static bool consumeUserGesture();
-    static UserGestureToken* currentToken();
+    static bool processingUserGesture() { return s_state == DefinitelyProcessingUserGesture; }
 
     explicit UserGestureIndicator(ProcessingUserGestureState);
-    explicit UserGestureIndicator(PassRefPtr<UserGestureToken>);
     ~UserGestureIndicator();
 
 
 private:
     static ProcessingUserGestureState s_state;
-    static UserGestureIndicator* s_topmostIndicator;
     ProcessingUserGestureState m_previousState;
-    RefPtr<UserGestureToken> m_token;
 };
 
 }

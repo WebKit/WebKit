@@ -1,3 +1,59 @@
+2013-07-01  Jochen Eisinger  <jochen@chromium.org>
+
+        Remove support for consumable user gestures
+        https://bugs.webkit.org/show_bug.cgi?id=118247
+
+        Reviewed by Geoffrey Garen.
+
+        The features was not enabled on any port, and is meanwhile broken, so we
+        should delete it.
+
+        No new tests, just deleting dead code.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::increment):
+        (WebCore::AccessibilityNodeObject::decrement):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press):
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeScript):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScriptInWorld):
+        * dom/UserGestureIndicator.cpp:
+        (WebCore::isDefinite):
+        (WebCore::UserGestureIndicator::UserGestureIndicator):
+        (WebCore::UserGestureIndicator::~UserGestureIndicator):
+        * dom/UserGestureIndicator.h:
+        (WebCore::UserGestureIndicator::processingUserGesture):
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openInNewTab):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::FrontendMenuProvider::contextMenuItemSelected):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::navigate):
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledURLNavigation::fire):
+        (WebCore::ScheduledURLNavigation::didStartTimer):
+        (WebCore::ScheduledRedirect::fire):
+        (WebCore::ScheduledRefresh::fire):
+        (WebCore::ScheduledHistoryNavigation::fire):
+        (WebCore::ScheduledFormSubmission::fire):
+        (WebCore::ScheduledFormSubmission::didStartTimer):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::fired):
+        * page/DOMTimer.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::showModalDialog):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * page/EventHandler.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::toggleMediaFullscreenState):
+        (WebCore::HitTestResult::enterFullscreenForVideo):
+
 2013-07-01  Frédéric Wang  <fred.wang@free.fr>
 
         Add Support for mspace element

@@ -208,7 +208,7 @@ void InspectorFrontendClientLocal::changeAttachedWindowWidth(unsigned width)
 
 void InspectorFrontendClientLocal::openInNewTab(const String& url)
 {
-    UserGestureIndicator indicator(DefinitelyProcessingNewUserGesture);
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     Page* page = m_inspectorController->inspectedPage();
     Frame* mainFrame = page->mainFrame();
     FrameLoadRequest request(mainFrame->document()->securityOrigin(), ResourceRequest(), "_blank");

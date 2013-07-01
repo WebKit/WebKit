@@ -107,7 +107,7 @@ protected:
 
     virtual void fire(Frame* frame)
     {
-        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingNewUserGesture : DefinitelyNotProcessingUserGesture);
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         frame->loader()->changeLocation(m_securityOrigin.get(), KURL(ParsedURLString, m_url), m_referrer, lockHistory(), lockBackForwardList(), false);
     }
 
@@ -117,7 +117,7 @@ protected:
             return;
         m_haveToldClient = true;
 
-        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingNewUserGesture : DefinitelyNotProcessingUserGesture);
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         frame->loader()->clientRedirected(KURL(ParsedURLString, m_url), delay(), currentTime() + timer->nextFireInterval(), lockBackForwardList());
     }
 
@@ -158,7 +158,7 @@ public:
 
     virtual void fire(Frame* frame)
     {
-        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingNewUserGesture : DefinitelyNotProcessingUserGesture);
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         bool refresh = equalIgnoringFragmentIdentifier(frame->document()->url(), KURL(ParsedURLString, url()));
         frame->loader()->changeLocation(securityOrigin(), KURL(ParsedURLString, url()), referrer(), lockHistory(), lockBackForwardList(), refresh);
     }
@@ -179,7 +179,7 @@ public:
 
     virtual void fire(Frame* frame)
     {
-        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingNewUserGesture : DefinitelyNotProcessingUserGesture);
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         frame->loader()->changeLocation(securityOrigin(), KURL(ParsedURLString, url()), referrer(), lockHistory(), lockBackForwardList(), true);
     }
 };
@@ -194,7 +194,7 @@ public:
 
     virtual void fire(Frame* frame)
     {
-        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingNewUserGesture : DefinitelyNotProcessingUserGesture);
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
 
         if (!m_historySteps) {
             // Special case for go(0) from a frame -> reload only the frame
@@ -223,7 +223,7 @@ public:
 
     virtual void fire(Frame* frame)
     {
-        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingNewUserGesture : DefinitelyNotProcessingUserGesture);
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
 
         // The submitForm function will find a target frame before using the redirection timer.
         // Now that the timer has fired, we need to repeat the security check which normally is done when
@@ -243,7 +243,7 @@ public:
             return;
         m_haveToldClient = true;
 
-        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingNewUserGesture : DefinitelyNotProcessingUserGesture);
+        UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         frame->loader()->clientRedirected(m_submission->requestURL(), delay(), currentTime() + timer->nextFireInterval(), lockBackForwardList());
     }
 

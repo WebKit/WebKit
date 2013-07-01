@@ -1020,13 +1020,13 @@ void AccessibilityNodeObject::alterSliderValue(bool increase)
     
 void AccessibilityNodeObject::increment()
 {
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingNewUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     alterSliderValue(true);
 }
 
 void AccessibilityNodeObject::decrement()
 {
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingNewUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     alterSliderValue(false);
 }
 

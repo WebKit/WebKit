@@ -2002,7 +2002,6 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
         activeWindow, firstFrame, m_frame, function, functionContext);
     if (!dialogFrame)
         return;
-    UserGestureIndicatorDisabler disabler;
     dialogFrame->page()->chrome().runModal();
 }
 

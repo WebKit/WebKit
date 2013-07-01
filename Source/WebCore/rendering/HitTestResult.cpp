@@ -416,7 +416,7 @@ void HitTestResult::toggleMediaFullscreenState() const
 #if ENABLE(VIDEO)
     if (HTMLMediaElement* mediaElement = this->mediaElement()) {
         if (mediaElement->isVideo() && mediaElement->supportsFullscreen()) {
-            UserGestureIndicator indicator(DefinitelyProcessingNewUserGesture);
+            UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
             mediaElement->toggleFullscreenState();
         }
     }
@@ -430,7 +430,7 @@ void HitTestResult::enterFullscreenForVideo() const
     if (mediaElt && mediaElt->hasTagName(HTMLNames::videoTag)) {
         HTMLVideoElement* videoElt = static_cast<HTMLVideoElement*>(mediaElt);
         if (!videoElt->isFullscreen() && mediaElt->supportsFullscreen()) {
-            UserGestureIndicator indicator(DefinitelyProcessingNewUserGesture);
+            UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
             videoElt->enterFullscreen();
         }
     }
