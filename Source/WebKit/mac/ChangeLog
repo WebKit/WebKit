@@ -1,3 +1,15 @@
+2013-07-01  Timothy Hatcher  <timothy@apple.com>
+
+        Link to WebInspectorUI.framework at build time instead of soft linking.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118261
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/WebKit.xcconfig:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (useWebKitWebInspector):
+
 2013-07-01  Jochen Eisinger  <jochen@chromium.org>
 
         Remove support for consumable user gestures

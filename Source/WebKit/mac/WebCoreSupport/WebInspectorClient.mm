@@ -49,12 +49,9 @@
 #import <WebCore/Page.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
-#import <WebCore/SoftLinking.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/PassOwnPtr.h>
-
-SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspectorUI, PrivateFrameworks, A)
 
 // The margin from the top and right of the dock button (same as the full screen button).
 static const CGFloat dockButtonMargin = 3;
@@ -220,9 +217,6 @@ void WebInspectorFrontendClient::frontendLoaded()
 
 static bool useWebKitWebInspector()
 {
-    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
-    WebInspectorUILibrary();
-
     if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"])
         return true;
 

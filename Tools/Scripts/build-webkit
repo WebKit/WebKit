@@ -227,7 +227,8 @@ if (isAppleMacWebKit()) {
     # WebKit2 is only supported in SnowLeopard and later at present.
     push @projects, ("Source/WebKit2", "Tools/MiniBrowser") if osXVersion()->{"minor"} >= 6 and !$noWebKit2;
 
-    push @projects, ("Source/WebInspectorUI");
+    # WebInspectorUI must come before WebKit and WebKit2
+    unshift @projects, ("Source/WebInspectorUI");
 
     # Build Tools needed for Apple ports
     push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");

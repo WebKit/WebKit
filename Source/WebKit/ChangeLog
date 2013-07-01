@@ -1,3 +1,13 @@
+2013-07-01  Timothy Hatcher  <timothy@apple.com>
+
+        Link to WebInspectorUI.framework at build time instead of soft linking.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118261
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2013-07-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction.

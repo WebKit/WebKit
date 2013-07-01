@@ -1,3 +1,13 @@
+2013-07-01  Timothy Hatcher  <timothy@apple.com>
+
+        Link to WebInspectorUI.framework at build time instead of soft linking.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118261
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/build-webkit: Build WebInspectorUI before WebKit and WebKit2.
+
 2013-07-01  Tim Horton  <timothy_horton@apple.com>
 
         Maximum scroll position can be negative in some cases

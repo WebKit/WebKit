@@ -26,18 +26,11 @@
 #import "config.h"
 #import "WebInspector.h"
 
-#import <WebCore/SoftLinking.h>
-
-SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspectorUI, PrivateFrameworks, A)
-
 namespace WebKit {
 
 static bool inspectorReallyUsesWebKitUserInterface(bool preference)
 {
     // This matches a similar check in WebInspectorProxyMac.mm. Keep them in sync.
-
-    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
-    WebInspectorUILibrary();
 
     if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"])
         return true;
