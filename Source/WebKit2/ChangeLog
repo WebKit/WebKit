@@ -1,3 +1,15 @@
+2013-07-01  Sam Weinig  <sam@webkit.org>
+
+        WKPageLoadDataWithUserData neglects to set the base URL that is passed in
+        <rdar://problem/14306784>
+        https://bugs.webkit.org/show_bug.cgi?id=118256
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadData):
+        Pass the baseURL, not blankURL(), and remove an unnecessary multiplication by sizeof(uint8_t) which is always 1.
+
 2013-07-01  Kangil Han  <kangil.han@samsung.com>
 
         Adopt toHTMLTextAreaElement for code cleanup
