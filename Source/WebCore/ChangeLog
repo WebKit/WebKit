@@ -1,3 +1,13 @@
+2013-07-01  Alex Christensen  <achristensen@apple.com>
+
+        Fixed unreachable return when GLX or EGL are used with WebGL.
+        https://bugs.webkit.org/show_bug.cgi?id=118263
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/opengl/GLPlatformContext.cpp:
+        (WebCore::createOffScreenContext): Fixed unreachable return.
+
 2013-07-01  Tim Horton  <timothy_horton@apple.com>
 
         Maximum scroll position can be negative in some cases

@@ -69,9 +69,9 @@ static PassOwnPtr<GLPlatformContext> createOffScreenContext()
     return adoptPtr(new GLXOffScreenContext());
 #elif USE(EGL)
     return adoptPtr(new EGLOffScreenContext());
-#endif
-
+#else
     return nullptr;
+#endif
 }
 
 static HashSet<String> parseExtensions(const String& extensionsString)
