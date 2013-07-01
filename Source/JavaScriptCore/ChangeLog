@@ -1,5 +1,20 @@
 2013-07-01  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152091
+
+    2013-06-27  Timothy Hatcher  <timothy@apple.com>
+
+            Notify the debugger about functions created from source code via new Function() or WebCore::JSLazyEventListener.
+
+            https://bugs.webkit.org/show_bug.cgi?id=118063
+
+            Reviewed by Geoffrey Garen.
+
+            * bytecode/UnlinkedCodeBlock.cpp:
+            (JSC::UnlinkedFunctionExecutable::fromGlobalCode): Call Debugger::sourceParsed.
+
+2013-07-01  Lucas Forschler  <lforschler@apple.com>
+
         Merge r151978
 
     2013-06-25  Ryosuke Niwa  <rniwa@webkit.org>

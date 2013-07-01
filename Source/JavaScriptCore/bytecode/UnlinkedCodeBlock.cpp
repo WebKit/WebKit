@@ -131,6 +131,10 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(const Ide
     ParserError error;
     CodeCache* codeCache = exec->vm().codeCache();
     UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(exec->vm(), name, source, error);
+
+    if (exec->lexicalGlobalObject()->hasDebugger())
+        exec->lexicalGlobalObject()->debugger()->sourceParsed(exec, source.provider(), error.m_line, error.m_message);
+
     if (error.m_type != ParserError::ErrorNone) {
         *exception = error.toErrorObject(exec->lexicalGlobalObject(), source);
         return 0;
