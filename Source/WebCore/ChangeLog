@@ -1,5 +1,19 @@
 2013-07-01  Alex Christensen  <achristensen@apple.com>
 
+        DrawingBuffer constructor and destructor were not defined for Windows.
+        I moved duplicate code from Cairo and Qt to DrawingBuffer.cpp to be used by Qt, Cairo, and Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=118262
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/cairo/DrawingBufferCairo.cpp: Removed duplicate DrawingBuffer constructor and destructor.
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        (WebCore::DrawingBuffer::~DrawingBuffer): Moved from Cairo and Qt implementation.
+        * platform/graphics/gpu/qt/DrawingBufferQt.cpp: Removed duplicate DrawingBuffer constructor and destructor.
+
+2013-07-01  Alex Christensen  <achristensen@apple.com>
+
         Fixed unreachable return when GLX or EGL are used with WebGL.
         https://bugs.webkit.org/show_bug.cgi?id=118263
 

@@ -40,6 +40,53 @@
 
 namespace WebCore {
 
+#if PLATFORM(WIN) || PLATFORM(QT) || USE(CAIRO)
+DrawingBuffer::DrawingBuffer(GraphicsContext3D* context, const IntSize& size, bool multisampleExtensionSupported, bool packedDepthStencilExtensionSupported, PreserveDrawingBuffer preserveDrawingBuffer, AlphaRequirement alpha)
+    : m_preserveDrawingBuffer(preserveDrawingBuffer)
+    , m_alpha(alpha)
+    , m_scissorEnabled(false)
+    , m_texture2DBinding(0)
+    , m_framebufferBinding(0)
+    , m_activeTextureUnit(GraphicsContext3D::TEXTURE0)
+    , m_context(context)
+    , m_size(-1, -1)
+    , m_multisampleExtensionSupported(multisampleExtensionSupported)
+    , m_packedDepthStencilExtensionSupported(packedDepthStencilExtensionSupported)
+    , m_fbo(context->createFramebuffer())
+    , m_colorBuffer(0)
+    , m_frontColorBuffer(0)
+    , m_separateFrontTexture(false)
+    , m_depthStencilBuffer(0)
+    , m_depthBuffer(0)
+    , m_stencilBuffer(0)
+    , m_multisampleFBO(0)
+    , m_multisampleColorBuffer(0)
+{
+    ASSERT(m_fbo);
+    if (!m_fbo) {
+        clear();
+        return;
+    }
+
+    // create a texture to render into
+    m_colorBuffer = context->createTexture();
+    context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_colorBuffer);
+    context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
+    context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+    context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+    context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
+    context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
+
+    createSecondaryBuffers();
+    reset(size);
+}
+
+DrawingBuffer::~DrawingBuffer()
+{
+    clear();
+}
+#endif
+
 // Global resource ceiling (expressed in terms of pixels) for DrawingBuffer creation and resize.
 // When this limit is set, DrawingBuffer::create() and DrawingBuffer::reset() calls that would
 // exceed the global cap will instead clear the buffer.
