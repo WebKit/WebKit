@@ -50,6 +50,7 @@
 #include "WebNotificationManagerProxy.h"
 #include "WebPluginSiteDataManager.h"
 #include "WebPageGroup.h"
+#include "WebPreferences.h"
 #include "WebMemorySampler.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
@@ -96,8 +97,6 @@ using namespace WebCore;
 namespace WebKit {
 
 static const double sharedSecondaryProcessShutdownTimeout = 60;
-
-unsigned WebContext::m_privateBrowsingEnterCount;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webContextCounter, ("WebContext"));
 
@@ -373,10 +372,7 @@ void WebContext::ensureNetworkProcess()
     if (!parameters.diskCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
 
-    // FIXME: We don't account for private browsing mode being enabled due to a persistent preference in any of active page groups.
-    // This means that clients must re-enable private browsing mode through API on each launch, not relying on preferences.
-    // If the client does not re-enable private browsing on next launch, NetworkProcess will crash.
-    parameters.privateBrowsingEnabled = m_privateBrowsingEnterCount;
+    parameters.privateBrowsingEnabled = WebPreferences::anyPageGroupsAreUsingPrivateBrowsing();
 
     parameters.cacheModel = m_cacheModel;
 
@@ -416,9 +412,6 @@ void WebContext::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProx
 
 void WebContext::willStartUsingPrivateBrowsing()
 {
-    if (m_privateBrowsingEnterCount++)
-        return;
-
     const Vector<WebContext*>& contexts = allContexts();
     for (size_t i = 0, count = contexts.size(); i < count; ++i) {
 #if ENABLE(NETWORK_PROCESS)
@@ -431,11 +424,6 @@ void WebContext::willStartUsingPrivateBrowsing()
 
 void WebContext::willStopUsingPrivateBrowsing()
 {
-    // If the client asks to disable private browsing without enabling it first, it may be resetting a persistent preference,
-    // so it is still necessary to destroy any existing private browsing session.
-    if (m_privateBrowsingEnterCount && --m_privateBrowsingEnterCount)
-        return;
-
     const Vector<WebContext*>& contexts = allContexts();
     for (size_t i = 0, count = contexts.size(); i < count; ++i) {
 #if ENABLE(NETWORK_PROCESS)
@@ -561,6 +549,9 @@ WebProcessProxy* WebContext::createNewWebProcess()
     if (!injectedBundleInitializationUserData)
         injectedBundleInitializationUserData = m_injectedBundleInitializationUserData;
     process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get())), 0);
+
+    if (WebPreferences::anyPageGroupsAreUsingPrivateBrowsing())
+        process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(), 0);
 
     m_processes.append(process);
 

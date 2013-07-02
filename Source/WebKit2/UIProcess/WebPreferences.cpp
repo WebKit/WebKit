@@ -26,9 +26,15 @@
 #include "config.h"
 #include "WebPreferences.h"
 
+#include "WebContext.h"
 #include "WebPageGroup.h"
+#include <wtf/ThreadingPrimitives.h>
 
 namespace WebKit {
+
+// FIXME: Manipulating this variable is not thread safe.
+// Instead of tracking private browsing state as a boolean preference, we should let the client provide storage sessions explicitly.
+static unsigned privateBrowsingPageGroupCount;
 
 WebPreferences::WebPreferences()
 {
@@ -49,16 +55,32 @@ WebPreferences::WebPreferences(const WebPreferences& other)
 
 WebPreferences::~WebPreferences()
 {
+    ASSERT(m_pageGroups.isEmpty());
 }
 
 void WebPreferences::addPageGroup(WebPageGroup* pageGroup)
 {
-    m_pageGroups.add(pageGroup);
+    bool didAddPageGroup = m_pageGroups.add(pageGroup).isNewEntry;
+    if (didAddPageGroup && privateBrowsingEnabled()) {
+        if (!privateBrowsingPageGroupCount)
+            WebContext::willStartUsingPrivateBrowsing();
+        ++privateBrowsingPageGroupCount;
+    }
 }
 
 void WebPreferences::removePageGroup(WebPageGroup* pageGroup)
 {
-    m_pageGroups.remove(pageGroup);
+    HashSet<WebPageGroup*>::iterator iter = m_pageGroups.find(pageGroup);
+    if (iter == m_pageGroups.end())
+        return;
+
+    m_pageGroups.remove(iter);
+
+    if (privateBrowsingEnabled()) {
+        --privateBrowsingPageGroupCount;
+        if (!privateBrowsingPageGroupCount)
+            WebContext::willStopUsingPrivateBrowsing();
+    }
 }
 
 void WebPreferences::update()
@@ -75,6 +97,11 @@ void WebPreferences::updateStringValueForKey(const String& key, const String& va
 
 void WebPreferences::updateBoolValueForKey(const String& key, bool value)
 {
+    if (key == WebPreferencesKey::privateBrowsingEnabledKey()) {
+        updatePrivateBrowsingValue(value);
+        return;
+    }
+
     platformUpdateBoolValueForKey(key, value);
     update(); // FIXME: Only send over the changed key and value.
 }
@@ -97,6 +124,30 @@ void WebPreferences::updateFloatValueForKey(const String& key, float value)
     update(); // FIXME: Only send over the changed key and value.
 }
 
+void WebPreferences::updatePrivateBrowsingValue(bool value)
+{
+    platformUpdateBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey(), value);
+
+    unsigned pageGroupsChanged = m_pageGroups.size();
+    if (!pageGroupsChanged)
+        return;
+
+    if (value) {
+        if (!privateBrowsingPageGroupCount)
+            WebContext::willStartUsingPrivateBrowsing();
+        privateBrowsingPageGroupCount += pageGroupsChanged;
+    }
+
+    update(); // FIXME: Only send over the changed key and value.
+
+    if (!value) {
+        ASSERT(privateBrowsingPageGroupCount >= pageGroupsChanged);
+        privateBrowsingPageGroupCount -= pageGroupsChanged;
+        if (!privateBrowsingPageGroupCount)
+            WebContext::willStopUsingPrivateBrowsing();
+    }
+}
+
 #define DEFINE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
     void WebPreferences::set##KeyUpper(const Type& value) \
     { \
@@ -114,5 +165,10 @@ void WebPreferences::updateFloatValueForKey(const String& key, float value)
 FOR_EACH_WEBKIT_PREFERENCE(DEFINE_PREFERENCE_GETTER_AND_SETTERS)
 
 #undef DEFINE_PREFERENCE_GETTER_AND_SETTERS
+
+bool WebPreferences::anyPageGroupsAreUsingPrivateBrowsing()
+{
+    return privateBrowsingPageGroupCount;
+}
 
 } // namespace WebKit
