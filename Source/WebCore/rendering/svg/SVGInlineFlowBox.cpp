@@ -43,7 +43,7 @@ void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
     PaintInfo childPaintInfo(paintInfo);
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->isSVGInlineTextBox())
-            static_cast<SVGInlineTextBox*>(child)->paintSelectionBackground(childPaintInfo);
+            toSVGInlineTextBox(child)->paintSelectionBackground(childPaintInfo);
         else if (child->isSVGInlineFlowBox())
             static_cast<SVGInlineFlowBox*>(child)->paintSelectionBackground(childPaintInfo);
     }
@@ -61,7 +61,7 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
     if (renderingContext.isRenderingPrepared()) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
             if (child->isSVGInlineTextBox())
-                computeTextMatchMarkerRectForRenderer(toRenderSVGInlineText(static_cast<SVGInlineTextBox*>(child)->textRenderer()));
+                computeTextMatchMarkerRectForRenderer(toRenderSVGInlineText(toSVGInlineTextBox(child)->textRenderer()));
 
             child->paint(paintInfo, LayoutPoint(), 0, 0);
         }
@@ -107,7 +107,7 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
             if (!box->isSVGInlineTextBox())
                 continue;
 
-            SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(box);
+            SVGInlineTextBox* textBox = toSVGInlineTextBox(box);
 
             int markerStartPosition = max<int>(marker->startOffset() - textBox->start(), 0);
             int markerEndPosition = min<int>(marker->endOffset() - textBox->start(), textBox->len());

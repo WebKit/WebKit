@@ -459,7 +459,7 @@ static inline void writeSVGInlineTextBoxes(TextStream& ts, const RenderText& tex
         if (!box->isSVGInlineTextBox())
             continue;
 
-        writeSVGInlineTextBox(ts, static_cast<SVGInlineTextBox*>(box), indent);
+        writeSVGInlineTextBox(ts, toSVGInlineTextBox(box), indent);
     }
 }
 

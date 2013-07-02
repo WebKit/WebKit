@@ -51,7 +51,7 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
     if (hasSelection) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
             if (child->isSVGInlineTextBox())
-                static_cast<SVGInlineTextBox*>(child)->paintSelectionBackground(childPaintInfo);
+                toSVGInlineTextBox(child)->paintSelectionBackground(childPaintInfo);
             else if (child->isSVGInlineFlowBox())
                 static_cast<SVGInlineFlowBox*>(child)->paintSelectionBackground(childPaintInfo);
         }
@@ -61,7 +61,7 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
     if (renderingContext.isRenderingPrepared()) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
             if (child->isSVGInlineTextBox())
-                SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(toRenderSVGInlineText(static_cast<SVGInlineTextBox*>(child)->textRenderer()));
+                SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(toRenderSVGInlineText(toSVGInlineTextBox(child)->textRenderer()));
 
             child->paint(paintInfo, LayoutPoint(), 0, 0);
         }
@@ -101,7 +101,7 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
             ASSERT(child->renderer());
             ASSERT(child->renderer()->isSVGInlineText());
 
-            SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(child);
+            SVGInlineTextBox* textBox = toSVGInlineTextBox(child);
             characterLayout.layoutInlineTextBox(textBox);
         } else {
             // Skip generated content.
@@ -138,7 +138,7 @@ void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, FloatRect* childRe
             ASSERT(child->renderer());
             ASSERT(child->renderer()->isSVGInlineText());
 
-            SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(child);
+            SVGInlineTextBox* textBox = toSVGInlineTextBox(child);
             boxRect = textBox->calculateBoundaries();
             textBox->setX(boxRect.x());
             textBox->setY(boxRect.y());
@@ -278,8 +278,8 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
             continue;
         }
 
-        SVGInlineTextBox* firstTextBox = static_cast<SVGInlineTextBox*>(*first);
-        SVGInlineTextBox* lastTextBox = static_cast<SVGInlineTextBox*>(*last);
+        SVGInlineTextBox* firstTextBox = toSVGInlineTextBox(*first);
+        SVGInlineTextBox* lastTextBox = toSVGInlineTextBox(*last);
 
         // Reordering is only necessary for BiDi text that is _absolutely_ positioned.
         if (firstTextBox->len() == 1 && firstTextBox->len() == lastTextBox->len()) {

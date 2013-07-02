@@ -1,3 +1,33 @@
+2013-07-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce toSVGInlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=118289
+
+        Reviewed by Andreas Kling.
+
+        As a step to change static_cast with toXXX, static_cast<SVGInlineTextBox*> can
+        be changed with toSVGInlineTextBox().
+
+        Blink merge from https://src.chromium.org/viewvc/blink?view=rev&revision=153345
+
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForPoint):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paintSelectionBackground):
+        (WebCore::SVGInlineFlowBox::paint):
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+        * rendering/svg/SVGInlineTextBox.h:
+        (WebCore::toSVGInlineTextBox):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGInlineTextBoxes):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes):
+        (WebCore::SVGRootInlineBox::layoutChildBoxes):
+        (WebCore::reverseInlineBoxRangeAndValueListsIfNeeded):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::collectTextBoxesInFlowBox):
+
 2013-07-02  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Simplify SVGTextContentElement::elementFromRenderer()

@@ -101,7 +101,7 @@ void SVGTextQuery::collectTextBoxesInFlowBox(InlineFlowBox* flowBox)
         }
 
         if (child->isSVGInlineTextBox())
-            m_textBoxes.append(static_cast<SVGInlineTextBox*>(child));
+            m_textBoxes.append(toSVGInlineTextBox(child));
     }
 }
 
