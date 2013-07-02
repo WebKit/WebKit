@@ -59,6 +59,9 @@ private:
     bool runThread() const { return m_runThread; }
     void setRunThread(bool runThread) { m_runThread = runThread; }
 
+    bool addToCurl(CURL* curlHandle);
+    bool removeFromCurl(CURL* curlHandle);
+
     static void downloadThread(void* data);
 
     ThreadIdentifier m_threadId;

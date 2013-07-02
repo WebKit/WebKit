@@ -1,3 +1,20 @@
+2013-07-02  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Crash after download.
+        https://bugs.webkit.org/show_bug.cgi?id=118303
+
+        Reviewed by Brent Fulgham.
+
+        We need to make sure that the Curl easy handle is removed from the Curl multi handle before it's freed.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (CurlDownloadManager::updateHandleList): Use addToCurl() and removeFromCurl() methods.
+        (CurlDownloadManager::addToCurl): Add method to add easy handle to multi handle.
+        (CurlDownloadManager::removeFromCurl): Add method to remove easy handle from multi handle, and then delete the handle.
+        (CurlDownloadManager::downloadThread): Use removeFromCurl() method.
+        (CurlDownload::~CurlDownload):
+        * platform/network/curl/CurlDownload.h: Avoid deleting Curl easy handle in destructor.
+
 2013-07-02  Radu Stavila  <stavila@adobe.com>
 
         [CSSRegions] No other SVG elements except the SVGRoot must have RegionInfo objects attached

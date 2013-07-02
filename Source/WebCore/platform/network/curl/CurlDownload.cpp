@@ -121,20 +121,32 @@ void CurlDownloadManager::updateHandleList()
     // Add pending curl easy handles to multi list 
     int size = m_pendingHandleList.size();
     for (int i = 0; i < size; i++) {
-        CURLMcode retval = curl_multi_add_handle(m_curlMultiHandle, m_pendingHandleList[0]);
-
-        if (retval == CURLM_OK)
+        if (addToCurl(m_pendingHandleList[0]))
             m_pendingHandleList.remove(0);
     }
 
     // Remove curl easy handles from multi list 
     size = m_removedHandleList.size();
     for (int i = 0; i < size; i++) {
-        CURLMcode retval = curl_multi_remove_handle(m_curlMultiHandle, m_removedHandleList[0]);
-
-        if (retval == CURLM_OK)
+        if (removeFromCurl(m_removedHandleList[0]))
             m_removedHandleList.remove(0);
     }
+}
+
+bool CurlDownloadManager::addToCurl(CURL* curlHandle)
+{
+    CURLMcode retval = curl_multi_add_handle(m_curlMultiHandle, curlHandle);
+    return retval == CURLM_OK;
+}
+
+bool CurlDownloadManager::removeFromCurl(CURL* curlHandle)
+{
+    CURLMcode retval = curl_multi_remove_handle(m_curlMultiHandle, curlHandle);
+    if (retval == CURLM_OK) {
+        curl_easy_cleanup(curlHandle);
+        return true;
+    }
+    return false;
 }
 
 void CurlDownloadManager::downloadThread(void* data)
@@ -188,7 +200,7 @@ void CurlDownloadManager::downloadThread(void* data)
             else
                 callOnMainThread<CurlDownload*, CurlDownload*>(CurlDownload::downloadFailedCallback, download);
 
-            curl_multi_remove_handle(downloadManager->getMultiHandle(), msg->easy_handle);
+            downloadManager->removeFromCurl(msg->easy_handle);
         }
 
         downloadManager->stopThreadIfIdle();
@@ -211,9 +223,6 @@ CurlDownload::CurlDownload()
 CurlDownload::~CurlDownload()
 {
     MutexLocker locker(m_mutex);
-
-    if (m_curlHandle)
-        curl_easy_cleanup(m_curlHandle);
 
     if (m_url)
         fastFree(m_url);
