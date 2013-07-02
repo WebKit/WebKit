@@ -40,6 +40,7 @@
 #include "ShareableResource.h"
 #include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebErrors.h"
 #include "WebResourceLoaderMessages.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceBuffer.h>
@@ -239,17 +240,18 @@ void NetworkResourceLoader::didSendData(ResourceHandle* handle, unsigned long lo
     send(Messages::WebResourceLoader::DidSendData(bytesSent, totalBytesToBeSent));
 }
 
-// FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
-// Once we know what they are they can be removed.
-
-void NetworkResourceLoader::wasBlocked(ResourceHandle*)
+void NetworkResourceLoader::wasBlocked(ResourceHandle* handle)
 {
-    notImplemented();
+    ASSERT_UNUSED(handle, handle == m_handle);
+
+    didFail(handle, WebKit::blockedError(request()));
 }
 
-void NetworkResourceLoader::cannotShowURL(ResourceHandle*)
+void NetworkResourceLoader::cannotShowURL(ResourceHandle* handle)
 {
-    notImplemented();
+    ASSERT_UNUSED(handle, handle == m_handle);
+
+    didFail(handle, WebKit::cannotShowURLError(request()));
 }
 
 bool NetworkResourceLoader::shouldUseCredentialStorage(ResourceHandle* handle)
