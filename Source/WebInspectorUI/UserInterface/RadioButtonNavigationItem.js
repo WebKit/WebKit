@@ -24,7 +24,7 @@
  */
 
 WebInspector.RadioButtonNavigationItem = function(identifier, toolTip, image, imageWidth, imageHeight) {
-    WebInspector.ButtonNavigationItem.call(this, identifier, toolTip, image, imageWidth, imageHeight);
+    WebInspector.ButtonNavigationItem.call(this, identifier, toolTip, image, imageWidth, imageHeight, null, "tab");
 };
 
 WebInspector.RadioButtonNavigationItem.StyleClassName = "radio";
@@ -43,10 +43,13 @@ WebInspector.RadioButtonNavigationItem.prototype = {
 
     set selected(flag)
     {
-        if (flag)
+        if (flag) {
             this.element.classList.add(WebInspector.RadioButtonNavigationItem.SelectedStyleClassName);
-        else
+            this.element.setAttribute("aria-selected", "true");
+        } else {
             this.element.classList.remove(WebInspector.RadioButtonNavigationItem.SelectedStyleClassName);
+            this.element.setAttribute("aria-selected", "false");
+        }
     },
 
     get active()
@@ -85,15 +88,19 @@ WebInspector.RadioButtonNavigationItem.prototype = {
 
         var isSelected = this.selected;
 
-        if (!isSelected)
+        if (!isSelected) {
             this.element.classList.add(WebInspector.RadioButtonNavigationItem.SelectedStyleClassName);
+            this.element.setAttribute("aria-selected", "true");
+        }
 
         var selectedWidth = this.element.offsetWidth;
         if (selectedWidth)
             this.element.style.minWidth = selectedWidth + "px";
 
-        if (!isSelected)
+        if (!isSelected) {
             this.element.classList.remove(WebInspector.RadioButtonNavigationItem.SelectedStyleClassName);
+            this.element.setAttribute("aria-selected", "false");
+        }
     },
 
     // Private

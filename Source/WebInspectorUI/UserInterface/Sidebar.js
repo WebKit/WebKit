@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Sidebar = function(element, side, sidebarPanels) {
+WebInspector.Sidebar = function(element, side, sidebarPanels, role, label) {
     WebInspector.Object.call(this);
 
     console.assert(!side || side === WebInspector.Sidebar.Sides.Left || side === WebInspector.Sidebar.Sides.Right);
@@ -33,6 +33,10 @@ WebInspector.Sidebar = function(element, side, sidebarPanels) {
     this._element.classList.add(WebInspector.Sidebar.StyleClassName);
     this._element.classList.add(WebInspector.Sidebar.CollapsedStyleClassName);
     this._element.classList.add(this._side);
+
+    this._element.setAttribute("role", role || "group");
+    if (label)
+        this._element.setAttribute("aria-label", label);
 
     this._resizeElement = document.createElement("div");
     this._resizeElement.classList.add(WebInspector.Sidebar.ResizeElementStyleClassName);

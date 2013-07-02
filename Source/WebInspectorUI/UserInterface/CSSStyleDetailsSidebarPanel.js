@@ -29,7 +29,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = function()
 
     this._selectedPanel = null;
 
-    this._navigationBar = new WebInspector.NavigationBar;
+    this._navigationBar = new WebInspector.NavigationBar(null, null, "tablist");
     this._navigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
     this.element.appendChild(this._navigationBar.element);
 
