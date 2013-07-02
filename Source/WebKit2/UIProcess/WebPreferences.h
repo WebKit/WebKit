@@ -75,6 +75,8 @@ public:
     // Exposed for WebKitTestRunner use only.
     void forceUpdate() { update(); }
 
+    static bool anyPageGroupsAreUsingPrivateBrowsing();
+
 private:
     WebPreferences();
     explicit WebPreferences(const String&);
@@ -94,6 +96,8 @@ private:
     void platformUpdateUInt32ValueForKey(const String& key, uint32_t value);
     void platformUpdateDoubleValueForKey(const String& key, double value);
     void platformUpdateFloatValueForKey(const String& key, float value);
+
+    void updatePrivateBrowsingValue(bool value);
 
     HashSet<WebPageGroup*> m_pageGroups;
     WebPreferencesStore m_store;

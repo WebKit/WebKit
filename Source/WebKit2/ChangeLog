@@ -1,3 +1,43 @@
+2013-07-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up private browsing session tracking
+        https://bugs.webkit.org/show_bug.cgi?id=118266
+        <rdar://problem/13078036>
+
+        Reviewed by Brady Eidson.
+
+        Instead of counting API calls, we now watch actual WebPreferences objects.
+
+        * UIProcess/API/C/WKPreferences.cpp: (WKPreferencesSetPrivateBrowsingEnabled):
+        Removed code that used to notify WebContext. It's now done by WebPreferences.
+
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureNetworkProcess): Instead of counting the number of times
+        API was called, rely on WebPreferences tracking.
+        (WebKit::WebContext::willStartUsingPrivateBrowsing): Ditto. This function is
+        now only called when we detect a change in private browsing state.
+        (WebKit::WebContext::willStopUsingPrivateBrowsing): Ditto.
+        (WebKit::WebContext::createNewWebProcess): Tell the new process to create a private
+        browsing session if needed.
+
+        * UIProcess/WebPreferences.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::addPageGroup): Count how many page groups use private
+        browsing, and notify WebContext when a session is needed. Note that we don't notify
+        WebContext about WebPreferences without any page groups, because it's likely
+        that preferences will be updated by the client before groups are associated.
+        (WebKit::WebPreferences::removePageGroup): Ditto.
+        (WebKit::WebPreferences::updateBoolValueForKey): Perform special handling for
+        private browsing mode changes.
+        (WebKit::WebPreferences::updatePrivateBrowsingValue): Notify WebContext when
+        it's time to create or destroy a private browsing session.
+        (WebKit::WebPreferences::anyPageGroupsAreUsingPrivateBrowsing): A getter for
+        WebContext to know when any page groups are in private browsing mode.
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::updatePreferences):
+        Don't create a private browsing session implicitly, UI process takes care of it.
+
 2013-07-01  Timothy Hatcher  <timothy@apple.com>
 
         Link to WebInspectorUI.framework at build time instead of soft linking.
