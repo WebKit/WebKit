@@ -44,6 +44,11 @@ static void* getProcAddress(const char* procName)
         return reinterpret_cast<void*>(context->getProcAddress(procName));
     return 0;
 }
+#elif PLATFORM(WIN)
+static void* getProcAddress(const char* procName)
+{
+    return GetProcAddress(GetModuleHandleA("libGLESv2"), procName);
+}
 #else
 typedef void* (*glGetProcAddressType) (const char* procName);
 static void* getProcAddress(const char* procName)
