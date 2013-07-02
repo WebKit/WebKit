@@ -41,6 +41,8 @@ private:
     virtual void setStyle(PassRefPtr<RenderStyle>);
     virtual void updateFromStyle() OVERRIDE;
 
+    virtual bool isRenderSVGBlock() const OVERRIDE { return true; };
+
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
 
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);

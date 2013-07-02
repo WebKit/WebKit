@@ -1,3 +1,22 @@
+2013-07-02  Radu Stavila  <stavila@adobe.com>
+
+        [CSSRegions] No other SVG elements except the SVGRoot must have RegionInfo objects attached
+        https://bugs.webkit.org/show_bug.cgi?id=118295
+
+        Reviewed by Antti Koivisto.
+
+        Only the SVGRoot element can be collected in a named flow. As such, no SVG element below the root should
+        be attached to a RenderBoxRegionInfo object.
+
+        A larger patch's test (https://bugs.webkit.org/show_bug.cgi?id=118300) is failing because of this.
+        This change will be covered by that test.
+
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::canHaveBoxInfoInRegion):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderSVGBlock):
+        * rendering/svg/RenderSVGBlock.h:
+
 2013-07-02  Kangil Han  <kangil.han@samsung.com>
 
         is/toHTMLStyleElement should use Element* for its argument
