@@ -1,3 +1,10 @@
+2013-07-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction for 'DebugSuffix' target.
+
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.vcxproj: Must pass the
+        DEBUGSUFFIX definition to the nmake instance to be available during script processing.
+
 2013-07-01  Sergio Correia  <sergio.correia@openbossa.org>
 
         [JSC]: Fix maybe-uninitialized gcc 4.8 warning in DFGSpeculativeJIT.cpp

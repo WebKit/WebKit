@@ -129,6 +129,13 @@
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'" />
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" />
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">%SystemDrive%\cygwin\bin\which.exe bash
+if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+nmake /nologo -f $(ProjectName).make DEBUGSUFFIX=_debug</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">%SystemDrive%\cygwin\bin\which.exe bash
+if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+nmake /nologo -f $(ProjectName).make clean
+nmake /nologo -f $(ProjectName).make DEBUGSUFFIX=_debug</NMakeReBuildCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
