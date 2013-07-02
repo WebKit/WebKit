@@ -1,5 +1,12 @@
 2013-07-02  David Farler  <dfarler@apple.com>
 
+        Unreviewed rebaseline of media/video-controls-captions-trackmenu-localized after r151697.
+
+        * platform/mac-lion/media/video-controls-captions-trackmenu-localized-expected.txt: Removed.
+        "Unknown SDH" -> "Unknown".
+
+2013-07-02  David Farler  <dfarler@apple.com>
+
         Unreviewed rebaseline of Mac Lion fast/js/global-constructors-attributes after r151914.
 
         * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
