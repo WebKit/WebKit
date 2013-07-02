@@ -1,3 +1,13 @@
+2013-07-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix cast-align warnings in WebCore/platform/graphics/texmap/TextureMapperGL.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=118249
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::updateContents):
+
 2013-07-02  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt][WK1] Support WebGL with EGL on Linux

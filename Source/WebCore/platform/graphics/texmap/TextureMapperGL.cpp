@@ -891,7 +891,7 @@ void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetR
     if (driverSupportsExternalTextureBGRA(m_context3D.get()))
         glFormat = GraphicsContext3D::BGRA;
     else
-        swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(data), IntRect(adjustedSourceOffset, targetRect.size()), bytesPerLine / bytesPerPixel);
+        swizzleBGRAToRGBA(reinterpret_cast_ptr<uint32_t*>(data), IntRect(adjustedSourceOffset, targetRect.size()), bytesPerLine / bytesPerPixel);
 
     updateContentsNoSwizzle(data, targetRect, adjustedSourceOffset, bytesPerLine, bytesPerPixel, glFormat);
 }
