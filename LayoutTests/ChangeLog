@@ -1,3 +1,10 @@
+2013-07-02  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed gardening. Added new baselines for GTK after revision r151841 and r151868.
+
+        * accessibility/listitem-title-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/listitem-title-expected.txt.
+        * platform/gtk/accessibility/aria-tab-role-on-buttons-expected.txt: Added.
+
 2013-07-02  Mihai Tica  <mitica@adobe.com>
 
         Unreviewed gardening. Rebaseline background blend mode default test result.
