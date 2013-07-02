@@ -1,3 +1,20 @@
+2013-06-26  Robert Hogan  <robert@webkit.org>
+
+        empty inlines should not affect line-wrapping
+        https://bugs.webkit.org/show_bug.cgi?id=25638
+
+        Reviewed by David Hyatt.
+
+        Don't break on empty inlines if we're in the middle of a word. I took this opportunity to
+        refactor the series of checks we perform to establish if we can break at the current position.
+
+        Test: fast/text/whitespace/inline-whitespace-wrapping-11.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::textBeginsWithBreakablePosition):
+        (WebCore::canBreakAtThisPosition):
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak):
+
 2013-07-02  Jae Hyun Park  <jae.park@company100.net>
 
         Implement CoordinatedSurface for Threaded Coordinated Graphics

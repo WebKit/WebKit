@@ -2869,6 +2869,54 @@ static inline void commitLineBreakAtCurrentWidth(LineWidth& width, InlineIterato
     lBreak.moveTo(object, offset, nextBreak);
 }
 
+static bool textBeginsWithBreakablePosition(RenderObject* next)
+{
+    ASSERT(next->isText());
+    RenderText* nextText = toRenderText(next);
+    if (nextText->isWordBreak())
+        return true;
+    if (!nextText->textLength())
+        return false;
+    UChar c = nextText->characterAt(0);
+    return c == ' ' || c == '\t' || (c == '\n' && !nextText->preservesNewline());
+}
+
+static bool canBreakAtThisPosition(bool autoWrap, LineWidth& width, InlineIterator& lBreak, RenderObject* next, const InlineIterator& current, EWhiteSpace currWS, bool currentCharacterIsSpace, bool autoWrapWasEverTrueOnLine)
+{
+    // If we are no-wrap and have found a line-breaking opportunity already then we should take it.
+    if (width.committedWidth() && !width.fitsOnLine(currentCharacterIsSpace) && currWS == NOWRAP)
+        return true;
+
+    // Avoid breaking before empty inlines.
+    if (next && isEmptyInline(next))
+        return false;
+
+    // Return early if we autowrap and the current character is a space as we will always want to break at such a position.
+    if (autoWrap && currentCharacterIsSpace)
+        return true;
+
+    bool nextIsText = (next && (current.m_obj->isText() || isEmptyInline(current.m_obj)) && next->isText() && !next->isBR() && (autoWrap || next->style()->autoWrap()));
+    if (!nextIsText)
+        return autoWrap;
+
+    bool canBreakHere = !currentCharacterIsSpace && textBeginsWithBreakablePosition(next);
+
+    // See if attempting to fit below floats creates more available width on the line.
+    if (!width.fitsOnLine() && !width.committedWidth())
+        width.fitBelowFloats();
+
+    bool canPlaceOnLine = width.fitsOnLine() || !autoWrapWasEverTrueOnLine;
+
+    // If we are an empty inline in the middle of a word and don't fit on the line then clear any line break we have and find
+    // one in the following text instead.
+    if (!canPlaceOnLine && !canBreakHere && isEmptyInline(current.m_obj))
+        lBreak.clear();
+    else if (canPlaceOnLine && canBreakHere)
+        commitLineBreakAtCurrentWidth(width, lBreak, next);
+
+    return canBreakHere;
+}
+
 InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
 {
     reset();
@@ -3408,30 +3456,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
         } else
             ASSERT_NOT_REACHED();
 
-        bool checkForBreak = autoWrap;
-        if (width.committedWidth() && !width.fitsOnLine(currentCharacterIsSpace) && lBreak.m_obj && currWS == NOWRAP)
-            checkForBreak = true;
-        else if (next && current.m_obj->isText() && next->isText() && !next->isBR() && (autoWrap || next->style()->autoWrap())) {
-            if (autoWrap && currentCharacterIsSpace)
-                checkForBreak = true;
-            else {
-                RenderText* nextText = toRenderText(next);
-                if (nextText->textLength()) {
-                    UChar c = nextText->characterAt(0);
-                    checkForBreak = !currentCharacterIsSpace && (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()));
-                } else if (nextText->isWordBreak())
-                    checkForBreak = true;
-
-                if (!width.fitsOnLine() && !width.committedWidth())
-                    width.fitBelowFloats();
-
-                bool canPlaceOnLine = width.fitsOnLine() || !autoWrapWasEverTrueOnLine;
-                if (canPlaceOnLine && checkForBreak)
-                    commitLineBreakAtCurrentWidth(width, lBreak, next);
-            }
-        }
-
-        if (checkForBreak && !width.fitsOnLine(ignoringSpaces)) {
+        bool canBreakHere = canBreakAtThisPosition(autoWrap, width, lBreak, next, current, currWS, currentCharacterIsSpace, autoWrapWasEverTrueOnLine);
+        if (canBreakHere && !width.fitsOnLine(ignoringSpaces)) {
             // if we have floats, try to get below them.
             if (currentCharacterIsSpace && !ignoringSpaces && currentStyle->collapseWhiteSpace())
                 trailingObjects.clear();

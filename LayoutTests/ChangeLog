@@ -1,3 +1,13 @@
+2013-06-26  Robert Hogan  <robert@webkit.org>
+
+        empty inlines should not affect line-wrapping
+        https://bugs.webkit.org/show_bug.cgi?id=25638
+
+        Reviewed by David Hyatt.
+
+        * fast/text/whitespace/inline-whitespace-wrapping-11-expected.html: Added.
+        * fast/text/whitespace/inline-whitespace-wrapping-11.html: Added.
+
 2013-07-02  Tim Horton  <timothy_horton@apple.com>
 
         constrainScrollPositionForOverhang needs to handle scrollOrigin correctly
