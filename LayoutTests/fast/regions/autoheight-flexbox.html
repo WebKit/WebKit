@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        .article {
+            -webkit-flow-into: article;
+            -webkit-font-smoothing: none;
+            font-family: Ahem;
+            font-size: 20px;
+            color: green;
+        }
+
+        .container {
+            position: absolute;
+            width: 100px;
+            display: -webkit-flex;
+        }
+
+        .cell {
+            -webkit-flow-from: article;
+            height: auto;
+            background: lime;
+        }
+        .red {
+            position: absolute;
+            display: block;
+            background-color: red;
+            width: 100px;
+            height: 40px;
+        }
+    </style>
+</head>
+    <body>
+        <p> Test whether an auto-height region is laid out properly inside a flexbox container with height auto.<br>
+            Test passes if you see a green rectangle.
+        </p>
+        <div class="article">
+            XXXXX<br>XXXXX
+        </div>
+        <div class="red">
+        </div>
+
+        <div class="container">
+            <div class="cell"></div>
+        </div>
+    </body>
+</html>

@@ -1,3 +1,38 @@
+2013-07-02  Catalin Badea  <badea@adobe.com>
+
+        [CSS-Regions] OverrideLogicalHeight used by both regions and flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=118057
+
+        Reviewed by David Hyatt.
+
+        Remove the use of overrideLogicalContentHeight() from regions and
+        use a local variable instead. The change was needed to avoid
+        overlapping with flexbox containers.
+
+        Test: fast/regions/autoheight-flexbox.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::validateRegions):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::applyBreakAfterContent):
+        (WebCore::RenderFlowThread::initializeRegionsComputedAutoHeight):
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect):
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::pageLogicalHeight):
+        (WebCore::RenderRegion::logicalHeightOfAllFlowThreadContent):
+        (WebCore::RenderRegion::updateRegionHasAutoLogicalHeightFlag):
+        (WebCore::RenderRegion::layoutBlock):
+        (WebCore::RenderRegion::updateLogicalHeight):
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::computedAutoHeight):
+        (WebCore::RenderRegion::setComputedAutoHeight):
+        (WebCore::RenderRegion::clearComputedAutoHeight):
+        (WebCore::RenderRegion::hasComputedAutoHeight):
+        * rendering/RenderView.cpp:
+
 2013-07-01  Alex Christensen  <achristensen@apple.com>
 
         Windows should be included in the list of platforms that can use OpenGL ES 2.

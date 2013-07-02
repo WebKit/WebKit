@@ -228,7 +228,7 @@ bool RenderView::initializeLayoutState(LayoutState& state)
 // inner flows have the necessary information to correctly fragment the content.
 // 2. The flows are laid out from the inner flow to the outer flow. After an inner flow is laid out it goes into the constrained layout phase
 // and marks the auto-height regions they need layout. This means the outer flows will relayout if they depend on regions with auto-height regions
-// belonging to inner flows. This step will correctly compute the overrideLogicalHeights for the auto-height regions. It's possible for non-auto-height
+// belonging to inner flows. This step will correctly set the computedAutoHeight for the auto-height regions. It's possible for non-auto-height
 // regions to relayout if they depend on auto-height regions. This will invalidate the inner flow threads and mark them as needing layout.
 // 3. The last step is to do one last layout if there are pathological dependencies between non-auto-height regions and auto-height regions
 // as detected in the previous step.

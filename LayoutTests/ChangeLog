@@ -1,3 +1,15 @@
+2013-07-02  Catalin Badea  <badea@adobe.com>
+
+        [CSS-Regions] OverrideLogicalHeight used by both regions and flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=118057
+
+        Reviewed by David Hyatt.
+
+        Add test for auto-height regions and flexbox containers.
+
+        * fast/regions/autoheight-flexbox-expected.html: Added.
+        * fast/regions/autoheight-flexbox.html: Added.
+
 2013-07-01  Frédéric Wang  <fred.wang@free.fr>
 
         Add Support for mspace element
