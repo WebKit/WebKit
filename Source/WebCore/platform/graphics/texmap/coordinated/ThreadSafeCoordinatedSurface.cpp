@@ -24,29 +24,51 @@
  */
 
 #include "config.h"
-#include "CoordinatedSurface.h"
+#include "ThreadSafeCoordinatedSurface.h"
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "TextureMapper.h"
+
 namespace WebCore {
 
-CoordinatedSurface::Factory* CoordinatedSurface::s_factory = 0;
-
-void CoordinatedSurface::setFactory(CoordinatedSurface::Factory factory)
+PassRefPtr<ThreadSafeCoordinatedSurface> ThreadSafeCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags)
 {
-    s_factory = factory;
+    return adoptRef(new ThreadSafeCoordinatedSurface(size, flags, ImageBuffer::create(size)));
 }
 
-PassRefPtr<CoordinatedSurface> CoordinatedSurface::create(const IntSize& size, Flags flags)
+ThreadSafeCoordinatedSurface::ThreadSafeCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags, PassOwnPtr<ImageBuffer> buffer)
+    : CoordinatedSurface(size, flags)
+    , m_imageBuffer(buffer)
 {
-    ASSERT(s_factory);
-    return s_factory(size, flags);
 }
 
-CoordinatedSurface::CoordinatedSurface(const IntSize& size, Flags flags)
-    : m_size(size)
-    , m_flags(flags)
+ThreadSafeCoordinatedSurface::~ThreadSafeCoordinatedSurface()
 {
+}
+
+void ThreadSafeCoordinatedSurface::paintToSurface(const IntRect& rect, CoordinatedSurface::Client* client)
+{
+    ASSERT(client);
+    ASSERT(m_imageBuffer);
+
+    GraphicsContext* context = m_imageBuffer->context();
+    context->save();
+    context->clip(rect);
+    context->translate(rect.x(), rect.y());
+
+    client->paintToSurfaceContext(context);
+
+    context->restore();
+}
+
+void ThreadSafeCoordinatedSurface::copyToTexture(PassRefPtr<BitmapTexture> passTexture, const IntRect& target, const IntPoint& sourceOffset)
+{
+    RefPtr<BitmapTexture> texture(passTexture);
+
+    ASSERT(m_imageBuffer);
+    RefPtr<Image> image = m_imageBuffer->copyImage(DontCopyBackingStore);
+    texture->updateContents(image.get(), target, sourceOffset, BitmapTexture::UpdateCanModifyOriginalImageData);
 }
 
 } // namespace WebCore

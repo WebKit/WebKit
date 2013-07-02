@@ -71,8 +71,6 @@ public:
 
     virtual ~WebCoordinatedSurface();
 
-    virtual WebCore::IntSize size() const OVERRIDE { return m_size; }
-
     virtual void paintToSurface(const WebCore::IntRect&, WebCore::CoordinatedSurface::Client*) OVERRIDE;
 
 #if USE(TEXTURE_MAPPER)
@@ -81,8 +79,6 @@ public:
 
 private:
     WebCoordinatedSurface(const WebCore::IntSize&, Flags, PassRefPtr<ShareableBitmap>);
-
-    virtual Flags flags() const OVERRIDE { return m_flags; }
 
     // Create a WebCoordinatedSurface referencing an existing ShareableBitmap.
     static PassRefPtr<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags, PassRefPtr<ShareableBitmap>);
@@ -98,8 +94,6 @@ private:
     bool isBackedByGraphicsSurface() const { return !!m_graphicsSurface; }
 #endif
 
-    WebCore::IntSize m_size;
-    Flags m_flags;
     RefPtr<ShareableBitmap> m_bitmap;
 
 #if USE(GRAPHICS_SURFACE)

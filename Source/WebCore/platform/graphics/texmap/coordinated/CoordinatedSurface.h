@@ -23,7 +23,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "IntRect.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -52,7 +51,7 @@ public:
     virtual ~CoordinatedSurface() { }
 
     bool supportsAlpha() const { return flags() & SupportsAlpha; }
-    virtual IntSize size() const = 0;
+    IntSize size() const { return m_size; }
 
     virtual void paintToSurface(const IntRect&, Client*) = 0;
 
@@ -61,7 +60,11 @@ public:
 #endif
 
 protected:
-    virtual Flags flags() const = 0;
+    CoordinatedSurface(const IntSize&, Flags);
+    Flags flags() const { return m_flags; }
+
+    IntSize m_size;
+    Flags m_flags;
 
 private:
     static CoordinatedSurface::Factory* s_factory;

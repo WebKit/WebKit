@@ -123,16 +123,14 @@ PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& s
 }
 
 WebCoordinatedSurface::WebCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags, PassRefPtr<ShareableBitmap> bitmap)
-    : m_size(size)
-    , m_flags(flags)
+    : CoordinatedSurface(size, flags)
     , m_bitmap(bitmap)
 {
 }
 
 #if USE(GRAPHICS_SURFACE)
 WebCoordinatedSurface::WebCoordinatedSurface(const WebCore::IntSize& size, CoordinatedSurface::Flags flags, PassRefPtr<WebCore::GraphicsSurface> surface)
-    : m_size(size)
-    , m_flags(flags)
+    : CoordinatedSurface(size, flags)
     , m_graphicsSurface(surface)
 {
 }

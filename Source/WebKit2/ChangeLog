@@ -1,3 +1,20 @@
+2013-07-02  Jae Hyun Park  <jae.park@company100.net>
+
+        Implement CoordinatedSurface for Threaded Coordinated Graphics
+        https://bugs.webkit.org/show_bug.cgi?id=109661
+
+        Reviewed by Noam Rosenthal.
+
+        This is a preparation patch for Threaded Coordianted Graphics.
+
+        This patch implements ThreadSafeCoordinatedSurface using ImageBuffer as a
+        backend. Also, this patch moves common implementation to CoordinatedSurface to
+        prevent duplication of code.
+
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::WebCoordinatedSurface):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+
 2013-07-01  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up private browsing session tracking

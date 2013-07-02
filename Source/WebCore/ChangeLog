@@ -1,3 +1,29 @@
+2013-07-02  Jae Hyun Park  <jae.park@company100.net>
+
+        Implement CoordinatedSurface for Threaded Coordinated Graphics
+        https://bugs.webkit.org/show_bug.cgi?id=109661
+
+        Reviewed by Noam Rosenthal.
+
+        This is a preparation patch for Threaded Coordianted Graphics.
+
+        This patch implements ThreadSafeCoordinatedSurface using ImageBuffer as a
+        backend. Also, this patch moves common implementation to CoordinatedSurface to
+        prevent duplication of code.
+
+        * platform/graphics/texmap/coordinated/CoordinatedSurface.cpp:
+        (WebCore::CoordinatedSurface::CoordinatedSurface):
+        * platform/graphics/texmap/coordinated/CoordinatedSurface.h:
+        (WebCore::CoordinatedSurface::size):
+        (WebCore::CoordinatedSurface::flags):
+        * platform/graphics/texmap/coordinated/ThreadSafeCoordinatedSurface.cpp: Added.
+        (WebCore::ThreadSafeCoordinatedSurface::create):
+        (WebCore::ThreadSafeCoordinatedSurface::ThreadSafeCoordinatedSurface):
+        (WebCore::ThreadSafeCoordinatedSurface::~ThreadSafeCoordinatedSurface):
+        (WebCore::ThreadSafeCoordinatedSurface::paintToSurface):
+        (WebCore::ThreadSafeCoordinatedSurface::copyToTexture):
+        * platform/graphics/texmap/coordinated/ThreadSafeCoordinatedSurface.h: Added.
+
 2013-07-02  Geoffrey Garen  <ggaren@apple.com>
 
         plainText() is O(N^2)

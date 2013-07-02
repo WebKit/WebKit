@@ -23,32 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CoordinatedSurface.h"
+#ifndef ThreadSafeCoordinatedSurface_h
+#define ThreadSafeCoordinatedSurface_h
 
 #if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedSurface.h"
+#include "ImageBuffer.h"
 
 namespace WebCore {
 
-CoordinatedSurface::Factory* CoordinatedSurface::s_factory = 0;
+class ThreadSafeCoordinatedSurface : public CoordinatedSurface {
+public:
+    virtual ~ThreadSafeCoordinatedSurface();
 
-void CoordinatedSurface::setFactory(CoordinatedSurface::Factory factory)
-{
-    s_factory = factory;
-}
+    static PassRefPtr<ThreadSafeCoordinatedSurface> create(const IntSize&, Flags);
 
-PassRefPtr<CoordinatedSurface> CoordinatedSurface::create(const IntSize& size, Flags flags)
-{
-    ASSERT(s_factory);
-    return s_factory(size, flags);
-}
+    virtual void paintToSurface(const IntRect&, CoordinatedSurface::Client*) OVERRIDE;
+    virtual void copyToTexture(PassRefPtr<BitmapTexture>, const IntRect& target, const IntPoint& sourceOffset) OVERRIDE;
 
-CoordinatedSurface::CoordinatedSurface(const IntSize& size, Flags flags)
-    : m_size(size)
-    , m_flags(flags)
-{
-}
+private:
+    ThreadSafeCoordinatedSurface(const IntSize&, Flags, PassOwnPtr<ImageBuffer>);
+
+    OwnPtr<ImageBuffer> m_imageBuffer;
+};
 
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)
+
+#endif // ThreadSafeCoordinatedSurface_h
