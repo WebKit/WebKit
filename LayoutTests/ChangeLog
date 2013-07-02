@@ -1,3 +1,10 @@
+2013-07-02  Andreas Kling  <akling@apple.com>
+
+        Skip 3 MathML tests that are failing after r152235.
+        <http://webkit.org/b/118298>
+
+        * TestExpectations:
+
 2013-07-02  Catalin Badea  <badea@adobe.com>
 
         [CSS-Regions] OverrideLogicalHeight used by both regions and flexbox

@@ -44,3 +44,7 @@ webkit.org/b/118081 fast/exclusions/shape-outside-floats/shape-outside-floats-ro
 
 webkit.org/b/118087 fast/exclusions/shape-outside-floats/shape-outside-floats-stacked.html [ Skip ]
 webkit.org/b/118087 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple.html [ Skip ]
+
+webkit.org/b/118298 mathml/presentation/mspace-units.html [ Skip ]
+webkit.org/b/118298 mathml/presentation/positive-namedspace.html [ Skip ]
+webkit.org/b/118298 mathml/presentation/mspace.html [ Skip ]
