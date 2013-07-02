@@ -1,3 +1,15 @@
+2013-07-02  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Improve implementation of elements in region being flowed to another flow thread
+        https://bugs.webkit.org/show_bug.cgi?id=118300
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/flow-body-in-html.html:
+        * fast/regions/region-content-flown-into-region-expected.html:
+        * fast/regions/region-content-flown-into-region.html:
+        * fast/regions/universal-selector-children-to-the-same-region.html:
+
 2013-07-02  David Farler  <dfarler@apple.com>
 
         Skip cache partitioning tests on Lion.

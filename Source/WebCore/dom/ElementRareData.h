@@ -60,6 +60,9 @@ public:
     bool isInCanvasSubtree() const { return m_isInCanvasSubtree; }
     void setIsInCanvasSubtree(bool value) { m_isInCanvasSubtree = value; }
 
+    bool isInsideRegion() const { return m_isInsideRegion; }
+    void setIsInsideRegion(bool value) { m_isInsideRegion = value; }
+
     RegionOversetState regionOversetState() const { return m_regionOversetState; }
     void setRegionOversetState(RegionOversetState state) { m_regionOversetState = state; }
 
@@ -159,6 +162,7 @@ private:
     unsigned m_childrenAffectedByForwardPositionalRules : 1;
     unsigned m_childrenAffectedByBackwardPositionalRules : 1;
 
+    unsigned m_isInsideRegion : 1;
     RegionOversetState m_regionOversetState;
 
     LayoutSize m_minimumSizeForResizing;
@@ -207,6 +211,7 @@ inline ElementRareData::ElementRareData(RenderObject* renderer)
     , m_childrenAffectedByDirectAdjacentRules(false)
     , m_childrenAffectedByForwardPositionalRules(false)
     , m_childrenAffectedByBackwardPositionalRules(false)
+    , m_isInsideRegion(false)
     , m_regionOversetState(RegionUndefined)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {

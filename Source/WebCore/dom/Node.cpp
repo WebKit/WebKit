@@ -60,6 +60,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
+#include "FlowThreadController.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
@@ -1121,6 +1122,11 @@ bool Node::canStartSelection() const
             return false;
     }
     return parentOrShadowHostNode() ? parentOrShadowHostNode()->canStartSelection() : true;
+}
+
+bool Node::isRegisteredWithNamedFlow() const
+{
+    return document()->renderView()->flowThreadController()->isContentNodeRegisteredWithAnyNamedFlow(this);
 }
 
 Element* Node::shadowHost() const

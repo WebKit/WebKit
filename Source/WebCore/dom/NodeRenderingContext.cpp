@@ -155,7 +155,7 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     return 0;
 }
 
-RenderObject* NodeRenderingContext::parentRenderer()
+RenderObject* NodeRenderingContext::parentRenderer() const
 {
     if (RenderObject* renderer = m_node->renderer())
         return renderer->parent();
@@ -177,15 +177,10 @@ RenderObject* NodeRenderingContext::parentRenderer()
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer;
 
-    if (m_node->isElementNode() && toElement(m_node)->moveToFlowThreadIsNeeded(m_style)) {
-        moveToFlowThread();
-        return m_parentFlowRenderer;
-    }
-
     return m_renderingParent ? m_renderingParent->renderer() : 0;
 }
 
-bool NodeRenderingContext::shouldCreateRenderer()
+bool NodeRenderingContext::shouldCreateRenderer() const
 {
     if (!m_node->document()->shouldCreateRenderers())
         return false;
@@ -194,40 +189,42 @@ bool NodeRenderingContext::shouldCreateRenderer()
     RenderObject* parentRenderer = this->parentRenderer();
     if (!parentRenderer)
         return false;
-    if (!parentRenderer->canHaveChildren()
-        && !(m_node->isPseudoElement() && parentRenderer->isRenderRegion())) {
-        if (parentRenderer->canDOMChildrenHaveRenderParent()) {
-            // In a region, only the children that need to be in a flow thread should have a renderer.
-            bool shouldBeInNamedFlow = m_node->isElementNode() && toElement(m_node)->moveToFlowThreadIsNeeded(m_style);
-            if (!shouldBeInNamedFlow)
-                return false;
-        } else
-            return false;
-    }
-
+    if (!parentRenderer->canHaveChildren() && !(m_node->isPseudoElement() && parentRenderer->canHaveGeneratedChildren()))
+        return false;
     if (!m_renderingParent->childShouldCreateRenderer(*this))
         return false;
     return true;
 }
 
-void NodeRenderingContext::moveToFlowThreadIfNeeded()
+// Check the specific case of elements that are children of regions but are flowed into a flow thread themselves.
+bool NodeRenderingContext::elementInsideRegionNeedsRenderer()
 {
-    ASSERT(m_node->isElementNode());
+    Element* element = toElement(m_node);
+    bool elementInsideRegionNeedsRenderer = false;
+    RenderObject* parentRenderer = this->parentRenderer();
+    if ((parentRenderer && !parentRenderer->canHaveChildren() && parentRenderer->isRenderRegion())
+        || (!parentRenderer && element->parentElement() && element->parentElement()->isInsideRegion())) {
 
-    if (!toElement(m_node)->moveToFlowThreadIsNeeded(m_style))
-        return;
+        if (!m_style)
+            m_style = element->styleForRenderer();
 
-    moveToFlowThread();
+        elementInsideRegionNeedsRenderer = element->shouldMoveToFlowThread(m_style.get());
+
+        // Children of this element will only be allowed to be flowed into other flow-threads if display is NOT none.
+        if (element->rendererIsNeeded(*this))
+            element->setIsInsideRegion(true);
+    }
+
+    return elementInsideRegionNeedsRenderer;
 }
 
-void NodeRenderingContext::moveToFlowThread()
+void NodeRenderingContext::moveToFlowThreadIfNeeded()
 {
-    ASSERT(m_node->isElementNode());
-    ASSERT(toElement(m_node)->moveToFlowThreadIsNeeded(m_style));
+    Element* element = toElement(m_node);
 
-    if (!m_style)
-        m_style = toElement(m_node)->styleForRenderer();
-    ASSERT(m_style);
+    if (!element->shouldMoveToFlowThread(m_style.get()))
+        return;
+
     ASSERT(m_node->document()->renderView());
     FlowThreadController* flowThreadController = m_node->document()->renderView()->flowThreadController();
     m_parentFlowRenderer = flowThreadController->ensureRenderFlowThreadWithName(m_style->flowThread());
@@ -250,8 +247,11 @@ void NodeRenderingContext::createRendererForElementIfNeeded()
 
     Element* element = toElement(m_node);
 
-    if (!shouldCreateRenderer())
+    element->setIsInsideRegion(false);
+
+    if (!shouldCreateRenderer() && !elementInsideRegionNeedsRenderer())
         return;
+
     if (!m_style)
         m_style = element->styleForRenderer();
     ASSERT(m_style);
