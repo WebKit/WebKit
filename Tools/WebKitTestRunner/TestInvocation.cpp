@@ -276,6 +276,11 @@ end:
 
 void TestInvocation::dumpWebProcessUnresponsiveness()
 {
+    dumpWebProcessUnresponsiveness(m_errorMessage.c_str());
+}
+
+void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
+{
     const char* errorMessageToStderr = 0;
 #if PLATFORM(MAC)
     char buffer[64];
@@ -286,7 +291,7 @@ void TestInvocation::dumpWebProcessUnresponsiveness()
     errorMessageToStderr = "#PROCESS UNRESPONSIVE - WebProcess";
 #endif
 
-    dump(m_errorMessage.c_str(), errorMessageToStderr, true);
+    dump(errorMessage, errorMessageToStderr, true);
 }
 
 void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bool seenError)

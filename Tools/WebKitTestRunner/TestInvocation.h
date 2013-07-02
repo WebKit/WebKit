@@ -49,6 +49,7 @@ public:
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
     void dumpWebProcessUnresponsiveness();
+    static void dumpWebProcessUnresponsiveness(const char* errorMessage);
     void outputText(const WTF::String&);
 private:
     void dumpResults();
