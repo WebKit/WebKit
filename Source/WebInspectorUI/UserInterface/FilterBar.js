@@ -31,7 +31,6 @@ WebInspector.FilterBar = function(element) {
 
     this._inputField = document.createElement("input");
     this._inputField.type = "search";
-    this._inputField.required = true;
     this._inputField.spellcheck = false;
     this._inputField.incremental = true;
     this._inputField.addEventListener("search", this._inputFieldChanged.bind(this), false);

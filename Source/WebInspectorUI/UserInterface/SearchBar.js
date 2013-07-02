@@ -35,7 +35,6 @@ WebInspector.SearchBar = function(identifier, placeholder, delegate) {
 
     this._searchInput = this._element.appendChild(document.createElement("input"));
     this._searchInput.type = "search";
-    this._searchInput.required = true;
     this._searchInput.spellcheck = false;
     this._searchInput.incremental = true;
     this._searchInput.setAttribute("results", 5);

@@ -45,7 +45,5 @@
     color: rgba(0, 0, 0, 0.35);
 }
 
-.search-bar > input[type="search"]:focus,
-.search-bar > input[type="search"]:valid {
-    background-color: white;
-}
+.search-bar > input[type="search"]:focus { background-color: white; }
+.search-bar > input[type="search"]:not(:placeholder-shown) { background-color: white; } /* Needs to be a separate rule. See http://webkit.org/b/118162 */
