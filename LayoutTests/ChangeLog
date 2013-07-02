@@ -1,5 +1,12 @@
 2013-07-02  Andreas Kling  <akling@apple.com>
 
+        Skip fast/dom/timer-throttling-hidden-page.html after r152202.
+        <http://webkit.org/b/118301>
+
+        * TestExpectations:
+
+2013-07-02  Andreas Kling  <akling@apple.com>
+
         Skip 3 MathML tests that are failing after r152235.
         <http://webkit.org/b/118298>
 

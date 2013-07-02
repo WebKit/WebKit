@@ -48,3 +48,5 @@ webkit.org/b/118087 fast/exclusions/shape-outside-floats/shape-outside-floats-si
 webkit.org/b/118298 mathml/presentation/mspace-units.html [ Skip ]
 webkit.org/b/118298 mathml/presentation/positive-namedspace.html [ Skip ]
 webkit.org/b/118298 mathml/presentation/mspace.html [ Skip ]
+
+webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
