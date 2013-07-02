@@ -15,3 +15,5 @@ webkit.org/b/116473 editing/selection/user-drag-element-and-user-select-none.htm
 
 # media/W3C/video/networkState/networkState_during_progress.html is flaky
 webkit.org/b/76280 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
+
+webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
