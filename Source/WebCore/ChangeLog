@@ -1,3 +1,27 @@
+2013-07-02  Kangil Han  <kangil.han@samsung.com>
+
+        is/toHTMLStyleElement should use Element* for its argument
+        https://bugs.webkit.org/show_bug.cgi?id=118286
+
+        Reviewed by Andreas Kling.
+
+        To reduce unnecessary call of isElementNode(), this patch replaces argument
+        of is/toHTMLStyleElement from Node* to Element*. Plus, use Element::hasTagName
+        in collectActiveStyleSheets function for minor code refactoring since
+        its cost is cheaper than Node::hasTagName.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::isAcceptableCSSStyleSheetParent):
+        * css/StyleScopeResolver.cpp:
+        (WebCore::StyleScopeResolver::scopeFor):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::collectActiveStyleSheets):
+        * dom/Node.cpp:
+        (WebCore::Node::numberOfScopedHTMLStyleChildren):
+        * html/HTMLStyleElement.h:
+        (WebCore::isHTMLStyleElement):
+        (WebCore::toHTMLStyleElement):
+
 2013-07-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unexpose EditingPropertiesToInclude in EditingStyle.h after r151772

@@ -2530,8 +2530,8 @@ void Node::unregisterScopedHTMLStyleChild()
 size_t Node::numberOfScopedHTMLStyleChildren() const
 {
     size_t count = 0;
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (isHTMLStyleElement(child) && toHTMLStyleElement(child)->isRegisteredAsScoped())
+    for (Element* element = ElementTraversal::firstWithin(this); element; element = ElementTraversal::next(element, this)) {
+        if (isHTMLStyleElement(element) && toHTMLStyleElement(element)->isRegisteredAsScoped())
             count++;
     }
 

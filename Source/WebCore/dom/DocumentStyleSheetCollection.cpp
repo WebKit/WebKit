@@ -299,7 +299,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             Element* e = toElement(n);
             AtomicString title = e->getAttribute(titleAttr);
             bool enabledViaScript = false;
-            if (e->hasLocalName(linkTag)) {
+            if (e->hasTagName(linkTag)) {
                 // <LINK> element
                 HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(n);
                 if (linkElement->isDisabled())
@@ -322,15 +322,17 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             // Get the current preferred styleset. This is the
             // set of sheets that will be enabled.
 #if ENABLE(SVG)
-            if (n->isSVGElement() && n->hasTagName(SVGNames::styleTag))
+            if (e->hasTagName(SVGNames::styleTag))
                 sheet = static_cast<SVGStyleElement*>(n)->sheet();
             else
 #endif
-            if (e->hasLocalName(linkTag))
-                sheet = static_cast<HTMLLinkElement*>(n)->sheet();
-            else
-                // <STYLE> element
-                sheet = toHTMLStyleElement(n)->sheet();
+            {
+                if (e->hasTagName(linkTag))
+                    sheet = static_cast<HTMLLinkElement*>(n)->sheet();
+                else
+                    // <STYLE> element
+                    sheet = toHTMLStyleElement(e)->sheet();
+            }
             // Check to see if this sheet belongs to a styleset
             // (thus making it PREFERRED or ALTERNATE rather than
             // PERSISTENT).
@@ -342,7 +344,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
                     // we are NOT an alternate sheet, then establish
                     // us as the preferred set. Otherwise, just ignore
                     // this sheet.
-                    if (e->hasLocalName(styleTag) || !rel.contains("alternate"))
+                    if (e->hasTagName(styleTag) || !rel.contains("alternate"))
                         m_preferredStylesheetSetName = m_selectedStylesheetSetName = title;
                 }
                 if (title != m_preferredStylesheetSetName)
