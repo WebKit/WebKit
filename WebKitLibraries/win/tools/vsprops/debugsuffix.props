@@ -8,18 +8,16 @@
     <TargetName>$(TargetName)$(DebugSuffix)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>
-    <ClCompile />
+    <ClCompile>
+      <UndefinePreprocessorDefinitions>DEBUG_INTERNAL;DEBUG_ALL;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+    </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)\$(ProjectName)$(DebugSuffix).lib</OutputFile>
     </Lib>
-    <ClCompile>
-      <PreprocessorDefinitions>DEBUG_INTERNAL;DEBUG_ALL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="DebugSuffix">
       <Value>$(DebugSuffix)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>
 </Project>
