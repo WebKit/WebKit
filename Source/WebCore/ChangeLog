@@ -1,3 +1,19 @@
+2013-07-02  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK1] Support WebGL with EGL on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=118251
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Let GraphicsContext3D work without a GraphicsSurface.
+
+        * Target.pri:
+        * platform/graphics/OpenGLShims.cpp:
+        (WebCore::getProcAddress):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+
 2013-07-02  Catalin Badea  <badea@adobe.com>
 
         [CSS-Regions] OverrideLogicalHeight used by both regions and flexbox

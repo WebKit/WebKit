@@ -1,3 +1,12 @@
+2013-07-02  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK1] Support WebGL with EGL on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=118251
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * qmake/mkspecs/features/features.prf:
+
 2013-07-01  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [Efl][Gtk] Look at WEBKIT_OUTPUTDIR instead of WEBKITOUTPUTDIR in jhbuildrc
