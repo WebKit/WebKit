@@ -1,5 +1,13 @@
 2013-07-02  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        Unreviewed gardening. Added new common expectations for test after r151665.
+
+        * accessibility/box-styled-lists-expected.txt: Added shared expectation.
+        * platform/efl/TestExpectations: Removed failure expectation.
+        * platform/gtk/TestExpectations: Ditto.
+
+2013-07-02  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         Unreviewed gardening. Added new baselines for GTK after revision r151841 and r151868.
 
         * accessibility/listitem-title-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/listitem-title-expected.txt.

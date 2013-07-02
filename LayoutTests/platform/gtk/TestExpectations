@@ -1402,8 +1402,6 @@ webkit.org/b/113168 fast/dom/Window/window-postmessage-clone-deep-array.html [ F
 webkit.org/b/113168 fast/js/large-expressions.html [ Failure ]
 webkit.org/b/113168 fast/js/toString-stack-overflow.html [ Failure ]
 
-webkit.org/b/117706 accessibility/box-styled-lists.html [ Failure ]
-
 webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
 webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Failure ]
