@@ -5300,8 +5300,6 @@ webcore_svg_sources += \
 	Source/WebCore/svg/SVGStyleElement.h \
 	Source/WebCore/svg/SVGStyledElement.cpp \
 	Source/WebCore/svg/SVGStyledElement.h \
-	Source/WebCore/svg/SVGStyledLocatableElement.cpp \
-	Source/WebCore/svg/SVGStyledLocatableElement.h \
 	Source/WebCore/svg/SVGSVGElement.cpp \
 	Source/WebCore/svg/SVGSVGElement.h \
 	Source/WebCore/svg/SVGSwitchElement.cpp \

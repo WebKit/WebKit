@@ -38,12 +38,12 @@ DEFINE_ANIMATED_TRANSFORM_LIST(SVGGraphicsElement, SVGNames::transformAttr, Tran
 
 BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGGraphicsElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(transform)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledLocatableElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
 END_REGISTER_ANIMATED_PROPERTIES
 
 SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
-    : SVGStyledLocatableElement(tagName, document, constructionType)
+    : SVGStyledElement(tagName, document, constructionType)
 {
     registerAnimatedPropertiesForSVGGraphicsElement();
 }
@@ -102,7 +102,7 @@ bool SVGGraphicsElement::isSupportedAttribute(const QualifiedName& attrName)
 void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (!isSupportedAttribute(name)) {
-        SVGStyledLocatableElement::parseAttribute(name, value);
+        SVGStyledElement::parseAttribute(name, value);
         return;
     }
 
@@ -120,7 +120,7 @@ void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicS
 void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledLocatableElement::svgAttributeChanged(attrName);
+        SVGStyledElement::svgAttributeChanged(attrName);
         return;
     }
 

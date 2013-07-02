@@ -2463,7 +2463,6 @@ set(WebCore_SOURCES
     svg/SVGStringList.cpp
     svg/SVGStyleElement.cpp
     svg/SVGStyledElement.cpp
-    svg/SVGStyledLocatableElement.cpp
     svg/SVGSwitchElement.cpp
     svg/SVGSymbolElement.cpp
     svg/SVGTRefElement.cpp

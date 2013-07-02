@@ -37,9 +37,9 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInstance.h"
 #include "SVGElementRareData.h"
+#include "SVGGraphicsElement.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
-#include "SVGStyledLocatableElement.h"
 #include "SVGTextElement.h"
 #include "ScriptEventListener.h"
 #include "XMLNames.h"
@@ -255,8 +255,8 @@ const HashSet<SVGElementInstance*>& SVGElement::instancesForElement() const
 
 bool SVGElement::getBoundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
 {
-    if (isStyledLocatable()) {
-        rect = toSVGStyledLocatableElement(this)->getBBox(styleUpdateStrategy);
+    if (isSVGGraphicsElement()) {
+        rect = toSVGGraphicsElement(this)->getBBox(styleUpdateStrategy);
         return true;
     }
     if (hasTagName(SVGNames::textTag)) {

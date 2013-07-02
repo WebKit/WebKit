@@ -1,3 +1,43 @@
+2013-07-02  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove SVGStyledLocatableElement class
+        https://bugs.webkit.org/show_bug.cgi?id=118283
+
+        Reviewed by Dirk Schulze.
+
+        Remove SVGStyledLocatableElement class and have SVGGraphicsElement
+        inherit SVGStyledElement directly instead. SVGStyledLocatableElement
+        is no longer needed and according to the specification, SVGGraphicsElement
+        should inherit SVGStyledElement (actually SVGElement once we merge
+        SVGStyledElement into SVGElement).
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetGnuVTableOffsetForType):
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::getBoundingBox):
+        * svg/SVGElement.h:
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::SVGGraphicsElement):
+        (WebCore::SVGGraphicsElement::parseAttribute):
+        (WebCore::SVGGraphicsElement::svgAttributeChanged):
+        * svg/SVGGraphicsElement.h:
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getTransformToElement):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::localCoordinateSpaceTransform):
+        * svg/SVGStyledLocatableElement.cpp: Removed.
+        * svg/SVGStyledLocatableElement.h: Removed.
+
 2013-07-02  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Crash after download.

@@ -426,7 +426,7 @@ void SVGStyledElement::setInstanceUpdatesBlocked(bool value)
 
 AffineTransform SVGStyledElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const
 {
-    // To be overriden by SVGStyledLocatableElement/SVGGraphicsElement (or as special case SVGTextElement and SVGPatternElement)
+    // To be overriden by SVGGraphicsElement (or as special case SVGTextElement and SVGPatternElement)
     return AffineTransform();
 }
 

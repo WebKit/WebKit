@@ -23,7 +23,7 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedTransformList.h"
-#include "SVGStyledLocatableElement.h"
+#include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGTransformable.h"
 
@@ -32,7 +32,7 @@ namespace WebCore {
 class AffineTransform;
 class Path;
 
-class SVGGraphicsElement : public SVGStyledLocatableElement, public SVGTransformable, public SVGTests {
+class SVGGraphicsElement : public SVGStyledElement, public SVGTransformable, public SVGTests {
 public:
     virtual ~SVGGraphicsElement();
 

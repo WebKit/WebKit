@@ -12123,9 +12123,6 @@
     <ClInclude Include="..\svg\SVGStyledElement.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
-    <ClInclude Include="..\svg\SVGStyledLocatableElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
     <ClInclude Include="..\svg\SVGGraphicsElement.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>

@@ -13462,7 +13462,6 @@
     <ClInclude Include="..\svg\SVGStopElement.h" />
     <ClInclude Include="..\svg\SVGStringList.h" />
     <ClInclude Include="..\svg\SVGStyledElement.h" />
-    <ClInclude Include="..\svg\SVGStyledLocatableElement.h" />
     <ClInclude Include="..\svg\SVGGraphicsElement.h" />
     <ClInclude Include="..\svg\SVGStyleElement.h" />
     <ClInclude Include="..\svg\SVGSVGElement.h" />

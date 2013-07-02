@@ -27,8 +27,8 @@
 
 #include "RenderObject.h"
 #include "SVGException.h"
+#include "SVGGraphicsElement.h"
 #include "SVGNames.h"
-#include "SVGStyledLocatableElement.h"
 
 namespace WebCore {
 
@@ -103,8 +103,8 @@ AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, Exceptio
 {
     AffineTransform ctm = getCTM(styleUpdateStrategy);
 
-    if (target && target->isStyledLocatable()) {
-        AffineTransform targetCTM = toSVGStyledLocatableElement(target)->getCTM(styleUpdateStrategy);
+    if (target && target->isSVGGraphicsElement()) {
+        AffineTransform targetCTM = toSVGGraphicsElement(target)->getCTM(styleUpdateStrategy);
         if (!targetCTM.isInvertible()) {
             ec = SVGException::SVG_MATRIX_NOT_INVERTABLE;
             return ctm;
