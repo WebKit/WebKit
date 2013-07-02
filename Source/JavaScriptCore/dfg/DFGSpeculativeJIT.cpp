@@ -2600,7 +2600,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor&
     Edge valueUse = m_jit.graph().varArgChild(node, 2);
     
     GPRTemporary value;
-    GPRReg valueGPR;
+    GPRReg valueGPR = InvalidGPRReg;
     
     if (valueUse->isConstant()) {
         JSValue jsValue = valueOfJSConstant(valueUse.node());

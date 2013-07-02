@@ -1,3 +1,14 @@
+2013-07-01  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [JSC]: Fix maybe-uninitialized gcc 4.8 warning in DFGSpeculativeJIT.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=118278
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        Initialize valueGPR with InvalidGPRReg.
+
 2013-07-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix cast-align warnings in JavaScriptCore/heap/HandleBlockInlines.h
