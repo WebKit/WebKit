@@ -57,10 +57,6 @@ namespace WebCore {
 // Editing style properties must be preserved during editing operation.
 // e.g. when a user inserts a new paragraph, all properties listed here must be copied to the new paragraph.
 static const CSSPropertyID editingProperties[] = {
-    CSSPropertyBackgroundColor,
-    CSSPropertyTextDecoration,
-
-    // CSS inheritable properties
     CSSPropertyColor,
     CSSPropertyFontFamily,
     CSSPropertyFontSize,
@@ -80,14 +76,22 @@ static const CSSPropertyID editingProperties[] = {
     CSSPropertyWebkitTextFillColor,
     CSSPropertyWebkitTextStrokeColor,
     CSSPropertyWebkitTextStrokeWidth,
+
+    // Non-inheritable properties
+    CSSPropertyBackgroundColor,
+    CSSPropertyTextDecoration,
 };
 
+const unsigned numAllEditingProperties = WTF_ARRAY_LENGTH(editingProperties);
+const unsigned numInheritableEditingProperties = numAllEditingProperties - 2;
+
+enum EditingPropertiesToInclude { OnlyInheritableEditingProperties, AllEditingProperties };
 template <class StyleDeclarationType>
-static PassRefPtr<MutableStylePropertySet> copyEditingProperties(StyleDeclarationType* style, EditingStyle::EditingPropertiesToInclude type = EditingStyle::OnlyInheritableEditingProperties)
+static PassRefPtr<MutableStylePropertySet> copyEditingProperties(StyleDeclarationType* style, EditingPropertiesToInclude type)
 {
-    if (type == EditingStyle::AllEditingProperties)
-        return style->copyPropertiesInSet(editingProperties, WTF_ARRAY_LENGTH(editingProperties));
-    return style->copyPropertiesInSet(editingProperties + 2, WTF_ARRAY_LENGTH(editingProperties) - 2);
+    if (type == AllEditingProperties)
+        return style->copyPropertiesInSet(editingProperties, numAllEditingProperties);
+    return style->copyPropertiesInSet(editingProperties, numInheritableEditingProperties);
 }
 
 static inline bool isEditingProperty(int id)
@@ -99,10 +103,24 @@ static inline bool isEditingProperty(int id)
     return false;
 }
 
-static PassRefPtr<MutableStylePropertySet> editingStyleFromComputedStyle(PassRefPtr<Node> node, EditingStyle::EditingPropertiesToInclude type = EditingStyle::OnlyInheritableEditingProperties)
+static PassRefPtr<MutableStylePropertySet> copyPropertiesFromComputedStyle(ComputedStyleExtractor& computedStyle, EditingStyle::PropertiesToInclude propertiesToInclude)
+{
+    switch (propertiesToInclude) {
+    case EditingStyle::AllProperties:
+        return computedStyle.copyProperties();
+    case EditingStyle::OnlyEditingInheritableProperties:
+        return copyEditingProperties(&computedStyle, OnlyInheritableEditingProperties);
+    case EditingStyle::EditingPropertiesInEffect:
+        return copyEditingProperties(&computedStyle, AllEditingProperties);
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+static PassRefPtr<MutableStylePropertySet> copyPropertiesFromComputedStyle(Node* node, EditingStyle::PropertiesToInclude propertiesToInclude)
 {
     ComputedStyleExtractor computedStyle(node);
-    return copyEditingProperties(&computedStyle, type);
+    return copyPropertiesFromComputedStyle(computedStyle, propertiesToInclude);
 }
 
 static PassRefPtr<CSSValue> extractPropertyValue(const StylePropertySet* style, CSSPropertyID propertyID)
@@ -113,20 +131,6 @@ static PassRefPtr<CSSValue> extractPropertyValue(const StylePropertySet* style, 
 static PassRefPtr<CSSValue> extractPropertyValue(ComputedStyleExtractor* computedStyle, CSSPropertyID propertyID)
 {
     return computedStyle->propertyValue(propertyID);
-}
-
-static inline EditingStyle::EditingPropertiesToInclude toEditingProperties(EditingStyle::PropertiesToInclude properties)
-{
-    switch (properties) {
-    case EditingStyle::AllProperties:
-    case EditingStyle::EditingPropertiesInEffect:
-        return EditingStyle::AllEditingProperties;
-    case EditingStyle::OnlyEditingInheritableProperties:
-        return EditingStyle::OnlyInheritableEditingProperties;
-    }
-
-    ASSERT_NOT_REACHED();
-    return EditingStyle::OnlyInheritableEditingProperties;
 }
 
 template<typename T>
@@ -431,7 +435,10 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
         node = node->parentNode();
 
     ComputedStyleExtractor computedStyleAtPosition(node);
-    m_mutableStyle = propertiesToInclude == AllProperties ? computedStyleAtPosition.copyProperties() : editingStyleFromComputedStyle(node);
+    // FIXME: It's strange to not set background-color and text-decoration when propertiesToInclude is EditingPropertiesInEffect.
+    // However editing/selection/contains-boundaries.html fails without this ternary.
+    m_mutableStyle = copyPropertiesFromComputedStyle(computedStyleAtPosition,
+        propertiesToInclude == EditingPropertiesInEffect ? OnlyEditingInheritableProperties : propertiesToInclude);
 
     if (propertiesToInclude == EditingPropertiesInEffect) {
         if (RefPtr<CSSValue> value = backgroundColorInEffect(node))
@@ -599,8 +606,8 @@ void EditingStyle::removeStyleAddedByNode(Node* node)
 {
     if (!node || !node->parentNode())
         return;
-    RefPtr<MutableStylePropertySet> parentStyle = editingStyleFromComputedStyle(node->parentNode(), AllEditingProperties);
-    RefPtr<MutableStylePropertySet> nodeStyle = editingStyleFromComputedStyle(node, AllEditingProperties);
+    RefPtr<MutableStylePropertySet> parentStyle = copyPropertiesFromComputedStyle(node->parentNode(), EditingPropertiesInEffect);
+    RefPtr<MutableStylePropertySet> nodeStyle = copyPropertiesFromComputedStyle(node, EditingPropertiesInEffect);
     nodeStyle->removeEquivalentProperties(parentStyle.get());
     m_mutableStyle->removeEquivalentProperties(nodeStyle.get());
 }
@@ -610,19 +617,13 @@ void EditingStyle::removeStyleConflictingWithStyleOfNode(Node* node)
     if (!node || !node->parentNode() || !m_mutableStyle)
         return;
 
-    RefPtr<MutableStylePropertySet> parentStyle = editingStyleFromComputedStyle(node->parentNode(), AllEditingProperties);
-    RefPtr<MutableStylePropertySet> nodeStyle = editingStyleFromComputedStyle(node, AllEditingProperties);
+    RefPtr<MutableStylePropertySet> parentStyle = copyPropertiesFromComputedStyle(node->parentNode(), EditingPropertiesInEffect);
+    RefPtr<MutableStylePropertySet> nodeStyle = copyPropertiesFromComputedStyle(node, EditingPropertiesInEffect);
     nodeStyle->removeEquivalentProperties(parentStyle.get());
 
     unsigned propertyCount = nodeStyle->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i)
         m_mutableStyle->removeProperty(nodeStyle->propertyAt(i).id());
-}
-
-void EditingStyle::removeAllButEditingProperties(EditingPropertiesToInclude propertiesToInclude)
-{
-    if (m_mutableStyle)
-        m_mutableStyle = copyEditingProperties(m_mutableStyle.get(), propertiesToInclude);
 }
 
 void EditingStyle::collapseTextDecorationProperties()
@@ -981,11 +982,28 @@ static inline bool elementMatchesAndPropertyIsNotInInlineStyleDecl(const HTMLEle
         && (mode == EditingStyle::OverrideValues || !equivalent->propertyExistsInStyle(style));
 }
 
+static PassRefPtr<MutableStylePropertySet> extractEditingProperties(const StylePropertySet* style, EditingStyle::PropertiesToInclude propertiesToInclude)
+{
+    if (!style)
+        return 0;
+
+    switch (propertiesToInclude) {
+    case EditingStyle::AllProperties:
+    case EditingStyle::EditingPropertiesInEffect:
+        return copyEditingProperties(style, AllEditingProperties);
+    case EditingStyle::OnlyEditingInheritableProperties:
+        return copyEditingProperties(style, OnlyInheritableEditingProperties);
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 void EditingStyle::mergeInlineAndImplicitStyleOfElement(StyledElement* element, CSSPropertyOverrideMode mode, PropertiesToInclude propertiesToInclude)
 {
     RefPtr<EditingStyle> styleFromRules = EditingStyle::create();
     styleFromRules->mergeStyleFromRulesForSerialization(element);
-    styleFromRules->removeAllButEditingProperties(toEditingProperties(propertiesToInclude));
+    styleFromRules->m_mutableStyle = extractEditingProperties(styleFromRules->m_mutableStyle.get(), propertiesToInclude);
     mergeStyle(styleFromRules->m_mutableStyle.get(), mode);
 
     mergeInlineStyleOfElement(element, mode, propertiesToInclude);
