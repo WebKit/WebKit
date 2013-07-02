@@ -1,3 +1,13 @@
+2013-07-02  David Farler  <dfarler@apple.com>
+
+        Skip cache partitioning tests on Lion.
+
+        Rubber stamped by Jeffrey Pfau.
+
+        * platform/mac-lion/TestExpectations:
+        http/tests/cache/partitioned-cache.html
+        http/tests/cache/partitioned-cache-iframe.html
+
 2013-07-02  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] .webkitClosedCaptionsVisible doesn't work with "Automatic" caption mode

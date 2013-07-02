@@ -135,3 +135,7 @@ http/tests/notifications
 
 # Lion does not support the tiled drawing area
 platform/mac-wk2/tiled-drawing [ Skip ]
+
+# Lion does not support cache partitioning
+http/tests/cache/partitioned-cache.html
+http/tests/cache/partitioned-cache-iframe.html
