@@ -122,9 +122,14 @@ void WebCoreAVFResourceLoader::dataReceived(CachedResource* resource, const char
 
 void WebCoreAVFResourceLoader::notifyFinished(CachedResource* resource)
 {
-    if (resource->loadFailedOrCanceled())
+    if (resource->loadFailedOrCanceled()) {
+        // <rdar://problem/13987417> Set the contentType of the contentInformationRequest to an empty
+        // string to trigger AVAsset's playable value to complete loading.
+        if ([m_avRequest.get() contentInformationRequest] && ![[m_avRequest.get() contentInformationRequest] contentType])
+            [[m_avRequest.get() contentInformationRequest] setContentType:@""];
+
         [m_avRequest.get() finishLoadingWithError:0];
-    else {
+    } else {
         fulfillRequestWithResource(resource);
         [m_avRequest.get() finishLoading];
     }
