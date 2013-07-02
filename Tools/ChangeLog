@@ -1,3 +1,15 @@
+2013-07-02  Brian Holt  <brian.holt@samsung.com>
+
+        [ATK] Leak: leaks in AccessibilityUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=118297
+
+        Fixed memory leak.
+
+        Reviewed by Christophe Dumez.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::stringValue):
+
 2013-07-02  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Fix WebKitTestRunner crashes.
