@@ -1,3 +1,22 @@
+2013-07-02  Tim Horton  <timothy_horton@apple.com>
+
+        constrainScrollPositionForOverhang needs to handle scrollOrigin correctly
+        https://bugs.webkit.org/show_bug.cgi?id=118176
+        <rdar://problem/14301271>
+
+        Reviewed by Anders Carlsson.
+
+        Add a test that ensures that fixed position works with a scrollable document
+        and direction: rtl, which is one case where scrollOrigin is set.
+
+        Disable the test on Mac WebKit1 because of https://bugs.webkit.org/show_bug.cgi?id=118269.
+
+        * compositing/geometry/fixed-position-flipped-writing-mode-expected.txt: Added.
+        * compositing/geometry/fixed-position-flipped-writing-mode.html: Added.
+        * platform/mac/compositing/geometry/fixed-position-flipped-writing-mode-expected.png: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2013-07-02  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed gardening. Added new common expectations for test after r151665.

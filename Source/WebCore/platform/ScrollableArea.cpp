@@ -412,36 +412,30 @@ IntRect ScrollableArea::visibleContentRect(VisibleContentRectIncludesScrollbars 
                    std::max(0, visibleHeight() + horizontalScrollbarHeight));
 }
 
-static int constrainedScrollPosition(int visibleContentSize, int totalContentsSize, int scrollPosition, int scrollOrigin, int headerHeight, int footerHeight)
-{
-    int maxValue = totalContentsSize - visibleContentSize - footerHeight;
-    if (maxValue <= 0)
-        return 0;
-
-    if (!scrollOrigin) {
-        if (scrollPosition <= headerHeight)
-            return 0;
-        if (scrollPosition > maxValue)
-            scrollPosition = maxValue - headerHeight;
-        else
-            scrollPosition -= headerHeight;
-    } else {
-        // FIXME: position:fixed elements are currently broken when there is a non-zero y-value in the scroll origin
-        // such as when -webkit-writing-mode:horizontal-bt; is set. But when we fix that, we need to make such
-        // pages work correctly with headers and footers as well. https://bugs.webkit.org/show_bug.cgi?id=113741
-        if (scrollPosition >= 0)
-            return 0;
-        if (scrollPosition < -maxValue)
-            scrollPosition = -maxValue;
-    }
-
-    return scrollPosition;
-}
-
 IntPoint ScrollableArea::constrainScrollPositionForOverhang(const IntRect& visibleContentRect, const IntSize& totalContentsSize, const IntPoint& scrollPosition, const IntPoint& scrollOrigin, int headerHeight, int footerHeight)
 {
-    return IntPoint(constrainedScrollPosition(visibleContentRect.width(), totalContentsSize.width(), scrollPosition.x(), scrollOrigin.x(), 0, 0),
-        constrainedScrollPosition(visibleContentRect.height(), totalContentsSize.height(), scrollPosition.y(), scrollOrigin.y(), headerHeight, footerHeight));
+    // The viewport rect that we're scrolling shouldn't be larger than our document.
+    IntSize idealScrollRectSize(std::min(visibleContentRect.width(), totalContentsSize.width()), std::min(visibleContentRect.height(), totalContentsSize.height()));
+    
+    IntRect scrollRect(scrollPosition + scrollOrigin - IntSize(0, headerHeight), idealScrollRectSize);
+    IntRect documentRect(IntPoint(), IntSize(totalContentsSize.width(), totalContentsSize.height() - headerHeight - footerHeight));
+
+    // Use intersection to constrain our ideal scroll rect by the document rect.
+    scrollRect.intersect(documentRect);
+
+    if (scrollRect.size() != idealScrollRectSize) {
+        // If the rect was clipped, restore its size, effectively pushing it "down" from the top left.
+        scrollRect.setSize(idealScrollRectSize);
+
+        // If we still clip, push our rect "up" from the bottom right.
+        scrollRect.intersect(documentRect);
+        if (scrollRect.width() < idealScrollRectSize.width())
+            scrollRect.move(-(idealScrollRectSize.width() - scrollRect.width()), 0);
+        if (scrollRect.height() < idealScrollRectSize.height())
+            scrollRect.move(0, -(idealScrollRectSize.height() - scrollRect.height()));
+    }
+
+    return scrollRect.location() - toIntSize(scrollOrigin);
 }
 
 IntPoint ScrollableArea::constrainScrollPositionForOverhang(const IntPoint& scrollPosition)

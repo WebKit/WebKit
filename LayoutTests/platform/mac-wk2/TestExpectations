@@ -398,6 +398,9 @@ webaudio/mediastreamaudiodestinationnode.html
 webaudio/mediastreamaudiosourcenode.html
 webaudio/codec-tests/vorbis/
 
+# Asserts in WebKit1-debug only, so reenabling.
+compositing/geometry/fixed-position-flipped-writing-mode.html [ Pass ]
+
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################
 

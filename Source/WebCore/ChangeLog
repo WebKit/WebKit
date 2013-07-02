@@ -1,3 +1,39 @@
+2013-07-02  Tim Horton  <timothy_horton@apple.com>
+
+        constrainScrollPositionForOverhang needs to handle scrollOrigin correctly
+        https://bugs.webkit.org/show_bug.cgi?id=118176
+        <rdar://problem/14301271>
+
+        Reviewed by Anders Carlsson.
+
+        Test: compositing/geometry/fixed-position-flipped-writing-mode.html
+
+        WebCore makes use of constrainScrollPositionForOverhang not only for
+        constraining fixed- and sticky-positioned elements to the viewport, but
+        also for clamping the tile cache's visible rect.
+
+        Therefore, constrainScrollPositionForOverhang needs to correctly take
+        the scrollOrigin into account. The easiest way I saw to do this was to
+        reimplement the function in terms of a pair of rect intersections
+        between a virtual scrollable "viewport" and the document (with a bit
+        of complication from headers and footers).
+
+        The first intersection is performed, then if the viewport doesn't fit,
+        it is pushed down and to the right, from the origin. Next, we intersect
+        again, this time pushing the rect up by the amount it overflowed the document
+        rect from the bottom right. This performs effectively the same constraint
+        as previously, but handles the scrollOrigin correctly and is also somewhat
+        easier to read and understand (with pictures).
+
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+        Subtract the scrollOrigin out of the offset passed to scrollOffsetForFixedPosition,
+        it's expecting an offset without the origin included.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::constrainScrollPositionForOverhang):
+        Reimplement the function as described above.
+
 2013-07-02  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove SVGStyledLocatableElement class
