@@ -1,3 +1,22 @@
+2013-07-02  Geoffrey Garen  <ggaren@apple.com>
+
+        plainText() is O(N^2)
+        https://bugs.webkit.org/show_bug.cgi?id=118282
+        <rdar://problem/14284360>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::expandCapacity): Factored out this helper function to simplify
+        some code that was duplicated in four places.
+
+        (WTF::StringBuilder::appendUninitializedSlow):
+        (WTF::StringBuilder::append): Use expandCapacity(). One of the cases
+        was not doing anything special, and so was O(N^2).
+
+        Also, always call expandCapacity() it in a standard way, calling
+        capacity() first, so it's easy to tell at a glance that you got it right.
+
 2013-07-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Avoid code duplication inside String::append()

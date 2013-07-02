@@ -1,3 +1,16 @@
+2013-07-02  Geoffrey Garen  <ggaren@apple.com>
+
+        plainText() is O(N^2)
+        https://bugs.webkit.org/show_bug.cgi?id=118282
+        <rdar://problem/14284360>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * editing/TextIterator.cpp:
+        (WebCore::plainText): Linear growth for a vector data type is O(N^2).
+        Don't do that. Luckily, StringBuilder does the right thing automatically,
+        so we can just delete code.
+
 2013-07-02  Tim Horton  <timothy_horton@apple.com>
 
         constrainScrollPositionForOverhang needs to handle scrollOrigin correctly
