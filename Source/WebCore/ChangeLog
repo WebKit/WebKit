@@ -1,3 +1,16 @@
+2013-07-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] .webkitClosedCaptionsVisible doesn't work with "Automatic" caption mode
+        https://bugs.webkit.org/show_bug.cgi?id=118319
+
+        Reviewed by Darin Adler.
+
+        Test: media/track/track-legacyapi-with-automatic-mode.html
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::textTrackSelectionScore): Don't apply "automatic"
+            logic when captions were enabled with .webkitClosedCaptionsVisible.
+
 2013-07-02  Anders Carlsson  <andersca@apple.com>
 
         Always flip the coordinate system before drawing NSViews from Widget::paint
