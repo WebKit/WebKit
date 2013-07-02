@@ -168,14 +168,6 @@ AC_ARG_ENABLE(debug_symbols,
     ])
 AC_MSG_RESULT([$enable_debug_symbols])
 
-AC_MSG_CHECKING([which GPU acceleration backend to use])
-AC_ARG_WITH(acceleration_backend,
-    AC_HELP_STRING([--with-acceleration-backend=@<:@opengl/clutter/none@:>@],
-        [Select accelerated backend (Clutter currently unsupported, OpenGL autodetected) [default=autodetect]]),
-    [],
-    [with_acceleration_backend="auto"])
-AC_MSG_RESULT([$with_acceleration_backend])
-
 AC_MSG_CHECKING([whether to enable WebGL support])
 AC_ARG_ENABLE(webgl, AC_HELP_STRING([--enable-webgl], [enable support for WebGL [default=check]]),
     [],

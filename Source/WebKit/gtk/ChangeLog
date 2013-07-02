@@ -1,3 +1,18 @@
+2013-07-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Remove unsupported AC backends
+        https://bugs.webkit.org/show_bug.cgi?id=117362
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/AcceleratedCompositingContext.h: removed clutter and cairo
+        additions.
+        * WebCoreSupport/AcceleratedCompositingContextCairo.cpp: Removed.
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp: Removed.
+        * webkit/webkitglobals.cpp:
+        (webkitInit): removed clutter-gtk initialization.
+
 2013-07-01  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Use PassOwnPtr for the returned value of createBackingStore

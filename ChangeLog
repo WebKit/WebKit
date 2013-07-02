@@ -1,3 +1,20 @@
+2013-07-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Remove unsupported AC backends
+        https://bugs.webkit.org/show_bug.cgi?id=117362
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/FindDependencies.m4: remove checks related to acceleration backend,
+        turn them into a check for OpenGL being available, simply.
+        * Source/autotools/ReadCommandLineArguments.m4: remove command line option to select
+        accelerated backend, it's now auto-detected.
+        * Source/autotools/SetupAutoconfHeader.m4: no longer defines USE_CLUTTER and
+        USE_TEXTURE_MAPPER_CAIRO.
+        * Source/autotools/SetupAutomake.m4: remove checks related to acceleration backend,
+        turn them into a check for OpenGL being available, simply.
+        * Source/autotools/Versions.m4: no longer check for clutter/clutter-gtk.
+
 2013-07-01  Timothy Hatcher  <timothy@apple.com>
 
         Link to WebInspectorUI.framework at build time instead of soft linking.

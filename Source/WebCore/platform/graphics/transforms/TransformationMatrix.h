@@ -35,9 +35,6 @@
 #if USE(CA)
 typedef struct CATransform3D CATransform3D;
 #endif
-#if USE(CLUTTER)
-typedef struct _CoglMatrix CoglMatrix;
-#endif
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
 #elif USE(CAIRO)
@@ -333,10 +330,6 @@ public:
 #if USE(CA)
     TransformationMatrix(const CATransform3D&);
     operator CATransform3D() const;
-#endif
-#if USE(CLUTTER)
-    TransformationMatrix(const CoglMatrix*);
-    operator CoglMatrix() const;
 #endif
 #if USE(CG)
     TransformationMatrix(const CGAffineTransform&);

@@ -35,7 +35,3 @@ m4_define([libxml_required_version], [2.6])
 m4_define([libxslt_required_version], [1.1.7])
 m4_define([pango_required_version], [1.30.0])
 m4_define([sqlite_required_version], [3.0])
-
-m4_define([clutter_required_version], [1.14])
-m4_define([clutter_gtk_required_version], [1.4])
-

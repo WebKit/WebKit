@@ -55,10 +55,6 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 
-#if USE(CLUTTER)
-#include <clutter-gtk/clutter-gtk.h>
-#endif
-
 static WebKitCacheModel cacheModel = WEBKIT_CACHE_MODEL_DEFAULT;
 
 using namespace WebCore;
@@ -563,10 +559,6 @@ void webkitInit()
     webkit_icon_database_set_path(webkit_get_icon_database(), iconDatabasePath.get());
 
     WebCore::ResourceHandle::setIgnoreSSLErrors(true);
-
-#if USE(CLUTTER)
-    gtk_clutter_init(0, 0);
-#endif
 
     atexit(webkitExit);
 }

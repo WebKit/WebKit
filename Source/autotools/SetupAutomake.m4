@@ -37,14 +37,11 @@ AM_CONDITIONAL([HAVE_ATSPI2], [test "$have_atspi2" = "yes"])
 
 # Accelerated compositing conditionals.
 AM_CONDITIONAL([USE_ACCELERATED_COMPOSITING], [test "$enable_accelerated_compositing" = "yes"])
-AM_CONDITIONAL([USE_TEXTURE_MAPPER_CAIRO],
-    [test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "none"])
 AM_CONDITIONAL([USE_TEXTURE_MAPPER_GL],
-    [test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "opengl"])
-AM_CONDITIONAL([USE_CLUTTER], [test "$with_acceleration_backend" = "clutter"])
+    [test "$enable_accelerated_compositing" = "yes" && test "$found_opengl" = "yes"])
 
 # These are the same for now, but they will soon be separate.
-AM_CONDITIONAL([USE_OPENGL], [test "$with_acceleration_backend" = "opengl"])
+AM_CONDITIONAL([USE_OPENGL], [test "$found_opengl" = "yes"])
 AM_CONDITIONAL([USE_EGL], [test "$enable_egl" = "yes"])
 AM_CONDITIONAL([USE_GLES2], [test "$enable_gles2" = "yes"])
 AM_CONDITIONAL([USE_GLX], [test "$enable_glx" = "yes"])

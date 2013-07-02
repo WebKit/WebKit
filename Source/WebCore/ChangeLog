@@ -1,3 +1,29 @@
+2013-07-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Remove unsupported AC backends
+        https://bugs.webkit.org/show_bug.cgi?id=117362
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Source/WebCore/platform/graphics/PlatformLayer.h: Removed mentions of clutter
+        and the texmap cairo backend.
+        * platform/graphics/clutter/DrawingBufferClutter.cpp: Removed.
+        * platform/graphics/clutter/GraphicsContext3DClutter.cpp: Removed.
+        * platform/graphics/clutter/GraphicsContext3DPrivate.cpp: Removed.
+        * platform/graphics/clutter/GraphicsContext3DPrivate.h: Removed.
+        * platform/graphics/clutter/GraphicsLayerActor.cpp: Removed.
+        * platform/graphics/clutter/GraphicsLayerActor.h: Removed.
+        * platform/graphics/clutter/GraphicsLayerClutter.cpp: Removed.
+        * platform/graphics/clutter/GraphicsLayerClutter.h: Removed.
+        * platform/graphics/clutter/PlatformClutterAnimation.cpp: Removed.
+        * platform/graphics/clutter/PlatformClutterAnimation.h: Removed.
+        * platform/graphics/clutter/PlatformClutterLayerClient.h: Removed.
+        * platform/graphics/clutter/TransformationMatrixClutter.cpp: Removed.
+        * Source/WebCore/platform/graphics/transforms/TransformationMatrix.h: Removed cogl
+        matrix type conversion.
+
 2013-07-01  Alex Christensen  <achristensen@apple.com>
 
         DrawingBuffer constructor and destructor were not defined for Windows.

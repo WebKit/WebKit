@@ -7,14 +7,6 @@
        certain distributions. Feel free to add more here, within reason,
        as long as they are not built by default. -->
 
-  <metamodule id="webkitgtk-clutter-dependencies">
-    <dependencies>
-      <dep package="clutter"/>
-      <dep package="clutter-gtk"/>
-      <dep package="cogl"/>
-    </dependencies>
-  </metamodule>
-
   <repository type="tarball" name="ftp.gnome.org"
       href="http://ftp.gnome.org"/>
 
@@ -22,37 +14,6 @@
     <branch repo="ftp.gnome.org"
             module="/pub/GNOME/sources/libsecret/0.11/libsecret-0.11.tar.xz" version="0.11"
             hash="sha256:e5399dfb61376a7500d20cb22715152780aa3a2c8a64281ec6bc8f0ebeb8b689"/>
-  </autotools>
-
-  <autotools id="cogl"
-            autogen-sh="configure"
-            autogenargs="--disable-introspection">
-    <branch module="/pub/GNOME/sources/cogl/1.14/cogl-1.14.0.tar.xz" version="1.14.0"
-            repo="ftp.gnome.org" 
-            hash="sha256:276e8c9f5ff0fcd57c1eaf74cc245f41ad469a95a18ac831fac2d5960baa5ae8"/>
-  </autotools>
-
-  <autotools id="clutter"
-           autogen-sh="configure"
-           autogenargs="--disable-introspection">
-    <dependencies>
-      <dep package="cogl"/>
-      <dep package="atk"/>
-    </dependencies>
-    <branch module="/pub/GNOME/sources/clutter/1.14/clutter-1.14.0.tar.xz" version="1.14.0"
-            repo="ftp.gnome.org" 
-            hash="sha256:3b7a07373c27fad4f0cf59fd66a6855d66f9a42b7b570a00ca51a8b488af64d5"/>
-  </autotools>
-
-  <autotools id="clutter-gtk"
-           autogen-sh="configure"
-           autogenargs="--disable-introspection">
-    <dependencies>
-      <dep package="clutter"/>
-    </dependencies>
-    <branch module="/pub/GNOME/sources/clutter-gtk/1.4/clutter-gtk-1.4.4.tar.xz" version="1.4.4"
-            repo="ftp.gnome.org"             
-            hash="sha256:bc3108594a01a08bb6d9b538afe995e4fd78634a8356064ee8137d87aad51b2e"/>
   </autotools>
 
 </moduleset>

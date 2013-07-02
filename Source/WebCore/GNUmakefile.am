@@ -202,21 +202,10 @@ DerivedSources/WebCore/XLinkNames.h: DerivedSources/WebCore/XLinkNames.cpp
 DerivedSources/WebCore/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/svg/xlinkattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
-if USE_TEXTURE_MAPPER_CAIRO
-webcore_cppflags += \
-	-I$(srcdir)/Source/WebCore/platform/graphics/texmap
-endif  # END USE_TEXTURE_MAPPER_CAIRO
-
 if USE_TEXTURE_MAPPER_GL
 webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/texmap
 endif  # END USETEXTURE_MAPPER_GL
-
-if USE_CLUTTER
-webcore_cppflags += \
-	-I$(srcdir)/Source/WebCore/platform/clutter \
-	-I$(srcdir)/Source/WebCore/platform/graphics/clutter
-endif  # END USE_CLUTTER
 
 if ENABLE_INDEXED_DATABASE
 webcore_cppflags += \
@@ -490,7 +479,6 @@ libWebCore_la_CPPFLAGS = \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
 	$(CAIRO_CFLAGS) \
-	$(CLUTTER_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(ENCHANT_CFLAGS) \
 	$(FREETYPE_CFLAGS) \
@@ -537,7 +525,6 @@ libWebCorePlatform_la_CPPFLAGS = \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
 	$(CAIRO_CFLAGS) \
-	$(CLUTTER_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(ENCHANT_CFLAGS) \
 	$(FREETYPE_CFLAGS) \
@@ -585,7 +572,6 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
 	$(CAIRO_CFLAGS) \
-	$(CLUTTER_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(ENCHANT_CFLAGS) \
 	$(FREETYPE_CFLAGS) \

@@ -75,13 +75,7 @@ private:
     WebKitWebView* m_webView;
     unsigned int m_layerFlushTimerCallbackId;
 
-#if USE(CLUTTER)
-    GtkWidget* m_rootLayerEmbedder;
-    OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
-    OwnPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
-
-    static gboolean layerFlushTimerFiredCallback(AcceleratedCompositingContext*);
-#elif USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL)
     OwnPtr<WebCore::RedirectedXCompositeWindow> m_redirectedWindow;
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
     OwnPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;

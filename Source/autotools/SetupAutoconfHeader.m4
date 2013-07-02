@@ -64,24 +64,9 @@ fi
 
 if test "$enable_accelerated_compositing" = "yes"; then
     AC_DEFINE([WTF_USE_ACCELERATED_COMPOSITING], [1], [ ])
-
-    if test "$with_acceleration_backend" = "none"; then
-        AC_DEFINE([WTF_USE_TEXTURE_MAPPER], [1], [ ])
-        AC_DEFINE([WTF_USE_TEXTURE_MAPPER_CAIRO], [1], [ ])
-    fi
-
-    if test "$with_acceleration_backend" = "opengl"; then
-        AC_DEFINE([WTF_USE_TEXTURE_MAPPER], [1], [ ])
-        AC_DEFINE([WTF_USE_TEXTURE_MAPPER_GL], [1], [ ])
-    fi
-
-    if test "$with_acceleration_backend" = "clutter"; then
-        AC_DEFINE([WTF_USE_CLUTTER], [1], [ ])
-    fi
-fi
-
-if test "$with_acceleration_backend" = "opengl"; then
     AC_DEFINE([WTF_USE_OPENGL], [1], [ ])
+    AC_DEFINE([WTF_USE_TEXTURE_MAPPER], [1], [ ])
+    AC_DEFINE([WTF_USE_TEXTURE_MAPPER_GL], [1], [ ])
 fi
 
 if test "$enable_glx" = "yes"; then

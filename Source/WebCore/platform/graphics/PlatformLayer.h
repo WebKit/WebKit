@@ -39,15 +39,10 @@ class TextureMapperPlatformLayer;
 typedef TextureMapperPlatformLayer PlatformLayer;
 };
 #elif PLATFORM(GTK)
-#if USE(TEXTURE_MAPPER_CAIRO) || USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL)
 namespace WebCore {
 class TextureMapperPlatformLayer;
 typedef TextureMapperPlatformLayer PlatformLayer;
-};
-#elif USE(CLUTTER)
-typedef struct _ClutterActor ClutterActor;
-namespace WebCore {
-typedef ClutterActor PlatformLayer;
 };
 #endif
 #elif PLATFORM(EFL)

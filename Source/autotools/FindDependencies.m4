@@ -256,15 +256,7 @@ if test "$enable_gles2" != "yes"; then
     AC_CHECK_HEADERS([GL/gl.h], [found_opengl="yes"], [])
 fi
 
-if test "$with_acceleration_backend" = "auto"; then
-    if test "$found_opengl" = "yes"; then
-        with_acceleration_backend="opengl";
-    else
-        with_acceleration_backend="none";
-    fi
-fi
-
-if test "$with_acceleration_backend" = "opengl"; then
+if test "$found_opengl" = "yes"; then
     PKG_CHECK_MODULES([XCOMPOSITE], [xcomposite]);
     PKG_CHECK_MODULES([XDAMAGE], [xdamage]);
     AC_SUBST(XCOMPOSITE_CFLAGS)
@@ -273,26 +265,25 @@ if test "$with_acceleration_backend" = "opengl"; then
     AC_SUBST(XDAMAGE_LIBS)
 fi
 
-# OpenGL is turned on by default (along with WebGL and accelerated compositing), but if Clutter is chosen
-# as the accelerated drawing backend, we want to disable it. COGL does not play well with OpenGL.
+# OpenGL is turned on by default if available (along with WebGL and accelerated compositing).
 if test "$enable_webgl" = "auto"; then
-    if test "$with_acceleration_backend" = "opengl"; then
+    if test "$found_opengl" = yes; then
         enable_webgl="yes";
     else
         enable_webgl="no";
     fi
 fi
 
-if test "$enable_webgl" = "yes" && test "$with_acceleration_backend" != "opengl"; then
-    AC_MSG_ERROR([OpenGL must be active (and Clutter disabled) to use WebGL.])
+if test "$enable_webgl" = "yes" && test "$found_opengl" != "yes"; then
+    AC_MSG_ERROR([OpenGL must be active to use WebGL.])
 fi;
 
-if test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "none"; then
-    AC_MSG_ERROR([OpenGL or Clutter must be active to use accelerated compositing.])
+if test "$enable_accelerated_compositing" = "yes" && test "$found_opengl" != "yes"; then
+    AC_MSG_ERROR([OpenGL must be active to use accelerated compositing.])
 fi
 
 if test "$enable_accelerated_compositing" = "auto"; then
-    if test "$with_acceleration_backend" != "none"; then
+    if test "$found_opengl" = "yes"; then
         enable_accelerated_compositing="yes";
     else
         enable_accelerated_compositing="no";
@@ -333,7 +324,7 @@ AC_SUBST(JSC_CPPFLAGS)
 enable_css_filters=no;
 enable_css_shaders=no;
 AC_MSG_CHECKING([whether to enable CSS Filters and Shaders])
-if test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "opengl"; then
+if test "$enable_accelerated_compositing" = "yes" && test "$found_opengl" = "yes"; then
     enable_css_filters=yes;
     enable_css_shaders=yes;
 fi
@@ -432,35 +423,22 @@ if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
     AC_SUBST([GSTREAMER_LIBS])
 fi
 
-acceleration_backend_description=$with_acceleration_backend
-if test "$with_acceleration_backend" = "clutter"; then
-    PKG_CHECK_MODULES(CLUTTER, clutter-1.0 >= clutter_required_version)
-    PKG_CHECK_MODULES([CLUTTER_GTK], [clutter-gtk-1.0 >= clutter_gtk_required_version])
-
-    AC_SUBST(CLUTTER_CFLAGS)
-    AC_SUBST(CLUTTER_LIBS)
-    AC_SUBST(CLUTTER_GTK_CFLAGS)
-    AC_SUBST(CLUTTER_GTK_LIBS)
-
-    enable_gles2=no
-    enable_glx=no
-    enable_egl=no
-fi
-
-if test "$with_acceleration_backend" = "opengl"; then
+acceleration_description=
+if test "$found_opengl" = "yes"; then
+    acceleration_description="OpenGL"
     if test "$enable_gles2" = "yes"; then
-        acceleration_backend_description="$acceleration_backend_description (gles2"
+        acceleration_description="$acceleration_description (gles2"
         OPENGL_LIBS="-lGLESv2"
     else
-        acceleration_backend_description="$acceleration_backend_description (gl"
+        acceleration_description="$acceleration_description (gl"
         OPENGL_LIBS="-lGL"
     fi
     if test "$enable_egl" = "yes"; then
-        acceleration_backend_description="$acceleration_backend_description, egl"
+        acceleration_description="$acceleration_description, egl"
         OPENGL_LIBS="$OPENGL_LIBS -lEGL"
     fi
     if test "$enable_glx" = "yes"; then
-        acceleration_backend_description="$acceleration_backend_description, glx"
+        acceleration_description="$acceleration_description, glx"
     fi
 
     # Check whether dlopen() is in the core libc like on FreeBSD, or in a separate
@@ -469,12 +447,12 @@ if test "$with_acceleration_backend" = "opengl"; then
     AC_SUBST([DLOPEN_LIBS])
 
     OPENGL_LIBS="$OPENGL_LIBS $DLOPEN_LIBS"
-    acceleration_backend_description="$acceleration_backend_description)"
+    acceleration_description="$acceleration_description)"
 fi
 AC_SUBST([OPENGL_LIBS])
 
 enable_accelerated_canvas=no
-if test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "opengl"; then
+if test "$enable_accelerated_compositing" = "yes" && test "$found_opengl" = "yes"; then
     CAIRO_GL_LIBS="cairo-gl"
     if test "$enable_glx" = "yes"; then
         CAIRO_GL_LIBS="$CAIRO_GL_LIBS cairo-glx"
