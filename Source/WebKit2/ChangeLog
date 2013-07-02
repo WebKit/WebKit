@@ -1,3 +1,14 @@
+2013-07-02  Ada Chan  <adachan@apple.com>
+
+        Fix crash when PageBanner::detachFromPage() is called from WebPage::~WebPage().
+        https://bugs.webkit.org/show_bug.cgi?id=118268
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebPage/mac/PageBannerMac.mm:
+        (WebKit::PageBanner::detachFromPage): Add some null checks. m_webPage->corePage()
+        can be null if this method is called after the web page is closed.
+
 2013-07-02  Jae Hyun Park  <jae.park@company100.net>
 
         Implement CoordinatedSurface for Threaded Coordinated Graphics
