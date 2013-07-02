@@ -223,7 +223,10 @@ public:
         Vector<CallReturnOffsetToBytecodeOffset, 0, UnsafeVectorOverflow>& callIndices = m_rareData->m_callReturnIndexVector;
         if (!callIndices.size())
             return 1;
-        RELEASE_ASSERT(index < m_rareData->m_callReturnIndexVector.size());
+        // FIXME: Fix places in DFG that call out to C that don't set the CodeOrigin. https://bugs.webkit.org/show_bug.cgi?id=118315 
+        ASSERT(index < m_rareData->m_callReturnIndexVector.size());
+        if (index >= m_rareData->m_callReturnIndexVector.size())
+            return 1;
         return m_rareData->m_callReturnIndexVector[index].bytecodeOffset;
     }
 

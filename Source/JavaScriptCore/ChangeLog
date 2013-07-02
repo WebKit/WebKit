@@ -1,3 +1,16 @@
+2013-07-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Replace RELEASE_ASSERT with ASSERT in CodeBlock:: bytecodeOffsetForCallAtIndex
+        https://bugs.webkit.org/show_bug.cgi?id=118316
+
+        Reviewed by Geoffrey Garen.
+
+        This is causing some crashiness in release builds. We should replace it with an ASSERT 
+        until we track down all the places that need fixing in bug 118315.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::bytecodeOffsetForCallAtIndex):
+
 2013-07-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction for 'DebugSuffix' target.
