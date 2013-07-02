@@ -1,3 +1,12 @@
+2013-07-01  Alex Christensen  <achristensen@apple.com>
+
+        Windows should be included in the list of platforms that can use OpenGL ES 2.
+        https://bugs.webkit.org/show_bug.cgi?id=118264
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/GraphicsContext3D.h: Added PLATFORM(WIN) to platforms using OpenGL ES 2.
+
 2013-07-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Remove unsupported AC backends
