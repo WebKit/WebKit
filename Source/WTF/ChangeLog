@@ -1,3 +1,18 @@
+2013-07-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Avoid code duplication inside String::append()
+        https://bugs.webkit.org/show_bug.cgi?id=118290
+
+        Reviewed by Anders Carlsson.
+
+        The implementation of 'append(UChar)' had been repeated inside 'append(LChar)',
+        this duplication is obviated now.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::appendInternal):
+        (WTF::String::append):
+        * wtf/text/WTFString.h:
+
 2013-06-28  Anders Carlsson  <andersca@apple.com>
 
         Remove String::deprecatedCharactersWithNullTermination() and related code

@@ -119,7 +119,8 @@ void String::append(const String& str)
     }
 }
 
-void String::append(LChar c)
+template <typename CharacterType>
+inline void String::appendInternal(CharacterType c)
 {
     // FIXME: This is extremely inefficient. So much so that we might want to take this
     // out of String's API. We can make it better by optimizing the case where exactly
@@ -137,22 +138,14 @@ void String::append(LChar c)
         m_impl = StringImpl::create(&c, 1);
 }
 
+void String::append(LChar c)
+{
+    appendInternal(c);
+}
+
 void String::append(UChar c)
 {
-    // FIXME: This is extremely inefficient. So much so that we might want to take this
-    // out of String's API. We can make it better by optimizing the case where exactly
-    // one String is pointing at this StringImpl, but even then it's going to require a
-    // call to fastMalloc every single time.
-    if (m_impl) {
-        UChar* data;
-        if (m_impl->length() >= numeric_limits<unsigned>::max())
-            CRASH();
-        RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + 1, data);
-        memcpy(data, m_impl->characters(), m_impl->length() * sizeof(UChar));
-        data[m_impl->length()] = c;
-        m_impl = newImpl.release();
-    } else
-        m_impl = StringImpl::create(&c, 1);
+    appendInternal(c);
 }
 
 int codePointCompare(const String& a, const String& b)
