@@ -1,3 +1,10 @@
+2013-07-02  David Farler  <dfarler@apple.com>
+
+        Unreviewed rebaseline of Mac Lion fast/js/global-constructors-attributes after r151914.
+
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        WaveTable -> PeriodicWave
+
 2013-07-02  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Improve implementation of elements in region being flowed to another flow thread
