@@ -303,20 +303,13 @@ SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* 
     if (!renderer->isSVGText() && !renderer->isSVGInline())
         return 0;
 
-    Node* node = renderer->node();
-    ASSERT(node);
-    ASSERT(node->isSVGElement());
+    SVGElement* element = toSVGElement(renderer->node());
+    ASSERT(element);
 
-    if (!node->hasTagName(SVGNames::textTag)
-        && !node->hasTagName(SVGNames::tspanTag)
-#if ENABLE(SVG_FONTS)
-        && !node->hasTagName(SVGNames::altGlyphTag)
-#endif
-        && !node->hasTagName(SVGNames::trefTag)
-        && !node->hasTagName(SVGNames::textPathTag))
+    if (!element->isTextContent())
         return 0;
 
-    return static_cast<SVGTextContentElement*>(node);
+    return toSVGTextContentElement(element);
 }
 
 }

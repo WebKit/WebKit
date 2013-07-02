@@ -1,3 +1,19 @@
+2013-07-02  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Simplify SVGTextContentElement::elementFromRenderer()
+        https://bugs.webkit.org/show_bug.cgi?id=118284
+
+        Reviewed by Andreas Kling.
+
+        Simplify SVGTextContentElement::elementFromRenderer() by leveraging
+        SVGElement::isTextContent() methods instead of explicitly checking
+        for tag names.
+
+        No new tests, no behavior change.
+
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::elementFromRenderer):
+
 2013-07-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix cast-align warnings in WebCore/platform/graphics/texmap/TextureMapperGL.cpp
