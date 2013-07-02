@@ -1,3 +1,20 @@
+2013-07-02  Anders Carlsson  <andersca@apple.com>
+
+        Always flip the coordinate system before drawing NSViews from Widget::paint
+        https://bugs.webkit.org/show_bug.cgi?id=118318
+        <rdar://problem/13895483>
+
+        Reviewed by Beth Dakin.
+
+        Undo the change that would not flip on 10.9; turns out the bug was in AppKit. Also remove the
+        _hasCanDrawSubviewsIntoLayerOrAncestor workaround since drawing works correctly now.
+
+        Also, pass flipped:NO when creating the NSGraphicsContext to indicate that the graphics context
+        is unflipped as far as AppKit knows (since we flipped it earlier).
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+
 2013-06-26  Robert Hogan  <robert@webkit.org>
 
         empty inlines should not affect line-wrapping

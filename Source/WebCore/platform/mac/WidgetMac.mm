@@ -54,9 +54,6 @@
 
 @interface NSView (Widget)
 - (void)visibleRectDidChange;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-- (BOOL)_hasCanDrawSubviewsIntoLayerOrAncestor;
-#endif
 @end
 
 namespace WebCore {
@@ -211,13 +208,8 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
     // code, which can deref it.
     RefPtr<Widget> protectedThis(this);
 
-    BOOL hasCanDrawSubviewsIntoLayerOrAncestor = NO;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    hasCanDrawSubviewsIntoLayerOrAncestor = [view _hasCanDrawSubviewsIntoLayerOrAncestor];
-#endif
-    
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-    if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen] || hasCanDrawSubviewsIntoLayerOrAncestor) {
+    if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {
         // This is the common case of drawing into a window or an inclusive layer, or printing.
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
@@ -249,21 +241,16 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
 
     NSRect viewFrame = [view frame];
     NSRect viewBounds = [view bounds];
+
     // Set up the translation and (flipped) orientation of the graphics context. In normal drawing, AppKit does it as it descends down
-    // the view hierarchy.
-    bool shouldFlipContext = true;
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    shouldFlipContext = false;
-#endif
-    if (shouldFlipContext) {
-        CGContextTranslateCTM(cgContext, viewFrame.origin.x - viewBounds.origin.x, viewFrame.origin.y + viewFrame.size.height + viewBounds.origin.y);
-        CGContextScaleCTM(cgContext, 1, -1);
-    } else
-        CGContextTranslateCTM(cgContext, viewFrame.origin.x - viewBounds.origin.x, viewFrame.origin.y + viewBounds.origin.y);
+    // the view hierarchy. Since Widget::paint is always called with a context that has a flipped coordinate system, and
+    // -[NSView displayRectIgnoringOpacity:inContext:] expects an unflipped context we always flip here.
+    CGContextTranslateCTM(cgContext, viewFrame.origin.x - viewBounds.origin.x, viewFrame.origin.y + viewFrame.size.height + viewBounds.origin.y);
+    CGContextScaleCTM(cgContext, 1, -1);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     {
-        NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
+        NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
         [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]] inContext:nsContext];
     }
     END_BLOCK_OBJC_EXCEPTIONS;
