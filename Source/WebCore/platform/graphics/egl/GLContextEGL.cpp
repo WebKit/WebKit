@@ -173,13 +173,14 @@ PassOwnPtr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext sharingCon
         return nullptr;
 
     EGLSurface surface = eglCreatePixmapSurface(display, config, pixmap, 0);
-#else
-    EGLSurface surface = EGL_NO_SURFACE;
-#endif
+
     if (surface == EGL_NO_SURFACE)
         return nullptr;
 
     return adoptPtr(new GLContextEGL(context, surface, PixmapSurface));
+#else
+    return nullptr;
+#endif
 }
 
 PassOwnPtr<GLContextEGL> GLContextEGL::createContext(EGLNativeWindowType window, GLContext* sharingContext)
