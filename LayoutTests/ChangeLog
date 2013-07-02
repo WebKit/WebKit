@@ -1,3 +1,9 @@
+2013-07-02  Mihai Tica  <mitica@adobe.com>
+
+        Unreviewed gardening. Rebaseline background blend mode default test result.
+
+        * platform/mac/css3/compositing/background-blend-mode-default-value-expected.png:
+
 2013-07-02  Andreas Kling  <akling@apple.com>
 
         Skip fast/dom/timer-throttling-hidden-page.html after r152202.
