@@ -680,7 +680,7 @@ int CaptionUserPreferencesMediaAF::textTrackSelectionScore(TextTrack* track, HTM
 
     Vector<String> userPreferredCaptionLanguages = preferredLanguages();
 
-    if ((displayMode == Automatic && !legacyOverride) || trackHasOnlyForcedSubtitles) {
+    if (displayMode == Automatic || trackHasOnlyForcedSubtitles) {
 
         if (!mediaElement || !mediaElement->player())
             return 0;
