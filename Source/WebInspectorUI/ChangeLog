@@ -1,3 +1,18 @@
+2013-07-03  Timothy Hatcher  <timothy@apple.com>
+
+        Guard remaining calls to decodeURIComponent with a try/catch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118371
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.js:
+        (WebInspector.displayNameForURL):
+        (WebInspector.updateWindowTitle):
+        * UserInterface/Utilities.js:
+        (arrayResult):
+        (queryString):
+
 2013-07-03  Jessie Berlin  <jberlin@apple.com>
 
         Ran update-webkit-localizable-strings.

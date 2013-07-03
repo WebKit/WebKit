@@ -1170,8 +1170,12 @@ function parseQueryString(queryString, arrayResult)
 
     function decode(string)
     {
-        // Replace "+" with " " then decode precent encoded values.
-        return decodeURIComponent(string.replace(/\+/g, " "));
+        try {
+            // Replace "+" with " " then decode precent encoded values.
+            return decodeURIComponent(string.replace(/\+/g, " "));
+        } catch (e) {
+            return string;
+        }
     }
 
     var parameters = arrayResult ? [] : {};

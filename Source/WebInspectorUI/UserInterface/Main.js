@@ -357,12 +357,14 @@ WebInspector.displayNameForURL = function(url, urlComponents)
 {
     if (!urlComponents)
         urlComponents = parseURL(url);
+
     var displayName;
     try {
         displayName = decodeURIComponent(urlComponents.lastPathComponent || "");
     } catch (e) {
         displayName = urlComponents.lastPathComponent;
     }
+
     return displayName || WebInspector.displayNameForHost(urlComponents.host) || url;
 }
 
@@ -377,14 +379,22 @@ WebInspector.updateWindowTitle = function()
     var mainFrame = this.frameResourceManager.mainFrame;
     console.assert(mainFrame);
 
-    // Build a title based on the URL components.
     var urlComponents = mainFrame.mainResource.urlComponents;
-    if (urlComponents.host && urlComponents.lastPathComponent)
-        var title = this.displayNameForHost(urlComponents.host) + " \u2014 " + decodeURIComponent(urlComponents.lastPathComponent);
+
+    var lastPathComponent;
+    try {
+        lastPathComponent = decodeURIComponent(urlComponents.lastPathComponent || "");
+    } catch (e) {
+        lastPathComponent = urlComponents.lastPathComponent;
+    }
+
+    // Build a title based on the URL components.
+    if (urlComponents.host && lastPathComponent)
+        var title = this.displayNameForHost(urlComponents.host) + " \u2014 " + lastPathComponent;
     else if (urlComponents.host)
         var title = this.displayNameForHost(urlComponents.host);
-    else if (urlComponents.lastPathComponent)
-        var title = decodeURIComponent(urlComponents.lastPathComponent);
+    else if (lastPathComponent)
+        var title = lastPathComponent;
     else
         var title = mainFrame.url;
 
