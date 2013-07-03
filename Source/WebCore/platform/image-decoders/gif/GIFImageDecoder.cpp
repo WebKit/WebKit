@@ -370,7 +370,7 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
     int top = upperBoundScaledY(frameRect.y());
     int bottom = lowerBoundScaledY(frameRect.maxY(), top);
     buffer->setOriginalFrameRect(IntRect(left, top, right - left, bottom - top));
-    
+
     if (!frameIndex) {
         // This is the first frame, so we're not relying on any previous data.
         if (!buffer->setSize(scaledSize().width(), scaledSize().height()))
@@ -407,15 +407,10 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
                 if (!buffer->setSize(bufferSize.width(), bufferSize.height()))
                     return setFailed();
             } else {
-              // Copy the whole previous buffer, then clear just its frame.
-              if (!buffer->copyBitmapData(*prevBuffer))
-                  return setFailed();
-              for (int y = prevRect.y(); y < prevRect.maxY(); ++y) {
-                  for (int x = prevRect.x(); x < prevRect.maxX(); ++x)
-                      buffer->setRGBA(x, y, 0, 0, 0, 0);
-              }
-              if ((prevRect.width() > 0) && (prevRect.height() > 0))
-                  buffer->setHasAlpha(true);
+                // Copy the whole previous buffer, then clear just its frame.
+                if (!buffer->copyBitmapData(*prevBuffer))
+                    return setFailed();
+                buffer->zeroFillFrameRect(prevRect);
             }
         }
     }

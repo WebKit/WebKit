@@ -178,6 +178,23 @@ void ImageFrame::zeroFillPixelData()
     m_hasAlpha = true;
 }
 
+void ImageFrame::zeroFillFrameRect(const IntRect& rect)
+{
+    ASSERT(IntRect(IntPoint(), m_size).contains(rect));
+
+    if (rect.isEmpty())
+        return;
+
+    size_t rectWidthInBytes = rect.width() * sizeof(PixelData);
+    PixelData* start = m_bytes + (rect.y() * width()) + rect.x();
+    for (int i = 0; i < rect.height(); ++i) {
+        memset(start, 0, rectWidthInBytes);
+        start += width();
+    }
+
+    setHasAlpha(true);
+}
+
 bool ImageFrame::copyBitmapData(const ImageFrame& other)
 {
     if (this == &other)

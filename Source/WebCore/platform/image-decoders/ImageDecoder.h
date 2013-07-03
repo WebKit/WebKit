@@ -77,6 +77,7 @@ namespace WebCore {
         // These do not touch other metadata, only the raw pixel data.
         void clearPixelData();
         void zeroFillPixelData();
+        void zeroFillFrameRect(const IntRect&);
 
         // Makes this frame have an independent copy of the provided image's
         // pixel data, so that modifications in one frame are not reflected in

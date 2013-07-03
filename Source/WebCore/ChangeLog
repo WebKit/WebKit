@@ -1,3 +1,26 @@
+2013-07-03  Balazs Kelemen  <b.kelemen@samsung.com>
+
+        Gif: zero filling should use memset instead of setRGBA for every pixel
+        https://bugs.webkit.org/show_bug.cgi?id=118350
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        No new tests. Actually it is not covered by existing tests. Surprisingly we haven't got pixel
+        tests for animated images. Given that this patch is pretty trivial I don't think it's worth the
+        cost to start introducing such tests.
+        I added a manual test: animated-gif-dispose-background.html.
+
+        GIFImageDecoder::initializeFrameBuffer use a loop to fill a subrect with tranparent pixels.
+        This is extremely ineffecient. The use case for this code path is not frequent on the web
+        but it's still better to fix it.
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageFrame::zeroFillFrameRect):
+        * platform/image-decoders/ImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        Fixed indentation in addition.
+
 2013-07-03  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
 
         TextureUnit code optimization
