@@ -1,3 +1,15 @@
+2013-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Migrate WebKitWebContext to GTask
+        https://bugs.webkit.org/show_bug.cgi?id=117153
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextGetPluginThread):
+        (webkit_web_context_get_plugins):
+        (webkit_web_context_get_plugins_finish):
+
 2013-07-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Invalidate FontCache before purging MemoryCache upon WebProcess termination/closure

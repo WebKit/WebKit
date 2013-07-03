@@ -493,15 +493,18 @@ void webkit_web_context_set_additional_plugins_directory(WebKitWebContext* conte
     context->priv->context->setAdditionalPluginsDirectory(WebCore::filenameToString(directory));
 }
 
-struct GetPluginsAsyncData {
-    Vector<PluginModuleInfo> plugins;
-};
-WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GetPluginsAsyncData)
-
-static void webkitWebContextGetPluginThread(GSimpleAsyncResult* result, GObject* object, GCancellable*)
+static void destroyPluginList(GList* plugins)
 {
-    GetPluginsAsyncData* data = static_cast<GetPluginsAsyncData*>(g_simple_async_result_get_op_res_gpointer(result));
-    data->plugins = WEBKIT_WEB_CONTEXT(object)->priv->context->pluginInfoStore().plugins();
+    g_list_free_full(plugins, g_object_unref);
+}
+
+static void webkitWebContextGetPluginThread(GTask* task, gpointer object, gpointer taskData, GCancellable*)
+{
+    Vector<PluginModuleInfo> plugins = WEBKIT_WEB_CONTEXT(object)->priv->context->pluginInfoStore().plugins();
+    GList* returnValue = 0;
+    for (size_t i = 0; i < plugins.size(); ++i)
+        returnValue = g_list_prepend(returnValue, webkitPluginCreate(plugins[i]));
+    g_task_return_pointer(task, returnValue, reinterpret_cast<GDestroyNotify>(destroyPluginList));
 }
 
 /**
@@ -520,11 +523,8 @@ void webkit_web_context_get_plugins(WebKitWebContext* context, GCancellable* can
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    GRefPtr<GSimpleAsyncResult> result = adoptGRef(g_simple_async_result_new(G_OBJECT(context), callback, userData,
-                                                                             reinterpret_cast<gpointer>(webkit_web_context_get_plugins)));
-    g_simple_async_result_set_op_res_gpointer(result.get(), createGetPluginsAsyncData(),
-                                              reinterpret_cast<GDestroyNotify>(destroyGetPluginsAsyncData));
-    g_simple_async_result_run_in_thread(result.get(), webkitWebContextGetPluginThread, G_PRIORITY_DEFAULT, cancellable);
+    GRefPtr<GTask> task = adoptGRef(g_task_new(context, cancellable, callback, userData));
+    g_task_run_in_thread(task.get(), webkitWebContextGetPluginThread);
 }
 
 /**
@@ -541,20 +541,9 @@ void webkit_web_context_get_plugins(WebKitWebContext* context, GCancellable* can
 GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncResult* result, GError** error)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
-    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+    g_return_val_if_fail(g_task_is_valid(result, context), 0);
 
-    GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkit_web_context_get_plugins);
-
-    if (g_simple_async_result_propagate_error(simpleResult, error))
-        return 0;
-
-    GetPluginsAsyncData* data = static_cast<GetPluginsAsyncData*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
-    GList* plugins = 0;
-    for (size_t i = 0; i < data->plugins.size(); ++i)
-        plugins = g_list_prepend(plugins, webkitPluginCreate(data->plugins[i]));
-
-    return plugins;
+    return static_cast<GList*>(g_task_propagate_pointer(G_TASK(result), error));
 }
 
 /**
