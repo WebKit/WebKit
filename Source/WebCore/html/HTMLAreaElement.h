@@ -80,6 +80,11 @@ inline bool isHTMLAreaElement(Node* node)
     return node->hasTagName(HTMLNames::areaTag);
 }
 
+inline bool isHTMLAreaElement(Element* element)
+{
+    return element->hasTagName(HTMLNames::areaTag);
+}
+
 inline HTMLAreaElement* toHTMLAreaElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLAreaElement(node));

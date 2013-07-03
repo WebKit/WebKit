@@ -117,6 +117,11 @@ inline bool isHTMLImageElement(Node* node)
     return node->hasTagName(HTMLNames::imgTag);
 }
 
+inline bool isHTMLImageElement(Element* element)
+{
+    return element->hasTagName(HTMLNames::imgTag);
+}
+
 inline HTMLImageElement* toHTMLImageElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLImageElement(node));

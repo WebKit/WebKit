@@ -97,15 +97,20 @@ private:
     ScopedStyleRegistrationState m_scopedStyleRegistrationState;
 };
 
+inline bool isHTMLStyleElement(Node* node)
+{
+    return node->hasTagName(HTMLNames::styleTag);
+}
+
 inline bool isHTMLStyleElement(Element* element)
 {
     return element->hasTagName(HTMLNames::styleTag);
 }
 
-inline HTMLStyleElement* toHTMLStyleElement(Element* element)
+inline HTMLStyleElement* toHTMLStyleElement(Node* node)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!element || isHTMLStyleElement(element));
-    return static_cast<HTMLStyleElement*>(element);
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLStyleElement(node));
+    return static_cast<HTMLStyleElement*>(node);
 }
 
 } //namespace

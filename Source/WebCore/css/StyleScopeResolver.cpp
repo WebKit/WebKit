@@ -60,10 +60,10 @@ const ContainerNode* StyleScopeResolver::scopeFor(const CSSStyleSheet* sheet)
     if (!document)
         return 0;
     Node* ownerNode = sheet->ownerNode();
-    if (!ownerNode || !ownerNode->isHTMLElement() || !isHTMLStyleElement(toElement(ownerNode)))
+    if (!ownerNode || !ownerNode->isHTMLElement() || !isHTMLStyleElement(ownerNode))
         return 0;
 
-    HTMLStyleElement* styleElement = toHTMLStyleElement(toElement(ownerNode));
+    HTMLStyleElement* styleElement = toHTMLStyleElement(ownerNode);
     if (!styleElement->scoped())
         return styleElement->isInShadowTree() ? styleElement->containingShadowRoot() : 0;
 

@@ -444,6 +444,11 @@ inline bool isHTMLInputElement(Node* node)
     return node->hasTagName(HTMLNames::inputTag);
 }
 
+inline bool isHTMLInputElement(Element* element)
+{
+    return element->hasTagName(HTMLNames::inputTag);
+}
+
 inline HTMLInputElement* toHTMLInputElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLInputElement(node));

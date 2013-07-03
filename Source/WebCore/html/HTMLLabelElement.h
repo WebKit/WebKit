@@ -60,6 +60,11 @@ inline bool isHTMLLabelElement(Node* node)
     return node->hasTagName(HTMLNames::labelTag);
 }
 
+inline bool isHTMLLabelElement(Element* element)
+{
+    return element->hasTagName(HTMLNames::labelTag);
+}
+
 inline HTMLLabelElement* toHTMLLabelElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLLabelElement(node));

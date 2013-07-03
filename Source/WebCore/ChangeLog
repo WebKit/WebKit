@@ -1,3 +1,45 @@
+2013-07-03  Kangil Han  <kangil.han@samsung.com>
+
+        Append overloading function for isFooElement
+        https://bugs.webkit.org/show_bug.cgi?id=118334
+
+        Reviewed by Antti Koivisto.
+
+        Node::hasTagName needs additional isElementNode() check when it is triggered.
+        So conversion from Element* to Node* in isFooElement should be avoided.
+        Therefore, to support both Node* and Element* as an argument of isFooElement,
+        this patch appends overloading inline function.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::isAcceptableCSSStyleSheetParent):
+        * css/StyleScopeResolver.cpp:
+        (WebCore::StyleScopeResolver::scopeFor):
+        * dom/Node.cpp:
+        (WebCore::Node::numberOfScopedHTMLStyleChildren):
+        * html/HTMLAnchorElement.h:
+        (WebCore::isHTMLAnchorElement):
+        * html/HTMLAreaElement.h:
+        (WebCore::isHTMLAreaElement):
+        * html/HTMLAudioElement.h:
+        (WebCore::isHTMLAudioElement):
+        * html/HTMLFormElement.h:
+        (WebCore::isHTMLFormElement):
+        * html/HTMLImageElement.h:
+        (WebCore::isHTMLImageElement):
+        * html/HTMLInputElement.h:
+        (WebCore::isHTMLInputElement):
+        * html/HTMLLabelElement.h:
+        (WebCore::isHTMLLabelElement):
+        * html/HTMLOptGroupElement.h:
+        (WebCore::isHTMLOptGroupElement):
+        * html/HTMLOptionElement.h:
+        (WebCore::isHTMLOptionElement):
+        * html/HTMLStyleElement.h:
+        (WebCore::isHTMLStyleElement):
+        (WebCore::toHTMLStyleElement):
+        * html/HTMLTextAreaElement.h:
+        (WebCore::isHTMLTextAreaElement):
+
 2013-07-03  Balazs Kelemen  <b.kelemen@samsung.com>
 
         Gif: zero filling should use memset instead of setRGBA for every pixel

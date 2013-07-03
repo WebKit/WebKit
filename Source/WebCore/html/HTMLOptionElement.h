@@ -100,6 +100,11 @@ inline bool isHTMLOptionElement(Node* node)
     return node->hasTagName(HTMLNames::optionTag);
 }
 
+inline bool isHTMLOptionElement(Element* element)
+{
+    return element->hasTagName(HTMLNames::optionTag);
+}
+
 inline HTMLOptionElement* toHTMLOptionElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLOptionElement(node));

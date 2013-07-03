@@ -159,6 +159,11 @@ inline bool isHTMLAnchorElement(Node* node)
     return node->hasTagName(HTMLNames::aTag);
 }
 
+inline bool isHTMLAnchorElement(Element* element)
+{
+    return element->hasTagName(HTMLNames::aTag);
+}
+
 inline HTMLAnchorElement* toHTMLAnchorElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLAnchorElement(node));
