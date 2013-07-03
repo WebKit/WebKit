@@ -1,3 +1,21 @@
+2013-07-03  Jer Noble  <jer.noble@apple.com>
+
+        Xcode often gets in a state where the debugger is completely unresponsive
+        https://bugs.webkit.org/show_bug.cgi?id=118157
+
+        The GetPointeeData() operations we use to retrieve strings is extremely expensive.
+        Rather than pull the character data out of the debugger one byte at a time
+        through the GetPointeeData() API, retrieve the memory contents of the string through
+        the ReadMemory() API, and convert the retrieved memory into a python string.
+
+        Reviewed by Anders Carlsson.
+
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module.lldb_webkit):
+        (guess_string_length):
+        (ustring_to_string):
+        (lstring_to_string):
+
 2013-07-03  Morten Stenshorne  <mstensho@opera.com>
 
         [GTK] Let F5 refresh the page in MiniBrowser
