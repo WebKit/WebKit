@@ -1,3 +1,19 @@
+2013-07-03  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Improve implementation of elements in region being flowed to another flow thread
+        https://bugs.webkit.org/show_bug.cgi?id=118300
+
+        Based on patch by Zoltán Árvai <zarvai@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fixed CSS_REGIONS guard.
+
+        * dom/Element.h:
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::elementInsideRegionNeedsRenderer):
+        (WebCore::NodeRenderingContext::moveToFlowThreadIfNeeded):
+
 2013-07-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Move SVGTests attributes parsing to SVGGraphicsElement
