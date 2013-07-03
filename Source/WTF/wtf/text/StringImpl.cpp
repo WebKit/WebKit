@@ -182,20 +182,7 @@ PassRefPtr<StringImpl> StringImpl::createWithoutCopying(const LChar* characters,
     return adoptRef(new StringImpl(characters, length, ConstructWithoutCopying));
 }
 
-template <typename CharType>
-inline PassRefPtr<StringImpl> StringImpl::constructInternal(StringImpl* stringImpl, unsigned length)
-{
-    return adoptRef(new (NotNull, stringImpl) StringImpl(length));
-}
-
-template <>
-inline PassRefPtr<StringImpl> StringImpl::constructInternal<LChar>(StringImpl* stringImpl, unsigned length)
-{
-    return adoptRef(new (NotNull, stringImpl) StringImpl(length, Force8BitConstructor));
-}
-
-template <typename CharType>
-inline PassRefPtr<StringImpl> StringImpl::createUninitializedInternal(unsigned length, CharType*& data)
+PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& data)
 {
     if (!length) {
         data = 0;
@@ -205,27 +192,35 @@ inline PassRefPtr<StringImpl> StringImpl::createUninitializedInternal(unsigned l
     // Allocate a single buffer large enough to contain the StringImpl
     // struct as well as the data which it contains. This removes one
     // heap allocation from this call.
-    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharType)))
+    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(LChar)))
         CRASH();
-    size_t size = sizeof(StringImpl) + length * sizeof(CharType);
+    size_t size = sizeof(StringImpl) + length * sizeof(LChar);
     StringImpl* string = static_cast<StringImpl*>(fastMalloc(size));
 
-    data = reinterpret_cast<CharType*>(string + 1);
-    return constructInternal<CharType>(string, length);
-}
-
-PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& data)
-{
-    return createUninitializedInternal(length, data);
+    data = reinterpret_cast<LChar*>(string + 1);
+    return adoptRef(new (NotNull, string) StringImpl(length, Force8BitConstructor));
 }
 
 PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& data)
 {
-    return createUninitializedInternal(length, data);
+    if (!length) {
+        data = 0;
+        return empty();
+    }
+
+    // Allocate a single buffer large enough to contain the StringImpl
+    // struct as well as the data which it contains. This removes one 
+    // heap allocation from this call.
+    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(UChar)))
+        CRASH();
+    size_t size = sizeof(StringImpl) + length * sizeof(UChar);
+    StringImpl* string = static_cast<StringImpl*>(fastMalloc(size));
+
+    data = reinterpret_cast<UChar*>(string + 1);
+    return adoptRef(new (NotNull, string) StringImpl(length));
 }
 
-template <typename CharType>
-inline PassRefPtr<StringImpl> StringImpl::reallocateInternal(PassRefPtr<StringImpl> originalString, unsigned length, CharType*& data)
+PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, LChar*& data)
 {
     ASSERT(originalString->is8Bit());
     ASSERT(originalString->hasOneRef());
@@ -237,46 +232,58 @@ inline PassRefPtr<StringImpl> StringImpl::reallocateInternal(PassRefPtr<StringIm
     }
 
     // Same as createUninitialized() except here we use fastRealloc.
-    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharType)))
+    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(LChar)))
         CRASH();
-    size_t size = sizeof(StringImpl) + length * sizeof(CharType);
+    size_t size = sizeof(StringImpl) + length * sizeof(LChar);
     originalString->~StringImpl();
     StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), size));
 
-    data = reinterpret_cast<CharType*>(string + 1);
-    return constructInternal<CharType>(string, length);
-}
-
-PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, LChar*& data)
-{
-    return reallocateInternal(originalString, length, data);
+    data = reinterpret_cast<LChar*>(string + 1);
+    return adoptRef(new (NotNull, string) StringImpl(length, Force8BitConstructor));
 }
 
 PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, UChar*& data)
 {
-    return reallocateInternal(originalString, length, data);
-}
+    ASSERT(!originalString->is8Bit());
+    ASSERT(originalString->hasOneRef());
+    ASSERT(originalString->bufferOwnership() == BufferInternal);
 
-template <typename CharType>
-inline PassRefPtr<StringImpl> StringImpl::createInternal(const CharType* characters, unsigned length)
-{
-    if (!characters || !length)
+    if (!length) {
+        data = 0;
         return empty();
+    }
 
-    CharType* data;
-    RefPtr<StringImpl> string = createUninitialized(length, data);
-    memcpy(data, characters, length * sizeof(CharType));
-    return string.release();
+    // Same as createUninitialized() except here we use fastRealloc.
+    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(UChar)))
+        CRASH();
+    size_t size = sizeof(StringImpl) + length * sizeof(UChar);
+    originalString->~StringImpl();
+    StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), size));
+
+    data = reinterpret_cast<UChar*>(string + 1);
+    return adoptRef(new (NotNull, string) StringImpl(length));
 }
 
 PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned length)
 {
-    return createInternal(characters, length);
+    if (!characters || !length)
+        return empty();
+
+    UChar* data;
+    RefPtr<StringImpl> string = createUninitialized(length, data);
+    memcpy(data, characters, length * sizeof(UChar));
+    return string.release();
 }
 
 PassRefPtr<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
 {
-    return createInternal(characters, length);
+    if (!characters || !length)
+        return empty();
+
+    LChar* data;
+    RefPtr<StringImpl> string = createUninitialized(length, data);
+    memcpy(data, characters, length * sizeof(LChar));
+    return string.release();
 }
 
 PassRefPtr<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters, unsigned length)
