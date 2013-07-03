@@ -1,3 +1,34 @@
+2013-07-02  Ruth Fong  <ruth_fong@apple.com>
+
+        Change event should not be dispatched by clicking a scrollbar of select listbox
+        https://bugs.webkit.org/show_bug.cgi?id=118019
+        <rdar://problem/14297760>
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/forms/select/listbox-click-on-scrollbar.html
+
+        Merge the following:
+        http://src.chromium.org/viewvc/blink?view=revision&revision=151689
+        https://chromium.googlesource.com/chromium/blink/+/492549b0fcaa58a85aa0797446b62985a263704f
+
+        Previously, a select element with the multiple attribute would dispatch
+        an onChanged event when the scrollbar is clicked. This patch corrects this
+        issue by only calling listBoxOnChange(), which fires the onChanged event, 
+        when an actual option is clicked.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childrenChanged): Updated to clear the list
+        of selected items when when an <option> element is added to/deleted from its <select> element.
+        (Without this addition, if a option was selected, and then JavaScript was used to modify 
+        the <select> element, and then the scrollbar was clicked, an onChanged event would fire 
+        because it remembers the previously selected option.)
+
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): Updated to
+        only call listBoxOnChange() if at least one option is selected. 
+
 2013-07-02  Alex Christensen  <achristensen@apple.com>
 
         Preparing Windows WebGL build system.
