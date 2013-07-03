@@ -1,3 +1,11 @@
+2013-07-03  Jessie Berlin  <jberlin@apple.com>
+
+        Ran update-webkit-localizable-strings.
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2013-06-28  Dean Jackson  <dino@apple.com>
 
         Update Apple System fonts in auto-complete
