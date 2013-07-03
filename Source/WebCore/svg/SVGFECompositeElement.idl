@@ -26,8 +26,7 @@
 [
     Conditional=SVG&FILTERS,
     DoNotCheckConstants
-] interface SVGFECompositeElement : SVGStyledElement,
-                           SVGFilterPrimitiveStandardAttributes {
+] interface SVGFECompositeElement : SVGStyledElement {
     // Composite Operators
     const unsigned short SVG_FECOMPOSITE_OPERATOR_UNKNOWN    = 0;
     const unsigned short SVG_FECOMPOSITE_OPERATOR_OVER       = 1;
@@ -46,3 +45,4 @@
     readonly attribute SVGAnimatedNumber      k4;
 };
 
+SVGFECompositeElement implements SVGFilterPrimitiveStandardAttributes;

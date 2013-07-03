@@ -26,8 +26,7 @@
 [
     Conditional=SVG&FILTERS,
     DoNotCheckConstants
-] interface SVGFEBlendElement : SVGStyledElement,
-                           SVGFilterPrimitiveStandardAttributes {
+] interface SVGFEBlendElement : SVGStyledElement {
     // Blend Mode Types
     const unsigned short SVG_FEBLEND_MODE_UNKNOWN  = 0;
     const unsigned short SVG_FEBLEND_MODE_NORMAL   = 1;
@@ -41,3 +40,4 @@
     readonly attribute SVGAnimatedEnumeration mode;
 };
 
+SVGFEBlendElement implements SVGFilterPrimitiveStandardAttributes;

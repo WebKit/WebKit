@@ -25,10 +25,10 @@
 
 [
     Conditional=SVG&FILTERS
-] interface SVGFEImageElement : SVGStyledElement,
-                                SVGFilterPrimitiveStandardAttributes {
+] interface SVGFEImageElement : SVGStyledElement {
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
 };
 
 SVGFEImageElement implements SVGExternalResourcesRequired;
+SVGFEImageElement implements SVGFilterPrimitiveStandardAttributes;
 SVGFEImageElement implements SVGURIReference;

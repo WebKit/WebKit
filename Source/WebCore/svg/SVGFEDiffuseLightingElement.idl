@@ -25,8 +25,7 @@
 
 [
     Conditional=SVG&FILTERS
-] interface SVGFEDiffuseLightingElement : SVGStyledElement,
-                           SVGFilterPrimitiveStandardAttributes {
+] interface SVGFEDiffuseLightingElement : SVGStyledElement {
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber surfaceScale;
     readonly attribute SVGAnimatedNumber diffuseConstant;
@@ -34,3 +33,4 @@
     readonly attribute SVGAnimatedNumber kernelUnitLengthY;
 };
 
+SVGFEDiffuseLightingElement implements SVGFilterPrimitiveStandardAttributes;

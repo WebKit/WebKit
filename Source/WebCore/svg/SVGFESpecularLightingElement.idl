@@ -25,11 +25,11 @@
 
 [
     Conditional=SVG&FILTERS
-] interface SVGFESpecularLightingElement : SVGStyledElement,
-                           SVGFilterPrimitiveStandardAttributes {
+] interface SVGFESpecularLightingElement : SVGStyledElement {
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber surfaceScale;
     readonly attribute SVGAnimatedNumber specularConstant;
     readonly attribute SVGAnimatedNumber specularExponent;
 };
 
+SVGFESpecularLightingElement implements SVGFilterPrimitiveStandardAttributes;

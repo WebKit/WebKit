@@ -1706,6 +1706,7 @@ dom_binding_idls += \
 	$(WebCore)/svg/SVGFETileElement.idl \
 	$(WebCore)/svg/SVGFETurbulenceElement.idl \
 	$(WebCore)/svg/SVGFilterElement.idl \
+	$(WebCore)/svg/SVGFilterPrimitiveStandardAttributes.idl \
 	$(WebCore)/svg/SVGFitToViewBox.idl \
 	$(WebCore)/svg/SVGFontElement.idl \
 	$(WebCore)/svg/SVGFontFaceElement.idl \

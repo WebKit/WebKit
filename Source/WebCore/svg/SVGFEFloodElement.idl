@@ -25,6 +25,7 @@
 
 [
     Conditional=SVG&FILTERS
-] interface SVGFEFloodElement : SVGStyledElement,
-                           SVGFilterPrimitiveStandardAttributes {
+] interface SVGFEFloodElement : SVGStyledElement {
 };
+
+SVGFEFloodElement implements SVGFilterPrimitiveStandardAttributes;

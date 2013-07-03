@@ -19,8 +19,7 @@
 
 [
     Conditional=SVG&FILTERS
-] interface SVGFEDropShadowElement : SVGStyledElement,
-                           SVGFilterPrimitiveStandardAttributes {
+] interface SVGFEDropShadowElement : SVGStyledElement {
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber dx;
     readonly attribute SVGAnimatedNumber dy;
@@ -31,3 +30,4 @@
                          [Default=Undefined] optional float stdDeviationY);
 };
 
+SVGFEDropShadowElement implements SVGFilterPrimitiveStandardAttributes;

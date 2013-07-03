@@ -26,8 +26,7 @@
 [
     Conditional=SVG&FILTERS,
     DoNotCheckConstants
-] interface SVGFEMorphologyElement : SVGStyledElement,
-                           SVGFilterPrimitiveStandardAttributes {
+] interface SVGFEMorphologyElement : SVGStyledElement {
     // Morphology Operators
     const unsigned short SVG_MORPHOLOGY_OPERATOR_UNKNOWN  = 0;
     const unsigned short SVG_MORPHOLOGY_OPERATOR_ERODE    = 1;
@@ -42,3 +41,4 @@
                    [Default=Undefined] optional float radiusY);
 };
 
+SVGFEMorphologyElement implements SVGFilterPrimitiveStandardAttributes;
