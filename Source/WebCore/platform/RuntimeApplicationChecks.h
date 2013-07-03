@@ -38,6 +38,7 @@ bool applicationIsMicrosoftOutlook();
 bool applicationIsSafari();
 bool applicationIsSolidStateNetworksDownloader();
 bool applicationIsVersions();
+bool applicationIsHRBlock();
 
 } // namespace WebCore
 

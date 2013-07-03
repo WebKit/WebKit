@@ -108,6 +108,12 @@ bool applicationIsVersions()
     return isVersions;
 }
 
+bool applicationIsHRBlock()
+{
+    static bool isHRBlock = mainBundleIsEqualTo("com.hrblock.tax.2010");
+    return isHRBlock;
+}
+
 bool applicationIsSolidStateNetworksDownloader()
 {
     static bool isSolidStateNetworksDownloader = mainBundleIsEqualTo("com.solidstatenetworks.awkhost");
