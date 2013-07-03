@@ -1,3 +1,11 @@
+2013-07-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix after r152320 and r152345 for build configurations that enable
+        SVG support but disable CSS regions support.
+
+        * svg/SVGElement.cpp: Wrap shouldMoveToFlowThread override into the ENABLE(CSS_REGIONS) build guard.
+        * svg/SVGElement.h: Ditto.
+
 2013-07-03  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Improve implementation of elements in region being flowed to another flow thread

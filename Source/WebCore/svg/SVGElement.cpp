@@ -460,11 +460,13 @@ static bool hasLoadListener(Element* element)
     return false;
 }
 
+#if ENABLE(CSS_REGIONS)
 bool SVGElement::shouldMoveToFlowThread(RenderStyle* styleToUse) const
 {
     // Allow only svg root elements to be directly collected by a render flow thread.
     return parentNode() && !parentNode()->isSVGElement() && hasTagName(SVGNames::svgTag) && Element::shouldMoveToFlowThread(styleToUse);
 }
+#endif
 
 void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
 {

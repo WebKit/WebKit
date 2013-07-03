@@ -120,7 +120,9 @@ public:
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) OVERRIDE;
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) OVERRIDE;
 
+#if ENABLE(CSS_REGIONS)
     virtual bool shouldMoveToFlowThread(RenderStyle*) const OVERRIDE;
+#endif
 
 protected:
     SVGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
