@@ -1,3 +1,24 @@
+2013-07-03  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Remove code duplication from StringImpl create()/reallocate() methods
+        https://bugs.webkit.org/show_bug.cgi?id=118355
+
+        Reviewed by Anders Carlsson.
+
+        StringImpl create()/reallocate() methods accepting LChar and UChar used to have
+        duplicated code. The code duplication is removed now via used templates.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::constructInternal):
+        (WTF::LChar):
+        (WTF::StringImpl::createUninitializedInternal):
+        (WTF::StringImpl::createUninitialized):
+        (WTF::StringImpl::reallocateInternal):
+        (WTF::StringImpl::reallocate):
+        (WTF::StringImpl::createInternal):
+        (WTF::StringImpl::create):
+        * wtf/text/StringImpl.h:
+
 2013-07-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix cast-align warnings in FastMalloc.cpp
