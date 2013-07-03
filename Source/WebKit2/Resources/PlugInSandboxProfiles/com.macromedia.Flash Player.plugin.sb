@@ -1,9 +1,6 @@
-(if (defined? 'semaphore-owner)
-    (allow ipc-posix-sem
-        (semaphore-owner same-sandbox))
-    (allow ipc-posix-sem
-        (ipc-posix-name "MacromediaSemaphoreDig")
-        (ipc-posix-name "59918130")))
+(allow ipc-posix-sem
+    (ipc-posix-name "MacromediaSemaphoreDig")
+    (ipc-posix-name "59918130"))
 
 (allow file-read*
     (home-literal "/mm.cfg")
