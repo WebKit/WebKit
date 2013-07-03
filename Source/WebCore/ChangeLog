@@ -1,3 +1,30 @@
+2013-07-03  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
+
+        TextureUnit code optimization
+        https://bugs.webkit.org/show_bug.cgi?id=117868
+
+        Reviewed by Noam Rosenthal.
+
+        According to OpenGL ES 2.0 specification it is not possible to use both
+        texture2D and textureCubeMap in one texture unit.
+        This patch reduces amount of code, slightly increases rendering performance
+        and makes WebKit more consistent with OpenGL.
+
+        No new tests. Covered by existing tests:
+        LayoutTests/webgl/conformance/textures/tex-image-webgl.html
+        LayoutTests/webgl/conformance/textures/texture-complete.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::~WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::reshape):
+        (WebCore::WebGLRenderingContext::bindTexture):
+        (WebCore::WebGLRenderingContext::deleteTexture):
+        (WebCore::WebGLRenderingContext::getParameter):
+        (WebCore::WebGLRenderingContext::handleNPOTTextures):
+        (WebCore::WebGLRenderingContext::validateTextureBinding):
+        (WebCore::WebGLRenderingContext::restoreCurrentTexture2D):
+        * html/canvas/WebGLRenderingContext.h:
+
 2013-07-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Stop inheriting SVGFilterPrimitiveStandardAttributes in SVG

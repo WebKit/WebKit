@@ -449,10 +449,8 @@ public:
     RefPtr<WebGLProgram> m_currentProgram;
     RefPtr<WebGLFramebuffer> m_framebufferBinding;
     RefPtr<WebGLRenderbuffer> m_renderbufferBinding;
-    class TextureUnitState {
-    public:
-        RefPtr<WebGLTexture> m_texture2DBinding;
-        RefPtr<WebGLTexture> m_textureCubeMapBinding;
+    struct TextureUnitState {
+        RefPtr<WebGLTexture> m_textureBinding;
     };
     Vector<TextureUnitState> m_textureUnits;
     unsigned long m_activeTextureUnit;
