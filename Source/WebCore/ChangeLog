@@ -1,3 +1,14 @@
+2013-07-02  Jessie Berlin  <jberlin@apple.com>
+
+        The callback for WKPageGetPlugInInformation needs info about whether or not there are any
+        non-playing instances of the plug-in on the page
+        https://bugs.webkit.org/show_bug.cgi?id=118330
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        Expose a symbol so it can be used in WebKit2.
+
 2013-07-02  Alex Christensen  <achristensen@apple.com>
 
         Added getProcAddress implementation for Windows in OpenGLShims.

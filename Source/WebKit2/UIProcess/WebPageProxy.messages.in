@@ -264,7 +264,7 @@ messages -> WebPageProxy {
     # Plug-in complex text input support messages
     PluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
     SetPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t complexTextInputState)
-    ContainsPlugInCallback(bool containsPlugIn, uint64_t plugInProcessToken, uint64_t callbackID)
+    ContainsPlugInCallback(bool containsPlugIn, Vector<String> nonPlayingPlugInInstanceMimeTypes, uint64_t plugInProcessToken, uint64_t callbackID)
 
     # Speech messages
     GetIsSpeaking() -> (bool isSpeaking)

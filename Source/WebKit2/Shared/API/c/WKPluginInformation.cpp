@@ -109,3 +109,9 @@ WKStringRef WKPluginInformationPluginURLKey()
     static WebString* key = WebString::create(pluginInformationPluginURLKey()).leakRef();
     return toAPI(key);
 }
+
+WKStringRef WKPlugInInformationPageContainsNonPlayingInstanceOfPlugInKey()
+{
+    static WebString* key = WebString::create(plugInInformationPageContainsNonPlayingInstanceOfPlugInKey()).leakRef();
+    return toAPI(key);
+}

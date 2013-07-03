@@ -101,6 +101,11 @@ String pluginInformationPluginURLKey()
     return ASCIILiteral("PluginInformationPluginURL");
 }
 
+String plugInInformationPageContainsNonPlayingInstanceOfPlugInKey()
+{
+    return ASCIILiteral("PlugInInformationPageContainsNonPlayingInstanceOfPlugIn");
+}
+
 void getPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDictionary::MapType& map)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -116,6 +121,16 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginMo
 {
     ImmutableDictionary::MapType map;
     getPluginModuleInformation(plugin, map);
+
+    return ImmutableDictionary::adopt(map);
+}
+
+PassRefPtr<ImmutableDictionary> createPlugInInformationDictionary(const PluginModuleInfo& plugInModuleInfo, bool pageContainsNonPlayingInstanceOfPlugIn)
+{
+    ImmutableDictionary::MapType map;
+    getPluginModuleInformation(plugInModuleInfo, map);
+
+    map.set(plugInInformationPageContainsNonPlayingInstanceOfPlugInKey(), WebBoolean::create(pageContainsNonPlayingInstanceOfPlugIn));
 
     return ImmutableDictionary::adopt(map);
 }

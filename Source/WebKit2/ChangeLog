@@ -1,3 +1,37 @@
+2013-07-02  Jessie Berlin  <jberlin@apple.com>
+
+        The callback for WKPageGetPlugInInformation needs info about whether or not there are any
+        non-playing instances of the plug-in on the page
+        https://bugs.webkit.org/show_bug.cgi?id=118330
+
+        Reviewed by Anders Carlsson.
+
+        Add another key value pair to the dictionary passed to the callback.
+
+        * Shared/API/c/WKPluginInformation.cpp:
+        (WKPlugInInformationPageContainsNonPlayingInstanceOfPlugInKey):
+        * Shared/API/c/WKPluginInformation.h:
+
+        * Shared/Plugins/Netscape/PluginInformation.cpp:
+        (WebKit::plugInInformationPageContainsNonPlayingInstanceOfPlugInKey):
+        (WebKit::createPlugInInformationDictionary):
+        Add the information about whether or not the page contains a non-playing instance of that
+        plug-in to the plug-in information dictionary.
+        * Shared/Plugins/Netscape/PluginInformation.h:
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::containsPlugInCallback):
+        Check if any of the MIME types of the plug-in instances that are present on the page but are
+        not playing match the instance of plug-in being searched for.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::addPlugInMimeTypesFromNodeListForNonPlayingPlugIns):
+        Based roughly off of addPlugInsFromNodeListMatchingPlugInOrigin in
+        HTMLPlugInImageElement.cpp.
+        (WebKit::WebPage::containsPluginViewsWithPluginProcessToken):
+        Based roughly off of HTMLPlugInImageElement::restartSimilarPlugIns.
+
 2013-07-02  Alexey Proskuryakov  <ap@apple.com>
 
         security/block-test.html fails when NetworkProcess is enabled
