@@ -1352,6 +1352,13 @@ static bool isDisplayFlexibleBox(EDisplay display)
     return display == FLEX || display == INLINE_FLEX;
 }
 
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+static bool isScrollableOverflow(EOverflow overflow)
+{
+    return overflow == OSCROLL || overflow == OAUTO || overflow == OOVERLAY;
+}
+#endif
+
 void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentStyle, Element *e)
 {
     ASSERT(parentStyle);
@@ -1470,10 +1477,6 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         || style->hasBlendMode()
         || style->position() == StickyPosition
         || (style->position() == FixedPosition && e && e->document()->page() && e->document()->page()->settings()->fixedPositionCreatesStackingContext())
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
-        // Touch overflow scrolling creates a stacking context.
-        || ((style->overflowX() != OHIDDEN || style->overflowY() != OHIDDEN) && style->useTouchOverflowScrolling())
-#endif
 #if ENABLE(DIALOG_ELEMENT)
         || (e && e->isInTopLayer())
 #endif
@@ -1525,6 +1528,12 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         style->setOverflowX(OVISIBLE);
         style->setOverflowY(OVISIBLE);
     }
+
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+    // Touch overflow scrolling creates a stacking context.
+    if (style->useTouchOverflowScrolling() && (isScrollableOverflow(style->overflowX()) || isScrollableOverflow(style->overflowY())))
+        style->setZIndex(0);
+#endif
 
     // Cull out any useless layers and also repeat patterns into additional layers.
     style->adjustBackgroundLayers();
