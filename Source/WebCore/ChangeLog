@@ -1,3 +1,19 @@
+2013-07-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Modernize QualifiedName by wrapping gNameCache in a function and using more early exits
+        https://bugs.webkit.org/show_bug.cgi?id=118299
+
+        Reviewed by Andreas Kling.
+
+        Did cleanups.
+
+        * dom/QualifiedName.cpp:
+        (WebCore::qualifiedNameCache): Added to wrap gNameCache.
+        (WebCore::QualifiedName::QualifiedName):
+        (WebCore::QualifiedName::QualifiedNameImpl::~QualifiedNameImpl):
+        (WebCore::QualifiedName::toString): Use early exit and StringBuilder.
+        (WebCore::QualifiedName::init): Use early exit.
+
 2013-07-02  Simon Fraser  <simon.fraser@apple.com>
 
         Don't set z-index: 0 on lots of elements with -webkit-overflow-scrolling: touch
