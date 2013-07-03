@@ -1,3 +1,13 @@
+2013-07-02  Alex Christensen  <achristensen@apple.com>
+
+        Preparing Windows WebGL build system.
+        https://bugs.webkit.org/show_bug.cgi?id=118325
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Added EGL files, removed unused GraphicsContext3DOpenGL.cpp.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Added EGL filter and files, removed unused GraphicsContext3DOpenGL.cpp.
+
 2013-07-02  Jessie Berlin  <jberlin@apple.com>
 
         The callback for WKPageGetPlugInInformation needs info about whether or not there are any

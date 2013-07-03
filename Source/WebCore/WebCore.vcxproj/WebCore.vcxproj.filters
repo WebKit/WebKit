@@ -289,6 +289,9 @@
     <Filter Include="platform\graphics\gpu">
       <UniqueIdentifier>{c2332ff9-436e-4c07-b692-fb4b9db40ffd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform\graphics\egl">
+      <UniqueIdentifier>{e27b348d-0b87-4e5f-b5b9-b99e283ea22b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DerivedSources.cpp">
@@ -7036,9 +7039,6 @@
     <ClCompile Include="..\page\CaptionUserPreferencesMediaAF.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGL.cpp">
-      <Filter>platform\graphics\opengl</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\cg\GraphicsContext3DCG.cpp">
       <Filter>platform\graphics\cg</Filter>
     </ClCompile>
@@ -7059,6 +7059,9 @@
     </ClCompile>
     <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLES.cpp">
       <Filter>platform\graphics\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\egl\GLContextEGL.cpp">
+      <Filter>platform\graphics\egl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -14764,6 +14767,9 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\cairo\GLContext.h">
       <Filter>platform\graphics\cairo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\egl\GLContextEGL.h">
+      <Filter>platform\graphics\egl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
