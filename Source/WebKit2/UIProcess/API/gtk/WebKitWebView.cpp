@@ -1622,7 +1622,6 @@ void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebFrameProxy* fra
 WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
 {
     GRefPtr<WebKitWebResource> resource = webView->priv->loadingResourcesMap.get(resourceIdentifier);
-    ASSERT(resource.get());
     return resource.get();
 }
 

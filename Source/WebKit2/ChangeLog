@@ -1,3 +1,23 @@
+2013-07-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2][GTK] Invalid ASSERTs in WebResources loading code
+        https://bugs.webkit.org/show_bug.cgi?id=118352
+
+        Reviewed by Carlos Garcia Campos.
+
+        The WebKitWebView keeps track of the resources being loaded in a
+        map. A couple of ASSERTs verify that every loaded resource is
+        stored in that map.
+
+        The map that is cleared each time a new load starts so there is a
+        small chance that we get notifications for resources that
+        correspond to previous page loads
+        (and thus are not stored in the map). We should remove the ASSERT
+        which is not valid anymore.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewGetLoadingWebResource):
+
 2013-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Migrate WebKitWebContext to GTask
