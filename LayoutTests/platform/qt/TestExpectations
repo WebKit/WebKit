@@ -674,10 +674,10 @@ http/tests/cookies/js-get-and-set-http-only-cookie.html
 webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Skip ]
 
 # Assertion failure in MessagePort::contextDestroyed in http/tests/security/MessagePort/event-listener-context.html, usually attributed to later tests
-webkit.org/b/94458 [ DEBUG ] http/tests/security/MessagePort/event-listener-context.html [ Skip ]
+webkit.org/b/94458 [ Debug ] http/tests/security/MessagePort/event-listener-context.html [ Skip ]
 
 # Layout Test fast/repaint/fixed-right-in-page-scale.html and others in same path are flaky
-webkit.org/b/84720 [ DEBUG ] fast/repaint/fixed-right-in-page-scale.html [ Skip ]
+webkit.org/b/84720 [ Debug ] fast/repaint/fixed-right-in-page-scale.html [ Skip ]
 
 # =========================================================================== #
 #       Failing xmlhttprequest tests                                          #
@@ -1897,8 +1897,8 @@ webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Skip ]
 
 webkit.org/b/111290 fast/regions/seamless-iframe-flowed-into-regions.html [ Skip ]
 
-webkit.org/b/110546 [ DEBUG ] fast/parser/document-write-fighting-eof.html [ Skip ]
-webkit.org/b/110546 [ DEBUG ] fast/parser/document-write-partial-entity-before-load.html [ Skip ]
+webkit.org/b/110546 [ Debug ] fast/parser/document-write-fighting-eof.html [ Skip ]
+webkit.org/b/110546 [ Debug ] fast/parser/document-write-partial-entity-before-load.html [ Skip ]
 
 webkit.org/b/112914 fast/media/mq-resolution-dpi-dpcm-warning.html [ Skip ]
 webkit.org/b/112914 fast/media/mq-resolution.html [ Skip ]
@@ -1917,6 +1917,9 @@ webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Skip ]
 
 # [GTK][Qt] fast/flexbox/clear-overflow-before-scroll-update.html is failing
 webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Skip ]
+
+# [Qt] fast/repaint/fixed-right-bottom-in-page-scale.html test flaky on Debug build and caused regression on the following tests after r118238. 
+webkit.org/b/118238 [ Debug ] fast/repaint/fixed-right-bottom-in-page-scale.html [ Skip ]
 
 # ============================================================================= #
 # failing security tests
