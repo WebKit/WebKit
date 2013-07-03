@@ -1,3 +1,31 @@
+2013-07-03  Simon Pena  <simon.pena@samsung.com>
+
+        WebTextCheckerClient doesn't initialize output arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=83683
+
+        Reviewed by Martin Robinson.
+
+        Callers of checkSpellingOfString and checkGrammarOfString expect
+        certain default values when no misspelled (or bad grammar) string
+        is found. They try to do that by initialising the reply arguments
+        that go into the IPC calls, but these values are ultimately ignored (see
+        HandleMessage.h, where the replyArguments are declared).
+
+        In the past, this seems to have led to various issues, (see
+        TextCheckingHelper::findFirstMisspelling in TextCheckingHelper.cpp),
+        where these return values are asserted and checked to be in the right range.
+
+        This patch initialises the values, so even if no available client
+        implements the methods (or if the implementation forgets to do it) the callers
+        will have their expected output.
+
+        However, and for a general case, we probably need a way to tell the caller
+        that any existing value in the output arguments will be ignored.
+
+        * UIProcess/WebTextCheckerClient.cpp:
+        (WebKit::WebTextCheckerClient::checkSpellingOfString):
+        (WebKit::WebTextCheckerClient::checkGrammarOfString):
+
 2013-07-03  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK][WK2] SIGSEV in WebKit::WebPageContextMenuClient::customContextMenuItemSelected

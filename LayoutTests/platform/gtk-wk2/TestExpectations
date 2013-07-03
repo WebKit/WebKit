@@ -229,8 +229,6 @@ Bug(GTK) plugins/document-open.html [ Crash ]
 
 webkit.org/b/116974 accessibility/title-ui-element-correctness.html [ Crash ]
 
-webkit.org/b/83683 [ Debug ] editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Crash ]
-
 webkit.org/b/108363 fullscreen/full-screen-iframe-legacy.html [ Crash ]
 
 # EventSender's contextClick should return objects that implements click() method

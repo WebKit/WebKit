@@ -1,3 +1,15 @@
+2013-07-03  Simon Pena  <simon.pena@samsung.com>
+
+        WebTextCheckerClient doesn't initialize output arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=83683
+
+        Reviewed by Martin Robinson.
+
+        Unskip editing/pasteboard/pasting-empty-html-falls-back-to-text.html, which no longer
+        crashes after the fix.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2013-07-03  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skipping test to paint the debug bot green.

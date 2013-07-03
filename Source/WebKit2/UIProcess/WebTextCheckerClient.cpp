@@ -93,6 +93,9 @@ void WebTextCheckerClient::closeSpellDocumentWithTag(uint64_t tag)
 
 void WebTextCheckerClient::checkSpellingOfString(uint64_t tag, const String& text, int32_t& misspellingLocation, int32_t& misspellingLength)
 {
+    misspellingLocation = -1;
+    misspellingLength = 0;
+
     if (!m_client.checkSpellingOfString)
         return;
 
@@ -101,6 +104,9 @@ void WebTextCheckerClient::checkSpellingOfString(uint64_t tag, const String& tex
 
 void WebTextCheckerClient::checkGrammarOfString(uint64_t tag, const String& text, Vector<WebCore::GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
 {
+    badGrammarLocation = -1;
+    badGrammarLength = 0;
+
     if (!m_client.checkGrammarOfString)
         return;
 
