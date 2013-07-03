@@ -1,3 +1,20 @@
+2013-07-03  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r152317
+
+    2013-07-02  Alexey Proskuryakov  <ap@apple.com>
+
+            security/block-test.html fails when NetworkProcess is enabled
+            https://bugs.webkit.org/show_bug.cgi?id=118320
+            <rdar://problem/14309423>
+
+            Reviewed by Geoff Garen.
+
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::wasBlocked):
+            (WebKit::NetworkResourceLoader::cannotShowURL):
+            Implemented missing ResourceHandleClient functions.
+
 2013-07-02  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152328
