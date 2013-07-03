@@ -1,3 +1,19 @@
+2013-07-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Invalidate FontCache before purging MemoryCache upon WebProcess termination/closure
+        https://bugs.webkit.org/show_bug.cgi?id=118280
+
+        Reviewed by Darin Adler.
+
+        Invalidate the FontCache before disabling and purging the MemoryCache in WebProcess::didClose
+        and WebProcess::terminate. This frees up additional references to objects that were held
+        by the FontCache, reducing the amount of 'LEAK: *' output when exiting MiniBrowser or
+        WebKitTestRunner in debug builds.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::terminate):
+        (WebKit::WebProcess::didClose):
+
 2013-07-02  Jessie Berlin  <jberlin@apple.com>
 
         The callback for WKPageGetPlugInInformation needs info about whether or not there are any
