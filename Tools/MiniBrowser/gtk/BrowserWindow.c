@@ -29,6 +29,7 @@
 
 #include "BrowserDownloadsBar.h"
 #include "BrowserSettingsDialog.h"
+#include <gdk/gdkkeysyms.h>
 #include <string.h>
 
 enum {
@@ -522,6 +523,11 @@ static void browser_window_init(BrowserWindow *window)
     gtk_entry_set_icon_activatable(GTK_ENTRY(window->uriEntry), GTK_ENTRY_ICON_PRIMARY, FALSE);
     updateUriEntryIcon(window);
 
+    /* Keyboard accelerators */
+    GtkAccelGroup *accelGroup = gtk_accel_group_new();
+    gtk_window_add_accel_group(GTK_WINDOW(window), accelGroup);
+    g_object_unref(accelGroup);
+
     GtkWidget *toolbar = gtk_toolbar_new();
     window->toolbar = toolbar;
     gtk_orientable_set_orientation(GTK_ORIENTABLE(toolbar), GTK_ORIENTATION_HORIZONTAL);
@@ -565,9 +571,10 @@ static void browser_window_init(BrowserWindow *window)
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
-    item = gtk_tool_button_new_from_stock(GTK_STOCK_OK);
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
     g_signal_connect_swapped(item, "clicked", G_CALLBACK(reloadCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_add_accelerator(GTK_WIDGET(item), "clicked", accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE);
     gtk_widget_show(GTK_WIDGET(item));
 
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);

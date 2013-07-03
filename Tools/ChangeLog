@@ -1,3 +1,15 @@
+2013-07-03  Morten Stenshorne  <mstensho@opera.com>
+
+        [GTK] Let F5 refresh the page in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=117638
+
+        Reviewed by Carlos Garcia Campos.
+
+        Also use the correct icon for the refresh button that was already there.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browser_window_init):
+
 2013-07-02  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         Unreviewed. Add my email to a few watchlists.
