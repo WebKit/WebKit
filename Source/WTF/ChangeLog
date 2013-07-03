@@ -1,3 +1,12 @@
+2013-07-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix cast-align warnings in FastMalloc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=117991
+
+        Reviewed by Mark Hahnenberg.
+
+        * wtf/FastMalloc.cpp:
+
 2013-07-02  Geoffrey Garen  <ggaren@apple.com>
 
         plainText() is O(N^2)

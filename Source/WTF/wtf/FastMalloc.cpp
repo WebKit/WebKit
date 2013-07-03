@@ -586,12 +586,12 @@ static ALWAYS_INLINE uint32_t freedObjectEndPoison()
 
 #define POISON_DEALLOCATION_EXPLICIT(allocation, allocationSize, startPoison, endPoison) do { \
     ASSERT((allocationSize) >= 2 * sizeof(uint32_t)); \
-    reinterpret_cast<uint32_t*>(allocation)[0] = 0xbadbeef9; \
-    reinterpret_cast<uint32_t*>(allocation)[1] = 0xbadbeefb; \
+    reinterpret_cast_ptr<uint32_t*>(allocation)[0] = 0xbadbeef9; \
+    reinterpret_cast_ptr<uint32_t*>(allocation)[1] = 0xbadbeefb; \
     if ((allocationSize) < 4 * sizeof(uint32_t)) \
         break; \
-    reinterpret_cast<uint32_t*>(allocation)[2] = (startPoison) ^ PTR_TO_UINT32(allocation); \
-    reinterpret_cast<uint32_t*>(allocation)[END_POISON_INDEX(allocationSize)] = (endPoison) ^ PTR_TO_UINT32(allocation); \
+    reinterpret_cast_ptr<uint32_t*>(allocation)[2] = (startPoison) ^ PTR_TO_UINT32(allocation); \
+    reinterpret_cast_ptr<uint32_t*>(allocation)[END_POISON_INDEX(allocationSize)] = (endPoison) ^ PTR_TO_UINT32(allocation); \
 } while (false)
 
 #define POISON_DEALLOCATION(allocation, allocationSize) \
