@@ -1,5 +1,13 @@
 2013-07-03  Alexey Proskuryakov  <ap@apple.com>
 
+        Skipping inspector tests that had other expectations, because specific rules override
+        general rules, and we need to skip all inspector tests.
+        <rdar://problem/12318375>
+
+        * platform/mac/TestExpectations:
+
+2013-07-03  Alexey Proskuryakov  <ap@apple.com>
+
         Skip inspector tests, because they are failing with production builds.
         <rdar://problem/12318375>
 

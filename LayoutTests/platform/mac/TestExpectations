@@ -263,15 +263,15 @@ webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvase
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html
 
-webkit.org/b/40300 inspector/debugger/live-edit.html [ Failure ]
-webkit.org/b/40300 inspector/debugger/live-edit-breakpoints.html [ Failure ]
+webkit.org/b/40300 inspector/debugger/live-edit.html
+webkit.org/b/40300 inspector/debugger/live-edit-breakpoints.html
 webkit.org/b/89652 inspector/debugger/debugger-compile-and-run.html
 webkit.org/b/53003 http/tests/inspector/compiler-source-mapping-debug.html
 
 webkit.org/b/96942 http/tests/inspector/network/network-xhr-replay.html
 
 webkit.org/b/109546 inspector/script-execution-state-change-notification.html [ Skip ]
-webkit.org/b/112502 inspector/elements/highlight-node-scaled.html [ Pass Failure ]
+webkit.org/b/112502 inspector/elements/highlight-node-scaled.html [ Skip ]
 
 # Flakey notification test.
 webkit.org/b/112499 http/tests/notifications/window-show-on-click.html [ Pass Failure ]
@@ -567,7 +567,7 @@ webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding.html [ Failure ]
 webkit.org/b/82665 webarchive/test-css-url-resources-in-stylesheets.html [ Failure ]
 webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Failure ]
 
-webkit.org/b/82671 http/tests/inspector/resource-har-conversion.html [ Failure ]
+webkit.org/b/82671 http/tests/inspector/resource-har-conversion.html [ Skip ]
 
 webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
 
@@ -596,7 +596,7 @@ webkit.org/b/82972 plugins/multiple-plugins.html [ Pass Failure ]
 
 webkit.org/b/82976 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
 
-webkit.org/b/82978 inspector/styles/svg-style.xhtml [ Pass Failure ]
+webkit.org/b/82978 inspector/styles/svg-style.xhtml [ Skip ]
 
 webkit.org/b/82979 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Pass Failure ]
 webkit.org/b/82979 canvas/philip/tests/2d.text.draw.align.center.html [ Pass Failure ]
@@ -614,7 +614,7 @@ webkit.org/b/83618 fast/dom/inline-event-attributes-release.html [ Pass Failure 
 webkit.org/b/84102 fast/profiler/stop-profiling-after-setTimeout.html [ Pass Failure ]
 webkit.org/b/84102 fast/profiler/dead-time.html [ Pass Failure ]
 
-webkit.org/b/85319 inspector/debugger/linkifier.html [ Pass Failure ]
+webkit.org/b/85319 inspector/debugger/linkifier.html [ Skip ]
 
 # Failing subpixel reference tests
 webkit.org/b/85532 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
@@ -664,7 +664,7 @@ webkit.org/b/89528 svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFail
 # Implement textInputController.setComposition()
 webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 
-webkit.org/b/90707 inspector/timeline/timeline-receive-response-event.html [ Pass Failure ]
+webkit.org/b/90707 inspector/timeline/timeline-receive-response-event.html [ Skip ]
 
 webkit.org/b/90708 fullscreen/exit-full-screen-iframe.html [ Failure ]
 
@@ -1000,7 +1000,7 @@ webkit.org/b/111902 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-
 webkit.org/b/58192 fast/dom/frame-loading-via-document-write.html [ Failure Pass ]
 webkit.org/b/58192 http/tests/appcache/fail-on-update-2.html [ Failure Pass ]
 webkit.org/b/58192 http/tests/appcache/fail-on-update.html [ Failure Pass ]
-webkit.org/b/58192 http/tests/inspector/console-websocket-error.html [ Failure Pass ]
+webkit.org/b/58192 http/tests/inspector/console-websocket-error.html [ Skip ]
 webkit.org/b/58192 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
 webkit.org/b/58192 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 
@@ -1085,7 +1085,7 @@ webkit.org/b/90987 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailu
 webkit.org/b/90951 fast/text/shaping
 
 # (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac
-webkit.org/b/94374 inspector/timeline/timeline-decode-resize.html [ Failure ]
+webkit.org/b/94374 inspector/timeline/timeline-decode-resize.html [ Skip ]
 
 # Flakey WebGL tests
 webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Failure Pass ]
@@ -1231,7 +1231,7 @@ webkit.org/b/111647 [ Debug ] sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html [ Sl
 webkit.org/b/111650 http/tests/cookies/third-party-cookie-relaxing.html [ Failure Pass ]
 webkit.org/b/111650 http/tests/plugins/third-party-cookie-accept-policy.html [ Failure Pass ]
 
-webkit.org/b/111754 inspector/debugger/debugger-expand-scope.html [ Crash Pass ]
+webkit.org/b/111754 inspector/debugger/debugger-expand-scope.html [ Skip ]
 
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure Pass ]
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure Pass ]
@@ -1371,7 +1371,7 @@ editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
 webkit.org/b/116238 css3/filters/custom/filter-fallback-to-software.html [ ImageOnlyFailure ]
 
-webkit.org/b/116241 inspector/storage-panel-dom-storage-update.html [ Failure ]
+webkit.org/b/116241 inspector/storage-panel-dom-storage-update.html [ Skip ]
 
 webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
 
@@ -1379,9 +1379,9 @@ webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ P
 
 webkit.org/b/116388 fast/js/post-message-numeric-property.html
 
-webkit.org/b/116582 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Pass Crash ]
+webkit.org/b/116582 inspector/styles/import-pseudoclass-crash.html [ Skip ]
 
-webkit.org/b/116592 inspector/geolocation-error.html [ Pass Failure ]
+webkit.org/b/116592 inspector/geolocation-error.html [ Skip ]
 
 # Inspector tests fail on Production builds <rdar://problem/12318375>.
 inspector [ Skip ]
