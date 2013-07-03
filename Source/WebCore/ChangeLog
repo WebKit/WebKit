@@ -1,3 +1,22 @@
+2013-07-03  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+        Implement mechanism to detect (partially) hidden blocked plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=117998
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::replacementTextRect):
+        Added private method for calculating the size of the replacement text for blocked plugins.
+
+        (WebCore::RenderEmbeddedObject::isReplacementObscured):
+        Added public method to determine if the EMBED element used for a blocked plugin is inaccessible to the user.
+        * rendering/RenderEmbeddedObject.h:
+        Declare the two new methods mentioned above.
+
+        * WebCore.exp.in:
+        Export RenderEmbeddedObject::isReplacementObscured().
+
 2013-07-03  Jessie Berlin  <jberlin@apple.com>
 
         Speculative build fix after r152340.

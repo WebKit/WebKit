@@ -52,6 +52,8 @@ public:
 
     void handleUnavailablePluginIndicatorEvent(Event*);
 
+    bool isReplacementObscured() const;
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool allowsAcceleratedCompositing() const;
 #endif
@@ -90,6 +92,7 @@ private:
     bool isInUnavailablePluginIndicator(MouseEvent*) const;
     bool isInUnavailablePluginIndicator(const LayoutPoint&) const;
     bool getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, Font&, TextRun&, float& textWidth) const;
+    LayoutRect replacementTextRect(const LayoutPoint&) const;
 
     virtual bool canHaveChildren() const;
     virtual RenderObjectChildList* virtualChildren() { return children(); }

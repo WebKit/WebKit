@@ -50,9 +50,10 @@ String pluginInformationPageURLKey();
 String pluginInformationPluginspageAttributeURLKey();
 String pluginInformationPluginURLKey();
 String plugInInformationPageContainsNonPlayingInstanceOfPlugInKey();
+String plugInInformationReplacementObscuredKey();
 
 PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo&);
-PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo&, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString);
+PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo&, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString, bool replacementObscured = false);
 PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const String& mimeType, const String& frameURLString, const String& pageURLString);
 PassRefPtr<ImmutableDictionary> createPlugInInformationDictionary(const PluginModuleInfo&, bool pageContainsNonPlayingInstanceOfPlugIn);
 

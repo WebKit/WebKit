@@ -549,10 +549,14 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
         break;
 
     case PluginModuleBlocked:
-        if (pluginElement->renderer()->isEmbeddedObject())
-            toRenderEmbeddedObject(pluginElement->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
+        bool replacementObscured = false;
+        if (pluginElement->renderer()->isEmbeddedObject()) {
+            RenderEmbeddedObject* renderObject = toRenderEmbeddedObject(pluginElement->renderer());
+            renderObject->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
+            replacementObscured = renderObject->isReplacementObscured();
+        }
 
-        send(Messages::WebPageProxy::DidBlockInsecurePluginVersion(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString));
+        send(Messages::WebPageProxy::DidBlockInsecurePluginVersion(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString, replacementObscured));
         return 0;
     }
 

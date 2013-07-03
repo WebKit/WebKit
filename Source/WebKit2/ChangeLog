@@ -1,3 +1,35 @@
+2013-07-03  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+        Implement mechanism to detect (partially) hidden blocked plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=117998
+
+        Reviewed by Dean Jackson.
+
+        * Shared/Plugins/Netscape/PluginInformation.h:
+        * Shared/Plugins/Netscape/PluginInformation.cpp:
+        (WebKit::plugInInformationReplacementObscuredKey):
+        Add key for plugInInformation dictionaries.
+
+        (WebKit::createPluginInformationDictionary):
+        Add boolean parameter identifying whether the replacement for a blocked plugin is obscured, and add it to the dictionary.
+
+        * Shared/API/c/WKPluginInformation.h:
+        * Shared/API/c/WKPluginInformation.cpp:
+        (WKPluginInformationReplacementObscuredKey):
+        Provide the C API for the plugInInformationReplacementObscuredKey().
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        Add bool replacementObscured parameter to pass on argument to createPluginInformationDictionary().
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add bool replacementObscured parameter to DidBlockInsecurePluginVersion() message.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Invoke isReplacementObscured() method for blocked plugins.
+
 2013-07-03  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/14271105> Flash Player: deny ipc-posix-sem 59918130
@@ -35,6 +67,7 @@
         * UIProcess/WebTextCheckerClient.cpp:
         (WebKit::WebTextCheckerClient::checkSpellingOfString):
         (WebKit::WebTextCheckerClient::checkGrammarOfString):
+
 
 2013-07-03  Sergio Villar Senin  <svillar@igalia.com>
 

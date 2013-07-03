@@ -106,6 +106,11 @@ String plugInInformationPageContainsNonPlayingInstanceOfPlugInKey()
     return ASCIILiteral("PlugInInformationPageContainsNonPlayingInstanceOfPlugIn");
 }
 
+String plugInInformationReplacementObscuredKey()
+{
+    return ASCIILiteral("PlugInInformationReplacementObscured");
+}
+
 void getPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDictionary::MapType& map)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -135,7 +140,7 @@ PassRefPtr<ImmutableDictionary> createPlugInInformationDictionary(const PluginMo
     return ImmutableDictionary::adopt(map);
 }
 
-PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo& plugin, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString)
+PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo& plugin, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString, bool replacementObscured)
 {
     ImmutableDictionary::MapType map;
     getPluginModuleInformation(plugin, map);
@@ -150,6 +155,7 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginMo
         map.set(pluginInformationPluginspageAttributeURLKey(), WebURL::create(pluginspageAttributeURLString));
     if (!pluginURLString.isEmpty())
         map.set(pluginInformationPluginURLKey(), WebURL::create(pluginURLString));
+    map.set(plugInInformationReplacementObscuredKey(), WebBoolean::create(replacementObscured));
 
     return ImmutableDictionary::adopt(map);
 }

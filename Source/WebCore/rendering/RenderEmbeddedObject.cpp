@@ -49,6 +49,7 @@
 #include "Path.h"
 #include "PlatformMouseEvent.h"
 #include "PluginViewBase.h"
+#include "RenderLayer.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidgetProtector.h"
@@ -275,6 +276,86 @@ bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     path.addRoundedRect(replacementTextRect, FloatSize(replacementTextRoundedRectRadius, replacementTextRoundedRectRadius));
 
     return true;
+}
+
+LayoutRect RenderEmbeddedObject::replacementTextRect(const LayoutPoint& accumulatedOffset) const
+{
+    FloatRect contentRect;
+    Path path;
+    FloatRect replacementTextRect;
+    Font font;
+    TextRun run("", 0);
+    float textWidth;
+    if (getReplacementTextGeometry(accumulatedOffset, contentRect, path, replacementTextRect, font, run, textWidth))
+        return LayoutRect(replacementTextRect);
+    
+    return LayoutRect();
+}
+
+bool RenderEmbeddedObject::isReplacementObscured() const
+{
+    // Return whether or not the replacement content for blocked plugins is accessible to the user.
+    
+    // Check the opacity of each layer containing the element or its ancestors.
+    float opacity = 1.0;
+    for (RenderLayer* layer = enclosingLayer(); layer; layer = layer->parent()) {
+        RenderLayerModelObject* renderer = layer->renderer();
+        RenderStyle* style = renderer->style();
+        opacity *= style->opacity();
+        if (opacity < 0.1)
+            return true;
+    }
+
+    // Calculate the absolute rect for the blocked plugin replacement text.
+    IntRect absoluteBoundingBox = absoluteBoundingBoxRect();
+    LayoutPoint absoluteLocation(absoluteBoundingBox.location());
+    LayoutRect rect = replacementTextRect(absoluteLocation);
+    if (rect.isEmpty())
+        return true;
+
+    RenderView* docRenderer = document()->renderView();
+    ASSERT(docRenderer);
+    if (!docRenderer)
+        return true;
+    
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
+    HitTestResult result;
+    HitTestLocation location;
+    
+    LayoutUnit x = rect.x();
+    LayoutUnit y = rect.y();
+    LayoutUnit width = rect.width();
+    LayoutUnit height = rect.height();
+    
+    // Hit test the center and near the corners of the replacement text to ensure
+    // it is visible and is not masked by other elements.
+    bool hit = false;
+    location = LayoutPoint(x + width / 2, y + height / 2);
+    hit = docRenderer->hitTest(request, location, result);
+    if (!hit || result.innerNode() != node())
+        return true;
+    
+    location = LayoutPoint(x, y);
+    hit = docRenderer->hitTest(request, location, result);
+    if (!hit || result.innerNode() != node())
+        return true;
+    
+    location = LayoutPoint(x + width, y);
+    hit = docRenderer->hitTest(request, location, result);
+    if (!hit || result.innerNode() != node())
+        return true;
+    
+    location = LayoutPoint(x + width, y + height);
+    hit = docRenderer->hitTest(request, location, result);
+    if (!hit || result.innerNode() != node())
+        return true;
+    
+    location = LayoutPoint(x, y + height);
+    hit = docRenderer->hitTest(request, location, result);
+    if (!hit || result.innerNode() != node())
+        return true;
+
+    return false;
 }
 
 void RenderEmbeddedObject::layout()
