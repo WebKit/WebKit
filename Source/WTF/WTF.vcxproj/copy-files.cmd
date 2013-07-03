@@ -1,5 +1,8 @@
 @echo off
 
+setlocal
+REM limit path to DOS-only for this file to avoid confusion between DOS rmdir and Cygwin's variant
+set PATH=%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem
 set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private
 
 if "%1" EQU "clean" goto :clean
@@ -34,3 +37,4 @@ goto :EOF
 
 echo Deleting copied files...
 if exist "%PrivateHeadersDirectory%" rmdir /s /q "%PrivateHeadersDirectory%" >NUL
+endlocal

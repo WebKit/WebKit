@@ -1,3 +1,10 @@
+2013-07-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction.
+
+        * WTF.vcxproj/copy-files.cmd: Limit path (for this file) to DOS-only to avoid
+        the Cygwin variant of rmdir from being used.
+
 2013-07-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r152356.
