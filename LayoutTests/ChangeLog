@@ -1,3 +1,10 @@
+2013-07-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Skip inspector tests, because they are failing with production builds.
+        <rdar://problem/12318375>
+
+        * platform/mac/TestExpectations:
+
 2013-07-02  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152288

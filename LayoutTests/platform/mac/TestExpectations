@@ -1382,3 +1382,8 @@ webkit.org/b/116388 fast/js/post-message-numeric-property.html
 webkit.org/b/116582 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Pass Crash ]
 
 webkit.org/b/116592 inspector/geolocation-error.html [ Pass Failure ]
+
+# Inspector tests fail on Production builds <rdar://problem/12318375>.
+inspector [ Skip ]
+http/tests/inspector [ Skip ]
+http/tests/inspector-enabled [ Skip ]
