@@ -52,9 +52,11 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
+#import <WebCore/HTMLPlugInImageElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/NodeList.h>
 #import <WebCore/NetworkingContext.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
@@ -980,6 +982,31 @@ void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *p
     }
 }
 
+static void addPlugInMimeTypesFromNodeListForNonPlayingPlugIns(PassRefPtr<NodeList> plugIns, HashSet<String>& mimeTypes)
+{
+    if (!plugIns)
+        return;
+
+    for (unsigned i = 0, length = plugIns->length(); i < length; i++) {
+        Node* node = plugIns->item(i);
+        if (!node->isPluginElement())
+            continue;
+
+        HTMLPlugInElement* plugInElement = toHTMLPlugInElement(node);
+
+        ASSERT(!plugInElement->hasTagName(WebCore::HTMLNames::appletTag));
+
+        if (plugInElement->displayState() == HTMLPlugInElement::DisplayState::Playing)
+            continue;
+
+        if (!plugInElement->isPlugInImageElement())
+            continue;
+
+        HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(node);
+        mimeTypes.add(plugInImageElement->loadedMimeType());
+    }
+}
+
 void WebPage::containsPluginViewsWithPluginProcessToken(uint64_t plugInProcessToken, uint64_t callbackID)
 {
     bool containsPlugIn = false;
@@ -990,7 +1017,22 @@ void WebPage::containsPluginViewsWithPluginProcessToken(uint64_t plugInProcessTo
         }
     }
 
-    send(Messages::WebPageProxy::ContainsPlugInCallback(containsPlugIn, plugInProcessToken, callbackID));
+    HashSet<String> nonPlayingPlugInMimeTypes;
+    for (Frame* frame = corePage()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (!frame->loader()->subframeLoader()->containsPlugins())
+            continue;
+
+        if (!frame->document())
+            continue;
+
+        addPlugInMimeTypesFromNodeListForNonPlayingPlugIns(frame->document()->getElementsByTagName(WebCore::HTMLNames::embedTag.localName()), nonPlayingPlugInMimeTypes);
+        addPlugInMimeTypesFromNodeListForNonPlayingPlugIns(frame->document()->getElementsByTagName(WebCore::HTMLNames::objectTag.localName()), nonPlayingPlugInMimeTypes);
+    }
+
+    Vector<String> nonPlayingPlugInMimeTypesVector;
+    copyToVector(nonPlayingPlugInMimeTypes, nonPlayingPlugInMimeTypesVector);
+
+    send(Messages::WebPageProxy::ContainsPlugInCallback(containsPlugIn, nonPlayingPlugInMimeTypesVector, plugInProcessToken, callbackID));
 }
 
 } // namespace WebKit

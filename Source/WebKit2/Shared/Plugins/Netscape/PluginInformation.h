@@ -49,11 +49,12 @@ String pluginInformationMIMETypeKey();
 String pluginInformationPageURLKey();
 String pluginInformationPluginspageAttributeURLKey();
 String pluginInformationPluginURLKey();
+String plugInInformationPageContainsNonPlayingInstanceOfPlugInKey();
 
 PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo&);
 PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo&, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString);
 PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const String& mimeType, const String& frameURLString, const String& pageURLString);
-
+PassRefPtr<ImmutableDictionary> createPlugInInformationDictionary(const PluginModuleInfo&, bool pageContainsNonPlayingInstanceOfPlugIn);
 
 void getPluginModuleInformation(const PluginModuleInfo&, ImmutableDictionary::MapType&);
 void getPlatformPluginModuleInformation(const PluginModuleInfo&, ImmutableDictionary::MapType&);
