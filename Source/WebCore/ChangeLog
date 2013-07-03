@@ -1,3 +1,73 @@
+2013-07-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Move SVGTests attributes parsing to SVGGraphicsElement
+        https://bugs.webkit.org/show_bug.cgi?id=118292
+
+        Reviewed by Darin Adler.
+
+        Move SVGTests attributes parsing to SVGGraphicsElement instead of doing
+        this in each of its subclasses. SVGGraphicsElement is now the one
+        subclassing SVGTests after r152167.
+
+        No new tests, no behavior change.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::isSupportedAttribute):
+        (WebCore::SVGAElement::parseAttribute):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::isSupportedAttribute):
+        (WebCore::SVGCircleElement::parseAttribute):
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::isSupportedAttribute):
+        (WebCore::SVGClipPathElement::parseAttribute):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::isSupportedAttribute):
+        (WebCore::SVGEllipseElement::parseAttribute):
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::isSupportedAttribute):
+        (WebCore::SVGForeignObjectElement::parseAttribute):
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::isSupportedAttribute):
+        (WebCore::SVGGElement::parseAttribute):
+        (WebCore::SVGGElement::svgAttributeChanged):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::isSupportedAttribute):
+        (WebCore::SVGGraphicsElement::parseAttribute):
+        (WebCore::SVGGraphicsElement::svgAttributeChanged):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::isSupportedAttribute):
+        (WebCore::SVGImageElement::parseAttribute):
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::isSupportedAttribute):
+        (WebCore::SVGLineElement::parseAttribute):
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::isSupportedAttribute):
+        (WebCore::SVGPathElement::parseAttribute):
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::isSupportedAttribute):
+        (WebCore::SVGPolyElement::parseAttribute):
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::isSupportedAttribute):
+        (WebCore::SVGRectElement::parseAttribute):
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseAttribute):
+        (WebCore::SVGSVGElement::svgAttributeChanged): Fall back to calling
+        SVGGraphicsElement::svgAttributeChanged() instead of
+        SVGStyledElement::svgAttributeChanged() as SVGGraphicsElement is the
+        parent class and it takes care of parsing SVGTests attributes now.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::isSupportedAttribute):
+        (WebCore::SVGUseElement::parseAttribute):
+        (WebCore::SVGUseElement::svgAttributeChanged):
+
 2013-07-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Modernize QualifiedName by wrapping gNameCache in a function and using more early exits

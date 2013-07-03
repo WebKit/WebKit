@@ -268,8 +268,7 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
         setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::heightAttr)
         setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
-    else if (SVGTests::parseAttribute(name, value)
-               || SVGLangSpace::parseAttribute(name, value)
+    else if (SVGLangSpace::parseAttribute(name, value)
                || SVGExternalResourcesRequired::parseAttribute(name, value)
                || SVGFitToViewBox::parseAttribute(this, name, value)
                || SVGZoomAndPan::parseAttribute(this, name, value)) {
@@ -280,7 +279,7 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
 }
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
-{ 
+{
     bool updateRelativeLengthsOrViewBox = false;
     bool widthChanged = attrName == SVGNames::widthAttr;
     if (widthChanged
@@ -306,8 +305,6 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
-    if (SVGTests::handleAttributeChange(this, attrName))
-        return;
 
     if (updateRelativeLengthsOrViewBox
         || SVGLangSpace::isKnownAttribute(attrName)
@@ -318,7 +315,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    SVGStyledElement::svgAttributeChanged(attrName);
+    SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
 unsigned SVGSVGElement::suspendRedraw(unsigned /* maxWaitMilliseconds */)

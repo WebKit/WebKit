@@ -94,8 +94,10 @@ AffineTransform* SVGGraphicsElement::supplementalTransform()
 bool SVGGraphicsElement::isSupportedAttribute(const QualifiedName& attrName)
 {
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
-    if (supportedAttributes.isEmpty())
+    if (supportedAttributes.isEmpty()) {
+        SVGTests::addSupportedAttributes(supportedAttributes);
         supportedAttributes.add(SVGNames::transformAttr);
+    }
     return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
 
@@ -114,6 +116,9 @@ void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicS
         return;
     }
 
+    if (SVGTests::parseAttribute(name, value))
+        return;
+
     ASSERT_NOT_REACHED();
 }
 
@@ -125,6 +130,9 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
+
+    if (SVGTests::handleAttributeChange(this, attrName))
+        return;
 
     RenderObject* object = renderer();
     if (!object)
