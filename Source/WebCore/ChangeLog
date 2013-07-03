@@ -1,3 +1,9 @@
+2013-07-03  Jessie Berlin  <jberlin@apple.com>
+
+        Speculative build fix after r152340.
+
+        * WebCore.exp.in:
+
 2013-07-03  Kangil Han  <kangil.han@samsung.com>
 
         Append overloading function for isFooElement
