@@ -1,3 +1,22 @@
+2013-07-03  Simon Pena  <simon.pena@samsung.com>
+
+        Output arguments used in IPC calls should be returned initialised
+        https://bugs.webkit.org/show_bug.cgi?id=118354
+
+        Reviewed by Anders Carlsson.
+
+        When Download::shouldDecodeSourceDataOfMIMEType and Download::retrieveDestinationWithSuggestedFilename
+        call DownloadProxy::shouldDecodeSourceDataOfMIMEType and DownloadProxy::decideDestinationWithSuggestedFilename
+        through IPC, they assume the output arguments result and allowOverwrite have
+        been initialised.
+
+        This patch initialises these arguments also in the unlikely event that a
+        m_webContext is not available.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::shouldDecodeSourceDataOfMIMEType):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+
 2013-07-03  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2][GTK] Invalid ASSERTs in WebResources loading code

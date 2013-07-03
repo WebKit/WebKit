@@ -135,6 +135,8 @@ void DownloadProxy::didReceiveData(uint64_t length)
 
 void DownloadProxy::shouldDecodeSourceDataOfMIMEType(const String& mimeType, bool& result)
 {
+    result = false;
+
     if (!m_webContext)
         return;
 
@@ -143,6 +145,8 @@ void DownloadProxy::shouldDecodeSourceDataOfMIMEType(const String& mimeType, boo
 
 void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filename, String& destination, bool& allowOverwrite, SandboxExtension::Handle& sandboxExtensionHandle)
 {
+    allowOverwrite = false;
+
     if (!m_webContext)
         return;
 
