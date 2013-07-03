@@ -1,3 +1,13 @@
+2013-07-03  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/14271105> Flash Player: deny ipc-posix-sem 59918130
+        <rdar://problem/14349560> Flash Player: deny ipc-posix-sem MacromediaSemaphoreDig on many sites
+
+        Reviewed by Sam Weinig.
+
+        * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player.plugin.sb:
+        semaphore-owner doesn't appear to work the way we need it to, removing it (at least for now).
+
 2013-07-03  Simon Pena  <simon.pena@samsung.com>
 
         WebTextCheckerClient doesn't initialize output arguments.
