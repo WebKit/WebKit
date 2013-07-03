@@ -436,7 +436,8 @@ JSStringRef AccessibilityUIElement::language()
     if (!locale)
         return JSStringCreateWithCharacters(0, 0);
 
-    return JSStringCreateWithUTF8CString(g_strdup_printf("AXLanguage: %s", locale));
+    GOwnPtr<char> axValue(g_strdup_printf("AXLanguage: %s", locale));
+    return JSStringCreateWithUTF8CString(axValue.get());
 }
 
 double AccessibilityUIElement::x()
