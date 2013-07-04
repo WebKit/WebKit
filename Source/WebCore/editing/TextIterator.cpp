@@ -244,6 +244,27 @@ static void setUpFullyClippedStack(BitStack& stack, Node* node)
 
     ASSERT(stack.size() == 1 + depthCrossingShadowBoundaries(node));
 }
+    
+static bool isRendererReplacedElement(RenderObject* renderer)
+{
+    if (!renderer)
+        return false;
+    
+    if (renderer->isImage() || renderer->isWidget())
+        return true;
+    
+    if (renderer->node() && renderer->node()->isElementNode()) {
+        Element* element = toElement(renderer->node());
+        if (element->isFormControlElement() || element->hasTagName(legendTag)
+            || element->hasTagName(meterTag) || element->hasTagName(progressTag))
+            return true;
+        
+        if (equalIgnoringCase(element->getAttribute(roleAttr), "img"))
+            return true;
+    }
+    
+    return false;
+}
 
 // --------
 
@@ -384,12 +405,7 @@ void TextIterator::advance()
             if (!m_handledNode) {
                 if (renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) // FIXME: What about CDATA_SECTION_NODE?
                     m_handledNode = handleTextNode();
-                else if (renderer && (renderer->isImage() || renderer->isWidget() ||
-                         (renderer->node() && renderer->node()->isElementNode() &&
-                          (toElement(renderer->node())->isFormControlElement()
-                          || toElement(renderer->node())->hasTagName(legendTag)
-                          || toElement(renderer->node())->hasTagName(meterTag)
-                          || toElement(renderer->node())->hasTagName(progressTag)))))
+                else if (isRendererReplacedElement(renderer))
                     m_handledNode = handleReplacedElement();
                 else
                     m_handledNode = handleNonTextNode();
