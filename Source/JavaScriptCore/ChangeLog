@@ -1,5 +1,18 @@
 2013-07-04  Patrick Gansterer  <paroga@webkit.org>
 
+        [CMake] Add generation of JITStubs for x86_64 MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=116666
+
+        Reviewed by Laszlo Gombos.
+
+        Also move the generation for ARM CPU into the CMakeLists.txt,
+        since it's compiler specific and not dedicated to Windows CE.
+
+        * CMakeLists.txt:
+        * PlatformWinCE.cmake: Removed.
+
+2013-07-04  Patrick Gansterer  <paroga@webkit.org>
+
         [CMake] Add STATICALLY_LINKED_WITH_WTF to JavaScriptCore project
         https://bugs.webkit.org/show_bug.cgi?id=118120
 
