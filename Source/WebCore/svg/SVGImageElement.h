@@ -28,6 +28,7 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageLoader.h"
+#include "SVGNames.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {

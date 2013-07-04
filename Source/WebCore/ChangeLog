@@ -1,3 +1,11 @@
+2013-07-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed build fix after r152399.
+
+        Add missing header include for SVGNames.h.
+
+        * svg/SVGImageElement.h:
+
 2013-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Change static_cast<SVGImageElement*> with toSVGImageElement
