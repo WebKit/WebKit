@@ -1,3 +1,12 @@
+2013-07-04  Balazs Kelemen  <b.kelemen@samsung.com>
+
+        [GStreamer] support preload="metadata"
+        https://bugs.webkit.org/show_bug.cgi?id=116817
+
+        Reviewed by Eric Carlson.
+
+        * media/video-load-preload-metadata.html: Added.
+
 2013-07-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Items the img aria role aren't inserting an object replacement character

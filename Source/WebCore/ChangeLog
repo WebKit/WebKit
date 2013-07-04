@@ -1,3 +1,28 @@
+2013-07-04  Balazs Kelemen  <b.kelemen@samsung.com>
+
+        [GStreamer] support preload="metadata"
+        https://bugs.webkit.org/show_bug.cgi?id=116817
+
+        Reviewed by Eric Carlson.
+
+        Add appropriate behavior for preload="metadata". Delay enabling download buffering
+        until playback is started in this case. This behavior fits with the standard quite
+        well and this is the most exact match we can get (at least without adding too much
+        extra complexity). What matters mostly is that we can avoid loading the media
+        before playback but we have the first frame and the metadata.
+
+        Test: media/video-load-preload-metadata.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::prepareToPlay): Set |m_preload| to |Auto|
+        so we will start download buffering if we did not start it yet.
+        (WebCore::MediaPlayerPrivateGStreamer::play): Ditto.
+        (MediaPlayerPrivateGStreamer::setDownloadBuffering): Only start download
+        buffering if |m_preload == Auto|. Also make sure we don't clear the download
+        flag once we started downloading because it would result in not well defined
+        behavior and it does not really makes sense.
+        (MediaPlayerPrivateGStreamer::setPreload): Set download buffering accordingly.
+
 2013-07-03  Jae Hyun Park  <jae.park@company100.net>
 
         [Coordinated Graphics] Don't use && operator in ASSERT

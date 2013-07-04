@@ -396,6 +396,7 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
 
 void MediaPlayerPrivateGStreamer::prepareToPlay()
 {
+    m_preload = MediaPlayer::Auto;
     if (m_delayingLoad) {
         m_delayingLoad = false;
         commitLoad();
@@ -407,6 +408,7 @@ void MediaPlayerPrivateGStreamer::play()
     if (changePipelineState(GST_STATE_PLAYING)) {
         m_isEndReached = false;
         m_delayingLoad = false;
+        m_preload = MediaPlayer::Auto;
         setDownloadBuffering();
         LOG_MEDIA_MESSAGE("Play");
     }
@@ -1081,8 +1083,10 @@ void MediaPlayerPrivateGStreamer::updateStates()
         if (state <= GST_STATE_READY) {
             m_resetPipeline = true;
             m_mediaDuration = 0;
-        } else
+        } else {
+            m_resetPipeline = false;
             cacheDuration();
+        }
 
         bool didBuffering = m_buffering;
 
@@ -1517,7 +1521,12 @@ void MediaPlayerPrivateGStreamer::setDownloadBuffering()
 
     GstPlayFlags flags;
     g_object_get(m_playBin.get(), "flags", &flags, NULL);
-    bool shouldDownload = !isLiveStream();
+
+    // We don't want to stop downloading if we already started it.
+    if (flags & GST_PLAY_FLAG_DOWNLOAD && m_readyState > MediaPlayer::HaveNothing && !m_resetPipeline)
+        return;
+
+    bool shouldDownload = !isLiveStream() && m_preload == MediaPlayer::Auto;
     if (shouldDownload) {
         LOG_MEDIA_MESSAGE("Enabling on-disk buffering");
         g_object_set(m_playBin.get(), "flags", flags | GST_PLAY_FLAG_DOWNLOAD, NULL);
@@ -1535,6 +1544,7 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
         return;
 
     m_preload = preload;
+    setDownloadBuffering();
 
     if (m_delayingLoad && m_preload != MediaPlayer::None) {
         m_delayingLoad = false;
