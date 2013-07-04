@@ -2165,7 +2165,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
             // If the window doesn't have a valid backing store, we need to fill the parts of the page that we
             // didn't paint with the background color (white or clear), to avoid garbage in those areas.
-            if (!_data->_windowHasValidBackingStore) {
+            if (!_data->_windowHasValidBackingStore || !drawingArea->hasReceivedFirstUpdate()) {
                 Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
                 for (size_t i = 0; i < unpaintedRects.size(); ++i)
                     drawPageBackground(context, _data->_page.get(), unpaintedRects[i]);
