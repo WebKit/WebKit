@@ -145,7 +145,6 @@ _LIBCPP_END_NAMESPACE_STD
 
 #define isnan _isnan
 #include <CoreGraphics/CoreGraphics.h>
-#include <CoreGraphics/CGFloat.h>
 #undef isnan
 #endif
 
