@@ -1,3 +1,25 @@
+2013-07-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Simplify PageThrottler ownership.
+        https://bugs.webkit.org/show_bug.cgi?id=118372
+
+        Reviewed by Sam Weinig.
+
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+            - 'clearPage' method removed - just clear the own pointer.
+        * page/Page.h:
+            - make m_pageThrottler an OwnPtr.
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::~PageThrottler):
+            - moved 'setThrottled(false)' from 'clearPage' (removed).
+        (WebCore::PageThrottler::throttlePage):
+        (WebCore::PageThrottler::unthrottlePage):
+            - no need to check 'm_page'
+        * page/PageThrottler.h:
+        (WebCore::PageThrottler::create):
+            - create a PassOwnPtr, not PassRefPtr.
+
 2013-07-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Updates to support changes in CoreGraphics libraries.

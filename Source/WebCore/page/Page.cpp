@@ -233,8 +233,8 @@ Page::~Page()
 #ifndef NDEBUG
     pageCounter.decrement();
 #endif
-    m_pageThrottler->clearPage();
 
+    m_pageThrottler.clear();
 }
 
 ArenaSize Page::renderTreeSize() const

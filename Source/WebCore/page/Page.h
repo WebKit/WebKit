@@ -536,7 +536,7 @@ private:
     AlternativeTextClient* m_alternativeTextClient;
 
     bool m_scriptedAnimationsSuspended;
-    RefPtr<PageThrottler> m_pageThrottler;
+    OwnPtr<PageThrottler> m_pageThrottler;
 
     OwnPtr<PageConsole> m_console;
 

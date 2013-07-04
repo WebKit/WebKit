@@ -48,27 +48,20 @@ PageThrottler::PageThrottler(Page* page)
 
 PageThrottler::~PageThrottler()
 {
+    setThrottled(false);
+
     for (HashSet<PageActivityAssertionToken*>::iterator i = m_activityTokens.begin(); i != m_activityTokens.end(); ++i)
         (*i)->invalidate();
 
-    if (m_throttleState != PageThrottledState && m_page) {
+    if (m_throttleState != PageThrottledState) {
         if (ChromeClient* chromeClient = m_page->chrome().client())
             chromeClient->decrementActivePageCount();
     }
 }
 
-void PageThrottler::clearPage()
-{
-    setThrottled(false);
-    m_page = 0;
-}
-
 void PageThrottler::throttlePage()
 {
     m_throttleState = PageThrottledState;
-
-    if (!m_page)
-        return;
 
     if (ChromeClient* chromeClient = m_page->chrome().client())
         chromeClient->decrementActivePageCount();
@@ -86,7 +79,7 @@ void PageThrottler::unthrottlePage()
     PageThrottleState oldState = m_throttleState;
     m_throttleState = PageNotThrottledState;
 
-    if (!m_page || oldState == PageNotThrottledState)
+    if (oldState == PageNotThrottledState)
         return;
 
     if (oldState == PageThrottledState) {
