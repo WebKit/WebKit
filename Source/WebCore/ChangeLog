@@ -1,3 +1,35 @@
+2013-07-01  Antti Koivisto  <antti@apple.com>
+
+        Take document height into account when determining when it is considered visually non-empy
+        https://bugs.webkit.org/show_bug.cgi?id=118272
+
+        Reviewed by Darin Adler.
+
+        The current visually non-empy mechanism takes into account only the amount of contents in renderers. 
+        Add a simple layout dependency so that we don't consider page non-empty until the document height
+        exceed a (low) height threshold (or the load completes).
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+        
+            Don't send layout callbacks until we have actually some content.
+
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty):
+        (WebCore::FrameView::updateIsVisuallyNonEmpty):
+        
+            Factor into functions.
+
+        * page/FrameView.h:
+        (WebCore::FrameView::incrementVisuallyNonEmptyCharacterCount):
+        (WebCore::FrameView::incrementVisuallyNonEmptyPixelCount):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::RenderHTMLCanvas):
+        
+             The size is not known but the estimate provided here is always bigger than the threshold so
+             the functionality is unchanged.
+
 2013-07-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed build fix after r152399.

@@ -87,7 +87,8 @@ RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
     , m_unavailablePluginIndicatorIsPressed(false)
     , m_mouseDownWasInUnavailablePluginIndicator(false)
 {
-    view()->frameView()->setIsVisuallyNonEmpty();
+    // Actual size is not known yet, report the default intrinsic size.
+    view()->frameView()->incrementVisuallyNonEmptyPixelCount(roundedIntSize(intrinsicSize()));
 }
 
 RenderEmbeddedObject::~RenderEmbeddedObject()

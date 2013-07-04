@@ -2749,7 +2749,7 @@ void FrameView::performPostLayoutTasks()
     if (page)
         requestedMilestones = page->requestedLayoutMilestones();
 
-    if (m_nestedLayoutCount <= 1) {
+    if (m_nestedLayoutCount <= 1 && m_frame->document()->documentElement()) {
         if (m_firstLayoutCallbackPending) {
             m_firstLayoutCallbackPending = false;
             m_frame->loader()->didFirstLayout();
@@ -2760,10 +2760,7 @@ void FrameView::performPostLayoutTasks()
                     page->startCountingRelevantRepaintedObjects();
             }
         }
-
-        // Ensure that we always send this eventually.
-        if (!m_frame->document()->parsing() && m_frame->loader()->stateMachine()->committedFirstRealDocumentLoad())
-            m_isVisuallyNonEmpty = true;
+        updateIsVisuallyNonEmpty();
 
         // If the layout was done with pending sheets, we are not in fact visually non-empty yet.
         if (m_isVisuallyNonEmpty && !m_frame->document()->didLayoutWithPendingStylesheets() && m_firstVisuallyNonEmptyLayoutCallbackPending) {
@@ -3734,8 +3731,37 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     ASSERT(!needsLayout());
 }
 
-void FrameView::setIsVisuallyNonEmpty()
+bool FrameView::qualifiesAsVisuallyNonEmpty() const
 {
+    // No content yet.
+    Element* documentElement = m_frame->document()->documentElement();
+    if (!documentElement || !documentElement->renderer())
+        return false;
+
+    // Ensure that we always get marked visually non-empty eventually.
+    if (!m_frame->document()->parsing() && m_frame->loader()->stateMachine()->committedFirstRealDocumentLoad())
+        return true;
+
+    // Require the document to grow a bit.
+    static const int documentHeightThreshold = 200;
+    if (documentElement->renderBox()->layoutOverflowRect().pixelSnappedHeight() < documentHeightThreshold)
+        return false;
+
+    // The first few hundred characters rarely contain the interesting content of the page.
+    if (m_visuallyNonEmptyCharacterCount > visualCharacterThreshold)
+        return true;
+    // Use a threshold value to prevent very small amounts of visible content from triggering didFirstVisuallyNonEmptyLayout
+    if (m_visuallyNonEmptyPixelCount > visualPixelThreshold)
+        return true;
+    return false;
+}
+
+void FrameView::updateIsVisuallyNonEmpty()
+{
+    if (m_isVisuallyNonEmpty)
+        return;
+    if (!qualifiesAsVisuallyNonEmpty())
+        return;
     m_isVisuallyNonEmpty = true;
     adjustTiledBackingCoverage();
 }
