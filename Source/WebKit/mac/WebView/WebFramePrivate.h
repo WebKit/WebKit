@@ -137,4 +137,5 @@ typedef enum {
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
 
+- (NSURL *)_unreachableURL;
 @end

@@ -1,3 +1,18 @@
+2013-07-04  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Add a method to get unreachable URL from WebFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=118399
+
+        Normally we could use [[WebFrame dataSource] unreachableURL] to get the failed URL.  However, if the frame has not
+        loaded (FrameLoader::frameHasLoaded() is false), we will get a nil dataSource and we won't be able to get unreachableURL.
+        We can add a method to always return the unreachableURL regardless if the frame has loaded or not.
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _unreachableURL]):
+        * WebView/WebFramePrivate.h:
+
 2013-07-03  Zalan Bujtas  <zalan@apple.com>
 
         H&R Block 2010 Help window can not be reopened.

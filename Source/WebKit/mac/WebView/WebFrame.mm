@@ -1241,6 +1241,11 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler()->hitTestResultAtPoint(IntPoint(point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent)] autorelease];
 }
 
+- (NSURL *)_unreachableURL
+{
+    return [[self _dataSource] unreachableURL];
+}
+
 @end
 
 @implementation WebFrame
