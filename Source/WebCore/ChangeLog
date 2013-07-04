@@ -1,3 +1,24 @@
+2013-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change static_cast<SVGImageElement*> with toSVGImageElement
+        https://bugs.webkit.org/show_bug.cgi?id=118387
+
+        Reviewed by Andreas Kling.
+
+        As a step to change static_cast with toXXX, static_cast<SVGImageElement*> can
+        be changed with toSVGImageElement().
+
+        Blink merge from https://src.chromium.org/viewvc/blink?view=rev&revision=153557
+
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::updateImageViewport):
+        (WebCore::RenderSVGImage::layout):
+        (WebCore::RenderSVGImage::paintForeground):
+        * svg/SVGImageElement.h:
+        (WebCore::toSVGImageElement):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+
 2013-07-04  Brian Holt  <brian.holt@samsung.com>
 
         [GTK] Leak: Free PangoFontDescription* in RenderThemeGtk3
