@@ -325,10 +325,6 @@ webkit.org/b/98745 plugins/keyboard-events.html [ Failure ]
 webkit.org/b/98745 plugins/mouse-events-fixedpos.html [ Failure ]
 webkit.org/b/98745 plugins/mouse-events.html [ Failure ]
 
-# Test runner needs setSmartInsertDeleteEnabled implementation
-webkit.org/b/99436 editing/selection/doubleclick-beside-cr-span.html [ Failure ]
-webkit.org/b/99436 editing/selection/doubleclick-whitespace.html [ Failure ]
-
 # Window size is being reported as screen size.
 webkit.org/b/103127 css3/device-adapt/opera/constrain-021.xhtml [ Failure ]
 webkit.org/b/103127 css3/device-adapt/opera/constrain-022.xhtml [ Failure ]

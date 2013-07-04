@@ -1,3 +1,16 @@
+2013-07-04  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Gardening. Unskip tests related with editing
+        https://bugs.webkit.org/show_bug.cgi?id=118379
+
+        Unreviewed gardening.
+
+        * platform/efl-wk2/TestExpectations:
+          Unskip editing/selection/doubleclick-beside-cr-span.html and
+          editing/selection/doubleclick-whitespace.html, which are passed after r150289
+        * platform/efl/editing/style/5065910-expected.txt: Removed (wrong expected result).
+        * platform/efl/editing/style/5065910-expected.png: Removed (wrong expected result).
+
 2013-07-04  Balazs Kelemen  <b.kelemen@samsung.com>
 
         [GStreamer] support preload="metadata"
