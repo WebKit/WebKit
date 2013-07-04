@@ -1,3 +1,13 @@
+2013-07-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Updates to support changes in CoreGraphics libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=118373
+
+        Reviewed by Anders Carlsson.
+
+        * WebCorePrefix.h: Include definitions for isnan/round/roundf for versions of
+        Visual Studio that do not provide them natively.
+
 2013-07-03  Gordon Sheridan  <gordon_sheridan@apple.com>
 
         Implement mechanism to detect (partially) hidden blocked plugins.
@@ -292,18 +302,18 @@
         -webkit-overflow-scrolling: touch is an inherited property that, on iOS, controls
         the behavior of overflow scrolling content, and causes overflow scrolling elements
         to become CSS stacking contexts.
-         
+
         However, the code was too aggressive in setting style->setZIndex(0), doing so
         for any element with overflow != hidden. Since the default for overflow is visible,
         that meant almost every element.
-        
+
         Previously, this didn't really matter. However, since r125693, any renderer with non-auto
         z-index gets a RenderLayer, and that RenderLayer will become a stacking context. The result
         was too many RenderLayers and incorrect stacking context behavior.
-        
+
         Fix by ensuring that -webkit-overflow-scrolling: touch  only affects elements which
         are actually scrollable.
-        
+
         Also move the code that does this to below the code that adjust overflow style
         for different elements.
 
@@ -339,20 +349,20 @@
 
         Previously, a select element with the multiple attribute would dispatch
         an onChanged event when the scrollbar is clicked. This patch corrects this
-        issue by only calling listBoxOnChange(), which fires the onChanged event, 
+        issue by only calling listBoxOnChange(), which fires the onChanged event,
         when an actual option is clicked.
 
         * html/HTMLSelectElement.cpp:
         (WebCore::HTMLSelectElement::childrenChanged): Updated to clear the list
         of selected items when when an <option> element is added to/deleted from its <select> element.
-        (Without this addition, if a option was selected, and then JavaScript was used to modify 
-        the <select> element, and then the scrollbar was clicked, an onChanged event would fire 
+        (Without this addition, if a option was selected, and then JavaScript was used to modify
+        the <select> element, and then the scrollbar was clicked, an onChanged event would fire
         because it remembers the previously selected option.)
 
         (WebCore::HTMLSelectElement::listBoxOnChange):
 
         (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): Updated to
-        only call listBoxOnChange() if at least one option is selected. 
+        only call listBoxOnChange() if at least one option is selected.
 
 2013-07-02  Alex Christensen  <achristensen@apple.com>
 
@@ -394,7 +404,7 @@
 
         Fixes the media/unsupported-rtsp.html test.
 
-        Set the contentType field of contentInformationRequest in order to trigger AVFoundation to 
+        Set the contentType field of contentInformationRequest in order to trigger AVFoundation to
         notice that loading failed and generate an error.
 
         * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
@@ -417,7 +427,7 @@
 
         Reviewed by David Hyatt.
 
-        Methods that must be const have been turned back into const. Code has been better organized. 
+        Methods that must be const have been turned back into const. Code has been better organized.
         Performance is better. Tests have been added to.
 
         * dom/Element.cpp:
@@ -1121,7 +1131,7 @@
         * loader/cache/CachedResource.cpp:
         (WebCore::deadDecodedDataDeletionIntervalForResourceType):
         (WebCore::CachedResource::CachedResource):
-        
+
             Use static function instead of calling a virtual.
 
         * loader/cache/CachedResource.h:
@@ -1229,7 +1239,7 @@
         When the RenderGeometryMap code path was added, RenderBox::outlineBoundsForRepaint()
         actually got slower if no coordinate mapping was needed. So avoid doing work when
         we can, including avoiding the FloatQuad construction.
-        
+
         Speeds up scrolling overflow:scroll areas with large numbers of layer children.
 
         * rendering/RenderBox.cpp:
@@ -1503,9 +1513,9 @@
 
         No one should be manually trying to attach or detach all their children so there's
         no reason for these methods to be public.
-        
+
         In doing this I realized that attachChildrenLazily is not used and can be removed.
-        
+
         I also realized that we were detaching all our children before the ShadowRoots which
         is sad since the InsertionPoints will call detach() on them as well, and then when we
         call ContainerNode::detach at the end of Element::detach we'll go detach them again!
@@ -1538,12 +1548,12 @@
 
         Reviewed by Tim Horton.
 
-        It is not sufficient to mark pages in the PageCache as needing a full style 
-        recalc. We also need to ensure that the RenderLayerCompositors for the CachesPages 
+        It is not sufficient to mark pages in the PageCache as needing a full style
+        recalc. We also need to ensure that the RenderLayerCompositors for the CachesPages
         get updated.
 
-        Keep track of whether device scale has been updated with 
-        m_needsDeviceScaleChanged. If that has been marked true, then restore() will call 
+        Keep track of whether device scale has been updated with
+        m_needsDeviceScaleChanged. If that has been marked true, then restore() will call
         Frame::deviceOrPageScaleFactorChanged().
         * history/CachedPage.cpp:
         (WebCore::CachedPage::CachedPage):
@@ -1709,14 +1719,14 @@
 
         Construction of FloatSize from LayoutSize, and FloatPoint's move(const LayoutSize&)
         and moveBy(const LayoutPoint&) were not inlined, and showed up on some profiles.
-        
+
         Make them inlined by removing the overloaded functions, and instead providing
         conversion operators from LayoutSize to FloatSize, and LayoutPoint to FloatPoint.
         Do the same to allow a LayoutRect to be converted to a FloatRect.
-        
+
         This is nice because it removes pollution of FloatRect, FloatPoint and FloatSize with
         Layout* entirely.
-        
+
         Remove Qt-specific conversions on LayoutRect, LayoutPoint and LayoutSize. Qt can
         convert via IntRect/FloatRect as necessary.
 
@@ -2219,7 +2229,7 @@
 
         Up to 1% of page load time can be used under CachedScript::script() for restarting
         the decoded data deletion timer.
-        
+
         Using DeferrableOneShotTimer instead of a plain Timer avoids unnecessary low level timer access.
 
         * loader/cache/CachedResource.cpp:
@@ -2234,12 +2244,12 @@
         * loader/cache/CachedScript.cpp:
         (WebCore::CachedScript::script):
         (WebCore::CachedScript::decodedDataDeletionTimerDelay):
-        
+
             Keep using zero delay for scripts.
 
         * platform/Timer.h:
         (WebCore::DeferrableOneShotTimer::stop):
-        
+
             Avoid unnecessary restart after stopping and starting again.
 
 2013-06-27  Anders Carlsson  <andersca@apple.com>
@@ -2359,7 +2369,7 @@
 
         Reviewed by Dean Jackson.
 
-        Remove an unneeded call to deprecatedCharactersWithNullTermination(). Ultimately, 
+        Remove an unneeded call to deprecatedCharactersWithNullTermination(). Ultimately,
         the string we used to call it on gets converted to an UTF-8 CString that has a null character anyway.
 
         * html/canvas/WebGLProgram.cpp:
@@ -2501,10 +2511,10 @@
 
         Reviewed by Simon Fraser.
 
-        With iOS tile cache implementation deleting RenderLayerCompositor may end up starting a deleted timer. 
-        This corrupts the timer heap and leads to a crash later. This happens because GraphicsLayers destructor 
+        With iOS tile cache implementation deleting RenderLayerCompositor may end up starting a deleted timer.
+        This corrupts the timer heap and leads to a crash later. This happens because GraphicsLayers destructor
         calls back to the RenderLayerCompositor that is being deleted. This is pretty fragile in general.
-        
+
         No test as there is no known way to repro this with plain webkit.
 
         * platform/Timer.cpp:
@@ -2512,13 +2522,13 @@
         (WebCore::TimerBase::~TimerBase):
         (WebCore::TimerBase::setNextFireTime):
         * platform/Timer.h:
-        
+
             Assert that the timer is alive before starting it. This turns bugs like this into clear crash stacks
             instead of hard-to-debug timer heap corruptions.
 
         * rendering/RenderLayerCompositor.cpp:
         (WebCore::RenderLayerCompositor::~RenderLayerCompositor):
-        
+
             Take care to delete owned GraphicsLayers before proceeding with the rest of the destructor.
 
 2013-06-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
@@ -2583,7 +2593,7 @@
         * English.lproj/Localizable.strings: Changed "Fullscreen" to "Full Screen"
         and added strings "Show Controls" and "Hide Controls".
 
-        * page/ContextMenuController.cpp: Updated to include a new context menu item 
+        * page/ContextMenuController.cpp: Updated to include a new context menu item
         that toggles betweeen "Show Controls" and "Hide Controls".
 
         * platform/ContextMenuItem.h:
@@ -3688,9 +3698,9 @@
         (WebCore::RenderBlock::layoutBlockChildren):
         Pull the percentage height descendant code that dirties those descendants
         out of layoutBlockChildren and into a protected helper function,
-        dirtyForLayoutFromPercentageHeightDescendants, that can be called from the 
+        dirtyForLayoutFromPercentageHeightDescendants, that can be called from the
         flex box code.
-        
+
         Also patch dirtyForLayoutFromPercentageHeightDescendants so that it will dirty
         preferred logical widths when a child has an aspect ratio, since we know that
         percentage height changes will potentially affect the preferred widths of the image and
@@ -3761,7 +3771,7 @@
 
         [Mac] Document URL is not updated by HSTS
         <rdar://problem/14241270> and https://bugs.webkit.org/show_bug.cgi?id=118003
-        
+
         Patch started by Alexey Proskuryakov, finished by Brady Eidson.
 
         Reviewed by Brady Eidson and then Alexey Proskuryakov.
@@ -4294,7 +4304,7 @@
 
         Reviewed by Andreas Kling.
 
-        Merge from https://chromiumcodereview.appspot.com/17388003. 
+        Merge from https://chromiumcodereview.appspot.com/17388003.
 
         Cleanup unused includes from WebCore.
 
@@ -4434,13 +4444,13 @@
         https://bugs.webkit.org/show_bug.cgi?id=117959
 
         Reviewed by Andy Estes.
-        
+
         FrameView::removeSlowRepaintObject() would assume that addSlowRepaintObject()
         had been called before it, but this isn't always the case. For example, if
         a page has a fixed background on the body, this falls into the accelerated
         path in WK2 tiled mode, so addSlowRepaintObject() is never called. However,
         we still call removeSlowRepaintObject() if the body is removed.
-        
+
         So null-check m_slowRepaintObjects to avoid crashing.
 
         Test: platform/mac-wk2/tiled-drawing/fixed-background/fixed-background-removal.html
@@ -4521,7 +4531,7 @@
         Reviewed by Ryosuke Niwa.
 
         Reduce code duplication when adding a line break.
-        
+
         No new tests, refactoring.
 
         * rendering/RenderBlockLineLayout.cpp:
@@ -5013,7 +5023,7 @@
 
         Reviewed by David Hyatt.
 
-        Collapsed trailing space on a normal wrap line should not cause a line-break 
+        Collapsed trailing space on a normal wrap line should not cause a line-break
         if it is the difference between fitting on the line and breaking. Likewise, on a line that
         has a mix of auto-wrap and no-wrap inlines we don't want a trailing space at the end of a no-wrap inline
         to be the difference between that no-wrap inline fitting or breaking the line. This latter
@@ -5041,7 +5051,7 @@
         * WebCore.vcxproj/WebCorePreBuild.cmd: Copy ANGLE headers and glext.h before building WebCore (which now uses them).
         * platform/graphics/ANGLEWebKitBridge.h: Look in newly copied directory for ShaderLang.h.
         * platform/graphics/OpenGLShims.h: Include GL/glext.h.
-        * platform/graphics/gpu/LoopBlinnShader.cpp: 
+        * platform/graphics/gpu/LoopBlinnShader.cpp:
         (WebCore::LoopBlinnShader::use): Fixed parameter ordering in call to uniformMatrix4fv.
         * platform/graphics/opengl/GLPlatformSurface.cpp:
         (WebCore::GLPlatformSurface::createOffScreenSurface): Added notImplemented for non-EGL builds for now.
@@ -5058,7 +5068,7 @@
         * html/track/TextTrack.cpp:
         (WebCore::TextTrack::platformTextTrack):
         * platform/graphics/PlatformTextTrack.h:
-        (WebCore::PlatformTextTrack::create): 
+        (WebCore::PlatformTextTrack::create):
         (WebCore::PlatformTextTrack::uniqueId):
         (WebCore::PlatformTextTrack::captionMenuOffItem):
         (WebCore::PlatformTextTrack::captionMenuAutomaticItem):
@@ -5081,7 +5091,7 @@
         Added glext.h from http://www.opengl.org/registry/oldspecs/glext.h for Windows
         This file does not meet WebKit style guidelines.
         Part of https://bugs.webkit.org/show_bug.cgi?id=117853
-        
+
         Reviewed by Brent Fulgham.
 
         * platform/graphics/win/GL: Added.
@@ -5091,11 +5101,11 @@
 
         Fix TextTrackCue::cueIndex() to handle the null case of TextTrack::cues(() properly
         https://bugs.webkit.org/show_bug.cgi?id=117815
-        <rdar://problem/14211041> 
+        <rdar://problem/14211041>
 
         Reviewed by Ryosuke Niwa.
 
-        This patch adds assert statements to try to catch when 
+        This patch adds assert statements to try to catch when
         track()->cues() returns a null pointer.
 
         * html/track/TextTrackCue.cpp:
@@ -5125,7 +5135,7 @@
 
         Reviewed by Andreas Kling.
 
-        Moved computeOversetStateForRegions() and overset() methods from RenderFlowThread to RenderNamedFlowThread. 
+        Moved computeOversetStateForRegions() and overset() methods from RenderFlowThread to RenderNamedFlowThread.
         Added ASSERTS in RenderRegion::regionOversetState and RenderRegion::setRegionOversetState to ensure
         the region was created from an element.
 
@@ -5536,7 +5546,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=117819
 
         Reviewed by Anders Carlsson.
-        
+
         At the end of FrameView::performPostLayoutTasks() we call scrollToAnchor() which attempts
         to restore the scroll position to a named anchor, even when the document has been
         changed by layout. This ends up in a call to ScrollView::scrollTo(), which in turn
@@ -5544,7 +5554,7 @@
         would bail if m_nestedLayoutCount != 0, so we never updated layer positions which
         depend on scroll position (but which would not be updated by layout, since their
         renderers are not marked for layout when scrolling happens).
-        
+
         We've solved this problem once before in updateFixedElementsAfterScrolling() which
         checks for m_nestedLayoutCount <= 1, so that we do work on the outermost nested layout.
         Apply that same fix to repaintFixedElementsAfterScrolling().
@@ -5817,7 +5827,7 @@
 
         Reviewed by David Hyatt.
 
-        The positioned height and width computation adds in the element's border and padding so 
+        The positioned height and width computation adds in the element's border and padding so
         don't add it to the intrinsic height and preferred widths of text controls that are
         absolutely positioned.
 
@@ -6728,7 +6738,7 @@
 
         Reviewed by David Hyatt.
         Per http://www.w3.org/TR/CSS21/visudet.html#Computing_widths_and_margins when width is auto then floating non-replaced,
-        absolute non-replaced, and inline-block non-replaced elements should use shrink-to-fit width. This trumps any no-wrap property 
+        absolute non-replaced, and inline-block non-replaced elements should use shrink-to-fit width. This trumps any no-wrap property
         on the element so if we are shrinking to fit ensure our minimum width respects all possible line breaks.
 
         Test: fast/block/shrink-to-fit-width-container-with-floating-children.html
@@ -7063,7 +7073,7 @@
 
         Reviewed by Brady Eidson.
 
-        * WebCore.exp.in: Updated to add a symbol for 
+        * WebCore.exp.in: Updated to add a symbol for
         HitTestResult::mediaIsVideo method
         and alphabetize the list of exposed methods.
 
@@ -7104,7 +7114,7 @@
         * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.h:
         * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
         (WebCore::InbandTextTrackPrivateAVFObjC::isSDH): Return true if track has both "transcribes
-            spoken dialog for accessibility" and "describes music and sound for accessibility" 
+            spoken dialog for accessibility" and "describes music and sound for accessibility"
             characteristics.
 
 2013-06-18  Ryosuke Niwa  <rniwa@webkit.org>
@@ -7440,16 +7450,16 @@
         * English.lproj/Localizable.strings: Updated to
         include localizable strings for "Download Video" and "Download Audio".
 
-        * page/ContextMenuController.cpp: Updated to 
+        * page/ContextMenuController.cpp: Updated to
         include and handle a "Download Video/Audio" context menu item.
 
         * platform/ContextMenuItem.h:
 
-        * platform/LocalizedStrings.cpp: 
+        * platform/LocalizedStrings.cpp:
         * platform/LocalizedStrings.h:
         * platform/efl/LocalizedStringsEfl.cpp:
         * platform/gtk/LocalizedStringsGtk.cpp:
-        * platform/qt/LocalizedStringsQt.cpp: 
+        * platform/qt/LocalizedStringsQt.cpp:
         Updated to include localizable strings for "Download Video" and "Download Audio".
 
 2013-06-17  Zoltan Horvath  <zoltan@webkit.org>
@@ -7719,12 +7729,12 @@
         https://bugs.webkit.org/show_bug.cgi?id=117684
 
         Reviewed by Tim Horton.
-        
-        FrameView is aware that "slow-repaint objects" (i.e. renderers with 
+
+        FrameView is aware that "slow-repaint objects" (i.e. renderers with
         background-attachment:fixed) require a slow-scrolling path. However,
         it was ignorant of the fact that such objects could be painting into
         compositing layers; it simply dirtied the main tiles, and nothing else.
-        
+
         Fix by having FrameView track the slow-repaints objects explicitly, as we
         do for position:fixed, and repaint each of them on scrolling.
 
@@ -7764,10 +7774,10 @@
         https://bugs.webkit.org/show_bug.cgi?id=65793
 
         Reviewed by Sam Weinig.
-        
+
         The code that computed background image geometry for background-attachment:fixed
         images was unaware of compositing, so often painting the image at the wrong location.
-        
+
         Fix by having RenderBoxModelObject::calculateBackgroundImageGeometry() do the correct
         math for fixed backgrounds in composited layer by offsetting the viewport rect by
         the paint container's absolute position.
@@ -7822,7 +7832,7 @@
         The optimization added in r102952 was incorrect in the case where a style change
         resulted in a positioned-movement-only layout but also required a repaint; it assumed
         that a composited layer did not need to be repainted for a a positioned-movement-only layout.
-        
+
         Fix by making RenderObject::setNeedsLayoutForPositionedMovement() check whether the
         style change requires a repaint, and calling setLayerNeedsFullRepaint() in that situation.
 
@@ -8040,7 +8050,7 @@
             setMediaElement.
         (-[WebVideoFullscreenController windowDidLoad]): Give the window's contentView a generic
             CALayer instaead of a QTMovieLayer.
-        (-[WebVideoFullscreenController setMediaElement:]): Test whether the incoming media 
+        (-[WebVideoFullscreenController setMediaElement:]): Test whether the incoming media
             element is backed by a QTMovie or an AVPlayer, and create the appropriate layer.
         (-[WebVideoFullscreenController windowDidExitFullscreen]): Remove the observer of
             AVPlayer's rate property.
@@ -8054,7 +8064,7 @@
         <rdar://problem/13881024>
 
         Reviewed by Darin Adler.
-        
+
         The API returns the matched ranges in the DOM order regardless of the
         find direction, but the index of the first match after the user selection
         should take the find direction into account.
@@ -8075,7 +8085,7 @@
         r150651 disabled setting the buffer size to a large value, but in so doing, also
         disabled setting the buffer size to a small value for Web Audio. Narrow the Mountain
         Lion protection to just the <video> element case.
-        
+
         * platform/audio/mac/AudioSessionManagerMac.cpp:
         (AudioSessionManager::updateSessionState):
 
@@ -8117,7 +8127,7 @@
         an element, we should move our Position either upstream or
         downstream (respectively) so as to obtain a valid position which can
         be used further for splitting of the text.
-        
+
         Test: editing/inserting/insert-paragraph-after-non-editable-node-before-text.html
 
         * editing/InsertParagraphSeparatorCommand.cpp:
@@ -8172,9 +8182,9 @@
         https://bugs.webkit.org/show_bug.cgi?id=117466
 
         Reviewed by Oliver Hunt.
-        
+
         Merge https://chromium.googlesource.com/chromium/blink/+/f4200a0093b3d9376f703961615359ec7fb712b4
-        
+
         If an event is created using as target an HTMLMediaElement which is
         currently being deleted it becomes a heap-use-after free situation.
 
@@ -8608,22 +8618,22 @@
         https://bugs.webkit.org/show_bug.cgi?id=117622
 
         Reviewed by Sam Weinig.
-        
+
         ScrollingCoordinator, and thus the scrolling state tree, is owned by Page,
         and so persists when navigating between cached pages. We do give the ScrollingStateTree
         a new ScrollingStateScrollingNode on navigation, however the ScrollingStateScrollingNode
         would not have dirty flags set for, say, WheelEventHandlerCount if the document had
         no wheel handlers. And because that dirty flag wasn't set, ScrollingTree::commitNewTreeState()
         would fail to update m_hasWheelEventHandlers, so we'd remain in slow scrolling.
-        
+
         Fix by having ScrollingStateTree remember if it's been given a new root ScrollingStateScrollingNode,
         and making ScrollingTree::commitNewTreeState() to the right thing in that case.
-        
+
         Also fix a couple of issues with the tiled scrolling indicator. First, on cached page
         navigation, the indicator color would show the state for the old page, because
         ScrollingCoordinatorMac::commitTreeState() checked scrollingTree()->hasWheelEventHandlers()
         before the scrolling thread has committed the new scrolling tree.
-        
+
         Second, the color change would animate, so stop that.
 
         Not testable, since tests can only dump the scrolling state tree.
@@ -8832,7 +8842,7 @@
 
 2013-06-13  Beth Dakin  <bdakin@apple.com>
 
-        Headers and footers should be pinned to the left edge of the window when scrolling 
+        Headers and footers should be pinned to the left edge of the window when scrolling
         horizontally, even when zoomed
         https://bugs.webkit.org/show_bug.cgi?id=117562
         -and corresponding-
@@ -8840,9 +8850,9 @@
 
         Reviewed by Sam Weinig.
 
-        We really want to use the width value from scrollOffsetForFixedPosition() for the 
+        We really want to use the width value from scrollOffsetForFixedPosition() for the
         banner with a scaled factor of 1. So if there is a different scale factor, re-
-        compute this value specifically for the banners. 
+        compute this value specifically for the banners.
         * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
         (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
 
@@ -8962,9 +8972,9 @@
         Reviewed by David Hyatt.
 
         During last layout that should update the auto-height regions new auto-height region height
-        is calculated correctly based on the text content, but it requires extra step 
+        is calculated correctly based on the text content, but it requires extra step
         to reposition the render block after new logical height is set (correct logical height becomes
-        available only during last layout). 
+        available only during last layout).
 
         Tests: fast/regions/autoheight-abspos-bottom-align.html
 
@@ -9277,14 +9287,14 @@
 
         Test: fast/text/whitespace/inline-whitespace-wrapping-8.html
 
-        A no-wrap inline shouldn't include trailing space when deciding whether it fits on a line. 
+        A no-wrap inline shouldn't include trailing space when deciding whether it fits on a line.
         Likewise when we finish iterating through the objects on a line we should clear our linebreak
         if the only thing that prevents us fitting on the line is our collapsed trailing whitespace.
-         
+
         Removing the trailing space from this measurement means we need to watch out for potential
         breaks between no-wrap inlines, in particular if we leave a no-wrap inline ignoring spaces
         and enter an autowrap inline then we need to mark the beginning of the autowrap inline
-        as a potential linebreak. The test fast/text/whitespace/inline-whitespace-wrapping-5.html 
+        as a potential linebreak. The test fast/text/whitespace/inline-whitespace-wrapping-5.html
         is an example of such a case.
 
         * rendering/RenderBlockLineLayout.cpp:
@@ -9839,11 +9849,11 @@
 
         Reviewed by Darin Adler.
 
-        Replaced elements that aren't RenderReplaced aren't |isReplaced| and don't have an 
+        Replaced elements that aren't RenderReplaced aren't |isReplaced| and don't have an
         intrinsic height or width. This causes them to go down the wrong height and width computation
-        path in RenderBox when they are absolute positioned. 
-        
-        The notion of |isReplaced| is entwined with the notion of being |isInline| so it isn't really 
+        path in RenderBox when they are absolute positioned.
+
+        The notion of |isReplaced| is entwined with the notion of being |isInline| so it isn't really
         possible to make them isReplaced without re-wiring a lot of code. So instead use an ad-hoc definition
         of isReplacedElement in RenderBox to bring all replaced elements into the height and width calculation.
         To make sure we get the right height and width in there, give non-RenderReplaced replaced renderers
@@ -10454,7 +10464,7 @@
         [CSS Regions] Rename region-overflow to region-fragment
         https://bugs.webkit.org/show_bug.cgi?id=117397
 
-        Renamed -webkit-region-overflow to -webkit-region-fragment and 
+        Renamed -webkit-region-overflow to -webkit-region-fragment and
         webkitRegionOverflow to webkitRegionFragment according to the new working draft
         at http://www.w3.org/TR/2013/WD-css3-regions-20130528/#the-region-fragment-property
 
@@ -10731,8 +10741,8 @@
 
         Reviewed by David Hyatt.
 
-        RenderNamedFlowThreads are attached to the RenderView, but they are painted 
-        and hit-tested through their regions. The easiest way to prevent the RenderView 
+        RenderNamedFlowThreads are attached to the RenderView, but they are painted
+        and hit-tested through their regions. The easiest way to prevent the RenderView
         from seeing the RenderNamedFlowThreads as its own children was to avoid collecting
         the layers of the RenderNamedFlowThreads as children layers of the RenderView.
 
@@ -11449,7 +11459,7 @@
         was leaving the element without a renderer, which was causing it to remain stuck in the :hover state (subsequent mouseMove
         events were not able to reset the element to its normal style due to the fact that it had no renderer).
 
-        The DragController::startDrag method was updated to properly handle the case when dragImage is NULL 
+        The DragController::startDrag method was updated to properly handle the case when dragImage is NULL
         (for instance by setting display:none inside the -webkit-drag pseudo-class).
 
         Reviewed by Antti Koivisto.
@@ -11692,16 +11702,16 @@
         At this moment there was a temporary fix that allowed parameter
         'inResult' to be NULL (see: webk.it/42115). However, there was no fix
         for parameter 'resolver'.
-        
+
         This patch refactors the code of the previous fix, moving the code for
         determine whether a parameter can be NULL or not to GetGReturnMacro.
         The solution is quite general and will alow to add other parameters in
-        the future if needed. 
+        the future if needed.
 
         * bindings/scripts/CodeGeneratorGObject.pm:
         (GetGReturnMacro): Pass functionName, as in some cases the code
         generated depends on the paramName and the functionName
-        (ParamCanBeNull): Checks if a parameter is allowed to be NULL 
+        (ParamCanBeNull): Checks if a parameter is allowed to be NULL
         (GenerateFunction):
 
 2013-06-06  Zalan Bujtas  <zalan@apple.com>
@@ -12806,7 +12816,7 @@
         * rendering/RenderBox.cpp:
         * rendering/RenderBox.h:
         (WebCore::RenderBox::layoutOverflowRect): Remove from layoutOverflowRect.
-        (RenderBox): 
+        (RenderBox):
         * rendering/RenderDeprecatedFlexibleBox.cpp:
         (WebCore::RenderDeprecatedFlexibleBox::layoutBlock): This should call updateScrollInfoAfterLayout() intead of directly calling layer()->updateScrollInfoAfterLayout().
         * rendering/RenderGrid.cpp:
@@ -13007,7 +13017,7 @@
         Reviewed by Jer Noble.
 
         Fix workflow to allow a video to enter into full screen
-        mode from a kWKContextMenuItemTagEnterVideoFullscreen 
+        mode from a kWKContextMenuItemTagEnterVideoFullscreen
         context menu item by denoting the enterFullscreenForVideo
         call as a user gesture, so Document::requestFullScreenForElement
         will execute correctly.
@@ -13040,7 +13050,7 @@
         * WebCore.exp.in:
         * platform/mac/MemoryPressureHandlerMac.mm:
         (WebCore::MemoryPressureHandler::install): Call new API
-        * platform/mac/WebCoreSystemInterface.h: 
+        * platform/mac/WebCoreSystemInterface.h:
         * platform/mac/WebCoreSystemInterface.mm:
 
 2013-05-30  Rafael Brandao  <rafael.lobo@openbossa.org>
@@ -13118,7 +13128,7 @@
         Add a new class PageActivityAssertionToken to allow HTMLMediaElement to decouple
         knowledge of and control over the lifetime of PageThrottler. The new class will
         have weak references to and from the PageThrottler so that holders of the token
-        will not need to care if the Page or PageThrottler has been destroyed. 
+        will not need to care if the Page or PageThrottler has been destroyed.
 
         HTMLMediaElement will create one of these PageActivityAssertionTokens when playback
         begins and destroy it when playback stops for any reason, or when the element is
@@ -13134,7 +13144,7 @@
         * page/Page.cpp:
         (WebCore::createActivityToken): Added simple factory method.
         * page/Page.h:
-        * page/PageActivityAssertionToken.cpp: 
+        * page/PageActivityAssertionToken.cpp:
         (WebCore::PageActivityAssertionToken::PageActivityAssertionToken): Call addActivityToken();
         (WebCore::PageActivityAssertionToken::~PageActivityAssertionToken): Call removeActivityToken();
         (WebCore::PageActivityAssertionToken::invalidate): Clear m_throttler.
@@ -13602,7 +13612,7 @@
         a frozen state because the page redirected. However, the paint-related
         milestones timer would still fire. This caused woes with header/footer
         banners.
-        
+
         Fix by not firing paint-related milestones if the layer tree is frozen,
         which we know via a new ChromeClient callback. When unfrozen, we'll
         paint again, and fire the timer later.
@@ -14166,8 +14176,8 @@
             direct representation of the CSS property. All the methods below
             are just simple getters and setters, along with a construtor and a
             factory method.
-        (WebCore::CSSBasicShapeInsetRectangle::create): 
-        (WebCore::CSSBasicShapeInsetRectangle::top): 
+        (WebCore::CSSBasicShapeInsetRectangle::create):
+        (WebCore::CSSBasicShapeInsetRectangle::top):
         (WebCore::CSSBasicShapeInsetRectangle::right):
         (WebCore::CSSBasicShapeInsetRectangle::bottom):
         (WebCore::CSSBasicShapeInsetRectangle::left):
@@ -14268,7 +14278,7 @@
 2013-05-29  Antti Koivisto  <antti@apple.com>
 
         Another attempt to fix windows build.
-        
+
         Not reviewed.
 
         * css/CSSFontSelector.h:
@@ -14276,7 +14286,7 @@
 2013-05-29  Antti Koivisto  <antti@apple.com>
 
         Try to fix window build.
-        
+
         Not reviewed.
 
         * platform/graphics/FontCache.h:
@@ -14292,14 +14302,14 @@
         r150671 intended to change things so that paint-related milestones
         only fire when painting has actually happened, so that WebKit clients
         are notified when we actually have bits to present.
-        
+
         However, it made an incorrect assumption that painting would happen
         inside of flushCompositingState(). This is not the case; flushCompositingState()
         will just dirty CALayers, and later on Core Animation will ask us to paint them.
-        
+
         This incorrect assumption meant that we would never start the
         m_paintRelatedMilestonesTimer, so never fire the milestones.
-        
+
         Fix by starting the m_paintRelatedMilestonesTimer via the RenderLayerBacking
         paintContents call back. At this time we know we're painting, so we can both
         set the FrameView's last paint time, and start up the timer. We also only
@@ -14321,31 +14331,31 @@
 
         Reviewed by Anreas Kling.
 
-        Style system generates many Font objects that are identical or similar enough to have identical FontGlyphs. 
+        Style system generates many Font objects that are identical or similar enough to have identical FontGlyphs.
         We can figure out that the FontGlyphs are going to be the same and share them. This reduces memory usage.
         It also improves performance as the glyph cache and the width cache hang from FontGlyphs and their hit rate
         increases.
-        
+
         On PLT3 this takes the number of live FontGlyphs at the end from 40k+ to <1k. Width cache hit rate improves
         from ~42% to ~55%.
 
         * css/CSSFontSelector.cpp:
         (WebCore::CSSFontSelector::CSSFontSelector):
-        
+
             Add unique id we can use in cache key.
 
         (WebCore::CSSFontSelector::dispatchInvalidationCallbacks):
-        
+
             Bump the version number on invalidation so we don't reuse cache entries after web font is loaded.
 
         (WebCore::CSSFontSelector::resolvesFamilyFor):
-        
+
             Test if FontSelector is needed for resolving a particular FontDescription.
 
         * css/CSSFontSelector.h:
         * page/Settings.cpp:
         (WebCore::setGenericFontFamilyMap):
-        
+
             Invalidate the cache if standard font settings change.
 
         * platform/graphics/Font.cpp:
@@ -14356,9 +14366,9 @@
         (WebCore::invalidateFontGlyphsCache):
         (WebCore::makeFontSelectorFlags):
         (WebCore::makeFontGlyphsCacheKey):
-        
+
             The cache key consists of
-            
+
             - all families.
             - shared key with the lower level FontData cache (FontCache), guaranteeing FontDatas would be identical.
             - font selector specific keys.
@@ -14367,7 +14377,7 @@
 
         (WebCore::computeFontGlyphsCacheHash):
         (WebCore::pruneUnreferencedFromFontGlyphsCache):
-        
+
             Don't accumulate unused entries.
 
         (WebCore::retrieveOrAddCachedFontGlyphs):
@@ -14388,7 +14398,7 @@
         (WebCore::FontDescriptionFontDataCacheKey::operator==):
         (WebCore::FontDescriptionFontDataCacheKey::operator!=):
         (WebCore::FontDescriptionFontDataCacheKey::computeHash):
-        
+
             Separate part of the key for sharing.
 
         (FontDescriptionFontDataCacheKey):
@@ -14398,7 +14408,7 @@
         * platform/graphics/FontFallbackList.h:
         (WebCore::FontGlyphs::create):
         (WebCore::FontGlyphs::~FontGlyphs):
-        
+
             Remove invalidate(). If FontGlyphs needs invalidation it is reconstructed.
 
         * platform/graphics/FontSelector.h:
@@ -14413,7 +14423,7 @@
         This was added in https://bugs.webkit.org/show_bug.cgi?id=49345 but
         not removed in https://bugs.webkit.org/show_bug.cgi?id=77492 which
         removed most of that code again.
-        
+
         * platform/PlatformGestureRecognizer.cpp: Removed.
 
 2013-05-29  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
@@ -15603,11 +15613,11 @@
         * platform/graphics/FontFallbackList.h:
         (WebCore):
         (WebCore::FontGlyphs::createForPlatformFont):
-        
+
             Tweaked the name.
 
         (WebCore::FontGlyphs::isForPlatformFont):
-        
+
             Move knowledge about platform font to FontGlyphs as it is needed for resolving system fallback on Mac.
 
         * platform/graphics/blackberry/FontCacheBlackBerry.cpp:
@@ -15622,7 +15632,7 @@
         (WebCore::FontCache::systemFallbackForCharacters):
         * platform/graphics/wince/FontCacheWinCE.cpp:
         (WebCore::FontCache::systemFallbackForCharacters):
-        
+
             More descriptive name and tighter interface.
 
 2013-05-27  Mihnea Ovidenie  <mihnea@adobe.com>
@@ -15780,7 +15790,7 @@
         * platform/graphics/freetype/FontCacheFreeType.cpp:
         * platform/graphics/mac/FontCacheMac.mm:
         (WebCore::FontCache::similarFontPlatformData):
-        
+
             Drop get* naming and make this Mac only as no other platform has it.
 
         * platform/graphics/qt/FontCacheQt.cpp:
@@ -16024,16 +16034,16 @@
         (WebCore::isInRange):
         (WebCore::shouldIgnoreRotation):
         (WebCore::glyphDataAndPageForNonCJKCharacterWithGlyphOrientation):
-        
+
             Helpers from FontFastPath.cpp.
 
         (WebCore::FontGlyphs::glyphDataAndPageForCharacter):
-        
+
             This is the primary interface. The code moves here from FontFastPath.cpp.
 
         * platform/graphics/FontFallbackList.h:
         (WebCore::FontGlyphs::createForPlatformData):
-        
+
             Remove setPlatformData in favor of constructor.
 
         (WebCore::FontGlyphs::primarySimpleFontData):
@@ -16065,7 +16075,7 @@
         Reviewed by Andreas Kling.
 
         Maybe it was a fallback list once. Nowadays its purpose is to cache realized glyphs and related data.
-        
+
         File renaming will be done separately.
 
         * WebCore.exp.in:
@@ -16073,7 +16083,7 @@
         (WebCore::Font::Font):
         (WebCore::Font::operator=):
         (WebCore::Font::operator==):
-        
+
             Refactored to early return style.
 
         (WebCore::Font::update):
@@ -16094,7 +16104,7 @@
         (WebCore::FontGlyphs::releaseFontData):
         (WebCore::FontGlyphs::determinePitch):
         (WebCore::FontGlyphs::realizeFontDataAt):
-        
+
             Renamed for clarity along with m_fontList -> m_realizedFontData.
 
         (WebCore::FontGlyphs::setPlatformFont):
@@ -16182,7 +16192,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=116788
 
         Reviewed by Anders Carlsson.
-        
+
         Empty files.
 
         * CMakeLists.txt:
@@ -16655,12 +16665,12 @@
         https://bugs.webkit.org/show_bug.cgi?id=102340
 
         Reviewed by Tim Horton.
-        
+
         Remove prefixes from the document properties, and the visibilitychanged event.
-        
+
         Rename the "preview" state to "unloaded". The "unloaded" state is never
         reached yet (see https://bugs.webkit.org/show_bug.cgi?id=116769).
-        
+
         Add some comments to places where we should update the visibility state
         when going in and out of the page cache, but cannot safely do so yet.
 
@@ -17622,7 +17632,7 @@
         code in willBeRemovedFromTree(). The assertion was caused by too many calls to
         FrameView::removeSlowRepaintObject(), which happened because we called it for
         RenderTexts, which share style with their parent renderer.
-        
+
         RenderText overrides styleWillChange() to do nothing, so we never
         call add/removeSlowRepaintObject() for them. Thus we should also skip this
         work in willBeRemovedFromTree() for RenderTexts.
@@ -17710,7 +17720,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=116591
 
         Reviewed by Darin Adler.
-        
+
         On a future OS, the rect returned by _focusRingVisibleRect should
         be in the coordinate system of the that NSView, not the base
         coordinate system, so fix the code that sets and reads the global
@@ -17727,16 +17737,16 @@
         https://bugs.webkit.org/show_bug.cgi?id=116514
 
         Reviewed by Darin Adler.
-        
+
         RenderObject increments and decrements a counter of slow repaint objects on
         FrameView when it sees style changes related to background-attachment:fixed.
         However, it omitted to decrement the count when a renderer with a fixed background
         was destroyed.
-        
+
         This caused Flickr to never fall into fast scrolling mode, since it toggled
         display:none on an element with a fixed background during loading, then removed
         the fixed background.
-        
+
         Did some minor cleanup of #ENABLE(FAST_MOBILE_SCROLLING) crap.
 
         Tests: platform/mac-wk2/tiled-drawing/slow-scrolling-background-toggle.html
@@ -17955,7 +17965,7 @@
         * page/DOMWindow.idl:
 
 2013-05-21  Mihai Tica  <mitica@adobe.com>
-        
+
         Update the background blending implementation to match the changes done
         in the spec. This implies that background color blending is removed and
         the background layers won't blend with the content behind the element
@@ -18060,7 +18070,7 @@
         * html/shadow/InsertionPoint.cpp:
         (WebCore::InsertionPoint::setResetStyleInheritance):
         * html/shadow/InsertionPoint.h:
-        
+
             Also remove some leftover selector code.
 
         (WebCore::InsertionPoint::insertionPointType):
@@ -18113,7 +18123,7 @@
         (WebCore::InsertionPoint::InsertionPoint):
         (WebCore::InsertionPoint::insertedInto):
         (WebCore::InsertionPoint::removedFrom):
-        
+
             Simplify insertion point list invalidation.
 
         * html/shadow/InsertionPoint.h:
@@ -18155,7 +18165,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=116483
 
         Reviewed by Andreas Kling.
-        
+
         Merge https://chromium.googlesource.com/chromium/blink/+/798cba0af9b2aff21e475e2e08ea3ca5e97dfc2c.
 
         Test: editing/undo/undo-after-event-edited.html
@@ -18182,7 +18192,7 @@
         (WebCore::ContentDistributor::distributeSelectionsTo):
         * html/shadow/ContentDistributor.h:
         * html/shadow/HTMLContentElement.idl:
-        
+
             Remove getDistributedNodes().
 
         * html/shadow/InsertionPoint.cpp:
@@ -18194,7 +18204,7 @@
         (WebCore::InsertionPoint::lastDistributed):
         (WebCore::InsertionPoint::nextDistributedTo):
         (WebCore::InsertionPoint::previousDistributedTo):
-        
+
             Rename for clarity.
 
         * html/shadow/InsertionPoint.h:
@@ -18398,12 +18408,12 @@
         https://bugs.webkit.org/show_bug.cgi?id=116454
 
         Reviewed by Andreas Kling.
-        
+
         Remove code supporting nested insertion points and distributing to multiple insertion points.
-    
+
         * html/HTMLDetailsElement.cpp:
         (DetailsContentElement):
-        
+
             Make distribution to <details> and <summary> mutually exclusive.
 
         * html/shadow/ContentDistributor.cpp:
@@ -18520,7 +18530,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=116479
 
         Reviewed by Andreas Kling.
-        
+
         Merge https://chromium.googlesource.com/chromium/blink/+/5cb43002a44f67a60ecf5a7ed76de2d0bcf89eb2
 
         DeleteSelection::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss() make style and link elements
@@ -18534,7 +18544,7 @@
 
 2013-05-20  Beth Dakin  <bdakin@apple.com>
 
-        Scrollbars still show sometimes even when WKPageSetSuppressScrollbarAnimations() 
+        Scrollbars still show sometimes even when WKPageSetSuppressScrollbarAnimations()
         is set
         https://bugs.webkit.org/show_bug.cgi?id=116493
         -and corresponding-
@@ -18542,10 +18552,10 @@
 
         Reviewed by Dean Jackson.
 
-        We need to be more aggressive with our approach since AppKit may still ask the 
+        We need to be more aggressive with our approach since AppKit may still ask the
         scrollbars to paint here.
 
-        scrollbarAnimationsAreSuppressed() will allow us to find out if the setting has 
+        scrollbarAnimationsAreSuppressed() will allow us to find out if the setting has
         been set.
         * page/FrameView.cpp:
         (WebCore::FrameView::scrollbarAnimationsAreSuppressed):
@@ -18586,7 +18596,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=100054
 
         Reviewed by Beth Dakin.
-        
+
         Make position: -webkit-sticky be constrained by an enclosing ancestor
         with non-visible overflow if there is one, rather than being constained
         always by the viewport.
@@ -18855,7 +18865,7 @@
         Reviewed by Martin Robinson.
 
         ShadowBlur::endShadowLayer copies the image from shadowContext to cairoContext.
-        CairoContext-path should be empty for doing this copy. Otherwise, the 
+        CairoContext-path should be empty for doing this copy. Otherwise, the
         original-image area will also get filled with the shadow.
 
         Test: fast/canvas/canvas-image-shadow.html
@@ -18991,13 +19001,13 @@
         https://bugs.webkit.org/show_bug.cgi?id=116417
 
         Reviewed by Sam Weinig.
-        
+
         PaintInfo and RenderLayer code referred to a "paintingRoot". This is only set when
         FrameView::setNodeToDraw() has been called and is used to restrict painting to
         some part of the subtree, but it could easily be misinterpreted, and confused with
         the "rootLayer" used by RenderLayer (which is usually not the layer associated with
         the paintingRoot).
-        
+
         Change the terminology from "paintingRoot" to "subtreePaintRoot" root to make the
         purpose of this variable more obvious.
 
@@ -19151,16 +19161,16 @@
         https://bugs.webkit.org/show_bug.cgi?id=116406
 
         Reviewed by Andreas Kling.
-        
+
         RenderLayer::paintLayerContents() was getting polluted with code related to filters,
         clipping and font subpixel quantization, and hard to follow.
-        
+
         Move three hunks of code into new functions:
         setupFontSubpixelQuantization() now contains the code related to whether we disable
         font subpixel quantization on the context.
         setupClipPath() now contains code related to clipping to shapes and references.
         setupFilters() and applyFilters() contain code related to CSS filters.
-        
+
         As part of this, the interaction with FilterEffectRendererHelper was simplified.
         It was convenient for setupFilters() to return a FilterEffectRendererHelper object
         if successful, so we use an OwnPtr<FilterEffectRendererHelper> now. In addition,
@@ -19192,18 +19202,18 @@
         https://bugs.webkit.org/show_bug.cgi?id=116397
 
         Reviewed by Andreas Kling.
-        
+
         RenderStyle::diff() was prone to being changed incorrectly, since there was
         a poorly documented ordering requirement: style changes that cause layout
         have to be detected before those that cause only repainting.
-        
+
         In addition, the existing code made it impossible to separately ask whether
         a given style change requires a repaint, if we've already detected that it
         requires a positioned-movement-only layout.
-        
+
         Fix by factoring the code into member functions that check for each type
         of style change.
-        
+
         No behavior change.
 
         * rendering/style/RenderStyle.cpp:
@@ -19257,7 +19267,7 @@
         Update to new StorageArea interface. The security checks are unnecessary here anyway because
         InspectorDOMStorageAgent::findStorageArea will only return a StorageArea that can be accessed
         by the frame's security origin.
-        
+
         * storage/Storage.cpp:
         (WebCore::Storage::key):
         (WebCore::Storage::getItem):
@@ -19285,7 +19295,7 @@
         However, this would cause FillLayer::hasOpaqueImage() to report that the
         background image is opaque, so we'd skip painting the background color.
         Unpainted content in an opaque layer results in garbage.
-        
+
         Fix by having ImageSource::frameHasAlphaAtIndex() always return true
         for frames that are not complete. When the image load completes, we
         recompute metadata and correctly determine that the frame is opaque.
@@ -19799,14 +19809,14 @@
 
         Reviewed by Simon Fraser.
 
-        This patch changes the WebCore-level API that WebKit uses to create a banner. 
-        Specifically this patch removes FrameView::setWantsLayerForHeader(), which created 
-        and returned a layer. Instead, WK2 will call Page::addHeaderWithHeight(). When the 
-        layer has been created, it will call back into WK2 via ChromeClient. This will 
-        allow WebCore to re-create the header/footer layers as needed whenever the 
+        This patch changes the WebCore-level API that WebKit uses to create a banner.
+        Specifically this patch removes FrameView::setWantsLayerForHeader(), which created
+        and returned a layer. Instead, WK2 will call Page::addHeaderWithHeight(). When the
+        layer has been created, it will call back into WK2 via ChromeClient. This will
+        allow WebCore to re-create the header/footer layers as needed whenever the
         FrameView/RenderLayerCompositor have been destroyed and recreated.
 
-        Remove references to old FrameView functions. Add references to new Page 
+        Remove references to old FrameView functions. Add references to new Page
         functions.
         * WebCore.exp.in:
 
@@ -19821,8 +19831,8 @@
         * page/FrameView.h:
         (FrameView):
 
-        Page now caches the header and footer height. When the FrameView/RLC have been 
-        destroyed, and the cached layer/height information on those classes has been lost, 
+        Page now caches the header and footer height. When the FrameView/RLC have been
+        destroyed, and the cached layer/height information on those classes has been lost,
         this data on Page will persist so that we can build the layers back up.
         * page/Page.cpp:
         (WebCore::Page::Page):
@@ -19832,7 +19842,7 @@
         (WebCore::Page::headerHeight):
         (WebCore::Page::footerHeight):
 
-        As soon as the root gets a backing, recreate the header and footer layers if 
+        As soon as the root gets a backing, recreate the header and footer layers if
         needed.
         * rendering/RenderLayerCompositor.cpp:
         (WebCore::RenderLayerCompositor::updateBacking):
@@ -20444,7 +20454,7 @@
 
         Frame flattening prevents <HTML> in <OBJECT> from having scrollbars
         https://bugs.webkit.org/show_bug.cgi?id=115884
-        
+
         Reviewed by Antonio Gomes.
 
         Frame flattening should be applied when the frame owner is frame or iframe. But when
@@ -20452,7 +20462,7 @@
         In this situation, we can't scroll the html document in object element.
 
         This patch adds two helper functions to verify flattening conditions.
-        
+
         Test: fast/frames/flattening/scrolling-in-object.html
 
         * page/FrameView.cpp:
@@ -20658,11 +20668,11 @@
         https://bugs.webkit.org/show_bug.cgi?id=116206
 
         Reviewed by Darin Adler.
-        
+
         When a RenderLayerBacking gains or loses a foregroundLayer or backgroundLayer,
         we need to repaint the primary layer, since what paints into that primary
         layer will change.
-        
+
         On the page in question, we gained/lost a foreground layer when scrolling because
         the page popped an element into position:fixed.
 
@@ -21226,7 +21236,7 @@
 
         Reviewed by Andreas Kling.
 
-        Turns out WebSocketHandshakeRequest is just used by the web inspector, and there's no reason 
+        Turns out WebSocketHandshakeRequest is just used by the web inspector, and there's no reason
         why we can't just use a ResourceRequest instead.
 
         * CMakeLists.txt:
@@ -21531,7 +21541,7 @@
 2013-05-14  Simon Fraser  <simon.fraser@apple.com>
 
         Revert http://trac.webkit.org/changeset/150047
-        
+
         It introduced unwanted behavioral differences between
         Retina and non-Retina Mac hardware.
 
@@ -21724,9 +21734,9 @@
         In the offsetParent algorithm, the nearest ancestor search skips from the topmost named flow elements directly to the body element.
         http://dev.w3.org/csswg/css-regions/#cssomview-offset-attributes
 
-        As a result of this change, the DumpRenderTree tool would crash in 
+        As a result of this change, the DumpRenderTree tool would crash in
         WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent when running the selecting-text-through-different-region-flows.html
-        test. The RenderObjects inside a flow are attached to the RenderFlowThread. However, the RenderFlowThread is attached to the 
+        test. The RenderObjects inside a flow are attached to the RenderFlowThread. However, the RenderFlowThread is attached to the
         RenderView directly, meaning that we are going to bypass the <body>'s RenderObject while iterating the parents.
 
         Reviewed by Darin Adler.
@@ -21986,27 +21996,27 @@
         REGRESSION: united.com has overlapping elements and is broken by flex box changes.
         https://bugs.webkit.org/show_bug.cgi?id=115329
         <rdar://problem/13690610>
-        
+
         The new flexbox spec says that flex-basis omitted in the flex shorthand defaults to
         0 when flex-grow/shrink are set. This has undesirable behavior when objects don't
         end up flexing at all, and it's something the spec is going to eventually address.
-        
+
         For now, though, to fix the regression, I'm making a targeted "hack" to deliberately
         violate the spec, but to do so as minimally as possible. This hack detects if there
         is infinite available space on a line, and if so, it treats a flex-basis of 0 like
         auto.
-        
+
         This means that when height is constrained and set by a container, flexing will do
         the right thing. Basically any time you end up actually flexing, the spec behavior
         should happen. If you're just laying out at intrinsic sizes, though, and no flexing
         is going to occur, we ignore a flex-basis of 0 and just use the child's normal size.
-        
+
         Note that widths don't have to be patched because the preferred logical widths
         algorithm is broken right now and not checking flex-basis. If it did, we'd have seen
         the same bug in the width direction.
-        
+
         This width issue is covered by https://bugs.webkit.org/show_bug.cgi?id=116117
-        
+
         Reviewed by Simon Fraser.
 
         Added fast/flexbox/auto-height-with-flex.html
@@ -22226,7 +22236,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=116077
 
         Reviewed by Benjamin Poulain.
-        
+
         Merge https://chromium.googlesource.com/chromium/blink/+/e861452a292e185501e48940305947aa6a4e23c2
         after simplifying and renaming functions to be more WebKit style.
 
@@ -22578,7 +22588,7 @@
 
 2013-05-13  Beth Dakin  <bdakin@apple.com>
 
-        Headers and footers should be pinned to the left edge of the window when scrolling 
+        Headers and footers should be pinned to the left edge of the window when scrolling
         horizontally
         https://bugs.webkit.org/show_bug.cgi?id=116061
         -and corresponding-
@@ -22586,21 +22596,21 @@
 
         Reviewed by Simon Fraser.
 
-        The scrolling thread will need to know about the header and footer layers in order 
-        the implement this custom scrolling behavior. 
+        The scrolling thread will need to know about the header and footer layers in order
+        the implement this custom scrolling behavior.
 
-        These getters will fetch the header or footer layer from the FrameView as 
+        These getters will fetch the header or footer layer from the FrameView as
         appropriate.
         * page/scrolling/ScrollingCoordinator.cpp:
         (WebCore::ScrollingCoordinator::headerLayerForFrameView):
         (WebCore::ScrollingCoordinator::footerLayerForFrameView):
         * page/scrolling/ScrollingCoordinator.h:
 
-        When we’re scrolling on the main thread, adjust the position of the header and 
+        When we’re scrolling on the main thread, adjust the position of the header and
         footer layers here.
         (WebCore::ScrollingCoordinator::updateMainFrameScrollPosition):
 
-        ScrollingStateScrollingNode now stores GraphicsLayers and PlatformLayers for the 
+        ScrollingStateScrollingNode now stores GraphicsLayers and PlatformLayers for the
         header and footer, just like it already does for the counterScrollingLayer.
         * page/scrolling/ScrollingStateScrollingNode.cpp:
         (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
@@ -22630,8 +22640,8 @@
         * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
         (WebCore::ScrollingTreeScrollingNodeMac::updateBeforeChildren):
 
-        This is where the magic happens when we are scrolling on the scrolling thread. 
-        Adjust the horizontal position the behave like a fixed object, but keep the 
+        This is where the magic happens when we are scrolling on the scrolling thread.
+        Adjust the horizontal position the behave like a fixed object, but keep the
         vertical position what it was when layer was created.
         (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
 
@@ -22641,8 +22651,8 @@
         (WebCore::RenderLayerCompositor::headerLayer):
         (WebCore::RenderLayerCompositor::footerLayer):
 
-        Set the anchor point for when we adjust the position later on. Also call 
-        frameViewRootLayerDidChange() to get the new layers picked up and sent to the 
+        Set the anchor point for when we adjust the position later on. Also call
+        frameViewRootLayerDidChange() to get the new layers picked up and sent to the
         scrolling tree.
         (WebCore::RenderLayerCompositor::updateLayerForHeader):
         (WebCore::RenderLayerCompositor::updateLayerForFooter):
@@ -22698,7 +22708,7 @@
         Regressions in flexbox layout caused by the flexing optimizations.
         https://bugs.webkit.org/show_bug.cgi?id=116058
         <rdar://problem/13863647>
-        
+
         Reviewed by Beth Dakin.
 
         Roll out the flex-related changes from r149597 so that the layout
@@ -22789,7 +22799,7 @@
         (WebCore): Remove FlowThread logic from logicalTopOffset move definition to header.
         * rendering/ExclusionShapeInfo.h:
         (WebCore::ExclusionShapeInfo::logicalTopOffset): Moved from cpp.
-        (WebCore::ExclusionShapeInfo::logicalLeftOffset): Add condition for RenderRegions. 
+        (WebCore::ExclusionShapeInfo::logicalLeftOffset): Add condition for RenderRegions.
         * rendering/RenderBlock.h:
         (RenderBlock): Add definition to the new helper members.
         * rendering/RenderBlockLineLayout.cpp:
@@ -23025,19 +23035,19 @@
         * dom/ShadowRoot.cpp:
         (WebCore::ShadowRoot::ShadowRoot):
         * dom/ShadowRoot.h:
-        
+
             No need for registration code anymore.
 
         * html/shadow/ContentDistributor.cpp:
         (WebCore::ScopeContentDistribution::ScopeContentDistribution):
-        
+
             Default m_insertionPointListIsValid to true to avoid crawling when there are no InsertionPoints.
 
         (WebCore::ScopeContentDistribution::ensureInsertionPointList):
         (WebCore::ScopeContentDistribution::registerInsertionPoint):
         (WebCore::ScopeContentDistribution::unregisterInsertionPoint):
         * html/shadow/ContentDistributor.h:
-        
+
             Remove distributeNodeChildrenTo, it was only used by the older/younger shadow root code.
 
         * testing/Internals.cpp:
@@ -23568,7 +23578,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=115991
 
         Reviewed by Dan Bernstein.
-        
+
         We can't optimize away the backing store of a layer by saying that
         it paints into a composited ancestor if its composited bounds are not contained
         by that ancestor.
@@ -23576,7 +23586,7 @@
         Test: compositing/backing/no-backing-for-clip-overhang.html
 
         * rendering/RenderLayerBacking.cpp:
-        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Pass in our 
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Pass in our
         previously computed composited bounds relative to our composited ancestor,
         and its composited bounds.
         * rendering/RenderLayerCompositor.cpp:
@@ -23913,18 +23923,18 @@
         https://bugs.webkit.org/show_bug.cgi?id=115951
 
         Reviewed by Beth Dakin.
-        
+
         The logic for painting the fixed root background into its own layer was
         broken when the document element's layer was composited. This could be caused
         by a negative z-index child of the body, or by an explicit compositing-causing
         style on the <html>.
-        
+
         There were two issues. First, when painting the layer for the fixed root
         background, we would simply short-circuit the fixed background paint in
         RenderLayer::paintLayer(), when checking for a composited layer. We have
         to continue to paint through the composited <html> layer to get the root
         background in this case.
-        
+
         Secondly, RenderLayerBacking::paintIntoLayer() would only set the PaintLayerPaintingSkipRootBackground
         flag if this RenderLayerBacking had a m_backgroundLayer. However, when the <html> is
         composited, we need to skip painting the root layer for both the RenderView's backing,
@@ -23969,7 +23979,7 @@
         * platform/text/TextCodecICU.h:
         * platform/text/TextCodecICU.cpp:
         (WebCore::TextCodecICU::create): Pass canonical ICU converter name to constructor.
-        (WebCore::TextCodecICU::registerEncodingNames): 
+        (WebCore::TextCodecICU::registerEncodingNames):
             - Updated terminology.
             - Added a comment that special cases should be kept in sync between registerEncodingNames
             and registerCodecs.
@@ -23982,7 +23992,7 @@
         (WebCore::TextCodecICU::TextCodecICU): Ditto.
         (WebCore::TextCodecICU::releaseICUConverter): Reset the converter to remove any
         leftover data.
-        (WebCore::TextCodecICU::createICUConverter): 
+        (WebCore::TextCodecICU::createICUConverter):
             - Compare converter name to converter name, not to another alias name.
             - Use proper string comparison instead of pointer comparison.
             - When creating a converter, assert that the name is not ambigous - canonical
@@ -24179,7 +24189,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=111974
 
         Reviewed by Ryosuke Niwa.
-        
+
         Per http://www.w3.org/TR/CSS2/visudet.html#propdef-vertical-align 'vertical-align' only applies to inline and table-cell
         elements.
 
@@ -24376,11 +24386,11 @@
         https://bugs.webkit.org/show_bug.cgi?id=115840
 
         Reviewed by Antti Koivisto.
-        
+
         In r107836, we moved some box-shadow painting into the paintFillLayer code for performance.
         However, in r145680 we started to skip background painting when we know the background is
         obscured. This broke shadow painting in some cases.
-        
+
         Fix by always painting the background fill layers if we know that they will also
         paint the shadow.
 
@@ -24395,17 +24405,17 @@
         https://bugs.webkit.org/show_bug.cgi?id=115946
 
         Reviewed by Antti Koivisto.
-        
+
         RenderLayer::backgroundIsKnownToBeOpaqueInRect() used hasVisibleContent()
         to check whether the layer's content was hidden via the visibility property.
         However, this assumed that a passing hasVisibleContent() check meant that the
         entire area was covered by the renderers and layers checked layer.
-        
+
         This is not always true. It's possible to have a visibility:hidden layer
         with a non-covering visbility:visible child, or even a single RenderText
         child that happens to have visibility:visible style. In these situations,
         hasVisibleContent() returns true but the entire area is not painted.
-        
+
         So we have to fall back to on a more conservative check using the
         visibility style, which will give is a reliable answer for the current layer.
 
@@ -24421,12 +24431,12 @@
         https://bugs.webkit.org/show_bug.cgi?id=115839
 
         Reviewed by Antti Koivisto.
-        
+
         RenderLayer::backgroundIsKnownToBeOpaqueInRect() would incorrectly return true
         for layers where the given rect wasn't contained in the background rect, but
         where some child layer obscured the rect, even though clipping hid part
         of that child layer.
-        
+
         So bail from RenderLayer::backgroundIsKnownToBeOpaqueInRect() if we have
         any overflow clipping. This could be enhanced in future to test whether child
         layers obscure the clipping rect, but that would be more expensive.
@@ -24492,7 +24502,7 @@
 
         Reviewed by David Hyatt.
 
-        r148121 only worried about split inlines inside anonymous blocks - it ought to have 
+        r148121 only worried about split inlines inside anonymous blocks - it ought to have
         catered for empty inlines, with no continuations, inside a single solitary anonymous block too.
 
         Test: fast/inline/anonymous-block-with-empty-inline.html
@@ -24857,7 +24867,7 @@
         * dom/Document.cpp:
         (WebCore::Document::setDomain):
         Update the security origin to one returned by copyWithDomainSetFromDOM.
-    
+
         (WebCore::Document::initSecurityContext):
         Set the security origin to one returned by copyWithUniversalAccessGranted().
 
@@ -24940,9 +24950,9 @@
 
         Reviewed by Darin Adler.
 
-        In case the author didn't include the rows of a table as the 
+        In case the author didn't include the rows of a table as the
         direct children, a table needs to dive down its descendant chain
-        until the rows are found. 
+        until the rows are found.
 
         I also took the opportunity to clean up a bit around what the different
         meanings of table are in the accessibility classes.
@@ -24978,7 +24988,7 @@
         After http://trac.webkit.org/changeset/140286, select elements can scroll whether they
         are disabled or not. While they scroll, they also change the selected item.
         This patch allows the select element to scroll, but does not change the selection
-        if the select element is disabled.        
+        if the select element is disabled.
 
         Test: fast/forms/select/listbox-disabled-scroll-no-onchange.html
         Test: fast/forms/select/listbox-disabled-no-autoscroll.html
@@ -25074,7 +25084,7 @@
 
         Reviewed by David Hyatt.
 
-        Text controls or any object that has scrollable content should not flex inside a table cell. 
+        Text controls or any object that has scrollable content should not flex inside a table cell.
         This makes our behaviour the same as IE, FF and Opera (Presto).
 
         * rendering/RenderTableSection.cpp:
@@ -25095,7 +25105,7 @@
 
         * WebCore.exp.in:
         Export symbol needed by WebKit2.
-        
+
         * dom/Document.cpp:
         (WebCore::Document::topOrigin):
         * dom/Document.h:
@@ -25117,7 +25127,7 @@
         * storage/StorageNamespaceImpl.cpp:
         (WebCore::StorageNamespaceImpl::transientLocalStorageNamespace):
         Move the default implementation here from PageGroup.
-        
+
         * storage/StorageStrategy.cpp:
         (WebCore::StorageStrategy::transientLocalStorageNamespace):
         Call the default implementation.
@@ -25134,7 +25144,7 @@
         we need to make sure all the CSS properties are recomputed and not fetched
         from the cache. For this reason we invalidate the properties cache.
         I've also renamed the function to give it a more meaningful name.
-        
+
         * page/Page.cpp:
         (WebCore::Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment):
         * page/Page.h:
@@ -25152,7 +25162,7 @@
 
         * css/RuleSet.cpp:
         (WebCore::RuleSet::findBestRuleSetAndAdd):
-        
+
             Check tag selectors with * local name (usually created for namespace) for a suitable narrower bucket too.
 
 2013-05-09  Darin Adler  <darin@apple.com>
@@ -26246,12 +26256,12 @@
         (WebCore::HTMLMediaElement::webkitClosedCaptionsVisible): Remove m_legacyWebKitClosedCaptionsVisible.
         * html/HTMLMediaElement.h:
 
-        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Remove 
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Remove
             HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT) requirement. AVFOUNDATION_TEXT_TRACK_SUPPORT ->
             AVFOUNDATION_MEDIA_SELECTION_GROUP
         * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h: Ditto.
 
-        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp: 
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
         (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation): Ditto.
         (WebCore::MediaPlayerPrivateAVFoundation::seek): Ditto.
         (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted): Ditto.
@@ -26261,7 +26271,7 @@
 
         * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.h:  Ditto.
         * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
-        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::kind): Don't look at media characteristics, 
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::kind): Don't look at media characteristics,
             a legacy CC track is always Captions.
         (WebCore::InbandTextTrackPrivateLegacyAVFObjC::isClosedCaptions): Ditto.
         (WebCore::InbandTextTrackPrivateLegacyAVFObjC::containsOnlyForcedSubtitles): Ditto.
@@ -26280,7 +26290,7 @@
             only on 10.8. AVFOUNDATION_TEXT_TRACK_SUPPORT -> AVFOUNDATION_MEDIA_SELECTION_GROUP
         (WebCore::MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks): Ditto.
         (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTrack): Ditto.
-        (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack): AVFOUNDATION_TEXT_TRACK_SUPPORT -> 
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack): AVFOUNDATION_TEXT_TRACK_SUPPORT ->
             AVFOUNDATION_MEDIA_SELECTION_GROUP
 
 2013-05-08  Sergio Villar Senin  <svillar@igalia.com>
@@ -26853,7 +26863,7 @@
 
 2013-05-07  Beth Dakin  <bdakin@apple.com>
 
-        Still possible to fire paint-related LayoutMilestones before CA has committed the 
+        Still possible to fire paint-related LayoutMilestones before CA has committed the
         changes
         https://bugs.webkit.org/show_bug.cgi?id=115753
         -and corresponding-
@@ -26861,7 +26871,7 @@
 
         Reviewed by Simon Fraser.
 
-        To ensure we wait for the CA commit, we should wait until the end of the runloop 
+        To ensure we wait for the CA commit, we should wait until the end of the runloop
         with a zero-delay timer.
 
         * rendering/RenderLayerCompositor.cpp:
@@ -27004,7 +27014,7 @@
         ResourceHandleClient::didReceiveResponse(), as this will cancel the request,
         because the MIME type is empty in this case, causing the POST request to fail.
         This header is only sent as an info header, or provisional response.
-        
+
         In addition, this patch changes the classification of http code 304 (Not modified).
         It is not reported as a redirect anymore, but as a response
         (ResourceHandleClient::didReceiveResponse() is called.
@@ -27181,15 +27191,15 @@
 
         Reviewed by Sam Weinig.
 
-        This fix here is just to rollout the change that caused this regression, which is 
-        http://trac.webkit.org/changeset/147395 . That change was not intended to cause any 
-        behavioral differences. The change made it so RenderObject::offsetParent() returned 
-        an Element* instead of a RenderBoxModelObject*. However, can muddle things when the 
-        object we are returning is a continuation. Multiple RenderObjects have the same 
-        Element in a continuation, so this new code can lead to a crash in 
-        adjustedPositionRelativeToOffsetParent() when we expect to walk the RenderObject 
-        chain and find the offsetParent in the Element’s parent chain. But we might crash in 
-        some complicated continuation scenarios because we lost this disambiguation of which 
+        This fix here is just to rollout the change that caused this regression, which is
+        http://trac.webkit.org/changeset/147395 . That change was not intended to cause any
+        behavioral differences. The change made it so RenderObject::offsetParent() returned
+        an Element* instead of a RenderBoxModelObject*. However, can muddle things when the
+        object we are returning is a continuation. Multiple RenderObjects have the same
+        Element in a continuation, so this new code can lead to a crash in
+        adjustedPositionRelativeToOffsetParent() when we expect to walk the RenderObject
+        chain and find the offsetParent in the Element’s parent chain. But we might crash in
+        some complicated continuation scenarios because we lost this disambiguation of which
         RenderObject to start with.
 
         Roll out.
@@ -27610,30 +27620,30 @@
 
         Optimize deprecated flexible box layout to be much faster. This patch implements
         the following optimizations in the deprecated flexible box:
-        
+
         (1) Defer repainting of children until they have been placed into their final
         positions. This is done by collecting all of the old frame rects into a Vector
         and then doing a walk after layout is finished to repaint any of the children if
         they moved from that position. This code matches the new RenderFlexibleBox's system
         for repainting moved children.
-        
+
         (2) Implement support for layout deltas. We keep a Vector of layout deltas for each
         child as we shift them around, and every time we lay a child out again, we apply that
         child's current layout delta to avoid repainting at the new position. RenderFlexibleBox
         does not have support for layout deltas yet, so we'll need to implement this in the
         new flexbox code as well.
-        
+
         (3) Optimize flexible objects to avoid laying them out unflexed. When laying out
         horizontal and vertical boxes now, we lay out the inflexible items first. We then
         check to see if the inflexible extent of all those children has changed.
-        
+
         If this extent didn't change, and the flexible items either don't need layout or there
         is only one flexing item, then we avoid laying out the item in an unflexed state
         and simply lay out one time with the flex applied instead. The new RenderFlexibleBox
         does not have these optimizations and would benefit from them in the block-direction box
         case (it uses preferred logical widths in the inline-direction box case, and so avoided
         layouts in that direction already).
-        
+
         Reviewed by Beth Dakin.
 
         * rendering/RenderDeprecatedFlexibleBox.cpp:
@@ -27641,7 +27651,7 @@
         Cache all of the old child frame rects so that we can compare them with the final
         positions for repaintDuringLayoutIfMoved. This collection is identical to what the
         new flexbox code does.
-        
+
         (WebCore::appendChildLayoutDeltas):
         Build up a vector that tracks layout deltas. We apply these layout deltas every
         time we lay out a child so that any repainting done during layout ignores our shifted
@@ -27651,25 +27661,25 @@
         (WebCore::repaintChildrenDuringLayoutIfMoved):
         After final placement of children, we do a single pass over all of the children and
         repaint them if they shifted their positions. This matches how the new flexbox works.
-        
+
         (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
         Collect the frame rects and layout deltas, and defer repainting of children to the
         end of layout.
-        
+
         (WebCore::gatherFlexChildrenInfo):
         Don't clear flex overrides when gathering flex information. Add additional information
         such as the number of flexing items so that we can use it to optimize flex layout.
-        
+
         (WebCore::layoutChildIfNeededApplyingDelta):
         A helper for applying your current layout delta for a child when laying that child out.
-        
+
         (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
         (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
         Both methods are patched to aggregate layout deltas as children move around during
         the multiple passes. In addition we now optimize layout in a couple of cases, such
         as when the inflexible space stays the same (thus giving a flexible object the
         same amount of available space, avoiding a need to lay out unflexed first).
-        
+
         (WebCore::RenderDeprecatedFlexibleBox::placeChild):
         Patched to add to our cached layout delta for that child when we do a movement.
 
@@ -27798,9 +27808,9 @@
         Patch by Julien Chaffraix.
         Reviewed by Benjamin Poulain.
 
-        Backport phttps://src.chromium.org/viewvc/blink?view=rev&revision=149612 from 
+        Backport phttps://src.chromium.org/viewvc/blink?view=rev&revision=149612 from
         https://chromiumcodereview.appspot.com/14105010
-        
+
         Fix the rows' height computation with vertical-align: baseline and rowspan.
         r140907 was careful in avoiding updating the baseline descent for
         spanning cells. However it still added the non-spanning cells baseline
@@ -28268,8 +28278,8 @@
         Reviewed by Andreas Kling.
 
         Younger and older shadow trees are an obscure corner of the Shadow DOM spec.
-        
-        Support only one shadow tree per element. This simplifies many things. 
+
+        Support only one shadow tree per element. This simplifies many things.
 
         * dom/ComposedShadowTreeWalker.cpp:
         (WebCore::ComposedShadowTreeWalker::traverseChild):
@@ -28300,9 +28310,9 @@
         * dom/Element.idl:
         * dom/ElementShadow.cpp:
         (WebCore::ElementShadow::addShadowRoot):
-        
+
         Allow only one ShadowRoot per ElementShadow. Remove linked list handling.
-        
+
         (WebCore::ElementShadow::removeAllShadowRoots):
         (WebCore::ElementShadow::attach):
         (WebCore::ElementShadow::detach):
@@ -28327,9 +28337,9 @@
         (WebCore::ShadowRoot::insertedInto):
         * dom/ShadowRoot.h:
         (ShadowRoot):
-        
+
             Remove LinkedList base.
-        
+
         * dom/TreeScopeAdopter.cpp:
         (WebCore::TreeScopeAdopter::moveTreeToNewScope):
         (WebCore::TreeScopeAdopter::moveTreeToNewDocument):
@@ -28464,7 +28474,7 @@
 
         * rendering/RenderBox.h: The functions declarations are removed.
         * rendering/RenderTreeAsText.cpp:
-        (WebCore::maxLayoutOverflow): 
+        (WebCore::maxLayoutOverflow):
         * rendering/RenderView.h:
         (WebCore::RenderView::pixelSnappedLayoutOverflowRect):
 
@@ -28789,7 +28799,7 @@
         (WebCore::HTMLMediaElement::loadInternal): Clear the LoadMediaResource from m_pendingActionFlags
             in case there is a pending async load.
         (WebCore::HTMLMediaElement::configureTextTrackGroup): Always log the track score.
-        (WebCore::HTMLMediaElement::configureTextTracks): Call configureTextTrackDisplay so 
+        (WebCore::HTMLMediaElement::configureTextTracks): Call configureTextTrackDisplay so
             m_legacyWebKitClosedCaptionsVisible is always updated immediately.
         (WebCore::HTMLMediaElement::setWebkitClosedCaptionsVisible): Use m_legacyWebKitClosedCaptionsVisible.
         (WebCore::HTMLMediaElement::webkitClosedCaptionsVisible): Ditto.
@@ -28830,7 +28840,7 @@
         (WebCore::MediaPlayerPrivateAVFoundationObjC::processLegacyCCTracks): New, process CC tracks.
         (WebCore::MediaPlayerPrivateAVFoundationObjC::processNewAndRemovedTextTracks): New, refactored
             common setup/cleanup code from processMediaSelectionOptions.
-        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions): Renamed from 
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions): Renamed from
             processTextTracks. Move common setup/cleanup code to processNewAndRemovedTextTracks.
         (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTrack): Deal with legacy CC tracks.
 
@@ -28935,7 +28945,7 @@
         because we believe they don't fit. That decision is made comparing the run width
         with the font computed size multiplied by a margin factor.
         I've increased the margin from 10% to 15%.
-         
+
         Test: fast/text/text-combine-different-fonts.html
 
         * rendering/RenderCombineText.cpp:
@@ -29327,14 +29337,14 @@
 
         <button> ignores margin-bottom.
         https://bugs.webkit.org/show_bug.cgi?id=114940
-        
+
         Reviewed by Beth Dakin.
 
         Make sure that the inner block inside the <button> (flexbox) acts like it
         establishes a block formatting context, i.e., it should refuse to collapse
         its margins with its children. This causes margins to stay inside the <button>
         and be honored, adding to the button's overall height.
-        
+
         Basically we have to remove the restriction that anonymous blocks can't be
         BFCs on the bottom margin.
 
@@ -29404,7 +29414,7 @@
         Fix an issue with JSPerformance.cpp in the WebCore.xcodeproj where
         it was being recognized as a diretory rather than a file, introduced
         in r149359.
-        
+
         * WebCore.xcodeproj/project.pbxproj:
 
 2013-04-30  Beth Dakin  <bdakin@apple.com>
@@ -29513,7 +29523,7 @@
         <rdar://problem/13401861>
 
         Reviewed by Tim Horton.
-        
+
         Core Animation can crash if fed deeply nested layer trees.
         Avoid this by capping CALayer tree depth at some empirically-determined
         level.
@@ -30042,7 +30052,7 @@
         its transform/opacity.
         This requires at least two intermediate surface passes for every filtered layer.
 
-        This patch makes it so that the last filter pass is applied together with the 
+        This patch makes it so that the last filter pass is applied together with the
         resulting surface's opacity and transform, during composition.
 
         Tested by css3/filters tests, whichn now scroll/zoom a lot faster.
@@ -30121,9 +30131,9 @@
         https://bugs.webkit.org/show_bug.cgi?id=111244
 
         Reviewed by David Kilzer.
-        
-        Enable performance.now() as a minimal subset of Web Timing API. 
-        It returns DOMHighResTimeStamp, a monotonically increasing value representing the 
+
+        Enable performance.now() as a minimal subset of Web Timing API.
+        It returns DOMHighResTimeStamp, a monotonically increasing value representing the
         number of milliseconds from the start of the navigation of the current document.
         JS libraries use this API to check against the requestAnimationFrame() timestamp.
 
@@ -30602,9 +30612,9 @@
 
         Reviewed by Ryosuke Niwa.
 
-        Add links should be done only when typing a word separator (e.g. space or dot) which 
-        breaks the text into two parts - the link and the rest of the text. Reflected in 
-        code, we should only add link when the caret position is at the right end location of 
+        Add links should be done only when typing a word separator (e.g. space or dot) which
+        breaks the text into two parts - the link and the rest of the text. Reflected in
+        code, we should only add link when the caret position is at the right end location of
         TextChecking result. Otherwise, the text on the right of a word separator could be
         highlighted as a link and the insertion point jumps unexpectedly.
 
@@ -30615,7 +30625,7 @@
 
 2013-04-29  Beth Dakin  <bdakin@apple.com>
 
-        Need a LayoutMilestone to fire when we have done our first paint after suppressing 
+        Need a LayoutMilestone to fire when we have done our first paint after suppressing
         incremental layout
         https://bugs.webkit.org/show_bug.cgi?id=115330
         -and corresponding-
@@ -30623,20 +30633,20 @@
 
         Reviewed by Simon Fraser.
 
-        To meet the needs of all of our clients, we really need two milestones. One 
-        indicating that a layout has happened after setVisualUpdatesAllowed(true), and 
+        To meet the needs of all of our clients, we really need two milestones. One
+        indicating that a layout has happened after setVisualUpdatesAllowed(true), and
         another indicating that painting has happened.
 
-        If layout is needed when setVisualUpdatesAllowed(true) is called, we need to 
-        update it so that we can guarantee the first paint is really happening at this 
-        time. Also fire the DidFirstLayoutAfterSuppressedIncrementalRendering milestone, 
-        and call add DidFirstPaintAfterSuppressedIncrementalRendering to the FrameView's 
-        pending paint milestones. 
+        If layout is needed when setVisualUpdatesAllowed(true) is called, we need to
+        update it so that we can guarantee the first paint is really happening at this
+        time. Also fire the DidFirstLayoutAfterSuppressedIncrementalRendering milestone,
+        and call add DidFirstPaintAfterSuppressedIncrementalRendering to the FrameView's
+        pending paint milestones.
         up the painting milestone.
         * dom/Document.cpp:
         (WebCore::Document::setVisualUpdatesAllowed):
 
-        FrameView now stores m_milestonesPendingPaint. We'll send and clear them once we 
+        FrameView now stores m_milestonesPendingPaint. We'll send and clear them once we
         have painted.
         * page/FrameView.cpp:
         (WebCore::FrameView::FrameView):
@@ -30650,7 +30660,7 @@
         * page/LayoutMilestones.h:
         (WebCore):
 
-        We don't need m_headerLayerAwaitingFirstFlush anymore since we can use FrameView's 
+        We don't need m_headerLayerAwaitingFirstFlush anymore since we can use FrameView's
         pending paint milestones instead.
         * rendering/RenderLayerCompositor.cpp:
         (WebCore::RenderLayerCompositor::RenderLayerCompositor):
@@ -30663,7 +30673,7 @@
 
         [Mac] Links can't be hovered or clicked with overlay scrollbars hidden.
         https://bugs.webkit.org/show_bug.cgi?id=99379
-        
+
         This is also <rdar://problem/10929565> Overlay scrollbars prevent hit-testing on
         content underneath them, even when hidden
 
@@ -31937,8 +31947,8 @@
         Reviewed by Simon Fraser.
 
         * Configurations/FeatureDefines.xcconfig:
-        * WebCore.exp.in: 
-        Export symbol needed to be added for IntRect(const LayoutRect&) constructor, 
+        * WebCore.exp.in:
+        Export symbol needed to be added for IntRect(const LayoutRect&) constructor,
         which is now being used in pixelSnappedIntRect(const LayoutRect&) in LayoutRect.h after disabling sub-pixel layout.
 
 2013-04-26  Simon Fraser  <simon.fraser@apple.com>
@@ -32089,9 +32099,9 @@
         (WebCore::InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF): Initialize m_pendingCueStatus.
         (WebCore::InbandTextTrackPrivateAVF::processCue): Never call update() on a cue that is delivered
             while seeking.
-        (WebCore::InbandTextTrackPrivateAVF::beginSeeking): Flush all incomplete cues, remember that 
+        (WebCore::InbandTextTrackPrivateAVF::beginSeeking): Flush all incomplete cues, remember that
             we are seeking.
-        (WebCore::InbandTextTrackPrivateAVF::resetCueValues): 
+        (WebCore::InbandTextTrackPrivateAVF::resetCueValues):
         * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
 
         * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
@@ -32099,7 +32109,7 @@
         (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted): Call track->endSeeking().
 
         * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
-        (WebCore::InbandTextTrackPrivateAVFObjC::kind): Include class name in Kind enum values to 
+        (WebCore::InbandTextTrackPrivateAVFObjC::kind): Include class name in Kind enum values to
             avoid compile error.
 
 2013-04-26  Andreas Kling  <akling@apple.com>
@@ -32141,12 +32151,12 @@
         use-after-free removing a frame from its parent in a beforeload event of an OBJECT element
         https://bugs.webkit.org/show_bug.cgi?id=113964
 
-        Object elements have the tendecny to modify or even fully remove 
-        the containing Document inside beforeload callback. While Document is removed, 
+        Object elements have the tendecny to modify or even fully remove
+        the containing Document inside beforeload callback. While Document is removed,
         RenderArena gets destroyed. Retained RenderWidgets fails to function with NULL arena.
-        
-        Protect RendereArena from getting wiped out, when Document is removed 
-        during FrameView::updateWidget(). 
+
+        Protect RendereArena from getting wiped out, when Document is removed
+        during FrameView::updateWidget().
 
         Reviewed by Antti Koivisto.
 
@@ -32494,7 +32504,7 @@
 
         If a page is suspended, then resumed when its WebView or WKView has been removed from a window,
         the page's media elements will unpause. Check whether media is allowed to start during resume()
-        via Page::canMediaStart() and if not, register for mediaCanStart notifications. Then, in 
+        via Page::canMediaStart() and if not, register for mediaCanStart notifications. Then, in
         mediaCanStart() if the media is force-paused, unpause it.
 
         * html/HTMLMediaElement.cpp:
@@ -32918,14 +32928,14 @@
         Reviewed by Andreas Kling.
 
         On this page ads dynamically loaded to subframes on slideshow navigation switch us to state where we throttle layer flushes.
-        
+
         Fix by ignoring any subframe-originated loads when determining throttling.
 
         * loader/FrameLoader.cpp:
         (WebCore::FrameLoader::loadProgressingStatusChanged):
         * loader/ProgressTracker.cpp:
         (WebCore::ProgressTracker::isMainLoadProgressing):
-        
+
             Rename, ignore subframe originated loads. Subframe loads that are initiated during the main load still count.
 
         * loader/ProgressTracker.h:
@@ -33044,10 +33054,10 @@
         but then not painting anything into it. On this page, the element is
         toggled to be visibility:hidden on scrolling, but RenderLayer::backgroundIsKnownToBeOpaqueInRect()
         failed to consider that as something that can cause backgrounds not to be opaque.
-        
+
         For the bug to happen, some subtle interactions with r142012 come into play
         for the layer to remain visible, hence the slightly complex testcase.
-        
+
         Test: compositing/contents-opaque/visibility-hidden.html
 
         * rendering/RenderLayer.cpp:
@@ -33137,7 +33147,7 @@
 
 2013-04-24  Beth Dakin  <bdakin@apple.com>
 
-        Vertical overlay scrollbar in iframes fades in and out rapidly when you scroll in 
+        Vertical overlay scrollbar in iframes fades in and out rapidly when you scroll in
         a circle
         https://bugs.webkit.org/show_bug.cgi?id=115124
         -and corresponding-
@@ -33145,20 +33155,20 @@
 
         Reviewed by Anders Carlsson.
 
-        With http://trac.webkit.org/changeset/119834 we started calling 
-        ScrollbarPainterController's contentAreaScrolled/contentAreaScrolledInDirection 
-        API on a zero-delay timer instead of calling it right away. This prevented some 
-        crashes that we saw whenever this was called during a layout. However, that delay, 
-        combined with the particulars of contentAreaScrolledInDirection cause this bug 
-        where sometimes the scrollbars in an iframe will fade out very noticeably when 
+        With http://trac.webkit.org/changeset/119834 we started calling
+        ScrollbarPainterController's contentAreaScrolled/contentAreaScrolledInDirection
+        API on a zero-delay timer instead of calling it right away. This prevented some
+        crashes that we saw whenever this was called during a layout. However, that delay,
+        combined with the particulars of contentAreaScrolledInDirection cause this bug
+        where sometimes the scrollbars in an iframe will fade out very noticeably when
         scrolling in a circle.
 
-        This change makes it so we will only use the zero-delay timer if the 
-        ScrollableArea is not currently handling a wheel event. If it IS handling a wheel 
-        event, then we will send the notifications to AppKit right away. I confirmed that 
-        this change did not reintroduce the old crashes. 
+        This change makes it so we will only use the zero-delay timer if the
+        ScrollableArea is not currently handling a wheel event. If it IS handling a wheel
+        event, then we will send the notifications to AppKit right away. I confirmed that
+        this change did not reintroduce the old crashes.
 
-        Keep track of whether we are currently handling a wheel event with the new member 
+        Keep track of whether we are currently handling a wheel event with the new member
         variable m_isHandlingWheelEvent.
         * page/EventHandler.cpp:
         (WebCore::EventHandler::EventHandler):
@@ -33167,7 +33177,7 @@
         (WebCore::EventHandler::isHandlingWheelEvent):
         (EventHandler):
 
-        To prevent layering violations, the ScrollableArea sub-classes will have to access 
+        To prevent layering violations, the ScrollableArea sub-classes will have to access
         this information from the EventHandler.
         * page/FrameView.cpp:
         (WebCore::FrameView::isHandlingWheelEvent):
@@ -33182,12 +33192,12 @@
         (WebCore::RenderListBox::isHandlingWheelEvent):
         * rendering/RenderListBox.h:
 
-        sendContentAreaScrolledSoon() can be private. Also add new function 
+        sendContentAreaScrolledSoon() can be private. Also add new function
         sendContentAreaScrolled().
         * platform/mac/ScrollAnimatorMac.h:
         (ScrollAnimatorMac):
 
-        If the ScrollableArea is handling a wheel event, call 
+        If the ScrollableArea is handling a wheel event, call
         sendContentAreaScrolled(), otherwise call sendContentAreaScrolledSoon()
         * platform/mac/ScrollAnimatorMac.mm:
         (WebCore::ScrollAnimatorMac::notifyContentAreaScrolled):
