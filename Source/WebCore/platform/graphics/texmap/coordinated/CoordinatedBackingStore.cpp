@@ -47,7 +47,8 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper* textureMapper)
         shouldReset = true;
     }
 
-    ASSERT(textureMapper->maxTextureSize().width() >= m_tileRect.size().width() && textureMapper->maxTextureSize().height() >= m_tileRect.size().height());
+    ASSERT(textureMapper->maxTextureSize().width() >= m_tileRect.size().width());
+    ASSERT(textureMapper->maxTextureSize().height() >= m_tileRect.size().height());
     if (shouldReset)
         texture->reset(m_tileRect.size(), m_surface->supportsAlpha());
 

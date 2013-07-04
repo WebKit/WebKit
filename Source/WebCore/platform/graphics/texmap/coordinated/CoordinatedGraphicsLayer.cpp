@@ -135,7 +135,8 @@ CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
         purgeBackingStores();
         m_coordinator->detachLayer(this);
     }
-    ASSERT(!m_coordinatedImageBacking && !m_mainBackingStore);
+    ASSERT(!m_coordinatedImageBacking);
+    ASSERT(!m_mainBackingStore);
     willBeDestroyed();
 }
 
