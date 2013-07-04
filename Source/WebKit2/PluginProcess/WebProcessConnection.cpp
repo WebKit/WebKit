@@ -289,7 +289,17 @@ void WebProcessConnection::createPluginAsynchronously(const PluginCreationParame
     // Normally the plug-in process doesn't give its synchronous messages the special flag to allow for that.
     // We can force it to do so by incrementing the "DispatchMessageMarkedDispatchWhenWaitingForSyncReply" count.
     m_connection->incrementDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount();
+
+    // The call to createPluginInternal can potentially cause the plug-in to be destroyed and
+    // thus free the WebProcessConnection object. Protect it.
+    RefPtr<WebProcessConnection> protect(this);
     createPluginInternal(creationParameters, result, wantsWheelEvents, remoteLayerClientID);
+
+    if (!m_connection) {
+        // createPluginInternal caused the connection to go away.
+        return;
+    }
+
     m_connection->decrementDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount();
 
     // If someone asked for this plug-in synchronously while it was in the middle of being created then we need perform the
