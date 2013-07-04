@@ -1,3 +1,14 @@
+2013-07-03  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Support some more editing keyboard events
+        https://bugs.webkit.org/show_bug.cgi?id=118346
+
+        Reviewed by Gyuyoung Kim.
+
+        For editable contents, support the shortcuts for copy, page, cut, select all, undo and redo.
+
+        * platform/efl/EflKeyboardUtilities.cpp:
+
 2013-07-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Items the img aria role aren't inserting an object replacement character

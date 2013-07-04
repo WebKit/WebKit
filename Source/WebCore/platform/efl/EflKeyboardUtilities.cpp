@@ -301,6 +301,15 @@ static const KeyDownEntry keyDownEntries[] = {
     { VK_RETURN, CtrlKey,            "InsertNewline"                               },
     { VK_RETURN, AltKey,             "InsertNewline"                               },
     { VK_RETURN, AltKey | ShiftKey,  "InsertNewline"                               },
+
+    { 'C',       CtrlKey,            "Copy"                                        },
+    { 'V',       CtrlKey,            "Paste"                                       },
+    { 'X',       CtrlKey,            "Cut"                                         },
+
+    { 'A',       CtrlKey,            "SelectAll"                                   },
+    { 'Z',       CtrlKey,            "Undo"                                        },
+    { 'Z',       CtrlKey | ShiftKey, "Redo"                                        },
+    { 'Y',       CtrlKey,            "Redo"                                        },
 };
 
 static const KeyPressEntry keyPressEntries[] = {
