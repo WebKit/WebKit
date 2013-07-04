@@ -1,3 +1,49 @@
+2013-07-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Have SVGTextContentElement inherit SVGGraphicsElement
+        https://bugs.webkit.org/show_bug.cgi?id=118351
+
+        Reviewed by Dirk Schulze.
+
+        Have SVGTextContentElement inherit SVGGraphicsElement instead of
+        SVGStyledElement in order to match the latest SVG2 specification:
+        https://svgwg.org/svg2-draft/text.html#InterfaceSVGTextContentElement
+
+        This patch also removes the SVGTransformable and SVGLocatable IDL
+        interfaces as they are no longer needed (were merged into
+        SVGGraphicsElement in the latest specification).
+
+        This is one step towards getting rid of multiple inheritance in
+        SVG, and complying with the latest SVG2 specification.
+
+        No new tests, covered by existing tests.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetGnuVTableOffsetForType):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeType):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::getBoundingBox):
+        * svg/SVGLocatable.idl: Removed.
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        (WebCore::SVGTextContentElement::isSupportedAttribute):
+        (WebCore::SVGTextContentElement::isPresentationAttribute):
+        (WebCore::SVGTextContentElement::collectStyleForPresentationAttribute):
+        (WebCore::SVGTextContentElement::parseAttribute):
+        (WebCore::SVGTextContentElement::svgAttributeChanged):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextContentElement.idl:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::SVGTextElement):
+        (WebCore::SVGTextElement::animatedLocalTransform):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextElement.idl:
+        * svg/SVGTransformable.idl: Removed.
+
 2013-07-03  Gavin Barraclough  <barraclough@apple.com>
 
         Remove PageThrottler::m_activeThrottleBlockers

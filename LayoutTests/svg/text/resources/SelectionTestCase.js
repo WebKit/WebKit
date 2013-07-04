@@ -29,7 +29,9 @@ function transformRect(rect, matrix) {
 }
 
 function toAbsoluteCoordinates(point, element) {
-    return transformPoint(point, document.rootElement.getTransformToElement(element));
+    // getScreenCTM() returns the transformation matrix from current user units (i.e., after application of the ‘transform’ property)
+    // to the parent user agent's notice of a "pixel".
+    return transformPoint(point, element.getScreenCTM());
 }
 
 // Select a range of characters in text element 'id', from the start position of the 'start' character to the end position of the 'end' character

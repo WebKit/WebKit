@@ -10628,7 +10628,6 @@
 		B22278A70D00BF200071B782 /* SVGLineElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGLineElement.idl; sourceTree = "<group>"; };
 		B22278AA0D00BF200071B782 /* SVGLocatable.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLocatable.cpp; sourceTree = "<group>"; };
 		B22278AB0D00BF200071B782 /* SVGLocatable.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGLocatable.h; sourceTree = "<group>"; };
-		B22278AC0D00BF200071B782 /* SVGLocatable.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGLocatable.idl; sourceTree = "<group>"; };
 		B22278AD0D00BF200071B782 /* SVGMarkerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMarkerElement.cpp; sourceTree = "<group>"; };
 		B22278AE0D00BF200071B782 /* SVGMarkerElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGMarkerElement.h; sourceTree = "<group>"; };
 		B22278AF0D00BF200071B782 /* SVGMarkerElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGMarkerElement.idl; sourceTree = "<group>"; };
@@ -10767,7 +10766,6 @@
 		B22279420D00BF210071B782 /* SVGTransform.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGTransform.idl; sourceTree = "<group>"; };
 		B22279430D00BF210071B782 /* SVGTransformable.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTransformable.cpp; sourceTree = "<group>"; };
 		B22279440D00BF210071B782 /* SVGTransformable.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGTransformable.h; sourceTree = "<group>"; };
-		B22279450D00BF210071B782 /* SVGTransformable.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGTransformable.idl; sourceTree = "<group>"; };
 		B22279460D00BF210071B782 /* SVGTransformDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTransformDistance.cpp; sourceTree = "<group>"; };
 		B22279470D00BF210071B782 /* SVGTransformDistance.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGTransformDistance.h; sourceTree = "<group>"; };
 		B22279480D00BF210071B782 /* SVGTransformList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTransformList.cpp; sourceTree = "<group>"; };
@@ -17999,7 +17997,6 @@
 				B22278A70D00BF200071B782 /* SVGLineElement.idl */,
 				B22278AA0D00BF200071B782 /* SVGLocatable.cpp */,
 				B22278AB0D00BF200071B782 /* SVGLocatable.h */,
-				B22278AC0D00BF200071B782 /* SVGLocatable.idl */,
 				B22278AD0D00BF200071B782 /* SVGMarkerElement.cpp */,
 				B22278AE0D00BF200071B782 /* SVGMarkerElement.h */,
 				B22278AF0D00BF200071B782 /* SVGMarkerElement.idl */,
@@ -18171,7 +18168,6 @@
 				B22279420D00BF210071B782 /* SVGTransform.idl */,
 				B22279430D00BF210071B782 /* SVGTransformable.cpp */,
 				B22279440D00BF210071B782 /* SVGTransformable.h */,
-				B22279450D00BF210071B782 /* SVGTransformable.idl */,
 				B22279460D00BF210071B782 /* SVGTransformDistance.cpp */,
 				B22279470D00BF210071B782 /* SVGTransformDistance.h */,
 				B22279480D00BF210071B782 /* SVGTransformList.cpp */,

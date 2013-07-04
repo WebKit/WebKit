@@ -1,3 +1,23 @@
+2013-07-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Have SVGTextContentElement inherit SVGGraphicsElement
+        https://bugs.webkit.org/show_bug.cgi?id=118351
+
+        Reviewed by Dirk Schulze.
+
+        Fix conversion to absolute (user agent) coordinates in the svg/text
+        tests to use SVGGraphicsElement::getScreenCTM() instead of
+        SVGGraphicsElement::getTransformToElement(). The previous code was
+        working until now due to a bug in getTransformToElement(), which
+        was not taking into consideration the CTM of the SVGTextElement (as
+        it was not recognized as a "locatable" element). Now that
+        SVGTextElement inherits from SVGGraphicsElement, it is properly
+        recognized as a "locatable" element by getTransformToElement().
+
+        * svg/text/resources/SelectionTestCase.js:
+        (toAbsoluteCoordinates):
+        * svg/text/selection-doubleclick.svg:
+
 2013-07-04  KyungTae Kim  <ktf.kim@samsung.com>
 
         [EFL] Gardening. Unskip tests related with editing

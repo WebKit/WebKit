@@ -25,7 +25,6 @@
 
 [
     Conditional=SVG
-] interface SVGTextElement : SVGTextPositioningElement,
-                                             SVGTransformable {
+] interface SVGTextElement : SVGTextPositioningElement {
 };
 

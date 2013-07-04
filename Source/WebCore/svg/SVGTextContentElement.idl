@@ -25,7 +25,7 @@
 
 [
     Conditional=SVG
-] interface SVGTextContentElement : SVGStyledElement {
+] interface SVGTextContentElement : SVGGraphicsElement {
     // lengthAdjust Types
     const unsigned short LENGTHADJUST_UNKNOWN          = 0;
     const unsigned short LENGTHADJUST_SPACING          = 1;
@@ -47,5 +47,5 @@
                          [Default=Undefined,IsIndex] optional unsigned long length);
 };
 
+// FIXME: SVGTextContentElement is not supposed to implement SVGExternalResourcesRequired.
 SVGTextContentElement implements SVGExternalResourcesRequired;
-SVGTextContentElement implements SVGTests;

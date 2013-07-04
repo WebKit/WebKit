@@ -40,7 +40,6 @@
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
-#include "SVGTextElement.h"
 #include "ScriptEventListener.h"
 #include "XMLNames.h"
 
@@ -257,10 +256,6 @@ bool SVGElement::getBoundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrate
 {
     if (isSVGGraphicsElement()) {
         rect = toSVGGraphicsElement(this)->getBBox(styleUpdateStrategy);
-        return true;
-    }
-    if (hasTagName(SVGNames::textTag)) {
-        rect = static_cast<SVGTextElement*>(this)->getBBox(styleUpdateStrategy);
         return true;
     }
     return false;
