@@ -1,3 +1,13 @@
+2013-07-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Exclude unsupported QuartzCore Features.
+        https://bugs.webkit.org/show_bug.cgi?id=118374
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.vcxproj/WebCoreCG.props: Exclude a few non-Windows
+        concepts from the QuartzCore headers.
+
 2013-07-03  Gavin Barraclough  <barraclough@apple.com>
 
         Simplify PageThrottler ownership.
