@@ -43,6 +43,7 @@ list(APPEND WebCore_SOURCES
     platform/win/DragImageWin.cpp
     platform/win/EditorWin.cpp
     platform/win/EventLoopWin.cpp
+    platform/win/FileSystemWin.cpp
     platform/win/KeyEventWin.cpp
     platform/win/LanguageWin.cpp
     platform/win/LocalizedStringsWin.cpp
@@ -63,8 +64,6 @@ list(APPEND WebCore_SOURCES
     platform/win/WebCoreInstanceHandle.cpp
     platform/win/WidgetWin.cpp
     platform/win/WheelEventWin.cpp
-
-    platform/wince/FileSystemWince.cpp
 
     platform/network/NetworkStorageSessionStub.cpp
 

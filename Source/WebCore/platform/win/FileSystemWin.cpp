@@ -253,6 +253,9 @@ static String bundleName()
 
 static String storageDirectory(DWORD pathIdentifier)
 {
+#if OS(WINCE)
+    return String();
+#else
     Vector<UChar> buffer(MAX_PATH);
     if (FAILED(SHGetFolderPathW(0, pathIdentifier | CSIDL_FLAG_CREATE, 0, 0, buffer.data())))
         return String();
@@ -265,6 +268,7 @@ static String storageDirectory(DWORD pathIdentifier)
         return String();
 
     return directory;
+#endif
 }
 
 static String cachedStorageDirectory(DWORD pathIdentifier)
