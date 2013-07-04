@@ -292,27 +292,29 @@ unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
     return 0;
 }
 
-gchar* attributeSetToString(AtkAttributeSet* attributeSet)
+static char* getAtkAttributeSetAsString(AtkObject* accessible)
 {
     GString* str = g_string_new(0);
-    for (GSList* attributes = attributeSet; attributes; attributes = attributes->next) {
+
+    AtkAttributeSet* attributeSet = atk_object_get_attributes(accessible);
+    for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
         AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
         GOwnPtr<gchar> attributeData(g_strconcat(attribute->name, ":", attribute->value, NULL));
         g_string_append(str, attributeData.get());
         if (attributes->next)
             g_string_append(str, ", ");
     }
+    atk_attribute_set_free(attributeSet);
 
     return g_string_free(str, FALSE);
 }
 
 JSStringRef AccessibilityUIElement::allAttributes()
 {
-    if (!m_element)
+    if (!m_element || !ATK_IS_OBJECT(m_element))
         return JSStringCreateWithCharacters(0, 0);
 
-    ASSERT(ATK_IS_OBJECT(m_element));
-    GOwnPtr<gchar> attributeData(attributeSetToString(atk_object_get_attributes(ATK_OBJECT(m_element))));
+    GOwnPtr<char> attributeData(getAtkAttributeSetAsString(ATK_OBJECT(m_element)));
     return JSStringCreateWithUTF8CString(attributeData.get());
 }
 
@@ -802,13 +804,21 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
     if (atkAttributeName.isEmpty())
         return JSStringCreateWithCharacters(0, 0);
 
-    for (GSList* atkAttributes = atk_object_get_attributes(ATK_OBJECT(m_element)); atkAttributes; atkAttributes = atkAttributes->next) {
-        AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(atkAttributes->data);
-        if (!strcmp(atkAttribute->name, atkAttributeName.utf8().data()))
-            return JSStringCreateWithUTF8CString(atkAttribute->value);
+    const char* attributeValue = 0;
+    AtkAttributeSet* attributeSet = atk_object_get_attributes(ATK_OBJECT(m_element));
+    for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
+        AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
+        if (!strcmp(atkAttribute->name, atkAttributeName.utf8().data())) {
+            attributeValue = atkAttribute->value;
+            break;
+        }
     }
+    JSStringRef jsString = attributeValue
+        ? JSStringCreateWithUTF8CString(attributeValue)
+        : JSStringCreateWithCharacters(0, 0);
+    atk_attribute_set_free(attributeSet);
 
-    return JSStringCreateWithCharacters(0, 0);
+    return jsString;
 }
 
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)

@@ -811,14 +811,13 @@ static const gchar* webkitAccessibleGetObjectLocale(AtkObject* object)
         const gchar* locale = 0;
 
         AtkAttributeSet* textAttributes = atk_text_get_default_attributes(ATK_TEXT(object));
-        for (GSList* attributes = textAttributes; attributes; attributes = attributes->next) {
+        for (AtkAttributeSet* attributes = textAttributes; attributes; attributes = attributes->next) {
             AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
             if (!strcmp(atkAttribute->name, atk_text_attribute_get_name(ATK_TEXT_ATTR_LANGUAGE))) {
                 locale = cacheAndReturnAtkProperty(object, AtkCachedDocumentLocale, String::fromUTF8(atkAttribute->value));
                 break;
             }
         }
-
         atk_attribute_set_free(textAttributes);
 
         return locale;

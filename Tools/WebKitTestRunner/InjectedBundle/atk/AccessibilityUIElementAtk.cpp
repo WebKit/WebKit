@@ -53,29 +53,19 @@ static String coreAttributeToAtkAttribute(JSStringRef attribute)
     return attributeString == "AXPlaceholderValue" ? "placeholder-text" : String();
 }
 
-static void attributesClear(AtkAttributeSet* attributesSet)
+static char* getAtkAttributeSetAsString(AtkObject* accessible)
 {
-    for (GSList* attributes = attributesSet; attributes; attributes = attributes->next) {
-        AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
-        g_free(atkAttribute->name);
-        g_free(atkAttribute->value);
-        g_free(atkAttribute);
-    }
-}
-
-static gchar* attributeSetToString(AtkAttributeSet* attributeSet)
-{
-    GOwnPtr<GSList> atkAttributes(attributeSet);
     GString* str = g_string_new(0);
-    for (GSList* attributes = atkAttributes.get(); attributes; attributes = attributes->next) {
+
+    AtkAttributeSet* attributeSet = atk_object_get_attributes(accessible);
+    for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
         AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
         GOwnPtr<gchar> attributeData(g_strconcat(attribute->name, ":", attribute->value, NULL));
         g_string_append(str, attributeData.get());
         if (attributes->next)
             g_string_append(str, ", ");
     }
-
-    attributesClear(atkAttributes.get());
+    atk_attribute_set_free(attributeSet);
 
     return g_string_free(str, FALSE);
 }
@@ -470,7 +460,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
     if (!m_element || !ATK_IS_OBJECT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
-    GOwnPtr<gchar> attributeData(attributeSetToString(atk_object_get_attributes(ATK_OBJECT(m_element.get()))));
+    GOwnPtr<char> attributeData(getAtkAttributeSetAsString(ATK_OBJECT(m_element.get())));
     return JSStringCreateWithUTF8CString(attributeData.get());
 }
 
@@ -483,19 +473,21 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
     if (atkAttributeName.isNull())
         return JSStringCreateWithCharacters(0, 0);
 
-    GOwnPtr<gchar> attributeValue;
-    GOwnPtr<GSList> objectAttributes(atk_object_get_attributes(ATK_OBJECT(m_element.get())));
-    for (GSList* attributes =  objectAttributes.get(); attributes; attributes = attributes->next) {
+    const char* attributeValue = 0;
+    AtkAttributeSet* attributeSet = atk_object_get_attributes(ATK_OBJECT(m_element.get()));
+    for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
         AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
         if (!strcmp(atkAttribute->name, atkAttributeName.utf8().data())) {
-            attributeValue.set(g_strdup(atkAttribute->value));
+            attributeValue = atkAttribute->value;
             break;
         }
     }
+    JSStringRef jsString = attributeValue
+        ? JSStringCreateWithUTF8CString(attributeValue)
+        : JSStringCreateWithCharacters(0, 0);
+    atk_attribute_set_free(attributeSet);
 
-    attributesClear(objectAttributes.get());
-
-    return JSStringCreateWithUTF8CString(attributeValue.get());
+    return jsString;
 }
 
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)

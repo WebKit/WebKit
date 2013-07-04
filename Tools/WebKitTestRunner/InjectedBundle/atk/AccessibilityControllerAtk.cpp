@@ -155,15 +155,20 @@ static AtkObject* childElementById(AtkObject* parent, const char* id)
     if (!ATK_IS_OBJECT(parent))
         return 0;
 
+    bool parentFound = false;
     AtkAttributeSet* attributeSet = atk_object_get_attributes(parent);
-    for (GSList* attributes = attributeSet; attributes; attributes = attributes->next) {
+    for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
         AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
         if (!strcmp(attribute->name, "html-id")) {
             if (!strcmp(attribute->value, id))
-                return parent;
+                parentFound = true;
             break;
         }
     }
+    atk_attribute_set_free(attributeSet);
+
+    if (parentFound)
+        return parent;
 
     int childCount = atk_object_get_n_accessible_children(parent);
     for (int i = 0; i < childCount; i++) {

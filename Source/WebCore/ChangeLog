@@ -1,3 +1,15 @@
+2013-07-04  Brian Holt  <brian.holt@samsung.com>
+
+        [ATK] Leak: AtkAttributeSet* should be freed
+        https://bugs.webkit.org/show_bug.cgi?id=118307
+
+        Reviewed by Christophe Dumez.
+
+        Use AtkAttributeSet* instead of GSList*.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetObjectLocale):
+
 2013-07-04  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Do not expose '\n' for wrapped lines with ATK_TEXT_BOUNDARY_CHAR
