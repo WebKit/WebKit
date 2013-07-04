@@ -602,11 +602,6 @@ static gchar* webkitAccessibleTextGetChar(AtkText* text, gint offset, GetTextRel
     if (*startOffset == *endOffset)
         return g_strdup("");
 
-    // Make sure we return the line break if we are at the visual end of a line.
-    VisiblePosition visiblePosition = coreObject->visiblePositionForIndex(actualOffset);
-    if (isEndOfLine(visiblePosition))
-        return g_strdup("\n");
-
     return g_utf8_substring(textData.get(), *startOffset, *endOffset);
 }
 

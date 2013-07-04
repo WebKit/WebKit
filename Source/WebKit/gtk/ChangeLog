@@ -1,3 +1,16 @@
+2013-07-04  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Do not expose '\n' for wrapped lines with ATK_TEXT_BOUNDARY_CHAR
+        https://bugs.webkit.org/show_bug.cgi?id=118359
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added new unit test to make sure we exposed line breaks properly.
+
+        * tests/testatk.c:
+        (testWebkitAtkGetTextAtOffsetWithWrappedLines): New unit test.
+        (main): Added new test to the test suite.
+
 2013-07-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Remove unsupported AC backends

@@ -50,6 +50,8 @@ static const char* contentsInTableWithHeaders = "<html><body><table><tr><th>foo<
 
 static const char* contentsWithExtraneousWhiteSpaces = "<html><head><body><p>This\n                          paragraph\n                                                      is\n                                                                                                                                                                                                                                                                                                                                                                            borked!</p></body></html>";
 
+static const char* contentsWithWrappedLines = "<html><body><p style='max-width:150px;'>This is one line wrapped because of the maximum width of its container.</p><p>This is another line wrapped<br>because of one forced<br>line break in the middle.</body></html>";
+
 static const char* comboBoxSelector = "<html><body><select><option selected value='foo'>foo</option><option value='bar'>bar</option></select></body></html>";
 
 static const char* embeddedObjects = "<html><body><p>Choose: <input value='foo' type='checkbox'/>foo <input value='bar' type='checkbox'/>bar (pick one)</p><p>Choose: <select name='foo'><option>bar</option><option>baz</option></select> (pick one)</p><p><input name='foobarbutton' value='foobar' type='button'/></p></body></html>";
@@ -938,6 +940,90 @@ static void testWebkitAtkGetTextAtOffsetWithSpecialCharacters()
     g_object_unref(list);
     g_object_unref(listItem);
     g_object_unref(paragraph);
+    g_object_unref(webView);
+}
+
+static void testWebkitAtkGetTextAtOffsetWithWrappedLines()
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation allocation = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+    webkit_web_view_load_string(webView, contentsWithWrappedLines, 0, 0, 0);
+
+    /* Enable caret browsing. */
+    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
+    g_object_set(settings, "enable-caret-browsing", TRUE, NULL);
+    webkit_web_view_set_settings(webView, settings);
+
+    /* Get to the inner AtkText object. */
+    AtkObject* object = getWebAreaObject(webView);
+    g_assert(object);
+
+    /* Check the paragraph with the text wrapped because of max-width. */
+    AtkText* paragraph1 = ATK_TEXT(atk_object_ref_accessible_child(object, 0));
+    g_assert(ATK_IS_TEXT(paragraph1));
+
+    gchar* text = atk_text_get_text(paragraph1, 0, -1);
+    g_assert_cmpstr(text, ==, "This is one line wrapped because of the maximum width of its container.");
+    g_free(text);
+
+    testGetTextFunction(paragraph1, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_CHAR, 16, "e", 15, 16);
+    testGetTextFunction(paragraph1, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_CHAR, 16, " ", 16, 17);
+    testGetTextFunction(paragraph1, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_CHAR, 16, "w", 17, 18);
+
+    testGetTextFunction(paragraph1, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_START, 16, "one ", 8, 12);
+    testGetTextFunction(paragraph1, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START, 16, "line ", 12, 17);
+    testGetTextFunction(paragraph1, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_START, 16, "wrapped ", 17, 25);
+
+    testGetTextFunction(paragraph1, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_END, 16, " line", 11, 16);
+    testGetTextFunction(paragraph1, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END, 16, " wrapped", 16, 24);
+    testGetTextFunction(paragraph1, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_END, 16, " because", 24, 32);
+
+    testGetTextFunction(paragraph1, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_LINE_START, 17, "This is one line ", 0, 17);
+    testGetTextFunction(paragraph1, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 17, "wrapped because ", 17, 33);
+    testGetTextFunction(paragraph1, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_LINE_START, 17, "of the maximum ", 33, 48);
+
+    /* The following line won't work at the moment because of a bug in GailTextUtil.
+       see https://bugzilla.gnome.org/show_bug.cgi?id=703554
+       testGetTextFunction(paragraph1, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_LINE_END, 17, "This is one line", 0, 16); */
+    testGetTextFunction(paragraph1, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 17, " wrapped because", 16, 32);
+    testGetTextFunction(paragraph1, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_LINE_END, 17, " of the maximum", 32, 47);
+
+    g_object_unref(paragraph1);
+
+    /* Check the paragraph with the text wrapped because of <br> elements. */
+    AtkText* paragraph2 = ATK_TEXT(atk_object_ref_accessible_child(object, 1));
+    g_assert(ATK_IS_TEXT(paragraph2));
+
+    text = atk_text_get_text(paragraph2, 0, -1);
+    g_assert_cmpstr(text, ==, "This is another line wrapped\nbecause of one forced\nline break in the middle.");
+    g_free(text);
+
+    testGetTextFunction(paragraph2, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_CHAR, 28, "d", 27, 28);
+    testGetTextFunction(paragraph2, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_CHAR, 28, "\n", 28, 29);
+    testGetTextFunction(paragraph2, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_CHAR, 28, "b", 29, 30);
+
+    testGetTextFunction(paragraph2, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_START, 28, "line ", 16, 21);
+    testGetTextFunction(paragraph2, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START, 28, "wrapped\n", 21, 29);
+    testGetTextFunction(paragraph2, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_START, 28, "because ", 29, 37);
+
+    testGetTextFunction(paragraph2, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_END, 28, " wrapped", 20, 28);
+    testGetTextFunction(paragraph2, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END, 28, "\nbecause", 28, 36);
+    testGetTextFunction(paragraph2, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_END, 28, " of", 36, 39);
+
+    testGetTextFunction(paragraph2, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_LINE_START, 30, "This is another line wrapped\n", 0, 29);
+    testGetTextFunction(paragraph2, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 30, "because of one forced\n", 29, 51);
+    testGetTextFunction(paragraph2, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_LINE_START, 30, "line break in the middle.", 51, 76);
+
+    /* The following line won't work at the moment because of a bug in GailTextUtil.
+       see https://bugzilla.gnome.org/show_bug.cgi?id=703554
+       testGetTextFunction(paragraph2, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_LINE_END, 30, "This is another line wrapped", 0, 28); */
+    testGetTextFunction(paragraph2, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 30, "\nbecause of one forced", 28, 50);
+    testGetTextFunction(paragraph2, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_LINE_END, 30, "\nline break in the middle.", 50, 76);
+
+    g_object_unref(paragraph2);
+
     g_object_unref(webView);
 }
 
@@ -2011,6 +2097,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/getTextAtOffsetTextInput", testWebkitAtkGetTextAtOffsetTextInput);
     g_test_add_func("/webkit/atk/getTextAtOffsetWithPreformattedText", testWebkitAtkGetTextAtOffsetWithPreformattedText);
     g_test_add_func("/webkit/atk/getTextAtOffsetWithSpecialCharacters", testWebkitAtkGetTextAtOffsetWithSpecialCharacters);
+    g_test_add_func("/webkit/atk/getTextAtOffsetWithWrappedLines", testWebkitAtkGetTextAtOffsetWithWrappedLines);
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodySimple", testWebkitAtkGetTextInParagraphAndBodySimple);
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodyModerate", testWebkitAtkGetTextInParagraphAndBodyModerate);
     g_test_add_func("/webkit/atk/getTextInTable", testWebkitAtkGetTextInTable);
