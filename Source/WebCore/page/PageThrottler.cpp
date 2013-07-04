@@ -38,7 +38,6 @@ static const double kThrottleHysteresisSeconds = 2.0;
 
 PageThrottler::PageThrottler(Page* page)
     : m_page(page)
-    , m_activeThrottleBlockers(0)
     , m_throttleState(PageNotThrottledState)
     , m_throttleHysteresisTimer(this, &PageThrottler::throttleHysteresisTimerFired)
 {
@@ -106,37 +105,6 @@ void PageThrottler::setThrottled(bool isThrottled)
     }
 }
 
-void PageThrottler::preventThrottling()
-{
-    // If we've already got events that block throttling we can increment
-    // and return early
-    if (m_activeThrottleBlockers++)
-        return;
-
-    if (m_throttleState == PageNotThrottledState)
-        return;
-
-    if (m_throttleState == PageThrottledState)
-        unthrottlePage();
-
-    m_throttleState = PageWaitingToThrottleState;
-    stopThrottleHysteresisTimer();
-}
-
-void PageThrottler::allowThrottling()
-{
-    ASSERT(m_activeThrottleBlockers > 0);
-    m_activeThrottleBlockers--;
-    if (m_activeThrottleBlockers)
-        return;
-
-    if (m_throttleState == PageNotThrottledState)
-        return;
-
-    ASSERT(m_throttleState == PageWaitingToThrottleState);
-    startThrottleHysteresisTimer();
-}
-
 void PageThrottler::stopThrottleHysteresisTimer()
 {
     m_throttleHysteresisTimer.stop();
@@ -156,32 +124,50 @@ void PageThrottler::startThrottleHysteresisTimer()
 {
     if (m_throttleHysteresisTimer.isActive())
         m_throttleHysteresisTimer.stop();
-    if (!m_activeThrottleBlockers)
+    if (!m_activityTokens.size())
         m_throttleHysteresisTimer.startOneShot(kThrottleHysteresisSeconds);
 }
 
 void PageThrottler::throttleHysteresisTimerFired(Timer<PageThrottler>*)
 {
-    ASSERT(!m_activeThrottleBlockers);
+    ASSERT(!m_activityTokens.size());
     throttlePage();
 }
 
 void PageThrottler::addActivityToken(PageActivityAssertionToken* token)
 {
-    if (!token || m_activityTokens.contains(token))
-        return;
+    ASSERT(token && !m_activityTokens.contains(token));
 
     m_activityTokens.add(token);
-    preventThrottling();
+
+    // If we've already got events that block throttling we can return early
+    if (m_activityTokens.size() > 1)
+        return;
+
+    if (m_throttleState == PageNotThrottledState)
+        return;
+
+    if (m_throttleState == PageThrottledState)
+        unthrottlePage();
+
+    m_throttleState = PageWaitingToThrottleState;
+    stopThrottleHysteresisTimer();
 }
 
 void PageThrottler::removeActivityToken(PageActivityAssertionToken* token)
 {
-    if (!token || !m_activityTokens.contains(token))
-        return;
+    ASSERT(token && m_activityTokens.contains(token));
 
     m_activityTokens.remove(token);
-    allowThrottling();
+
+    if (m_activityTokens.size())
+        return;
+
+    if (m_throttleState == PageNotThrottledState)
+        return;
+
+    ASSERT(m_throttleState == PageWaitingToThrottleState);
+    startThrottleHysteresisTimer();
 }
 
 }

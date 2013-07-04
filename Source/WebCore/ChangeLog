@@ -1,3 +1,29 @@
+2013-07-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove PageThrottler::m_activeThrottleBlockers
+        https://bugs.webkit.org/show_bug.cgi?id=118375
+
+        Reviewed by Mark Rowe.
+
+        This is simply m_activityTokens.size().
+
+        Also, fold preventThrottling into addActivityToken & allowThrottling into removeActivityToken
+        (these should no longer be called directly, and should not be public).
+
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+            - removed m_activeThrottleBlockers
+        (WebCore::PageThrottler::startThrottleHysteresisTimer):
+            - m_activeThrottleBlockers -> m_activityTokens.size()
+        (WebCore::PageThrottler::throttleHysteresisTimerFired):
+            - m_activeThrottleBlockers -> m_activityTokens.size()
+        (WebCore::PageThrottler::addActivityToken):
+            - added functionality from preventThrottling
+        (WebCore::PageThrottler::removeActivityToken):
+            - added functionality from allowThrottling
+        * page/PageThrottler.h:
+            - removed preventThrottling, allowThrottling, and m_activeThrottleBlockers.
+
 2013-07-01  Antti Koivisto  <antti@apple.com>
 
         Take document height into account when determining when it is considered visually non-empy

@@ -49,9 +49,7 @@ public:
 
     void setThrottled(bool);
 
-    void preventThrottling();
     void reportInterestingEvent();
-    void allowThrottling();
 
     ~PageThrottler();
 
@@ -76,7 +74,6 @@ private:
     void throttlePage();
     void unthrottlePage();
 
-    unsigned m_activeThrottleBlockers;
     PageThrottleState m_throttleState;
     Timer<PageThrottler> m_throttleHysteresisTimer;
     HashSet<PageActivityAssertionToken*> m_activityTokens;
