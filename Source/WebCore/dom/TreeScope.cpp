@@ -238,8 +238,8 @@ HTMLMapElement* TreeScope::getImageMap(const String& url) const
     size_t hashPos = url.find('#');
     String name = (hashPos == notFound ? url : url.substring(hashPos + 1)).impl();
     if (rootNode()->document()->isHTMLDocument())
-        return static_cast<HTMLMapElement*>(m_imageMapsByName->getElementByLowercasedMapName(AtomicString(name.lower()).impl(), this));
-    return static_cast<HTMLMapElement*>(m_imageMapsByName->getElementByMapName(AtomicString(name).impl(), this));
+        return toHTMLMapElement(m_imageMapsByName->getElementByLowercasedMapName(AtomicString(name.lower()).impl(), this));
+    return toHTMLMapElement(m_imageMapsByName->getElementByMapName(AtomicString(name).impl(), this));
 }
 
 Node* nodeFromPoint(Document* document, int x, int y, LayoutPoint* localPoint)

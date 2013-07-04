@@ -1735,11 +1735,12 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
                 result.append(axobj);
         } else {
             Node* parent = curr->parentNode();
-            if (parent && isHTMLAreaElement(curr) && parent->hasTagName(mapTag)) {
+            if (parent && isHTMLAreaElement(curr) && isHTMLMapElement(parent)) {
                 AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
+                HTMLMapElement* map = toHTMLMapElement(parent);
                 areaObject->setHTMLAreaElement(toHTMLAreaElement(curr));
-                areaObject->setHTMLMapElement(static_cast<HTMLMapElement*>(parent));
-                areaObject->setParent(accessibilityParentForImageMap(static_cast<HTMLMapElement*>(parent)));
+                areaObject->setHTMLMapElement(map);
+                areaObject->setParent(accessibilityParentForImageMap(map));
 
                 result.append(areaObject);
             }
@@ -2154,8 +2155,8 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTM
 
     AccessibilityObject* parent = 0;
     for (Element* mapParent = area->parentElement(); mapParent; mapParent = mapParent->parentElement()) {
-        if (mapParent->hasTagName(mapTag)) {
-            parent = accessibilityParentForImageMap(static_cast<HTMLMapElement*>(mapParent));
+        if (isHTMLMapElement(mapParent)) {
+            parent = accessibilityParentForImageMap(toHTMLMapElement(mapParent));
             break;
         }
     }

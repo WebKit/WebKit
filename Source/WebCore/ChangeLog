@@ -1,3 +1,27 @@
+2013-07-03  Kangil Han  <kangil.han@samsung.com>
+
+        Adopt is/toHTMLMapElement for code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=118235
+
+        Reviewed by Andreas Kling.
+
+        To enhance readability, this patch adopts is/toHTMLMapElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        (WebCore::AccessibilityRenderObject::accessibilityImageMapHitTest):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesMapName):
+        (WebCore::keyMatchesLowercasedMapName):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getImageMap):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::imageElement):
+        * html/HTMLMapElement.h:
+        (WebCore::isHTMLMapElement):
+        (WebCore::toHTMLMapElement):
+
 2013-07-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction after r15283.

@@ -55,12 +55,12 @@ inline bool keyMatchesName(AtomicStringImpl* key, Element* element)
 
 inline bool keyMatchesMapName(AtomicStringImpl* key, Element* element)
 {
-    return element->hasTagName(mapTag) && static_cast<HTMLMapElement*>(element)->getName().impl() == key;
+    return isHTMLMapElement(element) && toHTMLMapElement(element)->getName().impl() == key;
 }
 
 inline bool keyMatchesLowercasedMapName(AtomicStringImpl* key, Element* element)
 {
-    return element->hasTagName(mapTag) && static_cast<HTMLMapElement*>(element)->getName().lower().impl() == key;
+    return isHTMLMapElement(element) && toHTMLMapElement(element)->getName().lower().impl() == key;
 }
 
 inline bool keyMatchesLabelForAttribute(AtomicStringImpl* key, Element* element)
