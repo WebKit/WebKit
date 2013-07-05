@@ -400,7 +400,7 @@ webkit.org/b/107825 fullscreen/video-controls-drag.html [ Failure ]
 webkit.org/b/107825 media/audio-delete-while-step-button-clicked.html [ Failure ]
 webkit.org/b/107825 media/media-volume-slider-rendered-below.html [ Failure ]
 webkit.org/b/107825 media/nodesFromRect-shadowContent.html [ Failure ]
-webkit.org/b/107825 [ Release ] media/video-controls-fullscreen-volume.html [ Failure ]
+webkit.org/b/107825 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/107825 media/media-controls-clone.html [ Failure ]
 
 # Require ENABLE(CUSTOM_ELEMENTS) support
@@ -453,8 +453,6 @@ webkit.org/b/104684 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 
 webkit.org/b/105689 [ Debug ] plugins/npruntime/embed-property-iframe-equality.html [ Crash ]
 
-webkit.org/b/107257 [ Debug ] fast/js/toString-stack-overflow.html [ Crash ]
-
 webkit.org/b/107261 [ Debug ] dom/xhtml/level2/html/HTMLInputElement20.xhtml [ Crash Pass ]
 
 webkit.org/b/107376 storage/indexeddb/cursor-advance.html [ Crash Pass ]
@@ -488,6 +486,12 @@ webkit.org/b/112152 [ Debug ] accessibility/table-with-hidden-head-section.html 
 webkit.org/b/111451 [ Debug ] editing/selection/selection-in-iframe-removed-crash.html [ Crash Pass ]
 
 webkit.org/b/111902 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Crash ]
+
+webkit.org/b/118421 [ Debug ] fast/repaint/fixed-right-bottom-in-page-scale.html [ Crash ]
+
+webkit.org/b/118422 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-cached.html [ Crash Pass ]
+
+webkit.org/b/118423 http/tests/misc/iframe-reparenting-id-collision.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1202,7 +1206,8 @@ webkit.org/b/95428 media/video-controls-captions.html [ Failure ]
 
 webkit.org/b/95429 svg/custom/clamped-masking-clipping.svg [ ImageOnlyFailure ]
 
-webkit.org/b/90775 fast/dom/shadow/focus-navigation.html [ Failure ]
+# It now crashes on Debug
+webkit.org/b/90775 fast/dom/shadow/focus-navigation.html [ Crash Failure ]
 webkit.org/b/97468 fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/97468 fast/dom/shadow/shadowdom-for-textarea-with-placeholder.html [ ImageOnlyFailure ]
 
@@ -1210,7 +1215,8 @@ webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-complex-shadow.html [ Im
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-without-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-without-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/91488 fast/dom/shadow/shadowdom-for-output-only-shadow.html [ ImageOnlyFailure ]
+# It now crashes on Debug
+webkit.org/b/91488 fast/dom/shadow/shadowdom-for-output-only-shadow.html [ Crash ImageOnlyFailure ]
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ ImageOnlyFailure ]
 
@@ -1241,7 +1247,7 @@ webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-area.html [ Image
 webkit.org/b/102586 media/video-src-blob.html [ Failure ]
 
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces these regressions
-webkit.org/b/102776 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure ]
+webkit.org/b/102776 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure Timeout ]
 webkit.org/b/102776 media/track/track-cue-rendering-horizontal.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
 
@@ -1410,6 +1416,14 @@ webkit.org/b/118220 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 webkit.org/b/118221 fast/text/complex-first-glyph-with-initial-advance.html [ ImageOnlyFailure ]
 
 webkit.org/b/118222 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
+
+webkit.org/b/118416 [ Debug ] storage/websql/sql-error-codes.html [ Failure ]
+
+webkit.org/b/118418 accessibility/img-fallsback-to-title.html [ Failure ]
+
+webkit.org/b/118419 fast/css/style-scoped/registering.html [ Failure ]
+
+webkit.org/b/118420 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

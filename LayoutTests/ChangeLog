@@ -1,3 +1,14 @@
+2013-07-05  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Update TestExpectations with crashing and failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=118424
+
+        Unreviewed GTK gardening.
+
+        Updated TestExpectations with tests crashing and failing.
+
+        * platform/gtk/TestExpectations:
+
 2013-07-05  Mihai Maerean  <mmaerean@adobe.com>
 
         [New multicol] Change test to follow the pattern of the other tests
