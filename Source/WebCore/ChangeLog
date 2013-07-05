@@ -1,3 +1,17 @@
+2013-07-05  Sam Weinig  <sam@webkit.org>
+
+        WKPageFindStringMatches with kWKFindOptionsBackwards still doesn't work
+        <rdar://problem/13881024>
+        https://bugs.webkit.org/show_bug.cgi?id=118436
+
+        Reviewed by Tim Horton.
+
+        * page/Page.cpp:
+        (WebCore::Page::findStringMatchingRanges):
+        - When searching backwards, use END_TO_START rather than START_TO_END.
+        - If there is no selection and we are searching backwards, we now select the last item,
+          not the first.
+
 2013-07-05  Tullio Lucena  <tullio.lucena@openbossa.org>
 
         Nix upstreaming - Adding Nix render theme files
