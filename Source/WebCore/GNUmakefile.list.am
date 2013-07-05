@@ -1077,7 +1077,6 @@ webcore_svg_built_sources += \
 	DerivedSources/WebCore/JSSVGLinearGradientElement.h \
 	DerivedSources/WebCore/JSSVGLineElement.cpp \
 	DerivedSources/WebCore/JSSVGLineElement.h \
-	DerivedSources/WebCore/JSSVGLocatable.h \
 	DerivedSources/WebCore/JSSVGMPathElement.cpp \
 	DerivedSources/WebCore/JSSVGMPathElement.h \
 	DerivedSources/WebCore/JSSVGMarkerElement.cpp \
@@ -1189,7 +1188,6 @@ webcore_svg_built_sources += \
 	DerivedSources/WebCore/JSSVGTextPositioningElement.h \
 	DerivedSources/WebCore/JSSVGTitleElement.cpp \
 	DerivedSources/WebCore/JSSVGTitleElement.h \
-	DerivedSources/WebCore/JSSVGTransformable.h \
 	DerivedSources/WebCore/JSSVGTransform.cpp \
 	DerivedSources/WebCore/JSSVGTransform.h \
 	DerivedSources/WebCore/JSSVGTransformList.cpp \
