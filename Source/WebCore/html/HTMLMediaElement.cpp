@@ -298,6 +298,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_sendProgressEvents(true)
     , m_isFullscreen(false)
     , m_closedCaptionsVisible(false)
+    , m_webkitLegacyClosedCaptionOverride(false)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_needWidgetUpdate(false)
 #endif
@@ -4526,12 +4527,13 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 
 void HTMLMediaElement::setWebkitClosedCaptionsVisible(bool visible)
 {
+    m_webkitLegacyClosedCaptionOverride = visible;
     setClosedCaptionsVisible(visible);
 }
 
 bool HTMLMediaElement::webkitClosedCaptionsVisible() const
 {
-    return m_closedCaptionsVisible;
+    return m_webkitLegacyClosedCaptionOverride && m_closedCaptionsVisible;
 }
 
 

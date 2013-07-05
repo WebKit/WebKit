@@ -1,3 +1,25 @@
+2013-07-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] .webkitClosedCaptionsVisible doesn't work with "Automatic" caption mode
+        https://bugs.webkit.org/show_bug.cgi?id=118319
+
+        Reviewed by Jer Noble.
+
+        Track when captions are enabled with the old 'webkitClosedCaptionsVisible' attribute and
+        consider that when determining which track should be enabled.
+
+        Test: media/track/track-legacyapi-with-automatic-mode.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_webkitLegacyClosedCaptionOverride.
+        (WebCore::HTMLMediaElement::setWebkitClosedCaptionsVisible): Set m_webkitLegacyClosedCaptionOverride.
+        (WebCore::HTMLMediaElement::webkitClosedCaptionsVisible): Return m_webkitLegacyClosedCaptionOverride.
+        * html/HTMLMediaElement.h:
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::textTrackSelectionScore): Don't apply "automatic"
+            logic when captions were enabled with .webkitClosedCaptionsVisible.
+
 2013-07-05  Benjamin Dupont   <bdupont@nds.com>
 
         Segmentation fault occurred when ICU data library doesn't embed the expected encoding.
