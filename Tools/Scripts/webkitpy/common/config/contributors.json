@@ -1609,6 +1609,14 @@
             "michaeln"
          ]
       },
+      "Michael Pruett" : {
+         "emails" : [
+            "michael@68k.org"
+         ],
+         "nicks" : [
+            "mpruett"
+         ]
+      },
       "Michelangelo De Simone" : {
          "emails" : [
             "michelangelo@webkit.org"
@@ -2724,14 +2732,6 @@
       "Lia Chen" : {
          "emails" : [
             "liachen@rim.com"
-         ]
-      },
-      "Michael Pruett" : {
-         "emails" : [
-            "michael@68k.org"
-         ],
-         "nicks" : [
-            "mpruett"
          ]
       },
       "Mihai Balan" : {
