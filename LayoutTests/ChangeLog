@@ -1,3 +1,18 @@
+2013-07-05  Mihai Maerean  <mmaerean@adobe.com>
+
+        [New multicol] Change test to follow the pattern of the other tests
+        https://bugs.webkit.org/show_bug.cgi?id=117698
+
+        Reviewed by Andreas Kling.
+
+        Test is a ref test against the old multicol code, like all the other tests in LayoutTests/fast/multicol/newmulticol/
+        This is a follow up of bug 116614, testing that flow threads don't end up being cloned in region based multi
+        columns with columns:1 where the only child has column-span:all.
+
+        * fast/multicol/newmulticol/direct-child-column-span-all-expected.html: Added.
+        * fast/multicol/newmulticol/direct-child-column-span-all-expected.txt: Removed.
+        * fast/multicol/newmulticol/direct-child-column-span-all.html:
+
 2013-07-05  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] fast/text/font-kerning.html fails

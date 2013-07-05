@@ -1,3 +1,0 @@
-PASS
-
-test passes if it doesn't crash or assert.
