@@ -1,3 +1,19 @@
+2013-07-05  Tullio Lucena  <tullio.lucena@openbossa.org>
+
+        Nix upstreaming - Adding Nix render theme files
+        https://bugs.webkit.org/show_bug.cgi?id=118368
+
+        Reviewed by Benjamin Poulain.
+
+        All files related to render theme stuff.
+
+        No new tests. They will be uploaded on another patch during the upstreaming process.
+
+        * platform/nix/RenderThemeNix.cpp: Added.
+        * platform/nix/RenderThemeNix.h: Added.
+        * platform/nix/ScrollbarThemeNix.cpp: Added.
+        * platform/nix/ScrollbarThemeNix.h: Added.
+
 2013-07-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Identify OS-level at build-time.
