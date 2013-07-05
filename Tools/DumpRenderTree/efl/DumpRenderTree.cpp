@@ -435,11 +435,12 @@ void dump()
 
 static Ecore_Evas* initEcoreEvas()
 {
-    const char* engine = 0;
+    Ecore_Evas* ecoreEvas = 0;
 #if defined(WTF_USE_ACCELERATED_COMPOSITING) && defined(HAVE_ECORE_X)
-    engine = "opengl_x11";
+    ecoreEvas = ecore_evas_new("opengl_x11", 0, 0, 800, 600, 0);
+    if (!ecoreEvas)
 #endif
-    Ecore_Evas* ecoreEvas = ecore_evas_new(engine, 0, 0, 800, 600, 0);
+    ecoreEvas = ecore_evas_new(0, 0, 0, 800, 600, 0);
     if (!ecoreEvas) {
         shutdownEfl();
         exit(EXIT_FAILURE);
