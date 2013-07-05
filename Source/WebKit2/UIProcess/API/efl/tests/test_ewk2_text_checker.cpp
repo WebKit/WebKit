@@ -52,6 +52,7 @@ static const char learnSpellingString[] = "Learn Spelling";
 
 static const char* clientSuggestionsForWord[] = { "clientSuggestion1", "clientSuggestion2", "clientSuggestion3" };
 static unsigned contextMenuItemsNumber = 0;
+static String knownWord;
 
 /**
  * Structure keeps information which callbacks were called.
@@ -168,6 +169,28 @@ static void onSpellingCheck(uint64_t tag, const char* text, int32_t* misspelling
 }
 
 /**
+ * Checks spelling for the given @a text and compares it with the knownWord.
+ *
+ * @internal
+ *
+ * @param text the text containing the words to spellcheck
+ * @param misspelling_location a pointer to store the beginning of the misspelled @a text, @c -1 if the @a text is correct
+ * @param misspelling_length a pointer to store the length of misspelled @a text, @c 0 if the @a text is correct
+ */
+static void onSpellingForKnownWord(uint64_t, const char* text, int32_t* misspellingLocation, int32_t* misspellingLength)
+{
+    ASSERT_STREQ(knownWord.utf8().data(), text);
+
+    ASSERT_TRUE(misspellingLocation);
+    ASSERT_TRUE(misspellingLength);
+
+    *misspellingLocation = -1;
+    *misspellingLength = 0;
+
+    callbacksExecutionStats.spellingCheck = true;
+}
+
+/**
  * Gets a list of suggested spellings for a misspelled @a word.
  *
  * @internal
@@ -203,6 +226,7 @@ static void onWordLearn(uint64_t tag, const char* word)
 {
     ASSERT_EQ(defaultDocumentTag, tag);
     ASSERT_STREQ(expectedMisspelledWord, word);
+    knownWord = word;
     callbacksExecutionStats.wordLearn = true;
 }
 
@@ -218,6 +242,7 @@ static void onWordIgnore(uint64_t tag, const char* word)
 {
     ASSERT_EQ(defaultDocumentTag, tag);
     ASSERT_STREQ(expectedMisspelledWord, word);
+    knownWord = word;
     callbacksExecutionStats.wordIgnore = true;
 }
 
@@ -303,6 +328,16 @@ static Eina_Bool checkClientSuggestionsForWord(Ewk_View_Smart_Data*, Evas_Coord,
 
     wasContextMenuShown = true;
     return true;
+}
+
+static Eina_Bool selectLearnSpelling(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
+{
+    return ewk_context_menu_item_select(contextMenu, findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_LEARN_SPELLING, EWK_ACTION_TYPE));
+}
+
+static Eina_Bool selectIgnoreSpelling(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
+{
+    return ewk_context_menu_item_select(contextMenu, findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_SPELLING, EWK_ACTION_TYPE));
 }
 
 /**
@@ -763,40 +798,64 @@ TEST_F(EWK2UnitTestBase, ewk_text_checker_word_guesses_get_cb_set)
 
 /**
  * Test whether the client's callback (onWordLearn) is called when
- * the context menu option "Learn spelling" was choosen.
+ * the context menu option "Learn spelling" was chosen. In the next step,
+ * check whether the learned word is treated as spelled correctly while spell checking.
  */
 TEST_F(EWK2UnitTestBase, ewk_text_checker_word_learn_cb_set)
 {
     resetCallbacksExecutionStats();
+    knownWord = emptyString();
     defaultView = webView();
-    ewk_text_checker_continuous_spell_checking_enabled_set(true);
-
     ewk_text_checker_word_learn_cb_set(onWordLearn);
+    ewkViewClass()->context_menu_show = selectLearnSpelling;
+
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
+    mouseDoubleClick(10, 20);
+    mouseClick(10, 20, 3 /* Right button - invoke context menu */);
+
+    ASSERT_TRUE(waitUntilTrue(callbacksExecutionStats.wordLearn));
+
+    // Open html again and check whether the learned word
+    // is treated as spelled correctly while spell checking.
+    resetCallbacksExecutionStats();
+    ewk_text_checker_string_spelling_check_cb_set(onSpellingForKnownWord);
 
     ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
 
-    /* FIXME:
-        1) Invoke the context menu on the misspelled word (not implemented for WK2),
-           the word has to be selected first.
-        2) Check whether the callback was called. */
+    ASSERT_TRUE(callbacksExecutionStats.spellingCheck);
+
+    ewk_text_checker_string_spelling_check_cb_set(0);
+    ewk_text_checker_word_learn_cb_set(0);
 }
 
 /**
  * Test whether the client's callback (onWordIgnore) is called when
- * the context menu option "Ignore spelling" was choosen.
+ * the context menu option "Ignore spelling" was chosen. In the next step,
+ * check whether the ignored word is treated as spelled correctly while spell checking.
  */
 TEST_F(EWK2UnitTestBase, ewk_text_checker_word_ignore_cb_set)
 {
     resetCallbacksExecutionStats();
+    knownWord = emptyString();
     defaultView = webView();
-    ewk_text_checker_continuous_spell_checking_enabled_set(true);
-
     ewk_text_checker_word_ignore_cb_set(onWordIgnore);
+    ewkViewClass()->context_menu_show = selectIgnoreSpelling;
+
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
+    mouseDoubleClick(10, 20);
+    mouseClick(10, 20, 3 /* Right button - invoke context menu */);
+
+    ASSERT_TRUE(waitUntilTrue(callbacksExecutionStats.wordIgnore));
+
+    // Open html again and check whether the ignored word
+    // is treated as spelled correctly while spell checking.
+    resetCallbacksExecutionStats();
+    ewk_text_checker_string_spelling_check_cb_set(onSpellingForKnownWord);
 
     ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
 
-    /* FIXME:
-        1) Invoke the context menu on the misspelled word (not implemented for WK2),
-           the word has to be selected first.
-        2) Check whether the callback was called. */
+    ASSERT_TRUE(callbacksExecutionStats.spellingCheck);
+
+    ewk_text_checker_string_spelling_check_cb_set(0);
+    ewk_text_checker_word_ignore_cb_set(0);
 }

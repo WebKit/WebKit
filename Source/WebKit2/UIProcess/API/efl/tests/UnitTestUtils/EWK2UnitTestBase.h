@@ -53,6 +53,7 @@ protected:
     bool waitUntilTrue(bool &flag, double timeoutSeconds = defaultTimeoutSeconds);
 
     void mouseClick(int x, int y, int button = 1 /*Left*/);
+    void mouseDoubleClick(int x, int y, int button = 1 /*Left*/);
     void mouseDown(int x, int y, int button = 1 /*Left*/);
     void mouseUp(int x, int y, int button = 1 /*Left*/);
     void mouseMove(int x, int y);

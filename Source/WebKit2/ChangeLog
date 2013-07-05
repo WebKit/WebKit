@@ -1,3 +1,24 @@
+2013-07-05  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL][WK2] Implement unit test callbacks: onWordLearn and onWordIgnore.
+        https://bugs.webkit.org/show_bug.cgi?id=118392
+
+        Reviewed by Christophe Dumez.
+
+        Simulate behavior of Learn and Ignore Word in the text field.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::mouseDoubleClick):
+        Select the entire word in the text field.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        * UIProcess/API/efl/tests/test_ewk2_text_checker.cpp:
+        (onSpellingForKnownWord):
+        (onWordLearn):
+        (onWordIgnore):
+        (selectLearnSpelling):
+        (selectIgnoreSpelling):
+
 2013-07-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] WebKit2 test TestWebKitFaviconDatabase times out with recent glib
