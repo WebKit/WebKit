@@ -1,3 +1,13 @@
+2013-07-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] WebKit2 test TestWebKitFaviconDatabase times out with recent glib
+        https://bugs.webkit.org/show_bug.cgi?id=111434
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unskipped TestWebKitFaviconDatabase tests.
+
 2013-07-04  Viatcheslav Ostapenko  <sl.ostapenko@samsung.com>
 
         [EFL] DumpRenderTree doesn't run if "opengl_x11" engine is not available

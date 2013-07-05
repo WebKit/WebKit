@@ -1,5 +1,25 @@
 2013-07-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        [GTK] WebKit2 test TestWebKitFaviconDatabase times out with recent glib
+        https://bugs.webkit.org/show_bug.cgi?id=111434
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp:
+        (testNotInitialized):
+        (testSetDirectory):
+        (testClearDatabase):
+        (testGetFavicon):
+        (testGetFaviconURI): Removed gconstpointer parameter.
+        (testWebViewFavicon): Fixed to make it work together with the
+        other tests and removed gconstpointer parameter.
+        (testFaviconDatabase): Created to call all tests in the proper
+        order.
+        (beforeAll): Changed to call only testFaviconDatabase instead of
+        the separate tests.
+
+2013-07-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         TestWebKitFaviconDatabase/clear-database is not testing things properly
         https://bugs.webkit.org/show_bug.cgi?id=118404
 
