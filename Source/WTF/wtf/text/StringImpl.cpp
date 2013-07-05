@@ -1718,19 +1718,29 @@ bool equal(const StringImpl* a, const StringImpl* b)
     return stringImplContentEqual(a, b);
 }
 
-bool equal(const StringImpl* a, const LChar* b, unsigned length)
+template <typename CharType>
+inline bool equalInternal(const StringImpl* a, const CharType* b, unsigned length)
 {
     if (!a)
         return !b;
     if (!b)
-        return !a;
-
-    if (length != a->length())
         return false;
 
+    if (a->length() != length)
+        return false;
     if (a->is8Bit())
         return equal(a->characters8(), b, length);
     return equal(a->characters16(), b, length);
+}
+
+bool equal(const StringImpl* a, const LChar* b, unsigned length)
+{
+    return equalInternal(a, b, length);
+}
+
+bool equal(const StringImpl* a, const UChar* b, unsigned length)
+{
+    return equalInternal(a, b, length);
 }
 
 bool equal(const StringImpl* a, const LChar* b)
@@ -1766,20 +1776,6 @@ bool equal(const StringImpl* a, const LChar* b)
     }
 
     return !b[length];
-}
-
-bool equal(const StringImpl* a, const UChar* b, unsigned length)
-{
-    if (!a)
-        return !b;
-    if (!b)
-        return false;
-
-    if (a->length() != length)
-        return false;
-    if (a->is8Bit())
-        return equal(a->characters8(), b, length);
-    return equal(a->characters16(), b, length);
 }
 
 bool equalNonNull(const StringImpl* a, const StringImpl* b)
