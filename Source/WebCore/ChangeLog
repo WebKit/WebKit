@@ -1,3 +1,13 @@
+2013-07-05  Benjamin Dupont   <bdupont@nds.com>
+
+        Segmentation fault occurred when ICU data library doesn't embed the expected encoding.
+        https://bugs.webkit.org/show_bug.cgi?id=118410
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::newTextCodec):
+
 2013-07-05  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] fast/text/font-kerning.html fails
