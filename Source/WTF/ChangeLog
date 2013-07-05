@@ -2,6 +2,13 @@
 
         [Windows] Unreviewed build correction.
 
+        * WTF.vcxproj/WTFGenerated.make: Avoid syntax error in generated
+        file in cases where Legible Output support is not present.
+
+2013-07-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction.
+
         * WTF.vcxproj/WTFGenerated.make: Use space (rather than double
         quotes) when handling the no-Legible-Output case.
 
