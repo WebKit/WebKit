@@ -1,3 +1,18 @@
+2013-07-05  Zalan Bujtas  <zalan@apple.com>
+
+        iframe constrained by max-width in full screen
+        https://bugs.webkit.org/show_bug.cgi?id=118250
+
+        Reviewed by Antti Koivisto.
+
+        Ensure that contents inside iframe can go full screen properly.
+
+        Set max-width and max-height values to the default 'none', so that iframes are not
+        constrained when entering full screen.
+
+        * fullscreen/full-screen-iframe-with-max-width-height-expected.txt: Added.
+        * fullscreen/full-screen-iframe-with-max-width-height.html: Added.
+
 2013-07-05  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] .webkitClosedCaptionsVisible doesn't work with "Automatic" caption mode

@@ -1,0 +1,17 @@
+<body style="margin: 0px;">
+    <iframe id='fullscreenFrame' src='data:text/html,<div id="testDiv">test</div>' style='max-width: 10px; max-height: 10px;' frameborder='0' webkitallowfullscreen></iframe>
+    <script src='full-screen-test.js'></script>
+    <script>
+        var frame = document.getElementById('fullscreenFrame');
+        var testDiv = frame.contentWindow.document.getElementById('testDiv');
+        // Bail out early if the full screen API is not enabled or is missing:
+        if (Element.prototype.webkitRequestFullScreen == undefined) {
+            logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+            endTest();
+        } else {
+            // Test if the iframe expands full screen when max-width/max-height are set.
+            waitForEventTestAndEnd(document, 'webkitfullscreenchange', "frame.getBoundingClientRect().right == document.body.getBoundingClientRect().right && frame.getBoundingClientRect().bottom == document.body.getBoundingClientRect().bottom");
+            runWithKeyDown(function(){ testDiv.webkitRequestFullScreen(); });
+        }
+    </script>
+</body>
