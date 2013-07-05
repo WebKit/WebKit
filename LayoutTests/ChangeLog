@@ -1,3 +1,12 @@
+2013-07-05  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed gardening. Updated TestExpectations file.
+
+        Added accessibility/listitem-list.html to the list of expected
+        failures, which will get fixed once bug 105214 is fixed.
+
+        * platform/gtk/TestExpectations: Added new test.
+
 2013-07-05  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Update TestExpectations with crashing and failing tests
