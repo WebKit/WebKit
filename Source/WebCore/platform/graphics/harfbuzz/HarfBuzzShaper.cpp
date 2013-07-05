@@ -347,6 +347,22 @@ void HarfBuzzShaper::setFontFeatures()
         m_features.append(vrt2);
     }
 
+    hb_feature_t kerning = { HarfBuzzFace::kernTag, 0, 0, static_cast<unsigned>(-1) };
+    switch (description.kerning()) {
+    case FontDescription::NormalKerning:
+        kerning.value = 1;
+        m_features.append(kerning);
+        break;
+    case FontDescription::NoneKerning:
+        kerning.value = 0;
+        m_features.append(kerning);
+        break;
+    case FontDescription::AutoKerning:
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
     FontFeatureSettings* settings = description.featureSettings();
     if (!settings)
         return;

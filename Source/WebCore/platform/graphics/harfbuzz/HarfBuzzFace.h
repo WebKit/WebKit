@@ -46,6 +46,7 @@ class HarfBuzzFace : public RefCounted<HarfBuzzFace> {
 public:
     static const hb_tag_t vertTag;
     static const hb_tag_t vrt2Tag;
+    static const hb_tag_t kernTag;
 
     static PassRefPtr<HarfBuzzFace> create(FontPlatformData* platformData, uint64_t uniqueID)
     {

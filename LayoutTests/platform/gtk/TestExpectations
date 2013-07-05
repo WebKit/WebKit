@@ -1108,8 +1108,6 @@ webkit.org/b/73653 fast/forms/range/slider-in-multi-column.html [ Failure ]
 
 webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 
-webkit.org/b/76048 fast/text/font-kerning.html [ ImageOnlyFailure ]
-
 # Needs custom policy delegate enhancement to log downloads
 Bug(GTK) http/tests/download [ Failure ]
 

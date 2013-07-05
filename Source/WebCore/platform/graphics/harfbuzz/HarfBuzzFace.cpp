@@ -39,6 +39,7 @@ namespace WebCore {
 
 const hb_tag_t HarfBuzzFace::vertTag = HB_TAG('v', 'e', 'r', 't');
 const hb_tag_t HarfBuzzFace::vrt2Tag = HB_TAG('v', 'r', 't', '2');
+const hb_tag_t HarfBuzzFace::kernTag = HB_TAG('k', 'e', 'r', 'n');
 
 // Though we have FontCache class, which provides the cache mechanism for
 // WebKit's font objects, we also need additional caching layer for HarfBuzz

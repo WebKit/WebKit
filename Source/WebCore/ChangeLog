@@ -1,3 +1,20 @@
+2013-07-05  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] fast/text/font-kerning.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=76048
+
+        Reviewed by Martin Robinson.
+
+        Added kerning to the list of features for hb_shade() according to FontDescription::kerning().
+        Removed font-kerning.html from gtk/TestExpectations, which was failing before this fix.
+
+        * platform/graphics/harfbuzz/HarfBuzzFace.cpp:
+        (WebCore):
+        * platform/graphics/harfbuzz/HarfBuzzFace.h:
+        (HarfBuzzFace):
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::setFontFeatures):
+
 2013-07-05  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         Build fix GTK after r152404.
