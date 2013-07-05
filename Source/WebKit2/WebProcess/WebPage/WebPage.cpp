@@ -288,6 +288,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_inspectorClient(0)
     , m_backgroundColor(Color::white)
     , m_maximumRenderingSuppressionToken(0)
+    , m_scrollPinningBehavior(DoNotPin)
 {
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and
@@ -379,6 +380,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     setIsInWindow(parameters.isInWindow);
 
     setMinimumLayoutSize(parameters.minimumLayoutSize);
+    
+    setScrollPinningBehavior(parameters.scrollPinningBehavior);
 
     m_userAgent = parameters.userAgent;
 
@@ -4232,6 +4235,12 @@ void WebPage::stopExtendingIncrementalRenderingSuppression(unsigned token)
 
     m_activeRenderingSuppressionTokens.remove(token);
     m_page->mainFrame()->view()->setVisualUpdatesAllowedByClient(!shouldExtendIncrementalRenderingSuppression());
+}
+    
+void WebPage::setScrollPinningBehavior(uint32_t pinning)
+{
+    m_scrollPinningBehavior = static_cast<ScrollPinningBehavior>(pinning);
+    m_page->mainFrame()->view()->setScrollPinningBehavior(m_scrollPinningBehavior);
 }
 
 } // namespace WebKit

@@ -1,3 +1,57 @@
+2013-07-05  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Add API to lock the scroll position at the top or bottom of the page
+        https://bugs.webkit.org/show_bug.cgi?id=118429
+        <rdar://problem/14120323>
+
+        Reviewed by Anders Carlsson.
+
+        Test (API): WebKit2.ScrollPinningBehaviors
+
+        * WebCore.exp.in:
+        Expose FrameView::setScrollPinningBehavior.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        Our pinning behavior should be DoNotPin by default.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::minimumScrollPosition):
+        (WebCore::FrameView::maximumScrollPosition):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::minimumScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::maximumScrollPosition):
+        Fix the minimum scroll position's vertical location to the maximum if
+        we're pinned to the bottom, and vice-versa if we're pinned to the top.
+
+        (WebCore::FrameView::setScrollPinningBehavior): Added.
+        If scroll pinning behavior has changed, inform ScrollingCoordinator
+        and update scrollbars (which will also re-pin the scroll position).
+
+        * page/FrameView.h:
+        Override minimumScrollPosition, add setScrollPinningBehavior,
+        and storage for m_scrollPinningBehavior.
+
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::setScrollPinningBehavior): Added.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+        Our pinning behavior should be DoNotPin by default.
+
+        (WebCore::ScrollingTree::setScrollPinningBehavior):
+        (WebCore::ScrollingTree::scrollPinningBehavior):
+        Getter/setter for m_scrollPinningBehavior, scrolling-thread-safe.
+
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::setScrollPinningBehavior):
+        Inform ScrollingTree of the scroll pinning behavior change.
+        
+        * platform/ScrollTypes.h:
+        Add ScrollPinningBehavior enum.
+
 2013-07-05  Zalan Bujtas  <zalan@apple.com>
 
         iframe constrained by max-width in full screen

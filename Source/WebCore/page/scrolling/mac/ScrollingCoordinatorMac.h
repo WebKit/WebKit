@@ -77,6 +77,8 @@ public:
     virtual void setRubberBandsAtBottom(bool) OVERRIDE;
     virtual bool rubberBandsAtTop() const OVERRIDE;
     virtual void setRubberBandsAtTop(bool) OVERRIDE;
+    
+    virtual void setScrollPinningBehavior(ScrollPinningBehavior) OVERRIDE;
 
 private:
     // Return whether this scrolling coordinator can keep fixed position layers fixed to their

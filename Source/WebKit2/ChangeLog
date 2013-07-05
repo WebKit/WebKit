@@ -1,3 +1,56 @@
+2013-07-05  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Add API to lock the scroll position at the top or bottom of the page
+        https://bugs.webkit.org/show_bug.cgi?id=118429
+        <rdar://problem/14120323>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Pass the current ScrollPinningBehavior across to the WebPage upon creation.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetScrollPinningBehavior):
+        (WKPageSetScrollPinningBehavior):
+        * UIProcess/API/C/WKPagePrivate.h:
+        SPI to get/set the WebPageProxy's current ScrollPinningBehavior.
+        Convert between WK API type and WebCore enum.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::creationParameters):
+        Send ScrollPinningBehavior when creating a WebPage.
+
+        (WebKit::WebPageProxy::setScrollPinningBehavior):
+        Pass ScrollPinningBehavior changes across to the WebProcess (and save it
+        in WebPageProxy so it can be sent back across if the WebProcess crashes).
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::scrollPinningBehavior):
+        Getter/setter and storage for m_scrollPinningBehavior.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Inform new FrameViews of the current ScrollPinningBehavior.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Set our ScrollPinningBehavior based on our creation parameters.
+
+        (WebKit::WebPage::setScrollPinningBehavior):
+        Inform the FrameView of ScrollPinningBehavior changes.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::scrollPinningBehavior): Added.
+        (WebKit::WebPage::setScrollPinningBehavior): Added.
+        Add storage for m_scrollPinningBehavior.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add SetScrollPinningBehavior message.
+
 2013-07-05  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL][WK2] Implement unit test callbacks: onWordLearn and onWordIgnore.

@@ -318,6 +318,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
 #if ENABLE(PAGE_VISIBILITY_API)
     , m_visibilityState(PageVisibilityStateVisible)
 #endif
+    , m_scrollPinningBehavior(DoNotPin)
 {
 #if ENABLE(PAGE_VISIBILITY_API)
     if (!m_isVisible)
@@ -3998,6 +3999,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.mediaVolume = m_mediaVolume;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.minimumLayoutSize = m_minimumLayoutSize;
+    parameters.scrollPinningBehavior = m_scrollPinningBehavior;
 
 #if PLATFORM(MAC)
     parameters.layerHostingMode = m_layerHostingMode;
@@ -4496,6 +4498,17 @@ void WebPageProxy::setMainFrameInViewSourceMode(bool mainFrameInViewSourceMode)
 void WebPageProxy::didSaveToPageCache()
 {
     m_process->didSaveToPageCache();
+}
+
+void WebPageProxy::setScrollPinningBehavior(ScrollPinningBehavior pinning)
+{
+    if (m_scrollPinningBehavior == pinning)
+        return;
+    
+    m_scrollPinningBehavior = pinning;
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetScrollPinningBehavior(pinning), m_pageID);
 }
 
 } // namespace WebKit

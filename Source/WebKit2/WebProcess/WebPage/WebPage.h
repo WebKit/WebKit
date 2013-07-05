@@ -661,6 +661,9 @@ public:
     void stopExtendingIncrementalRenderingSuppression(unsigned token);
     bool shouldExtendIncrementalRenderingSuppression() { return !m_activeRenderingSuppressionTokens.isEmpty(); }
 
+    WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
+    void setScrollPinningBehavior(uint32_t /* WebCore::ScrollPinningBehavior */ pinning);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1025,6 +1028,8 @@ private:
 
     HashSet<unsigned> m_activeRenderingSuppressionTokens;
     unsigned m_maximumRenderingSuppressionToken;
+    
+    WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
 };
 
 } // namespace WebKit

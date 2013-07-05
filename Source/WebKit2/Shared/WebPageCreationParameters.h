@@ -90,6 +90,8 @@ struct WebPageCreationParameters {
     bool mayStartMediaWhenInWindow;
 
     WebCore::IntSize minimumLayoutSize;
+    
+    WebCore::ScrollPinningBehavior scrollPinningBehavior;
 
 #if PLATFORM(MAC)
     LayerHostingMode layerHostingMode;

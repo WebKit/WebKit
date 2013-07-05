@@ -100,6 +100,16 @@ WK_EXPORT WKArrayRef WKPageCopyRelatedPages(WKPageRef page);
 typedef void (*WKPageInvalidMessageFunction)(uint32_t messageID);
 WK_EXPORT void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction function);
 
+enum {
+    kWKScrollPinningBehaviorDoNotPin,
+    kWKScrollPinningBehaviorPinToTop,
+    kWKScrollPinningBehaviorPinToBottom
+};
+typedef uint32_t WKScrollPinningBehavior;
+
+WK_EXPORT WKScrollPinningBehavior WKPageGetScrollPinningBehavior(WKPageRef page);
+WK_EXPORT void WKPageSetScrollPinningBehavior(WKPageRef page, WKScrollPinningBehavior pinning);
+
 #ifdef __cplusplus
 }
 #endif

@@ -879,6 +879,44 @@ void WKPageSelectContextMenuItem(WKPageRef page, WKContextMenuItemRef item)
 #endif
 }
 
+WKScrollPinningBehavior WKPageGetScrollPinningBehavior(WKPageRef page)
+{
+    ScrollPinningBehavior pinning = toImpl(page)->scrollPinningBehavior();
+    
+    switch (pinning) {
+    case WebCore::ScrollPinningBehavior::DoNotPin:
+        return kWKScrollPinningBehaviorDoNotPin;
+    case WebCore::ScrollPinningBehavior::PinToTop:
+        return kWKScrollPinningBehaviorPinToTop;
+    case WebCore::ScrollPinningBehavior::PinToBottom:
+        return kWKScrollPinningBehaviorPinToBottom;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return kWKScrollPinningBehaviorDoNotPin;
+}
+
+void WKPageSetScrollPinningBehavior(WKPageRef page, WKScrollPinningBehavior pinning)
+{
+    ScrollPinningBehavior corePinning = ScrollPinningBehavior::DoNotPin;
+
+    switch (pinning) {
+    case kWKScrollPinningBehaviorDoNotPin:
+        corePinning = ScrollPinningBehavior::DoNotPin;
+        break;
+    case kWKScrollPinningBehaviorPinToTop:
+        corePinning = ScrollPinningBehavior::PinToTop;
+        break;
+    case kWKScrollPinningBehaviorPinToBottom:
+        corePinning = ScrollPinningBehavior::PinToBottom;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    
+    toImpl(page)->setScrollPinningBehavior(corePinning);
+}
+
 
 
 // -- DEPRECATED --

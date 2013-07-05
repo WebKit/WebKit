@@ -773,7 +773,10 @@ public:
     void connectionWillClose(CoreIPC::Connection*);
 
     void didSaveToPageCache();
-
+        
+    void setScrollPinningBehavior(WebCore::ScrollPinningBehavior);
+    WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
+        
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 
@@ -1287,6 +1290,8 @@ private:
 #if PLATFORM(MAC)
     HashMap<String, String> m_temporaryPDFFiles;
 #endif
+        
+    WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
 };
 
 } // namespace WebKit

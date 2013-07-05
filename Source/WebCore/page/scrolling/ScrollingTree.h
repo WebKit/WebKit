@@ -101,6 +101,9 @@ public:
     void setRubberBandsAtBottom(bool);
     bool rubberBandsAtTop();
     void setRubberBandsAtTop(bool);
+    
+    void setScrollPinningBehavior(ScrollPinningBehavior);
+    ScrollPinningBehavior scrollPinningBehavior();
 
     bool willWheelEventStartSwipeGesture(const PlatformWheelEvent&);
 
@@ -136,6 +139,7 @@ private:
     bool m_mainFramePinnedToTheTop;
     bool m_mainFramePinnedToTheBottom;
     bool m_mainFrameIsRubberBanding;
+    ScrollPinningBehavior m_scrollPinningBehavior;
 
     bool m_scrollingPerformanceLoggingEnabled;
     

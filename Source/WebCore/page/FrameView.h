@@ -197,6 +197,7 @@ public:
     virtual bool shouldRubberBandInDirection(ScrollDirection) const;
     virtual bool requestScrollPositionUpdate(const IntPoint&) OVERRIDE;
     virtual bool isRubberBandInProgress() const OVERRIDE;
+    virtual IntPoint minimumScrollPosition() const OVERRIDE;
     virtual IntPoint maximumScrollPosition() const OVERRIDE;
 
     // This is different than visibleContentRect() in that it ignores negative (or overly positive)
@@ -433,6 +434,8 @@ public:
     void setVisualUpdatesAllowedByClient(bool);
 
     void resumeAnimatingImages();
+    
+    void setScrollPinningBehavior(ScrollPinningBehavior);
 
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
@@ -660,6 +663,8 @@ private:
 #endif
 
     bool m_visualUpdatesAllowedByClient;
+    
+    ScrollPinningBehavior m_scrollPinningBehavior;
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)
