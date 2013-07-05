@@ -443,10 +443,7 @@ public:
         }
         output = reinterpret_cast<T*>(resultImpl + 1);
 
-        if (sizeof(T) == sizeof(char))
-            return adoptRef(new (NotNull, resultImpl) StringImpl(length, Force8BitConstructor));
-
-        return adoptRef(new (NotNull, resultImpl) StringImpl(length));
+        return constructInternal<T>(resultImpl, length);
     }
 
     static PassRefPtr<StringImpl> createEmptyUnique()
@@ -770,6 +767,10 @@ private:
     bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
     template <class UCharPredicate> PassRefPtr<StringImpl> stripMatchedCharacters(UCharPredicate);
     template <typename CharType, class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
+    template <typename CharType> static PassRefPtr<StringImpl> constructInternal(StringImpl*, unsigned);
+    template <typename CharType> static PassRefPtr<StringImpl> createUninitializedInternal(unsigned, CharType*&);
+    template <typename CharType> static PassRefPtr<StringImpl> reallocateInternal(PassRefPtr<StringImpl>, unsigned, CharType*&);
+    template <typename CharType> static PassRefPtr<StringImpl> createInternal(const CharType*, unsigned);
     WTF_EXPORT_STRING_API NEVER_INLINE const UChar* getData16SlowCase() const;
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
 
@@ -848,6 +849,14 @@ ValueCheck<StringImpl*> {
     static void checkConsistency(const StringImpl*) { }
 };
 #endif
+
+template <typename CharType>
+ALWAYS_INLINE PassRefPtr<StringImpl> StringImpl::constructInternal(StringImpl* impl, unsigned length)
+{
+    if (sizeof(CharType) == sizeof(char))
+        return adoptRef(new (NotNull, impl) StringImpl(length, Force8BitConstructor));
+    return adoptRef(new (NotNull, impl) StringImpl(length));
+}
 
 template <>
 ALWAYS_INLINE const LChar* StringImpl::getCharacters<LChar>() const { return characters8(); }
