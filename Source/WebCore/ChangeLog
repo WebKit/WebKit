@@ -1,3 +1,15 @@
+2013-07-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Identify OS-level at build-time.
+        https://bugs.webkit.org/show_bug.cgi?id=118428
+
+        Reviewed by Anders Carlsson.
+
+        * DerivedSources.make: Activate legible output features if present.
+        * WebCorePrefix.h: Activate MSVC 2010 workarounds for CGFloat if
+        building with VS2010.
+        * config.h: Activate legible output features if present.
+
 2013-07-05  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Add API to lock the scroll position at the top or bottom of the page

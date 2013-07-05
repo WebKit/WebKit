@@ -1,3 +1,14 @@
+2013-07-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Identify OS-level at build-time.
+        https://bugs.webkit.org/show_bug.cgi?id=118428
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.vcxproj/WTFGenerated.make: Check for Legible Output featurs
+        and set build environment as appropriate.
+        * wtf/Platform.h: Activate Legible Output features if present.
+
 2013-07-05  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         A lot of code duplication within StringImpl 'equal' functions
