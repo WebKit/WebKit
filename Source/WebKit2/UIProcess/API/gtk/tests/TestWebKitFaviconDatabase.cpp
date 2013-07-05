@@ -153,7 +153,7 @@ static void testClearDatabase(FaviconDatabaseTest* test, gconstpointer)
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext);
     webkit_favicon_database_clear(database);
 
-    GOwnPtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, kServer->getURIForPath("/").data()));
+    GOwnPtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, kServer->getURIForPath("/foo").data()));
     g_assert(!iconURI);
 }
 
