@@ -1,3 +1,21 @@
+2013-07-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Stop hardcoding interfaces that have indexed getters returning strings
+        https://bugs.webkit.org/show_bug.cgi?id=118414
+
+        Reviewed by Kentaro Hara.
+
+        Stop hardcoding the names of interfaces that have indexed getters returning
+        strings in the bindings generator. Now that we use the latest Web IDL indexed
+        getter, more information is provided in the IDL files and the generator is
+        able to figure out if the indexed getter is returning a DOMString on its own.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateImplementation):
+
 2013-07-05  Tim Horton  <timothy_horton@apple.com>
 
         Tons of crashes on bots after r152425
