@@ -1,3 +1,14 @@
+2013-07-06  Rob Buis  <rbuis@rim.com>
+
+        createElement("image") creates an HTMLImageElement, although this hack should exist in parser only
+        https://bugs.webkit.org/show_bug.cgi?id=88360
+
+        Reviewed by Sam Weinig.
+
+        Create a HTMLElement when using createElement('image'), but keep the HTML5 parser constructing HTMLImageelement for it.
+
+        * html/HTMLTagNames.in:
+
 2013-07-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Stop hardcoding interfaces that have indexed getters returning strings

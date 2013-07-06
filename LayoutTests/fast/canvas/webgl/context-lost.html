@@ -121,7 +121,7 @@ function testLostContext()
     // Test the extension itself.
     shouldGenerateGLError(gl, gl.INVALID_OPERATION, "extension.loseContext()");
 
-    image = document.createElement("image");
+    image = document.createElement("img");
     video = document.createElement("video");
     canvas2d = document.createElement("canvas");
     ctx2d = canvas2d.getContext("2d");
