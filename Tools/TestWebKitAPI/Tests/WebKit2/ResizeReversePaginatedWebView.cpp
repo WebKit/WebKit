@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "JavaScriptTest.h"
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
@@ -37,31 +38,21 @@ namespace TestWebKitAPI {
 static bool testDone;
 
 static const unsigned pageLength = 100;
-static const unsigned pageGap = 1000;
-
-static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
-{
-    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    ASSERT_NOT_NULL(scriptContext);
-
-    ASSERT_NOT_NULL(resultSerializedScriptValue);
-    JSValueRef returnValue = WKSerializedScriptValueDeserialize(resultSerializedScriptValue, scriptContext, 0);
-    double scrollPosition = JSValueToNumber(scriptContext, returnValue, 0);
-
-    ASSERT_EQ(-20900.0, scrollPosition);
-
-    testDone = true;
-}
+static const unsigned pageGap = 100;
+static const unsigned expectedPageCount = 20;
 
 static void didLayout(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef, const void* clientInfo)
 {
-    if (milestones & kWKDidFirstPaintAfterSuppressedIncrementalRendering) {
+    if (milestones & kWKDidFirstLayoutAfterSuppressedIncrementalRendering) {
         PlatformWebView* webView = (PlatformWebView*)clientInfo;
-        unsigned pageCount = WKPageGetPageCount(page);
-        webView->resizeTo((pageLength * pageCount) + (pageGap * (pageCount - 1)), 500);
 
-        WKRetainPtr<WKStringRef> javaScriptString(AdoptWK, WKStringCreateWithUTF8CString("window.scrollX"));
-        WKPageRunJavaScriptInMainFrame(page, javaScriptString.get(), 0, didRunJavaScript);
+        unsigned pageCount = WKPageGetPageCount(page);
+        EXPECT_EQ(expectedPageCount, pageCount);
+
+        webView->resizeTo((pageLength * pageCount) + (pageGap * (pageCount - 1)), 500);
+        EXPECT_JS_EQ(page, "window.scrollX", "-3800");
+
+        testDone = true;
     }
 }
 
@@ -78,7 +69,7 @@ TEST(WebKit2, ResizeReversePaginatedWebView)
 
     WKPageSetPageLoaderClient(webView.page(), &loaderClient);
 
-    WKPageListenForLayoutMilestones(webView.page(), kWKDidFirstPaintAfterSuppressedIncrementalRendering);
+    WKPageListenForLayoutMilestones(webView.page(), kWKDidFirstLayoutAfterSuppressedIncrementalRendering);
 
     WKPageGroupRef pageGroup =  WKPageGetPageGroup(webView.page());
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup);

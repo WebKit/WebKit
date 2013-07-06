@@ -1,3 +1,19 @@
+2013-07-05  Tim Horton  <timothy_horton@apple.com>
+
+        Fix r152265: FrameView's pagination mode is only one of two, and the logic was totally wrong
+        https://bugs.webkit.org/show_bug.cgi?id=118439
+        <rdar://problem/14366120>
+
+        Reviewed by Anders Carlsson.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::maximumScrollPosition):
+        - Test both Page and FrameView's pagination modes.
+        - *Don't* clamp negatives to zero if we are paginated with scroll offset set,
+            like the original changelog claimed, but the code did the opposite.
+        - Don't clamp in *all* pagination modes; with 'direction: RTL' it's still possible
+            to have a negative maximum position in LTR/TB pagination modes.
+
 2013-07-05  Sam Weinig  <sam@webkit.org>
 
         WKPageFindStringMatches with kWKFindOptionsBackwards still doesn't work

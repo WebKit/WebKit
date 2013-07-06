@@ -1,5 +1,23 @@
 2013-07-05  Tim Horton  <timothy_horton@apple.com>
 
+        Fix r152265: FrameView's pagination mode is only one of two, and the logic was totally wrong
+        https://bugs.webkit.org/show_bug.cgi?id=118439
+        <rdar://problem/14366120>
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit2/ResizeReversePaginatedWebView.cpp:
+        (TestWebKitAPI::didLayout):
+        (TestWebKitAPI::TEST):
+        - Make use of EXPECT_JS_EQ instead of manually doing JavaScript stuff.
+        - Assert that we got the right number of pages for sanity.
+        - Reduce the page gap size so that DrawingAreaImpl doesn't try to allocate
+            so much memory that SharedMemory asserts and makes the test time out.
+        - Use didFirstLayoutAfterSuppressedIncrementalRendering instead of Paint
+            because paint doesn't fire if the window is offscreen.
+
+2013-07-05  Tim Horton  <timothy_horton@apple.com>
+
         [wk2] Add API to lock the scroll position at the top or bottom of the page
         https://bugs.webkit.org/show_bug.cgi?id=118429
         <rdar://problem/14120323>
