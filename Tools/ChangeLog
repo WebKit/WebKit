@@ -1,3 +1,30 @@
+2013-07-06  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Update list of EFL WK2 API tests
+        https://bugs.webkit.org/show_bug.cgi?id=118443
+
+        Reviewed by Christophe Dumez.
+
+        The following tests were included:
+
+        Passing:
+        - CloseThenTerminate
+        - DidAssociateFormControls
+        - PageVisibilityState
+        - ResponsivenessTimerDoesntFireEarly
+        - TerminateTwice
+        - WillLoad
+
+        Failing:
+        - ResizeReversePaginatedWebView
+        - ScrollPinningBehaviors
+
+        This patch also modified ``test_webkit2_api_BINARIES'' list so that it is in
+        alphabetical order.
+
+        * TestWebKitAPI/CMakeLists.txt: Added Bundles for included tests.
+        * TestWebKitAPI/PlatformEfl.cmake: Added a few tests.
+
 2013-07-05  Tim Horton  <timothy_horton@apple.com>
 
         Fix r152265: FrameView's pagination mode is only one of two, and the logic was totally wrong
