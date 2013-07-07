@@ -1077,12 +1077,21 @@ ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
     return isEqual;
 }
 #else
-ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length) { return std::equal(a, a + length, b); }
-ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length) { return std::equal(a, a + length, b); }
+ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length) { return !memcmp(a, b, length); }
+ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length) { return !memcmp(a, b, length * sizeof(UChar)); }
 #endif
 
-ALWAYS_INLINE bool equal(const LChar* a, const UChar* b, unsigned length) { return std::equal(a, a + length, b); }
-ALWAYS_INLINE bool equal(const UChar* a, const LChar* b, unsigned length) { return std::equal(a, a + length, b); }
+ALWAYS_INLINE bool equal(const LChar* a, const UChar* b, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+    return true;
+}
+
+ALWAYS_INLINE bool equal(const UChar* a, const LChar* b, unsigned length) { return equal(b, a, length); }
+
 WTF_EXPORT_STRING_API bool equalIgnoringCase(const StringImpl*, const StringImpl*);
 WTF_EXPORT_STRING_API bool equalIgnoringCase(const StringImpl*, const LChar*);
 inline bool equalIgnoringCase(const LChar* a, const StringImpl* b) { return equalIgnoringCase(b, a); }

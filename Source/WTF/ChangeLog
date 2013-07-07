@@ -1,3 +1,15 @@
+2013-07-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the performance regressions introduced by r152418
+        https://bugs.webkit.org/show_bug.cgi?id=118438
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/StringImpl.h:
+        (WTF::equal):
+        Looping between two arbitrary pointers prevents important loop
+        optimizations.
+
 2013-07-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction.
