@@ -9,7 +9,7 @@ Build configuration:
  Enable GCC build optimization                            : $enable_optimizations
  Code coverage support                                    : $enable_coverage
  Optimized memory allocator                               : $enable_fast_malloc
- Accelerated rendering backend                            : $acceleration_backend_description
+ Accelerated rendering backend                            : $acceleration_description
 
 Features:
 =======
