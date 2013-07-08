@@ -173,9 +173,13 @@ namespace WebCore {
         EventListener* on##attribute() { return getAttributeEventListener(eventNames().eventName##Event); } \
         void setOn##attribute(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().eventName##Event, listener); } \
 
-    #define DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(recipient, attribute) \
-        EventListener* on##attribute() { return recipient ? recipient->getAttributeEventListener(eventNames().attribute##Event) : 0; } \
-        void setOn##attribute(PassRefPtr<EventListener> listener) { if (recipient) recipient->setAttributeEventListener(eventNames().attribute##Event, listener); } \
+    #define DECLARE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(recipient, attribute) \
+        EventListener* on##attribute(); \
+        void setOn##attribute(PassRefPtr<EventListener> listener);
+
+    #define DEFINE_FORWARDING_ATTRIBUTE_EVENT_LISTENER(type, recipient, attribute) \
+        EventListener* type::on##attribute() { return recipient ? recipient->getAttributeEventListener(eventNames().attribute##Event) : 0; } \
+        void type::setOn##attribute(PassRefPtr<EventListener> listener) { if (recipient) recipient->setAttributeEventListener(eventNames().attribute##Event, listener); }
 
     inline void EventTarget::visitJSEventListeners(JSC::SlotVisitor& visitor)
     {
