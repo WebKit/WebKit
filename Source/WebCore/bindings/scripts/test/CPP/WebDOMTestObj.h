@@ -188,6 +188,7 @@ public:
 #if ENABLE(Condition1) || ENABLE(Condition2)
     void conditionalMethod3();
 #endif
+    WebDOMTestObj treatReturnedNullObjectAsUndefined();
     void classMethod();
     int classMethodWithOptional(int arg);
 #if ENABLE(Condition1)

@@ -3344,6 +3344,11 @@ sub GenerateImplementationFunctionCall()
             push(@implContent, $indent . "    return JSValue::encode(jsUndefined());\n");
         }
 
+        if ($function->signature->extendedAttributes->{"TreatReturnedNullObjectAs"} and $function->signature->extendedAttributes->{"TreatReturnedNullObjectAs"} eq "Undefined") {
+            push(@implContent, $indent . "if (result == jsNull())\n");
+            push(@implContent, $indent . "    result = jsUndefined();\n\n");
+        }
+
         push(@implContent, $indent . "return JSValue::encode(result);\n");
     }
 }

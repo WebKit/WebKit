@@ -1052,6 +1052,12 @@
 
 #endif
 
+- (DOMTestObj *)treatReturnedNullObjectAsUndefined
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->treatReturnedNullObjectAsUndefined()));
+}
+
 - (void)classMethod
 {
     WebCore::JSMainThreadNullState state;

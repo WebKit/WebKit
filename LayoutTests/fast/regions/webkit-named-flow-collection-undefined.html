@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+    <body>
+
+        <script src="../../fast/js/resources/js-test-pre.js"></script>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            description("Test for <a href='https://bugs.webkit.org/show_bug.cgi?id=118463'>[118463] NamedFlowCollection getters should return undefined when there's no NamedFlow</a>");
+
+            var namedFlowCollection = document.webkitGetNamedFlows();
+            shouldBeUndefined("namedFlowCollection.item(0)");
+            shouldBeUndefined("namedFlowCollection.namedItem('flow')");
+        </script>
+    <script src="../../fast/js/resources/js-test-post.js"></script> 
+    </body>
+</html>

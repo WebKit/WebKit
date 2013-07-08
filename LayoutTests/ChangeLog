@@ -1,3 +1,16 @@
+2013-07-08  Radu Stavila  <stavila@adobe.com>
+
+        NamedFlowCollection getters should return undefined when there's no NamedFlow
+        https://bugs.webkit.org/show_bug.cgi?id=118463
+
+        Reviewed by Christophe Dumez.
+
+        Added test that validates that NamedFlowCollection getters return undefined
+        when no named flows exist.
+
+        * fast/regions/webkit-named-flow-collection-undefined-expected.txt: Added.
+        * fast/regions/webkit-named-flow-collection-undefined.html: Added.
+
 2013-07-08  David Farler  <dfarler@apple.com>
 
         fast/repaint/fixed-right-in-page-scale.html also crashing on Mountain Lion.

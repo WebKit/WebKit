@@ -1,0 +1,11 @@
+Test for [118463] NamedFlowCollection getters should return undefined when there's no NamedFlow
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS namedFlowCollection.item(0) is undefined.
+PASS namedFlowCollection.namedItem('flow') is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
