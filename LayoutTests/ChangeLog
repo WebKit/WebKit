@@ -1,3 +1,15 @@
+2013-07-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Merge r151913.
+
+    2013-06-24  Brent Fulgham  <bfulgham@apple.com>
+
+            [Mac] Unreviewed build correction after r151868
+            New test expecation had been placed in the wrong directory.
+
+            * platform/mac/accessibility/listitem-title-expected.txt: Copied from platform/mac/listitem-title-actual.txt.
+            * platform/mac/listitem-title-actual.txt: Removed.
+
 2013-07-03  Alexey Proskuryakov  <ap@apple.com>
 
         Skipping inspector tests that had other expectations, because specific rules override
