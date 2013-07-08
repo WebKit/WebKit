@@ -1,3 +1,14 @@
+2013-07-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r152416.
+        http://trac.webkit.org/changeset/152416
+        https://bugs.webkit.org/show_bug.cgi?id=118476
+
+        Wrong fix for the bug (Requested by ap on #webkit).
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::newTextCodec):
+
 2013-07-08  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r125294): A style rule with more than 8192 selectors can cause style corruption.

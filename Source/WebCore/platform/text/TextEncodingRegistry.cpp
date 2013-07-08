@@ -310,14 +310,9 @@ static void extendTextCodecMaps()
 PassOwnPtr<TextCodec> newTextCodec(const TextEncoding& encoding)
 {
     MutexLocker lock(encodingRegistryMutex());
+
     ASSERT(textCodecMap);
     TextCodecFactory factory = textCodecMap->get(encoding.name());
-
-    if (factory.function)
-        return factory.function(encoding, factory.additionalData);
-
-    // If encoding is unavailable, we use Latin1 encoding.
-    factory = textCodecMap->get("ISO-8859-1");
     ASSERT(factory.function);
     return factory.function(encoding, factory.additionalData);
 }
