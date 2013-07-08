@@ -1,3 +1,13 @@
+2013-07-08  David Farler  <dfarler@apple.com>
+
+        Skip fast/repaint/fixed-right-in-page-scale.html on Lion.
+        https://bugs.webkit.org/show_bug.cgi?id=118479
+
+        Unreviewed: test marked as crashing.
+
+        * platform/mac-lion/TestExpectations:
+        Skip fast/repaint/fixed-right-in-page-scale.html.
+
 2013-07-08  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r125294): A style rule with more than 8192 selectors can cause style corruption.
