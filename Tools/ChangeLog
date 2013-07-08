@@ -1,3 +1,15 @@
+2013-07-08  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] Leak: GFile* leaking in beginDragWithFilesCallback
+        https://bugs.webkit.org/show_bug.cgi?id=118412
+
+        Reviewed by Martin Robinson.
+
+        An adoptRef is required to balance ref and deref calls.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (beginDragWithFilesCallback):
+
 2013-07-06  Sergio Correia  <sergio.correia@openbossa.org>
 
         Update list of EFL WK2 API tests

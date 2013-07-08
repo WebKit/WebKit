@@ -541,7 +541,7 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
     GOwnPtr<gchar> scheme(g_file_get_uri_scheme(parentDirectory.get()));
     if (g_str_equal(scheme.get(), "http") || g_str_equal(scheme.get(), "https")) {
         GOwnPtr<gchar> currentDirectory(g_get_current_dir());
-        parentDirectory = g_file_new_for_path(currentDirectory.get());
+        parentDirectory = adoptGRef(g_file_new_for_path(currentDirectory.get()));
     }
 
     JSStringRef lengthProperty = JSStringCreateWithUTF8CString("length");
