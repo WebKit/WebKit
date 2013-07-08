@@ -64,9 +64,12 @@ fi
 
 if test "$enable_accelerated_compositing" = "yes"; then
     AC_DEFINE([WTF_USE_ACCELERATED_COMPOSITING], [1], [ ])
-    AC_DEFINE([WTF_USE_OPENGL], [1], [ ])
     AC_DEFINE([WTF_USE_TEXTURE_MAPPER], [1], [ ])
     AC_DEFINE([WTF_USE_TEXTURE_MAPPER_GL], [1], [ ])
+fi
+
+if test "$found_opengl" = "yes"; then
+    AC_DEFINE([WTF_USE_OPENGL], [1], [ ])
 fi
 
 if test "$enable_glx" = "yes"; then

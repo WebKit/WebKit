@@ -1,3 +1,19 @@
+2013-07-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Autoconf] Define WTF_USE_OPENGL when OpenGL was found
+        https://bugs.webkit.org/show_bug.cgi?id=118341
+
+        Reviewed by Gustavo Noronha Silva.
+
+        After r152275, WTF_USE_OPENGL is only defined if the accelerated compositing is enabled.
+        This breaks the build if disabling the accelerated compositing feature as the OpenGL-specific
+        code is not compiled anymore even if it's still required.
+
+        To avoid that, WTF_USE_OPENGL should be defined if OpenGL was found. The accelerated compositing
+        feature also relies on this condition, exiting the configuration process with an error otherwise.
+
+        * Source/autotools/SetupAutoconfHeader.m4:
+
 2013-07-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Remove unsupported AC backends
