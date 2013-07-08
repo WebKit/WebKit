@@ -1,3 +1,28 @@
+2013-07-08  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] Block Zoom does not zoom in on narrow paragraphs properly
+        https://bugs.webkit.org/show_bug.cgi?id=118472
+
+        Reviewed by Rob Buis.
+        Internally reviewed Arvid Nilsson and Genevieve Mak.
+
+        JIRA 114653
+        For the narrow paragraphs on www.nytimes.com, the first best node for
+        block zoom under the point is deprecated due to the limits of maximum
+        block zoom scale(3) and default maximum WebPage zoom scale(4) and instead
+        it picks up an ancestor node which is wider so that it looks like doesn't
+        zoom in properly.
+        To fix that, enlarge the default maximum WebPage zoom scale slightly
+        and use maximumScale() instead of maxBlockZoomScale() so that we can
+        accept more nodes. And also we'll still clamp the new scale by
+        maxBlockZoomScale() when we block zoom the WebPage, in which way those
+        nodes can be showed in the center of the viewport and surrounded by a
+        few other nodes within the viewport which shows better user experience.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::maximumScale):
+        (BlackBerry::WebKit::WebPagePrivate::adjustedBlockZoomNodeForZoomAndExpandingRatioLimits):
+
 2013-07-01  Jochen Eisinger  <jochen@chromium.org>
 
         Remove support for consumable user gestures

@@ -1763,7 +1763,7 @@ double WebPagePrivate::maximumScale() const
     if (m_maximumScale >= m_minimumScale && respectViewport())
         return std::max(zoomToFitScale, m_maximumScale);
 
-    return hasVirtualViewport() ? std::max<double>(zoomToFitScale, 4.0) : 4.0;
+    return hasVirtualViewport() ? std::max<double>(zoomToFitScale, 5.0) : 5.0;
 }
 
 double WebPage::maximumScale() const
@@ -2677,7 +2677,7 @@ Node* WebPagePrivate::adjustedBlockZoomNodeForZoomAndExpandingRatioLimits(Node* 
 {
     Node* initialNode = node;
     RenderObject* renderer = node->renderer();
-    bool acceptableNodeSize = newScaleForBlockZoomRect(rectForNode(node), 1.0, 0) < maxBlockZoomScale();
+    bool acceptableNodeSize = newScaleForBlockZoomRect(rectForNode(node), 1.0, 0) < maximumScale();
     IntSize actualVisibleSize = this->actualVisibleSize();
 
     while (!renderer || !acceptableNodeSize) {
@@ -2690,7 +2690,7 @@ Node* WebPagePrivate::adjustedBlockZoomNodeForZoomAndExpandingRatioLimits(Node* 
             return initialNode;
 
         renderer = node->renderer();
-        acceptableNodeSize = newScaleForBlockZoomRect(rectForNode(node), 1.0, 0) < maxBlockZoomScale();
+        acceptableNodeSize = newScaleForBlockZoomRect(rectForNode(node), 1.0, 0) < maximumScale();
     }
 
     return node;
