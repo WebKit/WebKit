@@ -1,5 +1,9 @@
 2013-07-08  Lucas Forschler  <lforschler@apple.com>
 
+        Rollout r151510. <rdar://problem/14380353>
+
+2013-07-08  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152306
 
     2013-07-02  Geoffrey Garen  <ggaren@apple.com>

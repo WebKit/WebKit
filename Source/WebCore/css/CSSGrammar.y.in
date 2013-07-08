@@ -321,14 +321,12 @@ static inline bool isCSSTokenAString(int yytype)
 %type <character> operator
 
 %type <valueList> expr
-%type <valueList> valid_expr
 %type <value> term
 %type <value> unary_term
 %type <value> function
 %type <value> calc_func_term
 %type <character> calc_func_operator
 %type <valueList> calc_func_expr
-%type <valueList> valid_calc_func_expr
 %type <valueList> calc_func_expr_list
 %type <valueList> calc_func_paren_expr
 %type <value> calc_function
@@ -1640,16 +1638,11 @@ prio:
   ;
 
 expr:
-    valid_expr
-    | valid_expr expr_recovery { $$ = 0; }
-  ;
-
-valid_expr:
     term {
         $$ = parser->createFloatingValueList();
         $$->addValue(parser->sinkFloatingValue($1));
     }
-    | valid_expr operator term {
+    | expr operator term {
         $$ = $1;
         if ($$) {
             if ($2) {
@@ -1661,6 +1654,9 @@ valid_expr:
             }
             $$->addValue(parser->sinkFloatingValue($3));
         }
+    }
+    | expr expr_recovery {
+        $$ = 0;
     }
   ;
 
@@ -1833,11 +1829,6 @@ calc_func_paren_expr:
   ;
 
 calc_func_expr:
-    valid_calc_func_expr
-    | valid_calc_func_expr expr_recovery { $$ = 0; }
-  ;
-
-valid_calc_func_expr:
     calc_func_term {
         $$ = parser->createFloatingValueList();
         $$->addValue(parser->sinkFloatingValue($1));
@@ -1868,6 +1859,9 @@ valid_calc_func_expr:
             $$ = 0;
     }
     | calc_func_paren_expr
+    | calc_func_expr error {
+        $$ = 0;
+    }
   ;
 
 calc_func_expr_list:
@@ -1965,25 +1959,18 @@ invalid_rule:
     ;
 
 invalid_block:
-    '{' error_recovery closing_brace {
+    '{' error invalid_block_list error closing_brace {
+        parser->invalidBlockHit();
+    }
+  | '{' error closing_brace {
         parser->invalidBlockHit();
     }
     ;
 
-invalid_square_brackets_block:
-    '[' error_recovery ']'
-  | '[' error_recovery TOKEN_EOF
-    ;
-
-invalid_parentheses_block:
-    opening_parenthesis error_recovery closing_parenthesis;
-
-opening_parenthesis:
-    '(' | FUNCTION | CALCFUNCTION | VARFUNCTION | MINFUNCTION | MAXFUNCTION | ANYFUNCTION | NOTFUNCTION
-#if ENABLE_VIDEO_TRACK
-    | CUEFUNCTION
-#endif
-    ;
+invalid_block_list:
+    invalid_block
+  | invalid_block_list error invalid_block
+;
 
 error_location: {
         $$ = parser->currentLocation();
@@ -1992,10 +1979,8 @@ error_location: {
 
 error_recovery:
     /* empty */
-  | error_recovery error
   | error_recovery invalid_block
-  | error_recovery invalid_square_brackets_block
-  | error_recovery invalid_parentheses_block
+  | error_recovery error
     ;
 
 %%
