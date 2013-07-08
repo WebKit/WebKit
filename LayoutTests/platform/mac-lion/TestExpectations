@@ -140,6 +140,4 @@ platform/mac-wk2/tiled-drawing [ Skip ]
 http/tests/cache/partitioned-cache.html
 http/tests/cache/partitioned-cache-iframe.html
 
-webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Crash ]
-
 webkit.org/b/118480 fast/text/international/synthesized-italic-vertical-latin.html [ Failure ]
