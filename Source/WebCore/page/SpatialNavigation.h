@@ -105,9 +105,7 @@ struct FocusCandidate {
         , focusableNode(0)
         , enclosingScrollableBox(0)
         , distance(maxDistance())
-        , parentDistance(maxDistance())
         , alignment(None)
-        , parentAlignment(None)
         , isOffscreen(true)
         , isOffscreenAfterScrolling(true)
     {
@@ -127,9 +125,7 @@ struct FocusCandidate {
     Node* focusableNode;
     Node* enclosingScrollableBox;
     long long distance;
-    long long parentDistance;
     RectsAlignment alignment;
-    RectsAlignment parentAlignment;
     LayoutRect rect;
     bool isOffscreen;
     bool isOffscreenAfterScrolling;
