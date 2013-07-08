@@ -34,7 +34,7 @@ javascriptcore_built_nosources += \
 javascriptcore_sources += \
 	Source/JavaScriptCore/API/APICast.h \
 	Source/JavaScriptCore/API/APIShims.h \
-    Source/JavaScriptCore/API/JSAPIWrapperObject.h \
+	Source/JavaScriptCore/API/JSAPIWrapperObject.h \
 	Source/JavaScriptCore/API/JSBase.cpp \
 	Source/JavaScriptCore/API/JSBasePrivate.h \
 	Source/JavaScriptCore/API/JSCallbackConstructor.cpp \
@@ -54,9 +54,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/API/JSScriptRef.cpp \
 	Source/JavaScriptCore/API/JSScriptRefPrivate.h \
 	Source/JavaScriptCore/API/JSStringRef.cpp \
+	Source/JavaScriptCore/API/JSStringRefPrivate.h \
 	Source/JavaScriptCore/API/JSValueRef.cpp \
 	Source/JavaScriptCore/API/JSWeakObjectMapRefInternal.h \
-    Source/JavaScriptCore/API/ObjCCallbackFunction.h \
+	Source/JavaScriptCore/API/ObjCCallbackFunction.h \
 	Source/JavaScriptCore/API/OpaqueJSString.cpp \
 	Source/JavaScriptCore/API/OpaqueJSString.h \
 	Source/JavaScriptCore/assembler/AbstractMacroAssembler.h \
@@ -785,6 +786,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/Tracing.h \
 	Source/JavaScriptCore/runtime/TypedArrayDescriptor.h \
 	Source/JavaScriptCore/runtime/Uint16WithFraction.h \
+	Source/JavaScriptCore/runtime/VMStackBounds.h \
 	Source/JavaScriptCore/runtime/Watchdog.cpp \
 	Source/JavaScriptCore/runtime/Watchdog.h \
 	Source/JavaScriptCore/runtime/WatchdogNone.cpp \

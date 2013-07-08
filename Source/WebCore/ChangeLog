@@ -1,3 +1,9 @@
+2013-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header files.
+
 2013-07-08  Ruth Fong  <ruth_fong@apple.com>
 
         Fix TextTrackCue::cueIndex() to handle the null case of TextTrack::cues(() properly

@@ -1,3 +1,9 @@
+2013-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header files.
+
 2013-07-08  Antti Koivisto  <antti@apple.com>
 
         Add Deque::removeLast

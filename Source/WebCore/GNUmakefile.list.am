@@ -2847,6 +2847,7 @@ webcore_sources += \
 	Source/WebCore/dom/ContextFeatures.cpp \
 	Source/WebCore/dom/ContextFeatures.h \
 	Source/WebCore/dom/CrossThreadTask.h \
+	Source/WebCore/dom/CurrentScriptIncrementer.h \
 	Source/WebCore/dom/CustomElementConstructor.h \
 	Source/WebCore/dom/CustomElementRegistry.h \
 	Source/WebCore/dom/CustomEvent.cpp \
