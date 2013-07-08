@@ -28,6 +28,7 @@
 #include "JSContextRefPrivate.h"
 #include "JSObjectRefPrivate.h"
 #include "JSScriptRefPrivate.h"
+#include "JSStringRefPrivate.h"
 #include <math.h>
 #define ASSERT_DISABLED 0
 #include <wtf/Assertions.h>
@@ -1204,6 +1205,11 @@ int main(int argc, char* argv[])
     JSStringRef jsCFEmptyIStringWithCharacters = JSStringCreateWithCharacters((JSChar*)buffer, CFStringGetLength(cfEmptyString));
     free(buffer);
     JSValueRef jsCFEmptyStringWithCharacters = JSValueMakeString(context, jsCFEmptyIStringWithCharacters);
+
+    JSChar constantString[] = { 'H', 'e', 'l', 'l', 'o', };
+    JSStringRef constantStringRef = JSStringCreateWithCharactersNoCopy(constantString, sizeof(constantString) / sizeof(constantString[0]));
+    ASSERT(JSStringGetCharactersPtr(constantStringRef) == constantString);
+    JSStringRelease(constantStringRef);
 
     ASSERT(JSValueGetType(context, NULL) == kJSTypeNull);
     ASSERT(JSValueGetType(context, jsUndefined) == kJSTypeUndefined);
