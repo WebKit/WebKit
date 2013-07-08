@@ -36,12 +36,15 @@ namespace WebKit {
 bool Module::load()
 {
     m_handle = g_module_open(m_path.utf8().data(), G_MODULE_BIND_LAZY);
+    if (!m_handle)
+        WTFLogAlways("Error loading module '%s': %s", m_path.utf8().data(), g_module_error());
     return m_handle;
 }
 
 void Module::unload()
 {
-    g_module_close(m_handle);
+    if (m_handle)
+        g_module_close(m_handle);
 }
 
 void* Module::platformFunctionPointer(const char* functionName) const

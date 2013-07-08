@@ -1,3 +1,16 @@
+2013-07-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Runtime critical warning when unloading a module that failed to load
+        https://bugs.webkit.org/show_bug.cgi?id=118425
+
+        Reviewed by Martin Robinson.
+
+        * Platform/gtk/ModuleGtk.cpp:
+        (WebKit::Module::load): Show an error message when the module
+        fails to load.
+        (WebKit::Module::unload): Check module pointer before calling
+        unload method.
+
 2013-07-05  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Add API to lock the scroll position at the top or bottom of the page
