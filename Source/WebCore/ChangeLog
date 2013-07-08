@@ -1,3 +1,20 @@
+2013-07-08  Ruth Fong  <ruth_fong@apple.com>
+
+        Fix TextTrackCue::cueIndex() to handle the null case of TextTrack::cues(() properly
+        https://bugs.webkit.org/show_bug.cgi?id=117815
+        <rdar://problem/14211041>
+
+        Reviewed by Eric Carlson.
+
+        Merge https://src.chromium.org/viewvc/blink?revision=153206&view=revision
+        
+        No new tests, only behavior change is preventing a crash in the release build.
+        cueIndex() is only used for sorting cues, so returning an invalidCueIndex in the case
+        where track()->cues() is null makes sense and won't modify behavior.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::cueIndex):
+
 2013-07-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r152416.

@@ -486,7 +486,8 @@ int TextTrackCue::cueIndex()
     if (m_cueIndex == invalidCueIndex) {
         ASSERT(track());
         ASSERT(track()->cues());
-        m_cueIndex = track()->cues()->getCueIndex(this);
+        if (TextTrackCueList* cueList = track()->cues())
+            m_cueIndex = cueList->getCueIndex(this);
     }
 
     return m_cueIndex;
