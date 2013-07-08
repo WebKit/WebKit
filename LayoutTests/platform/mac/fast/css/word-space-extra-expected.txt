@@ -6,11 +6,11 @@ layer at (0,0) size 785x2393
       RenderBlock {H2} at (0,0) size 769x28
         RenderText {#text} at (0,0) size 138x28
           text run at (0,0) width 138: "word-spacing"
-      RenderBlock (floating) {PRE} at (0,60) size 1264x167
-        RenderBlock {H3} at (0,15) size 1264x17
+      RenderBlock (floating) {PRE} at (0,60) size 1004x167
+        RenderBlock {H3} at (0,15) size 1004x17
           RenderText {#text} at (0,0) size 204x17
             text run at (0,0) width 204: "In a floated pre"
-        RenderBlock (anonymous) at (0,47) size 1264x120
+        RenderBlock (anonymous) at (0,47) size 1004x120
           RenderText {#text} at (0,0) size 260x30
             text run at (0,0) width 0: " "
             text run at (0,15) width 260: "Word   spacing test "
@@ -145,7 +145,7 @@ layer at (0,0) size 785x2393
             text run at (596,105) width 492: ". (with monospace font from elements to too)"
             text run at (1108,105) width 0: " "
       RenderBlock (anonymous) at (0,47) size 769x193
-        RenderBR {BR} at (1264,0) size 0x18
+        RenderBR {BR} at (1004,0) size 0x18
       RenderBlock {PRE} at (0,255) size 769x152
         RenderBlock {H3} at (0,0) size 769x17
           RenderText {#text} at (0,0) size 240x17
@@ -449,11 +449,11 @@ layer at (0,0) size 785x2393
       RenderBlock {H2} at (0,754) size 769x28
         RenderText {#text} at (0,0) size 141x28
           text run at (0,0) width 141: "letter-spacing"
-      RenderBlock (floating) {PRE} at (0,814) size 1521x167
-        RenderBlock {H3} at (0,15) size 1521x17
+      RenderBlock (floating) {PRE} at (0,814) size 1209x167
+        RenderBlock {H3} at (0,15) size 1209x17
           RenderText {#text} at (0,0) size 224x17
             text run at (0,0) width 224: "In a floated pre"
-        RenderBlock (anonymous) at (0,47) size 1521x120
+        RenderBlock (anonymous) at (0,47) size 1209x120
           RenderText {#text} at (0,0) size 286x30
             text run at (0,0) width 0: " "
             text run at (0,15) width 286: "Letter   spacing test "
@@ -588,7 +588,7 @@ layer at (0,0) size 785x2393
             text run at (702,105) width 572: ". (with monospace font from elements to too)"
             text run at (1274,105) width 0: " "
       RenderBlock (anonymous) at (0,801) size 769x193
-        RenderBR {BR} at (1521,0) size 0x18
+        RenderBR {BR} at (1209,0) size 0x18
       RenderBlock {PRE} at (0,1009) size 769x152
         RenderBlock {H3} at (0,0) size 769x17
           RenderText {#text} at (0,0) size 280x17
@@ -893,11 +893,11 @@ layer at (0,0) size 785x2393
       RenderBlock {H2} at (0,1539) size 769x28
         RenderText {#text} at (0,0) size 131x28
           text run at (0,0) width 131: "both-spacing"
-      RenderBlock (floating) {PRE} at (0,1599) size 2018x167
-        RenderBlock {H3} at (0,15) size 2018x17
+      RenderBlock (floating) {PRE} at (0,1599) size 1469x167
+        RenderBlock {H3} at (0,15) size 1469x17
           RenderText {#text} at (0,0) size 284x17
             text run at (0,0) width 284: "In a floated pre"
-        RenderBlock (anonymous) at (0,47) size 2018x120
+        RenderBlock (anonymous) at (0,47) size 1469x120
           RenderText {#text} at (0,0) size 543x30
             text run at (0,0) width 0: " "
             text run at (0,15) width 543: "Word and letter   spacing test "
@@ -1032,7 +1032,7 @@ layer at (0,0) size 785x2393
             text run at (1039,105) width 712: ". (with monospace font from elements to too)"
             text run at (1771,105) width 0: " "
       RenderBlock (anonymous) at (0,1586) size 769x193
-        RenderBR {BR} at (2018,0) size 0x18
+        RenderBR {BR} at (1469,0) size 0x18
       RenderBlock {PRE} at (0,1794) size 769x152
         RenderBlock {H3} at (0,0) size 769x17
           RenderText {#text} at (0,0) size 340x17
