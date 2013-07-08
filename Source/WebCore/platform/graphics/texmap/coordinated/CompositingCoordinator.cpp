@@ -406,23 +406,23 @@ void CompositingCoordinator::scheduleReleaseInactiveAtlases()
 
 void CompositingCoordinator::releaseInactiveAtlasesTimerFired(Timer<CompositingCoordinator>*)
 {
-    // We always want to keep one atlas for non-composited content.
+    // We always want to keep one atlas for root contents layer.
     OwnPtr<UpdateAtlas> atlasToKeepAnyway;
-    bool foundActiveAtlasForNonCompositedContent = false;
+    bool foundActiveAtlasForRootContentsLayer = false;
     for (int i = m_updateAtlases.size() - 1;  i >= 0; --i) {
         UpdateAtlas* atlas = m_updateAtlases[i].get();
         if (!atlas->isInUse())
             atlas->addTimeInactive(ReleaseInactiveAtlasesTimerInterval);
-        bool usableForNonCompositedContent = !atlas->supportsAlpha();
+        bool usableForRootContentsLayer = !atlas->supportsAlpha();
         if (atlas->isInactive()) {
-            if (!foundActiveAtlasForNonCompositedContent && !atlasToKeepAnyway && usableForNonCompositedContent)
+            if (!foundActiveAtlasForRootContentsLayer && !atlasToKeepAnyway && usableForRootContentsLayer)
                 atlasToKeepAnyway = m_updateAtlases[i].release();
             m_updateAtlases.remove(i);
-        } else if (usableForNonCompositedContent)
-            foundActiveAtlasForNonCompositedContent = true;
+        } else if (usableForRootContentsLayer)
+            foundActiveAtlasForRootContentsLayer = true;
     }
 
-    if (!foundActiveAtlasForNonCompositedContent && atlasToKeepAnyway)
+    if (!foundActiveAtlasForRootContentsLayer && atlasToKeepAnyway)
         m_updateAtlases.append(atlasToKeepAnyway.release());
 
     if (m_updateAtlases.size() <= 1)

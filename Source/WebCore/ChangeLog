@@ -1,3 +1,17 @@
+2013-07-08  Jae Hyun Park  <jae.park@company100.net>
+
+        [Coordinated Graphics] Rename variables in UpdateAtlas
+        https://bugs.webkit.org/show_bug.cgi?id=118403
+
+        Reviewed by Noam Rosenthal.
+
+        As of r149292, non-composited contents layer was removed from
+        CoordinatedGraphics. So, the variables should be renamed for
+        clarification.
+
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::releaseInactiveAtlasesTimerFired):
+
 2013-07-08  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Incremental build fix after r145712.
