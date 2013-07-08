@@ -1,3 +1,16 @@
+2013-07-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: iOS: SVG paths are not offset by the parent bounding box
+        https://bugs.webkit.org/show_bug.cgi?id=118433
+
+        The path for SVG shapes is in terms of its parent's view space. We need to offset
+        the path by that amount so that it's in the right location.
+
+        Reviewed by Tim Horton.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::elementPath):
+
 2013-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
