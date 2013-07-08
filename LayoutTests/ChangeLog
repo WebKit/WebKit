@@ -1,5 +1,15 @@
 2013-07-08  David Farler  <dfarler@apple.com>
 
+        Mark fast/text/international/synthesized-italic-vertical-latin.html as failing on Lion.
+        https://bugs.webkit.org/show_bug.cgi?id=118480
+
+        Unreviewed TestExpectation change.
+
+        * platform/mac-lion/TestExpectations:
+        Mark fast/text/international/synthesized-italic-vertical-latin.html as Failure.
+
+2013-07-08  David Farler  <dfarler@apple.com>
+
         Skip fast/repaint/fixed-right-in-page-scale.html on Lion.
         https://bugs.webkit.org/show_bug.cgi?id=118479
 
