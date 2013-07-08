@@ -1,3 +1,12 @@
+2013-07-08  Krzysztof Czech  <k.czech@ymail.com>
+
+        Unreviewed EFL gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=118453
+
+        Added new baseline for EFL after r151841
+
+        * platform/efl/accessibility/aria-tab-role-on-buttons-expected.txt: Added.
+
 2013-07-08  Kihong Kwon  <kihong.kwon@samsung.com>
 
         vibrate function have to return boolean value.
