@@ -833,6 +833,7 @@ GENERATORS += inspectorJSON
 inspectorBackendCommands.output = InspectorBackendCommands.qrc
 inspectorBackendCommands.input = INSPECTOR_BACKEND_COMMANDS_QRC
 inspectorBackendCommands.commands = $$QMAKE_COPY $$toSystemPath($$INSPECTOR_BACKEND_COMMANDS_QRC) ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}InspectorBackendCommands.qrc
+inspectorBackendCommands.depends = $$INSPECTOR_JSON
 inspectorBackendCommands.add_output_to_sources = false
 GENERATORS += inspectorBackendCommands
 

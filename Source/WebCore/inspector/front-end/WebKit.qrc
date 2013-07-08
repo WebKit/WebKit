@@ -77,6 +77,7 @@
     <file>ExtensionRegistryStub.js</file>
     <file>ExtensionServer.js</file>
     <file>ExtensionView.js</file>
+    <file>externs.js</file>
     <file>FileContentView.js</file>
     <file>FileManager.js</file>
     <file>FileMapping.js</file>

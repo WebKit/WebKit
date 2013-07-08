@@ -1,3 +1,13 @@
+2013-07-08  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Incremental build fix after r145712.
+        https://bugs.webkit.org/show_bug.cgi?id=112576.
+
+        Reviewed by Jocelyn Turcotte.
+
+        * DerivedSources.pri: Added dependence to INSPECTOR_JSON.
+        * inspector/front-end/WebKit.qrc: Added missing JS file.
+
 2013-07-08  Kihong Kwon  <kihong.kwon@samsung.com>
 
         vibrate function have to return boolean value.
