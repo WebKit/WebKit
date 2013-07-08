@@ -22,7 +22,6 @@
 
 #if ENABLE(VIBRATION)
 
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "Navigator.h"
 #include "Page.h"
@@ -39,40 +38,22 @@ NavigatorVibration::~NavigatorVibration()
 {
 }
 
-void NavigatorVibration::vibrate(Navigator* navigator, unsigned time, ExceptionCode& ec)
+bool NavigatorVibration::vibrate(Navigator* navigator, unsigned time)
 {
-    if (!navigator->frame()->page())
-        return;
-
-#if ENABLE(PAGE_VISIBILITY_API)
-    if (navigator->frame()->page()->visibilityState() == PageVisibilityStateHidden && time)
-        return;
-#endif
-
-    if (!Vibration::isActive(navigator->frame()->page())) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    Vibration::from(navigator->frame()->page())->vibrate(time);
+    return NavigatorVibration::vibrate(navigator, VibrationPattern(time));
 }
 
-void NavigatorVibration::vibrate(Navigator* navigator, const VibrationPattern& pattern, ExceptionCode& ec)
+bool NavigatorVibration::vibrate(Navigator* navigator, const VibrationPattern& pattern)
 {
     if (!navigator->frame()->page())
-        return;
+        return false;
 
 #if ENABLE(PAGE_VISIBILITY_API)
     if (navigator->frame()->page()->visibilityState() == PageVisibilityStateHidden)
-        return;
+        return false;
 #endif
 
-    if (!Vibration::isActive(navigator->frame()->page())) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    Vibration::from(navigator->frame()->page())->vibrate(pattern);
+    return Vibration::from(navigator->frame()->page())->vibrate(pattern);
 }
 
 } // namespace WebCore

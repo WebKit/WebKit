@@ -44,36 +44,25 @@ PassOwnPtr<Vibration> Vibration::create(VibrationClient* client)
     return adoptPtr(new Vibration(client));
 }
 
-void Vibration::vibrate(const unsigned& time)
+bool Vibration::vibrate(const VibrationPattern& pattern)
 {
-    if (!time) {
-        cancelVibration();
-        return;
-    }
-    m_pattern.append(time);
-    m_timerStart.startOneShot(0);
-    m_isVibrating = true;
-}
-
-void Vibration::vibrate(const VibrationPattern& pattern)
-{
-    int length = pattern.size();
-
-    // Cancel the pre-existing instance of vibration patterns, if the pattern is 0 or an empty list.
-    if (!length || (length == 1 && !pattern[0])) {
-        cancelVibration();
-        return;
-    }
-
-    if (m_isVibrating)
-        cancelVibration();
-
-    if (m_timerStart.isActive())
-        m_timerStart.stop();
+    size_t length = pattern.size();
 
     m_pattern = pattern;
+    if (length && !(length % 2))
+        m_pattern.removeLast();
+
+    // Pre-exsiting instance need to be canceled when vibration is called.
+    // And if time is 0, vibration have to be canceled also.
+    if (m_isVibrating || (m_pattern.size() == 1 && !m_pattern[0]))
+        cancelVibration();
+
+    if (!m_pattern.size())
+        return true;
+
     m_timerStart.startOneShot(0);
     m_isVibrating = true;
+    return true;
 }
 
 void Vibration::cancelVibration()

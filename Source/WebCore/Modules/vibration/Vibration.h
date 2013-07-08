@@ -39,8 +39,7 @@ public:
 
     static PassOwnPtr<Vibration> create(VibrationClient*);
 
-    void vibrate(const unsigned& time);
-    void vibrate(const VibrationPattern&);
+    bool vibrate(const VibrationPattern&);
     void cancelVibration();
 
     // FIXME : Add suspendVibration() and resumeVibration() to the page visibility feature, when the document.hidden attribute is changed.

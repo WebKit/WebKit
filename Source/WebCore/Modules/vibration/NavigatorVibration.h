@@ -34,12 +34,13 @@ class NavigatorVibration {
 public:
     typedef Vector<unsigned> VibrationPattern;
 
-    static void vibrate(Navigator*, unsigned time, ExceptionCode&);
-    static void vibrate(Navigator*, const VibrationPattern&, ExceptionCode&);
+    ~NavigatorVibration();
+
+    static bool vibrate(Navigator*, unsigned time);
+    static bool vibrate(Navigator*, const VibrationPattern&);
 
 private:
     NavigatorVibration();
-    ~NavigatorVibration();
 };
 
 } // namespace WebCore

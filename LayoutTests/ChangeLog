@@ -1,3 +1,18 @@
+2013-07-08  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        vibrate function have to return boolean value.
+        https://bugs.webkit.org/show_bug.cgi?id=118288
+
+        Reviewed by Gyuyoung Kim.
+
+        Update navigator-vibration.html to adjust latest spec.
+        Add vibration/cancelVibration-during-pattern-vibrating.html to TestExpactations
+        until Vibration API support visibilitychane event.
+
+        * platform/efl/TestExpectations:
+        * vibration/navigator-vibration-expected.txt:
+        * vibration/navigator-vibration.html:
+
 2013-07-06  Rob Buis  <rbuis@rim.com>
 
         createElement("image") creates an HTMLImageElement, although this hack should exist in parser only
