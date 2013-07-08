@@ -42,6 +42,7 @@ public:
 
     void adopt(CSSSelectorList& list);
     void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector);
+    void adoptSelectorArray(CSSSelector* selectors) { ASSERT(!m_selectorArray); m_selectorArray = selectors; }
 
     bool isValid() const { return !!m_selectorArray; }
     const CSSSelector* first() const { return m_selectorArray; }
@@ -62,6 +63,8 @@ public:
     bool hasInvalidSelector() const;
 
     String selectorsText() const;
+
+    unsigned selectorCount() const;
 
 private:
     unsigned length() const;

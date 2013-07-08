@@ -55,6 +55,8 @@ class StyleSheetContents;
 
 class RuleData {
 public:
+    static const unsigned maximumSelectorCount = 8192;
+
     RuleData(StyleRule*, unsigned selectorIndex, unsigned position, AddRuleFlags);
 
     unsigned position() const { return m_position; }

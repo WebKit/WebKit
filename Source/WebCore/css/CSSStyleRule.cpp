@@ -27,6 +27,7 @@
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
+#include "RuleSet.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
@@ -96,6 +97,10 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
     CSSSelectorList selectorList;
     p.parseSelector(selectorText, selectorList);
     if (!selectorList.isValid())
+        return;
+
+    // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
+    if (selectorList.selectorCount() > RuleData::maximumSelectorCount)
         return;
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);

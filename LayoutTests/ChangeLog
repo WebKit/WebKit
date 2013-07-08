@@ -1,3 +1,16 @@
+2013-07-08  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r125294): A style rule with more than 8192 selectors can cause style corruption.
+        <http://webkit.org/b/118369>
+        <rdar://problem/14291428>
+
+        Reviewed by Antti Koivisto.
+
+        Added a test to document the new cap of 8192 selectors per CSS rule.
+
+        * fast/css/rule-selector-overflow-expected.txt: Added.
+        * fast/css/rule-selector-overflow.html: Added.
+
 2013-07-08  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Update TestExpectations

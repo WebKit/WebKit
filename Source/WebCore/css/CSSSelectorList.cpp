@@ -85,6 +85,14 @@ void CSSSelectorList::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& se
     selectorVector.clear();
 }
 
+unsigned CSSSelectorList::selectorCount() const
+{
+    unsigned count = 0;
+    for (const CSSSelector* s = first(); s; s = next(s))
+        ++count;
+    return count;
+}
+
 unsigned CSSSelectorList::length() const
 {
     if (!m_selectorArray)

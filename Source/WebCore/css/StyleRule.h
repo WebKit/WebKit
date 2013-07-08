@@ -127,9 +127,12 @@ public:
     
     void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
+    void parserAdoptSelectorArray(CSSSelector* selectors) { m_selectorList.adoptSelectorArray(selectors); }
     void setProperties(PassRefPtr<StylePropertySet>);
 
     PassRefPtr<StyleRule> copy() const { return adoptRef(new StyleRule(*this)); }
+
+    Vector<RefPtr<StyleRule> > splitIntoMultipleRulesWithMaximumSelectorCount(unsigned maxSelectorCount) const;
 
     static unsigned averageSizeInBytes();
 
@@ -137,9 +140,17 @@ private:
     StyleRule(int sourceLine);
     StyleRule(const StyleRule&);
 
+    static PassRefPtr<StyleRule> create(int sourceLine, const Vector<const CSSSelector*>&, PassRefPtr<StylePropertySet>);
+
     RefPtr<StylePropertySet> m_properties;
     CSSSelectorList m_selectorList;
 };
+
+inline const StyleRule* toStyleRule(const StyleRuleBase* rule)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!rule || rule->isStyleRule());
+    return static_cast<const StyleRule*>(rule);
+}
 
 class StyleRuleFontFace : public StyleRuleBase {
 public:

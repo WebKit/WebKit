@@ -260,6 +260,44 @@ void StyleRule::setProperties(PassRefPtr<StylePropertySet> properties)
     m_properties = properties;
 }
 
+PassRefPtr<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSelector*>& selectors, PassRefPtr<StylePropertySet> properties)
+{
+    CSSSelector* selectorListArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * selectors.size()));
+    for (unsigned i = 0; i < selectors.size(); ++i)
+        new (NotNull, &selectorListArray[i]) CSSSelector(*selectors.at(i));
+    selectorListArray[selectors.size() - 1].setLastInSelectorList();
+    RefPtr<StyleRule> rule = StyleRule::create(sourceLine);
+    rule->parserAdoptSelectorArray(selectorListArray);
+    rule->setProperties(properties);
+    return rule.release();
+}
+
+Vector<RefPtr<StyleRule> > StyleRule::splitIntoMultipleRulesWithMaximumSelectorCount(unsigned maximumSelectorCount) const
+{
+    ASSERT(selectorList().selectorCount() > maximumSelectorCount);
+
+    Vector<RefPtr<StyleRule> > rules;
+    Vector<const CSSSelector*> selectorsToCopy;
+
+    unsigned selectorCount = 0;
+
+    for (const CSSSelector* selector = selectorList().first(); selector; selector = CSSSelectorList::next(selector)) {
+        for (const CSSSelector* component = selector; component; component = component->tagHistory())
+            selectorsToCopy.append(component);
+
+        if (++selectorCount == maximumSelectorCount) {
+            rules.append(create(sourceLine(), selectorsToCopy, m_properties));
+            selectorsToCopy.clear();
+            selectorCount = 0;
+        }
+    }
+
+    if (selectorCount)
+        rules.append(create(sourceLine(), selectorsToCopy, m_properties));
+
+    return rules;
+}
+
 StyleRulePage::StyleRulePage()
     : StyleRuleBase(Page)
 {

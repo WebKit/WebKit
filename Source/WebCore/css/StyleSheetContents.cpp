@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2012, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "MediaList.h"
 #include "Node.h"
+#include "RuleSet.h"
 #include "SecurityOrigin.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
@@ -139,6 +140,14 @@ void StyleSheetContents::parserAppendRule(PassRefPtr<StyleRuleBase> rule)
     if (rule->isMediaRule())
         reportMediaQueryWarningIfNeeded(singleOwnerDocument(), static_cast<StyleRuleMedia*>(rule.get())->mediaQueries());
 #endif
+
+    // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
+    // If we're adding a rule with a huge number of selectors, split it up into multiple rules
+    if (rule->isStyleRule() && toStyleRule(rule.get())->selectorList().selectorCount() > RuleData::maximumSelectorCount) {
+        Vector<RefPtr<StyleRule> > rules = toStyleRule(rule.get())->splitIntoMultipleRulesWithMaximumSelectorCount(RuleData::maximumSelectorCount);
+        m_childRules.appendVector(rules);
+        return;
+    }
 
     m_childRules.append(rule);
 }

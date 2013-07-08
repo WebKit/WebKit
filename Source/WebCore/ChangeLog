@@ -1,3 +1,49 @@
+2013-07-08  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r125294): A style rule with more than 8192 selectors can cause style corruption.
+        <http://webkit.org/b/118369>
+        <rdar://problem/14291428>
+
+        Reviewed by Antti Koivisto.
+
+        Add a semi-hard cap of 8192 selectors per CSS rule. Rules with longer selector lists will be split into
+        multiple rules (with 8192 selectors per rule.) The style properties are shared behind the scenes
+        so it's all pretty efficient.
+
+        This does generate a different CSSOM for gigantic selector lists, I've added a test to document this.
+        Note that setting CSSStyleRule.selectorText with over 8192 selectors will now fail, the splitting into
+        multiple rules only happens when parsing full style sheets.
+
+        Test: fast/css/rule-selector-overflow.html
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::selectorCount):
+
+            Add a helper to count the number of selectors in a list (not the number of raw selector components.)
+
+        * css/RuleSet.h:
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+
+            Add RuleData::maximumSelectorCount constant and cap CSSStyleRule.selectorText to that many selectors.
+
+        * css/CSSSelectorList.h:
+        (WebCore::CSSSelectorList::adoptSelectorArray):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::create):
+        (WebCore::StyleRule::splitIntoMultipleRulesWithMaximumSelectorCount):
+        * css/StyleRule.h:
+        (WebCore::StyleRule::parserAdoptSelectorArray):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parserAppendRule):
+
+            The meat of this change. Split rules with >8K selectors into multiple rules with 8K selectors in each.
+
+        * css/StyleRule.h:
+        (WebCore::toStyleRule):
+
+            Added a toStyleRule() helper for good measure.
+
 2013-07-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Introduce DECLARE_FORWARDING_ATTRIBUTE_EVENT_LISTENER() macro
