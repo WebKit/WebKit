@@ -86,9 +86,9 @@ void HTMLTablePartElement::collectStyleForPresentationAttribute(const QualifiedN
 HTMLTableElement* HTMLTablePartElement::findParentTable() const
 {
     ContainerNode* parent = parentNode();
-    while (parent && !parent->hasTagName(tableTag))
+    while (parent && !isHTMLTableElement(parent))
         parent = parent->parentNode();
-    return static_cast<HTMLTableElement*>(parent);
+    return toHTMLTableElement(parent);
 }
 
 }

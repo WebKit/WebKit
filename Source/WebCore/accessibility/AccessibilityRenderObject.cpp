@@ -54,6 +54,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "HTMLSelectElement.h"
+#include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -2535,7 +2536,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(trTag))
         return RowRole;
 
-    if (node && node->hasTagName(tableTag))
+    if (node && isHTMLTableElement(node))
         return TableRole;
 #endif
 

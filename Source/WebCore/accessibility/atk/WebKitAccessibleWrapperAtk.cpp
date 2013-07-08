@@ -185,7 +185,7 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
 
     // atk_table_get_summary returns an AtkObject. We have no summary object, so expose summary here.
     if (coreObject->roleValue() == TableRole) {
-        String summary = static_cast<HTMLTableElement*>(node)->summary();
+        String summary = toHTMLTableElement(node)->summary();
         if (!summary.isEmpty())
             return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, summary);
     }

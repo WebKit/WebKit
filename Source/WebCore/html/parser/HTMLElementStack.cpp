@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
+#include "HTMLTableElement.h"
 #include "MathMLNames.h"
 #include "SVGNames.h"
 #include <wtf/PassOwnPtr.h>
@@ -55,7 +56,7 @@ inline bool isScopeMarker(HTMLStackItem* item)
         || item->hasTagName(captionTag)
         || item->hasTagName(marqueeTag)
         || item->hasTagName(objectTag)
-        || item->hasTagName(tableTag)
+        || isHTMLTableElement(item->node())
         || item->hasTagName(tdTag)
         || item->hasTagName(thTag)
         || item->hasTagName(MathMLNames::miTag)
@@ -82,7 +83,7 @@ inline bool isListItemScopeMarker(HTMLStackItem* item)
 
 inline bool isTableScopeMarker(HTMLStackItem* item)
 {
-    return item->hasTagName(tableTag)
+    return isHTMLTableElement(item->node())
 #if ENABLE(TEMPLATE_ELEMENT)
         || item->hasTagName(templateTag)
 #endif

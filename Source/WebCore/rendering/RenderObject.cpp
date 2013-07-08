@@ -42,6 +42,7 @@
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "HTMLTableElement.h"
 #include "HitTestResult.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
@@ -3095,7 +3096,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     RenderObject* curr = parent();
     while (curr && (!curr->node() || (!curr->isPositioned() && !curr->isBody())) && !curr->isRenderNamedFlowThread()) {
         Node* element = curr->node();
-        if (!skipTables && element && (element->hasTagName(tableTag) || element->hasTagName(tdTag) || element->hasTagName(thTag)))
+        if (!skipTables && element && (isHTMLTableElement(element) || element->hasTagName(tdTag) || element->hasTagName(thTag)))
             break;
  
         float newZoom = curr->style()->effectiveZoom();

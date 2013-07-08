@@ -154,7 +154,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
 HTMLTableRowsCollection::HTMLTableRowsCollection(Node* table)
     : HTMLCollection(table, TableRows, OverridesItemAfter)
 {
-    ASSERT(table->hasTagName(tableTag));
+    ASSERT(isHTMLTableElement(table));
 }
 
 PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Node* table, CollectionType)
@@ -166,7 +166,7 @@ Element* HTMLTableRowsCollection::virtualItemAfter(unsigned& offsetInArray, Elem
 {
     ASSERT_UNUSED(offsetInArray, !offsetInArray);
     ASSERT(!previous || (previous->isHTMLElement() && toHTMLElement(previous)->hasLocalName(trTag)));
-    return rowAfter(static_cast<HTMLTableElement*>(ownerNode()), static_cast<HTMLTableRowElement*>(previous));
+    return rowAfter(toHTMLTableElement(ownerNode()), static_cast<HTMLTableRowElement*>(previous));
 }
 
 }

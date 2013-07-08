@@ -37,6 +37,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLStackItem.h"
+#include "HTMLTableElement.h"
 #include "HTMLTemplateElement.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
@@ -1678,7 +1679,7 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
         if (item->hasTagName(colgroupTag)) {
             return setInsertionMode(InColumnGroupMode);
         }
-        if (item->hasTagName(tableTag))
+        if (isHTMLTableElement(item->node()))
             return setInsertionMode(InTableMode);
         if (item->hasTagName(headTag)) {
 #if ENABLE(TEMPLATE_ELEMENT)
@@ -2419,7 +2420,7 @@ ReprocessBuffer:
         ASSERT(insertionMode() == InTableMode || insertionMode() == InTableBodyMode || insertionMode() == InRowMode);
         ASSERT(m_pendingTableCharacters.isEmpty());
         if (m_tree.currentStackItem()->isElementNode()
-            && (m_tree.currentStackItem()->hasTagName(HTMLNames::tableTag)
+            && (isHTMLTableElement(m_tree.currentStackItem()->node())
                 || m_tree.currentStackItem()->hasTagName(HTMLNames::tbodyTag)
                 || m_tree.currentStackItem()->hasTagName(HTMLNames::tfootTag)
                 || m_tree.currentStackItem()->hasTagName(HTMLNames::theadTag)

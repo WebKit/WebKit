@@ -43,6 +43,7 @@
 #import "HTMLImageElement.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
+#import "HTMLTableElement.h"
 #import "LoaderNSURLExtras.h"
 #import "RenderImage.h"
 #import "TextIterator.h"
@@ -261,7 +262,7 @@ static NSFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMutableDi
                     result = @"block";
                 else if (coreElement->hasTagName(liTag))
                     result = @"list-item";
-                else if (coreElement->hasTagName(tableTag))
+                else if (isHTMLTableElement(coreElement))
                     result = @"table";
                 else if (coreElement->hasTagName(trTag))
                     result = @"table-row";

@@ -47,6 +47,7 @@
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "KURL.h"
@@ -433,7 +434,7 @@ static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestor
 
     if (commonAncestorBlock->hasTagName(tbodyTag) || commonAncestorBlock->hasTagName(trTag)) {
         ContainerNode* table = commonAncestorBlock->parentNode();
-        while (table && !table->hasTagName(tableTag))
+        while (table && !isHTMLTableElement(table))
             table = table->parentNode();
 
         return table;

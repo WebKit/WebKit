@@ -36,6 +36,7 @@
 #include "htmlediting.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLTableElement.h"
 #include "NodeTraversal.h"
 #include "RenderTableCell.h"
 #include "Text.h"
@@ -445,7 +446,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
     makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss();
 
     // Never remove the start block unless it's a table, in which case we won't merge content in.
-    if (startNode == m_startBlock && startOffset == 0 && canHaveChildrenForEditing(startNode) && !startNode->hasTagName(tableTag)) {
+    if (startNode == m_startBlock && startOffset == 0 && canHaveChildrenForEditing(startNode) && !isHTMLTableElement(startNode)) {
         startOffset = 0;
         startNode = NodeTraversal::next(startNode);
         if (!startNode)

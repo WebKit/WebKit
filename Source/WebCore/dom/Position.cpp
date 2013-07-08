@@ -28,6 +28,7 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "HTMLNames.h"
+#include "HTMLTableElement.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
@@ -561,7 +562,7 @@ static bool endsOfNodeAreVisuallyDistinctPositions(Node* node)
         return true;
         
     // Don't include inline tables.
-    if (node->hasTagName(tableTag))
+    if (isHTMLTableElement(node))
         return false;
     
     // There is a VisiblePosition inside an empty inline-block container.

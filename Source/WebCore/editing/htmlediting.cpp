@@ -40,6 +40,7 @@
 #include "HTMLOListElement.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParagraphElement.h"
+#include "HTMLTableElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "HTMLUListElement.h"
 #include "NodeTraversal.h"
@@ -1219,19 +1220,23 @@ bool areIdenticalElements(const Node* first, const Node* second)
 
 bool isNonTableCellHTMLBlockElement(const Node* node)
 {
-    return node->hasTagName(listingTag)
-        || node->hasTagName(olTag)
-        || node->hasTagName(preTag)
-        || node->hasTagName(tableTag)
-        || node->hasTagName(ulTag)
-        || node->hasTagName(xmpTag)
-        || node->hasTagName(h1Tag)
-        || node->hasTagName(h2Tag)
-        || node->hasTagName(h3Tag)
-        || node->hasTagName(h4Tag)
-        || node->hasTagName(h5Tag);
+    if (!node->isElementNode())
+        return false;
+
+    const Element* element = toElement(node);
+    return element->hasTagName(listingTag)
+        || element->hasTagName(olTag)
+        || element->hasTagName(preTag)
+        || isHTMLTableElement(element)
+        || element->hasTagName(ulTag)
+        || element->hasTagName(xmpTag)
+        || element->hasTagName(h1Tag)
+        || element->hasTagName(h2Tag)
+        || element->hasTagName(h3Tag)
+        || element->hasTagName(h4Tag)
+        || element->hasTagName(h5Tag);
 }
-    
+
 Position adjustedSelectionStartForStyleComputation(const VisibleSelection& selection)
 {
     // This function is used by range style computations to avoid bugs like:
