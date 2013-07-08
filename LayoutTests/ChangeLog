@@ -1,3 +1,13 @@
+2013-07-08  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Multiple compositing/patterns test fail
+        https://bugs.webkit.org/show_bug.cgi?id=118490
+
+        * platform/mac/TestExpectations: The failures appear to be WK2 only in my testing,
+        so moved the expectations to mac-wk2.
+
+        * platform/mac-wk2/TestExpectations: Updated bug numbers.
+
 2013-07-08  Radu Stavila  <stavila@adobe.com>
 
         NamedFlowCollection getters should return undefined when there's no NamedFlow
