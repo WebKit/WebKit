@@ -1,3 +1,14 @@
+2013-07-08  Antti Koivisto  <antti@apple.com>
+
+        Add Deque::removeLast
+        https://bugs.webkit.org/show_bug.cgi?id=118466
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Deque.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2013-07-08  Brian Holt  <brian.holt@samsung.com>
 
         [GTK] Leak: GFile* leaking in beginDragWithFilesCallback

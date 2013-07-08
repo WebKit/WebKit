@@ -1,3 +1,18 @@
+2013-07-08  Antti Koivisto  <antti@apple.com>
+
+        Add Deque::removeLast
+        https://bugs.webkit.org/show_bug.cgi?id=118466
+
+        Reviewed by Andreas Kling.
+        
+        Deque can remove both the first and the last element efficiently.
+        
+        Test: TestWebKitAPI/Tests/WTF/Deque.cpp
+
+        * wtf/Deque.h:
+        (WTF::::takeLast):
+        (WTF::::removeLast):
+
 2013-07-08  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt][Windows] Buildfix after r152426.

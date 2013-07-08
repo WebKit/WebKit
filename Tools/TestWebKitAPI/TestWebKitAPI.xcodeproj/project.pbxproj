@@ -213,6 +213,7 @@
 		E194E1BB177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = E194E1BA177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm */; };
 		E194E1BD177E53C7009C4D4E /* StopLoadingFromDidReceiveResponse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */; };
 		E490296814E2E3A4002BEDD1 /* TypingStyleCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */; };
+		E4A757D4178AF1B100B5D7A4 /* Deque.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */; };
 		F660AA0D15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */; };
 		F660AA1115A5F631003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */; };
 		F660AA1315A619C9003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA1215A619C8003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp */; };
@@ -529,6 +530,7 @@
 		E194E1BA177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StopLoadingFromDidReceiveResponse.mm; sourceTree = "<group>"; };
 		E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = StopLoadingFromDidReceiveResponse.html; sourceTree = "<group>"; };
 		E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TypingStyleCrash.mm; sourceTree = "<group>"; };
+		E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Deque.cpp; path = WTF/Deque.cpp; sourceTree = "<group>"; };
 		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetInjectedBundleInitializationUserDataCallback.cpp; sourceTree = "<group>"; };
 		F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetInjectedBundleInitializationUserDataCallback_Bundle.cpp; sourceTree = "<group>"; };
@@ -779,6 +781,7 @@
 				26F1B44215CA434F00D1E4BF /* AtomicString.cpp */,
 				A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */,
 				26A2C72E15E2E73C005B1A14 /* CString.cpp */,
+				E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */,
 				1AA9E55714980A9900001A8A /* Functional.cpp */,
 				0BCD833414857CE400EA2003 /* HashMap.cpp */,
 				26B2DFF815BDE599004F691D /* HashSet.cpp */,
@@ -1176,6 +1179,7 @@
 				37A6895F148A9B50005100FA /* SubresourceErrorCrash.mm in Sources */,
 				C081224513FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m in Sources */,
 				0BCD856A1485C98B00EA2003 /* TemporaryChange.cpp in Sources */,
+				E4A757D4178AF1B100B5D7A4 /* Deque.cpp in Sources */,
 				29AB8AA4164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm in Sources */,
 				BC131AA9117131FC00B69727 /* TestsController.cpp in Sources */,
 				E490296814E2E3A4002BEDD1 /* TypingStyleCrash.mm in Sources */,
