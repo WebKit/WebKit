@@ -626,7 +626,9 @@
 #define HAVE_ALIGNED_MALLOC 1
 #define HAVE_ISDEBUGGERPRESENT 1
 
+#if !PLATFORM(QT)
 #include <WTF/WTFHeaderDetection.h>
+#endif
 
 #endif
 

@@ -1,3 +1,11 @@
+2013-07-08  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][Windows] Buildfix after r152426.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/Platform.h: Do not include WTFHeaderDetection.h on Qt build.
+
 2013-07-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the performance regressions introduced by r152418
