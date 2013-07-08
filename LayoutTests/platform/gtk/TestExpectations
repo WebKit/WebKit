@@ -422,6 +422,9 @@ Bug(GTK) editing/secure-input [ Failure ]
 # Synthesized italics not supported
 webkit.org/b/117975 fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 
+# .webkitClosedCaptionsVisible doesn't work with "Automatic" caption mode
+webkit.org/b/118459 media/track/track-legacyapi-with-automatic-mode.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -662,6 +665,8 @@ webkit.org/b/117583 http/tests/media/video-load-twice.html [ Failure Pass ]
 webkit.org/b/105191 media/video-playing-and-pause.html [ Failure Pass ]
 
 webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
+
+webkit.org/b/118460 media/media-element-play-after-eos.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

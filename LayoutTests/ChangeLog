@@ -1,3 +1,13 @@
+2013-07-08  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=118462
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Skip media/track/track-legacyapi-with-automatic-mode.html
+        and mark media/media-element-play-after-eos.html as flaky.
+
 2013-07-08  Krzysztof Czech  <k.czech@ymail.com>
 
         Unreviewed EFL gardening.
