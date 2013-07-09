@@ -1,3 +1,14 @@
+2013-07-09  Martin Robinson  <mrobinson@igalia.com>
+
+        PrettyPatch doesn't handle UTF-8 characters correctly
+        https://bugs.webkit.org/show_bug.cgi?id=45760
+
+        Reviewed by Adam Roben.
+
+        * PrettyPatch/PrettyPatch.rb: Since the diff lines are typically in UTF-8 and the results
+        of PrettyPatch may be served by a web server or not (for instance when accessed via
+        webkit-patch pretty-diff), we should use a meta tag to force the page encoding to UTF-8.
+
 2013-05-23  Patrick Gansterer  <paroga@webkit.org>
 
         EWS bubbles need more space
