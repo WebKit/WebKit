@@ -613,7 +613,7 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
         RefPtr<Range> selectedRange = frameWithSelection->selection()->selection().firstRange();
         if (options & Backwards) {
             for (size_t i = matchRanges->size(); i > 0; --i) {
-                if (selectedRange->compareBoundaryPoints(Range::START_TO_END, matchRanges->at(i - 1).get(), IGNORE_EXCEPTION) > 0) {
+                if (selectedRange->compareBoundaryPoints(Range::END_TO_START, matchRanges->at(i - 1).get(), IGNORE_EXCEPTION) > 0) {
                     indexForSelection = i - 1;
                     break;
                 }
@@ -626,6 +626,11 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
                 }
             }
         }
+    } else {
+        if (options & Backwards)
+            indexForSelection = matchRanges->size() - 1;
+        else
+            indexForSelection = 0;
     }
 }
 
