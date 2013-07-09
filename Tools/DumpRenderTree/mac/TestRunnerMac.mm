@@ -30,6 +30,7 @@
 #import "DumpRenderTree.h"
 #import "TestRunner.h"
 
+#import "DefaultPolicyDelegate.h"
 #import "EditingDelegate.h"
 #import "MockGeolocationProvider.h"
 #import "MockWebNotificationProvider.h"
@@ -407,11 +408,13 @@ void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
 
 void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
-    if (setDelegate) {
-        [policyDelegate setPermissive:permissive];
-        [[mainFrame webView] setPolicyDelegate:policyDelegate];
-    } else
-        [[mainFrame webView] setPolicyDelegate:nil];
+    if (!setDelegate) {
+        [[mainFrame webView] setPolicyDelegate:defaultPolicyDelegate];
+        return;
+    }
+
+    [policyDelegate setPermissive:permissive];
+    [[mainFrame webView] setPolicyDelegate:policyDelegate];
 }
 
 void TestRunner::setDatabaseQuota(unsigned long long quota)

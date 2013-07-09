@@ -1,3 +1,33 @@
+2013-07-09  Anders Carlsson  <andersca@apple.com>
+
+        DumpRenderTree should stop sending unsupported URLs to NSWorkspace
+        https://bugs.webkit.org/show_bug.cgi?id=118514
+        <rdar://problem/13686836>
+
+        Reviewed by Sam Weinig.
+
+        Add a new default policy delegate and override decidePolicyForNavigationAction: to not pass unhandled URLs to NSWorkspace.
+
+        * DumpRenderTree/DefaultPolicyDelegate.h: Added.
+        * DumpRenderTree/DefaultPolicyDelegate.m: Added.
+        (-[DefaultPolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Add DefaultPolicyDelegate.h and DefaultPolicyDelegate.m.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allocateGlobalControllers):
+        Allocate a DefaultPolicyDelegate object.
+
+        (resetWebViewToConsistentStateBeforeTesting):
+        Set the policy delegate to the default policy delegate.
+
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        Declare the defaultPolicyDelegate object.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setCustomPolicyDelegate):
+        Set the policy delegate to the default delegate if setDelegate is false.
+
 2013-07-08  Zan Dobersek  <zdobersek@igalia.com>
 
         KURL unit test fixture class should have a meaningful name

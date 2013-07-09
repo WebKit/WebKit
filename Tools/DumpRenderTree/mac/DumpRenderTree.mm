@@ -32,6 +32,7 @@
 
 #import "AccessibilityController.h"
 #import "CheckedMalloc.h"
+#import "DefaultPolicyDelegate.h"
 #import "DumpRenderTreeDraggingInfo.h"
 #import "DumpRenderTreePasteboard.h"
 #import "DumpRenderTreeWindow.h"
@@ -148,6 +149,7 @@ static EditingDelegate *editingDelegate;
 static ResourceLoadDelegate *resourceLoadDelegate;
 static HistoryDelegate *historyDelegate;
 PolicyDelegate *policyDelegate;
+DefaultPolicyDelegate *defaultPolicyDelegate;
 StorageTrackerDelegate *storageDelegate;
 
 static int dumpPixelsForAllTests = NO;
@@ -784,6 +786,7 @@ static void allocateGlobalControllers()
     policyDelegate = [[PolicyDelegate alloc] init];
     historyDelegate = [[HistoryDelegate alloc] init];
     storageDelegate = [[StorageTrackerDelegate alloc] init];
+    defaultPolicyDelegate = [[DefaultPolicyDelegate alloc] init];
 }
 
 // ObjC++ doens't seem to let me pass NSObject*& sadly.
@@ -1284,7 +1287,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [webView _scaleWebView:1.0 atOrigin:NSZeroPoint];
     [webView _setCustomBackingScaleFactor:0];
     [webView setTabKeyCyclesThroughElements:YES];
-    [webView setPolicyDelegate:nil];
+    [webView setPolicyDelegate:defaultPolicyDelegate];
     [policyDelegate setPermissive:NO];
     [policyDelegate setControllerToNotifyDone:0];
     [frameLoadDelegate resetToConsistentState];

@@ -39,6 +39,8 @@
 		1A215A8211F2609C008AD0F5 /* PluginTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A215A8011F2609C008AD0F5 /* PluginTest.h */; };
 		1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */; };
 		1A24BAA9120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */; };
+		1A2FB84E178C80930059FD96 /* DefaultPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2FB84C178C80920059FD96 /* DefaultPolicyDelegate.h */; };
+		1A2FB84F178C80930059FD96 /* DefaultPolicyDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.m */; };
 		1A31EB3813466AC100017372 /* ConvertPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A31EB3713466AC100017372 /* ConvertPoint.cpp */; };
 		1A3E28AA1311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */; };
 		1A4CCD4F171375A300981040 /* ToStringAndValueOfObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4CCD4E171375A300981040 /* ToStringAndValueOfObject.cpp */; };
@@ -254,6 +256,8 @@
 		1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginTest.cpp; sourceTree = "<group>"; };
 		1A215A8011F2609C008AD0F5 /* PluginTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginTest.h; sourceTree = "<group>"; };
 		1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeObjectFromDestroyedPlugin.cpp; sourceTree = "<group>"; };
+		1A2FB84C178C80920059FD96 /* DefaultPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultPolicyDelegate.h; sourceTree = "<group>"; };
+		1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultPolicyDelegate.m; sourceTree = "<group>"; };
 		1A31EB3713466AC100017372 /* ConvertPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvertPoint.cpp; sourceTree = "<group>"; };
 		1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetURLWithJavaScriptURLDestroyingPlugin.cpp; sourceTree = "<group>"; };
 		1A4CCD4E171375A300981040 /* ToStringAndValueOfObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ToStringAndValueOfObject.cpp; sourceTree = "<group>"; };
@@ -446,6 +450,8 @@
 		08FB7794FE84155DC02AAC07 /* DumpRenderTree */ = {
 			isa = PBXGroup;
 			children = (
+				1A2FB84C178C80920059FD96 /* DefaultPolicyDelegate.h */,
+				1A2FB84D178C80930059FD96 /* DefaultPolicyDelegate.m */,
 				9830F31E15C81181005AB206 /* DumpRenderTreeCommon.cpp */,
 				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
 				1422A2750AF6F4BD00E1A883 /* Delegates */,
@@ -756,6 +762,7 @@
 				BCB284C70CFA83C4007E533E /* PixelDumpSupport.h in Headers */,
 				BCB284D00CFA83CC007E533E /* PixelDumpSupportCG.h in Headers */,
 				BCA18B650C9B08C200114369 /* PolicyDelegate.h in Headers */,
+				1A2FB84E178C80930059FD96 /* DefaultPolicyDelegate.h in Headers */,
 				BCA18B670C9B08C200114369 /* ResourceLoadDelegate.h in Headers */,
 				3A5626CC131CA036002BE6D9 /* StorageTrackerDelegate.h in Headers */,
 				BC0131DB0C9772010087317D /* TestRunner.h in Headers */,
@@ -1002,6 +1009,7 @@
 				BC0131DA0C9772010087317D /* TestRunner.cpp in Sources */,
 				BCA18B240C9B014B00114369 /* TestRunnerMac.mm in Sources */,
 				BCA18B490C9B02C400114369 /* TextInputController.m in Sources */,
+				1A2FB84F178C80930059FD96 /* DefaultPolicyDelegate.m in Sources */,
 				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
 				4437730E125CBC3600AAE02C /* WebArchiveDumpSupport.cpp in Sources */,
 				440590711268453800CFD48D /* WebArchiveDumpSupportMac.mm in Sources */,
