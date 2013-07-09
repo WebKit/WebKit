@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+<style id="stylebro" type="text/css">
+.peb {
+    color: red;
+}
+</style>
+</head>
+<body>
+<script>
+
+styleElement = document.getElementById("stylebro");
+
+function selectorListWithLength(length)
+{
+    var a = new Array();
+    for (i = 0; i < length; ++i)
+        a.push(".x");
+    return a.join(", ");
+}
+
+function styleSheetWithSelectorLength(length)
+{
+    return selectorListWithLength(length) + " { color: red; }";
+}
+
+function sheet()
+{
+    return styleElement.sheet;
+}
+
+function rule()
+{
+    return sheet().cssRules[0];
+}
+
+description("This test tests and documents the behavior of CSS style rules with a massive number of selectors. Rules with >8192 selectors get split into multiple rules at the parsing stage. Setting a rule's selectorText via CSSOM will do nothing if there are more than 8192 selectors.");
+
+shouldBe("rule().selectorText = selectorListWithLength(1); rule().selectorText", "selectorListWithLength(1)");
+shouldBe("rule().selectorText = selectorListWithLength(8192); rule().selectorText", "selectorListWithLength(8192)");
+shouldBe("rule().selectorText = '.reset'; rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = selectorListWithLength(8193); rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = '.reset'; rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = selectorListWithLength(8193); sheet().rules.length", "1");
+shouldBe("rule().selectorText = selectorListWithLength(8192); rule().selectorText", "selectorListWithLength(8192)");
+shouldBe("rule().selectorText = selectorListWithLength(8192); sheet().rules.length", "1");
+shouldBe("rule().selectorText = '.reset'; rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = selectorListWithLength(8193); rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = selectorListWithLength(8193); sheet().rules.length", "1");
+
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(1); rule().selectorText", "selectorListWithLength(1)");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(8192); rule().selectorText", "selectorListWithLength(8192)");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(8192); sheet().rules.length", "1");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(8193); rule().selectorText", "selectorListWithLength(8192)");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(8193); sheet().rules.length", "2");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(16384); sheet().rules.length", "2");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(16385); sheet().rules.length", "3");
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
