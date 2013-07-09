@@ -1,5 +1,24 @@
 2013-07-09  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152434
+
+    2013-07-05  Tim Horton  <timothy_horton@apple.com>
+
+            Tons of crashes on bots after r152425
+            https://bugs.webkit.org/show_bug.cgi?id=118440
+            <rdar://problem/14366772>
+
+            Reviewed by Sam Weinig.
+
+            Null-check the frame's page and early return. It's OK to do this
+            because it only happens when we're being torn down.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::minimumScrollPosition):
+            (WebCore::FrameView::maximumScrollPosition):
+
+2013-07-09  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152433
 
     2013-07-05  Tim Horton  <timothy_horton@apple.com>
