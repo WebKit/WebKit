@@ -1,3 +1,18 @@
+2013-07-09  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remember the scroll position and restore after exiting full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=61956
+
+        Add support for two new FullScreenClient callbacks for saving and restoring the 
+        scroll position of the full-screen frame.
+
+        * WebView.cpp:
+        (WebView::fullScreenClientSaveScrollPosition):
+        (WebView::fullScreenClientRestoreScrollPosition):
+        * WebView.h:
+
 2013-07-01  Jochen Eisinger  <jochen@chromium.org>
 
         Remove support for consumable user gestures

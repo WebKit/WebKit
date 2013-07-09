@@ -29,10 +29,13 @@
 
 #include "Connection.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebFrame.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPage.h"
 #include <WebCore/Color.h>
 #include <WebCore/Element.h>
+#include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>
@@ -149,6 +152,16 @@ void WebFullScreenManager::requestExitFullScreen()
 void WebFullScreenManager::close()
 {
     m_page->injectedBundleFullScreenClient().closeFullScreen(m_page.get());
+}
+
+void WebFullScreenManager::saveScrollPosition()
+{
+    m_scrollPosition = m_page->corePage()->mainFrame()->view()->scrollPosition();
+}
+
+void WebFullScreenManager::restoreScrollPosition()
+{
+    m_page->corePage()->mainFrame()->view()->setScrollPosition(m_scrollPosition);
 }
 
 } // namespace WebKit

@@ -71,11 +71,14 @@ protected:
 
     void setAnimatingFullScreen(bool);
     void requestExitFullScreen();
+    void saveScrollPosition();
+    void restoreScrollPosition();
 
     void didReceiveWebFullScreenManagerMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     WebCore::IntRect m_initialFrame;
     WebCore::IntRect m_finalFrame;
+    WebCore::IntPoint m_scrollPosition;
     RefPtr<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
 };

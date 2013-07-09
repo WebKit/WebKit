@@ -1,3 +1,17 @@
+2013-07-09  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remember the scroll position and restore after exiting full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=61956
+
+        No new tests, adds a client callback used by WebKit and WebKit2 win.
+
+        * platform/graphics/win/FullScreenController.cpp:
+        (FullScreenController::enterFullScreen):
+        (FullScreenController::exitFullScreen):
+        * platform/graphics/win/FullScreenControllerClient.h:
+
 2013-07-09  Jeff Miller  <jeffm@apple.com>
 
         AuthenticationMac.mm does not handle NSURLAuthenticationMethodNegotiate in WebCore::mac()

@@ -33,6 +33,8 @@
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
 #import <WebCore/FloatRect.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/Page.h>
@@ -236,6 +238,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
         [_webViewPlaceholder.get() setWantsLayer:YES];
     }
     [[_webViewPlaceholder.get() layer] setContents:(id)webViewContents.get()];
+    _scrollPosition = [_webView _mainCoreFrame]->view()->scrollPosition();
     [self _swapView:_webView with:_webViewPlaceholder.get()];
     
     // Then insert the WebView into the full screen window
@@ -364,6 +367,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     
     NSResponder *firstResponder = [[self window] firstResponder];
     [self _swapView:_webViewPlaceholder.get() with:_webView];
+    [_webView _mainCoreFrame]->view()->setScrollPosition(_scrollPosition);
     [[_webView window] makeResponder:firstResponder firstResponderIfDescendantOfView:_webView];
     
     NSRect windowBounds = [[self window] frame];

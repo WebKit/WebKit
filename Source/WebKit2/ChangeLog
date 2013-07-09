@@ -1,3 +1,33 @@
+2013-07-09  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remember the scroll position and restore after exiting full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=61956
+        <rdar://problem/9544461>
+
+        Call into the main FrameView to save the scroll position before swapping the
+        WebView into the full-screen window, and restore the scroll position after 
+        swapping the WebView back into the browser window.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController beganExitFullScreenAnimation]):
+
+        In WebKit2, this requires some communication between the WebProcess and the
+        UIProcess, so add two new messages to WebFullScreenManager to be called by
+        its proxy.
+
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::saveScrollPosition):
+        (WebKit::WebFullScreenManagerProxy::restoreScrollPosition):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::saveScrollPosition):
+        (WebKit::WebFullScreenManager::restoreScrollPosition):
+
 2013-07-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Runtime critical warning when unloading a module that failed to load

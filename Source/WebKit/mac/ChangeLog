@@ -1,3 +1,20 @@
+2013-07-09  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remember the scroll position and restore after exiting full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=61956
+        <rdar://problem/9544461>
+
+        Call into the main FrameView to save the scroll position before swapping the
+        WebView into the full-screen window, and restore the scroll position after 
+        swapping the WebView back into the browser window.
+
+        * WebView/WebFullScreenController.h:
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController windowDidEnterFullscreen:]): Save the scroll position.
+        (-[WebFullScreenController exitFullscreen]): Restore the scroll position.
+
 2013-07-04  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Add a method to get unreachable URL from WebFrame.

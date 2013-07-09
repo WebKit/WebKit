@@ -1067,6 +1067,8 @@ protected:
     virtual void fullScreenClientWillExitFullScreen();
     virtual void fullScreenClientDidExitFullScreen();
     virtual void fullScreenClientForceRepaint();
+    virtual void fullScreenClientSaveScrollPosition();
+    virtual void fullScreenClientRestoreScrollPosition();
 #endif
 
     ULONG m_refCount;
@@ -1167,6 +1169,7 @@ protected:
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebCore::Element> m_fullScreenElement;
     OwnPtr<WebCore::FullScreenController> m_fullscreenController;
+    WebCore::IntPoint m_scrollPosition;
 #endif
 };
 

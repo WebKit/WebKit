@@ -25,6 +25,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 
+#import <WebCore/IntPoint.h>
 #import <wtf/OwnPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -49,6 +50,7 @@ namespace WebCore {
     RetainPtr<NSWindow> _backgroundWindow;
     NSRect _initialFrame;
     NSRect _finalFrame;
+    WebCore::IntPoint _scrollPosition;
 
     BOOL _isEnteringFullScreen;
     BOOL _isExitingFullScreen;
