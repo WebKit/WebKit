@@ -1,5 +1,19 @@
 2013-07-09  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152383
+
+    2013-07-03  Brent Fulgham  <bfulgham@apple.com>
+
+            [Windows] Updates to support changes in CoreGraphics libraries.
+            https://bugs.webkit.org/show_bug.cgi?id=118373
+
+            Reviewed by Anders Carlsson.
+
+            * WebCorePrefix.h: Include definitions for isnan/round/roundf for versions of
+            Visual Studio that do not provide them natively.
+
+2013-07-09  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152382
 
     2013-07-03  Gordon Sheridan  <gordon_sheridan@apple.com>
