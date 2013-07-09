@@ -1,5 +1,23 @@
 2013-07-09  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152403
+
+    2013-07-04  Anders Carlsson  <andersca@apple.com>
+
+            Crash when createPluginInternal ends up destroying the plug-in
+            https://bugs.webkit.org/show_bug.cgi?id=118397
+            <rdar://problem/14155051>
+
+            Reviewed by Simon Fraser.
+
+            Keep the WebProcessConnection object alive while calling createPluginInternal and handle
+            the IPC connection going away.
+
+            * PluginProcess/WebProcessConnection.cpp:
+            (WebKit::WebProcessConnection::createPluginAsynchronously):
+
+2013-07-09  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152382
 
     2013-07-03  Gordon Sheridan  <gordon_sheridan@apple.com>
