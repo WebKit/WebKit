@@ -156,6 +156,8 @@ void webkit_set_cache_model(WebKitCacheModel model)
         g_return_if_reached();
     }
 
+    bool disableCache = !cacheMinDeadCapacity && !cacheMaxDeadCapacity && !cacheTotalCapacity;
+    memoryCache()->setDisabled(disableCache);
     memoryCache()->setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
     pageCache()->setCapacity(pageCacheCapacity);

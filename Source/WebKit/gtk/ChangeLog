@@ -1,3 +1,20 @@
+2013-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] webkit_set_cache_model is not turning the cache off
+        https://bugs.webkit.org/show_bug.cgi?id=118345
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Our documentation says that WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER
+        disables the cache completely, but we are only setting the cache
+        capacities to 0. Cache capacities are not checked when resources
+        are added to the cache, but when it's pruned. To disable the cache
+        we need to call MemoryCache::setDisabled explicitly.
+
+        * webkit/webkitglobals.cpp:
+        (webkit_set_cache_model): Disable the cache when min dead, max
+        dead and total capacities are all set to 0.
+
 2013-07-08  Brian Holt  <brian.holt@samsung.com>
 
         [GTK] FrameLoaderClient: Refactor naked pointers to use smart pointers
