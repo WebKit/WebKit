@@ -1,3 +1,10 @@
+2013-07-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaselining after r152479.
+
+        * platform/qt-5.0-wk2/fast/css-grid-layout/grid-element-change-columns-repaint-expected.txt:
+        * platform/qt-5.0-wk2/fast/css-grid-layout/grid-element-change-rows-repaint-expected.txt:
+
 2013-07-09  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
