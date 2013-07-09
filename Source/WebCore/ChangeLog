@@ -1,5 +1,25 @@
 2013-07-09  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152348
+
+    2013-07-03  Zalan Bujtas  <zalan@apple.com>
+
+            H&R Block 2010 Help window can not be reopened.
+            https://bugs.webkit.org/show_bug.cgi?id=118342
+
+            Reviewed by Antti Koivisto.
+
+            http://trac.webkit.org/changeset/118916 changed the window.focus() behaviour so that
+            only the opener can (re)focus() a particular window.
+            H&R Block app relies on the relaxed window.focus() rules.
+
+            * WebCore.exp.in:
+            * platform/RuntimeApplicationChecks.cpp:
+            (WebCore::applicationIsHRBlock):
+            * platform/RuntimeApplicationChecks.h:
+
+2013-07-09  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152324
 
     2013-07-02  Jer Noble  <jer.noble@apple.com>

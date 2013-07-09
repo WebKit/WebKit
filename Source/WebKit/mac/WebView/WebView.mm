@@ -622,6 +622,11 @@ static bool shouldEnableLoadDeferring()
     return !applicationIsAdobeInstaller();
 }
 
+static bool shouldRestrictWindowFocus()
+{
+    return !applicationIsHRBlock();
+}
+
 - (void)_dispatchPendingLoadRequests
 {
     resourceLoadScheduler()->servePendingRequests();
@@ -1498,6 +1503,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setWebGLEnabled([preferences webGLEnabled]);
     settings->setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
     settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());
+    settings->setWindowFocusRestricted(shouldRestrictWindowFocus());
     settings->setFrameFlatteningEnabled([preferences isFrameFlatteningEnabled]);
     settings->setSpatialNavigationEnabled([preferences isSpatialNavigationEnabled]);
     settings->setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
