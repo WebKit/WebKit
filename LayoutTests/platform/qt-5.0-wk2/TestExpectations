@@ -481,6 +481,9 @@ webkit.org/b/92015 svg/carto.net/selectionlist.svg
 webkit.org/b/105417 svg/text/select-textLength-spacing-stretch-1.svg
 webkit.org/b/105417 svg/text/select-x-list-with-tspans-1.svg
 webkit.org/b/105417 svg/text/select-x-list-1.svg
+webkit.org/b/105417 svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg
+webkit.org/b/105417 svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg
+webkit.org/b/105417 svg/text/select-textLength-spacing-squeeze-3.svg
 
 # [Qt] svg/animations/animate-path-nested-transforms.html fails
 webkit.org/b/48987 svg/animations/animate-path-nested-transforms.html

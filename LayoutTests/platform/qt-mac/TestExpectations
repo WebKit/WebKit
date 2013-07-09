@@ -5858,5 +5858,7 @@ webkit.org/b/94005 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnly
 webkit.org/b/94005 css2.1/20110323/word-spacing-remove-space-006.htm [ ImageOnlyFailure ]
 webkit.org/b/94006 fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
 
-
-
+#[CSS Shapes] New tests added in r152122 are failing on Qt Mountain Lion
+webkit.org/b/118502 csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-000.html [ Skip ]
+webkit.org/b/118502 csswg/submitted/shapes/shape-outside/shape-outside-floats-square-000.html [ Skip ]
+webkit.org/b/118502 csswg/submitted/shapes/shape-outside/shape-outside-floats-vertical-rectangle-000.html [ Skip ]
