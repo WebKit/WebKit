@@ -1,3 +1,10 @@
+2013-07-09  Jeffrey Pfau  <jpfau@apple.com>
+
+        Skip cache partitioning tests, as cache partitioning is not supported on Lion
+        <rdar://problem/14391816>
+
+        * platform/mac-lion/TestExpectations:
+
 2013-07-09  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152494
