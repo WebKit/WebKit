@@ -288,7 +288,7 @@ void SVGFontFaceElement::rebuildFontFace()
     RefPtr<CSSValueList> list;
 
     if (describesParentFont) {
-        m_fontElement = static_cast<SVGFontElement*>(parentNode());
+        m_fontElement = toSVGFontElement(parentNode());
 
         list = CSSValueList::createCommaSeparated();
         list->append(CSSFontFaceSrcValue::createLocal(fontFamily()));

@@ -1,3 +1,28 @@
+2013-07-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use toSVGFontElement() instead of static_cast<SVGFontElement*>
+        https://bugs.webkit.org/show_bug.cgi?id=118496
+
+        Reviewed by Andreas Kling.
+
+        As a step to change static_cast with toXXX, static_cast<SVGFontElement*> can
+        be changed with toSVGFontElement().
+
+        Blink merge from https://src.chromium.org/viewvc/blink?view=rev&revision=153761
+
+        * svg/SVGFontElement.h:
+        (WebCore::toSVGFontElement):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::invalidateGlyphCache):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::insertedInto):
+        (WebCore::SVGHKernElement::removedFrom):
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::insertedInto):
+        (WebCore::SVGVKernElement::removedFrom):
+
 2013-07-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove support for [PassThisToCallback] extended attribute

@@ -27,6 +27,7 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGlyphElement.h"
 #include "SVGGlyphMap.h"
+#include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGStyledElement.h"
 
@@ -88,6 +89,12 @@ private:
     Glyph m_missingGlyph;
     bool m_isGlyphCacheValid;
 };
+
+inline SVGFontElement* toSVGFontElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::fontTag));
+    return static_cast<SVGFontElement*>(node);
+}
 
 } // namespace WebCore
 

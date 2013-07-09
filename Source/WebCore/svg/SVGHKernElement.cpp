@@ -44,10 +44,8 @@ PassRefPtr<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName
 Node::InsertionNotificationRequest SVGHKernElement::insertedInto(ContainerNode* rootParent)
 {
     ContainerNode* fontNode = parentNode();
-    if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
-        if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
-            element->invalidateGlyphCache();
-    }
+    if (fontNode && fontNode->hasTagName(SVGNames::fontTag))
+        toSVGFontElement(fontNode)->invalidateGlyphCache();
 
     return SVGElement::insertedInto(rootParent);
 }
@@ -55,10 +53,8 @@ Node::InsertionNotificationRequest SVGHKernElement::insertedInto(ContainerNode* 
 void SVGHKernElement::removedFrom(ContainerNode* rootParent)
 {
     ContainerNode* fontNode = parentNode();
-    if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
-        if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
-            element->invalidateGlyphCache();
-    }
+    if (fontNode && fontNode->hasTagName(SVGNames::fontTag))
+        toSVGFontElement(fontNode)->invalidateGlyphCache();
 
     SVGElement::removedFrom(rootParent);
 }
