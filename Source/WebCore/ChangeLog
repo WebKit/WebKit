@@ -1,3 +1,26 @@
+2013-07-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove support for [PassThisToCallback] extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=118391
+
+        Reviewed by Kentaro Hara.
+
+        The [PassThisToCallback] Webkit-specific IDL extended attribute is supported
+        by the JSC bindings generator but is no longer used. The attribute is not
+        even documented.
+
+        We can therefore drop support for this from the generator to simplify the
+        code.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackRequiresThisToPass):
+        * bindings/scripts/test/TestCallback.idl:
+
 2013-07-09  Praveen R Jadhav  <praveen.j@samsung.com>
 
         Update Exception handling in WebAudio.

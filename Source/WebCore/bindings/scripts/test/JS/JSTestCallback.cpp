@@ -148,8 +148,6 @@ bool JSTestCallback::callbackWithBoolean(bool boolParam)
 
 bool JSTestCallback::callbackRequiresThisToPass(int longParam, TestNode* testNodeParam)
 {
-    ASSERT(testNodeParam);
-
     if (!canInvokeCallback())
         return true;
 
@@ -163,9 +161,7 @@ bool JSTestCallback::callbackRequiresThisToPass(int longParam, TestNode* testNod
     args.append(toJS(exec, m_data->globalObject(), testNodeParam));
 
     bool raisedException = false;
-    JSValue jstestNodeParam = toJS(exec, m_data->globalObject(), testNodeParam);
-    m_data->invokeCallback(jstestNodeParam, args, &raisedException);
-
+    m_data->invokeCallback(args, &raisedException);
     return !raisedException;
 }
 

@@ -91,7 +91,6 @@ ObjCLegacyUnnamedParameters
 ObjCPolymorphic
 ObjCProtocol
 PassContext
-PassThisToCallback=*
 RaisesException
 Reflect=*
 Replaceable
