@@ -1,3 +1,14 @@
+2013-07-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        KURL unit test fixture class should have a meaningful name
+        https://bugs.webkit.org/show_bug.cgi?id=118467
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebCore/KURL.cpp:
+        (TestWebKitAPI::TEST_F): Use 'KURLTest' as the name for the KURL unit test's fixture class
+        instead of the generic and inappropriate 'WebCore' name.
+
 2013-07-08  Antti Koivisto  <antti@apple.com>
 
         Add Deque::removeLast
