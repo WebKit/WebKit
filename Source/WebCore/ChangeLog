@@ -1,3 +1,22 @@
+2013-07-09  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r152324
+
+    2013-07-02  Jer Noble  <jer.noble@apple.com>
+
+            media/unsupported-rtsp.html is failing
+            https://bugs.webkit.org/show_bug.cgi?id=118327
+
+            Reviewed by Eric Carlson.
+
+            Fixes the media/unsupported-rtsp.html test.
+
+            Set the contentType field of contentInformationRequest in order to trigger AVFoundation to 
+            notice that loading failed and generate an error.
+
+            * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+            (WebCore::WebCoreAVFResourceLoader::notifyFinished):
+
 2013-07-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152315
