@@ -1,3 +1,21 @@
+2013-07-08  Enrica Casucci  <enrica@apple.com>
+
+        DeleteSelectionCommand does not handle correctly deletion with two consecutive BR element.
+        https://bugs.webkit.org/show_bug.cgi?id=118457
+        <rdar://problem/14160912>
+
+        Reviewed by Simon Fraser.
+
+        In DeleteSelectionCommand::handleSpecialCareBRDelete we did not
+        handle correctly the case where we had <br><br> in the markup and
+        nothing was being deleted. We should consider this like
+        the case where the <br> is on the line by itself and remove it.
+
+        Test: editing/deleting/delete-image-followed-by-two-br.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleSpecialCaseBRDelete):
+
 2013-07-08  Radu Stavila  <stavila@adobe.com>
 
         NamedFlowCollection getters should return undefined when there's no NamedFlow

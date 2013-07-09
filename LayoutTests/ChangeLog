@@ -1,3 +1,15 @@
+2013-07-08  Enrica Casucci  <enrica@apple.com>
+
+        DeleteSelectionCommand does not handle correctly deletion with two consecutive BR element.
+        https://bugs.webkit.org/show_bug.cgi?id=118457
+        <rdar://problem/14160912>
+
+        Reviewed by Simon Fraser.
+
+        * editing/deleting/delete-image-followed-by-two-br-expected.txt: Added.
+        * editing/deleting/delete-image-followed-by-two-br.html: Added.
+        * platform/mac/editing/deleting/delete-br-002-expected.txt: Rebased.
+
 2013-07-08  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Multiple compositing/patterns test fail

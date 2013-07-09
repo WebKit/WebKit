@@ -309,7 +309,10 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     // Check for special-case where the selection contains only a BR on a line by itself after another BR.
     bool upstreamStartIsBR = nodeAfterUpstreamStart->hasTagName(brTag);
     bool downstreamStartIsBR = nodeAfterDownstreamStart->hasTagName(brTag);
-    bool isBROnLineByItself = upstreamStartIsBR && downstreamStartIsBR && nodeAfterDownstreamStart == nodeAfterUpstreamEnd;
+    // We should consider that the BR is on a line by itself also when we have <br><br>. This test should be true only
+    // when the two elements are siblings and should be false in a case like <div><br></div><br>.
+    bool isBROnLineByItself = upstreamStartIsBR && downstreamStartIsBR && ((nodeAfterDownstreamStart == nodeAfterUpstreamEnd) || (nodeAfterUpstreamEnd && nodeAfterUpstreamEnd->hasTagName(brTag) && nodeAfterUpstreamStart->nextSibling() == nodeAfterUpstreamEnd));
+
     if (isBROnLineByItself) {
         removeNode(nodeAfterDownstreamStart);
         return true;
