@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -97,7 +97,7 @@ public:
 protected:
     CodeBlock(CopyParsedBlockTag, CodeBlock& other);
         
-    CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSGlobalObject*, unsigned baseScopeDepth, PassRefPtr<SourceProvider>, unsigned sourceOffset, PassOwnPtr<CodeBlock> alternative);
+    CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSGlobalObject*, unsigned baseScopeDepth, PassRefPtr<SourceProvider>, unsigned sourceOffset, unsigned firstLineColumnOffset, PassOwnPtr<CodeBlock> alternative);
 
     WriteBarrier<JSGlobalObject> m_globalObject;
     Heap* m_heap;
@@ -176,8 +176,10 @@ public:
     }
 
     HandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset);
-    int lineNumberForBytecodeOffset(unsigned bytecodeOffset);
-    void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset);
+    unsigned lineNumberForBytecodeOffset(unsigned bytecodeOffset);
+    unsigned columnNumberForBytecodeOffset(unsigned bytecodeOffset);
+    void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
+        int& startOffset, int& endOffset, unsigned& line, unsigned& column);
 
 #if ENABLE(JIT)
 
@@ -569,6 +571,7 @@ public:
 
     SourceProvider* source() const { return m_source.get(); }
     unsigned sourceOffset() const { return m_sourceOffset; }
+    unsigned firstLineColumnOffset() const { return m_firstLineColumnOffset; }
 
     size_t numberOfJumpTargets() const { return m_unlinkedCode->numberOfJumpTargets(); }
     unsigned jumpTarget(int index) const { return m_unlinkedCode->jumpTarget(index); }
@@ -1174,6 +1177,7 @@ private:
 
     RefPtr<SourceProvider> m_source;
     unsigned m_sourceOffset;
+    unsigned m_firstLineColumnOffset;
     unsigned m_codeType;
 
 #if ENABLE(LLINT)
@@ -1312,8 +1316,8 @@ protected:
     {
     }
         
-    GlobalCodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, unsigned baseScopeDepth, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, PassOwnPtr<CodeBlock> alternative)
-        : CodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, baseScopeDepth, sourceProvider, sourceOffset, alternative)
+    GlobalCodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, unsigned baseScopeDepth, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset, PassOwnPtr<CodeBlock> alternative)
+        : CodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, baseScopeDepth, sourceProvider, sourceOffset, firstLineColumnOffset, alternative)
     {
     }
 };
@@ -1325,8 +1329,8 @@ public:
     {
     }
 
-    ProgramCodeBlock(ProgramExecutable* ownerExecutable, UnlinkedProgramCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, PassOwnPtr<CodeBlock> alternative)
-        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, 0, sourceProvider, 0, alternative)
+    ProgramCodeBlock(ProgramExecutable* ownerExecutable, UnlinkedProgramCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned firstLineColumnOffset, PassOwnPtr<CodeBlock> alternative)
+        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, 0, sourceProvider, 0, firstLineColumnOffset, alternative)
     {
     }
 
@@ -1348,7 +1352,7 @@ public:
     }
         
     EvalCodeBlock(EvalExecutable* ownerExecutable, UnlinkedEvalCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, int baseScopeDepth, PassOwnPtr<CodeBlock> alternative)
-        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, baseScopeDepth, sourceProvider, 0, alternative)
+        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, baseScopeDepth, sourceProvider, 0, 1, alternative)
     {
     }
 
@@ -1375,8 +1379,8 @@ public:
     {
     }
 
-    FunctionCodeBlock(FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, PassOwnPtr<CodeBlock> alternative = nullptr)
-        : CodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, 0, sourceProvider, sourceOffset, alternative)
+    FunctionCodeBlock(FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset, PassOwnPtr<CodeBlock> alternative = nullptr)
+        : CodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, 0, sourceProvider, sourceOffset, firstLineColumnOffset, alternative)
     {
     }
         

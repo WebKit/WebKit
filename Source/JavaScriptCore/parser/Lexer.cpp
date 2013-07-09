@@ -524,7 +524,7 @@ String Lexer<T>::invalidCharacterMessage() const
 }
 
 template <typename T>
-ALWAYS_INLINE const T* Lexer<T>::currentCharacter() const
+ALWAYS_INLINE const T* Lexer<T>::currentSourcePtr() const
 {
     ASSERT(m_code <= m_codeEnd);
     return m_code;
@@ -546,11 +546,13 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
         m_codeStart = 0;
 
     m_source = &source;
+    m_sourceOffset = source.startOffset();
     m_codeStartPlusOffset = m_codeStart + source.startOffset();
     m_code = m_codeStartPlusOffset;
     m_codeEnd = m_codeStart + source.endOffset();
     m_error = false;
     m_atLineStart = true;
+    m_lineStart = m_code;
     m_lexErrorMessage = String();
     
     m_buffer8.reserveInitialCapacity(initialReadBufferCapacity);
@@ -567,6 +569,7 @@ template <typename T>
 template <int shiftAmount> ALWAYS_INLINE void Lexer<T>::internalShift()
 {
     m_code += shiftAmount;
+    ASSERT(currentOffset() >= currentLineStartOffset());
     m_current = *m_code;
 }
 
@@ -766,20 +769,21 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
         }
     }
 
-    const LChar* identifierStart = currentCharacter();
+    const LChar* identifierStart = currentSourcePtr();
+    unsigned identifierLineStart = currentLineStartOffset();
     
     while (isIdentPart(m_current))
         shift();
     
     if (UNLIKELY(m_current == '\\')) {
-        setOffsetFromCharOffset(identifierStart);
+        setOffsetFromSourcePtr(identifierStart, identifierLineStart);
         return parseIdentifierSlowCase<shouldCreateIdentifier>(tokenData, lexerFlags, strictMode);
     }
 
     const Identifier* ident = 0;
     
     if (shouldCreateIdentifier) {
-        int identifierLength = currentCharacter() - identifierStart;
+        int identifierLength = currentSourcePtr() - identifierStart;
         ident = makeIdentifier(identifierStart, identifierLength);
 
         tokenData->ident = ident;
@@ -814,7 +818,8 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
         }
     }
 
-    const UChar* identifierStart = currentCharacter();
+    const UChar* identifierStart = currentSourcePtr();
+    int identifierLineStart = currentLineStartOffset();
 
     UChar orAllChars = 0;
     
@@ -824,7 +829,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     }
     
     if (UNLIKELY(m_current == '\\')) {
-        setOffsetFromCharOffset(identifierStart);
+        setOffsetFromSourcePtr(identifierStart, identifierLineStart);
         return parseIdentifierSlowCase<shouldCreateIdentifier>(tokenData, lexerFlags, strictMode);
     }
 
@@ -836,7 +841,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     const Identifier* ident = 0;
     
     if (shouldCreateIdentifier) {
-        int identifierLength = currentCharacter() - identifierStart;
+        int identifierLength = currentSourcePtr() - identifierStart;
         if (isAll8Bit)
             ident = makeIdentifierLCharFromUChar(identifierStart, identifierLength);
         else
@@ -866,7 +871,7 @@ template <typename T>
 template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlowCase(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
 {
     const ptrdiff_t remaining = m_codeEnd - m_code;
-    const T* identifierStart = currentCharacter();
+    const T* identifierStart = currentSourcePtr();
     bool bufferRequired = false;
 
     while (true) {
@@ -879,8 +884,8 @@ template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlow
 
         // \uXXXX unicode characters.
         bufferRequired = true;
-        if (identifierStart != currentCharacter())
-            m_buffer16.append(identifierStart, currentCharacter() - identifierStart);
+        if (identifierStart != currentSourcePtr())
+            m_buffer16.append(identifierStart, currentSourcePtr() - identifierStart);
         shift();
         if (UNLIKELY(m_current != 'u'))
             return atEnd() ? UNTERMINATED_IDENTIFIER_ESCAPE_ERRORTOK : INVALID_IDENTIFIER_ESCAPE_ERRORTOK;
@@ -893,18 +898,18 @@ template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlow
             return INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK;
         if (shouldCreateIdentifier)
             record16(ucharacter);
-        identifierStart = currentCharacter();
+        identifierStart = currentSourcePtr();
     }
 
     int identifierLength;
     const Identifier* ident = 0;
     if (shouldCreateIdentifier) {
         if (!bufferRequired) {
-            identifierLength = currentCharacter() - identifierStart;
+            identifierLength = currentSourcePtr() - identifierStart;
             ident = makeIdentifier(identifierStart, identifierLength);
         } else {
-            if (identifierStart != currentCharacter())
-                m_buffer16.append(identifierStart, currentCharacter() - identifierStart);
+            if (identifierStart != currentSourcePtr())
+                m_buffer16.append(identifierStart, currentSourcePtr() - identifierStart);
             ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
         }
 
@@ -944,16 +949,17 @@ template <typename T>
 template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseResult Lexer<T>::parseString(JSTokenData* tokenData, bool strictMode)
 {
     int startingOffset = currentOffset();
+    int startingLineStartOffset = currentLineStartOffset();
     int startingLineNumber = lineNumber();
     T stringQuoteCharacter = m_current;
     shift();
 
-    const T* stringStart = currentCharacter();
+    const T* stringStart = currentSourcePtr();
 
     while (m_current != stringQuoteCharacter) {
         if (UNLIKELY(m_current == '\\')) {
-            if (stringStart != currentCharacter() && shouldBuildStrings)
-                append8(stringStart, currentCharacter() - stringStart);
+            if (stringStart != currentSourcePtr() && shouldBuildStrings)
+                append8(stringStart, currentSourcePtr() - stringStart);
             shift();
 
             LChar escape = singleEscape(m_current);
@@ -977,17 +983,17 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
                     record8(convertHex(prev, m_current));
                 shift();
             } else {
-                setOffset(startingOffset);
+                setOffset(startingOffset, startingLineStartOffset);
                 setLineNumber(startingLineNumber);
                 m_buffer8.resize(0);
                 return parseStringSlowCase<shouldBuildStrings>(tokenData, strictMode);
             }
-            stringStart = currentCharacter();
+            stringStart = currentSourcePtr();
             continue;
         }
 
         if (UNLIKELY(characterRequiresParseStringSlowCase(m_current))) {
-            setOffset(startingOffset);
+            setOffset(startingOffset, startingLineStartOffset);
             setLineNumber(startingLineNumber);
             m_buffer8.resize(0);
             return parseStringSlowCase<shouldBuildStrings>(tokenData, strictMode);
@@ -996,8 +1002,8 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
         shift();
     }
 
-    if (currentCharacter() != stringStart && shouldBuildStrings)
-        append8(stringStart, currentCharacter() - stringStart);
+    if (currentSourcePtr() != stringStart && shouldBuildStrings)
+        append8(stringStart, currentSourcePtr() - stringStart);
     if (shouldBuildStrings) {
         tokenData->ident = makeIdentifier(m_buffer8.data(), m_buffer8.size());
         m_buffer8.resize(0);
@@ -1013,12 +1019,12 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
     T stringQuoteCharacter = m_current;
     shift();
 
-    const T* stringStart = currentCharacter();
+    const T* stringStart = currentSourcePtr();
 
     while (m_current != stringQuoteCharacter) {
         if (UNLIKELY(m_current == '\\')) {
-            if (stringStart != currentCharacter() && shouldBuildStrings)
-                append16(stringStart, currentCharacter() - stringStart);
+            if (stringStart != currentSourcePtr() && shouldBuildStrings)
+                append16(stringStart, currentSourcePtr() - stringStart);
             shift();
 
             LChar escape = singleEscape(m_current);
@@ -1093,7 +1099,7 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
                 return StringUnterminated;
             }
 
-            stringStart = currentCharacter();
+            stringStart = currentSourcePtr();
             continue;
         }
         // Fast check for characters that require special handling.
@@ -1110,8 +1116,8 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
         shift();
     }
 
-    if (currentCharacter() != stringStart && shouldBuildStrings)
-        append16(stringStart, currentCharacter() - stringStart);
+    if (currentSourcePtr() != stringStart && shouldBuildStrings)
+        append16(stringStart, currentSourcePtr() - stringStart);
     if (shouldBuildStrings)
         tokenData->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
     else
@@ -1317,7 +1323,8 @@ start:
         return EOFTOK;
     
     tokenLocation->startOffset = currentOffset();
-    tokenLocation->charPosition = currentCharPosition();
+    tokenLocation->sourceOffset = m_sourceOffset;
+    ASSERT(currentOffset() >= currentLineStartOffset());
 
     CharacterType type;
     if (LIKELY(isLatin1(m_current)))
@@ -1555,12 +1562,18 @@ start:
         token = SEMICOLON;
         break;
     case CharacterOpenBrace:
-        tokenData->intValue = currentOffset();
+        tokenData->line = lineNumber();
+        tokenData->offset = currentOffset();
+        tokenData->lineStartOffset = currentLineStartOffset();
+        ASSERT(tokenData->offset >= tokenData->lineStartOffset);
         shift();
         token = OPENBRACE;
         break;
     case CharacterCloseBrace:
-        tokenData->intValue = currentOffset();
+        tokenData->line = lineNumber();
+        tokenData->offset = currentOffset();
+        tokenData->lineStartOffset = currentLineStartOffset();
+        ASSERT(tokenData->offset >= tokenData->lineStartOffset);
         shift();
         token = CLOSEBRACE;
         break;
@@ -1650,6 +1663,7 @@ inNumberAfterDecimalPoint:
         shiftLineTerminator();
         m_atLineStart = true;
         m_terminator = true;
+        m_lineStart = m_code;
         goto start;
     case CharacterInvalid:
         m_lexErrorMessage = invalidCharacterMessage();
@@ -1674,6 +1688,7 @@ inSingleLineComment:
     shiftLineTerminator();
     m_atLineStart = true;
     m_terminator = true;
+    m_lineStart = m_code;
     if (!lastTokenWasRestrKeyword())
         goto start;
 
@@ -1683,6 +1698,8 @@ inSingleLineComment:
 returnToken:
     tokenLocation->line = m_lineNumber;
     tokenLocation->endOffset = currentOffset();
+    tokenLocation->lineStartOffset = currentLineStartOffset();
+    ASSERT(tokenLocation->endOffset >= tokenLocation->lineStartOffset);
     m_lastToken = token;
     return token;
 
@@ -1690,6 +1707,8 @@ returnError:
     m_error = true;
     tokenLocation->line = m_lineNumber;
     tokenLocation->endOffset = currentOffset();
+    tokenLocation->lineStartOffset = currentLineStartOffset();
+    ASSERT(tokenLocation->endOffset >= tokenLocation->lineStartOffset);
     RELEASE_ASSERT(token & ErrorTokenFlag);
     return token;
 }
@@ -1829,11 +1848,11 @@ void Lexer<T>::clear()
 }
 
 template <typename T>
-SourceCode Lexer<T>::sourceCode(int openBrace, int closeBrace, int firstLine)
+SourceCode Lexer<T>::sourceCode(int openBrace, int closeBrace, int firstLine, unsigned startColumn)
 {
     ASSERT(m_source->provider()->source()[openBrace] == '{');
     ASSERT(m_source->provider()->source()[closeBrace] == '}');
-    return SourceCode(m_source->provider(), openBrace, closeBrace + 1, firstLine);
+    return SourceCode(m_source->provider(), openBrace, closeBrace + 1, firstLine, startColumn);
 }
 
 // Instantiate the two flavors of Lexer we need instead of putting most of this file in Lexer.h

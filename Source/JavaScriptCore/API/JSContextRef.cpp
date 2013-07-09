@@ -237,7 +237,9 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
             if (i)
                 break;
         }
-        unsigned lineNumber = frame.line();
+        unsigned lineNumber;
+        unsigned column;
+        frame.computeLineAndColumn(lineNumber, column);
         if (!builder.isEmpty())
             builder.append('\n');
         builder.append('#');

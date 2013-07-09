@@ -1,3 +1,481 @@
+2013-07-09  Mark Lam  <mark.lam@apple.com>
+
+        Fix 30% JSBench regression (caused by adding column numbers to stack traces).
+        https://bugs.webkit.org/show_bug.cgi?id=118481.
+
+        Reviewed by Mark Hahnenberg and Geoffrey Garen.
+
+        Previously, we already capture ExpressionRangeInfo that provides a divot for
+        each bytecode that can potentially throw an exception (and therefore generate
+        a stack trace). On first attempt to compute column numbers, we then do a walk
+        of the source string to record all line start positions in a table associated
+        with the SourceProvider. The column number can then be computed as
+            divot - lineStartFor(bytecodeOffset).
+
+        The computation of this lineStarts table is the source of the 30% JSBench
+        performance regression.
+
+        The new code now records lineStarts as the lexer and parser scans the source
+        code. These lineStarts are then used to compute the column number for the
+        given divot, and stored in the ExpressionRangeInfo. Similarly, we also capture
+        the line number at the divot point and store that in the ExpressionRangeInfo.
+        Hence, to look up line and column numbers, we now lookup the ExpressionRangeInfo
+        for the bytecodeOffset, and then compute the line and column from the values
+        stored in the expression info.
+
+        The strategy:
+        1. We want to minimize perturbations to the lexer and parser. Specifically,
+           the changes added should not change how it scans code, and generate bytecode.
+        2. We regard the divot as the source character position we are interested
+           in. As such, we'll capture line and lineStart (for column) at the point
+           when we capture the divot information. This ensures that the 3 values are
+           consistent.
+
+        How the change is done:
+        1. Change the lexer to track lineStarts.
+        2. Change the parser to capture line and lineStarts at the point of capturing
+           divots.
+        3. Change the parser and associated code to plumb these values all the way to
+           the point that the correspoinding ExpressionRangeInfo is emitted.
+        4. Propagate and record SourceCode firstLine and firstLineColumnOffset to the
+           the necessary places so that we can add them as needed when reifying
+           UnlinkedCodeBlocks into CodeBlocks.
+        5. Compress the line and column number values in the ExpressionRangeInfo. In
+           practice, we seldom have both large line and column numbers. Hence, we can
+           encode both in an uint32_t most of the time. For the times when we encounter
+           both large line and column numbers, we have a fallback to store the "fat"
+           position info.
+        6. Emit an ExpressionRangeInfo for UnaryOp nodes to get more line and column
+           number coverage.
+        7. Change the interpreter to use the new way of computing line and column.
+        8. Delete old line and column computation code that is now unused.
+
+        Misc details:
+        - the old lexer was tracking both a startOffset and charPosition where
+          charPosition equals startOffset - SourceCode.startOffset. We now use
+          startOffset exclusively throughout the system for consistency.
+          All offset values (including lineStart) are relative to the start of the
+          SourceProvider string. These values will only be converted to be relative
+          to the SourceCode.startOffset at the very last minute i.e. when the divot
+          is stored into the ExpressionRangeInfo.
+
+          This change to use the same offset system everywhere reduces confusion
+          from having to convert back and forth between the 2 systems. It also
+          enables a lot of assertions to be used.
+
+        - Also fixed some bugs in the choice of divot positions to use. For example,
+          both Eval and Function expressions previously used column numbers from
+          the start of the expression but used the line number at the end of the
+          expression. This is now fixed to use either the start or end positions
+          as appropriate, but not a mix of line and columns from both.
+
+        - Why use ints instead of unsigneds for offsets and lineStarts inside the
+          lexer and parser?
+          Some tests (e.g. fast/js/call-base-resolution.html and
+          fast/js/eval-cross-window.html) has shown that lineStart offsets can be
+          prior to the SourceCode.startOffset. Keeping the lexer offsets as ints
+          simplifies computations and makes it easier to maintain the assertions
+          that (startOffset >= lineStartOffset).
+
+          However, column and line numbers are always unsigned when we publish
+          them to the ExpressionRangeInfo. The ints are only used inside the
+          lexer and parser ... well, and bytecode generator.
+
+        - For all cases, lineStart is always captured where the divot is captured.
+          However, some sputnik conformance tests have shown that we cannot honor
+          line breaks for assignment statements like the following:
+
+              eval("x\u000A*=\u000A-1;");
+
+          In this case, the lineStart is expected to be captured at the start of
+          the assignment expression instead of at the divot point in the middle.
+          The assignment expression is the only special case for this.
+
+        This patch has been tested against the full layout tests both with release
+        and debug builds with no regression.
+
+        * API/JSContextRef.cpp:
+        (JSContextCreateBacktrace):
+          - Updated to use the new StackFrame::computeLineAndColumn().
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+          - Added m_firstLineColumnOffset initialization.
+          - Plumbed the firstLineColumnOffset into the SourceCode.
+          - Initialized column for op_debug using the new way.
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+          - Changed to compute line number using the ExpressionRangeInfo.
+        (JSC::CodeBlock::columnNumberForBytecodeOffset): Added
+          - Changed to compute column number using the ExpressionRangeInfo.
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::firstLineColumnOffset):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+          - Plumbed firstLineColumnOffset through to the super class.
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+          - Plumbed firstLineColumnOffset through to the super class.
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+          - Plumbed firstLineColumnOffset through to the super class.
+            But for EvalCodeBlocks, the firstLineColumnOffset is always 1
+            because we're starting with a new source string with no start
+            offset.
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+          - Plumbed firstLineColumnOffset through to the super class.
+
+        * bytecode/ExpressionRangeInfo.h:
+          - Added modes for encoding line and column into a single 30-bit
+            unsigned. The encoding is in 1 of 3 modes:
+            1. FatLineMode: 22-bit line, 8-bit column
+            2. FatColumnMode: 8-bit line, 22-bit column
+            3. FatLineAndColumnMode: 32-bit line, 32-bit column
+        (JSC::ExpressionRangeInfo::encodeFatLineMode): Added.
+          - Encodes line and column into the 30-bit position using FatLine mode.
+        (JSC::ExpressionRangeInfo::encodeFatColumnMode): Added.
+          - Encodes line and column into the 30-bit position using FatColumn mode.
+        (JSC::ExpressionRangeInfo::decodeFatLineMode): Added.
+          - Decodes the FatLine mode 30-bit position into line and column.
+        (JSC::ExpressionRangeInfo::decodeFatColumnMode): Added.
+          - Decodes the FatColumn mode 30-bit position into line and column.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+          - Plumbed startColumn through.
+        (JSC::UnlinkedFunctionExecutable::link):
+          - Plumbed startColumn through.
+        (JSC::UnlinkedCodeBlock::lineNumberForBytecodeOffset):
+          - Computes a line number using the new way.
+        (JSC::UnlinkedCodeBlock::expressionRangeForBytecodeOffset):
+          - Added decoding of line and column.
+          - Added handling of the case when we do not find a fitting expression
+            range info for a specified bytecodeOffset. This only happens if the
+            bytecodeOffset is below the first expression range info. In that
+            case, we'll use the first expression range info entry.
+        (JSC::UnlinkedCodeBlock::addExpressionInfo):
+          - Added encoding of line and column.
+
+        * bytecode/UnlinkedCodeBlock.h:
+          - Added m_expressionInfoFatPositions in RareData.
+        (JSC::UnlinkedFunctionExecutable::functionStartColumn):
+        (JSC::UnlinkedCodeBlock::shrinkToFit):
+          - Removed obsoleted m_lineInfo.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall): Plumbed line and lineStart through.
+        (JSC::BytecodeGenerator::emitCallEval): Plumbed line and lineStart through.
+        (JSC::BytecodeGenerator::emitCallVarargs): Plumbed line and lineStart through.
+        (JSC::BytecodeGenerator::emitConstruct): Plumbed line and lineStart through.
+        (JSC::BytecodeGenerator::emitDebugHook): Plumbed lineStart through.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNode):
+        (JSC::BytecodeGenerator::emitNodeInConditionContext):
+          - Removed obsoleted m_lineInfo.
+        (JSC::BytecodeGenerator::emitExpressionInfo):
+          - Plumbed line and lineStart through.
+          - Compute the line and column to be added to the expression range info.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThrowableExpressionData::emitThrowReferenceError):
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::ArrayNode::toArgumentList):
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::NewExprNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PostfixNode::emitBracket):
+        (JSC::PostfixNode::emitDot):
+        (JSC::DeleteResolveNode::emitBytecode):
+        (JSC::DeleteBracketNode::emitBytecode):
+        (JSC::DeleteDotNode::emitBytecode):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::PrefixNode::emitBracket):
+        (JSC::PrefixNode::emitDot):
+          - Plumbed line and lineStart through the above as needed.
+
+        (JSC::UnaryOpNode::emitBytecode):
+          - Added emission of an ExpressionRangeInfo for the UnaryOp node.
+
+        (JSC::BinaryOpNode::emitStrcat):
+        (JSC::ThrowableBinaryOpNode::emitBytecode):
+        (JSC::InstanceOfNode::emitBytecode):
+        (JSC::emitReadModifyAssignment):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::AssignDotNode::emitBytecode):
+        (JSC::ReadModifyDotNode::emitBytecode):
+        (JSC::AssignBracketNode::emitBytecode):
+        (JSC::ReadModifyBracketNode::emitBytecode):
+          - Plumbed line and lineStart through the above as needed.
+
+        (JSC::ConstStatementNode::emitBytecode):
+        (JSC::EmptyStatementNode::emitBytecode):
+        (JSC::DebuggerStatementNode::emitBytecode):
+        (JSC::ExprStatementNode::emitBytecode):
+        (JSC::VarStatementNode::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        (JSC::ProgramNode::emitBytecode):
+        (JSC::EvalNode::emitBytecode):
+        (JSC::FunctionBodyNode::emitBytecode):
+          - Plumbed line and lineStart through the above as needed.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::appendSourceToError):
+          - Added line and column arguments for expressionRangeForBytecodeOffset().
+        (JSC::StackFrame::computeLineAndColumn):
+          - Replaces StackFrame::line() and StackFrame::column().
+        (JSC::StackFrame::expressionInfo):
+          - Added line and column arguments.
+        (JSC::StackFrame::toString):
+          - Changed to use the new StackFrame::computeLineAndColumn().
+        (JSC::Interpreter::getStackTrace):
+          - Added the needed firstLineColumnOffset arg for the StackFrame.
+
+        * interpreter/Interpreter.h:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::BinaryOpInfo::BinaryOpInfo):
+        (JSC::ASTBuilder::AssignmentInfo::AssignmentInfo):
+        (JSC::ASTBuilder::createResolve):
+        (JSC::ASTBuilder::createBracketAccess):
+        (JSC::ASTBuilder::createDotAccess):
+        (JSC::ASTBuilder::createRegExp):
+        (JSC::ASTBuilder::createNewExpr):
+        (JSC::ASTBuilder::createAssignResolve):
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createFunctionBody):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        (JSC::ASTBuilder::createBlockStatement):
+        (JSC::ASTBuilder::createExprStatement):
+        (JSC::ASTBuilder::createIfStatement):
+        (JSC::ASTBuilder::createForLoop):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::createVarStatement):
+        (JSC::ASTBuilder::createReturnStatement):
+        (JSC::ASTBuilder::createBreakStatement):
+        (JSC::ASTBuilder::createContinueStatement):
+        (JSC::ASTBuilder::createTryStatement):
+        (JSC::ASTBuilder::createSwitchStatement):
+        (JSC::ASTBuilder::createWhileStatement):
+        (JSC::ASTBuilder::createDoWhileStatement):
+        (JSC::ASTBuilder::createLabelStatement):
+        (JSC::ASTBuilder::createWithStatement):
+        (JSC::ASTBuilder::createThrowStatement):
+        (JSC::ASTBuilder::createDebugger):
+        (JSC::ASTBuilder::createConstStatement):
+        (JSC::ASTBuilder::appendBinaryExpressionInfo):
+        (JSC::ASTBuilder::appendUnaryToken):
+        (JSC::ASTBuilder::unaryTokenStackLastStart):
+        (JSC::ASTBuilder::unaryTokenStackLastLineStartPosition): Added.
+        (JSC::ASTBuilder::assignmentStackAppend):
+        (JSC::ASTBuilder::createAssignment):
+        (JSC::ASTBuilder::setExceptionLocation):
+        (JSC::ASTBuilder::makeDeleteNode):
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        (JSC::ASTBuilder::makeBinaryNode):
+        (JSC::ASTBuilder::makeAssignNode):
+        (JSC::ASTBuilder::makePrefixNode):
+        (JSC::ASTBuilder::makePostfixNode):.
+          - Plumbed line, lineStart, and startColumn through the above as needed.
+
+        * parser/Lexer.cpp:
+        (JSC::::currentSourcePtr):
+        (JSC::::setCode):
+          - Added tracking for sourceoffset and lineStart.
+        (JSC::::internalShift):
+        (JSC::::parseIdentifier):
+          - Added tracking for lineStart.
+        (JSC::::parseIdentifierSlowCase):
+        (JSC::::parseString):
+          - Added tracking for lineStart.
+        (JSC::::parseStringSlowCase):
+        (JSC::::lex):
+          - Added tracking for sourceoffset.
+        (JSC::::sourceCode):
+        * parser/Lexer.h:
+        (JSC::Lexer::currentOffset):
+        (JSC::Lexer::currentLineStartOffset):
+        (JSC::Lexer::setOffset):
+          - Added tracking for lineStart.
+        (JSC::Lexer::offsetFromSourcePtr): Added. conversion function.
+        (JSC::Lexer::sourcePtrFromOffset): Added. conversion function.
+        (JSC::Lexer::setOffsetFromSourcePtr):
+        (JSC::::lexExpectIdentifier):
+          - Added tracking for sourceoffset and lineStart.
+
+        * parser/NodeConstructors.h:
+        (JSC::Node::Node):
+        (JSC::ResolveNode::ResolveNode):
+        (JSC::EvalFunctionCallNode::EvalFunctionCallNode):
+        (JSC::FunctionCallValueNode::FunctionCallValueNode):
+        (JSC::FunctionCallResolveNode::FunctionCallResolveNode):
+        (JSC::FunctionCallBracketNode::FunctionCallBracketNode):
+        (JSC::FunctionCallDotNode::FunctionCallDotNode):
+        (JSC::CallFunctionCallDotNode::CallFunctionCallDotNode):
+        (JSC::ApplyFunctionCallDotNode::ApplyFunctionCallDotNode):
+        (JSC::PostfixNode::PostfixNode):
+        (JSC::DeleteResolveNode::DeleteResolveNode):
+        (JSC::DeleteBracketNode::DeleteBracketNode):
+        (JSC::DeleteDotNode::DeleteDotNode):
+        (JSC::PrefixNode::PrefixNode):
+        (JSC::ReadModifyResolveNode::ReadModifyResolveNode):
+        (JSC::ReadModifyBracketNode::ReadModifyBracketNode):
+        (JSC::AssignBracketNode::AssignBracketNode):
+        (JSC::AssignDotNode::AssignDotNode):
+        (JSC::ReadModifyDotNode::ReadModifyDotNode):
+        (JSC::AssignErrorNode::AssignErrorNode):
+        (JSC::WithNode::WithNode):
+        (JSC::ForInNode::ForInNode):
+          - Plumbed line and lineStart through the above as needed.
+        * parser/Nodes.cpp:
+        (JSC::StatementNode::setLoc): Plumbed lineStart.
+        (JSC::ScopeNode::ScopeNode): Plumbed lineStart.
+        (JSC::ProgramNode::ProgramNode): Plumbed startColumn.
+        (JSC::ProgramNode::create): Plumbed startColumn.
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::FunctionBodyNode): Plumbed startColumn.
+        (JSC::FunctionBodyNode::create): Plumbed startColumn.
+        * parser/Nodes.h:
+        (JSC::Node::startOffset):
+        (JSC::Node::lineStartOffset): Added.
+        (JSC::StatementNode::firstLine):
+        (JSC::StatementNode::lastLine):
+        (JSC::ThrowableExpressionData::ThrowableExpressionData):
+        (JSC::ThrowableExpressionData::setExceptionSourceCode):
+        (JSC::ThrowableExpressionData::divotStartOffset):
+        (JSC::ThrowableExpressionData::divotEndOffset):
+        (JSC::ThrowableExpressionData::divotLine):
+        (JSC::ThrowableExpressionData::divotLineStart):
+        (JSC::ThrowableSubExpressionData::ThrowableSubExpressionData):
+        (JSC::ThrowableSubExpressionData::setSubexpressionInfo):
+        (JSC::ThrowableSubExpressionData::subexpressionDivot):
+        (JSC::ThrowableSubExpressionData::subexpressionStartOffset):
+        (JSC::ThrowableSubExpressionData::subexpressionEndOffset):
+        (JSC::ThrowableSubExpressionData::subexpressionLine):
+        (JSC::ThrowableSubExpressionData::subexpressionLineStart):
+        (JSC::ThrowablePrefixedSubExpressionData::ThrowablePrefixedSubExpressionData):
+        (JSC::ThrowablePrefixedSubExpressionData::setSubexpressionInfo):
+        (JSC::ThrowablePrefixedSubExpressionData::subexpressionDivot):
+        (JSC::ThrowablePrefixedSubExpressionData::subexpressionStartOffset):
+        (JSC::ThrowablePrefixedSubExpressionData::subexpressionEndOffset):
+        (JSC::ThrowablePrefixedSubExpressionData::subexpressionLine):
+        (JSC::ThrowablePrefixedSubExpressionData::subexpressionLineStart):
+        (JSC::ScopeNode::startStartOffset):
+        (JSC::ScopeNode::startLineStartOffset):
+        (JSC::ProgramNode::startColumn):
+        (JSC::EvalNode::startColumn):
+        (JSC::FunctionBodyNode::startColumn):
+          - Plumbed line and lineStart through the above as needed.
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        (JSC::::parseSourceElements):
+        (JSC::::parseVarDeclarationList):
+        (JSC::::parseConstDeclarationList):
+        (JSC::::parseForStatement):
+        (JSC::::parseBreakStatement):
+        (JSC::::parseContinueStatement):
+        (JSC::::parseReturnStatement):
+        (JSC::::parseThrowStatement):
+        (JSC::::parseWithStatement):
+          - Plumbed line and lineStart through the above as needed.
+        (JSC::::parseFunctionBody):
+          - Plumbed startColumn.
+        (JSC::::parseFunctionInfo):
+        (JSC::::parseFunctionDeclaration):
+        (JSC::LabelInfo::LabelInfo):
+        (JSC::::parseExpressionOrLabelStatement):
+        (JSC::::parseAssignmentExpression):
+        (JSC::::parseBinaryExpression):
+        (JSC::::parseProperty):
+        (JSC::::parseObjectLiteral):
+        (JSC::::parsePrimaryExpression):
+        (JSC::::parseMemberExpression):
+        (JSC::::parseUnaryExpression):
+          - Plumbed line, lineStart, startColumn through the above as needed.
+        * parser/Parser.h:
+        (JSC::Parser::next):
+        (JSC::Parser::nextExpectIdentifier):
+        (JSC::Parser::tokenStart):
+        (JSC::Parser::tokenColumn):
+        (JSC::Parser::tokenEnd):
+        (JSC::Parser::tokenLineStart):
+        (JSC::Parser::lastTokenLine):
+        (JSC::Parser::lastTokenLineStart):
+        (JSC::::parse):
+        * parser/ParserTokens.h:
+        (JSC::JSTokenLocation::JSTokenLocation):
+          - Plumbed lineStart.
+        (JSC::JSTokenLocation::lineStartPosition):
+        (JSC::JSTokenLocation::startPosition):
+        (JSC::JSTokenLocation::endPosition):
+        * parser/SourceCode.h:
+        (JSC::SourceCode::SourceCode):
+        (JSC::SourceCode::startColumn):
+        (JSC::makeSource):
+        (JSC::SourceCode::subExpression):
+        * parser/SourceProvider.cpp: delete old code.
+        * parser/SourceProvider.h: delete old code.
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::closeBraceToken):
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+          - Plumbed lineStart.
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::makeFunctionCallNode):
+        (JSC::SyntaxChecker::makeAssignNode):
+        (JSC::SyntaxChecker::makePrefixNode):
+        (JSC::SyntaxChecker::makePostfixNode):
+        (JSC::SyntaxChecker::makeDeleteNode):
+        (JSC::SyntaxChecker::createResolve):
+        (JSC::SyntaxChecker::createBracketAccess):
+        (JSC::SyntaxChecker::createDotAccess):
+        (JSC::SyntaxChecker::createRegExp):
+        (JSC::SyntaxChecker::createNewExpr):
+        (JSC::SyntaxChecker::createAssignResolve):
+        (JSC::SyntaxChecker::createFunctionExpr):
+        (JSC::SyntaxChecker::createFunctionBody):
+        (JSC::SyntaxChecker::createFuncDeclStatement):
+        (JSC::SyntaxChecker::createForInLoop):
+        (JSC::SyntaxChecker::createReturnStatement):
+        (JSC::SyntaxChecker::createBreakStatement):
+        (JSC::SyntaxChecker::createContinueStatement):
+        (JSC::SyntaxChecker::createWithStatement):
+        (JSC::SyntaxChecker::createLabelStatement):
+        (JSC::SyntaxChecker::createThrowStatement):
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+        (JSC::SyntaxChecker::appendBinaryExpressionInfo):
+        (JSC::SyntaxChecker::operatorStackPop):
+          - Made SyntaxChecker prototype changes to match ASTBuilder due to new
+            args added for plumbing line, lineStart, and startColumn.
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::generateBytecode):
+        (JSC::CodeCache::getCodeBlock):
+          - Plumbed startColumn.
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        (JSC::FunctionExecutable::fromGlobalCode):
+          - Plumbed startColumn.
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::startColumn):
+        (JSC::ScriptExecutable::recordParse):
+        (JSC::FunctionExecutable::create):
+          - Plumbed startColumn.
+
 2013-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

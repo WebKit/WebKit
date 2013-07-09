@@ -1,3 +1,24 @@
+2013-07-09  Mark Lam  <mark.lam@apple.com>
+
+        Fix 30% JSBench regression (caused by adding column numbers to stack traces).
+        https://bugs.webkit.org/show_bug.cgi?id=118481.
+
+        Reviewed by Mark Hahnenberg and Geoffrey Garen.
+
+        Test: fast/js/line-column-numbers.html
+
+        Updated the bindings to use StackFrame::computeLineAndColumn(). The old
+        StackFrame::line() and StackFrame::column() has been removed. The new
+        algorithm always computes the 2 values together anyway. Hence it is more
+        efficient to return them as a pair instead of doing the same computation
+        twice for each half of the result.
+
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptCallStack):
+        (WebCore::createScriptCallStackFromException):
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+
 2013-07-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use toSVGFontElement() instead of static_cast<SVGFontElement*>

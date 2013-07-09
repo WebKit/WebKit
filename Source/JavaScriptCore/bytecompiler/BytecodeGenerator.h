@@ -339,7 +339,6 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
-            addLineInfo(n->lineNo());
             if (!m_stack.isSafeToRecurse()) {
                 emitThrowExpressionTooDeepException();
                 return;
@@ -356,7 +355,6 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
-            addLineInfo(n->lineNo());
             if (!m_stack.isSafeToRecurse())
                 return emitThrowExpressionTooDeepException();
             return n->emitBytecode(*this, dst);
@@ -369,7 +367,6 @@ namespace JSC {
 
         void emitNodeInConditionContext(ExpressionNode* n, Label* trueTarget, Label* falseTarget, FallThroughMode fallThroughMode)
         {
-            addLineInfo(n->lineNo());
             if (!m_stack.isSafeToRecurse()) {
                 emitThrowExpressionTooDeepException();
                 return;
@@ -378,33 +375,27 @@ namespace JSC {
             n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMode);
         }
 
-        void emitExpressionInfo(unsigned divot, unsigned startOffset, unsigned endOffset)
+        void emitExpressionInfo(int divot, int startOffset, int endOffset, unsigned line, int lineStart)
         {
-            divot -= m_scopeNode->source().startOffset();
-            if (divot > ExpressionRangeInfo::MaxDivot) {
-                // Overflow has occurred, we can only give line number info for errors for this region
-                divot = 0;
-                startOffset = 0;
-                endOffset = 0;
-            } else if (startOffset > ExpressionRangeInfo::MaxOffset) {
-                // If the start offset is out of bounds we clear both offsets
-                // so we only get the divot marker.  Error message will have to be reduced
-                // to line and charPosition number.
-                startOffset = 0;
-                endOffset = 0;
-            } else if (endOffset > ExpressionRangeInfo::MaxOffset) {
-                // The end offset is only used for additional context, and is much more likely
-                // to overflow (eg. function call arguments) so we are willing to drop it without
-                // dropping the rest of the range.
-                endOffset = 0;
-            }
-            
-            ExpressionRangeInfo info;
-            info.instructionOffset = instructions().size();
-            info.divotPoint = divot;
-            info.startOffset = startOffset;
-            info.endOffset = endOffset;
-            m_codeBlock->addExpressionInfo(info);
+            int sourceOffset = m_scopeNode->source().startOffset();
+            unsigned firstLine = m_scopeNode->source().firstLine();
+
+            ASSERT(divot >= lineStart);
+            ASSERT(divot >= sourceOffset);
+            divot -= sourceOffset;
+
+            if (lineStart > sourceOffset)
+                lineStart -= sourceOffset;
+            else
+                lineStart = 0;
+
+            ASSERT(line >= firstLine);
+            line -= firstLine;
+
+            unsigned instructionOffset = instructions().size();
+            ASSERT(divot >= lineStart);
+            unsigned column = divot - lineStart;
+            m_codeBlock->addExpressionInfo(instructionOffset, divot, startOffset, endOffset, line, column);
         }
 
         ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsPure)
@@ -480,15 +471,15 @@ namespace JSC {
         void emitPutGetterSetter(RegisterID* base, const Identifier& property, RegisterID* getter, RegisterID* setter);
         
         ExpectedFunction expectedFunctionForIdentifier(const Identifier&);
-        RegisterID* emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
-        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
-        RegisterID* emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, RegisterID* profileHookRegister, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
+        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
+        RegisterID* emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, RegisterID* profileHookRegister, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
         RegisterID* emitLoadVarargs(RegisterID* argCountDst, RegisterID* thisRegister, RegisterID* args);
 
         RegisterID* emitReturn(RegisterID* src);
         RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
 
-        RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
         RegisterID* emitStrcat(RegisterID* dst, RegisterID* src, int count);
         void emitToPrimitive(RegisterID* dst, RegisterID* src);
 
@@ -524,7 +515,7 @@ namespace JSC {
         RegisterID* emitPushWithScope(RegisterID* scope);
         void emitPopScope();
 
-        void emitDebugHook(DebugHookID, int firstLine, int lastLine, int charPosition);
+        void emitDebugHook(DebugHookID, unsigned firstLine, unsigned lastLine, unsigned charOffset, unsigned lineStart);
 
         int scopeDepth() { return m_dynamicScopeDepth + m_finallyDepth; }
         bool hasFinaliser() { return m_finallyDepth != 0; }
@@ -592,7 +583,7 @@ namespace JSC {
         // (i.e. "Object()" is identical to "new Object()").
         ExpectedFunction emitExpectedFunctionSnippet(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, Label* done);
         
-        RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
 
         RegisterID* newRegister();
 
@@ -644,11 +635,6 @@ namespace JSC {
         UnlinkedFunctionExecutable* makeFunction(FunctionBodyNode* body)
         {
             return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), body);
-        }
-
-        void addLineInfo(unsigned lineNo)
-        {
-            m_codeBlock->addLineInfo(instructions().size(), lineNo - m_scopeNode->firstLine());
         }
 
         RegisterID* emitInitLazyRegister(RegisterID*);

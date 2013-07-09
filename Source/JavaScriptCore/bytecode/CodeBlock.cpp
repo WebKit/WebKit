@@ -1603,6 +1603,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_needsActivation(other.m_needsActivation)
     , m_source(other.m_source)
     , m_sourceOffset(other.m_sourceOffset)
+    , m_firstLineColumnOffset(other.m_firstLineColumnOffset)
     , m_codeType(other.m_codeType)
     , m_identifiers(other.m_identifiers)
     , m_constantRegisters(other.m_constantRegisters)
@@ -1632,7 +1633,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     }
 }
 
-CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, unsigned baseScopeDepth, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, PassOwnPtr<CodeBlock> alternative)
+CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, unsigned baseScopeDepth, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset, PassOwnPtr<CodeBlock> alternative)
     : m_globalObject(globalObject->vm(), ownerExecutable, globalObject)
     , m_heap(&m_globalObject->vm().heap)
     , m_numCalleeRegisters(unlinkedCodeBlock->m_numCalleeRegisters)
@@ -1648,6 +1649,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_needsActivation(unlinkedCodeBlock->needsFullScopeChain())
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
+    , m_firstLineColumnOffset(firstLineColumnOffset)
     , m_codeType(unlinkedCodeBlock->codeType())
     , m_alternative(alternative)
     , m_osrExitCounter(0)
@@ -1671,10 +1673,12 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
         unsigned lineCount = unlinkedExecutable->lineCount();
         unsigned firstLine = ownerExecutable->lineNo() + unlinkedExecutable->firstLineOffset();
+        unsigned startColumn = unlinkedExecutable->functionStartColumn();
+        startColumn += (unlinkedExecutable->firstLineOffset() ? 1 : ownerExecutable->startColumn());
         unsigned startOffset = sourceOffset + unlinkedExecutable->startOffset();
         unsigned sourceLength = unlinkedExecutable->sourceLength();
-        SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine);
-        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount);
+        SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine, startColumn);
+        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn);
         m_functionDecls[i].set(*m_vm, ownerExecutable, executable);
     }
 
@@ -1683,10 +1687,12 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
         unsigned lineCount = unlinkedExecutable->lineCount();
         unsigned firstLine = ownerExecutable->lineNo() + unlinkedExecutable->firstLineOffset();
+        unsigned startColumn = unlinkedExecutable->functionStartColumn();
+        startColumn += (unlinkedExecutable->firstLineOffset() ? 1 : ownerExecutable->startColumn());
         unsigned startOffset = sourceOffset + unlinkedExecutable->startOffset();
         unsigned sourceLength = unlinkedExecutable->sourceLength();
-        SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine);
-        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount);
+        SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine, startColumn);
+        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn);
         m_functionExprs[i].set(*m_vm, ownerExecutable, executable);
     }
 
@@ -1943,10 +1949,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
 
         case op_debug: {
-            size_t charPosition = pc[i + 4].u.operand;
-            size_t actualCharPosition = charPosition + m_sourceOffset;
-            size_t column = m_source->charPositionToColumnNumber(actualCharPosition);
-            instructions[i + 4] = column;
+            instructions[i + 4] = columnNumberForBytecodeOffset(i);
             break;
         }
 
@@ -2463,16 +2466,29 @@ HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
     return 0;
 }
 
-int CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
+unsigned CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
     RELEASE_ASSERT(bytecodeOffset < instructions().size());
     return m_ownerExecutable->lineNo() + m_unlinkedCode->lineNumberForBytecodeOffset(bytecodeOffset);
 }
 
-void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset)
+unsigned CodeBlock::columnNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
-    m_unlinkedCode->expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset);
+    int divot;
+    int startOffset;
+    int endOffset;
+    unsigned line;
+    unsigned column;
+    expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset, line, column);
+    return column;
+}
+
+void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
+{
+    m_unlinkedCode->expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset, line, column);
     divot += m_sourceOffset;
+    column += line ? 1 : firstLineColumnOffset();
+    line += m_ownerExecutable->lineNo();
 }
 
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)

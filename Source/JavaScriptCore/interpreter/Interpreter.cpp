@@ -422,9 +422,11 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     int startOffset = 0;
     int endOffset = 0;
     int divotPoint = 0;
+    unsigned line = 0;
+    unsigned column = 0;
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset);
+    codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divotPoint, startOffset, endOffset, line, column);
 
     int expressionStart = divotPoint - startOffset;
     int expressionStop = divotPoint + endOffset;
@@ -572,25 +574,28 @@ static StackFrameCodeType getStackFrameCodeType(CallFrame* callFrame)
     return StackFrameGlobalCode;
 }
 
-unsigned StackFrame::line()
+void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column)
 {
-    return codeBlock ? codeBlock->lineNumberForBytecodeOffset(bytecodeOffset) + lineOffset : 0;
-}
+    if (!codeBlock) {
+        line = 0;
+        column = 0;
+        return;
+    }
 
-unsigned StackFrame::column()
-{
-    if (!code)
-        return 0;
     int divot = 0;
     int unusedStartOffset = 0;
     int unusedEndOffset = 0;
-    expressionInfo(divot, unusedStartOffset, unusedEndOffset);
-    return code->charPositionToColumnNumber(divot);
+    unsigned divotLine = 0;
+    unsigned divotColumn = 0;
+    expressionInfo(divot, unusedStartOffset, unusedEndOffset, divotLine, divotColumn);
+
+    line = divotLine + lineOffset;
+    column = divotColumn + (divotLine ? 1 : firstLineColumnOffset);
 }
 
-void StackFrame::expressionInfo(int& divot, int& startOffset, int& endOffset)
+void StackFrame::expressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
 {
-    codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset);
+    codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset, line, column);
     divot += characterOffset;
 }
 
@@ -605,10 +610,14 @@ String StackFrame::toString(CallFrame* callFrame)
             traceBuild.append('@');
         traceBuild.append(sourceURL);
         if (codeType != StackFrameNativeCode) {
+            unsigned line;
+            unsigned column;
+            computeLineAndColumn(line, column);
+
             traceBuild.append(':');
-            traceBuild.appendNumber(line());
+            traceBuild.appendNumber(line);
             traceBuild.append(':');
-            traceBuild.appendNumber(column());
+            traceBuild.appendNumber(column);
         }
     }
     return traceBuild.toString().impl();
@@ -636,13 +645,15 @@ void Interpreter::getStackTrace(VM* vm, Vector<StackFrame>& results, size_t maxS
                 Strong<UnlinkedCodeBlock>(*vm, callerCodeBlock->unlinkedCodeBlock()),
                 callerCodeBlock->source(),
                 callerCodeBlock->ownerExecutable()->lineNo(),
+                callerCodeBlock->firstLineColumnOffset(),
                 callerCodeBlock->sourceOffset(),
                 bytecodeOffset,
                 sourceURL
             };
+
             results.append(s);
         } else {
-            StackFrame s = { Strong<JSObject>(*vm, callFrame->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, String()};
+            StackFrame s = { Strong<JSObject>(*vm, callFrame->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String()};
             results.append(s);
         }
         callFrame = getCallerInfo(vm, callFrame, bytecodeOffset, callerCodeBlock);

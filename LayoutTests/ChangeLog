@@ -1,3 +1,42 @@
+2013-07-09  Mark Lam  <mark.lam@apple.com>
+
+        Fix 30% JSBench regression (caused by adding column numbers to stack traces).
+        https://bugs.webkit.org/show_bug.cgi?id=118481.
+
+        Reviewed by Mark Hahnenberg and Geoffrey Garen.
+
+        The fix now computes line and column numbers more accurately. As a result,
+        some of the test results need to be re-baselined. Among other fixes, one
+        major source of difference is that the old code was incorrectly computing
+        0-based column numbers. This has now been fixed to be 1-based.
+        Note: line numbers were always 1-based.
+
+        Also added a new test: fast/js/line-column-numbers.html, which tests line
+        and column numbers for source code in various configurations.
+
+        * editing/execCommand/outdent-blockquote-test1-expected.txt:
+        * editing/execCommand/outdent-blockquote-test2-expected.txt:
+        * editing/execCommand/outdent-blockquote-test3-expected.txt:
+        * editing/execCommand/outdent-blockquote-test4-expected.txt:
+        * editing/pasteboard/copy-paste-float-expected.txt:
+        * editing/pasteboard/paste-blockquote-before-blockquote-expected.txt:
+        * editing/pasteboard/paste-double-nested-blockquote-before-blockquote-expected.txt:
+        * fast/dom/Window/window-resize-contents-expected.txt:
+        * fast/events/remove-target-with-shadow-in-drag-expected.txt:
+        * fast/js/line-column-numbers-expected.txt: Added.
+        * fast/js/line-column-numbers.html: Added.
+        * fast/js/script-tests/line-column-numbers.js: Added.
+        (try.doThrow4b):
+        (doThrow5b.try.innerFunc):
+        (doThrow5b):
+        (doThrow6b.try.innerFunc):
+        (doThrow6b):
+        (catch):
+        (try.doThrow11b):
+        (try.doThrow14b):
+        * fast/js/stack-trace-expected.txt:
+        * inspector/console/console-url-line-column-expected.txt:
+
 2013-07-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

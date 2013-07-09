@@ -88,7 +88,7 @@ UnlinkedCodeBlockType* CodeCache::generateBytecode(VM& vm, JSScope* scope, Execu
     RefPtr<RootNode> rootNode = parse<RootNode>(&vm, source, 0, Identifier(), strictness, JSParseProgramCode, error);
     if (!rootNode)
         return 0;
-    executable->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->lineNo(), rootNode->lastLine());
+    executable->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->lineNo(), rootNode->lastLine(), rootNode->startColumn());
 
     UnlinkedCodeBlockType* unlinkedCode = UnlinkedCodeBlockType::create(&vm, executable->executableInfo());
     unlinkedCode->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->lineNo() - source.firstLine(), rootNode->lastLine() - rootNode->lineNo());
@@ -116,7 +116,8 @@ UnlinkedCodeBlockType* CodeCache::getCodeBlock(VM& vm, JSScope* scope, Executabl
     if (!addResult.isNewEntry && canCache) {
         UnlinkedCodeBlockType* unlinkedCode = jsCast<UnlinkedCodeBlockType*>(addResult.iterator->value.cell.get());
         unsigned firstLine = source.firstLine() + unlinkedCode->firstLine();
-        executable->recordParse(unlinkedCode->codeFeatures(), unlinkedCode->hasCapturedVariables(), firstLine, firstLine + unlinkedCode->lineCount());
+        unsigned startColumn = source.firstLine() ? source.startColumn() : 0;
+        executable->recordParse(unlinkedCode->codeFeatures(), unlinkedCode->hasCapturedVariables(), firstLine, firstLine + unlinkedCode->lineCount(), startColumn);
         return unlinkedCode;
     }
     UnlinkedCodeBlockType* unlinkedCode = generateBytecode<UnlinkedCodeBlockType, ExecutableType>(vm, scope, executable, source, strictness, debuggerMode, profilerMode, error);

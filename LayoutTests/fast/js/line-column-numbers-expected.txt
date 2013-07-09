@@ -1,0 +1,189 @@
+This test checks line and column numbers in stack traces for correctness.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+--> Case 1 Stack Trace:
+    0   global code at line-column-numbers.html:40:36
+
+--> Case 2 Stack Trace:
+    0   global code at line-column-numbers.html:44:40
+
+--> Case 3 Stack Trace:
+    0   global code at line-column-numbers.html:48:32
+
+--> Case 3 Stack Trace:
+    0   global code at line-column-numbers.html:48:113
+
+--> Case 4 Stack Trace:
+    0   doThrow4 at line-column-numbers.html:54:44
+    1   global code at line-column-numbers.html:55:13
+
+--> Case 5 Stack Trace:
+    0   innerFunc at line-column-numbers.html:64:69
+    1   doThrow5 at line-column-numbers.html:64:82
+    2   global code at line-column-numbers.html:64:133
+
+--> Case 6 Stack Trace:
+    0   innerFunc at line-column-numbers.html:70:69
+    1   doThrow6 at line-column-numbers.html:70:82
+    2   global code at line-column-numbers.html:70:133
+
+--> Case 7 Stack Trace:
+    0    at line-column-numbers.html:75:51
+    1   global code at line-column-numbers.html:75:55
+
+--> Case 8 Stack Trace:
+    0    at line-column-numbers.html:78:59
+    1   global code at line-column-numbers.html:78:63
+
+--> Case 9 Stack Trace:
+    0    at line-column-numbers.html:82:55
+    1   global code at line-column-numbers.html:82:59
+
+--> Case 9 Stack Trace:
+    0    at line-column-numbers.html:82:157
+    1   global code at line-column-numbers.html:82:161
+
+--> Case 10 Stack Trace:
+    0    at line-column-numbers.html:89:26
+    1   global code at line-column-numbers.html:90:8
+
+--> Case 11 Stack Trace:
+    0    at line-column-numbers.html:101:41
+    1   doThrow11 at line-column-numbers.html:101:45
+    2   global code at line-column-numbers.html:103:14
+
+--> Case 12 Stack Trace:
+    0    at line-column-numbers.html:112:53
+    1    at line-column-numbers.html:112:57
+    2   global code at line-column-numbers.html:112:62
+
+--> Case 13 Stack Trace:
+    0    at line-column-numbers.html:118:53
+    1    at line-column-numbers.html:118:57
+    2   global code at line-column-numbers.html:118:62
+
+--> Case 14 Stack Trace:
+    0    at line-column-numbers.html:124:76
+    1    at line-column-numbers.html:124:80
+    2   doThrow14 at line-column-numbers.html:124:85
+    3   global code at line-column-numbers.html:124:99
+
+--> Case 15 Stack Trace:
+    0    at eval code
+    1   eval at [native code]
+    2   global code at line-column-numbers.html:130:5
+
+--> Case 16 Stack Trace:
+    0    at doThrow16
+    1    at eval code
+    2   eval at [native code]
+    3   global code at line-column-numbers.html:136:5
+
+--> Case 17 Stack Trace:
+    0    at 
+    1    at eval code
+    2   eval at [native code]
+    3   global code at line-column-numbers.html:149:5
+
+--> Case 18 Stack Trace:
+    0    at 
+    1    at eval code
+    2   eval at [native code]
+    3   global code at line-column-numbers.html:155:5
+
+--> Case 1 Stack Trace:
+    0   global code at line-column-numbers.js:3:28
+
+--> Case 2 Stack Trace:
+    0   global code at line-column-numbers.js:7:32
+
+--> Case 3 Stack Trace:
+    0   global code at line-column-numbers.js:11:24
+
+--> Case 3 Stack Trace:
+    0   global code at line-column-numbers.js:11:88
+
+--> Case 4 Stack Trace:
+    0   doThrow4b at line-column-numbers.js:16:45
+    1   global code at line-column-numbers.js:17:14
+
+--> Case 5 Stack Trace:
+    0   innerFunc at line-column-numbers.js:24:70
+    1   doThrow5b at line-column-numbers.js:24:83
+    2   global code at line-column-numbers.js:24:135
+
+--> Case 6 Stack Trace:
+    0   innerFunc at line-column-numbers.js:28:70
+    1   doThrow6b at line-column-numbers.js:28:83
+    2   global code at line-column-numbers.js:28:135
+
+--> Case 7 Stack Trace:
+    0    at line-column-numbers.js:32:43
+    1   global code at line-column-numbers.js:32:47
+
+--> Case 8 Stack Trace:
+    0    at line-column-numbers.js:36:47
+    1   global code at line-column-numbers.js:36:51
+
+--> Case 9 Stack Trace:
+    0    at line-column-numbers.js:40:39
+    1   global code at line-column-numbers.js:40:43
+
+--> Case 9 Stack Trace:
+    0    at line-column-numbers.js:40:124
+    1   global code at line-column-numbers.js:40:128
+
+--> Case 10 Stack Trace:
+    0    at line-column-numbers.js:46:26
+    1   global code at line-column-numbers.js:47:8
+
+--> Case 11 Stack Trace:
+    0    at line-column-numbers.js:56:41
+    1   doThrow11b at line-column-numbers.js:56:45
+    2   global code at line-column-numbers.js:58:15
+
+--> Case 12 Stack Trace:
+    0    at line-column-numbers.js:65:53
+    1    at line-column-numbers.js:65:57
+    2   global code at line-column-numbers.js:65:62
+
+--> Case 13 Stack Trace:
+    0    at line-column-numbers.js:69:53
+    1    at line-column-numbers.js:69:57
+    2   global code at line-column-numbers.js:69:62
+
+--> Case 14 Stack Trace:
+    0    at line-column-numbers.js:73:77
+    1    at line-column-numbers.js:73:81
+    2   doThrow14b at line-column-numbers.js:73:86
+    3   global code at line-column-numbers.js:73:101
+
+--> Case 15 Stack Trace:
+    0    at eval code
+    1   eval at [native code]
+    2   global code at line-column-numbers.js:77:5
+
+--> Case 16 Stack Trace:
+    0    at doThrow15b
+    1    at eval code
+    2   eval at [native code]
+    3   global code at line-column-numbers.js:81:5
+
+--> Case 17 Stack Trace:
+    0    at 
+    1    at eval code
+    2   eval at [native code]
+    3   global code at line-column-numbers.js:92:5
+
+--> Case 18 Stack Trace:
+    0    at 
+    1    at eval code
+    2   eval at [native code]
+    3   global code at line-column-numbers.js:96:5
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

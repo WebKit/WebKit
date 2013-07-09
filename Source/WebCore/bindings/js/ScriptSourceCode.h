@@ -45,7 +45,7 @@ class ScriptSourceCode {
 public:
     ScriptSourceCode(const String& source, const KURL& url = KURL(), const TextPosition& startPosition = TextPosition::minimumPosition())
         : m_provider(JSC::StringSourceProvider::create(source, url.isNull() ? String() : url.string(), startPosition))
-        , m_code(m_provider, startPosition.m_line.oneBasedInt())
+        , m_code(m_provider, startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
         , m_url(url)
     {
     }
