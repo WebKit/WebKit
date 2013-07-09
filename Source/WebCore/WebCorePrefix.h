@@ -168,6 +168,8 @@ _LIBCPP_END_NAMESPACE_STD
 /* Windows doesn't include CFNetwork.h via CoreServices.h, so we do
    it explicitly here to make Windows more consistent with Mac. */
 #include <CFNetwork/CFNetwork.h>
+// On Windows, dispatch.h needs to be included before certain CFNetwork headers.
+#include <dispatch/dispatch.h>
 #endif
 #include <windows.h>
 #else

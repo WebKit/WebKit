@@ -1,3 +1,14 @@
+2013-07-09  peavo@outlook.com  <peavo@outlook.com>
+
+        [Windows] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=106558
+
+        Reviewed by Brent Fulgham.
+
+        On Windows, dispatch.h needs to be included before certain CFNetwork headers.
+
+        * WebCorePrefix.h: Include dispatch.h.
+
 2013-07-09  Mark Lam  <mark.lam@apple.com>
 
         Fix 30% JSBench regression (caused by adding column numbers to stack traces).
