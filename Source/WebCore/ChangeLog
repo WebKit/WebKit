@@ -1,5 +1,16 @@
 2013-07-09  Jeff Miller  <jeffm@apple.com>
 
+        AuthenticationMac.mm does not handle NSURLAuthenticationMethodNegotiate in WebCore::mac()
+        https://bugs.webkit.org/show_bug.cgi?id=118518
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::mac):
+        Map ProtectionSpaceAuthenticationSchemeNegotiate to NSURLAuthenticationMethodNegotiate.
+
+2013-07-09  Jeff Miller  <jeffm@apple.com>
+
         AuthenticationMac.mm does not handle NSURLAuthenticationMethodNegotiate
         https://bugs.webkit.org/show_bug.cgi?id=118517
 
