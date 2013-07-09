@@ -159,6 +159,11 @@ namespace WebCore {
     
     typedef unsigned ScrollbarControlPartMask;
 
+    enum ScrollPinningBehavior {
+        DoNotPin,
+        PinToTop,
+        PinToBottom
+    };
 }
 
 #endif

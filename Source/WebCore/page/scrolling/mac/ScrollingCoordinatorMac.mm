@@ -112,6 +112,11 @@ void ScrollingCoordinatorMac::setRubberBandsAtTop(bool rubberBandsAtTop)
 {
     scrollingTree()->setRubberBandsAtTop(rubberBandsAtTop);
 }
+    
+void ScrollingCoordinatorMac::setScrollPinningBehavior(ScrollPinningBehavior pinning)
+{
+    scrollingTree()->setScrollPinningBehavior(pinning);
+}
 
 void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
 {

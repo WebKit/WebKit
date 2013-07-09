@@ -58,6 +58,7 @@ ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     , m_mainFramePinnedToTheTop(false)
     , m_mainFramePinnedToTheBottom(false)
     , m_mainFrameIsRubberBanding(false)
+    , m_scrollPinningBehavior(DoNotPin)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_isHandlingProgrammaticScroll(false)
 {
@@ -325,6 +326,20 @@ void ScrollingTree::setRubberBandsAtTop(bool rubberBandsAtTop)
     MutexLocker locker(m_swipeStateMutex);
 
     m_rubberBandsAtTop = rubberBandsAtTop;
+}
+    
+void ScrollingTree::setScrollPinningBehavior(ScrollPinningBehavior pinning)
+{
+    MutexLocker locker(m_swipeStateMutex);
+    
+    m_scrollPinningBehavior = pinning;
+}
+
+ScrollPinningBehavior ScrollingTree::scrollPinningBehavior()
+{
+    MutexLocker lock(m_swipeStateMutex);
+    
+    return m_scrollPinningBehavior;
 }
 
 bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wheelEvent)

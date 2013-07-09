@@ -342,7 +342,12 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
 
 IntPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const
 {
-    return IntPoint(0, 0);
+    IntPoint position;
+    
+    if (scrollingTree()->rootNode() == this && scrollingTree()->scrollPinningBehavior() == PinToBottom)
+        position.setY(maximumScrollPosition().y());
+
+    return position;
 }
 
 IntPoint ScrollingTreeScrollingNodeMac::maximumScrollPosition() const
@@ -351,6 +356,9 @@ IntPoint ScrollingTreeScrollingNodeMac::maximumScrollPosition() const
                       totalContentsSize().height() - viewportRect().height());
 
     position.clampNegativeToZero();
+
+    if (scrollingTree()->rootNode() == this && scrollingTree()->scrollPinningBehavior() == PinToTop)
+        position.setY(minimumScrollPosition().y());
 
     return position;
 }

@@ -1245,6 +1245,9 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     m_frame->coreFrame()->view()->setProhibitsScrolling(shouldDisableScrolling);
     m_frame->coreFrame()->view()->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());
+    
+    if (webPage->scrollPinningBehavior() != DoNotPin)
+        m_frame->coreFrame()->view()->setScrollPinningBehavior(webPage->scrollPinningBehavior());
 
 #if USE(TILED_BACKING_STORE)
     if (shouldUseFixedLayout) {
