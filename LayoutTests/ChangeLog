@@ -2,6 +2,12 @@
 
         [Qt] Unreviewed gardening.
 
+        * platform/qt-mac/TestExpectations: Skip failing test after r151546.
+
+2013-07-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
         * platform/qt-5.0-wk2/TestExpectations: Skip flaky svg tests.
         * platform/qt-mac/TestExpectations: Skip failing CSS Shape tests.
 
