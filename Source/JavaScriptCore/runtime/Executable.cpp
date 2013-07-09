@@ -141,7 +141,7 @@ void ProgramExecutable::destroy(JSCell* cell)
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExecutable::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionExecutable) };
 
-FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine)
+FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine, unsigned startColumn)
     : ScriptExecutable(vm.functionExecutableStructure.get(), vm, source, unlinkedExecutable->isInStrictContext())
     , m_unlinkedExecutable(vm, this, unlinkedExecutable)
 {
@@ -149,6 +149,7 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, Unlinke
     ASSERT(source.length());
     m_firstLine = firstLine;
     m_lastLine = lastLine;
+    m_startColumn = startColumn;
 }
 
 void FunctionExecutable::destroy(JSCell* cell)
@@ -320,7 +321,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JI
         m_programCodeBlock = newCodeBlock.release();
     } else {
         JSGlobalObject* globalObject = scope->globalObject();
-        m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, m_unlinkedProgramCodeBlock.get(), globalObject, source().provider(), m_programCodeBlock.release()));
+        m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, m_unlinkedProgramCodeBlock.get(), globalObject, source().provider(), source().startColumn(), m_programCodeBlock.release()));
         m_programCodeBlock->copyPostParseDataFromAlternative();
     }
 
@@ -500,14 +501,18 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* s
     DebuggerMode debuggerMode = globalObject->hasDebugger() ? DebuggerOn : DebuggerOff;
     ProfilerMode profilerMode = globalObject->hasProfiler() ? ProfilerOn : ProfilerOff;
     UnlinkedFunctionCodeBlock* unlinkedCodeBlock = m_unlinkedExecutable->codeBlockFor(*vm, scope, m_source, specializationKind, debuggerMode, profilerMode, error);
-    recordParse(m_unlinkedExecutable->features(), m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine());
+    recordParse(m_unlinkedExecutable->features(), m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine(), startColumn());
 
     if (!unlinkedCodeBlock) {
         exception = error.toErrorObject(globalObject, m_source);
         return nullptr;
     }
 
-    OwnPtr<FunctionCodeBlock> result = adoptPtr(new FunctionCodeBlock(this, unlinkedCodeBlock, globalObject, source().provider(), source().startOffset()));
+    SourceProvider* provider = source().provider();
+    unsigned sourceOffset = source().startOffset();
+    unsigned startColumn = source().startColumn();
+
+    OwnPtr<FunctionCodeBlock> result = adoptPtr(new FunctionCodeBlock(this, unlinkedCodeBlock, globalObject, provider, sourceOffset, startColumn));
     result->copyPostParseDataFrom(codeBlockFor(specializationKind).get());
     return result.release();
 }
@@ -657,9 +662,10 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, E
         return 0;
     unsigned firstLine = source.firstLine() + unlinkedFunction->firstLineOffset();
     unsigned startOffset = source.startOffset() + unlinkedFunction->startOffset();
+    unsigned startColumn = source.startColumn();
     unsigned sourceLength = unlinkedFunction->sourceLength();
-    SourceCode functionSource(source.provider(), startOffset, startOffset + sourceLength, firstLine);
-    return FunctionExecutable::create(exec->vm(), functionSource, unlinkedFunction, firstLine, unlinkedFunction->lineCount());
+    SourceCode functionSource(source.provider(), startOffset, startOffset + sourceLength, firstLine, startColumn);
+    return FunctionExecutable::create(exec->vm(), functionSource, unlinkedFunction, firstLine, unlinkedFunction->lineCount(), startColumn);
 }
 
 String FunctionExecutable::paramString() const

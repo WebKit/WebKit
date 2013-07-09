@@ -59,8 +59,12 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
     if (JSC::ExecState* exec = JSMainThreadExecState::currentState()) {
         Vector<StackFrame> stackTrace;
         Interpreter::getStackTrace(&exec->vm(), stackTrace, maxStackSize);
-        for (size_t i = 0; i < stackTrace.size(); i++)
-            frames.append(ScriptCallFrame(stackTrace[i].friendlyFunctionName(exec), stackTrace[i].friendlySourceURL(), stackTrace[i].line(), stackTrace[i].column()));
+        for (size_t i = 0; i < stackTrace.size(); i++) {
+            unsigned line;
+            unsigned column;
+            stackTrace[i].computeLineAndColumn(line, column);
+            frames.append(ScriptCallFrame(stackTrace[i].friendlyFunctionName(exec), stackTrace[i].friendlySourceURL(), line, column));
+        }
     }
     if (frames.isEmpty() && !emptyIsAllowed) {
         // No frames found. It may happen in the case where
@@ -84,7 +88,10 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
             break;
 
         String functionName = stackTrace[i].friendlyFunctionName(exec);
-        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL, stackTrace[i].line(), stackTrace[i].column()));
+        unsigned line;
+        unsigned column;
+        stackTrace[i].computeLineAndColumn(line, column);
+        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL, line, column));
     }
 
     return ScriptCallStack::create(frames);
@@ -99,7 +106,10 @@ PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* e
             break;
 
         String functionName = stackTrace[i].friendlyFunctionName(exec);
-        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL, stackTrace[i].line(), stackTrace[i].column()));
+        unsigned line;
+        unsigned column;
+        stackTrace[i].computeLineAndColumn(line, column);
+        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL, line, column));
     }
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions

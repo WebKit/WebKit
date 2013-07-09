@@ -41,6 +41,7 @@ namespace JSC {
             , m_startChar(0)
             , m_endChar(0)
             , m_firstLine(0)
+            , m_startColumn(0)
         {
         }
 
@@ -49,19 +50,30 @@ namespace JSC {
         {
         }
 
-        SourceCode(PassRefPtr<SourceProvider> provider, int firstLine = 1)
+        SourceCode(PassRefPtr<SourceProvider> provider)
+            : m_provider(provider)
+            , m_startChar(0)
+            , m_endChar(m_provider->source().length())
+            , m_firstLine(1)
+            , m_startColumn(1)
+        {
+        }
+
+        SourceCode(PassRefPtr<SourceProvider> provider, int firstLine, int startColumn)
             : m_provider(provider)
             , m_startChar(0)
             , m_endChar(m_provider->source().length())
             , m_firstLine(std::max(firstLine, 1))
+            , m_startColumn(std::max(startColumn, 1))
         {
         }
 
-        SourceCode(PassRefPtr<SourceProvider> provider, int start, int end, int firstLine)
+        SourceCode(PassRefPtr<SourceProvider> provider, int start, int end, int firstLine, int startColumn)
             : m_provider(provider)
             , m_startChar(start)
             , m_endChar(end)
             , m_firstLine(std::max(firstLine, 1))
+            , m_startColumn(std::max(startColumn, 1))
         {
         }
 
@@ -84,29 +96,32 @@ namespace JSC {
         bool isNull() const { return !m_provider; }
         SourceProvider* provider() const { return m_provider.get(); }
         int firstLine() const { return m_firstLine; }
+        int startColumn() const { return m_startColumn; }
         int startOffset() const { return m_startChar; }
         int endOffset() const { return m_endChar; }
         int length() const { return m_endChar - m_startChar; }
         
-        SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine);
+        SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn);
 
     private:
         RefPtr<SourceProvider> m_provider;
         int m_startChar;
         int m_endChar;
         int m_firstLine;
+        int m_startColumn;
     };
 
     inline SourceCode makeSource(const String& source, const String& url = String(), const TextPosition& startPosition = TextPosition::minimumPosition())
     {
-        return SourceCode(StringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt());
+        return SourceCode(StringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
     }
 
-    inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine)
+    inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn)
     {
         ASSERT(provider()->source()[openBrace] == '{');
         ASSERT(provider()->source()[closeBrace] == '}');
-        return SourceCode(provider(), openBrace, closeBrace + 1, firstLine);
+        startColumn += 1; // Convert to base 1.
+        return SourceCode(provider(), openBrace, closeBrace + 1, firstLine, startColumn);
     }
 
 } // namespace JSC

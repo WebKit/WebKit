@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,6 +92,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_firstLineOffset(node->firstLine() - source.firstLine())
     , m_lineCount(node->lastLine() - node->firstLine())
     , m_functionStartOffset(node->functionStart() - source.startOffset())
+    , m_functionStartColumn(node->startColumn())
     , m_startOffset(node->source().startOffset() - source.startOffset())
     , m_sourceLength(node->source().length())
     , m_features(node->features())
@@ -122,8 +123,9 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& s
 {
     unsigned firstLine = lineOffset + m_firstLineOffset;
     unsigned startOffset = sourceOffset + m_startOffset;
-    SourceCode code(source.provider(), startOffset, startOffset + m_sourceLength, firstLine);
-    return FunctionExecutable::create(vm, code, this, firstLine, firstLine + m_lineCount);
+    unsigned startColumn = m_functionStartColumn + 1; // startColumn should start from 1, not 0.
+    SourceCode code(source.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);
+    return FunctionExecutable::create(vm, code, this, firstLine, firstLine + m_lineCount, startColumn);
 }
 
 UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(const Identifier& name, ExecState* exec, Debugger*, const SourceCode& source, JSObject** exception)
@@ -240,24 +242,17 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 int UnlinkedCodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
     ASSERT(bytecodeOffset < instructions().size());
-    Vector<LineInfo>& lineInfo = m_lineInfo;
-    
-    int low = 0;
-    int high = lineInfo.size();
-    while (low < high) {
-        int mid = low + (high - low) / 2;
-        if (lineInfo[mid].instructionOffset <= bytecodeOffset)
-            low = mid + 1;
-        else
-            high = mid;
-    }
-    
-    if (!low)
-        return 0;
-    return lineInfo[low - 1].lineNumber;
+    int divot;
+    int startOffset;
+    int endOffset;
+    unsigned line;
+    unsigned column;
+    expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset, line, column);
+    return line;
 }
 
-void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset)
+void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset,
+    int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
 {
     ASSERT(bytecodeOffset < instructions().size());
 
@@ -265,6 +260,8 @@ void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset
         startOffset = 0;
         endOffset = 0;
         divot = 0;
+        line = 0;
+        column = 0;
         return;
     }
 
@@ -280,17 +277,83 @@ void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset
             high = mid;
     }
 
-    ASSERT(low);
-    if (!low) {
+    if (!low)
+        low = 1;
+
+    ExpressionRangeInfo& info = expressionInfo[low - 1];
+    startOffset = info.startOffset;
+    endOffset = info.endOffset;
+    divot = info.divotPoint;
+
+    switch (info.mode) {
+    case ExpressionRangeInfo::FatLineMode:
+        info.decodeFatLineMode(line, column);
+        break;
+    case ExpressionRangeInfo::FatColumnMode:
+        info.decodeFatColumnMode(line, column);
+        break;
+    case ExpressionRangeInfo::FatLineAndColumnMode: {
+        unsigned fatIndex = info.position;
+        ExpressionRangeInfo::FatPosition& fatPos = m_rareData->m_expressionInfoFatPositions[fatIndex];
+        line = fatPos.line;
+        column = fatPos.column;
+        break;
+    }
+    } // switch
+}
+
+void UnlinkedCodeBlock::addExpressionInfo(unsigned instructionOffset,
+    int divot, int startOffset, int endOffset, unsigned line, unsigned column)
+{
+    if (divot > ExpressionRangeInfo::MaxDivot) {
+        // Overflow has occurred, we can only give line number info for errors for this region
+        divot = 0;
         startOffset = 0;
         endOffset = 0;
-        divot = 0;
-        return;
+    } else if (startOffset > ExpressionRangeInfo::MaxOffset) {
+        // If the start offset is out of bounds we clear both offsets
+        // so we only get the divot marker. Error message will have to be reduced
+        // to line and charPosition number.
+        startOffset = 0;
+        endOffset = 0;
+    } else if (endOffset > ExpressionRangeInfo::MaxOffset) {
+        // The end offset is only used for additional context, and is much more likely
+        // to overflow (eg. function call arguments) so we are willing to drop it without
+        // dropping the rest of the range.
+        endOffset = 0;
     }
 
-    startOffset = expressionInfo[low - 1].startOffset;
-    endOffset = expressionInfo[low - 1].endOffset;
-    divot = expressionInfo[low - 1].divotPoint;
+    unsigned positionMode =
+        (line <= ExpressionRangeInfo::MaxFatLineModeLine && column <= ExpressionRangeInfo::MaxFatLineModeColumn) 
+        ? ExpressionRangeInfo::FatLineMode
+        : (line <= ExpressionRangeInfo::MaxFatColumnModeLine && column <= ExpressionRangeInfo::MaxFatColumnModeColumn)
+        ? ExpressionRangeInfo::FatColumnMode
+        : ExpressionRangeInfo::FatLineAndColumnMode;
+
+    ExpressionRangeInfo info;
+    info.instructionOffset = instructionOffset;
+    info.divotPoint = divot;
+    info.startOffset = startOffset;
+    info.endOffset = endOffset;
+
+    info.mode = positionMode;
+    switch (positionMode) {
+    case ExpressionRangeInfo::FatLineMode:
+        info.encodeFatLineMode(line, column);
+        break;
+    case ExpressionRangeInfo::FatColumnMode:
+        info.encodeFatColumnMode(line, column);
+        break;
+    case ExpressionRangeInfo::FatLineAndColumnMode: {
+        createRareDataIfNecessary();
+        unsigned fatIndex = m_rareData->m_expressionInfoFatPositions.size();
+        ExpressionRangeInfo::FatPosition fatPos = { line, column };
+        m_rareData->m_expressionInfoFatPositions.append(fatPos);
+        info.position = fatIndex;
+    }
+    } // switch
+
+    m_expressionInfo.append(info);
 }
 
 void UnlinkedProgramCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)

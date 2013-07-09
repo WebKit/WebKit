@@ -103,6 +103,7 @@ public:
     unsigned firstLineOffset() const { return m_firstLineOffset; }
     unsigned lineCount() const { return m_lineCount; }
     unsigned functionStartOffset() const { return m_functionStartOffset; }
+    unsigned functionStartColumn() const { return m_functionStartColumn; }
     unsigned startOffset() const { return m_startOffset; }
     unsigned sourceLength() { return m_sourceLength; }
 
@@ -159,6 +160,7 @@ private:
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
     unsigned m_functionStartOffset;
+    unsigned m_functionStartColumn;
     unsigned m_startOffset;
     unsigned m_sourceLength;
 
@@ -245,19 +247,8 @@ public:
     bool needsFullScopeChain() const { return m_needsFullScopeChain; }
     void setNeedsFullScopeChain(bool needsFullScopeChain) { m_needsFullScopeChain = needsFullScopeChain; }
 
-    void addExpressionInfo(const ExpressionRangeInfo& expressionInfo)
-    {
-        m_expressionInfo.append(expressionInfo);
-    }
-
-    void addLineInfo(unsigned bytecodeOffset, int lineNo)
-    {
-        Vector<LineInfo>& lineInfo = m_lineInfo;
-        if (!lineInfo.size() || lineInfo.last().lineNumber != lineNo) {
-            LineInfo info = { bytecodeOffset, lineNo };
-            lineInfo.append(info);
-        }
-    }
+    void addExpressionInfo(unsigned instructionOffset, int divot,
+        int startOffset, int endOffset, unsigned line, unsigned column);
 
     bool hasExpressionInfo() { return m_expressionInfo.size(); }
 
@@ -331,7 +322,6 @@ public:
         m_constantRegisters.shrinkToFit();
         m_functionDecls.shrinkToFit();
         m_functionExprs.shrinkToFit();
-        m_lineInfo.shrinkToFit();
         m_propertyAccessInstructions.shrinkToFit();
         m_expressionInfo.shrinkToFit();
 
@@ -345,6 +335,7 @@ public:
             m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
             m_rareData->m_characterSwitchJumpTables.shrinkToFit();
             m_rareData->m_stringSwitchJumpTables.shrinkToFit();
+            m_rareData->m_expressionInfoFatPositions.shrinkToFit();
         }
     }
 
@@ -456,7 +447,8 @@ public:
 
     int lineNumberForBytecodeOffset(unsigned bytecodeOffset);
 
-    void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset);
+    void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
+        int& startOffset, int& endOffset, unsigned& line, unsigned& column);
 
     void recordParse(CodeFeatures features, bool hasCapturedVariables, unsigned firstLine, unsigned lineCount)
     {
@@ -534,8 +526,6 @@ private:
 
     WriteBarrier<SharedSymbolTable> m_symbolTable;
 
-    Vector<LineInfo> m_lineInfo;
-
     Vector<unsigned> m_propertyAccessInstructions;
 
 #if ENABLE(BYTECODE_COMMENTS)
@@ -568,6 +558,8 @@ public:
         Vector<UnlinkedSimpleJumpTable> m_characterSwitchJumpTables;
         Vector<UnlinkedStringJumpTable> m_stringSwitchJumpTables;
         RefPtr<CodeCache> m_evalCodeCache;
+
+        Vector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     };
 
 private:

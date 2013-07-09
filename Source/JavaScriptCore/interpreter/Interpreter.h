@@ -82,6 +82,7 @@ namespace JSC {
         Strong<UnlinkedCodeBlock> codeBlock;
         RefPtr<SourceProvider> code;
         int lineOffset;
+        unsigned firstLineColumnOffset;
         unsigned characterOffset;
         unsigned bytecodeOffset;
         String sourceURL;
@@ -125,9 +126,10 @@ namespace JSC {
             }
             return traceLine.isNull() ? emptyString() : traceLine;
         }
-        JS_EXPORT_PRIVATE unsigned line();
-        JS_EXPORT_PRIVATE unsigned column();
-        JS_EXPORT_PRIVATE void expressionInfo(int& divot, int& startOffset, int& endOffset);
+        JS_EXPORT_PRIVATE void computeLineAndColumn(unsigned& line, unsigned& column);
+
+    private:
+        void expressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column);
     };
 
     class TopCallFrameSetter {

@@ -36,7 +36,8 @@ namespace JSC {
 struct SourceProviderCacheItemCreationParameters {
     unsigned functionStart;
     unsigned closeBraceLine;
-    unsigned closeBracePos;
+    unsigned closeBraceOffset;
+    unsigned closeBraceLineStartOffset;
     bool needsFullActivation;
     bool usesEval;
     bool strictMode;
@@ -59,10 +60,13 @@ public:
     {
         JSToken token;
         token.m_type = CLOSEBRACE;
-        token.m_data.intValue = closeBracePos;
-        token.m_location.startOffset = closeBracePos;
-        token.m_location.endOffset = closeBracePos + 1;
+        token.m_data.offset = closeBraceOffset;
+        token.m_location.startOffset = closeBraceOffset;
+        token.m_location.endOffset = closeBraceOffset + 1;
         token.m_location.line = closeBraceLine;
+        token.m_location.lineStartOffset = closeBraceLineStartOffset;
+        // token.m_location.sourceOffset is initialized once by the client. So,
+        // we do not need to set it here.
         return token;
     }
 
@@ -72,9 +76,10 @@ public:
     unsigned closeBraceLine : 31;
     bool usesEval : 1;
 
-    unsigned closeBracePos : 31;
+    unsigned closeBraceOffset : 31;
     bool strictMode : 1;
 
+    unsigned closeBraceLineStartOffset;
     unsigned usedVariablesCount;
     unsigned writtenVariablesCount;
 
@@ -106,8 +111,9 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , needsFullActivation(parameters.needsFullActivation)
     , closeBraceLine(parameters.closeBraceLine)
     , usesEval(parameters.usesEval)
-    , closeBracePos(parameters.closeBracePos)
+    , closeBraceOffset(parameters.closeBraceOffset)
     , strictMode(parameters.strictMode)
+    , closeBraceLineStartOffset(parameters.closeBraceLineStartOffset)
     , usedVariablesCount(parameters.usedVariables.size())
     , writtenVariablesCount(parameters.writtenVariables.size())
 {
