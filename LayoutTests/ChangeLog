@@ -1,3 +1,11 @@
+2013-07-09  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/TestExpectations: Skip failing composting test after r152303.
+        * platform/qt/editing/deleting/delete-br-002-expected.png: Update after r152478.
+        * platform/qt/editing/deleting/delete-br-002-expected.txt: Update after r152478.
+
 2013-07-08  Martin Robinson  <mrobinson@igalia.com>
 
         [CSS Grid Layout] Rename grid-{rows|columns} to grid-definition-{rows|columns}

@@ -2549,6 +2549,8 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/Google/resource-timing [ Sk
 # [Qt] A new compositing bug uncovered by r135859
 webkit.org/b/103424 fast/backgrounds/background-opaque-images-over-color.html
 
+webkit.org/b/118494 compositing/geometry/fixed-position-flipped-writing-mode.html [ Skip ]
+
 # [Qt] Text on scaled layer is blurry
 webkit.org/b/101491 compositing/text-on-scaled-layer.html [ Skip ]
 webkit.org/b/101491 compositing/text-on-scaled-surface.html [ Skip ]
