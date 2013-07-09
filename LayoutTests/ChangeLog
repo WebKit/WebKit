@@ -1,5 +1,12 @@
 2013-07-08  Alexey Proskuryakov  <ap@apple.com>
 
+        Updating fast/js/global-constructors-attributes.html results.
+
+        * fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+
+2013-07-08  Alexey Proskuryakov  <ap@apple.com>
+
         Merge r152470.
 
     2013-07-08  Alexey Proskuryakov  <ap@apple.com>
