@@ -1,3 +1,10 @@
+2013-07-09  Bruno de Oliveira Abinader  <brunoabinader@gmail.com>
+
+        Unreviewed change of my email addresses.
+        https://bugs.webkit.org/show_bug.cgi?id=100122
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-07-09  Anders Carlsson  <andersca@apple.com>
 
         DumpRenderTree should stop sending unsupported URLs to NSWorkspace
