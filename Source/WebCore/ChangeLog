@@ -1,5 +1,26 @@
 2013-07-09  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152424
+
+    2013-07-05  Zalan Bujtas  <zalan@apple.com>
+
+            iframe constrained by max-width in full screen
+            https://bugs.webkit.org/show_bug.cgi?id=118250
+
+            Reviewed by Antti Koivisto.
+
+            Ensure that contents inside iframe can go full screen properly.
+
+            Set max-width and max-height values to the default 'none', so that iframes are not
+            constrained when entering full screen.
+
+            Test: fullscreen/full-screen-iframe-with-max-width-height.html
+
+            * css/fullscreen.css:
+            (iframe:-webkit-full-screen):
+
+2013-07-09  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152422
 
     2013-07-05  Eric Carlson  <eric.carlson@apple.com>
