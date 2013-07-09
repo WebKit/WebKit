@@ -1,4 +1,25 @@
 =================
+WebKitGTK+  2.1.3
+=================
+
+What's new in WebKitGTK+ 2.1.3?
+
+  - Add support for preload="metadata" to GStreamer media backend.
+  - Do not expose '\n' for wrapped lines with ATK_TEXT_BOUNDARY_CHAR.
+  - Fix potential race condition in GStreamer media backend when
+    getting the video sink caps.
+  - Fix performance issues rendering a page with animations.
+  - Several fixes and improvements in GStreamer video accelerated
+    compositing support.
+  - Adjust internal size on GStreamer HTTP source element when
+    receiving data if necessary.
+  - Actually disable the memory cache when DOCUMENT_VIEWER cache model
+    is used in WebKit1.
+  - Fix runtime critical warning in WebKit2 when unloading a module
+    that failed to load.
+  - Fix several memory leaks.
+
+=================
 WebKitGTK+  2.1.2
 =================
 
