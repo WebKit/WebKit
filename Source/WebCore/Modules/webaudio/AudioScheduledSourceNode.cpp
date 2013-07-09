@@ -135,39 +135,43 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize,
     return;
 }
 
-void AudioScheduledSourceNode::start(double when)
+void AudioScheduledSourceNode::start(double when, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
 
     if (ScriptController::processingUserGesture())
         context()->removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
 
-    if (m_playbackState != UNSCHEDULED_STATE)
+    if (m_playbackState != UNSCHEDULED_STATE) {
+        ec = INVALID_STATE_ERR;
         return;
+    }
 
     m_startTime = when;
     m_playbackState = SCHEDULED_STATE;
 }
 
-void AudioScheduledSourceNode::stop(double when)
+void AudioScheduledSourceNode::stop(double when, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
-    if (!(m_playbackState == SCHEDULED_STATE || m_playbackState == PLAYING_STATE))
+    if (!(m_playbackState == SCHEDULED_STATE || m_playbackState == PLAYING_STATE)) {
+        ec = INVALID_STATE_ERR;
         return;
+    }
     
     when = max(0.0, when);
     m_endTime = when;
 }
 
 #if ENABLE(LEGACY_WEB_AUDIO)
-void AudioScheduledSourceNode::noteOn(double when)
+void AudioScheduledSourceNode::noteOn(double when, ExceptionCode& ec)
 {
-    start(when);
+    start(when, ec);
 }
 
-void AudioScheduledSourceNode::noteOff(double when)
+void AudioScheduledSourceNode::noteOff(double when, ExceptionCode& ec)
 {
-    stop(when);
+    stop(when, ec);
 }
 #endif
 

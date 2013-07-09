@@ -91,6 +91,7 @@
 const int UndefinedThreadIdentifier = 0xffffffff;
 
 const unsigned MaxNodesToDeletePerQuantum = 10;
+const unsigned MaxPeriodicWaveLength = 4096;
 
 namespace WebCore {
     
@@ -328,7 +329,7 @@ PassRefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, si
 {
     RefPtr<AudioBuffer> audioBuffer = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
     if (!audioBuffer.get()) {
-        ec = SYNTAX_ERR;
+        ec = NOT_SUPPORTED_ERR;
         return 0;
     }
 
@@ -464,7 +465,7 @@ PassRefPtr<ScriptProcessorNode> AudioContext::createScriptProcessor(size_t buffe
     RefPtr<ScriptProcessorNode> node = ScriptProcessorNode::create(this, m_destinationNode->sampleRate(), bufferSize, numberOfInputChannels, numberOfOutputChannels);
 
     if (!node.get()) {
-        ec = SYNTAX_ERR;
+        ec = INDEX_SIZE_ERR;
         return 0;
     }
 
@@ -597,7 +598,7 @@ PassRefPtr<PeriodicWave> AudioContext::createPeriodicWave(Float32Array* real, Fl
 {
     ASSERT(isMainThread());
     
-    if (!real || !imag || (real->length() != imag->length())) {
+    if (!real || !imag || (real->length() != imag->length() || (real->length() > MaxPeriodicWaveLength) || (real->length() <= 0))) {
         ec = SYNTAX_ERR;
         return 0;
     }

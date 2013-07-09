@@ -1,3 +1,18 @@
+2013-07-09  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        Update Exception handling in WebAudio.
+        https://bugs.webkit.org/show_bug.cgi?id=118405.
+
+        Reviewed by Chris Rogers.
+
+        New test cases to check exception handling in AnalyserNode and
+        AudioBufferSourceNode.
+
+        * webaudio/analyser-exception-expected.txt: Added.
+        * webaudio/analyser-exception.html: Added.
+        * webaudio/audiobuffersource-exception-expected.txt: Added.
+        * webaudio/audiobuffersource-exception.html: Added.
+
 2013-07-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebaselining after r152479.

@@ -50,13 +50,13 @@ public:
 
     unsigned frequencyBinCount() const { return m_analyser.frequencyBinCount(); }
 
-    void setMinDecibels(float k) { m_analyser.setMinDecibels(k); }
+    void setMinDecibels(float k, ExceptionCode&);
     float minDecibels() const { return m_analyser.minDecibels(); }
 
-    void setMaxDecibels(float k) { m_analyser.setMaxDecibels(k); }
+    void setMaxDecibels(float k, ExceptionCode&);
     float maxDecibels() const { return m_analyser.maxDecibels(); }
 
-    void setSmoothingTimeConstant(float k) { m_analyser.setSmoothingTimeConstant(k); }
+    void setSmoothingTimeConstant(float k, ExceptionCode&);
     float smoothingTimeConstant() const { return m_analyser.smoothingTimeConstant(); }
 
     void getFloatFrequencyData(Float32Array* array) { m_analyser.getFloatFrequencyData(array); }

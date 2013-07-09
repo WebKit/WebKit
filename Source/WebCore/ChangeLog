@@ -1,3 +1,41 @@
+2013-07-09  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        Update Exception handling in WebAudio.
+        https://bugs.webkit.org/show_bug.cgi?id=118405.
+
+        Reviewed by Chris Rogers.
+
+        AudioBufferSourceNode, OscillatorNode and AnalyserNode don't
+        propagate exception mentioned in WebAudio spec.
+        Code updated to throw DOM exception as expected.
+
+        Tests: webaudio/analyser-exception.html
+               webaudio/audiobuffersource-exception.html
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::setFftSize):
+        (WebCore::AnalyserNode::setMinDecibels):
+        (WebCore::AnalyserNode::setMaxDecibels):
+        (WebCore::AnalyserNode::setSmoothingTimeConstant):
+        * Modules/webaudio/AnalyserNode.h:
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::startGrain):
+        (WebCore::AudioBufferSourceNode::noteGrainOn):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createBuffer):
+        (WebCore::AudioContext::createScriptProcessor):
+        (WebCore::AudioContext::createPeriodicWave):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::start):
+        (WebCore::AudioScheduledSourceNode::stop):
+        (WebCore::AudioScheduledSourceNode::noteOn):
+        (WebCore::AudioScheduledSourceNode::noteOff):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/OscillatorNode.idl:
+
 2013-07-08  Martin Robinson  <mrobinson@igalia.com>
 
         [CSS Grid Layout] Rename grid-{rows|columns} to grid-definition-{rows|columns}

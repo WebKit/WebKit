@@ -75,7 +75,37 @@ void AnalyserNode::reset()
 void AnalyserNode::setFftSize(unsigned size, ExceptionCode& ec)
 {
     if (!m_analyser.setFftSize(size))
-        ec = NOT_SUPPORTED_ERR;
+        ec = INDEX_SIZE_ERR;
+}
+
+void AnalyserNode::setMinDecibels(float k, ExceptionCode& ec)
+{
+    if (k > maxDecibels()) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    m_analyser.setMinDecibels(k);
+}
+
+void AnalyserNode::setMaxDecibels(float k, ExceptionCode& ec)
+{
+    if (k < minDecibels()) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    m_analyser.setMaxDecibels(k);
+}
+
+void AnalyserNode::setSmoothingTimeConstant(float k, ExceptionCode& ec)
+{
+    if (k < 0 || k > 1) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    m_analyser.setSmoothingTimeConstant(k);
 }
 
 } // namespace WebCore

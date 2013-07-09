@@ -48,11 +48,11 @@
     readonly attribute AudioParam frequency; // in Hertz
     readonly attribute AudioParam detune; // in Cents
 
-    void start(double when);
-    void stop(double when);
+    [RaisesException] void start(double when);
+    [RaisesException] void stop(double when);
 
-    [Conditional=LEGACY_WEB_AUDIO] void noteOn(double when);
-    [Conditional=LEGACY_WEB_AUDIO] void noteOff(double when);
+    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOn(double when);
+    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOff(double when);
 
     void setPeriodicWave(PeriodicWave wave);
 

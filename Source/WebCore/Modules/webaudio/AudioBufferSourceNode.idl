@@ -44,16 +44,16 @@
     attribute double loopStart;
     attribute double loopEnd;
 
-    void start(double when);
-    [ImplementedAs=startGrain] void start(double when, double grainOffset);
-    [ImplementedAs=startGrain] void start(double when, double grainOffset, double grainDuration);
-    void stop(double when);
+    [RaisesException] void start(double when);
+    [ImplementedAs=startGrain, RaisesException] void start(double when, double grainOffset);
+    [ImplementedAs=startGrain, RaisesException] void start(double when, double grainOffset, double grainDuration);
+    [RaisesException] void stop(double when);
 
     [Conditional=LEGACY_WEB_AUDIO] attribute boolean looping; // This is an alias for the .loop attribute for backwards compatibility.
 
-    [Conditional=LEGACY_WEB_AUDIO] void noteOn(double when);
-    [Conditional=LEGACY_WEB_AUDIO] void noteGrainOn(double when, double grainOffset, double grainDuration);
-    [Conditional=LEGACY_WEB_AUDIO] void noteOff(double when);
+    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOn(double when);
+    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteGrainOn(double when, double grainOffset, double grainDuration);
+    [Conditional=LEGACY_WEB_AUDIO, RaisesException] void noteOff(double when);
     
     attribute EventListener onended;
 };

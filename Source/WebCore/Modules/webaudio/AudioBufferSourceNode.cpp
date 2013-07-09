@@ -373,21 +373,23 @@ unsigned AudioBufferSourceNode::numberOfChannels()
     return output(0)->numberOfChannels();
 }
 
-void AudioBufferSourceNode::startGrain(double when, double grainOffset)
+void AudioBufferSourceNode::startGrain(double when, double grainOffset, ExceptionCode& ec)
 {
     // Duration of 0 has special value, meaning calculate based on the entire buffer's duration.
-    startGrain(when, grainOffset, 0);
+    startGrain(when, grainOffset, 0, ec);
 }
 
-void AudioBufferSourceNode::startGrain(double when, double grainOffset, double grainDuration)
+void AudioBufferSourceNode::startGrain(double when, double grainOffset, double grainDuration, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
 
     if (ScriptController::processingUserGesture())
         context()->removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
 
-    if (m_playbackState != UNSCHEDULED_STATE)
+    if (m_playbackState != UNSCHEDULED_STATE) {
+        ec = INVALID_STATE_ERR;
         return;
+    }
 
     if (!buffer())
         return;
@@ -421,9 +423,9 @@ void AudioBufferSourceNode::startGrain(double when, double grainOffset, double g
 }
 
 #if ENABLE(LEGACY_WEB_AUDIO)
-void AudioBufferSourceNode::noteGrainOn(double when, double grainOffset, double grainDuration)
+void AudioBufferSourceNode::noteGrainOn(double when, double grainOffset, double grainDuration, ExceptionCode& ec)
 {
-    startGrain(when, grainOffset, grainDuration);
+    startGrain(when, grainOffset, grainDuration, ec);
 }
 #endif
 
