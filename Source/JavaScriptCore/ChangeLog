@@ -1,5 +1,17 @@
 2013-07-09  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152497
+
+    2013-07-09  Mark Lam  <mark.lam@apple.com>
+
+            Gardening to unbreak builds on the Windows bot.
+
+            Not reviewed.
+
+            * parser/ParserTokens.h:
+
+2013-07-09  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152494
 
     2013-07-09  Mark Lam  <mark.lam@apple.com>
