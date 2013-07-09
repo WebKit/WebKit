@@ -7,13 +7,13 @@ if (window.testRunner)
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .gridMinMaxMinMax {
-    -webkit-grid-columns: 50px 100px;
-    -webkit-grid-rows: minmax(10px, -webkit-min-content) minmax(50px, 100px);
+    -webkit-grid-definition-columns: 50px 100px;
+    -webkit-grid-definition-rows: minmax(10px, -webkit-min-content) minmax(50px, 100px);
 }
 
 .gridAutoAuto {
-    -webkit-grid-columns: 50px 100px;
-    -webkit-grid-rows: auto auto;
+    -webkit-grid-definition-columns: 50px 100px;
+    -webkit-grid-definition-rows: auto auto;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>

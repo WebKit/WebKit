@@ -1,3 +1,15 @@
+2013-07-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [CSS Grid Layout] Rename grid-{rows|columns} to grid-definition-{rows|columns}
+        https://bugs.webkit.org/show_bug.cgi?id=103336
+
+        Reviewed by Tony Chang.
+
+        Update tests to reflect the rename of -webkit-grid-{rows|columns} to
+        -webkit-grid-definition-{rows|columns}.
+
+        * fast/css-grid-layout: Mass search and replace for the new name.
+
 2013-07-08  Enrica Casucci  <enrica@apple.com>
 
         DeleteSelectionCommand does not handle correctly deletion with two consecutive BR element.

@@ -2645,8 +2645,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         parsedValue = parseGridTrackSize();
         break;
 
-    case CSSPropertyWebkitGridColumns:
-    case CSSPropertyWebkitGridRows:
+    case CSSPropertyWebkitGridDefinitionColumns:
+    case CSSPropertyWebkitGridDefinitionRows:
         if (!cssGridLayoutEnabled())
             return false;
         return parseGridTrackList(propId, important);

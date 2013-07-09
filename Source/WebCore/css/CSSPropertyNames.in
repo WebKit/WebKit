@@ -301,8 +301,8 @@ z-index
 -webkit-font-size-delta
 -webkit-grid-auto-columns
 -webkit-grid-auto-rows
--webkit-grid-columns
--webkit-grid-rows
+-webkit-grid-definition-columns
+-webkit-grid-definition-rows
 -webkit-grid-start
 -webkit-grid-end
 -webkit-grid-before

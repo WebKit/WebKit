@@ -7,8 +7,8 @@ if (window.testRunner)
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-columns: 200px 200px;
-    -webkit-grid-rows: 100px 100px;
+    -webkit-grid-definition-columns: 200px 200px;
+    -webkit-grid-definition-rows: 100px 100px;
     height: 200px;
     width: 400px;
 }
@@ -38,8 +38,8 @@ function changeGridTrackSizesAndCheckLayout()
 {
     var grid = document.getElementsByClassName("grid")[0];
     grid.offsetLeft;
-    grid.style.webkitGridColumns = "100px 300px";
-    grid.style.webkitGridRows = "50px 150px";
+    grid.style.webkitGridDefinitionColumns = "100px 300px";
+    grid.style.webkitGridDefinitionRows = "50px 150px";
     checkLayout('.grid');
 }
 window.addEventListener("load", changeGridTrackSizesAndCheckLayout, false);

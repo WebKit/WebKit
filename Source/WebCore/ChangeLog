@@ -1,3 +1,23 @@
+2013-07-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [CSS Grid Layout] Rename grid-{rows|columns} to grid-definition-{rows|columns}
+        https://bugs.webkit.org/show_bug.cgi?id=103336
+
+        Reviewed by Tony Chang.
+
+        Rename -webkit-grid-{rows|columns} to -webkit-grid-definition-{rows|columns}.
+        The latest version of the spec has renamed these properties.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Handle the new names.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Ditto.
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty): Ditto.
+        * css/CSSPropertyNames.in: Add support for the new names.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty): Handle the new names.
+
 2013-07-08  Enrica Casucci  <enrica@apple.com>
 
         DeleteSelectionCommand does not handle correctly deletion with two consecutive BR element.

@@ -2846,14 +2846,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.style()->setGridAutoRows(trackSize);
         return;
     }
-    case CSSPropertyWebkitGridColumns: {
+    case CSSPropertyWebkitGridDefinitionColumns: {
         Vector<GridTrackSize> trackSizes;
         if (!createGridTrackList(value, trackSizes, state))
             return;
         state.style()->setGridColumns(trackSizes);
         return;
     }
-    case CSSPropertyWebkitGridRows: {
+    case CSSPropertyWebkitGridDefinitionRows: {
         Vector<GridTrackSize> trackSizes;
         if (!createGridTrackList(value, trackSizes, state))
             return;

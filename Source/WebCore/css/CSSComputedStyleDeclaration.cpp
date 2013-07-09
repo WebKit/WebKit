@@ -291,8 +291,8 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitGridAutoColumns,
     CSSPropertyWebkitGridAutoFlow,
     CSSPropertyWebkitGridAutoRows,
-    CSSPropertyWebkitGridColumns,
-    CSSPropertyWebkitGridRows,
+    CSSPropertyWebkitGridDefinitionColumns,
+    CSSPropertyWebkitGridDefinitionRows,
     CSSPropertyWebkitGridStart,
     CSSPropertyWebkitGridEnd,
     CSSPropertyWebkitGridBefore,
@@ -1973,9 +1973,9 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(style->gridAutoFlow());
         case CSSPropertyWebkitGridAutoRows:
             return valueForGridTrackSize(style->gridAutoRows(), style.get(), m_node->document()->renderView());
-        case CSSPropertyWebkitGridColumns:
+        case CSSPropertyWebkitGridDefinitionColumns:
             return valueForGridTrackList(style->gridColumns(), style.get(), m_node->document()->renderView());
-        case CSSPropertyWebkitGridRows:
+        case CSSPropertyWebkitGridDefinitionRows:
             return valueForGridTrackList(style->gridRows(), style.get(), m_node->document()->renderView());
 
         case CSSPropertyWebkitGridStart:
