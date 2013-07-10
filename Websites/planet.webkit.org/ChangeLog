@@ -1,3 +1,17 @@
+2013-07-10  Peter Beverloo  <peter@chromium.org>
+
+        [Planet WebKit] Remove my website from the list of feeds
+        https://bugs.webkit.org/show_bug.cgi?id=118510
+
+        Reviewed by Andreas Kling.
+
+        With various awesome folks at Apple having taken over the Last
+        Week in WebKit series and my blog now featuring Last Week in
+        Blink, there's no reason for it to be included on the Planet
+        anymore.
+
+        * config.ini:
+
 2013-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         Remove irrelevant blog from Planet WebKit.
