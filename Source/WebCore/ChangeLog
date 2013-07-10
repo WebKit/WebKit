@@ -1,3 +1,18 @@
+2013-07-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r151957): WebGL textures do not show
+        https://bugs.webkit.org/show_bug.cgi?id=118464
+
+        Reviewed by Christophe Dumez.
+
+        After r151957 decoder.frameIsCompleteAtIndex(0) doesn't trigger image decoding,
+        we have to call decoder.createFrameAtIndex(0) explicitly to ensure it.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+
 2013-07-10  Karol Świniarski  <k.swiniarsk2@samsung.com>
 
         Change recently ratified extensions prefixes from WEBKIT_WEBGL_ to WEBGL_
