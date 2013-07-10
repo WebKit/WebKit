@@ -1,3 +1,10 @@
+2013-07-09  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        Unreviewed build fix.
+
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+
 2013-07-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce isSVGFontElement() and isSVGImageElement(), use them
