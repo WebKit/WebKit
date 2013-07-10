@@ -1,3 +1,15 @@
+2013-07-09  James Craig  <james@cookiecrook.com>
+
+        @readonly and @aria-readonly="false" are not exposed correctly to accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=118475
+
+        Reviewed by Chris Fleizach.
+
+        Account for implicit and explicit @readonly/@aria-readonly mismatches. Updated existing test coverage.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::canSetValueAttribute):
+
 2013-07-09  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.

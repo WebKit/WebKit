@@ -1,3 +1,15 @@
+2013-07-09  James Craig  <james@cookiecrook.com>
+
+        @readonly and @aria-readonly="false" are not exposed correctly to accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=118475
+
+        Reviewed by Chris Fleizach.
+
+        Updated existing test to account for implicit and explicit @readonly/@aria-readonly mismatches. 
+
+        * accessibility/aria-readonly-expected.txt:
+        * accessibility/aria-readonly.html:
+
 2013-07-09  Mark Lam  <mark.lam@apple.com>
 
         Fix 30% JSBench regression (caused by adding column numbers to stack traces).

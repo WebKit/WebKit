@@ -2705,8 +2705,17 @@ bool AccessibilityRenderObject::canSetExpandedAttribute() const
 
 bool AccessibilityRenderObject::canSetValueAttribute() const
 {
+
+    // In the event of a (Boolean)@readonly and (True/False/Undefined)@aria-readonly
+    // value mismatch, the host language native attribute value wins.    
+    if (isNativeTextControl())
+        return !isReadOnly();
+
     if (equalIgnoringCase(getAttribute(aria_readonlyAttr), "true"))
         return false;
+    
+    if (equalIgnoringCase(getAttribute(aria_readonlyAttr), "false"))
+        return true;
 
     if (isProgressIndicator() || isSlider())
         return true;
