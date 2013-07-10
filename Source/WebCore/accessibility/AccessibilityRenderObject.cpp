@@ -626,7 +626,7 @@ String AccessibilityRenderObject::helpText() const
     return String();
 }
 
-String AccessibilityRenderObject::textUnderElement() const
+String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
 {
     if (!m_renderer)
         return String();
@@ -645,23 +645,9 @@ String AccessibilityRenderObject::textUnderElement() const
     }
 #endif
 
-#if PLATFORM(GTK)
-    // On GTK, always use a text iterator in order to get embedded object characters.
-    // TODO: Add support for embedded object characters to the other codepaths that try
-    // to build the accessible text recursively, so this special case isn't needed.
-    // https://bugs.webkit.org/show_bug.cgi?id=105214
-    if (Node* node = this->node()) {
-        if (Frame* frame = node->document()->frame()) {
-            // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
-            if (frame->document() != node->document())
-                return String();
-
-            return plainText(rangeOfContents(node).get(), textIteratorBehaviorForTextRange());
-        }
-    }
-#endif
-
-    if (m_renderer->isText()) {
+    // We use a text iterator for text objects AND for those cases where we are
+    // explicitly asking for the full text under a given element.
+    if (m_renderer->isText() || mode == TextUnderElementModeIncludeAllChildren) {
         // If possible, use a text iterator to get the text, so that whitespace
         // is handled consistently.
         if (Node* node = this->node()) {
@@ -683,7 +669,7 @@ String AccessibilityRenderObject::textUnderElement() const
             return String(renderTextObject->text());
     }
     
-    return AccessibilityNodeObject::textUnderElement();
+    return AccessibilityNodeObject::textUnderElement(mode);
 }
 
 Node* AccessibilityRenderObject::node() const

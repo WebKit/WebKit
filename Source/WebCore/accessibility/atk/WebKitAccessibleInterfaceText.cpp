@@ -535,7 +535,7 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
     if (endOffset == -1) {
         end = coreObject->stringValue().length();
         if (!end)
-            end = coreObject->textUnderElement().length();
+            end = coreObject->textUnderElement(TextUnderElementModeIncludeAllChildren).length();
     }
 
     String ret;
@@ -544,7 +544,7 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
     else {
         ret = coreObject->stringValue();
         if (!ret)
-            ret = coreObject->textUnderElement();
+            ret = coreObject->textUnderElement(TextUnderElementModeIncludeAllChildren);
     }
 
     if (!ret.length()) {

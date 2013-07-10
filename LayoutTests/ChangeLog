@@ -1,3 +1,14 @@
+2013-07-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        AX: Allow requesting the full plain text for an object with textUnderElement()
+        https://bugs.webkit.org/show_bug.cgi?id=105214
+
+        Reviewed by Chris Fleizach.
+
+        Removed tests that are not longer expected to fail.
+
+        * platform/gtk/TestExpectations: Removed tests.
+
 2013-07-10  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Update new baselines after r152494 and r152478

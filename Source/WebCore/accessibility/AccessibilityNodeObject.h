@@ -120,7 +120,7 @@ public:
     virtual AccessibilityButtonState checkboxOrRadioValue() const;
 
     virtual unsigned hierarchicalLevel() const;
-    virtual String textUnderElement() const;
+    virtual String textUnderElement(AccessibilityTextUnderElementMode = TextUnderElementModeSkipIgnoredChildren) const;
     virtual String accessibilityDescription() const;
     virtual String helpText() const;
     virtual String title() const;

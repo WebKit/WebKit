@@ -239,6 +239,11 @@ struct AccessibilityText {
         textElements.append(element);
     }
 };
+
+enum AccessibilityTextUnderElementMode {
+    TextUnderElementModeSkipIgnoredChildren,
+    TextUnderElementModeIncludeAllChildren
+};
     
 enum AccessibilityOrientation {
     AccessibilityOrientationVertical,
@@ -585,7 +590,7 @@ public:
 
     // Methods for determining accessibility text.
     virtual String stringValue() const { return String(); }
-    virtual String textUnderElement() const { return String(); }
+    virtual String textUnderElement(AccessibilityTextUnderElementMode = TextUnderElementModeSkipIgnoredChildren) const { return String(); }
     virtual String text() const { return String(); }
     virtual int textLength() const { return 0; }
     virtual String ariaLabeledByAttribute() const { return String(); }

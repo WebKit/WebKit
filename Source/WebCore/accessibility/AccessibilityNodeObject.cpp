@@ -1504,8 +1504,12 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
 
 // When building the textUnderElement for an object, determine whether or not
 // we should include the inner text of this given descendant object or skip it.
-static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj)
+static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj, AccessibilityTextUnderElementMode mode)
 {
+    // Do not use any heuristic if we are explicitly asking to include all the children.
+    if (mode == TextUnderElementModeIncludeAllChildren)
+        return true;
+
     // Consider this hypothetical example:
     // <div tabindex=0>
     //   <h2>
@@ -1542,7 +1546,7 @@ static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj)
     return true;
 }
 
-String AccessibilityNodeObject::textUnderElement() const
+String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
 {
     Node* node = this->node();
     if (node && node->isTextNode())
@@ -1550,7 +1554,7 @@ String AccessibilityNodeObject::textUnderElement() const
 
     StringBuilder builder;
     for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!shouldUseAccessiblityObjectInnerText(child))
+        if (!shouldUseAccessiblityObjectInnerText(child, mode))
             continue;
 
         if (child->isAccessibilityNodeObject()) {
@@ -1564,7 +1568,7 @@ String AccessibilityNodeObject::textUnderElement() const
             }
         }
 
-        String childText = child->textUnderElement();
+        String childText = child->textUnderElement(mode);
         if (childText.length()) {
             if (builder.length())
                 builder.append(' ');

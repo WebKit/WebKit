@@ -1,3 +1,42 @@
+2013-07-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        AX: Allow requesting the full plain text for an object with textUnderElement()
+        https://bugs.webkit.org/show_bug.cgi?id=105214
+
+        Reviewed by Chris Fleizach.
+
+        Allow specifying different function modes for textUnderElement(),
+        so we can effectively ask for the "normal" result (e.g to retrieve
+        test to be exposed as the 'title') or for the full text under the
+        element (without omitting any child in the subtree). This is
+        needed for the implementation of atk_text_get_text() in GTK/EFL.
+
+        * accessibility/AccessibilityObject.h: Add new enumeration to
+        specify the different modes for textUnderElement().
+        (WebCore::AccessibilityObject::textUnderElement): Added parameter.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::shouldUseAccessiblityObjectInnerText): Always return
+        'true' when using the "include all children" mode.
+        (WebCore::AccessibilityNodeObject::textUnderElement): Updated call
+        to shouldUseAccessiblityObjectInnerText().
+        * accessibility/AccessibilityNodeObject.h:
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement): Removed
+        GTK specific code and expand the usage of text iterators beyond
+        text render objects, using it also when in the "include all
+        children" mode.
+        * accessibility/AccessibilityRenderObject.h:
+
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::getLengthForTextRange): Updated
+        call to textUnderElement(), preserving the previous behavior.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextGetText): Updated call to textUnderElement(),
+        using the "include all children" mode.
+
 2013-07-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         Remove the meshType from CoordinatedCustomFilterOperation
