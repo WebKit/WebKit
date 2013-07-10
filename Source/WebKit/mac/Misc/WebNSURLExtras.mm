@@ -264,10 +264,6 @@ using namespace WTF;
 
 - (NSString *)_web_hostString
 {
-    NSData *data = [self _web_hostData];
-    if (!data) {
-        data = [NSData data];
-    }
     return [[[NSString alloc] initWithData:[self _web_hostData] encoding:NSUTF8StringEncoding] autorelease];
 }
 

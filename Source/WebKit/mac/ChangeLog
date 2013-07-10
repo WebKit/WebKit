@@ -1,3 +1,15 @@
+2013-07-10  Jessie Berlin  <jberlin@apple.com>
+
+        Remove some dead code from WebNSURLExtras _web_hostString
+        https://bugs.webkit.org/show_bug.cgi?id=118519
+
+        Reviewed by Anders Carlsson.
+
+        * Misc/WebNSURLExtras.mm:
+        (-[NSURL _web_hostString]):
+        NSString initWithData:encoding: does not throw an exception when passing nil for the data, so
+        just delete the code that wasn't being run.
+
 2013-07-09  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.
