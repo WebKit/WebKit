@@ -1,3 +1,19 @@
+2013-07-10  Sam Weinig  <sam@webkit.org>
+
+        Range.getClientRects() not working correctly for partially contained vertically styled text nodes
+        <rdar://problem/14305675>
+        https://bugs.webkit.org/show_bug.cgi?id=118447
+
+        Reviewed by David Hyatt.
+
+        Original patch by Mac Murrett, tweaked by me.
+
+        Test: fast/dom/Range/getClientRects-vertical.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::localQuadForTextBox):
+        Use the physical accessors rather than the logical ones to get the correct metrics.
+
 2013-07-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Reduce number of header includes in SVG
