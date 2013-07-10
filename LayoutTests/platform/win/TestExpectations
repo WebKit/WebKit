@@ -2529,6 +2529,7 @@ media/video-controls-captions-trackmenu.html
 media/video-controls-captions-trackmenu-hide-on-click.html
 media/video-controls-captions-trackmenu-hide-on-click-outside.html
 media/video-controls-visible-exiting-fullscreen.html
+media/video-controls-captions-trackmenu-includes-enabled-track.html
 
 # Fails on JSC platforms due to gc timing issues
 # https://bugs.webkit.org/show_bug.cgi?id=106957

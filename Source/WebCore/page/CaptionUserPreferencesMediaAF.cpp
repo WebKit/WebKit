@@ -796,10 +796,21 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferencesMediaAF::sortedTrackListForMenu
         TextTrack* track = trackList->item(i);
         String language = displayNameForLanguageLocale(track->language());
 
-        if (track->containsOnlyForcedSubtitles())
+        if (track->containsOnlyForcedSubtitles()) {
+            LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - skipping '%s' track with language '%s' because it contains only forced subtitles", track->kind().string().utf8().data(), language.utf8().data());
             continue;
+        }
         
         if (track->isEasyToRead()) {
+            LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - adding '%s' track with language '%s' because it is 'easy to read'", track->kind().string().utf8().data(), language.utf8().data());
+            if (!language.isEmpty())
+                languagesIncluded.add(language);
+            tracksForMenu.append(track);
+            continue;
+        }
+
+        if (track->mode() == TextTrack::showingKeyword()) {
+            LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - adding '%s' track with language '%s' because it is already visible", track->kind().string().utf8().data(), language.utf8().data());
             if (!language.isEmpty())
                 languagesIncluded.add(language);
             tracksForMenu.append(track);
@@ -830,6 +841,8 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferencesMediaAF::sortedTrackListForMenu
         if (!language.isEmpty())
             languagesIncluded.add(language);
         tracksForMenu.append(track);
+
+        LOG(Media, "CaptionUserPreferencesMac::sortedTrackListForMenu - adding '%s' track with language '%s', is%s main program content", track->kind().string().utf8().data(), language.utf8().data(), track->isMainProgramContent() ? "" : " NOT");
     }
 
     // Now that we have filtered for the user's accessibility/translation preference, add  all tracks with a unique language without regard to track type.
