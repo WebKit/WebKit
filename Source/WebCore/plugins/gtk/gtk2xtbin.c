@@ -42,6 +42,7 @@
  * inside a GTK application.  
  */
 
+#include "config.h"
 #include "GtkVersioning.h"
 #include "xembed.h"
 #include "gtk2xtbin.h"

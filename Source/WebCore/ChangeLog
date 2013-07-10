@@ -1,3 +1,19 @@
+2013-07-10  Dominique Leuenberger  <dimstar@opensuse.org>
+
+        Fix build against GTK+ 2.0
+        https://bugs.webkit.org/show_bug.cgi?id=117895
+
+        Reviewed by Martin Robinson.
+
+        GTK2 build fails for undefined GDK_IS_X11_DISPLAY
+        GTK 2.0 does define GDK_WINDOWING_X11,but GDK_IS_X11_DISPLAY is not
+        present in GTK+ 2.0. A dummy defines is sufficient, as GTK 2.0 is not
+        that multiple backend aware anyway...
+
+        * platform/gtk/GtkVersioning.h: Define GDK_IS_X11_DISPLAY for GTK+ 2.0
+          and compatibility for gtk_widget_get_preferred_size()
+        * plugins/gtk/gtk2xtbin.c: Include config.h
+
 2013-07-10  Tim Horton  <timothy_horton@apple.com>
 
         Deferring layer flushes can cause painting without layout being done

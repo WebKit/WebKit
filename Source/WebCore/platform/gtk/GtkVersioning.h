@@ -40,6 +40,21 @@ void gdk_screen_get_monitor_workarea(GdkScreen *, int monitor, GdkRectangle *are
 
 GdkDevice* getDefaultGDKPointerDevice(GdkWindow* window);
 
+// gtk_widget_get_preferred_size() appeared only in GTK 3.0.
+#if !GTK_CHECK_VERSION (2, 91, 0)  // gtk_widget_get_preferred_size appeared about then.
+#define gtk_widget_get_preferred_size(widget, minimumSize, naturalSize) \
+        (gtk_widget_size_request((widget), ((minimumSize))))
+#endif
+
+// Define GDK_IS_X11_DISPLAY dummy for GTK+ 2.0 compatibility.
+#ifndef GDK_IS_X11_DISPLAY
+  #ifdef GDK_WINDOWING_X11
+    #define GDK_IS_X11_DISPLAY(display) 1
+  #else
+    #define GDK_IS_X11_DISPLAY(display) 0
+  #endif
+#endif
+
 G_END_DECLS
 
 #endif // GtkVersioning_h
