@@ -1,5 +1,16 @@
 2013-07-10  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152429
+
+    2013-07-05  Brent Fulgham  <bfulgham@apple.com>
+
+            [Windows] Unreviewed build correction.
+
+            * WTF.vcxproj/WTFGenerated.make: Avoid syntax error in generated
+            file in cases where Legible Output support is not present.
+
+2013-07-10  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152427
 
     2013-07-05  Brent Fulgham  <bfulgham@apple.com>
