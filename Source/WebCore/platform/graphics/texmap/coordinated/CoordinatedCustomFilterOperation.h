@@ -42,15 +42,15 @@ namespace WebCore {
 
 class CoordinatedCustomFilterOperation : public CustomFilterOperation {
 public:
-    static PassRefPtr<CoordinatedCustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
+    static PassRefPtr<CoordinatedCustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns)
     {
-        return adoptRef(new CoordinatedCustomFilterOperation(program, programID, sortedParameters, meshRows, meshColumns, meshType));
+        return adoptRef(new CoordinatedCustomFilterOperation(program, programID, sortedParameters, meshRows, meshColumns));
     }
 
     int programID() const { return m_programID; }
 
 private:
-    CoordinatedCustomFilterOperation(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
+    CoordinatedCustomFilterOperation(PassRefPtr<CustomFilterProgram> program, int programID, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns)
         : CustomFilterOperation(program, sortedParameters, meshRows, meshColumns)
         , m_programID(programID)
     {

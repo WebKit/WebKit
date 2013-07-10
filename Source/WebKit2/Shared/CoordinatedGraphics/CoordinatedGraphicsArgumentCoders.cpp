@@ -153,8 +153,6 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
             ASSERT(program->platformCompiledProgram()->client());
             WebCustomFilterProgramProxy* customFilterProgramProxy = static_cast<WebCustomFilterProgramProxy*>(program->platformCompiledProgram()->client());
             const CustomFilterProgramInfo& programInfo = program->programInfo();
-            // FIXME: CustomFilterOperation should not need the meshType, it should just be encoded in the program itself.
-            // https://bugs.webkit.org/show_bug.cgi?id=102529
             encoder.encodeEnum(programInfo.meshType());
             encoder << customFilterProgramProxy->id();
             CustomFilterParameterList parameters = customOperation->parameters();
@@ -338,7 +336,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
                 return false;
 
             // At this point the Shaders are already validated, so we just use WebCustomFilterOperation for transportation.
-            filter = CoordinatedCustomFilterOperation::create(0, programID, parameters, meshRows, meshColumns, meshType);
+            filter = CoordinatedCustomFilterOperation::create(0, programID, parameters, meshRows, meshColumns);
             break;
         }
 #endif

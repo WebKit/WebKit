@@ -1,3 +1,19 @@
+2013-07-10  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Remove the meshType from CoordinatedCustomFilterOperation
+        https://bugs.webkit.org/show_bug.cgi?id=118529
+
+        Reviewed by Noam Rosenthal.
+
+        Following the removal of the meshType from CustomFilterOperation in r149153,
+        remove also the meshType from CoordinatedCustomFilterOperation.
+
+        No new tests, no new functionality.
+
+        * platform/graphics/texmap/coordinated/CoordinatedCustomFilterOperation.h:
+        (WebCore::CoordinatedCustomFilterOperation::create): Remove unused meshType parameter.
+        (WebCore::CoordinatedCustomFilterOperation::CoordinatedCustomFilterOperation): Ditto.
+ Ditto.
 2013-07-10  James Craig  <james@cookiecrook.com>
 
         AX: AccessibilityNodeObject::supportsRequiredAttribute() should switch on CellRole
