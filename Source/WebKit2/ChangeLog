@@ -1,3 +1,15 @@
+2013-07-09  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL] tooltip callback doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=118522
+
+        Reviewed by Christophe Dumez.
+
+        Add missing code to connect didChangeTooltip callback.
+
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::ViewClientEfl):
+
 2013-07-09  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.
