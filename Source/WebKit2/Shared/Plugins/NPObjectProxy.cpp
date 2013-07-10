@@ -35,6 +35,10 @@
 #include "NPRemoteObjectMap.h"
 #include "NPRuntimeUtilities.h"
 #include "NPVariantData.h"
+#include <WebCore/RunLoop.h>
+#include <wtf/MainThread.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -55,6 +59,8 @@ NPObjectProxy::NPObjectProxy()
 
 NPObjectProxy::~NPObjectProxy()
 {
+    ASSERT(isMainThread());
+
     if (!m_npRemoteObjectMap)
         return;
 
@@ -293,6 +299,16 @@ NPObject* NPObjectProxy::NP_Allocate(NPP npp, NPClass*)
 
 void NPObjectProxy::NP_Deallocate(NPObject* npObject)
 {
+    // http://webkit.org/b/118535 - The Java Netscape Plug-in has a background thread do some of their NPP_Destroy work.
+    // That background thread can call NP_Deallocate, and this leads to a WebProcess <-> PluginProcess deadlock.
+    // Since NPAPI behavior on a background thread is undefined, it is okay to limit this workaround to the one API
+    // that is known to be misused during plugin teardown, and to not be concerned about change in behavior if this
+    // occured at any other time.
+    if (!isMainThread()) {
+        RunLoop::main()->dispatch(bind(&NPObjectProxy::NP_Deallocate, npObject));
+        return;
+    }
+    
     NPObjectProxy* npObjectProxy = toNPObjectProxy(npObject);
     delete npObjectProxy;
 }
