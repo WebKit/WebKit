@@ -126,15 +126,6 @@ void applyFallbackCursor(Ecore_Evas* ecoreEvas, const char* cursorString)
 #endif
 }
 
-int getDPI()
-{
-#ifdef HAVE_ECORE_X
-    return ecore_x_dpi_get();
-#else
-    return 160;
-#endif
-}
-
 bool isUsingEcoreX(const Evas* evas)
 {
 #ifdef HAVE_ECORE_X

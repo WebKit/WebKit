@@ -125,8 +125,6 @@
 static const float zoomMinimum = 0.05;
 static const float zoomMaximum = 4.0;
 
-static const float devicePixelRatio = 1.0;
-
 static const char ewkViewTypeString[] = "EWK_View";
 
 static const size_t ewkViewRepaintsSizeInitial = 32;
@@ -342,7 +340,6 @@ struct _Ewk_View_Private_Data {
             float maxScale;
             Eina_Bool userScalable : 1;
         } zoomRange;
-        float devicePixelRatio;
         double domTimerInterval;
         bool allowUniversalAccessFromFileURLs : 1;
         bool allowFileAccessFromFileURLs : 1;
@@ -842,7 +839,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.zoomRange.minScale = zoomMinimum;
     priv->settings.zoomRange.maxScale = zoomMaximum;
     priv->settings.zoomRange.userScalable = true;
-    priv->settings.devicePixelRatio = devicePixelRatio;
 
     priv->settings.domTimerInterval = priv->pageSettings->defaultMinDOMTimerInterval();
 
@@ -1239,14 +1235,11 @@ static void _ewk_view_zoom_animation_start(Ewk_View_Smart_Data* smartData)
 static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(Ewk_View_Private_Data* priv)
 {
     int desktopWidth = 980;
-    int deviceDPI = WebCore::getDPI();
-    priv->settings.devicePixelRatio = deviceDPI / WebCore::ViewportArguments::deprecatedTargetDPI;
-
     WebCore::IntRect availableRect = enclosingIntRect(priv->page->chrome().client()->pageRect());
     WebCore::IntRect deviceRect = enclosingIntRect(priv->page->chrome().client()->windowRect());
 
-    WebCore::ViewportAttributes attributes = WebCore::computeViewportAttributes(priv->viewportArguments, desktopWidth, deviceRect.width(), deviceRect.height(), priv->settings.devicePixelRatio, availableRect.size());
-    WebCore::restrictMinimumScaleFactorToViewportSize(attributes, availableRect.size(), priv->settings.devicePixelRatio);
+    WebCore::ViewportAttributes attributes = WebCore::computeViewportAttributes(priv->viewportArguments, desktopWidth, deviceRect.width(), deviceRect.height(), priv->page->deviceScaleFactor(), availableRect.size());
+    WebCore::restrictMinimumScaleFactorToViewportSize(attributes, availableRect.size(), priv->page->deviceScaleFactor());
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);
 
     return attributes;
@@ -3940,7 +3933,7 @@ void ewk_view_viewport_attributes_get(const Evas_Object* ewkView, int* width, in
     if (minScale)
         *minScale = attributes.minimumScale;
     if (devicePixelRatio)
-        *devicePixelRatio = priv->settings.devicePixelRatio;
+        *devicePixelRatio = priv->page->deviceScaleFactor();
     if (userScalable)
         *userScalable = static_cast<bool>(attributes.userScalable);
 }
@@ -3995,12 +3988,22 @@ Eina_Bool ewk_view_user_scalable_get(const Evas_Object* ewkView)
     return priv->settings.zoomRange.userScalable;
 }
 
+Eina_Bool ewk_view_device_pixel_ratio_set(Evas_Object* ewkView, float ratio)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    priv->page->setDeviceScaleFactor(ratio);
+
+    return true;
+}
+
 float ewk_view_device_pixel_ratio_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, -1.0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, -1.0);
 
-    return priv->settings.devicePixelRatio;
+    return priv->page->deviceScaleFactor();
 }
 
 void ewk_view_text_direction_set(Evas_Object* ewkView, Ewk_Text_Direction direction)

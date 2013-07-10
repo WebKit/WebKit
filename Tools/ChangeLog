@@ -1,3 +1,14 @@
+2013-07-09  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Add ewk_view_device_pixel_ratio_set
+        https://bugs.webkit.org/show_bug.cgi?id=118521
+
+        Reviewed by Gyuyoung Kim.
+
+        * EWebLauncher/main.c: Added new option(-r) to test device pixel ratio.
+        (windowCreate):
+        (parseUserArguments):
+
 2013-07-09  Bruno de Oliveira Abinader  <brunoabinader@gmail.com>
 
         Unreviewed change of my email addresses.

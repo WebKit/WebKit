@@ -30,7 +30,6 @@ typedef struct _Evas Evas;
 namespace WebCore {
 
 void applyFallbackCursor(Ecore_Evas*, const char*);
-int getDPI();
 bool isUsingEcoreX(const Evas*);
 
 } // namespace WebCore

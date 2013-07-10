@@ -128,7 +128,7 @@ struct ViewportArguments {
         return !(*this == other);
     }
 
-#if PLATFORM(BLACKBERRY) || PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(BLACKBERRY) || PLATFORM(GTK) || PLATFORM(QT)
     // FIXME: We're going to keep this constant around until all embedders
     // refactor their code to no longer need it.
     static const float deprecatedTargetDPI;

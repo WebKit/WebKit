@@ -115,6 +115,8 @@ static const Ecore_Getopt options = {
              ecore_getopt_callback_ecore_evas_list_engines, NULL),
         ECORE_GETOPT_CHOICE
             ('b', "backing-store", "choose backing store to use.", backingStores),
+        ECORE_GETOPT_STORE_DOUBLE
+            ('r', "device-pixel-ratio", "Ratio between the CSS units and device pixels."),
         ECORE_GETOPT_STORE_DEF_BOOL
             ('c', "encoding-detector", "enable/disable encoding detector", 0),
         ECORE_GETOPT_STORE_DEF_BOOL
@@ -148,6 +150,7 @@ typedef struct _User_Arguments {
     char *engine;
     Eina_Bool quitOption;
     char *backingStore;
+    float device_pixel_ratio;
     Eina_Bool enableEncodingDetector;
     Eina_Bool enableTiledBackingStore;
     Eina_Bool isFlattening;
@@ -863,6 +866,7 @@ windowCreate(User_Arguments *userArgs)
     ewk_view_setting_local_storage_database_path_set(app->browser, userArgs->databasePath);
     ewk_view_setting_enable_frame_flattening_set(app->browser, userArgs->isFlattening);
     ewk_view_setting_encoding_detector_set(app->browser, userArgs->enableEncodingDetector);
+    ewk_view_device_pixel_ratio_set(app->browser, userArgs->device_pixel_ratio);
 
     app->userArgs = userArgs;
     app->url_bar = NULL;
@@ -938,6 +942,7 @@ parseUserArguments(int argc, char *argv[], User_Arguments *userArgs)
     userArgs->engine = NULL;
     userArgs->quitOption = EINA_FALSE;
     userArgs->backingStore = (char *)backingStores[1];
+    userArgs->device_pixel_ratio = 1.0;
     userArgs->enableEncodingDetector = EINA_FALSE;
     userArgs->enableTiledBackingStore = EINA_FALSE;
     userArgs->isFlattening = EINA_FALSE;
@@ -953,6 +958,7 @@ parseUserArguments(int argc, char *argv[], User_Arguments *userArgs)
         ECORE_GETOPT_VALUE_STR(userArgs->engine),
         ECORE_GETOPT_VALUE_BOOL(userArgs->quitOption),
         ECORE_GETOPT_VALUE_STR(userArgs->backingStore),
+        ECORE_GETOPT_VALUE_DOUBLE(userArgs->device_pixel_ratio),
         ECORE_GETOPT_VALUE_BOOL(userArgs->enableEncodingDetector),
         ECORE_GETOPT_VALUE_BOOL(userArgs->isFlattening),
         ECORE_GETOPT_VALUE_BOOL(userArgs->isFullscreen),

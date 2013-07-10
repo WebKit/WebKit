@@ -2422,13 +2422,53 @@ EAPI Eina_Bool ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalabl
 EAPI Eina_Bool ewk_view_user_scalable_get(const Evas_Object *o);
 
 /**
- * Gets the device pixel ratio value.
+ * Queries the ratio between the CSS units and device pixels when the content is unscaled.
  *
- * @param o view to get the device pixel ratio value
+ * When designing touch-friendly contents, knowing the approximated target size on a device
+ * is important for contents providers in order to get the intented layout and element
+ * sizes.
  *
- * @return the device pixel ratio value on success or @c -1.0 on failure
+ * As most first generation touch devices had a PPI of approximately 160, this became a
+ * de-facto value, when used in conjunction with the viewport meta tag.
+ *
+ * Devices with a higher PPI learning towards 240 or 320, applies a pre-scaling on all
+ * content, of either 1.5 or 2.0, not affecting the CSS scale or pinch zooming.
+ *
+ * This value can be set using this property and it is exposed to CSS media queries using
+ * the -webkit-device-pixel-ratio query.
+ *
+ * For instance, if you want to load an image without having it upscaled on a web view
+ * using a device pixel ratio of 2.0 it can be done by loading an image of say 100x100
+ * pixels but showing it at half the size.
+ *
+ * @media (-webkit-min-device-pixel-ratio: 1.5) {
+ *     .icon {
+ *         width: 50px;
+ *         height: 50px;
+ *         url: "/images/icon@2x.png"; // This is actually a 100x100 image
+ *     }
+ * }
+ *
+ * If the above is used on a device with device pixel ratio of 1.5, it will be scaled
+ * down but still provide a better looking image.
+ *
+ * @param o view object to get device pixel ratio
+ *
+ * @return the ratio between the CSS units and device pixels,
+ *         or @c -1.0 on failure
  */
 EAPI float ewk_view_device_pixel_ratio_get(const Evas_Object *o);
+
+/**
+ * Sets the ratio between the CSS units and device pixels when the content is unscaled.
+ *
+ * @param o view object to set device pixel ratio
+ *
+ * @return @c EINA_TRUE if the device pixel ratio was set, @c EINA_FALSE otherwise
+ *
+ * @see ewk_view_device_pixel_ratio_get()
+ */
+EAPI Eina_Bool ewk_view_device_pixel_ratio_set(Evas_Object *o, float ratio);
 
 /**
  * Changes the text direction of the selected input node.
