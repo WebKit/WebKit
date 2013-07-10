@@ -392,7 +392,7 @@ WebInspector.ProfilesPanel = function(name, type)
     this._profileViewStatusBarItemsContainer = document.createElement("div");
     this._profileViewStatusBarItemsContainer.className = "status-bar-items";
 
-    this._profilerEnabled = !Capabilities.profilerCausesRecompilation;
+    this._profilerEnabled = !Capabilities.profilerCausesRecompilation || WebInspector.settings.profilerEnabled.get();
 
     if (singleProfileMode) {
         this._launcherView = this._createLauncherView();

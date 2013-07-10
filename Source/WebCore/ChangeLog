@@ -1,3 +1,15 @@
+2013-07-10  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        Web Inspector: "Always enable" profiling does not work
+        https://bugs.webkit.org/show_bug.cgi?id=118487
+
+        Enable profiler when loading panel if profiler is enabled in inspector
+        settings.
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/ProfilesPanel.js:
+
 2013-07-09  Roger Fong  <roger_fong@apple.com>
 
         HTMLPluginElement's state should be Playing before firing mouse click event.
