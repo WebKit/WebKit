@@ -1,3 +1,13 @@
+2013-07-10  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+        Remove platform specific expetations after r152494 because the generic is good for Qt.
+
+        * platform/qt/editing/execCommand/outdent-blockquote-test1-expected.txt: Removed after r152494.
+        * platform/qt/editing/execCommand/outdent-blockquote-test2-expected.txt: Removed after r152494.
+        * platform/qt/editing/execCommand/outdent-blockquote-test3-expected.txt: Removed after r152494.
+        * platform/qt/editing/execCommand/outdent-blockquote-test4-expected.txt: Removed after r152494.
+
 2013-07-09  James Craig  <james@cookiecrook.com>
 
         @readonly and @aria-readonly="false" are not exposed correctly to accessibility
