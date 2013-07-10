@@ -1,3 +1,16 @@
+2013-07-10  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Fix a bug in MediaStreamDescriptor::removeVideoComponent
+        https://bugs.webkit.org/show_bug.cgi?id=118446
+
+        Reviewed by Eric Carlson.
+
+        MediaStreamDescriptor::removeVideoComponent is currently trying to
+        remove the 'videoComponent' from the wrong vector.
+
+        * platform/mediastream/MediaStreamDescriptor.h:
+        (WebCore::MediaStreamDescriptor::removeVideoComponent):
+
 2013-07-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         AX: Allow requesting the full plain text for an object with textUnderElement()
