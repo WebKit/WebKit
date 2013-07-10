@@ -22,7 +22,6 @@
 #define SVGFitToViewBox_h
 
 #if ENABLE(SVG)
-#include "Attribute.h"
 #include "FloatRect.h"
 #include "QualifiedName.h"
 #include "SVGNames.h"

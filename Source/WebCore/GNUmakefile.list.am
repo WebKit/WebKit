@@ -4996,6 +4996,7 @@ webcore_svg_sources += \
 	Source/WebCore/svg/properties/SVGAnimatedEnumerationPropertyTearOff.h \
 	Source/WebCore/svg/properties/SVGAnimatedListPropertyTearOff.h \
 	Source/WebCore/svg/properties/SVGAnimatedPathSegListPropertyTearOff.h \
+	Source/WebCore/svg/properties/SVGAnimatedProperty.cpp \
 	Source/WebCore/svg/properties/SVGAnimatedProperty.h \
 	Source/WebCore/svg/properties/SVGAnimatedPropertyDescription.h \
 	Source/WebCore/svg/properties/SVGAnimatedPropertyMacros.h \
@@ -5063,6 +5064,7 @@ webcore_svg_sources += \
 	Source/WebCore/svg/SVGAnimatedTransformList.h \
 	Source/WebCore/svg/SVGAnimatedType.cpp \
 	Source/WebCore/svg/SVGAnimatedType.h \
+	Source/WebCore/svg/SVGAnimatedTypeAnimator.cpp \
 	Source/WebCore/svg/SVGAnimatedTypeAnimator.h \
 	Source/WebCore/svg/SVGAnimateElement.cpp \
 	Source/WebCore/svg/SVGAnimateElement.h \

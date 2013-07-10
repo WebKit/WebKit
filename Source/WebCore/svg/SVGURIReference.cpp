@@ -27,6 +27,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "KURL.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 

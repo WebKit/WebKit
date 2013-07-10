@@ -29,6 +29,7 @@
 #include "RenderSVGTextPath.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 

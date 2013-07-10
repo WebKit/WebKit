@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011-2012. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,21 +24,15 @@
 #if ENABLE(SVG)
 #include "SVGAnimatedProperty.h"
 #include "SVGAnimatedType.h"
-#include "SVGAttributeToPropertyMap.h"
 #include "SVGElementInstance.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 struct SVGElementAnimatedProperties {
-    SVGElementAnimatedProperties()
-        : element(0)
-    { }
+    SVGElementAnimatedProperties();
 
-    SVGElementAnimatedProperties(SVGElement* element, Vector<RefPtr<SVGAnimatedProperty> >& properties)
-        : element(element)
-        , properties(properties)
-    { }
+    SVGElementAnimatedProperties(SVGElement*, Vector<RefPtr<SVGAnimatedProperty> >&);
 
     SVGElement* element;
     Vector<RefPtr<SVGAnimatedProperty> > properties;
@@ -49,7 +44,7 @@ class SVGAnimationElement;
 class SVGAnimatedTypeAnimator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~SVGAnimatedTypeAnimator() { }
+    virtual ~SVGAnimatedTypeAnimator();
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&) = 0;
 
     virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) = 0;
@@ -62,75 +57,16 @@ public:
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*) = 0;
     virtual float calculateDistance(const String& fromString, const String& toString) = 0;
 
-    void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
-    {
-        from = constructFromString(fromString);
-        to = constructFromString(toString);
-    }
-
-    void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-    {
-        from = constructFromString(fromString);
-        to = constructFromString(byString);
-        addAnimatedTypes(from.get(), to.get());
-    }
+    void calculateFromAndToValues(OwnPtr<SVGAnimatedType>&, OwnPtr<SVGAnimatedType>&, const String& fromString, const String& toString);
+    void calculateFromAndByValues(OwnPtr<SVGAnimatedType>&, OwnPtr<SVGAnimatedType>&, const String& fromString, const String& byString);
 
     void setContextElement(SVGElement* contextElement) { m_contextElement = contextElement; }
     AnimatedPropertyType type() const { return m_type; }
 
-    SVGElementAnimatedPropertyList findAnimatedPropertiesForAttributeName(SVGElement* targetElement, const QualifiedName& attributeName)
-    {
-        ASSERT(targetElement);
-
-        SVGElementAnimatedPropertyList propertiesByInstance;
-
-        Vector<RefPtr<SVGAnimatedProperty> > targetProperties;
-        targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(targetElement, attributeName, targetProperties);
-
-        if (!SVGAnimatedType::supportsAnimVal(m_type))
-            return SVGElementAnimatedPropertyList();
-
-        SVGElementAnimatedProperties propertiesPair(targetElement, targetProperties);
-        propertiesByInstance.append(propertiesPair);
-
-        const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
-        const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-        for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-            SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
-            if (!shadowTreeElement)
-                continue;
-
-            Vector<RefPtr<SVGAnimatedProperty> > instanceProperties;
-            targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(shadowTreeElement, attributeName, instanceProperties);
-
-            SVGElementAnimatedProperties instancePropertiesPair(shadowTreeElement, instanceProperties);
-            propertiesByInstance.append(instancePropertiesPair);
-        }
-
-#if !ASSERT_DISABLED
-        SVGElementAnimatedPropertyList::const_iterator propertiesEnd = propertiesByInstance.end();
-        for (SVGElementAnimatedPropertyList::const_iterator it = propertiesByInstance.begin(); it != propertiesEnd; ++it) {
-            size_t propertiesSize = it->properties.size();
-            for (size_t i = 0; i < propertiesSize; ++i) {
-                RefPtr<SVGAnimatedProperty> property = it->properties[i];
-                if (property->animatedPropertyType() != m_type) {
-                    ASSERT(m_type == AnimatedAngle);
-                    ASSERT(property->animatedPropertyType() == AnimatedEnumeration);
-                }
-            }
-        }
-#endif
-
-        return propertiesByInstance;
-    }
+    SVGElementAnimatedPropertyList findAnimatedPropertiesForAttributeName(SVGElement*, const QualifiedName&);
 
 protected:
-    SVGAnimatedTypeAnimator(AnimatedPropertyType type, SVGAnimationElement* animationElement, SVGElement* contextElement)
-        : m_type(type)
-        , m_animationElement(animationElement)
-        , m_contextElement(contextElement)
-    {
-    }
+    SVGAnimatedTypeAnimator(AnimatedPropertyType, SVGAnimationElement*, SVGElement*);
 
     // Helpers for animators that operate on single types, eg. just one SVGAnimatedInteger.
     template<typename AnimValType>

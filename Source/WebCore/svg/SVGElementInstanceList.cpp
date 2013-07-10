@@ -22,6 +22,8 @@
 #if ENABLE(SVG)
 #include "SVGElementInstanceList.h"
 
+#include "SVGElementInstance.h"
+
 namespace WebCore {
 
 SVGElementInstanceList::SVGElementInstanceList(PassRefPtr<SVGElementInstance> rootInstance)

@@ -21,7 +21,6 @@
 #define SVGListProperty_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedProperty.h"
 #include "SVGException.h"
 #include "SVGPropertyTearOff.h"
 #include "SVGPropertyTraits.h"

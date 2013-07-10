@@ -23,10 +23,11 @@
 
 #if ENABLE(SVG)
 #include "FloatPoint.h"
-#include "PathTraversalState.h"
 #include "SVGPathConsumer.h"
 
 namespace WebCore {
+
+class PathTraversalState;
 
 class SVGPathTraversalStateBuilder : public SVGPathConsumer {
 public:

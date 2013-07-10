@@ -2622,6 +2622,7 @@ HEADERS += \
     svg/graphics/SVGImage.h \
     svg/graphics/SVGImageCache.h \
     svg/graphics/SVGImageForContainer.h \
+    svg/properties/SVGAnimatedProperty.h \
     svg/properties/SVGAttributeToPropertyMap.h \
     svg/properties/SVGAnimatedEnumerationPropertyTearOff.h \
     svg/properties/SVGAnimatedListPropertyTearOff.h \
@@ -3708,6 +3709,7 @@ enable?(SVG) {
         svg/graphics/SVGImage.cpp \
         svg/graphics/SVGImageCache.cpp \
         svg/graphics/SVGImageForContainer.cpp \
+        svg/properties/SVGAnimatedProperty.cpp \
         svg/properties/SVGAttributeToPropertyMap.cpp \
         svg/properties/SVGPathSegListPropertyTearOff.cpp \
         svg/SVGDocumentExtensions.cpp \
@@ -3736,6 +3738,7 @@ enable?(SVG) {
         svg/SVGAnimatedString.cpp \
         svg/SVGAnimatedTransformList.cpp \
         svg/SVGAnimatedType.cpp \
+        svg/SVGAnimatedTypeAnimator.cpp \
         svg/SVGAnimateElement.cpp \
         svg/SVGAnimateMotionElement.cpp \
         svg/SVGAnimateTransformElement.cpp \

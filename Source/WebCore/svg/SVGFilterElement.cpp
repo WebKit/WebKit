@@ -34,6 +34,7 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 

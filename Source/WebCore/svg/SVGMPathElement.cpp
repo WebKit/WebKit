@@ -24,8 +24,10 @@
 
 #include "Document.h"
 #include "SVGAnimateMotionElement.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGPathElement.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 

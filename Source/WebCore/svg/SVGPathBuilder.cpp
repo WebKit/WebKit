@@ -26,6 +26,8 @@
 #if ENABLE(SVG)
 #include "SVGPathBuilder.h"
 
+#include "Path.h"
+
 namespace WebCore {
 
 SVGPathBuilder::SVGPathBuilder()

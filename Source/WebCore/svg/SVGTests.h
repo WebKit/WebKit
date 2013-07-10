@@ -22,7 +22,6 @@
 #define SVGTests_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedProperty.h"
 #include "SVGAnimatedPropertyMacros.h"
 #include "SVGStringList.h"
 

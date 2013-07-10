@@ -4857,6 +4857,9 @@
     <ClCompile Include="..\svg\graphics\filters\SVGFilterBuilder.cpp">
       <Filter>rendering\svg\graphics\filters</Filter>
     </ClCompile>
+    <ClCompile Include="..\svg\properties\SVGAnimatedProperty.cpp">
+      <Filter>rendering\svg\properties</Filter>
+    </ClCompile>
     <ClCompile Include="..\svg\properties\SVGAttributeToPropertyMap.cpp">
       <Filter>rendering\svg\properties</Filter>
     </ClCompile>

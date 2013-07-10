@@ -24,6 +24,7 @@
 
 #include "SVGAnimatedProperty.h"
 #include "SVGPropertyInfo.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

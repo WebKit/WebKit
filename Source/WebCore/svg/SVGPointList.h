@@ -22,7 +22,6 @@
 #define SVGPointList_h
 
 #if ENABLE(SVG)
-#include "QualifiedName.h"
 #include "SVGPropertyTraits.h"
 #include <wtf/Vector.h>
 

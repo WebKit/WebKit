@@ -24,6 +24,7 @@
 #if ENABLE(SVG)
 #include "SVGAnimateMotionElement.h"
 
+#include "AffineTransform.h"
 #include "Attribute.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"

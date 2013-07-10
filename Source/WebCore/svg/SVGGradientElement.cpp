@@ -35,6 +35,7 @@
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
 #include "StyleResolver.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 

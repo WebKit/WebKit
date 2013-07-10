@@ -27,6 +27,7 @@
 #include "SVGPathParser.h"
 
 #include "AffineTransform.h"
+#include "SVGPathSource.h"
 #include <wtf/MathExtras.h>
 
 static const float gOneOverThree = 1 / 3.f;

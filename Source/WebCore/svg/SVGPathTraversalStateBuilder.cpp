@@ -25,6 +25,8 @@
 #if ENABLE(SVG)
 #include "SVGPathTraversalStateBuilder.h"
 
+#include "PathTraversalState.h"
+
 namespace WebCore {
 
 SVGPathTraversalStateBuilder::SVGPathTraversalStateBuilder()

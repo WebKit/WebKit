@@ -21,9 +21,7 @@
 #define SVGPathUtilities_h
 
 #if ENABLE(SVG)
-#include "SVGPathByteStream.h"
 #include "SVGPathConsumer.h"
-#include "SVGPathSeg.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -32,6 +30,7 @@ namespace WebCore {
 class Path;
 class SVGPathByteStream;
 class SVGPathElement;
+class SVGPathSeg;
 class SVGPathSegList;
 
 // String/SVGPathByteStream -> Path

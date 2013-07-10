@@ -42,6 +42,7 @@
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "ScriptEventListener.h"
+#include "XLinkNames.h"
 #include "XMLNames.h"
 
 namespace WebCore {

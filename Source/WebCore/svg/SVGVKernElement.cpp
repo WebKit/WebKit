@@ -25,6 +25,7 @@
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 
 namespace WebCore {
 

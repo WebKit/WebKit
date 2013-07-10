@@ -24,6 +24,7 @@
 
 #include "AnimationUtilities.h"
 #include "SVGPathSeg.h"
+#include "SVGPathSource.h"
 #include <wtf/TemporaryChange.h>
 
 namespace WebCore {

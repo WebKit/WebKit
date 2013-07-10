@@ -30,7 +30,6 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGSMILElement.h"
-#include "SVGStringList.h"
 #include "SVGTests.h"
 #include "UnitBezier.h"
 

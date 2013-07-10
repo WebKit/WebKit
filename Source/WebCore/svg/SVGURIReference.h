@@ -23,7 +23,6 @@
 
 #if ENABLE(SVG)
 #include "Document.h"
-#include "XLinkNames.h"
 
 namespace WebCore {
 

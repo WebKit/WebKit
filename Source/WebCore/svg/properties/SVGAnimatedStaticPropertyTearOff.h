@@ -21,6 +21,7 @@
 #define SVGAnimatedStaticPropertyTearOff_h
 
 #if ENABLE(SVG)
+#include "ExceptionCode.h"
 #include "SVGAnimatedProperty.h"
 
 namespace WebCore {

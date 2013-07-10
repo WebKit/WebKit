@@ -23,7 +23,6 @@
 #if ENABLE(SVG_FONTS)
 #include "SurrogatePairAwareTextIterator.h"
 #include "SVGGlyph.h"
-#include "SVGGlyphElement.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>

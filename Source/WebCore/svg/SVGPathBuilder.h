@@ -26,10 +26,11 @@
 
 #if ENABLE(SVG)
 #include "FloatPoint.h"
-#include "Path.h"
 #include "SVGPathConsumer.h"
 
 namespace WebCore {
+
+class Path;
 
 class SVGPathBuilder : public SVGPathConsumer {
 public:

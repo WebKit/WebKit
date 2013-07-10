@@ -31,6 +31,7 @@
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGElementInstance.h"
 #include "ScriptEventListener.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 

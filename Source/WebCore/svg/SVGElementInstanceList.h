@@ -21,11 +21,13 @@
 #define SVGElementInstanceList_h
 
 #if ENABLE(SVG)
-
-#include "SVGElementInstance.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class SVGElementInstance;
 
 class SVGElementInstanceList : public RefCounted<SVGElementInstanceList> {
 public:

@@ -21,11 +21,12 @@
 #ifndef SVGAnimateMotionElement_h
 #define SVGAnimateMotionElement_h
 #if ENABLE(SVG)
-#include "AffineTransform.h"
 #include "Path.h"
 #include "SVGAnimationElement.h"
 
 namespace WebCore {
+
+class AffineTransform;
             
 class SVGAnimateMotionElement FINAL : public SVGAnimationElement {
 public:

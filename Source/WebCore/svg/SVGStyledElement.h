@@ -24,6 +24,7 @@
 #if ENABLE(SVG)
 #include "CSSPropertyNames.h"
 #include "SVGAnimatedString.h"
+#include "SVGElement.h"
 #include "SVGLocatable.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>

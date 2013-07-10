@@ -10528,6 +10528,7 @@
     <ClCompile Include="..\svg\graphics\filters\SVGFEImage.cpp" />
     <ClCompile Include="..\svg\graphics\filters\SVGFilter.cpp" />
     <ClCompile Include="..\svg\graphics\filters\SVGFilterBuilder.cpp" />
+    <ClCompile Include="..\svg\properties\SVGAnimatedProperty.cpp" />
     <ClCompile Include="..\svg\properties\SVGAttributeToPropertyMap.cpp" />
     <ClCompile Include="..\svg\properties\SVGPathSegListPropertyTearOff.cpp" />
     <ClCompile Include="..\history\BackForwardController.cpp" />

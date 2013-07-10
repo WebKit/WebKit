@@ -22,7 +22,7 @@
 
 #if ENABLE(SVG)
 #include "SVGGradientElement.h"
-#include "SVGLength.h"
+#include "SVGUnitTypes.h"
 
 namespace WebCore {
 

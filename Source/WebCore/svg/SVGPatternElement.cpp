@@ -40,6 +40,7 @@
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
 #include "SVGTransformable.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 

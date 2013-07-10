@@ -31,6 +31,7 @@
 #include "SVGElementInstance.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
+#include "XLinkNames.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {

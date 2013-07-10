@@ -1,3 +1,88 @@
+2013-07-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Reduce number of header includes in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=118474
+
+        Reviewed by Rob Buis.
+
+        Reduce number of header includes in SVG. In particular, SVGAnimatedPropertyMacros.h
+        no longer brings SVGElement.h header include. This means that the SVGElement
+        class can now have animated properties.
+
+        This patch is a prerequirement to merge SVGStyledElement into SVGElement.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/GradientAttributes.h:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGAnimateMotionElement.cpp:
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimatedTypeAnimator.cpp: Added.
+        (WebCore::SVGElementAnimatedProperties::SVGElementAnimatedProperties):
+        (WebCore::SVGAnimatedTypeAnimator::SVGAnimatedTypeAnimator):
+        (WebCore::SVGAnimatedTypeAnimator::~SVGAnimatedTypeAnimator):
+        (WebCore::SVGAnimatedTypeAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedTypeAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedTypeAnimator::findAnimatedPropertiesForAttributeName):
+        * svg/SVGAnimatedTypeAnimator.h:
+        * svg/SVGAnimationElement.h:
+        * svg/SVGCursorElement.cpp:
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        * svg/SVGElementInstanceList.cpp:
+        * svg/SVGElementInstanceList.h:
+        * svg/SVGElementRareData.h:
+        * svg/SVGFEImageElement.cpp:
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGFontData.cpp:
+        * svg/SVGFontData.h:
+        * svg/SVGFontElement.h:
+        * svg/SVGForeignObjectElement.cpp:
+        * svg/SVGGlyphMap.h:
+        * svg/SVGGradientElement.cpp:
+        * svg/SVGMPathElement.cpp:
+        * svg/SVGMPathElement.h:
+        * svg/SVGPathBlender.cpp:
+        * svg/SVGPathBlender.h:
+        * svg/SVGPathBuilder.cpp:
+        * svg/SVGPathBuilder.h:
+        * svg/SVGPathParser.cpp:
+        * svg/SVGPathParser.h:
+        * svg/SVGPathSegListBuilder.h:
+        * svg/SVGPathTraversalStateBuilder.cpp:
+        * svg/SVGPathTraversalStateBuilder.h:
+        * svg/SVGPathUtilities.h:
+        * svg/SVGPatternElement.cpp:
+        * svg/SVGPointList.h:
+        * svg/SVGScriptElement.cpp:
+        * svg/SVGStyledElement.h:
+        * svg/SVGTests.h:
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        * svg/SVGTransformable.h:
+        * svg/SVGURIReference.cpp:
+        * svg/SVGURIReference.h:
+        * svg/SVGVKernElement.cpp:
+        * svg/SVGVKernElement.h:
+        * svg/SVGZoomAndPan.h:
+        * svg/properties/SVGAnimatedProperty.cpp: Added.
+        (WebCore::SVGAnimatedProperty::SVGAnimatedProperty):
+        (WebCore::SVGAnimatedProperty::~SVGAnimatedProperty):
+        (WebCore::SVGAnimatedProperty::commitChange):
+        (WebCore::SVGAnimatedProperty::animatedPropertyCache):
+        * svg/properties/SVGAnimatedProperty.h:
+        * svg/properties/SVGAnimatedPropertyMacros.h:
+        (WebCore::SVGSynchronizableAnimatedProperty::synchronize):
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h:
+        * svg/properties/SVGListProperty.h:
+
 2013-07-10  Dominique Leuenberger  <dimstar@opensuse.org>
 
         Fix build against GTK+ 2.0

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +23,6 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedPropertyDescription.h"
-#include "SVGElement.h"
 #include "SVGPropertyInfo.h"
 #include <wtf/RefCounted.h>
 
@@ -39,34 +39,14 @@ public:
     bool isReadOnly() const { return m_isReadOnly; }
     void setIsReadOnly() { m_isReadOnly = true; }
 
-    void commitChange()
-    {
-        ASSERT(m_contextElement);
-        ASSERT(!m_contextElement->m_deletionHasBegun);
-        m_contextElement->invalidateSVGAttributes();
-        m_contextElement->svgAttributeChanged(m_attributeName);
-    }
+    void commitChange();
 
     virtual bool isAnimatedListTearOff() const { return false; }
 
     // Caching facilities.
     typedef HashMap<SVGAnimatedPropertyDescription, SVGAnimatedProperty*, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;
 
-    virtual ~SVGAnimatedProperty()
-    {
-        // Remove wrapper from cache.
-        Cache* cache = animatedPropertyCache();
-        const Cache::const_iterator end = cache->end();
-        for (Cache::const_iterator it = cache->begin(); it != end; ++it) {
-            if (it->value == this) {
-                cache->remove(it->key);
-                break;
-            }
-        }
-
-        // Assure that animationEnded() was called, if animationStarted() was called before.
-        ASSERT(!m_isAnimating);
-    }
+    virtual ~SVGAnimatedProperty();
 
     template<typename OwnerType, typename TearOffType, typename PropertyType>
     static PassRefPtr<TearOffType> lookupOrCreateWrapper(OwnerType* element, const SVGPropertyInfo* info, PropertyType& property)
@@ -98,21 +78,10 @@ public:
     }
 
 protected:
-    SVGAnimatedProperty(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType)
-        : m_contextElement(contextElement)
-        , m_attributeName(attributeName)
-        , m_animatedPropertyType(animatedPropertyType)
-        , m_isAnimating(false)
-        , m_isReadOnly(false)
-    {
-    }
+    SVGAnimatedProperty(SVGElement*, const QualifiedName&, AnimatedPropertyType);
 
 private:
-    static Cache* animatedPropertyCache()
-    {
-        static Cache* s_cache = new Cache;                
-        return s_cache;
-    }
+    static Cache* animatedPropertyCache();
 
     RefPtr<SVGElement> m_contextElement;
     const QualifiedName& m_attributeName;

@@ -27,6 +27,7 @@
 #include "Document.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 
