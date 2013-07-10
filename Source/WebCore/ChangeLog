@@ -1,3 +1,43 @@
+2013-07-10  Tim Horton  <timothy_horton@apple.com>
+
+        Deferring layer flushes can cause painting without layout being done
+        https://bugs.webkit.org/show_bug.cgi?id=118493
+
+        Reviewed by Simon Fraser.
+
+        r147797 added a mechanism for the TileController to inform RenderLayerCompositor
+        that it had performed an action (setNeedsDisplay, etc.) that would cause CoreAnimation
+        to call back into us to paint in this runloop, and that it shouldn't throttle the next
+        layer flush.
+
+        However, if tiles were created and left unparented (because the TileController was
+        out-of-window), when they are later parented, we failed to inform RenderLayerCompositor
+        that they were about to call back for painting, and so it would happily throttle the
+        next layer flush, and layout would be out of date, and garbage and corruption could result.
+
+        To resolve this, rework the logic surrounding parenting existing-but-unparented tiles
+        to ensure that they get added to the TileController's dirtyRect.
+
+        No new tests; the bug only reproduces under specific timing circumstances, and
+        manifests itself as an assertion failure or garbage on the screen, so it's quite
+        hard to make a workable test.
+
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::revalidateTiles):
+        - Factor out the code to parent unparented tiles so that it is shared between the
+            created-new-tile and reparenting-existing-tile cases.
+        - Keep track of whether we updated the frame of a pre-existing tile.
+        - If the tile is dirty and needed to be parented (because either it's new
+            or hadn't been parented before), add it to the dirty rect list.
+        - If the tile changed size, add it to the dirty rect list.
+
+        (WebCore::TileController::ensureTilesForRect):
+        Ditto everything from revalidateTiles.
+
+        (WebCore::TileController::createTileLayer):
+        - Explicitly mark fresh tiles as needing display, so that we can depend on
+            [WebTileLayer needsDisplay] in revalidateTiles to tell us that it's dirty.
+
 2013-07-10  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] every enabled text track should be listed in the track menu

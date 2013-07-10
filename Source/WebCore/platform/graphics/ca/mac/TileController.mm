@@ -686,26 +686,30 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
             IntRect tileRect = rectForTileIndex(tileIndex);
             m_primaryTileCoverageRect.unite(tileRect);
 
-            TileInfo& tileInfo = m_tiles.add(tileIndex, TileInfo()).iterator->value;
-            if (!tileInfo.layer) {
-                tileInfo.layer = createTileLayer(tileRect);
-                if (!m_unparentsOffscreenTiles || m_isInWindow)
-                    [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
-            } else {
-                if ((!m_unparentsOffscreenTiles || m_isInWindow) && ![tileInfo.layer.get() superlayer])
-                    [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
+            bool shouldChangeTileLayerFrame = false;
 
+            TileInfo& tileInfo = m_tiles.add(tileIndex, TileInfo()).iterator->value;
+            if (!tileInfo.layer)
+                tileInfo.layer = createTileLayer(tileRect);
+            else {
                 // We already have a layer for this tile. Ensure that its size is correct.
                 FloatSize tileLayerSize([tileInfo.layer.get() frame].size);
-                if (tileLayerSize == FloatSize(tileRect.size()))
-                    continue;
+                shouldChangeTileLayerFrame = tileLayerSize != FloatSize(tileRect.size());
 
-                [tileInfo.layer.get() setFrame:tileRect];
+                if (shouldChangeTileLayerFrame)
+                    [tileInfo.layer.get() setFrame:tileRect];
             }
-            
-            FloatRect scaledTileRect = tileRect;
-            scaledTileRect.scale(1 / m_scale);
-            dirtyRects.append(scaledTileRect);
+
+            bool shouldParentTileLayer = (!m_unparentsOffscreenTiles || m_isInWindow) && ![tileInfo.layer.get() superlayer];
+
+            if (shouldParentTileLayer)
+                [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
+
+            if ((shouldParentTileLayer && [tileInfo.layer.get() needsDisplay]) || shouldChangeTileLayerFrame) {
+                FloatRect scaledTileRect = tileRect;
+                scaledTileRect.scale(1 / m_scale);
+                dirtyRects.append(scaledTileRect);
+            }
         }
     }
 
@@ -752,6 +756,8 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
 
     if (dirtyRects.isEmpty())
         return;
+
+    // This will ensure we flush compositing state and do layout in this run loop iteration.
     platformLayer->owner()->platformCALayerDidCreateTiles(dirtyRects);
 }
 
@@ -836,18 +842,18 @@ void TileController::ensureTilesForRect(const FloatRect& rect)
 
             IntRect tileRect = rectForTileIndex(tileIndex);
             TileInfo& tileInfo = m_tiles.add(tileIndex, TileInfo()).iterator->value;
-            if (!tileInfo.layer) {
-                tileInfo.layer = createTileLayer(tileRect);
-                [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
-            } else {
-                if (![tileInfo.layer.get() superlayer])
-                    [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
 
+            bool shouldChangeTileLayerFrame = false;
+
+            if (!tileInfo.layer)
+                tileInfo.layer = createTileLayer(tileRect);
+            else {
                 // We already have a layer for this tile. Ensure that its size is correct.
                 CGSize tileLayerSize = [tileInfo.layer.get() frame].size;
-                if (tileLayerSize.width >= tileRect.width() && tileLayerSize.height >= tileRect.height())
-                    continue;
-                [tileInfo.layer.get() setFrame:tileRect];
+                shouldChangeTileLayerFrame = tileLayerSize.width < tileRect.width() || tileLayerSize.height < tileRect.height();
+
+                if (shouldChangeTileLayerFrame)
+                    [tileInfo.layer.get() setFrame:tileRect];
             }
 
             if (!tileRect.intersects(m_primaryTileCoverageRect)) {
@@ -855,9 +861,16 @@ void TileController::ensureTilesForRect(const FloatRect& rect)
                 ++tilesInCohort;
             }
 
-            FloatRect scaledTileRect = tileRect;
-            scaledTileRect.scale(1 / m_scale);
-            dirtyRects.append(scaledTileRect);
+            bool shouldParentTileLayer = ![tileInfo.layer.get() superlayer];
+
+            if (shouldParentTileLayer)
+                [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
+
+            if ((shouldParentTileLayer && [tileInfo.layer.get() needsDisplay]) || shouldChangeTileLayerFrame) {
+                FloatRect scaledTileRect = tileRect;
+                scaledTileRect.scale(1 / m_scale);
+                dirtyRects.append(scaledTileRect);
+            }
         }
     }
     
@@ -867,6 +880,7 @@ void TileController::ensureTilesForRect(const FloatRect& rect)
     if (m_tiledScrollingIndicatorLayer)
         updateTileCoverageMap();
 
+    // This will ensure we flush compositing state and do layout in this run loop iteration.
     if (!dirtyRects.isEmpty())
         platformLayer->owner()->platformCALayerDidCreateTiles(dirtyRects);
 }
@@ -993,12 +1007,9 @@ WebTileLayer* TileController::tileLayerAtIndex(const TileIndex& index) const
 RetainPtr<WebTileLayer> TileController::createTileLayer(const IntRect& tileRect)
 {
     RetainPtr<WebTileLayer> layer = LayerPool::sharedPool()->takeLayerWithSize(tileRect.size());
-    if (layer) {
-        // If we were able to restore a layer from the LayerPool, we should call setNeedsDisplay to
-        // ensure we avoid stale content.
+    if (layer)
         [layer resetPaintCount];
-        [layer setNeedsDisplay];
-    } else
+    else
         layer = adoptNS([[WebTileLayer alloc] init]);
     [layer.get() setAnchorPoint:CGPointZero];
     [layer.get() setFrame:tileRect];
@@ -1015,6 +1026,8 @@ RetainPtr<WebTileLayer> TileController::createTileLayer(const IntRect& tileRect)
     [layer.get() setContentsScale:m_deviceScaleFactor];
     [layer.get() setAcceleratesDrawing:m_acceleratesDrawing];
 #endif
+
+    [layer setNeedsDisplay];
 
     return layer;
 }
