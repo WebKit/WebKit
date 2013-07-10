@@ -155,12 +155,11 @@ static void dispatchEvent(GdkEvent* event)
 void EventSenderProxy::replaySavedEvents()
 {
     while (!m_eventQueue.isEmpty()) {
-        WTREventQueueItem item = m_eventQueue.first();
+        WTREventQueueItem item = m_eventQueue.takeFirst();
         if (item.delay)
             g_usleep(item.delay * 1000);
 
         dispatchEvent(item.event);
-        m_eventQueue.remove(0);
     }
 }
 

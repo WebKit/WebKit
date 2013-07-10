@@ -32,7 +32,7 @@
 #include <QTouchEvent>
 #elif PLATFORM(GTK)
 #include <gdk/gdk.h>
-#include <wtf/Vector.h>
+#include <wtf/Deque.h>
 #elif PLATFORM(EFL)
 #include <WebKit2/EWebKit2.h>
 #include <wtf/Deque.h>
@@ -114,7 +114,7 @@ private:
 #if PLATFORM(MAC)
     int eventNumber;
 #elif PLATFORM(GTK)
-    Vector<WTREventQueueItem> m_eventQueue;
+    Deque<WTREventQueueItem> m_eventQueue;
     unsigned m_mouseButtonCurrentlyDown;
 #elif PLATFORM(QT)
     Qt::MouseButtons m_mouseButtons;

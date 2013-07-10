@@ -1,3 +1,23 @@
+2013-07-10  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] WebKitTestRunner tries to remove an already deleted event in EventSenderProxy::replaySavedEvents
+        https://bugs.webkit.org/show_bug.cgi?id=118509
+
+        Reviewed by Martin Robinson.
+
+        In EventSenderProxy::replaySavedEvents WebKitTestRunner can crash
+        when trying to remove an event already removed, if another event is
+        processed in the middle. By using a Deque's takeFirst, we ensure the
+        element is removed before we dispatch it.
+
+        fast/events/mousedown-inside-dragstart-should-not-cause-crash.html no longer
+        crashes after this fix is added.
+
+        * WebKitTestRunner/EventSenderProxy.h: Use a Deque instead of Vector in GTK
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::replaySavedEvents): Use takeFirst to retrieve the event
+        from the queue.
+
 2013-07-09  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Add ewk_view_device_pixel_ratio_set
