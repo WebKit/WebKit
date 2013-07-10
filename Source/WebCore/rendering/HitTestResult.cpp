@@ -47,6 +47,7 @@
 #include "UserGestureIndicator.h"
 
 #if ENABLE(SVG)
+#include "SVGImageElement.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #endif
@@ -321,7 +322,7 @@ KURL HitTestResult::absoluteImageURL() const
         || isHTMLInputElement(m_innerNonSharedNode.get())
         || m_innerNonSharedNode->hasTagName(objectTag)
 #if ENABLE(SVG)
-        || m_innerNonSharedNode->hasTagName(SVGNames::imageTag)
+        || isSVGImageElement(m_innerNonSharedNode.get())
 #endif
        ) {
         Element* element = toElement(m_innerNonSharedNode.get());

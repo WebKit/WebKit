@@ -145,7 +145,7 @@ SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
 #ifndef NDEBUG
     for (unsigned i = 0; i < listLength; ++i) {
         ASSERT(list->item(i));
-        ASSERT(list->item(i)->hasTagName(SVGNames::fontTag));
+        ASSERT(isSVGFontElement(list->item(i)));
     }
 #endif
 

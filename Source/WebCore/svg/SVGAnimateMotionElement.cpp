@@ -28,6 +28,7 @@
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
+#include "SVGImageElement.h"
 #include "SVGMPathElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -69,7 +70,7 @@ bool SVGAnimateMotionElement::hasValidAttributeType()
     if (targetElement->hasTagName(gTag)
         || targetElement->hasTagName(defsTag)
         || targetElement->hasTagName(useTag)
-        || targetElement->hasTagName(SVGNames::imageTag)
+        || isSVGImageElement(targetElement)
         || targetElement->hasTagName(switchTag)
         || targetElement->hasTagName(pathTag)
         || targetElement->hasTagName(rectTag)

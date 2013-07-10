@@ -1,3 +1,46 @@
+2013-07-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce isSVGFontElement() and isSVGImageElement(), use them
+        https://bugs.webkit.org/show_bug.cgi?id=118504
+
+        Reviewed by Benjamin Poulain.
+
+        Let's use isFoo() to enhance readibility in svg element classes along with html's.
+
+        No new tests, there is no behavior changes.
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::getSVGFontById):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteImageURL):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeType):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::viewportElement):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::SVGFontElement):
+        * svg/SVGFontElement.h:
+        (WebCore::toSVGFontElement):
+        (WebCore::isSVGFontElement):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::associatedFontElement):
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::invalidateGlyphCache):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::insertedInto):
+        (WebCore::SVGHKernElement::removedFrom):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        * svg/SVGImageElement.h:
+        (WebCore::toSVGImageElement):
+        (WebCore::isSVGImageElement):
+        * svg/SVGLocatable.cpp:
+        (WebCore::isViewportElement):
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::insertedInto):
+        (WebCore::SVGVKernElement::removedFrom):
+
 2013-07-09  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Add ewk_view_device_pixel_ratio_set

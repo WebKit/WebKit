@@ -38,6 +38,7 @@
 #include "SVGElementInstance.h"
 #include "SVGElementRareData.h"
 #include "SVGGraphicsElement.h"
+#include "SVGImageElement.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "ScriptEventListener.h"
@@ -206,7 +207,7 @@ SVGElement* SVGElement::viewportElement() const
     // to determine the "overflow" property. <use> on <symbol> wouldn't work otherwhise.
     ContainerNode* n = parentOrShadowHostNode();
     while (n) {
-        if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::symbolTag))
+        if (n->hasTagName(SVGNames::svgTag) || isSVGImageElement(n) || n->hasTagName(SVGNames::symbolTag))
             return toSVGElement(n);
 
         n = n->parentOrShadowHostNode();

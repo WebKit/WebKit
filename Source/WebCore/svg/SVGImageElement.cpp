@@ -64,7 +64,7 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* 
     , m_height(LengthModeHeight)
     , m_imageLoader(this)
 {
-    ASSERT(hasTagName(SVGNames::imageTag));
+    ASSERT(isSVGImageElement(SVGNames::imageTag));
     registerAnimatedPropertiesForSVGImageElement();
 }
 

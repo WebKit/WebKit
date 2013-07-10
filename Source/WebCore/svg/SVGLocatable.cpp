@@ -28,6 +28,7 @@
 #include "RenderObject.h"
 #include "SVGException.h"
 #include "SVGGraphicsElement.h"
+#include "SVGImageElement.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -37,7 +38,7 @@ static bool isViewportElement(Node* node)
     return (node->hasTagName(SVGNames::svgTag)
         || node->hasTagName(SVGNames::symbolTag)
         || node->hasTagName(SVGNames::foreignObjectTag)
-        || node->hasTagName(SVGNames::imageTag));
+        || isSVGImageElement(node));
 }
 
 SVGElement* SVGLocatable::nearestViewportElement(const SVGElement* element)
