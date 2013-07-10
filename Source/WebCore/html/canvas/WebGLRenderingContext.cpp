@@ -2405,11 +2405,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         }
         return m_oesElementIndexUint.get();
     }
-    if (equalIgnoringCase(name, "WEBGL_lose_context")
-        // FIXME: remove this after a certain grace period.
-        || equalIgnoringCase(name, "WEBKIT_WEBGL_lose_context")
-        // FIXME: Is it safe to remove WEBKIT_lose_context now?
-        || equalIgnoringCase(name, "WEBKIT_lose_context")) {
+    if (equalIgnoringCase(name, "WEBGL_lose_context")) {
         if (!m_webglLoseContext)
             m_webglLoseContext = WebGLLoseContext::create(this);
         return m_webglLoseContext.get();
@@ -2425,17 +2421,13 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         if (!m_webglCompressedTexturePVRTC)
             m_webglCompressedTexturePVRTC = WebGLCompressedTexturePVRTC::create(this);
     }
-    if ((equalIgnoringCase(name, "WEBGL_compressed_texture_s3tc")
-         // FIXME: remove this after a certain grace period.
-         || equalIgnoringCase(name, "WEBKIT_WEBGL_compressed_texture_s3tc"))
+    if (equalIgnoringCase(name, "WEBGL_compressed_texture_s3tc")
         && WebGLCompressedTextureS3TC::supported(this)) {
         if (!m_webglCompressedTextureS3TC)
             m_webglCompressedTextureS3TC = WebGLCompressedTextureS3TC::create(this);
         return m_webglCompressedTextureS3TC.get();
     }
-    if ((equalIgnoringCase(name, "WEBGL_depth_texture")
-        // FIXME: remove this after a certain grace period.
-        || equalIgnoringCase(name, "WEBKIT_WEBGL_depth_texture"))
+    if (equalIgnoringCase(name, "WEBGL_depth_texture")
         && WebGLDepthTexture::supported(graphicsContext3D())) {
         if (!m_webglDepthTexture) {
             m_context->getExtensions()->ensureEnabled("GL_CHROMIUM_depth_texture");
@@ -2958,9 +2950,9 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     if (WebGLCompressedTexturePVRTC::supported(this))
         result.append("WEBKIT_WEBGL_compressed_texture_pvrtc");
     if (WebGLCompressedTextureS3TC::supported(this))
-        result.append("WEBKIT_WEBGL_compressed_texture_s3tc");
+        result.append("WEBGL_compressed_texture_s3tc");
     if (WebGLDepthTexture::supported(graphicsContext3D()))
-        result.append("WEBKIT_WEBGL_depth_texture");
+        result.append("WEBGL_depth_texture");
     if (supportsDrawBuffers())
         result.append("EXT_draw_buffers");
 
