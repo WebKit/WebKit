@@ -1,3 +1,17 @@
+2013-07-10  James Craig  <james@cookiecrook.com>
+
+        AX: AccessibilityNodeObject::supportsRequiredAttribute() should switch on CellRole
+        https://bugs.webkit.org/show_bug.cgi?id=117817
+
+        Reviewed by Chris Fleizach.
+
+        CellRole supports the required attribute now for accessibility, according to ARIA spec.
+
+        * platform/mac/accessibility/table-attributes-expected.txt:
+        * platform/mac/accessibility/table-cell-spans-expected.txt:
+        * platform/mac/accessibility/table-cells-expected.txt:
+        * platform/mac/accessibility/table-sections-expected.txt:
+
 2013-07-10  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

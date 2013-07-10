@@ -1,3 +1,16 @@
+2013-07-10  James Craig  <james@cookiecrook.com>
+
+        AX: AccessibilityNodeObject::supportsRequiredAttribute() should switch on CellRole
+        https://bugs.webkit.org/show_bug.cgi?id=117817
+
+        Reviewed by Chris Fleizach.
+
+        CellRole supports the required attribute now for accessibility, according to ARIA spec. 
+        Updated existing test coverage.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::supportsRequiredAttribute):
+
 2013-07-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r151957): WebGL textures do not show
