@@ -531,9 +531,9 @@ void HTMLPlugInImageElement::simulatedMouseClickTimerFired(DeferrableOneShotTime
     ASSERT(displayState() == RestartingWithPendingMouseClick);
     ASSERT(m_pendingClickEventFromSnapshot);
 
+    setDisplayState(Playing);
     dispatchSimulatedClick(m_pendingClickEventFromSnapshot.get(), SendMouseOverUpDownEvents, DoNotShowPressedLook);
 
-    setDisplayState(Playing);
     m_pendingClickEventFromSnapshot = nullptr;
 }
 

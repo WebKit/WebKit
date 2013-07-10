@@ -1,3 +1,14 @@
+2013-07-09  Roger Fong  <roger_fong@apple.com>
+
+        HTMLPluginElement's state should be Playing before firing mouse click event.
+        https://bugs.webkit.org/show_bug.cgi?id=118398.
+        <rdar://problem/14262126>
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac-wk2/plugins/snapshotting/plugin-receives-click-event-expected.txt: Added.
+        * plugins/snapshotting/plugin-receives-click-event.html: Added.
+
 2013-07-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         AX: Allow requesting the full plain text for an object with textUnderElement()
