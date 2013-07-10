@@ -1,5 +1,16 @@
 2013-07-10  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152427
+
+    2013-07-05  Brent Fulgham  <bfulgham@apple.com>
+
+            [Windows] Unreviewed build correction.
+
+            * WTF.vcxproj/WTFGenerated.make: Use space (rather than double
+            quotes) when handling the no-Legible-Output case.
+
+2013-07-10  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152426
 
     2013-07-05  Brent Fulgham  <bfulgham@apple.com>

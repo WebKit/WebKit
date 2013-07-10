@@ -18,6 +18,6 @@ WTFHeaderDetection.h: WTFGenerated.make
     -mkdir "%ConfigurationBuildDir%\include\private\wtf
     <<testOSXLevel.cmd
 IF EXIST "%ConfigurationBuildDir%\include\private\wtf\$@" exit
-echo "" > "%ConfigurationBuildDir%\include\private\wtf\$@"
+echo  > "%ConfigurationBuildDir%\include\private\wtf\$@"
 IF EXIST "$(WEBKIT_LIBRARIES)/include/AVFoundationCF/AVCFPlayerItemLegibleOutput.h" (echo #define __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ 1090 > "%ConfigurationBuildDir%\include\private\wtf\$@")
 <<
