@@ -1,3 +1,19 @@
+2013-07-10  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r152426
+
+    2013-07-05  Brent Fulgham  <bfulgham@apple.com>
+
+            [Windows] Identify OS-level at build-time.
+            https://bugs.webkit.org/show_bug.cgi?id=118428
+
+            Reviewed by Anders Carlsson.
+
+            * DerivedSources.make: Activate legible output features if present.
+            * WebCorePrefix.h: Activate MSVC 2010 workarounds for CGFloat if
+            building with VS2010.
+            * config.h: Activate legible output features if present.
+
 2013-07-09  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152514
