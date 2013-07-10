@@ -11745,9 +11745,6 @@
     <ClInclude Include="..\svg\ColorDistance.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
-    <ClInclude Include="..\svg\ElementTimeControl.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
     <ClInclude Include="..\svg\SVGAElement.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>

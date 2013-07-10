@@ -137,7 +137,7 @@ PASS SVGViewElement.toString() is '[object SVGViewElementConstructor]'
 PASS SVGScriptElement.toString() is '[object SVGScriptElementConstructor]'
 FAIL SVGEvent.toString() should be [object SVGEventConstructor]. Threw exception ReferenceError: Can't find variable: SVGEvent
 PASS SVGZoomEvent.toString() is '[object SVGZoomEventConstructor]'
-FAIL SVGAnimationElement.toString() should be [object SVGAnimationElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGAnimationElement
+PASS SVGAnimationElement.toString() is '[object SVGAnimationElementConstructor]'
 PASS SVGAnimateElement.toString() is '[object SVGAnimateElementConstructor]'
 PASS SVGSetElement.toString() is '[object SVGSetElementConstructor]'
 PASS SVGAnimateMotionElement.toString() is '[object SVGAnimateMotionElementConstructor]'

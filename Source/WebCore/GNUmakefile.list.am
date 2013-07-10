@@ -230,7 +230,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDynamicsCompressorNode.cpp \
 	DerivedSources/WebCore/JSElement.cpp \
 	DerivedSources/WebCore/JSElement.h \
-	DerivedSources/WebCore/JSElementTimeControl.h \
 	DerivedSources/WebCore/JSEntity.cpp \
 	DerivedSources/WebCore/JSEntity.h \
 	DerivedSources/WebCore/JSEntityReference.cpp \
@@ -4976,7 +4975,6 @@ webcore_svg_sources += \
 	Source/WebCore/svg/animation/SVGSMILElement.h \
 	Source/WebCore/svg/ColorDistance.cpp \
 	Source/WebCore/svg/ColorDistance.h \
-	Source/WebCore/svg/ElementTimeControl.h \
 	Source/WebCore/svg/GradientAttributes.h \
 	Source/WebCore/svg/graphics/filters/SVGFEImage.cpp \
 	Source/WebCore/svg/graphics/filters/SVGFEImage.h \

@@ -13307,7 +13307,6 @@
     <ClInclude Include="..\plugins\PluginView.h" />
     <ClInclude Include="..\plugins\win\PluginMessageThrottlerWin.h" />
     <ClInclude Include="..\svg\ColorDistance.h" />
-    <ClInclude Include="..\svg\ElementTimeControl.h" />
     <ClInclude Include="..\svg\SVGAElement.h" />
     <ClInclude Include="..\svg\SVGAltGlyphDefElement.h" />
     <ClInclude Include="..\svg\SVGAltGlyphElement.h" />

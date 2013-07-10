@@ -1,3 +1,20 @@
+2013-07-10  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove ElementTimeControl and expose SVGAnimationElement
+        https://bugs.webkit.org/show_bug.cgi?id=118349
+
+        Reviewed by Rob Buis.
+
+        Rebaseline several test cases now that SVGAnimationElement is exposed
+        on the global Window object.
+
+        * fast/js/global-constructors-attributes-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt:
+        * svg/custom/global-constructors-expected.txt:
+
 2013-07-09  Roger Fong  <roger_fong@apple.com>
 
         HTMLPluginElement's state should be Playing before firing mouse click event.

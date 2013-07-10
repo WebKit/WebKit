@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +25,18 @@
  */
 
 [
-    NoInterfaceObject,
-    Conditional=SVG,
-] interface SVGAnimationElement : SVGElement,
-                                  ElementTimeControl {
+    Conditional=SVG
+] interface SVGAnimationElement : SVGElement {
     readonly attribute SVGElement targetElement;
 
     float getStartTime();
     float getCurrentTime();
     [RaisesException] float getSimpleDuration();
+
+    void beginElement();
+    void beginElementAt([Default=Undefined] optional float offset);
+    void endElement();
+    void endElementAt([Default=Undefined] optional float offset);
 };
 
 SVGAnimationElement implements SVGExternalResourcesRequired;
