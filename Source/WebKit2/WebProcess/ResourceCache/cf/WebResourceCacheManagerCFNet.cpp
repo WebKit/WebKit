@@ -64,10 +64,11 @@ RetainPtr<CFArrayRef> WebResourceCacheManager::cfURLCacheHostNames()
 void WebResourceCacheManager::cfURLCacheHostNamesWithCallback(CacheCallback callback)
 {
     WKCFURLCacheCopyAllPartitionNames(^(CFArrayRef partitionNames) {
-        CFMutableArrayRef hostNames = CFArrayCreateMutableCopy(0, 0, WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(CFSTR("")));
-        CFArrayAppendArray(hostNames, partitionNames, CFRangeMake(0, CFArrayGetCount(partitionNames)));
+        RetainPtr<CFArrayRef> hostNamesInPersistentStore = adoptCF(WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(CFSTR("")));
+        RetainPtr<CFMutableArrayRef> hostNames = adoptCF(CFArrayCreateMutableCopy(0, 0, hostNamesInPersistentStore.get()));
+        CFArrayAppendArray(hostNames.get(), partitionNames, CFRangeMake(0, CFArrayGetCount(partitionNames)));
         CFRelease(partitionNames);
-        callback(adoptCF(hostNames));
+        callback(std::move(hostNames));
     });
 }
 #endif

@@ -1,3 +1,14 @@
+2013-07-11  Jessie Berlin  <jberlin@apple.com>
+
+        WebResourceCacheManager::cfURLCacheHostNamesWithCallback leaks an array (pointed out by the
+        clang static analyzer)
+        https://bugs.webkit.org/show_bug.cgi?id=118533
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.cpp:
+        (WebKit::WebResourceCacheManager::cfURLCacheHostNamesWithCallback):
+
 2013-07-11  Sergio Correia  <sergio.correia@openbossa.org>
 
         Use GOwnPtr in PluginProcessProxyUnix to manage stdOut variable
