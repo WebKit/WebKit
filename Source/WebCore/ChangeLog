@@ -1,3 +1,22 @@
+2013-07-11  Kangil Han  <kangil.han@samsung.com>
+
+        Introduce isHTMLTitleElement and toHTMLTitleElement
+        https://bugs.webkit.org/show_bug.cgi?id=118558
+
+        Reviewed by Andreas Kling.
+
+        To enhance readability, this patch introduces isHTMLTitleElement and toHTMLTitleElement.
+        This also helps out to reduce duplicated use of static_cast.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setTitle):
+        (WebCore::Document::removeTitle):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::removeHeadContents):
+        * html/HTMLTitleElement.h:
+        (WebCore::isHTMLTitleElement):
+        (WebCore::toHTMLTitleElement):
+
 2013-07-11  Patrick Gansterer  <paroga@webkit.org>
 
         Remove unused Windows CE files

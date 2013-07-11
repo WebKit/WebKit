@@ -44,6 +44,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
+#include "HTMLTitleElement.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
@@ -705,7 +706,7 @@ static void removeHeadContents(ReplacementFragment& fragment)
             || node->hasTagName(linkTag)
             || node->hasTagName(metaTag)
             || node->hasTagName(styleTag)
-            || node->hasTagName(titleTag)) {
+            || isHTMLTitleElement(node)) {
             next = NodeTraversal::nextSkippingChildren(node);
             fragment.removeNode(node);
         } else

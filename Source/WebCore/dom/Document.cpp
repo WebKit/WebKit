@@ -1536,9 +1536,9 @@ void Document::setTitle(const String& title)
     updateTitle(StringWithDirection(title, LTR));
 
     if (m_titleElement) {
-        ASSERT(m_titleElement->hasTagName(titleTag));
-        if (m_titleElement->hasTagName(titleTag))
-            static_cast<HTMLTitleElement*>(m_titleElement.get())->setText(title);
+        ASSERT(isHTMLTitleElement(m_titleElement.get()));
+        if (isHTMLTitleElement(m_titleElement.get()))
+            toHTMLTitleElement(m_titleElement.get())->setText(title);
     }
 }
 
@@ -1565,8 +1565,8 @@ void Document::removeTitle(Element* titleElement)
     // Update title based on first title element in the head, if one exists.
     if (HTMLElement* headElement = head()) {
         for (Node* e = headElement->firstChild(); e; e = e->nextSibling())
-            if (e->hasTagName(titleTag)) {
-                HTMLTitleElement* titleElement = static_cast<HTMLTitleElement*>(e);
+            if (isHTMLTitleElement(e)) {
+                HTMLTitleElement* titleElement = toHTMLTitleElement(e);
                 setTitleElement(titleElement->textWithDirection(), titleElement);
                 break;
             }
