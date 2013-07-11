@@ -136,7 +136,7 @@ typedef float CGFloat;
 
 // FIXME: Move this to JavaScriptCore/wtf/Platform.h, which is where we define WTF_USE_AVFOUNDATION on the Mac.
 // https://bugs.webkit.org/show_bug.cgi?id=67334
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && !USE(WINGDI)
 #define WTF_USE_AVFOUNDATION 1
 
 #if HAVE(AVCF_LEGIBLE_OUTPUT)

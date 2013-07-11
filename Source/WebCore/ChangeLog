@@ -1,3 +1,9 @@
+2013-07-11  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r152426.
+
+        * config.h:
+
 2013-07-11  Fabienne Semeria   <fsemeria@nds.com>
 
         [Qt] memory leak in WebCore::FontCache::getLastResortFallbackFont
