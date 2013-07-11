@@ -565,7 +565,8 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
 
     if (renderer->isEmbeddedObject() && toRenderEmbeddedObject(renderer)->allowsAcceleratedCompositing()) {
         PluginViewBase* pluginViewBase = toPluginViewBase(toRenderWidget(renderer)->widget());
-        m_graphicsLayer->setContentsToMedia(pluginViewBase->platformLayer());
+        if (!pluginViewBase->shouldNotAddLayer())
+            m_graphicsLayer->setContentsToMedia(pluginViewBase->platformLayer());
     }
 #if ENABLE(VIDEO)
     else if (renderer->isVideo()) {

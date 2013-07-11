@@ -1,3 +1,14 @@
+2013-07-10  Roger Fong  <roger_fong@apple.com>
+
+        Plugins that don't support snapshotting should not all autostart.
+        https://bugs.webkit.org/show_bug.cgi?id=118572
+        <rdar://problem/14324391>.
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac-wk2/plugins/snapshotting/quicktime-plugin-snapshotted-expected.txt: Added.
+        * plugins/snapshotting/quicktime-plugin-snapshotted.html: Added.
+
 2013-07-11  Mario Sanchez Prada  <mario@webkit.org>
 
         [GTK] Unreviewed gardening. Added expected failures after r152574.

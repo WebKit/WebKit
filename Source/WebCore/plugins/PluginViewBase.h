@@ -69,6 +69,7 @@ public:
     virtual bool shouldAllowNavigationFromDrags() const { return false; }
 
     virtual bool isPluginViewBase() const { return true; }
+    virtual bool shouldNotAddLayer() const { return false; }
 
 protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }

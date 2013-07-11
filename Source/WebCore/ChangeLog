@@ -1,3 +1,24 @@
+2013-07-10  Roger Fong  <roger_fong@apple.com>
+
+        Plugins that don't support snapshotting should not all autostart.
+        https://bugs.webkit.org/show_bug.cgi?id=118572
+        <rdar://problem/14324391>.
+
+        Reviewed by Dean Jackson.
+
+        Test: plugins/snapshotting/quicktime-plugin-snapshotted.html
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot): Pass in information about whether or not a snapshot exists
+        to the shadow dom.
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::shouldNotAddLayer): This method determines whether or not we should add the plugin's layer to the tree.
+        It should not be added if the plugin is in it's snapshotted state but does not actually support snapshotting.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): We should only add the layer to the tree when the plugin
+        is actually playing. Otherwise we run into an issue where the contents of the layer initially appear on the screen briefly 
+        on page load before we display the substitute for a plugin that doesn't support snapshotting.
+
 2013-07-11  Dan Bernstein  <mitz@apple.com>
 
         [mac] No API for getting the page visibility state of a WebView
