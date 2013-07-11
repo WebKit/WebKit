@@ -71,17 +71,17 @@ MacroAssemblerCodeRef JITThunks::ctiStub(VM* vm, ThunkGenerator generator)
 
 NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, NativeFunction constructor)
 {
-    if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(function))
+    if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(std::make_pair(function, constructor)))
         return nativeExecutable;
 
     NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, JIT::compileCTINativeCall(vm, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), constructor, NoIntrinsic);
-    weakAdd(*m_hostFunctionStubMap, function, PassWeak<NativeExecutable>(nativeExecutable));
+    weakAdd(*m_hostFunctionStubMap, std::make_pair(function, constructor), PassWeak<NativeExecutable>(nativeExecutable));
     return nativeExecutable;
 }
 
 NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, ThunkGenerator generator, Intrinsic intrinsic)
 {
-    if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(function))
+    if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(std::make_pair(function, callHostFunctionAsConstructor)))
         return nativeExecutable;
 
     MacroAssemblerCodeRef code;
@@ -94,7 +94,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, T
         code = JIT::compileCTINativeCall(vm, function);
 
     NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), callHostFunctionAsConstructor, intrinsic);
-    weakAdd(*m_hostFunctionStubMap, function, PassWeak<NativeExecutable>(nativeExecutable));
+    weakAdd(*m_hostFunctionStubMap, std::make_pair(function, callHostFunctionAsConstructor), PassWeak<NativeExecutable>(nativeExecutable));
     return nativeExecutable;
 }
 

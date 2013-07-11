@@ -1,3 +1,15 @@
+2013-07-10  Oliver Hunt  <oliver@apple.com>
+
+        NativeExecutable cache needs to use both call and construct functions for key
+        https://bugs.webkit.org/show_bug.cgi?id=118545
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure we don't decide that all bound functions aren't constructors.
+
+        * fast/js/function-bind-expected.txt:
+        * fast/js/script-tests/function-bind.js:
+
 2013-07-11  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] In a region chain with auto-height regions, lines get their length based only on the first region

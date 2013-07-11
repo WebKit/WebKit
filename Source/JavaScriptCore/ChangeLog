@@ -1,3 +1,22 @@
+2013-07-10  Oliver Hunt  <oliver@apple.com>
+
+        NativeExecutable cache needs to use both call and construct functions for key
+        https://bugs.webkit.org/show_bug.cgi?id=118545
+
+        Reviewed by Geoffrey Garen.
+
+        Make the native executable cache make use a key pair so we don't decide to
+        treat all subsequent functions as not being constructors.
+
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITThunks.h:
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getCallData):
+        (JSC::JSCell::getConstructData):
+
 2013-07-09  Mark Lam  <mark.lam@apple.com>
 
         Gardening to unbreak builds on the Windows bot.
