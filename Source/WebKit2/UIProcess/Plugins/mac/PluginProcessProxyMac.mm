@@ -28,6 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#import "DynamicLinkerEnvironmentExtractor.h"
 #import "EnvironmentVariables.h"
 #import "PluginProcessCreationParameters.h"
 #import "PluginProcessMessages.h"
@@ -35,6 +36,8 @@
 #import <WebCore/FileSystem.h>
 #import <WebCore/KURL.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <crt_externs.h>
+#import <mach-o/dyld.h>
 #import <spawn.h>
 #import <wtf/text/CString.h>
 
@@ -89,6 +92,9 @@ bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
     posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
 
     EnvironmentVariables environmentVariables;
+
+    DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], _NSGetMachExecuteHeader()->cputype);
+    environmentExtractor.getExtractedEnvironmentVariables(environmentVariables);
     
     // To make engineering builds work, if the path is outside of /System set up
     // DYLD_FRAMEWORK_PATH to pick up other frameworks, but don't do it for the
