@@ -1,3 +1,33 @@
+2013-07-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Refactor code for translating offsets between WebCore a11y and ATK
+        https://bugs.webkit.org/show_bug.cgi?id=118179
+
+        Reviewed by Chris Fleizach.
+
+        Encapsulate better and make more clear the translation of offsets
+        between our ATK implementation and WebCore's accessibility layer.
+
+        Values for offsets can differ sometimes between those two worlds
+        due to some extra flattening we need to do in ATK based ports to
+        properly expose the accessibility hierarchy to ATs, which
+        sometimes means adding extra text elements in the exposed text
+        through the AtkText interface (e.g. list items markers).
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (offsetAdjustmentForListItem): Helper function to refactor code
+        needed to translate offsets from WebCore to ATK worlds. Currently
+        related to considering list item markers in LTR text only.
+        (webCoreOffsetToAtkOffset): Convenience function for code
+        readability purposes. It just calls offsetAdjustmentForListItem.
+        (atkOffsetToWebCoreOffset): Likewise.
+        (getSelectionOffsetsForObject): Use webCoreOffsetToAtkOffset.
+        (webkitAccessibleTextGetCaretOffset): Use webCoreOffsetToAtkOffset
+        to translate an offset from WebCore to ATK before returning it.
+        (webkitAccessibleTextSetSelection): Use atkOffsetToWebCoreOffset
+        to translate an offset from WebCore to ATK before using it.
+        (webkitAccessibleTextSetCaretOffset): Likewise.
+
 2013-07-10  Sam Weinig  <sam@webkit.org>
 
         Range.getClientRects() not working correctly for partially contained vertically styled text nodes
