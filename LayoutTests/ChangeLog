@@ -1,5 +1,9 @@
 2013-07-10  Lucas Forschler  <lforschler@apple.com>
 
+        Rollout r152556. <rdar://problem/14305675>
+
+2013-07-10  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152554
 
     2013-07-10  Sam Weinig  <sam@webkit.org>
