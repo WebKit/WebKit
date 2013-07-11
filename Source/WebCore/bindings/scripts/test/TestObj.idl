@@ -167,9 +167,6 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     [Conditional=Condition1] const unsigned short CONDITIONAL_CONST = 0;
 
-    // 'TreatReturnedNullObjectAs' extended method
-    [TreatReturnedNullObjectAs=Undefined] TestObj treatReturnedNullObjectAsUndefined();
-
 #if defined(TESTING_JS)
     [CachedAttribute] readonly attribute any cachedAttribute1;
     [CachedAttribute] readonly attribute any cachedAttribute2;

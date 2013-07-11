@@ -990,14 +990,6 @@ void WebDOMTestObj::conditionalMethod3()
 
 #endif
 
-WebDOMTestObj WebDOMTestObj::treatReturnedNullObjectAsUndefined()
-{
-    if (!impl())
-        return WebDOMTestObj();
-
-    return toWebKit(WTF::getPtr(impl()->treatReturnedNullObjectAsUndefined()));
-}
-
 void WebDOMTestObj::classMethod()
 {
     if (!impl())

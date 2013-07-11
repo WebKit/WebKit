@@ -405,16 +405,6 @@ WEBKIT_API void
 webkit_dom_test_obj_conditional_method3(WebKitDOMTestObj* self);
 
 /**
- * webkit_dom_test_obj_treat_returned_null_object_as_undefined:
- * @self: A #WebKitDOMTestObj
- *
- * Returns: (transfer none):
- *
-**/
-WEBKIT_API WebKitDOMTestObj*
-webkit_dom_test_obj_treat_returned_null_object_as_undefined(WebKitDOMTestObj* self);
-
-/**
  * webkit_dom_test_obj_class_method:
  * @self: A #WebKitDOMTestObj
  *

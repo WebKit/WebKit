@@ -1413,16 +1413,6 @@ webkit_dom_test_obj_conditional_method3(WebKitDOMTestObj* self)
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
 
-WebKitDOMTestObj*
-webkit_dom_test_obj_treat_returned_null_object_as_undefined(WebKitDOMTestObj* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    WebCore::TestObj* item = WebKit::core(self);
-    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->treatReturnedNullObjectAsUndefined());
-    return WebKit::kit(gobjectResult.get());
-}
-
 void
 webkit_dom_test_obj_class_method(WebKitDOMTestObj* self)
 {

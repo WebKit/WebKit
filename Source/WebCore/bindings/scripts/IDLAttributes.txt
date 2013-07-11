@@ -101,7 +101,6 @@ SkipVTableValidation
 StrictTypeChecking
 SuppressToJSObject
 TreatNullAs=NullString
-TreatReturnedNullObjectAs=Undefined
 TreatReturnedNullStringAs=Null|Undefined
 TreatUndefinedAs=NullString
 TypedArray=*

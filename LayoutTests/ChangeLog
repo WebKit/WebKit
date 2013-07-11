@@ -1,3 +1,15 @@
+2013-07-11  Radu Stavila  <stavila@adobe.com>
+
+        NamedFlowCollection getters should follow the same pattern as HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=118561
+
+        Reviewed by Christophe Dumez.
+
+        Updated test for NamedFlowCollection getters when no named flows are created.
+
+        * fast/regions/webkit-named-flow-collection-empty-getters-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-collection-undefined-expected.txt.
+        * fast/regions/webkit-named-flow-collection-empty-getters.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-collection-undefined.html.
+
 2013-07-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Unreviewed gardening. Added crash expectations in debug builds after r152537

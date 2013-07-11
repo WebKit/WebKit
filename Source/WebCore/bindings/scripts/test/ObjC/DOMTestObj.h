@@ -167,7 +167,6 @@ enum {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 - (void)conditionalMethod3;
 #endif
-- (DOMTestObj *)treatReturnedNullObjectAsUndefined;
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
 - (void)classMethod2:(int)arg;
