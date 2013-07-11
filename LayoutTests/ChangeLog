@@ -1,3 +1,9 @@
+2013-07-11  Mario Sanchez Prada  <mario@webkit.org>
+
+        [GTK] Unreviewed gardening. Added expected failures after r152574.
+
+        * platform/gtk/TestExpectations: Added test failures.
+
 2013-07-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Layout Test accessibility/deleting-iframe-destroys-axcache.html, platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html are failing

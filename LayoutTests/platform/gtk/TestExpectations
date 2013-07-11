@@ -1355,6 +1355,8 @@ webkit.org/b/114251 accessibility/svg-group-element-with-title.html [ Failure ]
 webkit.org/b/114259 platform/gtk/accessibility/aria-slider-required-attributes.html [ Failure ]
 webkit.org/b/114259 platform/gtk/accessibility/combo-box-collapsed-selection-changed.html [ Failure ]
 
+webkit.org/b/118577 platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html [ Failure ]
+
 webkit.org/b/114625 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 
 webkit.org/b/114626 accessibility/link-inside-button-accessible-text.html [ Failure ]
