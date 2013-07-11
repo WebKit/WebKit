@@ -1,3 +1,17 @@
+2013-07-11  Andreas Kling  <akling@apple.com>
+
+        Revert r149313: Don't check for @media rules affected by viewport changes in every layout.
+        <rdar://problem/14277905>
+
+        Rubber-stamped by Antti Koivisto.
+
+        This changed caused more harm than good. setFrameRect() is not the only path in FrameView
+        that can cause media queries to need invalidation.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::layout):
+
 2013-07-11  Kangil Han  <kangil.han@samsung.com>
 
         Introduce isHTMLTitleElement and toHTMLTitleElement
