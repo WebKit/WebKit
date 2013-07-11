@@ -1,3 +1,9 @@
+2013-07-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Unreviewed gardening. Added crash expectations in debug builds after r152537
+
+        * platform/gtk/TestExpectations: Added two crashing tests.
+
 2013-07-10  Sam Weinig  <sam@webkit.org>
 
         Range.getClientRects() not working correctly for partially contained vertically styled text nodes
