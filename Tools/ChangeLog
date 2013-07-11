@@ -1,3 +1,26 @@
+2013-07-10  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Handle "load,provisional,failed" with the on_error callback on EFL MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=118538
+
+        Reviewed by Christophe Dumez.
+
+        When attempting some odd url such as ``foo'', MiniBrowser will now show an
+        error message such as "Cannot resolve hostname (foo)".
+
+        Previously, it had the following behavior if MiniBrowser was started with
+        such urls, e.g ``./MiniBrowser foo'':
+
+        - Debug:
+        It wouldt hit WebKit2/Platform/CoreIPC/unix/ConnectionUnix.cpp(460) and crash.
+
+        - Release:
+        No asserts, naturally, but the view would remain blank, even if we tried to
+        change to a valid url.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+
 2013-07-10  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] WebKitTestRunner tries to remove an already deleted event in EventSenderProxy::replaySavedEvents

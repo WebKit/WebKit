@@ -1847,6 +1847,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     evas_object_smart_callback_add(window->ewk_view, "file,chooser,request", on_file_chooser_request, window);
     evas_object_smart_callback_add(window->ewk_view, "favicon,changed", on_view_favicon_changed, window);
     evas_object_smart_callback_add(window->ewk_view, "load,error", on_error, window);
+    evas_object_smart_callback_add(window->ewk_view, "load,provisional,failed", on_error, window);
     evas_object_smart_callback_add(window->ewk_view, "load,progress", on_progress, window);
     evas_object_smart_callback_add(window->ewk_view, "title,changed", on_title_changed, window);
     evas_object_smart_callback_add(window->ewk_view, "url,changed", on_url_changed, window);
