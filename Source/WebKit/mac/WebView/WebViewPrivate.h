@@ -584,6 +584,7 @@ Could be worth adding to the API.
 - (void)_listenForLayoutMilestones:(WebLayoutMilestones)layoutMilestones;
 - (WebLayoutMilestones)_layoutMilestones;
 
+- (WebPageVisibilityState)_visibilityState;
 - (void)_setVisibilityState:(WebPageVisibilityState)visibilityState isInitialState:(BOOL)isInitialState;
 
 // Whether the column-break-{before,after} properties are respected instead of the

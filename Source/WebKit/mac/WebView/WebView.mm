@@ -430,6 +430,23 @@ static PageVisibilityState core(WebPageVisibilityState visibilityState)
     return PageVisibilityStateVisible;
 }
 
+static WebPageVisibilityState kit(PageVisibilityState visibilityState)
+{
+    switch (visibilityState) {
+    case PageVisibilityStateVisible:
+        return WebPageVisibilityStateVisible;
+    case PageVisibilityStateHidden:
+        return WebPageVisibilityStateHidden;
+    case PageVisibilityStatePrerender:
+        return WebPageVisibilityStatePrerender;
+    case PageVisibilityStateUnloaded:
+        return WebPageVisibilityStateUnloaded;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebPageVisibilityStateVisible;
+}
+
 @interface WebView (WebFileInternal)
 - (float)_deviceScaleFactor;
 - (BOOL)_isLoading;
@@ -2949,6 +2966,15 @@ static Vector<String> toStringVector(NSArray* patterns)
         return 0;
 
     return kitLayoutMilestones(page->requestedLayoutMilestones());
+}
+
+- (WebPageVisibilityState)_visibilityState
+{
+#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    if (_private->page)
+        return kit(_private->page->visibilityState());
+#endif
+    return WebPageVisibilityStateVisible;
 }
 
 - (void)_setVisibilityState:(WebPageVisibilityState)visibilityState isInitialState:(BOOL)isInitialState

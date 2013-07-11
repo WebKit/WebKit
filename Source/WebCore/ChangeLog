@@ -1,3 +1,12 @@
+2013-07-11  Dan Bernstein  <mitz@apple.com>
+
+        [mac] No API for getting the page visibility state of a WebView
+        https://bugs.webkit.org/show_bug.cgi?id=118578
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in: Export WebCore::Page::visibilityState().
+
 2013-07-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Layout Test accessibility/deleting-iframe-destroys-axcache.html, platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html are failing
