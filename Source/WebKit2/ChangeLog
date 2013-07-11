@@ -1,3 +1,14 @@
+2013-07-10  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/14395759> PluginProcess sometimes logs an error about being unable to load WebKit2.framework.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::createPropertyListFile): Ensure that any environment variables
+        specified in dynamic linker load commands are passed to the subprocess that we spawn to create
+        the MIME type property list.
+
 2013-07-10  Brady Eidson  <beidson@apple.com>
 
         Some Java plugin instances can deadlock with the WebProcess on NPP_Destroy.
