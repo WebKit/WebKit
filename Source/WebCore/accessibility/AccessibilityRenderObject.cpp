@@ -662,11 +662,13 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     
         // Sometimes text fragments don't have Nodes associated with them (like when
         // CSS content is used to insert text or when a RenderCounter is used.)
-        RenderText* renderTextObject = toRenderText(m_renderer);
-        if (renderTextObject->isTextFragment())
-            return String(static_cast<RenderTextFragment*>(m_renderer)->contentString());
-        else
+        if (m_renderer->isText()) {
+            RenderText* renderTextObject = toRenderText(m_renderer);
+            if (renderTextObject->isTextFragment())
+                return String(static_cast<RenderTextFragment*>(m_renderer)->contentString());
+
             return String(renderTextObject->text());
+        }
     }
     
     return AccessibilityNodeObject::textUnderElement(mode);

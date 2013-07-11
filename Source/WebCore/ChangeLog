@@ -1,3 +1,18 @@
+2013-07-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Layout Test accessibility/deleting-iframe-destroys-axcache.html, platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=118552
+
+        Reviewed by Chris Fleizach.
+
+        Do not assume always that we have a RenderText renderer when
+        calling to toRenderText(), since we might be executing that part
+        of the code due to have requested to include all the children.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement): Add
+        missing guard for RenderText, needed after r152537.
+
 2013-07-11  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] In a region chain with auto-height regions, lines get their length based only on the first region

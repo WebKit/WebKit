@@ -1,3 +1,14 @@
+2013-07-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Layout Test accessibility/deleting-iframe-destroys-axcache.html, platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=118552
+
+        Reviewed by Chris Fleizach.
+
+        Remove tests that are no longer expected to crash.
+
+        * platform/gtk/TestExpectations: Removed tests.
+
 2013-07-10  Oliver Hunt  <oliver@apple.com>
 
         NativeExecutable cache needs to use both call and construct functions for key
