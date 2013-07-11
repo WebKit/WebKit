@@ -76,7 +76,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
 PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
     const AtomicString fallbackFamily = QFont(fontDescription.firstFamily()).lastResortFamily();
-    return getCachedFontData(new FontPlatformData(fontDescription, fallbackFamily), shouldRetain);
+    return getCachedFontData(fontDescription, fallbackFamily, false, shouldRetain);
 }
 
 void FontCache::getTraitsInFamily(const AtomicString&, Vector<unsigned>&)
