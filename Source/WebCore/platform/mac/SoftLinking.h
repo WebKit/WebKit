@@ -52,7 +52,7 @@
         return frameworkLibrary; \
     }
 
-#define SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(framework, unstagedLocation, version) \
+#define SOFT_LINK_STAGED_FRAMEWORK(framework, unstagedLocation, version) \
     static void* framework##Library() \
     { \
         static void* frameworkLibrary = ^{ \
@@ -61,6 +61,7 @@
                 result = dlopen("/System/Library/StagedFrameworks/Safari/" #framework ".framework/Versions/" #version "/" #framework, RTLD_LAZY); \
             return result; \
         }(); \
+        ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
         return frameworkLibrary; \
     }
 

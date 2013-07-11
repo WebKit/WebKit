@@ -1,3 +1,15 @@
+2013-07-11  Timothy Hatcher  <timothy@apple.com>
+
+        Revert r152267 and soft link WebInspectorUI.framework again.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118544
+
+        Reviewed by David Kilzer.
+
+        * Configurations/WebKit.xcconfig:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (useWebKitWebInspector):
+
 2013-07-10  Jessie Berlin  <jberlin@apple.com>
 
         Remove some dead code from WebNSURLExtras _web_hostString

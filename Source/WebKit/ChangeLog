@@ -1,3 +1,13 @@
+2013-07-11  Timothy Hatcher  <timothy@apple.com>
+
+        Revert r152267 and soft link WebInspectorUI.framework again.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118544
+
+        Reviewed by David Kilzer.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2013-07-01  Timothy Hatcher  <timothy@apple.com>
 
         Link to WebInspectorUI.framework at build time instead of soft linking.

@@ -448,7 +448,6 @@
 		1C904FD40BA9DD0F0081E9D0 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1C904FD50BA9DD0F0081E9D0 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1C9F5EFB1651CDF700C480F8 /* Dock.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Dock.pdf; sourceTree = "<group>"; };
-		1CC915AB1782151B002CC4B1 /* WebInspectorUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebInspectorUI.framework; path = "/Users/Timothy/Work/Safari-TOT.git/OpenSource/WebKitBuild/Release/WebInspectorUI.framework"; sourceTree = "<absolute>"; };
 		1CCFFD120B1F81F2002EE926 /* OldWebAssertions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OldWebAssertions.c; sourceTree = "<group>"; };
 		224100F2091818D900D2D266 /* WebPluginsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginsPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		224100F80918190100D2D266 /* WebPluginsPrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginsPrivate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -832,7 +831,6 @@
 				1A20D08A0ED384F20043FA9F /* QuartzCore.framework */,
 				830E81E005853AC000AD0891 /* Security.framework */,
 				F738C9EA03FAD3DF0321FBE0 /* WebCore.framework */,
-				1CC915AB1782151B002CC4B1 /* WebInspectorUI.framework */,
 			);
 			name = "Frameworks and Libraries";
 			sourceTree = "<group>";
