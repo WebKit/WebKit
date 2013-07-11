@@ -63,7 +63,7 @@ public:
         virtual void didFlushRootLayer() = 0;
         virtual void willSyncLayerState(CoordinatedGraphicsLayerState&) = 0;
         virtual void notifyFlushRequired() = 0;
-        virtual void commitSceneState(CoordinatedGraphicsState&) = 0;
+        virtual void commitSceneState(const CoordinatedGraphicsState&) = 0;
         virtual void paintLayerContents(const GraphicsLayer*, GraphicsContext&, const IntRect& clipRect) = 0;
     };
 

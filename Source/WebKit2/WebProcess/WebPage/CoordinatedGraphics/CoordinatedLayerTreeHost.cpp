@@ -360,7 +360,7 @@ void CoordinatedLayerTreeHost::paintLayerContents(const GraphicsLayer* graphicsL
     }
 }
 
-void CoordinatedLayerTreeHost::commitSceneState(WebCore::CoordinatedGraphicsState& state)
+void CoordinatedLayerTreeHost::commitSceneState(const WebCore::CoordinatedGraphicsState& state)
 {
     m_webPage->send(Messages::CoordinatedLayerTreeHostProxy::CommitCoordinatedGraphicsState(state));
     m_isWaitingForRenderer = true;

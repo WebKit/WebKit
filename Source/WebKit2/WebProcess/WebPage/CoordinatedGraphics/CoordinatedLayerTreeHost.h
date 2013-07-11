@@ -106,7 +106,7 @@ private:
     virtual void didFlushRootLayer() OVERRIDE;
     virtual void willSyncLayerState(WebCore::CoordinatedGraphicsLayerState&) OVERRIDE;
     virtual void notifyFlushRequired() OVERRIDE { scheduleLayerFlush(); };
-    virtual void commitSceneState(WebCore::CoordinatedGraphicsState&) OVERRIDE;
+    virtual void commitSceneState(const WebCore::CoordinatedGraphicsState&) OVERRIDE;
     virtual void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) OVERRIDE;
 
 #if ENABLE(CSS_SHADERS)
