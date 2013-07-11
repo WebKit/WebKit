@@ -331,10 +331,10 @@ static FloatRect localQuadForTextBox(InlineTextBox* box, unsigned start, unsigne
             // Change the height and y position (or width and x for vertical text)
             // because selectionRect uses selection-specific values.
             if (box->isHorizontal()) {
-                r.setHeight(box->logicalHeight());
+                r.setHeight(box->height());
                 r.setY(box->y());
             } else {
-                r.setWidth(box->logicalWidth());
+                r.setWidth(box->width());
                 r.setX(box->x());
             }
         }

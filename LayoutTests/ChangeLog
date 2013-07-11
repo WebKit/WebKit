@@ -1,5 +1,20 @@
 2013-07-10  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152554
+
+    2013-07-10  Sam Weinig  <sam@webkit.org>
+
+            Range.getClientRects() not working correctly for partially contained vertically styled text nodes
+            <rdar://problem/14305675>
+            https://bugs.webkit.org/show_bug.cgi?id=118447
+
+            Reviewed by David Hyatt.
+
+            * fast/dom/Range/getClientRects-vertical-expected.txt: Added.
+            * fast/dom/Range/getClientRects-vertical.html: Added.
+
+2013-07-10  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152541
 
     2013-07-09  Roger Fong  <roger_fong@apple.com>
