@@ -1,3 +1,14 @@
+2013-07-11  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove unused Windows CE files
+        https://bugs.webkit.org/show_bug.cgi?id=118557
+
+        Reviewed by Andreas Kling.
+
+        * wtf/wince/FastMallocWinCE.h: Removed.
+        * wtf/wince/MemoryManager.cpp: Removed.
+        * wtf/wince/MemoryManager.h: Removed.
+
 2013-07-10  Michael Brüning  <michael.bruning@digia.com>
 
         Workaround for x86 optimizer bug in MSVC 2012.
