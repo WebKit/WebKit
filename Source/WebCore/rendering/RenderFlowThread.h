@@ -168,6 +168,9 @@ public:
     void popFlowThreadLayoutState();
     LayoutUnit offsetFromLogicalTopOfFirstRegion(const RenderBlock*) const;
 
+    // Used to estimate the maximum height of the flow thread.
+    static LayoutUnit maxLogicalHeight() { return LayoutUnit::max() / 2; }
+
 protected:
     virtual const char* renderName() const = 0;
 

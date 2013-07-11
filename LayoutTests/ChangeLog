@@ -1,3 +1,17 @@
+2013-07-11  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] In a region chain with auto-height regions, lines get their length based only on the first region
+        https://bugs.webkit.org/show_bug.cgi?id=118531
+
+        Reviewed by Alexandru Chiculita.
+
+        Add tests verifying the lines widths are correctly computed in auto-height regions with and without a max-height set.
+
+        * fast/regions/autoheight-correct-region-for-lines-2-expected.html: Added.
+        * fast/regions/autoheight-correct-region-for-lines-2.html: Added.
+        * fast/regions/autoheight-correct-region-for-lines-expected.html: Added.
+        * fast/regions/autoheight-correct-region-for-lines.html: Added.
+
 2013-07-11  Radu Stavila  <stavila@adobe.com>
 
         NamedFlowCollection getters should follow the same pattern as HTMLCollection

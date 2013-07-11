@@ -81,7 +81,7 @@ LayoutUnit RenderRegion::maxPageLogicalHeight() const
 {
     ASSERT(m_flowThread);
     ASSERT(hasAutoLogicalHeight() && !m_flowThread->inConstrainedLayoutPhase());
-    return style()->logicalMaxHeight().isUndefined() ? LayoutUnit::max() / 2 : computeReplacedLogicalHeightUsing(style()->logicalMaxHeight());
+    return style()->logicalMaxHeight().isUndefined() ? RenderFlowThread::maxLogicalHeight() : computeReplacedLogicalHeightUsing(style()->logicalMaxHeight());
 }
 
 LayoutUnit RenderRegion::logicalHeightOfAllFlowThreadContent() const

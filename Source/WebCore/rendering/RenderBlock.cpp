@@ -1496,7 +1496,7 @@ bool RenderBlock::updateRegionsAndShapesBeforeChildLayout(RenderFlowThread* flow
 
     // Compute the maximum logical height content may cause this block to expand to
     // FIXME: These should eventually use the const computeLogicalHeight rather than updateLogicalHeight
-    setLogicalHeight(LayoutUnit::max() / 2);
+    setLogicalHeight(RenderFlowThread::maxLogicalHeight());
     updateLogicalHeight();
 
 #if ENABLE(CSS_SHAPES)

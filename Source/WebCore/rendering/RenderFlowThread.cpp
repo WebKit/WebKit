@@ -251,11 +251,17 @@ void RenderFlowThread::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, L
     computedValues.m_position = logicalTop;
     computedValues.m_extent = 0;
 
+    const LayoutUnit maxFlowSize = RenderFlowThread::maxLogicalHeight();
     for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         ASSERT(!region->needsLayout() || region->isRenderRegionSet());
 
-        computedValues.m_extent += region->logicalHeightOfAllFlowThreadContent();
+        LayoutUnit distanceToMaxSize = maxFlowSize - computedValues.m_extent;
+        computedValues.m_extent += std::min(distanceToMaxSize, region->logicalHeightOfAllFlowThreadContent());
+
+        // If we reached the maximum size there's no point in going further.
+        if (computedValues.m_extent == maxFlowSize)
+            return;
     }
 }
 
@@ -685,6 +691,8 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, LayoutUnit off
     if (!hasRegions())
         return;
 
+    ASSERT(box->logicalHeight() >= 0);
+
     // FIXME: Not right for differing writing-modes.
     RenderRegion* startRegion = regionAtBlockOffset(offsetFromLogicalTopOfFirstPage, true);
     RenderRegion* endRegion = regionAtBlockOffset(offsetFromLogicalTopOfFirstPage + box->logicalHeight(), true);
@@ -875,7 +883,7 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* la
             region->clearComputedAutoHeight();
 
         LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
-        LayoutUnit regionLogicalHeight = std::min<LayoutUnit>(LayoutUnit::max() / 2 - logicalHeight, region->logicalHeightOfAllFlowThreadContent());
+        LayoutUnit regionLogicalHeight = std::min<LayoutUnit>(RenderFlowThread::maxLogicalHeight() - logicalHeight, region->logicalHeightOfAllFlowThreadContent());
 
         LayoutRect regionRect(style()->direction() == LTR ? LayoutUnit() : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
 

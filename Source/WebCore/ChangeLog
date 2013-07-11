@@ -1,3 +1,34 @@
+2013-07-11  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] In a region chain with auto-height regions, lines get their length based only on the first region
+        https://bugs.webkit.org/show_bug.cgi?id=118531
+
+        Reviewed by Alexandru Chiculita.
+
+        When computing the height a flow thread it's possible to overflow the maximum LayoutUnit and obtain a negative value.
+        This leads to invalid results during layout when computing the region range and the RenderBoxRegion info for the
+        descendant boxes of the flow thread.
+    
+        This issue appears especially during the auto-height algorithm because it initializes the auto-height regions
+        height with the LayoutUnit::max() / 2 value. Summing two such regions overflows and results in a negative value.
+
+        The fix clamps the maximum height of the flow thread to LayoutUnit::max() / 2. This doesn't affect the auto-height
+        algorithm because regionAtBlockOffset() will still return the correct values as the auto-height regions content
+        is established and their height updated.
+
+        Tests: fast/regions/autoheight-correct-region-for-lines-2.html
+               fast/regions/autoheight-correct-region-for-lines.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateRegionsAndShapesBeforeChildLayout):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::computeLogicalHeight):
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::maxPageLogicalHeight):
+
 2013-07-11  Timothy Hatcher  <timothy@apple.com>
 
         Revert r152267 and soft link WebInspectorUI.framework again.
