@@ -48,11 +48,14 @@
 #include "SVGPathSegCurvetoCubic.h"
 #include "SVGPathSegCurvetoCubicSmooth.h"
 #include "SVGPathSegCurvetoQuadratic.h"
-#include "SVGPathSegCurvetoQuadraticSmooth.h"
-#include "SVGPathSegLineto.h"
+#include "SVGPathSegCurvetoQuadraticSmoothAbs.h"
+#include "SVGPathSegCurvetoQuadraticSmoothRel.h"
+#include "SVGPathSegLinetoAbs.h"
 #include "SVGPathSegLinetoHorizontal.h"
+#include "SVGPathSegLinetoRel.h"
 #include "SVGPathSegLinetoVertical.h"
-#include "SVGPathSegMoveto.h"
+#include "SVGPathSegMovetoAbs.h"
+#include "SVGPathSegMovetoRel.h"
 
 using namespace JSC;
 

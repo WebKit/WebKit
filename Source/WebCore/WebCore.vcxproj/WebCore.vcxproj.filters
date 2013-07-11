@@ -12033,28 +12033,70 @@
     <ClInclude Include="..\svg\SVGPathSegArc.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegArcAbs.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegArcRel.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
     <ClInclude Include="..\svg\SVGPathSegClosePath.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGPathSegCurvetoCubic.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicAbs.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicRel.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
     <ClInclude Include="..\svg\SVGPathSegCurvetoCubicSmooth.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicSmoothAbs.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicSmoothRel.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGPathSegCurvetoQuadratic.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticSmooth.h">
+    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticAbs.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegLineto.h">
+    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticRel.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticSmoothAbs.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticSmoothRel.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoAbs.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoRel.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGPathSegLinetoHorizontal.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoHorizontalAbs.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoHorizontalRel.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
     <ClInclude Include="..\svg\SVGPathSegLinetoVertical.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoVerticalAbs.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoVerticalRel.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGPathSegList.h">
@@ -12066,7 +12108,10 @@
     <ClInclude Include="..\svg\SVGPathSegListSource.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegMoveto.h">
+    <ClInclude Include="..\svg\SVGPathSegMovetoAbs.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegMovetoRel.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGPathSource.h">

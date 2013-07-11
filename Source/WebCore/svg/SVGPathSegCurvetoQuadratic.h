@@ -72,40 +72,6 @@ private:
     float m_y1;
 };
 
-class SVGPathSegCurvetoQuadraticAbs : public SVGPathSegCurvetoQuadratic {
-public:
-    static PassRefPtr<SVGPathSegCurvetoQuadraticAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
-    {
-        return adoptRef(new SVGPathSegCurvetoQuadraticAbs(element, role, x, y, x1, y1));
-    }
-
-private:
-    SVGPathSegCurvetoQuadraticAbs(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
-        : SVGPathSegCurvetoQuadratic(element, role, x, y, x1, y1)
-    {
-    }
-
-    virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_ABS; }
-    virtual String pathSegTypeAsLetter() const { return "Q"; }
-};
-
-class SVGPathSegCurvetoQuadraticRel : public SVGPathSegCurvetoQuadratic {
-public:
-    static PassRefPtr<SVGPathSegCurvetoQuadraticRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
-    {
-        return adoptRef(new SVGPathSegCurvetoQuadraticRel(element, role, x, y, x1, y1));
-    }
-
-private:
-    SVGPathSegCurvetoQuadraticRel(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
-        : SVGPathSegCurvetoQuadratic(element, role, x, y, x1, y1)
-    {
-    }
-
-    virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_REL; }
-    virtual String pathSegTypeAsLetter() const { return "q"; }
-};
-
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

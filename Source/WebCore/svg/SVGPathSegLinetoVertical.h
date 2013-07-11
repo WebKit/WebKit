@@ -45,40 +45,6 @@ private:
     float m_y;
 };
 
-class SVGPathSegLinetoVerticalAbs : public SVGPathSegLinetoVertical {
-public:
-    static PassRefPtr<SVGPathSegLinetoVerticalAbs> create(SVGPathElement* element, SVGPathSegRole role, float y)
-    {
-        return adoptRef(new SVGPathSegLinetoVerticalAbs(element, role, y));
-    }
-
-private:
-    SVGPathSegLinetoVerticalAbs(SVGPathElement* element, SVGPathSegRole role, float y)
-        : SVGPathSegLinetoVertical(element, role, y)
-    {
-    }
-
-    virtual unsigned short pathSegType() const { return PATHSEG_LINETO_VERTICAL_ABS; }
-    virtual String pathSegTypeAsLetter() const { return "V"; }
-};
-
-class SVGPathSegLinetoVerticalRel : public SVGPathSegLinetoVertical {
-public:
-    static PassRefPtr<SVGPathSegLinetoVerticalRel> create(SVGPathElement* element, SVGPathSegRole role, float y)
-    {
-        return adoptRef(new SVGPathSegLinetoVerticalRel(element, role, y));
-    }
-
-private:
-    SVGPathSegLinetoVerticalRel(SVGPathElement* element, SVGPathSegRole role, float y)
-        : SVGPathSegLinetoVertical(element, role, y)
-    {
-    }
-
-    virtual unsigned short pathSegType() const { return PATHSEG_LINETO_VERTICAL_REL; }
-    virtual String pathSegTypeAsLetter() const { return "v"; }
-};
-
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

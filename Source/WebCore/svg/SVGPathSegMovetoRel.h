@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,31 +19,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSegLinetoHorizontal_h
-#define SVGPathSegLinetoHorizontal_h
+#ifndef SVGPathSegMovetoRel_h
+#define SVGPathSegMovetoRel_h
 
 #if ENABLE(SVG)
 #include "SVGPathSegWithContext.h"
 
 namespace WebCore {
 
-class SVGPathSegLinetoHorizontal : public SVGPathSegWithContext {
+class SVGPathSegMovetoRel : public SVGPathSegSingleCoordinate {
 public:
-    SVGPathSegLinetoHorizontal(SVGPathElement* element, SVGPathSegRole role, float x)
-        : SVGPathSegWithContext(element, role)
-        , m_x(x)
+    static PassRefPtr<SVGPathSegMovetoRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
     {
-    }
-
-    float x() const { return m_x; }
-    void setX(float x)
-    {
-        m_x = x;
-        commitChange();
+        return adoptRef(new SVGPathSegMovetoRel(element, role, x, y));
     }
 
 private:
-    float m_x;
+    SVGPathSegMovetoRel(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+        : SVGPathSegSingleCoordinate(element, role, x, y)
+    {
+    }
+
+    virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_REL; }
+    virtual String pathSegTypeAsLetter() const { return "m"; }
 };
 
 } // namespace WebCore

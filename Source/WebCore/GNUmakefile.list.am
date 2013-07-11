@@ -5244,22 +5244,37 @@ webcore_svg_sources += \
 	Source/WebCore/svg/SVGPathParser.cpp \
 	Source/WebCore/svg/SVGPathParser.h \
 	Source/WebCore/svg/SVGPathSegArc.h \
+	Source/WebCore/svg/SVGPathSegArcAbs.h \
+	Source/WebCore/svg/SVGPathSegArcRel.h \
 	Source/WebCore/svg/SVGPathSegClosePath.h \
 	Source/WebCore/svg/SVGPathSegCurvetoCubic.h \
+	Source/WebCore/svg/SVGPathSegCurvetoCubicAbs.h \
+	Source/WebCore/svg/SVGPathSegCurvetoCubicRel.h \
 	Source/WebCore/svg/SVGPathSegCurvetoCubicSmooth.h \
+	Source/WebCore/svg/SVGPathSegCurvetoCubicSmoothAbs.h \
+	Source/WebCore/svg/SVGPathSegCurvetoCubicSmoothRel.h \
 	Source/WebCore/svg/SVGPathSegCurvetoQuadratic.h \
-	Source/WebCore/svg/SVGPathSegCurvetoQuadraticSmooth.h \
+	Source/WebCore/svg/SVGPathSegCurvetoQuadraticAbs.h \
+	Source/WebCore/svg/SVGPathSegCurvetoQuadraticRel.h \
+	Source/WebCore/svg/SVGPathSegCurvetoQuadraticSmoothAbs.h \
+	Source/WebCore/svg/SVGPathSegCurvetoQuadraticSmoothRel.h \
 	Source/WebCore/svg/SVGPathSeg.h \
-	Source/WebCore/svg/SVGPathSegLineto.h \
+	Source/WebCore/svg/SVGPathSegLinetoAbs.h \
+	Source/WebCore/svg/SVGPathSegLinetoRel.h \
 	Source/WebCore/svg/SVGPathSegLinetoHorizontal.h \
+	Source/WebCore/svg/SVGPathSegLinetoHorizontalAbs.h \
+	Source/WebCore/svg/SVGPathSegLinetoHorizontalRel.h \
 	Source/WebCore/svg/SVGPathSegLinetoVertical.h \
+	Source/WebCore/svg/SVGPathSegLinetoVerticalAbs.h \
+	Source/WebCore/svg/SVGPathSegLinetoVerticalRel.h \
 	Source/WebCore/svg/SVGPathSegListBuilder.cpp \
 	Source/WebCore/svg/SVGPathSegListBuilder.h \
 	Source/WebCore/svg/SVGPathSegList.cpp \
 	Source/WebCore/svg/SVGPathSegList.h \
 	Source/WebCore/svg/SVGPathSegListSource.cpp \
 	Source/WebCore/svg/SVGPathSegListSource.h \
-	Source/WebCore/svg/SVGPathSegMoveto.h \
+	Source/WebCore/svg/SVGPathSegMovetoAbs.h \
+	Source/WebCore/svg/SVGPathSegMovetoRel.h \
 	Source/WebCore/svg/SVGPathSegWithContext.h \
 	Source/WebCore/svg/SVGPathSource.h \
 	Source/WebCore/svg/SVGPathStringBuilder.cpp \

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,31 +19,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSegLinetoHorizontal_h
-#define SVGPathSegLinetoHorizontal_h
+#ifndef SVGPathSegArcRel_h
+#define SVGPathSegArcRel_h
 
 #if ENABLE(SVG)
-#include "SVGPathSegWithContext.h"
+#include "SVGPathSegArc.h"
 
 namespace WebCore {
 
-class SVGPathSegLinetoHorizontal : public SVGPathSegWithContext {
+class SVGPathSegArcRel : public SVGPathSegArc {
 public:
-    SVGPathSegLinetoHorizontal(SVGPathElement* element, SVGPathSegRole role, float x)
-        : SVGPathSegWithContext(element, role)
-        , m_x(x)
+    static PassRefPtr<SVGPathSegArcRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag)
     {
-    }
-
-    float x() const { return m_x; }
-    void setX(float x)
-    {
-        m_x = x;
-        commitChange();
+        return adoptRef(new SVGPathSegArcRel(element, role, x, y, r1, r2, angle, largeArcFlag, sweepFlag));
     }
 
 private:
-    float m_x;
+    SVGPathSegArcRel(SVGPathElement* element, SVGPathSegRole role, float x, float y, float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag)
+        : SVGPathSegArc(element, role, x, y, r1, r2, angle, largeArcFlag, sweepFlag)
+    {
+    }
+
+    virtual unsigned short pathSegType() const { return PATHSEG_ARC_REL; }
+    virtual String pathSegTypeAsLetter() const { return "a"; }
 };
 
 } // namespace WebCore

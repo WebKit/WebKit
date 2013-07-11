@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,32 +19,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSegLineto_h
-#define SVGPathSegLineto_h
+#ifndef SVGPathSegLinetoRel_h
+#define SVGPathSegLinetoRel_h
 
 #if ENABLE(SVG)
 #include "SVGPathSegWithContext.h"
 
 namespace WebCore {
 
-class SVGPathSegLinetoAbs : public SVGPathSegSingleCoordinate { 
-public:
-    static PassRefPtr<SVGPathSegLinetoAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
-    {
-        return adoptRef(new SVGPathSegLinetoAbs(element, role, x, y));
-    }
-
-private:
-    SVGPathSegLinetoAbs(SVGPathElement* element, SVGPathSegRole role, float x, float y)
-        : SVGPathSegSingleCoordinate(element, role, x, y)
-    {
-    }
-
-    virtual unsigned short pathSegType() const { return PATHSEG_LINETO_ABS; }
-    virtual String pathSegTypeAsLetter() const { return "L"; }
-};
-
-class SVGPathSegLinetoRel : public SVGPathSegSingleCoordinate { 
+class SVGPathSegLinetoRel : public SVGPathSegSingleCoordinate {
 public:
     static PassRefPtr<SVGPathSegLinetoRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
     {

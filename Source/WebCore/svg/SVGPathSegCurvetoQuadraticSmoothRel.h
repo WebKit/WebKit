@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,46 +19,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSegMoveto_h
-#define SVGPathSegMoveto_h
+#ifndef SVGPathSegCurvetoQuadraticSmoothRel_h
+#define SVGPathSegCurvetoQuadraticSmoothRel_h
 
 #if ENABLE(SVG)
 #include "SVGPathSegWithContext.h"
 
 namespace WebCore {
 
-class SVGPathSegMovetoAbs : public SVGPathSegSingleCoordinate { 
+class SVGPathSegCurvetoQuadraticSmoothRel : public SVGPathSegSingleCoordinate {
 public:
-    static PassRefPtr<SVGPathSegMovetoAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+    static PassRefPtr<SVGPathSegCurvetoQuadraticSmoothRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
     {
-        return adoptRef(new SVGPathSegMovetoAbs(element, role, x, y));
+        return adoptRef(new SVGPathSegCurvetoQuadraticSmoothRel(element, role, x, y));
     }
 
 private:
-    SVGPathSegMovetoAbs(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+    SVGPathSegCurvetoQuadraticSmoothRel(SVGPathElement* element, SVGPathSegRole role, float x, float y)
         : SVGPathSegSingleCoordinate(element, role, x, y)
     {
     }
 
-    virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_ABS; }
-    virtual String pathSegTypeAsLetter() const { return "M"; }
-};
-
-class SVGPathSegMovetoRel : public SVGPathSegSingleCoordinate { 
-public:
-    static PassRefPtr<SVGPathSegMovetoRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
-    {
-        return adoptRef(new SVGPathSegMovetoRel(element, role, x, y));
-    }
-
-private:
-    SVGPathSegMovetoRel(SVGPathElement* element, SVGPathSegRole role, float x, float y)
-        : SVGPathSegSingleCoordinate(element, role, x, y)
-    {
-    }
-
-    virtual unsigned short pathSegType() const { return PATHSEG_MOVETO_REL; }
-    virtual String pathSegTypeAsLetter() const { return "m"; }
+    virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL; }
+    virtual String pathSegTypeAsLetter() const { return "t"; }
 };
 
 } // namespace WebCore

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,31 +19,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSegLinetoHorizontal_h
-#define SVGPathSegLinetoHorizontal_h
+#ifndef SVGPathSegCurvetoCubicSmoothRel_h
+#define SVGPathSegCurvetoCubicSmoothRel_h
 
 #if ENABLE(SVG)
-#include "SVGPathSegWithContext.h"
+#include "SVGPathSegCurvetoCubicSmooth.h"
 
 namespace WebCore {
 
-class SVGPathSegLinetoHorizontal : public SVGPathSegWithContext {
+class SVGPathSegCurvetoCubicSmoothRel : public SVGPathSegCurvetoCubicSmooth {
 public:
-    SVGPathSegLinetoHorizontal(SVGPathElement* element, SVGPathSegRole role, float x)
-        : SVGPathSegWithContext(element, role)
-        , m_x(x)
+    static PassRefPtr<SVGPathSegCurvetoCubicSmoothRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x2, float y2)
     {
-    }
-
-    float x() const { return m_x; }
-    void setX(float x)
-    {
-        m_x = x;
-        commitChange();
+        return adoptRef(new SVGPathSegCurvetoCubicSmoothRel(element, role, x, y, x2, y2));
     }
 
 private:
-    float m_x;
+    SVGPathSegCurvetoCubicSmoothRel(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x2, float y2)
+        : SVGPathSegCurvetoCubicSmooth(element, role, x, y, x2, y2)
+    {
+    }
+
+    virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_SMOOTH_REL; }
+    virtual String pathSegTypeAsLetter() const { return "s"; }
 };
 
 } // namespace WebCore

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,31 +19,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSegLinetoHorizontal_h
-#define SVGPathSegLinetoHorizontal_h
+#ifndef SVGPathSegLinetoVerticalAbs_h
+#define SVGPathSegLinetoVerticalAbs_h
 
 #if ENABLE(SVG)
-#include "SVGPathSegWithContext.h"
+#include "SVGPathSegLinetoVertical.h"
 
 namespace WebCore {
 
-class SVGPathSegLinetoHorizontal : public SVGPathSegWithContext {
+class SVGPathSegLinetoVerticalAbs : public SVGPathSegLinetoVertical {
 public:
-    SVGPathSegLinetoHorizontal(SVGPathElement* element, SVGPathSegRole role, float x)
-        : SVGPathSegWithContext(element, role)
-        , m_x(x)
+    static PassRefPtr<SVGPathSegLinetoVerticalAbs> create(SVGPathElement* element, SVGPathSegRole role, float y)
     {
-    }
-
-    float x() const { return m_x; }
-    void setX(float x)
-    {
-        m_x = x;
-        commitChange();
+        return adoptRef(new SVGPathSegLinetoVerticalAbs(element, role, y));
     }
 
 private:
-    float m_x;
+    SVGPathSegLinetoVerticalAbs(SVGPathElement* element, SVGPathSegRole role, float y)
+        : SVGPathSegLinetoVertical(element, role, y)
+    {
+    }
+
+    virtual unsigned short pathSegType() const { return PATHSEG_LINETO_VERTICAL_ABS; }
+    virtual String pathSegTypeAsLetter() const { return "V"; }
 };
 
 } // namespace WebCore

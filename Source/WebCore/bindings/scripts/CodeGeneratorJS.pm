@@ -220,11 +220,7 @@ sub AddIncludesForType
 
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
-    if ($type =~ /SVGPathSeg/) {
-        my $joinedName = $type;
-        $joinedName =~ s/Abs|Rel//;
-        $includesRef->{"${joinedName}.h"} = 1;
-    } elsif ($type eq "XPathNSResolver") {
+    if ($type eq "XPathNSResolver") {
         $includesRef->{"JSXPathNSResolver.h"} = 1;
         $includesRef->{"JSCustomXPathNSResolver.h"} = 1;
     } elsif ($isCallback && $codeGenerator->IsWrapperType($type)) {
@@ -3643,11 +3639,6 @@ sub NativeToJSValue
         } else {
             return "($value.hasNoValue() ? jsNull() : $value.jsValue())";
         }
-    } elsif ($type =~ /SVGPathSeg/) {
-        AddToImplIncludes("JS$type.h", $conditional);
-        my $joinedName = $type;
-        $joinedName =~ s/Abs|Rel//;
-        AddToImplIncludes("$joinedName.h", $conditional);
     } elsif ($type eq "SerializedScriptValue" or $type eq "any") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
         return "$value ? $value->deserialize(exec, castedThis->globalObject(), 0) : jsNull()";
