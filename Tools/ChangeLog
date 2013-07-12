@@ -1,3 +1,18 @@
+2013-07-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r152599.
+        http://trac.webkit.org/changeset/152599
+        https://bugs.webkit.org/show_bug.cgi?id=118612
+
+        This patch includes a failing unit test (Requested by
+        mrobinson on #webkit).
+
+        * Scripts/webkitpy/style/checkers/python.py:
+        (Pylinter):
+        * Scripts/webkitpy/style/checkers/python_unittest.py:
+        (PythonCheckerTest.test_check):
+        * Scripts/webkitpy/style/checkers/python_unittest_falsepositives.py: Removed.
+
 2013-07-12  Emanuele Aina  <emanuele.aina@collabora.com>
 
         [Tools] Ignore missing GNUmakefile when detecting previous arch in build-webkit
