@@ -1,3 +1,21 @@
+2013-07-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Improve StringImpl::constructInternal() method
+        https://bugs.webkit.org/show_bug.cgi?id=118503
+
+        Reviewed by Benjamin Poulain.
+
+        StringImpl::constructInternal used 'if ()' statement to decide which constructor
+        to invoke hence compiler had to compile both branches even though optimizer would
+        have then removed one of those, and as the function is inline it could affect
+        slightly the compilation time.
+
+        The problem is solved via template specialization.
+
+        * wtf/text/StringImpl.h:
+        (WTF::LChar):
+        (WTF::UChar):
+
 2013-07-11  Patrick Gansterer  <paroga@webkit.org>
 
         Remove unused Windows CE files

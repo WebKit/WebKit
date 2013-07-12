@@ -850,13 +850,10 @@ ValueCheck<StringImpl*> {
 };
 #endif
 
-template <typename CharType>
-ALWAYS_INLINE PassRefPtr<StringImpl> StringImpl::constructInternal(StringImpl* impl, unsigned length)
-{
-    if (sizeof(CharType) == sizeof(char))
-        return adoptRef(new (NotNull, impl) StringImpl(length, Force8BitConstructor));
-    return adoptRef(new (NotNull, impl) StringImpl(length));
-}
+template <>
+ALWAYS_INLINE PassRefPtr<StringImpl> StringImpl::constructInternal<LChar>(StringImpl* impl, unsigned length) { return adoptRef(new (NotNull, impl) StringImpl(length, Force8BitConstructor)); }
+template <>
+ALWAYS_INLINE PassRefPtr<StringImpl> StringImpl::constructInternal<UChar>(StringImpl* impl, unsigned length) { return adoptRef(new (NotNull, impl) StringImpl(length)); }
 
 template <>
 ALWAYS_INLINE const LChar* StringImpl::getCharacters<LChar>() const { return characters8(); }
