@@ -562,6 +562,14 @@ void RenderView::repaintViewAndCompositedLayers()
 #endif
 }
 
+LayoutRect RenderView::visualOverflowRect() const
+{
+    if (m_frameView->paintsEntireContents())
+        return layoutOverflowRect();
+
+    return RenderBlock::visualOverflowRect();
+}
+
 void RenderView::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
 {
     // If a container was specified, and was not 0 or the RenderView,
