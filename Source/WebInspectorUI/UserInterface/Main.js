@@ -169,7 +169,7 @@ WebInspector.contentLoaded = function()
     this.navigationSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
     this.navigationSidebar.addEventListener(WebInspector.Sidebar.Event.SidebarPanelSelected, this._navigationSidebarPanelSelected, this);
 
-    this.rightSidebar = this.detailsSidebar = new WebInspector.Sidebar(document.getElementById("details-sidebar"), WebInspector.Sidebar.Sides.Right, "group", WebInspector.UIString("Details"));
+    this.rightSidebar = this.detailsSidebar = new WebInspector.Sidebar(document.getElementById("details-sidebar"), WebInspector.Sidebar.Sides.Right, null, null, WebInspector.UIString("Details"));
     this.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.CollapsedStateDidChange, this._sidebarCollapsedStateDidChange, this);
     this.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
     this.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.SidebarPanelSelected, this._detailsSidebarPanelSelected, this);
