@@ -212,8 +212,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
     NSEnumerator *keyEnumerator = [MIMETypes keyEnumerator];
     NSDictionary *MIMEDictionary;
-    NSString *MIME, *description;
-    NSArray *extensions;
+    NSString *MIME;
 
     while ((MIME = [keyEnumerator nextObject]) != nil) {
         MIMEDictionary = [MIMETypes objectForKey:MIME];
@@ -225,7 +224,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
         MimeClassInfo mimeClassInfo;
         
-        extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
+        NSArray *extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
         for (NSUInteger i = 0; i < [extensions count]; ++i) {
             // The DivX plug-in lists multiple extensions in a comma separated string instead of using
             // multiple array elements in the property list. Work around this here by splitting the
@@ -236,17 +235,11 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
                 mimeClassInfo.extensions.append(extension);
         }
 
-        if ([extensions count] == 0)
-            extensions = [NSArray arrayWithObject:@""];
-
         mimeClassInfo.type = String(MIME).lower();
 
-        description = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
-        mimeClassInfo.desc = description;
+        mimeClassInfo.desc = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
 
         pluginInfo.mimes.append(mimeClassInfo);
-        if (!description)
-            description = @"";
     }
 
     NSString *filename = [(NSString *)path lastPathComponent];
@@ -257,7 +250,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         theName = filename;
     pluginInfo.name = theName;
 
-    description = [self _objectForInfoDictionaryKey:WebPluginDescriptionKey];
+    NSString *description = [self _objectForInfoDictionaryKey:WebPluginDescriptionKey];
     if (!description)
         description = filename;
     pluginInfo.desc = description;

@@ -1,3 +1,29 @@
+2013-07-12  Jessie Berlin  <jberlin@apple.com>
+
+        Remove some dead stores pointed out by the clang static analyzer.
+        https://bugs.webkit.org/show_bug.cgi?id=118608
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        kr is never read after this point, so there is no reason to assign to it.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+        The extensions array is only used in the while loop. Move the declaration to the first place
+        it is used in the while loop. Since it is always reassigned at that location, and since it
+        is never read after the subsequent for loop, the assignment to an array containing the empty
+        string is never used. Remove it.
+        Similarly, the value of the description is always overwritten before used to assign to
+        mimeClassInfo.desc or to pluginInfo.desc, so the code to assign it to the empty string is
+        never used. Remove it.
+
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController _placePopupWindow:]):
+        maxWidth is never read (and never was since it was added in r7311) after it is used on the
+        line above to set windowFrame.size.width.
+
 2013-07-11  Dan Bernstein  <mitz@apple.com>
 
         [mac] No API for getting the page visibility state of a WebView
