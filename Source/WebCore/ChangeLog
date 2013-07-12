@@ -1,3 +1,12 @@
+2013-07-12  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=118461
+
+        Reviewed by Brent Fulgham.
+
+        * config.h: Only enable AVFOUNDATION for Windows if CoreGraphics is used.
+
 2013-07-12  Oleg Beletski  <oleg.beletski@gmail.com>
 
         [EFL] --minimal build fails while linking libwebcore_efl.so
