@@ -1,3 +1,10 @@
+2013-07-12  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skipping new failing test on Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=118595
+
+        * platform/qt/TestExpectations:
+
 2013-07-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fix.

@@ -1471,6 +1471,9 @@ css3/filters/effect-reference-hw.html
 # failing fast tests
 # ============================================================================= #
 
+# [Qt] New test: fast/regions/autoheight-correct-region-for-lines-2.html fails after r152572.
+webkit.org/b/118595 fast/regions/autoheight-correct-region-for-lines-2.html [ Skip ] 
+
 # [Qt] Two new test in fast/regions/ flaky after r151282
 # https://bugs.webkit.org/show_bug.cgi?id=117338
 fast/css/hover-display-block-none.html
