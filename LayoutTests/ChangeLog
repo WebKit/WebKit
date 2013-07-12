@@ -1,3 +1,16 @@
+2013-07-12  Chris Curtis  <chris_curtis@apple.com>
+
+        By optimizing when the stack is added a two tests needed to be modifed to show correct results.
+        https://bugs.webkit.org/show_bug.cgi?id=118328
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/console/console-exception-stack-traces.html: This test compares the console's currect 
+        stack with the error object's stack. The test was failing on decodeURI() and eval() which create 
+        a new frame on the stack to execute. The console's stack was unaware of these calls and the size 
+        of the stacks would not match. I added a check to pass if it was the specific case with decodeURI
+        or eval.
+
 2013-07-12  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skipping new failing test on Qt.

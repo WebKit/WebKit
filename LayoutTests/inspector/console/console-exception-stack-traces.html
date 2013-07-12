@@ -94,8 +94,10 @@ function test()
 
         if (traceStackTrace && errorStackTrace) {
             var hadStackTraceDifference = false;
-            if (traceStackTrace.length !== errorStackTrace.length)
-                hadStackTraceDifference = true;
+             if (traceStackTrace.length != errorStackTrace.length) {
+                if (errorStackTrace.length - traceStackTrace.length != 1 || (errorStackTrace[0].functionName != "decodeURI" && errorStackTrace[0].functionName != "eval"))
+                    hadStackTraceDifference = true;
+            }
             else {
                 for (var i = 0; i < traceStackTrace.length; ++i) {
                     if (traceStackTrace[i].functionName !== errorStackTrace[i].functionName)

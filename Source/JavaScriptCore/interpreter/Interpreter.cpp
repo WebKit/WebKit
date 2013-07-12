@@ -665,6 +665,11 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
     VM* vm = &callFrame->vm();
     ASSERT(callFrame == vm->topCallFrame || callFrame == callFrame->lexicalGlobalObject()->globalExec() || callFrame == callFrame->dynamicGlobalObject()->globalExec());
 
+    if (error.isObject()) {
+        if (asObject(error)->hasProperty(callFrame, vm->propertyNames->stack))
+            return;
+    }
+    
     Vector<StackFrame> stackTrace;
     getStackTrace(&callFrame->vm(), stackTrace);
     vm->exceptionStack() = RefCountedArray<StackFrame>(stackTrace);
@@ -686,8 +691,6 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
             builder.append('\n');
     }
 
-    if (errorObject->hasProperty(callFrame, vm->propertyNames->stack))
-        return;
     errorObject->putDirect(*vm, vm->propertyNames->stack, jsString(vm, builder.toString()), ReadOnly | DontDelete);
 }
 

@@ -1,3 +1,16 @@
+2013-07-12  Chris Curtis    <chris_curtis@apple.com>
+
+        Optimize addStrackTraceIfNecessary to be faster in the case when it's not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=118328
+
+        Reviewed by Geoffrey Garen.
+
+        Retrieving the stack is costly. We want to get it only once. By moving the check
+        for the .stack property above the code to retrieve the stack, we ensure this. 
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::addStackTraceIfNecessary):
+
 2013-07-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Build correction after r152573/r152577.
