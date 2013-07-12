@@ -1,3 +1,19 @@
+2013-07-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r152571
+
+    2013-07-11  Timothy Hatcher  <timothy@apple.com>
+
+            Revert r152267 and soft link WebInspectorUI.framework again.
+
+            https://bugs.webkit.org/show_bug.cgi?id=118544
+
+            Reviewed by David Kilzer.
+
+            * Configurations/WebKit.xcconfig:
+            * WebCoreSupport/WebInspectorClient.mm:
+            (useWebKitWebInspector):
+
 2013-07-09  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152348

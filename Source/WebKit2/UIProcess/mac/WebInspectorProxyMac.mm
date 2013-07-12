@@ -47,7 +47,10 @@
 #import <WebKitSystemInterface.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/SoftLinking.h>
 #import <wtf/text/WTFString.h>
+
+SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 using namespace WebCore;
 using namespace WebKit;
@@ -190,6 +193,9 @@ namespace WebKit {
 static bool inspectorReallyUsesWebKitUserInterface(WebPreferences* preferences)
 {
     // This matches a similar check in WebInspectorMac.mm. Keep them in sync.
+
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
 
     if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"])
         return true;
