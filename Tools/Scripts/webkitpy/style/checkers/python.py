@@ -95,6 +95,7 @@ class Pylinter(object):
         "Instance of 'Popen' has no 'stdout' member",
         "Instance of 'Popen' has no 'stderr' member",
         "Instance of 'Popen' has no 'wait' member",
+        "Instance of 'Popen' has no 'pid' member",
     ]
 
     def __init__(self):
