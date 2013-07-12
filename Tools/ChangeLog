@@ -1,3 +1,21 @@
+2013-07-12  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        [jhbuild] Avoid restarting from scratch failed initial checkouts
+        https://bugs.webkit.org/show_bug.cgi?id=118603
+
+        Reviewed by Martin Robinson.
+
+        If the initial checkout is interrupted midway (eg. because the internet
+        connection went down) config files do not get generated and that causes
+        the next checkout to start from scratch (the missing files cause the
+        script to delete the build root and the downloaded sources).
+
+        By generating the files before invoking jhbuild, subsequent runs are able
+        to start where the previous run left.
+
+        * Scripts/update-webkit-libs-jhbuild:
+        (saveJhbuildMd5): invoke it before runJhbuild().
+
 2013-07-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Remove single-worker restriction on tests.

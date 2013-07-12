@@ -124,7 +124,7 @@ if (-e getJhbuildPath() && jhbuildConfigurationChanged()) {
     cleanJhbuild();
 }
 
+saveJhbuildMd5();
+
 print "Updating " . $prettyPlatform{$platform} . " port dependencies using jhbuild...\n";
 runJhbuild("build");
-
-saveJhbuildMd5();
