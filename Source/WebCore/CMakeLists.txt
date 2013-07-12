@@ -2102,7 +2102,6 @@ set(WebCore_SOURCES
     plugins/PluginData.cpp
     plugins/PluginDebug.cpp
     plugins/PluginMainThreadScheduler.cpp
-    plugins/PluginPackage.cpp
     plugins/PluginStream.cpp
     plugins/PluginView.cpp
 
@@ -2610,6 +2609,7 @@ endif ()
 
 if (ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES
+        plugins/PluginPackage.cpp
         plugins/npapi.cpp
     )
 else ()

@@ -1,3 +1,13 @@
+2013-07-12  Oleg Beletski  <oleg.beletski@gmail.com>
+
+        [EFL] --minimal build fails while linking libwebcore_efl.so
+        https://bugs.webkit.org/show_bug.cgi?id=118549
+
+        Reviewed by Christophe Dumez.
+
+        * CMakeLists.txt:
+        Moving file plugins/PluginPackage.cpp to ENABLE_NETSCAPE_PLUGIN_API block.
+
 2013-07-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Insufficient viewport repaints when FrameView::paintsEntireContents
