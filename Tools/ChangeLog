@@ -1,3 +1,18 @@
+2013-07-12  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        [Tools] Ignore missing GNUmakefile when detecting previous arch in build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=91223
+
+        Reviewed by Martin Robinson.
+
+        When run on a clean checkout, `build-webkit` complains that no
+        GNUmakefile exists when trying to detect the previously configured
+        architecture, but in this case there's no previous configuration so
+        the warning is pointless.
+
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture): Redirect grep stderr to /dev/null.
+
 2013-07-12  Brian Holt  <brian.holt@samsung.com>
 
         check-webkit-style: Ignore false positive: Instance of 'Popen' has no 'pid' member
