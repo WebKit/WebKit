@@ -1,3 +1,14 @@
+2013-07-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] TextTrackRepresentation not cleared when captions are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=118623
+
+        Reviewed by Dean Jackson.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay): Do not return immediately
+            when captions are disabled so the necessary cleanup happens.
+
 2013-07-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Attempt to satisfy the Open Source Windows bots.

@@ -1227,10 +1227,8 @@ const AtomicString& MediaControlTextTrackContainerElement::shadowPseudoId() cons
 
 void MediaControlTextTrackContainerElement::updateDisplay()
 {
-    if (!mediaController()->closedCaptionsVisible()) {
+    if (!mediaController()->closedCaptionsVisible())
         removeChildren();
-        return;
-    }
 
     HTMLMediaElement* mediaElement = toParentMediaElement(this);
     // 1. If the media element is an audio element, or is another playback
