@@ -1,3 +1,10 @@
+2013-07-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Attempt to satisfy the Open Source Windows bots.
+
+        * DerivedSources.make: Restore the HAVE_AVCF macro detection.
+        * config.h: Return to using HAVE_AVCF to activate AVFoundation code.
+
 2013-07-12  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile fix.
