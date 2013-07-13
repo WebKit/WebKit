@@ -1393,10 +1393,11 @@
       },
       "Kwang Yul Seo" : {
          "emails" : [
+            "skyul@company100.com",
             "skyul@company100.net",
             "kseo@webkit.org"
          ],
-         "expertise" : "The BrewMP Port",
+         "expertise" : "HTML Parsing, Networking, WebKit2",
          "nicks" : [
             "kseo"
          ]

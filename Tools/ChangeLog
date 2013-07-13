@@ -1,3 +1,9 @@
+2013-07-12  Kwang Yul Seo  <skyul@company100.net>
+
+        Unreviewed. Add an email address and update my domain of experts.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-07-12  Emanuele Aina  <emanuele.aina@collabora.com>
 
         [jhbuild] Avoid restarting from scratch failed initial checkouts
