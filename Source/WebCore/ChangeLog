@@ -1,3 +1,15 @@
+2013-07-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        parseHTMLInteger shouldn't upconvert 8-bit string
+        https://bugs.webkit.org/show_bug.cgi?id=118629
+
+        Reviewed by Sam Weinig.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/e0ebab23e0c16b49dc90c9c39b8bbbf4f243a01e.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLInteger):
+
 2013-07-12  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] TextTrackRepresentation not cleared when captions are disabled

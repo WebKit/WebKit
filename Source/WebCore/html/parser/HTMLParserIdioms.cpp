@@ -207,12 +207,12 @@ bool parseHTMLInteger(const String& input, int& value)
     // Step 1
     // Step 2
     unsigned length = input.length();
-    if (length && input.is8Bit()) {
+    if (!length || input.is8Bit()) {
         const LChar* start = input.characters8();
         return parseHTMLIntegerInternal(start, start + length, value);
     }
 
-    const UChar* start = input.characters();
+    const UChar* start = input.characters16();
     return parseHTMLIntegerInternal(start, start + length, value);
 }
 
