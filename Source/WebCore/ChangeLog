@@ -1,5 +1,44 @@
 2013-07-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Avoid upconverting strings in various places in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=118632
+
+        Reviewed by Andreas Kling.
+
+        Avoid calling String::characters() in various places since it upconverts 8-bit strings to 16-bit strings.
+
+        Merge
+        https://chromium.googlesource.com/chromium/blink/+/a6162e2ad7c7870e22445d3c463d17e7ac871e80
+        https://chromium.googlesource.com/chromium/blink/+/18095209b3f467758b83894e7b14f813f6953f81
+        https://chromium.googlesource.com/chromium/blink/+/fefcf2b95d55f24c60fd2e95978cf4544f3c92ca
+        https://chromium.googlesource.com/chromium/blink/+/8e0527b0fb33998318aedfd74b3511025f7ff294
+        https://chromium.googlesource.com/chromium/blink/+/feaf798b04597b0849b4000fc305264895d3eac5
+        https://chromium.googlesource.com/chromium/blink/+/bd1a49103a6e07b1023d2c742d8217769efbffb4
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::setupParser):
+        (WebCore::CSSParser::parseImageSet):
+        (WebCore::CSSParser::rewriteSpecifiers):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserString::init):
+        (WebCore::CSSParserString::clear):
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::isValidAttributeName):
+        (WebCore::convertAttributeNameToPropertyName):
+        (WebCore::propertyNameMatchesAttributeName):
+        (WebCore::isValidPropertyName):
+        (WebCore::convertPropertyNameToAttributeName):
+        * dom/Range.cpp:
+        (WebCore::Range::toString):
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::parseSandboxPolicy):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::measureText):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::markFutureAndPastNodes):
+
+2013-07-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         parseHTMLInteger shouldn't upconvert 8-bit string
         https://bugs.webkit.org/show_bug.cgi?id=118629
 

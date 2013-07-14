@@ -39,10 +39,9 @@ static bool isValidAttributeName(const String& name)
     if (!name.startsWith("data-"))
         return false;
 
-    const UChar* characters = name.characters();
     unsigned length = name.length();
     for (unsigned i = 5; i < length; ++i) {
-        if (isASCIIUpper(characters[i]))
+        if (isASCIIUpper(name[i]))
             return false;
     }
 
@@ -53,15 +52,14 @@ static String convertAttributeNameToPropertyName(const String& name)
 {
     StringBuilder stringBuilder;
 
-    const UChar* characters = name.characters();
     unsigned length = name.length();
     for (unsigned i = 5; i < length; ++i) {
-        UChar character = characters[i];
+        UChar character = name[i];
         if (character != '-')
             stringBuilder.append(character);
         else {
-            if ((i + 1 < length) && isASCIILower(characters[i + 1])) {
-                stringBuilder.append(toASCIIUpper(characters[i + 1]));
+            if ((i + 1 < length) && isASCIILower(name[i + 1])) {
+                stringBuilder.append(toASCIIUpper(name[i + 1]));
                 ++i;
             } else
                 stringBuilder.append(character);
@@ -76,19 +74,18 @@ static bool propertyNameMatchesAttributeName(const String& propertyName, const S
     if (!attributeName.startsWith("data-"))
         return false;
 
-    const UChar* property = propertyName.characters();
-    const UChar* attribute = attributeName.characters();
     unsigned propertyLength = propertyName.length();
     unsigned attributeLength = attributeName.length();
-   
+
     unsigned a = 5;
     unsigned p = 0;
     bool wordBoundary = false;
     while (a < attributeLength && p < propertyLength) {
-        if (attribute[a] == '-' && a + 1 < attributeLength && attribute[a + 1] != '-')
+        const UChar currentAttributeNameChar = attributeName[a];
+        if (currentAttributeNameChar == '-' && a + 1 < attributeLength && attributeName[a + 1] != '-')
             wordBoundary = true;
         else {
-            if ((wordBoundary ? toASCIIUpper(attribute[a]) : attribute[a]) != property[p])
+            if ((wordBoundary ? toASCIIUpper(currentAttributeNameChar) : currentAttributeNameChar) != propertyName[p])
                 return false;
             p++;
             wordBoundary = false;
@@ -101,10 +98,9 @@ static bool propertyNameMatchesAttributeName(const String& propertyName, const S
 
 static bool isValidPropertyName(const String& name)
 {
-    const UChar* characters = name.characters();
     unsigned length = name.length();
     for (unsigned i = 0; i < length; ++i) {
-        if (characters[i] == '-' && (i + 1 < length) && isASCIILower(characters[i + 1]))
+        if (name[i] == '-' && (i + 1 < length) && isASCIILower(name[i + 1]))
             return false;
     }
     return true;
@@ -115,10 +111,9 @@ static String convertPropertyNameToAttributeName(const String& name)
     StringBuilder builder;
     builder.append("data-");
 
-    const UChar* characters = name.characters();
     unsigned length = name.length();
     for (unsigned i = 0; i < length; ++i) {
-        UChar character = characters[i];
+        UChar character = name[i];
         if (isASCIIUpper(character)) {
             builder.append('-');
             builder.append(toASCIILower(character));

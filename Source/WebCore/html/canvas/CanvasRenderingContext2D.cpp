@@ -2113,7 +2113,7 @@ PassRefPtr<TextMetrics> CanvasRenderingContext2D::measureText(const String& text
     Font::setCodePath(Font::Complex);
 #endif
 
-    metrics->setWidth(accessFont().width(TextRun(text.characters(), text.length())));
+    metrics->setWidth(accessFont().width(TextRun(text)));
 
 #if PLATFORM(QT)
     Font::setCodePath(oldCodePath);
