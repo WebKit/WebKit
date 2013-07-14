@@ -786,6 +786,8 @@ platform/mac/fast/text/combining-character-sequence-fallback.html
 # --- Editing ---
 # Pasting replaces the three periods with an ellipsis on Lion and Mountain Lion
 editing/pasteboard/5478250.html
+# This test case needs to be rebaselined.
+webkit.org/b/117493 editing/caret/caret-color.html [ Failure ]
 
 # Sometimes fail <rdar://problem/9356912>
 platform/mac/editing/spelling/autocorrection-delete.html

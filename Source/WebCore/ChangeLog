@@ -1,3 +1,19 @@
+2013-07-13  Joone Hur  <joone.hur@intel.com>
+
+        Caret should respect text background color
+        https://bugs.webkit.org/show_bug.cgi?id=117493
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch allows the caret to become visible in the black background
+        by getting the caret color from the color of the element containing
+        the text, not the parent element that has the contentEditable attribute.
+
+        Test: editing/caret/caret-color.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::paintCaret):
+
 2013-07-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Avoid upconverting strings in various places in WebCore

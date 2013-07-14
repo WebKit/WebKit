@@ -1469,7 +1469,8 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoi
 
     Color caretColor = Color::black;
     ColorSpace colorSpace = ColorSpaceDeviceRGB;
-    Element* element = node->rootEditableElement();
+    Element* element = node->isElementNode() ? toElement(node) : node->parentElement();
+
     if (element && element->renderer()) {
         caretColor = element->renderer()->style()->visitedDependentColor(CSSPropertyColor);
         colorSpace = element->renderer()->style()->colorSpace();

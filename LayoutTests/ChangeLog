@@ -1,3 +1,20 @@
+2013-07-13  Joone Hur  <joone.hur@intel.com>
+
+        Caret should respect text background color
+        https://bugs.webkit.org/show_bug.cgi?id=117493
+
+        Reviewed by Ryosuke Niwa.
+
+        This tests to make sure that the caret is visible in the black background 
+        by getting the caret color from the color of the element(span) containing 
+        the text, not the parent element(div) that has the contentEditable
+        attribute.
+
+        * editing/caret/caret-color-expected.txt: Added.
+        * editing/caret/caret-color.html: Added.
+        * platform/efl/editing/caret/caret-color-expected.png: Added.
+        * platform/mac/TestExpectations: Skip this test case.
+
 2013-07-12  Chris Curtis  <chris_curtis@apple.com>
 
         By optimizing when the stack is added a two tests needed to be modifed to show correct results.
