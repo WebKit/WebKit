@@ -1,3 +1,15 @@
+2013-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLTextFormControlElement::valueWithHardLineBreaks shouldn't upconvert 8-bit string
+        https://bugs.webkit.org/show_bug.cgi?id=118631
+
+        Reviewed by Andreas Kling.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/2c7c70a7bd3d61bfbf97de95c459ec9f40b46e31.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::valueWithHardLineBreaks):
+
 2013-07-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add toSVGFilterElement() and use it.
