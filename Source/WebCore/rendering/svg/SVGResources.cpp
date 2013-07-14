@@ -149,7 +149,7 @@ static inline String targetReferenceFromResource(SVGElement* element)
         target = static_cast<SVGGradientElement*>(element)->href();
 #if ENABLE(FILTERS)
     else if (element->hasTagName(SVGNames::filterTag))
-        target = static_cast<SVGFilterElement*>(element)->href();
+        target = toSVGFilterElement(element)->href();
 #endif
     else
         ASSERT_NOT_REACHED();

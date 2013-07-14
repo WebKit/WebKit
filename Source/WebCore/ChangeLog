@@ -1,3 +1,27 @@
+2013-07-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add toSVGFilterElement() and use it.
+        https://bugs.webkit.org/show_bug.cgi?id=118653
+
+        Reviewed by Ryosuke Niwa.
+
+        We can use toSVGFilterElement() instead of using static_cast<..> to improve readability.
+        Blink also uses it.
+
+        No new tests, no behavior change.
+
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives):
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::resourceBoundingBox):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        (WebCore::RenderSVGResourceFilter::filterUnits):
+        (WebCore::RenderSVGResourceFilter::primitiveUnits):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::targetReferenceFromResource):
+        * svg/SVGFilterElement.h:
+        (WebCore::toSVGFilterElement):
+
 2013-07-14  Kangil Han  <kangil.han@samsung.com>
 
         Introduce toHTMLVideoElement
