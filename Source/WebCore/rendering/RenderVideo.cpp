@@ -230,8 +230,7 @@ void RenderVideo::layout()
     
 HTMLVideoElement* RenderVideo::videoElement() const
 {
-    ASSERT(node()->hasTagName(videoTag));
-    return static_cast<HTMLVideoElement*>(node()); 
+    return toHTMLVideoElement(node()); 
 }
 
 void RenderVideo::updateFromElement()

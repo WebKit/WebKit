@@ -720,7 +720,7 @@ QUrl DumpRenderTreeSupportQt::mediaContentUrlByElementId(QWebFrameAdapter* adapt
     if (!coreNode)
         return res;
 
-    HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(coreNode);
+    HTMLVideoElement* videoElement = toHTMLVideoElement(coreNode);
     PlatformMedia platformMedia = videoElement->platformMedia();
     if (platformMedia.type != PlatformMedia::QtMediaPlayerType)
         return res;

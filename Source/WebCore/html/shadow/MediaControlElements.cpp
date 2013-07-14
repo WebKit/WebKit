@@ -1238,7 +1238,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         return;
 
     // 2. Let video be the media element or other playback mechanism.
-    HTMLVideoElement* video = static_cast<HTMLVideoElement*>(mediaElement);
+    HTMLVideoElement* video = toHTMLVideoElement(mediaElement);
 
     // 3. Let output be an empty list of absolutely positioned CSS block boxes.
     Vector<RefPtr<HTMLDivElement> > output;

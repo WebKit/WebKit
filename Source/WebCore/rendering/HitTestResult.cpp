@@ -429,7 +429,7 @@ void HitTestResult::enterFullscreenForVideo() const
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElt(mediaElement());
     if (mediaElt && mediaElt->hasTagName(HTMLNames::videoTag)) {
-        HTMLVideoElement* videoElt = static_cast<HTMLVideoElement*>(mediaElt);
+        HTMLVideoElement* videoElt = toHTMLVideoElement(mediaElt);
         if (!videoElt->isFullscreen() && mediaElt->supportsFullscreen()) {
             UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
             videoElt->enterFullscreen();

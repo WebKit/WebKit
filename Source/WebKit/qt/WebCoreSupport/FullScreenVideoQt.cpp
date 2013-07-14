@@ -113,11 +113,11 @@ FullScreenVideoQt::~FullScreenVideoQt()
 void FullScreenVideoQt::enterFullScreenForNode(Node* node)
 {
     Q_ASSERT(node);
-    m_videoElement = static_cast<HTMLVideoElement*>(node);
+    m_videoElement = toHTMLVideoElement(node);
 
 #if USE(QT_MULTIMEDIA)
     Q_ASSERT(m_FullScreenVideoHandler);
-    HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(node);
+    HTMLVideoElement* videoElement = toHTMLVideoElement(node);
     PlatformMedia platformMedia = videoElement->platformMedia();
 
     ASSERT(platformMedia.type == PlatformMedia::QtMediaPlayerType);
@@ -143,7 +143,7 @@ void FullScreenVideoQt::exitFullScreenForNode(Node* node)
     Q_ASSERT(node);
 
 #if USE(QT_MULTIMEDIA)
-    HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(node);
+    HTMLVideoElement* videoElement = toHTMLVideoElement(node);
     PlatformMedia platformMedia = videoElement->platformMedia();
 
     ASSERT(platformMedia.type == PlatformMedia::QtMediaPlayerType);

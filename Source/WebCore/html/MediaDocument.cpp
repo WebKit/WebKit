@@ -85,7 +85,7 @@ void MediaDocumentParser::createDocumentStructure()
 
     RefPtr<Element> mediaElement = document()->createElement(videoTag, false);
 
-    m_mediaElement = static_cast<HTMLVideoElement*>(mediaElement.get());
+    m_mediaElement = toHTMLVideoElement(mediaElement.get());
     m_mediaElement->setAttribute(controlsAttr, "");
     m_mediaElement->setAttribute(autoplayAttr, "");
 
@@ -140,12 +140,12 @@ static inline HTMLVideoElement* descendentVideoElement(Node* node)
     ASSERT(node);
 
     if (node->hasTagName(videoTag))
-        return static_cast<HTMLVideoElement*>(node);
+        return toHTMLVideoElement(node);
 
     RefPtr<NodeList> nodeList = node->getElementsByTagNameNS(videoTag.namespaceURI(), videoTag.localName());
    
     if (nodeList.get()->length() > 0)
-        return static_cast<HTMLVideoElement*>(nodeList.get()->item(0));
+        return toHTMLVideoElement(nodeList.get()->item(0));
 
     return 0;
 }
@@ -155,7 +155,7 @@ static inline HTMLVideoElement* ancestorVideoElement(Node* node)
     while (node && !node->hasTagName(videoTag))
         node = node->parentOrShadowHostNode();
 
-    return static_cast<HTMLVideoElement*>(node);
+    return toHTMLVideoElement(node);
 }
 
 void MediaDocument::defaultEventHandler(Event* event)

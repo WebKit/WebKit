@@ -1,3 +1,18 @@
+2013-07-14  Kangil Han  <kangil.han@samsung.com>
+
+        Introduce toHTMLVideoElement
+        https://bugs.webkit.org/show_bug.cgi?id=118582
+
+        Reviewed by Ryosuke Niwa.
+
+        To avoid direct use of static_cast, this patch introduces toHTMLVideoElement.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::mediaContentUrlByElementId):
+        * WebCoreSupport/FullScreenVideoQt.cpp:
+        (WebCore::FullScreenVideoQt::enterFullScreenForNode):
+        (WebCore::FullScreenVideoQt::exitFullScreenForNode):
+
 2013-07-01  Jochen Eisinger  <jochen@chromium.org>
 
         Remove support for consumable user gestures
