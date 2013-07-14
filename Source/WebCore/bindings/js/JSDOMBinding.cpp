@@ -109,25 +109,11 @@ String valueToStringWithNullCheck(ExecState* exec, JSValue value)
     return value.toString(exec)->value(exec);
 }
 
-AtomicString valueToAtomicStringWithNullCheck(ExecState* exec, JSValue value)
-{
-    if (value.isNull())
-        return nullAtom;
-    return value.toAtomicString(exec);
-}
-
 String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
 {
     if (value.isUndefinedOrNull())
         return String();
     return value.toString(exec)->value(exec);
-}
-
-AtomicString valueToAtomicStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
-{
-    if (value.isUndefinedOrNull())
-        return nullAtom;
-    return value.toAtomicString(exec);
 }
 
 JSValue jsDateOrNull(ExecState* exec, double value)

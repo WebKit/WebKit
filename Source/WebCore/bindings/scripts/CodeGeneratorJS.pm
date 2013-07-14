@@ -3334,11 +3334,6 @@ sub GetNativeTypeFromSignature
         return "int";
     }
 
-    # FIXME: GetNativeType should support Atomic extension.
-    if ($type eq "DOMString" and ($signature->extendedAttributes->{"Atomic"} or $signature->extendedAttributes->{"Reflect"})) {
-        return "const AtomicString&";
-    }
-
     return GetNativeType($type);
 }
 
@@ -3478,22 +3473,11 @@ sub JSValueToNative
     if ($type eq "DOMString") {
         # FIXME: This implements [TreatNullAs=NullString] and [TreatUndefinedAs=NullString],
         # but the Web IDL spec requires [TreatNullAs=EmptyString] and [TreatUndefinedAs=EmptyString].
-        if (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString")
-            and ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString")) {
-            if ($signature->extendedAttributes->{"Atomic"}) {
-                return "valueToStringWithUndefinedOrNullCheck(exec, $value)";
-            } else {
-                return "valueToAtomicStringWithUndefinedOrNullCheck(exec, $value)";
-            }
+        if (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") and ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString")) {
+            return "valueToStringWithUndefinedOrNullCheck(exec, $value)"
         }
-        if ($signature->extendedAttributes->{"Reflect"}) {
-            return "valueToAtomicStringWithNullCheck(exec, $value)";
-        }
-        if ($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") {
-            return "valueToStringWithNullCheck(exec, $value)";
-        }
-        if ($signature->extendedAttributes->{"Atomic"}) {
-            return "$value.isEmpty() ? nullAtom : $value.toAtomicString(exec)";
+        if (($signature->extendedAttributes->{"TreatNullAs"} and $signature->extendedAttributes->{"TreatNullAs"} eq "NullString") or $signature->extendedAttributes->{"Reflect"}) {
+            return "valueToStringWithNullCheck(exec, $value)"
         }
         # FIXME: Add the case for 'if ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString"))'.
         return "$value.isEmpty() ? String() : $value.toString(exec)->value(exec)";

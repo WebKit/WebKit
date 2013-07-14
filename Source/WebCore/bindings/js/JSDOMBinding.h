@@ -249,10 +249,7 @@ class DOMStringList;
     AtomicStringImpl* findAtomicString(JSC::PropertyName);
 
     String valueToStringWithNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null
-    AtomicString valueToAtomicStringWithNullCheck(JSC::ExecState*, JSC::JSValue);
-
     String valueToStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null or undefined
-    AtomicString valueToAtomicStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue);
 
     inline int32_t finiteInt32Value(JSC::JSValue value, JSC::ExecState* exec, bool& okay)
     {

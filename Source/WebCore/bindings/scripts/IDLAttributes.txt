@@ -19,7 +19,6 @@
 #
 
 ActiveDOMObject
-Atomic
 CPPPureInterface
 CachedAttribute
 CallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack

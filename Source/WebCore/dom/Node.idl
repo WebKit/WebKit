@@ -126,10 +126,10 @@
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-    void addEventListener([Atomic] DOMString type, 
+    void addEventListener(DOMString type, 
                           EventListener listener, 
                           optional boolean useCapture);
-    void removeEventListener([Atomic] DOMString type, 
+    void removeEventListener(DOMString type, 
                              EventListener listener, 
                              optional boolean useCapture);
     [RaisesException] boolean dispatchEvent(Event event);

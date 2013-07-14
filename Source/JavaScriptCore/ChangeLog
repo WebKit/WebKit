@@ -1,3 +1,15 @@
+2013-07-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r151978.
+        http://trac.webkit.org/changeset/151978
+        https://bugs.webkit.org/show_bug.cgi?id=118651
+
+        Caused regressions at least 3 websites (Requested by rniwa on
+        #webkit).
+
+        * runtime/JSCJSValue.h:
+        * runtime/JSString.h:
+
 2013-07-12  Chris Curtis    <chris_curtis@apple.com>
 
         Optimize addStrackTraceIfNecessary to be faster in the case when it's not necessary
