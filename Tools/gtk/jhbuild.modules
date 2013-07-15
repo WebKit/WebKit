@@ -269,35 +269,35 @@
   </autotools>
 
   <autotools id="gstreamer">
-    <branch repo="gstreamer" module="gstreamer" checkoutdir="gstreamer" tag="1.0.4"/>
+    <branch repo="gstreamer" module="gstreamer" checkoutdir="gstreamer" tag="1.0.8"/>
   </autotools>
 
   <autotools id="gst-plugins-base" autogenargs="--disable-examples">
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-plugins-base" checkoutdir="gst-plugins-base" tag="1.0.4"/>
+    <branch repo="gstreamer" module="gst-plugins-base" checkoutdir="gst-plugins-base" tag="1.0.8"/>
   </autotools>
 
   <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup --disable-gst_v4l2 --without-libv4l2">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-plugins-good" checkoutdir="gst-plugins-good" tag="1.0.4"/>
+    <branch repo="gstreamer" module="gst-plugins-good" checkoutdir="gst-plugins-good" tag="1.0.8"/>
   </autotools>
 
   <autotools id="gst-plugins-bad" autogenargs="--disable-examples">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-plugins-bad" checkoutdir="gst-plugins-bad" tag="1.0.4"/>
+    <branch repo="gstreamer" module="gst-plugins-bad" checkoutdir="gst-plugins-bad" tag="1.0.8"/>
   </autotools>
 
   <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm'">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-libav" checkoutdir="gst-libav" tag="1.0.4"/>
+    <branch repo="gstreamer" module="gst-libav" checkoutdir="gst-libav" tag="1.0.8"/>
   </autotools>
 
   <autotools id="xserver" autogenargs="--disable-xinerama --enable-glx --enable-composite --disable-xorg --disable-dmx --disable-xnest --disable-xquartz --disable-xwin --disable-xephyr --disable-xfake --disable-xfbdev --disable-install-setuid --disable-unit-tests --enable-unix-transport --enable-tcp-transport --enable-local-transport --with-xkb-path=/usr/share/X11/xkb --with-xkb-output=/var/lib/xkb --with-xkb-bin-directory=/usr/bin">

@@ -1,3 +1,12 @@
+2013-07-15  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Increase the JHBuild version of GStreamer to 1.0.7
+        https://bugs.webkit.org/show_bug.cgi?id=115166
+
+        Reviewed by Philippe Normand.
+
+        * gtk/jhbuild.modules: Bumping GStreamer version up to 1.0.8.
+
 2013-07-12  Kwang Yul Seo  <skyul@company100.net>
 
         Unreviewed. Add an email address and update my domain of experts.
