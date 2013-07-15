@@ -1,3 +1,14 @@
+2013-07-14  Jon Lee  <jonlee@apple.com>
+
+        Origins with invalid ports are not marked as unique (118652)
+        https://bugs.webkit.org/show_bug.cgi?id=118652
+        <rdar://problem/14437753>
+
+        Reviewed by Sam Weinig.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::create): Return a unique origin if the port is out of range.
+
 2013-07-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another Qt build fix attempt after r152619.
