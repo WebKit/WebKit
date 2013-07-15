@@ -1,5 +1,12 @@
 2013-07-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another Qt build fix attempt after r152619.
+
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::toString):
+
+2013-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Qt build fix attempt after r152619.
 
         * dom/QualifiedName.cpp:
