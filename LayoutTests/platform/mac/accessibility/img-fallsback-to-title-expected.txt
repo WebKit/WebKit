@@ -1,5 +1,4 @@
-    
-test
+     test
 test
 This tests that images will fallback to using the title attribute if no other descriptive text is present.
 

@@ -1,5 +1,22 @@
 2013-07-15  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152388
+
+    2013-07-03  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Items the img aria role aren't inserting an object replacement character
+            https://bugs.webkit.org/show_bug.cgi?id=118259
+
+            Reviewed by Reviewed by Tim Horton.
+
+            * accessibility/non-native-image-crash-expected.txt:
+            * platform/mac/accessibility/aria-image-emits-object-replacement-expected.txt: Added.
+            * platform/mac/accessibility/aria-image-emits-object-replacement.html: Added.
+            * platform/mac/accessibility/img-fallsback-to-title-expected.txt:
+                 Update expected tests where role="img" now emits replacement character.
+
+2013-07-15  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152330
 
     2013-07-02  Ruth Fong  <ruth_fong@apple.com>
