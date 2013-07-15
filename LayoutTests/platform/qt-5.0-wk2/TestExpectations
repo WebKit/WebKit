@@ -100,6 +100,24 @@ compositing/overflow/repaint-after-losing-scrollbars.html [ ImageOnlyFailure ]
 compositing/repaint/transform-style-change.html [ ImageOnlyFailure ]
 compositing/video-page-visibility.html [ ImageOnlyFailure ]
 
+# [Qt][WK2][PIXEL TESTS] Failing compositing mask and reflection pixel tests after r151205
+# webkit.org/b/117702
+compositing/masks/masked-ancestor.html
+compositing/masks/multiple-masks.html
+compositing/masks/simple-composited-mask.html
+compositing/masks/direct-image-mask.html
+compositing/masks/mask-of-clipped-layer.html
+compositing/reflections/reflection-on-composited.html
+compositing/reflections/simple-composited-reflections.html
+compositing/reflections/nested-reflection-transformed2.html
+compositing/reflections/nested-reflection-mask-change.html
+compositing/reflections/nested-reflection-transformed.html
+compositing/reflections/reflection-ordering.html
+compositing/reflections/reflection-positioning.html
+compositing/reflections/reflection-positioning2.html
+compositing/reflections/reflection-opacity.html
+compositing/reflections/remove-add-reflection.html
+
 # There are some bugs with reflections.
 compositing/reflections/animation-inside-reflection.html
 compositing/reflections/backface-hidden-reflection.html
@@ -696,6 +714,46 @@ css2.1/t100304-c43-rpl-bbx-01-d-g.html
 css3/filters/filter-change-repaint-composited.html [ ImageOnlyFailure ]
 css3/filters/filter-repaint-composited-fallback-crash.html [ ImageOnlyFailure ]
 css3/filters/filter-repaint-composited-fallback.html [ ImageOnlyFailure ]
+
+# [Qt][WK2][PIXEL TESTS] Failing CSS2.1 pixel tests after r151205, box moved by one pixel, on some of them red is showing
+# webkit.org/b/117699
+css2.1/20110323/absolute-non-replaced-height-002.htm
+css2.1/20110323/absolute-non-replaced-width-001.htm
+css2.1/20110323/absolute-non-replaced-width-002.htm
+css2.1/20110323/absolute-non-replaced-width-003.htm
+css2.1/20110323/absolute-non-replaced-width-004.htm
+css2.1/20110323/absolute-non-replaced-width-005.htm
+css2.1/20110323/absolute-non-replaced-width-006.htm
+css2.1/20110323/absolute-non-replaced-width-007.htm
+css2.1/20110323/absolute-non-replaced-width-008.htm
+css2.1/20110323/absolute-non-replaced-width-009.htm
+css2.1/20110323/absolute-non-replaced-width-010.htm
+css2.1/20110323/absolute-non-replaced-width-011.htm
+css2.1/20110323/absolute-non-replaced-width-012.htm
+css2.1/20110323/absolute-non-replaced-width-013.htm
+css2.1/20110323/absolute-non-replaced-width-014.htm
+css2.1/20110323/absolute-non-replaced-width-016.htm
+css2.1/20110323/abspos-containing-block-initial-001.htm
+css2.1/20110323/block-non-replaced-height-005.htm
+css2.1/20110323/block-non-replaced-height-006.htm
+css2.1/20110323/block-non-replaced-width-007.htm
+css2.1/20110323/block-replaced-width-001.htm
+css2.1/20110323/float-non-replaced-width-006.htm
+css2.1/20110323/inline-block-non-replaced-width-001.htm
+css2.1/20110323/inline-block-non-replaced-width-002.htm
+css2.1/t0803-c5502-mrgn-r-01-c-a.html
+css2.1/t0803-c5504-mrgn-l-01-c-a.html
+css2.1/t0803-c5505-mrgn-01-e-a.html
+css2.1/t0803-c5505-mrgn-03-c-ag.html
+css2.1/t0804-c5506-padn-t-00-b-a.html
+css2.1/t0804-c5507-padn-r-01-c-a.html
+css2.1/t0804-c5508-ipadn-b-03-b-a.html
+css2.1/t0804-c5509-padn-l-01-b-a.html
+css2.1/t0804-c5510-padn-00-b-ag.html
+css2.1/t0804-c5510-padn-01-e-a.html
+css2.1/t0805-c5518-ibrdr-t-00-a.html
+css2.1/t0805-c5519-brdr-r-00-a.html
+css2.1/t0905-c414-flt-00-d.html
 
 # [Qt][WK2] Skip tests that depend on disabling accelerated compositing
 # webkit.org/b/99167 css3/filters/effect-blur.html

@@ -1,3 +1,9 @@
+2013-07-15  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][WK2] Unreviewed gardening. Skipping bad pixel results.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2013-07-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         apply-style-command-crash.html is flaky
