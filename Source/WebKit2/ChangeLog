@@ -1,3 +1,16 @@
+2013-07-15  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] Remote inspector server should send an error page if resources not found
+        https://bugs.webkit.org/show_bug.cgi?id=117137
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Sometimes it is difficult to understand why remote inspector fails to deliver the content.
+        This patch gives an option to show error page with some basic explanation.
+
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        (WebKit::WebInspectorServer::platformResourceForPath):
+
 2013-07-15  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] [WK2] Check if the keyEventQueue is empty in WebPageProxy::getEditorCommandsForKeyEvent

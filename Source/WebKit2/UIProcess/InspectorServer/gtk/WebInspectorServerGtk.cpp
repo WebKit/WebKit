@@ -53,9 +53,21 @@ bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char
         return false;
 
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(localPath.data()));
-    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(file.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE, G_FILE_QUERY_INFO_NONE, 0, 0));
-    if (!fileInfo)
-        return false;
+    GOwnPtr<GError> error;
+    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(file.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE, G_FILE_QUERY_INFO_NONE, 0, &error.outPtr()));
+    if (!fileInfo) {
+        StringBuilder builder;
+        builder.appendLiteral("<!DOCTYPE html><html><head></head><body>Error: ");
+        builder.appendNumber(error->code);
+        builder.appendLiteral(", ");
+        builder.append(error->message);
+        builder.appendLiteral(" occurred during fetching webinspector resource files.<br>Make sure you ran make install or have set WEBKIT_INSPECTOR_SERVER_PATH in your environment to point to webinspector folder.</body></html>");
+        CString cstr = builder.toString().utf8();
+        data.append(cstr.data(), cstr.length());
+        contentType = "text/html; charset=utf-8";
+        g_warning("Error fetching webinspector resource files: %d, %s", error->code, error->message);
+        return true;
+    }
 
     GRefPtr<GFileInputStream> inputStream = adoptGRef(g_file_read(file.get(), 0, 0));
     if (!inputStream)
