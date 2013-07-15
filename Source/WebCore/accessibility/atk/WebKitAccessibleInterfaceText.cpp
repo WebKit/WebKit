@@ -168,7 +168,8 @@ static gchar* webkitAccessibleTextGetText(AtkText*, gint startOffset, gint endOf
 static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
 {
     GailTextUtil* gailTextUtil = gail_text_util_new();
-    gail_text_util_text_setup(gailTextUtil, webkitAccessibleTextGetText(textObject, 0, -1));
+    GOwnPtr<char> text(webkitAccessibleTextGetText(textObject, 0, -1));
+    gail_text_util_text_setup(gailTextUtil, text.get());
     return gailTextUtil;
 }
 

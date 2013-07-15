@@ -1,3 +1,15 @@
+2013-07-15  Brian Holt  <brian.holt@samsung.com>
+
+        [ATK] Leak: Leak in WebKitAccessibleTextGetText
+        https://bugs.webkit.org/show_bug.cgi?id=118596
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fixed memory leak.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getGailTextUtilForAtk):
+
 2013-07-14  Jon Lee  <jonlee@apple.com>
 
         Origins with invalid ports are not marked as unique (118652)
