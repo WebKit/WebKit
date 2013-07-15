@@ -52,12 +52,6 @@ NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
     return *defaultSession();
 }
 
-PassOwnPtr<NetworkStorageSession> NetworkStorageSession::createDefaultSession(const String&)
-{
-    ASSERT(isMainThread());
-    return adoptPtr(new NetworkStorageSession(ResourceHandle::defaultSession()));
-}
-
 PassOwnPtr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(const String&)
 {
     ASSERT_NOT_REACHED();

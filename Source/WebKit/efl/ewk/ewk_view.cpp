@@ -269,7 +269,7 @@ struct _Ewk_View_Private_Data {
 #if ENABLE(NAVIGATOR_CONTENT_UTILS) || ENABLE(CUSTOM_SCHEME_HANDLER)
     OwnPtr<WebCore::NavigatorContentUtilsClientEfl> navigatorContentUtilsClient;
 #endif
-    OwnPtr<WebCore::NetworkStorageSession> storageSession;
+    WebCore::NetworkStorageSession* storageSession;
     struct {
         Ewk_Menu menu;
         WebCore::PopupMenuClient* menuClient;
@@ -849,7 +849,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
     priv->history = ewk_history_new(static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList()));
 
-    priv->storageSession = WebCore::NetworkStorageSession::createDefaultSession();
+    priv->storageSession = &WebCore::NetworkStorageSession::defaultStorageSession();
 
     priv->pageClient = adoptPtr(new PageClientEfl(smartData->self));
 
@@ -4772,7 +4772,7 @@ WebCore::NetworkStorageSession* storageSession(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-    return priv->storageSession.get();
+    return priv->storageSession;
 }
 
 } // namespace EWKPrivate

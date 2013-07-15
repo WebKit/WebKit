@@ -45,7 +45,6 @@ class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
 public:
     static NetworkStorageSession& defaultStorageSession();
-    static PassOwnPtr<NetworkStorageSession> createDefaultSession(const String& identifierBase = String());
     static PassOwnPtr<NetworkStorageSession> createPrivateBrowsingSession(const String& identifierBase);
 
     static void switchToNewTestingSession();
