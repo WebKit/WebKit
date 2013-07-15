@@ -1388,6 +1388,13 @@ void XMLDocumentParser::doEnd()
 }
 
 #if ENABLE(XSLT)
+static inline const char* nativeEndianUTF16Encoding()
+{
+    const UChar BOM = 0xFEFF;
+    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
+    return BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE";
+}
+
 void* xmlDocPtrForString(CachedResourceLoader* cachedResourceLoader, const String& source, const String& url)
 {
     if (source.isEmpty())
@@ -1396,16 +1403,14 @@ void* xmlDocPtrForString(CachedResourceLoader* cachedResourceLoader, const Strin
     // Parse in a single chunk into an xmlDocPtr
     // FIXME: Hook up error handlers so that a failure to parse the main document results in
     // good error messages.
-    const UChar BOM = 0xFEFF;
-    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
+
+    const bool is8Bit = source.is8Bit();
+    const char* characters = is8Bit ? reinterpret_cast<const char*>(source.characters8()) : reinterpret_cast<const char*>(source.characters16());
+    size_t sizeInBytes = source.length() * (is8Bit ? sizeof(LChar) : sizeof(UChar));
+    const char* encoding = is8Bit ? "iso-8859-1" : nativeEndianUTF16Encoding();
 
     XMLDocumentParserScope scope(cachedResourceLoader, errorFunc, 0);
-    xmlDocPtr sourceDoc = xmlReadMemory(reinterpret_cast<const char*>(source.characters()),
-                                        source.length() * sizeof(UChar),
-                                        url.latin1().data(),
-                                        BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE",
-                                        XSLT_PARSE_OPTIONS);
-    return sourceDoc;
+    return xmlReadMemory(characters, sizeInBytes, url.latin1().data(), encoding, XSLT_PARSE_OPTIONS);
 }
 #endif
 
