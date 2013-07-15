@@ -252,7 +252,6 @@ public:
     // RenderObject tree manipulation
     //////////////////////////////////////////
     virtual bool canHaveChildren() const { return virtualChildren(); }
-    virtual bool canDOMChildrenHaveRenderParent() const { return false; } // Even if this render object can't have render children, the children in the DOM tree may have a render parent (that is different from this object).
     virtual bool canHaveGeneratedChildren() const;
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const { return true; }
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);

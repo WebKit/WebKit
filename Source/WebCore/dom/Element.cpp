@@ -1476,6 +1476,7 @@ void Element::detach(const AttachContext& context)
         data->setIsInCanvasSubtree(false);
         data->resetComputedStyle();
         data->resetDynamicRestyleObservations();
+        data->setIsInsideRegion(false);
     }
 
     if (ElementShadow* shadow = this->shadow()) {
@@ -2421,6 +2422,19 @@ bool Element::isInCanvasSubtree() const
     return hasRareData() && elementRareData()->isInCanvasSubtree();
 }
 
+void Element::setIsInsideRegion(bool value)
+{
+    if (value == isInsideRegion())
+        return;
+
+    ensureElementRareData()->setIsInsideRegion(value);
+}
+
+bool Element::isInsideRegion() const
+{
+    return hasRareData() ? elementRareData()->isInsideRegion() : false;
+}
+
 AtomicString Element::computeInheritedLanguage() const
 {
     const Node* n = this;
@@ -2755,33 +2769,25 @@ RenderRegion* Element::renderRegion() const
     return 0;
 }
 
-bool Element::moveToFlowThreadIsNeeded(RefPtr<RenderStyle>& cachedStyle)
+#if ENABLE(CSS_REGIONS)
+
+bool Element::shouldMoveToFlowThread(RenderStyle* styleToUse) const
 {
-    Document* doc = document();
-    
-    if (!doc->cssRegionsEnabled())
-        return false;
+    ASSERT(styleToUse);
 
 #if ENABLE(FULLSCREEN_API)
-    if (doc->webkitIsFullScreen() && doc->webkitCurrentFullScreenElement() == this)
+    if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == this)
         return false;
 #endif
 
     if (isInShadowTree())
         return false;
 
-    if (!cachedStyle)
-        cachedStyle = styleForRenderer();
-    if (!cachedStyle)
+    if (styleToUse->flowThread().isEmpty())
         return false;
 
-    if (cachedStyle->flowThread().isEmpty())
-        return false;
-
-    return !document()->renderView()->flowThreadController()->isContentNodeRegisteredWithAnyNamedFlow(this);
+    return !isRegisteredWithNamedFlow();
 }
-
-#if ENABLE(CSS_REGIONS)
 
 const AtomicString& Element::webkitRegionOverset() const
 {

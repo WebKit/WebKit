@@ -46,7 +46,7 @@ public:
     
     void recalcTextStyle(StyleChange);
     void createTextRendererIfNeeded();
-    bool textRendererIsNeeded(NodeRenderingContext&);
+    bool textRendererIsNeeded(const NodeRenderingContext&);
     RenderText* createTextRenderer(RenderArena*, RenderStyle*);
     void updateTextRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 

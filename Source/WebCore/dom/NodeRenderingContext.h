@@ -56,7 +56,7 @@ public:
     Node* node() const;
     ContainerNode* parentNodeForRenderingAndStyle() const;
     bool resetStyleInheritance() const;
-    RenderObject* parentRenderer(); // the renderer that will be the parent for this node's renderer. In the case of RenderFlowThreads, it may need to create it.
+    RenderObject* parentRenderer() const;
     RenderObject* nextRenderer() const;
     RenderObject* previousRenderer() const;
     InsertionPoint* insertionPoint() const;
@@ -67,9 +67,9 @@ public:
     bool isOnEncapsulationBoundary() const;
 
 private:
-    bool shouldCreateRenderer();
-    void moveToFlowThread();
+    bool shouldCreateRenderer() const;
     void moveToFlowThreadIfNeeded();
+    bool elementInsideRegionNeedsRenderer();
 
     Node* m_node;
     ContainerNode* m_renderingParent;

@@ -199,7 +199,7 @@ PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
     return create(document(), data());
 }
 
-bool Text::textRendererIsNeeded(NodeRenderingContext& context)
+bool Text::textRendererIsNeeded(const NodeRenderingContext& context)
 {
     if (isEditingText())
         return true;
