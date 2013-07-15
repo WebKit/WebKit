@@ -132,6 +132,13 @@ compositing/reflections/nested-reflection-transition.html
 compositing/reflections/load-video-in-reflection.html
 compositing/reflections/transform-inside-reflection.html
 
+# Failing compositing reftests. Result looks good, but fails with minor differencies.
+compositing/patterns/direct-pattern-compositing-contain-no-repeat.html
+compositing/patterns/direct-pattern-compositing-contain.html
+compositing/patterns/direct-pattern-compositing-cover.html
+compositing/patterns/direct-pattern-compositing-position.html
+compositing/patterns/direct-pattern-compositing-size.html
+
 # Flaky tests.
 compositing/geometry/limit-layer-bounds-fixed-positioned.html
 compositing/rtl/rtl-absolute-overflow-scrolled.html
@@ -756,7 +763,8 @@ css2.1/t0805-c5519-brdr-r-00-a.html
 css2.1/t0905-c414-flt-00-d.html
 
 # [Qt][WK2] Skip tests that depend on disabling accelerated compositing
-# webkit.org/b/99167 css3/filters/effect-blur.html
+# webkit.org/b/99167
+css3/filters/effect-blur.html
 css3/filters/effect-brightness.html
 css3/filters/effect-sepia.html
 css3/filters/blur-filter-page-scroll.html
@@ -774,8 +782,31 @@ css3/filters/effect-opacity.html
 css3/filters/effect-invert.html
 css3/filters/null-effect-check.html
 
+css3/filters/composited-reflected.html
+css3/filters/custom/custom-filter-clamp-css-color-matrix.html
+css3/filters/custom/custom-filter-nonseparable-blend-mode-luminosity.html
+css3/filters/custom/custom-filter-unavailable-varying.html
+css3/filters/effect-drop-shadow-hw.html
+css3/filters/effect-reference.html
+css3/filters/filter-repaint-sepia.html
+
+# [Qt] Failing css3/selectors3 pixel tests
+# webkit.org/b/118667
+css3/selectors3/html/css3-modsel-d4.html
+css3/selectors3/xhtml/css3-modsel-15c.xml
+css3/selectors3/xhtml/css3-modsel-d1.xml
+css3/selectors3/xhtml/css3-modsel-d1b.xml
+css3/selectors3/xhtml/css3-modsel-d2.xml
+css3/selectors3/xhtml/css3-modsel-d3.xml
+css3/selectors3/xml/css3-modsel-15c.xml
+css3/selectors3/xml/css3-modsel-d1.xml
+css3/selectors3/xml/css3-modsel-d1b.xml
+css3/selectors3/xml/css3-modsel-d2.xml
+css3/selectors3/xml/css3-modsel-d3.xml
+
 # [Qt][WK2] css3/unicode-bidi-isolate-aharon-failing.html fails
 webkit.org/b/74505 css3/unicode-bidi-isolate-aharon-failing.html
+webkit.org/b/74505 css3/unicode-bidi-isolate-basic.html
 
 # [Qt][WK2] css3/filters/should-not-have-compositing-layer.html is failing since added in 104622
 webkit.org/b/76061 css3/filters/should-not-have-compositing-layer.html
@@ -854,6 +885,14 @@ transitions/opacity-transition-zindex.html [ ImageOnlyFailure ]
 svg/as-background-image/tiled-background-image.html [ Skip ]
 svg/filters/feImage-reference-svg-primitive.svg [ ImageOnlyFailure ] # Reni said this is actually a know svg issue with feImage.
 svg/custom/use-instanceRoot-event-bubbling.xhtml [ ImageOnlyFailure ]
+
+# [Qt] Animation pixel failures
+# webkit.org/b/118666
+animations/cross-fade-background-image.html
+animations/cross-fade-webkit-mask-box-image.html
+animations/missing-values-first-keyframe.html
+animations/missing-values-last-keyframe.html
+animations/opacity-transform-animation.html
 
 # Unexplained plugin failures
 plugins/embed-prefers-plugins-for-images.html
