@@ -19,64 +19,43 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
       if (result !== false) return result;
     }
 
-    if (support.hexNumber == true &&
-      ((ch == "0" && stream.match(/^[xX][0-9a-fA-F]+/))
-      || (ch == "x" || ch == "X") && stream.match(/^'[0-9a-fA-F]+'/))) {
+    if ((ch == "0" && stream.match(/^[xX][0-9a-fA-F]+/))
+      || (ch == "x" || ch == "X") && stream.match(/^'[0-9a-fA-F]+'/)) {
       // hex
-      // ref: http://dev.mysql.com/doc/refman/5.5/en/hexadecimal-literals.html
       return "number";
-    } else if (support.binaryNumber == true &&
-      (((ch == "b" || ch == "B") && stream.match(/^'[01]+'/))
-      || (ch == "0" && stream.match(/^b[01]+/)))) {
+    } else if (((ch == "b" || ch == "B") && stream.match(/^'[01]+'/))
+      || (ch == "0" && stream.match(/^b[01]+/))) {
       // bitstring
-      // ref: http://dev.mysql.com/doc/refman/5.5/en/bit-field-literals.html
       return "number";
     } else if (ch.charCodeAt(0) > 47 && ch.charCodeAt(0) < 58) {
       // numbers
-      // ref: http://dev.mysql.com/doc/refman/5.5/en/number-literals.html
-          stream.match(/^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?/);
-      support.decimallessFloat == true && stream.eat('.');
+      stream.match(/^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?/);
       return "number";
     } else if (ch == "?" && (stream.eatSpace() || stream.eol() || stream.eat(";"))) {
       // placeholders
       return "variable-3";
-    } else if (ch == "'" || (ch == '"' && support.doubleQuote)) {
+    } else if (ch == '"' || ch == "'") {
       // strings
-      // ref: http://dev.mysql.com/doc/refman/5.5/en/string-literals.html
       state.tokenize = tokenLiteral(ch);
       return state.tokenize(stream, state);
-    } else if ((((support.nCharCast == true && (ch == "n" || ch == "N"))
-        || (support.charsetCast == true && ch == "_" && stream.match(/[a-z][a-z0-9]*/i)))
-        && (stream.peek() == "'" || stream.peek() == '"'))) {
-      // charset casting: _utf8'str', N'str', n'str'
-      // ref: http://dev.mysql.com/doc/refman/5.5/en/string-literals.html
-      return "keyword";
     } else if (/^[\(\),\;\[\]]/.test(ch)) {
       // no highlightning
       return null;
-    } else if (support.commentSlashSlash && ch == "/" && stream.eat("/")) {
-      // 1-line comment
-      stream.skipToEnd();
-      return "comment";
-    } else if ((support.commentHash && ch == "#")
-        || (ch == "-" && stream.eat("-") && (!support.commentSpaceRequired || stream.eat(" ")))) {
+    } else if (ch == "#" || (ch == "-" && stream.eat("-") && stream.eat(" "))) {
       // 1-line comments
-      // ref: https://kb.askmonty.org/en/comment-syntax/
       stream.skipToEnd();
       return "comment";
     } else if (ch == "/" && stream.eat("*")) {
       // multi-line comments
-      // ref: https://kb.askmonty.org/en/comment-syntax/
       state.tokenize = tokenComment;
       return state.tokenize(stream, state);
     } else if (ch == ".") {
       // .1 for 0.1
-      if (support.zerolessFloat == true && stream.match(/^(?:\d+(?:e[+-]?\d+)?)/i)) {
+      if (support.zerolessFloat == true && stream.match(/^(?:\d+(?:e\d*)?|\d*e\d+)/i)) {
         return "number";
       }
       // .table_name (ODBC)
-      // // ref: http://dev.mysql.com/doc/refman/5.6/en/identifier-qualifiers.html
-      if (support.ODBCdotTable == true && stream.match(/^[a-zA-Z_]+/)) {
+      if (stream.match(/^[a-zA-Z_]+/) && support.ODBCdotTable == true) {
         return "variable-2";
       }
     } else if (operatorChars.test(ch)) {
@@ -86,13 +65,11 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     } else if (ch == '{' &&
         (stream.match(/^( )*(d|D|t|T|ts|TS)( )*'[^']*'( )*}/) || stream.match(/^( )*(d|D|t|T|ts|TS)( )*"[^"]*"( )*}/))) {
       // dates (weird ODBC syntax)
-      // ref: http://dev.mysql.com/doc/refman/5.5/en/date-and-time-literals.html
       return "number";
     } else {
       stream.eatWhile(/^[_\w\d]/);
       var word = stream.current().toLowerCase();
       // dates (standard SQL syntax)
-      // ref: http://dev.mysql.com/doc/refman/5.5/en/date-and-time-literals.html
       if (dateSQL.hasOwnProperty(word) && (stream.match(/^( )+'[^']*'/) || stream.match(/^( )+"[^"]*"/)))
         return "number";
       if (atoms.hasOwnProperty(word)) return "atom";
@@ -189,8 +166,6 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
 
   // `identifier`
   function hookIdentifier(stream) {
-    // MySQL/MariaDB identifiers
-    // ref: http://dev.mysql.com/doc/refman/5.6/en/identifier-qualifiers.html
     var ch;
     while ((ch = stream.next()) != null) {
       if (ch == "`" && !stream.eat("`")) return "variable-2";
@@ -201,9 +176,7 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
   // variable token
   function hookVar(stream) {
     // variables
-    // @@prefix.varName @varName
-    // varName can be quoted with ` or ' or "
-    // ref: http://dev.mysql.com/doc/refman/5.5/en/user-variables.html
+    // @@ and prefix
     if (stream.eat("@")) {
       stream.match(/^session\./);
       stream.match(/^local\./);
@@ -227,27 +200,18 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
 
   // short client keyword token
   function hookClient(stream) {
-    // \N means NULL
-    // ref: http://dev.mysql.com/doc/refman/5.5/en/null-values.html
-    if (stream.eat("N")) {
-        return "atom";
-    }
     // \g, etc
-    // ref: http://dev.mysql.com/doc/refman/5.5/en/mysql-commands.html
-    return stream.match(/^[a-zA-Z.#!?]/) ? "variable-2" : null;
+    return stream.match(/^[a-zA-Z]\b/) ? "variable-2" : null;
   }
 
-  // these keywords are used by all SQL dialects (however, a mode can still overwrite it)
   var sqlKeywords = "alter and as asc between by count create delete desc distinct drop from having in insert into is join like not on or order select set table union update values where ";
 
-  // turn a space-separated list into an array
   function set(str) {
     var obj = {}, words = str.split(" ");
     for (var i = 0; i < words.length; ++i) obj[words[i]] = true;
     return obj;
   }
 
-  // A generic SQL Mode. It's not a standard, it just try to support what is generally supported
   CodeMirror.defineMIME("text/x-sql", {
     name: "sql",
     keywords: set(sqlKeywords + "begin"),
@@ -255,7 +219,7 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     atoms: set("false true null unknown"),
     operatorChars: /^[*+\-%<>!=]/,
     dateSQL: set("date time timestamp"),
-    support: set("ODBCdotTable doubleQuote binaryNumber hexNumber")
+    support: set("ODBCdotTable")
   });
 
   CodeMirror.defineMIME("text/x-mysql", {
@@ -266,7 +230,7 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     atoms: set("false true null unknown"),
     operatorChars: /^[*+\-%<>!=&|^]/,
     dateSQL: set("date time timestamp"),
-    support: set("ODBCdotTable decimallessFloat zerolessFloat binaryNumber hexNumber doubleQuote nCharCast charsetCast commentHash commentSpaceRequired"),
+    support: set("ODBCdotTable zerolessFloat"),
     hooks: {
       "@":   hookVar,
       "`":   hookIdentifier,
@@ -282,26 +246,12 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     atoms: set("false true null unknown"),
     operatorChars: /^[*+\-%<>!=&|^]/,
     dateSQL: set("date time timestamp"),
-    support: set("ODBCdotTable decimallessFloat zerolessFloat binaryNumber hexNumber doubleQuote nCharCast charsetCast commentHash commentSpaceRequired"),
+    support: set("ODBCdotTable zerolessFloat"),
     hooks: {
       "@":   hookVar,
       "`":   hookIdentifier,
       "\\":  hookClient
     }
-  });
-
-  // the query language used by Apache Cassandra is called CQL, but this mime type
-  // is called Cassandra to avoid confusion with Contextual Query Language
-  CodeMirror.defineMIME("text/x-cassandra", {
-    name: "sql",
-    client: { },
-    keywords: set("use select from using consistency where limit first reversed first and in insert into values using consistency ttl update set delete truncate begin batch apply create keyspace with columnfamily primary key index on drop alter type add any one quorum all local_quorum each_quorum"),
-    builtin: set("ascii bigint blob boolean counter decimal double float int text timestamp uuid varchar varint"),
-    atoms: set("false true"),
-    operatorChars: /^[<>=]/,
-    dateSQL: { },
-    support: set("commentSlashSlash decimallessFloat"),
-    hooks: { }
   });
 
   // this is based on Peter Raganitsch's 'plsql' mode
@@ -312,38 +262,6 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     functions:  set("abs acos add_months ascii asin atan atan2 average bfilename ceil chartorowid chr concat convert cos cosh count decode deref dual dump dup_val_on_index empty error exp false floor found glb greatest hextoraw initcap instr instrb isopen last_day least lenght lenghtb ln lower lpad ltrim lub make_ref max min mod months_between new_time next_day nextval nls_charset_decl_len nls_charset_id nls_charset_name nls_initcap nls_lower nls_sort nls_upper nlssort no_data_found notfound null nvl others power rawtohex reftohex round rowcount rowidtochar rpad rtrim sign sin sinh soundex sqlcode sqlerrm sqrt stddev substr substrb sum sysdate tan tanh to_char to_date to_label to_multi_byte to_number to_single_byte translate true trunc uid upper user userenv variance vsize"),
     builtin:    set("bfile blob character clob dec float int integer mlslabel natural naturaln nchar nclob number numeric nvarchar2 real rowtype signtype smallint string varchar varchar2"),
     operatorChars: /^[*+\-%<>!=~]/,
-    dateSQL:    set("date time timestamp"),
-    support:    set("doubleQuote nCharCast zerolessFloat binaryNumber hexNumber")
+    dateSQL:    set("date time timestamp")
   });
 }());
-
-/*
-  How Properties of Mime Types are used by SQL Mode
-  =================================================
-
-  keywords:
-    A list of keywords you want to be highlighted.
-  functions:
-    A list of function names you want to be highlighted.
-  builtin:
-    A list of builtin types you want to be highlighted (if you want types to be of class "builtin" instead of "keyword").
-  operatorChars:
-    All characters that must be handled as operators.
-  client:
-    Commands parsed and executed by the client (not the server).
-  support:
-    A list of supported syntaxes which are not common, but are supported by more than 1 DBMS.
-    * ODBCdotTable: .tableName
-    * zerolessFloat: .1
-    * doubleQuote
-    * nCharCast: N'string'
-    * charsetCast: _utf8'string'
-    * commentHash: use # char for comments
-    * commentSlashSlash: use // for comments
-    * commentSpaceRequired: require a space after -- for comments
-  atoms:
-    Keywords that must be highlighted as atoms,. Some DBMS's support more atoms than others:
-    UNKNOWN, INFINITY, UNDERFLOW, NaN...
-  dateSQL:
-    Used for date/time SQL standard syntax, because not all DBMS's support same temporal types.
-*/

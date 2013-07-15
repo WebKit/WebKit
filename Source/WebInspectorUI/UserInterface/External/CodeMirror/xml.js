@@ -58,19 +58,20 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
         if (stream.eat("[")) {
           if (stream.match("CDATA[")) return chain(inBlock("atom", "]]>"));
           else return null;
-        } else if (stream.match("--")) {
-          return chain(inBlock("comment", "-->"));
-        } else if (stream.match("DOCTYPE", true, true)) {
+        }
+        else if (stream.match("--")) return chain(inBlock("comment", "-->"));
+        else if (stream.match("DOCTYPE", true, true)) {
           stream.eatWhile(/[\w\._\-]/);
           return chain(doctype(1));
-        } else {
-          return null;
         }
-      } else if (stream.eat("?")) {
+        else return null;
+      }
+      else if (stream.eat("?")) {
         stream.eatWhile(/[\w\._\-]/);
         state.tokenize = inBlock("meta", "?>");
         return "meta";
-      } else {
+      }
+      else {
         var isClose = stream.eat("/");
         tagName = "";
         var c;
@@ -80,7 +81,8 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
         state.tokenize = inTag;
         return "tag";
       }
-    } else if (ch == "&") {
+    }
+    else if (ch == "&") {
       var ok;
       if (stream.eat("#")) {
         if (stream.eat("x")) {
@@ -92,7 +94,8 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
         ok = stream.eatWhile(/[\w\.\-:]/) && stream.eat(";");
       }
       return ok ? "atom" : "error";
-    } else {
+    }
+    else {
       stream.eatWhile(/[^&<]/);
       return null;
     }
@@ -104,15 +107,16 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
       state.tokenize = inText;
       type = ch == ">" ? "endTag" : "selfcloseTag";
       return "tag";
-    } else if (ch == "=") {
+    }
+    else if (ch == "=") {
       type = "equals";
       return null;
-    } else if (ch == "<") {
-      return "error";
-    } else if (/[\'\"]/.test(ch)) {
+    }
+    else if (/[\'\"]/.test(ch)) {
       state.tokenize = inAttribute(ch);
       return state.tokenize(stream, state);
-    } else {
+    }
+    else {
       stream.eatWhile(/[^\s\u00a0=<>\"\']/);
       return "word";
     }
@@ -316,8 +320,7 @@ CodeMirror.defineMode("xml", function(config, parserConfig) {
     blockCommentStart: "<!--",
     blockCommentEnd: "-->",
 
-    configuration: parserConfig.htmlMode ? "html" : "xml",
-    helperType: parserConfig.htmlMode ? "html" : "xml"
+    configuration: parserConfig.htmlMode ? "html" : "xml"
   };
 });
 

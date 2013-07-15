@@ -2,7 +2,6 @@
 
 CodeMirror.defineMode("javascript", function(config, parserConfig) {
   var indentUnit = config.indentUnit;
-  var statementIndent = parserConfig.statementIndent;
   var jsonMode = parserConfig.json;
   var isTS = parserConfig.typescript;
 
@@ -14,7 +13,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     var operator = kw("operator"), atom = {type: "atom", style: "atom"};
 
     var jsKeywords = {
-      "if": kw("if"), "while": A, "with": A, "else": B, "do": B, "try": B, "finally": B,
+      "if": A, "while": A, "with": A, "else": B, "do": B, "try": B, "finally": B,
       "return": C, "break": C, "continue": C, "new": C, "delete": C, "throw": C,
       "var": kw("var"), "const": kw("var"), "let": kw("var"),
       "function": kw("function"), "catch": kw("catch"),
@@ -227,9 +226,8 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
   }
   function pushlex(type, info) {
     var result = function() {
-      var state = cx.state, indent = state.indented;
-      if (state.lexical.type == "stat") indent = state.lexical.indented;
-      state.lexical = new JSLexical(indent, cx.stream.column(), type, null, state.lexical, info);
+      var state = cx.state;
+      state.lexical = new JSLexical(state.indented, cx.stream.column(), type, null, state.lexical, info);
     };
     result.lex = true;
     return result;
@@ -258,32 +256,30 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     if (type == "keyword b") return cont(pushlex("form"), statement, poplex);
     if (type == "{") return cont(pushlex("}"), block, poplex);
     if (type == ";") return cont();
-    if (type == "if") return cont(pushlex("form"), expression, statement, poplex, maybeelse);
     if (type == "function") return cont(functiondef);
     if (type == "for") return cont(pushlex("form"), expect("("), pushlex(")"), forspec1, expect(")"),
-                                   poplex, statement, poplex);
+                                      poplex, statement, poplex);
     if (type == "variable") return cont(pushlex("stat"), maybelabel);
     if (type == "switch") return cont(pushlex("form"), expression, pushlex("}", "switch"), expect("{"),
-                                      block, poplex, poplex);
+                                         block, poplex, poplex);
     if (type == "case") return cont(expression, expect(":"));
     if (type == "default") return cont(expect(":"));
     if (type == "catch") return cont(pushlex("form"), pushcontext, expect("("), funarg, expect(")"),
-                                     statement, poplex, popcontext);
+                                        statement, poplex, popcontext);
     return pass(pushlex("stat"), expression, expect(";"), poplex);
   }
   function expression(type) {
-    return expressionInner(type, false);
+    return expressionInner(type, maybeoperatorComma);
   }
   function expressionNoComma(type) {
-    return expressionInner(type, true);
+    return expressionInner(type, maybeoperatorNoComma);
   }
-  function expressionInner(type, noComma) {
-    var maybeop = noComma ? maybeoperatorNoComma : maybeoperatorComma;
+  function expressionInner(type, maybeop) {
     if (atomicTypes.hasOwnProperty(type)) return cont(maybeop);
     if (type == "function") return cont(functiondef);
-    if (type == "keyword c") return cont(noComma ? maybeexpressionNoComma : maybeexpression);
+    if (type == "keyword c") return cont(maybeexpression);
     if (type == "(") return cont(pushlex(")"), maybeexpression, expect(")"), poplex, maybeop);
-    if (type == "operator") return cont(noComma ? expressionNoComma : expression);
+    if (type == "operator") return cont(expression);
     if (type == "[") return cont(pushlex("]"), commasep(expressionNoComma, "]"), poplex, maybeop);
     if (type == "{") return cont(pushlex("}"), commasep(objprop, "}"), poplex, maybeop);
     return cont();
@@ -291,10 +287,6 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
   function maybeexpression(type) {
     if (type.match(/[;\}\)\],]/)) return pass();
     return pass(expression);
-  }
-  function maybeexpressionNoComma(type) {
-    if (type.match(/[;\}\)\],]/)) return pass();
-    return pass(expressionNoComma);
   }
 
   function maybeoperatorComma(type, value) {
@@ -311,7 +303,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     if (type == ";") return;
     if (type == "(") return cont(pushlex(")", "call"), commasep(expressionNoComma, ")"), poplex, me);
     if (type == ".") return cont(property, me);
-    if (type == "[") return cont(pushlex("]"), maybeexpression, expect("]"), poplex, me);
+    if (type == "[") return cont(pushlex("]"), expression, expect("]"), poplex, me);
   }
   function maybelabel(type) {
     if (type == ":") return cont(poplex, statement);
@@ -373,9 +365,6 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     if (value == "=") return cont(expressionNoComma, vardef2);
     if (type == ",") return cont(vardef1);
   }
-  function maybeelse(type, value) {
-    if (type == "keyword b" && value == "else") return cont(pushlex("form"), statement, poplex);
-  }
   function forspec1(type) {
     if (type == "var") return cont(vardef1, expect(";"), forspec2);
     if (type == ";") return cont(forspec2);
@@ -427,7 +416,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
       if (state.tokenize != jsTokenComment && stream.eatSpace()) return null;
       var style = state.tokenize(stream, state);
       if (type == "comment") return style;
-      state.lastType = type == "operator" && (content == "++" || content == "--") ? "incdec" : type;
+      state.lastType = type;
       return parseJS(state, style, type, content, stream);
     },
 
@@ -435,35 +424,26 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
       if (state.tokenize == jsTokenComment) return CodeMirror.Pass;
       if (state.tokenize != jsTokenBase) return 0;
       var firstChar = textAfter && textAfter.charAt(0), lexical = state.lexical;
-      // Kludge to prevent 'maybelse' from blocking lexical scope pops
-      for (var i = state.cc.length - 1; i >= 0; --i) {
-        var c = state.cc[i];
-        if (c == poplex) lexical = lexical.prev;
-        else if (c != maybeelse || /^else\b/.test(textAfter)) break;
-      }
       if (lexical.type == "stat" && firstChar == "}") lexical = lexical.prev;
-      if (statementIndent && lexical.type == ")" && lexical.prev.type == "stat")
-        lexical = lexical.prev;
       var type = lexical.type, closing = firstChar == type;
+      if (parserConfig.statementIndent != null) {
+        if (type == ")" && lexical.prev && lexical.prev.type == "stat") lexical = lexical.prev;
+        if (lexical.type == "stat") return lexical.indented + parserConfig.statementIndent;
+      }
 
       if (type == "vardef") return lexical.indented + (state.lastType == "operator" || state.lastType == "," ? 4 : 0);
       else if (type == "form" && firstChar == "{") return lexical.indented;
       else if (type == "form") return lexical.indented + indentUnit;
       else if (type == "stat")
-        return lexical.indented + (state.lastType == "operator" || state.lastType == "," ? statementIndent || indentUnit : 0);
-      else if (lexical.info == "switch" && !closing && parserConfig.doubleIndentSwitch != false)
+        return lexical.indented + (state.lastType == "operator" || state.lastType == "," ? indentUnit : 0);
+      else if (lexical.info == "switch" && !closing)
         return lexical.indented + (/^(?:case|default)\b/.test(textAfter) ? indentUnit : 2 * indentUnit);
       else if (lexical.align) return lexical.column + (closing ? 0 : 1);
       else return lexical.indented + (closing ? 0 : indentUnit);
     },
 
     electricChars: ":{}",
-    blockCommentStart: jsonMode ? null : "/*",
-    blockCommentEnd: jsonMode ? null : "*/",
-    lineComment: jsonMode ? null : "//",
-    fold: "brace",
 
-    helperType: jsonMode ? "json" : "javascript",
     jsonMode: jsonMode
   };
 });
@@ -473,6 +453,5 @@ CodeMirror.defineMIME("text/ecmascript", "javascript");
 CodeMirror.defineMIME("application/javascript", "javascript");
 CodeMirror.defineMIME("application/ecmascript", "javascript");
 CodeMirror.defineMIME("application/json", {name: "javascript", json: true});
-CodeMirror.defineMIME("application/x-json", {name: "javascript", json: true});
 CodeMirror.defineMIME("text/typescript", { name: "javascript", typescript: true });
 CodeMirror.defineMIME("application/typescript", { name: "javascript", typescript: true });

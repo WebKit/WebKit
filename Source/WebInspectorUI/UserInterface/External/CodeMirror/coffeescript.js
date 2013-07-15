@@ -339,8 +339,7 @@ CodeMirror.defineMode('coffeescript', function(conf) {
             return state.scopes[0].offset;
         },
 
-        lineComment: "#",
-        fold: "indent"
+        lineComment: "#"
     };
     return external;
 });

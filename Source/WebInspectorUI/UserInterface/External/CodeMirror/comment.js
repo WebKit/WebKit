@@ -17,7 +17,7 @@
 
   CodeMirror.defineExtension("lineComment", function(from, to, options) {
     if (!options) options = noOptions;
-    var self = this, mode = self.getModeAt(from);
+    var self = this, mode = CodeMirror.innerMode(self.getMode(), self.getTokenAt(from).state).mode;
     var commentString = options.lineComment || mode.lineComment;
     if (!commentString) {
       if (options.blockCommentStart || mode.blockCommentStart) {
@@ -30,7 +30,7 @@
     if (firstLine == null) return;
     var end = Math.min(to.ch != 0 || to.line == from.line ? to.line + 1 : to.line, self.lastLine() + 1);
     var pad = options.padding == null ? " " : options.padding;
-    var blankLines = options.commentBlankLines || from.line == to.line;
+    var blankLines = options.commentBlankLines;
 
     self.operation(function() {
       if (options.indent) {
@@ -52,7 +52,7 @@
 
   CodeMirror.defineExtension("blockComment", function(from, to, options) {
     if (!options) options = noOptions;
-    var self = this, mode = self.getModeAt(from);
+    var self = this, mode = CodeMirror.innerMode(self.getMode(), self.getTokenAt(from).state).mode;
     var startString = options.blockCommentStart || mode.blockCommentStart;
     var endString = options.blockCommentEnd || mode.blockCommentEnd;
     if (!startString || !endString) {
@@ -85,19 +85,19 @@
 
   CodeMirror.defineExtension("uncomment", function(from, to, options) {
     if (!options) options = noOptions;
-    var self = this, mode = self.getModeAt(from);
+    var self = this, mode = CodeMirror.innerMode(self.getMode(), self.getTokenAt(from).state).mode;
     var end = Math.min(to.line, self.lastLine()), start = Math.min(from.line, end);
 
     // Try finding line comments
     var lineString = options.lineComment || mode.lineComment, lines = [];
-    var pad = options.padding == null ? " " : options.padding, didSomething;
-    lineComment: {
-      if (!lineString) break lineComment;
+    var pad = options.padding == null ? " " : options.padding;
+    lineComment: for(;;) {
+      if (!lineString) break;
       for (var i = start; i <= end; ++i) {
         var line = self.getLine(i);
         var found = line.indexOf(lineString);
         if (found == -1 && (i != end || i == start) && nonWS.test(line)) break lineComment;
-        if (i != start && found > -1 && nonWS.test(line.slice(0, found))) break lineComment;
+        if (i != start && nonWS.test(line.slice(0, found))) break lineComment;
         lines.push(line);
       }
       self.operation(function() {
@@ -106,11 +106,10 @@
           var pos = line.indexOf(lineString), endPos = pos + lineString.length;
           if (pos < 0) continue;
           if (line.slice(endPos, endPos + pad.length) == pad) endPos += pad.length;
-          didSomething = true;
           self.replaceRange("", Pos(i, pos), Pos(i, endPos));
         }
       });
-      if (didSomething) return true;
+      return true;
     }
 
     // Try block comments

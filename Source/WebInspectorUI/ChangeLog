@@ -1,3 +1,48 @@
+2013-07-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r152598.
+        http://trac.webkit.org/changeset/152598
+        https://bugs.webkit.org/show_bug.cgi?id=118658
+
+        totally broke the web inspector (JS ERROR: SyntaxError:
+        Expected token '}') (Requested by thorton on #webkit).
+
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js:
+        * Tools/PrettyPrinting/Formatter.js:
+        * Tools/PrettyPrinting/FormatterContentBuilder.js:
+        * Tools/PrettyPrinting/codemirror.css:
+        (.CodeMirror-scrollbar-filler):
+        (.CodeMirror-gutters):
+        (.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler):
+        (.CodeMirror-widget):
+        * Tools/PrettyPrinting/codemirror.js:
+        (window.CodeMirror):
+        (window.CodeMirror.):
+        (.do):
+        (moveVisually):
+        * Tools/PrettyPrinting/css.js:
+        (.):
+        (CodeMirror):
+        * Tools/PrettyPrinting/javascript.js:
+        (.):
+        * UserInterface/External/CodeMirror/codemirror.css:
+        (.CodeMirror-widget):
+        * UserInterface/External/CodeMirror/codemirror.js:
+        (window.CodeMirror):
+        (window.CodeMirror.):
+        * UserInterface/External/CodeMirror/coffeescript.js:
+        * UserInterface/External/CodeMirror/comment.js:
+        (.):
+        * UserInterface/External/CodeMirror/css.js:
+        (.):
+        (CodeMirror):
+        * UserInterface/External/CodeMirror/javascript.js:
+        (.):
+        * UserInterface/External/CodeMirror/matchbrackets.js:
+        (.):
+        * UserInterface/External/CodeMirror/sql.js:
+        * UserInterface/External/CodeMirror/xml.js:
+
 2013-07-12  Timothy Hatcher  <timothy@apple.com>
 
         Update CodeMirror to 7f560afa1c (3.14+).
