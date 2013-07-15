@@ -1,3 +1,22 @@
+2013-07-15  Brian Holt  <brian.holt@samsung.com>
+
+        check-webkit-style: Ignore false positive: Instance of 'Popen' has no 'pid' member
+        https://bugs.webkit.org/show_bug.cgi?id=118592
+
+        Reviewed by Martin Robinson.
+
+        Added a suppression for pylint false positives and a unit test.
+
+        * Scripts/webkitpy/style/checkers/python.py:
+        (Pylinter):
+        * Scripts/webkitpy/style/checkers/python_unittest.py:
+        (PythonCheckerTest.test_check):
+        (PythonCheckerTest):
+        (PythonCheckerTest.test_pylint_false_positives):
+        (PythonCheckerTest.test_pylint_false_positives._mock_handle_style_error):
+        * Scripts/webkitpy/style/checkers/python_unittest_falsepositives.py: Added.
+        (test_popen):
+
 2013-07-15  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Increase the JHBuild version of GStreamer to 1.0.7
