@@ -45,9 +45,9 @@
 #include <AVFoundationCF/AVCFPlayerLayer.h>
 #include <AVFoundationCF/AVFoundationCF.h>
 #include <CoreMedia/CoreMedia.h>
+#include <d3d9.h>
 #include <delayimp.h>
 #include <dispatch/dispatch.h>
-#include <WebKitQuartzCoreAdditions/WKCACFTypes.h>
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
 

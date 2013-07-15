@@ -1,3 +1,11 @@
+2013-07-15  Roger Fong  <roger_fong@apple.com>
+
+        Replace WKCACFTypes include with d3d9 include.
+
+        Rubberstamped by Eric Carlson.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+
 2013-07-15  Antoine Quint  <graouts@apple.com>
 
         Text with "text-overflow:ellipsis" and an SVG font do not render correctly
