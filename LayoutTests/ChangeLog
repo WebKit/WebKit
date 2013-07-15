@@ -1,3 +1,9 @@
+2013-07-15  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed, fix a mismerge from r152303.
+
+        * platform/mac/TestExpectations:
+
 2013-07-10  Lucas Forschler  <lforschler@apple.com>
 
         Rollout r152556. <rdar://problem/14305675>
