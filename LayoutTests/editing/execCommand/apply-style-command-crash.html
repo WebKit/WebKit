@@ -9,9 +9,7 @@ if (window.testRunner) {
 
 onload = function() {
     x.innerHTML += '';
-}
 
-setTimeout(function() {
     document.designMode = 'on';
     document.execCommand('selectall');
     document.execCommand('bold');
@@ -19,7 +17,7 @@ setTimeout(function() {
     document.body.innerHTML = "PASS. WebKit didn't crash";
     if (window.testRunner)
         testRunner.notifyDone();
-}, 0)
+}
 </script>
 </head>
 <body>

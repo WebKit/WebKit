@@ -1,3 +1,38 @@
+2013-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        apply-style-command-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=118634
+
+        Reviewed by Andreas Kling.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/a30dad44ded92d24ed56761434cf6041688659a0.
+
+        Also replace CRLF to LF and get rid of svn:executable.
+
+        * editing/execCommand/apply-style-command-crash.html:
+
+2013-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        apply-style-command-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=118634
+
+        Reviewed by Andreas Kling.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/a30dad44ded92d24ed56761434cf6041688659a0.
+
+        * editing/execCommand/apply-style-command-crash.html:
+
+2013-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        apply-style-command-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=118634
+
+        Reviewed by Andreas Kling.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/a30dad44ded92d24ed56761434cf6041688659a0.
+
+        * editing/execCommand/apply-style-command-crash.html:
+
 2013-07-13  Joone Hur  <joone.hur@intel.com>
 
         Caret should respect text background color
