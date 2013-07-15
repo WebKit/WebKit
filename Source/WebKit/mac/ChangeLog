@@ -1,3 +1,16 @@
+2013-07-14  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Calling Notification.requestPermission() without a callback crashes
+        https://bugs.webkit.org/show_bug.cgi?id=118654
+        <rdar://problem/14293352>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/WebNotificationClient.mm:
+        (-[WebNotificationPolicyListener initWithCallback:]): The callback can be NULL, so remove the ASSERT.
+        (-[WebNotificationPolicyListener allow]): Check for the callback before asking it to handle the event.
+        (-[WebNotificationPolicyListener deny]): Ditto.
+
 2013-07-12  Jessie Berlin  <jberlin@apple.com>
 
         Remove some dead stores pointed out by the clang static analyzer.
