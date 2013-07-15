@@ -81,11 +81,18 @@ void PageBanner::didAddParentLayer(GraphicsLayer* parentLayer)
 
 void PageBanner::detachFromPage()
 {
-    // We can hide the banner by removing the parent layer that hosts it.
-    if (m_type == Header)
-        m_webPage->corePage()->addHeaderWithHeight(0);
-    else if (m_type == Footer)
-        m_webPage->corePage()->addFooterWithHeight(0);
+    if (!m_webPage)
+        return;
+
+    // m_webPage->corePage() can be null when this is called from WebPage::~WebPage() after
+    // the web page has been closed.
+    if (m_webPage->corePage()) {
+        // We can hide the banner by removing the parent layer that hosts it.
+        if (m_type == Header)
+            m_webPage->corePage()->addHeaderWithHeight(0);
+        else if (m_type == Footer)
+            m_webPage->corePage()->addFooterWithHeight(0);
+    }
 
     m_type = NotSet;
     m_webPage = 0;
