@@ -299,7 +299,7 @@ void CurlDownload::moveFileToDestination()
     if (m_destination.isEmpty())
         return;
 
-    ::MoveFile(m_tempPath.charactersWithNullTermination().data(), m_destination.charactersWithNullTermination().data());
+    ::MoveFileEx(m_tempPath.charactersWithNullTermination().data(), m_destination.charactersWithNullTermination().data(), MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING);
 }
 
 void CurlDownload::didReceiveHeader(const String& header)

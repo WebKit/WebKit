@@ -1,3 +1,17 @@
+2013-07-15  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Download does not replace existing file.
+        https://bugs.webkit.org/show_bug.cgi?id=118356
+
+        Reviewed by Brent Fulgham.
+
+        If the download target file already exists, it is not replaced after the download has finished.
+        At this point, the user would have already approved to replace the file, so it should be replaced.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (CurlDownload::moveFileToDestination): Move file and replace it if it already exists.
+        If the new file is on a different volume, do a copy/delete operation.
+
 2013-07-15  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [CoordinatedGraphics] Crash at CoordinatedGraphicsScene::updateImageBacking
