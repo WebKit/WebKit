@@ -540,12 +540,18 @@ void WebPageProxy::close()
     m_activePopupMenu = 0;
 
     m_estimatedProgress = 0.0;
-    
+
     m_loaderClient.initialize(0);
     m_policyClient.initialize(0);
+    m_formClient.initialize(0);
     m_uiClient.initialize(0);
 #if PLATFORM(EFL)
     m_uiPopupMenuClient.initialize(0);
+#endif
+    m_findClient.initialize(0);
+    m_findMatchesClient.initialize(0);
+#if ENABLE(CONTEXT_MENUS)
+    m_contextMenuClient.initialize(0);
 #endif
 
     m_drawingArea = nullptr;
