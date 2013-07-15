@@ -117,7 +117,7 @@ String QualifiedName::toString() const
     if (!hasPrefix())
         return localName();
 
-    return prefix() + ':' + localName();
+    return String(prefix()) + ':' + String(localName());
 }
 
 // Global init routines
