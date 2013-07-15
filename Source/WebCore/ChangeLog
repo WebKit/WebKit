@@ -1,5 +1,25 @@
 2013-07-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        compositionstart event should contain the text to be replaced
+        https://bugs.webkit.org/show_bug.cgi?id=118684
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/9e04f728a95ad7d4783b1d31c3cdc1412dd6cc4d.
+
+        DOM3 level 3 specifies compositionstart event's data to be the text to be replaced.
+        http://www.w3.org/TR/DOM-Level-3-Events/#event-type-compositionstart
+
+        According to the author of the Blink change, IE10 on Windows and Firefox22 on Linux confirms
+        to the specified behavior.
+
+        Test: fast/events/ime-composition-events-001.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::setComposition):
+
+2013-07-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         xmlDocPtrForString shouldn't upconvert 8-bit string
         https://bugs.webkit.org/show_bug.cgi?id=118693
 

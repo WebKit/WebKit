@@ -57,6 +57,17 @@ if (window.testRunner) {
         textInputController.setMarkedText('9', 0, 1);
         textInputController.unmarkText();
     }
+
+    // Case 5: Compose a text on selection and commit it.
+    test.value = 'I have a pen';
+    test.selectionStart = 2;
+    test.selectionEnd = 6;
+    textInputController.setMarkedText('lost', 0, 1);
+    textInputController.insertText('made');
+    if (test.value == 'I made a pen')
+        log('SUCCESS: ' + test.value);
+    else
+        log('FAILURE: ' + test.value + ' is not "I made a pen".');
 }
 </script>
 </body>

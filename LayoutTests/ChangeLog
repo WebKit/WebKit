@@ -1,3 +1,15 @@
+2013-07-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        compositionstart event should contain the text to be replaced
+        https://bugs.webkit.org/show_bug.cgi?id=118684
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a test case.
+
+        * fast/events/ime-composition-events-001-expected.txt:
+        * fast/events/ime-composition-events-001.html:
+
 2013-07-15  Antoine Quint  <graouts@apple.com>
 
         Text with "text-overflow:ellipsis" and an SVG font do not render correctly
