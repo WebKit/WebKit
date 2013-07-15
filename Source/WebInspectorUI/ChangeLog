@@ -1,3 +1,16 @@
+2013-07-15  Timothy Hatcher  <timothy@apple.com>
+
+        Properly handle style text changes while the color popover is open.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118575
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._colorSwatchClicked.updateCodeMirror):
+        The original text marker might have been cleared by a style update, in this case we need to
+        find the new color text marker so we know the right range for the new style color text.
+
 2013-07-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r152598.

@@ -678,22 +678,52 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
 
         function updateCodeMirror(newColorText)
         {
-            this._codeMirror.operation(function() 
+            function update()
             {
+                // The original text marker might have been cleared by a style update,
+                // in this case we need to find the new color text marker so we know
+                // the right range for the new style color text.
+                if (!colorTextMarker || !colorTextMarker.find()) {
+                    colorTextMarker = null;
+
+                    var marks = this._codeMirror.findMarksAt(range.from);
+                    if (!marks.length)
+                        return;
+
+                    for (var i = 0; i < marks.length; ++i) {
+                        var mark = marks[i];
+                        if (!mark.__markedColor)
+                            continue;
+                        colorTextMarker = mark;
+                        break;
+                    }
+                }
+
+                if (!colorTextMarker)
+                    return;
+
+                // Sometimes we still might find a stale text marker with findMarksAt.
+                var newRange = colorTextMarker.find();
+                if (!newRange)
+                    return;
+
+                range = newRange;
+
                 colorTextMarker.clear();
 
                 this._codeMirror.replaceRange(newColorText, range.from, range.to);
 
                 // The color's text format could have changed, so we need to update the "range" 
                 // variable to anticipate a different "range.to" property.
-                var to = {line: range.from.line, ch: range.from.ch + newColorText.length};
-                range.to = to;
+                range.to.ch = range.from.ch + newColorText.length;
 
-                colorTextMarker = this._codeMirror.markText(range.from, to);
+                colorTextMarker = this._codeMirror.markText(range.from, range.to);
                 colorTextMarker.__markedColor = true;
 
                 swatch.__colorTextMarker = colorTextMarker;
-            }.bind(this));
+            }
+
+            this._codeMirror.operation(update.bind(this));
         }
 
         if (event.shiftKey) {
@@ -710,7 +740,6 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             this._ignoreCodeMirrorContentDidChangeEvent = true;
             updateCodeMirror.call(this, newColorText);
             delete this._ignoreCodeMirrorContentDidChangeEvent;
-
         } else {
             this._colorPickerPopover = new WebInspector.Popover(this);
 
