@@ -29,14 +29,15 @@ web_inspector_user_interface_path = File.expand_path File.join(File.dirname(__FI
 web_inspector_code_mirror_resources_path = File.join web_inspector_user_interface_path, "/External/CodeMirror"
 
 CODE_MIRROR_FILES_TO_COPY = %w(
-  lib/codemirror.js
-  lib/codemirror.css
   addon/comment/comment.js
+  addon/display/placeholder.js
+  addon/edit/closebrackets.js
   addon/edit/matchbrackets.js
   addon/mode/overlay.js
-  addon/display/placeholder.js
   addon/runmode/runmode.js
   addon/search/searchcursor.js
+  lib/codemirror.css
+  lib/codemirror.js
   mode/clojure/clojure.js
   mode/coffeescript/coffeescript.js
   mode/css/css.js

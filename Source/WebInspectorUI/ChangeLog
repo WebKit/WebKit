@@ -1,5 +1,32 @@
 2013-07-15  Timothy Hatcher  <timothy@apple.com>
 
+        Update CodeMirror to 3.14.1.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118605
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/update-codemirror-resources.rb: Updated the list to add closebrackets.js and sorted the files.
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js:
+        * Tools/PrettyPrinting/Formatter.js:
+        * Tools/PrettyPrinting/FormatterContentBuilder.js:
+        * Tools/PrettyPrinting/codemirror.css:
+        * Tools/PrettyPrinting/codemirror.js:
+        * Tools/PrettyPrinting/css.js:
+        * Tools/PrettyPrinting/javascript.js:
+        * UserInterface/External/CodeMirror/closebrackets.js:
+        * UserInterface/External/CodeMirror/codemirror.css:
+        * UserInterface/External/CodeMirror/codemirror.js:
+        * UserInterface/External/CodeMirror/coffeescript.js:
+        * UserInterface/External/CodeMirror/comment.js:
+        * UserInterface/External/CodeMirror/css.js:
+        * UserInterface/External/CodeMirror/javascript.js:
+        * UserInterface/External/CodeMirror/matchbrackets.js:
+        * UserInterface/External/CodeMirror/sql.js:
+        * UserInterface/External/CodeMirror/xml.js:
+
+2013-07-15  Timothy Hatcher  <timothy@apple.com>
+
         Make sure to add main resources for sub-frames to the Network Timeline.
 
         https://bugs.webkit.org/show_bug.cgi?id=118649
