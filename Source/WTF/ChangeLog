@@ -1,3 +1,16 @@
+2013-07-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        Minor cleaning of AtomicString::addSlowCase
+        https://bugs.webkit.org/show_bug.cgi?id=118615
+
+        Reviewed by Geoffrey Garen.
+
+        Give the variable a proper name.
+        Add assertions to clarify the in and out states.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::addSlowCase):
+
 2013-07-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Improve StringImpl::constructInternal() method

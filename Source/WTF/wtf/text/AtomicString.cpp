@@ -377,16 +377,22 @@ PassRefPtr<StringImpl> AtomicString::addFromLiteralData(const char* characters, 
     return addToStringTable<CharBuffer, CharBufferFromLiteralDataTranslator>(buffer);
 }
 
-PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl* r)
+PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl* string)
 {
-    if (!r->length())
+    if (!string->length())
         return StringImpl::empty();
 
+    ASSERT_WITH_MESSAGE(!string->isAtomic(), "AtomicString should not hit the slow case if the string is already atomic.");
+
     AtomicStringTableLocker locker;
-    StringImpl* result = *stringTable().add(r).iterator;
-    if (result == r)
-        r->setIsAtomic(true);
-    return result;
+    HashSet<StringImpl*>::AddResult addResult = stringTable().add(string);
+
+    if (addResult.isNewEntry) {
+        ASSERT(*addResult.iterator == string);
+        string->setIsAtomic(true);
+    }
+
+    return *addResult.iterator;
 }
 
 template<typename CharacterType>
