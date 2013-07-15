@@ -412,6 +412,34 @@ fast/dynamic/containing-block-change.html [ ImageOnlyFailure ]
 fast/frames/inline-object-inside-frameset.html [ ImageOnlyFailure ]
 fast/repaint/textarea-set-disabled.html [ ImageOnlyFailure ]
 
+
+# [Qt][WK2] Failing fast/repaint pixel tests
+# webkit.org/b/118674
+fast/repaint/absolute-position-moved.html
+fast/repaint/caret-outside-block.html
+fast/repaint/fixed-child-move-after-scroll.html
+fast/repaint/fixed-child-of-transformed-move-after-scroll.html
+fast/repaint/fixed-in-page-scale.html
+fast/repaint/fixed-move-after-scroll.html
+fast/repaint/fixed-scale.html
+fast/repaint/fixed-scroll-simple.html
+fast/repaint/fixed-table-cell.html
+fast/repaint/fixed-table-overflow-zindex.html
+fast/repaint/fixed-table-overflow.html
+fast/repaint/fixed-tranformed.html
+fast/repaint/intermediate-layout-position-clip.html
+fast/repaint/overflow-hide.html
+fast/repaint/overflow-show.html
+fast/repaint/repaint-during-scroll.html
+fast/repaint/scroll-absolute-layer-with-reflection.html
+fast/repaint/scroll-fixed-layer-with-no-visible-content.html
+fast/repaint/scroll-fixed-layer-with-reflection.html
+fast/repaint/scroll-in-clipped-layer.html
+fast/repaint/scroll-in-fixed-layer.html
+fast/repaint/selection-clear.html
+fast/repaint/table-cell-collapsed-border-scroll.html
+fast/repaint/transform-translate.html
+
 # =========================================================================== #
 # Fullscreen tests.                                                          #
 # =========================================================================== #
@@ -848,12 +876,15 @@ compositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnl
 compositing/geometry/fixed-position-transform-composited-page-scale-down.html [ ImageOnlyFailure ]
 compositing/geometry/fixed-position-transform-composited-page-scale.html [ ImageOnlyFailure ]
 compositing/geometry/horizontal-scroll-composited.html [ ImageOnlyFailure ]
+compositing/geometry/layer-due-to-layer-children-deep.html [ ImageOnlyFailure ]
+compositing/geometry/repaint-foreground-layer.html [ ImageOnlyFailure ]
 compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
 compositing/images/direct-pdf-image.html [ ImageOnlyFailure ]
 compositing/layer-creation/fixed-position-and-transform.html [ ImageOnlyFailure ]
 compositing/layer-creation/fixed-position-scroll.html [ ImageOnlyFailure ]
 compositing/layer-creation/fixed-position-under-transform.html [ ImageOnlyFailure ]
 compositing/overflow/fixed-position-ancestor-clip.html [ ImageOnlyFailure ]
+compositing/reflections/compositing-change-inside-reflection.html [ ImageOnlyFailure ]
 compositing/reflections/masked-reflection-on-composited.html [ ImageOnlyFailure ]
 compositing/rtl/rtl-fixed-overflow-scrolled.html [ ImageOnlyFailure ]
 compositing/transitions/singular-scale-transition.html [ ImageOnlyFailure ]

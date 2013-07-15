@@ -1,5 +1,14 @@
 2013-07-15  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
+        [Qt][WK2] Unreviewed cleanup for pixel tester bot.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/editing/deleting/delete-image-002-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/move-by-character-004-expected.png:
+        * platform/qt-5.0-wk2/fast/canvas/setWidthResetAfterForcedRender-expected.png:
+
+2013-07-15  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
         [Qt][WK2] Unreviewed gardening. Skipping bad pixel results.
 
         * platform/qt-5.0-wk2/TestExpectations:
