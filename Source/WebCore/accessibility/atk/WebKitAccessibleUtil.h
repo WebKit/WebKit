@@ -37,8 +37,6 @@ AtkAttributeSet* addToAtkAttributeSet(AtkAttributeSet*, const char* name, const 
 
 void contentsRelativeToAtkCoordinateType(WebCore::AccessibilityObject*, AtkCoordType, WebCore::IntRect, gint* x, gint* y, gint* width = 0, gint* height = 0);
 
-const char* returnString(const String&);
-
 String accessibilityTitle(WebCore::AccessibilityObject*);
 
 String accessibilityDescription(WebCore::AccessibilityObject*);

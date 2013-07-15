@@ -2,6 +2,7 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Alonzo
  * Copyright (C) 2009, 2010, 2011, 2012 Igalia S.L.
+ * Copyright (C) 2013 Samsung Electronics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +26,7 @@
 #if HAVE(ACCESSIBILITY)
 
 #include <atk/atk.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class AccessibilityObject;
@@ -41,14 +43,30 @@ G_BEGIN_DECLS
 
 typedef struct _WebKitAccessible                WebKitAccessible;
 typedef struct _WebKitAccessibleClass           WebKitAccessibleClass;
+typedef struct _WebKitAccessiblePrivate         WebKitAccessiblePrivate;
+
 
 struct _WebKitAccessible {
     AtkObject parent;
     WebCore::AccessibilityObject* m_object;
+
+    WebKitAccessiblePrivate *priv;
 };
 
 struct _WebKitAccessibleClass {
     AtkObjectClass parentClass;
+};
+
+enum AtkCachedProperty {
+    AtkCachedAccessibleName,
+    AtkCachedAccessibleDescription,
+    AtkCachedActionName,
+    AtkCachedActionKeyBinding,
+    AtkCachedDocumentLocale,
+    AtkCachedDocumentType,
+    AtkCachedDocumentEncoding,
+    AtkCachedDocumentURI,
+    AtkCachedImageDescription
 };
 
 GType webkitAccessibleGetType(void) G_GNUC_CONST;
@@ -62,6 +80,8 @@ void webkitAccessibleDetach(WebKitAccessible*);
 AtkObject* webkitAccessibleGetFocusedElement(WebKitAccessible*);
 
 WebCore::AccessibilityObject* objectFocusedAndCaretOffsetUnignored(WebCore::AccessibilityObject*, int& offset);
+
+const char* cacheAndReturnAtkProperty(AtkObject*, AtkCachedProperty, String value);
 
 G_END_DECLS
 
