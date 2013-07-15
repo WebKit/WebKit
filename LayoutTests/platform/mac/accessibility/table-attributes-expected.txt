@@ -32,6 +32,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -58,6 +59,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -84,6 +86,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {2, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -110,6 +113,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {3, 2}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -136,6 +140,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {3, 2}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 
@@ -166,6 +171,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -192,6 +198,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -218,6 +225,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -244,6 +252,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {1, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 
@@ -522,6 +531,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -548,6 +558,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {2, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -574,6 +585,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {3, 2}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -600,6 +612,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -626,6 +639,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {4, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -652,6 +666,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -678,6 +693,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {1, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -704,6 +720,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {2, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -730,6 +747,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -756,6 +774,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {4, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -782,6 +801,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {1, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -808,6 +828,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {2, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -834,6 +855,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 AXRole: AXCell
@@ -860,6 +882,7 @@ AXTopLevelUIElement: <AXCell>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {4, 1}
 AXARIABusy: 0
+AXRequired: 0
 
 ------------
 
