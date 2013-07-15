@@ -1,3 +1,16 @@
+2013-07-15  Dong-Gwan Kim  <donggwan.kim@samsung.com>
+
+        [EFL] Add fallback for TestWebKitAPI if opengl is not available.
+        https://bugs.webkit.org/show_bug.cgi?id=118583
+
+        Reviewed by Christophe Dumez.
+
+        There're many fails on efl webkit2 API test if opengl is not available.
+        So, add fallback to non-opengl evas engine.
+
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::initEcoreEvas):
+
 2013-07-15  Brian Holt  <brian.holt@samsung.com>
 
         check-webkit-style: Ignore false positive: Instance of 'Popen' has no 'pid' member

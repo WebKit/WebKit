@@ -45,11 +45,13 @@ static Ecore_Evas* initEcoreEvas()
     if (!ecore_evas_init())
         return 0;
 
-    const char* engine = 0;
+    Ecore_Evas* ecoreEvas;
 #if defined(WTF_USE_ACCELERATED_COMPOSITING) && defined(HAVE_ECORE_X)
-    engine = "opengl_x11";
+    ecoreEvas = ecore_evas_new("opengl_x11", 0, 0, 800, 600, 0);
+    // Graceful fallback to software rendering if evas_gl engine is not available.
+    if (!ecoreEvas)
 #endif
-    Ecore_Evas* ecoreEvas = ecore_evas_new(engine, 0, 0, 800, 600, 0);
+    ecoreEvas = ecore_evas_new(0, 0, 0, 800, 600, 0);
 
     ASSERT(ecoreEvas);
 
