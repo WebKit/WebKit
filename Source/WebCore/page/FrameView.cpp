@@ -480,18 +480,6 @@ void FrameView::setFrameRect(const IntRect& newRect)
     }
 #endif
 
-    // Viewport-dependent media queries may cause us to need completely different style information.
-    if (m_frame) {
-        if (Document* document = m_frame->document()) {
-            if (StyleResolver* resolver = document->styleResolverIfExists()) {
-                if (resolver->affectedByViewportChange()) {
-                    document->styleResolverChanged(DeferRecalcStyle);
-                    InspectorInstrumentation::mediaQueryResultChanged(document);
-                }
-            }
-        }
-    }
-
     sendResizeEventIfNeeded();
 }
 
@@ -1199,7 +1187,12 @@ void FrameView::layout(bool allowSubtree)
             m_inSynchronousPostLayout = false;
         }
 
-        document->evaluateMediaQueryList();
+        // Viewport-dependent media queries may cause us to need completely different style information.
+        if (document->ensureStyleResolver()->affectedByViewportChange()) {
+            document->styleResolverChanged(DeferRecalcStyle);
+            InspectorInstrumentation::mediaQueryResultChanged(document);
+        } else
+            document->evaluateMediaQueryList();
 
         // If there is any pagination to apply, it will affect the RenderView's style, so we should
         // take care of that now.
