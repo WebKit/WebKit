@@ -89,3 +89,29 @@ function selectCaptionMenuItem(title)
     eventSender.mouseUp();
 }
 
+function showTrackMenu()
+{
+    clickCCButton();
+}
+
+function hideTrackMenu()
+{
+    if (!window.eventSender)
+        return;
+
+    eventSender.mouseMoveTo(1, 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function listTrackMenu()
+{
+    var trackListItems = trackMenuList();
+    consoleWrite("Track menu:");
+    for (i = 0; i < trackListItems.length; i++) {
+        var logString = i + ": \"" + trackListItems[i].textContent + "\"";
+        if (trackListItems[i].className == "selected")
+            logString += ", checked";
+        consoleWrite(logString);
+    }
+}

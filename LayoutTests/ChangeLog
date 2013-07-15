@@ -1,5 +1,25 @@
 2013-07-15  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152547
+
+    2013-07-10  Eric Carlson  <eric.carlson@apple.com>
+
+            [Mac] every enabled text track should be listed in the track menu
+            https://bugs.webkit.org/show_bug.cgi?id=118477
+
+            Reviewed by Jer Noble.
+
+            * media/trackmenu-test.js: Add some new utility functions.
+
+            * media/video-controls-captions-trackmenu-includes-enabled-track-expected.txt: Added.
+            * media/video-controls-captions-trackmenu-includes-enabled-track.html: Added.
+            * platform/efl/TestExpectations:
+            * platform/gtk/TestExpectations:
+            * platform/qt/TestExpectations:
+            * platform/win/TestExpectations:
+
+2013-07-15  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152532
 
     2013-07-10  James Craig  <james@cookiecrook.com>
