@@ -199,8 +199,10 @@ bool NodeRenderingContext::shouldCreateRenderer() const
 // Check the specific case of elements that are children of regions but are flowed into a flow thread themselves.
 bool NodeRenderingContext::elementInsideRegionNeedsRenderer()
 {
-    Element* element = toElement(m_node);
     bool elementInsideRegionNeedsRenderer = false;
+
+#if ENABLE(CSS_REGIONS)
+    Element* element = toElement(m_node);
     RenderObject* parentRenderer = this->parentRenderer();
     if ((parentRenderer && !parentRenderer->canHaveChildren() && parentRenderer->isRenderRegion())
         || (!parentRenderer && element->parentElement() && element->parentElement()->isInsideRegion())) {
@@ -214,12 +216,14 @@ bool NodeRenderingContext::elementInsideRegionNeedsRenderer()
         if (element->rendererIsNeeded(*this))
             element->setIsInsideRegion(true);
     }
+#endif
 
     return elementInsideRegionNeedsRenderer;
 }
 
 void NodeRenderingContext::moveToFlowThreadIfNeeded()
 {
+#if ENABLE(CSS_REGIONS)
     Element* element = toElement(m_node);
 
     if (!element->shouldMoveToFlowThread(m_style.get()))
@@ -229,6 +233,7 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
     FlowThreadController* flowThreadController = m_node->document()->renderView()->flowThreadController();
     m_parentFlowRenderer = flowThreadController->ensureRenderFlowThreadWithName(m_style->flowThread());
     flowThreadController->registerNamedFlowContentNode(m_node, m_parentFlowRenderer);
+#endif
 }
 
 bool NodeRenderingContext::isOnEncapsulationBoundary() const

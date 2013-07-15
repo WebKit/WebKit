@@ -1,5 +1,25 @@
 2013-07-15  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152345
+
+    2013-07-03  Radu Stavila  <stavila@adobe.com>
+
+            [CSS Regions] Improve implementation of elements in region being flowed to another flow thread
+            https://bugs.webkit.org/show_bug.cgi?id=118300
+
+            Based on patch by Zoltán Árvai <zarvai@inf.u-szeged.hu>
+
+            Reviewed by Csaba Osztrogonác.
+
+            Fixed CSS_REGIONS guard.
+
+            * dom/Element.h:
+            * dom/NodeRenderingContext.cpp:
+            (WebCore::NodeRenderingContext::elementInsideRegionNeedsRenderer):
+            (WebCore::NodeRenderingContext::moveToFlowThreadIfNeeded):
+
+2013-07-15  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152330
 
     2013-07-02  Ruth Fong  <ruth_fong@apple.com>
