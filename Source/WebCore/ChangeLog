@@ -1,3 +1,15 @@
+2013-07-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        MediaFragmentURIParser::parseFragments shouldn't upconvert 8-bit string
+        https://bugs.webkit.org/show_bug.cgi?id=118692
+
+        Reviewed by Michael Saboff.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/2aa17cc56a807f7e05d386d6eb66cda25e6b0542.
+
+        * html/MediaFragmentURIParser.cpp:
+        (WebCore::MediaFragmentURIParser::parseFragments):
+
 2013-07-15  Kwang Yul Seo  <skyul@company100.net>
 
         NetworkStorageSession::createDefaultSession is only implemented by Soup
