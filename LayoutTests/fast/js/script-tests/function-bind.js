@@ -1,5 +1,8 @@
 description("Tests Function.bind.");
 
+shouldThrow("new (decodeURI.bind())()");
+shouldBe("(new (String.bind())('foo')).toString()", "'foo'");
+
 var result;
 
 function F(x, y)

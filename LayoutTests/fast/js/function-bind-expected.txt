@@ -3,6 +3,10 @@ Tests Function.bind.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS new (decodeURI.bind())() threw exception TypeError: 'function decodeURI() {
+    [native code]
+}' is not a constructor (evaluating 'new (decodeURI.bind())()').
+PASS (new (String.bind())('foo')).toString() is 'foo'
 PASS result is "[object Window] -> x:1, y:2"
 PASS result is "'a' -> x:'b', y:1"
 PASS result is "'a' -> x:'b', y:'c'"

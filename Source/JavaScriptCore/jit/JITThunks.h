@@ -64,7 +64,7 @@ public:
 private:
     typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef> CTIStubMap;
     CTIStubMap m_ctiStubMap;
-    typedef HashMap<NativeFunction, Weak<NativeExecutable> > HostFunctionStubMap;
+    typedef HashMap<pair<NativeFunction, NativeFunction>, Weak<NativeExecutable> > HostFunctionStubMap;
     OwnPtr<HostFunctionStubMap> m_hostFunctionStubMap;
 };
 
