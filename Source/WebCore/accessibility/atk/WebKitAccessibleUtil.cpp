@@ -79,14 +79,6 @@ void contentsRelativeToAtkCoordinateType(AccessibilityObject* coreObject, AtkCoo
         *height = rect.height();
 }
 
-// Used to provide const char* returns.
-const char* returnString(const String& str)
-{
-    static CString returnedString;
-    returnedString = str.utf8();
-    return returnedString.data();
-}
-
 // FIXME: Different kinds of elements are putting the title tag to use
 // in different AX fields. This might not be 100% correct but we will
 // keep it now in order to achieve consistency with previous behavior.
