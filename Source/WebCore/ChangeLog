@@ -1,3 +1,27 @@
+2013-07-15  Antoine Quint  <graouts@apple.com>
+
+        Text with "text-overflow:ellipsis" and an SVG font do not render correctly
+        https://bugs.webkit.org/show_bug.cgi?id=118669
+
+        Reviewed by David Kilzer.
+
+        Partial runs may be routed through the complex path in several Font functions. While incomplete,
+        we can check for a non-NULL run.renderingContext() and exempt runs that have it from being forced
+        down the complex path. A more thorough fix is already tracked by http://webkit.org/b/100050.
+
+        Adding a new testcase which is a copy of svg/text/text-overflow-ellipsis-svgfont.html with kerning
+        and ligatures turned on explicitly since DRT runs with those off by default and this option is required
+        to be on for the issue to reproduce.
+
+        Fix courtesy of Dan Bernstein.
+
+        Test: svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawEmphasisMarks):
+        (WebCore::Font::selectionRectForText):
+
 2013-07-15  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Download does not replace existing file.

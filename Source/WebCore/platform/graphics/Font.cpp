@@ -266,7 +266,7 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()))
+    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !run.renderingContext())
         codePathToUse = Complex;
 
     if (codePathToUse != Complex)
@@ -285,7 +285,7 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()))
+    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !run.renderingContext())
         codePathToUse = Complex;
 
     if (codePathToUse != Complex)
@@ -362,7 +362,7 @@ FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point
 
     CodePath codePathToUse = codePath(run);
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()))
+    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !run.renderingContext())
         codePathToUse = Complex;
 
     if (codePathToUse != Complex)
