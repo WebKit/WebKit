@@ -64,7 +64,6 @@ list(APPEND WebCore_SOURCES
     platform/win/WheelEventWin.cpp
 
     platform/wince/FileSystemWince.cpp
-    platform/wince/KURLWince.cpp
 
     platform/network/win/CredentialStorageWin.cpp
     platform/network/win/CookieJarWin.cpp
