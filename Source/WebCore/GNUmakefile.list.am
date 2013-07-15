@@ -5734,7 +5734,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/gtk/ErrorsGtk.cpp \
 	Source/WebCore/platform/gtk/ErrorsGtk.h \
 	Source/WebCore/platform/gtk/GamepadsGtk.cpp \
-	Source/WebCore/platform/gtk/KURLGtk.cpp \
 	Source/WebCore/platform/gtk/LanguageGtk.cpp \
 	Source/WebCore/platform/gtk/LoggingGtk.cpp \
 	Source/WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
