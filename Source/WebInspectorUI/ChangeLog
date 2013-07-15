@@ -1,5 +1,19 @@
 2013-07-15  Timothy Hatcher  <timothy@apple.com>
 
+        Make sure to add main resources for sub-frames to the Network Timeline.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118649
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._mainResourceDidChange): Remove the
+        call to _clear() and early return for event.target.isMainFrame(). The _clear()
+        is already handled if needed by the call to _startAutoRecording(), so it was
+        redundant here and caused the erroneous addition of isMainFrame() early return.
+
+2013-07-15  Timothy Hatcher  <timothy@apple.com>
+
         Properly handle style text changes while the color popover is open.
 
         https://bugs.webkit.org/show_bug.cgi?id=118575

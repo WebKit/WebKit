@@ -404,16 +404,11 @@ WebInspector.TimelineManager.prototype = {
         if (!WebInspector.frameResourceManager.mainFrame)
             return;
 
-        if (!event.target.isMainFrame())
-            return;
-
         if (this._startAutoRecording(event))
             return;
 
-        if (!this._recording) {
-            this._clear();
+        if (!this._recording)
             return;
-        }
 
         var mainResource = event.target.mainResource;
         if (mainResource === this._autoRecordingMainResource)
