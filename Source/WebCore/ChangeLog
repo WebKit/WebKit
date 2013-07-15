@@ -1,3 +1,18 @@
+2013-07-15  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [CoordinatedGraphics] Crash at CoordinatedGraphicsScene::updateImageBacking
+        https://bugs.webkit.org/show_bug.cgi?id=118613
+
+        The operations of creating/removing/updating/clearing weren't in the
+        right sequence. Changing the order solves the issue because when an image is
+        replaced the old one is deleted before the new one is created, and IDs are
+        not unique in cairo (they're based on the image pointer).
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        (WebCore::CoordinatedGraphicsScene::syncImageBackings):
+
 2013-07-15  Brian Holt  <brian.holt@samsung.com>
 
         [ATK] Leak: Leak in WebKitAccessibleTextGetText

@@ -528,11 +528,11 @@ void CoordinatedGraphicsScene::removeUpdateAtlas(uint32_t atlasID)
 
 void CoordinatedGraphicsScene::syncImageBackings(const CoordinatedGraphicsState& state)
 {
-    for (size_t i = 0; i < state.imagesToCreate.size(); ++i)
-        createImageBacking(state.imagesToCreate[i]);
-
     for (size_t i = 0; i < state.imagesToRemove.size(); ++i)
         removeImageBacking(state.imagesToRemove[i]);
+
+    for (size_t i = 0; i < state.imagesToCreate.size(); ++i)
+        createImageBacking(state.imagesToCreate[i]);
 
     for (size_t i = 0; i < state.imagesToUpdate.size(); ++i)
         updateImageBacking(state.imagesToUpdate[i].first, state.imagesToUpdate[i].second);
