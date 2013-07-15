@@ -228,6 +228,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     [[self window] setAutodisplay:NO];
 
     NSResponder *webWindowFirstResponder = [[_webView window] firstResponder];
+    [self _manager]->saveScrollPosition();
     [[self window] setFrame:screenFrame display:NO];
 
     // Painting is normally suspended when the WKView is removed from the window, but this is
@@ -386,6 +387,7 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*)
     [self _manager]->didExitFullScreen();
     [self _manager]->setAnimatingFullScreen(false);
     [self _page]->scalePage(_savedScale, IntPoint());
+    [self _manager]->restoreScrollPosition();
     [self _page]->forceRepaint(VoidCallback::create(self, completeFinishExitFullScreenAnimationAfterRepaint));
 }
 

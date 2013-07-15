@@ -28,5 +28,7 @@ messages -> WebFullScreenManager LegacyReceiver {
     WillExitFullScreen()
     DidExitFullScreen()
     SetAnimatingFullScreen(bool animating)
+    SaveScrollPosition()
+    RestoreScrollPosition()
 }
 #endif

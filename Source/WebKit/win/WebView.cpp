@@ -6913,6 +6913,20 @@ void WebView::fullScreenClientForceRepaint()
     m_fullscreenController->repaintCompleted();
 }
 
+void WebView::fullScreenClientSaveScrollPosition()
+{
+    if (Frame* coreFrame = core(m_mainFrame))
+        if (FrameView* view = coreFrame->view())
+            m_scrollPosition = view->scrollPosition();
+}
+
+void WebView::fullScreenClientRestoreScrollPosition()
+{
+    if (Frame* coreFrame = core(m_mainFrame))
+        if (FrameView* view = coreFrame->view())
+            view->setScrollPosition(m_scrollPosition);
+}
+
 #endif
 // Used by TextInputController in DumpRenderTree
 

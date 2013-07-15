@@ -124,6 +124,8 @@ void FullScreenController::enterFullScreen()
     m_private->m_isFullScreen = true;
     m_private->m_isEnteringFullScreen = true;
 
+    m_private->m_client->fullScreenClientSaveScrollPosition();
+
     m_private->m_originalHost = m_private->m_client->fullScreenClientParentWindow();
     RECT originalFrame = {0, 0, 0, 0};
     ::GetClientRect(m_private->m_client->fullScreenClientWindow(), &originalFrame);
@@ -178,6 +180,7 @@ void FullScreenController::exitFullScreen()
 
     ::SetWindowPos(m_private->m_client->fullScreenClientWindow(), 0, m_private->m_originalFrame.x(), m_private->m_originalFrame.y(), m_private->m_originalFrame.width(), m_private->m_originalFrame.height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
+    m_private->m_client->fullScreenClientRestoreScrollPosition();
     m_private->m_client->fullScreenClientDidExitFullScreen();
     m_private->m_client->fullScreenClientForceRepaint();
 }

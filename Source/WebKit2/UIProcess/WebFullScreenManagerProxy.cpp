@@ -93,6 +93,16 @@ void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, bool& supp
     supports = !withKeyboard;
 }
 
+void WebFullScreenManagerProxy::saveScrollPosition()
+{
+    m_page->process()->send(Messages::WebFullScreenManager::SaveScrollPosition(), m_page->pageID());
+}
+
+void WebFullScreenManagerProxy::restoreScrollPosition()
+{
+    m_page->process()->send(Messages::WebFullScreenManager::RestoreScrollPosition(), m_page->pageID());
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(FULLSCREEN_API)
