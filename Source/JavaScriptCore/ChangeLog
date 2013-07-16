@@ -1,5 +1,17 @@
 2013-07-15  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152577
+
+    2013-07-11  Oliver Hunt  <oliver@apple.com>
+
+            Attempt to fix the windows build.
+
+            * jit/JITThunks.cpp:
+            (JSC::JITThunks::hostFunctionStub):
+            * jit/JITThunks.h:
+
+2013-07-15  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152573
 
     2013-07-10  Oliver Hunt  <oliver@apple.com>
