@@ -126,7 +126,7 @@ WebVTTParser::WebVTTParser(WebVTTParserClient* client, ScriptExecutionContext* c
 {
 }
 
-void WebVTTParser::getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues)
+void WebVTTParser::getNewCues(Vector<RefPtr<WebVTTCueData> >& outputCues)
 {
     outputCues = m_cuelist;
     m_cuelist.clear();
@@ -360,9 +360,12 @@ void WebVTTParser::createNewCue()
     if (!m_currentContent.length())
         return;
 
-    RefPtr<TextTrackCue> cue = TextTrackCue::create(m_scriptExecutionContext, m_currentStartTime, m_currentEndTime, m_currentContent.toString());
+    RefPtr<WebVTTCueData> cue = WebVTTCueData::create();
+    cue->setStartTime(m_currentStartTime);
+    cue->setEndTime(m_currentEndTime);
+    cue->setContent(m_currentContent.toString());
     cue->setId(m_currentId);
-    cue->setCueSettings(m_currentSettings);
+    cue->setSettings(m_currentSettings);
 
     m_cuelist.append(cue);
     if (m_client)

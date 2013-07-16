@@ -35,7 +35,6 @@
 
 #include "DocumentFragment.h"
 #include "HTMLNames.h"
-#include "TextTrackCue.h"
 #include "TextTrackRegion.h"
 #include "WebVTTTokenizer.h"
 #include <wtf/PassOwnPtr.h>
@@ -56,6 +55,41 @@ public:
     virtual void newRegionsParsed() = 0;
 #endif
     virtual void fileFailedToParse() = 0;
+};
+
+class WebVTTCueData : public RefCounted<WebVTTCueData> {
+public:
+
+    static PassRefPtr<WebVTTCueData> create() { return adoptRef(new WebVTTCueData()); }
+    virtual ~WebVTTCueData() { }
+
+    double startTime() const { return m_startTime; }
+    void setStartTime(double startTime) { m_startTime = startTime; }
+
+    double endTime() const { return m_endTime; }
+    void setEndTime(double endTime) { m_endTime = endTime; }
+
+    String id() const { return m_id; }
+    void setId(String id) { m_id = id; }
+
+    String content() const { return m_content; }
+    void setContent(String content) { m_content = content; }
+
+    String settings() const { return m_settings; }
+    void setSettings(String settings) { m_settings = settings; }
+
+private:
+    WebVTTCueData()
+        : m_startTime(0)
+        , m_endTime(0)
+    {
+    }
+
+    double m_startTime;
+    double m_endTime;
+    String m_id;
+    String m_content;
+    String m_settings;
 };
 
 class WebVTTParser {
@@ -112,7 +146,7 @@ public:
     void parseBytes(const char* data, unsigned length);
 
     // Transfers ownership of last parsed cues to caller.
-    void getNewCues(Vector<RefPtr<TextTrackCue> >&);
+    void getNewCues(Vector<RefPtr<WebVTTCueData> >&);
 #if ENABLE(WEBVTT_REGIONS)
     void getNewRegions(Vector<RefPtr<TextTrackRegion> >&);
 #endif
@@ -165,7 +199,7 @@ private:
     WebVTTParserClient* m_client;
 
     Vector<AtomicString> m_languageStack;
-    Vector<RefPtr<TextTrackCue> > m_cuelist;
+    Vector<RefPtr<WebVTTCueData> > m_cuelist;
 
 #if ENABLE(WEBVTT_REGIONS)
     Vector<RefPtr<TextTrackRegion> > m_regionList;

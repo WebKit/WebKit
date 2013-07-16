@@ -1,3 +1,51 @@
+2013-07-16  Brendan Long  <b.long@cablelabs.com>
+
+        Make WebVTTParser return cue data instead of cue DOM objects
+        https://bugs.webkit.org/show_bug.cgi?id=118687
+
+        Reviewed by Eric Carlson.
+
+        No new tests because this doesn't change functionality.
+
+        * html/track/InbandTextTrack.cpp:
+        Make TextTrackCueMap handle WebVTTCues instead of just generic cues.
+        m_dataToCueMap and m_cueToDataMap were renamed m_genericDataToCueMap
+        and m_genericCueToDataMap. The cue maps were turned into pointers so we
+        only allocate the ones we need.
+        (WebCore::TextTrackCueMap::TextTrackCueMap): Initialize maps to 0.
+        (WebCore::TextTrackCueMap::~TextTrackCueMap): Delete allocated maps.
+        (WebCore::TextTrackCueMap::add): Changed to allocate cue maps as needed, and added WebVTT version.
+        (WebCore::TextTrackCueMap::find): Checked to check if cue maps are allocated, and added WebVTT version.
+        (WebCore::TextTrackCueMap::findGenericData): Changed to accept TextTrackCue instead of TextTrackCueGeneric.
+        (WebCore::TextTrackCueMap::findWebVTTData): Same as findGenericData, except for WebVTTCueData.
+        (WebCore::TextTrackCueMap::remove): Accept TextTrackCue instead of TextTrackCueGeneric, and look in both maps.
+        (WebCore::InbandTextTrack::addWebVTTCue): Added, based on addGenericCue.
+        (WebCore::InbandTextTrack::removeWebVTTCue): Added, almost identical to removeGenericCue.
+        (WebCore::InbandTextTrack::removeCue): m_cueMap.remove() takes a TextTrackCue now so it can remove both types of cue.
+        (WebCore::InbandTextTrack::willRemoveTextTrackPrivate): Use ASSERT_UNUSED instead of UNUSED_PARAM + ASSERT.
+        * html/track/InbandTextTrack.h: Add new functions above, change maps to pointers and add maps for holding WebVTT cues.
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::getNewCues): Return WebVTTCueData instead of TextTrackCue.
+        (WebCore::WebVTTParser::createNewCue): Create WebVTTCueData instead of TextTrackCue.
+        * html/track/WebVTTParser.h: Add WebVTTCueData class, based on GenericCueData.
+        The following functions are just constructors, destructors, getters, or setters.
+        (WebCore::WebVTTCueData::create):
+        (WebCore::WebVTTCueData::~WebVTTCueData):
+        (WebCore::WebVTTCueData::startTime):
+        (WebCore::WebVTTCueData::setStartTime):
+        (WebCore::WebVTTCueData::endTime):
+        (WebCore::WebVTTCueData::setEndTime):
+        (WebCore::WebVTTCueData::id):
+        (WebCore::WebVTTCueData::setId):
+        (WebCore::WebVTTCueData::content):
+        (WebCore::WebVTTCueData::setContent):
+        (WebCore::WebVTTCueData::settings):
+        (WebCore::WebVTTCueData::setSettings):
+        (WebCore::WebVTTCueData::WebVTTCueData):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::getNewCues): Convert WebVTTCueData to TextTrackCue when we get them.
+        * platform/graphics/InbandTextTrackPrivateClient.h: Add addWebVTTCue and removeWebVTTCue functions to the interface.
+
 2013-07-16  Tim Horton  <timothy_horton@apple.com>
 
         Use the correct cursor value for the unavailable plugin indicator

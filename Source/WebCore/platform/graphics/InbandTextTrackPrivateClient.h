@@ -129,6 +129,8 @@ private:
     Status m_status;
 };
 
+class WebVTTCueData;
+
 class InbandTextTrackPrivateClient {
 public:
     virtual ~InbandTextTrackPrivateClient() { }
@@ -136,6 +138,9 @@ public:
     virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) = 0;
     virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
     virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
+
+    virtual void addWebVTTCue(InbandTextTrackPrivate*, PassRefPtr<WebVTTCueData>) = 0;
+    virtual void removeWebVTTCue(InbandTextTrackPrivate*, WebVTTCueData*) = 0;
 
     virtual void willRemoveTextTrackPrivate(InbandTextTrackPrivate*) = 0;
 };

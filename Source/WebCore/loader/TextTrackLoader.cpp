@@ -38,6 +38,7 @@
 #include "ResourceBuffer.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
+#include "TextTrackCue.h"
 #include "WebVTTParser.h"
 
 namespace WebCore {
@@ -209,8 +210,17 @@ void TextTrackLoader::fileFailedToParse()
 void TextTrackLoader::getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues)
 {
     ASSERT(m_cueParser);
-    if (m_cueParser)
-        m_cueParser->getNewCues(outputCues);
+    if (m_cueParser) {
+        Vector<RefPtr<WebVTTCueData> > newCues;
+        m_cueParser->getNewCues(newCues);
+        for (size_t i = 0; i < newCues.size(); ++i) {
+            RefPtr<WebVTTCueData> data = newCues[i];
+            RefPtr<TextTrackCue> cue = TextTrackCue::create(m_scriptExecutionContext, data->startTime(), data->endTime(), data->content());
+            cue->setId(data->id());
+            cue->setCueSettings(data->settings());
+            outputCues.append(cue);
+        }
+    }
 }
 
 #if ENABLE(WEBVTT_REGIONS)
