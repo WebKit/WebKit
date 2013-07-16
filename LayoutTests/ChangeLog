@@ -1,5 +1,12 @@
 2013-07-16  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed rebaselines, AppleWin port.
+
+        * platform/win/fast/js/global-constructors-attributes-dedicated-worker-expected.txt: Added.
+        * platform/win/fast/js/global-constructors-attributes-shared-worker-expected.txt: Added.
+
+2013-07-16  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed gardening. -webkit-user-select: all not supported on AppleWin port.
         https://bugs.webkit.org/show_bug.cgi?id=118740
 
