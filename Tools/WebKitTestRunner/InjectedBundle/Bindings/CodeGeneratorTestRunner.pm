@@ -416,7 +416,7 @@ sub _parentClassRefGetterExpression
 sub _parentInterface
 {
     my ($interface) = @_;
-    return $interface->parents->[0];
+    return $interface->parent;
 }
 
 sub _platformType

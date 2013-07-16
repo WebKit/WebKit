@@ -87,15 +87,15 @@ EOF
 sub GetParentClassName {
     my $interface = shift;
 
-    return "WebKitDOMObject" if @{$interface->parents} eq 0;
-    return "WebKitDOM" . $interface->parents(0);
+    return "WebKitDOMObject" unless $interface->parent;
+    return "WebKitDOM" . $interface->parent;
 }
 
 sub GetParentImplClassName {
     my $interface = shift;
 
-    return "Object" if @{$interface->parents} eq 0;
-    return $interface->parents(0);
+    return "Object" unless $interface->parent;
+    return $interface->parent;
 }
 
 sub IsBaseType
@@ -183,8 +183,8 @@ sub ClassNameToGObjectType {
 sub GetParentGObjType {
     my $interface = shift;
 
-    return "WEBKIT_TYPE_DOM_OBJECT" if @{$interface->parents} eq 0;
-    return "WEBKIT_TYPE_DOM_" . ClassNameToGObjectType($interface->parents(0));
+    return "WEBKIT_TYPE_DOM_OBJECT" unless $interface->parent;
+    return "WEBKIT_TYPE_DOM_" . ClassNameToGObjectType($interface->parent);
 }
 
 sub GetClassName {

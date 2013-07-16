@@ -139,30 +139,25 @@ sub GetParentImplClassName
 {
     my $interface = shift;
 
-    if (@{$interface->parents} eq 0) {
+    unless ($interface->parent) {
         return "EventTarget" if $interface->extendedAttributes->{"EventTarget"};
         return "Object";
     }
 
-    return $interface->parents(0);
+    return $interface->parent;
 }
 
 sub GetParent
 {
     my $interface = shift;
-    my $numParents = @{$interface->parents};
 
-    my $parent = "";
-    if ($numParents eq 0) {
+    my $parent;
+    if (!$interface->parent) {
         $parent = "WebDOMObject";
         $parent = "WebDOMEventTarget" if $interface->extendedAttributes->{"EventTarget"};
-    } elsif ($numParents eq 1) {
-        my $parentName = $interface->parents(0);
-        $parent = "WebDOM" . $parentName;
     } else {
-        my @parents = @{$interface->parents};
-        my $firstParent = shift(@parents);
-        $parent = "WebDOM" . $firstParent;
+        my $parentName = $interface->parent;
+        $parent = "WebDOM" . $parentName;
     }
 
     return $parent;
@@ -590,12 +585,6 @@ sub GenerateImplementation
 {
     my $object = shift;
     my $interface = shift;
-
-    my @ancestorInterfaceNames = ();
-
-    if (@{$interface->parents} > 1) {
-        $codeGenerator->AddMethodsConstantsAndAttributesFromParentInterfaces($interface, \@ancestorInterfaceNames);
-    }
 
     my $interfaceName = $interface->name;
     my $className = GetClassName($interfaceName);

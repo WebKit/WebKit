@@ -1,3 +1,46 @@
+2013-07-16  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Get rid of multiple inheritance support from the bindings generators
+        https://bugs.webkit.org/show_bug.cgi?id=118353
+
+        Reviewed by Kentaro Hara.
+
+        Remove multiple inheritance support from the bindings generators (except
+        the ObjC one which still needs it for now). Multiple inheritance is no
+        longer supported in Web IDL and it makes the scripts more complex than
+        they needs to be.
+
+        Multiple inheritance support is no longer needed now that our SVG
+        interfaces have been updated to use the simpler SVG2 inheritance model
+        and use Web IDL 'implements' statements.
+
+        Note that the IDL parser still support multiple inheritance for now in
+        order not to break the ObjC bindings generator.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GetParentImplClassName):
+        (GetParent):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetParentClassName):
+        (GetParentImplClassName):
+        (GetParentGObjType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetParentClassName):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateConstructorDefinition):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (AddMethodsConstantsAndAttributesFromParentInterfaces):
+        (GenerateImplementation):
+        * bindings/scripts/IDLParser.pm:
+        (parseInterface):
+        (parseException):
+        (parseInheritance):
+
 2013-07-16  Eric Carlson  <eric.carlson@apple.com>
 
         HTMLMediaElement should not add cues for disabled text tracks

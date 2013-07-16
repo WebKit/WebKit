@@ -43,7 +43,8 @@ struct( idlDocument => {
 # Used to represent 'interface' blocks
 struct( domInterface => {
     name => '$',      # Class identifier
-    parents => '@',      # List of strings
+    parent => '$',      # Parent class identifier
+    parents => '@',      # Parent class identifiers (Kept for compatibility with ObjC bindings)
     constants => '@',    # List of 'domConstant'
     functions => '@',    # List of 'domFunction'
     anonymousFunctions => '@', # List of 'domFunction'
@@ -496,7 +497,9 @@ sub parseInterface
         my $interfaceNameToken = $self->getToken();
         $self->assertTokenType($interfaceNameToken, IdentifierToken);
         $interface->name($interfaceNameToken->value());
-        push(@{$interface->parents}, @{$self->parseInheritance()});
+        my $parents = $self->parseInheritance();
+        $interface->parents($parents);
+        $interface->parent($parents->[0]);
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         my $interfaceMembers = $self->parseInterfaceMembers();
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
@@ -695,7 +698,9 @@ sub parseException
         $self->assertTokenType($exceptionNameToken, IdentifierToken);
         $interface->name($exceptionNameToken->value());
         $interface->isException(1);
-        push(@{$interface->parents}, @{$self->parseInheritance()});
+        my $parents = $self->parseInheritance();
+        $interface->parents($parents);
+        $interface->parent($parents->[0]);
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         my $exceptionMembers = $self->parseExceptionMembers();
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
@@ -738,7 +743,7 @@ sub parseInheritance
         $self->assertTokenValue($self->getToken(), ":", __LINE__);
         my $scopedName = $self->parseScopedName();
         push(@parent, $scopedName);
-        # Multiple inheritance?
+        # Multiple inheritance (needed for ObjC bindings).
         push(@parent, @{$self->parseIdentifiers()});
     }
     return \@parent;

@@ -205,58 +205,6 @@ sub ForAllParents
     &$recurse($interface);
 }
 
-sub AddMethodsConstantsAndAttributesFromParentInterfaces
-{
-    # Add to $interface all of its inherited interface members, except for those
-    # inherited through $interface's first listed parent.  If an array reference
-    # is passed in as $parents, the names of all ancestor interfaces visited
-    # will be appended to the array.  If $collectDirectParents is true, then
-    # even the names of $interface's first listed parent and its ancestors will
-    # be appended to $parents.
-
-    my $object = shift;
-    my $interface = shift;
-    my $parents = shift;
-    my $collectDirectParents = shift;
-
-    my $first = 1;
-
-    $object->ForAllParents($interface, sub {
-        my $currentInterface = shift;
-
-        if ($first) {
-            # Ignore first parent class, already handled by the generation itself.
-            $first = 0;
-
-            if ($collectDirectParents) {
-                # Just collect the names of the direct ancestor interfaces,
-                # if necessary.
-                push(@$parents, $currentInterface->name);
-                $object->ForAllParents($currentInterface, sub {
-                    my $currentInterface = shift;
-                    push(@$parents, $currentInterface->name);
-                }, undef);
-            }
-
-            # Prune the recursion here.
-            return 'prune';
-        }
-
-        # Collect the name of this additional parent.
-        push(@$parents, $currentInterface->name) if $parents;
-
-        print "  |  |>  -> Inheriting "
-            . @{$currentInterface->constants} . " constants, "
-            . @{$currentInterface->functions} . " functions, "
-            . @{$currentInterface->attributes} . " attributes...\n  |  |>\n" if $verbose;
-
-        # Add this parent's members to $interface.
-        push(@{$interface->constants}, @{$currentInterface->constants});
-        push(@{$interface->functions}, @{$currentInterface->functions});
-        push(@{$interface->attributes}, @{$currentInterface->attributes});
-    });
-}
-
 sub FindSuperMethod
 {
     my ($object, $interface, $functionName) = @_;
