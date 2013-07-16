@@ -1,3 +1,12 @@
+2013-07-16  Alex Christensen  <achristensen@apple.com>
+
+        Added passing WebGL tests.
+        https://bugs.webkit.org/show_bug.cgi?id=118696
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/TestExpectations: Replaced webgl directory with list of failing webgl tests.
+
 2013-07-16  Filip Pizlo  <fpizlo@apple.com>
 
         MakeRope fixup shouldn't lead to an Identity without kids
