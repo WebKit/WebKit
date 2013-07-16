@@ -14290,6 +14290,9 @@
     <None Include="..\css\quirks.css">
       <Filter>css</Filter>
     </None>
+    <None Include="..\css\unavailablePlugIns.css">
+      <Filter>css</Filter>
+    </None>
     <None Include="..\xml\XPathGrammar.y">
       <Filter>xml</Filter>
     </None>

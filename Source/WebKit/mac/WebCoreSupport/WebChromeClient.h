@@ -102,7 +102,7 @@ public:
     virtual void setStatusbarText(const WTF::String&) OVERRIDE;
 
     virtual void scrollbarsModeDidChange() const OVERRIDE { }
-    virtual bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const OVERRIDE;
+    virtual bool shouldUnavailablePluginMessageIncludeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const OVERRIDE;
     virtual void unavailablePluginButtonClicked(WebCore::Element*, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const OVERRIDE;
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags) OVERRIDE;
 
