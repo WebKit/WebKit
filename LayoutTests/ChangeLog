@@ -1,5 +1,12 @@
 2013-07-16  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Adjust test and update results for AppleWin port after r151868.
+
+        * platform/win/accessibility/multiple-select-element-role-expected.txt:
+        * platform/win/accessibility/multiple-select-element-role.html:
+
+2013-07-16  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed rebaselines, AppleWin port.
 
         * platform/win/fast/js/global-constructors-attributes-dedicated-worker-expected.txt: Added.
