@@ -1,4 +1,3 @@
-
 # Tests failing on WK1 only (working on WK2)
 
 # Failing compositing tests - need more investigation
@@ -161,3 +160,9 @@ webkit.org/b/117336 css3/filters/composited-during-animation-layertree.html [ Sk
 
 # [EFL][GTK][Qt] css3/flexbox/image-percent-max-height.html ref test fail after r151997
 webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ Skip ]
+
+# SHADOW_DOM not enabled on WK1
+editing/pasteboard/paste-noplugin.html [ Skip ]
+
+# [Qt][WK1] New fast/events/ime-composition-events-001.html fails after r152668.
+webkit.org/b/118722 fast/events/ime-composition-events-001.html [ Skip ]

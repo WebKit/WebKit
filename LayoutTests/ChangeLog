@@ -1,3 +1,14 @@
+2013-07-16  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt]Unreviewed gardening. New baseline and skip failing tests.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt-5.0-wk1/http/tests/security/contentSecurityPolicy/object-src-none-allowed-expected.txt: Added.
+        * platform/qt/TestExpectations:
+        * platform/qt/editing/caret/caret-color-expected.png: Added.
+        * platform/qt/editing/caret/caret-color-expected.txt: Added.
+        * platform/qt/http/tests/security/contentSecurityPolicy/object-src-none-blocked-expected.txt: Added.
+
 2013-07-15  Yuta Kitamura  <yutak@chromium.org>
 
         NULL ptr in WebCore::Range::processAncestorsAndTheirSiblings
