@@ -1,3 +1,15 @@
+2013-07-16  Brian Holt  <brian.holt@samsung.com>
+
+        webkitpy: replace urllib with urllib2 for downloading additional modules
+        https://bugs.webkit.org/show_bug.cgi?id=118671
+
+        Reviewed by Ryosuke Niwa.
+
+        Urllib2 is available whereever urllib is, but has better proxy support.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller._download_to_stream):
+
 2013-07-16  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Adds support for aria-haspopup property.

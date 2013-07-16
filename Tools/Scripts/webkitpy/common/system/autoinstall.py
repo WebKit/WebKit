@@ -39,7 +39,7 @@ import stat
 import sys
 import tarfile
 import tempfile
-import urllib
+import urllib2
 import urlparse
 import zipfile
 
@@ -287,7 +287,7 @@ class AutoInstaller(object):
         failures = 0
         while True:
             try:
-                netstream = urllib.urlopen(url)
+                netstream = urllib2.urlopen(url)
                 break
             except IOError, err:
                 # Try multiple times
