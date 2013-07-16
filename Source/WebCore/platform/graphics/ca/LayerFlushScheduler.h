@@ -38,7 +38,7 @@ class LayerFlushScheduler {
     WTF_MAKE_NONCOPYABLE(LayerFlushScheduler);
 public:
     LayerFlushScheduler(LayerFlushSchedulerClient*);
-    ~LayerFlushScheduler();
+    virtual ~LayerFlushScheduler();
 
     void schedule();
     void invalidate();
@@ -55,7 +55,9 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<CFRunLoopObserverRef> m_runLoopObserver;
     static void runLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context);
-    void runLoopObserverCallback();
+
+protected:
+    virtual void runLoopObserverCallback();
 #endif
 };
 

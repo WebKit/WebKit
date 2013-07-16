@@ -64,23 +64,40 @@ extern BOOL applicationIsTerminating;
 extern int pluginDatabaseClientCount;
 
 #if USE(ACCELERATED_COMPOSITING)
-class LayerFlushController : public WebCore::LayerFlushSchedulerClient {
+class LayerFlushController;
+
+class WebViewLayerFlushScheduler : public WebCore::LayerFlushScheduler {
 public:
-    static PassOwnPtr<LayerFlushController> create(WebView* webView)
+    WebViewLayerFlushScheduler(LayerFlushController*);
+    virtual ~WebViewLayerFlushScheduler() { }
+
+private:
+    virtual void runLoopObserverCallback() OVERRIDE
     {
-        return adoptPtr(new LayerFlushController(webView));
+        RefPtr<LayerFlushController> protector = m_flushController;
+        WebCore::LayerFlushScheduler::runLoopObserverCallback();
+    }
+    
+    LayerFlushController* m_flushController;
+};
+
+class LayerFlushController : public RefCounted<LayerFlushController>, public WebCore::LayerFlushSchedulerClient {
+public:
+    static PassRefPtr<LayerFlushController> create(WebView* webView)
+    {
+        return adoptRef(new LayerFlushController(webView));
     }
     
     virtual bool flushLayers();
     
     void scheduleLayerFlush();
-    void invalidateObserver();
+    void invalidate();
     
 private:
     LayerFlushController(WebView*);
     
     WebView* m_webView;
-    WebCore::LayerFlushScheduler m_layerFlushScheduler;
+    WebViewLayerFlushScheduler m_layerFlushScheduler;
 };
 #endif
 
@@ -169,7 +186,7 @@ private:
     // so that the NSView drawing is visually synchronized with CALayer updates.
     BOOL needsOneShotDrawingSynchronization;
     BOOL postsAcceleratedCompositingNotifications;
-    OwnPtr<LayerFlushController> layerFlushController;
+    RefPtr<LayerFlushController> layerFlushController;
 #endif
 
     NSPasteboard *insertionPasteboard;

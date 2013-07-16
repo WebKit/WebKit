@@ -1139,7 +1139,7 @@ static bool fastDocumentTeardownEnabled()
 
 #if USE(ACCELERATED_COMPOSITING)
     if (_private->layerFlushController) {
-        _private->layerFlushController->invalidateObserver();
+        _private->layerFlushController->invalidate();
         _private->layerFlushController = nullptr;
     }
 #endif

@@ -1,3 +1,23 @@
+2013-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Protect against the LayerFlushController being deleted inside its flushLayers() callback
+        https://bugs.webkit.org/show_bug.cgi?id=118741
+
+        Reviewed by Tim Horton.
+
+        It's possible (especially on iOS) for the LayerFlushController to be destroyed
+        inside its callback, via -[WebView _close]. Protect against this by making
+        it refcounted, and holding a ref across the callback.
+        
+        Due to the odd relationship in which LayerFlushController owns its LayerFlushScheduler
+        by value, we achieve this by allowing subclasses of LayerFlushScheduler
+        to override runLoopObserverCallback(). WebViewLayerFlushScheduler uses the
+        override to protect the owner of the LayerFlushScheduler, which is the
+        LayerFlushController, when the callback is firing.
+
+        * WebCore.exp.in:
+        * platform/graphics/ca/LayerFlushScheduler.h: Make runLoopObserverCallback() and the dtor virtual.
+
 2013-07-16  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of multiple inheritance support from the bindings generators

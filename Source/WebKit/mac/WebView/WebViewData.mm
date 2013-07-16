@@ -48,9 +48,10 @@ void LayerFlushController::scheduleLayerFlush()
     m_layerFlushScheduler.schedule();
 }
 
-void LayerFlushController::invalidateObserver()
+void LayerFlushController::invalidate()
 {
     m_layerFlushScheduler.invalidate();
+    m_webView = nullptr;
 }
 
 LayerFlushController::LayerFlushController(WebView* webView)
@@ -58,6 +59,12 @@ LayerFlushController::LayerFlushController(WebView* webView)
     , m_layerFlushScheduler(this)
 {
     ASSERT_ARG(webView, webView);
+}
+
+WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flushController)
+    : WebCore::LayerFlushScheduler(flushController)
+    , m_flushController(flushController)
+{
 }
 #endif
 
