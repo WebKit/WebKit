@@ -1,3 +1,15 @@
+2013-07-16  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] fast/events/platform-wheelevent-with-delta-zero-crash.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=110222
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added handling of zero mouse scroll deltas in EventSender.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (mouseScrollByCallback):
+
 2013-07-16  Brian Holt  <brian.holt@samsung.com>
 
         webkitpy: replace urllib with urllib2 for downloading additional modules
