@@ -30,6 +30,32 @@ namespace WebCore {
 class MouseEvent;
 class TextRun;
 
+class RenderEmbeddedObject;
+
+class RenderEmbeddedObjectEventListener : public EventListener {
+public:
+    static PassRefPtr<RenderEmbeddedObjectEventListener> create(RenderEmbeddedObject* renderEmbeddedObject) { return adoptRef(new RenderEmbeddedObjectEventListener(renderEmbeddedObject)); }
+    static const RenderEmbeddedObjectEventListener* cast(const EventListener* listener)
+    {
+        return listener->type() == RenderEmbeddedObjectEventListenerType
+            ? static_cast<const RenderEmbeddedObjectEventListener*>(listener)
+            : 0;
+    }
+
+    virtual bool operator==(const EventListener& other);
+
+private:
+    RenderEmbeddedObjectEventListener(RenderEmbeddedObject* renderEmbeddedObject)
+        : EventListener(RenderEmbeddedObjectEventListenerType)
+        , m_renderEmbeddedObject(renderEmbeddedObject)
+    {
+    }
+
+    virtual void handleEvent(ScriptExecutionContext*, Event*);
+
+    RenderEmbeddedObject* m_renderEmbeddedObject;
+};
+
 // Renderer for embeds and objects, often, but not always, rendered via plug-ins.
 // For example, <embed src="foo.html"> does not invoke a plug-in.
 class RenderEmbeddedObject : public RenderPart {
@@ -46,11 +72,14 @@ public:
     void setPluginUnavailabilityReason(PluginUnavailabilityReason);
     bool showsUnavailablePluginIndicator() const;
 
+    void setPluginUnavailabilityReasonDescription(const String&);
+    const String& pluginUnavailabilityReasonDescription() { return m_unavailabilityDescription; }
+
     // FIXME: This belongs on HTMLObjectElement.
     bool hasFallbackContent() const { return m_hasFallbackContent; }
     void setHasFallbackContent(bool hasFallbackContent) { m_hasFallbackContent = hasFallbackContent; }
 
-    void handleUnavailablePluginIndicatorEvent(Event*);
+    void handleUnavailablePluginButtonClickEvent(Event*);
 
     bool isReplacementObscured() const;
 
@@ -59,10 +88,9 @@ public:
 #endif
 
 protected:
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
-    virtual void paint(PaintInfo&, const LayoutPoint&);
+    virtual void willBeDestroyed() OVERRIDE;
 
-    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
+    virtual void paint(PaintInfo&, const LayoutPoint&);
 
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
@@ -88,12 +116,6 @@ private:
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier, Node** stopNode);
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier, Node** stopNode);
 
-    void setUnavailablePluginIndicatorIsPressed(bool);
-    bool isInUnavailablePluginIndicator(MouseEvent*) const;
-    bool isInUnavailablePluginIndicator(const LayoutPoint&) const;
-    bool getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, Font&, TextRun&, float& textWidth) const;
-    LayoutRect replacementTextRect(const LayoutPoint&) const;
-
     virtual bool canHaveChildren() const;
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
@@ -104,10 +126,10 @@ private:
 
     bool m_showsUnavailablePluginIndicator;
     PluginUnavailabilityReason m_pluginUnavailabilityReason;
-    String m_unavailablePluginReplacementText;
-    bool m_unavailablePluginIndicatorIsPressed;
-    bool m_mouseDownWasInUnavailablePluginIndicator;
     RenderObjectChildList m_children;
+    RefPtr<HTMLElement> m_indicator;
+    RefPtr<HTMLElement> m_indicatorLabel;
+    String m_unavailabilityDescription;
 };
 
 inline RenderEmbeddedObject* toRenderEmbeddedObject(RenderObject* object)

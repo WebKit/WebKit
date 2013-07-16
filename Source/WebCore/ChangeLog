@@ -1,3 +1,80 @@
+2013-07-15  Tim Horton  <timothy_horton@apple.com>
+
+        Update blocked/missing plug-in UI
+        https://bugs.webkit.org/show_bug.cgi?id=118347
+        <rdar://problem/14209318>
+
+        Reviewed by Sam Weinig.
+        Patch by Anders Carlsson, Antoine Quint, Sam Weinig, and myself.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSDefaultStyleSheets.cpp:
+        * css/unavailablePlugIns.css: Added.
+        Add new Source/WebCore/css/unavailablePlugIns.css stylesheet.
+
+        * dom/EventListener.h:
+        New event listener type to support the creation of an event listener
+        for the label and icon for missing / blocked plug-in UI.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+        Remove explicit event handling since we're now using a DOM event handler
+        on the label and icon in the shadow root.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+        Don't populate the shadow root with plugin snapshotting elements
+        if we're not planning on showing a snapshot, because this means that
+        the shadow root was created for the unavailable plugin indicator instead.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::shouldUnavailablePluginMessageIncludeButton):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject):
+        (WebCore::shouldUnavailablePluginMessageIncludeButton):
+        Rename from shouldUnavailablePluginMessageBeButton to
+        shouldUnavailablePluginMessageIncludeButton for accuracy.
+
+        (WebCore::RenderEmbeddedObject::setPluginUnavailabilityReasonDescription):
+        Set custom text to be displayed in the unavailability indicator.
+
+        (WebCore::RenderEmbeddedObject::setPluginUnavailabilityReason):
+        (WebCore::RenderEmbeddedObject::handleUnavailablePluginButtonClickEvent):
+        (WebCore::RenderEmbeddedObject::willBeDestroyed):
+        (WebCore::RenderEmbeddedObject::isReplacementObscured):
+        (WebCore::RenderEmbeddedObjectEventListener::handleEvent):
+        (WebCore::RenderEmbeddedObjectEventListener::operator==):
+        Remove the old code used to render the missing / blocked plug-in UI in C++ in favor
+        of populating a shadow root in setPluginUnavailabilityReason(). We add a DOM event
+        listener in the shadow root to eventually call into unavailablePluginButtonClicked()
+        on the ChromeClient.
+
+        (WebCore::RenderEmbeddedObject::paint):
+        (WebCore::RenderEmbeddedObject::layout):
+        Paint and lay out UA shadow root children.
+
+        (WebCore::RenderEmbeddedObject::canHaveChildren):
+        canHaveChildren can use the existence of a UA shadow root to decide
+        whether a RenderEmbeddedObject can have children.
+
+        * rendering/RenderEmbeddedObject.h:
+        (WebCore::RenderEmbeddedObjectEventListener::create):
+        (WebCore::RenderEmbeddedObjectEventListener::cast):
+        (WebCore::RenderEmbeddedObjectEventListener::RenderEmbeddedObjectEventListener):
+        Create the new event listener class necessary to handle events in the shadow root.
+
+        (WebCore::RenderEmbeddedObject::pluginUnavailabilityReasonDescription): Added.
+
+        * rendering/RenderWidget.h:
+        Promote willBeDestroyed() to be public so we may override it in the RenderEmbeddedObject subclass.
+
 2013-07-15  Andreas Kling  <akling@apple.com>
 
         Pack WebCore::Font slightly better.

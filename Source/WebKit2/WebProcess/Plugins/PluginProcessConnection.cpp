@@ -122,12 +122,15 @@ void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connect
 
 void PluginProcessConnection::didClose(CoreIPC::Connection*)
 {
-    // The plug-in process must have crashed.
-    for (HashMap<uint64_t, PluginProxy*>::const_iterator::Values it = m_plugins.begin().values(), end = m_plugins.end().values(); it != end; ++it) {
-        PluginProxy* pluginProxy = (*it);
+    // Make a copy, because calling pluginProcessCrashed can cause a reattach (for the unavailability indicator)
+    // and can destroy the widget, mutating the HashMap while we're iterating it.
+    Vector<RefPtr<PluginProxy> > pluginProxies;
+    for (const auto& pluginProxy : m_plugins.values())
+        pluginProxies.append(pluginProxy);
 
+    // The plug-in process must have crashed.
+    for (const auto& pluginProxy : pluginProxies)
         pluginProxy->pluginProcessCrashed();
-    }
 }
 
 void PluginProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)

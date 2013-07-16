@@ -505,7 +505,7 @@ void WebChromeClient::scrollRectIntoView(const IntRect&) const
     notImplemented();
 }
 
-bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
+bool WebChromeClient::shouldUnavailablePluginMessageIncludeButton(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
     switch (pluginUnavailabilityReason) {
     case RenderEmbeddedObject::PluginMissing:

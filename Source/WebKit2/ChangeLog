@@ -1,3 +1,58 @@
+2013-07-15  Tim Horton  <timothy_horton@apple.com>
+
+        Update blocked/missing plug-in UI
+        https://bugs.webkit.org/show_bug.cgi?id=118347
+        <rdar://problem/14209318>
+
+        Reviewed by Sam Weinig.
+        Patch by Antoine Quint, Anders Carlsson, Sam Weinig, and myself.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add a 6 argument -> 4 reply message handler.
+        (It seems that FindPlugin is getting a little out of hand.)
+
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::pluginLoadPolicy):
+        * UIProcess/WebLoaderClient.h:
+        Add an unavailability description out-argument to a new version of
+        pluginLoadPolicy, so clients can override the text of the unavailable
+        plugin indicator. Bump the WKPageLoaderClient version and update APIClientTraits.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Plumb the unavailability description through to the WebProcess via
+        the FindPlugin message.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didClose):
+        Make a strongly referencing copy of the list of PluginProxies, so we can
+        throw them away without the HashMap being mutated underneath us (see the comment).
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginProcessCrashed):
+        Invalidate the plug-in's widget before setting the plugin unavailability reason,
+        because doing so would cause the plug-in's renderer to be torn down, making
+        invalidate() crash.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldUnavailablePluginMessageIncludeButton):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Rename from shouldUnavailablePluginMessageBeButton to
+        shouldUnavailablePluginMessageIncludeButton for accuracy.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Acquire the unavailability description from the client
+        (via FindPlugin) and hand it to the RenderEmbeddedObject.
+        (WebKit::WebPage::canPluginHandleResponse):
+        Re-acquire the plugin's renderer, in case setPluginUnavailabilityReason destroyed it.
+
 2013-07-15  Simon Cooper  <scooper@apple.com>
 
         PluginProcess deny file-read-data /Library/Application Support/Macromedia/FlashPlayerTrust

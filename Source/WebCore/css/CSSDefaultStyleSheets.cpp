@@ -206,6 +206,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
         String plugInsRules = RenderTheme::themeForPage(element->document()->page())->extraPlugInsStyleSheet() + element->document()->page()->chrome().client()->plugInExtraStyleSheet();
         if (plugInsRules.isEmpty())
             plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet));
+        plugInsRules = plugInsRules + String(unavailablePlugInsUserAgentStyleSheet, sizeof(unavailablePlugInsUserAgentStyleSheet));
         plugInsStyleSheet = parseUASheet(plugInsRules);
         defaultStyle->addRulesFromSheet(plugInsStyleSheet, screenEval());
         changedDefaultStyle = true;
