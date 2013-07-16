@@ -221,6 +221,8 @@ struct Node {
 
     void convertToIdentity()
     {
+        RELEASE_ASSERT(child1());
+        RELEASE_ASSERT(!child2());
         setOpAndDefaultNonExitFlags(Identity);
     }
 

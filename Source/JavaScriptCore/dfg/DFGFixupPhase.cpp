@@ -960,6 +960,11 @@ private:
             JSString* string = jsCast<JSString*>(m_graph.valueOfJSConstant(edge.node()).asCell());
             if (string->length())
                 continue;
+            
+            // Don't allow the MakeRope to have zero children.
+            if (!i && !node->child2())
+                break;
+            
             node->children.removeEdge(i--);
         }
         

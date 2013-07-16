@@ -1,3 +1,17 @@
+2013-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+        MakeRope fixup shouldn't lead to an Identity without kids
+        https://bugs.webkit.org/show_bug.cgi?id=118745
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/dfg-make-rope-all-empty-strings.html: Added.
+        * fast/js/dfg-make-rope-all-empty-strings-expected.txt: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-make-rope-all-empty-strings.js: Added.
+        (foo):
+        (bar):
+
 2013-07-16  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed rebaseline test added in r152612 for Apple Windows port.
