@@ -1,3 +1,17 @@
+2013-07-15  Yuta Kitamura  <yutak@chromium.org>
+
+        NULL ptr in WebCore::Range::processAncestorsAndTheirSiblings
+        https://bugs.webkit.org/show_bug.cgi?id=77614
+
+        Reviewed by Ryosuke Niwa.
+
+        This change is ported from Blink revision 153483:
+        https://src.chromium.org/viewvc/blink?revision=153483&view=revision
+
+        * fast/dom/Range/detach-range-during-deletecontents-expected.txt: Added.
+        * fast/dom/Range/detach-range-during-deletecontents.html: Added.
+        * fast/dom/Range/resources/detach-range-during-deletecontents-iframe.xhtml: Added.
+
 2013-07-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Input element that becomes visible during a simulated click event from an associated label element doesn't get focused

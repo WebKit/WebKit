@@ -35,6 +35,8 @@ class RangeBoundaryPoint {
 public:
     explicit RangeBoundaryPoint(PassRefPtr<Node> container);
 
+    explicit RangeBoundaryPoint(const RangeBoundaryPoint&);
+
     const Position toPosition() const;
 
     Node* container() const;
@@ -56,7 +58,7 @@ public:
 
 private:
     static const int invalidOffset = -1;
-    
+
     RefPtr<Node> m_containerNode;
     mutable int m_offsetInContainer;
     RefPtr<Node> m_childBeforeBoundary;
@@ -68,6 +70,13 @@ inline RangeBoundaryPoint::RangeBoundaryPoint(PassRefPtr<Node> container)
     , m_childBeforeBoundary(0)
 {
     ASSERT(m_containerNode);
+}
+
+inline RangeBoundaryPoint::RangeBoundaryPoint(const RangeBoundaryPoint& other)
+    : m_containerNode(other.container())
+    , m_offsetInContainer(other.offset())
+    , m_childBeforeBoundary(other.childBefore())
+{
 }
 
 inline Node* RangeBoundaryPoint::container() const

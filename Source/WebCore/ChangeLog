@@ -1,3 +1,26 @@
+2013-07-15  Yuta Kitamura  <yutak@chromium.org>
+
+        Fix a crash in Range::processContents().
+
+        NULL ptr in WebCore::Range::processAncestorsAndTheirSiblings
+        https://bugs.webkit.org/show_bug.cgi?id=77614
+
+        Reviewed by Ryosuke Niwa.
+
+        This change is ported from Blink revision 153483:
+        https://src.chromium.org/viewvc/blink?revision=153483&view=revision
+
+        This crash can be initiated by calling Range.detach() while deleteContents()
+        is processing the same range. Range::processContents() should save the state
+        of the range since mutation events can change the state of the range.
+
+        Test: fast/dom/Range/detach-range-during-deletecontents.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::processContents):
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::RangeBoundaryPoint):
+
 2013-07-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Input element that becomes visible during a simulated click event from an associated label element doesn't get focused
