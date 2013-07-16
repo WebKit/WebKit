@@ -495,6 +495,9 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (!placeholder.isEmpty())
         attributeSet = addToAtkAttributeSet(attributeSet, "placeholder-text", placeholder.utf8().data());
 
+    if (coreObject->ariaHasPopup())
+        attributeSet = addToAtkAttributeSet(attributeSet, "aria-haspopup", "true");
+
     return attributeSet;
 }
 

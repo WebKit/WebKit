@@ -51,6 +51,24 @@ static String coreAttributeToAtkAttribute(JSStringRef attribute)
     return "";
 }
 
+static String getAttributeSetValueForId(AtkObject* accessible, const char* id)
+{
+    const char* attributeValue = 0;
+    AtkAttributeSet* attributeSet = atk_object_get_attributes(accessible);
+    for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
+        AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
+        if (!strcmp(atkAttribute->name, id)) {
+            attributeValue = atkAttribute->value;
+            break;
+        }
+    }
+
+    String atkAttributeValue = String::fromUTF8(attributeValue);
+    atk_attribute_set_free(attributeSet);
+
+    return atkAttributeValue;
+}
+
 static inline String roleToString(AtkRole role)
 {
     switch (role) {
@@ -804,21 +822,8 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
     if (atkAttributeName.isEmpty())
         return JSStringCreateWithCharacters(0, 0);
 
-    const char* attributeValue = 0;
-    AtkAttributeSet* attributeSet = atk_object_get_attributes(ATK_OBJECT(m_element));
-    for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
-        AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
-        if (!strcmp(atkAttribute->name, atkAttributeName.utf8().data())) {
-            attributeValue = atkAttribute->value;
-            break;
-        }
-    }
-    JSStringRef jsString = attributeValue
-        ? JSStringCreateWithUTF8CString(attributeValue)
-        : JSStringCreateWithCharacters(0, 0);
-    atk_attribute_set_free(attributeSet);
-
-    return jsString;
+    String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element), atkAttributeName.utf8().data());
+    return JSStringCreateWithUTF8CString(attributeValue.utf8().data());
 }
 
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
@@ -1021,8 +1026,10 @@ bool AccessibilityUIElement::isIgnored() const
 
 bool AccessibilityUIElement::hasPopup() const
 {
-    // FIXME: implement
-    return false;
+    if (!m_element || !ATK_IS_OBJECT(m_element))
+        return false;
+
+    return equalIgnoringCase(getAttributeSetValueForId(ATK_OBJECT(m_element), "aria-haspopup"), "true");
 }
 
 void AccessibilityUIElement::takeFocus()

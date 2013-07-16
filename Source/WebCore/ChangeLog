@@ -1,3 +1,18 @@
+2013-07-16  Krzysztof Czech  <k.czech@ymail.com>
+
+        [ATK] Adds support for aria-haspopup property.
+        https://bugs.webkit.org/show_bug.cgi?id=117834
+
+        Reviewed by Christophe Dumez.
+
+        Adds support for aria-haspopup property.
+
+        Tests: accessibility/element-haspopup.html
+               accessibility/popup-button-title.html
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+
 2013-07-16  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [texmap][GStreamer] upload onto the texture only the buffer to be painted
