@@ -1,3 +1,13 @@
+2013-07-16  David Farler  <dfarler@apple.com>
+
+        Typo in DFGInsertionSet.h header guard: "DFGInsectionSet_h" -> "DFGInsertionSet_h"
+        https://bugs.webkit.org/show_bug.cgi?id=118753
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGInsertionSet.h:
+        "DFGInsectionSet_h" -> "DFGInsertionSet_h"
+
 2013-07-16  Filip Pizlo  <fpizlo@apple.com>
 
         MakeRope fixup shouldn't lead to an Identity without kids

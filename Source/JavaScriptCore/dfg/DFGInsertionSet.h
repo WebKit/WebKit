@@ -24,7 +24,7 @@
  */
 
 #ifndef DFGInsertionSet_h
-#define DFGInsectionSet_h
+#define DFGInsertionSet_h
 
 #include <wtf/Platform.h>
 
