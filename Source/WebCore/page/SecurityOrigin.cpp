@@ -539,7 +539,7 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const St
 PassRefPtr<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, int port)
 {
     if (port < 0 || port > MaxAllowedPort)
-        createUnique();
+        return createUnique();
     String decodedHost = decodeURLEscapeSequences(host);
     return create(KURL(KURL(), protocol + "://" + host + ":" + String::number(port) + "/"));
 }
