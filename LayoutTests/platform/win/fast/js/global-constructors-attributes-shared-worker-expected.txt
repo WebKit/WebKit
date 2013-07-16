@@ -107,3 +107,4 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'XMLHttpRequest').configur
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
