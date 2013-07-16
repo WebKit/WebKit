@@ -47,6 +47,7 @@ typedef int ExceptionCode;
 
 enum EChildrenOnly { IncludeNode, ChildrenOnly };
 enum EAbsoluteURLs { DoNotResolveURLs, ResolveAllURLs, ResolveNonLocalURLs };
+enum EFragmentSerialization { HTMLFragmentSerialization, XMLFragmentSerialization };
 
 PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text);
 PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL, ParserContentPolicy = AllowScriptingContent);
@@ -64,7 +65,7 @@ void replaceChildrenWithFragment(ContainerNode*, PassRefPtr<DocumentFragment>, E
 void replaceChildrenWithText(ContainerNode*, const String&, ExceptionCode&);
 
 String createMarkup(const Range*, Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
-String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0, EAbsoluteURLs = DoNotResolveURLs, Vector<QualifiedName>* tagNamesToSkip = 0);
+String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0, EAbsoluteURLs = DoNotResolveURLs, Vector<QualifiedName>* tagNamesToSkip = 0, EFragmentSerialization = HTMLFragmentSerialization);
 
 String createFullMarkup(const Node*);
 String createFullMarkup(const Range*);

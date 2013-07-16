@@ -1,3 +1,40 @@
+2013-07-15  Rob Buis  <rwlbuis@webkit.org>
+
+        XMLSerializer doesn't include namespaces on nodes in HTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=16496
+
+        Reviewed by Ryosuke Niwa.
+
+        Introduce a xml fragment serialization mode as indicated by
+        http://html5.org/specs/dom-parsing.html#xmlserializer (commit 00b84d2). In this mode
+        the XML fragment serialization algorithm is respected, the changes in this patch do the following:
+
+        - elements are self-closing if otherwise this would lead to invalid xml syntax.
+        - the resulting xml is XML namespace-well-formed (http://www.w3.org/TR/xml-names11/#Conformance).
+        This is achieved by always, when in xml fragment serialization mode, attempting to write out the element/attribute namespace,
+        preventing using the XML namespace as a default namespace and special casing the use of element's in XML namespace by using the xml prefix.
+
+        The chosen approach matches FireFox 25 behavior.
+
+        Test: fast/dom/dom-serialize-namespace.html
+
+        * WebCore.order: Adapt to changed createMarkup signature.
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::MarkupAccumulator):
+        (WebCore::MarkupAccumulator::serializeNodesWithNamespaces): makes sure xml namespace/prefix is known so it is never used in namespace declarations.
+        (WebCore::MarkupAccumulator::appendNamespace): Avoid adding namespace declarations that do not differ from current default namespace.
+        (WebCore::MarkupAccumulator::appendOpenTag): Print xml prefix if the element's namespace is XML to avoid conflicts.
+        (WebCore::MarkupAccumulator::appendAttribute):
+        (WebCore::MarkupAccumulator::shouldAddNamespaceAttribute): Also take into account xmlns attributes with no namespace.
+        (WebCore::MarkupAccumulator::shouldSelfClose): Force self-closing to create well-formed XML elements.
+        * editing/MarkupAccumulator.h: Use EFragmentSerialization.
+        (WebCore::MarkupAccumulator::inXMLFragmentSerialization):
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+        * editing/markup.h: Add EFragmentSerialization enum.
+        * xml/XMLSerializer.cpp:
+        (WebCore::XMLSerializer::serializeToString):
+
 2013-07-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         MediaFragmentURIParser::parseFragments shouldn't upconvert 8-bit string

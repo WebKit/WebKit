@@ -66,7 +66,7 @@ struct EntityDescription {
 // FIXME: Noncopyable?
 class MarkupAccumulator {
 public:
-    MarkupAccumulator(Vector<Node*>*, EAbsoluteURLs, const Range* = 0);
+    MarkupAccumulator(Vector<Node*>*, EAbsoluteURLs, const Range* = 0, EFragmentSerialization = HTMLFragmentSerialization);
     virtual ~MarkupAccumulator();
 
     String serializeNodes(Node* targetNode, Node* nodeToSkip, EChildrenOnly);
@@ -111,9 +111,11 @@ private:
     String resolveURLIfNeeded(const Element*, const String&) const;
     void appendQuotedURLAttributeValue(StringBuilder&, const Element*, const Attribute&);
     void serializeNodesWithNamespaces(Node* targetNode, Node* nodeToSkip, EChildrenOnly, const Namespaces*, Vector<QualifiedName>* tagNamesToSkip);
+    bool inXMLFragmentSerialization() const { return m_fragmentSerialization == XMLFragmentSerialization; }
 
     StringBuilder m_markup;
     const EAbsoluteURLs m_resolveURLsMethod;
+    EFragmentSerialization m_fragmentSerialization;
 };
 
 }

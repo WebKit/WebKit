@@ -135,7 +135,7 @@ var attrib = document.createAttribute("myAttrib");
 attrib.nodeValue = "XXX";
 node.setAttributeNode(attrib);
 
-shouldBe("(new XMLSerializer).serializeToString(node)", '"<div myAttrib=\\"XXX\\"></div>"');
+shouldBe("(new XMLSerializer).serializeToString(node)", '"<div xmlns=\\"http://www.w3.org/1999/xhtml\\" myAttrib=\\"XXX\\"></div>"');
 shouldBe("node.getAttributeNode('myAttrib').name", '"myAttrib"');
 shouldBe("node.getAttributeNode('myattrib').name", '"myAttrib"');
 shouldBe("attrib.name", '"myAttrib"');

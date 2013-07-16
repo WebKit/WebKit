@@ -1,2 +1,2 @@
-<div id="target"> <div id="output"> </div><foo xml:space="preserve"></foo><bar xml:space="default"></bar></div>
+<div xmlns="http://www.w3.org/1999/xhtml" id="target"> <div id="output"> </div><xml:foo xml:space="preserve"/><xml:bar xml:space="default"/></div>
 

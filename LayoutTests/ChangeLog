@@ -1,3 +1,21 @@
+2013-07-15  Rob Buis  <rwlbuis@webkit.org>
+
+        XMLSerializer doesn't include namespaces on nodes in HTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=16496
+
+        Reviewed by Ryosuke Niwa.
+
+        The updated tests are progressions and match FF.
+
+        * fast/dom/Element/getAttribute-check-case-sensitivity-expected.txt:
+        * fast/dom/Element/script-tests/getAttribute-check-case-sensitivity.js:
+        * fast/dom/XMLSerializer-xml-namespace-expected.txt:
+        * fast/dom/dom-serialize-namespace-expected.txt: Added.
+        * fast/dom/dom-serialize-namespace.html: Added.
+        * fast/xsl/xslt-processor-expected.txt:
+        * inspector/elements/set-outer-html-expected.txt:
+        * svg/custom/xlink-prefix-in-attributes-expected.txt:
+
 2013-07-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         compositionstart event should contain the text to be replaced

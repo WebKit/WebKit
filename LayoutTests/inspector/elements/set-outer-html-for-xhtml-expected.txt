@@ -15,9 +15,9 @@ Event AttrRemoved: div
 Event CharacterDataModified: 
 ==========8<==========
 <div xmlns="http://www.w3.org/1999/xhtml" id="container" style="display:none">
-<p xmlns="http://www.w3.org/1999/xhtml">WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
-<h2 xmlns="http://www.w3.org/1999/xhtml">Getting not involved</h2>
-<p xmlns="http://www.w3.org/1999/xhtml" id="identity">There are many ways to get involved. You can:</p>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
+<h2>Getting not involved</h2>
+<p id="identity">There are many ways to get involved. You can:</p>
 </div>
 ==========>8==========
 
@@ -27,9 +27,9 @@ Wrapper identity: identity
 Event CharacterDataModified: 
 ==========8<==========
 <div xmlns="http://www.w3.org/1999/xhtml" id="container" style="display:none">
-<p xmlns="http://www.w3.org/1999/xhtml">WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
-<h2 xmlns="http://www.w3.org/1999/xhtml">Getting involved</h2>
-<p xmlns="http://www.w3.org/1999/xhtml" id="identity">There are many ways to get involved. You can:</p>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
+<h2>Getting involved</h2>
+<p id="identity">There are many ways to get involved. You can:</p>
 </div>
 ==========>8==========
 
@@ -46,9 +46,9 @@ Event AttrModified: a
 Event AttrRemoved: a
 ==========8<==========
 <div xmlns="http://www.w3.org/1999/xhtml" id="container" style="display:none">
-<p xmlns="http://www.w3.org/1999/xhtml">WebKit is used by <a foo="bar" href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
-<h2 xmlns="http://www.w3.org/1999/xhtml">Getting involved</h2>
-<p xmlns="http://www.w3.org/1999/xhtml" id="identity">There are many ways to get involved. You can:</p>
+<p>WebKit is used by <a foo="bar" href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
+<h2>Getting involved</h2>
+<p id="identity">There are many ways to get involved. You can:</p>
 </div>
 ==========>8==========
 
@@ -60,9 +60,9 @@ Event AttrRemoved: a
 Event AttrRemoved: a
 ==========8<==========
 <div xmlns="http://www.w3.org/1999/xhtml" id="container" style="display:none">
-<p xmlns="http://www.w3.org/1999/xhtml">WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
-<h2 xmlns="http://www.w3.org/1999/xhtml">Getting involved</h2>
-<p xmlns="http://www.w3.org/1999/xhtml" id="identity">There are many ways to get involved. You can:</p>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
+<h2>Getting involved</h2>
+<p id="identity">There are many ways to get involved. You can:</p>
 </div>
 ==========>8==========
 
@@ -77,9 +77,9 @@ Wrapper identity: identity
 Event NodeRemoved: 
 ==========8<==========
 <div xmlns="http://www.w3.org/1999/xhtml" id="container" style="display:none">
-<p xmlns="http://www.w3.org/1999/xhtml">WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
-<h2 xmlns="http://www.w3.org/1999/xhtml"></h2>
-<p xmlns="http://www.w3.org/1999/xhtml" id="identity">There are many ways to get involved. You can:</p>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
+<h2></h2>
+<p id="identity">There are many ways to get involved. You can:</p>
 </div>
 ==========>8==========
 
@@ -89,9 +89,9 @@ Wrapper identity: identity
 Event NodeInserted: 
 ==========8<==========
 <div xmlns="http://www.w3.org/1999/xhtml" id="container" style="display:none">
-<p xmlns="http://www.w3.org/1999/xhtml">WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
-<h2 xmlns="http://www.w3.org/1999/xhtml">Getting involved</h2>
-<p xmlns="http://www.w3.org/1999/xhtml" id="identity">There are many ways to get involved. You can:</p>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
+<h2>Getting involved</h2>
+<p id="identity">There are many ways to get involved. You can:</p>
 </div>
 ==========>8==========
 
@@ -108,9 +108,9 @@ Event NodeInserted: h2
 Event NodeRemoved: h2
 ==========8<==========
 <div xmlns="http://www.w3.org/1999/xhtml" id="container" style="display:none">
-<p xmlns="http://www.w3.org/1999/xhtml">WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
-<h2 xmlns="http://www.w3.org/1999/xhtml">Getting</h2><h2 xmlns="http://www.w3.org/1999/xhtml">involved</h2>
-<p xmlns="http://www.w3.org/1999/xhtml" id="identity">There are many ways to get involved. You can:</p>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
+<h2>Getting</h2><h2>involved</h2>
+<p id="identity">There are many ways to get involved. You can:</p>
 </div>
 ==========>8==========
 
@@ -122,9 +122,9 @@ Event NodeRemoved: h2
 Event NodeRemoved: h2
 ==========8<==========
 <div xmlns="http://www.w3.org/1999/xhtml" id="container" style="display:none">
-<p xmlns="http://www.w3.org/1999/xhtml">WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
-<h2 xmlns="http://www.w3.org/1999/xhtml">Getting involved</h2>
-<p xmlns="http://www.w3.org/1999/xhtml" id="identity">There are many ways to get involved. You can:</p>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
+<h2>Getting involved</h2>
+<p id="identity">There are many ways to get involved. You can:</p>
 </div>
 ==========>8==========
 
@@ -140,9 +140,9 @@ Event NodeInserted: h3
 Event NodeRemoved: h2
 ==========8<==========
 <div xmlns="http://www.w3.org/1999/xhtml" id="container" style="display:none">
-<p xmlns="http://www.w3.org/1999/xhtml">WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
-<h3 xmlns="http://www.w3.org/1999/xhtml">Getting involved</h3>
-<p xmlns="http://www.w3.org/1999/xhtml" id="identity">There are many ways to get involved. You can:</p>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
+<h3>Getting involved</h3>
+<p id="identity">There are many ways to get involved. You can:</p>
 </div>
 ==========>8==========
 
@@ -153,9 +153,9 @@ Event NodeInserted: h2
 Event NodeRemoved: h3
 ==========8<==========
 <div xmlns="http://www.w3.org/1999/xhtml" id="container" style="display:none">
-<p xmlns="http://www.w3.org/1999/xhtml">WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
-<h2 xmlns="http://www.w3.org/1999/xhtml">Getting involved</h2>
-<p xmlns="http://www.w3.org/1999/xhtml" id="identity">There are many ways to get involved. You can:</p>
+<p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc.</p>
+<h2>Getting involved</h2>
+<p id="identity">There are many ways to get involved. You can:</p>
 </div>
 ==========>8==========
 
