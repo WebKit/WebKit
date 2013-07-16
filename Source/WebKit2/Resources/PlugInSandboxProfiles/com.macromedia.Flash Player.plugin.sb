@@ -28,6 +28,9 @@
 (allow file-read* file-write*
     (mount-relative-regex #"^/\.TemporaryItems/"))
 
+(deny file-read* (with no-log)
+    (subpath "/Library/Application Support/Macromedia/FlashPlayerTrust"))
+
 (allow network-bind (local ip))
 
 (webkit-powerbox)

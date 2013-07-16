@@ -1,3 +1,21 @@
+2013-07-15  Simon Cooper  <scooper@apple.com>
+
+        PluginProcess deny file-read-data /Library/Application Support/Macromedia/FlashPlayerTrust
+        https://bugs.webkit.org/show_bug.cgi?id=118690
+        <rdar://problem/14255963>
+
+        Reviewed by Dean Jackson.
+
+        Silently deny access to FlashPlayerTrust. This location contains
+        files containing lists of paths that Flash Player will
+        "allow" access to (without asking the user). Since the plugin
+        sandbox won't permit the access to the listed paths it is better
+        to silently block attempts to read these "whitelists". The
+        "whitelists" are created by other Adobe "installer" like
+        applications.
+
+        * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player.plugin.sb:
+
 2013-07-14  Jon Lee  <jonlee@apple.com>
 
         Calling Notification.requestPermission() without a callback crashes
