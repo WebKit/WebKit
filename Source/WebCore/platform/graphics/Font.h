@@ -128,7 +128,7 @@ public:
     
     FontRenderingMode renderingMode() const { return m_fontDescription.renderingMode(); }
 
-    TypesettingFeatures typesettingFeatures() const { return m_typesettingFeatures; }
+    TypesettingFeatures typesettingFeatures() const { return static_cast<TypesettingFeatures>(m_typesettingFeatures); }
 
     const AtomicString& firstFamily() const { return m_fontDescription.firstFamily(); }
     unsigned familyCount() const { return m_fontDescription.familyCount(); }
@@ -310,7 +310,7 @@ private:
     short m_letterSpacing;
     short m_wordSpacing;
     bool m_needsTranscoding;
-    mutable TypesettingFeatures m_typesettingFeatures; // Caches values computed from m_fontDescription.
+    mutable unsigned m_typesettingFeatures : 2; // (TypesettingFeatures) Caches values computed from m_fontDescription.
 };
 
 void invalidateFontGlyphsCache();
