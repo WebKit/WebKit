@@ -1,3 +1,18 @@
+2013-07-16  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GStreamer] verify and log the received caps in the video sink
+        https://bugs.webkit.org/show_bug.cgi?id=118559
+
+        Reviewed by Philippe Normand.
+
+        Verify the correctness of the received caps in the video sink, and
+        also log them for debugging purposes.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkSetCaps):
+
 2013-07-16  Kangil Han  <kangil.han@samsung.com>
 
         Use toHTMLSelectElement and dismiss isHTMLSelectElement

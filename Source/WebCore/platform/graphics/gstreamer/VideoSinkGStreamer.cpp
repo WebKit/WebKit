@@ -378,7 +378,18 @@ static gboolean webkitVideoSinkStart(GstBaseSink* baseSink)
 
 static gboolean webkitVideoSinkSetCaps(GstBaseSink* baseSink, GstCaps* caps)
 {
-    WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
+    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(baseSink);
+    WebKitVideoSinkPrivate* priv = sink->priv;
+
+    GST_DEBUG_OBJECT(sink, "Current caps %" GST_PTR_FORMAT ", setting caps %" GST_PTR_FORMAT, priv->currentCaps, caps);
+
+#ifdef GST_API_VERSION_1
+    GstVideoInfo info;
+    if (!gst_video_info_from_caps(&info, caps)) {
+        GST_ERROR_OBJECT(sink, "Invalid caps %" GST_PTR_FORMAT, caps);
+        return FALSE;
+    }
+#endif
 
     gst_caps_replace(&priv->currentCaps, caps);
     return TRUE;
