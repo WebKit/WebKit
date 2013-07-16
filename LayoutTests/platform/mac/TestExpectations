@@ -1335,3 +1335,4 @@ webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.htm
 
 webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Pass Crash ]
 
+webkit.org/b/118701 svg/custom/xlink-prefix-in-attributes.html [ Failure ]
