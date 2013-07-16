@@ -1,3 +1,13 @@
+2013-07-16  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt] Replace Nokia references.
+        https://bugs.webkit.org/show_bug.cgi?id=118728
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebkitplatformplugin.h:
+        * examples/platformplugin/qwebkitplatformplugin.h:
+
 2013-07-14  Kangil Han  <kangil.han@samsung.com>
 
         Introduce toHTMLVideoElement

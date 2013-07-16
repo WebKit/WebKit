@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2010 University of Szeged
+ * Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
  *
  * All rights reserved.
  *
@@ -83,7 +84,7 @@ MiniBrowserApplication::MiniBrowserApplication(int& argc, char** argv)
     , m_windowOptions(this)
     , m_holdingControl(false)
 {
-    setOrganizationName("Nokia");
+    setOrganizationName("QtProject");
     setApplicationName("QtMiniBrowser");
     setApplicationVersion("0.1");
 

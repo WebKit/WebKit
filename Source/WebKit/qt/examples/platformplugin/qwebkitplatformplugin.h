@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -180,7 +181,7 @@ public:
 };
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.9");
+Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "org.qt-project.Qt.WebKit.PlatformPlugin/1.9");
 QT_END_NAMESPACE
 
 #endif // QWEBKITPLATFORMPLUGIN_H

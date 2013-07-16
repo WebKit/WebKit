@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
  * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
  * Copyright (C) 2006 George Staikos <staikos@kde.org>
@@ -94,7 +95,7 @@ LauncherApplication::LauncherApplication(int& argc, char** argv)
     , m_robotExtraTimeSeconds(0)
 {
     // To allow QWebInspector's configuration persistence
-    setOrganizationName("Nokia");
+    setOrganizationName("QtProject");
     setApplicationName("QtTestBrowser");
     setApplicationVersion("0.1");
 

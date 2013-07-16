@@ -1,3 +1,15 @@
+2013-07-16  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt] Replace Nokia references.
+        https://bugs.webkit.org/show_bug.cgi?id=118728
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::MiniBrowserApplication):
+        * QtTestBrowser/qttestbrowser.cpp:
+        (LauncherApplication::LauncherApplication):
+
 2013-07-15  Tim Horton  <timothy_horton@apple.com>
 
         Update blocked/missing plug-in UI
