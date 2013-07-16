@@ -221,6 +221,8 @@ bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart
 
     bool handled = true;
     process()->sendSync(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
+    m_temporarilyClosedComposition = false;
+
     return handled;
 }
 

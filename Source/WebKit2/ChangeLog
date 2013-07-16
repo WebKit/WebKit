@@ -1,3 +1,26 @@
+2013-07-16  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r150291): Chinese predictive input pop-up disappears on twitter.com
+        https://bugs.webkit.org/show_bug.cgi?id=118739
+        <rdar://problem/14300350>
+
+        Reviewed by Daniel Bates.
+
+        EditorState tracking on UI side is very fragile. This is a targeted fix just for
+        this specific scenario.
+
+        The issue was that we had a stale m_temporarilyClosedComposition flag, which was
+        making UI process believe that a composition was closed from WebProcess side,
+        and notify input method about that. It shouldn't have been a problem, because there
+        is no composition at this point indeed, but this extra call is a problem for
+        predictive input, which works in a somewhat unconventional way (<rdar://problem/14458297>).
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::insertText): Reset m_temporarilyClosedComposition flag when
+        getting new EditorState in response to performing this action. There is certainly
+        no composition after insertText, and all interested parties are on the same page
+        already.
+
 2013-07-16  Jessie Berlin  <jberlin@apple.com>
 
         Fix some NSDictionary misuse pointed out by the clang static analyzer
