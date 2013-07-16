@@ -377,9 +377,8 @@ DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttrib
 {
     static NSArray *excludedElements = createExcludedElementsForAttributedStringConversion();
     
-    NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys: excludedElements, NSExcludedElementsDocumentAttribute, 
-        nil, @"WebResourceHandler", nil];
-    
+    NSDictionary *dictionary = [NSDictionary dictionaryWithObject:excludedElements forKey:NSExcludedElementsDocumentAttribute];
+
     NSArray *subResources;
     DOMDocumentFragment* fragment = [string _documentFromRange:NSMakeRange(0, [string length])
                                                       document:[[m_webView mainFrame] DOMDocument]
@@ -387,8 +386,7 @@ DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttrib
                                                   subresources:&subResources];
     for (WebResource* resource in subResources)
         resources.append([resource _coreResource]);
-    
-    [dictionary release];
+
     return core(fragment);
 }
 
