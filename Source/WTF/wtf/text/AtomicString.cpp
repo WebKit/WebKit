@@ -421,10 +421,14 @@ AtomicStringImpl* AtomicString::find(const StringImpl* stringImpl)
     return static_cast<AtomicStringImpl*>(*iterator);
 }
 
-void AtomicString::remove(StringImpl* r)
+void AtomicString::remove(StringImpl* string)
 {
+    ASSERT(string->isAtomic());
     AtomicStringTableLocker locker;
-    stringTable().remove(r);
+    HashSet<StringImpl*>& atomicStringTable = stringTable();
+    HashSet<StringImpl*>::iterator iterator = atomicStringTable.find(string);
+    ASSERT_WITH_MESSAGE(iterator != atomicStringTable.end(), "The string being removed is atomic in the string table of an other thread!");
+    atomicStringTable.remove(iterator);
 }
 
 AtomicString AtomicString::lower() const

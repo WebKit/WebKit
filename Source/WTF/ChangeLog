@@ -1,5 +1,18 @@
 2013-07-15  Benjamin Poulain  <benjamin@webkit.org>
 
+        Add a threading assertion to AtomicString::remove
+        https://bugs.webkit.org/show_bug.cgi?id=118695
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::remove): The destructor of StringImpl remove
+        the string from the string table if it is atomic. This needs to be done
+        on the same thread as the one on which the string was added (otherwise the original
+        table would keep a dangling pointer to a dead string).
+
+2013-07-15  Benjamin Poulain  <benjamin@webkit.org>
+
         Minor cleaning of AtomicString::addSlowCase
         https://bugs.webkit.org/show_bug.cgi?id=118615
 
