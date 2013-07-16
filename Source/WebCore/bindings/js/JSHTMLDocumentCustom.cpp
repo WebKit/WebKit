@@ -75,7 +75,7 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyNa
 
     Node* node = document->documentNamedItemMap().getElementByDocumentNamedItem(atomicPropertyName, document);
     Frame* frame;
-    if (node->hasTagName(iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
+    if (node->hasTagName(iframeTag) && (frame = toHTMLIFrameElement(node)->contentFrame()))
         return toJS(exec, frame);
 
     return toJS(exec, thisObj->globalObject(), node);

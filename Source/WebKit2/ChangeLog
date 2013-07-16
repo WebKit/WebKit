@@ -1,3 +1,15 @@
+2013-07-15  Kangil Han  <kangil.han@samsung.com>
+
+        Introduce toHTMLIFrameElement
+        https://bugs.webkit.org/show_bug.cgi?id=118672
+
+        Reviewed by Ryosuke Niwa.
+
+        To avoid direct use of static_cast, this patch introduces toHTMLIFrameElement for code cleanup.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::htmlIFrameElementContentFrame):
+
 2013-07-15  Tim Horton  <timothy_horton@apple.com>
 
         Update blocked/missing plug-in UI

@@ -81,7 +81,7 @@ LayoutUnit RenderIFrame::maxPreferredLogicalWidth() const
 
 bool RenderIFrame::isSeamless() const
 {
-    return node() && node()->hasTagName(iframeTag) && static_cast<HTMLIFrameElement*>(node())->shouldDisplaySeamlessly();
+    return node() && node()->hasTagName(iframeTag) && toHTMLIFrameElement(node())->shouldDisplaySeamlessly();
 }
 
 bool RenderIFrame::requiresLayer() const
@@ -102,7 +102,7 @@ bool RenderIFrame::flattenFrame() const
     if (!node() || !node()->hasTagName(iframeTag))
         return false;
 
-    HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(node());
+    HTMLIFrameElement* element = toHTMLIFrameElement(node());
     Frame* frame = element->document()->frame();
 
     if (isSeamless())
