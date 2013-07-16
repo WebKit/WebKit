@@ -1,3 +1,17 @@
+2013-07-15  Andreas Kling  <akling@apple.com>
+
+        Pack WebCore::Font slightly better.
+        <http://webkit.org/b/118681>
+        <rdar://problem/14446014>
+
+        Reviewed by Sam Weinig.
+
+        Knock 8 bytes off of Font by packing the members better. Reduces memory consumption by 429 kB when
+        viewing the full HTML5 spec at <http://whatwg.org/c>
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::typesettingFeatures):
+
 2013-07-15  Rob Buis  <rwlbuis@webkit.org>
 
         XMLSerializer doesn't include namespaces on nodes in HTML documents
