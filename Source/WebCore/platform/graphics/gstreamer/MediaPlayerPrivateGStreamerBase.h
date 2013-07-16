@@ -137,8 +137,7 @@ protected:
     unsigned long m_muteSignalHandler;
     mutable IntSize m_videoSize;
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
-    void updateTexture(GstBuffer*);
-    RefPtr<BitmapTexture> m_texture;
+    PassRefPtr<BitmapTexture> updateTexture(TextureMapper*);
 #endif
 };
 }

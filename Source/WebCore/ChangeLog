@@ -1,5 +1,35 @@
 2013-07-16  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
+        [texmap][GStreamer] upload onto the texture only the buffer to be painted
+        https://bugs.webkit.org/show_bug.cgi?id=118471
+
+        Reviewed by Philippe Normand.
+
+        Right now all the buffers are uploaded onto the texture. With this
+        logic pose situations where buffers that will not be painted are
+        uploaded.
+
+        This patch uploads only the buffers that are going to be shown.
+
+        With this approach, the buffers may arrive before a GraphicsLayer is
+        set, so we should be more cautious with GraphicsLayerTextureMapper's
+        client.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::paintToTextureMapper):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::~GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::setContentsToMedia):
+
+2013-07-16  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
         [GStreamer] verify and log the received caps in the video sink
         https://bugs.webkit.org/show_bug.cgi?id=118559
 
