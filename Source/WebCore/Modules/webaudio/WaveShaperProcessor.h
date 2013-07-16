@@ -38,6 +38,12 @@ namespace WebCore {
 
 class WaveShaperProcessor : public AudioDSPKernelProcessor {
 public:
+    enum OverSampleType {
+        OverSampleNone,
+        OverSample2x,
+        OverSample4x
+    };
+
     WaveShaperProcessor(float sampleRate, size_t numberOfChannels);
 
     virtual ~WaveShaperProcessor();
@@ -49,9 +55,14 @@ public:
     void setCurve(Float32Array*);
     Float32Array* curve() { return m_curve.get(); }
 
+    void setOversample(OverSampleType);
+    OverSampleType oversample() const { return m_oversample; }
+
 private:
     // m_curve represents the non-linear shaping curve.
     RefPtr<Float32Array> m_curve;
+
+    OverSampleType m_oversample;
 
     // This synchronizes process() with setCurve().
     mutable Mutex m_processLock;

@@ -25,8 +25,12 @@
 #ifndef WaveShaperDSPKernel_h
 #define WaveShaperDSPKernel_h
 
+#include "AudioArray.h"
 #include "AudioDSPKernel.h"
+#include "DownSampler.h"
+#include "UpSampler.h"
 #include "WaveShaperProcessor.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -35,20 +39,35 @@ class WaveShaperProcessor;
 // WaveShaperDSPKernel is an AudioDSPKernel and is responsible for non-linear distortion on one channel.
 
 class WaveShaperDSPKernel : public AudioDSPKernel {
-public:  
-    explicit WaveShaperDSPKernel(WaveShaperProcessor* processor)
-    : AudioDSPKernel(processor)
-    {
-    }
-    
+public:
+    explicit WaveShaperDSPKernel(WaveShaperProcessor*);
+
     // AudioDSPKernel
     virtual void process(const float* source, float* dest, size_t framesToProcess);
-    virtual void reset() { }
+    virtual void reset();
     virtual double tailTime() const OVERRIDE { return 0; }
-    virtual double latencyTime() const OVERRIDE { return 0; }
-    
+    virtual double latencyTime() const OVERRIDE;
+
+    // Oversampling requires more resources, so let's only allocate them if needed.
+    void lazyInitializeOversampling();
+
 protected:
+    // Apply the shaping curve.
+    void processCurve(const float* source, float* dest, size_t framesToProcess);
+
+    // Use up-sampling, process at the higher sample-rate, then down-sample.
+    void processCurve2x(const float* source, float* dest, size_t framesToProcess);
+    void processCurve4x(const float* source, float* dest, size_t framesToProcess);
+
     WaveShaperProcessor* waveShaperProcessor() { return static_cast<WaveShaperProcessor*>(processor()); }
+
+    // Oversampling.
+    OwnPtr<AudioFloatArray> m_tempBuffer;
+    OwnPtr<AudioFloatArray> m_tempBuffer2;
+    OwnPtr<UpSampler> m_upSampler;
+    OwnPtr<DownSampler> m_downSampler;
+    OwnPtr<UpSampler> m_upSampler2;
+    OwnPtr<DownSampler> m_downSampler2;
 };
 
 } // namespace WebCore

@@ -5631,6 +5631,8 @@ platform_sources += \
 	Source/WebCore/platform/audio/DirectConvolver.h \
 	Source/WebCore/platform/audio/Distance.cpp \
 	Source/WebCore/platform/audio/Distance.h \
+	Source/WebCore/platform/audio/DownSampler.cpp \
+	Source/WebCore/platform/audio/DownSampler.h \
 	Source/WebCore/platform/audio/DynamicsCompressor.h \
 	Source/WebCore/platform/audio/DynamicsCompressorKernel.cpp \
 	Source/WebCore/platform/audio/DynamicsCompressorKernel.h \
@@ -5656,6 +5658,8 @@ platform_sources += \
 	Source/WebCore/platform/audio/ReverbInputBuffer.h \
 	Source/WebCore/platform/audio/SincResampler.cpp \
 	Source/WebCore/platform/audio/SincResampler.h \
+	Source/WebCore/platform/audio/UpSampler.cpp \
+	Source/WebCore/platform/audio/UpSampler.h \
 	Source/WebCore/platform/audio/VectorMath.cpp \
 	Source/WebCore/platform/audio/VectorMath.h \
 	Source/WebCore/platform/audio/ZeroPole.cpp \

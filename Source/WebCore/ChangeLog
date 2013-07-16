@@ -1,3 +1,64 @@
+2013-07-15  Chris Rogers  <crogers@google.com>
+
+        Add support for WaveShaperNode.oversample
+        https://bugs.webkit.org/show_bug.cgi?id=117435
+
+        Reviewed by Kenneth Russell.
+
+        Adapted from Blink:
+        https://codereview.chromium.org/15619003/
+
+        Please see specification for details:
+        https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#WaveShaperNode
+
+        .oversample specifies what type of oversampling (if any) should be used when applying the shaping curve.
+        The default value is "none", meaning the curve will be applied directly to the input samples.
+        A value of "2x" or "4x" can improve the quality of the processing by avoiding some aliasing,
+        with the "4x" value yielding the highest quality.
+
+        Tests: webaudio/waveshaper-oversample-2x.html
+               webaudio/waveshaper-oversample-4x.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/webaudio/WaveShaperDSPKernel.cpp:
+        (WebCore::WaveShaperDSPKernel::WaveShaperDSPKernel):
+        (WebCore::WaveShaperDSPKernel::lazyInitializeOversampling):
+        (WebCore::WaveShaperDSPKernel::process):
+        (WebCore::WaveShaperDSPKernel::processCurve):
+        (WebCore::WaveShaperDSPKernel::processCurve2x):
+        (WebCore::WaveShaperDSPKernel::processCurve4x):
+        (WebCore::WaveShaperDSPKernel::reset):
+        (WebCore::WaveShaperDSPKernel::latencyTime):
+        * Modules/webaudio/WaveShaperDSPKernel.h:
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::WaveShaperNode):
+        (WebCore::WaveShaperNode::setOversample):
+        (WebCore::WaveShaperNode::oversample):
+        * Modules/webaudio/WaveShaperNode.h:
+        (WebCore::WaveShaperNode::latency):
+        * Modules/webaudio/WaveShaperNode.idl:
+        * Modules/webaudio/WaveShaperProcessor.cpp:
+        (WebCore::WaveShaperProcessor::WaveShaperProcessor):
+        (WebCore::WaveShaperProcessor::setOversample):
+        * Modules/webaudio/WaveShaperProcessor.h:
+        (WebCore::WaveShaperProcessor::oversample):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/DownSampler.cpp: Added.
+        (WebCore::DownSampler::DownSampler):
+        (WebCore::DownSampler::initializeKernel):
+        (WebCore::DownSampler::process):
+        (WebCore::DownSampler::reset):
+        (WebCore::DownSampler::latencyFrames):
+        * platform/audio/DownSampler.h: Added.
+        * platform/audio/UpSampler.cpp: Added.
+        (WebCore::UpSampler::UpSampler):
+        (WebCore::UpSampler::initializeKernel):
+        (WebCore::UpSampler::process):
+        (WebCore::UpSampler::reset):
+        (WebCore::UpSampler::latencyFrames):
+        * platform/audio/UpSampler.h: Added.
+
 2013-07-15  Tim Horton  <timothy_horton@apple.com>
 
         Update blocked/missing plug-in UI

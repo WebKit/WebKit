@@ -1870,6 +1870,7 @@ set(WebCore_SOURCES
     platform/audio/Cone.cpp
     platform/audio/DirectConvolver.cpp
     platform/audio/Distance.cpp
+    platform/audio/DownSampler.cpp
     platform/audio/DynamicsCompressor.cpp
     platform/audio/DynamicsCompressorKernel.cpp
     platform/audio/EqualPowerPanner.cpp
@@ -1888,6 +1889,7 @@ set(WebCore_SOURCES
     platform/audio/ReverbConvolverStage.cpp
     platform/audio/ReverbInputBuffer.cpp
     platform/audio/SincResampler.cpp
+    platform/audio/UpSampler.cpp
     platform/audio/VectorMath.cpp
     platform/audio/ZeroPole.cpp
 

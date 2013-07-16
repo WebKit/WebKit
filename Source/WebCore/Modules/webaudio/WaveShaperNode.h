@@ -43,6 +43,11 @@ public:
     void setCurve(Float32Array*);
     Float32Array* curve();
 
+    void setOversample(const String& , ExceptionCode&);
+    String oversample() const;
+
+    double latency() const { return latencyTime(); }
+
 private:    
     explicit WaveShaperNode(AudioContext*);    
 

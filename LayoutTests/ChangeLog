@@ -1,3 +1,25 @@
+2013-07-15  Chris Rogers  <crogers@google.com>
+
+        Add support for WaveShaperNode.oversample
+        https://bugs.webkit.org/show_bug.cgi?id=117435
+
+        Reviewed by Kenneth Russell.
+
+        * webaudio/resources/waveshaper-testing.js: Added.
+        (T0):
+        (T1):
+        (T2):
+        (T3):
+        (T4):
+        (generateWaveShapingCurve):
+        (checkShapedCurve):
+        (createImpulseBuffer):
+        (runWaveShaperOversamplingTest):
+        * webaudio/waveshaper-oversample-2x-expected.txt: Added.
+        * webaudio/waveshaper-oversample-2x.html: Added.
+        * webaudio/waveshaper-oversample-4x-expected.txt: Added.
+        * webaudio/waveshaper-oversample-4x.html: Added.
+
 2013-07-15  Jeffrey Pfau  <jpfau@apple.com>
 
         Mark svg/custom/xlink-prefix-in-attributes.html as failing on Mac

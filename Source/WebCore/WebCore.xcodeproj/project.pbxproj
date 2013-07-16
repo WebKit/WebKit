@@ -5750,6 +5750,10 @@
 		FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD06DFA4134A4DEF006F5D7D /* DefaultAudioDestinationNode.h */; };
 		FD1660A513787C6D001FFA7B /* DenormalDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = FD1660A413787C6D001FFA7B /* DenormalDisabler.h */; };
 		FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = FD1AF14E1656F12100C6D4F7 /* ShapeValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FD1762DF176686D900D836A8 /* UpSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD1762DD176686D900D836A8 /* UpSampler.cpp */; };
+		FD1762E0176686D900D836A8 /* UpSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FD1762DE176686D900D836A8 /* UpSampler.h */; };
+		FD1762E3176686EA00D836A8 /* DownSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD1762E1176686EA00D836A8 /* DownSampler.cpp */; };
+		FD1762E4176686EA00D836A8 /* DownSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FD1762E2176686EA00D836A8 /* DownSampler.h */; };
 		FD23A12513F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD23A12313F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp */; };
 		FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */; };
 		FD2DBF1212B048A300ED98C6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */; };
@@ -12624,6 +12628,10 @@
 		FD08A887175D3926002CD360 /* ShapeOutsideInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapeOutsideInfo.h; sourceTree = "<group>"; };
 		FD1660A413787C6D001FFA7B /* DenormalDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DenormalDisabler.h; sourceTree = "<group>"; };
 		FD1AF14E1656F12100C6D4F7 /* ShapeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShapeValue.h; path = style/ShapeValue.h; sourceTree = "<group>"; };
+		FD1762DD176686D900D836A8 /* UpSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpSampler.cpp; sourceTree = "<group>"; };
+		FD1762DE176686D900D836A8 /* UpSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpSampler.h; sourceTree = "<group>"; };
+		FD1762E1176686EA00D836A8 /* DownSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownSampler.cpp; sourceTree = "<group>"; };
+		FD1762E2176686EA00D836A8 /* DownSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownSampler.h; sourceTree = "<group>"; };
 		FD23A12313F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaElementAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaElementAudioSourceNode.h; sourceTree = "<group>"; };
 		FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
@@ -20789,6 +20797,8 @@
 				FDAF19971513D131008DB0C3 /* DirectConvolver.h */,
 				FD31605A12B026F700C1A359 /* Distance.cpp */,
 				FD31605B12B026F700C1A359 /* Distance.h */,
+				FD1762E1176686EA00D836A8 /* DownSampler.cpp */,
+				FD1762E2176686EA00D836A8 /* DownSampler.h */,
 				FD6ED2C5136B8E66003CF072 /* DynamicsCompressor.cpp */,
 				FD6ED2C6136B8E66003CF072 /* DynamicsCompressor.h */,
 				FD537354137B653B00008DCE /* DynamicsCompressorKernel.cpp */,
@@ -20825,6 +20835,8 @@
 				FD31607712B026F700C1A359 /* ReverbInputBuffer.h */,
 				FD00D7A214A3F61900734011 /* SincResampler.cpp */,
 				FD00D7A314A3F61900734011 /* SincResampler.h */,
+				FD1762DD176686D900D836A8 /* UpSampler.cpp */,
+				FD1762DE176686D900D836A8 /* UpSampler.h */,
 				FD31607812B026F700C1A359 /* VectorMath.cpp */,
 				FD31607912B026F700C1A359 /* VectorMath.h */,
 				FD537350137B651800008DCE /* ZeroPole.cpp */,
@@ -24070,6 +24082,8 @@
 				83C1D434178D5AB500141E68 /* SVGPathSegLinetoVerticalRel.h in Headers */,
 				83C1D435178D5AB500141E68 /* SVGPathSegMovetoAbs.h in Headers */,
 				83C1D436178D5AB500141E68 /* SVGPathSegMovetoRel.h in Headers */,
+				FD1762E0176686D900D836A8 /* UpSampler.h in Headers */,
+				FD1762E4176686EA00D836A8 /* DownSampler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27045,6 +27059,8 @@
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				977E2E0E12F0FC9C00C13380 /* XSSAuditorDelegate.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				FD1762DF176686D900D836A8 /* UpSampler.cpp in Sources */,
+				FD1762E3176686EA00D836A8 /* DownSampler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
