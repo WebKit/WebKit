@@ -1,3 +1,13 @@
+2013-07-16  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt] Replace Nokia with Qt Project in service name.
+        https://bugs.webkit.org/show_bug.cgi?id=118729
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2013-07-16  Dong-Gwan Kim  <donggwan.kim@samsung.com>
 
         EWK2BackForwardListTest should be defined by inheriting from EWK2UnitTestBase.
