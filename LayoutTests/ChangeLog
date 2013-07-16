@@ -1,3 +1,17 @@
+2013-07-16  Eric Carlson  <eric.carlson@apple.com>
+
+        HTMLMediaElement should not add cues for disabled text tracks
+        https://bugs.webkit.org/show_bug.cgi?id=118682
+
+        Merge https://src.chromium.org/viewvc/blink?view=rev&revision=153810
+
+        Reviewed by Ryosuke Niwa.
+
+        * media/track/track-disabled-addcue-expected.txt: Added.
+        * media/track/track-disabled-addcue.html: Added.
+        * media/track/track-disabled-expected.txt: Added.
+        * media/track/track-disabled.html: Added.
+
 2013-07-16  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] fast/events/platform-wheelevent-with-delta-zero-crash.html is crashing
