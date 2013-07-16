@@ -202,24 +202,11 @@ private:
     mutable bool m_shouldRecalcListItems;
 };
 
-inline bool isHTMLSelectElement(const Node* node)
-{
-    return node->hasTagName(HTMLNames::selectTag);
-}
-
 inline HTMLSelectElement* toHTMLSelectElement(Node* node)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLSelectElement(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(HTMLNames::selectTag));
     return static_cast<HTMLSelectElement*>(node);
 }
-
-inline const HTMLSelectElement* toHTMLSelectElement(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLSelectElement(node));
-    return static_cast<const HTMLSelectElement*>(node);
-}
-
-void toHTMLSelectElement(const HTMLSelectElement*); // This overload will catch anyone doing an unnecessary cast.
 
 } // namespace
 

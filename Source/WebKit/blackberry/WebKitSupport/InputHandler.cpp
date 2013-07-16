@@ -2008,7 +2008,7 @@ bool InputHandler::didNodeOpenPopup(Node* node)
     ASSERT(!node->isInShadowTree());
 
     if (node->hasTagName(HTMLNames::selectTag))
-        return openSelectPopup(static_cast<HTMLSelectElement*>(node));
+        return openSelectPopup(toHTMLSelectElement(node));
 
     if (isHTMLOptionElement(node)) {
         HTMLOptionElement* optionElement = toHTMLOptionElement(node);
@@ -2101,7 +2101,7 @@ void InputHandler::setPopupListIndex(int index)
         renderMenu->hidePopup();
     }
 
-    HTMLSelectElement* selectElement = static_cast<HTMLSelectElement*>(m_currentFocusElement.get());
+    HTMLSelectElement* selectElement = toHTMLSelectElement(m_currentFocusElement.get());
     int optionIndex = selectElement->listToOptionIndex(index);
     selectElement->optionSelectedByUser(optionIndex, true /* deselect = true */, true /* fireOnChangeNow = false */);
     clearCurrentFocusElement();
@@ -2115,7 +2115,7 @@ void InputHandler::setPopupListIndexes(int size, const bool* selecteds)
     if (size < 0)
         return;
 
-    HTMLSelectElement* selectElement = static_cast<HTMLSelectElement*>(m_currentFocusElement.get());
+    HTMLSelectElement* selectElement = toHTMLSelectElement(m_currentFocusElement.get());
     const WTF::Vector<HTMLElement*>& items = selectElement->listItems();
     if (items.size() != static_cast<unsigned>(size))
         return;

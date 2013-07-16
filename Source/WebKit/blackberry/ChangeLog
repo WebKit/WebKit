@@ -1,3 +1,18 @@
+2013-07-16  Kangil Han  <kangil.han@samsung.com>
+
+        Use toHTMLSelectElement and dismiss isHTMLSelectElement
+        https://bugs.webkit.org/show_bug.cgi?id=118714
+
+        Reviewed by Ryosuke Niwa.
+
+        To avoid direct use of static_cast, this patch introduces toHTMLIFrameElement for code cleanup.
+        Additionally, this patch removes isHTMLSelectElement because not all element subclasses can be checked by a combination of tag names.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::didNodeOpenPopup):
+        (BlackBerry::WebKit::InputHandler::setPopupListIndex):
+        (BlackBerry::WebKit::InputHandler::setPopupListIndexes):
+
 2013-07-08  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Block Zoom does not zoom in on narrow paragraphs properly
