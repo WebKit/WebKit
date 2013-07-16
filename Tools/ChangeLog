@@ -1,3 +1,9 @@
+2013-07-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Update James Craig's email address.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-07-15  Dong-Gwan Kim  <donggwan.kim@samsung.com>
 
         [EFL] Add fallback for TestWebKitAPI if opengl is not available.
