@@ -62,7 +62,7 @@ object::-webkit-unavailable-plugin-content > div
 
     opacity: 0.8;
 
-    cursor: hand;
+    cursor: pointer;
 }
 
 embed::-webkit-unavailable-plugin-content > div > span,
@@ -81,7 +81,7 @@ object::-webkit-unavailable-plugin-content > div > span
     padding: 2px 4px 3px 4px;
     margin-bottom: 1px;
 
-    cursor: hand;
+    cursor: pointer;
 }
 
 embed::-webkit-unavailable-plugin-content > div > img,
