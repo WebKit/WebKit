@@ -1,3 +1,22 @@
+2013-07-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Input element that becomes visible during a simulated click event from an associated label element doesn't get focused
+        https://bugs.webkit.org/show_bug.cgi?id=118700
+
+        Reviewed by Kent Tamura.
+
+        Inspired by https://chromium.googlesource.com/chromium/blink/+/6435f70d53403b250e261a914f30d55142f81476.
+
+        The bug was caused by isMouseFocusable() check in HTMLLabelElement::defaultEventHandler not updating the layout even
+        though the call to dispatchSimulatedClick may have dirtied the render tree.
+
+        Explicitly update the layout so that we have up-to-date render tree.
+
+        Test: fast/forms/label/label-becomes-visible-while-clicking-on-label.html
+
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::defaultEventHandler):
+
 2013-07-15  Kangil Han  <kangil.han@samsung.com>
 
         Introduce toHTMLIFrameElement
