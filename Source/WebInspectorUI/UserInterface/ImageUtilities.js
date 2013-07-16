@@ -104,7 +104,7 @@ function _prefetchCachedImagesAndUpdate()
     }
 
     _generatedImageCacheDatabase.transaction(function(tx) {
-        tx.executeSql("SELECT key, pixelRatio, imageVersion, formatVersion, data FROM CachedImages WHERE pixelRatio = ? AND formatVersion = ?", [window.devicePixelRatio, _imageStorageFormatVersion], function(tx, result) {
+        tx.executeSql("SELECT key, imageVersion, data FROM CachedImages WHERE pixelRatio = ? AND formatVersion = ?", [window.devicePixelRatio, _imageStorageFormatVersion], function(tx, result) {
             for (var i = 0; i < result.rows.length; ++i) {
                 var row = result.rows.item(i);
                 _fetchedCachedImages[row.key] = {data: row.data, imageVersion: row.imageVersion};
