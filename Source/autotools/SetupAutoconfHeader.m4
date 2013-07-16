@@ -21,6 +21,8 @@ fi
 
 if test "$GTK_API_VERSION" = "2.0"; then
     AC_DEFINE([GTK_API_VERSION_2], [1], [ ])
+else
+    AC_DEFINE([GDK_VERSION_MIN_REQUIRED], [GDK_VERSION_3_6], [Minimum GTK/GDK version required])
 fi
 
 if test "$enable_webkit2" = "yes"; then
