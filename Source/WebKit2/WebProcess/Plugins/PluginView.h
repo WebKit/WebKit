@@ -154,6 +154,7 @@ private:
     virtual bool shouldAlwaysAutoStart() const OVERRIDE;
     virtual void beginSnapshottingRunningPlugin() OVERRIDE;
     virtual bool shouldAllowNavigationFromDrags() const OVERRIDE;
+    virtual bool shouldNotAddLayer() const OVERRIDE;
 
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);

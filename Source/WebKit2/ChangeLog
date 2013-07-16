@@ -1,5 +1,24 @@
 2013-07-15  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152580
+
+    2013-07-10  Roger Fong  <roger_fong@apple.com>
+
+            Plugins that don't support snapshotting should not all autostart.
+            https://bugs.webkit.org/show_bug.cgi?id=118572
+            <rdar://problem/14324391>.
+
+            Reviewed by Dean Jackson.
+
+            * WebProcess/Plugins/PluginView.cpp:
+            (WebKit::PluginView::shouldNotAddLayer): This method determines whether or not we should add the plugin's layer to the tree.
+            It should not be added if the plugin is in it's snapshotted state but does not actually support snapshotting.
+            (WebKit::PluginView::pluginSnapshotTimerFired): If the plugin does not support snapshotting go straight 
+            to the the DisplayingSnapshot state.
+            * WebProcess/Plugins/PluginView.h:
+
+2013-07-15  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152520
 
     2013-07-09  Jer Noble  <jer.noble@apple.com>

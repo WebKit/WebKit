@@ -924,6 +924,11 @@ bool PluginView::shouldAllowNavigationFromDrags() const
     return m_plugin->shouldAllowNavigationFromDrags();
 }
 
+bool PluginView::shouldNotAddLayer() const
+{
+    return m_pluginElement->displayState() < HTMLPlugInElement::Restarting && !m_plugin->supportsSnapshotting();
+}
+
 PassRefPtr<SharedBuffer> PluginView::liveResourceData() const
 {
     if (!m_isInitialized || !m_plugin)
@@ -1652,27 +1657,25 @@ void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>*)
 {
     ASSERT(m_plugin);
 
-    if (m_pluginElement->isPlugInImageElement() && !m_plugin->supportsSnapshotting()) {
-        toHTMLPlugInImageElement(m_pluginElement.get())->restartSnapshottedPlugIn();
-        return;
-    }
-
-    // Snapshot might be 0 if plugin size is 0x0.
-    RefPtr<ShareableBitmap> snapshot = m_plugin->snapshot();
-    RefPtr<Image> snapshotImage;
-    if (snapshot)
-        snapshotImage = snapshot->createImage();
-    m_pluginElement->updateSnapshot(snapshotImage.get());
+    if (m_plugin->supportsSnapshotting()) {
+        // Snapshot might be 0 if plugin size is 0x0.
+        RefPtr<ShareableBitmap> snapshot = m_plugin->snapshot();
+        RefPtr<Image> snapshotImage;
+        if (snapshot)
+            snapshotImage = snapshot->createImage();
+        m_pluginElement->updateSnapshot(snapshotImage.get());
 
 #if PLATFORM(MAC)
-    unsigned maximumSnapshotRetries = frame() ? frame()->settings()->maximumPlugInSnapshotAttempts() : 0;
-    if (snapshotImage && isAlmostSolidColor(static_cast<BitmapImage*>(snapshotImage.get())) && m_countSnapshotRetries < maximumSnapshotRetries) {
-        ++m_countSnapshotRetries;
-        m_pluginSnapshotTimer.restart();
-        return;
-    }
+        unsigned maximumSnapshotRetries = frame() ? frame()->settings()->maximumPlugInSnapshotAttempts() : 0;
+        if (snapshotImage && isAlmostSolidColor(static_cast<BitmapImage*>(snapshotImage.get())) && m_countSnapshotRetries < maximumSnapshotRetries) {
+            ++m_countSnapshotRetries;
+            m_pluginSnapshotTimer.restart();
+            return;
+        }
 #endif
-
+    }
+    // Even if there is no snapshot we still set the state to DisplayingSnapshot
+    // since we just want to display the default empty box.
     m_pluginElement->setDisplayState(HTMLPlugInElement::DisplayingSnapshot);
 }
 

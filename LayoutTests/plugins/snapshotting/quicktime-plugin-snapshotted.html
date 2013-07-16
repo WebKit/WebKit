@@ -1,0 +1,13 @@
+<p>This test ensures that quicktime plugins can also be snapshotted. 
+We make the plugin here too small to be the primary plugin, thus it should get snapshotted.</p>
+<script>
+if (window.testRunner) {
+    window.internals.settings.setPlugInSnapshottingEnabled(true);
+    window.internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    setTimeout(function () {
+        testRunner.notifyDone();
+    }, 500);
+}
+</script>
+<embed src="../resources/orange.mov" width="300" height="300"></embed>
