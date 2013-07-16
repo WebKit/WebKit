@@ -2161,6 +2161,31 @@ def check_using_std(clean_lines, line_number, file_state, error):
           "Use 'using namespace std;' instead of 'using std::%s;'." % method_name)
 
 
+def check_using_namespace(clean_lines, line_number, file_state, error):
+    """Looks for 'using namespace foo;' which should be removed.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    # This check doesn't apply to C or Objective-C implementation files.
+    if file_state.is_c_or_objective_c():
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    using_namespace_match = match(r'\s*using\s+namespace\s+(?P<method_name>\S+)\s*;\s*$', line)
+    if not using_namespace_match:
+        return
+
+    method_name = using_namespace_match.group('method_name')
+    error(line_number, 'build/using_namespace', 4,
+          "Do not use 'using namespace %s;'." % method_name)
+
 def check_max_min_macros(clean_lines, line_number, file_state, error):
     """Looks use of MAX() and MIN() macros that should be replaced with std::max() and std::min().
 
@@ -2645,6 +2670,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_namespace_indentation(clean_lines, line_number, file_extension, file_state, error)
     check_directive_indentation(clean_lines, line_number, file_state, error)
     check_using_std(clean_lines, line_number, file_state, error)
+    check_using_namespace(clean_lines, line_number, file_state, error)
     check_max_min_macros(clean_lines, line_number, file_state, error)
     check_ctype_functions(clean_lines, line_number, file_state, error)
     check_switch_indentation(clean_lines, line_number, error)
@@ -3630,6 +3656,7 @@ class CppChecker(object):
         'build/printf_format',
         'build/storage_class',
         'build/using_std',
+        'build/using_namespace',
         'legal/copyright',
         'readability/braces',
         'readability/casting',

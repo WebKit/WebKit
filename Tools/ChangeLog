@@ -1,3 +1,19 @@
+2013-07-16  Brian Holt  <brian.holt@samsung.com>
+
+        check-webkit-style: "using namespace foo;" should be flagged as an error in headers
+        https://bugs.webkit.org/show_bug.cgi?id=57241
+
+        Reviewed by Ryosuke Niwa.
+
+        Added check for "using namespace foo" and unit test.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_using_namespace):
+        (check_style):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_using_namespace):
+
 2013-07-16  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] fast/events/platform-wheelevent-with-delta-zero-crash.html is crashing

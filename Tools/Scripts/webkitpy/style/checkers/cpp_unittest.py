@@ -4490,6 +4490,13 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [build/using_std] [4]",
             'foo.cpp')
 
+    def test_using_namespace(self):
+        self.assert_lint(
+            'using namespace foo;',
+            "Do not use 'using namespace foo;'."
+            "  [build/using_namespace] [4]",
+            'foo.cpp')
+
     def test_max_macro(self):
         self.assert_lint(
             'int i = MAX(0, 1);',
