@@ -1,5 +1,25 @@
 2013-07-15  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152642
+
+    2013-07-14  Jon Lee  <jonlee@apple.com>
+
+            [WK2] Calling Notification.requestPermission() without a callback crashes
+            https://bugs.webkit.org/show_bug.cgi?id=118654
+            <rdar://problem/14293352>
+
+            Reviewed by Alexey Proskuryakov.
+
+            * http/tests/notifications/notification-request-permission-expected.txt:
+            * http/tests/notifications/notification-request-permission.html: Add additional subtests that check
+            that the call succeeds even after granting or denying permission.
+
+            * http/tests/notifications/notification-request-permission-no-callback-expected.txt: Added.
+            * http/tests/notifications/notification-request-permission-no-callback.html: Added. Similar test to
+            notification-request-permission, without the callback function.
+
+2013-07-15  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152580
 
     2013-07-10  Roger Fong  <roger_fong@apple.com>

@@ -241,7 +241,6 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
     if (!(self = [super init]))
         return nil;
 
-    ASSERT(callback);
     _callback = callback;
     return self;
 }
@@ -269,7 +268,8 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
     }
 #endif
 #if ENABLE(NOTIFICATIONS)
-    _callback->handleEvent(Notification::permissionString(NotificationClient::PermissionAllowed));
+    if (_callback)
+        _callback->handleEvent(Notification::permissionString(NotificationClient::PermissionAllowed));
 #endif
 }
 
@@ -283,7 +283,8 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
     }
 #endif
 #if ENABLE(NOTIFICATIONS)
-    _callback->handleEvent(Notification::permissionString(NotificationClient::PermissionDenied));
+    if (_callback)
+        _callback->handleEvent(Notification::permissionString(NotificationClient::PermissionDenied));
 #endif
 }
 
