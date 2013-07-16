@@ -1,3 +1,15 @@
+2013-07-16  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r152703
+
+    2013-07-15  Tim Horton  <timothy_horton@apple.com>
+
+            Unreviewed rebaselines after r152701.
+
+            * editing/pasteboard/paste-noplugin-expected.txt:
+            * http/tests/security/contentSecurityPolicy/object-src-url-blocked-expected.txt:
+            * platform/mac/accessibility/plugin-expected.txt:
+
 2013-07-15  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152653
