@@ -1278,7 +1278,7 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSVa
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    const AtomicString& nativeValue(valueToAtomicStringWithNullCheck(exec, value));
+    const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
         return;
     impl->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, nativeValue);
@@ -1326,7 +1326,7 @@ void setJSTestObjReflectedURLAttr(ExecState* exec, JSObject* thisObject, JSValue
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    const AtomicString& nativeValue(valueToAtomicStringWithNullCheck(exec, value));
+    const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
         return;
     impl->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, nativeValue);
@@ -1338,7 +1338,7 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSVa
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    const AtomicString& nativeValue(valueToAtomicStringWithNullCheck(exec, value));
+    const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
         return;
     impl->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, nativeValue);
@@ -1374,7 +1374,7 @@ void setJSTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* thisObject, J
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    const AtomicString& nativeValue(valueToAtomicStringWithNullCheck(exec, value));
+    const String& nativeValue(valueToStringWithNullCheck(exec, value));
     if (exec->hadException())
         return;
     impl->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, nativeValue);
