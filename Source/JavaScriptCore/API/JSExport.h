@@ -91,8 +91,7 @@
 //    class, conversion is consistent with valueWithObjectOfClass/toObject.
 // struct types: C struct types are supported, where JSValue provides support
 //    for the given type. Support is built in for CGPoint, NSRange, CGRect, and
-//    CGSize; see JSValueStructSupport.h for information on how to add support
-//    for additional types.
+//    CGSize.
 // block types: In addition to support provided by valueWithObject/toObject for
 //    block types, if a JavaScript Function is passed as an argument, where the
 //    type required is a block with a void return value (and where the block's
