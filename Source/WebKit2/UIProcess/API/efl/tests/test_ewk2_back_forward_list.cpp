@@ -58,32 +58,35 @@ static void serverCallbackNavigation(SoupServer* server, SoupMessage* message, c
     soup_message_body_complete(message->response_body);
 }
 
-static inline void checkItem(Ewk_Back_Forward_List_Item* item, const char* title, const char* url, const char* originalURL)
-{
-    ASSERT_TRUE(item);
-    EXPECT_STREQ(url, ewk_back_forward_list_item_url_get(item));
-    EXPECT_STREQ(title, ewk_back_forward_list_item_title_get(item));
-    EXPECT_STREQ(originalURL, ewk_back_forward_list_item_original_url_get(item));
-}
+class EWK2BackForwardListTest : public EWK2UnitTestBase {
+protected:
+    void checkItem(Ewk_Back_Forward_List_Item* item, const char* title, const char* url, const char* originalURL)
+    {
+        ASSERT_TRUE(item);
+        EXPECT_STREQ(url, ewk_back_forward_list_item_url_get(item));
+        EXPECT_STREQ(title, ewk_back_forward_list_item_title_get(item));
+        EXPECT_STREQ(originalURL, ewk_back_forward_list_item_original_url_get(item));
+    }
 
-static inline WKEinaSharedString urlFromTitle(EWK2UnitTestServer* httpServer, const char* title)
-{
-    Eina_Strbuf* path = eina_strbuf_new();
-    eina_strbuf_append_printf(path, "/%s", title);
-    WKEinaSharedString res = httpServer->getURLForPath(eina_strbuf_string_get(path)).data();
-    eina_strbuf_free(path);
+    WKEinaSharedString urlFromTitle(EWK2UnitTestServer* httpServer, const char* title)
+    {
+        Eina_Strbuf* path = eina_strbuf_new();
+        eina_strbuf_append_printf(path, "/%s", title);
+        WKEinaSharedString res = httpServer->getURLForPath(eina_strbuf_string_get(path)).data();
+        eina_strbuf_free(path);
 
-    return res;
-}
+        return res;
+    }
 
-static inline void freeEinaList(Eina_List* list)
-{
-    void* data = 0;
-    EINA_LIST_FREE(list, data)
+    void freeEinaList(Eina_List* list)
+    {
+        void* data = 0;
+        EINA_LIST_FREE(list, data)
         ewk_object_unref(static_cast<Ewk_Object*>(data));
-}
+    }
+};
 
-TEST_F(EWK2UnitTestBase, ewk_back_forward_list_current_item_get)
+TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_current_item_get)
 {
     const char* url = environment->defaultTestPageUrl();
     ASSERT_TRUE(loadUrlSync(url));
@@ -97,7 +100,7 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_current_item_get)
     ASSERT_EQ(currentItem, anotherCurrentItem);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_back_forward_list_previous_item_get)
+TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_previous_item_get)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallbackNavigation);
@@ -119,7 +122,7 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_previous_item_get)
     ASSERT_EQ(previousItem, anotherPreviousItem);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_back_forward_list_next_item_get)
+TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_next_item_get)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallbackNavigation);
@@ -145,7 +148,7 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_next_item_get)
     ASSERT_EQ(nextItem, anotherNextItem);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_back_forward_list_item_at_index_get)
+TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_item_at_index_get)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallbackNavigation);
@@ -170,7 +173,7 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_item_at_index_get)
     ASSERT_FALSE(nonExistingItem);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_back_forward_list_count)
+TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_count)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallbackNavigation);
@@ -187,7 +190,7 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_count)
     EXPECT_EQ(2, ewk_back_forward_list_count(backForwardList));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_back_items_copy)
+TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_n_back_items_copy)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallbackNavigation);
@@ -224,7 +227,7 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_back_items_copy)
     freeEinaList(backList);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_forward_items_copy)
+TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_n_forward_items_copy)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallbackNavigation);
