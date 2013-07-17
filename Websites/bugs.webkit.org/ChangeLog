@@ -1,3 +1,12 @@
+2013-07-16  James Craig  <james@cookiecrook.com>
+
+        AX: Add a 'choose product' link for the new-ax-bug alias.
+        https://bugs.webkit.org/show_bug.cgi?id=118697
+
+        Reviewed by Chris Fleizach.
+
+        * template/en/custom/global/choose-product.html.tmpl: Added new link for accessibility bugs.
+
 2013-07-09  Martin Robinson  <mrobinson@igalia.com>
 
         PrettyPatch doesn't handle UTF-8 characters correctly
