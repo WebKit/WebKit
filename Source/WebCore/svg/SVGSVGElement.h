@@ -84,7 +84,7 @@ public:
     float currentScale() const;
     void setCurrentScale(float scale);
 
-    FloatPoint& currentTranslate() { return m_translation; }
+    SVGPoint& currentTranslate() { return m_translation; }
     void setCurrentTranslate(const FloatPoint&);
 
     // Only used from the bindings.
@@ -113,7 +113,7 @@ public:
     static float createSVGNumber();
     static SVGLength createSVGLength();
     static SVGAngle createSVGAngle();
-    static FloatPoint createSVGPoint();
+    static SVGPoint createSVGPoint();
     static SVGMatrix createSVGMatrix();
     static FloatRect createSVGRect();
     static SVGTransform createSVGTransform();
@@ -181,7 +181,7 @@ private:
     bool m_useCurrentView;
     SVGZoomAndPanType m_zoomAndPan;
     RefPtr<SMILTimeContainer> m_timeContainer;
-    FloatPoint m_translation;
+    SVGPoint m_translation;
     RefPtr<SVGViewSpec> m_viewSpec;
 };
 

@@ -44,6 +44,7 @@
 #include "JSbool.h"
 #include "KURL.h"
 #include "SVGDocument.h"
+#include "SVGPoint.h"
 #include "SVGStaticPropertyTearOff.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStackFactory.h"
@@ -942,7 +943,7 @@ JSValue jsTestObjMutablePoint(ExecState* exec, JSValue slotBase, PropertyName)
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGStaticPropertyTearOff<TestObj, FloatPoint>::create(impl, impl->mutablePoint(), &TestObj::updateMutablePoint)));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGStaticPropertyTearOff<TestObj, SVGPoint>::create(impl, impl->mutablePoint(), &TestObj::updateMutablePoint)));
     return result;
 }
 
@@ -952,7 +953,7 @@ JSValue jsTestObjImmutablePoint(ExecState* exec, JSValue slotBase, PropertyName)
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<FloatPoint>::create(impl->immutablePoint())));
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl->immutablePoint())));
     return result;
 }
 
@@ -1652,7 +1653,7 @@ void setJSTestObjMutablePoint(ExecState* exec, JSObject* thisObject, JSValue val
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    SVGPropertyTearOff<FloatPoint>* nativeValue(toSVGPoint(value));
+    SVGPropertyTearOff<SVGPoint>* nativeValue(toSVGPoint(value));
     if (exec->hadException())
         return;
     impl->setMutablePoint(nativeValue);
@@ -1664,7 +1665,7 @@ void setJSTestObjImmutablePoint(ExecState* exec, JSObject* thisObject, JSValue v
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    SVGPropertyTearOff<FloatPoint>* nativeValue(toSVGPoint(value));
+    SVGPropertyTearOff<SVGPoint>* nativeValue(toSVGPoint(value));
     if (exec->hadException())
         return;
     impl->setImmutablePoint(nativeValue);
@@ -2989,7 +2990,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(Exec
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<FloatPoint>::create(impl->mutablePointFunction())));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl->mutablePointFunction())));
     return JSValue::encode(result);
 }
 
@@ -3002,7 +3003,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(Ex
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<FloatPoint>::create(impl->immutablePointFunction())));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl->immutablePointFunction())));
     return JSValue::encode(result);
 }
 

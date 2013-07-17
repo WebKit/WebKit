@@ -78,11 +78,11 @@ public:
     unsigned getNumberOfChars();
     float getComputedTextLength();
     float getSubStringLength(unsigned charnum, unsigned nchars, ExceptionCode&);
-    FloatPoint getStartPositionOfChar(unsigned charnum, ExceptionCode&);
-    FloatPoint getEndPositionOfChar(unsigned charnum, ExceptionCode&);
+    SVGPoint getStartPositionOfChar(unsigned charnum, ExceptionCode&);
+    SVGPoint getEndPositionOfChar(unsigned charnum, ExceptionCode&);
     FloatRect getExtentOfChar(unsigned charnum, ExceptionCode&);
     float getRotationOfChar(unsigned charnum, ExceptionCode&);
-    int getCharNumAtPosition(const FloatPoint&);
+    int getCharNumAtPosition(const SVGPoint&);
     void selectSubString(unsigned charnum, unsigned nchars, ExceptionCode&);
 
     static SVGTextContentElement* elementFromRenderer(RenderObject*);

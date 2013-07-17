@@ -40,6 +40,7 @@
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
+#import "SVGPoint.h"
 #import "SerializedScriptValue.h"
 #import "TestTypedefs.h"
 #import "ThreadCheck.h"
@@ -161,7 +162,7 @@
 - (DOMSVGPoint *)immutablePointFunction
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::FloatPoint>::create(IMPL->immutablePointFunction())));
+    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::SVGPoint>::create(IMPL->immutablePointFunction())));
 }
 
 - (void)methodWithException

@@ -315,7 +315,7 @@ bool getTotalLengthOfSVGPathByteStream(SVGPathByteStream* stream, float& totalLe
     return ok;
 }
 
-bool getPointAtLengthOfSVGPathByteStream(SVGPathByteStream* stream, float length, FloatPoint& point)
+bool getPointAtLengthOfSVGPathByteStream(SVGPathByteStream* stream, float length, SVGPoint& point)
 {
     ASSERT(stream);
     if (stream->isEmpty())

@@ -58,6 +58,7 @@
 #import "Node.h"
 #import "ObjCEventListener.h"
 #import "SVGDocument.h"
+#import "SVGPoint.h"
 #import "SVGStaticPropertyTearOff.h"
 #import "SerializedScriptValue.h"
 #import "TestEnumType.h"
@@ -673,7 +674,7 @@
 - (DOMSVGPoint *)mutablePoint
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(WebCore::SVGStaticPropertyTearOff<WebCore::TestObj, WebCore::FloatPoint>::create(IMPL, IMPL->mutablePoint(), &WebCore::TestObj::updateMutablePoint)));
+    return kit(WTF::getPtr(WebCore::SVGStaticPropertyTearOff<WebCore::TestObj, WebCore::SVGPoint>::create(IMPL, IMPL->mutablePoint(), &WebCore::TestObj::updateMutablePoint)));
 }
 
 - (void)setMutablePoint:(DOMSVGPoint *)newMutablePoint
@@ -687,7 +688,7 @@
 - (DOMSVGPoint *)immutablePoint
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::FloatPoint>::create(IMPL->immutablePoint())));
+    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::SVGPoint>::create(IMPL->immutablePoint())));
 }
 
 - (void)setImmutablePoint:(DOMSVGPoint *)newImmutablePoint
@@ -1126,13 +1127,13 @@
 - (DOMSVGPoint *)mutablePointFunction
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::FloatPoint>::create(IMPL->mutablePointFunction())));
+    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::SVGPoint>::create(IMPL->mutablePointFunction())));
 }
 
 - (DOMSVGPoint *)immutablePointFunction
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::FloatPoint>::create(IMPL->immutablePointFunction())));
+    return kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::SVGPoint>::create(IMPL->immutablePointFunction())));
 }
 
 - (void)orange

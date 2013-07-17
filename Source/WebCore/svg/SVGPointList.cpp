@@ -23,7 +23,6 @@
 #if ENABLE(SVG)
 #include "SVGPointList.h"
 
-#include "FloatPoint.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,7 +37,7 @@ String SVGPointList::valueAsString() const
         if (i > 0)
             builder.append(' '); // FIXME: Shouldn't we use commas to seperate?
 
-        const FloatPoint& point = at(i);
+        const SVGPoint& point = at(i);
         builder.append(String::number(point.x()) + ' ' + String::number(point.y()));
     }
 

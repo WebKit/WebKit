@@ -1,3 +1,69 @@
+2013-07-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Get rid of SVGPoint special case from the bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=118783
+
+        Reviewed by Kentaro Hara.
+
+        Get rid of SVGPoint special case from the bindings generator by adding a
+        new SVGPoint.h header that contains a typedef to FloatPoint.
+
+        Also use SVGPoint type in the implementation API for consistency with
+        the IDL.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (SkipIncludeHeader):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjMutablePoint):
+        (WebCore::jsTestObjImmutablePoint):
+        (WebCore::setJSTestObjMutablePoint):
+        (WebCore::setJSTestObjImmutablePoint):
+        (WebCore::jsTestObjPrototypeFunctionMutablePointFunction):
+        (WebCore::jsTestObjPrototypeFunctionImmutablePointFunction):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionImmutablePointFunction):
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj mutablePoint]):
+        (-[DOMTestObj immutablePoint]):
+        (-[DOMTestObj mutablePointFunction]):
+        (-[DOMTestObj immutablePointFunction]):
+        * bindings/scripts/test/ObjC/DOMTestTypedefs.mm:
+        (-[DOMTestTypedefs immutablePointFunction]):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::buildLocalToBorderBoxTransform):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::startPositionOfCharacter):
+        (WebCore::SVGTextQuery::endPositionOfCharacter):
+        (WebCore::SVGTextQuery::characterNumberAtPosition):
+        * rendering/svg/SVGTextQuery.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::getPointAtLength):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathTraversalStateBuilder.cpp:
+        (WebCore::SVGPathTraversalStateBuilder::currentPoint):
+        * svg/SVGPathTraversalStateBuilder.h:
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::getPointAtLengthOfSVGPathByteStream):
+        * svg/SVGPathUtilities.h:
+        * svg/SVGPoint.h: Added.
+        * svg/SVGPointList.cpp:
+        (WebCore::SVGPointList::valueAsString):
+        * svg/SVGPointList.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createSVGPoint):
+        * svg/SVGSVGElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::getStartPositionOfChar):
+        (WebCore::SVGTextContentElement::getEndPositionOfChar):
+        (WebCore::SVGTextContentElement::getCharNumAtPosition):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGZoomEvent.cpp:
+        (WebCore::SVGZoomEvent::previousTranslate):
+        (WebCore::SVGZoomEvent::newTranslate):
+        * svg/SVGZoomEvent.h:
+
 2013-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] webkitwebsrc: use SubResourceLoader

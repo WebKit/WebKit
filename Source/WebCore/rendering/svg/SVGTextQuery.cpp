@@ -352,10 +352,10 @@ bool SVGTextQuery::startPositionOfCharacterCallback(Data* queryData, const SVGTe
     return true;
 }
 
-FloatPoint SVGTextQuery::startPositionOfCharacter(unsigned position) const
+SVGPoint SVGTextQuery::startPositionOfCharacter(unsigned position) const
 {
     if (m_textBoxes.isEmpty())
-        return FloatPoint();
+        return SVGPoint();
 
     StartPositionOfCharacterData data(position);
     executeQuery(&data, &SVGTextQuery::startPositionOfCharacterCallback);
@@ -399,10 +399,10 @@ bool SVGTextQuery::endPositionOfCharacterCallback(Data* queryData, const SVGText
     return true;
 }
 
-FloatPoint SVGTextQuery::endPositionOfCharacter(unsigned position) const
+SVGPoint SVGTextQuery::endPositionOfCharacter(unsigned position) const
 {
     if (m_textBoxes.isEmpty())
-        return FloatPoint();
+        return SVGPoint();
 
     EndPositionOfCharacterData data(position);
     executeQuery(&data, &SVGTextQuery::endPositionOfCharacterCallback);
@@ -543,7 +543,7 @@ bool SVGTextQuery::characterNumberAtPositionCallback(Data* queryData, const SVGT
     return false;
 }
 
-int SVGTextQuery::characterNumberAtPosition(const FloatPoint& position) const
+int SVGTextQuery::characterNumberAtPosition(const SVGPoint& position) const
 {
     if (m_textBoxes.isEmpty())
         return -1;

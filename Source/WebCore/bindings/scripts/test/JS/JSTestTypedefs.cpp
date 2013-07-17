@@ -30,6 +30,7 @@
 #include "JSTestCallback.h"
 #include "JSTestSubObj.h"
 #include "KURL.h"
+#include "SVGPoint.h"
 #include "SerializedScriptValue.h"
 #include "TestTypedefs.h"
 #include <runtime/Error.h>
@@ -500,7 +501,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionImmutablePointFuncti
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestTypedefs::s_info);
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<FloatPoint>::create(impl->immutablePointFunction())));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl->immutablePointFunction())));
     return JSValue::encode(result);
 }
 
