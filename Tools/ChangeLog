@@ -1,3 +1,18 @@
+2013-07-16  Kwang Yul Seo  <skyul@company100.net>
+
+        check-webkit-style: "using namespace foo;" should be flagged as an error only in headers
+        https://bugs.webkit.org/show_bug.cgi?id=118755
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix r152719 to check "using namespace foo;" only in headers.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_using_namespace):
+        (check_style):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_using_namespace):
+
 2013-07-16  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of multiple inheritance support from the bindings generators
