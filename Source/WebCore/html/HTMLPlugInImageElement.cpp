@@ -368,12 +368,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     // styles defined in the injected user agents stylesheets to specify
     // the look-and-feel of the snapshotted plug-in overlay. 
     root->setResetStyleInheritance(true);
-
-    // If we don't expect to be displaying a snapshot yet, the shadow root belongs
-    // to the unavailable plug-in indicator, not to us, so we won't populate it.
-    if (displayState() != DisplayingSnapshot)
-        return;
-
+    
     String mimeType = loadedMimeType();
 
     DEFINE_STATIC_LOCAL(RefPtr<DOMWrapperWorld>, isolatedWorld, (DOMWrapperWorld::create(JSDOMWindow::commonVM())));

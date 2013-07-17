@@ -90,7 +90,7 @@ public:
     bool shouldGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
     void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*, APIObject*);
 
-    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, PluginModuleLoadPolicy currentPluginLoadPolicy, ImmutableDictionary*, String& unavailabilityDescriptionOutParameter);
+    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, PluginModuleLoadPolicy currentPluginLoadPolicy, ImmutableDictionary*);
     void didFailToInitializePlugin(WebPageProxy*, ImmutableDictionary*);
     void didBlockInsecurePluginVersion(WebPageProxy*, ImmutableDictionary*);
 };

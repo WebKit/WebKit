@@ -1419,11 +1419,11 @@ void PluginView::pluginProcessCrashed()
     // FIXME: The renderer could also be a RenderApplet, we should handle that.
     if (!m_pluginElement->renderer()->isEmbeddedObject())
         return;
-
-    Widget::invalidate();
         
     RenderEmbeddedObject* renderer = toRenderEmbeddedObject(m_pluginElement->renderer());
     renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginCrashed);
+    
+    Widget::invalidate();
 }
 
 void PluginView::willSendEventToPlugin()

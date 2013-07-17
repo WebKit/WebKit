@@ -82,13 +82,12 @@ typedef bool (*WKPageShouldGoToBackForwardListItemCallback)(WKPageRef page, WKBa
 typedef void (*WKPageDidNewFirstVisuallyNonEmptyLayoutCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageWillGoToBackForwardListItemCallback)(WKPageRef page, WKBackForwardListItemRef item, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageDidLayoutCallback)(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef userData, const void *clientInfo);
-typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback)(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInfoDictionary, WKStringRef* unavailabilityDescription, const void* clientInfo);
+typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback)(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInfoDictionary, const void* clientInfo);
 typedef void (*WKPagePluginDidFailCallback)(WKPageRef page, WKErrorCode errorCode, WKDictionaryRef pluginInfoDictionary, const void* clientInfo);
 
 // Deprecated
 typedef void (*WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef mimeType, const void* clientInfo);
 typedef void (*WKPagePluginDidFailCallback_deprecatedForUseWithV1)(WKPageRef page, WKErrorCode errorCode, WKStringRef mimeType, WKStringRef pluginIdentifier, WKStringRef pluginVersion, const void* clientInfo);
-typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback_deprecatedForUseWithV2)(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInfoDictionary, const void* clientInfo);
 
 struct WKPageLoaderClient {
     int                                                                 version;
@@ -140,15 +139,12 @@ struct WKPageLoaderClient {
     void                                                                (*registerIntentServiceForFrame_unavailable)(void);
 
     WKPageDidLayoutCallback                                             didLayout;
-    WKPagePluginLoadPolicyCallback_deprecatedForUseWithV2                                      pluginLoadPolicy_deprecatedForUseWithV2;
-    WKPagePluginDidFailCallback                                         pluginDidFail;
-
-    // Version 3
     WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
+    WKPagePluginDidFailCallback                                         pluginDidFail;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 
-enum { kWKPageLoaderClientCurrentVersion = 3 };
+enum { kWKPageLoaderClientCurrentVersion = 2 };
 
 // Policy Client.
 typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);

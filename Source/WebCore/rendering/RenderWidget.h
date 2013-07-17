@@ -86,11 +86,11 @@ protected:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual void paintContents(PaintInfo&, const LayoutPoint&);
-    virtual void willBeDestroyed();
 
 private:
     virtual bool isWidget() const { return true; }
 
+    virtual void willBeDestroyed();
     virtual void destroy();
     virtual void setSelectionState(SelectionState);
     virtual void setOverlapTestResult(bool);

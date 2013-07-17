@@ -324,7 +324,7 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
     if (!widget) {
         RenderEmbeddedObject* renderer = element->renderEmbeddedObject();
 
-        if (renderer && !renderer->showsUnavailablePluginIndicator())
+        if (!renderer->showsUnavailablePluginIndicator())
             renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginMissing);
         return 0;
     }

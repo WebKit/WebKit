@@ -9,15 +9,6 @@ Original contents:
 "
 | <embed>
 |   src="http://localhost:8000/evil.swf"
-|   <shadow:root>
-|     <div>
-|       pseudo="-webkit-unavailable-plugin-content"
-|       shadow:pseudoId="-webkit-unavailable-plugin-content"
-|       <div>
-|         <span>
-|           role="button"
-|           "Missing Plug-in"
-|         <img>
 | "
 "
 | <object>
@@ -27,15 +18,6 @@ Original contents:
 |     value="http://localhost:8000/evil.swf"
 |   <embed>
 |     src="http://localhost:8000/evil.swf"
-|     <shadow:root>
-|       <div>
-|         pseudo="-webkit-unavailable-plugin-content"
-|         shadow:pseudoId="-webkit-unavailable-plugin-content"
-|         <div>
-|           <span>
-|             role="button"
-|             "Missing Plug-in"
-|           <img>
 | "
 "
 

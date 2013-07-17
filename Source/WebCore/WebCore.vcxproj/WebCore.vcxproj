@@ -13666,7 +13666,6 @@
     <None Include="..\css\mediaControls.css" />
     <None Include="..\css\plugIns.css" />
     <None Include="..\css\quirks.css" />
-    <None Include="..\css\unavailablePlugIns.css" />
     <None Include="..\xml\XPathGrammar.y" />
     <None Include="..\bindings\scripts\CodeGenerator.pm" />
     <None Include="..\bindings\scripts\CodeGeneratorJS.pm" />
