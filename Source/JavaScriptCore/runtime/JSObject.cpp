@@ -1400,7 +1400,7 @@ bool JSObject::hasInstance(ExecState* exec, JSValue value)
         return defaultHasInstance(exec, value, get(exec, exec->propertyNames().prototype));
     if (info.implementsHasInstance())
         return methodTable()->customHasInstance(this, exec, value);
-    throwError(exec, createInvalidParamError(exec, "instanceof" , this));
+    throwError(exec, createInvalidParameterError(exec, "instanceof" , this));
     return false;
 }
 

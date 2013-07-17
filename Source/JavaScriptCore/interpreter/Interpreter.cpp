@@ -189,7 +189,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
     }
 
     if (!arguments.isObject()) {
-        callFrame->vm().exception = createInvalidParamError(callFrame, "Function.prototype.apply", arguments);
+        callFrame->vm().exception = createInvalidParameterError(callFrame, "Function.prototype.apply", arguments);
         return 0;
     }
 

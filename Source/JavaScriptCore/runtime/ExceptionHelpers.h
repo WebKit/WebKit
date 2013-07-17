@@ -42,7 +42,7 @@ JSObject* createStackOverflowError(JSGlobalObject*);
 JSObject* createOutOfMemoryError(JSGlobalObject*);
 JSObject* createUndefinedVariableError(ExecState*, const Identifier&);
 JSObject* createNotAnObjectError(ExecState*, JSValue);
-JSObject* createInvalidParamError(ExecState*, const char* op, JSValue);
+JSObject* createInvalidParameterError(ExecState*, const char* op, JSValue);
 JSObject* createNotAConstructorError(ExecState*, JSValue);
 JSObject* createNotAFunctionError(ExecState*, JSValue);
 JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const String&);

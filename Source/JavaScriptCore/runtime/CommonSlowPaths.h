@@ -78,7 +78,7 @@ ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, JSStack* stack, CodeSpec
 inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
 {
     if (!baseVal.isObject()) {
-        exec->vm().exception = createInvalidParamError(exec, "in", baseVal);
+        exec->vm().exception = createInvalidParameterError(exec, "in", baseVal);
         return false;
     }
 

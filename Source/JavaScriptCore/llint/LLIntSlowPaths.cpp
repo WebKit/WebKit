@@ -731,7 +731,7 @@ LLINT_SLOW_PATH_DECL(slow_path_check_has_instance)
             LLINT_RETURN(jsBoolean(baseObject->methodTable()->customHasInstance(baseObject, exec, value)));
         }
     }
-    LLINT_THROW(createInvalidParamError(exec, "instanceof", baseVal));
+    LLINT_THROW(createInvalidParameterError(exec, "instanceof", baseVal));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_instanceof)

@@ -1889,7 +1889,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_check_has_instance)
         }
     }
 
-    stackFrame.vm->exception = createInvalidParamError(callFrame, "instanceof", baseVal);
+    stackFrame.vm->exception = createInvalidParameterError(callFrame, "instanceof", baseVal);
     VM_THROW_EXCEPTION_AT_END();
     return JSValue::encode(JSValue());
 }
@@ -3301,7 +3301,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_in)
     JSValue baseVal = stackFrame.args[1].jsValue();
 
     if (!baseVal.isObject()) {
-        stackFrame.vm->exception = createInvalidParamError(stackFrame.callFrame, "in", baseVal);
+        stackFrame.vm->exception = createInvalidParameterError(stackFrame.callFrame, "in", baseVal);
         VM_THROW_EXCEPTION();
     }
 

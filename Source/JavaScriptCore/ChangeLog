@@ -1,3 +1,27 @@
+2013-07-17  Chris Curtis  <chris_curtis@apple.com>
+
+        Naming convention on createInvalidParamError is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=118756
+
+        Reviewed by Geoffrey Garen.
+        
+        Changed the naming of createInvalidParamError to createInvalidParameterError.
+        This corrects the naming convention for the function listed in the WebKit code styling.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::loadVarargs):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createInvalidParameterError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasInstance):
+
 2013-07-16  David Farler  <dfarler@apple.com>
 
         Typo in DFGInsertionSet.h header guard: "DFGInsectionSet_h" -> "DFGInsertionSet_h"

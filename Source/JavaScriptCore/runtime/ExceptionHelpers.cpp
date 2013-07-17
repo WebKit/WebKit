@@ -84,7 +84,7 @@ JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
     return createReferenceError(exec, message);
 }
     
-JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue value)
+JSObject* createInvalidParameterError(ExecState* exec, const char* op, JSValue value)
 {
     String errorMessage = makeString("'", value.toString(exec)->value(exec), "' is not a valid argument for '", op, "'");
     JSObject* exception = createTypeError(exec, errorMessage);
