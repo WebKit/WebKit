@@ -1,3 +1,16 @@
+2013-07-17  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Make DRT obbey testRunner's addURLToRedirect
+        https://bugs.webkit.org/show_bug.cgi?id=118239
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Support testRunner's addURLToRedirect in GTK's DRT, so it redirects
+        to the proper URI when indicated.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (willSendRequestCallback):
+
 2013-07-17  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         Add a new find-resolved-bugs command to webkit-patch.

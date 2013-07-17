@@ -1,3 +1,15 @@
+2013-07-17  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Make DRT obbey testRunner's addURLToRedirect
+        https://bugs.webkit.org/show_bug.cgi?id=118239
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Unskip http/tests/loading/cross-origin-XHR-willLoadRequest.html now that DRT obbeys
+        testRunner's addURLToRedirect.
+
+        * platform/gtk/TestExpectations:
+
 2013-07-17  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewd gardening. Rebase and skip failing tests.
