@@ -461,6 +461,14 @@ AtomicString AtomicString::fromUTF8Internal(const char* charactersStart, const c
     return atomicString;
 }
 
+#if !ASSERT_DISABLED
+bool AtomicString::isInAtomicStringTable(StringImpl* string)
+{
+    AtomicStringTableLocker locker;
+    return stringTable().contains(string);
+}
+#endif
+
 #ifndef NDEBUG
 void AtomicString::show() const
 {

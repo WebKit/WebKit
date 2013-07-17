@@ -182,11 +182,13 @@ private:
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(const UChar*, unsigned length, unsigned existingHash);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(const UChar*);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(StringImpl*, unsigned offset, unsigned length);
-    ALWAYS_INLINE static PassRefPtr<StringImpl> add(StringImpl* r)
+    ALWAYS_INLINE static PassRefPtr<StringImpl> add(StringImpl* string)
     {
-        if (!r || r->isAtomic())
-            return r;
-        return addSlowCase(r);
+        if (!string || string->isAtomic()) {
+            ASSERT_WITH_MESSAGE(!string || isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+            return string;
+        }
+        return addSlowCase(string);
     }
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addFromLiteralData(const char* characters, unsigned length);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
@@ -195,6 +197,10 @@ private:
 #endif
 
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);
+
+#if !ASSERT_DISABLED
+    WTF_EXPORT_STRING_API static bool isInAtomicStringTable(StringImpl*);
+#endif
 };
 
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }

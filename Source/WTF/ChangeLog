@@ -1,5 +1,25 @@
 2013-07-17  Benjamin Poulain  <benjamin@webkit.org>
 
+        Add a thread safety assertion when creating an AtomicString from a StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=118637
+
+        Reviewed by Sam Weinig.
+
+        The goal is to prevent this kind of use:
+        -Someone create a String from a StringImpl.
+        -At some point, the string becomes atomic.
+        -Later, when the string only has one ref, its ownership is 'passed' to an other thread
+         without checking String::isSafeToSendToAnotherThread().
+        -In the thread B, an AtomicString is created from the String.
+        ->The AtomicString's StringImpl returned is not in the current thread string table.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::isInAtomicStringTable):
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::add):
+
+2013-07-17  Benjamin Poulain  <benjamin@webkit.org>
+
         Simplify AtomicString::lower()
         https://bugs.webkit.org/show_bug.cgi?id=118719
         <rdar://problem/14452883>
