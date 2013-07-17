@@ -181,6 +181,7 @@ fast/js/dfg-intrinsic-osr-exit
 fast/js/dfg-intrinsic-side-effect-assignment-osr-exit
 fast/js/dfg-intrinsic-unused-this
 fast/js/dfg-intrinsic-unused-this-method-check
+fast/js/dfg-make-rope-all-empty-strings
 fast/js/dfg-max-backwards-propagation
 fast/js/dfg-min-backwards-propagation
 fast/js/dfg-min-max
