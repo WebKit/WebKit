@@ -1,3 +1,14 @@
+2013-07-17  Stephanie Lewis  <slewis@apple.com>
+
+        fullscreen/full-screen-iframe-with-max-width-height.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=118820
+
+        Unreviewed.
+
+        Label a flaky test as flaky
+
+        * platform/mac/TestExpectations:
+
 2013-07-17  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening after r152800.
