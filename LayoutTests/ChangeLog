@@ -1,3 +1,10 @@
+2013-07-17  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Rebaseline tests for AppleWin port after r152789.
+
+        * platform/win/editing/pasteboard/paste-noplugin-expected.txt: Added.
+        * platform/win/platform/win/plugins/draws-gradient-expected.txt:
+
 2013-07-17  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes][CSS Exclusions] Cleanup tests to reflect split between CSS Shapes and CSS Exclusions
