@@ -1,3 +1,13 @@
+2013-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        API tests should test for JSStringCreateWithCFString with empty string
+        https://bugs.webkit.org/show_bug.cgi?id=118819
+
+        Reviewed by Mark Hahnenberg.
+
+        * API/tests/testapi.c:
+        (main): Test!
+
 2013-07-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG assumes that NewFunction will never pass its input through
