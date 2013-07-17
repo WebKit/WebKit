@@ -53,7 +53,7 @@ JSStringRef JSStringCreateWithCFString(CFStringRef string)
         return OpaqueJSString::create(reinterpret_cast<UChar*>(buffer.get()), length).leakRef();
     }
     
-    return OpaqueJSString::create(static_cast<const LChar*>(0), 0).leakRef();
+    return OpaqueJSString::create(reinterpret_cast<const LChar*>(""), 0).leakRef();
 }
 
 CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string)

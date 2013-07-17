@@ -56,7 +56,6 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
         }
     }
 
-    // Null string.
     return OpaqueJSString::create().leakRef();
 }
 

@@ -1,3 +1,18 @@
+2013-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        JSStringCreateWithCFString should not convert the empty string into the NULL string
+        https://bugs.webkit.org/show_bug.cgi?id=118816
+
+        Reviewed by Sam Weinig.
+
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithUTF8CString): Removed an extraneous comment, which
+        a previous version of the patch made incorrect.
+
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString): Don't convert the empty string into the
+        null string.
+
 2013-07-17  Chris Curtis  <chris_curtis@apple.com>
 
         Naming convention on createInvalidParamError is incorrect.
