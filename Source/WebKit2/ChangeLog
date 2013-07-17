@@ -1,5 +1,22 @@
 2013-07-17  Dong-Gwan Kim  <donggwan.kim@samsung.com>
 
+        [EFL][WK2] EWK2StorageManagerTest should be defined by inheriting from EWK2UnitTestBase.
+        https://bugs.webkit.org/show_bug.cgi?id=118777
+
+        Reviewed by Christophe Dumez.
+
+        It should be defined as relevant test class specific to each test file for more readability.
+        It could be helpful to remove unnecessary static methods.
+
+        * UIProcess/API/efl/tests/test_ewk2_storage_manager.cpp:
+        (EWK2StorageManagerTest::OriginData::OriginData):
+        (EWK2StorageManagerTest::getStorageOriginsCallback):
+        (EWK2StorageManagerTest::timerCallback):
+        (EWK2StorageManagerTest::checkOrigin):
+        (TEST_F):
+
+2013-07-17  Dong-Gwan Kim  <donggwan.kim@samsung.com>
+
         [EFL][WK2] EWK2PopupMenuTest should be defined by inheriting from EWK2UnitTestBase.
         https://bugs.webkit.org/show_bug.cgi?id=118775
 

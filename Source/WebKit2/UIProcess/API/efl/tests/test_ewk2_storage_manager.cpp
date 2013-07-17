@@ -29,76 +29,80 @@
 
 using namespace EWK2UnitTest;
 
-struct OriginData {
-    Eina_List* originList;
-    Ewk_Storage_Manager* manager;
-    bool didReceiveOriginsCallback;
-    bool isSynchronized;
-    unsigned timeToCheck;
+class EWK2StorageManagerTest : public EWK2UnitTestBase {
+public:
+    struct OriginData {
+        Eina_List* originList;
+        Ewk_Storage_Manager* manager;
+        bool didReceiveOriginsCallback;
+        bool isSynchronized;
+        unsigned timeToCheck;
 
-    OriginData()
-        : originList(0)
-        , manager(0)
-        , didReceiveOriginsCallback(false)
-        , isSynchronized(false)
-        , timeToCheck(10)
-    { }
-};
+        OriginData()
+            : originList(0)
+            , manager(0)
+            , didReceiveOriginsCallback(false)
+            , isSynchronized(false)
+            , timeToCheck(10)
+        { }
+    };
 
-static void getStorageOriginsCallback(Eina_List* origins, Ewk_Error* error, void* userData)
-{
-    ASSERT_FALSE(error);
+    static void getStorageOriginsCallback(Eina_List* origins, Ewk_Error* error, void* userData)
+    {
+        ASSERT_FALSE(error);
 
-    OriginData* originData = static_cast<OriginData*>(userData);
-    originData->didReceiveOriginsCallback = true;
+        OriginData* originData = static_cast<OriginData*>(userData);
+        originData->didReceiveOriginsCallback = true;
 
-    Eina_List* l;
-    void* data;
-    EINA_LIST_FOREACH(origins, l, data) {
-        originData->originList = eina_list_append(originData->originList, data);
-        Ewk_Security_Origin* origin = static_cast<Ewk_Security_Origin*>(data);
-        if (!strcmp(ewk_security_origin_protocol_get(origin), "http")
-            && !strcmp(ewk_security_origin_host_get(origin), "www.storagetest.com")
-            && !ewk_security_origin_port_get(origin)) {
-                originData->isSynchronized = true;
-                ecore_main_loop_quit();
+        Eina_List* l;
+        void* data;
+        EINA_LIST_FOREACH(origins, l, data) {
+            originData->originList = eina_list_append(originData->originList, data);
+            Ewk_Security_Origin* origin = static_cast<Ewk_Security_Origin*>(data);
+            if (!strcmp(ewk_security_origin_protocol_get(origin), "http")
+                && !strcmp(ewk_security_origin_host_get(origin), "www.storagetest.com")
+                && !ewk_security_origin_port_get(origin)) {
+                    originData->isSynchronized = true;
+                    ecore_main_loop_quit();
+            }
         }
     }
-}
 
-static bool timerCallback(void* userData)
-{
-    OriginData* originData = static_cast<OriginData*>(userData);
+    static bool timerCallback(void* userData)
+    {
+        OriginData* originData = static_cast<OriginData*>(userData);
 
-    if (originData->isSynchronized || !--(originData->timeToCheck)) {
-        ecore_main_loop_quit();
-        return ECORE_CALLBACK_CANCEL;
+        if (originData->isSynchronized || !--(originData->timeToCheck)) {
+            ecore_main_loop_quit();
+            return ECORE_CALLBACK_CANCEL;
+        }
+
+        if (originData->didReceiveOriginsCallback) {
+            originData->didReceiveOriginsCallback = false;
+            ewk_storage_manager_origins_get(originData->manager, getStorageOriginsCallback, originData);
+        }
+
+        return ECORE_CALLBACK_RENEW;
     }
 
-    if (originData->didReceiveOriginsCallback) {
-        originData->didReceiveOriginsCallback = false;
-        ewk_storage_manager_origins_get(originData->manager, getStorageOriginsCallback, originData);
+protected:
+    bool checkOrigin(Eina_List* origins, Ewk_Security_Origin** origin)
+    {
+        Eina_List* l;
+        void* data;
+        EINA_LIST_FOREACH(origins, l, data) {
+            *origin = static_cast<Ewk_Security_Origin*>(data);
+            if (!strcmp(ewk_security_origin_protocol_get(*origin), "http")
+                && !strcmp(ewk_security_origin_host_get(*origin), "www.storagetest.com")
+                && !ewk_security_origin_port_get(*origin))
+                return true;
+        }
+
+        return false;
     }
+};
 
-    return ECORE_CALLBACK_RENEW;
-}
-
-static bool checkOrigin(Eina_List* origins, Ewk_Security_Origin** origin)
-{
-    Eina_List* l;
-    void* data;
-    EINA_LIST_FOREACH(origins, l, data) {
-        *origin = static_cast<Ewk_Security_Origin*>(data);
-        if (!strcmp(ewk_security_origin_protocol_get(*origin), "http")
-            && !strcmp(ewk_security_origin_host_get(*origin), "www.storagetest.com")
-            && !ewk_security_origin_port_get(*origin))
-            return true;
-    }
-
-    return false;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_storage_manager_origins_get)
+TEST_F(EWK2StorageManagerTest, ewk_storage_manager_origins_get)
 {
     Evas_Object* view = webView();
     const char* storageHTML =
