@@ -1,3 +1,17 @@
+2013-07-17  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Crashes in CFURLGetBytes under WebProcess::updateActivePages()
+        https://bugs.webkit.org/show_bug.cgi?id=118814
+        <rdar://problem/14173389>
+
+        Reviewed by Brady Eidson.
+
+        Speculative fix. It's unclear how we end up with an invalid URL when committing
+        a load.
+
+        * WebProcess/mac/WebProcessMac.mm: (WebKit::WebProcess::updateActivePages):
+        Added a null check.
+
 2013-07-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r152786 and r152789.
