@@ -1,3 +1,13 @@
+2013-07-17  Mihai Maerean  <mmaerean@adobe.com>
+
+        ASSERTION FAILED: layoutState->m_renderer == this in WebCore::RenderBlock::offsetFromLogicalTopOfFirstPage
+        https://bugs.webkit.org/show_bug.cgi?id=118587
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/crash-div-outside-body-vertical-rl-expected.html: Added.
+        * fast/regions/crash-div-outside-body-vertical-rl.html: Added.
+
 2013-07-16  Alex Christensen  <achristensen@apple.com>
 
         Added passing WebGL tests.
