@@ -2804,3 +2804,7 @@ editing/selection/user-select-all-with-single-click.html
 # Our external builds do not yet support AVCF, which this test relies on
 media/video-load-preload-metadata.html
 media/track/track-legacyapi-with-automatic-mode.html
+
+# CSS_SHAPES not supported on AppleWin port.
+# https://bugs.webkit.org/show_bug.cgi?id=118810
+fast/shapes

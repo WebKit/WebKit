@@ -1,5 +1,14 @@
 2013-07-17  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed gardening after r152800.
+        https://bugs.webkit.org/show_bug.cgi?id=118810.
+
+        CSS_SHAPES not yet supported on AppleWin port.
+
+        * platform/win/TestExpectations:
+
+2013-07-17  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed gardening. 
         Skip some tests on AppleWin port that requires AVFoundation, since it does not support it yet.
 
