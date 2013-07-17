@@ -255,6 +255,10 @@ public:
     void tryReplaceEncodedData(PassRefPtr<SharedBuffer>);
 #endif
 
+#if USE(SOUP)
+    virtual char* getOrCreateReadBuffer(size_t /* requestedSize */, size_t& /* actualSize */) { return 0; }
+#endif
+
 protected:
     virtual void checkNotify();
 

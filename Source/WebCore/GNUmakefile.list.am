@@ -4131,6 +4131,8 @@ webcore_sources += \
 	Source/WebCore/loader/SubresourceLoader.h \
 	Source/WebCore/loader/SubstituteData.h \
 	Source/WebCore/loader/SubstituteResource.h \
+	Source/WebCore/loader/soup/CachedRawResourceSoup.cpp \
+	Source/WebCore/loader/soup/SubresourceLoaderSoup.cpp \
 	Source/WebCore/loader/TextResourceDecoder.cpp \
 	Source/WebCore/loader/TextResourceDecoder.h \
 	Source/WebCore/loader/ThreadableLoaderClient.h \

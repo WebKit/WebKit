@@ -67,6 +67,10 @@ private:
     const char* calculateIncrementalDataChunk(ResourceBuffer*, unsigned& incrementalDataLength);
     void notifyClientsDataWasReceived(const char* data, unsigned length);
 
+#if USE(SOUP)
+    virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize);
+#endif
+
     unsigned long m_identifier;
 
     struct RedirectPair {

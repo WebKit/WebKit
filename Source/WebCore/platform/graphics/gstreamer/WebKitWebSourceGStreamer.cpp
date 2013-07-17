@@ -22,16 +22,15 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "Document.h"
-#include "Frame.h"
-#include "FrameLoader.h"
+#include "CachedRawResource.h"
+#include "CachedRawResourceClient.h"
+#include "CachedResourceHandle.h"
+#include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerVersioning.h"
 #include "MediaPlayer.h"
-#include "NetworkingContext.h"
 #include "NotImplemented.h"
-#include "ResourceHandleClient.h"
-#include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <gst/app/gstappsrc.h>
@@ -44,24 +43,19 @@
 
 using namespace WebCore;
 
-class StreamingClient : public ResourceHandleClient {
+class StreamingClient : public CachedRawResourceClient {
     WTF_MAKE_NONCOPYABLE(StreamingClient); WTF_MAKE_FAST_ALLOCATED;
     public:
         StreamingClient(WebKitWebSrc*);
         virtual ~StreamingClient();
 
-        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&);
-        virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-
-        virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize);
-
-        virtual void didReceiveData(ResourceHandle*, const char*, int, int);
-        virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
-        virtual void didFail(ResourceHandle*, const ResourceError&);
-        virtual void wasBlocked(ResourceHandle*);
-        virtual void cannotShowURL(ResourceHandle*);
-
     private:
+        // CachedResourceClient
+        virtual void responseReceived(CachedResource*, const ResourceResponse&);
+        virtual void dataReceived(CachedResource*, const char*, int);
+        virtual void notifyFinished(CachedResource*);
+        virtual char* getOrCreateReadBuffer(CachedResource*, size_t requestedSize, size_t& actualSize);
+
         WebKitWebSrc* m_src;
 };
 
@@ -71,11 +65,10 @@ struct _WebKitWebSrcPrivate {
     GstPad* srcpad;
     gchar* uri;
 
-    RefPtr<WebCore::Frame> frame;
     WebCore::MediaPlayer* player;
 
     StreamingClient* client;
-    RefPtr<ResourceHandle> resourceHandle;
+    CachedResourceHandle<CachedRawResource> resource;
 
     guint64 offset;
     guint64 size;
@@ -294,6 +287,8 @@ static void webKitWebSrcDispose(GObject* object)
         priv->buffer.clear();
     }
 
+    priv->player = 0;
+
     GST_CALL_PARENT(G_OBJECT_CLASS, dispose, (object));
 }
 
@@ -366,16 +361,15 @@ static void webKitWebSrcStop(WebKitWebSrc* src, bool seeking)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
-    if (priv->resourceHandle) {
-        priv->resourceHandle->cancel();
-        priv->resourceHandle.release();
+    if (priv->resource) {
+        priv->resource->removeClient(priv->client);
+        priv->resource = 0;
     }
-    priv->resourceHandle = 0;
 
-    if (priv->frame && !seeking)
-        priv->frame.clear();
-
-    priv->player = 0;
+    if (priv->client) {
+        delete priv->client;
+        priv->client = 0;
+    }
 
     if (priv->buffer) {
 #ifdef GST_API_VERSION_1
@@ -437,21 +431,14 @@ static bool webKitWebSrcStart(WebKitWebSrc* src)
         GST_ERROR_OBJECT(src, "No URI provided");
         return false;
     }
-    
+
+    ASSERT(priv->player);
+
     KURL url = KURL(KURL(), priv->uri);
 
     ResourceRequest request(url);
     request.setAllowCookies(true);
-
-    NetworkingContext* context = 0;
-    FrameLoader* loader = priv->frame ? priv->frame->loader() : 0;
-    if (loader) {
-        loader->addExtraFieldsToSubresourceRequest(request);
-        context = loader->networkingContext();
-    }
-
-    if (priv->player)
-        request.setHTTPReferrer(priv->player->referrer());
+    request.setHTTPReferrer(priv->player->referrer());
 
     // Let Apple web servers know we want to access their nice movie trailers.
     if (!g_ascii_strcasecmp("movies.apple.com", url.host().utf8().data())
@@ -472,9 +459,17 @@ static bool webKitWebSrcStart(WebKitWebSrc* src)
     // Needed to use DLNA streaming servers
     request.setHTTPHeaderField("transferMode.dlna", "Streaming");
 
-    priv->resourceHandle = ResourceHandle::create(context, request, priv->client, false, false);
-    if (!priv->resourceHandle) {
-        GST_ERROR_OBJECT(src, "Failed to create ResourceHandle");
+    if (CachedResourceLoader* loader = priv->player->cachedResourceLoader()) {
+        CachedResourceRequest cacheRequest(request, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, DoNotBufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
+        priv->resource = loader->requestRawResource(cacheRequest);
+        if (priv->resource) {
+            priv->client = new StreamingClient(src);
+            priv->resource->addClient(priv->client);
+        }
+    }
+
+    if (!priv->resource) {
+        GST_ERROR_OBJECT(src, "Failed to schedule resource load");
         return false;
     }
 
@@ -676,7 +671,7 @@ static gboolean webKitWebSrcNeedDataMainCb(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
-    priv->resourceHandle->setDefersLoading(false);
+    priv->resource->setDefersLoading(false);
 
     GST_OBJECT_LOCK(src);
     priv->paused = FALSE;
@@ -706,7 +701,7 @@ static gboolean webKitWebSrcEnoughDataMainCb(WebKitWebSrc* src)
 {
     WebKitWebSrcPrivate* priv = src->priv;
 
-    priv->resourceHandle->setDefersLoading(true);
+    priv->resource->setDefersLoading(true);
 
     GST_OBJECT_LOCK(src);
     priv->paused = TRUE;
@@ -769,15 +764,8 @@ static gboolean webKitWebSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer user
 
 void webKitWebSrcSetMediaPlayer(WebKitWebSrc* src, WebCore::MediaPlayer* player)
 {
-    WebKitWebSrcPrivate* priv = src->priv;
-    WebCore::Frame* frame = 0;
-
-    WebCore::Document* document = player->mediaPlayerClient()->mediaPlayerOwningDocument();
-    if (document)
-        frame = document->frame();
-
-    priv->frame = frame;
-    priv->player = player;
+    ASSERT(player);
+    src->priv->player = player;
 }
 
 StreamingClient::StreamingClient(WebKitWebSrc* src) : m_src(src)
@@ -790,11 +778,7 @@ StreamingClient::~StreamingClient()
 
 }
 
-void StreamingClient::willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&)
-{
-}
-
-void StreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+void StreamingClient::responseReceived(CachedResource* resource, const ResourceResponse& response)
 {
     WebKitWebSrcPrivate* priv = m_src->priv;
 
@@ -883,7 +867,7 @@ void StreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse
         notifyGstTagsOnPad(GST_ELEMENT(m_src), m_src->priv->srcpad, tags);
 }
 
-void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, int length, int)
+void StreamingClient::dataReceived(CachedResource* resource, const char* data, int length)
 {
     WebKitWebSrcPrivate* priv = m_src->priv;
 
@@ -896,7 +880,7 @@ void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, i
         unmapGstBuffer(priv->buffer.get());
 #endif
 
-    if (priv->seekID || handle != priv->resourceHandle) {
+    if (priv->seekID || resource != priv->resource) {
         GST_DEBUG_OBJECT(m_src, "Seek in progress, ignoring data");
         priv->buffer.clear();
         return;
@@ -930,7 +914,7 @@ void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, i
         GST_ELEMENT_ERROR(m_src, CORE, FAILED, (0), (0));
 }
 
-char* StreamingClient::getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize)
+char* StreamingClient::getOrCreateReadBuffer(CachedResource*, size_t requestedSize, size_t& actualSize)
 {
     WebKitWebSrcPrivate* priv = m_src->priv;
 
@@ -948,33 +932,24 @@ char* StreamingClient::getOrCreateReadBuffer(size_t requestedSize, size_t& actua
     return getGstBufferDataPointer(buffer);
 }
 
-void StreamingClient::didFinishLoading(ResourceHandle*, double)
+void StreamingClient::notifyFinished(CachedResource* resource)
 {
     WebKitWebSrcPrivate* priv = m_src->priv;
+
+    if (resource->loadFailedOrCanceled()) {
+        if (!resource->wasCanceled()) {
+            const ResourceError& error = resource->resourceError();
+            GST_ERROR_OBJECT(m_src, "Have failure: %s", error.localizedDescription().utf8().data());
+            GST_ELEMENT_ERROR(m_src, RESOURCE, FAILED, ("%s", error.localizedDescription().utf8().data()), (0));
+        }
+        gst_app_src_end_of_stream(m_src->priv->appsrc);
+        return;
+    }
 
     GST_DEBUG_OBJECT(m_src, "Have EOS");
 
     if (!priv->seekID)
         gst_app_src_end_of_stream(m_src->priv->appsrc);
-}
-
-void StreamingClient::didFail(ResourceHandle*, const ResourceError& error)
-{
-    GST_ERROR_OBJECT(m_src, "Have failure: %s", error.localizedDescription().utf8().data());
-    GST_ELEMENT_ERROR(m_src, RESOURCE, FAILED, ("%s", error.localizedDescription().utf8().data()), (0));
-    gst_app_src_end_of_stream(m_src->priv->appsrc);
-}
-
-void StreamingClient::wasBlocked(ResourceHandle*)
-{
-    GST_ERROR_OBJECT(m_src, "Request was blocked");
-    GST_ELEMENT_ERROR(m_src, RESOURCE, OPEN_READ, ("Access to \"%s\" was blocked", m_src->priv->uri), (0));
-}
-
-void StreamingClient::cannotShowURL(ResourceHandle*)
-{
-    GST_ERROR_OBJECT(m_src, "Cannot show URL");
-    GST_ELEMENT_ERROR(m_src, RESOURCE, OPEN_READ, ("Can't show \"%s\"", m_src->priv->uri), (0));
 }
 
 #endif // USE(GSTREAMER)

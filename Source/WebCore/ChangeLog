@@ -1,3 +1,45 @@
+2013-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] webkitwebsrc: use SubResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=73743
+
+        Reviewed by Philippe Normand.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * PlatformEfl.cmake: Ditto.
+        * PlatformGTK.cmake: Ditto.
+        * loader/SubresourceLoader.h: Add getOrCreateReadBuffer() when
+        using SOUP.
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedRawResourceClient.h:
+        (WebCore::CachedRawResourceClient::getOrCreateReadBuffer): Added
+        to allow the client to allocate the read buffer.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::getOrCreateReadBuffer):
+        * loader/soup/CachedRawResourceSoup.cpp: Added.
+        (WebCore::CachedRawResource::getOrCreateReadBuffer): Iterate the
+        clients until one returns a valid read buffer or return NULL to
+        fallback to the default read buffer.
+        * loader/soup/SubresourceLoaderSoup.cpp: Added.
+        (WebCore::SubresourceLoader::getOrCreateReadBuffer): Call
+        CachedResource::getOrCreateReadBuffer().
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient): Make this a CachedRawResourceClient.
+        (_WebKitWebSrcPrivate): Remove frame and resourceHandle and add a
+        cached resource handle.
+        (webKitWebSrcDispose): Clear the player pointer.
+        (webKitWebSrcStop): Remove the client from the cached resource.
+        (webKitWebSrcStart): Use CachedResourceLoader to schedule a
+        CachedRawResource load for the media without buffering the data.
+        (webKitWebSrcNeedDataMainCb): Call CachedResource::setDefersLoading.
+        (webKitWebSrcEnoughDataMainCb): Ditto.
+        (webKitWebSrcSetMediaPlayer): Simply update the player pointer.
+        (StreamingClient::responseReceived): Update to the
+        CachedRawResourceClient API.
+        (StreamingClient::dataReceived): Ditto.
+        (StreamingClient::getOrCreateReadBuffer): Ditto.
+        (StreamingClient::notifyFinished): Ditto.
+
 2013-07-17  Kwang Yul Seo  <skyul@company100.net>
 
         Remove unused member variable m_domURL from WorkerGlobalScope

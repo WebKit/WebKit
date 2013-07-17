@@ -42,6 +42,9 @@ list(APPEND WebCore_SOURCES
 
     editing/atk/FrameSelectionAtk.cpp
 
+    loader/soup/CachedRawResourceSoup.cpp
+    loader/soup/SubresourceLoaderSoup.cpp
+
     page/gtk/DragControllerGtk.cpp
     page/gtk/EventHandlerGtk.cpp
 
