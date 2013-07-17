@@ -96,8 +96,12 @@ bool AccessibilityTableCell::isTableCell() const
     
 AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
 {
+    // Always call determineAccessibleRole so that the ARIA role is set.
+    // Even though this object reports a Cell role, the ARIA role will be used
+    // to determine if it's a column header.
+    AccessibilityRole defaultRole = AccessibilityRenderObject::determineAccessibilityRole();
     if (!isTableCell())
-        return AccessibilityRenderObject::determineAccessibilityRole();
+        return defaultRole;
     
     return CellRole;
 }

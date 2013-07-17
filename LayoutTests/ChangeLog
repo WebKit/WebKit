@@ -1,3 +1,13 @@
+2013-07-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Regression: columnheader/rowheader roles not exposed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=113628
+
+        Reviewed by Tim Horton.
+
+        * platform/mac/accessibility/aria-columnrowheaders-expected.txt: Added.
+        * platform/mac/accessibility/aria-columnrowheaders.html: Added.
+
 2013-07-17  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Make DRT obbey testRunner's addURLToRedirect

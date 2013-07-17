@@ -1,3 +1,18 @@
+2013-07-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Regression: columnheader/rowheader roles not exposed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=113628
+
+        Reviewed by Tim Horton.
+
+        When we determine the row and column headers we look at the ARIA role being returned, but
+        since TableCell overrides the determineAccessibilityRole method, the ARIA role is never set.
+
+        Test: platform/mac/accessibility/aria-columnrowheaders.html
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::determineAccessibilityRole):
+
 2013-07-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Get rid of SVGPoint special case from the bindings generator
