@@ -1410,9 +1410,6 @@ webkit.org/b/106221 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
 webkit.org/b/112228 svg/custom/resources-css-scaled.html [ Skip ]
 
-# [GTK][Qt] After (r152685) svg/custom/xlink-prefix-in-attributes.html test fails.
-webkit.org/b/118724 svg/custom/xlink-prefix-in-attributes.html [ Skip ]
-
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #

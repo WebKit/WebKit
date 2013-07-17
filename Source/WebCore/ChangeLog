@@ -1,3 +1,18 @@
+2013-07-17  Rob Buis  <rwlbuis@webkit.org>
+
+        [Mac] REGRESSION(r152685): svg/custom/xlink-prefix-in-attributes.html failed unexpectedly
+        https://bugs.webkit.org/show_bug.cgi?id=118701
+
+        Reviewed by Ryosuke Niwa.
+
+        Use the computed attribute prefix, otherwise href being in xlink namespace but not having any prefix
+        will cause outputting the xlink namespace in appendNamespace.
+
+        Patch fixes svg/custom/xlink-prefix-in-attributes.html.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendAttribute):
+
 2013-07-17  Chris Fleizach  <cfleizach@apple.com>
 
         Regression: columnheader/rowheader roles not exposed correctly

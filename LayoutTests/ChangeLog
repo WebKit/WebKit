@@ -1,3 +1,13 @@
+2013-07-17  Rob Buis  <rwlbuis@webkit.org>
+
+        [Mac] REGRESSION(r152685): svg/custom/xlink-prefix-in-attributes.html failed unexpectedly
+        https://bugs.webkit.org/show_bug.cgi?id=118701
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2013-07-17  Chris Fleizach  <cfleizach@apple.com>
 
         Regression: columnheader/rowheader roles not exposed correctly

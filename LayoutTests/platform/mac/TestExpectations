@@ -1296,5 +1296,3 @@ webkit.org/b/116592 inspector/geolocation-error.html [ Pass Failure ]
 webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.html
 
 webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Pass Crash ]
-
-webkit.org/b/118701 svg/custom/xlink-prefix-in-attributes.html [ Failure ]

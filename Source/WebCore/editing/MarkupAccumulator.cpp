@@ -465,10 +465,10 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element,
 
     result.append(' ');
 
+    QualifiedName prefixedName = attribute.name();
     if (documentIsHTML && !attributeIsInSerializedNamespace(attribute))
         result.append(attribute.name().localName());
     else {
-        QualifiedName prefixedName = attribute.name();
         if (attribute.namespaceURI() == XLinkNames::xlinkNamespaceURI) {
             if (!attribute.prefix())
                 prefixedName.setPrefix(xlinkAtom);
@@ -493,7 +493,7 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element,
     }
 
     if ((inXMLFragmentSerialization() || !documentIsHTML) && namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
-        appendNamespace(result, attribute.prefix(), attribute.namespaceURI(), *namespaces);
+        appendNamespace(result, prefixedName.prefix(), prefixedName.namespaceURI(), *namespaces);
 }
 
 void MarkupAccumulator::appendCDATASection(StringBuilder& result, const String& section)
