@@ -42,43 +42,54 @@ static const char indexHTMLString[] =
     "<head><title>EFLWebKit2 Authentication test</title></head>"
     "<body></body></html>";
 
-static void serverCallback(SoupServer*, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, void*)
-{
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
-        return;
+class EWK2AuthRequestTest : public EWK2UnitTestBase {
+public:
+    static void serverCallback(SoupServer*, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, void*)
+    {
+        if (message->method != SOUP_METHOD_GET) {
+            soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+            return;
+        }
+
+        if (!strcmp(path, "/index.html")) {
+            const char* authorization = soup_message_headers_get_one(message->request_headers, "Authorization");
+            // Require authentication
+            if (authorization && !strcmp(authorization, expectedAuthorization)) {
+                // Successful authentication.
+                soup_message_set_status(message, SOUP_STATUS_OK);
+                soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, indexHTMLString, strlen(indexHTMLString));
+            } else {
+                // No (valid) authorization header provided by the client, request authentication.
+                soup_message_set_status(message, SOUP_STATUS_UNAUTHORIZED);
+                soup_message_headers_append(message->response_headers, "WWW-Authenticate", "Basic realm=\"my realm\"");
+            }
+        } else
+            soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+
+        soup_message_body_complete(message->response_body);
     }
 
-    if (!strcmp(path, "/index.html")) {
-        const char* authorization = soup_message_headers_get_one(message->request_headers, "Authorization");
-        // Require authentication
-        if (authorization && !strcmp(authorization, expectedAuthorization)) {
-            // Successful authentication.
-            soup_message_set_status(message, SOUP_STATUS_OK);
-            soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, indexHTMLString, strlen(indexHTMLString));
-        } else {
-            // No (valid) authorization header provided by the client, request authentication.
-            soup_message_set_status(message, SOUP_STATUS_UNAUTHORIZED);
-            soup_message_headers_append(message->response_headers, "WWW-Authenticate", "Basic realm=\"my realm\"");
-        }
-    } else
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+    static void onAuthenticationRequest(void* userData, Evas_Object*, void* eventInfo)
+    {
+        Ewk_Auth_Request** returnRequest = static_cast<Ewk_Auth_Request**>(userData);
+        ASSERT_TRUE(returnRequest);
 
-    soup_message_body_complete(message->response_body);
-}
+        Ewk_Auth_Request* request = static_cast<Ewk_Auth_Request*>(eventInfo);
+        ASSERT_TRUE(request);
 
-static void onAuthenticationRequest(void* userData, Evas_Object*, void* eventInfo)
-{
-    Ewk_Auth_Request** returnRequest = static_cast<Ewk_Auth_Request**>(userData);
-    ASSERT_TRUE(returnRequest);
+        *returnRequest = ewk_object_ref(request);
+    }
 
-    Ewk_Auth_Request* request = static_cast<Ewk_Auth_Request*>(eventInfo);
-    ASSERT_TRUE(request);
+    static void onLoadFinished(void* userData, Evas_Object*, void*)
+    {
+        bool* isFinished = static_cast<bool*>(userData);
+        ASSERT_TRUE(isFinished);
 
-    *returnRequest = ewk_object_ref(request);
-}
+        *isFinished = true;
+    }
+};
 
-TEST_F(EWK2UnitTestBase, ewk_auth_request_success)
+TEST_F(EWK2AuthRequestTest, ewk_auth_request_success)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
@@ -105,7 +116,7 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_success)
     ASSERT_TRUE(waitUntilTitleChangedTo(expectedSuccessTitle));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_auth_request_failure_then_success)
+TEST_F(EWK2AuthRequestTest, ewk_auth_request_failure_then_success)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
@@ -146,15 +157,7 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_failure_then_success)
     ASSERT_TRUE(waitUntilTitleChangedTo(expectedSuccessTitle));
 }
 
-static void onLoadFinished(void* userData, Evas_Object*, void*)
-{
-    bool* isFinished = static_cast<bool*>(userData);
-    ASSERT_TRUE(isFinished);
-
-    *isFinished = true;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_auth_request_cancel)
+TEST_F(EWK2AuthRequestTest, ewk_auth_request_cancel)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
