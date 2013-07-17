@@ -32,34 +32,38 @@ using namespace EWK2UnitTest;
 
 extern EWK2UnitTestEnvironment* environment;
 
-static void onFileChooserRequest(void* userData, Evas_Object*, void* eventInfo)
-{
-    Ewk_File_Chooser_Request** returnRequest = static_cast<Ewk_File_Chooser_Request**>(userData);
-    ASSERT_TRUE(returnRequest);
-    Ewk_File_Chooser_Request* request = static_cast<Ewk_File_Chooser_Request*>(eventInfo);
-    ASSERT_TRUE(request);
+class EWK2FileChooserRequestTest : public EWK2UnitTestBase {
+public:
+    static void onFileChooserRequest(void* userData, Evas_Object*, void* eventInfo)
+    {
+        Ewk_File_Chooser_Request** returnRequest = static_cast<Ewk_File_Chooser_Request**>(userData);
+        ASSERT_TRUE(returnRequest);
+        Ewk_File_Chooser_Request* request = static_cast<Ewk_File_Chooser_Request*>(eventInfo);
+        ASSERT_TRUE(request);
 
-    // Ref the request to process asynchronously.
-    *returnRequest = ewk_object_ref(request);
-}
-
-static int compareStrings(const void* string1, const void* string2)
-{
-    ASSERT(string1);
-    ASSERT(string2);
-
-    return strcmp(static_cast<const char*>(string1), static_cast<const char*>(string2));
-}
-
-static void freeStringList(Eina_List** list)
-{
-    void* data;
-    EINA_LIST_FREE(*list, data) {
-        eina_stringshare_del(static_cast<char*>(data));
+        // Ref the request to process asynchronously.
+        *returnRequest = ewk_object_ref(request);
     }
-}
 
-TEST_F(EWK2UnitTestBase, ewk_file_chooser_request_files_choose)
+    static int compareStrings(const void* string1, const void* string2)
+    {
+        ASSERT(string1);
+        ASSERT(string2);
+
+        return strcmp(static_cast<const char*>(string1), static_cast<const char*>(string2));
+    }
+
+protected:
+    void freeStringList(Eina_List** list)
+    {
+        void* data;
+        EINA_LIST_FREE(*list, data) {
+        eina_stringshare_del(static_cast<char*>(data));
+        }
+    }
+};
+
+TEST_F(EWK2FileChooserRequestTest, ewk_file_chooser_request_files_choose)
 {
     Ewk_File_Chooser_Request* request = 0;
     evas_object_smart_callback_add(webView(), "file,chooser,request", onFileChooserRequest, &request);
@@ -98,7 +102,7 @@ TEST_F(EWK2UnitTestBase, ewk_file_chooser_request_files_choose)
     EXPECT_TRUE(waitUntilTitleChangedTo("file1.png|file2.png"));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_file_chooser_request_file_choose)
+TEST_F(EWK2FileChooserRequestTest, ewk_file_chooser_request_file_choose)
 {
     Ewk_File_Chooser_Request* request = 0;
     evas_object_smart_callback_add(webView(), "file,chooser,request", onFileChooserRequest, &request);
@@ -124,7 +128,7 @@ TEST_F(EWK2UnitTestBase, ewk_file_chooser_request_file_choose)
     EXPECT_TRUE(waitUntilTitleChangedTo("file3.png"));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_file_chooser_request_file_cancel)
+TEST_F(EWK2FileChooserRequestTest, ewk_file_chooser_request_file_cancel)
 {
     Ewk_File_Chooser_Request* request = 0;
     evas_object_smart_callback_add(webView(), "file,chooser,request", onFileChooserRequest, &request);
