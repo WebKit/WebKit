@@ -39,39 +39,42 @@ extern EWK2UnitTestEnvironment* environment;
 #define anotherTestString "I'm another test string!"
 #define testUrl "file:///path/somewhere"
 
-static inline void checkString(const WKEinaSharedString& string, const char* pattern)
-{
-    ASSERT_EQ(string.isNull(), pattern ? false : true);
-    ASSERT_EQ(string.length(), pattern ? strlen(pattern) : 0); // Compare length.
-    ASSERT_EQ(string, pattern); // Compare values. Check '==' operator with WKEinaSharedString and plain string.
-    ASSERT_STREQ(string, pattern); // Compare values. Check 'const char*' operator.
-}
+class EWK2EinaSharedStringTest : public EWK2UnitTestBase {
+protected:
+    void checkString(const WKEinaSharedString& string, const char* pattern)
+    {
+        ASSERT_EQ(string.isNull(), pattern ? false : true);
+        ASSERT_EQ(string.length(), pattern ? strlen(pattern) : 0); // Compare length.
+        ASSERT_EQ(string, pattern); // Compare values. Check '==' operator with WKEinaSharedString and plain string.
+        ASSERT_STREQ(string, pattern); // Compare values. Check 'const char*' operator.
+    }
+};
 
-TEST_F(EWK2UnitTestBase, constructEmpty)
+TEST_F(EWK2EinaSharedStringTest, constructEmpty)
 {
     WKEinaSharedString emptyString;
     checkString(emptyString, 0);
 }
 
-TEST_F(EWK2UnitTestBase, constructFromPlainString)
+TEST_F(EWK2EinaSharedStringTest, constructFromPlainString)
 {
     WKEinaSharedString emptyString(testString);
     checkString(emptyString, testString);
 }
 
-TEST_F(EWK2UnitTestBase, constructFromWKString)
+TEST_F(EWK2EinaSharedStringTest, constructFromWKString)
 {
     WKEinaSharedString string(AdoptWK, WKStringCreateWithUTF8CString(testString));
     checkString(string, testString);
 }
 
-TEST_F(EWK2UnitTestBase, constructFromWKURL)
+TEST_F(EWK2EinaSharedStringTest, constructFromWKURL)
 {
     WKEinaSharedString string(AdoptWK, WKURLCreateWithUTF8CString(testUrl));
     checkString(string, testUrl);
 }
 
-TEST_F(EWK2UnitTestBase, constructFromEinaStringShare)
+TEST_F(EWK2EinaSharedStringTest, constructFromEinaStringShare)
 {
     WKEinaSharedString string(WKEinaSharedString::adopt(eina_stringshare_add(testString)));
     checkString(string, testString);
@@ -83,7 +86,7 @@ TEST_F(EWK2UnitTestBase, constructFromEinaStringShare)
     checkString(string, anotherTestString);
 }
 
-TEST_F(EWK2UnitTestBase, costructCopy)
+TEST_F(EWK2EinaSharedStringTest, costructCopy)
 {
     WKEinaSharedString string(testString);
     WKEinaSharedString copyString(string);
@@ -92,7 +95,7 @@ TEST_F(EWK2UnitTestBase, costructCopy)
     ASSERT_EQ(string, copyString); // Check '==' operator with two instances of WKEinaSharedString.
 }
 
-TEST_F(EWK2UnitTestBase, comparisonOperators)
+TEST_F(EWK2EinaSharedStringTest, comparisonOperators)
 {
     WKEinaSharedString string(testString);
     WKEinaSharedString sameString(testString);
@@ -109,7 +112,7 @@ TEST_F(EWK2UnitTestBase, comparisonOperators)
     ASSERT_EQ(string, string); // Self-comparison.
 }
 
-TEST_F(EWK2UnitTestBase, assignmentOperators)
+TEST_F(EWK2EinaSharedStringTest, assignmentOperators)
 {
     WKEinaSharedString string;
 
@@ -125,7 +128,7 @@ TEST_F(EWK2UnitTestBase, assignmentOperators)
     checkString(string, anotherTestString);
 }
 
-TEST_F(EWK2UnitTestBase, leakString)
+TEST_F(EWK2EinaSharedStringTest, leakString)
 {
     WKEinaSharedString string;
 
