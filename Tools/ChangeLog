@@ -1,3 +1,15 @@
+2013-07-17  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        Add a new find-resolved-bugs command to webkit-patch.
+        https://bugs.webkit.org/show_bug.cgi?id=118060
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintBaselines._platform_for_path):
+        (FindResolvedBugs):
+        (FindResolvedBugs.execute):
+
 2013-07-16  Balazs Kelemen  <kbalazs@webkit.org>
 
         [CMake] Undefined references should be detected at build time

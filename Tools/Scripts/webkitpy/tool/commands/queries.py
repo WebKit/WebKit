@@ -1,6 +1,7 @@
 # Copyright (c) 2009 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
 # Copyright (c) 2012 Intel Corporation. All rights reserved.
+# Copyright (c) 2013 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -41,6 +42,7 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.config.committers import CommitterList
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.net.buildbot import BuildBot
+from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.user import User
@@ -574,3 +576,36 @@ class PrintBaselines(Command):
         if platform_matchobj:
             return platform_matchobj.group(1)
         return None
+
+
+class FindResolvedBugs(Command):
+    name = "find-resolved-bugs"
+    help_text = "Collect the RESOLVED bugs in the given TestExpectations file"
+    argument_names = "TEST_EXPECTATIONS_FILE"
+
+    def execute(self, options, args, tool):
+        filename = args[0]
+        if not tool.filesystem.isfile(filename):
+            print "The given path is not a file, please pass a valid path."
+            return
+
+        ids = set()
+        inputfile = tool.filesystem.open_text_file_for_reading(filename)
+        for line in inputfile:
+            result = re.search("(https://bugs\.webkit\.org/show_bug\.cgi\?id=|webkit\.org/b/)([0-9]+)", line)
+            if result:
+                ids.add(result.group(2))
+        inputfile.close()
+
+        resolved_ids = set()
+        num_of_bugs = len(ids)
+        bugzilla = Bugzilla()
+        for i, bugid in enumerate(ids, start=1):
+            bug = bugzilla.fetch_bug(bugid)
+            print "Checking bug %s \t [%d/%d]" % (bugid, i, num_of_bugs)
+            if not bug.is_open():
+                resolved_ids.add(bugid)
+
+        print "Resolved bugs in %s :" % (filename)
+        for bugid in resolved_ids:
+            print "https://bugs.webkit.org/show_bug.cgi?id=%s" % (bugid)
