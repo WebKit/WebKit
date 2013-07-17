@@ -119,12 +119,7 @@ public:
 
     bool overlapsLayers(const IntRect& bounds) const
     {
-        const RectList& layerRects = m_overlapStack.last();
-        for (unsigned i = 0; i < layerRects.size(); i++) {
-            if (layerRects[i].intersects(bounds))
-                return true;
-        }
-        return false;
+        return m_overlapStack.last().intersects(bounds);
     }
 
     bool isEmpty()
@@ -139,14 +134,42 @@ public:
 
     void popCompositingContainer()
     {
-        m_overlapStack[m_overlapStack.size() - 2].appendVector(m_overlapStack.last());
+        m_overlapStack[m_overlapStack.size() - 2].append(m_overlapStack.last());
         m_overlapStack.removeLast();
     }
 
     RenderGeometryMap& geometryMap() { return m_geometryMap; }
 
 private:
-    typedef Vector<IntRect> RectList;
+    struct RectList {
+        Vector<IntRect> rects;
+        IntRect boundingRect;
+        
+        void append(const IntRect& rect)
+        {
+            rects.append(rect);
+            boundingRect.unite(rect);
+        }
+
+        void append(const RectList& rectList)
+        {
+            rects.appendVector(rectList.rects);
+            boundingRect.unite(rectList.boundingRect);
+        }
+        
+        bool intersects(const IntRect& rect) const
+        {
+            if (!rects.size() || !boundingRect.intersects(rect))
+                return false;
+
+            for (unsigned i = 0; i < rects.size(); i++) {
+                if (rects[i].intersects(rect))
+                    return true;
+            }
+            return false;
+        }
+    };
+
     Vector<RectList> m_overlapStack;
     HashSet<const RenderLayer*> m_layers;
     RenderGeometryMap m_geometryMap;

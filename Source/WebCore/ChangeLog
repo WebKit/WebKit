@@ -1,3 +1,23 @@
+2013-07-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize RenderLayerCompositor's OverlapMap
+        https://bugs.webkit.org/show_bug.cgi?id=118764
+
+        Reviewed by Tim Horton.
+
+        Overlap stack items can have RectLists with hundreds of rectangles.
+        This makes the linear search in OverlapMap::overlapsLayers() very slow.
+        
+        Optimize by storing the bounding rect of the list of rects, and doing an early
+        check on that. This reduces time spent in RenderLayer::scrollTo() by 13% in some
+        content with lots of layers inside an overflow:scroll.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::OverlapMap::overlapsLayers):
+        (WebCore::RenderLayerCompositor::OverlapMap::popCompositingContainer):
+        (WebCore::RenderLayerCompositor::OverlapMap::RectList::append):
+        (WebCore::RenderLayerCompositor::OverlapMap::RectList::intersects):
+
 2013-07-17  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Port refactoring of shape-outside code from Blink
