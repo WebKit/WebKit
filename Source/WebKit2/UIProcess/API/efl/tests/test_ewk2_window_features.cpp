@@ -33,38 +33,62 @@
 using namespace EWK2UnitTest;
 using namespace WebCore;
 
-static Evas_Object* createDefaultWindow(Ewk_View_Smart_Data* smartData, const char*, const Ewk_Window_Features* windowFeatures)
-{
-    // default values of WebCore:WindowFeatures()
-    // - menuBarVisible(true)
-    // - statusBarVisible(true)
-    // - toolBarVisible(true)
-    // - locationBarVisible(true)
-    // - scrollbarsVisible(true)
-    // - resizable(true)
-    // - fullscreen(false)
+class EWK2WindowFeaturesTest : public EWK2UnitTestBase {
+public:
+    static Evas_Object* createDefaultWindow(Ewk_View_Smart_Data* smartData, const char*, const Ewk_Window_Features* windowFeatures)
+    {
+        // default values of WebCore:WindowFeatures()
+        // - menuBarVisible(true)
+        // - statusBarVisible(true)
+        // - toolBarVisible(true)
+        // - locationBarVisible(true)
+        // - scrollbarsVisible(true)
+        // - resizable(true)
+        // - fullscreen(false)
 
-    EXPECT_TRUE(ewk_window_features_toolbar_visible_get(windowFeatures));
-    EXPECT_TRUE(ewk_window_features_statusbar_visible_get(windowFeatures));
-    EXPECT_TRUE(ewk_window_features_scrollbars_visible_get(windowFeatures));
-    EXPECT_TRUE(ewk_window_features_menubar_visible_get(windowFeatures));
-    EXPECT_TRUE(ewk_window_features_locationbar_visible_get(windowFeatures));
-    EXPECT_TRUE(ewk_window_features_resizable_get(windowFeatures));
+        EXPECT_TRUE(ewk_window_features_toolbar_visible_get(windowFeatures));
+        EXPECT_TRUE(ewk_window_features_statusbar_visible_get(windowFeatures));
+        EXPECT_TRUE(ewk_window_features_scrollbars_visible_get(windowFeatures));
+        EXPECT_TRUE(ewk_window_features_menubar_visible_get(windowFeatures));
+        EXPECT_TRUE(ewk_window_features_locationbar_visible_get(windowFeatures));
+        EXPECT_TRUE(ewk_window_features_resizable_get(windowFeatures));
 
-    EXPECT_FALSE(ewk_window_features_fullscreen_get(windowFeatures));
+        EXPECT_FALSE(ewk_window_features_fullscreen_get(windowFeatures));
 
-    int x, y, width, height;
-    ewk_window_features_geometry_get(windowFeatures, &x, &y, &width, &height);
+        int x, y, width, height;
+        ewk_window_features_geometry_get(windowFeatures, &x, &y, &width, &height);
 
-    EXPECT_EQ(0, x);
-    EXPECT_EQ(0, y);
-    EXPECT_EQ(0, width);
-    EXPECT_EQ(0, height);
+        EXPECT_EQ(0, x);
+        EXPECT_EQ(0, y);
+        EXPECT_EQ(0, width);
+        EXPECT_EQ(0, height);
 
-    return 0;
-}
+        return 0;
+    }
 
-TEST_F(EWK2UnitTestBase, ewk_window_features_default_property_get)
+    static Evas_Object* createWindow(Ewk_View_Smart_Data *smartData, const char*, const Ewk_Window_Features *windowFeatures)
+    {
+        EXPECT_FALSE(ewk_window_features_toolbar_visible_get(windowFeatures));
+        EXPECT_TRUE(ewk_window_features_statusbar_visible_get(windowFeatures));
+        EXPECT_TRUE(ewk_window_features_scrollbars_visible_get(windowFeatures));
+        EXPECT_FALSE(ewk_window_features_menubar_visible_get(windowFeatures));
+        EXPECT_FALSE(ewk_window_features_locationbar_visible_get(windowFeatures));
+        EXPECT_TRUE(ewk_window_features_resizable_get(windowFeatures));
+        EXPECT_FALSE(ewk_window_features_fullscreen_get(windowFeatures));
+
+        int x, y, width, height;
+        ewk_window_features_geometry_get(windowFeatures, &x, &y, &width, &height);
+
+        EXPECT_EQ(100, x);
+        EXPECT_EQ(150, y);
+        EXPECT_EQ(400, width);
+        EXPECT_EQ(400, height);
+
+        return 0;
+    }
+};
+
+TEST_F(EWK2WindowFeaturesTest, ewk_window_features_default_property_get)
 {
     Evas_Object* view = webView();
 
@@ -76,28 +100,7 @@ TEST_F(EWK2UnitTestBase, ewk_window_features_default_property_get)
     ASSERT_TRUE(waitUntilLoadFinished());
 }
 
-static Evas_Object* createWindow(Ewk_View_Smart_Data *smartData, const char*, const Ewk_Window_Features *windowFeatures)
-{
-    EXPECT_FALSE(ewk_window_features_toolbar_visible_get(windowFeatures));
-    EXPECT_TRUE(ewk_window_features_statusbar_visible_get(windowFeatures));
-    EXPECT_TRUE(ewk_window_features_scrollbars_visible_get(windowFeatures));
-    EXPECT_FALSE(ewk_window_features_menubar_visible_get(windowFeatures));
-    EXPECT_FALSE(ewk_window_features_locationbar_visible_get(windowFeatures));
-    EXPECT_TRUE(ewk_window_features_resizable_get(windowFeatures));
-    EXPECT_FALSE(ewk_window_features_fullscreen_get(windowFeatures));
-
-    int x, y, width, height;
-    ewk_window_features_geometry_get(windowFeatures, &x, &y, &width, &height);
-
-    EXPECT_EQ(100, x);
-    EXPECT_EQ(150, y);
-    EXPECT_EQ(400, width);
-    EXPECT_EQ(400, height);
-
-    return 0;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_window_features_property_get)
+TEST_F(EWK2WindowFeaturesTest, ewk_window_features_property_get)
 {
     Evas_Object* view = webView();
 
