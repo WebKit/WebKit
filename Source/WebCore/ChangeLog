@@ -1,3 +1,37 @@
+2013-07-17  Andreas Kling  <akling@apple.com>
+
+        CSS selector list splitting should be by component, not by selector.
+        <http://webkit.org/b/118761>
+        <rdar://problem/14421609>
+
+        Reviewed by Antti Koivisto.
+
+        Test (amended): fast/css/rule-selector-overflow.html
+
+        * css/CSSSelectorList.h:
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::CSSSelectorList):
+        (WebCore::CSSSelectorList::componentCount):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::setSelectorText):
+
+            Renamed CSSSelectorList::length() to componentCount() and made it public.
+
+        * css/RuleSet.h:
+
+            maximumSelectorCount => maximumSelectorComponentCount
+
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount):
+
+            Make the splits after accumulating 'maximumSelectorComponentCount' components.
+
+        * css/StyleRule.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parserAppendRule):
+
+            splitIntoMultipleRulesWithMaximumSelectorCount => splitIntoMultipleRulesWithMaximumSelectorComponentCount
+
 2013-07-17  Rob Buis  <rwlbuis@webkit.org>
 
         [Mac] REGRESSION(r152685): svg/custom/xlink-prefix-in-attributes.html failed unexpectedly

@@ -39,9 +39,9 @@ CSSSelectorList::~CSSSelectorList()
 
 CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
 {
-    unsigned otherLength = other.length();
-    m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * otherLength));
-    for (unsigned i = 0; i < otherLength; ++i)
+    unsigned otherComponentCount = other.componentCount();
+    m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * otherComponentCount));
+    for (unsigned i = 0; i < otherComponentCount; ++i)
         new (NotNull, &m_selectorArray[i]) CSSSelector(other.m_selectorArray[i]);
 }
 
@@ -85,15 +85,7 @@ void CSSSelectorList::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& se
     selectorVector.clear();
 }
 
-unsigned CSSSelectorList::selectorCount() const
-{
-    unsigned count = 0;
-    for (const CSSSelector* s = first(); s; s = next(s))
-        ++count;
-    return count;
-}
-
-unsigned CSSSelectorList::length() const
+unsigned CSSSelectorList::componentCount() const
 {
     if (!m_selectorArray)
         return 0;

@@ -272,28 +272,28 @@ PassRefPtr<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSe
     return rule.release();
 }
 
-Vector<RefPtr<StyleRule> > StyleRule::splitIntoMultipleRulesWithMaximumSelectorCount(unsigned maximumSelectorCount) const
+Vector<RefPtr<StyleRule> > StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned maxCount) const
 {
-    ASSERT(selectorList().selectorCount() > maximumSelectorCount);
+    ASSERT(selectorList().componentCount() > maxCount);
 
     Vector<RefPtr<StyleRule> > rules;
-    Vector<const CSSSelector*> selectorsToCopy;
-
-    unsigned selectorCount = 0;
+    Vector<const CSSSelector*> componentsSinceLastSplit;
 
     for (const CSSSelector* selector = selectorList().first(); selector; selector = CSSSelectorList::next(selector)) {
+        Vector<const CSSSelector*, 8> componentsInThisSelector;
         for (const CSSSelector* component = selector; component; component = component->tagHistory())
-            selectorsToCopy.append(component);
+            componentsInThisSelector.append(component);
 
-        if (++selectorCount == maximumSelectorCount) {
-            rules.append(create(sourceLine(), selectorsToCopy, m_properties));
-            selectorsToCopy.clear();
-            selectorCount = 0;
+        if (componentsInThisSelector.size() + componentsSinceLastSplit.size() > maxCount) {
+            rules.append(create(sourceLine(), componentsSinceLastSplit, m_properties));
+            componentsSinceLastSplit.clear();
         }
+
+        componentsSinceLastSplit.appendVector(componentsInThisSelector);
     }
 
-    if (selectorCount)
-        rules.append(create(sourceLine(), selectorsToCopy, m_properties));
+    if (!componentsSinceLastSplit.isEmpty())
+        rules.append(create(sourceLine(), componentsSinceLastSplit, m_properties));
 
     return rules;
 }

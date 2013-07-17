@@ -1,3 +1,16 @@
+2013-07-17  Andreas Kling  <akling@apple.com>
+
+        CSS selector list splitting should be by component, not by selector.
+        <http://webkit.org/b/118761>
+        <rdar://problem/14421609>
+
+        Reviewed by Antti Koivisto.
+
+        Added more cases to the already existing selector list splitting test.
+
+        * fast/css/rule-selector-overflow-expected.txt:
+        * fast/css/rule-selector-overflow.html:
+
 2013-07-17  Rob Buis  <rwlbuis@webkit.org>
 
         [Mac] REGRESSION(r152685): svg/custom/xlink-prefix-in-attributes.html failed unexpectedly
