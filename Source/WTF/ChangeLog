@@ -1,3 +1,16 @@
+2013-07-17  Benjamin Poulain  <benjamin@webkit.org>
+
+        Simplify AtomicString::lower()
+        https://bugs.webkit.org/show_bug.cgi?id=118719
+        <rdar://problem/14452883>
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::lower): Previously, the code was using a copy constructor for two path
+        and one regular construction in another path.
+        Just put the StringImpl where it needs to be instead.
+
 2013-07-15  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a threading assertion to AtomicString::remove

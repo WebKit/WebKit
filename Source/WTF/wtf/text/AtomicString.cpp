@@ -436,11 +436,15 @@ AtomicString AtomicString::lower() const
     // Note: This is a hot function in the Dromaeo benchmark.
     StringImpl* impl = this->impl();
     if (UNLIKELY(!impl))
-        return *this;
-    RefPtr<StringImpl> newImpl = impl->lower();
-    if (LIKELY(newImpl == impl))
-        return *this;
-    return AtomicString(newImpl);
+        return AtomicString();
+
+    RefPtr<StringImpl> lowerImpl = impl->lower();
+    AtomicString returnValue;
+    if (LIKELY(lowerImpl == impl))
+        returnValue.m_string = lowerImpl.release();
+    else
+        returnValue.m_string = addSlowCase(lowerImpl.get());
+    return returnValue;
 }
 
 AtomicString AtomicString::fromUTF8Internal(const char* charactersStart, const char* charactersEnd)
