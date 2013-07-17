@@ -5266,6 +5266,7 @@ bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionNa
         {
             bytesRequired = floor(static_cast<double>((width + 3) / 4)) * floor(static_cast<double>((height + 3) / 4)) * 16;
         }
+        break;
     case Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
     case Extensions3D::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
         {

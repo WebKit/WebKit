@@ -1,3 +1,13 @@
+2013-07-16  Pratik Solanki  <psolanki@apple.com>
+
+        Missing break in WebGLRenderingContext::validateCompressedTexFuncData()
+        https://bugs.webkit.org/show_bug.cgi?id=118742
+
+        Reviewed by Ryosuke Niwa.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateCompressedTexFuncData):
+
 2013-07-16  Andreas Kling  <akling@apple.com>
 
         Atomicize HTMLAnchorElement.hash before passing it to JS.
