@@ -664,6 +664,11 @@ public:
     WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
     void setScrollPinningBehavior(uint32_t /* WebCore::ScrollPinningBehavior */ pinning);
 
+    bool pageOverlaySupportsDataDetection();
+    bool pageOverlayOpenDataDetectorMenuAtPoint(const WebCore::IntPoint&);
+    WKStringRef pageOverlayDataDetectorCopyTypeAtPoint(const WebCore::IntPoint&);
+    bool pageOverlayDataDetectorExistsAtPoint(const WebCore::IntPoint&);
+    
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

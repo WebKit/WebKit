@@ -28,6 +28,8 @@
 
 #import "WebFrame.h"
 #import "WebPage.h"
+#import "WKRetainPtr.h"
+#import "WKStringCF.h"
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
@@ -38,6 +40,10 @@
 
 using namespace WebCore;
 using namespace WebKit;
+
+static NSString *NSAccessibilityDataDetectorExistsAtPoint        = @"AXDataDetectorExistsAtPoint";
+static NSString *NSAccessibilityDidShowDataDetectorMenuAtPoint   = @"AXDidShowDataDetectorMenuAtPoint";
+static NSString *NSAccessibilityDataDetectorTypeAtPoint          = @"AXDataDetectorTypeAtPoint";
 
 @implementation WKAccessibilityWebPageObject
 
@@ -103,6 +109,16 @@ using namespace WebKit;
     return m_attributeNames;
 }
 
+- (NSArray *)accessibilityParameterizedAttributeNames
+{
+    NSArray *names = nil;
+    
+    if (m_page->pageOverlaySupportsDataDetection())
+        names = [NSArray arrayWithObjects:NSAccessibilityDataDetectorExistsAtPoint, NSAccessibilityDataDetectorTypeAtPoint, NSAccessibilityDidShowDataDetectorMenuAtPoint,  nil];
+    
+    return names;
+}
+
 - (BOOL)accessibilityIsAttributeSettable:(NSString *)attribute
 {
     return NO;
@@ -159,6 +175,40 @@ using namespace WebKit;
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute])
         return [self accessibilityChildren];
 
+    return nil;
+}
+
+- (NSPoint)_convertScreenPointToWindow:(NSPoint)point
+{
+    return m_page->screenToWindow(IntPoint(point.x, point.y));
+}
+
+- (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
+{
+    if ([attribute isEqualToString:NSAccessibilityDidShowDataDetectorMenuAtPoint]) {
+        if (![parameter isKindOfClass:[NSValue class]])
+            return nil;
+        
+        NSPoint point = [self _convertScreenPointToWindow:[(NSValue *)parameter pointValue]];
+        return [NSNumber numberWithBool:m_page->pageOverlayOpenDataDetectorMenuAtPoint(IntPoint(point))];
+    }
+    if ([attribute isEqualToString:NSAccessibilityDataDetectorTypeAtPoint]) {
+        if (![parameter isKindOfClass:[NSValue class]])
+            return nil;
+        
+        NSPoint point = [self _convertScreenPointToWindow:[(NSValue *)parameter pointValue]];
+        WKRetainPtr<WKStringRef> type = adoptWK(m_page->pageOverlayDataDetectorCopyTypeAtPoint(IntPoint(point)));
+        if (type)
+            return [(NSString *)WKStringCopyCFString(kCFAllocatorDefault, type.get()) autorelease];
+    }
+    if ([attribute isEqualToString:NSAccessibilityDataDetectorExistsAtPoint]) {
+        if (![parameter isKindOfClass:[NSValue class]])
+            return nil;
+        
+        NSPoint point = [self _convertScreenPointToWindow:[(NSValue *)parameter pointValue]];
+        return [NSNumber numberWithBool:m_page->pageOverlayDataDetectorExistsAtPoint(IntPoint(point))];
+    }
+    
     return nil;
 }
 

@@ -130,6 +130,26 @@ bool PageOverlay::mouseEvent(const WebMouseEvent& mouseEvent)
     return m_client->mouseEvent(this, mouseEvent);
 }
 
+bool PageOverlay::supportsDataDetection()
+{
+    return m_client->supportsDataDetection(this);
+}
+    
+bool PageOverlay::dataDetectorExistsAtPoint(const WebCore::IntPoint& point)
+{
+    return m_client->dataDetectorExistsAtPoint(this, point);
+}
+
+WKStringRef PageOverlay::dataDetectorCopyTypeAtPoint(const WebCore::IntPoint& point)
+{
+    return m_client->dataDetectorCopyTypeAtPoint(this, point);
+}
+
+bool PageOverlay::dataDetectorOpenMenuAtPoint(const WebCore::IntPoint& point)
+{
+    return m_client->showDataDetectorMenuAtPoint(this, point);
+}
+    
 void PageOverlay::startFadeInAnimation()
 {
     m_fractionFadedIn = 0.0;

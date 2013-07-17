@@ -27,11 +27,13 @@
 #define PageOverlay_h
 
 #include "APIObject.h"
+#include "WKBase.h"
 #include <WebCore/RunLoop.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
     class GraphicsContext;
+    class IntPoint;
     class IntRect;
 }
 
@@ -52,6 +54,11 @@ public:
         virtual void didMoveToWebPage(PageOverlay*, WebPage*) = 0;
         virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
         virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) = 0;
+
+        virtual bool supportsDataDetection(PageOverlay*) { return false; }
+        virtual bool dataDetectorExistsAtPoint(PageOverlay*, const WebCore::IntPoint&) { return false; }
+        virtual WKStringRef dataDetectorCopyTypeAtPoint(PageOverlay*, const WebCore::IntPoint&) { return 0; }
+        virtual bool showDataDetectorMenuAtPoint(PageOverlay*, const WebCore::IntPoint&) { return false; }
     };
 
     static PassRefPtr<PageOverlay> create(Client*);
@@ -64,6 +71,11 @@ public:
     void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
     bool mouseEvent(const WebMouseEvent&);
 
+    bool supportsDataDetection();
+    bool dataDetectorExistsAtPoint(const WebCore::IntPoint&);
+    WKStringRef dataDetectorCopyTypeAtPoint(const WebCore::IntPoint&);
+    bool dataDetectorOpenMenuAtPoint(const WebCore::IntPoint&);
+    
     void startFadeInAnimation();
     void startFadeOutAnimation();
     void stopFadeOutAnimation();

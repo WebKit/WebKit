@@ -1,3 +1,40 @@
+2013-07-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver not working with data detection page overlays
+        https://bugs.webkit.org/show_bug.cgi?id=118680
+
+        Reviewed by Tim Horton.
+
+        Expose API methods so that a client implementing data detectors is able to respond
+        to the needs of accessibility clients like VoiceOver.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (PageOverlayClientImpl::supportsDataDetection):
+        (PageOverlayClientImpl::dataDetectorExistsAtPoint):
+        (PageOverlayClientImpl::dataDetectorCopyTypeAtPoint):
+        (PageOverlayClientImpl::showDataDetectorMenuAtPoint):
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::supportsDataDetection):
+        (WebKit::PageOverlay::dataDetectorExistsAtPoint):
+        (WebKit::PageOverlay::dataDetectorCopyTypeAtPoint):
+        (WebKit::PageOverlay::dataDetectorOpenMenuAtPoint):
+        * WebProcess/WebPage/PageOverlay.h:
+        (WebKit::PageOverlay::Client::supportsDataDetection):
+        (WebKit::PageOverlay::Client::dataDetectorExistsAtPoint):
+        (WebKit::PageOverlay::Client::dataDetectorCopyTypeAtPoint):
+        (WebKit::PageOverlay::Client::showDataDetectorMenuAtPoint):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pageOverlayOpenDataDetectorMenuAtPoint):
+        (WebKit::WebPage::pageOverlayDataDetectorCopyTypeAtPoint):
+        (WebKit::WebPage::pageOverlayDataDetectorExistsAtPoint):
+        (WebKit::WebPage::pageOverlaySupportsDataDetection):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (-[WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames]):
+        (-[WKAccessibilityWebPageObject _convertScreenPointToWindow:]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:forParameter:]):
+
 2013-07-17  Dong-Gwan Kim  <donggwan.kim@samsung.com>
 
         [EFL][WK2] EWK2CookieManagerTest should be defined by inheriting from EWK2UnitTestBase.
