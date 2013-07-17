@@ -1,5 +1,20 @@
 2013-07-17  Dong-Gwan Kim  <donggwan.kim@samsung.com>
 
+        [EFL][WK2] EWK2FaviconDatabaseTest should be defined by inheriting from EWK2UnitTestBase.
+        https://bugs.webkit.org/show_bug.cgi?id=118772
+
+        Reviewed by Christophe Dumez.
+
+        It should be defined as relevant test class specific to each test file for more readability.
+        It could be helpful to remove unnecessary static methods.
+
+        * UIProcess/API/efl/tests/test_ewk2_favicon_database.cpp:
+        (EWK2FaviconDatabaseTest::serverCallback):
+        (EWK2FaviconDatabaseTest::requestFaviconData):
+        (TEST_F):
+
+2013-07-17  Dong-Gwan Kim  <donggwan.kim@samsung.com>
+
         [EFL][WK2] EWK2EinaSharedStringTest should be defined by inheriting from EWK2UnitTestBase.
         https://bugs.webkit.org/show_bug.cgi?id=118771
 

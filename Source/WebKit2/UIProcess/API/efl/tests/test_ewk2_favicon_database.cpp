@@ -35,65 +35,68 @@ using namespace EWK2UnitTest;
 
 extern EWK2UnitTestEnvironment* environment;
 
-static void serverCallback(SoupServer* httpServer, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-{
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+class EWK2FaviconDatabaseTest : public EWK2UnitTestBase {
+public:
+    struct IconRequestData {
+        Evas_Object* view;
+        Evas_Object* icon;
+    };
+
+    static void serverCallback(SoupServer* httpServer, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+    {
+        if (message->method != SOUP_METHOD_GET) {
+            soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
         return;
-    }
+        }
 
-    if (!strcmp(path, "/favicon.ico")) {
-        CString faviconPath = environment->pathForResource("blank.ico");
-        Eina_File* f = eina_file_open(faviconPath.data(), false);
-        if (!f) {
-            soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+        if (!strcmp(path, "/favicon.ico")) {
+            CString faviconPath = environment->pathForResource("blank.ico");
+            Eina_File* f = eina_file_open(faviconPath.data(), false);
+            if (!f) {
+                soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+                soup_message_body_complete(message->response_body);
+                return;
+            }
+
+            size_t fileSize = eina_file_size_get(f);
+
+            void* contents = eina_file_map_all(f, EINA_FILE_POPULATE);
+            if (!contents) {
+                soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+                soup_message_body_complete(message->response_body);
+                return;
+            }
+
+            soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, contents, fileSize);
+            soup_message_set_status(message, SOUP_STATUS_OK);
             soup_message_body_complete(message->response_body);
+
+            eina_file_map_free(f, contents);
+            eina_file_close(f);
             return;
         }
 
-        size_t fileSize = eina_file_size_get(f);
-
-        void* contents = eina_file_map_all(f, EINA_FILE_POPULATE);
-        if (!contents) {
-            soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
-            soup_message_body_complete(message->response_body);
-            return;
-        }
-
-        soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, contents, fileSize);
+        const char contents[] = "<html><body>favicon test</body></html>";
         soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, contents, strlen(contents));
         soup_message_body_complete(message->response_body);
-
-        eina_file_map_free(f, contents);
-        eina_file_close(f);
-        return;
     }
 
-    const char contents[] = "<html><body>favicon test</body></html>";
-    soup_message_set_status(message, SOUP_STATUS_OK);
-    soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, contents, strlen(contents));
-    soup_message_body_complete(message->response_body);
-}
+    static void requestFaviconData(void* userData, Evas_Object*, void* eventInfo)
+    {
+        IconRequestData* data = static_cast<IconRequestData*>(userData);
 
-struct IconRequestData {
-    Evas_Object* view;
-    Evas_Object* icon;
+        // Check the API retrieving a valid favicon from icon database.
+        Ewk_Context* context = ewk_view_context_get(data->view);
+        Ewk_Favicon_Database* faviconDatabase = ewk_context_favicon_database_get(context);
+        ASSERT_TRUE(faviconDatabase);
+
+        Evas* evas = evas_object_evas_get(data->view);
+        data->icon = ewk_favicon_database_icon_get(faviconDatabase, ewk_view_url_get(data->view), evas);
+    }
 };
 
-static void requestFaviconData(void* userData, Evas_Object*, void* eventInfo)
-{
-    IconRequestData* data = static_cast<IconRequestData*>(userData);
-
-    // Check the API retrieving a valid favicon from icon database.
-    Ewk_Context* context = ewk_view_context_get(data->view);
-    Ewk_Favicon_Database* faviconDatabase = ewk_context_favicon_database_get(context);
-    ASSERT_TRUE(faviconDatabase);
-
-    Evas* evas = evas_object_evas_get(data->view);
-    data->icon = ewk_favicon_database_icon_get(faviconDatabase, ewk_view_url_get(data->view), evas);
-}
-
-TEST_F(EWK2UnitTestBase, ewk_favicon_database_async_icon_get)
+TEST_F(EWK2FaviconDatabaseTest, ewk_favicon_database_async_icon_get)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
