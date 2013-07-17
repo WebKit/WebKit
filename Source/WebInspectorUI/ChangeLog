@@ -1,3 +1,37 @@
+2013-07-16  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: InspectorFrontendHost is undefined
+        https://bugs.webkit.org/show_bug.cgi?id=118715
+
+        Reviewed by Timothy Hatcher.
+
+        Add InspectorFrontendHostStub.js to New Inspector because of the InspectorFrontendHost initialization.
+
+        * UserInterface/InspectorFrontendHostStub.js: Added.
+        (.WebInspector.InspectorFrontendHostStub):
+        (.WebInspector.InspectorFrontendHostStub.prototype.platform):
+        (.WebInspector.InspectorFrontendHostStub.prototype.port):
+        (.WebInspector.InspectorFrontendHostStub.prototype.bringToFront):
+        (.WebInspector.InspectorFrontendHostStub.prototype.closeWindow):
+        (.WebInspector.InspectorFrontendHostStub.prototype.requestSetDockSide):
+        (.WebInspector.InspectorFrontendHostStub.prototype.setAttachedWindowHeight):
+        (.WebInspector.InspectorFrontendHostStub.prototype.setAttachedWindowWidth):
+        (.WebInspector.InspectorFrontendHostStub.prototype.setToolbarHeight):
+        (.WebInspector.InspectorFrontendHostStub.prototype.moveWindowBy):
+        (.WebInspector.InspectorFrontendHostStub.prototype.loaded):
+        (.WebInspector.InspectorFrontendHostStub.prototype.localizedStringsURL):
+        (.WebInspector.InspectorFrontendHostStub.prototype.inspectedURLChanged):
+        (.WebInspector.InspectorFrontendHostStub.prototype.copyText):
+        (.WebInspector.InspectorFrontendHostStub.prototype.openInNewTab):
+        (.WebInspector.InspectorFrontendHostStub.prototype.canSave):
+        (.WebInspector.InspectorFrontendHostStub.prototype.save):
+        (.WebInspector.InspectorFrontendHostStub.prototype.append):
+        (.WebInspector.InspectorFrontendHostStub.prototype.close.cleanup):
+        (.WebInspector.InspectorFrontendHostStub.prototype.close):
+        (.WebInspector.InspectorFrontendHostStub.prototype.sendMessageToBackend):
+        (.WebInspector.InspectorFrontendHostStub.prototype.loadResourceSynchronously):
+        * UserInterface/Main.html:
+
 2013-07-15  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Remove unused columns from select query in ImageUtilities.js
