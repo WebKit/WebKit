@@ -6,7 +6,7 @@ if (window.internals)
 // The test functions and globals used here are defined parsing-test-utils.js.
 
 applyToEachArglist(
-    testShapeSpecifiedProperty,
+    testSpecifiedProperty,
     [// [property, value, expectedValue]
      ["-webkit-wrap-through", "wrap", "wrap"],
      ["-webkit-wrap-through", "none", "none"],
@@ -17,7 +17,7 @@ applyToEachArglist(
 );
 
 applyToEachArglist(
-    testShapeComputedProperty,
+    testComputedProperty,
     [// [property, value, expectedValue]
      ["-webkit-wrap-through", "wrap", "wrap"],
      ["-webkit-wrap-through", "5", "wrap"],
@@ -25,7 +25,7 @@ applyToEachArglist(
 );
 
 applyToEachArglist(
-    testNotInheritedShapeChildProperty,
+    testNotInheritedChildProperty,
     [// [property, parentValue, childValue, expectedChildValue]
      ["-webkit-wrap-through", "wrap", "none", "none"],
      ["-webkit-wrap-through", "none", "wrap", "wrap"]]

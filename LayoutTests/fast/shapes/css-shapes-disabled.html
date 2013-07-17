@@ -4,7 +4,7 @@
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
 
-description('Test that parsing of css exclusions related properties can be disabled.');
+description('Test that parsing of css shapes related properties can be disabled.');
 
 if (window.internals) {
     window.internals.settings.setCSSShapesEnabled(false);
@@ -31,8 +31,11 @@ function testStyle(property, value, computedExpected) {
     shouldBeEqualToString('testComputedStyle("' + property + '", "' + value + '")', computedExpected);
 }
 
-testStyle("-webkit-wrap-flow", "both", "auto");
-testStyle("-webkit-wrap-through", "none", "wrap");
+testStyle("-webkit-shape-margin", "10px", "0px");
+testStyle("-webkit-shape-padding", "10px", "0px");
+
+testStyle("-webkit-shape-outside", "circle(10px, 10px, 10px)", "auto");
+testStyle("-webkit-shape-inside", "circle(10px, 10px, 10px)", "outside-shape");
 
 </script>
 <script src="../js/resources/js-test-post.js"></script>
