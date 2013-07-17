@@ -153,7 +153,13 @@ void HTMLAppletElement::updateWidget(PluginCreationOption)
     Frame* frame = document()->frame();
     ASSERT(frame);
 
-    renderer->setWidget(frame->loader()->subframeLoader()->createJavaAppletWidget(roundedIntSize(LayoutSize(contentWidth, contentHeight)), this, paramNames, paramValues));
+    RefPtr<Widget> widget = frame->loader()->subframeLoader()->createJavaAppletWidget(roundedIntSize(LayoutSize(contentWidth, contentHeight)), this, paramNames, paramValues);
+
+    // createJavaAppletWidget can call setPluginUnavailabilityReason, which can cause reattach and destroy our renderer.
+
+    renderer = renderEmbeddedObject();
+    if (renderer)
+        renderer->setWidget(widget.release());
 }
 
 bool HTMLAppletElement::canEmbedJava() const

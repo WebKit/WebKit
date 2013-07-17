@@ -1,3 +1,21 @@
+2013-07-16  Tim Horton  <timothy_horton@apple.com>
+
+        Many crashes loading Java applets after r152701
+        https://bugs.webkit.org/show_bug.cgi?id=118760
+        <rdar://problem/14462836>
+
+        Reviewed by Dean Jackson.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::updateWidget):
+        Re-acquire the renderer after calling createJavaAppletWidget,
+        because it can cause reattach, leaving our renderer pointer stale.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+        Null-check renderer, as element->renderEmbeddedObject() can very clearly
+        return null in some cases.
+
 2013-07-16  Pratik Solanki  <psolanki@apple.com>
 
         Missing break in WebGLRenderingContext::validateCompressedTexFuncData()
