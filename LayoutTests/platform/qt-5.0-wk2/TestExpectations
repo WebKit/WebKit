@@ -440,6 +440,9 @@ fast/repaint/selection-clear.html
 fast/repaint/table-cell-collapsed-border-scroll.html
 fast/repaint/transform-translate.html
 
+# [GTK][Qt] Regression: This test fails after r152701 changed how unavailable plugins are handled
+webkit.org/b/118730 fast/images/object-image.html [ Skip ]
+
 # =========================================================================== #
 # Fullscreen tests.                                                          #
 # =========================================================================== #
