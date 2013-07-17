@@ -48,7 +48,6 @@
 namespace WebCore {
 
     class Blob;
-    class DOMURL;
     class ScheduledAction;
     class WorkerInspectorController;
     class WorkerLocation;
@@ -174,9 +173,6 @@ namespace WebCore {
         OwnPtr<WorkerScriptController> m_script;
         WorkerThread* m_thread;
 
-#if ENABLE(BLOB)
-        mutable RefPtr<DOMURL> m_domURL;
-#endif
 #if ENABLE(INSPECTOR)
         OwnPtr<WorkerInspectorController> m_workerInspectorController;
 #endif

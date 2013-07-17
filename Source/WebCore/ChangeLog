@@ -1,3 +1,18 @@
+2013-07-17  Kwang Yul Seo  <skyul@company100.net>
+
+        Remove unused member variable m_domURL from WorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=118784
+
+        Reviewed by Christophe Dumez.
+
+        WorkerContext::webkitURL() was removed in r107082, and this was the
+        only place where the member variable |m_domURL| in WorkerContext was
+        mutated. This variable is no longer needed and so it should be removed.
+
+        No behavior change.
+
+        * workers/WorkerGlobalScope.h:
+
 2013-07-17  Mihai Maerean  <mmaerean@adobe.com>
 
         ASSERTION FAILED: layoutState->m_renderer == this in WebCore::RenderBlock::offsetFromLogicalTopOfFirstPage
