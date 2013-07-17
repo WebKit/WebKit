@@ -29,61 +29,64 @@
 
 using namespace EWK2UnitTest;
 
-struct OriginData {
-    Eina_List* originList;
-    Ewk_Database_Manager* manager;
-    bool didReceiveOriginsCallback;
-    bool isSynchronized;
-    unsigned timeoutSeconds;
+class EWK2DatabaseManagerTest : public EWK2UnitTestBase {
+public:
+    struct OriginData {
+        Eina_List* originList;
+        Ewk_Database_Manager* manager;
+        bool didReceiveOriginsCallback;
+        bool isSynchronized;
+        unsigned timeoutSeconds;
 
-    OriginData()
-        : originList(0)
-        , manager(0)
-        , didReceiveOriginsCallback(false)
-        , isSynchronized(false)
-        , timeoutSeconds(10)
-    { }
-};
+        OriginData()
+            : originList(0)
+            , manager(0)
+            , didReceiveOriginsCallback(false)
+            , isSynchronized(false)
+            , timeoutSeconds(10)
+        { }
+    };
 
-static void getDatabaseOriginsCallback(Eina_List* origins, Ewk_Error* error, void* userData)
-{
-    ASSERT_FALSE(error);
+    static void databaseOriginsCallback(Eina_List* origins, Ewk_Error* error, void* userData)
+    {
+        ASSERT_FALSE(error);
 
-    OriginData* originData = static_cast<OriginData*>(userData);
-    originData->didReceiveOriginsCallback = true;
+        OriginData* originData = static_cast<OriginData*>(userData);
+        originData->didReceiveOriginsCallback = true;
 
-    Eina_List* l;
-    void* data;
-    EINA_LIST_FOREACH(origins, l, data) {
-        originData->originList = eina_list_append(originData->originList, data);
-        Ewk_Security_Origin* origin = static_cast<Ewk_Security_Origin*>(data);
-        if (!strcmp(ewk_security_origin_protocol_get(origin), "http")
-            && !strcmp(ewk_security_origin_host_get(origin), "www.databasetest.com")
-            && !ewk_security_origin_port_get(origin)) {
-                originData->isSynchronized = true;
-                ecore_main_loop_quit();
+        Eina_List* l;
+        void* data;
+        EINA_LIST_FOREACH(origins, l, data) {
+            originData->originList = eina_list_append(originData->originList, data);
+            Ewk_Security_Origin* origin = static_cast<Ewk_Security_Origin*>(data);
+            if (!strcmp(ewk_security_origin_protocol_get(origin), "http")
+                && !strcmp(ewk_security_origin_host_get(origin), "www.databasetest.com")
+                && !ewk_security_origin_port_get(origin)) {
+                    originData->isSynchronized = true;
+                    ecore_main_loop_quit();
+            }
         }
     }
-}
 
-static bool timerCallback(void* userData)
-{
-    OriginData* originData = static_cast<OriginData*>(userData);
+    static Eina_Bool timerCallback(void* userData)
+    {
+        OriginData* originData = static_cast<OriginData*>(userData);
 
-    if (originData->isSynchronized || !--(originData->timeoutSeconds)) {
-        ecore_main_loop_quit();
-        return ECORE_CALLBACK_CANCEL;
+        if (originData->isSynchronized || !--(originData->timeoutSeconds)) {
+            ecore_main_loop_quit();
+            return ECORE_CALLBACK_CANCEL;
+        }
+
+        if (originData->didReceiveOriginsCallback) {
+            originData->didReceiveOriginsCallback = false;
+            ewk_database_manager_origins_get(originData->manager, databaseOriginsCallback, originData);
+        }
+
+        return ECORE_CALLBACK_RENEW;
     }
+};
 
-    if (originData->didReceiveOriginsCallback) {
-        originData->didReceiveOriginsCallback = false;
-        ewk_database_manager_origins_get(originData->manager, getDatabaseOriginsCallback, originData);
-    }
-
-    return ECORE_CALLBACK_RENEW;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_database_manager_origins_get)
+TEST_F(EWK2DatabaseManagerTest, ewk_database_manager_origins_get)
 {
     Evas_Object* view = webView();
     const char* databaseHTML =
@@ -99,8 +102,8 @@ TEST_F(EWK2UnitTestBase, ewk_database_manager_origins_get)
 
     OriginData originData;
     originData.manager = ewk_context_database_manager_get(ewk_view_context_get(view));
-    ASSERT_TRUE(ewk_database_manager_origins_get(originData.manager, getDatabaseOriginsCallback, &originData));
-    Ecore_Timer* database_timer = ecore_timer_add(1, reinterpret_cast<Ecore_Task_Cb>(timerCallback), &originData);
+    ASSERT_TRUE(ewk_database_manager_origins_get(originData.manager, databaseOriginsCallback, &originData));
+    Ecore_Timer* database_timer = ecore_timer_add(1, timerCallback, &originData);
 
     ecore_main_loop_begin();
     if (database_timer)
