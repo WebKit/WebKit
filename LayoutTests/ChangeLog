@@ -1,5 +1,12 @@
 2013-07-17  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed gardening. 
+        Skip some tests on AppleWin port that requires AVFoundation, since it does not support it yet.
+
+        * platform/win/TestExpectations:
+
+2013-07-17  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Rebaseline tests for AppleWin port after r152789.
 
         * platform/win/editing/pasteboard/paste-noplugin-expected.txt: Added.

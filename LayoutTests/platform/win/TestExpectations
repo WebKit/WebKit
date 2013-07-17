@@ -2800,3 +2800,7 @@ fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 # https://bugs.webkit.org/show_bug.cgi?id=118740
 editing/selection/user-select-all-image-with-single-click.html
 editing/selection/user-select-all-with-single-click.html
+
+# Our external builds do not yet support AVCF, which this test relies on
+media/video-load-preload-metadata.html
+media/track/track-legacyapi-with-automatic-mode.html
