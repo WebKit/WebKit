@@ -29,9 +29,215 @@
 using namespace EWK2UnitTest;
 
 extern EWK2UnitTestEnvironment* environment;
-bool fullScreenCallbackCalled;
 
-TEST_F(EWK2UnitTestBase, ewk_view_type_check)
+static bool fullScreenCallbackCalled;
+static bool obtainedPageContents = false;
+
+static struct {
+    const char* expectedMessage;
+    bool called;
+} alertCallbackData;
+
+static struct {
+    const char* expectedMessage;
+    bool result;
+    bool called;
+} confirmCallbackData;
+
+static struct {
+    const char* expectedMessage;
+    const char* expectedDefaultValue;
+    const char* result;
+    bool called;
+} promptCallbackData;
+
+class EWK2ViewTest : public EWK2UnitTestBase {
+public:
+    struct VibrationCbData {
+        bool didReceiveVibrate; // Whether the vibration event received.
+        bool didReceiveCancelVibration; // Whether the cancel vibration event received.
+        unsigned vibrateCalledCount; // Vibrate callbacks count.
+        unsigned expectedVibrationTime; // Expected vibration time.
+    };
+
+    static void onLoadFinishedForRedirection(void* userData, Evas_Object*, void*)
+    {
+        int* countLoadFinished = static_cast<int*>(userData);
+        (*countLoadFinished)--;
+    }
+
+    static void serverCallbackNavigation(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+    {
+        if (message->method != SOUP_METHOD_GET) {
+            soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+            return;
+        }
+
+        soup_message_set_status(message, SOUP_STATUS_OK);
+
+        Eina_Strbuf* body = eina_strbuf_new();
+        eina_strbuf_append_printf(body, "<html><title>%s</title><body>%s</body></html>", path + 1, path + 1);
+        const size_t bodyLength = eina_strbuf_length_get(body);
+        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, eina_strbuf_string_steal(body), bodyLength);
+        eina_strbuf_free(body);
+
+        soup_message_body_complete(message->response_body);
+    }
+
+    static void onFormAboutToBeSubmitted(void* userData, Evas_Object*, void* eventInfo)
+    {
+        Ewk_Form_Submission_Request* request = static_cast<Ewk_Form_Submission_Request*>(eventInfo);
+        bool* handled = static_cast<bool*>(userData);
+
+        ASSERT_TRUE(request);
+
+        Eina_List* fieldNames = ewk_form_submission_request_field_names_get(request);
+        ASSERT_TRUE(fieldNames);
+        ASSERT_EQ(3, eina_list_count(fieldNames));
+        void* data;
+        EINA_LIST_FREE(fieldNames, data)
+            eina_stringshare_del(static_cast<char*>(data));
+
+        const char* value1 = ewk_form_submission_request_field_value_get(request, "text1");
+        ASSERT_STREQ("value1", value1);
+        eina_stringshare_del(value1);
+        const char* value2 = ewk_form_submission_request_field_value_get(request, "text2");
+        ASSERT_STREQ("value2", value2);
+        eina_stringshare_del(value2);
+        const char* password = ewk_form_submission_request_field_value_get(request, "password");
+        ASSERT_STREQ("secret", password);
+        eina_stringshare_del(password);
+
+        *handled = true;
+    }
+
+    static Eina_Bool fullScreenCallback(Ewk_View_Smart_Data* smartData, Ewk_Security_Origin*)
+    {
+        fullScreenCallbackCalled = true;
+        return false;
+    }
+
+    static Eina_Bool fullScreenExitCallback(Ewk_View_Smart_Data* smartData)
+    {
+        fullScreenCallbackCalled = true;
+        return false;
+    }
+
+    static void checkAlert(Ewk_View_Smart_Data*, const char* message)
+    {
+        alertCallbackData.called = true;
+        EXPECT_STREQ(message, alertCallbackData.expectedMessage);
+    }
+
+    static Eina_Bool checkConfirm(Ewk_View_Smart_Data*, const char* message)
+    {
+        confirmCallbackData.called = true;
+        EXPECT_STREQ(message, confirmCallbackData.expectedMessage);
+        return confirmCallbackData.result;
+    }
+
+    static const char* checkPrompt(Ewk_View_Smart_Data*, const char* message, const char* defaultValue)
+    {
+        promptCallbackData.called = true;
+        EXPECT_STREQ(message, promptCallbackData.expectedMessage);
+        EXPECT_STREQ(defaultValue, promptCallbackData.expectedDefaultValue);
+
+        if (!promptCallbackData.result)
+            return 0;
+
+        return eina_stringshare_add(promptCallbackData.result);
+    }
+
+    static void onTextFound(void* userData, Evas_Object*, void* eventInfo)
+    {
+        int* result = static_cast<int*>(userData);
+        unsigned* matchCount = static_cast<unsigned*>(eventInfo);
+
+        *result = *matchCount;
+    }
+
+    static void onVibrate(void* userData, Evas_Object*, void* eventInfo)
+    {
+        VibrationCbData* data = static_cast<VibrationCbData*>(userData);
+        unsigned* vibrationTime = static_cast<unsigned*>(eventInfo);
+        if (*vibrationTime == data->expectedVibrationTime)
+            data->didReceiveVibrate = true;
+        data->vibrateCalledCount++;
+    }
+
+    static void onCancelVibration(void* userData, Evas_Object*, void*)
+    {
+        VibrationCbData* data = static_cast<VibrationCbData*>(userData);
+        data->didReceiveCancelVibration = true;
+    }
+
+    static void loadVibrationHTMLString(Evas_Object* webView, const char* vibrationPattern, bool waitForVibrationEvent, VibrationCbData* data)
+    {
+        const char* content =
+            "<html><head><script type='text/javascript'>function vibrate() { navigator.vibrate(%s);"
+            " document.title = \"Loaded\"; }</script></head><body onload='vibrate()'></body></html>";
+
+        data->didReceiveVibrate = false;
+        data->didReceiveCancelVibration = false;
+        data->vibrateCalledCount = 0;
+        Eina_Strbuf* buffer = eina_strbuf_new();
+        eina_strbuf_append_printf(buffer, content, vibrationPattern);
+        ewk_view_html_string_load(webView, eina_strbuf_string_get(buffer), 0, 0);
+        eina_strbuf_free(buffer);
+
+        if (!waitForVibrationEvent)
+            return;
+
+        while (!data->didReceiveVibrate && !data->didReceiveCancelVibration)
+            ecore_main_loop_iterate();
+    }
+
+    static void onContentsSizeChangedPortrait(void* userData, Evas_Object*, void* eventInfo)
+    {
+        bool* result = static_cast<bool*>(userData);
+        Ewk_CSS_Size* size = static_cast<Ewk_CSS_Size*>(eventInfo);
+        if (size->w == 2000 && size->h == 3000)
+            *result = true;
+    }
+
+    static void onContentsSizeChangedLandscape(void* userData, Evas_Object*, void* eventInfo)
+    {
+        bool* result = static_cast<bool*>(userData);
+        Ewk_CSS_Size* size = static_cast<Ewk_CSS_Size*>(eventInfo);
+        if (size->w == 3000 && size->h == 2000)
+            *result = true;
+    }
+
+    static void PageContentsAsMHTMLCallback(Ewk_Page_Contents_Type type, const char* data, void*)
+    {
+        // Check the type
+        ASSERT_EQ(EWK_PAGE_CONTENTS_TYPE_MHTML, type);
+
+        // The variable data should have below text block.
+        const String expectedMHTML = "\r\n\r\n<=00h=00t=00m=00l=00>=00<=00h=00e=00a=00d=00>=00<=00m=00e=00t=00a=00 =00c=\r\n"
+            "=00h=00a=00r=00s=00e=00t=00=3D=00\"=00U=00T=00F=00-=001=006=00L=00E=00\"=00>=\r\n"
+            "=00<=00/=00h=00e=00a=00d=00>=00<=00b=00o=00d=00y=00>=00<=00p=00>=00S=00i=00=\r\n"
+            "m=00p=00l=00e=00 =00H=00T=00M=00L=00<=00/=00p=00>=00<=00/=00b=00o=00d=00y=\r\n"
+            "=00>=00<=00/=00h=00t=00m=00l=00>=00\r\n";
+
+        ASSERT_TRUE(String(data).contains(expectedMHTML));
+
+        obtainedPageContents = true;
+    }
+
+    static void PageContentsAsStringCallback(Ewk_Page_Contents_Type type, const char* data, void*)
+    {
+        // Check the type.
+        ASSERT_EQ(EWK_PAGE_CONTENTS_TYPE_STRING, type);
+
+        // The variable data should be "Simple HTML".
+        ASSERT_STREQ("Simple HTML", data);
+
+        obtainedPageContents = true;
+    }
+};
+
+TEST_F(EWK2ViewTest, ewk_view_type_check)
 {
     ASSERT_FALSE(ewk_view_context_get(0));
 
@@ -39,13 +245,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_type_check)
     ASSERT_FALSE(ewk_view_url_set(rectangle, 0));
 }
 
-static void onLoadFinishedForRedirection(void* userData, Evas_Object*, void*)
-{
-    int* countLoadFinished = static_cast<int*>(userData);
-    (*countLoadFinished)--;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_view_url_get)
+TEST_F(EWK2ViewTest, ewk_view_url_get)
 {
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
     EXPECT_STREQ(environment->defaultTestPageUrl(), ewk_view_url_get(webView()));
@@ -59,7 +259,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_url_get)
     EXPECT_STREQ(environment->defaultTestPageUrl(), ewk_view_url_get(webView()));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_device_pixel_ratio)
+TEST_F(EWK2ViewTest, ewk_view_device_pixel_ratio)
 {
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
 
@@ -73,7 +273,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_device_pixel_ratio)
     ASSERT_FLOAT_EQ(1, ewk_view_device_pixel_ratio_get(webView()));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_html_string_load)
+TEST_F(EWK2ViewTest, ewk_view_html_string_load)
 {
     ewk_view_html_string_load(webView(), "<html><head><title>Foo</title></head><body>Bar</body></html>", 0, 0);
     ASSERT_TRUE(waitUntilTitleChangedTo("Foo"));
@@ -83,25 +283,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_html_string_load)
     ASSERT_STREQ("Bar", ewk_view_title_get(webView()));
 }
 
-static void serverCallbackNavigation(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-{
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
-        return;
-    }
-
-    soup_message_set_status(message, SOUP_STATUS_OK);
-
-    Eina_Strbuf* body = eina_strbuf_new();
-    eina_strbuf_append_printf(body, "<html><title>%s</title><body>%s</body></html>", path + 1, path + 1);
-    const size_t bodyLength = eina_strbuf_length_get(body);
-    soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, eina_strbuf_string_steal(body), bodyLength);
-    eina_strbuf_free(body);
-
-    soup_message_body_complete(message->response_body);
-}
-
-TEST_F(EWK2UnitTestBase, ewk_view_navigation)
+TEST_F(EWK2ViewTest, ewk_view_navigation)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallbackNavigation);
@@ -153,7 +335,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_navigation)
     ASSERT_STREQ("Page3", ewk_view_title_get(webView()));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_custom_encoding)
+TEST_F(EWK2ViewTest, ewk_view_custom_encoding)
 {
     ASSERT_FALSE(ewk_view_custom_encoding_get(webView()));
     ASSERT_TRUE(ewk_view_custom_encoding_set(webView(), "UTF-8"));
@@ -163,34 +345,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_custom_encoding)
     ASSERT_FALSE(ewk_view_custom_encoding_get(webView()));
 }
 
-static void onFormAboutToBeSubmitted(void* userData, Evas_Object*, void* eventInfo)
-{
-    Ewk_Form_Submission_Request* request = static_cast<Ewk_Form_Submission_Request*>(eventInfo);
-    bool* handled = static_cast<bool*>(userData);
-
-    ASSERT_TRUE(request);
-
-    Eina_List* fieldNames = ewk_form_submission_request_field_names_get(request);
-    ASSERT_TRUE(fieldNames);
-    ASSERT_EQ(3, eina_list_count(fieldNames));
-    void* data;
-    EINA_LIST_FREE(fieldNames, data)
-        eina_stringshare_del(static_cast<char*>(data));
-
-    const char* value1 = ewk_form_submission_request_field_value_get(request, "text1");
-    ASSERT_STREQ("value1", value1);
-    eina_stringshare_del(value1);
-    const char* value2 = ewk_form_submission_request_field_value_get(request, "text2");
-    ASSERT_STREQ("value2", value2);
-    eina_stringshare_del(value2);
-    const char* password = ewk_form_submission_request_field_value_get(request, "password");
-    ASSERT_STREQ("secret", password);
-    eina_stringshare_del(password);
-
-    *handled = true;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_view_form_submission_request)
+TEST_F(EWK2ViewTest, ewk_view_form_submission_request)
 {
     const char* formHTML =
         "<html><head><script type='text/javascript'>function submitForm() { document.getElementById('myform').submit(); }</script></head>"
@@ -214,14 +369,14 @@ TEST_F(EWK2UnitTestBase, ewk_view_form_submission_request)
     evas_object_smart_callback_del(webView(), "form,submission,request", onFormAboutToBeSubmitted);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_settings_get)
+TEST_F(EWK2ViewTest, ewk_view_settings_get)
 {
     Ewk_Settings* settings = ewk_view_settings_get(webView());
     ASSERT_TRUE(settings);
     ASSERT_EQ(settings, ewk_view_settings_get(webView()));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_theme_set)
+TEST_F(EWK2ViewTest, ewk_view_theme_set)
 {
     const char* buttonHTML = "<html><body><input type='button' id='btn'>"
         "<script>document.title=document.getElementById('btn').clientWidth;</script>"
@@ -243,7 +398,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_theme_set)
     EXPECT_TRUE(waitUntilTitleChangedTo("299")); // button of big button theme has 299px as padding (15 to -285)
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_mouse_events_enabled)
+TEST_F(EWK2ViewTest, ewk_view_mouse_events_enabled)
 {
     ASSERT_TRUE(ewk_view_mouse_events_enabled_set(webView(), EINA_TRUE));
     ASSERT_TRUE(ewk_view_mouse_events_enabled_get(webView()));
@@ -255,19 +410,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_mouse_events_enabled)
     ASSERT_FALSE(ewk_view_mouse_events_enabled_get(webView()));
 }
 
-static Eina_Bool fullScreenCallback(Ewk_View_Smart_Data* smartData, Ewk_Security_Origin*)
-{
-    fullScreenCallbackCalled = true;
-    return false;
-}
-
-static Eina_Bool fullScreenExitCallback(Ewk_View_Smart_Data* smartData)
-{
-    fullScreenCallbackCalled = true;
-    return false;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_view_full_screen_enter)
+TEST_F(EWK2ViewTest, ewk_view_full_screen_enter)
 {
     const char fullscreenHTML[] =
         "<!doctype html><head><script>function makeFullScreen(){"
@@ -286,7 +429,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_full_screen_enter)
     ASSERT_TRUE(fullScreenCallbackCalled);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
+TEST_F(EWK2ViewTest, ewk_view_full_screen_exit)
 {
     const char fullscreenHTML[] =
         "<!doctype html><head><script>function makeFullScreenAndExit(){"
@@ -306,14 +449,14 @@ TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
     ASSERT_TRUE(fullScreenCallbackCalled);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_cancel_full_screen_request)
+TEST_F(EWK2ViewTest, ewk_view_cancel_full_screen_request)
 {
     // FullScreenmanager should skip cancel fullscreen request if fullscreen
     // mode was not set using FullScreen API.
     ASSERT_FALSE(ewk_view_fullscreen_exit(webView()));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_same_page_navigation)
+TEST_F(EWK2ViewTest, ewk_view_same_page_navigation)
 {
     // Tests that same page navigation updates the page URL.
     String testUrl = environment->urlForResource("same_page_navigation.html").data();
@@ -324,7 +467,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_same_page_navigation)
     ASSERT_TRUE(waitUntilURLChangedTo(testUrl.utf8().data()));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_title_changed)
+TEST_F(EWK2ViewTest, ewk_view_title_changed)
 {
     const char* titleChangedHTML =
         "<!doctype html><head><title>Title before changed</title></head>"
@@ -348,31 +491,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_title_changed)
     EXPECT_STREQ("", ewk_view_title_get(webView()));
 }
 
-static struct {
-    const char* expectedMessage;
-    bool called;
-} alertCallbackData;
-
-static struct {
-    const char* expectedMessage;
-    bool result;
-    bool called;
-} confirmCallbackData;
-
-static struct {
-    const char* expectedMessage;
-    const char* expectedDefaultValue;
-    const char* result;
-    bool called;
-} promptCallbackData;
-
-static void checkAlert(Ewk_View_Smart_Data*, const char* message)
-{
-    alertCallbackData.called = true;
-    EXPECT_STREQ(message, alertCallbackData.expectedMessage);
-}
-
-TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_alert)
+TEST_F(EWK2ViewTest, ewk_view_run_javascript_alert)
 {
     ewkViewClass()->run_javascript_alert = checkAlert;
 
@@ -412,14 +531,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_alert)
     EXPECT_FALSE(alertCallbackData.called);
 }
 
-static Eina_Bool checkConfirm(Ewk_View_Smart_Data*, const char* message)
-{
-    confirmCallbackData.called = true;
-    EXPECT_STREQ(message, confirmCallbackData.expectedMessage);
-    return confirmCallbackData.result;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
+TEST_F(EWK2ViewTest, ewk_view_run_javascript_confirm)
 {
     ewkViewClass()->run_javascript_confirm = checkConfirm;
 
@@ -476,19 +588,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_confirm)
     EXPECT_FALSE(confirmCallbackData.called);
 }
 
-static const char* checkPrompt(Ewk_View_Smart_Data*, const char* message, const char* defaultValue)
-{
-    promptCallbackData.called = true;
-    EXPECT_STREQ(message, promptCallbackData.expectedMessage);
-    EXPECT_STREQ(defaultValue, promptCallbackData.expectedDefaultValue);
-
-    if (!promptCallbackData.result)
-        return 0;
-
-    return eina_stringshare_add(promptCallbackData.result);
-}
-
-TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
+TEST_F(EWK2ViewTest, ewk_view_run_javascript_prompt)
 {
     static const char promptMessage[] = "Prompt message";
     static const char promptResult[] = "Prompt result";
@@ -576,21 +676,21 @@ TEST_F(EWK2UnitTestBase, ewk_view_run_javascript_prompt)
     EXPECT_FALSE(promptCallbackData.called);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_context_get)
+TEST_F(EWK2ViewTest, ewk_view_context_get)
 {
     Ewk_Context* context = ewk_view_context_get(webView());
     ASSERT_TRUE(context);
     ASSERT_EQ(context, ewk_view_context_get(webView()));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_page_group_get)
+TEST_F(EWK2ViewTest, ewk_view_page_group_get)
 {
     Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
     ASSERT_TRUE(pageGroup);
     ASSERT_EQ(pageGroup, ewk_view_page_group_get(webView()));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_feed_touch_event)
+TEST_F(EWK2ViewTest, ewk_view_feed_touch_event)
 {
     Eina_List* points = 0;
     Ewk_Touch_Point point1 = { 0, 0, 0, EVAS_TOUCH_POINT_DOWN };
@@ -616,15 +716,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_feed_touch_event)
     eina_list_free(points);
 }
 
-static void onTextFound(void* userData, Evas_Object*, void* eventInfo)
-{
-    int* result = static_cast<int*>(userData);
-    unsigned* matchCount = static_cast<unsigned*>(eventInfo);
-
-    *result = *matchCount;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_view_text_find)
+TEST_F(EWK2ViewTest, ewk_view_text_find)
 {
     const char textFindHTML[] =
         "<!DOCTYPE html>"
@@ -651,7 +743,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_text_find)
     evas_object_smart_callback_del(webView(), "text,found", onTextFound);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_text_matches_count)
+TEST_F(EWK2ViewTest, ewk_view_text_matches_count)
 {
     const char textFindHTML[] =
         "<!DOCTYPE html>"
@@ -703,7 +795,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_text_matches_count)
     evas_object_smart_callback_del(webView(), "text,found", onTextFound);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_touch_events_enabled)
+TEST_F(EWK2ViewTest, ewk_view_touch_events_enabled)
 {
     ASSERT_FALSE(ewk_view_touch_events_enabled_get(webView()));
 
@@ -745,12 +837,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_touch_events_enabled)
     ASSERT_FALSE(ewk_view_touch_events_enabled_get(webView()));
 }
 
-Eina_Bool windowMoveResizeTimedOut(void* data)
-{
-    *static_cast<bool*>(data) = true;
-}
-
-TEST_F(EWK2UnitTestBase, window_move_resize)
+TEST_F(EWK2ViewTest, window_move_resize)
 {
     int x, y, width, height;
     Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(webView()));
@@ -770,7 +857,7 @@ TEST_F(EWK2UnitTestBase, window_move_resize)
     EXPECT_EQ(100, height);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_inspector)
+TEST_F(EWK2ViewTest, ewk_view_inspector)
 {
 #if ENABLE(INSPECTOR)
     ASSERT_TRUE(ewk_view_inspector_show(webView()));
@@ -781,7 +868,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_inspector)
 #endif
 }
 
-TEST_F(EWK2UnitTestBase, DISABLED_ewk_view_scale)
+TEST_F(EWK2ViewTest, DISABLED_ewk_view_scale)
 {
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
 
@@ -802,7 +889,7 @@ TEST_F(EWK2UnitTestBase, DISABLED_ewk_view_scale)
     ASSERT_FLOAT_EQ(1, ewk_view_scale_get(webView()));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_pagination)
+TEST_F(EWK2ViewTest, ewk_view_pagination)
 {
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
 
@@ -831,50 +918,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_pagination)
     ASSERT_EQ(EWK_PAGINATION_MODE_UNPAGINATED, ewk_view_pagination_mode_get(webView()));
 }
 
-struct VibrationCbData {
-    bool didReceiveVibrate; // Whether the vibration event received.
-    bool didReceiveCancelVibration; // Whether the cancel vibration event received.
-    unsigned vibrateCalledCount; // Vibrate callbacks count.
-    unsigned expectedVibrationTime; // Expected vibration time.
-};
-
-static void onVibrate(void* userData, Evas_Object*, void* eventInfo)
-{
-    VibrationCbData* data = static_cast<VibrationCbData*>(userData);
-    unsigned* vibrationTime = static_cast<unsigned*>(eventInfo);
-    if (*vibrationTime == data->expectedVibrationTime)
-        data->didReceiveVibrate = true;
-    data->vibrateCalledCount++;
-}
-
-static void onCancelVibration(void* userData, Evas_Object*, void*)
-{
-    VibrationCbData* data = static_cast<VibrationCbData*>(userData);
-    data->didReceiveCancelVibration = true;
-}
-
-static void loadVibrationHTMLString(Evas_Object* webView, const char* vibrationPattern, bool waitForVibrationEvent, VibrationCbData* data)
-{
-    const char* content =
-        "<html><head><script type='text/javascript'>function vibrate() { navigator.vibrate(%s);"
-        " document.title = \"Loaded\"; }</script></head><body onload='vibrate()'></body></html>";
-
-    data->didReceiveVibrate = false;
-    data->didReceiveCancelVibration = false;
-    data->vibrateCalledCount = 0;
-    Eina_Strbuf* buffer = eina_strbuf_new();
-    eina_strbuf_append_printf(buffer, content, vibrationPattern);
-    ewk_view_html_string_load(webView, eina_strbuf_string_get(buffer), 0, 0);
-    eina_strbuf_free(buffer);
-
-    if (!waitForVibrationEvent)
-        return;
-
-    while (!data->didReceiveVibrate && !data->didReceiveCancelVibration)
-        ecore_main_loop_iterate();
-}
-
-TEST_F(EWK2UnitTestBase, ewk_context_vibration_client_callbacks_set)
+TEST_F(EWK2ViewTest, ewk_context_vibration_client_callbacks_set)
 {
     VibrationCbData data = { false, false, 0, 5000 };
     evas_object_smart_callback_add(webView(), "vibrate", onVibrate, &data);
@@ -914,23 +958,7 @@ TEST_F(EWK2UnitTestBase, ewk_context_vibration_client_callbacks_set)
     ASSERT_FALSE(data.didReceiveCancelVibration);
 }
 
-static void onContentsSizeChangedPortrait(void* userData, Evas_Object*, void* eventInfo)
-{
-    bool* result = static_cast<bool*>(userData);
-    Ewk_CSS_Size* size = static_cast<Ewk_CSS_Size*>(eventInfo);
-    if (size->w == 2000 && size->h == 3000)
-        *result = true;
-}
-
-static void onContentsSizeChangedLandscape(void* userData, Evas_Object*, void* eventInfo)
-{
-    bool* result = static_cast<bool*>(userData);
-    Ewk_CSS_Size* size = static_cast<Ewk_CSS_Size*>(eventInfo);
-    if (size->w == 3000 && size->h == 2000)
-        *result = true;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_view_contents_size_changed)
+TEST_F(EWK2ViewTest, ewk_view_contents_size_changed)
 {
     const char contentsSizeHTMLPortrait[] =
         "<!DOCTYPE html>"
@@ -963,37 +991,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_contents_size_changed)
     evas_object_smart_callback_del(webView(), "contents,size,changed", onContentsSizeChangedPortrait);
 }
 
-static bool obtainedPageContents = false;
-
-static void PageContentsAsMHTMLCallback(Ewk_Page_Contents_Type type, const char* data, void*)
-{
-    // Check the type
-    ASSERT_EQ(EWK_PAGE_CONTENTS_TYPE_MHTML, type);
-
-    // The variable data should have below text block.
-    const String expectedMHTML = "\r\n\r\n<=00h=00t=00m=00l=00>=00<=00h=00e=00a=00d=00>=00<=00m=00e=00t=00a=00 =00c=\r\n"
-        "=00h=00a=00r=00s=00e=00t=00=3D=00\"=00U=00T=00F=00-=001=006=00L=00E=00\"=00>=\r\n"
-        "=00<=00/=00h=00e=00a=00d=00>=00<=00b=00o=00d=00y=00>=00<=00p=00>=00S=00i=00=\r\n"
-        "m=00p=00l=00e=00 =00H=00T=00M=00L=00<=00/=00p=00>=00<=00/=00b=00o=00d=00y=\r\n"
-        "=00>=00<=00/=00h=00t=00m=00l=00>=00\r\n";
-
-    ASSERT_TRUE(String(data).contains(expectedMHTML));
-
-    obtainedPageContents = true;
-}
-
-static void PageContentsAsStringCallback(Ewk_Page_Contents_Type type, const char* data, void*)
-{
-    // Check the type.
-    ASSERT_EQ(EWK_PAGE_CONTENTS_TYPE_STRING, type);
-
-    // The variable data should be "Simple HTML".
-    ASSERT_STREQ("Simple HTML", data);
-
-    obtainedPageContents = true;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_view_page_contents_get)
+TEST_F(EWK2ViewTest, ewk_view_page_contents_get)
 {
     const char content[] = "<p>Simple HTML</p>";
     ewk_view_html_string_load(webView(), content, 0, 0);
@@ -1009,7 +1007,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_page_contents_get)
         ecore_main_loop_iterate();
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_source_mode)
+TEST_F(EWK2ViewTest, ewk_view_source_mode)
 {
     const char indexHTML[] = "<html><body>Test Web View Mode<script>document.title=window.document.body.innerText;</script></body></html>";
     const char contents[] = "Test Web View Mode";
@@ -1030,7 +1028,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_source_mode)
     //       https://bugs.webkit.org/show_bug.cgi?id=101904.
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_user_agent)
+TEST_F(EWK2ViewTest, ewk_view_user_agent)
 {
     const char* defaultUserAgent = eina_stringshare_add(ewk_view_user_agent_get(webView()));
     const char customUserAgent[] = "Foo";
