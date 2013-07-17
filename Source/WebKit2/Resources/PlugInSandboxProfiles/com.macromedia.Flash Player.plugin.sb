@@ -1,3 +1,8 @@
+(webkit-powerbox)
+(webkit-printing)
+(webkit-camera)
+(webkit-microphone)
+
 (allow ipc-posix-sem
     (ipc-posix-name "MacromediaSemaphoreDig")
     (ipc-posix-name "59918130"))
@@ -33,5 +38,3 @@
 
 (allow network-bind (local ip))
 
-(webkit-powerbox)
-(webkit-printing)
