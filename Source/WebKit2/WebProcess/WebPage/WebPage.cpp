@@ -1837,51 +1837,7 @@ void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(gestureEvent.type()), handled));
 }
 #endif
-    
-bool WebPage::pageOverlayOpenDataDetectorMenuAtPoint(const WebCore::IntPoint& point)
-{
-    if (!m_pageOverlays.size())
-        return false;
-    PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
-    for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it)
-        if ((*it)->supportsDataDetection())
-            return (*it)->dataDetectorOpenMenuAtPoint(point);
-    return false;
-}
 
-WKStringRef WebPage::pageOverlayDataDetectorCopyTypeAtPoint(const WebCore::IntPoint& point)
-{
-    if (!m_pageOverlays.size())
-        return 0;
-    PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
-    for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it)
-        if ((*it)->supportsDataDetection())
-            return (*it)->dataDetectorCopyTypeAtPoint(point);
-    return 0;
-}
-
-bool WebPage::pageOverlayDataDetectorExistsAtPoint(const WebCore::IntPoint& point)
-{
-    if (!m_pageOverlays.size())
-        return false;
-    PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
-    for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it)
-        if ((*it)->supportsDataDetection())
-            return (*it)->dataDetectorExistsAtPoint(point);
-    return false;
-}
-
-bool WebPage::pageOverlaySupportsDataDetection()
-{
-    if (!m_pageOverlays.size())
-        return false;
-    PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
-    for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it)
-        if ((*it)->supportsDataDetection())
-            return true;
-    return false;
-}
-    
 void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
 {
     bool isEnabled = false;

@@ -1,3 +1,21 @@
+2013-07-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r152786 and r152789.
+        http://trac.webkit.org/changeset/152786
+        http://trac.webkit.org/changeset/152789
+        https://bugs.webkit.org/show_bug.cgi?id=118807
+
+        overly platform specific and dirty API (and Sam says no)
+        (Requested by thorton on #webkit).
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+        * WebProcess/WebPage/PageOverlay.cpp:
+        * WebProcess/WebPage/PageOverlay.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+
 2013-07-17  Tim Horton  <timothy_horton@apple.com>
 
         AX: VoiceOver not working with data detection page overlays

@@ -115,34 +115,6 @@ private:
         }
     }
     
-    virtual bool supportsDataDetection(PageOverlay* pageOverlay)
-    {
-        if (!m_client.dataDetectionCallbacks.supportsDataDetectors)
-            return false;
-        return m_client.dataDetectionCallbacks.supportsDataDetectors(toAPI(pageOverlay), m_client.clientInfo);
-    }
-    
-    virtual bool dataDetectorExistsAtPoint(PageOverlay* pageOverlay, const WebCore::IntPoint& point)
-    {
-        if (!m_client.dataDetectionCallbacks.dataDetectorExistsAtPoint)
-            return false;
-        return m_client.dataDetectionCallbacks.dataDetectorExistsAtPoint(toAPI(pageOverlay), WKPointMake(point.x(), point.y()), m_client.clientInfo);
-    }
-    
-    virtual WKStringRef dataDetectorCopyTypeAtPoint(PageOverlay* pageOverlay, const WebCore::IntPoint& point)
-    {
-        if (!m_client.dataDetectionCallbacks.dataDetectorCopyTypeAtPoint)
-            return 0;
-        return m_client.dataDetectionCallbacks.dataDetectorCopyTypeAtPoint(toAPI(pageOverlay), WKPointMake(point.x(), point.y()), m_client.clientInfo);
-    }
-    
-    virtual bool showDataDetectorMenuAtPoint(PageOverlay* pageOverlay, const WebCore::IntPoint& point)
-    {
-        if (!m_client.dataDetectionCallbacks.showDataDetectorMenuAtPoint)
-            return false;
-        return m_client.dataDetectionCallbacks.showDataDetectorMenuAtPoint(toAPI(pageOverlay), WKPointMake(point.x(), point.y()), m_client.clientInfo);
-    }
-    
     WKBundlePageOverlayClient m_client;
 };
 

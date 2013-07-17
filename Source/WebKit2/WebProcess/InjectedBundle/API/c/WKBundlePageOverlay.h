@@ -49,18 +49,6 @@ typedef bool (*WKBundlePageOverlayMouseUpCallback)(WKBundlePageOverlayRef pageOv
 typedef bool (*WKBundlePageOverlayMouseMovedCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, const void* clientInfo);
 typedef bool (*WKBundlePageOverlayMouseDraggedCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKEventMouseButton mouseButton, const void* clientInfo);
 
-typedef bool (*WKDataDetectionIsSupportedCallback)(WKBundlePageOverlayRef pageOverlay, const void* clientInfo);
-typedef bool (*WKDataDetectionExistsAtPointCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, const void* clientInfo);
-typedef WKStringRef (*WKDataDetectionTypeAtPointCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, const void* clientInfo);
-typedef bool (*WKDataDetectionShowMenuAtPointCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, const void* clientInfo);
-
-struct WKBundlePageOverlayDataDetectionCallbacks {
-    WKDataDetectionIsSupportedCallback                                 supportsDataDetectors;
-    WKDataDetectionExistsAtPointCallback                               dataDetectorExistsAtPoint;
-    WKDataDetectionTypeAtPointCallback                                 dataDetectorCopyTypeAtPoint;
-    WKDataDetectionShowMenuAtPointCallback                             showDataDetectorMenuAtPoint;
-};
-    
 struct WKBundlePageOverlayClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -71,13 +59,10 @@ struct WKBundlePageOverlayClient {
     WKBundlePageOverlayMouseUpCallback                                  mouseUp;
     WKBundlePageOverlayMouseMovedCallback                               mouseMoved;
     WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
-
-    // Version 1
-    struct WKBundlePageOverlayDataDetectionCallbacks                    dataDetectionCallbacks;
 };
 typedef struct WKBundlePageOverlayClient WKBundlePageOverlayClient;
 
-enum { kWKBundlePageOverlayClientCurrentVersion = 1 };
+enum { kWKBundlePageOverlayClientCurrentVersion = 0 };
     
 WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID();
 
