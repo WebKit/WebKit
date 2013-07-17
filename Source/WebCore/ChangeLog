@@ -1,3 +1,48 @@
+2013-07-17  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Port refactoring of shape-outside code from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=118757
+
+        Reviewed by Dean Jackson.
+
+        Refactor the left and right offset methods to reduce the number of
+        arguments by splitting the methods into smaller methods. This
+        refactoring was requested as part of porting support for stacked
+        floats with shape-outside to Blink.
+
+        Also add a variable when calling computeSegmentsForLine to make it
+        more readable and easier to follow the coordinate system change.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeLogicalLocationForFloat): Update to use
+            the refactored IgnoringShapeOutside methods.
+        (WebCore::RenderBlock::logicalLeftFloatOffsetForLine): New method to
+            compute the offset contributed by left floats.
+        (WebCore::RenderBlock::adjustLogicalLeftOffsetForLine): New method to
+            compute misc adjustments to the left offset.
+        (WebCore::RenderBlock::logicalRightFloatOffsetForLine): New method to
+            compute the offset contributed by right floats.
+        (WebCore::RenderBlock::adjustLogicalRightOffsetForLine): New method to
+            compute misc adjustments to the right offset.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalRightOffsetForLine): Implement original
+            method in terms of the float offset computation method and the
+            offset adjustment method. This method takes into account the
+            shape-outside on any floats when computing the offset.
+        (WebCore::RenderBlock::logicalLeftOffsetForLine): Ditto.
+        (WebCore::RenderBlock::logicalRightOffsetForLineIgnoringShapeOutside):
+            Compute the right offset as if there was no shape-outside on any
+            of the floats.
+        (WebCore::RenderBlock::logicalLeftOffsetForLineIgnoringShapeOutside):
+            Compute the left offset as if there was no shape-outside on any
+            of the floats.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded): Update
+            to use a variable to make the calls to computeSegmentsForLine more
+            explicit about the coordinate system conversion.
+
 2013-07-17  Zalan Bujtas  <zalan@apple.com>
 
         Wrong linebox height, when block element parent has vertical-align property defined.
