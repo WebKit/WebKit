@@ -382,7 +382,7 @@ HTMLMediaElement* HitTestResult::mediaElement() const
         return 0;
 
     if (m_innerNonSharedNode->hasTagName(HTMLNames::videoTag) || isHTMLAudioElement(m_innerNonSharedNode.get()))
-        return static_cast<HTMLMediaElement*>(m_innerNonSharedNode.get());
+        return toHTMLMediaElement(m_innerNonSharedNode.get());
     return 0;
 }
 #endif

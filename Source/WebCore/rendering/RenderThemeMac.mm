@@ -343,7 +343,7 @@ bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
     if (!mediaNode || !mediaNode->isMediaElement())
         return false;
 
-    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+    HTMLMediaElement* mediaElement = toHTMLMediaElement(mediaNode);
     if (!mediaElement)
         return false;
 

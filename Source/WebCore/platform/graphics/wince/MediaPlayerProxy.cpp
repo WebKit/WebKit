@@ -89,7 +89,7 @@ void WebMediaPlayerProxy::load(const String& url)
 
 void WebMediaPlayerProxy::initEngine()
 {
-    HTMLMediaElement* element = static_cast<HTMLMediaElement*>(m_mediaPlayer->mediaPlayerClient());
+    HTMLMediaElement* element = toHTMLMediaElement(m_mediaPlayer->mediaPlayerClient());
     String url = element->initialURL();
 
     if (url.isEmpty())
@@ -116,7 +116,7 @@ void WebMediaPlayerProxy::initEngine()
 
 HTMLMediaElement* WebMediaPlayerProxy::element()
 {
-    return static_cast<HTMLMediaElement*>(m_mediaPlayer->mediaPlayerClient());
+    return toHTMLMediaElement(m_mediaPlayer->mediaPlayerClient());
 
 }
 

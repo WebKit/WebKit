@@ -2690,7 +2690,7 @@ void FrameView::updateWidget(RenderObject* object)
         // FIXME: It is not clear that Media elements need or want this updateWidget() call.
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         else if (ownerElement->isMediaElement())
-            static_cast<HTMLMediaElement*>(ownerElement)->updateWidget(CreateAnyWidgetType);
+            toHTMLMediaElement(ownerElement)->updateWidget(CreateAnyWidgetType);
 #endif
         else
             ASSERT_NOT_REACHED();

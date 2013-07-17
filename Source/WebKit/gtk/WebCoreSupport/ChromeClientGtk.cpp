@@ -938,7 +938,7 @@ void ChromeClient::enterFullscreenForNode(Node* node)
 
     HTMLElement* element = static_cast<HTMLElement*>(node);
     if (element && element->isMediaElement()) {
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        HTMLMediaElement* mediaElement = toHTMLMediaElement(element);
         if (mediaElement->player() && mediaElement->player()->canEnterFullscreen())
             mediaElement->player()->enterFullscreen();
     }
@@ -951,7 +951,7 @@ void ChromeClient::exitFullscreenForNode(Node* node)
 
     HTMLElement* element = static_cast<HTMLElement*>(node);
     if (element && element->isMediaElement()) {
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        HTMLMediaElement* mediaElement = toHTMLMediaElement(element);
         if (mediaElement->player())
             mediaElement->player()->exitFullscreen();
     }
@@ -995,7 +995,7 @@ void ChromeClient::enterFullScreenForElement(WebCore::Element* element)
 
 #if ENABLE(VIDEO) && USE(NATIVE_FULLSCREEN_VIDEO)
     if (element && element->isMediaElement()) {
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        HTMLMediaElement* mediaElement = toHTMLMediaElement(element);
         if (mediaElement->player() && mediaElement->player()->canEnterFullscreen()) {
             element->document()->webkitWillEnterFullScreenForElement(element);
             mediaElement->player()->enterFullscreen();
@@ -1036,7 +1036,7 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element*)
 #if ENABLE(VIDEO) && USE(NATIVE_FULLSCREEN_VIDEO)
     if (m_fullScreenElement && m_fullScreenElement->isMediaElement()) {
         m_fullScreenElement->document()->webkitWillExitFullScreenForElement(m_fullScreenElement.get());
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(m_fullScreenElement.get());
+        HTMLMediaElement* mediaElement = toHTMLMediaElement(m_fullScreenElement.get());
         if (mediaElement->player()) {
             mediaElement->player()->exitFullscreen();
             m_fullScreenElement->document()->webkitDidExitFullScreenForElement(m_fullScreenElement.get());

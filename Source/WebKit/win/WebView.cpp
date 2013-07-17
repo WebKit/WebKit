@@ -6243,7 +6243,7 @@ void WebView::enterFullscreenForNode(Node* node)
 #if ENABLE(VIDEO)
     if (!toElement(node)->isMediaElement())
         return;
-    HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
+    HTMLMediaElement* videoElement = toHTMLMediaElement(node);
 
     if (m_fullScreenVideoController) {
         if (m_fullScreenVideoController->mediaElement() == videoElement) {

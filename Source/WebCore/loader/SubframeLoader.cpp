@@ -261,7 +261,7 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const 
     if (!m_frame->document()->contentSecurityPolicy()->allowMediaFromSource(completedURL))
         return 0;
 
-    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(node);
+    HTMLMediaElement* mediaElement = toHTMLMediaElement(node);
     RenderPart* renderer = toRenderPart(node->renderer());
     IntSize size;
 

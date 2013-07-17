@@ -71,7 +71,7 @@ static HTMLMediaElement* getMediaElementFromRenderObject(RenderObject* o)
     if (!mediaNode || !mediaNode->isElementNode() || !toElement(mediaNode)->isMediaElement())
         return 0;
 
-    return static_cast<HTMLMediaElement*>(mediaNode);
+    return toHTMLMediaElement(mediaNode);
 }
 
 void RenderThemeGtk::initMediaButtons()

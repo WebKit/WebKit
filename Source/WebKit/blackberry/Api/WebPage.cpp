@@ -2168,7 +2168,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
             imageElement = toHTMLAreaElement(node.get())->imageElement();
 
         if (static_cast<HTMLElement*>(node.get())->isMediaElement())
-            mediaElement = static_cast<HTMLMediaElement*>(node.get());
+            mediaElement = toHTMLMediaElement(node.get());
 
         if (imageElement && imageElement->renderer()) {
             context.setFlag(Platform::WebContext::IsImage);
@@ -4986,7 +4986,7 @@ void WebPage::notifyFullScreenVideoExited(bool done)
     if (!element)
         return;
     if (d->m_webSettings->fullScreenVideoCapable() && element->hasTagName(HTMLNames::videoTag))
-        static_cast<HTMLMediaElement*>(element)->exitFullscreen();
+        toHTMLMediaElement(element)->exitFullscreen();
 #if ENABLE(FULLSCREEN_API)
     else
         element->document()->webkitCancelFullScreen();
@@ -5615,7 +5615,7 @@ void WebPagePrivate::enterFullscreenForNode(Node* node)
     if (!node || !node->hasTagName(HTMLNames::videoTag))
         return;
 
-    MediaPlayer* player = static_cast<HTMLMediaElement*>(node)->player();
+    MediaPlayer* player = toHTMLMediaElement(node)->player();
     if (!player)
         return;
 
@@ -5648,7 +5648,7 @@ void WebPagePrivate::exitFullscreenForNode(Node* node)
     if (!node || !node->hasTagName(HTMLNames::videoTag))
         return;
 
-    MediaPlayer* player = static_cast<HTMLMediaElement*>(node)->player();
+    MediaPlayer* player = toHTMLMediaElement(node)->player();
     if (!player)
         return;
 

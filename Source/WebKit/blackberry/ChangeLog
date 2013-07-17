@@ -1,3 +1,18 @@
+2013-07-17  Kangil Han  <kangil.han@samsung.com>
+
+        Use toHTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=118727
+
+        Reviewed by Ryosuke Niwa.
+
+        To avoid direct use of static_cast, this patch uses toHTMLMediaElement for code cleanup.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        (BlackBerry::WebKit::WebPage::notifyFullScreenVideoExited):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullscreenForNode):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullscreenForNode):
+
 2013-07-16  Kangil Han  <kangil.han@samsung.com>
 
         Use toHTMLSelectElement and dismiss isHTMLSelectElement

@@ -62,7 +62,7 @@ HTMLMediaElement* toParentMediaElement(Node* node)
     if (!mediaNode || !mediaNode->isElementNode() || !toElement(mediaNode)->isMediaElement())
         return 0;
 
-    return static_cast<HTMLMediaElement*>(mediaNode);
+    return toHTMLMediaElement(mediaNode);
 }
 
 MediaControlElementType mediaControlElementType(Node* node)

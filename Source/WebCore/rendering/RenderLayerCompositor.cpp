@@ -2070,7 +2070,7 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderObject* renderer) 
         if (!node || (!node->hasTagName(HTMLNames::videoTag) && !isHTMLAudioElement(node)))
             return false;
 
-        HTMLMediaElement* mediaElement = toMediaElement(node);
+        HTMLMediaElement* mediaElement = toHTMLMediaElement(node);
         return mediaElement->player() ? mediaElement->player()->supportsAcceleratedRendering() : false;
     }
 #endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)

@@ -2045,7 +2045,7 @@ String Internals::getImageSourceURL(Element* element, ExceptionCode& ec)
 void Internals::simulateAudioInterruption(Node* node)
 {
 #if USE(GSTREAMER)
-    HTMLMediaElement* element = toMediaElement(node);
+    HTMLMediaElement* element = toHTMLMediaElement(node);
     element->player()->simulateAudioInterruption();
 #else
     UNUSED_PARAM(node);

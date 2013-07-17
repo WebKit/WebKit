@@ -802,7 +802,7 @@ inline bool isMediaElement(Node* node)
     return node && node->isElementNode() && toElement(node)->isMediaElement();
 }
 
-inline HTMLMediaElement* toMediaElement(Node* node)
+inline HTMLMediaElement* toHTMLMediaElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isMediaElement(node));
     return static_cast<HTMLMediaElement*>(node);

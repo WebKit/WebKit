@@ -1,3 +1,15 @@
+2013-07-17  Kangil Han  <kangil.han@samsung.com>
+
+        Use toHTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=118727
+
+        Reviewed by Ryosuke Niwa.
+
+        To avoid direct use of static_cast, this patch uses toHTMLMediaElement for code cleanup.
+
+        * WebView/WebView.mm:
+        (-[WebView _enterFullscreenForNode:WebCore::]):
+
 2013-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Protect against the LayerFlushController being deleted inside its flushLayers() callback

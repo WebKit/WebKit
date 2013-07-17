@@ -36,7 +36,7 @@ using namespace JSC;
 
 void JSHTMLMediaElement::setController(ExecState*, JSValue value)
 {
-    HTMLMediaElement* imp = static_cast<HTMLMediaElement*>(impl());
+    HTMLMediaElement* imp = toHTMLMediaElement(impl());
     // 4.8.10.11.2 Media controllers: controller attribute.
     // On setting, it must first remove the element's mediagroup attribute, if any, 
     imp->setMediaGroup(String());

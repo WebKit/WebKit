@@ -58,7 +58,7 @@ Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode
     HTMLElement::insertedInto(insertionPoint);
     Element* parent = parentElement();
     if (parent && parent->isMediaElement())
-        static_cast<HTMLMediaElement*>(parentNode())->sourceWasAdded(this);
+        toHTMLMediaElement(parentNode())->sourceWasAdded(this);
     return InsertionDone;
 }
 
@@ -68,7 +68,7 @@ void HTMLSourceElement::removedFrom(ContainerNode* removalRoot)
     if (!parent && removalRoot->isElementNode())
         parent = toElement(removalRoot);
     if (parent && parent->isMediaElement())
-        toMediaElement(parent)->sourceWasRemoved(this);
+        toHTMLMediaElement(parent)->sourceWasRemoved(this);
     HTMLElement::removedFrom(removalRoot);
 }
 
