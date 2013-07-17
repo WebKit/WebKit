@@ -38,16 +38,16 @@ protected:
     bool visitLoop(Visit visit, TIntermLoop*);
     bool visitBranch(Visit visit, TIntermBranch*);
 
-    int index;
+    size_t index;
     ConstantUnion *unionArray;
     TType type;
     TOperator constructorType;
     bool singleConstantParam;
     TInfoSink& infoSink;
     TSymbolTable& symbolTable;
-    int size; // size of the constructor ( 4 for vec4)
+    size_t size; // size of the constructor ( 4 for vec4)
     bool isMatrix;
-    int matrixSize; // dimension of the matrix (nominal size and not the instance size)
+    size_t matrixSize; // dimension of the matrix (nominal size and not the instance size)
 };
 
 //
@@ -61,7 +61,7 @@ protected:
 
 void TConstTraverser::visitSymbol(TIntermSymbol* node)
 {
-    infoSink.info.message(EPrefixInternalError, "Symbol Node found in constant constructor", node->getLine());
+    infoSink.info.message(EPrefixInternalError, node->getLine(), "Symbol Node found in constant constructor");
     return;
 
 }
@@ -74,12 +74,12 @@ bool TConstTraverser::visitBinary(Visit visit, TIntermBinary* node)
         TString buf;
         buf.append("'constructor' : assigning non-constant to ");
         buf.append(type.getCompleteString());
-        infoSink.info.message(EPrefixError, buf.c_str(), node->getLine());
+        infoSink.info.message(EPrefixError, node->getLine(), buf.c_str());
         error = true;
         return false;  
     }
 
-   infoSink.info.message(EPrefixInternalError, "Binary Node found in constant constructor", node->getLine());
+   infoSink.info.message(EPrefixInternalError, node->getLine(), "Binary Node found in constant constructor");
     
     return false;
 }
@@ -89,7 +89,7 @@ bool TConstTraverser::visitUnary(Visit visit, TIntermUnary* node)
     TString buf;
     buf.append("'constructor' : assigning non-constant to ");
     buf.append(type.getCompleteString());
-    infoSink.info.message(EPrefixError, buf.c_str(), node->getLine());
+    infoSink.info.message(EPrefixError, node->getLine(), buf.c_str());
     error = true;
     return false;  
 }
@@ -100,7 +100,7 @@ bool TConstTraverser::visitAggregate(Visit visit, TIntermAggregate* node)
         TString buf;
         buf.append("'constructor' : assigning non-constant to ");
         buf.append(type.getCompleteString());
-        infoSink.info.message(EPrefixError, buf.c_str(), node->getLine());
+        infoSink.info.message(EPrefixError, node->getLine(), buf.c_str());
         error = true;
         return false;  
     }
@@ -144,24 +144,31 @@ bool TConstTraverser::visitAggregate(Visit visit, TIntermAggregate* node)
 
 bool TConstTraverser::visitSelection(Visit visit, TIntermSelection* node)
 {
-    infoSink.info.message(EPrefixInternalError, "Selection Node found in constant constructor", node->getLine());
+    infoSink.info.message(EPrefixInternalError, node->getLine(), "Selection Node found in constant constructor");
     error = true;
     return false;
 }
 
 void TConstTraverser::visitConstantUnion(TIntermConstantUnion* node)
 {
+    if (!node->getUnionArrayPointer())
+    {
+        // The constant was not initialized, this should already have been logged
+        assert(infoSink.info.size() != 0);
+        return;
+    }
+
     ConstantUnion* leftUnionArray = unionArray;
-    int instanceSize = type.getObjectSize();
+    size_t instanceSize = type.getObjectSize();
 
     if (index >= instanceSize)
         return;
 
     if (!singleConstantParam) {
-        int size = node->getType().getObjectSize();
+        size_t size = node->getType().getObjectSize();
     
         ConstantUnion *rightUnionArray = node->getUnionArrayPointer();
-        for (int i=0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             if (index >= instanceSize)
                 return;
             leftUnionArray[index] = rightUnionArray[i];
@@ -169,11 +176,11 @@ void TConstTraverser::visitConstantUnion(TIntermConstantUnion* node)
             (index)++;
         }
     } else {
-        int totalSize = index + size;
+        size_t totalSize = index + size;
         ConstantUnion *rightUnionArray = node->getUnionArrayPointer();
         if (!isMatrix) {
-            int count = 0;
-            for (int i = index; i < totalSize; i++) {
+            size_t count = 0;
+            for (size_t i = index; i < totalSize; i++) {
                 if (i >= instanceSize)
                     return;
 
@@ -185,9 +192,9 @@ void TConstTraverser::visitConstantUnion(TIntermConstantUnion* node)
                     count++;
             }
         } else {  // for matrix constructors
-            int count = 0;
-            int element = index;
-            for (int i = index; i < totalSize; i++) {
+            size_t count = 0;
+            size_t element = index;
+            for (size_t i = index; i < totalSize; i++) {
                 if (i >= instanceSize)
                     return;
                 if (element - i == 0 || (i - element) % (matrixSize + 1) == 0 )
@@ -206,14 +213,14 @@ void TConstTraverser::visitConstantUnion(TIntermConstantUnion* node)
 
 bool TConstTraverser::visitLoop(Visit visit, TIntermLoop* node)
 {
-    infoSink.info.message(EPrefixInternalError, "Loop Node found in constant constructor", node->getLine());
+    infoSink.info.message(EPrefixInternalError, node->getLine(), "Loop Node found in constant constructor");
     error = true;
     return false;
 }
 
 bool TConstTraverser::visitBranch(Visit visit, TIntermBranch* node)
 {
-    infoSink.info.message(EPrefixInternalError, "Branch Node found in constant constructor", node->getLine());
+    infoSink.info.message(EPrefixInternalError, node->getLine(), "Branch Node found in constant constructor");
     error = true;
     return false;
 }
@@ -223,7 +230,7 @@ bool TConstTraverser::visitBranch(Visit visit, TIntermBranch* node)
 // Individual functions can be initialized to 0 to skip processing of that
 // type of node.  It's children will still be processed.
 //
-bool TIntermediate::parseConstTree(TSourceLoc line, TIntermNode* root, ConstantUnion* unionArray, TOperator constructorType, TSymbolTable& symbolTable, TType t, bool singleConstantParam)
+bool TIntermediate::parseConstTree(const TSourceLoc& line, TIntermNode* root, ConstantUnion* unionArray, TOperator constructorType, TSymbolTable& symbolTable, TType t, bool singleConstantParam)
 {
     if (root == 0)
         return false;

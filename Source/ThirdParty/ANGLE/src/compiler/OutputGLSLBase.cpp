@@ -79,25 +79,9 @@ void TOutputGLSLBase::writeVariableType(const TType& type)
     if ((qualifier != EvqTemporary) && (qualifier != EvqGlobal))
         out << type.getQualifierString() << " ";
     // Declare the struct if we have not done so already.
-    if ((type.getBasicType() == EbtStruct) &&
-        (mDeclaredStructs.find(type.getTypeName()) == mDeclaredStructs.end()))
+    if ((type.getBasicType() == EbtStruct) && !structDeclared(type.getStruct()))
     {
-        out << "struct " << hashName(type.getTypeName()) << "{\n";
-        const TTypeList* structure = type.getStruct();
-        ASSERT(structure != NULL);
-        for (size_t i = 0; i < structure->size(); ++i)
-        {
-            const TType* fieldType = (*structure)[i].type;
-            ASSERT(fieldType != NULL);
-            if (writeVariablePrecision(fieldType->getPrecision()))
-                out << " ";
-            out << getTypeName(*fieldType) << " " << hashName(fieldType->getFieldName());
-            if (fieldType->isArray())
-                out << arrayBrackets(*fieldType);
-            out << ";\n";
-        }
-        out << "}";
-        mDeclaredStructs.insert(type.getTypeName());
+        declareStruct(type.getStruct());
     }
     else
     {
@@ -138,24 +122,25 @@ const ConstantUnion* TOutputGLSLBase::writeConstantUnion(const TType& type,
 
     if (type.getBasicType() == EbtStruct)
     {
-        out << hashName(type.getTypeName()) << "(";
-        const TTypeList* structure = type.getStruct();
-        ASSERT(structure != NULL);
-        for (size_t i = 0; i < structure->size(); ++i)
+        const TStructure* structure = type.getStruct();
+        out << hashName(structure->name()) << "(";
+
+        const TFieldList& fields = structure->fields();
+        for (size_t i = 0; i < fields.size(); ++i)
         {
-            const TType* fieldType = (*structure)[i].type;
+            const TType* fieldType = fields[i]->type();
             ASSERT(fieldType != NULL);
             pConstUnion = writeConstantUnion(*fieldType, pConstUnion);
-            if (i != structure->size() - 1) out << ", ";
+            if (i != fields.size() - 1) out << ", ";
         }
         out << ")";
     }
     else
     {
-        int size = type.getObjectSize();
+        size_t size = type.getObjectSize();
         bool writeType = size > 1;
         if (writeType) out << getTypeName(type) << "(";
-        for (int i = 0; i < size; ++i, ++pConstUnion)
+        for (size_t i = 0; i < size; ++i, ++pConstUnion)
         {
             switch (pConstUnion->getType())
             {
@@ -260,12 +245,18 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary* node)
         case EOpIndexDirectStruct:
             if (visit == InVisit)
             {
+                // Here we are writing out "foo.bar", where "foo" is struct
+                // and "bar" is field. In AST, it is represented as a binary
+                // node, where left child represents "foo" and right child "bar".
+                // The node itself represents ".". The struct field "bar" is
+                // actually stored as an index into TStructure::fields.
                 out << ".";
-                // TODO(alokp): ASSERT
-                TString fieldName = node->getType().getFieldName();
+                const TStructure* structure = node->getLeft()->getType().getStruct();
+                const TIntermConstantUnion* index = node->getRight()->getAsConstantUnion();
+                const TField* field = structure->fields()[index->getIConst(0)];
 
-                const TType& structType = node->getLeft()->getType();
-                if (!mSymbolTable.findBuiltIn(structType.getTypeName()))
+                TString fieldName = field->name();
+                if (!mSymbolTable.findBuiltIn(structure->name()))
                     fieldName = hashName(fieldName);
 
                 out << fieldName;
@@ -596,7 +587,7 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate* node)
             {
                 const TType& type = node->getType();
                 ASSERT(type.getBasicType() == EbtStruct);
-                out << hashName(type.getTypeName()) << "(";
+                out << hashName(type.getStruct()->name()) << "(";
             }
             else if (visit == InVisit)
             {
@@ -765,7 +756,7 @@ TString TOutputGLSLBase::getTypeName(const TType& type)
     else
     {
         if (type.getBasicType() == EbtStruct)
-            out << hashName(type.getTypeName());
+            out << hashName(type.getStruct()->name());
         else
             out << type.getBasicString();
     }
@@ -797,4 +788,30 @@ TString TOutputGLSLBase::hashFunctionName(const TString& mangled_name)
     if (mSymbolTable.findBuiltIn(mangled_name) != NULL || name == "main")
         return name;
     return hashName(name);
+}
+
+bool TOutputGLSLBase::structDeclared(const TStructure* structure) const
+{
+    return mDeclaredStructs.find(structure->name()) != mDeclaredStructs.end();
+}
+
+void TOutputGLSLBase::declareStruct(const TStructure* structure)
+{
+    TInfoSinkBase& out = objSink();
+
+    out << "struct " << hashName(structure->name()) << "{\n";
+    const TFieldList& fields = structure->fields();
+    for (size_t i = 0; i < fields.size(); ++i)
+    {
+        const TField* field = fields[i];
+        if (writeVariablePrecision(field->type()->getPrecision()))
+            out << " ";
+        out << getTypeName(*field->type()) << " " << hashName(field->name());
+        if (field->type()->isArray())
+            out << arrayBrackets(*field->type());
+        out << ";\n";
+    }
+    out << "}";
+
+    mDeclaredStructs.insert(structure->name());
 }

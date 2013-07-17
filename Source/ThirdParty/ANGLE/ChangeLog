@@ -1,3 +1,256 @@
+2013-07-16  Alex Christensen  <achristensen@apple.com>
+
+        Update ANGLE from r1987 to r2426 while keeping these changes:
+        Keeping #if defined(_MSC_VER) around #pragma warning(disable: 4718) in DependencyGraph.cpp.
+        Keeping include khrplatform.h instead of KHR/khrplatform.h in ShaderLang.h.
+        Added static_casts in Intermediate.cpp to fix compiling on Mac.
+        Changed enum bit fields to just enums for GCC in Types.h to fix compiling for GTK.
+        Ran Bison on Mac after removing the unsupported %code tag (See diff uploaded to bug for details).
+        Added YYLTYPE definition to glslang_tab.h which would have been put there by the unsupported %code tag.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118550
+
+        Reviewed by Dean Jackson.
+
+        * ANGLE.plist: Updated revision of ANGLE to 2426.
+        * ANGLE.xcodeproj/project.pbxproj:
+        * GNUmakefile.am:
+        * Target.pri:
+            Renamed DetectRecursion to DetectCallDepth and added builtin_symbol_table.
+        * include/GLSLANG/ShaderLang.h:
+        * src/common/version.h:
+        * src/compiler/BaseTypes.h:
+        (getQualifierString):
+        * src/compiler/Common.h:
+        * src/compiler/Compiler.cpp:
+        (TCompiler::TCompiler):
+        (TCompiler::Init):
+        (TCompiler::compile):
+        (TCompiler::detectCallDepth):
+        (TCompiler::enforceTimingRestrictions):
+        (TCompiler::limitExpressionComplexity):
+        * src/compiler/ConstantUnion.h:
+        (ConstantUnion::ConstantUnion):
+        * src/compiler/DetectCallDepth.cpp: Added.
+        (DetectCallDepth::FunctionNode::FunctionNode):
+        (DetectCallDepth::FunctionNode::getName):
+        (DetectCallDepth::FunctionNode::addCallee):
+        (DetectCallDepth::FunctionNode::detectCallDepth):
+        (DetectCallDepth::FunctionNode::reset):
+        (DetectCallDepth::DetectCallDepth):
+        (DetectCallDepth::~DetectCallDepth):
+        (DetectCallDepth::visitAggregate):
+        (DetectCallDepth::checkExceedsMaxDepth):
+        (DetectCallDepth::resetFunctionNodes):
+        (DetectCallDepth::detectCallDepthForFunction):
+        (DetectCallDepth::detectCallDepth):
+        (DetectCallDepth::findFunctionByName):
+        * src/compiler/DetectCallDepth.h: Added.
+        (DetectCallDepth::getInfoSink):
+        * src/compiler/DetectRecursion.cpp: Removed.
+        * src/compiler/DetectRecursion.h: Removed.
+        * src/compiler/Diagnostics.cpp:
+        (TDiagnostics::writeInfo):
+        * src/compiler/ForLoopUnroll.cpp:
+        (ForLoopUnroll::evaluateIntConstant):
+        * src/compiler/InfoSink.cpp:
+        (TInfoSinkBase::prefix):
+        (TInfoSinkBase::location):
+        (TInfoSinkBase::message):
+        * src/compiler/InfoSink.h:
+        * src/compiler/Initialize.cpp:
+        (TBuiltIns::initialize):
+        (IdentifyBuiltIns):
+        (InitExtensionBehavior):
+        * src/compiler/Intermediate.cpp: Updated and added static_casts to fix build errors on Mac.
+        (TIntermediate::addSymbol):
+        (TIntermediate::addBinaryMath):
+        (TIntermediate::addAssign):
+        (TIntermediate::addIndex):
+        (TIntermediate::addUnaryMath):
+        (TIntermediate::setAggregateOperator):
+        (TIntermediate::addConversion):
+        (TIntermediate::growAggregate):
+        (TIntermediate::makeAggregate):
+        (TIntermediate::addSelection):
+        (TIntermediate::addComma):
+        (TIntermediate::addConstantUnion):
+        (TIntermediate::addSwizzle):
+        (TIntermediate::addLoop):
+        (TIntermediate::addBranch):
+        (TIntermUnary::promote):
+        (TIntermBinary::promote):
+        (CompareStruct):
+        (CompareStructure):
+        (TIntermConstantUnion::fold):
+        (TIntermediate::promoteConstantUnion):
+        * src/compiler/OutputGLSL.cpp:
+        (TOutputGLSL::visitSymbol):
+        * src/compiler/OutputGLSL.h:
+        * src/compiler/OutputGLSLBase.cpp:
+        (TOutputGLSLBase::writeVariableType):
+        (TOutputGLSLBase::writeConstantUnion):
+        (TOutputGLSLBase::visitBinary):
+        (TOutputGLSLBase::visitAggregate):
+        (TOutputGLSLBase::getTypeName):
+        (TOutputGLSLBase::hashFunctionName):
+        (TOutputGLSLBase::structDeclared):
+        (TOutputGLSLBase::declareStruct):
+        * src/compiler/OutputGLSLBase.h:
+        * src/compiler/OutputHLSL.cpp:
+        (sh::OutputHLSL::OutputHLSL):
+        (sh::OutputHLSL::header):
+        (sh::OutputHLSL::visitSymbol):
+        (sh::OutputHLSL::visitBinary):
+        (sh::OutputHLSL::visitAggregate):
+        (sh::OutputHLSL::visitSelection):
+        (sh::OutputHLSL::visitLoop):
+        (sh::OutputHLSL::handleExcessiveLoop):
+        (sh::OutputHLSL::typeString):
+        (sh::OutputHLSL::initializer):
+        (sh::OutputHLSL::addConstructor):
+        (sh::OutputHLSL::writeConstantUnion):
+        (sh::OutputHLSL::decorateField):
+        * src/compiler/OutputHLSL.h:
+        * src/compiler/ParseHelper.cpp:
+        (TParseContext::parseVectorFields):
+        (TParseContext::parseMatrixFields):
+        (TParseContext::error):
+        (TParseContext::warning):
+        (TParseContext::assignError):
+        (TParseContext::unaryOpError):
+        (TParseContext::binaryOpError):
+        (TParseContext::precisionErrorCheck):
+        (TParseContext::lValueErrorCheck):
+        (TParseContext::globalErrorCheck):
+        (TParseContext::reservedErrorCheck):
+        (TParseContext::constructorErrorCheck):
+        (TParseContext::voidErrorCheck):
+        (TParseContext::boolErrorCheck):
+        (TParseContext::samplerErrorCheck):
+        (TParseContext::structQualifierErrorCheck):
+        (TParseContext::parameterSamplerErrorCheck):
+        (TParseContext::containsSampler):
+        (TParseContext::arraySizeErrorCheck):
+        (TParseContext::arrayQualifierErrorCheck):
+        (TParseContext::arrayTypeErrorCheck):
+        (TParseContext::arrayErrorCheck):
+        (TParseContext::nonInitConstErrorCheck):
+        (TParseContext::nonInitErrorCheck):
+        (TParseContext::paramErrorCheck):
+        (TParseContext::extensionErrorCheck):
+        (TParseContext::findFunction):
+        (TParseContext::isVariableBuiltIn):
+        (TParseContext::executeInitializer):
+        (TParseContext::addConstructor):
+        (TParseContext::constructBuiltIn):
+        (TParseContext::constructStruct):
+        (TParseContext::addConstVectorNode):
+        (TParseContext::addConstMatrixNode):
+        (TParseContext::addConstArrayNode):
+        (TParseContext::addConstStruct):
+        (TParseContext::enterStructDeclaration):
+        (TParseContext::structNestingErrorCheck):
+        * src/compiler/ParseHelper.h:
+        (TParseContext::TParseContext):
+        (TParseContext::pragma):
+        * src/compiler/PoolAlloc.cpp:
+        (TPoolAllocator::allocate):
+        * src/compiler/ShHandle.h:
+        * src/compiler/ShaderLang.cpp:
+        (ShInitBuiltInResources):
+        * src/compiler/SymbolTable.cpp:
+        (TType::TType):
+        (TType::buildMangledName):
+        (TType::getObjectSize):
+        (TStructure::containsArrays):
+        (TStructure::buildMangledName):
+        (TStructure::calculateObjectSize):
+        (TStructure::calculateDeepestNesting):
+        (TSymbolTableLevel::relateToExtension):
+        * src/compiler/SymbolTable.h:
+        (TSymbol::relateToExtension):
+        (TSymbol::getExtension):
+        (TVariable::TVariable):
+        (TVariable::setQualifier):
+        (TVariable::shareConstPointer):
+        * src/compiler/Types.h: Updated and changed enum bit fields to enums to fix compiling with GCC.
+        (TField::TField):
+        (TField::type):
+        (TField::name):
+        (NewPoolTFieldList):
+        (TStructure::TStructure):
+        (TStructure::name):
+        (TStructure::fields):
+        (TStructure::mangledName):
+        (TStructure::objectSize):
+        (TStructure::deepestNesting):
+        (TType::TType):
+        (TType::clearArrayness):
+        (TType::getStruct):
+        (TType::setStruct):
+        (TType::getMangledName):
+        (TType::getDeepestStructNesting):
+        (TType::isStructureContainingArrays):
+        (TPublicType::setBasic):
+        * src/compiler/VariableInfo.cpp:
+        (getUserDefinedVariableInfo):
+        * src/compiler/builtin_symbol_table.cpp: Added.
+        (builtin1):
+        (builtin2):
+        (builtin3):
+        (InsertBuiltInFunctionsCommon):
+        (InsertBuiltInFunctionsVertex):
+        * src/compiler/builtin_symbol_table.h: Added.
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_lex.cpp:
+        (yy_get_previous_state):
+        (yy_try_NUL_trans):
+        (yyget_lloc):
+        (yyset_lloc):
+        (string_input):
+        (check_type):
+        (reserved_word):
+        (glslang_scan):
+        * src/compiler/glslang_tab.cpp:
+        (yysyntax_error):
+        (yyerror):
+        (glslang_parse):
+        * src/compiler/glslang_tab.h: Readded YYLTYPE definition after Bison removed it.
+        * src/compiler/intermOut.cpp:
+        (TOutputTraverser::visitUnary):
+        (TOutputTraverser::visitAggregate):
+        (TOutputTraverser::visitConstantUnion):
+        * src/compiler/intermediate.h:
+        (TIntermNode::TIntermNode):
+        (TIntermNode::~TIntermNode):
+        (TIntermNode::getLine):
+        (TIntermNode::setLine):
+        (TIntermNode::getAsLoopNode):
+        (TIntermConstantUnion::getIConst):
+        (TIntermConstantUnion::getFConst):
+        (TIntermConstantUnion::getBConst):
+        (TIntermAggregate::TIntermAggregate):
+        (TIntermTraverser::TIntermTraverser):
+        (TIntermTraverser::getMaxDepth):
+        (TIntermTraverser::incrementDepth):
+        * src/compiler/localintermediate.h:
+        * src/compiler/parseConst.cpp:
+        (TConstTraverser::visitSymbol):
+        (TConstTraverser::visitBinary):
+        (TConstTraverser::visitUnary):
+        (TConstTraverser::visitAggregate):
+        (TConstTraverser::visitSelection):
+        (TConstTraverser::visitConstantUnion):
+        (TConstTraverser::visitLoop):
+        (TConstTraverser::visitBranch):
+        (TIntermediate::parseConstTree):
+        * src/compiler/preprocessor/ExpressionParser.cpp:
+        * src/compiler/timing/RestrictVertexShaderTiming.cpp:
+        (RestrictVertexShaderTiming::visitSymbol):
+            Updated ANGLE to r2426 and ran Bison.
+
 2013-06-17  Darin Adler  <darin@apple.com>
 
         Sort all the Xcode project files

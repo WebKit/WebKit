@@ -96,10 +96,10 @@ public:
     const TPersistString& str() const { return sink; }
     const char* c_str() const { return sink.c_str(); }
 
-    void prefix(TPrefixType message);
-    void location(TSourceLoc loc);
-    void message(TPrefixType message, const char* s);
-    void message(TPrefixType message, const char* s, TSourceLoc loc);
+    void prefix(TPrefixType p);
+    void location(int file, int line);
+    void location(const TSourceLoc& loc);
+    void message(TPrefixType p, const TSourceLoc& loc, const char* m);
 
 private:
     TPersistString sink;

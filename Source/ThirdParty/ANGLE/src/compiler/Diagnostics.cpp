@@ -46,7 +46,7 @@ void TDiagnostics::writeInfo(Severity severity,
     TInfoSinkBase& sink = mInfoSink.info;
     /* VC++ format: file(linenum) : error #: 'token' : extrainfo */
     sink.prefix(prefix);
-    sink.location(EncodeSourceLoc(loc.file, loc.line));
+    sink.location(loc.file, loc.line);
     sink << "'" << token <<  "' : " << reason << " " << extra << "\n";
 }
 

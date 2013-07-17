@@ -24,6 +24,8 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/include/KHR/khrplatform.h \
 	Source/ThirdParty/ANGLE/src/common/angleutils.h \
 	Source/ThirdParty/ANGLE/src/compiler/BaseTypes.h \
+	Source/ThirdParty/ANGLE/src/compiler/builtin_symbol_table.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/builtin_symbol_table.h \
 	Source/ThirdParty/ANGLE/src/compiler/BuiltInFunctionEmulator.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/BuiltInFunctionEmulator.h \
 	Source/ThirdParty/ANGLE/src/compiler/CodeGenGLSL.cpp \
@@ -39,10 +41,10 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/depgraph/DependencyGraphOutput.h \
 	Source/ThirdParty/ANGLE/src/compiler/depgraph/DependencyGraphOutput.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/depgraph/DependencyGraphTraverse.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/DetectCallDepth.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/DetectCallDepth.h \
 	Source/ThirdParty/ANGLE/src/compiler/DetectDiscontinuity.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/DetectDiscontinuity.h \
-	Source/ThirdParty/ANGLE/src/compiler/DetectRecursion.cpp \
-	Source/ThirdParty/ANGLE/src/compiler/DetectRecursion.h \
 	Source/ThirdParty/ANGLE/src/compiler/Diagnostics.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/Diagnostics.h \
 	Source/ThirdParty/ANGLE/src/compiler/DirectiveHandler.cpp \

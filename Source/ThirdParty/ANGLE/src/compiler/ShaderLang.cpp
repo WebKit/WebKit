@@ -126,6 +126,7 @@ void ShInitBuiltInResources(ShBuiltInResources* resources)
     resources->OES_EGL_image_external = 0;
     resources->ARB_texture_rectangle = 0;
     resources->EXT_draw_buffers = 0;
+    resources->EXT_frag_depth = 0;
 
     // Disable highp precision in fragment shader by default.
     resources->FragmentPrecisionHigh = 0;

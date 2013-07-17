@@ -159,7 +159,13 @@ typedef enum {
   // vec234, or mat234 type. The ShArrayIndexClampingStrategy enum,
   // specified in the ShBuiltInResources when constructing the
   // compiler, selects the strategy for the clamping implementation.
-  SH_CLAMP_INDIRECT_ARRAY_BOUNDS = 0x1000
+  SH_CLAMP_INDIRECT_ARRAY_BOUNDS = 0x1000,
+
+  // This flag limits the complexity of an expression.
+  SH_LIMIT_EXPRESSION_COMPLEXITY = 0x2000,
+
+  // This flag limits the depth of the call stack.
+  SH_LIMIT_CALL_STACK_DEPTH = 0x4000,
 } ShCompileOptions;
 
 // Defines alternate strategies for implementing array index clamping.
@@ -209,6 +215,7 @@ typedef struct
     int OES_EGL_image_external;
     int ARB_texture_rectangle;
     int EXT_draw_buffers;
+    int EXT_frag_depth;
 
     // Set to 1 if highp precision is supported in the fragment language.
     // Default is 0.
@@ -222,6 +229,12 @@ typedef struct
     // Selects a strategy to use when implementing array index clamping.
     // Default is SH_CLAMP_WITH_CLAMP_INTRINSIC.
     ShArrayIndexClampingStrategy ArrayIndexClampingStrategy;
+
+    // The maximum complexity an expression can be.
+    int MaxExpressionComplexity;
+
+    // The maximum depth a call stack can be.
+    int MaxCallStackDepth;
 } ShBuiltInResources;
 
 //

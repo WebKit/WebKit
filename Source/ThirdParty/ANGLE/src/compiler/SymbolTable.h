@@ -32,6 +32,7 @@
 
 #include <assert.h>
 
+#include "common/angleutils.h"
 #include "compiler/InfoSink.h"
 #include "compiler/intermediate.h"
 
@@ -49,13 +50,16 @@ public:
     virtual bool isVariable() const { return false; }
     void setUniqueId(int id) { uniqueId = id; }
     int getUniqueId() const { return uniqueId; }
-    virtual void dump(TInfoSink &infoSink) const = 0;	
-    TSymbol(const TSymbol&);
-    virtual TSymbol* clone(TStructureMap& remapper) = 0;
+    virtual void dump(TInfoSink &infoSink) const = 0;
+    void relateToExtension(const TString& ext) { extension = ext; }
+    const TString& getExtension() const { return extension; }
 
-protected:
+private:
+    DISALLOW_COPY_AND_ASSIGN(TSymbol);
+
     const TString *name;
     unsigned int uniqueId;      // For real comparing during code generation
+    TString extension;
 };
 
 //
@@ -70,15 +74,13 @@ protected:
 //
 class TVariable : public TSymbol {
 public:
-    TVariable(const TString *name, const TType& t, bool uT = false ) : TSymbol(name), type(t), userType(uT), unionArray(0), arrayInformationType(0) { }
+    TVariable(const TString *name, const TType& t, bool uT = false ) : TSymbol(name), type(t), userType(uT), unionArray(0) { }
     virtual ~TVariable() { }
     virtual bool isVariable() const { return true; }    
     TType& getType() { return type; }    
     const TType& getType() const { return type; }
     bool isUserType() const { return userType; }
     void setQualifier(TQualifier qualifier) { type.setQualifier(qualifier); }
-    void updateArrayInformationType(TType *t) { arrayInformationType = t; }
-    TType* getArrayInformationType() { return arrayInformationType; }
 
     virtual void dump(TInfoSink &infoSink) const;
 
@@ -100,16 +102,15 @@ public:
         delete[] unionArray;
         unionArray = constArray;  
     }
-    TVariable(const TVariable&, TStructureMap& remapper); // copy constructor
-    virtual TVariable* clone(TStructureMap& remapper);
 
-protected:
+private:
+    DISALLOW_COPY_AND_ASSIGN(TVariable);
+
     TType type;
     bool userType;
     // we are assuming that Pool Allocator will free the memory allocated to unionArray
     // when this object is destroyed
     ConstantUnion *unionArray;
-    TType *arrayInformationType;  // this is used for updating maxArraySize in all the references to a given symbol
 };
 
 //
@@ -119,11 +120,6 @@ protected:
 struct TParameter {
     TString *name;
     TType* type;
-    void copyParam(const TParameter& param, TStructureMap& remapper)
-    {
-        name = NewPoolTString(param.name->c_str());
-        type = param.type->clone(remapper);
-    }
 };
 
 //
@@ -163,9 +159,6 @@ public:
     void relateToOperator(TOperator o) { op = o; }
     TOperator getBuiltInOp() const { return op; }
 
-    void relateToExtension(const TString& ext) { extension = ext; }
-    const TString& getExtension() const { return extension; }
-
     void setDefined() { defined = true; }
     bool isDefined() { return defined; }
 
@@ -173,16 +166,15 @@ public:
     const TParameter& getParam(size_t i) const { return parameters[i]; }
 
     virtual void dump(TInfoSink &infoSink) const;
-    TFunction(const TFunction&, TStructureMap& remapper);
-    virtual TFunction* clone(TStructureMap& remapper);
 
-protected:
+private:
+    DISALLOW_COPY_AND_ASSIGN(TFunction);
+
     typedef TVector<TParameter> TParamList;
     TParamList parameters;
     TType returnType;
     TString mangledName;
     TOperator op;
-    TString extension;
     bool defined;
 };
 
@@ -231,7 +223,6 @@ public:
     void relateToOperator(const char* name, TOperator op);
     void relateToExtension(const char* name, const TString& ext);
     void dump(TInfoSink &infoSink) const;
-    TSymbolTableLevel* clone(TStructureMap& remapper);
 
 protected:
     tLevel level;
@@ -321,7 +312,6 @@ public:
     }
     int getMaxSymbolId() { return uniqueId; }
     void dump(TInfoSink &infoSink) const;
-    void copyTable(const TSymbolTable& copyOf);
 
     bool setDefaultPrecision( const TPublicType& type, TPrecision prec ){
         if (IsSampler(type.type))

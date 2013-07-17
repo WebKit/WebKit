@@ -2869,6 +2869,7 @@ if (WTF_USE_3D_GRAPHICS)
     endif ()
 
     list(APPEND ANGLESupport_SOURCES
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/builtin_symbol_table.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/BuiltInFunctionEmulator.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/CodeGenGLSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/Compiler.cpp
@@ -2879,8 +2880,8 @@ if (WTF_USE_3D_GRAPHICS)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/depgraph/DependencyGraphBuilder.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/depgraph/DependencyGraphOutput.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/depgraph/DependencyGraphTraverse.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/DetectCallDepth.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/DetectDiscontinuity.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/DetectRecursion.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/ForLoopUnroll.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/InfoSink.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/Initialize.cpp
