@@ -453,7 +453,15 @@ private:
             break;
         }
             
-        case NewFunction:
+        case NewFunction: {
+            SpeculatedType child = node->child1()->prediction();
+            if (child & SpecEmpty)
+                changed |= mergePrediction((child & ~SpecEmpty) | SpecFunction);
+            else
+                changed |= mergePrediction(child);
+            break;
+        }
+            
         case NewFunctionNoCheck:
         case NewFunctionExpression: {
             changed |= setPrediction(SpecFunction);

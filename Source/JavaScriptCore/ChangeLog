@@ -1,3 +1,32 @@
+2013-07-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG assumes that NewFunction will never pass its input through
+        https://bugs.webkit.org/show_bug.cgi?id=118798
+
+        Reviewed by Sam Weinig.
+        
+        Previously the DFG was assuming that NewFunction always returns a function. That's not
+        the case. It may return whatever was passed to it, if it wasn't passed SpecEmpty.
+        
+        This fact needed to be wired through the compiler.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::makeTop):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-07-17  Geoffrey Garen  <ggaren@apple.com>
 
         JSStringCreateWithCFString should not convert the empty string into the NULL string

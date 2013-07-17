@@ -237,6 +237,10 @@ fast/js/dfg-uint32array-overflow-values
 fast/js/dfg-uint8array
 fast/js/dfg-uint8clampedarray
 fast/js/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias
+fast/js/dfg-use-function-as-variable
+fast/js/dfg-use-function-as-variable-merge-structure
+fast/js/dfg-use-function-as-variable-not-constant
+fast/js/dfg-use-function-as-variable-with-closure
 fast/js/dfg-value-to-int32-with-side-effect
 fast/js/dfg-weak-js-constant-silent-fill
 fast/js/dictionary-no-cache

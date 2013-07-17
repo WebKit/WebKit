@@ -61,6 +61,7 @@ extern "C" {
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_E)(ExecState*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EA)(ExecState*, JSArray*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EAZ)(ExecState*, JSArray*, int32_t);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EC)(ExecState*, JSCell*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ECI)(ExecState*, JSCell*, Identifier*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ECJ)(ExecState*, JSCell*, EncodedJSValue);
@@ -206,7 +207,8 @@ void DFG_OPERATION operationTearOffInlinedArguments(ExecState*, JSCell*, JSCell*
 EncodedJSValue DFG_OPERATION operationGetArgumentsLength(ExecState*, int32_t) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationGetInlinedArgumentByVal(ExecState*, int32_t, InlineCallFrame*, int32_t) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationGetArgumentByVal(ExecState*, int32_t, int32_t) WTF_INTERNAL;
-JSCell* DFG_OPERATION operationNewFunction(ExecState*, JSCell*) WTF_INTERNAL;
+JSCell* DFG_OPERATION operationNewFunctionNoCheck(ExecState*, JSCell*) WTF_INTERNAL;
+EncodedJSValue DFG_OPERATION operationNewFunction(ExecState*, JSCell*) WTF_INTERNAL;
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState*, JSCell*) WTF_INTERNAL;
 double DFG_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
 size_t DFG_OPERATION operationIsObject(ExecState*, EncodedJSValue) WTF_INTERNAL;

@@ -1,3 +1,33 @@
+2013-07-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG assumes that NewFunction will never pass its input through
+        https://bugs.webkit.org/show_bug.cgi?id=118798
+
+        Reviewed by Sam Weinig.
+
+        * fast/js/dfg-use-function-as-variable-expected.txt: Added.
+        * fast/js/dfg-use-function-as-variable-merge-structure-expected.txt: Added.
+        * fast/js/dfg-use-function-as-variable-merge-structure.html: Added.
+        * fast/js/dfg-use-function-as-variable-not-constant-expected.txt: Added.
+        * fast/js/dfg-use-function-as-variable-not-constant.html: Added.
+        * fast/js/dfg-use-function-as-variable-with-closure-expected.txt: Added.
+        * fast/js/dfg-use-function-as-variable-with-closure.html: Added.
+        * fast/js/dfg-use-function-as-variable.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-use-function-as-variable-merge-structure.js: Added.
+        (.x):
+        (run_tests):
+        * fast/js/script-tests/dfg-use-function-as-variable-not-constant.js: Added.
+        (run_tests.x):
+        (run_tests):
+        * fast/js/script-tests/dfg-use-function-as-variable-with-closure.js: Added.
+        (run_tests.x):
+        (run_tests.y):
+        (run_tests):
+        * fast/js/script-tests/dfg-use-function-as-variable.js: Added.
+        (run_tests.x):
+        (run_tests):
+
 2013-07-17  Alex Christensen  <achristensen@apple.com>
 
         Unreviewed. Skip more failing WebGL tests on Mac.

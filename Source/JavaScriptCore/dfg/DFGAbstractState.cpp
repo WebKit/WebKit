@@ -1226,7 +1226,19 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         forNode(node).makeTop();
         break;
         
-    case NewFunction:
+    case NewFunction: {
+        AbstractValue& value = forNode(node);
+        value = forNode(node->child1());
+        
+        if (!(value.m_type & SpecEmpty)) {
+            m_foundConstants = true;
+            break;
+        }
+
+        value.set((value.m_type & ~SpecEmpty) | SpecFunction);
+        break;
+    }
+
     case NewFunctionExpression:
     case NewFunctionNoCheck:
         forNode(node).set(m_codeBlock->globalObjectFor(node->codeOrigin)->functionStructure());

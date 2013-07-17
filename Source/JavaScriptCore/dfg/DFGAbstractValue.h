@@ -65,7 +65,7 @@ struct AbstractValue {
     
     void makeTop()
     {
-        m_type = SpecTop;
+        m_type |= SpecTop; // The state may have included SpecEmpty, in which case we want this to become SpecEmptyOrTop.
         m_arrayModes = ALL_ARRAY_MODES;
         m_currentKnownStructure.makeTop();
         m_futurePossibleStructure.makeTop();
