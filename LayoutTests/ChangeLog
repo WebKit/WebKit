@@ -1,3 +1,21 @@
+2013-07-17  Zalan Bujtas  <zalan@apple.com>
+
+        Wrong linebox height, when block element parent has vertical-align property defined.
+        https://bugs.webkit.org/show_bug.cgi?id=118245
+
+        Reviewed by David Hyatt.
+
+        Do not push the current element to the next, when it is still considered empty, even with
+        some object(s) in front. Behave as if it was actually empty.
+        Inline elements like <span></span> generate such lines.
+
+        * fast/css/empty-span-with-parent-div-and-vertical-align-expected.html: Added.
+        * fast/css/empty-span-with-parent-div-and-vertical-align.html: Added.
+        * platform/mac/fast/lists/inlineBoxWrapperNullCheck-expected.png: Rebased.
+        * platform/mac/fast/lists/inlineBoxWrapperNullCheck-expected.txt: Rebased.
+        * platform/mac/tables/mozilla/marvin/backgr_index-expected.png: Rebased.
+        * platform/mac/tables/mozilla/marvin/backgr_index-expected.txt: Rebased.
+
 2013-07-17  Alex Christensen  <achristensen@apple.com>
 
         Unreviewed. Skip failing WebGL tests.

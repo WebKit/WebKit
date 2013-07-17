@@ -3504,21 +3504,30 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
     bool segmentAllowsOverflow = true;
 #endif
 
-    if (lBreak == resolver.position() && (!lBreak.m_obj || !lBreak.m_obj->isBR()) && segmentAllowsOverflow) {
-        // we just add as much as possible
-        if (blockStyle->whiteSpace() == PRE && !current.m_pos) {
-            lBreak.moveTo(last, last->isText() ? last->length() : 0);
-        } else if (lBreak.m_obj) {
-            // Don't ever break in the middle of a word if we can help it.
-            // There's no room at all. We just have to be on this line,
-            // even though we'll spill out.
-            lBreak.moveTo(current.m_obj, current.m_pos);
+    if (segmentAllowsOverflow) {
+        if (lBreak == resolver.position()) {
+            if (!lBreak.m_obj || !lBreak.m_obj->isBR()) {
+                // we just add as much as possible
+                if (blockStyle->whiteSpace() == PRE && !current.m_pos) {
+                    lBreak.moveTo(last, last->isText() ? last->length() : 0);
+                } else if (lBreak.m_obj) {
+                    // Don't ever break in the middle of a word if we can help it.
+                    // There's no room at all. We just have to be on this line,
+                    // even though we'll spill out.
+                    lBreak.moveTo(current.m_obj, current.m_pos);
+                }
+            }
+            // make sure we consume at least one char/object.
+            if (lBreak == resolver.position())
+                lBreak.increment();
+        } else if (!width.committedWidth() && (!current.m_obj || !current.m_obj->isBR()) && !current.m_pos) {
+            // Do not push the current object to the next line, when this line has some content, but it is still considered empty.
+            // Empty inline elements like <span></span> can produce such lines and now we just ignore these break opportunities
+            // at the start of a line, if no width has been committed yet.
+            // Behave as if it was actually empty and consume at least one object.
+            lBreak.increment();
         }
     }
-
-    // make sure we consume at least one char/object.
-    if (lBreak == resolver.position() && segmentAllowsOverflow)
-        lBreak.increment();
 
     // Sanity check our midpoints.
     checkMidpoints(lineMidpointState, lBreak);
@@ -3608,7 +3617,7 @@ void RenderBlock::checkLinesForTextOverflow()
             if (curr->lineCanAccommodateEllipsis(ltr, blockEdge, lineBoxEdge, width)) {
                 float totalLogicalWidth = curr->placeEllipsis(ellipsisStr, ltr, blockLeftEdge, blockRightEdge, width);
 
-                float logicalLeft = 0; // We are only intersted in the delta from the base position.
+                float logicalLeft = 0; // We are only interested in the delta from the base position.
                 float truncatedWidth = pixelSnappedLogicalRightOffsetForLine(curr->lineTop(), firstLine);
                 updateLogicalWidthForAlignment(textAlign, 0, logicalLeft, totalLogicalWidth, truncatedWidth, 0);
                 if (ltr)
