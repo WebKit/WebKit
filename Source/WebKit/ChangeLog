@@ -1,3 +1,15 @@
+2013-07-16  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [CMake] Undefined references should be detected at build time
+        https://bugs.webkit.org/show_bug.cgi?id=110236
+
+        Reviewed by Christophe Dumez.
+
+        Add library dependencies that were not defined explicitly before.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+
 2013-07-11  Timothy Hatcher  <timothy@apple.com>
 
         Revert r152267 and soft link WebInspectorUI.framework again.

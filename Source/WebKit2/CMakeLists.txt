@@ -603,9 +603,16 @@ set(WebProcess_LIBRARIES
 )
 
 set(WebKit2_LIBRARIES
+    JavaScriptCore
     WTF
     WebCore
 )
+
+# librt is needed for shm_open on Linux.
+find_library(LIBRT_LIBRARIES NAMES rt)
+if (LIBRT_LIBRARIES)
+    list(APPEND WebKit2_LIBRARIES ${LIBRT_LIBRARIES})
+endif ()
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 

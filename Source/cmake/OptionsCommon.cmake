@@ -31,6 +31,10 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND "${LOWERCASE_CMAKE_HOST_SYSTEM
     set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "-Wl,--no-keep-memory ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
 endif ()
 
+if (UNIX AND NOT APPLE)
+    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined ${CMAKE_SHARED_LINKER_FLAGS}")
+endif ()
+
 set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
 
 set(LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "Where to install libraries (lib${LIB_SUFFIX})")

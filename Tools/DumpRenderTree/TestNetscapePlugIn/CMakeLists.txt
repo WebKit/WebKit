@@ -37,4 +37,9 @@ set(WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES
 
 include_directories(${WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES})
 
+set(WebKitTestNetscapePlugin_LIBRARIES
+    ${X11_LIBRARIES}
+)
+
 add_library(TestNetscapePlugin SHARED ${WebKitTestNetscapePlugin_SOURCES})
+target_link_libraries(TestNetscapePlugin ${WebKitTestNetscapePlugin_LIBRARIES})

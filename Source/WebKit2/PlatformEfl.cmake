@@ -228,6 +228,7 @@ list(APPEND WebKit2_LIBRARIES
     ${CAIRO_LIBRARIES}
     ${ECORE_LIBRARIES}
     ${ECORE_EVAS_LIBRARIES}
+    ${ECORE_IMF_EVAS_LIBRARIES}
     ${EDJE_LIBRARIES}
     ${EFREET_LIBRARIES}
     ${EINA_LIBRARIES}
@@ -283,7 +284,11 @@ endif ()
 if (ENABLE_ECORE_X)
     list(APPEND WebProcess_LIBRARIES
         ${ECORE_X_LIBRARIES}
-        ${X11_Xext_LIB})
+        ${X11_Xext_LIB}
+    )
+    list(APPEND WebKit2_LIBRARIES
+        ${ECORE_X_LIBRARIES}
+    )
 endif ()
 
 add_custom_target(forwarding-headerEfl
@@ -356,6 +361,12 @@ if (ENABLE_PLUGIN_PROCESS)
     set(PluginProcess_LIBRARIES
         WebKit2
     )
+
+    if (ENABLE_ECORE_X)
+        list(APPEND PluginProcess_LIBRARIES
+            ${ECORE_X_LIBRARIES}
+        )
+    endif ()
 
     add_executable(PluginProcess ${PluginProcess_SOURCES})
     target_link_libraries(PluginProcess ${PluginProcess_LIBRARIES})

@@ -79,6 +79,16 @@ set(WebKitTestRunnerInjectedBundle_IDL_FILES
     "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/TextInputController.idl"
 )
 
+set(WebKitTestRunnerInjectedBundle_LIBRARIES
+    ${WebKitTestRunner_LIBRARIES}
+    ${ATK_LIBRARIES}
+    ${ECORE_LIBRARIES}
+    ${ECORE_FILE_LIBRARIES}
+    ${FONTCONFIG_LIBRARIES}
+    ${GLIB_LIBRARIES}
+    ${GLIB_GOBJECT_LIBRARIES}
+)
+
 GENERATE_BINDINGS(WebKitTestRunnerInjectedBundle_SOURCES
     "${WebKitTestRunnerInjectedBundle_IDL_FILES}"
     "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings"
@@ -92,7 +102,7 @@ INCLUDE_IF_EXISTS(${WEBKIT_TESTRUNNER_DIR}/Platform${PORT}.cmake)
 include_directories(${WebKitTestRunner_INCLUDE_DIRECTORIES})
 
 add_library(TestRunnerInjectedBundle SHARED ${WebKitTestRunnerInjectedBundle_SOURCES})
-target_link_libraries(TestRunnerInjectedBundle ${WebKitTestRunner_LIBRARIES})
+target_link_libraries(TestRunnerInjectedBundle ${WebKitTestRunnerInjectedBundle_LIBRARIES})
 
 add_executable(WebKitTestRunner ${WebKitTestRunner_SOURCES})
 target_link_libraries(WebKitTestRunner ${WebKitTestRunner_LIBRARIES})
