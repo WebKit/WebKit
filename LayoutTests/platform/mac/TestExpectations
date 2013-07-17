@@ -842,6 +842,9 @@ webgl/conformance/ogles/GL/operators/operators_009_to_016.html
 webgl/conformance/rendering/multisample-corruption.html
 webgl/conformance/textures/texture-size.html
 webgl/conformance/rendering/more-than-65536-indices.html
+webgl/conformance/extensions/oes-texture-float.html
+webgl/conformance/glsl/samplers/glsl-function-texture2dlod.html
+webgl/conformance/ogles/GL/refract/refract_001_to_006.html
 
 # Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
 fast/events/mousedown-in-subframe-scrollbar.html
