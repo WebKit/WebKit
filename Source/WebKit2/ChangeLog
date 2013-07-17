@@ -1,3 +1,21 @@
+2013-07-17  Dong-Gwan Kim  <donggwan.kim@samsung.com>
+
+        [EFL][WK2] EWK2ColorPickerTest should be defined by inheriting from EWK2UnitTestBase.
+        https://bugs.webkit.org/show_bug.cgi?id=118762
+
+        Reviewed by Christophe Dumez.
+
+        It should be defined as relevant test class specific to each test file for more readability.
+        It could be helpful to remove unnecessary static methods.
+
+        * UIProcess/API/efl/tests/test_ewk2_color_picker.cpp:
+        (EWK2ColorPickerTest::onColorPickerDone):
+        (EWK2ColorPickerTest::setColorPickerColor):
+        (EWK2ColorPickerTest::showColorPicker):
+        (EWK2ColorPickerTest::hideColorPicker):
+        (EWK2ColorPickerTest::hideColorPickerByRemovingElement):
+        (TEST_F):
+
 2013-07-16  Gordon Sheridan  <gordon_sheridan@apple.com>
 
         setPluginUnavailabilityReason can destroy renderObject before obscurity check
