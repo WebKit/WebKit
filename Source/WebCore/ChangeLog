@@ -1,3 +1,20 @@
+2013-07-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Remove Platform(EFL) guard from Widget::frameRectsChanged
+        https://bugs.webkit.org/show_bug.cgi?id=118782
+
+        Reviewed by Christophe Dumez.
+
+        Since r58487, Widget::frameRectsChanged was moved to cpp and guarded.
+        But we can move back to header because WebKit/Efl refactored related code in r145710.
+
+        No new tests, refactoring.
+
+        * platform/Widget.cpp: Removed platform guard and move frameRectsChangd() back to header.
+        * platform/Widget.h:
+        (WebCore::Widget::frameRectsChanged):
+        * platform/efl/WidgetEfl.cpp:
+
 2013-07-16  Alex Christensen  <achristensen@apple.com>
 
         Update ANGLE to r2426.
