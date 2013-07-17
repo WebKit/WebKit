@@ -1,3 +1,10 @@
+2013-07-17  Alex Christensen  <achristensen@apple.com>
+
+        Unreviewed. Skip more failing WebGL tests on Mac.
+
+        * platform/mac-lion/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-07-17  Stephanie Lewis  <slewis@apple.com>
 
         fullscreen/full-screen-iframe-with-max-width-height.html is flaky

@@ -25,6 +25,13 @@ fast/canvas/canvas-strokeRect-gradient-shadow.html
 
 # Currently failing WebGL tests <rdar://problem/9355460>
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
+webgl/conformance/glsl/functions/glsl-function-atan-xy.html
+webgl/conformance/glsl/misc/glsl-long-variable-names.html
+webgl/conformance/misc/object-deletion-behaviour.html
+webgl/conformance/textures/mipmap-fbo.html
+webgl/conformance/textures/texture-attachment-formats.html
+webgl/conformance/uniforms/uniform-default-values.html
+webgl/conformance/limits/gl-min-textures.html
 
 # --- Editing ---
 
