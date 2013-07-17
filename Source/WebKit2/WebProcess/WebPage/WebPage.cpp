@@ -556,15 +556,11 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
         bool replacementObscured = false;
         if (pluginElement->renderer()->isEmbeddedObject()) {
             RenderEmbeddedObject* renderObject = toRenderEmbeddedObject(pluginElement->renderer());
+            replacementObscured = renderObject->isReplacementObscured();
+            
+            // setPluginUnavailabilityReason can cause a reattach, which means that our RenderEmbeddedObject might get destroyed, so it is important to check obscurity first
             renderObject->setPluginUnavailabilityReasonDescription(unavailabilityDescription);
             renderObject->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
-        }
-
-        // setPluginUnavailabilityReason can cause a reattach, which means that our RenderEmbeddedObject has been destroyed, so re-acquire it.
-
-        if (pluginElement->renderer() && pluginElement->renderer()->isEmbeddedObject()) {
-            RenderEmbeddedObject* renderObject = toRenderEmbeddedObject(pluginElement->renderer());
-            replacementObscured = renderObject->isReplacementObscured();
         }
 
         send(Messages::WebPageProxy::DidBlockInsecurePluginVersion(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString, replacementObscured));

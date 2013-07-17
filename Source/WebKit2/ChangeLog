@@ -1,3 +1,15 @@
+2013-07-16  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+        setPluginUnavailabilityReason can destroy renderObject before obscurity check
+        https://bugs.webkit.org/show_bug.cgi?id=118770
+        <rdar://problem/14462331>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Moved obscurity check to before renderObject is potentially destroyed.
+
 2013-07-16  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r150291): Chinese predictive input pop-up disappears on twitter.com
