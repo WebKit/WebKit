@@ -1,3 +1,55 @@
+2013-07-17  Frédéric Wang  <fred.wang@free.fr>
+
+        Replace MathML pixel tests by reftests.
+        https://bugs.webkit.org/show_bug.cgi?id=118599
+
+        Reviewed by Chris Fleizach.
+
+        - attributes.xhtml is replaced by attributes*.html
+
+        - underover.xhtml, under.xhtml, sub.xhtml, sup.xhtml, over.xhtml and subsup.xhtml are replaced by scripts*.html and bug*.html.
+
+        - tokenElements.xhtml is replaced by replaced tokenElements-mathvariant.html
+
+        * mathml/presentation/attributes-background-color-expected.html: Added.
+        * mathml/presentation/attributes-background-color.html: Added.
+        * mathml/presentation/attributes-display-expected.html: Added.
+        * mathml/presentation/attributes-display.html: Added.
+        * mathml/presentation/attributes-mathsize-expected.html: Added.
+        * mathml/presentation/attributes-mathsize.html: Added.
+        * mathml/presentation/attributes-mathvariant-expected.html: Added.
+        * mathml/presentation/attributes-mathvariant.html: Added.
+        * mathml/presentation/attributes-style-expected-mismatch.html: Added.
+        * mathml/presentation/attributes-style.html: Added.
+        * mathml/presentation/attributes.xhtml: Removed.
+        * mathml/presentation/bug95015-expected.html: Added.
+        * mathml/presentation/bug95015.html: Added.
+        * mathml/presentation/bug95404-expected.html: Added.
+        * mathml/presentation/bug95404.html: Added.
+        * mathml/presentation/bug97990-expected.html: Added.
+        * mathml/presentation/bug97990.html: Added.
+        * mathml/presentation/over.xhtml: Removed.
+        * mathml/presentation/scripts-font-size-expected-mismatch.html: Added.
+        * mathml/presentation/scripts-font-size.html: Added.
+        * mathml/presentation/scripts-height-expected.html: Added.
+        * mathml/presentation/scripts-height.html: Added.
+        * mathml/presentation/scripts-mrow-expected.html: Added.
+        * mathml/presentation/scripts-mrow.html: Added.
+        * mathml/presentation/scripts-subsup-expected.html: Added.
+        * mathml/presentation/scripts-subsup.html: Added.
+        * mathml/presentation/scripts-underover-expected.html: Added.
+        * mathml/presentation/scripts-underover.html: Added.
+        * mathml/presentation/scripts-width-expected.html: Added.
+        * mathml/presentation/scripts-width.html: Added.
+        * mathml/presentation/sub.xhtml: Removed.
+        * mathml/presentation/subsup.xhtml: Removed.
+        * mathml/presentation/sup.xhtml: Removed.
+        * mathml/presentation/tokenElements-mathvariant-expected.html: Added.
+        * mathml/presentation/tokenElements-mathvariant.html: Added.
+        * mathml/presentation/tokenElements.xhtml: Removed.
+        * mathml/presentation/under.xhtml: Removed.
+        * mathml/presentation/underover.xhtml: Removed.
+
 2013-07-17  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Remove setCSSShapesEnabled(true) from shape-inside-on-first-region-inline-content-expected.html since it's no longer using shapes 

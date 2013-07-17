@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <title>mathvariant</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- This tests the mathvariant attribute. The default value is "italic" on
+         single-char <mi> elements and "normal" otherwise. -->
+    <div>
+      <math>
+        <mi mathvariant="normal">A</mi>
+        <mi>A</mi>
+        <mtext mathvariant="italic">A</mtext>
+        <mi mathvariant="bold">A</mi>
+        <mi mathvariant="bold-italic">A</mi>
+      </math>
+    </div>
+
+    <!-- This tests the deprecated font style attributes. -->
+    <math>
+      <mtext fontsize="2em">A</mtext>
+      <mtext fontfamily="sans-serif">A</mtext>
+      <mtext fontstyle="italic">A</mtext>
+      <mtext fontweight="bold">A</mtext>
+    </math>
+    
+  </body>
+</html>

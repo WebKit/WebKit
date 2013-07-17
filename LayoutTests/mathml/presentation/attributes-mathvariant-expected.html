@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>mathvariant</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- The style attribute should be equivalent to the mathvariant attribute.
+         Note that the mathvariant attribute is supposed to map "A" to the
+         corresponding character from the Mathematical Alphanumeric Symbols
+         Unicode block ("U+1D400 MATHEMATICAL BOLD CAPITAL",
+         "U+1D434 MATHEMATICAL ITALIC CAPITAL A" and
+         "U+1D468 MATHEMATICAL BOLD ITALIC CAPITAL A") but the WebKit
+         implementation relies on CSS style instead. See also bug 108778.
+      -->
+    <div>
+      <math>
+        <mi style="font-style: normal;">A</mi>
+        <mi style="font-style: italic;">A</mi>
+        <mtext style="font-style: italic;">A</mtext>
+        <mi style="font-style: normal; font-weight: bold;">A</mi>
+        <mi style="font-weight: bold; font-style: italic;">A</mi>
+      </math>
+    </div>
+
+    <!-- The style attribute should have the same effect as the MathML
+         attributes -->
+    <div>
+      <math>
+        <mtext style="font-size: 2em;">A</mtext>
+        <mtext style="font-family: sans-serif;">A</mtext>
+        <mtext style="font-style: italic;">A</mtext>
+        <mtext style="font-weight: bold;">A</mtext>
+      </math>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <title>scripts-width</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- sub/sup scripts of different widths: they should align left. -->
+    <p>
+        <math>
+          <msubsup>
+            <mspace/>
+            <mrow>
+              <mspace width="10px" height="10px" depth="10px"
+                      mathbackground="red"/>
+              <mspace width="20px"/>
+            </mrow>
+            <mspace width="30px" height="10px" depth="10px"
+                    mathbackground="green"/>
+          </msubsup>
+        </math>
+    </p>
+    <p>
+        <math>
+          <msubsup>
+            <mspace/>
+            <mspace width="30px" height="10px" depth="10px"
+                    mathbackground="green"/>
+            <mrow>
+              <mspace width="10px" height="10px" depth="10px"
+                      mathbackground="red"/>
+              <mspace width="20px"/>
+            </mrow>
+          </msubsup>
+        </math>
+    </p>
+
+
+  </body>
+</html>
