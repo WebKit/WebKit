@@ -40,85 +40,95 @@ static const char INDEX_HTML_STRING[] =
     " <img src='http://localhost:%u/image.png' width=5 height=5></img>"
     "</body></html>";
 
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-{
-    if (message->method != SOUP_METHOD_GET) {
-        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
-        return;
+class EWK2CookieManagerTest : public EWK2UnitTestBase {
+public:
+    static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+    {
+        if (message->method != SOUP_METHOD_GET) {
+            soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+            return;
+        }
+
+        soup_message_set_status(message, SOUP_STATUS_OK);
+        if (!strcmp(path, "/index.html")) {
+            Eina_Strbuf* buffer = eina_strbuf_new();
+            eina_strbuf_append_printf(buffer, INDEX_HTML_STRING, soup_server_get_port(server));
+            soup_message_headers_replace(message->response_headers, "Set-Cookie", "foo=bar; Max-Age=60");
+            soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, eina_strbuf_string_steal(buffer), eina_strbuf_length_get(buffer));
+            eina_strbuf_free(buffer);
+        } else if (!strcmp(path, "/image.png"))
+            soup_message_headers_replace(message->response_headers, "Set-Cookie", "baz=qux; Max-Age=60");
+        else
+            soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+
+        soup_message_body_complete(message->response_body);
     }
 
-    soup_message_set_status(message, SOUP_STATUS_OK);
-    if (!strcmp(path, "/index.html")) {
-        Eina_Strbuf* buffer = eina_strbuf_new();
-        eina_strbuf_append_printf(buffer, INDEX_HTML_STRING, soup_server_get_port(server));
-        soup_message_headers_replace(message->response_headers, "Set-Cookie", "foo=bar; Max-Age=60");
-        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, eina_strbuf_string_steal(buffer), eina_strbuf_length_get(buffer));
-        eina_strbuf_free(buffer);
-    } else if (!strcmp(path, "/image.png"))
-        soup_message_headers_replace(message->response_headers, "Set-Cookie", "baz=qux; Max-Age=60");
-    else
-        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+    static void getAcceptPolicyCallback(Ewk_Cookie_Accept_Policy policy, Ewk_Error* error, void* event_info)
+    {
+        ASSERT_FALSE(error);
+        Ewk_Cookie_Accept_Policy* ret = static_cast<Ewk_Cookie_Accept_Policy*>(event_info);
+        *ret = policy;
+        ecore_main_loop_quit();
+    }
 
-    soup_message_body_complete(message->response_body);
-}
+    static void getHostnamesWithCookiesCallback(Eina_List* hostnames, Ewk_Error* error, void* event_info)
+    {
+        ASSERT_FALSE(error);
 
-static void getAcceptPolicyCallback(Ewk_Cookie_Accept_Policy policy, Ewk_Error* error, void* event_info)
-{
-    ASSERT_FALSE(error);
-    Ewk_Cookie_Accept_Policy* ret = static_cast<Ewk_Cookie_Accept_Policy*>(event_info);
-    *ret = policy;
-    ecore_main_loop_quit();
-}
+        Eina_List** ret = static_cast<Eina_List**>(event_info);
+        Eina_List* l;
+        void* data;
+        EINA_LIST_FOREACH(hostnames, l, data)
+            *ret = eina_list_append(*ret, eina_stringshare_ref(static_cast<char*>(data)));
+        ecore_main_loop_quit();
+    }
 
-static Ewk_Cookie_Accept_Policy getAcceptPolicy(Ewk_Cookie_Manager* manager)
-{
-    Ewk_Cookie_Accept_Policy policy = EWK_COOKIE_ACCEPT_POLICY_ALWAYS;
-    ewk_cookie_manager_async_accept_policy_get(manager, getAcceptPolicyCallback, &policy);
-    ecore_main_loop_begin();
-    return policy;
-}
+    static int compareHostNames(const void* hostName1, const void* hostName2)
+    {
+        return strcmp(static_cast<const char*>(hostName1), static_cast<const char*>(hostName2));
+    }
 
-static void getHostnamesWithCookiesCallback(Eina_List* hostnames, Ewk_Error* error, void* event_info)
-{
-    ASSERT_FALSE(error);
+    static void onCookiesChanged(void *eventInfo)
+    {
+        bool* cookiesChanged = static_cast<bool*>(eventInfo);
+        *cookiesChanged = true;
+    }
 
-    Eina_List** ret = static_cast<Eina_List**>(event_info);
-    Eina_List* l;
-    void* data;
-    EINA_LIST_FOREACH(hostnames, l, data)
-        *ret = eina_list_append(*ret, eina_stringshare_ref(static_cast<char*>(data)));
-    ecore_main_loop_quit();
-}
+protected:
+    Ewk_Cookie_Accept_Policy getAcceptPolicy(Ewk_Cookie_Manager* manager)
+    {
+        Ewk_Cookie_Accept_Policy policy = EWK_COOKIE_ACCEPT_POLICY_ALWAYS;
+        ewk_cookie_manager_async_accept_policy_get(manager, getAcceptPolicyCallback, &policy);
+        ecore_main_loop_begin();
+        return policy;
+    }
 
-static Eina_List* getHostnamesWithCookies(Ewk_Cookie_Manager* manager)
-{
-    Eina_List* ret = 0;
-    ewk_cookie_manager_async_hostnames_with_cookies_get(manager, getHostnamesWithCookiesCallback, &ret);
-    ecore_main_loop_begin();
-    return ret;
-}
+    Eina_List* getHostnamesWithCookies(Ewk_Cookie_Manager* manager)
+    {
+        Eina_List* ret = 0;
+        ewk_cookie_manager_async_hostnames_with_cookies_get(manager, getHostnamesWithCookiesCallback, &ret);
+        ecore_main_loop_begin();
+        return ret;
+    }
 
-static void freeHostNames(Eina_List* hostnames)
-{
-    void* data;
-    EINA_LIST_FREE(hostnames, data)
-        eina_stringshare_del(static_cast<char*>(data));
-}
+    void freeHostNames(Eina_List* hostnames)
+    {
+        void* data;
+        EINA_LIST_FREE(hostnames, data)
+            eina_stringshare_del(static_cast<char*>(data));
+    }
 
-static int countHostnamesWithCookies(Ewk_Cookie_Manager* manager)
-{
-    Eina_List* hostnames = getHostnamesWithCookies(manager);
-    int count = eina_list_count(hostnames);
-    freeHostNames(hostnames);
-    return count;
-}
+    int countHostnamesWithCookies(Ewk_Cookie_Manager* manager)
+    {
+        Eina_List* hostnames = getHostnamesWithCookies(manager);
+        int count = eina_list_count(hostnames);
+        freeHostNames(hostnames);
+        return count;
+    }
+};
 
-static int compareHostNames(const void* hostName1, const void* hostName2)
-{
-    return strcmp(static_cast<const char*>(hostName1), static_cast<const char*>(hostName2));
-}
-
-TEST_F(EWK2UnitTestBase, ewk_cookie_manager_accept_policy)
+TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_accept_policy)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
@@ -156,13 +166,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_accept_policy)
     ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 }
 
-void onCookiesChanged(void *eventInfo)
-{
-    bool* cookiesChanged = static_cast<bool*>(eventInfo);
-    *cookiesChanged = true;
-}
-
-TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
+TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_changes_watch)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
@@ -225,7 +229,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
     unlink(textStorage2);
 }
 
-TEST_F(EWK2UnitTestBase, ewk_cookie_manager_cookies_delete)
+TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_cookies_delete)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
@@ -261,7 +265,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_cookies_delete)
     ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 }
 
-TEST_F(EWK2UnitTestBase, DISABLED_ewk_cookie_manager_permanent_storage)
+TEST_F(EWK2CookieManagerTest, DISABLED_ewk_cookie_manager_permanent_storage)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
@@ -308,4 +312,3 @@ TEST_F(EWK2UnitTestBase, DISABLED_ewk_cookie_manager_permanent_storage)
     unlink(textStorage);
     unlink(sqliteStorage);
 }
-

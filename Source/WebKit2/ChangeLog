@@ -1,3 +1,22 @@
+2013-07-17  Dong-Gwan Kim  <donggwan.kim@samsung.com>
+
+        [EFL][WK2] EWK2CookieManagerTest should be defined by inheriting from EWK2UnitTestBase.
+        https://bugs.webkit.org/show_bug.cgi?id=118721
+
+        Reviewed by Christophe Dumez.
+
+        It should be defined as relevant test class specific to each test file for more readability.
+        It could be helpful to remove unnecessary static methods.
+
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (compareHostNames):
+        (onCookiesChanged):
+        (EWK2CookieManagerTest::getAcceptPolicy):
+        (EWK2CookieManagerTest::getHostnamesWithCookies):
+        (EWK2CookieManagerTest::freeHostNames):
+        (EWK2CookieManagerTest::countHostnamesWithCookies):
+        (TEST_F):
+
 2013-07-16  Balazs Kelemen  <kbalazs@webkit.org>
 
         [CMake] Undefined references should be detected at build time
