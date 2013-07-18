@@ -1,5 +1,11 @@
 2013-07-18  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Build correction #2 after r152861.
+
+        * WinLauncher/WinLauncher.cpp: Declare proper linkage.
+
+2013-07-18  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Build correction after r152861.
 
         * WinLauncher/WinLauncher.cpp: Don't reference private header.
