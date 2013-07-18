@@ -33,11 +33,6 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-// These were put here with %code requires, which our version of Bison does not support,
-// so I put them here manually.
-#define YYLTYPE TSourceLoc
-#define YYLTYPE_IS_DECLARED 1
-
 /* Tokens.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
@@ -239,6 +234,8 @@
 typedef union YYSTYPE
 
 {
+#define YYLTYPE TSourceLoc
+#define YYLTYPE_IS_DECLARED 1
     struct {
         union {
             TString *string;

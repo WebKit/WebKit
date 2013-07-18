@@ -1,4 +1,4 @@
-#line 17 "src/compiler/glslang.l"
+#line 17 "./glslang.l"
 //
 // Copyright (c) 2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -21,7 +21,7 @@
 
 
 
-#line 25 "src/compiler/glslang_lex.cpp"
+#line 25 "./glslang_lex.cpp"
 
 #define  YY_INT_ALIGNED short int
 

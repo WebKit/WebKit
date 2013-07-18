@@ -48,12 +48,9 @@ WHICH GENERATES THE GLSL ES PARSER (glslang_tab.cpp AND glslang_tab.h).
 %parse-param {TParseContext* context}
 %locations
 
-%code requires {
+%union {
 #define YYLTYPE TSourceLoc
 #define YYLTYPE_IS_DECLARED 1
-}
-
-%union {
     struct {
         union {
             TString *string;

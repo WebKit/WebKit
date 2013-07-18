@@ -1,3 +1,15 @@
+2013-07-17  Alex Christensen  <achristensen@apple.com>
+
+        Made a repeatable process for updating ANGLE that does not include manually editing any files.
+        https://bugs.webkit.org/show_bug.cgi?id=118815
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_lex.cpp:
+        * src/compiler/glslang_tab.cpp:
+        * src/compiler/glslang_tab.h: Put YYLTYPE definition in %union instead of prologue and ran Bison.
+
 2013-07-16  Alex Christensen  <achristensen@apple.com>
 
         Update ANGLE from r1987 to r2426 while keeping these changes:
