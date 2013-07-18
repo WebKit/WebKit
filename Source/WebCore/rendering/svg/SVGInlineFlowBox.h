@@ -51,6 +51,12 @@ private:
     float m_logicalHeight;
 };
 
+inline SVGInlineFlowBox* toSVGInlineFlowBox(InlineBox* box)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!box || box->isSVGInlineFlowBox());
+    return static_cast<SVGInlineFlowBox*>(box);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

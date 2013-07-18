@@ -53,7 +53,7 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
             if (child->isSVGInlineTextBox())
                 toSVGInlineTextBox(child)->paintSelectionBackground(childPaintInfo);
             else if (child->isSVGInlineFlowBox())
-                static_cast<SVGInlineFlowBox*>(child)->paintSelectionBackground(childPaintInfo);
+                toSVGInlineFlowBox(child)->paintSelectionBackground(childPaintInfo);
         }
     }
 
@@ -111,7 +111,7 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
 
             ASSERT_WITH_SECURITY_IMPLICATION(child->isInlineFlowBox());
 
-            SVGInlineFlowBox* flowBox = static_cast<SVGInlineFlowBox*>(child);
+            SVGInlineFlowBox* flowBox = toSVGInlineFlowBox(child);
             bool isTextPath = node->hasTagName(SVGNames::textPathTag);
             if (isTextPath) {
                 // Build text chunks for all <textPath> children, using the line layout algorithm.
@@ -151,7 +151,7 @@ void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, FloatRect* childRe
 
             ASSERT_WITH_SECURITY_IMPLICATION(child->isInlineFlowBox());
 
-            SVGInlineFlowBox* flowBox = static_cast<SVGInlineFlowBox*>(child);
+            SVGInlineFlowBox* flowBox = toSVGInlineFlowBox(child);
             layoutChildBoxes(flowBox);
 
             boxRect = flowBox->calculateBoundaries();

@@ -1,5 +1,28 @@
 2013-07-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Introduce toSVGInlineFlowBox() and use it
+        https://bugs.webkit.org/show_bug.cgi?id=118794
+
+        Reviewed by Andreas Kling.
+
+        As a step to change static_cast with toSVGXXX, static_cast<SVGInlineFlowBox*> can
+        be changed with toSVGInlineFlowBox().
+
+        Blink merge from https://src.chromium.org/viewvc/blink?view=rev&revision=154385
+
+        No new tests, no behavior change.
+
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paintSelectionBackground):
+        * rendering/svg/SVGInlineFlowBox.h:
+        (WebCore::toSVGInlineFlowBox):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes):
+        (WebCore::SVGRootInlineBox::layoutChildBoxes):
+
+2013-07-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Use toSVGMarkerElement() instead of static_cast<>
         https://bugs.webkit.org/show_bug.cgi?id=118800
 

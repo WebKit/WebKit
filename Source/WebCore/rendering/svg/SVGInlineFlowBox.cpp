@@ -45,7 +45,7 @@ void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
         if (child->isSVGInlineTextBox())
             toSVGInlineTextBox(child)->paintSelectionBackground(childPaintInfo);
         else if (child->isSVGInlineFlowBox())
-            static_cast<SVGInlineFlowBox*>(child)->paintSelectionBackground(childPaintInfo);
+            toSVGInlineFlowBox(child)->paintSelectionBackground(childPaintInfo);
     }
 }
 
