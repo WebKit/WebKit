@@ -87,13 +87,11 @@ group {
                 min: 9 7;
                 max: 9 7;
                 fixed: 1 1;
-                rel1 {
-                    relative: 0.0 0.0;
-                    offset: 0 16;
-                }
+                align: 0.5 0;
+                rel1.to: "bg";
                 rel2 {
+                    to: "bg";
                     relative: 1.0 0.0;
-                    offset: -1 -1;
                 }
                 image.normal: "widget/spinner/sp_up_default.png";
             }
@@ -121,14 +119,12 @@ group {
                 min: 9 7;
                 max: 9 7;
                 fixed: 1 1;
+                align: 0.5 1;
                 rel1 {
+                    to: "bg";
                     relative: 0.0 1.0;
-                    offset: 0 0;
                 }
-                rel2 {
-                    relative: 1.0 1.0;
-                    offset: -1 -18;
-                }
+                rel2.to: "bg";
                 image.normal: "widget/spinner/sp_down_default.png";
             }
             description {

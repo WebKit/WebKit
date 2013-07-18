@@ -1,3 +1,16 @@
+2013-07-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Refactor spin.edc not to use offset
+        https://bugs.webkit.org/show_bug.cgi?id=118830
+
+        Reviewed by Gyuyoung Kim.
+
+        Updated pixel tests reults.
+
+        * platform/efl/fast/forms/number/number-appearance-rtl-expected.png:
+        * platform/efl/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png:
+        * platform/efl/fast/forms/number/number-appearance-spinbutton-layer-expected.png:
+
 2013-07-17  Jacky Jiang  <zhajiang@blackberry.com>
 
         Dereference null pointer crash in Length::decrementCalculatedRef()

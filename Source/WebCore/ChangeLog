@@ -1,3 +1,17 @@
+2013-07-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Refactor spin.edc not to use offset
+        https://bugs.webkit.org/show_bug.cgi?id=118830
+
+        Reviewed by Gyuyoung Kim.
+
+        EDJE allows offset to specify the pixel based position,
+        but it's not good way if you want to locate object like arrow top or bottom.
+
+        Instead, this patch uses align property.
+
+        * platform/efl/DefaultTheme/widget/spinner/spinner.edc:
+
 2013-07-18  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [gstreamer] Avoid calls to g_slist_index in webKitWebAudioSrcLoop()
