@@ -1,3 +1,13 @@
+2013-07-18  Santosh Mahto  <santosh.ma@samsung.com>
+
+        ASSERTION FAILED: !listItems().size() || m_activeSelectionAnchorIndex >= 0 in WebCore::HTMLSelectElement::updateListBoxSelection
+        https://bugs.webkit.org/show_bug.cgi?id=118591
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/select/selectall-command-crash-expected.txt: Added.
+        * fast/forms/select/selectall-command-crash.html: Added.
+
 2013-07-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Refactor spin.edc not to use offset

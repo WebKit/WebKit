@@ -567,6 +567,8 @@ void HTMLSelectElement::selectAll()
     m_activeSelectionState = true;
     setActiveSelectionAnchorIndex(nextSelectableListIndex(-1));
     setActiveSelectionEndIndex(previousSelectableListIndex(-1));
+    if (m_activeSelectionAnchorIndex < 0)
+        return;
 
     updateListBoxSelection(false);
     listBoxOnChange();
