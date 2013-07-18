@@ -62,7 +62,7 @@ void SVGTransform::setMatrix(const AffineTransform& matrix)
     m_matrix = matrix;
 }
 
-void SVGTransform::updateMatrix()
+void SVGTransform::updateSVGMatrix()
 {
     // The underlying matrix has been changed, alter the transformation type.
     // Spec: In case the matrix object is changed directly (i.e., without using the methods on the SVGTransform interface itself)

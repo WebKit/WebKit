@@ -466,6 +466,7 @@ sub WK_ucfirst
     my ($object, $param) = @_;
     my $ret = ucfirst($param);
     $ret =~ s/Xml/XML/ if $ret =~ /^Xml[^a-z]/;
+    $ret =~ s/Svg/SVG/ if $ret =~ /^Svg/;
 
     return $ret;
 }
@@ -524,13 +525,6 @@ sub AttributeNameForGetterAndSetter
         $attributeName = $attribute->signature->extendedAttributes->{"ImplementedAs"};
     }
     my $attributeType = $attribute->signature->type;
-
-    # Avoid clash with C++ keyword.
-    $attributeName = "_operator" if $attributeName eq "operator";
-
-    # SVGAElement defines a non-virtual "String& target() const" method which clashes with "virtual String target() const" in Element.
-    # To solve this issue the SVGAElement method was renamed to "svgTarget", take care of that when calling this method.
-    $attributeName = "svgTarget" if $attributeName eq "target" and $attributeType eq "SVGAnimatedString";
 
     # SVG animated types need to use a special attribute name.
     # The rest of the special casing for SVG animated types is handled in the language-specific code generators.

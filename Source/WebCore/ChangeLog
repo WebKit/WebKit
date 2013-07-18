@@ -1,3 +1,45 @@
+2013-07-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Use [ImplementedAs] instead of special casing in the bindings generators
+        https://bugs.webkit.org/show_bug.cgi?id=118848
+
+        Reviewed by Kentaro Hara.
+
+        In several instances, special casing were used in the bindings generator to avoid
+        name clashes in the implementation. The [ImplementedBy] IDL extended attribute is
+        meant to solve this issue so we now use it instead.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (WK_ucfirst):
+        (AttributeNameForGetterAndSetter):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (NativeToJSValue):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * svg/SVGAElement.idl:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::parseAttribute):
+        (WebCore::SVGFECompositeElement::setFilterEffectAttribute):
+        (WebCore::SVGFECompositeElement::build):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFECompositeElement.idl:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::SVGFEMorphologyElement):
+        (WebCore::SVGFEMorphologyElement::parseAttribute):
+        (WebCore::SVGFEMorphologyElement::setFilterEffectAttribute):
+        (WebCore::SVGFEMorphologyElement::build):
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEMorphologyElement.idl:
+        * svg/SVGTransform.cpp:
+        (WebCore::SVGTransform::updateSVGMatrix):
+        * svg/SVGTransform.h:
+        * svg/SVGTransform.idl:
+
 2013-07-18  Zalan Bujtas  <zalan@apple.com>
 
         Incorrect calculated width for mspace.

@@ -33,7 +33,7 @@
     const unsigned short SVG_MORPHOLOGY_OPERATOR_DILATE   = 2;
 
     readonly attribute SVGAnimatedString      in1;
-    readonly attribute SVGAnimatedEnumeration operator;
+    [ImplementedAs=svgOperator] readonly attribute SVGAnimatedEnumeration operator;
     readonly attribute SVGAnimatedNumber      radiusX;
     readonly attribute SVGAnimatedNumber      radiusY;
 

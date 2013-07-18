@@ -1994,7 +1994,7 @@ sub GenerateImplementation
                 my $isNullable = $attribute->signature->isNullable;
                 $codeGenerator->AssertNotSequenceType($type);
                 my $getFunctionName = GetAttributeGetterName($interfaceName, $className, $attribute);
-                my $implGetterFunctionName = $codeGenerator->WK_lcfirst($name);
+                my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
 
                 my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
                 push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
@@ -3640,12 +3640,6 @@ sub NativeToJSValue
             if ($selfIsTearOffType) {
                 AddToImplIncludes("SVGStaticPropertyWithParentTearOff.h", $conditional);
                 $tearOffType =~ s/SVGPropertyTearOff</SVGStaticPropertyWithParentTearOff<$interfaceName, /;
-
-                if ($value =~ /matrix/ and $interfaceName eq "SVGTransform") {
-                    # SVGTransform offers a matrix() method for internal usage that returns an AffineTransform
-                    # and a svgMatrix() method returning a SVGMatrix, used for the bindings.
-                    $value =~ s/matrix/svgMatrix/;
-                }
 
                 $value = "${tearOffType}::create(castedThis->impl(), $value, $updateMethod)";
             } else {

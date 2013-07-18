@@ -844,8 +844,6 @@ sub GenerateHeader
 
             my $attributeType = GetObjCType($attribute->signature->type);
             my $property = "\@property" . GetPropertyAttributes($attribute->signature->type, $attribute->isReadOnly);
-            # Some SVGFE*Element.idl use 'operator' as attribute name, rewrite as '_operator' to avoid clashes with C/C++
-            $attributeName =~ s/operator/_operator/ if ($attributeName =~ /operator/);
             $property .= " " . $attributeType . ($attributeType =~ /\*$/ ? "" : " ") . $attributeName;
 
             my $publicInterfaceKey = $property . ";";
@@ -1228,9 +1226,6 @@ sub GenerateImplementation
             } elsif ($attributeName eq "frame") {
                 # Special case attribute frame to be frameBorders.
                 $attributeInterfaceName .= "Borders";
-            } elsif ($attributeName eq "operator") {
-                # Avoid clash with C++ keyword.
-                $attributeInterfaceName = "_operator";
             }
 
             $attributeNames{$attributeInterfaceName} = 1;
@@ -1329,12 +1324,6 @@ sub GenerateImplementation
                         $getter =~ s/IMPL->//;
                         $getter =~ s/\(//;
                         my $updateMethod = "&${implClassNameWithNamespace}::update" . $codeGenerator->WK_ucfirst($getter);
-
-                        if ($getterContentHead =~ /matrix/ and $implClassName eq "SVGTransform") {
-                            # SVGTransform offers a matrix() method for internal usage that returns an AffineTransform
-                            # and a svgMatrix() method returning a SVGMatrix, used for the bindings.
-                            $getterContentHead =~ s/matrix/svgMatrix/;
-                        }
 
                         $getterContentHead = "${tearOffType}::create(IMPL, $getterContentHead$getterContentTail, $updateMethod)";
 

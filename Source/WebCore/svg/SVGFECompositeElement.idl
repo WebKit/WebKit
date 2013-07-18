@@ -38,7 +38,7 @@
 
     readonly attribute SVGAnimatedString      in1;
     readonly attribute SVGAnimatedString      in2;
-    readonly attribute SVGAnimatedEnumeration operator;
+    [ImplementedAs=svgOperator] readonly attribute SVGAnimatedEnumeration operator;
     readonly attribute SVGAnimatedNumber      k1;
     readonly attribute SVGAnimatedNumber      k2;
     readonly attribute SVGAnimatedNumber      k3;

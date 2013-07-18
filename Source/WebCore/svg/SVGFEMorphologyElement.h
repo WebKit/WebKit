@@ -77,7 +77,7 @@ private:
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEMorphologyElement)
         DECLARE_ANIMATED_STRING(In1, in1)
-        DECLARE_ANIMATED_ENUMERATION(_operator, _operator, MorphologyOperatorType)
+        DECLARE_ANIMATED_ENUMERATION(SVGOperator, svgOperator, MorphologyOperatorType)
         DECLARE_ANIMATED_NUMBER(RadiusX, radiusX)
         DECLARE_ANIMATED_NUMBER(RadiusY, radiusY)
     END_DECLARE_ANIMATED_PROPERTIES
