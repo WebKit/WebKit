@@ -3219,7 +3219,7 @@ void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point, const Web
     if (!node)
         return;
 
-    IntRect zoomableArea = node->getRect();
+    IntRect zoomableArea = node->pixelSnappedBoundingBox();
 
     while (true) {
         bool found = !node->isTextNode() && !node->isShadowRoot();
@@ -3235,7 +3235,7 @@ void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point, const Web
             break;
 
         node = node->parentNode();
-        zoomableArea.unite(node->getRect());
+        zoomableArea.unite(node->pixelSnappedBoundingBox());
     }
 
     if (node->document() && node->document()->frame() && node->document()->frame()->view()) {
