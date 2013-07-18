@@ -40,9 +40,6 @@ public:
     virtual void updateLogicalWidth() OVERRIDE;
     virtual void updateLogicalHeight() OVERRIDE;
 
-protected:
-    virtual void layout();
-    
 private:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
     virtual const char* renderName() const OVERRIDE { return isAnonymous() ? "RenderMathMLSpace (anonymous)" : "RenderMathMLSpace"; }
@@ -50,12 +47,13 @@ private:
     virtual bool isRenderMathMLSpace() const OVERRIDE { return true; }
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE { return false; } 
-    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
+
     virtual void updateFromElement() OVERRIDE;
 
-    float m_width;
-    float m_height;
-    float m_depth;
+    LayoutUnit m_width;
+    LayoutUnit m_height;
+    LayoutUnit m_depth;
 };
 
 inline RenderMathMLSpace* toRenderMathMLSpace(RenderMathMLBlock* block)

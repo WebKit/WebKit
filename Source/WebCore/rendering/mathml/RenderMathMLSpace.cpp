@@ -44,14 +44,10 @@ RenderMathMLSpace::RenderMathMLSpace(Element* element)
 {
 }
 
-void RenderMathMLSpace::computePreferredLogicalWidths()
+void RenderMathMLSpace::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    ASSERT(preferredLogicalWidthsDirty());
-
-    m_minPreferredLogicalWidth = m_width;
-    m_maxPreferredLogicalWidth = m_width;
-
-    RenderMathMLBlock::computePreferredLogicalWidths();
+    minLogicalWidth = m_width;
+    maxLogicalWidth = m_width;
 }
 
 void RenderMathMLSpace::updateFromElement()
@@ -87,12 +83,6 @@ void RenderMathMLSpace::updateLogicalWidth()
 void RenderMathMLSpace::updateLogicalHeight()
 {
     setLogicalHeight(m_height + m_depth);
-}
-
-void RenderMathMLSpace::layout()
-{
-    updateFromElement();
-    RenderMathMLBlock::layout();
 }
 
 void RenderMathMLSpace::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

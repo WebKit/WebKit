@@ -54,7 +54,7 @@ private:
 
     virtual const char* renderName() const { return "RenderMathMLFraction"; }
     
-    float m_lineThickness;
+    LayoutUnit m_lineThickness;
 };
     
 inline RenderMathMLFraction* toRenderMathMLFraction(RenderObject* object)

@@ -66,7 +66,7 @@ layer at (0,0) size 800x332
         RenderText {#text} at (0,27) size 173x18
           text run at (0,27) width 173: "line thickness by keyword: "
         RenderMathMLMath {math} at (173,0) size 74x63 [padding: 0 1 0 1]
-          RenderMathMLFraction {mfrac} at (2,4) size 16x58
+          RenderMathMLFraction {mfrac} at (2,5) size 16x58
             RenderMathMLBlock (anonymous, flex) at (0,0) size 16x29
               RenderBlock {mn} at (0,0) size 16x23
                 RenderText {#text} at (0,-12) size 16x49

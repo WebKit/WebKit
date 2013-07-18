@@ -1,3 +1,20 @@
+2013-07-18  Zalan Bujtas  <zalan@apple.com>
+
+        Incorrect calculated width for mspace.
+        https://bugs.webkit.org/show_bug.cgi?id=118601
+
+        Reviewed by Chris Fleizach.
+
+        Use intrinsic logical widths to size <mspace> properly.
+        This patch also fixes an assert on isPreferredLogicalHeightDirty(), which occurs
+        while layouting <mspace>. The assert fix is required, so that the sizing can be
+        fixed.
+
+        * mathml/presentation/mspace-prefered-width-expected.html: Added.
+        * mathml/presentation/mspace-prefered-width.html: Added.
+        * platform/mac/mathml/presentation/fractions-expected.png: Rebaseline: float->LayoutUnit.
+        * platform/mac/mathml/presentation/fractions-expected.txt: Rebaseline: float->LayoutUnit.
+
 2013-07-18  Santosh Mahto  <santosh.ma@samsung.com>
 
         ASSERTION FAILED: !listItems().size() || m_activeSelectionAnchorIndex >= 0 in WebCore::HTMLSelectElement::updateListBoxSelection

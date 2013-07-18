@@ -1,3 +1,28 @@
+2013-07-18  Zalan Bujtas  <zalan@apple.com>
+
+        Incorrect calculated width for mspace.
+        https://bugs.webkit.org/show_bug.cgi?id=118601
+
+        Reviewed by Chris Fleizach.
+
+        Use intrinsic logical widths to size <mspace> properly.
+        This patch also fixes an assert on isPreferredLogicalHeightDirty() which occurs
+        while layouting <mspace>. The assert fix is required, so that the sizing can be
+        fixed.
+
+        Test: mathml/presentation/mspace-prefered-width.html
+
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::parseMathMLLength): switch to LayoutUnits.
+        (WebCore::parseMathMLNamedSpace): switch to LayoutUnits.
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::updateFromElement):
+        * rendering/mathml/RenderMathMLFraction.h:
+        * rendering/mathml/RenderMathMLSpace.cpp:
+        (WebCore::RenderMathMLSpace::computeIntrinsicLogicalWidths):
+        * rendering/mathml/RenderMathMLSpace.h:
+
 2013-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         willWriteSelectionToPasteboard and willPerformDragSourceAction editing callbacks are not called for drag and drop

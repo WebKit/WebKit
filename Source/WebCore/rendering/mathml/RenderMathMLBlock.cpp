@@ -226,7 +226,7 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 //   number, representing a terminating decimal number (a type of rational
 //   number)"
 //
-bool parseMathMLLength(const String& string, float& lengthValue, const RenderStyle* style, bool allowNegative)
+bool parseMathMLLength(const String& string, LayoutUnit& lengthValue, const RenderStyle* style, bool allowNegative)
 {
     String s = string.simplifyWhiteSpace();
 
@@ -320,7 +320,7 @@ bool parseMathMLLength(const String& string, float& lengthValue, const RenderSty
     return false;
 }
 
-bool parseMathMLNamedSpace(const String& string, float& lengthValue, const RenderStyle* style, bool allowNegative)
+bool parseMathMLNamedSpace(const String& string, LayoutUnit& lengthValue, const RenderStyle* style, bool allowNegative)
 {
     float length = 0;
     // See if it is one of the namedspaces (ranging -7/18em, -6/18, ... 7/18em)
