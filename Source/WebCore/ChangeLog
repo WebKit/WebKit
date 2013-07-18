@@ -1,3 +1,26 @@
+2013-07-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use toSVGMarkerElement() instead of static_cast<>
+        https://bugs.webkit.org/show_bug.cgi?id=118800
+
+        Reviewed by Andreas Kling.
+
+        Though there is toSVGMarkerElement(), some files still use static_cast<SVGMarkerElement*>.
+        To remove all static_cast<> use, we need to change argument from SVGElement to Node.
+
+        No new tests, no behavior changes.
+
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::referencePoint):
+        (WebCore::RenderSVGResourceMarker::angle):
+        (WebCore::RenderSVGResourceMarker::markerTransformation):
+        (WebCore::RenderSVGResourceMarker::viewportTransform):
+        (WebCore::RenderSVGResourceMarker::calcViewport):
+        * rendering/svg/RenderSVGResourceMarker.h:
+        (WebCore::RenderSVGResourceMarker::markerUnits):
+        * svg/SVGMarkerElement.h:
+        (WebCore::toSVGMarkerElement):
+
 2013-07-17  Jacky Jiang  <zhajiang@blackberry.com>
 
         Dereference null pointer crash in Length::decrementCalculatedRef()
