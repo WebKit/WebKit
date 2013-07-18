@@ -1,3 +1,43 @@
+2013-07-18  Frédéric Wang  <fred.wang@free.fr>
+
+        Convert MathML fraction tests to reftests.
+        https://bugs.webkit.org/show_bug.cgi?id=118812
+
+        Reviewed by Chris Fleizach.
+
+        fractions-vertical-alignment and fractions are converted to reftests.
+
+        * mathml/presentation/fractions-box-expected.html: Added.
+        * mathml/presentation/fractions-box.html: Added.
+        * mathml/presentation/fractions-color-expected-mismatch.html: Added.
+        * mathml/presentation/fractions-color.html: Added.
+        * mathml/presentation/fractions-invalid-expected.html: Added.
+        * mathml/presentation/fractions-invalid.html: Added.
+        * mathml/presentation/fractions-linethickness-expected.html: Added.
+        * mathml/presentation/fractions-linethickness.html: Added.
+        * mathml/presentation/fractions-mrow-expected.html: Added.
+        * mathml/presentation/fractions-mrow.html: Added.
+        * mathml/presentation/fractions-numalign-denomalign-expected.html: Added.
+        * mathml/presentation/fractions-numalign-denomalign.html: Added.
+        * mathml/presentation/fractions-positions-expected.html: Added.
+        * mathml/presentation/fractions-positions.html: Added.
+        * mathml/presentation/fractions-vertical-alignment-expected.html: Added.
+        * mathml/presentation/fractions-vertical-alignment.html: Added.
+        * mathml/presentation/fractions-vertical-alignment.xhtml: Removed.
+        * mathml/presentation/fractions.xhtml: Removed.
+        * platform/efl/mathml/presentation/fractions-expected.png: Removed.
+        * platform/efl/mathml/presentation/fractions-expected.txt: Removed.
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.png: Removed.
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/fractions-expected.png: Removed.
+        * platform/gtk/mathml/presentation/fractions-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/fractions-vertical-alignment-expected.png: Removed.
+        * platform/gtk/mathml/presentation/fractions-vertical-alignment-expected.txt: Removed.
+        * platform/mac/mathml/presentation/fractions-expected.png: Removed.
+        * platform/mac/mathml/presentation/fractions-expected.txt: Removed.
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.png: Removed.
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.txt: Removed.
+
 2013-07-18  Zalan Bujtas  <zalan@apple.com>
 
         fullscreen/full-screen-iframe-with-max-width-height.html is flaky
