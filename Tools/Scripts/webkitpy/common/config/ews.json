@@ -36,7 +36,8 @@
         ]
     },
     "Win EWS": {
-        "port": "win"
+        "port": "win",
+        "runTests": true
     },
     "Mac EWS": {
         "port": "mac",

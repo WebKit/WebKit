@@ -1,3 +1,9 @@
+2013-07-18  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Test enabling WinEWS tests now that queue is at a good state and NRWT with multiple processes is enabled.
+
+        * Scripts/webkitpy/common/config/ews.json:
+
 2013-07-18  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r132678): Tests that use SSL or port 8080 time out when run using old-run-webkit-tests
