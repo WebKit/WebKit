@@ -107,6 +107,21 @@ public:
         s_isColorPickerShown = false;
         evas_object_smart_callback_call(smartData->self, "input,type,color,request", 0);
     }
+
+protected:
+    enum Button { ShowColorPickerButton, HideColorPickerButton };
+
+    void clickButton(Button button)
+    {
+        switch (button) {
+        case ShowColorPickerButton:
+            mouseClick(30, 20);
+            break;
+        case HideColorPickerButton:
+            mouseClick(80, 20);
+            break;
+        }
+    }
 };
 
 TEST_F(EWK2ColorPickerTest, ewk_color_picker_color_set)
@@ -136,24 +151,21 @@ TEST_F(EWK2ColorPickerTest, ewk_color_picker_color_set)
     ewk_view_html_string_load(webView(), colorPickerHTML, 0, 0);
     waitUntilLoadFinished();
 
-    // 1. Click input element to show color picker.
-    mouseClick(30, 20);
+    clickButton(ShowColorPickerButton);
 
     bool handled = false;
     evas_object_smart_callback_add(webView(), "input,type,color,request", onColorPickerDone, &handled);
     while (!handled)
         ecore_main_loop_iterate();
 
-    // 6. Click input element to show color picker again.
-    mouseClick(30, 20);
+    clickButton(ShowColorPickerButton);
 
     handled = false;
     while (!handled)
         ecore_main_loop_iterate();
 
-    // 8. Click button to remove input element durlng color picker is shown.
     api->input_picker_color_dismiss = hideColorPickerByRemovingElement;
-    mouseClick(80, 20);
+    clickButton(HideColorPickerButton);
 
     handled = false;
     while (!handled)
