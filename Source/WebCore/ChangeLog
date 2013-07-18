@@ -1,3 +1,110 @@
+2013-07-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Support in-band text tracks.
+        https://bugs.webkit.org/show_bug.cgi?id=103770
+
+        Reviewed by Eric Carlson.
+
+        Existing media tests cover these features.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add new files for Windows captions
+        * WebCore.vcxproj/WebCore.vcxproj.filters: ditto.
+        * config.h: Make sure proper buid flags are turned on when building
+        with AVCF_LEGIBLE_OUTPUT.
+        * page/CaptionUserPreferencesMediaAF.cpp: Revise to reduce soft linking
+        duplication between Mac and Windows.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Update
+        to support Windows platform by removing compiler guards and adding
+        Windows declarations for soft-link functions.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h: Ditto.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        Remove build guards preventing Windows from using LegibleOutput
+        features.
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::seek):
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted):
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification):
+        (WebCore::MediaPlayerPrivateAVFoundation::trackModeChanged):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::contentsNeedsDisplay): Ditto
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h:
+        Add new LegibleOutput support functions, and try to reduce duplication
+        between Windows and Mac soft link declarations.
+        * platform/graphics/avfoundation/cf/CoreMediaSoftLinking.h: Ditto.
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp: Added.
+        (WebCore::InbandTextTrackPrivateAVCF::InbandTextTrackPrivateAVCF):
+        (WebCore::InbandTextTrackPrivateAVCF::disconnect):
+        (WebCore::InbandTextTrackPrivateAVCF::kind):
+        (WebCore::InbandTextTrackPrivateAVCF::isClosedCaptions):
+        (WebCore::InbandTextTrackPrivateAVCF::isSDH):
+        (WebCore::InbandTextTrackPrivateAVCF::containsOnlyForcedSubtitles):
+        (WebCore::InbandTextTrackPrivateAVCF::isMainProgramContent):
+        (WebCore::InbandTextTrackPrivateAVCF::isEasyToRead):
+        (WebCore::InbandTextTrackPrivateAVCF::label):
+        (WebCore::InbandTextTrackPrivateAVCF::language):
+        (WebCore::InbandTextTrackPrivateAVCF::isDefault):
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.h: Added.
+        (WebCore::InbandTextTrackPrivateAVCF::create):
+        (WebCore::InbandTextTrackPrivateAVCF::~InbandTextTrackPrivateAVCF):
+        (WebCore::InbandTextTrackPrivateAVCF::mediaSelectionOption):
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateLegacyAVCF.cpp: Added.
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::InbandTextTrackPrivateLegacyAVCF):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::disconnect):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::kind):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::isClosedCaptions):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::containsOnlyForcedSubtitles):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::isMainProgramContent):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::isEasyToRead):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::label):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::language):
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateLegacyAVCF.h: Added.
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::create):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::~InbandTextTrackPrivateLegacyAVCF):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::avPlayerItemTrack):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        Update to support LegibleOutput features for the Windows port.
+        (WebCore::AVFWrapper::currentTrack): Added.
+        (WebCore::AVFWrapper::legibleOutput): Added.
+        (WebCore::createMetadataKeyNames): Added missing key names.
+        (WebCore::avLegibleOutput): Added.
+        (WebCore::safeMediaSelectionGroupForLegibleMedia): Added.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::cancelLoad): Clear text
+        tracks when cancelling.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::setCurrentTrack): Added.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::currentTrack): Added.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformDuration): Revised
+        to match logic in Objective C implementation.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::currentTime): Revised
+        to match logic in Objective C implementation.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::paintCurrentFrameInContext):
+        Check presence of metadata before proceeding. Revised to match logic
+        in Objective C implementation.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::paint): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::tracksChanged): Update for
+        in-band text tracks.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::clearTextTracks): Added.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::processLegacyClosedCaptionsTracks):
+        Added.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::processNewAndRemovedTextTracks):
+        Added.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::processMediaSelectionOptions):
+        Added.
+        (WebCore::AVFWrapper::setCurrentTrack): Added.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::languageOfPrimaryAudioTrack):
+        Added.
+        (WebCore::AVFWrapper::AVFWrapper): Add new initializers.
+        (WebCore::AVFWrapper::~AVFWrapper): Clean up text track information.
+        (WebCore::AVFWrapper::createPlayer): Add Legible Output support.
+        (WebCore::AVFWrapper::createPlayerItem): Ditto.
+        (WebCore::LegibleOutputData::LegibleOutputData): Added.
+        (WebCore::AVFWrapper::processCue): Added.
+        (WebCore::AVFWrapper::legibleOutputCallback): Added.
+        (WebCore::AVFWrapper::safeMediaSelectionGroupForLegibleMedia): Added.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        Update to support LegibleOutput features for the Windows port.
+        * platform/win/SoftLinking.h: Change signature of variable accessor
+        to match Mac so reduce duplicate code.
+
 2013-07-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Make atob() / btoa() argument non optional

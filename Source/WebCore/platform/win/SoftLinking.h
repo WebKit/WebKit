@@ -157,7 +157,7 @@
     #define myVar get_myVar()
 */ 
 #define SOFT_LINK_VARIABLE_DLL_IMPORT(library, variableName, variableType) \
-    static variableType get_##variableName() \
+    static variableType get##variableName() \
     { \
         static variableType* ptr = reinterpret_cast<variableType*>(SOFT_LINK_GETPROCADDRESS(library##Library(), #variableName)); \
         ASSERT(ptr); \
@@ -168,7 +168,7 @@
     Note that this will only work for variable types for which a return value of 0 can signal an error.
  */
 #define SOFT_LINK_VARIABLE_DLL_IMPORT_OPTIONAL(library, variableName, variableType) \
-    static variableType get_##variableName() \
+    static variableType get##variableName() \
     { \
         static variableType* ptr = reinterpret_cast<variableType*>(SOFT_LINK_GETPROCADDRESS(library##Library(), #variableName)); \
         if (!ptr) \

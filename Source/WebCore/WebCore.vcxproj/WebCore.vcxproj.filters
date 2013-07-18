@@ -7066,6 +7066,16 @@
     <ClCompile Include="..\platform\graphics\egl\GLContextEGL.cpp">
       <Filter>platform\graphics\egl</Filter>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSVGGraphicsElement.cpp" />
+    <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateAVCF.cpp">
+      <Filter>platform\graphics\avfoundation\cf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\avfoundation\InbandTextTrackPrivateAVF.cpp">
+      <Filter>platform\graphics\avfoundation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.cpp">
+      <Filter>platform\graphics\avfoundation\cf</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -14815,6 +14825,15 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\egl\GLContextEGL.h">
       <Filter>platform\graphics\egl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateAVCF.h">
+      <Filter>platform\graphics\avfoundation\cf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\avfoundation\InbandTextTrackPrivateAVF.h">
+      <Filter>platform\graphics\avfoundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.h">
+      <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
