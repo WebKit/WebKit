@@ -1,3 +1,16 @@
+2013-07-18  Jer Noble  <jer.noble@apple.com>
+
+        New PDFPlugin doesn't support WebKitOmitPDFSupport, acts as if Plug-ins are off
+        https://bugs.webkit.org/show_bug.cgi?id=118858
+
+        Reviewed by Eric Carlson.
+
+        Expand the scope of rejecting non video/ or audio/ MIME types when
+        filling the MIME type cache.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::shouldRejectMIMEType): Added utility function.
+
 2013-07-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Support in-band text tracks.
