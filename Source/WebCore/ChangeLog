@@ -1,3 +1,21 @@
+2013-07-18  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [gstreamer] Avoid calls to g_slist_index in webKitWebAudioSrcLoop()
+        https://bugs.webkit.org/show_bug.cgi?id=118827
+
+        Reviewed by Philippe Normand.
+
+        webKitWebAudioSrcLoop() currently calls g_slist_index for each element 
+        to get its index in a list it's iterating over. g_list_index function uses
+        a sequential search to find that element, which is clearly unecessary.
+        This patch adds a local variable to store the current index and use it 
+        instead of calling g_slist_index function.
+
+        No new tests, no behavior changes.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcLoop):
+
 2013-07-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce toSVGInlineFlowBox() and use it

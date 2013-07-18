@@ -354,8 +354,9 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
         return;
 
     GSList* channelBufferList = 0;
+    register int i;
     unsigned bufferSize = priv->framesToPull * sizeof(float);
-    for (int i = g_slist_length(priv->pads) - 1; i >= 0; i--) {
+    for (i = g_slist_length(priv->pads) - 1; i >= 0; i--) {
         GstBuffer* channelBuffer = gst_buffer_new_and_alloc(bufferSize);
         ASSERT(channelBuffer);
         channelBufferList = g_slist_prepend(channelBufferList, channelBuffer);
@@ -372,16 +373,16 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     // FIXME: Add support for local/live audio input.
     priv->provider->render(0, priv->bus, priv->framesToPull);
 
-    GSList* padsIt;
-    GSList* buffersIt;
-    for (padsIt = priv->pads, buffersIt = channelBufferList; padsIt && buffersIt; padsIt = g_slist_next(padsIt), buffersIt = g_slist_next(buffersIt)) {
+    GSList* padsIt = priv->pads;
+    GSList* buffersIt = channelBufferList;
+    for (i = 0; padsIt && buffersIt; padsIt = g_slist_next(padsIt), buffersIt = g_slist_next(buffersIt), ++i) {
         GstPad* pad = static_cast<GstPad*>(padsIt->data);
         GstBuffer* channelBuffer = static_cast<GstBuffer*>(buffersIt->data);
 
 #ifndef GST_API_VERSION_1
         GRefPtr<GstCaps> monoCaps = adoptGRef(getGStreamerMonoAudioCaps(priv->sampleRate));
         GstStructure* structure = gst_caps_get_structure(monoCaps.get(), 0);
-        GstAudioChannelPosition channelPosition = webKitWebAudioGStreamerChannelPosition(g_slist_index(channelBufferList, channelBuffer));
+        GstAudioChannelPosition channelPosition = webKitWebAudioGStreamerChannelPosition(i);
         gst_audio_set_channel_positions(structure, &channelPosition);
         gst_buffer_set_caps(channelBuffer, monoCaps.get());
 #endif
