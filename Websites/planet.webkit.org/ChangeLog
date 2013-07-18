@@ -1,5 +1,11 @@
 2013-06-12  Brent Fulgham  <bfulgham@apple.com>
 
+        Correct URL *again* for webkit.org RSS feed.
+
+        * config.ini: See above.
+
+2013-06-12  Brent Fulgham  <bfulgham@apple.com>
+
         Correct URL for webkit.org RSS feed.
 
         * config.ini: See above.
