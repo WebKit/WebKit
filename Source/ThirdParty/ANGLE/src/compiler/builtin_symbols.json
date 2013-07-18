@@ -1,0 +1,1816 @@
+{
+"ttypemap" : {
+ "float":"new TType(EbtFloat, EbpUndefined, EvqGlobal, 1, false, false)",
+ "int":"new TType(EbtInt, EbpUndefined, EvqGlobal, 1, false, false)",
+ "bool":"new TType(EbtBool, EbpUndefined, EvqGlobal, 1, false, false)",
+ "vec2":"new TType(EbtFloat, EbpUndefined, EvqGlobal, 2, false, false)",
+ "vec3":"new TType(EbtFloat, EbpUndefined, EvqGlobal, 3, false, false)",
+ "vec4":"new TType(EbtFloat, EbpUndefined, EvqGlobal, 4, false, false)",
+ "bvec2":"new TType(EbtBool, EbpUndefined, EvqGlobal, 2, false, false)",
+ "bvec3":"new TType(EbtBool, EbpUndefined, EvqGlobal, 3, false, false)",
+ "bvec4":"new TType(EbtBool, EbpUndefined, EvqGlobal, 4, false, false)",
+ "ivec2":"new TType(EbtInt, EbpUndefined, EvqGlobal, 2, false, false)",
+ "ivec3":"new TType(EbtInt, EbpUndefined, EvqGlobal, 3, false, false)",
+ "ivec4":"new TType(EbtInt, EbpUndefined, EvqGlobal, 4, false, false)",
+ "mat2":"new TType(EbtFloat, EbpUndefined, EvqGlobal, 2, true, false)",
+ "mat3":"new TType(EbtFloat, EbpUndefined, EvqGlobal, 3, true, false)",
+ "mat4":"new TType(EbtFloat, EbpUndefined, EvqGlobal, 4, true, false)",
+ "sampler2D":"new TType(EbtSampler2D, EbpUndefined, EvqGlobal, 1, false, false)",
+ "samplerCube":"new TType(EbtSamplerCube, EbpUndefined, EvqGlobal, 1, false, false)",
+ "samplerExternalOES":"new TType(EbtSamplerExternalOES, EbpUndefined, EvqGlobal, 1, false, false)",
+ "sampler2DRect":"new TType(EbtSampler2DRect, EbpUndefined, EvqGlobal, 1, false, false)"
+},
+
+"common" : [
+ {
+  "name": "radians",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "degrees"}
+  ]
+ },
+ {
+  "name": "radians",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "degrees"}
+  ]
+ },
+ {
+  "name": "radians",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "degrees"}
+  ]
+ },
+ {
+  "name": "radians",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "degrees"}
+  ]
+ },
+ {
+  "name": "degrees",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "radians"}
+  ]
+ },
+ {
+  "name": "degrees",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "radians"}
+  ]
+ },
+ {
+  "name": "degrees",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "radians"}
+  ]
+ },
+ {
+  "name": "degrees",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "radians"}
+  ]
+ },
+ {
+  "name": "sin",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "angle"}
+  ]
+ },
+ {
+  "name": "sin",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "angle"}
+  ]
+ },
+ {
+  "name": "sin",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "angle"}
+  ]
+ },
+ {
+  "name": "sin",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "angle"}
+  ]
+ },
+ {
+  "name": "cos",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "angle"}
+  ]
+ },
+ {
+  "name": "cos",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "angle"}
+  ]
+ },
+ {
+  "name": "cos",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "angle"}
+  ]
+ },
+ {
+  "name": "cos",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "angle"}
+  ]
+ },
+ {
+  "name": "tan",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "angle"}
+  ]
+ },
+ {
+  "name": "tan",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "angle"}
+  ]
+ },
+ {
+  "name": "tan",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "angle"}
+  ]
+ },
+ {
+  "name": "tan",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "angle"}
+  ]
+ },
+ {
+  "name": "asin",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "asin",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "asin",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "asin",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "acos",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "acos",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "acos",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "acos",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "atan",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "y"},
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "atan",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "y"},
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "atan",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "y"},
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "atan",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "y"},
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "atan",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "y_over_x"}
+  ]
+ },
+ {
+  "name": "atan",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "y_over_x"}
+  ]
+ },
+ {
+  "name": "atan",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "y_over_x"}
+  ]
+ },
+ {
+  "name": "atan",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "y_over_x"}
+  ]
+ },
+ {
+  "name": "pow",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "pow",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "pow",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "pow",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "exp",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "exp",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "exp",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "exp",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "log",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "log",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "log",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "log",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "exp2",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "exp2",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "exp2",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "exp2",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "log2",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "log2",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "log2",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "log2",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "sqrt",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "sqrt",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "sqrt",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "sqrt",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "inversesqrt",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "inversesqrt",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "inversesqrt",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "inversesqrt",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "abs",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "abs",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "abs",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "abs",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "sign",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "sign",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "sign",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "sign",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "floor",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "floor",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "floor",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "floor",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "ceil",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "ceil",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "ceil",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "ceil",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "fract",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "fract",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "fract",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "fract",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "mod",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "mod",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "mod",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "mod",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "mod",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "mod",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "mod",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "min",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "min",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "min",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "min",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "min",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "min",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "min",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "max",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "max",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "max",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "max",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "max",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "max",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "max",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "clamp",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"},
+   {"type": "float", "name": "minVal"},
+   {"type": "float", "name": "maxVal"}
+  ]
+ },
+ {
+  "name": "clamp",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "float", "name": "minVal"},
+   {"type": "float", "name": "maxVal"}
+  ]
+ },
+ {
+  "name": "clamp",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "float", "name": "minVal"},
+   {"type": "float", "name": "maxVal"}
+  ]
+ },
+ {
+  "name": "clamp",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "float", "name": "minVal"},
+   {"type": "float", "name": "maxVal"}
+  ]
+ },
+ {
+  "name": "clamp",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "minVal"},
+   {"type": "vec2", "name": "maxVal"}
+  ]
+ },
+ {
+  "name": "clamp",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "minVal"},
+   {"type": "vec3", "name": "maxVal"}
+  ]
+ },
+ {
+  "name": "clamp",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "minVal"},
+   {"type": "vec4", "name": "maxVal"}
+  ]
+ },
+ {
+  "name": "mix",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"},
+   {"type": "float", "name": "y"},
+   {"type": "float", "name": "a"}
+  ]
+ },
+ {
+  "name": "mix",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"},
+   {"type": "float", "name": "a"}
+  ]
+ },
+ {
+  "name": "mix",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"},
+   {"type": "float", "name": "a"}
+  ]
+ },
+ {
+  "name": "mix",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"},
+   {"type": "float", "name": "a"}
+  ]
+ },
+ {
+  "name": "mix",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"},
+   {"type": "vec2", "name": "a"}
+  ]
+ },
+ {
+  "name": "mix",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"},
+   {"type": "vec3", "name": "a"}
+  ]
+ },
+ {
+  "name": "mix",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"},
+   {"type": "vec4", "name": "a"}
+  ]
+ },
+ {
+  "name": "step",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "edge"},
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "step",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "edge"},
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "step",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "edge"},
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "step",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "edge"},
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "step",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "float", "name": "edge"},
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "step",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "float", "name": "edge"},
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "step",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "float", "name": "edge"},
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "smoothstep",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "edge0"},
+   {"type": "float", "name": "edge1"},
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "smoothstep",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "edge0"},
+   {"type": "vec2", "name": "edge1"},
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "smoothstep",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "edge0"},
+   {"type": "vec3", "name": "edge1"},
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "smoothstep",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "edge0"},
+   {"type": "vec4", "name": "edge1"},
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "smoothstep",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "float", "name": "edge0"},
+   {"type": "float", "name": "edge1"},
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "smoothstep",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "float", "name": "edge0"},
+   {"type": "float", "name": "edge1"},
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "smoothstep",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "float", "name": "edge0"},
+   {"type": "float", "name": "edge1"},
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "length",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "length",
+  "return_type": "float",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "length",
+  "return_type": "float",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "length",
+  "return_type": "float",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "distance",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "p0"},
+   {"type": "float", "name": "p1"}
+  ]
+ },
+ {
+  "name": "distance",
+  "return_type": "float",
+  "parameter": [
+   {"type": "vec2", "name": "p0"},
+   {"type": "vec2", "name": "p1"}
+  ]
+ },
+ {
+  "name": "distance",
+  "return_type": "float",
+  "parameter": [
+   {"type": "vec3", "name": "p0"},
+   {"type": "vec3", "name": "p1"}
+  ]
+ },
+ {
+  "name": "distance",
+  "return_type": "float",
+  "parameter": [
+   {"type": "vec4", "name": "p0"},
+   {"type": "vec4", "name": "p1"}
+  ]
+ },
+ {
+  "name": "dot",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"},
+   {"type": "float", "name": "y"}
+  ]
+ },
+ {
+  "name": "dot",
+  "return_type": "float",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "dot",
+  "return_type": "float",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "dot",
+  "return_type": "float",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "cross",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "normalize",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "x"}
+  ]
+ },
+ {
+  "name": "normalize",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "normalize",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "normalize",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "faceforward",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "N"},
+   {"type": "float", "name": "I"},
+   {"type": "float", "name": "Nref"}
+  ]
+ },
+ {
+  "name": "faceforward",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "N"},
+   {"type": "vec2", "name": "I"},
+   {"type": "vec2", "name": "Nref"}
+  ]
+ },
+ {
+  "name": "faceforward",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "N"},
+   {"type": "vec3", "name": "I"},
+   {"type": "vec3", "name": "Nref"}
+  ]
+ },
+ {
+  "name": "faceforward",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "N"},
+   {"type": "vec4", "name": "I"},
+   {"type": "vec4", "name": "Nref"}
+  ]
+ },
+ {
+  "name": "reflect",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "I"},
+   {"type": "float", "name": "N"}
+  ]
+ },
+ {
+  "name": "reflect",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "I"},
+   {"type": "vec2", "name": "N"}
+  ]
+ },
+ {
+  "name": "reflect",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "I"},
+   {"type": "vec3", "name": "N"}
+  ]
+ },
+ {
+  "name": "reflect",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "I"},
+   {"type": "vec4", "name": "N"}
+  ]
+ },
+ {
+  "name": "refract",
+  "return_type": "float",
+  "parameter": [
+   {"type": "float", "name": "I"},
+   {"type": "float", "name": "N"},
+   {"type": "float", "name": "eta"}
+  ]
+ },
+ {
+  "name": "refract",
+  "return_type": "vec2",
+  "parameter": [
+   {"type": "vec2", "name": "I"},
+   {"type": "vec2", "name": "N"},
+   {"type": "float", "name": "eta"}
+  ]
+ },
+ {
+  "name": "refract",
+  "return_type": "vec3",
+  "parameter": [
+   {"type": "vec3", "name": "I"},
+   {"type": "vec3", "name": "N"},
+   {"type": "float", "name": "eta"}
+  ]
+ },
+ {
+  "name": "refract",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "vec4", "name": "I"},
+   {"type": "vec4", "name": "N"},
+   {"type": "float", "name": "eta"}
+  ]
+ },
+ {
+  "name": "matrixCompMult",
+  "return_type": "mat2",
+  "parameter": [
+   {"type": "mat2", "name": "x"},
+   {"type": "mat2", "name": "y"}
+  ]
+ },
+ {
+  "name": "matrixCompMult",
+  "return_type": "mat3",
+  "parameter": [
+   {"type": "mat3", "name": "x"},
+   {"type": "mat3", "name": "y"}
+  ]
+ },
+ {
+  "name": "matrixCompMult",
+  "return_type": "mat4",
+  "parameter": [
+   {"type": "mat4", "name": "x"},
+   {"type": "mat4", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThan",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThan",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThan",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThan",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "ivec2", "name": "x"},
+   {"type": "ivec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThan",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "ivec3", "name": "x"},
+   {"type": "ivec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThan",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "ivec4", "name": "x"},
+   {"type": "ivec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThanEqual",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThanEqual",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThanEqual",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThanEqual",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "ivec2", "name": "x"},
+   {"type": "ivec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThanEqual",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "ivec3", "name": "x"},
+   {"type": "ivec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "lessThanEqual",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "ivec4", "name": "x"},
+   {"type": "ivec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThan",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThan",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThan",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThan",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "ivec2", "name": "x"},
+   {"type": "ivec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThan",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "ivec3", "name": "x"},
+   {"type": "ivec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThan",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "ivec4", "name": "x"},
+   {"type": "ivec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThanEqual",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThanEqual",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThanEqual",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThanEqual",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "ivec2", "name": "x"},
+   {"type": "ivec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThanEqual",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "ivec3", "name": "x"},
+   {"type": "ivec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "greaterThanEqual",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "ivec4", "name": "x"},
+   {"type": "ivec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "equal",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "equal",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "equal",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "equal",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "ivec2", "name": "x"},
+   {"type": "ivec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "equal",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "ivec3", "name": "x"},
+   {"type": "ivec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "equal",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "ivec4", "name": "x"},
+   {"type": "ivec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "equal",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "bvec2", "name": "x"},
+   {"type": "bvec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "equal",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "bvec3", "name": "x"},
+   {"type": "bvec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "equal",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "bvec4", "name": "x"},
+   {"type": "bvec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "notEqual",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "vec2", "name": "x"},
+   {"type": "vec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "notEqual",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "vec3", "name": "x"},
+   {"type": "vec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "notEqual",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "vec4", "name": "x"},
+   {"type": "vec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "notEqual",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "ivec2", "name": "x"},
+   {"type": "ivec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "notEqual",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "ivec3", "name": "x"},
+   {"type": "ivec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "notEqual",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "ivec4", "name": "x"},
+   {"type": "ivec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "notEqual",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "bvec2", "name": "x"},
+   {"type": "bvec2", "name": "y"}
+  ]
+ },
+ {
+  "name": "notEqual",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "bvec3", "name": "x"},
+   {"type": "bvec3", "name": "y"}
+  ]
+ },
+ {
+  "name": "notEqual",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "bvec4", "name": "x"},
+   {"type": "bvec4", "name": "y"}
+  ]
+ },
+ {
+  "name": "any",
+  "return_type": "bool",
+  "parameter": [
+   {"type": "bvec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "any",
+  "return_type": "bool",
+  "parameter": [
+   {"type": "bvec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "any",
+  "return_type": "bool",
+  "parameter": [
+   {"type": "bvec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "all",
+  "return_type": "bool",
+  "parameter": [
+   {"type": "bvec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "all",
+  "return_type": "bool",
+  "parameter": [
+   {"type": "bvec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "all",
+  "return_type": "bool",
+  "parameter": [
+   {"type": "bvec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "not",
+  "return_type": "bvec2",
+  "parameter": [
+   {"type": "bvec2", "name": "x"}
+  ]
+ },
+ {
+  "name": "not",
+  "return_type": "bvec3",
+  "parameter": [
+   {"type": "bvec3", "name": "x"}
+  ]
+ },
+ {
+  "name": "not",
+  "return_type": "bvec4",
+  "parameter": [
+   {"type": "bvec4", "name": "x"}
+  ]
+ },
+ {
+  "name": "texture2D",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "sampler2D", "name": "sampler"},
+   {"type": "vec2", "name": "coord"}
+  ]
+ },
+ {
+  "name": "texture2DProj",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "sampler2D", "name": "sampler"},
+   {"type": "vec3", "name": "coord"}
+  ]
+ },
+ {
+  "name": "texture2DProj",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "sampler2D", "name": "sampler"},
+   {"type": "vec4", "name": "coord"}
+  ]
+ },
+ {
+  "name": "textureCube",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "samplerCube", "name": "sampler"},
+   {"type": "vec3", "name": "coord"}
+  ]
+ },
+ {
+  "name": "texture2D",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "samplerExternalOES", "name": "sampler"},
+   {"type": "vec2", "name": "coord"}
+  ],
+  "condition":"resources.OES_EGL_image_external"
+ },
+ {
+  "name": "texture2DProj",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "samplerExternalOES", "name": "sampler"},
+   {"type": "vec3", "name": "coord"}
+  ],
+  "condition":"resources.OES_EGL_image_external"
+ },
+ {
+  "name": "texture2DProj",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "samplerExternalOES", "name": "sampler"},
+   {"type": "vec4", "name": "coord"}
+  ],
+  "condition":"resources.OES_EGL_image_external"
+ },
+ {
+  "name": "texture2DRect",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "sampler2DRect", "name": "sampler"},
+   {"type": "vec2", "name": "coord"}
+  ],
+  "condition":"resources.ARB_texture_rectangle"
+ },
+ {
+  "name": "texture2DRectProj",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "sampler2DRect", "name": "sampler"},
+   {"type": "vec3", "name": "coord"}
+  ],
+  "condition":"resources.ARB_texture_rectangle"
+ },
+ {
+  "name": "texture2DRectProj",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "sampler2DRect", "name": "sampler"},
+   {"type": "vec4", "name": "coord"}
+  ],
+  "condition":"resources.ARB_texture_rectangle"
+ }
+],
+ 
+"vertex" : [
+ {
+  "name": "texture2DLod",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "sampler2D", "name": "sampler"},
+   {"type": "vec2", "name": "coord"},
+   {"type": "float", "name": "lod"}
+  ]
+ },
+ {
+  "name": "texture2DProjLod",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "sampler2D", "name": "sampler"},
+   {"type": "vec3", "name": "coord"},
+   {"type": "float", "name": "lod"}
+  ]
+ },
+ {
+  "name": "texture2DProjLod",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "sampler2D", "name": "sampler"},
+   {"type": "vec4", "name": "coord"},
+   {"type": "float", "name": "lod"}
+  ]
+ },
+ {
+  "name": "textureCubeLod",
+  "return_type": "vec4",
+  "parameter": [
+   {"type": "samplerCube", "name": "sampler"},
+   {"type": "vec3", "name": "coord"},
+   {"type": "float", "name": "lod"}
+  ]
+ }
+]
+
+} 
