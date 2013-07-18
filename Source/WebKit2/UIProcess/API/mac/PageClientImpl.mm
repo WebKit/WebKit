@@ -458,36 +458,6 @@ CGContextRef PageClientImpl::containingWindowGraphicsContext()
     return static_cast<CGContextRef>([[window graphicsContext] graphicsPort]);
 }
 
-void PageClientImpl::didCommitLoadForMainFrame(bool useCustomRepresentation)
-{
-    [m_wkView _setPageHasCustomRepresentation:useCustomRepresentation];
-}
-
-void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference& dataReference)
-{
-    [m_wkView _didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:suggestedFilename dataReference:dataReference];
-}
-
-double PageClientImpl::customRepresentationZoomFactor()
-{
-    return [m_wkView _customRepresentationZoomFactor];
-}
-
-void PageClientImpl::setCustomRepresentationZoomFactor(double zoomFactor)
-{
-    [m_wkView _setCustomRepresentationZoomFactor:zoomFactor];
-}
-
-void PageClientImpl::findStringInCustomRepresentation(const String& string, FindOptions options, unsigned maxMatchCount)
-{
-    [m_wkView _findStringInCustomRepresentation:string withFindOptions:options maxMatchCount:maxMatchCount];
-}
-
-void PageClientImpl::countStringMatchesInCustomRepresentation(const String& string, FindOptions options, unsigned maxMatchCount)
-{
-    [m_wkView _countStringMatchesInCustomRepresentation:string withFindOptions:options maxMatchCount:maxMatchCount];
-}
-
 void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
 {
     notImplemented();

@@ -43,7 +43,6 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"
 #import "NativeWebWheelEvent.h"
-#import "PDFViewController.h"
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -174,8 +173,6 @@ struct WKViewInterpretKeyEventsParameters {
     
     // For asynchronous validation.
     ValidationMap _validationMap;
-
-    OwnPtr<PDFViewController> _pdfViewController;
 
     OwnPtr<FindIndicatorWindow> _findIndicatorWindow;
     // We keep here the event when resending it to
@@ -2257,10 +2254,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (id)accessibilityFocusedUIElement
 {
     [self enableAccessibilityIfNecessary];
-    
-    if (_data->_pdfViewController)
-        return NSAccessibilityUnignoredDescendant(_data->_pdfViewController->pdfView());
-
     return _data->_remoteAccessibilityChild.get();
 }
 
@@ -2272,10 +2265,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (id)accessibilityHitTest:(NSPoint)point
 {
     [self enableAccessibilityIfNecessary];
-
-    if (_data->_pdfViewController)
-        return [_data->_pdfViewController->pdfView() accessibilityHitTest:point];
-    
     return _data->_remoteAccessibilityChild.get();
 }
 
@@ -2286,9 +2275,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
 
         id child = nil;
-        if (_data->_pdfViewController)
-            child = NSAccessibilityUnignoredDescendant(_data->_pdfViewController->pdfView());
-        else if (_data->_remoteAccessibilityChild)
+        if (_data->_remoteAccessibilityChild)
             child = _data->_remoteAccessibilityChild.get();
         
         if (!child)
@@ -2764,57 +2751,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [self _setPluginComplexTextInputState:pluginComplexTextInputState];
 }
 
-- (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation
-{
-    bool hadPDFView = _data->_pdfViewController;
-    _data->_pdfViewController = nullptr;
-
-    if (pageHasCustomRepresentation)
-        _data->_pdfViewController = PDFViewController::create(self);
-
-    if (pageHasCustomRepresentation != hadPDFView)
-        _data->_page->drawingArea()->pageCustomRepresentationChanged();
-}
-
-- (void)_didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:(const String&)suggestedFilename dataReference:(const CoreIPC::DataReference&)dataReference
-{
-    ASSERT(_data->_pdfViewController);
-
-    _data->_pdfViewController->setPDFDocumentData(_data->_page->mainFrame()->mimeType(), suggestedFilename, dataReference);
-}
-
-- (double)_customRepresentationZoomFactor
-{
-    if (!_data->_pdfViewController)
-        return 1;
-
-    return _data->_pdfViewController->zoomFactor();
-}
-
-- (void)_setCustomRepresentationZoomFactor:(double)zoomFactor
-{
-    if (!_data->_pdfViewController)
-        return;
-
-    _data->_pdfViewController->setZoomFactor(zoomFactor);
-}
-
-- (void)_findStringInCustomRepresentation:(NSString *)string withFindOptions:(WebKit::FindOptions)options maxMatchCount:(NSUInteger)count
-{
-    if (!_data->_pdfViewController)
-        return;
-
-    _data->_pdfViewController->findString(string, options, count);
-}
-
-- (void)_countStringMatchesInCustomRepresentation:(NSString *)string withFindOptions:(WebKit::FindOptions)options maxMatchCount:(NSUInteger)count
-{
-    if (!_data->_pdfViewController)
-        return;
-
-    _data->_pdfViewController->countStringMatches(string, options, count);
-}
-
 - (void)_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag
 {
     IntSize size([image size]);
@@ -3212,22 +3148,15 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     LOG(View, "Creating an NSPrintOperation for frame '%s'", toImpl(frameRef)->url().utf8().data());
 
-    // Only the top frame can currently contain a PDF view.
-    if (_data->_pdfViewController) {
-        if (!toImpl(frameRef)->isMainFrame())
-            return 0;
-        return _data->_pdfViewController->makePrintOperation(printInfo);
-    } else {
-        // FIXME: If the frame cannot be printed (e.g. if it contains an encrypted PDF that disallows
-        // printing), this function should return nil.
-        RetainPtr<WKPrintingView> printingView = adoptNS([[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef) view:self]);
-        // NSPrintOperation takes ownership of the view.
-        NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get() printInfo:printInfo];
-        [printOperation setCanSpawnSeparateThread:YES];
-        [printOperation setJobTitle:toImpl(frameRef)->title()];
-        printingView->_printOperation = printOperation;
-        return printOperation;
-    }
+    // FIXME: If the frame cannot be printed (e.g. if it contains an encrypted PDF that disallows
+    // printing), this function should return nil.
+    RetainPtr<WKPrintingView> printingView = adoptNS([[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef) view:self]);
+    // NSPrintOperation takes ownership of the view.
+    NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get() printInfo:printInfo];
+    [printOperation setCanSpawnSeparateThread:YES];
+    [printOperation setJobTitle:toImpl(frameRef)->title()];
+    printingView->_printOperation = printOperation;
+    return printOperation;
 }
 
 - (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset

@@ -79,7 +79,6 @@ public:
     virtual void setPageOverlayOpacity(PageOverlay*, float) { }
     // If this function returns false, PageOverlay should apply opacity when painting.
     virtual bool pageOverlayShouldApplyFadeWhenPainting() const { return true; }
-    virtual void pageCustomRepresentationChanged() { }
 
     virtual void setPaintingEnabled(bool) { }
     virtual void updatePreferences(const WebPreferencesStore&) { }

@@ -1,3 +1,73 @@
+2013-07-18  Tim Horton  <timothy_horton@apple.com>
+
+        Remove PDFViewController and WKView "custom representations"
+        https://bugs.webkit.org/show_bug.cgi?id=118720
+
+        Reviewed by Alexey Proskuryakov.
+
+        PDFViewController was the only implementation of
+        a "custom representation" for a WKView. As it has
+        been superceded by PDFPlugin, we can remove both
+        PDFViewController and the notion of a WKView custom
+        representation.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/mac/PDFViewController.h: Removed.
+        * UIProcess/API/mac/PDFViewController.mm: Removed.
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView accessibilityFocusedUIElement]):
+        (-[WKView accessibilityHitTest:]):
+        (-[WKView accessibilityAttributeValue:]):
+        (-[WKView printOperationWithPrintInfo:forFrame:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::supportsTextEncoding):
+        (WebKit::WebPageProxy::supportsTextZoom):
+        (WebKit::WebPageProxy::setTextZoomFactor):
+        (WebKit::WebPageProxy::setPageZoomFactor):
+        (WebKit::WebPageProxy::setPageAndTextZoomFactors):
+        (WebKit::WebPageProxy::findString):
+        (WebKit::WebPageProxy::countStringMatches):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::textZoomFactor):
+        (WebKit::WebPageProxy::pageZoomFactor):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtPageClient.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::committedLoad):
+        (WebKit::WebFrameLoaderClient::finishedLoading):
+        (WebKit::WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setNeedsDisplayInRect):
+        (WebKit::DrawingAreaImpl::scroll):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformPreferencesDidChange):
+        * mac/WebKit2.order:
+
 2013-07-18  Dong-Gwan Kim  <donggwan.kim@samsung.com>
 
         [EFL][WK2] Replace mouseClick with more meaningful method in test_ewk2_color_picker.cpp

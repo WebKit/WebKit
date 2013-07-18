@@ -119,14 +119,6 @@ private:
     
     virtual CGContextRef containingWindowGraphicsContext();
 
-    virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
-    virtual void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&);
-
-    virtual double customRepresentationZoomFactor();
-    virtual void setCustomRepresentationZoomFactor(double);
-    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount);
-    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount);
-
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
 
     virtual void didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&);

@@ -67,7 +67,6 @@ public:
     // The timeout, in seconds, we use when waiting for a DidUpdateGeometry message.
     static const double didUpdateBackingStoreStateTimeout;
 
-    virtual void pageCustomRepresentationChanged() { }
     virtual void waitForPossibleGeometryUpdate(double = didUpdateBackingStoreStateTimeout) { }
 
     virtual void colorSpaceDidChange() { }

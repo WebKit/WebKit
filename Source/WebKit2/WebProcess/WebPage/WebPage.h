@@ -552,8 +552,6 @@ public:
     void setMediaVolume(float);
     void setMayStartMediaWhenInWindow(bool);
 
-    bool mainFrameHasCustomRepresentation() const;
-
     void didChangeScrollOffsetForMainFrame();
 
     void mainFrameDidLayout();
@@ -613,7 +611,6 @@ public:
     uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
 #endif
 
-    bool shouldUseCustomRepresentationForResponse(const WebCore::ResourceResponse&);
     bool canPluginHandleResponse(const WebCore::ResourceResponse& response);
 
     bool asynchronousPluginInitializationEnabled() const { return m_asynchronousPluginInitializationEnabled; }
@@ -1023,7 +1020,6 @@ private:
 #endif
     WebInspectorClient* m_inspectorClient;
 
-    HashSet<String, CaseFoldingHash> m_mimeTypesWithCustomRepresentations;
     WebCore::Color m_backgroundColor;
 
     HashSet<unsigned> m_activeRenderingSuppressionTokens;

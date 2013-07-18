@@ -114,7 +114,7 @@ messages -> WebPageProxy {
     DidCreateSubframe(uint64_t frameID)
 
     # Frame load messages
-    DidCommitLoadForFrame(uint64_t frameID, WTF::String mimeType, bool hasCustomRepresentation, uint32_t loadType, WebKit::PlatformCertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidCommitLoadForFrame(uint64_t frameID, WTF::String mimeType, uint32_t loadType, WebKit::PlatformCertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFailLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFailProvisionalLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     DidFinishDocumentLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
@@ -137,9 +137,6 @@ messages -> WebPageProxy {
 #if PLATFORM(QT)
     ResolveApplicationSchemeRequest(WebKit::QtNetworkRequestData request)
 #endif
-
-    # Custom representations
-    DidFinishLoadingDataForCustomRepresentation(WTF::String suggestedFilename, CoreIPC::DataReference data)
 
     # Forms messages
     WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, WTF::Vector<std::pair<WTF::String, WTF::String>> textFieldValues, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic

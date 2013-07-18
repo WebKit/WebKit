@@ -40,12 +40,10 @@ public:
 
     WebFrame* webFrame() const { return m_frame; }
 
-    bool frameHasCustomRepresentation() const { return m_frameHasCustomRepresentation; }
-
 private:
     virtual void frameLoaderDestroyed() OVERRIDE;
 
-    virtual bool hasHTMLView() const OVERRIDE;
+    virtual bool hasHTMLView() const OVERRIDE { return true; }
     virtual bool hasWebView() const OVERRIDE;
     
     virtual void makeRepresentation(WebCore::DocumentLoader*) OVERRIDE;
@@ -175,7 +173,7 @@ private:
 
     virtual void dispatchDidBecomeFrameset(bool) OVERRIDE;
 
-    virtual bool canCachePage() const OVERRIDE;
+    virtual bool canCachePage() const OVERRIDE { return true; }
     virtual void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) OVERRIDE;
     
     virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL& url, const String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
@@ -230,7 +228,6 @@ private:
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView;
     bool m_didCompletePageTransitionAlready;
-    bool m_frameHasCustomRepresentation;
     bool m_frameCameFromPageCache;
 };
 

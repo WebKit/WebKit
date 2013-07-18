@@ -40,12 +40,6 @@ public:
     virtual void preferencesDidChange() { }
 
     virtual void setFindIndicator(PassRefPtr<WebKit::FindIndicator>, bool fadeOut, bool animate) { }
-    virtual void didCommitLoadForMainFrame(bool useCustomRepresentation) { }
-    virtual void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&) { }
-    virtual double customRepresentationZoomFactor() { return 1; }
-    virtual void setCustomRepresentationZoomFactor(double) { }
-    virtual void findStringInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
-    virtual void countStringMatchesInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
     virtual void clearAllEditCommands() { }
 
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes& attr);

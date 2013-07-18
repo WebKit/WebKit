@@ -115,14 +115,6 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
 {
     if (WebInspector* inspector = this->inspector())
         inspector->setInspectorUsesWebKitUserInterface(store.getBoolValueForKey(WebPreferencesKey::inspectorUsesWebKitUserInterfaceKey()));
-
-    BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
-    if (!shouldUsePDFPlugin() && !omitPDFSupport) {
-        // If we don't have PDFPlugin, we will use a PDF view in the UI process for PDF and PostScript MIME types.
-        HashSet<String> mimeTypes = MIMETypeRegistry::getPDFAndPostScriptMIMETypes();
-        for (HashSet<String>::iterator it = mimeTypes.begin(); it != mimeTypes.end(); ++it)
-            m_mimeTypesWithCustomRepresentations.add(*it);
-    }
 }
 
 bool WebPage::shouldUsePDFPlugin() const

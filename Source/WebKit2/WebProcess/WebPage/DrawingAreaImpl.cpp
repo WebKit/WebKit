@@ -109,9 +109,6 @@ void DrawingAreaImpl::setNeedsDisplayInRect(const IntRect& rect)
     if (dirtyRect.isEmpty())
         return;
 
-    if (m_webPage->mainFrameHasCustomRepresentation())
-        return;
-
     m_dirtyRegion.unite(dirtyRect);
     scheduleDisplay();
 }
@@ -129,9 +126,6 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDel
         m_layerTreeHost->scrollNonCompositedContents(scrollRect);
         return;
     }
-
-    if (m_webPage->mainFrameHasCustomRepresentation())
-        return;
 
     if (scrollRect.isEmpty())
         return;
@@ -265,18 +259,6 @@ bool DrawingAreaImpl::pageOverlayShouldApplyFadeWhenPainting() const
         return false;
 
     return true;
-}
-
-void DrawingAreaImpl::pageCustomRepresentationChanged()
-{
-    if (!m_alwaysUseCompositing)
-        return;
-
-    if (m_webPage->mainFrameHasCustomRepresentation()) {
-        if (m_layerTreeHost)
-            exitAcceleratedCompositingMode();
-    } else if (!m_layerTreeHost)
-        enterAcceleratedCompositingMode(0);
 }
 
 void DrawingAreaImpl::setPaintingEnabled(bool paintingEnabled)
@@ -540,7 +522,7 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
 
 void DrawingAreaImpl::exitAcceleratedCompositingMode()
 {
-    if (m_alwaysUseCompositing && !m_webPage->mainFrameHasCustomRepresentation())
+    if (m_alwaysUseCompositing)
         return;
 
     ASSERT(!m_layerTreeStateIsFrozen);
@@ -676,13 +658,6 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     ASSERT(!m_isPaintingSuspended);
     ASSERT(!m_layerTreeHost);
     ASSERT(!m_webPage->size().isEmpty());
-
-    // FIXME: It would be better if we could avoid painting altogether when there is a custom representation.
-    if (m_webPage->mainFrameHasCustomRepresentation()) {
-        // ASSUMPTION: the custom representation will be painting the dirty region for us.
-        m_dirtyRegion = Region();
-        return;
-    }
 
     m_webPage->layoutIfNeeded();
 

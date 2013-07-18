@@ -25,7 +25,6 @@ messages -> DrawingArea LegacyReceiver {
     DidUpdate()
     SuspendPainting()
     ResumePainting()
-    PageCustomRepresentationChanged()
     SetLayerHostingMode(uint32_t layerHostingMode)
 
 #if PLATFORM(MAC)

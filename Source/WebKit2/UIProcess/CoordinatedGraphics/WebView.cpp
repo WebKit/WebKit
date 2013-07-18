@@ -436,38 +436,7 @@ void WebView::updateAcceleratedCompositingMode(const LayerTreeContext&)
     notImplemented();
 }
 
-void WebView::didCommitLoadForMainFrame(bool)
-{
-    notImplemented();
-}
-
-void WebView::didFinishLoadingDataForCustomRepresentation(const String&, const CoreIPC::DataReference&)
-{
-    notImplemented();
-}
-
-double WebView::customRepresentationZoomFactor()
-{
-    notImplemented();
-    return 0;
-}
-
-void WebView::setCustomRepresentationZoomFactor(double)
-{
-    notImplemented();
-}
-
 void WebView::flashBackingStoreUpdates(const Vector<IntRect>&)
-{
-    notImplemented();
-}
-
-void WebView::findStringInCustomRepresentation(const String&, FindOptions, unsigned)
-{
-    notImplemented();
-}
-
-void WebView::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
 {
     notImplemented();
 }

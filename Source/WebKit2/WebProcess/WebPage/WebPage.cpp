@@ -3005,17 +3005,6 @@ void WebPage::clearSelection()
     m_page->focusController()->focusedOrMainFrame()->selection()->clear();
 }
 
-bool WebPage::mainFrameHasCustomRepresentation() const
-{
-    if (Frame* frame = mainFrame()) {
-        WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
-        ASSERT(webFrameLoaderClient);
-        return webFrameLoaderClient->frameHasCustomRepresentation();
-    }
-
-    return false;
-}
-
 void WebPage::didChangeScrollOffsetForMainFrame()
 {
     Frame* frame = m_page->mainFrame();
@@ -3856,15 +3845,6 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 #else
     return false;
 #endif
-}
-
-bool WebPage::shouldUseCustomRepresentationForResponse(const ResourceResponse& response)
-{
-    if (!m_mimeTypesWithCustomRepresentations.contains(response.mimeType()))
-        return false;
-
-    // If a plug-in exists that claims to support this response, it should take precedence over the custom representation.
-    return !canPluginHandleResponse(response);
 }
 
 #if PLATFORM(QT) || PLATFORM(GTK)

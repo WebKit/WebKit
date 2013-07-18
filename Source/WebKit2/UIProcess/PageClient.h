@@ -223,15 +223,7 @@ public:
 #endif // USE(APPKIT)
 #endif // PLATFORM(MAC)
 
-    // Custom representations.
-    virtual void didCommitLoadForMainFrame(bool useCustomRepresentation) = 0;
-    virtual void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&) = 0;
-    virtual double customRepresentationZoomFactor() = 0;
-    virtual void setCustomRepresentationZoomFactor(double) = 0;
-
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects) = 0;
-    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) = 0;
-    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) = 0;
 };
 
 } // namespace WebKit

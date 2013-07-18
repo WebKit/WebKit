@@ -180,15 +180,7 @@ protected:
     virtual void exitAcceleratedCompositingMode() OVERRIDE;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;
 
-    virtual void didCommitLoadForMainFrame(bool) OVERRIDE;
-    virtual void didFinishLoadingDataForCustomRepresentation(const String&, const CoreIPC::DataReference&) OVERRIDE;
-
-    virtual double customRepresentationZoomFactor() OVERRIDE;
-    virtual void setCustomRepresentationZoomFactor(double) OVERRIDE;
-
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>&) OVERRIDE;
-    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned) OVERRIDE;
-    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned) OVERRIDE;
 
 protected:
     WebViewClient m_client;

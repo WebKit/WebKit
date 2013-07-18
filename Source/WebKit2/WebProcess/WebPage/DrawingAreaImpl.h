@@ -90,8 +90,6 @@ private:
     virtual void suspendPainting();
     virtual void resumePainting();
     
-    virtual void pageCustomRepresentationChanged();
-
     void sendDidUpdateBackingStoreState();
 
     void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
