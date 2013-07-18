@@ -1,3 +1,34 @@
+2013-07-18  Dong-Gwan Kim  <donggwan.kim@samsung.com>
+
+        [EFL][WK2] Move all the static methods into EWK2TextCheckerTest in test_ewk2_text_checker.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=118790
+
+        Reviewed by Christophe Dumez.
+
+        All the static methods should be moved to EWK2TextCheckerTest.
+
+        * UIProcess/API/efl/tests/test_ewk2_text_checker.cpp:
+        (EWK2TextCheckerTest::resetCallbacksExecutionStats):
+        (EWK2TextCheckerTest::onTimeout):
+        (EWK2TextCheckerTest::onSettingChange):
+        (EWK2TextCheckerTest::onSpellDocumentTag):
+        (EWK2TextCheckerTest::onSpellDocumentTagClose):
+        (EWK2TextCheckerTest::onSpellingCheck):
+        (EWK2TextCheckerTest::onSpellingForKnownWord):
+        (EWK2TextCheckerTest::onWordGuesses):
+        (EWK2TextCheckerTest::onWordLearn):
+        (EWK2TextCheckerTest::onWordIgnore):
+        (EWK2TextCheckerTest::findContextMenuItem):
+        (EWK2TextCheckerTest::checkCorrectnessOfSpellingItems):
+        (EWK2TextCheckerTest::toogleCheckSpellingWhileTyping):
+        (EWK2TextCheckerTest::checkClientSuggestionsForWord):
+        (EWK2TextCheckerTest::selectLearnSpelling):
+        (EWK2TextCheckerTest::selectIgnoreSpelling):
+        (EWK2TextCheckerTest::countContextMenuItems):
+        (EWK2TextCheckerTest::clickButton):
+        (EWK2TextCheckerTest::showContextMenu):
+        (EWK2TextCheckerTest::selectFirstWord):
+
 2013-07-17  Tim Horton  <timothy_horton@apple.com>
 
         Update blocked/missing plug-in UI
