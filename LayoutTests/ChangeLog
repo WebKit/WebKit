@@ -1,3 +1,16 @@
+2013-07-18  Zalan Bujtas  <zalan@apple.com>
+
+        fullscreen/full-screen-iframe-with-max-width-height.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=118820
+
+        Reviewed by Andreas Kling.
+
+        Don't start the test until after the iframe has finished loading.
+
+        * fullscreen/full-screen-iframe-with-max-width-height-expected.txt:
+        * fullscreen/full-screen-iframe-with-max-width-height.html:
+        * platform/mac/TestExpectations:
+
 2013-07-18  Praveen R Jadhav  <praveen.j@samsung.com>
 
         Only the first call to 'stop' method of AudioBufferSourceNode must be entertained.
