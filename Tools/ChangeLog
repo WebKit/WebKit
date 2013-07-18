@@ -1,3 +1,19 @@
+2013-07-18  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r132678): Tests that use SSL or port 8080 time out when run using old-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=118854
+        <rdar://problem/14081339>
+
+        Reviewed by David Kilzer.
+
+        Following <http://trac.webkit.org/changeset/132678> (https://bugs.webkit.org/show_bug.cgi?id=98602)
+        Apache no longer listens to ports 8443 (SSL) and 8080. So, tests that use these ports time out when
+        run using old-run-webkit-tests. We need to update old-run-webkit-tests to explicitly tell Apache to
+        listen on these ports so that we can run tests that use port 8443 and 8080.
+
+        * Scripts/old-run-webkit-tests:
+        (configureAndOpenHTTPDIfNeeded):
+
 2013-07-17  Tim Horton  <timothy_horton@apple.com>
 
         Update blocked/missing plug-in UI
