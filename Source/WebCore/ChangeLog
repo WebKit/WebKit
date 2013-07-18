@@ -1,5 +1,24 @@
 2013-07-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Simplify SVG animated type handling in the JSC bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=118845
+
+        Reviewed by Kentaro Hara.
+
+        Simplify IsSVGAnimatedType subroutine in the bindings generator so that
+        we no longer need to hardcode SVG animated types. Also remove the
+        CanUseFastAttribute subroutine as it is equivalent to IsSVGAnimatedType.
+        This allows us to simplify the GetterExpression subroutine so that
+        we can use fastHasAttribute() unconditionally for boolean type.
+
+        No new tests, no behavior change.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsSVGAnimatedType):
+        (GetterExpression):
+
+2013-07-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Use [ImplementedAs] instead of special casing in the bindings generators
         https://bugs.webkit.org/show_bug.cgi?id=118848
 

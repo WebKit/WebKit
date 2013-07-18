@@ -66,14 +66,6 @@ my %enumTypeHash = ();
 
 my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1);
 
-my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
-                           "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
-                           "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1,
-                           "SVGAnimatedNumber" => 1, "SVGAnimatedNumberList" => 1,
-                           "SVGAnimatedPreserveAspectRatio" => 1,
-                           "SVGAnimatedRect" => 1, "SVGAnimatedString" => 1,
-                           "SVGAnimatedTransformList" => 1);
-
 my %svgAttributesInHTMLHash = ("class" => 1, "id" => 1, "onabort" => 1, "onclick" => 1,
                                "onerror" => 1, "onload" => 1, "onmousedown" => 1,
                                "onmouseenter" => 1, "onmouseleave" => 1,
@@ -430,8 +422,7 @@ sub IsSVGAnimatedType
     my $object = shift;
     my $type = shift;
 
-    return 1 if $svgAnimatedTypeHash{$type};
-    return 0;
+    return $type =~ /^SVGAnimated/;
 }
 
 sub GetSequenceType
@@ -548,16 +539,6 @@ sub ContentAttributeName
     return "WebCore::${namespace}::${contentAttributeName}Attr";
 }
 
-sub CanUseFastAttribute
-{
-    my ($generator, $attribute) = @_;
-    my $attributeType = $attribute->signature->type;
-    # HTMLNames::styleAttr cannot be used with fast{Get,Has}Attribute but we do not [Reflect] the
-    # style attribute.
-
-    return !$generator->IsSVGAnimatedType($attributeType);
-}
-
 sub GetterExpression
 {
     my ($generator, $implIncludes, $interfaceName, $attribute) = @_;
@@ -573,11 +554,7 @@ sub GetterExpression
         $functionName = "getURLAttribute";
     } elsif ($attribute->signature->type eq "boolean") {
         my $namespace = $generator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-        if ($generator->CanUseFastAttribute($attribute)) {
-            $functionName = "fastHasAttribute";
-        } else {
-            $functionName = "hasAttribute";
-        }
+        $functionName = "hasAttribute";
     } elsif ($attribute->signature->type eq "long") {
         $functionName = "getIntegralAttribute";
     } elsif ($attribute->signature->type eq "unsigned long") {
@@ -589,10 +566,10 @@ sub GetterExpression
         } elsif ($contentAttributeName eq "WebCore::HTMLNames::nameAttr") {
             $functionName = "getNameAttribute";
             $contentAttributeName = "";
-        } elsif ($generator->CanUseFastAttribute($attribute)) {
-            $functionName = "fastGetAttribute";
-        } else {
+        } elsif ($generator->IsSVGAnimatedType($attribute)) {
             $functionName = "getAttribute";
+        } else {
+            $functionName = "fastGetAttribute";
         }
     }
 
