@@ -22,8 +22,11 @@
 #if USE(EGL)
 
 #include "GraphicsContext3D.h"
-#include <cairo.h>
 #include <wtf/OwnPtr.h>
+
+#if USE(CAIRO)
+#include <cairo.h>
+#endif
 
 #if USE(OPENGL_ES_2)
 #include <GLES2/gl2.h>
@@ -220,8 +223,10 @@ GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, EGLSurfaceTyp
 
 GLContextEGL::~GLContextEGL()
 {
+#if USE(CAIRO)
     if (m_cairoDevice)
         cairo_device_destroy(m_cairoDevice);
+#endif
 
     EGLDisplay display = sharedEGLDisplay();
     if (m_context) {

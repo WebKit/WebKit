@@ -1,3 +1,13 @@
+2013-07-18  Alex Christensen  <achristensen@apple.com>
+
+        Fixed compile errors for non-Cairo platforms using EGL.
+        https://bugs.webkit.org/show_bug.cgi?id=118536
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/egl/GLContextEGL.cpp: Added #if USE(CAIRO) around cairo.h.
+        (WebCore::GLContextEGL::~GLContextEGL): Added #if USE(CAIRO) around cairo_device_destroy call. 
+
 2013-07-18  Jer Noble  <jer.noble@apple.com>
 
         New PDFPlugin doesn't support WebKitOmitPDFSupport, acts as if Plug-ins are off
