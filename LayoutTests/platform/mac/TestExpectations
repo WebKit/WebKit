@@ -1304,3 +1304,11 @@ webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.htm
 webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Pass Crash ]
 
 webkit.org/b/118820 fullscreen/full-screen-iframe-with-max-width-height.html [ Pass Failure ]
+
+webkit.org/b/118601 [ Debug ] mathml/presentation/bug95015.html [ Pass Crash ]
+webkit.org/b/118601 [ Debug ] mathml/presentation/scripts-width.html [ Pass Crash ]
+webkit.org/b/118601 [ Debug ] mathml/presentation/scripts-underover.html [ Pass Crash ]
+webkit.org/b/118601 [ Debug ] mathml/presentation/bug97990.html [ Pass Crash ]
+webkit.org/b/118601 [ Debug ] mathml/presentation/scripts-height.html [ Pass Crash ]
+webkit.org/b/118601 [ Debug ] mathml/presentation/scripts-mrow.html [ Pass Crash ]
+webkit.org/b/118601 [ Debug ] mathml/presentation/scripts-subsup.html [ Pass Crash ]
