@@ -1,5 +1,14 @@
 2013-07-18  Zalan Bujtas  <zalan@apple.com>
 
+        Unskip mathml tests after r152840.
+        https://bugs.webkit.org/show_bug.cgi?id=118842
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
+2013-07-18  Zalan Bujtas  <zalan@apple.com>
+
         Incorrect calculated width for mspace.
         https://bugs.webkit.org/show_bug.cgi?id=118601
 
