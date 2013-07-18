@@ -1,5 +1,24 @@
 2013-07-18  Dong-Gwan Kim  <donggwan.kim@samsung.com>
 
+        [EFL][WK2] Replace mouseClick with more meaningful method in test_ewk2_context_menu.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=118796
+
+        Reviewed by Christophe Dumez.
+
+        Some mouseClick methods are used in test_ewk2_context_menu.cpp.
+        But it is difficult to understand what they mean.
+        So i would like to replace those with more meaningful method for readability.
+
+        * UIProcess/API/efl/tests/test_ewk2_context_menu.cpp:
+        (EWK2ContextMenuTest::testContextMenu):
+        (EWK2ContextMenuTest::testContextMenuForRemoveAndAppend):
+        (EWK2ContextMenuTest::testContextMenuForSubmenu):
+        (EWK2ContextMenuTest::finishTest):
+        (EWK2ContextMenuTest::showContextMenu):
+        (TEST_F):
+
+2013-07-18  Dong-Gwan Kim  <donggwan.kim@samsung.com>
+
         [EFL][WK2] Replace mouseClick with more meaningful method in test_ewk2_file_chooser_request.cpp
         https://bugs.webkit.org/show_bug.cgi?id=118792
 
