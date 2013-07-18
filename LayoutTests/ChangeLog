@@ -1,3 +1,13 @@
+2013-07-17  Jacky Jiang  <zhajiang@blackberry.com>
+
+        Dereference null pointer crash in Length::decrementCalculatedRef()
+        https://bugs.webkit.org/show_bug.cgi?id=118686
+
+        Reviewed by Simon Fraser.
+
+        * transitions/transition-transform-translate-calculated-length-crash-expected.txt: Added.
+        * transitions/transition-transform-translate-calculated-length-crash.html: Added.
+
 2013-07-17  Stephanie Lewis  <slewis@apple.com>
 
         Skip crashing MathML tests while waiting for a fix for 

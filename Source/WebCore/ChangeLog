@@ -1,3 +1,24 @@
+2013-07-17  Jacky Jiang  <zhajiang@blackberry.com>
+
+        Dereference null pointer crash in Length::decrementCalculatedRef()
+        https://bugs.webkit.org/show_bug.cgi?id=118686
+
+        Reviewed by Simon Fraser.
+
+        Length(Calculated) won't insert any CalculationValue to CalculationValueHandleMap;
+        therefore, we dereference null CalculationValue pointer when the temporary
+        Length object goes out of the scope.
+        Length(Calculated) is not allowed as it doesn't make sense that we construct
+        a Calculated Length object with uninitialized calc expression.
+        The code just wants to blend with zero. To fix the bug, we can just blend
+        with Length(0, Fixed) here as we currently can blend different type units
+        and zero has the same behavior regardless of unit.
+
+        Test: transitions/transition-transform-translate-calculated-length-crash.html
+
+        * platform/graphics/transforms/TranslateTransformOperation.cpp:
+        (WebCore::TranslateTransformOperation::blend):
+
 2013-07-17  Tim Horton  <timothy_horton@apple.com>
 
         Update blocked/missing plug-in UI
