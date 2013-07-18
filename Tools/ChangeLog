@@ -1,3 +1,9 @@
+2013-07-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Build correction after r152861.
+
+        * WinLauncher/WinLauncher.cpp: Don't reference private header.
+
 2013-07-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Support in-band text tracks.

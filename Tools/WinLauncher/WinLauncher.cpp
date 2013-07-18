@@ -35,7 +35,6 @@
 #include <wtf/Platform.h>
 
 #if USE(CF)
-#include <CoreFoundation/CFPriv.h>
 #include <CoreFoundation/CFRunLoop.h>
 #endif
 
@@ -265,6 +264,10 @@ BOOL WINAPI DllMain(HINSTANCE dllInstance, DWORD reason, LPVOID)
 
     return TRUE;
 }
+
+#if USE(CF)
+void _CFRunLoopSetWindowsMessageQueueMask(CFRunLoopRef, uint32_t, CFStringRef);
+#endif
 
 extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HINSTANCE, LPTSTR, int nCmdShow)
 {
