@@ -1,3 +1,24 @@
+2013-07-18  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Ensure that the plugin layer is removed completely when the PluginProcess crashes
+        https://bugs.webkit.org/show_bug.cgi?id=118862
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        Add m_pluginProcessHasCrashed.
+
+        (WebKit::PluginView::platformLayer):
+        Don't return the plugin's layer if it has crashed.
+
+        (WebKit::PluginView::pluginProcessCrashed):
+        Set m_pluginProcessHasCrashed.
+        Cause a style recalc so that we rebuild the layer tree; our layer won't be included.
+
+        * WebProcess/Plugins/PluginView.h:
+        Add m_pluginProcessHasCrashed.
+
 2013-07-18  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13886443> Assertion failures in NetworkProcess in SandboxExtension::revoke when aborting SyncNetworkResourceLoader

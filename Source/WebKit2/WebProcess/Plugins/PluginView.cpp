@@ -276,6 +276,7 @@ PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<P
     , m_isWaitingForSynchronousInitialization(false)
     , m_isWaitingUntilMediaCanStart(false)
     , m_isBeingDestroyed(false)
+    , m_pluginProcessHasCrashed(false)
     , m_pendingURLRequestsTimer(RunLoop::main(), this, &PluginView::pendingURLRequestsTimerFired)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_npRuntimeObjectMap(this)
@@ -620,7 +621,7 @@ void PluginView::didInitializePlugin()
 PlatformLayer* PluginView::platformLayer() const
 {
     // The plug-in can be null here if it failed to initialize.
-    if (!m_isInitialized || !m_plugin)
+    if (!m_isInitialized || !m_plugin || m_pluginProcessHasCrashed)
         return 0;
         
     return m_plugin->pluginLayer();
@@ -1249,7 +1250,7 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
     RenderBoxModelObject* renderer = toRenderBoxModelObject(m_pluginElement->renderer());
     if (!renderer)
         return;
-    
+
     IntRect contentRect(dirtyRect);
     contentRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
     renderer->repaintRectangle(contentRect);
@@ -1413,13 +1414,17 @@ bool PluginView::isAcceleratedCompositingEnabled()
 
 void PluginView::pluginProcessCrashed()
 {
+    m_pluginProcessHasCrashed = true;
+
     if (!m_pluginElement->renderer())
         return;
 
     // FIXME: The renderer could also be a RenderApplet, we should handle that.
     if (!m_pluginElement->renderer()->isEmbeddedObject())
         return;
-        
+
+    m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
+
     RenderEmbeddedObject* renderer = toRenderEmbeddedObject(m_pluginElement->renderer());
     renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginCrashed);
     
