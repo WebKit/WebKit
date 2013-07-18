@@ -193,10 +193,6 @@
     [ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
 #endif
 
-    // Base64
-    [RaisesException] DOMString atob([TreatNullAs=NullString,Default=Undefined] optional DOMString string);
-    [RaisesException] DOMString btoa([TreatNullAs=NullString,Default=Undefined] optional DOMString string);
-
     [Replaceable,Conditional=CSS3_CONDITIONAL_RULES] readonly attribute DOMWindowCSS CSS;
 
     // Events
@@ -325,3 +321,4 @@
 };
 
 DOMWindow implements WindowTimers;
+DOMWindow implements WindowBase64;

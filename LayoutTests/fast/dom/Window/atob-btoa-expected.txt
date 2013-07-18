@@ -11,9 +11,9 @@ PASS window.btoa("abcd") is "YWJjZA=="
 PASS window.btoa("abcde") is "YWJjZGU="
 PASS window.btoa("abcdef") is "YWJjZGVm"
 PASS typeof window.btoa is "function"
-PASS window.btoa() is "dW5kZWZpbmVk"
+PASS window.btoa() threw exception TypeError: Not enough arguments.
 PASS window.btoa("") is ""
-PASS window.btoa(null) is ""
+PASS window.btoa(null) is "bnVsbA=="
 PASS window.btoa(undefined) is "dW5kZWZpbmVk"
 PASS window.btoa(window) is "W29iamVjdCBXaW5kb3dd"
 PASS window.btoa("éé") is "6ek="
@@ -22,9 +22,9 @@ PASS window.btoa("тест") threw exception Error: InvalidCharacterError: DOM E
 PASS window.btoa is 0
 PASS typeof window.btoa is "number"
 PASS typeof window.atob is "function"
-PASS window.atob() threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS window.atob() threw exception TypeError: Not enough arguments.
 PASS window.atob("") is ""
-PASS window.atob(null) is ""
+PASS window.atob(null) is "ée"
 PASS window.atob(undefined) threw exception Error: InvalidCharacterError: DOM Exception 5.
 PASS window.atob(" YQ==") threw exception Error: InvalidCharacterError: DOM Exception 5.
 PASS window.atob("YQ==\u000a") threw exception Error: InvalidCharacterError: DOM Exception 5.

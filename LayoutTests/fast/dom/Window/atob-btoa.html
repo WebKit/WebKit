@@ -19,9 +19,9 @@ shouldBe('window.btoa("abcde")', '"YWJjZGU="');
 shouldBe('window.btoa("abcdef")', '"YWJjZGVm"');
 
 shouldBe('typeof window.btoa', '"function"');
-shouldBe('window.btoa()', '"dW5kZWZpbmVk"');
+shouldThrow('window.btoa()', '"TypeError: Not enough arguments"');
 shouldBe('window.btoa("")', '""');
-shouldBe('window.btoa(null)', '""');
+shouldBe('window.btoa(null)', '"bnVsbA=="'); // Gets converted to "null" string.
 shouldBe('window.btoa(undefined)', '"dW5kZWZpbmVk"');
 shouldBe('window.btoa(window)', '"W29iamVjdCBXaW5kb3dd"'); // "[object Window]"
 shouldBe('window.btoa("éé")', '"6ek="');
@@ -32,9 +32,9 @@ shouldBe('window.btoa', '0');
 shouldBe('typeof window.btoa', '"number"');
 
 shouldBe('typeof window.atob', '"function"');
-shouldThrow('window.atob()'); // 'undefined' 
+shouldThrow('window.atob()', '"TypeError: Not enough arguments"');
 shouldBe('window.atob("")', '""');
-shouldBe('window.atob(null)', '""');
+shouldBe('window.atob(null)', '"\x9Eée"'); // Gets converted to "null" string.
 shouldThrow('window.atob(undefined)');
 shouldThrow('window.atob(" YQ==")');
 shouldThrow('window.atob("YQ==\\u000a")');

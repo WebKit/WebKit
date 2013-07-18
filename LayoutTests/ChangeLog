@@ -1,3 +1,17 @@
+2013-07-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Make atob() / btoa() argument non optional
+        https://bugs.webkit.org/show_bug.cgi?id=118844
+
+        Reviewed by Kentaro Hara.
+
+        Update and rebaseline fast/dom/Window/atob-btoa.html as atob() /
+        btoa() 's behavior has changed to match the specification and
+        the behavior in other browsers.
+
+        * fast/dom/Window/atob-btoa-expected.txt:
+        * fast/dom/Window/atob-btoa.html:
+
 2013-07-18  Frédéric Wang  <fred.wang@free.fr>
 
         Convert MathML fraction tests to reftests.

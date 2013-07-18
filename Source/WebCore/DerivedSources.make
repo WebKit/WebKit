@@ -464,6 +464,7 @@ BINDING_IDLS = \
     $(WebCore)/page/SpeechInputResult.idl \
     $(WebCore)/page/SpeechInputResultList.idl \
     $(WebCore)/page/WebKitPoint.idl \
+    $(WebCore)/page/WindowBase64.idl \
     $(WebCore)/page/WindowTimers.idl \
     $(WebCore)/page/WorkerNavigator.idl \
     $(WebCore)/plugins/DOMMimeType.idl \
