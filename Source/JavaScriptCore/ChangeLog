@@ -1,3 +1,12 @@
+2013-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        LLInt get_argument_by_val for JSVALUE64 stores into the array profile when it meant to store into the value profile
+        https://bugs.webkit.org/show_bug.cgi?id=118865
+
+        Reviewed by Mark Hahnenberg.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2013-07-18  Andreas Kling  <akling@apple.com>
 
         CodeBlock::m_argumentValueProfiles wastes a lot of memory.
