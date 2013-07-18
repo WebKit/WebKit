@@ -1,5 +1,20 @@
 2013-07-18  Dong-Gwan Kim  <donggwan.kim@samsung.com>
 
+        [EFL][WK2] Replace mouseClick with more meaningful method in test_ewk2_file_chooser_request.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=118792
+
+        Reviewed by Christophe Dumez.
+
+        Some mouseClick methods are used in test_ewk2_file_chooser_request.cpp.
+        But it is difficult to understand what they mean.
+        So i would like to replace those with more meaningful method for readability.
+
+        * UIProcess/API/efl/tests/test_ewk2_file_chooser_request.cpp:
+        (EWK2FileChooserRequestTest::clickFileInput):
+        (TEST_F):
+
+2013-07-18  Dong-Gwan Kim  <donggwan.kim@samsung.com>
+
         [EFL][WK2] Move all the static methods into EWK2TextCheckerTest in test_ewk2_text_checker.cpp
         https://bugs.webkit.org/show_bug.cgi?id=118790
 

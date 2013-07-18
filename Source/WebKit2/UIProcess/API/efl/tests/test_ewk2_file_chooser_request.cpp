@@ -61,6 +61,11 @@ protected:
         eina_stringshare_del(static_cast<char*>(data));
         }
     }
+
+    void clickFileInput()
+    {
+        mouseClick(15, 15);
+    }
 };
 
 TEST_F(EWK2FileChooserRequestTest, ewk_file_chooser_request_files_choose)
@@ -69,8 +74,7 @@ TEST_F(EWK2FileChooserRequestTest, ewk_file_chooser_request_files_choose)
     evas_object_smart_callback_add(webView(), "file,chooser,request", onFileChooserRequest, &request);
     ASSERT_TRUE(loadUrlSync(environment->urlForResource("file_chooser.html").data()));
 
-    // Click on the file input.
-    mouseClick(15, 15);
+    clickFileInput();
 
     // Wait for the file chooser request.
     while (!request)
@@ -108,8 +112,7 @@ TEST_F(EWK2FileChooserRequestTest, ewk_file_chooser_request_file_choose)
     evas_object_smart_callback_add(webView(), "file,chooser,request", onFileChooserRequest, &request);
     ASSERT_TRUE(loadUrlSync(environment->urlForResource("file_chooser.html").data()));
 
-    // Click on the file input.
-    mouseClick(15, 15);
+    clickFileInput();
 
     // Wait for the file chooser request.
     while (!request)
@@ -134,8 +137,7 @@ TEST_F(EWK2FileChooserRequestTest, ewk_file_chooser_request_file_cancel)
     evas_object_smart_callback_add(webView(), "file,chooser,request", onFileChooserRequest, &request);
     ASSERT_TRUE(loadUrlSync(environment->urlForResource("file_chooser.html").data()));
 
-    // Click on the file input.
-    mouseClick(15, 15);
+    clickFileInput();
 
     // Wait for the file chooser request.
     while (!request)
@@ -155,8 +157,8 @@ TEST_F(EWK2FileChooserRequestTest, ewk_file_chooser_request_file_cancel)
     // Default behavior is to cancel if the client does not act on the request.
     request = 0;
     evas_object_smart_callback_add(webView(), "file,chooser,request", onFileChooserRequest, &request);
-    // Click on the file input.
-    mouseClick(15, 15);
+
+    clickFileInput();
 
     // Wait for the file chooser request.
     while (!request)
