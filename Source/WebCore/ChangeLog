@@ -1,3 +1,18 @@
+2013-07-18  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        Only the first call to 'stop' method of AudioBufferSourceNode must be entertained.
+        https://bugs.webkit.org/show_bug.cgi?id=118776
+
+        Reviewed by Jer Noble.
+
+        Subsequent calls to 'stop' for a AudioSourceBufferNode throws an exception.
+        End time set by first 'stop' method is used for processing.
+
+        No new tests. audiobuffersource-exception.html is updated.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::stop):
+
 2013-07-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Simplify SVG animated type handling in the JSC bindings generator

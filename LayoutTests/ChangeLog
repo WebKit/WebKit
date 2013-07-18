@@ -1,3 +1,15 @@
+2013-07-18  Praveen R Jadhav  <praveen.j@samsung.com>
+
+        Only the first call to 'stop' method of AudioBufferSourceNode must be entertained.
+        https://bugs.webkit.org/show_bug.cgi?id=118776
+
+        Reviewed by Jer Noble.
+
+        Test case updated to check subsequent calls to 'stop' for a given AudioBufferSourceNode.
+
+        * webaudio/audiobuffersource-exception-expected.txt:
+        * webaudio/audiobuffersource-exception.html:
+
 2013-07-18  Zalan Bujtas  <zalan@apple.com>
 
         Unskip mathml tests after r152840.

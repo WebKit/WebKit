@@ -40,6 +40,9 @@ function runTest() {
     shouldThrow("bufferSource.start(0)", "'Error: InvalidStateError: DOM Exception 11'");
     bufferSource.stop(0);
 
+    // 'stop' should be called only once.
+    shouldThrow("bufferSource.stop(0)", "'Error: InvalidStateError: DOM Exception 11'");
+
     context.oncomplete = finishJSTest;
     context.startRendering();
 }
