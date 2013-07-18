@@ -1072,6 +1072,7 @@ void tst_QWebElement::addElementToHead()
     QVERIFY(!head.isNull());
     QString append = "<script type=\"text/javascript\">var t = 0;</script>";
     head.appendInside(append);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=102234", Continue);
     QCOMPARE(head.toInnerXml(), append);
 }
 

@@ -1,3 +1,24 @@
+2013-07-18  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt][WK1] Mark failing API tests as XFAIL
+
+        Reviewed by Csaba Osztrogonác.
+
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::widgetsRenderingThroughCache):
+        (tst_QGraphicsWebView::windowResizeEvent):
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::addElementToHead):
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::setHtmlWithImageResource):
+        (tst_QWebFrame::setHtmlWithStylesheetResource):
+        (tst_QWebFrame::setHtmlWithJSAlert):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::geolocationRequestJS):
+        (tst_QWebPage::popupFormSubmission):
+        (tst_QWebPage::originatingObjectInNetworkRequests):
+        (tst_QWebPage::testStopScheduledPageRefresh):
+
 2013-07-16  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt] Replace Nokia references.

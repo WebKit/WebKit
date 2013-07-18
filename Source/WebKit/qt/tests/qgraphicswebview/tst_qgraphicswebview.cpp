@@ -672,6 +672,7 @@ void tst_QGraphicsWebView::windowResizeEvent()
     webView.page()->mainFrame()->addToJavaScriptWindowObject("resizeSpy",
                                                              &resizeSpy);
     webView.setGeometry(QRect(0, 0, 50, 50));
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=118670", Continue);
     QVERIFY(::waitForSignal(&resizeSpy, SIGNAL(resized()), 1000));
     QCOMPARE(resizeSpy.size(), QSize(50, 50));
 

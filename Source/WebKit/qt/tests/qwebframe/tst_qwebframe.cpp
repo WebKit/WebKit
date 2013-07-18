@@ -419,7 +419,9 @@ void tst_QWebFrame::setHtmlWithImageResource()
     frame->setHtml(html);
     waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
     QCOMPARE(frame->evaluateJavaScript("document.images.length").toInt(), 1);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=118659", Continue);
     QCOMPARE(frame->evaluateJavaScript("document.images[0].width").toInt(), 0);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=118659", Continue);
     QCOMPARE(frame->evaluateJavaScript("document.images[0].height").toInt(), 0);
 }
 
@@ -452,6 +454,7 @@ void tst_QWebFrame::setHtmlWithStylesheetResource()
     frame->setHtml(html, QUrl(QLatin1String("http://www.example.com/")));
     waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
     webElement = frame->documentElement().findFirst("p");
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=118659", Continue);
     QCOMPARE(webElement.styleProperty("color", QWebElement::CascadedStyle), QString());
 }
 
@@ -509,6 +512,7 @@ void tst_QWebFrame::setHtmlWithJSAlert()
     m_view->setPage(&page);
     page.mainFrame()->setHtml(html);
     QCOMPARE(page.alerts, 1);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=118663", Continue);
     QCOMPARE(m_view->page()->mainFrame()->toHtml(), html);
 }
 

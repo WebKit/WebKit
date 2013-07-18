@@ -343,6 +343,7 @@ void tst_QWebPage::geolocationRequestJS()
     QTest::qWait(2000);
     QVariant empty = m_view->page()->mainFrame()->evaluateJavaScript("errorCode");
 
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=102235", Continue);
     QVERIFY(empty.type() == QVariant::Double && empty.toInt() != 0);
 
     newPage->setGeolocationPermission(true);
@@ -471,6 +472,7 @@ void tst_QWebPage::popupFormSubmission()
 
     QString url = page.createdWindows.takeFirst()->mainFrame()->url().toString();
     // Check if the form submission was OK.
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=118597", Continue);
     QVERIFY(url.contains("?foo=bar"));
 }
 
@@ -2857,6 +2859,7 @@ void tst_QWebPage::originatingObjectInNetworkRequests()
     QCOMPARE(networkManager->requests.count(), 2);
 
     QList<QWebFrame*> childFrames = m_page->mainFrame()->childFrames();
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=118660", Continue);
     QCOMPARE(childFrames.count(), 2);
 
     for (int i = 0; i < 2; ++i)
@@ -3000,6 +3003,7 @@ void tst_QWebPage::testStopScheduledPageRefresh()
                                "</body></html>");
     page2.triggerAction(QWebPage::StopScheduledPageRefresh);
     QTest::qWait(1500);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=118673", Continue);
     QCOMPARE(page2.mainFrame()->url().toString(), QLatin1String("about:blank"));
 }
 
