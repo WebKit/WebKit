@@ -1,3 +1,16 @@
+2013-07-18  Andreas Kling  <akling@apple.com>
+
+        CodeBlock::m_argumentValueProfiles wastes a lot of memory.
+        <http://webkit.org/b/118852>
+        <rdar://problem/14481659>
+
+        Reviewed by Anders Carlsson.
+
+        Add Vector::resizeToFit(size), like resize() but without growth padding.
+
+        * wtf/Vector.h:
+        (WTF::::resizeToFit):
+
 2013-07-17  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a thread safety assertion when creating an AtomicString from a StringImpl

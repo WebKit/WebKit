@@ -2018,7 +2018,7 @@ void CodeBlock::setNumParameters(int newValue)
     m_numParameters = newValue;
 
 #if ENABLE(VALUE_PROFILER)
-    m_argumentValueProfiles.resize(newValue);
+    m_argumentValueProfiles.resizeToFit(newValue);
 #endif
 }
 
@@ -2501,8 +2501,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
     m_callLinkInfos.shrinkToFit();
 #endif
 #if ENABLE(VALUE_PROFILER)
-    if (shrinkMode == EarlyShrink)
-        m_argumentValueProfiles.shrinkToFit();
     m_rareCaseProfiles.shrinkToFit();
     m_specialFastCaseProfiles.shrinkToFit();
 #endif
