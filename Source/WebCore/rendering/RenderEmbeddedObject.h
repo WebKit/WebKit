@@ -44,6 +44,7 @@ public:
         InsecurePluginVersion,
     };
     void setPluginUnavailabilityReason(PluginUnavailabilityReason);
+    void setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason, const String& description);
     bool showsUnavailablePluginIndicator() const;
 
     // FIXME: This belongs on HTMLObjectElement.
@@ -91,7 +92,7 @@ private:
     void setUnavailablePluginIndicatorIsPressed(bool);
     bool isInUnavailablePluginIndicator(MouseEvent*) const;
     bool isInUnavailablePluginIndicator(const LayoutPoint&) const;
-    bool getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, Font&, TextRun&, float& textWidth) const;
+    bool getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, FloatRect& arrowRect, Font&, TextRun&, float& textWidth) const;
     LayoutRect replacementTextRect(const LayoutPoint&) const;
 
     virtual bool canHaveChildren() const;
@@ -108,6 +109,7 @@ private:
     bool m_unavailablePluginIndicatorIsPressed;
     bool m_mouseDownWasInUnavailablePluginIndicator;
     RenderObjectChildList m_children;
+    String m_unavailabilityDescription;
 };
 
 inline RenderEmbeddedObject* toRenderEmbeddedObject(RenderObject* object)

@@ -1,3 +1,17 @@
+2013-07-17  Tim Horton  <timothy_horton@apple.com>
+
+        Update blocked/missing plug-in UI
+        https://bugs.webkit.org/show_bug.cgi?id=118347
+        <rdar://problem/14209318>
+
+        Reviewed by Sam Weinig.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+        Match new WKPageLoaderClient entry.
+
 2013-07-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r152701, r152703, r152739, r152754,
