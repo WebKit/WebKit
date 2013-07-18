@@ -5,85 +5,85 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Testing 'undefined.a++'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined.a')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a')" should be true. Was false.
 
 Testing '++undefined.a'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined.a')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a')" should be true. Was false.
 
 Testing 'undefined[0]++'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
 
 Testing '++undefined[1]'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined[1]')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[1]')" should be true. Was false.
 
 Testing 'undefined.b'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined.b')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.b')" should be true. Was false.
 
 Testing 'undefined[0]'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
 
 Testing 'undefined.b += 1'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined.b')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.b')" should be true. Was false.
 
 Testing 'undefined[0] += 1'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
 
 Testing 'undefined()'
-PASS ex.message == "'undefined' is not a function (evaluating 'undefined()')" is true
+FAIL ex.message == "'undefined' is not a function (evaluating 'undefined()')" should be true. Was false.
 
 Testing 'new undefined()'
-PASS ex.message == "'undefined' is not a constructor (evaluating 'new undefined()')" is true
+FAIL ex.message == "'undefined' is not a constructor (evaluating 'new undefined()')" should be true. Was false.
 
 Testing '({}).b()'
-PASS ex.message == "'undefined' is not a function (evaluating '({}).b()')" is true
+FAIL ex.message == "'undefined' is not a function (evaluating '({}).b()')" should be true. Was false.
 
 Testing 'new {}.b()'
-PASS ex.message == "'undefined' is not a constructor (evaluating 'new {}.b()')" is true
+FAIL ex.message == "'undefined' is not a constructor (evaluating 'new {}.b()')" should be true. Was false.
 
 Testing '1()'
-PASS ex.message == "'1' is not a function (evaluating '1()')" is true
+FAIL ex.message == "'1' is not a function (evaluating '1()')" should be true. Was false.
 
 Testing 'new 1()'
-PASS ex.message == "'1' is not a constructor (evaluating 'new 1()')" is true
+FAIL ex.message == "'1' is not a constructor (evaluating 'new 1()')" should be true. Was false.
 
 Testing 'throw { message : 'thrown object' }'
 PASS ex.message == "thrown object" is true
 
 Testing '1 in undefined'
-PASS ex.message == "'undefined' is not a valid argument for 'in' (evaluating '1 in undefined')" is true
+FAIL ex.message == "'undefined' is not a valid argument for 'in' (evaluating '1 in undefined')" should be true. Was false.
 
 Testing '1 instanceof undefined'
-PASS ex.message == "'undefined' is not a valid argument for 'instanceof' (evaluating '1 instanceof undefined')" is true
+FAIL ex.message == "'undefined' is not a valid argument for 'instanceof' (evaluating '1 instanceof undefined')" should be true. Was false.
 
 Testing 'for (undefined.b in [1]) {}'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined.b')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.b')" should be true. Was false.
 
 Testing 'for (undefined[0] in [1]) {}'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
 
 Testing 'undefined.a = 5'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined.a = 5')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a = 5')" should be true. Was false.
 
 Testing 'undefined[0] = 5'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined[0] = 5')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0] = 5')" should be true. Was false.
 
 Testing '({b:undefined}).b.a = 5'
-PASS ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b.a = 5')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b.a = 5')" should be true. Was false.
 
 Testing '({b:undefined}).b[0] = 5'
-PASS ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b[0] = 5')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b[0] = 5')" should be true. Was false.
 
 Testing 'undefined.a += 5'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined.a')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a')" should be true. Was false.
 
 Testing 'undefined[0] += 5'
-PASS ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
 
 Testing '({b:undefined}).b.a += 5'
-PASS ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b.a')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b.a')" should be true. Was false.
 
 Testing '({b:undefined}).b[0] += 5'
-PASS ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b[0]')" is true
+FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b[0]')" should be true. Was false.
 PASS successfullyParsed is true
 
 TEST COMPLETE

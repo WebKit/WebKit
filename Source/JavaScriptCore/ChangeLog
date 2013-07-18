@@ -1,3 +1,60 @@
+2013-07-18  Chris Curtis  <chris_curtis@apple.com>
+
+        Fixed ASSERTION FAILED: callFrame == vm->topCallFrame in JSC::Interpreter::addStackTraceIfNecessary
+        https://bugs.webkit.org/show_bug.cgi?id=118498
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/JITStubs.cpp:
+        (throwExceptionFromOpCall):
+        Created new throwExceptionFromOpCall that takes in a functor that contains
+        a function pointer (to create the errorObject) instead of a JSValue. Inside
+        of throwExceptionFromOpCall the topCallFrame is being rolled back in order
+        to handle the error throw. By passing the function pointer in, we can defer
+        the creation of the error object until after topCallFrame has been rolled 
+        back. This allows the error object to be created with the appropriate top 
+        frame.
+
+        DEFINE_STUB_FUNCTION(void*, stack_check):
+        DEFINE_STUB_FUNCTION(void*, op_call_arityCheck):
+        DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck):
+        DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_NotJSFunction):
+        DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct):
+
+        (JSC::ErrorFunctor::~ErrorFunctor):
+        (JSC::ErrorWithExecFunctor::ErrorWithExecFunctor):
+        (JSC::ErrorWithExecFunctor::operator()):
+        (JSC::ErrorWithExecAndCalleeFunctor::ErrorWithExecAndCalleeFunctor):
+        (JSC::ErrorWithExecAndCalleeFunctor::operator()):
+        (JSC::ErrorWithExceptionFunctor::ErrorWithExceptionFunctor):
+        (JSC::ErrorWithExceptionFunctor::operator()):
+        (JSC::throwExceptionFromOpCall):
+
+        In order to eliminate the need to duplicate code, an error functor was 
+        created for the 3 different throwExceptionFromOpCall handles. 
+        1. The exception needs to be created, and the function pointer takes 1 
+            parameter(callFrame->callerFrame()).
+        2. The exception needs to be created, and the function pointer takes 2 
+            parameters (callFrame->callerFrame(), callFrame.calleeAsValue()).
+        3. The exception is already created. In this case, At the time when 
+            the error functor is called, vm.exception is returned. 
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::errorDescriptionForValue):
+        (JSC::createError):
+        (JSC::createInvalidParameterError):
+        (JSC::createNotAConstructorError):
+        (JSC::createNotAFunctionError):
+        (JSC::createNotAnObjectError):
+        * runtime/ExceptionHelpers.h:
+
+        The function toString() was being used to stringify an object for an exception
+        message. If the user wrote a toString() for that object, then the system would 
+        continue to evaluate that code. A new helper function was created to prevent 
+        the system to continue execution and exception creation from that execution.
+
 2013-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt get_argument_by_val for JSVALUE64 stores into the array profile when it meant to store into the value profile

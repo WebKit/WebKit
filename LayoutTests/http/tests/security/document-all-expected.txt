@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 1: TypeError: '[object WindowConstructor]' is not a function (evaluating 'obj.alert.constructor("return document.body.innerHTML")')
+CONSOLE MESSAGE: line 1: TypeError: WindowConstructor is not a function (evaluating 'obj.alert.constructor("return document.body.innerHTML")')
 

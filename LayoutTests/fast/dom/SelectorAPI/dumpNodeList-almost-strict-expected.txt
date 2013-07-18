@@ -47,38 +47,38 @@ length: 0
 Document.querySelector
 
 [object HTMLDivElement]
-TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: null is not an object (evaluating 'node.querySelector(selectorString).dump')
 [object HTMLDivElement]
 [object HTMLDivElement]
 [object HTMLDivElement]
 Error: SyntaxError: DOM Exception 12
 Error: SyntaxError: DOM Exception 12
-TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
-TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: null is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: null is not an object (evaluating 'node.querySelector(selectorString).dump')
 
 Element.querySelector
 
-TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: null is not an object (evaluating 'node.querySelector(selectorString).dump')
 [object HTMLDivElement]
-TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: null is not an object (evaluating 'node.querySelector(selectorString).dump')
 [object HTMLDivElement]
 [object HTMLDivElement]
 [object HTMLDivElement]
 Error: SyntaxError: DOM Exception 12
 Error: SyntaxError: DOM Exception 12
-TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
-TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: null is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: null is not an object (evaluating 'node.querySelector(selectorString).dump')
 
 DocumentFragment.querySelector
 
 [object HTMLDivElement]
 [object HTMLDivElement]
-TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: null is not an object (evaluating 'node.querySelector(selectorString).dump')
 [object HTMLDivElement]
 [object HTMLDivElement]
 [object HTMLDivElement]
 Error: SyntaxError: DOM Exception 12
 Error: SyntaxError: DOM Exception 12
-TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
-TypeError: 'null' is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: null is not an object (evaluating 'node.querySelector(selectorString).dump')
+TypeError: null is not an object (evaluating 'node.querySelector(selectorString).dump')
 

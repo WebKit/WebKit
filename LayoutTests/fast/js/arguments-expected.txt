@@ -138,7 +138,7 @@ PASS argumentsConstUndefined() is '[object Arguments]'
 PASS argumentCalleeInException() is argumentCalleeInException
 PASS shadowedArgumentsApply([true]) is true
 PASS shadowedArgumentsLength([]) is 0
-PASS shadowedArgumentsLength() threw exception TypeError: 'undefined' is not an object (evaluating 'arguments.length').
+PASS shadowedArgumentsLength() threw exception TypeError: undefined is not an object (evaluating 'arguments.length').
 PASS shadowedArgumentsCallee([]) is undefined.
 PASS shadowedArgumentsIndex([true]) is true
 PASS descriptor.value is "one"

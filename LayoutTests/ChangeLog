@@ -1,3 +1,104 @@
+2013-07-18  Chris Curtis  <chris_curtis@apple.com>
+
+        Fixed ASSERTION FAILED: callFrame == vm->topCallFrame in JSC::Interpreter::addStackTraceIfNecessary
+        https://bugs.webkit.org/show_bug.cgi?id=118498
+
+        Reviewed by Geoffrey Garen.
+
+        New Tests to see if JSC evaluates user code after exception creation
+
+        * fast/js/not-a-constructor-to-string-expected.txt: Added.
+        * fast/js/not-a-constructor-to-string.html: Added.
+        * fast/js/not-a-function-to-string-expected.txt: Added.
+        * fast/js/not-a-function-to-string.html: Added.
+
+        Modified test output of the object that was being evaluated at the time of the 
+        error. Only the error message has changed.
+
+        * fast/dom/MutationObserver/mutation-record-constructor-expected.txt:
+        * fast/dom/NodeList/nodelist-item-call-as-function-expected.txt:
+        * fast/dom/Range/getClientRects-expected.txt:
+        * fast/dom/SelectorAPI/dumpNodeList-almost-strict-expected.txt:
+        * fast/dom/SelectorAPI/dumpNodeList-expected.txt:
+        * fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * fast/dom/setPrimitiveValue-exceptions-expected.txt:
+        * fast/events/window-onerror-exception-in-attr-expected.txt:
+        * fast/forms/select-namedItem-expected.txt:
+        * fast/js/arguments-expected.txt:
+        * fast/js/array-prototype-properties-expected.txt:
+        * fast/js/basic-strict-mode-expected.txt:
+        * fast/js/date-toisostring-expected.txt:
+        * fast/js/delete-getters-setters-expected.txt:
+        * fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt:
+        * fast/js/dfg-compare-final-object-to-final-object-or-other-when-both-proven-final-object-expected.txt:
+        * fast/js/dfg-compare-final-object-to-final-object-or-other-when-proven-final-object-expected.txt:
+        * fast/js/dfg-inline-arguments-use-from-all-the-places-broken-expected.txt:
+        * fast/js/dfg-peephole-compare-final-object-to-final-object-or-other-when-both-proven-final-object-expected.txt:
+        * fast/js/dfg-peephole-compare-final-object-to-final-object-or-other-when-proven-final-object-expected.txt:
+        * fast/js/exception-expression-offset-expected.txt:
+        * fast/js/exception-for-nonobject-expected.txt:
+        * fast/js/exception-thrown-from-new-expected.txt:
+        * fast/js/function-bind-expected.txt:
+        * fast/js/instance-of-immediates-expected.txt:
+        * fast/js/object-prototype-properties-expected.txt:
+        * fast/regex/cross-frame-callable-expected.txt:
+        * fast/xsl/transform-xhr-doc-expected.txt:
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+        * http/tests/security/document-all-expected.txt:
+        * http/tests/security/srcdoc-in-sandbox-cannot-access-parent-expected.txt:
+        * http/tests/security/window-named-proto-expected.txt:
+        * inspector/console/console-exception-stack-traces-expected.txt:
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-15c-expected.txt:
+        * platform/efl/css3/selectors3/xml/css3-modsel-15c-expected.txt:
+        * platform/efl/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-15c-expected.txt:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-15c-expected.txt:
+        * platform/gtk/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/gtk/svg/custom/createelement-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt:
+        * platform/mac-wk2/editing/spelling/markers-expected.txt:
+        * platform/mac-wk2/plugins/npruntime/object-from-destroyed-plugin-expected.txt: Added.
+        * platform/mac-wk2/plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt: Added.
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-15c-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-15c-expected.txt:
+        * platform/mac/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt:
+        * platform/qt/css3/selectors3/xhtml/css3-modsel-15c-expected.txt:
+        * platform/qt/css3/selectors3/xml/css3-modsel-15c-expected.txt:
+        * platform/qt/svg/custom/createelement-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt:
+        * platform/win/fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * plugins/npruntime/object-from-destroyed-plugin-expected.txt:
+        * plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt:
+        * plugins/npruntime/plugin-scriptable-object-invoke-default-expected.txt:
+        * sputnik/Conformance/08_Types/8.6_The_Object_Type/8.6.2_Internal_Properties_and_Methods/S8.6.2_A7-expected.txt:
+        * sputnik/Conformance/13_Function_Definition/S13_A17_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/S15.1_A1_T1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/S15.1_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/S15.1_A2_T1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.2_Object.prototype.toString/S15.2.4.2_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.3_Object.prototype.toLocaleString/S15.2.4.3_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.4_Object.prototype.valueOf/S15.2.4.4_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.5_Object.prototype.hasOwnProperty/S15.2.4.5_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.6_Object.prototype.isPrototypeOf/S15.2.4.6_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/15.2.4.7_Object.prototype.propertyIsEnumerable/S15.2.4.7_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/S15.2.4_A3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.4/S15.2.4_A4-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.2_Function.prototype.toString/S15.3.4.2_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/S15.3.4_A5-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.12_String.prototype.search/S15.5.4.12_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.13_String.prototype.slice/S15.5.4.13_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.15_String.prototype.substring/S15.5.4.15_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.17_String.prototype.toLocaleLowerCase/S15.5.4.17_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.7_String.prototype.indexOf/S15.5.4.7_A7-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.8_String.prototype.lastIndexOf/S15.5.4.8_A7-expected.txt:
+        * svg/custom/createelement-expected.txt:
+        * svg/custom/use-nested-missing-target-removed-expected.txt:
+        * svg/dom/svgpath-out-of-bounds-getPathSeg-expected.txt:
+
 2013-07-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Make atob() / btoa() argument non optional

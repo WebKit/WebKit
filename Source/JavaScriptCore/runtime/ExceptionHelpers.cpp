@@ -84,40 +84,59 @@ JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
     return createReferenceError(exec, message);
 }
     
-JSObject* createInvalidParameterError(ExecState* exec, const char* op, JSValue value)
+JSString* errorDescriptionForValue(ExecState* exec, JSValue v)
 {
-    String errorMessage = makeString("'", value.toString(exec)->value(exec), "' is not a valid argument for '", op, "'");
-    JSObject* exception = createTypeError(exec, errorMessage);
+    VM& vm = exec->vm();
+    if (v.isNull())
+        return vm.smallStrings.nullString();
+    if (v.isUndefined())
+        return vm.smallStrings.undefinedString();
+    if (v.isInt32())
+        return jsString(&vm, vm.numericStrings.add(v.asInt32()));
+    if (v.isDouble())
+        return jsString(&vm, vm.numericStrings.add(v.asDouble()));
+    if (v.isTrue())
+        return vm.smallStrings.trueString();
+    if (v.isFalse())
+        return vm.smallStrings.falseString();
+    if (v.isString())
+        return jsCast<JSString*>(v.asCell());
+    if (v.isObject()) {
+        CallData callData;
+        JSObject* object = asObject(v);
+        if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
+            return vm.smallStrings.functionString();
+    }
+    return jsString(exec, asObject(v)->methodTable()->className(asObject(v)));
+}
+    
+JSObject* createError(ExecState* exec, ErrorFactory errorFactory, JSValue value, const String& message)
+{
+    String errorMessage = makeString(errorDescriptionForValue(exec, value)->value(exec), " ", message);
+    JSObject* exception = errorFactory(exec, errorMessage);
     ASSERT(exception->isErrorInstance());
     static_cast<ErrorInstance*>(exception)->setAppendSourceToMessage();
     return exception;
+}
+
+JSObject* createInvalidParameterError(ExecState* exec, const char* op, JSValue value)
+{
+    return createError(exec, createTypeError, value, makeString("is not a valid argument for '", op, "'"));
 }
 
 JSObject* createNotAConstructorError(ExecState* exec, JSValue value)
 {
-    String errorMessage = makeString("'", value.toString(exec)->value(exec), "' is not a constructor");
-    JSObject* exception = createTypeError(exec, errorMessage);
-    ASSERT(exception->isErrorInstance());
-    static_cast<ErrorInstance*>(exception)->setAppendSourceToMessage();
-    return exception;
+    return createError(exec, createTypeError, value, "is not a constructor");
 }
 
 JSObject* createNotAFunctionError(ExecState* exec, JSValue value)
 {
-    String errorMessage = makeString("'", value.toString(exec)->value(exec), "' is not a function");
-    JSObject* exception = createTypeError(exec, errorMessage);
-    ASSERT(exception->isErrorInstance());
-    static_cast<ErrorInstance*>(exception)->setAppendSourceToMessage();
-    return exception;
+    return createError(exec, createTypeError, value, "is not a function");
 }
 
 JSObject* createNotAnObjectError(ExecState* exec, JSValue value)
 {
-    String errorMessage = makeString("'", value.toString(exec)->value(exec), "' is not an object");
-    JSObject* exception = createTypeError(exec, errorMessage);
-    ASSERT(exception->isErrorInstance());
-    static_cast<ErrorInstance*>(exception)->setAppendSourceToMessage();
-    return exception;
+    return createError(exec, createTypeError, value, "is not an object");
 }
 
 JSObject* createErrorForInvalidGlobalAssignment(ExecState* exec, const String& propertyName)

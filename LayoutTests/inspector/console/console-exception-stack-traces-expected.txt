@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 16: URIError: URI error
-CONSOLE MESSAGE: line 21: TypeError: '1' is not a function (evaluating '1()')
+CONSOLE MESSAGE: line 21: TypeError: 1 is not a function (evaluating '1()')
 CONSOLE MESSAGE: line 26: RangeError: Array size is not a small enough positive integer.
 CONSOLE MESSAGE: line 31: SyntaxError: Expected token '}'
 CONSOLE MESSAGE: line 36: ReferenceError: Can't find variable: doesNotExist
