@@ -237,6 +237,17 @@
         * transitions/transition-transform-translate-calculated-length-crash-expected.txt: Added.
         * transitions/transition-transform-translate-calculated-length-crash.html: Added.
 
+2013-07-18  Stephanie Lewis  <slewis@apple.com>
+
+        Compositing pattern tests fail on Lion WK1 Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=118870
+
+        Unreviewed.
+
+        Update Lion expectations after http://trac.webkit.org/changeset/152470
+
+        * platform/mac-lion/TestExpectations:
+
 2013-07-17  Stephanie Lewis  <slewis@apple.com>
 
         Skip crashing MathML tests while waiting for a fix for 

@@ -148,3 +148,11 @@ http/tests/cache/partitioned-cache.html
 http/tests/cache/partitioned-cache-iframe.html
 
 webkit.org/b/118480 fast/text/international/synthesized-italic-vertical-latin.html [ Failure ]
+
+webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing-add-text.html [ ImageOnlyFailure ]
+webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure ]
+webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
+webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure ] 
+webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure ]
+webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]   
+webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing.html [ ImageOnlyFailure ]
