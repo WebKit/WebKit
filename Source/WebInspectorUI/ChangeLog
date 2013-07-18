@@ -1,3 +1,13 @@
+2013-07-17  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: Fix a typo in WebInspector.loaded
+        https://bugs.webkit.org/show_bug.cgi?id=118834
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Main.js:
+        (WebInspector.loaded):
+
 2013-07-16  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: InspectorFrontendHost is undefined

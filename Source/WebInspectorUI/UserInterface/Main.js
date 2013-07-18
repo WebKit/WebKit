@@ -106,7 +106,7 @@ WebInspector.loaded = function()
 
     // Create settings.
     this._lastSelectedNavigationSidebarPanelSetting = new WebInspector.Setting("last-selected-navigation-sidebar-panel", "resource");
-    this._navigationSidebarCollapsedSetting = new WebInspector.Setting("navigation-sidebar-collasped", false);
+    this._navigationSidebarCollapsedSetting = new WebInspector.Setting("navigation-sidebar-collapsed", false);
     this._navigationSidebarWidthSetting = new WebInspector.Setting("navigation-sidebar-width", null);
 
     this._lastSelectedDetailsSidebarPanelSetting = new WebInspector.Setting("last-selected-details-sidebar-panel", null);
