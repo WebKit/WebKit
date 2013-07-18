@@ -238,7 +238,14 @@ void WebProcess::updateActivePages()
             mainFrameOriginString = mainFrameOrigin->toRawString();
         else
             mainFrameOriginString = KURL(KURL(), mainFrame->url()).protocol() + ':'; // toRawString() is not supposed to work with unique origins, and would just return "://".
-        CFArrayAppendValue(activePageURLs.get(), userVisibleString([NSURL URLWithString:mainFrameOriginString]));
+
+        NSURL *originAsNSURL = [NSURL URLWithString:mainFrameOriginString];
+        // +[NSURL URLWithString:] returns nil when its argument is malformed. It's unclear how we can possibly have a malformed URL here,
+        // but it happens in practice according to <rdar://problem/14173389>. Leaving an assertion in to catch a reproducible case.
+        ASSERT(originAsNSURL);
+        NSString *userVisibleOriginString = originAsNSURL ? userVisibleString(originAsNSURL) : @"(null)";
+
+        CFArrayAppendValue(activePageURLs.get(), userVisibleOriginString);
     }
     WKSetApplicationInformationItem(kLSActivePageUserVisibleOriginsKey, activePageURLs.get());
 #endif
