@@ -790,14 +790,17 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
     Image* image = getImage(element);
     if (state.type == DragSourceActionSelection) {
         if (!clipboard->hasData()) {
+            RefPtr<Range> selectionRange = src->selection()->toNormalizedRange();
+            ASSERT(selectionRange);
+
+            src->editor().willWriteSelectionToPasteboard(selectionRange.get());
+
             if (enclosingTextFormControl(src->selection()->start()))
                 clipboard->writePlainText(src->editor().selectedTextForClipboard());
-            else {
-                RefPtr<Range> selectionRange = src->selection()->toNormalizedRange();
-                ASSERT(selectionRange);
-
+            else
                 clipboard->writeRange(selectionRange.get(), src);
-            }
+
+            src->editor().didWriteSelectionToPasteboard();
         }
         m_client->willPerformDragSourceAction(DragSourceActionSelection, dragOrigin, clipboard);
         if (!dragImage) {
