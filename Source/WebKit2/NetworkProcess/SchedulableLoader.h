@@ -88,6 +88,7 @@ private:
 
     Vector<RefPtr<SandboxExtension>> m_requestBodySandboxExtensions;
     Vector<RefPtr<SandboxExtension>> m_resourceSandboxExtensions;
+    bool m_sandboxExtensionsAreConsumed;
 
     RefPtr<NetworkConnectionToWebProcess> m_connection;
     

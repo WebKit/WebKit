@@ -1,3 +1,28 @@
+2013-07-18  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13886443> Assertion failures in NetworkProcess in SandboxExtension::revoke when aborting SyncNetworkResourceLoader
+        <rdar://problem/13826348> ASSERT(!m_useCount) fails in NetworkProcess at SandboxExtension::~SandboxExtension
+        https://bugs.webkit.org/show_bug.cgi?id=118855
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFail):
+        Moved sandbox extension invalidation to cleanup() meaning that we won't fail to
+        do this when aborting a loader that currently loading from network.
+    
+        * NetworkProcess/SchedulableLoader.cpp:
+        (WebKit::SchedulableLoader::SchedulableLoader):
+        (WebKit::SchedulableLoader::consumeSandboxExtensions):
+        (WebKit::SchedulableLoader::invalidateSandboxExtensions):
+        * NetworkProcess/SchedulableLoader.h:
+        Keep track of whether sandbox extensions are consumed, we don't want to revoke
+        extensions that were never consumed (as used to be the case with sync loaders,
+        and would be with async ones after the above fix). Also, get rid of extensions
+        immediately when invalidating, we won't need them again.
+
 2013-07-18  Tim Horton  <timothy_horton@apple.com>
 
         Remove PDFViewController and WKView "custom representations"
