@@ -1,3 +1,16 @@
+2013-07-18  Timothy Hatcher  <timothy@apple.com>
+
+        Add extract-localizable-js-strings and use it for WebInspectorUI.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118851
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/extract-localizable-js-strings: Added.
+        * Scripts/extract-localizable-strings: Drive-by-fix: disable deprecated warnings about "goto".
+        * Scripts/update-webkit-localizable-strings: Use extract-localizable-js-strings for
+        the WebInspectorUI project.
+
 2013-07-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Build correction #2 after r152861.

@@ -43,6 +43,7 @@
 # The exceptions file has a list of strings in quotes, filenames, and filename/string pairs separated by :.
 
 use strict;
+no warnings 'deprecated';
 
 sub UnescapeHexSequence($);
 
