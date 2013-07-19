@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <title>mfenced-mi</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- The <mfenced> element should be equivalent to its "expanded" form with
+         <mrow> and <mo> elements, as described in the MathML specification.
+         The MathML operator dictionary defines '(', ')', '{', '}' as fences,
+         so we don't need an explicit "fence" attribute on the <mo> elements.-->
+    <!-- FIXME: <mfenced> and its expanded form do not use the same spacing,
+         so -webkit-margin-start and -webkit-margin-end are currently set
+         explicitly below. See bug 118843. -->
+
+    <p>
+      <math>
+        <mrow>
+          <mo>(</mo>
+          <mrow>
+            <mi>x</mi>
+            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">,</mo>
+            <mi>y</mi>
+            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">,</mo>
+            <mi>z</mi>
+          </mrow>
+          <mo>)</mo>
+        </mrow>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mrow>
+          <mo>{</mo>
+          <mrow>
+            <mi>x</mi>
+            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">1</mo>
+            <mi>y</mi>
+            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">2</mo>
+            <mi>z</mi>
+          </mrow>
+          <mo>}</mo>
+        </mrow>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mrow>
+          <mo>(</mo>
+          <mrow>
+            <mi>x</mi>
+            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">1</mo>
+            <mi>y</mi>
+            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">2</mo>
+            <mi>z</mi>
+            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">3</mo>
+            <mi>u</mi>
+            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">3</mo>
+            <mi>v</mi>
+            <mo separator="true" style="-webkit-margin-start: 0; -webkit-margin-end: .25em;">3</mo>
+            <mi>w</mi>
+          </mrow>
+          <mo>)</mo>
+        </mrow>
+      </math>
+    </p>
+
+  </body>
+</html>

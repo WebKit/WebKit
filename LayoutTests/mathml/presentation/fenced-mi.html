@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <title>mfenced-mi</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- Test default attribute values. -->
+    <p>
+      <math>
+        <mfenced><mi>x</mi><mi>y</mi><mi>z</mi></mfenced>
+      </math>
+    </p>
+
+    <!-- Test for open, close and separators. The third separator '3' should
+         be ignored. -->
+    <p>    
+      <math>
+        <mfenced separators="123" open="{" close="}">
+          <mi>x</mi><mi>y</mi><mi>z</mi>
+        </mfenced>
+      </math>
+    </p>
+
+    <!-- Test for open, close and separators. The third separator '3' should
+         be repeated. -->
+    <p>    
+      <math>
+        <mfenced separators="123">
+          <mi>x</mi><mi>y</mi><mi>z</mi><mi>u</mi><mi>v</mi><mi>w</mi>
+        </mfenced>
+      </math>
+    </p>
+
+  </body>
+</html>

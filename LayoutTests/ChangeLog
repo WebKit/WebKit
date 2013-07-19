@@ -1,3 +1,78 @@
+2013-07-19  Frédéric Wang  <fred.wang@free.fr>
+
+        More conversions from MathML pixel tests to reftests.
+        https://bugs.webkit.org/show_bug.cgi?id=118853
+
+        Reviewed by Chris Fleizach.
+
+        * mathml/presentation/fenced-expected.html: Added.
+        * mathml/presentation/fenced-mi-expected.html: Added.
+        * mathml/presentation/fenced-mi.html: Added.
+        * mathml/presentation/fenced-mi.xhtml: Removed.
+        * mathml/presentation/fenced.html: Added.
+        * mathml/presentation/fenced.xhtml: Removed.
+        * mathml/presentation/mroot-pref-width-expected.html: Added.
+        * mathml/presentation/mroot-pref-width.html:
+        * mathml/presentation/row-alignment.xhtml: Removed.
+        * mathml/presentation/style-border-padding-background-expected.html: Added.
+        * mathml/presentation/style-border-padding-background.html: Added.
+        * mathml/presentation/style-color-sqrt-expected-mismatch.html: Added.
+        * mathml/presentation/style-color-sqrt.html: Added.
+        * mathml/presentation/style.xhtml: Removed.
+        * mathml/presentation/tables-columnalign-expected.html: Added.
+        * mathml/presentation/tables-columnalign.html: Added.
+        * mathml/presentation/tables-simple-expected.html: Added.
+        * mathml/presentation/tables-simple.html: Added.
+        * mathml/presentation/tables-spans-dynamic-expected.html: Added.
+        * mathml/presentation/tables-spans-dynamic.html: Added.
+        * mathml/presentation/tables-spans-expected.html: Added.
+        * mathml/presentation/tables-spans.html: Added.
+        * mathml/presentation/tables.xhtml: Removed.
+        * mathml/xHeight.xhtml: Removed.
+        * platform/efl/mathml/presentation/fenced-expected.png: Removed.
+        * platform/efl/mathml/presentation/fenced-expected.txt: Removed.
+        * platform/efl/mathml/presentation/fenced-mi-expected.png: Removed.
+        * platform/efl/mathml/presentation/fenced-mi-expected.txt: Removed.
+        * platform/efl/mathml/presentation/mroot-pref-width-expected.png: Removed.
+        * platform/efl/mathml/presentation/mroot-pref-width-expected.txt: Removed.
+        * platform/efl/mathml/presentation/row-alignment-expected.png: Removed.
+        * platform/efl/mathml/presentation/row-alignment-expected.txt: Removed.
+        * platform/efl/mathml/presentation/style-expected.png: Removed.
+        * platform/efl/mathml/presentation/style-expected.txt: Removed.
+        * platform/efl/mathml/presentation/tables-expected.png: Removed.
+        * platform/efl/mathml/presentation/tables-expected.txt: Removed.
+        * platform/efl/mathml/xHeight-expected.png: Removed.
+        * platform/efl/mathml/xHeight-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/fenced-expected.png: Removed.
+        * platform/gtk/mathml/presentation/fenced-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/fenced-mi-expected.png: Removed.
+        * platform/gtk/mathml/presentation/fenced-mi-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/mroot-pref-width-expected.png: Removed.
+        * platform/gtk/mathml/presentation/mroot-pref-width-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/row-alignment-expected.png: Removed.
+        * platform/gtk/mathml/presentation/row-alignment-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/style-expected.png: Removed.
+        * platform/gtk/mathml/presentation/style-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/tables-expected.png: Removed.
+        * platform/gtk/mathml/presentation/tables-expected.txt: Removed.
+        * platform/gtk/mathml/xHeight-expected.png: Removed.
+        * platform/gtk/mathml/xHeight-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/mathml/presentation/fenced-expected.png: Removed.
+        * platform/mac/mathml/presentation/fenced-expected.txt: Removed.
+        * platform/mac/mathml/presentation/fenced-mi-expected.png: Removed.
+        * platform/mac/mathml/presentation/fenced-mi-expected.txt: Removed.
+        * platform/mac/mathml/presentation/mroot-pref-width-expected.png: Removed.
+        * platform/mac/mathml/presentation/mroot-pref-width-expected.txt: Removed.
+        * platform/mac/mathml/presentation/row-alignment-expected.png: Removed.
+        * platform/mac/mathml/presentation/row-alignment-expected.txt: Removed.
+        * platform/mac/mathml/presentation/style-expected.png: Removed.
+        * platform/mac/mathml/presentation/style-expected.txt: Removed.
+        * platform/mac/mathml/presentation/tables-expected.png: Removed.
+        * platform/mac/mathml/presentation/tables-expected.txt: Removed.
+        * platform/mac/mathml/xHeight-expected.png: Removed.
+        * platform/mac/mathml/xHeight-expected.txt: Removed.
+
 2013-07-19  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skip some flaky tests on AppleWin port.
