@@ -236,8 +236,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         ASSERT(!m_exitSiteLabels.size());
     
     codeBlock()->saveCompilation(m_graph.m_compilation);
-    
-    codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 }
 
 bool JITCompiler::compile(JITCode& entry)
@@ -265,6 +263,7 @@ bool JITCompiler::compile(JITCode& entry)
         return false;
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
+    codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 
     if (shouldShowDisassembly())
         m_disassembler->dump(linkBuffer);
@@ -354,6 +353,7 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         return false;
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
+    codeBlock()->shrinkToFit(CodeBlock::LateShrink);
     
     // FIXME: switch the stack check & arity check over to DFGOpertaion style calls, not JIT stubs.
     linkBuffer.link(callStackCheck, cti_stack_check);
