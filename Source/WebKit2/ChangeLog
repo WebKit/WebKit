@@ -1,3 +1,19 @@
+2013-07-18  Simon Cooper  <scooper@apple.com>
+
+        Flash Player: deny file-read-data /Library/Application Support/Macromedia/FlashAuthor.cfg
+        https://bugs.webkit.org/show_bug.cgi?id=118874
+        <rdar://problem/14271327>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Silently deny access to FlashAuthor.cfg. This location contains
+        files containing lists of paths that Flash Player will
+        "allow" access to (without asking the user). Since the plugin
+        sandbox won't permit the access to the listed paths it is better
+        to silently block attempts to read this "whitelist".
+
+        * Resources/PlugInSandboxProfiles/com.macromedia.Flash Player.plugin.sb:
+
 2013-07-18  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Ensure that the plugin layer is removed completely when the PluginProcess crashes
