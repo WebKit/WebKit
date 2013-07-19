@@ -1,5 +1,11 @@
 2013-07-19  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
+        [Qt][WK2] More unreviewed cleanup for pixel tester bot.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
+2013-07-19  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
         [Qt][WK2] Unreviewed cleanup for pixel tester bot.
 
         * platform/qt-5.0-wk2/TestExpectations:

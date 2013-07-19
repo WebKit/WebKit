@@ -233,6 +233,18 @@ webkit.org/b/91610 editing/selection/14971.html
 # These tests always fail (with and without --singly). It needs investigation.
 editing/selection/caret-mode-paragraph-keys-navigation.html
 
+# [Qt][WK2] Editing/selection tests that has different results from xvfb with gpu
+# webkit.org/b/118903
+editing/selection/caret-rtl-2-left.html
+editing/selection/caret-rtl-2.html
+editing/selection/caret-rtl-right.html
+editing/selection/caret-rtl.html
+editing/selection/extend-selection-bidi.html
+editing/selection/vertical-rl-rtl-extend-line-backward-br.html
+editing/selection/vertical-rl-rtl-extend-line-backward-p.html
+editing/selection/vertical-rl-rtl-extend-line-forward-br.html
+editing/selection/vertical-rl-rtl-extend-line-forward-p.html
+
 # =========================================================================== #
 # Fast tests.                                                                 #
 # =========================================================================== #
