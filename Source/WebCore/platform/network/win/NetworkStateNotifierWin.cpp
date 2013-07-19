@@ -77,8 +77,7 @@ void NetworkStateNotifier::addressChanged()
     if (m_isOnLine == oldOnLine)
         return;
 
-    if (m_networkStateChangedFunction)
-        m_networkStateChangedFunction();
+    notifyNetworkStateChange();
 }
 
 void NetworkStateNotifier::callAddressChanged(void* context)
@@ -103,7 +102,6 @@ void NetworkStateNotifier::registerForAddressChange()
 
 NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(false)
-    , m_networkStateChangedFunction(0)
 {
     updateState();
 

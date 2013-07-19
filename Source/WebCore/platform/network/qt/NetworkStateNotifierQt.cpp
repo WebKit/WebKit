@@ -79,13 +79,11 @@ void NetworkStateNotifier::updateState()
         return;
 
     m_isOnLine = p->effectivelyOnline();
-    if (m_networkStateChangedFunction)
-        m_networkStateChangedFunction();
+    notifyNetworkStateChange();
 }
 
 NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(true)
-    , m_networkStateChangedFunction(0)
 {
     p = new NetworkStateNotifierPrivate(this);
     m_isOnLine = p->effectivelyOnline();

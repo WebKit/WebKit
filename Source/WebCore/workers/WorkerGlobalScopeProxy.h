@@ -60,6 +60,8 @@ namespace WebCore {
 
         virtual void workerObjectDestroyed() = 0;
 
+        virtual void notifyNetworkStateChange(bool isOnline) = 0;
+
 #if ENABLE(INSPECTOR)
         class PageInspector {
         public:

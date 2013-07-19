@@ -1,3 +1,83 @@
+2013-07-18  Kwang Yul Seo  <skyul@company100.net>
+
+        WorkerGlobalScope should support onoffline/ononline event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=118832
+
+        Reviewed by Alexey Proskuryakov.
+
+        HTML5 spec says that WorkerGlobalScope should support
+        onoffline/ononline event handlers as stated in
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/offline.html#event-offline
+
+        Modified NetworkStateNotifier to support multiple callbacks and added a
+        callback to dispatch offline and online events to WorkerGlobalScope
+        when network state is changed.
+
+        No new test because the current test infrastructure does not provide a
+        mock network state notifier.
+
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        Change the function to take an additional argument, isOnLine so that we
+        can remove a call to NetworkStateNotifier::onLine().
+        (WebCore::Page::Page):
+        Use NetworkStateNotifier::addNetworkStateChangeListener which
+        allows us to add multiple callbacks.
+
+        * platform/network/NetworkStateNotifier.cpp:
+        (WebCore::NetworkStateNotifier::addNetworkStateChangeListener):
+        Replace NetworkStateNotifier::setNetworkStateChangedFunction with
+        NetworkStateNotifier::addNetworkStateChangeListener.
+        (WebCore::NetworkStateNotifier::notifyNetworkStateChange):
+        A helper method to notify all registered network state change
+        callbacks.
+        * platform/network/NetworkStateNotifier.h:
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        * platform/network/blackberry/NetworkStateNotifierBlackBerry.cpp:
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        (WebCore::NetworkStateNotifier::networkStateChange):
+        * platform/network/efl/NetworkStateNotifierEfl.cpp:
+        (WebCore::NetworkStateNotifier::networkInterfaceChanged):
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+        (WebCore::NetworkStateNotifier::networkStateChangeTimerFired):
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        * platform/network/qt/NetworkStateNotifierQt.cpp:
+        (WebCore::NetworkStateNotifier::updateState):
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        * platform/network/win/NetworkStateNotifierWin.cpp:
+        (WebCore::NetworkStateNotifier::addressChanged):
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier):
+        Replace m_networkStateChangedFunction() with notifyNetworkStateChange().
+
+        * workers/Worker.cpp:
+        (WebCore::networkStateChanged):
+        Notify network state change by iterating all Workers.
+        (WebCore::Worker::Worker):
+        Initialize allWorkers and add networkStateChanged to
+        NetworkStateNotifier in first invocation. Add this Worker to
+        allWorkers.
+        (WebCore::Worker::~Worker):
+        Remove this Worker from allWorkers.
+        (WebCore::Worker::notifyNetworkStateChange):
+        * workers/Worker.h:
+        * workers/WorkerGlobalScope.h:
+        Add onoffline and ononline event handlers.
+        * workers/WorkerGlobalScope.idl:
+        Add onoffline and ononline event handlers
+        * workers/WorkerGlobalScopeProxy.h:
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::NotifyNetworkStateChangeTask::create):
+        (WebCore::NotifyNetworkStateChangeTask::NotifyNetworkStateChangeTask):
+        (WebCore::NotifyNetworkStateChangeTask::performTask):
+        A subclass of ScriptExecutionContext::Task to dispatch offline and
+        online events to WorkerGlobalScope.
+        (WebCore::WorkerMessagingProxy::notifyNetworkStateChange):
+        Notify network state change using ScriptExecutionContext::postTask to
+        dispatch events across threads.
+        * workers/WorkerMessagingProxy.h:
+
 2013-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r152876.

@@ -39,11 +39,17 @@ NetworkStateNotifier& networkStateNotifier()
     return *networkStateNotifier;
 }
 
-void NetworkStateNotifier::setNetworkStateChangedFunction(void(*function)())
+void NetworkStateNotifier::addNetworkStateChangeListener(NetworkStateChangeListener listener)
 {
-    ASSERT(!m_networkStateChangedFunction);
+    ASSERT(!listener);
+    m_listeners.append(listener);
+}
 
-    m_networkStateChangedFunction = function;
+void NetworkStateNotifier::notifyNetworkStateChange()
+{
+    Vector<NetworkStateChangeListener>::iterator end = m_listeners.end();
+    for (Vector<NetworkStateChangeListener>::iterator it = m_listeners.begin(); it != end; ++it)
+        (*it)(m_isOnLine);
 }
 
 }

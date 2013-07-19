@@ -38,6 +38,8 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "ErrorEvent.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
@@ -242,6 +244,29 @@ private:
     String m_message;
 };
 
+class NotifyNetworkStateChangeTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<NotifyNetworkStateChangeTask> create(bool isOnLine)
+    {
+        return adoptPtr(new NotifyNetworkStateChangeTask(isOnLine));
+    }
+
+private:
+    NotifyNetworkStateChangeTask(bool isOnLine)
+        : m_isOnLine(isOnLine)
+    {
+    }
+
+    virtual void performTask(ScriptExecutionContext *context)
+    {
+        AtomicString eventName = m_isOnLine ? eventNames().onlineEvent : eventNames().offlineEvent;
+        WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
+        workerGlobalScope->dispatchEvent(Event::create(eventName, false, false));
+    }
+
+    bool m_isOnLine;
+};
+
 
 WorkerGlobalScopeProxy* WorkerGlobalScopeProxy::create(Worker* worker)
 {
@@ -359,6 +384,17 @@ void WorkerMessagingProxy::workerObjectDestroyed()
 {
     m_workerObject = 0;
     m_scriptExecutionContext->postTask(createCallbackTask(&workerObjectDestroyedInternal, AllowCrossThreadAccess(this)));
+}
+
+void WorkerMessagingProxy::notifyNetworkStateChange(bool isOnline)
+{
+    if (m_askedToTerminate)
+        return;
+
+    if (!m_workerThread)
+        return;
+
+    m_workerThread->runLoop().postTask(NotifyNetworkStateChangeTask::create(isOnline));
 }
 
 void WorkerMessagingProxy::workerObjectDestroyedInternal(ScriptExecutionContext*, WorkerMessagingProxy* proxy)

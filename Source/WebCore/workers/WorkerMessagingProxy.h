@@ -58,6 +58,7 @@ namespace WebCore {
         virtual void postMessageToWorkerGlobalScope(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>) OVERRIDE;
         virtual bool hasPendingActivity() const OVERRIDE;
         virtual void workerObjectDestroyed() OVERRIDE;
+        virtual void notifyNetworkStateChange(bool isOnline) OVERRIDE;
 #if ENABLE(INSPECTOR)
         virtual void connectToInspector(WorkerGlobalScopeProxy::PageInspector*) OVERRIDE;
         virtual void disconnectFromInspector() OVERRIDE;

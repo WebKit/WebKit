@@ -97,8 +97,8 @@ void NetworkStateNotifier::networkInterfaceChanged()
     bool wasOnline = m_isOnLine;
     updateState();
 
-    if (wasOnline != m_isOnLine && m_networkStateChangedFunction)
-        m_networkStateChangedFunction();
+    if (wasOnline != m_isOnLine)
+        notifyNetworkStateChange();
 }
 
 Eina_Bool NetworkStateNotifier::readSocketCallback(void* userData, Ecore_Fd_Handler* handler)
@@ -156,7 +156,6 @@ NetworkStateNotifier::~NetworkStateNotifier()
 
 NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(false)
-    , m_networkStateChangedFunction(0)
     , m_netlinkSocket(-1)
     , m_fdHandler(0)
 {

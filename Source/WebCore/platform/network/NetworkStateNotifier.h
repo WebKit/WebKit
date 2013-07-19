@@ -28,6 +28,7 @@
 
 #include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 
@@ -65,7 +66,8 @@ public:
 #if PLATFORM(EFL)
     ~NetworkStateNotifier();
 #endif
-    void setNetworkStateChangedFunction(void (*)());
+    typedef void (*NetworkStateChangeListener)(bool m_isOnLine);
+    void addNetworkStateChangeListener(NetworkStateChangeListener);
 
     bool onLine() const { return m_isOnLine; }
 
@@ -79,8 +81,9 @@ public:
 
 private:
     bool m_isOnLine;
-    void (*m_networkStateChangedFunction)();
+    Vector<NetworkStateChangeListener> m_listeners;
 
+    void notifyNetworkStateChange();
     void updateState();
 
 #if PLATFORM(MAC)
@@ -117,7 +120,6 @@ private:
 
 inline NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(true)
-    , m_networkStateChangedFunction(0)
 {
 }
 

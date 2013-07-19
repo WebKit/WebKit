@@ -96,7 +96,7 @@ static HashSet<Page*>* allPages;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
-static void networkStateChanged()
+static void networkStateChanged(bool isOnLine)
 {
     Vector<RefPtr<Frame> > frames;
     
@@ -108,7 +108,7 @@ static void networkStateChanged()
         InspectorInstrumentation::networkStateChanged(*it);
     }
 
-    AtomicString eventName = networkStateNotifier().onLine() ? eventNames().onlineEvent : eventNames().offlineEvent;
+    AtomicString eventName = isOnLine ? eventNames().onlineEvent : eventNames().offlineEvent;
     for (unsigned i = 0; i < frames.size(); i++)
         frames[i]->document()->dispatchWindowEvent(Event::create(eventName, false, false));
 }
@@ -193,7 +193,7 @@ Page::Page(PageClients& pageClients)
     if (!allPages) {
         allPages = new HashSet<Page*>;
         
-        networkStateNotifier().setNetworkStateChangedFunction(networkStateChanged);
+        networkStateNotifier().addNetworkStateChangeListener(networkStateChanged);
     }
 
     ASSERT(!allPages->contains(this));

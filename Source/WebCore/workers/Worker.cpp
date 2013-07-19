@@ -43,18 +43,36 @@
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
+#include "NetworkStateNotifier.h"
 #include "TextEncoding.h"
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
+#include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
+
+static HashSet<Worker*>* allWorkers;
+
+void networkStateChanged(bool isOnLine)
+{
+    HashSet<Worker*>::iterator end = allWorkers->end();
+    for (HashSet<Worker*>::iterator it = allWorkers->begin(); it != end; ++it)
+        (*it)->notifyNetworkStateChange(isOnLine);
+}
 
 inline Worker::Worker(ScriptExecutionContext* context)
     : AbstractWorker(context)
     , m_contextProxy(WorkerGlobalScopeProxy::create(this))
 {
+    if (!allWorkers) {
+        allWorkers = new HashSet<Worker*>;
+        networkStateNotifier().addNetworkStateChangeListener(networkStateChanged);
+    }
+
+    HashSet<Worker*>::AddResult addResult = allWorkers->add(this);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
 PassRefPtr<Worker> Worker::create(ScriptExecutionContext* context, const String& url, ExceptionCode& ec)
@@ -86,6 +104,7 @@ Worker::~Worker()
 {
     ASSERT(isMainThread());
     ASSERT(scriptExecutionContext()); // The context is protected by worker context proxy, so it cannot be destroyed while a Worker exists.
+    allWorkers->remove(this);
     m_contextProxy->workerObjectDestroyed();
 }
 
@@ -130,6 +149,11 @@ void Worker::stop()
 bool Worker::hasPendingActivity() const
 {
     return m_contextProxy->hasPendingActivity() || ActiveDOMObject::hasPendingActivity();
+}
+
+void Worker::notifyNetworkStateChange(bool isOnLine)
+{
+    m_contextProxy->notifyNetworkStateChange(isOnLine);
 }
 
 void Worker::didReceiveResponse(unsigned long identifier, const ResourceResponse&)

@@ -71,12 +71,16 @@ namespace WebCore {
     private:
         explicit Worker(ScriptExecutionContext*);
 
+        void notifyNetworkStateChange(bool isOnline);
+
         // WorkerScriptLoaderClient callbacks
         virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) OVERRIDE;
         virtual void notifyFinished() OVERRIDE;
 
         virtual void refEventTarget() OVERRIDE { ref(); }
         virtual void derefEventTarget() OVERRIDE { deref(); }
+
+        friend void networkStateChanged(bool isOnLine);
 
         RefPtr<WorkerScriptLoader> m_scriptLoader;
         WorkerGlobalScopeProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.

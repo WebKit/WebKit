@@ -33,7 +33,6 @@ namespace WebCore {
 
 NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(BlackBerry::Platform::Settings::instance()->isNetworkAvailable())
-    , m_networkStateChangedFunction(0)
 {
 }
 
@@ -44,8 +43,7 @@ void NetworkStateNotifier::networkStateChange(bool online)
 
     m_isOnLine = online;
 
-    if (m_networkStateChangedFunction)
-        m_networkStateChangedFunction();
+    notifyNetworkStateChange();
 }
 
 } // namespace WebCore
