@@ -4897,21 +4897,22 @@ void SpeculativeJIT::compile(Node* node)
         
     case NewFunction: {
         JSValueOperand value(this, node->child1());
-        GPRTemporary resultTag(this, op1);
-        GPRTemporary resultPayload(this, op1, false);
+        GPRTemporary resultTag(this, value);
+        GPRTemporary resultPayload(this, value, false);
         
         GPRReg valueTagGPR = value.tagGPR();
         GPRReg valuePayloadGPR = value.payloadGPR();
         GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
         
-        m_jit.move(valuePayloadGPR, resultGPR);
+        m_jit.move(valuePayloadGPR, resultPayloadGPR);
+        m_jit.move(valueTagGPR, resultTagGPR);
         
         JITCompiler::Jump notCreated = m_jit.branch32(JITCompiler::Equal, valueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
         
         addSlowPathGenerator(
             slowPathCall(
-                notCreated, this, operationNewFunction, resultTagGPR, resultPayloadGPR,
+                notCreated, this, operationNewFunction, JSValueRegs(resultTagGPR, resultPayloadGPR),
                 m_jit.codeBlock()->functionDecl(node->functionDeclIndex())));
         
         jsValueResult(resultTagGPR, resultPayloadGPR, node);

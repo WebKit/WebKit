@@ -4057,7 +4057,7 @@ void SpeculativeJIT::compileNewFunctionNoCheck(Node* node)
     GPRReg resultGPR = result.gpr();
     flushRegisters();
     callOperation(
-        operationNewFunction, resultGPR, m_jit.codeBlock()->functionDecl(node->functionDeclIndex()));
+        operationNewFunctionNoCheck, resultGPR, m_jit.codeBlock()->functionDecl(node->functionDeclIndex()));
     cellResult(resultGPR, node);
 }
 
