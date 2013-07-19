@@ -3050,10 +3050,9 @@ RenderObject* RenderObject::hoverAncestor() const
     // See https://bugs.webkit.org/show_bug.cgi?id=111749
     RenderObject* hoverAncestor = parent();
     
-    // Skip anonymous blocks. There's no point in treating them as hover ancestors
-    // and it would also prevent us from continuing the search on the DOM tree
-    // when reaching the named flow thread.
-    if (hoverAncestor && hoverAncestor->isAnonymousBlock())
+    // Skip anonymous blocks directly flowed into flow threads as it would
+    // prevent us from continuing the search on the DOM tree when reaching the named flow thread.
+    if (hoverAncestor && hoverAncestor->isAnonymousBlock() && hoverAncestor->parent() && hoverAncestor->parent()->isRenderNamedFlowThread())
         hoverAncestor = hoverAncestor->parent();
 
     if (hoverAncestor && hoverAncestor->isRenderNamedFlowThread()) {

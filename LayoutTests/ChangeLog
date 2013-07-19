@@ -1,3 +1,16 @@
+2013-07-19  Radu Stavila  <stavila@adobe.com>
+
+        Hover doesn't work for block elements inside a href element
+        https://bugs.webkit.org/show_bug.cgi?id=118907
+
+        Reviewed by David Hyatt.
+
+        Don't skip all anonymous objects when searching for the hover ancestor, only the ones
+        directly flowed into a region.
+
+        * fast/css/hover-display-block-expected.txt: Added.
+        * fast/css/hover-display-block.html: Added.
+
 2013-07-19  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Clear overflowing line's segments in pushShapeContentOverflowBelowTheContentBox
