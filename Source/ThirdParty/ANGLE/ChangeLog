@@ -1,3 +1,14 @@
+2013-07-19  Alex Christensen  <achristensen@apple.com>
+
+        Generate derived files in ANGLE at build time rather than when updating from upstream.
+        https://bugs.webkit.org/show_bug.cgi?id=118872
+
+        Reviewed by Mark Rowe.
+
+        * ANGLE.xcodeproj/project.pbxproj: Made Derived Sources target which calls DerivedSources.make,
+        moved generated files into Derived Sources group.
+        * DerivedSources.make: Added.
+
 2013-07-18  Alex Christensen  <achristensen@apple.com>
 
         Added previously unincluded files from ANGLE r2426 with these exceptions:
