@@ -1,3 +1,9 @@
+2013-07-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip some flaky tests on AppleWin port.
+
+        * platform/win/TestExpectations:
+
 2013-07-19  Abhijeet Kandalkar  <abhijeet.k@samsung.com>
 
         Spatial Navigation handling of space key in <select> appears to confuse listIndex and optionIndex.
