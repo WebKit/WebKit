@@ -134,18 +134,19 @@ sub decamelize
                 $t .= $p3 ? $p1 ? "${p1}_$p2$p3" : "$p2$p3" : "$p1$p2";
                 $t;
         }ge;
-        $s;
-}
 
-sub FixUpDecamelizedName {
-    my $classname = shift;
-
-    # FIXME: try to merge this somehow with the fixes in ClassNameToGobjectType
-    $classname =~ s/x_path/xpath/;
-    $classname =~ s/web_kit/webkit/;
-    $classname =~ s/htmli_frame/html_iframe/;
-
-    return $classname;
+        # Some strings are not correctly decamelized, apply fix ups
+        for ($s) {
+            s/domcss/dom_css/;
+            s/domhtml/dom_html/;
+            s/domdom/dom_dom/;
+            s/domcdata/dom_cdata/;
+            s/domui/dom_ui/;
+            s/x_path/xpath/;
+            s/web_kit/webkit/;
+            s/htmli_frame/html_iframe/;
+        }
+        return $s;
 }
 
 sub HumanReadableConditional {
@@ -163,28 +164,11 @@ sub HumanReadableConditional {
     return join(' ', @humanReadable);
 }
 
-sub ClassNameToGObjectType {
-    my $className = shift;
-    my $CLASS_NAME = uc(decamelize($className));
-    # Fixup: with our prefix being 'WebKitDOM' decamelize can't get
-    # WebKitDOMCSS and similar names right, so we have to fix it
-    # manually.
-    $CLASS_NAME =~ s/DOMCSS/DOM_CSS/;
-    $CLASS_NAME =~ s/DOMHTML/DOM_HTML/;
-    $CLASS_NAME =~ s/DOMDOM/DOM_DOM/;
-    $CLASS_NAME =~ s/DOMCDATA/DOM_CDATA/;
-    $CLASS_NAME =~ s/DOMX_PATH/DOM_XPATH/;
-    $CLASS_NAME =~ s/DOM_WEB_KIT/DOM_WEBKIT/;
-    $CLASS_NAME =~ s/DOMUI/DOM_UI/;
-    $CLASS_NAME =~ s/HTMLI_FRAME/HTML_IFRAME/;
-    return $CLASS_NAME;
-}
-
 sub GetParentGObjType {
     my $interface = shift;
 
     return "WEBKIT_TYPE_DOM_OBJECT" unless $interface->parent;
-    return "WEBKIT_TYPE_DOM_" . ClassNameToGObjectType($interface->parent);
+    return "WEBKIT_TYPE_DOM_" . uc(decamelize(($interface->parent)));
 }
 
 sub GetClassName {
@@ -604,8 +588,9 @@ EOF
 sub GenerateProperties {
     my ($object, $interfaceName, $interface) = @_;
 
-    my $clsCaps = substr(ClassNameToGObjectType($className), 12);
-    my $lowerCaseIfaceName = "webkit_dom_" . (FixUpDecamelizedName(decamelize($interfaceName)));
+    my $decamelize = decamelize($interfaceName);
+    my $clsCaps = uc($decamelize);
+    my $lowerCaseIfaceName = "webkit_dom_$decamelize";
     my $parentImplClassName = GetParentImplClassName($interface);
 
     my $conditionGuardStart = "";
@@ -832,9 +817,9 @@ EOF
 
     push(@hBodyPre, $implContent);
 
-    my $decamelize = FixUpDecamelizedName(decamelize($interfaceName));
+    my $decamelize = decamelize($interfaceName);
     my $clsCaps = uc($decamelize);
-    my $lowerCaseIfaceName = "webkit_dom_" . ($decamelize);
+    my $lowerCaseIfaceName = "webkit_dom_$decamelize";
 
     $implContent = << "EOF";
 #define WEBKIT_TYPE_DOM_${clsCaps}            (${lowerCaseIfaceName}_get_type())
@@ -867,7 +852,7 @@ sub GetGReturnMacro {
     if ($paramIDLType eq "GError") {
         $condition = "!$paramName || !*$paramName";
     } elsif (IsGDOMClassType($paramIDLType)) {
-        my $paramTypeCaps = uc(FixUpDecamelizedName(decamelize($paramIDLType)));
+        my $paramTypeCaps = uc(decamelize($paramIDLType));
         $condition = "WEBKIT_DOM_IS_${paramTypeCaps}($paramName)";
         if (ParamCanBeNull($functionName, $paramName)) {
             $condition = "!$paramName || $condition";
@@ -902,7 +887,7 @@ sub ParamCanBeNull {
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix, $parentNode) = @_;
 
-    my $decamelize = FixUpDecamelizedName(decamelize($interfaceName));
+    my $decamelize = decamelize($interfaceName);
 
     if ($object eq "MediaQueryListListener") {
         return;
@@ -1299,8 +1284,9 @@ sub GenerateCFile {
 
     my $implContent = "";
 
-    my $clsCaps = uc(FixUpDecamelizedName(decamelize($interfaceName)));
-    my $lowerCaseIfaceName = "webkit_dom_" . FixUpDecamelizedName(decamelize($interfaceName));
+    my $decamelize = decamelize($interfaceName);
+    my $clsCaps = uc($decamelize);
+    my $lowerCaseIfaceName = "webkit_dom_$decamelize";
     my $parentImplClassName = GetParentImplClassName($interface);
     my $baseClassName = GetBaseClass($parentImplClassName);
 
@@ -1390,7 +1376,7 @@ sub GenerateEventTargetIface {
     my $interface = shift;
 
     my $interfaceName = $interface->name;
-    my $decamelize = FixUpDecamelizedName(decamelize($interfaceName));
+    my $decamelize = decamelize($interfaceName);
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     my @conditionalWarn = GenerateConditionalWarning($interface);
 

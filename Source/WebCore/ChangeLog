@@ -1,3 +1,27 @@
+2013-07-19  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Merge decamelizations fix ups in the GObject DOM bindings code generator
+        https://bugs.webkit.org/show_bug.cgi?id=117543
+
+        Reviewed by Carlos Garcia Campos.
+
+        Ensure that all the code that calls to decamelize() applies the same fix ups
+
+        Now all functions that need to decamelize a string should simply call
+        to decamelize(). This function calls to FixUpDecamelize to apply some
+        fix ups.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (decamelize): decamelizes a string and applies fix ups
+        (FixUpDecamelize): applies a series of fix ups to a decamelized string
+        (GetParentGObjType): moved fix ups to FixUpDecamelize()
+        (GenerateProperties): simply call to decamelize
+        (GenerateHeader): simply call to decamelize
+        (GetGReturnMacro): simply call to decamelize
+        (GenerateFunction): simply call to decamelize
+        (GenerateCFile): simply call to decamelize
+        (GenerateEventTargetIface): simply call to decamelize
+
 2013-07-19  Kwang Yul Seo  <skyul@company100.net>
 
         Unreviewed.
