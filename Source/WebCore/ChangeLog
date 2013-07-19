@@ -1,3 +1,10 @@
+2013-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r152876.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks):
+
 2013-07-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Media] Share more code between Mac and Windows implementation files.
