@@ -503,11 +503,11 @@ void MediaPlayerPrivateGStreamer::seek(float time)
     INFO_MEDIA_MESSAGE("[Seek] seeking to %" GST_TIME_FORMAT " (%f)", GST_TIME_ARGS(clockTime), time);
 
     if (m_seeking) {
+        m_timeOfOverlappingSeek = time;
         if (m_seekIsPending) {
             m_seekTime = time;
             return;
         }
-        m_timeOfOverlappingSeek = time;
     }
 
     GstState state;
@@ -1045,11 +1045,12 @@ void MediaPlayerPrivateGStreamer::asyncStateChangeDone()
         else {
             LOG_MEDIA_MESSAGE("[Seek] seeked to %f", m_seekTime);
             m_seeking = false;
-            if (m_timeOfOverlappingSeek != -1) {
+            if (m_timeOfOverlappingSeek != m_seekTime && m_timeOfOverlappingSeek != -1) {
                 seek(m_timeOfOverlappingSeek);
                 m_timeOfOverlappingSeek = -1;
                 return;
             }
+            m_timeOfOverlappingSeek = -1;
 
             // The pipeline can still have a pending state. In this case a position query will fail.
             // Right now we can use m_seekTime as a fallback.

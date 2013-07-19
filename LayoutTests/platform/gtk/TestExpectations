@@ -1397,8 +1397,6 @@ webkit.org/b/90589 fast/css/user-drag-none.html [ Failure ]
 
 webkit.org/b/116806 fast/css/text-overflow-ellipsis-behind-floats.html [ ImageOnlyFailure ]
 
-webkit.org/b/117580 media/video-seek-multiple.html [ Failure ]
-
 webkit.org/b/117581 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
 
 webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]

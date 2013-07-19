@@ -1,3 +1,18 @@
+2013-07-19  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] media/video-seek-multiple.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=117580
+
+        Reviewed by Philippe Normand.
+
+        When receiving several seek calls in a row, ensure that the final position
+        is the one requested in the last call received.
+
+        Already covered in test media/video-seek-multiple.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+
 2013-07-19  Kangil Han  <kangil.han@samsung.com>
 
         Use explicit HTMLFrameElementBase cast and introduce toHTMLFrameElementBase
