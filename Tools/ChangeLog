@@ -1,3 +1,27 @@
+2013-07-19  Daniel Bates  <dabates@apple.com>
+
+        Make Perl tools work when using git bisect with Git branch build setup
+        https://bugs.webkit.org/show_bug.cgi?id=118512
+
+        Reviewed by Martin Robinson.
+
+        The various Perl tools (run-webkit-app, {debug, run}-safari, et cetera) don't work
+        during a git bisect session with a Git branch build setup (i.e. git config
+        core.webKitBranchBuild true). Specifically, the tools cannot find the branch-
+        specific build of WebKit because they cannot determine the branch Git is on (since
+        git bisect puts Git into a detached HEAD state). We should teach our tooling to
+        parse the file .git/BISECT_START (created by git bisect start) for the name of the
+        branch Git was on when we began a git bisect session. Then the tools can determine
+        the path to the built WebKit.
+
+        * Scripts/VCSUtils.pm:
+        (gitDirectory): Added.
+        (gitBisectStartBranch): Added.
+        (gitBranch): Modified to call gitBisectStartBranch() when we have a detached
+        HEAD (e.g. running git bisect).
+        (determineVCSRoot): Modified to call gitDirectory() to determine the path to
+        the .git directory in the Git checkout.
+
 2013-07-19  Alex Christensen  <achristensen@apple.com>
 
         Added x64 configuration to Visual Studio build.
