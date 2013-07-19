@@ -1,3 +1,20 @@
+2013-07-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Bindings generation tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=118877
+
+        Reviewed by Kentaro Hara.
+
+        I inadvertently removed the wrong part of the if statement
+        in r152845, causing hasAttribute() to be used unconditionally
+        for reflected boolean attributes instead of fastHasAttribute().
+        This patch fixes the issue.
+
+        No new tests, covered by bindings tests.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GetterExpression):
+
 2013-07-18  Kwang Yul Seo  <skyul@company100.net>
 
         WorkerGlobalScope should support onoffline/ononline event handlers

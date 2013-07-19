@@ -553,8 +553,7 @@ sub GetterExpression
     if ($attribute->signature->extendedAttributes->{"URL"}) {
         $functionName = "getURLAttribute";
     } elsif ($attribute->signature->type eq "boolean") {
-        my $namespace = $generator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
-        $functionName = "hasAttribute";
+        $functionName = "fastHasAttribute";
     } elsif ($attribute->signature->type eq "long") {
         $functionName = "getIntegralAttribute";
     } elsif ($attribute->signature->type eq "unsigned long") {
