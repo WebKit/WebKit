@@ -297,6 +297,7 @@ void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
         mediaController()->setVolume(volume, ASSERT_NO_EXCEPTION);
     if (m_clearMutedOnUserInteraction)
         mediaController()->setMuted(false);
+    event->setDefaultHandled();
 }
 
 bool MediaControlVolumeSliderElement::willRespondToMouseMoveEvents()
