@@ -214,6 +214,7 @@
       <Filter>wtf</Filter>
     </ClCompile>
     <ClCompile Include="..\wtf\FunctionDispatcher.cpp" />
+    <ClCompile Include="..\wtf\text\AtomicStringTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\wtf\dtoa\utils.h">

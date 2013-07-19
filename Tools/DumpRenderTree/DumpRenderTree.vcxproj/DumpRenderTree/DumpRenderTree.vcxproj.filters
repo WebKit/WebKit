@@ -105,6 +105,7 @@
     <ClCompile Include="..\..\WorkQueue.cpp">
       <Filter>Support</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\JavaScriptThreading.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\AccessibilityController.h">
@@ -187,6 +188,7 @@
     <ClInclude Include="..\..\WorkQueueItem.h">
       <Filter>Support</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\JavaScriptThreading.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DumpRenderTreePostBuild.cmd" />

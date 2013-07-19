@@ -1,3 +1,15 @@
+2013-07-19  Alex Christensen  <achristensen@apple.com>
+
+        Added x64 configuration to Visual Studio build.
+        https://bugs.webkit.org/show_bug.cgi?id=118888
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/QTMovieWin/QTMovieWin.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCoreGenerated.vcxproj:
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj:
+
 2013-07-19  Abhijeet Kandalkar  <abhijeet.k@samsung.com>
 
         Spatial Navigation handling of space key in <select> appears to confuse listIndex and optionIndex.

@@ -1,3 +1,12 @@
+2013-07-19  Alex Christensen  <achristensen@apple.com>
+
+        Added x64 configuration to Visual Studio build.
+        https://bugs.webkit.org/show_bug.cgi?id=118888
+
+        Reviewed by Brent Fulgham.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
 2013-07-18  Roger Fong  <roger_fong@apple.com>
 
         Make sure to link against _debug binaries when appropriate.

@@ -1,3 +1,14 @@
+2013-07-19  Alex Christensen  <achristensen@apple.com>
+
+        Added x64 configuration to Visual Studio build.
+        https://bugs.webkit.org/show_bug.cgi?id=118888
+
+        Reviewed by Brent Fulgham.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.vcxproj/WTFGenerated.vcxproj:
+
 2013-07-18  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the build after r152881
