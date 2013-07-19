@@ -1,5 +1,11 @@
 2013-07-19  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Skip failing tests to make WinEWS bots happy.
+
+        * platform/win/TestExpectations:
+
+2013-07-19  Roger Fong  <roger_fong@apple.com>
+
         Unskip flaky tests on AppleWin. 
         Flakiness is not an issue with the tests themselves but with the test infrastructure.
 

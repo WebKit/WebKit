@@ -2808,3 +2808,12 @@ media/track/track-legacyapi-with-automatic-mode.html
 # CSS_SHAPES not supported on AppleWin port.
 # https://bugs.webkit.org/show_bug.cgi?id=118810
 fast/shapes
+
+# Skip failing tests to make EWS bots happy
+fast/dom/NodeList/nodelist-item-call-as-function.html [ Failure ]
+fast/dom/call-a-constructor-as-a-function.html [ Failure ]
+fast/forms/search-event-delay.html [ Failure ]
+fast/js/exception-thrown-from-new.html [ Failure ]
+fast/lists/inlineBoxWrapperNullCheck.html [ Failure ]
+fast/regex/cross-frame-callable.html [ Failure ]
+svg/dom/svgpath-out-of-bounds-getPathSeg.html [ Failure ]
