@@ -2743,7 +2743,7 @@ inline void TrailingObjects::setTrailingWhitespace(RenderText* whitespace)
 inline void TrailingObjects::clear()
 {
     m_whitespace = 0;
-    m_boxes.clear();
+    m_boxes.shrink(0); // Use shrink(0) instead of clear() to retain our capacity.
 }
 
 inline void TrailingObjects::appendBoxIfNeeded(RenderBoxModelObject* box)

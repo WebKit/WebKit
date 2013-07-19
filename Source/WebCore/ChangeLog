@@ -1,3 +1,17 @@
+2013-07-19  Geoffrey Garen  <ggaren@apple.com>
+
+        TrailingObjects shouldn't shrink vector capacity in a loop
+        https://bugs.webkit.org/show_bug.cgi?id=118322
+
+        Reviewed by Darin Adler.
+
+        This seems to take about 3% off the profile of loading a large text file.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::TrailingObjects::clear): clear() has the built-in side effect
+        of throwing away existing capacity. Use shrink(0) to indicate that we
+        want to keep our existing capacity.
+
 2013-07-19  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Merge decamelizations fix ups in the GObject DOM bindings code generator
