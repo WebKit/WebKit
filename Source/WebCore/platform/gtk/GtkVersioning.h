@@ -122,6 +122,21 @@ gboolean g_signal_accumulator_first_wins(GSignalInvocationHint* invocationHint, 
 void gdk_screen_get_monitor_workarea(GdkScreen *, int monitor, GdkRectangle *area);
 #endif
 
+// gtk_widget_get_preferred_size() appeared only in GTK 3.0.
+#if !GTK_CHECK_VERSION (2, 91, 0)  // gtk_widget_get_preferred_size appeared about then.
+#define gtk_widget_get_preferred_size(widget, minimumSize, naturalSize) \
+        (gtk_widget_size_request((widget), ((minimumSize))))
+#endif
+
+// Define GDK_IS_X11_DISPLAY dummy for GTK+ 2.0 compatibility.
+#ifdef GTK_API_VERSION_2
+  #ifdef GDK_WINDOWING_X11
+    #define GDK_IS_X11_DISPLAY(display) 1
+  #else
+    #define GDK_IS_X11_DISPLAY(display) 0
+  #endif
+#endif
+
 G_END_DECLS
 
 #endif // GtkVersioning_h
