@@ -1,3 +1,26 @@
+2013-07-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Media] Share more code between Mac and Windows implementation files.
+        https://bugs.webkit.org/show_bug.cgi?id=118801
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::clearTextTracks): Move
+        implementation from ObjC file to parent file.
+        (WebCore::MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks):
+        Ditto.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        Remove duplicate implementation.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        Ditto.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        Ditto.
+
 2013-07-18  Alex Christensen  <achristensen@apple.com>
 
         Fixed compile errors for non-Cairo platforms using EGL.

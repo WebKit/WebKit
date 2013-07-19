@@ -946,16 +946,6 @@ void MediaPlayerPrivateAVFoundationCF::sizeChanged()
     setNaturalSize(IntSize(naturalSize));
 }
 
-void MediaPlayerPrivateAVFoundationCF::clearTextTracks()
-{
-    for (unsigned i = 0; i < m_textTracks.size(); ++i) {
-        RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
-        player()->removeTextTrack(track);
-        track->disconnect();
-    }
-    m_textTracks.clear();
-}
-
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 void MediaPlayerPrivateAVFoundationCF::processLegacyClosedCaptionsTracks()
 {
@@ -997,32 +987,6 @@ void MediaPlayerPrivateAVFoundationCF::processLegacyClosedCaptionsTracks()
     processNewAndRemovedTextTracks(removedTextTracks);
 }
 #endif
-
-void MediaPlayerPrivateAVFoundationCF::processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF> >& removedTextTracks)
-{
-    // FIXME: Lift to parent class (https://bugs.webkit.org/show_bug.cgi?id=118801)
-    if (removedTextTracks.size()) {
-        for (unsigned i = 0; i < m_textTracks.size(); ++i) {
-            if (!removedTextTracks.contains(m_textTracks[i]))
-                continue;
-            
-            player()->removeTextTrack(removedTextTracks[i].get());
-            m_textTracks.remove(i);
-        }
-    }
-    
-    for (unsigned i = 0; i < m_textTracks.size(); ++i) {
-        RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
-        
-        track->setTextTrackIndex(i);
-        if (track->hasBeenReported())
-            continue;
-        
-        track->setHasBeenReported(true);
-        player()->addTextTrack(track.get());
-    }
-    LOG(Media, "MediaPlayerPrivateAVFoundationCF::processNewAndRemovedTextTracks(%p) - found %i text tracks", this, m_textTracks.size());
-}
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 void MediaPlayerPrivateAVFoundationCF::processMediaSelectionOptions()

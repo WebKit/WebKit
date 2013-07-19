@@ -175,8 +175,6 @@ private:
 
     virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) OVERRIDE;
     virtual InbandTextTrackPrivateAVF* currentTrack() const OVERRIDE { return m_currentTrack; }
-    void processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF> >&);
-    void clearTextTracks();
 
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     void processLegacyClosedCaptionsTracks();

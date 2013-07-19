@@ -250,7 +250,7 @@ protected:
     virtual void setUpVideoRendering();
     virtual void tearDownVideoRendering();
     bool hasSetUpVideoRendering() const;
-    
+
     static void mainThreadCallback(void*);
     
     void invalidateCachedDuration();
@@ -264,6 +264,8 @@ protected:
     virtual size_t extraMemoryCost() const OVERRIDE;
 
     virtual void trackModeChanged() OVERRIDE;
+    void processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF> >&);
+    void clearTextTracks();
     Vector<RefPtr<InbandTextTrackPrivateAVF> > m_textTracks;
     
 private:
