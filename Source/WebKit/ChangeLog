@@ -1,5 +1,17 @@
 2013-07-19  Alex Christensen  <achristensen@apple.com>
 
+        Added 64-bit symbols to WebKitExports.def.in for 64-bit Windows builds
+        and a macro to only use them for 64-bit builds.
+        https://bugs.webkit.org/show_bug.cgi?id=118887
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Added 64-bit symbols.
+        * WebKit.vcxproj/WebKitExportGenerator/make-export-file-generator:
+        Added support for new symbolWithPointer macro.
+
+2013-07-19  Alex Christensen  <achristensen@apple.com>
+
         Added x64 configuration to Visual Studio build.
         https://bugs.webkit.org/show_bug.cgi?id=118888
 
