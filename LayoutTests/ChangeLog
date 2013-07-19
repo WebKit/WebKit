@@ -1,3 +1,9 @@
+2013-07-19  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip some flaky tests on AppleWin port.
+
+        * platform/win/TestExpectations:
+
 2013-07-19  Frédéric Wang  <fred.wang@free.fr>
 
         More conversions from MathML pixel tests to reftests.
