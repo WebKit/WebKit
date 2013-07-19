@@ -425,7 +425,7 @@ EXPORTS
         symbolWithPointer(?setDefaultFontSize@Settings@WebCore@@QAEXH@Z, ?setDefaultFontSize@Settings@WebCore@@QEAAXH@Z)
         symbolWithPointer(?setDefaultFixedFontSize@Settings@WebCore@@QAEXH@Z, ?setDefaultFixedFontSize@Settings@WebCore@@QEAAXH@Z)
         symbolWithPointer(?setAuthorAndUserStylesEnabled@Settings@WebCore@@QAEX_N@Z, ?setAuthorAndUserStylesEnabled@Settings@WebCore@@QEAAX_N@Z)
-        symbolWithPointer(?setAcceleratedCompositingEnabled@Settings@WebCore@@QAEX_N@Z, ?setAcceleratedCompositingEnabled@Settings@WebCore@@QEAAX_N@Z
+        symbolWithPointer(?setAcceleratedCompositingEnabled@Settings@WebCore@@QAEX_N@Z, ?setAcceleratedCompositingEnabled@Settings@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setAutofilled@HTMLInputElement@WebCore@@QAEX_N@Z, ?setAutofilled@HTMLInputElement@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setDocumentState@HistoryItem@WebCore@@QAEXABV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@@Z, ?setDocumentState@HistoryItem@WebCore@@QEAAXAEBV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@@Z)
         symbolWithPointer(?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@@Z, ?overrideUserPreferredLanguages@WebCore@@YAXAEBV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@@Z)
