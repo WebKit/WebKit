@@ -168,6 +168,7 @@ public:
             m_pageLogicalHeightChanged = true;
         }
     }
+    LayoutUnit pageOrViewLogicalHeight() const;
 
     // FIXME: These functions are deprecated. No code should be added that uses these.
     int bestTruncatedAt() const { return m_legacyPrinting.m_bestTruncatedAt; }

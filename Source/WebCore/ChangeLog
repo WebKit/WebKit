@@ -1,3 +1,107 @@
+2013-07-19  David Hyatt  <hyatt@apple.com>
+
+        OSX: ePub: Unable to select text in vertical Japanese book
+        https://bugs.webkit.org/show_bug.cgi?id=118864
+        <rdar://problem/14109351>
+
+        Reviewed by Dan Bernstein and Sam Weinig.
+
+        This patch fixes all of the various writing-mode and pagination combinations
+        so that the columns are painted in the correct location. The code that sets up
+        the initial painting translation offset in the block direction and that advances
+        that offset has been pulled into two helper functions, initialBlockOffsetForPainting
+        and blockDeltaForPaintingNextColumn, and that code is now shared by the four call
+        sites that need it (painting and hit testing in RenderBlock and painting and hit testing
+        in RenderLayer).
+        
+        This patch also backs out the maximumScrollPosition change, since it only occurred because
+        of incorrect sizing of the RenderView, and this sizing issue has now been corrected by
+        ensuring that computeLogicalHeight() always makes sure you are the size of the viewport
+        and does not shrink you to the column height.
+        
+        There was also a race condition that caused pagination to be incorrect if layout occurred
+        before the html/body renderer that set the writing-mode were available. When this happened,
+        the writing mode got propagated up to the view, but the column styles didn't get
+        adjusted to compensate for the writing mode change.
+
+        Added tests for every pagination and writing-mode combination in fast/multicol/pagination.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForDocument):
+        (WebCore::StyleResolver::adjustRenderStyle):
+        Move setStylesForPaginationMode into RenderStyle and make it a member function. This is
+        necessary so that the style can be adjusted dynamically to fix the race condition mentioned
+        above.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::maximumScrollPosition):
+        Back out this change since the symptom it was fixing only occurred because the logical
+        height of the view was being set incorrectly.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::checkForPaginationLogicalHeightChange):
+        Patch the column code that sets up the initial page height to use the pagination API's
+        page height rather than the viewport logical height. This allows the view to still match
+        the viewport in dimensions rather than being incorrectly sized to the column height.
+        
+        (WebCore::RenderBlock::initialBlockOffsetForPainting):
+        (WebCore::RenderBlock::blockDeltaForPaintingNextColumn):
+        Two new helper functions used to set up the block direction paint/hit testing translation.
+        The major bug fix that occurred in this code is that the old block axis code didn't handle
+        reversal correctly and it also used physical coordinates to try to determine the translation
+        offset, when you really need to use logical coordinates in the original writing mode coordinate
+        system to determine the offset.
+
+        (WebCore::RenderBlock::paintColumnContents):
+        Patched to call the new helper functions.
+
+        (WebCore::ColumnRectIterator::ColumnRectIterator):
+        (WebCore::ColumnRectIterator::adjust):
+        (WebCore::ColumnRectIterator::update):
+        Patched to call the new helper functions.
+
+        * rendering/RenderBlock.h:
+        Add the two new helper functions to the RenderBlock header.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        If the writing mode of the html/body propagates to the viewport and changes its writing mode,
+        also change our column styles to match if we're in paginated mode.
+
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        Call the new pageOrViewLogicalHeight function on RenderView instead of
+        RenderBox::viewLogicalHeightForPercentages (which is now removed).
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        Patched to use the two new helper functions for block direction paint offset setup and
+        advancement.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pageOrViewLogicalHeight):
+        New helper function that does what viewLogicalHeightForPercentages used to do but also
+        handles returning the page length for block axis column progression. Again, this is to
+        allow the view to retain its correct size (matching the viewport).
+
+        (WebCore::RenderView::viewLogicalHeight):
+        Back out the code that made the view grow or shrink to the size of the Pagination API page
+        length when the progression was block axis. This was the source of most of the scroll origin
+        and scrolling issues.
+
+        * rendering/RenderView.h:
+        Add the new pageOrViewLogicalHeight() function.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setColumnStylesFromPaginationMode):
+        This is the old StyleResolver function for setting up the column styles. It's in RenderStyle
+        now so that it can be called at any time to change a style rather than only at style resolution
+        time.
+
+        * rendering/style/RenderStyle.h:
+        Declaration of the setColumnStylesFromPaginationMode function.
+
 2013-07-19  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Http response code 401 (Authentication required) is not handled.

@@ -314,6 +314,9 @@ public:
 
     void updateColumnInfoFromStyle(RenderStyle*);
     
+    LayoutUnit initialBlockOffsetForPainting() const;
+    LayoutUnit blockDeltaForPaintingNextColumn() const;
+
     // These two functions take the ColumnInfo* to avoid repeated lookups of the info in the global HashMap.
     unsigned columnCount(ColumnInfo*) const;
     LayoutRect columnRectAt(ColumnInfo*, unsigned) const;

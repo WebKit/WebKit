@@ -1652,10 +1652,7 @@ IntPoint FrameView::maximumScrollPosition() const
     if (!m_frame->page())
         return maximumOffset;
 
-    // With pagination enabled, we can have a negative maximum scroll position.
-    if ((m_frame->page()->pagination().mode == Pagination::Unpaginated && m_pagination.mode == Pagination::Unpaginated)
-        || scrollOrigin() == IntPoint::zero())
-        maximumOffset.clampNegativeToZero();
+    maximumOffset.clampNegativeToZero();
 
     if (m_frame == m_frame->page()->mainFrame() && m_scrollPinningBehavior == PinToTop)
         maximumOffset.setY(minimumScrollPosition().y());

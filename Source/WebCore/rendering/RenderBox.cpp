@@ -292,6 +292,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         // Propagate the new writing mode and direction up to the RenderView.
         RenderView* viewRenderer = view();
         RenderStyle* viewStyle = viewRenderer->style();
+        bool viewChangedWritingMode = false;
         if (viewStyle->direction() != newStyle->direction() && (isRootRenderer || !document()->directionSetOnDocumentElement())) {
             viewStyle->setDirection(newStyle->direction());
             if (isBodyRenderer)
@@ -301,6 +302,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
         if (viewStyle->writingMode() != newStyle->writingMode() && (isRootRenderer || !document()->writingModeSetOnDocumentElement())) {
             viewStyle->setWritingMode(newStyle->writingMode());
+            viewChangedWritingMode = true;
             viewRenderer->setHorizontalWritingMode(newStyle->isHorizontalWritingMode());
             viewRenderer->markAllDescendantsWithFloatsForLayout();
             if (isBodyRenderer) {
@@ -311,6 +313,13 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         }
 
         frame()->view()->recalculateScrollbarOverlayStyle();
+        
+        const Pagination& pagination = frame()->view()->pagination();
+        if (viewChangedWritingMode && pagination.mode != Pagination::Unpaginated) {
+            viewStyle->setColumnStylesFromPaginationMode(pagination.mode);
+            if (viewRenderer->hasColumns())
+                viewRenderer->updateColumnInfoFromStyle(viewStyle);
+        }
     }
 
 #if ENABLE(CSS_SHAPES)
@@ -2560,7 +2569,7 @@ void RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logica
         && (isRoot() || (isBody() && document()->documentElement()->renderer()->style()->logicalHeight().isPercent())) && !isInline();
     if (stretchesToViewport() || paginatedContentNeedsBaseHeight) {
         LayoutUnit margins = collapsedMarginBefore() + collapsedMarginAfter();
-        LayoutUnit visibleHeight = viewLogicalHeightForPercentages();
+        LayoutUnit visibleHeight = view()->pageOrViewLogicalHeight();
         if (isRoot())
             computedValues.m_extent = max(computedValues.m_extent, visibleHeight - margins);
         else {
@@ -2568,13 +2577,6 @@ void RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logica
             computedValues.m_extent = max(computedValues.m_extent, visibleHeight - marginsBordersPadding);
         }
     }
-}
-
-LayoutUnit RenderBox::viewLogicalHeightForPercentages() const
-{
-    if (document()->printing())
-        return static_cast<LayoutUnit>(view()->pageLogicalHeight());
-    return view()->viewLogicalHeight();
 }
 
 LayoutUnit RenderBox::computeLogicalHeightUsing(const Length& height) const
@@ -2685,7 +2687,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
         cb->computeLogicalHeight(cb->logicalHeight(), 0, computedValues);
         availableHeight = computedValues.m_extent - cb->borderAndPaddingLogicalHeight() - cb->scrollbarLogicalHeight();
     } else if (cb->isRenderView())
-        availableHeight = viewLogicalHeightForPercentages();
+        availableHeight = view()->pageOrViewLogicalHeight();
 
     if (availableHeight == -1)
         return availableHeight;

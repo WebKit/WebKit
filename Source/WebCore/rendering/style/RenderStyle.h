@@ -45,6 +45,7 @@
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
 #include "OutlineValue.h"
+#include "Pagination.h"
 #include "RenderStyleConstants.h"
 #include "RoundedRect.h"
 #include "ShadowData.h"
@@ -379,6 +380,8 @@ public:
     void setAffectedByActive() { noninherited_flags.setAffectedByActive(true); }
     void setAffectedByDrag() { noninherited_flags.setAffectedByDrag(true); }
 
+    void setColumnStylesFromPaginationMode(const Pagination::Mode&);
+    
     bool operator==(const RenderStyle& other) const;
     bool operator!=(const RenderStyle& other) const { return !(*this == other); }
     bool isFloating() const { return noninherited_flags._floating != NoFloat; }

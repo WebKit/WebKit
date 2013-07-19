@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "Font.h"
 #include "FontSelector.h"
+#include "Pagination.h"
 #include "QuotesData.h"
 #include "RenderArena.h"
 #include "RenderObject.h"
@@ -1741,6 +1742,46 @@ ShapeValue* RenderStyle::initialShapeInside()
 {
     DEFINE_STATIC_LOCAL(RefPtr<ShapeValue>, sOutsideValue, (ShapeValue::createOutsideValue()));
     return sOutsideValue.get();
+}
+
+void RenderStyle::setColumnStylesFromPaginationMode(const Pagination::Mode& paginationMode)
+{
+    if (paginationMode == Pagination::Unpaginated)
+        return;
+        
+    switch (paginationMode) {
+    case Pagination::LeftToRightPaginated:
+        setColumnAxis(HorizontalColumnAxis);
+        if (isHorizontalWritingMode())
+            setColumnProgression(isLeftToRightDirection() ? NormalColumnProgression : ReverseColumnProgression);
+        else
+            setColumnProgression(isFlippedBlocksWritingMode() ? ReverseColumnProgression : NormalColumnProgression);
+        break;
+    case Pagination::RightToLeftPaginated:
+        setColumnAxis(HorizontalColumnAxis);
+        if (isHorizontalWritingMode())
+            setColumnProgression(isLeftToRightDirection() ? ReverseColumnProgression : NormalColumnProgression);
+        else
+            setColumnProgression(isFlippedBlocksWritingMode() ? NormalColumnProgression : ReverseColumnProgression);
+        break;
+    case Pagination::TopToBottomPaginated:
+        setColumnAxis(VerticalColumnAxis);
+        if (isHorizontalWritingMode())
+            setColumnProgression(isFlippedBlocksWritingMode() ? ReverseColumnProgression : NormalColumnProgression);
+        else
+            setColumnProgression(isLeftToRightDirection() ? NormalColumnProgression : ReverseColumnProgression);
+        break;
+    case Pagination::BottomToTopPaginated:
+        setColumnAxis(VerticalColumnAxis);
+        if (isHorizontalWritingMode())
+            setColumnProgression(isFlippedBlocksWritingMode() ? NormalColumnProgression : ReverseColumnProgression);
+        else
+            setColumnProgression(isLeftToRightDirection() ? ReverseColumnProgression : NormalColumnProgression);
+        break;
+    case Pagination::Unpaginated:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 } // namespace WebCore

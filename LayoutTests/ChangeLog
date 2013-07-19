@@ -1,3 +1,64 @@
+2013-07-19  David Hyatt  <hyatt@apple.com>
+
+        OSX: ePub: Unable to select text in vertical Japanese book
+        https://bugs.webkit.org/show_bug.cgi?id=118864
+        <rdar://problem/14109351>
+
+        Reviewed by Dan Bernstein and Sam Weinig.
+
+        * fast/multicol/pagination: Added.
+        * fast/multicol/pagination/BottomToTop-bt.html: Added.
+        * fast/multicol/pagination/BottomToTop-lr.html: Added.
+        * fast/multicol/pagination/BottomToTop-rl.html: Added.
+        * fast/multicol/pagination/BottomToTop-tb.html: Added.
+        * fast/multicol/pagination/LeftToRight-bt.html: Added.
+        * fast/multicol/pagination/LeftToRight-lr.html: Added.
+        * fast/multicol/pagination/LeftToRight-rl.html: Added.
+        * fast/multicol/pagination/LeftToRight-tb.html: Added.
+        * fast/multicol/pagination/RightToLeft-bt.html: Added.
+        * fast/multicol/pagination/RightToLeft-lr.html: Added.
+        * fast/multicol/pagination/RightToLeft-rl.html: Added.
+        * fast/multicol/pagination/RightToLeft-tb.html: Added.
+        * fast/multicol/pagination/TopToBottom-bt.html: Added.
+        * fast/multicol/pagination/TopToBottom-lr.html: Added.
+        * fast/multicol/pagination/TopToBottom-rl.html: Added.
+        * fast/multicol/pagination/TopToBottom-tb.html: Added.
+        * platform/mac/fast/multicol/pagination: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTop-bt-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTop-bt-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTop-lr-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTop-lr-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTop-rl-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTop-rl-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTop-tb-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/BottomToTop-tb-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRight-bt-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRight-bt-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRight-lr-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRight-lr-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRight-rl-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRight-rl-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRight-tb-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/LeftToRight-tb-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-bt-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-bt-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-lr-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-lr-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-rl-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-rl-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-tb-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/RightToLeft-tb-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottom-bt-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottom-bt-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottom-lr-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottom-lr-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottom-rl-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottom-rl-expected.txt: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottom-tb-expected.png: Added.
+        * platform/mac/fast/multicol/pagination/TopToBottom-tb-expected.txt: Added.
+        * platform/mac/fast/multicol/shrink-to-column-height-for-pagination-expected.png:
+        * platform/mac/fast/multicol/shrink-to-column-height-for-pagination-expected.txt:
+
 2013-07-19  Radu Stavila  <stavila@adobe.com>
 
         Hover doesn't work for block elements inside a href element
