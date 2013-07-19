@@ -1452,7 +1452,10 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
         } else if (m_multiple && keyCode == ' ' && isSpatialNavigationEnabled(document()->frame())) {
             // Use space to toggle selection change.
             m_activeSelectionState = !m_activeSelectionState;
-            updateSelectedState(listToOptionIndex(m_activeSelectionEndIndex), true /*multi*/, false /*shift*/);
+            ASSERT(m_activeSelectionEndIndex >= 0
+                && m_activeSelectionEndIndex < static_cast<int>(listItems.size())
+                && listItems[m_activeSelectionEndIndex]->hasTagName(optionTag));
+            updateSelectedState(m_activeSelectionEndIndex, true /*multi*/, false /*shift*/);
             listBoxOnChange();
             event->setDefaultHandled();
         }

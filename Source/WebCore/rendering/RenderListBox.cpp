@@ -348,6 +348,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&
     for (int i = 0; i < size; ++i) {
         HTMLElement* element = listItems[i];
         if (isHTMLOptionElement(element) && !element->isDisabledFormControl()) {
+            select->setActiveSelectionEndIndex(i);
             rects.append(pixelSnappedIntRect(itemBoundingBoxRect(additionalOffset, i)));
             return;
         }

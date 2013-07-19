@@ -1,3 +1,21 @@
+2013-07-19  Abhijeet Kandalkar  <abhijeet.k@samsung.com>
+
+        Spatial Navigation handling of space key in <select> appears to confuse listIndex and optionIndex.
+        https://bugs.webkit.org/show_bug.cgi?id=99525
+
+        HTMLSelect Element inherently contains the logic to focus option node and thus, implementing an explicit logic to find the focus index is not required.
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: fast/spatial-navigation/snav-multiple-select-optgroup.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * page/SpatialNavigation.cpp:
+        (WebCore::canScrollInDirection):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::addFocusRingRects):
+
 2013-07-19  David Hyatt  <hyatt@apple.com>
 
         OSX: ePub: Unable to select text in vertical Japanese book

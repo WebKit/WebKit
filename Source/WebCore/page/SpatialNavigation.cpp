@@ -448,6 +448,10 @@ Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection direc
 bool canScrollInDirection(const Node* container, FocusDirection direction)
 {
     ASSERT(container);
+
+    if (container->hasTagName(HTMLNames::selectTag))
+        return false;
+
     if (container->isDocumentNode())
         return canScrollInDirection(toDocument(container)->frame(), direction);
 

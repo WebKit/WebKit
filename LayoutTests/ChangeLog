@@ -1,3 +1,15 @@
+2013-07-19  Abhijeet Kandalkar  <abhijeet.k@samsung.com>
+
+        Spatial Navigation handling of space key in <select> appears to confuse listIndex and optionIndex.
+        https://bugs.webkit.org/show_bug.cgi?id=99525
+
+        Added testcase to test support of option group within HTMLSelect element.
+
+        Reviewed by Joseph Pecoraro.
+
+        * fast/spatial-navigation/snav-multiple-select-optgroup-expected.txt: Added.
+        * fast/spatial-navigation/snav-multiple-select-optgroup.html: Added.
+
 2013-07-19  David Hyatt  <hyatt@apple.com>
 
         OSX: ePub: Unable to select text in vertical Japanese book
