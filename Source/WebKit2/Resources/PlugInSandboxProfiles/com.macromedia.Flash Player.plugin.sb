@@ -29,6 +29,7 @@
     (mount-relative-regex #"^/\.TemporaryItems/"))
 
 (deny file-read* (with no-log)
+    (literal "/Library/Application Support/Macromedia/FlashAuthor.cfg")
     (subpath "/Library/Application Support/Macromedia/FlashPlayerTrust"))
 
 (allow network-bind (local ip))
