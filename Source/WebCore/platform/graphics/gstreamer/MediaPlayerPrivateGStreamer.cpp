@@ -74,7 +74,7 @@ static const char* gPlaybinName = "playbin2";
 static const gint64 gPercentMax = 100;
 #endif
 
-GST_DEBUG_CATEGORY_STATIC(webkit_media_player_debug);
+GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
 using namespace std;
