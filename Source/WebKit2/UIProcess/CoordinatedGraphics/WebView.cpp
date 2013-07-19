@@ -207,6 +207,11 @@ void WebView::didChangeContentsSize(const WebCore::IntSize& size)
     updateViewportSize();
 }
 
+void WebView::didFindZoomableArea(const WebCore::IntPoint& target, const WebCore::IntRect& area)
+{
+    m_client.didFindZoomableArea(this, target, area);
+}
+
 AffineTransform WebView::transformFromScene() const
 {
     return transformToScene().inverse();
@@ -497,6 +502,11 @@ void WebView::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore
 void WebView::pageTransitionViewportReady()
 {
     m_client.didCompletePageTransition(this);
+}
+
+void WebView::findZoomableAreaForPoint(const IntPoint& point, const IntSize& size)
+{
+    m_page->findZoomableAreaForPoint(transformFromScene().mapPoint(point), transformFromScene().mapSize(size));
 }
 
 } // namespace WebKit

@@ -662,7 +662,7 @@ public:
 
     WebPageCreationParameters creationParameters() const;
 
-#if PLATFORM(QT)
+#if USE(COORDINATED_GRAPHICS)
     void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
 #endif
 
@@ -887,10 +887,9 @@ private:
     void pageDidRequestScroll(const WebCore::IntPoint&);
     void pageTransitionViewportReady();
 #endif
-#if PLATFORM(QT)
+#if USE(COORDINATED_GRAPHICS)
     void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
 #endif
-
 #if PLATFORM(QT) || PLATFORM(EFL)
     void didChangeContentsSize(const WebCore::IntSize&);
 #endif

@@ -111,6 +111,14 @@ void WebViewClient::didChangeTooltip(WebView* view, const String& tooltip)
     m_client.didChangeTooltip(toAPI(view), adoptWK(toCopiedAPI(tooltip)).get(), m_client.clientInfo);
 }
 
+void WebViewClient::didFindZoomableArea(WebView* view, const IntPoint& target, const IntRect& area)
+{
+    if (!m_client.didFindZoomableArea)
+        return;
+
+    m_client.didFindZoomableArea(toAPI(view), toAPI(target), toAPI(area), m_client.clientInfo);
+}
+
 } // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS)

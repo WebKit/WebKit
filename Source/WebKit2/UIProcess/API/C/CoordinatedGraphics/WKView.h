@@ -36,6 +36,7 @@ typedef void (*WKViewPageDidChangeContentsPositionCallback)(WKViewRef view, WKPo
 typedef void (*WKViewPageDidRenderFrameCallback)(WKViewRef view, WKSize contentsSize, WKRect coveredRect, const void* clientInfo);
 typedef void (*WKViewPageDidChangeViewportAttributesCallback)(WKViewRef view, WKViewportAttributesRef, const void* clientInfo);
 typedef void (*WKViewPageDidChangeTooltipCallback)(WKViewRef view, WKStringRef newTooltip, const void* clientInfo);
+typedef void (*WKViewDidFindZoomableAreaCallback)(WKViewRef view, WKPoint point, WKRect area, const void* clientInfo);
 
 struct WKViewClient {
     int                                              version;
@@ -51,6 +52,7 @@ struct WKViewClient {
     WKViewCallback                                   didCompletePageTransition;
     WKViewPageDidChangeViewportAttributesCallback    didChangeViewportAttributes;
     WKViewPageDidChangeTooltipCallback               didChangeTooltip;
+    WKViewDidFindZoomableAreaCallback                didFindZoomableArea;
 };
 typedef struct WKViewClient WKViewClient;
 
@@ -102,6 +104,8 @@ WK_EXPORT bool WKViewExitFullScreen(WKViewRef);
 
 WK_EXPORT void WKViewSetOpacity(WKViewRef view, double opacity);
 WK_EXPORT double WKViewOpacity(WKViewRef view);
+
+WK_EXPORT void WKViewFindZoomableAreaForRect(WKViewRef, WKRect);
 
 #ifdef __cplusplus
 }

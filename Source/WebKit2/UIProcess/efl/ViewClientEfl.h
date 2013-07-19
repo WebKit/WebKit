@@ -56,6 +56,7 @@ private:
     static void didCompletePageTransition(WKViewRef, const void* clientInfo);
     static void didChangeViewportAttributes(WKViewRef, WKViewportAttributesRef, const void* clientInfo);
     static void didChangeTooltip(WKViewRef, WKStringRef, const void* clientInfo);
+    static void didFindZoomableArea(WKViewRef, WKPoint, WKRect, const void* clientInfo);
 
     EwkView* m_view;
 };

@@ -366,6 +366,7 @@ set(WebKit2_SOURCES
     UIProcess/Authentication/WebProtectionSpace.cpp
 
     UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp
+    UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp
 
     UIProcess/Downloads/DownloadProxy.cpp
     UIProcess/Downloads/DownloadProxyMap.cpp
@@ -519,6 +520,7 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/WebUndoStep.cpp
 
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp
+    WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp
 )
 
 set(WebKit2_MESSAGES_IN_FILES

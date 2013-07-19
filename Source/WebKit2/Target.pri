@@ -565,6 +565,7 @@ SOURCES += \
     UIProcess/BackingStore.cpp \
     UIProcess/qt/BackingStoreQt.cpp \
     UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp \
+    UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp \
     UIProcess/DefaultUndoController.cpp \
     UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/Downloads/DownloadProxyMap.cpp \
@@ -748,6 +749,7 @@ SOURCES += \
     WebProcess/WebPage/EventDispatcher.cpp \
     WebProcess/WebPage/FindController.cpp \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp \
+    WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp \
     WebProcess/WebPage/TapHighlightController.cpp \
     WebProcess/WebPage/LayerTreeHost.cpp \
     WebProcess/WebPage/PageBanner.cpp \

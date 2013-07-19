@@ -26,6 +26,7 @@
 #include "WKAPICast.h"
 #include "WebView.h"
 
+using namespace WebCore;
 using namespace WebKit;
 
 WKViewRef WKViewCreate(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
@@ -186,6 +187,12 @@ void WKViewSetOpacity(WKViewRef view, double opacity)
 double WKViewOpacity(WKViewRef view)
 {
     return toImpl(view)->opacity();
+}
+
+void WKViewFindZoomableAreaForRect(WKViewRef viewRef, WKRect wkRect)
+{
+    IntRect rect = toIntRect(wkRect);
+    toImpl(viewRef)->findZoomableAreaForPoint(rect.center(), rect.size());
 }
 
 #endif // USE(COORDINATED_GRAPHICS)

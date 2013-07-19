@@ -297,7 +297,7 @@ messages -> WebPage LegacyReceiver {
     SetComposition(WTF::String compositionString, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t cursorPosition)
     CancelComposition()
 #endif
-#if PLATFORM(QT)
+#if USE(COORDINATED_GRAPHICS)
     FindZoomableAreaForPoint(WebCore::IntPoint point, WebCore::IntSize area)
 #endif
 

@@ -1,3 +1,47 @@
+2013-07-18  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [WK2] Share Qt port's codes to find zoomable area with CoordinatedGraphics.
+        https://bugs.webkit.org/show_bug.cgi?id=118585
+
+        Reviewed by Anders Carlsson.
+
+        The function to find zoomable area is needed in order to implement the
+        feature to scale for double-tap gesture. The WK2 EFL and NIX port want
+        to use that function, so extract the code from the Qt port, make it
+        usable in the CoordinatedGraphics and add API and callback.
+
+        * CMakeLists.txt:
+        * Target.pri:
+        * UIProcess/API/C/CoordinatedGraphics/WKView.cpp:
+        (WKViewFindZoomableAreaForRect):
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::didFindZoomableArea):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp: Added.
+        (WebKit::WebPageProxy::findZoomableAreaForPoint):
+        (WebKit::WebPageProxy::didFindZoomableArea):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::didFindZoomableArea):
+        (WebKit::WebView::findZoomableAreaForPoint):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/CoordinatedGraphics/WebViewClient.cpp:
+        (WebKit::WebViewClient::didFindZoomableArea):
+        * UIProcess/CoordinatedGraphics/WebViewClient.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::didFindZoomableArea):
+        (WebKit::ViewClientEfl::ViewClientEfl):
+        * UIProcess/efl/ViewClientEfl.h:
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp: Added.
+        (WebKit::WebPage::findZoomableAreaForPoint):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-07-18  Simon Cooper  <scooper@apple.com>
 
         Flash Player: deny file-read-data /Library/Application Support/Macromedia/FlashAuthor.cfg

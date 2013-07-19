@@ -154,6 +154,11 @@ void ViewClientEfl::didChangeTooltip(WKViewRef, WKStringRef tooltip, const void*
         toEwkView(clientInfo)->smartCallback<TooltipTextSet>().call(WKEinaSharedString(tooltip));
 }
 
+void ViewClientEfl::didFindZoomableArea(WKViewRef, WKPoint point, WKRect area, const void* clientInfo)
+{
+    toEwkView(clientInfo)->didFindZoomableArea(point, area);
+}
+
 ViewClientEfl::ViewClientEfl(EwkView* view)
     : m_view(view)
 {
@@ -164,6 +169,7 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
     viewClient.version = kWKViewClientCurrentVersion;
     viewClient.clientInfo = this;
     viewClient.didChangeContentsSize = didChangeContentsSize;
+    viewClient.didFindZoomableArea = didFindZoomableArea;
     viewClient.viewNeedsDisplay = viewNeedsDisplay;
     viewClient.webProcessCrashed = webProcessCrashed;
     viewClient.webProcessDidRelaunch = webProcessDidRelaunch;

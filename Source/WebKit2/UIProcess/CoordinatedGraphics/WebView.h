@@ -93,6 +93,8 @@ public:
     bool exitFullScreen();
 #endif
 
+    void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
+
     // View client.
     void initializeClient(const WKViewClient*);
 
@@ -101,6 +103,7 @@ public:
     void didChangeContentsSize(const WebCore::IntSize&);
     const WebCore::IntSize& contentsSize() const { return m_contentsSize; }
     WebCore::FloatSize visibleContentsSize() const;
+    void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
 
     // FIXME: Should become private when Web Events creation is moved to WebView.
     WebCore::AffineTransform transformFromScene() const;

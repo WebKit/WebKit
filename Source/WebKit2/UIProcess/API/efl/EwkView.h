@@ -201,6 +201,8 @@ public:
 
     PassRefPtr<cairo_surface_t> takeSnapshot();
 
+    void didFindZoomableArea(const WKPoint&, const WKRect&);
+
 private:
     EwkView(WKViewRef, Evas_Object*);
     ~EwkView();
