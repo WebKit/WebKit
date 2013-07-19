@@ -1,3 +1,15 @@
+2013-07-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r152801.
+        http://trac.webkit.org/changeset/152801
+        https://bugs.webkit.org/show_bug.cgi?id=118876
+
+        Un-rebaseline some plugin tests since r152789 was rolled out
+        (Requested by rfong on #webkit).
+
+        * platform/win/editing/pasteboard/paste-noplugin-expected.txt: Removed.
+        * platform/win/platform/win/plugins/draws-gradient-expected.txt:
+
 2013-07-18  Chris Curtis  <chris_curtis@apple.com>
 
         Fixed ASSERTION FAILED: callFrame == vm->topCallFrame in JSC::Interpreter::addStackTraceIfNecessary
