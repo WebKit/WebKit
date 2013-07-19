@@ -1,3 +1,13 @@
+2013-07-19  Frédéric Wang  <fred.wang@free.fr>
+
+        Update test expectations for MathML after r152840.
+        https://bugs.webkit.org/show_bug.cgi?id=118053
+
+        Reviewed by Chris Fleizach.
+
+        * TestExpectations: unskip mspace tests
+        * platform/mac/TestExpectations: ImageOnlyFailure for mspace-units
+
 2013-07-19  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Update expectations after r152793, r152777 and r152872
