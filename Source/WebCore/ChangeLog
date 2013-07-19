@@ -1,3 +1,45 @@
+2013-07-19  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Http response code 401 (Authentication required) is not handled.
+        https://bugs.webkit.org/show_bug.cgi?id=118849
+
+        Reviewed by Brent Fulgham.
+
+        The current Curl implementation does not handle a 401 response.
+        When receiving http code 401, we need to give a notification that authorization is required, by calling the appropriate notification method.
+        This gives a WebKit client the possibility to present a password dialog to the user.
+        In response to this, we should provide Curl with the given username and password, so another request can be sent with the given credentials.
+
+        * platform/network/ResourceHandle.h:
+            Added method to check if credential storage should be used.
+        * platform/network/ResourceHandleInternal.h:
+            Added member to keep track of number of authentication failures.
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::shouldUseCredentialStorage):
+            Added method to check if credential storage should be used.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+            Implement method; notify client when authentication is required.
+        (WebCore::ResourceHandle::receivedCredential):
+            Implement method; provide Curl with password and username when available.
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+            Implement method; reset Curl username and password.
+        (WebCore::ResourceHandle::receivedCancellation):
+            Implement method; notify client that authorization has been cancelled.
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::isHttpAuthentication):
+            Added function to check if http code is an 'Authorization required' code.
+        (WebCore::getProtectionSpace):
+            Added function to initialize a protection space object from a Curl handle and a response object. 
+        (WebCore::headerCallback):
+            Notify client when authorization is required.
+        (WebCore::ResourceHandleManager::applyAuthenticationToRequest):
+            Added method to set Curl username and password.
+        (WebCore::ResourceHandleManager::initializeHandle):
+            Use method to set Curl username and password.
+        * platform/network/curl/ResourceHandleManager.h:
+            Added method to set Curl username and password.
+
 2013-07-19  Radu Stavila  <stavila@adobe.com>
 
         Hover doesn't work for block elements inside a href element

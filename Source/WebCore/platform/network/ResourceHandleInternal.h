@@ -107,6 +107,7 @@ namespace WebCore {
             , m_url(0)
             , m_customHeaders(0)
             , m_cancelled(false)
+            , m_authFailureCount(0)
             , m_formDataStream(loader)
 #endif
 #if USE(SOUP)
@@ -185,6 +186,7 @@ namespace WebCore {
         struct curl_slist* m_customHeaders;
         ResourceResponse m_response;
         bool m_cancelled;
+        unsigned short m_authFailureCount;
 
         FormDataStream m_formDataStream;
         Vector<char> m_postBytes;

@@ -1,3 +1,27 @@
+2013-07-19  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Http response code 401 (Authentication required) is not handled.
+        https://bugs.webkit.org/show_bug.cgi?id=118849
+
+        Reviewed by Brent Fulgham.
+
+        The current Curl implementation does not handle a 401 response.
+        When receiving http code 401, we need to give a notification that authorization is required, by calling the appropriate notification method.
+        This gives a WebKit client the possibility to present a password dialog to the user.
+        In response to this, we should provide Curl with the given username and password, so another request can be sent with the given credentials.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+            Implement empty method; use the same implementation as the CFNetwork version does,
+            notify delegate when authorization is required. 
+        * WebURLAuthenticationChallengeSenderCurl.cpp:
+        (WebURLAuthenticationChallengeSender::cancelAuthenticationChallenge):
+            Implement empty method; use the same implementation as the CFNetwork version does.
+        (WebURLAuthenticationChallengeSender::continueWithoutCredentialForAuthenticationChallenge):
+            Implement empty method; use the same implementation as the CFNetwork version does.
+        (WebURLAuthenticationChallengeSender::useCredential):
+            Implement empty method; use the same implementation as the CFNetwork version does.
+
 2013-07-17  Kangil Han  <kangil.han@samsung.com>
 
         Use toHTMLMediaElement

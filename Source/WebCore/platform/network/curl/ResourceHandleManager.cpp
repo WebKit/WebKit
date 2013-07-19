@@ -35,6 +35,7 @@
 #include "config.h"
 #include "ResourceHandleManager.h"
 
+#include "CredentialStorage.h"
 #include "DataURL.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
@@ -135,6 +136,11 @@ inline static bool isHttpInfo(int statusCode)
 inline static bool isHttpRedirect(int statusCode)
 {
     return 300 <= statusCode && statusCode < 400 && statusCode != 304;
+}
+
+inline static bool isHttpAuthentication(int statusCode)
+{
+    return statusCode == 401;
 }
 
 ResourceHandleManager::ResourceHandleManager()
@@ -279,6 +285,58 @@ static bool isAppendableHeader(const String &key)
     return false;
 }
 
+static bool getProtectionSpace(CURL* h, const ResourceResponse& response, ProtectionSpace& protectionSpace)
+{
+    CURLcode err;
+
+    long port = 0;
+    err = curl_easy_getinfo(h, CURLINFO_PRIMARY_PORT, &port);
+    if (err != CURLE_OK)
+        return false;
+
+    long availableAuth = CURLAUTH_NONE;
+    err = curl_easy_getinfo(h, CURLINFO_HTTPAUTH_AVAIL, &availableAuth);
+    if (err != CURLE_OK)
+        return false;
+
+    const char* url = 0;
+    err = curl_easy_getinfo(h, CURLINFO_EFFECTIVE_URL, &url);
+    if (err != CURLE_OK)
+        return false;
+
+    KURL kurl(ParsedURLString, url);
+
+    String host = kurl.host();
+    String protocol = kurl.protocol();
+
+    String realm;
+
+    String authHeader = response.httpHeaderField("WWW-Authenticate");
+    const String realmString = "realm=";
+    int realmPos = authHeader.find(realmString);
+    if (realmPos > 0)
+        realm = authHeader.substring(realmPos + realmString.length());
+
+    ProtectionSpaceServerType serverType = ProtectionSpaceServerHTTP;
+    if (protocol == "https")
+        serverType = ProtectionSpaceServerHTTPS;
+
+    ProtectionSpaceAuthenticationScheme authScheme = ProtectionSpaceAuthenticationSchemeUnknown;
+
+    if (availableAuth & CURLAUTH_BASIC)
+        authScheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
+    if (availableAuth & CURLAUTH_DIGEST)
+        authScheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
+    if (availableAuth & CURLAUTH_GSSNEGOTIATE)
+        authScheme = ProtectionSpaceAuthenticationSchemeNegotiate;
+    if (availableAuth & CURLAUTH_NTLM)
+        authScheme = ProtectionSpaceAuthenticationSchemeNTLM;
+
+    protectionSpace = ProtectionSpace(host, port, serverType, realm, authScheme);
+
+    return true;
+}
+
 /*
  * This is being called for each HTTP header in the response. This includes '\r\n'
  * for the last line of the header.
@@ -348,6 +406,16 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 
                 d->m_firstRequest.setURL(newURL);
 
+                return totalSize;
+            }
+        } else if (isHttpAuthentication(httpCode)) {
+            ProtectionSpace protectionSpace;
+            if (getProtectionSpace(d->m_handle, d->m_response, protectionSpace)) {
+                Credential credential;
+                AuthenticationChallenge challenge(protectionSpace, credential, d->m_authFailureCount, d->m_response, ResourceError());
+                challenge.setAuthenticationClient(job);
+                job->didReceiveAuthenticationChallenge(challenge);
+                d->m_authFailureCount++;
                 return totalSize;
             }
         }
@@ -752,6 +820,41 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     }
 }
 
+void ResourceHandleManager::applyAuthenticationToRequest(ResourceHandle* handle, ResourceRequest& request)
+{
+    // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
+    ResourceHandleInternal* d = handle->getInternal();
+
+    if (handle->shouldUseCredentialStorage()) {
+        if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
+            // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
+            // try and reuse the credential preemptively, as allowed by RFC 2617.
+            d->m_initialCredential = CredentialStorage::get(request.url());
+        } else {
+            // If there is already a protection space known for the URL, update stored credentials
+            // before sending a request. This makes it possible to implement logout by sending an
+            // XMLHttpRequest with known incorrect credentials, and aborting it immediately (so that
+            // an authentication dialog doesn't pop up).
+            CredentialStorage::set(Credential(d->m_user, d->m_pass, CredentialPersistenceNone), request.url());
+        }
+    }
+
+    String user = d->m_user;
+    String password = d->m_pass;
+
+    if (!d->m_initialCredential.isEmpty()) {
+        user = d->m_initialCredential.user();
+        password = d->m_initialCredential.password();
+    }
+
+    // It seems we need to set CURLOPT_USERPWD even if username and password is empty.
+    // Otherwise cURL will not automatically continue with a new request after a 401 response.
+
+    // curl CURLOPT_USERPWD expects username:password
+    String userpass = user + ":" + password;
+    curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
+}
+
 void ResourceHandleManager::initializeHandle(ResourceHandle* job)
 {
     static const int allowedProtocols = CURLPROTO_FILE | CURLPROTO_FTP | CURLPROTO_FTPS | CURLPROTO_HTTP | CURLPROTO_HTTPS;
@@ -859,11 +962,8 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
         curl_easy_setopt(d->m_handle, CURLOPT_HTTPHEADER, headers);
         d->m_customHeaders = headers;
     }
-    // curl CURLOPT_USERPWD expects username:password
-    if (d->m_user.length() || d->m_pass.length()) {
-        String userpass = d->m_user + ":" + d->m_pass;
-        curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
-    }
+
+    applyAuthenticationToRequest(job, job->firstRequest());
 
     // Set proxy options if we have them.
     if (m_proxy.length()) {

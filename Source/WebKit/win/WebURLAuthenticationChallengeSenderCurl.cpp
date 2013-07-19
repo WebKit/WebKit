@@ -28,7 +28,6 @@
 #include <initguid.h>
 #include "WebURLAuthenticationChallengeSender.h"
 
-#include "NotImplemented.h"
 #include "WebKit.h"
 #include "WebURLAuthenticationChallenge.h"
 #include "WebURLCredential.h"
@@ -42,21 +41,37 @@ using namespace WebCore;
 HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::cancelAuthenticationChallenge(
         /* [in] */ IWebURLAuthenticationChallenge* challenge)
 {
-    notImplemented();
-    return E_FAIL;
+    COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+    if (!webChallenge)
+        return E_FAIL;
+
+    m_client->receivedCancellation(webChallenge->authenticationChallenge());
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::continueWithoutCredentialForAuthenticationChallenge(
         /* [in] */ IWebURLAuthenticationChallenge* challenge)
 {
-    notImplemented();
-    return E_FAIL;
+    COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+    if (!webChallenge)
+        return E_FAIL;
+
+    m_client->receivedRequestToContinueWithoutCredential(webChallenge->authenticationChallenge());
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebURLAuthenticationChallengeSender::useCredential(
         /* [in] */ IWebURLCredential* credential, 
         /* [in] */ IWebURLAuthenticationChallenge* challenge)
 {
-    notImplemented();
-    return E_FAIL;
+    COMPtr<WebURLAuthenticationChallenge> webChallenge(Query, challenge);
+    if (!webChallenge)
+        return E_FAIL;
+    
+    COMPtr<WebURLCredential> webCredential;
+    if (!credential || FAILED(credential->QueryInterface(__uuidof(WebURLCredential), (void**)&webCredential)))
+        return E_FAIL;
+
+    m_client->receivedCredential(webChallenge->authenticationChallenge(), webCredential->credential());
+    return S_OK;
 }

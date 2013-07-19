@@ -81,6 +81,7 @@ private:
     bool removeScheduledJob(ResourceHandle*);
     void startJob(ResourceHandle*);
     bool startScheduledJobs();
+    void applyAuthenticationToRequest(ResourceHandle*, ResourceRequest&);
 
     void initializeHandle(ResourceHandle*);
 
