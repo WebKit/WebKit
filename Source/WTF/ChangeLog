@@ -1,3 +1,23 @@
+2013-07-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        Little cleaning of StringImpl::lower() and StringImpl::upper() for ARM
+        https://bugs.webkit.org/show_bug.cgi?id=118831
+
+        Reviewed by Gavin Barraclough.
+
+        Clean lower() and upper() before trying some optimizations:
+        -Prefix the code with the empty() case. Otherwise, each descending loop starts with
+         a check for length == 0.
+        -Change ored to a 32 bits registers. ARM only has 32 bits registers and access to full word.
+         To keep the value a UChar, the compiler is adding a bunch of useless value & 0xffff in the loops.
+        -Change the pointer based loops for index based loops. The compiler does a mighty job at optimizing
+         those for each architecture. No need to make the code more complex.
+        -Don't perform the check for int32 unless we need to. The only code limited to int is Unicode::toLower.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::lower):
+        (WTF::StringImpl::upper):
+
 2013-07-18  Andreas Kling  <akling@apple.com>
 
         CodeBlock::m_argumentValueProfiles wastes a lot of memory.
