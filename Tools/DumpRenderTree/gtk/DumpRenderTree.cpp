@@ -1288,22 +1288,25 @@ static void willSendRequestCallback(WebKitWebView* webView, WebKitWebFrame* webF
 
     SoupMessage* soupMessage = webkit_network_request_get_message(request);
     SoupURI* uri = soup_uri_new(webkit_network_request_get_uri(request));
-    GOwnPtr<char> uriString(soup_uri_to_string(uri, FALSE));
 
-    if (SOUP_URI_VALID_FOR_HTTP(uri) && g_strcmp0(uri->host, "127.0.0.1")
-        && g_strcmp0(uri->host, "255.255.255.255")
-        && g_ascii_strncasecmp(uri->host, "localhost", 9)) {
-        printf("Blocked access to external URL %s\n", uriString.get());
-        // Cancel load of blocked resource to avoid potential
-        // network-related timeouts in tests.
-        webkit_network_request_set_uri(request, "about:blank");
-        soup_uri_free(uri);
-        return;
+    if (SOUP_URI_IS_VALID(uri)) {
+        GOwnPtr<char> uriString(soup_uri_to_string(uri, FALSE));
+
+        if (SOUP_URI_VALID_FOR_HTTP(uri) && g_strcmp0(uri->host, "127.0.0.1")
+            && g_strcmp0(uri->host, "255.255.255.255")
+            && g_ascii_strncasecmp(uri->host, "localhost", 9)) {
+            printf("Blocked access to external URL %s\n", uriString.get());
+            // Cancel load of blocked resource to avoid potential
+            // network-related timeouts in tests.
+            webkit_network_request_set_uri(request, "about:blank");
+            soup_uri_free(uri);
+            return;
+        }
+
+        const string& destination = gTestRunner->redirectionDestinationForURL(uriString.get());
+        if (!destination.empty())
+            webkit_network_request_set_uri(request, destination.c_str());
     }
-
-    const string& destination = gTestRunner->redirectionDestinationForURL(uriString.get());
-    if (!destination.empty())
-        webkit_network_request_set_uri(request, destination.c_str());
 
     if (uri)
         soup_uri_free(uri);

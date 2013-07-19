@@ -1,3 +1,17 @@
+2013-07-19  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Fix regression in DumpRenderTree introduced in r152782 by checking if uri is valid
+        https://bugs.webkit.org/show_bug.cgi?id=118895
+
+        Reviewed by Philippe Normand.
+
+        In r152782 an uri is used to create an string representation without checking first if it
+        is valid. That fails later when the string is used to check for existing redirections. This
+        patch ensures that the uri is valid before using it.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (willSendRequestCallback): Ensure an uri is valid before using it.
+
 2013-07-18  Timothy Hatcher  <timothy@apple.com>
 
         Add extract-localizable-js-strings and use it for WebInspectorUI.
