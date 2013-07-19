@@ -32,6 +32,7 @@ list(APPEND WebKit2_SOURCES
     WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp
     UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp
     UIProcess/API/C/gtk/WKInspectorClientGtk.cpp
+    UIProcess/gtk/ExperimentalFeatures.cpp
     UIProcess/gtk/WebContextMenuProxyGtk.cpp
     UIProcess/gtk/WebContextGtk.cpp
     UIProcess/gtk/WebPageProxyGtk.cpp

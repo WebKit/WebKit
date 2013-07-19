@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebKitSettings.h"
 
+#include "ExperimentalFeatures.h"
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include <WebCore/UserAgentGtk.h>
@@ -136,6 +137,17 @@ enum {
     PROP_ENABLE_ACCELERATED_2D_CANVAS,
     PROP_ENABLE_WRITE_CONSOLE_MESSAGES_TO_STDOUT
 };
+
+static void webKitSettingsConstructed(GObject* object)
+{
+    G_OBJECT_CLASS(webkit_settings_parent_class)->constructed(object);
+
+    WebPreferences* prefs = WEBKIT_SETTINGS(object)->priv->preferences.get();
+    ExperimentalFeatures features;
+    bool regionBasedColumnsEnabled = features.isEnabled(ExperimentalFeatures::RegionBasedColumns);
+    if (prefs->regionBasedColumnsEnabled() != regionBasedColumnsEnabled)
+        prefs->setRegionBasedColumnsEnabled(regionBasedColumnsEnabled);
+}
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
 {
@@ -438,6 +450,7 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
 static void webkit_settings_class_init(WebKitSettingsClass* klass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
+    gObjectClass->constructed = webKitSettingsConstructed;
     gObjectClass->set_property = webKitSettingsSetProperty;
     gObjectClass->get_property = webKitSettingsGetProperty;
 

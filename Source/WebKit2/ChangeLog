@@ -1,3 +1,41 @@
+2013-07-19  Morten Stenshorne  <mstensho@opera.com>
+
+        [GTK] Need a way to enable region based columns from the command line
+        https://bugs.webkit.org/show_bug.cgi?id=116611
+
+        Reviewed by Martin Robinson.
+
+        Add an environment variable to enable experimental features.
+
+        This provides a means to enable experimental features without polluting
+        the public API.
+
+        Environment variable name: WEBKITGTK_EXPERIMENTAL_FEATURES
+
+        Format: WEBKITGTK_EXPERIMENTAL_FEATURES="<feature1>=1,<feature2>=1,..."
+        Or, to enable all experimental features: WEBKITGTK_EXPERIMENTAL_FEATURES=all
+
+        So far the only feature is region based columns (implement multicol using
+        the CSS regions implementation rather than ColumnInfo & co) - REGION_BASED_COLUMNS.
+
+        Example: WEBKITGTK_EXPERIMENTAL_FEATURES="REGION_BASED_COLUMNS=1"
+
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsConstructed):
+        (webkit_settings_class_init):
+        * UIProcess/gtk/ExperimentalFeatures.cpp: Added.
+        (WebKit):
+        (Setting):
+        (WebKit::ExperimentalFeatures::ExperimentalFeatures):
+        (WebKit::ExperimentalFeatures::isEnabled):
+        (WebKit::ExperimentalFeatures::setEnableByName):
+        (WebKit::ExperimentalFeatures::parseEnvironment):
+        * UIProcess/gtk/ExperimentalFeatures.h: Added.
+        (WebKit):
+        (ExperimentalFeatures):
+
 2013-07-18  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [WK2] Share Qt port's codes to find zoomable area with CoordinatedGraphics.
