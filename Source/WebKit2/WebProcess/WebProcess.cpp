@@ -576,6 +576,7 @@ void WebProcess::terminate()
 {
 #ifndef NDEBUG
     gcController().garbageCollectNow();
+    fontCache()->invalidate();
     memoryCache()->setDisabled(true);
 #endif
 
@@ -628,6 +629,7 @@ void WebProcess::didClose(CoreIPC::Connection*)
     pages.clear();
 
     gcController().garbageCollectSoon();
+    fontCache()->invalidate();
     memoryCache()->setDisabled(true);
 #endif    
 
