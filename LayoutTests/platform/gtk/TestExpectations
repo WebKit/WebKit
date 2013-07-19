@@ -494,6 +494,8 @@ webkit.org/b/118422 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-
 
 webkit.org/b/118423 http/tests/misc/iframe-reparenting-id-collision.html [ Crash Pass ]
 
+webkit.org/b/118902 svg/animations/svgenum-animation-6.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1436,6 +1438,9 @@ webkit.org/b/118730 http/tests/security/contentSecurityPolicy/1.1/plugintypes-ur
 webkit.org/b/118730 plugins/embed-attributes-style.html [ Failure ]
 webkit.org/b/118730 plugins/iframe-shims.html [ Failure ]
 webkit.org/b/118730 editing/pasteboard/paste-noplugin.html [ Failure ]
+
+# New MathML test introduced when MathML pixel tests were replaced with ref tests
+webkit.org/b/118904 mathml/presentation/bug95404.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

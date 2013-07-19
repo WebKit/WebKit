@@ -1,3 +1,20 @@
+2013-07-19  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Update expectations after r152793, r152777 and r152872
+        https://bugs.webkit.org/show_bug.cgi?id=118906
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Mark svg/animations/svgenum-animation-6.html as flaky, and
+        mathml/presentation/bug95404.html, introduced in r152777, as ImageOnlyFailure.
+        * platform/gtk/editing/pasteboard/emacs-cntl-y-001-expected.txt: New baseline after r152872.
+        * platform/gtk/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt: Ditto.
+        * platform/gtk/fast/dom/Range/getClientRects-expected.txt: Ditto.
+        * platform/gtk/fast/js/function-length-expected.txt: Ditto.
+        * platform/gtk/plugins/npruntime/object-from-destroyed-plugin-expected.txt: Added after r152872.
+        * platform/gtk/plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt: Added after r152872.
+        * platform/gtk/tables/mozilla/marvin/backgr_index-expected.txt: New baseline after r152793.
+
 2013-07-19  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt][WK2] More unreviewed cleanup for pixel tester bot.

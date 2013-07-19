@@ -1,8 +1,8 @@
-layer at (0,0) size 827x1749
+layer at (0,0) size 827x1734
   RenderView at (0,0) size 785x585
-layer at (0,0) size 785x1749
-  RenderBlock {HTML} at (0,0) size 785x1750
-    RenderBody {BODY} at (8,17) size 769x1720 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 785x1734
+  RenderBlock {HTML} at (0,0) size 785x1735
+    RenderBody {BODY} at (8,17) size 769x1705 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
@@ -29,7 +29,7 @@ layer at (0,0) size 785x1749
       RenderBlock {P} at (0,232) size 769x16
         RenderText {#text} at (0,0) size 392x15
           text run at (0,0) width 392: "The images used as backgrounds are the following:"
-      RenderBlock {UL} at (0,260) size 769x749
+      RenderBlock {UL} at (0,260) size 769x734
         RenderListItem {LI} at (40,0) size 729x34
           RenderListMarker at (-15,19) size 6x15: bullet
           RenderImage {IMG} at (0,0) size 80x30
@@ -38,24 +38,24 @@ layer at (0,0) size 785x1749
           RenderListMarker at (-15,69) size 6x15: bullet
           RenderImage {IMG} at (0,0) size 30x80
           RenderText {#text} at (0,0) size 0x0
-        RenderListItem {LI} at (40,118) size 729x630
-          RenderListMarker at (-15,0) size 6x15: bullet
-          RenderImage {IMG} at (0,15) size 779x611
+        RenderListItem {LI} at (40,118) size 729x615
+          RenderListMarker at (-15,600) size 6x15: bullet
+          RenderImage {IMG} at (0,0) size 779x611
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1021) size 769x16
+      RenderBlock {P} at (0,1006) size 769x16
         RenderText {#text} at (0,0) size 336x15
           text run at (0,0) width 336: "They are in GIF format, with transparency."
-      RenderBlock {P} at (0,1049) size 769x31
+      RenderBlock {P} at (0,1034) size 769x31
         RenderText {#text} at (0,0) size 760x30
           text run at (0,0) width 760: "Each color band in the rainbow backgrounds is 20 pixels wide. Each stripe within the color band"
           text run at (0,15) width 152: "is two pixels wide."
-      RenderBlock {P} at (0,1092) size 769x16
+      RenderBlock {P} at (0,1077) size 769x16
         RenderText {#text} at (0,0) size 728x15
           text run at (0,0) width 728: "The aqua and purple band is 10 pixels wide. Each stripe within the band is two pixels wide."
-      RenderBlock {P} at (0,1120) size 769x16
+      RenderBlock {P} at (0,1105) size 769x16
         RenderText {#text} at (0,0) size 744x15
           text run at (0,0) width 744: "Many image background rules in this test suite are backed up with a 'black' background color."
-      RenderBlock {P} at (0,1148) size 769x61
+      RenderBlock {P} at (0,1133) size 769x61
         RenderText {#text} at (0,0) size 232x15
           text run at (0,0) width 232: "This test suite assumes that "
         RenderInline {STRONG} at (0,0) size 720x30
@@ -75,10 +75,10 @@ layer at (0,0) size 785x1749
             text run at (0,45) width 56: "<tfoot>"
         RenderText {#text} at (56,45) size 8x15
           text run at (56,45) width 8: "."
-      RenderBlock {H2} at (0,1224) size 769x24
+      RenderBlock {H2} at (0,1209) size 769x24
         RenderText {#text} at (0,0) size 204x23
           text run at (0,0) width 204: "Table of Contents"
-      RenderBlock {OL} at (0,1263) size 769x456
+      RenderBlock {OL} at (0,1248) size 769x456
         RenderListItem {LI} at (40,0) size 729x105
           RenderBlock (anonymous) at (0,0) size 729x15
             RenderListMarker at (-27,0) size 24x15: "A"

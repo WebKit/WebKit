@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS window.confirm.length is 0
 PASS window.open.length is 2
-FAIL window.showModalDialog.length should be 1. Threw exception TypeError: 'undefined' is not an object (evaluating 'window.showModalDialog.length')
+FAIL window.showModalDialog.length should be 1. Threw exception TypeError: undefined is not an object (evaluating 'window.showModalDialog.length')
 PASS window.setTimeout.length is 1
 PASS window.clearTimeout.length is 0
 PASS window.addEventListener.length is 2
