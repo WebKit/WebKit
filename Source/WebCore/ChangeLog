@@ -1,3 +1,12 @@
+2013-07-19  Kwang Yul Seo  <skyul@company100.net>
+
+        Unreviewed.
+
+        Fix an assertion failure which causes debug bots to fail.
+
+        * platform/network/NetworkStateNotifier.cpp:
+        (WebCore::NetworkStateNotifier::addNetworkStateChangeListener):
+
 2013-07-19  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] media/video-seek-multiple.html is failing

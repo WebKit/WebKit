@@ -41,7 +41,7 @@ NetworkStateNotifier& networkStateNotifier()
 
 void NetworkStateNotifier::addNetworkStateChangeListener(NetworkStateChangeListener listener)
 {
-    ASSERT(!listener);
+    ASSERT(listener);
     m_listeners.append(listener);
 }
 
