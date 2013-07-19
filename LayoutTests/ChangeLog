@@ -1,3 +1,20 @@
+2013-07-19  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes][CSS Regions] Modify existing tests to test overflow also when padding is applied on the container
+        https://bugs.webkit.org/show_bug.cgi?id=117881
+
+        Reviewed by David Hyatt.
+
+        Currently, we don't have tests which test the overflow behavior when there is padding applied on the container.
+        I modified the existing tests to cover these cases as well and increase our test coverage.
+
+        * fast/shapes/shape-inside/shape-inside-overflow-fixed-dimensions-expected.html:
+        * fast/shapes/shape-inside/shape-inside-overflow-fixed-dimensions.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-bottom-positioned-multiple-shapes-expected.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-bottom-positioned-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-overflow-bottom-positioned-multiple-shapes-expected.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-overflow-bottom-positioned-multiple-shapes.html:
+
 2013-07-19  Frédéric Wang  <fred.wang@free.fr>
 
         Update test expectations for MathML after r152840.

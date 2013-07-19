@@ -9,26 +9,24 @@
 #container {
     font: 20px Ahem, sans-serif;
     line-height: 20px;
-    border: 2px solid blue;
-    border-bottom: 30px solid yellow;
     position: relative;
-    width: 200px;
-    height: 200px;
-    margin-bottom: 60px;
 }
 #shape-inside {
     width: 200px;
     height: 200px;
+    background-color: green;
     border-bottom: 30px solid yellow;
+    padding-top: 15px;
+    padding-bottom: 10px;
     -webkit-shape-inside: rectangle(50px, 0px, 100px, 50px);
 }
 #border {
     position: absolute;
-    margin-top: -2px;
+    margin-top: 13px;
     left: 48px;
     width: 100px;
     height: 40px;
-    border: 2px solid green;
+    border: 2px solid blue;
 }
 </style>
 </head>
@@ -39,7 +37,7 @@
             X X X X X X X X X X X X X X X X
         </div>
     </div>
-    <p>Requires Ahem font. The inline content should start inside the green rectangle (shape-inside) and the overflow should be pushed below the content box. The overflow should start where the yellow bottom border starts. <br/>
+    <p>Requires Ahem font. The inline content should start inside the green rectangle (shape-inside) and the overflow should be pushed below the content box. The overflow should start 10px above the yellow bottom border. <br/>
     <p>Bug <a href="http://webkit.org/b/114526">114526</a>: [CSS Exclusions] shape-inside overflow should be pushed to the outside of the content box</p>
 </body>
 </html>
