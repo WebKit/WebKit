@@ -1,5 +1,21 @@
 2013-07-19  Zoltan Horvath  <zoltan@webkit.org>
 
+        [CSS Shapes] Clear overflowing line's segments in pushShapeContentOverflowBelowTheContentBox
+        https://bugs.webkit.org/show_bug.cgi?id=118002
+
+        Reviewed by David Hyatt.
+
+        When the last line in the shape overlaps with the shape bottom boundaries we need to clear the computed segments. (We need to compute
+        the segments anyway, since shape-outside's code uses the same code path to determine its segments and the line containing is not a
+        requirement in that case.) Rather then doing the job in RenderBlock::LineBreaker::nextLineBreak I moved the functionality to its correct
+        place to pushShapeContentOverflowBelowTheContentBox. Now all the overflow related functionality is located in one function. I fixed the
+        corresponding layout test.
+
+        * fast/shapes/shape-inside/shape-inside-overflow-expected.html:
+        * fast/shapes/shape-inside/shape-inside-overflow.html:
+
+2013-07-19  Zoltan Horvath  <zoltan@webkit.org>
+
         [CSS Shapes][CSS Regions] Modify existing tests to test overflow also when padding is applied on the container
         https://bugs.webkit.org/show_bug.cgi?id=117881
 

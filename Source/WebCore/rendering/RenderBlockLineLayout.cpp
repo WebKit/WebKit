@@ -1665,11 +1665,16 @@ static inline void pushShapeContentOverflowBelowTheContentBox(RenderBlock* block
     ASSERT(shapeInsideInfo);
 
     LayoutUnit logicalLineBottom = lineTop + lineHeight;
+    LayoutUnit shapeLogicalBottom = shapeInsideInfo->shapeLogicalBottom();
     LayoutUnit shapeContainingBlockHeight = shapeInsideInfo->shapeContainingBlockHeight();
 
     bool isOverflowPositionedAlready = (shapeContainingBlockHeight - shapeInsideInfo->owner()->borderAndPaddingAfter() + lineHeight) <= lineTop;
 
-    if (logicalLineBottom <= shapeInsideInfo->shapeLogicalBottom() || !shapeContainingBlockHeight || isOverflowPositionedAlready)
+    // If the last line overlaps with the shape, we don't need the segments anymore
+    if (lineTop < shapeLogicalBottom && shapeLogicalBottom < logicalLineBottom)
+        shapeInsideInfo->clearSegments();
+
+    if (logicalLineBottom <= shapeLogicalBottom || !shapeContainingBlockHeight || isOverflowPositionedAlready)
         return;
 
     LayoutUnit newLogicalHeight = block->logicalHeight() + (shapeContainingBlockHeight - (lineTop + shapeInsideInfo->owner()->borderAndPaddingAfter()));
@@ -2810,13 +2815,6 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 
     if (!shapeInsideInfo || !shapeInsideInfo->lineOverlapsShapeBounds())
         return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
-
-    // In layoutRunsAndFloatsInRange we have to use lineOverlapsShapeBounds() to determine the line segments since shape-outside's codepaths uses the same code to determine its segments. The line containing is not a requirement for shape-outside,
-    // so in this case we can end up with some extra segments for the overflowing content, but we don't want to apply the segments for the overflowing content, so we need to reset it.
-    if (!m_block->flowThreadContainingBlock() && !shapeInsideInfo->lineWithinShapeBounds()) {
-        shapeInsideInfo->clearSegments();
-        return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
-    }
 
     InlineIterator end = resolver.position();
     InlineIterator oldEnd = end;

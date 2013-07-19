@@ -9,26 +9,21 @@
         line-height: 20px;
         border: 2px solid blue;
     }
-    #border {
-        position: absolute;
-        left: 48px;
+    #shape-inside {
+        margin-top: -2px;
+        margin-left: 48px;
         width: 100px;
-        height: 40px;
+        height: 50px;
         border: 2px solid green;
     }
-    .spacer {
-        width: 50px;
-        height: 40px;
-    }
+    #overflow { margin-top: -2px; }
 </style>
 </head>
 <body>
     <div id="container">
-        <div id="border"></div>
-        <div id="shape-inside">
-            <div class="spacer" style="float:left"></div>
-            <div class="spacer" style="float:right"></div>
-            This text should wrap inside the green rectangle, and overflow should wrap
+        <div id="shape-inside">This text should wrap</div>
+        <div id="overflow">
+            inside the green rectangle, and overflow should wrap
             inside the blue rectangle.
         </div>
     </div>
