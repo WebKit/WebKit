@@ -2808,23 +2808,3 @@ media/track/track-legacyapi-with-automatic-mode.html
 # CSS_SHAPES not supported on AppleWin port.
 # https://bugs.webkit.org/show_bug.cgi?id=118810
 fast/shapes
-
-# Flaky tests on AppleWin port
-editing/pasteboard/paste-4039777-fix.html
-editing/spelling/grammar-paste.html
-editing/pasteboard/copy-backslash-with-euc.html
-editing/pasteboard/do-not-copy-unnecessary-styles.html
-editing/spelling/spellcheck-queue.html
-editing/style/5065910.html
-platform/win/accessibility/parent-element.html
-css1/basic/comments.html
-media/video-frame-accurate-seek.html
-animations/cross-fade-webkit-mask-box-image.html
-fast/frames/lots-of-iframes.html
-fast/css/font-face-data-uri.html
-fast/history/history-subframe-with-name.html
-media/fallback.html
-fast/text/large-text-composed-char.html
-fast/media/mq-transform-02.html
-fast/media/mq-transform-03.html
-fast/js/global-constructors-attributes-dedicated-worker.html

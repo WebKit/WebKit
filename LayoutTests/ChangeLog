@@ -1,5 +1,12 @@
 2013-07-19  Roger Fong  <roger_fong@apple.com>
 
+        Unskip flaky tests on AppleWin. 
+        Flakiness is not an issue with the tests themselves but with the test infrastructure.
+
+        * platform/win/TestExpectations:
+
+2013-07-19  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Skip some flaky tests on AppleWin port.
 
         * platform/win/TestExpectations:
