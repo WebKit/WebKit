@@ -119,11 +119,14 @@ HMENU ContextMenu::createPlatformContextMenuFromItems(const Vector<ContextMenuIt
 #else
         // ContextMenuItem::platformContextMenuItem doesn't set the title of the MENUITEMINFO to make the
         // lifetime handling easier for callers.
-        String itemTitle = item.title();
+        Vector<UChar> wideCharTitle; // Retain buffer for long enough to make the InsertMenuItem call
+
+        const String& itemTitle = item.title();
         if (item.type() != SeparatorType) {
             menuItem.fMask |= MIIM_STRING;
             menuItem.cch = itemTitle.length();
-            menuItem.dwTypeData = const_cast<LPWSTR>(itemTitle.charactersWithNullTermination().data());
+            wideCharTitle = itemTitle.charactersWithNullTermination();
+            menuItem.dwTypeData = const_cast<LPWSTR>(wideCharTitle.data());
         }
 
         ::InsertMenuItem(menu, i, TRUE, &menuItem);

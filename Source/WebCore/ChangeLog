@@ -1,3 +1,21 @@
+2013-07-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Avoid passing addresses of temporaries to Windows API.
+        https://bugs.webkit.org/show_bug.cgi?id=118917
+
+        Reviewed by Anders Carlsson.
+
+        The temporary Vector returned by String::charactersWithNullTermination
+        was going out of scope before its first use, causing Windows API to
+        receive garbage memory.
+
+        * platform/win/ContextMenuWin.cpp:
+        (WebCore::ContextMenu::createPlatformContextMenuFromItems):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::createGlobalHDropContent):
+        * platform/win/SSLKeyGeneratorWin.cpp:
+        (WebCore::WebCore::signedPublicKeyAndChallengeString):
+
 2013-07-19  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Remove lineWithinShapeBounds() from ShapeInfo since it's no longer used

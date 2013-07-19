@@ -963,7 +963,8 @@ static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, Share
         // windows does not enjoy a leading slash on paths
         if (localPath[0] == '/')
             localPath = localPath.substring(1);
-        LPCWSTR localPathStr = localPath.charactersWithNullTermination().data();
+        const Vector<UChar>& localPathWide = localPath.charactersWithNullTermination();
+        LPCWSTR localPathStr = localPathWide.data();
         if (wcslen(localPathStr) + 1 < MAX_PATH)
             wcscpy_s(filePath, MAX_PATH, localPathStr);
         else
