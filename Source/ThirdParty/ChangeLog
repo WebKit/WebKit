@@ -1,3 +1,10 @@
+2013-07-18  Roger Fong  <roger_fong@apple.com>
+
+        Make sure to link against _debug binaries when appropriate.
+        <rdar://problem/14473010>.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
 2013-06-17  Darin Adler  <darin@apple.com>
 
         Sort all the Xcode project files

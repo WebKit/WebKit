@@ -9,7 +9,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <UndefinePreprocessorDefinitions>DEBUG_INTERNAL;DEBUG_ALL;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;DEBUG_INTERNAL;DEBUG_ALL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)\$(ProjectName)$(DebugSuffix).lib</OutputFile>
