@@ -81,6 +81,12 @@ private:
     bool m_viewSource;
 };
 
+inline HTMLFrameElementBase* toHTMLFrameElementBase(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(HTMLNames::frameTag) || node->hasTagName(HTMLNames::iframeTag));
+    return static_cast<HTMLFrameElementBase*>(node);
+}
+
 } // namespace WebCore
 
 #endif // HTMLFrameElementBase_h

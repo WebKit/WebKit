@@ -172,7 +172,7 @@ void HTMLBodyElement::didNotifySubtreeInsertions(ContainerNode* insertionPoint)
     // FIXME: Perhaps this code should be in attach() instead of here.
     Element* ownerElement = document()->ownerElement();
     if (ownerElement && (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))) {
-        HTMLFrameElementBase* ownerFrameElement = static_cast<HTMLFrameElementBase*>(ownerElement);
+        HTMLFrameElementBase* ownerFrameElement = toHTMLFrameElementBase(ownerElement);
         int marginWidth = ownerFrameElement->marginWidth();
         if (marginWidth != -1)
             setAttribute(marginwidthAttr, String::number(marginWidth));

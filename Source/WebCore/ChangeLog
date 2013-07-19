@@ -1,3 +1,32 @@
+2013-07-19  Kangil Han  <kangil.han@samsung.com>
+
+        Use explicit HTMLFrameElementBase cast and introduce toHTMLFrameElementBase
+        https://bugs.webkit.org/show_bug.cgi?id=118873
+
+        Reviewed by Ryosuke Niwa.
+
+        It should be HTMLFrameElementBase that embraces both HTMLFrameElement and HTMLIFrameElement.
+        This also makes correct toFooElement possible.
+        Next, to avoid direct use of static_cast, this patch introduces toHTMLFrameElementBase for code cleanup.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::scanForForm):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::didNotifySubtreeInsertions):
+        * html/HTMLFrameElementBase.h:
+        (WebCore::toHTMLFrameElementBase):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadSubframe):
+        * page/EventHandler.cpp:
+        (WebCore::targetIsFrame):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::init):
+        * rendering/RenderFrameBase.cpp:
+        (WebCore::RenderFrameBase::layoutWithFlattening):
+        * rendering/RenderLayer.cpp:
+        (WebCore::frameElementAndViewPermitScroll):
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2013-07-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Bindings generation tests are failing

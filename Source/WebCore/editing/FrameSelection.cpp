@@ -1974,11 +1974,9 @@ static HTMLFormElement* scanForForm(Node* start)
             return toHTMLFormElement(element);
         if (element->isHTMLElement() && toHTMLElement(element)->isFormControlElement())
             return static_cast<HTMLFormControlElement*>(element)->form();
-        if (element->hasTagName(frameTag) || element->hasTagName(iframeTag)) {
-            Node* childDocument = static_cast<HTMLFrameElementBase*>(element)->contentDocument();
-            if (HTMLFormElement* frameResult = scanForForm(childDocument))
+        if (element->hasTagName(frameTag) || element->hasTagName(iframeTag))
+            if (HTMLFormElement* frameResult = scanForForm(toHTMLFrameElementBase(element)->contentDocument()))
                 return frameResult;
-        }
     }
     return 0;
 }

@@ -353,10 +353,10 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
     int marginWidth = -1;
     int marginHeight = -1;
     if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag)) {
-        HTMLFrameElementBase* o = static_cast<HTMLFrameElementBase*>(ownerElement);
-        allowsScrolling = o->scrollingMode() != ScrollbarAlwaysOff;
-        marginWidth = o->marginWidth();
-        marginHeight = o->marginHeight();
+        HTMLFrameElementBase* frameElementBase = toHTMLFrameElementBase(ownerElement);
+        allowsScrolling = frameElementBase->scrollingMode() != ScrollbarAlwaysOff;
+        marginWidth = frameElementBase->marginWidth();
+        marginHeight = frameElementBase->marginHeight();
     }
 
     if (!ownerElement->document()->securityOrigin()->canDisplay(url)) {
