@@ -1,3 +1,13 @@
+2013-07-19  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebase failing tests.
+
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_index-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/marvin/backgr_index-expected.txt: Copied from LayoutTests/platform/qt/tables/mozilla/marvin/backgr_index-expected.txt.
+        * platform/qt/fast/lists/inlineBoxWrapperNullCheck-expected.txt:
+        * platform/qt/http/tests/security/contentSecurityPolicy/object-src-none-blocked-expected.txt:
+        * platform/qt/tables/mozilla/marvin/backgr_index-expected.txt:
+
 2013-07-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r152801.
