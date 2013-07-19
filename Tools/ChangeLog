@@ -1,3 +1,19 @@
+2013-07-19  Martin Robinson  <mrobinson@igalia.com>
+
+        Add a couple people to the MathML watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=118909
+
+        Reviewed by Andreas Kling.
+
+        Add a couple people to the MathML watchlist and add Kalyan's other
+        email address to fix style checker warnings about the watchlist
+        contents.
+
+        * Scripts/webkitpy/common/config/contributors.json: Add Frédéric to the
+        list of contributors and add Kalyan's second email address.
+        * Scripts/webkitpy/common/config/watchlist: Add myself and Frédéric to the MathML
+        watchlist.
+
 2013-07-19  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Fix regression in DumpRenderTree introduced in r152782 by checking if uri is valid
