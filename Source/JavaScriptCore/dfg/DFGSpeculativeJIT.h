@@ -1155,6 +1155,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_DFGOperation_EC operation, GPRReg result, JSCell* cell)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(cell));
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(J_DFGOperation_ECI operation, GPRReg result, GPRReg arg1, Identifier* identifier)
     {
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
@@ -1376,6 +1381,11 @@ public:
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
 
+    JITCompiler::Call callOperation(J_DFGOperation_EC operation, GPRReg resultTag, GPRReg resultPayload, JSCell* cell)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(cell));
+        return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
+    }
     JITCompiler::Call callOperation(J_DFGOperation_ECI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, Identifier* identifier)
     {
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));

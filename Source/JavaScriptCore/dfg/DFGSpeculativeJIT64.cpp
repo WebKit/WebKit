@@ -4752,7 +4752,7 @@ void SpeculativeJIT::compile(Node* node)
                 notCreated, this, operationNewFunction,
                 resultGPR, m_jit.codeBlock()->functionDecl(node->functionDeclIndex())));
         
-        cellResult(resultGPR, node);
+        jsValueResult(resultGPR, node);
         break;
     }
         

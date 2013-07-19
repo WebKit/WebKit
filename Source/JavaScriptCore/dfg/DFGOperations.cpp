@@ -1412,12 +1412,20 @@ EncodedJSValue DFG_OPERATION operationGetInlinedArgumentByVal(
     return JSValue::encode(argumentsValue.get(exec, index));
 }
 
-JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
+JSCell* DFG_OPERATION operationNewFunctionNoCheck(ExecState* exec, JSCell* functionExecutable)
 {
     ASSERT(functionExecutable->inherits(&FunctionExecutable::s_info));
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     return JSFunction::create(exec, static_cast<FunctionExecutable*>(functionExecutable), exec->scope());
+}
+
+EncodedJSValue DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
+{
+    ASSERT(functionExecutable->inherits(&FunctionExecutable::s_info));
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    return JSValue::encode(JSFunction::create(exec, static_cast<FunctionExecutable*>(functionExecutable), exec->scope()));
 }
 
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* functionExecutableAsCell)

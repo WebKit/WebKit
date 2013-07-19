@@ -215,6 +215,14 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
         else
             out.print(comma, "executable(not function: ", RawPointer(node->executable()), ")");
     }
+    if (node->hasFunctionDeclIndex()) {
+        FunctionExecutable* executable = m_codeBlock->functionDecl(node->functionDeclIndex());
+        out.print(comma, executable->inferredName().string(), "#", executable->hashFor(CodeForCall));
+    }
+    if (node->hasFunctionExprIndex()) {
+        FunctionExecutable* executable = m_codeBlock->functionExpr(node->functionExprIndex());
+        out.print(comma, executable->inferredName().string(), "#", executable->hashFor(CodeForCall));
+    }
     if (node->hasStorageAccessData()) {
         StorageAccessData& storageAccessData = m_storageAccessData[node->storageAccessDataIndex()];
         out.print(comma, "id", storageAccessData.identifierNumber, "{", m_codeBlock->identifier(storageAccessData.identifierNumber).string(), "}");
