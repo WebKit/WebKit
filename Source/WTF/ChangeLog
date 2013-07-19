@@ -1,5 +1,12 @@
 2013-07-18  Benjamin Poulain  <benjamin@webkit.org>
 
+        Fix the build after r152881
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::lower):
+
+2013-07-18  Benjamin Poulain  <benjamin@webkit.org>
+
         Little cleaning of StringImpl::lower() and StringImpl::upper() for ARM
         https://bugs.webkit.org/show_bug.cgi?id=118831
 

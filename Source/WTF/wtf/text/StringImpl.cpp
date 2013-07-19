@@ -396,7 +396,7 @@ PassRefPtr<StringImpl> StringImpl::lower()
     if (is8Bit()) {
         for (unsigned i = 0; i < m_length; ++i) {
             LChar character = m_data8[i];
-            if (UNLIKELYisASCIIUpper(character)))
+            if (UNLIKELY(isASCIIUpper(character)))
                 noUpper = false;
             ored |= character;
         }
