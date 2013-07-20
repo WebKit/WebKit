@@ -18,7 +18,6 @@ INCLUDEPATH += \
 
 HEADERS += \
     src/compiler/BaseTypes.h \
-    src/compiler/builtin_symbol_table.h \
     src/compiler/BuiltInFunctionEmulator.h \
     src/compiler/Common.h \
     src/compiler/ConstantUnion.h \
@@ -26,8 +25,8 @@ HEADERS += \
     src/compiler/depgraph/DependencyGraph.h \
     src/compiler/depgraph/DependencyGraphBuilder.h \
     src/compiler/depgraph/DependencyGraphOutput.h \
-    src/compiler/DetectCallDepth.h \
     src/compiler/DetectDiscontinuity.h \
+    src/compiler/DetectRecursion.h \
     src/compiler/Diagnostics.h \
     src/compiler/DirectiveHandler.h \
     src/compiler/ExtensionBehavior.h \
@@ -85,7 +84,6 @@ HEADERS += \
     src/third_party/compiler/ArrayBoundsClamper.h
 
 SOURCES += \
-    src/compiler/builtin_symbol_table.cpp \
     src/compiler/BuiltInFunctionEmulator.cpp \
     src/compiler/CodeGenGLSL.cpp \
     src/compiler/Compiler.cpp \
@@ -94,8 +92,8 @@ SOURCES += \
     src/compiler/depgraph/DependencyGraphBuilder.cpp \
     src/compiler/depgraph/DependencyGraphOutput.cpp \
     src/compiler/depgraph/DependencyGraphTraverse.cpp \
-    src/compiler/DetectCallDepth.cpp \
     src/compiler/DetectDiscontinuity.cpp \
+    src/compiler/DetectRecursion.cpp \
     src/compiler/Diagnostics.cpp \
     src/compiler/DirectiveHandler.cpp \
     src/compiler/ForLoopUnroll.cpp \

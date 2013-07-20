@@ -52,7 +52,6 @@ OutputHLSL::OutputHLSL(TParseContext &context) : TIntermTraverser(true, true, tr
     mUsesPointCoord = false;
     mUsesFrontFacing = false;
     mUsesPointSize = false;
-    mUsesFragDepth = false;
     mUsesXor = false;
     mUsesMod1 = false;
     mUsesMod2v = false;
@@ -189,11 +188,6 @@ void OutputHLSL::header()
         out <<  varyings;
         out << "\n"
                "static float4 gl_Color[1] = {float4(0, 0, 0, 0)};\n";
-
-        if (mUsesFragDepth)
-        {
-            out << "static float gl_Depth = 0.0;\n";
-        }
 
         if (mUsesFragCoord)
         {
@@ -513,11 +507,6 @@ void OutputHLSL::header()
     if (mUsesPointSize)
     {
         out << "#define GL_USES_POINT_SIZE\n";
-    }
-
-    if (mUsesFragDepth)
-    {
-        out << "#define GL_USES_FRAG_DEPTH\n";
     }
 
     if (mUsesDepthRange)
@@ -854,11 +843,6 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
         mUsesPointSize = true;
         out << name;
     }
-    else if (name == "gl_FragDepthEXT")
-    {
-        mUsesFragDepth = true;
-        out << "gl_Depth";
-    }
     else
     {
         TQualifier qualifier = node->getQualifier();
@@ -968,10 +952,7 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
       case EOpIndexDirectStruct:
         if (visit == InVisit)
         {
-            const TStructure* structure = node->getLeft()->getType().getStruct();
-            const TIntermConstantUnion* index = node->getRight()->getAsConstantUnion();
-            const TField* field = structure->fields()[index->getIConst(0)];
-            out << "." + decorateField(field->name(), node->getLeft()->getType());
+            out << "." + decorateField(node->getType().getFieldName(), node->getLeft()->getType());
 
             return false;
         }
@@ -993,7 +974,7 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
 
                     if (element)
                     {
-                        int i = element->getIConst(0);
+                        int i = element->getUnionArrayPointer()[0].getIConst();
 
                         switch (i)
                         {
@@ -1040,18 +1021,18 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
                 out << "!(";
             }
 
-            const TFieldList &fields = node->getLeft()->getType().getStruct()->fields();
+            const TTypeList *fields = node->getLeft()->getType().getStruct();
 
-            for (size_t i = 0; i < fields.size(); i++)
+            for (size_t i = 0; i < fields->size(); i++)
             {
-                const TField *field = fields[i];
+                const TType *fieldType = (*fields)[i].type;
 
                 node->getLeft()->traverse(this);
-                out << "." + decorateField(field->name(), node->getLeft()->getType()) + " == ";
+                out << "." + decorateField(fieldType->getFieldName(), node->getLeft()->getType()) + " == ";
                 node->getRight()->traverse(this);
-                out << "." + decorateField(field->name(), node->getLeft()->getType());
+                out << "." + decorateField(fieldType->getFieldName(), node->getLeft()->getType());
 
-                if (i < fields.size() - 1)
+                if (i < fields->size() - 1)
                 {
                     out << " && ";
                 }
@@ -1257,7 +1238,7 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
         {
             if (mInsideFunction)
             {
-                outputLineDirective(node->getLine().first_line);
+                outputLineDirective(node->getLine());
                 out << "{\n";
 
                 mScopeDepth++;
@@ -1274,7 +1255,7 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
 
             for (TIntermSequence::iterator sit = node->getSequence().begin(); sit != node->getSequence().end(); sit++)
             {
-                outputLineDirective((*sit)->getLine().first_line);
+                outputLineDirective((*sit)->getLine());
 
                 traverseStatements(*sit);
 
@@ -1283,7 +1264,7 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
 
             if (mInsideFunction)
             {
-                outputLineDirective(node->getLine().last_line);
+                outputLineDirective(node->getEndLine());
                 out << "}\n";
 
                 mScopeDepth--;
@@ -1302,7 +1283,7 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
             {
                 if (variable->getType().getStruct())
                 {
-                    addConstructor(variable->getType(), scopedStruct(variable->getType().getStruct()->name()), NULL);
+                    addConstructor(variable->getType(), scopedStruct(variable->getType().getTypeName()), NULL);
                 }
 
                 if (!variable->getAsSymbolNode() || variable->getAsSymbolNode()->getSymbol() != "")   // Variable declaration
@@ -1420,7 +1401,7 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
                 {
                     if (symbol->getType().getStruct())
                     {
-                        addConstructor(symbol->getType(), scopedStruct(symbol->getType().getStruct()->name()), NULL);
+                        addConstructor(symbol->getType(), scopedStruct(symbol->getType().getTypeName()), NULL);
                     }
 
                     out << argumentString(symbol);
@@ -1669,8 +1650,8 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
         outputTriplet(visit, "mat4(", ", ", ")");
         break;
       case EOpConstructStruct:
-        addConstructor(node->getType(), scopedStruct(node->getType().getStruct()->name()), &node->getSequence());
-        outputTriplet(visit, structLookup(node->getType().getStruct()->name()) + "_ctor(", ", ", ")");
+        addConstructor(node->getType(), scopedStruct(node->getType().getTypeName()), &node->getSequence());
+        outputTriplet(visit, structLookup(node->getType().getTypeName()) + "_ctor(", ", ", ")");
         break;
       case EOpLessThan:         outputTriplet(visit, "(", " < ", ")");                 break;
       case EOpGreaterThan:      outputTriplet(visit, "(", " > ", ")");                 break;
@@ -1760,7 +1741,7 @@ bool OutputHLSL::visitSelection(Visit visit, TIntermSelection *node)
 
         out << ")\n";
         
-        outputLineDirective(node->getLine().first_line);
+        outputLineDirective(node->getLine());
         out << "{\n";
 
         if (node->getTrueBlock())
@@ -1768,20 +1749,20 @@ bool OutputHLSL::visitSelection(Visit visit, TIntermSelection *node)
             traverseStatements(node->getTrueBlock());
         }
 
-        outputLineDirective(node->getLine().first_line);
+        outputLineDirective(node->getLine());
         out << ";\n}\n";
 
         if (node->getFalseBlock())
         {
             out << "else\n";
 
-            outputLineDirective(node->getFalseBlock()->getLine().first_line);
+            outputLineDirective(node->getFalseBlock()->getLine());
             out << "{\n";
 
-            outputLineDirective(node->getFalseBlock()->getLine().first_line);
+            outputLineDirective(node->getFalseBlock()->getLine());
             traverseStatements(node->getFalseBlock());
 
-            outputLineDirective(node->getFalseBlock()->getLine().first_line);
+            outputLineDirective(node->getFalseBlock()->getLine());
             out << ";\n}\n";
         }
     }
@@ -1814,7 +1795,7 @@ bool OutputHLSL::visitLoop(Visit visit, TIntermLoop *node)
     {
         out << "{do\n";
 
-        outputLineDirective(node->getLine().first_line);
+        outputLineDirective(node->getLine());
         out << "{\n";
     }
     else
@@ -1842,7 +1823,7 @@ bool OutputHLSL::visitLoop(Visit visit, TIntermLoop *node)
 
         out << ")\n";
         
-        outputLineDirective(node->getLine().first_line);
+        outputLineDirective(node->getLine());
         out << "{\n";
     }
 
@@ -1851,12 +1832,12 @@ bool OutputHLSL::visitLoop(Visit visit, TIntermLoop *node)
         traverseStatements(node->getBody());
     }
 
-    outputLineDirective(node->getLine().first_line);
+    outputLineDirective(node->getLine());
     out << ";}\n";
 
     if (node->getType() == ELoopDoWhile)
     {
-        outputLineDirective(node->getCondition()->getLine().first_line);
+        outputLineDirective(node->getCondition()->getLine());
         out << "while(\n";
 
         node->getCondition()->traverse(this);
@@ -1996,7 +1977,7 @@ bool OutputHLSL::handleExcessiveLoop(TIntermLoop *node)
                         if (constant->getBasicType() == EbtInt && constant->getNominalSize() == 1)
                         {
                             index = symbol;
-                            initial = constant->getIConst(0);
+                            initial = constant->getUnionArrayPointer()[0].getIConst();
                         }
                     }
                 }
@@ -2018,7 +1999,7 @@ bool OutputHLSL::handleExcessiveLoop(TIntermLoop *node)
                 if (constant->getBasicType() == EbtInt && constant->getNominalSize() == 1)
                 {
                     comparator = test->getOp();
-                    limit = constant->getIConst(0);
+                    limit = constant->getUnionArrayPointer()[0].getIConst();
                 }
             }
         }
@@ -2039,7 +2020,7 @@ bool OutputHLSL::handleExcessiveLoop(TIntermLoop *node)
             {
                 if (constant->getBasicType() == EbtInt && constant->getNominalSize() == 1)
                 {
-                    int value = constant->getIConst(0);
+                    int value = constant->getUnionArrayPointer()[0].getIConst();
 
                     switch (op)
                     {
@@ -2128,7 +2109,7 @@ bool OutputHLSL::handleExcessiveLoop(TIntermLoop *node)
                 out << increment;
                 out << ")\n";
                 
-                outputLineDirective(node->getLine().first_line);
+                outputLineDirective(node->getLine());
                 out << "{\n";
 
                 if (node->getBody())
@@ -2136,7 +2117,7 @@ bool OutputHLSL::handleExcessiveLoop(TIntermLoop *node)
                     node->getBody()->traverse(this);
                 }
 
-                outputLineDirective(node->getLine().first_line);
+                outputLineDirective(node->getLine());
                 out << ";}\n";
 
                 if (!firstLoopFragment)
@@ -2232,23 +2213,22 @@ TString OutputHLSL::typeString(const TType &type)
 {
     if (type.getBasicType() == EbtStruct)
     {
-        const TString& typeName = type.getStruct()->name();
-        if (typeName != "")
+        if (type.getTypeName() != "")
         {
-            return structLookup(typeName);
+            return structLookup(type.getTypeName());
         }
         else   // Nameless structure, define in place
         {
-            const TFieldList &fields = type.getStruct()->fields();
+            const TTypeList &fields = *type.getStruct();
 
             TString string = "struct\n"
                              "{\n";
 
             for (unsigned int i = 0; i < fields.size(); i++)
             {
-                const TField *field = fields[i];
+                const TType &field = *fields[i].type;
 
-                string += "    " + typeString(*field->type()) + " " + decorate(field->name()) + arrayString(*field->type()) + ";\n";
+                string += "    " + typeString(field) + " " + decorate(field.getFieldName()) + arrayString(field) + ";\n";
             }
 
             string += "} ";
@@ -2324,12 +2304,11 @@ TString OutputHLSL::initializer(const TType &type)
 {
     TString string;
 
-    size_t size = type.getObjectSize();
-    for (size_t component = 0; component < size; component++)
+    for (int component = 0; component < type.getObjectSize(); component++)
     {
         string += "0";
 
-        if (component + 1 < size)
+        if (component < type.getObjectSize() - 1)
         {
             string += ", ";
         }
@@ -2368,13 +2347,13 @@ void OutputHLSL::addConstructor(const TType &type, const TString &name, const TI
         structure += "struct " + decorate(name) + "\n"
                      "{\n";
 
-        const TFieldList &fields = type.getStruct()->fields();
+        const TTypeList &fields = *type.getStruct();
 
         for (unsigned int i = 0; i < fields.size(); i++)
         {
-            const TField *field = fields[i];
+            const TType &field = *fields[i].type;
 
-            structure += "    " + typeString(*field->type()) + " " + decorateField(field->name(), type) + arrayString(*field->type()) + ";\n";
+            structure += "    " + typeString(field) + " " + decorateField(field.getFieldName(), type) + arrayString(field) + ";\n";
         }
 
         structure += "};\n";
@@ -2386,7 +2365,7 @@ void OutputHLSL::addConstructor(const TType &type, const TString &name, const TI
 
         for (unsigned int i = 0; i < fields.size(); i++)
         {
-            ctorParameters.push_back(*fields[i]->type());
+            ctorParameters.push_back(*fields[i].type);
         }
     }
     else if (parameters)
@@ -2479,30 +2458,27 @@ void OutputHLSL::addConstructor(const TType &type, const TString &name, const TI
     }
     else
     {
-        size_t remainingComponents = ctorType.getObjectSize();
-        size_t parameterIndex = 0;
+        int remainingComponents = ctorType.getObjectSize();
+        int parameterIndex = 0;
 
         while (remainingComponents > 0)
         {
             const TType &parameter = ctorParameters[parameterIndex];
-            const size_t parameterSize = parameter.getObjectSize();
-            bool moreParameters = parameterIndex + 1 < ctorParameters.size();
+            bool moreParameters = parameterIndex < (int)ctorParameters.size() - 1;
 
             constructor += "x" + str(parameterIndex);
 
             if (parameter.isScalar())
             {
-                ASSERT(parameterSize <= remainingComponents);
-                remainingComponents -= parameterSize;
+                remainingComponents -= parameter.getObjectSize();
             }
             else if (parameter.isVector())
             {
-                if (remainingComponents == parameterSize || moreParameters)
+                if (remainingComponents == parameter.getObjectSize() || moreParameters)
                 {
-                    ASSERT(parameterSize <= remainingComponents);
-                    remainingComponents -= parameterSize;
+                    remainingComponents -= parameter.getObjectSize();
                 }
-                else if (remainingComponents < static_cast<size_t>(parameter.getNominalSize()))
+                else if (remainingComponents < parameter.getNominalSize())
                 {
                     switch (remainingComponents)
                     {
@@ -2519,10 +2495,9 @@ void OutputHLSL::addConstructor(const TType &type, const TString &name, const TI
             }
             else if (parameter.isMatrix() || parameter.getStruct())
             {
-                ASSERT(remainingComponents == parameterSize || moreParameters);
-                ASSERT(parameterSize <= remainingComponents);
+                ASSERT(remainingComponents == parameter.getObjectSize() || moreParameters);
                 
-                remainingComponents -= parameterSize;
+                remainingComponents -= parameter.getObjectSize();
             }
             else UNREACHABLE();
 
@@ -2559,17 +2534,17 @@ const ConstantUnion *OutputHLSL::writeConstantUnion(const TType &type, const Con
 
     if (type.getBasicType() == EbtStruct)
     {
-        out << structLookup(type.getStruct()->name()) + "_ctor(";
+        out << structLookup(type.getTypeName()) + "_ctor(";
         
-        const TFieldList &fields = type.getStruct()->fields();
+        const TTypeList *structure = type.getStruct();
 
-        for (size_t i = 0; i < fields.size(); i++)
+        for (size_t i = 0; i < structure->size(); i++)
         {
-            const TType *fieldType = fields[i]->type();
+            const TType *fieldType = (*structure)[i].type;
 
             constUnion = writeConstantUnion(*fieldType, constUnion);
 
-            if (i != fields.size() - 1)
+            if (i != structure->size() - 1)
             {
                 out << ", ";
             }
@@ -2579,7 +2554,7 @@ const ConstantUnion *OutputHLSL::writeConstantUnion(const TType &type, const Con
     }
     else
     {
-        size_t size = type.getObjectSize();
+        int size = type.getObjectSize();
         bool writeType = size > 1;
         
         if (writeType)
@@ -2587,7 +2562,7 @@ const ConstantUnion *OutputHLSL::writeConstantUnion(const TType &type, const Con
             out << typeString(type) << "(";
         }
 
-        for (size_t i = 0; i < size; i++, constUnion++)
+        for (int i = 0; i < size; i++, constUnion++)
         {
             switch (constUnion->getType())
             {
@@ -2680,7 +2655,7 @@ TString OutputHLSL::decorateUniform(const TString &string, const TType &type)
 
 TString OutputHLSL::decorateField(const TString &string, const TType &structure)
 {
-    if (structure.getStruct()->name().compare(0, 3, "gl_") != 0)
+    if (structure.getTypeName().compare(0, 3, "gl_") != 0)
     {
         return decorate(string);
     }

@@ -6,13 +6,13 @@
 		<key>OpenSourceProject</key>
 		<string>ANGLE</string>
 		<key>OpenSourceVersion</key>
-		<string>r2426</string>
+		<string>r1641</string>
 		<key>OpenSourceWebsiteURL</key>
 		<string>http://code.google.com/p/angleproject/</string>
 		<key>OpenSourceSCM</key>
-		<string>svn co -r2426 http://angleproject.googlecode.com/svn/trunk/</string>
+		<string>svn co -r1641 http://angleproject.googlecode.com/svn/trunk/</string>
 		<key>OpenSourceImportDate</key>
-		<string>2013-06-13</string>
+		<string>2013-01-04</string>
 		<key>OpenSourceLicense</key>
 		<string>BSD</string>
 		<key>OpenSourceLicenseFile</key>

@@ -7,85 +7,30 @@
 #ifndef _TYPES_INCLUDED
 #define _TYPES_INCLUDED
 
-#include "common/angleutils.h"
-
 #include "compiler/BaseTypes.h"
 #include "compiler/Common.h"
 #include "compiler/debug.h"
 
-struct TPublicType;
 class TType;
+struct TPublicType;
 
-class TField
-{
-public:
-    POOL_ALLOCATOR_NEW_DELETE(GlobalPoolAllocator);
-    TField(TType* type, TString* name) : mType(type), mName(name) {}
-
-    // TODO(alokp): We should only return const type.
-    // Fix it by tweaking grammar.
-    TType* type() { return mType; }
-    const TType* type() const { return mType; }
-
-    const TString& name() const { return *mName; }
-
-private:
-    DISALLOW_COPY_AND_ASSIGN(TField);
-    TType* mType;
-    TString* mName;
+//
+// Need to have association of line numbers to types in a list for building structs.
+//
+struct TTypeLine {
+    TType* type;
+    int line;
 };
+typedef TVector<TTypeLine> TTypeList;
 
-typedef TVector<TField*> TFieldList;
-inline TFieldList* NewPoolTFieldList()
+inline TTypeList* NewPoolTTypeList()
 {
-    void* memory = GlobalPoolAllocator.allocate(sizeof(TFieldList));
-    return new(memory) TFieldList;
+    void* memory = GlobalPoolAllocator.allocate(sizeof(TTypeList));
+    return new(memory) TTypeList;
 }
 
-class TStructure
-{
-public:
-    POOL_ALLOCATOR_NEW_DELETE(GlobalPoolAllocator);
-    TStructure(TString* name, TFieldList* fields)
-        : mName(name),
-          mFields(fields),
-          mObjectSize(0),
-          mDeepestNesting(0) {
-    }
-
-    const TString& name() const { return *mName; }
-    const TFieldList& fields() const { return *mFields; }
-
-    const TString& mangledName() const {
-        if (mMangledName.empty())
-            mMangledName = buildMangledName();
-        return mMangledName;
-    }
-    size_t objectSize() const {
-        if (mObjectSize == 0)
-            mObjectSize = calculateObjectSize();
-        return mObjectSize;
-    };
-    int deepestNesting() const {
-        if (mDeepestNesting == 0)
-            mDeepestNesting = calculateDeepestNesting();
-        return mDeepestNesting;
-    }
-    bool containsArrays() const;
-
-private:
-    DISALLOW_COPY_AND_ASSIGN(TStructure);
-    TString buildMangledName() const;
-    size_t calculateObjectSize() const;
-    int calculateDeepestNesting() const;
-
-    TString* mName;
-    TFieldList* mFields;
-
-    mutable TString mMangledName;
-    mutable size_t mObjectSize;
-    mutable int mDeepestNesting;
-};
+typedef TMap<TTypeList*, TTypeList*> TStructureMap;
+typedef TMap<TTypeList*, TTypeList*>::iterator TStructureMapIterator;
 
 //
 // Base class for things that have a type.
@@ -96,13 +41,69 @@ public:
     POOL_ALLOCATOR_NEW_DELETE(GlobalPoolAllocator)
     TType() {}
     TType(TBasicType t, TPrecision p, TQualifier q = EvqTemporary, int s = 1, bool m = false, bool a = false) :
-            type(t), precision(p), qualifier(q), size(s), matrix(m), array(a), arraySize(0), structure(0)
+            type(t), precision(p), qualifier(q), size(s), matrix(m), array(a), arraySize(0),
+            maxArraySize(0), arrayInformationType(0), structure(0), structureSize(0), deepestStructNesting(0), fieldName(0), mangled(0), typeName(0)
     {
     }
     explicit TType(const TPublicType &p);
-    TType(TStructure* userDef, TPrecision p = EbpUndefined) :
-            type(EbtStruct), precision(p), qualifier(EvqTemporary), size(1), matrix(false), array(false), arraySize(0), structure(userDef)
+    TType(TTypeList* userDef, const TString& n, TPrecision p = EbpUndefined) :
+            type(EbtStruct), precision(p), qualifier(EvqTemporary), size(1), matrix(false), array(false), arraySize(0),
+            maxArraySize(0), arrayInformationType(0), structure(userDef), structureSize(0), deepestStructNesting(0), fieldName(0), mangled(0)
     {
+        typeName = NewPoolTString(n.c_str());
+    }
+
+    void copyType(const TType& copyOf, TStructureMap& remapper)
+    {
+        type = copyOf.type;
+        precision = copyOf.precision;
+        qualifier = copyOf.qualifier;
+        size = copyOf.size;
+        matrix = copyOf.matrix;
+        array = copyOf.array;
+        arraySize = copyOf.arraySize;
+
+        TStructureMapIterator iter;
+        if (copyOf.structure) {
+            if ((iter = remapper.find(structure)) == remapper.end()) {
+                // create the new structure here
+                structure = NewPoolTTypeList();
+                for (unsigned int i = 0; i < copyOf.structure->size(); ++i) {
+                    TTypeLine typeLine;
+                    typeLine.line = (*copyOf.structure)[i].line;
+                    typeLine.type = (*copyOf.structure)[i].type->clone(remapper);
+                    structure->push_back(typeLine);
+                }
+            } else {
+                structure = iter->second;
+            }
+        } else
+            structure = 0;
+
+        fieldName = 0;
+        if (copyOf.fieldName)
+            fieldName = NewPoolTString(copyOf.fieldName->c_str());
+        typeName = 0;
+        if (copyOf.typeName)
+            typeName = NewPoolTString(copyOf.typeName->c_str());
+
+        mangled = 0;
+        if (copyOf.mangled)
+            mangled = NewPoolTString(copyOf.mangled->c_str());
+
+        structureSize = copyOf.structureSize;
+        maxArraySize = copyOf.maxArraySize;
+        deepestStructNesting = copyOf.deepestStructNesting;
+        assert(copyOf.arrayInformationType == 0);
+        arrayInformationType = 0; // arrayInformationType should not be set for builtIn symbol table level
+    }
+
+    TType* clone(TStructureMap& remapper)
+    {
+        TType *newType = new TType();
+        newType->copyType(*this, remapper);
+
+        return newType;
     }
 
     TBasicType getBasicType() const { return type; }
@@ -118,7 +119,22 @@ public:
     int getNominalSize() const { return size; }
     void setNominalSize(int s) { size = s; }
     // Full size of single instance of type
-    size_t getObjectSize() const;
+    int getObjectSize() const
+    {
+        int totalSize;
+
+        if (getBasicType() == EbtStruct)
+            totalSize = getStructSize();
+        else if (matrix)
+            totalSize = size * size;
+        else
+            totalSize = size;
+
+        if (isArray())
+            totalSize *= std::max(getArraySize(), getMaxArraySize());
+
+        return totalSize;
+    }
 
     bool isMatrix() const { return matrix ? true : false; }
     void setMatrix(bool m) { matrix = m; }
@@ -126,20 +142,47 @@ public:
     bool isArray() const  { return array ? true : false; }
     int getArraySize() const { return arraySize; }
     void setArraySize(int s) { array = true; arraySize = s; }
-    void clearArrayness() { array = false; arraySize = 0; }
+    int getMaxArraySize () const { return maxArraySize; }
+    void setMaxArraySize (int s) { maxArraySize = s; }
+    void clearArrayness() { array = false; arraySize = 0; maxArraySize = 0; }
+    void setArrayInformationType(TType* t) { arrayInformationType = t; }
+    TType* getArrayInformationType() const { return arrayInformationType; }
 
     bool isVector() const { return size > 1 && !matrix; }
     bool isScalar() const { return size == 1 && !matrix && !structure; }
 
-    TStructure* getStruct() const { return structure; }
-    void setStruct(TStructure* s) { structure = s; }
+    TTypeList* getStruct() const { return structure; }
+    void setStruct(TTypeList* s) { structure = s; computeDeepestStructNesting(); }
 
-    const TString& getMangledName() const {
-        if (mangled.empty()) {
-            mangled = buildMangledName();
-            mangled += ';';
+    const TString& getTypeName() const
+    {
+        assert(typeName);
+        return *typeName;
+    }
+    void setTypeName(const TString& n)
+    {
+        typeName = NewPoolTString(n.c_str());
+    }
+
+    bool isField() const { return fieldName != 0; }
+    const TString& getFieldName() const
+    {
+        assert(fieldName);
+        return *fieldName;
+    }
+    void setFieldName(const TString& n)
+    {
+        fieldName = NewPoolTString(n.c_str());
+    }
+
+    TString& getMangledName() {
+        if (!mangled) {
+            mangled = NewPoolTString("");
+            buildMangledName(*mangled);
+            *mangled += ';' ;
         }
-        return mangled;
+
+        return *mangled;
     }
 
     bool sameElementType(const TType& right) const {
@@ -187,34 +230,32 @@ public:
     // For type "nesting2", this method would return 2 -- the number
     // of structures through which indirection must occur to reach the
     // deepest field (nesting2.field1.position).
-    int getDeepestStructNesting() const {
-        return structure ? structure->deepestNesting() : 0;
-    }
+    int getDeepestStructNesting() const { return deepestStructNesting; }
 
-    bool isStructureContainingArrays() const {
-        return structure ? structure->containsArrays() : false;
-    }
+    bool isStructureContainingArrays() const;
 
-private:
-    TString buildMangledName() const;
+protected:
+    void buildMangledName(TString&);
+    int getStructSize() const;
+    void computeDeepestStructNesting();
 
-#ifdef __GNUC__
-    TBasicType type;
-    TPrecision precision;
-    TQualifier qualifier;
-#else
     TBasicType type      : 6;
     TPrecision precision;
     TQualifier qualifier : 7;
-#endif
     int size             : 8; // size of vector or matrix, not size of array
     unsigned int matrix  : 1;
     unsigned int array   : 1;
     int arraySize;
+    int maxArraySize;
+    TType* arrayInformationType;
 
-    TStructure* structure;      // 0 unless this is a struct
+    TTypeList* structure;      // 0 unless this is a struct
+    mutable int structureSize;
+    int deepestStructNesting;
 
-    mutable TString mangled;
+    TString *fieldName;         // for structure field names
+    TString *mangled;
+    TString *typeName;          // for structure field type name
 };
 
 //
@@ -236,9 +277,9 @@ struct TPublicType
     bool array;
     int arraySize;
     TType* userDef;
-    TSourceLoc line;
+    int line;
 
-    void setBasic(TBasicType bt, TQualifier q, const TSourceLoc& ln)
+    void setBasic(TBasicType bt, TQualifier q, int ln = 0)
     {
         type = bt;
         qualifier = q;

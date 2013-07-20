@@ -1,3 +1,317 @@
+2013-07-20  Dean Jackson  <dino@apple.com>
+
+        Updated ANGLE is leaking like a sieve
+        https://bugs.webkit.org/show_bug.cgi?id=118939
+
+        Rollout 152863, r152821, r152929 and r152755.
+
+        * ANGLE.plist:
+        * ANGLE.xcodeproj/project.pbxproj:
+        * DerivedSources.make: Removed.
+        * GNUmakefile.am:
+        * Target.pri:
+        * include/GLSLANG/ShaderLang.h:
+        * src/compiler/BaseTypes.h:
+        (getQualifierString):
+        * src/compiler/Common.h:
+        (EncodeSourceLoc):
+        (DecodeSourceLoc):
+        * src/compiler/Compiler.cpp:
+        (TCompiler::TCompiler):
+        (TCompiler::Init):
+        (TCompiler::compile):
+        (TCompiler::detectRecursion):
+        * src/compiler/ConstantUnion.h:
+        (ConstantUnion::ConstantUnion):
+        * src/compiler/DetectCallDepth.cpp: Removed.
+        * src/compiler/DetectRecursion.cpp: Added.
+        (DetectRecursion::FunctionNode::FunctionNode):
+        (DetectRecursion::FunctionNode::getName):
+        (DetectRecursion::FunctionNode::addCallee):
+        (DetectRecursion::FunctionNode::detectRecursion):
+        (DetectRecursion::DetectRecursion):
+        (DetectRecursion::~DetectRecursion):
+        (DetectRecursion::visitAggregate):
+        (DetectRecursion::detectRecursion):
+        (DetectRecursion::findFunctionByName):
+        * src/compiler/DetectRecursion.h: Renamed from Source/ThirdParty/ANGLE/src/compiler/DetectCallDepth.h.
+        * src/compiler/Diagnostics.cpp:
+        (TDiagnostics::writeInfo):
+        * src/compiler/ForLoopUnroll.cpp:
+        (ForLoopUnroll::evaluateIntConstant):
+        * src/compiler/InfoSink.cpp:
+        (TInfoSinkBase::prefix):
+        (TInfoSinkBase::location):
+        (TInfoSinkBase::message):
+        * src/compiler/InfoSink.h:
+        * src/compiler/Initialize.cpp:
+        (BuiltInFunctionsCommon):
+        (BuiltInFunctionsVertex):
+        (TBuiltIns::initialize):
+        (IdentifyBuiltIns):
+        (InitExtensionBehavior):
+        * src/compiler/Intermediate.cpp:
+        (TIntermediate::addSymbol):
+        (TIntermediate::addBinaryMath):
+        (TIntermediate::addAssign):
+        (TIntermediate::addIndex):
+        (TIntermediate::addUnaryMath):
+        (TIntermediate::setAggregateOperator):
+        (TIntermediate::addConversion):
+        (TIntermediate::growAggregate):
+        (TIntermediate::makeAggregate):
+        (TIntermediate::addSelection):
+        (TIntermediate::addComma):
+        (TIntermediate::addConstantUnion):
+        (TIntermediate::addSwizzle):
+        (TIntermediate::addLoop):
+        (TIntermediate::addBranch):
+        (TIntermUnary::promote):
+        (TIntermBinary::promote):
+        (CompareStruct):
+        (CompareStructure):
+        (TIntermConstantUnion::fold):
+        (TIntermediate::promoteConstantUnion):
+        * src/compiler/OutputGLSL.cpp:
+        (TOutputGLSL::writeVariablePrecision):
+        * src/compiler/OutputGLSL.h:
+        * src/compiler/OutputGLSLBase.cpp:
+        (TOutputGLSLBase::writeVariableType):
+        (TOutputGLSLBase::writeConstantUnion):
+        (TOutputGLSLBase::visitBinary):
+        (TOutputGLSLBase::visitAggregate):
+        (TOutputGLSLBase::getTypeName):
+        (TOutputGLSLBase::hashFunctionName):
+        * src/compiler/OutputGLSLBase.h:
+        * src/compiler/OutputHLSL.cpp:
+        (sh::OutputHLSL::OutputHLSL):
+        (sh::OutputHLSL::header):
+        (sh::OutputHLSL::visitSymbol):
+        (sh::OutputHLSL::visitBinary):
+        (sh::OutputHLSL::visitAggregate):
+        (sh::OutputHLSL::visitSelection):
+        (sh::OutputHLSL::visitLoop):
+        (sh::OutputHLSL::handleExcessiveLoop):
+        (sh::OutputHLSL::typeString):
+        (sh::OutputHLSL::initializer):
+        (sh::OutputHLSL::addConstructor):
+        (sh::OutputHLSL::writeConstantUnion):
+        (sh::OutputHLSL::decorateField):
+        * src/compiler/OutputHLSL.h:
+        * src/compiler/ParseHelper.cpp:
+        (TParseContext::parseVectorFields):
+        (TParseContext::parseMatrixFields):
+        (TParseContext::error):
+        (TParseContext::warning):
+        (TParseContext::assignError):
+        (TParseContext::unaryOpError):
+        (TParseContext::binaryOpError):
+        (TParseContext::precisionErrorCheck):
+        (TParseContext::lValueErrorCheck):
+        (TParseContext::globalErrorCheck):
+        (TParseContext::reservedErrorCheck):
+        (TParseContext::constructorErrorCheck):
+        (TParseContext::voidErrorCheck):
+        (TParseContext::boolErrorCheck):
+        (TParseContext::samplerErrorCheck):
+        (TParseContext::structQualifierErrorCheck):
+        (TParseContext::parameterSamplerErrorCheck):
+        (TParseContext::containsSampler):
+        (TParseContext::arraySizeErrorCheck):
+        (TParseContext::arrayQualifierErrorCheck):
+        (TParseContext::arrayTypeErrorCheck):
+        (TParseContext::arrayErrorCheck):
+        (TParseContext::arraySetMaxSize):
+        (TParseContext::nonInitConstErrorCheck):
+        (TParseContext::nonInitErrorCheck):
+        (TParseContext::paramErrorCheck):
+        (TParseContext::extensionErrorCheck):
+        (TParseContext::handleExtensionDirective):
+        (TParseContext::handlePragmaDirective):
+        (TParseContext::findFunction):
+        (TParseContext::executeInitializer):
+        (TParseContext::addConstructor):
+        (TParseContext::constructBuiltIn):
+        (TParseContext::constructStruct):
+        (TParseContext::addConstVectorNode):
+        (TParseContext::addConstMatrixNode):
+        (TParseContext::addConstArrayNode):
+        (TParseContext::addConstStruct):
+        (TParseContext::enterStructDeclaration):
+        (TParseContext::structNestingErrorCheck):
+        * src/compiler/ParseHelper.h:
+        (TParseContext::TParseContext):
+        (TParseContext::pragma):
+        * src/compiler/PoolAlloc.cpp:
+        (TPoolAllocator::allocate):
+        * src/compiler/ShHandle.h:
+        * src/compiler/ShaderLang.cpp:
+        (ShInitBuiltInResources):
+        * src/compiler/SymbolTable.cpp:
+        (TType::TType):
+        (TType::buildMangledName):
+        (TType::getStructSize):
+        (TType::computeDeepestStructNesting):
+        (TType::isStructureContainingArrays):
+        (TSymbolTableLevel::relateToExtension):
+        (TSymbol::TSymbol):
+        (TVariable::TVariable):
+        (TVariable::clone):
+        (TFunction::TFunction):
+        (TFunction::clone):
+        (TSymbolTableLevel::clone):
+        (TSymbolTable::copyTable):
+        * src/compiler/SymbolTable.h:
+        (TVariable::TVariable):
+        (TVariable::updateArrayInformationType):
+        (TVariable::getArrayInformationType):
+        (TParameter::copyParam):
+        (TFunction::relateToExtension):
+        (TFunction::getExtension):
+        * src/compiler/Types.h:
+        (NewPoolTTypeList):
+        (TType::TType):
+        (TType::copyType):
+        (TType::clone):
+        (TType::getObjectSize):
+        (TType::getMaxArraySize):
+        (TType::setMaxArraySize):
+        (TType::clearArrayness):
+        (TType::setArrayInformationType):
+        (TType::getArrayInformationType):
+        (TType::getStruct):
+        (TType::setStruct):
+        (TType::getTypeName):
+        (TType::setTypeName):
+        (TType::isField):
+        (TType::getFieldName):
+        (TType::setFieldName):
+        (TType::getMangledName):
+        (TType::getDeepestStructNesting):
+        (TPublicType::setBasic):
+        * src/compiler/VariableInfo.cpp:
+        (getUserDefinedVariableInfo):
+        * src/compiler/builtin_symbol_table.cpp: Removed.
+        * src/compiler/builtin_symbol_table.h: Removed.
+        * src/compiler/builtin_symbols.json: Removed.
+        * src/compiler/generate_builtin_symbol_table.py: Removed.
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_lex.cpp:
+        (yy_get_previous_state):
+        (yy_try_NUL_trans):
+        (yy_push_state):
+        (yy_pop_state):
+        (yy_top_state):
+        (string_input):
+        (check_type):
+        (reserved_word):
+        (yyerror):
+        (glslang_scan):
+        * src/compiler/glslang_tab.cpp:
+        * src/compiler/glslang_tab.h:
+        * src/compiler/intermOut.cpp:
+        (TOutputTraverser::visitUnary):
+        (TOutputTraverser::visitAggregate):
+        (TOutputTraverser::visitConstantUnion):
+        * src/compiler/intermediate.h:
+        (TIntermNode::TIntermNode):
+        (TIntermNode::getLine):
+        (TIntermNode::setLine):
+        (TIntermNode::~TIntermNode):
+        (TIntermConstantUnion::setUnionArrayPointer):
+        (TIntermAggregate::TIntermAggregate):
+        (TIntermAggregate::setEndLine):
+        (TIntermAggregate::getEndLine):
+        (TIntermTraverser::TIntermTraverser):
+        (TIntermTraverser::incrementDepth):
+        * src/compiler/localintermediate.h:
+        * src/compiler/parseConst.cpp:
+        (TConstTraverser::visitSymbol):
+        (TConstTraverser::visitBinary):
+        (TConstTraverser::visitUnary):
+        (TConstTraverser::visitAggregate):
+        (TConstTraverser::visitSelection):
+        (TConstTraverser::visitConstantUnion):
+        (TConstTraverser::visitLoop):
+        (TConstTraverser::visitBranch):
+        (TIntermediate::parseConstTree):
+        * src/compiler/timing/RestrictVertexShaderTiming.cpp:
+        (RestrictVertexShaderTiming::visitSymbol):
+        * src/libEGL/Config.cpp: Removed.
+        * src/libEGL/Config.h: Removed.
+        * src/libEGL/Display.cpp: Removed.
+        * src/libEGL/Display.h: Removed.
+        * src/libEGL/README: Added.
+        * src/libEGL/ShaderCache.h: Removed.
+        * src/libEGL/Surface.cpp: Removed.
+        * src/libEGL/Surface.h: Removed.
+        * src/libEGL/libEGL.cpp: Removed.
+        * src/libEGL/libEGL.def: Removed.
+        * src/libEGL/libEGL.rc: Removed.
+        * src/libEGL/libEGL.vcxproj: Removed.
+        * src/libEGL/libEGL.vcxproj.filters: Removed.
+        * src/libEGL/main.cpp: Removed.
+        * src/libEGL/main.h: Removed.
+        * src/libEGL/resource.h: Removed.
+        * src/libGLESv2/BinaryStream.h: Removed.
+        * src/libGLESv2/Blit.cpp: Removed.
+        * src/libGLESv2/Blit.h: Removed.
+        * src/libGLESv2/Buffer.cpp: Removed.
+        * src/libGLESv2/Buffer.h: Removed.
+        * src/libGLESv2/Context.cpp: Removed.
+        * src/libGLESv2/Context.h: Removed.
+        * src/libGLESv2/D3DConstantTable.cpp: Removed.
+        * src/libGLESv2/D3DConstantTable.h: Removed.
+        * src/libGLESv2/Fence.cpp: Removed.
+        * src/libGLESv2/Fence.h: Removed.
+        * src/libGLESv2/Float16ToFloat32.cpp: Removed.
+        * src/libGLESv2/Float16ToFloat32.py: Removed.
+        * src/libGLESv2/Framebuffer.cpp: Removed.
+        * src/libGLESv2/Framebuffer.h: Removed.
+        * src/libGLESv2/HandleAllocator.cpp: Removed.
+        * src/libGLESv2/HandleAllocator.h: Removed.
+        * src/libGLESv2/IndexDataManager.cpp: Removed.
+        * src/libGLESv2/IndexDataManager.h: Removed.
+        * src/libGLESv2/Program.cpp: Removed.
+        * src/libGLESv2/Program.h: Removed.
+        * src/libGLESv2/ProgramBinary.cpp: Removed.
+        * src/libGLESv2/ProgramBinary.h: Removed.
+        * src/libGLESv2/Query.cpp: Removed.
+        * src/libGLESv2/Query.h: Removed.
+        * src/libGLESv2/README: Added.
+        * src/libGLESv2/Renderbuffer.cpp: Removed.
+        * src/libGLESv2/Renderbuffer.h: Removed.
+        * src/libGLESv2/ResourceManager.cpp: Removed.
+        * src/libGLESv2/ResourceManager.h: Removed.
+        * src/libGLESv2/Shader.cpp: Removed.
+        * src/libGLESv2/Shader.h: Removed.
+        * src/libGLESv2/Texture.cpp: Removed.
+        * src/libGLESv2/Texture.h: Removed.
+        * src/libGLESv2/TextureSSE2.cpp: Removed.
+        * src/libGLESv2/VertexDataManager.cpp: Removed.
+        * src/libGLESv2/VertexDataManager.h: Removed.
+        * src/libGLESv2/libGLESv2.cpp: Removed.
+        * src/libGLESv2/libGLESv2.def: Removed.
+        * src/libGLESv2/libGLESv2.rc: Removed.
+        * src/libGLESv2/libGLESv2.vcxproj: Removed.
+        * src/libGLESv2/libGLESv2.vcxproj.filters: Removed.
+        * src/libGLESv2/main.cpp: Removed.
+        * src/libGLESv2/main.h: Removed.
+        * src/libGLESv2/mathutil.h: Removed.
+        * src/libGLESv2/resource.h: Removed.
+        * src/libGLESv2/shaders/Blit.ps: Removed.
+        * src/libGLESv2/shaders/Blit.vs: Removed.
+        * src/libGLESv2/shaders/componentmaskps.h: Removed.
+        * src/libGLESv2/shaders/flipyvs.h: Removed.
+        * src/libGLESv2/shaders/generate_shaders.bat: Removed.
+        * src/libGLESv2/shaders/luminanceps.h: Removed.
+        * src/libGLESv2/shaders/passthroughps.h: Removed.
+        * src/libGLESv2/shaders/standardvs.h: Removed.
+        * src/libGLESv2/utilities.cpp: Removed.
+        * src/libGLESv2/utilities.h: Removed.
+        * src/libGLESv2/vertexconversion.h: Removed.
+
 2013-07-19  Alex Christensen  <achristensen@apple.com>
 
         Generate derived files in ANGLE at build time rather than when updating from upstream.

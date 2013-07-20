@@ -16,6 +16,373 @@
 
 //============================================================================
 //
+// Prototypes for built-in functions seen by both vertex and fragment shaders.
+//
+//============================================================================
+static TString BuiltInFunctionsCommon(const ShBuiltInResources& resources)
+{
+    TString s;
+
+    //
+    // Angle and Trigonometric Functions.
+    //
+    s.append(TString("float radians(float degrees);"));
+    s.append(TString("vec2  radians(vec2  degrees);"));
+    s.append(TString("vec3  radians(vec3  degrees);"));
+    s.append(TString("vec4  radians(vec4  degrees);"));
+
+    s.append(TString("float degrees(float radians);"));
+    s.append(TString("vec2  degrees(vec2  radians);"));
+    s.append(TString("vec3  degrees(vec3  radians);"));
+    s.append(TString("vec4  degrees(vec4  radians);"));
+
+    s.append(TString("float sin(float angle);"));
+    s.append(TString("vec2  sin(vec2  angle);"));
+    s.append(TString("vec3  sin(vec3  angle);"));
+    s.append(TString("vec4  sin(vec4  angle);"));
+
+    s.append(TString("float cos(float angle);"));
+    s.append(TString("vec2  cos(vec2  angle);"));
+    s.append(TString("vec3  cos(vec3  angle);"));
+    s.append(TString("vec4  cos(vec4  angle);"));
+
+    s.append(TString("float tan(float angle);"));
+    s.append(TString("vec2  tan(vec2  angle);"));
+    s.append(TString("vec3  tan(vec3  angle);"));
+    s.append(TString("vec4  tan(vec4  angle);"));
+
+    s.append(TString("float asin(float x);"));
+    s.append(TString("vec2  asin(vec2  x);"));
+    s.append(TString("vec3  asin(vec3  x);"));
+    s.append(TString("vec4  asin(vec4  x);"));
+
+    s.append(TString("float acos(float x);"));
+    s.append(TString("vec2  acos(vec2  x);"));
+    s.append(TString("vec3  acos(vec3  x);"));
+    s.append(TString("vec4  acos(vec4  x);"));
+
+    s.append(TString("float atan(float y, float x);"));
+    s.append(TString("vec2  atan(vec2  y, vec2  x);"));
+    s.append(TString("vec3  atan(vec3  y, vec3  x);"));
+    s.append(TString("vec4  atan(vec4  y, vec4  x);"));
+
+    s.append(TString("float atan(float y_over_x);"));
+    s.append(TString("vec2  atan(vec2  y_over_x);"));
+    s.append(TString("vec3  atan(vec3  y_over_x);"));
+    s.append(TString("vec4  atan(vec4  y_over_x);"));
+
+    //
+    // Exponential Functions.
+    //
+    s.append(TString("float pow(float x, float y);"));
+    s.append(TString("vec2  pow(vec2  x, vec2  y);"));
+    s.append(TString("vec3  pow(vec3  x, vec3  y);"));
+    s.append(TString("vec4  pow(vec4  x, vec4  y);"));
+
+    s.append(TString("float exp(float x);"));
+    s.append(TString("vec2  exp(vec2  x);"));
+    s.append(TString("vec3  exp(vec3  x);"));
+    s.append(TString("vec4  exp(vec4  x);"));
+
+    s.append(TString("float log(float x);"));
+    s.append(TString("vec2  log(vec2  x);"));
+    s.append(TString("vec3  log(vec3  x);"));
+    s.append(TString("vec4  log(vec4  x);"));
+
+    s.append(TString("float exp2(float x);"));
+    s.append(TString("vec2  exp2(vec2  x);"));
+    s.append(TString("vec3  exp2(vec3  x);"));
+    s.append(TString("vec4  exp2(vec4  x);"));
+
+    s.append(TString("float log2(float x);"));
+    s.append(TString("vec2  log2(vec2  x);"));
+    s.append(TString("vec3  log2(vec3  x);"));
+    s.append(TString("vec4  log2(vec4  x);"));
+
+    s.append(TString("float sqrt(float x);"));
+    s.append(TString("vec2  sqrt(vec2  x);"));
+    s.append(TString("vec3  sqrt(vec3  x);"));
+    s.append(TString("vec4  sqrt(vec4  x);"));
+
+    s.append(TString("float inversesqrt(float x);"));
+    s.append(TString("vec2  inversesqrt(vec2  x);"));
+    s.append(TString("vec3  inversesqrt(vec3  x);"));
+    s.append(TString("vec4  inversesqrt(vec4  x);"));
+
+    //
+    // Common Functions.
+    //
+    s.append(TString("float abs(float x);"));
+    s.append(TString("vec2  abs(vec2  x);"));
+    s.append(TString("vec3  abs(vec3  x);"));
+    s.append(TString("vec4  abs(vec4  x);"));
+
+    s.append(TString("float sign(float x);"));
+    s.append(TString("vec2  sign(vec2  x);"));
+    s.append(TString("vec3  sign(vec3  x);"));
+    s.append(TString("vec4  sign(vec4  x);"));
+
+    s.append(TString("float floor(float x);"));
+    s.append(TString("vec2  floor(vec2  x);"));
+    s.append(TString("vec3  floor(vec3  x);"));
+    s.append(TString("vec4  floor(vec4  x);"));
+
+    s.append(TString("float ceil(float x);"));
+    s.append(TString("vec2  ceil(vec2  x);"));
+    s.append(TString("vec3  ceil(vec3  x);"));
+    s.append(TString("vec4  ceil(vec4  x);"));
+
+    s.append(TString("float fract(float x);"));
+    s.append(TString("vec2  fract(vec2  x);"));
+    s.append(TString("vec3  fract(vec3  x);"));
+    s.append(TString("vec4  fract(vec4  x);"));
+
+    s.append(TString("float mod(float x, float y);"));
+    s.append(TString("vec2  mod(vec2  x, float y);"));
+    s.append(TString("vec3  mod(vec3  x, float y);"));
+    s.append(TString("vec4  mod(vec4  x, float y);"));
+    s.append(TString("vec2  mod(vec2  x, vec2  y);"));
+    s.append(TString("vec3  mod(vec3  x, vec3  y);"));
+    s.append(TString("vec4  mod(vec4  x, vec4  y);"));
+
+    s.append(TString("float min(float x, float y);"));
+    s.append(TString("vec2  min(vec2  x, float y);"));
+    s.append(TString("vec3  min(vec3  x, float y);"));
+    s.append(TString("vec4  min(vec4  x, float y);"));
+    s.append(TString("vec2  min(vec2  x, vec2  y);"));
+    s.append(TString("vec3  min(vec3  x, vec3  y);"));
+    s.append(TString("vec4  min(vec4  x, vec4  y);"));
+
+    s.append(TString("float max(float x, float y);"));
+    s.append(TString("vec2  max(vec2  x, float y);"));
+    s.append(TString("vec3  max(vec3  x, float y);"));
+    s.append(TString("vec4  max(vec4  x, float y);"));
+    s.append(TString("vec2  max(vec2  x, vec2  y);"));
+    s.append(TString("vec3  max(vec3  x, vec3  y);"));
+    s.append(TString("vec4  max(vec4  x, vec4  y);"));
+
+    s.append(TString("float clamp(float x, float minVal, float maxVal);"));
+    s.append(TString("vec2  clamp(vec2  x, float minVal, float maxVal);"));
+    s.append(TString("vec3  clamp(vec3  x, float minVal, float maxVal);"));
+    s.append(TString("vec4  clamp(vec4  x, float minVal, float maxVal);"));
+    s.append(TString("vec2  clamp(vec2  x, vec2  minVal, vec2  maxVal);"));
+    s.append(TString("vec3  clamp(vec3  x, vec3  minVal, vec3  maxVal);"));
+    s.append(TString("vec4  clamp(vec4  x, vec4  minVal, vec4  maxVal);"));
+
+    s.append(TString("float mix(float x, float y, float a);"));
+    s.append(TString("vec2  mix(vec2  x, vec2  y, float a);"));
+    s.append(TString("vec3  mix(vec3  x, vec3  y, float a);"));
+    s.append(TString("vec4  mix(vec4  x, vec4  y, float a);"));
+    s.append(TString("vec2  mix(vec2  x, vec2  y, vec2  a);"));
+    s.append(TString("vec3  mix(vec3  x, vec3  y, vec3  a);"));
+    s.append(TString("vec4  mix(vec4  x, vec4  y, vec4  a);"));
+
+    s.append(TString("float step(float edge, float x);"));
+    s.append(TString("vec2  step(vec2  edge, vec2  x);"));
+    s.append(TString("vec3  step(vec3  edge, vec3  x);"));
+    s.append(TString("vec4  step(vec4  edge, vec4  x);"));
+    s.append(TString("vec2  step(float edge, vec2  x);"));
+    s.append(TString("vec3  step(float edge, vec3  x);"));
+    s.append(TString("vec4  step(float edge, vec4  x);"));
+
+    s.append(TString("float smoothstep(float edge0, float edge1, float x);"));
+    s.append(TString("vec2  smoothstep(vec2  edge0, vec2  edge1, vec2  x);"));
+    s.append(TString("vec3  smoothstep(vec3  edge0, vec3  edge1, vec3  x);"));
+    s.append(TString("vec4  smoothstep(vec4  edge0, vec4  edge1, vec4  x);"));
+    s.append(TString("vec2  smoothstep(float edge0, float edge1, vec2  x);"));
+    s.append(TString("vec3  smoothstep(float edge0, float edge1, vec3  x);"));
+    s.append(TString("vec4  smoothstep(float edge0, float edge1, vec4  x);"));
+
+    //
+    // Geometric Functions.
+    //
+    s.append(TString("float length(float x);"));
+    s.append(TString("float length(vec2  x);"));
+    s.append(TString("float length(vec3  x);"));
+    s.append(TString("float length(vec4  x);"));
+
+    s.append(TString("float distance(float p0, float p1);"));
+    s.append(TString("float distance(vec2  p0, vec2  p1);"));
+    s.append(TString("float distance(vec3  p0, vec3  p1);"));
+    s.append(TString("float distance(vec4  p0, vec4  p1);"));
+
+    s.append(TString("float dot(float x, float y);"));
+    s.append(TString("float dot(vec2  x, vec2  y);"));
+    s.append(TString("float dot(vec3  x, vec3  y);"));
+    s.append(TString("float dot(vec4  x, vec4  y);"));
+
+    s.append(TString("vec3 cross(vec3 x, vec3 y);"));
+    s.append(TString("float normalize(float x);"));
+    s.append(TString("vec2  normalize(vec2  x);"));
+    s.append(TString("vec3  normalize(vec3  x);"));
+    s.append(TString("vec4  normalize(vec4  x);"));
+
+    s.append(TString("float faceforward(float N, float I, float Nref);"));
+    s.append(TString("vec2  faceforward(vec2  N, vec2  I, vec2  Nref);"));
+    s.append(TString("vec3  faceforward(vec3  N, vec3  I, vec3  Nref);"));
+    s.append(TString("vec4  faceforward(vec4  N, vec4  I, vec4  Nref);"));
+
+    s.append(TString("float reflect(float I, float N);"));
+    s.append(TString("vec2  reflect(vec2  I, vec2  N);"));
+    s.append(TString("vec3  reflect(vec3  I, vec3  N);"));
+    s.append(TString("vec4  reflect(vec4  I, vec4  N);"));
+
+    s.append(TString("float refract(float I, float N, float eta);"));
+    s.append(TString("vec2  refract(vec2  I, vec2  N, float eta);"));
+    s.append(TString("vec3  refract(vec3  I, vec3  N, float eta);"));
+    s.append(TString("vec4  refract(vec4  I, vec4  N, float eta);"));
+
+    //
+    // Matrix Functions.
+    //
+    s.append(TString("mat2 matrixCompMult(mat2 x, mat2 y);"));
+    s.append(TString("mat3 matrixCompMult(mat3 x, mat3 y);"));
+    s.append(TString("mat4 matrixCompMult(mat4 x, mat4 y);"));
+
+    //
+    // Vector relational functions.
+    //
+    s.append(TString("bvec2 lessThan(vec2 x, vec2 y);"));
+    s.append(TString("bvec3 lessThan(vec3 x, vec3 y);"));
+    s.append(TString("bvec4 lessThan(vec4 x, vec4 y);"));
+
+    s.append(TString("bvec2 lessThan(ivec2 x, ivec2 y);"));
+    s.append(TString("bvec3 lessThan(ivec3 x, ivec3 y);"));
+    s.append(TString("bvec4 lessThan(ivec4 x, ivec4 y);"));
+
+    s.append(TString("bvec2 lessThanEqual(vec2 x, vec2 y);"));
+    s.append(TString("bvec3 lessThanEqual(vec3 x, vec3 y);"));
+    s.append(TString("bvec4 lessThanEqual(vec4 x, vec4 y);"));
+
+    s.append(TString("bvec2 lessThanEqual(ivec2 x, ivec2 y);"));
+    s.append(TString("bvec3 lessThanEqual(ivec3 x, ivec3 y);"));
+    s.append(TString("bvec4 lessThanEqual(ivec4 x, ivec4 y);"));
+
+    s.append(TString("bvec2 greaterThan(vec2 x, vec2 y);"));
+    s.append(TString("bvec3 greaterThan(vec3 x, vec3 y);"));
+    s.append(TString("bvec4 greaterThan(vec4 x, vec4 y);"));
+
+    s.append(TString("bvec2 greaterThan(ivec2 x, ivec2 y);"));
+    s.append(TString("bvec3 greaterThan(ivec3 x, ivec3 y);"));
+    s.append(TString("bvec4 greaterThan(ivec4 x, ivec4 y);"));
+
+    s.append(TString("bvec2 greaterThanEqual(vec2 x, vec2 y);"));
+    s.append(TString("bvec3 greaterThanEqual(vec3 x, vec3 y);"));
+    s.append(TString("bvec4 greaterThanEqual(vec4 x, vec4 y);"));
+
+    s.append(TString("bvec2 greaterThanEqual(ivec2 x, ivec2 y);"));
+    s.append(TString("bvec3 greaterThanEqual(ivec3 x, ivec3 y);"));
+    s.append(TString("bvec4 greaterThanEqual(ivec4 x, ivec4 y);"));
+
+    s.append(TString("bvec2 equal(vec2 x, vec2 y);"));
+    s.append(TString("bvec3 equal(vec3 x, vec3 y);"));
+    s.append(TString("bvec4 equal(vec4 x, vec4 y);"));
+
+    s.append(TString("bvec2 equal(ivec2 x, ivec2 y);"));
+    s.append(TString("bvec3 equal(ivec3 x, ivec3 y);"));
+    s.append(TString("bvec4 equal(ivec4 x, ivec4 y);"));
+
+    s.append(TString("bvec2 equal(bvec2 x, bvec2 y);"));
+    s.append(TString("bvec3 equal(bvec3 x, bvec3 y);"));
+    s.append(TString("bvec4 equal(bvec4 x, bvec4 y);"));
+
+    s.append(TString("bvec2 notEqual(vec2 x, vec2 y);"));
+    s.append(TString("bvec3 notEqual(vec3 x, vec3 y);"));
+    s.append(TString("bvec4 notEqual(vec4 x, vec4 y);"));
+
+    s.append(TString("bvec2 notEqual(ivec2 x, ivec2 y);"));
+    s.append(TString("bvec3 notEqual(ivec3 x, ivec3 y);"));
+    s.append(TString("bvec4 notEqual(ivec4 x, ivec4 y);"));
+
+    s.append(TString("bvec2 notEqual(bvec2 x, bvec2 y);"));
+    s.append(TString("bvec3 notEqual(bvec3 x, bvec3 y);"));
+    s.append(TString("bvec4 notEqual(bvec4 x, bvec4 y);"));
+
+    s.append(TString("bool any(bvec2 x);"));
+    s.append(TString("bool any(bvec3 x);"));
+    s.append(TString("bool any(bvec4 x);"));
+
+    s.append(TString("bool all(bvec2 x);"));
+    s.append(TString("bool all(bvec3 x);"));
+    s.append(TString("bool all(bvec4 x);"));
+
+    s.append(TString("bvec2 not(bvec2 x);"));
+    s.append(TString("bvec3 not(bvec3 x);"));
+    s.append(TString("bvec4 not(bvec4 x);"));
+
+    //
+    // Texture Functions.
+    //
+    s.append(TString("vec4 texture2D(sampler2D sampler, vec2 coord);"));
+    s.append(TString("vec4 texture2DProj(sampler2D sampler, vec3 coord);"));
+    s.append(TString("vec4 texture2DProj(sampler2D sampler, vec4 coord);"));
+    s.append(TString("vec4 textureCube(samplerCube sampler, vec3 coord);"));
+
+    if (resources.OES_EGL_image_external) {
+        s.append(TString("vec4 texture2D(samplerExternalOES sampler, vec2 coord);"));
+        s.append(TString("vec4 texture2DProj(samplerExternalOES sampler, vec3 coord);"));
+        s.append(TString("vec4 texture2DProj(samplerExternalOES sampler, vec4 coord);"));
+    }
+
+    if (resources.ARB_texture_rectangle) {
+        s.append(TString("vec4 texture2DRect(sampler2DRect sampler, vec2 coord);"));
+        s.append(TString("vec4 texture2DRectProj(sampler2DRect sampler, vec3 coord);"));
+        s.append(TString("vec4 texture2DRectProj(sampler2DRect sampler, vec4 coord);"));
+    }
+
+    //
+    // Noise functions.
+    //
+    //s.append(TString("float noise1(float x);"));
+    //s.append(TString("float noise1(vec2  x);"));
+    //s.append(TString("float noise1(vec3  x);"));
+    //s.append(TString("float noise1(vec4  x);"));
+
+    //s.append(TString("vec2 noise2(float x);"));
+    //s.append(TString("vec2 noise2(vec2  x);"));
+    //s.append(TString("vec2 noise2(vec3  x);"));
+    //s.append(TString("vec2 noise2(vec4  x);"));
+
+    //s.append(TString("vec3 noise3(float x);"));
+    //s.append(TString("vec3 noise3(vec2  x);"));
+    //s.append(TString("vec3 noise3(vec3  x);"));
+    //s.append(TString("vec3 noise3(vec4  x);"));
+
+    //s.append(TString("vec4 noise4(float x);"));
+    //s.append(TString("vec4 noise4(vec2  x);"));
+    //s.append(TString("vec4 noise4(vec3  x);"));
+    //s.append(TString("vec4 noise4(vec4  x);"));
+
+    return s;
+}
+
+//============================================================================
+//
+// Prototypes for built-in functions seen by vertex shaders only.
+//
+//============================================================================
+static TString BuiltInFunctionsVertex(const ShBuiltInResources& resources)
+{
+    TString s;
+
+    //
+    // Geometric Functions.
+    //
+    //s.append(TString("vec4 ftransform();"));
+
+    //
+    // Texture Functions.
+    //
+    s.append(TString("vec4 texture2DLod(sampler2D sampler, vec2 coord, float lod);"));
+    s.append(TString("vec4 texture2DProjLod(sampler2D sampler, vec3 coord, float lod);"));
+    s.append(TString("vec4 texture2DProjLod(sampler2D sampler, vec4 coord, float lod);"));
+    s.append(TString("vec4 textureCubeLod(samplerCube sampler, vec3 coord, float lod);"));
+
+    return s;
+}
+
+//============================================================================
+//
 // Prototypes for built-in functions seen by fragment shaders only.
 //
 //============================================================================
@@ -133,12 +500,15 @@ void TBuiltIns::initialize(ShShaderType type, ShShaderSpec spec,
     switch (type) {
     case SH_FRAGMENT_SHADER:
         builtInStrings.push_back(DefaultPrecisionFragment());
+        builtInStrings.push_back(BuiltInFunctionsCommon(resources));
         builtInStrings.push_back(BuiltInFunctionsFragment(resources));
         builtInStrings.push_back(StandardUniforms());
         break;
 
     case SH_VERTEX_SHADER:
         builtInStrings.push_back(DefaultPrecisionVertex());
+        builtInStrings.push_back(BuiltInFunctionsCommon(resources));
+        builtInStrings.push_back(BuiltInFunctionsVertex(resources));
         builtInStrings.push_back(StandardUniforms());
         break;
 
@@ -169,10 +539,6 @@ void IdentifyBuiltIns(ShShaderType type, ShShaderSpec spec,
         if (spec != SH_CSS_SHADERS_SPEC) {
             symbolTable.insert(*new TVariable(NewPoolTString("gl_FragColor"),                   TType(EbtFloat, EbpMedium, EvqFragColor,   4)));
             symbolTable.insert(*new TVariable(NewPoolTString("gl_FragData[gl_MaxDrawBuffers]"), TType(EbtFloat, EbpMedium, EvqFragData,    4)));
-            if (resources.EXT_frag_depth) {
-                symbolTable.insert(*new TVariable(NewPoolTString("gl_FragDepthEXT"),            TType(EbtFloat, resources.FragmentPrecisionHigh ? EbpHigh : EbpMedium, EvqFragDepth, 1)));
-                symbolTable.relateToExtension("gl_FragDepthEXT", "GL_EXT_frag_depth");
-            }
         } else {
             symbolTable.insert(*new TVariable(NewPoolTString("css_MixColor"),                   TType(EbtFloat, EbpMedium, EvqGlobal,      4)));
             symbolTable.insert(*new TVariable(NewPoolTString("css_ColorMatrix"),                TType(EbtFloat, EbpMedium, EvqGlobal,      4, true)));
@@ -290,6 +656,4 @@ void InitExtensionBehavior(const ShBuiltInResources& resources,
         extBehavior["GL_ARB_texture_rectangle"] = EBhUndefined;
     if (resources.EXT_draw_buffers)
         extBehavior["GL_EXT_draw_buffers"] = EBhUndefined;
-    if (resources.EXT_frag_depth)
-        extBehavior["GL_EXT_frag_depth"] = EBhUndefined;
 }
