@@ -9,6 +9,17 @@
         * Scripts/generate-coverage-data: Added --no-build to run-javascriptcore-tests call.
         (generateReport): Moved report generation to a subroutine.
 
+2013-07-19  Stephanie Lewis  <slewis@apple.com>
+
+        <rdar://problem/14499595> pagination wk2 api test failing on ML (118928)
+
+        Unreviewed.
+
+        Rebaseline pagination test after http://trac.webkit.org/changeset/152911
+
+        * TestWebKitAPI/Tests/WebKit2/ResizeReversePaginatedWebView.cpp:
+        (TestWebKitAPI::didLayout):
+
 2013-07-19  Daniel Bates  <dabates@apple.com>
 
         Make Perl tools work when using git bisect with Git branch build setup

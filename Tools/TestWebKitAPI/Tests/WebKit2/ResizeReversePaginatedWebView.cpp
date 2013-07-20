@@ -50,7 +50,7 @@ static void didLayout(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef, 
         EXPECT_EQ(expectedPageCount, pageCount);
 
         webView->resizeTo((pageLength * pageCount) + (pageGap * (pageCount - 1)), 500);
-        EXPECT_JS_EQ(page, "window.scrollX", "-3800");
+        EXPECT_JS_EQ(page, "window.scrollX", "0");
 
         testDone = true;
     }
