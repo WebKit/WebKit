@@ -326,7 +326,7 @@ for my $dir (@projects) {
         $result = buildGtkProject($project, $clean, $prefixPath, $makeArgs, $noWebKit1, $noWebKit2, @features);
     } elsif (isAppleMacWebKit()) {
         my @local_options = @options;
-        push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";
+        push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
         my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit()) {

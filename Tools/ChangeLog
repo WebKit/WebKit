@@ -1,3 +1,14 @@
+2013-07-19  Alex Christensen  <achristensen@apple.com>
+
+        Improved code coverage generation.
+        https://bugs.webkit.org/show_bug.cgi?id=118926
+
+        Reviewed by Tim Horton.
+
+        * Scripts/build-webkit: Removed exception preventing ANGLE code coverage support.
+        * Scripts/generate-coverage-data: Added --no-build to run-javascriptcore-tests call.
+        (generateReport): Moved report generation to a subroutine.
+
 2013-07-19  Daniel Bates  <dabates@apple.com>
 
         Make Perl tools work when using git bisect with Git branch build setup

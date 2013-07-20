@@ -46,46 +46,49 @@ sub parseGcovrOutput($);
 sub getFileHitsAndBranches($);
 sub addLineCounts($$$$$$);
 sub createResultName();
+sub generateReport($);
 
-my $resultName = createResultName();
-
-# Move to the source directory
 chdirWebKit();
+system("mkdir WebKitBuild/Coverage") if ! -d "WebKitBuild/Coverage";
 
 # Delete old gcov files
 print "Cleaning up\n";
 system("if [ -d WebKitBuild ]; then find WebKitBuild -name '*.gcda' -delete; fi;") == 0 or die "Cannot delete old gcda files (code coverage";
 
-# Compile WebKit and run the tests
 print "Building and testing\n";
-system("Tools/Scripts/build-webkit", "--coverage", @ARGV) == 0 or die "Cannot compile webkit with code coverage";
+system("Tools/Scripts/build-webkit", "--clean", @ARGV) == 0 or die "Cannot clean WebKit build";
+system("Tools/Scripts/build-webkit", "--coverage", "--release", @ARGV) == 0 or die "Cannot compile WebKit with code coverage";
+system("Tools/Scripts/run-javascriptcore-tests --no-build");
+system("Tools/Scripts/run-api-tests");
 system("Tools/Scripts/run-webkit-tests");
 system("Tools/Scripts/run-webkit-tests -2");
-system("Tools/Scripts/run-javascriptcore-tests");
-system("Tools/Scripts/run-api-tests");
-
-# Generate the coverage data and report
-print "Collecting coverage data\n";
-system("mkdir WebKitBuild/Coverage") if ! -d "WebKitBuild/Coverage";
-system("python Tools/Scripts/webkitpy/tool/gcovr --xml --output=WebKitBuild/Coverage/" . $resultName . ".xml") == 0 or die "Cannot run gcovr";
-
-# Collect useful data from xml to json format
-my $jsonData = encode_json(parseGcovrOutput("WebKitBuild/Coverage/$resultName.xml"));
-open my $templateFile, "<", "Tools/CodeCoverage/results-template.html" or die "Cannot open Tools/CodeCoverage/results-template.html";
-my $templateHtml = join("", <$templateFile>);
-close $templateFile;
-$templateHtml =~ s/%CoverageDataJSON%/$jsonData/;
-
-my $reportFilename = "WebKitBuild/Coverage/$resultName.html";
-open my $reportFile, ">", $reportFilename or die "Cannot open $reportFilename";
-print $reportFile $templateHtml;
-close $reportFile;
-
-# Open the report
-my $url = "file://" . sourceDir() . "/WebKitBuild/Coverage/$resultName.html";
-system "open \"$url\"";
-
+generateReport(createResultName());
 print "Done\n";
+
+sub generateReport()
+{
+    my ($reportName) = @_;
+
+    # Generate the coverage data and report
+    print "Collecting coverage data\n";
+    system("python Tools/Scripts/webkitpy/tool/gcovr --xml --output=WebKitBuild/Coverage/" . $reportName . ".xml") == 0 or die "Cannot run gcovr";
+
+    # Collect useful data from xml to json format
+    my $jsonData = encode_json(parseGcovrOutput("WebKitBuild/Coverage/$reportName.xml"));
+    open my $templateFile, "<", "Tools/CodeCoverage/results-template.html" or die "Cannot open Tools/CodeCoverage/results-template.html";
+    my $templateHtml = join("", <$templateFile>);
+    close $templateFile;
+    $templateHtml =~ s/%CoverageDataJSON%/$jsonData/;
+
+    my $reportFilename = "WebKitBuild/Coverage/$reportName.html";
+    open my $reportFile, ">", $reportFilename or die "Cannot open $reportFilename";
+    print $reportFile $templateHtml;
+    close $reportFile;
+
+    # Open the report
+    my $url = "file://" . sourceDir() . "/WebKitBuild/Coverage/$reportName.html";
+    system "open \"$url\"";
+}
 
 sub parseGcovrOutput($)
 {
