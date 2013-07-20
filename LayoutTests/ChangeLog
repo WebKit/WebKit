@@ -1,3 +1,31 @@
+2013-07-19  Brady Eidson  <beidson@apple.com>
+
+        Pages should not be able to abuse users inside beforeunload handlers.
+        <rdar://problem/14475779> and https://bugs.webkit.org/show_bug.cgi?id=118871.
+
+        Reviewed by Alexey Proskuryakov.
+
+        In addition to the new tests, updated some results of previous tests that were relying on "alert"
+        as a poor man's logging method.
+
+        * fast/events/onbeforeunload-focused-iframe-expected.txt:
+        * fast/events/onbeforeunload-focused-iframe.html:
+        * fast/events/onunload-clears-onbeforeunload-expected.txt:
+        * fast/events/onunload-clears-onbeforeunload.html:
+        * fast/loader/page-dismissal-modal-dialogs-expected.txt:
+        * fast/loader/page-dismissal-modal-dialogs.html:
+        * fast/loader/recursive-before-unload-crash-expected.txt:
+        * fast/loader/recursive-before-unload-crash.html:
+        * fast/loader/resources/iframe-with-beforeunload.html: Added.
+        * fast/loader/show-only-one-beforeunload-dialog-expected.txt: Added.
+        * fast/loader/show-only-one-beforeunload-dialog.html: Added.
+        * http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin-expected.txt: Added.
+        * http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin.html: Added.
+        * http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin-expected.txt: Added.
+        * http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin.html: Added.
+        * http/tests/misc/resources/iframe-with-beforeunload.html: Added.
+        * http/tests/misc/resources/notify-done.html: Added.
+
 2013-07-19  Stephanie Lewis  <slewis@apple.com>
 
         Some compositing tests fail on ML WK2 Debugi

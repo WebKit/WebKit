@@ -1,3 +1,39 @@
+2013-07-19  Brady Eidson  <beidson@apple.com>
+
+        Pages should not be able to abuse users inside beforeunload handlers.
+        <rdar://problem/14475779> and https://bugs.webkit.org/show_bug.cgi?id=118871.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests: fast/loader/show-only-one-beforeunload-dialog.html
+               http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin.html
+               http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::shouldClose):
+        (WebCore::FrameLoader::handleBeforeUnloadEvent):
+        (WebCore::FrameLoader::shouldCloseFiringBeforeUnloadEvent): Renamed from fireBeforeUnloadEvent.
+          Add logic to enforce "1 beforeunload dialog per navigation" as well as "iframes can only show beforeunload 
+          dialogs if their entire ancestry's security origins match the navigating frame."
+        * loader/FrameLoader.h:
+        * loader/FrameLoader.h:
+
+        Add the ability for Page to know when any frame is dispatching beforeunload:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::incrementFrameHandlingBeforeUnloadEventCount):
+        (WebCore::Page::decrementFrameHandlingBeforeUnloadEventCount):
+        (WebCore::Page::isAnyFrameHandlingBeforeUnloadEvent):
+        * page/Page.h:
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::print): Disallow if any frame is in beforeunload dispatch.
+        (WebCore::DOMWindow::alert): Ditto.
+        (WebCore::DOMWindow::confirm): Ditto.
+        (WebCore::DOMWindow::prompt): Ditto.
+        (WebCore::DOMWindow::showModalDialog): Ditto.
+
 2013-07-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver not detecting misspelled words don't work in all cases

@@ -406,6 +406,10 @@ public:
     void captionPreferencesChanged();
 #endif
 
+    void incrementFrameHandlingBeforeUnloadEventCount();
+    void decrementFrameHandlingBeforeUnloadEventCount();
+    bool isAnyFrameHandlingBeforeUnloadEvent();
+
 private:
     void initGroup();
 
@@ -542,6 +546,8 @@ private:
 
     HashSet<String> m_seenPlugins;
     HashSet<String> m_seenMediaEngines;
+    
+    unsigned m_framesHandlingBeforeUnloadEvent;
 };
 
 inline PageGroup& Page::group()
