@@ -737,6 +737,9 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
         for (unsigned i = 0; i < size; i++) {
             const TextCheckingResult& result = results[i];
             AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, trueValue, NSMakeRange(result.location + range.location, result.length));
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+            AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, trueValue, NSMakeRange(result.location + range.location, result.length));
+#endif
         }
         return;
     }
@@ -754,6 +757,9 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
         
         NSRange spellRange = NSMakeRange(range.location + currentPosition + misspellingLocation, misspellingLength);
         AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, [NSNumber numberWithBool:YES], spellRange);
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, [NSNumber numberWithBool:YES], spellRange);
+#endif
         charLength -= (misspellingLocation + misspellingLength);
         currentPosition += (misspellingLocation + misspellingLength);
     }
@@ -831,6 +837,9 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     
     // remove inherited attachment from prior AXAttributedStringAppendReplaced
     [attrString removeAttribute:NSAccessibilityAttachmentTextAttribute range:attrStringRange];
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [attrString removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:attrStringRange];
+#endif
     [attrString removeAttribute:NSAccessibilityMisspelledTextAttribute range:attrStringRange];
     
     // set new attributes

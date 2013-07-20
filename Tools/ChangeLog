@@ -1,3 +1,17 @@
+2013-07-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver not detecting misspelled words don't work in all cases
+        https://bugs.webkit.org/show_bug.cgi?id=118924
+
+        Reviewed by Tim Horton.
+
+        Make the misspelled detection dependent on both types of attributes being present.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::attributedStringRangeIsMisspelled):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::attributedStringRangeIsMisspelled):
+
 2013-07-19  Alex Christensen  <achristensen@apple.com>
 
         Improved code coverage generation.
