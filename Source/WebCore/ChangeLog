@@ -1,3 +1,17 @@
+2013-07-19  Jer Noble  <jer.noble@apple.com>
+
+        Pagination: Do not paint the baseBackgroundColor if asked to skipRootBackground.
+        https://bugs.webkit.org/show_bug.cgi?id=118933
+
+        Reviewed by Simon Fraser.
+
+        Captions rendered through TextTrackRepresentation are rendered with a background
+        color when in paginated views. Do not fill the paint area with the
+        baseBackgroundColor when the paint flags include SkipRootBackground.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paint):
+
 2013-07-19  Brady Eidson  <beidson@apple.com>
 
         Pages should not be able to abuse users inside beforeunload handlers.

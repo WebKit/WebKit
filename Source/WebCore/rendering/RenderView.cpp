@@ -411,7 +411,7 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     ASSERT(LayoutPoint(IntPoint(paintOffset.x(), paintOffset.y())) == paintOffset);
 
     // This avoids painting garbage between columns if there is a column gap.
-    if (m_frameView && m_frameView->pagination().mode != Pagination::Unpaginated)
+    if (m_frameView && m_frameView->pagination().mode != Pagination::Unpaginated && paintInfo.shouldPaintWithinRoot(this))
         paintInfo.context->fillRect(paintInfo.rect, m_frameView->baseBackgroundColor(), ColorSpaceDeviceRGB);
 
     paintObject(paintInfo, paintOffset);
