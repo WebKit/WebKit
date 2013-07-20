@@ -1,3 +1,27 @@
+2013-07-19  Andreas Kling  <akling@apple.com>
+
+        Cache style declaration CSSOM wrappers directly on MutableStylePropertySet.
+        <http://webkit.org/b/118883>
+
+        Reviewed by Gavin Barraclough
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/183bcd51eb0e79cab930cf46695df05dc793630f
+        From Blink r153700 by <ager@chromium.org>:
+
+        In my measurements the mapping is adding more overhead than just having a field
+        in all MutableStylePropertySet objects. So this saves memory and makes access
+        faster.
+
+        * css/StylePropertySet.cpp:
+        (WebCore::MutableStylePropertySet::MutableStylePropertySet):
+        (WebCore::MutableStylePropertySet::~MutableStylePropertySet):
+        (WebCore::StylePropertySet::hasCSSOMWrapper):
+        (WebCore::MutableStylePropertySet::cssStyleDeclaration):
+        (WebCore::MutableStylePropertySet::ensureCSSStyleDeclaration):
+        (WebCore::MutableStylePropertySet::ensureInlineCSSStyleDeclaration):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::StylePropertySet):
+
 2013-07-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Avoid passing addresses of temporaries to Windows API.

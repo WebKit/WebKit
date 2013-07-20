@@ -48,13 +48,6 @@ using namespace std;
 
 namespace WebCore {
 
-typedef HashMap<MutableStylePropertySet*, OwnPtr<PropertySetCSSStyleDeclaration> > PropertySetCSSOMWrapperMap;
-static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
-{
-    DEFINE_STATIC_LOCAL(PropertySetCSSOMWrapperMap, propertySetCSSOMWrapperMapInstance, ());
-    return propertySetCSSOMWrapperMapInstance;
-}
-
 static size_t sizeForImmutableStylePropertySetWithPropertyCount(unsigned count)
 {
     return sizeof(ImmutableStylePropertySet) - sizeof(void*) + sizeof(CSSValue*) * count + sizeof(StylePropertyMetadata) * count;
@@ -81,12 +74,21 @@ PassRefPtr<ImmutableStylePropertySet> StylePropertySet::immutableCopyIfNeeded() 
     return ImmutableStylePropertySet::create(mutableThis->m_propertyVector.data(), mutableThis->m_propertyVector.size(), cssParserMode());
 }
 
+MutableStylePropertySet::MutableStylePropertySet(CSSParserMode cssParserMode)
+    : StylePropertySet(cssParserMode)
+{
+}
+
 MutableStylePropertySet::MutableStylePropertySet(const CSSProperty* properties, unsigned length)
     : StylePropertySet(CSSStrictMode)
 {
     m_propertyVector.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i)
         m_propertyVector.uncheckedAppend(properties[i]);
+}
+
+MutableStylePropertySet::~MutableStylePropertySet()
+{
 }
 
 ImmutableStylePropertySet::ImmutableStylePropertySet(const CSSProperty* properties, unsigned length, CSSParserMode cssParserMode)
@@ -118,13 +120,6 @@ MutableStylePropertySet::MutableStylePropertySet(const StylePropertySet& other)
         for (unsigned i = 0; i < other.propertyCount(); ++i)
             m_propertyVector.uncheckedAppend(other.propertyAt(i).toCSSProperty());
     }
-}
-
-MutableStylePropertySet::~MutableStylePropertySet()
-{
-    ASSERT(!m_ownsCSSOMWrapper || propertySetCSSOMWrapperMap().contains(this));
-    if (m_ownsCSSOMWrapper)
-        propertySetCSSOMWrapperMap().remove(this);
 }
 
 String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
@@ -1023,6 +1018,11 @@ String StylePropertySet::asText() const
     return result.toString();
 }
 
+bool StylePropertySet::hasCSSOMWrapper() const
+{
+    return m_isMutable && static_cast<const MutableStylePropertySet*>(this)->m_cssomWrapper;
+}
+
 void MutableStylePropertySet::mergeAndOverrideOnConflict(const StylePropertySet* other)
 {
     unsigned size = other->propertyCount();
@@ -1197,34 +1197,28 @@ PassRefPtr<MutableStylePropertySet> StylePropertySet::copyPropertiesInSet(const 
 
 PropertySetCSSStyleDeclaration* MutableStylePropertySet::cssStyleDeclaration()
 {
-    if (!m_ownsCSSOMWrapper)
-        return 0;
-    return propertySetCSSOMWrapperMap().get(this);
+    return m_cssomWrapper.get();
 }
 
 CSSStyleDeclaration* MutableStylePropertySet::ensureCSSStyleDeclaration()
 {
-    if (m_ownsCSSOMWrapper) {
-        ASSERT(!static_cast<CSSStyleDeclaration*>(propertySetCSSOMWrapperMap().get(this))->parentRule());
-        ASSERT(!propertySetCSSOMWrapperMap().get(this)->parentElement());
-        return propertySetCSSOMWrapperMap().get(this);
+    if (m_cssomWrapper) {
+        ASSERT(!static_cast<CSSStyleDeclaration*>(m_cssomWrapper.get())->parentRule());
+        ASSERT(!m_cssomWrapper->parentElement());
+        return m_cssomWrapper.get();
     }
-    m_ownsCSSOMWrapper = true;
-    PropertySetCSSStyleDeclaration* cssomWrapper = new PropertySetCSSStyleDeclaration(this);
-    propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
-    return cssomWrapper;
+    m_cssomWrapper = adoptPtr(new PropertySetCSSStyleDeclaration(this));
+    return m_cssomWrapper.get();
 }
 
 CSSStyleDeclaration* MutableStylePropertySet::ensureInlineCSSStyleDeclaration(StyledElement* parentElement)
 {
-    if (m_ownsCSSOMWrapper) {
-        ASSERT(propertySetCSSOMWrapperMap().get(this)->parentElement() == parentElement);
-        return propertySetCSSOMWrapperMap().get(this);
+    if (m_cssomWrapper) {
+        ASSERT(m_cssomWrapper->parentElement() == parentElement);
+        return m_cssomWrapper.get();
     }
-    m_ownsCSSOMWrapper = true;
-    PropertySetCSSStyleDeclaration* cssomWrapper = new InlineCSSStyleDeclaration(this, parentElement);
-    propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
-    return cssomWrapper;
+    m_cssomWrapper = adoptPtr(new InlineCSSStyleDeclaration(this, parentElement));
+    return m_cssomWrapper.get();
 }
 
 unsigned StylePropertySet::averageSizeInBytes()
