@@ -1,4 +1,25 @@
 ==================
+WebKitGTK+   2.0.4
+==================
+
+What's new in WebKitGTK+ 2.0.4?
+
+  - Fix a crash in GStreamer backend due to uninitialized log category.
+  - Ensure that clicking on volume slider doesn't pause the media in
+    GStreamer backend.
+  - Fix a crash when getting the editor command for a key event
+    initiated by the web inspector.
+  - Actually disable the memory cache when DOCUMENT_VIEWER cache model
+    is used in WebKit1.
+  - Fix a crash in UI process when the web process crashes.
+  - Fix a crash in WebKit2 when a context menu item is selected after
+    the page has been closed.
+  - Fix network errors when uploading a file containing special
+    characters using input file element.
+  - Fix debug build and some other build issues.
+  - Fix several memory leaks.
+
+==================
 WebKitGTK+   2.0.3
 ==================
 
