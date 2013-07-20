@@ -1,3 +1,17 @@
+2013-07-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extract computeRenderStyleForProperty and nodeOrItsAncestorNeedsStyleRecalc from ComputedStyleExtractor::propertyValue
+        https://bugs.webkit.org/show_bug.cgi?id=118930
+
+        Reviewed by Andreas Kling.
+
+        Extracted two functions as a preparation to fix bugs 118032 and 118618.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::nodeOrItsAncestorNeedsStyleRecalc):
+        (WebCore::computeRenderStyleForProperty):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+
 2013-07-19  Andreas Kling  <akling@apple.com>
 
         Cache style declaration CSSOM wrappers directly on MutableStylePropertySet.

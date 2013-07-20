@@ -1568,6 +1568,34 @@ PassRefPtr<MutableStylePropertySet> CSSComputedStyleDeclaration::copyProperties(
     return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
 }
 
+static inline bool nodeOrItsAncestorNeedsStyleRecalc(Node* styledNode)
+{
+    if (styledNode->document()->hasPendingForcedStyleRecalc())
+        return true;
+    for (Node* n = styledNode; n; n = n->parentNode()) {// FIXME: Call parentOrShadowHostNode() instead
+        if (n->needsStyleRecalc())
+            return true;
+    }
+    return false;
+}
+
+static inline PassRefPtr<RenderStyle> computeRenderStyleForProperty(Node* styledNode, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID)
+{
+    RenderObject* renderer = styledNode->renderer();
+
+    if (renderer && renderer->isComposited() && AnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
+        AnimationUpdateBlock animationUpdateBlock(renderer->animation());
+        RefPtr<RenderStyle> style = renderer->animation()->getAnimatedStyleForRenderer(renderer);
+        if (pseudoElementSpecifier && !styledNode->isPseudoElement()) {
+            // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
+            return style->getCachedPseudoStyle(pseudoElementSpecifier);
+        }
+        return style.release();
+    }
+
+    return styledNode->computedStyle(styledNode->isPseudoElement() ? NOPSEUDO : pseudoElementSpecifier);
+}
+
 PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     Node* styledNode = this->styledNode();
@@ -1584,35 +1612,19 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 
         if (forceFullLayout)
             document->updateLayoutIgnorePendingStylesheets();
-        else {
-            bool needsStyleRecalc = document->hasPendingForcedStyleRecalc();
-            for (Node* n = styledNode; n && !needsStyleRecalc; n = n->parentNode())
-                needsStyleRecalc = n->needsStyleRecalc();
-            if (needsStyleRecalc)
-                document->updateStyleIfNeeded();
-        }
+        else if (nodeOrItsAncestorNeedsStyleRecalc(styledNode))
+            document->updateStyleIfNeeded();
 
         // The style recalc could have caused the styled node to be discarded or replaced
         // if it was a PseudoElement so we need to update it.
         styledNode = this->styledNode();
     }
 
-    RenderObject* renderer = styledNode->renderer();
-
-    RefPtr<RenderStyle> style;
-    if (renderer && renderer->isComposited() && AnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
-        AnimationUpdateBlock animationUpdateBlock(renderer->animation());
-        style = renderer->animation()->getAnimatedStyleForRenderer(renderer);
-        if (m_pseudoElementSpecifier && !styledNode->isPseudoElement()) {
-            // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
-            style = style->getCachedPseudoStyle(m_pseudoElementSpecifier);
-        }
-    } else
-        style = styledNode->computedStyle(styledNode->isPseudoElement() ? NOPSEUDO : m_pseudoElementSpecifier);
-
+    RefPtr<RenderStyle> style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID);
     if (!style)
         return 0;
 
+    RenderObject* renderer = styledNode->renderer();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->writingMode());
 
     switch (propertyID) {
