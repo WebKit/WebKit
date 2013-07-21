@@ -496,7 +496,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/llint/LowLevelInterpreter.cpp \
 	Source/JavaScriptCore/llint/LowLevelInterpreter.h \
 	Source/JavaScriptCore/os-win32/stdbool.h \
-	Source/JavaScriptCore/os-win32/stdint.h \
 	Source/JavaScriptCore/parser/ASTBuilder.h \
 	Source/JavaScriptCore/parser/Lexer.cpp \
 	Source/JavaScriptCore/parser/Lexer.h \
