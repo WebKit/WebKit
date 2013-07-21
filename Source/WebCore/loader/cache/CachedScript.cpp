@@ -41,7 +41,7 @@ namespace WebCore {
 
 CachedScript::CachedScript(const ResourceRequest& resourceRequest, const String& charset)
     : CachedResource(resourceRequest, Script)
-    , m_decoder(TextResourceDecoder::create("application/javascript", charset))
+    , m_decoder(TextResourceDecoder::create(ASCIILiteral("application/javascript"), charset))
 {
     // It's javascript we want.
     // But some websites think their scripts are <some wrong mimetype here>

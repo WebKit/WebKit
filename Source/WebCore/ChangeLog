@@ -1,3 +1,22 @@
+2013-07-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add ASCIILiteral() on strings allocated often enough to appear in my Instruments
+        https://bugs.webkit.org/show_bug.cgi?id=118937
+
+        Reviewed by Alexey Proskuryakov.
+
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::saveFormControlState):
+        (WebCore::BaseCheckableInputType::fallbackValue):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+
 2013-07-20  Dean Jackson  <dino@apple.com>
 
         Updated ANGLE is leaking like a sieve

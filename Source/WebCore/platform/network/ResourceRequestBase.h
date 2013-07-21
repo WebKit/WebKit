@@ -162,7 +162,7 @@ namespace WebCore {
             : m_url(url)
             , m_cachePolicy(policy)
             , m_timeoutInterval(s_defaultTimeoutInterval)
-            , m_httpMethod("GET")
+            , m_httpMethod(ASCIILiteral("GET"))
             , m_allowCookies(true)
             , m_resourceRequestUpdated(true)
             , m_platformRequestUpdated(false)
