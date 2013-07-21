@@ -1,3 +1,18 @@
+2013-07-21  Anders Carlsson  <andersca@apple.com>
+
+        Java Updater not launched on Lion and Mountain Lion
+        https://bugs.webkit.org/show_bug.cgi?id=118953
+        <rdar://problem/14496721>
+
+        Reviewed by Sam Weinig.
+
+        On Lion and Mountain Lion, -[NSURL isEqual:] will return NO for two file URLs if one of
+        them has "localhost" specified, even if the paths are otherwise equal. Work around this by
+        comparing the paths directly.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::isJavaUpdaterURL):
+
 2013-07-19  Morten Stenshorne  <mstensho@opera.com>
 
         [GTK] Need a way to enable region based columns from the command line
