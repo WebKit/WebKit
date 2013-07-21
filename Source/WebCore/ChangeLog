@@ -1,3 +1,21 @@
+2013-07-21  Andreas Kling  <akling@apple.com>
+
+        KURL creates duplicate strings when completing data: URIs.
+        <http://webkit.org/b/118952>
+        <rdar://problem/14504480>
+
+        Reviewed by Anders Carlsson.
+
+        When checking if the original URL input string can be reused, compare against the part
+        of the parsing buffer that we would actually return, not the entire buffer.
+
+        632 kB progression on <http://www.nytimes.com/>
+
+        Test: KURLTest.KURLDataURIStringSharing
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::parse):
+
 2013-07-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Add ASCIILiteral() on strings allocated often enough to appear in my Instruments

@@ -1,3 +1,14 @@
+2013-07-21  Andreas Kling  <akling@apple.com>
+
+        KURL creates duplicate strings when completing data: URIs.
+        <http://webkit.org/b/118952>
+        <rdar://problem/14504480>
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebCore/KURL.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2013-07-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver not detecting misspelled words don't work in all cases
