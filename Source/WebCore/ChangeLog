@@ -1,3 +1,21 @@
+2013-07-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK1] Support direct painting without GraphicsSurface
+        https://bugs.webkit.org/show_bug.cgi?id=118302
+
+        Reviewed by Jocelyn Turcotte.
+
+        Configure the WebGL OpenGL context to share texture with
+        the HostWindow OpenGL if available, and paint accelerated
+        using the the now shared textures.
+
+        This should return the performance without GraphicsSurface
+        on the WK1 code path to what it was before r135995 (28/11 2012).
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+
 2013-07-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce toSVGUseElement(), use it

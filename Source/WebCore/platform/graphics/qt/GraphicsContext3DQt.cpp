@@ -120,6 +120,10 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
         return;
     }
 
+    QOpenGLContext* shareContext = 0;
+    if (hostWindow && hostWindow->platformPageClient() && hostWindow->platformPageClient()->makeOpenGLContextCurrentIfAvailable())
+        shareContext = QOpenGLContext::currentContext();
+
 #if QT_VERSION >= 0x050100
     QOffscreenSurface* surface = new QOffscreenSurface;
     surface->create();
@@ -135,6 +139,9 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
 #endif
 
     m_platformContext = new QOpenGLContext(m_surfaceOwner);
+    if (shareContext)
+        m_platformContext->setShareContext(shareContext);
+
     if (!m_platformContext->create())
         return;
 
@@ -229,9 +236,10 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
     m_context->markLayerComposited();
     blitMultisampleFramebufferAndRestoreContext();
 
-#if USE(GRAPHICS_SURFACE)
-    ASSERT(m_graphicsSurface);
     if (textureMapper->accelerationMode() == TextureMapper::OpenGLMode) {
+        TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
+#if USE(GRAPHICS_SURFACE)
+        ASSERT(m_graphicsSurface);
         // CGL only provides us the context, but not the view the context is currently bound to.
         // To make sure the context is bound the the right surface we have to do a makeCurrent through QOpenGL again.
         // FIXME: Remove this code as soon as GraphicsSurfaceMac makes use of NSOpenGL.
@@ -246,11 +254,14 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
         // FIXME: Remove this code as soon as GraphicsSurfaceMac makes use of NSOpenGL.
         currentContext->makeCurrent(currentSurface);
 
-        TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
         m_graphicsSurface->paintToTextureMapper(texmapGL, targetRect, matrix, opacity);
+#else
+        TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (m_context->m_attrs.alpha ? TextureMapperGL::ShouldBlend : 0);
+        IntSize textureSize(m_context->m_currentWidth, m_context->m_currentHeight);
+        texmapGL->drawTexture(m_context->m_texture, flags, textureSize, targetRect, matrix, opacity);
+#endif
         return;
     }
-#endif
 
     GraphicsContext* context = textureMapper->graphicsContext();
     QPainter* painter = context->platformContext();
