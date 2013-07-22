@@ -48,7 +48,7 @@ class WebDownload
 : public IWebDownload
 , public IWebURLAuthenticationChallengeSender
 #if USE(CURL)
-, public CurlDownloadListener
+, public WebCore::CurlDownloadListener
 #endif
 {
 public:
@@ -141,7 +141,7 @@ protected:
 #if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;
 #elif USE(CURL)
-    CurlDownload m_download;
+    WebCore::CurlDownload m_download;
 #endif
     COMPtr<IWebMutableURLRequest> m_request;
     COMPtr<IWebDownloadDelegate> m_delegate;

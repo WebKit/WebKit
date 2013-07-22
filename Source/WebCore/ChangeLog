@@ -1,3 +1,30 @@
+2013-07-22  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Download fails for certain urls.
+        https://bugs.webkit.org/show_bug.cgi?id=118468
+
+        Reviewed by Brent Fulgham.
+
+        The current Curl download implementation has a few shortcomings:
+        1) Downloading from secure locations fails. We need to provide Curl with the path to a certificate file (.pem file).
+        2) Cookies are not set in the download request. We need to give Curl the path to the cookie file.
+        3) When a normal load is converted to a download, some of the headers from the original request is not sent (e.g. Referer, User agent).
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::CurlDownload): Initialize custom headers member.
+        (WebCore::CurlDownload::~CurlDownload): Free custom headers member.
+        (WebCore::CurlDownload::init): Set certificate and cookie file path.
+        (WebCore::CurlDownload::closeFile): Check file handle against value for invalid platform handle.
+        (WebCore::CurlDownload::writeDataToFile): Added utility method to write download data to file.
+        (WebCore::CurlDownload::addHeaders): Added utility method to add headers to request.
+        (WebCore::CurlDownload::didReceiveData): Use writeDataToFile utility method.
+        * platform/network/curl/CurlDownload.h:
+        Put class in WebCore namespace.
+        Added method to init download from resource handle, request, and response object.
+        Added utility method to write download data to file.
+        Added utility method to add headers to request.
+        Added custom headers member.
+
 2013-07-22  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] captions sometimes positioned incorrectly after fullscreen state change

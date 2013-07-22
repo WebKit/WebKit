@@ -67,9 +67,7 @@ void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, c
 
     m_delegate = delegate;
 
-    KURL url(ParsedURLString, request.url());
-
-    m_download.init(this, url);
+    m_download.init(this, handle, request, response);
 
     start();
 }

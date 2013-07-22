@@ -1,3 +1,16 @@
+2013-07-22  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Download fails for certain urls.
+        https://bugs.webkit.org/show_bug.cgi?id=118468
+
+        Reviewed by Brent Fulgham.
+
+        Initialize download from provided resource handle, request, and response object.
+
+        * WebDownload.h: Use WebCore namespace for Curl download class.
+        * WebDownloadCurl.cpp:
+        (WebDownload::init): Initialize download from provided resource handle, request, and response object.
+
 2013-07-19  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Http response code 401 (Authentication required) is not handled.

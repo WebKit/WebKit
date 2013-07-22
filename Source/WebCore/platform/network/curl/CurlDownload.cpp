@@ -28,6 +28,7 @@
 
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/MainThreadTask.h>
+#include <WebCore/ResourceRequest.h>
 
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
@@ -36,6 +37,8 @@ using namespace WebCore;
 
 template<> struct CrossThreadCopierBase<false, false, CurlDownload*> : public CrossThreadCopierPassThrough<CurlDownload*> {
 };
+
+namespace WebCore {
 
 // CurlDownloadManager -------------------------------------------------------------------
 
@@ -213,6 +216,7 @@ CurlDownloadManager CurlDownload::m_downloadManager;
 
 CurlDownload::CurlDownload()
 : m_curlHandle(0)
+, m_customHeaders(0)
 , m_url(0)
 , m_tempHandle(invalidPlatformFileHandle)
 , m_deletesFileUponFailure(false)
@@ -226,6 +230,9 @@ CurlDownload::~CurlDownload()
 
     if (m_url)
         fastFree(m_url);
+
+    if (m_customHeaders)
+        curl_slist_free_all(m_customHeaders);
 
     closeFile();
     moveFileToDestination();
@@ -253,7 +260,29 @@ void CurlDownload::init(CurlDownloadListener* listener, const KURL& url)
     curl_easy_setopt(m_curlHandle, CURLOPT_MAXREDIRS, 10);
     curl_easy_setopt(m_curlHandle, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 
+    const char* certPath = getenv("CURL_CA_BUNDLE_PATH");
+    if (certPath)
+        curl_easy_setopt(m_curlHandle, CURLOPT_CAINFO, certPath);
+
+    const char* cookieJarPath = getenv("CURL_COOKIE_JAR_PATH");
+    if (cookieJarPath)
+        curl_easy_setopt(m_curlHandle, CURLOPT_COOKIEFILE, cookieJarPath);
+
     m_listener = listener;
+}
+
+void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const ResourceRequest& request, const ResourceResponse&)
+{
+    if (!listener)
+        return;
+
+    MutexLocker locker(m_mutex);
+
+    KURL url(ParsedURLString, request.url());
+
+    init(listener, url);
+
+    addHeaders(request);
 }
 
 bool CurlDownload::start()
@@ -288,7 +317,7 @@ void CurlDownload::closeFile()
 {
     MutexLocker locker(m_mutex);
 
-    if (m_tempHandle) {
+    if (m_tempHandle != invalidPlatformFileHandle) {
         WebCore::closeFile(m_tempHandle);
         m_tempHandle = invalidPlatformFileHandle;
     }
@@ -300,6 +329,43 @@ void CurlDownload::moveFileToDestination()
         return;
 
     ::MoveFileEx(m_tempPath.charactersWithNullTermination().data(), m_destination.charactersWithNullTermination().data(), MOVEFILE_COPY_ALLOWED | MOVEFILE_REPLACE_EXISTING);
+}
+
+void CurlDownload::writeDataToFile(const char* data, int size)
+{
+    if (m_tempPath.isEmpty())
+        m_tempPath = openTemporaryFile("download", m_tempHandle);
+
+    if (m_tempHandle != invalidPlatformFileHandle)
+        writeToFile(m_tempHandle, data, size);
+}
+
+void CurlDownload::addHeaders(const ResourceRequest& request)
+{
+    if (request.httpHeaderFields().size() > 0) {
+        struct curl_slist* headers = 0;
+
+        HTTPHeaderMap customHeaders = request.httpHeaderFields();
+        HTTPHeaderMap::const_iterator end = customHeaders.end();
+        for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it) {
+            const String& value = it->value;
+            String headerString(it->key);
+            if (value.isEmpty())
+                // Insert the ; to tell curl that this header has an empty value.
+                headerString.append(";");
+            else {
+                headerString.append(": ");
+                headerString.append(value);
+            }
+            CString headerLatin1 = headerString.latin1();
+            headers = curl_slist_append(headers, headerLatin1.data());
+        }
+
+        if (headers) {
+            curl_easy_setopt(m_curlHandle, CURLOPT_HTTPHEADER, headers);
+            m_customHeaders = headers;
+        }
+    }
 }
 
 void CurlDownload::didReceiveHeader(const String& header)
@@ -335,13 +401,7 @@ void CurlDownload::didReceiveData(void* data, int size)
 
     callOnMainThread<CurlDownload*, CurlDownload*, int, int>(receivedDataCallback, this, size);
 
-    if (m_tempPath.isEmpty())
-        m_tempPath = openTemporaryFile("download", m_tempHandle);
-
-    if (m_tempHandle != invalidPlatformFileHandle) {
-        const char* fileData = static_cast<const char*>(data);
-        writeToFile(m_tempHandle, fileData, size);
-    }
+    writeDataToFile(static_cast<const char*>(data), size);
 }
 
 void CurlDownload::didReceiveResponse()
@@ -424,4 +484,6 @@ void CurlDownload::receivedResponseCallback(CurlDownload* download)
 {
     if (download)
         download->didReceiveResponse();
+}
+
 }
