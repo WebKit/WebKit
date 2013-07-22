@@ -1,5 +1,18 @@
 2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        Unreviewed gardening. Added baselines for GTK+ related to subpixel layout.
+
+        * platform/gtk/editing/selection/mixed-editability-10-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-22-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-23-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/coords-units-03-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt: Added.
+        * platform/gtk/svg/custom/pattern-with-transformation-expected.txt: Added.
+        * platform/gtk/svg/text/text-midpoint-split-bug-expected.txt: Added.
+
+2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         Unreviewed gardening. Added needed baselines for GTK after r149088.
 
         * platform/gtk/editing/selection/5825350-1-expected.txt: Added.
