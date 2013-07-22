@@ -1,3 +1,9 @@
+2013-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * WTF.vcxproj/WTFGenerated.make: Stop triggering a "Build All" when things have not changed.
+
 2013-07-19  Alex Christensen  <achristensen@apple.com>
 
         Added x64 configuration to Visual Studio build.
