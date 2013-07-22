@@ -3899,8 +3899,10 @@ void WebPageProxy::resetStateAfterProcessExited()
     setViewNeedsDisplay(IntRect(IntPoint(), viewSize()));
 
     // Can't expect DidReceiveEvent notifications from a crashed web process.
+#if ENABLE(GESTURE_EVENTS)
+    m_gestureEventQueue.clear();
+#endif
     m_keyEventQueue.clear();
-    
     m_wheelEventQueue.clear();
     m_currentlyProcessedWheelEvents.clear();
 

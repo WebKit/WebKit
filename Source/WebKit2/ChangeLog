@@ -1,3 +1,14 @@
+2013-07-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Frequent MESSAGE_CHECK failures in WebPageProxy::didReceiveEvent
+        https://bugs.webkit.org/show_bug.cgi?id=118976
+        <rdar://problem/14155030>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        Clear m_gestureEventQueue, just like we clear all other event queues here.
+
 2013-07-21  Anders Carlsson  <andersca@apple.com>
 
         Java Updater not launched on Lion and Mountain Lion
