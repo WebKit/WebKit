@@ -1,5 +1,26 @@
 2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        Unreviewed gardening. Added new baselines for GTK+ after r152911.
+
+        * platform/gtk/fast/multicol/pagination/BottomToTop-bt-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/BottomToTop-lr-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/BottomToTop-rl-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/BottomToTop-tb-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/LeftToRight-bt-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/LeftToRight-lr-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/LeftToRight-rl-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/LeftToRight-tb-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/RightToLeft-bt-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/RightToLeft-lr-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/RightToLeft-rl-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/RightToLeft-tb-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/TopToBottom-bt-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/TopToBottom-lr-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/TopToBottom-rl-expected.txt: Added.
+        * platform/gtk/fast/multicol/pagination/TopToBottom-tb-expected.txt: Added.
+
+2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         Unreviewed gardening. Added baselines for GTK+ related to subpixel layout.
 
         * platform/gtk/editing/selection/mixed-editability-10-expected.txt: Added.
