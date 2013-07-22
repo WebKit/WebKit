@@ -1,3 +1,22 @@
+2013-07-22  Jakob Petsovits  <jpetsovits@blackberry.com>
+
+        [BlackBerry] Fix WebGL to a 2D canvas copies.
+        https://bugs.webkit.org/show_bug.cgi?id=118921
+        https://jira.bbqnx.net/browse/BRWSR-12714
+        JIRA 449577
+
+        Reviewed by George Staikos.
+
+        The transform here was converted incorrectly when it
+        replaced the pixel copy that was there before.
+        As a true draw transformation, it doesn't need the "- 1"
+        modification that pixel copies often require.
+
+        Fixes existing webgl/conformance/canvas tests.
+
+        * platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+
 2013-07-22  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Download fails for certain urls.

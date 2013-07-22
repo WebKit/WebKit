@@ -365,7 +365,7 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
     FloatRect src(0, 0, canvasWidth, canvasHeight);
     FloatRect dst(0, 0, imageWidth, imageHeight);
     double oldTransform[6];
-    double flipYTransform[6] = { 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, imageHeight - 1 };
+    double flipYTransform[6] = { 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, imageHeight };
     context->platformContext()->getTransform(oldTransform);
     context->platformContext()->setTransform(flipYTransform);
     BlackBerry::Platform::Graphics::TiledImage image(IntSize(imageWidth, imageHeight), reinterpret_cast_ptr<const unsigned*>(imagePixels));
