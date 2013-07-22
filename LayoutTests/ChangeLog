@@ -1,3 +1,17 @@
+2013-07-22  Joone Hur  <joone.hur@intel.com>
+
+        Rebaseline the caret color test for the Mac port after r152612
+        https://bugs.webkit.org/show_bug.cgi?id=118961
+
+        Reviewed by Alexey Proskuryakov.
+    
+        Added expected results of the caret color test for the Mac port.
+
+        * platform/mac-wk2/editing/caret/caret-color-expected.png: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/editing/caret/caret-color-expected.png: Added.
+        * platform/mac/editing/caret/caret-color-expected.txt: Added.
+
 2013-07-22  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r152227) Images with compositing layer don't show up unless the containing window is resized.
