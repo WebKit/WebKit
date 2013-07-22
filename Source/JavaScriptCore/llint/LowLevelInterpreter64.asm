@@ -1076,7 +1076,7 @@ _llint_op_get_argument_by_val:
     negi t2
     sxi2q t2, t2
     loadisFromInstruction(1, t3)
-    loadpFromInstruction(4, t1)
+    loadpFromInstruction(5, t1)
     loadq ThisArgumentOffset[cfr, t2, 8], t0
     storeq t0, [cfr, t3, 8]
     valueProfile(t0, t1)
