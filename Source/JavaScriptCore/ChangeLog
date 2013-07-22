@@ -1,5 +1,25 @@
 2013-07-22  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152848
+
+    2013-07-18  Andreas Kling  <akling@apple.com>
+
+            CodeBlock::m_argumentValueProfiles wastes a lot of memory.
+            <http://webkit.org/b/118852>
+            <rdar://problem/14481659>
+
+            Reviewed by Anders Carlsson.
+
+            Use Vector::resizeToFit() for CodeBlock::m_argumentValueProfiles. We don't need any padding
+            for growth, since we won't be appending to it anyway.
+
+            921 KB progression on <http://twitter.com/awesomekling>
+
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::setNumParameters):
+
+2013-07-22  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152737
 
     2013-07-16  Mark Hahnenberg  <mhahnenberg@apple.com>

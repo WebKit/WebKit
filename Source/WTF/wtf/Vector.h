@@ -608,6 +608,7 @@ namespace WTF {
         void shrink(size_t size);
         void grow(size_t size);
         void resize(size_t size);
+        void resizeToFit(size_t size);
         void reserveCapacity(size_t newCapacity);
         bool tryReserveCapacity(size_t newCapacity);
         void reserveInitialCapacity(size_t initialCapacity);
@@ -894,6 +895,13 @@ namespace WTF {
         }
         
         m_size = size;
+    }
+
+    template<typename T, size_t inlineCapacity, typename OverflowHandler>
+    void Vector<T, inlineCapacity, OverflowHandler>::resizeToFit(size_t size)
+    {
+        reserveCapacity(size);
+        resize(size);
     }
 
     template<typename T, size_t inlineCapacity, typename OverflowHandler>
