@@ -1,3 +1,9 @@
+2013-07-22  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed gardening of AppleWin port. Skip some crashing tests.
+
+        * platform/win/TestExpectations:
+
 2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Unreviewed gardening. Added baselines needed after r110542.
