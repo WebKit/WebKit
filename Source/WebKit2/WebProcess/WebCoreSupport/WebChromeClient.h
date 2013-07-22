@@ -121,7 +121,7 @@ private:
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const OVERRIDE;
     virtual void scrollRectIntoView(const WebCore::IntRect&) const OVERRIDE; // Currently only Mac has a non empty implementation.
 
-    virtual bool shouldUnavailablePluginMessageIncludeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const OVERRIDE;
+    virtual bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const OVERRIDE;
     virtual void unavailablePluginButtonClicked(WebCore::Element*, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const OVERRIDE;
 
     virtual void scrollbarsModeDidChange() const OVERRIDE;
