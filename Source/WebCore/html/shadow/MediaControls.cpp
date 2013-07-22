@@ -276,6 +276,10 @@ void MediaControls::enteredFullscreen()
         page->chrome().setCursorHiddenUntilMouseMoves(true);
 
     startHideFullscreenControlsTimer();
+#if ENABLE(VIDEO_TRACK)
+    if (m_textDisplayContainer)
+        m_textDisplayContainer->enteredFullscreen();
+#endif
 }
 
 void MediaControls::exitedFullscreen()
@@ -283,6 +287,10 @@ void MediaControls::exitedFullscreen()
     m_isFullscreen = false;
     m_fullScreenButton->setIsFullscreen(false);
     stopHideFullscreenControlsTimer();
+#if ENABLE(VIDEO_TRACK)
+    if (m_textDisplayContainer)
+        m_textDisplayContainer->exitedFullscreen();
+#endif
 }
 
 void MediaControls::defaultEventHandler(Event* event)

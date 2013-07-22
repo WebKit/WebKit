@@ -1307,10 +1307,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         }
     } else {
         hide();
-        m_textTrackRepresentation = nullptr;
-        mediaElement->setTextTrackRepresentation(0);
-        removeInlineStyleProperty(CSSPropertyWidth);
-        removeInlineStyleProperty(CSSPropertyHeight);
+        clearTextTrackRepresentation();
     }
 }
 
@@ -1336,8 +1333,31 @@ void MediaControlTextTrackContainerElement::updateTimerFired(Timer<MediaControlT
     for (size_t i = 0; i < activeCues.size(); ++i) {
         TextTrackCue* cue = activeCues[i].data();
         cue->setFontSize(m_fontSize, m_videoDisplaySize.size(), m_fontSizeIsImportant);
-        
     }
+    updateDisplay();
+}
+
+void MediaControlTextTrackContainerElement::clearTextTrackRepresentation()
+{
+    if (HTMLMediaElement* mediaElement = toParentMediaElement(this))
+        mediaElement->setTextTrackRepresentation(0);
+    m_textTrackRepresentation = nullptr;
+    removeInlineStyleProperty(CSSPropertyPosition);
+    removeInlineStyleProperty(CSSPropertyWidth);
+    removeInlineStyleProperty(CSSPropertyHeight);
+    removeInlineStyleProperty(CSSPropertyLeft);
+    removeInlineStyleProperty(CSSPropertyTop);
+}
+
+void MediaControlTextTrackContainerElement::enteredFullscreen()
+{
+    updateSizes(true);
+}
+
+void MediaControlTextTrackContainerElement::exitedFullscreen()
+{
+    clearTextTrackRepresentation();
+    updateSizes(true);
 }
 
 void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
