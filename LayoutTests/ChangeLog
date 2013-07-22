@@ -1,3 +1,19 @@
+2013-07-22  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r152227) Images with compositing layer don't show up unless the containing window is resized.
+        https://bugs.webkit.org/show_bug.cgi?id=118951
+
+        Reviewed by Simon Fraser.
+
+        Ensure that the content rect is initialized when the image is set on the graphics layer.
+
+        RenderLayerBacking::updateGraphicsLayerGeometry() only updates the contents rect when
+        the associated graphics layer has a content layer. Since the image gets committed 
+        on the graphics layer after the update calls, the contents rect is left uninitialized.
+
+        * compositing/images/positioned-image-content-rect-expected.html: Added.
+        * compositing/images/positioned-image-content-rect.html: Added.
+
 2013-07-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r152968.
