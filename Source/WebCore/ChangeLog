@@ -1,5 +1,23 @@
 2013-07-22  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152839
+
+    2013-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+            willWriteSelectionToPasteboard and willPerformDragSourceAction editing callbacks are not called for drag and drop
+            https://bugs.webkit.org/show_bug.cgi?id=118828
+
+            Reviewed by Gavin Barraclough.
+
+            Call these two callbacks when we start a drag and drop.
+
+            No new tests for now but we should start logging these callbacks in DRT and WTR's EditorClients.
+
+            * page/DragController.cpp:
+            (WebCore::DragController::startDrag):
+
+2013-07-22  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152824
 
     2013-07-17  Tim Horton  <timothy_horton@apple.com>
