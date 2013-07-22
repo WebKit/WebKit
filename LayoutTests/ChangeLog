@@ -1,3 +1,48 @@
+2013-07-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r152968.
+        http://trac.webkit.org/changeset/152968
+        https://bugs.webkit.org/show_bug.cgi?id=118975
+
+        "I forgot to add a test" (Requested by abucur on #webkit).
+
+        * fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.html: Removed.
+        * fast/regions/percentage-margins-mixed-ltr-dominant-regions.html:
+        * fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.html: Removed.
+        * fast/regions/percentage-margins-mixed-rtl-dominant-regions.html:
+        * fast/regions/percentage-margins-rtl-variable-width-regions-expected.html: Removed.
+        * fast/regions/percentage-margins-rtl-variable-width-regions.html:
+        * platform/efl/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png: Added.
+        * platform/efl/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.txt: Added.
+        * platform/efl/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png: Added.
+        * platform/efl/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.txt: Added.
+        * platform/efl/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png: Added.
+        * platform/efl/fast/regions/percentage-margins-rtl-variable-width-regions-expected.txt: Added.
+        * platform/efl/fast/regions/percentage-margins-variable-width-regions-expected.png: Added.
+        * platform/efl/fast/regions/percentage-margins-variable-width-regions-expected.txt: Added.
+        * platform/gtk/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png: Added.
+        * platform/gtk/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.txt: Added.
+        * platform/gtk/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png: Added.
+        * platform/gtk/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.txt: Added.
+        * platform/gtk/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png: Added.
+        * platform/gtk/fast/regions/percentage-margins-rtl-variable-width-regions-expected.txt: Added.
+        * platform/gtk/fast/regions/percentage-margins-variable-width-regions-expected.png: Added.
+        * platform/gtk/fast/regions/percentage-margins-variable-width-regions-expected.txt: Added.
+        * platform/mac/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png: Added.
+        * platform/mac/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.txt: Added.
+        * platform/mac/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png: Added.
+        * platform/mac/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.txt: Added.
+        * platform/mac/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png: Added.
+        * platform/mac/fast/regions/percentage-margins-rtl-variable-width-regions-expected.txt: Added.
+        * platform/qt/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png: Added.
+        * platform/qt/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.txt: Added.
+        * platform/qt/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png: Added.
+        * platform/qt/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.txt: Added.
+        * platform/qt/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png: Added.
+        * platform/qt/fast/regions/percentage-margins-rtl-variable-width-regions-expected.txt: Added.
+        * platform/qt/fast/regions/percentage-margins-variable-width-regions-expected.png: Added.
+        * platform/qt/fast/regions/percentage-margins-variable-width-regions-expected.txt: Added.
+
 2013-07-22  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening of AppleWin port. Skip some crashing tests.
