@@ -101,7 +101,7 @@ fast/events/option-tab.html [ WontFix Failure ]
 # These tests expect a TIFF decoder (via Chromium).
 # These pass while they're marked as WontFix - check it.
 fast/images/embed-image.html [ WontFix Pass ]
-webkit.org/b/118730 fast/images/object-image.html [ WontFix Failure ]
+fast/images/object-image.html [ WontFix Pass ]
 
 # This test requires Mac ObjC bindings, although it currently passes
 Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ WontFix Pass ]
@@ -1428,15 +1428,6 @@ webkit.org/b/118420 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
 webkit.org/b/118595 fast/regions/autoheight-correct-region-for-lines-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/118724 svg/custom/xlink-prefix-in-attributes.html [ Failure ]
-
-# Plugin-related failures after r152701
-webkit.org/b/118730 fast/replaced/border-radius-clip.html [ Failure ]
-webkit.org/b/118730 http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html [ Failure ]
-webkit.org/b/118730 http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html [ Failure ]
-webkit.org/b/118730 http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html [ Failure ]
-webkit.org/b/118730 plugins/embed-attributes-style.html [ Failure ]
-webkit.org/b/118730 plugins/iframe-shims.html [ Failure ]
-webkit.org/b/118730 editing/pasteboard/paste-noplugin.html [ Failure ]
 
 # New MathML test introduced when MathML pixel tests were replaced with ref tests
 webkit.org/b/118904 mathml/presentation/bug95404.html [ ImageOnlyFailure ]

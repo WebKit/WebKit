@@ -1,3 +1,15 @@
+2013-07-22  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Regression: Multiple tests fail after r152701 changed how unavailable plugins are handled
+        https://bugs.webkit.org/show_bug.cgi?id=118730
+
+        Unreviewed GTK gardening. Unskip tests no longer failing.
+
+        Changes from r152701 were reverted in r152814 and later reworked in r152824,
+        so the tests no longer fail.
+
+        * platform/gtk/TestExpectations:
+
 2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed gardening. Update test expectations for GTK.
