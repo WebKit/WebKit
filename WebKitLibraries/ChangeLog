@@ -1,3 +1,14 @@
+2013-07-22  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r152874
+
+    2013-07-18  Roger Fong  <roger_fong@apple.com>
+
+            Make sure to link against _debug binaries when appropriate.
+            <rdar://problem/14473010>.
+
+            * win/tools/vsprops/debugsuffix.props:
+
 2013-06-18  Roger Fong  <roger_fong@apple.com>
 
         Replace tools32 folder with tools and update WebKit Windows solution accordingly.
