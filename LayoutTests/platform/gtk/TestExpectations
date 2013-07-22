@@ -850,6 +850,9 @@ webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/98381 accessibility/transformed-element.html [ Failure ]
 webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
 
+# No platform-specific expectations available until we implement attributesOfChildren().
+webkit.org/b/118967 accessibility/lists.html [ Failure Missing ]
+
 # Blur and focus events are not received for the following tests.
 Bug(GTK) fast/events/blur-focus-window-should-blur-focus-element.html [ Failure ]
 Bug(GTK) fast/dom/HTMLDocument/hasFocus.html [ Failure ]

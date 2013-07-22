@@ -1,3 +1,9 @@
+2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed gardening. Add accesibility/lists.html as 'Missing' expectation.
+
+        * platform/gtk/TestExpectations: Added test.
+
 2013-07-22  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skipping failing tests.
