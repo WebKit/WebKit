@@ -1,3 +1,21 @@
+2013-07-22  Zalan Bujtas  <zalan@apple.com>
+
+        segfault in RenderLayerCompositor when the iframe's position attribute is changed and it embeds <object>.
+        https://bugs.webkit.org/show_bug.cgi?id=118965
+
+        Reviewed by Simon Fraser.
+
+        Do not change the composition state unless we can reliably figure out the iframe's size.
+        If the renderer is not yet attached, its size is not computable.
+
+        * compositing/iframes/iframe-position-absolute-with-padding-percentage-crash-expected.txt: Added.
+        * compositing/iframes/iframe-position-absolute-with-padding-percentage-crash.html: Added.
+        * compositing/iframes/resources/embed-tag-with-composition.html: Added.
+        * platform/efl/TestExpectations: skip
+        * platform/efl-wk2/TestExpectations: skip
+        * platform/qt-5.0-wk1/TestExpectations: skip
+        * platform/qt-5.0-wk2/TestExpectations: skip
+
 2013-07-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver only read the first column in a safari table

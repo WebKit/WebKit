@@ -25,6 +25,7 @@ compositing/geometry/vertical-scroll-composited.html
 compositing/geometry/video-opacity-overlay.html
 compositing/iframes/iframe-in-composited-layer.html
 compositing/iframes/resizer.html
+compositing/iframes/iframe-position-absolute-with-padding-percentage-crash.html
 compositing/layer-creation/fixed-position-scroll.html
 compositing/layers-inside-overflow-scroll.html
 compositing/plugins/composited-plugin.html

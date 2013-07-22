@@ -172,6 +172,7 @@ compositing/geometry/tall-page-composited.html
 compositing/plugins
 compositing/video
 compositing/layers-inside-overflow-scroll.html
+compositing/iframes/iframe-position-absolute-with-padding-percentage-crash.html
 
 # [Qt][WK2] New compositing test are failing since added in r126663.
 # webkit.org/b/95076 

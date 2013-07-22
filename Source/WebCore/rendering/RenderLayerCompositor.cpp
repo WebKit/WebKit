@@ -2158,7 +2158,7 @@ bool RenderLayerCompositor::requiresCompositingForFrame(RenderObject* renderer) 
         return false;
 
     // If we can't reliably know the size of the iframe yet, don't change compositing state.
-    if (renderer->needsLayout())
+    if (!renderer->parent() || renderer->needsLayout())
         return frameRenderer->hasLayer() && frameRenderer->layer()->isComposited();
     
     // Don't go into compositing mode if height or width are zero.
