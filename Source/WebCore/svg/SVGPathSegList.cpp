@@ -41,8 +41,7 @@ String SVGPathSegList::valueAsString() const
 void SVGPathSegList::commitChange(SVGElement* contextElement, ListModification listModification)
 {
     ASSERT(contextElement);
-    ASSERT(contextElement->hasTagName(SVGNames::pathTag));
-    static_cast<SVGPathElement*>(contextElement)->pathSegListChanged(m_role, listModification);
+    toSVGPathElement(contextElement)->pathSegListChanged(m_role, listModification);
 }
 
 }

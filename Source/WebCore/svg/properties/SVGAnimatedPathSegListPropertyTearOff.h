@@ -89,7 +89,7 @@ public:
     void animValDidChange()
     {
         ASSERT(m_animatedPathByteStream);
-        SVGPathElement* pathElement = static_cast<SVGPathElement*>(contextElement());
+        SVGPathElement* pathElement = toSVGPathElement(contextElement());
 
         // If the animVal is observed from JS, we have to update it on each animation step.
         // This is an expensive operation and only done, if someone actually observes the animatedPathSegList() while an animation is running.

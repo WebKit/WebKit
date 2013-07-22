@@ -89,8 +89,7 @@ SVGPathElement* SVGPathSegListPropertyTearOff::contextElement() const
 {
     SVGElement* contextElement = m_animatedProperty->contextElement();
     ASSERT(contextElement);
-    ASSERT(contextElement->hasTagName(SVGNames::pathTag));
-    return static_cast<SVGPathElement*>(contextElement);
+    return toSVGPathElement(contextElement);
 }
 
 bool SVGPathSegListPropertyTearOff::processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify)

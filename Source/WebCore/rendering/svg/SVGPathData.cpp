@@ -73,8 +73,7 @@ static void updatePathFromLineElement(SVGElement* element, Path& path)
 
 static void updatePathFromPathElement(SVGElement* element, Path& path)
 {
-    ASSERT(element->hasTagName(SVGNames::pathTag));
-    buildPathFromByteStream(static_cast<SVGPathElement*>(element)->pathByteStream(), path);
+    buildPathFromByteStream(toSVGPathElement(element)->pathByteStream(), path);
 }
 
 static void updatePathFromPolygonElement(SVGElement* element, Path& path)

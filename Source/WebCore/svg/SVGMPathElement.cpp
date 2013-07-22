@@ -154,7 +154,7 @@ SVGPathElement* SVGMPathElement::pathElement()
 {
     Element* target = targetElementFromIRIString(href(), document());
     if (target && target->hasTagName(SVGNames::pathTag))
-        return static_cast<SVGPathElement*>(target);
+        return toSVGPathElement(target);
     return 0;
 }
 
