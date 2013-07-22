@@ -1,3 +1,13 @@
+2013-07-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver only read the first column in a safari table
+        https://bugs.webkit.org/show_bug.cgi?id=118992
+
+        Reviewed by Tim Horton.
+
+        * accessibility/table-with-mismatch-column-count-in-initial-section-expected.txt: Added.
+        * accessibility/table-with-mismatch-column-count-in-initial-section.html: Added.
+
 2013-07-22  Beth Dakin  <bdakin@apple.com>
 
         StickyPositionContraints should not need to change to account for a RenderLayer's 

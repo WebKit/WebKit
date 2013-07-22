@@ -350,7 +350,7 @@ void AccessibilityTable::addChildren()
     if (!tableSection)
         return;
     
-    RenderTableSection* initialTableSection = tableSection;
+    unsigned maxColumnCount = 0;
     while (tableSection) {
         
         HashSet<AccessibilityObject*> appendedRows;
@@ -382,11 +382,12 @@ void AccessibilityTable::addChildren()
             appendedRows.add(row);
         }
     
+        maxColumnCount = max(tableSection->numColumns(), maxColumnCount);
         tableSection = table->sectionBelow(tableSection, SkipEmptySections);
     }
     
     // make the columns based on the number of columns in the first body
-    unsigned length = initialTableSection->numColumns();
+    unsigned length = maxColumnCount;
     for (unsigned i = 0; i < length; ++i) {
         AccessibilityTableColumn* column = static_cast<AccessibilityTableColumn*>(axCache->getOrCreate(ColumnRole));
         column->setColumnIndex((int)i);
