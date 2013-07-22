@@ -1,3 +1,49 @@
+2013-07-22  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Convert percentage-margins-* tests to ref-tests
+        https://bugs.webkit.org/show_bug.cgi?id=118723
+
+        Reviewed by Andreas Kling.
+
+        The patch converts the percentage margins tests for regions in ref tests.
+
+        * fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.html: Added.
+        * fast/regions/percentage-margins-mixed-ltr-dominant-regions.html:
+        * fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.html: Added.
+        * fast/regions/percentage-margins-mixed-rtl-dominant-regions.html:
+        * fast/regions/percentage-margins-rtl-variable-width-regions-expected.html: Added.
+        * fast/regions/percentage-margins-rtl-variable-width-regions.html:
+        * platform/efl/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png: Removed.
+        * platform/efl/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.txt: Removed.
+        * platform/efl/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png: Removed.
+        * platform/efl/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.txt: Removed.
+        * platform/efl/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png: Removed.
+        * platform/efl/fast/regions/percentage-margins-rtl-variable-width-regions-expected.txt: Removed.
+        * platform/efl/fast/regions/percentage-margins-variable-width-regions-expected.png: Removed.
+        * platform/efl/fast/regions/percentage-margins-variable-width-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png: Removed.
+        * platform/gtk/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png: Removed.
+        * platform/gtk/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png: Removed.
+        * platform/gtk/fast/regions/percentage-margins-rtl-variable-width-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/percentage-margins-variable-width-regions-expected.png: Removed.
+        * platform/gtk/fast/regions/percentage-margins-variable-width-regions-expected.txt: Removed.
+        * platform/mac/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png: Removed.
+        * platform/mac/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.txt: Removed.
+        * platform/mac/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png: Removed.
+        * platform/mac/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.txt: Removed.
+        * platform/mac/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png: Removed.
+        * platform/mac/fast/regions/percentage-margins-rtl-variable-width-regions-expected.txt: Removed.
+        * platform/qt/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png: Removed.
+        * platform/qt/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.txt: Removed.
+        * platform/qt/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png: Removed.
+        * platform/qt/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.txt: Removed.
+        * platform/qt/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png: Removed.
+        * platform/qt/fast/regions/percentage-margins-rtl-variable-width-regions-expected.txt: Removed.
+        * platform/qt/fast/regions/percentage-margins-variable-width-regions-expected.png: Removed.
+        * platform/qt/fast/regions/percentage-margins-variable-width-regions-expected.txt: Removed.
+
 2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed gardening. Add accesibility/lists.html as 'Missing' expectation.
