@@ -130,6 +130,7 @@ void HTMLPlugInImageElement::setDisplayState(DisplayState state)
     if (state == RestartingWithPendingMouseClick || state == Restarting) {
         m_isRestartedPlugin = true;
         m_snapshotDecision = NeverSnapshot;
+        setNeedsStyleRecalc(SyntheticStyleChange);
         if (displayState() == DisplayingSnapshot)
             m_removeSnapshotTimer.startOneShot(removeSnapshotTimerDelay);
     }
@@ -423,6 +424,7 @@ void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer<HTMLPlugInImageEleme
 {
     m_snapshotImage = nullptr;
     m_isRestartedPlugin = false;
+    setNeedsStyleRecalc(SyntheticStyleChange);
     if (renderer())
         renderer()->repaint();
 }
