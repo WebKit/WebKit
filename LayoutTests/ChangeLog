@@ -1,3 +1,10 @@
+2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed gardening. Added needed baselines for GTK after r149088.
+
+        * platform/gtk/editing/selection/5825350-1-expected.txt: Added.
+        * platform/gtk/editing/selection/5825350-2-expected.txt: Added.
+
 2013-07-22  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Convert percentage-margins-* tests to ref-tests
