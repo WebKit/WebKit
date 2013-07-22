@@ -84,6 +84,13 @@ namespace WebCore {
         bool isNull() const { return !m_data; }
         const AtomicString& operator[](size_t i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < size()); return (*m_data)[i]; }
 
+        static bool spaceSplitStringContainsValue(const String& spaceSplitString, const char* value, unsigned length, bool shouldFoldCase);
+        template<size_t length>
+        static bool spaceSplitStringContainsValue(const String& spaceSplitString, const char (&value)[length], bool shouldFoldCase)
+        {
+            return spaceSplitStringContainsValue(spaceSplitString, value, length - 1, shouldFoldCase);
+        }
+
     private:
         void ensureUnique()
         {

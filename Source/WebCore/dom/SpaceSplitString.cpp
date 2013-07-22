@@ -53,8 +53,8 @@ static inline bool hasNonASCIIOrUpper(const String& string)
     return hasNonASCIIOrUpper(string.characters16(), length);
 }
 
-template <typename CharacterType>
-inline void SpaceSplitStringData::createVector(const CharacterType* characters, unsigned length)
+template <typename CharacterType, typename TokenProcessor>
+static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, const CharacterType* characters, unsigned length)
 {
     unsigned start = 0;
     while (true) {
@@ -66,22 +66,38 @@ inline void SpaceSplitStringData::createVector(const CharacterType* characters, 
         while (end < length && isNotHTMLSpace(characters[end]))
             ++end;
 
-        m_vector.append(AtomicString(characters + start, end - start));
+        if (!tokenProcessor.processToken(characters + start, end - start))
+            return;
 
         start = end + 1;
     }
 }
 
+class AppendTokenToVectorTokenProcessor {
+public:
+    AppendTokenToVectorTokenProcessor(Vector<AtomicString, 4>& vector) : m_vector(vector) { }
+
+    template <typename CharacterType>
+    bool processToken(const CharacterType* characters, unsigned length)
+    {
+        m_vector.append(AtomicString(characters, length));
+        return true;
+    }
+private:
+    Vector<AtomicString, 4>& m_vector;
+};
+
 void SpaceSplitStringData::createVector(const String& string)
 {
     unsigned length = string.length();
 
+    AppendTokenToVectorTokenProcessor tokenProcessor(m_vector);
     if (string.is8Bit()) {
-        createVector(string.characters8(), length);
+        tokenizeSpaceSplitString(tokenProcessor, string.characters8(), length);
         return;
     }
 
-    createVector(string.characters16(), length);
+    tokenizeSpaceSplitString(tokenProcessor, string.characters16(), length);
 }
 
 bool SpaceSplitStringData::containsAll(SpaceSplitStringData& other)
@@ -166,6 +182,48 @@ void SpaceSplitString::set(const AtomicString& inputString, bool shouldFoldCase)
         string = string.foldCase();
 
     m_data = SpaceSplitStringData::create(string);
+}
+
+class TokenIsEqualToCStringTokenProcessor {
+public:
+    TokenIsEqualToCStringTokenProcessor(const char* referenceString, unsigned referenceStringLength)
+        : m_referenceString(referenceString)
+        , m_referenceStringLength(referenceStringLength)
+        , m_referenceStringWasFound(false)
+    {
+    }
+
+    template <typename CharacterType>
+    bool processToken(const CharacterType* characters, unsigned length)
+    {
+        if (length == m_referenceStringLength && equal(characters, reinterpret_cast<const LChar*>(m_referenceString), length)) {
+            m_referenceStringWasFound = true;
+            return false;
+        }
+        return true;
+    }
+
+    bool referenceStringWasFound() const { return m_referenceStringWasFound; }
+
+private:
+    const char* m_referenceString;
+    unsigned m_referenceStringLength;
+    bool m_referenceStringWasFound;
+};
+
+bool SpaceSplitString::spaceSplitStringContainsValue(const String& inputString, const char* value, unsigned valueLength, bool shouldFoldCase)
+{
+    String string = inputString;
+    if (shouldFoldCase && hasNonASCIIOrUpper(string))
+        string = string.foldCase();
+
+    TokenIsEqualToCStringTokenProcessor tokenProcessor(value, valueLength);
+    unsigned length = string.length();
+    if (string.is8Bit())
+        tokenizeSpaceSplitString(tokenProcessor, string.characters8(), length);
+    else
+        tokenizeSpaceSplitString(tokenProcessor, string.characters16(), length);
+    return tokenProcessor.referenceStringWasFound();
 }
 
 SpaceSplitStringData::~SpaceSplitStringData()

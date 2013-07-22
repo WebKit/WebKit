@@ -1,3 +1,36 @@
+2013-07-22  Benjamin Poulain  <benjamin@webkit.org>
+
+        Do not allocate 2 AtomicString just to do a comparison in HTMLAnchorElement::setRel()
+        https://bugs.webkit.org/show_bug.cgi?id=118941
+
+        Reviewed by Gavin Barraclough.
+
+        Currently, the only type of link relation supported by HTMLAnchorElement is RelationNoReferrer.
+
+        To find the value, we create a SpaceSplitString with the input value of the attribute (which
+        create one or more AtomicString depending on the input). Then we create a new AtomicString for
+        the literal "noreferrer". Finally, we compare the pointers and throw away all the AtomicStrings.
+
+        This causes a lot of memory operations for something really simple.
+
+        This patch adds a little helper method to SpaceSplitString to find a literal in the input. The only
+        allocation happens if we need to foldCase(). The following operations are done without allocating
+        new buffer and without hashing the input.
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::tokenizeSpaceSplitString):
+        (WebCore::AppendTokenToVectorTokenProcessor::AppendTokenToVectorTokenProcessor):
+        (WebCore::AppendTokenToVectorTokenProcessor::processToken):
+        (WebCore::SpaceSplitStringData::createVector):
+        (WebCore::TokenIsEqualToCStringTokenProcessor::TokenIsEqualToCStringTokenProcessor):
+        (WebCore::TokenIsEqualToCStringTokenProcessor::processToken):
+        (WebCore::TokenIsEqualToCStringTokenProcessor::referenceStringWasFound):
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue):
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::setRel):
+
 2013-07-22  Zalan Bujtas  <zalan@apple.com>
 
         segfault in RenderLayerCompositor when the iframe's position attribute is changed and it embeds <object>.
