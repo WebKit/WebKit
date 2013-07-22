@@ -49,6 +49,7 @@ SchedulableLoader::SchedulableLoader(const NetworkResourceLoadParameters& parame
     , m_inPrivateBrowsingMode(parameters.inPrivateBrowsingMode)
     , m_shouldClearReferrerOnHTTPSToHTTPRedirect(parameters.shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_isLoadingMainResource(parameters.isMainResource)
+    , m_sandboxExtensionsAreConsumed(false)
     , m_connection(connection)
 {
     // Either this loader has both a webPageID and webFrameID, or it is not allowed to ask the client for authentication credentials.
@@ -93,15 +94,23 @@ void SchedulableLoader::consumeSandboxExtensions()
 
     for (size_t i = 0, count = m_resourceSandboxExtensions.size(); i < count; ++i)
         m_resourceSandboxExtensions[i]->consume();
+
+    m_sandboxExtensionsAreConsumed = true;
 }
 
 void SchedulableLoader::invalidateSandboxExtensions()
 {
-    for (size_t i = 0, count = m_requestBodySandboxExtensions.size(); i < count; ++i)
-        m_requestBodySandboxExtensions[i]->revoke();
+    if (m_sandboxExtensionsAreConsumed) {
+        for (size_t i = 0, count = m_requestBodySandboxExtensions.size(); i < count; ++i)
+            m_requestBodySandboxExtensions[i]->revoke();
+        for (size_t i = 0, count = m_resourceSandboxExtensions.size(); i < count; ++i)
+            m_resourceSandboxExtensions[i]->revoke();
+    }
 
-    for (size_t i = 0, count = m_resourceSandboxExtensions.size(); i < count; ++i)
-        m_resourceSandboxExtensions[i]->revoke();
+    m_requestBodySandboxExtensions.clear();
+    m_resourceSandboxExtensions.clear();
+
+    m_sandboxExtensionsAreConsumed = false;
 }
 
 } // namespace WebKit

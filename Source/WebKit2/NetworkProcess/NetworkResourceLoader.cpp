@@ -86,6 +86,8 @@ void NetworkResourceLoader::cleanup()
 {
     ASSERT(isMainThread());
 
+    invalidateSandboxExtensions();
+
     if (FormData* formData = request().httpBody())
         formData->removeGeneratedFilesIfNeeded();
 
@@ -181,7 +183,6 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double fini
 
     // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
-    invalidateSandboxExtensions();
     send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
     
     cleanup();
@@ -193,7 +194,6 @@ void NetworkResourceLoader::didFail(ResourceHandle* handle, const ResourceError&
 
     // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
-    invalidateSandboxExtensions();
     send(Messages::WebResourceLoader::DidFailResourceLoad(error));
     cleanup();
 }
