@@ -392,34 +392,35 @@ PassRefPtr<StringImpl> StringImpl::lower()
 
     // First scan the string for uppercase and non-ASCII characters:
     bool noUpper = true;
-    unsigned ored = 0;
     if (is8Bit()) {
+        unsigned failingIndex;
         for (unsigned i = 0; i < m_length; ++i) {
             LChar character = m_data8[i];
-            if (UNLIKELY(isASCIIUpper(character)))
-                noUpper = false;
-            ored |= character;
+            if (UNLIKELY((character & ~0x7F) || isASCIIUpper(character))) {
+                failingIndex = i;
+                goto SlowPath8bitLower;
+            }
         }
-        // Nothing to do if the string is all ASCII with no uppercase.
-        if (noUpper && !(ored & ~0x7F))
-            return this;
+        return this;
 
+SlowPath8bitLower:
         LChar* data8;
         RefPtr<StringImpl> newImpl = createUninitialized(m_length, data8);
 
-        if (!(ored & ~0x7F)) {
-            for (unsigned i = 0; i < m_length; ++i)
-                data8[i] = toASCIILower(m_data8[i]);
+        for (unsigned i = 0; i < failingIndex; ++i)
+            data8[i] = m_data8[i];
 
-            return newImpl.release();
+        for (unsigned i = failingIndex; i < m_length; ++i) {
+            LChar character = m_data8[i];
+            if (!(character & ~0x7F))
+                data8[i] = toASCIILower(character);
+            else
+                data8[i] = static_cast<LChar>(Unicode::toLower(character));
         }
-
-        // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
-        for (unsigned i = 0; i < m_length; ++i)
-            data8[i] = static_cast<LChar>(Unicode::toLower(m_data8[i]));
 
         return newImpl.release();
     }
+    unsigned ored = 0;
 
     for (unsigned i = 0; i < m_length; ++i) {
         UChar character = m_data16[i];

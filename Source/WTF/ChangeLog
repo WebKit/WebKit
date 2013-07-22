@@ -1,3 +1,19 @@
+2013-07-22  Benjamin Poulain  <benjamin@webkit.org>
+
+        String::lower() - Skip to slow path on the first failure
+        https://bugs.webkit.org/show_bug.cgi?id=118885
+
+        Reviewed by Andreas Kling.
+
+        In the 8 bits case, we don't need to know the state of the full string before changing characters
+        to their lowercase variant.
+        Just fail immediately and start transforming characters from the point of failure.
+
+        This avoid reading the string twice when the uppercase character is not at the end of the string.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::lower):
+
 2013-07-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.
