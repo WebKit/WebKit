@@ -1,3 +1,15 @@
+2013-07-22  Diego Pino Garcia  <dpino@igalia.com>
+
+        Web Inspector: When right-clicking on a DataGrid column, show editing 
+        menu option as "Edit <columnName>" instead of just "Edit"
+        https://bugs.webkit.org/show_bug.cgi?id=118970
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js: Add literal "Edit '%s'"
+        * UserInterface/DataGrid.js: Change "Edit" for "Edit <columnTitle>"
+        (WebInspector.DataGrid.prototype._contextMenuInDataTable):
+
 2013-07-21  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Cleanup InspectorFrontendHostStub.js

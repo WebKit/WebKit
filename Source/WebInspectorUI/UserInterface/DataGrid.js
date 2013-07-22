@@ -1114,12 +1114,15 @@ WebInspector.DataGrid.prototype = {
         if (gridNode && gridNode.selectable && !gridNode.isEventWithinDisclosureTriangle(event)) {
             contextMenu.appendItem(WebInspector.UIString("Copy Row"), this._copyRow.bind(this, event.target));
 
-            // FIXME: Use the column names for Editing, instead of just "Edit".
             if (this.dataGrid._editCallback) {
                 if (gridNode === this.creationNode)
                     contextMenu.appendItem(WebInspector.UIString("Add New"), this._startEditing.bind(this, event.target));
-                else
-                    contextMenu.appendItem(WebInspector.UIString("Edit"), this._startEditing.bind(this, event.target));
+                else {
+                    var element = event.target.enclosingNodeOrSelfWithNodeName("td");
+                    var columnIdentifier = parseInt(element.className.match(/\b(\d+)-column\b/)[1], 10);
+                    var columnTitle = this.dataGrid.columns[columnIdentifier].title;
+                    contextMenu.appendItem(WebInspector.UIString("Edit “%s”").format(columnTitle), this._startEditing.bind(this, event.target));
+                }
             }
             if (this.dataGrid._deleteCallback && gridNode !== this.creationNode)
                 contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
