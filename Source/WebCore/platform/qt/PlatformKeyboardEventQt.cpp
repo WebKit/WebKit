@@ -39,21 +39,22 @@ namespace WebCore {
 
 String keyIdentifierForQtKeyCode(int keyCode)
 {
+    // Based on http://www.w3.org/TR/DOM-Level-3-Events/#key-values-list
     switch (keyCode) {
-    case Qt::Key_Menu:
+    case Qt::Key_unknown:
+        return ASCIILiteral("Unidentified");
     case Qt::Key_Alt:
         return ASCIILiteral("Alt");
-    case Qt::Key_Clear:
-        return ASCIILiteral("Clear");
-    case Qt::Key_Down:
-        return ASCIILiteral("Down");
-    case Qt::Key_End:
-        return ASCIILiteral("End");
-    case Qt::Key_Return:
-    case Qt::Key_Enter:
-        return ASCIILiteral("Enter");
-    case Qt::Key_Execute:
-        return ASCIILiteral("Execute");
+    case Qt::Key_AltGr:
+        return ASCIILiteral("AltGraph");
+    case Qt::Key_Control:
+        return ASCIILiteral("Control");
+    case Qt::Key_Meta:
+        return ASCIILiteral("Meta");
+    case Qt::Key_Shift:
+        return ASCIILiteral("Shift");
+    case Qt::Key_Multi_key:
+        return ASCIILiteral("Compose");
     case Qt::Key_F1:
         return ASCIILiteral("F1");
     case Qt::Key_F2:
@@ -102,39 +103,242 @@ String keyIdentifierForQtKeyCode(int keyCode)
         return ASCIILiteral("F23");
     case Qt::Key_F24:
         return ASCIILiteral("F24");
+    // 'LaunchApplication1'
+    // 'LaunchApplication2'
+    case Qt::Key_LaunchMail:
+        return ASCIILiteral("LaunchMail");
+    // 'List'
+    // 'Props'
+    // 'Soft1'
+    // 'Soft2'
+    // 'Soft3'
+    // 'Soft4'
+    case Qt::Key_Yes:
+        return ASCIILiteral("Accept");
+    // 'Again'
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+        return ASCIILiteral("Enter");
+    // 'Find'
     case Qt::Key_Help:
         return ASCIILiteral("Help");
-    case Qt::Key_Home:
-        return ASCIILiteral("Home");
-    case Qt::Key_Insert:
-        return ASCIILiteral("Insert");
+    // 'Info'
+    case Qt::Key_Menu:
+    case Qt::Key_MenuKB:
+        return ASCIILiteral("Menu");
+    case Qt::Key_Pause:
+        return ASCIILiteral("Pause");
+    case Qt::Key_Play:
+        return ASCIILiteral("Play");
+    case Qt::Key_Execute:
+        return ASCIILiteral("Execute");
+    case Qt::Key_Cancel:
+        return ASCIILiteral("Cancel");
+    case Qt::Key_Escape:
+        return ASCIILiteral("Esc");
+    // 'Exit'
+    case Qt::Key_Zoom:
+        return ASCIILiteral("Zoom");
+    case Qt::Key_Comma:
+        return ASCIILiteral("Seperator");
+    case Qt::Key_Plus:
+        return ASCIILiteral("Add");
+    case Qt::Key_Minus:
+        return ASCIILiteral("Subtract");
+    case Qt::Key_Asterisk:
+        return ASCIILiteral("Multiply");
+    case Qt::Key_Slash:
+        return ASCIILiteral("Divide");
+    case Qt::Key_Equal:
+        return ASCIILiteral("Equals");
+    case Qt::Key_Period:
+        return ASCIILiteral("Decimal");
+    case Qt::Key_MonBrightnessDown:
+        return ASCIILiteral("BrightnessDown");
+    case Qt::Key_MonBrightnessUp:
+        return ASCIILiteral("BrightnessUp");
+    case Qt::Key_Camera:
+        return ASCIILiteral("Camera");
+    case Qt::Key_Eject:
+        return ASCIILiteral("Eject");
+    case Qt::Key_PowerDown:
+    case Qt::Key_PowerOff:
+        return ASCIILiteral("Power");
+    case Qt::Key_Print:
+        return ASCIILiteral("PrintScreen");
+    case Qt::Key_Favorites:
+        return ASCIILiteral("BrowserFavorites");
+    case Qt::Key_HomePage:
+        return ASCIILiteral("BrowserHome");
+    case Qt::Key_Refresh:
+        return ASCIILiteral("BrowserRefresh");
+    case Qt::Key_Search:
+        return ASCIILiteral("BrowserSearch");
+    case Qt::Key_Stop:
+        return ASCIILiteral("BrowserStop");
+    case Qt::Key_Back:
+        return ASCIILiteral("BrowserBack");
+    case Qt::Key_Forward:
+        return ASCIILiteral("BrowserForward");
     case Qt::Key_Left:
         return ASCIILiteral("Left");
     case Qt::Key_PageDown:
         return ASCIILiteral("PageDown");
     case Qt::Key_PageUp:
         return ASCIILiteral("PageUp");
-    case Qt::Key_Pause:
-        return ASCIILiteral("Pause");
-    case Qt::Key_Print:
-        return ASCIILiteral("PrintScreen");
     case Qt::Key_Right:
         return ASCIILiteral("Right");
-    case Qt::Key_Select:
-        return ASCIILiteral("Select");
     case Qt::Key_Up:
         return ASCIILiteral("Up");
-        // Standard says that DEL becomes U+007F.
-    case Qt::Key_Delete:
-        return ASCIILiteral("U+007F");
-    case Qt::Key_Backspace:
-        return ASCIILiteral("U+0008");
+    // 'UpLeft'
+    // 'UpRight'
+    case Qt::Key_Down:
+        return ASCIILiteral("Down");
+    // 'DownLeft'
+    // 'DownRight'
+    case Qt::Key_Home:
+        return ASCIILiteral("Home");
+    case Qt::Key_End:
+        return ASCIILiteral("End");
+    case Qt::Key_Select:
+        return ASCIILiteral("Select");
+    case Qt::Key_Clear:
+        return ASCIILiteral("Clear");
+    case Qt::Key_Copy:
+        return ASCIILiteral("Copy");
+    case Qt::Key_Cut:
+        return ASCIILiteral("Cut");
+    // 'EraseEof'
+    case Qt::Key_Insert:
+        return ASCIILiteral("Insert");
+    case Qt::Key_Paste:
+        return ASCIILiteral("Paste");
+    // 'Undo'
+    case Qt::Key_Dead_Grave:
+        return ASCIILiteral("DeadGrave");
+    case Qt::Key_Dead_Acute:
+        return ASCIILiteral("DeadAcute");
+    case Qt::Key_Dead_Circumflex:
+        return ASCIILiteral("DeadCircumflex");
+    case Qt::Key_Dead_Tilde:
+        return ASCIILiteral("DeadTilde");
+    case Qt::Key_Dead_Macron:
+        return ASCIILiteral("DeadMacron");
+    case Qt::Key_Dead_Breve:
+        return ASCIILiteral("DeadBreve");
+    case Qt::Key_Dead_Abovedot:
+        return ASCIILiteral("DeadAboveDot");
+    case Qt::Key_Dead_Diaeresis:
+        return ASCIILiteral("DeadUmlaut");
+    case Qt::Key_Dead_Abovering:
+        return ASCIILiteral("DeadAboveRing");
+    case Qt::Key_Dead_Doubleacute:
+        return ASCIILiteral("DeadDoubleAcute");
+    case Qt::Key_Dead_Caron:
+        return ASCIILiteral("DeadCaron");
+    case Qt::Key_Dead_Cedilla:
+        return ASCIILiteral("DeadCedilla");
+    case Qt::Key_Dead_Ogonek:
+        return ASCIILiteral("DeadOgonek");
+    case Qt::Key_Dead_Iota:
+        return ASCIILiteral("DeadIota");
+    case Qt::Key_Dead_Voiced_Sound:
+        return ASCIILiteral("DeadVoicedSound");
+    case Qt::Key_Dead_Semivoiced_Sound:
+        return ASCIILiteral("DeadSemivoicedSound");
+
+    case Qt::Key_MultipleCandidate:
+        return ASCIILiteral("AllCandidate");
+    case Qt::Key_SingleCandidate:
+        return ASCIILiteral("NextCandidate");
+    case Qt::Key_PreviousCandidate:
+        return ASCIILiteral("PreviousCandidate");
+    case Qt::Key_Codeinput:
+        return ASCIILiteral("CodeInput");
+
+    case Qt::Key_Mode_switch:
+        return ASCIILiteral("ModeChange");
+    case Qt::Key_Hangul:
+        return ASCIILiteral("HangulMode");
+    case Qt::Key_Hangul_Hanja:
+        return ASCIILiteral("HanjaMode");
+    case Qt::Key_Hiragana:
+        return ASCIILiteral("Hiragana");
+    case Qt::Key_Kana_Lock:
+    case Qt::Key_Kana_Shift:
+        return ASCIILiteral("KanaMode");
+    case Qt::Key_Kanji:
+        return ASCIILiteral("KanjiMode");
+    case Qt::Key_Katakana:
+        return ASCIILiteral("Katakana");
+
+    // 'AudioFaderFront'
+    // 'AudioFaderRear'
+    // 'AudioBalanceLeft'
+    // 'AudioBalanceRight'
+    case Qt::Key_BassDown:
+        return ASCIILiteral("AudioBassBoostDown");
+    case Qt::Key_BassUp:
+        return ASCIILiteral("AudioBassBoostUp");
+    case Qt::Key_VolumeMute:
+        return ASCIILiteral("VolumeMute");
+    case Qt::Key_VolumeDown:
+        return ASCIILiteral("VolumeDown");
+    case Qt::Key_VolumeUp:
+        return ASCIILiteral("VolumeUp");
+    case Qt::Key_MediaPause:
+        return ASCIILiteral("MediaPause");
+    case Qt::Key_MediaPlay:
+        return ASCIILiteral("MediaPlay");
+    // 'MediaTrackEnd'
+    case Qt::Key_MediaNext:
+        return ASCIILiteral("MediaNextTrack");
+    case Qt::Key_MediaTogglePlayPause:
+        return ASCIILiteral("MediaPlayPause");
+    case Qt::Key_MediaPrevious:
+        return ASCIILiteral("MediaPreviousTrack");
+    // 'MediaTrackSkip'
+    // 'MediaTrackStart'
+    case Qt::Key_MediaStop:
+        return ASCIILiteral("MediaStop");
+    case Qt::Key_LaunchMedia:
+        return ASCIILiteral("SelectMedia");
+
+    case Qt::Key_AudioForward:
+        return ASCIILiteral("FastFwd");
+    case Qt::Key_MediaRecord:
+        return ASCIILiteral("MediaRecord");
+    case Qt::Key_AudioRewind:
+        return ASCIILiteral("MediaRewind");
+    case Qt::Key_Subtitle:
+        return ASCIILiteral("Subtitle");
+#if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
+    case Qt::Key_Blue:
+        return ASCIILiteral("Blue");
+    case Qt::Key_ChannelDown:
+        return ASCIILiteral("ChannelDown");
+    case Qt::Key_ChannelUp:
+        return ASCIILiteral("ChannelUp");
+    case Qt::Key_Green:
+        return ASCIILiteral("Green");
+    case Qt::Key_Red:
+        return ASCIILiteral("Red");
+    case Qt::Key_Yellow:
+        return ASCIILiteral("Yellow");
+#endif
+    // Keys we have returned U+charcode for in the past.
+    // FIXME: Change them to correct standard values if others do.
     case Qt::Key_Tab:
-        return ASCIILiteral("U+0009");
     case Qt::Key_Backtab:
-        return ASCIILiteral("U+0009");
+        return ASCIILiteral("U+0009"); // return ASCIILiteral("Tab");
+    case Qt::Key_Backspace:
+        return ASCIILiteral("U+0008"); // return ASCIILiteral("Backspace");
+    case Qt::Key_Delete:
+        return ASCIILiteral("U+007F"); // return ASCIILiteral("Del");
     default:
-        return String::format("U+%04X", toupper(keyCode));
+        if (keyCode < 128)
+            return String::format("U+%04X", toASCIIUpper(keyCode));
+        return String();
     }
 }
 
@@ -217,7 +421,6 @@ int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad)
         return VK_SHIFT; // (10) SHIFT key
     case Qt::Key_Control:
         return VK_CONTROL; // (11) CTRL key
-    case Qt::Key_Menu:
     case Qt::Key_Alt:
         return VK_MENU; // (12) ALT key
 
@@ -406,7 +609,8 @@ int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad)
         return VK_LWIN; // (5B) Left Windows key (Microsoft Natural keyboard)
         // case Qt::Key_Meta_R: FIXME: What to do here?
         //    return VK_RWIN; // (5C) Right Windows key (Natural keyboard)
-        // VK_APPS (5D) Applications key (Natural keyboard)
+    case Qt::Key_Menu:
+        return VK_APPS; // (5D) Applications key (Natural keyboard)
         // VK_SLEEP (5F) Computer Sleep key
         // VK_SEPARATOR (6C) Separator key
         // VK_SUBTRACT (6D) Subtract key
