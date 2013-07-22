@@ -1,3 +1,12 @@
+2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed gardening. Update test expectations for GTK.
+
+        * platform/gtk/accessibility/aria-option-role-expected.txt: Update
+        expectations to match those from EFL.
+        * platform/gtk/TestExpectations: Removed test from failures expectations,
+        now it's running as expected.
+
 2013-07-22  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Update platform specific expectations.
