@@ -1,3 +1,53 @@
+2013-07-22  Beth Dakin  <bdakin@apple.com>
+
+        StickyPositionContraints should not need to change to account for a RenderLayer's 
+        scrollOffset
+        https://bugs.webkit.org/show_bug.cgi?id=118958
+        -and corresponding-
+        <rdar://problem/12469203>
+
+        Reviewed by Simon Fraser.
+
+        Before this patch, to get sticky offsets right in overflow areas, the 
+        StickyPositionConstraints changed on every scroll to factor it in. This will be a 
+        problem once we can scroll overflow areas on the scrolling thread. The constraints 
+        should never have to change to account for the scroll position. This patch fixes 
+        that issue by changing the StickyPositionViewportConstraints’s containerBlockRect 
+        and stickyBoxRect to be in a coordinate space that is relative to the scrolling 
+        ancestor rather than being absolute. This patch also removes ‘absolute’ from those 
+        variable names since they are no longer absolute.
+
+        A few re-names in the StickyPositionViewportConstraints class. The parameter to 
+        computeStickyOffset() used to be called viewportRect, and is now called 
+        constrainingRect. m_absoluteStickyBoxRect is now m_stickyBoxRect, and 
+        m_absoluteContainingBlockRect is now m_containingBlockRect. And finally, 
+        layerPositionForViewportRect() is now layerPositionForConstrainingRect()
+        * page/scrolling/ScrollingConstraints.cpp:
+        (WebCore::StickyPositionViewportConstraints::computeStickyOffset):
+        (WebCore::StickyPositionViewportConstraints::layerPositionForConstrainingRect):
+        * page/scrolling/ScrollingConstraints.h:
+        (WebCore::StickyPositionViewportConstraints::StickyPositionViewportConstraints):
+        (WebCore::StickyPositionViewportConstraints::containingBlockRect):
+        (WebCore::StickyPositionViewportConstraints::setContainingBlockRect):
+        (WebCore::StickyPositionViewportConstraints::stickyBoxRect):
+        (WebCore::StickyPositionViewportConstraints::setStickyBoxRect):
+        (WebCore::StickyPositionViewportConstraints::operator==):
+
+        Accounting for the re-names. 
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::syncLayerPositionForViewportRect):
+        (WebCore::ScrollingStateStickyNode::dumpProperties):
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::parentScrollPositionDidChange):
+
+        Compute all values relative to the scrolling ancestor. This requires some juggling 
+        in the overflow case to factor border and padding in or out.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::computeStickyPositionConstraints):
+
+        This is where the scrollOffset should be factored in.
+        (WebCore::RenderBoxModelObject::stickyPositionOffset):
+
 2013-07-22  Dean Jackson  <dino@apple.com>
 
         PlugIn content can disappear after restarting

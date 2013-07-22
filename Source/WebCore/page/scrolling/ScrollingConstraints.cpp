@@ -45,14 +45,14 @@ FloatPoint FixedPositionViewportConstraints::layerPositionForViewportRect(const 
     return m_layerPositionAtLastLayout + offset;
 }
 
-FloatSize StickyPositionViewportConstraints::computeStickyOffset(const FloatRect& viewportRect) const
+FloatSize StickyPositionViewportConstraints::computeStickyOffset(const FloatRect& constrainingRect) const
 {
-    FloatRect boxRect = m_absoluteStickyBoxRect;
+    FloatRect boxRect = m_stickyBoxRect;
     
     if (hasAnchorEdge(AnchorEdgeRight)) {
-        float rightLimit = viewportRect.maxX() - m_rightOffset;
-        float rightDelta = std::min<float>(0, rightLimit - m_absoluteStickyBoxRect.maxX());
-        float availableSpace = std::min<float>(0, m_absoluteContainingBlockRect.x() - m_absoluteStickyBoxRect.x());
+        float rightLimit = constrainingRect.maxX() - m_rightOffset;
+        float rightDelta = std::min<float>(0, rightLimit - m_stickyBoxRect.maxX());
+        float availableSpace = std::min<float>(0, m_containingBlockRect.x() - m_stickyBoxRect.x());
         if (rightDelta < availableSpace)
             rightDelta = availableSpace;
 
@@ -60,9 +60,9 @@ FloatSize StickyPositionViewportConstraints::computeStickyOffset(const FloatRect
     }
 
     if (hasAnchorEdge(AnchorEdgeLeft)) {
-        float leftLimit = viewportRect.x() + m_leftOffset;
-        float leftDelta = std::max<float>(0, leftLimit - m_absoluteStickyBoxRect.x());
-        float availableSpace = std::max<float>(0, m_absoluteContainingBlockRect.maxX() - m_absoluteStickyBoxRect.maxX());
+        float leftLimit = constrainingRect.x() + m_leftOffset;
+        float leftDelta = std::max<float>(0, leftLimit - m_stickyBoxRect.x());
+        float availableSpace = std::max<float>(0, m_containingBlockRect.maxX() - m_stickyBoxRect.maxX());
         if (leftDelta > availableSpace)
             leftDelta = availableSpace;
 
@@ -70,9 +70,9 @@ FloatSize StickyPositionViewportConstraints::computeStickyOffset(const FloatRect
     }
     
     if (hasAnchorEdge(AnchorEdgeBottom)) {
-        float bottomLimit = viewportRect.maxY() - m_bottomOffset;
-        float bottomDelta = std::min<float>(0, bottomLimit - m_absoluteStickyBoxRect.maxY());
-        float availableSpace = std::min<float>(0, m_absoluteContainingBlockRect.y() - m_absoluteStickyBoxRect.y());
+        float bottomLimit = constrainingRect.maxY() - m_bottomOffset;
+        float bottomDelta = std::min<float>(0, bottomLimit - m_stickyBoxRect.maxY());
+        float availableSpace = std::min<float>(0, m_containingBlockRect.y() - m_stickyBoxRect.y());
         if (bottomDelta < availableSpace)
             bottomDelta = availableSpace;
 
@@ -80,21 +80,21 @@ FloatSize StickyPositionViewportConstraints::computeStickyOffset(const FloatRect
     }
 
     if (hasAnchorEdge(AnchorEdgeTop)) {
-        float topLimit = viewportRect.y() + m_topOffset;
-        float topDelta = std::max<float>(0, topLimit - m_absoluteStickyBoxRect.y());
-        float availableSpace = std::max<float>(0, m_absoluteContainingBlockRect.maxY() - m_absoluteStickyBoxRect.maxY());
+        float topLimit = constrainingRect.y() + m_topOffset;
+        float topDelta = std::max<float>(0, topLimit - m_stickyBoxRect.y());
+        float availableSpace = std::max<float>(0, m_containingBlockRect.maxY() - m_stickyBoxRect.maxY());
         if (topDelta > availableSpace)
             topDelta = availableSpace;
 
         boxRect.move(0, topDelta);
     }
 
-    return boxRect.location() - m_absoluteStickyBoxRect.location();
+    return boxRect.location() - m_stickyBoxRect.location();
 }
 
-FloatPoint StickyPositionViewportConstraints::layerPositionForViewportRect(const FloatRect& viewportRect) const
+FloatPoint StickyPositionViewportConstraints::layerPositionForConstrainingRect(const FloatRect& constrainingRect) const
 {
-    FloatSize offset = computeStickyOffset(viewportRect);
+    FloatSize offset = computeStickyOffset(constrainingRect);
     return m_layerPositionAtLastLayout + offset - m_stickyOffsetAtLastLayout;
 }
 

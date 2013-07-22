@@ -72,7 +72,7 @@ void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportCon
 
 void ScrollingStateStickyNode::syncLayerPositionForViewportRect(const LayoutRect& viewportRect)
 {
-    FloatPoint position = m_constraints.layerPositionForViewportRect(viewportRect);
+    FloatPoint position = m_constraints.layerPositionForConstrainingRect(viewportRect);
     graphicsLayer()->syncPosition(position);
 }
 
@@ -112,15 +112,15 @@ void ScrollingStateStickyNode::dumpProperties(TextStream& ts, int indent) const
     }
 
     writeIndent(ts, indent + 1);
-    FloatRect r = m_constraints.absoluteContainingBlockRect();
+    FloatRect r = m_constraints.containingBlockRect();
     ts << "(containing block rect " << r.x() << ", " << r.y() << " " << r.width() << " x " << r.height() << ")\n";
 
     writeIndent(ts, indent + 1);
-    r = m_constraints.absoluteStickyBoxRect();
+    r = m_constraints.stickyBoxRect();
     ts << "(sticky box rect " << r.x() << " " << r.y() << " " << r.width() << " " << r.height() << ")\n";
 
     writeIndent(ts, indent + 1);
-    r = m_constraints.absoluteStickyBoxRect();
+    r = m_constraints.stickyBoxRect();
     ts << "(sticky box rect " << r.x() << " " << r.y() << " " << r.width() << " " << r.height() << ")\n";
 
     writeIndent(ts, indent + 1);

@@ -1,3 +1,20 @@
+2013-07-22  Beth Dakin  <bdakin@apple.com>
+
+        StickyPositionContraints should not need to change to account for a RenderLayer's 
+        scrollOffset
+        https://bugs.webkit.org/show_bug.cgi?id=118958
+        -and corresponding-
+        <rdar://problem/12469203>
+
+        Reviewed by Simon Fraser.
+
+        This tests stick in overflow areas where the sticky’s containing block overflows 
+        the overflow area. The sticky object should not extend beyond the overflow area in 
+        that case. 
+
+        * fast/css/sticky/sticky-top-overflow-container-overflow-expected.html: Added.
+        * fast/css/sticky/sticky-top-overflow-container-overflow.html: Added.
+
 2013-07-22  Joone Hur  <joone.hur@intel.com>
 
         Rebaseline the caret color test for the Mac port after r152612

@@ -125,18 +125,18 @@ public:
         , m_rightOffset(other.m_rightOffset)
         , m_topOffset(other.m_topOffset)
         , m_bottomOffset(other.m_bottomOffset)
-        , m_absoluteContainingBlockRect(other.m_absoluteContainingBlockRect)
-        , m_absoluteStickyBoxRect(other.m_absoluteStickyBoxRect)
+        , m_containingBlockRect(other.m_containingBlockRect)
+        , m_stickyBoxRect(other.m_stickyBoxRect)
         , m_stickyOffsetAtLastLayout(other.m_stickyOffsetAtLastLayout)
         , m_layerPositionAtLastLayout(other.m_layerPositionAtLastLayout)
     { }
 
-    FloatSize computeStickyOffset(const FloatRect& viewportRect) const;
+    FloatSize computeStickyOffset(const FloatRect& constrainingRect) const;
 
     const FloatSize stickyOffsetAtLastLayout() const { return m_stickyOffsetAtLastLayout; }
     void setStickyOffsetAtLastLayout(const FloatSize& offset) { m_stickyOffsetAtLastLayout = offset; }
 
-    FloatPoint layerPositionForViewportRect(const FloatRect& viewportRect) const;
+    FloatPoint layerPositionForConstrainingRect(const FloatRect& constrainingRect) const;
 
     const FloatPoint& layerPositionAtLastLayout() const { return m_layerPositionAtLastLayout; }
     void setLayerPositionAtLastLayout(const FloatPoint& point) { m_layerPositionAtLastLayout = point; }
@@ -151,11 +151,13 @@ public:
     void setTopOffset(float offset) { m_topOffset = offset; }
     void setBottomOffset(float offset) { m_bottomOffset = offset; }
 
-    FloatRect absoluteContainingBlockRect() const { return m_absoluteContainingBlockRect; }
-    void setAbsoluteContainingBlockRect(const FloatRect& rect) { m_absoluteContainingBlockRect = rect; }
+    // containingBlockRect() is in the scrolling ancestor's coordinate space.
+    FloatRect containingBlockRect() const { return m_containingBlockRect; }
+    void setContainingBlockRect(const FloatRect& rect) { m_containingBlockRect = rect; }
 
-    FloatRect absoluteStickyBoxRect() const { return m_absoluteStickyBoxRect; }
-    void setAbsoluteStickyBoxRect(const FloatRect& rect) { m_absoluteStickyBoxRect = rect; }
+    // stickyBoxRect() is in the scrolling ancestor's coordinate space.
+    FloatRect stickyBoxRect() const { return m_stickyBoxRect; }
+    void setStickyBoxRect(const FloatRect& rect) { m_stickyBoxRect = rect; }
 
     bool operator==(const StickyPositionViewportConstraints& other) const
     {
@@ -163,8 +165,8 @@ public:
             && m_rightOffset == other.m_rightOffset
             && m_topOffset == other.m_topOffset
             && m_bottomOffset == other.m_bottomOffset
-            && m_absoluteContainingBlockRect == other.m_absoluteContainingBlockRect
-            && m_absoluteStickyBoxRect == other.m_absoluteStickyBoxRect
+            && m_containingBlockRect == other.m_containingBlockRect
+            && m_stickyBoxRect == other.m_stickyBoxRect
             && m_stickyOffsetAtLastLayout == other.m_stickyOffsetAtLastLayout
             && m_layerPositionAtLastLayout == other.m_layerPositionAtLastLayout;
     }
@@ -178,8 +180,8 @@ private:
     float m_rightOffset;
     float m_topOffset;
     float m_bottomOffset;
-    FloatRect m_absoluteContainingBlockRect;
-    FloatRect m_absoluteStickyBoxRect;
+    FloatRect m_containingBlockRect;
+    FloatRect m_stickyBoxRect;
     FloatSize m_stickyOffsetAtLastLayout;
     FloatPoint m_layerPositionAtLastLayout;
 };

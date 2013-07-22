@@ -65,10 +65,10 @@ static inline CGPoint operator*(CGPoint& a, const CGSize& b)
 
 void ScrollingTreeStickyNode::parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta)
 {
-    FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(viewportRect);
+    FloatPoint layerPosition = m_constraints.layerPositionForConstrainingRect(viewportRect);
 
     // FIXME: Subtracting the cumulativeDelta is not totally sufficient to get the new position right for nested
-    // sticky objects. We probably need a way to modify the absoluteContainingBlockRect in the ViewportContraints
+    // sticky objects. We probably need a way to modify the containingBlockRect in the ViewportContraints
     // to get this right in all cases.
     layerPosition -= cumulativeDelta;
 
