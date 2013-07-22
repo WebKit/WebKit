@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="../video-test.js"></script>
+        <script>
+            waitForEvent('loadstart', function ()
+            {
+                var video = document.getElementById('vid');
+                video.textTracks[0].mode = "disabled";
+
+                consoleWrite("Waiting for the duration of the first cue to elapse.");
+                video.addEventListener('timeupdate', function (e)
+                {
+                     if (e.target.currentTime < 1)
+                          return;
+
+                      // End test after the duration of the first cue to make sure the test
+                      // doesn't crash during the period this cue would have been
+                      // rendered if the track was not disabled.
+                      consoleWrite("The duration of the first cue has elapsed.<br>");
+                      endTest();
+                });
+            });
+            
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile('video', '../content/test');
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <video id="vid" autoplay controls>
+            <track kind='subtitles' srclang='en' label='English' src='captions-webvtt/captions.vtt' />
+        </video>
+    </body>
+</html>
