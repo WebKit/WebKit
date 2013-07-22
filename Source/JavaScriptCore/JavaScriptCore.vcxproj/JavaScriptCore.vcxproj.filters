@@ -1932,4 +1932,9 @@
     <None Include="JavaScriptCorePostBuild.cmd" />
     <None Include="JavaScriptCorePreBuild.cmd" />
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\jit\JITStubsMSVC64.asm">
+      <Filter>jit</Filter>
+    </MASM>
+  </ItemGroup>
 </Project>

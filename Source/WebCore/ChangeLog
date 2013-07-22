@@ -1,3 +1,13 @@
+2013-07-22  Alex Christensen  <achristensen@apple.com>
+
+        Added assembly files to Windows 64-bit builds.
+        https://bugs.webkit.org/show_bug.cgi?id=118931
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Added PaintHooks.asm for x64 and enabled MASM.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Added PaintHooks.asm.
+
 2013-07-22  Jakob Petsovits  <jpetsovits@blackberry.com>
 
         [BlackBerry] Fix WebGL to a 2D canvas copies.

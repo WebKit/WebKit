@@ -15779,4 +15779,9 @@
       <Filter>rendering</Filter>
     </CustomBuildStep>
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\plugins\win\PaintHooks.asm">
+      <Filter>plugins\win</Filter>
+    </MASM>
+  </ItemGroup>
 </Project>
