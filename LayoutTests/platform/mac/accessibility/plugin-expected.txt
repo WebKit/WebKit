@@ -2,7 +2,7 @@
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
-AXChildren: <array of size 1>
+AXChildren: <array of size 0>
 AXHelp: 
 AXParent: <AXGroup>
 AXSize: NSSize: {784, 150}
