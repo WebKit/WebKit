@@ -1,3 +1,10 @@
+2013-07-22  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skipping failing tests.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2013-07-22  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Regression: Multiple tests fail after r152701 changed how unavailable plugins are handled

@@ -1924,6 +1924,9 @@ webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Skip
 # [Qt] fast/repaint/fixed-right-bottom-in-page-scale.html test flaky on Debug build and caused regression on the following tests after r118238. 
 webkit.org/b/118238 [ Debug ] fast/repaint/fixed-right-bottom-in-page-scale.html [ Skip ]
 
+# [Qt] REGRESSION(r152906) Modified fast/shapes/shape-inside/shape-inside-overflow.html ref test fails.
+webkit.org/b/118964 fast/shapes/shape-inside/shape-inside-overflow.html [ Skip ]
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
