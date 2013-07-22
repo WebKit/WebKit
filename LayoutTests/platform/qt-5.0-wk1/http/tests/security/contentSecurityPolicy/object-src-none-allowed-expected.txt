@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Refused to load plugin data from '' because it violates the following Content Security Policy directive: "object-src 'none'".
-
-CONSOLE MESSAGE: Refused to load plugin data from '' because it violates the following Content Security Policy directive: "object-src 'none'".
-
 
 
 --------

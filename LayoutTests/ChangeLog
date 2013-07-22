@@ -1,3 +1,9 @@
+2013-07-22  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebase after r152814.
+
+        * platform/qt-5.0-wk1/http/tests/security/contentSecurityPolicy/object-src-none-allowed-expected.txt:
+
 2013-07-22  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed gardening. Added new baselines for GTK+ after r152911.
