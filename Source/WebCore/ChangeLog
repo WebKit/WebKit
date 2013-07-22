@@ -1,3 +1,28 @@
+2013-07-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce toSVGGradientElement(), use it
+        https://bugs.webkit.org/show_bug.cgi?id=118943
+
+        Reviewed by Andreas Kling.
+
+        As a step to change static_cast with toSVGXXX, static_cast<SVGGradientElement*> can
+        be changed with toSVGGradientElement().
+
+        No new tests, no behavior change.
+
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::gradientElement):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::targetReferenceFromResource):
+        * svg/SVGGradientElement.h:
+        (WebCore::toSVGGradientElement):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+
 2013-07-21  Andreas Kling  <akling@apple.com>
 
         KURL creates duplicate strings when completing data: URIs.

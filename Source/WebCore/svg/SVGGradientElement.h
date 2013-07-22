@@ -27,6 +27,7 @@
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGNames.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "SVGUnitTypes.h"
@@ -106,6 +107,12 @@ private:
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 };
+
+inline SVGGradientElement* toSVGGradientElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || (node->hasTagName(SVGNames::radialGradientTag) || node->hasTagName(SVGNames::linearGradientTag)));
+    return static_cast<SVGGradientElement*>(node);
+}
 
 } // namespace WebCore
 

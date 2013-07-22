@@ -173,7 +173,7 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
         // Respect xlink:href, take attributes from referenced element
         Node* refNode = SVGURIReference::targetElementFromIRIString(current->href(), document());
         if (refNode && (refNode->hasTagName(SVGNames::linearGradientTag) || refNode->hasTagName(SVGNames::radialGradientTag))) {
-            current = static_cast<SVGGradientElement*>(refNode);
+            current = toSVGGradientElement(refNode);
 
             // Cycle detection
             if (processedGradients.contains(current)) {
