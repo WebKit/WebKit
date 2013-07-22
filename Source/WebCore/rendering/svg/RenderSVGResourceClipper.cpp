@@ -246,7 +246,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
         WindRule newClipRule = style->svgStyle()->clipRule();
         bool isUseElement = childNode->hasTagName(SVGNames::useTag);
         if (isUseElement) {
-            SVGUseElement* useElement = static_cast<SVGUseElement*>(childNode);
+            SVGUseElement* useElement = toSVGUseElement(childNode);
             renderer = useElement->rendererClipChild();
             if (!renderer)
                 continue;

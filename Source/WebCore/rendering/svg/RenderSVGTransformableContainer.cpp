@@ -47,11 +47,11 @@ bool RenderSVGTransformableContainer::calculateLocalTransform()
     // need to respect the translations induced by their corresponding use elements x/y attributes.
     SVGUseElement* useElement = 0;
     if (element->hasTagName(SVGNames::useTag))
-        useElement = static_cast<SVGUseElement*>(element);
+        useElement = toSVGUseElement(element);
     else if (element->isInShadowTree() && element->hasTagName(SVGNames::gTag)) {
         SVGElement* correspondingElement = element->correspondingElement();
         if (correspondingElement && correspondingElement->hasTagName(SVGNames::useTag))
-            useElement = static_cast<SVGUseElement*>(correspondingElement);
+            useElement = toSVGUseElement(correspondingElement);
     }
 
     if (useElement) {

@@ -28,6 +28,7 @@
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
+#include "SVGNames.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
@@ -125,6 +126,12 @@ private:
     CachedResourceHandle<CachedSVGDocument> m_cachedDocument;
     Timer<SVGElement> m_svgLoadEventTimer;
 };
+
+inline SVGUseElement* toSVGUseElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::useTag));
+    return static_cast<SVGUseElement*>(node);
+}
 
 }
 
