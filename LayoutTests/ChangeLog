@@ -1,3 +1,13 @@
+2013-07-22  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Update platform specific expectations.
+
+        * platform/qt-5.0-wk1/fast/loader/show-only-one-beforeunload-dialog-expected.txt: Added after r152941.
+        * platform/qt-5.0-wk1/http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin-expected.txt: Added after r152941.
+        * platform/qt-5.0-wk2/fast/multicol/shrink-to-column-height-for-pagination-expected.png: Removed.
+        * platform/qt/fast/multicol/shrink-to-column-height-for-pagination-expected.png: Added after r152911.
+        * platform/qt/fast/multicol/shrink-to-column-height-for-pagination-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/fast/multicol/shrink-to-column-height-for-pagination-expected.txt.
+
 2013-07-19  Brady Eidson  <beidson@apple.com>
 
         Pages should not be able to abuse users inside beforeunload handlers.
