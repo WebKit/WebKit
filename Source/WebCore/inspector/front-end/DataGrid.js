@@ -931,14 +931,15 @@ WebInspector.DataGrid.prototype = {
             contextMenu.appendItem(WebInspector.UIString("Refresh"), this._refreshCallback.bind(this));
 
         if (gridNode && gridNode.selectable && !gridNode.isEventWithinDisclosureTriangle(event)) {
-            // FIXME: Use the column names for Editing, instead of just "Edit".
             if (this._editCallback) {
                 if (gridNode === this.creationNode)
                     contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add new" : "Add New"), this._startEditing.bind(this, event.target));
                 else {
                     var columnIdentifier = this.columnIdentifierFromNode(event.target);
-                    if (columnIdentifier && this.columns[columnIdentifier].editable)
-                        contextMenu.appendItem(WebInspector.UIString("Edit"), this._startEditing.bind(this, event.target));
+                    if (columnIdentifier && this.columns[columnIdentifier].editable) {
+                        var columnTitle = columnIdentifier[0].toUpperCase() + columnIdentifier.slice(1);
+                        contextMenu.appendItem(WebInspector.UIString("Edit “%s”", columnTitle), this._startEditing.bind(this, event.target));
+                    }
                 }
             }
             if (this._deleteCallback && gridNode !== this.creationNode)

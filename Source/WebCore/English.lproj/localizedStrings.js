@@ -180,6 +180,7 @@ localizedStrings["Edit Text"] = "Edit Text";
 localizedStrings["Edit text"] = "Edit text";
 localizedStrings["Edit as HTML"] = "Edit as HTML";
 localizedStrings["Edit"] = "Edit";
+localizedStrings["Edit “%s”"] = "Edit “%s”";
 localizedStrings["Element state: %s"] = "Element state: %s";
 localizedStrings["Elements Panel"] = "Elements Panel";
 localizedStrings["Elements"] = "Elements";
