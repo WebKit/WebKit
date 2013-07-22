@@ -542,7 +542,8 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 
     uint64_t pluginProcessToken;
     uint32_t pluginLoadPolicy;
-    if (!sendSync(Messages::WebPageProxy::FindPlugin(parameters.mimeType, static_cast<uint32_t>(processType), parameters.url.string(), frameURLString, pageURLString, allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy))) {
+    String unavailabilityDescription;
+    if (!sendSync(Messages::WebPageProxy::FindPlugin(parameters.mimeType, static_cast<uint32_t>(processType), parameters.url.string(), frameURLString, pageURLString, allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy, unavailabilityDescription))) {
         return 0;
     }
 
@@ -555,7 +556,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
         bool replacementObscured = false;
         if (pluginElement->renderer()->isEmbeddedObject()) {
             RenderEmbeddedObject* renderObject = toRenderEmbeddedObject(pluginElement->renderer());
-            renderObject->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
+            renderObject->setPluginUnavailabilityReasonWithDescription(RenderEmbeddedObject::InsecurePluginVersion, unavailabilityDescription);
             replacementObscured = renderObject->isReplacementObscured();
         }
 
@@ -3847,7 +3848,8 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 
     uint64_t pluginProcessToken;
     String newMIMEType;
-    if (!sendSync(Messages::WebPageProxy::FindPlugin(response.mimeType(), PluginProcessTypeNormal, response.url().string(), response.url().string(), response.url().string(), allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy)))
+    String unavailabilityDescription;
+    if (!sendSync(Messages::WebPageProxy::FindPlugin(response.mimeType(), PluginProcessTypeNormal, response.url().string(), response.url().string(), response.url().string(), allowOnlyApplicationPlugins), Messages::WebPageProxy::FindPlugin::Reply(pluginProcessToken, newMIMEType, pluginLoadPolicy, unavailabilityDescription)))
         return false;
 
     return pluginLoadPolicy != PluginModuleBlocked && pluginProcessToken;
