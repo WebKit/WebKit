@@ -1,3 +1,16 @@
+2013-07-21  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Web Inspector: Cleanup InspectorFrontendHostStub.js
+        https://bugs.webkit.org/show_bug.cgi?id=118959
+
+        Reviewed by Timothy Hatcher.
+
+        Remove some functions because we dont use on New Inspector.
+
+        * UserInterface/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub):
+        (.WebInspector.InspectorFrontendHostStub.prototype.save):
+
 2013-07-17  Seokju Kwon  <seokju.kwon@gmail.com>
 
         Web Inspector: Fix a typo in WebInspector.loaded

@@ -34,25 +34,9 @@ if (!window.InspectorFrontendHost) {
     WebInspector.InspectorFrontendHostStub = function()
     {
         this._attachedWindowHeight = 0;
-        this._fileBuffers = {};
     }
 
     WebInspector.InspectorFrontendHostStub.prototype = {
-        platform: function()
-        {
-            var match = navigator.userAgent.match(/Windows NT/);
-            if (match)
-                return "windows";
-            match = navigator.userAgent.match(/Mac OS X/);
-            if (match)
-                return "mac";
-            return "linux";
-        },
-
-        port: function()
-        {
-            return "unknown";
-        },
 
         bringToFront: function()
         {
@@ -111,48 +95,8 @@ if (!window.InspectorFrontendHost) {
             window.open(url, "_blank");
         },
 
-        canSave: function()
-        {
-            return true;
-        },
-
         save: function(url, content, forceSaveAs)
         {
-            if (this._fileBuffers[url])
-                throw new Error("Concurrent file modification denied.");
-
-            this._fileBuffers[url] = [content];
-        },
-
-        append: function(url, content)
-        {
-            var buffer = this._fileBuffers[url];
-            if (!buffer)
-                throw new Error("File is not open for write yet.");
-
-            buffer.push(content);
-        },
-
-        close: function(url)
-        {
-            var content = this._fileBuffers[url];
-            delete this._fileBuffers[url];
-
-            if (!content)
-                return;
-
-            var lastSlashIndex = url.lastIndexOf("/");
-            var fileNameSuffix = lastSlashIndex === -1 ? url : url.substring(lastSlashIndex + 1);
-
-            var blob = new Blob(content, {type: "application/octet-stream"});
-            var objectUrl = window.URL.createObjectURL(blob);
-            window.location = objectUrl + "#" + fileNameSuffix;
-
-            function cleanup()
-            {
-                window.URL.revokeObjectURL(objectUrl);
-            }
-            setTimeout(cleanup, 0);
         },
 
         sendMessageToBackend: function(message)
