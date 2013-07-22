@@ -336,7 +336,9 @@ String HTMLAnchorElement::target() const
 String HTMLAnchorElement::hash() const
 {
     String fragmentIdentifier = href().fragmentIdentifier();
-    return fragmentIdentifier.isEmpty() ? emptyString() : "#" + fragmentIdentifier;
+    if (fragmentIdentifier.isEmpty())
+        return emptyString();
+    return AtomicString(String("#" + fragmentIdentifier));
 }
 
 void HTMLAnchorElement::setHash(const String& value)

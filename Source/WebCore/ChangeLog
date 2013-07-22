@@ -1,5 +1,26 @@
 2013-07-22  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152743
+
+    2013-07-16  Andreas Kling  <akling@apple.com>
+
+            Atomicize HTMLAnchorElement.hash before passing it to JS.
+            <http://webkit.org/b/118748>
+            <rdar://problem/14459780>
+
+            Reviewed by Sam Weinig.
+
+            Instead of generating a unique string from '#' + the URL hash every time HTMLAnchorElement.hash
+            is queried, turn it into an AtomicString. This prevents massive memory usage in scripts that
+            fetch .hash a lot.
+
+            Reduces memory consumption by 4.65 MB when viewing the full HTML5 spec at <http://whatwg.org/c>
+
+            * html/HTMLAnchorElement.cpp:
+            (WebCore::HTMLAnchorElement::hash):
+
+2013-07-22  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152721
 
     2013-07-16  Eric Carlson  <eric.carlson@apple.com>
