@@ -132,7 +132,7 @@ public:
 
     PassRefPtr<StyleRule> copy() const { return adoptRef(new StyleRule(*this)); }
 
-    Vector<RefPtr<StyleRule> > splitIntoMultipleRulesWithMaximumSelectorCount(unsigned maxSelectorCount) const;
+    Vector<RefPtr<StyleRule> > splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned) const;
 
     static unsigned averageSizeInBytes();
 

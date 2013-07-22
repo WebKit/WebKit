@@ -64,10 +64,9 @@ public:
 
     String selectorsText() const;
 
-    unsigned selectorCount() const;
+    unsigned componentCount() const;
 
 private:
-    unsigned length() const;
     void deleteSelectors();
 
     // End of a multipart selector is indicated by m_isLastInTagHistory bit in the last item.
