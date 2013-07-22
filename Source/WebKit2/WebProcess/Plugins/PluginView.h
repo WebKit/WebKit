@@ -231,6 +231,7 @@ private:
     bool m_isWaitingForSynchronousInitialization;
     bool m_isWaitingUntilMediaCanStart;
     bool m_isBeingDestroyed;
+    bool m_pluginProcessHasCrashed;
 
     // Pending URLRequests that the plug-in has made.
     Deque<RefPtr<URLRequest>> m_pendingURLRequests;
