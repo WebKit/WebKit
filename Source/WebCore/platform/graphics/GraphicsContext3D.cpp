@@ -32,7 +32,6 @@
 #include "GraphicsContext3D.h"
 
 #include "CheckedInt.h"
-#include "DrawingBuffer.h"
 #include "Extensions3D.h"
 #include "Image.h"
 #include "ImageData.h"

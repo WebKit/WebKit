@@ -1,5 +1,16 @@
 2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        Remove unnecessary header inclusions in GraphicsContext3D.cpp, GraphicsContext3DOpenGLCommon.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=118989
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/GraphicsContext3D.cpp: Remove the unnecessary DrawingBuffer header inclusion.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp: Remove the unnecessary
+        CanvasRenderingContext and WebGLObject header inclusions.
+
+2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
+
         Remove the topDocumentURL member of the GraphicsContext3D::Attributes struct
         https://bugs.webkit.org/show_bug.cgi?id=118987
 

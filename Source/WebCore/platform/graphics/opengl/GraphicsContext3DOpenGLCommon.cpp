@@ -32,7 +32,6 @@
 
 #include "GraphicsContext3D.h"
 
-#include "CanvasRenderingContext.h"
 #if USE(OPENGL_ES_2)
 #include "Extensions3DOpenGLES.h"
 #else
@@ -44,7 +43,6 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
-#include "WebGLObject.h"
 #include <cstring>
 #include <wtf/ArrayBuffer.h>
 #include <wtf/ArrayBufferView.h>
