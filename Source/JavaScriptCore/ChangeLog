@@ -1,5 +1,27 @@
 2013-07-22  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152882
+
+    2013-07-18  Andreas Kling  <akling@apple.com>
+
+            CodeBlock DFG entry list isn't getting shrunk-to-fit after linking.
+            <http://webkit.org/b/118875>
+            <rdar://problem/14488577>
+
+            Reviewed by Geoffrey Garen.
+
+            Move the CodeBlock::shrinkToFit() call out of JITCompiler::link() and to the call sites
+            so SpeculativeJIT::linkOSREntries() can fill in CodeBlock::m_dfgData->osrEntry first.
+
+            886 kB progression on <http://twitter.com/awesomekling>
+
+            * dfg/DFGJITCompiler.cpp:
+            (JSC::DFG::JITCompiler::link):
+            (JSC::DFG::JITCompiler::compile):
+            (JSC::DFG::JITCompiler::compileFunction):
+
+2013-07-22  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152868
 
     2013-07-18  Filip Pizlo  <fpizlo@apple.com>
