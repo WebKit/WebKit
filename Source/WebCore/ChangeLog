@@ -1,5 +1,25 @@
 2013-07-22  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152989
+
+    2013-07-22  Dean Jackson  <dino@apple.com>
+
+            PlugIn content can disappear after restarting
+            https://bugs.webkit.org/show_bug.cgi?id=118982
+
+            Reviewed by Simon Fraser.
+
+            When a snapshotted plug-in is restarted, we inserted its compositing
+            layer back into the tree, but didn't recalculate style. This meant
+            that a subsequent compositing tree operation (such as any hardware
+            animation) could cause the content to disappear.
+
+            * html/HTMLPlugInImageElement.cpp:
+            (WebCore::HTMLPlugInImageElement::setDisplayState): Force a style recalc.
+            (WebCore::HTMLPlugInImageElement::removeSnapshotTimerFired): Ditto.
+
+2013-07-22  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152951
 
     2013-07-21  Andreas Kling  <akling@apple.com>
