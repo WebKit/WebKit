@@ -1,5 +1,12 @@
 2013-07-23  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        [GTK] Unreviewed gardening. Baseline and rebaseline needed after r152612 and r152911.
+
+        * platform/gtk/editing/caret/caret-color-expected.txt: Added.
+        * platform/gtk/fast/multicol/shrink-to-column-height-for-pagination-expected.txt: Updated.
+
+2013-07-23  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         [GTK] Unreviewed gardening. Added needed baselines after r104133.
 
         * platform/gtk/perf/nested-combined-selectors-expected.txt: Added.
