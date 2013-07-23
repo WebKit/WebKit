@@ -40,12 +40,12 @@ namespace WebCore {
 class HTTPHeaderMap;
 class ResourceResponseBase;
 
-typedef enum {
+enum ContentDispositionType {
     ContentDispositionNone,
     ContentDispositionInline,
     ContentDispositionAttachment,
     ContentDispositionOther
-} ContentDispositionType;
+};
 
 #if ENABLE(NOSNIFF)
 enum ContentTypeOptionsDisposition {

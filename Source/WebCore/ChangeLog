@@ -1,5 +1,16 @@
 2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        Fix the style of the ContentDispositionType enum definition
+        https://bugs.webkit.org/show_bug.cgi?id=118990
+
+        Reviewed by Darin Adler.
+
+        * platform/network/HTTPParsers.h: Align the style of the ContentDispositionType enumeration
+        definition with the other enumeration definitions in the HTTPParsers header, using the
+        'enum Name { ... }' style instead of a typedef.
+
+2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Mock GDK_IS_X11_DISPLAY macro can be redefined unnecessarily
         https://bugs.webkit.org/show_bug.cgi?id=118980
 
