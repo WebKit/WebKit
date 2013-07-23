@@ -1,3 +1,18 @@
+2013-07-23  Tim Horton  <timothy_horton@apple.com>
+
+        Add a test for plug-in unavailability indicator obscurity detection
+        https://bugs.webkit.org/show_bug.cgi?id=119007
+
+        Reviewed by Anders Carlsson.
+
+        Add a test that ensures that RenderEmbeddedObject accurately detects the
+        various different ways the unavailable plugin dialog can be obscured.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * plugins/unavailable-plugin-indicator-obscurity-expected.txt: Added.
+        * plugins/unavailable-plugin-indicator-obscurity.html: Added.
+
 2013-07-23  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] REGRESSION(r152906) Modified fast/shapes/shape-inside/shape-inside-overflow.html ref test fails.

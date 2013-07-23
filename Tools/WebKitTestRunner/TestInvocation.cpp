@@ -651,6 +651,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetBlockAllPlugins")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef shouldBlock = static_cast<WKBooleanRef>(messageBody);
+        TestController::shared().setBlockAllPlugins(WKBooleanGetValue(shouldBlock));
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 

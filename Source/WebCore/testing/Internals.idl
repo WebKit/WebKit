@@ -276,5 +276,7 @@
     boolean isVibrating();
 #endif
 
+    [RaisesException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
+
     [RaisesException] ClientRect selectionBounds();
 };

@@ -812,4 +812,11 @@ bool TestRunner::secureEventInputIsEnabled() const
     return WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
 }
 
+void TestRunner::setBlockAllPlugins(bool shouldBlock)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetBlockAllPlugins"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(shouldBlock));
+    WKBundlePostMessage(InjectedBundle::shared().bundle(), messageName.get(), messageBody.get());
+}
+
 } // namespace WTR

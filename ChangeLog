@@ -1,3 +1,13 @@
+2013-07-23  Tim Horton  <timothy_horton@apple.com>
+
+        Add a test for plug-in unavailability indicator obscurity detection
+        https://bugs.webkit.org/show_bug.cgi?id=119007
+
+        Reviewed by Anders Carlsson.
+
+        * Source/autotools/symbols.filter:
+        Expose RenderEmbeddedObject::isReplacementObscured to internals.
+
 2013-07-16  Balazs Kelemen  <kbalazs@webkit.org>
 
         [CMake] Undefined references should be detected at build time

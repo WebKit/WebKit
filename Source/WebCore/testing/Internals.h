@@ -325,6 +325,8 @@ public:
     bool isVibrating();
 #endif
 
+    bool isPluginUnavailabilityIndicatorObscured(Element*, ExceptionCode&);
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

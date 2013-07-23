@@ -190,5 +190,8 @@ interface TestRunner {
 
     // Secure text input mode (Mac only)
     readonly attribute boolean secureEventInputIsEnabled;
+    
+    // Override plugin load policy.
+    void setBlockAllPlugins(boolean shouldBlock);
 };
 

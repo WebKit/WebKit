@@ -78,6 +78,7 @@
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "Range.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderMenuList.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
@@ -2174,5 +2175,22 @@ bool Internals::isVibrating()
     return Vibration::from(page)->isVibrating();
 }
 #endif
+
+bool Internals::isPluginUnavailabilityIndicatorObscured(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    RenderObject* renderer = element->renderer();
+    if (!renderer || !renderer->isEmbeddedObject()) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    RenderEmbeddedObject* embed = toRenderEmbeddedObject(renderer);
+    return embed->isReplacementObscured();
+}
 
 }

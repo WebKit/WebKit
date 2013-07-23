@@ -112,6 +112,8 @@ TestController::TestController(int argc, const char* argv[])
     , m_isGeolocationPermissionAllowed(false)
     , m_policyDelegateEnabled(false)
     , m_policyDelegatePermissive(false)
+    , m_handlesAuthenticationChallenges(false)
+    , m_shouldBlockAllPlugins(false)
 {
     initialize(argc, argv);
     controller = this;
@@ -487,7 +489,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // didLayout
         0, // pluginLoadPolicy_deprecatedForUseWithV2
         0, // pluginDidFail
-        0, // pluginLoadPolicy
+        pluginLoadPolicy, // pluginLoadPolicy
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
 
@@ -624,6 +626,8 @@ bool TestController::resetStateToConsistentValues()
     m_handlesAuthenticationChallenges = false;
     m_authenticationUsername = String();
     m_authenticationPassword = String();
+
+    m_shouldBlockAllPlugins = false;
 
     // Reset main page back to about:blank
     m_doneResetting = false;
@@ -1075,6 +1079,18 @@ void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WK
 void TestController::processDidCrash(WKPageRef page, const void* clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->processDidCrash();
+}
+
+WKPluginLoadPolicy TestController::pluginLoadPolicy(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInformation, WKStringRef* unavailabilityDescription, const void* clientInfo)
+{
+    return static_cast<TestController*>(const_cast<void*>(clientInfo))->pluginLoadPolicy(page, currentPluginLoadPolicy, pluginInformation, unavailabilityDescription);
+}
+
+WKPluginLoadPolicy TestController::pluginLoadPolicy(WKPageRef, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInformation, WKStringRef* unavailabilityDescription)
+{
+    if (m_shouldBlockAllPlugins)
+        return kWKPluginLoadPolicyBlocked;
+    return currentPluginLoadPolicy;
 }
 
 void TestController::didCommitLoadForFrame(WKPageRef page, WKFrameRef frame)

@@ -1,3 +1,37 @@
+2013-07-23  Tim Horton  <timothy_horton@apple.com>
+
+        Add a test for plug-in unavailability indicator obscurity detection
+        https://bugs.webkit.org/show_bug.cgi?id=119007
+
+        Reviewed by Anders Carlsson.
+
+        Expose the ability to block plug-ins via pluginLoadPolicy to testRunner.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setBlockAllPlugins):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        Add testRunner.setBlockAllPlugins function (and corresponding message to
+        forward it through to TestController).
+
+        * WebKitTestRunner/TestController.cpp:
+        Initialize m_shouldBlockAllPlugins to false (and drive-by initialize m_handlesAuthenticationChallenges).
+
+        (WTR::TestController::createWebViewWithOptions):
+        Register our pluginLoadPolicy callback.
+
+        (WTR::TestController::resetStateToConsistentValues):
+        Reset m_shouldBlockAllPlugins to false.
+
+        (WTR::TestController::pluginLoadPolicy):
+        Return the existing plugin load policy, unless setBlockAllPlugins(true)
+        was called, in which case we reject all plugins with kWKPluginLoadPolicyBlocked.
+
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::setBlockAllPlugins):
+
 2013-07-21  Andreas Kling  <akling@apple.com>
 
         KURL creates duplicate strings when completing data: URIs.
