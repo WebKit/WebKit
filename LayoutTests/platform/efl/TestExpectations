@@ -1021,7 +1021,6 @@ Bug(EFL) editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure
 # MathML: Absolute and Integral operators are not stacked properly
 webkit.org/b/47744 mathml/presentation/mo.xhtml
 webkit.org/b/47744 mathml/presentation/row.xhtml
-webkit.org/b/47744 mathml/presentation/over.xhtml
 
 # EFL has not fully implemented about some SVG attributes
 Bug(EFL) svg/custom

@@ -1,3 +1,13 @@
+2013-07-23  Frédéric Wang  <fred.wang@free.fr>
+
+        Enable some MathML reftests on Windows and EFL ports.
+        https://bugs.webkit.org/show_bug.cgi?id=118916
+
+        Reviewed by Chris Fleizach.
+
+        * platform/efl/TestExpectations: do not skip over.html
+        * platform/win/TestExpectations: enable most of the non-pixel tests
+
 2013-07-22  Zalan Bujtas  <zalan@apple.com>
 
         segfault in RenderLayerCompositor when the iframe's position attribute is changed and it embeds <object>.
