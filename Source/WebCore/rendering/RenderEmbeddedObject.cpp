@@ -335,7 +335,7 @@ bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     return true;
 }
 
-LayoutRect RenderEmbeddedObject::replacementTextRect(const LayoutPoint& accumulatedOffset) const
+LayoutRect RenderEmbeddedObject::unavailablePluginIndicatorBounds(const LayoutPoint& accumulatedOffset) const
 {
     FloatRect contentRect;
     Path path;
@@ -345,7 +345,7 @@ LayoutRect RenderEmbeddedObject::replacementTextRect(const LayoutPoint& accumula
     TextRun run("", 0);
     float textWidth;
     if (getReplacementTextGeometry(accumulatedOffset, contentRect, path, replacementTextRect, arrowRect, font, run, textWidth))
-        return LayoutRect(replacementTextRect);
+        return LayoutRect(path.boundingRect());
 
     return LayoutRect();
 }
@@ -367,7 +367,7 @@ bool RenderEmbeddedObject::isReplacementObscured() const
     // Calculate the absolute rect for the blocked plugin replacement text.
     IntRect absoluteBoundingBox = absoluteBoundingBoxRect();
     LayoutPoint absoluteLocation(absoluteBoundingBox.location());
-    LayoutRect rect = replacementTextRect(absoluteLocation);
+    LayoutRect rect = unavailablePluginIndicatorBounds(absoluteLocation);
     if (rect.isEmpty())
         return true;
 

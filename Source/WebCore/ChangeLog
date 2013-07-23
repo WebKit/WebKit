@@ -1,5 +1,22 @@
 2013-07-22  Tim Horton  <timothy_horton@apple.com>
 
+        RenderEmbeddedObject::isReplacementObscured should include the arrow in its area-of-interest
+        https://bugs.webkit.org/show_bug.cgi?id=118995
+        <rdar://problem/14516421>
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::unavailablePluginIndicatorBounds):
+        Rename method from replacementTextRect to unavailablePluginIndicatorBounds for accuracy.
+        Use the bounding box of the indicator's path, which includes the rounded rect behind
+        the text as well as the arrow button.
+
+        (WebCore::RenderEmbeddedObject::isReplacementObscured):
+        * rendering/RenderEmbeddedObject.h:
+
+2013-07-22  Tim Horton  <timothy_horton@apple.com>
+
         <applet> plugins are instantiated post-attach (instead of post-layout like for object and embed)
         https://bugs.webkit.org/show_bug.cgi?id=118994
         <rdar://problem/14511232>

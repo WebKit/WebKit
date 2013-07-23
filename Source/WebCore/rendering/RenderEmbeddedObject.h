@@ -93,7 +93,7 @@ private:
     bool isInUnavailablePluginIndicator(MouseEvent*) const;
     bool isInUnavailablePluginIndicator(const LayoutPoint&) const;
     bool getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, FloatRect& arrowRect, Font&, TextRun&, float& textWidth) const;
-    LayoutRect replacementTextRect(const LayoutPoint&) const;
+    LayoutRect unavailablePluginIndicatorBounds(const LayoutPoint&) const;
 
     virtual bool canHaveChildren() const;
     virtual RenderObjectChildList* virtualChildren() { return children(); }
