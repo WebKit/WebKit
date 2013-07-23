@@ -4,28 +4,28 @@
 <style>
     #container {
         position: relative;
+        font: 20px Ahem, sans-serif;
+        line-height: 20px;
         width: 200px;
         height: 200px;
-        line-height: 20px;
         border: 2px solid blue;
     }
     #shape-inside {
         margin-top: -2px;
-        margin-left: 48px;
+        padding-top: 1px;
+        margin-left: 49px;
         width: 100px;
-        height: 50px;
-        border: 2px solid green;
+        height: 49px;
+        border: 1px solid green;
     }
-    #overflow { margin-top: -2px; }
 </style>
 </head>
 <body>
     <div id="container">
-        <div id="shape-inside">This text should wrap</div>
-        <div id="overflow">
-            inside the green rectangle, and overflow should wrap
-            inside the blue rectangle.
-        </div>
+        <div id="shape-inside">X X X X X X</div>
+        <div>X X X X X X</div>
     </div>
+    <p>Requires Ahem font. The content should wrap inside the green rectangle, and the overflow should wrap inside the blue rectangle.</p>
+
 </body>
 </html>

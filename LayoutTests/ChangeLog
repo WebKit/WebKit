@@ -1,3 +1,15 @@
+2013-07-23  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] REGRESSION(r152906) Modified fast/shapes/shape-inside/shape-inside-overflow.html ref test fails.
+        https://bugs.webkit.org/show_bug.cgi?id=118964
+
+        Reviewed by Andreas Kling.
+
+        I modified the test to use Ahem font. Now it's working well on Qt as well.
+
+        * fast/shapes/shape-inside/shape-inside-overflow-expected.html:
+        * fast/shapes/shape-inside/shape-inside-overflow.html:
+
 2013-07-23  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Unreviewed gardening. Added expectations for flaky tests.
