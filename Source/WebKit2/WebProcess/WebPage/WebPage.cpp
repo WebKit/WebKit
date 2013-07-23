@@ -558,6 +558,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
             RenderEmbeddedObject* renderObject = toRenderEmbeddedObject(pluginElement->renderer());
             renderObject->setPluginUnavailabilityReasonWithDescription(RenderEmbeddedObject::InsecurePluginVersion, unavailabilityDescription);
             replacementObscured = renderObject->isReplacementObscured();
+            renderObject->setUnavailablePluginIndicatorIsHidden(replacementObscured);
         }
 
         send(Messages::WebPageProxy::DidBlockInsecurePluginVersion(parameters.mimeType, parameters.url.string(), frameURLString, pageURLString, replacementObscured));

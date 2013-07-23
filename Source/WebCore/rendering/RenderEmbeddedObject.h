@@ -45,7 +45,11 @@ public:
     };
     void setPluginUnavailabilityReason(PluginUnavailabilityReason);
     void setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason, const String& description);
-    bool showsUnavailablePluginIndicator() const;
+
+    bool isPluginUnavailable() const { return m_isPluginUnavailable; }
+    bool showsUnavailablePluginIndicator() const { return isPluginUnavailable() && !m_isUnavailablePluginIndicatorHidden; }
+
+    void setUnavailablePluginIndicatorIsHidden(bool);
 
     // FIXME: This belongs on HTMLObjectElement.
     bool hasFallbackContent() const { return m_hasFallbackContent; }
@@ -103,7 +107,8 @@ private:
 
     bool m_hasFallbackContent; // FIXME: This belongs on HTMLObjectElement.
 
-    bool m_showsUnavailablePluginIndicator;
+    bool m_isPluginUnavailable;
+    bool m_isUnavailablePluginIndicatorHidden;
     PluginUnavailabilityReason m_pluginUnavailabilityReason;
     String m_unavailablePluginReplacementText;
     bool m_unavailablePluginIndicatorIsPressed;

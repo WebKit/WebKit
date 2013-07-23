@@ -95,7 +95,8 @@ static const Color& replacementTextColor()
 RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
     : RenderPart(element)
     , m_hasFallbackContent(false)
-    , m_showsUnavailablePluginIndicator(false)
+    , m_isPluginUnavailable(false)
+    , m_isUnavailablePluginIndicatorHidden(false)
     , m_unavailablePluginIndicatorIsPressed(false)
     , m_mouseDownWasInUnavailablePluginIndicator(false)
 {
@@ -154,19 +155,14 @@ void RenderEmbeddedObject::setPluginUnavailabilityReason(PluginUnavailabilityRea
 
 void RenderEmbeddedObject::setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason pluginUnavailabilityReason, const String& description)
 {
-    ASSERT(!m_showsUnavailablePluginIndicator);
-    m_showsUnavailablePluginIndicator = true;
+    ASSERT(!m_isPluginUnavailable);
+    m_isPluginUnavailable = true;
     m_pluginUnavailabilityReason = pluginUnavailabilityReason;
 
     if (description.isEmpty())
         m_unavailablePluginReplacementText = unavailablePluginReplacementText(pluginUnavailabilityReason);
     else
         m_unavailablePluginReplacementText = description;
-}
-
-bool RenderEmbeddedObject::showsUnavailablePluginIndicator() const
-{
-    return m_showsUnavailablePluginIndicator;
 }
 
 void RenderEmbeddedObject::setUnavailablePluginIndicatorIsPressed(bool pressed)
@@ -227,7 +223,7 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (Frame* frame = this->frame())
         page = frame->page();
 
-    if (showsUnavailablePluginIndicator()) {
+    if (isPluginUnavailable()) {
         if (page && paintInfo.phase == PaintPhaseForeground)
             page->addRelevantUnpaintedObject(this, visualOverflowRect());
         RenderReplaced::paint(paintInfo, paintOffset);
@@ -273,6 +269,13 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.height()) / 2 + fontMetrics.ascent());
     context->setFillColor(replacementTextColor(), style()->colorSpace());
     context->drawBidiText(font, run, FloatPoint(labelX, labelY));
+}
+
+void RenderEmbeddedObject::setUnavailablePluginIndicatorIsHidden(bool hidden)
+{
+    m_isUnavailablePluginIndicatorHidden = hidden;
+
+    repaint();
 }
 
 static void addReplacementArrowPath(Path& path, const FloatRect& insideRect)

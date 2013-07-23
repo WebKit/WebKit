@@ -1,5 +1,51 @@
 2013-07-22  Tim Horton  <timothy_horton@apple.com>
 
+        Plug-in unavailability indicator should not be displayed if a blocked plugin's indicator is clipped
+        https://bugs.webkit.org/show_bug.cgi?id=118998
+        <rdar://problem/14511268>
+
+        Reviewed by Anders Carlsson.
+        
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+        (WebCore::HTMLPlugInElement::supportsFocus):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateWidgetIfNecessary):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+        (WebCore::SubframeLoader::loadPlugin):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateWidget):
+        Rename showsUnavailablePluginIndicator to isPluginUnavailable, since being unavailable
+        and actually showing the indicator are two totally different things.
+
+        * WebCore.exp.in: Expose setUnavailablePluginIndicatorIsHidden.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject):
+        Rename m_showsUnavailablePluginIndicator to m_isPluginUnavailable.
+        Add m_isUnavailablePluginIndicatorHidden, defaulting to false.
+
+        (WebCore::RenderEmbeddedObject::setPluginUnavailabilityReasonWithDescription):
+        Set m_isPluginUnavailable when we get an unavailability reason.
+
+        (WebCore::RenderEmbeddedObject::paint):
+        (WebCore::RenderEmbeddedObject::setUnavailablePluginIndicatorIsHidden): Added.
+
+        * rendering/RenderEmbeddedObject.h:
+        (WebCore::RenderEmbeddedObject::isPluginUnavailable): Added.
+
+        (WebCore::RenderEmbeddedObject::showsUnavailablePluginIndicator):
+        Repurpose "showsUnavailablePluginIndicator" to actually represent whether
+        the indicator is displayed (i.e. the plugin is unavailable, and the
+        indicator is not hidden).
+
+2013-07-22  Tim Horton  <timothy_horton@apple.com>
+
         RenderEmbeddedObject::isReplacementObscured should include the arrow in its area-of-interest
         https://bugs.webkit.org/show_bug.cgi?id=118995
         <rdar://problem/14516421>
