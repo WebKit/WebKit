@@ -74,6 +74,7 @@
 #endif
 #include <WebCore/CairoUtilitiesEfl.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextCairo.h>
 #include <WebKit2/WKImageCairo.h>
 #include <wtf/MathExtras.h>
@@ -790,6 +791,11 @@ void EwkView::setTouchEventsEnabled(bool enabled)
         evas_object_event_callback_del(m_evasObject, EVAS_CALLBACK_MULTI_UP, handleTouchUp);
         evas_object_event_callback_del(m_evasObject, EVAS_CALLBACK_MULTI_MOVE, handleTouchMove);
     }
+}
+
+void EwkView::doneWithTouchEvent(WKTouchEventRef, bool /* wasEventHandled */)
+{
+    notImplemented();
 }
 #endif
 

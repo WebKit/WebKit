@@ -62,3 +62,113 @@ WKTouchEventRef WKTouchEventCreate(WKEventType type, WKArrayRef wkTouchPoints, W
     return 0;
 #endif
 }
+
+WKEventType WKTouchEventGetType(WKTouchEventRef event)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(event)->eventType();
+#else
+    UNUSED_PARAM(event);
+    return kWKEventTypeNoType;
+#endif
+}
+
+WKArrayRef WKTouchEventGetTouchPoints(WKTouchEventRef event)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(event)->touchPoints();
+#else
+    UNUSED_PARAM(event);
+    return 0;
+#endif
+}
+
+WKEventModifiers WKTouchEventGetModifiers(WKTouchEventRef event)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(event)->modifiers();
+#else
+    UNUSED_PARAM(event);
+    return 0;
+#endif
+}
+
+double WKTouchEventGetTimestamp(WKTouchEventRef event)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(event)->timestamp();
+#else
+    UNUSED_PARAM(event);
+    return 0;
+#endif
+}
+
+uint32_t WKTouchPointGetID(WKTouchPointRef point)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(point)->id();
+#else
+    UNUSED_PARAM(point);
+    return 0;
+#endif
+}
+
+WKTouchPointState WKTouchPointGetState(WKTouchPointRef point)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(point)->state();
+#else
+    UNUSED_PARAM(point);
+    return kWKTouchPointStateTouchCancelled;
+#endif
+}
+
+WKPoint WKTouchPointGetScreenPosition(WKTouchPointRef point)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(point)->screenPosition();
+#else
+    UNUSED_PARAM(point);
+    return WKPointMake(0, 0);
+#endif
+}
+
+WKPoint WKTouchPointGetPosition(WKTouchPointRef point)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(point)->position();
+#else
+    UNUSED_PARAM(point);
+    return WKPointMake(0, 0);
+#endif
+}
+
+WKSize WKTouchPointGetRadius(WKTouchPointRef point)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(point)->radius();
+#else
+    UNUSED_PARAM(point);
+    return WKSizeMake(0, 0);
+#endif
+}
+
+float WKTouchPointGetRotationAngle(WKTouchPointRef point)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(point)->rotationAngle();
+#else
+    UNUSED_PARAM(point);
+    return 0;
+#endif
+}
+
+float WKTouchPointGetForceFactor(WKTouchPointRef point)
+{
+#if ENABLE(TOUCH_EVENTS)
+    return toImpl(point)->forceFactor();
+#else
+    UNUSED_PARAM(point);
+    return 0;
+#endif
+}

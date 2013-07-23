@@ -43,6 +43,10 @@ namespace WebKit {
 
 class WebView;
 
+#if ENABLE(TOUCH_EVENTS)
+class NativeWebTouchEvent;
+#endif
+
 class WebViewClient: public APIClient<WKViewClient, kWKViewClientCurrentVersion> {
 public:
     void viewNeedsDisplay(WebView*, const WebCore::IntRect&);
@@ -55,6 +59,9 @@ public:
     void didChangeViewportAttributes(WebView*, const WebCore::ViewportAttributes&);
     void didChangeTooltip(WebView*, const String& tooltip);
     void didFindZoomableArea(WebView*, const WebCore::IntPoint&, const WebCore::IntRect&);
+#if ENABLE(TOUCH_EVENTS)
+    void doneWithTouchEvent(WebView*, const NativeWebTouchEvent&, bool);
+#endif
 };
 
 } // namespace WebKit

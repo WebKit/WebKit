@@ -55,6 +55,19 @@ typedef enum WKTouchPointState WKTouchPointState;
 WK_EXPORT WKTouchPointRef WKTouchPointCreate(int id, WKPoint position, WKPoint screenPosition, WKTouchPointState, WKSize radius, float rotationAngle, float forceFactor);
 WK_EXPORT WKTouchEventRef WKTouchEventCreate(WKEventType, WKArrayRef, WKEventModifiers, double timestamp);
 
+WK_EXPORT WKEventType WKTouchEventGetType(WKTouchEventRef);
+WK_EXPORT WKArrayRef WKTouchEventGetTouchPoints(WKTouchEventRef);
+WK_EXPORT WKEventModifiers WKTouchEventGetModifiers(WKTouchEventRef);
+WK_EXPORT double WKTouchEventGetTimestamp(WKTouchEventRef);
+
+WK_EXPORT uint32_t WKTouchPointGetID(WKTouchPointRef);
+WK_EXPORT WKTouchPointState WKTouchPointGetState(WKTouchPointRef);
+WK_EXPORT WKPoint WKTouchPointGetScreenPosition(WKTouchPointRef);
+WK_EXPORT WKPoint WKTouchPointGetPosition(WKTouchPointRef);
+WK_EXPORT WKSize WKTouchPointGetRadius(WKTouchPointRef);
+WK_EXPORT float WKTouchPointGetRotationAngle(WKTouchPointRef);
+WK_EXPORT float WKTouchPointGetForceFactor(WKTouchPointRef);
+
 #ifdef __cplusplus
 }
 #endif

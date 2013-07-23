@@ -393,9 +393,9 @@ void WebView::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void WebView::doneWithTouchEvent(const NativeWebTouchEvent&, bool /*wasEventHandled*/)
+void WebView::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
 {
-    notImplemented();
+    m_client.doneWithTouchEvent(this, event, wasEventHandled);
 }
 #endif
 

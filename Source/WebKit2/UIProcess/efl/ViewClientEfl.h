@@ -57,6 +57,9 @@ private:
     static void didChangeViewportAttributes(WKViewRef, WKViewportAttributesRef, const void* clientInfo);
     static void didChangeTooltip(WKViewRef, WKStringRef, const void* clientInfo);
     static void didFindZoomableArea(WKViewRef, WKPoint, WKRect, const void* clientInfo);
+#if ENABLE(TOUCH_EVENTS)
+    static void doneWithTouchEvent(WKViewRef, WKTouchEventRef, bool, const void* clientInfo);
+#endif
 
     EwkView* m_view;
 };

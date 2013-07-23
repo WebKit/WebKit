@@ -27,6 +27,11 @@
 #include <WebCore/TextDirection.h>
 #include <WebKit2/WKPopupItem.h>
 
+#if ENABLE(TOUCH_EVENTS)
+#include "WebEvent.h"
+#include <WebKit2/WKEventEfl.h>
+#endif
+
 namespace WebKit {
 
 class WebView;
@@ -61,6 +66,43 @@ inline WKPopupItemTextDirection toAPI(WebCore::TextDirection direction)
 
     return wkDirection;
 }
+
+#if ENABLE(TOUCH_EVENTS)
+inline WKEventType toAPI(WebEvent::Type type)
+{
+    switch (type) {
+    case WebEvent::TouchStart:
+        return kWKEventTypeTouchStart;
+    case WebEvent::TouchMove:
+        return kWKEventTypeTouchMove;
+    case WebEvent::TouchEnd:
+        return kWKEventTypeTouchEnd;
+    case WebEvent::TouchCancel:
+        return kWKEventTypeTouchCancel;
+    default:
+        return kWKEventTypeNoType;
+    }
+}
+
+inline WKTouchPointState toAPI(WebPlatformTouchPoint::TouchPointState state)
+{
+    switch (state) {
+    case WebPlatformTouchPoint::TouchReleased:
+        return kWKTouchPointStateTouchReleased;
+    case WebPlatformTouchPoint::TouchPressed:
+        return kWKTouchPointStateTouchPressed;
+    case WebPlatformTouchPoint::TouchMoved:
+        return kWKTouchPointStateTouchMoved;
+    case WebPlatformTouchPoint::TouchStationary:
+        return kWKTouchPointStateTouchStationary;
+    case WebPlatformTouchPoint::TouchCancelled:
+        return kWKTouchPointStateTouchCancelled;
+    }
+
+    ASSERT_NOT_REACHED();
+    return kWKTouchPointStateTouchCancelled;
+}
+#endif
 
 }
 

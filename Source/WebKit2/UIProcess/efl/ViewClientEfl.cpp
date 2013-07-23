@@ -159,6 +159,13 @@ void ViewClientEfl::didFindZoomableArea(WKViewRef, WKPoint point, WKRect area, c
     toEwkView(clientInfo)->didFindZoomableArea(point, area);
 }
 
+#if ENABLE(TOUCH_EVENTS)
+void ViewClientEfl::doneWithTouchEvent(WKViewRef, WKTouchEventRef event, bool wasEventHandled, const void* clientInfo)
+{
+    toEwkView(clientInfo)->doneWithTouchEvent(event, wasEventHandled);
+}
+#endif
+
 ViewClientEfl::ViewClientEfl(EwkView* view)
     : m_view(view)
 {
@@ -178,6 +185,9 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
     viewClient.didCompletePageTransition = didCompletePageTransition;
     viewClient.didChangeViewportAttributes = didChangeViewportAttributes;
     viewClient.didChangeTooltip = didChangeTooltip;
+#if ENABLE(TOUCH_EVENTS)
+    viewClient.doneWithTouchEvent = doneWithTouchEvent;
+#endif
 
     WKViewSetViewClient(m_view->wkView(), &viewClient);
 }

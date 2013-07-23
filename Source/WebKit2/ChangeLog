@@ -1,3 +1,46 @@
+2013-07-23  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Add doneWithTouchEvent callback to the WKViewClient.
+        https://bugs.webkit.org/show_bug.cgi?id=110085
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add doneWithTouchEvent callback to the WKViewClient in order to get the
+        result of touch events in the EwkView. The result will be used to
+        recognize gestures in the Bug 102643.
+
+        APIs to get values from WKTouchEventRef and WKTouchPointRef are added
+        because WKTypeRef is opaque to the applications.
+
+        * UIProcess/API/C/CoordinatedGraphics/WKView.h:
+        * UIProcess/API/C/efl/WKAPICastEfl.h:
+        (WebKit::toAPI):
+        * UIProcess/API/C/efl/WKEventEfl.cpp:
+        (WKTouchEventGetType):
+        (WKTouchEventGetTouchPoints):
+        (WKTouchEventGetModifiers):
+        (WKTouchEventGetTimestamp):
+        (WKTouchPointGetID):
+        (WKTouchPointGetState):
+        (WKTouchPointGetScreenPosition):
+        (WKTouchPointGetPosition):
+        (WKTouchPointGetRadius):
+        (WKTouchPointGetRotationAngle):
+        (WKTouchPointGetForceFactor):
+        * UIProcess/API/C/efl/WKEventEfl.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::doneWithTouchEvent):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::doneWithTouchEvent):
+        * UIProcess/CoordinatedGraphics/WebViewClient.cpp:
+        (WebKit::WebViewClient::doneWithTouchEvent):
+        * UIProcess/CoordinatedGraphics/WebViewClient.h:
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::doneWithTouchEvent):
+        (WebKit::ViewClientEfl::ViewClientEfl):
+        * UIProcess/efl/ViewClientEfl.h:
+
 2013-07-22  Alexey Proskuryakov  <ap@apple.com>
 
         Frequent MESSAGE_CHECK failures in WebPageProxy::didReceiveEvent
