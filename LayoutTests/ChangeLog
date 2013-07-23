@@ -1,3 +1,9 @@
+2013-07-23  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Unreviewed gardening. Added needed baselines after r104133.
+
+        * platform/gtk/perf/nested-combined-selectors-expected.txt: Added.
+
 2013-07-23  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. New baselines after r152941.
