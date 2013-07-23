@@ -661,11 +661,21 @@ webkit.org/b/116977 media/event-attributes.html [ Failure Timeout Pass ]
 
 webkit.org/b/117583 http/tests/media/video-load-twice.html [ Failure Pass ]
 
+webkit.org/b/103443 fast/parser/parser-yield-timing.html [ Failure Pass ]
+
 webkit.org/b/105191 media/video-playing-and-pause.html [ Failure Pass ]
+
+webkit.org/b/105280 [ Debug ] http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html [ Failure Pass ]
+
+webkit.org/b/105280 [ Debug ] http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html [ Failure Pass ]
 
 webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
 
 webkit.org/b/118460 media/media-element-play-after-eos.html [ Timeout Pass ]
+
+webkit.org/b/119009 http/tests/cache/subresource-failover-to-network.html [ Failure Pass ]
+
+webkit.org/b/119010 editing/selection/drag-text-delay.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

@@ -1,3 +1,9 @@
+2013-07-23  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Unreviewed gardening. Added expectations for flaky tests.
+
+        * platform/gtk/TestExpectations: Added new expectations.
+
 2013-07-23  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Unskip passing tests.
