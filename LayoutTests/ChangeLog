@@ -1,3 +1,15 @@
+2013-07-23  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Unreviewed gardening. Added needed baselines for GTK+.
+
+        * platform/gtk/fast/block/lineboxcontain/block-with-ideographs-expected.txt: Added.
+        * platform/gtk/fast/css-generated-content/details-summary-before-after-expected.txt: Added.
+        * platform/gtk/fast/css3-text/css3-text-decoration/text-decoration-line-scaled-expected.txt: Added.
+        * platform/gtk/fast/regions/region-dynamic-after-before-expected.txt: Added.
+        * platform/gtk/fast/regions/region-generated-content-before-after-expected.txt: Added.
+        * platform/gtk/fast/text/text-combine-different-fonts-expected.txt: Added.
+        * platform/gtk/svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures-expected.txt: Added.
+
 2013-07-23  Frédéric Wang  <fred.wang@free.fr>
 
         Enable some MathML reftests on Windows and EFL ports.
