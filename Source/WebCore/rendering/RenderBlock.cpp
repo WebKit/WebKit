@@ -7327,24 +7327,9 @@ LayoutRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, La
 
     LayoutRect caretRect = localCaretRectForEmptyElement(width(), textIndentOffset());
 
-    if (extraWidthToEndOfLine) {
-        if (isRenderBlock()) {
-            *extraWidthToEndOfLine = width() - caretRect.maxX();
-        } else {
-            // FIXME: This code looks wrong.
-            // myRight and containerRight are set up, but then clobbered.
-            // So *extraWidthToEndOfLine will always be 0 here.
-
-            LayoutUnit myRight = caretRect.maxX();
-            // FIXME: why call localToAbsoluteForContent() twice here, too?
-            FloatPoint absRightPoint = localToAbsolute(FloatPoint(myRight, 0));
-
-            LayoutUnit containerRight = containingBlock()->x() + containingBlockLogicalWidthForContent();
-            FloatPoint absContainerPoint = localToAbsolute(FloatPoint(containerRight, 0));
-
-            *extraWidthToEndOfLine = absContainerPoint.x() - absRightPoint.x();
-        }
-    }
+    // FIXME: Does this need to adjust for vertical orientation?
+    if (extraWidthToEndOfLine)
+        *extraWidthToEndOfLine = width() - caretRect.maxX();
 
     return caretRect;
 }

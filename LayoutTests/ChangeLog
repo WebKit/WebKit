@@ -1,3 +1,18 @@
+2013-07-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Dictionary hotkey does not work on vertical text
+        https://bugs.webkit.org/show_bug.cgi?id=118993
+        <rdar://problem/14478260>
+
+        Reviewed by Enrica Casucci.
+
+        * platform/mac/editing/input/caret-primary-bidi-expected.txt: Old results had
+        some collapsed positions have a rect of width 1. Now they are all consistently 0.
+
+        * platform/mac/editing/input/firstrectforcharacterrange-vertical-expected.txt: Added.
+        * platform/mac/editing/input/firstrectforcharacterrange-vertical.html: Added.
+        * platform/wk2/TestExpectations: Skipping the new test, as WKTR doesn't implement firstRectForCharacterRange.
+
 2013-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: Borders
