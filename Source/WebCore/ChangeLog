@@ -1,5 +1,18 @@
 2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        Remove unused DrawingBuffer::paintRenderingResultsToImageData
+        https://bugs.webkit.org/show_bug.cgi?id=118986
+
+        Reviewed by Darin Adler.
+
+        Remove the paintRenderingResultsToImageData method of the DrawingBuffer class. It is not used anywhere
+        and also introduces a nasty layering violation by including and operating with the ImageData class.
+
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        * platform/graphics/gpu/DrawingBuffer.h:
+
+2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
+
         Remove unnecessary includes in FormDataBuilder.cpp
         https://bugs.webkit.org/show_bug.cgi?id=118991
 

@@ -36,7 +36,6 @@
 
 #include "Extensions3D.h"
 #include "GraphicsContext3D.h"
-#include "ImageData.h"
 
 namespace WebCore {
 
@@ -439,11 +438,6 @@ void DrawingBuffer::restoreFramebufferBinding()
 bool DrawingBuffer::multisample() const
 {
     return m_context && m_context->getContextAttributes().antialias && m_multisampleExtensionSupported;
-}
-
-PassRefPtr<ImageData> DrawingBuffer::paintRenderingResultsToImageData()
-{
-    return m_context->paintRenderingResultsToImageData(this);
 }
 
 void DrawingBuffer::discardResources()
