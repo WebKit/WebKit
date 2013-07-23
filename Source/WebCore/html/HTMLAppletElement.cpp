@@ -91,12 +91,21 @@ RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
     return renderPart();
 }
 
-void HTMLAppletElement::updateWidget(PluginCreationOption)
+void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
 {
     setNeedsWidgetUpdate(false);
     // FIXME: This should ASSERT isFinishedParsingChildren() instead.
     if (!isFinishedParsingChildren())
         return;
+
+    // FIXME: It's sadness that we have this special case here.
+    //        See http://trac.webkit.org/changeset/25128 and
+    //        plugins/netscape-plugin-setwindow-size.html
+    if (pluginCreationOption == CreateOnlyNonNetscapePlugins) {
+        // Ensure updateWidget() is called again during layout to create the Netscape plug-in.
+        setNeedsWidgetUpdate(true);
+        return;
+    }
 
     RenderEmbeddedObject* renderer = renderEmbeddedObject();
 
