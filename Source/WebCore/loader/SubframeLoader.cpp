@@ -324,7 +324,7 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
     if (!widget) {
         RenderEmbeddedObject* renderer = element->renderEmbeddedObject();
 
-        if (!renderer->showsUnavailablePluginIndicator())
+        if (!renderer->isPluginUnavailable())
             renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginMissing);
         return 0;
     }
@@ -456,7 +456,7 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
         pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 
     if (!widget) {
-        if (!renderer->showsUnavailablePluginIndicator())
+        if (!renderer->isPluginUnavailable())
             renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginMissing);
         return false;
     }

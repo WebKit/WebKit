@@ -2662,7 +2662,7 @@ void FrameView::updateWidget(RenderObject* object)
     if (object->isEmbeddedObject()) {
         RenderEmbeddedObject* embeddedObject = static_cast<RenderEmbeddedObject*>(object);
         // No need to update if it's already crashed or known to be missing.
-        if (embeddedObject->showsUnavailablePluginIndicator())
+        if (embeddedObject->isPluginUnavailable())
             return;
 
         if (object->isSnapshottedPlugIn()) {
