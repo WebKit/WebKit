@@ -1564,7 +1564,7 @@ void RenderBlock::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalH
             // We need to go ahead and set our explicit page height if one exists, so that we can
             // avoid doing two layout passes.
             updateLogicalHeight();
-            LayoutUnit columnHeight = contentLogicalHeight();
+            LayoutUnit columnHeight = isRenderView() ? view()->pageOrViewLogicalHeight() : contentLogicalHeight();
             if (columnHeight > 0) {
                 pageLogicalHeight = columnHeight;
                 hasSpecifiedPageLogicalHeight = true;
@@ -3085,6 +3085,36 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, const LayoutPoint& pain
     }
 }
 
+LayoutUnit RenderBlock::initialBlockOffsetForPainting() const
+{
+    ColumnInfo* colInfo = columnInfo();
+    LayoutUnit result = 0;
+    if (colInfo->progressionAxis() == ColumnInfo::BlockAxis && colInfo->progressionIsReversed()) {
+        LayoutRect colRect = columnRectAt(colInfo, 0);
+        result = isHorizontalWritingMode() ? colRect.y() : colRect.x();
+        result -= borderAndPaddingBefore();
+        if (style()->isFlippedBlocksWritingMode())
+            result = -result;
+    }
+    return result;
+}
+    
+LayoutUnit RenderBlock::blockDeltaForPaintingNextColumn() const
+{
+    ColumnInfo* colInfo = columnInfo();
+    LayoutUnit blockDelta = -colInfo->columnHeight();
+    LayoutUnit colGap = columnGap();
+    if (colInfo->progressionAxis() == ColumnInfo::BlockAxis) {
+        if (!colInfo->progressionIsReversed())
+            blockDelta = colGap;
+        else
+            blockDelta -= (colInfo->columnHeight() + colGap);
+    }
+    if (style()->isFlippedBlocksWritingMode())
+        blockDelta = -blockDelta;
+    return blockDelta;
+}
+
 void RenderBlock::paintColumnContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset, bool paintingFloats)
 {
     // We need to do multiple passes, breaking up our child painting into strips.
@@ -3093,20 +3123,16 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, const LayoutPoint& p
     unsigned colCount = columnCount(colInfo);
     if (!colCount)
         return;
-    LayoutUnit currLogicalTopOffset = 0;
     LayoutUnit colGap = columnGap();
+    LayoutUnit currLogicalTopOffset = initialBlockOffsetForPainting();
+    LayoutUnit blockDelta = blockDeltaForPaintingNextColumn();
     for (unsigned i = 0; i < colCount; i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
         LayoutRect colRect = columnRectAt(colInfo, i);
         flipForWritingMode(colRect);
+        
         LayoutUnit logicalLeftOffset = (isHorizontalWritingMode() ? colRect.x() : colRect.y()) - logicalLeftOffsetForContent();
         LayoutSize offset = isHorizontalWritingMode() ? LayoutSize(logicalLeftOffset, currLogicalTopOffset) : LayoutSize(currLogicalTopOffset, logicalLeftOffset);
-        if (colInfo->progressionAxis() == ColumnInfo::BlockAxis) {
-            if (isHorizontalWritingMode())
-                offset.expand(0, colRect.y() - borderTop() - paddingTop());
-            else
-                offset.expand(colRect.x() - borderLeft() - paddingLeft(), 0);
-        }
         colRect.moveBy(paintOffset);
         PaintInfo info(paintInfo);
         info.rect.intersect(pixelSnappedIntRect(colRect));
@@ -3134,12 +3160,7 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, const LayoutPoint& p
             else
                 paintContents(info, adjustedPaintOffset);
         }
-
-        LayoutUnit blockDelta = (isHorizontalWritingMode() ? colRect.height() : colRect.width());
-        if (style()->isFlippedBlocksWritingMode())
-            currLogicalTopOffset += blockDelta;
-        else
-            currLogicalTopOffset -= blockDelta;
+        currLogicalTopOffset += blockDelta;
     }
 }
 
@@ -5138,7 +5159,10 @@ public:
     {
         int colCount = m_colInfo->columnCount();
         m_colIndex = colCount - 1;
-        m_currLogicalTopOffset = colCount * m_colInfo->columnHeight() * m_direction;
+        
+        m_currLogicalTopOffset = m_block.initialBlockOffsetForPainting();
+        m_currLogicalTopOffset = colCount * m_block.blockDeltaForPaintingNextColumn();
+        
         update();
     }
 
@@ -5156,12 +5180,6 @@ public:
     {
         LayoutUnit currLogicalLeftOffset = (m_isHorizontal ? m_colRect.x() : m_colRect.y()) - m_logicalLeft;
         offset += m_isHorizontal ? LayoutSize(currLogicalLeftOffset, m_currLogicalTopOffset) : LayoutSize(m_currLogicalTopOffset, currLogicalLeftOffset);
-        if (m_colInfo->progressionAxis() == ColumnInfo::BlockAxis) {
-            if (m_isHorizontal)
-                offset.expand(0, m_colRect.y() - m_block.borderTop() - m_block.paddingTop());
-            else
-                offset.expand(m_colRect.x() - m_block.borderLeft() - m_block.paddingLeft(), 0);
-        }
     }
 
 private:
@@ -5169,10 +5187,9 @@ private:
     {
         if (m_colIndex < 0)
             return;
-
         m_colRect = m_block.columnRectAt(const_cast<ColumnInfo*>(m_colInfo), m_colIndex);
         m_block.flipForWritingMode(m_colRect);
-        m_currLogicalTopOffset -= (m_isHorizontal ? m_colRect.height() : m_colRect.width()) * m_direction;
+        m_currLogicalTopOffset -= m_block.blockDeltaForPaintingNextColumn();
     }
 
     const RenderBlock& m_block;
