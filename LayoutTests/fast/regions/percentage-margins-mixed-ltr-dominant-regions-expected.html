@@ -1,0 +1,82 @@
+<!doctype html>
+<html style="direction:ltr">
+<head>
+ <style>
+    p {
+        margin-top: 16px;
+        margin-bottom: 16px;
+    }
+
+    .content {
+        text-align: justify;
+        padding: 5px;
+        font-size: 10px;
+        font-family: Ahem;
+    }
+    
+    .first-box {
+        border: 1px solid blue;
+	    margin:0 10%;
+    }
+    
+    .second-box {
+        margin:10px;
+        border: 1px solid green;
+        direction:rtl
+    }
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+    }
+
+    #region1 {
+        width: 200px;
+        height: 100px;
+        overflow: hidden;
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 180px;
+        overflow: hidden;
+    }
+    
+    #region3 {
+        width: 120px;
+        height: 120px;
+    }
+</style>
+</head>
+<body>
+<p>The text lines should not overflow the regions. The fragment boxes should respect the margin values for their regions.</p>
+<div id="container">
+    <div id="region1">
+        <div class="content">
+            <div class="first-box">
+                <div class="second-box">
+                    <p>This line of text should not get out of the region. This line of text <span style="line-height: 100px;">XXXXXXX</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="region2">
+        <div class="content" style="margin-top: -33px;">
+            <div class="first-box">
+                <div class="second-box">
+                    <p>should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</p>
+                    <p>This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text <span style="line-height: 100px;">XXXXXX</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="region3">
+        <div class="content" style="overflow: hidden;">
+            <div class="first-box" style="margin-top: -33px;">
+                <div class="second-box">
+                    <p>should not get out of the region.</p>
+                    <p>This line of text should not get out of the region.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
