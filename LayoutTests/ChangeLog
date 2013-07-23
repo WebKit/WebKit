@@ -1,5 +1,18 @@
 2013-07-23  Simon Pena  <simon.pena@samsung.com>
 
+        [GTK] Unreviewed gardening. New baselines after r152941.
+        https://bugs.webkit.org/show_bug.cgi?id=119005
+
+        Unreviewed GTK gardening.
+
+        GTK's DumpRenderTree prints CONFIRM instead of CONFIRM NAVIGATION, so we need
+        platform-specific expectations.
+
+        * platform/gtk/fast/loader/show-only-one-beforeunload-dialog-expected.txt: Added.
+        * platform/gtk/http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin-expected.txt: Added.
+
+2013-07-23  Simon Pena  <simon.pena@samsung.com>
+
         [GTK] Unreviewed gardening. Skip failing test.
         https://bugs.webkit.org/show_bug.cgi?id=119006
 
