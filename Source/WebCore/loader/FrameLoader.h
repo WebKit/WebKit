@@ -319,7 +319,7 @@ private:
     static void callContinueLoadAfterNewWindowPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue);
     static void callContinueFragmentScrollAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
     
-    bool fireBeforeUnloadEvent(Chrome&);
+    bool handleBeforeUnloadEvent(Chrome&, FrameLoader* frameLoaderBeingNavigated);
 
     void continueLoadAfterNavigationPolicy(const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
     void continueLoadAfterNewWindowPolicy(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue);
@@ -440,6 +440,8 @@ private:
     bool m_didPerformFirstNavigation;
     bool m_loadingFromCachedPage;
     bool m_suppressOpenerInNewFrame;
+    
+    bool m_currentNavigationHasShownBeforeUnloadConfirmPanel;
 
     SandboxFlags m_forcedSandboxFlags;
 

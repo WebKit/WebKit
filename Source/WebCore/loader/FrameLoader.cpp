@@ -237,6 +237,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_didPerformFirstNavigation(false)
     , m_loadingFromCachedPage(false)
     , m_suppressOpenerInNewFrame(false)
+    , m_currentNavigationHasShownBeforeUnloadConfirmPanel(false)
     , m_forcedSandboxFlags(SandboxNone)
 {
 }
@@ -2740,7 +2741,7 @@ bool FrameLoader::shouldClose()
         for (i = 0; i < targetFrames.size(); i++) {
             if (!targetFrames[i]->tree()->isDescendantOf(m_frame))
                 continue;
-            if (!targetFrames[i]->loader()->fireBeforeUnloadEvent(page->chrome()))
+            if (!targetFrames[i]->loader()->handleBeforeUnloadEvent(page->chrome(), this))
                 break;
         }
 
@@ -2751,10 +2752,11 @@ bool FrameLoader::shouldClose()
     if (!shouldClose)
         m_submittedFormURL = KURL();
 
+    m_currentNavigationHasShownBeforeUnloadConfirmPanel = false;
     return shouldClose;
 }
 
-bool FrameLoader::fireBeforeUnloadEvent(Chrome& chrome)
+bool FrameLoader::handleBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoaderBeingNavigated)
 {
     DOMWindow* domWindow = m_frame->document()->domWindow();
     if (!domWindow)
@@ -2763,16 +2765,55 @@ bool FrameLoader::fireBeforeUnloadEvent(Chrome& chrome)
     RefPtr<Document> document = m_frame->document();
     if (!document->body())
         return true;
-
+    
     RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
     m_pageDismissalEventBeingDispatched = BeforeUnloadDismissal;
+
+    // We store the frame's page in a local variable because the frame might get detached inside dispatchEvent.
+    Page* page = m_frame->page();
+    page->incrementFrameHandlingBeforeUnloadEventCount();
     domWindow->dispatchEvent(beforeUnloadEvent.get(), domWindow->document());
+    page->decrementFrameHandlingBeforeUnloadEventCount();
+
     m_pageDismissalEventBeingDispatched = NoDismissal;
 
     if (!beforeUnloadEvent->defaultPrevented())
         document->defaultEventHandler(beforeUnloadEvent.get());
     if (beforeUnloadEvent->result().isNull())
         return true;
+
+    // If the navigating FrameLoader has already shown a beforeunload confirmation panel for the current navigation attempt,
+    // this frame is not allowed to cause another one to be shown.
+    if (frameLoaderBeingNavigated->m_currentNavigationHasShownBeforeUnloadConfirmPanel) {
+        document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Blocked attempt to show multiple beforeunload confirmation dialogs for the same navigation.");
+        return true;
+    }
+
+    // We should only display the beforeunload dialog for an iframe if its SecurityOrigin matches all
+    // ancestor frame SecurityOrigins up through the navigating FrameLoader.
+    if (frameLoaderBeingNavigated != this) {
+        Frame* parentFrame = m_frame->tree()->parent();
+        while (parentFrame) {
+            Document* parentDocument = parentFrame->document();
+            if (!parentDocument)
+                return true;
+            if (!m_frame->document() || !m_frame->document()->securityOrigin()->canAccess(parentDocument->securityOrigin())) {
+                document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Blocked attempt to show beforeunload confirmation dialog on behalf of a frame with different security origin. Protocols, domains, and ports must match.");
+                return true;
+            }
+            
+            if (parentFrame->loader() == frameLoaderBeingNavigated)
+                break;
+            
+            parentFrame = parentFrame->tree()->parent();
+        }
+        
+        // The navigatingFrameLoader should always be in our ancestory.
+        ASSERT(parentFrame);
+        ASSERT(parentFrame->loader() == frameLoaderBeingNavigated);
+    }
+
+    frameLoaderBeingNavigated->m_currentNavigationHasShownBeforeUnloadConfirmPanel = true;
 
     String text = document->displayStringModifiedByEncoding(beforeUnloadEvent->result());
     return chrome.runBeforeUnloadConfirmPanel(text, m_frame);

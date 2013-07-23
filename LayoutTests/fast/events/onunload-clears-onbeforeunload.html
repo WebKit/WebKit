@@ -13,12 +13,12 @@ window.onunload = unload;
 
 function before()
 {
-    alert( "before unload");
+    console.log( "before unload");
 }
 
 function unload()
 {
-    alert( "unload" );
+    console.log( "unload" );
     window.removeEventListener('beforeunload', before, false);
 }
 

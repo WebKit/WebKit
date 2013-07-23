@@ -8,7 +8,7 @@ var haveAddedIFrame = false;
 
 window.onbeforeunload = function() {
     if (!haveAddedIFrame)
-        alert("onbeforeunload called, and iframe hasn't been added yet.");
+        document.getElementById("logger").innerText += "onbeforeunload called, and iframe hasn't been added yet.\n";
     var a = document.createEvent("MouseEvents");
     a.initEvent("click", true, true);
     var d = document.createElement("a");
@@ -21,7 +21,7 @@ function clicked() {
 }
 
 function addiframe() {
-    alert("Adding iframe");
+    document.getElementById("logger").innerText += "Adding iframe.\n";
     var frame = document.createElement("iframe");
     frame.src = "http://localhost:1234/"
     document.body.appendChild(frame);
@@ -44,4 +44,5 @@ In this state, the frame is very difficult to navigate anywhere else, and attemp
 This was reproducibly identified on sears.com following a bizarre Safari specific code path.<br>
 <a href="javascript:void(clicked())">Click here to run the beforeunload test and blow out the stack</a><br>
 <a href="javascript:void(addiframe())">Click here to append an iframe and crash</a><br>
+<div id="logger"></div>
 </body>

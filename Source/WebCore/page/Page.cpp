@@ -188,6 +188,7 @@ Page::Page(PageClients& pageClients)
     , m_scriptedAnimationsSuspended(false)
     , m_pageThrottler(PageThrottler::create(this))
     , m_console(PageConsole::create(this))
+    , m_framesHandlingBeforeUnloadEvent(0)
 {
     ASSERT(m_editorClient);
 
@@ -1579,6 +1580,22 @@ void Page::captionPreferencesChanged()
         frame->document()->captionPreferencesChanged();
 }
 #endif
+
+void Page::incrementFrameHandlingBeforeUnloadEventCount()
+{
+    ++m_framesHandlingBeforeUnloadEvent;
+}
+
+void Page::decrementFrameHandlingBeforeUnloadEventCount()
+{
+    ASSERT(m_framesHandlingBeforeUnloadEvent);
+    --m_framesHandlingBeforeUnloadEvent;
+}
+
+bool Page::isAnyFrameHandlingBeforeUnloadEvent()
+{
+    return m_framesHandlingBeforeUnloadEvent;
+}
 
 Page::PageClients::PageClients()
     : alternativeTextClient(0)

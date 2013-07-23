@@ -1,7 +1,7 @@
 <html>
 <body>
     New window with beforeUnload handler.<br>
-    You should see an alert with "beforeUnload" if you try to close the window.<br>
+    You should see "beforeUnload" in the console log if you try to close the window.<br>
     <iframe src="resources/onbeforeunload-focused-iframe-frame.html" id="focusedFrame"></iframe>
     <script>
         if (window.testRunner) {
@@ -13,7 +13,7 @@
         window.onbeforeunload = beforeUnload;
         function beforeUnload()
         {
-            alert("beforeUnload");
+            console.log("beforeUnload");
             window.onbeforeunload = null;
         }
 

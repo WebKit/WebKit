@@ -1,0 +1,25 @@
+<script>
+
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.waitUntilDone();
+}
+
+window.onload = function()
+{
+	window.setTimeout("window.location.href = 'resources/notify-done.html';", 0);
+}
+
+window.onbeforeunload = function()
+{
+	return "This is beforeunload from the top level frame.";
+}
+
+</script>
+<body>
+This page has multiple iframes, each trying to bring up a beforeunload dialog.<br>
+This page also has a beforeunload dialog, itself.<br>
+Only the dialog from this top-level frame should display, and none of the iframe ones should display.<br>
+<iframe src="resources/iframe-with-beforeunload.html"></iframe><br>
+<iframe src="resources/iframe-with-beforeunload.html"></iframe><br>
+</body>

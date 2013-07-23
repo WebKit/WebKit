@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html><head><meta charset=utf-8><title>Page Dismissal Modal Dialogs mainFrame</title><script>
+<html>
+<head>
+<meta charset=utf-8>
+<title>Page Dismissal Modal Dialogs mainFrame</title>
+<script>
 function showMessages(event) {
     alert(event + " PASS");
     confirm(event + " PASS");
@@ -27,13 +31,17 @@ addEventListener("load", function() {
     }
     location = "resources/pass-and-notify-done.html";
 }, false);
-</script></head><body><div>
-
-<span onclick="showMessages('mainFrame click')" id=anchor>anchor</span>
-<iframe src=resources/page-dismissal-modal-dialogs-iframe.html></iframe>
+</script>
+</head>
+<body>
+<div>
+<span onclick="showMessages('mainFrame click');" id=anchor>anchor</span>
+<iframe src="resources/page-dismissal-modal-dialogs-iframe.html"></iframe>
 
 This page registers handlers for various types of unload events and attempts to
 popup modal dialogs through various JavaScript calls in each of them. Also, it
 does the same thing in an iframe. In addition, it tries to popup dialogs in the
 context of one frame when running a handler in the other frame.
-</div></body></html>
+</div>
+</body>
+</html>
