@@ -1,5 +1,15 @@
 2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        Remove unnecessary includes in FormDataBuilder.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=118991
+
+        Reviewed by Darin Adler.
+
+        * platform/network/FormDataBuilder.cpp: Remove the Frame and FrameLoader header inclusions,
+        nothing these two headers provide is used in this source file.
+
+2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
+
         Fix the style of the ContentDispositionType enum definition
         https://bugs.webkit.org/show_bug.cgi?id=118990
 
