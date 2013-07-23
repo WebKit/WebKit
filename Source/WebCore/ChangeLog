@@ -1,3 +1,16 @@
+2013-07-22  Santosh Mahto  <santosh.ma@samsung.com>
+
+        DateInputType constructor initiate incorrect base class
+        https://bugs.webkit.org/show_bug.cgi?id=118962
+
+        Reviewed by Gyuyoung Kim.
+
+        No new test required since solving code error
+
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::DateInputType):
+        Corrected the base class instantiation in constructor.
+
 2013-07-22  Tim Horton  <timothy_horton@apple.com>
 
         Plug-in unavailability indicator should not be displayed if a blocked plugin's indicator is clipped
