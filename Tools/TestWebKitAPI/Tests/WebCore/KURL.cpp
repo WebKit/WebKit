@@ -32,7 +32,7 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-class WebCore: public testing::Test {
+class KURLTest : public testing::Test {
 public:
     virtual void SetUp()
     {
@@ -40,7 +40,7 @@ public:
     }
 };
 
-TEST_F(WebCore, KURLConstructorDefault)
+TEST_F(KURLTest, KURLConstructorDefault)
 {
     KURL kurl;
 
@@ -50,7 +50,7 @@ TEST_F(WebCore, KURLConstructorDefault)
     EXPECT_FALSE(kurl.isValid());
 }
 
-TEST_F(WebCore, KURLConstructorConstChar)
+TEST_F(KURLTest, KURLConstructorConstChar)
 {
     KURL kurl(ParsedURLString, "http://username:password@www.example.com:8080/index.html?var=val#fragment");
 
