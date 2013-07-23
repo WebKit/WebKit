@@ -1,3 +1,22 @@
+2013-07-22  Beth Dakin  <bdakin@apple.com>
+
+        StickyPositionConstraints should store the constrainingRectAtLastLayout
+        https://bugs.webkit.org/show_bug.cgi?id=118999
+
+        Reviewed by Simon Fraser.
+
+        Much like how FixedPositionConstraints store a viewportRectAtLastLayout, 
+        StickyConstraints should store a constrainingRectAtLastLayout. We'll need this to 
+        get sticky right in overflow areas once overflow areas scroll on the scrolling 
+        thread. 
+
+        * page/scrolling/ScrollingConstraints.h:
+        (WebCore::StickyPositionViewportConstraints::StickyPositionViewportConstraints):
+        (WebCore::StickyPositionViewportConstraints::constrainingRectAtLastLayout):
+        (WebCore::StickyPositionViewportConstraints::setConstrainingRectAtLastLayout):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::computeStickyPositionConstraints):
+
 2013-07-22  Santosh Mahto  <santosh.ma@samsung.com>
 
         DateInputType constructor initiate incorrect base class

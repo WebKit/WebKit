@@ -125,6 +125,7 @@ public:
         , m_rightOffset(other.m_rightOffset)
         , m_topOffset(other.m_topOffset)
         , m_bottomOffset(other.m_bottomOffset)
+        , m_constrainingRectAtLastLayout(other.m_constrainingRectAtLastLayout)
         , m_containingBlockRect(other.m_containingBlockRect)
         , m_stickyBoxRect(other.m_stickyBoxRect)
         , m_stickyOffsetAtLastLayout(other.m_stickyOffsetAtLastLayout)
@@ -150,6 +151,11 @@ public:
     void setRightOffset(float offset) { m_rightOffset = offset; }
     void setTopOffset(float offset) { m_topOffset = offset; }
     void setBottomOffset(float offset) { m_bottomOffset = offset; }
+
+    // constrainingRectAtLastLayout() is the viewport rect if this sticky object sticks to the viewport, and
+    // it is the overflow area's scrolled clip rect if this sticky object sticks inside an overflow area.
+    FloatRect constrainingRectAtLastLayout() const { return m_constrainingRectAtLastLayout; }
+    void setConstrainingRectAtLastLayout(const FloatRect& rect) { m_constrainingRectAtLastLayout = rect; }
 
     // containingBlockRect() is in the scrolling ancestor's coordinate space.
     FloatRect containingBlockRect() const { return m_containingBlockRect; }
@@ -180,6 +186,7 @@ private:
     float m_rightOffset;
     float m_topOffset;
     float m_bottomOffset;
+    FloatRect m_constrainingRectAtLastLayout;
     FloatRect m_containingBlockRect;
     FloatRect m_stickyBoxRect;
     FloatSize m_stickyOffsetAtLastLayout;
