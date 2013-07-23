@@ -1,3 +1,15 @@
+2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Mock GDK_IS_X11_DISPLAY macro can be redefined unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=118980
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/GtkVersioning.h: Only define the GDK_IS_X11_DISPLAY macro when using the GTK+ 2 API version
+        as that's the only supported configuration where the macro is not defined. Definining it only if it's not
+        yet defined at the time of inclusion of this header can cause redefinitions in GTK+ headers that are normally
+        included later.
+
 2013-07-22  Beth Dakin  <bdakin@apple.com>
 
         StickyPositionConstraints should store the constrainingRectAtLastLayout
