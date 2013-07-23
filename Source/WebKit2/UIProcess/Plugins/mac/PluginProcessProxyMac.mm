@@ -405,9 +405,12 @@ void PluginProcessProxy::launchProcess(const String& launchPath, const Vector<St
 
 static bool isJavaUpdaterURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
 {
-    NSURL *javaUpdaterURL = [NSURL fileURLWithPathComponents:[NSArray arrayWithObjects:(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources/Java Updater.app", nil]];
+    NSURL *url = [NSURL URLWithString:urlString];
+    if (![url isFileURL])
+        return false;
 
-    return [[NSURL URLWithString:urlString] isEqual:javaUpdaterURL];
+    NSString *javaUpdaterPath = [NSString pathWithComponents:[NSArray arrayWithObjects:(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources/Java Updater.app", nil]];
+    return [url.path isEqualToString:javaUpdaterPath];
 }
 
 static bool shouldLaunchApplicationAtURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
