@@ -1,3 +1,17 @@
+2013-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: Borders
+        https://bugs.webkit.org/show_bug.cgi?id=118822
+
+        Reviewed by Dean Jackson.
+
+        Test that the shape is properly respected when the float has a border.
+
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-square-border-000-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-square-border-000.html: Added.
+        * csswg/submitted/shapes/shape-outside/w3c-import.log: Updated with new
+            import information.
+
 2013-07-23  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Convert percentage-margins-* tests to ref-tests

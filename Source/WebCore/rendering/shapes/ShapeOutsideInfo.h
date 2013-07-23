@@ -44,6 +44,7 @@ public:
     LayoutUnit leftSegmentMarginBoxDelta() const { return m_leftSegmentMarginBoxDelta; }
     LayoutUnit rightSegmentMarginBoxDelta() const { return m_rightSegmentMarginBoxDelta; }
 
+    bool computeSegmentsForContainingBlockLine(LayoutUnit lineTop, LayoutUnit floatTop, LayoutUnit lineHeight);
     virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE;
 
     static PassOwnPtr<ShapeOutsideInfo> createInfo(const RenderBox* renderer) { return adoptPtr(new ShapeOutsideInfo(renderer)); }

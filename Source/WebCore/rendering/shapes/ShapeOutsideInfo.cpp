@@ -42,6 +42,12 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox* box)
     return box->isFloatingWithShapeOutside() && value->type() == ShapeValue::Shape && value->shape();
 }
 
+bool ShapeOutsideInfo::computeSegmentsForContainingBlockLine(LayoutUnit lineTop, LayoutUnit floatTop, LayoutUnit lineHeight)
+{
+    LayoutUnit lineTopInShapeCoordinates = lineTop - floatTop + logicalTopOffset();
+    return computeSegmentsForLine(lineTopInShapeCoordinates, lineHeight);
+}
+
 bool ShapeOutsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
 {
     if (shapeSizeDirty() || m_lineTop != lineTop || m_lineHeight != lineHeight) {

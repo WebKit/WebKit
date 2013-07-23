@@ -4477,8 +4477,7 @@ LayoutUnit RenderBlock::logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, Lay
         const FloatingObject* lastFloat = adapter.lastFloat();
         if (offsetMode == ShapeOutsideFloatShapeOffset && lastFloat) {
             if (ShapeOutsideInfo* shapeOutside = lastFloat->renderer()->shapeOutsideInfo()) {
-                LayoutUnit lineTopInShapeCoordinates = logicalTop - logicalTopForFloat(lastFloat);
-                shapeOutside->computeSegmentsForLine(lineTopInShapeCoordinates, logicalHeight);
+                shapeOutside->computeSegmentsForContainingBlockLine(logicalTop, logicalTopForFloat(lastFloat), logicalHeight);
                 left += shapeOutside->rightSegmentMarginBoxDelta();
             }
         }
@@ -4546,8 +4545,7 @@ LayoutUnit RenderBlock::logicalRightFloatOffsetForLine(LayoutUnit logicalTop, La
         const FloatingObject* lastFloat = adapter.lastFloat();
         if (offsetMode == ShapeOutsideFloatShapeOffset && lastFloat) {
             if (ShapeOutsideInfo* shapeOutside = lastFloat->renderer()->shapeOutsideInfo()) {
-                LayoutUnit lineTopInShapeCoordinates = logicalTop - logicalTopForFloat(lastFloat);
-                shapeOutside->computeSegmentsForLine(lineTopInShapeCoordinates, logicalHeight);
+                shapeOutside->computeSegmentsForContainingBlockLine(logicalTop, logicalTopForFloat(lastFloat), logicalHeight);
                 rightFloatOffset += shapeOutside->leftSegmentMarginBoxDelta();
             }
         }

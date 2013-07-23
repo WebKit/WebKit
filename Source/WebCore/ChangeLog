@@ -1,3 +1,29 @@
+2013-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: Borders
+        https://bugs.webkit.org/show_bug.cgi?id=118822
+
+        Reviewed by Dean Jackson.
+
+        Converting to the shape coordinate system was not properly accounting
+        for borders and padding. This has been fixed and a new convienence
+        method added because of the added complexity of the conversion.
+
+        Test: csswg/submitted/shapes/shape-outside/shape-outside-floats-square-border-000.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftFloatOffsetForLine): Update to use
+            computeSegmentsForContainingBlockLine to do the coordinate
+            conversion.
+        (WebCore::RenderBlock::logicalRightFloatOffsetForLine): Ditto.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded): Ditto.
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computeSegmentsForContainingBlockLine):
+            Add new method to do the coordinate conversion from the containing
+            block coordinate system to the coordinate system of the shape so
+            that the segments can be correctly calculated.
+
 2013-07-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Remove deprecated and unused compositing settings
