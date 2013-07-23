@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -9,9 +9,14 @@
 
 #include <list>
 #include <set>
+#include <map>
+
+#define GL_APICALL
+#include <GLES2/gl2.h>
 
 #include "compiler/intermediate.h"
 #include "compiler/ParseHelper.h"
+#include "compiler/Uniform.h"
 
 namespace sh
 {
@@ -20,14 +25,16 @@ class UnfoldShortCircuit;
 class OutputHLSL : public TIntermTraverser
 {
   public:
-    explicit OutputHLSL(TParseContext &context);
+    OutputHLSL(TParseContext &context, const ShBuiltInResources& resources, ShShaderOutput outputType);
     ~OutputHLSL();
 
     void output();
 
     TInfoSinkBase &getBodyStream();
+    const ActiveUniforms &getUniforms();
 
     TString typeString(const TType &type);
+    TString textureString(const TType &type);
     static TString qualifierString(TQualifier qualifier);
     static TString arrayString(const TType &type);
     static TString initializer(const TType &type);
@@ -64,6 +71,7 @@ class OutputHLSL : public TIntermTraverser
     TString structLookup(const TString &typeName);
 
     TParseContext &mContext;
+    const ShShaderOutput mOutputType;
     UnfoldShortCircuit *mUnfoldShortCircuit;
     bool mInsideFunction;
 
@@ -72,9 +80,10 @@ class OutputHLSL : public TIntermTraverser
     TInfoSinkBase mBody;
     TInfoSinkBase mFooter;
 
-    std::set<std::string> mReferencedUniforms;
-    std::set<std::string> mReferencedAttributes;
-    std::set<std::string> mReferencedVaryings;
+    typedef std::map<TString, TIntermSymbol*> ReferencedSymbols;
+    ReferencedSymbols mReferencedUniforms;
+    ReferencedSymbols mReferencedAttributes;
+    ReferencedSymbols mReferencedVaryings;
 
     // Parameters determining what goes in the header output
     bool mUsesTexture2D;
@@ -92,11 +101,14 @@ class OutputHLSL : public TIntermTraverser
     bool mUsesTexture2DProjLod0_bias;
     bool mUsesTextureCubeLod0;
     bool mUsesTextureCubeLod0_bias;
+    bool mUsesFragColor;
+    bool mUsesFragData;
     bool mUsesDepthRange;
     bool mUsesFragCoord;
     bool mUsesPointCoord;
     bool mUsesFrontFacing;
     bool mUsesPointSize;
+    bool mUsesFragDepth;
     bool mUsesXor;
     bool mUsesMod1;
     bool mUsesMod2v;
@@ -126,6 +138,8 @@ class OutputHLSL : public TIntermTraverser
     bool mUsesAtan2_3;
     bool mUsesAtan2_4;
 
+    int mNumRenderTargets;
+
     typedef std::set<TString> Constructors;
     Constructors mConstructors;
 
@@ -146,6 +160,18 @@ class OutputHLSL : public TIntermTraverser
     bool mInsideDiscontinuousLoop;
 
     TIntermSymbol *mExcessiveLoopIndex;
+
+    int mUniformRegister;
+    int mSamplerRegister;
+
+    TString registerString(TIntermSymbol *operand);
+    int samplerRegister(TIntermSymbol *sampler);
+    int uniformRegister(TIntermSymbol *uniform);
+    void declareUniform(const TType &type, const TString &name, int index);
+    static GLenum glVariableType(const TType &type);
+    static GLenum glVariablePrecision(const TType &type);
+
+    ActiveUniforms mActiveUniforms;
 };
 }
 

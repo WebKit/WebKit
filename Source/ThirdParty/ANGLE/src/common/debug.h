@@ -99,6 +99,13 @@ namespace gl
     #define UNREACHABLE() ERR("\t! Unreachable reached: %s(%d)\n", __FUNCTION__, __LINE__)
 #endif
 
+// A macro that determines whether an object has a given runtime type.
+#if !defined(NDEBUG) && (!defined(_MSC_VER) || defined(_CPPRTTI))
+#define HAS_DYNAMIC_TYPE(type, obj) (dynamic_cast<type >(obj) != NULL)
+#else
+#define HAS_DYNAMIC_TYPE(type, obj) true
+#endif
+
 // A macro functioning as a compile-time assert to validate constant conditions
 #define META_ASSERT(condition) typedef int COMPILE_TIME_ASSERT_##__LINE__[static_cast<bool>(condition)?1:-1]
 

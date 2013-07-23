@@ -14,10 +14,6 @@
 #endif
 
 #include <windows.h>
-#include <d3d9.h>
-#include <D3Dcompiler.h>
-#include <d3d9types.h>
-#include <mmsystem.h>
 
 #if defined(min)
 #undef min

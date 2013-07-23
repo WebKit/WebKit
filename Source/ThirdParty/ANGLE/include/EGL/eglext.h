@@ -306,6 +306,12 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYSURFACEPOINTERANGLEPROC) (EGLDisplay
 #define EGL_SOFTWARE_DISPLAY_ANGLE ((EGLNativeDisplayType)-1)
 #endif
 
+#ifndef EGL_ANGLE_direct3d_display
+#define EGL_ANGLE_direct3d_display 1
+#define EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE ((EGLNativeDisplayType)-2)
+#define EGL_D3D11_ONLY_DISPLAY_ANGLE ((EGLNativeDisplayType)-3)
+#endif
+
 #ifndef EGL_ANGLE_surface_d3d_texture_2d_share_handle
 #define EGL_ANGLE_surface_d3d_texture_2d_share_handle 1
 #define EGL_D3D_TEXTURE_2D_SHARE_HANDLE_ANGLE	0x3200

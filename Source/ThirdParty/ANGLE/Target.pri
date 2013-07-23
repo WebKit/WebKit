@@ -25,8 +25,8 @@ HEADERS += \
     src/compiler/depgraph/DependencyGraph.h \
     src/compiler/depgraph/DependencyGraphBuilder.h \
     src/compiler/depgraph/DependencyGraphOutput.h \
+    src/compiler/DetectCallDepth.h \
     src/compiler/DetectDiscontinuity.h \
-    src/compiler/DetectRecursion.h \
     src/compiler/Diagnostics.h \
     src/compiler/DirectiveHandler.h \
     src/compiler/ExtensionBehavior.h \
@@ -92,8 +92,8 @@ SOURCES += \
     src/compiler/depgraph/DependencyGraphBuilder.cpp \
     src/compiler/depgraph/DependencyGraphOutput.cpp \
     src/compiler/depgraph/DependencyGraphTraverse.cpp \
+    src/compiler/DetectCallDepth.cpp \
     src/compiler/DetectDiscontinuity.cpp \
-    src/compiler/DetectRecursion.cpp \
     src/compiler/Diagnostics.cpp \
     src/compiler/DirectiveHandler.cpp \
     src/compiler/ForLoopUnroll.cpp \

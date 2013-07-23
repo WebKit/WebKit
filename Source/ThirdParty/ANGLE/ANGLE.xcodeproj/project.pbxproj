@@ -12,8 +12,8 @@
 		49951C0314B7AAB30060E96E /* length_limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0214B7AAB30060E96E /* length_limits.h */; };
 		49951C0914B7AAD80060E96E /* BuiltInFunctionEmulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */; };
 		49951C0A14B7AAD80060E96E /* BuiltInFunctionEmulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */; };
-		49951C0B14B7AAD80060E96E /* DetectRecursion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49951C0714B7AAD80060E96E /* DetectRecursion.cpp */; };
-		49951C0C14B7AAD80060E96E /* DetectRecursion.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0814B7AAD80060E96E /* DetectRecursion.h */; };
+		5CB13FD4179DB3FD001F851D /* DetectCallDepth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FD2179DB3FD001F851D /* DetectCallDepth.cpp */; };
+		5CB13FD5179DB3FD001F851D /* DetectCallDepth.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB13FD3179DB3FD001F851D /* DetectCallDepth.h */; };
 		90D9B10212E11DCB002D4255 /* Compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0F912E11DCB002D4255 /* Compiler.cpp */; };
 		90D9B10312E11DCB002D4255 /* ExtensionBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B0FA12E11DCB002D4255 /* ExtensionBehavior.h */; };
 		90D9B10412E11DCB002D4255 /* glslang_lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0FB12E11DCB002D4255 /* glslang_lex.cpp */; };
@@ -140,8 +140,8 @@
 		49951C0214B7AAB30060E96E /* length_limits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = length_limits.h; sourceTree = "<group>"; };
 		49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltInFunctionEmulator.cpp; sourceTree = "<group>"; };
 		49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltInFunctionEmulator.h; sourceTree = "<group>"; };
-		49951C0714B7AAD80060E96E /* DetectRecursion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetectRecursion.cpp; sourceTree = "<group>"; };
-		49951C0814B7AAD80060E96E /* DetectRecursion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetectRecursion.h; sourceTree = "<group>"; };
+		5CB13FD2179DB3FD001F851D /* DetectCallDepth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetectCallDepth.cpp; sourceTree = "<group>"; };
+		5CB13FD3179DB3FD001F851D /* DetectCallDepth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetectCallDepth.h; sourceTree = "<group>"; };
 		5D7C59C51208C68B001C873E /* ANGLE.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ANGLE.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -399,8 +399,8 @@
 				FB39D2251200F35A00088E69 /* ConstantUnion.h */,
 				FB39D2261200F35A00088E69 /* debug.cpp */,
 				FB39D2271200F35A00088E69 /* debug.h */,
-				49951C0714B7AAD80060E96E /* DetectRecursion.cpp */,
-				49951C0814B7AAD80060E96E /* DetectRecursion.h */,
+				5CB13FD3179DB3FD001F851D /* DetectCallDepth.h */,
+				5CB13FD2179DB3FD001F851D /* DetectCallDepth.cpp */,
 				A26567B0159C21B100398539 /* Diagnostics.cpp */,
 				A26567B1159C21B100398539 /* Diagnostics.h */,
 				A26567B2159C21B100398539 /* DirectiveHandler.cpp */,
@@ -530,7 +530,6 @@
 				A265683A159C23E100398539 /* DependencyGraph.h in Headers */,
 				A265683C159C23E100398539 /* DependencyGraphBuilder.h in Headers */,
 				A265683E159C23E100398539 /* DependencyGraphOutput.h in Headers */,
-				49951C0C14B7AAD80060E96E /* DetectRecursion.h in Headers */,
 				A26567BC159C21B100398539 /* Diagnostics.h in Headers */,
 				A264F8AD16974DED006FAA5A /* DiagnosticsBase.h in Headers */,
 				A26567BE159C21B100398539 /* DirectiveHandler.h in Headers */,
@@ -569,6 +568,7 @@
 				90D9B11812E11DD6002D4255 /* VariableInfo.h in Headers */,
 				A264F8CA16974E2A006FAA5A /* VariablePacker.h in Headers */,
 				90D9B11A12E11DD6002D4255 /* VersionGLSL.h in Headers */,
+				5CB13FD5179DB3FD001F851D /* DetectCallDepth.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,7 +635,6 @@
 				A265683B159C23E100398539 /* DependencyGraphBuilder.cpp in Sources */,
 				A265683D159C23E100398539 /* DependencyGraphOutput.cpp in Sources */,
 				A265683F159C23E100398539 /* DependencyGraphTraverse.cpp in Sources */,
-				49951C0B14B7AAD80060E96E /* DetectRecursion.cpp in Sources */,
 				A26567BB159C21B100398539 /* Diagnostics.cpp in Sources */,
 				A264F8AC16974DED006FAA5A /* DiagnosticsBase.cpp in Sources */,
 				A26567BD159C21B100398539 /* DirectiveHandler.cpp in Sources */,
@@ -681,6 +680,7 @@
 				90D9B11712E11DD6002D4255 /* VariableInfo.cpp in Sources */,
 				A264F8C916974E2A006FAA5A /* VariablePacker.cpp in Sources */,
 				90D9B11912E11DD6002D4255 /* VersionGLSL.cpp in Sources */,
+				5CB13FD4179DB3FD001F851D /* DetectCallDepth.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -14,513 +14,413 @@
 
 #include "compiler/intermediate.h"
 
-//============================================================================
-//
-// Prototypes for built-in functions seen by both vertex and fragment shaders.
-//
-//============================================================================
-static TString BuiltInFunctionsCommon(const ShBuiltInResources& resources)
+void InsertBuiltInFunctions(ShShaderType type, ShShaderSpec spec, const ShBuiltInResources &resources, TSymbolTable &symbolTable)
 {
-    TString s;
+    TType *float1 = new TType(EbtFloat, EbpUndefined, EvqGlobal, 1);
+    TType *float2 = new TType(EbtFloat, EbpUndefined, EvqGlobal, 2);
+    TType *float3 = new TType(EbtFloat, EbpUndefined, EvqGlobal, 3);
+    TType *float4 = new TType(EbtFloat, EbpUndefined, EvqGlobal, 4);
+
+    TType *int2 = new TType(EbtInt, EbpUndefined, EvqGlobal, 2);
+    TType *int3 = new TType(EbtInt, EbpUndefined, EvqGlobal, 3);
+    TType *int4 = new TType(EbtInt, EbpUndefined, EvqGlobal, 4);
 
     //
     // Angle and Trigonometric Functions.
     //
-    s.append(TString("float radians(float degrees);"));
-    s.append(TString("vec2  radians(vec2  degrees);"));
-    s.append(TString("vec3  radians(vec3  degrees);"));
-    s.append(TString("vec4  radians(vec4  degrees);"));
+    symbolTable.insertBuiltIn(float1, "radians", float1);
+    symbolTable.insertBuiltIn(float2, "radians", float2);
+    symbolTable.insertBuiltIn(float3, "radians", float3);
+    symbolTable.insertBuiltIn(float4, "radians", float4);
 
-    s.append(TString("float degrees(float radians);"));
-    s.append(TString("vec2  degrees(vec2  radians);"));
-    s.append(TString("vec3  degrees(vec3  radians);"));
-    s.append(TString("vec4  degrees(vec4  radians);"));
+    symbolTable.insertBuiltIn(float1, "degrees", float1);
+    symbolTable.insertBuiltIn(float2, "degrees", float2);
+    symbolTable.insertBuiltIn(float3, "degrees", float3);
+    symbolTable.insertBuiltIn(float4, "degrees", float4);
 
-    s.append(TString("float sin(float angle);"));
-    s.append(TString("vec2  sin(vec2  angle);"));
-    s.append(TString("vec3  sin(vec3  angle);"));
-    s.append(TString("vec4  sin(vec4  angle);"));
+    symbolTable.insertBuiltIn(float1, "sin", float1);
+    symbolTable.insertBuiltIn(float2, "sin", float2);
+    symbolTable.insertBuiltIn(float3, "sin", float3);
+    symbolTable.insertBuiltIn(float4, "sin", float4);
 
-    s.append(TString("float cos(float angle);"));
-    s.append(TString("vec2  cos(vec2  angle);"));
-    s.append(TString("vec3  cos(vec3  angle);"));
-    s.append(TString("vec4  cos(vec4  angle);"));
+    symbolTable.insertBuiltIn(float1, "cos", float1);
+    symbolTable.insertBuiltIn(float2, "cos", float2);
+    symbolTable.insertBuiltIn(float3, "cos", float3);
+    symbolTable.insertBuiltIn(float4, "cos", float4);
 
-    s.append(TString("float tan(float angle);"));
-    s.append(TString("vec2  tan(vec2  angle);"));
-    s.append(TString("vec3  tan(vec3  angle);"));
-    s.append(TString("vec4  tan(vec4  angle);"));
+    symbolTable.insertBuiltIn(float1, "tan", float1);
+    symbolTable.insertBuiltIn(float2, "tan", float2);
+    symbolTable.insertBuiltIn(float3, "tan", float3);
+    symbolTable.insertBuiltIn(float4, "tan", float4);
 
-    s.append(TString("float asin(float x);"));
-    s.append(TString("vec2  asin(vec2  x);"));
-    s.append(TString("vec3  asin(vec3  x);"));
-    s.append(TString("vec4  asin(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "asin", float1);
+    symbolTable.insertBuiltIn(float2, "asin", float2);
+    symbolTable.insertBuiltIn(float3, "asin", float3);
+    symbolTable.insertBuiltIn(float4, "asin", float4);
 
-    s.append(TString("float acos(float x);"));
-    s.append(TString("vec2  acos(vec2  x);"));
-    s.append(TString("vec3  acos(vec3  x);"));
-    s.append(TString("vec4  acos(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "acos", float1);
+    symbolTable.insertBuiltIn(float2, "acos", float2);
+    symbolTable.insertBuiltIn(float3, "acos", float3);
+    symbolTable.insertBuiltIn(float4, "acos", float4);
 
-    s.append(TString("float atan(float y, float x);"));
-    s.append(TString("vec2  atan(vec2  y, vec2  x);"));
-    s.append(TString("vec3  atan(vec3  y, vec3  x);"));
-    s.append(TString("vec4  atan(vec4  y, vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "atan", float1, float1);
+    symbolTable.insertBuiltIn(float2, "atan", float2, float2);
+    symbolTable.insertBuiltIn(float3, "atan", float3, float3);
+    symbolTable.insertBuiltIn(float4, "atan", float4, float4);
 
-    s.append(TString("float atan(float y_over_x);"));
-    s.append(TString("vec2  atan(vec2  y_over_x);"));
-    s.append(TString("vec3  atan(vec3  y_over_x);"));
-    s.append(TString("vec4  atan(vec4  y_over_x);"));
+    symbolTable.insertBuiltIn(float1, "atan", float1);
+    symbolTable.insertBuiltIn(float2, "atan", float2);
+    symbolTable.insertBuiltIn(float3, "atan", float3);
+    symbolTable.insertBuiltIn(float4, "atan", float4);
 
     //
     // Exponential Functions.
     //
-    s.append(TString("float pow(float x, float y);"));
-    s.append(TString("vec2  pow(vec2  x, vec2  y);"));
-    s.append(TString("vec3  pow(vec3  x, vec3  y);"));
-    s.append(TString("vec4  pow(vec4  x, vec4  y);"));
+    symbolTable.insertBuiltIn(float1, "pow", float1, float1);
+    symbolTable.insertBuiltIn(float2, "pow", float2, float2);
+    symbolTable.insertBuiltIn(float3, "pow", float3, float3);
+    symbolTable.insertBuiltIn(float4, "pow", float4, float4);
 
-    s.append(TString("float exp(float x);"));
-    s.append(TString("vec2  exp(vec2  x);"));
-    s.append(TString("vec3  exp(vec3  x);"));
-    s.append(TString("vec4  exp(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "exp", float1);
+    symbolTable.insertBuiltIn(float2, "exp", float2);
+    symbolTable.insertBuiltIn(float3, "exp", float3);
+    symbolTable.insertBuiltIn(float4, "exp", float4);
 
-    s.append(TString("float log(float x);"));
-    s.append(TString("vec2  log(vec2  x);"));
-    s.append(TString("vec3  log(vec3  x);"));
-    s.append(TString("vec4  log(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "log", float1);
+    symbolTable.insertBuiltIn(float2, "log", float2);
+    symbolTable.insertBuiltIn(float3, "log", float3);
+    symbolTable.insertBuiltIn(float4, "log", float4);
 
-    s.append(TString("float exp2(float x);"));
-    s.append(TString("vec2  exp2(vec2  x);"));
-    s.append(TString("vec3  exp2(vec3  x);"));
-    s.append(TString("vec4  exp2(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "exp2", float1);
+    symbolTable.insertBuiltIn(float2, "exp2", float2);
+    symbolTable.insertBuiltIn(float3, "exp2", float3);
+    symbolTable.insertBuiltIn(float4, "exp2", float4);
 
-    s.append(TString("float log2(float x);"));
-    s.append(TString("vec2  log2(vec2  x);"));
-    s.append(TString("vec3  log2(vec3  x);"));
-    s.append(TString("vec4  log2(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "log2", float1);
+    symbolTable.insertBuiltIn(float2, "log2", float2);
+    symbolTable.insertBuiltIn(float3, "log2", float3);
+    symbolTable.insertBuiltIn(float4, "log2", float4);
 
-    s.append(TString("float sqrt(float x);"));
-    s.append(TString("vec2  sqrt(vec2  x);"));
-    s.append(TString("vec3  sqrt(vec3  x);"));
-    s.append(TString("vec4  sqrt(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "sqrt", float1);
+    symbolTable.insertBuiltIn(float2, "sqrt", float2);
+    symbolTable.insertBuiltIn(float3, "sqrt", float3);
+    symbolTable.insertBuiltIn(float4, "sqrt", float4);
 
-    s.append(TString("float inversesqrt(float x);"));
-    s.append(TString("vec2  inversesqrt(vec2  x);"));
-    s.append(TString("vec3  inversesqrt(vec3  x);"));
-    s.append(TString("vec4  inversesqrt(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "inversesqrt", float1);
+    symbolTable.insertBuiltIn(float2, "inversesqrt", float2);
+    symbolTable.insertBuiltIn(float3, "inversesqrt", float3);
+    symbolTable.insertBuiltIn(float4, "inversesqrt", float4);
 
     //
     // Common Functions.
     //
-    s.append(TString("float abs(float x);"));
-    s.append(TString("vec2  abs(vec2  x);"));
-    s.append(TString("vec3  abs(vec3  x);"));
-    s.append(TString("vec4  abs(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "abs", float1);
+    symbolTable.insertBuiltIn(float2, "abs", float2);
+    symbolTable.insertBuiltIn(float3, "abs", float3);
+    symbolTable.insertBuiltIn(float4, "abs", float4);
 
-    s.append(TString("float sign(float x);"));
-    s.append(TString("vec2  sign(vec2  x);"));
-    s.append(TString("vec3  sign(vec3  x);"));
-    s.append(TString("vec4  sign(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "sign", float1);
+    symbolTable.insertBuiltIn(float2, "sign", float2);
+    symbolTable.insertBuiltIn(float3, "sign", float3);
+    symbolTable.insertBuiltIn(float4, "sign", float4);
 
-    s.append(TString("float floor(float x);"));
-    s.append(TString("vec2  floor(vec2  x);"));
-    s.append(TString("vec3  floor(vec3  x);"));
-    s.append(TString("vec4  floor(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "floor", float1);
+    symbolTable.insertBuiltIn(float2, "floor", float2);
+    symbolTable.insertBuiltIn(float3, "floor", float3);
+    symbolTable.insertBuiltIn(float4, "floor", float4);
 
-    s.append(TString("float ceil(float x);"));
-    s.append(TString("vec2  ceil(vec2  x);"));
-    s.append(TString("vec3  ceil(vec3  x);"));
-    s.append(TString("vec4  ceil(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "ceil", float1);
+    symbolTable.insertBuiltIn(float2, "ceil", float2);
+    symbolTable.insertBuiltIn(float3, "ceil", float3);
+    symbolTable.insertBuiltIn(float4, "ceil", float4);
 
-    s.append(TString("float fract(float x);"));
-    s.append(TString("vec2  fract(vec2  x);"));
-    s.append(TString("vec3  fract(vec3  x);"));
-    s.append(TString("vec4  fract(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "fract", float1);
+    symbolTable.insertBuiltIn(float2, "fract", float2);
+    symbolTable.insertBuiltIn(float3, "fract", float3);
+    symbolTable.insertBuiltIn(float4, "fract", float4);
 
-    s.append(TString("float mod(float x, float y);"));
-    s.append(TString("vec2  mod(vec2  x, float y);"));
-    s.append(TString("vec3  mod(vec3  x, float y);"));
-    s.append(TString("vec4  mod(vec4  x, float y);"));
-    s.append(TString("vec2  mod(vec2  x, vec2  y);"));
-    s.append(TString("vec3  mod(vec3  x, vec3  y);"));
-    s.append(TString("vec4  mod(vec4  x, vec4  y);"));
+    symbolTable.insertBuiltIn(float1, "mod", float1, float1);
+    symbolTable.insertBuiltIn(float2, "mod", float2, float1);
+    symbolTable.insertBuiltIn(float3, "mod", float3, float1);
+    symbolTable.insertBuiltIn(float4, "mod", float4, float1);
+    symbolTable.insertBuiltIn(float2, "mod", float2, float2);
+    symbolTable.insertBuiltIn(float3, "mod", float3, float3);
+    symbolTable.insertBuiltIn(float4, "mod", float4, float4);
 
-    s.append(TString("float min(float x, float y);"));
-    s.append(TString("vec2  min(vec2  x, float y);"));
-    s.append(TString("vec3  min(vec3  x, float y);"));
-    s.append(TString("vec4  min(vec4  x, float y);"));
-    s.append(TString("vec2  min(vec2  x, vec2  y);"));
-    s.append(TString("vec3  min(vec3  x, vec3  y);"));
-    s.append(TString("vec4  min(vec4  x, vec4  y);"));
+    symbolTable.insertBuiltIn(float1, "min", float1, float1);
+    symbolTable.insertBuiltIn(float2, "min", float2, float1);
+    symbolTable.insertBuiltIn(float3, "min", float3, float1);
+    symbolTable.insertBuiltIn(float4, "min", float4, float1);
+    symbolTable.insertBuiltIn(float2, "min", float2, float2);
+    symbolTable.insertBuiltIn(float3, "min", float3, float3);
+    symbolTable.insertBuiltIn(float4, "min", float4, float4);
 
-    s.append(TString("float max(float x, float y);"));
-    s.append(TString("vec2  max(vec2  x, float y);"));
-    s.append(TString("vec3  max(vec3  x, float y);"));
-    s.append(TString("vec4  max(vec4  x, float y);"));
-    s.append(TString("vec2  max(vec2  x, vec2  y);"));
-    s.append(TString("vec3  max(vec3  x, vec3  y);"));
-    s.append(TString("vec4  max(vec4  x, vec4  y);"));
+    symbolTable.insertBuiltIn(float1, "max", float1, float1);
+    symbolTable.insertBuiltIn(float2, "max", float2, float1);
+    symbolTable.insertBuiltIn(float3, "max", float3, float1);
+    symbolTable.insertBuiltIn(float4, "max", float4, float1);
+    symbolTable.insertBuiltIn(float2, "max", float2, float2);
+    symbolTable.insertBuiltIn(float3, "max", float3, float3);
+    symbolTable.insertBuiltIn(float4, "max", float4, float4);
 
-    s.append(TString("float clamp(float x, float minVal, float maxVal);"));
-    s.append(TString("vec2  clamp(vec2  x, float minVal, float maxVal);"));
-    s.append(TString("vec3  clamp(vec3  x, float minVal, float maxVal);"));
-    s.append(TString("vec4  clamp(vec4  x, float minVal, float maxVal);"));
-    s.append(TString("vec2  clamp(vec2  x, vec2  minVal, vec2  maxVal);"));
-    s.append(TString("vec3  clamp(vec3  x, vec3  minVal, vec3  maxVal);"));
-    s.append(TString("vec4  clamp(vec4  x, vec4  minVal, vec4  maxVal);"));
+    symbolTable.insertBuiltIn(float1, "clamp", float1, float1, float1);
+    symbolTable.insertBuiltIn(float2, "clamp", float2, float1, float1);
+    symbolTable.insertBuiltIn(float3, "clamp", float3, float1, float1);
+    symbolTable.insertBuiltIn(float4, "clamp", float4, float1, float1);
+    symbolTable.insertBuiltIn(float2, "clamp", float2, float2, float2);
+    symbolTable.insertBuiltIn(float3, "clamp", float3, float3, float3);
+    symbolTable.insertBuiltIn(float4, "clamp", float4, float4, float4);
 
-    s.append(TString("float mix(float x, float y, float a);"));
-    s.append(TString("vec2  mix(vec2  x, vec2  y, float a);"));
-    s.append(TString("vec3  mix(vec3  x, vec3  y, float a);"));
-    s.append(TString("vec4  mix(vec4  x, vec4  y, float a);"));
-    s.append(TString("vec2  mix(vec2  x, vec2  y, vec2  a);"));
-    s.append(TString("vec3  mix(vec3  x, vec3  y, vec3  a);"));
-    s.append(TString("vec4  mix(vec4  x, vec4  y, vec4  a);"));
+    symbolTable.insertBuiltIn(float1, "mix", float1, float1, float1);
+    symbolTable.insertBuiltIn(float2, "mix", float2, float2, float1);
+    symbolTable.insertBuiltIn(float3, "mix", float3, float3, float1);
+    symbolTable.insertBuiltIn(float4, "mix", float4, float4, float1);
+    symbolTable.insertBuiltIn(float2, "mix", float2, float2, float2);
+    symbolTable.insertBuiltIn(float3, "mix", float3, float3, float3);
+    symbolTable.insertBuiltIn(float4, "mix", float4, float4, float4);
 
-    s.append(TString("float step(float edge, float x);"));
-    s.append(TString("vec2  step(vec2  edge, vec2  x);"));
-    s.append(TString("vec3  step(vec3  edge, vec3  x);"));
-    s.append(TString("vec4  step(vec4  edge, vec4  x);"));
-    s.append(TString("vec2  step(float edge, vec2  x);"));
-    s.append(TString("vec3  step(float edge, vec3  x);"));
-    s.append(TString("vec4  step(float edge, vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "step", float1, float1);
+    symbolTable.insertBuiltIn(float2, "step", float2, float2);
+    symbolTable.insertBuiltIn(float3, "step", float3, float3);
+    symbolTable.insertBuiltIn(float4, "step", float4, float4);
+    symbolTable.insertBuiltIn(float2, "step", float1, float2);
+    symbolTable.insertBuiltIn(float3, "step", float1, float3);
+    symbolTable.insertBuiltIn(float4, "step", float1, float4);
 
-    s.append(TString("float smoothstep(float edge0, float edge1, float x);"));
-    s.append(TString("vec2  smoothstep(vec2  edge0, vec2  edge1, vec2  x);"));
-    s.append(TString("vec3  smoothstep(vec3  edge0, vec3  edge1, vec3  x);"));
-    s.append(TString("vec4  smoothstep(vec4  edge0, vec4  edge1, vec4  x);"));
-    s.append(TString("vec2  smoothstep(float edge0, float edge1, vec2  x);"));
-    s.append(TString("vec3  smoothstep(float edge0, float edge1, vec3  x);"));
-    s.append(TString("vec4  smoothstep(float edge0, float edge1, vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "smoothstep", float1, float1, float1);
+    symbolTable.insertBuiltIn(float2, "smoothstep", float2, float2, float2);
+    symbolTable.insertBuiltIn(float3, "smoothstep", float3, float3, float3);
+    symbolTable.insertBuiltIn(float4, "smoothstep", float4, float4, float4);
+    symbolTable.insertBuiltIn(float2, "smoothstep", float1, float1, float2);
+    symbolTable.insertBuiltIn(float3, "smoothstep", float1, float1, float3);
+    symbolTable.insertBuiltIn(float4, "smoothstep", float1, float1, float4);
 
     //
     // Geometric Functions.
     //
-    s.append(TString("float length(float x);"));
-    s.append(TString("float length(vec2  x);"));
-    s.append(TString("float length(vec3  x);"));
-    s.append(TString("float length(vec4  x);"));
+    symbolTable.insertBuiltIn(float1, "length", float1);
+    symbolTable.insertBuiltIn(float1, "length", float2);
+    symbolTable.insertBuiltIn(float1, "length", float3);
+    symbolTable.insertBuiltIn(float1, "length", float4);
 
-    s.append(TString("float distance(float p0, float p1);"));
-    s.append(TString("float distance(vec2  p0, vec2  p1);"));
-    s.append(TString("float distance(vec3  p0, vec3  p1);"));
-    s.append(TString("float distance(vec4  p0, vec4  p1);"));
+    symbolTable.insertBuiltIn(float1, "distance", float1, float1);
+    symbolTable.insertBuiltIn(float1, "distance", float2, float2);
+    symbolTable.insertBuiltIn(float1, "distance", float3, float3);
+    symbolTable.insertBuiltIn(float1, "distance", float4, float4);
 
-    s.append(TString("float dot(float x, float y);"));
-    s.append(TString("float dot(vec2  x, vec2  y);"));
-    s.append(TString("float dot(vec3  x, vec3  y);"));
-    s.append(TString("float dot(vec4  x, vec4  y);"));
+    symbolTable.insertBuiltIn(float1, "dot", float1, float1);
+    symbolTable.insertBuiltIn(float1, "dot", float2, float2);
+    symbolTable.insertBuiltIn(float1, "dot", float3, float3);
+    symbolTable.insertBuiltIn(float1, "dot", float4, float4);
 
-    s.append(TString("vec3 cross(vec3 x, vec3 y);"));
-    s.append(TString("float normalize(float x);"));
-    s.append(TString("vec2  normalize(vec2  x);"));
-    s.append(TString("vec3  normalize(vec3  x);"));
-    s.append(TString("vec4  normalize(vec4  x);"));
+    symbolTable.insertBuiltIn(float3, "cross", float3, float3);
+    symbolTable.insertBuiltIn(float1, "normalize", float1);
+    symbolTable.insertBuiltIn(float2, "normalize", float2);
+    symbolTable.insertBuiltIn(float3, "normalize", float3);
+    symbolTable.insertBuiltIn(float4, "normalize", float4);
 
-    s.append(TString("float faceforward(float N, float I, float Nref);"));
-    s.append(TString("vec2  faceforward(vec2  N, vec2  I, vec2  Nref);"));
-    s.append(TString("vec3  faceforward(vec3  N, vec3  I, vec3  Nref);"));
-    s.append(TString("vec4  faceforward(vec4  N, vec4  I, vec4  Nref);"));
+    symbolTable.insertBuiltIn(float1, "faceforward", float1, float1, float1);
+    symbolTable.insertBuiltIn(float2, "faceforward", float2, float2, float2);
+    symbolTable.insertBuiltIn(float3, "faceforward", float3, float3, float3);
+    symbolTable.insertBuiltIn(float4, "faceforward", float4, float4, float4);
 
-    s.append(TString("float reflect(float I, float N);"));
-    s.append(TString("vec2  reflect(vec2  I, vec2  N);"));
-    s.append(TString("vec3  reflect(vec3  I, vec3  N);"));
-    s.append(TString("vec4  reflect(vec4  I, vec4  N);"));
+    symbolTable.insertBuiltIn(float1, "reflect", float1, float1);
+    symbolTable.insertBuiltIn(float2, "reflect", float2, float2);
+    symbolTable.insertBuiltIn(float3, "reflect", float3, float3);
+    symbolTable.insertBuiltIn(float4, "reflect", float4, float4);
 
-    s.append(TString("float refract(float I, float N, float eta);"));
-    s.append(TString("vec2  refract(vec2  I, vec2  N, float eta);"));
-    s.append(TString("vec3  refract(vec3  I, vec3  N, float eta);"));
-    s.append(TString("vec4  refract(vec4  I, vec4  N, float eta);"));
+    symbolTable.insertBuiltIn(float1, "refract", float1, float1, float1);
+    symbolTable.insertBuiltIn(float2, "refract", float2, float2, float1);
+    symbolTable.insertBuiltIn(float3, "refract", float3, float3, float1);
+    symbolTable.insertBuiltIn(float4, "refract", float4, float4, float1);
+
+    TType *mat2 = new TType(EbtFloat, EbpUndefined, EvqGlobal, 2, true);
+    TType *mat3 = new TType(EbtFloat, EbpUndefined, EvqGlobal, 3, true);
+    TType *mat4 = new TType(EbtFloat, EbpUndefined, EvqGlobal, 4, true);
 
     //
     // Matrix Functions.
     //
-    s.append(TString("mat2 matrixCompMult(mat2 x, mat2 y);"));
-    s.append(TString("mat3 matrixCompMult(mat3 x, mat3 y);"));
-    s.append(TString("mat4 matrixCompMult(mat4 x, mat4 y);"));
+    symbolTable.insertBuiltIn(mat2, "matrixCompMult", mat2, mat2);
+    symbolTable.insertBuiltIn(mat3, "matrixCompMult", mat3, mat3);
+    symbolTable.insertBuiltIn(mat4, "matrixCompMult", mat4, mat4);
+
+    TType *bool1 = new TType(EbtBool, EbpUndefined, EvqGlobal, 1);
+    TType *bool2 = new TType(EbtBool, EbpUndefined, EvqGlobal, 2);
+    TType *bool3 = new TType(EbtBool, EbpUndefined, EvqGlobal, 3);
+    TType *bool4 = new TType(EbtBool, EbpUndefined, EvqGlobal, 4);
 
     //
     // Vector relational functions.
     //
-    s.append(TString("bvec2 lessThan(vec2 x, vec2 y);"));
-    s.append(TString("bvec3 lessThan(vec3 x, vec3 y);"));
-    s.append(TString("bvec4 lessThan(vec4 x, vec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "lessThan", float2, float2);
+    symbolTable.insertBuiltIn(bool3, "lessThan", float3, float3);
+    symbolTable.insertBuiltIn(bool4, "lessThan", float4, float4);
 
-    s.append(TString("bvec2 lessThan(ivec2 x, ivec2 y);"));
-    s.append(TString("bvec3 lessThan(ivec3 x, ivec3 y);"));
-    s.append(TString("bvec4 lessThan(ivec4 x, ivec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "lessThan", int2, int2);
+    symbolTable.insertBuiltIn(bool3, "lessThan", int3, int3);
+    symbolTable.insertBuiltIn(bool4, "lessThan", int4, int4);
 
-    s.append(TString("bvec2 lessThanEqual(vec2 x, vec2 y);"));
-    s.append(TString("bvec3 lessThanEqual(vec3 x, vec3 y);"));
-    s.append(TString("bvec4 lessThanEqual(vec4 x, vec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "lessThanEqual", float2, float2);
+    symbolTable.insertBuiltIn(bool3, "lessThanEqual", float3, float3);
+    symbolTable.insertBuiltIn(bool4, "lessThanEqual", float4, float4);
 
-    s.append(TString("bvec2 lessThanEqual(ivec2 x, ivec2 y);"));
-    s.append(TString("bvec3 lessThanEqual(ivec3 x, ivec3 y);"));
-    s.append(TString("bvec4 lessThanEqual(ivec4 x, ivec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "lessThanEqual", int2, int2);
+    symbolTable.insertBuiltIn(bool3, "lessThanEqual", int3, int3);
+    symbolTable.insertBuiltIn(bool4, "lessThanEqual", int4, int4);
 
-    s.append(TString("bvec2 greaterThan(vec2 x, vec2 y);"));
-    s.append(TString("bvec3 greaterThan(vec3 x, vec3 y);"));
-    s.append(TString("bvec4 greaterThan(vec4 x, vec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "greaterThan", float2, float2);
+    symbolTable.insertBuiltIn(bool3, "greaterThan", float3, float3);
+    symbolTable.insertBuiltIn(bool4, "greaterThan", float4, float4);
 
-    s.append(TString("bvec2 greaterThan(ivec2 x, ivec2 y);"));
-    s.append(TString("bvec3 greaterThan(ivec3 x, ivec3 y);"));
-    s.append(TString("bvec4 greaterThan(ivec4 x, ivec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "greaterThan", int2, int2);
+    symbolTable.insertBuiltIn(bool3, "greaterThan", int3, int3);
+    symbolTable.insertBuiltIn(bool4, "greaterThan", int4, int4);
 
-    s.append(TString("bvec2 greaterThanEqual(vec2 x, vec2 y);"));
-    s.append(TString("bvec3 greaterThanEqual(vec3 x, vec3 y);"));
-    s.append(TString("bvec4 greaterThanEqual(vec4 x, vec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "greaterThanEqual", float2, float2);
+    symbolTable.insertBuiltIn(bool3, "greaterThanEqual", float3, float3);
+    symbolTable.insertBuiltIn(bool4, "greaterThanEqual", float4, float4);
 
-    s.append(TString("bvec2 greaterThanEqual(ivec2 x, ivec2 y);"));
-    s.append(TString("bvec3 greaterThanEqual(ivec3 x, ivec3 y);"));
-    s.append(TString("bvec4 greaterThanEqual(ivec4 x, ivec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "greaterThanEqual", int2, int2);
+    symbolTable.insertBuiltIn(bool3, "greaterThanEqual", int3, int3);
+    symbolTable.insertBuiltIn(bool4, "greaterThanEqual", int4, int4);
 
-    s.append(TString("bvec2 equal(vec2 x, vec2 y);"));
-    s.append(TString("bvec3 equal(vec3 x, vec3 y);"));
-    s.append(TString("bvec4 equal(vec4 x, vec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "equal", float2, float2);
+    symbolTable.insertBuiltIn(bool3, "equal", float3, float3);
+    symbolTable.insertBuiltIn(bool4, "equal", float4, float4);
 
-    s.append(TString("bvec2 equal(ivec2 x, ivec2 y);"));
-    s.append(TString("bvec3 equal(ivec3 x, ivec3 y);"));
-    s.append(TString("bvec4 equal(ivec4 x, ivec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "equal", int2, int2);
+    symbolTable.insertBuiltIn(bool3, "equal", int3, int3);
+    symbolTable.insertBuiltIn(bool4, "equal", int4, int4);
 
-    s.append(TString("bvec2 equal(bvec2 x, bvec2 y);"));
-    s.append(TString("bvec3 equal(bvec3 x, bvec3 y);"));
-    s.append(TString("bvec4 equal(bvec4 x, bvec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "equal", bool2, bool2);
+    symbolTable.insertBuiltIn(bool3, "equal", bool3, bool3);
+    symbolTable.insertBuiltIn(bool4, "equal", bool4, bool4);
 
-    s.append(TString("bvec2 notEqual(vec2 x, vec2 y);"));
-    s.append(TString("bvec3 notEqual(vec3 x, vec3 y);"));
-    s.append(TString("bvec4 notEqual(vec4 x, vec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "notEqual", float2, float2);
+    symbolTable.insertBuiltIn(bool3, "notEqual", float3, float3);
+    symbolTable.insertBuiltIn(bool4, "notEqual", float4, float4);
 
-    s.append(TString("bvec2 notEqual(ivec2 x, ivec2 y);"));
-    s.append(TString("bvec3 notEqual(ivec3 x, ivec3 y);"));
-    s.append(TString("bvec4 notEqual(ivec4 x, ivec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "notEqual", int2, int2);
+    symbolTable.insertBuiltIn(bool3, "notEqual", int3, int3);
+    symbolTable.insertBuiltIn(bool4, "notEqual", int4, int4);
 
-    s.append(TString("bvec2 notEqual(bvec2 x, bvec2 y);"));
-    s.append(TString("bvec3 notEqual(bvec3 x, bvec3 y);"));
-    s.append(TString("bvec4 notEqual(bvec4 x, bvec4 y);"));
+    symbolTable.insertBuiltIn(bool2, "notEqual", bool2, bool2);
+    symbolTable.insertBuiltIn(bool3, "notEqual", bool3, bool3);
+    symbolTable.insertBuiltIn(bool4, "notEqual", bool4, bool4);
 
-    s.append(TString("bool any(bvec2 x);"));
-    s.append(TString("bool any(bvec3 x);"));
-    s.append(TString("bool any(bvec4 x);"));
+    symbolTable.insertBuiltIn(bool1, "any", bool2);
+    symbolTable.insertBuiltIn(bool1, "any", bool3);
+    symbolTable.insertBuiltIn(bool1, "any", bool4);
 
-    s.append(TString("bool all(bvec2 x);"));
-    s.append(TString("bool all(bvec3 x);"));
-    s.append(TString("bool all(bvec4 x);"));
+    symbolTable.insertBuiltIn(bool1, "all", bool2);
+    symbolTable.insertBuiltIn(bool1, "all", bool3);
+    symbolTable.insertBuiltIn(bool1, "all", bool4);
 
-    s.append(TString("bvec2 not(bvec2 x);"));
-    s.append(TString("bvec3 not(bvec3 x);"));
-    s.append(TString("bvec4 not(bvec4 x);"));
+    symbolTable.insertBuiltIn(bool2, "not", bool2);
+    symbolTable.insertBuiltIn(bool3, "not", bool3);
+    symbolTable.insertBuiltIn(bool4, "not", bool4);
+
+    TType *sampler2D = new TType(EbtSampler2D, EbpUndefined, EvqGlobal, 1);
+    TType *samplerCube = new TType(EbtSamplerCube, EbpUndefined, EvqGlobal, 1);
 
     //
-    // Texture Functions.
+    // Texture Functions for GLSL ES 1.0
     //
-    s.append(TString("vec4 texture2D(sampler2D sampler, vec2 coord);"));
-    s.append(TString("vec4 texture2DProj(sampler2D sampler, vec3 coord);"));
-    s.append(TString("vec4 texture2DProj(sampler2D sampler, vec4 coord);"));
-    s.append(TString("vec4 textureCube(samplerCube sampler, vec3 coord);"));
+    symbolTable.insertBuiltIn(float4, "texture2D", sampler2D, float2);
+    symbolTable.insertBuiltIn(float4, "texture2DProj", sampler2D, float3);
+    symbolTable.insertBuiltIn(float4, "texture2DProj", sampler2D, float4);
+    symbolTable.insertBuiltIn(float4, "textureCube", samplerCube, float3);
 
-    if (resources.OES_EGL_image_external) {
-        s.append(TString("vec4 texture2D(samplerExternalOES sampler, vec2 coord);"));
-        s.append(TString("vec4 texture2DProj(samplerExternalOES sampler, vec3 coord);"));
-        s.append(TString("vec4 texture2DProj(samplerExternalOES sampler, vec4 coord);"));
+    if (resources.OES_EGL_image_external)
+    {
+        TType *samplerExternalOES = new TType(EbtSamplerExternalOES, EbpUndefined, EvqGlobal, 1);
+
+        symbolTable.insertBuiltIn(float4, "texture2D", samplerExternalOES, float2);
+        symbolTable.insertBuiltIn(float4, "texture2DProj", samplerExternalOES, float3);
+        symbolTable.insertBuiltIn(float4, "texture2DProj", samplerExternalOES, float4);
     }
 
-    if (resources.ARB_texture_rectangle) {
-        s.append(TString("vec4 texture2DRect(sampler2DRect sampler, vec2 coord);"));
-        s.append(TString("vec4 texture2DRectProj(sampler2DRect sampler, vec3 coord);"));
-        s.append(TString("vec4 texture2DRectProj(sampler2DRect sampler, vec4 coord);"));
+    if (resources.ARB_texture_rectangle)
+    {
+        TType *sampler2DRect = new TType(EbtSampler2DRect, EbpUndefined, EvqGlobal, 1);
+
+        symbolTable.insertBuiltIn(float4, "texture2DRect", sampler2DRect, float2);
+        symbolTable.insertBuiltIn(float4, "texture2DRectProj", sampler2DRect, float3);
+        symbolTable.insertBuiltIn(float4, "texture2DRectProj", sampler2DRect, float4);
     }
 
-    //
-    // Noise functions.
-    //
-    //s.append(TString("float noise1(float x);"));
-    //s.append(TString("float noise1(vec2  x);"));
-    //s.append(TString("float noise1(vec3  x);"));
-    //s.append(TString("float noise1(vec4  x);"));
+    if (type == SH_FRAGMENT_SHADER)
+    {
+        symbolTable.insertBuiltIn(float4, "texture2D", sampler2D, float2, float1);
+        symbolTable.insertBuiltIn(float4, "texture2DProj", sampler2D, float3, float1);
+        symbolTable.insertBuiltIn(float4, "texture2DProj", sampler2D, float4, float1);
+        symbolTable.insertBuiltIn(float4, "textureCube", samplerCube, float3, float1);
 
-    //s.append(TString("vec2 noise2(float x);"));
-    //s.append(TString("vec2 noise2(vec2  x);"));
-    //s.append(TString("vec2 noise2(vec3  x);"));
-    //s.append(TString("vec2 noise2(vec4  x);"));
+        if (resources.OES_standard_derivatives)
+        {
+            symbolTable.insertBuiltIn(float1, "dFdx", float1);
+            symbolTable.insertBuiltIn(float2, "dFdx", float2);
+            symbolTable.insertBuiltIn(float3, "dFdx", float3);
+            symbolTable.insertBuiltIn(float4, "dFdx", float4);
+            
+            symbolTable.insertBuiltIn(float1, "dFdy", float1);
+            symbolTable.insertBuiltIn(float2, "dFdy", float2);
+            symbolTable.insertBuiltIn(float3, "dFdy", float3);
+            symbolTable.insertBuiltIn(float4, "dFdy", float4);
 
-    //s.append(TString("vec3 noise3(float x);"));
-    //s.append(TString("vec3 noise3(vec2  x);"));
-    //s.append(TString("vec3 noise3(vec3  x);"));
-    //s.append(TString("vec3 noise3(vec4  x);"));
-
-    //s.append(TString("vec4 noise4(float x);"));
-    //s.append(TString("vec4 noise4(vec2  x);"));
-    //s.append(TString("vec4 noise4(vec3  x);"));
-    //s.append(TString("vec4 noise4(vec4  x);"));
-
-    return s;
-}
-
-//============================================================================
-//
-// Prototypes for built-in functions seen by vertex shaders only.
-//
-//============================================================================
-static TString BuiltInFunctionsVertex(const ShBuiltInResources& resources)
-{
-    TString s;
-
-    //
-    // Geometric Functions.
-    //
-    //s.append(TString("vec4 ftransform();"));
-
-    //
-    // Texture Functions.
-    //
-    s.append(TString("vec4 texture2DLod(sampler2D sampler, vec2 coord, float lod);"));
-    s.append(TString("vec4 texture2DProjLod(sampler2D sampler, vec3 coord, float lod);"));
-    s.append(TString("vec4 texture2DProjLod(sampler2D sampler, vec4 coord, float lod);"));
-    s.append(TString("vec4 textureCubeLod(samplerCube sampler, vec3 coord, float lod);"));
-
-    return s;
-}
-
-//============================================================================
-//
-// Prototypes for built-in functions seen by fragment shaders only.
-//
-//============================================================================
-static TString BuiltInFunctionsFragment(const ShBuiltInResources& resources)
-{
-    TString s;
-
-    //
-    // Texture Functions.
-    //
-    s.append(TString("vec4 texture2D(sampler2D sampler, vec2 coord, float bias);"));
-    s.append(TString("vec4 texture2DProj(sampler2D sampler, vec3 coord, float bias);"));
-    s.append(TString("vec4 texture2DProj(sampler2D sampler, vec4 coord, float bias);"));
-    s.append(TString("vec4 textureCube(samplerCube sampler, vec3 coord, float bias);"));
-
-    if (resources.OES_standard_derivatives) {
-        s.append(TString("float dFdx(float p);"));
-        s.append(TString("vec2  dFdx(vec2  p);"));
-        s.append(TString("vec3  dFdx(vec3  p);"));
-        s.append(TString("vec4  dFdx(vec4  p);"));
-
-        s.append(TString("float dFdy(float p);"));
-        s.append(TString("vec2  dFdy(vec2  p);"));
-        s.append(TString("vec3  dFdy(vec3  p);"));
-        s.append(TString("vec4  dFdy(vec4  p);"));
-
-        s.append(TString("float fwidth(float p);"));
-        s.append(TString("vec2  fwidth(vec2  p);"));
-        s.append(TString("vec3  fwidth(vec3  p);"));
-        s.append(TString("vec4  fwidth(vec4  p);"));
+            symbolTable.insertBuiltIn(float1, "fwidth", float1);
+            symbolTable.insertBuiltIn(float2, "fwidth", float2);
+            symbolTable.insertBuiltIn(float3, "fwidth", float3);
+            symbolTable.insertBuiltIn(float4, "fwidth", float4);
+        }
     }
 
-    return s;
-}
-
-//============================================================================
-//
-// Standard uniforms.
-//
-//============================================================================
-static TString StandardUniforms()
-{
-    TString s;
+    if(type == SH_VERTEX_SHADER)
+    {
+        symbolTable.insertBuiltIn(float4, "texture2DLod", sampler2D, float2, float1);
+        symbolTable.insertBuiltIn(float4, "texture2DProjLod", sampler2D, float3, float1);
+        symbolTable.insertBuiltIn(float4, "texture2DProjLod", sampler2D, float4, float1);
+        symbolTable.insertBuiltIn(float4, "textureCubeLod", samplerCube, float3, float1);
+    }
 
     //
     // Depth range in window coordinates
     //
-    s.append(TString("struct gl_DepthRangeParameters {"));
-    s.append(TString("    highp float near;"));        // n
-    s.append(TString("    highp float far;"));         // f
-    s.append(TString("    highp float diff;"));        // f - n
-    s.append(TString("};"));
-    s.append(TString("uniform gl_DepthRangeParameters gl_DepthRange;"));
+    TFieldList *fields = NewPoolTFieldList();
+    TField *near = new TField(new TType(EbtFloat, EbpHigh, EvqGlobal, 1), NewPoolTString("near"));
+    TField *far = new TField(new TType(EbtFloat, EbpHigh, EvqGlobal, 1), NewPoolTString("far"));
+    TField *diff = new TField(new TType(EbtFloat, EbpHigh, EvqGlobal, 1), NewPoolTString("diff"));
+    fields->push_back(near);
+    fields->push_back(far);
+    fields->push_back(diff);
+    TStructure *depthRangeStruct = new TStructure(NewPoolTString("gl_DepthRangeParameters"), fields);
+    TVariable *depthRangeParameters = new TVariable(&depthRangeStruct->name(), depthRangeStruct, true);
+    symbolTable.insert(*depthRangeParameters);
+    TVariable *depthRange = new TVariable(NewPoolTString("gl_DepthRange"), TType(depthRangeStruct));
+    depthRange->setQualifier(EvqUniform);
+    symbolTable.insert(*depthRange);
 
-    return s;
-}
-
-//============================================================================
-//
-// Default precision for vertex shaders.
-//
-//============================================================================
-static TString DefaultPrecisionVertex()
-{
-    TString s;
-
-    s.append(TString("precision highp int;"));
-    s.append(TString("precision highp float;"));
-
-    return s;
-}
-
-//============================================================================
-//
-// Default precision for fragment shaders.
-//
-//============================================================================
-static TString DefaultPrecisionFragment()
-{
-    TString s;
-
-    s.append(TString("precision mediump int;"));
-    // No default precision for float in fragment shaders
-
-    return s;
-}
-
-//============================================================================
-//
-// Implementation dependent built-in constants.
-//
-//============================================================================
-static TString BuiltInConstants(ShShaderSpec spec, const ShBuiltInResources &resources)
-{
-    TStringStream s;
-
-    s << "const int gl_MaxVertexAttribs = " << resources.MaxVertexAttribs << ";";
-    s << "const int gl_MaxVertexUniformVectors = " << resources.MaxVertexUniformVectors << ";";
-
-    s << "const int gl_MaxVaryingVectors = " << resources.MaxVaryingVectors << ";";
-    s << "const int gl_MaxVertexTextureImageUnits = " << resources.MaxVertexTextureImageUnits << ";";
-    s << "const int gl_MaxCombinedTextureImageUnits = " << resources.MaxCombinedTextureImageUnits << ";";
-    s << "const int gl_MaxTextureImageUnits = " << resources.MaxTextureImageUnits << ";";
-    s << "const int gl_MaxFragmentUniformVectors = " << resources.MaxFragmentUniformVectors << ";";
+    //
+    // Implementation dependent built-in constants.
+    //
+    symbolTable.insertConstInt("gl_MaxVertexAttribs", resources.MaxVertexAttribs);
+    symbolTable.insertConstInt("gl_MaxVertexUniformVectors", resources.MaxVertexUniformVectors);
+    symbolTable.insertConstInt("gl_MaxVaryingVectors", resources.MaxVaryingVectors);
+    symbolTable.insertConstInt("gl_MaxVertexTextureImageUnits", resources.MaxVertexTextureImageUnits);
+    symbolTable.insertConstInt("gl_MaxCombinedTextureImageUnits", resources.MaxCombinedTextureImageUnits);
+    symbolTable.insertConstInt("gl_MaxTextureImageUnits", resources.MaxTextureImageUnits);
+    symbolTable.insertConstInt("gl_MaxFragmentUniformVectors", resources.MaxFragmentUniformVectors);
 
     if (spec != SH_CSS_SHADERS_SPEC)
-        s << "const int gl_MaxDrawBuffers = " << resources.MaxDrawBuffers << ";";
-
-    return s.str();
-}
-
-void TBuiltIns::initialize(ShShaderType type, ShShaderSpec spec,
-                           const ShBuiltInResources& resources)
-{
-    switch (type) {
-    case SH_FRAGMENT_SHADER:
-        builtInStrings.push_back(DefaultPrecisionFragment());
-        builtInStrings.push_back(BuiltInFunctionsCommon(resources));
-        builtInStrings.push_back(BuiltInFunctionsFragment(resources));
-        builtInStrings.push_back(StandardUniforms());
-        break;
-
-    case SH_VERTEX_SHADER:
-        builtInStrings.push_back(DefaultPrecisionVertex());
-        builtInStrings.push_back(BuiltInFunctionsCommon(resources));
-        builtInStrings.push_back(BuiltInFunctionsVertex(resources));
-        builtInStrings.push_back(StandardUniforms());
-        break;
-
-    default: assert(false && "Language not supported");
+    {
+        symbolTable.insertConstInt("gl_MaxDrawBuffers", resources.MaxDrawBuffers);
     }
-
-    builtInStrings.push_back(BuiltInConstants(spec, resources));
 }
 
 void IdentifyBuiltIns(ShShaderType type, ShShaderSpec spec,
-                      const ShBuiltInResources& resources,
-                      TSymbolTable& symbolTable)
+                      const ShBuiltInResources &resources,
+                      TSymbolTable &symbolTable)
 {
     //
     // First, insert some special built-in variables that are not in 
@@ -539,6 +439,10 @@ void IdentifyBuiltIns(ShShaderType type, ShShaderSpec spec,
         if (spec != SH_CSS_SHADERS_SPEC) {
             symbolTable.insert(*new TVariable(NewPoolTString("gl_FragColor"),                   TType(EbtFloat, EbpMedium, EvqFragColor,   4)));
             symbolTable.insert(*new TVariable(NewPoolTString("gl_FragData[gl_MaxDrawBuffers]"), TType(EbtFloat, EbpMedium, EvqFragData,    4)));
+            if (resources.EXT_frag_depth) {
+                symbolTable.insert(*new TVariable(NewPoolTString("gl_FragDepthEXT"),            TType(EbtFloat, resources.FragmentPrecisionHigh ? EbpHigh : EbpMedium, EvqFragDepth, 1)));
+                symbolTable.relateToExtension("gl_FragDepthEXT", "GL_EXT_frag_depth");
+            }
         } else {
             symbolTable.insert(*new TVariable(NewPoolTString("css_MixColor"),                   TType(EbtFloat, EbpMedium, EvqGlobal,      4)));
             symbolTable.insert(*new TVariable(NewPoolTString("css_ColorMatrix"),                TType(EbtFloat, EbpMedium, EvqGlobal,      4, true)));
@@ -560,8 +464,6 @@ void IdentifyBuiltIns(ShShaderType type, ShShaderSpec spec,
     // expected to be resolved through a library of functions, versus as
     // operations.
     //
-    symbolTable.relateToOperator("not",              EOpVectorLogicalNot);
-
     symbolTable.relateToOperator("matrixCompMult",   EOpMul);
 
     symbolTable.relateToOperator("equal",            EOpVectorEqual);
@@ -612,6 +514,7 @@ void IdentifyBuiltIns(ShShaderType type, ShShaderSpec spec,
     
     symbolTable.relateToOperator("any",          EOpAny);
     symbolTable.relateToOperator("all",          EOpAll);
+    symbolTable.relateToOperator("not",          EOpVectorLogicalNot);
 
     // Map language-specific operators.
     switch(type) {
@@ -656,4 +559,6 @@ void InitExtensionBehavior(const ShBuiltInResources& resources,
         extBehavior["GL_ARB_texture_rectangle"] = EBhUndefined;
     if (resources.EXT_draw_buffers)
         extBehavior["GL_EXT_draw_buffers"] = EBhUndefined;
+    if (resources.EXT_frag_depth)
+        extBehavior["GL_EXT_frag_depth"] = EBhUndefined;
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2011 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2012 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -14,6 +14,7 @@
 #include "compiler/InitializeDll.h"
 #include "compiler/preprocessor/length_limits.h"
 #include "compiler/ShHandle.h"
+#include "compiler/TranslatorHLSL.h"
 
 //
 // This is the platform independent interface between an OGL driver
@@ -126,6 +127,7 @@ void ShInitBuiltInResources(ShBuiltInResources* resources)
     resources->OES_EGL_image_external = 0;
     resources->ARB_texture_rectangle = 0;
     resources->EXT_draw_buffers = 0;
+    resources->EXT_frag_depth = 0;
 
     // Disable highp precision in fragment shader by default.
     resources->FragmentPrecisionHigh = 0;
@@ -350,4 +352,22 @@ void ShGetNameHashingEntry(const ShHandle handle,
     strncpy(hashedName, it->second.c_str(), len);
     // To be on the safe side in case the source is longer than expected.
     hashedName[len - 1] = '\0';
+}
+
+void ShGetInfoPointer(const ShHandle handle, ShShaderInfo pname, void** params)
+{
+    if (!handle || !params)
+        return;
+
+    TShHandleBase* base = static_cast<TShHandleBase*>(handle);
+    TranslatorHLSL* translator = base->getAsTranslatorHLSL();
+    if (!translator) return;
+
+    switch(pname)
+    {
+    case SH_ACTIVE_UNIFORMS_ARRAY:
+        *params = (void*)&translator->getUniforms();
+        break;
+    default: UNREACHABLE();
+    }
 }

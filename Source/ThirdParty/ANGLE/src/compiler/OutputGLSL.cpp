@@ -19,3 +19,17 @@ bool TOutputGLSL::writeVariablePrecision(TPrecision)
 {
     return false;
 }
+
+void TOutputGLSL::visitSymbol(TIntermSymbol* node)
+{
+    TInfoSinkBase& out = objSink();
+
+    if (node->getSymbol() == "gl_FragDepthEXT")
+    {
+        out << "gl_FragDepth";
+    }
+    else
+    {
+        TOutputGLSLBase::visitSymbol(node);
+    }
+}

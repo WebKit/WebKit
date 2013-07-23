@@ -6,8 +6,8 @@
 
 #include "compiler/InfoSink.h"
 
-void TInfoSinkBase::prefix(TPrefixType message) {
-    switch(message) {
+void TInfoSinkBase::prefix(TPrefixType p) {
+    switch(p) {
         case EPrefixNone:
             break;
         case EPrefixWarning:
@@ -31,29 +31,24 @@ void TInfoSinkBase::prefix(TPrefixType message) {
     }
 }
 
-void TInfoSinkBase::location(TSourceLoc loc) {
-    int string = 0, line = 0;
-    DecodeSourceLoc(loc, &string, &line);
-
+void TInfoSinkBase::location(int file, int line) {
     TPersistStringStream stream;
     if (line)
-        stream << string << ":" << line;
+        stream << file << ":" << line;
     else
-        stream << string << ":? ";
+        stream << file << ":? ";
     stream << ": ";
 
     sink.append(stream.str());
 }
 
-void TInfoSinkBase::message(TPrefixType message, const char* s) {
-    prefix(message);
-    sink.append(s);
-    sink.append("\n");
+void TInfoSinkBase::location(const TSourceLoc& loc) {
+    location(loc.first_file, loc.first_line);
 }
 
-void TInfoSinkBase::message(TPrefixType message, const char* s, TSourceLoc loc) {
-    prefix(message);
+void TInfoSinkBase::message(TPrefixType p, const TSourceLoc& loc, const char* m) {
+    prefix(p);
     location(loc);
-    sink.append(s);
+    sink.append(m);
     sink.append("\n");
 }

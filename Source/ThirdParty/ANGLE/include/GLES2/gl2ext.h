@@ -556,6 +556,44 @@ typedef void* GLeglImageOES;
 #define GL_COLOR_ATTACHMENT15_NV                                0x8CEF
 #endif
 
+/* GL_EXT_draw_buffers */
+#ifndef GL_EXT_draw_buffers
+#define GL_MAX_DRAW_BUFFERS_EXT                                  0x8824
+#define GL_DRAW_BUFFER0_EXT                                      0x8825
+#define GL_DRAW_BUFFER1_EXT                                      0x8826
+#define GL_DRAW_BUFFER2_EXT                                      0x8827
+#define GL_DRAW_BUFFER3_EXT                                      0x8828
+#define GL_DRAW_BUFFER4_EXT                                      0x8829
+#define GL_DRAW_BUFFER5_EXT                                      0x882A
+#define GL_DRAW_BUFFER6_EXT                                      0x882B
+#define GL_DRAW_BUFFER7_EXT                                      0x882C
+#define GL_DRAW_BUFFER8_EXT                                      0x882D
+#define GL_DRAW_BUFFER9_EXT                                      0x882E
+#define GL_DRAW_BUFFER10_EXT                                     0x882F
+#define GL_DRAW_BUFFER11_EXT                                     0x8830
+#define GL_DRAW_BUFFER12_EXT                                     0x8831
+#define GL_DRAW_BUFFER13_EXT                                     0x8832
+#define GL_DRAW_BUFFER14_EXT                                     0x8833
+#define GL_DRAW_BUFFER15_EXT                                     0x8834
+#define GL_COLOR_ATTACHMENT0_EXT                                 0x8CE0
+#define GL_COLOR_ATTACHMENT1_EXT                                 0x8CE1
+#define GL_COLOR_ATTACHMENT2_EXT                                 0x8CE2
+#define GL_COLOR_ATTACHMENT3_EXT                                 0x8CE3
+#define GL_COLOR_ATTACHMENT4_EXT                                 0x8CE4
+#define GL_COLOR_ATTACHMENT5_EXT                                 0x8CE5
+#define GL_COLOR_ATTACHMENT6_EXT                                 0x8CE6
+#define GL_COLOR_ATTACHMENT7_EXT                                 0x8CE7
+#define GL_COLOR_ATTACHMENT8_EXT                                 0x8CE8
+#define GL_COLOR_ATTACHMENT9_EXT                                 0x8CE9
+#define GL_COLOR_ATTACHMENT10_EXT                                0x8CEA
+#define GL_COLOR_ATTACHMENT11_EXT                                0x8CEB
+#define GL_COLOR_ATTACHMENT12_EXT                                0x8CEC
+#define GL_COLOR_ATTACHMENT13_EXT                                0x8CED
+#define GL_COLOR_ATTACHMENT14_EXT                                0x8CEE
+#define GL_COLOR_ATTACHMENT15_EXT                                0x8CEF
+#define GL_MAX_COLOR_ATTACHMENTS_EXT                             0x8CDF
+#endif
+
 /* GL_NV_fbo_color_attachments */
 #ifndef GL_NV_fbo_color_attachments
 #define GL_MAX_COLOR_ATTACHMENTS_NV                             0x8CDF
@@ -1329,6 +1367,14 @@ typedef void (GL_APIENTRYP PFNGLCOVERAGEOPERATIONNVPROC) (GLenum operation);
 GL_APICALL void GL_APIENTRY glDrawBuffersNV (GLsizei n, const GLenum *bufs);
 #endif
 typedef void (GL_APIENTRYP PFNGLDRAWBUFFERSNVPROC) (GLsizei n, const GLenum *bufs);
+#endif
+
+#ifndef GL_EXT_draw_buffers
+#define GL_EXT_draw_buffers 1
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glDrawBuffersEXT (GLsizei n, const GLenum *bufs);
+#endif
+typedef void (GL_APIENTRYP PFNGLDRAWBUFFERSEXTPROC) (GLsizei n, const GLenum *bufs);
 #endif
 
 /* GL_NV_fbo_color_attachments */

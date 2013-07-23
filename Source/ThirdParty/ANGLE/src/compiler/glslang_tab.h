@@ -86,52 +86,51 @@
      FLOATCONSTANT = 302,
      INTCONSTANT = 303,
      BOOLCONSTANT = 304,
-     FIELD_SELECTION = 305,
-     LEFT_OP = 306,
-     RIGHT_OP = 307,
-     INC_OP = 308,
-     DEC_OP = 309,
-     LE_OP = 310,
-     GE_OP = 311,
-     EQ_OP = 312,
-     NE_OP = 313,
-     AND_OP = 314,
-     OR_OP = 315,
-     XOR_OP = 316,
-     MUL_ASSIGN = 317,
-     DIV_ASSIGN = 318,
-     ADD_ASSIGN = 319,
-     MOD_ASSIGN = 320,
-     LEFT_ASSIGN = 321,
-     RIGHT_ASSIGN = 322,
-     AND_ASSIGN = 323,
-     XOR_ASSIGN = 324,
-     OR_ASSIGN = 325,
-     SUB_ASSIGN = 326,
-     LEFT_PAREN = 327,
-     RIGHT_PAREN = 328,
-     LEFT_BRACKET = 329,
-     RIGHT_BRACKET = 330,
-     LEFT_BRACE = 331,
-     RIGHT_BRACE = 332,
-     DOT = 333,
-     COMMA = 334,
-     COLON = 335,
-     EQUAL = 336,
-     SEMICOLON = 337,
-     BANG = 338,
-     DASH = 339,
-     TILDE = 340,
-     PLUS = 341,
-     STAR = 342,
-     SLASH = 343,
-     PERCENT = 344,
-     LEFT_ANGLE = 345,
-     RIGHT_ANGLE = 346,
-     VERTICAL_BAR = 347,
-     CARET = 348,
-     AMPERSAND = 349,
-     QUESTION = 350
+     LEFT_OP = 305,
+     RIGHT_OP = 306,
+     INC_OP = 307,
+     DEC_OP = 308,
+     LE_OP = 309,
+     GE_OP = 310,
+     EQ_OP = 311,
+     NE_OP = 312,
+     AND_OP = 313,
+     OR_OP = 314,
+     XOR_OP = 315,
+     MUL_ASSIGN = 316,
+     DIV_ASSIGN = 317,
+     ADD_ASSIGN = 318,
+     MOD_ASSIGN = 319,
+     LEFT_ASSIGN = 320,
+     RIGHT_ASSIGN = 321,
+     AND_ASSIGN = 322,
+     XOR_ASSIGN = 323,
+     OR_ASSIGN = 324,
+     SUB_ASSIGN = 325,
+     LEFT_PAREN = 326,
+     RIGHT_PAREN = 327,
+     LEFT_BRACKET = 328,
+     RIGHT_BRACKET = 329,
+     LEFT_BRACE = 330,
+     RIGHT_BRACE = 331,
+     DOT = 332,
+     COMMA = 333,
+     COLON = 334,
+     EQUAL = 335,
+     SEMICOLON = 336,
+     BANG = 337,
+     DASH = 338,
+     TILDE = 339,
+     PLUS = 340,
+     STAR = 341,
+     SLASH = 342,
+     PERCENT = 343,
+     LEFT_ANGLE = 344,
+     RIGHT_ANGLE = 345,
+     VERTICAL_BAR = 346,
+     CARET = 347,
+     AMPERSAND = 348,
+     QUESTION = 349
    };
 #endif
 /* Tokens.  */
@@ -182,52 +181,51 @@
 #define FLOATCONSTANT 302
 #define INTCONSTANT 303
 #define BOOLCONSTANT 304
-#define FIELD_SELECTION 305
-#define LEFT_OP 306
-#define RIGHT_OP 307
-#define INC_OP 308
-#define DEC_OP 309
-#define LE_OP 310
-#define GE_OP 311
-#define EQ_OP 312
-#define NE_OP 313
-#define AND_OP 314
-#define OR_OP 315
-#define XOR_OP 316
-#define MUL_ASSIGN 317
-#define DIV_ASSIGN 318
-#define ADD_ASSIGN 319
-#define MOD_ASSIGN 320
-#define LEFT_ASSIGN 321
-#define RIGHT_ASSIGN 322
-#define AND_ASSIGN 323
-#define XOR_ASSIGN 324
-#define OR_ASSIGN 325
-#define SUB_ASSIGN 326
-#define LEFT_PAREN 327
-#define RIGHT_PAREN 328
-#define LEFT_BRACKET 329
-#define RIGHT_BRACKET 330
-#define LEFT_BRACE 331
-#define RIGHT_BRACE 332
-#define DOT 333
-#define COMMA 334
-#define COLON 335
-#define EQUAL 336
-#define SEMICOLON 337
-#define BANG 338
-#define DASH 339
-#define TILDE 340
-#define PLUS 341
-#define STAR 342
-#define SLASH 343
-#define PERCENT 344
-#define LEFT_ANGLE 345
-#define RIGHT_ANGLE 346
-#define VERTICAL_BAR 347
-#define CARET 348
-#define AMPERSAND 349
-#define QUESTION 350
+#define LEFT_OP 305
+#define RIGHT_OP 306
+#define INC_OP 307
+#define DEC_OP 308
+#define LE_OP 309
+#define GE_OP 310
+#define EQ_OP 311
+#define NE_OP 312
+#define AND_OP 313
+#define OR_OP 314
+#define XOR_OP 315
+#define MUL_ASSIGN 316
+#define DIV_ASSIGN 317
+#define ADD_ASSIGN 318
+#define MOD_ASSIGN 319
+#define LEFT_ASSIGN 320
+#define RIGHT_ASSIGN 321
+#define AND_ASSIGN 322
+#define XOR_ASSIGN 323
+#define OR_ASSIGN 324
+#define SUB_ASSIGN 325
+#define LEFT_PAREN 326
+#define RIGHT_PAREN 327
+#define LEFT_BRACKET 328
+#define RIGHT_BRACKET 329
+#define LEFT_BRACE 330
+#define RIGHT_BRACE 331
+#define DOT 332
+#define COMMA 333
+#define COLON 334
+#define EQUAL 335
+#define SEMICOLON 336
+#define BANG 337
+#define DASH 338
+#define TILDE 339
+#define PLUS 340
+#define STAR 341
+#define SLASH 342
+#define PERCENT 343
+#define LEFT_ANGLE 344
+#define RIGHT_ANGLE 345
+#define VERTICAL_BAR 346
+#define CARET 347
+#define AMPERSAND 348
+#define QUESTION 349
 
 
 
@@ -236,8 +234,9 @@
 typedef union YYSTYPE
 
 {
+#define YYLTYPE TSourceLoc
+#define YYLTYPE_IS_DECLARED 1
     struct {
-        TSourceLoc line;
         union {
             TString *string;
             float f;
@@ -247,7 +246,6 @@ typedef union YYSTYPE
         TSymbol* symbol;
     } lex;
     struct {
-        TSourceLoc line;
         TOperator op;
         union {
             TIntermNode* intermNode;
@@ -261,8 +259,8 @@ typedef union YYSTYPE
             TQualifier qualifier;
             TFunction* function;
             TParameter param;
-            TTypeLine typeLine;
-            TTypeList* typeList;
+            TField* field;
+            TFieldList* fieldList;
         };
     } interm;
 }
@@ -274,5 +272,19 @@ typedef union YYSTYPE
 # define YYSTYPE_IS_TRIVIAL 1
 #endif
 
+
+
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+} YYLTYPE;
+# define yyltype YYLTYPE /* obsolescent; will be withdrawn */
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
+#endif
 
 

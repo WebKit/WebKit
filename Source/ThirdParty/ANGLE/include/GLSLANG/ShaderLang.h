@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2002-2010 The ANGLE Project Authors. All rights reserved.
+// Copyright (c) 2002-2013 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -78,9 +78,11 @@ typedef enum {
 } ShShaderSpec;
 
 typedef enum {
-  SH_ESSL_OUTPUT = 0x8B45,
-  SH_GLSL_OUTPUT = 0x8B46,
-  SH_HLSL_OUTPUT = 0x8B47
+  SH_ESSL_OUTPUT   = 0x8B45,
+  SH_GLSL_OUTPUT   = 0x8B46,
+  SH_HLSL_OUTPUT   = 0x8B47,
+  SH_HLSL9_OUTPUT  = 0x8B47,
+  SH_HLSL11_OUTPUT = 0x8B48
 } ShShaderOutput;
 
 typedef enum {
@@ -116,7 +118,8 @@ typedef enum {
   SH_MAPPED_NAME_MAX_LENGTH      =  0x6000,
   SH_NAME_MAX_LENGTH             =  0x6001,
   SH_HASHED_NAME_MAX_LENGTH      =  0x6002,
-  SH_HASHED_NAMES_COUNT          =  0x6003
+  SH_HASHED_NAMES_COUNT          =  0x6003,
+  SH_ACTIVE_UNIFORMS_ARRAY       =  0x6004
 } ShShaderInfo;
 
 // Compile options.
@@ -159,7 +162,13 @@ typedef enum {
   // vec234, or mat234 type. The ShArrayIndexClampingStrategy enum,
   // specified in the ShBuiltInResources when constructing the
   // compiler, selects the strategy for the clamping implementation.
-  SH_CLAMP_INDIRECT_ARRAY_BOUNDS = 0x1000
+  SH_CLAMP_INDIRECT_ARRAY_BOUNDS = 0x1000,
+
+  // This flag limits the complexity of an expression.
+  SH_LIMIT_EXPRESSION_COMPLEXITY = 0x2000,
+
+  // This flag limits the depth of the call stack.
+  SH_LIMIT_CALL_STACK_DEPTH = 0x4000,
 } ShCompileOptions;
 
 // Defines alternate strategies for implementing array index clamping.
@@ -209,6 +218,7 @@ typedef struct
     int OES_EGL_image_external;
     int ARB_texture_rectangle;
     int EXT_draw_buffers;
+    int EXT_frag_depth;
 
     // Set to 1 if highp precision is supported in the fragment language.
     // Default is 0.
@@ -222,6 +232,12 @@ typedef struct
     // Selects a strategy to use when implementing array index clamping.
     // Default is SH_CLAMP_WITH_CLAMP_INTRINSIC.
     ShArrayIndexClampingStrategy ArrayIndexClampingStrategy;
+
+    // The maximum complexity an expression can be.
+    int MaxExpressionComplexity;
+
+    // The maximum depth a call stack can be.
+    int MaxCallStackDepth;
 } ShBuiltInResources;
 
 //
@@ -248,7 +264,7 @@ typedef void* ShHandle;
 // spec: Specifies the language spec the compiler must conform to -
 //       SH_GLES2_SPEC or SH_WEBGL_SPEC.
 // output: Specifies the output code type - SH_ESSL_OUTPUT, SH_GLSL_OUTPUT,
-//         or SH_HLSL_OUTPUT.
+//         SH_HLSL9_OUTPUT or SH_HLSL11_OUTPUT.
 // resources: Specifies the built-in resources.
 COMPILER_EXPORT ShHandle ShConstructCompiler(
     ShShaderType type,
@@ -410,6 +426,18 @@ COMPILER_EXPORT void ShGetNameHashingEntry(const ShHandle handle,
                                            int index,
                                            char* name,
                                            char* hashedName);
+
+// Returns a parameter from a compiled shader.
+// Parameters:
+// handle: Specifies the compiler
+// pname: Specifies the parameter to query.
+// The following parameters are defined:
+// SH_ACTIVE_UNIFORMS_ARRAY: an STL vector of active uniforms. Valid only for
+//                           HLSL output.
+// params: Requested parameter
+COMPILER_EXPORT void ShGetInfoPointer(const ShHandle handle,
+                                      ShShaderInfo pname,
+                                      void** params);
 
 #ifdef __cplusplus
 }

@@ -1,3 +1,12 @@
+2013-07-23  Alex Christensen  <achristensen@apple.com>
+
+        Updated ANGLE to latest git commit (047373aa3eb408be62be52ade840fa5f11e72337).
+        https://bugs.webkit.org/show_bug.cgi?id=118550
+
+        Reviewed by Dean Jackson.
+
+        * CMakeLists.txt: Renamed DetectRecursion to DetectCallDepth and added Uniform.cpp.
+
 2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
 
         Use Checked<uint32_t, RecordOverflow> instead of CheckedInt in GraphicsContext3D

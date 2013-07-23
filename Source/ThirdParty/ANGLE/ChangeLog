@@ -1,3 +1,1956 @@
+2013-07-23  Alex Christensen  <achristensen@apple.com>
+
+        Updated ANGLE to latest git commit (047373aa3eb408be62be52ade840fa5f11e72337).
+        Added missing ANGLE files except unused tests, extensions, samples, build, and .git directories.
+        Ran Bison after making some changes to fix compile errors (see below).
+
+        https://bugs.webkit.org/show_bug.cgi?id=118550
+
+        Reviewed by Dean Jackson.
+
+        * ANGLE.plist: Updated from svn to git.
+        * ANGLE.xcodeproj/project.pbxproj: Renamed DetectRecursion to DetectCallDepth.
+        * AUTHORS: Added.
+        * CONTRIBUTORS: Added.
+        * DEPS: Added.
+        * GNUmakefile.am: Renamed DetectRecursion to DetectCallDepth and added Uniform.cpp.
+        * LICENSE: Added.
+        * README.chromium: Added.
+        * Target.pri: Renamed DetectRecursion to DetectCallDepth.
+        * codereview.settings: Added.
+        * include/EGL/eglext.h:
+        * include/GLES2/gl2ext.h:
+        * include/GLSLANG/ShaderLang.h:
+        * src/ANGLE.sln: Added.
+        * src/build_angle.gyp: Added.
+        * src/build_angle.gypi: Added.
+        * src/common/RefCountObject.cpp:
+        * src/common/angleutils.h:
+        (ArraySize):
+        (SafeRelease):
+        * src/common/debug.cpp:
+        * src/common/debug.h:
+        * src/common/system.h:
+        * src/common/version.h:
+        * src/compiler/64bit-lexer-safety.patch: Added.
+        * src/compiler/BaseTypes.h:
+        (getQualifierString):
+        * src/compiler/CodeGenHLSL.cpp:
+        (ConstructCompiler):
+        * src/compiler/Common.h:
+        * src/compiler/Compiler.cpp:
+        (TCompiler::TCompiler):
+        (TCompiler::Init):
+        (TCompiler::compile):
+        (TCompiler::InitBuiltInSymbolTable):
+        (TCompiler::detectCallDepth):
+        (TCompiler::limitExpressionComplexity):
+        (TCompiler::getResources):
+        * src/compiler/ConstantUnion.h:
+        (ConstantUnion::ConstantUnion):
+        * src/compiler/DetectCallDepth.cpp: Added.
+        (DetectCallDepth::FunctionNode::FunctionNode):
+        (DetectCallDepth::FunctionNode::getName):
+        (DetectCallDepth::FunctionNode::addCallee):
+        (DetectCallDepth::FunctionNode::detectCallDepth):
+        (DetectCallDepth::FunctionNode::reset):
+        (DetectCallDepth::DetectCallDepth):
+        (DetectCallDepth::~DetectCallDepth):
+        (DetectCallDepth::visitAggregate):
+        (DetectCallDepth::checkExceedsMaxDepth):
+        (DetectCallDepth::resetFunctionNodes):
+        (DetectCallDepth::detectCallDepthForFunction):
+        (DetectCallDepth::detectCallDepth):
+        (DetectCallDepth::findFunctionByName):
+        * src/compiler/DetectCallDepth.h: Added.
+        (DetectCallDepth::getInfoSink):
+        * src/compiler/DetectRecursion.cpp: Removed.
+        * src/compiler/DetectRecursion.h: Removed.
+        * src/compiler/Diagnostics.cpp:
+        (TDiagnostics::writeInfo):
+        * src/compiler/ForLoopUnroll.cpp:
+        (ForLoopUnroll::evaluateIntConstant):
+        * src/compiler/InfoSink.cpp:
+        (TInfoSinkBase::prefix):
+        (TInfoSinkBase::location):
+        (TInfoSinkBase::message):
+        * src/compiler/InfoSink.h:
+        * src/compiler/Initialize.cpp:
+        (InsertBuiltInFunctions):
+        (IdentifyBuiltIns):
+        (InitExtensionBehavior):
+        * src/compiler/Initialize.h:
+        * src/compiler/Intermediate.cpp:
+        (TIntermediate::addSymbol):
+        (TIntermediate::addBinaryMath):
+        (TIntermediate::addAssign):
+        (TIntermediate::addIndex):
+        (TIntermediate::addUnaryMath):
+        (TIntermediate::setAggregateOperator):
+        (TIntermediate::addConversion):
+        (TIntermediate::growAggregate):
+        (TIntermediate::makeAggregate):
+        (TIntermediate::addSelection):
+        (TIntermediate::addComma):
+        (TIntermediate::addConstantUnion):
+        (TIntermediate::addSwizzle):
+        (TIntermediate::addLoop):
+        (TIntermediate::addBranch):
+        (TIntermUnary::promote):
+        (TIntermBinary::promote):
+        (CompareStruct):
+        (CompareStructure):
+        (TIntermConstantUnion::fold): Added implied static_casts to fix compiling errors on Mac.
+        (TIntermediate::promoteConstantUnion):
+        * src/compiler/OutputGLSL.cpp:
+        (TOutputGLSL::visitSymbol):
+        * src/compiler/OutputGLSL.h:
+        * src/compiler/OutputGLSLBase.cpp:
+        (TOutputGLSLBase::writeVariableType):
+        (TOutputGLSLBase::writeConstantUnion):
+        (TOutputGLSLBase::visitBinary):
+        (TOutputGLSLBase::visitAggregate):
+        (TOutputGLSLBase::getTypeName):
+        (TOutputGLSLBase::structDeclared):
+        (TOutputGLSLBase::declareStruct):
+        * src/compiler/OutputGLSLBase.h:
+        * src/compiler/OutputHLSL.cpp:
+        (sh::OutputHLSL::OutputHLSL):
+        (sh::OutputHLSL::getUniforms):
+        (sh::OutputHLSL::header):
+        (sh::OutputHLSL::visitSymbol):
+        (sh::OutputHLSL::visitBinary):
+        (sh::OutputHLSL::visitAggregate):
+        (sh::OutputHLSL::visitSelection):
+        (sh::OutputHLSL::visitLoop):
+        (sh::OutputHLSL::handleExcessiveLoop):
+        (sh::OutputHLSL::argumentString):
+        (sh::OutputHLSL::typeString):
+        (sh::OutputHLSL::textureString):
+        (sh::OutputHLSL::initializer):
+        (sh::OutputHLSL::addConstructor):
+        (sh::OutputHLSL::writeConstantUnion):
+        (sh::OutputHLSL::decorateUniform):
+        (sh::OutputHLSL::decorateField):
+        (sh::OutputHLSL::registerString):
+        (sh::OutputHLSL::samplerRegister):
+        (sh::OutputHLSL::uniformRegister):
+        (sh::OutputHLSL::declareUniform):
+        (sh::OutputHLSL::glVariableType):
+        (sh::OutputHLSL::glVariablePrecision):
+        * src/compiler/OutputHLSL.h:
+        * src/compiler/ParseHelper.cpp:
+        (TParseContext::parseVectorFields):
+        (TParseContext::parseMatrixFields):
+        (TParseContext::error):
+        (TParseContext::warning):
+        (TParseContext::assignError):
+        (TParseContext::unaryOpError):
+        (TParseContext::binaryOpError):
+        (TParseContext::precisionErrorCheck):
+        (TParseContext::lValueErrorCheck):
+        (TParseContext::globalErrorCheck):
+        (TParseContext::reservedErrorCheck):
+        (TParseContext::constructorErrorCheck):
+        (TParseContext::voidErrorCheck):
+        (TParseContext::boolErrorCheck):
+        (TParseContext::samplerErrorCheck):
+        (TParseContext::structQualifierErrorCheck):
+        (TParseContext::parameterSamplerErrorCheck):
+        (TParseContext::containsSampler):
+        (TParseContext::arraySizeErrorCheck):
+        (TParseContext::arrayQualifierErrorCheck):
+        (TParseContext::arrayTypeErrorCheck):
+        (TParseContext::arrayErrorCheck):
+        (TParseContext::nonInitConstErrorCheck):
+        (TParseContext::nonInitErrorCheck):
+        (TParseContext::paramErrorCheck):
+        (TParseContext::extensionErrorCheck):
+        (TParseContext::isExtensionEnabled):
+        Replaced auto with std::map<std::string, TBehavior>::const_iterator to fix Qt and EFL compiling errors.
+        (TParseContext::findFunction):
+        (TParseContext::executeInitializer):
+        (TParseContext::addConstructor):
+        (TParseContext::constructBuiltIn):
+        (TParseContext::constructStruct):
+        (TParseContext::addConstVectorNode):
+        (TParseContext::addConstMatrixNode):
+        (TParseContext::addConstArrayNode):
+        (TParseContext::addConstStruct):
+        (TParseContext::enterStructDeclaration):
+        (TParseContext::structNestingErrorCheck):
+        (TParseContext::addIndexExpression):
+        * src/compiler/ParseHelper.h:
+        (TParseContext::TParseContext):
+        (TParseContext::pragma):
+        * src/compiler/PoolAlloc.cpp:
+        (TPoolAllocator::allocate):
+        * src/compiler/ShHandle.h:
+        (TShHandleBase::getAsTranslatorHLSL):
+        * src/compiler/ShaderLang.cpp:
+        (ShInitBuiltInResources):
+        (ShGetInfoPointer):
+        * src/compiler/SymbolTable.cpp:
+        (TType::TType):
+        (TType::buildMangledName):
+        (TType::getObjectSize):
+        (TStructure::containsArrays):
+        (TStructure::buildMangledName):
+        (TStructure::calculateObjectSize):
+        (TStructure::calculateDeepestNesting):
+        (TSymbolTableLevel::relateToExtension):
+        * src/compiler/SymbolTable.h:
+        (TSymbol::relateToExtension):
+        (TSymbol::getExtension):
+        (TVariable::TVariable):
+        (TVariable::setQualifier):
+        (TVariable::shareConstPointer):
+        (TSymbolTableLevel::insert):
+        (TSymbolTable::insertConstInt):
+        (TSymbolTable::insertBuiltIn):
+        * src/compiler/TranslatorHLSL.cpp:
+        (TranslatorHLSL::TranslatorHLSL):
+        (TranslatorHLSL::translate):
+        * src/compiler/TranslatorHLSL.h:
+        (TranslatorHLSL::getAsTranslatorHLSL):
+        (TranslatorHLSL::getUniforms):
+        * src/compiler/Types.h: Removed enum bit fields to fix gcc compiler errors.
+        (TField::TField):
+        (TField::type):
+        (TField::name):
+        (NewPoolTFieldList):
+        (TStructure::TStructure):
+        (TStructure::name):
+        (TStructure::fields):
+        (TStructure::mangledName):
+        (TStructure::objectSize):
+        (TStructure::deepestNesting):
+        (TType::TType):
+        (TType::elementRegisterCount):
+        (TType::totalRegisterCount):
+        (TType::clearArrayness):
+        (TType::getStruct):
+        (TType::setStruct):
+        (TType::getMangledName):
+        (TType::getDeepestStructNesting):
+        (TType::isStructureContainingArrays):
+        (TPublicType::setBasic):
+        * src/compiler/Uniform.cpp: Added.
+        (sh::Uniform::Uniform):
+        * src/compiler/Uniform.h: Added.
+        * src/compiler/VariableInfo.cpp:
+        (getUserDefinedVariableInfo):
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y: Moved YYLTYPE definition into %union to work with Bison 2.3.
+        * src/compiler/glslang_lex.cpp:
+        (yy_get_previous_state):
+        (yy_try_NUL_trans):
+        (yyget_lloc):
+        (yyset_lloc):
+        (string_input):
+        (check_type):
+        (reserved_word):
+        (glslang_scan):
+        * src/compiler/glslang_tab.cpp:
+        (yyerror):
+        * src/compiler/glslang_tab.h:
+        * src/compiler/intermOut.cpp:
+        (TOutputTraverser::visitUnary):
+        (TOutputTraverser::visitAggregate):
+        (TOutputTraverser::visitConstantUnion):
+        * src/compiler/intermediate.h:
+        (TIntermNode::TIntermNode):
+        (TIntermNode::~TIntermNode):
+        (TIntermNode::getLine):
+        (TIntermNode::setLine):
+        (TIntermNode::getAsLoopNode):
+        (TIntermTyped::totalRegisterCount):
+        (TIntermTyped::elementRegisterCount):
+        (TIntermTyped::getArraySize):
+        (TIntermConstantUnion::getIConst):
+        (TIntermConstantUnion::getFConst):
+        (TIntermConstantUnion::getBConst):
+        (TIntermAggregate::TIntermAggregate):
+        (TIntermTraverser::TIntermTraverser):
+        (TIntermTraverser::getMaxDepth):
+        (TIntermTraverser::incrementDepth):
+        * src/compiler/localintermediate.h:
+        * src/compiler/parseConst.cpp:
+        (TConstTraverser::visitSymbol):
+        (TConstTraverser::visitBinary):
+        (TConstTraverser::visitUnary):
+        (TConstTraverser::visitAggregate):
+        (TConstTraverser::visitSelection):
+        (TConstTraverser::visitConstantUnion):
+        (TConstTraverser::visitLoop):
+        (TConstTraverser::visitBranch):
+        (TIntermediate::parseConstTree):
+        * src/compiler/preprocessor/64bit-tokenizer-safety.patch: Added.
+        * src/compiler/preprocessor/Tokenizer.cpp:
+        (yy_get_previous_state):
+        (yy_try_NUL_trans):
+        * src/compiler/preprocessor/Tokenizer.l:
+        * src/compiler/preprocessor/preprocessor.vcxproj: Added.
+        * src/compiler/preprocessor/preprocessor.vcxproj.filters: Added.
+        * src/compiler/timing/RestrictVertexShaderTiming.cpp:
+        (RestrictVertexShaderTiming::visitSymbol):
+        * src/compiler/translator_common.vcxproj: Added.
+        * src/compiler/translator_common.vcxproj.filters: Added.
+        * src/compiler/translator_hlsl.vcxproj: Added.
+        * src/compiler/translator_hlsl.vcxproj.filters: Added.
+        * src/libEGL/Config.cpp: Added.
+        (egl::Config::Config):
+        (egl::Config::getHandle):
+        (egl::SortConfig::SortConfig):
+        (egl::SortConfig::scanForWantedComponents):
+        (egl::SortConfig::wantedComponentsSize):
+        (egl::SortConfig::operator()):
+        (egl::ConfigSet::ConfigSet):
+        (egl::ConfigSet::add):
+        (egl::ConfigSet::size):
+        (egl::ConfigSet::getConfigs):
+        (egl::ConfigSet::get):
+        * src/libEGL/Config.h: Added.
+        * src/libEGL/Display.cpp: Added.
+        (egl::Display::getDisplay):
+        (egl::Display::Display):
+        (egl::Display::~Display):
+        (egl::Display::initialize):
+        (egl::Display::terminate):
+        (egl::Display::getConfigs):
+        (egl::Display::getConfigAttrib):
+        (egl::Display::createWindowSurface):
+        (egl::Display::createOffscreenSurface):
+        (egl::Display::createContext):
+        (egl::Display::restoreLostDevice):
+        (egl::Display::destroySurface):
+        (egl::Display::destroyContext):
+        (egl::Display::notifyDeviceLost):
+        (egl::Display::recreateSwapChains):
+        (egl::Display::isInitialized):
+        (egl::Display::isValidConfig):
+        (egl::Display::isValidContext):
+        (egl::Display::isValidSurface):
+        (egl::Display::hasExistingWindowSurface):
+        (egl::Display::initExtensionString):
+        (egl::Display::getExtensionString):
+        (egl::Display::initVendorString):
+        (egl::Display::getVendorString):
+        * src/libEGL/Display.h: Added.
+        (egl::Display::getRenderer):
+        * src/libEGL/Surface.cpp: Added.
+        (egl::Surface::Surface):
+        (egl::Surface::~Surface):
+        (egl::Surface::initialize):
+        (egl::Surface::release):
+        (egl::Surface::resetSwapChain):
+        (egl::Surface::resizeSwapChain):
+        (egl::Surface::swapRect):
+        (egl::Surface::getWindowHandle):
+        (egl::SurfaceWindowProc):
+        (egl::Surface::subclassWindow):
+        (egl::Surface::unsubclassWindow):
+        (egl::Surface::checkForOutOfDateSwapChain):
+        (egl::Surface::swap):
+        (egl::Surface::postSubBuffer):
+        (egl::Surface::getWidth):
+        (egl::Surface::getHeight):
+        (egl::Surface::isPostSubBufferSupported):
+        (egl::Surface::getSwapChain):
+        (egl::Surface::setSwapInterval):
+        (egl::Surface::getTextureFormat):
+        (egl::Surface::getTextureTarget):
+        (egl::Surface::setBoundTexture):
+        (egl::Surface::getBoundTexture):
+        (egl::Surface::getFormat):
+        * src/libEGL/Surface.h: Added.
+        * src/libEGL/libEGL.cpp: Added.
+        (validateDisplay):
+        (validateConfig):
+        (validateContext):
+        (validateSurface):
+        * src/libEGL/libEGL.def: Added.
+        * src/libEGL/libEGL.rc: Added.
+        * src/libEGL/libEGL.vcxproj: Added.
+        * src/libEGL/libEGL.vcxproj.filters: Added.
+        * src/libEGL/main.cpp: Added.
+        (DllMain):
+        (egl::setCurrentError):
+        (egl::getCurrentError):
+        (egl::setCurrentAPI):
+        (egl::getCurrentAPI):
+        (egl::setCurrentDisplay):
+        (egl::getCurrentDisplay):
+        (egl::setCurrentDrawSurface):
+        (egl::getCurrentDrawSurface):
+        (egl::setCurrentReadSurface):
+        (egl::getCurrentReadSurface):
+        (egl::error):
+        * src/libEGL/main.h: Added.
+        (egl::error):
+        (egl::success):
+        * src/libEGL/resource.h: Added.
+        * src/libGLESv2/BinaryStream.h: Added.
+        (gl::BinaryInputStream::BinaryInputStream):
+        (gl::BinaryInputStream::read):
+        (gl::BinaryInputStream::skip):
+        (gl::BinaryInputStream::offset):
+        (gl::BinaryInputStream::error):
+        (gl::BinaryInputStream::endOfStream):
+        (gl::BinaryOutputStream::BinaryOutputStream):
+        (gl::BinaryOutputStream::write):
+        (gl::BinaryOutputStream::length):
+        (gl::BinaryOutputStream::data):
+        * src/libGLESv2/Buffer.cpp: Added.
+        (gl::Buffer::Buffer):
+        (gl::Buffer::~Buffer):
+        (gl::Buffer::bufferData):
+        (gl::Buffer::bufferSubData):
+        (gl::Buffer::getStorage):
+        (gl::Buffer::size):
+        (gl::Buffer::usage):
+        (gl::Buffer::getStaticVertexBuffer):
+        (gl::Buffer::getStaticIndexBuffer):
+        (gl::Buffer::invalidateStaticData):
+        (gl::Buffer::promoteStaticUsage):
+        * src/libGLESv2/Buffer.h: Added.
+        * src/libGLESv2/Context.cpp: Added.
+        (gl::makeStaticString):
+        (gl::Context::Context):
+        (gl::Context::~Context):
+        (gl::Context::makeCurrent):
+        (gl::Context::markContextLost):
+        (gl::Context::isContextLost):
+        (gl::Context::setClearColor):
+        (gl::Context::setClearDepth):
+        (gl::Context::setClearStencil):
+        (gl::Context::setCullFace):
+        (gl::Context::isCullFaceEnabled):
+        (gl::Context::setCullMode):
+        (gl::Context::setFrontFace):
+        (gl::Context::setDepthTest):
+        (gl::Context::isDepthTestEnabled):
+        (gl::Context::setDepthFunc):
+        (gl::Context::setDepthRange):
+        (gl::Context::setBlend):
+        (gl::Context::isBlendEnabled):
+        (gl::Context::setBlendFactors):
+        (gl::Context::setBlendColor):
+        (gl::Context::setBlendEquation):
+        (gl::Context::setStencilTest):
+        (gl::Context::isStencilTestEnabled):
+        (gl::Context::setStencilParams):
+        (gl::Context::setStencilBackParams):
+        (gl::Context::setStencilWritemask):
+        (gl::Context::setStencilBackWritemask):
+        (gl::Context::setStencilOperations):
+        (gl::Context::setStencilBackOperations):
+        (gl::Context::setPolygonOffsetFill):
+        (gl::Context::isPolygonOffsetFillEnabled):
+        (gl::Context::setPolygonOffsetParams):
+        (gl::Context::setSampleAlphaToCoverage):
+        (gl::Context::isSampleAlphaToCoverageEnabled):
+        (gl::Context::setSampleCoverage):
+        (gl::Context::isSampleCoverageEnabled):
+        (gl::Context::setSampleCoverageParams):
+        (gl::Context::setScissorTest):
+        (gl::Context::isScissorTestEnabled):
+        (gl::Context::setDither):
+        (gl::Context::isDitherEnabled):
+        (gl::Context::setLineWidth):
+        (gl::Context::setGenerateMipmapHint):
+        (gl::Context::setFragmentShaderDerivativeHint):
+        (gl::Context::setViewportParams):
+        (gl::Context::setScissorParams):
+        (gl::Context::setColorMask):
+        (gl::Context::setDepthMask):
+        (gl::Context::setActiveSampler):
+        (gl::Context::getReadFramebufferHandle):
+        (gl::Context::getDrawFramebufferHandle):
+        (gl::Context::getRenderbufferHandle):
+        (gl::Context::getArrayBufferHandle):
+        (gl::Context::getActiveQuery):
+        (gl::Context::setEnableVertexAttribArray):
+        (gl::Context::getVertexAttribState):
+        (gl::Context::setVertexAttribState):
+        (gl::Context::getVertexAttribPointer):
+        (gl::Context::setPackAlignment):
+        (gl::Context::getPackAlignment):
+        (gl::Context::setUnpackAlignment):
+        (gl::Context::getUnpackAlignment):
+        (gl::Context::setPackReverseRowOrder):
+        (gl::Context::getPackReverseRowOrder):
+        (gl::Context::createBuffer):
+        (gl::Context::createProgram):
+        (gl::Context::createShader):
+        (gl::Context::createTexture):
+        (gl::Context::createRenderbuffer):
+        (gl::Context::createFramebuffer):
+        (gl::Context::createFence):
+        (gl::Context::createQuery):
+        (gl::Context::deleteBuffer):
+        (gl::Context::deleteShader):
+        (gl::Context::deleteProgram):
+        (gl::Context::deleteTexture):
+        (gl::Context::deleteRenderbuffer):
+        (gl::Context::deleteFramebuffer):
+        (gl::Context::deleteFence):
+        (gl::Context::deleteQuery):
+        (gl::Context::getBuffer):
+        (gl::Context::getShader):
+        (gl::Context::getProgram):
+        (gl::Context::getTexture):
+        (gl::Context::getRenderbuffer):
+        (gl::Context::getReadFramebuffer):
+        (gl::Context::getDrawFramebuffer):
+        (gl::Context::bindArrayBuffer):
+        (gl::Context::bindElementArrayBuffer):
+        (gl::Context::bindTexture2D):
+        (gl::Context::bindTextureCubeMap):
+        (gl::Context::bindReadFramebuffer):
+        (gl::Context::bindDrawFramebuffer):
+        (gl::Context::bindRenderbuffer):
+        (gl::Context::useProgram):
+        (gl::Context::linkProgram):
+        (gl::Context::setProgramBinary):
+        (gl::Context::beginQuery):
+        (gl::Context::endQuery):
+        (gl::Context::setFramebufferZero):
+        (gl::Context::setRenderbufferStorage):
+        (gl::Context::getFramebuffer):
+        (gl::Context::getFence):
+        (gl::Context::getQuery):
+        (gl::Context::getArrayBuffer):
+        (gl::Context::getElementArrayBuffer):
+        (gl::Context::getCurrentProgramBinary):
+        (gl::Context::getTexture2D):
+        (gl::Context::getTextureCubeMap):
+        (gl::Context::getSamplerTexture):
+        (gl::Context::getBooleanv):
+        (gl::Context::getFloatv):
+        (gl::Context::getIntegerv):
+        (gl::Context::getQueryParameterInfo):
+        (gl::Context::applyRenderTarget):
+        (gl::Context::applyState):
+        (gl::Context::applyShaders):
+        (gl::Context::applyTextures):
+        (gl::Context::readPixels):
+        (gl::Context::clear):
+        (gl::Context::drawArrays):
+        (gl::Context::drawElements):
+        (gl::Context::sync):
+        (gl::Context::recordInvalidEnum):
+        (gl::Context::recordInvalidValue):
+        (gl::Context::recordInvalidOperation):
+        (gl::Context::recordOutOfMemory):
+        (gl::Context::recordInvalidFramebufferOperation):
+        (gl::Context::getError):
+        (gl::Context::getResetStatus):
+        (gl::Context::isResetNotificationEnabled):
+        (gl::Context::getMajorShaderModel):
+        (gl::Context::getMaximumPointSize):
+        (gl::Context::getMaximumCombinedTextureImageUnits):
+        (gl::Context::getMaxSupportedSamples):
+        (gl::Context::getMaximumRenderTargets):
+        (gl::Context::supportsEventQueries):
+        (gl::Context::supportsOcclusionQueries):
+        (gl::Context::supportsBGRATextures):
+        (gl::Context::supportsDXT1Textures):
+        (gl::Context::supportsDXT3Textures):
+        (gl::Context::supportsDXT5Textures):
+        (gl::Context::supportsFloat32Textures):
+        (gl::Context::supportsFloat32LinearFilter):
+        (gl::Context::supportsFloat32RenderableTextures):
+        (gl::Context::supportsFloat16Textures):
+        (gl::Context::supportsFloat16LinearFilter):
+        (gl::Context::supportsFloat16RenderableTextures):
+        (gl::Context::getMaximumRenderbufferDimension):
+        (gl::Context::getMaximumTextureDimension):
+        (gl::Context::getMaximumCubeTextureDimension):
+        (gl::Context::getMaximumTextureLevel):
+        (gl::Context::supportsLuminanceTextures):
+        (gl::Context::supportsLuminanceAlphaTextures):
+        (gl::Context::supportsDepthTextures):
+        (gl::Context::supports32bitIndices):
+        (gl::Context::supportsNonPower2Texture):
+        (gl::Context::supportsInstancing):
+        (gl::Context::supportsTextureFilterAnisotropy):
+        (gl::Context::getTextureMaxAnisotropy):
+        (gl::Context::getCurrentReadFormatType):
+        (gl::Context::detachBuffer):
+        (gl::Context::detachTexture):
+        (gl::Context::detachFramebuffer):
+        (gl::Context::detachRenderbuffer):
+        (gl::Context::getIncompleteTexture):
+        (gl::Context::skipDraw):
+        (gl::Context::setVertexAttrib):
+        (gl::Context::setVertexAttribDivisor):
+        (gl::Context::initExtensionString):
+        (gl::Context::getExtensionString):
+        (gl::Context::initRendererString):
+        (gl::Context::getRendererString):
+        (gl::Context::blitFramebuffer):
+        * src/libGLESv2/Context.h: Added.
+        (gl::VertexAttribute::VertexAttribute):
+        (gl::VertexAttribute::typeSize):
+        (gl::VertexAttribute::stride):
+        * src/libGLESv2/Fence.cpp: Added.
+        (gl::Fence::Fence):
+        (gl::Fence::~Fence):
+        (gl::Fence::isFence):
+        (gl::Fence::setFence):
+        (gl::Fence::testFence):
+        (gl::Fence::finishFence):
+        (gl::Fence::getFenceiv):
+        * src/libGLESv2/Fence.h: Added.
+        * src/libGLESv2/Float16ToFloat32.cpp: Added.
+        (gl::float16ToFloat32):
+        * src/libGLESv2/Float16ToFloat32.py: Added.
+        (convertMantissa):
+        (convertExponent):
+        (convertOffset):
+        * src/libGLESv2/Framebuffer.cpp: Added.
+        (gl::Framebuffer::Framebuffer):
+        (gl::Framebuffer::~Framebuffer):
+        (gl::Framebuffer::lookupRenderbuffer):
+        (gl::Framebuffer::setColorbuffer):
+        (gl::Framebuffer::setDepthbuffer):
+        (gl::Framebuffer::setStencilbuffer):
+        (gl::Framebuffer::detachTexture):
+        (gl::Framebuffer::detachRenderbuffer):
+        (gl::Framebuffer::getRenderTargetSerial):
+        (gl::Framebuffer::getDepthbufferSerial):
+        (gl::Framebuffer::getStencilbufferSerial):
+        (gl::Framebuffer::getColorbuffer):
+        (gl::Framebuffer::getDepthbuffer):
+        (gl::Framebuffer::getStencilbuffer):
+        (gl::Framebuffer::getDepthOrStencilbuffer):
+        (gl::Framebuffer::getReadColorbuffer):
+        (gl::Framebuffer::getReadColorbufferType):
+        (gl::Framebuffer::getFirstColorbuffer):
+        (gl::Framebuffer::getColorbufferType):
+        (gl::Framebuffer::getDepthbufferType):
+        (gl::Framebuffer::getStencilbufferType):
+        (gl::Framebuffer::getColorbufferHandle):
+        (gl::Framebuffer::getDepthbufferHandle):
+        (gl::Framebuffer::getStencilbufferHandle):
+        (gl::Framebuffer::getDrawBufferState):
+        (gl::Framebuffer::setDrawBufferState):
+        (gl::Framebuffer::isEnabledColorAttachment):
+        (gl::Framebuffer::hasEnabledColorAttachment):
+        (gl::Framebuffer::hasStencil):
+        (gl::Framebuffer::usingExtendedDrawBuffers):
+        (gl::Framebuffer::completeness):
+        (gl::DefaultFramebuffer::DefaultFramebuffer):
+        (gl::Framebuffer::getSamples):
+        (gl::DefaultFramebuffer::completeness):
+        * src/libGLESv2/Framebuffer.h: Added.
+        * src/libGLESv2/HandleAllocator.cpp: Added.
+        (gl::HandleAllocator::HandleAllocator):
+        (gl::HandleAllocator::~HandleAllocator):
+        (gl::HandleAllocator::setBaseHandle):
+        (gl::HandleAllocator::allocate):
+        (gl::HandleAllocator::release):
+        * src/libGLESv2/HandleAllocator.h: Added.
+        * src/libGLESv2/Program.cpp: Added.
+        (gl::AttributeBindings::AttributeBindings):
+        (gl::AttributeBindings::~AttributeBindings):
+        (gl::InfoLog::InfoLog):
+        (gl::InfoLog::~InfoLog):
+        (gl::InfoLog::getLength):
+        (gl::InfoLog::getLog):
+        (gl::InfoLog::appendSanitized):
+        (gl::InfoLog::append):
+        (gl::InfoLog::reset):
+        (gl::Program::Program):
+        (gl::Program::~Program):
+        (gl::Program::attachShader):
+        (gl::Program::detachShader):
+        (gl::Program::getAttachedShadersCount):
+        (gl::AttributeBindings::bindAttributeLocation):
+        (gl::Program::bindAttributeLocation):
+        (gl::Program::link):
+        (gl::AttributeBindings::getAttributeBinding):
+        (gl::Program::unlink):
+        (gl::Program::isLinked):
+        (gl::Program::getProgramBinary):
+        (gl::Program::setProgramBinary):
+        (gl::Program::release):
+        (gl::Program::addRef):
+        (gl::Program::getRefCount):
+        (gl::Program::getProgramBinaryLength):
+        (gl::Program::getInfoLogLength):
+        (gl::Program::getInfoLog):
+        (gl::Program::getAttachedShaders):
+        (gl::Program::getActiveAttribute):
+        (gl::Program::getActiveAttributeCount):
+        (gl::Program::getActiveAttributeMaxLength):
+        (gl::Program::getActiveUniform):
+        (gl::Program::getActiveUniformCount):
+        (gl::Program::getActiveUniformMaxLength):
+        (gl::Program::flagForDeletion):
+        (gl::Program::isFlaggedForDeletion):
+        (gl::Program::validate):
+        (gl::Program::isValidated):
+        * src/libGLESv2/Program.h: Added.
+        * src/libGLESv2/ProgramBinary.cpp: Added.
+        (gl::str):
+        (gl::UniformLocation::UniformLocation):
+        (gl::ProgramBinary::ProgramBinary):
+        (gl::ProgramBinary::~ProgramBinary):
+        (gl::ProgramBinary::getSerial):
+        (gl::ProgramBinary::issueSerial):
+        (gl::ProgramBinary::getPixelExecutable):
+        (gl::ProgramBinary::getVertexExecutable):
+        (gl::ProgramBinary::getGeometryExecutable):
+        (gl::ProgramBinary::getAttributeLocation):
+        (gl::ProgramBinary::getSemanticIndex):
+        (gl::ProgramBinary::getUsedSamplerRange):
+        (gl::ProgramBinary::usesPointSize):
+        (gl::ProgramBinary::usesPointSpriteEmulation):
+        (gl::ProgramBinary::usesGeometryShader):
+        (gl::ProgramBinary::getSamplerMapping):
+        (gl::ProgramBinary::getSamplerTextureType):
+        (gl::ProgramBinary::getUniformLocation):
+        (gl::ProgramBinary::setUniform1fv):
+        (gl::ProgramBinary::setUniform2fv):
+        (gl::ProgramBinary::setUniform3fv):
+        (gl::ProgramBinary::setUniform4fv):
+        (gl::transposeMatrix):
+        (gl::ProgramBinary::setUniformMatrix2fv):
+        (gl::ProgramBinary::setUniformMatrix3fv):
+        (gl::ProgramBinary::setUniformMatrix4fv):
+        (gl::ProgramBinary::setUniform1iv):
+        (gl::ProgramBinary::setUniform2iv):
+        (gl::ProgramBinary::setUniform3iv):
+        (gl::ProgramBinary::setUniform4iv):
+        (gl::ProgramBinary::getUniformfv):
+        (gl::ProgramBinary::getUniformiv):
+        (gl::ProgramBinary::dirtyAllUniforms):
+        (gl::ProgramBinary::applyUniforms):
+        (gl::ProgramBinary::packVaryings):
+        (gl::ProgramBinary::linkVaryings):
+        (gl::ProgramBinary::load):
+        (gl::ProgramBinary::save):
+        (gl::ProgramBinary::getLength):
+        (gl::ProgramBinary::link):
+        (gl::ProgramBinary::linkAttributes):
+        (gl::ProgramBinary::linkUniforms):
+        (gl::ProgramBinary::defineUniform):
+        (gl::ProgramBinary::generateGeometryShaderHLSL):
+        (gl::ProgramBinary::generatePointSpriteHLSL):
+        (gl::ProgramBinary::decorateAttribute):
+        (gl::ProgramBinary::isValidated):
+        (gl::ProgramBinary::getActiveAttribute):
+        (gl::ProgramBinary::getActiveAttributeCount):
+        (gl::ProgramBinary::getActiveAttributeMaxLength):
+        (gl::ProgramBinary::getActiveUniform):
+        (gl::ProgramBinary::getActiveUniformCount):
+        (gl::ProgramBinary::getActiveUniformMaxLength):
+        (gl::ProgramBinary::validate):
+        (gl::ProgramBinary::validateSamplers):
+        (gl::ProgramBinary::Sampler::Sampler):
+        (gl::AttributeSorter::AttributeSorter):
+        (gl::AttributeSorter::operator()):
+        (gl::ProgramBinary::sortAttributesByLayout):
+        * src/libGLESv2/ProgramBinary.h: Added.
+        (gl::UniformLocation::UniformLocation):
+        * src/libGLESv2/Query.cpp: Added.
+        (gl::Query::Query):
+        (gl::Query::~Query):
+        (gl::Query::begin):
+        (gl::Query::end):
+        (gl::Query::getResult):
+        (gl::Query::isResultAvailable):
+        (gl::Query::getType):
+        * src/libGLESv2/Query.h: Added.
+        * src/libGLESv2/Renderbuffer.cpp: Added.
+        (gl::RenderbufferInterface::RenderbufferInterface):
+        (gl::RenderbufferInterface::addProxyRef):
+        (gl::RenderbufferInterface::releaseProxy):
+        (gl::RenderbufferInterface::getRedSize):
+        (gl::RenderbufferInterface::getGreenSize):
+        (gl::RenderbufferInterface::getBlueSize):
+        (gl::RenderbufferInterface::getAlphaSize):
+        (gl::RenderbufferInterface::getDepthSize):
+        (gl::RenderbufferInterface::getStencilSize):
+        (gl::RenderbufferTexture2D::RenderbufferTexture2D):
+        (gl::RenderbufferTexture2D::~RenderbufferTexture2D):
+        (gl::RenderbufferTexture2D::addProxyRef):
+        (gl::RenderbufferTexture2D::releaseProxy):
+        (gl::RenderbufferTexture2D::getRenderTarget):
+        (gl::RenderbufferTexture2D::getDepthStencil):
+        (gl::RenderbufferTexture2D::getWidth):
+        (gl::RenderbufferTexture2D::getHeight):
+        (gl::RenderbufferTexture2D::getInternalFormat):
+        (gl::RenderbufferTexture2D::getActualFormat):
+        (gl::RenderbufferTexture2D::getSamples):
+        (gl::RenderbufferTexture2D::getSerial):
+        (gl::RenderbufferTextureCubeMap::RenderbufferTextureCubeMap):
+        (gl::RenderbufferTextureCubeMap::~RenderbufferTextureCubeMap):
+        (gl::RenderbufferTextureCubeMap::addProxyRef):
+        (gl::RenderbufferTextureCubeMap::releaseProxy):
+        (gl::RenderbufferTextureCubeMap::getRenderTarget):
+        (gl::RenderbufferTextureCubeMap::getDepthStencil):
+        (gl::RenderbufferTextureCubeMap::getWidth):
+        (gl::RenderbufferTextureCubeMap::getHeight):
+        (gl::RenderbufferTextureCubeMap::getInternalFormat):
+        (gl::RenderbufferTextureCubeMap::getActualFormat):
+        (gl::RenderbufferTextureCubeMap::getSamples):
+        (gl::RenderbufferTextureCubeMap::getSerial):
+        (gl::Renderbuffer::Renderbuffer):
+        (gl::Renderbuffer::~Renderbuffer):
+        (gl::Renderbuffer::addRef):
+        (gl::Renderbuffer::release):
+        (gl::Renderbuffer::getRenderTarget):
+        (gl::Renderbuffer::getDepthStencil):
+        (gl::Renderbuffer::getWidth):
+        (gl::Renderbuffer::getHeight):
+        (gl::Renderbuffer::getInternalFormat):
+        (gl::Renderbuffer::getActualFormat):
+        (gl::Renderbuffer::getRedSize):
+        (gl::Renderbuffer::getGreenSize):
+        (gl::Renderbuffer::getBlueSize):
+        (gl::Renderbuffer::getAlphaSize):
+        (gl::Renderbuffer::getDepthSize):
+        (gl::Renderbuffer::getStencilSize):
+        (gl::Renderbuffer::getSamples):
+        (gl::Renderbuffer::getSerial):
+        (gl::Renderbuffer::setStorage):
+        (gl::RenderbufferStorage::RenderbufferStorage):
+        (gl::RenderbufferStorage::~RenderbufferStorage):
+        (gl::RenderbufferStorage::getRenderTarget):
+        (gl::RenderbufferStorage::getDepthStencil):
+        (gl::RenderbufferStorage::getWidth):
+        (gl::RenderbufferStorage::getHeight):
+        (gl::RenderbufferStorage::getInternalFormat):
+        (gl::RenderbufferStorage::getActualFormat):
+        (gl::RenderbufferStorage::getSamples):
+        (gl::RenderbufferStorage::getSerial):
+        (gl::RenderbufferStorage::issueSerial):
+        (gl::RenderbufferStorage::issueCubeSerials):
+        (gl::Colorbuffer::Colorbuffer):
+        (gl::Colorbuffer::~Colorbuffer):
+        (gl::Colorbuffer::getRenderTarget):
+        (gl::DepthStencilbuffer::DepthStencilbuffer):
+        (gl::DepthStencilbuffer::~DepthStencilbuffer):
+        (gl::DepthStencilbuffer::getDepthStencil):
+        (gl::Depthbuffer::Depthbuffer):
+        (gl::Depthbuffer::~Depthbuffer):
+        (gl::Stencilbuffer::Stencilbuffer):
+        (gl::Stencilbuffer::~Stencilbuffer):
+        * src/libGLESv2/Renderbuffer.h: Added.
+        (gl::RenderbufferInterface::~RenderbufferInterface):
+        * src/libGLESv2/ResourceManager.cpp: Added.
+        (gl::ResourceManager::ResourceManager):
+        (gl::ResourceManager::~ResourceManager):
+        (gl::ResourceManager::addRef):
+        (gl::ResourceManager::release):
+        (gl::ResourceManager::createBuffer):
+        (gl::ResourceManager::createShader):
+        (gl::ResourceManager::createProgram):
+        (gl::ResourceManager::createTexture):
+        (gl::ResourceManager::createRenderbuffer):
+        (gl::ResourceManager::deleteBuffer):
+        (gl::ResourceManager::deleteShader):
+        (gl::ResourceManager::deleteProgram):
+        (gl::ResourceManager::deleteTexture):
+        (gl::ResourceManager::deleteRenderbuffer):
+        (gl::ResourceManager::getBuffer):
+        (gl::ResourceManager::getShader):
+        (gl::ResourceManager::getTexture):
+        (gl::ResourceManager::getProgram):
+        (gl::ResourceManager::getRenderbuffer):
+        (gl::ResourceManager::setRenderbuffer):
+        (gl::ResourceManager::checkBufferAllocation):
+        (gl::ResourceManager::checkTextureAllocation):
+        (gl::ResourceManager::checkRenderbufferAllocation):
+        * src/libGLESv2/ResourceManager.h: Added.
+        * src/libGLESv2/Shader.cpp: Added.
+        (gl::Shader::Shader):
+        (gl::Shader::~Shader):
+        (gl::Shader::getHandle):
+        (gl::Shader::setSource):
+        (gl::Shader::getInfoLogLength):
+        (gl::Shader::getInfoLog):
+        (gl::Shader::getSourceLength):
+        (gl::Shader::getTranslatedSourceLength):
+        (gl::Shader::getSourceImpl):
+        (gl::Shader::getSource):
+        (gl::Shader::getTranslatedSource):
+        (gl::Shader::getUniforms):
+        (gl::Shader::isCompiled):
+        (gl::Shader::getHLSL):
+        (gl::Shader::addRef):
+        (gl::Shader::release):
+        (gl::Shader::getRefCount):
+        (gl::Shader::isFlaggedForDeletion):
+        (gl::Shader::flagForDeletion):
+        (gl::Shader::initializeCompiler):
+        (gl::Shader::releaseCompiler):
+        (gl::Shader::parseVaryings):
+        (gl::Shader::resetVaryingsRegisterAssignment):
+        (gl::Shader::uncompile):
+        (gl::Shader::compileToHLSL):
+        (gl::Shader::parseType):
+        (gl::Shader::compareVarying):
+        (gl::VertexShader::VertexShader):
+        (gl::VertexShader::~VertexShader):
+        (gl::VertexShader::getType):
+        (gl::VertexShader::uncompile):
+        (gl::VertexShader::compile):
+        (gl::VertexShader::getSemanticIndex):
+        (gl::VertexShader::parseAttributes):
+        (gl::FragmentShader::FragmentShader):
+        (gl::FragmentShader::~FragmentShader):
+        (gl::FragmentShader::getType):
+        (gl::FragmentShader::compile):
+        * src/libGLESv2/Shader.h: Added.
+        (gl::Varying::Varying):
+        (gl::Attribute::Attribute):
+        * src/libGLESv2/Texture.cpp: Added.
+        (gl::Texture::Texture):
+        (gl::Texture::~Texture):
+        (gl::Texture::setMinFilter):
+        (gl::Texture::setMagFilter):
+        (gl::Texture::setWrapS):
+        (gl::Texture::setWrapT):
+        (gl::Texture::setMaxAnisotropy):
+        (gl::Texture::setUsage):
+        (gl::Texture::getMinFilter):
+        (gl::Texture::getMagFilter):
+        (gl::Texture::getWrapS):
+        (gl::Texture::getWrapT):
+        (gl::Texture::getMaxAnisotropy):
+        (gl::Texture::getLodOffset):
+        (gl::Texture::getSamplerState):
+        (gl::Texture::getUsage):
+        (gl::Texture::isMipmapFiltered):
+        (gl::Texture::setImage):
+        (gl::Texture::setCompressedImage):
+        (gl::Texture::subImage):
+        (gl::Texture::subImageCompressed):
+        (gl::Texture::getNativeTexture):
+        (gl::Texture::hasDirtyImages):
+        (gl::Texture::resetDirty):
+        (gl::Texture::getTextureSerial):
+        (gl::Texture::getRenderTargetSerial):
+        (gl::Texture::isImmutable):
+        (gl::Texture::creationLevels):
+        (gl::Texture2D::Texture2D):
+        (gl::Texture2D::~Texture2D):
+        (gl::Texture2D::addProxyRef):
+        (gl::Texture2D::releaseProxy):
+        (gl::Texture2D::getTarget):
+        (gl::Texture2D::getWidth):
+        (gl::Texture2D::getHeight):
+        (gl::Texture2D::getInternalFormat):
+        (gl::Texture2D::getActualFormat):
+        (gl::Texture2D::redefineImage):
+        (gl::Texture2D::setImage):
+        (gl::Texture2D::bindTexImage):
+        (gl::Texture2D::releaseTexImage):
+        (gl::Texture2D::setCompressedImage):
+        (gl::Texture2D::commitRect):
+        (gl::Texture2D::subImage):
+        (gl::Texture2D::subImageCompressed):
+        (gl::Texture2D::copyImage):
+        (gl::Texture2D::copySubImage):
+        (gl::Texture2D::storage):
+        (gl::Texture2D::isSamplerComplete):
+        (gl::Texture2D::isMipmapComplete):
+        (gl::Texture2D::isCompressed):
+        (gl::Texture2D::isDepth):
+        (gl::Texture2D::createTexture):
+        (gl::Texture2D::updateTexture):
+        (gl::Texture2D::convertToRenderTarget):
+        (gl::Texture2D::generateMipmaps):
+        (gl::Texture2D::getRenderbuffer):
+        (gl::Texture2D::getRenderTarget):
+        (gl::Texture2D::getDepthStencil):
+        (gl::Texture2D::levelCount):
+        (gl::Texture2D::getStorage):
+        (gl::TextureCubeMap::TextureCubeMap):
+        (gl::TextureCubeMap::~TextureCubeMap):
+        (gl::TextureCubeMap::addProxyRef):
+        (gl::TextureCubeMap::releaseProxy):
+        (gl::TextureCubeMap::getTarget):
+        (gl::TextureCubeMap::getWidth):
+        (gl::TextureCubeMap::getHeight):
+        (gl::TextureCubeMap::getInternalFormat):
+        (gl::TextureCubeMap::getActualFormat):
+        (gl::TextureCubeMap::setImagePosX):
+        (gl::TextureCubeMap::setImageNegX):
+        (gl::TextureCubeMap::setImagePosY):
+        (gl::TextureCubeMap::setImageNegY):
+        (gl::TextureCubeMap::setImagePosZ):
+        (gl::TextureCubeMap::setImageNegZ):
+        (gl::TextureCubeMap::setCompressedImage):
+        (gl::TextureCubeMap::commitRect):
+        (gl::TextureCubeMap::subImage):
+        (gl::TextureCubeMap::subImageCompressed):
+        (gl::TextureCubeMap::isSamplerComplete):
+        (gl::TextureCubeMap::isCubeComplete):
+        (gl::TextureCubeMap::isMipmapCubeComplete):
+        (gl::TextureCubeMap::isCompressed):
+        (gl::TextureCubeMap::createTexture):
+        (gl::TextureCubeMap::updateTexture):
+        (gl::TextureCubeMap::convertToRenderTarget):
+        (gl::TextureCubeMap::setImage):
+        (gl::TextureCubeMap::faceIndex):
+        (gl::TextureCubeMap::redefineImage):
+        (gl::TextureCubeMap::copyImage):
+        (gl::TextureCubeMap::copySubImage):
+        (gl::TextureCubeMap::storage):
+        (gl::TextureCubeMap::generateMipmaps):
+        (gl::TextureCubeMap::getRenderbuffer):
+        (gl::TextureCubeMap::getRenderTarget):
+        (gl::TextureCubeMap::levelCount):
+        (gl::TextureCubeMap::getStorage):
+        * src/libGLESv2/Texture.h: Added.
+        * src/libGLESv2/Uniform.cpp: Added.
+        (gl::Uniform::Uniform):
+        (gl::Uniform::~Uniform):
+        (gl::Uniform::isArray):
+        (gl::Uniform::elementCount):
+        * src/libGLESv2/Uniform.h: Added.
+        * src/libGLESv2/angletypes.h: Added.
+        * src/libGLESv2/constants.h: Added.
+        * src/libGLESv2/libGLESv2.cpp: Added.
+        (validImageSize):
+        (checkTextureFormatType):
+        (validateSubImageParams2D):
+        (validateSubImageParamsCube):
+        (validReadFormatType):
+        * src/libGLESv2/libGLESv2.def: Added.
+        * src/libGLESv2/libGLESv2.rc: Added.
+        * src/libGLESv2/libGLESv2.vcxproj: Added.
+        * src/libGLESv2/libGLESv2.vcxproj.filters: Added.
+        * src/libGLESv2/main.cpp: Added.
+        (DllMain):
+        (gl::makeCurrent):
+        (gl::getContext):
+        (gl::getNonLostContext):
+        (gl::getDisplay):
+        (gl::error):
+        * src/libGLESv2/main.h: Added.
+        (gl::error):
+        * src/libGLESv2/mathutil.h: Added.
+        (gl::Vector4::Vector4):
+        (gl::isPow2):
+        (gl::log2):
+        (gl::ceilPow2):
+        (gl::clamp):
+        (gl::clamp01):
+        (gl::unorm):
+        (gl::supportsSSE2):
+        (gl::float32ToFloat16):
+        (rx::Range::Range):
+        * src/libGLESv2/precompiled.cpp: Added.
+        * src/libGLESv2/precompiled.h: Added.
+        * src/libGLESv2/renderer: Added.
+        * src/libGLESv2/renderer/Blit.cpp: Added.
+        (rx::Blit::Blit):
+        (rx::Blit::~Blit):
+        (rx::Blit::initGeometry):
+        (rx::Blit::setShader):
+        (rx::Blit::setVertexShader):
+        (rx::Blit::setPixelShader):
+        (rx::Blit::getSurfaceRect):
+        (rx::Blit::boxFilter):
+        (rx::Blit::copy):
+        (rx::Blit::formatConvert):
+        (rx::Blit::setFormatConvertShaders):
+        (rx::Blit::copySurfaceToTexture):
+        (rx::Blit::setViewport):
+        (rx::Blit::setCommonBlitState):
+        (rx::Blit::render):
+        (rx::Blit::saveState):
+        (rx::Blit::restoreState):
+        * src/libGLESv2/renderer/Blit.h: Added.
+        * src/libGLESv2/renderer/BufferStorage.cpp: Added.
+        (rx::BufferStorage::BufferStorage):
+        (rx::BufferStorage::~BufferStorage):
+        (rx::BufferStorage::getSerial):
+        (rx::BufferStorage::updateSerial):
+        (rx::BufferStorage::markBufferUsage):
+        * src/libGLESv2/renderer/BufferStorage.h: Added.
+        * src/libGLESv2/renderer/BufferStorage11.cpp: Added.
+        (rx::BufferStorage11::BufferStorage11):
+        (rx::BufferStorage11::~BufferStorage11):
+        (rx::BufferStorage11::makeBufferStorage11):
+        (rx::BufferStorage11::getData):
+        (rx::BufferStorage11::setData):
+        (rx::BufferStorage11::clear):
+        (rx::BufferStorage11::getSize):
+        (rx::BufferStorage11::supportsDirectBinding):
+        (rx::BufferStorage11::markBufferUsage):
+        (rx::BufferStorage11::getBuffer):
+        * src/libGLESv2/renderer/BufferStorage11.h: Added.
+        * src/libGLESv2/renderer/BufferStorage9.cpp: Added.
+        (rx::BufferStorage9::BufferStorage9):
+        (rx::BufferStorage9::~BufferStorage9):
+        (rx::BufferStorage9::makeBufferStorage9):
+        (rx::BufferStorage9::getData):
+        (rx::BufferStorage9::setData):
+        (rx::BufferStorage9::clear):
+        (rx::BufferStorage9::getSize):
+        (rx::BufferStorage9::supportsDirectBinding):
+        * src/libGLESv2/renderer/BufferStorage9.h: Added.
+        * src/libGLESv2/renderer/Fence11.cpp: Added.
+        (rx::Fence11::Fence11):
+        (rx::Fence11::~Fence11):
+        (rx::Fence11::isFence):
+        (rx::Fence11::setFence):
+        (rx::Fence11::testFence):
+        (rx::Fence11::finishFence):
+        (rx::Fence11::getFenceiv):
+        * src/libGLESv2/renderer/Fence11.h: Added.
+        * src/libGLESv2/renderer/Fence9.cpp: Added.
+        (rx::Fence9::Fence9):
+        (rx::Fence9::~Fence9):
+        (rx::Fence9::isFence):
+        (rx::Fence9::setFence):
+        (rx::Fence9::testFence):
+        (rx::Fence9::finishFence):
+        (rx::Fence9::getFenceiv):
+        * src/libGLESv2/renderer/Fence9.h: Added.
+        * src/libGLESv2/renderer/FenceImpl.h: Added.
+        (rx::FenceImpl::FenceImpl):
+        (rx::FenceImpl::~FenceImpl):
+        (rx::FenceImpl::setStatus):
+        (rx::FenceImpl::getStatus):
+        (rx::FenceImpl::setCondition):
+        (rx::FenceImpl::getCondition):
+        * src/libGLESv2/renderer/Image.cpp: Added.
+        (rx::Image::Image):
+        (rx::Image::loadAlphaDataToBGRA):
+        (rx::Image::loadAlphaDataToNative):
+        (rx::Image::loadAlphaFloatDataToRGBA):
+        (rx::Image::loadAlphaHalfFloatDataToRGBA):
+        (rx::Image::loadLuminanceDataToNativeOrBGRA):
+        (rx::Image::loadLuminanceFloatDataToRGBA):
+        (rx::Image::loadLuminanceFloatDataToRGB):
+        (rx::Image::loadLuminanceHalfFloatDataToRGBA):
+        (rx::Image::loadLuminanceAlphaDataToNativeOrBGRA):
+        (rx::Image::loadLuminanceAlphaFloatDataToRGBA):
+        (rx::Image::loadLuminanceAlphaHalfFloatDataToRGBA):
+        (rx::Image::loadRGBUByteDataToBGRX):
+        (rx::Image::loadRGBUByteDataToRGBA):
+        (rx::Image::loadRGB565DataToBGRA):
+        (rx::Image::loadRGB565DataToRGBA):
+        (rx::Image::loadRGBFloatDataToRGBA):
+        (rx::Image::loadRGBFloatDataToNative):
+        (rx::Image::loadRGBHalfFloatDataToRGBA):
+        (rx::Image::loadRGBAUByteDataToBGRA):
+        (rx::Image::loadRGBAUByteDataToNative):
+        (rx::Image::loadRGBA4444DataToBGRA):
+        (rx::Image::loadRGBA4444DataToRGBA):
+        (rx::Image::loadRGBA5551DataToBGRA):
+        (rx::Image::loadRGBA5551DataToRGBA):
+        (rx::Image::loadRGBAFloatDataToRGBA):
+        (rx::Image::loadRGBAHalfFloatDataToRGBA):
+        (rx::Image::loadBGRADataToBGRA):
+        * src/libGLESv2/renderer/Image.h: Added.
+        (rx::Image::~Image):
+        (rx::Image::getWidth):
+        (rx::Image::getHeight):
+        (rx::Image::getInternalFormat):
+        (rx::Image::getActualFormat):
+        (rx::Image::markDirty):
+        (rx::Image::markClean):
+        (rx::Image::setManagedSurface):
+        * src/libGLESv2/renderer/Image11.cpp: Added.
+        (rx::Image11::Image11):
+        (rx::Image11::~Image11):
+        (rx::Image11::makeImage11):
+        (rx::Image11::generateMipmap):
+        (rx::Image11::isDirty):
+        (rx::Image11::updateSurface):
+        (rx::Image11::redefine):
+        (rx::Image11::isRenderableFormat):
+        (rx::Image11::getDXGIFormat):
+        (rx::Image11::loadData):
+        (rx::Image11::loadCompressedData):
+        (rx::Image11::copy):
+        (rx::Image11::getStagingTexture):
+        (rx::Image11::getStagingSubresource):
+        (rx::Image11::createStagingTexture):
+        (rx::Image11::map):
+        (rx::Image11::unmap):
+        * src/libGLESv2/renderer/Image11.h: Added.
+        * src/libGLESv2/renderer/Image9.cpp: Added.
+        (rx::Image9::Image9):
+        (rx::Image9::~Image9):
+        (rx::Image9::generateMip):
+        (rx::Image9::makeImage9):
+        (rx::Image9::generateMipmap):
+        (rx::Image9::copyLockableSurfaces):
+        (rx::Image9::redefine):
+        (rx::Image9::createSurface):
+        (rx::Image9::lock):
+        (rx::Image9::unlock):
+        (rx::Image9::isRenderableFormat):
+        (rx::Image9::getD3DFormat):
+        (rx::Image9::getSurface):
+        (rx::Image9::setManagedSurface):
+        (rx::Image9::updateSurface):
+        (rx::Image9::loadData):
+        (rx::Image9::loadCompressedData):
+        (rx::Image9::copy):
+        * src/libGLESv2/renderer/Image9.h: Added.
+        (rx::Image9::isDirty):
+        * src/libGLESv2/renderer/ImageSSE2.cpp: Added.
+        (rx::Image::loadRGBAUByteDataToBGRASSE2):
+        (rx::Image::loadAlphaDataToBGRASSE2):
+        * src/libGLESv2/renderer/IndexBuffer.cpp: Added.
+        (rx::IndexBuffer::IndexBuffer):
+        (rx::IndexBuffer::~IndexBuffer):
+        (rx::IndexBuffer::getSerial):
+        (rx::IndexBuffer::updateSerial):
+        (rx::IndexBufferInterface::IndexBufferInterface):
+        (rx::IndexBufferInterface::~IndexBufferInterface):
+        (rx::IndexBufferInterface::getIndexType):
+        (rx::IndexBufferInterface::getBufferSize):
+        (rx::IndexBufferInterface::getSerial):
+        (rx::IndexBufferInterface::mapBuffer):
+        (rx::IndexBufferInterface::unmapBuffer):
+        (rx::IndexBufferInterface::getIndexBuffer):
+        (rx::IndexBufferInterface::getWritePosition):
+        (rx::IndexBufferInterface::setWritePosition):
+        (rx::IndexBufferInterface::discard):
+        (rx::IndexBufferInterface::setBufferSize):
+        (rx::StreamingIndexBufferInterface::StreamingIndexBufferInterface):
+        (rx::StreamingIndexBufferInterface::~StreamingIndexBufferInterface):
+        (rx::StreamingIndexBufferInterface::reserveBufferSpace):
+        (rx::StaticIndexBufferInterface::StaticIndexBufferInterface):
+        (rx::StaticIndexBufferInterface::~StaticIndexBufferInterface):
+        (rx::StaticIndexBufferInterface::reserveBufferSpace):
+        (rx::StaticIndexBufferInterface::lookupRange):
+        (rx::StaticIndexBufferInterface::addRange):
+        * src/libGLESv2/renderer/IndexBuffer.h: Added.
+        (rx::StaticIndexBufferInterface::IndexRange::operator<):
+        * src/libGLESv2/renderer/IndexBuffer11.cpp: Added.
+        (rx::IndexBuffer11::IndexBuffer11):
+        (rx::IndexBuffer11::~IndexBuffer11):
+        (rx::IndexBuffer11::initialize):
+        (rx::IndexBuffer11::makeIndexBuffer11):
+        (rx::IndexBuffer11::mapBuffer):
+        (rx::IndexBuffer11::unmapBuffer):
+        (rx::IndexBuffer11::getIndexType):
+        (rx::IndexBuffer11::getBufferSize):
+        (rx::IndexBuffer11::setSize):
+        (rx::IndexBuffer11::discard):
+        (rx::IndexBuffer11::getIndexFormat):
+        (rx::IndexBuffer11::getBuffer):
+        * src/libGLESv2/renderer/IndexBuffer11.h: Added.
+        * src/libGLESv2/renderer/IndexBuffer9.cpp: Added.
+        (rx::IndexBuffer9::IndexBuffer9):
+        (rx::IndexBuffer9::~IndexBuffer9):
+        (rx::IndexBuffer9::initialize):
+        (rx::IndexBuffer9::makeIndexBuffer9):
+        (rx::IndexBuffer9::mapBuffer):
+        (rx::IndexBuffer9::unmapBuffer):
+        (rx::IndexBuffer9::getIndexType):
+        (rx::IndexBuffer9::getBufferSize):
+        (rx::IndexBuffer9::setSize):
+        (rx::IndexBuffer9::discard):
+        (rx::IndexBuffer9::getIndexFormat):
+        (rx::IndexBuffer9::getBuffer):
+        * src/libGLESv2/renderer/IndexBuffer9.h: Added.
+        * src/libGLESv2/renderer/IndexDataManager.cpp: Added.
+        (rx::IndexDataManager::IndexDataManager):
+        (rx::IndexDataManager::~IndexDataManager):
+        (rx::indexTypeSize):
+        (rx::convertIndices):
+        (rx::computeRange):
+        (rx::IndexDataManager::prepareIndexData):
+        (rx::IndexDataManager::getCountingIndices):
+        * src/libGLESv2/renderer/IndexDataManager.h: Added.
+        * src/libGLESv2/renderer/InputLayoutCache.cpp: Added.
+        (rx::InputLayoutCache::InputLayoutCache):
+        (rx::InputLayoutCache::~InputLayoutCache):
+        (rx::InputLayoutCache::initialize):
+        (rx::InputLayoutCache::clear):
+        (rx::InputLayoutCache::applyVertexBuffers):
+        (rx::InputLayoutCache::hashInputLayout):
+        (rx::InputLayoutCache::compareInputLayouts):
+        * src/libGLESv2/renderer/InputLayoutCache.h: Added.
+        * src/libGLESv2/renderer/Query11.cpp: Added.
+        (rx::Query11::Query11):
+        (rx::Query11::~Query11):
+        (rx::Query11::begin):
+        (rx::Query11::end):
+        (rx::Query11::getResult):
+        (rx::Query11::isResultAvailable):
+        (rx::Query11::testQuery):
+        * src/libGLESv2/renderer/Query11.h: Added.
+        * src/libGLESv2/renderer/Query9.cpp: Added.
+        (rx::Query9::Query9):
+        (rx::Query9::~Query9):
+        (rx::Query9::begin):
+        (rx::Query9::end):
+        (rx::Query9::getResult):
+        (rx::Query9::isResultAvailable):
+        (rx::Query9::testQuery):
+        * src/libGLESv2/renderer/Query9.h: Added.
+        * src/libGLESv2/renderer/QueryImpl.h: Added.
+        (rx::QueryImpl::QueryImpl):
+        (rx::QueryImpl::~QueryImpl):
+        (rx::QueryImpl::getType):
+        * src/libGLESv2/renderer/RenderStateCache.cpp: Added.
+        (rx::RenderStateCache::RenderStateCache):
+        (rx::RenderStateCache::~RenderStateCache):
+        (rx::RenderStateCache::initialize):
+        (rx::RenderStateCache::clear):
+        (rx::RenderStateCache::hashBlendState):
+        (rx::RenderStateCache::compareBlendStates):
+        (rx::RenderStateCache::getBlendState):
+        (rx::RenderStateCache::hashRasterizerState):
+        (rx::RenderStateCache::compareRasterizerStates):
+        (rx::RenderStateCache::getRasterizerState):
+        (rx::RenderStateCache::hashDepthStencilState):
+        (rx::RenderStateCache::compareDepthStencilStates):
+        (rx::RenderStateCache::getDepthStencilState):
+        (rx::RenderStateCache::hashSamplerState):
+        (rx::RenderStateCache::compareSamplerStates):
+        (rx::RenderStateCache::getSamplerState):
+        * src/libGLESv2/renderer/RenderStateCache.h: Added.
+        * src/libGLESv2/renderer/RenderTarget.h: Added.
+        (rx::RenderTarget::RenderTarget):
+        (rx::RenderTarget::~RenderTarget):
+        (rx::RenderTarget::getWidth):
+        (rx::RenderTarget::getHeight):
+        (rx::RenderTarget::getInternalFormat):
+        (rx::RenderTarget::getActualFormat):
+        (rx::RenderTarget::getSamples):
+        * src/libGLESv2/renderer/RenderTarget11.cpp: Added.
+        (rx::getRTVSubresourceIndex):
+        (rx::getDSVSubresourceIndex):
+        (rx::RenderTarget11::RenderTarget11):
+        (rx::RenderTarget11::~RenderTarget11):
+        (rx::RenderTarget11::makeRenderTarget11):
+        (rx::RenderTarget11::getTexture):
+        (rx::RenderTarget11::getRenderTargetView):
+        (rx::RenderTarget11::getDepthStencilView):
+        (rx::RenderTarget11::getShaderResourceView):
+        (rx::RenderTarget11::getSubresourceIndex):
+        * src/libGLESv2/renderer/RenderTarget11.h: Added.
+        * src/libGLESv2/renderer/RenderTarget9.cpp: Added.
+        (rx::RenderTarget9::RenderTarget9):
+        (rx::RenderTarget9::~RenderTarget9):
+        (rx::RenderTarget9::makeRenderTarget9):
+        (rx::RenderTarget9::getSurface):
+        * src/libGLESv2/renderer/RenderTarget9.h: Added.
+        * src/libGLESv2/renderer/Renderer.cpp: Added.
+        (rx::Renderer::Renderer):
+        (rx::Renderer::~Renderer):
+        (rx::Renderer::initializeCompiler):
+        (rx::Renderer::compileToBinary):
+        * src/libGLESv2/renderer/Renderer.h: Added.
+        (getComparableOSVersion):
+        (rx::Renderer::getVertexTextureSupport):
+        * src/libGLESv2/renderer/Renderer11.cpp: Added.
+        (rx::Renderer11::Renderer11):
+        (rx::Renderer11::~Renderer11):
+        (rx::Renderer11::makeRenderer11):
+        (rx::Renderer11::initialize):
+        (rx::Renderer11::initializeDevice):
+        (rx::Renderer11::generateConfigs):
+        (rx::Renderer11::deleteConfigs):
+        (rx::Renderer11::sync):
+        (rx::Renderer11::createSwapChain):
+        (rx::Renderer11::setSamplerState):
+        (rx::Renderer11::setTexture):
+        (rx::Renderer11::setRasterizerState):
+        (rx::Renderer11::setBlendState):
+        (rx::Renderer11::setDepthStencilState):
+        (rx::Renderer11::setScissorRectangle):
+        (rx::Renderer11::setViewport):
+        (rx::Renderer11::applyPrimitiveType):
+        (rx::Renderer11::applyRenderTarget):
+        (rx::Renderer11::applyVertexBuffer):
+        (rx::Renderer11::applyIndexBuffer):
+        (rx::Renderer11::drawArrays):
+        (rx::Renderer11::drawElements):
+        (rx::Renderer11::drawLineLoop):
+        (rx::Renderer11::drawTriangleFan):
+        (rx::Renderer11::applyShaders):
+        (rx::Renderer11::applyUniforms):
+        (rx::Renderer11::clear):
+        (rx::Renderer11::maskedClear):
+        (rx::Renderer11::markAllStateDirty):
+        (rx::Renderer11::releaseDeviceResources):
+        (rx::Renderer11::notifyDeviceLost):
+        (rx::Renderer11::isDeviceLost):
+        (rx::Renderer11::testDeviceLost):
+        (rx::Renderer11::testDeviceResettable):
+        (rx::Renderer11::release):
+        (rx::Renderer11::resetDevice):
+        (rx::Renderer11::getAdapterVendor):
+        (rx::Renderer11::getRendererDescription):
+        (rx::Renderer11::getAdapterIdentifier):
+        (rx::Renderer11::getBGRATextureSupport):
+        (rx::Renderer11::getDXT1TextureSupport):
+        (rx::Renderer11::getDXT3TextureSupport):
+        (rx::Renderer11::getDXT5TextureSupport):
+        (rx::Renderer11::getDepthTextureSupport):
+        (rx::Renderer11::getFloat32TextureSupport):
+        (rx::Renderer11::getFloat16TextureSupport):
+        (rx::Renderer11::getLuminanceTextureSupport):
+        (rx::Renderer11::getLuminanceAlphaTextureSupport):
+        (rx::Renderer11::getTextureFilterAnisotropySupport):
+        (rx::Renderer11::getTextureMaxAnisotropy):
+        (rx::Renderer11::getEventQuerySupport):
+        (rx::Renderer11::getViewportBounds):
+        (rx::Renderer11::getMaxVertexTextureImageUnits):
+        (rx::Renderer11::getMaxCombinedTextureImageUnits):
+        (rx::Renderer11::getReservedVertexUniformVectors):
+        (rx::Renderer11::getReservedFragmentUniformVectors):
+        (rx::Renderer11::getMaxVertexUniformVectors):
+        (rx::Renderer11::getMaxFragmentUniformVectors):
+        (rx::Renderer11::getMaxVaryingVectors):
+        (rx::Renderer11::getNonPower2TextureSupport):
+        (rx::Renderer11::getOcclusionQuerySupport):
+        (rx::Renderer11::getInstancingSupport):
+        (rx::Renderer11::getShareHandleSupport):
+        (rx::Renderer11::getDerivativeInstructionSupport):
+        (rx::Renderer11::getPostSubBufferSupport):
+        (rx::Renderer11::getMajorShaderModel):
+        (rx::Renderer11::getMinorShaderModel):
+        (rx::Renderer11::getMaxPointSize):
+        (rx::Renderer11::getMaxViewportDimension):
+        (rx::Renderer11::getMaxTextureWidth):
+        (rx::Renderer11::getMaxTextureHeight):
+        (rx::Renderer11::get32BitIndexSupport):
+        (rx::Renderer11::getMinSwapInterval):
+        (rx::Renderer11::getMaxSwapInterval):
+        (rx::Renderer11::getMaxSupportedSamples):
+        (rx::Renderer11::getNearestSupportedSamples):
+        (rx::Renderer11::getMaxRenderTargets):
+        (rx::Renderer11::copyToRenderTarget):
+        (rx::Renderer11::copyImage):
+        (rx::Renderer11::copyTexture):
+        (rx::Renderer11::unapplyRenderTargets):
+        (rx::Renderer11::setOneTimeRenderTarget):
+        (rx::Renderer11::createRenderTarget):
+        (rx::Renderer11::loadExecutable):
+        (rx::Renderer11::compileToExecutable):
+        (rx::Renderer11::createVertexBuffer):
+        (rx::Renderer11::createIndexBuffer):
+        (rx::Renderer11::createBufferStorage):
+        (rx::Renderer11::createQuery):
+        (rx::Renderer11::createFence):
+        (rx::Renderer11::getRenderTargetResource):
+        (rx::Renderer11::blitRect):
+        (rx::Renderer11::readPixels):
+        (rx::Renderer11::createImage):
+        (rx::Renderer11::generateMipmap):
+        (rx::Renderer11::createTextureStorage2D):
+        (rx::Renderer11::createTextureStorageCube):
+        (rx::getFastPixelCopySize):
+        (rx::readPixelColor):
+        (rx::writePixelColor):
+        (rx::Renderer11::readTextureData):
+        (rx::Renderer11::blitRenderbufferRect):
+        (rx::Renderer11::resolveMultisampledTexture):
+        (rx::Renderer11::getLUID):
+        * src/libGLESv2/renderer/Renderer11.h: Added.
+        (rx::Renderer11::getDevice):
+        (rx::Renderer11::getDeviceContext):
+        (rx::Renderer11::getDxgiFactory):
+        * src/libGLESv2/renderer/Renderer9.cpp: Added.
+        (rx::Renderer9::Renderer9):
+        (rx::Renderer9::~Renderer9):
+        (rx::Renderer9::makeRenderer9):
+        (rx::Renderer9::initialize):
+        (rx::Renderer9::initializeDevice):
+        (rx::Renderer9::getDefaultPresentParameters):
+        (rx::Renderer9::generateConfigs):
+        (rx::Renderer9::deleteConfigs):
+        (rx::Renderer9::startScene):
+        (rx::Renderer9::endScene):
+        (rx::Renderer9::sync):
+        (rx::Renderer9::createSwapChain):
+        (rx::Renderer9::allocateEventQuery):
+        (rx::Renderer9::freeEventQuery):
+        (rx::Renderer9::createVertexShader):
+        (rx::Renderer9::createPixelShader):
+        (rx::Renderer9::createVertexBuffer):
+        (rx::Renderer9::createIndexBuffer):
+        (rx::Renderer9::createBufferStorage):
+        (rx::Renderer9::createQuery):
+        (rx::Renderer9::createFence):
+        (rx::Renderer9::setSamplerState):
+        (rx::Renderer9::setTexture):
+        (rx::Renderer9::setRasterizerState):
+        (rx::Renderer9::setBlendState):
+        (rx::Renderer9::setDepthStencilState):
+        (rx::Renderer9::setScissorRectangle):
+        (rx::Renderer9::setViewport):
+        (rx::Renderer9::applyPrimitiveType):
+        (rx::Renderer9::getNullColorbuffer):
+        (rx::Renderer9::applyRenderTarget):
+        (rx::Renderer9::applyVertexBuffer):
+        (rx::Renderer9::applyIndexBuffer):
+        (rx::Renderer9::drawArrays):
+        (rx::Renderer9::drawElements):
+        (rx::Renderer9::drawLineLoop):
+        (rx::drawPoints):
+        (rx::Renderer9::drawIndexedPoints):
+        (rx::Renderer9::applyShaders):
+        (rx::Renderer9::applyUniforms):
+        (rx::Renderer9::applyUniformnfv):
+        (rx::Renderer9::applyUniformniv):
+        (rx::Renderer9::applyUniformnbv):
+        (rx::Renderer9::clear):
+        (rx::Renderer9::markAllStateDirty):
+        (rx::Renderer9::releaseDeviceResources):
+        (rx::Renderer9::notifyDeviceLost):
+        (rx::Renderer9::isDeviceLost):
+        (rx::Renderer9::testDeviceLost):
+        (rx::Renderer9::testDeviceResettable):
+        (rx::Renderer9::resetDevice):
+        (rx::Renderer9::getAdapterVendor):
+        (rx::Renderer9::getRendererDescription):
+        (rx::Renderer9::getAdapterIdentifier):
+        (rx::Renderer9::getMultiSampleSupport):
+        (rx::Renderer9::getBGRATextureSupport):
+        (rx::Renderer9::getDXT1TextureSupport):
+        (rx::Renderer9::getDXT3TextureSupport):
+        (rx::Renderer9::getDXT5TextureSupport):
+        (rx::Renderer9::getDepthTextureSupport):
+        (rx::Renderer9::getFloat32TextureSupport):
+        (rx::Renderer9::getFloat16TextureSupport):
+        (rx::Renderer9::getLuminanceTextureSupport):
+        (rx::Renderer9::getLuminanceAlphaTextureSupport):
+        (rx::Renderer9::getTextureFilterAnisotropySupport):
+        (rx::Renderer9::getTextureMaxAnisotropy):
+        (rx::Renderer9::getEventQuerySupport):
+        (rx::Renderer9::getMaxVertexTextureImageUnits):
+        (rx::Renderer9::getMaxCombinedTextureImageUnits):
+        (rx::Renderer9::getReservedVertexUniformVectors):
+        (rx::Renderer9::getReservedFragmentUniformVectors):
+        (rx::Renderer9::getMaxVertexUniformVectors):
+        (rx::Renderer9::getMaxFragmentUniformVectors):
+        (rx::Renderer9::getMaxVaryingVectors):
+        (rx::Renderer9::getNonPower2TextureSupport):
+        (rx::Renderer9::getOcclusionQuerySupport):
+        (rx::Renderer9::getInstancingSupport):
+        (rx::Renderer9::getShareHandleSupport):
+        (rx::Renderer9::getDerivativeInstructionSupport):
+        (rx::Renderer9::getPostSubBufferSupport):
+        (rx::Renderer9::getMajorShaderModel):
+        (rx::Renderer9::getMaxPointSize):
+        (rx::Renderer9::getMaxViewportDimension):
+        (rx::Renderer9::getMaxTextureWidth):
+        (rx::Renderer9::getMaxTextureHeight):
+        (rx::Renderer9::get32BitIndexSupport):
+        (rx::Renderer9::getCapsDeclTypes):
+        (rx::Renderer9::getMinSwapInterval):
+        (rx::Renderer9::getMaxSwapInterval):
+        (rx::Renderer9::getMaxSupportedSamples):
+        (rx::Renderer9::getNearestSupportedSamples):
+        (rx::Renderer9::getMaxRenderTargets):
+        (rx::Renderer9::ConvertTextureInternalFormat):
+        (rx::Renderer9::copyToRenderTarget):
+        (rx::Renderer9::getBufferPool):
+        (rx::Renderer9::copyImage):
+        (rx::Renderer9::blitRect):
+        (rx::Renderer9::readPixels):
+        (rx::Renderer9::createRenderTarget):
+        (rx::Renderer9::loadExecutable):
+        (rx::Renderer9::compileToExecutable):
+        (rx::Renderer9::boxFilter):
+        (rx::Renderer9::getTexturePool):
+        (rx::Renderer9::createImage):
+        (rx::Renderer9::generateMipmap):
+        (rx::Renderer9::createTextureStorage2D):
+        (rx::Renderer9::createTextureStorageCube):
+        (rx::Renderer9::getLUID):
+        * src/libGLESv2/renderer/Renderer9.h: Added.
+        (rx::Renderer9::getDevice):
+        * src/libGLESv2/renderer/ShaderCache.h: Added.
+        (rx::ShaderCache::ShaderCache):
+        (rx::ShaderCache::~ShaderCache):
+        (rx::ShaderCache::initialize):
+        (rx::ShaderCache::create):
+        (rx::ShaderCache::clear):
+        (rx::ShaderCache::createShader):
+        * src/libGLESv2/renderer/ShaderExecutable.h: Added.
+        (rx::ShaderExecutable::ShaderExecutable):
+        (rx::ShaderExecutable::~ShaderExecutable):
+        (rx::ShaderExecutable::getFunction):
+        (rx::ShaderExecutable::getLength):
+        * src/libGLESv2/renderer/ShaderExecutable11.cpp: Added.
+        (rx::ShaderExecutable11::ShaderExecutable11):
+        (rx::ShaderExecutable11::~ShaderExecutable11):
+        (rx::ShaderExecutable11::makeShaderExecutable11):
+        (rx::ShaderExecutable11::getVertexShader):
+        (rx::ShaderExecutable11::getPixelShader):
+        (rx::ShaderExecutable11::getGeometryShader):
+        (rx::ShaderExecutable11::getConstantBuffer):
+        * src/libGLESv2/renderer/ShaderExecutable11.h: Added.
+        * src/libGLESv2/renderer/ShaderExecutable9.cpp: Added.
+        (rx::ShaderExecutable9::ShaderExecutable9):
+        (rx::ShaderExecutable9::~ShaderExecutable9):
+        (rx::ShaderExecutable9::makeShaderExecutable9):
+        (rx::ShaderExecutable9::getVertexShader):
+        (rx::ShaderExecutable9::getPixelShader):
+        * src/libGLESv2/renderer/ShaderExecutable9.h: Added.
+        * src/libGLESv2/renderer/SwapChain.h: Added.
+        (rx::SwapChain::SwapChain):
+        (rx::SwapChain::~SwapChain):
+        (rx::SwapChain::getShareHandle):
+        * src/libGLESv2/renderer/SwapChain11.cpp: Added.
+        (rx::SwapChain11::SwapChain11):
+        (rx::SwapChain11::~SwapChain11):
+        (rx::SwapChain11::release):
+        (rx::SwapChain11::releaseOffscreenTexture):
+        (rx::SwapChain11::resetOffscreenTexture):
+        (rx::SwapChain11::resize):
+        (rx::SwapChain11::reset):
+        (rx::SwapChain11::initPassThroughResources):
+        (rx::SwapChain11::swapRect):
+        (rx::SwapChain11::getOffscreenTexture):
+        (rx::SwapChain11::getRenderTarget):
+        (rx::SwapChain11::getRenderTargetShaderResource):
+        (rx::SwapChain11::getDepthStencil):
+        (rx::SwapChain11::getDepthStencilTexture):
+        (rx::SwapChain11::makeSwapChain11):
+        (rx::SwapChain11::recreate):
+        * src/libGLESv2/renderer/SwapChain11.h: Added.
+        (rx::SwapChain11::getWidth):
+        (rx::SwapChain11::getHeight):
+        * src/libGLESv2/renderer/SwapChain9.cpp: Added.
+        (rx::SwapChain9::SwapChain9):
+        (rx::SwapChain9::~SwapChain9):
+        (rx::SwapChain9::release):
+        (rx::convertInterval):
+        (rx::SwapChain9::resize):
+        (rx::SwapChain9::reset):
+        (rx::SwapChain9::swapRect):
+        (rx::SwapChain9::getRenderTarget):
+        (rx::SwapChain9::getDepthStencil):
+        (rx::SwapChain9::getOffscreenTexture):
+        (rx::SwapChain9::makeSwapChain9):
+        (rx::SwapChain9::recreate):
+        * src/libGLESv2/renderer/SwapChain9.h: Added.
+        * src/libGLESv2/renderer/TextureStorage.cpp: Added.
+        (rx::TextureStorageInterface::TextureStorageInterface):
+        (rx::TextureStorageInterface::~TextureStorageInterface):
+        (rx::TextureStorageInterface::isRenderTarget):
+        (rx::TextureStorageInterface::isManaged):
+        (rx::TextureStorageInterface::getTextureSerial):
+        (rx::TextureStorageInterface::issueTextureSerial):
+        (rx::TextureStorageInterface::getLodOffset):
+        (rx::TextureStorageInterface::levelCount):
+        (rx::TextureStorageInterface2D::TextureStorageInterface2D):
+        (rx::TextureStorageInterface2D::~TextureStorageInterface2D):
+        (rx::TextureStorageInterface2D::getRenderTarget):
+        (rx::TextureStorageInterface2D::generateMipmap):
+        (rx::TextureStorageInterface2D::getRenderTargetSerial):
+        (rx::TextureStorageInterfaceCube::TextureStorageInterfaceCube):
+        (rx::TextureStorageInterfaceCube::~TextureStorageInterfaceCube):
+        (rx::TextureStorageInterfaceCube::getRenderTarget):
+        (rx::TextureStorageInterfaceCube::generateMipmap):
+        (rx::TextureStorageInterfaceCube::getRenderTargetSerial):
+        * src/libGLESv2/renderer/TextureStorage.h: Added.
+        (rx::TextureStorage::TextureStorage):
+        (rx::TextureStorage::~TextureStorage):
+        (rx::TextureStorageInterface::getStorageInstance):
+        * src/libGLESv2/renderer/TextureStorage11.cpp: Added.
+        (rx::TextureStorage11::TextureStorage11):
+        (rx::TextureStorage11::~TextureStorage11):
+        (rx::TextureStorage11::makeTextureStorage11):
+        (rx::TextureStorage11::GetTextureBindFlags):
+        (rx::TextureStorage11::IsTextureFormatRenderable):
+        (rx::TextureStorage11::getBindFlags):
+        (rx::TextureStorage11::getBaseTexture):
+        (rx::TextureStorage11::getLodOffset):
+        (rx::TextureStorage11::isRenderTarget):
+        (rx::TextureStorage11::isManaged):
+        (rx::TextureStorage11::levelCount):
+        (rx::TextureStorage11::getSubresourceIndex):
+        (rx::TextureStorage11::updateSubresourceLevel):
+        (rx::TextureStorage11::generateMipmapLayer):
+        (rx::TextureStorage11_2D::TextureStorage11_2D):
+        (rx::TextureStorage11_2D::~TextureStorage11_2D):
+        (rx::TextureStorage11_2D::makeTextureStorage11_2D):
+        (rx::TextureStorage11_2D::getRenderTarget):
+        (rx::TextureStorage11_2D::getSRV):
+        (rx::TextureStorage11_2D::generateMipmap):
+        (rx::TextureStorage11_Cube::TextureStorage11_Cube):
+        (rx::TextureStorage11_Cube::~TextureStorage11_Cube):
+        (rx::TextureStorage11_Cube::makeTextureStorage11_Cube):
+        (rx::TextureStorage11_Cube::getRenderTarget):
+        (rx::TextureStorage11_Cube::getSRV):
+        (rx::TextureStorage11_Cube::generateMipmap):
+        * src/libGLESv2/renderer/TextureStorage11.h: Added.
+        (rx::TextureStorage11::getRenderTarget):
+        (rx::TextureStorage11::generateMipmap):
+        * src/libGLESv2/renderer/TextureStorage9.cpp: Added.
+        (rx::TextureStorage9::TextureStorage9):
+        (rx::TextureStorage9::~TextureStorage9):
+        (rx::TextureStorage9::makeTextureStorage9):
+        (rx::TextureStorage9::GetTextureUsage):
+        (rx::TextureStorage9::IsTextureFormatRenderable):
+        (rx::TextureStorage9::isRenderTarget):
+        (rx::TextureStorage9::isManaged):
+        (rx::TextureStorage9::getPool):
+        (rx::TextureStorage9::getUsage):
+        (rx::TextureStorage9::getLodOffset):
+        (rx::TextureStorage9::levelCount):
+        (rx::TextureStorage9_2D::TextureStorage9_2D):
+        (rx::TextureStorage9_2D::~TextureStorage9_2D):
+        (rx::TextureStorage9_2D::makeTextureStorage9_2D):
+        (rx::TextureStorage9_2D::getSurfaceLevel):
+        (rx::TextureStorage9_2D::getRenderTarget):
+        (rx::TextureStorage9_2D::generateMipmap):
+        (rx::TextureStorage9_2D::getBaseTexture):
+        (rx::TextureStorage9_2D::initializeRenderTarget):
+        (rx::TextureStorage9_Cube::TextureStorage9_Cube):
+        (rx::TextureStorage9_Cube::~TextureStorage9_Cube):
+        (rx::TextureStorage9_Cube::makeTextureStorage9_Cube):
+        (rx::TextureStorage9_Cube::getCubeMapSurface):
+        (rx::TextureStorage9_Cube::getRenderTarget):
+        (rx::TextureStorage9_Cube::generateMipmap):
+        (rx::TextureStorage9_Cube::getBaseTexture):
+        (rx::TextureStorage9_Cube::initializeRenderTarget):
+        * src/libGLESv2/renderer/TextureStorage9.h: Added.
+        (rx::TextureStorage9::getRenderTarget):
+        (rx::TextureStorage9::generateMipmap):
+        * src/libGLESv2/renderer/VertexBuffer.cpp: Added.
+        (rx::VertexBuffer::VertexBuffer):
+        (rx::VertexBuffer::~VertexBuffer):
+        (rx::VertexBuffer::updateSerial):
+        (rx::VertexBuffer::getSerial):
+        (rx::VertexBufferInterface::VertexBufferInterface):
+        (rx::VertexBufferInterface::~VertexBufferInterface):
+        (rx::VertexBufferInterface::getSerial):
+        (rx::VertexBufferInterface::getBufferSize):
+        (rx::VertexBufferInterface::setBufferSize):
+        (rx::VertexBufferInterface::getWritePosition):
+        (rx::VertexBufferInterface::setWritePosition):
+        (rx::VertexBufferInterface::discard):
+        (rx::VertexBufferInterface::storeVertexAttributes):
+        (rx::VertexBufferInterface::storeRawData):
+        (rx::VertexBufferInterface::reserveVertexSpace):
+        (rx::VertexBufferInterface::reserveRawDataSpace):
+        (rx::VertexBufferInterface::getVertexBuffer):
+        (rx::StreamingVertexBufferInterface::StreamingVertexBufferInterface):
+        (rx::StreamingVertexBufferInterface::~StreamingVertexBufferInterface):
+        (rx::StreamingVertexBufferInterface::reserveSpace):
+        (rx::StaticVertexBufferInterface::StaticVertexBufferInterface):
+        (rx::StaticVertexBufferInterface::~StaticVertexBufferInterface):
+        (rx::StaticVertexBufferInterface::lookupAttribute):
+        (rx::StaticVertexBufferInterface::reserveSpace):
+        (rx::StaticVertexBufferInterface::storeVertexAttributes):
+        * src/libGLESv2/renderer/VertexBuffer.h: Added.
+        * src/libGLESv2/renderer/VertexBuffer11.cpp: Added.
+        (rx::VertexBuffer11::VertexBuffer11):
+        (rx::VertexBuffer11::~VertexBuffer11):
+        (rx::VertexBuffer11::initialize):
+        (rx::VertexBuffer11::makeVertexBuffer11):
+        (rx::VertexBuffer11::storeVertexAttributes):
+        (rx::VertexBuffer11::storeRawData):
+        (rx::VertexBuffer11::getSpaceRequired):
+        (rx::VertexBuffer11::requiresConversion):
+        (rx::VertexBuffer11::getBufferSize):
+        (rx::VertexBuffer11::setBufferSize):
+        (rx::VertexBuffer11::discard):
+        (rx::VertexBuffer11::getVertexSize):
+        (rx::VertexBuffer11::getDXGIFormat):
+        (rx::VertexBuffer11::getBuffer):
+        (rx::copyVertexData):
+        (rx::copyFixedVertexData):
+        (rx::copyToFloatVertexData):
+        (rx::VertexBuffer11::getVertexConversion):
+        * src/libGLESv2/renderer/VertexBuffer11.h: Added.
+        * src/libGLESv2/renderer/VertexBuffer9.cpp: Added.
+        (rx::VertexBuffer9::VertexBuffer9):
+        (rx::VertexBuffer9::~VertexBuffer9):
+        (rx::VertexBuffer9::initialize):
+        (rx::VertexBuffer9::makeVertexBuffer9):
+        (rx::VertexBuffer9::storeVertexAttributes):
+        (rx::VertexBuffer9::storeRawData):
+        (rx::VertexBuffer9::getSpaceRequired):
+        (rx::VertexBuffer9::requiresConversion):
+        (rx::VertexBuffer9::getVertexSize):
+        (rx::VertexBuffer9::getDeclType):
+        (rx::VertexBuffer9::getBufferSize):
+        (rx::VertexBuffer9::setBufferSize):
+        (rx::VertexBuffer9::discard):
+        (rx::VertexBuffer9::getBuffer):
+        (rx::VertexBuffer9::initializeTranslations):
+        (rx::VertexBuffer9::typeIndex):
+        (rx::VertexBuffer9::formatConverter):
+        (rx::VertexBuffer9::spaceRequired):
+        * src/libGLESv2/renderer/VertexBuffer9.h: Added.
+        * src/libGLESv2/renderer/VertexDataManager.cpp: Added.
+        (rx::elementsInBuffer):
+        (rx::VertexDataManager::VertexDataManager):
+        (rx::VertexDataManager::~VertexDataManager):
+        (rx::directStoragePossible):
+        (rx::VertexDataManager::prepareVertexData):
+        * src/libGLESv2/renderer/VertexDataManager.h: Added.
+        * src/libGLESv2/renderer/VertexDeclarationCache.cpp: Added.
+        (rx::VertexDeclarationCache::VertexDeclarationCache):
+        (rx::VertexDeclarationCache::~VertexDeclarationCache):
+        (rx::VertexDeclarationCache::applyDeclaration):
+        (rx::VertexDeclarationCache::markStateDirty):
+        * src/libGLESv2/renderer/VertexDeclarationCache.h: Added.
+        * src/libGLESv2/renderer/generatemip.h: Added.
+        (rx::L8::average):
+        (rx::A8L8::average):
+        (rx::A8R8G8B8::average):
+        (rx::A16B16G16R16F::average):
+        (rx::R16F::average):
+        (rx::R16G16F::average):
+        (rx::A32B32G32R32F::average):
+        (rx::R32F::average):
+        (rx::R32G32F::average):
+        (rx::R32G32B32F::average):
+        (rx::GenerateMip):
+        * src/libGLESv2/renderer/renderer11_utils.cpp: Added.
+        (gl_d3d11::ConvertBlendFunc):
+        (gl_d3d11::ConvertBlendOp):
+        (gl_d3d11::ConvertColorMask):
+        (gl_d3d11::ConvertCullMode):
+        (gl_d3d11::ConvertComparison):
+        (gl_d3d11::ConvertDepthMask):
+        (gl_d3d11::ConvertStencilMask):
+        (gl_d3d11::ConvertStencilOp):
+        (gl_d3d11::ConvertFilter):
+        (gl_d3d11::ConvertTextureWrap):
+        (gl_d3d11::ConvertMinLOD):
+        (gl_d3d11::ConvertMaxLOD):
+        (d3d11_gl::ConvertBackBufferFormat):
+        (d3d11_gl::ConvertDepthStencilFormat):
+        (d3d11_gl::ConvertRenderbufferFormat):
+        (d3d11_gl::ConvertTextureInternalFormat):
+        (gl_d3d11::ConvertRenderbufferFormat):
+        (gl_d3d11::ConvertTextureFormat):
+        (d3d11::SetPositionTexCoordVertex):
+        (d3d11::SetPositionDepthColorVertex):
+        (d3d11::ComputePixelSizeBits):
+        (d3d11::ComputeBlockSizeBits):
+        (d3d11::IsCompressed):
+        (d3d11::GetTextureFormatDimensionAlignment):
+        (d3d11::IsDepthStencilFormat):
+        (d3d11::GetDepthTextureFormat):
+        (d3d11::GetDepthShaderResourceFormat):
+        (d3d11::SetDebugName):
+        * src/libGLESv2/renderer/renderer11_utils.h: Added.
+        (d3d11::isDeviceLostError):
+        * src/libGLESv2/renderer/renderer9_utils.cpp: Added.
+        (gl_d3d9::ConvertComparison):
+        (gl_d3d9::ConvertColor):
+        (gl_d3d9::ConvertBlendFunc):
+        (gl_d3d9::ConvertBlendOp):
+        (gl_d3d9::ConvertStencilOp):
+        (gl_d3d9::ConvertTextureWrap):
+        (gl_d3d9::ConvertCullMode):
+        (gl_d3d9::ConvertCubeFace):
+        (gl_d3d9::ConvertColorMask):
+        (gl_d3d9::ConvertMagFilter):
+        (gl_d3d9::ConvertMinFilter):
+        (gl_d3d9::ConvertRenderbufferFormat):
+        (gl_d3d9::GetMultisampleTypeFromSamples):
+        (d3d9_gl::GetStencilSize):
+        (d3d9_gl::GetAlphaSize):
+        (d3d9_gl::GetSamplesFromMultisampleType):
+        (d3d9_gl::IsFormatChannelEquivalent):
+        (d3d9_gl::ConvertBackBufferFormat):
+        (d3d9_gl::ConvertDepthStencilFormat):
+        (d3d9_gl::ConvertRenderTargetFormat):
+        (d3d9_gl::GetEquivalentFormat):
+        (d3d9::IsCompressedFormat):
+        (d3d9::ComputeRowSize):
+        * src/libGLESv2/renderer/renderer9_utils.h: Added.
+        (d3d9::isDeviceLostError):
+        * src/libGLESv2/renderer/shaders: Added.
+        * src/libGLESv2/renderer/shaders/Blit.ps: Added.
+        * src/libGLESv2/renderer/shaders/Blit.vs: Added.
+        * src/libGLESv2/renderer/shaders/Clear11.hlsl: Added.
+        * src/libGLESv2/renderer/shaders/Passthrough11.hlsl: Added.
+        * src/libGLESv2/renderer/shaders/compiled: Added.
+        * src/libGLESv2/renderer/shaders/compiled/clear11vs.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/clearmultiple11ps.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/clearsingle11ps.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/componentmaskps.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/flipyvs.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/luminanceps.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/passthrough11vs.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/passthroughlum11ps.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/passthroughlumalpha11ps.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/passthroughps.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/passthroughrgb11ps.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/passthroughrgba11ps.h: Added.
+        * src/libGLESv2/renderer/shaders/compiled/standardvs.h: Added.
+        * src/libGLESv2/renderer/shaders/generate_shaders.bat: Added.
+        * src/libGLESv2/renderer/vertexconversion.h: Added.
+        (rx::Identity::convert):
+        (rx::Cast::convert):
+        (rx::Normalize::convert):
+        (rx::FixedToFloat::convert):
+        (rx::SimpleDefaultValues::zero):
+        (rx::SimpleDefaultValues::one):
+        (rx::NormalizedDefaultValues::zero):
+        (rx::NormalizedDefaultValues::one):
+        (rx::VertexDataConverter::convertArray):
+        (rx::VertexDataConverter::pointerAddBytes):
+        (rx::VertexDataConverter::copyComponent):
+        * src/libGLESv2/resource.h: Added.
+        * src/libGLESv2/utilities.cpp: Added.
+        (gl::UniformComponentCount):
+        (gl::UniformComponentType):
+        (gl::UniformComponentSize):
+        (gl::UniformInternalSize):
+        (gl::UniformExternalSize):
+        (gl::VariableRowCount):
+        (gl::VariableColumnCount):
+        (gl::AllocateFirstFreeBits):
+        (gl::ComputePitch):
+        (gl::ComputeCompressedPitch):
+        (gl::ComputeCompressedSize):
+        (gl::IsCompressed):
+        (gl::IsDepthTexture):
+        (gl::IsStencilTexture):
+        (gl::MakeValidSize):
+        (gl::ComputePixelSize):
+        (gl::IsCubemapTextureTarget):
+        (gl::IsInternalTextureTarget):
+        (gl::ConvertSizedInternalFormat):
+        (gl::ExtractFormat):
+        (gl::ExtractType):
+        (gl::IsColorRenderable):
+        (gl::IsDepthRenderable):
+        (gl::IsStencilRenderable):
+        (gl::IsFloat32Format):
+        (gl::IsFloat16Format):
+        (gl::GetAlphaSize):
+        (gl::GetRedSize):
+        (gl::GetGreenSize):
+        (gl::GetBlueSize):
+        (gl::GetDepthSize):
+        (gl::GetStencilSize):
+        (gl::IsTriangleMode):
+        (getTempPath):
+        (writeFile):
+        * src/libGLESv2/utilities.h: Added.
+        * src/third_party/murmurhash: Added.
+        * src/third_party/murmurhash/LICENSE: Added.
+        * src/third_party/murmurhash/MurmurHash3.cpp: Added, replaced tabs with spaces.
+        (rotl32):
+        (rotl64):
+        (getblock):
+        (fmix):
+        (MurmurHash3_x86_32):
+        (MurmurHash3_x86_128):
+        (MurmurHash3_x64_128):
+        * src/third_party/murmurhash/MurmurHash3.h: Added, replaced tabs with spaces.
+
 2013-07-20  Dean Jackson  <dino@apple.com>
 
         Updated ANGLE is leaking like a sieve
