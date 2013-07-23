@@ -1,3 +1,21 @@
+2013-07-22  Tim Horton  <timothy_horton@apple.com>
+
+        <applet> plugins are instantiated post-attach (instead of post-layout like for object and embed)
+        https://bugs.webkit.org/show_bug.cgi?id=118994
+        <rdar://problem/14511232>
+
+        Reviewed by Anders Carlsson.
+
+        Make <applet> consistent with <object> and <embed>, deferring plugin
+        instantiation to post-layout, so that layout is up-to-date if anything
+        needs it (like RenderEmbeddedObject::isReplacementObscured) during creation.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::updateWidget):
+        Copy code from HTMLObjectElement/HTMLEmbedElement that defers plugin
+        creation until post-layout tasks. Java is always an NPAPI plugin, so
+        we should always defer if requested.
+
 2013-07-22  Benjamin Poulain  <benjamin@webkit.org>
 
         Do not allocate 2 AtomicString just to do a comparison in HTMLAnchorElement::setRel()
