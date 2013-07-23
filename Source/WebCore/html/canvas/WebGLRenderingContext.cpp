@@ -430,7 +430,6 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
     attributes.noExtensions = true;
     attributes.shareResources = false;
     attributes.preferDiscreteGPU = true;
-    attributes.topDocumentURL = document->topDocument()->url();
 
     RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(attributes, hostWindow));
 

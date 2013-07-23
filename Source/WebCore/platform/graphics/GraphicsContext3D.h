@@ -29,7 +29,6 @@
 #include "GraphicsTypes3D.h"
 #include "Image.h"
 #include "IntRect.h"
-#include "KURL.h"
 #include "PlatformLayer.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -454,7 +453,6 @@ public:
         bool noExtensions;
         bool shareResources;
         bool preferDiscreteGPU;
-        KURL topDocumentURL;
     };
 
     enum RenderStyle {
