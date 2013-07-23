@@ -290,6 +290,27 @@
 (define (webkit-imagecapture)
     (allow appleevent-send (appleevent-destination "com.apple.imagecaptureextension2")))
 
+;; Camera
+(define (webkit-camera)
+    (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
+    (allow mach-lookup
+        (global-name "com.apple.cmio.AppleCameraAssistant")
+        ;; Apple DAL assistants
+        (global-name "com.apple.cmio.VDCAssistant")
+        (global-name "com.apple.cmio.AVCAssistant")
+        (global-name "com.apple.cmio.IIDCVideoAssistant")
+        ;; QuickTimeIIDCDigitizer assistant
+        (global-name "com.apple.IIDCAssistant"))
+    (allow iokit-open
+        ;; QuickTimeUSBVDCDigitizer
+        (iokit-user-client-class "IOUSBDeviceUserClientV2")
+        (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
+    (allow device-camera))
+
+;; Microphone
+(define (webkit-microphone)
+    (allow device-microphone))
+
 (allow ipc-posix-shm*
     (ipc-posix-name-regex #"^AudioIO")
     (ipc-posix-name-regex #"^CFPBS:")
