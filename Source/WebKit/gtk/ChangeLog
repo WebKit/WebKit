@@ -1,3 +1,29 @@
+2013-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GtkAdjustmentWatcher idle source not correctly handled
+        https://bugs.webkit.org/show_bug.cgi?id=119003
+
+        Reviewed by Martin Robinson.
+
+        GtkAdjustmentWatcher::updateAdjustmentsFromScrollbarsLater()
+        creates a new idle source and initializes
+        m_updateAdjustmentCallbackId, which is used everywhere and
+        specially in the destructor to cancel the source when the
+        GtkAdjustmentWatcher is deleted. However,
+        m_updateAdjustmentCallbackId is reset to 0 in
+        GtkAdjustmentWatcher::updateAdjustmentsFromScrollbars() only when
+        not returning early. This method is public and not only called by
+        the updateAdjustmentCallback, which means that a call to
+        updateAdjustmentsFromScrollbars could reset the
+        m_updateAdjustmentCallbackId without actually destroying the source.
+
+        * WebCoreSupport/GtkAdjustmentWatcher.cpp:
+        (WebKit::GtkAdjustmentWatcher::updateAdjustmentsFromScrollbars):
+        Cancel the adjustment later idle if it has been scheduled.
+        (WebKit::GtkAdjustmentWatcher::updateAdjustmentCallback): Reset
+        m_updateAdjustmentCallbackId.
+        * WebCoreSupport/GtkAdjustmentWatcher.h:
+
 2013-07-17  Kangil Han  <kangil.han@samsung.com>
 
         Use toHTMLMediaElement

@@ -43,6 +43,8 @@ public:
     bool scrollbarsDisabled() const { return m_scrollbarsDisabled; };
 
 private:
+    static gboolean updateAdjustmentCallback(GtkAdjustmentWatcher*);
+
     WebKitWebView* m_webView;
     GRefPtr<GtkAdjustment> m_horizontalAdjustment;
     GRefPtr<GtkAdjustment> m_verticalAdjustment;

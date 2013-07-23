@@ -68,11 +68,15 @@ void GtkAdjustmentWatcher::updateAdjustmentsFromScrollbars()
     FrameView* frameView = core(m_webView)->mainFrame()->view();
     updateAdjustmentFromScrollbar(m_horizontalAdjustment.get(), frameView->horizontalScrollbar());
     updateAdjustmentFromScrollbar(m_verticalAdjustment.get(), frameView->verticalScrollbar());
-    m_updateAdjustmentCallbackId = 0;
+    if (m_updateAdjustmentCallbackId) {
+        g_source_remove(m_updateAdjustmentCallbackId);
+        m_updateAdjustmentCallbackId = 0;
+    }
 }
 
-static gboolean updateAdjustmentCallback(GtkAdjustmentWatcher* watcher)
+gboolean GtkAdjustmentWatcher::updateAdjustmentCallback(GtkAdjustmentWatcher* watcher)
 {
+    watcher->m_updateAdjustmentCallbackId = 0;
     watcher->updateAdjustmentsFromScrollbars();
     return FALSE;
 }
