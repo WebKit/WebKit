@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<title>CSS Test: rounded rectangle shape-outside on floats with clamped radii values</title>
+<link rel="author" title="Bem Jones-Bey" href="mailto:bjonesbe@adobe.com">
+<link rel="help" href="http://dev.w3.org/csswg/css-shapes-1/#shape-outside-property">
+<link rel="match" href="shape-outside-floats-rounded-rectangle-004-reference.html">
+<meta name="flags" content="ahem">
+<script>
+// This is required to run the tests in WebKit's test infrastructure.
+if (window.internals)
+    window.internals.settings.setCSSShapesEnabled(true);
+</script>
+<style>
+.container {
+    font: 10px/1 Ahem, sans-serif;
+    width: 80px;
+    height: 40px;
+    border: 1px solid black;
+    margin: 5px;
+}
+.float {
+    float: left;
+    width: 40px;
+    height: 40px;
+    border: 1px solid blue;
+    border-radius: 50%;
+}
+.fixed-units {
+    -webkit-shape-outside: rectangle(0px, 0px, 40px, 40px, 40px, 40px);
+}
+.different-units {
+    -webkit-shape-outside: rectangle(0px, 0px, 40px, 40px, 100%, 100%);
+}
+.relative-units {
+    -webkit-shape-outside: rectangle(0px, 0px, 100%, 100%, 700em, 700em);
+}
+.edge-case {
+    -webkit-shape-outside: rectangle(0px, 0px, 100%, 100%, 50%, 50%);
+}
+</style>
+<body>
+    <div class="container">
+        <div class="float fixed-units"></div>
+        X<br/>
+        X<br/>
+        X<br/>
+        X
+    </div>
+    <div class="container">
+        <div class="float relative-units"></div>
+        X<br/>
+        X<br/>
+        X<br/>
+        X
+    </div>
+    <div class="container">
+        <div class="float different-units"></div>
+        X<br/>
+        X<br/>
+        X<br/>
+        X
+    </div>
+    <div class="container">
+        <div class="float edge-case"></div>
+        X<br/>
+        X<br/>
+        X<br/>
+        X
+    </div>
+</body>

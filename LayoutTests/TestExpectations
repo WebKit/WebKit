@@ -37,11 +37,6 @@ webkit.org/b/118086 fast/shapes/shape-outside-floats/shape-outside-floats-simple
 webkit.org/b/118083 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-inset-rectangle.html [ Skip ]
 webkit.org/b/118083 fast/shapes/shape-outside-floats/shape-outside-floats-simple-inset-rectangle.html [ Skip ]
 
-webkit.org/b/118081 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-001.html [ Skip ]
-webkit.org/b/118081 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-002.html [ Skip ]
-webkit.org/b/118081 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-003.html [ Skip ]
-webkit.org/b/118081 fast/shapes/shape-outside-floats/shape-outside-floats-rounded-rectangle-large-radius.html [ Skip ]
-
 webkit.org/b/118087 fast/shapes/shape-outside-floats/shape-outside-floats-stacked.html [ Skip ]
 webkit.org/b/118087 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple.html [ Skip ]
 

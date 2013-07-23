@@ -1,3 +1,34 @@
+2013-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: support for rounded rectangle shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=118081
+
+        Reviewed by Dean Jackson.
+
+        Update the shape-outside rounded rectangle tests and import them from
+        the CSS WG's repository. They have been moved to the CSS WG repository
+        so they can be part of the spec test suite for CSS Shapes.
+
+        * TestExpectations: Remove skipping for tests that have been replaced.
+        * csswg/submitted/shapes/shape-outside/resources/rounded-rectangle.js: Added.
+        (ellipseXIntercept):
+        (scanConvertRoundedRectangleOutside):
+        (genLeftRightRoundedRectFloatShapeOutsideRefTest):
+        (genLeftRoundedRectFloatShapeOutsideRefTest):
+        (genRightRoundedRectFloatShapeOutsideRefTest):
+        * csswg/submitted/shapes/shape-outside/resources/subpixel-utils.js: Added.
+        (SubPixelLayout):
+        (SubPixelLayout.):
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-001-expected.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-001-expected.html.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-001.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-001.html.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-002-expected.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-002-expected.html.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-002.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-002.html.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-003-expected.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-003-expected.html.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-003.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle-003.html.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-004-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-rounded-rectangle-004.html: Added.
+        * csswg/submitted/shapes/shape-outside/w3c-import.log:
+
 2013-07-23  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r152313): Links in certain twitter postings don't warp correctly on page

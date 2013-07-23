@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html>
-<head>
+<title>shape-outside-floats-rounded-rectangle-003.html</title>
+<link rel="author" title="Bem Jones-Bey" href="mailto:bjonesbe@adobe.com">
+<link rel="help" href="http://dev.w3.org/csswg/css-shapes-1/#shape-outside-property">
+<link rel="match" href="shape-outside-floats-rounded-rectangle-003-reference.html">
+<meta name="flags" content="ahem">
 <script>
     if (window.internals)
         window.internals.settings.setCSSShapesEnabled(true);
@@ -8,6 +11,7 @@
 <style>
 .container {
     font: 20px/1 Ahem, sans-serif;
+    line-height: 20px;
     width: 500px;
     height: 200px; 
     border: 1px solid black;
@@ -22,7 +26,7 @@
 }
 </style>
 
-<h2><a href="https://bugs.webkit.org/show_bug.cgi?id=100299">Bug 100299</a> - [CSS Exclusions] shape-outside on floats for rounded rectangle shapes</h2>
+<body>
 <p>The black squares should trace the right side of the ellipse's blue outline.</p>
 <div class="container">
 X<br/>
@@ -53,4 +57,3 @@ X<br/>
 X
 </div>
 </body>
-</html>
