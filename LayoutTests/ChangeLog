@@ -1,3 +1,16 @@
+2013-07-23  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Unskip passing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=119008
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: unskip editing/selection/mixed-editability-10.html,
+        editing/selection/5825350-1.html and editing/selection/5825350-2.html since they have new
+        baselines, unskip http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html
+        after r152778, unskip fast/images/webgl-teximage2d.html after r152531 and
+        svg/custom/xlink-prefix-in-attributes.html after r152785
+
 2013-07-23  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Unreviewed gardening. Baseline and rebaseline needed after r152612 and r152911.

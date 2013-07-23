@@ -922,12 +922,6 @@ Bug(GTK) http/tests/globalhistory [ Failure ]
 # Need to add functionality to DumpRenderTree to handle error pages
 Bug(GTK) fast/history/back-forward-reset-after-error-handling.html [ Failure ]
 
-# These tests also use firstRectForCharacterRange, but they generate slightly
-# different values. (Chromium also fails here; see their test_expectations.txt file)
-Bug(GTK) editing/selection/mixed-editability-10.html [ Failure ]
-Bug(GTK) editing/selection/5825350-1.html [ Failure ]
-Bug(GTK) editing/selection/5825350-2.html [ Failure ]
-
 # Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 Bug(GTK) fast/loader/api-test-new-window-data-load-base-url.html [ Failure ]
 Bug(GTK) fast/loader/api-test-go-to-current-back-forward-item.html [ Failure ]
@@ -1184,8 +1178,6 @@ webkit.org/b/84037 fast/text/international/spaces-combined-in-vertical-text.html
 # Failing after r121121 on both GTK and EFL
 webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 
-webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
-
 # This failure appears to be GTK-specific
 webkit.org/b/91319 css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
 
@@ -1411,8 +1403,6 @@ webkit.org/b/113168 fast/js/toString-stack-overflow.html [ Failure ]
 
 webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
-webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Failure ]
-
 webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
 webkit.org/b/118220 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 
@@ -1429,8 +1419,6 @@ webkit.org/b/118419 fast/css/style-scoped/registering.html [ Failure ]
 webkit.org/b/118420 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
 
 webkit.org/b/118595 fast/regions/autoheight-correct-region-for-lines-2.html [ ImageOnlyFailure ]
-
-webkit.org/b/118724 svg/custom/xlink-prefix-in-attributes.html [ Failure ]
 
 # MathML tests failing after MathML pixel tests were replaced with ref tests
 webkit.org/b/118904 mathml/presentation/bug95404.html [ ImageOnlyFailure ]
