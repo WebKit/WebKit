@@ -1432,8 +1432,9 @@ webkit.org/b/118595 fast/regions/autoheight-correct-region-for-lines-2.html [ Im
 
 webkit.org/b/118724 svg/custom/xlink-prefix-in-attributes.html [ Failure ]
 
-# New MathML test introduced when MathML pixel tests were replaced with ref tests
+# MathML tests failing after MathML pixel tests were replaced with ref tests
 webkit.org/b/118904 mathml/presentation/bug95404.html [ ImageOnlyFailure ]
+webkit.org/b/119004 mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
