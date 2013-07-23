@@ -2907,11 +2907,7 @@ static bool canBreakAtThisPosition(bool autoWrap, LineWidth& width, InlineIterat
 
     bool canPlaceOnLine = width.fitsOnLine() || !autoWrapWasEverTrueOnLine;
 
-    // If we are an empty inline in the middle of a word and don't fit on the line then clear any line break we have and find
-    // one in the following text instead.
-    if (!canPlaceOnLine && !canBreakHere && isEmptyInline(current.m_obj))
-        lBreak.clear();
-    else if (canPlaceOnLine && canBreakHere)
+    if (canPlaceOnLine && canBreakHere)
         commitLineBreakAtCurrentWidth(width, lBreak, next);
 
     return canBreakHere;
