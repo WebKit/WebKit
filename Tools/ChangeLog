@@ -1,5 +1,20 @@
 2013-07-22  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152951
+
+    2013-07-21  Andreas Kling  <akling@apple.com>
+
+            KURL creates duplicate strings when completing data: URIs.
+            <http://webkit.org/b/118952>
+            <rdar://problem/14504480>
+
+            Reviewed by Anders Carlsson.
+
+            * TestWebKitAPI/Tests/WebCore/KURL.cpp:
+            (TestWebKitAPI::TEST_F):
+
+2013-07-22  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152484
 
     2013-07-08  Zan Dobersek  <zdobersek@igalia.com>

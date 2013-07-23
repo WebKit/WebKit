@@ -72,4 +72,13 @@ TEST_F(KURLTest, KURLConstructorConstChar)
     EXPECT_EQ(String("fragment"), kurl.fragmentIdentifier());
 }
 
+TEST_F(KURLTest, KURLDataURIStringSharing)
+{
+    KURL baseURL(ParsedURLString, "http://www.webkit.org/");
+    String threeApples = "data:text/plain;charset=utf-8;base64,76O/76O/76O/";
+
+    KURL url(baseURL, threeApples);
+    EXPECT_EQ(threeApples.impl(), url.string().impl());
+}
+
 } // namespace TestWebKitAPI
