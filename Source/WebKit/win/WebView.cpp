@@ -2866,9 +2866,27 @@ void WebView::dispatchDidReceiveIconFromWebFrame(WebFrame* frame)
 {
     registerForIconNotification(false);
 
-    if (m_frameLoadDelegate)
-        // FIXME: <rdar://problem/5491010> - Pass in the right HBITMAP. 
-        m_frameLoadDelegate->didReceiveIcon(this, 0, frame);
+    if (m_frameLoadDelegate) {
+        String str = frame->url().string();
+
+        IntSize sz(16, 16);
+
+        BitmapInfo bmInfo = BitmapInfo::create(sz);
+
+        HBITMAP hBitmap = 0;
+
+        Image* icon = iconDatabase().synchronousIconForPageURL(str, sz);
+
+        if (icon && icon->width()) {
+            HWndDC dc(0);
+            hBitmap = CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0);
+            icon->getHBITMAPOfSize(hBitmap, &static_cast<SIZE>(sz));
+        }
+
+        HRESULT hr = m_frameLoadDelegate->didReceiveIcon(this, (OLE_HANDLE)hBitmap, frame);
+        if (hr == E_NOTIMPL)
+            DeleteObject(hBitmap);
+    }
 }
 
 HRESULT WebView::setAccessibilityDelegate(

@@ -1,3 +1,15 @@
+2013-07-23  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] WebView didReceiveIcon delegate call doesn't have the icon in it
+        https://bugs.webkit.org/show_bug.cgi?id=100379
+
+        Reviewed by Brent Fulgham.
+
+        Added missing icon to WebView didReceiveIcon delegate call, fixes <rdar://problem/5491010>.
+
+        * WebView.cpp:
+        (WebView::dispatchDidReceiveIconFromWebFrame):
+
 2013-07-22  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Download fails for certain urls.
