@@ -1,3 +1,18 @@
+2013-07-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Remove deprecated and unused compositing settings
+        https://bugs.webkit.org/show_bug.cgi?id=119014
+
+        Reviewed by Andreas Kling.
+
+        Remove A set of settings to control accelerated compositing that have long been
+        replaced with triggers returned by ChromeClient, but haven't been fully removed.
+
+        They are only set by the Qt port but not read anywhere.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+
 2013-07-18  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt][WK1] Mark failing API tests as XFAIL

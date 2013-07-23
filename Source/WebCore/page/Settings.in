@@ -95,11 +95,6 @@ downloadableBinaryFontsEnabled initial=true
 
 xssAuditorEnabled initial=false
 unsafePluginPastingEnabled initial=true
-acceleratedCompositingFor3DTransformsEnabled initial=true
-acceleratedCompositingForVideoEnabled initial=true
-acceleratedCompositingForPluginsEnabled initial=true
-acceleratedCompositingForCanvasEnabled initial=true
-acceleratedCompositingForAnimationEnabled initial=true
 acceleratedCompositingForFixedPositionEnabled initial=false
 acceleratedCompositingForOverflowScrollEnabled initial=false
 

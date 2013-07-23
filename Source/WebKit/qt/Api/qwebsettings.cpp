@@ -151,10 +151,6 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::AcceleratedCompositingEnabled));
 
         settings->setAcceleratedCompositingEnabled(value);
-        settings->setAcceleratedCompositingFor3DTransformsEnabled(value);
-        settings->setAcceleratedCompositingForAnimationEnabled(value);
-        settings->setAcceleratedCompositingForVideoEnabled(false);
-        settings->setAcceleratedCompositingForPluginsEnabled(false);
 
         bool showDebugVisuals = qgetenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS") == "1";
         settings->setShowDebugBorders(showDebugVisuals);
@@ -168,9 +164,6 @@ void QWebSettingsPrivate::apply()
 #if ENABLE(CSS_SHADERS)
         // For now, enable CSS shaders when WebGL is enabled.
         settings->setCSSCustomFilterEnabled(value);
-#endif
-#if USE(ACCELERATED_COMPOSITING)
-        settings->setAcceleratedCompositingForCanvasEnabled(value);
 #endif
 #endif
 #if ENABLE(WEB_AUDIO)
