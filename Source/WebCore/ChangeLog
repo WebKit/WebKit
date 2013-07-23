@@ -1,5 +1,17 @@
 2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Soup] Remove unnecessary header inclusions in ResourceHandleSoup.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=118983
+
+        Reviewed by Martin Robinson.
+
+        Remove inclusions of the CachedResourceLoader, ChromeClient, Frame and Page headers. These are not
+        necessary (anymore) and only prevent the source file to be built independently of WebCore, as it should be.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+
+2013-07-23  Zan Dobersek  <zdobersek@igalia.com>
+
         Remove unnecessary header inclusions in GraphicsContext3D.cpp, GraphicsContext3DOpenGLCommon.cpp
         https://bugs.webkit.org/show_bug.cgi?id=118989
 
