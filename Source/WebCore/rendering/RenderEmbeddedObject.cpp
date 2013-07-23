@@ -280,21 +280,21 @@ void RenderEmbeddedObject::setUnavailablePluginIndicatorIsHidden(bool hidden)
 
 static void addReplacementArrowPath(Path& path, const FloatRect& insideRect)
 {
-    FloatRect insideRectWithMargin(insideRect);
-    insideRectWithMargin.inflate(-replacementArrowPadding);
+    FloatRect rect(insideRect);
+    rect.inflate(-replacementArrowPadding);
 
-    FloatPoint center = insideRectWithMargin.center();
-    FloatSize arrowEdge(insideRectWithMargin.width() / 2, insideRectWithMargin.height() / 3);
+    FloatPoint center = rect.center();
+    FloatSize arrowEdge(rect.width() / 2, rect.height() / 3);
     FloatSize arrowHorizontalEdge(arrowEdge.width(), 0);
     FloatSize arrowVerticalEdge(0, arrowEdge.height());
 
-    path.moveTo(FloatPoint(center.x(), insideRectWithMargin.y()));
-    path.addLineTo(path.currentPoint() + arrowVerticalEdge);
-    path.addLineTo(path.currentPoint() - arrowHorizontalEdge);
-    path.addLineTo(path.currentPoint() + arrowVerticalEdge);
-    path.addLineTo(path.currentPoint() + arrowHorizontalEdge);
-    path.addLineTo(path.currentPoint() + arrowVerticalEdge);
-    path.addLineTo(center + arrowHorizontalEdge);
+    path.moveTo(FloatPoint(floorf(center.x()), floorf(rect.y())));
+    path.addLineTo(FloatPoint(floorf(center.x()), floorf(rect.y() + arrowEdge.height())));
+    path.addLineTo(FloatPoint(ceilf(center.x() - arrowEdge.width()), floorf(rect.y() + arrowEdge.height())));
+    path.addLineTo(FloatPoint(ceilf(center.x() - arrowEdge.width()), ceilf(rect.y() + arrowEdge.height() + arrowEdge.height())));
+    path.addLineTo(FloatPoint(floorf(center.x()), ceilf(rect.y() + arrowEdge.height() + arrowEdge.height())));
+    path.addLineTo(FloatPoint(floorf(center.x()), ceilf(rect.y() + arrowEdge.height() + arrowEdge.height() + arrowEdge.height())));
+    path.addLineTo(FloatPoint(ceilf(center.x() + arrowEdge.width()), center.y()));
     path.closeSubpath();
 }
 
@@ -329,8 +329,9 @@ bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
 
     if (shouldUnavailablePluginMessageBeButton(document(), m_pluginUnavailabilityReason)) {
         arrowRect = path.boundingRect();
-        arrowRect.setX(arrowRect.maxX() + replacementArrowLeftMargin);
+        arrowRect.setX(ceilf(arrowRect.maxX() + replacementArrowLeftMargin));
         arrowRect.setWidth(arrowRect.height());
+        arrowRect.inflate(-0.5);
         path.addEllipse(arrowRect);
         addReplacementArrowPath(path, arrowRect);
     }
