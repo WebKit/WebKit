@@ -33,10 +33,10 @@
 #ifndef SocketStreamHandle_h
 #define SocketStreamHandle_h
 
-#include <wtf/gobject/GRefPtr.h>
 #include "SocketStreamHandleBase.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/gobject/GRefPtr.h>
 
 namespace WebCore {
 

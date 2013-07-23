@@ -20,13 +20,11 @@
 #include "config.h"
 #include "ResourceRequest.h"
 
-#include <wtf/gobject/GOwnPtr.h>
 #include "GOwnPtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "SoupURIUtils.h"
-
-#include <libsoup/soup.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
