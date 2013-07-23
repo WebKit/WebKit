@@ -1,3 +1,26 @@
+2013-07-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The computed values of fix length padding should be subpixel precision like margin
+        https://bugs.webkit.org/show_bug.cgi?id=118936
+
+        Reviewed by Simon Fraser.
+
+        The bug was caused by ComputedStyleExtractor::propertyValue always returning the used value
+        for padding. Fixed the bug by returning the computed value when they're of fixed length.
+
+        This aligns the behaviors of getComputedStyle(~).padding~ with getComputedStyle(~).margin~,
+        which had been fixed in r102149. While the current CSSOM specification says getComputedStyle
+        should return the used values for margins when display property is set to anything but none,
+        new behavior matches that of Chrome, Firefox, and Internet Explorer.
+
+        Also extracted zoomAdjustedPaddingOrMarginPixelValue to reduce the code duplication.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-padding-margin-subpixel-length.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::zoomAdjustedPaddingOrMarginPixelValue): Extracted.
+        (WebCore::ComputedStyleExtractor::propertyValue):
+
 2013-07-23  Alex Christensen  <achristensen@apple.com>
 
         Updated ANGLE to latest git commit (047373aa3eb408be62be52ade840fa5f11e72337).

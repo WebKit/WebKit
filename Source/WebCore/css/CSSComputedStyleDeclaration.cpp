@@ -1596,6 +1596,18 @@ static inline PassRefPtr<RenderStyle> computeRenderStyleForProperty(Node* styled
     return styledNode->computedStyle(styledNode->isPseudoElement() ? NOPSEUDO : pseudoElementSpecifier);
 }
 
+typedef Length (RenderStyle::*RenderStyleLengthGetter)() const;
+typedef LayoutUnit (RenderBoxModelObject::*RenderBoxComputedCSSValueGetter)() const;
+
+template<RenderStyleLengthGetter lengthGetter, RenderBoxComputedCSSValueGetter computedCSSValueGetter>
+inline PassRefPtr<CSSValue> zoomAdjustedPaddingOrMarginPixelValue(RenderStyle* style, RenderObject* renderer)
+{
+    Length unzoomedLength = (style->*lengthGetter)();
+    if (unzoomedLength.isFixed() || !renderer || !renderer->isBox())
+        return zoomAdjustedPixelValueForLength(unzoomedLength, style);
+    return zoomAdjustedPixelValue((toRenderBox(renderer)->*computedCSSValueGetter)(), style);
+}
+
 PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     Node* styledNode = this->styledNode();
@@ -2072,12 +2084,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             if (style->locale().isNull())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
             return cssValuePool().createValue(style->locale(), CSSPrimitiveValue::CSS_STRING);
-        case CSSPropertyMarginTop: {
-            Length marginTop = style->marginTop();
-            if (marginTop.isFixed() || !renderer || !renderer->isBox())
-                return zoomAdjustedPixelValueForLength(marginTop, style.get());
-            return zoomAdjustedPixelValue(toRenderBox(renderer)->marginTop(), style.get());
-        }
+        case CSSPropertyMarginTop:
+            return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style.get(), renderer);
         case CSSPropertyMarginRight: {
             Length marginRight = style->marginRight();
             if (marginRight.isFixed() || !renderer || !renderer->isBox())
@@ -2092,18 +2100,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
                 value = toRenderBox(renderer)->marginRight();
             return zoomAdjustedPixelValue(value, style.get());
         }
-        case CSSPropertyMarginBottom: {
-            Length marginBottom = style->marginBottom();
-            if (marginBottom.isFixed() || !renderer || !renderer->isBox())
-                return zoomAdjustedPixelValueForLength(marginBottom, style.get());
-            return zoomAdjustedPixelValue(toRenderBox(renderer)->marginBottom(), style.get());
-        }
-        case CSSPropertyMarginLeft: {
-            Length marginLeft = style->marginLeft();
-            if (marginLeft.isFixed() || !renderer || !renderer->isBox())
-                return zoomAdjustedPixelValueForLength(marginLeft, style.get());
-            return zoomAdjustedPixelValue(toRenderBox(renderer)->marginLeft(), style.get());
-        }
+        case CSSPropertyMarginBottom:
+            return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginBottom, &RenderBoxModelObject::marginBottom>(style.get(), renderer);
+        case CSSPropertyMarginLeft:
+            return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginLeft, &RenderBoxModelObject::marginLeft>(style.get(), renderer);
         case CSSPropertyWebkitMarqueeDirection:
             return cssValuePool().createValue(style->marqueeDirection());
         case CSSPropertyWebkitMarqueeIncrement:
@@ -2163,21 +2163,13 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyOverflowY:
             return cssValuePool().createValue(style->overflowY());
         case CSSPropertyPaddingTop:
-            if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->computedCSSPaddingTop(), style.get());
-            return zoomAdjustedPixelValueForLength(style->paddingTop(), style.get());
+            return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::paddingTop, &RenderBoxModelObject::computedCSSPaddingTop>(style.get(), renderer);
         case CSSPropertyPaddingRight:
-            if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->computedCSSPaddingRight(), style.get());
-            return zoomAdjustedPixelValueForLength(style->paddingRight(), style.get());
+            return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::paddingRight, &RenderBoxModelObject::computedCSSPaddingRight>(style.get(), renderer);
         case CSSPropertyPaddingBottom:
-            if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->computedCSSPaddingBottom(), style.get());
-            return zoomAdjustedPixelValueForLength(style->paddingBottom(), style.get());
+            return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::paddingBottom, &RenderBoxModelObject::computedCSSPaddingBottom>(style.get(), renderer);
         case CSSPropertyPaddingLeft:
-            if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->computedCSSPaddingLeft(), style.get());
-            return zoomAdjustedPixelValueForLength(style->paddingLeft(), style.get());
+            return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::paddingLeft, &RenderBoxModelObject::computedCSSPaddingLeft>(style.get(), renderer);
         case CSSPropertyPageBreakAfter:
             return cssValuePool().createValue(style->pageBreakAfter());
         case CSSPropertyPageBreakBefore:
