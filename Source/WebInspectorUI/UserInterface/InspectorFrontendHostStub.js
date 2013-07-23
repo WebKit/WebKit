@@ -101,6 +101,8 @@ if (!window.InspectorFrontendHost) {
 
         sendMessageToBackend: function(message)
         {
+            if (WebInspector.socket)
+                WebInspector.socket.send(message);
         },
 
         loadResourceSynchronously: function(url)

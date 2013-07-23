@@ -1,3 +1,22 @@
+2013-07-23  Roland Takacs  <rtakacs@inf.u-szeged.hu>
+
+        WebSocket initialization to use remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=118678
+
+        Reviewed by Timothy Hatcher.
+
+        Add WebSocket initialization and define a 'connect-src' directive in the
+        Content-Security-Policy HTTP header to enable the connection.
+
+        * UserInterface/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.sendMessageToBackend):
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.loaded):
+        (WebInspector._initializeWebSocketIfNeeded.createSocket.WebInspector):
+        (WebInspector._initializeWebSocketIfNeeded.createSocket):
+        (WebInspector._initializeWebSocketIfNeeded):
+
 2013-07-22  Diego Pino Garcia  <dpino@igalia.com>
 
         Web Inspector: When right-clicking on a DataGrid column, show editing 
