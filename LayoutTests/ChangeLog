@@ -1,3 +1,17 @@
+2013-07-23  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG string concatenation optimizations might emit speculative nodes after emitting nodes that kill the original inputs
+        https://bugs.webkit.org/show_bug.cgi?id=119032
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-strcat-over-objects-then-exit-on-it-expected.txt: Added.
+        * fast/js/dfg-strcat-over-objects-then-exit-on-it.html: Added.
+        * fast/js/script-tests/dfg-strcat-over-objects-then-exit-on-it.js: Added.
+        (foo):
+        (bar):
+        (x):
+
 2013-07-23  Mark Lam  <mark.lam@apple.com>
 
         Added ExpressionRangeInfo for BinaryOpNodes that can throw exceptions
