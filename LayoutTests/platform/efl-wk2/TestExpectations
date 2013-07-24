@@ -153,9 +153,6 @@ webkit.org/b/81574 inspector/debugger/source-frame-count.html [ Crash Failure Pa
 # Test is flaky and needs to be fixed
 webkit.org/b/56985 http/tests/loading/bad-server-subframe.html [ Crash Pass ]
 
-# Sometimes times out of the build bot
-webkit.org/b/90207 fast/forms/select/select-state-restore.html [ Failure Pass ]
-
 # Affects multiple platforms.
 webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Failure Pass ]
 
@@ -190,8 +187,6 @@ webkit.org/b/103113 editing/deleting/delete-ligature-003.html [ Failure Pass ]
 webkit.org/b/103115 http/tests/loading/remove-child-triggers-parser.html [ Failure Pass ]
 
 webkit.org/b/102201 fast/dom/Window/window-resize.html [ Failure Pass ]
-
-webkit.org/b/98722 [ Debug ] fast/dom/gc-acid3.html [ Crash Pass ]
 
 webkit.org/b/103396 [ Debug ] fast/forms/state-restore-per-form.html [ Failure Pass ]
 webkit.org/b/103399 [ Debug ] fast/forms/basic-buttons.html [ Failure Pass ]

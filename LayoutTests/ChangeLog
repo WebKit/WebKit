@@ -1,3 +1,12 @@
+2013-07-24  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [EFL] Unreviewed gardening
+        https://bugs.webkit.org/show_bug.cgi?id=118826
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations: Update test expectations after r134890 and r139491.
+
 2013-07-24  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Added expectations for flaky tests.
