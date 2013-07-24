@@ -202,8 +202,6 @@ private:
 
     virtual bool shouldAlwaysAutoStart() const OVERRIDE { return true; }
 
-    virtual uint64_t plugInProcessToken() const OVERRIDE { return 0; }
-
     WebCore::IntSize m_size;
 
     WebCore::KURL m_sourceURL;

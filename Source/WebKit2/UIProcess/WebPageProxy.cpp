@@ -616,9 +616,6 @@ void WebPageProxy::close()
 #if PLATFORM(GTK)
     invalidateCallbackMap(m_printFinishedCallbacks);
 #endif
-#if PLATFORM(MAC)
-    invalidateCallbackMap(m_plugInInformationCallbacks);
-#endif
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);

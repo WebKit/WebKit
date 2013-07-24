@@ -80,7 +80,6 @@ public:
 #endif
 
     WebCore::HTMLPlugInElement* pluginElement() const { return m_pluginElement.get(); }
-    Plugin* plugIn() const { return m_plugin.get(); }
     const Plugin::Parameters& initialParameters() const { return m_parameters; }
 
     // FIXME: Remove this; nobody should have to know about the plug-in view's renderer except the plug-in view itself.

@@ -260,8 +260,6 @@ private:
 
     virtual String getSelectionString() const OVERRIDE { return String(); }
 
-    virtual uint64_t plugInProcessToken() const OVERRIDE { return 0; }
-
     void updateNPNPrivateMode();
 
 #if PLUGIN_ARCHITECTURE(WIN)

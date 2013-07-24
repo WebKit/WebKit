@@ -3,6 +3,36 @@
         Remove WKPageGetPlugInInformation - it is not used anymore
         https://bugs.webkit.org/show_bug.cgi?id=119047
 
+        Reviewed by Alexey Proskuryakov.
+
+        Revert r151172, which fixed a crash introduced in r151043, r151054, which fixed some naming
+        and ref-churn issues introduced in r151043, and r151043, which added
+        WKPageGetPlugInInformation.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.cpp:
+        (WKPageIsURLKnownHSTSHost):
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+
+2013-07-24  Jessie Berlin  <jberlin@apple.com>
+
+        Remove WKPageGetPlugInInformation - it is not used anymore
+        https://bugs.webkit.org/show_bug.cgi?id=119047
+
         Rubber-stamped by Alexey Proskuryakov.
 
         Revert r152328, which added a key used only in the callback info for

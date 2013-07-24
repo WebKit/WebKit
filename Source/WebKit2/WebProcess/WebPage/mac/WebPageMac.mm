@@ -972,17 +972,4 @@ void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *p
     }
 }
 
-void WebPage::containsPluginViewsWithPluginProcessToken(uint64_t plugInProcessToken, uint64_t callbackID)
-{
-    bool containsPlugIn = false;
-    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it) {
-        if ((*it)->plugIn()->plugInProcessToken() == plugInProcessToken) {
-            containsPlugIn = true;
-            break;
-        }
-    }
-
-    send(Messages::WebPageProxy::ContainsPlugInCallback(containsPlugIn, plugInProcessToken, callbackID));
-}
-
 } // namespace WebKit

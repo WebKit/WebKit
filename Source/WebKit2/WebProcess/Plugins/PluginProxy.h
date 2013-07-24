@@ -139,8 +139,6 @@ private:
 
     virtual String getSelectionString() const OVERRIDE { return String(); }
 
-    virtual uint64_t plugInProcessToken() const OVERRIDE { return m_pluginProcessToken; }
-
     float contentsScaleFactor();
     bool needsBackingStore() const;
     bool updateBackingStore();
