@@ -1369,7 +1369,7 @@ WebInspector._generateDisclosureTriangleImages = function()
     generateColoredImagesForCSS("Images/DisclosureTriangleTinyClosed.pdf", specifications, 8, 8, "disclosure-triangle-tiny-closed-");
 }
 
-WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor)
+WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor, eventTarget)
 {
     if (WebInspector._elementDraggingEventListener || WebInspector._elementEndDraggingEventListener)
         WebInspector.elementDragEnd(event);
@@ -1390,8 +1390,10 @@ WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, e
     WebInspector._elementEndDraggingEventListener = elementDragEnd;
     
     var targetDocument = event.target.ownerDocument;
-    targetDocument.addEventListener("mousemove", dividerDrag, true);
-    targetDocument.addEventListener("mouseup", elementDragEnd, true);
+
+    WebInspector._elementDraggingEventTarget = eventTarget || targetDocument;
+    WebInspector._elementDraggingEventTarget.addEventListener("mousemove", dividerDrag, true);
+    WebInspector._elementDraggingEventTarget.addEventListener("mouseup", elementDragEnd, true);
     
     targetDocument.body.style.cursor = cursor;
     
@@ -1400,16 +1402,16 @@ WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, e
 
 WebInspector.elementDragEnd = function(event)
 {
-    var targetDocument = event.target.ownerDocument;
-    targetDocument.removeEventListener("mousemove", WebInspector._elementDraggingEventListener, true);
-    targetDocument.removeEventListener("mouseup", WebInspector._elementEndDraggingEventListener, true);
+    WebInspector._elementDraggingEventTarget.removeEventListener("mousemove", WebInspector._elementDraggingEventListener, true);
+    WebInspector._elementDraggingEventTarget.removeEventListener("mouseup", WebInspector._elementEndDraggingEventListener, true);
     
-    targetDocument.body.style.removeProperty("cursor");
+    event.target.ownerDocument.body.style.removeProperty("cursor");
     
     if (WebInspector._elementDraggingGlassPane)
         WebInspector._elementDraggingGlassPane.parentElement.removeChild(WebInspector._elementDraggingGlassPane);
     
     delete WebInspector._elementDraggingGlassPane;
+    delete WebInspector._elementDraggingEventTarget;
     delete WebInspector._elementDraggingEventListener;
     delete WebInspector._elementEndDraggingEventListener;
     

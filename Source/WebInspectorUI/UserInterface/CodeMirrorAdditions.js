@@ -281,23 +281,19 @@
         return true;
     });
 
-    function alterNumber(amount, codeMirror)
-    {
-        var selectionAnchor = codeMirror.getCursor("anchor");
-        var selectionHead = codeMirror.getCursor("head");
-
+    CodeMirror.defineExtension("alterNumberInRange", function(amount, startPosition, endPosition, affectsSelection) {
         // We don't try if the range is multiline, pass to another key handler.
-        if (selectionAnchor.line !== selectionHead.line)
-            return CodeMirror.Pass;
+        if (startPosition.line !== endPosition.line)
+            return false;
 
-        var line = codeMirror.getLine(selectionAnchor.line);
+        var line = this.getLine(startPosition.line);
 
         var foundPeriod = false;
 
         var start = NaN;
         var end = NaN;
 
-        for (var i = selectionAnchor.ch; i >= 0; --i) {
+        for (var i = startPosition.ch; i >= 0; --i) {
             var character = line.charAt(i);
 
             if (character === ".") {
@@ -306,7 +302,7 @@
                 foundPeriod = true;
             } else if (character !== "-" && character !== "+" && isNaN(parseInt(character))) {
                 // Found the end already, just scan backwards.
-                if (i === selectionAnchor.ch) {
+                if (i === startPosition.ch) {
                     end = i;
                     continue;
                 }
@@ -318,7 +314,7 @@
         }
 
         if (isNaN(end)) {
-            for (var i = selectionAnchor.ch + 1; i < line.length; ++i) {
+            for (var i = startPosition.ch + 1; i < line.length; ++i) {
                 var character = line.charAt(i);
 
                 if (character === ".") {
@@ -339,7 +335,7 @@
 
         // No number range found, pass to another key handler.
         if (isNaN(start) || isNaN(end))
-            return CodeMirror.Pass;
+            return false;
 
         var number = parseFloat(line.substring(start, end));
         if (number < 1 && number >= -1 && amount === 1)
@@ -352,21 +348,35 @@
         var alteredNumber = Number((number + amount).toFixed(6));
         var alteredNumberString = alteredNumber.toString();
 
-        var from = {line: selectionAnchor.line, ch: start};
-        var to = {line: selectionAnchor.line, ch: end};
+        var from = {line: startPosition.line, ch: start};
+        var to = {line: startPosition.line, ch: end};
 
-        codeMirror.replaceRange(alteredNumberString, from, to);
+        this.replaceRange(alteredNumberString, from, to);
 
-        var newTo = {line: selectionAnchor.line, ch: from.ch + alteredNumberString.length};
+        if (affectsSelection) {
+            var newTo = {line: startPosition.line, ch: from.ch + alteredNumberString.length};
 
-        // Fix up the selection so it follows the increase or decrease in the replacement length.
-        if (selectionHead.ch >= to.ch)
-            selectionHead = newTo;
+            // Fix up the selection so it follows the increase or decrease in the replacement length.
+            if (endPosition.ch >= to.ch)
+                endPosition = newTo;
 
-        if (selectionAnchor.ch >= to.ch)
-            selectionAnchor = newTo;
+            if (startPosition.ch >= to.ch)
+                startPosition = newTo;
 
-        codeMirror.setSelection(selectionAnchor, selectionHead);
+            this.setSelection(startPosition, endPosition);
+        }
+
+        return true;
+    });
+
+    function alterNumber(amount, codeMirror)
+    {
+        var startPosition = codeMirror.getCursor("anchor");
+        var endPosition = codeMirror.getCursor("head");
+
+        var foundNumber = codeMirror.alterNumberInRange(amount, startPosition, endPosition, true);
+        if (!foundNumber)
+            return CodeMirror.Pass;
     }
 
     function ignoreKey(codeMirror)
@@ -410,6 +420,7 @@
     extraJSONTypes.forEach(function(type) {
         CodeMirror.defineMIME(type, {name: "javascript", json: true});
     });
+
 })();
 
 WebInspector.compareCodeMirrorPositions = function(a, b)

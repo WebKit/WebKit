@@ -1,3 +1,100 @@
+2013-07-24  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: support click-and-drag editing of CSS numeric values
+        https://bugs.webkit.org/show_bug.cgi?id=118896
+
+        Reviewed by Timothy Hatcher.
+
+        Add support for adjustment of numeric values in the various CodeMirror editors
+        by holding the option key and dragging the mouse. By default, dragging one pixel
+        changes the value by 1, but key modifiers allow to customize that behavior by using
+        the control key to change the value to 0.1 and the shift key to change the value to 10.
+
+        * UserInterface/CodeMirrorAdditions.js:
+        Split adjustNumber() into two methods such that we may use its logic from the
+        CodeMirrorDragToAlterNumberController. The new method, CodeMirror.prototype.alterNumberInRange()
+        allow to set begin and end CodeMirror positions such that the existing alterNumber()
+        can use information based on the current cursor position, and CodeMirrorDragToAlterNumberController
+        can use information based on the hovered token.
+
+        * UserInterface/CodeMirrorDragToAlterNumberController.css: Added.
+        (.CodeMirror.drag-to-adjust .CodeMirror-lines):
+        Set the cursor to "col-resize" when a number token is hovered and the option key
+        modifier is pressed.
+
+        * UserInterface/CodeMirrorDragToAlterNumberController.js: Added.
+        (WebInspector.CodeMirrorDragToAlterNumberController):
+        We define the new "dragToAdjustNumbers" CodeMirror option.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype.set enabled):
+        The "enabled" property controls whether the associated CodeMirror instance
+        may act upon hovering numeric values to adjust them via a drag interaction.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype.handleEvent):
+        Proxy for various event-specific methods to deal with mouse events. We also bind
+        the value of the "active" property to the "mouseenter" and "mouseleave" events
+        if we're not currently dragging-to-adjust.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype._setActive):
+        The "active" property is set when the mouse is over the associated CodeMirror
+        editor and when it's on we track all "mousemove" events such that we may
+        identify tokens containing numeric values. We also start tracking changes to the
+        option modifier key press state such that we may change the cursor accordingly.
+        We ensure that the CodeMirror instance is not read-only such that we don't
+        allow adjustment of numeric values in places where they couldn't be committed.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype._setDragging):
+        The "dragging" property reflects whether a dragging-to-adjust interaction
+        is underway. We call into WebInspector.elementDragStart() and WebInspector.elementDragEnd()
+        to set the cursor to "col-resize" for the whole document while tracking mousemove
+        and mouseup events at the window level such that we can drag-to-adjust even outside
+        of the inspector window.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype._setTracksMouseClickAndDrag):
+        The "tracksMouseClickAndDrag" property is set to true whenever the controller
+        has detected that a token containing a numeric value is being hovered and the
+        option modifier key is pressed. This property controls the cursor value for the
+        hovered token to reflect that a drag-to-adjust interaction is allowed and tracks
+        "mousedown" events for when a dragging interaction may be initiated.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype._modifiersDidChange):
+        Sets the "tracksMouseClickAndDrag" property depending on the availability of a hovered
+        token containing a numeric value and the pressed state of the option modified key.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype._mouseMoved):
+        Handles "mousemove" events when we're not in the "dragging" state such that we
+        check the currently hovered token, if any, to see if it contains a number that
+        we may drag-to-adjust. Subsequently, we may enter the "tracksMouseClickAndDrag"
+        state.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype._mouseWasPressed):
+        Handles "mousedown" events during a drag-to-adjust interaction. We simply track
+        the current mouse position in the x-axis and enter the "dragging" state.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype._mouseWasDragged):
+        Handles "mousemove" events when we are in the "dragging" state. We compare the
+        current mouse position in the x-axis with the last recoreded value and determine
+        the amount by which we should adjust the value, taking into account the shift and
+        control modifier keys. We then call into WebInspector.alterNumberInRange() to
+        apply the change amount to the associated CodeMirror editor.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype._mouseWasReleased):
+        Handles "mouseup" events, simply exiting the "dragging" state and resetting other
+        parameters we would have customized as a result of the drag-to-adjust interaction.
+
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype._reset):
+        Resetting some parameters we would have customized as a result of the drag-to-adjust
+        interaction.
+
+        * UserInterface/Main.html:
+        Include the new CodeMirrorDragToAlterNumberController.{js|css} files.
+
+        * UserInterface/Main.js:
+        (WebInspector.elementDragStart):
+        (WebInspector.elementDragEnd):
+        Add an extra parameter to elementDragStart() such that the caller may specify the event
+        target for the "mousemove" and "mouseup" events.
+
 2013-07-23  Roland Takacs  <rtakacs@inf.u-szeged.hu>
 
         WebSocket initialization to use remote inspector
