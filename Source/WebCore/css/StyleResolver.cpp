@@ -4158,6 +4158,10 @@ void StyleResolver::loadPendingImages()
     m_state.pendingImageProperties().clear();
 }
 
+#ifndef NDEBUG
+static bool inLoadPendingResources = false;
+#endif
+
 void StyleResolver::loadPendingResources()
 {
     // We've seen crashes in all three of the functions below. Some of them
@@ -4166,6 +4170,12 @@ void StyleResolver::loadPendingResources()
     ASSERT(style());
     if (!style())
         return;
+
+#ifndef NDEBUG
+    // Re-entering this function will probably mean trouble. Catch it in debug builds.
+    ASSERT(!inLoadPendingResources);
+    inLoadPendingResources = true;
+#endif
 
     // Start loading images referenced by this style.
     loadPendingImages();
@@ -4178,6 +4188,10 @@ void StyleResolver::loadPendingResources()
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
     // Start loading the SVG Documents referenced by this style.
     loadPendingSVGDocuments();
+#endif
+
+#ifndef NDEBUG
+    inLoadPendingResources = false;
 #endif
 }
 
