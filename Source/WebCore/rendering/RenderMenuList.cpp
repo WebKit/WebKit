@@ -57,7 +57,7 @@ RenderMenuList::RenderMenuList(Element* element)
     : RenderFlexibleBox(element)
     , m_buttonText(0)
     , m_innerBlock(0)
-    , m_optionsChanged(true)
+    , m_needsOptionsWidthUpdate(true)
     , m_optionsWidth(0)
     , m_lastActiveIndex(-1)
     , m_popupIsVisible(false)
@@ -165,8 +165,10 @@ void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* old
         adjustInnerStyle();
 
     bool fontChanged = !oldStyle || oldStyle->font() != style()->font();
-    if (fontChanged)
+    if (fontChanged) {
         updateOptionsWidth();
+        m_needsOptionsWidthUpdate = false;
+    }
 }
 
 void RenderMenuList::updateOptionsWidth()
@@ -206,9 +208,9 @@ void RenderMenuList::updateOptionsWidth()
 
 void RenderMenuList::updateFromElement()
 {
-    if (m_optionsChanged) {
+    if (m_needsOptionsWidthUpdate) {
         updateOptionsWidth();
-        m_optionsChanged = false;
+        m_needsOptionsWidthUpdate = false;
     }
 
     if (m_popupIsVisible)

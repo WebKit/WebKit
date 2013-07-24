@@ -1,3 +1,17 @@
+2013-07-24  Andreas Kling  <akling@apple.com>
+
+        RenderMenuList computes the width of its longest option twice.
+        <http://webkit.org/b/119046>
+        <rdar://problem/14534679>
+
+        Reviewed by Darin Adler.
+
+        Rename the RenderMenuList::m_optionsChanged flag to m_needsOptionsWidthUpdate,
+        and make sure it gets cleared after we do a width computation in response to font changes.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::styleDidChange):
+
 2013-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
         Make KURL::hasPath private
