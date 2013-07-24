@@ -1,3 +1,17 @@
+2013-07-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use-after-free in ApplyStyleCommand::removeInlineStyle
+        https://bugs.webkit.org/show_bug.cgi?id=118627
+
+        Reviewed by Oliver Hunt.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/b6471d077e012b05ccba14d0ce8e6d616106c8e6
+
+        Unfortunately, there is no test case for this bug.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+
 2013-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove CheckedInt, use Checked<T, RecordOverflow> instead
