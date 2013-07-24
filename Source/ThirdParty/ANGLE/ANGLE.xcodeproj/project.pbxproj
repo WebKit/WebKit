@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		5CB13FD6179F44C8001F851D /* Derived Sources */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5CB13FD7179F44C8001F851D /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
+			buildPhases = (
+				5CB13FDD179F44F3001F851D /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Derived Sources";
+			productName = "Derived Sources";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		312BDB0C15FECAC90097EBC7 /* ANGLE.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = 312BDB0915FEC91E0097EBC7 /* ANGLE.plist */; };
 		312BDB0E15FECAE50097EBC7 /* ANGLE.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 312BDB0A15FECA3A0097EBC7 /* ANGLE.txt */; };
@@ -14,11 +28,13 @@
 		49951C0A14B7AAD80060E96E /* BuiltInFunctionEmulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */; };
 		5CB13FD4179DB3FD001F851D /* DetectCallDepth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FD2179DB3FD001F851D /* DetectCallDepth.cpp */; };
 		5CB13FD5179DB3FD001F851D /* DetectCallDepth.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB13FD3179DB3FD001F851D /* DetectCallDepth.h */; };
+		5CB13FE4179F4658001F851D /* ExpressionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FDF179F4658001F851D /* ExpressionParser.cpp */; };
+		5CB13FE5179F4658001F851D /* glslang_lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FE0179F4658001F851D /* glslang_lex.cpp */; };
+		5CB13FE6179F4658001F851D /* glslang_tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FE1179F4658001F851D /* glslang_tab.cpp */; };
+		5CB13FE7179F4658001F851D /* glslang_tab.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB13FE2179F4658001F851D /* glslang_tab.h */; };
+		5CB13FE8179F4658001F851D /* Tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FE3179F4658001F851D /* Tokenizer.cpp */; };
 		90D9B10212E11DCB002D4255 /* Compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0F912E11DCB002D4255 /* Compiler.cpp */; };
 		90D9B10312E11DCB002D4255 /* ExtensionBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B0FA12E11DCB002D4255 /* ExtensionBehavior.h */; };
-		90D9B10412E11DCB002D4255 /* glslang_lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0FB12E11DCB002D4255 /* glslang_lex.cpp */; };
-		90D9B10512E11DCB002D4255 /* glslang_tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0FC12E11DCB002D4255 /* glslang_tab.cpp */; };
-		90D9B10612E11DCB002D4255 /* glslang_tab.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B0FD12E11DCB002D4255 /* glslang_tab.h */; };
 		90D9B10712E11DCB002D4255 /* glslang.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B0FE12E11DCB002D4255 /* glslang.h */; };
 		90D9B10912E11DCB002D4255 /* SearchSymbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B10012E11DCB002D4255 /* SearchSymbol.cpp */; };
 		90D9B10A12E11DCB002D4255 /* SearchSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B10112E11DCB002D4255 /* SearchSymbol.h */; };
@@ -48,7 +64,6 @@
 		A264F8AF16974DED006FAA5A /* DirectiveHandlerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F89616974DED006FAA5A /* DirectiveHandlerBase.h */; };
 		A264F8B016974DED006FAA5A /* DirectiveParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F89716974DED006FAA5A /* DirectiveParser.cpp */; };
 		A264F8B116974DED006FAA5A /* DirectiveParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F89816974DED006FAA5A /* DirectiveParser.h */; };
-		A264F8B216974DED006FAA5A /* ExpressionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F89916974DED006FAA5A /* ExpressionParser.cpp */; };
 		A264F8B316974DED006FAA5A /* ExpressionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F89A16974DED006FAA5A /* ExpressionParser.h */; };
 		A264F8B416974DED006FAA5A /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F89B16974DED006FAA5A /* Input.cpp */; };
 		A264F8B516974DED006FAA5A /* Input.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F89C16974DED006FAA5A /* Input.h */; };
@@ -65,7 +80,6 @@
 		A264F8C016974DED006FAA5A /* SourceLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8A716974DED006FAA5A /* SourceLocation.h */; };
 		A264F8C116974DED006FAA5A /* Token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F8A816974DED006FAA5A /* Token.cpp */; };
 		A264F8C216974DED006FAA5A /* Token.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8A916974DED006FAA5A /* Token.h */; };
-		A264F8C316974DED006FAA5A /* Tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F8AA16974DED006FAA5A /* Tokenizer.cpp */; };
 		A264F8C416974DED006FAA5A /* Tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8AB16974DED006FAA5A /* Tokenizer.h */; };
 		A264F8C816974E2A006FAA5A /* HashNames.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8C516974E2A006FAA5A /* HashNames.h */; };
 		A264F8C916974E2A006FAA5A /* VariablePacker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F8C616974E2A006FAA5A /* VariablePacker.cpp */; };
@@ -110,6 +124,16 @@
 		FB39D76E120110FC00088E69 /* ShaderLang.h in Headers */ = {isa = PBXBuildFile; fileRef = FB39D2BF1200F3E600088E69 /* ShaderLang.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5CB13FDB179F44EE001F851D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5CB13FD6179F44C8001F851D;
+			remoteInfo = "Derived Sources";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		312BDB0B15FECAB00097EBC7 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -142,14 +166,16 @@
 		49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltInFunctionEmulator.h; sourceTree = "<group>"; };
 		5CB13FD2179DB3FD001F851D /* DetectCallDepth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetectCallDepth.cpp; sourceTree = "<group>"; };
 		5CB13FD3179DB3FD001F851D /* DetectCallDepth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetectCallDepth.h; sourceTree = "<group>"; };
+		5CB13FDF179F4658001F851D /* ExpressionParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExpressionParser.cpp; path = ExpressionParser.cpp; sourceTree = "<group>"; };
+		5CB13FE0179F4658001F851D /* glslang_lex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glslang_lex.cpp; path = glslang_lex.cpp; sourceTree = "<group>"; };
+		5CB13FE1179F4658001F851D /* glslang_tab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glslang_tab.cpp; path = glslang_tab.cpp; sourceTree = "<group>"; };
+		5CB13FE2179F4658001F851D /* glslang_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glslang_tab.h; path = glslang_tab.h; sourceTree = "<group>"; };
+		5CB13FE3179F4658001F851D /* Tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tokenizer.cpp; path = Tokenizer.cpp; sourceTree = "<group>"; };
 		5D7C59C51208C68B001C873E /* ANGLE.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ANGLE.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		90D9B0F912E11DCB002D4255 /* Compiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Compiler.cpp; sourceTree = "<group>"; };
 		90D9B0FA12E11DCB002D4255 /* ExtensionBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionBehavior.h; sourceTree = "<group>"; };
-		90D9B0FB12E11DCB002D4255 /* glslang_lex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glslang_lex.cpp; sourceTree = "<group>"; };
-		90D9B0FC12E11DCB002D4255 /* glslang_tab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glslang_tab.cpp; sourceTree = "<group>"; };
-		90D9B0FD12E11DCB002D4255 /* glslang_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glslang_tab.h; sourceTree = "<group>"; };
 		90D9B0FE12E11DCB002D4255 /* glslang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glslang.h; sourceTree = "<group>"; };
 		90D9B10012E11DCB002D4255 /* SearchSymbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchSymbol.cpp; sourceTree = "<group>"; };
 		90D9B10112E11DCB002D4255 /* SearchSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchSymbol.h; sourceTree = "<group>"; };
@@ -179,7 +205,6 @@
 		A264F89616974DED006FAA5A /* DirectiveHandlerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectiveHandlerBase.h; sourceTree = "<group>"; };
 		A264F89716974DED006FAA5A /* DirectiveParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectiveParser.cpp; sourceTree = "<group>"; };
 		A264F89816974DED006FAA5A /* DirectiveParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectiveParser.h; sourceTree = "<group>"; };
-		A264F89916974DED006FAA5A /* ExpressionParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExpressionParser.cpp; sourceTree = "<group>"; };
 		A264F89A16974DED006FAA5A /* ExpressionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpressionParser.h; sourceTree = "<group>"; };
 		A264F89B16974DED006FAA5A /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
 		A264F89C16974DED006FAA5A /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
@@ -196,7 +221,6 @@
 		A264F8A716974DED006FAA5A /* SourceLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceLocation.h; sourceTree = "<group>"; };
 		A264F8A816974DED006FAA5A /* Token.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Token.cpp; sourceTree = "<group>"; };
 		A264F8A916974DED006FAA5A /* Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Token.h; sourceTree = "<group>"; };
-		A264F8AA16974DED006FAA5A /* Tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tokenizer.cpp; sourceTree = "<group>"; };
 		A264F8AB16974DED006FAA5A /* Tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tokenizer.h; sourceTree = "<group>"; };
 		A264F8C516974E2A006FAA5A /* HashNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashNames.h; sourceTree = "<group>"; };
 		A264F8C616974E2A006FAA5A /* VariablePacker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariablePacker.cpp; sourceTree = "<group>"; };
@@ -285,6 +309,19 @@
 			name = misc;
 			sourceTree = "<group>";
 		};
+		5CB13FDE179F457B001F851D /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				5CB13FDF179F4658001F851D /* ExpressionParser.cpp */,
+				5CB13FE0179F4658001F851D /* glslang_lex.cpp */,
+				5CB13FE1179F4658001F851D /* glslang_tab.cpp */,
+				5CB13FE2179F4658001F851D /* glslang_tab.h */,
+				5CB13FE3179F4658001F851D /* Tokenizer.cpp */,
+			);
+			name = "Derived Sources";
+			path = DerivedSources/ANGLE;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		5D7C59C41208C68B001C873E /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
@@ -359,6 +396,7 @@
 		FB39D06E1200ED9200088E69 = {
 			isa = PBXGroup;
 			children = (
+				5CB13FDE179F457B001F851D /* Derived Sources */,
 				5D7C59C41208C68B001C873E /* Configurations */,
 				A29B15E916978B7D00111D97 /* include */,
 				312BDB0715FEC8E60097EBC7 /* misc */,
@@ -409,9 +447,6 @@
 				A0AABE2A13AFE81000F2EBD1 /* ForLoopUnroll.cpp */,
 				A0AABE2B13AFE81000F2EBD1 /* ForLoopUnroll.h */,
 				90D9B0FE12E11DCB002D4255 /* glslang.h */,
-				90D9B0FB12E11DCB002D4255 /* glslang_lex.cpp */,
-				90D9B0FC12E11DCB002D4255 /* glslang_tab.cpp */,
-				90D9B0FD12E11DCB002D4255 /* glslang_tab.h */,
 				A264F8C516974E2A006FAA5A /* HashNames.h */,
 				FB39D22A1200F35A00088E69 /* InfoSink.cpp */,
 				FB39D22B1200F35A00088E69 /* InfoSink.h */,
@@ -485,7 +520,6 @@
 				A264F89616974DED006FAA5A /* DirectiveHandlerBase.h */,
 				A264F89716974DED006FAA5A /* DirectiveParser.cpp */,
 				A264F89816974DED006FAA5A /* DirectiveParser.h */,
-				A264F89916974DED006FAA5A /* ExpressionParser.cpp */,
 				A264F89A16974DED006FAA5A /* ExpressionParser.h */,
 				A264F89B16974DED006FAA5A /* Input.cpp */,
 				A264F89C16974DED006FAA5A /* Input.h */,
@@ -503,7 +537,6 @@
 				A264F8A716974DED006FAA5A /* SourceLocation.h */,
 				A264F8A816974DED006FAA5A /* Token.cpp */,
 				A264F8A916974DED006FAA5A /* Token.h */,
-				A264F8AA16974DED006FAA5A /* Tokenizer.cpp */,
 				A264F8AB16974DED006FAA5A /* Tokenizer.h */,
 			);
 			path = preprocessor;
@@ -539,7 +572,6 @@
 				90D9B10312E11DCB002D4255 /* ExtensionBehavior.h in Headers */,
 				A0AABE2D13AFE81000F2EBD1 /* ForLoopUnroll.h in Headers */,
 				90D9B10712E11DCB002D4255 /* glslang.h in Headers */,
-				90D9B10612E11DCB002D4255 /* glslang_tab.h in Headers */,
 				A264F8C816974E2A006FAA5A /* HashNames.h in Headers */,
 				A264F8B516974DED006FAA5A /* Input.h in Headers */,
 				A264F8CD169762AA006FAA5A /* khrplatform.h in Headers */,
@@ -569,6 +601,7 @@
 				A264F8CA16974E2A006FAA5A /* VariablePacker.h in Headers */,
 				90D9B11A12E11DD6002D4255 /* VersionGLSL.h in Headers */,
 				5CB13FD5179DB3FD001F851D /* DetectCallDepth.h in Headers */,
+				5CB13FE7179F4658001F851D /* glslang_tab.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,6 +621,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5CB13FDC179F44EE001F851D /* PBXTargetDependency */,
 			);
 			name = ANGLE;
 			productName = angle;
@@ -617,9 +651,26 @@
 			projectRoot = "";
 			targets = (
 				FB39D0D01200F0E300088E69 /* ANGLE */,
+				5CB13FD6179F44C8001F851D /* Derived Sources */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5CB13FDD179F44F3001F851D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/ANGLE\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/ANGLE\"\n\n/bin/ln -sfh \"${SRCROOT}\" .\nexport ANGLE=\"ANGLE\"\n\nmake  --no-builtin-rules -f \"ANGLE/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FB39D0CE1200F0E300088E69 /* Sources */ = {
@@ -640,10 +691,7 @@
 				A26567BD159C21B100398539 /* DirectiveHandler.cpp in Sources */,
 				A264F8AE16974DED006FAA5A /* DirectiveHandlerBase.cpp in Sources */,
 				A264F8B016974DED006FAA5A /* DirectiveParser.cpp in Sources */,
-				A264F8B216974DED006FAA5A /* ExpressionParser.cpp in Sources */,
 				A0AABE2C13AFE81000F2EBD1 /* ForLoopUnroll.cpp in Sources */,
-				90D9B10412E11DCB002D4255 /* glslang_lex.cpp in Sources */,
-				90D9B10512E11DCB002D4255 /* glslang_tab.cpp in Sources */,
 				FB39D2791200F35A00088E69 /* InfoSink.cpp in Sources */,
 				FB39D27B1200F35A00088E69 /* Initialize.cpp in Sources */,
 				FB39D27D1200F35A00088E69 /* InitializeDll.cpp in Sources */,
@@ -672,7 +720,6 @@
 				FB39D2A81200F35A00088E69 /* ShaderLang.cpp in Sources */,
 				FB39D2AA1200F35A00088E69 /* SymbolTable.cpp in Sources */,
 				A264F8C116974DED006FAA5A /* Token.cpp in Sources */,
-				A264F8C316974DED006FAA5A /* Tokenizer.cpp in Sources */,
 				A0AABE4813AFE96100F2EBD1 /* TranslatorESSL.cpp in Sources */,
 				FB39D2AC1200F35A00088E69 /* TranslatorGLSL.cpp in Sources */,
 				90D9B11312E11DD6002D4255 /* util.cpp in Sources */,
@@ -681,12 +728,45 @@
 				A264F8C916974E2A006FAA5A /* VariablePacker.cpp in Sources */,
 				90D9B11912E11DD6002D4255 /* VersionGLSL.cpp in Sources */,
 				5CB13FD4179DB3FD001F851D /* DetectCallDepth.cpp in Sources */,
+				5CB13FE4179F4658001F851D /* ExpressionParser.cpp in Sources */,
+				5CB13FE5179F4658001F851D /* glslang_lex.cpp in Sources */,
+				5CB13FE6179F4658001F851D /* glslang_tab.cpp in Sources */,
+				5CB13FE8179F4658001F851D /* Tokenizer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		5CB13FDC179F44EE001F851D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5CB13FD6179F44C8001F851D /* Derived Sources */;
+			targetProxy = 5CB13FDB179F44EE001F851D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		5CB13FD8179F44C8001F851D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5CB13FD9179F44C8001F851D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5CB13FDA179F44C8001F851D /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		5D7C59DB1208C6C3001C873E /* Production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C61208C68B001C873E /* Base.xcconfig */;
@@ -733,6 +813,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5CB13FD7179F44C8001F851D /* Build configuration list for PBXAggregateTarget "Derived Sources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CB13FD8179F44C8001F851D /* Debug */,
+				5CB13FD9179F44C8001F851D /* Release */,
+				5CB13FDA179F44C8001F851D /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "ANGLE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
