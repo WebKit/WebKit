@@ -1,3 +1,21 @@
+2013-07-23  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r150867): FrameView auto-sizing + delegate denied image load may cause StyleResolver to re-enter itself.
+        <rdar://problem/14324895>
+        <http://webkit.org/b/119023>
+
+        Reviewed by Simon Fraser.
+
+        Add a test for this rather specific problem.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2ObjC/PreventImageLoadWithAutoResizing.mm: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2ObjC/PreventImageLoadWithAutoResizing_Bundle.cpp: Added.
+        (TestWebKitAPI::DenyWillSendRequestTest::DenyWillSendRequestTest):
+        (TestWebKitAPI::DenyWillSendRequestTest::willSendRequestForFrame):
+        (TestWebKitAPI::DenyWillSendRequestTest::didCreatePage):
+
 2013-07-23  Tim Horton  <timothy_horton@apple.com>
 
         Add a test for plug-in unavailability indicator obscurity detection

@@ -1,3 +1,25 @@
+2013-07-23  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r150867): FrameView auto-sizing + delegate denied image load may cause StyleResolver to re-enter itself.
+        <rdar://problem/14324895>
+        <http://webkit.org/b/119023>
+
+        Reviewed by Simon Fraser.
+
+        The bug happened when FrameView::autoSizeIfEnabled() was getting called below FrameLoader::checkCompleted()
+        triggered by an incorrect loadDone() callback originating in SubresourceLoader::didCancel().
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingResources):
+
+            Add an assertion that this function is not getting re-entered. If a similar bug occurs
+            in the future, this will help the lucky person debugging.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didCancel):
+
+            Don't notifyDone() if the SubresourceLoader is in Uninitialized state.
+
 2013-07-23  Tim Horton  <timothy_horton@apple.com>
 
         Pixel-snap the unavailable plugin indicator arrow for maximum sharpness

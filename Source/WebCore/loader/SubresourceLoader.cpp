@@ -334,6 +334,9 @@ void SubresourceLoader::willCancel(const ResourceError& error)
 
 void SubresourceLoader::didCancel(const ResourceError&)
 {
+    if (m_state == Uninitialized)
+        return;
+
     m_resource->cancelLoad();
     notifyDone();
 }
