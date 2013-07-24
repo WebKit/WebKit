@@ -1361,6 +1361,8 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     }
 
     NonlocalResolveInfo resolveVerifier;
+    if (generator.isStrictMode())
+        generator.emitExpressionInfo(divot(), divotStartOffset(), divotEndOffset(), divotLine(), divotLineStart());
     RefPtr<RegisterID> base = generator.emitResolveBaseForPut(generator.newTemporary(), resolveResult, m_ident, resolveVerifier);
     if (dst == generator.ignoredResult())
         dst = 0;
@@ -1739,6 +1741,8 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             propertyName = generator.newTemporary();
             RefPtr<RegisterID> protect = propertyName;
             NonlocalResolveInfo resolveVerifier;
+            if (generator.isStrictMode())
+                generator.emitExpressionInfo(divot(), divotStartOffset(), divotEndOffset(), divotLine(), divotLineStart());
             RegisterID* base = generator.emitResolveBaseForPut(generator.newTemporary(), resolveResult, ident, resolveVerifier);
 
             generator.emitExpressionInfo(divot(), divotStartOffset(), divotEndOffset(), divotLine(), divotLineStart());
