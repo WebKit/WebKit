@@ -1,5 +1,15 @@
 2013-07-24  Anton Obzhirov  <a.obzhirov@samsung.com>
 
+        [GTK] TestInspectorServer unit test is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=105866
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
+2013-07-24  Anton Obzhirov  <a.obzhirov@samsung.com>
+
         [GTK] [WK2] Handle wheel event with delta zero
         https://bugs.webkit.org/show_bug.cgi?id=118973
 

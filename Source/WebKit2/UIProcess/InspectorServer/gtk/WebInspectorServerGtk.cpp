@@ -48,7 +48,7 @@ bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char
     }
 
     // Point the default path to a formatted page that queries the page list and display them.
-    CString localPath = WebCore::fileSystemRepresentation(inspectorServerFilesPath() + ((path == "/") ? "/webinspector/inspectorPageIndex.html" : path));
+    CString localPath = WebCore::fileSystemRepresentation(inspectorServerFilesPath() + ((path == "/") ? "/inspectorPageIndex.html" : path));
     if (localPath.isNull())
         return false;
 
@@ -97,7 +97,7 @@ void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
         builder.appendLiteral("\", \"url\": \"");
         builder.append(webPage->activeURL());
         builder.appendLiteral("\", \"inspectorUrl\": \"");
-        builder.appendLiteral("/webinspector/inspector.html?page=");
+        builder.appendLiteral("/inspector.html?page=");
         builder.appendNumber(it->key);
         builder.appendLiteral("\" }");
     }
@@ -116,7 +116,7 @@ String WebInspectorServer::inspectorServerFilesPath()
     if (environmentPath && g_file_test(environmentPath, G_FILE_TEST_IS_DIR))
         m_inspectorServerFilesPath = String(environmentPath);
     else
-        m_inspectorServerFilesPath = String(WebCore::sharedResourcesPath().data());
+        m_inspectorServerFilesPath = String(WebCore::sharedResourcesPath().data()) + "/webinspector";
 
     return m_inspectorServerFilesPath;
 }

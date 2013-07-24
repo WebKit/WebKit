@@ -40,6 +40,10 @@ int main(int argc, char** argv)
 
     // Overwrite WEBKIT_INSPECTOR_SERVER variable with default value.
     g_setenv("WEBKIT_INSPECTOR_SERVER", "127.0.0.1:2999", TRUE);
+    
+    // Overwrite WEBKIT_INSPECTOR_SERVER_PATH variable to point to inspector resources folder.
+    const gchar* inspectorResourcesPath = g_getenv("WEBKIT_INSPECTOR_PATH");
+    g_setenv("WEBKIT_INSPECTOR_SERVER_PATH", inspectorResourcesPath, TRUE);
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
     webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(webView), TRUE);

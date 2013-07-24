@@ -1,3 +1,25 @@
+2013-07-24  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] TestInspectorServer unit test is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=105866
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The test failed because it couldn't find inspector resources in default folder
+        (make install step was missing). It uses now resources available in
+        WebKitBuild folder. WebInspectorServerGtk was refactored as well to make
+        easier to use WEBKIT_INSPECTOR_SERVER_PATH variable.
+
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/InspectorTestServer.cpp:
+        (main):
+        * UIProcess/API/gtk/tests/TestInspectorServer.cpp:
+        (testInspectorServerPageList):
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        (WebKit::WebInspectorServer::platformResourceForPath):
+        (WebKit::WebInspectorServer::buildPageList):
+        (WebKit::WebInspectorServer::inspectorServerFilesPath):
+
 2013-07-23  Simon Cooper  <scooper@apple.com>
 
         10.7: Java applets do not work due to sandbox violation/exception

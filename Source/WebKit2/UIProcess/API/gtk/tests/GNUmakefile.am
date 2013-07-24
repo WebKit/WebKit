@@ -70,8 +70,17 @@ Programs/resources/webkit2gtk-tests-resources.gresource: Source/WebKit2/UIProces
 	$(AM_V_at)mkdir -p ${GENPROGRAMS}/resources
 	$(AM_V_GEN) $(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir) $<
 
-DISTCLEANFILES += Programs/resources/webkit2gtk-tests-resources.gresource
-noinst_DATA += Programs/resources/webkit2gtk-tests-resources.gresource
+Programs/resources/inspector/inspectorPageIndex.html: Source/WebKit2/UIProcess/InspectorServer/front-end/inspectorPageIndex.html
+	$(AM_V_at)mkdir -p ${GENPROGRAMS}/resources/inspector
+	$(AM_V_GEN)cp $(srcdir)/Source/WebKit2/UIProcess/InspectorServer/front-end/inspectorPageIndex.html ${GENPROGRAMS}/resources/inspector
+
+DISTCLEANFILES += \
+	Programs/resources/webkit2gtk-tests-resources.gresource \
+	Programs/resources/inspector/inspectorPageIndex.html
+
+noinst_DATA += \
+	Programs/resources/webkit2gtk-tests-resources.gresource \
+	Programs/resources/inspector/inspectorPageIndex.html
 
 noinst_LTLIBRARIES += Libraries/libWebKit2APITestCore.la
 Libraries_libWebKit2APITestCore_la_SOURCES = \
