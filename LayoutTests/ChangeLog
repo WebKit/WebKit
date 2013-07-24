@@ -1,3 +1,10 @@
+2013-07-24  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Add expectations for flaky test.
+
+        * platform/gtk/TestExpectations: Mark svg/stroke/non-scaling-stroke-pattern.svg
+        as flaky.
+
 2013-07-24  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Unreviewed gardening

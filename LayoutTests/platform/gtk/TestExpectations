@@ -581,6 +581,8 @@ webkit.org/b/73409 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnl
 
 webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Timeout Pass ]
 
+webkit.org/b/88230 svg/stroke/non-scaling-stroke-pattern.svg [ ImageOnlyFailure Pass ]
+
 webkit.org/b/98036 fast/dom/inline-event-attributes-release.html [ Failure Pass ]
 
 webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure Pass ]
