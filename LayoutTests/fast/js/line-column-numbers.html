@@ -21,7 +21,7 @@ testId = 0;
 function printStack(stackTrace) {
     debug("--> Case " + testId + " Stack Trace:")
     stackTrace = stackTrace.split("\n");
-    var length = Math.min(stackTrace.length, 100);
+    var length = Math.min(stackTrace.length, 20);
     for (var i = 0; i < length; i++) {
         var indexOfAt = stackTrace[i].indexOf('@')
         var indexOfLastSlash = stackTrace[i].lastIndexOf('/');
@@ -159,6 +159,43 @@ eval("\n" +
 "    printStack(e.stack);\n" +
 "}\n" +
 "");
+</script>
+
+<!-- Case 19: Binary op with type coersion on strcat. -->
+<script>testId++;</script>
+<script>
+try {
+    testObj19 = {
+        toString: function() {
+            var result = ("Hello " + "World") + this;
+            b = 5;
+            return result;
+        },
+        run: function() {
+            return testObj19.toString();
+        }
+    };
+    testObj19.run();
+} catch(e) {
+    printStack(e.stack);
+}
+</script>
+
+<!-- Case 20: BinaryOp with type coersion on comparison. -->
+<script>testId++;</script>
+<script>
+try {
+    function test20() {
+        var f = function g() {
+            if (this != 10) f();
+        };
+        var a = f();
+    }
+
+    test20();
+} catch(e) {
+    printStack(e.stack);
+}
 </script>
 
 <!-- Now do it all over with a loaded script file. -->

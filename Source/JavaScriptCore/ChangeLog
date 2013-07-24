@@ -1,5 +1,20 @@
 2013-07-23  Mark Lam  <mark.lam@apple.com>
 
+        Added ExpressionRangeInfo for BinaryOpNodes that can throw exceptions
+        due to type coersion.
+        https://bugs.webkit.org/show_bug.cgi?id=116853.
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BinaryOpNode::emitBytecode):
+        - Added expression info for the strcat and the general binary op cases.
+          I did not add expression info for the "compare with null" case because
+          that comparison cannot trigger type coersion, and hence it won't throw
+          any exceptions and doesn't need the expression info.
+
+2013-07-23  Mark Lam  <mark.lam@apple.com>
+
         Removed unused sourceOffset from JSTokenLocation.
         https://bugs.webkit.org/show_bug.cgi?id=118996.
 

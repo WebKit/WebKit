@@ -1095,8 +1095,10 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
 {
     OpcodeID opcodeID = this->opcodeID();
 
-    if (opcodeID == op_add && m_expr1->isAdd() && m_expr1->resultDescriptor().definitelyIsString())
+    if (opcodeID == op_add && m_expr1->isAdd() && m_expr1->resultDescriptor().definitelyIsString()) {
+        generator.emitExpressionInfo(startOffset(), 0, 0, lineNo(), lineStartOffset());
         return emitStrcat(generator, dst);
+    }
 
     if (opcodeID == op_neq) {
         if (m_expr1->isNull() || m_expr2->isNull()) {
@@ -1116,6 +1118,7 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(left, m_rightHasAssignments, right->isPure(generator));
     bool wasTypeof = generator.m_lastOpcodeID == op_typeof;
     RegisterID* src2 = generator.emitNode(right);
+    generator.emitExpressionInfo(startOffset(), 0, 0, lineNo(), lineStartOffset());
     if (wasTypeof && (opcodeID == op_neq || opcodeID == op_nstricteq)) {
         RefPtr<RegisterID> tmp = generator.tempDestination(dst);
         if (opcodeID == op_neq)

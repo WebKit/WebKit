@@ -93,6 +93,50 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     2   eval at [native code]
     3   global code at line-column-numbers.html:155:5
 
+--> Case 19 Stack Trace:
+    0   toString at line-column-numbers.html:170:26
+    1   toString at line-column-numbers.html:170:26
+    2   toString at line-column-numbers.html:170:26
+    3   toString at line-column-numbers.html:170:26
+    4   toString at line-column-numbers.html:170:26
+    5   toString at line-column-numbers.html:170:26
+    6   toString at line-column-numbers.html:170:26
+    7   toString at line-column-numbers.html:170:26
+    8   toString at line-column-numbers.html:170:26
+    9   toString at line-column-numbers.html:170:26
+    10   toString at line-column-numbers.html:170:26
+    11   toString at line-column-numbers.html:170:26
+    12   toString at line-column-numbers.html:170:26
+    13   toString at line-column-numbers.html:170:26
+    14   toString at line-column-numbers.html:170:26
+    15   toString at line-column-numbers.html:170:26
+    16   toString at line-column-numbers.html:170:26
+    17   toString at line-column-numbers.html:170:26
+    18   toString at line-column-numbers.html:170:26
+    19   toString at line-column-numbers.html:170:26
+
+--> Case 20 Stack Trace:
+    0   g at line-column-numbers.html:190:17
+    1   g at line-column-numbers.html:190:30
+    2   g at line-column-numbers.html:190:30
+    3   g at line-column-numbers.html:190:30
+    4   g at line-column-numbers.html:190:30
+    5   g at line-column-numbers.html:190:30
+    6   g at line-column-numbers.html:190:30
+    7   g at line-column-numbers.html:190:30
+    8   g at line-column-numbers.html:190:30
+    9   g at line-column-numbers.html:190:30
+    10   g at line-column-numbers.html:190:30
+    11   g at line-column-numbers.html:190:30
+    12   g at line-column-numbers.html:190:30
+    13   g at line-column-numbers.html:190:30
+    14   g at line-column-numbers.html:190:30
+    15   g at line-column-numbers.html:190:30
+    16   g at line-column-numbers.html:190:30
+    17   g at line-column-numbers.html:190:30
+    18   g at line-column-numbers.html:190:30
+    19   g at line-column-numbers.html:190:30
+
 --> Case 1 Stack Trace:
     0   global code at line-column-numbers.js:3:28
 
@@ -182,6 +226,50 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     1    at eval code
     2   eval at [native code]
     3   global code at line-column-numbers.js:96:5
+
+--> Case 19 Stack Trace:
+    0   toString at line-column-numbers.js:109:26
+    1   toString at line-column-numbers.js:109:26
+    2   toString at line-column-numbers.js:109:26
+    3   toString at line-column-numbers.js:109:26
+    4   toString at line-column-numbers.js:109:26
+    5   toString at line-column-numbers.js:109:26
+    6   toString at line-column-numbers.js:109:26
+    7   toString at line-column-numbers.js:109:26
+    8   toString at line-column-numbers.js:109:26
+    9   toString at line-column-numbers.js:109:26
+    10   toString at line-column-numbers.js:109:26
+    11   toString at line-column-numbers.js:109:26
+    12   toString at line-column-numbers.js:109:26
+    13   toString at line-column-numbers.js:109:26
+    14   toString at line-column-numbers.js:109:26
+    15   toString at line-column-numbers.js:109:26
+    16   toString at line-column-numbers.js:109:26
+    17   toString at line-column-numbers.js:109:26
+    18   toString at line-column-numbers.js:109:26
+    19   toString at line-column-numbers.js:109:26
+
+--> Case 20 Stack Trace:
+    0   g at line-column-numbers.js:127:17
+    1   g at line-column-numbers.js:127:30
+    2   g at line-column-numbers.js:127:30
+    3   g at line-column-numbers.js:127:30
+    4   g at line-column-numbers.js:127:30
+    5   g at line-column-numbers.js:127:30
+    6   g at line-column-numbers.js:127:30
+    7   g at line-column-numbers.js:127:30
+    8   g at line-column-numbers.js:127:30
+    9   g at line-column-numbers.js:127:30
+    10   g at line-column-numbers.js:127:30
+    11   g at line-column-numbers.js:127:30
+    12   g at line-column-numbers.js:127:30
+    13   g at line-column-numbers.js:127:30
+    14   g at line-column-numbers.js:127:30
+    15   g at line-column-numbers.js:127:30
+    16   g at line-column-numbers.js:127:30
+    17   g at line-column-numbers.js:127:30
+    18   g at line-column-numbers.js:127:30
+    19   g at line-column-numbers.js:127:30
 
 PASS successfullyParsed is true
 

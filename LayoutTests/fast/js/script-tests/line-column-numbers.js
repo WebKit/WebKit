@@ -101,4 +101,37 @@ eval("\n" +
 "}\n" +
 "");
 
+// Case 19: Binary op with type coersion on strcat.
+testId++;
+try {
+    testObj19b = {
+        toString: function() {
+            var result = ("Hello " + "World") + this;
+            b19 = 5;
+            return result;
+        },
+        run: function() {
+            return testObj19b.toString();
+        }
+    };
+    testObj19b.run();
+} catch(e) {
+    printStack(e.stack);
+}
+
+// Case 20: BinaryOp with type coersion on comparison.
+testId++;
+try {
+    function test20b() {
+        var f = function g() {
+            if (this != 10) f();
+        };
+        var a = f();
+    }
+
+    test20b();
+} catch(e) {
+    printStack(e.stack);
+}
+
 successfullyParsed = true;

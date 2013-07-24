@@ -1,3 +1,18 @@
+2013-07-23  Mark Lam  <mark.lam@apple.com>
+
+        Added ExpressionRangeInfo for BinaryOpNodes that can throw exceptions
+        due to type coersion.
+        https://bugs.webkit.org/show_bug.cgi?id=116853.
+
+        Reviewed by Geoffrey Garen.
+
+        Added the test case from bugzilla which exercises the general binary op
+        type coersion case, plus another for exercising the strcat case.
+
+        * fast/js/line-column-numbers-expected.txt:
+        * fast/js/line-column-numbers.html:
+        * fast/js/script-tests/line-column-numbers.js:
+
 2013-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         The computed values of fix length padding should be subpixel precision like margin
