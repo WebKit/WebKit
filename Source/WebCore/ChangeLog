@@ -1,3 +1,15 @@
+2013-07-24  Jessie Berlin  <jberlin@apple.com>
+
+        Remove WKPageGetPlugInInformation - it is not used anymore
+        https://bugs.webkit.org/show_bug.cgi?id=119047
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Revert r152328, which added a key used only in the callback info for
+        WKPageGetPlugInInformation.
+
+        * WebCore.exp.in:
+
 2013-07-24  Robert Hogan  <robert@webkit.org>
 
         Border drawing incorrect when using both border-collapse: collapse and overflow: hidden on a table

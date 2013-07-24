@@ -77,9 +77,6 @@ WK_EXPORT WKStringRef WKPluginInformationPluginspageAttributeURLKey();
 WK_EXPORT WKStringRef WKPluginInformationPluginURLKey();
 
 /* Value type: WKBooleanRef */
-WK_EXPORT WKStringRef WKPlugInInformationPageContainsNonPlayingInstanceOfPlugInKey();
-
-/* Value type: WKBooleanRef */
 WK_EXPORT WKStringRef WKPlugInInformationReplacementObscuredKey();
 
 #ifdef __cplusplus

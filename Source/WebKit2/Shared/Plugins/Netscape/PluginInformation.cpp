@@ -101,11 +101,6 @@ String pluginInformationPluginURLKey()
     return ASCIILiteral("PluginInformationPluginURL");
 }
 
-String plugInInformationPageContainsNonPlayingInstanceOfPlugInKey()
-{
-    return ASCIILiteral("PlugInInformationPageContainsNonPlayingInstanceOfPlugIn");
-}
-
 String plugInInformationReplacementObscuredKey()
 {
     return ASCIILiteral("PlugInInformationReplacementObscured");
@@ -126,16 +121,6 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginMo
 {
     ImmutableDictionary::MapType map;
     getPluginModuleInformation(plugin, map);
-
-    return ImmutableDictionary::adopt(map);
-}
-
-PassRefPtr<ImmutableDictionary> createPlugInInformationDictionary(const PluginModuleInfo& plugInModuleInfo, bool pageContainsNonPlayingInstanceOfPlugIn)
-{
-    ImmutableDictionary::MapType map;
-    getPluginModuleInformation(plugInModuleInfo, map);
-
-    map.set(plugInInformationPageContainsNonPlayingInstanceOfPlugInKey(), WebBoolean::create(pageContainsNonPlayingInstanceOfPlugIn));
 
     return ImmutableDictionary::adopt(map);
 }

@@ -40,7 +40,6 @@
 #import "PluginProcessProxy.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
-#import "WebContext.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/DictationAlternative.h>
@@ -483,7 +482,7 @@ void WebPageProxy::getPlugInInformation(pid_t plugInProcessID, PassRefPtr<Dictio
     m_process->send(Messages::WebPage::ContainsPluginViewsWithPluginProcessToken(plugInProcessProxy->pluginProcessToken(), callbackID), m_pageID);
 }
 
-void WebPageProxy::containsPlugInCallback(bool containsPlugIn, const Vector<String>& nonPlayingPlugInInstanceMimeTypes, uint64_t plugInToken, uint64_t callbackID)
+void WebPageProxy::containsPlugInCallback(bool containsPlugIn, uint64_t plugInToken, uint64_t callbackID)
 {
     RefPtr<DictionaryCallback> callback = m_plugInInformationCallbacks.take(callbackID);
     if (!callback) {
@@ -499,19 +498,9 @@ void WebPageProxy::containsPlugInCallback(bool containsPlugIn, const Vector<Stri
     PluginProcessProxy* plugInProcessProxy = PluginProcessManager::shared().findPlugInProcessByToken(plugInToken);
     ASSERT(plugInProcessProxy);
 
-    String plugInBundleIdentifier = plugInProcessProxy->pluginProcessAttributes().moduleInfo.bundleIdentifier;
-    bool containsNonPlayingInstanceOfPlugIn = false;
-
-    for (const String& plugInMimeType: nonPlayingPlugInInstanceMimeTypes) {
-        String mimeType = plugInMimeType;
-        PluginModuleInfo plugInInfo = m_process->context()->pluginInfoStore().findPlugin(mimeType, KURL());
-        if (plugInInfo.bundleIdentifier == plugInBundleIdentifier) {
-            containsNonPlayingInstanceOfPlugIn = true;
-            break;
-        }
-    }
-
-    RefPtr<ImmutableDictionary> plugInInformation = createPlugInInformationDictionary(plugInProcessProxy->pluginProcessAttributes().moduleInfo, containsNonPlayingInstanceOfPlugIn);
+    ImmutableDictionary::MapType map;
+    getPluginModuleInformation(plugInProcessProxy->pluginProcessAttributes().moduleInfo, map);
+    RefPtr<ImmutableDictionary> plugInInformation = ImmutableDictionary::adopt(map);
 
     callback->performCallbackWithReturnValue(plugInInformation.get());
 }

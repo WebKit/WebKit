@@ -1,3 +1,24 @@
+2013-07-24  Jessie Berlin  <jberlin@apple.com>
+
+        Remove WKPageGetPlugInInformation - it is not used anymore
+        https://bugs.webkit.org/show_bug.cgi?id=119047
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Revert r152328, which added a key used only in the callback info for
+        WKPageGetPlugInInformation.
+
+        * Shared/API/c/WKPluginInformation.cpp:
+        * Shared/API/c/WKPluginInformation.h:
+        * Shared/Plugins/Netscape/PluginInformation.cpp:
+        * Shared/Plugins/Netscape/PluginInformation.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::containsPlugInCallback):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::containsPluginViewsWithPluginProcessToken):
+
 2013-07-24  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] TestInspectorServer unit test is timing out

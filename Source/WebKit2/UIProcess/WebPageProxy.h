@@ -539,7 +539,7 @@ public:
     ColorSpaceData colorSpace();
 
     void getPlugInInformation(pid_t plugInProcessID, PassRefPtr<DictionaryCallback>);
-    void containsPlugInCallback(bool containsPlugIn, const Vector<String>& nonPlayingPlugInInstanceMimeTypes, uint64_t plugInToken, uint64_t callbackID);
+    void containsPlugInCallback(bool containsPlugIn, uint64_t plugInToken, uint64_t callbackID);
 #endif
 
     void pageScaleFactorDidChange(double);
