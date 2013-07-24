@@ -35,9 +35,6 @@ extern "C" {
 WK_EXPORT pid_t WKPageGetProcessIdentifier(WKPageRef page);
 WK_EXPORT bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url);
 
-typedef void (^WKPageGetPlugInInformationBlock)(WKDictionaryRef, WKErrorRef);
-WK_EXPORT void WKPageGetPlugInInformation(WKPageRef, pid_t plugInProcessID, WKPageGetPlugInInformationBlock);
-
 #ifdef __cplusplus
 }
 #endif
