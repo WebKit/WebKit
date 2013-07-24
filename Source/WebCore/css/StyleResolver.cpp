@@ -1492,7 +1492,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     // Touch overflow scrolling creates a stacking context.
-    if (style->useTouchOverflowScrolling() && (isScrollableOverflow(style->overflowX()) || isScrollableOverflow(style->overflowY())))
+    if (style->hasAutoZIndex() && style->useTouchOverflowScrolling() && (isScrollableOverflow(style->overflowX()) || isScrollableOverflow(style->overflowY())))
         style->setZIndex(0);
 #endif
 

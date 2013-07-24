@@ -1,3 +1,20 @@
+2013-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r152335): Mac Pro title occluded in MobileSafari; can't scroll page
+        https://bugs.webkit.org/show_bug.cgi?id=119066
+        <rdar://problem/14499184>
+
+        Reviewed by Daniel Bates.
+
+        Following <http://trac.webkit.org/changeset/152335> (bug #118337) we set
+        the z-index to 0 on every element with CSS "overflow: scroll" and
+        "-webkit-overflow-scrolling: touch" regardless of whether the element has
+        non-auto z-index. Instead we should only set the z-index to 0 for such elements
+        that have an auto z-index.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+
 2013-07-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use-after-free in ApplyStyleCommand::removeInlineStyle
