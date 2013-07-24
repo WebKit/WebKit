@@ -208,7 +208,7 @@ if (ENABLE_WEBGL OR WTF_USE_TILED_BACKING_STORE)
         add_definitions(-DHAVE_GLX)
     endif ()
 
-    option(ENABLE_EGL ON)
+    option(ENABLE_EGL "Enable EGL Support")
 
     if (ENABLE_EGL)
         find_package(EGL REQUIRED)
@@ -218,7 +218,7 @@ if (ENABLE_WEBGL OR WTF_USE_TILED_BACKING_STORE)
         set(WTF_USE_EGL 1)
         set(USE_GRAPHICS_SURFACE 1)
         add_definitions(-DWTF_USE_EGL=1)
-        option(ENABLE_GLES2 ON)
+        option(ENABLE_GLES2 "Enable GLES Support")
 
         if (ENABLE_GLES2)
             find_package(GLES REQUIRED)
