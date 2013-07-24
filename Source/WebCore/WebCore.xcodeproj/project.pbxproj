@@ -3313,7 +3313,6 @@
 		9FA37EFB1172FDA600C4CD55 /* JSScriptProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA37EF71172FD9300C4CD55 /* JSScriptProfile.h */; };
 		9FA37EFC1172FDA600C4CD55 /* JSScriptProfileNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FA37EF81172FD9300C4CD55 /* JSScriptProfileNode.cpp */; };
 		9FA37EFD1172FDA600C4CD55 /* JSScriptProfileNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FA37EF91172FD9300C4CD55 /* JSScriptProfileNode.h */; };
-		A00B721A11DE6428008AB9FF /* CheckedInt.h in Headers */ = {isa = PBXBuildFile; fileRef = A00B721911DE6427008AB9FF /* CheckedInt.h */; };
 		A024575116CEAA27000E5671 /* EXTDrawBuffers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A024574E16CEAA27000E5671 /* EXTDrawBuffers.cpp */; };
 		A024575216CEAA27000E5671 /* EXTDrawBuffers.h in Headers */ = {isa = PBXBuildFile; fileRef = A024574F16CEAA27000E5671 /* EXTDrawBuffers.h */; };
 		A07D3355152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A07D3353152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp */; };
@@ -9783,7 +9782,6 @@
 		9FA37EF71172FD9300C4CD55 /* JSScriptProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptProfile.h; sourceTree = "<group>"; };
 		9FA37EF81172FD9300C4CD55 /* JSScriptProfileNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptProfileNode.cpp; sourceTree = "<group>"; };
 		9FA37EF91172FD9300C4CD55 /* JSScriptProfileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptProfileNode.h; sourceTree = "<group>"; };
-		A00B721911DE6427008AB9FF /* CheckedInt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CheckedInt.h; path = canvas/CheckedInt.h; sourceTree = "<group>"; };
 		A024574E16CEAA27000E5671 /* EXTDrawBuffers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EXTDrawBuffers.cpp; path = canvas/EXTDrawBuffers.cpp; sourceTree = "<group>"; };
 		A024574F16CEAA27000E5671 /* EXTDrawBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTDrawBuffers.h; path = canvas/EXTDrawBuffers.h; sourceTree = "<group>"; };
 		A024575016CEAA27000E5671 /* EXTDrawBuffers.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTDrawBuffers.idl; path = canvas/EXTDrawBuffers.idl; sourceTree = "<group>"; };
@@ -14058,7 +14056,6 @@
 				49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */,
 				49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */,
 				49484FC0102CF23C00187DD3 /* CanvasStyle.h */,
-				A00B721911DE6427008AB9FF /* CheckedInt.h */,
 				2E97CCE712939CB800C5C8FF /* DataView.cpp */,
 				2E97CCE812939CB800C5C8FF /* DataView.h */,
 				2E97CCE912939CB800C5C8FF /* DataView.idl */,
@@ -21150,7 +21147,6 @@
 				97B8FFD116AE7F960038388D /* CharacterReferenceParserInlines.h in Headers */,
 				B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */,
 				F55B3DB21251F12D003EF269 /* CheckboxInputType.h in Headers */,
-				A00B721A11DE6428008AB9FF /* CheckedInt.h in Headers */,
 				93F925430F7EF5B8007E37C9 /* CheckedRadioButtons.h in Headers */,
 				D619A308144E00BE004BC302 /* ChildListMutationScope.h in Headers */,
 				A81872200977D3C0005826D9 /* ChildNodeList.h in Headers */,

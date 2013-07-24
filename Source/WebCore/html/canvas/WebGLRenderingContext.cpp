@@ -30,7 +30,6 @@
 #include "WebGLRenderingContext.h"
 
 #include "CachedImage.h"
-#include "CheckedInt.h"
 #include "DOMWindow.h"
 #include "EXTDrawBuffers.h"
 #include "EXTTextureFilterAnisotropic.h"
@@ -1954,10 +1953,10 @@ void WebGLRenderingContext::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei c
 
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
         // Ensure we have a valid rendering state
-        CheckedInt<GC3Dint> checkedFirst(first);
-        CheckedInt<GC3Dint> checkedCount(count);
-        CheckedInt<GC3Dint> checkedSum = checkedFirst + checkedCount;
-        if (!checkedSum.isValid() || !validateRenderingState(checkedSum.value())) {
+        Checked<GC3Dint, RecordOverflow> checkedFirst(first);
+        Checked<GC3Dint, RecordOverflow> checkedCount(count);
+        Checked<GC3Dint, RecordOverflow> checkedSum = checkedFirst + checkedCount;
+        if (checkedSum.hasOverflowed() || !validateRenderingState(checkedSum.unsafeGet())) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawArrays", "attempt to access out of bounds arrays");
             return;
         }

@@ -3330,7 +3330,6 @@ webcore_sources += \
 	Source/WebCore/html/canvas/CanvasRenderingContext.h \
 	Source/WebCore/html/canvas/CanvasStyle.cpp \
 	Source/WebCore/html/canvas/CanvasStyle.h \
-	Source/WebCore/html/canvas/CheckedInt.h \
 	Source/WebCore/html/canvas/DataView.cpp \
 	Source/WebCore/html/canvas/DataView.h \
 	Source/WebCore/html/canvas/DOMPath.h \

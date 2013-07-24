@@ -29,7 +29,6 @@
 
 #include "WebGLBuffer.h"
 
-#include "CheckedInt.h"
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContext.h"
 
@@ -117,10 +116,10 @@ bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, const void* data
         return false;
 
     if (byteLength) {
-        CheckedInt<GC3Dintptr> checkedBufferOffset(offset);
-        CheckedInt<GC3Dsizeiptr> checkedDataLength(byteLength);
-        CheckedInt<GC3Dintptr> checkedBufferMax = checkedBufferOffset + checkedDataLength;
-        if (!checkedBufferMax.isValid() || offset > m_byteLength || checkedBufferMax.value() > m_byteLength)
+        Checked<GC3Dintptr, RecordOverflow> checkedBufferOffset(offset);
+        Checked<GC3Dsizeiptr, RecordOverflow> checkedDataLength(byteLength);
+        Checked<GC3Dintptr, RecordOverflow> checkedBufferMax = checkedBufferOffset + checkedDataLength;
+        if (checkedBufferMax.hasOverflowed() || offset > m_byteLength || checkedBufferMax.unsafeGet() > m_byteLength)
             return false;
     }
 

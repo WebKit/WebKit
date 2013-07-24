@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DataView.h"
 
-#include "CheckedInt.h"
 #include "ExceptionCode.h"
 
 namespace {
@@ -53,10 +52,10 @@ PassRefPtr<DataView> DataView::create(PassRefPtr<ArrayBuffer> buffer, unsigned b
 {
     if (byteOffset > buffer->byteLength())
         return 0;
-    CheckedInt<uint32_t> checkedOffset(byteOffset);
-    CheckedInt<uint32_t> checkedLength(byteLength);
-    CheckedInt<uint32_t> checkedMax = checkedOffset + checkedLength;
-    if (!checkedMax.isValid() || checkedMax.value() > buffer->byteLength())
+    Checked<uint32_t, RecordOverflow> checkedOffset(byteOffset);
+    Checked<uint32_t, RecordOverflow> checkedLength(byteLength);
+    Checked<uint32_t, RecordOverflow> checkedMax = checkedOffset + checkedLength;
+    if (checkedMax.hasOverflowed() || checkedMax.unsafeGet() > buffer->byteLength())
         return 0;
     return adoptRef(new DataView(buffer, byteOffset, byteLength));
 }

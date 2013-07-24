@@ -1,3 +1,24 @@
+2013-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove CheckedInt, use Checked<T, RecordOverflow> instead
+        https://bugs.webkit.org/show_bug.cgi?id=119022
+
+        Reviewed by Oliver Hunt.
+
+        Following the cleanup in r153062, the CheckedInt uses are replaced with
+        using the Checked<T, RecordOverflow> class. The CheckedInt header is not
+        used anywhere anymore and is thus removed.
+
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/CheckedInt.h: Removed.
+        * html/canvas/DataView.cpp:
+        (WebCore::DataView::create):
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::associateBufferSubDataImpl):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::drawArrays):
+
 2013-07-24  Andreas Kling  <akling@apple.com>
 
         RenderMenuList computes the width of its longest option twice.
