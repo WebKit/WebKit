@@ -1,3 +1,9 @@
+2013-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Setting the svn:eol-style=native property on the ANGLE.sln file.
+
+        * src/ANGLE.sln: Added property svn:eol-style.
+
 2013-07-24  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Buildfix after r153064. Add Uniform files to the Target.pri.
