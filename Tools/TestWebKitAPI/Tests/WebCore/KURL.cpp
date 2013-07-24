@@ -44,7 +44,6 @@ TEST_F(KURLTest, KURLConstructorDefault)
 {
     KURL kurl;
 
-    EXPECT_FALSE(kurl.hasPath());
     EXPECT_TRUE(kurl.isEmpty());
     EXPECT_TRUE(kurl.isNull());
     EXPECT_FALSE(kurl.isValid());
@@ -54,7 +53,6 @@ TEST_F(KURLTest, KURLConstructorConstChar)
 {
     KURL kurl(ParsedURLString, "http://username:password@www.example.com:8080/index.html?var=val#fragment");
 
-    EXPECT_TRUE(kurl.hasPath());
     EXPECT_FALSE(kurl.isEmpty());
     EXPECT_FALSE(kurl.isNull());
     EXPECT_TRUE(kurl.isValid());

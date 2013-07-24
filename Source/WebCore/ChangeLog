@@ -1,3 +1,12 @@
+2013-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Make KURL::hasPath private
+        https://bugs.webkit.org/show_bug.cgi?id=118279
+
+        Reviewed by Darin Adler.
+
+        * platform/KURL.h: The KURL::hasPath method is not used outside of the KURL class, so it is made private.
+
 2013-07-24  Jessie Berlin  <jberlin@apple.com>
 
         Remove WKPageGetPlugInInformation - it is not used anymore

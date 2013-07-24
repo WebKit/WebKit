@@ -1,3 +1,13 @@
+2013-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Make KURL::hasPath private
+        https://bugs.webkit.org/show_bug.cgi?id=118279
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/KURL.cpp:
+        (TestWebKitAPI::TEST_F): Remove references to KURL::hasPath the method is now private and thus not accessible for testing.
+
 2013-07-24  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] TestInspectorServer unit test is timing out
