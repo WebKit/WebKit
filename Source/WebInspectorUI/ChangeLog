@@ -1,5 +1,20 @@
 2013-07-24  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: control+clicking on a numeric token should not show the context menu
+        https://bugs.webkit.org/show_bug.cgi?id=119048
+
+        Reviewed by Timothy Hatcher.
+
+        Track "contextmenu" events when we're hovering a token containing a numeric value
+        and call preventDefault() in the event handler to ensure that the context menu does
+        not appear.
+
+        * UserInterface/CodeMirrorDragToAlterNumberController.js:
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype.handleEvent):
+        (WebInspector.CodeMirrorDragToAlterNumberController.prototype._setTracksMouseClickAndDrag):
+
+2013-07-24  Antoine Quint  <graouts@apple.com>
+
         Web Inspector: support click-and-drag editing of CSS numeric values
         https://bugs.webkit.org/show_bug.cgi?id=118896
 

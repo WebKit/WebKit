@@ -80,6 +80,9 @@ WebInspector.CodeMirrorDragToAlterNumberController.prototype = {
         case "mouseup":
             this._mouseWasReleased(event);
             break;
+        case "contextmenu":
+            event.preventDefault();
+            break;
         }
     },
 
@@ -125,9 +128,11 @@ WebInspector.CodeMirrorDragToAlterNumberController.prototype = {
         if (tracksMouseClickAndDrag) {
             this._element.classList.add(WebInspector.CodeMirrorDragToAlterNumberController.StyleClassName);
             window.addEventListener("mousedown", this, true);
+            window.addEventListener("contextmenu", this, true);
         } else {
             this._element.classList.remove(WebInspector.CodeMirrorDragToAlterNumberController.StyleClassName);
             window.removeEventListener("mousedown", this, true);
+            window.removeEventListener("contextmenu", this, true);
             this._setDragging(false);
         }
         
