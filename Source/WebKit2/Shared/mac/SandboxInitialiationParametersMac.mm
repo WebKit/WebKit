@@ -70,6 +70,12 @@ void SandboxInitializationParameters::addPathParameter(const char* name, const c
     appendPathInternal(name, path);
 }
 
+void SandboxInitializationParameters::addParameter(const char* name, const char* value)
+{
+    m_namedParameters.append(name);
+    m_namedParameters.append(fastStrDup(value));
+}
+
 const char* const* SandboxInitializationParameters::namedParameterArray() const
 {
     if (!(m_namedParameters.size() % 2))

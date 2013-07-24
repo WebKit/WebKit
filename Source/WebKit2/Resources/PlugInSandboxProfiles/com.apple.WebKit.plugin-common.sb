@@ -50,6 +50,11 @@
                        (home-library-preferences-regex (string-append #"/ByHost/" (regex-quote domain) #"\..*\.plist$")))))
             domains))
 
+;; WebKit2 sandbox launcher needs to define an _OS_VERSION parameter
+;; This parameter is the major OS Version number.
+(if (not (defined? 'os-version))
+    (define os-version (param "_OS_VERSION")))
+
 ;; OS X 10.7 (Lion) compatibility
 (if (not (defined? 'ipc-posix-shm*))
     (define ipc-posix-shm* ipc-posix-shm))
@@ -212,6 +217,9 @@
     (local-name "com.apple.tsm.portname")
     (global-name-regex #"_OpenStep$"))
 
+(if (equal? os-version "10.7")
+    (allow mach-lookup
+        (global-name "com.apple.system.DirectoryService.membership_v1")))
 
 ;; Configuration directories
 (allow file-read* (subpath (param "PLUGIN_PATH")))
@@ -311,23 +319,28 @@
 (define (webkit-microphone)
     (allow device-microphone))
 
-(allow ipc-posix-shm*
-    (ipc-posix-name-regex #"^AudioIO")
-    (ipc-posix-name-regex #"^CFPBS:")
-    (ipc-posix-name "com.apple.ColorSync.Gen.lock")
-    (ipc-posix-name "com.apple.ColorSync.Disp.lock")
-    (ipc-posix-name "com.apple.ColorSync.Gray2.2")
-    (ipc-posix-name "com.apple.ColorSync.sRGB")
-    (ipc-posix-name "com.apple.ColorSync.GenGray")
-    (ipc-posix-name "com.apple.ColorSync.GenRGB")
-    (ipc-posix-name-regex #"^com\.apple\.cs\.")
-    (ipc-posix-name "_CS_GSHMEMLOCK")
-    (ipc-posix-name "_CS_DSHMEMLOCK"))
-
-(allow ipc-posix-shm-read*
-    (ipc-posix-name-regex #"^/tmp/com\.apple\.csseed\.")
-    (ipc-posix-name "FNetwork.defaultStorageSession")
-    (ipc-posix-name "apple.shm.notification_center"))
+(if (equal? os-version "10.7")
+    (allow ipc-posix-shm)
+    (begin
+        (if (equal? os-version "10.8")
+            (allow ipc-posix-shm*
+                (ipc-posix-name "_CS_GSHMEMLOCK")
+                (ipc-posix-name "_CS_DSHMEMLOCK")))
+        (allow ipc-posix-shm*
+            (ipc-posix-name-regex #"^AudioIO")
+            (ipc-posix-name-regex #"^CFPBS:")
+            (ipc-posix-name "com.apple.ColorSync.Gen.lock")
+            (ipc-posix-name "com.apple.ColorSync.Disp.lock")
+            (ipc-posix-name "com.apple.ColorSync.Gray2.2")
+            (ipc-posix-name "com.apple.ColorSync.sRGB")
+            (ipc-posix-name "com.apple.ColorSync.GenGray")
+            (ipc-posix-name "com.apple.ColorSync.GenRGB")
+            (ipc-posix-name-regex #"^com\.apple\.cs\.")
+            (ipc-posix-name-regex #"^ls\."))
+        (allow ipc-posix-shm-read*
+            (ipc-posix-name-regex #"^/tmp/com\.apple\.csseed\.")
+            (ipc-posix-name "FNetwork.defaultStorageSession")
+            (ipc-posix-name "apple.shm.notification_center"))))
 
 ;; Silently block access to some resources
 (deny file-read* file-write* (with no-log)

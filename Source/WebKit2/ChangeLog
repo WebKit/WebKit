@@ -1,3 +1,22 @@
+2013-07-23  Simon Cooper  <scooper@apple.com>
+
+        10.7: Java applets do not work due to sandbox violation/exception
+        https://bugs.webkit.org/show_bug.cgi?id=118920
+        <rdar://problem/14471541&12910934&14223830&14260729&14267679>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Introduce versioning into the common profile and use it to fix
+        a number of issues with Java on 10.7 and 10.8. Allow writing the
+        com.apple.java.util.prefs preference file. This change also
+        introduces a "/Library/Application Support/Java/PublicFiles"
+        area which Java can read without any restrictions. Files written
+        to this location will need to be created and written to by
+        a privileged process.
+
+        * Resources/PlugInSandboxProfiles/com.apple.WebKit.plugin-common.sb:
+        * Resources/PlugInSandboxProfiles/com.oracle.java.JavaAppletPlugin.sb:
+
 2013-07-23  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Add doneWithTouchEvent callback to the WKViewClient.
