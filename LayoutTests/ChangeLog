@@ -1,3 +1,32 @@
+2013-07-24  Robert Hogan  <robert@webkit.org>
+
+        Border drawing incorrect when using both border-collapse: collapse and overflow: hidden on a table
+        https://bugs.webkit.org/show_bug.cgi?id=18305
+
+        Reviewed by David Hyatt.
+
+        * fast/table/overflow-table-collapsed-borders-cell-painting-expected.png: Added.
+        * fast/table/overflow-table-collapsed-borders-cell-painting-expected.txt: Added.
+        * fast/table/overflow-table-collapsed-borders-cell-painting-table-self-painting-layer-expected.png: Added.
+        * fast/table/overflow-table-collapsed-borders-cell-painting-table-self-painting-layer-expected.txt: Added.
+        * fast/table/overflow-table-collapsed-borders-cell-painting-table-self-painting-layer.html: Added.
+        * fast/table/overflow-table-collapsed-borders-cell-painting.html: Added.
+        * fast/table/overflow-table-collapsed-borders-section-layer-painting-expected.png: Added.
+        * fast/table/overflow-table-collapsed-borders-section-layer-painting-expected.txt: Added.
+        * fast/table/overflow-table-collapsed-borders-section-layer-painting.html: Added.
+        * fast/table/overflow-table-collapsed-borders-section-layer-table-self-painting-layer-expected.png: Added.
+        * fast/table/overflow-table-collapsed-borders-section-layer-table-self-painting-layer-expected.txt: Added.
+        * fast/table/overflow-table-collapsed-borders-section-layer-table-self-painting-layer.html: Added.
+        * fast/table/overflow-table-collapsed-borders-section-self-painting-layer-painting-expected.png: Added.
+        * fast/table/overflow-table-collapsed-borders-section-self-painting-layer-painting-expected.txt: Added.
+        * fast/table/overflow-table-collapsed-borders-section-self-painting-layer-painting.html: Added.
+        * fast/table/overflow-table-collapsed-borders-section-self-painting-layer-table-self-painting-layer-expected.png: Added.
+        * fast/table/overflow-table-collapsed-borders-section-self-painting-layer-table-self-painting-layer-expected.txt: Added.
+        * fast/table/overflow-table-collapsed-borders-section-self-painting-layer-table-self-painting-layer.html: Added.
+        * fast/table/table-overflow-expected.html: Added.
+        * fast/table/table-overflow.html: Added.
+        * platform/qt/fast/table/overflowHidden-expected.txt:
+
 2013-07-24  Frédéric Wang  <fred.wang@free.fr>
 
         Graphical elements inside mphantom should not be visible.

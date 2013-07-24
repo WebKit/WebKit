@@ -1,3 +1,42 @@
+2013-07-24  Robert Hogan  <robert@webkit.org>
+
+        Border drawing incorrect when using both border-collapse: collapse and overflow: hidden on a table
+        https://bugs.webkit.org/show_bug.cgi?id=18305
+
+        Reviewed by David Hyatt.
+
+        overflowClipRect() clips out the table's half of a collapsed border when there is an overflow clip
+        on the table. This prevents the table's half of the border ever getting painted. 
+
+        To fix this, clip to the border box of tables when we're in the paint phase that gets the sections to draw the collapsed borders
+        or when we're self painting. This will allow the table's half of the border to get painted. In the case where the table is self
+        painting we ensure that content gets clipped to cell's side of the collapsed border by ensuring the clip passed to child layers
+        from the table clips to the inside of the collapsed border. 
+
+        It's worth noting that a table's collapsed borders are painted by the table's layer using functions in 
+        RenderTableSection and RenderTableCell. So if a table section has a self-painting layer this patch still works, because
+        the borders aren't painted by the section's layer.
+
+        Tests: fast/table/overflow-table-collapsed-borders-cell-painting-table-self-painting-layer.html
+               fast/table/overflow-table-collapsed-borders-cell-painting.html
+               fast/table/overflow-table-collapsed-borders-section-layer-painting.html
+               fast/table/overflow-table-collapsed-borders-section-layer-table-self-painting-layer.html
+               fast/table/overflow-table-collapsed-borders-section-self-painting-layer-painting.html
+               fast/table/overflow-table-collapsed-borders-section-self-painting-layer-table-self-painting-layer.html
+               fast/table/table-overflow.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+        (WebCore::RenderBox::overflowClipRect):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::overflowClipRectForChildLayers):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::overflowClipRect):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::overflowClipRectForChildLayers):
+
 2013-07-24  Frédéric Wang  <fred.wang@free.fr>
 
         Graphical elements inside mphantom should not be visible.

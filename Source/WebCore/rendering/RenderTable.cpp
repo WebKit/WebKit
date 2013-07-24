@@ -1355,9 +1355,16 @@ int RenderTable::firstLineBoxBaseline() const
     return -1;
 }
 
-LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy)
+LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy, PaintPhase phase)
 {
-    LayoutRect rect = RenderBlock::overflowClipRect(location, region, relevancy);
+    LayoutRect rect;
+    // Don't clip out the table's side of the collapsed borders if we're in the paint phase that will ask the sections to paint them.
+    // Likewise, if we're self-painting we avoid clipping them out as the clip rect that will be passed down to child layers from RenderLayer will do that instead.
+    if (phase == PaintPhaseChildBlockBackgrounds || layer()->isSelfPaintingLayer()) {
+        rect = borderBoxRectInRegion(region);
+        rect.setLocation(location + rect.location());
+    } else
+        rect = RenderBox::overflowClipRect(location, region, relevancy);
     
     // If we have a caption, expand the clip to include the caption.
     // FIXME: Technically this is wrong, but it's virtually impossible to fix this

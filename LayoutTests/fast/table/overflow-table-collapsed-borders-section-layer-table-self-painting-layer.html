@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .table
+            {
+                border: 20px solid black;
+                color: green;
+                display: table;
+                font: 10px/1em Ahem;
+                height: 4em;
+                overflow: hidden;
+                table-layout: fixed;
+                width: 5em;
+                border-collapse: collapse;
+            }
+            .row
+            {
+                display: table-row;
+            }
+            .tbody
+            {
+                display: table-row-group;
+            }
+            .cell
+            {
+                display: table-cell;
+                white-space: nowrap;
+            }
+            .span2
+            {
+                color: blue;
+            }
+            .layer
+            {
+                opacity: 0.9;
+            }
+            .self-painting-layer
+            {
+                -webkit-mask:-webkit-gradient(linear, left top, left bottom, from(#E7E7E7), to(#CFCFCF));
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <!-- webkit.org/b/18305:  In each table the blue bar should intrude halfway into the right-hand border. This tests that overflow:hidden on a table
+             still allows overflowing content to spill onto the cell's half of a collapsed border.-->
+        <div class="table self-painting-layer">
+            <div class="tbody layer">
+              <div class="row">
+                <div class="cell"><span class="span2">XXXXXXX</span></div>
+              </div>
+            </div>
+        </div>
+        <div class="table self-painting-layer">
+            <div class="tbody layer">
+              <div class="row">
+                <div class="cell self-painting-layer"><span class="span2">XXXXXXX</span></div>
+              </div>
+            </div>
+        </div>
+        <div class="table self-painting-layer">
+            <div class="tbody layer">
+              <div class="row">
+                <div class="cell layer"><span class="span2">XXXXXXX</span></div>
+              </div>
+            </div>
+        </div>
+        <div class="table self-painting-layer">
+            <div class="tbody layer">
+              <div class="row">
+                <div class="cell"><span class="span2 self-painting-layer">XXXXXXX</span></div>
+              </div>
+            </div>
+        </div>
+        <div class="table self-painting-layer">
+            <div class="tbody layer">
+              <div class="row">
+                <div class="cell"><span class="span2 layer">XXXXXXX</span></div>
+              </div>
+            </div>
+        </div>
+        <div class="table self-painting-layer">
+            <div class="tbody layer">
+              <div class="row">
+                <div class="cell self-painting-layer"><span class="span2 layer">XXXXXXX</span></div>
+              </div>
+            </div>
+        </div>
+        <div class="table self-painting-layer">
+            <div class="tbody layer">
+              <div class="row">
+                <div class="cell self-painting-layer"><span class="span2 self-painting-layer">XXXXXXX</span></div>
+              </div>
+            </div>
+        </div>
+        <div class="table self-painting-layer">
+            <div class="tbody layer">
+              <div class="row">
+                <div class="cell layer"><span class="span2 self-painting-layer">XXXXXXX</span></div>
+              </div>
+            </div>
+        </div>
+        <div class="table self-painting-layer">
+            <div class="tbody layer">
+              <div class="row">
+                <div class="cell layer"><span class="span2 layer">XXXXXXX</span></div>
+              </div>
+            </div>
+        </div>
+    </body>
+</html>
