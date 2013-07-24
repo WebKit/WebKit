@@ -75,6 +75,7 @@ HEADERS += \
     src/compiler/TranslatorGLSL.h \
     src/compiler/TranslatorHLSL.h \
     src/compiler/Types.h \
+    src/compiler/Uniform.h \
     src/compiler/UnfoldShortCircuit.h \
     src/compiler/util.h \
     src/compiler/ValidateLimitations.h \
@@ -122,6 +123,7 @@ SOURCES += \
     src/compiler/TranslatorESSL.cpp \
     src/compiler/TranslatorGLSL.cpp \
     src/compiler/TranslatorHLSL.cpp \
+    src/compiler/Uniform.cpp \
     src/compiler/UnfoldShortCircuit.cpp \
     src/compiler/util.cpp \
     src/compiler/ValidateLimitations.cpp \
