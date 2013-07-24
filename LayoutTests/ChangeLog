@@ -1,3 +1,10 @@
+2013-07-24  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Added expectations for flaky tests.
+
+        * platform/gtk/TestExpectations: Marked animations/resume-after-page-cache.html,
+        css3/calc/img-size.html and perf/nested-combined-selectors.html as flaky.
+
 2013-07-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG string concatenation optimizations might emit speculative nodes after emitting nodes that kill the original inputs

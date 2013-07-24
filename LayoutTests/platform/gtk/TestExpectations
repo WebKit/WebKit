@@ -677,6 +677,12 @@ webkit.org/b/119009 http/tests/cache/subresource-failover-to-network.html [ Fail
 
 webkit.org/b/119010 editing/selection/drag-text-delay.html [ Failure Pass ]
 
+webkit.org/b/119040 perf/nested-combined-selectors.html [ Failure Pass ]
+
+webkit.org/b/119041 css3/calc/img-size.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
