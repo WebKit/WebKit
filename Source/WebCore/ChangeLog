@@ -1,5 +1,21 @@
 2013-07-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r153092
+
+    2013-07-24  Jessie Berlin  <jberlin@apple.com>
+
+            Remove WKPageGetPlugInInformation - it is not used anymore
+            https://bugs.webkit.org/show_bug.cgi?id=119047
+
+            Rubber-stamped by Alexey Proskuryakov.
+
+            Revert r152328, which added a key used only in the callback info for
+            WKPageGetPlugInInformation.
+
+            * WebCore.exp.in:
+
+2013-07-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153002
 
     2013-07-22  Chris Fleizach  <cfleizach@apple.com>
