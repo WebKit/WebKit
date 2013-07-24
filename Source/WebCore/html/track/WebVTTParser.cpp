@@ -151,9 +151,9 @@ void WebVTTParser::parseBytes(const char* data, unsigned length)
 
         switch (m_state) {
         case Initial:
-            // Buffer up at least 9 bytes before proceeding with checking for the file identifier.
+            // Buffer up at least 9 bytes or a full line before proceeding with checking for the file identifier.
             m_identifierData.append(data, length);
-            if (m_identifierData.size() < bomLength + fileIdentifierLength)
+            if (position == line.sizeInBytes() && m_identifierData.size() < bomLength + fileIdentifierLength)
                 return;
 
             // 4-12 - Collect the first line and check for "WEBVTT".

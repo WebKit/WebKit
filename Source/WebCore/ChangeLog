@@ -1,3 +1,15 @@
+2013-07-24  Brendan Long  <b.long@cablelabs.com>
+
+        WebVTTParser's identifier buffering can ignore subsequent lines
+        https://bugs.webkit.org/show_bug.cgi?id=118483
+
+        Reviewed by Eric Carlson.
+
+        No new tests since this bug can't be reproduced in layout tests.
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::parseBytes): Only buffer the identifier if we haven't read an entire line.
+
 2013-07-23  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r150867): FrameView auto-sizing + delegate denied image load may cause StyleResolver to re-enter itself.
