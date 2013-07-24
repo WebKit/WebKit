@@ -46,6 +46,7 @@ public:
     void addConfDirectoryParameter(const char* name, int confID);
     void addPathParameter(const char* name, NSString *path);
     void addPathParameter(const char* name, const char* path);
+    void addParameter(const char* name, const char* value);
 
     const char* const* namedParameterArray() const;
 

@@ -29,6 +29,7 @@
 #import "SandboxInitializationParameters.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
+#import <WebCore/SystemVersionMac.h>
 #import <mach/task.h>
 #import <pwd.h>
 #import <stdlib.h>
@@ -165,6 +166,18 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
         String defaultSystemDirectorySuffix = String([[NSBundle mainBundle] bundleIdentifier]) + "+" + parameters.clientIdentifier;
         sandboxParameters.setSystemDirectorySuffix(defaultSystemDirectorySuffix);
     }
+
+    Vector<String> osVersionParts;
+    String osSystemMarketingVersion = String(systemMarketingVersion());
+    osSystemMarketingVersion.split('.', false, osVersionParts);
+    if (osVersionParts.size() < 2) {
+        WTFLogAlways("%s: Couldn't find OS Version\n", getprogname());
+        exit(EX_NOPERM);
+    }
+    String osVersion = osVersionParts[0];
+    osVersion.append('.');
+    osVersion.append(osVersionParts[1]);
+    sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
