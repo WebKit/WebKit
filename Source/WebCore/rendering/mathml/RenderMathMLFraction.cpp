@@ -143,7 +143,7 @@ void RenderMathMLFraction::layout()
 void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
-    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground)
+    if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style()->visibility() != VISIBLE)
         return;
     
     RenderBox* denominatorWrapper = lastChildBox();

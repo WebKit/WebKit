@@ -251,7 +251,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
     
-    if (info.context->paintingDisabled())
+    if (info.context->paintingDisabled() || style()->visibility() != VISIBLE)
         return;
     
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + contentBoxRect().location());

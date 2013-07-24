@@ -1,3 +1,17 @@
+2013-07-24  Frédéric Wang  <fred.wang@free.fr>
+
+        Graphical elements inside mphantom should not be visible.
+        https://bugs.webkit.org/show_bug.cgi?id=116600.
+
+        Reviewed by Chris Fleizach.
+
+        Test: mathml/presentation/phantom.html
+
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::paint): don't paint the fraction bar when the visibility is not "visible"
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::paint): don't paint the radical symbol when the visibility is not "visible"
+
 2013-07-24  Brendan Long  <b.long@cablelabs.com>
 
         WebVTTParser's identifier buffering can ignore subsequent lines

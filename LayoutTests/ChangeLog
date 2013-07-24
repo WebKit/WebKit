@@ -1,3 +1,13 @@
+2013-07-24  Frédéric Wang  <fred.wang@free.fr>
+
+        Graphical elements inside mphantom should not be visible.
+        https://bugs.webkit.org/show_bug.cgi?id=116600.
+
+        Reviewed by Chris Fleizach.
+
+        * mathml/presentation/phantom-expected.html: Added.
+        * mathml/presentation/phantom.html: Added.
+
 2013-07-24  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Add expectations for flaky test.
