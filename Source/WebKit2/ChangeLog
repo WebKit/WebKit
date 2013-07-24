@@ -1,3 +1,20 @@
+2013-07-24  Kwang Yul Seo  <skyul@company100.net>
+
+        [WK2][Soup] Add entry point for network process
+        https://bugs.webkit.org/show_bug.cgi?id=110136
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Original patch by Balazs Kelemen <kbalazs@webkit.org>.
+
+        Added a common entry point for non-Mac Unix ports.
+
+        * NetworkProcess/unix/NetworkProcessMainUnix.cpp: Added.
+        (WebKit::NetworkProcessMain):
+        * NetworkProcess/unix/NetworkProcessMainUnix.h: Added.
+        * unix/NetworkMainUnix.cpp: Added.
+        (main):
+
 2013-07-24  Jessie Berlin  <jberlin@apple.com>
 
         Remove WKPageGetPlugInInformation - it is not used anymore
