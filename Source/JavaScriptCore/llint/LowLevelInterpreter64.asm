@@ -889,7 +889,7 @@ _llint_op_get_array_length:
     loadisFromInstruction(1, t1)
     loadpFromInstruction(8, t2)
     loadp JSObject::m_butterfly[t3], t0
-    loadi -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0], t0
+    loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetArrayLengthSlow
     orq tagTypeNumber, t0
     valueProfile(t0, t2)
@@ -1022,7 +1022,7 @@ _llint_op_get_by_val:
     bineq t2, ContiguousShape, .opGetByValNotContiguous
 .opGetByValIsContiguous:
 
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t3], .opGetByValOutOfBounds
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValOutOfBounds
     loadisFromInstruction(1, t0)
     loadq [t3, t1, 8], t2
     btqz t2, .opGetByValOutOfBounds
@@ -1030,7 +1030,7 @@ _llint_op_get_by_val:
 
 .opGetByValNotContiguous:
     bineq t2, DoubleShape, .opGetByValNotDouble
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t3], .opGetByValOutOfBounds
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValOutOfBounds
     loadis 8[PB, PC, 8], t0
     loadd [t3, t1, 8], ft0
     bdnequn ft0, ft0, .opGetByValOutOfBounds
@@ -1041,7 +1041,7 @@ _llint_op_get_by_val:
 .opGetByValNotDouble:
     subi ArrayStorageShape, t2
     bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValSlow
-    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t3], .opGetByValOutOfBounds
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t3], .opGetByValOutOfBounds
     loadisFromInstruction(1, t0)
     loadq ArrayStorage::m_vector[t3, t1, 8], t2
     btqz t2, .opGetByValOutOfBounds
@@ -1120,20 +1120,20 @@ _llint_op_get_by_pname:
 
 
 macro contiguousPutByVal(storeCallback)
-    biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0], .outOfBounds
+    biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .outOfBounds
 .storeResult:
     loadisFromInstruction(3, t2)
     storeCallback(t2, t1, [t0, t3, 8])
     dispatch(5)
 
 .outOfBounds:
-    biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValOutOfBounds
+    biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
     if VALUE_PROFILER
         loadp 32[PB, PC, 8], t2
         storeb 1, ArrayProfile::m_mayStoreToHole[t2]
     end
     addi 1, t3, t2
-    storei t2, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0]
+    storei t2, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0]
     jmp .storeResult
 end
 
@@ -1184,7 +1184,7 @@ _llint_op_put_by_val:
 
 .opPutByValNotContiguous:
     bineq t2, ArrayStorageShape, .opPutByValSlow
-    biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValOutOfBounds
+    biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
     btqz ArrayStorage::m_vector[t0, t3, 8], .opPutByValArrayStorageEmpty
 .opPutByValArrayStorageStoreResult:
     loadisFromInstruction(3, t2)
@@ -1199,9 +1199,9 @@ _llint_op_put_by_val:
         storeb 1, ArrayProfile::m_mayStoreToHole[t1]
     end
     addi 1, ArrayStorage::m_numValuesInVector[t0]
-    bib t3, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0], .opPutByValArrayStorageStoreResult
+    bib t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .opPutByValArrayStorageStoreResult
     addi 1, t3, t1
-    storei t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0]
+    storei t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0]
     jmp .opPutByValArrayStorageStoreResult
 
 .opPutByValOutOfBounds:

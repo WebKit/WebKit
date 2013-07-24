@@ -1,3 +1,28 @@
+2013-07-24  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to hijack IndexingHeader for things other than lengths
+        https://bugs.webkit.org/show_bug.cgi?id=119065
+
+        Reviewed by Mark Hahnenberg.
+        
+        Made the body of IndexingHeader be a union.
+        
+        Modified the offlineasm so that you can say IndexingHeader::u.lengths.publicLength.
+        Previously those dots would cause parse errors. Now an identifier in offlineasm can
+        have a dot anywhere except the first character.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/parser.rb:
+        * runtime/IndexingHeader.h:
+        (JSC::IndexingHeader::offsetOfPublicLength):
+        (JSC::IndexingHeader::offsetOfVectorLength):
+        (JSC::IndexingHeader::IndexingHeader):
+        (JSC::IndexingHeader::vectorLength):
+        (JSC::IndexingHeader::setVectorLength):
+        (JSC::IndexingHeader::publicLength):
+        (JSC::IndexingHeader::setPublicLength):
+
 2013-07-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JIT::updateTopCallFrame doesn't update the CallFrame's bytecodeOffset if bytecodeOffset == 0
