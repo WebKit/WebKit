@@ -377,6 +377,10 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
 
 void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
 {
+    // Copy behaviour of Qt and EFL - just return in case of (0,0) mouse scroll
+    if (!horizontal && !vertical)
+        return;
+
     GdkEvent* event = gdk_event_new(GDK_SCROLL);
     event->scroll.x = m_position.x;
     event->scroll.y = m_position.y;

@@ -1,3 +1,19 @@
+2013-07-24  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] [WK2] Handle wheel event with delta zero
+        https://bugs.webkit.org/show_bug.cgi?id=118973
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added handling of zero mouse scroll deltas in EventSenderProxy similar
+        to WK1 and Qt/EFL ports.
+
+        fast/events/platform-wheelevent-with-delta-zero-crash.html is no longer
+        failing on WK2.
+
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::mouseScrollBy):
+
 2013-07-23  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r150867): FrameView auto-sizing + delegate denied image load may cause StyleResolver to re-enter itself.
