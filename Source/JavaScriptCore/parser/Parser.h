@@ -1036,7 +1036,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
 
     RefPtr<ParsedNode> result;
     if (m_sourceElements) {
-        JSTokenLocation endLocation(m_source->startOffset());
+        JSTokenLocation endLocation;
         endLocation.line = m_lexer->lastLineNumber();
         endLocation.lineStartOffset = m_lexer->currentLineStartOffset();
         endLocation.startOffset = m_lexer->currentOffset();

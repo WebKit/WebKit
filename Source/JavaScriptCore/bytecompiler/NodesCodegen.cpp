@@ -202,16 +202,15 @@ bool ArrayNode::isSimpleArray() const
     return true;
 }
 
-ArgumentListNode* ArrayNode::toArgumentList(VM* vm, int lineNumber, int startPosition, unsigned sourceOffset) const
+ArgumentListNode* ArrayNode::toArgumentList(VM* vm, int lineNumber, int startPosition) const
 {
     ASSERT(!m_elision && !m_optional);
     ElementNode* ptr = m_element;
     if (!ptr)
         return 0;
-    JSTokenLocation location(sourceOffset);
+    JSTokenLocation location;
     location.line = lineNumber;
     location.startOffset = startPosition;
-    location.sourceOffset = sourceOffset;
     ArgumentListNode* head = new (vm) ArgumentListNode(location, ptr->value());
     ArgumentListNode* tail = head;
     ptr = ptr->next();
@@ -549,7 +548,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
                 if (m_args->m_listNode->m_next) {
                     ASSERT(m_args->m_listNode->m_next->m_expr->isSimpleArray());
                     ASSERT(!m_args->m_listNode->m_next->m_next);
-                    m_args->m_listNode = static_cast<ArrayNode*>(m_args->m_listNode->m_next->m_expr)->toArgumentList(generator.vm(), 0, 0, 0);
+                    m_args->m_listNode = static_cast<ArrayNode*>(m_args->m_listNode->m_next->m_expr)->toArgumentList(generator.vm(), 0, 0);
                     RefPtr<RegisterID> realFunction = generator.emitMove(generator.tempDestination(dst), base.get());
                     CallArguments callArguments(generator, m_args);
                     generator.emitNode(callArguments.thisRegister(), oldList->m_expr);

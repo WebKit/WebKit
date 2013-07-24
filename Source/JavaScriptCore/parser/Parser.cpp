@@ -82,7 +82,6 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
     m_lexer = adoptPtr(new LexerType(vm));
     m_arena = m_vm->parserArena.get();
     m_lexer->setCode(source, m_arena);
-    m_token.m_location.sourceOffset = source.startOffset();
     m_token.m_location.endOffset = source.startOffset();
     m_token.m_location.lineStartOffset = source.startOffset();
 
@@ -861,7 +860,7 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
     if (const SourceProviderCacheItem* cachedInfo = TreeBuilder::CanUseFunctionCache ? findCachedFunctionInfo(openBraceOffset) : 0) {
         // If we're in a strict context, the cached function info must say it was strict too.
         ASSERT(!strictMode() || cachedInfo->strictMode);
-        JSTokenLocation endLocation(m_source->startOffset());
+        JSTokenLocation endLocation;
 
         endLocation.line = cachedInfo->closeBraceLine;
         endLocation.startOffset = cachedInfo->closeBraceOffset;
@@ -966,7 +965,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
      * special case that looks for a colon as the next character in the input.
      */
     Vector<LabelInfo> labels;
-    JSTokenLocation location(m_source->startOffset());
+    JSTokenLocation location;
     do {
         int start = tokenStart();
         int startingLine = tokenLine();
@@ -1634,7 +1633,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     int expressionLine = tokenLine();
     int expressionLineStart = tokenLineStart();
     int newCount = 0;
-    JSTokenLocation location(m_source->startOffset());
+    JSTokenLocation location;
     while (match(NEW)) {
         next();
         newCount++;
