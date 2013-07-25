@@ -116,10 +116,11 @@ typedef OptionRange optionRange;
     \
     v(bool, useExperimentalFTL, false) \
     v(bool, useFTLTBAA, true) \
-    v(bool, enableLLVMLICM, true) \
     v(bool, enableLLVMFastISel, false) \
     v(bool, useLLVMSmallCodeModel, false) \
+    v(unsigned, llvmBackendOptimizationLevel, 2) \
     v(unsigned, llvmOptimizationLevel, 2) \
+    v(unsigned, llvmSizeLevel, 0) \
     \
     v(bool, enableConcurrentJIT, true) \
     v(unsigned, numberOfCompilerThreads, computeNumberOfWorkerThreads(2) - 1) \

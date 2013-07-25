@@ -49,7 +49,7 @@
 #include <llvm-c/Disassembler.h>
 #include <llvm-c/ExecutionEngine.h>
 #include <llvm-c/Target.h>
-#include <llvm-c/Transforms/Scalar.h>
+#include <llvm-c/Transforms/PassManagerBuilder.h>
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop

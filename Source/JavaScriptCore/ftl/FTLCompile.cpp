@@ -85,7 +85,7 @@ void compile(State& state)
     
     LLVMMCJITCompilerOptions options;
     LLVMInitializeMCJITCompilerOptions(&options, sizeof(options));
-    options.OptLevel = Options::llvmOptimizationLevel();
+    options.OptLevel = Options::llvmBackendOptimizationLevel();
     options.NoFramePointerElim = true;
     if (Options::useLLVMSmallCodeModel())
         options.CodeModel = LLVMCodeModelSmall;
@@ -100,25 +100,35 @@ void compile(State& state)
         CRASH();
     }
 
-    LLVMPassManagerRef pass = LLVMCreatePassManager();
-    LLVMAddTargetData(LLVMGetExecutionEngineTargetData(engine), pass);
-    LLVMAddConstantPropagationPass(pass);
-    LLVMAddInstructionCombiningPass(pass);
-    LLVMAddPromoteMemoryToRegisterPass(pass);
-    LLVMAddBasicAliasAnalysisPass(pass);
-    LLVMAddTypeBasedAliasAnalysisPass(pass);
-    if (Options::enableLLVMLICM())
-        LLVMAddLICMPass(pass);
-    LLVMAddGVNPass(pass);
-    LLVMAddCFGSimplificationPass(pass);
-    LLVMRunPassManager(pass, state.module);
+    LLVMPassManagerBuilderRef passBuilder = LLVMPassManagerBuilderCreate();
+    LLVMPassManagerBuilderSetOptLevel(passBuilder, Options::llvmOptimizationLevel());
+    LLVMPassManagerBuilderSetSizeLevel(passBuilder, Options::llvmSizeLevel());
+    
+    LLVMPassManagerRef functionPasses = LLVMCreateFunctionPassManagerForModule(state.module);
+    LLVMPassManagerRef modulePasses = LLVMCreatePassManager();
+    
+    LLVMAddTargetData(LLVMGetExecutionEngineTargetData(engine), modulePasses);
+    
+    LLVMPassManagerBuilderPopulateFunctionPassManager(passBuilder, functionPasses);
+    LLVMPassManagerBuilderPopulateModulePassManager(passBuilder, modulePasses);
+    
+    LLVMPassManagerBuilderDispose(passBuilder);
+
+    LLVMInitializeFunctionPassManager(functionPasses);
+    for (LValue function = LLVMGetFirstFunction(state.module); function; function = LLVMGetNextFunction(function))
+        LLVMRunFunctionPassManager(functionPasses, function);
+    LLVMFinalizeFunctionPassManager(functionPasses);
+    
+    LLVMRunPassManager(modulePasses, state.module);
+
     if (DFG::shouldShowDisassembly() || DFG::verboseCompilationEnabled())
         state.dumpState("after optimization");
     
     // FIXME: Need to add support for the case where JIT memory allocation failed.
     // https://bugs.webkit.org/show_bug.cgi?id=113620
     state.generatedFunction = reinterpret_cast<GeneratedFunction>(LLVMGetPointerToGlobal(engine, state.function));
-    LLVMDisposePassManager(pass);
+    LLVMDisposePassManager(functionPasses);
+    LLVMDisposePassManager(modulePasses);
     LLVMDisposeExecutionEngine(engine);
 
     if (shouldShowDisassembly()) {
