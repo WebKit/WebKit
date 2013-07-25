@@ -290,6 +290,8 @@ public:
     
     LValue isZero8(LValue value) { return equal(value, int8Zero); }
     LValue notZero8(LValue value) { return notEqual(value, int8Zero); }
+    LValue isZero32(LValue value) { return equal(value, int32Zero); }
+    LValue notZero32(LValue value) { return notEqual(value, int32Zero); }
     LValue isZero64(LValue value) { return equal(value, int64Zero); }
     LValue notZero64(LValue value) { return notEqual(value, int64Zero); }
     

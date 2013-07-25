@@ -1,3 +1,21 @@
+2013-05-24  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support LogicalNot and Branch on Int32 and Number
+        https://bugs.webkit.org/show_bug.cgi?id=116739
+
+        Reviewed by Gavin Barraclough.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileLogicalNot):
+        (JSC::FTL::LowerDFGToLLVM::compileBranch):
+        (JSC::FTL::LowerDFGToLLVM::boolify):
+        (LowerDFGToLLVM):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::isZero32):
+        (JSC::FTL::Output::notZero32):
+
 2013-05-23  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: add heuristics to reduce the likelihood of a trivially inlineable function being independently compiled by the concurrent JIT

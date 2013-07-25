@@ -124,9 +124,15 @@ inline bool canCompile(Node* node)
         return false;
     case Branch:
     case LogicalNot:
-        if (node->child1().useKind() == BooleanUse)
+        switch (node->child1().useKind()) {
+        case BooleanUse:
+        case Int32Use:
+        case NumberUse:
             break;
-        return false;
+        default:
+            return false;
+        }
+        break;
     default:
         // Don't know how to handle anything else.
         return false;
@@ -163,12 +169,21 @@ bool canCompile(Graph& graph)
                     break;
                 default:
                     // Don't know how to handle anything else.
+                    if (verboseCompilationEnabled()) {
+                        dataLog("FTL rejecting node because of bad use kind: ", edge.useKind(), " in node:\n");
+                        graph.dump(WTF::dataFile(), "    ", node);
+                    }
                     return false;
                 }
             }
             
-            if (!canCompile(node))
+            if (!canCompile(node)) {
+                if (verboseCompilationEnabled()) {
+                    dataLog("FTL rejecting node:\n");
+                    graph.dump(WTF::dataFile(), "    ", node);
+                }
                 return false;
+            }
         }
     }
     

@@ -1126,16 +1126,7 @@ private:
     
     void compileLogicalNot()
     {
-        switch (m_node->child1().useKind()) {
-        case BooleanUse: {
-            m_booleanValues.add(m_node, m_out.bitNot(lowBoolean(m_node->child1())));
-            break;
-        }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
+        m_booleanValues.add(m_node, m_out.bitNot(boolify(m_node->child1())));
     }
     
     void compileJump()
@@ -1145,19 +1136,10 @@ private:
     
     void compileBranch()
     {
-        switch (m_node->child1().useKind()) {
-        case BooleanUse: {
-            m_out.branch(
-                lowBoolean(m_node->child1()),
-                m_blocks.get(m_graph.m_blocks[m_node->takenBlockIndex()].get()),
-                m_blocks.get(m_graph.m_blocks[m_node->notTakenBlockIndex()].get()));
-            break;
-        }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
+        m_out.branch(
+            boolify(m_node->child1()),
+            m_blocks.get(m_graph.m_blocks[m_node->takenBlockIndex()].get()),
+            m_blocks.get(m_graph.m_blocks[m_node->notTakenBlockIndex()].get()));
     }
     
     void compileReturn()
@@ -1170,6 +1152,21 @@ private:
     void compileForceOSRExit()
     {
         terminate(InadequateCoverage);
+    }
+    
+    LValue boolify(Edge edge)
+    {
+        switch (edge.useKind()) {
+        case BooleanUse:
+            return lowBoolean(m_node->child1());
+        case Int32Use:
+            return m_out.notZero32(lowInt32(m_node->child1()));
+        case NumberUse:
+            return m_out.doubleNotEqual(lowDouble(edge), m_out.doubleZero);
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return 0;
+        }
     }
     
     enum EqualNullOrUndefinedMode { EqualNull, EqualUndefined, EqualNullOrUndefined };
