@@ -1,3 +1,9 @@
+2013-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed, build fix on the EFL port.
+
+        * CMakeLists.txt: Added JSCTestRunnerUtils.cpp.
+
 2013-07-25  Julien Brianceau  <jbrianceau@nds.com>
 
         [sh4] Add missing store8(TrustedImm32, void*) implementation in baseline JIT.

@@ -26,6 +26,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
 
 set(JavaScriptCore_SOURCES
     API/JSBase.cpp
+    API/JSCTestRunnerUtils.cpp
     API/JSCallbackConstructor.cpp
     API/JSCallbackFunction.cpp
     API/JSCallbackObject.cpp
