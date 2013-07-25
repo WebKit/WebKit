@@ -652,6 +652,7 @@ public:
     void invalidateCFG();
     
     void clearReplacements();
+    void initializeNodeOwners();
     
     void getBlocksInDepthFirstOrder(Vector<BasicBlock*>& result);
     

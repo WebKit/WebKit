@@ -561,6 +561,19 @@ void Graph::clearReplacements()
             block->at(nodeIndex)->misc.replacement = 0;
     }
 }
+
+void Graph::initializeNodeOwners()
+{
+    for (BlockIndex blockIndex = numBlocks(); blockIndex--;) {
+        BasicBlock* block = m_blocks[blockIndex].get();
+        if (!block)
+            continue;
+        for (unsigned phiIndex = block->phis.size(); phiIndex--;)
+            block->phis[phiIndex]->misc.owner = block;
+        for (unsigned nodeIndex = block->size(); nodeIndex--;)
+            block->at(nodeIndex)->misc.owner = block;
+    }
+}
     
 } } // namespace JSC::DFG
 

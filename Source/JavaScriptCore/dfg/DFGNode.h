@@ -1406,8 +1406,20 @@ private:
 public:
     // Fields used by various analyses.
     AbstractValue value;
+    
+    // Miscellaneous data that is usually meaningless, but can hold some analysis results
+    // if you ask right. For example, if you do Graph::initializeNodeOwners(), misc.owner
+    // will tell you which basic block a node belongs to. You cannot rely on this persisting
+    // across transformations unless you do the maintenance work yourself. Other phases use
+    // misc.replacement, but they do so manually: first you do Graph::clearReplacements()
+    // and then you set, and use, replacement's yourself.
+    //
+    // Bottom line: don't use these fields unless you initialize them yourself, or by
+    // calling some appropriate methods that initialize them the way you want. Otherwise,
+    // these fields are meaningless.
     union {
         Node* replacement;
+        BasicBlock* owner;
     } misc;
 };
 
