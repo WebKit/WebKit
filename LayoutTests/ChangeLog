@@ -1,3 +1,14 @@
+2013-06-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, unbreak all of the tests.
+        
+        Printing "Some tests failed" is great for the silentTestPass mode, but breaks all previous
+        expected-to-fail tests. Changed it so we only print this helpful message if we're in
+        silentTestPass mode.
+
+        * fast/js/resources/js-test-pre.js:
+        (isSuccessfullyParsed):
+
 2013-05-31  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: convert more fast/js/dfg-* tests to wait for the concurrent JIT

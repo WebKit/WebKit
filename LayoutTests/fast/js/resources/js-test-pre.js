@@ -622,7 +622,7 @@ function isSuccessfullyParsed()
     shouldBeTrue("successfullyParsed");
     if (silentTestPass && didPassSomeTestsSilently)
         debug("Passed some tests silently.");
-    if (didFailSomeTests)
+    if (silentTestPass && didFailSomeTests)
         debug("Some tests failed.");
     debug('<br /><span class="pass">TEST COMPLETE</span>');
 }

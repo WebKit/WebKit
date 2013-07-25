@@ -198,15 +198,11 @@ struct StructureStubInfo {
             watchpoints, codeBlock, this);
     }
         
-    unsigned bytecodeIndex;
-
     int8_t accessType;
     bool seen : 1;
     bool resetByGC : 1;
 
-#if ENABLE(DFG_JIT)
     CodeOrigin codeOrigin;
-#endif // ENABLE(DFG_JIT)
 
     union {
         struct {
@@ -313,7 +309,7 @@ inline void* getStructureStubInfoReturnLocation(StructureStubInfo* structureStub
 
 inline unsigned getStructureStubInfoBytecodeIndex(StructureStubInfo* structureStubInfo)
 {
-    return structureStubInfo->bytecodeIndex;
+    return structureStubInfo->codeOrigin.bytecodeIndex;
 }
 
 } // namespace JSC

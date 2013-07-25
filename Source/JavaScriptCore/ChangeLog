@@ -1,3 +1,30 @@
+2013-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Get rid of StructureStubInfo::bytecodeIndex
+        https://bugs.webkit.org/show_bug.cgi?id=117127
+
+        Reviewed by Mark Hahnenberg.
+        
+        StructureStubInfo already has a CodeOrigin field, which also has a bytecodeIndex.
+        It makes sense to just always use the CodeOrigin.
+
+        * bytecode/StructureStubInfo.h:
+        (StructureStubInfo):
+        (JSC::getStructureStubInfoBytecodeIndex):
+        * jit/JIT.cpp:
+        (JSC::PropertyStubCompilationInfo::copyToStubInfo):
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdSelfList):
+        (JSC::JIT::compileGetByIdProtoList):
+        (JSC::JIT::compileGetByIdChainList):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compilePutByIdTransition):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+
 2013-06-01  Filip Pizlo  <fpizlo@apple.com>
 
         Fix some minor issues in the DFG's profiling of heap accesses

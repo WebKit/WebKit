@@ -527,7 +527,7 @@ void JIT::privateCompileSlowCases()
 ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(StructureStubInfo& info, LinkBuffer &linkBuffer)
 {
     ASSERT(bytecodeIndex != std::numeric_limits<unsigned>::max());
-    info.bytecodeIndex = bytecodeIndex;
+    info.codeOrigin = CodeOrigin(bytecodeIndex);
     info.callReturnLocation = linkBuffer.locationOf(callReturnLocation);
     info.hotPathBegin = linkBuffer.locationOf(hotPathBegin);
 

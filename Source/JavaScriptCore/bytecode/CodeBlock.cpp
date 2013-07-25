@@ -2644,7 +2644,7 @@ ClosureCallStubRoutine* CodeBlock::findClosureCallForReturnPC(ReturnAddressPtr r
         if (!info.stub->code().executableMemory()->contains(returnAddress.value()))
             continue;
 
-        RELEASE_ASSERT(info.stub->codeOrigin().bytecodeIndex < CodeOrigin::invalidBytecodeIndex);
+        RELEASE_ASSERT(info.stub->codeOrigin().bytecodeIndex != CodeOrigin::invalidBytecodeIndex);
         return info.stub.get();
     }
     
@@ -2657,7 +2657,7 @@ ClosureCallStubRoutine* CodeBlock::findClosureCallForReturnPC(ReturnAddressPtr r
         ClosureCallStubRoutine* stub = static_cast<ClosureCallStubRoutine*>(genericStub);
         if (!stub->code().executableMemory()->contains(returnAddress.value()))
             continue;
-        RELEASE_ASSERT(stub->codeOrigin().bytecodeIndex < CodeOrigin::invalidBytecodeIndex);
+        RELEASE_ASSERT(stub->codeOrigin().bytecodeIndex != CodeOrigin::invalidBytecodeIndex);
         return stub;
     }
     
@@ -2717,9 +2717,9 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
         if (inlineCallFrame->baselineCodeBlock() == this)
             break;
         origin = inlineCallFrame->caller;
-        RELEASE_ASSERT(origin.bytecodeIndex < CodeOrigin::invalidBytecodeIndex);
+        RELEASE_ASSERT(origin.bytecodeIndex != CodeOrigin::invalidBytecodeIndex);
     }
-    RELEASE_ASSERT(origin.bytecodeIndex < CodeOrigin::invalidBytecodeIndex);
+    RELEASE_ASSERT(origin.bytecodeIndex != CodeOrigin::invalidBytecodeIndex);
     unsigned bytecodeIndex = origin.bytecodeIndex;
     RELEASE_ASSERT(bytecodeIndex < instructionCount());
     return bytecodeIndex;
