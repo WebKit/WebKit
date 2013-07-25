@@ -1,5 +1,30 @@
 2013-05-25  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: cti_optimize shouldn't allow GCs to get in the way of it seeing the state of its CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=116748
+
+        Reviewed by Geoffrey Garen.
+        
+        This fixes the following race: an optimized version of our code block could be installed
+        by the GC just as we return from completeAllReadyPlansForVM(), leading us to believe
+        that the code block isn't ready yet even though it is. Currently this triggers a
+        RELEASE_ASSERT. We could remove that assertion, but then this case would lead to the
+        code in question entering into optimizeAfterWarmUp mode. That seems pretty wasteful.
+        
+        Fix the bug, and hopefully close the door on these bugs for a while, by wrapping
+        cti_optimize in a DeferGC. There is little downside to doing so since the only
+        "allocations" in cti_optimize are the ones where we inform the GC about extra memory
+        usage.
+        
+        I had a more comprehensive solution (see the bug, "work in progress" patch) but that
+        one involved adding *more* raciness to cti_optimize. I decided that was a less good
+        approach once I came to appreciate the simplicity of just using DeferGC.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
+2013-05-25  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should support ArithDiv
         https://bugs.webkit.org/show_bug.cgi?id=116771
 

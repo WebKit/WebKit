@@ -42,6 +42,7 @@
 #include "DFGOSREntry.h"
 #include "DFGWorklist.h"
 #include "Debugger.h"
+#include "DeferGC.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
 #include "Heap.h"
@@ -958,6 +959,26 @@ DEFINE_STUB_FUNCTION(void, optimize)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     
+    // Defer GC so that it doesn't run between when we enter into this slow path and
+    // when we figure out the state of our code block. This prevents a number of
+    // awkward reentrancy scenarios, including:
+    //
+    // - The optimized version of our code block being jettisoned by GC right after
+    //   we concluded that we wanted to use it.
+    //
+    // - An optimized version of our code block being installed just as we decided
+    //   that it wasn't ready yet.
+    //
+    // This still leaves the following: anytime we return from cti_optimize, we may
+    // GC, and the GC may either jettison the optimized version of our code block,
+    // or it may install the optimized version of our code block even though we
+    // concluded that it wasn't ready yet.
+    //
+    // Note that jettisoning won't happen if we already initiated OSR, because in
+    // that case we would have already planted the optimized code block into the JS
+    // stack.
+    DeferGC deferGC(stackFrame.vm->heap);
+    
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned bytecodeIndex = stackFrame.args[0].int32();
@@ -1039,15 +1060,10 @@ DEFINE_STUB_FUNCTION(void, optimize)
     
     if (worklistState == DFG::Worklist::Compiled) {
         // If we don't have an optimized replacement but we did just get compiled, then
-        // either of the following happened:
-        // - The compilation failed or was invalidated, in which case the execution count
-        //   thresholds have already been set appropriately by
-        //   CodeBlock::setOptimizationThresholdBasedOnCompilationResult() and we have
-        //   nothing left to do.
-        // - GC ran after DFG::Worklist::completeAllReadyPlansForVM() and jettisoned our
-        //   code block. Obviously that's unfortunate and we'd rather not have that
-        //   happen, but it can happen, and if it did then the jettisoning logic will
-        //   have set our threshold appropriately and we have nothing left to do.
+        // the compilation failed or was invalidated, in which case the execution count
+        // thresholds have already been set appropriately by
+        // CodeBlock::setOptimizationThresholdBasedOnCompilationResult() and we have
+        // nothing left to do.
         if (!codeBlock->hasOptimizedReplacement()) {
             codeBlock->updateAllPredictions();
             if (Options::verboseOSR())
