@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html>
-<head>
+<title>CSS Test: circle shape-outside on floats</title>
+<link rel="author" title="Bem Jones-Bey" href="mailto:bjonesbe@adobe.com">
+<link rel="help" href="http://dev.w3.org/csswg/css-shapes-1/#shape-outside-property">
+<link rel="match" href="shape-outside-floats-circle-000-reference.html">
+<meta name="flags" content="ahem">
 <script>
-    if (window.internals)
-        window.internals.settings.setCSSShapesEnabled(true);
+// This is required to run the tests in WebKit's test infrastructure.
+if (window.internals)
+    window.internals.settings.setCSSShapesEnabled(true);
 </script>
 <style>
 .container {
@@ -22,7 +26,7 @@
 }
 </style>
 
-<h2><a href="https://bugs.webkit.org/show_bug.cgi?id=98676">Bug 98673</a> - [CSS Exclusions] shape-outside on floats for circle and ellipse shapes</h2>
+<body>
 <p>The black squares should trace the right side of the circle's blue outline.</p>
 <div class="container">
 X<br/>
@@ -53,4 +57,3 @@ X<br/>
 X
 </div>
 </body>
-</html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
-<head>
+<title>shape-outside-floats-ellipse-000-reference.html</title>
+<link rel="author" title="Bem Jones-Bey" href="mailto:bjonesbe@adobe.com">
+<meta name="flags" content="ahem dom">
 <style>
 .container {
     position: relative;
@@ -15,7 +16,6 @@
     height: 160px;
     border-radius: 160px / 80px;
     border: 1px solid blue;
-    margin: -1px; /* shape-outside layout is unaffected by the border */
 }
 
 #left-ellipse-outline {
@@ -27,7 +27,7 @@
 #right-ellipse-outline {
     position: absolute;
     top: 20px;
-    left: 180px;
+    right: 0px;
 }
 
 .left-ellipse-float-line {
@@ -43,7 +43,7 @@
 }
 </style>
 
-<h2><a href="https://bugs.webkit.org/show_bug.cgi?id=98673">Bug 98673</a> - [CSS Exclusions] shape-outside on floats for circle and ellipse shapes</h2>
+<body>
 <p>The black squares should trace the right side of the ellipse's blue outline.</p>
 <div class="container">
 X<br/>
@@ -77,11 +77,13 @@ X
 </div>
 </body>
 
-<script src="../resources/rounded-rectangle.js"></script>
-<script src="../resources/subpixel-utils.js"></script>
+<script src="resources/rounded-rectangle.js"></script>
+<script src="resources/subpixel-utils.js"></script>
 <script>
+// Note that the border must be added into the width to account for its
+// affect on float positioning.
 genLeftRightRoundedRectFloatShapeOutsideRefTest({
-    roundedRect: {x: 0, y: 20, width: 320, height: 160, rx: 160, ry: 80},
+    roundedRect: {x: 0, y: 20, width: 321, height: 160, rx: 160, ry: 80},
     containerWidth: 500, 
     containerHeight: 200,
     lineHeight: 20,
