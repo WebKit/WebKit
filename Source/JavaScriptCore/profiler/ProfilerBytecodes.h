@@ -29,6 +29,7 @@
 #include "CodeBlockHash.h"
 #include "JSCJSValue.h"
 #include "ProfilerBytecodeSequence.h"
+#include <wtf/ByteSpinLock.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/WTFString.h>
 

@@ -60,6 +60,8 @@ Database::~Database()
 
 Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
 {
+    Locker locker(m_lock);
+    
     codeBlock = codeBlock->baselineVersion();
     
     HashMap<CodeBlock*, Bytecodes*>::iterator iter = m_bytecodesMap.find(codeBlock);
@@ -76,19 +78,16 @@ Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
 
 void Database::notifyDestruction(CodeBlock* codeBlock)
 {
+    Locker locker(m_lock);
+    
     m_bytecodesMap.remove(codeBlock);
 }
 
-PassRefPtr<Compilation> Database::newCompilation(Bytecodes* bytecodes, CompilationKind kind)
+void Database::addCompilation(PassRefPtr<Compilation> compilation)
 {
-    RefPtr<Compilation> compilation = adoptRef(new Compilation(bytecodes, kind));
+    ASSERT(!isCompilationThread());
+    
     m_compilations.append(compilation);
-    return compilation.release();
-}
-
-PassRefPtr<Compilation> Database::newCompilation(CodeBlock* codeBlock, CompilationKind kind)
-{
-    return newCompilation(ensureBytecodesFor(codeBlock), kind);
 }
 
 JSValue Database::toJS(ExecState* exec) const

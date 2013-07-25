@@ -35,6 +35,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
+#include <wtf/ThreadingPrimitives.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Profiler {
@@ -50,8 +51,7 @@ public:
     Bytecodes* ensureBytecodesFor(CodeBlock*);
     void notifyDestruction(CodeBlock*);
     
-    PassRefPtr<Compilation> newCompilation(CodeBlock*, CompilationKind);
-    PassRefPtr<Compilation> newCompilation(Bytecodes*, CompilationKind);
+    void addCompilation(PassRefPtr<Compilation>);
     
     // Converts the database to a JavaScript object that is suitable for JSON stringification.
     // Note that it's probably a good idea to use an ExecState* associated with a global
@@ -70,6 +70,20 @@ public:
     void registerToSaveAtExit(const char* filename);
     
 private:
+    // Use a full-blown adaptive mutex because:
+    // - There is only one ProfilerDatabase per VM. The size overhead of the system's
+    //   mutex is negligible if you only have one of them.
+    // - It's locked infrequently - once per bytecode generation, compilation, and
+    //   code block collection - so the fact that the fast path still requires a
+    //   function call is neglible.
+    // - It tends to be held for a while. Currently, we hold it while generating
+    //   Profiler::Bytecodes for a CodeBlock. That's uncommon and shouldn't affect
+    //   performance, but if we did have contention, we would want a sensible,
+    //   power-aware backoff. An adaptive mutex will do this as a matter of course,
+    //   but a spinlock won't.
+    typedef Mutex Lock;
+    typedef MutexLocker Locker;
+    
 
     void addDatabaseToAtExit();
     void removeDatabaseFromAtExit();
@@ -85,6 +99,7 @@ private:
     bool m_shouldSaveAtExit;
     CString m_atExitSaveFilename;
     Database* m_nextRegisteredDatabase;
+    Lock m_lock;
 };
 
 } } // namespace JSC::Profiler

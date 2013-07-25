@@ -47,7 +47,7 @@ static const char* dfgOpNames[] = {
 Graph::Graph(VM& vm, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues)
     : m_vm(vm)
     , m_codeBlock(codeBlock)
-    , m_compilation(vm.m_perBytecodeProfiler ? vm.m_perBytecodeProfiler->newCompilation(codeBlock, Profiler::DFG) : 0)
+    , m_compilation(vm.m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(vm.m_perBytecodeProfiler->ensureBytecodesFor(codeBlock), Profiler::DFG)) : 0)
     , m_profiledBlock(codeBlock->alternative())
     , m_allocator(vm.m_dfgState->m_allocator)
     , m_hasArguments(false)

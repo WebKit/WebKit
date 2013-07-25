@@ -286,8 +286,10 @@ bool JITCompiler::link(RefPtr<JSC::JITCode>& entry)
 
     if (shouldShowDisassembly())
         m_disassembler->dump(linkBuffer);
-    if (m_graph.m_compilation)
+    if (m_graph.m_compilation) {
         m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
+        m_vm->m_perBytecodeProfiler->addCompilation(m_graph.m_compilation);
+    }
 
     m_jitCode->initializeCodeRef(linkBuffer.finalizeCodeWithoutDisassembly());
     entry = m_jitCode;
@@ -389,8 +391,10 @@ bool JITCompiler::linkFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePt
     
     if (shouldShowDisassembly())
         m_disassembler->dump(linkBuffer);
-    if (m_graph.m_compilation)
+    if (m_graph.m_compilation) {
         m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
+        m_vm->m_perBytecodeProfiler->addCompilation(m_graph.m_compilation);
+    }
 
     entryWithArityCheck = linkBuffer.locationOf(m_arityCheck);
     m_jitCode->initializeCodeRef(linkBuffer.finalizeCodeWithoutDisassembly());

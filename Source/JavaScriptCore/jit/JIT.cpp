@@ -594,7 +594,10 @@ PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCom
     if (Options::showDisassembly() || m_vm->m_perBytecodeProfiler)
         m_disassembler = adoptPtr(new JITDisassembler(m_codeBlock));
     if (m_vm->m_perBytecodeProfiler) {
-        m_compilation = m_vm->m_perBytecodeProfiler->newCompilation(m_codeBlock, Profiler::Baseline);
+        m_compilation = adoptRef(
+            new Profiler::Compilation(
+                m_vm->m_perBytecodeProfiler->ensureBytecodesFor(m_codeBlock),
+                Profiler::Baseline));
         m_compilation->addProfiledBytecodes(*m_vm->m_perBytecodeProfiler, m_codeBlock);
     }
     
@@ -784,8 +787,10 @@ PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCom
 
     if (Options::showDisassembly())
         m_disassembler->dump(patchBuffer);
-    if (m_compilation)
+    if (m_compilation) {
         m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
+        m_vm->m_perBytecodeProfiler->addCompilation(m_compilation);
+    }
     
     CodeRef result = patchBuffer.finalizeCodeWithoutDisassembly();
     
