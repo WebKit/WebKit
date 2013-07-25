@@ -431,7 +431,7 @@ public:
         m_jitCode = code;
         m_jitCodeWithArityCheck = codeWithArityCheck;
 #if ENABLE(DFG_JIT)
-        if (JITCode::jitTypeFor(m_jitCode) == JITCode::DFGJIT) {
+        if (JITCode::isOptimizingJIT(JITCode::jitTypeFor(m_jitCode))) {
             createDFGDataIfNecessary();
             m_vm->heap.m_dfgCodeBlocks.m_set.add(this);
         }
@@ -472,10 +472,10 @@ public:
     bool hasOptimizedReplacement()
     {
         ASSERT(JITCode::isBaselineCode(getJITType()));
-        bool result = replacement()->getJITType() > getJITType();
+        bool result = JITCode::isHigherTier(replacement()->getJITType(), getJITType());
 #if !ASSERT_DISABLED
         if (result)
-            ASSERT(replacement()->getJITType() == JITCode::DFGJIT);
+            ASSERT(JITCode::isOptimizingJIT(replacement()->getJITType()));
         else {
             ASSERT(JITCode::isBaselineCode(replacement()->getJITType()));
             ASSERT(replacement() == this);
@@ -1438,8 +1438,8 @@ inline Register& ExecState::uncheckedR(int index)
 #if ENABLE(DFG_JIT)
 inline bool ExecState::isInlineCallFrame()
 {
-    if (LIKELY(!codeBlock() || codeBlock()->getJITType() != JITCode::DFGJIT))
-        return false;
+    if (LIKELY(!codeBlock() || !JITCode::isOptimizingJIT(codeBlock()->getJITType())))
+       return false;
     return isInlineCallFrameSlow();
 }
 #endif

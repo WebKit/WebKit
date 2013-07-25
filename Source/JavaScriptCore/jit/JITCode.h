@@ -47,7 +47,7 @@ public:
     typedef MacroAssemblerCodeRef CodeRef;
     typedef MacroAssemblerCodePtr CodePtr;
 
-    enum JITType { None, HostCallThunk, InterpreterThunk, BaselineJIT, DFGJIT };
+    enum JITType { None, HostCallThunk, InterpreterThunk, BaselineJIT, DFGJIT, FTLJIT };
     
     static JITType bottomTierJIT()
     {
@@ -56,18 +56,58 @@ public:
     
     static JITType topTierJIT()
     {
-        return DFGJIT;
+        return FTLJIT;
     }
     
     static JITType nextTierJIT(JITType jitType)
     {
-        ASSERT_UNUSED(jitType, jitType == BaselineJIT || jitType == DFGJIT);
-        return DFGJIT;
+        switch (jitType) {
+        case BaselineJIT:
+            return DFGJIT;
+        case DFGJIT:
+            return FTLJIT;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+    
+    static bool isJIT(JITType jitType)
+    {
+        switch (jitType) {
+        case BaselineJIT:
+        case DFGJIT:
+        case FTLJIT:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    static bool isLowerTier(JITType expectedLower, JITType expectedHigher)
+    {
+        RELEASE_ASSERT(isJIT(expectedLower));
+        RELEASE_ASSERT(isJIT(expectedHigher));
+        return expectedLower < expectedHigher;
+    }
+    
+    static bool isHigherTier(JITType expectedHigher, JITType expectedLower)
+    {
+        return isLowerTier(expectedLower, expectedHigher);
+    }
+    
+    static bool isLowerOrSameTier(JITType expectedLower, JITType expectedHigher)
+    {
+        return !isHigherTier(expectedLower, expectedHigher);
+    }
+    
+    static bool isHigherOrSameTier(JITType expectedHigher, JITType expectedLower)
+    {
+        return isLowerOrSameTier(expectedLower, expectedHigher);
     }
     
     static bool isOptimizingJIT(JITType jitType)
     {
-        return jitType == DFGJIT;
+        return jitType == DFGJIT || jitType == FTLJIT;
     }
     
     static bool isBaselineCode(JITType jitType)

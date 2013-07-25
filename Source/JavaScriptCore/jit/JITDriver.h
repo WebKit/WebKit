@@ -53,7 +53,7 @@ inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& code
     RefPtr<JITCode> oldJITCode = jitCode;
     
     bool dfgCompiled = false;
-    if (jitType == JITCode::DFGJIT)
+    if (JITCode::isOptimizingJIT(jitType))
         dfgCompiled = DFG::tryCompile(exec, codeBlock.get(), jitCode, bytecodeIndex);
     if (dfgCompiled) {
         if (codeBlock->alternative())
@@ -91,7 +91,7 @@ inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCode
     MacroAssemblerCodePtr oldJITCodeWithArityCheck = jitCodeWithArityCheck;
     
     bool dfgCompiled = false;
-    if (jitType == JITCode::DFGJIT)
+    if (JITCode::isOptimizingJIT(jitType))
         dfgCompiled = DFG::tryCompileFunction(exec, codeBlock.get(), jitCode, jitCodeWithArityCheck, bytecodeIndex);
     if (dfgCompiled) {
         if (codeBlock->alternative())

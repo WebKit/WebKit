@@ -162,7 +162,7 @@ JSObject* EvalExecutable::compileOptimized(ExecState* exec, JSScope* scope, unsi
     ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_evalCodeBlock);
     JSObject* error = 0;
-    if (m_evalCodeBlock->getJITType() != JITCode::topTierJIT())
+    if (!JITCode::isOptimizingJIT(m_evalCodeBlock->getJITType()))
         error = compileInternal(exec, scope, JITCode::nextTierJIT(m_evalCodeBlock->getJITType()), bytecodeIndex);
     ASSERT(!!m_evalCodeBlock);
     return error;
@@ -184,6 +184,8 @@ inline const char* samplingDescription(JITCode::JITType jitType)
         return "Baseline Compilation (TOTAL)";
     case JITCode::DFGJIT:
         return "DFG Compilation (TOTAL)";
+    case JITCode::FTLJIT:
+        return "FTL Compilation (TOTAL)";
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
@@ -293,7 +295,7 @@ JSObject* ProgramExecutable::compileOptimized(ExecState* exec, JSScope* scope, u
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_programCodeBlock);
     JSObject* error = 0;
-    if (m_programCodeBlock->getJITType() != JITCode::topTierJIT())
+    if (!JITCode::isOptimizingJIT(m_programCodeBlock->getJITType()))
         error = compileInternal(exec, scope, JITCode::nextTierJIT(m_programCodeBlock->getJITType()), bytecodeIndex);
     ASSERT(!!m_programCodeBlock);
     return error;
@@ -461,7 +463,7 @@ JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, JSScope* 
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForCall);
     JSObject* error = 0;
-    if (m_codeBlockForCall->getJITType() != JITCode::topTierJIT())
+    if (!JITCode::isOptimizingJIT(m_codeBlockForCall->getJITType()))
         error = compileForCallInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForCall->getJITType()), bytecodeIndex);
     ASSERT(!!m_codeBlockForCall);
     return error;
@@ -472,7 +474,7 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, JSSc
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForConstruct);
     JSObject* error = 0;
-    if (m_codeBlockForConstruct->getJITType() != JITCode::topTierJIT())
+    if (JITCode::isOptimizingJIT(m_codeBlockForConstruct->getJITType()))
         error = compileForConstructInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()), bytecodeIndex);
     ASSERT(!!m_codeBlockForConstruct);
     return error;

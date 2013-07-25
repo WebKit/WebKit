@@ -2386,18 +2386,23 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
     
     if (verboseUnlinking)
         dataLog("Clearing structure cache (kind ", static_cast<int>(stubInfo.accessType), ") in ", *this, ".\n");
-    
-    if (isGetByIdAccess(accessType)) {
-        if (getJITType() == JITCode::DFGJIT)
+
+    switch (getJITType()) {
+    case JITCode::BaselineJIT:
+        if (isGetByIdAccess(accessType))
+            JIT::resetPatchGetById(repatchBuffer, &stubInfo);
+        else
+            JIT::resetPatchPutById(repatchBuffer, &stubInfo);
+        break;
+    case JITCode::DFGJIT:
+        if (isGetByIdAccess(accessType))
             DFG::dfgResetGetByID(repatchBuffer, stubInfo);
         else
-            JIT::resetPatchGetById(repatchBuffer, &stubInfo);
-    } else {
-        ASSERT(isPutByIdAccess(accessType));
-        if (getJITType() == JITCode::DFGJIT)
             DFG::dfgResetPutByID(repatchBuffer, stubInfo);
-        else 
-            JIT::resetPatchPutById(repatchBuffer, &stubInfo);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
     
     stubInfo.reset();
@@ -2836,7 +2841,7 @@ CodeBlock* FunctionCodeBlock::replacement()
 
 JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
-    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
+    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType()))
         return 0;
     JSObject* error = static_cast<ProgramExecutable*>(ownerExecutable())->compileOptimized(exec, scope, bytecodeIndex);
     return error;
@@ -2844,7 +2849,7 @@ JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, un
 
 JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
-    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
+    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType()))
         return 0;
     JSObject* error = static_cast<EvalExecutable*>(ownerExecutable())->compileOptimized(exec, scope, bytecodeIndex);
     return error;
@@ -2852,7 +2857,7 @@ JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, unsig
 
 JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
 {
-    if (replacement()->getJITType() == JITCode::nextTierJIT(getJITType()))
+    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType()))
         return 0;
     JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scope, bytecodeIndex, m_isConstructor ? CodeForConstruct : CodeForCall);
     return error;
@@ -3094,7 +3099,7 @@ void CodeBlock::optimizeSoon()
 #if ENABLE(JIT)
 uint32_t CodeBlock::adjustedExitCountThreshold(uint32_t desiredThreshold)
 {
-    ASSERT(getJITType() == JITCode::DFGJIT);
+    ASSERT(JITCode::isOptimizingJIT(getJITType()));
     // Compute this the lame way so we don't saturate. This is called infrequently
     // enough that this loop won't hurt us.
     unsigned result = desiredThreshold;
@@ -3231,7 +3236,7 @@ bool CodeBlock::shouldOptimizeNow()
 #if ENABLE(DFG_JIT)
 void CodeBlock::tallyFrequentExitSites()
 {
-    ASSERT(getJITType() == JITCode::DFGJIT);
+    ASSERT(JITCode::isOptimizingJIT(getJITType()));
     ASSERT(alternative()->getJITType() == JITCode::BaselineJIT);
     ASSERT(!!m_dfgData);
     

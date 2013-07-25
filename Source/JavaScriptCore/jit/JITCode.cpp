@@ -116,6 +116,9 @@ void printInternal(PrintStream& out, JSC::JITCode::JITType type)
     case JSC::JITCode::DFGJIT:
         out.print("DFG");
         return;
+    case JSC::JITCode::FTLJIT:
+        out.print("FTL");
+        return;
     default:
         CRASH();
         return;

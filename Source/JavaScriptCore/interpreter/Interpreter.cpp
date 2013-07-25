@@ -473,7 +473,7 @@ static unsigned getBytecodeOffsetForCallFrame(CallFrame* callFrame)
     if (!codeBlock)
         return 0;
 #if ENABLE(DFG_JIT)
-    if (codeBlock->getJITType() == JITCode::DFGJIT)
+    if (JITCode::isOptimizingJIT(codeBlock->getJITType()))
         return codeBlock->codeOrigin(callFrame->codeOriginIndexForDFG()).bytecodeIndex;
 #endif
     return callFrame->bytecodeOffsetForNonDFGCode();
@@ -500,7 +500,7 @@ static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecode
 
     if (wasCalledByHost) {
 #if ENABLE(DFG_JIT)
-        if (callerCodeBlock && callerCodeBlock->getJITType() == JITCode::DFGJIT) {
+        if (callerCodeBlock && JITCode::isOptimizingJIT(callerCodeBlock->getJITType())) {
             unsigned codeOriginIndex = callFrame->callerFrame()->removeHostCallFrameFlag()->codeOriginIndexForDFG();
             CodeOrigin origin = callerCodeBlock->codeOrigin(codeOriginIndex);
             bytecodeOffset = origin.bytecodeIndex;
@@ -521,7 +521,7 @@ static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecode
                 ASSERT(newCodeBlock->instructionCount() > bytecodeOffset);
                 callerCodeBlock = newCodeBlock;
             }
-        } else if (callerCodeBlock && callerCodeBlock->getJITType() == JITCode::DFGJIT) {
+        } else if (callerCodeBlock && JITCode::isOptimizingJIT(callerCodeBlock->getJITType())) {
             CodeOrigin origin;
             if (!callerCodeBlock->codeOriginForReturn(callFrame->returnPC(), origin)) {
                 // This should not be possible, but we're seeing cases where it does happen

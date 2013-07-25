@@ -52,7 +52,7 @@ void DFGCodeBlocks::jettison(PassOwnPtr<CodeBlock> codeBlockPtr)
     CodeBlock* codeBlock = codeBlockPtr.leakPtr();
     
     ASSERT(codeBlock);
-    ASSERT(codeBlock->getJITType() == JITCode::DFGJIT);
+    ASSERT(JITCode::isOptimizingJIT(codeBlock->getJITType()));
     
     // It should not have already been jettisoned.
     ASSERT(!codeBlock->m_dfgData->isJettisoned);

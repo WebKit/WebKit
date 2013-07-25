@@ -1,3 +1,64 @@
+2013-07-15  Oliver Hunt  <oliver@apple.com>
+
+        Merge dfgFourthTier r147587
+
+    2013-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Everyone should know about the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=113897
+
+        Reviewed by Mark Hahnenberg.
+        
+        In order to get OSR exit to work right, we need the distinction between DFG and
+        FTL to be clear even after compilation finishes, since they will have subtly
+        different OSR stories and likely use different data structures.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::ProgramCodeBlock::compileOptimized):
+        (JSC::EvalCodeBlock::compileOptimized):
+        (JSC::FunctionCodeBlock::compileOptimized):
+        (JSC::CodeBlock::adjustedExitCountThreshold):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::hasOptimizedReplacement):
+        (JSC::ExecState::isInlineCallFrame):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::JITCode):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::dumpState):
+        * heap/DFGCodeBlocks.cpp:
+        (JSC::DFGCodeBlocks::jettison):
+        * interpreter/Interpreter.cpp:
+        (JSC::getLineNumberForCallFrame):
+        (JSC::getCallerInfo):
+        * jit/JITCode.cpp:
+        (WTF::printInternal):
+        * jit/JITCode.h:
+        (JSC::JITCode::topTierJIT):
+        (JSC::JITCode::nextTierJIT):
+        (JITCode):
+        (JSC::JITCode::isJIT):
+        (JSC::JITCode::isLowerTier):
+        (JSC::JITCode::isHigherTier):
+        (JSC::JITCode::isLowerOrSameTier):
+        (JSC::JITCode::isHigherOrSameTier):
+        (JSC::JITCode::isOptimizingJIT):
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileOptimized):
+        (JSC::samplingDescription):
+        (JSC::ProgramExecutable::compileOptimized):
+        (JSC::FunctionExecutable::compileOptimizedForCall):
+        (JSC::FunctionExecutable::compileOptimizedForConstruct):
+
 2013-04-03  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should abstract out how it does forward exits, and that code should be simplified

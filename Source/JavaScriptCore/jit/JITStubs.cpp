@@ -2041,7 +2041,16 @@ DEFINE_STUB_FUNCTION(void, optimize)
     }
     
     CodeBlock* optimizedCodeBlock = codeBlock->replacement();
-    ASSERT(optimizedCodeBlock->getJITType() == JITCode::DFGJIT);
+    ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->getJITType()));
+    
+    if (optimizedCodeBlock->getJITType() == JITCode::FTLJIT) {
+        // FTL JIT doesn't support OSR entry yet.
+        // https://bugs.webkit.org/show_bug.cgi?id=113625
+        
+        // Don't attempt OSR entry again.
+        codeBlock->dontOptimizeAnytimeSoon();
+        return;
+    }
     
     if (void* address = DFG::prepareOSREntry(callFrame, optimizedCodeBlock, bytecodeIndex)) {
         if (Options::showDFGDisassembly()) {
