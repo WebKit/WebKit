@@ -130,6 +130,7 @@ bool canCompile(Graph& graph)
                 }
                 break;
             case CompareEq:
+            case CompareStrictEq:
                 if (node->isBinaryUseKind(Int32Use))
                     break;
                 if (node->isBinaryUseKind(NumberUse))

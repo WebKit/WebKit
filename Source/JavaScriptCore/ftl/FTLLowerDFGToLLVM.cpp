@@ -364,6 +364,9 @@ private:
         case CompareEq:
             compileCompareEq();
             break;
+        case CompareStrictEq:
+            compileCompareStrictEq();
+            break;
         case CompareLess:
             compileCompareLess();
             break;
@@ -951,6 +954,18 @@ private:
     }
     
     void compileCompareEq()
+    {
+        if (m_node->isBinaryUseKind(Int32Use)
+            || m_node->isBinaryUseKind(NumberUse)
+            || m_node->isBinaryUseKind(ObjectUse)) {
+            compileCompareStrictEq();
+            return;
+        }
+        
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    void compileCompareStrictEq()
     {
         if (m_node->isBinaryUseKind(Int32Use)) {
             m_booleanValues.add(
