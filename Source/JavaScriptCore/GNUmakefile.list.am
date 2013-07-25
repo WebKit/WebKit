@@ -170,9 +170,15 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecompiler/RegisterID.h \
 	Source/JavaScriptCore/bytecompiler/StaticPropertyAnalysis.h \
 	Source/JavaScriptCore/bytecompiler/StaticPropertyAnalyzer.h \
+	Source/JavaScriptCore/dfg/DFGAbstractHeap.cpp \
+	Source/JavaScriptCore/dfg/DFGAbstractHeap.h \
+	Source/JavaScriptCore/dfg/DFGAbstractInterpreter.h \
+	Source/JavaScriptCore/dfg/DFGAbstractInterpreterInlines.h \
+	Source/JavaScriptCore/dfg/DFGAbstractValue.cpp \
 	Source/JavaScriptCore/dfg/DFGAbstractValue.h \
 	Source/JavaScriptCore/dfg/DFGAdjacencyList.h \
 	Source/JavaScriptCore/dfg/DFGAllocator.h \
+	Source/JavaScriptCore/dfg/DFGAnalysis.h \
 	Source/JavaScriptCore/dfg/DFGArgumentPosition.h \
 	Source/JavaScriptCore/dfg/DFGArgumentsSimplificationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGArgumentsSimplificationPhase.h \
@@ -181,10 +187,17 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGArrayifySlowPathGenerator.h \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.cpp \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.h \
+	Source/JavaScriptCore/dfg/DFGAtTailAbstractState.cpp \
+	Source/JavaScriptCore/dfg/DFGAtTailAbstractState.h \
 	Source/JavaScriptCore/dfg/DFGBackwardsPropagationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGBackwardsPropagationPhase.h \
+	Source/JavaScriptCore/dfg/DFGBasicBlock.cpp \
 	Source/JavaScriptCore/dfg/DFGBasicBlock.h \
 	Source/JavaScriptCore/dfg/DFGBasicBlockInlines.h \
+	Source/JavaScriptCore/dfg/DFGBinarySwitch.cpp \
+	Source/JavaScriptCore/dfg/DFGBinarySwitch.h \
+	Source/JavaScriptCore/dfg/DFGBlockInsertionSet.cpp \
+	Source/JavaScriptCore/dfg/DFGBlockInsertionSet.h \
 	Source/JavaScriptCore/dfg/DFGBranchDirection.h \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
@@ -198,16 +211,28 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGCFAPhase.h \
 	Source/JavaScriptCore/dfg/DFGCPSRethreadingPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGCPSRethreadingPhase.h \
+	Source/JavaScriptCore/dfg/DFGClobberize.cpp \
+	Source/JavaScriptCore/dfg/DFGClobberize.h \
+	Source/JavaScriptCore/dfg/DFGClobberSet.cpp \
+	Source/JavaScriptCore/dfg/DFGClobberSet.h \
 	Source/JavaScriptCore/dfg/DFGCommon.cpp \
 	Source/JavaScriptCore/dfg/DFGCommon.h \
 	Source/JavaScriptCore/dfg/DFGCommonData.cpp \
 	Source/JavaScriptCore/dfg/DFGCommonData.h \
 	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.h \
+	Source/JavaScriptCore/dfg/DFGCriticalEdgeBreakingPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGCriticalEdgeBreakingPhase.h \
 	Source/JavaScriptCore/dfg/DFGCSEPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGCSEPhase.h \
 	Source/JavaScriptCore/dfg/DFGDCEPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGDCEPhase.h \
+	Source/JavaScriptCore/dfg/DFGDesiredIdentifiers.cpp \
+	Source/JavaScriptCore/dfg/DFGDesiredIdentifiers.h \
+	Source/JavaScriptCore/dfg/DFGDesiredStructureChains.cpp \
+	Source/JavaScriptCore/dfg/DFGDesiredStructureChains.h \
+	Source/JavaScriptCore/dfg/DFGDesiredWatchpoints.cpp \
+	Source/JavaScriptCore/dfg/DFGDesiredWatchpoints.h \
 	Source/JavaScriptCore/dfg/DFGDisassembler.cpp \
 	Source/JavaScriptCore/dfg/DFGDisassembler.h \
 	Source/JavaScriptCore/dfg/DFGDominators.cpp \
@@ -217,24 +242,51 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGDriver.h \
 	Source/JavaScriptCore/dfg/DFGEdge.cpp \
 	Source/JavaScriptCore/dfg/DFGEdge.h \
+	Source/JavaScriptCore/dfg/DFGEdgeDominates.h \
+	Source/JavaScriptCore/dfg/DFGEdgeUsesStructure.h \
 	Source/JavaScriptCore/dfg/DFGFPRInfo.h \
+	Source/JavaScriptCore/dfg/DFGFailedFinalizer.cpp \
+	Source/JavaScriptCore/dfg/DFGFailedFinalizer.h \
+	Source/JavaScriptCore/dfg/DFGFiltrationResult.h \
+	Source/JavaScriptCore/dfg/DFGFinalizer.cpp \
+	Source/JavaScriptCore/dfg/DFGFinalizer.h \
 	Source/JavaScriptCore/dfg/DFGFixupPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGFixupPhase.h \
+	Source/JavaScriptCore/dfg/DFGFlushFormat.cpp \
+	Source/JavaScriptCore/dfg/DFGFlushFormat.h \
+	Source/JavaScriptCore/dfg/DFGFlushLivenessAnalysisPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGFlushLivenessAnalysisPhase.h \
 	Source/JavaScriptCore/dfg/DFGGenerationInfo.h \
 	Source/JavaScriptCore/dfg/DFGGPRInfo.h \
+	Source/JavaScriptCore/dfg/DFGGenerationInfo.h \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
+	Source/JavaScriptCore/dfg/DFGInPlaceAbstractState.cpp \
+	Source/JavaScriptCore/dfg/DFGInPlaceAbstractState.h \
 	Source/JavaScriptCore/dfg/DFGInsertionSet.h \
 	Source/JavaScriptCore/dfg/DFGJITCode.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCode.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
+	Source/JavaScriptCore/dfg/DFGJITFinalizer.cpp \
+	Source/JavaScriptCore/dfg/DFGJITFinalizer.h \
+	Source/JavaScriptCore/dfg/DFGLICMPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGLICMPhase.h \
+	Source/JavaScriptCore/dfg/DFGLazyJSValue.cpp \
+	Source/JavaScriptCore/dfg/DFGLazyJSValue.h \
+	Source/JavaScriptCore/dfg/DFGLivenessAnalysisPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGLivenessAnalysisPhase.h \
 	Source/JavaScriptCore/dfg/DFGLongLivedState.cpp \
 	Source/JavaScriptCore/dfg/DFGLongLivedState.h \
+	Source/JavaScriptCore/dfg/DFGLoopPreHeaderCreationPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGLoopPreHeaderCreationPhase.h \
+	Source/JavaScriptCore/dfg/DFGMergeMode.h \
 	Source/JavaScriptCore/dfg/DFGMinifiedGraph.h \
 	Source/JavaScriptCore/dfg/DFGMinifiedID.h \
 	Source/JavaScriptCore/dfg/DFGMinifiedNode.cpp \
 	Source/JavaScriptCore/dfg/DFGMinifiedNode.h \
+	Source/JavaScriptCore/dfg/DFGNaturalLoops.cpp \
+	Source/JavaScriptCore/dfg/DFGNaturalLoops.h \
 	Source/JavaScriptCore/dfg/DFGNode.cpp \
 	Source/JavaScriptCore/dfg/DFGNode.h \
 	Source/JavaScriptCore/dfg/DFGNodeAllocator.h \
@@ -243,33 +295,39 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGNodeType.h \
 	Source/JavaScriptCore/dfg/DFGOperations.cpp \
 	Source/JavaScriptCore/dfg/DFGOperations.h \
+	Source/JavaScriptCore/dfg/DFGOSRAvailabilityAnalysisPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGOSRAvailabilityAnalysisPhase.h \
 	Source/JavaScriptCore/dfg/DFGOSREntry.cpp \
 	Source/JavaScriptCore/dfg/DFGOSREntry.h \
+	Source/JavaScriptCore/dfg/DFGOSRExitCompilationInfo.h \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler32_64.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler64.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler.h \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompilerCommon.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompilerCommon.h \
-	Source/JavaScriptCore/dfg/DFGOSRExit.h \
 	Source/JavaScriptCore/dfg/DFGOSRExit.cpp \
-	Source/JavaScriptCore/dfg/DFGOSRExitBase.h \
+	Source/JavaScriptCore/dfg/DFGOSRExit.h \
 	Source/JavaScriptCore/dfg/DFGOSRExitBase.cpp \
-	Source/JavaScriptCore/dfg/DFGOSRExitCompilationInfo.h \
+	Source/JavaScriptCore/dfg/DFGOSRExitBase.h \
 	Source/JavaScriptCore/dfg/DFGOSRExitJumpPlaceholder.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitJumpPlaceholder.h \
-	Source/JavaScriptCore/dfg/DFGOSRExitPreparation.h \
 	Source/JavaScriptCore/dfg/DFGOSRExitPreparation.cpp \
+	Source/JavaScriptCore/dfg/DFGOSRExitPreparation.h \
 	Source/JavaScriptCore/dfg/DFGPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGPhase.h \
-	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.cpp \
-	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.h \
+	Source/JavaScriptCore/dfg/DFGPlan.cpp \
+	Source/JavaScriptCore/dfg/DFGPlan.h \
 	Source/JavaScriptCore/dfg/DFGPredictionInjectionPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGPredictionInjectionPhase.h \
+	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.h \
 	Source/JavaScriptCore/dfg/DFGRegisterBank.h \
 	Source/JavaScriptCore/dfg/DFGRegisterSet.h \
 	Source/JavaScriptCore/dfg/DFGRepatch.cpp \
 	Source/JavaScriptCore/dfg/DFGRepatch.h \
+	Source/JavaScriptCore/dfg/DFGSafeToExecute.h \
+	Source/JavaScriptCore/dfg/DFGSaneStringGetByValSlowPathGenerator.h \
 	Source/JavaScriptCore/dfg/DFGScoreBoard.h \
 	Source/JavaScriptCore/dfg/DFGScratchRegisterAllocator.h \
 	Source/JavaScriptCore/dfg/DFGSilentRegisterSavePlan.h \
@@ -279,29 +337,31 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.cpp \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.h \
 	Source/JavaScriptCore/dfg/DFGStructureAbstractValue.h \
-	Source/JavaScriptCore/dfg/DFGTypeCheckHoistingPhase.cpp \
-	Source/JavaScriptCore/dfg/DFGTypeCheckHoistingPhase.h \
 	Source/JavaScriptCore/dfg/DFGThunks.cpp \
 	Source/JavaScriptCore/dfg/DFGThunks.h \
+	Source/JavaScriptCore/dfg/DFGTypeCheckHoistingPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGTypeCheckHoistingPhase.h \
 	Source/JavaScriptCore/dfg/DFGUnificationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGUnificationPhase.h \
 	Source/JavaScriptCore/dfg/DFGUseKind.cpp \
 	Source/JavaScriptCore/dfg/DFGUseKind.h \
+	Source/JavaScriptCore/dfg/DFGValidate.cpp \
+	Source/JavaScriptCore/dfg/DFGValidate.h \
 	Source/JavaScriptCore/dfg/DFGValueRecoveryOverride.h \
 	Source/JavaScriptCore/dfg/DFGValueSource.cpp \
 	Source/JavaScriptCore/dfg/DFGValueSource.h \
+	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \
+	Source/JavaScriptCore/dfg/DFGVariableAccessDataDump.cpp \
+	Source/JavaScriptCore/dfg/DFGVariableAccessDataDump.h \
 	Source/JavaScriptCore/dfg/DFGVariableEvent.cpp \
 	Source/JavaScriptCore/dfg/DFGVariableEvent.h \
 	Source/JavaScriptCore/dfg/DFGVariableEventStream.cpp \
 	Source/JavaScriptCore/dfg/DFGVariableEventStream.h \
-	Source/JavaScriptCore/dfg/DFGValidate.cpp \
-	Source/JavaScriptCore/dfg/DFGValidate.h \
-	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \
-	Source/JavaScriptCore/dfg/DFGVariableAccessDataDump.cpp \
-	Source/JavaScriptCore/dfg/DFGVariableAccessDataDump.h \
 	Source/JavaScriptCore/dfg/DFGVariadicFunction.h \
 	Source/JavaScriptCore/dfg/DFGVirtualRegisterAllocationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGVirtualRegisterAllocationPhase.h \
+	Source/JavaScriptCore/dfg/DFGWorklist.cpp \
+	Source/JavaScriptCore/dfg/DFGWorklist.h \
 	Source/JavaScriptCore/disassembler/Disassembler.cpp \
 	Source/JavaScriptCore/disassembler/Disassembler.h \
 	Source/JavaScriptCore/heap/CopiedAllocator.h \
@@ -530,6 +590,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/parser/Parser.h \
 	Source/JavaScriptCore/parser/ParserModes.h \
 	Source/JavaScriptCore/parser/ResultType.h \
+	Source/JavaScriptCore/parser/SourceCode.cpp \
 	Source/JavaScriptCore/parser/SourceCode.h \
 	Source/JavaScriptCore/parser/SourceProvider.cpp \
 	Source/JavaScriptCore/parser/SourceProvider.h \
@@ -616,6 +677,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/DateInstance.h \
 	Source/JavaScriptCore/runtime/DatePrototype.cpp \
 	Source/JavaScriptCore/runtime/DatePrototype.h \
+	Source/JavaScriptCore/runtime/DumpContext.cpp \
+	Source/JavaScriptCore/runtime/DumpContext.h \
 	Source/JavaScriptCore/runtime/ErrorConstructor.cpp \
 	Source/JavaScriptCore/runtime/ErrorConstructor.h \
 	Source/JavaScriptCore/runtime/Error.cpp \
@@ -647,6 +710,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/IndexingType.h \
 	Source/JavaScriptCore/runtime/InitializeThreading.cpp \
 	Source/JavaScriptCore/runtime/InitializeThreading.h \
+	Source/JavaScriptCore/runtime/IntendedStructureChain.cpp \
+	Source/JavaScriptCore/runtime/IntendedStructureChain.h \
 	Source/JavaScriptCore/runtime/InternalFunction.cpp \
 	Source/JavaScriptCore/runtime/InternalFunction.h \
 	Source/JavaScriptCore/runtime/Intrinsic.h \

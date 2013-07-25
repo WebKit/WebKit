@@ -1,3 +1,10 @@
+2013-07-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fixing.
+
+        * GNUmakefile.am: Make the shared libjsc library depend on any changes to the build target list.
+        * GNUmakefile.list.am: Add additional build targets for files that were introduced by the FTL branch merge.
+
 2013-07-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Buildfix after this error:
