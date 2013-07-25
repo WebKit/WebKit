@@ -1,3 +1,14 @@
+2013-04-05  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should better abstract arguments
+        https://bugs.webkit.org/show_bug.cgi?id=114073
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGGPRInfo.h:
+        (GPRInfo):
+        (JSC::DFG::GPRInfo::toArgumentRegister):
+
 2013-07-15  Oliver Hunt  <oliver@apple.com>
 
         Merged dfgFourthTier r147609

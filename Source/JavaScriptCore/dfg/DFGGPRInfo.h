@@ -259,6 +259,7 @@ class GPRInfo {
 public:
     typedef GPRReg RegisterType;
     static const unsigned numberOfRegisters = 5;
+    static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // Temporary registers.
     static const GPRReg regT0 = X86Registers::eax;
@@ -321,6 +322,7 @@ class GPRInfo {
 public:
     typedef GPRReg RegisterType;
     static const unsigned numberOfRegisters = 9;
+    static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = X86Registers::eax;
@@ -355,6 +357,13 @@ public:
     {
         ASSERT(index < numberOfRegisters);
         static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8 };
+        return registerForIndex[index];
+    }
+    
+    static GPRReg toArgumentRegister(unsigned index)
+    {
+        ASSERT(index < numberOfArgumentRegisters);
+        static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3, argumentGPR4, argumentGPR5 };
         return registerForIndex[index];
     }
 
@@ -394,6 +403,7 @@ class GPRInfo {
 public:
     typedef GPRReg RegisterType;
     static const unsigned numberOfRegisters = 8;
+    static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // Temporary registers.
     static const GPRReg regT0 = ARMRegisters::r0;
@@ -467,6 +477,7 @@ class GPRInfo {
 public:
     typedef GPRReg RegisterType;
     static const unsigned numberOfRegisters = 6;
+    static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // Temporary registers.
     static const GPRReg regT0 = MIPSRegisters::v0;
