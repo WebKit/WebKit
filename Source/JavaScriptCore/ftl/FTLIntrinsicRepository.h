@@ -41,7 +41,8 @@ namespace JSC { namespace FTL {
     macro(doubleAbs, "llvm.fabs.f64", functionType(doubleType, doubleType)) \
     macro(mulWithOverflow32, "llvm.smul.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
     macro(subWithOverflow32, "llvm.ssub.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
-    macro(trap, "llvm.trap", functionType(voidType))
+    macro(trap, "llvm.trap", functionType(voidType)) \
+    macro(osrExit, "webkit_osr_exit", functionType(voidType, boolean, int32, Variadic))
 
 #define FOR_EACH_FUNCTION_TYPE(macro) \
     macro(I_DFGOperation_EJss, functionType(intPtr, intPtr, intPtr)) \

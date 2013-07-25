@@ -78,8 +78,15 @@ $count = 0
 
 loop {
     line = $stdin.readline
+    if line =~ /^; NOTE: THIS IS A COMBINED MODULE/
+        puts line
+        puts $stdin.read
+        exit 0
+    end
     break if line =~ /^define/
 }
+
+puts "; NOTE: THIS IS A COMBINED MODULE"
 
 # Loop over all definitions.
 shouldContinue = true

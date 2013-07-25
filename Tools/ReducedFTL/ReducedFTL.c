@@ -146,6 +146,11 @@ static const char *symbolLookupCallback(
     }
 }
 
+void webkit_osr_exit()
+{
+    abort();
+}
+
 int main(int c, char **v)
 {
     LLVMContextRef *contexts;

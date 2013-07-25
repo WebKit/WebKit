@@ -54,6 +54,7 @@
 #include "DFGVirtualRegisterAllocationPhase.h"
 #include "FTLCapabilities.h"
 #include "FTLCompile.h"
+#include "FTLFail.h"
 #include "FTLLink.h"
 #include "FTLLowerDFGToLLVM.h"
 #include "FTLState.h"
@@ -222,6 +223,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         
         if (Options::reportCompileTimes())
             beforeFTL = currentTimeMS();
+        
+        if (Options::llvmAlwaysFails()) {
+            FTL::fail(state);
+            return FTLPath;
+        }
         
         FTL::compile(state);
         FTL::link(state);

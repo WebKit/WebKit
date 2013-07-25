@@ -1,3 +1,33 @@
+2013-07-20  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should be able to generate LLVM IR that uses an intrinsic for OSR exit
+        https://bugs.webkit.org/show_bug.cgi?id=118948
+
+        Reviewed by Sam Weinig.
+        
+        - Add the ability to generate LLVM IR but then not use it, via --llvmAlwaysFails=true.
+          This allows doing "what if" experiments with IR generation, even if the generated IR
+          can't yet execute.
+        
+        - Add an OSR exit path that just calls an intrinsic that combines the branch and the
+          off-ramp.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * ftl/FTLFail.cpp: Added.
+        (FTL):
+        (JSC::FTL::fail):
+        * ftl/FTLFail.h: Added.
+        (FTL):
+        * ftl/FTLIntrinsicRepository.h:
+        (FTL):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::emitOSRExitCall):
+        * runtime/Options.h:
+        (JSC):
+
 2013-07-19  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: StringObjectUse uses structures, and CSE should know that

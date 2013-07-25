@@ -2488,35 +2488,49 @@ private:
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
         OSRExitCompilationInfo& info = m_ftlState.osrExit.last();
 
-        LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation"));
+        LBasicBlock lastNext = 0;
+        LBasicBlock continuation = 0;
         
-        m_out.branch(failCondition, failCase, continuation);
-        
-        m_out.appendTo(m_prologue);
-        info.m_thunkAddress = buildAlloca(m_out.m_builder, m_out.intPtr);
-        
-        LBasicBlock lastNext = m_out.appendTo(failCase, continuation);
+        if (!Options::useLLVMOSRExitIntrinsic()) {
+            LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase"));
+            continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation"));
+            
+            m_out.branch(failCondition, failCase, continuation);
 
+            m_out.appendTo(m_prologue);
+            info.m_thunkAddress = buildAlloca(m_out.m_builder, m_out.intPtr);
+        
+            lastNext = m_out.appendTo(failCase, continuation);
+        }
+        
         if (Options::ftlOSRExitOmitsMarshalling()) {
             m_out.call(
                 m_out.intToPtr(
                     m_out.get(info.m_thunkAddress),
                     pointerType(functionType(m_out.voidType))));
         } else
-            emitOSRExitCall(exit, info, lowValue, direction, recovery);
-        m_out.unreachable();
+            emitOSRExitCall(failCondition, index, exit, info, lowValue, direction, recovery);
         
-        m_out.appendTo(continuation, lastNext);
+        if (!Options::useLLVMOSRExitIntrinsic()) {
+            m_out.unreachable();
+            
+            m_out.appendTo(continuation, lastNext);
         
-        m_exitThunkGenerator.emitThunk(index);
+            m_exitThunkGenerator.emitThunk(index);
+        }
     }
     
     void emitOSRExitCall(
-        OSRExit& exit, OSRExitCompilationInfo& info, FormattedValue lowValue,
-        SpeculationDirection direction, FormattedValue recovery)
+        LValue failCondition, unsigned index, OSRExit& exit, OSRExitCompilationInfo& info,
+        FormattedValue lowValue, SpeculationDirection direction, FormattedValue recovery)
     {
         ExitArgumentList arguments;
+        
+        if (Options::useLLVMOSRExitIntrinsic()) {
+            arguments.append(failCondition);
+            arguments.append(m_out.constInt32(index));
+        }
+        
         arguments.append(m_callFrame);
         if (!!lowValue)
             arguments.append(lowValue.value());
@@ -2559,6 +2573,11 @@ private:
         Vector<LType, 16> argumentTypes;
         for (unsigned i = 0; i < arguments.size(); ++i)
             argumentTypes.append(typeOf(arguments[i]));
+        
+        if (Options::useLLVMOSRExitIntrinsic()) {
+            m_out.call(m_out.osrExitIntrinsic(), arguments);
+            return;
+        }
         
         m_out.call(
             m_out.intToPtr(

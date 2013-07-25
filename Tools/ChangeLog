@@ -1,5 +1,29 @@
 2013-07-20  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: FTL should be able to generate LLVM IR that uses an intrinsic for OSR exit
+        https://bugs.webkit.org/show_bug.cgi?id=118948
+
+        Reviewed by Sam Weinig.
+        
+        - Make ReducedFTL capable of dealing with code that uses the fake OSR exit intrinsic,
+          by exporting it as a function.
+        
+        - Make combineModules.rb idempotent. Sometimes it's convenient to run a file through
+          it even if you know that you've already done so. See processIRDump.sh.
+        
+        - Add a script, processIRDump.sh, that takes the output of --dumpLLVMIR=true and
+          runs it through ReducedFTL automatically. You typically want to say something like:
+          
+          jsc --dumpLLVMIR=true <program(s)> > jsc-output.txt
+          ./processIRDump.sh --timing < jsc-output.txt
+
+        * ReducedFTL/ReducedFTL.c:
+        (webkit_osr_exit):
+        * ReducedFTL/combineModules.rb:
+        * ReducedFTL/processIRDump.sh: Added.
+
+2013-07-20  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: We should use the no-asserts build of LLVM if that's what the user configured
         https://bugs.webkit.org/show_bug.cgi?id=118947
 
