@@ -54,6 +54,7 @@ void link(State& state)
     
     // LLVM will create its own jump tables as needed.
     codeBlock->clearImmediateSwitchJumpTables();
+    codeBlock->clearCharacterSwitchJumpTables();
     
     // Create the entrypoint.
     // FIXME: This is a total kludge - LLVM should just use our calling convention.
