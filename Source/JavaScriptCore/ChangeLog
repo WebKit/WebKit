@@ -1,3 +1,12 @@
+2013-07-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        One more fix after FTL upstream.
+
+        * Target.pri:
+        * bytecode/CodeBlock.h:
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::GetByIdStatus):
+
 2013-07-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after FTL upstream.

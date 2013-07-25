@@ -111,7 +111,6 @@ SOURCES += \
     debugger/DebuggerActivation.cpp \
     debugger/DebuggerCallFrame.cpp \
     debugger/Debugger.cpp \
-    dfg/DFGAbstractState.cpp \
     dfg/DFGArgumentsSimplificationPhase.cpp \
     dfg/DFGArrayMode.cpp \
     dfg/DFGAssemblyHelpers.cpp \
