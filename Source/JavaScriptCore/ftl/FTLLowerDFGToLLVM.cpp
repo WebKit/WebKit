@@ -1489,7 +1489,7 @@ private:
             Vector<SwitchCase> cases;
             for (unsigned i = 0; i < data->cases.size(); ++i) {
                 cases.append(SwitchCase(
-                    m_out.constInt32(data->cases[i].value.asInt32()),
+                    m_out.constInt32(data->cases[i].value.switchLookupValue()),
                     m_blocks.get(m_graph.m_blocks[data->cases[i].target].get())));
             }
             
@@ -1497,7 +1497,12 @@ private:
                 intValue, cases,
                 m_blocks.get(m_graph.m_blocks[data->fallThrough].get()));
             return;
-        } }
+        }
+        
+        case SwitchChar:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
         RELEASE_ASSERT_NOT_REACHED();
     }
     

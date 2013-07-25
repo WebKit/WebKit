@@ -756,6 +756,8 @@
 		A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A7386551118697B400540279 /* SpecializedThunkJIT.h */; };
 		A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7386552118697B400540279 /* ThunkGenerators.cpp */; };
 		A7386556118697B400540279 /* ThunkGenerators.h in Headers */ = {isa = PBXBuildFile; fileRef = A7386553118697B400540279 /* ThunkGenerators.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A73A535A1799CD5D00170C19 /* DFGLazyJSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73A53581799CD5D00170C19 /* DFGLazyJSValue.cpp */; };
+		A73A535B1799CD5D00170C19 /* DFGLazyJSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A73A53591799CD5D00170C19 /* DFGLazyJSValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A73E1330179624CD00E4DEA8 /* DFGDesiredStructureChains.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73E132C179624CD00E4DEA8 /* DFGDesiredStructureChains.cpp */; };
 		A73E1331179624CD00E4DEA8 /* DFGDesiredStructureChains.h in Headers */ = {isa = PBXBuildFile; fileRef = A73E132D179624CD00E4DEA8 /* DFGDesiredStructureChains.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1789,6 +1791,8 @@
 		A7386551118697B400540279 /* SpecializedThunkJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecializedThunkJIT.h; sourceTree = "<group>"; };
 		A7386552118697B400540279 /* ThunkGenerators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThunkGenerators.cpp; sourceTree = "<group>"; };
 		A7386553118697B400540279 /* ThunkGenerators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThunkGenerators.h; sourceTree = "<group>"; };
+		A73A53581799CD5D00170C19 /* DFGLazyJSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLazyJSValue.cpp; path = dfg/DFGLazyJSValue.cpp; sourceTree = "<group>"; };
+		A73A53591799CD5D00170C19 /* DFGLazyJSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLazyJSValue.h; path = dfg/DFGLazyJSValue.h; sourceTree = "<group>"; };
 		A73E132C179624CD00E4DEA8 /* DFGDesiredStructureChains.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredStructureChains.cpp; path = dfg/DFGDesiredStructureChains.cpp; sourceTree = "<group>"; };
 		A73E132D179624CD00E4DEA8 /* DFGDesiredStructureChains.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredStructureChains.h; path = dfg/DFGDesiredStructureChains.h; sourceTree = "<group>"; };
 		A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakObjectMapRefPrivate.h; sourceTree = "<group>"; };
@@ -2972,6 +2976,8 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
+				A73A53581799CD5D00170C19 /* DFGLazyJSValue.cpp */,
+				A73A53591799CD5D00170C19 /* DFGLazyJSValue.h */,
 				0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */,
 				0F62016E143FCD2F0068B77C /* DFGAbstractState.h */,
 				0F55C19317276E4600CEABFD /* DFGAbstractValue.cpp */,
@@ -3714,6 +3720,7 @@
 				14CA958D16AB50FA00938A06 /* ObjectAllocationProfile.h in Headers */,
 				BC18C4450E16F5CD00B34460 /* ObjectConstructor.h in Headers */,
 				BC18C4460E16F5CD00B34460 /* ObjectPrototype.h in Headers */,
+				A73A535B1799CD5D00170C19 /* DFGLazyJSValue.h in Headers */,
 				E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */,
 				969A079B0ED1D3AE00F1F681 /* Opcode.h in Headers */,
 				0F2BDC2C151FDE9100CD8910 /* Operands.h in Headers */,
@@ -4283,6 +4290,7 @@
 				0FC09776146943B000CF2442 /* DFGOSRExitCompiler32_64.cpp in Sources */,
 				0FC0977214693AF900CF2442 /* DFGOSRExitCompiler64.cpp in Sources */,
 				0F7025A91714B0FA00382C0E /* DFGOSRExitCompilerCommon.cpp in Sources */,
+				A73A535A1799CD5D00170C19 /* DFGLazyJSValue.cpp in Sources */,
 				0FEFC9AA1681A3B300567F53 /* DFGOSRExitJumpPlaceholder.cpp in Sources */,
 				0F235BED17178E7300690C7F /* DFGOSRExitPreparation.cpp in Sources */,
 				0FFFC95B14EF90AD00C72532 /* DFGPhase.cpp in Sources */,

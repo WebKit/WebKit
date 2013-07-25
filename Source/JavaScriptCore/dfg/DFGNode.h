@@ -36,6 +36,7 @@
 #include "DFGAdjacencyList.h"
 #include "DFGArrayMode.h"
 #include "DFGCommon.h"
+#include "DFGLazyJSValue.h"
 #include "DFGNodeFlags.h"
 #include "DFGNodeType.h"
 #include "DFGVariableAccessData.h"
@@ -83,18 +84,19 @@ struct SwitchCase {
     {
     }
     
-    SwitchCase(JSValue value, BlockIndex target)
+    SwitchCase(LazyJSValue value, BlockIndex target)
         : value(value)
         , target(target)
     {
     }
     
-    JSValue value;
+    LazyJSValue value;
     BlockIndex target;
 };
 
 enum SwitchKind {
-    SwitchImm
+    SwitchImm,
+    SwitchChar
 };
 
 struct SwitchData {

@@ -1959,6 +1959,72 @@ static inline void putUTF8Triple(char*& buffer, UChar ch)
     *buffer++ = static_cast<char>((ch & 0x3F) | 0x80);
 }
 
+bool StringImpl::utf8Impl(
+    const UChar* characters, unsigned length, char*& buffer, size_t bufferSize, ConversionMode mode)
+{
+    if (mode == StrictConversionReplacingUnpairedSurrogatesWithFFFD) {
+        const UChar* charactersEnd = characters + length;
+        char* bufferEnd = buffer + bufferSize;
+        while (characters < charactersEnd) {
+            // Use strict conversion to detect unpaired surrogates.
+            ConversionResult result = convertUTF16ToUTF8(&characters, charactersEnd, &buffer, bufferEnd, true);
+            ASSERT(result != targetExhausted);
+            // Conversion fails when there is an unpaired surrogate.
+            // Put replacement character (U+FFFD) instead of the unpaired surrogate.
+            if (result != conversionOK) {
+                ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
+                // There should be room left, since one UChar hasn't been converted.
+                ASSERT((buffer + 3) <= bufferEnd);
+                putUTF8Triple(buffer, replacementCharacter);
+                ++characters;
+            }
+        }
+    } else {
+        bool strict = mode == StrictConversion;
+        const UChar* originalCharacters = characters;
+        ConversionResult result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferSize, strict);
+        ASSERT(result != targetExhausted); // (length * 3) should be sufficient for any conversion
+
+        // Only produced from strict conversion.
+        if (result == sourceIllegal) {
+            ASSERT(strict);
+            return false;
+        }
+
+        // Check for an unconverted high surrogate.
+        if (result == sourceExhausted) {
+            if (strict)
+                return false;
+            // This should be one unpaired high surrogate. Treat it the same
+            // was as an unpaired high surrogate would have been handled in
+            // the middle of a string with non-strict conversion - which is
+            // to say, simply encode it to UTF-8.
+            ASSERT_UNUSED(
+                originalCharacters, (characters + 1) == (originalCharacters + length));
+            ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
+            // There should be room left, since one UChar hasn't been converted.
+            ASSERT((buffer + 3) <= (buffer + bufferSize));
+            putUTF8Triple(buffer, *characters);
+        }
+    }
+    
+    return true;
+}
+
+CString StringImpl::utf8ForCharacters(
+    const UChar* characters, unsigned length, ConversionMode mode)
+{
+    if (!length)
+        return CString("", 0);
+    if (length > numeric_limits<unsigned>::max() / 3)
+        return CString();
+    Vector<char, 1024> bufferVector(length * 3);
+    char* buffer = bufferVector.data();
+    if (!utf8Impl(characters, length, buffer, bufferVector.size(), mode))
+        return CString();
+    return CString(bufferVector.data(), buffer - bufferVector.data());
+}
+
 CString StringImpl::utf8ForRange(unsigned offset, unsigned length, ConversionMode mode) const
 {
     ASSERT(offset <= this->length());
@@ -1989,51 +2055,8 @@ CString StringImpl::utf8ForRange(unsigned offset, unsigned length, ConversionMod
         ConversionResult result = convertLatin1ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size());
         ASSERT_UNUSED(result, result != targetExhausted); // (length * 3) should be sufficient for any conversion
     } else {
-        const UChar* characters = this->characters16() + offset;
-
-        if (mode == StrictConversionReplacingUnpairedSurrogatesWithFFFD) {
-            const UChar* charactersEnd = characters + length;
-            char* bufferEnd = buffer + bufferVector.size();
-            while (characters < charactersEnd) {
-                // Use strict conversion to detect unpaired surrogates.
-                ConversionResult result = convertUTF16ToUTF8(&characters, charactersEnd, &buffer, bufferEnd, true);
-                ASSERT(result != targetExhausted);
-                // Conversion fails when there is an unpaired surrogate.
-                // Put replacement character (U+FFFD) instead of the unpaired surrogate.
-                if (result != conversionOK) {
-                    ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
-                    // There should be room left, since one UChar hasn't been converted.
-                    ASSERT((buffer + 3) <= bufferEnd);
-                    putUTF8Triple(buffer, replacementCharacter);
-                    ++characters;
-                }
-            }
-        } else {
-            bool strict = mode == StrictConversion;
-            ConversionResult result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size(), strict);
-            ASSERT(result != targetExhausted); // (length * 3) should be sufficient for any conversion
-
-            // Only produced from strict conversion.
-            if (result == sourceIllegal) {
-                ASSERT(strict);
-                return CString();
-            }
-
-            // Check for an unconverted high surrogate.
-            if (result == sourceExhausted) {
-                if (strict)
-                    return CString();
-                // This should be one unpaired high surrogate. Treat it the same
-                // was as an unpaired high surrogate would have been handled in
-                // the middle of a string with non-strict conversion - which is
-                // to say, simply encode it to UTF-8.
-                ASSERT((characters + 1) == (this->characters() + length));
-                ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
-                // There should be room left, since one UChar hasn't been converted.
-                ASSERT((buffer + 3) <= (buffer + bufferVector.size()));
-                putUTF8Triple(buffer, *characters);
-            }
-        }
+        if (!utf8Impl(this->characters16() + offset, length, buffer, bufferVector.size(), mode))
+            return CString();
     }
 
     return CString(bufferVector.data(), buffer - bufferVector.data());

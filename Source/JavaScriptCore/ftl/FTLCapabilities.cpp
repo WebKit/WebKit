@@ -79,7 +79,6 @@ inline bool canCompile(Node* node)
     case Jump:
     case ForceOSRExit:
     case ForwardForceOSRExit:
-    case Switch:
         // These are OK.
         break;
     case GetArrayLength:
@@ -136,6 +135,14 @@ inline bool canCompile(Node* node)
         case Int32Use:
         case NumberUse:
         case ObjectOrOtherUse:
+            break;
+        default:
+            return false;
+        }
+        break;
+    case Switch:
+        switch (node->switchData()->kind) {
+        case SwitchImm:
             break;
         default:
             return false;

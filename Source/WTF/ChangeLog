@@ -1,3 +1,25 @@
+2013-06-18  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should have switch_char
+        https://bugs.webkit.org/show_bug.cgi?id=117710
+
+        Reviewed by Michael Saboff.
+        
+        I wanted to be able to say stringImpl->at(index), and now I can!
+
+        Also made it possible to convert a UChar to a utf8 CString without
+        allocating a StringImpl.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::utf8Impl):
+        (WTF):
+        (WTF::StringImpl::utf8ForCharacters):
+        (WTF::StringImpl::utf8ForRange):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+        (WTF::StringImpl::at):
+        (WTF::StringImpl::operator[]):
+
 2013-06-15  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Add CFG simplification for Switch

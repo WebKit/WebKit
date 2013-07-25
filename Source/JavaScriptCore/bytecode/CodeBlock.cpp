@@ -564,7 +564,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
                     continue;
                 ASSERT(!((i + m_rareData->m_characterSwitchJumpTables[i].min) & ~0xFFFF));
                 UChar ch = static_cast<UChar>(entry + m_rareData->m_characterSwitchJumpTables[i].min);
-                out.printf("\t\t\"%s\" => %04d\n", String(&ch, 1).utf8().data(), *iter);
+                out.printf("\t\t\"%s\" => %04d\n", StringImpl::utf8ForCharacters(&ch, 1).data(), *iter);
             }
             out.printf("      }\n");
             ++i;
@@ -1838,6 +1838,20 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     // instruction stream to more accurate assess the cost of tier-up).
     optimizeAfterWarmUp();
     jitAfterWarmUp();
+
+    // If the concurrent thread will want the code block's hash, then compute it here
+    // synchronously.
+    if (Options::showDisassembly()
+        || Options::showDFGDisassembly()
+        || Options::dumpBytecodeAtDFGTime()
+        || Options::verboseCompilation()
+        || Options::logCompilationChanges()
+        || Options::validateGraph()
+        || Options::validateGraphAtEachPhase()
+        || Options::verboseOSR()
+        || Options::verboseCompilationQueue()
+        || Options::reportCompileTimes())
+        hash();
 
     if (Options::dumpGeneratedBytecodes())
         dumpBytecode();

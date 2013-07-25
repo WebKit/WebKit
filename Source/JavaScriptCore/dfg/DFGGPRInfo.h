@@ -59,6 +59,7 @@ public:
     bool operator!() const { return m_gpr == InvalidGPRReg; }
     
     GPRReg gpr() const { return m_gpr; }
+    GPRReg payloadGPR() const { return m_gpr; }
     
 private:
     GPRReg m_gpr;

@@ -1,3 +1,21 @@
+2013-06-18  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should have switch_char
+        https://bugs.webkit.org/show_bug.cgi?id=117710
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * fast/js/regress/script-tests/switch-char-constant.js: Added.
+        (foo):
+        (bar):
+        * fast/js/regress/script-tests/switch-char.js: Added.
+        (foo):
+        (bar):
+        * fast/js/regress/switch-char-constant-expected.txt: Added.
+        * fast/js/regress/switch-char-constant.html: Added.
+        * fast/js/regress/switch-char-expected.txt: Added.
+        * fast/js/regress/switch-char.html: Added.
+
 2013-06-15  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Add CFG simplification for Switch

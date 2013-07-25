@@ -188,7 +188,7 @@ public:
                         TriState found = FalseTriState;
                         BlockIndex targetBlockIndex = NoBlock;
                         for (unsigned i = data->cases.size(); found == FalseTriState && i--;) {
-                            found = JSValue::pureStrictEqual(value, data->cases[i].value);
+                            found = data->cases[i].value.strictEqual(value);
                             if (found == TrueTriState)
                                 targetBlockIndex = data->cases[i].target;
                         }

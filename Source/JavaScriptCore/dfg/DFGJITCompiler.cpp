@@ -150,40 +150,66 @@ void JITCompiler::compileExceptionHandlers()
     }
 }
 
-void JITCompiler::link(LinkBuffer& linkBuffer)
+SimpleJumpTable& JITCompiler::jumpTable(SwitchKind kind, unsigned index)
 {
-    // Link the code, populate data in CodeBlock data structures.
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("JIT code for %p start at [%p, %p). Size = %zu.\n", m_codeBlock, linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize(), linkBuffer.debugSize());
-#endif
-    
+    switch (kind) {
+    case SwitchImm:
+        return m_codeBlock->immediateSwitchJumpTable(index);
+    case SwitchChar:
+        return m_codeBlock->characterSwitchJumpTable(index);
+    }
+}
+
+unsigned JITCompiler::numberOfJumpTables(SwitchKind kind)
+{
+    switch (kind) {
+    case SwitchImm:
+        return m_codeBlock->numberOfImmediateSwitchJumpTables();
+    case SwitchChar:
+        return m_codeBlock->numberOfCharacterSwitchJumpTables();
+    }
+}
+
+void JITCompiler::linkSwitches(LinkBuffer& linkBuffer, SwitchKind kind)
+{
     BitVector usedJumpTables;
     for (unsigned i = m_graph.m_switchData.size(); i--;) {
         SwitchData& data = m_graph.m_switchData[i];
         if (!data.didUseJumpTable)
             continue;
         
-        // Cast to int to avoid tautological comparison warnings.
-        RELEASE_ASSERT(static_cast<int>(data.kind) == static_cast<int>(SwitchImm));
+        if (data.kind != kind)
+            continue;
         
         usedJumpTables.set(data.switchTableIndex);
-        SimpleJumpTable& table =
-            m_codeBlock->immediateSwitchJumpTable(data.switchTableIndex);
+        SimpleJumpTable& table = jumpTable(kind, data.switchTableIndex);
         table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough]);
         for (unsigned j = table.ctiOffsets.size(); j--;)
             table.ctiOffsets[j] = table.ctiDefault;
         for (unsigned j = data.cases.size(); j--;) {
             SwitchCase& myCase = data.cases[j];
-            table.ctiOffsets[myCase.value.asInt32() - table.min] =
+            table.ctiOffsets[myCase.value.switchLookupValue() - table.min] =
                 linkBuffer.locationOf(m_blockHeads[myCase.target]);
         }
     }
-    for (unsigned i = m_codeBlock->numberOfImmediateSwitchJumpTables(); i--;) {
+    
+    for (unsigned i = numberOfJumpTables(kind); i--;) {
         if (usedJumpTables.get(i))
             continue;
         
-        m_codeBlock->immediateSwitchJumpTable(i).clear();
+        jumpTable(kind, i).clear();
     }
+}
+
+void JITCompiler::link(LinkBuffer& linkBuffer)
+{
+    // Link the code, populate data in CodeBlock data structures.
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLogF("JIT code for %p start at [%p, %p). Size = %zu.\n", m_codeBlock, linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize(), linkBuffer.debugSize());
+#endif
+
+    linkSwitches(linkBuffer, SwitchImm);
+    linkSwitches(linkBuffer, SwitchChar);
 
     // Link all calls out from the JIT code to their respective functions.
     for (unsigned i = 0; i < m_calls.size(); ++i)

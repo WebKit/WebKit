@@ -71,20 +71,6 @@ static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeB
         return CompilationFailed;
 
     
-    // If the concurrent thread will want the code block's hash, then compute it here
-    // synchronously.
-    if (Options::showDisassembly()
-        || Options::showDFGDisassembly()
-        || Options::dumpBytecodeAtDFGTime()
-        || Options::verboseCompilation()
-        || Options::logCompilationChanges()
-        || Options::validateGraph()
-        || Options::validateGraphAtEachPhase()
-        || Options::verboseOSR()
-        || Options::verboseCompilationQueue()
-        || Options::reportCompileTimes())
-        codeBlock->hash();
-    
     if (logCompilationChanges())
         dataLog("DFG(Driver) compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
     

@@ -167,6 +167,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_typeof:
     case op_to_number:
     case op_switch_imm:
+    case op_switch_char:
     case op_in:
     case op_get_from_scope:
     case op_put_to_scope:

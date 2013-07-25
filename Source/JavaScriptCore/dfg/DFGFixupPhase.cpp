@@ -585,6 +585,10 @@ private:
                 if (node->child1()->shouldSpeculateInteger())
                     setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 break;
+            case SwitchChar:
+                if (node->child1()->shouldSpeculateString())
+                    setUseKindAndUnboxIfProfitable<StringUse>(node->child1());
+                break;
             }
             break;
         }
