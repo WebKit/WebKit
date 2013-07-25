@@ -48,9 +48,9 @@ public:
     void find(JSFunction*);
 
 private:
-    JS_EXPORT_PRIVATE StackIterator(CallFrame* startFrame, FrameFilter = nullptr);
+    JS_EXPORT_PRIVATE StackIterator(CallFrame* startFrame, FrameFilter = 0);
 
-    static Frame* end() { return nullptr; }
+    static Frame* end() { return 0; }
     JS_EXPORT_PRIVATE void gotoNextFrame();
 
     Frame* m_frame;
