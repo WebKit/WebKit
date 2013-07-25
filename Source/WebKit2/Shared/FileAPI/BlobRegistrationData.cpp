@@ -88,14 +88,14 @@ void BlobRegistrationData::encode(CoreIPC::ArgumentEncoder& encoder) const
             encoder << CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(item.data->data()), item.data->length());
             break;
         case BlobDataItem::File:
-            encoder << item.offset;
-            encoder << item.length;
+            encoder << static_cast<int64_t>(item.offset);
+            encoder << static_cast<int64_t>(item.length);
             encoder << item.expectedModificationTime;
             encoder << item.path;
             break;
         case BlobDataItem::Blob:
-            encoder << item.offset;
-            encoder << item.length;
+            encoder << static_cast<int64_t>(item.offset);
+            encoder << static_cast<int64_t>(item.length);
             encoder << item.url;
             break;
         }
@@ -138,10 +138,10 @@ bool BlobRegistrationData::decode(CoreIPC::ArgumentDecoder& decoder, BlobRegistr
             break;
         }
         case BlobDataItem::File: {
-            long long offset;
+            int64_t offset;
             if (!decoder.decode(offset))
                 return false;
-            long long length;
+            int64_t length;
             if (!decoder.decode(length))
                 return false;
             double expectedModificationTime;
@@ -154,10 +154,10 @@ bool BlobRegistrationData::decode(CoreIPC::ArgumentDecoder& decoder, BlobRegistr
             break;
         }
         case BlobDataItem::Blob: {
-            long long offset;
+            int64_t offset;
             if (!decoder.decode(offset))
                 return false;
-            long long length;
+            int64_t length;
             if (!decoder.decode(length))
                 return false;
             String url;

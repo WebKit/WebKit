@@ -1,3 +1,18 @@
+2013-07-25  Kwang Yul Seo  <skyul@company100.net>
+
+        Build fix: use of long long in CoreIPC::ArgumentEncoder and CoreIPC::ArgumentDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=118228
+
+        Reviewed by Anders Carlsson.
+
+        Build fails on some platforms where int64_t and long long are different types.
+
+        * Shared/FileAPI/BlobRegistrationData.cpp:
+        (WebKit::BlobRegistrationData::encode):
+        Add explicit casts to int64_t.
+        (WebKit::BlobRegistrationData::decode):
+        Use int64_t instead of long long.
+
 2013-07-25  Anders Carlsson  <andersca@apple.com>
 
         Remove lastModifiedDate from ResourceResponse
