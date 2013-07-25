@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAssemblyHelpers.h"
+#include "DFGGraph.h"
 #include "DFGSpeculativeJIT.h"
 #include "JSCellInlines.h"
 
@@ -84,6 +85,52 @@ bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock)
         exitSite = FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind);
     
     return baselineCodeBlockForOriginAndBaselineCodeBlock(m_codeOriginForExitProfile, profiledCodeBlock)->addFrequentExitSite(exitSite);
+}
+
+void OSRExit::convertToForward(BasicBlock* block, Node* currentNode, unsigned nodeIndex, const ValueRecovery& valueRecovery)
+{
+    // Check that either the current node is a SetLocal, or the preceding node was a
+    // SetLocal with the same code origin, or that we've provided a valueRecovery.
+    if (!ASSERT_DISABLED
+        && !valueRecovery
+        && !currentNode->containsMovHint()) {
+        Node* setLocal = block->at(nodeIndex - 1);
+        ASSERT_UNUSED(setLocal, setLocal->containsMovHint());
+        ASSERT_UNUSED(setLocal, setLocal->codeOrigin == currentNode->codeOrigin);
+    }
+    
+    // Find the first node for the next bytecode instruction. Also track the last mov hint
+    // on this node.
+    unsigned indexInBlock = nodeIndex + 1;
+    Node* node = 0;
+    Node* lastMovHint = 0;
+    for (;;) {
+        if (indexInBlock == block->size()) {
+            // This is an inline return. Give up and do a backwards speculation. This is safe
+            // because an inline return has its own bytecode index and it's always safe to
+            // reexecute that bytecode.
+            ASSERT(node->op() == Jump);
+            return;
+        }
+        node = block->at(indexInBlock);
+        if (node->containsMovHint() && node->child1() == currentNode)
+            lastMovHint = node;
+        if (node->codeOrigin != currentNode->codeOrigin)
+            break;
+        indexInBlock++;
+    }
+    
+    ASSERT(node->codeOrigin != currentNode->codeOrigin);
+    m_codeOrigin = node->codeOrigin;
+    
+    if (!valueRecovery)
+        return;
+    
+    ASSERT(lastMovHint);
+    ASSERT(lastMovHint->child1() == currentNode);
+    m_lastSetOperand = lastMovHint->local();
+    m_valueRecoveryOverride = adoptRef(
+        new ValueRecoveryOverride(lastMovHint->local(), valueRecovery));
 }
 
 } } // namespace JSC::DFG

@@ -45,6 +45,8 @@
 namespace JSC { namespace DFG {
 
 class SpeculativeJIT;
+struct BasicBlock;
+struct Node;
 
 // This enum describes the types of additional recovery that
 // may need be performed should a speculation check fail.
@@ -111,6 +113,8 @@ struct OSRExit {
     MacroAssembler::Jump getPatchableCodeOffsetAsJump() const;
     CodeLocationJump codeLocationForRepatch(CodeBlock*) const;
     void correctJump(LinkBuffer&);
+    
+    void convertToForward(BasicBlock*, Node*, unsigned nodeIndex, const ValueRecovery&);
 
     unsigned m_streamIndex;
     int m_lastSetOperand;

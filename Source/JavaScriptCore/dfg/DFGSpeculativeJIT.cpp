@@ -223,70 +223,8 @@ JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind)
 
 void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecovery)
 {
-    if (!valueRecovery) {
-        // Check that either the current node is a SetLocal, or the preceding node was a
-        // SetLocal with the same code origin.
-        if (!m_currentNode->containsMovHint()) {
-            Node* setLocal = m_jit.graph().m_blocks[m_block]->at(m_indexInBlock - 1);
-            ASSERT_UNUSED(setLocal, setLocal->containsMovHint());
-            ASSERT_UNUSED(setLocal, setLocal->codeOrigin == m_currentNode->codeOrigin);
-        }
-        
-        // Find the next node.
-        unsigned indexInBlock = m_indexInBlock + 1;
-        Node* node = 0;
-        for (;;) {
-            if (indexInBlock == m_jit.graph().m_blocks[m_block]->size()) {
-                // This is an inline return. Give up and do a backwards speculation. This is safe
-                // because an inline return has its own bytecode index and it's always safe to
-                // reexecute that bytecode.
-                ASSERT(node->op() == Jump);
-                return;
-            }
-            node = m_jit.graph().m_blocks[m_block]->at(indexInBlock);
-            if (node->codeOrigin != m_currentNode->codeOrigin)
-                break;
-            indexInBlock++;
-        }
-        
-        ASSERT(node->codeOrigin != m_currentNode->codeOrigin);
-        OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
-        exit.m_codeOrigin = node->codeOrigin;
-        return;
-    }
-    
-    unsigned setLocalIndexInBlock = m_indexInBlock + 1;
-    
-    Node* setLocal = m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock);
-    bool hadInt32ToDouble = false;
-    
-    if (setLocal->op() == ForwardInt32ToDouble) {
-        setLocal = m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock);
-        hadInt32ToDouble = true;
-    }
-    if (setLocal->op() == Flush || setLocal->op() == Phantom)
-        setLocal = m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock);
-        
-    if (hadInt32ToDouble)
-        ASSERT(setLocal->child1()->child1() == m_currentNode);
-    else
-        ASSERT(setLocal->child1() == m_currentNode);
-    ASSERT(setLocal->containsMovHint());
-    ASSERT(setLocal->codeOrigin == m_currentNode->codeOrigin);
-
-    Node* nextNode = m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock + 1);
-    if (nextNode->op() == Jump && nextNode->codeOrigin == m_currentNode->codeOrigin) {
-        // We're at an inlined return. Use a backward speculation instead.
-        return;
-    }
-    ASSERT(nextNode->codeOrigin != m_currentNode->codeOrigin);
-        
-    OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
-    exit.m_codeOrigin = nextNode->codeOrigin;
-        
-    exit.m_lastSetOperand = setLocal->local();
-    exit.m_valueRecoveryOverride = adoptRef(
-        new ValueRecoveryOverride(setLocal->local(), valueRecovery));
+    m_jit.codeBlock()->lastOSRExit().convertToForward(
+        m_jit.graph().m_blocks[m_block].get(), m_currentNode, m_indexInBlock, valueRecovery);
 }
 
 void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)

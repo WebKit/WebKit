@@ -1,3 +1,33 @@
+2013-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should abstract out how it does forward exits, and that code should be simplified
+        https://bugs.webkit.org/show_bug.cgi?id=113894
+
+        Reviewed by Mark Hahnenberg.
+        
+        1) We previously had two different ways of convertingToForward, one path for
+           where we had a ValueRecovery for the current node and one where we didn't.
+           But the paths were doing exactly the same thing except that if you have a
+           ValueRecovery, you also find the last applicable mov hint and do some
+           extra things. This patch combines the two paths and bases both of them on
+           the previous no-ValueRecovery path, which was simpler to begin with.
+        
+        2) This moves the logic into DFG::OSRExit, which further simplifies the code
+           and makes the logic available to the FTL.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::convertToForward):
+        (DFG):
+        * dfg/DFGOSRExit.h:
+        (DFG):
+        (OSRExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::convertLastOSRExitToForward):
+
+2013-07-15  Oliver Hunt  <oliver@apple.com>
+
+        Merge dfgFourthTier r147582
+
 2013-07-15  Oliver Hunt  <oliver@apple.com>
 
         Merge dfgFourthTier r147014
