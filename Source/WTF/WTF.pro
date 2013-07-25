@@ -189,6 +189,7 @@ SOURCES += \
     Assertions.cpp \
     Atomics.cpp \
     BitVector.cpp \
+    CompilationThread.cpp \
     CryptographicallyRandomNumber.cpp \
     CurrentTime.cpp \
     DateMath.cpp \
@@ -227,6 +228,7 @@ SOURCES += \
     RandomNumber.cpp \
     RefCountedLeakCounter.cpp \
     SHA1.cpp \
+    SixCharacterHash.cpp \
     StackBounds.cpp \
     StringPrintStream.cpp \
     TCSystemAlloc.cpp \
