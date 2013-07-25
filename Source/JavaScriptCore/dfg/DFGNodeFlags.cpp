@@ -34,7 +34,7 @@ namespace JSC { namespace DFG {
 
 void dumpNodeFlags(PrintStream& out, NodeFlags flags)
 {
-    if (!(flags ^ NodeDoesNotExit)) {
+    if (!((flags & ~NodeRelevantToOSR) ^ NodeDoesNotExit)) {
         out.print("<empty>");
         return;
     }

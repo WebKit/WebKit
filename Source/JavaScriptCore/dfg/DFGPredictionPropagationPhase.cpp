@@ -483,14 +483,20 @@ private:
         case ZombieHint: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
-            CRASH();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         
         case Phi:
             // Phis should not be visible here since we're iterating the all-but-Phi's
             // part of basic blocks.
-            CRASH();
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+            
+        case Upsilon:
+        case GetArgument:
+            // These don't get inserted until we go into SSA.
+            RELEASE_ASSERT_NOT_REACHED();
             break;
 
         case GetScope:
@@ -551,7 +557,7 @@ private:
             break;
             
         case LastNodeType:
-            CRASH();
+            RELEASE_ASSERT_NOT_REACHED();
             break;
 #else
         default:

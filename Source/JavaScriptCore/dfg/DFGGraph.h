@@ -147,7 +147,7 @@ public:
         if (node->op() == GetLocal)
             dethread();
         else
-            ASSERT(!node->hasVariableAccessData());
+            ASSERT(!node->hasVariableAccessData(*this));
         node->convertToConstant(constantNumber);
     }
     
@@ -406,7 +406,12 @@ public:
         
         CodeBlock* profiledBlock = baselineCodeBlockFor(node->codeOrigin);
         
-        if (node->hasLocal()) {
+        if (node->op() == GetArgument)
+            return profiledBlock->valueProfileForArgument(operandToArgument(node->local()));
+        
+        if (node->hasLocal(*this)) {
+            if (m_form == SSA)
+                return 0;
             if (!operandIsArgument(node->local()))
                 return 0;
             int argument = operandToArgument(node->local());
@@ -646,6 +651,8 @@ public:
     
     void invalidateCFG();
     
+    void getBlocksInDepthFirstOrder(Vector<BasicBlock*>& result);
+    
     Profiler::Compilation* compilation() { return m_plan.compilation.get(); }
     
     DesiredIdentifiers& identifiers() { return m_plan.identifiers; }
@@ -684,6 +691,7 @@ public:
 private:
     
     void handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock*, BasicBlock* successor);
+    void addForDepthFirstSort(Vector<BasicBlock*>& result, Vector<BasicBlock*, 16>& worklist, HashSet<BasicBlock*>& seen, BasicBlock*);
     
     AddSpeculationMode addImmediateShouldSpeculateInteger(Node* add, bool variableShouldSpeculateInteger, Node* immediate)
     {

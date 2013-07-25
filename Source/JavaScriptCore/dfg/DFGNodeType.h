@@ -62,7 +62,9 @@ namespace JSC { namespace DFG {
     macro(MovHintAndCheck, NodeMustGenerate | NodeExitsForward) \
     macro(MovHint, NodeDoesNotExit) \
     macro(ZombieHint, NodeDoesNotExit) \
+    macro(GetArgument, NodeResultJS | NodeMustGenerate) \
     macro(Phantom, NodeMustGenerate) \
+    macro(Upsilon, NodeDoesNotExit | NodeRelevantToOSR) \
     macro(Phi, NodeDoesNotExit | NodeRelevantToOSR) \
     macro(Flush, NodeMustGenerate | NodeDoesNotExit) \
     macro(PhantomLocal, NodeMustGenerate | NodeDoesNotExit) \

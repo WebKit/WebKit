@@ -120,6 +120,7 @@ private:
         case ValueToInt32: {
             if (node->child1()->shouldSpeculateInteger()) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
+                node->setOpAndDefaultFlags(Identity);
                 break;
             }
             
@@ -868,6 +869,8 @@ private:
 
         case GetArrayLength:
         case Phi:
+        case Upsilon:
+        case GetArgument:
         case ForwardInt32ToDouble:
         case PhantomPutStructure:
         case GetIndexedPropertyStorage:

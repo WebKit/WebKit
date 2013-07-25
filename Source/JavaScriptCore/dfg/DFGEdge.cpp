@@ -39,6 +39,8 @@ void Edge::dump(PrintStream& out) const
             out.print("Check:");
         out.print(useKind(), ":");
     }
+    if (doesKill())
+        out.print("Kill:");
     out.print(node());
 }
 

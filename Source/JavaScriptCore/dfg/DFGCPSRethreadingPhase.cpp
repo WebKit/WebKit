@@ -327,12 +327,14 @@ private:
             // SetArgument may only appear in the root block.
             //
             // Tail variable: the last thing that happened to the variable in the block.
-            // It may be a Flush, PhantomLocal, GetLocal, SetLocal, or SetArgument.
+            // It may be a Flush, PhantomLocal, GetLocal, SetLocal, SetArgument, or Phi.
             // SetArgument may only appear in the root block. Note that if there ever
             // was a GetLocal to the variable, and it was followed by PhantomLocals and
             // Flushes but not SetLocals, then the tail variable will be the GetLocal.
             // This reflects the fact that you only care that the tail variable is a
-            // Flush or PhantomLocal if nothing else interesting happened.
+            // Flush or PhantomLocal if nothing else interesting happened. Likewise, if
+            // there ever was a SetLocal and it was followed by Flushes, then the tail
+            // variable will be a SetLocal and not those subsequent Flushes.
             //
             // Child of GetLocal: the operation that the GetLocal keeps alive. For
             // uncaptured locals, it may be a Phi from the current block. For arguments,

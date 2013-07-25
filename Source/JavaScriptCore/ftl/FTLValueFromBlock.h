@@ -36,6 +36,12 @@ namespace JSC { namespace FTL {
 
 class ValueFromBlock {
 public:
+    ValueFromBlock()
+        : m_value(0)
+        , m_block(0)
+    {
+    }
+    
     ValueFromBlock(LValue value, LBasicBlock block)
         : m_value(value)
         , m_block(block)

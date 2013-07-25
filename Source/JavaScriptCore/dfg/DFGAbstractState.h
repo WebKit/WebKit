@@ -130,7 +130,7 @@ public:
     // Call this before beginning CFA to initialize the abstract values of
     // arguments, and to indicate which blocks should be listed for CFA
     // execution.
-    static void initialize(Graph&);
+    void initialize();
 
     // Start abstractly executing the given basic block. Initializes the
     // notion of abstract state to what we believe it to be at the head

@@ -27,6 +27,7 @@
 #define DFGVariableAccessData_h
 
 #include "DFGDoubleFormatState.h"
+#include "DFGFlushFormat.h"
 #include "DFGNodeFlags.h"
 #include "Operands.h"
 #include "SpeculatedType.h"
@@ -316,6 +317,29 @@ public:
     bool mergeFlags(NodeFlags newFlags)
     {
         return checkAndSet(m_flags, m_flags | newFlags);
+    }
+    
+    FlushFormat flushFormat()
+    {
+        ASSERT(find() == this);
+        
+        if (!shouldUnboxIfPossible())
+            return FlushedJSValue;
+        
+        if (shouldUseDoubleFormat())
+            return FlushedDouble;
+        
+        SpeculatedType prediction = argumentAwarePrediction();
+        if (isInt32Speculation(prediction))
+            return FlushedInt32;
+        
+        if (isCellSpeculation(prediction))
+            return FlushedCell;
+        
+        if (isBooleanSpeculation(prediction))
+            return FlushedBoolean;
+        
+        return FlushedJSValue;
     }
     
 private:

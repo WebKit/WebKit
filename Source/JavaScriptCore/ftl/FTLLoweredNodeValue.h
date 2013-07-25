@@ -23,75 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGNode.h"
+#ifndef FTLLoweredNodeValue_h
+#define FTLLoweredNodeValue_h
 
-#if ENABLE(DFG_JIT)
+#include <wtf/Platform.h>
 
-#include "DFGGraph.h"
-#include "DFGNodeAllocator.h"
+#if ENABLE(FTL_JIT)
 
-namespace JSC { namespace DFG {
+#include "DFGBasicBlock.h"
+#include "FTLAbbreviatedTypes.h"
 
-unsigned Node::index() const
-{
-    return NodeAllocator::allocatorOf(this)->indexOf(this);
-}
+namespace JSC { namespace FTL {
 
-bool Node::hasVariableAccessData(Graph& graph)
-{
-    switch (op()) {
-    case Phi:
-        return graph.m_form != SSA;
-    case GetLocal:
-    case GetArgument:
-    case SetLocal:
-    case MovHint:
-    case MovHintAndCheck:
-    case ZombieHint:
-    case SetArgument:
-    case Flush:
-    case PhantomLocal:
-        return true;
-    default:
-        return false;
+// Represents the act of having lowered a DFG::Node to an LValue, and records the
+// DFG::BasicBlock that did the lowering. The LValue is what we use most often, but
+// we need to verify that we're in a block that is dominated by the one that did
+// the lowering. We're guaranteed that for each DFG::Node, there will be one
+// LoweredNodeValue that always dominates all uses of the DFG::Node; but there may
+// be others that don't dominate and we're effectively doing opportunistic GVN on
+// the lowering code.
+
+class LoweredNodeValue {
+public:
+    LoweredNodeValue()
+        : m_value(0)
+        , m_block(0)
+    {
     }
-}
-
-} } // namespace JSC::DFG
-
-namespace WTF {
-
-using namespace JSC;
-using namespace JSC::DFG;
-
-void printInternal(PrintStream& out, SwitchKind kind)
-{
-    switch (kind) {
-    case SwitchImm:
-        out.print("SwitchImm");
-        return;
-    case SwitchChar:
-        out.print("SwitchChar");
-        return;
-    case SwitchString:
-        out.print("SwitchString");
-        return;
+    
+    LoweredNodeValue(LValue value, DFG::BasicBlock* block)
+        : m_value(value)
+        , m_block(block)
+    {
+        ASSERT(m_value);
+        ASSERT(m_block);
     }
-    RELEASE_ASSERT_NOT_REACHED();
-}
+    
+    bool isSet() const { return !!m_value; }
+    bool operator!() const { return !isSet(); }
+    
+    LValue value() const { return m_value; }
+    DFG::BasicBlock* block() const { return m_block; }
+    
+private:
+    LValue m_value;
+    DFG::BasicBlock* m_block;
+};
 
-void printInternal(PrintStream& out, Node* node)
-{
-    if (!node) {
-        out.print("-");
-        return;
-    }
-    out.print("@", node->index());
-    out.print(AbbreviatedSpeculationDump(node->prediction()));
-}
+} } // namespace JSC::FTL
 
-} // namespace WTF
+#endif // ENABLE(FTL_JIT)
 
-#endif // ENABLE(DFG_JIT)
+#endif // FTLLoweredNodeValue_h
 

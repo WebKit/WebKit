@@ -41,11 +41,6 @@ enum ValueSourceKind {
     ValueInJSStack,
     Int32InJSStack,
     DoubleInJSStack,
-    ValueInLocals,
-    Int32InLocals,
-    BooleanInLocals,
-    DoubleInLocals,
-    ArgumentsSource,
     SourceIsDead,
     HaveNode
 };

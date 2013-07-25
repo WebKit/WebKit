@@ -23,75 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGNode.h"
+#ifndef DFGCriticalEdgeBreakingPhase_h
+#define DFGCriticalEdgeBreakingPhase_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
-#include "DFGNodeAllocator.h"
-
 namespace JSC { namespace DFG {
 
-unsigned Node::index() const
-{
-    return NodeAllocator::allocatorOf(this)->indexOf(this);
-}
+class Graph;
 
-bool Node::hasVariableAccessData(Graph& graph)
-{
-    switch (op()) {
-    case Phi:
-        return graph.m_form != SSA;
-    case GetLocal:
-    case GetArgument:
-    case SetLocal:
-    case MovHint:
-    case MovHintAndCheck:
-    case ZombieHint:
-    case SetArgument:
-    case Flush:
-    case PhantomLocal:
-        return true;
-    default:
-        return false;
-    }
-}
+// Inserts dummy basic blocks to break critical edges. An edge A->B is
+// critical if A has multiple successors and B has multiple predessors.
+
+bool performCriticalEdgeBreaking(Graph&);
 
 } } // namespace JSC::DFG
 
-namespace WTF {
-
-using namespace JSC;
-using namespace JSC::DFG;
-
-void printInternal(PrintStream& out, SwitchKind kind)
-{
-    switch (kind) {
-    case SwitchImm:
-        out.print("SwitchImm");
-        return;
-    case SwitchChar:
-        out.print("SwitchChar");
-        return;
-    case SwitchString:
-        out.print("SwitchString");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void printInternal(PrintStream& out, Node* node)
-{
-    if (!node) {
-        out.print("-");
-        return;
-    }
-    out.print("@", node->index());
-    out.print(AbbreviatedSpeculationDump(node->prediction()));
-}
-
-} // namespace WTF
-
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGCriticalEdgeBreakingPhase_h
 

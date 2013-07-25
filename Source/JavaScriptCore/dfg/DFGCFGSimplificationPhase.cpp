@@ -361,15 +361,9 @@ private:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog(
             "Fixing predecessors and phis due to jettison of Block ", *jettisonedBlock,
-            " from Block ", *block, ".\n",
+            " from Block ", *block, ".\n");
 #endif
-        for (unsigned i = 0; i < jettisonedBlock->predecessors.size(); ++i) {
-            if (jettisonedBlock->predecessors[i] != block)
-                continue;
-            jettisonedBlock->predecessors[i] = jettisonedBlock->predecessors.last();
-            jettisonedBlock->predecessors.removeLast();
-            break;
-        }
+        jettisonedBlock->removePredecessor(block);
     }
 
     Vector<BasicBlock*, 1> noBlocks()

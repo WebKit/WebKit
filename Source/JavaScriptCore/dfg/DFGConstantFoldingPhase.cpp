@@ -372,7 +372,7 @@ private:
                     m_graph.dethread();
                 }
             } else
-                ASSERT(!node->hasVariableAccessData());
+                ASSERT(!node->hasVariableAccessData(m_graph));
             
             m_graph.convertToConstant(node, value);
             m_insertionSet.insertNode(
@@ -391,7 +391,7 @@ private:
     {
         for (; indexInBlock < block->size(); ++indexInBlock) {
             Node* node = block->at(indexInBlock);
-            if (!node->hasLocal())
+            if (!node->hasLocal(m_graph))
                 continue;
             if (node->local() != operand)
                 continue;

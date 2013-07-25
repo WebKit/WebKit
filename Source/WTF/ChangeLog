@@ -1,3 +1,61 @@
+2013-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should have an SSA form for use by FTL
+        https://bugs.webkit.org/show_bug.cgi?id=118338
+
+        Reviewed by Mark Hahnenberg.
+        
+        - Extend variadicity of PrintStream and dataLog.
+        
+        - Give HashSet the ability to add a span of things.
+        
+        - Give HashSet the ability to == another HashSet.
+        
+        - Note FIXME's in HashTable concerning copying performance, that affects
+          the way that the DFG now uses HashSets and HashMaps.
+        
+        - Factor out the bulk-insertion logic of JSC::DFG::InsertionSet into
+          WTF::Insertion, so that it can be used in more places.
+        
+        - Create a dumper for lists and maps.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/DataLog.h:
+        (WTF):
+        (WTF::dataLog):
+        * wtf/HashSet.h:
+        (HashSet):
+        (WTF):
+        (WTF::::add):
+        (WTF::=):
+        * wtf/HashTable.h:
+        (WTF::::HashTable):
+        (WTF::=):
+        * wtf/Insertion.h: Added.
+        (WTF):
+        (Insertion):
+        (WTF::Insertion::Insertion):
+        (WTF::Insertion::index):
+        (WTF::Insertion::element):
+        (WTF::Insertion::operator<):
+        (WTF::executeInsertions):
+        * wtf/ListDump.h: Added.
+        (WTF):
+        (ListDump):
+        (WTF::ListDump::ListDump):
+        (WTF::ListDump::dump):
+        (MapDump):
+        (WTF::MapDump::MapDump):
+        (WTF::MapDump::dump):
+        (WTF::listDump):
+        (WTF::sortedListDump):
+        (WTF::lessThan):
+        (WTF::mapDump):
+        (WTF::sortedMapDump):
+        * wtf/PrintStream.h:
+        (PrintStream):
+        (WTF::PrintStream::print):
+
 2013-07-02  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix 32-bit build.

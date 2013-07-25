@@ -60,6 +60,8 @@
 		974CFC8E16A4F327006D5404 /* WeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 974CFC8D16A4F327006D5404 /* WeakPtr.h */; };
 		9BC70F05176C379D00101DEC /* AtomicStringTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */; };
 		9BD8F40B176C2B470002D865 /* AtomicStringTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */; };
+		A70DA0841799F04D00529A9B /* Insertion.h in Headers */ = {isa = PBXBuildFile; fileRef = A70DA0821799F04D00529A9B /* Insertion.h */; };
+		A70DA0851799F04D00529A9B /* ListDump.h in Headers */ = {isa = PBXBuildFile; fileRef = A70DA0831799F04D00529A9B /* ListDump.h */; };
 		A876DBD8151816E500DADB95 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = A876DBD7151816E500DADB95 /* Platform.h */; };
 		A8A4737F151A825B004123FF /* Alignment.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47254151A825A004123FF /* Alignment.h */; };
 		A8A47381151A825B004123FF /* ArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47256151A825A004123FF /* ArrayBuffer.cpp */; };
@@ -336,6 +338,8 @@
 		974CFC8D16A4F327006D5404 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtr.h; sourceTree = "<group>"; };
 		9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicStringTable.cpp; sourceTree = "<group>"; };
 		9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicStringTable.h; sourceTree = "<group>"; };
+		A70DA0821799F04D00529A9B /* Insertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Insertion.h; sourceTree = "<group>"; };
+		A70DA0831799F04D00529A9B /* ListDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListDump.h; sourceTree = "<group>"; };
 		A736B3581799E11A00C6F05E /* LLVMHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLVMHeaders.h; sourceTree = "<group>"; };
 		A876DBD7151816E500DADB95 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		A8A47254151A825A004123FF /* Alignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alignment.h; sourceTree = "<group>"; };
@@ -691,10 +695,12 @@
 				A8A472BA151A825A004123FF /* HashTraits.h */,
 				A8A472BB151A825A004123FF /* HexNumber.h */,
 				A8A472BC151A825A004123FF /* InlineASM.h */,
+				A70DA0821799F04D00529A9B /* Insertion.h */,
 				A8A472BE151A825A004123FF /* Int16Array.h */,
 				A8A472BF151A825A004123FF /* Int32Array.h */,
 				A8A472BD151A825A004123FF /* Int8Array.h */,
 				A8A472C0151A825A004123FF /* IntegralTypedArrayBase.h */,
+				A70DA0831799F04D00529A9B /* ListDump.h */,
 				A8A472C1151A825A004123FF /* ListHashSet.h */,
 				A736B3581799E11A00C6F05E /* LLVMHeaders.h */,
 				A8A472C3151A825A004123FF /* Locker.h */,
@@ -1006,11 +1012,13 @@
 				A8A473DA151A825B004123FF /* HashTraits.h in Headers */,
 				A8A473DB151A825B004123FF /* HexNumber.h in Headers */,
 				A8A473DC151A825B004123FF /* InlineASM.h in Headers */,
+				A70DA0841799F04D00529A9B /* Insertion.h in Headers */,
 				A8A473DE151A825B004123FF /* Int16Array.h in Headers */,
 				A8A473DF151A825B004123FF /* Int32Array.h in Headers */,
 				A8A473DD151A825B004123FF /* Int8Array.h in Headers */,
 				26147B0A15DDCCDC00DDB907 /* IntegerToStringConversion.h in Headers */,
 				A8A473E0151A825B004123FF /* IntegralTypedArrayBase.h in Headers */,
+				A70DA0851799F04D00529A9B /* ListDump.h in Headers */,
 				A8A473E1151A825B004123FF /* ListHashSet.h in Headers */,
 				A8A473E3151A825B004123FF /* Locker.h in Headers */,
 				A8A473E6151A825B004123FF /* MainThread.h in Headers */,

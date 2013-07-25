@@ -36,12 +36,17 @@
 #include "DFGCPSRethreadingPhase.h"
 #include "DFGCSEPhase.h"
 #include "DFGConstantFoldingPhase.h"
+#include "DFGCriticalEdgeBreakingPhase.h"
 #include "DFGDCEPhase.h"
 #include "DFGFailedFinalizer.h"
+#include "DFGFlushLivenessAnalysisPhase.h"
 #include "DFGFixupPhase.h"
 #include "DFGJITCompiler.h"
+#include "DFGLivenessAnalysisPhase.h"
+#include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGPredictionInjectionPhase.h"
 #include "DFGPredictionPropagationPhase.h"
+#include "DFGSSAConversionPhase.h"
 #include "DFGTypeCheckHoistingPhase.h"
 #include "DFGUnificationPhase.h"
 #include "DFGValidate.h"
@@ -182,21 +187,21 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     dfg.m_fixpointState = FixpointConverged;
 
     performStoreElimination(dfg);
-    performCPSRethreading(dfg);
-    
-    // Note that DCE is necessary even in the FTL, because only we know what is
-    // live-in-bytecode. The FTL uses this information to determine when OSR exit
-    // values should be wired to LValues, versus being wired to ExitValue::dead().
-    // This is distinct from what ZombieHint gives us: ZombieHint says that the
-    // value in the given bytecode local is always dead; the reference counts that
-    // DCE produces tell us that the value is live for a while but eventually
-    // dies, and it tells us exactly when the death point is.
-    performDCE(dfg);
 
 #if ENABLE(FTL_JIT)
     if (Options::useExperimentalFTL()
         && compileMode == CompileFunction
         && FTL::canCompile(dfg)) {
+        
+        performCriticalEdgeBreaking(dfg);
+        performCPSRethreading(dfg);
+        performSSAConversion(dfg);
+        performLivenessAnalysis(dfg);
+        performCFA(dfg);
+        performDCE(dfg); // We rely on this to convert dead SetLocals into the appropriate hint, and to kill dead code that won't be recognized as dead by LLVM.
+        performLivenessAnalysis(dfg);
+        performFlushLivenessAnalysis(dfg);
+        performOSRAvailabilityAnalysis(dfg);
         
         dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:");
         
@@ -215,6 +220,8 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     }
 #endif // ENABLE(FTL_JIT)
     
+    performCPSRethreading(dfg);
+    performDCE(dfg);
     performVirtualRegisterAllocation(dfg);
     dumpAndVerifyGraph(dfg, "Graph after optimization:");
 

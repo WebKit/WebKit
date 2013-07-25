@@ -45,21 +45,6 @@ void ValueSource::dump(PrintStream& out) const
     case DoubleInJSStack:
         out.print("DoubleInJSStack");
         return;
-    case ValueInLocals:
-        out.print("ValueInLocals");
-        return;
-    case Int32InLocals:
-        out.print("Int32InLocals");
-        return;
-    case BooleanInLocals:
-        out.print("BooleanInLocals");
-        return;
-    case DoubleInLocals:
-        out.print("DoubleInLocals");
-        return;
-    case ArgumentsSource:
-        out.print("ArgumentsSource");
-        return;
     case SourceIsDead:
         out.print("SourceIsDead");
         return;

@@ -74,6 +74,16 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
         }
     }
     
+    if (m_graph.m_form == SSA) {
+        HashMap<Node*, AbstractValue>::iterator iter = basicBlock->ssa->valuesAtHead.begin();
+        HashMap<Node*, AbstractValue>::iterator end = basicBlock->ssa->valuesAtHead.end();
+        for (; iter != end; ++iter) {
+            forNode(iter->key) = iter->value;
+            if (iter->value.hasClobberableState())
+                m_haveStructures = true;
+        }
+    }
+    
     basicBlock->cfaShouldRevisit = false;
     basicBlock->cfaHasVisited = true;
     m_block = basicBlock;
@@ -83,13 +93,28 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
     m_currentNode = 0;
 }
 
-void AbstractState::initialize(Graph& graph)
+static void setLiveValues(HashMap<Node*, AbstractValue>& values, HashSet<Node*>& live)
 {
-    BasicBlock* root = graph.block(0);
+    values.clear();
+    
+    HashSet<Node*>::iterator iter = live.begin();
+    HashSet<Node*>::iterator end = live.end();
+    for (; iter != end; ++iter)
+        values.add(*iter, AbstractValue());
+}
+
+void AbstractState::initialize()
+{
+    BasicBlock* root = m_graph.block(0);
     root->cfaShouldRevisit = true;
     root->cfaHasVisited = false;
     root->cfaFoundConstants = false;
     for (size_t i = 0; i < root->valuesAtHead.numberOfArguments(); ++i) {
+        if (m_graph.m_form == SSA) {
+            root->valuesAtHead.argument(i).makeTop();
+            continue;
+        }
+        
         Node* node = root->variablesAtHead.argument(i);
         ASSERT(node->op() == SetArgument);
         if (!node->variableAccessData()->shouldUnboxIfPossible()) {
@@ -118,12 +143,11 @@ void AbstractState::initialize(Graph& graph)
             root->valuesAtHead.local(i).clear();
         root->valuesAtTail.local(i).clear();
     }
-    for (BlockIndex blockIndex = 1 ; blockIndex < graph.numBlocks(); ++blockIndex) {
-        BasicBlock* block = graph.block(blockIndex);
+    for (BlockIndex blockIndex = 1 ; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+        BasicBlock* block = m_graph.block(blockIndex);
         if (!block)
             continue;
-        if (!block->isReachable)
-            continue;
+        ASSERT(block->isReachable);
         block->cfaShouldRevisit = false;
         block->cfaHasVisited = false;
         block->cfaFoundConstants = false;
@@ -137,12 +161,12 @@ void AbstractState::initialize(Graph& graph)
         }
         if (!block->isOSRTarget)
             continue;
-        if (block->bytecodeBegin != graph.m_plan.osrEntryBytecodeIndex)
+        if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
             continue;
-        for (size_t i = 0; i < graph.m_plan.mustHandleValues.size(); ++i) {
+        for (size_t i = 0; i < m_graph.m_plan.mustHandleValues.size(); ++i) {
             AbstractValue value;
-            value.setMostSpecific(graph, graph.m_plan.mustHandleValues[i]);
-            int operand = graph.m_plan.mustHandleValues.operandForIndex(i);
+            value.setMostSpecific(m_graph, m_graph.m_plan.mustHandleValues[i]);
+            int operand = m_graph.m_plan.mustHandleValues.operandForIndex(i);
             block->valuesAtHead.operand(operand).merge(value);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("    Initializing Block #%u, operand r%d, to ", blockIndex, operand);
@@ -151,6 +175,15 @@ void AbstractState::initialize(Graph& graph)
 #endif
         }
         block->cfaShouldRevisit = true;
+    }
+    if (m_graph.m_form == SSA) {
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            setLiveValues(block->ssa->valuesAtHead, block->ssa->liveAtHead);
+            setLiveValues(block->ssa->valuesAtTail, block->ssa->liveAtTail);
+        }
     }
 }
 
@@ -172,20 +205,41 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     bool changed = false;
     
     if (mergeMode != DontMerge || !ASSERT_DISABLED) {
-        for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
+        switch (m_graph.m_form) {
+        case ThreadedCPS: {
+            for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("        Merging state for argument %zu.\n", argument);
+                dataLogF("        Merging state for argument %zu.\n", argument);
 #endif
-            AbstractValue& destination = block->valuesAtTail.argument(argument);
-            changed |= mergeStateAtTail(destination, m_variables.argument(argument), block->variablesAtTail.argument(argument));
+                AbstractValue& destination = block->valuesAtTail.argument(argument);
+                changed |= mergeStateAtTail(destination, m_variables.argument(argument), block->variablesAtTail.argument(argument));
+            }
+            
+            for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                dataLogF("        Merging state for local %zu.\n", local);
+#endif
+                AbstractValue& destination = block->valuesAtTail.local(local);
+                changed |= mergeStateAtTail(destination, m_variables.local(local), block->variablesAtTail.local(local));
+            }
+            break;
         }
-        
-        for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("        Merging state for local %zu.\n", local);
-#endif
-            AbstractValue& destination = block->valuesAtTail.local(local);
-            changed |= mergeStateAtTail(destination, m_variables.local(local), block->variablesAtTail.local(local));
+            
+        case SSA: {
+            for (size_t i = 0; i < block->valuesAtTail.size(); ++i)
+                changed |= block->valuesAtTail[i].merge(m_variables[i]);
+            
+            HashSet<Node*>::iterator iter = block->ssa->liveAtTail.begin();
+            HashSet<Node*>::iterator end = block->ssa->liveAtTail.end();
+            for (; iter != end; ++iter) {
+                Node* node = *iter;
+                changed |= block->ssa->valuesAtTail.find(node)->value.merge(forNode(node));
+            }
+            break;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
         }
     }
     
@@ -292,6 +346,18 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         forNode(node) = forNode(node->child1());
         break;
     }
+        
+    case GetArgument: {
+        ASSERT(m_graph.m_form == SSA);
+        VariableAccessData* variable = node->variableAccessData();
+        AbstractValue& value = m_variables.operand(variable->local());
+        ASSERT(value.isTop());
+        FiltrationResult result =
+            value.filter(typeFilterFor(useKindFor(variable->flushFormat())));
+        ASSERT_UNUSED(result, result == FiltrationOK);
+        forNode(node) = value;
+        break;
+    }
             
     case GetLocal: {
         VariableAccessData* variableAccessData = node->variableAccessData();
@@ -323,13 +389,13 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         break;
     }
         
+    case MovHint:
     case MovHintAndCheck: {
         // Don't need to do anything. A MovHint is effectively a promise that the SetLocal
         // was dead.
         break;
     }
         
-    case MovHint:
     case ZombieHint: {
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -1610,6 +1676,17 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         break;
             
     case Phi:
+        RELEASE_ASSERT(m_graph.m_form == SSA);
+        // The state of this node would have already been decided.
+        break;
+        
+    case Upsilon: {
+        AbstractValue& value = forNode(node->child1());
+        forNode(node) = value;
+        forNode(node->phi()) = value;
+        break;
+    }
+        
     case Flush:
     case PhantomLocal:
     case Breakpoint:
@@ -1702,7 +1779,7 @@ inline void AbstractState::clobberStructures(unsigned indexInBlock)
     m_didClobber = true;
 }
 
-inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node* node)
+bool AbstractState::mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node* node)
 {
     if (!node)
         return false;
@@ -1790,21 +1867,44 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     return true;
 }
 
-inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
+bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
 {
     ASSERT(from->variablesAtTail.numberOfArguments() == to->variablesAtHead.numberOfArguments());
     ASSERT(from->variablesAtTail.numberOfLocals() == to->variablesAtHead.numberOfLocals());
     
     bool changed = false;
     
-    for (size_t argument = 0; argument < from->variablesAtTail.numberOfArguments(); ++argument) {
-        AbstractValue& destination = to->valuesAtHead.argument(argument);
-        changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.argument(argument), to->variablesAtHead.argument(argument), from->variablesAtTail.argument(argument));
+    switch (m_graph.m_form) {
+    case ThreadedCPS: {
+        for (size_t argument = 0; argument < from->variablesAtTail.numberOfArguments(); ++argument) {
+            AbstractValue& destination = to->valuesAtHead.argument(argument);
+            changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.argument(argument), to->variablesAtHead.argument(argument), from->variablesAtTail.argument(argument));
+        }
+        
+        for (size_t local = 0; local < from->variablesAtTail.numberOfLocals(); ++local) {
+            AbstractValue& destination = to->valuesAtHead.local(local);
+            changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.local(local), to->variablesAtHead.local(local), from->variablesAtTail.local(local));
+        }
+        break;
     }
-    
-    for (size_t local = 0; local < from->variablesAtTail.numberOfLocals(); ++local) {
-        AbstractValue& destination = to->valuesAtHead.local(local);
-        changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.local(local), to->variablesAtHead.local(local), from->variablesAtTail.local(local));
+        
+    case SSA: {
+        for (size_t i = from->valuesAtTail.size(); i--;)
+            changed |= to->valuesAtHead[i].merge(from->valuesAtTail[i]);
+        
+        HashSet<Node*>::iterator iter = to->ssa->liveAtHead.begin();
+        HashSet<Node*>::iterator end = to->ssa->liveAtHead.end();
+        for (; iter != end; ++iter) {
+            Node* node = *iter;
+            changed |= to->ssa->valuesAtHead.find(node)->value.merge(
+                from->ssa->valuesAtTail.find(node)->value);
+        }
+        break;
+    }
+        
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
 
     if (!to->cfaHasVisited)

@@ -194,7 +194,10 @@ enum GraphForm {
     //
     // ThreadedCPS form is suitable for data flow analysis (CFA, prediction
     // propagation), register allocation, and code generation.
-    ThreadedCPS
+    ThreadedCPS,
+    
+    // SSA form. See DFGSSAConversionPhase.h for a description.
+    SSA
 };
 
 // Describes the state of the UnionFind structure of VariableAccessData's.
@@ -230,6 +233,19 @@ inline bool isProved(ProofStatus proofStatus)
 inline ProofStatus proofStatusForIsProved(bool isProved)
 {
     return isProved ? IsProved : NeedsCheck;
+}
+
+enum KillStatus { DoesNotKill, DoesKill };
+
+inline bool doesKill(KillStatus killStatus)
+{
+    ASSERT(killStatus == DoesNotKill || killStatus == DoesKill);
+    return killStatus == DoesKill;
+}
+
+inline KillStatus killStatusForDoesKill(bool doesKill)
+{
+    return doesKill ? DoesKill : DoesNotKill;
 }
 
 template<typename T, typename U>

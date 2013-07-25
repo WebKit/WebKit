@@ -81,24 +81,28 @@ public:
             V_EQUAL((static_cast<VirtualRegister>(i), 0), static_cast<Node*>(0), root->variablesAtHead.local(i));
         
         // Validate ref counts and uses.
-        HashMap<Node*, unsigned> myRefCounts;
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
-            if (!block || !block->isReachable)
+            if (!block)
                 continue;
+            VALIDATE((block), block->isReachable);
             for (size_t i = 0; i < block->numNodes(); ++i)
-                myRefCounts.add(block->node(i), 0);
+                m_myRefCounts.add(block->node(i), 0);
         }
-        HashSet<Node*> acceptableNodes;
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
-            if (!block || !block->isReachable)
+            if (!block)
                 continue;
             for (size_t i = 0; i < block->numNodes(); ++i) {
                 Node* node = block->node(i);
-                acceptableNodes.add(node);
+                m_acceptableNodes.add(node);
                 if (!node->shouldGenerate())
                     continue;
+                if (node->op() == Upsilon) {
+                    VALIDATE((node), m_graph.m_form == SSA);
+                    if (node->phi()->shouldGenerate())
+                        m_myRefCounts.find(node)->value++;
+                }
                 for (unsigned j = 0; j < m_graph.numChildren(node); ++j) {
                     // Phi children in LoadStore form are invalid.
                     if (m_graph.m_form == LoadStore && block->isPhiIndex(i))
@@ -108,22 +112,28 @@ public:
                     if (!edge)
                         continue;
                     
-                    myRefCounts.find(edge.node())->value++;
+                    m_myRefCounts.find(edge.node())->value++;
+                    
+                    if (m_graph.m_form == SSA) {
+                        // In SSA, all edges must hasResult().
+                        VALIDATE((node, edge), edge->hasResult());
+                        continue;
+                    }
                     
                     // Unless I'm a Flush, Phantom, GetLocal, or Phi, my children should hasResult().
                     switch (node->op()) {
                     case Flush:
                     case GetLocal:
-                        VALIDATE((node, edge), edge->hasVariableAccessData());
+                        VALIDATE((node, edge), edge->hasVariableAccessData(m_graph));
                         VALIDATE((node, edge), edge->variableAccessData() == node->variableAccessData());
                         break;
                     case PhantomLocal:
-                        VALIDATE((node, edge), edge->hasVariableAccessData());
+                        VALIDATE((node, edge), edge->hasVariableAccessData(m_graph));
                         VALIDATE((node, edge), edge->variableAccessData() == node->variableAccessData());
                         VALIDATE((node, edge), edge->op() != SetLocal);
                         break;
                     case Phi:
-                        VALIDATE((node, edge), edge->hasVariableAccessData());
+                        VALIDATE((node, edge), edge->hasVariableAccessData(m_graph));
                         if (m_graph.m_unificationState == LocallyUnified)
                             break;
                         VALIDATE((node, edge), edge->variableAccessData() == node->variableAccessData());
@@ -148,6 +158,9 @@ public:
                         case ThreadedCPS:
                             VALIDATE((node, edge), edge->hasResult());
                             break;
+                        case SSA:
+                            RELEASE_ASSERT_NOT_REACHED();
+                            break;
                         }
                         break;
                     default:
@@ -157,9 +170,44 @@ public:
                 }
             }
         }
+        
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
-            if (!block || !block->isReachable)
+            if (!block)
+                continue;
+            for (size_t i = 0; i < block->numNodes(); ++i) {
+                Node* node = block->node(i);
+                if (m_graph.m_refCountState == ExactRefCount)
+                    V_EQUAL((node), m_myRefCounts.get(node), node->adjustedRefCount());
+                else
+                    V_EQUAL((node), node->refCount(), 1);
+            }
+        }
+        
+        switch (m_graph.m_form) {
+        case LoadStore:
+        case ThreadedCPS:
+            validateCPS();
+            break;
+            
+        case SSA:
+            // FIXME: Implement SSA verification.
+            break;
+        }
+    }
+    
+private:
+    Graph& m_graph;
+    GraphDumpMode m_graphDumpMode;
+    
+    HashMap<Node*, unsigned> m_myRefCounts;
+    HashSet<Node*> m_acceptableNodes;
+    
+    void validateCPS()
+    {
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
                 continue;
             
             HashSet<Node*> phisInThisBlock;
@@ -170,15 +218,11 @@ public:
                 nodesInThisBlock.add(node);
                 if (block->isPhiIndex(i))
                     phisInThisBlock.add(node);
-                if (m_graph.m_refCountState == ExactRefCount)
-                    V_EQUAL((node), myRefCounts.get(node), node->adjustedRefCount());
-                else
-                    V_EQUAL((node), node->refCount(), 1);
                 for (unsigned j = 0; j < m_graph.numChildren(node); ++j) {
                     Edge edge = m_graph.child(node, j);
                     if (!edge)
                         continue;
-                    VALIDATE((node, edge), acceptableNodes.contains(edge.node()));
+                    VALIDATE((node, edge), m_acceptableNodes.contains(edge.node()));
                 }
             }
             
@@ -228,7 +272,6 @@ public:
                     for (unsigned k = 0; k < block->predecessors.size(); ++k) {
                         BasicBlock* prevBlock = block->predecessors[k];
                         VALIDATE((block->predecessors[k]), prevBlock);
-                        VALIDATE((block->predecessors[k]), prevBlock->isReachable);
                         Node* prevNode = prevBlock->variablesAtTail.operand(local);
                         // If we have a Phi that is not referring to *this* block then all predecessors
                         // must have that local available.
@@ -274,17 +317,17 @@ public:
                 block->variablesAtHead.numberOfLocals());
             
             for (size_t i = 0; i < block->variablesAtHead.numberOfArguments(); ++i) {
-                VALIDATE((static_cast<VirtualRegister>(argumentToOperand(i)), block), !block->variablesAtHead.argument(i) || block->variablesAtHead.argument(i)->hasVariableAccessData());
+                VALIDATE((static_cast<VirtualRegister>(argumentToOperand(i)), block), !block->variablesAtHead.argument(i) || block->variablesAtHead.argument(i)->hasVariableAccessData(m_graph));
                 if (m_graph.m_form == ThreadedCPS)
-                    VALIDATE((static_cast<VirtualRegister>(argumentToOperand(i)), block), !block->variablesAtTail.argument(i) || block->variablesAtTail.argument(i)->hasVariableAccessData());
+                    VALIDATE((static_cast<VirtualRegister>(argumentToOperand(i)), block), !block->variablesAtTail.argument(i) || block->variablesAtTail.argument(i)->hasVariableAccessData(m_graph));
                 
                 getLocalPositions.argument(i) = notSet;
                 setLocalPositions.argument(i) = notSet;
             }
             for (size_t i = 0; i < block->variablesAtHead.numberOfLocals(); ++i) {
-                VALIDATE((static_cast<VirtualRegister>(i), block), !block->variablesAtHead.local(i) || block->variablesAtHead.local(i)->hasVariableAccessData());
+                VALIDATE((static_cast<VirtualRegister>(i), block), !block->variablesAtHead.local(i) || block->variablesAtHead.local(i)->hasVariableAccessData(m_graph));
                 if (m_graph.m_form == ThreadedCPS)
-                    VALIDATE((static_cast<VirtualRegister>(i), block), !block->variablesAtTail.local(i) || block->variablesAtTail.local(i)->hasVariableAccessData());
+                    VALIDATE((static_cast<VirtualRegister>(i), block), !block->variablesAtTail.local(i) || block->variablesAtTail.local(i)->hasVariableAccessData(m_graph));
 
                 getLocalPositions.local(i) = notSet;
                 setLocalPositions.local(i) = notSet;
@@ -321,7 +364,7 @@ public:
                         break;
                     // Ignore GetLocal's that we know to be dead, but that the graph
                     // doesn't yet know to be dead.
-                    if (!myRefCounts.get(node))
+                    if (!m_myRefCounts.get(node))
                         break;
                     if (m_graph.m_form == ThreadedCPS)
                         VALIDATE((node, block), getLocalPositions.operand(node->local()) == notSet);
@@ -354,10 +397,6 @@ public:
             }
         }
     }
-    
-private:
-    Graph& m_graph;
-    GraphDumpMode m_graphDumpMode;
     
     void checkOperand(
         BasicBlock* block, Operands<size_t>& getLocalPositions,

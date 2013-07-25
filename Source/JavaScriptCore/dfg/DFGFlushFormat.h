@@ -23,75 +23,74 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGNode.h"
+#ifndef DFGFlushFormat_h
+#define DFGFlushFormat_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
-#include "DFGNodeAllocator.h"
+#include "DFGNodeFlags.h"
+#include "DFGUseKind.h"
+#include <wtf/PrintStream.h>
 
 namespace JSC { namespace DFG {
 
-unsigned Node::index() const
+enum FlushFormat {
+    DeadFlush,
+    FlushedInt32,
+    FlushedDouble,
+    FlushedCell,
+    FlushedBoolean,
+    FlushedJSValue
+};
+
+inline NodeFlags resultFor(FlushFormat format)
 {
-    return NodeAllocator::allocatorOf(this)->indexOf(this);
+    switch (format) {
+    case DeadFlush:
+    case FlushedJSValue:
+    case FlushedCell:
+        return NodeResultJS;
+    case FlushedInt32:
+        return NodeResultInt32;
+    case FlushedDouble:
+        return NodeResultNumber;
+    case FlushedBoolean:
+        return NodeResultBoolean;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
 }
 
-bool Node::hasVariableAccessData(Graph& graph)
+inline UseKind useKindFor(FlushFormat format)
 {
-    switch (op()) {
-    case Phi:
-        return graph.m_form != SSA;
-    case GetLocal:
-    case GetArgument:
-    case SetLocal:
-    case MovHint:
-    case MovHintAndCheck:
-    case ZombieHint:
-    case SetArgument:
-    case Flush:
-    case PhantomLocal:
-        return true;
-    default:
-        return false;
+    switch (format) {
+    case DeadFlush:
+    case FlushedJSValue:
+        return UntypedUse;
+    case FlushedCell:
+        return CellUse;
+    case FlushedInt32:
+        return Int32Use;
+    case FlushedDouble:
+        return NumberUse;
+    case FlushedBoolean:
+        return BooleanUse;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return UntypedUse;
 }
 
 } } // namespace JSC::DFG
 
 namespace WTF {
 
-using namespace JSC;
-using namespace JSC::DFG;
-
-void printInternal(PrintStream& out, SwitchKind kind)
-{
-    switch (kind) {
-    case SwitchImm:
-        out.print("SwitchImm");
-        return;
-    case SwitchChar:
-        out.print("SwitchChar");
-        return;
-    case SwitchString:
-        out.print("SwitchString");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void printInternal(PrintStream& out, Node* node)
-{
-    if (!node) {
-        out.print("-");
-        return;
-    }
-    out.print("@", node->index());
-    out.print(AbbreviatedSpeculationDump(node->prediction()));
-}
+void printInternal(PrintStream&, JSC::DFG::FlushFormat);
 
 } // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGFlushFormat_h
 

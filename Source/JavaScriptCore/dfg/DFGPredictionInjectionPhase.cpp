@@ -81,7 +81,7 @@ public:
                     m_graph.m_plan.mustHandleValues.operandForIndex(i));
                 if (!node)
                     continue;
-                ASSERT(node->hasLocal());
+                ASSERT(node->hasLocal(m_graph));
                 node->variableAccessData()->predict(
                     speculationFromValue(m_graph.m_plan.mustHandleValues[i]));
             }

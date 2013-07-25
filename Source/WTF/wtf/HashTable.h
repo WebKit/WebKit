@@ -1173,6 +1173,8 @@ namespace WTF {
     {
         // Copy the hash table the dumb way, by adding each element to the new table.
         // It might be more efficient to copy the table slots, but it's not clear that efficiency is needed.
+        // FIXME: It's likely that this can be improved, for static analyses that use
+        // HashSets. https://bugs.webkit.org/show_bug.cgi?id=118455
         const_iterator end = other.end();
         for (const_iterator it = other.begin(); it != end; ++it)
             add(*it);
@@ -1212,6 +1214,8 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>& HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::operator=(const HashTable& other)
     {
+        // FIXME: It's likely that this can be improved, for static analyses that use
+        // HashSets. https://bugs.webkit.org/show_bug.cgi?id=118455
         HashTable tmp(other);
         swap(tmp);
         return *this;

@@ -48,17 +48,15 @@ void printInternal(PrintStream& out, OptimizationFixpointState state)
     switch (state) {
     case BeforeFixpoint:
         out.print("BeforeFixpoint");
-        break;
+        return;
     case FixpointNotConverged:
         out.print("FixpointNotConverged");
-        break;
+        return;
     case FixpointConverged:
         out.print("FixpointConverged");
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
+        return;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void printInternal(PrintStream& out, GraphForm form)
@@ -66,14 +64,15 @@ void printInternal(PrintStream& out, GraphForm form)
     switch (form) {
     case LoadStore:
         out.print("LoadStore");
-        break;
+        return;
     case ThreadedCPS:
         out.print("ThreadedCPS");
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
+        return;
+    case SSA:
+        out.print("SSA");
+        return;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void printInternal(PrintStream& out, UnificationState state)
@@ -81,14 +80,12 @@ void printInternal(PrintStream& out, UnificationState state)
     switch (state) {
     case LocallyUnified:
         out.print("LocallyUnified");
-        break;
+        return;
     case GloballyUnified:
         out.print("GloballyUnified");
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
+        return;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void printInternal(PrintStream& out, RefCountState state)
@@ -96,14 +93,12 @@ void printInternal(PrintStream& out, RefCountState state)
     switch (state) {
     case EverythingIsLive:
         out.print("EverythingIsLive");
-        break;
+        return;
     case ExactRefCount:
         out.print("ExactRefCount");
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
+        return;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void printInternal(PrintStream& out, ProofStatus status)
@@ -111,14 +106,12 @@ void printInternal(PrintStream& out, ProofStatus status)
     switch (status) {
     case IsProved:
         out.print("IsProved");
-        break;
+        return;
     case NeedsCheck:
         out.print("NeedsCheck");
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
+        return;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WTF

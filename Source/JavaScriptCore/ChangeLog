@@ -1,3 +1,349 @@
+2013-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should have an SSA form for use by FTL
+        https://bugs.webkit.org/show_bug.cgi?id=118338
+
+        Reviewed by Mark Hahnenberg.
+        
+        Adds an SSA form to the DFG. We can convert ThreadedCPS form into SSA form
+        after breaking critical edges. The conversion algorithm follows Aycock and
+        Horspool, and the SSA form itself follows something I've done before, where
+        instead of having Phi functions specify input nodes corresponding to block
+        predecessors, we instead have Upsilon functions in the predecessors that
+        specify which value in that block goes into which subsequent Phi. Upsilons
+        don't have to dominate Phis (usually they don't) and they correspond to a
+        non-SSA "mov" into the Phi's "variable". This gives all of the good
+        properties of SSA, while ensuring that a bunch of CFG transformations don't
+        have to be SSA-aware.
+        
+        So far the only DFG phases that are SSA-aware are DCE and CFA. CFG
+        simplification is probably SSA-aware by default, though I haven't tried it.
+        Constant folding probably needs a few tweaks, but is likely ready. Ditto
+        for CSE, though it's not clear that we'd want to use block-local CSE when
+        we could be doing GVN.
+        
+        Currently only the FTL can generate code from the SSA form, and there is no
+        way to convert from SSA to ThreadedCPS or LoadStore. There probably will
+        never be such a capability.
+        
+        In order to handle OSR exit state in the SSA, we place MovHints at Phi
+        points. Other than that, you can reconstruct state-at-exit by forward
+        propagating MovHints. Note that MovHint is the new SetLocal in SSA.
+        SetLocal and GetLocal only survive into SSA if they are on captured
+        variables, or in the case of flushes. A "live SetLocal" will be
+        NodeMustGenerate and will always correspond to a flush. Computing the
+        state-at-exit requires running SSA liveness analysis, OSR availability
+        analysis, and flush liveness analysis. The FTL runs all of these prior to
+        generating code. While OSR exit continues to be tricky, much of the logic
+        is now factored into separate phases and the backend has to do less work
+        to reason about what happened outside of the basic block that is being
+        lowered.
+        
+        Conversion from DFG SSA to LLVM SSA is done by ensuring that we generate
+        code in depth-first order, thus guaranteeing that a node will always be
+        lowered (and hence have a LValue) before any of the blocks dominated by
+        that node's block have code generated. For Upsilon/Phi, we just use
+        alloca's. We could do something more clever there, but it's probably not
+        worth it, at least not now.
+        
+        Finally, while the SSA form is currently only being converted to LLVM IR,
+        there is nothing that prevents us from considering other backends in the
+        future - with the caveat that this form is designed to be first lowered to
+        a lower-level SSA before actual machine code generation commences. So we
+        ought to either use LLVM (the intended path) or we will have to write our
+        own SSA low-level backend.
+        
+        This runs all of the code that the FTL was known to run previously. No
+        change in performance for now. But it does open some exciting
+        possibilities!
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Operands.h:
+        (JSC::OperandValueTraits::dump):
+        (JSC::Operands::fill):
+        (Operands):
+        (JSC::Operands::clear):
+        (JSC::Operands::operator==):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::beginBasicBlock):
+        (JSC::DFG::setLiveValues):
+        (DFG):
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::executeEffects):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        (JSC::DFG::AbstractState::merge):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        * dfg/DFGAdjacencyList.h:
+        (JSC::DFG::AdjacencyList::justOneChild):
+        (AdjacencyList):
+        * dfg/DFGBasicBlock.cpp: Added.
+        (DFG):
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (JSC::DFG::BasicBlock::~BasicBlock):
+        (JSC::DFG::BasicBlock::ensureLocals):
+        (JSC::DFG::BasicBlock::isInPhis):
+        (JSC::DFG::BasicBlock::isInBlock):
+        (JSC::DFG::BasicBlock::removePredecessor):
+        (JSC::DFG::BasicBlock::replacePredecessor):
+        (JSC::DFG::BasicBlock::dump):
+        (JSC::DFG::BasicBlock::SSAData::SSAData):
+        (JSC::DFG::BasicBlock::SSAData::~SSAData):
+        * dfg/DFGBasicBlock.h:
+        (BasicBlock):
+        (JSC::DFG::BasicBlock::operator[]):
+        (JSC::DFG::BasicBlock::successor):
+        (JSC::DFG::BasicBlock::successorForCondition):
+        (SSAData):
+        * dfg/DFGBasicBlockInlines.h:
+        (DFG):
+        * dfg/DFGBlockInsertionSet.cpp: Added.
+        (DFG):
+        (JSC::DFG::BlockInsertionSet::BlockInsertionSet):
+        (JSC::DFG::BlockInsertionSet::~BlockInsertionSet):
+        (JSC::DFG::BlockInsertionSet::insert):
+        (JSC::DFG::BlockInsertionSet::insertBefore):
+        (JSC::DFG::BlockInsertionSet::execute):
+        * dfg/DFGBlockInsertionSet.h: Added.
+        (DFG):
+        (BlockInsertionSet):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlock):
+        * dfg/DFGCommon.cpp:
+        (WTF::printInternal):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::doesKill):
+        (DFG):
+        (JSC::DFG::killStatusForDoesKill):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::isCapturedAtOrAfter):
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp: Added.
+        (DFG):
+        (CriticalEdgeBreakingPhase):
+        (JSC::DFG::CriticalEdgeBreakingPhase::CriticalEdgeBreakingPhase):
+        (JSC::DFG::CriticalEdgeBreakingPhase::run):
+        (JSC::DFG::CriticalEdgeBreakingPhase::breakCriticalEdge):
+        (JSC::DFG::performCriticalEdgeBreaking):
+        * dfg/DFGCriticalEdgeBreakingPhase.h: Added.
+        (DFG):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        (JSC::DFG::DCEPhase::findTypeCheckRoot):
+        (JSC::DFG::DCEPhase::countNode):
+        (DCEPhase):
+        (JSC::DFG::DCEPhase::countEdge):
+        (JSC::DFG::DCEPhase::eliminateIrrelevantPhantomChildren):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGEdge.cpp:
+        (JSC::DFG::Edge::dump):
+        * dfg/DFGEdge.h:
+        (JSC::DFG::Edge::Edge):
+        (JSC::DFG::Edge::setNode):
+        (JSC::DFG::Edge::useKindUnchecked):
+        (JSC::DFG::Edge::setUseKind):
+        (JSC::DFG::Edge::setProofStatus):
+        (JSC::DFG::Edge::willNotHaveCheck):
+        (JSC::DFG::Edge::willHaveCheck):
+        (Edge):
+        (JSC::DFG::Edge::killStatusUnchecked):
+        (JSC::DFG::Edge::killStatus):
+        (JSC::DFG::Edge::setKillStatus):
+        (JSC::DFG::Edge::doesKill):
+        (JSC::DFG::Edge::doesNotKill):
+        (JSC::DFG::Edge::shift):
+        (JSC::DFG::Edge::makeWord):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGFlushFormat.cpp: Added.
+        (WTF):
+        (WTF::printInternal):
+        * dfg/DFGFlushFormat.h: Added.
+        (DFG):
+        (JSC::DFG::resultFor):
+        (JSC::DFG::useKindFor):
+        (WTF):
+        * dfg/DFGFlushLivenessAnalysisPhase.cpp: Added.
+        (DFG):
+        (FlushLivenessAnalysisPhase):
+        (JSC::DFG::FlushLivenessAnalysisPhase::FlushLivenessAnalysisPhase):
+        (JSC::DFG::FlushLivenessAnalysisPhase::run):
+        (JSC::DFG::FlushLivenessAnalysisPhase::process):
+        (JSC::DFG::FlushLivenessAnalysisPhase::setForNode):
+        (JSC::DFG::FlushLivenessAnalysisPhase::flushFormat):
+        (JSC::DFG::performFlushLivenessAnalysis):
+        * dfg/DFGFlushLivenessAnalysisPhase.h: Added.
+        (DFG):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (DFG):
+        (JSC::DFG::Graph::addForDepthFirstSort):
+        (JSC::DFG::Graph::getBlocksInDepthFirstOrder):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::convertToConstant):
+        (JSC::DFG::Graph::valueProfileFor):
+        (Graph):
+        * dfg/DFGInsertionSet.h:
+        (DFG):
+        (JSC::DFG::InsertionSet::execute):
+        * dfg/DFGLivenessAnalysisPhase.cpp: Added.
+        (DFG):
+        (LivenessAnalysisPhase):
+        (JSC::DFG::LivenessAnalysisPhase::LivenessAnalysisPhase):
+        (JSC::DFG::LivenessAnalysisPhase::run):
+        (JSC::DFG::LivenessAnalysisPhase::process):
+        (JSC::DFG::LivenessAnalysisPhase::addChildUse):
+        (JSC::DFG::performLivenessAnalysis):
+        * dfg/DFGLivenessAnalysisPhase.h: Added.
+        (DFG):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::hasVariableAccessData):
+        (DFG):
+        * dfg/DFGNode.h:
+        (DFG):
+        (Node):
+        (JSC::DFG::Node::hasLocal):
+        (JSC::DFG::Node::variableAccessData):
+        (JSC::DFG::Node::hasPhi):
+        (JSC::DFG::Node::phi):
+        (JSC::DFG::Node::takenBlock):
+        (JSC::DFG::Node::notTakenBlock):
+        (JSC::DFG::Node::successor):
+        (JSC::DFG::Node::successorForCondition):
+        (JSC::DFG::nodeComparator):
+        (JSC::DFG::nodeListDump):
+        (JSC::DFG::nodeMapDump):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp: Added.
+        (DFG):
+        (OSRAvailabilityAnalysisPhase):
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::OSRAvailabilityAnalysisPhase):
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        (JSC::DFG::performOSRAvailabilityAnalysis):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.h: Added.
+        (DFG):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSSAConversionPhase.cpp: Added.
+        (DFG):
+        (SSAConversionPhase):
+        (JSC::DFG::SSAConversionPhase::SSAConversionPhase):
+        (JSC::DFG::SSAConversionPhase::run):
+        (JSC::DFG::SSAConversionPhase::forwardPhiChildren):
+        (JSC::DFG::SSAConversionPhase::forwardPhi):
+        (JSC::DFG::SSAConversionPhase::forwardPhiEdge):
+        (JSC::DFG::SSAConversionPhase::deduplicateChildren):
+        (JSC::DFG::SSAConversionPhase::addFlushedLocalOp):
+        (JSC::DFG::SSAConversionPhase::addFlushedLocalEdge):
+        (JSC::DFG::performSSAConversion):
+        * dfg/DFGSSAConversionPhase.h: Added.
+        (DFG):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        (Validate):
+        (JSC::DFG::Validate::validateCPS):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::flushFormat):
+        (VariableAccessData):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::createPhiVariables):
+        (JSC::FTL::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileUpsilon):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compilePhi):
+        (JSC::FTL::LowerDFGToLLVM::compileJSConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileWeakJSConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArgument):
+        (JSC::FTL::LowerDFGToLLVM::compileGetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileAdd):
+        (JSC::FTL::LowerDFGToLLVM::compileArithSub):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileArithDiv):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMod):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMinOrMax):
+        (JSC::FTL::LowerDFGToLLVM::compileArithAbs):
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+        (JSC::FTL::LowerDFGToLLVM::compileBitAnd):
+        (JSC::FTL::LowerDFGToLLVM::compileBitOr):
+        (JSC::FTL::LowerDFGToLLVM::compileBitXor):
+        (JSC::FTL::LowerDFGToLLVM::compileBitRShift):
+        (JSC::FTL::LowerDFGToLLVM::compileBitLShift):
+        (JSC::FTL::LowerDFGToLLVM::compileBitURShift):
+        (JSC::FTL::LowerDFGToLLVM::compileUInt32ToNumber):
+        (JSC::FTL::LowerDFGToLLVM::compileInt32ToDouble):
+        (JSC::FTL::LowerDFGToLLVM::compileGetButterfly):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArrayLength):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileGetGlobalVar):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEqConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEqConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareLess):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareLessEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareGreater):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareGreaterEq):
+        (JSC::FTL::LowerDFGToLLVM::compileLogicalNot):
+        (JSC::FTL::LowerDFGToLLVM::speculateBackward):
+        (JSC::FTL::LowerDFGToLLVM::lowInt32):
+        (JSC::FTL::LowerDFGToLLVM::lowCell):
+        (JSC::FTL::LowerDFGToLLVM::lowBoolean):
+        (JSC::FTL::LowerDFGToLLVM::lowDouble):
+        (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+        (JSC::FTL::LowerDFGToLLVM::lowStorage):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateBoolean):
+        (JSC::FTL::LowerDFGToLLVM::isLive):
+        (JSC::FTL::LowerDFGToLLVM::use):
+        (JSC::FTL::LowerDFGToLLVM::initializeOSRExitStateForBlock):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+        (JSC::FTL::LowerDFGToLLVM::linkOSRExitsAndCompleteInitializationBlocks):
+        (JSC::FTL::LowerDFGToLLVM::setInt32):
+        (JSC::FTL::LowerDFGToLLVM::setJSValue):
+        (JSC::FTL::LowerDFGToLLVM::setBoolean):
+        (JSC::FTL::LowerDFGToLLVM::setStorage):
+        (JSC::FTL::LowerDFGToLLVM::setDouble):
+        (JSC::FTL::LowerDFGToLLVM::isValid):
+        * ftl/FTLLoweredNodeValue.h: Added.
+        (FTL):
+        (LoweredNodeValue):
+        (JSC::FTL::LoweredNodeValue::LoweredNodeValue):
+        (JSC::FTL::LoweredNodeValue::isSet):
+        (JSC::FTL::LoweredNodeValue::operator!):
+        (JSC::FTL::LoweredNodeValue::value):
+        (JSC::FTL::LoweredNodeValue::block):
+        * ftl/FTLValueFromBlock.h:
+        (JSC::FTL::ValueFromBlock::ValueFromBlock):
+        (ValueFromBlock):
+        * ftl/FTLValueSource.cpp:
+        (JSC::FTL::ValueSource::dump):
+        * ftl/FTLValueSource.h:
+
 2013-07-11  Mark Lam  <mark.lam@apple.com>
 
         Resurrect the CLoop LLINT on the FTL branch.

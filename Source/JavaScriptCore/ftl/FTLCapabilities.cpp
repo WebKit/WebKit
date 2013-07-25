@@ -82,6 +82,8 @@ inline bool canCompile(Node* node)
     case Jump:
     case ForceOSRExit:
     case ForwardForceOSRExit:
+    case Phi:
+    case Upsilon:
         // These are OK.
         break;
     case GetArrayLength:

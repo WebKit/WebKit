@@ -82,12 +82,19 @@ namespace WTF {
         //   static bool equal(const ValueType&, const T&);
         //   static translate(ValueType&, const T&, unsigned hashCode);
         template<typename HashTranslator, typename T> AddResult add(const T&);
+        
+        // Attempts to add a list of things to the set. Returns true if any of
+        // them are new to the set. Returns false if the set is unchanged.
+        template<typename IteratorType>
+        bool add(IteratorType begin, IteratorType end);
 
         void remove(const ValueType&);
         void remove(iterator);
         void clear();
 
         static bool isValidValue(const ValueType&);
+        
+        bool operator==(const HashSet&) const;
 
     private:
         friend void deleteAllValues<>(const HashSet&);
@@ -187,6 +194,16 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V>
+    template<typename IteratorType>
+    inline bool HashSet<T, U, V>::add(IteratorType begin, IteratorType end)
+    {
+        bool changed = false;
+        for (IteratorType iter = begin; iter != end; ++iter)
+            changed |= add(*iter).isNewEntry;
+        return changed;
+    }
+
+    template<typename T, typename U, typename V>
     inline void HashSet<T, U, V>::remove(iterator it)
     {
         if (it.m_impl == m_impl.end())
@@ -251,6 +268,18 @@ namespace WTF {
         for (unsigned i = 0; it != end; ++it, ++i)
             vector[i] = *it;
     }  
+
+    template<typename T, typename U, typename V>
+    inline bool HashSet<T, U, V>::operator==(const HashSet& other) const
+    {
+        if (size() != other.size())
+            return false;
+        for (const_iterator iter = begin(); iter != end(); ++iter) {
+            if (!other.contains(*iter))
+                return false;
+        }
+        return true;
+    }
 
 } // namespace WTF
 

@@ -83,6 +83,22 @@ CString toCString(const T1& value1, const T2& value2, const T3& value3, const T4
     return stream.toCString();
 }
 
+template<typename T1, typename T2, typename T3, typename T4, typename T5>
+CString toCString(const T1& value1, const T2& value2, const T3& value3, const T4& value4, const T5& value5)
+{
+    StringPrintStream stream;
+    stream.print(value1, value2, value3, value4, value5);
+    return stream.toCString();
+}
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
+CString toCString(const T1& value1, const T2& value2, const T3& value3, const T4& value4, const T5& value5, const T6& value6)
+{
+    StringPrintStream stream;
+    stream.print(value1, value2, value3, value4, value5, value6);
+    return stream.toCString();
+}
+
 template<typename T>
 String toString(const T& value)
 {

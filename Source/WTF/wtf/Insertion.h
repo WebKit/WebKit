@@ -23,75 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGNode.h"
-
-#if ENABLE(DFG_JIT)
-
-#include "DFGGraph.h"
-#include "DFGNodeAllocator.h"
-
-namespace JSC { namespace DFG {
-
-unsigned Node::index() const
-{
-    return NodeAllocator::allocatorOf(this)->indexOf(this);
-}
-
-bool Node::hasVariableAccessData(Graph& graph)
-{
-    switch (op()) {
-    case Phi:
-        return graph.m_form != SSA;
-    case GetLocal:
-    case GetArgument:
-    case SetLocal:
-    case MovHint:
-    case MovHintAndCheck:
-    case ZombieHint:
-    case SetArgument:
-    case Flush:
-    case PhantomLocal:
-        return true;
-    default:
-        return false;
-    }
-}
-
-} } // namespace JSC::DFG
+#ifndef Insertion_h
+#define Insertion_h
 
 namespace WTF {
 
-using namespace JSC;
-using namespace JSC::DFG;
-
-void printInternal(PrintStream& out, SwitchKind kind)
-{
-    switch (kind) {
-    case SwitchImm:
-        out.print("SwitchImm");
-        return;
-    case SwitchChar:
-        out.print("SwitchChar");
-        return;
-    case SwitchString:
-        out.print("SwitchString");
-        return;
+template<typename T>
+class Insertion {
+public:
+    Insertion() { }
+    
+    Insertion(size_t index, T element)
+        : m_index(index)
+        , m_element(element)
+    {
     }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-void printInternal(PrintStream& out, Node* node)
-{
-    if (!node) {
-        out.print("-");
-        return;
+    
+    size_t index() const { return m_index; }
+    T element() const { return m_element; }
+    
+    bool operator<(const Insertion& other) const
+    {
+        return m_index < other.m_index;
     }
-    out.print("@", node->index());
-    out.print(AbbreviatedSpeculationDump(node->prediction()));
+    
+private:
+    size_t m_index;
+    T m_element;
+};
+
+template<typename TargetVectorType, typename InsertionVectorType>
+void executeInsertions(TargetVectorType& target, InsertionVectorType& insertions)
+{
+    if (!insertions.size())
+        return;
+    target.grow(target.size() + insertions.size());
+    size_t lastIndex = target.size();
+    for (size_t indexInInsertions = insertions.size(); indexInInsertions--;) {
+        size_t firstIndex = insertions[indexInInsertions].index() + indexInInsertions;
+        size_t indexOffset = indexInInsertions + 1;
+        for (size_t i = lastIndex; --i > firstIndex;)
+            target[i] = target[i - indexOffset];
+        target[firstIndex] = insertions[indexInInsertions].element();
+        lastIndex = firstIndex;
+    }
+    insertions.resize(0);
 }
 
 } // namespace WTF
 
-#endif // ENABLE(DFG_JIT)
+using WTF::Insertion;
+using WTF::executeInsertions;
 
+#endif // Insertion_h

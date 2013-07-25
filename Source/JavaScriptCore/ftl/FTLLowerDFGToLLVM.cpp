@@ -33,15 +33,19 @@
 #include "FTLAbstractHeapRepository.h"
 #include "FTLExitThunkGenerator.h"
 #include "FTLFormattedValue.h"
+#include "FTLLoweredNodeValue.h"
 #include "FTLOutput.h"
 #include "FTLThunks.h"
 #include "FTLValueSource.h"
 #include "LinkBuffer.h"
 #include "Operations.h"
+#include <wtf/ProcessID.h>
 
 namespace JSC { namespace FTL {
 
 using namespace DFG;
+
+static int compileCounter;
 
 // Using this instead of typeCheck() helps to reduce the load on LLVM, by creating
 // significantly less dead code.
@@ -61,10 +65,6 @@ public:
         , m_ftlState(state)
         , m_heaps(state.context)
         , m_out(state.context)
-        , m_localsBoolean(OperandsLike, state.graph.block(0)->variablesAtHead)
-        , m_locals32(OperandsLike, state.graph.block(0)->variablesAtHead)
-        , m_locals64(OperandsLike, state.graph.block(0)->variablesAtHead)
-        , m_localsDouble(OperandsLike, state.graph.block(0)->variablesAtHead)
         , m_valueSources(OperandsLike, state.graph.block(0)->variablesAtHead)
         , m_lastSetOperand(std::numeric_limits<int>::max())
         , m_exitThunkGenerator(state)
@@ -74,26 +74,30 @@ public:
     
     void lower()
     {
+        CString name;
+        if (verboseCompilationEnabled()) {
+            name = toCString(
+                "jsBody_", atomicIncrement(&compileCounter), "_", codeBlock()->inferredName(),
+                "_", codeBlock()->hash());
+        } else
+            name = "jsBody";
+        
+        m_graph.m_dominators.computeIfNecessary(m_graph);
+        
         m_ftlState.module =
-            LLVMModuleCreateWithNameInContext("jsBody", m_ftlState.context);
+            LLVMModuleCreateWithNameInContext(name.data(), m_ftlState.context);
         
         m_ftlState.function = addFunction(
-            m_ftlState.module, "jsBody", functionType(m_out.int64, m_out.intPtr));
+            m_ftlState.module, name.data(), functionType(m_out.int64, m_out.intPtr));
         setFunctionCallingConv(m_ftlState.function, LLVMCCallConv);
         
         m_out.initialize(m_ftlState.module, m_ftlState.function, m_heaps);
         
         m_prologue = appendBasicBlock(m_ftlState.context, m_ftlState.function);
         m_out.appendTo(m_prologue);
-        for (unsigned index = m_localsBoolean.size(); index--;) {
-            m_localsBoolean[index] = buildAlloca(m_out.m_builder, m_out.boolean);
-            m_locals32[index] = buildAlloca(m_out.m_builder, m_out.int32);
-            m_locals64[index] = buildAlloca(m_out.m_builder, m_out.int64);
-            m_localsDouble[index] = buildAlloca(m_out.m_builder, m_out.doubleType);
-        }
+        createPhiVariables();
         
         m_initialization = appendBasicBlock(m_ftlState.context, m_ftlState.function);
-        m_argumentChecks = appendBasicBlock(m_ftlState.context, m_ftlState.function);
 
         m_callFrame = m_out.param(0);
         m_tagTypeNumber = m_out.constInt64(TagTypeNumber);
@@ -104,23 +108,19 @@ public:
             if (!m_highBlock)
                 continue;
             m_blocks.add(m_highBlock, FTL_NEW_BLOCK(m_out, ("Block ", *m_highBlock)));
-            addFlushedLocalOpRoots();
         }
         
-        closeOverFlushedLocalOps();
-        
-        m_out.appendTo(m_argumentChecks, lowBlock(m_graph.block(0)));
-
-        transferAndCheckArguments();
-        
-        m_out.jump(lowBlock(m_graph.block(0)));
-        
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
-            compileBlock(blockIndex);
+        Vector<BasicBlock*> depthFirst;
+        m_graph.getBlocksInDepthFirstOrder(depthFirst);
+        for (unsigned i = 0; i < depthFirst.size(); ++i)
+            compileBlock(depthFirst[i]);
         
         // And now complete the initialization block.
         linkOSRExitsAndCompleteInitializationBlocks();
 
+        if (Options::dumpLLVMIR())
+            dumpModule(m_ftlState.module);
+        
         if (verboseCompilationEnabled())
             m_ftlState.dumpState("after lowering");
         if (validationEnabled())
@@ -129,99 +129,53 @@ public:
 
 private:
     
-    void addFlushedLocalOpRoots()
+    void createPhiVariables()
     {
-        for (unsigned nodeIndex = m_highBlock->size(); nodeIndex--;) {
-            Node* node = m_highBlock->at(nodeIndex);
-            if (node->op() != Flush)
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
                 continue;
-            addFlushedLocalOp(node);
-        }
-    }
-    
-    void closeOverFlushedLocalOps()
-    {
-        while (!m_flushedLocalOpWorklist.isEmpty()) {
-            Node* node = m_flushedLocalOpWorklist.last();
-            m_flushedLocalOpWorklist.removeLast();
-            
-            ASSERT(m_flushedLocalOps.contains(node));
-            
-            DFG_NODE_DO_TO_CHILDREN(m_graph, node, addFlushedLocalEdge);
-        }
-    }
-    
-    void addFlushedLocalOp(Node* node)
-    {
-        if (m_flushedLocalOps.contains(node))
-            return;
-        m_flushedLocalOps.add(node);
-        m_flushedLocalOpWorklist.append(node);
-    }
-    void addFlushedLocalEdge(Node*, Edge edge)
-    {
-        addFlushedLocalOp(edge.node());
-    }
-    
-    void transferAndCheckArguments()
-    {
-        // While checking arguments, everything is in the stack.
-        for (unsigned i = m_valueSources.size(); i--;)
-            m_valueSources[i] = ValueSource(ValueInJSStack);
-        
-        m_codeOrigin = CodeOrigin(0);
-        m_node = 0;
-        
-        for (int i = 0; i < m_graph.m_codeBlock->numParameters(); ++i) {
-            Node* node = m_graph.m_arguments[i];
-            if (!node->shouldGenerate())
-                continue;
-            
-            VariableAccessData* variable = node->variableAccessData();
-            // If it's captured then we'll be accessing it through loads and stores
-            // anyway - there's no point in transfering it out.
-            if (variable->isCaptured())
-                continue;
-            
-            LValue jsValue = m_out.load64(addressFor(variable->local()));
-            
-            if (variable->shouldUnboxIfPossible()) {
-                RELEASE_ASSERT(!variable->shouldUseDoubleFormat());
-                
-                SpeculatedType prediction = variable->argumentAwarePrediction();
-                
-                if (isInt32Speculation(prediction)) {
-                    speculateBackward(BadType, jsValueValue(jsValue), node, isNotInt32(jsValue));
-                    m_out.set(unboxInt32(jsValue), m_locals32.operand(variable->local()));
+            for (unsigned nodeIndex = block->size(); nodeIndex--;) {
+                Node* node = block->at(nodeIndex);
+                if (node->op() != Phi)
                     continue;
+                LType type;
+                switch (node->flags() & NodeResultMask) {
+                case NodeResultNumber:
+                    type = m_out.doubleType;
+                    break;
+                case NodeResultInt32:
+                    type = m_out.int32;
+                    break;
+                case NodeResultBoolean:
+                    type = m_out.boolean;
+                    break;
+                case NodeResultJS:
+                    type = m_out.int64;
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
                 }
-                
-                if (isCellSpeculation(prediction)) {
-                    speculateBackward(BadType, jsValueValue(jsValue), node, isNotCell(jsValue));
-                    m_out.set(jsValue, m_locals64.operand(variable->local()));
-                    continue;
-                }
-                if (isBooleanSpeculation(prediction)) {
-                    speculateBackward(BadType, jsValueValue(jsValue), node, isNotBoolean(jsValue));
-                    m_out.set(unboxBoolean(jsValue), m_localsBoolean.operand(variable->local()));
-                    continue;
-                }
+                m_phis.add(node, buildAlloca(m_out.m_builder, type));
             }
-            
-            m_out.set(jsValue, m_locals64.operand(variable->local()));
         }
     }
     
-    void compileBlock(BlockIndex blockIndex)
+    void compileBlock(BasicBlock* block)
     {
-        m_highBlock = m_graph.block(blockIndex);
-        if (!m_highBlock)
+        if (!block)
             return;
+        
+        if (verboseCompilationEnabled())
+            dataLog("Compiling block ", *block, "\n");
+        
+        m_highBlock = block;
         
         LBasicBlock lowBlock = m_blocks.get(m_highBlock);
         
         m_nextHighBlock = 0;
-        for (BlockIndex nextBlockIndex = blockIndex + 1; nextBlockIndex < m_graph.numBlocks(); ++nextBlockIndex) {
+        for (BlockIndex nextBlockIndex = m_highBlock->index + 1; nextBlockIndex < m_graph.numBlocks(); ++nextBlockIndex) {
             m_nextHighBlock = m_graph.block(nextBlockIndex);
             if (m_nextHighBlock)
                 break;
@@ -241,11 +195,7 @@ private:
         
         initializeOSRExitStateForBlock();
         
-        m_int32Values.clear();
-        m_jsValueValues.clear();
-        m_booleanValues.clear();
-        m_storageValues.clear();
-        m_timeToLive.clear();
+        m_live = block->ssa->liveAtHead;
         
         m_state.reset();
         m_state.beginBasicBlock(m_highBlock);
@@ -274,11 +224,20 @@ private:
         m_direction = (m_node->flags() & NodeExitsForward) ? ForwardSpeculation : BackwardSpeculation;
         
         switch (m_node->op()) {
+        case Upsilon:
+            compileUpsilon();
+            break;
+        case Phi:
+            compilePhi();
+            break;
         case JSConstant:
             compileJSConstant();
             break;
         case WeakJSConstant:
             compileWeakJSConstant();
+            break;
+        case GetArgument:
+            compileGetArgument();
             break;
         case GetLocal:
             compileGetLocal();
@@ -445,8 +404,8 @@ private:
         if (m_node->shouldGenerate())
             DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, use);
         
-        if (m_node->hasResult())
-            m_timeToLive.add(m_node, m_node->adjustedRefCount());
+        if (m_node->adjustedRefCount())
+            m_live.add(m_node);
         
         if (shouldExecuteEffects)
             m_state.executeEffects(nodeIndex);
@@ -454,73 +413,111 @@ private:
         return true;
     }
     
+    void compileUpsilon()
+    {
+        LValue destination = m_phis.get(m_node->phi());
+        
+        switch (m_node->child1().useKind()) {
+        case NumberUse:
+            m_out.set(lowDouble(m_node->child1()), destination);
+            break;
+        case Int32Use:
+            m_out.set(lowInt32(m_node->child1()), destination);
+            break;
+        case BooleanUse:
+            m_out.set(lowBoolean(m_node->child1()), destination);
+            break;
+        case CellUse:
+            m_out.set(lowCell(m_node->child1()), destination);
+            break;
+        case UntypedUse:
+            m_out.set(lowJSValue(m_node->child1()), destination);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+    
+    void compilePhi()
+    {
+        LValue source = m_phis.get(m_node);
+        
+        switch (m_node->flags() & NodeResultMask) {
+        case NodeResultNumber:
+            setDouble(m_out.get(source));
+            break;
+        case NodeResultInt32:
+            setInt32(m_out.get(source));
+            break;
+        case NodeResultBoolean:
+            setBoolean(m_out.get(source));
+            break;
+        case NodeResultJS:
+            setJSValue(m_out.get(source));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+    
     void compileJSConstant()
     {
         JSValue value = m_graph.valueOfJSConstant(m_node);
         if (value.isDouble())
-            m_doubleValues.add(m_node, m_out.constDouble(value.asDouble()));
+            setDouble(m_out.constDouble(value.asDouble()));
         else
-            m_jsValueValues.add(m_node, m_out.constInt64(JSValue::encode(value)));
+            setJSValue(m_out.constInt64(JSValue::encode(value)));
     }
     
     void compileWeakJSConstant()
     {
-        m_jsValueValues.add(m_node, weakPointer(m_node->weakConstant()));
+        setJSValue(weakPointer(m_node->weakConstant()));
+    }
+    
+    void compileGetArgument()
+    {
+        VariableAccessData* variable = m_node->variableAccessData();
+        int operand = variable->operand();
+
+        LValue jsValue = m_out.load64(addressFor(operand));
+
+        switch (useKindFor(variable->flushFormat())) {
+        case Int32Use:
+            speculateBackward(BadType, jsValueValue(jsValue), m_node, isNotInt32(jsValue));
+            setInt32(unboxInt32(jsValue));
+            break;
+        case CellUse:
+            speculateBackward(BadType, jsValueValue(jsValue), m_node, isNotCell(jsValue));
+            setJSValue(jsValue);
+            break;
+        case BooleanUse:
+            speculateBackward(BadType, jsValueValue(jsValue), m_node, isNotBoolean(jsValue));
+            setBoolean(unboxBoolean(jsValue));
+            break;
+        case UntypedUse:
+            setJSValue(jsValue);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
     }
     
     void compileGetLocal()
     {
-        // GetLocal is one of the few nodes that may be left behind, with !shouldGenerate().
-        if (!m_node->shouldGenerate())
-            return;
+        // GetLocals arise only for captured variables.
         
         VariableAccessData* variable = m_node->variableAccessData();
-        SpeculatedType prediction = variable->argumentAwarePrediction();
         AbstractValue& value = m_state.variables().operand(variable->local());
         
-        if (prediction == SpecNone) {
-            terminate(InadequateCoverage);
-            return;
-        }
+        RELEASE_ASSERT(variable->isCaptured());
         
-        if (value.isClear()) {
-            // FIXME: We should trap instead.
-            // https://bugs.webkit.org/show_bug.cgi?id=110383
-            terminate(InadequateCoverage);
-            return;
-        }
-        
-        if (variable->isCaptured()) {
-            if (isInt32Speculation(value.m_value))
-                m_int32Values.add(m_node, m_out.load32(payloadFor(variable->local())));
-            else
-                m_jsValueValues.add(m_node, m_out.load64(addressFor(variable->local())));
-            return;
-        }
-        
-        if (variable->shouldUnboxIfPossible()) {
-            if (variable->shouldUseDoubleFormat()) {
-                m_doubleValues.add(m_node, m_out.get(m_localsDouble.operand(variable->local())));
-                return;
-            }
-            
-            // Locals that are marked shouldUnboxIfPossible() that aren't also forced to
-            // use double format, and that have the right prediction, will always be
-            // speculated on SetLocal and will always be stored into an appropriately
-            // typed reference LValue.
-            if (isInt32Speculation(prediction)) {
-                m_int32Values.add(m_node, m_out.get(m_locals32.operand(variable->local())));
-                return;
-            }
-            if (isBooleanSpeculation(prediction)) {
-                m_booleanValues.add(m_node, m_out.get(m_localsBoolean.operand(variable->local())));
-                return;
-            }
-            // We skip the Cell case here because that gets treated identically to
-            // JSValues, since cells are stored untagged.
-        }
-        
-        m_jsValueValues.add(m_node, m_out.get(m_locals64.operand(variable->local())));
+        if (isInt32Speculation(value.m_value))
+            setInt32(m_out.load32(payloadFor(variable->local())));
+        else
+            setJSValue(m_out.load64(addressFor(variable->local())));
     }
     
     void compileSetLocal()
@@ -529,64 +526,40 @@ private:
         
         VariableAccessData* variable = m_node->variableAccessData();
         SpeculatedType prediction = variable->argumentAwarePrediction();
-        bool needsFlushing = m_flushedLocalOps.contains(m_node);
         
         if (variable->shouldUnboxIfPossible()) {
             if (variable->shouldUseDoubleFormat()) {
                 LValue value = lowDouble(m_node->child1());
-                m_out.set(value, m_localsDouble.operand(variable->local()));
-                if (needsFlushing) {
-                    m_out.storeDouble(value, addressFor(variable->local()));
-                    m_valueSources.operand(variable->local()) = ValueSource(DoubleInJSStack);
-                } else
-                    m_valueSources.operand(variable->local()) = ValueSource(DoubleInLocals);
+                m_out.storeDouble(value, addressFor(variable->local()));
+                m_valueSources.operand(variable->local()) = ValueSource(DoubleInJSStack);
                 return;
             }
             
             if (isInt32Speculation(prediction)) {
                 LValue value = lowInt32(m_node->child1());
-                m_out.set(value, m_locals32.operand(variable->local()));
-                if (needsFlushing) {
-                    m_out.store32(value, payloadFor(variable->local()));
-                    m_valueSources.operand(variable->local()) = ValueSource(Int32InJSStack);
-                } else
-                    m_valueSources.operand(variable->local()) = ValueSource(Int32InLocals);
+                m_out.store32(value, payloadFor(variable->local()));
+                m_valueSources.operand(variable->local()) = ValueSource(Int32InJSStack);
                 return;
             }
             if (isCellSpeculation(prediction)) {
                 LValue value = lowCell(m_node->child1());
-                m_out.set(value, m_locals64.operand(variable->local()));
-                if (needsFlushing) {
-                    m_out.store64(value, addressFor(variable->local()));
-                    m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
-                } else
-                    m_valueSources.operand(variable->local()) = ValueSource(ValueInLocals);
+                m_out.store64(value, addressFor(variable->local()));
+                m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
                 return;
             }
             if (isBooleanSpeculation(prediction)) {
-                m_out.set(lowBoolean(m_node->child1()), m_localsBoolean.operand(variable->local()));
-                if (needsFlushing) {
-                    m_out.store64(lowJSValue(m_node->child1()), addressFor(variable->local()));
-                    m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
-                } else
-                    m_valueSources.operand(variable->local()) = ValueSource(ValueInLocals);
+                speculateBoolean(m_node->child1());
+                m_out.store64(
+                    lowJSValue(m_node->child1(), ManualOperandSpeculation),
+                    addressFor(variable->local()));
+                m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
                 return;
             }
         }
         
         LValue value = lowJSValue(m_node->child1());
-        if (variable->isCaptured()) {
-            m_out.store64(value, addressFor(variable->local()));
-            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
-            return;
-        }
-        
-        m_out.set(value, m_locals64.operand(variable->local()));
-        if (needsFlushing) {
-            m_out.store64(value, addressFor(variable->local()));
-            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
-        } else
-            m_valueSources.operand(variable->local()) = ValueSource(ValueInLocals);
+        m_out.store64(value, addressFor(variable->local()));
+        m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
     }
     
     void compileMovHint()
@@ -620,19 +593,18 @@ private:
             LValue right = lowInt32(m_node->child2());
             
             if (nodeCanTruncateInteger(m_node->arithNodeFlags())) {
-                m_int32Values.add(m_node, m_out.add(left, right));
+                setInt32(m_out.add(left, right));
                 break;
             }
             
             LValue result = m_out.addWithOverflow32(left, right);
             speculate(Overflow, noValue(), 0, m_out.extractValue(result, 1));
-            m_int32Values.add(m_node, m_out.extractValue(result, 0));
+            setInt32(m_out.extractValue(result, 0));
             break;
         }
             
         case NumberUse: {
-            m_doubleValues.add(
-                m_node,
+            setDouble(
                 m_out.doubleAdd(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             break;
         }
@@ -651,19 +623,18 @@ private:
             LValue right = lowInt32(m_node->child2());
             
             if (nodeCanTruncateInteger(m_node->arithNodeFlags())) {
-                m_int32Values.add(m_node, m_out.sub(left, right));
+                setInt32(m_out.sub(left, right));
                 break;
             }
             
             LValue result = m_out.subWithOverflow32(left, right);
             speculate(Overflow, noValue(), 0, m_out.extractValue(result, 1));
-            m_int32Values.add(m_node, m_out.extractValue(result, 0));
+            setInt32(m_out.extractValue(result, 0));
             break;
         }
             
         case NumberUse: {
-            m_doubleValues.add(
-                m_node,
+            setDouble(
                 m_out.doubleSub(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             break;
         }
@@ -703,13 +674,12 @@ private:
                 m_out.appendTo(continuation, lastNext);
             }
             
-            m_int32Values.add(m_node, result);
+            setInt32(result);
             break;
         }
             
         case NumberUse: {
-            m_doubleValues.add(
-                m_node,
+            setDouble(
                 m_out.doubleMul(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             break;
         }
@@ -800,13 +770,12 @@ private:
             
             m_out.appendTo(done, lastNext);
             
-            m_int32Values.add(m_node, m_out.phi(m_out.int32, results));
+            setInt32(m_out.phi(m_out.int32, results));
             break;
         }
             
         case NumberUse: {
-            m_doubleValues.add(
-                m_node,
+            setDouble(
                 m_out.doubleDiv(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             break;
         }
@@ -891,13 +860,12 @@ private:
             
             m_out.appendTo(done, lastNext);
             
-            m_int32Values.add(m_node, m_out.phi(m_out.int32, results));
+            setInt32(m_out.phi(m_out.int32, results));
             break;
         }
             
         case NumberUse: {
-            m_doubleValues.add(
-                m_node,
+            setDouble(
                 m_out.doubleRem(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             break;
         }
@@ -915,8 +883,7 @@ private:
             LValue left = lowInt32(m_node->child1());
             LValue right = lowInt32(m_node->child2());
             
-            m_int32Values.add(
-                m_node,
+            setInt32(
                 m_out.select(
                     m_node->op() == ArithMin
                         ? m_out.lessThan(left, right)
@@ -950,7 +917,7 @@ private:
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
-            m_doubleValues.add(m_node, m_out.phi(m_out.doubleType, results));
+            setDouble(m_out.phi(m_out.doubleType, results));
             break;
         }
             
@@ -971,12 +938,12 @@ private:
             
             speculate(Overflow, noValue(), 0, m_out.equal(result, m_out.constInt32(1 << 31)));
             
-            m_int32Values.add(m_node, result);
+            setInt32(result);
             break;
         }
             
         case NumberUse: {
-            m_doubleValues.add(m_node, m_out.doubleAbs(lowDouble(m_node->child1())));
+            setDouble(m_out.doubleAbs(lowDouble(m_node->child1())));
             break;
         }
             
@@ -1003,12 +970,12 @@ private:
                 result = m_out.extractValue(overflowResult, 0);
             }
             
-            m_int32Values.add(m_node, result);
+            setInt32(result);
             break;
         }
             
         case NumberUse: {
-            m_doubleValues.add(m_node, m_out.doubleNeg(lowDouble(m_node->child1())));
+            setDouble(m_out.doubleNeg(lowDouble(m_node->child1())));
             break;
         }
             
@@ -1020,47 +987,38 @@ private:
     
     void compileBitAnd()
     {
-        m_int32Values.add(
-            m_node, m_out.bitAnd(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+        setInt32(m_out.bitAnd(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
     void compileBitOr()
     {
-        m_int32Values.add(
-            m_node, m_out.bitOr(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+        setInt32(m_out.bitOr(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
     void compileBitXor()
     {
-        m_int32Values.add(
-            m_node, m_out.bitXor(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+        setInt32(m_out.bitXor(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
     void compileBitRShift()
     {
-        m_int32Values.add(
-            m_node,
-            m_out.aShr(
-                lowInt32(m_node->child1()),
-                m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));
+        setInt32(m_out.aShr(
+            lowInt32(m_node->child1()),
+            m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));
     }
     
     void compileBitLShift()
     {
-        m_int32Values.add(
-            m_node,
-            m_out.shl(
-                lowInt32(m_node->child1()),
-                m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));
+        setInt32(m_out.shl(
+            lowInt32(m_node->child1()),
+            m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));
     }
     
     void compileBitURShift()
     {
-        m_int32Values.add(
-            m_node,
-            m_out.lShr(
-                lowInt32(m_node->child1()),
-                m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));
+        setInt32(m_out.lShr(
+            lowInt32(m_node->child1()),
+            m_out.bitAnd(lowInt32(m_node->child2()), m_out.constInt32(31))));
     }
     
     void compileUInt32ToNumber()
@@ -1068,14 +1026,14 @@ private:
         LValue value = lowInt32(m_node->child1());
 
         if (!nodeCanSpeculateInteger(m_node->arithNodeFlags())) {
-            m_doubleValues.add(m_node, m_out.unsignedToDouble(value));
+            setDouble(m_out.unsignedToDouble(value));
             return;
         }
         
         speculateForward(
             Overflow, noValue(), 0, m_out.lessThan(value, m_out.int32Zero),
             FormattedValue(ValueFormatUInt32, value));
-        m_int32Values.add(m_node, value);
+        setInt32(value);
     }
     
     void compileInt32ToDouble()
@@ -1087,7 +1045,7 @@ private:
         // contemporaneous low-level representations. So, this gives child1 a double
         // representation and then forwards that representation to m_node.
         
-        m_doubleValues.add(m_node, lowDouble(m_node->child1()));
+        setDouble(lowDouble(m_node->child1()));
     }
     
     void compileCheckStructure()
@@ -1215,8 +1173,7 @@ private:
     
     void compileGetButterfly()
     {
-        m_storageValues.add(
-            m_node, m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSObject_butterfly));
+        setStorage(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSObject_butterfly));
     }
     
     void compileGetArrayLength()
@@ -1225,8 +1182,7 @@ private:
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous: {
-            m_int32Values.add(
-                m_node, m_out.load32(lowStorage(m_node->child2()), m_heaps.Butterfly_publicLength));
+            setInt32(m_out.load32(lowStorage(m_node->child2()), m_heaps.Butterfly_publicLength));
             break;
         }
             
@@ -1256,7 +1212,7 @@ private:
                     storage, m_out.zeroExt(index, m_out.intPtr),
                     m_state.forNode(m_node->child2()).m_value));
                 speculate(LoadFromHole, noValue(), 0, m_out.isZero64(result));
-                m_jsValueValues.add(m_node, result);
+                setJSValue(result);
                 return;
             }
             
@@ -1288,7 +1244,7 @@ private:
                         LoadFromHole, noValue(), 0,
                         m_out.doubleNotEqualOrUnordered(result, result));
                 }
-                m_doubleValues.add(m_node, result);
+                setDouble(result);
                 break;
             }
             
@@ -1388,8 +1344,7 @@ private:
         StorageAccessData& data =
             m_graph.m_storageAccessData[m_node->storageAccessDataIndex()];
         
-        m_jsValueValues.add(
-            m_node,
+        setJSValue(
             m_out.load64(
                 m_out.address(
                     m_heaps.properties[data.identifierNumber],
@@ -1412,7 +1367,7 @@ private:
     
     void compileGetGlobalVar()
     {
-        m_jsValueValues.add(m_node, m_out.load64(m_out.absolute(m_node->registerPointer())));
+        setJSValue(m_out.load64(m_out.absolute(m_node->registerPointer())));
     }
     
     void compilePutGlobalVar()
@@ -1437,30 +1392,27 @@ private:
     {
         ASSERT(m_graph.valueOfJSConstant(m_node->child2().node()).isNull());
         masqueradesAsUndefinedWatchpointIfIsStillValid();
-        m_booleanValues.add(
-            m_node, equalNullOrUndefined(
+        setBoolean(
+            equalNullOrUndefined(
                 m_node->child1(), AllCellsAreFalse, EqualNullOrUndefined));
     }
     
     void compileCompareStrictEq()
     {
         if (m_node->isBinaryUseKind(Int32Use)) {
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.equal(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
             return;
         }
         
         if (m_node->isBinaryUseKind(NumberUse)) {
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.doubleEqual(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
         }
         
         if (m_node->isBinaryUseKind(ObjectUse)) {
             masqueradesAsUndefinedWatchpointIfIsStillValid();
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.equal(
                     lowNonNullObject(m_node->child1()),
                     lowNonNullObject(m_node->child2())));
@@ -1477,19 +1429,16 @@ private:
         if (constant.isUndefinedOrNull()
             && !masqueradesAsUndefinedWatchpointIfIsStillValid()) {
             if (constant.isNull()) {
-                m_booleanValues.add(
-                    m_node, equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualNull));
+                setBoolean(equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualNull));
                 return;
             }
         
             ASSERT(constant.isUndefined());
-            m_booleanValues.add(
-                m_node, equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualUndefined));
+            setBoolean(equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualUndefined));
             return;
         }
         
-        m_booleanValues.add(
-            m_node,
+        setBoolean(
             m_out.equal(
                 lowJSValue(m_node->child1()),
                 m_out.constInt64(JSValue::encode(constant))));
@@ -1498,15 +1447,13 @@ private:
     void compileCompareLess()
     {
         if (m_node->isBinaryUseKind(Int32Use)) {
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.lessThan(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
             return;
         }
         
         if (m_node->isBinaryUseKind(NumberUse)) {
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.doubleLessThan(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             return;
         }
@@ -1517,15 +1464,13 @@ private:
     void compileCompareLessEq()
     {
         if (m_node->isBinaryUseKind(Int32Use)) {
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.lessThanOrEqual(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
             return;
         }
         
         if (m_node->isBinaryUseKind(NumberUse)) {
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.doubleLessThanOrEqual(
                     lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             return;
@@ -1537,15 +1482,13 @@ private:
     void compileCompareGreater()
     {
         if (m_node->isBinaryUseKind(Int32Use)) {
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.greaterThan(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
             return;
         }
         
         if (m_node->isBinaryUseKind(NumberUse)) {
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.doubleGreaterThan(
                     lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             return;
@@ -1557,16 +1500,14 @@ private:
     void compileCompareGreaterEq()
     {
         if (m_node->isBinaryUseKind(Int32Use)) {
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.greaterThanOrEqual(
                     lowInt32(m_node->child1()), lowInt32(m_node->child2())));
             return;
         }
         
         if (m_node->isBinaryUseKind(NumberUse)) {
-            m_booleanValues.add(
-                m_node,
+            setBoolean(
                 m_out.doubleGreaterThanOrEqual(
                     lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             return;
@@ -1577,7 +1518,7 @@ private:
     
     void compileLogicalNot()
     {
-        m_booleanValues.add(m_node, m_out.bitNot(boolify(m_node->child1())));
+        setBoolean(m_out.bitNot(boolify(m_node->child1())));
     }
     
     void compileJump()
@@ -1999,14 +1940,17 @@ private:
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == Int32Use || edge.useKind() == KnownInt32Use));
         
-        if (LValue result = m_int32Values.get(edge.node()))
-            return result;
+        LoweredNodeValue value = m_int32Values.get(edge.node());
+        if (isValid(value))
+            return value.value();
         
-        if (LValue boxedResult = m_jsValueValues.get(edge.node())) {
+        value = m_jsValueValues.get(edge.node());
+        if (isValid(value)) {
+            LValue boxedResult = value.value();
             FTL_TYPE_CHECK(
                 jsValueValue(boxedResult), edge, SpecInt32, isNotInt32(boxedResult));
             LValue result = unboxInt32(boxedResult);
-            m_int32Values.add(edge.node(), result);
+            setInt32(edge.node(), result);
             return result;
         }
 
@@ -2019,10 +1963,12 @@ private:
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || isCell(edge.useKind()));
         
-        if (LValue uncheckedResult = m_jsValueValues.get(edge.node())) {
+        LoweredNodeValue value = m_jsValueValues.get(edge.node());
+        if (isValid(value)) {
+            LValue uncheckedValue = value.value();
             FTL_TYPE_CHECK(
-                jsValueValue(uncheckedResult), edge, SpecCell, isNotCell(uncheckedResult));
-            return uncheckedResult;
+                jsValueValue(uncheckedValue), edge, SpecCell, isNotCell(uncheckedValue));
+            return uncheckedValue;
         }
         
         RELEASE_ASSERT(!(m_state.forNode(edge).m_type & SpecCell));
@@ -2061,14 +2007,17 @@ private:
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == BooleanUse);
         
-        if (LValue result = m_booleanValues.get(edge.node()))
-            return result;
+        LoweredNodeValue value = m_booleanValues.get(edge.node());
+        if (isValid(value))
+            return value.value();
         
-        if (LValue unboxedResult = m_jsValueValues.get(edge.node())) {
+        value = m_jsValueValues.get(edge.node());
+        if (isValid(value)) {
+            LValue unboxedResult = value.value();
             FTL_TYPE_CHECK(
                 jsValueValue(unboxedResult), edge, SpecBoolean, isNotBoolean(unboxedResult));
             LValue result = unboxBoolean(unboxedResult);
-            m_booleanValues.add(edge.node(), result);
+            setBoolean(edge.node(), result);
             return result;
         }
         
@@ -2081,16 +2030,21 @@ private:
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || isDouble(edge.useKind()));
         
-        if (LValue result = m_doubleValues.get(edge.node()))
-            return result;
+        LoweredNodeValue value = m_doubleValues.get(edge.node());
+        if (isValid(value))
+            return value.value();
         
-        if (LValue intResult = m_int32Values.get(edge.node())) {
-            LValue result = m_out.intToDouble(intResult);
-            m_doubleValues.add(edge.node(), result);
+        value = m_int32Values.get(edge.node());
+        if (isValid(value)) {
+            LValue result = m_out.intToDouble(value.value());
+            setDouble(edge.node(), result);
             return result;
         }
         
-        if (LValue boxedResult = m_jsValueValues.get(edge.node())) {
+        value = m_jsValueValues.get(edge.node());
+        if (isValid(value)) {
+            LValue boxedResult = value.value();
+            
             LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("Double unboxing int case"));
             LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("Double unboxing double case"));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Double unboxing continuation"));
@@ -2115,7 +2069,7 @@ private:
             
             LValue result = m_out.phi(m_out.doubleType, intToDouble, unboxedDouble);
             
-            m_doubleValues.add(edge.node(), result);
+            setDouble(edge.node(), result);
             return result;
         }
         
@@ -2128,24 +2082,28 @@ private:
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == UntypedUse);
         
-        if (LValue result = m_jsValueValues.get(edge.node()))
-            return result;
+        LoweredNodeValue value = m_jsValueValues.get(edge.node());
+        if (isValid(value))
+            return value.value();
         
-        if (LValue unboxedResult = m_int32Values.get(edge.node())) {
-            LValue result = boxInt32(unboxedResult);
-            m_jsValueValues.add(edge.node(), result);
-            return result;
-        }
-        
-        if (LValue unboxedResult = m_booleanValues.get(edge.node())) {
-            LValue result = boxBoolean(unboxedResult);
-            m_jsValueValues.add(edge.node(), result);
+        value = m_int32Values.get(edge.node());
+        if (isValid(value)) {
+            LValue result = boxInt32(value.value());
+            setJSValue(edge.node(), result);
             return result;
         }
         
-        if (LValue unboxedResult = m_doubleValues.get(edge.node())) {
-            LValue result = boxDouble(unboxedResult);
-            m_jsValueValues.add(edge.node(), result);
+        value = m_booleanValues.get(edge.node());
+        if (isValid(value)) {
+            LValue result = boxBoolean(value.value());
+            setJSValue(edge.node(), result);
+            return result;
+        }
+        
+        value = m_doubleValues.get(edge.node());
+        if (isValid(value)) {
+            LValue result = boxDouble(value.value());
+            setJSValue(edge.node(), result);
             return result;
         }
         
@@ -2155,11 +2113,12 @@ private:
     
     LValue lowStorage(Edge edge)
     {
-        if (LValue result = m_storageValues.get(edge.node()))
-            return result;
+        LoweredNodeValue value = m_storageValues.get(edge.node());
+        if (isValid(value))
+            return value.value();
         
         LValue result = lowCell(edge);
-        m_storageValues.add(edge.node(), result);
+        setStorage(edge.node(), result);
         return result;
     }
     
@@ -2241,6 +2200,9 @@ private:
             break;
         case NumberUse:
             speculateNumber(edge);
+            break;
+        case BooleanUse:
+            speculateBoolean(edge);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -2342,6 +2304,11 @@ private:
             doubleValue(value), edge, SpecRealNumber,
             m_out.doubleNotEqualOrUnordered(value, value));
     }
+    
+    void speculateBoolean(Edge edge)
+    {
+        lowBoolean(edge);
+    }
 
     bool masqueradesAsUndefinedWatchpointIsStillValid()
     {
@@ -2430,22 +2397,15 @@ private:
     
     bool isLive(Node* node)
     {
-        HashMap<Node*, unsigned>::iterator iter = m_timeToLive.find(node);
-        ASSERT(iter != m_timeToLive.end());
-        return !!iter->value;
+        return m_live.contains(node);
     }
     
     void use(Edge edge)
     {
-        if (!edge->hasResult()) {
-            ASSERT(edge->hasVariableAccessData());
+        ASSERT(edge->hasResult());
+        if (!edge.doesKill())
             return;
-        }
-        
-        HashMap<Node*, unsigned>::iterator iter = m_timeToLive.find(edge.node());
-        ASSERT(iter != m_timeToLive.end());
-        ASSERT(iter->value);
-        iter->value--;
+        m_live.remove(edge.node());
     }
     
     // Wrapper used only for DFG_NODE_DO_TO_CHILDREN
@@ -2462,63 +2422,34 @@ private:
     void initializeOSRExitStateForBlock()
     {
         for (unsigned i = m_valueSources.size(); i--;) {
-            Node* node = m_highBlock->variablesAtHead[i];
-            if (!node) {
-                m_valueSources[i] = ValueSource(SourceIsDead);
-                continue;
-            }
-            
-            VariableAccessData* variable = node->variableAccessData();
-            SpeculatedType prediction = variable->argumentAwarePrediction();
-            
-            if (variable->isArgumentsAlias()) {
-                m_valueSources[i] = ValueSource(ArgumentsSource);
-                continue;
-            }
-            
-            if (!node->shouldGenerate()) {
-                m_valueSources[i] = ValueSource(SourceIsDead);
-                continue;
-            }
-            
-            if (m_flushedLocalOps.contains(node)) {
-                // This value will have been flushed to the JSStack in some form or
-                // another.
-                
-                if (variable->shouldUnboxIfPossible()) {
-                    if (variable->shouldUseDoubleFormat()) {
-                        m_valueSources[i] = ValueSource(DoubleInJSStack);
-                        continue;
-                    }
-                    
-                    if (isInt32Speculation(prediction)) {
-                        m_valueSources[i] = ValueSource(Int32InJSStack);
-                        continue;
-                    }
+            FlushFormat format = m_highBlock->ssa->flushFormatAtHead[i];
+            switch (format) {
+            case DeadFlush: {
+                // Must consider available nodes instead.
+                Node* node = m_highBlock->ssa->availabilityAtHead[i];
+                if (!node) {
+                    m_valueSources[i] = ValueSource(SourceIsDead);
+                    break;
                 }
                 
+                m_valueSources[i] = ValueSource(node);
+                break;
+            }
+                
+            case FlushedInt32:
+                m_valueSources[i] = ValueSource(Int32InJSStack);
+                break;
+                
+            case FlushedDouble:
+                m_valueSources[i] = ValueSource(DoubleInJSStack);
+                break;
+                
+            case FlushedCell:
+            case FlushedBoolean:
+            case FlushedJSValue:
                 m_valueSources[i] = ValueSource(ValueInJSStack);
-                continue;
+                break;
             }
-            
-            if (variable->shouldUnboxIfPossible()) {
-                if (variable->shouldUseDoubleFormat()) {
-                    m_valueSources[i] = ValueSource(DoubleInLocals);
-                    continue;
-                }
-                
-                if (isInt32Speculation(prediction)) {
-                    m_valueSources[i] = ValueSource(Int32InLocals);
-                    continue;
-                }
-                
-                if (isBooleanSpeculation(prediction)) {
-                    m_valueSources[i] = ValueSource(BooleanInLocals);
-                    continue;
-                }
-            }
-            
-            m_valueSources[i] = ValueSource(ValueInLocals);
         }
     }
     
@@ -2546,11 +2477,10 @@ private:
         ASSERT(m_ftlState.jitCode->osrExit.size() == m_ftlState.osrExit.size());
         unsigned index = m_ftlState.osrExit.size();
         
-        m_ftlState.jitCode->osrExit.append(
-            OSRExit(
-                kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
-                m_codeOrigin, m_lastSetOperand, m_valueSources.numberOfArguments(),
-                m_valueSources.numberOfLocals()));
+        m_ftlState.jitCode->osrExit.append(OSRExit(
+            kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
+            m_codeOrigin, m_lastSetOperand, m_valueSources.numberOfArguments(),
+            m_valueSources.numberOfLocals()));
         m_ftlState.osrExit.append(OSRExitCompilationInfo());
         
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
@@ -2601,27 +2531,6 @@ private:
                 break;
             case DoubleInJSStack:
                 exit.m_values[i] = ExitValue::inJSStackAsDouble();
-                break;
-            case ValueInLocals:
-                addExitArgument(
-                    exit, arguments, i, ValueFormatJSValue, m_out.get(m_locals64[i]));
-                break;
-            case Int32InLocals:
-                addExitArgument(
-                    exit, arguments, i, ValueFormatInt32, m_out.get(m_locals32[i]));
-                break;
-            case BooleanInLocals:
-                addExitArgument(
-                    exit, arguments, i, ValueFormatBoolean, m_out.get(m_localsBoolean[i]));
-                break;
-            case DoubleInLocals:
-                addExitArgument(
-                    exit, arguments, i, ValueFormatDouble, m_out.get(m_localsDouble[i]));
-                break;
-            case ArgumentsSource:
-                // FIXME: implement PhantomArguments.
-                // https://bugs.webkit.org/show_bug.cgi?id=113986
-                RELEASE_ASSERT_NOT_REACHED();
                 break;
             case SourceIsDead:
                 exit.m_values[i] = ExitValue::dead();
@@ -2682,12 +2591,10 @@ private:
                 Node* uint32ToNumber = 0;
                 Node* doubleAsInt32 = 0;
                 
-                HashMap<Node*, unsigned>::iterator iter = m_timeToLive.begin();
-                HashMap<Node*, unsigned>::iterator end = m_timeToLive.end();
+                HashSet<Node*>::iterator iter = m_live.begin();
+                HashSet<Node*>::iterator end = m_live.end();
                 for (; iter != end; ++iter) {
-                    if (!iter->value)
-                        continue;
-                    Node* candidate = iter->key;
+                    Node* candidate = *iter;
                     if (!candidate->child1())
                         continue;
                     if (candidate->child1() != node)
@@ -2732,24 +2639,28 @@ private:
         }
         
         ASSERT(isLive(node));
-        
-        if (LValue result = m_int32Values.get(node)) {
-            addExitArgument(exit, arguments, index, ValueFormatInt32, result);
+
+        LoweredNodeValue value = m_int32Values.get(node);
+        if (isValid(value)) {
+            addExitArgument(exit, arguments, index, ValueFormatInt32, value.value());
             return;
         }
         
-        if (LValue result = m_booleanValues.get(node)) {
-            addExitArgument(exit, arguments, index, ValueFormatBoolean, result);
+        value = m_booleanValues.get(node);
+        if (isValid(value)) {
+            addExitArgument(exit, arguments, index, ValueFormatBoolean, value.value());
             return;
         }
         
-        if (LValue result = m_jsValueValues.get(node)) {
-            addExitArgument(exit, arguments, index, ValueFormatJSValue, result);
+        value = m_jsValueValues.get(node);
+        if (isValid(value)) {
+            addExitArgument(exit, arguments, index, ValueFormatJSValue, value.value());
             return;
         }
         
-        if (LValue result = m_doubleValues.get(node)) {
-            addExitArgument(exit, arguments, index, ValueFormatDouble, result);
+        value = m_doubleValues.get(node);
+        if (isValid(value)) {
+            addExitArgument(exit, arguments, index, ValueFormatDouble, value.value());
             return;
         }
 
@@ -2820,7 +2731,7 @@ private:
             m_ftlState.finalizer->initializeExitThunksLinkBuffer(linkBuffer.release());
         }
 
-        m_out.jump(m_argumentChecks);
+        m_out.jump(lowBlock(m_graph.block(0)));
     }
     
     void observeMovHint(Node* node)
@@ -2832,6 +2743,57 @@ private:
         
         m_lastSetOperand = operand;
         m_valueSources.operand(operand) = ValueSource(node->child1().node());
+    }
+    
+    void setInt32(Node* node, LValue value)
+    {
+        m_int32Values.set(node, LoweredNodeValue(value, m_highBlock));
+    }
+    void setJSValue(Node* node, LValue value)
+    {
+        m_jsValueValues.set(node, LoweredNodeValue(value, m_highBlock));
+    }
+    void setBoolean(Node* node, LValue value)
+    {
+        m_booleanValues.set(node, LoweredNodeValue(value, m_highBlock));
+    }
+    void setStorage(Node* node, LValue value)
+    {
+        m_storageValues.set(node, LoweredNodeValue(value, m_highBlock));
+    }
+    void setDouble(Node* node, LValue value)
+    {
+        m_doubleValues.set(node, LoweredNodeValue(value, m_highBlock));
+    }
+
+    void setInt32(LValue value)
+    {
+        setInt32(m_node, value);
+    }
+    void setJSValue(LValue value)
+    {
+        setJSValue(m_node, value);
+    }
+    void setBoolean(LValue value)
+    {
+        setBoolean(m_node, value);
+    }
+    void setStorage(LValue value)
+    {
+        setStorage(m_node, value);
+    }
+    void setDouble(LValue value)
+    {
+        setDouble(m_node, value);
+    }
+    
+    bool isValid(const LoweredNodeValue& value)
+    {
+        if (!value)
+            return false;
+        if (!m_graph.m_dominators.dominates(value.block(), m_highBlock))
+            return false;
+        return true;
     }
     
     void addWeakReference(JSCell* target)
@@ -2881,27 +2843,20 @@ private:
     
     LBasicBlock m_prologue;
     LBasicBlock m_initialization;
-    LBasicBlock m_argumentChecks;
     HashMap<BasicBlock*, LBasicBlock> m_blocks;
     
     LValue m_callFrame;
     LValue m_tagTypeNumber;
     LValue m_tagMask;
     
-    HashSet<Node*> m_flushedLocalOps;
-    Vector<Node*> m_flushedLocalOpWorklist;
+    HashMap<Node*, LoweredNodeValue> m_int32Values;
+    HashMap<Node*, LoweredNodeValue> m_jsValueValues;
+    HashMap<Node*, LoweredNodeValue> m_booleanValues;
+    HashMap<Node*, LoweredNodeValue> m_storageValues;
+    HashMap<Node*, LoweredNodeValue> m_doubleValues;
+    HashSet<Node*> m_live;
     
-    HashMap<Node*, LValue> m_int32Values;
-    HashMap<Node*, LValue> m_jsValueValues;
-    HashMap<Node*, LValue> m_booleanValues;
-    HashMap<Node*, LValue> m_storageValues;
-    HashMap<Node*, LValue> m_doubleValues;
-    HashMap<Node*, unsigned> m_timeToLive;
-    
-    Operands<LValue> m_localsBoolean;
-    Operands<LValue> m_locals32;
-    Operands<LValue> m_locals64;
-    Operands<LValue> m_localsDouble;
+    HashMap<Node*, LValue> m_phis;
     
     Operands<ValueSource> m_valueSources;
     int m_lastSetOperand;

@@ -45,9 +45,11 @@
 #include "SpeculatedType.h"
 #include "StructureSet.h"
 #include "ValueProfile.h"
+#include <wtf/ListDump.h>
 
 namespace JSC { namespace DFG {
 
+class Graph;
 struct BasicBlock;
 
 struct StructureTransitionData {
@@ -500,32 +502,14 @@ struct Node {
         }
     }
     
-    bool hasVariableAccessData()
+    bool hasVariableAccessData(Graph&);
+    bool hasLocal(Graph& graph)
     {
-        switch (op()) {
-        case GetLocal:
-        case SetLocal:
-        case MovHint:
-        case MovHintAndCheck:
-        case ZombieHint:
-        case Phi:
-        case SetArgument:
-        case Flush:
-        case PhantomLocal:
-            return true;
-        default:
-            return false;
-        }
-    }
-    
-    bool hasLocal()
-    {
-        return hasVariableAccessData();
+        return hasVariableAccessData(graph);
     }
     
     VariableAccessData* variableAccessData()
     {
-        ASSERT(hasVariableAccessData());
         return reinterpret_cast<VariableAccessData*>(m_opInfo)->find();
     }
     
@@ -538,6 +522,17 @@ struct Node {
     {
         ASSERT(op() == GetLocalUnlinked);
         return static_cast<VirtualRegister>(m_opInfo);
+    }
+    
+    bool hasPhi()
+    {
+        return op() == Upsilon;
+    }
+    
+    Node* phi()
+    {
+        ASSERT(hasPhi());
+        return bitwise_cast<Node*>(m_opInfo);
     }
     
     bool hasIdentifier()
@@ -775,16 +770,16 @@ struct Node {
         m_opInfo2 = bitwise_cast<uintptr_t>(block);
     }
     
-    BasicBlock* takenBlock()
+    BasicBlock*& takenBlock()
     {
         ASSERT(isBranch() || isJump());
-        return bitwise_cast<BasicBlock*>(m_opInfo);
+        return *bitwise_cast<BasicBlock**>(&m_opInfo);
     }
     
-    BasicBlock* notTakenBlock()
+    BasicBlock*& notTakenBlock()
     {
         ASSERT(isBranch());
-        return bitwise_cast<BasicBlock*>(m_opInfo2);
+        return *bitwise_cast<BasicBlock**>(&m_opInfo2);
     }
     
     SwitchData* switchData()
@@ -807,7 +802,7 @@ struct Node {
         }
     }
     
-    BasicBlock* successor(unsigned index)
+    BasicBlock*& successor(unsigned index)
     {
         if (isSwitch()) {
             if (index < switchData()->cases.size())
@@ -822,11 +817,11 @@ struct Node {
             return notTakenBlock();
         default:
             RELEASE_ASSERT_NOT_REACHED();
-            return 0;
+            return takenBlock();
         }
     }
     
-    BasicBlock* successorForCondition(bool condition)
+    BasicBlock*& successorForCondition(bool condition)
     {
         ASSERT(isBranch());
         return condition ? takenBlock() : notTakenBlock();
@@ -1405,6 +1400,23 @@ public:
     AbstractValue value;
     Node* replacement;
 };
+
+inline bool nodeComparator(Node* a, Node* b)
+{
+    return a->index() < b->index();
+}
+
+template<typename T>
+CString nodeListDump(const T& nodeList)
+{
+    return sortedListDump(nodeList, nodeComparator);
+}
+
+template<typename T>
+CString nodeMapDump(const T& nodeMap)
+{
+    return sortedMapDump(nodeMap, nodeComparator);
+}
 
 } } // namespace JSC::DFG
 

@@ -4404,7 +4404,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case Phi:
     case Flush:
         break;
 
@@ -4841,6 +4840,9 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case LastNodeType:
+    case Phi:
+    case Upsilon:
+    case GetArgument:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

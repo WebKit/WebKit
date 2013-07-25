@@ -118,6 +118,18 @@ void dataLog(const T1& value1, const T2& value2, const T3& value3, const T4& val
     dataFile().print(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13);
 }
 
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12, typename T13, typename T14>
+void dataLog(const T1& value1, const T2& value2, const T3& value3, const T4& value4, const T5& value5, const T6& value6, const T7& value7, const T8& value8, const T9& value9, const T10& value10, const T11& value11, const T12& value12, const T13& value13, const T14& value14)
+{
+    dataFile().print(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14);
+}
+
+template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12, typename T13, typename T14, typename T15>
+void dataLog(const T1& value1, const T2& value2, const T3& value3, const T4& value4, const T5& value5, const T6& value6, const T7& value7, const T8& value8, const T9& value9, const T10& value10, const T11& value11, const T12& value12, const T13& value13, const T14& value14, const T15& value15)
+{
+    dataFile().print(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15);
+}
+
 } // namespace WTF
 
 using WTF::dataLog;

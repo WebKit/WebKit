@@ -33,6 +33,8 @@
 #include "DFGNode.h"
 #include "DFGVariadicFunction.h"
 #include "Operands.h"
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
@@ -44,42 +46,16 @@ class InsertionSet;
 typedef Vector<BasicBlock*, 2> PredecessorList;
 
 struct BasicBlock : RefCounted<BasicBlock> {
-    BasicBlock(unsigned bytecodeBegin, unsigned numArguments, unsigned numLocals)
-        : bytecodeBegin(bytecodeBegin)
-        , index(NoBlock)
-        , isOSRTarget(false)
-        , cfaHasVisited(false)
-        , cfaShouldRevisit(false)
-        , cfaFoundConstants(false)
-        , cfaDidFinish(true)
-        , cfaBranchDirection(InvalidBranchDirection)
-#if !ASSERT_DISABLED
-        , isLinked(false)
-#endif
-        , isReachable(false)
-        , variablesAtHead(numArguments, numLocals)
-        , variablesAtTail(numArguments, numLocals)
-        , valuesAtHead(numArguments, numLocals)
-        , valuesAtTail(numArguments, numLocals)
-    {
-    }
+    BasicBlock(unsigned bytecodeBegin, unsigned numArguments, unsigned numLocals);
+    ~BasicBlock();
     
-    ~BasicBlock()
-    {
-    }
-    
-    void ensureLocals(unsigned newNumLocals)
-    {
-        variablesAtHead.ensureLocals(newNumLocals);
-        variablesAtTail.ensureLocals(newNumLocals);
-        valuesAtHead.ensureLocals(newNumLocals);
-        valuesAtTail.ensureLocals(newNumLocals);
-    }
+    void ensureLocals(unsigned newNumLocals);
     
     size_t size() const { return m_nodes.size(); }
     bool isEmpty() const { return !size(); }
     Node*& at(size_t i) { return m_nodes[i]; }
     Node* at(size_t i) const { return m_nodes[i]; }
+    Node*& operator[](size_t i) { return at(i); }
     Node* operator[](size_t i) const { return at(i); }
     Node* last() const { return at(size() - 1); }
     void resize(size_t size) { m_nodes.resize(size); }
@@ -96,44 +72,34 @@ struct BasicBlock : RefCounted<BasicBlock> {
     }
     bool isPhiIndex(size_t i) const { return i < phis.size(); }
     
-    bool isInPhis(Node* node) const
-    {
-        for (size_t i = 0; i < phis.size(); ++i) {
-            if (phis[i] == node)
-                return true;
-        }
-        return false;
-    }
-    
-    bool isInBlock(Node* myNode) const
-    {
-        for (size_t i = 0; i < numNodes(); ++i) {
-            if (node(i) == myNode)
-                return true;
-        }
-        return false;
-    }
+    bool isInPhis(Node* node) const;
+    bool isInBlock(Node* myNode) const;
     
     unsigned numSuccessors() { return last()->numSuccessors(); }
     
-    BasicBlock* successor(unsigned index)
+    BasicBlock*& successor(unsigned index)
     {
         return last()->successor(index);
     }
-    BasicBlock* successorForCondition(bool condition)
+    BasicBlock*& successorForCondition(bool condition)
     {
         return last()->successorForCondition(condition);
     }
+    
+    void removePredecessor(BasicBlock* block);
+    void replacePredecessor(BasicBlock* from, BasicBlock* to);
 
 #define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
     templatePre typeParams templatePost Node* appendNode(Graph&, SpeculatedType valueParamsComma valueParams);
     DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
 #undef DFG_DEFINE_APPEND_NODE
     
-    void dump(PrintStream& out) const
-    {
-        out.print("#", index);
-    }
+#define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
+    templatePre typeParams templatePost Node* appendNonTerminal(Graph&, SpeculatedType valueParamsComma valueParams);
+    DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
+#undef DFG_DEFINE_APPEND_NODE
+    
+    void dump(PrintStream& out) const;
     
     // This value is used internally for block linking and OSR entry. It is mostly meaningless
     // for other purposes due to inlining.
@@ -160,6 +126,21 @@ struct BasicBlock : RefCounted<BasicBlock> {
     
     Operands<AbstractValue> valuesAtHead;
     Operands<AbstractValue> valuesAtTail;
+    
+    struct SSAData {
+        Operands<FlushFormat> flushFormatAtHead;
+        Operands<FlushFormat> flushFormatAtTail;
+        Operands<Node*> availabilityAtHead;
+        Operands<Node*> availabilityAtTail;
+        HashSet<Node*> liveAtHead;
+        HashSet<Node*> liveAtTail;
+        HashMap<Node*, AbstractValue> valuesAtHead;
+        HashMap<Node*, AbstractValue> valuesAtTail;
+        
+        SSAData(BasicBlock*);
+        ~SSAData();
+    };
+    OwnPtr<SSAData> ssa;
 
 private:
     friend class InsertionSet;

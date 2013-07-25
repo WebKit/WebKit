@@ -43,7 +43,7 @@ template<typename T> struct OperandValueTraits;
 template<typename T>
 struct OperandValueTraits {
     static T defaultValue() { return T(); }
-    static void dump(const T& value, PrintStream& out) { value.dump(out); }
+    static void dump(const T& value, PrintStream& out) { out.print(value); }
 };
 
 enum OperandKind { ArgumentOperand, LocalOperand };
@@ -209,12 +209,25 @@ public:
         setLocalFirstTime(operand, value);
     }
     
-    void clear()
+    void fill(T value)
     {
         for (size_t i = 0; i < m_arguments.size(); ++i)
-            m_arguments[i] = Traits::defaultValue();
+            m_arguments[i] = value;
         for (size_t i = 0; i < m_locals.size(); ++i)
-            m_locals[i] = Traits::defaultValue();
+            m_locals[i] = value;
+    }
+    
+    void clear()
+    {
+        fill(Traits::defaultValue());
+    }
+    
+    bool operator==(const Operands& other) const
+    {
+        ASSERT(numberOfArguments() == other.numberOfArguments());
+        ASSERT(numberOfLocals() == other.numberOfLocals());
+        
+        return m_arguments == other.m_arguments && m_locals == other.m_locals;
     }
     
     void dump(PrintStream& out) const;

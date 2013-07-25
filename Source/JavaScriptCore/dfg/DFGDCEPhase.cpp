@@ -45,6 +45,8 @@ public:
     
     bool run()
     {
+        ASSERT(m_graph.m_form == ThreadedCPS || m_graph.m_form == SSA);
+        
         // First reset the counts to 0 for all nodes.
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
@@ -75,10 +77,31 @@ public:
         }
         
         while (!m_worklist.isEmpty()) {
-            Node* node = m_worklist.last();
-            m_worklist.removeLast();
-            ASSERT(node->shouldGenerate()); // It should not be on the worklist unless it's ref'ed.
-            DFG_NODE_DO_TO_CHILDREN(m_graph, node, countEdge);
+            while (!m_worklist.isEmpty()) {
+                Node* node = m_worklist.last();
+                m_worklist.removeLast();
+                ASSERT(node->shouldGenerate()); // It should not be on the worklist unless it's ref'ed.
+                DFG_NODE_DO_TO_CHILDREN(m_graph, node, countEdge);
+            }
+            
+            if (m_graph.m_form == SSA) {
+                // Find Phi->Upsilon edges, which are represented as meta-data in the
+                // Upsilon.
+                for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+                    BasicBlock* block = m_graph.block(blockIndex);
+                    if (!block)
+                        continue;
+                    for (unsigned nodeIndex = block->size(); nodeIndex--;) {
+                        Node* node = block->at(nodeIndex);
+                        if (node->op() != Upsilon)
+                            continue;
+                        if (node->shouldGenerate())
+                            continue;
+                        if (node->phi()->shouldGenerate())
+                            countNode(node);
+                    }
+                }
+            }
         }
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
@@ -94,8 +117,10 @@ public:
                     continue;
                 
                 switch (node->op()) {
-                case SetLocal: {
-                    if (node->child1().isProved() || node->child1().useKind() == UntypedUse) {
+                case SetLocal:
+                case MovHint: {
+                    ASSERT((node->op() == SetLocal) == (m_graph.m_form == ThreadedCPS));
+                    if (node->child1().willNotHaveCheck()) {
                         // Consider the possibility that UInt32ToNumber is dead but its
                         // child isn't; if so then we should MovHint the child.
                         if (!node->child1()->shouldGenerate()
@@ -117,8 +142,10 @@ public:
                     
                 case GetLocal:
                 case SetArgument: {
-                    // Leave them as not shouldGenerate.
-                    break;
+                    if (m_graph.m_form == ThreadedCPS) {
+                        // Leave them as not shouldGenerate.
+                        break;
+                    }
                 }
 
                 default: {
@@ -126,7 +153,7 @@ public:
                         for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++) {
                             Edge edge = m_graph.m_varArgChildren[childIdx];
 
-                            if (!edge || edge.isProved() || edge.useKind() == UntypedUse)
+                            if (!edge || edge.willNotHaveCheck())
                                 continue;
 
                             insertionSet.insertNode(indexInBlock, SpecNone, Phantom, node->codeOrigin, edge);
@@ -158,21 +185,25 @@ private:
     {
         // We may have an "unproved" untyped use for code that is unreachable. The CFA
         // will just not have gotten around to it.
-        if (edge.isProved() || edge.useKind() == UntypedUse)
+        if (edge.willNotHaveCheck())
             return;
         if (!edge->postfixRef())
             m_worklist.append(edge.node());
     }
     
+    void countNode(Node* node)
+    {
+        if (node->postfixRef())
+            return;
+        m_worklist.append(node);
+    }
+    
     void countEdge(Node*, Edge edge)
     {
         // Don't count edges that are already counted for their type checks.
-        if (!(edge.isProved() || edge.useKind() == UntypedUse))
+        if (edge.willHaveCheck())
             return;
-        
-        if (edge->postfixRef())
-            return;
-        m_worklist.append(edge.node());
+        countNode(edge.node());
     }
     
     void eliminateIrrelevantPhantomChildren(Node* node)
@@ -181,7 +212,7 @@ private:
             Edge edge = node->children.child(i);
             if (!edge)
                 continue;
-            if (edge.isProved() || edge.useKind() == UntypedUse)
+            if (edge.willNotHaveCheck())
                 node->children.removeEdge(i--);
         }
     }

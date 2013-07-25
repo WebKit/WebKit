@@ -39,12 +39,12 @@ class AdjacencyList;
 
 class Edge {
 public:
-    explicit Edge(Node* node = 0, UseKind useKind = UntypedUse, ProofStatus proofStatus = NeedsCheck)
+    explicit Edge(Node* node = 0, UseKind useKind = UntypedUse, ProofStatus proofStatus = NeedsCheck, KillStatus killStatus = DoesNotKill)
 #if USE(JSVALUE64)
-        : m_encodedWord(makeWord(node, useKind, proofStatus))
+        : m_encodedWord(makeWord(node, useKind, proofStatus, killStatus))
 #else
         : m_node(node)
-        , m_encodedWord(makeWord(useKind, proofStatus))
+        , m_encodedWord(makeWord(useKind, proofStatus, killStatus))
 #endif
     {
     }
@@ -61,7 +61,7 @@ public:
     void setNode(Node* node)
     {
 #if USE(JSVALUE64)
-        m_encodedWord = makeWord(node, useKind(), proofStatus());
+        m_encodedWord = makeWord(node, useKind(), proofStatus(), killStatus());
 #else
         m_node = node;
 #endif
@@ -71,9 +71,9 @@ public:
     {
 #if USE(JSVALUE64)
         unsigned masked = m_encodedWord & (((1 << shift()) - 1));
-        unsigned shifted = masked >> 1;
+        unsigned shifted = masked >> 2;
 #else
-        unsigned shifted = static_cast<UseKind>(m_encodedWord) >> 1;
+        unsigned shifted = static_cast<UseKind>(m_encodedWord) >> 2;
 #endif
         ASSERT(shifted < static_cast<unsigned>(LastUseKind));
         UseKind result = static_cast<UseKind>(shifted);
@@ -89,9 +89,9 @@ public:
     {
         ASSERT(node());
 #if USE(JSVALUE64)
-        m_encodedWord = makeWord(node(), useKind, proofStatus());
+        m_encodedWord = makeWord(node(), useKind, proofStatus(), killStatus());
 #else
-        m_encodedWord = makeWord(useKind, proofStatus());
+        m_encodedWord = makeWord(useKind, proofStatus(), killStatus());
 #endif
     }
     
@@ -108,9 +108,9 @@ public:
     {
         ASSERT(node());
 #if USE(JSVALUE64)
-        m_encodedWord = makeWord(node(), useKind(), proofStatus);
+        m_encodedWord = makeWord(node(), useKind(), proofStatus, killStatus());
 #else
-        m_encodedWord = makeWord(useKind(), proofStatus);
+        m_encodedWord = makeWord(useKind(), proofStatus, killStatus());
 #endif
     }
     bool isProved() const
@@ -121,6 +121,36 @@ public:
     {
         return proofStatus() == NeedsCheck;
     }
+    
+    bool willNotHaveCheck() const
+    {
+        return isProved() || useKind() == UntypedUse;
+    }
+    bool willHaveCheck() const
+    {
+        return !willNotHaveCheck();
+    }
+    
+    KillStatus killStatusUnchecked() const
+    {
+        return killStatusForDoesKill(m_encodedWord & 2);
+    }
+    KillStatus killStatus() const
+    {
+        ASSERT(node());
+        return killStatusUnchecked();
+    }
+    void setKillStatus(KillStatus killStatus)
+    {
+        ASSERT(node());
+#if USE(JSVALUE64)
+        m_encodedWord = makeWord(node(), useKind(), proofStatus(), killStatus);
+#else
+        m_encodedWord = makeWord(useKind(), proofStatus(), killStatus);
+#endif
+    }
+    bool doesKill() const { return DFG::doesKill(killStatus()); }
+    bool doesNotKill() const { return !doesKill(); }
     
     bool isSet() const { return !!node(); }
     
@@ -148,22 +178,22 @@ private:
     friend class AdjacencyList;
     
 #if USE(JSVALUE64)
-    static uint32_t shift() { return 6; }
+    static uint32_t shift() { return 7; }
     
-    static uintptr_t makeWord(Node* node, UseKind useKind, ProofStatus proofStatus)
+    static uintptr_t makeWord(Node* node, UseKind useKind, ProofStatus proofStatus, KillStatus killStatus)
     {
         ASSERT(sizeof(node) == 8);
         uintptr_t shiftedValue = bitwise_cast<uintptr_t>(node) << shift();
         ASSERT((shiftedValue >> shift()) == bitwise_cast<uintptr_t>(node));
         ASSERT(useKind >= 0 && useKind < LastUseKind);
-        ASSERT((static_cast<uintptr_t>(LastUseKind) << 1) <= (static_cast<uintptr_t>(1) << shift()));
-        return shiftedValue | (static_cast<uintptr_t>(useKind) << 1) | DFG::isProved(proofStatus);
+        ASSERT((static_cast<uintptr_t>(LastUseKind) << 2) <= (static_cast<uintptr_t>(2) << shift()));
+        return shiftedValue | (static_cast<uintptr_t>(useKind) << 2) | (DFG::doesKill(killStatus) << 1) | DFG::isProved(proofStatus);
     }
     
 #else
-    static uintptr_t makeWord(UseKind useKind, ProofStatus proofStatus)
+    static uintptr_t makeWord(UseKind useKind, ProofStatus proofStatus, KillStatus killStatus)
     {
-        return (static_cast<uintptr_t>(useKind) << 1) | DFG::isProved(proofStatus);
+        return (static_cast<uintptr_t>(useKind) << 2) | (DFG::doesKill(killStatus) << 1) | DFG::isProved(proofStatus);
     }
     
     Node* m_node;

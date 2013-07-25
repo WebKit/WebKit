@@ -51,7 +51,7 @@ public:
     
     bool run()
     {
-        ASSERT(m_graph.m_form == ThreadedCPS);
+        ASSERT(m_graph.m_form == ThreadedCPS || m_graph.m_form == SSA);
         ASSERT(m_graph.m_unificationState == GloballyUnified);
         ASSERT(m_graph.m_refCountState == EverythingIsLive);
         
@@ -68,7 +68,7 @@ public:
         // after all predecessors have been visited. Only loops will cause this analysis to
         // revisit blocks, and the amount of revisiting is proportional to loop depth.
         
-        AbstractState::initialize(m_graph);
+        m_state.initialize();
         
         do {
             m_changed = false;
