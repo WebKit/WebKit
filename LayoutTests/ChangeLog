@@ -1,5 +1,40 @@
 2013-05-28  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: fast/js should have a way of running tests long enough to wait for the concurrent JIT to tier up
+        https://bugs.webkit.org/show_bug.cgi?id=116878
+
+        Reviewed by Oliver Hunt.
+
+        This adds three things to js-test-pre and uses them in one representative test:
+
+        silentTestPass: If you set this to true, then testPassed() won't print anything, and will instead just have
+            isSuccessfullyParsed() print a message saying that some tests passed silently. This allows tests to call
+            shouldBe() and friends in a loop whose running time is dependent on concurrent JIT behavior, and still
+            be sure that the resulting test will be deterministic.
+        
+        noInline(): If testRunner is present, disable inlining of the relevant function.
+
+        dfgIncrement({f:function, i:index, n:limit}): Returns index either if index < limit, or if the function is
+            DFG compiled. Otherwise, if index >= limit and the function isn't DFG compiled, return 0. This means
+            that the 'i++' in the fast/js/dfg-* warm-up loops can be replaced with:
+
+            i = dfgIncrement({f:<function you're interested in>, i:i + 1, n:<some number smaller than the loop condition>)
+
+            This has the effect of having the loop repeat the first 'n' iterations until the function is DFG
+            compiled. See the modified test, where we do n:100 and the loop condition is i < 200. So the loop will
+            repeat the first 100 iterations until the function is DFG compiled and will only do the last 100
+            iterations once DFG compilation kicks in.    
+
+        * fast/js/dfg-arguments-osr-exit-multiple-blocks-expected.txt:
+        * fast/js/resources/js-test-pre.js:
+        (testPassed):
+        (dfgIncrement):
+        (noInline):
+        (isSuccessfullyParsed):
+        * fast/js/script-tests/dfg-arguments-osr-exit-multiple-blocks.js:
+
+2013-05-28  Filip Pizlo  <fpizlo@apple.com>
+
         testRunner should have a way of disabling inlining of functions
         https://bugs.webkit.org/show_bug.cgi?id=116875
 

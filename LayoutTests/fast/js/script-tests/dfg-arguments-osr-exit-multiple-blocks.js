@@ -2,6 +2,8 @@ description(
 "Tests aliased uses of 'arguments' that require reification of the Arguments object on OSR exit, in the case that there is some interesting control flow."
 );
 
+silentTestPass = true;
+
 function baz() {
     return [variable];
 }
@@ -24,10 +26,12 @@ function bar(x) {
     return foo(x);
 }
 
+noInline(bar);
+
 var variable = 32;
 var expected = "74";
 
-for (var i = 0; i < 200; ++i) {
+for (var i = 0; i < 200; i = dfgIncrement({f:bar, i:i + 1, n:100})) {
     if (i == 150) {
         variable = "32";
         expected = "\"4232\"";
@@ -35,3 +39,4 @@ for (var i = 0; i < 200; ++i) {
     
     shouldBe("bar(42)", expected);
 }
+

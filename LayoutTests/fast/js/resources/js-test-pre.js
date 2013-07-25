@@ -2,7 +2,10 @@
 if (self.testRunner)
     testRunner.dumpAsText(self.enablePixelTesting);
 
-var description, debug, successfullyParsed, errorMessage;
+var description, debug, successfullyParsed, errorMessage, silentTestPass, didPassSomeTestsSilently;
+
+silentTestPass = false;
+didPassSomeTestsSilently = false;
 
 (function() {
 
@@ -96,7 +99,10 @@ function escapeHTML(text)
 
 function testPassed(msg)
 {
-    debug('<span><span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
+    if (silentTestPass)
+        didPassSomeTestsSilently = true;
+    else
+        debug('<span><span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
 }
 
 function testFailed(msg)
@@ -564,12 +570,45 @@ function gc() {
     }
 }
 
+function dfgIncrement(argument)
+{
+    if (!self.testRunner)
+        return argument.i;
+    
+    if (argument.i < argument.n)
+        return argument.i;
+    
+    var numberOfCompiles = "compiles" in argument ? argument.compiles : 1;
+    
+    if (argument.f instanceof Array) {
+        for (var i = 0; i < argument.f.length; ++i) {
+            if (testRunner.numberOfDFGCompiles(argument.f[i]) < numberOfCompiles)
+                return 0;
+        }
+    } else {
+        if (testRunner.numberOfDFGCompiles(argument.f) < numberOfCompiles)
+            return 0;
+    }
+    
+    return argument.i;
+}
+
+function noInline(theFunction)
+{
+    if (!self.testRunner)
+        return;
+    
+    testRunner.neverInlineFunction(theFunction);
+}
+
 function isSuccessfullyParsed()
 {
     // FIXME: Remove this and only report unexpected syntax errors.
     if (!errorMessage)
         successfullyParsed = true;
     shouldBeTrue("successfullyParsed");
+    if (silentTestPass && didPassSomeTestsSilently)
+        debug("Passed some tests silently.");
     debug('<br /><span class="pass">TEST COMPLETE</span>');
 }
 
