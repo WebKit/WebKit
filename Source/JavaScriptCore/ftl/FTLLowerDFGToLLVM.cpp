@@ -318,6 +318,9 @@ private:
         case ArithMax:
             compileArithMinOrMax();
             break;
+        case ArithAbs:
+            compileArithAbs();
+            break;
         case ArithNegate:
             compileArithNegate();
             break;
@@ -926,6 +929,32 @@ private:
             
             m_out.appendTo(continuation, lastNext);
             m_doubleValues.add(m_node, m_out.phi(m_out.doubleType, results));
+            break;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+    
+    void compileArithAbs()
+    {
+        switch (m_node->child1().useKind()) {
+        case Int32Use: {
+            LValue value = lowInt32(m_node->child1());
+            
+            LValue mask = m_out.aShr(value, m_out.constInt32(31));
+            LValue result = m_out.bitXor(mask, m_out.add(mask, value));
+            
+            speculate(Overflow, noValue(), 0, m_out.equal(result, m_out.constInt32(1 << 31)));
+            
+            m_int32Values.add(m_node, result);
+            break;
+        }
+            
+        case NumberUse: {
+            m_doubleValues.add(m_node, m_out.doubleAbs(lowDouble(m_node->child1())));
             break;
         }
             

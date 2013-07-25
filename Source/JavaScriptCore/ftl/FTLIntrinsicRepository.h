@@ -38,7 +38,8 @@ namespace JSC { namespace FTL {
 #define FOR_EACH_FTL_INTRINSIC(macro) \
     macro(addWithOverflow32, "llvm.sadd.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
     macro(subWithOverflow32, "llvm.ssub.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
-    macro(mulWithOverflow32, "llvm.smul.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32))
+    macro(mulWithOverflow32, "llvm.smul.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
+    macro(doubleAbs, "llvm.fabs.f64", functionType(doubleType, doubleType))
 
 class IntrinsicRepository : public CommonValues {
 public:

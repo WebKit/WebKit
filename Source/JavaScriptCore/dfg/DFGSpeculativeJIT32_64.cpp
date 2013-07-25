@@ -2263,11 +2263,11 @@ void SpeculativeJIT::compile(Node* node)
     case ArithAbs: {
         switch (node->child1().useKind()) {
         case Int32Use: {
-            SpeculateIntegerOperand op1(this, node->child1());
+            SpeculateStrictInt32Operand op1(this, node->child1());
             GPRTemporary result(this, op1);
             GPRTemporary scratch(this);
             
-            m_jit.zeroExtend32ToPtr(op1.gpr(), result.gpr());
+            m_jit.move(op1.gpr(), result.gpr());
             m_jit.rshift32(result.gpr(), MacroAssembler::TrustedImm32(31), scratch.gpr());
             m_jit.add32(scratch.gpr(), result.gpr());
             m_jit.xor32(scratch.gpr(), result.gpr());

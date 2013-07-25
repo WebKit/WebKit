@@ -1,3 +1,29 @@
+2013-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support ArithAbs
+        https://bugs.webkit.org/show_bug.cgi?id=116890
+
+        Reviewed by Oliver Hunt.
+        
+        Implements ArithAbs in the FTL, and cleans up the DFG implementation. The
+        DFG implementation was previously doing zero extensions manually when it
+        is probably better to just use StrictInt32Operand instead.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        (FTL):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileArithAbs):
+        (LowerDFGToLLVM):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::doubleAbs):
+
 2013-05-28  Mark Lam  <mark.lam@apple.com>
 
         Misc JIT probe enhacements.

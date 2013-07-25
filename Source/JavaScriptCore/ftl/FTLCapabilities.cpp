@@ -70,6 +70,7 @@ inline bool canCompile(Node* node)
     case ArithMod:
     case ArithMin:
     case ArithMax:
+    case ArithAbs:
     case ArithNegate:
     case UInt32ToNumber:
     case Int32ToDouble:

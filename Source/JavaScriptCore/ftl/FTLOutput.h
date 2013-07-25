@@ -164,6 +164,10 @@ public:
     {
         return call(mulWithOverflow32Intrinsic(), left, right);
     }
+    LValue doubleAbs(LValue value)
+    {
+        return call(doubleAbsIntrinsic(), value);
+    }
     
     LValue zeroExt(LValue value, LType type) { return buildZExt(m_builder, value, type); }
     LValue intToFP(LValue value, LType type) { return buildSIToFP(m_builder, value, type); }
