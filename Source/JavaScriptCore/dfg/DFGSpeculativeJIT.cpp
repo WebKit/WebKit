@@ -744,7 +744,7 @@ void SpeculativeJIT::checkArray(Node* node)
     m_jit.loadPtr(
         MacroAssembler::Address(baseReg, JSCell::structureOffset()), temp.gpr());
     speculationCheck(
-        BadType, JSValueRegs(baseReg), node,
+        BadType, JSValueSource::unboxedCell(baseReg), node,
         m_jit.branchPtr(
             MacroAssembler::NotEqual,
             MacroAssembler::Address(temp.gpr(), Structure::classInfoOffset()),

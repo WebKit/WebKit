@@ -37,6 +37,7 @@
 #include "JITCompilationEffort.h"
 #include "MacroAssembler.h"
 #include <wtf/DataLog.h>
+#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -58,7 +59,8 @@ class VM;
 //   * The value referenced by a DataLabel may be set.
 //
 class LinkBuffer {
-    WTF_MAKE_NONCOPYABLE(LinkBuffer);
+    WTF_MAKE_NONCOPYABLE(LinkBuffer); WTF_MAKE_FAST_ALLOCATED;
+    
     typedef MacroAssemblerCodeRef CodeRef;
     typedef MacroAssemblerCodePtr CodePtr;
     typedef MacroAssembler::Label Label;
@@ -86,7 +88,6 @@ public:
         , m_vm(&vm)
 #ifndef NDEBUG
         , m_completed(false)
-        , m_effort(effort)
 #endif
     {
         linkCode(ownerUID, effort);
@@ -94,7 +95,6 @@ public:
 
     ~LinkBuffer()
     {
-        ASSERT(m_completed || (!m_executableMemory && m_effort == JITCompilationCanFail));
     }
     
     bool didFailToAllocate() const
@@ -264,7 +264,6 @@ private:
     VM* m_vm;
 #ifndef NDEBUG
     bool m_completed;
-    JITCompilationEffort m_effort;
 #endif
 };
 

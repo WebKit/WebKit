@@ -694,7 +694,7 @@ private:
             setUseKindAndUnboxIfProfitable<CellUse>(node->child1());
             if (!isInt32Speculation(node->prediction()))
                 break;
-            if (m_graph.m_identifiers[node->identifierNumber()] != vm().propertyNames->length.impl())
+            if (m_graph.identifiers()[node->identifierNumber()] != vm().propertyNames->length.impl())
                 break;
             CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->codeOrigin);
             ArrayProfile* arrayProfile = 
@@ -1120,7 +1120,7 @@ private:
         
         JSObject* stringPrototypeObject = asObject(stringObjectStructure->storedPrototype());
         Structure* stringPrototypeStructure = stringPrototypeObject->structure();
-        if (!m_graph.m_watchpoints.isStillValid(stringPrototypeStructure->transitionWatchpointSet()))
+        if (!m_graph.watchpoints().isStillValid(stringPrototypeStructure->transitionWatchpointSet()))
             return false;
         
         if (stringPrototypeStructure->isDictionary())

@@ -23,46 +23,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
+#ifndef DFGPlan_h
+#define DFGPlan_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLGeneratedFunction.h"
-#include "FTLJITCode.h"
-#include "FTLJITFinalizer.h"
-#include "FTLOSRExitCompilationInfo.h"
-#include <wtf/Noncopyable.h>
+#include "CodeBlock.h"
+#include "DFGDesiredIdentifiers.h"
+#include "DFGDesiredStructureChains.h"
+#include "DFGDesiredWatchpoints.h"
+#include "DFGFinalizer.h"
+#include "ProfilerCompilation.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
-namespace JSC { namespace FTL {
+namespace JSC { namespace DFG {
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
+enum CompileMode { CompileFunction, CompileOther };
+enum CompilationResult { CompilationFailed, CompilationInvalidated, CompilationSuccessful };
+
+struct Plan : public ThreadSafeRefCounted<Plan> {
+    Plan(
+        CompileMode compileMode, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex,
+        unsigned numVarsWithValues);
+    ~Plan();
     
-public:
-    State(DFG::Graph& graph);
+    void compileInThread();
     
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    Vector<OSRExitCompilationInfo> osrExit;
-    LLVMExecutionEngineRef engine;
-    GeneratedFunction generatedFunction;
-    JITFinalizer* finalizer;
+    CompilationResult finalize(RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck);
     
-    void dumpState(const char* when);
+    VM& vm() { return *codeBlock->vm(); }
+
+    const CompileMode compileMode;
+    CodeBlock* const codeBlock;
+    const unsigned osrEntryBytecodeIndex;
+    const unsigned numVarsWithValues;
+    Operands<JSValue> mustHandleValues;
+
+    RefPtr<Profiler::Compilation> compilation;
+
+    OwnPtr<Finalizer> finalizer;
+    
+    DesiredWatchpoints watchpoints;
+    DesiredIdentifiers identifiers;
+    DesiredStructureChains chains;
+
+private:
+    bool isStillValid();
+    void reallyAdd();
 };
 
-} } // namespace JSC::FTL
+} } // namespace JSC::DFG
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(DFG_JIT)
 
-#endif // FTLState_h
+#endif // DFGPlan_h
 

@@ -135,12 +135,12 @@ void AbstractState::initialize(Graph& graph)
         }
         if (!block->isOSRTarget)
             continue;
-        if (block->bytecodeBegin != graph.m_osrEntryBytecodeIndex)
+        if (block->bytecodeBegin != graph.m_plan.osrEntryBytecodeIndex)
             continue;
-        for (size_t i = 0; i < graph.m_mustHandleValues.size(); ++i) {
+        for (size_t i = 0; i < graph.m_plan.mustHandleValues.size(); ++i) {
             AbstractValue value;
-            value.setMostSpecific(graph, graph.m_mustHandleValues[i]);
-            int operand = graph.m_mustHandleValues.operandForIndex(i);
+            value.setMostSpecific(graph, graph.m_plan.mustHandleValues[i]);
+            int operand = graph.m_plan.mustHandleValues.operandForIndex(i);
             block->valuesAtHead.operand(operand).merge(value);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("    Initializing Block #%u, operand r%d, to ", blockIndex, operand);
@@ -1296,7 +1296,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             if (Structure* structure = forNode(node->child1()).bestProvenStructure()) {
                 GetByIdStatus status = GetByIdStatus::computeFor(
                     m_graph.m_vm, structure,
-                    m_graph.m_identifiers[node->identifierNumber()]);
+                    m_graph.identifiers()[node->identifierNumber()]);
                 if (status.isSimple()) {
                     // Assert things that we can't handle and that the computeFor() method
                     // above won't be able to return.
@@ -1363,7 +1363,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         // infinity of structures.
         ASSERT(
             value.m_futurePossibleStructure.isSubsetOf(StructureSet(node->structure()))
-            || m_graph.m_watchpoints.shouldAssumeMixedState(node->structure()->transitionWatchpointSet()));
+            || m_graph.watchpoints().shouldAssumeMixedState(node->structure()->transitionWatchpointSet()));
         
         value.filter(m_graph, node->structure());
         m_haveStructures = true;
@@ -1497,7 +1497,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                 m_graph.m_vm,
                 m_graph.globalObjectFor(node->codeOrigin),
                 structure,
-                m_graph.m_identifiers[node->identifierNumber()],
+                m_graph.identifiers()[node->identifierNumber()],
                 node->op() == PutByIdDirect);
             if (status.isSimpleReplace()) {
                 forNode(node->child1()).filter(m_graph, structure);

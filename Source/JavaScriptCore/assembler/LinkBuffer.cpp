@@ -29,6 +29,7 @@
 #if ENABLE(ASSEMBLER)
 
 #include "Options.h"
+#include <wtf/CompilationThread.h>
 
 namespace JSC {
 
@@ -146,6 +147,7 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
 void LinkBuffer::performFinalization()
 {
 #ifndef NDEBUG
+    ASSERT(!isCompilationThread());
     ASSERT(!m_completed);
     ASSERT(isValid());
     m_completed = true;

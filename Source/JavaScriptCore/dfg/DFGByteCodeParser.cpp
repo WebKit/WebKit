@@ -789,7 +789,7 @@ private:
         Node* objectNode = cellConstant(object);
         
         if (object->structure() == structure
-            && m_graph.m_watchpoints.isStillValid(structure->transitionWatchpointSet())) {
+            && m_graph.watchpoints().isStillValid(structure->transitionWatchpointSet())) {
             addToGraph(StructureTransitionWatchpoint, OpInfo(structure), objectNode);
             return objectNode;
         }
@@ -1212,13 +1212,13 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
             // the inputs must be kept alive whatever exits the intrinsic may do.
             addToGraph(Phantom, callTarget);
             emitArgumentPhantoms(registerOffset, argumentCountIncludingThis, kind);
-            if (m_graph.m_compilation)
-                m_graph.m_compilation->noticeInlinedCall();
+            if (m_graph.compilation())
+                m_graph.compilation()->noticeInlinedCall();
             return;
         }
     } else if (handleInlining(usesResult, callTarget, resultOperand, callLinkStatus, registerOffset, argumentCountIncludingThis, nextOffset, kind)) {
-        if (m_graph.m_compilation)
-            m_graph.m_compilation->noticeInlinedCall();
+        if (m_graph.compilation())
+            m_graph.compilation()->noticeInlinedCall();
         return;
     }
     
@@ -1728,15 +1728,15 @@ void ByteCodeParser::handleGetById(
     // execution if it doesn't have a prediction, so we do it manually.
     if (prediction == SpecNone)
         addToGraph(ForceOSRExit);
-    else if (m_graph.m_compilation)
-        m_graph.m_compilation->noticeInlinedGetById();
+    else if (m_graph.compilation())
+        m_graph.compilation()->noticeInlinedGetById();
     
     Node* originalBaseForBaselineJIT = base;
                 
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(getByIdStatus.structureSet())), base);
     
     if (getByIdStatus.chain()) {
-        m_graph.m_chains.addLazily(getByIdStatus.chain());
+        m_graph.chains().addLazily(getByIdStatus.chain());
         Structure* currentStructure = getByIdStatus.structureSet().singletonStructure();
         JSObject* currentObject = 0;
         for (unsigned i = 0; i < getByIdStatus.chain()->size(); ++i) {
@@ -1881,7 +1881,7 @@ bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned 
     ResolveOperation* resolveValueOperation = pc;
     switch (resolveValueOperation->m_operation) {
     case ResolveOperation::GetAndReturnGlobalProperty: {
-        ResolveGlobalStatus status = ResolveGlobalStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_currentIndex, resolveValueOperation, m_graph.m_identifiers[identifier]);
+        ResolveGlobalStatus status = ResolveGlobalStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_currentIndex, resolveValueOperation, m_graph.identifiers()[identifier]);
         if (status.isSimple()) {
             ASSERT(status.structure());
 
@@ -1917,9 +1917,9 @@ bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned 
 
         JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
 
-        StringImpl* uid = m_graph.m_identifiers[identifier];
+        StringImpl* uid = m_graph.identifiers()[identifier];
         SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
-        if (!m_graph.m_watchpoints.isStillValid(entry.watchpointSet())) {
+        if (!m_graph.watchpoints().isStillValid(entry.watchpointSet())) {
             *value = addToGraph(GetGlobalVar, OpInfo(globalObject->assertRegisterIsInThisObject(pc->m_registerAddress)), OpInfo(prediction));
             return true;
         }
@@ -2011,8 +2011,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         m_currentInstruction = currentInstruction; // Some methods want to use this, and we'd rather not thread it through calls.
         OpcodeID opcodeID = interpreter->getOpcodeID(currentInstruction->u.opcode);
         
-        if (m_graph.m_compilation && opcodeID != op_call_put_result) {
-            addToGraph(CountExecution, OpInfo(m_graph.m_compilation->executionCounterFor(
+        if (m_graph.compilation() && opcodeID != op_call_put_result) {
+            addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
                 Profiler::OriginStack(*m_vm->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
         }
         
@@ -2571,7 +2571,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(currentInstruction[2].u.operand);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
             
-            StringImpl* uid = m_graph.m_identifiers[identifierNumber];
+            StringImpl* uid = m_graph.identifiers()[identifierNumber];
             GetByIdStatus getByIdStatus = GetByIdStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock, m_currentIndex, uid);
             
@@ -2594,7 +2594,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             PutByIdStatus putByIdStatus = PutByIdStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock,
                 m_currentIndex,
-                m_graph.m_identifiers[identifierNumber]);
+                m_graph.identifiers()[identifierNumber]);
             bool canCountAsInlined = true;
             if (!putByIdStatus.isSet()) {
                 addToGraph(ForceOSRExit);
@@ -2624,7 +2624,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 && (!putByIdStatus.structureChain()
                     || putByIdStatus.structureChain()->isStillValid())) {
                 
-                m_graph.m_chains.addLazily(putByIdStatus.structureChain());
+                m_graph.chains().addLazily(putByIdStatus.structureChain());
                 
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(putByIdStatus.oldStructure())), base);
                 if (!direct) {
@@ -2693,8 +2693,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 canCountAsInlined = false;
             }
             
-            if (canCountAsInlined && m_graph.m_compilation)
-                m_graph.m_compilation->noticeInlinedPutById();
+            if (canCountAsInlined && m_graph.compilation())
+                m_graph.compilation()->noticeInlinedPutById();
 
             NEXT_OPCODE(op_put_by_id);
         }
@@ -2717,7 +2717,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
             JSGlobalObject* globalObject = codeBlock->globalObject();
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[4].u.operand];
-            StringImpl* uid = m_graph.m_identifiers[identifierNumber];
+            StringImpl* uid = m_graph.identifiers()[identifierNumber];
             SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
             if (!entry.couldBeWatched()) {
                 addToGraph(
@@ -3193,7 +3193,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case PutToBaseOperation::GlobalVariablePutChecked: {
                 CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
                 JSGlobalObject* globalObject = codeBlock->globalObject();
-                SymbolTableEntry entry = globalObject->symbolTable()->get(m_graph.m_identifiers[identifier]);
+                SymbolTableEntry entry = globalObject->symbolTable()->get(m_graph.identifiers()[identifier]);
                 if (entry.couldBeWatched()) {
                     addToGraph(PutGlobalVarCheck,
                                OpInfo(codeBlock->globalObject()->assertRegisterIsInThisObject(putToBase->m_registerAddress)),
@@ -3566,9 +3566,9 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
 
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i) {
             StringImpl* rep = codeBlock->identifier(i).impl();
-            BorrowedIdentifierMap::AddResult result = byteCodeParser->m_identifierMap.add(rep, byteCodeParser->m_graph.m_identifiers.numberOfIdentifiers());
+            BorrowedIdentifierMap::AddResult result = byteCodeParser->m_identifierMap.add(rep, byteCodeParser->m_graph.identifiers().numberOfIdentifiers());
             if (result.isNewEntry)
-                byteCodeParser->m_graph.m_identifiers.addLazily(rep);
+                byteCodeParser->m_graph.identifiers().addLazily(rep);
             m_identifierRemap[i] = result.iterator->value;
         }
         for (size_t i = 0; i < codeBlock->numberOfConstantRegisters(); ++i) {
@@ -3636,8 +3636,8 @@ void ByteCodeParser::parseCodeBlock()
 {
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     
-    if (m_graph.m_compilation) {
-        m_graph.m_compilation->addProfiledBytecodes(
+    if (m_graph.compilation()) {
+        m_graph.compilation()->addProfiledBytecodes(
             *m_vm->m_perBytecodeProfiler, m_inlineStackTop->m_profiledBlock);
     }
     

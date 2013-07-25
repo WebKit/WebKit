@@ -23,46 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "FTLJITFinalizer.h"
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLGeneratedFunction.h"
-#include "FTLJITCode.h"
-#include "FTLJITFinalizer.h"
-#include "FTLOSRExitCompilationInfo.h"
-#include <wtf/Noncopyable.h>
+#include "CodeBlockWithJITType.h"
+#include "DFGPlan.h"
 
 namespace JSC { namespace FTL {
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
+using namespace DFG;
+
+JITFinalizer::JITFinalizer(Plan& plan)
+    : Finalizer(plan)
+{
+}
+
+JITFinalizer::~JITFinalizer()
+{
+    if (m_engine)
+        LLVMDisposeExecutionEngine(m_engine);
+}
+
+bool JITFinalizer::finalize(RefPtr<JSC::JITCode>&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool JITFinalizer::finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck)
+{
+    if (m_exitThunksLinkBuffer) {
+        m_jitCode->initializeExitThunks(
+            FINALIZE_DFG_CODE(
+                *m_exitThunksLinkBuffer,
+                ("FTL exit thunks for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data())));
+    } // else this function had no OSR exits, so no exit thunks.
     
-public:
-    State(DFG::Graph& graph);
+    withArityCheck = m_entrypointLinkBuffer->locationOf(m_arityCheck);
+    m_jitCode->initializeCode(
+        m_engine,
+        FINALIZE_DFG_CODE(
+            *m_entrypointLinkBuffer,
+            ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data(), m_function)));
+    entry = m_jitCode;
     
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    Vector<OSRExitCompilationInfo> osrExit;
-    LLVMExecutionEngineRef engine;
-    GeneratedFunction generatedFunction;
-    JITFinalizer* finalizer;
+    m_engine = 0; // We don't own it anymore.
     
-    void dumpState(const char* when);
-};
+    return true;
+}
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLState_h
 

@@ -1,3 +1,174 @@
+2013-05-15  Mark Lam  <mark.lam@apple.com>
+
+        Fix for broken 32-bit build in SpeculativeJIT::checkArray().
+        https://bugs.webkit.org/show_bug.cgi?id=116184.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+
+2013-05-15  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should separate link phase into things that must be done concurrently and things that must be done synchronously, and have a way of passing data from one to the other
+        https://bugs.webkit.org/show_bug.cgi?id=116060
+
+        Reviewed by Gavin Barraclough.
+        
+        This introduces the concept of a DFG::Plan, which corresponds to:
+        
+        - The data that the concurrent DFG or FTL need to start compiling a CodeBlock.
+          This mostly includes basic things like CodeBlock*, but also a list of
+          must-handle values for OSR entry.
+        
+        - The data that the synchronous linker need to link in code compiled by a
+          concurrent compilation thread. This is further encapsulated by DFG::Finalizer,
+          since the data, and the actions that need to be taken, are different in DFG
+          versus FTL. This patch also institutes the policy that the concurrent
+          compilation thread shall not use LinkBuffer::performFinalization(), since that
+          code assumes that it's running on the same thread that will actually run the
+          code.
+        
+        - The actions that need to be taken to compile code. In other words, most of the
+          code that previously lived in DFGDriver.cpp now lives in
+          DFG::Plan::compileInThread().
+        
+        - The actions that need to be taken when synchronously linking the code. This
+          includes "really" adding watchpoints and identifiers, checking watchpoint and
+          chain validity, and running the DFG::Finalizer.
+        
+        Currently, DFGDriver just creates a Plan and runs it synchronously. But in the
+        future, we will be able to malloc some Plans and enqueue them, and have the
+        concurrent thread dequeue them and call Plan::compileInThread().
+        
+        For now, this has no behavior or performance change.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::performFinalization):
+        * assembler/LinkBuffer.h:
+        (LinkBuffer):
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::~LinkBuffer):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::setFuturePossibleStructure):
+        (JSC::DFG::AbstractValue::filterFuturePossibleStructure):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addStructureTransitionCheck):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        * dfg/DFGDriver.cpp:
+        (DFG):
+        (JSC::DFG::compile):
+        * dfg/DFGFailedFinalizer.cpp: Added.
+        (DFG):
+        (JSC::DFG::FailedFinalizer::FailedFinalizer):
+        (JSC::DFG::FailedFinalizer::~FailedFinalizer):
+        (JSC::DFG::FailedFinalizer::finalize):
+        (JSC::DFG::FailedFinalizer::finalizeFunction):
+        * dfg/DFGFailedFinalizer.h: Added.
+        (DFG):
+        (FailedFinalizer):
+        * dfg/DFGFinalizer.cpp: Added.
+        (DFG):
+        (JSC::DFG::Finalizer::Finalizer):
+        (JSC::DFG::Finalizer::~Finalizer):
+        * dfg/DFGFinalizer.h: Added.
+        (DFG):
+        (Finalizer):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::canOptimizeStringObjectAccess):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::dump):
+        (DFG):
+        * dfg/DFGGraph.h:
+        (Graph):
+        (JSC::DFG::Graph::masqueradesAsUndefinedWatchpointIsStillValid):
+        (JSC::DFG::Graph::compilation):
+        (JSC::DFG::Graph::identifiers):
+        (JSC::DFG::Graph::watchpoints):
+        (JSC::DFG::Graph::chains):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::linkFunction):
+        (DFG):
+        (JSC::DFG::JITCompiler::disassemble):
+        * dfg/DFGJITCompiler.h:
+        (JITCompiler):
+        (JSC::DFG::JITCompiler::addLazily):
+        * dfg/DFGJITFinalizer.cpp: Added.
+        (DFG):
+        (JSC::DFG::JITFinalizer::JITFinalizer):
+        (JSC::DFG::JITFinalizer::~JITFinalizer):
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGJITFinalizer.h: Added.
+        (DFG):
+        (JITFinalizer):
+        * dfg/DFGPlan.cpp: Added.
+        (DFG):
+        (JSC::DFG::dumpAndVerifyGraph):
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::~Plan):
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::isStillValid):
+        (JSC::DFG::Plan::reallyAdd):
+        (JSC::DFG::Plan::finalize):
+        * dfg/DFGPlan.h: Added.
+        (DFG):
+        (Plan):
+        (JSC::DFG::Plan::vm):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::identifierUID):
+        (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        * ftl/FTLGeneratedFunction.h: Added.
+        (FTL):
+        * ftl/FTLJITFinalizer.cpp: Added.
+        (FTL):
+        (JSC::FTL::JITFinalizer::JITFinalizer):
+        (JSC::FTL::JITFinalizer::~JITFinalizer):
+        (JSC::FTL::JITFinalizer::finalize):
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h: Added.
+        (FTL):
+        (JITFinalizer):
+        (JSC::FTL::JITFinalizer::initializeExitThunksLinkBuffer):
+        (JSC::FTL::JITFinalizer::initializeEntrypointLinkBuffer):
+        (JSC::FTL::JITFinalizer::initializeCode):
+        (JSC::FTL::JITFinalizer::initializeFunction):
+        (JSC::FTL::JITFinalizer::initializeArityCheck):
+        (JSC::FTL::JITFinalizer::initializeJITCode):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLink.h:
+        (FTL):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::linkOSRExitsAndCompleteInitializationBlocks):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * ftl/FTLState.h:
+        (FTL):
+        (State):
+
 2013-05-14  Mark Lam  <mark.lam@apple.com>
 
         Refactor JITStubs.cpp to move CPU specific parts out into their own files.

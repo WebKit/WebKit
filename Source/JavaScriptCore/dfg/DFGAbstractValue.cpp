@@ -112,7 +112,7 @@ void AbstractValue::filter(Graph& graph, const StructureSet& other)
 
 void AbstractValue::setFuturePossibleStructure(Graph& graph, Structure* structure)
 {
-    if (graph.m_watchpoints.isStillValid(structure->transitionWatchpointSet()))
+    if (graph.watchpoints().isStillValid(structure->transitionWatchpointSet()))
         m_futurePossibleStructure = structure;
     else
         m_futurePossibleStructure.makeTop();
@@ -120,7 +120,7 @@ void AbstractValue::setFuturePossibleStructure(Graph& graph, Structure* structur
 
 void AbstractValue::filterFuturePossibleStructure(Graph& graph, Structure* structure)
 {
-    if (graph.m_watchpoints.isStillValid(structure->transitionWatchpointSet()))
+    if (graph.watchpoints().isStillValid(structure->transitionWatchpointSet()))
         m_futurePossibleStructure.filter(StructureAbstractValue(structure));
 }
 

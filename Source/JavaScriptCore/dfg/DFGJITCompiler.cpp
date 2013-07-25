@@ -29,7 +29,9 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "DFGFailedFinalizer.h"
 #include "DFGJITCode.h"
+#include "DFGJITFinalizer.h"
 #include "DFGOSRExitCompiler.h"
 #include "DFGOperations.h"
 #include "DFGRegisterBank.h"
@@ -59,7 +61,7 @@ JITCompiler::~JITCompiler()
 void JITCompiler::linkOSRExits()
 {
     ASSERT(m_jitCode->osrExit.size() == m_exitCompilationInfo.size());
-    if (m_graph.m_compilation) {
+    if (m_graph.compilation()) {
         for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
             OSRExit& exit = m_jitCode->osrExit[i];
             Vector<Label> labels;
@@ -229,25 +231,23 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             m_jitCode->watchpoints[exit.m_watchpointIndex].correctLabels(linkBuffer);
     }
     
-    if (m_graph.m_compilation) {
+    if (m_graph.compilation()) {
         ASSERT(m_exitSiteLabels.size() == m_jitCode->osrExit.size());
         for (unsigned i = 0; i < m_exitSiteLabels.size(); ++i) {
             Vector<Label>& labels = m_exitSiteLabels[i];
             Vector<const void*> addresses;
             for (unsigned j = 0; j < labels.size(); ++j)
                 addresses.append(linkBuffer.locationOf(labels[j]).executableAddress());
-            m_graph.m_compilation->addOSRExitSite(addresses);
+            m_graph.compilation()->addOSRExitSite(addresses);
         }
     } else
         ASSERT(!m_exitSiteLabels.size());
     
-    m_jitCode->common.compilation = m_graph.m_compilation;
+    m_jitCode->common.compilation = m_graph.compilation();
     
-    m_graph.m_watchpoints.reallyAdd();
-    m_graph.m_identifiers.reallyAdd(*m_vm);
 }
 
-bool JITCompiler::compile()
+void JITCompiler::compile()
 {
     SamplingRegion samplingRegion("DFG Backend");
 
@@ -266,37 +266,29 @@ bool JITCompiler::compile()
     // Create OSR entry trampolines if necessary.
     m_speculative->createOSREntries();
     setEndOfCode();
-
-    return true;
 }
 
-bool JITCompiler::link(RefPtr<JSC::JITCode>& entry)
+void JITCompiler::link()
 {
-    if (!m_graph.isStillValid())
-        return false;
+    OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(*m_vm, this, m_codeBlock, JITCompilationCanFail));
+    if (linkBuffer->didFailToAllocate()) {
+        m_graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(m_graph.m_plan));
+        return;
+    }
     
-    LinkBuffer linkBuffer(*m_vm, this, m_codeBlock, JITCompilationCanFail);
-    if (linkBuffer.didFailToAllocate())
-        return false;
-    link(linkBuffer);
-    m_speculative->linkOSREntries(linkBuffer);
+    link(*linkBuffer);
+    m_speculative->linkOSREntries(*linkBuffer);
     
     m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 
-    if (shouldShowDisassembly())
-        m_disassembler->dump(linkBuffer);
-    if (m_graph.m_compilation) {
-        m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
-        m_vm->m_perBytecodeProfiler->addCompilation(m_graph.m_compilation);
-    }
-
-    m_jitCode->initializeCodeRef(linkBuffer.finalizeCodeWithoutDisassembly());
-    entry = m_jitCode;
-    return true;
+    disassemble(*linkBuffer);
+    
+    m_graph.m_plan.finalizer = adoptPtr(new JITFinalizer(
+        m_graph.m_plan, m_jitCode.release(), linkBuffer.release()));
 }
 
-bool JITCompiler::compileFunction()
+void JITCompiler::compileFunction()
 {
     SamplingRegion samplingRegion("DFG Backend");
     
@@ -366,40 +358,39 @@ bool JITCompiler::compileFunction()
     // Create OSR entry trampolines if necessary.
     m_speculative->createOSREntries();
     setEndOfCode();
-    
-    return true;
 }
 
-bool JITCompiler::linkFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck)
+void JITCompiler::linkFunction()
 {
-    if (!m_graph.isStillValid())
-        return false;
-
     // === Link ===
-    LinkBuffer linkBuffer(*m_vm, this, m_codeBlock, JITCompilationCanFail);
-    if (linkBuffer.didFailToAllocate())
-        return false;
-    link(linkBuffer);
-    m_speculative->linkOSREntries(linkBuffer);
+    OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(*m_vm, this, m_codeBlock, JITCompilationCanFail));
+    if (linkBuffer->didFailToAllocate()) {
+        m_graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(m_graph.m_plan));
+        return;
+    }
+    link(*linkBuffer);
+    m_speculative->linkOSREntries(*linkBuffer);
     
     m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
     
     // FIXME: switch the stack check & arity check over to DFGOpertaion style calls, not JIT stubs.
-    linkBuffer.link(m_callStackCheck, cti_stack_check);
-    linkBuffer.link(m_callArityCheck, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
+    linkBuffer->link(m_callStackCheck, cti_stack_check);
+    linkBuffer->link(m_callArityCheck, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
     
+    disassemble(*linkBuffer);
+    
+    m_graph.m_plan.finalizer = adoptPtr(new JITFinalizer(
+        m_graph.m_plan, m_jitCode.release(), linkBuffer.release(), m_arityCheck));
+}
+
+void JITCompiler::disassemble(LinkBuffer& linkBuffer)
+{
     if (shouldShowDisassembly())
         m_disassembler->dump(linkBuffer);
-    if (m_graph.m_compilation) {
-        m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
-        m_vm->m_perBytecodeProfiler->addCompilation(m_graph.m_compilation);
-    }
-
-    entryWithArityCheck = linkBuffer.locationOf(m_arityCheck);
-    m_jitCode->initializeCodeRef(linkBuffer.finalizeCodeWithoutDisassembly());
-    entry = m_jitCode;
-    return true;
+    
+    if (m_graph.m_plan.compilation)
+        m_disassembler->reportToProfiler(m_graph.m_plan.compilation.get(), linkBuffer);
 }
 
 } } // namespace JSC::DFG

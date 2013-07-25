@@ -247,22 +247,22 @@ public:
     JITCompiler(Graph& dfg);
     ~JITCompiler();
     
-    bool compile();
-    bool compileFunction();
+    void compile();
+    void compileFunction();
     
-    bool link(RefPtr<JSC::JITCode>& entry);
-    bool linkFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck);
+    void link();
+    void linkFunction();
 
     // Accessors for properties.
     Graph& graph() { return m_graph; }
     
     void addLazily(Watchpoint* watchpoint, WatchpointSet* set)
     {
-        m_graph.m_watchpoints.addLazily(watchpoint, set);
+        m_graph.watchpoints().addLazily(watchpoint, set);
     }
     void addLazily(Watchpoint* watchpoint, InlineWatchpointSet& set)
     {
-        m_graph.m_watchpoints.addLazily(watchpoint, set);
+        m_graph.watchpoints().addLazily(watchpoint, set);
     }
     
     // Methods to set labels for the disassembler.
@@ -445,6 +445,7 @@ private:
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*);
     void compileExceptionHandlers();
     void linkOSRExits();
+    void disassemble(LinkBuffer&);
     
     // The dataflow graph currently being generated.
     Graph& m_graph;

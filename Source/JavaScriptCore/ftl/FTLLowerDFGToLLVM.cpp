@@ -1958,9 +1958,9 @@ private:
         m_out.appendTo(m_initialization);
         
         if (m_exitThunkGenerator.didThings()) {
-            LinkBuffer linkBuffer(
+            OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(
                 vm(), &m_exitThunkGenerator, m_ftlState.graph.m_codeBlock,
-                JITCompilationMustSucceed);
+                JITCompilationMustSucceed));
         
             ASSERT(m_ftlState.osrExit.size() == m_ftlState.jitCode->osrExit.size());
         
@@ -1968,20 +1968,17 @@ private:
                 OSRExitCompilationInfo& info = m_ftlState.osrExit[i];
                 OSRExit& exit = m_ftlState.jitCode->osrExit[i];
             
-                linkBuffer.link(info.m_thunkJump, target);
+                linkBuffer->link(info.m_thunkJump, target);
             
                 m_out.set(
                     m_out.constIntPtr(
-                        linkBuffer.locationOf(info.m_thunkLabel).executableAddress()),
+                        linkBuffer->locationOf(info.m_thunkLabel).executableAddress()),
                     info.m_thunkAddress);
             
-                exit.m_patchableCodeOffset = linkBuffer.offsetOf(info.m_thunkJump);
+                exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
             }
         
-            m_ftlState.jitCode->initializeExitThunks(
-                FINALIZE_DFG_CODE(
-                    linkBuffer,
-                    ("FTL exit thunks for %s", toCString(CodeBlockWithJITType(m_ftlState.graph.m_codeBlock,JITCode::FTLJIT)).data())));
+            m_ftlState.finalizer->initializeExitThunksLinkBuffer(linkBuffer.release());
         }
 
         m_out.jump(m_argumentChecks);

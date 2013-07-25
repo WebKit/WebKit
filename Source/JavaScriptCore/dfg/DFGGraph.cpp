@@ -44,16 +44,13 @@ static const char* dfgOpNames[] = {
 #undef STRINGIZE_DFG_OP_ENUM
 };
 
-Graph::Graph(VM& vm, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues)
+Graph::Graph(VM& vm, Plan& plan)
     : m_vm(vm)
-    , m_codeBlock(codeBlock)
-    , m_compilation(vm.m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(vm.m_perBytecodeProfiler->ensureBytecodesFor(codeBlock), Profiler::DFG)) : 0)
-    , m_profiledBlock(codeBlock->alternative())
+    , m_plan(plan)
+    , m_codeBlock(m_plan.codeBlock)
+    , m_profiledBlock(m_codeBlock->alternative())
     , m_allocator(vm.m_dfgState->m_allocator)
     , m_hasArguments(false)
-    , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
-    , m_mustHandleValues(mustHandleValues)
-    , m_identifiers(codeBlock)
     , m_fixpointState(BeforeFixpoint)
     , m_form(LoadStore)
     , m_unificationState(LocallyUnified)
@@ -189,7 +186,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
     if (node->hasRegisterPointer())
         out.print(comma, "global", globalObjectFor(node->codeOrigin)->findRegisterIndex(node->registerPointer()), "(", RawPointer(node->registerPointer()), ")");
     if (node->hasIdentifier())
-        out.print(comma, "id", node->identifierNumber(), "{", m_identifiers[node->identifierNumber()], "}");
+        out.print(comma, "id", node->identifierNumber(), "{", identifiers()[node->identifierNumber()], "}");
     if (node->hasStructureSet()) {
         for (size_t i = 0; i < node->structureSet().size(); ++i)
             out.print(comma, "struct(", RawPointer(node->structureSet()[i]), ": ", IndexingTypeDump(node->structureSet()[i]->indexingType()), ")");
@@ -226,7 +223,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
     }
     if (node->hasStorageAccessData()) {
         StorageAccessData& storageAccessData = m_storageAccessData[node->storageAccessDataIndex()];
-        out.print(comma, "id", storageAccessData.identifierNumber, "{", m_identifiers[storageAccessData.identifierNumber], "}");
+        out.print(comma, "id", storageAccessData.identifierNumber, "{", identifiers()[storageAccessData.identifierNumber], "}");
         out.print(", ", static_cast<ptrdiff_t>(storageAccessData.offset));
     }
     ASSERT(node->hasVariableAccessData() == node->hasLocal());
@@ -443,12 +440,6 @@ void Graph::resetExitStates()
         for (unsigned indexInBlock = block->size(); indexInBlock--;)
             block->at(indexInBlock)->setCanExit(true);
     }
-}
-
-bool Graph::isStillValid() const
-{
-    return m_watchpoints.areStillValid()
-        && m_chains.areStillValid();
 }
 
 } } // namespace JSC::DFG

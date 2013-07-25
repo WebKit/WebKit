@@ -582,7 +582,7 @@ public:
 
     StringImpl* identifierUID(unsigned index)
     {
-        return m_jit.graph().m_identifiers[index];
+        return m_jit.graph().identifiers()[index];
     }
 
     // Spill all VirtualRegisters back to the JSStack.
@@ -2875,7 +2875,7 @@ void SpeculativeJIT::speculateStringObjectForStructure(Edge edge, StructureLocat
     Structure* stringObjectStructure =
         m_jit.globalObjectFor(m_currentNode->codeOrigin)->stringObjectStructure();
     Structure* stringPrototypeStructure = stringObjectStructure->storedPrototype().asCell()->structure();
-    ASSERT(m_jit.graph().m_watchpoints.isValidOrMixed(stringPrototypeStructure->transitionWatchpointSet()));
+    ASSERT(m_jit.graph().watchpoints().isValidOrMixed(stringPrototypeStructure->transitionWatchpointSet()));
     
     if (!m_state.forNode(edge).m_currentKnownStructure.isSubsetOf(StructureSet(m_jit.globalObjectFor(m_currentNode->codeOrigin)->stringObjectStructure()))) {
         speculationCheck(

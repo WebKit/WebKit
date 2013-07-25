@@ -34,13 +34,11 @@
 #include "DFGArgumentPosition.h"
 #include "DFGAssemblyHelpers.h"
 #include "DFGBasicBlock.h"
-#include "DFGDesiredIdentifiers.h"
-#include "DFGDesiredStructureChains.h"
-#include "DFGDesiredWatchpoints.h"
 #include "DFGDominators.h"
 #include "DFGLongLivedState.h"
 #include "DFGNode.h"
 #include "DFGNodeAllocator.h"
+#include "DFGPlan.h"
 #include "DFGVariadicFunction.h"
 #include "JSStack.h"
 #include "MethodOfGettingAValueProfile.h"
@@ -92,7 +90,7 @@ enum AddSpeculationMode {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph {
 public:
-    Graph(VM&, CodeBlock*, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues);
+    Graph(VM&, Plan&);
     ~Graph();
     
     void changeChild(Edge& edge, Node* newNode)
@@ -381,7 +379,7 @@ public:
     
     bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
     {
-        return m_watchpoints.isStillValid(
+        return m_plan.watchpoints.isStillValid(
             globalObjectFor(codeOrigin)->masqueradesAsUndefinedWatchpoint());
     }
     
@@ -701,11 +699,15 @@ public:
         }
     }
     
-    bool isStillValid() const;
+    Profiler::Compilation* compilation() { return m_plan.compilation.get(); }
+    
+    DesiredIdentifiers& identifiers() { return m_plan.identifiers; }
+    DesiredWatchpoints& watchpoints() { return m_plan.watchpoints; }
+    DesiredStructureChains& chains() { return m_plan.chains; }
     
     VM& m_vm;
+    Plan& m_plan;
     CodeBlock* m_codeBlock;
-    RefPtr<Profiler::Compilation> m_compilation;
     CodeBlock* m_profiledBlock;
     
     NodeAllocator& m_allocator;
@@ -728,11 +730,6 @@ public:
     Dominators m_dominators;
     unsigned m_localVars;
     unsigned m_parameterSlots;
-    unsigned m_osrEntryBytecodeIndex;
-    Operands<JSValue> m_mustHandleValues;
-    DesiredWatchpoints m_watchpoints;
-    DesiredIdentifiers m_identifiers;
-    DesiredStructureChains m_chains;
     
     OptimizationFixpointState m_fixpointState;
     GraphForm m_form;

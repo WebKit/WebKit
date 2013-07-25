@@ -23,46 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
+#ifndef DFGJITFinalizer_h
+#define DFGJITFinalizer_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLGeneratedFunction.h"
-#include "FTLJITCode.h"
-#include "FTLJITFinalizer.h"
-#include "FTLOSRExitCompilationInfo.h"
-#include <wtf/Noncopyable.h>
+#include "DFGFinalizer.h"
+#include "DFGJITCode.h"
+#include "LinkBuffer.h"
+#include "MacroAssembler.h"
 
-namespace JSC { namespace FTL {
+namespace JSC { namespace DFG {
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
-    
+class JITFinalizer : public Finalizer {
 public:
-    State(DFG::Graph& graph);
+    JITFinalizer(Plan&, PassRefPtr<JITCode>, PassOwnPtr<LinkBuffer>, MacroAssembler::Label arityCheck = MacroAssembler::Label());
+    virtual ~JITFinalizer();
     
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    Vector<OSRExitCompilationInfo> osrExit;
-    LLVMExecutionEngineRef engine;
-    GeneratedFunction generatedFunction;
-    JITFinalizer* finalizer;
+    bool finalize(RefPtr<JSC::JITCode>& entry);
+    bool finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck);
+
+private:
+    void finalizeCommon();
     
-    void dumpState(const char* when);
+    RefPtr<JITCode> m_jitCode;
+    OwnPtr<LinkBuffer> m_linkBuffer;
+    MacroAssembler::Label m_arityCheck;
 };
 
-} } // namespace JSC::FTL
+} } // namespace JSC::DFG
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(DFG_JIT)
 
-#endif // FTLState_h
+#endif // DFGJITFinalizer_h
 

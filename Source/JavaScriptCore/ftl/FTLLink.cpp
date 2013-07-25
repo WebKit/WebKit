@@ -47,15 +47,8 @@ static void compileEntry(CCallHelpers& jit)
     jit.emitPutImmediateToCallFrameHeader(jit.codeBlock(), JSStack::CodeBlock);
 }
 
-bool link(State& state, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
+void link(State& state)
 {
-    if (!state.graph.isStillValid()) {
-        LLVMDisposeExecutionEngine(state.engine);
-        return false;
-    }
-    
-    state.graph.m_watchpoints.reallyAdd();
-    
     // Create the entrypoint.
     // FIXME: This is a total kludge - LLVM should just use our calling convention.
     // https://bugs.webkit.org/show_bug.cgi?id=113621
@@ -124,19 +117,15 @@ bool link(State& state, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr& ji
     jit.move(GPRInfo::regT0, GPRInfo::callFrameRegister);
     jit.jump(fromArityCheck);
         
-    LinkBuffer linkBuffer(state.graph.m_vm, &jit, state.graph.m_codeBlock, JITCompilationMustSucceed);
-    linkBuffer.link(callStackCheck, cti_stack_check);
-    linkBuffer.link(callArityCheck, state.graph.m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
-        
-    jitCodeWithArityCheck = linkBuffer.locationOf(arityCheck);
-    state.jitCode->initializeCode(
-        state.engine,
-        FINALIZE_DFG_CODE(
-            linkBuffer,
-            ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT)).data(), state.generatedFunction)));
-    jitCode = state.jitCode;
+    OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(state.graph.m_vm, &jit, state.graph.m_codeBlock, JITCompilationMustSucceed));
+    linkBuffer->link(callStackCheck, cti_stack_check);
+    linkBuffer->link(callArityCheck, state.graph.m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
     
-    return true;
+    state.finalizer->initializeEntrypointLinkBuffer(linkBuffer.release());
+    state.finalizer->initializeCode(state.engine);
+    state.finalizer->initializeFunction(state.generatedFunction);
+    state.finalizer->initializeArityCheck(arityCheck);
+    state.finalizer->initializeJITCode(state.jitCode);
 }
 
 } } // namespace JSC::FTL

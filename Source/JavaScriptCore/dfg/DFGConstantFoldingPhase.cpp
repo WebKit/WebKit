@@ -155,7 +155,7 @@ private:
                 bool needsCellCheck = m_state.forNode(child).m_type & ~SpecCell;
                 
                 GetByIdStatus status = GetByIdStatus::computeFor(
-                    vm(), structure, m_graph.m_identifiers[identifierNumber]);
+                    vm(), structure, m_graph.identifiers()[identifierNumber]);
                 
                 if (!status.isSimple()) {
                     // FIXME: We could handle prototype cases.
@@ -223,7 +223,7 @@ private:
                     vm(),
                     m_graph.globalObjectFor(codeOrigin),
                     structure,
-                    m_graph.m_identifiers[identifierNumber],
+                    m_graph.identifiers()[identifierNumber],
                     node->op() == PutByIdDirect);
                 
                 if (!status.isSimpleReplace() && !status.isSimpleTransition())
@@ -261,7 +261,7 @@ private:
                                 structure->storedPrototype().asCell());
                         }
                         
-                        m_graph.m_chains.addLazily(status.structureChain());
+                        m_graph.chains().addLazily(status.structureChain());
                         
                         for (unsigned i = 0; i < status.structureChain()->size(); ++i) {
                             JSValue prototype = status.structureChain()->at(i)->storedPrototype();
@@ -399,7 +399,7 @@ private:
         Node* weakConstant = m_insertionSet.insertNode(
             indexInBlock, speculationFromValue(cell), WeakJSConstant, codeOrigin, OpInfo(cell));
         
-        if (m_graph.m_watchpoints.isStillValid(cell->structure()->transitionWatchpointSet())) {
+        if (m_graph.watchpoints().isStillValid(cell->structure()->transitionWatchpointSet())) {
             m_insertionSet.insertNode(
                 indexInBlock, SpecNone, StructureTransitionWatchpoint, codeOrigin,
                 OpInfo(cell->structure()), Edge(weakConstant, CellUse));

@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "CodeBlockWithJITType.h"
+#include "FTLJITFinalizer.h"
 
 namespace JSC { namespace FTL {
 
@@ -42,6 +43,8 @@ State::State(Graph& graph)
     , engine(0)
     , generatedFunction(0)
 {
+    finalizer = new JITFinalizer(graph.m_plan);
+    graph.m_plan.finalizer = adoptPtr(finalizer);
 }
 
 void State::dumpState(const char* when)

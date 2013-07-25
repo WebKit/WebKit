@@ -23,46 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
+#include "config.h"
+#include "DFGJITFinalizer.h"
 
-#include <wtf/Platform.h>
+#if ENABLE(DFG_JIT)
 
-#if ENABLE(FTL_JIT)
+#include "DFGCommon.h"
+#include "DFGPlan.h"
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLGeneratedFunction.h"
-#include "FTLJITCode.h"
-#include "FTLJITFinalizer.h"
-#include "FTLOSRExitCompilationInfo.h"
-#include <wtf/Noncopyable.h>
+namespace JSC { namespace DFG {
 
-namespace JSC { namespace FTL {
+JITFinalizer::JITFinalizer(Plan& plan, PassRefPtr<JITCode> jitCode, PassOwnPtr<LinkBuffer> linkBuffer, MacroAssembler::Label arityCheck)
+    : Finalizer(plan)
+    , m_jitCode(jitCode)
+    , m_linkBuffer(linkBuffer)
+    , m_arityCheck(arityCheck)
+{
+}
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
+JITFinalizer::~JITFinalizer()
+{
+}
+
+bool JITFinalizer::finalize(RefPtr<JSC::JITCode>& entry)
+{
+    finalizeCommon();
     
-public:
-    State(DFG::Graph& graph);
+    m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
+    entry = m_jitCode;
     
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    Vector<OSRExitCompilationInfo> osrExit;
-    LLVMExecutionEngineRef engine;
-    GeneratedFunction generatedFunction;
-    JITFinalizer* finalizer;
+    return true;
+}
+
+bool JITFinalizer::finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck)
+{
+    finalizeCommon();
     
-    void dumpState(const char* when);
-};
+    withArityCheck = m_linkBuffer->locationOf(m_arityCheck);
+    m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
+    entry = m_jitCode;
+    
+    return true;
+}
 
-} } // namespace JSC::FTL
+void JITFinalizer::finalizeCommon()
+{
+    if (m_plan.compilation)
+        m_plan.vm().m_perBytecodeProfiler->addCompilation(m_plan.compilation);
+}
 
-#endif // ENABLE(FTL_JIT)
+} } // namespace JSC::DFG
 
-#endif // FTLState_h
+#endif // ENABLE(DFG_JIT)
 

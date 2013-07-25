@@ -23,46 +23,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
+#ifndef FTLJITFinalizer_h
+#define FTLJITFinalizer_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
+#include "DFGFinalizer.h"
 #include "FTLGeneratedFunction.h"
 #include "FTLJITCode.h"
-#include "FTLJITFinalizer.h"
-#include "FTLOSRExitCompilationInfo.h"
-#include <wtf/Noncopyable.h>
+#include "FTLLLVMHeaders.h"
+#include "LinkBuffer.h"
+#include "MacroAssembler.h"
 
 namespace JSC { namespace FTL {
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
-    
+class JITFinalizer : public DFG::Finalizer {
 public:
-    State(DFG::Graph& graph);
+    JITFinalizer(DFG::Plan&);
+    virtual ~JITFinalizer();
     
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    Vector<OSRExitCompilationInfo> osrExit;
-    LLVMExecutionEngineRef engine;
-    GeneratedFunction generatedFunction;
-    JITFinalizer* finalizer;
+    void initializeExitThunksLinkBuffer(PassOwnPtr<LinkBuffer> buffer)
+    {
+        m_exitThunksLinkBuffer = buffer;
+    }
+    void initializeEntrypointLinkBuffer(PassOwnPtr<LinkBuffer> buffer)
+    {
+        m_entrypointLinkBuffer = buffer;
+    }
+    void initializeCode(LLVMExecutionEngineRef engine)
+    {
+        m_engine = engine;
+    }
+    void initializeFunction(GeneratedFunction function)
+    {
+        m_function = function;
+    }
+    void initializeArityCheck(MacroAssembler::Label label)
+    {
+        m_arityCheck = label;
+    }
+    void initializeJITCode(PassRefPtr<JITCode> jitCode)
+    {
+        m_jitCode = jitCode;
+    }
     
-    void dumpState(const char* when);
+    bool finalize(RefPtr<JSC::JITCode>& entry);
+    bool finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck);
+
+private:
+    OwnPtr<LinkBuffer> m_exitThunksLinkBuffer;
+    OwnPtr<LinkBuffer> m_entrypointLinkBuffer;
+    LLVMExecutionEngineRef m_engine;
+    MacroAssembler::Label m_arityCheck;
+    GeneratedFunction m_function;
+    RefPtr<JITCode> m_jitCode;
 };
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLState_h
+#endif // FTLJITFinalizer_h
 

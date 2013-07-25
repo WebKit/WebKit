@@ -29,34 +29,15 @@
 #include "JSObject.h"
 #include "JSString.h"
 
-
 #if ENABLE(DFG_JIT)
 
-#include "DFGArgumentsSimplificationPhase.h"
-#include "DFGBackwardsPropagationPhase.h"
-#include "DFGByteCodeParser.h"
-#include "DFGCFAPhase.h"
-#include "DFGCFGSimplificationPhase.h"
-#include "DFGCPSRethreadingPhase.h"
-#include "DFGCSEPhase.h"
-#include "DFGConstantFoldingPhase.h"
-#include "DFGDCEPhase.h"
-#include "DFGFixupPhase.h"
-#include "DFGJITCompiler.h"
-#include "DFGPredictionInjectionPhase.h"
-#include "DFGPredictionPropagationPhase.h"
-#include "DFGTypeCheckHoistingPhase.h"
-#include "DFGUnificationPhase.h"
-#include "DFGValidate.h"
-#include "DFGVirtualRegisterAllocationPhase.h"
-#include "FTLCapabilities.h"
-#include "FTLCompile.h"
-#include "FTLLink.h"
-#include "FTLLowerDFGToLLVM.h"
-#include "FTLState.h"
+#include "DFGJITCode.h"
+#include "DFGPlan.h"
+#include "DFGThunks.h"
+#include "FTLThunks.h"
+#include "JITCode.h"
 #include "Operations.h"
 #include "Options.h"
-#include <wtf/CompilationThread.h>
 
 namespace JSC { namespace DFG {
 
@@ -67,23 +48,9 @@ unsigned getNumCompilations()
     return numCompilations;
 }
 
-static void dumpAndVerifyGraph(Graph& graph, const char* text)
-{
-    GraphDumpMode modeForFinalValidate = DumpGraph;
-    if (verboseCompilationEnabled()) {
-        dataLog(text, "\n");
-        graph.dump();
-        modeForFinalValidate = DontDumpGraph;
-    }
-    if (validationEnabled())
-        validate(graph, modeForFinalValidate);
-}
-
-enum CompileMode { CompileFunction, CompileOther };
 static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck, unsigned osrEntryBytecodeIndex)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
-    CompilationScope compilationScope;
     
     numCompilations++;
     
@@ -102,6 +69,19 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     if (logCompilationChanges())
         dataLog("DFG compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
     
+    // Make sure that any stubs that the DFG is going to use are initialized. We want to
+    // make sure that al JIT code generation does finalization on the main thread.
+    exec->vm().getCTIStub(osrExitGenerationThunkGenerator);
+    exec->vm().getCTIStub(throwExceptionFromCallSlowPathGenerator);
+    exec->vm().getCTIStub(linkCallThunkGenerator);
+    exec->vm().getCTIStub(linkConstructThunkGenerator);
+    exec->vm().getCTIStub(linkClosureCallThunkGenerator);
+    exec->vm().getCTIStub(virtualCallThunkGenerator);
+    exec->vm().getCTIStub(virtualConstructThunkGenerator);
+#if ENABLE(FTL_JIT)
+    exec->vm().getCTIStub(FTL::osrExitGenerationThunkGenerator);
+#endif
+    
     // Derive our set of must-handle values. The compilation must be at least conservative
     // enough to allow for OSR entry with these values.
     unsigned numVarsWithValues;
@@ -109,9 +89,9 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         numVarsWithValues = codeBlock->m_numVars;
     else
         numVarsWithValues = 0;
-    Operands<JSValue> mustHandleValues(codeBlock->numParameters(), numVarsWithValues);
-    for (size_t i = 0; i < mustHandleValues.size(); ++i) {
-        int operand = mustHandleValues.operandForIndex(i);
+    Plan plan(compileMode, codeBlock, osrEntryBytecodeIndex, numVarsWithValues);
+    for (size_t i = 0; i < plan.mustHandleValues.size(); ++i) {
+        int operand = plan.mustHandleValues.operandForIndex(i);
         if (operandIsArgument(operand)
             && !operandToArgument(operand)
             && compileMode == CompileFunction
@@ -120,92 +100,15 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
             // also never be used. It doesn't matter what we put into the value for this,
             // but it has to be an actual value that can be grokked by subsequent DFG passes,
             // so we sanitize it here by turning it into Undefined.
-            mustHandleValues[i] = jsUndefined();
+            plan.mustHandleValues[i] = jsUndefined();
         } else
-            mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
+            plan.mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
     }
     
-    Graph dfg(exec->vm(), codeBlock, osrEntryBytecodeIndex, mustHandleValues);
-    if (!parse(dfg))
+    plan.compileInThread();
+    if (plan.finalize(jitCode, jitCodeWithArityCheck) != CompilationSuccessful)
         return false;
-    
-    // By this point the DFG bytecode parser will have potentially mutated various tables
-    // in the CodeBlock. This is a good time to perform an early shrink, which is more
-    // powerful than a late one. It's safe to do so because we haven't generated any code
-    // that references any of the tables directly, yet.
-    codeBlock->shrinkToFit(CodeBlock::EarlyShrink);
-
-    if (validationEnabled())
-        validate(dfg);
-    
-    performCPSRethreading(dfg);
-    performUnification(dfg);
-    performPredictionInjection(dfg);
-    
-    if (validationEnabled())
-        validate(dfg);
-    
-    performBackwardsPropagation(dfg);
-    performPredictionPropagation(dfg);
-    performFixup(dfg);
-    performTypeCheckHoisting(dfg);
-    
-    dfg.m_fixpointState = FixpointNotConverged;
-
-    performCSE(dfg);
-    performArgumentsSimplification(dfg);
-    performCPSRethreading(dfg); // This should usually be a no-op since CSE rarely dethreads, and arguments simplification rarely does anything.
-    performCFA(dfg);
-    performConstantFolding(dfg);
-    performCFGSimplification(dfg);
-
-    dfg.m_fixpointState = FixpointConverged;
-
-    performStoreElimination(dfg);
-    performCPSRethreading(dfg);
-    performDCE(dfg);
-
-#if ENABLE(FTL_JIT)
-    if (Options::useExperimentalFTL()
-        && compileMode == CompileFunction
-        && FTL::canCompile(dfg)) {
-        
-        dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:");
-        
-        // FIXME: Support OSR entry.
-        // https://bugs.webkit.org/show_bug.cgi?id=113625
-        
-        FTL::State state(dfg);
-        FTL::lowerDFGToLLVM(state);
-        FTL::compile(state);
-        compilationScope.leaveEarly();
-        return FTL::link(state, jitCode, *jitCodeWithArityCheck);
-    }
-#endif // ENABLE(FTL_JIT)
-    
-    performVirtualRegisterAllocation(dfg);
-    dumpAndVerifyGraph(dfg, "Graph after optimization:");
-
-    JITCompiler dataFlowJIT(dfg);
-    bool result;
-    if (compileMode == CompileFunction) {
-        ASSERT(jitCodeWithArityCheck);
-        
-        if (!dataFlowJIT.compileFunction())
-            return false;
-        compilationScope.leaveEarly();
-        result = dataFlowJIT.linkFunction(jitCode, *jitCodeWithArityCheck);
-    } else {
-        ASSERT(compileMode == CompileOther);
-        ASSERT(!jitCodeWithArityCheck);
-        
-        if (!dataFlowJIT.compile())
-            return false;
-        compilationScope.leaveEarly();
-        result = dataFlowJIT.link(jitCode);
-    }
-    
-    return result;
+    return true;
 }
 
 bool tryCompile(ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, unsigned bytecodeIndex)

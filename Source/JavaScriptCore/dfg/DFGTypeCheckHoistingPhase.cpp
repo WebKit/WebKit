@@ -195,10 +195,10 @@ public:
             ASSERT(block->isReachable);
             if (!block->isOSRTarget)
                 continue;
-            if (block->bytecodeBegin != m_graph.m_osrEntryBytecodeIndex)
+            if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
                 continue;
-            for (size_t i = 0; i < m_graph.m_mustHandleValues.size(); ++i) {
-                int operand = m_graph.m_mustHandleValues.operandForIndex(i);
+            for (size_t i = 0; i < m_graph.m_plan.mustHandleValues.size(); ++i) {
+                int operand = m_graph.m_plan.mustHandleValues.operandForIndex(i);
                 Node* node = block->variablesAtHead.operand(operand);
                 if (!node)
                     continue;
@@ -208,7 +208,7 @@ public:
                     continue;
                 if (!iter->value.m_structure)
                     continue;
-                JSValue value = m_graph.m_mustHandleValues[i];
+                JSValue value = m_graph.m_plan.mustHandleValues[i];
                 if (!value || !value.isCell()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                     dataLog(

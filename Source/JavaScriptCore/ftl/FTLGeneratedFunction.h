@@ -23,46 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
+#ifndef FTLGeneratedFunction_h
+#define FTLGeneratedFunction_h
 
-#include <wtf/Platform.h>
-
-#if ENABLE(FTL_JIT)
-
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLGeneratedFunction.h"
-#include "FTLJITCode.h"
-#include "FTLJITFinalizer.h"
-#include "FTLOSRExitCompilationInfo.h"
-#include <wtf/Noncopyable.h>
+#include "CallFrame.h"
 
 namespace JSC { namespace FTL {
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
-    
-public:
-    State(DFG::Graph& graph);
-    
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    Vector<OSRExitCompilationInfo> osrExit;
-    LLVMExecutionEngineRef engine;
-    GeneratedFunction generatedFunction;
-    JITFinalizer* finalizer;
-    
-    void dumpState(const char* when);
-};
+typedef EncodedJSValue (*GeneratedFunction)(ExecState*);
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLState_h
-
+#endif // FTLGeneratedFunction_h

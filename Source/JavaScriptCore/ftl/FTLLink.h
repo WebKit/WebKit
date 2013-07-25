@@ -34,7 +34,7 @@
 
 namespace JSC { namespace FTL {
 
-bool link(State&, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr& jitCodeWithArityCheck);
+void link(State&);
 
 } } // namespace JSC::FTL
 

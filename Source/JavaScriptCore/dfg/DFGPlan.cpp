@@ -1,0 +1,204 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "DFGPlan.h"
+
+#if ENABLE(DFG_JIT)
+
+#include "DFGArgumentsSimplificationPhase.h"
+#include "DFGBackwardsPropagationPhase.h"
+#include "DFGByteCodeParser.h"
+#include "DFGCFAPhase.h"
+#include "DFGCFGSimplificationPhase.h"
+#include "DFGCPSRethreadingPhase.h"
+#include "DFGCSEPhase.h"
+#include "DFGConstantFoldingPhase.h"
+#include "DFGDCEPhase.h"
+#include "DFGFailedFinalizer.h"
+#include "DFGFixupPhase.h"
+#include "DFGJITCompiler.h"
+#include "DFGPredictionInjectionPhase.h"
+#include "DFGPredictionPropagationPhase.h"
+#include "DFGTypeCheckHoistingPhase.h"
+#include "DFGUnificationPhase.h"
+#include "DFGValidate.h"
+#include "DFGVirtualRegisterAllocationPhase.h"
+#include "FTLCapabilities.h"
+#include "FTLCompile.h"
+#include "FTLLink.h"
+#include "FTLLowerDFGToLLVM.h"
+#include "FTLState.h"
+#include "Operations.h"
+
+namespace JSC { namespace DFG {
+
+static void dumpAndVerifyGraph(Graph& graph, const char* text)
+{
+    GraphDumpMode modeForFinalValidate = DumpGraph;
+    if (verboseCompilationEnabled()) {
+        dataLog(text, "\n");
+        graph.dump();
+        modeForFinalValidate = DontDumpGraph;
+    }
+    if (validationEnabled())
+        validate(graph, modeForFinalValidate);
+}
+
+Plan::Plan(
+    CompileMode compileMode, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex,
+    unsigned numVarsWithValues)
+    : compileMode(compileMode)
+    , codeBlock(codeBlock)
+    , osrEntryBytecodeIndex(osrEntryBytecodeIndex)
+    , numVarsWithValues(numVarsWithValues)
+    , mustHandleValues(codeBlock->numParameters(), numVarsWithValues)
+    , compilation(codeBlock->vm()->m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(codeBlock->vm()->m_perBytecodeProfiler->ensureBytecodesFor(codeBlock), Profiler::DFG)) : 0)
+    , identifiers(codeBlock)
+{
+}
+
+Plan::~Plan()
+{
+}
+
+void Plan::compileInThread()
+{
+    SamplingRegion samplingRegion("DFG Compilation (Plan)");
+    CompilationScope compilationScope;
+
+    Graph dfg(vm(), *this);
+    
+    if (!parse(dfg)) {
+        finalizer = adoptPtr(new FailedFinalizer(*this));
+        return;
+    }
+    
+    // By this point the DFG bytecode parser will have potentially mutated various tables
+    // in the CodeBlock. This is a good time to perform an early shrink, which is more
+    // powerful than a late one. It's safe to do so because we haven't generated any code
+    // that references any of the tables directly, yet.
+    codeBlock->shrinkToFit(CodeBlock::EarlyShrink);
+
+    if (validationEnabled())
+        validate(dfg);
+    
+    performCPSRethreading(dfg);
+    performUnification(dfg);
+    performPredictionInjection(dfg);
+    
+    if (validationEnabled())
+        validate(dfg);
+    
+    performBackwardsPropagation(dfg);
+    performPredictionPropagation(dfg);
+    performFixup(dfg);
+    performTypeCheckHoisting(dfg);
+    
+    dfg.m_fixpointState = FixpointNotConverged;
+
+    performCSE(dfg);
+    performArgumentsSimplification(dfg);
+    performCPSRethreading(dfg); // This should usually be a no-op since CSE rarely dethreads, and arguments simplification rarely does anything.
+    performCFA(dfg);
+    performConstantFolding(dfg);
+    performCFGSimplification(dfg);
+
+    dfg.m_fixpointState = FixpointConverged;
+
+    performStoreElimination(dfg);
+    performCPSRethreading(dfg);
+    performDCE(dfg);
+
+#if ENABLE(FTL_JIT)
+    if (Options::useExperimentalFTL()
+        && compileMode == CompileFunction
+        && FTL::canCompile(dfg)) {
+        
+        dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:");
+        
+        // FIXME: Support OSR entry.
+        // https://bugs.webkit.org/show_bug.cgi?id=113625
+        
+        FTL::State state(dfg);
+        FTL::lowerDFGToLLVM(state);
+        FTL::compile(state);
+        FTL::link(state);
+        return;
+    }
+#endif // ENABLE(FTL_JIT)
+    
+    performVirtualRegisterAllocation(dfg);
+    dumpAndVerifyGraph(dfg, "Graph after optimization:");
+
+    JITCompiler dataFlowJIT(dfg);
+    if (compileMode == CompileFunction) {
+        dataFlowJIT.compileFunction();
+        dataFlowJIT.linkFunction();
+    } else {
+        ASSERT(compileMode == CompileOther);
+        
+        dataFlowJIT.compile();
+        dataFlowJIT.link();
+    }
+    
+    ASSERT(finalizer);
+}
+
+bool Plan::isStillValid()
+{
+    return watchpoints.areStillValid()
+        && chains.areStillValid();
+}
+
+void Plan::reallyAdd()
+{
+    watchpoints.reallyAdd();
+    identifiers.reallyAdd(vm());
+}
+
+CompilationResult Plan::finalize(RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
+{
+    if (!isStillValid())
+        return CompilationInvalidated;
+    
+    bool result;
+    if (compileMode == CompileFunction)
+        result = finalizer->finalizeFunction(jitCode, *jitCodeWithArityCheck);
+    else
+        result = finalizer->finalize(jitCode);
+    
+    if (!result)
+        return CompilationFailed;
+    
+    reallyAdd();
+    
+    return CompilationSuccessful;
+}
+
+} } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
+

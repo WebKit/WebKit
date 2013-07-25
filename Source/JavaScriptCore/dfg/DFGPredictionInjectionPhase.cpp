@@ -74,16 +74,16 @@ public:
                 continue;
             if (!block->isOSRTarget)
                 continue;
-            if (block->bytecodeBegin != m_graph.m_osrEntryBytecodeIndex)
+            if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
                 continue;
-            for (size_t i = 0; i < m_graph.m_mustHandleValues.size(); ++i) {
+            for (size_t i = 0; i < m_graph.m_plan.mustHandleValues.size(); ++i) {
                 Node* node = block->variablesAtHead.operand(
-                    m_graph.m_mustHandleValues.operandForIndex(i));
+                    m_graph.m_plan.mustHandleValues.operandForIndex(i));
                 if (!node)
                     continue;
                 ASSERT(node->hasLocal());
                 node->variableAccessData()->predict(
-                    speculationFromValue(m_graph.m_mustHandleValues[i]));
+                    speculationFromValue(m_graph.m_plan.mustHandleValues[i]));
             }
         }
         
