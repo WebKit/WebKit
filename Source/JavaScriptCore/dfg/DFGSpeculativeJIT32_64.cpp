@@ -391,7 +391,9 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(Edge operand, bool inv
         if (!isKnownCell(operand.node()))
             notCell = m_jit.branch32(MacroAssembler::NotEqual, argTagGPR, TrustedImm32(JSValue::CellTag));
 
-        m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint());
         m_jit.move(invert ? TrustedImm32(1) : TrustedImm32(0), resultPayloadGPR);
         notMasqueradesAsUndefined = m_jit.jump();
     } else {
@@ -458,7 +460,9 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNull(Edge operand, Node* branch
         if (!isKnownCell(operand.node()))
             notCell = m_jit.branch32(MacroAssembler::NotEqual, argTagGPR, TrustedImm32(JSValue::CellTag));
 
-        m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint());
         jump(invert ? taken : notTaken, ForceJump);
     } else {
         GPRTemporary localGlobalObject(this);
@@ -1284,7 +1288,9 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
     GPRReg op2GPR = op2.gpr();
     
     if (m_jit.graph().globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
-        m_jit.graph().globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            m_jit.graph().globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint());
         DFG_TYPE_CHECK(
             JSValueSource::unboxedCell(op1GPR), node->child1(), SpecObject, m_jit.branchPtr(
                 MacroAssembler::Equal, 
@@ -1361,7 +1367,9 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     }
 
     if (masqueradesAsUndefinedWatchpointValid) {
-        m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint());
         DFG_TYPE_CHECK(
             JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchPtr(
                 MacroAssembler::Equal, 
@@ -1389,7 +1397,9 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     
     // We know that within this branch, rightChild must be a cell.
     if (masqueradesAsUndefinedWatchpointValid) {
-        m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint());
         DFG_TYPE_CHECK(
             JSValueRegs(op2TagGPR, op2PayloadGPR), rightChild, (~SpecCell) | SpecObject,
             m_jit.branchPtr(
@@ -1469,7 +1479,9 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     }
 
     if (masqueradesAsUndefinedWatchpointValid) {
-        m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint());
         DFG_TYPE_CHECK(
             JSValueSource::unboxedCell(op1GPR), leftChild, SpecObject, m_jit.branchPtr(
                 MacroAssembler::Equal, 
@@ -1496,7 +1508,9 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     
     // We know that within this branch, rightChild must be a cell.
     if (masqueradesAsUndefinedWatchpointValid) {
-        m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint());
         DFG_TYPE_CHECK(
             JSValueRegs(op2TagGPR, op2PayloadGPR), rightChild, (~SpecCell) | SpecObject,
             m_jit.branchPtr(
@@ -1614,7 +1628,9 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
 
     MacroAssembler::Jump notCell = m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::CellTag));
     if (masqueradesAsUndefinedWatchpointValid) {
-        m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint());
 
         DFG_TYPE_CHECK(
             JSValueRegs(valueTagGPR, valuePayloadGPR), nodeUse, (~SpecCell) | SpecObject,
@@ -1744,7 +1760,9 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BlockIndex taken, Blo
     
     MacroAssembler::Jump notCell = m_jit.branch32(MacroAssembler::NotEqual, valueTagGPR, TrustedImm32(JSValue::CellTag));
     if (m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
-        m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint());
 
         DFG_TYPE_CHECK(
             JSValueRegs(valueTagGPR, valuePayloadGPR), nodeUse, (~SpecCell) | SpecObject,
@@ -2566,8 +2584,12 @@ void SpeculativeJIT::compile(Node* node)
                 if (node->arrayMode().isSaneChain()) {
                     JSGlobalObject* globalObject = m_jit.globalObjectFor(node->codeOrigin);
                     ASSERT(globalObject->arrayPrototypeChainIsSane());
-                    globalObject->arrayPrototype()->structure()->addTransitionWatchpoint(speculationWatchpoint());
-                    globalObject->objectPrototype()->structure()->addTransitionWatchpoint(speculationWatchpoint());
+                    m_jit.addLazily(
+                        speculationWatchpoint(),
+                        globalObject->arrayPrototype()->structure()->transitionWatchpointSet());
+                    m_jit.addLazily(
+                        speculationWatchpoint(),
+                        globalObject->objectPrototype()->structure()->transitionWatchpointSet());
                 }
                 
                 SpeculateStrictInt32Operand property(this, node->child2());
@@ -3380,7 +3402,9 @@ void SpeculativeJIT::compile(Node* node)
     case NewArray: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->codeOrigin);
         if (!globalObject->isHavingABadTime() && !hasArrayStorage(node->indexingType())) {
-            globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
+            m_jit.addLazily(
+                speculationWatchpoint(),
+                globalObject->havingABadTimeWatchpoint());
             
             Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType());
             ASSERT(structure->indexingType() == node->indexingType());
@@ -3550,7 +3574,9 @@ void SpeculativeJIT::compile(Node* node)
     case NewArrayWithSize: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->codeOrigin);
         if (!globalObject->isHavingABadTime() && !hasArrayStorage(node->indexingType())) {
-            globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
+            m_jit.addLazily(
+                speculationWatchpoint(),
+                globalObject->havingABadTimeWatchpoint());
             
             SpeculateStrictInt32Operand size(this, node->child1());
             GPRTemporary result(this);
@@ -3626,7 +3652,9 @@ void SpeculativeJIT::compile(Node* node)
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->codeOrigin);
         IndexingType indexingType = node->indexingType();
         if (!globalObject->isHavingABadTime() && !hasArrayStorage(indexingType)) {
-            globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
+            m_jit.addLazily(
+                speculationWatchpoint(),
+                globalObject->havingABadTimeWatchpoint());
             
             unsigned numElements = node->numConstants();
             
@@ -3732,7 +3760,9 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case AllocationProfileWatchpoint: {
-        jsCast<JSFunction*>(node->function())->addAllocationProfileWatchpoint(speculationWatchpoint());
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            jsCast<JSFunction*>(node->function())->allocationProfileWatchpointSet());
         noResult(node);
         break;
     }
@@ -4025,9 +4055,10 @@ void SpeculativeJIT::compile(Node* node)
         // quite a hint already.
         
         m_jit.addWeakReference(node->structure());
-        node->structure()->addTransitionWatchpoint(
+        m_jit.addLazily(
             speculationWatchpoint(
-                node->child1()->op() == WeakJSConstant ? BadWeakConstantCache : BadCache));
+                node->child1()->op() == WeakJSConstant ? BadWeakConstantCache : BadCache),
+            node->structure()->transitionWatchpointSet());
         
 #if !ASSERT_DISABLED
         SpeculateCellOperand op1(this, node->child1());
@@ -4236,9 +4267,9 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case GlobalVarWatchpoint: {
-        m_jit.globalObjectFor(node->codeOrigin)->symbolTable()->get(
-            identifier(node->identifierNumberForCheck())->impl()).addWatchpoint(
-                speculationWatchpoint());
+        WatchpointSet* set = m_jit.globalObjectFor(node->codeOrigin)->symbolTable()->get(
+            identifier(node->identifierNumberForCheck())->impl()).watchpointSet();
+        m_jit.addLazily(speculationWatchpoint(), set);
         
 #if DFG_ENABLE(JIT_ASSERT)
         GPRTemporary scratch(this);
@@ -4291,7 +4322,9 @@ void SpeculativeJIT::compile(Node* node)
         isCell.link(&m_jit);
         JITCompiler::Jump notMasqueradesAsUndefined;
         if (m_jit.graph().globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
-            m_jit.graph().globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
+            m_jit.addLazily(
+                speculationWatchpoint(),
+                m_jit.graph().globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint());
             m_jit.move(TrustedImm32(0), result.gpr());
             notMasqueradesAsUndefined = m_jit.jump();
         } else {

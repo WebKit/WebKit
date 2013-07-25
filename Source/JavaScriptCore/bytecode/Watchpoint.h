@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,11 @@ public:
     WatchpointSet(InitialWatchpointSetMode);
     ~WatchpointSet();
     
+    // It is safe to call this from another thread.  It may return true
+    // even if the set actually had been invalidated, but that ought to happen
+    // only in the case of races, and should be rare.
     bool isStillValid() const { return !m_isInvalidated; }
+    // Like isStillValid(), may be called from another thread.
     bool hasBeenInvalidated() const { return m_isInvalidated; }
     
     // As a convenience, this will ignore 0. That's because code paths in the DFG
@@ -124,13 +128,20 @@ public:
         freeFat();
     }
     
+    // It is safe to call this from another thread.  It may return false
+    // even if the set actually had been invalidated, but that ought to happen
+    // only in the case of races, and should be rare.
     bool hasBeenInvalidated() const
     {
-        if (isFat())
-            return fat()->hasBeenInvalidated();
-        return m_data & IsInvalidatedFlag;
+        uintptr_t data = m_data;
+        if (isFat(data)) {
+            WTF::loadLoadFence();
+            return fat(data)->hasBeenInvalidated();
+        }
+        return data & IsInvalidatedFlag;
     }
     
+    // Like hasBeenInvalidated(), may be called from another thread.
     bool isStillValid() const
     {
         return !hasBeenInvalidated();
@@ -163,19 +174,27 @@ private:
     static const uintptr_t IsInvalidatedFlag = 2;
     static const uintptr_t IsWatchedFlag     = 4;
     
-    bool isThin() const { return m_data & IsThinFlag; }
-    bool isFat() const { return !isThin(); };
+    static bool isThin(uintptr_t data) { return data & IsThinFlag; }
+    static bool isFat(uintptr_t data) { return !isThin(data); }
+    
+    bool isThin() const { return isThin(m_data); }
+    bool isFat() const { return isFat(m_data); };
+    
+    static WatchpointSet* fat(uintptr_t data)
+    {
+        return bitwise_cast<WatchpointSet*>(data);
+    }
     
     WatchpointSet* fat()
     {
         ASSERT(isFat());
-        return bitwise_cast<WatchpointSet*>(m_data);
+        return fat(m_data);
     }
     
     const WatchpointSet* fat() const
     {
         ASSERT(isFat());
-        return bitwise_cast<WatchpointSet*>(m_data);
+        return fat(m_data);
     }
     
     WatchpointSet* inflate()

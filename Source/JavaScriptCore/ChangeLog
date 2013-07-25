@@ -1,4 +1,109 @@
-2013-04-20  Filip Pizlo  <fpizlo@apple.com>
+2013-07-16  Oliver Hunt <oliver@apple.com>
+
+        Merge dfgFourthTier r148836
+
+    2013-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: It should be possible to query WatchpointSets, and add Watchpoints, even if the compiler is running in another thread
+        https://bugs.webkit.org/show_bug.cgi?id=114909
+
+        Reviewed by Oliver Hunt.
+        
+        The idea here is that a concurrent compiler will use watchpoint sets as follows:
+        
+        During concurrent compilation: It will create Watchpoints, and query WatchpointSets only
+        for the purpose of profiling. That is, it will use decide whether it is profitable to
+        compile the code "as if" the watchpoint sets are valid.
+        
+        During synchronous linking: By "linking" I don't necessarily mean the LinkBuffer stuff,
+        but just the very bitter end of compilation where we make the JIT code callable. This
+        can happen after LinkBuffer stuff. Anyway, this will have to happen synchronously, and
+        at that point we can (a) check that all WatchpointSets that we assumed were valid are
+        still valid and (b) if they are then we add the watchpoints to those sets. If any of the
+        sets are invalid, we give up on this compilation and try again later.
+        
+        The querying of WatchpointSets is engineered to say that the set is still valid if it
+        is so *right now*, but this is done in a racy way and so it may say so spuriously: we
+        may, with hopefully low probability, have a set that says it is valid even though it was
+        just invalidated. The goal is only to ensure that (i) a set never claims to be invalid
+        if it is actually valid, (ii) a set doesn't claim to be valid if it was invalidated
+        before compilation even began, and (iii) querying the validity of a set doesn't cause us
+        to crash.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Watchpoint.cpp:
+        (JSC::InlineWatchpointSet::inflateSlow):
+        * bytecode/Watchpoint.h:
+        (WatchpointSet):
+        (InlineWatchpointSet):
+        (JSC::InlineWatchpointSet::hasBeenInvalidated):
+        (JSC::InlineWatchpointSet::isThin):
+        (JSC::InlineWatchpointSet::isFat):
+        (JSC::InlineWatchpointSet::fat):
+        * dfg/DFGDesiredWatchpoints.cpp: Added.
+        (DFG):
+        (JSC::DFG::DesiredWatchpoints::DesiredWatchpoints):
+        (JSC::DFG::DesiredWatchpoints::~DesiredWatchpoints):
+        (JSC::DFG::DesiredWatchpoints::addLazily):
+        (JSC::DFG::DesiredWatchpoints::reallyAdd):
+        (JSC::DFG::DesiredWatchpoints::areStillValid):
+        * dfg/DFGDesiredWatchpoints.h: Added.
+        (DFG):
+        (JSC::DFG::WatchpointForGenericWatchpointSet::WatchpointForGenericWatchpointSet):
+        (WatchpointForGenericWatchpointSet):
+        (GenericDesiredWatchpoints):
+        (JSC::DFG::GenericDesiredWatchpoints::GenericDesiredWatchpoints):
+        (JSC::DFG::GenericDesiredWatchpoints::addLazily):
+        (JSC::DFG::GenericDesiredWatchpoints::reallyAdd):
+        (JSC::DFG::GenericDesiredWatchpoints::areStillValid):
+        (DesiredWatchpoints):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addLazily):
+        (JITCompiler):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLCompile.h:
+        (FTL):
+        * ftl/FTLState.h:
+        (State):
+        * runtime/JSFunction.h:
+        (JSFunction):
+        (JSC::JSFunction::allocationProfileWatchpointSet):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::transitionWatchpointSet):
+
+2013-07-16  Oliver Hunt <oliver@apple.com>
+
+        Merge dfgFourthTier r148804
+
+    2013-04-20  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: value profiles and array profiles should be thread-safe enough to be accessible in a concurrent compilation thread
         https://bugs.webkit.org/show_bug.cgi?id=114906

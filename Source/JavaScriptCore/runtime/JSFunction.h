@@ -153,6 +153,11 @@ namespace JSC {
             ASSERT(tryGetAllocationProfile());
             m_allocationProfileWatchpoint.add(watchpoint);
         }
+        
+        InlineWatchpointSet& allocationProfileWatchpointSet()
+        {
+            return m_allocationProfileWatchpoint;
+        }
 
     protected:
         const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;

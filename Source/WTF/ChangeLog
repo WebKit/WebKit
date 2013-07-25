@@ -1,5 +1,31 @@
 2013-07-16  Oliver Hunt <oliver@apple.com>
 
+        Merge dfgFourthTier r148836
+
+    2013-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: It should be possible to query WatchpointSets, and add Watchpoints, even if the compiler is running in another thread
+        https://bugs.webkit.org/show_bug.cgi?id=114909
+
+        Reviewed by Oliver Hunt.
+        
+        Harden our notions of memory fences, now that we're doing racy algorithms.
+
+        * wtf/Atomics.h:
+        (WTF):
+        (WTF::compilerFence):
+        (WTF::armV7_dmb):
+        (WTF::armV7_dmb_st):
+        (WTF::loadLoadFence):
+        (WTF::loadStoreFence):
+        (WTF::storeLoadFence):
+        (WTF::storeStoreFence):
+        (WTF::memoryBarrierAfterLock):
+        (WTF::memoryBarrierBeforeUnlock):
+        (WTF::x86_mfence):
+
+2013-07-16  Oliver Hunt <oliver@apple.com>
+
         Merge dfgFourthTier r148804
 
     2013-04-20  Filip Pizlo  <fpizlo@apple.com>

@@ -344,6 +344,11 @@ public:
     {
         m_transitionWatchpointSet.notifyWrite();
     }
+    
+    InlineWatchpointSet& transitionWatchpointSet() const
+    {
+        return m_transitionWatchpointSet;
+    }
         
     static JS_EXPORTDATA const ClassInfo s_info;
 

@@ -23,22 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLCompile_h
-#define FTLCompile_h
+#include "config.h"
+#include "DFGDesiredWatchpoints.h"
 
-#include <wtf/Platform.h>
+#if ENABLE(DFG_JIT)
 
-#if ENABLE(FTL_JIT)
+namespace JSC { namespace DFG {
 
-#include "FTLState.h"
+DesiredWatchpoints::DesiredWatchpoints() { }
+DesiredWatchpoints::~DesiredWatchpoints() { }
 
-namespace JSC { namespace FTL {
+void DesiredWatchpoints::addLazily(Watchpoint* watchpoint, WatchpointSet* set)
+{
+    m_sets.addLazily(WatchpointForWatchpointSet(watchpoint, set));
+}
 
-bool compile(State&, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr& jitCodeWithArityCheck);
+void DesiredWatchpoints::addLazily(Watchpoint* watchpoint, InlineWatchpointSet& set)
+{
+    m_inlineSets.addLazily(WatchpointForInlineWatchpointSet(watchpoint, &set));
+}
 
-} } // namespace JSC::FTL
+void DesiredWatchpoints::reallyAdd()
+{
+    m_sets.reallyAdd();
+    m_inlineSets.reallyAdd();
+}
 
-#endif // ENABLE(FTL_JIT)
+bool DesiredWatchpoints::areStillValid() const
+{
+    return m_sets.areStillValid() && m_inlineSets.areStillValid();
+}
 
-#endif // FTLCompile_h
+} } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
 

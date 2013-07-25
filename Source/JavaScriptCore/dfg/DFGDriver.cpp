@@ -174,12 +174,7 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         
         FTL::State state(dfg);
         FTL::lowerDFGToLLVM(state);
-        FTL::compile(state, jitCode, *jitCodeWithArityCheck);
-        
-        // FIXME: Need to add support for the case where JIT memory allocation failed.
-        // https://bugs.webkit.org/show_bug.cgi?id=113620
-        
-        return true;
+        return FTL::compile(state, jitCode, *jitCodeWithArityCheck);
     }
 #endif // ENABLE(FTL_JIT)
     

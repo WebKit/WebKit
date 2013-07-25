@@ -49,7 +49,7 @@ static void compileEntry(CCallHelpers& jit)
     jit.emitPutImmediateToCallFrameHeader(jit.codeBlock(), JSStack::CodeBlock);
 }
 
-void compile(State& state, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
+bool compile(State& state, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
 {
     LLVMExecutionEngineRef engine;
     char* error = 0;
@@ -80,8 +80,17 @@ void compile(State& state, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr&
     // FIXME: LLVM should use our own JIT memory allocator, and we shouldn't have to
     // keep around an LLVMExecutionEngineRef to keep code alive.
     // https://bugs.webkit.org/show_bug.cgi?id=113619
+    // FIXME: Need to add support for the case where JIT memory allocation failed.
+    // https://bugs.webkit.org/show_bug.cgi?id=113620
     GeneratedFunction function = reinterpret_cast<GeneratedFunction>(LLVMGetPointerToGlobal(engine, state.function));
     LLVMDisposePassManager(pass);
+    
+    if (!state.watchpoints.areStillValid()) {
+        LLVMDisposeExecutionEngine(engine);
+        return false;
+    }
+    
+    state.watchpoints.reallyAdd();
     
     // Create the entrypoint.
     // FIXME: This is a total kludge - LLVM should just use our calling convention.
@@ -162,6 +171,8 @@ void compile(State& state, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr&
             linkBuffer,
             ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::FTLJIT)).data(), function)));
     jitCode = state.jitCode;
+    
+    return true;
 }
 
 } } // namespace JSC::FTL

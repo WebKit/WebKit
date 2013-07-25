@@ -309,6 +309,8 @@
 		0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE228ED1436AB2700196C48 /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE228EB1436AB2300196C48 /* Options.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Options.cpp */; };
+		0FE8534B1723CDA500B618F5 /* DFGDesiredWatchpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE853491723CDA500B618F5 /* DFGDesiredWatchpoints.cpp */; };
+		0FE8534C1723CDA500B618F5 /* DFGDesiredWatchpoints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE8534A1723CDA500B618F5 /* DFGDesiredWatchpoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A08170513DB00BB722C /* FTLAbbreviations.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA09FD170513DB00BB722C /* FTLAbbreviations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA09FE170513DB00BB722C /* FTLCapabilities.cpp */; };
 		0FEA0A0A170513DB00BB722C /* FTLCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA09FF170513DB00BB722C /* FTLCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1293,6 +1295,8 @@
 		0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessDataDump.h; path = dfg/DFGVariableAccessDataDump.h; sourceTree = "<group>"; };
 		0FE228EA1436AB2300196C48 /* Options.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Options.cpp; sourceTree = "<group>"; };
 		0FE228EB1436AB2300196C48 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
+		0FE853491723CDA500B618F5 /* DFGDesiredWatchpoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredWatchpoints.cpp; path = dfg/DFGDesiredWatchpoints.cpp; sourceTree = "<group>"; };
+		0FE8534A1723CDA500B618F5 /* DFGDesiredWatchpoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredWatchpoints.h; path = dfg/DFGDesiredWatchpoints.h; sourceTree = "<group>"; };
 		0FEA09FD170513DB00BB722C /* FTLAbbreviations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLAbbreviations.h; path = ftl/FTLAbbreviations.h; sourceTree = "<group>"; };
 		0FEA09FE170513DB00BB722C /* FTLCapabilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLCapabilities.cpp; path = ftl/FTLCapabilities.cpp; sourceTree = "<group>"; };
 		0FEA09FF170513DB00BB722C /* FTLCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLCapabilities.h; path = ftl/FTLCapabilities.h; sourceTree = "<group>"; };
@@ -2878,6 +2882,8 @@
 				0FFFC94E14EF909500C72532 /* DFGCSEPhase.h */,
 				0F2FC77016E12F6F0038D976 /* DFGDCEPhase.cpp */,
 				0F2FC77116E12F6F0038D976 /* DFGDCEPhase.h */,
+				0FE853491723CDA500B618F5 /* DFGDesiredWatchpoints.cpp */,
+				0FE8534A1723CDA500B618F5 /* DFGDesiredWatchpoints.h */,
 				0FF427611591A1C9004CB9FF /* DFGDisassembler.cpp */,
 				0FF427621591A1C9004CB9FF /* DFGDisassembler.h */,
 				0FD81ACF154FB4EB00983E72 /* DFGDominators.cpp */,
@@ -3485,6 +3491,7 @@
 				FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */,
 				0F4680CA14BBB16C00BFE272 /* LLIntCommon.h in Headers */,
 				0F4680D314BBD16700BFE272 /* LLIntData.h in Headers */,
+				0FE8534C1723CDA500B618F5 /* DFGDesiredWatchpoints.h in Headers */,
 				0F0B839B14BCF46000885B4F /* LLIntEntrypoints.h in Headers */,
 				0F4680A314BA7F8D00BFE272 /* LLIntExceptions.h in Headers */,
 				0F4680CB14BBB17200BFE272 /* LLIntOfflineAsmConfig.h in Headers */,
@@ -4147,6 +4154,7 @@
 				0FF0F19F16B72A17005DF95B /* FunctionExecutableDump.cpp in Sources */,
 				147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */,
 				C2D58C3415912FEE0021A844 /* GCActivityCallback.cpp in Sources */,
+				0FE8534B1723CDA500B618F5 /* DFGDesiredWatchpoints.cpp in Sources */,
 				0F766D2F15A8DCE0008F363E /* GCAwareJITStubRoutine.cpp in Sources */,
 				C2239D1A16262BDD005AC5FD /* GCThread.cpp in Sources */,
 				C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */,

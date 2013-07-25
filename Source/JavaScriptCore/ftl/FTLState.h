@@ -30,6 +30,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "DFGDesiredWatchpoints.h"
 #include "DFGGraph.h"
 #include "FTLAbbreviations.h"
 #include "FTLJITCode.h"
@@ -51,6 +52,7 @@ public:
     LValue function;
     RefPtr<JITCode> jitCode;
     Vector<OSRExitCompilationInfo> osrExit;
+    DFG::DesiredWatchpoints watchpoints;
     
     void dumpState(const char* when);
 };
