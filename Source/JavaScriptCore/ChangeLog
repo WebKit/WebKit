@@ -2,6 +2,13 @@
 
         [Windows] Unreviewed build fix.
 
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props: Add missing 'ftl'
+        include path.
+
+2013-07-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
         * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Add some missing files:
         runtime/VM.h,.cpp; Remove deleted JSGlobalData.h,.cpp.
         * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
