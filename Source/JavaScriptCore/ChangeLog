@@ -1,3 +1,19 @@
+2013-05-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG::ByteCodeParser doesn't need ExecState*
+        https://bugs.webkit.org/show_bug.cgi?id=115582
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (ByteCodeParser):
+        (JSC::DFG::parse):
+        * dfg/DFGByteCodeParser.h:
+        (DFG):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+
 2013-05-02  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Profiler should be thread-safe

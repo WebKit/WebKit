@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ namespace DFG {
 
 // Populate the Graph with a basic block of code from the CodeBlock,
 // starting at the provided bytecode index.
-bool parse(ExecState*, Graph&);
+bool parse(Graph&);
 
 } } // namespace JSC::DFG
 

@@ -126,7 +126,7 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     }
     
     Graph dfg(exec->vm(), codeBlock, osrEntryBytecodeIndex, mustHandleValues);
-    if (!parse(exec, dfg))
+    if (!parse(dfg))
         return false;
     
     // By this point the DFG bytecode parser will have potentially mutated various tables
