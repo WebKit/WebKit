@@ -364,6 +364,15 @@ private:
         case CompareLess:
             compileCompareLess();
             break;
+        case CompareLessEq:
+            compileCompareLessEq();
+            break;
+        case CompareGreater:
+            compileCompareGreater();
+            break;
+        case CompareGreaterEq:
+            compileCompareGreaterEq();
+            break;
         case Branch:
             compileBranch();
             break;
@@ -964,6 +973,68 @@ private:
             m_booleanValues.add(
                 m_node,
                 m_out.doubleLessThan(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            return;
+        }
+        
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    void compileCompareLessEq()
+    {
+        if (m_node->isBinaryUseKind(Int32Use)) {
+            m_booleanValues.add(
+                m_node,
+                m_out.lessThanOrEqual(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+            return;
+        }
+        
+        if (m_node->isBinaryUseKind(NumberUse)) {
+            m_booleanValues.add(
+                m_node,
+                m_out.doubleLessThanOrEqual(
+                    lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            return;
+        }
+        
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    void compileCompareGreater()
+    {
+        if (m_node->isBinaryUseKind(Int32Use)) {
+            m_booleanValues.add(
+                m_node,
+                m_out.greaterThan(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+            return;
+        }
+        
+        if (m_node->isBinaryUseKind(NumberUse)) {
+            m_booleanValues.add(
+                m_node,
+                m_out.doubleGreaterThan(
+                    lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            return;
+        }
+        
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    void compileCompareGreaterEq()
+    {
+        if (m_node->isBinaryUseKind(Int32Use)) {
+            m_booleanValues.add(
+                m_node,
+                m_out.greaterThanOrEqual(
+                    lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+            return;
+        }
+        
+        if (m_node->isBinaryUseKind(NumberUse)) {
+            m_booleanValues.add(
+                m_node,
+                m_out.doubleGreaterThanOrEqual(
+                    lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            return;
         }
         
         RELEASE_ASSERT_NOT_REACHED();

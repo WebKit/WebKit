@@ -137,6 +137,9 @@ bool canCompile(Graph& graph)
                     break;
                 return false;
             case CompareLess:
+            case CompareLessEq:
+            case CompareGreater:
+            case CompareGreaterEq:
                 if (node->isBinaryUseKind(Int32Use))
                     break;
                 if (node->isBinaryUseKind(NumberUse))
