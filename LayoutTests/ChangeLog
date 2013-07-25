@@ -1,5 +1,14 @@
 2013-05-27  Filip Pizlo  <fpizlo@apple.com>
 
+        testRunner should be able to tell you if a function is DFG compiled
+        https://bugs.webkit.org/show_bug.cgi?id=116847
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/script-tests/dfg-min-max.js:
+
+2013-05-27  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: DFG ArithMod should have the !nodeUsedAsNumber optimizations that ArithDiv has
         https://bugs.webkit.org/show_bug.cgi?id=116841
 

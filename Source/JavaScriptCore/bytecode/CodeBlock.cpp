@@ -3057,6 +3057,12 @@ void CodeBlock::countReoptimization()
         m_reoptimizationRetryCounter = Options::reoptimizationRetryCounterMax();
 }
 
+unsigned CodeBlock::numberOfDFGCompiles()
+{
+    ASSERT(JITCode::isBaselineCode(jitType()));
+    return (JITCode::isOptimizingJIT(replacement()->jitType()) ? 1 : 0) + m_reoptimizationRetryCounter;
+}
+
 int32_t CodeBlock::codeTypeThresholdMultiplier() const
 {
     if (codeType() == EvalCode)

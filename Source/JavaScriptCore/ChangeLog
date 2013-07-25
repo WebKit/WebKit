@@ -1,5 +1,36 @@
 2013-05-27  Filip Pizlo  <fpizlo@apple.com>
 
+        testRunner should be able to tell you if a function is DFG compiled
+        https://bugs.webkit.org/show_bug.cgi?id=116847
+
+        Reviewed by Mark Hahnenberg.
+
+        * API/JSCTestRunnerUtils.cpp: Added.
+        (JSC):
+        (JSC::numberOfDFGCompiles):
+        * API/JSCTestRunnerUtils.h: Added.
+        (JSC):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::numberOfDFGCompiles):
+        (JSC):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::runThread):
+        * runtime/Executable.h:
+        (JSC):
+        * runtime/JSFunctionInlines.h: Added.
+        (JSC):
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::jsExecutable):
+        (JSC::JSFunction::isHostFunction):
+        (JSC::JSFunction::nativeFunction):
+        (JSC::JSFunction::nativeConstructor):
+        * runtime/Operations.h:
+
+2013-05-27  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: DFG ArithMod should have the !nodeUsedAsNumber optimizations that ArithDiv has
         https://bugs.webkit.org/show_bug.cgi?id=116841
 

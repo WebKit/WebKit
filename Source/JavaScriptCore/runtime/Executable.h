@@ -784,38 +784,6 @@ namespace JSC {
         RefPtr<FunctionCodeBlock> m_codeBlockForConstruct;
     };
 
-    inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope)
-        : Base(vm, scope->globalObject()->functionStructure())
-        , m_executable(vm, this, executable)
-        , m_scope(vm, this, scope)
-        , m_allocationProfileWatchpoint(InitializedBlind) // See comment in JSFunction.cpp concerning the reason for using InitializedBlind as opposed to InitializedWatching.
-    {
-    }
-
-    inline FunctionExecutable* JSFunction::jsExecutable() const
-    {
-        ASSERT(!isHostFunctionNonInline());
-        return static_cast<FunctionExecutable*>(m_executable.get());
-    }
-
-    inline bool JSFunction::isHostFunction() const
-    {
-        ASSERT(m_executable);
-        return m_executable->isHostFunction();
-    }
-
-    inline NativeFunction JSFunction::nativeFunction()
-    {
-        ASSERT(isHostFunction());
-        return static_cast<NativeExecutable*>(m_executable.get())->function();
-    }
-
-    inline NativeFunction JSFunction::nativeConstructor()
-    {
-        ASSERT(isHostFunction());
-        return static_cast<NativeExecutable*>(m_executable.get())->constructor();
-    }
-
     inline bool isHostFunction(JSValue value, NativeFunction nativeFunction)
     {
         JSFunction* function = jsCast<JSFunction*>(getJSFunction(value));

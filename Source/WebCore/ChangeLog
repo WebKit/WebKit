@@ -1,3 +1,18 @@
+2013-05-27  Filip Pizlo  <fpizlo@apple.com>
+
+        testRunner should be able to tell you if a function is DFG compiled
+        https://bugs.webkit.org/show_bug.cgi?id=116847
+
+        Reviewed by Mark Hahnenberg.
+
+        Bail early if we're in the compilation thread. This is only relevant for
+        debug dumps.
+
+        No new tests becase no new behavior.
+
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script):
+
 2013-05-25  Mark Lam  <mark.lam@apple.com>
 
         Remove Interpreter::retrieveLastCaller().

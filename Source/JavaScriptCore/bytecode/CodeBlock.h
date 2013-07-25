@@ -779,6 +779,8 @@ public:
     // to avoid thrashing.
     unsigned reoptimizationRetryCounter() const;
     void countReoptimization();
+    
+    unsigned numberOfDFGCompiles();
 
     int32_t codeTypeThresholdMultiplier() const;
 

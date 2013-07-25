@@ -25,6 +25,7 @@
 #include "ExceptionHelpers.h"
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"
+#include "JSFunctionInlines.h"
 #include "JSProxy.h"
 #include "JSString.h"
 #include "StructureInlines.h"

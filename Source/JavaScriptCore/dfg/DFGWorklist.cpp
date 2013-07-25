@@ -211,6 +211,8 @@ void Worklist::dump(const MutexLocker&, PrintStream& out) const
 
 void Worklist::runThread()
 {
+    CompilationScope compilationScope;
+    
     if (Options::verboseCompilationQueue())
         dataLog(*this, ": Thread started\n");
     

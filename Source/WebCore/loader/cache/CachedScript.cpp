@@ -70,6 +70,11 @@ String CachedScript::mimeType() const
 
 const String& CachedScript::script()
 {
+    if (isCompilationThread()) {
+        RELEASE_ASSERT(m_script);
+        return m_script;
+    }
+    
     ASSERT(!isPurgeable());
 
     if (!m_script && m_data) {

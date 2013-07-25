@@ -1,3 +1,14 @@
+2013-05-27  Filip Pizlo  <fpizlo@apple.com>
+
+        testRunner should be able to tell you if a function is DFG compiled
+        https://bugs.webkit.org/show_bug.cgi?id=116847
+
+        Reviewed by Mark Hahnenberg.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (numberOfDFGCompiles):
+        (TestRunner::staticFunctions):
+
 2013-05-21  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: display-profiler-output should make it even easier to diff the compilation story between two different runs
