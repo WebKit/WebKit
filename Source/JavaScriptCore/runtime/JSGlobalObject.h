@@ -348,7 +348,9 @@ public:
         
     void haveABadTime(VM&);
         
+    bool objectPrototypeIsSane();
     bool arrayPrototypeChainIsSane();
+    bool stringPrototypeChainIsSane();
 
     void setProfileGroup(unsigned value) { createRareDataIfNeeded(); m_rareData->profileGroup = value; }
     unsigned profileGroup() const

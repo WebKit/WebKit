@@ -472,7 +472,7 @@ EncodedJSValue DFG_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
     return JSValue::encode(JSValue(base).get(exec, ident));
 }
 
-EncodedJSValue DFG_OPERATION operationGetByValArrayInt(ExecState* exec, JSArray* base, int32_t index)
+ALWAYS_INLINE EncodedJSValue getByValCellInt(ExecState* exec, JSCell* base, int32_t index)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -484,6 +484,16 @@ EncodedJSValue DFG_OPERATION operationGetByValArrayInt(ExecState* exec, JSArray*
 
     // Use this since we know that the value is out of bounds.
     return JSValue::encode(JSValue(base).get(exec, index));
+}
+
+EncodedJSValue DFG_OPERATION operationGetByValArrayInt(ExecState* exec, JSArray* base, int32_t index)
+{
+    return getByValCellInt(exec, base, index);
+}
+
+EncodedJSValue DFG_OPERATION operationGetByValStringInt(ExecState* exec, JSString* base, int32_t index)
+{
+    return getByValCellInt(exec, base, index);
 }
 
 EncodedJSValue DFG_OPERATION operationGetById(ExecState* exec, EncodedJSValue base, StringImpl* uid)

@@ -898,7 +898,19 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             forNode(node).makeTop();
             break;
         case Array::String:
-            forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
+            if (node->arrayMode().isOutOfBounds()) {
+                // If the watchpoint was still valid we could totally set this to be
+                // SpecString | SpecOther. Except that we'd have to be careful. If we
+                // tested the watchpoint state here then it could change by the time
+                // we got to the backend. So to do this right, we'd have to get the
+                // fixup phase to check the watchpoint state and then bake into the
+                // GetByVal operation the fact that we're using a watchpoint, using
+                // something like Array::SaneChain (except not quite, because that
+                // implies an in-bounds access). None of this feels like it's worth it,
+                // so we're going with TOP for now.
+                forNode(node).makeTop();
+            } else
+                forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
             break;
         case Array::Arguments:
             forNode(node).makeTop();

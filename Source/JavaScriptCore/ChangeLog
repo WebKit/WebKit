@@ -1,5 +1,35 @@
 2013-06-22  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: DFG shouldn't exit just because a String GetByVal went out-of-bounds
+        https://bugs.webkit.org/show_bug.cgi?id=117906
+
+        Reviewed by Mark Hahnenberg.
+        
+        This does the obvious thing, but also makes sure that out-of-bounds accesses
+        don't fall off into a C call, but try to do the fast thing if the prototype
+        chain is sane. We ought to probably do this for other array accesses in the
+        future, as well, since it's so darn easy.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::objectPrototypeIsSane):
+        (JSC):
+        (JSC::JSGlobalObject::arrayPrototypeChainIsSane):
+        (JSC::JSGlobalObject::stringPrototypeChainIsSane):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+
+2013-06-22  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: GC's put_by_id transition fixpoint should converge more quickly
         https://bugs.webkit.org/show_bug.cgi?id=117912
 

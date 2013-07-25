@@ -437,12 +437,24 @@ void JSGlobalObject::haveABadTime(VM& vm)
     }
 }
 
+bool JSGlobalObject::objectPrototypeIsSane()
+{
+    return !hasIndexedProperties(m_objectPrototype->structure()->indexingType())
+        && m_objectPrototype->prototype().isNull();
+}
+
 bool JSGlobalObject::arrayPrototypeChainIsSane()
 {
     return !hasIndexedProperties(m_arrayPrototype->structure()->indexingType())
         && m_arrayPrototype->prototype() == m_objectPrototype.get()
-        && !hasIndexedProperties(m_objectPrototype->structure()->indexingType())
-        && m_objectPrototype->prototype().isNull();
+        && objectPrototypeIsSane();
+}
+
+bool JSGlobalObject::stringPrototypeChainIsSane()
+{
+    return !hasIndexedProperties(m_stringPrototype->structure()->indexingType())
+        && m_stringPrototype->prototype() == m_objectPrototype.get()
+        && objectPrototypeIsSane();
 }
 
 void JSGlobalObject::createThrowTypeError(ExecState* exec)

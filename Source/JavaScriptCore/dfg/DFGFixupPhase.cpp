@@ -391,13 +391,25 @@ private:
             blessArrayOperation(node->child1(), node->child2(), node->child3());
             
             ArrayMode arrayMode = node->arrayMode();
-            if (arrayMode.type() == Array::Double
-                && arrayMode.arrayClass() == Array::OriginalArray
-                && arrayMode.speculation() == Array::InBounds
-                && arrayMode.conversion() == Array::AsIs
-                && m_graph.globalObjectFor(node->codeOrigin)->arrayPrototypeChainIsSane()
-                && !(node->flags() & NodeUsedAsOther))
-                node->setArrayMode(arrayMode.withSpeculation(Array::SaneChain));
+            switch (arrayMode.type()) {
+            case Array::Double:
+                if (arrayMode.arrayClass() == Array::OriginalArray
+                    && arrayMode.speculation() == Array::InBounds
+                    && arrayMode.conversion() == Array::AsIs
+                    && m_graph.globalObjectFor(node->codeOrigin)->arrayPrototypeChainIsSane()
+                    && !(node->flags() & NodeUsedAsOther))
+                    node->setArrayMode(arrayMode.withSpeculation(Array::SaneChain));
+                break;
+                
+            case Array::String:
+                if ((node->prediction() & ~SpecString)
+                    || m_graph.hasExitSite(node->codeOrigin, OutOfBounds))
+                    node->setArrayMode(arrayMode.withSpeculation(Array::OutOfBounds));
+                break;
+                
+            default:
+                break;
+            }
             
             switch (node->arrayMode().type()) {
             case Array::SelectUsingPredictions:

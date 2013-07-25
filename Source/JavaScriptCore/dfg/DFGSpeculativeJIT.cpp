@@ -2075,13 +2075,38 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
     GPRReg propertyReg = property.gpr();
     GPRReg storageReg = storage.gpr();
 
+    GPRTemporary scratch(this);
+    GPRReg scratchReg = scratch.gpr();
+#if USE(JSVALUE32_64)
+    GPRTemporary resultTag;
+    GPRReg resultTagReg = InvalidGPRReg;
+    if (node->arrayMode().isOutOfBounds()) {
+        GPRTemporary realResultTag(this);
+        resultTag.adopt(realResultTag);
+        resultTagReg = resultTag.gpr();
+    }
+#endif
+
+    if (node->arrayMode().isOutOfBounds()) {
+        JSGlobalObject* globalObject = m_jit.globalObjectFor(node->codeOrigin);
+        if (globalObject->stringPrototypeChainIsSane()) {
+            m_jit.addLazily(
+                speculationWatchpoint(),
+                globalObject->stringPrototype()->structure()->transitionWatchpointSet());
+            m_jit.addLazily(
+                speculationWatchpoint(),
+                globalObject->objectPrototype()->structure()->transitionWatchpointSet());
+        }
+    }
+
     ASSERT(ArrayMode(Array::String).alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
 
     // unsigned comparison so we can filter out negative indices and indices that are too large
-    speculationCheck(Uncountable, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSString::offsetOfLength())));
-
-    GPRTemporary scratch(this);
-    GPRReg scratchReg = scratch.gpr();
+    JITCompiler::Jump outOfBounds = m_jit.branch32(
+        MacroAssembler::AboveOrEqual, propertyReg,
+        MacroAssembler::Address(baseReg, JSString::offsetOfLength()));
+    if (node->arrayMode().isInBounds())
+        speculationCheck(OutOfBounds, JSValueRegs(), 0, outOfBounds);
 
     m_jit.loadPtr(MacroAssembler::Address(baseReg, JSString::offsetOfValue()), scratchReg);
 
@@ -2110,7 +2135,46 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
         slowPathCall(
             bigCharacter, this, operationSingleCharacterString, scratchReg, scratchReg));
 
-    cellResult(scratchReg, m_currentNode);
+    if (node->arrayMode().isOutOfBounds()) {
+#if USE(JSVALUE32_64)
+        m_jit.move(TrustedImm32(JSValue::CellTag), resultTagReg);
+#endif
+
+        JSGlobalObject* globalObject = m_jit.globalObjectFor(node->codeOrigin);
+        if (globalObject->stringPrototypeChainIsSane()) {
+#if USE(JSVALUE64)
+            addSlowPathGenerator(
+                slowPathMove(
+                    outOfBounds, this, TrustedImm64(JSValue::encode(jsUndefined())),
+                    scratchReg));
+#else
+            addSlowPathGenerator(
+                slowPathMove(
+                    outOfBounds, this,
+                    TrustedImm32(JSValue::UndefinedTag), resultTagReg,
+                    TrustedImm32(0), scratchReg));
+#endif
+        } else {
+#if USE(JSVALUE64)
+            addSlowPathGenerator(
+                slowPathCall(
+                    outOfBounds, this, operationGetByValStringInt,
+                    scratchReg, baseReg, propertyReg));
+#else
+            addSlowPathGenerator(
+                slowPathCall(
+                    outOfBounds, this, operationGetByValStringInt,
+                    resultTagReg, scratchReg, baseReg, propertyReg));
+#endif
+        }
+        
+#if USE(JSVALUE64)
+        jsValueResult(scratchReg, m_currentNode);
+#else
+        jsValueResult(resultTagReg, scratchReg, m_currentNode);
+#endif
+    } else
+        cellResult(scratchReg, m_currentNode);
 }
 
 void SpeculativeJIT::compileFromCharCode(Node* node)
