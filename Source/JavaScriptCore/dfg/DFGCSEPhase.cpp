@@ -754,6 +754,7 @@ private:
                 break;
                 
             case CheckArray:
+            case ForwardCheckArray:
                 if (node->child1() == child1 && node->arrayMode() == arrayMode)
                     return true;
                 break;
@@ -1321,6 +1322,7 @@ private:
             break;
                 
         case CheckArray:
+        case ForwardCheckArray:
             if (cseMode == StoreElimination)
                 break;
             if (checkArrayElimination(node->child1().node(), node->arrayMode()))

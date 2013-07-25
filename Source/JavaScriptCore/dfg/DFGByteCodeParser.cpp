@@ -324,6 +324,8 @@ private:
         VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
         variableAccessData->mergeStructureCheckHoistingFailed(
             m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+        variableAccessData->mergeCheckArrayHoistingFailed(
+            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.local(operand) = node;
     }
@@ -377,6 +379,8 @@ private:
         
         variableAccessData->mergeStructureCheckHoistingFailed(
             m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+        variableAccessData->mergeCheckArrayHoistingFailed(
+            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.argument(argument) = node;
     }
@@ -1977,6 +1981,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 argumentToOperand(argument), m_codeBlock->isCaptured(argumentToOperand(argument)));
             variable->mergeStructureCheckHoistingFailed(
                 m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+            variable->mergeCheckArrayHoistingFailed(
+                m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
             
             Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
             m_graph.m_arguments[argument] = setArgument;

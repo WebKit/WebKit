@@ -479,6 +479,7 @@ private:
         case PhantomPutStructure:
         case PhantomArguments:
         case CheckArray:
+        case ForwardCheckArray:
         case Arrayify:
         case ArrayifyToStructure:
         case MovHint:

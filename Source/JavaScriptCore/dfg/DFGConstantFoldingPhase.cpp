@@ -121,6 +121,7 @@ private:
             }
                 
             case CheckArray:
+            case ForwardCheckArray:
             case Arrayify: {
                 if (!node->arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node->child1())))
                     break;

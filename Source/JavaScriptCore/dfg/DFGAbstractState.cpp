@@ -1384,6 +1384,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case ReallocatePropertyStorage:
         forNode(node).clear(); // The result is not a JS value.
         break;
+    case ForwardCheckArray:
     case CheckArray: {
         if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
             m_foundConstants = true;

@@ -921,6 +921,7 @@ struct Node {
         case StringCharAt:
         case StringCharCodeAt:
         case CheckArray:
+        case ForwardCheckArray:
         case Arrayify:
         case ArrayifyToStructure:
         case ArrayPush:

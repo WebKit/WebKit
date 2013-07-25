@@ -759,7 +759,8 @@ private:
             break;
         }
             
-        case CheckArray: {
+        case CheckArray:
+        case ForwardCheckArray: {
             switch (node->arrayMode().type()) {
             case Array::String:
                 setUseKindAndUnboxIfProfitable<StringUse>(node->child1());

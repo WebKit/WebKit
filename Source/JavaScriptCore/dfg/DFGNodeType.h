@@ -150,6 +150,7 @@ namespace JSC { namespace DFG {
     macro(ReallocatePropertyStorage, NodeMustGenerate | NodeDoesNotExit | NodeResultStorage) \
     macro(GetButterfly, NodeResultStorage) \
     macro(CheckArray, NodeMustGenerate) \
+    macro(ForwardCheckArray, NodeMustGenerate | NodeExitsForward) \
     macro(Arrayify, NodeMustGenerate) \
     macro(ArrayifyToStructure, NodeMustGenerate) \
     macro(GetIndexedPropertyStorage, NodeResultStorage) \

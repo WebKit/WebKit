@@ -158,6 +158,7 @@ typedef OptionRange optionRange;
     \
     v(double, doubleVoteRatioForDoubleFormat, 2) \
     v(double, structureCheckVoteRatioForHoisting, 1) \
+    v(double, checkArrayVoteRatioForHoisting, 1) \
     \
     v(unsigned, minimumNumberOfScansBetweenRebalance, 100) \
     v(unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(7)) \

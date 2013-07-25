@@ -50,6 +50,7 @@ public:
         , m_shouldNeverUnbox(false)
         , m_isArgumentsAlias(false)
         , m_structureCheckHoistingFailed(false)
+        , m_checkArrayHoistingFailed(false)
         , m_isProfitableToUnbox(false)
         , m_isLoadedFrom(false)
         , m_doubleFormatState(EmptyDoubleFormatState)
@@ -66,6 +67,7 @@ public:
         , m_shouldNeverUnbox(isCaptured)
         , m_isArgumentsAlias(false)
         , m_structureCheckHoistingFailed(false)
+        , m_checkArrayHoistingFailed(false)
         , m_isProfitableToUnbox(false)
         , m_doubleFormatState(EmptyDoubleFormatState)
     {
@@ -135,9 +137,19 @@ public:
         return checkAndSet(m_structureCheckHoistingFailed, m_structureCheckHoistingFailed | failed);
     }
     
+    bool mergeCheckArrayHoistingFailed(bool failed)
+    {
+        return checkAndSet(m_checkArrayHoistingFailed, m_checkArrayHoistingFailed | failed);
+    }
+    
     bool structureCheckHoistingFailed()
     {
         return m_structureCheckHoistingFailed;
+    }
+    
+    bool checkArrayHoistingFailed()
+    {
+        return m_checkArrayHoistingFailed;
     }
     
     bool mergeIsArgumentsAlias(bool isArgumentsAlias)
@@ -321,6 +333,7 @@ private:
     bool m_shouldNeverUnbox;
     bool m_isArgumentsAlias;
     bool m_structureCheckHoistingFailed;
+    bool m_checkArrayHoistingFailed;
     bool m_isProfitableToUnbox;
     bool m_isLoadedFrom;
 

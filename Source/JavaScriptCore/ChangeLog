@@ -1,3 +1,94 @@
+2013-05-17  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        CheckArrays should be hoisted
+        https://bugs.webkit.org/show_bug.cgi?id=116353
+
+        Performance neutral. This will be more important when we start depending on CheckArray for flat arrays.
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGAbstractState.cpp: Add ForwardCheckArray to wherever we had a CheckArray before.
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::isContravenedByStructure): Checks if the ArrayMode derived from a specific Structure 
+        would contradict the ArrayModes that would be filtered by the current ArrayMode. This is used to detect
+        if any specific CheckStructures would contradict our CheckArray so that we can defer to the CheckStructure's
+        judgment.
+        * dfg/DFGByteCodeParser.cpp: Fill in checkArrayHoistingFailed where we previously exited due to a BadIndexingType.
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::checkArrayElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGNodeType.h: New ForwardCheckArray node type.
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp: Refactored most of TypeCheckHoistingPhase into separate functions, some 
+        of which are now generic to both CheckStructure and CheckArray hoisting while others are specific to one or the
+        other. Both of the non-zero CheckBallot values must be 1 because we use them as an index into an array of 
+        length 2 inside the VariableAccessData.
+        (CheckData): Moved structure outside of TypeCheckHoistingPhase so that ArrayTypeCheck and StructureTypeCheck
+        can access it. Also added new fields for tracking ArrayModes. We need the m_arrayModeIsValid because there 
+        isn't a good sentinel value for "this ArrayMode is invalid and meaningless" like there is for m_structure.
+        We need m_arrayModeHoistingOkay for when we want to permanently disable hoisting for that particular variable.
+        (JSC::DFG::CheckData::CheckData):
+        (JSC::DFG::CheckData::disableCheckArrayHoisting): Helper function for disabling CheckArray hoisting for a 
+        specific CheckData.
+        (JSC::DFG::TypeCheckHoistingPhase::run): We now do both CheckStructure and CheckArray hoisting, although we prefer
+        CheckStructure hoisting when given the possibility to do both.
+        (TypeCheckHoistingPhase):
+        (JSC::DFG::TypeCheckHoistingPhase::clearVariableVotes): Clears all of the VariableAccessData votes since they 
+        can only have two types of votes at any particular time.
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks): Very similar to identifyRedundantStructureChecks,
+        but with a few different nodes that are important, namely CheckArray (instead of CheckStructure) and the Arrayify-like
+        nodes always disable hoisting since they always change the IndexingType. 
+        (JSC::DFG::TypeCheckHoistingPhase::disableHoistingForVariablesWithInsufficientVotes):
+        (JSC::DFG::TypeCheckHoistingPhase::disableHoistingAcrossOSREntries):
+        (JSC::DFG::TypeCheckHoistingPhase::disableCheckArrayHoisting): Helper that looks up the CheckData for the 
+        specified variable and disables CheckArray hoisting on it.
+        (JSC::DFG::TypeCheckHoistingPhase::shouldConsiderForHoisting):
+        (JSC::DFG::TypeCheckHoistingPhase::noticeStructureCheck):
+        (JSC::DFG::TypeCheckHoistingPhase::noticeCheckArray):
+        (JSC::DFG::TypeCheckHoistingPhase::noticeStructureCheckAccountingForArrayMode): We want to take CheckStructure nodes
+        into account when hoisting CheckArrays, so we make sure that if we contradict what a CheckStructure says then we 
+        give up on hoisting the CheckArray.
+        (JSC::DFG::ArrayTypeCheck::isValidToHoist):
+        (ArrayTypeCheck): Structure that houses some of the specifics on how to hoist CheckArrays. This structure
+        is used a template argument to allow some of the very similar code to statically parameterized and reused
+        for both CheckStructure and CheckArray hoisting.
+        (JSC::DFG::ArrayTypeCheck::disableHoisting):
+        (JSC::DFG::ArrayTypeCheck::isContravenedByValue):
+        (JSC::DFG::ArrayTypeCheck::hasEnoughVotesToHoist):
+        (JSC::DFG::ArrayTypeCheck::hoistingPreviouslyFailed):
+        (JSC::DFG::StructureTypeCheck::isValidToHoist):
+        (StructureTypeCheck): Same as ArrayTypeCheck, but specific to CheckStructure hoisting.
+        (JSC::DFG::StructureTypeCheck::disableHoisting):
+        (JSC::DFG::StructureTypeCheck::isContravenedByValue):
+        (JSC::DFG::StructureTypeCheck::hasEnoughVotesToHoist):
+        (JSC::DFG::StructureTypeCheck::hoistingPreviouslyFailed):
+        * dfg/DFGUnificationPhase.cpp: Added merging of whether or not CheckArray hoisting failed.
+        (JSC::DFG::UnificationPhase::run):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::mergeCheckArrayHoistingFailed):
+        (VariableAccessData):
+        (JSC::DFG::VariableAccessData::checkArrayHoistingFailed):
+        * runtime/Options.h:
+
 2013-05-17  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: getCTIStub should be thread-safe

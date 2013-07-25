@@ -367,6 +367,11 @@ public:
     {
         return conversion() != Array::AsIs;
     }
+
+    bool isContravenedByStructure(Structure* structure)
+    {
+        return !arrayModesAlreadyChecked(arrayModesThatPassFiltering(), arrayModeFromStructure(structure));
+    }
     
     ArrayModes arrayModesThatPassFiltering() const
     {

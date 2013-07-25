@@ -332,6 +332,7 @@ public:
                 case StructureTransitionWatchpoint:
                 case ForwardStructureTransitionWatchpoint:
                 case CheckArray:
+                case ForwardCheckArray:
                     // We don't care about these because if we get uses of the relevant
                     // variable then we can safely get rid of these, too. This of course
                     // relies on there not being any information transferred by the CFA
@@ -520,7 +521,8 @@ public:
                 case ForwardCheckStructure:
                 case StructureTransitionWatchpoint:
                 case ForwardStructureTransitionWatchpoint:
-                case CheckArray: {
+                case CheckArray:
+                case ForwardCheckArray: {
                     // We can just get rid of this node, if it references a phantom argument.
                     if (!isOKToOptimize(node->child1().node()))
                         break;

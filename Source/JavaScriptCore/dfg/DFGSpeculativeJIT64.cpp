@@ -2393,6 +2393,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
+    case ForwardCheckArray:
     case CheckArray: {
         checkArray(node);
         break;
