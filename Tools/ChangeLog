@@ -1,3 +1,25 @@
+2013-07-25  Sam Weinig  <sam@webkit.org>
+
+        -[WebHTMLView attributedSubstringForProposedRange:actualRange:] does not include strikethrough attribute in the returned attributed string
+        https://bugs.webkit.org/show_bug.cgi?id=119099
+        <rdar://problem/13439291>
+
+        Reviewed by Enrica Casucci.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/AttributedString.mm:
+        (TestWebKitAPI::attributedString):
+        (TestWebKitAPI::AttributedStringTest_CustomFont::didLoadURL):
+        (TestWebKitAPI::AttributedStringTest_CustomFont::url):
+        (TestWebKitAPI::AttributedStringTest_CustomFont::runTest):
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::AttributedStringTest_Strikethrough::didLoadURL):
+        (TestWebKitAPI::AttributedStringTest_Strikethrough::url):
+        (TestWebKitAPI::AttributedStringTest_Strikethrough::runTest):
+        * TestWebKitAPI/Tests/mac/attributedStringStrikethrough.html: Added.
+        Add tests for attributed strings with strikethrough.  Refactor the attributed string tests
+        to make adding more easier in the future.
+
 2013-07-20  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL should be able to generate LLVM IR that uses an intrinsic for OSR exit

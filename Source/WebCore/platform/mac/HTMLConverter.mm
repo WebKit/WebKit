@@ -1696,6 +1696,8 @@ static NSInteger _colCompare(id block1, id block2, void *)
         RenderStyle* style = renderer->style();
         if (style->textDecorationsInEffect() & TextDecorationUnderline)
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+        if (style->textDecorationsInEffect() & TextDecorationLineThrough)
+            [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
         if (NSFont *font = style->font().primaryFont()->getNSFont())
             [attrs.get() setObject:font forKey:NSFontAttributeName];
         else
