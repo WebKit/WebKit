@@ -197,6 +197,7 @@ namespace JSC {
         friend class SuperRegion;
         friend class IncrementalSweeper;
         friend class HeapStatistics;
+        friend class VM;
         friend class WeakSet;
         template<typename T> friend void* allocateCell(Heap&);
         template<typename T> friend void* allocateCell(Heap&, size_t);

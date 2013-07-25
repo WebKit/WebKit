@@ -264,9 +264,12 @@ VM::VM(VMType vmType, HeapType heapType)
 
 VM::~VM()
 {
+    // Never GC, ever again.
+    heap.incrementDeferralDepth();
+    
 #if ENABLE(DFG_JIT)
-    // Make sure concurrent compilations are done, but don't install them, since installing
-    // them might cause a GC. We don't want to GC right now.
+    // Make sure concurrent compilations are done, but don't install them, since there is
+    // no point to doing so.
     if (worklist) {
         worklist->waitUntilAllPlansForVMAreReady(*this);
         worklist->removeAllReadyPlansForVM(*this);
