@@ -530,7 +530,7 @@ PassRefPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* s
 
     if (!unlinkedCodeBlock) {
         exception = error.toErrorObject(globalObject, m_source);
-        return nullptr;
+        return 0;
     }
 
     SourceProvider* provider = source().provider();
