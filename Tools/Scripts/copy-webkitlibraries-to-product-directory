@@ -66,7 +66,9 @@ sub unpackIfNecessary
                 (system($ranlib, $targetDir . "/" . $library) == 0) or die;
             }
         }
+        return 1;
     }
+    return 0;
 }
 
 sub dittoHeaders
@@ -129,6 +131,8 @@ if ($ENV{ENABLE_FTL_JIT}) {
         return $contents eq $string;
     }
 
+    my $shouldUpdateLLVMLibraryToken = 0;
+
     if ($useOwnLLVM) {
         print("Building LLVM.\n");
         chdir $ownLLVMDirectory;
@@ -137,19 +141,20 @@ if ($ENV{ENABLE_FTL_JIT}) {
         my $numCPUs = $';
         (system("make -j $numCPUs") == 0) or die;
         chdirWebKit();
-    
+        
         my $ownLLVMBuildMode = "";
         if (fileContains($ownLLVMDirectory . "/Makefile.config", "ENABLE_OPTIMIZED=1")) {
             $ownLLVMBuildMode .= "Release";
         } else {
             $ownLLVMBuildMode .= "Debug";
         }
-    
+        
         # FIXME: Add support for builds that disable assertions.
         $ownLLVMBuildMode .= "+Asserts";
-    
+        
         my $librarySourceDirectory = "$ownLLVMDirectory/$ownLLVMBuildMode/lib";
         my $libraryTargetDirectory = $productDir;
+        $shouldUpdateLLVMLibraryToken = 0;
         print("Symlinking libraries from $librarySourceDirectory to $libraryTargetDirectory\n");
         opendir (my $dirHandle, $librarySourceDirectory);
         while (my $filename = readdir($dirHandle)) {
@@ -166,18 +171,32 @@ if ($ENV{ENABLE_FTL_JIT}) {
                 print "   Ranlib $filename\n";
                 (system($ranlib, $targetLibrary) == 0) or die;
                 (open my $fileHandle, ">", $ranlibToken) or die;
-                    print {$fileHandle} "$sourceLibrary";
-                    close $fileHandle;
+                print {$fileHandle} "$sourceLibrary";
+                close $fileHandle;
+                $shouldUpdateLLVMLibraryToken = 1;
             }
         }
         closedir $dirHandle;
+    } else {
+        $shouldUpdateLLVMLibraryToken =
+            unpackIfNecessary($productDir, "$productDir/libLLVMCore.a", $llvmLibraryPackage, 1);
+    }
+
+    if ($useOwnLLVM) {
         (system("rm", "-rf", "$productDir/usr/local/include/llvm") == 0) or die;
         (system("rm", "-rf", "$productDir/usr/local/include/llvm-c") == 0) or die;
         symlink("$ownLLVMDirectory/include/llvm", "$productDir/usr/local/include/llvm") or die;
         symlink("$ownLLVMDirectory/include/llvm-c", "$productDir/usr/local/include/llvm-c") or die;
     } else {
         unpackIfNecessary("$productDir/usr/local/include", "$productDir/usr/local/include/llvm-c/Core.h", $llvmIncludePackage, 0);
-        unpackIfNecessary($productDir, "$productDir/libLLVMCore.a", $llvmLibraryPackage, 1);
+    }
+
+    my $llvmLibraryToken = "$productDir/usr/local/include/WebKitLLVMLibraryToken.h";
+    if ($shouldUpdateLLVMLibraryToken || !-e $llvmLibraryToken) {
+        (open my $fileHandle, ">", $llvmLibraryToken) or die;
+        print {$fileHandle} "/* This file fools WebKit's build system into relinking JavaScriptCore if the LLVM libraries changed. */\n";
+        close $fileHandle;
     }
 
 }
+

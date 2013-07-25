@@ -1,5 +1,23 @@
 2013-07-16  Oliver Hunt <oliver@apple.com>
 
+        Merge dfgFourthTier r148850
+
+    2013-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: WebKit's build system should relink JavaScriptCore if LLVM's libraries changed but its headers didn't
+        https://bugs.webkit.org/show_bug.cgi?id=114926
+
+        Reviewed by Geoffrey Garen.
+        
+        Use a phony file that includes a phony header to force JavaScriptCore to be relinked
+        if necessary. The external LLVM-importing scripts will touch the header if the libraries
+        are known to have changed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/WebKitLLVMLibraryAnchor.cpp: Added.
+
+2013-07-16  Oliver Hunt <oliver@apple.com>
+
         Merge dfgFourthTier r148836
 
     2013-04-21  Filip Pizlo  <fpizlo@apple.com>
