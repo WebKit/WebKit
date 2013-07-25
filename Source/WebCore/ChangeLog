@@ -1,5 +1,28 @@
 2013-07-24  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS] Captions are clipped in documents using pagination
+        https://bugs.webkit.org/show_bug.cgi?id=119072
+
+        Reviewed by Beth Dakin.
+
+        MediaControlTextTrackContainerElement::createTextTrackRepresentationImage() is called
+        to paint captions into a layer used for fullscreen video. It did the painting using
+        a subtree paint, but starting at the root RenderView's layer. This is problematic,
+        because the caption painting is subject to clipping for columns, and any enclosing
+        overflow:hidden container.
+        
+        Fix this by starting the paint at the MediaControlTextTrackContainerElement's
+        renderer's layer. By doing this we don't have to worry about an offset, so no
+        translation is required.
+        
+        Also make sure we update layer before grabbing the renderer (in case layout
+        destroys it).
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+
+2013-07-24  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r152335): Mac Pro title occluded in MobileSafari; can't scroll page
         https://bugs.webkit.org/show_bug.cgi?id=119066
         <rdar://problem/14499184>

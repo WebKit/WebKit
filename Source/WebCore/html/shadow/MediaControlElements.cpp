@@ -1397,34 +1397,31 @@ PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresen
     if (!hasChildNodes())
         return 0;
 
-    RenderObject* renderer = this->renderer();
-    if (!renderer)
-        return 0;
-
     Frame* frame = document()->frame();
     if (!frame)
         return 0;
 
     document()->updateLayout();
 
-    LayoutRect topLevelRect;
-    IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
+    RenderObject* renderer = this->renderer();
+    if (!renderer)
+        return 0;
+
+    if (!renderer->hasLayer())
+        return 0;
+
+    RenderLayer* layer = toRenderLayerModelObject(renderer)->layer();
 
     float deviceScaleFactor = 1;
     if (Page* page = document()->page())
         deviceScaleFactor = page->deviceScaleFactor();
 
+    IntRect paintingRect = IntRect(IntPoint(), layer->size());
     OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
     if (!buffer)
         return 0;
 
-    // Translate the renderer painting rect into graphics context coordinates.
-    FloatSize translation(-paintingRect.x(), -paintingRect.y());
-
-    buffer->context()->translate(translation);
-
-    RenderLayer* layer = frame->contentRenderer()->layer();
-    layer->paint(buffer->context(), paintingRect, PaintBehaviorFlattenCompositingLayers, renderer, 0, RenderLayer::PaintLayerPaintingCompositingAllPhases);
+    layer->paint(buffer->context(), paintingRect, PaintBehaviorFlattenCompositingLayers, 0, 0, RenderLayer::PaintLayerPaintingCompositingAllPhases);
 
     return buffer->copyImage();
 }
