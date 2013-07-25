@@ -267,6 +267,7 @@ namespace JSC { namespace DFG {
     /* this point, but execution does continue in the basic block - just in a */\
     /* different compiler. */\
     macro(ForceOSRExit, NodeMustGenerate) \
+    macro(ForwardForceOSRExit, NodeMustGenerate | NodeExitsForward) \
     \
     /* Checks the watchdog timer. If the timer has fired, we OSR exit to the */ \
     /* baseline JIT to redo the watchdog timer check, and service the timer. */ \

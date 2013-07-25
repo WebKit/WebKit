@@ -335,6 +335,7 @@ public:
     
     void compile(Node*);
     void noticeOSRBirth(Node*);
+    void bail();
     void compile(BasicBlock&);
 
     void checkArgumentTypes();
@@ -2202,9 +2203,7 @@ public:
     BlockIndex m_block;
     Node* m_currentNode;
     SpeculationDirection m_speculationDirection;
-#if !ASSERT_DISABLED
     bool m_canExit;
-#endif
     unsigned m_indexInBlock;
     // Virtual and physical register maps.
     Vector<GenerationInfo, 32> m_generationInfo;

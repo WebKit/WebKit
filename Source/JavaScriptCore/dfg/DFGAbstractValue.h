@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayProfile.h"
+#include "DFGFiltrationResult.h"
 #include "DFGStructureAbstractValue.h"
 #include "JSCell.h"
 #include "SpeculatedType.h"
@@ -182,18 +183,13 @@ struct AbstractValue {
         checkConsistency();
     }
     
-    void filter(Graph&, const StructureSet&);
+    FiltrationResult filter(Graph&, const StructureSet&);
     
-    void filterArrayModes(ArrayModes arrayModes);
+    FiltrationResult filterArrayModes(ArrayModes arrayModes);
     
-    void filter(SpeculatedType type);
+    FiltrationResult filter(SpeculatedType type);
     
-    void filterByValue(JSValue value)
-    {
-        filter(speculationFromValue(value));
-        if (m_type)
-            m_value = value;
-    }
+    FiltrationResult filterByValue(JSValue value);
     
     bool validateType(JSValue value) const
     {
@@ -364,7 +360,7 @@ private:
     void filterArrayModesByType();
     
     bool shouldBeClear() const;
-    void normalizeClarity();
+    FiltrationResult normalizeClarity();
 };
 
 } } // namespace JSC::DFG

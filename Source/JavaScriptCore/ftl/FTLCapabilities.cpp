@@ -78,6 +78,7 @@ inline bool canCompile(Node* node)
     case CompareStrictEqConstant:
     case Jump:
     case ForceOSRExit:
+    case ForwardForceOSRExit:
         // These are OK.
         break;
     case GetArrayLength:

@@ -3443,7 +3443,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     : m_byteCodeParser(byteCodeParser)
     , m_codeBlock(codeBlock)
     , m_profiledBlock(profiledBlock)
-    , m_exitProfile(profiledBlock->exitProfile())
     , m_callsiteBlockHead(callsiteBlockHead)
     , m_returnValue(returnValueVR)
     , m_didReturn(false)
@@ -3453,6 +3452,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     {
         ConcurrentJITLocker locker(m_profiledBlock->m_lock);
         m_lazyOperands.initialize(locker, m_profiledBlock->lazyOperandValueProfiles());
+        m_exitProfile.initialize(locker, profiledBlock->exitProfile());
     }
     
     m_argumentPositions.resize(argumentCountIncludingThis);

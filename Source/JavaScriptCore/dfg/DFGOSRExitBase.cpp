@@ -37,16 +37,9 @@ namespace JSC { namespace DFG {
 
 bool OSRExitBase::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock)
 {
-    FrequentExitSite exitSite;
-    
-    if (m_kind == ArgumentsEscaped) {
-        // Count this one globally. It doesn't matter where in the code block the arguments excaped;
-        // the fact that they did is not associated with any particular instruction.
-        exitSite = FrequentExitSite(m_kind);
-    } else
-        exitSite = FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind);
-    
-    return baselineCodeBlockForOriginAndBaselineCodeBlock(m_codeOriginForExitProfile, profiledCodeBlock)->addFrequentExitSite(exitSite);
+    return baselineCodeBlockForOriginAndBaselineCodeBlock(
+        m_codeOriginForExitProfile, profiledCodeBlock)->addFrequentExitSite(
+            FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind));
 }
 
 bool OSRExitBase::doSearchForForwardConversion(

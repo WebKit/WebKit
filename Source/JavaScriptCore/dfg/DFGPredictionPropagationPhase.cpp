@@ -522,6 +522,7 @@ private:
         case CheckHasInstance:
         case ThrowReferenceError:
         case ForceOSRExit:
+        case ForwardForceOSRExit:
         case SetArgument:
         case CheckStructure:
         case CheckExecutable:

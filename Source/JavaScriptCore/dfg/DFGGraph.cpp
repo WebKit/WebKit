@@ -253,7 +253,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
         out.print(" = ", value);
     }
     if (op == WeakJSConstant)
-        out.print(comma, RawPointer(node->weakConstant()));
+        out.print(comma, RawPointer(node->weakConstant()), " (structure: ", RawPointer(node->weakConstant()->structure()), ")");
     if (node->isBranch() || node->isJump())
         out.print(comma, "T:#", node->takenBlockIndex());
     if (node->isBranch())

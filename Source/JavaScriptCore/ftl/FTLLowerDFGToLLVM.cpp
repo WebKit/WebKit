@@ -265,7 +265,7 @@ private:
         if (verboseCompilationEnabled())
             dataLog("Lowering ", m_node, "\n");
         
-        bool shouldExecuteEffects = m_state.startExecuting(m_node);
+        bool shouldExecuteEffects = m_state.startExecuting(m_node, AbstractState::CleanFiltration);
         
         m_direction = (m_node->flags() & NodeExitsForward) ? ForwardSpeculation : BackwardSpeculation;
         
@@ -418,6 +418,7 @@ private:
             compileReturn();
             break;
         case ForceOSRExit:
+        case ForwardForceOSRExit:
             compileForceOSRExit();
             break;
         default:
@@ -1619,7 +1620,7 @@ private:
             return;
         ASSERT(mayHaveTypeCheck(highValue.useKind()));
         appendOSRExit(BadType, lowValue, highValue.node(), failCondition, direction, recovery);
-        m_state.forNode(highValue).filter(typesPassedThrough);
+        m_state.filter(highValue, typesPassedThrough);
     }
     
     LValue lowInt32(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)

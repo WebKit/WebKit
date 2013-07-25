@@ -93,6 +93,21 @@ public:
         MergeToSuccessors
     };
     
+    enum ExecutionMode {
+        // If we encounter a contradiction, assume that this might just
+        // be because we haven't converged yet.
+        StillConverging,
+        
+        // If we encounter a contradition, assume that this contradiction
+        // is real and report it to the profiling infrastructure as if it
+        // happened at run time.
+        AfterConvergence,
+        
+        // Assume that there cannot be any contradictions other than
+        // ForceOSRExit because we have already cleaned the graph.
+        CleanFiltration
+    };
+    
     AbstractState(Graph&);
     
     ~AbstractState();
@@ -176,12 +191,12 @@ public:
     //
     // This is guaranteed to be equivalent to doing:
     //
-    // if (state.startExecuting(index)) {
+    // if (state.startExecuting(index, executionMode)) {
     //     state.executeEdges(index);
     //     result = state.executeEffects(index);
     // } else
     //     result = true;
-    bool execute(unsigned indexInBlock);
+    bool execute(unsigned indexInBlock, ExecutionMode);
     
     // Indicate the start of execution of the node. It resets any state in the node,
     // that is progressively built up by executeEdges() and executeEffects(). In
@@ -189,8 +204,8 @@ public:
     // startExecuting() and executeEdges()/Effects() whether the last run of the
     // analysis concluded that the node can exit, you should probably set that
     // information aside prior to calling startExecuting().
-    bool startExecuting(Node*);
-    bool startExecuting(unsigned indexInBlock);
+    bool startExecuting(Node*, ExecutionMode);
+    bool startExecuting(unsigned indexInBlock, ExecutionMode);
     
     // Abstractly execute the edges of the given node. This runs filterEdgeByUse()
     // on all edges of the node. You can skip this step, if you have already used
@@ -230,6 +245,38 @@ public:
     bool mergeToSuccessors(Graph&, BasicBlock*);
     
     void dump(PrintStream& out);
+    
+    template<typename T>
+    FiltrationResult filter(T node, const StructureSet& set, ExitKind exitKind)
+    {
+        return filter(forNode(node), set, exitKind);
+    }
+    
+    template<typename T>
+    FiltrationResult filterArrayModes(
+        T node, ArrayModes arrayModes, ExitKind exitKind = BadIndexingType)
+    {
+        return filterArrayModes(forNode(node), arrayModes, exitKind);
+    }
+    
+    template<typename T>
+    FiltrationResult filter(T node, SpeculatedType type, ExitKind exitKind = BadType)
+    {
+        return filter(forNode(node), type, exitKind);
+    }
+    
+    template<typename T>
+    FiltrationResult filterByValue(T node, JSValue value, ExitKind exitKind)
+    {
+        return filterByValue(forNode(node), value, exitKind);
+    }
+    
+    FiltrationResult filter(AbstractValue&, const StructureSet&, ExitKind);
+    FiltrationResult filterArrayModes(AbstractValue&, ArrayModes, ExitKind = BadIndexingType);
+    FiltrationResult filter(AbstractValue&, SpeculatedType, ExitKind = BadType);
+    FiltrationResult filterByValue(AbstractValue&, JSValue, ExitKind);
+    
+    void bail(ExitKind);
     
 private:
     void clobberWorld(const CodeOrigin&, unsigned indexInBlock);
@@ -273,7 +320,7 @@ private:
         } else
             edge.setProofStatus(IsProved);
         
-        value.filter(type);
+        filter(value, type);
     }
     
     void verifyEdge(Node*, Edge);
@@ -284,6 +331,9 @@ private:
     
     Operands<AbstractValue> m_variables;
     BasicBlock* m_block;
+    Node* m_currentNode;
+    ExecutionMode m_executionMode;
+    
     bool m_haveStructures;
     bool m_foundConstants;
     

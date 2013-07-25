@@ -881,6 +881,7 @@ private:
         case GarbageValue:
         case CountExecution:
         case ForceOSRExit:
+        case ForwardForceOSRExit:
         case CheckWatchdogTimer:
             break;
 #else

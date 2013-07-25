@@ -622,10 +622,15 @@ public:
     bool addFrequentExitSite(const DFG::FrequentExitSite& site)
     {
         ASSERT(JITCode::isBaselineCode(jitType()));
-        return m_exitProfile.add(site);
+        ConcurrentJITLocker locker(m_lock);
+        return m_exitProfile.add(locker, site);
     }
-
-    bool hasExitSite(const DFG::FrequentExitSite& site) const { return m_exitProfile.hasExitSite(site); }
+        
+    bool hasExitSite(const DFG::FrequentExitSite& site) const
+    {
+        ConcurrentJITLocker locker(m_lock);
+        return m_exitProfile.hasExitSite(locker, site);
+    }
 
     DFG::ExitProfile& exitProfile() { return m_exitProfile; }
 
@@ -907,7 +912,7 @@ public:
     // Another exception to the rules is that the GC can do whatever it wants
     // without holding any locks, because the GC is guaranteed to wait until any
     // concurrent compilation threads finish what they're doing.
-    ConcurrentJITLock m_lock;
+    mutable ConcurrentJITLock m_lock;
     
     bool m_shouldAlwaysBeInlined;
     bool m_allTransitionsHaveBeenMarked; // Initialized and used on every GC.

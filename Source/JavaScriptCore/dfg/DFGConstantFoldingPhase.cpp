@@ -103,7 +103,7 @@ private:
                 else
                     set = node->structureSet();
                 if (value.m_currentKnownStructure.isSubsetOf(set)) {
-                    m_state.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                    m_state.execute(indexInBlock, AbstractState::CleanFiltration); // Catch the fact that we may filter on cell.
                     node->convertToPhantom();
                     eliminated = true;
                     break;
@@ -112,7 +112,17 @@ private:
                 if (structureValue.isSubsetOf(set)
                     && structureValue.hasSingleton()) {
                     Structure* structure = structureValue.singleton();
-                    m_state.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                    m_state.execute(indexInBlock, AbstractState::CleanFiltration); // Catch the fact that we may filter on cell.
+                    AdjacencyList children = node->children;
+                    children.removeEdge(0);
+                    if (!!children.child1()) {
+                        Node phantom(Phantom, node->codeOrigin, children);
+                        if (node->flags() & NodeExitsForward)
+                            phantom.mergeFlags(NodeExitsForward);
+                        m_insertionSet.insertNode(indexInBlock, SpecNone, phantom);
+                    }
+                    node->children.setChild2(Edge());
+                    node->children.setChild3(Edge());
                     node->convertToStructureTransitionWatchpoint(structure);
                     eliminated = true;
                     break;
@@ -171,7 +181,7 @@ private:
                 // Now before we do anything else, push the CFA forward over the GetById
                 // and make sure we signal to the loop that it should continue and not
                 // do any eliminations.
-                m_state.execute(indexInBlock);
+                m_state.execute(indexInBlock, AbstractState::CleanFiltration);
                 eliminated = true;
                 
                 if (needsWatchpoint) {
@@ -235,7 +245,7 @@ private:
                 // Now before we do anything else, push the CFA forward over the PutById
                 // and make sure we signal to the loop that it should continue and not
                 // do any eliminations.
-                m_state.execute(indexInBlock);
+                m_state.execute(indexInBlock, AbstractState::CleanFiltration);
                 eliminated = true;
                 
                 if (needsWatchpoint) {
@@ -324,7 +334,7 @@ private:
                 continue;
             }
                 
-            m_state.execute(indexInBlock);
+            m_state.execute(indexInBlock, AbstractState::CleanFiltration);
             if (!node->shouldGenerate() || m_state.didClobber() || node->hasConstant())
                 continue;
             JSValue value = m_state.forNode(node).value();
@@ -418,7 +428,7 @@ private:
     // to ensure soundness, we must paint unreachable code as such, by inserting an
     // unconditional ForceOSRExit wherever we find that a node would have always exited.
     // This will only happen in cases where we are making static speculations, or we're
-    // making totally wrong speculations due to imprecision on the prediction propagator.
+    // making totally wrong speculations due to imprecision in the prediction propagator.
     bool paintUnreachableCode(BlockIndex blockIndex)
     {
         bool changed = false;
@@ -430,7 +440,7 @@ private:
         m_state.beginBasicBlock(block);
         
         for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
-            m_state.execute(indexInBlock);
+            m_state.execute(indexInBlock, AbstractState::AfterConvergence);
             if (m_state.isValid())
                 continue;
             
@@ -440,12 +450,15 @@ private:
             case Throw:
             case ThrowReferenceError:
             case ForceOSRExit:
+            case ForwardForceOSRExit:
                 // Do nothing. These nodes will already do the right thing.
                 break;
                 
             default:
                 m_insertionSet.insertNode(
-                    indexInBlock, SpecNone, ForceOSRExit, node->codeOrigin);
+                    indexInBlock, SpecNone,
+                    (node->flags() & NodeExitsForward) ? ForwardForceOSRExit : ForceOSRExit,
+                    node->codeOrigin);
                 changed = true;
                 break;
             }

@@ -70,10 +70,11 @@ const char* exitKindToString(ExitKind kind)
         return "Uncountable";
     case UncountableWatchpoint:
         return "UncountableWatchpoint";
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return "Unknown";
+    case WatchdogTimerFired:
+        return "WatchdogTimerFired";
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return "Unknown";
 }
 
 bool exitKindIsCountable(ExitKind kind)

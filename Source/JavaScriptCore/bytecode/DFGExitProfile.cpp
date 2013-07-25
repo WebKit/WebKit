@@ -33,7 +33,7 @@ namespace JSC { namespace DFG {
 ExitProfile::ExitProfile() { }
 ExitProfile::~ExitProfile() { }
 
-bool ExitProfile::add(const FrequentExitSite& site)
+bool ExitProfile::add(const ConcurrentJITLocker&, const FrequentExitSite& site)
 {
     // If we've never seen any frequent exits then create the list and put this site
     // into it.
@@ -70,7 +70,7 @@ Vector<FrequentExitSite> ExitProfile::exitSitesFor(unsigned bytecodeIndex)
     return result;
 }
 
-bool ExitProfile::hasExitSite(const FrequentExitSite& site) const
+bool ExitProfile::hasExitSite(const ConcurrentJITLocker&, const FrequentExitSite& site) const
 {
     if (!m_frequentExitSites)
         return false;
@@ -82,7 +82,10 @@ bool ExitProfile::hasExitSite(const FrequentExitSite& site) const
     return false;
 }
 
-QueryableExitProfile::QueryableExitProfile(const ExitProfile& profile)
+QueryableExitProfile::QueryableExitProfile() { }
+QueryableExitProfile::~QueryableExitProfile() { }
+
+void QueryableExitProfile::initialize(const ConcurrentJITLocker&, const ExitProfile& profile)
 {
     if (!profile.m_frequentExitSites)
         return;
@@ -90,7 +93,5 @@ QueryableExitProfile::QueryableExitProfile(const ExitProfile& profile)
     for (unsigned i = 0; i < profile.m_frequentExitSites->size(); ++i)
         m_frequentExitSites.add(profile.m_frequentExitSites->at(i));
 }
-
-QueryableExitProfile::~QueryableExitProfile() { }
 
 } } // namespace JSC::DFG

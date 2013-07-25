@@ -862,7 +862,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(Edge edge, DataFormat& returnFor
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT(edge.useKind() != KnownInt32Use || !(value.m_type & ~SpecInt32));
-    value.filter(SpecInt32);
+    m_state.filter(value, SpecInt32);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -963,7 +963,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT(edge.useKind() != KnownNumberUse || !(value.m_type & ~SpecNumber));
-    value.filter(SpecNumber);
+    m_state.filter(value, SpecNumber);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -1100,7 +1100,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT((edge.useKind() != KnownCellUse && edge.useKind() != KnownStringUse) || !(value.m_type & ~SpecCell));
-    value.filter(SpecCell);
+    m_state.filter(value, SpecCell);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -1177,7 +1177,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
 #endif
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
-    value.filter(SpecBoolean);
+    m_state.filter(value, SpecBoolean);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -4907,7 +4907,8 @@ void SpeculativeJIT::compile(Node* node)
         CRASH();
         break;
 
-    case ForceOSRExit: {
+    case ForceOSRExit:
+    case ForwardForceOSRExit: {
         terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
         break;
     }

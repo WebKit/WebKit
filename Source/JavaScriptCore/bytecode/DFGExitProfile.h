@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef DFGExitProfile_h
 #define DFGExitProfile_h
 
+#include "ConcurrentJITLock.h"
 #include "ExitKind.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -51,7 +52,11 @@ public:
         : m_bytecodeOffset(bytecodeOffset)
         , m_kind(kind)
     {
-        ASSERT(exitKindIsCountable(kind));
+        if (m_kind == ArgumentsEscaped) {
+            // Count this one globally. It doesn't matter where in the code block the arguments excaped;
+            // the fact that they did is not associated with any particular instruction.
+            m_bytecodeOffset = 0;
+        }
     }
     
     // Use this constructor if you wish for the exit site to be counted globally within its
@@ -60,7 +65,6 @@ public:
         : m_bytecodeOffset(0)
         , m_kind(kind)
     {
-        ASSERT(exitKindIsCountable(kind));
     }
     
     bool operator!() const
@@ -127,7 +131,7 @@ public:
     // be called a fixed number of times per recompilation. Recompilation is
     // rare to begin with, and implies doing O(n) operations on the CodeBlock
     // anyway.
-    bool add(const FrequentExitSite&);
+    bool add(const ConcurrentJITLocker&, const FrequentExitSite&);
     
     // Get the frequent exit sites for a bytecode index. This is O(n), and is
     // meant to only be used from debugging/profiling code.
@@ -137,14 +141,14 @@ public:
     // in the compiler. It should be strictly cheaper than building a
     // QueryableExitProfile, if you really expect this to be called infrequently
     // and you believe that there are few exit sites.
-    bool hasExitSite(const FrequentExitSite&) const;
-    bool hasExitSite(ExitKind kind) const
+    bool hasExitSite(const ConcurrentJITLocker&, const FrequentExitSite&) const;
+    bool hasExitSite(const ConcurrentJITLocker& locker, ExitKind kind) const
     {
-        return hasExitSite(FrequentExitSite(kind));
+        return hasExitSite(locker, FrequentExitSite(kind));
     }
-    bool hasExitSite(unsigned bytecodeIndex, ExitKind kind) const
+    bool hasExitSite(const ConcurrentJITLocker& locker, unsigned bytecodeIndex, ExitKind kind) const
     {
-        return hasExitSite(FrequentExitSite(bytecodeIndex, kind));
+        return hasExitSite(locker, FrequentExitSite(bytecodeIndex, kind));
     }
     
 private:
@@ -155,9 +159,11 @@ private:
 
 class QueryableExitProfile {
 public:
-    explicit QueryableExitProfile(const ExitProfile&);
+    QueryableExitProfile();
     ~QueryableExitProfile();
     
+    void initialize(const ConcurrentJITLocker&, const ExitProfile&);
+
     bool hasExitSite(const FrequentExitSite& site) const
     {
         return m_frequentExitSites.find(site) != m_frequentExitSites.end();

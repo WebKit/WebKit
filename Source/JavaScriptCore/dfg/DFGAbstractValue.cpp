@@ -83,8 +83,11 @@ void AbstractValue::set(Graph& graph, Structure* structure)
     checkConsistency();
 }
 
-void AbstractValue::filter(Graph& graph, const StructureSet& other)
+FiltrationResult AbstractValue::filter(Graph& graph, const StructureSet& other)
 {
+    if (isClear())
+        return FiltrationOK;
+    
     // FIXME: This could be optimized for the common case of m_type not
     // having structures, array modes, or a specific value.
     // https://bugs.webkit.org/show_bug.cgi?id=109663
@@ -105,26 +108,29 @@ void AbstractValue::filter(Graph& graph, const StructureSet& other)
         
     filterArrayModesByType();
     filterValueByType();
-    normalizeClarity();
-    
-    checkConsistency();
+    return normalizeClarity();
 }
 
-void AbstractValue::filterArrayModes(ArrayModes arrayModes)
+FiltrationResult AbstractValue::filterArrayModes(ArrayModes arrayModes)
 {
     ASSERT(arrayModes);
     
+    if (isClear())
+        return FiltrationOK;
+    
     m_type &= SpecCell;
     m_arrayModes &= arrayModes;
-    normalizeClarity();
-    
-    checkConsistency();
+    return normalizeClarity();
 }
 
-void AbstractValue::filter(SpeculatedType type)
+FiltrationResult AbstractValue::filter(SpeculatedType type)
 {
+    if (isClear())
+        return FiltrationOK;
+    
     if (type == SpecTop)
-        return;
+        return isClear() ? Contradiction : FiltrationOK;
+    
     m_type &= type;
     
     // It's possible that prior to this filter() call we had, say, (Final, TOP), and
@@ -135,9 +141,15 @@ void AbstractValue::filter(SpeculatedType type)
     m_futurePossibleStructure.filter(m_type);
     filterArrayModesByType();
     filterValueByType();
-    normalizeClarity();
-    
-    checkConsistency();
+    return normalizeClarity();
+}
+
+FiltrationResult AbstractValue::filterByValue(JSValue value)
+{
+    FiltrationResult result = filter(speculationFromValue(value));
+    if (m_type)
+        m_value = value;
+    return result;
 }
 
 void AbstractValue::setFuturePossibleStructure(Graph& graph, Structure* structure)
@@ -200,13 +212,22 @@ bool AbstractValue::shouldBeClear() const
     return false;
 }
 
-void AbstractValue::normalizeClarity()
+FiltrationResult AbstractValue::normalizeClarity()
 {
     // It's useful to be able to quickly check if an abstract value is clear.
     // This normalizes everything to make that easy.
     
-    if (shouldBeClear())
+    FiltrationResult result;
+    
+    if (shouldBeClear()) {
         clear();
+        result = Contradiction;
+    } else
+        result = FiltrationOK;
+
+    checkConsistency();
+    
+    return result;
 }
 
 void AbstractValue::checkConsistency() const

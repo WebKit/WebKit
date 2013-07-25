@@ -23,58 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitBase_h
-#define DFGOSRExitBase_h
+#ifndef DFGFiltrationResult_h
+#define DFGFiltrationResult_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeOrigin.h"
-#include "DFGExitProfile.h"
-
 namespace JSC { namespace DFG {
 
-struct BasicBlock;
-struct Node;
-
-// Provides for the OSR exit profiling functionality that is common between the DFG
-// and the FTL.
-
-struct OSRExitBase {
-    OSRExitBase(ExitKind kind, CodeOrigin origin)
-        : m_kind(kind)
-        , m_count(0)
-        , m_codeOrigin(origin)
-        , m_codeOriginForExitProfile(origin)
-    {
-    }
-    
-    ExitKind m_kind;
-    uint32_t m_count;
-    
-    CodeOrigin m_codeOrigin;
-    CodeOrigin m_codeOriginForExitProfile;
-
-    bool considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
-    {
-        if (!m_count)
-            return false;
-        return considerAddingAsFrequentExitSiteSlow(profiledCodeBlock);
-    }
-    
-    // Returns true if the forward conversion is really needed.
-    bool doSearchForForwardConversion(
-        BasicBlock*, Node* currentNode, unsigned nodeIndex, bool hasValueRecovery,
-        Node*& nextBCNode, Node*& lastMovHint);
-
-private:
-    bool considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock);
+enum FiltrationResult {
+    FiltrationOK,
+    Contradiction
 };
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGOSRExitBase_h
+#endif // DFGFiltrationResult_h
 

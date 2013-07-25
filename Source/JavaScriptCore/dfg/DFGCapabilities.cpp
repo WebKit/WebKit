@@ -72,7 +72,7 @@ bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel result)
 {
     if (Options::verboseCompilation() && !canCompile(result))
-        dataLog("Cannot compile code block ", *codeBlock, " because of opcode %s.\n", opcodeNames[opcodeID]);
+        dataLog("Cannot compile code block ", *codeBlock, " because of opcode ", opcodeNames[opcodeID], "\n");
 }
 
 // Opcode checking.
@@ -261,8 +261,11 @@ CapabilityLevel capabilityLevel(CodeBlock* codeBlock)
         switch (interpreter->getOpcodeID(instructionsBegin[bytecodeOffset].u.opcode)) {
 #define DEFINE_OP(opcode, length) \
         case opcode: { \
-            result = leastUpperBound(result, capabilityLevel(opcode, codeBlock, instructionsBegin + bytecodeOffset)); \
-            debugFail(codeBlock, opcode, result); \
+            CapabilityLevel newResult = leastUpperBound(result, capabilityLevel(opcode, codeBlock, instructionsBegin + bytecodeOffset)); \
+            if (newResult != result) { \
+                debugFail(codeBlock, opcode, newResult); \
+                result = newResult; \
+            } \
             bytecodeOffset += length; \
             break; \
         }

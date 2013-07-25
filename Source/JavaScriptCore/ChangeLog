@@ -1,3 +1,131 @@
+2013-06-05  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG CFA should know when it hits a contradiction
+        https://bugs.webkit.org/show_bug.cgi?id=117272
+
+        Reviewed by Oliver Hunt.
+        
+        This makes the DFG CFA immediately detect when it hit a contradiction. Previously
+        we might not know this: for example if we did an int32 type check on a known string;
+        the code would definitely always exit but the CFA would think that we wouldn't have
+        even though it would have computed a BOTTOM (i.e. contradictory) value for that
+        variable.
+        
+        This requires two other changes:
+        
+        - CFA must report contradictions as if they are frequent exit sites, since
+          contradictory speculations will subsequently get replaced with ForceOSRExit.
+          ForceOSRExit cannot itself report profiling data back to the DFG::ExitProfile. So,
+          we do this on behalf of the speculation, eagerly, within the CFA. This also has
+          the effect of speeding convergence somewhat. We may want to revisit this later;
+          for example we might want to instead have the notion of a ForceOSRExit that knows
+          the set of speculations that got folded into it.
+        
+        - This revealed a bug where the CFA was modeling CheckStructure on a node that had
+          a known singleton m_futurePossibleStructure set somewhat differently than the
+          constant folder. If the CheckStructure was checking a structure set with two or
+          more structures in it, it would not filter the abstract value. But the constant
+          folder would turn this into a watchpoint on the singleton structure, thereby
+          filtering the value. This discrepancy meant that we wouldn't realize the
+          contradiction until the backend, and the AbstractState::bail() method asserts that
+          we always realize contradictions in the constant folder.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addFrequentExitSite):
+        (JSC::CodeBlock::hasExitSite):
+        (CodeBlock):
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::ExitProfile::add):
+        (JSC::DFG::ExitProfile::hasExitSite):
+        (JSC::DFG::QueryableExitProfile::QueryableExitProfile):
+        (JSC::DFG::QueryableExitProfile::~QueryableExitProfile):
+        (DFG):
+        (JSC::DFG::QueryableExitProfile::initialize):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::FrequentExitSite::FrequentExitSite):
+        (ExitProfile):
+        (JSC::DFG::ExitProfile::hasExitSite):
+        (QueryableExitProfile):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::AbstractState):
+        (JSC::DFG::AbstractState::beginBasicBlock):
+        (JSC::DFG::AbstractState::reset):
+        (JSC::DFG::AbstractState::startExecuting):
+        (JSC::DFG::AbstractState::executeEffects):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::filter):
+        (DFG):
+        (JSC::DFG::AbstractState::filterArrayModes):
+        (JSC::DFG::AbstractState::filterByValue):
+        (JSC::DFG::AbstractState::bail):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        (JSC::DFG::AbstractState::filter):
+        (JSC::DFG::AbstractState::filterArrayModes):
+        (JSC::DFG::AbstractState::filterByValue):
+        (JSC::DFG::AbstractState::filterByType):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::filterArrayModes):
+        (DFG):
+        (JSC::DFG::AbstractValue::filterByValue):
+        (JSC::DFG::AbstractValue::normalizeClarity):
+        * dfg/DFGAbstractValue.h:
+        (AbstractValue):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::debugFail):
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (ConstantFoldingPhase):
+        (JSC::DFG::ConstantFoldingPhase::paintUnreachableCode):
+        * dfg/DFGFiltrationResult.h: Added.
+        (DFG):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOSRExitBase.cpp:
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSite):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::backwardTypeCheck):
+        (JSC::DFG::SpeculativeJIT::bail):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileToStringOnCell):
+        (JSC::DFG::SpeculativeJIT::speculateStringObject):
+        (JSC::DFG::SpeculativeJIT::speculateStringOrStringObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::appendTypeCheck):
+
 2013-06-07  Mark Lam  <mark.lam@apple.com>
 
         32-bit CallFrame::Location should use Instruction* for BytecodeLocation, not bytecodeOffset.

@@ -101,7 +101,7 @@ private:
                 m_state.dump(WTF::dataFile());
                 dataLogF("\n");
             }
-            if (!m_state.execute(i)) {
+            if (!m_state.execute(i, AbstractState::StillConverging)) {
                 if (verbose)
                     dataLogF("         Expect OSR exit.\n");
                 break;

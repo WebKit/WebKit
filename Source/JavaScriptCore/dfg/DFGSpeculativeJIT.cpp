@@ -262,7 +262,7 @@ void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs js
 void SpeculativeJIT::backwardTypeCheck(JSValueSource source, Edge edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail)
 {
     ASSERT(needsTypeCheck(edge, typesPassedThrough));
-    m_state.forNode(edge).filter(typesPassedThrough);
+    m_state.filter(edge, typesPassedThrough);
     backwardSpeculationCheck(BadType, source, edge.node(), jumpToFail);
 }
 
@@ -1591,6 +1591,13 @@ void SpeculativeJIT::compileInlineStart(Node* node)
     }
 }
 
+void SpeculativeJIT::bail()
+{
+    m_compileOkay = true;
+    m_jit.breakpoint();
+    clearGenerationInfo();
+}
+
 void SpeculativeJIT::compile(BasicBlock& block)
 {
     ASSERT(m_compileOkay);
@@ -1602,9 +1609,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
         // Don't generate code for basic blocks that are unreachable according to CFA.
         // But to be sure that nobody has generated a jump to this block, drop in a
         // breakpoint here.
-#if !ASSERT_DISABLED
         m_jit.breakpoint();
-#endif
         return;
     }
 
@@ -1668,10 +1673,12 @@ void SpeculativeJIT::compile(BasicBlock& block)
 
     for (m_indexInBlock = 0; m_indexInBlock < block.size(); ++m_indexInBlock) {
         m_currentNode = block[m_indexInBlock];
-#if !ASSERT_DISABLED
+        
+        // If there was a contradiction then the constant folder ought to have caught it.
+        RELEASE_ASSERT(m_state.isValid());
+        
         m_canExit = m_currentNode->canExit();
-#endif
-        bool shouldExecuteEffects = m_state.startExecuting(m_currentNode);
+        bool shouldExecuteEffects = m_state.startExecuting(m_currentNode, AbstractState::CleanFiltration);
         m_jit.setForNode(m_currentNode);
         m_codeOriginForOSR = m_currentNode->codeOrigin;
         if (!m_currentNode->shouldGenerate()) {
@@ -1733,8 +1740,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
             
             compile(m_currentNode);
             if (!m_compileOkay) {
-                m_compileOkay = true;
-                clearGenerationInfo();
+                bail();
                 return;
             }
             
@@ -4210,7 +4216,7 @@ void SpeculativeJIT::compileToStringOnCell(Node* node)
         GPRReg resultGPR = result.gpr();
         
         speculateStringObject(node->child1(), op1GPR);
-        m_state.forNode(node->child1()).filter(SpecStringObject);
+        m_state.filter(node->child1(), SpecStringObject);
         m_jit.loadPtr(JITCompiler::Address(op1GPR, JSWrapperObject::internalValueCellOffset()), resultGPR);
         cellResult(resultGPR, node);
         break;
@@ -4233,7 +4239,7 @@ void SpeculativeJIT::compileToStringOnCell(Node* node)
         m_jit.move(op1GPR, resultGPR);
         done.link(&m_jit);
         
-        m_state.forNode(node->child1()).filter(SpecString | SpecStringObject);
+        m_state.filter(node->child1(), SpecString | SpecStringObject);
         
         cellResult(resultGPR, node);
         break;
@@ -4454,7 +4460,7 @@ void SpeculativeJIT::speculateStringObject(Edge edge)
         return;
     
     speculateStringObject(edge, gpr);
-    m_state.forNode(edge).filter(SpecStringObject);
+    m_state.filter(edge, SpecStringObject);
 }
 
 void SpeculativeJIT::speculateStringOrStringObject(Edge edge)
@@ -4479,7 +4485,7 @@ void SpeculativeJIT::speculateStringOrStringObject(Edge edge)
     
     isString.link(&m_jit);
     
-    m_state.forNode(edge).filter(SpecString | SpecStringObject);
+    m_state.filter(edge, SpecString | SpecStringObject);
 }
 
 void SpeculativeJIT::speculateNotCell(Edge edge)
