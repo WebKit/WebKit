@@ -1,5 +1,55 @@
 2013-06-26  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: FTL should support ForwardCheckStructure/ForwardStructureTransitionWatchpoint and doing so shouldn't break V8/crypto
+        https://bugs.webkit.org/show_bug.cgi?id=118091
+
+        Reviewed by Mark Hahnenberg.
+        
+        I was going to just add ForwardCheckStructure/ForwardStructureTransitionWatchpoint support,
+        which is trivial. But doing so increases coverage a lot, and revealed long-standing bugs in
+        the FTL. I then fixed those bugs, also:
+        
+        - The FTL should not attempt to compile a block that is not reachable according to the CFA.
+          This is analogous to terminating basic block compilation if the CFA becomes !isValid().
+          Attempting to compile such a block means that you're running on broken CFA state, and the
+          CFA will become inconsistent with the code you're generating, leading to some
+          strangeness. For example, the FTL relies on the CFA to tell it that we gave up compiling
+          a node and hence don't have LValue's for that node (by virtue of us giving up due to
+          !isValid()). But the CFA's isValid() bit will not be set correctly for blocks that
+          weren't visited by the CFA at all, and the CFA expects you to know this because it
+          expects that you already checked BasicBlock::cfaHasVisited.
+        
+        - SetLocal needs to change the ValueSource of the operand to indicate that its value has
+          been stashed in the local (i.e. the "reference" corresponding to the operand in FTL
+          speak). This is because although OSR exit already knows that the value of the operand is
+          stored in the Node, and it already knows what LValue corresponds to the node, OSR exit
+          will also assume that if the Node dies then the value-at-exit for that operand should be
+          Dead (i.e. jsUndefined). But the Node dying, and the local dying, are two distinct
+          things; in particular the local always outlives the Node in the case of a SetLocal. So,
+          we just need to have SetLocal have the ValueSource be BlahInLocal rather than HaveNode,
+          to ensure that OSR exit knows that the darn thing is really live until the end of the
+          basic block, as opposed to until whenever the Node dies (which could be at any time).
+        
+        - PutByOffset was erroneously storing to an offset from the base object, rather than an
+          offset from the storage. Note that the storage will be the base object (exactly - i.e.
+          same node, same value) for inline stores, but will be a distinct thing for out-of-line
+          stores.
+        
+        - At-head set-up of OSR exit state was using ValueInLocals for variables forced double,
+          when it should have been using DoubleInLocals.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByOffset):
+        (JSC::FTL::LowerDFGToLLVM::initializeOSRExitStateForBlock):
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+
+2013-06-26  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should support PutByVal
         https://bugs.webkit.org/show_bug.cgi?id=118075
 

@@ -234,6 +234,11 @@ private:
         // make IR dumps easier to read.
         m_out.appendTo(lowBlock, m_nextLowBlock);
         
+        if (!m_highBlock->cfaHasVisited) {
+            m_out.crash();
+            return;
+        }
+        
         initializeOSRExitStateForBlock();
         
         m_int32Values.clear();
@@ -348,9 +353,11 @@ private:
             compileInt32ToDouble();
             break;
         case CheckStructure:
+        case ForwardCheckStructure:
             compileCheckStructure();
             break;
         case StructureTransitionWatchpoint:
+        case ForwardStructureTransitionWatchpoint:
             compileStructureTransitionWatchpoint();
             break;
         case PutStructure:
@@ -528,7 +535,8 @@ private:
                 if (needsFlushing) {
                     m_out.storeDouble(value, addressFor(variable->local()));
                     m_valueSources.operand(variable->local()) = ValueSource(DoubleInJSStack);
-                }
+                } else
+                    m_valueSources.operand(variable->local()) = ValueSource(DoubleInLocals);
                 return;
             }
             
@@ -538,7 +546,8 @@ private:
                 if (needsFlushing) {
                     m_out.store32(value, payloadFor(variable->local()));
                     m_valueSources.operand(variable->local()) = ValueSource(Int32InJSStack);
-                }
+                } else
+                    m_valueSources.operand(variable->local()) = ValueSource(Int32InLocals);
                 return;
             }
             if (isCellSpeculation(prediction)) {
@@ -547,7 +556,8 @@ private:
                 if (needsFlushing) {
                     m_out.store64(value, addressFor(variable->local()));
                     m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
-                }
+                } else
+                    m_valueSources.operand(variable->local()) = ValueSource(ValueInLocals);
                 return;
             }
             if (isBooleanSpeculation(prediction)) {
@@ -555,7 +565,8 @@ private:
                 if (needsFlushing) {
                     m_out.store64(lowJSValue(m_node->child1()), addressFor(variable->local()));
                     m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
-                }
+                } else
+                    m_valueSources.operand(variable->local()) = ValueSource(ValueInLocals);
                 return;
             }
         }
@@ -571,7 +582,8 @@ private:
         if (needsFlushing) {
             m_out.store64(value, addressFor(variable->local()));
             m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
-        }
+        } else
+            m_valueSources.operand(variable->local()) = ValueSource(ValueInLocals);
     }
     
     void compileMovHint()
@@ -1333,7 +1345,7 @@ private:
             lowJSValue(m_node->child3()),
             m_out.address(
                 m_heaps.properties[data.identifierNumber],
-                lowStorage(m_node->child2()),
+                lowStorage(m_node->child1()),
                 data.offset * sizeof(EncodedJSValue)));
     }
     
@@ -2363,7 +2375,7 @@ private:
             
             if (variable->shouldUnboxIfPossible()) {
                 if (variable->shouldUseDoubleFormat()) {
-                    m_valueSources[i] = ValueSource(ValueInLocals);
+                    m_valueSources[i] = ValueSource(DoubleInLocals);
                     continue;
                 }
                 
@@ -2586,6 +2598,7 @@ private:
             return;
         }
 
+        dataLog("Cannot find value for node: ", node, "\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
     

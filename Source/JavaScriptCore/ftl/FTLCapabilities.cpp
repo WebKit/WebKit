@@ -54,7 +54,9 @@ inline bool canCompile(Node* node)
     case BitLShift:
     case BitURShift:
     case CheckStructure:
+    case ForwardCheckStructure:
     case StructureTransitionWatchpoint:
+    case ForwardStructureTransitionWatchpoint:
     case PutStructure:
     case PhantomPutStructure:
     case GetButterfly:
