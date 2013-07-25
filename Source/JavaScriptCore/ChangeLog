@@ -1,3 +1,22 @@
+2013-07-01  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should run AA passes before GVN
+        https://bugs.webkit.org/show_bug.cgi?id=118276
+
+        Rubber stamped by Geoffrey Garen.
+        
+        These enable load elimination in GVN.
+        
+        Immediately gives us a speed-up on a bunch of benchmarks I hacked to run
+        properly in the FTL. One example is 20% on imaging-gaussian-blur. (Fair
+        warning: the stock version of that benchmark won't see speed-ups -
+        probably slow-downs instead - because the FTL can't do OSR entry yet.)
+        Another example is the findGraphNode function, which now sees a 7%
+        speed-up, and that's without even doing LICM or other good things.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+
 2013-06-27  Filip Pizlo  <fpizlo@apple.com>
 
         Make Graph::substituteGetLocal() out-of-line

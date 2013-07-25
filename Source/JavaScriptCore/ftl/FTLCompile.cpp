@@ -99,7 +99,7 @@ void compile(State& state)
         dataLog("FATAL: Could not create LLVM execution engine: ", error, "\n");
         CRASH();
     }
-    
+
     LLVMPassManagerRef pass = LLVMCreatePassManager();
     LLVMAddTargetData(LLVMGetExecutionEngineTargetData(engine), pass);
     LLVMAddConstantPropagationPass(pass);
@@ -107,6 +107,8 @@ void compile(State& state)
     LLVMAddPromoteMemoryToRegisterPass(pass);
     if (Options::enableLLVMLICM())
         LLVMAddLICMPass(pass);
+    LLVMAddBasicAliasAnalysisPass(pass);
+    LLVMAddTypeBasedAliasAnalysisPass(pass);
     LLVMAddGVNPass(pass);
     LLVMAddCFGSimplificationPass(pass);
     LLVMRunPassManager(pass, state.module);
