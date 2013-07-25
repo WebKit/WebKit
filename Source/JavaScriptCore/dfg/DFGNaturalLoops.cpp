@@ -84,7 +84,7 @@ void NaturalLoops::compute(Graph& graph)
             }
             if (found)
                 continue;
-            NaturalLoop loop(successor);
+            NaturalLoop loop(successor, m_loops.size());
             loop.addBlock(block);
             m_loops.append(loop);
         }
@@ -131,6 +131,65 @@ void NaturalLoops::compute(Graph& graph)
             }
         }
     }
+
+    // Figure out reverse mapping from blocks to loops.
+    for (BlockIndex blockIndex = graph.numBlocks(); blockIndex--;) {
+        BasicBlock* block = graph.block(blockIndex);
+        if (!block)
+            continue;
+        for (unsigned i = BasicBlock::numberOfInnerMostLoopIndices; i--;)
+            block->innerMostLoopIndices[i] = UINT_MAX;
+    }
+    for (unsigned loopIndex = m_loops.size(); loopIndex--;) {
+        NaturalLoop& loop = m_loops[loopIndex];
+        
+        for (unsigned blockIndexInLoop = loop.size(); blockIndexInLoop--;) {
+            BasicBlock* block = loop[blockIndexInLoop];
+            
+            for (unsigned i = 0; i < BasicBlock::numberOfInnerMostLoopIndices; ++i) {
+                unsigned thisIndex = block->innerMostLoopIndices[i];
+                if (thisIndex == UINT_MAX || loop.size() < m_loops[thisIndex].size()) {
+                    insertIntoBoundedVector(
+                        block->innerMostLoopIndices, BasicBlock::numberOfInnerMostLoopIndices,
+                        loopIndex, i);
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Now each block knows its inner-most loop and its next-to-inner-most loop. Use
+    // this to figure out loop parenting.
+    for (unsigned i = m_loops.size(); i--;) {
+        NaturalLoop& loop = m_loops[i];
+        RELEASE_ASSERT(loop.header()->innerMostLoopIndices[0] == i);
+        
+        loop.m_outerLoopIndex = loop.header()->innerMostLoopIndices[1];
+    }
+    
+    if (validationEnabled()) {
+        // Do some self-verification that we've done some of this correctly.
+        
+        for (BlockIndex blockIndex = graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = graph.block(blockIndex);
+            if (!block)
+                continue;
+            
+            Vector<const NaturalLoop*> simpleLoopsOf;
+            
+            for (unsigned i = m_loops.size(); i--;) {
+                if (m_loops[i].contains(block))
+                    simpleLoopsOf.append(&m_loops[i]);
+            }
+            
+            Vector<const NaturalLoop*> fancyLoopsOf = loopsOf(block);
+            
+            std::sort(simpleLoopsOf.begin(), simpleLoopsOf.end());
+            std::sort(fancyLoopsOf.begin(), fancyLoopsOf.end());
+            
+            RELEASE_ASSERT(simpleLoopsOf == fancyLoopsOf);
+        }
+    }
     
     if (verbose)
         dataLog("Results: ", *this, "\n");
@@ -139,12 +198,8 @@ void NaturalLoops::compute(Graph& graph)
 Vector<const NaturalLoop*> NaturalLoops::loopsOf(BasicBlock* block) const
 {
     Vector<const NaturalLoop*> result;
-    
-    for (unsigned i = m_loops.size(); i--;) {
-        if (m_loops[i].contains(block))
-            result.append(&m_loops[i]);
-    }
-    
+    for (const NaturalLoop* loop = innerMostLoopOf(block); loop; loop = innerMostOuterLoop(*loop))
+        result.append(loop);
     return result;
 }
 

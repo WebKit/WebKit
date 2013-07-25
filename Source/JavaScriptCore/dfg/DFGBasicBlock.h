@@ -127,6 +127,10 @@ struct BasicBlock : RefCounted<BasicBlock> {
     Operands<AbstractValue> valuesAtHead;
     Operands<AbstractValue> valuesAtTail;
     
+    // These fields are reserved for NaturalLoops.
+    static const unsigned numberOfInnerMostLoopIndices = 2;
+    unsigned innerMostLoopIndices[numberOfInnerMostLoopIndices];
+
     struct SSAData {
         Operands<FlushFormat> flushFormatAtHead;
         Operands<FlushFormat> flushFormatAtTail;

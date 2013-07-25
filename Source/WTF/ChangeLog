@@ -1,3 +1,17 @@
+2013-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: NaturalLoops should be able to quickly answer questions like "what loops own this basic block"
+        https://bugs.webkit.org/show_bug.cgi?id=118750
+
+        Reviewed by Mark Hahnenberg.
+        
+        Add a utility function for inserting an element into a vector that has bounded size,
+        and where the insertion causes things to drop off the end.
+
+        * wtf/StdLibExtras.h:
+        (WTF):
+        (WTF::insertIntoBoundedVector):
+
 2013-07-12  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should have an SSA form for use by FTL

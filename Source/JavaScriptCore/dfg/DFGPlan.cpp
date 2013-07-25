@@ -187,6 +187,13 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     dfg.m_fixpointState = FixpointConverged;
 
     performStoreElimination(dfg);
+    
+    // If we're doing validation, then run some analyses, to give them an opportunity
+    // to self-validate. Now is as good a time as any to do this.
+    if (validationEnabled()) {
+        dfg.m_dominators.computeIfNecessary(dfg);
+        dfg.m_naturalLoops.computeIfNecessary(dfg);
+    }
 
 #if ENABLE(FTL_JIT)
     if (Options::useExperimentalFTL()

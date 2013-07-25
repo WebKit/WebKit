@@ -1,5 +1,31 @@
 2013-07-16  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: NaturalLoops should be able to quickly answer questions like "what loops own this basic block"
+        https://bugs.webkit.org/show_bug.cgi?id=118750
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGBasicBlock.h:
+        (BasicBlock):
+        * dfg/DFGNaturalLoops.cpp:
+        (JSC::DFG::NaturalLoops::compute):
+        (JSC::DFG::NaturalLoops::loopsOf):
+        * dfg/DFGNaturalLoops.h:
+        (DFG):
+        (JSC::DFG::NaturalLoop::NaturalLoop):
+        (NaturalLoop):
+        (JSC::DFG::NaturalLoop::index):
+        (JSC::DFG::NaturalLoop::isOuterMostLoop):
+        (JSC::DFG::NaturalLoop::addBlock):
+        (JSC::DFG::NaturalLoops::headerOf):
+        (JSC::DFG::NaturalLoops::innerMostLoopOf):
+        (NaturalLoops):
+        (JSC::DFG::NaturalLoops::innerMostOuterLoop):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+
+2013-07-16  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: don't GC when shutting down the VM
         https://bugs.webkit.org/show_bug.cgi?id=118751
 

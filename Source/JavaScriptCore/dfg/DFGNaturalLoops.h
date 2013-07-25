@@ -36,19 +36,22 @@
 
 namespace JSC { namespace DFG {
 
+class NaturalLoops;
+
 class NaturalLoop {
 public:
     NaturalLoop()
         : m_header(0)
+        , m_outerLoopIndex(UINT_MAX)
     {
     }
     
-    NaturalLoop(BasicBlock* header)
+    NaturalLoop(BasicBlock* header, unsigned index)
         : m_header(header)
+        , m_outerLoopIndex(UINT_MAX)
+        , m_index(index)
     {
     }
-    
-    void addBlock(BasicBlock* block) { m_body.append(block); }
     
     BasicBlock* header() const { return m_header; }
     
@@ -65,11 +68,22 @@ public:
         ASSERT(block != header()); // Header should be contained.
         return false;
     }
+
+    // The index of this loop in NaturalLoops.
+    unsigned index() const { return m_index; }
+    
+    bool isOuterMostLoop() const { return m_outerLoopIndex == UINT_MAX; }
     
     void dump(PrintStream&) const;
 private:
+    friend class NaturalLoops;
+    
+    void addBlock(BasicBlock* block) { m_body.append(block); }
+    
     BasicBlock* m_header;
     Vector<BasicBlock*, 4> m_body;
+    unsigned m_outerLoopIndex;
+    unsigned m_index;
 };
 
 class NaturalLoops : public Analysis<NaturalLoops> {
@@ -94,11 +108,29 @@ public:
     // loop it belongs to.
     const NaturalLoop* headerOf(BasicBlock* block) const
     {
-        for (unsigned i = m_loops.size(); i--;) {
-            if (m_loops[i].header() == block)
-                return &m_loops[i];
+        const NaturalLoop* loop = innerMostLoopOf(block);
+        if (loop->header() == block)
+            return loop;
+        if (!ASSERT_DISABLED) {
+            for (; loop; loop = innerMostOuterLoop(*loop))
+                ASSERT(loop->header() != block);
         }
         return 0;
+    }
+    
+    const NaturalLoop* innerMostLoopOf(BasicBlock* block) const
+    {
+        unsigned index = block->innerMostLoopIndices[0];
+        if (index == UINT_MAX)
+            return 0;
+        return &m_loops[index];
+    }
+    
+    const NaturalLoop* innerMostOuterLoop(const NaturalLoop& loop) const
+    {
+        if (loop.m_outerLoopIndex == UINT_MAX)
+            return 0;
+        return &m_loops[loop.m_outerLoopIndex];
     }
     
     // Return the indices of all loops this belongs to.

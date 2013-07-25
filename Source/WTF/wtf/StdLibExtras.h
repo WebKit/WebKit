@@ -260,6 +260,14 @@ inline ArrayElementType* approximateBinarySearch(const ArrayType& array, size_t 
     return binarySearchImpl<ArrayElementType, KeyType, ArrayType, ExtractKey, ReturnAdjacentElementIfKeyIsNotPresent>(const_cast<ArrayType&>(array), size, key, extractKey);
 }
 
+template<typename VectorType, typename ElementType>
+inline void insertIntoBoundedVector(VectorType& vector, size_t size, const ElementType& element, size_t index)
+{
+    for (unsigned i = size; i-- > index + 1;)
+        vector[i] = vector[i - 1];
+    vector[index] = element;
+}
+
 } // namespace WTF
 
 #if OS(WINCE)
@@ -297,6 +305,7 @@ inline void* operator new(size_t, NotNullTag, void* location)
 
 using WTF::KB;
 using WTF::MB;
+using WTF::insertIntoBoundedVector;
 using WTF::isPointerAligned;
 using WTF::is8ByteAligned;
 using WTF::binarySearch;
