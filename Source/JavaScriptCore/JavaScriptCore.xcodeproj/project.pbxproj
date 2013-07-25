@@ -839,6 +839,8 @@
 		A7E5AB381799E4B200D2833D /* LLVMDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E5AB341799E4B200D2833D /* LLVMDisassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7E5AB391799E4B200D2833D /* UDis86Disassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E5AB351799E4B200D2833D /* UDis86Disassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7E5AB3A1799E4B200D2833D /* X86Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E5AB361799E4B200D2833D /* X86Disassembler.cpp */; };
+		A7F2996B17A0BB670010417A /* FTLFail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F2996917A0BB670010417A /* FTLFail.cpp */; };
+		A7F2996C17A0BB670010417A /* FTLFail.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F2996A17A0BB670010417A /* FTLFail.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7F9935F0FD7325100A0B2D0 /* JSONObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F9935D0FD7325100A0B2D0 /* JSONObject.h */; };
 		A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */; };
 		A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */; };
@@ -1909,6 +1911,8 @@
 		A7E5AB341799E4B200D2833D /* LLVMDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLVMDisassembler.h; path = disassembler/LLVMDisassembler.h; sourceTree = "<group>"; };
 		A7E5AB351799E4B200D2833D /* UDis86Disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UDis86Disassembler.h; path = disassembler/UDis86Disassembler.h; sourceTree = "<group>"; };
 		A7E5AB361799E4B200D2833D /* X86Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = X86Disassembler.cpp; path = disassembler/X86Disassembler.cpp; sourceTree = "<group>"; };
+		A7F2996917A0BB670010417A /* FTLFail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLFail.cpp; path = ftl/FTLFail.cpp; sourceTree = "<group>"; };
+		A7F2996A17A0BB670010417A /* FTLFail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLFail.h; path = ftl/FTLFail.h; sourceTree = "<group>"; };
 		A7F8690E0F9584A100558697 /* CachedCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedCall.h; sourceTree = "<group>"; };
 		A7F869EC0F95C2EC00558697 /* CallFrameClosure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrameClosure.h; sourceTree = "<group>"; };
 		A7F9935D0FD7325100A0B2D0 /* JSONObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONObject.h; sourceTree = "<group>"; };
@@ -2169,9 +2173,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
 				932F5BE10822A1C700736975 /* jsc */,
 				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
+				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				6511230514046A4C002B101D /* testRegExp */,
@@ -2290,6 +2294,8 @@
 				0F235BC317178E1C00690C7F /* FTLExitThunkGenerator.h */,
 				0F235BC417178E1C00690C7F /* FTLExitValue.cpp */,
 				0F235BC517178E1C00690C7F /* FTLExitValue.h */,
+				A7F2996917A0BB670010417A /* FTLFail.cpp */,
+				A7F2996A17A0BB670010417A /* FTLFail.h */,
 				0FEA0A2B170B661900BB722C /* FTLFormattedValue.h */,
 				A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */,
 				0FEA0A261709623B00BB722C /* FTLIntrinsicRepository.cpp */,
@@ -3623,6 +3629,7 @@
 				0F235BD717178E1C00690C7F /* FTLExitArgumentList.h in Headers */,
 				0F235BD917178E1C00690C7F /* FTLExitThunkGenerator.h in Headers */,
 				0F235BDB17178E1C00690C7F /* FTLExitValue.h in Headers */,
+				A7F2996C17A0BB670010417A /* FTLFail.h in Headers */,
 				0FEA0A2C170B661900BB722C /* FTLFormattedValue.h in Headers */,
 				A78A977F179738D5009DF744 /* FTLGeneratedFunction.h in Headers */,
 				0FEA0A241709606900BB722C /* FTLIntrinsicRepository.h in Headers */,
@@ -4455,6 +4462,7 @@
 				0F235BD517178E1C00690C7F /* FTLExitArgumentForOperand.cpp in Sources */,
 				0F235BD817178E1C00690C7F /* FTLExitThunkGenerator.cpp in Sources */,
 				0F235BDA17178E1C00690C7F /* FTLExitValue.cpp in Sources */,
+				A7F2996B17A0BB670010417A /* FTLFail.cpp in Sources */,
 				0FEA0A281709623B00BB722C /* FTLIntrinsicRepository.cpp in Sources */,
 				0FEA0A0D170513DB00BB722C /* FTLJITCode.cpp in Sources */,
 				A78A9780179738D5009DF744 /* FTLJITFinalizer.cpp in Sources */,

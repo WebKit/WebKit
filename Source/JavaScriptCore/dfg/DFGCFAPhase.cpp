@@ -32,22 +32,18 @@
 #include "DFGGraph.h"
 #include "DFGInPlaceAbstractState.h"
 #include "DFGPhase.h"
+#include "DFGSafeToExecute.h"
 #include "Operations.h"
 
 namespace JSC { namespace DFG {
 
 class CFAPhase : public Phase {
 public:
-#if DFG_ENABLE(DFG_PROPAGATION_VERBOSE)
-    static const bool verbose = true;
-#else
-    static const bool verbose = false;
-#endif
-
     CFAPhase(Graph& graph)
         : Phase(graph, "control flow analysis")
         , m_state(graph)
         , m_interpreter(graph, m_state)
+        , m_verbose(Options::verboseCFA())
     {
     }
     
@@ -58,6 +54,11 @@ public:
         ASSERT(m_graph.m_refCountState == EverythingIsLive);
         
         m_count = 0;
+        
+        if (m_verbose && !shouldDumpGraphAtEachPhase()) {
+            dataLog("Graph before CFA:\n");
+            m_graph.dump();
+        }
         
         // This implements a pseudo-worklist-based forward CFA, except that the visit order
         // of blocks is the bytecode program order (which is nearly topological), and
@@ -87,37 +88,42 @@ private:
             return;
         if (!block->cfaShouldRevisit)
             return;
-        if (verbose)
+        if (m_verbose)
             dataLog("   Block ", *block, ":\n");
         m_state.beginBasicBlock(block);
-        if (verbose) {
+        if (m_verbose) {
             dataLogF("      head vars: ");
             dumpOperands(block->valuesAtHead, WTF::dataFile());
             dataLogF("\n");
         }
         for (unsigned i = 0; i < block->size(); ++i) {
-            if (verbose) {
+            if (m_verbose) {
                 Node* node = block->at(i);
                 dataLogF("      %s @%u: ", Graph::opName(node->op()), node->index());
+                
+                if (!safeToExecute(m_state, m_graph, node))
+                    dataLog("(UNSAFE) ");
+                
                 m_interpreter.dump(WTF::dataFile());
+                
                 if (m_state.haveStructures())
                     dataLog(" (Have Structures)");
                 dataLogF("\n");
             }
             if (!m_interpreter.execute(i)) {
-                if (verbose)
+                if (m_verbose)
                     dataLogF("         Expect OSR exit.\n");
                 break;
             }
         }
-        if (verbose) {
+        if (m_verbose) {
             dataLogF("      tail regs: ");
             m_interpreter.dump(WTF::dataFile());
             dataLogF("\n");
         }
         m_changed |= m_state.endBasicBlock(MergeToSuccessors);
         
-        if (verbose) {
+        if (m_verbose) {
             dataLogF("      tail vars: ");
             dumpOperands(block->valuesAtTail, WTF::dataFile());
             dataLogF("\n");
@@ -127,7 +133,7 @@ private:
     void performForwardCFA()
     {
         ++m_count;
-        if (verbose)
+        if (m_verbose)
             dataLogF("CFA [%u]\n", ++m_count);
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
@@ -137,6 +143,8 @@ private:
 private:
     InPlaceAbstractState m_state;
     AbstractInterpreter<InPlaceAbstractState> m_interpreter;
+    
+    bool m_verbose;
     
     bool m_changed;
     unsigned m_count;

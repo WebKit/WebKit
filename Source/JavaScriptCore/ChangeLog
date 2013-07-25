@@ -1,5 +1,37 @@
 2013-07-20  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: each DFG node that relies on other nodes to do their type checks should be able to tell you if those type checks happened
+        https://bugs.webkit.org/show_bug.cgi?id=118866
+
+        Reviewed by Sam Weinig.
+        
+        Adds a safeToExecute() method that takes a node and an abstract state and tells you
+        if the node will run without crashing under that state.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * dfg/DFGCFAPhase.cpp:
+        (CFAPhase):
+        (JSC::DFG::CFAPhase::CFAPhase):
+        (JSC::DFG::CFAPhase::run):
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        (JSC::DFG::CFAPhase::performForwardCFA):
+        * dfg/DFGSafeToExecute.h: Added.
+        (DFG):
+        (SafeToExecuteEdge):
+        (JSC::DFG::SafeToExecuteEdge::SafeToExecuteEdge):
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::SafeToExecuteEdge::result):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::isValidOffset):
+        (StructureAbstractValue):
+        * runtime/Options.h:
+        (JSC):
+
+2013-07-20  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should be able to generate LLVM IR that uses an intrinsic for OSR exit
         https://bugs.webkit.org/show_bug.cgi?id=118948
 

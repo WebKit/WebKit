@@ -1819,7 +1819,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         || Options::validateGraphAtEachPhase()
         || Options::verboseOSR()
         || Options::verboseCompilationQueue()
-        || Options::reportCompileTimes())
+        || Options::reportCompileTimes()
+        || Options::verboseCFA())
         hash();
 
     if (Options::dumpGeneratedBytecodes())

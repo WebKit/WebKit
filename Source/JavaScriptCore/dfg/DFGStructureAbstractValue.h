@@ -282,6 +282,15 @@ public:
         return speculationFromStructure(m_structure);
     }
     
+    bool isValidOffset(PropertyOffset offset)
+    {
+        if (isTop())
+            return false;
+        if (isClear())
+            return true;
+        return m_structure->isValidOffset(offset);
+    }
+    
     bool hasSingleton() const
     {
         return isNeitherClearNorTop();

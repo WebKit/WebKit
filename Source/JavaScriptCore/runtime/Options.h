@@ -113,6 +113,7 @@ typedef OptionRange optionRange;
     v(bool, verboseCallLink, false) \
     v(bool, verboseCompilationQueue, false) \
     v(bool, reportCompileTimes, false) \
+    v(bool, verboseCFA, false) \
     \
     v(bool, enableOSREntryInLoops, true) \
     \
