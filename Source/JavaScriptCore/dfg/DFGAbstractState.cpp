@@ -1498,7 +1498,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        forNode(node->child1()).filterArrayModes(node->arrayMode().arrayModesThatPassFiltering());
+        filterArrayModes(node->child1(), node->arrayMode().arrayModesThatPassFiltering());
         m_haveStructures = true;
         break;
     }
