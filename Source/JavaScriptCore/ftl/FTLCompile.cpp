@@ -47,7 +47,8 @@ void compile(State& state)
     LLVMInitializeMCJITCompilerOptions(&options, sizeof(options));
     options.OptLevel = Options::llvmOptimizationLevel();
     options.NoFramePointerElim = true;
-    options.CodeModel = LLVMCodeModelSmall;
+    if (Options::useLLVMSmallCodeModel())
+        options.CodeModel = LLVMCodeModelSmall;
     options.EnableFastISel = Options::enableLLVMFastISel();
     
     if (LLVMCreateMCJITCompilerForModule(&state.engine, state.module, &options, sizeof(options), &error)) {

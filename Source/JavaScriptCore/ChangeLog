@@ -1,3 +1,17 @@
+2013-05-12  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL shouldn't use FastISel and Small code model should be turned off for now
+        https://bugs.webkit.org/show_bug.cgi?id=115998
+
+        Reviewed by Oliver Hunt.
+        
+        This switches off FastISel and makes it possible to turn off Small code model.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * runtime/Options.h:
+        (JSC):
+
 2013-05-21  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: should use ConcurrentJITLock[er] directly and not through typedef
@@ -955,7 +969,6 @@
         * runtime/Options.h:
         (JSC):
 
->>>>>>> .r149942
 2013-05-10  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL should support CompareStrictEqConstant

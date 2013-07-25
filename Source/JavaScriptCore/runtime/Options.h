@@ -115,7 +115,8 @@ typedef OptionRange optionRange;
     v(bool, useExperimentalFTL, false) \
     v(bool, useFTLTBAA, true) \
     v(bool, enableLLVMLICM, true) \
-    v(bool, enableLLVMFastISel, true) \
+    v(bool, enableLLVMFastISel, false) \
+    v(bool, useLLVMSmallCodeModel, false) \
     v(unsigned, llvmOptimizationLevel, 2) \
     \
     v(bool, enableConcurrentJIT, true) \
