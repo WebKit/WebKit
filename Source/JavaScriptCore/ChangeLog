@@ -5,6 +5,60 @@
         * interpreter/Interpreter.cpp:
         * jit/JITStubs.cpp:
 
+2013-06-05  Mark Lam  <mark.lam@apple.com>
+
+        Disambiguate between CallFrame bytecodeOffset and codeOriginIndex.
+        https://bugs.webkit.org/show_bug.cgi?id=117262.
+
+        Reviewed by Geoffrey Garen.
+
+        When writing to the ArgumentCount tag in CallFrame, we will set the high
+        bit if the written value is a codeOriginIndex.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeOrigin.h:
+        (CodeOrigin):
+        (JSC::CodeOrigin::isHandle):
+        (JSC::CodeOrigin::encodeHandle):
+        (JSC::CodeOrigin::decodeHandle):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::beginCall):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryBuildGetByIDList):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::locationAsBytecodeOffset):
+        (JSC::CallFrame::setLocationAsBytecodeOffset):
+        (JSC::CallFrame::currentVPC):
+        (JSC::CallFrame::setCurrentVPC):
+        (JSC::CallFrame::trueCallFrame):
+        * interpreter/CallFrame.h:
+        (ExecState):
+        (JSC::ExecState::inlineCallFrame):
+        * interpreter/CallFrameInlines.h: Added.
+        (JSC::CallFrame::hasLocationAsBytecodeOffset):
+        (JSC::CallFrame::hasLocationAsCodeOriginIndex):
+        (JSC::CallFrame::locationAsRawBits):
+        (JSC::CallFrame::setLocationAsRawBits):
+        (JSC::CallFrame::locationAsBytecodeOffset):
+        (JSC::CallFrame::setLocationAsBytecodeOffset):
+        (JSC::CallFrame::locationAsCodeOriginIndex):
+        * interpreter/Interpreter.cpp:
+        (JSC::getBytecodeOffsetForCallFrame):
+        (JSC::getCallerInfo):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
+2013-06-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix release build.
+
+        * interpreter/Interpreter.cpp:
+        * jit/JITStubs.cpp:
+
 2013-06-04  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Clean up AbstractValue

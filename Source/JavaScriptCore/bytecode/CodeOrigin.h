@@ -88,6 +88,21 @@ struct CodeOrigin {
     Vector<CodeOrigin> inlineStack() const;
     
     void dump(PrintStream&) const;
+
+    static inline bool isHandle(uint32_t bits) { return !!(bits & handleFlag); }
+    static inline uint32_t encodeHandle(uint32_t bits)
+    {
+        ASSERT(!isHandle(bits));
+        return bits | handleFlag;
+    }
+    static inline uint32_t decodeHandle(uint32_t bits)
+    {
+        ASSERT(isHandle(bits));
+        return bits & ~handleFlag;
+    }
+
+private:
+    static const uint32_t handleFlag = (1 << 31);
 };
 
 struct InlineCallFrame {

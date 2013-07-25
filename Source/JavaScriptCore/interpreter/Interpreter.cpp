@@ -34,6 +34,7 @@
 #include "BatchedTransitionOptimizer.h"
 #include "CallFrame.h"
 #include "CallFrameClosure.h"
+#include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "Heap.h"
 #include "Debugger.h"
@@ -474,9 +475,9 @@ static unsigned getBytecodeOffsetForCallFrame(CallFrame* callFrame)
         return 0;
 #if ENABLE(DFG_JIT)
     if (JITCode::isOptimizingJIT(codeBlock->jitType()))
-        return codeBlock->codeOrigin(callFrame->codeOriginIndexForDFG()).bytecodeIndex;
+        return codeBlock->codeOrigin(callFrame->locationAsCodeOriginIndex()).bytecodeIndex;
 #endif
-    return callFrame->bytecodeOffsetForNonDFGCode();
+    return callFrame->locationAsBytecodeOffset();
 }
 
 static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecodeOffset, CodeBlock*& caller)
@@ -501,14 +502,14 @@ static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecode
     if (wasCalledByHost) {
 #if ENABLE(DFG_JIT)
         if (callerCodeBlock && JITCode::isOptimizingJIT(callerCodeBlock->jitType())) {
-            unsigned codeOriginIndex = callFrame->callerFrame()->removeHostCallFrameFlag()->codeOriginIndexForDFG();
+            unsigned codeOriginIndex = callFrame->callerFrame()->removeHostCallFrameFlag()->locationAsCodeOriginIndex();
             CodeOrigin origin = callerCodeBlock->codeOrigin(codeOriginIndex);
             bytecodeOffset = origin.bytecodeIndex;
             if (InlineCallFrame* inlineCallFrame = origin.inlineCallFrame)
                 callerCodeBlock = inlineCallFrame->baselineCodeBlock();
         } else
 #endif
-            bytecodeOffset = trueCallerFrame->bytecodeOffsetForNonDFGCode();
+            bytecodeOffset = trueCallerFrame->locationAsBytecodeOffset();
     } else {
 #if ENABLE(DFG_JIT)
         if (callFrame->isInlineCallFrame()) {

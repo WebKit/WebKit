@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -113,22 +113,16 @@ namespace JSC  {
         void clearReturnPC() { registers()[JSStack::ReturnPC] = static_cast<Instruction*>(0); }
 #endif
         AbstractPC abstractReturnPC(VM& vm) { return AbstractPC(vm, this); }
-#if USE(JSVALUE32_64)
-        unsigned bytecodeOffsetForNonDFGCode() const;
-        void setBytecodeOffsetForNonDFGCode(unsigned offset);
-#else
-        unsigned bytecodeOffsetForNonDFGCode() const
-        {
-            ASSERT(codeBlock());
-            return this[JSStack::ArgumentCount].tag();
-        }
-        
-        void setBytecodeOffsetForNonDFGCode(unsigned offset)
-        {
-            ASSERT(codeBlock());
-            this[JSStack::ArgumentCount].tag() = static_cast<int32_t>(offset);
-        }
-#endif
+
+        bool hasLocationAsBytecodeOffset() const;
+        bool hasLocationAsCodeOriginIndex() const;
+
+        unsigned locationAsRawBits() const;
+        unsigned locationAsBytecodeOffset() const;
+        unsigned locationAsCodeOriginIndex() const;
+
+        void setLocationAsRawBits(unsigned);
+        void setLocationAsBytecodeOffset(unsigned);
 
         Register* frameExtent()
         {
@@ -141,7 +135,6 @@ namespace JSC  {
     
 #if ENABLE(DFG_JIT)
         InlineCallFrame* inlineCallFrame() const { return this[JSStack::ReturnPC].asInlineCallFrame(); }
-        unsigned codeOriginIndexForDFG() const { return this[JSStack::ArgumentCount].tag(); }
 #else
         // This will never be called if !ENABLE(DFG_JIT) since all calls should be guarded by
         // isInlineCallFrame(). But to make it easier to write code without having a bunch of

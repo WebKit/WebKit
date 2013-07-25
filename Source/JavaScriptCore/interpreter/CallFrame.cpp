@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CallFrame.h"
 
+#include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "Interpreter.h"
 #include "Operations.h"
@@ -41,25 +42,28 @@ JSStack* CallFrame::stack()
 #endif
 
 #if USE(JSVALUE32_64)
-unsigned CallFrame::bytecodeOffsetForNonDFGCode() const
+unsigned CallFrame::locationAsBytecodeOffset() const
 {
     ASSERT(codeBlock());
+    ASSERT(hasLocationAsBytecodeOffset());
     return currentVPC() - codeBlock()->instructions().begin();
 }
 
-void CallFrame::setBytecodeOffsetForNonDFGCode(unsigned offset)
+void CallFrame::setLocationAsBytecodeOffset(unsigned offset)
 {
     ASSERT(codeBlock());
+    ASSERT(!CodeOrigin::isHandle(offset));
     setCurrentVPC(codeBlock()->instructions().begin() + offset);
+    ASSERT(hasLocationAsBytecodeOffset());
 }
 #else
 Instruction* CallFrame::currentVPC() const
 {
-    return codeBlock()->instructions().begin() + bytecodeOffsetForNonDFGCode();
+    return codeBlock()->instructions().begin() + locationAsBytecodeOffset();
 }
 void CallFrame::setCurrentVPC(Instruction* vpc)
 {
-    setBytecodeOffsetForNonDFGCode(vpc - codeBlock()->instructions().begin());
+    setLocationAsBytecodeOffset(vpc - codeBlock()->instructions().begin());
 }
 #endif
     
@@ -119,7 +123,7 @@ CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
             return 0;
         }
     } else {
-        unsigned index = codeOriginIndexForDFG();
+        unsigned index = locationAsCodeOriginIndex();
         ASSERT(machineCodeBlock->canGetCodeOrigin(index));
         if (!machineCodeBlock->canGetCodeOrigin(index)) {
             // See above. In release builds, we try to protect ourselves from crashing even

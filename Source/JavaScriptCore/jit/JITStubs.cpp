@@ -36,6 +36,7 @@
 #include "Arguments.h"
 #include "ArrayConstructor.h"
 #include "CallFrame.h"
+#include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "CodeProfiling.h"
 #include "CommonSlowPaths.h"
@@ -1689,7 +1690,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
         JSObject* object = asObject(baseValue);
         bool didOptimize = false;
 
-        unsigned bytecodeOffset = callFrame->bytecodeOffsetForNonDFGCode();
+        unsigned bytecodeOffset = callFrame->locationAsBytecodeOffset();
         ASSERT(bytecodeOffset);
         ByValInfo& byValInfo = callFrame->codeBlock()->getByValInfo(bytecodeOffset - 1);
         ASSERT(!byValInfo.stubRoutine);
@@ -1823,7 +1824,7 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
         JSObject* object = asObject(baseValue);
         bool didOptimize = false;
 
-        unsigned bytecodeOffset = callFrame->bytecodeOffsetForNonDFGCode();
+        unsigned bytecodeOffset = callFrame->locationAsBytecodeOffset();
         ASSERT(bytecodeOffset);
         ByValInfo& byValInfo = callFrame->codeBlock()->getByValInfo(bytecodeOffset - 1);
         ASSERT(!byValInfo.stubRoutine);
