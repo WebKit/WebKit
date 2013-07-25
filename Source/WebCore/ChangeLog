@@ -1,3 +1,14 @@
+2013-06-21  Mark Lam  <mark.lam@apple.com>
+
+        Fixed broken build: updated to match SmallStrings changes in r151864.
+
+        Not reviewed.
+
+        No new tests.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsStringWithCache):
+
 2013-06-15  Filip Pizlo  <fpizlo@apple.com>
 
         Concurrent JIT shouldn't try to recompute the CodeBlockHash as part of debug dumps, since doing so may fail if dealing with a CachedScript that doesn't have its script string handy

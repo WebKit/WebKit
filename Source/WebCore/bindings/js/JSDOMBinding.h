@@ -490,7 +490,7 @@ class DOMStringList;
             UChar singleCharacter = (*stringImpl)[0u];
             if (singleCharacter <= JSC::maxSingleCharacterString) {
                 JSC::VM* vm = &exec->vm();
-                return vm->smallStrings.singleCharacterString(vm, static_cast<unsigned char>(singleCharacter));
+                return vm->smallStrings.singleCharacterString(static_cast<unsigned char>(singleCharacter));
             }
         }
 

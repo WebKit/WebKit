@@ -351,7 +351,7 @@ namespace JSC {
     ALWAYS_INLINE JSString* jsSingleCharacterString(VM* vm, UChar c)
     {
         if (c <= maxSingleCharacterString)
-            return vm->smallStrings.singleCharacterString(vm, c);
+            return vm->smallStrings.singleCharacterString(c);
         return JSString::create(*vm, String(&c, 1).impl());
     }
 
@@ -361,7 +361,7 @@ namespace JSC {
         ASSERT(offset < static_cast<unsigned>(s.length()));
         UChar c = s.characterAt(offset);
         if (c <= maxSingleCharacterString)
-            return vm->smallStrings.singleCharacterString(vm, c);
+            return vm->smallStrings.singleCharacterString(c);
         return JSString::create(*vm, StringImpl::create(s.impl(), offset, 1));
     }
 
@@ -402,7 +402,7 @@ namespace JSC {
         if (size == 1) {
             UChar c = s.characterAt(0);
             if (c <= maxSingleCharacterString)
-                return vm->smallStrings.singleCharacterString(vm, c);
+                return vm->smallStrings.singleCharacterString(c);
         }
         return JSString::create(*vm, s.impl());
     }
@@ -428,7 +428,7 @@ namespace JSC {
         if (length == 1) {
             UChar c = s.characterAt(offset);
             if (c <= maxSingleCharacterString)
-                return vm->smallStrings.singleCharacterString(vm, c);
+                return vm->smallStrings.singleCharacterString(c);
         }
         return JSString::createHasOtherOwner(*vm, StringImpl::create8(s.impl(), offset, length));
     }
@@ -443,7 +443,7 @@ namespace JSC {
         if (length == 1) {
             UChar c = s.characterAt(offset);
             if (c <= maxSingleCharacterString)
-                return vm->smallStrings.singleCharacterString(vm, c);
+                return vm->smallStrings.singleCharacterString(c);
         }
         return JSString::createHasOtherOwner(*vm, StringImpl::create(s.impl(), offset, length));
     }
@@ -456,7 +456,7 @@ namespace JSC {
         if (size == 1) {
             UChar c = s.characterAt(0);
             if (c <= maxSingleCharacterString)
-                return vm->smallStrings.singleCharacterString(vm, c);
+                return vm->smallStrings.singleCharacterString(c);
         }
         return JSString::createHasOtherOwner(*vm, s.impl());
     }

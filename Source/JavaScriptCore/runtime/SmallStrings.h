@@ -68,16 +68,12 @@ namespace JSC {
             return m_emptyString;
         }
 
-        JSString* singleCharacterString(VM* vm, unsigned char character)
+        JSString* singleCharacterString(unsigned char character)
         {
-            if (!m_singleCharacterStrings[character])
-                createSingleCharacterString(vm, character);
             return m_singleCharacterStrings[character];
         }
 
         JS_EXPORT_PRIVATE WTF::StringImpl* singleCharacterStringRep(unsigned char character);
-
-        void finalizeSmallStrings();
 
         JSString** singleCharacterStrings() { return &m_singleCharacterStrings[0]; }
 

@@ -2105,7 +2105,6 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
     GPRReg smallStringsReg = smallStrings.gpr();
     m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.vm()->smallStrings.singleCharacterStrings()), smallStringsReg);
     m_jit.loadPtr(MacroAssembler::BaseIndex(smallStringsReg, scratchReg, MacroAssembler::ScalePtr, 0), scratchReg);
-    speculationCheck(Uncountable, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Zero, scratchReg));
     cellResult(scratchReg, m_currentNode);
 }
 

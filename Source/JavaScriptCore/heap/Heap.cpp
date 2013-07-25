@@ -758,11 +758,6 @@ void Heap::collect(SweepToggle sweepToggle)
     }
 
     {
-        GCPHASE(finalizeSmallStrings);
-        m_vm->smallStrings.finalizeSmallStrings();
-    }
-
-    {
         GCPHASE(DeleteCodeBlocks);
         deleteUnmarkedCompiledCode();
     }

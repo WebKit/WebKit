@@ -1,3 +1,17 @@
+2013-06-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Small strings shouldn't get GC'd
+        https://bugs.webkit.org/show_bug.cgi?id=117897
+
+        Reviewed by Mark Hahnenberg.
+        
+        This test speeds up by 5%.
+
+        * fast/js/regress/script-tests/string-get-by-val.js: Added.
+        (foo):
+        * fast/js/regress/string-get-by-val-expected.txt: Added.
+        * fast/js/regress/string-get-by-val.html: Added.
+
 2013-06-18  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should have switch_char

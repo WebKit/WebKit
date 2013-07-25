@@ -1,3 +1,33 @@
+2013-06-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Small strings shouldn't get GC'd
+        https://bugs.webkit.org/show_bug.cgi?id=117897
+
+        Reviewed by Mark Hahnenberg.
+        
+        Kill off the code needed to allocate them lazily and finalize them.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterString):
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsString):
+        (JSC::jsSubstring8):
+        (JSC::jsSubstring):
+        (JSC::jsOwnedString):
+        * runtime/NumberPrototype.cpp:
+        (JSC::integerValueToString):
+        * runtime/SmallStrings.cpp:
+        (JSC):
+        (JSC::SmallStrings::initializeCommonStrings):
+        (JSC::SmallStrings::visitStrongReferences):
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::singleCharacterString):
+        (SmallStrings):
+
 2013-06-20  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Structure should have a dump()

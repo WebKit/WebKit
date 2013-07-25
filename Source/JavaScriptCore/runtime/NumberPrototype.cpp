@@ -476,7 +476,7 @@ static inline EncodedJSValue integerValueToString(ExecState* exec, int32_t radix
         ASSERT(value <= 36);
         ASSERT(value >= 0);
         VM* vm = &exec->vm();
-        return JSValue::encode(vm->smallStrings.singleCharacterString(vm, radixDigits[value]));
+        return JSValue::encode(vm->smallStrings.singleCharacterString(radixDigits[value]));
     }
 
     if (radix == 10) {

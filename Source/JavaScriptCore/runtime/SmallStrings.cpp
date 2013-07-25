@@ -36,13 +36,6 @@
 
 namespace JSC {
 
-static inline void finalize(JSString*& string)
-{
-    if (!string || Heap::isMarked(string))
-        return;
-    string = 0;
-}
-
 class SmallStringsStorage {
     WTF_MAKE_NONCOPYABLE(SmallStringsStorage); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -84,6 +77,8 @@ SmallStrings::SmallStrings()
 void SmallStrings::initializeCommonStrings(VM& vm)
 {
     createEmptyString(&vm);
+    for (unsigned i = 0; i <= maxSingleCharacterString; ++i)
+        createSingleCharacterString(&vm, i);
 #define JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE(name) initialize(&vm, m_##name, #name);
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE
@@ -92,6 +87,8 @@ void SmallStrings::initializeCommonStrings(VM& vm)
 void SmallStrings::visitStrongReferences(SlotVisitor& visitor)
 {
     visitor.appendUnbarrieredPointer(&m_emptyString);
+    for (unsigned i = 0; i <= maxSingleCharacterString; ++i)
+        visitor.appendUnbarrieredPointer(m_singleCharacterStrings + i);
 #define JSC_COMMON_STRINGS_ATTRIBUTE_VISIT(name) visitor.appendUnbarrieredPointer(&m_##name);
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_VISIT)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_VISIT
@@ -99,13 +96,6 @@ void SmallStrings::visitStrongReferences(SlotVisitor& visitor)
 
 SmallStrings::~SmallStrings()
 {
-}
-
-void SmallStrings::finalizeSmallStrings()
-{
-    finalize(m_emptyString);
-    for (unsigned i = 0; i < singleCharacterStringCount; ++i)
-        finalize(m_singleCharacterStrings[i]);
 }
 
 void SmallStrings::createEmptyString(VM* vm)
