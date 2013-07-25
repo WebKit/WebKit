@@ -2797,6 +2797,26 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_switch_char);
         }
 
+        case op_switch_string: {
+            SwitchData data;
+            data.kind = SwitchString;
+            data.switchTableIndex = currentInstruction[1].u.operand;
+            data.fallThrough = m_currentIndex + currentInstruction[2].u.operand;
+            StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
+            StringJumpTable::StringOffsetTable::iterator iter;
+            StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
+            for (iter = table.offsetTable.begin(); iter != end; ++iter) {
+                unsigned target = m_currentIndex + iter->value.branchOffset;
+                if (target == data.fallThrough)
+                    continue;
+                data.cases.append(
+                    SwitchCase(LazyJSValue::knownStringImpl(iter->key.get()), target));
+            }
+            m_graph.m_switchData.append(data);
+            addToGraph(Switch, OpInfo(&m_graph.m_switchData.last()), get(currentInstruction[3].u.operand));
+            LAST_OPCODE(op_switch_string);
+        }
+
         case op_ret:
             flushArgumentsAndCapturedVariables();
             if (inlineCallFrame()) {

@@ -740,6 +740,8 @@
 		A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B4011C7B235007A5315 /* RegExpKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A709F2F017A0AC0400512E98 /* SlowPathCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A709F2EF17A0AC0400512E98 /* SlowPathCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A709F2F217A0AC2A00512E98 /* CommonSlowPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A709F2F117A0AC2A00512E98 /* CommonSlowPaths.cpp */; };
+		A70B083217A0B79B00DAF14B /* DFGBinarySwitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A70B083017A0B79B00DAF14B /* DFGBinarySwitch.cpp */; };
+		A70B083317A0B79B00DAF14B /* DFGBinarySwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B083117A0B79B00DAF14B /* DFGBinarySwitch.h */; };
 		A71236E51195F33C00BD2174 /* JITOpcodes32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */; };
 		A72028B61797601E0098028C /* JSCTestRunnerUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72028B41797601E0098028C /* JSCTestRunnerUtils.cpp */; };
 		A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A72028B51797601E0098028C /* JSCTestRunnerUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1774,6 +1776,8 @@
 		A1712B4011C7B235007A5315 /* RegExpKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpKey.h; sourceTree = "<group>"; };
 		A709F2EF17A0AC0400512E98 /* SlowPathCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowPathCall.h; sourceTree = "<group>"; };
 		A709F2F117A0AC2A00512E98 /* CommonSlowPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonSlowPaths.cpp; sourceTree = "<group>"; };
+		A70B083017A0B79B00DAF14B /* DFGBinarySwitch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGBinarySwitch.cpp; path = dfg/DFGBinarySwitch.cpp; sourceTree = "<group>"; };
+		A70B083117A0B79B00DAF14B /* DFGBinarySwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBinarySwitch.h; path = dfg/DFGBinarySwitch.h; sourceTree = "<group>"; };
 		A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITOpcodes32_64.cpp; sourceTree = "<group>"; };
 		A718F61A11754A21002465A7 /* RegExpJitTables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpJitTables.h; sourceTree = "<group>"; };
 		A718F8211178EB4B002465A7 /* create_regex_tables */ = {isa = PBXFileReference; explicitFileType = text.script.python; fileEncoding = 4; path = create_regex_tables; sourceTree = "<group>"; };
@@ -2107,9 +2111,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				932F5BE10822A1C700736975 /* jsc */,
 				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
-				932F5BE10822A1C700736975 /* jsc */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				6511230514046A4C002B101D /* testRegExp */,
@@ -2994,6 +2998,8 @@
 				0F714CA216EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.h */,
 				0F620170143FCD2F0068B77C /* DFGBasicBlock.h */,
 				0FD5652216AB780A00197653 /* DFGBasicBlockInlines.h */,
+				A70B083017A0B79B00DAF14B /* DFGBinarySwitch.cpp */,
+				A70B083117A0B79B00DAF14B /* DFGBinarySwitch.h */,
 				0F8364B5164B0C0E0053329A /* DFGBranchDirection.h */,
 				86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */,
 				86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */,
@@ -3408,6 +3414,7 @@
 				0F714CA516EA92F200F3EBEB /* DFGBackwardsPropagationPhase.h in Headers */,
 				0F620176143FCD3B0068B77C /* DFGBasicBlock.h in Headers */,
 				0FFB921A16D02EC50055A5DB /* DFGBasicBlockInlines.h in Headers */,
+				A70B083317A0B79B00DAF14B /* DFGBinarySwitch.h in Headers */,
 				0F8364B7164B0C110053329A /* DFGBranchDirection.h in Headers */,
 				86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */,
 				0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */,
@@ -4252,6 +4259,7 @@
 				0F63948415E48118006A597C /* DFGArrayMode.cpp in Sources */,
 				0FC0976E1468AB5100CF2442 /* DFGAssemblyHelpers.cpp in Sources */,
 				0F714CA416EA92F000F3EBEB /* DFGBackwardsPropagationPhase.cpp in Sources */,
+				A70B083217A0B79B00DAF14B /* DFGBinarySwitch.cpp in Sources */,
 				86EC9DC41328DF82002B2AD7 /* DFGByteCodeParser.cpp in Sources */,
 				0FD82E2114172CE300179C94 /* DFGCapabilities.cpp in Sources */,
 				0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */,

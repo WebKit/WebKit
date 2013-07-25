@@ -951,6 +951,11 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(size));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(P_DFGOperation_ESJss operation, GPRReg result, size_t index, GPRReg arg1)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(index), arg1);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(P_DFGOperation_ESt operation, GPRReg result, Structure* structure)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure));
@@ -1786,6 +1791,12 @@ public:
 #endif
     
     template<typename T, typename U>
+    void branch8(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)
+    {
+        return addBranch(m_jit.branch8(cond, left, right), destination);
+    }
+    
+    template<typename T, typename U>
     void branchPtr(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)
     {
         return addBranch(m_jit.branchPtr(cond, left, right), destination);
@@ -1831,6 +1842,7 @@ public:
     {
         m_branches.append(BranchRecord(jump, destination));
     }
+    void addBranch(const MacroAssembler::JumpList& jump, BlockIndex destination);
 
     void linkBranches();
 
@@ -1879,10 +1891,32 @@ public:
     void compileStringIdentEquality(Node*);
     void emitObjectOrOtherBranch(Edge value, BlockIndex taken, BlockIndex notTaken);
     void emitBranch(Node*);
+    
+    struct StringSwitchCase {
+        StringSwitchCase() { }
+        
+        StringSwitchCase(StringImpl* string, BlockIndex target)
+            : string(string)
+            , target(target)
+        {
+        }
+        
+        bool operator<(const StringSwitchCase& other) const;
+        
+        StringImpl* string;
+        BlockIndex target;
+    };
+    
     void emitSwitchIntJump(SwitchData*, GPRReg value, GPRReg scratch);
     void emitSwitchImm(Node*, SwitchData*);
     void emitSwitchCharStringJump(SwitchData*, GPRReg value, GPRReg scratch);
     void emitSwitchChar(Node*, SwitchData*);
+    void emitBinarySwitchStringRecurse(
+        SwitchData*, const Vector<StringSwitchCase>&, unsigned numChecked,
+        unsigned begin, unsigned end, GPRReg buffer, GPRReg length, GPRReg temp,
+        unsigned alreadyCheckedLength, bool checkedExactLength);
+    void emitSwitchStringOnString(SwitchData*, GPRReg string);
+    void emitSwitchString(Node*, SwitchData*);
     void emitSwitch(Node*);
     
     void compileToStringOnCell(Node*);

@@ -40,7 +40,8 @@ namespace JSC { namespace DFG {
 
 enum LazinessKind {
     KnownValue,
-    SingleCharacterString
+    SingleCharacterString,
+    KnownStringImpl
 };
 
 class LazyJSValue {
@@ -56,6 +57,14 @@ public:
         LazyJSValue result;
         result.m_kind = SingleCharacterString;
         result.u.character = character;
+        return result;
+    }
+    
+    static LazyJSValue knownStringImpl(StringImpl* string)
+    {
+        LazyJSValue result;
+        result.m_kind = KnownStringImpl;
+        result.u.stringImpl = string;
         return result;
     }
     
@@ -80,6 +89,12 @@ public:
         return u.character;
     }
     
+    StringImpl* stringImpl() const
+    {
+        ASSERT(m_kind == KnownStringImpl);
+        return u.stringImpl;
+    }
+    
     TriState strictEqual(const LazyJSValue& other) const;
     
     unsigned switchLookupValue() const
@@ -92,8 +107,10 @@ public:
             return value().asInt32();
         case SingleCharacterString:
             return character();
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return 0;
         }
-        RELEASE_ASSERT_NOT_REACHED();
     }
     
     void dump(PrintStream&) const;
@@ -102,6 +119,7 @@ private:
     union {
         EncodedJSValue value;
         UChar character;
+        StringImpl* stringImpl;
     } u;
     LazinessKind m_kind;
 };

@@ -191,6 +191,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_tear_off_activation:
     case op_new_func:
     case op_new_func_exp:
+    case op_switch_string: // Don't inline because we don't want to copy string tables in the concurrent JIT.
         return CanCompile;
 
     default:

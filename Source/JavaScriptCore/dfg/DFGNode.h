@@ -96,7 +96,8 @@ struct SwitchCase {
 
 enum SwitchKind {
     SwitchImm,
-    SwitchChar
+    SwitchChar,
+    SwitchString
 };
 
 struct SwitchData {

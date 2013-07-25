@@ -1644,6 +1644,14 @@ char* DFG_OPERATION operationFindSwitchImmTargetForDouble(
     return static_cast<char*>(table.ctiDefault.executableAddress());
 }
 
+char* DFG_OPERATION operationSwitchString(ExecState* exec, size_t tableIndex, JSString* string)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return static_cast<char*>(exec->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(string->value(exec).impl()).executableAddress());
+}
+
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
 {
     return fmod(a, b);

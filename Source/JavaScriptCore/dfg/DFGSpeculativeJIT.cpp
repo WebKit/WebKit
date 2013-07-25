@@ -30,6 +30,7 @@
 
 #include "Arguments.h"
 #include "DFGArrayifySlowPathGenerator.h"
+#include "DFGBinarySwitch.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 #include "JSCJSValueInlines.h"
@@ -4899,12 +4900,7 @@ void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
         
         op1.use();
 
-        DFG_TYPE_CHECK(
-            JSValueSource::unboxedCell(op1GPR), node->child1(), SpecString, m_jit.branchPtr(
-                MacroAssembler::NotEqual,
-                MacroAssembler::Address(op1GPR, JSCell::structureOffset()),
-                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
-        
+        speculateString(node->child1(), op1GPR);
         emitSwitchCharStringJump(data, op1GPR, tempGPR);
         noResult(node, UseChildrenCalledExplicitly);
         break;
@@ -4949,6 +4945,306 @@ void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
     }
 }
 
+bool SpeculativeJIT::StringSwitchCase::operator<(
+    const SpeculativeJIT::StringSwitchCase& other) const
+{
+    unsigned minLength = std::min(string->length(), other.string->length());
+    for (unsigned i = 0; i < minLength; ++i) {
+        if (string->at(i) == other.string->at(i))
+            continue;
+        return string->at(i) < other.string->at(i);
+    }
+    return string->length() < other.string->length();
+}
+
+namespace {
+
+struct CharacterCase {
+    bool operator<(const CharacterCase& other) const
+    {
+        return character < other.character;
+    }
+    
+    LChar character;
+    unsigned begin;
+    unsigned end;
+};
+
+} // anonymous namespace
+
+void SpeculativeJIT::emitBinarySwitchStringRecurse(
+    SwitchData* data, const Vector<SpeculativeJIT::StringSwitchCase>& cases,
+    unsigned numChecked, unsigned begin, unsigned end, GPRReg buffer, GPRReg length,
+    GPRReg temp, unsigned alreadyCheckedLength, bool checkedExactLength)
+{
+    static const bool verbose = false;
+    
+    if (verbose) {
+        dataLog("We're down to the following cases, alreadyCheckedLength = ", alreadyCheckedLength, ":\n");
+        for (unsigned i = begin; i < end; ++i) {
+            dataLog("    ", cases[i].string, "\n");
+        }
+    }
+    
+    if (begin == end) {
+        jump(data->fallThrough, ForceJump);
+        return;
+    }
+    
+    unsigned minLength = cases[begin].string->length();
+    unsigned commonChars = minLength;
+    bool allLengthsEqual = true;
+    for (unsigned i = begin + 1; i < end; ++i) {
+        unsigned myCommonChars = numChecked;
+        for (unsigned j = numChecked;
+            j < std::min(cases[begin].string->length(), cases[i].string->length());
+            ++j) {
+            if (cases[begin].string->at(j) != cases[i].string->at(j)) {
+                if (verbose)
+                    dataLog("string(", cases[i].string, ")[", j, "] != string(", cases[begin].string, ")[", j, "]\n");
+                break;
+            }
+            myCommonChars++;
+        }
+        commonChars = std::min(commonChars, myCommonChars);
+        if (minLength != cases[i].string->length())
+            allLengthsEqual = false;
+        minLength = std::min(minLength, cases[i].string->length());
+    }
+    
+    if (checkedExactLength) {
+        RELEASE_ASSERT(alreadyCheckedLength == minLength);
+        RELEASE_ASSERT(allLengthsEqual);
+    }
+    
+    RELEASE_ASSERT(minLength >= commonChars);
+    
+    if (verbose)
+        dataLog("length = ", minLength, ", commonChars = ", commonChars, ", allLengthsEqual = ", allLengthsEqual, "\n");
+    
+    if (!allLengthsEqual && alreadyCheckedLength < minLength)
+        branch32(MacroAssembler::Below, length, Imm32(minLength), data->fallThrough);
+    if (allLengthsEqual && (alreadyCheckedLength < minLength || !checkedExactLength))
+        branch32(MacroAssembler::NotEqual, length, Imm32(minLength), data->fallThrough);
+    
+    for (unsigned i = numChecked; i < commonChars; ++i) {
+        branch8(
+            MacroAssembler::NotEqual, MacroAssembler::Address(buffer, i),
+            TrustedImm32(cases[begin].string->at(i)), data->fallThrough);
+    }
+    
+    if (minLength == commonChars) {
+        // This is the case where one of the cases is a prefix of all of the other cases.
+        // We've already checked that the input string is a prefix of all of the cases,
+        // so we just check length to jump to that case.
+        
+        if (!ASSERT_DISABLED) {
+            ASSERT(cases[begin].string->length() == commonChars);
+            for (unsigned i = begin + 1; i < end; ++i)
+                ASSERT(cases[i].string->length() > commonChars);
+        }
+        
+        if (allLengthsEqual) {
+            RELEASE_ASSERT(end == begin + 1);
+            jump(cases[begin].target, ForceJump);
+            return;
+        }
+        
+        branch32(MacroAssembler::Equal, length, Imm32(commonChars), cases[begin].target);
+        
+        // We've checked if the length is >= minLength, and then we checked if the
+        // length is == commonChars. We get to this point if it is >= minLength but not
+        // == commonChars. Hence we know that it now must be > minLength, i.e., that
+        // it's >= minLength + 1.
+        emitBinarySwitchStringRecurse(
+            data, cases, commonChars, begin + 1, end, buffer, length, temp, minLength + 1, false);
+        return;
+    }
+    
+    // At this point we know that the string is longer than commonChars, and we've only
+    // verified commonChars. Use a binary switch on the next unchecked character, i.e.
+    // string[commonChars].
+    
+    RELEASE_ASSERT(end >= begin + 2);
+    
+    m_jit.load8(MacroAssembler::Address(buffer, commonChars), temp);
+    
+    Vector<CharacterCase> characterCases;
+    CharacterCase currentCase;
+    currentCase.character = cases[begin].string->at(commonChars);
+    currentCase.begin = begin;
+    currentCase.end = begin + 1;
+    for (unsigned i = begin + 1; i < end; ++i) {
+        if (cases[i].string->at(commonChars) != currentCase.character) {
+            if (verbose)
+                dataLog("string(", cases[i].string, ")[", commonChars, "] != string(", cases[begin].string, ")[", commonChars, "]\n");
+            currentCase.end = i;
+            characterCases.append(currentCase);
+            currentCase.character = cases[i].string->at(commonChars);
+            currentCase.begin = i;
+            currentCase.end = i + 1;
+        } else
+            currentCase.end = i + 1;
+    }
+    characterCases.append(currentCase);
+    
+    Vector<int64_t> characterCaseValues;
+    for (unsigned i = 0; i < characterCases.size(); ++i)
+        characterCaseValues.append(characterCases[i].character);
+    
+    BinarySwitch binarySwitch(temp, characterCaseValues, BinarySwitch::Int32);
+    while (binarySwitch.advance(m_jit)) {
+        const CharacterCase& myCase = characterCases[binarySwitch.caseIndex()];
+        emitBinarySwitchStringRecurse(
+            data, cases, commonChars + 1, myCase.begin, myCase.end, buffer, length,
+            temp, minLength, allLengthsEqual);
+    }
+    
+    addBranch(binarySwitch.fallThrough(), data->fallThrough);
+}
+
+void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
+{
+    data->didUseJumpTable = true;
+    
+    bool canDoBinarySwitch = true;
+    unsigned totalLength = 0;
+    
+    for (unsigned i = data->cases.size(); i--;) {
+        StringImpl* string = data->cases[i].value.stringImpl();
+        if (!string->is8Bit()) {
+            canDoBinarySwitch = false;
+            break;
+        }
+        if (string->length() > Options::maximumBinaryStringSwitchCaseLength()) {
+            canDoBinarySwitch = false;
+            break;
+        }
+        totalLength += string->length();
+    }
+    
+    if (!canDoBinarySwitch || totalLength > Options::maximumBinaryStringSwitchTotalLength()) {
+        flushRegisters();
+        callOperation(
+            operationSwitchString, string, data->switchTableIndex, string);
+        m_jit.jump(string);
+        return;
+    }
+    
+    GPRTemporary length(this);
+    GPRTemporary temp(this);
+    
+    GPRReg lengthGPR = length.gpr();
+    GPRReg tempGPR = temp.gpr();
+    
+    m_jit.load32(MacroAssembler::Address(string, JSString::offsetOfLength()), lengthGPR);
+    m_jit.loadPtr(MacroAssembler::Address(string, JSString::offsetOfValue()), tempGPR);
+    
+    MacroAssembler::JumpList slowCases;
+    slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, tempGPR));
+    slowCases.append(m_jit.branchTest32(
+        MacroAssembler::Zero,
+        MacroAssembler::Address(tempGPR, StringImpl::flagsOffset()),
+        TrustedImm32(StringImpl::flagIs8Bit())));
+    
+    m_jit.loadPtr(MacroAssembler::Address(tempGPR, StringImpl::dataOffset()), string);
+    
+    Vector<StringSwitchCase> cases;
+    for (unsigned i = 0; i < data->cases.size(); ++i) {
+        cases.append(
+            StringSwitchCase(data->cases[i].value.stringImpl(), data->cases[i].target));
+    }
+    
+    std::sort(cases.begin(), cases.end());
+    
+    emitBinarySwitchStringRecurse(
+        data, cases, 0, 0, cases.size(), string, lengthGPR, tempGPR, 0, false);
+    
+    slowCases.link(&m_jit);
+    silentSpillAllRegisters(string);
+    callOperation(operationSwitchString, string, data->switchTableIndex, string);
+    silentFillAllRegisters(string);
+    m_jit.jump(string);
+}
+
+void SpeculativeJIT::emitSwitchString(Node* node, SwitchData* data)
+{
+    switch (node->child1().useKind()) {
+    case StringIdentUse: {
+        SpeculateCellOperand op1(this, node->child1());
+        GPRTemporary temp(this);
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg tempGPR = temp.gpr();
+        
+        speculateString(node->child1(), op1GPR);
+        speculateStringIdentAndLoadStorage(node->child1(), op1GPR, tempGPR);
+        
+        Vector<int64_t> identifierCaseValues;
+        for (unsigned i = 0; i < data->cases.size(); ++i) {
+            identifierCaseValues.append(
+                static_cast<int64_t>(bitwise_cast<intptr_t>(data->cases[i].value.stringImpl())));
+        }
+        
+        BinarySwitch binarySwitch(tempGPR, identifierCaseValues, BinarySwitch::IntPtr);
+        while (binarySwitch.advance(m_jit))
+            jump(data->cases[binarySwitch.caseIndex()].target, ForceJump);
+        addBranch(binarySwitch.fallThrough(), data->fallThrough);
+        
+        noResult(node);
+        break;
+    }
+        
+    case StringUse: {
+        SpeculateCellOperand op1(this, node->child1());
+        
+        GPRReg op1GPR = op1.gpr();
+        
+        op1.use();
+
+        speculateString(node->child1(), op1GPR);
+        emitSwitchStringOnString(data, op1GPR);
+        noResult(node, UseChildrenCalledExplicitly);
+        break;
+    }
+        
+    case UntypedUse: {
+        JSValueOperand op1(this, node->child1());
+        
+        JSValueRegs op1Regs = op1.jsValueRegs();
+        
+        op1.use();
+        
+#if USE(JSVALUE64)
+        addBranch(
+            m_jit.branchTest64(
+                MacroAssembler::NonZero, op1Regs.gpr(), GPRInfo::tagMaskRegister),
+            data->fallThrough);
+#else
+        addBranch(
+            m_jit.branch32(
+                MacroAssembler::NotEqual, op1Regs.tagGPR(), TrustedImm32(JSValue::CellTag)),
+            data->fallThrough);
+#endif
+        
+        addBranch(
+            m_jit.branchPtr(
+                MacroAssembler::NotEqual,
+                MacroAssembler::Address(op1Regs.payloadGPR(), JSCell::structureOffset()),
+                MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())),
+            data->fallThrough);
+        
+        emitSwitchStringOnString(data, op1Regs.payloadGPR());
+        noResult(node, UseChildrenCalledExplicitly);
+        break;
+    }
+        
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 void SpeculativeJIT::emitSwitch(Node* node)
 {
     SwitchData* data = node->switchData();
@@ -4960,8 +5256,18 @@ void SpeculativeJIT::emitSwitch(Node* node)
     case SwitchChar: {
         emitSwitchChar(node, data);
         return;
+    }
+    case SwitchString: {
+        emitSwitchString(node, data);
+        return;
     } }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void SpeculativeJIT::addBranch(const MacroAssembler::JumpList& jump, BlockIndex destination)
+{
+    for (unsigned i = jump.jumps().size(); i--;)
+        addBranch(jump.jumps()[i], destination);
 }
 
 void SpeculativeJIT::linkBranches()

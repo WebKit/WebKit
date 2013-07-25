@@ -1,3 +1,91 @@
+2013-06-25  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should support switch_string
+        https://bugs.webkit.org/show_bug.cgi?id=117967
+
+        Reviewed by Sam Weinig.
+        
+        Add a reusable binary switch creator.
+        
+        Implement switch on string using three modes:
+        
+        - Binary switch on StringImpl* in the case of identifiers.
+        
+        - Trie of binary switches on characters in the case of a not-too-big
+          switch over not-too-big 8-bit strings.
+        
+        - Hash lookup if all else fails.
+        
+        Anywhere from a 2x to 3x speed-up on microbenchmarks that stress
+        string switches. 25-35% speed-up on HashMap tests. 4% speed-up on
+        pdfjs.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/JumpTable.h:
+        (StringJumpTable):
+        (JSC::StringJumpTable::clear):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGBinarySwitch.cpp: Added.
+        (DFG):
+        (JSC::DFG::BinarySwitch::BinarySwitch):
+        (JSC::DFG::BinarySwitch::advance):
+        (JSC::DFG::BinarySwitch::build):
+        * dfg/DFGBinarySwitch.h: Added.
+        (DFG):
+        (BinarySwitch):
+        (JSC::DFG::BinarySwitch::caseIndex):
+        (JSC::DFG::BinarySwitch::caseValue):
+        (JSC::DFG::BinarySwitch::fallThrough):
+        (JSC::DFG::BinarySwitch::Case::Case):
+        (Case):
+        (JSC::DFG::BinarySwitch::Case::operator<):
+        (JSC::DFG::BinarySwitch::BranchCode::BranchCode):
+        (BranchCode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::getValue):
+        (JSC::DFG::equalToStringImpl):
+        (DFG):
+        (JSC::DFG::LazyJSValue::strictEqual):
+        (JSC::DFG::LazyJSValue::dump):
+        * dfg/DFGLazyJSValue.h:
+        (JSC::DFG::LazyJSValue::knownStringImpl):
+        (LazyJSValue):
+        (JSC::DFG::LazyJSValue::stringImpl):
+        (JSC::DFG::LazyJSValue::switchLookupValue):
+        * dfg/DFGNode.cpp:
+        (WTF::printInternal):
+        * dfg/DFGNode.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+        (JSC::DFG::SpeculativeJIT::StringSwitchCase::operator<):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::emitBinarySwitchStringRecurse):
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        (JSC::DFG::SpeculativeJIT::emitSwitchString):
+        (JSC::DFG::SpeculativeJIT::emitSwitch):
+        (JSC::DFG::SpeculativeJIT::addBranch):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::branch8):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::StringSwitchCase::StringSwitchCase):
+        (StringSwitchCase):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+        * runtime/Options.h:
+        (JSC):
+
 2013-06-24  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Count external memory usage towards heap footprint

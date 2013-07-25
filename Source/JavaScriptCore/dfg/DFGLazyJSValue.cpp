@@ -39,6 +39,8 @@ JSValue LazyJSValue::getValue(VM& vm) const
         return value();
     case SingleCharacterString:
         return jsSingleCharacterString(&vm, u.character);
+    case KnownStringImpl:
+        return jsString(&vm, u.stringImpl);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -59,6 +61,19 @@ static TriState equalToSingleCharacter(JSValue value, UChar character)
     return triState(string->at(0) == character);
 }
 
+static TriState equalToStringImpl(JSValue value, StringImpl* stringImpl)
+{
+    if (!value.isString())
+        return FalseTriState;
+    
+    JSString* jsString = asString(value);
+    const StringImpl* string = jsString->tryGetValueImpl();
+    if (!string)
+        return MixedTriState;
+    
+    return triState(WTF::equal(stringImpl, string));
+}
+
 TriState LazyJSValue::strictEqual(const LazyJSValue& other) const
 {
     switch (m_kind) {
@@ -68,12 +83,26 @@ TriState LazyJSValue::strictEqual(const LazyJSValue& other) const
             return JSValue::pureStrictEqual(value(), other.value());
         case SingleCharacterString:
             return equalToSingleCharacter(value(), other.character());
+        case KnownStringImpl:
+            return equalToStringImpl(value(), other.stringImpl());
         }
         break;
     case SingleCharacterString:
         switch (other.m_kind) {
         case SingleCharacterString:
             return triState(character() == other.character());
+        case KnownStringImpl:
+            if (other.stringImpl()->length() != 1)
+                return FalseTriState;
+            return triState(other.stringImpl()->at(0) == character());
+        default:
+            return other.strictEqual(*this);
+        }
+        break;
+    case KnownStringImpl:
+        switch (other.m_kind) {
+        case KnownStringImpl:
+            return triState(WTF::equal(stringImpl(), other.stringImpl()));
         default:
             return other.strictEqual(*this);
         }
@@ -92,6 +121,9 @@ void LazyJSValue::dump(PrintStream& out) const
         out.print("Lazy:SingleCharacterString(");
         out.printf("%04X", static_cast<unsigned>(character()));
         out.print(" / ", StringImpl::utf8ForCharacters(&u.character, 1), ")");
+        return;
+    case KnownStringImpl:
+        out.print("Lazy:String(", stringImpl(), ")");
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();

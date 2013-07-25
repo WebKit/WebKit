@@ -1,3 +1,46 @@
+2013-06-25  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should support switch_string
+        https://bugs.webkit.org/show_bug.cgi?id=117967
+
+        Reviewed by Sam Weinig.
+
+        * fast/js/regress/script-tests/switch-string-basic-big-var.js: Added.
+        (foo):
+        (make):
+        * fast/js/regress/script-tests/switch-string-basic-big.js: Added.
+        (foo):
+        (make):
+        * fast/js/regress/script-tests/switch-string-basic-var.js: Added.
+        (foo):
+        (make):
+        * fast/js/regress/script-tests/switch-string-basic.js: Added.
+        (foo):
+        * fast/js/regress/script-tests/switch-string-big-length-tower-var.js: Added.
+        (foo):
+        * fast/js/regress/script-tests/switch-string-length-tower-var.js: Added.
+        (foo):
+        * fast/js/regress/script-tests/switch-string-length-tower.js: Added.
+        (foo):
+        * fast/js/regress/script-tests/switch-string-short.js: Added.
+        (foo):
+        * fast/js/regress/switch-string-basic-big-expected.txt: Added.
+        * fast/js/regress/switch-string-basic-big-var-expected.txt: Added.
+        * fast/js/regress/switch-string-basic-big-var.html: Added.
+        * fast/js/regress/switch-string-basic-big.html: Added.
+        * fast/js/regress/switch-string-basic-expected.txt: Added.
+        * fast/js/regress/switch-string-basic-var-expected.txt: Added.
+        * fast/js/regress/switch-string-basic-var.html: Added.
+        * fast/js/regress/switch-string-basic.html: Added.
+        * fast/js/regress/switch-string-big-length-tower-var-expected.txt: Added.
+        * fast/js/regress/switch-string-big-length-tower-var.html: Added.
+        * fast/js/regress/switch-string-length-tower-expected.txt: Added.
+        * fast/js/regress/switch-string-length-tower-var-expected.txt: Added.
+        * fast/js/regress/switch-string-length-tower-var.html: Added.
+        * fast/js/regress/switch-string-length-tower.html: Added.
+        * fast/js/regress/switch-string-short-expected.txt: Added.
+        * fast/js/regress/switch-string-short.html: Added.
+
 2013-06-23  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should optimize identifier string equality

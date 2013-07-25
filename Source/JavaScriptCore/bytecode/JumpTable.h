@@ -70,6 +70,11 @@ namespace JSC {
             return loc->value.ctiOffset;
         }
 #endif
+        
+        void clear()
+        {
+            offsetTable.clear();
+        }
     };
 
     struct SimpleJumpTable {

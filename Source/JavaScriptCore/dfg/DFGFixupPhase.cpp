@@ -611,6 +611,12 @@ private:
                 if (node->child1()->shouldSpeculateString())
                     setUseKindAndUnboxIfProfitable<StringUse>(node->child1());
                 break;
+            case SwitchString:
+                if (node->child1()->shouldSpeculateStringIdent())
+                    setUseKindAndUnboxIfProfitable<StringIdentUse>(node->child1());
+                else if (node->child1()->shouldSpeculateString())
+                    setUseKindAndUnboxIfProfitable<StringUse>(node->child1());
+                break;
             }
             break;
         }

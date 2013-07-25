@@ -53,6 +53,14 @@ namespace WTF {
         {
             return equal(a.get(), b.get());
         }
+        static bool equal(const RefPtr<StringImpl>& a, const StringImpl* b)
+        {
+            return equal(a.get(), b);
+        }
+        static bool equal(const StringImpl* a, const RefPtr<StringImpl>& b)
+        {
+            return equal(a, b.get());
+        }
 
         static unsigned hash(const String& key) { return key.impl()->hash(); }
         static bool equal(const String& a, const String& b)

@@ -1563,7 +1563,12 @@ private:
             m_out.appendTo(continuation, lastNext);
             buildSwitch(data, m_out.int16, m_out.phi(m_out.int16, characters));
             return;
-        } }
+        }
+        
+        case SwitchString:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
         
         RELEASE_ASSERT_NOT_REACHED();
     }

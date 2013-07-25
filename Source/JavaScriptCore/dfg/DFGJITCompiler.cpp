@@ -163,6 +163,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         if (!data.didUseJumpTable)
             continue;
         
+        if (data.kind == SwitchString)
+            continue;
+        
         RELEASE_ASSERT(data.kind == SwitchImm || data.kind == SwitchChar);
         
         usedJumpTables.set(data.switchTableIndex);
@@ -182,6 +185,31 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             continue;
         
         m_codeBlock->switchJumpTable(i).clear();
+    }
+
+    // NOTE: we cannot clear string switch tables because (1) we're running concurrently
+    // and we cannot deref StringImpl's and (2) it would be weird to deref those
+    // StringImpl's since we refer to them.
+    for (unsigned i = m_graph.m_switchData.size(); i--;) {
+        SwitchData& data = m_graph.m_switchData[i];
+        if (!data.didUseJumpTable)
+            continue;
+        
+        if (data.kind != SwitchString)
+            continue;
+        
+        StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
+        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough]);
+        StringJumpTable::StringOffsetTable::iterator iter;
+        StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
+        for (iter = table.offsetTable.begin(); iter != end; ++iter)
+            iter->value.ctiOffset = table.ctiDefault;
+        for (unsigned j = data.cases.size(); j--;) {
+            SwitchCase& myCase = data.cases[j];
+            iter = table.offsetTable.find(myCase.value.stringImpl());
+            RELEASE_ASSERT(iter != end);
+            iter->value.ctiOffset = linkBuffer.locationOf(m_blockHeads[myCase.target]);
+        }
     }
 
     // Link all calls out from the JIT code to their respective functions.

@@ -135,6 +135,9 @@ typedef OptionRange optionRange;
     /* Depth of inline stack, so 1 = no inlining, 2 = one level, etc. */ \
     v(unsigned, maximumInliningDepth, 5) \
     \
+    v(unsigned, maximumBinaryStringSwitchCaseLength, 50) \
+    v(unsigned, maximumBinaryStringSwitchTotalLength, 2000) \
+    \
     v(int32, thresholdForJITAfterWarmUp, 100) \
     v(int32, thresholdForJITSoon, 100) \
     \

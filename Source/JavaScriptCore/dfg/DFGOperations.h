@@ -120,6 +120,7 @@ typedef char* DFG_OPERATION (*P_DFGOperation_EOS)(ExecState*, JSObject*, size_t)
 typedef char* DFG_OPERATION (*P_DFGOperation_EOZ)(ExecState*, JSObject*, int32_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_EPS)(ExecState*, void*, size_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_ES)(ExecState*, size_t);
+typedef char* DFG_OPERATION (*P_DFGOperation_ESJss)(ExecState*, size_t, JSString*);
 typedef char* DFG_OPERATION (*P_DFGOperation_ESt)(ExecState*, Structure*);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStPS)(ExecState*, Structure*, void*, size_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStSS)(ExecState*, Structure*, size_t, size_t);
@@ -230,6 +231,7 @@ JSCell* DFG_OPERATION operationToString(ExecState*, EncodedJSValue);
 JSCell* DFG_OPERATION operationMakeRope2(ExecState*, JSString*, JSString*);
 JSCell* DFG_OPERATION operationMakeRope3(ExecState*, JSString*, JSString*, JSString*);
 char* DFG_OPERATION operationFindSwitchImmTargetForDouble(ExecState*, EncodedJSValue, size_t tableIndex);
+char* DFG_OPERATION operationSwitchString(ExecState*, size_t tableIndex, JSString*);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

@@ -53,6 +53,9 @@ void printInternal(PrintStream& out, SwitchKind kind)
     case SwitchChar:
         out.print("SwitchChar");
         return;
+    case SwitchString:
+        out.print("SwitchString");
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -1,3 +1,16 @@
+2013-06-25  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should support switch_string
+        https://bugs.webkit.org/show_bug.cgi?id=117967
+
+        Reviewed by Sam Weinig.
+        
+        Make it possible to compare a RefPtr<StringImpl> and a StringImpl* without
+        having to ref the StringImpl.
+
+        * wtf/text/StringHash.h:
+        (WTF::StringHash::equal):
+
 2013-06-24  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Count external memory usage towards heap footprint
