@@ -373,6 +373,9 @@ private:
         case CompareGreaterEq:
             compileCompareGreaterEq();
             break;
+        case LogicalNot:
+            compileLogicalNot();
+            break;
         case Branch:
             compileBranch();
             break;
@@ -1038,6 +1041,20 @@ private:
         }
         
         RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    void compileLogicalNot()
+    {
+        switch (m_node->child1().useKind()) {
+        case BooleanUse: {
+            m_booleanValues.add(m_node, m_out.bitNot(lowBoolean(m_node->child1())));
+            break;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
     }
     
     void compileBranch()

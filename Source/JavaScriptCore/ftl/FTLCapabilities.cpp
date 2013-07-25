@@ -146,6 +146,7 @@ bool canCompile(Graph& graph)
                     break;
                 return false;
             case Branch:
+            case LogicalNot:
                 if (node->child1().useKind() == BooleanUse)
                     break;
                 return false;

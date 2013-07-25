@@ -195,6 +195,7 @@ static inline LValue buildXor(LBuilder builder, LValue left, LValue right) { ret
 static inline LValue buildShl(LBuilder builder, LValue left, LValue right) { return LLVMBuildShl(builder, left, right, ""); }
 static inline LValue buildAShr(LBuilder builder, LValue left, LValue right) { return LLVMBuildAShr(builder, left, right, ""); }
 static inline LValue buildLShr(LBuilder builder, LValue left, LValue right) { return LLVMBuildLShr(builder, left, right, ""); }
+static inline LValue buildNot(LBuilder builder, LValue value) { return LLVMBuildNot(builder, value, ""); }
 static inline LValue buildLoad(LBuilder builder, LValue pointer) { return LLVMBuildLoad(builder, pointer, ""); }
 static inline LValue buildStore(LBuilder builder, LValue value, LValue pointer) { return LLVMBuildStore(builder, value, pointer); }
 static inline LValue buildZExt(LBuilder builder, LValue value, LType type) { return LLVMBuildZExt(builder, value, type, ""); }

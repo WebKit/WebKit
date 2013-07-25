@@ -1,5 +1,23 @@
 2013-05-10  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: FTL should support LogicalNot
+        https://bugs.webkit.org/show_bug.cgi?id=115924
+
+        Reviewed by Mark Hahnenberg.
+
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::buildNot):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileLogicalNot):
+        (LowerDFGToLLVM):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::bitNot):
+
+2013-05-10  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should support CompareGreater, CompareLessEq, and CompareGreaterEq
         https://bugs.webkit.org/show_bug.cgi?id=115923
 

@@ -138,6 +138,7 @@ public:
     LValue shl(LValue left, LValue right) { return buildShl(m_builder, left, right); }
     LValue aShr(LValue left, LValue right) { return buildAShr(m_builder, left, right); }
     LValue lShr(LValue left, LValue right) { return buildLShr(m_builder, left, right); }
+    LValue bitNot(LValue value) { return buildNot(m_builder, value); }
     
     LValue addWithOverflow32(LValue left, LValue right)
     {
