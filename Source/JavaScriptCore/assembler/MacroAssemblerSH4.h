@@ -812,6 +812,17 @@ public:
         releaseScratch(scr);
     }
 
+    void store8(TrustedImm32 imm, void* address)
+    {
+        RegisterID srcval = claimScratch();
+        RegisterID dstptr = claimScratch();
+        move(imm, srcval);
+        m_assembler.loadConstant(reinterpret_cast<uint32_t>(address), dstptr);
+        m_assembler.movbRegMem(srcval, dstptr);
+        releaseScratch(dstptr);
+        releaseScratch(srcval);
+    }
+
     void store16(RegisterID src, BaseIndex address)
     {
         RegisterID scr = claimScratch();
