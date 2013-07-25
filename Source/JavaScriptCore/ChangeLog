@@ -1,3 +1,48 @@
+2013-06-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix build for LLVM ToT.
+
+        This doesn't affect those using the binary drops, but if you're building from
+        LLVM ToT you'll get link errors. These arise because we expect there to be a
+        libLLVMArchive, but that is no longer built by LLVM ToT. This casues the linker
+        to fall back on the system's libLLVMArchive, which is incompatible with the
+        other LLVM libs we pull in.
+        
+        Also, we didn't need that library anyway and shouldn't have been linking
+        against it.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
+2013-06-26  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support hole/OOB PutByVal's
+        https://bugs.webkit.org/show_bug.cgi?id=118112
+
+        Reviewed by Geoffrey Garen.
+        
+        Added a common code generator for the out-of-bounds case that is reused by
+        all contiguous-like arrays (Int32, Double, Contiguous).
+        
+        This is relatively straight-forward, except that it's the first time that
+        the FTL has to call DFG operations that take more than two arguments.
+
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::functionType):
+        (JSC::FTL::buildCall):
+        * ftl/FTLAbstractHeapRepository.h:
+        (FTL):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        (FTL):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::contiguousPutByValOutOfBounds):
+        (JSC::FTL::LowerDFGToLLVM::vmCall):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::call):
+
 2013-06-26  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL::canCompile(Graph&) should not consider nodes that won't be compiled

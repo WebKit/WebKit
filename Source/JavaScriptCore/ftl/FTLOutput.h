@@ -324,6 +324,8 @@ public:
     LValue call(LValue function) { return buildCall(m_builder, function); }
     LValue call(LValue function, LValue arg1) { return buildCall(m_builder, function, arg1); }
     LValue call(LValue function, LValue arg1, LValue arg2) { return buildCall(m_builder, function, arg1, arg2); }
+    LValue call(LValue function, LValue arg1, LValue arg2, LValue arg3) { return buildCall(m_builder, function, arg1, arg2, arg3); }
+    LValue call(LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4) { return buildCall(m_builder, function, arg1, arg2, arg3, arg4); }
     
     template<typename FunctionType>
     LValue operation(FunctionType function)

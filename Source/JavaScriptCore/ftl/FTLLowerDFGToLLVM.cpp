@@ -1311,9 +1311,13 @@ private:
         Edge child3 = m_graph.varArgChild(m_node, 2);
         Edge child4 = m_graph.varArgChild(m_node, 3);
 
+        LValue base = lowCell(child1);
         LValue index = lowInt32(child2);
         LValue storage = lowStorage(child4);
         
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("PutByVal continuation"));
+        LBasicBlock outerLastNext = m_out.appendTo(m_out.m_block, continuation);
+            
         switch (m_node->arrayMode().type()) {
         case Array::Int32:
         case Array::Contiguous: {
@@ -1330,22 +1334,17 @@ private:
             
             if (m_node->op() == PutByValAlias) {
                 m_out.store64(value, elementPointer);
-                return;
+                break;
             }
             
-            if (m_node->arrayMode().isInBounds()) {
-                speculate(
-                    StoreToHoleOrOutOfBounds, noValue(), 0,
-                    m_out.aboveOrEqual(
-                        index, m_out.load32(storage, m_heaps.Butterfly_publicLength)));
-            } else {
-                // FIXME: Implement hole/OOB stores in the FTL.
-                // https://bugs.webkit.org/show_bug.cgi?id=118077
-                RELEASE_ASSERT_NOT_REACHED();
-            }
+            contiguousPutByValOutOfBounds(
+                codeBlock()->isStrictMode()
+                    ? operationPutByValBeyondArrayBoundsStrict
+                    : operationPutByValBeyondArrayBoundsNonStrict,
+                base, storage, index, value, continuation);
             
             m_out.store64(value, elementPointer);
-            return;
+            break;
         }
             
         case Array::Double: {
@@ -1362,28 +1361,26 @@ private:
 
             if (m_node->op() == PutByValAlias) {
                 m_out.storeDouble(value, elementPointer);
-                return;
+                break;
             }
             
-            if (m_node->arrayMode().isInBounds()) {
-                speculate(
-                    StoreToHoleOrOutOfBounds, noValue(), 0,
-                    m_out.aboveOrEqual(
-                        index, m_out.load32(storage, m_heaps.Butterfly_publicLength)));
-            } else {
-                // FIXME: Implement hole/OOB stores in the FTL.
-                // https://bugs.webkit.org/show_bug.cgi?id=118077
-                RELEASE_ASSERT_NOT_REACHED();
-            }
+            contiguousPutByValOutOfBounds(
+                codeBlock()->isStrictMode()
+                    ? operationPutDoubleByValBeyondArrayBoundsStrict
+                    : operationPutDoubleByValBeyondArrayBoundsNonStrict,
+                base, storage, index, value, continuation);
             
             m_out.storeDouble(value, elementPointer);
-            return;
+            break;
         }
             
         default:
             RELEASE_ASSERT_NOT_REACHED();
-            return;
+            break;
         }
+
+        m_out.jump(continuation);
+        m_out.appendTo(continuation, outerLastNext);
     }
     
     void compileGetByOffset()
@@ -1868,6 +1865,59 @@ private:
         return m_out.phi(m_out.boolean, results);
     }
     
+    template<typename FunctionType>
+    void contiguousPutByValOutOfBounds(
+        FunctionType slowPathFunction,
+        LValue base, LValue storage, LValue index, LValue value,
+        LBasicBlock continuation)
+    {
+        LValue isNotInBounds = m_out.aboveOrEqual(
+            index, m_out.load32(storage, m_heaps.Butterfly_publicLength));
+        if (m_node->arrayMode().isInBounds())
+            speculate(StoreToHoleOrOutOfBounds, noValue(), 0, isNotInBounds);
+        else {
+            LBasicBlock notInBoundsCase =
+                FTL_NEW_BLOCK(m_out, ("PutByVal not in bounds"));
+            LBasicBlock performStore =
+                FTL_NEW_BLOCK(m_out, ("PutByVal perform store"));
+                
+            m_out.branch(isNotInBounds, notInBoundsCase, performStore);
+                
+            LBasicBlock lastNext = m_out.appendTo(notInBoundsCase, performStore);
+                
+            LValue isOutOfBounds = m_out.aboveOrEqual(
+                index, m_out.load32(storage, m_heaps.Butterfly_vectorLength));
+                
+            if (!m_node->arrayMode().isOutOfBounds())
+                speculate(OutOfBounds, noValue(), 0, isOutOfBounds);
+            else {
+                LBasicBlock outOfBoundsCase =
+                    FTL_NEW_BLOCK(m_out, ("PutByVal out of bounds"));
+                LBasicBlock holeCase =
+                    FTL_NEW_BLOCK(m_out, ("PutByVal hole case"));
+                    
+                m_out.branch(isOutOfBounds, outOfBoundsCase, holeCase);
+                    
+                LBasicBlock innerLastNext = m_out.appendTo(outOfBoundsCase, holeCase);
+                    
+                vmCall(
+                    m_out.operation(slowPathFunction),
+                    m_callFrame, base, index, value);
+                    
+                m_out.jump(continuation);
+                    
+                m_out.appendTo(holeCase, innerLastNext);
+            }
+            
+            m_out.store32(
+                m_out.add(index, m_out.int32One),
+                storage, m_heaps.Butterfly_publicLength);
+                
+            m_out.jump(performStore);
+            m_out.appendTo(performStore, lastNext);
+        }
+    }
+    
     void buildSwitch(SwitchData* data, LType type, LValue switchValue)
     {
         Vector<SwitchCase> cases;
@@ -2328,6 +2378,20 @@ private:
     {
         callPreflight();
         LValue result = m_out.call(function, arg1, arg2);
+        callCheck(mode);
+        return result;
+    }
+    LValue vmCall(LValue function, LValue arg1, LValue arg2, LValue arg3, ExceptionCheckMode mode = CheckExceptions)
+    {
+        callPreflight();
+        LValue result = m_out.call(function, arg1, arg2, arg3);
+        callCheck(mode);
+        return result;
+    }
+    LValue vmCall(LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4, ExceptionCheckMode mode = CheckExceptions)
+    {
+        callPreflight();
+        LValue result = m_out.call(function, arg1, arg2, arg3, arg4);
         callCheck(mode);
         return result;
     }

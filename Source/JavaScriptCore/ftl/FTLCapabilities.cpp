@@ -125,13 +125,6 @@ inline bool canCompile(Node* node)
         default:
             return false;
         }
-        switch (node->arrayMode().speculation()) {
-        case Array::SaneChain:
-        case Array::InBounds:
-            break;
-        default:
-            return false;
-        }
         break;
     case CompareEq:
     case CompareStrictEq:

@@ -98,6 +98,16 @@ static inline LType functionType(LType returnType, LType param1, LType param2, V
     LType paramTypes[] = { param1, param2 };
     return functionType(returnType, paramTypes, 2, variadicity);
 }
+static inline LType functionType(LType returnType, LType param1, LType param2, LType param3, Variadicity variadicity = NotVariadic)
+{
+    LType paramTypes[] = { param1, param2, param3 };
+    return functionType(returnType, paramTypes, 3, variadicity);
+}
+static inline LType functionType(LType returnType, LType param1, LType param2, LType param3, LType param4, Variadicity variadicity = NotVariadic)
+{
+    LType paramTypes[] = { param1, param2, param3, param4 };
+    return functionType(returnType, paramTypes, 4, variadicity);
+}
 
 static inline LType typeOf(LValue value) { return LLVMTypeOf(value); }
 
@@ -221,6 +231,16 @@ static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, L
 {
     LValue args[] = { arg1, arg2 };
     return buildCall(builder, function, args, 2);
+}
+static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, LValue arg2, LValue arg3)
+{
+    LValue args[] = { arg1, arg2, arg3 };
+    return buildCall(builder, function, args, 3);
+}
+static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4)
+{
+    LValue args[] = { arg1, arg2, arg3, arg4 };
+    return buildCall(builder, function, args, 4);
 }
 enum TailCallMode { IsNotTailCall, IsTailCall };
 static inline void setTailCall(LValue call, TailCallMode mode) { LLVMSetTailCall(call, mode == IsTailCall); }

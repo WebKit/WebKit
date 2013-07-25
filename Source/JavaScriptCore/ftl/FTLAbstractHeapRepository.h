@@ -40,6 +40,7 @@ namespace JSC { namespace FTL {
 
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength()) \
+    macro(Butterfly_vectorLength, Butterfly::offsetOfVectorLength()) \
     macro(JSCell_structure, JSCell::structureOffset()) \
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
     macro(JSString_length, JSString::offsetOfLength()) \
