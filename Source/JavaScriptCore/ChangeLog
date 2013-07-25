@@ -1,3 +1,30 @@
+2013-05-25  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support ArithDiv
+        https://bugs.webkit.org/show_bug.cgi?id=116771
+
+        Reviewed by Oliver Hunt.
+
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::buildDiv):
+        (JSC::FTL::buildRem):
+        (JSC::FTL::buildFDiv):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        * ftl/FTLCommonValues.h:
+        (CommonValues):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileArithDiv):
+        (LowerDFGToLLVM):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::div):
+        (JSC::FTL::Output::rem):
+        (JSC::FTL::Output::doubleDiv):
+
 2013-05-25  Mark Lam  <mark.lam@apple.com>
 
         Remove Interpreter::retrieveLastCaller().

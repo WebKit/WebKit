@@ -308,6 +308,9 @@ private:
         case ArithMul:
             compileArithMul();
             break;
+        case ArithDiv:
+            compileArithDiv();
+            break;
         case ArithNegate:
             compileArithNegate();
             break;
@@ -659,6 +662,8 @@ private:
                 LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ArithMul slow case"));
                 LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithMul continuation"));
                 
+                m_out.branch(m_out.notZero32(result), continuation, slowCase);
+                
                 LBasicBlock lastNext = m_out.appendTo(slowCase, continuation);
                 speculate(NegativeZero, noValue(), 0, m_out.lessThan(left, m_out.int32Zero));
                 speculate(NegativeZero, noValue(), 0, m_out.lessThan(right, m_out.int32Zero));
@@ -674,6 +679,103 @@ private:
             m_doubleValues.add(
                 m_node,
                 m_out.doubleMul(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            break;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+    
+    void compileArithDiv()
+    {
+        switch (m_node->binaryUseKind()) {
+        case Int32Use: {
+            LValue numerator = lowInt32(m_node->child1());
+            LValue denominator = lowInt32(m_node->child2());
+            
+            LBasicBlock unsafeDenominator = FTL_NEW_BLOCK(m_out, ("ArithDiv unsafe denominator"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithDiv continuation"));
+            LBasicBlock done = FTL_NEW_BLOCK(m_out, ("ArithDiv done"));
+            
+            Vector<ValueFromBlock, 3> results;
+            
+            LValue adjustedDenominator = m_out.add(denominator, m_out.int32One);
+            
+            m_out.branch(m_out.above(adjustedDenominator, m_out.int32One), continuation, unsafeDenominator);
+            
+            LBasicBlock lastNext = m_out.appendTo(unsafeDenominator, continuation);
+            
+            LValue neg2ToThe31 = m_out.constInt32(-2147483647-1);
+            
+            if (nodeUsedAsNumber(m_node->arithNodeFlags())) {
+                speculate(Overflow, noValue(), 0, m_out.isZero32(denominator));
+                speculate(Overflow, noValue(), 0, m_out.equal(numerator, neg2ToThe31));
+                m_out.jump(continuation);
+            } else {
+                // This is the case where we convert the result to an int after we're done. So,
+                // if the denominator is zero, then the result should be result should be zero.
+                // If the denominator is not zero (i.e. it's -1 because we're guarded by the
+                // check above) and the numerator is -2^31 then the result should be -2^31.
+                
+                LBasicBlock divByZero = FTL_NEW_BLOCK(m_out, ("ArithDiv divide by zero"));
+                LBasicBlock notDivByZero = FTL_NEW_BLOCK(m_out, ("ArithDiv not divide by zero"));
+                LBasicBlock neg2ToThe31ByNeg1 = FTL_NEW_BLOCK(m_out, ("ArithDiv -2^31/-1"));
+                
+                m_out.branch(m_out.isZero32(denominator), divByZero, notDivByZero);
+                
+                m_out.appendTo(divByZero, notDivByZero);
+                results.append(m_out.anchor(m_out.int32Zero));
+                m_out.jump(done);
+                
+                m_out.appendTo(notDivByZero, neg2ToThe31ByNeg1);
+                m_out.branch(m_out.equal(numerator, neg2ToThe31), neg2ToThe31ByNeg1, continuation);
+                
+                m_out.appendTo(neg2ToThe31ByNeg1, continuation);
+                results.append(m_out.anchor(neg2ToThe31));
+                m_out.jump(done);
+            }
+            
+            m_out.appendTo(continuation, done);
+            
+            if (!nodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
+                LBasicBlock zeroNumerator = FTL_NEW_BLOCK(m_out, ("ArithDiv zero numerator"));
+                LBasicBlock numeratorContinuation = FTL_NEW_BLOCK(m_out, ("ArithDiv numerator continuation"));
+                
+                m_out.branch(m_out.isZero32(numerator), zeroNumerator, numeratorContinuation);
+                
+                LBasicBlock innerLastNext = m_out.appendTo(zeroNumerator, numeratorContinuation);
+                
+                speculate(
+                    NegativeZero, noValue(), 0, m_out.lessThan(denominator, m_out.int32Zero));
+                
+                m_out.jump(numeratorContinuation);
+                
+                m_out.appendTo(numeratorContinuation, innerLastNext);
+            }
+            
+            LValue divisionResult = m_out.div(numerator, denominator);
+            
+            if (nodeUsedAsNumber(m_node->arithNodeFlags())) {
+                speculate(
+                    Overflow, noValue(), 0,
+                    m_out.notEqual(m_out.mul(divisionResult, denominator), numerator));
+            }
+            
+            results.append(m_out.anchor(divisionResult));
+            m_out.jump(done);
+            
+            m_out.appendTo(done, lastNext);
+            
+            m_int32Values.add(m_node, m_out.phi(m_out.int32, results));
+            break;
+        }
+            
+        case NumberUse: {
+            m_doubleValues.add(
+                m_node,
+                m_out.doubleDiv(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             break;
         }
             

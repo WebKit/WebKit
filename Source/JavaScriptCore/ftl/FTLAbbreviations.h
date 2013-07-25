@@ -170,10 +170,13 @@ static inline LValue buildAlloca(LBuilder builder, LType type) { return LLVMBuil
 static inline LValue buildAdd(LBuilder builder, LValue left, LValue right) { return LLVMBuildAdd(builder, left, right, ""); }
 static inline LValue buildSub(LBuilder builder, LValue left, LValue right) { return LLVMBuildSub(builder, left, right, ""); }
 static inline LValue buildMul(LBuilder builder, LValue left, LValue right) { return LLVMBuildMul(builder, left, right, ""); }
+static inline LValue buildDiv(LBuilder builder, LValue left, LValue right) { return LLVMBuildSDiv(builder, left, right, ""); }
+static inline LValue buildRem(LBuilder builder, LValue left, LValue right) { return LLVMBuildSRem(builder, left, right, ""); }
 static inline LValue buildNeg(LBuilder builder, LValue value) { return LLVMBuildNeg(builder, value, ""); }
 static inline LValue buildFAdd(LBuilder builder, LValue left, LValue right) { return LLVMBuildFAdd(builder, left, right, ""); }
 static inline LValue buildFSub(LBuilder builder, LValue left, LValue right) { return LLVMBuildFSub(builder, left, right, ""); }
 static inline LValue buildFMul(LBuilder builder, LValue left, LValue right) { return LLVMBuildFMul(builder, left, right, ""); }
+static inline LValue buildFDiv(LBuilder builder, LValue left, LValue right) { return LLVMBuildFDiv(builder, left, right, ""); }
 static inline LValue buildFNeg(LBuilder builder, LValue value) { return LLVMBuildFNeg(builder, value, ""); }
 static inline LValue buildAnd(LBuilder builder, LValue left, LValue right) { return LLVMBuildAnd(builder, left, right, ""); }
 static inline LValue buildOr(LBuilder builder, LValue left, LValue right) { return LLVMBuildOr(builder, left, right, ""); }

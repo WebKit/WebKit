@@ -133,11 +133,14 @@ public:
     LValue add(LValue left, LValue right) { return buildAdd(m_builder, left, right); }
     LValue sub(LValue left, LValue right) { return buildSub(m_builder, left, right); }
     LValue mul(LValue left, LValue right) { return buildMul(m_builder, left, right); }
+    LValue div(LValue left, LValue right) { return buildDiv(m_builder, left, right); }
+    LValue rem(LValue left, LValue right) { return buildRem(m_builder, left, right); }
     LValue neg(LValue value) { return buildNeg(m_builder, value); }
 
     LValue doubleAdd(LValue left, LValue right) { return buildFAdd(m_builder, left, right); }
     LValue doubleSub(LValue left, LValue right) { return buildFSub(m_builder, left, right); }
     LValue doubleMul(LValue left, LValue right) { return buildFMul(m_builder, left, right); }
+    LValue doubleDiv(LValue left, LValue right) { return buildFDiv(m_builder, left, right); }
     LValue doubleNeg(LValue value) { return buildFNeg(m_builder, value); }
 
     LValue bitAnd(LValue left, LValue right) { return buildAnd(m_builder, left, right); }
