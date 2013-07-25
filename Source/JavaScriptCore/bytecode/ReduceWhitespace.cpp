@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,27 +26,29 @@
 #include "config.h"
 #include "ReduceWhitespace.h"
 
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/ASCIICType.h>
+#include <wtf/StringPrintStream.h>
 
 namespace JSC {
 
-String reduceWhitespace(const String& input)
+CString reduceWhitespace(const CString& input)
 {
-    StringBuilder builder;
+    StringPrintStream out;
+    
+    const char* data = input.data();
     
     for (unsigned i = 0; i < input.length();) {
-        if (isASCIISpace(input[i])) {
-            while (i < input.length() && isASCIISpace(input[i]))
+        if (isASCIISpace(data[i])) {
+            while (i < input.length() && isASCIISpace(data[i]))
                 ++i;
-            builder.append(' ');
+            out.print(CharacterDump(' '));
             continue;
         }
-        builder.append(input[i]);
+        out.print(CharacterDump(data[i]));
         ++i;
     }
     
-    return builder.toString();
+    return out.toCString();
 }
 
 } // namespace JSC

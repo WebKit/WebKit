@@ -97,7 +97,7 @@ public:
     static void dumpStatistics();
 
     JS_EXPORT_PRIVATE static Structure* addPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&);
-    static Structure* addPropertyTransitionToExistingStructureConcurrently(Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&);
+    static Structure* addPropertyTransitionToExistingStructureConcurrently(Structure*, StringImpl* uid, unsigned attributes, JSCell* specificValue, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* addPropertyTransitionToExistingStructure(Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&);
     static Structure* removePropertyTransition(VM&, Structure*, PropertyName, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* changePrototypeTransition(VM&, Structure*, JSValue prototype);
@@ -162,6 +162,7 @@ public:
     static void visitChildren(JSCell*, SlotVisitor&);
         
     // Will just the prototype chain intercept this property access?
+    bool prototypeChainMayInterceptStoreTo(VM&, StringImpl* uid);
     bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
         
     bool transitionDidInvolveSpecificValue() const { return !!m_specificValueInPrevious; }
@@ -242,8 +243,8 @@ public:
     PropertyOffset get(VM&, const WTF::String& name);
     JS_EXPORT_PRIVATE PropertyOffset get(VM&, PropertyName, unsigned& attributes, JSCell*& specificValue);
 
-    PropertyOffset getConcurrently(VM&, PropertyName);
-    PropertyOffset getConcurrently(VM&, PropertyName, unsigned& attributes, JSCell*& specificValue);
+    PropertyOffset getConcurrently(VM&, StringImpl* uid);
+    PropertyOffset getConcurrently(VM&, StringImpl* uid, unsigned& attributes, JSCell*& specificValue);
 
     bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
     bool hasReadOnlyOrGetterSetterPropertiesExcludingProto() const { return m_hasReadOnlyOrGetterSetterPropertiesExcludingProto; }
@@ -368,7 +369,7 @@ private:
 
     static Structure* create(VM&, const Structure*);
     
-    static Structure* addPropertyTransitionToExistingStructureImpl(Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&);
+    static Structure* addPropertyTransitionToExistingStructureImpl(Structure*, StringImpl* uid, unsigned attributes, JSCell* specificValue, PropertyOffset&);
 
     // This will return the structure that has a usable property table, that property table,
     // and the list of structures that we visited before we got to it. If it returns a

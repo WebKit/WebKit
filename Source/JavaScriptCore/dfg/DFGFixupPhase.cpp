@@ -686,7 +686,7 @@ private:
             setUseKindAndUnboxIfProfitable<CellUse>(node->child1());
             if (!isInt32Speculation(node->prediction()))
                 break;
-            if (codeBlock()->identifier(node->identifierNumber()) != vm().propertyNames->length)
+            if (m_graph.m_identifiers[node->identifierNumber()] != vm().propertyNames->length.impl())
                 break;
             CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->codeOrigin);
             ArrayProfile* arrayProfile = 
@@ -1079,12 +1079,12 @@ private:
         return true;
     }
     
-    bool isStringPrototypeMethodSane(Structure* stringPrototypeStructure, const Identifier& ident)
+    bool isStringPrototypeMethodSane(Structure* stringPrototypeStructure, StringImpl* uid)
     {
         unsigned attributesUnused;
         JSCell* specificValue;
         PropertyOffset offset = stringPrototypeStructure->getConcurrently(
-            vm(), ident, attributesUnused, specificValue);
+            vm(), uid, attributesUnused, specificValue);
         if (!isValidOffset(offset))
             return false;
         
@@ -1123,9 +1123,9 @@ private:
         // (that would call toString()). We don't want the DFG to have to distinguish
         // between the two, just because that seems like it would get confusing. So we
         // just require both methods to be sane.
-        if (!isStringPrototypeMethodSane(stringPrototypeStructure, vm().propertyNames->valueOf))
+        if (!isStringPrototypeMethodSane(stringPrototypeStructure, vm().propertyNames->valueOf.impl()))
             return false;
-        if (!isStringPrototypeMethodSane(stringPrototypeStructure, vm().propertyNames->toString))
+        if (!isStringPrototypeMethodSane(stringPrototypeStructure, vm().propertyNames->toString.impl()))
             return false;
         
         return true;

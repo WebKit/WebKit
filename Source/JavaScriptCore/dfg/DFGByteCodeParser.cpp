@@ -1124,7 +1124,7 @@ private:
     // inlining.
     bool m_haveBuiltOperandMaps;
     // Mapping between identifier names and numbers.
-    IdentifierMap m_identifierMap;
+    BorrowedIdentifierMap m_identifierMap;
     // Mapping between values and constant numbers.
     JSValueMap m_jsValueMap;
     // Index of the empty value, or UINT_MAX if there is no mapping. This is a horrible
@@ -1880,7 +1880,7 @@ bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned 
     ResolveOperation* resolveValueOperation = pc;
     switch (resolveValueOperation->m_operation) {
     case ResolveOperation::GetAndReturnGlobalProperty: {
-        ResolveGlobalStatus status = ResolveGlobalStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_currentIndex, resolveValueOperation, m_codeBlock->identifier(identifier));
+        ResolveGlobalStatus status = ResolveGlobalStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_currentIndex, resolveValueOperation, m_graph.m_identifiers[identifier]);
         if (status.isSimple()) {
             ASSERT(status.structure());
 
@@ -1916,8 +1916,8 @@ bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned 
 
         JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
 
-        Identifier ident = m_codeBlock->identifier(identifier);
-        SymbolTableEntry entry = globalObject->symbolTable()->get(ident.impl());
+        StringImpl* uid = m_graph.m_identifiers[identifier];
+        SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
         if (!m_graph.m_watchpoints.isStillValid(entry.watchpointSet())) {
             *value = addToGraph(GetGlobalVar, OpInfo(globalObject->assertRegisterIsInThisObject(pc->m_registerAddress)), OpInfo(prediction));
             return true;
@@ -2570,9 +2570,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(currentInstruction[2].u.operand);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
             
-            Identifier identifier = m_codeBlock->identifier(identifierNumber);
+            StringImpl* uid = m_graph.m_identifiers[identifierNumber];
             GetByIdStatus getByIdStatus = GetByIdStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock, m_currentIndex, identifier);
+                m_inlineStackTop->m_profiledBlock, m_currentIndex, uid);
             
             handleGetById(
                 currentInstruction[1].u.operand, prediction, base, identifierNumber, getByIdStatus);
@@ -2593,7 +2593,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             PutByIdStatus putByIdStatus = PutByIdStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock,
                 m_currentIndex,
-                m_codeBlock->identifier(identifierNumber));
+                m_graph.m_identifiers[identifierNumber]);
             bool canCountAsInlined = true;
             if (!putByIdStatus.isSet()) {
                 addToGraph(ForceOSRExit);
@@ -2715,8 +2715,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
             JSGlobalObject* globalObject = codeBlock->globalObject();
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[4].u.operand];
-            Identifier identifier = m_codeBlock->identifier(identifierNumber);
-            SymbolTableEntry entry = globalObject->symbolTable()->get(identifier.impl());
+            StringImpl* uid = m_graph.m_identifiers[identifierNumber];
+            SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
             if (!entry.couldBeWatched()) {
                 addToGraph(
                     PutGlobalVar,
@@ -3191,7 +3191,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case PutToBaseOperation::GlobalVariablePutChecked: {
                 CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
                 JSGlobalObject* globalObject = codeBlock->globalObject();
-                SymbolTableEntry entry = globalObject->symbolTable()->get(m_codeBlock->identifier(identifier).impl());
+                SymbolTableEntry entry = globalObject->symbolTable()->get(m_graph.m_identifiers[identifier]);
                 if (entry.couldBeWatched()) {
                     addToGraph(PutGlobalVarCheck,
                                OpInfo(codeBlock->globalObject()->assertRegisterIsInThisObject(putToBase->m_registerAddress)),
@@ -3564,9 +3564,9 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
 
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i) {
             StringImpl* rep = codeBlock->identifier(i).impl();
-            IdentifierMap::AddResult result = byteCodeParser->m_identifierMap.add(rep, byteCodeParser->m_codeBlock->numberOfIdentifiers());
+            BorrowedIdentifierMap::AddResult result = byteCodeParser->m_identifierMap.add(rep, byteCodeParser->m_graph.m_identifiers.numberOfIdentifiers());
             if (result.isNewEntry)
-                byteCodeParser->m_codeBlock->addIdentifier(Identifier(byteCodeParser->m_vm, rep));
+                byteCodeParser->m_graph.m_identifiers.addLazily(rep);
             m_identifierRemap[i] = result.iterator->value;
         }
         for (size_t i = 0; i < codeBlock->numberOfConstantRegisters(); ++i) {

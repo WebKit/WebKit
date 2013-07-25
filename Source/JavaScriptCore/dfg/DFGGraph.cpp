@@ -53,6 +53,7 @@ Graph::Graph(VM& vm, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, const
     , m_hasArguments(false)
     , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
     , m_mustHandleValues(mustHandleValues)
+    , m_identifiers(codeBlock)
     , m_fixpointState(BeforeFixpoint)
     , m_form(LoadStore)
     , m_unificationState(LocallyUnified)
@@ -188,7 +189,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
     if (node->hasRegisterPointer())
         out.print(comma, "global", globalObjectFor(node->codeOrigin)->findRegisterIndex(node->registerPointer()), "(", RawPointer(node->registerPointer()), ")");
     if (node->hasIdentifier())
-        out.print(comma, "id", node->identifierNumber(), "{", m_codeBlock->identifier(node->identifierNumber()).string(), "}");
+        out.print(comma, "id", node->identifierNumber(), "{", m_identifiers[node->identifierNumber()], "}");
     if (node->hasStructureSet()) {
         for (size_t i = 0; i < node->structureSet().size(); ++i)
             out.print(comma, "struct(", RawPointer(node->structureSet()[i]), ": ", IndexingTypeDump(node->structureSet()[i]->indexingType()), ")");
@@ -225,7 +226,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
     }
     if (node->hasStorageAccessData()) {
         StorageAccessData& storageAccessData = m_storageAccessData[node->storageAccessDataIndex()];
-        out.print(comma, "id", storageAccessData.identifierNumber, "{", m_codeBlock->identifier(storageAccessData.identifierNumber).string(), "}");
+        out.print(comma, "id", storageAccessData.identifierNumber, "{", m_identifiers[storageAccessData.identifierNumber], "}");
         out.print(", ", static_cast<ptrdiff_t>(storageAccessData.offset));
     }
     ASSERT(node->hasVariableAccessData() == node->hasLocal());

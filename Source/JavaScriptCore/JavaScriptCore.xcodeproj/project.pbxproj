@@ -220,6 +220,9 @@
 		0F8364B7164B0C110053329A /* DFGBranchDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8364B5164B0C0E0053329A /* DFGBranchDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F8F2B95172E04A0007DBDA5 /* FTLLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F2B93172E049E007DBDA5 /* FTLLink.cpp */; };
 		0F8F2B96172E04A3007DBDA5 /* FTLLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B94172E049E007DBDA5 /* FTLLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F8F2B99172F04FF007DBDA5 /* DFGDesiredIdentifiers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F2B97172F04FD007DBDA5 /* DFGDesiredIdentifiers.cpp */; };
+		0F8F2B9A172F0501007DBDA5 /* DFGDesiredIdentifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B98172F04FD007DBDA5 /* DFGDesiredIdentifiers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F8F2B9E17306C8D007DBDA5 /* SourceCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F2B9D17306C8B007DBDA5 /* SourceCode.cpp */; };
 		0F8F943C1667631300D61971 /* CodeSpecializationKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F943A1667631100D61971 /* CodeSpecializationKind.cpp */; };
 		0F8F94401667633000D61971 /* CodeBlockHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F943D1667632D00D61971 /* CodeBlockHash.cpp */; };
 		0F8F94411667633200D61971 /* CodeBlockHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F943E1667632D00D61971 /* CodeBlockHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1196,6 +1199,9 @@
 		0F85A31E16AB76AE0077571E /* DFGVariadicFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariadicFunction.h; path = dfg/DFGVariadicFunction.h; sourceTree = "<group>"; };
 		0F8F2B93172E049E007DBDA5 /* FTLLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FTLLink.cpp; path = ftl/FTLLink.cpp; sourceTree = "<group>"; };
 		0F8F2B94172E049E007DBDA5 /* FTLLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FTLLink.h; path = ftl/FTLLink.h; sourceTree = "<group>"; };
+		0F8F2B97172F04FD007DBDA5 /* DFGDesiredIdentifiers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredIdentifiers.cpp; path = dfg/DFGDesiredIdentifiers.cpp; sourceTree = "<group>"; };
+		0F8F2B98172F04FD007DBDA5 /* DFGDesiredIdentifiers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGDesiredIdentifiers.h; path = dfg/DFGDesiredIdentifiers.h; sourceTree = "<group>"; };
+		0F8F2B9D17306C8B007DBDA5 /* SourceCode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SourceCode.cpp; sourceTree = "<group>"; };
 		0F8F943A1667631100D61971 /* CodeSpecializationKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeSpecializationKind.cpp; sourceTree = "<group>"; };
 		0F8F943D1667632D00D61971 /* CodeBlockHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeBlockHash.cpp; sourceTree = "<group>"; };
 		0F8F943E1667632D00D61971 /* CodeBlockHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBlockHash.h; sourceTree = "<group>"; };
@@ -2559,6 +2565,7 @@
 				A77F18241641925400640A47 /* ParserModes.h */,
 				65303D631447B9E100D3F904 /* ParserTokens.h */,
 				869EBCB60E8C6D4A008722CC /* ResultType.h */,
+				0F8F2B9D17306C8B007DBDA5 /* SourceCode.cpp */,
 				65E866EE0DD59AFA00A2B2A1 /* SourceCode.h */,
 				0F493AF816D0CAD10084508B /* SourceProvider.cpp */,
 				65E866ED0DD59AFA00A2B2A1 /* SourceProvider.h */,
@@ -2894,6 +2901,8 @@
 				0FFFC94E14EF909500C72532 /* DFGCSEPhase.h */,
 				0F2FC77016E12F6F0038D976 /* DFGDCEPhase.cpp */,
 				0F2FC77116E12F6F0038D976 /* DFGDCEPhase.h */,
+				0F8F2B97172F04FD007DBDA5 /* DFGDesiredIdentifiers.cpp */,
+				0F8F2B98172F04FD007DBDA5 /* DFGDesiredIdentifiers.h */,
 				0FE853491723CDA500B618F5 /* DFGDesiredWatchpoints.cpp */,
 				0FE8534A1723CDA500B618F5 /* DFGDesiredWatchpoints.h */,
 				0FF427611591A1C9004CB9FF /* DFGDisassembler.cpp */,
@@ -3479,6 +3488,7 @@
 				86E3C612167BABD7006D760A /* JSValue.h in Headers */,
 				86E3C61B167BABEE006D760A /* JSValueInternal.h in Headers */,
 				BC18C42C0E16F5CD00B34460 /* JSValueRef.h in Headers */,
+				0F8F2B9A172F0501007DBDA5 /* DFGDesiredIdentifiers.h in Headers */,
 				BC18C42D0E16F5CD00B34460 /* JSVariableObject.h in Headers */,
 				86E3C615167BABD7006D760A /* JSVirtualMachine.h in Headers */,
 				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,
@@ -4123,6 +4133,7 @@
 				86EC9DD21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp in Sources */,
 				86880F1F14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp in Sources */,
 				86880F4D14353B2100B08D42 /* DFGSpeculativeJIT64.cpp in Sources */,
+				0F8F2B9E17306C8D007DBDA5 /* SourceCode.cpp in Sources */,
 				0FC097A1146B28CA00CF2442 /* DFGThunks.cpp in Sources */,
 				0F63944015C75F1D006A597C /* DFGTypeCheckHoistingPhase.cpp in Sources */,
 				0FBE0F7616C1DB0F0082C5E8 /* DFGUnificationPhase.cpp in Sources */,
@@ -4346,6 +4357,7 @@
 				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
 				C2DF442F1707AC0100A5CA96 /* SuperRegion.cpp in Sources */,
 				0F919D2815856773004A4E7D /* SymbolTable.cpp in Sources */,
+				0F8F2B99172F04FF007DBDA5 /* DFGDesiredIdentifiers.cpp in Sources */,
 				A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,

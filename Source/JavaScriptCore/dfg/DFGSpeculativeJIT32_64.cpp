@@ -286,7 +286,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNon
                 structureCheck.m_jump, this, operationGetByIdOptimize,
                 JSValueRegs(resultTagGPR, resultPayloadGPR),
                 static_cast<int32_t>(JSValue::CellTag), basePayloadGPR,
-                identifier(identifierNumber));
+                identifierUID(identifierNumber));
         } else {
             JITCompiler::JumpList slowCases;
             slowCases.append(structureCheck.m_jump);
@@ -295,14 +295,14 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNon
                 slowCases, this, operationGetByIdOptimize,
                 JSValueRegs(resultTagGPR, resultPayloadGPR),
                 static_cast<int32_t>(JSValue::CellTag), basePayloadGPR,
-                identifier(identifierNumber));
+                identifierUID(identifierNumber));
         }
     } else {
         if (!slowPathTarget.isSet()) {
             slowPath = slowPathCall(
                 structureCheck.m_jump, this, operationGetByIdOptimize,
                 JSValueRegs(resultTagGPR, resultPayloadGPR), baseTagGPROrNone, basePayloadGPR,
-                identifier(identifierNumber));
+                identifierUID(identifierNumber));
         } else {
             JITCompiler::JumpList slowCases;
             slowCases.append(structureCheck.m_jump);
@@ -310,7 +310,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNon
             slowPath = slowPathCall(
                 slowCases, this, operationGetByIdOptimize,
                 JSValueRegs(resultTagGPR, resultPayloadGPR), baseTagGPROrNone, basePayloadGPR,
-                identifier(identifierNumber));
+                identifierUID(identifierNumber));
         }
     }
     m_jit.addPropertyAccess(
@@ -351,14 +351,14 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
     if (!slowPathTarget.isSet()) {
         slowPath = slowPathCall(
             structureCheck.m_jump, this, optimizedCall, NoResult, valueTagGPR, valuePayloadGPR,
-            basePayloadGPR, identifier(identifierNumber));
+            basePayloadGPR, identifierUID(identifierNumber));
     } else {
         JITCompiler::JumpList slowCases;
         slowCases.append(structureCheck.m_jump);
         slowCases.append(slowPathTarget);
         slowPath = slowPathCall(
             slowCases, this, optimizedCall, NoResult, valueTagGPR, valuePayloadGPR,
-            basePayloadGPR, identifier(identifierNumber));
+            basePayloadGPR, identifierUID(identifierNumber));
     }
     RegisterSet currentlyUsedRegisters = usedRegisters();
     currentlyUsedRegisters.clear(scratchGPR);
@@ -4224,7 +4224,7 @@ void SpeculativeJIT::compile(Node* node)
         
         WatchpointSet* watchpointSet =
             m_jit.globalObjectFor(node->codeOrigin)->symbolTable()->get(
-                identifier(node->identifierNumberForCheck())->impl()).watchpointSet();
+                identifierUID(node->identifierNumberForCheck())).watchpointSet();
         addSlowPathGenerator(
             slowPathCall(
                 m_jit.branchTest8(
@@ -4252,7 +4252,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case GlobalVarWatchpoint: {
         WatchpointSet* set = m_jit.globalObjectFor(node->codeOrigin)->symbolTable()->get(
-            identifier(node->identifierNumberForCheck())->impl()).watchpointSet();
+            identifierUID(node->identifierNumberForCheck())).watchpointSet();
         m_jit.addLazily(speculationWatchpoint(), set);
         
 #if DFG_ENABLE(JIT_ASSERT)
@@ -4473,7 +4473,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRResult resultPayload(this);
         GPRResult2 resultTag(this);
         ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolve, resultTag.gpr(), resultPayload.gpr(), identifier(data.identifierNumber), data.resolveOperations);
+        callOperation(operationResolve, resultTag.gpr(), resultPayload.gpr(), identifierUID(data.identifierNumber), data.resolveOperations);
         jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
         break;
     }
@@ -4483,7 +4483,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRResult resultPayload(this);
         GPRResult2 resultTag(this);
         ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolveBase, resultTag.gpr(), resultPayload.gpr(), identifier(data.identifierNumber), data.resolveOperations, data.putToBaseOperation);
+        callOperation(operationResolveBase, resultTag.gpr(), resultPayload.gpr(), identifierUID(data.identifierNumber), data.resolveOperations, data.putToBaseOperation);
         jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
         break;
     }
@@ -4493,7 +4493,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRResult resultPayload(this);
         GPRResult2 resultTag(this);
         ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolveBaseStrictPut, resultTag.gpr(), resultPayload.gpr(), identifier(data.identifierNumber), data.resolveOperations, data.putToBaseOperation);
+        callOperation(operationResolveBaseStrictPut, resultTag.gpr(), resultPayload.gpr(), identifierUID(data.identifierNumber), data.resolveOperations, data.putToBaseOperation);
         jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
         break;
     }
@@ -4536,7 +4536,7 @@ void SpeculativeJIT::compile(Node* node)
             slowPathCall(
                 structuresNotMatch, this, operationResolveGlobal,
                 JSValueRegs(resultTagGPR, resultPayloadGPR), resolveInfoGPR, globalObjectGPR,
-                &m_jit.codeBlock()->identifier(data.identifierNumber)));
+                identifierUID(data.identifierNumber)));
 
         jsValueResult(resultTagGPR, resultPayloadGPR, node);
         break;

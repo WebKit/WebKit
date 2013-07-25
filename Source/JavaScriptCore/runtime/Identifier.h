@@ -59,6 +59,7 @@ namespace JSC {
         int length() const { return m_string.length(); }
         
         CString ascii() const { return m_string.ascii(); }
+        CString utf8() const { return m_string.utf8(); }
 
         static Identifier createLCharFromUChar(VM* vm, const UChar* s, int length) { return Identifier(vm, add8(vm, s, length)); }
 
@@ -247,6 +248,7 @@ namespace JSC {
     };
 
     typedef HashMap<RefPtr<StringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, IdentifierMapIndexHashTraits> IdentifierMap;
+    typedef HashMap<StringImpl*, int, IdentifierRepHash, HashTraits<StringImpl*>, IdentifierMapIndexHashTraits> BorrowedIdentifierMap;
 
     template<typename U, typename V>
     HashSet<StringImpl*>::AddResult IdentifierTable::add(U value)

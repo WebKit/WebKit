@@ -34,6 +34,7 @@
 #include "DFGArgumentPosition.h"
 #include "DFGAssemblyHelpers.h"
 #include "DFGBasicBlock.h"
+#include "DFGDesiredIdentifiers.h"
 #include "DFGDesiredWatchpoints.h"
 #include "DFGDominators.h"
 #include "DFGLongLivedState.h"
@@ -727,6 +728,7 @@ public:
     unsigned m_osrEntryBytecodeIndex;
     Operands<JSValue> m_mustHandleValues;
     DesiredWatchpoints m_watchpoints;
+    DesiredIdentifiers m_identifiers;
     
     OptimizationFixpointState m_fixpointState;
     GraphForm m_form;

@@ -1239,7 +1239,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             break;
         }
 
-        value.set((value.m_type & ~SpecEmpty) | SpecFunction);
+        value.setType((value.m_type & ~SpecEmpty) | SpecFunction);
         break;
     }
 
@@ -1296,7 +1296,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             if (Structure* structure = forNode(node->child1()).bestProvenStructure()) {
                 GetByIdStatus status = GetByIdStatus::computeFor(
                     m_graph.m_vm, structure,
-                    m_graph.m_codeBlock->identifier(node->identifierNumber()));
+                    m_graph.m_identifiers[node->identifierNumber()]);
                 if (status.isSimple()) {
                     // Assert things that we can't handle and that the computeFor() method
                     // above won't be able to return.
@@ -1497,7 +1497,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                 m_graph.m_vm,
                 m_graph.globalObjectFor(node->codeOrigin),
                 structure,
-                m_graph.m_codeBlock->identifier(node->identifierNumber()),
+                m_graph.m_identifiers[node->identifierNumber()],
                 node->op() == PutByIdDirect);
             if (status.isSimpleReplace()) {
                 forNode(node->child1()).filter(m_graph, structure);

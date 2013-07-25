@@ -37,6 +37,7 @@ namespace WTF {
 
 class CString;
 class String;
+class StringImpl;
 
 class PrintStream {
     WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(PrintStream);
@@ -211,9 +212,11 @@ public:
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const char*);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const CString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const String&);
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const StringImpl*);
 inline void printInternal(PrintStream& out, char* value) { printInternal(out, static_cast<const char*>(value)); }
 inline void printInternal(PrintStream& out, CString& value) { printInternal(out, static_cast<const CString&>(value)); }
 inline void printInternal(PrintStream& out, String& value) { printInternal(out, static_cast<const String&>(value)); }
+inline void printInternal(PrintStream& out, StringImpl* value) { printInternal(out, static_cast<const StringImpl*>(value)); }
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, bool);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, int);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, unsigned);

@@ -580,9 +580,9 @@ public:
         return valueOfJSConstant(node).isNull();
     }
 
-    Identifier* identifier(unsigned index)
+    StringImpl* identifierUID(unsigned index)
     {
-        return &m_jit.codeBlock()->identifier(index);
+        return m_jit.graph().m_identifiers[index];
     }
 
     // Spill all VirtualRegisters back to the JSStack.
@@ -1129,24 +1129,24 @@ public:
         m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
         return call;
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EGriJsgI operation, GPRReg result, GPRReg arg1, GPRReg arg2, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_EGriJsgI operation, GPRReg result, GPRReg arg1, GPRReg arg2, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(uid));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EI operation, GPRReg result, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_EI operation, GPRReg result, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(uid));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EIRo operation, GPRReg result, Identifier* identifier, ResolveOperations* operations)
+    JITCompiler::Call callOperation(J_DFGOperation_EIRo operation, GPRReg result, StringImpl* uid, ResolveOperations* operations)
     {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(identifier), TrustedImmPtr(operations));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(uid), TrustedImmPtr(operations));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EIRoPtbo operation, GPRReg result, Identifier* identifier, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
+    JITCompiler::Call callOperation(J_DFGOperation_EIRoPtbo operation, GPRReg result, StringImpl* uid, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
     {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(identifier), TrustedImmPtr(operations), TrustedImmPtr(putToBaseOperations));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(uid), TrustedImmPtr(operations), TrustedImmPtr(putToBaseOperations));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EA operation, GPRReg result, GPRReg arg1)
@@ -1179,14 +1179,14 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(cell));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_ECI operation, GPRReg result, GPRReg arg1, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_ECI operation, GPRReg result, GPRReg arg1, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(uid));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EJI operation, GPRReg result, GPRReg arg1, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_EJI operation, GPRReg result, GPRReg arg1, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(uid));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EDA operation, GPRReg result, FPRReg arg1, GPRReg arg2)
@@ -1288,9 +1288,9 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheck(operation);
     }
-    JITCompiler::Call callOperation(V_DFGOperation_EJCI operation, GPRReg arg1, GPRReg arg2, Identifier* identifier)
+    JITCompiler::Call callOperation(V_DFGOperation_EJCI operation, GPRReg arg1, GPRReg arg2, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(uid));
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EJJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
@@ -1354,9 +1354,9 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EGriJsgI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, GPRReg arg2, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_EGriJsgI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, GPRReg arg2, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(uid));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1)
@@ -1364,9 +1364,9 @@ public:
         m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EI operation, GPRReg resultTag, GPRReg resultPayload, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_EI operation, GPRReg resultTag, GPRReg resultPayload, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(uid));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EA operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1)
@@ -1405,19 +1405,19 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(cell));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_ECI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_ECI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(uid));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EJI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_EJI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, TrustedImmPtr(uid));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EJI operation, GPRReg resultTag, GPRReg resultPayload, int32_t arg1Tag, GPRReg arg1Payload, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_EJI operation, GPRReg resultTag, GPRReg resultPayload, int32_t arg1Tag, GPRReg arg1Payload, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, TrustedImm32(arg1Tag), TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, TrustedImm32(arg1Tag), TrustedImmPtr(uid));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EDA operation, GPRReg resultTag, GPRReg resultPayload, FPRReg arg1, GPRReg arg2)
@@ -1499,15 +1499,15 @@ public:
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
 
-    JITCompiler::Call callOperation(J_DFGOperation_EIRo operation, GPRReg resultTag, GPRReg resultPayload, Identifier* identifier, ResolveOperations* operations)
+    JITCompiler::Call callOperation(J_DFGOperation_EIRo operation, GPRReg resultTag, GPRReg resultPayload, StringImpl* uid, ResolveOperations* operations)
     {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(identifier), TrustedImmPtr(operations));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(uid), TrustedImmPtr(operations));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
 
-    JITCompiler::Call callOperation(J_DFGOperation_EIRoPtbo operation, GPRReg resultTag, GPRReg resultPayload, Identifier* identifier, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
+    JITCompiler::Call callOperation(J_DFGOperation_EIRoPtbo operation, GPRReg resultTag, GPRReg resultPayload, StringImpl* uid, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
     {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(identifier), TrustedImmPtr(operations), TrustedImmPtr(putToBaseOperations));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(uid), TrustedImmPtr(operations), TrustedImmPtr(putToBaseOperations));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
 
@@ -1527,9 +1527,9 @@ public:
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, arg2, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheck(operation);
     }
-    JITCompiler::Call callOperation(V_DFGOperation_EJCI operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2, Identifier* identifier)
+    JITCompiler::Call callOperation(V_DFGOperation_EJCI operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, arg2, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, arg2, TrustedImmPtr(uid));
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_DFGOperation_ECJJ operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)

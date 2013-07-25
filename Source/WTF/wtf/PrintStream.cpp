@@ -62,6 +62,11 @@ void printInternal(PrintStream& out, const String& string)
     out.print(string.utf8());
 }
 
+void printInternal(PrintStream& out, const StringImpl* string)
+{
+    out.print(string->utf8());
+}
+
 void printInternal(PrintStream& out, bool value)
 {
     if (value)

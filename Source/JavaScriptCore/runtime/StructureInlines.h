@@ -80,12 +80,12 @@ inline PropertyOffset Structure::get(VM& vm, const WTF::String& name)
     return entry ? entry->offset : invalidOffset;
 }
     
-inline PropertyOffset Structure::getConcurrently(VM& vm, PropertyName propertyName)
+inline PropertyOffset Structure::getConcurrently(VM& vm, StringImpl* uid)
 {
     unsigned attributesIgnored;
     JSCell* specificValueIgnored;
     return getConcurrently(
-        vm, propertyName, attributesIgnored, specificValueIgnored);
+        vm, uid, attributesIgnored, specificValueIgnored);
 }
 
 inline bool Structure::masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject)

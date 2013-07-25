@@ -87,9 +87,9 @@ CodeBlockHash InlineCallFrame::hash() const
     return executable->hashFor(specializationKind());
 }
 
-String InlineCallFrame::inferredName() const
+CString InlineCallFrame::inferredName() const
 {
-    return jsCast<FunctionExecutable*>(executable.get())->inferredName().string();
+    return jsCast<FunctionExecutable*>(executable.get())->inferredName().utf8();
 }
 
 CodeBlock* InlineCallFrame::baselineCodeBlock() const

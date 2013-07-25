@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,6 +85,8 @@ namespace JSC {
                 return String();
             return m_provider->getRange(m_startChar, m_endChar);
         }
+        
+        CString toUTF8() const;
         
         intptr_t providerID() const
         {

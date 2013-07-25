@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,11 @@
 
 #include "PropertyOffset.h"
 #include <wtf/NotFound.h>
+#include <wtf/text/StringImpl.h>
 
 namespace JSC {
 
 class CodeBlock;
-class Identifier;
 class VM;
 class JSGlobalObject;
 class Structure;
@@ -90,8 +90,8 @@ public:
         ASSERT((m_state == NoInformation || m_state == TakesSlowPath) == (m_offset == invalidOffset));
     }
     
-    static PutByIdStatus computeFor(CodeBlock*, unsigned bytecodeIndex, Identifier&);
-    static PutByIdStatus computeFor(VM&, JSGlobalObject*, Structure*, Identifier&, bool isDirect);
+    static PutByIdStatus computeFor(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);
+    static PutByIdStatus computeFor(VM&, JSGlobalObject*, Structure*, StringImpl* uid, bool isDirect);
     
     State state() const { return m_state; }
     
@@ -107,7 +107,7 @@ public:
     PropertyOffset offset() const { return m_offset; }
     
 private:
-    static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, Identifier&);
+    static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);
     
     State m_state;
     Structure* m_oldStructure;

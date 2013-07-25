@@ -1,3 +1,36 @@
+2013-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG tries to ref/deref StringImpls in a ton of places
+        https://bugs.webkit.org/show_bug.cgi?id=115300
+
+        Reviewed by Geoffrey Garen.
+        
+        Make it possible to do more things directly to StringImpl*'s, including being
+        able to directly do utf8 conversion on a substring without creating the
+        substring first.
+        
+        Add assertions to StringImpl that it isn't being ref/deref'd from the
+        compilation thread.
+
+        * wtf/PrintStream.cpp:
+        (WTF::printInternal):
+        (WTF):
+        * wtf/PrintStream.h:
+        (WTF):
+        (WTF::printInternal):
+        * wtf/StringPrintStream.h:
+        (WTF):
+        (WTF::toCString):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::utf8ForRange):
+        (WTF::StringImpl::utf8):
+        (WTF):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+        (WTF::StringImpl::hasAtLeastOneRef):
+        (WTF::StringImpl::ref):
+        (WTF::StringImpl::deref):
+
 2013-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: String::utf8() should also be available as StringImpl::utf8() so that you don't have to ref() a StringImpl just to get its utf8()

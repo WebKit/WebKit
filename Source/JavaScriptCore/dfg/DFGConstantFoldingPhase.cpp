@@ -155,7 +155,7 @@ private:
                 bool needsCellCheck = m_state.forNode(child).m_type & ~SpecCell;
                 
                 GetByIdStatus status = GetByIdStatus::computeFor(
-                    vm(), structure, codeBlock()->identifier(identifierNumber));
+                    vm(), structure, m_graph.m_identifiers[identifierNumber]);
                 
                 if (!status.isSimple()) {
                     // FIXME: We could handle prototype cases.
@@ -223,7 +223,7 @@ private:
                     vm(),
                     m_graph.globalObjectFor(codeOrigin),
                     structure,
-                    codeBlock()->identifier(identifierNumber),
+                    m_graph.m_identifiers[identifierNumber],
                     node->op() == PutByIdDirect);
                 
                 if (!status.isSimpleReplace() && !status.isSimpleTransition())

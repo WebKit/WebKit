@@ -35,11 +35,11 @@
 
 namespace JSC {
 
-PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, Identifier& ident)
+PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, StringImpl* uid)
 {
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
-    UNUSED_PARAM(ident);
+    UNUSED_PARAM(uid);
 #if ENABLE(LLINT)
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
 
@@ -49,7 +49,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     
     if (instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id)
         || instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id_out_of_line)) {
-        PropertyOffset offset = structure->getConcurrently(*profiledBlock->vm(), ident);
+        PropertyOffset offset = structure->getConcurrently(*profiledBlock->vm(), uid);
         if (!isValidOffset(offset))
             return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
         
@@ -68,7 +68,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     ASSERT(newStructure);
     ASSERT(chain);
     
-    PropertyOffset offset = newStructure->getConcurrently(*profiledBlock->vm(), ident);
+    PropertyOffset offset = newStructure->getConcurrently(*profiledBlock->vm(), uid);
     if (!isValidOffset(offset))
         return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
     
@@ -78,23 +78,23 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 #endif
 }
 
-PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, Identifier& ident)
+PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, StringImpl* uid)
 {
     CodeBlockLocker locker(profiledBlock->m_lock);
     
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
-    UNUSED_PARAM(ident);
+    UNUSED_PARAM(uid);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
     if (!profiledBlock->numberOfStructureStubInfos())
-        return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
+        return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
     
     if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex))
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     
     StructureStubInfo& stubInfo = profiledBlock->getStubInfo(bytecodeIndex);
     if (!stubInfo.seen)
-        return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
+        return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
     
     if (stubInfo.resetByGC)
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
@@ -107,7 +107,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     case access_put_by_id_replace: {
         PropertyOffset offset =
             stubInfo.u.putByIdReplace.baseObjectStructure->getConcurrently(
-                *profiledBlock->vm(), ident);
+                *profiledBlock->vm(), uid);
         if (isValidOffset(offset)) {
             return PutByIdStatus(
                 SimpleReplace,
@@ -123,7 +123,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         ASSERT(stubInfo.u.putByIdTransition.previousStructure->transitionWatchpointSetHasBeenInvalidated());
         PropertyOffset offset = 
             stubInfo.u.putByIdTransition.structure->getConcurrently(
-                *profiledBlock->vm(), ident);
+                *profiledBlock->vm(), uid);
         if (isValidOffset(offset)) {
             return PutByIdStatus(
                 SimpleTransition,
@@ -143,9 +143,9 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
 #endif // ENABLE(JIT)
 }
 
-PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, Structure* structure, Identifier& ident, bool isDirect)
+PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, Structure* structure, StringImpl* uid, bool isDirect)
 {
-    if (PropertyName(ident).asIndex() != PropertyName::NotAnIndex)
+    if (toUInt32FromStringImpl(uid) != PropertyName::NotAnIndex)
         return PutByIdStatus(TakesSlowPath);
     
     if (structure->typeInfo().overridesGetOwnPropertySlot())
@@ -157,7 +157,7 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
     unsigned attributes;
     JSCell* specificValue;
     PropertyOffset offset = structure->getConcurrently(
-        vm, ident, attributes, specificValue);
+        vm, uid, attributes, specificValue);
     if (isValidOffset(offset)) {
         if (attributes & (Accessor | ReadOnly))
             return PutByIdStatus(TakesSlowPath);
@@ -183,7 +183,7 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
     
     if (!isDirect) {
         // If the prototype chain has setters or read-only properties, then give up.
-        if (structure->prototypeChainMayInterceptStoreTo(vm, ident))
+        if (structure->prototypeChainMayInterceptStoreTo(vm, uid))
             return PutByIdStatus(TakesSlowPath);
         
         // If the prototype chain hasn't been normalized (i.e. there are proxies or dictionaries)
@@ -210,7 +210,7 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
     // - If we're not storing a value that could be specific: again, this would only be a
     //   problem if the existing transition did have a specific value, which we check for
     //   by passing 0 for the specificValue.
-    Structure* transition = Structure::addPropertyTransitionToExistingStructureConcurrently(structure, ident, 0, 0, offset);
+    Structure* transition = Structure::addPropertyTransitionToExistingStructureConcurrently(structure, uid, 0, 0, offset);
     if (!transition)
         return PutByIdStatus(TakesSlowPath); // This occurs in bizarre cases only. See above.
     ASSERT(!transition->transitionDidInvolveSpecificValue());

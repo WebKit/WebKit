@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ReduceWhitespace_h
-#define ReduceWhitespace_h
+#ifndef DFGDesiredIdentifiers_h
+#define DFGDesiredIdentifiers_h
 
-#include <wtf/text/CString.h>
+#include <wtf/Platform.h>
 
-namespace JSC {
+#if ENABLE(DFG_JIT)
 
-// Replace all whitespace runs with a single space.
-CString reduceWhitespace(const CString&);
+#include "CodeBlock.h"
+#include "Identifier.h"
 
-} // namespace JSC
+namespace JSC { namespace DFG {
 
-#endif // ReduceWhitespace_h
+class DesiredIdentifiers {
+public:
+    DesiredIdentifiers(CodeBlock*);
+    ~DesiredIdentifiers();
+    
+    unsigned numberOfIdentifiers()
+    {
+        return m_codeBlock->numberOfIdentifiers() + m_addedIdentifiers.size();
+    }
+    
+    void addLazily(StringImpl*);
+    
+    StringImpl* at(unsigned index) const
+    {
+        StringImpl* result;
+        if (index < m_codeBlock->numberOfIdentifiers())
+            result = m_codeBlock->identifier(index).impl();
+        else
+            result = m_addedIdentifiers[index - m_codeBlock->numberOfIdentifiers()];
+        ASSERT(result->hasAtLeastOneRef());
+        return result;
+    }
+    
+    StringImpl* operator[](unsigned index) const { return at(index); }
+    
+    void reallyAdd(VM&);
+    
+private:
+    CodeBlock* m_codeBlock;
+    Vector<StringImpl*> m_addedIdentifiers;
+};
+
+} } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
+
+#endif // DFGDesiredIdentifiers_h
+

@@ -33,11 +33,11 @@
 
 namespace JSC {
 
-static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* structure, Identifier& identifier)
+static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* structure, StringImpl* uid)
 {
     unsigned attributesIgnored;
     JSCell* specificValue;
-    PropertyOffset offset = structure->getConcurrently(*codeBlock->vm(), identifier, attributesIgnored, specificValue);
+    PropertyOffset offset = structure->getConcurrently(*codeBlock->vm(), uid, attributesIgnored, specificValue);
     if (structure->isDictionary())
         specificValue = 0;
     if (!isValidOffset(offset))
@@ -46,7 +46,7 @@ static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* 
     return ResolveGlobalStatus(ResolveGlobalStatus::Simple, structure, offset, specificValue);
 }
 
-ResolveGlobalStatus ResolveGlobalStatus::computeFor(CodeBlock* codeBlock, int, ResolveOperation* operation, Identifier& identifier)
+ResolveGlobalStatus ResolveGlobalStatus::computeFor(CodeBlock* codeBlock, int, ResolveOperation* operation, StringImpl* uid)
 {
     CodeBlockLocker locker(codeBlock->m_lock);
     
@@ -54,7 +54,7 @@ ResolveGlobalStatus ResolveGlobalStatus::computeFor(CodeBlock* codeBlock, int, R
     if (!operation->m_structure)
         return ResolveGlobalStatus();
     
-    return computeForStructure(codeBlock, operation->m_structure.get(), identifier);
+    return computeForStructure(codeBlock, operation->m_structure.get(), uid);
 }
 
 } // namespace JSC

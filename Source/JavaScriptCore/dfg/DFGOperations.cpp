@@ -268,15 +268,15 @@ void* DFG_OPERATION function##WithReturnAddress(ExecState*, ReturnAddressPtr) RE
 FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)
 
 #define J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function) \
-EncodedJSValue DFG_OPERATION function##WithReturnAddress(ExecState*, JSCell*, Identifier*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
+EncodedJSValue DFG_OPERATION function##WithReturnAddress(ExecState*, JSCell*, StringImpl*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
 FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)
 
 #define J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function) \
-EncodedJSValue DFG_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
+EncodedJSValue DFG_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, StringImpl*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
 FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)
 
 #define V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
-void DFG_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, JSCell*, Identifier*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
+void DFG_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, JSCell*, StringImpl*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
 FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function)
 
 namespace JSC { namespace DFG {
@@ -485,70 +485,74 @@ EncodedJSValue DFG_OPERATION operationGetByValArrayInt(ExecState* exec, JSArray*
     return JSValue::encode(JSValue(base).get(exec, index));
 }
 
-EncodedJSValue DFG_OPERATION operationGetById(ExecState* exec, EncodedJSValue base, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationGetById(ExecState* exec, EncodedJSValue base, StringImpl* uid)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue);
-    return JSValue::encode(baseValue.get(exec, *propertyName, slot));
+    Identifier ident(vm, uid);
+    return JSValue::encode(baseValue.get(exec, ident, slot));
 }
 
 J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(operationGetByIdBuildList);
-EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ExecState* exec, EncodedJSValue base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ExecState* exec, EncodedJSValue base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    
+
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(exec, *propertyName, slot);
+    JSValue result = baseValue.get(exec, ident, slot);
 
     if (accessType == static_cast<AccessType>(stubInfo.accessType))
-        dfgBuildGetByIDList(exec, baseValue, *propertyName, slot, stubInfo);
+        dfgBuildGetByIDList(exec, baseValue, ident, slot, stubInfo);
 
     return JSValue::encode(result);
 }
 
 J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(operationGetByIdProtoBuildList);
-EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ExecState* exec, EncodedJSValue base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ExecState* exec, EncodedJSValue base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(exec, *propertyName, slot);
+    JSValue result = baseValue.get(exec, ident, slot);
     
     if (accessType == static_cast<AccessType>(stubInfo.accessType))
-        dfgBuildGetByIDProtoList(exec, baseValue, *propertyName, slot, stubInfo);
+        dfgBuildGetByIDProtoList(exec, baseValue, ident, slot, stubInfo);
 
     return JSValue::encode(result);
 }
 
 J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(operationGetByIdOptimize);
-EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    
+
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(exec, *propertyName, slot);
+    JSValue result = baseValue.get(exec, ident, slot);
     
     if (accessType == static_cast<AccessType>(stubInfo.accessType)) {
         if (stubInfo.seen)
-            dfgRepatchGetByID(exec, baseValue, *propertyName, slot, stubInfo);
+            dfgRepatchGetByID(exec, baseValue, ident, slot, stubInfo);
         else
             stubInfo.seen = true;
     }
@@ -556,12 +560,14 @@ EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState
     return JSValue::encode(result);
 }
 
-EncodedJSValue DFG_OPERATION operationCallCustomGetter(ExecState* exec, JSCell* base, PropertySlot::GetValueFunc function, Identifier* ident)
+EncodedJSValue DFG_OPERATION operationCallCustomGetter(ExecState* exec, JSCell* base, PropertySlot::GetValueFunc function, StringImpl* uid)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    return JSValue::encode(function(exec, asObject(base), *ident));
+    Identifier ident(vm, uid);
+    
+    return JSValue::encode(function(exec, asObject(base), ident));
 }
 
 EncodedJSValue DFG_OPERATION operationCallGetter(ExecState* exec, JSCell* base, JSCell* value)
@@ -738,50 +744,55 @@ size_t DFG_OPERATION operationRegExpTest(ExecState* exec, JSCell* base, JSCell* 
     return asRegExpObject(base)->test(exec, input);
 }
         
-void DFG_OPERATION operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     PutPropertySlot slot(true);
-    base->methodTable()->put(base, exec, *propertyName, JSValue::decode(encodedValue), slot);
+    base->methodTable()->put(base, exec, ident, JSValue::decode(encodedValue), slot);
 }
 
-void DFG_OPERATION operationPutByIdNonStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdNonStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     PutPropertySlot slot(false);
-    base->methodTable()->put(base, exec, *propertyName, JSValue::decode(encodedValue), slot);
+    base->methodTable()->put(base, exec, ident, JSValue::decode(encodedValue), slot);
 }
 
-void DFG_OPERATION operationPutByIdDirectStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdDirectStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     PutPropertySlot slot(true);
     ASSERT(base->isObject());
-    asObject(base)->putDirect(exec->vm(), *propertyName, JSValue::decode(encodedValue), slot);
+    asObject(base)->putDirect(exec->vm(), ident, JSValue::decode(encodedValue), slot);
 }
 
-void DFG_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName)
+void DFG_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     PutPropertySlot slot(false);
     ASSERT(base->isObject());
-    asObject(base)->putDirect(exec->vm(), *propertyName, JSValue::decode(encodedValue), slot);
+    asObject(base)->putDirect(exec->vm(), ident, JSValue::decode(encodedValue), slot);
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdStrictOptimize);
-void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
@@ -789,23 +800,24 @@ void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ExecState* ex
     JSValue baseValue(base);
     PutPropertySlot slot(true);
     
-    baseValue.put(exec, *propertyName, value, slot);
+    baseValue.put(exec, ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
     if (stubInfo.seen)
-        dfgRepatchPutByID(exec, baseValue, *propertyName, slot, stubInfo, NotDirect);
+        dfgRepatchPutByID(exec, baseValue, ident, slot, stubInfo, NotDirect);
     else
         stubInfo.seen = true;
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdNonStrictOptimize);
-void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
@@ -813,23 +825,24 @@ void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState*
     JSValue baseValue(base);
     PutPropertySlot slot(false);
     
-    baseValue.put(exec, *propertyName, value, slot);
+    baseValue.put(exec, ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
     if (stubInfo.seen)
-        dfgRepatchPutByID(exec, baseValue, *propertyName, slot, stubInfo, NotDirect);
+        dfgRepatchPutByID(exec, baseValue, ident, slot, stubInfo, NotDirect);
     else
         stubInfo.seen = true;
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectStrictOptimize);
-void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
@@ -837,23 +850,24 @@ void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecSta
     PutPropertySlot slot(true);
     
     ASSERT(base->isObject());
-    asObject(base)->putDirect(exec->vm(), *propertyName, value, slot);
+    asObject(base)->putDirect(exec->vm(), ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
     if (stubInfo.seen)
-        dfgRepatchPutByID(exec, base, *propertyName, slot, stubInfo, Direct);
+        dfgRepatchPutByID(exec, base, ident, slot, stubInfo, Direct);
     else
         stubInfo.seen = true;
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectNonStrictOptimize);
-void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
@@ -861,23 +875,24 @@ void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(Exec
     PutPropertySlot slot(false);
     
     ASSERT(base->isObject());
-    asObject(base)->putDirect(exec->vm(), *propertyName, value, slot);
+    asObject(base)->putDirect(exec->vm(), ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
     if (stubInfo.seen)
-        dfgRepatchPutByID(exec, base, *propertyName, slot, stubInfo, Direct);
+        dfgRepatchPutByID(exec, base, ident, slot, stubInfo, Direct);
     else
         stubInfo.seen = true;
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdStrictBuildList);
-void DFG_OPERATION operationPutByIdStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
@@ -885,20 +900,21 @@ void DFG_OPERATION operationPutByIdStrictBuildListWithReturnAddress(ExecState* e
     JSValue baseValue(base);
     PutPropertySlot slot(true);
     
-    baseValue.put(exec, *propertyName, value, slot);
+    baseValue.put(exec, ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
-    dfgBuildPutByIdList(exec, baseValue, *propertyName, slot, stubInfo, NotDirect);
+    dfgBuildPutByIdList(exec, baseValue, ident, slot, stubInfo, NotDirect);
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdNonStrictBuildList);
-void DFG_OPERATION operationPutByIdNonStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdNonStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
@@ -906,20 +922,21 @@ void DFG_OPERATION operationPutByIdNonStrictBuildListWithReturnAddress(ExecState
     JSValue baseValue(base);
     PutPropertySlot slot(false);
     
-    baseValue.put(exec, *propertyName, value, slot);
+    baseValue.put(exec, ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
-    dfgBuildPutByIdList(exec, baseValue, *propertyName, slot, stubInfo, NotDirect);
+    dfgBuildPutByIdList(exec, baseValue, ident, slot, stubInfo, NotDirect);
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectStrictBuildList);
-void DFG_OPERATION operationPutByIdDirectStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdDirectStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
     
@@ -927,20 +944,21 @@ void DFG_OPERATION operationPutByIdDirectStrictBuildListWithReturnAddress(ExecSt
     PutPropertySlot slot(true);
     
     ASSERT(base->isObject());
-    asObject(base)->putDirect(exec->vm(), *propertyName, value, slot);
+    asObject(base)->putDirect(exec->vm(), ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
-    dfgBuildPutByIdList(exec, base, *propertyName, slot, stubInfo, Direct);
+    dfgBuildPutByIdList(exec, base, ident, slot, stubInfo, Direct);
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectNonStrictBuildList);
-void DFG_OPERATION operationPutByIdDirectNonStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, Identifier* propertyName, ReturnAddressPtr returnAddress)
+void DFG_OPERATION operationPutByIdDirectNonStrictBuildListWithReturnAddress(ExecState* exec, EncodedJSValue encodedValue, JSCell* base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
+    Identifier ident(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
@@ -948,12 +966,12 @@ void DFG_OPERATION operationPutByIdDirectNonStrictBuildListWithReturnAddress(Exe
     PutPropertySlot slot(false);
     
     ASSERT(base->isObject());
-    asObject(base)->putDirect(exec->vm(), *propertyName, value, slot);
+    asObject(base)->putDirect(exec->vm(), ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
-    dfgBuildPutByIdList(exec, base, *propertyName, slot, stubInfo, Direct);
+    dfgBuildPutByIdList(exec, base, ident, slot, stubInfo, Direct);
 }
 
 size_t DFG_OPERATION operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -1229,30 +1247,31 @@ void DFG_OPERATION operationNotifyGlobalVarWrite(WatchpointSet* watchpointSet)
     watchpointSet->notifyWrite();
 }
 
-EncodedJSValue DFG_OPERATION operationResolve(ExecState* exec, Identifier* propertyName, ResolveOperations* operations)
+EncodedJSValue DFG_OPERATION operationResolve(ExecState* exec, StringImpl* uid, ResolveOperations* operations)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    return JSValue::encode(JSScope::resolve(exec, *propertyName, operations));
+    Identifier ident(vm, uid);
+    return JSValue::encode(JSScope::resolve(exec, ident, operations));
 }
 
-EncodedJSValue DFG_OPERATION operationResolveBase(ExecState* exec, Identifier* propertyName, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
+EncodedJSValue DFG_OPERATION operationResolveBase(ExecState* exec, StringImpl* uid, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    
-    return JSValue::encode(JSScope::resolveBase(exec, *propertyName, false, operations, putToBaseOperations));
+    Identifier ident(vm, uid);
+    return JSValue::encode(JSScope::resolveBase(exec, ident, false, operations, putToBaseOperations));
 }
 
-EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState* exec, Identifier* propertyName, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
+EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState* exec, StringImpl* uid, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    
-    return JSValue::encode(JSScope::resolveBase(exec, *propertyName, true, operations, putToBaseOperations));
+    Identifier ident(vm, uid);
+    return JSValue::encode(JSScope::resolveBase(exec, ident, true, operations, putToBaseOperations));
 }
 
-EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState* exec, ResolveOperation* resolveOperation, JSGlobalObject* globalObject, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState* exec, ResolveOperation* resolveOperation, JSGlobalObject* globalObject, StringImpl* uid)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -1260,7 +1279,8 @@ EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState* exec, ResolveOper
     UNUSED_PARAM(resolveOperation);
     UNUSED_PARAM(globalObject);
     ASSERT(resolveOperation->m_operation == ResolveOperation::GetAndReturnGlobalProperty);
-    return JSValue::encode(JSScope::resolveGlobal(exec, *propertyName, globalObject, resolveOperation));
+    Identifier ident(vm, uid);
+    return JSValue::encode(JSScope::resolveGlobal(exec, ident, globalObject, resolveOperation));
 }
 
 EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValue value)

@@ -25,6 +25,7 @@
 
 #include <limits.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/CompilationThread.h>
 #include <wtf/Forward.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringHasher.h>
@@ -548,6 +549,7 @@ public:
     QStringData* qStringData() { return bufferOwnership() == BufferAdoptedQString ? m_qStringData : 0; }
 #endif
     
+    WTF_EXPORT_STRING_API CString utf8ForRange(unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
     WTF_EXPORT_STRING_API CString utf8(ConversionMode = LenientConversion) const;
 
 private:
@@ -591,19 +593,27 @@ public:
             return existingHash();
         return hashSlowCase();
     }
-
+    
     inline bool hasOneRef() const
     {
         return m_refCount == s_refCountIncrement;
     }
+    
+    // This method is useful for assertions.
+    inline bool hasAtLeastOneRef() const
+    {
+        return !!m_refCount;
+    }
 
     inline void ref()
     {
+        ASSERT(!isCompilationThread());
         m_refCount += s_refCountIncrement;
     }
 
     inline void deref()
     {
+        ASSERT(!isCompilationThread());        
         unsigned tempRefCount = m_refCount - s_refCountIncrement;
         if (!tempRefCount) {
             StringImpl::destroy(this);

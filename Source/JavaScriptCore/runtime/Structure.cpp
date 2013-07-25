@@ -321,12 +321,12 @@ void Structure::despecifyDictionaryFunction(VM& vm, PropertyName propertyName)
     entry->specificValue.clear();
 }
 
-Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
+Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, StringImpl* uid, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
 {
     ASSERT(!structure->isDictionary());
     ASSERT(structure->isObject());
 
-    if (Structure* existingTransition = structure->m_transitionTable.get(propertyName.uid(), attributes)) {
+    if (Structure* existingTransition = structure->m_transitionTable.get(uid, attributes)) {
         JSCell* specificValueInPrevious = existingTransition->m_specificValueInPrevious.get();
         if (specificValueInPrevious && specificValueInPrevious != specificValue)
             return 0;
@@ -341,13 +341,13 @@ Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* st
 Structure* Structure::addPropertyTransitionToExistingStructure(Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
 {
     ASSERT(!isCompilationThread());
-    return addPropertyTransitionToExistingStructureImpl(structure, propertyName, attributes, specificValue, offset);
+    return addPropertyTransitionToExistingStructureImpl(structure, propertyName.uid(), attributes, specificValue, offset);
 }
 
-Structure* Structure::addPropertyTransitionToExistingStructureConcurrently(Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
+Structure* Structure::addPropertyTransitionToExistingStructureConcurrently(Structure* structure, StringImpl* uid, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
 {
     Locker locker(structure->m_lock);
-    return addPropertyTransitionToExistingStructureImpl(structure, propertyName, attributes, specificValue, offset);
+    return addPropertyTransitionToExistingStructureImpl(structure, uid, attributes, specificValue, offset);
 }
 
 bool Structure::anyObjectInChainMayInterceptIndexedAccesses() const
@@ -789,7 +789,7 @@ PropertyTable* Structure::copyPropertyTableForPinning(VM& vm, Structure* owner)
     return PropertyTable::create(vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
 }
 
-PropertyOffset Structure::getConcurrently(VM&, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
+PropertyOffset Structure::getConcurrently(VM&, StringImpl* uid, unsigned& attributes, JSCell*& specificValue)
 {
     Vector<Structure*, 8> structures;
     Structure* structure;
@@ -798,7 +798,7 @@ PropertyOffset Structure::getConcurrently(VM&, PropertyName propertyName, unsign
     findStructuresAndMapForMaterialization(structures, structure, table);
     
     if (table) {
-        PropertyMapEntry* entry = table->find(propertyName.uid()).first;
+        PropertyMapEntry* entry = table->find(uid).first;
         if (entry) {
             attributes = entry->attributes;
             specificValue = entry->specificValue.get();
@@ -811,7 +811,7 @@ PropertyOffset Structure::getConcurrently(VM&, PropertyName propertyName, unsign
     
     for (unsigned i = structures.size(); i--;) {
         structure = structures[i];
-        if (structure->m_nameInPrevious.get() != propertyName.uid())
+        if (structure->m_nameInPrevious.get() != uid)
             continue;
         
         attributes = structure->m_attributesInPrevious;
@@ -970,13 +970,13 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
         thisObject->m_propertyTableUnsafe.clear();
 }
 
-bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyName)
+bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, StringImpl* uid)
 {
     // Note, this method is called from two kinds of places: (1) assertions and (2)
     // the compilation thread. As such, it does things somewhat carefully to ensure
     // thread safety. Currently that only affects the way we do Structure::get().
     
-    unsigned i = propertyName.asIndex();
+    unsigned i = toUInt32FromStringImpl(uid);
     if (i != PropertyName::NotAnIndex)
         return anyObjectInChainMayInterceptIndexedAccesses();
     
@@ -989,7 +989,7 @@ bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyN
         
         unsigned attributes;
         JSCell* specificValue;
-        PropertyOffset offset = current->getConcurrently(vm, propertyName, attributes, specificValue);
+        PropertyOffset offset = current->getConcurrently(vm, uid, attributes, specificValue);
         if (!JSC::isValidOffset(offset))
             continue;
         
@@ -998,6 +998,11 @@ bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyN
         
         return false;
     }
+}
+
+bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyName)
+{
+    return prototypeChainMayInterceptStoreTo(vm, propertyName.uid());
 }
 
 #if DO_PROPERTYMAP_CONSTENCY_CHECK

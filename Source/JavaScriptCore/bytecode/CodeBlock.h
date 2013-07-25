@@ -109,10 +109,10 @@ namespace JSC {
 
         UnlinkedCodeBlock* unlinkedCodeBlock() const { return m_unlinkedCode.get(); }
 
-        String inferredName() const;
+        CString inferredName() const;
         CodeBlockHash hash() const;
-        String sourceCodeForTools() const; // Not quite the actual source we parsed; this will do things like prefix the source for a function with a reified signature.
-        String sourceCodeOnOneLine() const; // As sourceCodeForTools(), but replaces all whitespace runs with a single space.
+        CString sourceCodeForTools() const; // Not quite the actual source we parsed; this will do things like prefix the source for a function with a reified signature.
+        CString sourceCodeOnOneLine() const; // As sourceCodeForTools(), but replaces all whitespace runs with a single space.
         void dumpAssumingJITType(PrintStream&, JITCode::JITType) const;
         void dump(PrintStream&) const;
 
@@ -983,7 +983,7 @@ namespace JSC {
 
         void dumpBytecode(PrintStream&, ExecState*, const Instruction* begin, const Instruction*&);
 
-        CString registerName(ExecState*, int r) const;
+        CString registerName(int r) const;
         void printUnaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
         void printBinaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
         void printConditionalJump(PrintStream&, ExecState*, const Instruction*, const Instruction*&, int location, const char* op);

@@ -244,6 +244,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     m_jitCode->common.compilation = m_graph.m_compilation;
     
     m_graph.m_watchpoints.reallyAdd();
+    m_graph.m_identifiers.reallyAdd(*m_vm);
 }
 
 bool JITCompiler::compile()

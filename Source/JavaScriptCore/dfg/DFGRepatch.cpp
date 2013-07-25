@@ -458,7 +458,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
                 stubJit.setupArgumentsWithExecState(
                     baseGPR,
                     MacroAssembler::TrustedImmPtr(FunctionPtr(slot.customGetter()).executableAddress()),
-                    MacroAssembler::TrustedImmPtr(const_cast<Identifier*>(&ident)));
+                    MacroAssembler::TrustedImmPtr(ident.impl()));
                 operationFunction = operationCallCustomGetter;
             }
             

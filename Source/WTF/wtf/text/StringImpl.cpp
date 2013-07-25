@@ -1959,10 +1959,11 @@ static inline void putUTF8Triple(char*& buffer, UChar ch)
     *buffer++ = static_cast<char>((ch & 0x3F) | 0x80);
 }
 
-CString StringImpl::utf8(ConversionMode mode) const
+CString StringImpl::utf8ForRange(unsigned offset, unsigned length, ConversionMode mode) const
 {
-    unsigned length = this->length();
-
+    ASSERT(offset <= this->length());
+    ASSERT(offset + length <= this->length());
+    
     if (!length)
         return CString("", 0);
 
@@ -1983,12 +1984,12 @@ CString StringImpl::utf8(ConversionMode mode) const
     char* buffer = bufferVector.data();
 
     if (is8Bit()) {
-        const LChar* characters = this->characters8();
+        const LChar* characters = this->characters8() + offset;
 
         ConversionResult result = convertLatin1ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size());
         ASSERT_UNUSED(result, result != targetExhausted); // (length * 3) should be sufficient for any conversion
     } else {
-        const UChar* characters = this->characters16();
+        const UChar* characters = this->characters16() + offset;
 
         if (mode == StrictConversionReplacingUnpairedSurrogatesWithFFFD) {
             const UChar* charactersEnd = characters + length;
@@ -2036,6 +2037,11 @@ CString StringImpl::utf8(ConversionMode mode) const
     }
 
     return CString(bufferVector.data(), buffer - bufferVector.data());
+}
+
+CString StringImpl::utf8(ConversionMode mode) const
+{
+    return utf8ForRange(0, length(), mode);
 }
 
 } // namespace WTF
