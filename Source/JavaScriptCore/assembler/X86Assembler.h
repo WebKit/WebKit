@@ -79,19 +79,23 @@ namespace X86Registers {
 #if USE(MASM_PROBE)
     #define FOR_EACH_CPU_REGISTER(V) \
         FOR_EACH_CPU_GPREGISTER(V) \
+        FOR_EACH_CPU_SPECIAL_REGISTER(V) \
         FOR_EACH_CPU_FPREGISTER(V)
 
     #define FOR_EACH_CPU_GPREGISTER(V) \
         V(void*, eax) \
+        V(void*, ebx) \
         V(void*, ecx) \
         V(void*, edx) \
-        V(void*, ebx) \
-        V(void*, esp) \
-        V(void*, ebp) \
         V(void*, esi) \
         V(void*, edi) \
-        FOR_EACH_X86_64_CPU_GPREGISTER(V) \
-        V(void*, eip)
+        V(void*, ebp) \
+        V(void*, esp) \
+        FOR_EACH_X86_64_CPU_GPREGISTER(V)
+
+    #define FOR_EACH_CPU_SPECIAL_REGISTER(V) \
+        V(void*, eip) \
+        V(void*, eflags) \
 
     #define FOR_EACH_CPU_FPREGISTER(V) \
         V(__m128, xmm0) \

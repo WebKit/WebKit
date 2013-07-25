@@ -25,26 +25,23 @@
 
 #include "config.h"
 
-#if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
-#include "MacroAssemblerX86Common.h"
+#if ENABLE(ASSEMBLER) && CPU(ARM_THUMB2)
+#include "MacroAssemblerARMv7.h"
+
+#if USE(MASM_PROBE)
+#include <wtf/StdLibExtras.h>
+#endif
 
 namespace JSC {
 
 #if USE(MASM_PROBE)
 
-void MacroAssemblerX86Common::ProbeContext::dumpCPURegisters(const char* indentation)
+void MacroAssemblerARMv7::ProbeContext::dumpCPURegisters(const char* indentation)
 {
-#if CPU(X86)
     #define DUMP_GPREGISTER(_type, _regName) { \
         int32_t value = reinterpret_cast<int32_t>(cpu._regName); \
-        dataLogF("%s    %6s: 0x%08x   %d\n", indentation, #_regName, value, value) ; \
+        dataLogF("%s    %5s: 0x%08x   %d\n", indentation, #_regName, value, value) ; \
     }
-#elif CPU(X86_64)
-    #define DUMP_GPREGISTER(_type, _regName) { \
-        int64_t value = reinterpret_cast<int64_t>(cpu._regName); \
-        dataLogF("%s    %6s: 0x%016llx   %lld\n", indentation, #_regName, value, value) ; \
-    }
-#endif
     FOR_EACH_CPU_GPREGISTER(DUMP_GPREGISTER)
     FOR_EACH_CPU_SPECIAL_REGISTER(DUMP_GPREGISTER)
     #undef DUMP_GPREGISTER
@@ -52,14 +49,14 @@ void MacroAssemblerX86Common::ProbeContext::dumpCPURegisters(const char* indenta
     #define DUMP_FPREGISTER(_type, _regName) { \
         uint32_t* u = reinterpret_cast<uint32_t*>(&cpu._regName); \
         double* d = reinterpret_cast<double*>(&cpu._regName); \
-        dataLogF("%s    %6s: 0x%08x%08x 0x%08x%08x   %12g %12g\n", \
-            indentation, #_regName, u[3], u[2], u[1], u[0], d[1], d[0]); \
+        dataLogF("%s    %5s: 0x %08x %08x   %12g\n", \
+            indentation, #_regName, u[1], u[0], d[0]); \
     }
     FOR_EACH_CPU_FPREGISTER(DUMP_FPREGISTER)
     #undef DUMP_FPREGISTER
 }
 
-void MacroAssemblerX86Common::ProbeContext::dump(const char* indentation)
+void MacroAssemblerARMv7::ProbeContext::dump(const char* indentation)
 {
     if (!indentation)
         indentation = "";
@@ -77,8 +74,30 @@ void MacroAssemblerX86Common::ProbeContext::dump(const char* indentation)
     dataLogF("%s}\n", indentation);
 }
 
+
+extern "C" void ctiMasmProbeTrampoline();
+
+// For details on "What code is emitted for the probe?" and "What values are in
+// the saved registers?", see comment for MacroAssemblerX86::probe() in
+// MacroAssemblerX86_64.h.
+
+void MacroAssemblerARMv7::probe(MacroAssemblerARMv7::ProbeFunction function, void* arg1, void* arg2)
+{
+    push(RegisterID::sp);
+    push(RegisterID::lr);
+    push(RegisterID::ip);
+    push(RegisterID::r0);
+    // The following uses RegisterID::ip. So, they must come after we push ip above.
+    push(trustedImm32FromPtr(arg2));
+    push(trustedImm32FromPtr(arg1));
+    push(trustedImm32FromPtr(function));
+
+    move(trustedImm32FromPtr(ctiMasmProbeTrampoline), RegisterID::ip);
+    m_assembler.blx(RegisterID::ip);
+}
 #endif // USE(MASM_PROBE)
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
+#endif // ENABLE(ASSEMBLER)
+

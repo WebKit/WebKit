@@ -34,6 +34,8 @@
 
 namespace JSC {
 
+struct JITStackFrame;
+
 class MacroAssemblerARMv7 : public AbstractMacroAssembler<ARMv7Assembler> {
     // FIXME: switch dataTempRegister & addressTempRegister, or possibly use r7?
     //        - dTR is likely used more than aTR, and we'll get better instruction
@@ -1796,6 +1798,33 @@ public:
         UNREACHABLE_FOR_PLATFORM();
     }
 
+#if USE(MASM_PROBE)
+    struct CPUState {
+        #define DECLARE_REGISTER(_type, _regName) \
+            _type _regName;
+        FOR_EACH_CPU_REGISTER(DECLARE_REGISTER)
+        #undef DECLARE_REGISTER
+    };
+
+    struct ProbeContext;
+    typedef void (*ProbeFunction)(struct ProbeContext*);
+
+    struct ProbeContext {
+        ProbeFunction probeFunction;
+        void* arg1;
+        void* arg2;
+        JITStackFrame* jitStackFrame;
+        CPUState cpu;
+
+        void dump(const char* indentation = 0);
+    private:
+        void dumpCPURegisters(const char* indentation);
+    };
+
+    // For details about probe(), see comment in MacroAssemblerX86_64.h.
+    void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
+#endif // USE(MASM_PROBE)
+
 protected:
     ALWAYS_INLINE Jump jump()
     {
@@ -1905,6 +1934,23 @@ private:
     {
         ARMv7Assembler::relinkCall(call.dataLocation(), destination.executableAddress());
     }
+
+#if USE(MASM_PROBE)
+    inline TrustedImm32 trustedImm32FromPtr(void* ptr)
+    {
+        return TrustedImm32(TrustedImmPtr(ptr));
+    }
+
+    inline TrustedImm32 trustedImm32FromPtr(ProbeFunction function)
+    {
+        return TrustedImm32(TrustedImmPtr(reinterpret_cast<void*>(function)));
+    }
+
+    inline TrustedImm32 trustedImm32FromPtr(void (*function)())
+    {
+        return TrustedImm32(TrustedImmPtr(reinterpret_cast<void*>(function)));
+    }
+#endif
 
     bool m_makeJumpPatchable;
 };

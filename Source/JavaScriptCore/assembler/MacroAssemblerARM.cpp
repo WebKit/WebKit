@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013 Apple Inc.
  * Copyright (C) 2009 University of Szeged
  * All rights reserved.
  *
@@ -30,6 +31,10 @@
 
 #include "MacroAssemblerARM.h"
 
+#if USE(MASM_PROBE)
+#include <wtf/StdLibExtras.h>
+#endif
+
 #if OS(LINUX)
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -55,7 +60,7 @@ static bool isVFPPresent()
         }
         close(fd);
     }
-#endif
+#endif // OS(LINUX)
 
 #if (COMPILER(RVCT) && defined(__TARGET_FPU_VFP)) || (COMPILER(GCC) && defined(__VFP_FP__))
     return true;
@@ -92,8 +97,72 @@ void MacroAssemblerARM::load32WithUnalignedHalfWords(BaseIndex address, Register
     }
     m_assembler.orr(dest, dest, m_assembler.lsl(ARMRegisters::S0, 16));
 }
-#endif
+#endif // CPU(ARMV5_OR_LOWER)
+
+#if USE(MASM_PROBE)
+
+void MacroAssemblerARM::ProbeContext::dumpCPURegisters(const char* indentation)
+{
+    #define DUMP_GPREGISTER(_type, _regName) { \
+        int32_t value = reinterpret_cast<int32_t>(cpu._regName); \
+        dataLogF("%s    %5s: 0x%08x   %d\n", indentation, #_regName, value, value) ; \
+    }
+    FOR_EACH_CPU_GPREGISTER(DUMP_GPREGISTER)
+    FOR_EACH_CPU_SPECIAL_REGISTER(DUMP_GPREGISTER)
+    #undef DUMP_GPREGISTER
+
+    #define DUMP_FPREGISTER(_type, _regName) { \
+        uint32_t* u = reinterpret_cast<uint32_t*>(&cpu._regName); \
+        double* d = reinterpret_cast<double*>(&cpu._regName); \
+        dataLogF("%s    %5s: 0x %08x %08x   %12g\n", \
+            indentation, #_regName, u[1], u[0], d[0]); \
+    }
+    FOR_EACH_CPU_FPREGISTER(DUMP_FPREGISTER)
+    #undef DUMP_FPREGISTER
+}
+
+void MacroAssemblerARM::ProbeContext::dump(const char* indentation)
+{
+    if (!indentation)
+        indentation = "";
+
+    dataLogF("%sProbeContext %p {\n", indentation, this);
+    dataLogF("%s  probeFunction: %p\n", indentation, probeFunction);
+    dataLogF("%s  arg1: %p %llu\n", indentation, arg1, reinterpret_cast<int64_t>(arg1));
+    dataLogF("%s  arg2: %p %llu\n", indentation, arg2, reinterpret_cast<int64_t>(arg2));
+    dataLogF("%s  jitStackFrame: %p\n", indentation, jitStackFrame);
+    dataLogF("%s  cpu: {\n", indentation);
+
+    dumpCPURegisters(indentation);
+
+    dataLogF("%s  }\n", indentation);
+    dataLogF("%s}\n", indentation);
+}
+
+
+extern "C" void ctiMasmProbeTrampoline();
+
+// For details on "What code is emitted for the probe?" and "What values are in
+// the saved registers?", see comment for MacroAssemblerX86::probe() in
+// MacroAssemblerX86_64.h.
+
+void MacroAssemblerARM::probe(MacroAssemblerARM::ProbeFunction function, void* arg1, void* arg2)
+{
+    push(RegisterID::sp);
+    push(RegisterID::lr);
+    push(RegisterID::ip);
+    push(RegisterID::S0);
+    // The following uses RegisterID::S0. So, they must come after we push S0 above.
+    push(trustedImm32FromPtr(arg2));
+    push(trustedImm32FromPtr(arg1));
+    push(trustedImm32FromPtr(function));
+
+    move(trustedImm32FromPtr(ctiMasmProbeTrampoline), RegisterID::S0);
+    m_assembler.blx(RegisterID::S0);
 
 }
+#endif // USE(MASM_PROBE)
+
+} // namespace JSC
 
 #endif // ENABLE(ASSEMBLER) && CPU(ARM_TRADITIONAL)

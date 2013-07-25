@@ -687,12 +687,12 @@ extern "C" void ctiMasmProbeTrampoline();
 // we also need to preserve the CPU registers and set up the ProbeContext to be
 // passed to the user probe function.
 //
-// Hence, we do only the minimum here to preserve the rax (to be used as a
-// scratch register) and rsp registers, and pass the probe arguments. We'll let
-// the ctiMasmProbeTrampoline handle the rest of the probe invocation work
-// i.e. saving the CPUState (and setting up the ProbeContext), calling the user
-// probe function, and restoring the CPUState before returning to JIT generated
-// code.
+// Hence, we do only the minimum here to preserve a scratch register (i.e. rax
+// in this case) and the stack pointer (i.e. rsp), and pass the probe arguments.
+// We'll let the ctiMasmProbeTrampoline handle the rest of the probe invocation
+// work i.e. saving the CPUState (and setting up the ProbeContext), calling the
+// user probe function, and restoring the CPUState before returning to JIT
+// generated code.
 //
 // What values are in the saved registers?
 // ======================================
@@ -701,34 +701,22 @@ extern "C" void ctiMasmProbeTrampoline();
 // that are expected at the start of the instruction immediately following the
 // probe.
 //
-// Specifcally, the saved rsp will point to the stack position before we
-// push the ProbeContext frame. The saved rip will point to the address of
-// the instruction immediately following the probe. 
+// Specifcally, the saved stack pointer register will point to the stack
+// position before we push the ProbeContext frame. The saved rip will point to
+// the address of the instruction immediately following the probe. 
 
 inline void MacroAssemblerX86_64::probe(MacroAssemblerX86_64::ProbeFunction function, void* arg1, void* arg2)
 {
-    RegisterID esp = RegisterID::esp;
-    #define probeContextField(field) Address(esp, offsetof(ProbeContext, field))
-
-    // The X86_64 ABI specifies that the worse case stack alignment requirement
-    // is 32 bytes.
-    const int probeFrameSize = WTF::roundUpToMultipleOf(32, sizeof(ProbeContext));
-    sub64(TrustedImm32(probeFrameSize), esp);
-
-    store64(RegisterID::eax, probeContextField(cpu.eax));
-
-    move(TrustedImm32(probeFrameSize), RegisterID::eax);
-    add64(esp, RegisterID::eax);
-    store64(RegisterID::eax, probeContextField(cpu.esp));
-
-    store64(trustedImm64FromPtr(function), probeContextField(probeFunction));
-    store64(trustedImm64FromPtr(arg1), probeContextField(arg1));
-    store64(trustedImm64FromPtr(arg2), probeContextField(arg2));
-
+    push(RegisterID::esp);
+    push(RegisterID::eax);
+    move(trustedImm64FromPtr(arg2), RegisterID::eax);
+    push(RegisterID::eax);
+    move(trustedImm64FromPtr(arg1), RegisterID::eax);
+    push(RegisterID::eax);
+    move(trustedImm64FromPtr(function), RegisterID::eax);
+    push(RegisterID::eax);
     move(trustedImm64FromPtr(ctiMasmProbeTrampoline), RegisterID::eax);
     call(RegisterID::eax);
-
-    #undef probeContextField
 }
 #endif // USE(MASM_PROBE)
 

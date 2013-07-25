@@ -292,22 +292,7 @@ public:
     }
 
 #if USE(MASM_PROBE)
-    // This function emits code to preserve the CPUState (e.g. registers),
-    // call a user supplied probe function, and restore the CPUState before
-    // continuing with other JIT generated code.
-    //
-    // The user supplied probe function will be called with a single pointer to
-    // a ProbeContext struct (defined above) which contains, among other things,
-    // the preserved CPUState. This allows the user probe function to inspect
-    // the CPUState at that point in the JIT generated code.
-    //
-    // If the user probe function alters the register values in the ProbeContext,
-    // the altered values will be loaded into the CPU registers when the probe
-    // returns.
-    //
-    // The ProbeContext is stack allocated and is only valid for the duration
-    // of the call to the user probe function.
-
+    // For details about probe(), see comment in MacroAssemblerX86_64.h.
     void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
 #endif // USE(MASM_PROBE)
 
@@ -352,55 +337,20 @@ private:
 
 extern "C" void ctiMasmProbeTrampoline();
 
-// What code is emitted for the probe?
-// ==================================
-// We want to keep the size of the emitted probe invocation code as compact as
-// possible to minimize the perturbation to the JIT generated code. However,
-// we also need to preserve the CPU registers and set up the ProbeContext to be
-// passed to the user probe function.
-//
-// Hence, we do only the minimum here to preserve the eax (to be used as a
-// scratch register) and esp registers, and pass the probe arguments. We'll let
-// the ctiMasmProbeTrampoline handle the rest of the probe invocation work
-// i.e. saving the CPUState (and setting up the ProbeContext), calling the user
-// probe function, and restoring the CPUState before returning to JIT generated
-// code.
-//
-// What values are in the saved registers?
-// ======================================
-// Conceptually, the saved registers should contain values as if the probe
-// is not present in the JIT generated code. Hence, they should contain values
-// that are expected at the start of the instruction immediately following the
-// probe.
-//
-// Specifcally, the saved esp will point to the stack position before we
-// push the ProbeContext frame. The saved eip will point to the address of
-// the instruction immediately following the probe. 
+// For details on "What code is emitted for the probe?" and "What values are in
+// the saved registers?", see comment for MacroAssemblerX86::probe() in
+// MacroAssemblerX86_64.h.
 
 inline void MacroAssemblerX86::probe(MacroAssemblerX86::ProbeFunction function, void* arg1, void* arg2)
 {
-    RegisterID esp = RegisterID::esp;
-    #define probeContextField(field) Address(esp, offsetof(ProbeContext, field))
-
-    // The X86_64 ABI specifies that the worse case stack alignment requirement
-    // is 32 bytes.
-    const int probeFrameSize = WTF::roundUpToMultipleOf(32, sizeof(ProbeContext));
-    sub32(TrustedImm32(probeFrameSize), esp);
-
-    store32(RegisterID::eax, probeContextField(cpu.eax));
-
-    move(TrustedImm32(probeFrameSize), RegisterID::eax);
-    add32(esp, RegisterID::eax);
-    store32(RegisterID::eax, probeContextField(cpu.esp));
-
-    store32(trustedImm32FromPtr(function), probeContextField(probeFunction));
-    store32(trustedImm32FromPtr(arg1), probeContextField(arg1));
-    store32(trustedImm32FromPtr(arg2), probeContextField(arg2));
+    push(RegisterID::esp);
+    push(RegisterID::eax);
+    push(trustedImm32FromPtr(arg2));
+    push(trustedImm32FromPtr(arg1));
+    push(trustedImm32FromPtr(function));
 
     move(trustedImm32FromPtr(ctiMasmProbeTrampoline), RegisterID::eax);
     call(RegisterID::eax);
-
-    #undef probeContextField
 }
 #endif // USE(MASM_PROBE)
 

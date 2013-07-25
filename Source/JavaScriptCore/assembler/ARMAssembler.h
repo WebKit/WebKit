@@ -50,7 +50,7 @@ namespace JSC {
             r9,
             r10,
             r11,
-            r12, S1 = r12,
+            r12, ip = r12, S1 = r12,
             r13, sp = r13,
             r14, lr = r14,
             r15, pc = r15
@@ -91,6 +91,52 @@ namespace JSC {
             d31
         } FPRegisterID;
 
+#if USE(MASM_PROBE)
+    #define FOR_EACH_CPU_REGISTER(V) \
+        FOR_EACH_CPU_GPREGISTER(V) \
+        FOR_EACH_CPU_SPECIAL_REGISTER(V) \
+        FOR_EACH_CPU_FPREGISTER(V)
+
+    #define FOR_EACH_CPU_GPREGISTER(V) \
+        V(void*, r0) \
+        V(void*, r1) \
+        V(void*, r2) \
+        V(void*, r3) \
+        V(void*, r4) \
+        V(void*, r5) \
+        V(void*, r6) \
+        V(void*, r7) \
+        V(void*, r8) \
+        V(void*, r9) \
+        V(void*, r10) \
+        V(void*, r11) \
+        V(void*, ip) \
+        V(void*, sp) \
+        V(void*, lr) \
+        V(void*, pc)
+
+    #define FOR_EACH_CPU_SPECIAL_REGISTER(V) \
+        V(void*, apsr) \
+        V(void*, fpscr) \
+
+    #define FOR_EACH_CPU_FPREGISTER(V) \
+        V(double, d0) \
+        V(double, d1) \
+        V(double, d2) \
+        V(double, d3) \
+        V(double, d4) \
+        V(double, d5) \
+        V(double, d6) \
+        V(double, d7) \
+        V(double, d8) \
+        V(double, d9) \
+        V(double, d10) \
+        V(double, d11) \
+        V(double, d12) \
+        V(double, d13) \
+        V(double, d14) \
+        V(double, d15)
+#endif // USE(MASM_PROBE)
     } // namespace ARMRegisters
 
     class ARMAssembler {

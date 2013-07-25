@@ -172,6 +172,77 @@ namespace ARMRegisters {
         ASSERT(!(reg & 1));
         return (FPDoubleRegisterID)(reg >> 1);
     }
+
+#if USE(MASM_PROBE)
+    #define FOR_EACH_CPU_REGISTER(V) \
+        FOR_EACH_CPU_GPREGISTER(V) \
+        FOR_EACH_CPU_SPECIAL_REGISTER(V) \
+        FOR_EACH_CPU_FPREGISTER(V)
+
+    #define FOR_EACH_CPU_GPREGISTER(V) \
+        V(void*, r0) \
+        V(void*, r1) \
+        V(void*, r2) \
+        V(void*, r3) \
+        V(void*, r4) \
+        V(void*, r5) \
+        V(void*, r6) \
+        V(void*, r7) \
+        V(void*, r8) \
+        V(void*, r9) \
+        V(void*, r10) \
+        V(void*, r11) \
+        V(void*, ip) \
+        V(void*, sp) \
+        V(void*, lr) \
+        V(void*, pc)
+
+    #define FOR_EACH_CPU_SPECIAL_REGISTER(V) \
+        V(void*, apsr) \
+        V(void*, fpscr) \
+
+    #define FOR_EACH_CPU_FPREGISTER(V) \
+        V(double, d0) \
+        V(double, d1) \
+        V(double, d2) \
+        V(double, d3) \
+        V(double, d4) \
+        V(double, d5) \
+        V(double, d6) \
+        V(double, d7) \
+        V(double, d8) \
+        V(double, d9) \
+        V(double, d10) \
+        V(double, d11) \
+        V(double, d12) \
+        V(double, d13) \
+        V(double, d14) \
+        V(double, d15) \
+        FOR_EACH_CPU_FPREGISTER_EXTENSION(V)
+
+#if CPU(APPLE_ARMV7S)
+    #define FOR_EACH_CPU_FPREGISTER_EXTENSION(V) \
+        V(double, d16) \
+        V(double, d17) \
+        V(double, d18) \
+        V(double, d19) \
+        V(double, d20) \
+        V(double, d21) \
+        V(double, d22) \
+        V(double, d23) \
+        V(double, d24) \
+        V(double, d25) \
+        V(double, d26) \
+        V(double, d27) \
+        V(double, d28) \
+        V(double, d29) \
+        V(double, d30) \
+        V(double, d31)
+#else
+    #define FOR_EACH_CPU_FPREGISTER_EXTENSION(V) // Nothing to add.
+#endif // CPU(APPLE_ARMV7S)
+
+#endif // USE(MASM_PROBE)
 }
 
 class ARMv7Assembler;

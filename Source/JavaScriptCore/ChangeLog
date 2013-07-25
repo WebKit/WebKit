@@ -1,3 +1,61 @@
+2013-05-28  Mark Lam  <mark.lam@apple.com>
+
+        Misc JIT probe enhacements.
+        https://bugs.webkit.org/show_bug.cgi?id=116586.
+
+        Reviewed by Michael Saboff.
+
+        1. Added JIT probe support for ARMv7 and traditional ARM.
+           Built and tested on ARMv7. ARM version not tested nor built. 
+        2. Fix the following bugs in the X86 and X86_64 probes:
+           a. Cannot assume that the stack pointer is already aligned when
+              we push args for the probe. Instead, we ensure the stack
+              alignment at runtime when we set up the probe call.
+              This is now done in the ctiMasmProbeTrampoline.
+           b. On return, the user probe function may have altered the stack
+              pointer value to be restored. Previously, if the sp restore value
+              points to some of the other register restore values in the
+              ProbeContext record, we will fail to return from the probe having
+              those user specified value as we're expected to do.
+              This is now fixed.
+        3. Rearranged the X86/X86_64 registers order to organize them like gdb
+           expects on X86_64.
+        4. We also now preserve the condition code registers.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        (ARMRegisters):
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::isVFPPresent):
+        (JSC::MacroAssemblerARM::ProbeContext::dumpCPURegisters):
+        (JSC::MacroAssemblerARM::ProbeContext::dump):
+        (JSC::MacroAssemblerARM::probe):
+        * assembler/MacroAssemblerARM.h:
+        (MacroAssemblerARM):
+        (CPUState):
+        (ProbeContext):
+        (JSC::MacroAssemblerARM::trustedImm32FromPtr):
+        * assembler/MacroAssemblerARMv7.h:
+        (MacroAssemblerARMv7):
+        (CPUState):
+        (ProbeContext):
+        (JSC::MacroAssemblerARMv7::trustedImm32FromPtr):
+        * assembler/MacroAssemblerX86.h:
+        (MacroAssemblerX86):
+        (JSC::MacroAssemblerX86::probe):
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssemblerX86Common::ProbeContext::dumpCPURegisters):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::probe):
+        * assembler/X86Assembler.h:
+        * config.h:
+        * jit/JITStubsARM.h:
+        * jit/JITStubsARMv7.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86Common.h:
+        * jit/JITStubsX86_64.h:
+
 2013-05-28  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL should call masqueradesAsUndefinedWatchpointIfIsStillValid() in all of the places where it currently calls masqueradesAsUndefinedWatchpointIsStillValid()
@@ -1402,6 +1460,10 @@
         https://bugs.webkit.org/show_bug.cgi?id=115705.
 
         Reviewed by Geoffrey Garen.
+
+        Edit: For C++ code, you can do debugging by adding printfs to your
+        code. For JIT generated code, you can now do the equivalent by
+        inserting a probe and have it emit a call to your probe function.
 
         The probe is in the form of a MacroAssembler pseudo instruction.
         It takes 3 arguments: a ProbeFunction, and 2 void* args.
