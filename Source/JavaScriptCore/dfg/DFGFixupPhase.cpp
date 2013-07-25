@@ -1112,7 +1112,7 @@ private:
         
         JSObject* stringPrototypeObject = asObject(stringObjectStructure->storedPrototype());
         Structure* stringPrototypeStructure = stringPrototypeObject->structure();
-        if (stringPrototypeStructure->transitionWatchpointSetHasBeenInvalidated())
+        if (!m_graph.m_watchpoints.isStillValid(stringPrototypeStructure->transitionWatchpointSet()))
             return false;
         
         if (stringPrototypeStructure->isDictionary())

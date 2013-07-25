@@ -34,6 +34,7 @@
 #include "DFGArgumentPosition.h"
 #include "DFGAssemblyHelpers.h"
 #include "DFGBasicBlock.h"
+#include "DFGDesiredWatchpoints.h"
 #include "DFGDominators.h"
 #include "DFGLongLivedState.h"
 #include "DFGNode.h"
@@ -374,6 +375,12 @@ public:
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
     {
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, m_profiledBlock);
+    }
+    
+    bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
+    {
+        return m_watchpoints.isStillValid(
+            globalObjectFor(codeOrigin)->masqueradesAsUndefinedWatchpoint());
     }
     
     bool hasGlobalExitSite(const CodeOrigin& codeOrigin, ExitKind exitKind)
@@ -719,6 +726,7 @@ public:
     unsigned m_parameterSlots;
     unsigned m_osrEntryBytecodeIndex;
     Operands<JSValue> m_mustHandleValues;
+    DesiredWatchpoints m_watchpoints;
     
     OptimizationFixpointState m_fixpointState;
     GraphForm m_form;

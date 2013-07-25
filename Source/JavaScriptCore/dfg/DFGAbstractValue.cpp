@@ -110,17 +110,17 @@ void AbstractValue::filter(Graph& graph, const StructureSet& other)
     checkConsistency();
 }
 
-void AbstractValue::setFuturePossibleStructure(Graph&, Structure* structure)
+void AbstractValue::setFuturePossibleStructure(Graph& graph, Structure* structure)
 {
-    if (structure->transitionWatchpointSetIsStillValid())
+    if (graph.m_watchpoints.isStillValid(structure->transitionWatchpointSet()))
         m_futurePossibleStructure = structure;
     else
         m_futurePossibleStructure.makeTop();
 }
 
-void AbstractValue::filterFuturePossibleStructure(Graph&, Structure* structure)
+void AbstractValue::filterFuturePossibleStructure(Graph& graph, Structure* structure)
 {
-    if (structure->transitionWatchpointSetIsStillValid())
+    if (graph.m_watchpoints.isStillValid(structure->transitionWatchpointSet()))
         m_futurePossibleStructure.filter(StructureAbstractValue(structure));
 }
 

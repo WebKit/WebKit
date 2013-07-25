@@ -239,7 +239,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     
     m_jitCode->common.compilation = m_graph.m_compilation;
     
-    m_watchpoints.reallyAdd();
+    m_graph.m_watchpoints.reallyAdd();
 }
 
 bool JITCompiler::compile(RefPtr<JSC::JITCode>& entry)
@@ -262,7 +262,7 @@ bool JITCompiler::compile(RefPtr<JSC::JITCode>& entry)
     speculative.createOSREntries();
     setEndOfCode();
 
-    if (!m_watchpoints.areStillValid())
+    if (!m_graph.m_watchpoints.areStillValid())
         return false;
     
     LinkBuffer linkBuffer(*m_vm, this, m_codeBlock, JITCompilationCanFail);
@@ -355,7 +355,7 @@ bool JITCompiler::compileFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCod
     speculative.createOSREntries();
     setEndOfCode();
     
-    if (!m_watchpoints.areStillValid())
+    if (!m_graph.m_watchpoints.areStillValid())
         return false;
 
     // === Link ===

@@ -397,7 +397,7 @@ private:
         Node* weakConstant = m_insertionSet.insertNode(
             indexInBlock, speculationFromValue(cell), WeakJSConstant, codeOrigin, OpInfo(cell));
         
-        if (cell->structure()->transitionWatchpointSetIsStillValid()) {
+        if (m_graph.m_watchpoints.isStillValid(cell->structure()->transitionWatchpointSet())) {
             m_insertionSet.insertNode(
                 indexInBlock, SpecNone, StructureTransitionWatchpoint, codeOrigin,
                 OpInfo(cell->structure()), Edge(weakConstant, CellUse));

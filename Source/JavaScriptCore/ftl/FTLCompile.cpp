@@ -85,12 +85,12 @@ bool compile(State& state, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr&
     GeneratedFunction function = reinterpret_cast<GeneratedFunction>(LLVMGetPointerToGlobal(engine, state.function));
     LLVMDisposePassManager(pass);
     
-    if (!state.watchpoints.areStillValid()) {
+    if (!state.graph.m_watchpoints.areStillValid()) {
         LLVMDisposeExecutionEngine(engine);
         return false;
     }
     
-    state.watchpoints.reallyAdd();
+    state.graph.m_watchpoints.reallyAdd();
     
     // Create the entrypoint.
     // FIXME: This is a total kludge - LLVM should just use our calling convention.

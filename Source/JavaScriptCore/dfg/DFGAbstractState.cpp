@@ -558,7 +558,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     }
 
     case ArithIMul: {
-        forNode(node).set(SpecInt32);
+        forNode(node).setType(SpecInt32);
         break;
     }
         
@@ -682,23 +682,18 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case IsString:
     case IsObject:
     case IsFunction: {
-        node->setCanExit(node->op() == IsUndefined && m_codeBlock->globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid());
+        node->setCanExit(
+            node->op() == IsUndefined
+            && m_graph.masqueradesAsUndefinedWatchpointIsStillValid(node->codeOrigin));
         JSValue child = forNode(node->child1()).value();
         if (child) {
             bool constantWasSet;
             switch (node->op()) {
             case IsUndefined:
-                if (m_codeBlock->globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
-                    constantWasSet = trySetConstant(node, jsBoolean(
-                        child.isCell()
-                        ? false 
-                        : child.isUndefined()));
-                } else {
-                    constantWasSet = trySetConstant(node, jsBoolean(
-                        child.isCell()
-                        ? child.asCell()->structure()->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->codeOrigin))
-                        : child.isUndefined()));
-                }
+                constantWasSet = trySetConstant(node, jsBoolean(
+                    child.isCell()
+                    ? child.asCell()->structure()->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->codeOrigin))
+                    : child.isUndefined()));
                 break;
             case IsBoolean:
                 constantWasSet = trySetConstant(node, jsBoolean(child.isBoolean()));
@@ -868,7 +863,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         break;
         
     case StringFromCharCode:
-        forNode(node).set(SpecString);
+        forNode(node).setType(SpecString);
         break;
 
     case StringCharAt:
@@ -1007,7 +1002,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         break;
 
     case RegExpTest:
-        forNode(node).set(SpecBoolean);
+        forNode(node).setType(SpecBoolean);
         break;
             
     case Jump:
@@ -1366,7 +1361,9 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         // Currently, we only issue singleton watchpoints (that check one structure)
         // and our futurePossibleStructure set can only contain zero, one, or an
         // infinity of structures.
-        ASSERT(value.m_futurePossibleStructure.isSubsetOf(StructureSet(node->structure())));
+        ASSERT(
+            value.m_futurePossibleStructure.isSubsetOf(StructureSet(node->structure()))
+            || m_graph.m_watchpoints.shouldAssumeMixedState(node->structure()->transitionWatchpointSet()));
         
         value.filter(m_graph, node->structure());
         m_haveStructures = true;

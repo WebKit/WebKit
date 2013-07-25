@@ -30,7 +30,6 @@
 
 #include "CodeBlock.h"
 #include "DFGCCallHelpers.h"
-#include "DFGDesiredWatchpoints.h"
 #include "DFGDisassembler.h"
 #include "DFGFPRInfo.h"
 #include "DFGGPRInfo.h"
@@ -255,11 +254,11 @@ public:
     
     void addLazily(Watchpoint* watchpoint, WatchpointSet* set)
     {
-        m_watchpoints.addLazily(watchpoint, set);
+        m_graph.m_watchpoints.addLazily(watchpoint, set);
     }
     void addLazily(Watchpoint* watchpoint, InlineWatchpointSet& set)
     {
-        m_watchpoints.addLazily(watchpoint, set);
+        m_graph.m_watchpoints.addLazily(watchpoint, set);
     }
     
     // Methods to set labels for the disassembler.
@@ -479,8 +478,6 @@ private:
     Vector<OSRExitCompilationInfo> m_exitCompilationInfo;
     Vector<Vector<Label> > m_exitSiteLabels;
     unsigned m_currentCodeOriginIndex;
-    
-    DesiredWatchpoints m_watchpoints;
 };
 
 } } // namespace JSC::DFG

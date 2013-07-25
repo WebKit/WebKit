@@ -788,7 +788,8 @@ private:
         // be jettisoned if the object ever dies.
         Node* objectNode = cellConstant(object);
         
-        if (object->structure() == structure && structure->transitionWatchpointSetIsStillValid()) {
+        if (object->structure() == structure
+            && m_graph.m_watchpoints.isStillValid(structure->transitionWatchpointSet())) {
             addToGraph(StructureTransitionWatchpoint, OpInfo(structure), objectNode);
             return objectNode;
         }
@@ -1917,7 +1918,7 @@ bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned 
 
         Identifier ident = m_codeBlock->identifier(identifier);
         SymbolTableEntry entry = globalObject->symbolTable()->get(ident.impl());
-        if (!entry.couldBeWatched()) {
+        if (!m_graph.m_watchpoints.isStillValid(entry.watchpointSet())) {
             *value = addToGraph(GetGlobalVar, OpInfo(globalObject->assertRegisterIsInThisObject(pc->m_registerAddress)), OpInfo(prediction));
             return true;
         }
@@ -2638,6 +2639,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                         addStructureTransitionCheck(prototype.asCell());
                     }
                 }
+                WTF::loadLoadFence();
                 ASSERT(putByIdStatus.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
                 
                 Node* propertyStorage;

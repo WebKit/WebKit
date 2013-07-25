@@ -290,6 +290,25 @@ public:
         }
         return result;
     }
+    
+    bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
+    {
+        return m_jit.graph().masqueradesAsUndefinedWatchpointIsStillValid(codeOrigin);
+    }
+    void speculationWatchpointForMasqueradesAsUndefined(const CodeOrigin& codeOrigin)
+    {
+        m_jit.addLazily(
+            speculationWatchpoint(),
+            m_jit.graph().globalObjectFor(codeOrigin)->masqueradesAsUndefinedWatchpoint());
+    }
+    bool masqueradesAsUndefinedWatchpointIsStillValid()
+    {
+        return masqueradesAsUndefinedWatchpointIsStillValid(m_currentNode->codeOrigin);
+    }
+    void speculationWatchpointForMasqueradesAsUndefined()
+    {
+        speculationWatchpointForMasqueradesAsUndefined(m_currentNode->codeOrigin);
+    }
 
     static void writeBarrier(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, WriteBarrierUseKind);
 
@@ -2856,7 +2875,7 @@ void SpeculativeJIT::speculateStringObjectForStructure(Edge edge, StructureLocat
     Structure* stringObjectStructure =
         m_jit.globalObjectFor(m_currentNode->codeOrigin)->stringObjectStructure();
     Structure* stringPrototypeStructure = stringObjectStructure->storedPrototype().asCell()->structure();
-    ASSERT(stringPrototypeStructure->transitionWatchpointSetIsStillValid());
+    ASSERT(m_jit.graph().m_watchpoints.isValidOrMixed(stringPrototypeStructure->transitionWatchpointSet()));
     
     if (!m_state.forNode(edge).m_currentKnownStructure.isSubsetOf(StructureSet(m_jit.globalObjectFor(m_currentNode->codeOrigin)->stringObjectStructure()))) {
         speculationCheck(
@@ -2864,7 +2883,9 @@ void SpeculativeJIT::speculateStringObjectForStructure(Edge edge, StructureLocat
             m_jit.branchPtr(
                 JITCompiler::NotEqual, structureLocation, TrustedImmPtr(stringObjectStructure)));
     }
-    stringPrototypeStructure->addTransitionWatchpoint(speculationWatchpoint(NotStringObject));
+    m_jit.addLazily(
+        speculationWatchpoint(NotStringObject),
+        stringPrototypeStructure->transitionWatchpointSet());
 }
 
 #define DFG_TYPE_CHECK(source, edge, typesPassedThrough, jumpToFail) do { \

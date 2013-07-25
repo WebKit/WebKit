@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "Watchpoint.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -60,6 +61,9 @@ typedef WatchpointForGenericWatchpointSet<InlineWatchpointSet> WatchpointForInli
 template<typename WatchpointSetType>
 class GenericDesiredWatchpoints {
     WTF_MAKE_NONCOPYABLE(GenericDesiredWatchpoints);
+#if !ASSERT_DISABLED
+    typedef HashMap<WatchpointSetType*, bool> StateMap;
+#endif
 public:
     GenericDesiredWatchpoints()
         : m_reallyAdded(false)
@@ -87,9 +91,46 @@ public:
         }
         return true;
     }
+    
+#if ASSERT_DISABLED
+    bool isStillValid(WatchpointSetType* set)
+    {
+        return set->isStillValid();
+    }
+    
+    bool shouldAssumeMixedState(WatchpointSetType*)
+    {
+        return true;
+    }
+#else
+    bool isStillValid(WatchpointSetType* set)
+    {
+        bool result = set->isStillValid();
+        m_firstKnownState.add(set, result);
+        return result;
+    }
+    
+    bool shouldAssumeMixedState(WatchpointSetType* set)
+    {
+        typename StateMap::iterator iter = m_firstKnownState.find(set);
+        if (iter == m_firstKnownState.end())
+            return false;
+        
+        WTF::loadLoadFence();
+        return iter->value != set->isStillValid();
+    }
+#endif
+    
+    bool isValidOrMixed(WatchpointSetType* set)
+    {
+        return isStillValid(set) || shouldAssumeMixedState(set);
+    }
 
 private:
     Vector<WatchpointForGenericWatchpointSet<WatchpointSetType> > m_watchpoints;
+#if !ASSERT_DISABLED
+    StateMap m_firstKnownState;
+#endif
     bool m_reallyAdded;
 };
 
@@ -104,6 +145,31 @@ public:
     void reallyAdd();
     
     bool areStillValid() const;
+    
+    bool isStillValid(WatchpointSet* set)
+    {
+        return m_sets.isStillValid(set);
+    }
+    bool isStillValid(InlineWatchpointSet& set)
+    {
+        return m_inlineSets.isStillValid(&set);
+    }
+    bool shouldAssumeMixedState(WatchpointSet* set)
+    {
+        return m_sets.shouldAssumeMixedState(set);
+    }
+    bool shouldAssumeMixedState(InlineWatchpointSet& set)
+    {
+        return m_inlineSets.shouldAssumeMixedState(&set);
+    }
+    bool isValidOrMixed(WatchpointSet* set)
+    {
+        return m_sets.isValidOrMixed(set);
+    }
+    bool isValidOrMixed(InlineWatchpointSet& set)
+    {
+        return m_inlineSets.isValidOrMixed(&set);
+    }
     
 private:
     GenericDesiredWatchpoints<WatchpointSet> m_sets;

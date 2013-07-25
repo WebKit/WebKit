@@ -1,3 +1,87 @@
+2013-07-16  Oliver Hunt <oliver@apple.com>
+
+        Merge dfgFourthTier r149233
+
+    2013-04-26  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: CFA should defend against results seeming inconsistent due to a watchpoint firing during compilation
+        https://bugs.webkit.org/show_bug.cgi?id=115083
+
+        Reviewed by Geoffrey Garen.
+        
+        This ruggedizes our racyness with respect to watchpoints. We want to be able to assert,
+        in some places, that a watchpoint-based optimization has only occurred if the
+        watchpoint set was still valid. But currently we *can* soundly do watchpoint-based
+        optimizations even for invalid watchpoints, so long as we recorded in the IR that we
+        had done so; this will then lead to the code being insta-jettisoned after compilation
+        completes. Obviously, we don't want this to happen often - but we do want to allow it
+        precisely in the case of watchpoint races.
+        
+        This adds the ability to assert that we hadn't over-watchpointed ourselves, with and
+        exemption for races.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::setFuturePossibleStructure):
+        (JSC::DFG::AbstractValue::filterFuturePossibleStructure):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addStructureTransitionCheck):
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        * dfg/DFGDesiredWatchpoints.h:
+        (GenericDesiredWatchpoints):
+        (JSC::DFG::GenericDesiredWatchpoints::isStillValid):
+        (JSC::DFG::GenericDesiredWatchpoints::shouldAssumeMixedState):
+        (JSC::DFG::GenericDesiredWatchpoints::isValidOrMixed):
+        (JSC::DFG::DesiredWatchpoints::isStillValid):
+        (JSC::DFG::DesiredWatchpoints::shouldAssumeMixedState):
+        (JSC::DFG::DesiredWatchpoints::isValidOrMixed):
+        (DesiredWatchpoints):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::canOptimizeStringObjectAccess):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::masqueradesAsUndefinedWatchpointIsStillValid):
+        (Graph):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addLazily):
+        (JITCompiler):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::masqueradesAsUndefinedWatchpointIsStillValid):
+        (JSC::DFG::SpeculativeJIT::speculationWatchpointForMasqueradesAsUndefined):
+        (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLState.h:
+        (State):
+
 2013-04-23  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: AbstractValue methods that deal with watchpoints should have access to Graph, so that in debug mode, Graph can track the history of watchpoint states and detect races
