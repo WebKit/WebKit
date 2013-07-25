@@ -53,6 +53,7 @@ static void removeNonEmptyDirectory(const char* directoryPath)
 
 int main(int argc, char** argv)
 {
+    g_unsetenv("DBUS_SESSION_BUS_ADDRESS");
     gtk_test_init(&argc, &argv, 0);
     g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);

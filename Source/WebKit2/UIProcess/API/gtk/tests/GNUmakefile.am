@@ -5,6 +5,7 @@ TEST_PROGS += \
 	Programs/WebKit2APITests/TestBackForwardList \
 	Programs/WebKit2APITests/TestContextMenu \
 	Programs/WebKit2APITests/TestCookieManager \
+	Programs/WebKit2APITests/TestDOMNode \
 	Programs/WebKit2APITests/TestDownloads \
 	Programs/WebKit2APITests/TestInspector \
 	Programs/WebKit2APITests/TestInspectorServer \
@@ -90,6 +91,8 @@ Libraries_libWebKit2APITestCore_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/WebKitTestBus.h \
 	Source/WebKit2/UIProcess/API/gtk/tests/WebKitTestServer.cpp \
 	Source/WebKit2/UIProcess/API/gtk/tests/WebKitTestServer.h \
+	Source/WebKit2/UIProcess/API/gtk/tests/WebProcessTestRunner.cpp \
+	Source/WebKit2/UIProcess/API/gtk/tests/WebProcessTestRunner.h \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestMain.cpp \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestMain.h \
 	Source/WebKit2/UIProcess/API/gtk/tests/WebViewTest.cpp \
@@ -118,6 +121,32 @@ Libraries_WebExtensions_libWebExtensionTest_la_CXXFLAGS = \
 
 Libraries_WebExtensions_libWebExtensionTest_la_CFLAGS = \
         $(global_cflags)
+
+
+noinst_LTLIBRARIES += Libraries/WebExtensions/libWebProcessTest.la
+Libraries_WebExtensions_libWebProcessTest_la_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/DOMNodeTest.cpp \
+	Source/WebKit2/UIProcess/API/gtk/tests/WebProcessTest.cpp \
+	Source/WebKit2/UIProcess/API/gtk/tests/WebProcessTest.h
+
+Libraries_WebExtensions_libWebProcessTest_la_LDFLAGS = \
+	-rpath ${shell pwd}/$(top_builddir)/Libraries/WebExtensions/.libs \
+	$(no_undefined) \
+	-avoid-version \
+	-module
+
+Libraries_WebExtensions_libWebProcessTest_la_CPPFLAGS = \
+	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API/gtk \
+	-I$(top_builddir)/DerivedSources \
+	-I$(top_builddir)/DerivedSources/WebKit2/webkit2extension/include \
+	-DWEBKIT2_COMPILATION \
+	$(webkit2_tests_cppflags)
+
+Libraries_WebExtensions_libWebProcessTest_la_CXXFLAGS = \
+	$(global_cxxflags)
+
+Libraries_WebExtensions_libWebProcessTest_la_CFLAGS = \
+	$(global_cflags)
 
 
 EXTRA_DIST += \
@@ -267,5 +296,11 @@ Programs_WebKit2APITests_TestWebKitWebViewGroup_SOURCES = \
 Programs_WebKit2APITests_TestWebKitWebViewGroup_CPPFLAGS = $(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestWebKitWebViewGroup_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestWebKitWebViewGroup_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestDOMNode_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestDOMNode.cpp
+Programs_WebKit2APITests_TestDOMNode_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestDOMNode_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestDOMNode_LDFLAGS = $(webkit2_tests_ldflags)
 
 endif # ENABLE_WEBKIT2

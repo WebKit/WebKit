@@ -1,3 +1,78 @@
+2013-07-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add support for running unit tests in the web process
+        https://bugs.webkit.org/show_bug.cgi?id=118427
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Some tests, like GObject DOM bindings API tests, run entirely in
+        the WebProcess, so we just need to start the test from the UI
+        process and wait until the test finishes running in the
+        WebProcess. Tests are split in two files, one containing the
+        actual test that runs in the WebProcess and another one to add the
+        tests to the glib test system that works as a
+        proxy. WebProcessTestRunner class starts a private DBus session
+        bus and starts the tests sending a message to the WebExtension
+        waiting until it finishes or fails. WebProcess tests are created
+        by defining a class derived from WebProcessTest class and
+        implementing the static create method and the virtual runTest
+        method. The macro REGISTER_TEST is used by the web process tests
+        to register their test cases. This patch includes the migration
+        of the WebKitDOMNode test, all other GObject DOM bindings tests
+        will be migrated in the same way in follow up patches.
+
+        * UIProcess/API/gtk/tests/DOMNodeTest.cpp: Added.
+        (WebKitDOMNodeTest::create): Create a new WebKitDOMNodeTest.
+        (WebKitDOMNodeTest::webPageFromArgs): Get the pageID parameter
+        from the arguments dictionary.
+        (WebKitDOMNodeTest::testHierarchyNavigation):
+        (WebKitDOMNodeTest::testInsertion):
+        (WebKitDOMNodeTest::runTest): Run the given test.
+        (registerTests): Register test cases.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add new files to
+        compilation.
+        * UIProcess/API/gtk/tests/TestDOMNode.cpp: Added.
+        (testWebKitDOMNodeHierarchyNavigation):
+        (testWebKitDOMNodeInsertion):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/TestMain.cpp:
+        (main): Unset DBUS_SESSION_BUS_ADDRESS environment variable to
+        make sure that the GLib bus singleton is initialized by the
+        private DBus session bus created by the tests.
+        * UIProcess/API/gtk/tests/WebProcessTest.cpp: Added.
+        (testsMap): Initialize and get the global map of tests.
+        (WebProcessTest::add): Add a new test to the map, keeping a
+        function to create the test.
+        (WebProcessTest::create): Create a test for the given name.
+        (methodCallCallback): Handle RunTest DBus method. It creates and
+        runs the given test.
+        (webkit_web_extension_initialize):Register the DBus service for
+        this WebExtension.
+        * UIProcess/API/gtk/tests/WebProcessTest.h: Added.
+        * UIProcess/API/gtk/tests/WebProcessTestRunner.cpp: Added.
+        (WebProcessTestRunner::WebProcessTestRunner): Start a private DBus
+        session bus and get a connection to it.
+        (WebProcessTestRunner::~WebProcessTestRunner): Stop the private
+        DBus session bus.
+        (WebProcessTestRunner::proxyCreatedCallback):
+        (WebProcessTestRunner::proxy): Create a new proxy to send messages
+        to the WebExtension if it doesn't exists.
+        (WebProcessTestRunner::onNameAppeared): Called when the DBus
+        service has been registered in the WebExtension and it's safe to
+        create a proxy.
+        (WebProcessTestRunner::onNameVanished): Called when the DBus
+        service is unregistered. This happens when the web process crash,
+        so we just exit here, because the g_asserts in the web process
+        have already registered the error message.
+        (WebProcessTestRunner::testFinishedCallback): Called when the
+        WebProcess tests has finished.
+        (WebProcessTestRunner::runTest): Send a message to the
+        WebExtension to start the given test and monitor the service.
+        (WebProcessTestRunner::finishTest): Save the test result and
+        finish the main loop.
+        * UIProcess/API/gtk/tests/WebProcessTestRunner.h: Added.
+
 2013-05-05  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled back in r149527 with crash fixed.
