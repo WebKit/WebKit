@@ -38,6 +38,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/API/JSAPIWrapperObject.h \
 	Source/JavaScriptCore/API/JSBase.cpp \
 	Source/JavaScriptCore/API/JSBasePrivate.h \
+	Source/JavaScriptCore/API/JSCTestRunnerUtils.cpp \
+	Source/JavaScriptCore/API/JSCTestRunnerUtils.h \
 	Source/JavaScriptCore/API/JSCallbackConstructor.cpp \
 	Source/JavaScriptCore/API/JSCallbackConstructor.h \
 	Source/JavaScriptCore/API/JSCallbackFunction.cpp \
