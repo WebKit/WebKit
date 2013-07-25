@@ -1,0 +1,205 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#ifndef FTLAbbreviations_h
+#define FTLAbbreviations_h
+
+#include <wtf/Platform.h>
+
+#if ENABLE(FTL_JIT)
+
+#include "FTLLLVMHeaders.h"
+
+namespace JSC { namespace FTL {
+
+// This file contains short-form calls into the LLVM C API. It is meant to
+// save typing and make the lowering code clearer. If we ever call an LLVM C API
+// function more than once in the FTL lowering code, we should add a shortcut for
+// it here.
+
+#if USE(JSVALUE32_64)
+#error "The FTL backend assumes that pointers are 64-bit."
+#endif
+
+typedef LLVMBasicBlockRef LBasicBlock;
+typedef LLVMBuilderRef LBuilder;
+typedef LLVMCallConv LCallConv;
+typedef LLVMIntPredicate LIntPredicate;
+typedef LLVMLinkage LLinkage;
+typedef LLVMModuleRef LModule;
+typedef LLVMTypeRef LType;
+typedef LLVMValueRef LValue;
+
+static inline LType voidType() { return LLVMVoidType(); }
+static inline LType int1Type() { return LLVMInt1Type(); }
+static inline LType int32Type() { return LLVMInt32Type(); }
+static inline LType int64Type() { return LLVMInt64Type(); }
+static inline LType intPtrType() { return LLVMInt64Type(); }
+
+static inline LType pointerType(LType type) { return LLVMPointerType(type, 0); }
+
+enum PackingMode { NotPacked, Packed };
+static inline LType structType(LType* elementTypes, unsigned elementCount, PackingMode packing = NotPacked)
+{
+    return LLVMStructType(elementTypes, elementCount, packing == Packed);
+}
+static inline LType structType(PackingMode packing = NotPacked)
+{
+    return structType(0, 0, packing);
+}
+static inline LType structType(LType element1, PackingMode packing = NotPacked)
+{
+    return structType(&element1, 1, packing);
+}
+static inline LType structType(LType element1, LType element2, PackingMode packing = NotPacked)
+{
+    LType elements[] = { element1, element2 };
+    return structType(elements, 2, packing);
+}
+
+enum Variadicity { NotVariadic, Variadic };
+static inline LType functionType(LType returnType, const LType* paramTypes, unsigned paramCount, Variadicity variadicity)
+{
+    return LLVMFunctionType(returnType, const_cast<LType*>(paramTypes), paramCount, variadicity == Variadic);
+}
+template<typename VectorType>
+inline LType functionType(LType returnType, const VectorType& vector, Variadicity variadicity = NotVariadic)
+{
+    return functionType(returnType, vector.begin(), vector.size(), variadicity);
+}
+static inline LType functionType(LType returnType, Variadicity variadicity = NotVariadic)
+{
+    return functionType(returnType, 0, 0, variadicity);
+}
+static inline LType functionType(LType returnType, LType param1, Variadicity variadicity = NotVariadic)
+{
+    return functionType(returnType, &param1, 1, variadicity);
+}
+static inline LType functionType(LType returnType, LType param1, LType param2, Variadicity variadicity = NotVariadic)
+{
+    LType paramTypes[] = { param1, param2 };
+    return functionType(returnType, paramTypes, 2, variadicity);
+}
+
+static inline LType typeOf(LValue value) { return LLVMTypeOf(value); }
+
+static inline unsigned mdKindID(const char* string) { return LLVMGetMDKindID(string, strlen(string)); }
+static inline LValue mdString(const char* string, unsigned length) { return LLVMMDString(string, length); }
+static inline LValue mdString(const char* string) { return mdString(string, strlen(string)); }
+static inline LValue mdNode(LValue* args, unsigned numArgs) { return LLVMMDNode(args, numArgs); }
+static inline LValue mdNode() { return mdNode(0, 0); }
+static inline LValue mdNode(LValue arg1) { return mdNode(&arg1, 1); }
+static inline LValue mdNode(LValue arg1, LValue arg2)
+{
+    LValue args[] = { arg1, arg2 };
+    return mdNode(args, 2);
+}
+
+static inline void setMetadata(LValue instruction, unsigned kind, LValue metadata) { LLVMSetMetadata(instruction, kind, metadata); }
+
+static inline LValue addFunction(LModule module, const char* name, LType type) { return LLVMAddFunction(module, name, type); }
+static inline void setLinkage(LValue global, LLinkage linkage) { LLVMSetLinkage(global, linkage); }
+static inline void setFunctionCallingConv(LValue function, LCallConv convention) { LLVMSetFunctionCallConv(function, convention); }
+
+static inline LValue addExternFunction(LModule module, const char* name, LType type)
+{
+    LValue result = addFunction(module, name, type);
+    setLinkage(result, LLVMExternalLinkage);
+    return result;
+}
+
+static inline LValue getParam(LValue function, unsigned index) { return LLVMGetParam(function, index); }
+
+enum BitExtension { ZeroExtend, SignExtend };
+static inline LValue constInt(LType type, unsigned long long value, BitExtension extension) { return LLVMConstInt(type, value, extension == SignExtend); }
+static inline LValue constIntToPtr(LValue value, LType type) { return LLVMConstIntToPtr(value, type); }
+static inline LValue constBitCast(LValue value, LType type) { return LLVMConstBitCast(value, type); }
+
+static inline LBasicBlock appendBasicBlock(LValue function, const char* name = "") { return LLVMAppendBasicBlock(function, name); }
+static inline LBasicBlock insertBasicBlock(LBasicBlock beforeBasicBlock, const char* name = "") { return LLVMInsertBasicBlock(beforeBasicBlock, name); }
+
+static inline LValue buildAlloca(LBuilder builder, LType type) { return LLVMBuildAlloca(builder, type, ""); }
+static inline LValue buildAdd(LBuilder builder, LValue left, LValue right) { return LLVMBuildAdd(builder, left, right, ""); }
+static inline LValue buildSub(LBuilder builder, LValue left, LValue right) { return LLVMBuildSub(builder, left, right, ""); }
+static inline LValue buildMul(LBuilder builder, LValue left, LValue right) { return LLVMBuildMul(builder, left, right, ""); }
+static inline LValue buildNeg(LBuilder builder, LValue value) { return LLVMBuildNeg(builder, value, ""); }
+static inline LValue buildAnd(LBuilder builder, LValue left, LValue right) { return LLVMBuildAnd(builder, left, right, ""); }
+static inline LValue buildOr(LBuilder builder, LValue left, LValue right) { return LLVMBuildOr(builder, left, right, ""); }
+static inline LValue buildXor(LBuilder builder, LValue left, LValue right) { return LLVMBuildXor(builder, left, right, ""); }
+static inline LValue buildShl(LBuilder builder, LValue left, LValue right) { return LLVMBuildShl(builder, left, right, ""); }
+static inline LValue buildAShr(LBuilder builder, LValue left, LValue right) { return LLVMBuildAShr(builder, left, right, ""); }
+static inline LValue buildLShr(LBuilder builder, LValue left, LValue right) { return LLVMBuildLShr(builder, left, right, ""); }
+static inline LValue buildLoad(LBuilder builder, LValue pointer) { return LLVMBuildLoad(builder, pointer, ""); }
+static inline LValue buildStore(LBuilder builder, LValue value, LValue pointer) { return LLVMBuildStore(builder, value, pointer); }
+static inline LValue buildZExt(LBuilder builder, LValue value, LType type) { return LLVMBuildZExt(builder, value, type, ""); }
+static inline LValue buildIntCast(LBuilder builder, LValue value, LType type) { return LLVMBuildIntCast(builder, value, type, ""); }
+static inline LValue buildIntToPtr(LBuilder builder, LValue value, LType type) { return LLVMBuildIntToPtr(builder, value, type, ""); }
+static inline LValue buildPtrToInt(LBuilder builder, LValue value, LType type) { return LLVMBuildPtrToInt(builder, value, type, ""); }
+static inline LValue buildICmp(LBuilder builder, LIntPredicate cond, LValue left, LValue right) { return LLVMBuildICmp(builder, cond, left, right, ""); }
+static inline LValue buildCall(LBuilder builder, LValue function, const LValue* args, unsigned numArgs)
+{
+    return LLVMBuildCall(builder, function, const_cast<LValue*>(args), numArgs, "");
+}
+template<typename VectorType>
+inline LValue buildCall(LBuilder builder, LValue function, const VectorType& vector)
+{
+    return buildCall(builder, function, vector.begin(), vector.size());
+}
+static inline LValue buildCall(LBuilder builder, LValue function)
+{
+    return buildCall(builder, function, 0, 0);
+}
+static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1)
+{
+    return buildCall(builder, function, &arg1, 1);
+}
+static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, LValue arg2)
+{
+    LValue args[] = { arg1, arg2 };
+    return buildCall(builder, function, args, 2);
+}
+enum TailCallMode { IsNotTailCall, IsTailCall };
+static inline void setTailCall(LValue call, TailCallMode mode) { LLVMSetTailCall(call, mode == IsTailCall); }
+static inline LValue buildExtractValue(LBuilder builder, LValue aggVal, unsigned index) { return LLVMBuildExtractValue(builder, aggVal, index, ""); }
+static inline LValue buildSelect(LBuilder builder, LValue condition, LValue taken, LValue notTaken) { return LLVMBuildSelect(builder, condition, taken, notTaken, ""); }
+static inline LValue buildBr(LBuilder builder, LBasicBlock destination) { return LLVMBuildBr(builder, destination); }
+static inline LValue buildCondBr(LBuilder builder, LValue condition, LBasicBlock taken, LBasicBlock notTaken) { return LLVMBuildCondBr(builder, condition, taken, notTaken); }
+static inline LValue buildRet(LBuilder builder, LValue value) { return LLVMBuildRet(builder, value); }
+static inline LValue buildUnreachable(LBuilder builder) { return LLVMBuildUnreachable(builder); }
+
+static inline void dumpModule(LModule module) { LLVMDumpModule(module); }
+static inline void verifyModule(LModule module)
+{
+    char* error = 0;
+    LLVMVerifyModule(module, LLVMAbortProcessAction, &error);
+    LLVMDisposeMessage(error);
+}
+
+} } // namespace JSC::FTL
+
+#endif // ENABLE(FTL_JIT)
+
+#endif // FTLAbbreviations_h
+

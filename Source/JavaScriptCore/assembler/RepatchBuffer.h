@@ -46,16 +46,22 @@ class RepatchBuffer {
 public:
     RepatchBuffer(CodeBlock* codeBlock)
     {
+#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
         RefPtr<JITCode> code = codeBlock->getJITCode();
         m_start = code->start();
         m_size = code->size();
 
         ExecutableAllocator::makeWritable(m_start, m_size);
+#else
+        UNUSED_PARAM(codeBlock);
+#endif
     }
 
     ~RepatchBuffer()
     {
+#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
         ExecutableAllocator::makeExecutable(m_start, m_size);
+#endif
     }
 
     void relink(CodeLocationJump jump, CodeLocationLabel destination)
@@ -170,8 +176,10 @@ public:
     }
 
 private:
+#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
     void* m_start;
     size_t m_size;
+#endif
 };
 
 } // namespace JSC

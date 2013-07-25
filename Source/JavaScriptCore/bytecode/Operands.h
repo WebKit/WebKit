@@ -48,6 +48,8 @@ struct OperandValueTraits {
 
 enum OperandKind { ArgumentOperand, LocalOperand };
 
+enum OperandsLikeTag { OperandsLike };
+
 template<typename T, typename Traits = OperandValueTraits<T> >
 class Operands {
 public:
@@ -57,6 +59,13 @@ public:
     {
         m_arguments.fill(Traits::defaultValue(), numArguments);
         m_locals.fill(Traits::defaultValue(), numLocals);
+    }
+    
+    template<typename U, typename OtherTraits>
+    explicit Operands(OperandsLikeTag, const Operands<U, OtherTraits>& other)
+    {
+        m_arguments.fill(Traits::defaultValue(), other.numberOfArguments());
+        m_locals.fill(Traits::defaultValue(), other.numberOfLocals());
     }
     
     size_t numberOfArguments() const { return m_arguments.size(); }
@@ -208,6 +217,8 @@ public:
             m_locals[i] = Traits::defaultValue();
     }
     
+    void dump(PrintStream& out) const;
+    
 private:
     Vector<T, 8> m_arguments;
     Vector<T, 16> m_locals;
@@ -229,6 +240,12 @@ void dumpOperands(const Operands<T, Traits>& operands, PrintStream& out)
         out.print("r", local, ":");
         Traits::dump(operands.local(local), out);
     }
+}
+
+template<typename T, typename Traits>
+inline void Operands<T, Traits>::dump(PrintStream& out) const
+{
+    dumpOperands(*this, out);
 }
 
 } // namespace JSC

@@ -95,7 +95,8 @@ void AbstractState::initialize(Graph& graph)
             continue;
         }
         
-        SpeculatedType prediction = node->variableAccessData()->prediction();
+        SpeculatedType prediction =
+            node->variableAccessData()->argumentAwarePrediction();
         if (isInt32Speculation(prediction))
             root->valuesAtHead.argument(i).set(SpecInt32);
         else if (isBooleanSpeculation(prediction))

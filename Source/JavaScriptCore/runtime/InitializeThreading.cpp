@@ -30,6 +30,7 @@
 #include "InitializeThreading.h"
 
 #include "ExecutableAllocator.h"
+#include "FTLLLVMHeaders.h"
 #include "Heap.h"
 #include "HeapStatistics.h"
 #include "Options.h"
@@ -68,6 +69,11 @@ static void initializeThreadingOnce()
     JSStack::initializeThreading();
 #if ENABLE(LLINT)
     LLInt::initialize();
+#endif
+#if ENABLE(FTL_JIT)
+    LLVMLinkInMCJIT();
+    LLVMInitializeNativeTarget();
+    LLVMInitializeAllAsmPrinters();
 #endif
 }
 

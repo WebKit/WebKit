@@ -94,6 +94,7 @@ public:
         DoubleConditionBits_should_not_interfere_with_X86Assembler_Condition_codes);
 
     static const RegisterID stackPointerRegister = X86Registers::esp;
+    static const RegisterID framePointerRegister = X86Registers::ebp;
 
 #if ENABLE(JIT_CONSTANT_BLINDING)
     static bool shouldBlindForSpecificArch(uint32_t value) { return value >= 0x00ffffff; }

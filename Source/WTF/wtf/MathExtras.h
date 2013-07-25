@@ -356,6 +356,13 @@ template<typename T> inline bool isZeroOrUnordered(T value)
     return !isNotZeroAndOrdered(value);
 }
 
+template<typename T> inline bool isGreaterThanNonZeroPowerOfTwo(T value, unsigned power)
+{
+    // The crazy way of testing of index >= 2 ** power
+    // (where I use ** to denote pow()).
+    return !!((value >> 1) >> (power - 1));
+}
+
 #ifndef UINT64_C
 #if COMPILER(MSVC)
 #define UINT64_C(c) c ## ui64

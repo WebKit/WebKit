@@ -35,9 +35,9 @@
 
 namespace JSC { namespace DFG {
 
-void handleExitCounts(CCallHelpers&, const OSRExit&);
-void reifyInlinedCallFrames(CCallHelpers&, const OSRExit&);
-void adjustAndJumpToTarget(CCallHelpers&, const OSRExit&);
+void handleExitCounts(CCallHelpers&, const OSRExitBase&);
+void reifyInlinedCallFrames(CCallHelpers&, const OSRExitBase&);
+void adjustAndJumpToTarget(CCallHelpers&, const OSRExitBase&);
 
 } } // namespace JSC::DFG
 

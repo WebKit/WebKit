@@ -37,17 +37,20 @@ use POSIX;
 
 my $coverageSupport = 0;
 my $showHelp = 0;
+my $ftlJIT = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
+  --[no-]ftl-jit                Toggle FTL JIT support (default: $ftlJIT)
 EOF
 
 GetOptions(
     'coverage!' => \$coverageSupport,
-    'help' => \$showHelp
+    'help' => \$showHelp,
+    'ftl-jit' => \$ftlJIT
 );
 
 if ($showHelp) {
@@ -72,6 +75,10 @@ if (isQt()) {
 } elsif (cmakeBasedPortName()) {
     buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, "jsc", cmakeBasedPortArguments()); # This call only returns if nothing wrong happened
     exit exitStatus(0);
+}
+
+if (isAppleMacWebKit()) {
+    (system("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", productDir()) == 0) or die;
 }
 
 sub buildMyProject

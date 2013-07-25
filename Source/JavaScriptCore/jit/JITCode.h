@@ -46,8 +46,8 @@ class JITCode;
 }
 
 #if ENABLE(JIT)
-    class VM;
-    class JSStack;
+class VM;
+class JSStack;
 #endif
 
 class JITCode : public RefCounted<JITCode> {

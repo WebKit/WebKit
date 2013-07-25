@@ -36,7 +36,7 @@
 namespace JSC { namespace DFG {
 
 typedef MacroAssembler::RegisterID GPRReg;
-#define InvalidGPRReg ((GPRReg)-1)
+#define InvalidGPRReg ((::JSC::DFG::GPRReg)-1)
 
 #if USE(JSVALUE64)
 class JSValueRegs {
@@ -366,7 +366,7 @@ public:
         static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3, argumentGPR4, argumentGPR5 };
         return registerForIndex[index];
     }
-
+    
     static unsigned toIndex(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);

@@ -30,10 +30,11 @@
 
 #include "DFGOperations.h"
 #include "JSCJSValueInlines.h"
+#include "Operations.h"
 
 namespace JSC { namespace DFG {
 
-void handleExitCounts(CCallHelpers& jit, const OSRExit& exit)
+void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
 {
     jit.add32(AssemblyHelpers::TrustedImm32(1), AssemblyHelpers::AbsoluteAddress(&exit.m_count));
     
@@ -74,7 +75,7 @@ void handleExitCounts(CCallHelpers& jit, const OSRExit& exit)
     doneAdjusting.link(&jit);
 }
 
-void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExit& exit)
+void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 {
 #if USE(JSVALUE64)
     ASSERT(jit.baselineCodeBlock()->getJITType() == JITCode::BaselineJIT);
@@ -148,7 +149,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExit& exit)
 #endif // USE(JSVALUE64) // ending the #else part, so directly above is the 32-bit part
 }
 
-void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExit& exit)
+void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
 {
     if (exit.m_codeOrigin.inlineCallFrame)
         jit.addPtr(AssemblyHelpers::TrustedImm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);

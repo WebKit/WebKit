@@ -131,7 +131,7 @@ public:
     {
         if (isInt32Speculation(prediction))
             return ValueSource(Int32InJSStack);
-        if (isArraySpeculation(prediction) || isCellSpeculation(prediction))
+        if (isCellSpeculation(prediction))
             return ValueSource(CellInJSStack);
         if (isBooleanSpeculation(prediction))
             return ValueSource(BooleanInJSStack);

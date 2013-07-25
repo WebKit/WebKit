@@ -37,6 +37,7 @@
 #include "DFGNode.h"
 #include "DFGRepatch.h"
 #include "Debugger.h"
+#include "FTLJITCode.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITStubs.h"
@@ -3231,16 +3232,45 @@ void CodeBlock::tallyFrequentExitSites()
     
     CodeBlock* profiledBlock = alternative();
     
-    DFG::JITCode* jitCode = m_jitCode->dfg();
-    for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
-        DFG::OSRExit& exit = jitCode->osrExit[i];
-        
-        if (!exit.considerAddingAsFrequentExitSite(profiledBlock))
-            continue;
-        
+    switch (getJITType()) {
+    case JITCode::DFGJIT: {
+        DFG::JITCode* jitCode = m_jitCode->dfg();
+        for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
+            DFG::OSRExit& exit = jitCode->osrExit[i];
+            
+            if (!exit.considerAddingAsFrequentExitSite(profiledBlock))
+                continue;
+            
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("OSR exit #", i, " (bc#", exit.m_codeOrigin.bytecodeIndex, ", ", exit.m_kind, ") for ", *this, " occurred frequently: counting as frequent exit site.\n");
+            dataLog("OSR exit #", i, " (bc#", exit.m_codeOrigin.bytecodeIndex, ", ", exit.m_kind, ") for ", *this, " occurred frequently: counting as frequent exit site.\n");
 #endif
+        }
+        break;
+    }
+        
+    case JITCode::FTLJIT: {
+        // There is no easy way to avoid duplicating this code since the FTL::JITCode::osrExit
+        // vector contains a totally different type, that just so happens to behave like
+        // DFG::JITCode::osrExit.
+#if ENABLE(FTL_JIT)
+        FTL::JITCode* jitCode = m_jitCode->ftl();
+        for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
+            FTL::OSRExit& exit = jitCode->osrExit[i];
+            
+            if (!exit.considerAddingAsFrequentExitSite(this, profiledBlock))
+                continue;
+            
+#if DFG_ENABLE(DEBUG_VERBOSE)
+            dataLog("OSR exit #", i, " (bc#", exit.m_codeOrigin.bytecodeIndex, ", ", exit.m_kind, ") for ", *this, " occurred frequently: counting as frequent exit site.\n");
+#endif
+        }
+#endif
+        break;
+    }        
+        
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
 }
 #endif // ENABLE(DFG_JIT)

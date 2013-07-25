@@ -1722,7 +1722,7 @@ extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
     // Otherwise, the replacement must be optimized code. Use this as an opportunity
     // to check our logic.
     ASSERT(codeBlock->hasOptimizedReplacement());
-    ASSERT(codeBlock->replacement()->getJITType() == JITCode::DFGJIT);
+    ASSERT(JITCode::isOptimizingJIT(codeBlock->replacement()->getJITType()));
 
     codeBlock->reoptimize();
 }

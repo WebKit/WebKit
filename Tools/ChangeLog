@@ -1,3 +1,63 @@
+2013-04-15  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Update LLVM-related build scripts to copy generated headers as well
+        https://bugs.webkit.org/show_bug.cgi?id=114551
+
+        Reviewed by Oliver Hunt.
+        
+        Also added the ability to use something other than bzip2 compression, since although
+        it is great for checking things into the tree, it increases turn-around times when
+        experimenting.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        (unpackIfNecessary):
+        * Scripts/export-llvm-build:
+
+2013-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Include LLVM headers with surrounding #pragmas instead of using my #define
+        https://bugs.webkit.org/show_bug.cgi?id=113921
+
+        Reviewed by Oliver Hunt.
+
+        The LLVM community wants us to continue including all of LLVM's C++ headers. Change
+        the export script to do this.
+        
+        * Scripts/export-llvm-build:
+
+2013-03-29  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Check in a known-good build of LLVM into WebKitLibraries, and have a story for updating it
+        https://bugs.webkit.org/show_bug.cgi?id=113452
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        * Scripts/export-llvm-build:
+
+2013-03-29  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL JIT should be able run some simple function
+        https://bugs.webkit.org/show_bug.cgi?id=113481
+
+        Reviewed by Geoffrey Garen.
+        
+        Give the scripts the ability to find an LLVM build and use it.
+        
+        Also added a script, export-llvm-build, that allows you to take your
+        own build of LLVM and package it for use by WebKit's build system.
+        
+        The build system treats a "build" of LLVM as a pair of .tar.bz2's,
+        one for the library archives and one for the headers. It then unpacks
+        them into your built products directory in a mannner that is mostly
+        analogous to how WebKitSystemInterface works.
+
+        * Scripts/build-jsc:
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        (unpackIfNecessary):
+        (dittoHeaders):
+        * Scripts/export-llvm-build: Added.
+
 2013-07-24  Anders Carlsson  <andersca@apple.com>
 
         Crash when calling WKPageGetProcessIdentifier after aborted process launch

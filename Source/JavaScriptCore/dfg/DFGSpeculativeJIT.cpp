@@ -1806,11 +1806,11 @@ void SpeculativeJIT::checkArgumentTypes()
         }
         
         VariableAccessData* variableAccessData = node->variableAccessData();
-        if (!variableAccessData->isProfitableToUnbox())
+        if (!variableAccessData->shouldUnboxIfPossible())
             continue;
         
         VirtualRegister virtualRegister = variableAccessData->local();
-        SpeculatedType predictedType = variableAccessData->prediction();
+        SpeculatedType predictedType = variableAccessData->argumentAwarePrediction();
 
         JSValueSource valueSource = JSValueSource(JITCompiler::addressFor(virtualRegister));
         

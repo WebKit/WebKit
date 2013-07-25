@@ -293,6 +293,25 @@ inline NodeFlags defaultFlags(NodeType op)
     }
 }
 
+inline bool needsOSRBackwardRewiring(NodeType op)
+{
+    return op == UInt32ToNumber;
+}
+
+inline bool needsOSRForwardRewiring(NodeType op)
+{
+    switch (op) {
+    case Int32ToDouble:
+    case ForwardInt32ToDouble:
+    case ValueToInt32:
+    case UInt32ToNumber:
+    case DoubleAsInt32:
+        return true;
+    default:
+        return false;
+    }
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

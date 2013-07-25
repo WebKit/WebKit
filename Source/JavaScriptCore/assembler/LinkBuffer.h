@@ -199,6 +199,11 @@ public:
         return applyOffset(label.m_label).m_offset;
     }
 
+    unsigned offsetOf(PatchableJump jump)
+    {
+        return applyOffset(jump.m_jump.m_label).m_offset;
+    }
+
     // Upon completion of all patching 'FINALIZE_CODE()' should be called once to
     // complete generation of the code. Alternatively, call
     // finalizeCodeWithoutDisassembly() directly if you have your own way of

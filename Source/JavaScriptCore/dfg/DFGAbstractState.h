@@ -112,6 +112,21 @@ public:
         return m_variables;
     }
     
+    bool needsTypeCheck(Node* node, SpeculatedType typesPassedThrough)
+    {
+        return forNode(node).m_type & ~typesPassedThrough;
+    }
+    
+    bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough)
+    {
+        return needsTypeCheck(edge.node(), typesPassedThrough);
+    }
+    
+    bool needsTypeCheck(Edge edge)
+    {
+        return needsTypeCheck(edge, typeFilterFor(edge.useKind()));
+    }
+    
     // Call this before beginning CFA to initialize the abstract values of
     // arguments, and to indicate which blocks should be listed for CFA
     // execution.
@@ -185,19 +200,7 @@ public:
     
     ALWAYS_INLINE void filterEdgeByUse(Node* node, Edge& edge)
     {
-#if !ASSERT_DISABLED
-        switch (edge.useKind()) {
-        case KnownInt32Use:
-        case KnownNumberUse:
-        case KnownCellUse:
-        case KnownStringUse:
-            ASSERT(!(forNode(edge).m_type & ~typeFilterFor(edge.useKind())));
-            break;
-        default:
-            break;
-        }
-#endif // !ASSERT_DISABLED
-        
+        ASSERT(mayHaveTypeCheck(edge.useKind()) || !needsTypeCheck(edge));
         filterByType(node, edge, typeFilterFor(edge.useKind()));
     }
     

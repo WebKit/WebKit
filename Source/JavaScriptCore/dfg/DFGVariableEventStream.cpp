@@ -214,7 +214,7 @@ void VariableEventStream::reconstruct(
             
             bool found = false;
             
-            if (node && node->op() == UInt32ToNumber) {
+            if (node && needsOSRBackwardRewiring(node->op())) {
                 MinifiedID id = node->child1();
                 if (tryToSetConstantRecovery(valueRecoveries[i], codeBlock, graph.at(id)))
                     continue;
@@ -257,6 +257,7 @@ void VariableEventStream::reconstruct(
                         doubleAsInt32ID = id;
                         break;
                     default:
+                        ASSERT(!needsOSRForwardRewiring(node->op()));
                         break;
                     }
                 }

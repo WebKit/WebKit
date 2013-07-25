@@ -102,11 +102,13 @@ set(JavaScriptCore_SOURCES
     dfg/DFGNodeFlags.cpp
     dfg/DFGOSREntry.cpp
     dfg/DFGOSRExit.cpp
+    dfg/DFGOSRExitBase.cpp
     dfg/DFGOSRExitCompiler.cpp
     dfg/DFGOSRExitCompiler32_64.cpp
     dfg/DFGOSRExitCompiler64.cpp
     dfg/DFGOSRExitCompilerCommon.cpp
     dfg/DFGOSRExitJumpPlaceholder.cpp
+    dfg/DFGOSRExitPreparation.cpp
     dfg/DFGOperations.cpp
     dfg/DFGPhase.cpp
     dfg/DFGPredictionPropagationPhase.cpp

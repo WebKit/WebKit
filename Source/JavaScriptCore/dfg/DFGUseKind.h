@@ -95,6 +95,25 @@ ALWAYS_INLINE SpeculatedType typeFilterFor(UseKind useKind)
     }
 }
 
+ALWAYS_INLINE bool shouldNotHaveTypeCheck(UseKind kind)
+{
+    switch (kind) {
+    case UntypedUse:
+    case KnownInt32Use:
+    case KnownNumberUse:
+    case KnownCellUse:
+    case KnownStringUse:
+        return true;
+    default:
+        return false;
+    }
+}
+
+ALWAYS_INLINE bool mayHaveTypeCheck(UseKind kind)
+{
+    return !shouldNotHaveTypeCheck(kind);
+}
+
 ALWAYS_INLINE bool isNumerical(UseKind kind)
 {
     switch (kind) {
@@ -102,6 +121,34 @@ ALWAYS_INLINE bool isNumerical(UseKind kind)
     case KnownInt32Use:
     case RealNumberUse:
     case NumberUse:
+        return true;
+    default:
+        return false;
+    }
+}
+
+ALWAYS_INLINE bool isDouble(UseKind kind)
+{
+    switch (kind) {
+    case KnownInt32Use:
+    case RealNumberUse:
+    case NumberUse:
+        return true;
+    default:
+        return false;
+    }
+}
+
+ALWAYS_INLINE bool isCell(UseKind kind)
+{
+    switch (kind) {
+    case CellUse:
+    case KnownCellUse:
+    case ObjectUse:
+    case StringUse:
+    case KnownStringUse:
+    case StringObjectUse:
+    case StringOrStringObjectUse:
         return true;
     default:
         return false;

@@ -1,3 +1,26 @@
+2013-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Just linking LLVM into JSC causes all plugin tests to fail
+        https://bugs.webkit.org/show_bug.cgi?id=113915
+
+        Reviewed by nobody.
+        
+        This is pretty funny. I don't know, yet, what is going on, but I don't want it to block other work.
+
+        * platform/mac/TestExpectations:
+
+2013-03-29  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL JIT should be able to compile the Marsaglia random number generator
+        https://bugs.webkit.org/show_bug.cgi?id=113635
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/regress/marsaglia-expected.txt: Added.
+        * fast/js/regress/marsaglia.html: Added.
+        * fast/js/regress/script-tests/marsaglia.js: Added.
+        (marsaglia):
+
 2013-07-24  Daniel Bates  <dabates@apple.com>
 
         Add DRT test to ensure don't override z-index for overflow: scroll, -webkit-overflow-scrolling: touch

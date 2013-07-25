@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "DFGCommon.h"
 #include "DFGExitProfile.h"
 #include "DFGGPRInfo.h"
+#include "DFGOSRExitBase.h"
 #include "DFGValueRecoveryOverride.h"
 #include "MacroAssembler.h"
 #include "MethodOfGettingAValueProfile.h"
@@ -84,7 +85,7 @@ private:
 //
 // This structure describes how to exit the speculative path by
 // going into baseline code.
-struct OSRExit {
+struct OSRExit : public OSRExitBase {
     OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = UINT_MAX);
     
     MacroAssemblerCodeRef m_code;
@@ -93,22 +94,10 @@ struct OSRExit {
     MethodOfGettingAValueProfile m_valueProfile;
 
     unsigned m_patchableCodeOffset;
-    CodeOrigin m_codeOrigin;
-    CodeOrigin m_codeOriginForExitProfile;
     
     unsigned m_recoveryIndex;
     unsigned m_watchpointIndex;
     
-    ExitKind m_kind;
-    uint32_t m_count;
-    
-    bool considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
-    {
-        if (!m_count || !exitKindIsCountable(m_kind))
-            return false;
-        return considerAddingAsFrequentExitSiteSlow(profiledCodeBlock);
-    }
-
     void setPatchableCodeOffset(MacroAssembler::PatchableJump);
     MacroAssembler::Jump getPatchableCodeOffsetAsJump() const;
     CodeLocationJump codeLocationForRepatch(CodeBlock*) const;
@@ -120,9 +109,6 @@ struct OSRExit {
     int m_lastSetOperand;
     
     RefPtr<ValueRecoveryOverride> m_valueRecoveryOverride;
-
-private:
-    bool considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock);
 };
 
 struct SpeculationFailureDebugInfo {

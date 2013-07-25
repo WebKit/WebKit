@@ -1,0 +1,132 @@
+#!/usr/bin/env ruby
+
+# Copyright (C) 2013 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+require 'getoptlong'
+require 'pathname'
+require 'shellwords'
+require 'tmpdir'
+
+def mysys(*cmd)
+    commandArray = cmd.each{|value| Shellwords.shellescape(value.to_s)}.join(' ')
+    $stderr.puts ">> #{commandArray}"
+    riase unless system(*cmd)
+end
+
+$libraryPackage = Pathname.new("LLVMLibraries.tar.bz2")
+$includePackage = Pathname.new("LLVMIncludes.tar.bz2")
+$llvmBuild = "Release+Asserts"
+$compression = "bzip2"
+
+def usage
+    puts "export-llvm-build <LLVM directory>"
+    puts
+    puts "--library-package  (-l)   Change where to put the compressed library package."
+    puts "                          Default is #{$libraryPackage}."
+    puts "--include-package  (-i)   Change wehre to put the compressed header package."
+    puts "                          Default is #{$includePackage}."
+    puts "--llvm-build       (-b)   Change which LLVM build to use."
+    puts "                          Default is #{$llvmBuild}."
+    puts "--compression             Change what compression to do. Can be one of gzip,"
+    puts "                          bzip2, or none."
+    puts "                          Default is #{$compression}."
+    exit 1
+end
+
+GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
+               ['--library-package', '-l', GetoptLong::REQUIRED_ARGUMENT],
+               ['--include-package', '-i', GetoptLong::REQUIRED_ARGUMENT],
+               ['--llvm-build', '-b', GetoptLong::REQUIRED_ARGUMENT],
+               ['--compression', GetoptLong::REQUIRED_ARGUMENT]).each {
+    | opt, arg |
+    case opt
+    when '--help'
+        usage
+    when '--library-package'
+        $libraryPackage = Pathname.new(arg)
+    when '--include-package'
+        $includePackage = Pathname.new(arg)
+    when '--llvm-build'
+        $llvmBuild = arg
+    when '--compression'
+        $compression = arg
+    else
+        raise
+    end
+}
+
+if ARGV.length != 1
+    usage
+end
+
+$llvmPath = Pathname.new(ARGV[0])
+
+$currentPath = Pathname.pwd
+
+def compressionChar
+    case $compression
+    when "gzip"
+        "z"
+    when "bzip2"
+        "y"
+    when "none"
+        ""
+    else
+        raise "Bad choice of compression."
+    end
+end
+
+Dir.chdir($llvmPath + $llvmBuild + "lib") {
+    mysys("tar", "-c#{compressionChar}vf", $currentPath + $libraryPackage, *Dir.entries('.').select{|value| value =~ /\.a$/})
+}
+
+Dir.mktmpdir {
+    | directory |
+    directory = Pathname.new(directory).realpath
+    Dir.chdir($llvmPath) {
+        mysys("svn", "export", "include", directory + "include")
+    }
+    ["include/llvm/Config"].each {
+        | genDirName |
+        configSrcPath = $llvmPath + genDirName
+        configDstPath = directory + genDirName
+        Dir.foreach(configSrcPath) {
+            | filename |
+            next unless filename =~ /\.def$/ or filename =~ /\.h$/
+            mysys("cp", configSrcPath + filename, configDstPath + filename)
+        }
+    }
+    Dir.chdir(directory + "include") {
+        mysys("tar", "-cyvf", $currentPath + $includePackage, ".")
+    }
+}
+
+puts
+puts "LLVM has been packaged for use by WebKit."
+puts
+puts "You can use it right now by setting these environment variables:"
+puts
+puts "export LLVM_LIBRARY_PACKAGE=#{Shellwords.shellescape($libraryPackage.realpath.to_s)}"
+puts "export LLVM_INCLUDE_PACKAGE=#{Shellwords.shellescape($includePackage.realpath.to_s)}"
+puts

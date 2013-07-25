@@ -141,11 +141,13 @@ SOURCES += \
     dfg/DFGOperations.cpp \
     dfg/DFGOSREntry.cpp \
     dfg/DFGOSRExit.cpp \
+    dfg/DFGOSRExitBase.cpp \
     dfg/DFGOSRExitCompiler.cpp \
     dfg/DFGOSRExitCompiler64.cpp \
     dfg/DFGOSRExitCompiler32_64.cpp \
     dfg/DFGOSRExitCompilerCommon.cpp \
     dfg/DFGOSRExitJumpPlaceholder.cpp \
+    dfg/DFGOSRExitPreparation.cpp \
     dfg/DFGPhase.cpp \
     dfg/DFGPredictionPropagationPhase.cpp \
     dfg/DFGPredictionInjectionPhase.cpp \

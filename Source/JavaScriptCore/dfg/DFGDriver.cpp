@@ -49,6 +49,10 @@
 #include "DFGUnificationPhase.h"
 #include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
+#include "FTLCapabilities.h"
+#include "FTLCompile.h"
+#include "FTLLowerDFGToLLVM.h"
+#include "FTLState.h"
 #include "Operations.h"
 #include "Options.h"
 
@@ -59,6 +63,18 @@ static unsigned numCompilations;
 unsigned getNumCompilations()
 {
     return numCompilations;
+}
+
+static void dumpAndVerifyGraph(Graph& graph, const char* text)
+{
+    GraphDumpMode modeForFinalValidate = DumpGraph;
+    if (verboseCompilationEnabled()) {
+        dataLog(text, "\n");
+        graph.dump();
+        modeForFinalValidate = DontDumpGraph;
+    }
+    if (validationEnabled())
+        validate(graph, modeForFinalValidate);
 }
 
 enum CompileMode { CompileFunction, CompileOther };
@@ -145,17 +161,31 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     performStoreElimination(dfg);
     performCPSRethreading(dfg);
     performDCE(dfg);
-    performVirtualRegisterAllocation(dfg);
 
-    GraphDumpMode modeForFinalValidate = DumpGraph;
-    if (verboseCompilationEnabled()) {
-        dataLogF("Graph after optimization:\n");
-        dfg.dump();
-        modeForFinalValidate = DontDumpGraph;
+#if ENABLE(FTL_JIT)
+    if (Options::useExperimentalFTL()
+        && compileMode == CompileFunction
+        && FTL::canCompile(dfg)) {
+        
+        dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:");
+        
+        // FIXME: Support OSR entry.
+        // https://bugs.webkit.org/show_bug.cgi?id=113625
+        
+        FTL::State state(dfg);
+        FTL::lowerDFGToLLVM(state);
+        FTL::compile(state, jitCode, *jitCodeWithArityCheck);
+        
+        // FIXME: Need to add support for the case where JIT memory allocation failed.
+        // https://bugs.webkit.org/show_bug.cgi?id=113620
+        
+        return true;
     }
-    if (validationEnabled())
-        validate(dfg, modeForFinalValidate);
+#endif // ENABLE(FTL_JIT)
     
+    performVirtualRegisterAllocation(dfg);
+    dumpAndVerifyGraph(dfg, "Graph after optimization:");
+
     JITCompiler dataFlowJIT(dfg);
     bool result;
     if (compileMode == CompileFunction) {

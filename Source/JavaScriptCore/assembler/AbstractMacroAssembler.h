@@ -105,6 +105,11 @@ public:
             , offset(offset)
         {
         }
+        
+        Address withOffset(int32_t additionalOffset)
+        {
+            return Address(base, offset + additionalOffset);
+        }
 
         RegisterID base;
         int32_t offset;

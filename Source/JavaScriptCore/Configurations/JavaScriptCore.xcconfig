@@ -34,11 +34,18 @@ JSVALUE_MODEL_x86_64 = 64;
 
 // Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
 OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-all_load;
+
+OTHER_LDFLAGS_LLVM = $(OTHER_LDFLAGS_LLVM_$(ENABLE_FTL_JIT));
+OTHER_LDFLAGS_LLVM_ = ;
+OTHER_LDFLAGS_LLVM_ENABLE_FTL_JIT = -lpthread -lm -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMIRReader -lLLVMAsmParser -lLLVMMCDisassembler -lLLVMMCParser -lLLVMInstrumentation -lLLVMArchive -lLLVMBitReader -lLLVMInterpreter -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMBitWriter -lLLVMMCJIT -lLLVMJIT -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMTarget -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport;
+
+
+
 OTHER_LDFLAGS_BASE = -lobjc -Wl,-Y,3 $(OTHER_LDFLAGS_HIDE_SYMBOLS);
 OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE);
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -framework CoreServices;
+OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_LLVM) -sub_library libobjc -framework CoreServices;
 GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS);

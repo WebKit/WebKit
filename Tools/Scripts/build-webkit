@@ -205,10 +205,10 @@ if (!isQt() && !-d "WebKitLibraries") {
 }
 
 my @options = ();
+my $hasFTLJIT = 0;
 
 if (isAppleMacWebKit()) {
     push @options, XcodeOptions();
-
     sub option($$$)
     {
         my ($feature, $isEnabled, $defaultValue) = @_;
@@ -218,8 +218,10 @@ if (isAppleMacWebKit()) {
 
     foreach (@features) {
         my $option = option($_->{define}, ${$_->{value}}, $_->{default});
+        $hasFTLJIT = 1 if ($_->{define} eq "ENABLE_FTL_JIT") and (${$_->{value}});
         push @options, $option unless $option eq "";
     }
+    $ENV{ENABLE_FTL_JIT} = 1 if $hasFTLJIT;
 
     # ANGLE must come before WebCore
     splice @projects, 0, 0, "Source/ThirdParty/ANGLE";
@@ -232,7 +234,7 @@ if (isAppleMacWebKit()) {
 
     # Build Tools needed for Apple ports
     push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
-    
+
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
     (system("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", $productDir) == 0) or die;
 } elsif (isWinCairo()) {

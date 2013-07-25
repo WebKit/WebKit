@@ -110,6 +110,11 @@ typedef OptionRange optionRange;
     v(bool, validateGraph, false) \
     v(bool, validateGraphAtEachPhase, false) \
     \
+    v(bool, useExperimentalFTL, false) \
+    v(bool, useFTLTBAA, true) \
+    v(bool, enableLLVMLICM, true) \
+    v(unsigned, llvmOptimizationLevel, 2) \
+    \
     v(bool, enableProfiler, false) \
     \
     v(unsigned, maximumOptimizationCandidateInstructionCount, 10000) \

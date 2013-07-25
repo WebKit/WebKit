@@ -36,15 +36,12 @@
 namespace JSC { namespace DFG {
 
 OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAValueProfile valueProfile, SpeculativeJIT* jit, unsigned streamIndex, unsigned recoveryIndex)
-    : m_jsValueSource(jsValueSource)
+    : OSRExitBase(kind, jit->m_codeOriginForOSR)
+    , m_jsValueSource(jsValueSource)
     , m_valueProfile(valueProfile)
     , m_patchableCodeOffset(0)
-    , m_codeOrigin(jit->m_codeOriginForOSR)
-    , m_codeOriginForExitProfile(m_codeOrigin)
     , m_recoveryIndex(recoveryIndex)
     , m_watchpointIndex(std::numeric_limits<unsigned>::max())
-    , m_kind(kind)
-    , m_count(0)
     , m_streamIndex(streamIndex)
     , m_lastSetOperand(jit->m_lastSetOperand)
 {
@@ -73,54 +70,15 @@ void OSRExit::correctJump(LinkBuffer& linkBuffer)
     m_patchableCodeOffset = linkBuffer.offsetOf(label);
 }
 
-bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock)
-{
-    FrequentExitSite exitSite;
-    
-    if (m_kind == ArgumentsEscaped) {
-        // Count this one globally. It doesn't matter where in the code block the arguments excaped;
-        // the fact that they did is not associated with any particular instruction.
-        exitSite = FrequentExitSite(m_kind);
-    } else
-        exitSite = FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind);
-    
-    return baselineCodeBlockForOriginAndBaselineCodeBlock(m_codeOriginForExitProfile, profiledCodeBlock)->addFrequentExitSite(exitSite);
-}
-
 void OSRExit::convertToForward(BasicBlock* block, Node* currentNode, unsigned nodeIndex, const ValueRecovery& valueRecovery)
 {
-    // Check that either the current node is a SetLocal, or the preceding node was a
-    // SetLocal with the same code origin, or that we've provided a valueRecovery.
-    if (!ASSERT_DISABLED
-        && !valueRecovery
-        && !currentNode->containsMovHint()) {
-        Node* setLocal = block->at(nodeIndex - 1);
-        ASSERT_UNUSED(setLocal, setLocal->containsMovHint());
-        ASSERT_UNUSED(setLocal, setLocal->codeOrigin == currentNode->codeOrigin);
-    }
-    
-    // Find the first node for the next bytecode instruction. Also track the last mov hint
-    // on this node.
-    unsigned indexInBlock = nodeIndex + 1;
-    Node* node = 0;
-    Node* lastMovHint = 0;
-    for (;;) {
-        if (indexInBlock == block->size()) {
-            // This is an inline return. Give up and do a backwards speculation. This is safe
-            // because an inline return has its own bytecode index and it's always safe to
-            // reexecute that bytecode.
-            ASSERT(node->op() == Jump);
-            return;
-        }
-        node = block->at(indexInBlock);
-        if (node->containsMovHint() && node->child1() == currentNode)
-            lastMovHint = node;
-        if (node->codeOrigin != currentNode->codeOrigin)
-            break;
-        indexInBlock++;
-    }
-    
+    Node* node;
+    Node* lastMovHint;
+    if (!doSearchForForwardConversion(block, currentNode, nodeIndex, !!valueRecovery, node, lastMovHint))
+        return;
+
     ASSERT(node->codeOrigin != currentNode->codeOrigin);
+    
     m_codeOrigin = node->codeOrigin;
     
     if (!valueRecovery)

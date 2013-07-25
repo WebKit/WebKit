@@ -2106,7 +2106,7 @@ public:
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, Edge);
     
     // Helpers for performing type checks on an edge stored in the given registers.
-    bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough) { return m_state.forNode(edge).m_type & ~typesPassedThrough; }
+    bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough) { return m_state.needsTypeCheck(edge, typesPassedThrough); }
     void backwardTypeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail);
     void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail);
     void forwardTypeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, const ValueRecovery&);
@@ -2711,7 +2711,7 @@ public:
         , m_fprOrInvalid(InvalidFPRReg)
     {
         ASSERT(m_jit);
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == NumberUse || edge.useKind() == KnownNumberUse || edge.useKind() == RealNumberUse));
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || isDouble(edge.useKind()));
         if (jit->isFilled(node()))
             fpr();
     }
@@ -2760,7 +2760,7 @@ public:
         ASSERT(m_jit);
         if (!edge)
             return;
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == CellUse || edge.useKind() == KnownCellUse || edge.useKind() == ObjectUse || edge.useKind() == StringUse || edge.useKind() == KnownStringUse || edge.useKind() == StringObjectUse || edge.useKind() == StringOrStringObjectUse));
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || isCell(edge.useKind()));
         if (jit->isFilled(node()))
             gpr();
     }
@@ -2868,9 +2868,12 @@ void SpeculativeJIT::speculateStringObjectForStructure(Edge edge, StructureLocat
 }
 
 #define DFG_TYPE_CHECK(source, edge, typesPassedThrough, jumpToFail) do { \
-        if (!needsTypeCheck((edge), (typesPassedThrough)))              \
+        JSValueSource _dtc_source = (source);                           \
+        Edge _dtc_edge = (edge);                                        \
+        SpeculatedType _dtc_typesPassedThrough = typesPassedThrough;    \
+        if (!needsTypeCheck(_dtc_edge, _dtc_typesPassedThrough))        \
             break;                                                      \
-        typeCheck((source), (edge), (typesPassedThrough), (jumpToFail)); \
+        typeCheck(_dtc_source, _dtc_edge, _dtc_typesPassedThrough, (jumpToFail)); \
     } while (0)
 
 } } // namespace JSC::DFG

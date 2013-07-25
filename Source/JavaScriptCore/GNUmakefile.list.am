@@ -254,9 +254,13 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompilerCommon.h \
 	Source/JavaScriptCore/dfg/DFGOSRExit.h \
 	Source/JavaScriptCore/dfg/DFGOSRExit.cpp \
+	Source/JavaScriptCore/dfg/DFGOSRExitBase.h \
+	Source/JavaScriptCore/dfg/DFGOSRExitBase.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompilationInfo.h \
 	Source/JavaScriptCore/dfg/DFGOSRExitJumpPlaceholder.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitJumpPlaceholder.h \
+	Source/JavaScriptCore/dfg/DFGOSRExitPreparation.h \
+	Source/JavaScriptCore/dfg/DFGOSRExitPreparation.cpp \
 	Source/JavaScriptCore/dfg/DFGPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGPhase.h \
 	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.cpp \

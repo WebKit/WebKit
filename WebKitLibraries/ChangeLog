@@ -1,3 +1,29 @@
+2013-04-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Updated LLVM drops to include MCJIT fixes.
+
+        * LLVMIncludesMountainLion.tar.bz2:
+        * LLVMLibrariesMountainLion.tar.bz2:
+
+2013-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Updated LLVM drops to include LLVM_DO_NOT_INCLUDE_CPP_HEADERS changes.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * LLVMIncludesMountainLion.tar.bz2:
+        * LLVMLibrariesMountainLion.tar.bz2:
+
+2013-03-29  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Check in a known-good build of LLVM into WebKitLibraries, and have a story for updating it
+        https://bugs.webkit.org/show_bug.cgi?id=113452
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * LLVMIncludesMountainLion.tar.bz2: Added.
+        * LLVMLibrariesMountainLion.tar.bz2: Added.
+
 2013-07-18  Roger Fong  <roger_fong@apple.com>
 
         Make sure to link against _debug binaries when appropriate.

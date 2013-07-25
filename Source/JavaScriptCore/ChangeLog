@@ -1,3 +1,1539 @@
+2013-04-16  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should be able to query Structure without modifying it
+        https://bugs.webkit.org/show_bug.cgi?id=114708
+
+        Reviewed by Oliver Hunt.
+        
+        This is work towards allowing the DFG, and FTL, to run on a separate thread.
+        The idea is that the most evil thing that the DFG does that has thread-safety
+        issues is fiddling with Structures by calling Structure::get(). This can lead
+        to rematerialization of property tables, which is definitely not thread-safe
+        due to how StringImpl works. So, this patch completely side-steps the problem
+        by creating a new version of Structure::get, called
+        Structure::getWithoutMaterializing, which may choose to do an O(n) search if
+        necessary to avoid materialization. I believe this should be fine - the DFG
+        does't call into these code path often enough for this to matter, and most of
+        the time, the Structure that we call this on will already have a property
+        table because some inline cache would have already called ::get() on that
+        Structure.
+        
+        Also cleaned up the materialization logic: we can stop the search as soon as
+        we find any Structure with a property table rather than searching all the way
+        for a pinned one.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        * runtime/Structure.cpp:
+        (JSC::Structure::findStructuresAndMapForMaterialization):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::getWithoutMaterializing):
+        (JSC):
+        * runtime/Structure.h:
+        (Structure):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::getWithoutMaterializing):
+        (JSC):
+
+2013-04-13  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Fix release build.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        * ftl/FTLExitValue.cpp:
+        * ftl/FTLOSRExitCompiler.cpp:
+
+2013-04-13  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should have OSR exit
+        https://bugs.webkit.org/show_bug.cgi?id=113623
+
+        Reviewed by Oliver Hunt.
+        
+        This implements OSR exit, and hilariously, it actually works. The idea is to have
+        LLVM call a no-return function on the off-ramp, passing it everything we know about
+        bytecode state that isn't already flushed to the call frame. Our own JIT takes care
+        of the rest.
+        
+        We can now run all of SunSpider, V8, and Kraken with the FTL enabled.
+        
+        The details are described in FTLOSRExit.h.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/AbstractMacroAssembler.h:
+        (Address):
+        (JSC::AbstractMacroAssembler::Address::withOffset):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::offsetOf):
+        (LinkBuffer):
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/RepatchBuffer.h:
+        (JSC::RepatchBuffer::RepatchBuffer):
+        (JSC::RepatchBuffer::~RepatchBuffer):
+        (RepatchBuffer):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/Operands.h:
+        (Operands):
+        (JSC):
+        (JSC::::dump):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        * dfg/DFGGPRInfo.h:
+        (DFG):
+        (GPRInfo):
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::belongsInMinifiedGraph):
+        * dfg/DFGNodeType.h:
+        (JSC::DFG::needsOSRBackwardRewiring):
+        (DFG):
+        (JSC::DFG::needsOSRForwardRewiring):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        (DFG):
+        (JSC::DFG::OSRExit::convertToForward):
+        * dfg/DFGOSRExit.h:
+        (OSRExit):
+        * dfg/DFGOSRExitBase.cpp: Added.
+        (DFG):
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSiteSlow):
+        (JSC::DFG::OSRExitBase::doSearchForForwardConversion):
+        * dfg/DFGOSRExitBase.h: Added.
+        (DFG):
+        (JSC::DFG::OSRExitBase::OSRExitBase):
+        (OSRExitBase):
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSite):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        (DFG):
+        * dfg/DFGOSRExitPreparation.cpp: Added.
+        (DFG):
+        (JSC::DFG::prepareCodeOriginForOSRExit):
+        * dfg/DFGOSRExitPreparation.h: Added.
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::forSpeculation):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::functionType):
+        (FTL):
+        (JSC::FTL::typeOf):
+        (JSC::FTL::appendBasicBlock):
+        (JSC::FTL::insertBasicBlock):
+        (JSC::FTL::buildCall):
+        (JSC::FTL::setTailCall):
+        * ftl/FTLCArgumentGetter.cpp: Added.
+        (FTL):
+        (JSC::FTL::CArgumentGetter::loadNextAndBox):
+        * ftl/FTLCArgumentGetter.h: Added.
+        (FTL):
+        (JSC::FTL::isArgumentRegister):
+        (CArgumentGetter):
+        (JSC::FTL::CArgumentGetter::CArgumentGetter):
+        (JSC::FTL::CArgumentGetter::loadNext8):
+        (JSC::FTL::CArgumentGetter::loadNext32):
+        (JSC::FTL::CArgumentGetter::loadNext64):
+        (JSC::FTL::CArgumentGetter::loadNextPtr):
+        (JSC::FTL::CArgumentGetter::loadNextDouble):
+        (JSC::FTL::CArgumentGetter::nextAddress):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLExitArgument.cpp: Added.
+        (FTL):
+        (JSC::FTL::ExitArgument::dump):
+        * ftl/FTLExitArgument.h: Added.
+        (FTL):
+        (ExitArgumentRepresentation):
+        (ExitArgument):
+        (JSC::FTL::ExitArgument::ExitArgument):
+        (JSC::FTL::ExitArgument::operator!):
+        (JSC::FTL::ExitArgument::format):
+        (JSC::FTL::ExitArgument::argument):
+        (JSC::FTL::ExitArgument::withFormat):
+        (JSC::FTL::ExitArgument::representation):
+        * ftl/FTLExitArgumentForOperand.cpp: Added.
+        (FTL):
+        (JSC::FTL::ExitArgumentForOperand::dump):
+        * ftl/FTLExitArgumentForOperand.h: Added.
+        (FTL):
+        (ExitArgumentForOperand):
+        (JSC::FTL::ExitArgumentForOperand::ExitArgumentForOperand):
+        (JSC::FTL::ExitArgumentForOperand::operator!):
+        (JSC::FTL::ExitArgumentForOperand::exitArgument):
+        (JSC::FTL::ExitArgumentForOperand::operand):
+        (JSC::FTL::lesserArgumentIndex):
+        * ftl/FTLExitArgumentList.h: Added.
+        (FTL):
+        * ftl/FTLExitThunkGenerator.cpp: Added.
+        (FTL):
+        (JSC::FTL::ExitThunkGenerator::ExitThunkGenerator):
+        (JSC::FTL::ExitThunkGenerator::~ExitThunkGenerator):
+        (JSC::FTL::ExitThunkGenerator::emitThunk):
+        * ftl/FTLExitThunkGenerator.h: Added.
+        (FTL):
+        (ExitThunkGenerator):
+        (JSC::FTL::ExitThunkGenerator::didThings):
+        * ftl/FTLExitValue.cpp: Added.
+        (FTL):
+        (JSC::FTL::ExitValue::dump):
+        * ftl/FTLExitValue.h: Added.
+        (FTL):
+        (ExitValue):
+        (JSC::FTL::ExitValue::ExitValue):
+        (JSC::FTL::ExitValue::operator!):
+        (JSC::FTL::ExitValue::dead):
+        (JSC::FTL::ExitValue::inJSStack):
+        (JSC::FTL::ExitValue::inJSStackAsInt32):
+        (JSC::FTL::ExitValue::inJSStackAsDouble):
+        (JSC::FTL::ExitValue::constant):
+        (JSC::FTL::ExitValue::exitArgument):
+        (JSC::FTL::ExitValue::kind):
+        (JSC::FTL::ExitValue::isDead):
+        (JSC::FTL::ExitValue::isInJSStackSomehow):
+        (JSC::FTL::ExitValue::isConstant):
+        (JSC::FTL::ExitValue::isArgument):
+        * ftl/FTLFormattedValue.h:
+        (FTL):
+        (JSC::FTL::noValue):
+        (JSC::FTL::int32Value):
+        (JSC::FTL::uInt32Value):
+        (JSC::FTL::booleanValue):
+        (JSC::FTL::jsValueValue):
+        (JSC::FTL::doubleValue):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::initializeExitThunks):
+        (FTL):
+        (JSC::FTL::JITCode::exitThunks):
+        * ftl/FTLJITCode.h:
+        (JITCode):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (FTL):
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::transferAndCheckArguments):
+        (JSC::FTL::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compileMovHint):
+        (JSC::FTL::LowerDFGToLLVM::compileZombieHint):
+        (JSC::FTL::LowerDFGToLLVM::compileMovHintAndCheck):
+        (JSC::FTL::LowerDFGToLLVM::compileAdd):
+        (JSC::FTL::LowerDFGToLLVM::compileArithSub):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+        (JSC::FTL::LowerDFGToLLVM::compileUInt32ToNumber):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::speculateBackward):
+        (JSC::FTL::LowerDFGToLLVM::speculateForward):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::terminate):
+        (JSC::FTL::LowerDFGToLLVM::backwardTypeCheck):
+        (JSC::FTL::LowerDFGToLLVM::forwardTypeCheck):
+        (JSC::FTL::LowerDFGToLLVM::typeCheck):
+        (JSC::FTL::LowerDFGToLLVM::appendTypeCheck):
+        (JSC::FTL::LowerDFGToLLVM::lowInt32):
+        (JSC::FTL::LowerDFGToLLVM::lowCell):
+        (JSC::FTL::LowerDFGToLLVM::lowBoolean):
+        (JSC::FTL::LowerDFGToLLVM::speculateObject):
+        (JSC::FTL::LowerDFGToLLVM::isLive):
+        (JSC::FTL::LowerDFGToLLVM::use):
+        (JSC::FTL::LowerDFGToLLVM::initializeOSRExitStateForBlock):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+        (JSC::FTL::LowerDFGToLLVM::tryToSetConstantExitArgument):
+        (JSC::FTL::LowerDFGToLLVM::addExitArgument):
+        (JSC::FTL::LowerDFGToLLVM::linkOSRExitsAndCompleteInitializationBlocks):
+        (JSC::FTL::LowerDFGToLLVM::observeMovHint):
+        * ftl/FTLOSRExit.cpp: Added.
+        (FTL):
+        (JSC::FTL::OSRExit::OSRExit):
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        (JSC::FTL::OSRExit::convertToForward):
+        * ftl/FTLOSRExit.h: Added.
+        (FTL):
+        (OSRExit):
+        * ftl/FTLOSRExitCompilationInfo.h: Added.
+        (FTL):
+        (JSC::FTL::OSRExitCompilationInfo::OSRExitCompilationInfo):
+        (OSRExitCompilationInfo):
+        * ftl/FTLOSRExitCompiler.cpp: Added.
+        (FTL):
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLOSRExitCompiler.h: Added.
+        (FTL):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::newBlock):
+        (JSC::FTL::Output::intToPtr):
+        (JSC::FTL::Output::load):
+        (JSC::FTL::Output::store):
+        (Output):
+        (JSC::FTL::Output::call):
+        (JSC::FTL::Output::convertToTailCall):
+        (FTL):
+        * ftl/FTLState.h:
+        (State):
+        * ftl/FTLThunks.cpp: Added.
+        (FTL):
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        * ftl/FTLThunks.h: Added.
+        (JSC):
+        (FTL):
+        * ftl/FTLValueFormat.cpp: Added.
+        (WTF):
+        (WTF::printInternal):
+        * ftl/FTLValueFormat.h: Added.
+        (FTL):
+        (WTF):
+        * ftl/FTLValueSource.cpp: Added.
+        (FTL):
+        (JSC::FTL::ValueSource::dump):
+        * ftl/FTLValueSource.h: Added.
+        (FTL):
+        (ValueSource):
+        (JSC::FTL::ValueSource::ValueSource):
+        (JSC::FTL::ValueSource::kind):
+        (JSC::FTL::ValueSource::operator!):
+        (JSC::FTL::ValueSource::node):
+
+2013-04-12  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: switch to using MCJIT and disable frame pointer elimination
+        https://bugs.webkit.org/show_bug.cgi?id=114542
+
+        Reviewed by Oliver Hunt and Michael Saboff.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+
+2013-04-09  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should provide utilities for common OSR exit tasks
+        https://bugs.webkit.org/show_bug.cgi?id=114306
+
+        Reviewed by Mark Hahnenberg.
+        
+        Just abstract out some things that the FTL will want to use as well.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler.h:
+        (OSRExitCompiler):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp: Added.
+        (DFG):
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h: Added.
+        (DFG):
+
+2013-04-09  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should better abstract floating point arguments
+        https://bugs.webkit.org/show_bug.cgi?id=114300
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGFPRInfo.h:
+        (FPRInfo):
+        (JSC::DFG::FPRInfo::toArgumentRegister):
+
+2013-04-05  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should better abstract arguments
+        https://bugs.webkit.org/show_bug.cgi?id=114073
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGGPRInfo.h:
+        (GPRInfo):
+        (JSC::DFG::GPRInfo::toArgumentRegister):
+
+2013-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: put DFG data into a DFG::JITCode, and put common DFG and FTL data into something accessible from both DFG::JITCode and FTL::JITCode
+        https://bugs.webkit.org/show_bug.cgi?id=113905
+
+        Reviewed by Geoffrey Garen.
+        
+        This removes one pointer from CodeBlock.
+        
+        It also gives us a framework for having JITType-specific data in CodeBlock, by
+        putting it into the appropriate JITCode class (either DFG::JITCode or
+        FTL::JITCode). And it allows us to have DFG and FTL share some common data,
+        via DFG::CommonData, which is stored in both DFG::JITCode and FTL::JITCode and
+        always accessible via JITCode::dfgCommon().
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::performTracingFixpointIteration):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::stronglyVisitWeakReferences):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::shouldImmediatelyAssumeLivenessDuringScan):
+        (JSC::DFGCodeBlocks::mark):
+        * dfg/DFGAssemblyHelpers.h:
+        * dfg/DFGCommonData.cpp: Added.
+        (DFG):
+        (JSC::DFG::CommonData::notifyCompilingStructureTransition):
+        (JSC::DFG::CommonData::shrinkToFit):
+        * dfg/DFGCommonData.h: Added.
+        (JSC):
+        (DFG):
+        (JSC::DFG::WeakReferenceTransition::WeakReferenceTransition):
+        (WeakReferenceTransition):
+        (CommonData):
+        (JSC::DFG::CommonData::CommonData):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGDriver.h:
+        (DFG):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGJITCode.cpp: Added.
+        (DFG):
+        (JSC::DFG::JITCode::JITCode):
+        (JSC::DFG::JITCode::~JITCode):
+        (JSC::DFG::JITCode::dfgCommon):
+        (JSC::DFG::JITCode::dfg):
+        (JSC::DFG::JITCode::shrinkToFit):
+        * dfg/DFGJITCode.h: Added.
+        (DFG):
+        (JITCode):
+        (JSC::DFG::JITCode::appendOSREntryData):
+        (JSC::DFG::JITCode::osrEntryDataForBytecodeIndex):
+        (JSC::DFG::JITCode::appendOSRExit):
+        (JSC::DFG::JITCode::lastOSRExit):
+        (JSC::DFG::JITCode::appendSpeculationRecovery):
+        (JSC::DFG::JITCode::appendWatchpoint):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JITCompiler):
+        (JSC::DFG::JITCompiler::addWeakReference):
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        (JSC::DFG::JITCompiler::jitCode):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.h:
+        (OSRExit):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::backwardSpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::speculationWatchpoint):
+        (JSC::DFG::SpeculativeJIT::convertLastOSRExitToForward):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableEventStream.cpp:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::JITCode):
+        (JSC::FTL::JITCode::~JITCode):
+        (FTL):
+        (JSC::FTL::JITCode::initializeCode):
+        (JSC::FTL::JITCode::addressForCall):
+        (JSC::FTL::JITCode::executableAddressAtOffset):
+        (JSC::FTL::JITCode::dataAddressAtOffset):
+        (JSC::FTL::JITCode::offsetOf):
+        (JSC::FTL::JITCode::size):
+        (JSC::FTL::JITCode::contains):
+        (JSC::FTL::JITCode::ftl):
+        (JSC::FTL::JITCode::dfgCommon):
+        * ftl/FTLJITCode.h:
+        (JITCode):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileStructureTransitionWatchpoint):
+        (JSC::FTL::LowerDFGToLLVM::compilePutStructure):
+        (JSC::FTL::LowerDFGToLLVM::compilePhantomPutStructure):
+        (JSC::FTL::LowerDFGToLLVM::addWeakReference):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::weakPointer):
+        * ftl/FTLState.cpp:
+        (FTL):
+        (JSC::FTL::State::State):
+        (JSC::FTL::State::dumpState):
+        * ftl/FTLState.h:
+        (State):
+        * heap/DFGCodeBlocks.cpp:
+        (JSC::DFGCodeBlocks::~DFGCodeBlocks):
+        (JSC::DFGCodeBlocks::jettison):
+        (JSC::DFGCodeBlocks::clearMarks):
+        (JSC::DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks):
+        (JSC::DFGCodeBlocks::traceMarkedCodeBlocks):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::dfgCommon):
+        (JSC):
+        (JSC::JITCode::dfg):
+        (JSC::JITCode::ftl):
+        (JSC::DirectJITCode::DirectJITCode):
+        (JSC::DirectJITCode::initializeCodeRef):
+        (JSC::DirectJITCode::addressForCall):
+        (JSC::DirectJITCode::executableAddressAtOffset):
+        (JSC::DirectJITCode::dataAddressAtOffset):
+        (JSC::DirectJITCode::offsetOf):
+        (JSC::DirectJITCode::size):
+        (JSC::DirectJITCode::contains):
+        * jit/JITCode.h:
+        (DFG):
+        (FTL):
+        (JSC):
+        (JITCode):
+        (DirectJITCode):
+
+2013-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Include LLVM headers with surrounding #pragmas instead of using my #define
+        https://bugs.webkit.org/show_bug.cgi?id=113921
+
+        Reviewed by Oliver Hunt.
+        
+        The LLVM community wants us to continue including all of LLVM's C++ headers. Change
+        to using #pragma's to disable warnings that they cannot handle.
+
+        * ftl/FTLLLVMHeaders.h:
+
+2013-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Everyone should know about the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=113897
+
+        Reviewed by Mark Hahnenberg.
+        
+        In order to get OSR exit to work right, we need the distinction between DFG and
+        FTL to be clear even after compilation finishes, since they will have subtly
+        different OSR stories and likely use different data structures.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::ProgramCodeBlock::compileOptimized):
+        (JSC::EvalCodeBlock::compileOptimized):
+        (JSC::FunctionCodeBlock::compileOptimized):
+        (JSC::CodeBlock::adjustedExitCountThreshold):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::hasOptimizedReplacement):
+        (JSC::ExecState::isInlineCallFrame):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::JITCode):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::dumpState):
+        * heap/DFGCodeBlocks.cpp:
+        (JSC::DFGCodeBlocks::jettison):
+        * interpreter/Interpreter.cpp:
+        (JSC::getLineNumberForCallFrame):
+        (JSC::getCallerInfo):
+        * jit/JITCode.cpp:
+        (WTF::printInternal):
+        * jit/JITCode.h:
+        (JSC::JITCode::topTierJIT):
+        (JSC::JITCode::nextTierJIT):
+        (JITCode):
+        (JSC::JITCode::isJIT):
+        (JSC::JITCode::isLowerTier):
+        (JSC::JITCode::isHigherTier):
+        (JSC::JITCode::isLowerOrSameTier):
+        (JSC::JITCode::isHigherOrSameTier):
+        (JSC::JITCode::isOptimizingJIT):
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileOptimized):
+        (JSC::samplingDescription):
+        (JSC::ProgramExecutable::compileOptimized):
+        (JSC::FunctionExecutable::compileOptimizedForCall):
+        (JSC::FunctionExecutable::compileOptimizedForConstruct):
+
+2013-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should abstract out how it does forward exits, and that code should be simplified
+        https://bugs.webkit.org/show_bug.cgi?id=113894
+
+        Reviewed by Mark Hahnenberg.
+        
+        1) We previously had two different ways of convertingToForward, one path for
+           where we had a ValueRecovery for the current node and one where we didn't.
+           But the paths were doing exactly the same thing except that if you have a
+           ValueRecovery, you also find the last applicable mov hint and do some
+           extra things. This patch combines the two paths and bases both of them on
+           the previous no-ValueRecovery path, which was simpler to begin with.
+        
+        2) This moves the logic into DFG::OSRExit, which further simplifies the code
+           and makes the logic available to the FTL.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::convertToForward):
+        (DFG):
+        * dfg/DFGOSRExit.h:
+        (DFG):
+        (OSRExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::convertLastOSRExitToForward):
+
+2013-04-02  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should have the equivalent of a ValueRecovery
+        https://bugs.webkit.org/show_bug.cgi?id=113819
+
+        Reviewed by Mark Hahnenberg.
+        
+        This adds a way of saying that we have a value, we don't want to say what
+        node the value came from, but we know specifics of how the value is
+        formatted. This is the LLVM equivalent of DFG's ValueRecovery.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLFormattedValue.h: Added.
+        (FTL):
+        (FormattedValue):
+        (JSC::FTL::FormattedValue::FormattedValue):
+        (JSC::FTL::FormattedValue::operator!):
+        (JSC::FTL::FormattedValue::format):
+        (JSC::FTL::FormattedValue::value):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileUInt32ToNumber):
+        (JSC::FTL::LowerDFGToLLVM::speculateForward):
+        (JSC::FTL::LowerDFGToLLVM::weakPointer):
+
+2013-04-02  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should use the right abstract heap for Int32 array accesses
+        https://bugs.webkit.org/show_bug.cgi?id=113759
+
+        Reviewed by Mark Hahnenberg.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+
+2013-04-02  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support fast property stores
+        https://bugs.webkit.org/show_bug.cgi?id=113757
+
+        Reviewed by Oliver Hunt.
+        
+        Simplified the task of handling property transitions and reduced amount of code
+        duplication between the JITs.
+        
+        Added PutByOffset, PutStructure, PhantomPutStructure, WeakJSConstant, and a
+        stub form of StructureTransitionWatchpoint to the FTL.
+        
+        Also simplified the creation of pointer constants, and fixed a bug in
+        speculateObject().
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::notifyCompilingStructureTransition):
+        (Graph):
+        * dfg/DFGJITCompiler.h:
+        (JITCompiler):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileWeakJSConstant):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compileStructureTransitionWatchpoint):
+        (JSC::FTL::LowerDFGToLLVM::compilePutStructure):
+        (JSC::FTL::LowerDFGToLLVM::compilePhantomPutStructure):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByOffset):
+        (JSC::FTL::LowerDFGToLLVM::speculateObject):
+        (JSC::FTL::LowerDFGToLLVM::weakPointer):
+        * ftl/FTLOutput.h:
+        (Output):
+        (JSC::FTL::Output::constIntPtr):
+        (JSC::FTL::Output::absolute):
+
+2013-04-01  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support some more integer arithmetic ops (negate, xor, urshift)
+        https://bugs.webkit.org/show_bug.cgi?id=113740
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::buildNeg):
+        (JSC::FTL::buildLShr):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compileBitXor):
+        (JSC::FTL::LowerDFGToLLVM::compileBitURShift):
+        (JSC::FTL::LowerDFGToLLVM::compileUInt32ToNumber):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::neg):
+        (JSC::FTL::Output::lShr):
+
+2013-04-01  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support GetGlobalVar/PutGlobalVar
+        https://bugs.webkit.org/show_bug.cgi?id=113728
+
+        Reviewed by Gavin Barraclough.
+        
+        Removed the macro magic for the globals absolute abstract heap, since for anything
+        with absolute addresses we can just share a common absolute abstract heap. It
+        would only be a problem if we for example were emitting an access to a global but
+        not using an absolute address, and then wanted to say that this access was
+        constrained to global variables. I don't believe we do that, and I don't believe we
+        ever will.
+        
+        Then added Output::absolute(), a convenient way of building a typed pointer for an
+        absolute address.
+        
+        Then added GetGlobalVar/PutGlobalVar.
+
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+        (FTL):
+        (AbstractHeapRepository):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetGlobalVar):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compilePutGlobalVar):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::absolute):
+        (Output):
+
+2013-03-31  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support ArithSub
+        https://bugs.webkit.org/show_bug.cgi?id=113675
+
+        Reviewed by Oliver Hunt.
+        
+        This does the obvious bit of implementing ArithSub, but it also takes this
+        as an opportunity to clean up how intrinsics and common values (common types
+        and constants) are handled. Previously they were all lumped together in
+        FTL::Output. Now, in an effort to split up the files and make FTL::Output
+        less big, I created a thing called FTL::CommonValues which just tracks the
+        common values, and a thing called FTL::IntrinsicRepository which just tracks
+        intrinsics. These and FTL::Output are all related to each other in a linear
+        hierarchy. Moreover, IntrinsicRepository uses macro-fu to make it easy to
+        declare new intrinsics in the future.
+        
+        I also out-of-lined some things and made .cpp files for each of these classes.
+        Initialize I wasn't going to do this but then I realized that FTL::Output is
+        already included in multiple places. Probably it's better if some of its guts
+        are not inline, and it's also good to now have .cpp "landing pads" if we ever
+        want to add more things to that class.
+        
+        Note that a lot of how these things are designed has to do with the fact
+        that pretty soon here I'll have to switch us from using the LLVM global
+        context to using a context that we create. When that happens, anyone who
+        creates anything will have to know the context; that's why FTL::CommonValues
+        already knows the module but doesn't use it - in the future it will have to
+        do things with it.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::buildSub):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCommonValues.cpp: Added.
+        (FTL):
+        (JSC::FTL::CommonValues::CommonValues):
+        * ftl/FTLCommonValues.h: Added.
+        (FTL):
+        (CommonValues):
+        (JSC::FTL::CommonValues::initialize):
+        * ftl/FTLIntrinsicRepository.cpp: Added.
+        (FTL):
+        (JSC::FTL::IntrinsicRepository::IntrinsicRepository):
+        * ftl/FTLIntrinsicRepository.h: Added.
+        (FTL):
+        (IntrinsicRepository):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileArithSub):
+        (LowerDFGToLLVM):
+        * ftl/FTLOutput.cpp: Added.
+        (FTL):
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::~Output):
+        * ftl/FTLOutput.h:
+        (Output):
+        (JSC::FTL::Output::initialize):
+        (JSC::FTL::Output::sub):
+        (JSC::FTL::Output::addWithOverflow32):
+        (JSC::FTL::Output::subWithOverflow32):
+        (JSC::FTL::Output::mulWithOverflow32):
+
+2013-03-31  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL doesn't need virtual register allocation
+        https://bugs.webkit.org/show_bug.cgi?id=113679
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::dumpAndVerifyGraph):
+        (DFG):
+        (JSC::DFG::compile):
+
+2013-03-31  Filip Pizlo  <fpizlo@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=113656
+        Fix Sam's nits.
+
+        Unreviewed.
+
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::IndexedAbstractHeap::initialize):
+        * ftl/FTLAbstractHeap.h:
+        (IndexedAbstractHeap):
+        (AbsoluteAbstractHeap):
+        * ftl/FTLAbstractHeapRepository.h:
+        (AbstractHeapRepository):
+
+2013-03-31  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL JIT should support GetByVal on Int32 arrays
+        https://bugs.webkit.org/show_bug.cgi?id=113668
+
+        Reviewed by Sam Weinig.
+        
+        It actually already supported this, but needed to be told that it did.
+        
+        Also adds an option to enable LICM (loop-invariant code motion, i.e.
+        http://llvm.org/docs/Passes.html#licm-loop-invariant-code-motion). LICM
+        isn't doing me any good right now, but I guess I'll have to play with
+        it more. And this adds the ability to tweak the LLVM optimization level
+        from the command-line.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        * runtime/Options.h:
+        (JSC):
+
+2013-03-31  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL JIT should supply TBAA meta-data to LLVM
+        https://bugs.webkit.org/show_bug.cgi?id=113656
+
+        Reviewed by Oliver Hunt.
+        
+        This adds support for performing strong typing on the LLVM IR that the FTL
+        generates, by using TBAA meta-data. This will permit LLVM to do aggressive
+        GVN, load elimination, and LICM optimization even if it sees pointer store
+        side-effects. The goal is to precisely model all loads and stores we emit,
+        except for the super crazy ones (GetById that can go all-out polymorphic,
+        or for example a Call where we know nothing).
+        
+        This is accomplished by introducing the notion of an AbstractHeap
+        typesystem. An AbstractHeap is a subset of all possible memory locations
+        that we might store to. For example, JSCell::m_structure and
+        JSObject::m_butterfly are two disjoint AbstractHeaps because we know that
+        a store to one cannot clobber the other. AbstractHeaps follow a
+        single-inheritance hierarchy. There is the root heap, which corresponds to
+        any possible memory location accessible to the JS engine, and then there
+        are heaps for all internal object fields, a heap for each global object,
+        and so on.
+        
+        There are three other tidbits here that make this somewhat more interesting.
+        We have a notion of an AbstractHeap-with-offset, called AbstractField.
+        JSCell::m_structure is actually an AbstractField. This allows us to say
+        things like m_out.loadPtr(base, m_heaps.JSCell_structure); this both
+        gives you the offset of JSCell::m_structure and ascribes TBAA meta-data for
+        the JSCell::m_structure heap to the generated load instrction.
+        
+        Another fun tidbit is the notion of Indexed, Numbered, and Absolute abstract
+        heaps. An indexed abstract heap corresponds to a set of locations that you
+        might access by index from some base. Virtual registers are a great example.
+        Though I call them just "variables" in the FTL. When we access a virtual
+        register, we know that we aren't interfering with accesses to
+        Structure-managed named properties, or with JSCell::m_structure, or with
+        other such disjoint heaps. But we also know that if we access a variable at
+        offset X and then another variable at offset Y and we know that X and Y are
+        unequal, then these two accesses are on disjoint subheaps of the variables
+        heap. This works out naturally for interference between, say, scoped variable
+        access and local variable access: if you access scoped variable r5 and then
+        access a local variable r5, these might interfere - and they will get the
+        same abstract subheap of the variables heap. IndexedAbstractHeaps
+        conveniently remember the size of the elements and will give you an
+        AbstractField (i.e. heap-with-offset) if you give it an index. This is great
+        for conveniently writing code that accesses contiguous arrays of well-typed
+        things. This allows you to literally do things like
+        m_out.load64(callFrameRegister, m_heaps.variables[operand]) and the right
+        thing will happen. You can also get the heap variables.atAnyIndex(), if
+        you're doing an access with an unknown index.
+        
+        Numbered and Absolute abstract heaps are related except that they don't
+        assume that the value used to get the abstract subheap corresponds to any
+        meaningful offset from any base. Numbered heaps, like the properties heap
+        (for named properties tracked by Structure), are "numbered" (not indexed)
+        by the propertyNumber. So you can emit a GetByOffset by separately
+        computing the offset and the propertyNumber (both values are stored in the
+        StorageAccessData), and passing the offset directly to Output::address()
+        and passing m_heaps.properties[propertyNumber] as the field. Absolute heaps
+        are similar, but are keyed on absolute address. This is appropriate for
+        global variables, and possibly other things.
+        
+        Finally, FTL::Output understands the notion of a pointer-with-TBAA-data,
+        and calls it a TypedPointer. TypedPointer is a tuple of a LLVMValueRef
+        referencing an intptr value and a pointer to an AbstractHeap. All load()
+        and store() operations now take a TypedPointer, and will perform the access
+        by casting the intptr to a pointer of the right type and then ascribing the
+        TBAA meta-data from the AbstractHeap.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::mdKindID):
+        (JSC::FTL::mdString):
+        (JSC::FTL::mdNode):
+        (FTL):
+        (JSC::FTL::setMetadata):
+        * ftl/FTLAbstractHeap.cpp: Added.
+        (FTL):
+        (JSC::FTL::AbstractHeap::tbaaMetadataSlow):
+        (JSC::FTL::AbstractHeap::decorateInstruction):
+        (JSC::FTL::IndexedAbstractHeap::IndexedAbstractHeap):
+        (JSC::FTL::IndexedAbstractHeap::~IndexedAbstractHeap):
+        (JSC::FTL::IndexedAbstractHeap::baseIndex):
+        (JSC::FTL::IndexedAbstractHeap::atSlow):
+        (JSC::FTL::IndexedAbstractHeap::initialize):
+        (JSC::FTL::NumberedAbstractHeap::NumberedAbstractHeap):
+        (JSC::FTL::NumberedAbstractHeap::~NumberedAbstractHeap):
+        (JSC::FTL::AbsoluteAbstractHeap::AbsoluteAbstractHeap):
+        (JSC::FTL::AbsoluteAbstractHeap::~AbsoluteAbstractHeap):
+        * ftl/FTLAbstractHeap.h: Added.
+        (FTL):
+        (AbstractHeap):
+        (JSC::FTL::AbstractHeap::AbstractHeap):
+        (JSC::FTL::AbstractHeap::isInitialized):
+        (JSC::FTL::AbstractHeap::initialize):
+        (JSC::FTL::AbstractHeap::parent):
+        (JSC::FTL::AbstractHeap::heapName):
+        (JSC::FTL::AbstractHeap::tbaaMetadata):
+        (AbstractField):
+        (JSC::FTL::AbstractField::AbstractField):
+        (JSC::FTL::AbstractField::initialize):
+        (JSC::FTL::AbstractField::offset):
+        (IndexedAbstractHeap):
+        (JSC::FTL::IndexedAbstractHeap::atAnyIndex):
+        (JSC::FTL::IndexedAbstractHeap::at):
+        (JSC::FTL::IndexedAbstractHeap::operator[]):
+        (JSC::FTL::IndexedAbstractHeap::returnInitialized):
+        (JSC::FTL::IndexedAbstractHeap::MyHashTraits::constructDeletedValue):
+        (JSC::FTL::IndexedAbstractHeap::MyHashTraits::isDeletedValue):
+        (NumberedAbstractHeap):
+        (JSC::FTL::NumberedAbstractHeap::atAnyNumber):
+        (JSC::FTL::NumberedAbstractHeap::at):
+        (JSC::FTL::NumberedAbstractHeap::operator[]):
+        (AbsoluteAbstractHeap):
+        (JSC::FTL::AbsoluteAbstractHeap::atAnyAddress):
+        (JSC::FTL::AbsoluteAbstractHeap::at):
+        (JSC::FTL::AbsoluteAbstractHeap::operator[]):
+        * ftl/FTLAbstractHeapRepository.cpp: Added.
+        (FTL):
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        (JSC::FTL::AbstractHeapRepository::~AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h: Added.
+        (FTL):
+        (AbstractHeapRepository):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileGetButterfly):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArrayLength):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::speculateObject):
+        (JSC::FTL::LowerDFGToLLVM::addressFor):
+        (JSC::FTL::LowerDFGToLLVM::payloadFor):
+        (JSC::FTL::LowerDFGToLLVM::tagFor):
+        (LowerDFGToLLVM):
+        * ftl/FTLOutput.h:
+        (FTL):
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::initialize):
+        (JSC::FTL::Output::set):
+        (JSC::FTL::Output::load):
+        (JSC::FTL::Output::store):
+        (Output):
+        (JSC::FTL::Output::load32):
+        (JSC::FTL::Output::load64):
+        (JSC::FTL::Output::loadPtr):
+        (JSC::FTL::Output::store32):
+        (JSC::FTL::Output::store64):
+        (JSC::FTL::Output::storePtr):
+        (JSC::FTL::Output::addPtr):
+        (JSC::FTL::Output::address):
+        (JSC::FTL::Output::baseIndex):
+        * ftl/FTLTypedPointer.h: Added.
+        (FTL):
+        (TypedPointer):
+        (JSC::FTL::TypedPointer::TypedPointer):
+        (JSC::FTL::TypedPointer::operator!):
+        (JSC::FTL::TypedPointer::heap):
+        (JSC::FTL::TypedPointer::value):
+        * runtime/Options.h:
+        (JSC):
+
+2013-03-30  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL JIT should be able to compile the Array.prototype.findGraphNode function in Kraken/ai-astar
+        https://bugs.webkit.org/show_bug.cgi?id=113646
+
+        Reviewed by Oliver Hunt.
+        
+        This adds enough FTL support to compile Array.prototype.findGraphNode. This isn't
+        a speed-up, yet, because findGraphNode tends to be aggressively inlined by the DFG,
+        and the FTL can't yet compile the things into which it was inlined. In future
+        patches we will get to a point where we can compile the callers, and then we'll be
+        able to see what the performance effects are.
+        
+        But the interesting thing is that it isn't a slow-down, either. This implies that
+        even if we FTL compile a CodeBlock that we shouldn't have (the fact that we
+        compiling things that end up being inlined is dumb, and the fact that the current
+        FTL tiering strategy launches LLVM for those things is even dumber), we still run
+        at OK performance.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::transferAndCheckArguments):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckStructure):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compileGetButterfly):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArrayLength):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::LowerDFGToLLVM::lowInt32):
+        (JSC::FTL::LowerDFGToLLVM::lowCell):
+        (JSC::FTL::LowerDFGToLLVM::lowObject):
+        (JSC::FTL::LowerDFGToLLVM::lowBoolean):
+        (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+        (JSC::FTL::LowerDFGToLLVM::lowStorage):
+        (JSC::FTL::LowerDFGToLLVM::isNotInt32):
+        (JSC::FTL::LowerDFGToLLVM::isNotCell):
+        (JSC::FTL::LowerDFGToLLVM::isNotBoolean):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateCell):
+        (JSC::FTL::LowerDFGToLLVM::speculateObject):
+        (JSC::FTL::LowerDFGToLLVM::accountedPointer):
+        (JSC::FTL::LowerDFGToLLVM::weakPointer):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::insertNewBlocksBefore):
+        (JSC::FTL::Output::appendTo):
+        (Output):
+        (JSC::FTL::Output::baseIndex):
+
+2013-03-29  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL JIT should be able to compile the Marsaglia random number generator
+        https://bugs.webkit.org/show_bug.cgi?id=113635
+
+        Reviewed by Oliver Hunt.
+        
+        Just adding missing functionality.
+        
+        Also "fixed" OSR exit to use a call to abort() in addition to using Unreachable
+        since the latter doesn't actually mean trap - quite the opposite, it tells LLVM
+        that the code can never be reached.
+        
+        The Marsaglia function runs ~60% faster with FTL, than DFG. Not a terrible start.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLAbbreviations.h:
+        (FTL):
+        (JSC::FTL::voidType):
+        (JSC::FTL::structType):
+        (JSC::FTL::functionType):
+        (JSC::FTL::addFunction):
+        (JSC::FTL::setLinkage):
+        (JSC::FTL::setFunctionCallingConv):
+        (JSC::FTL::addExternFunction):
+        (JSC::FTL::constIntToPtr):
+        (JSC::FTL::constBitCast):
+        (JSC::FTL::buildMul):
+        (JSC::FTL::buildOr):
+        (JSC::FTL::buildShl):
+        (JSC::FTL::buildAShr):
+        (JSC::FTL::buildCall):
+        (JSC::FTL::buildExtractValue):
+        (JSC::FTL::dumpModule):
+        (JSC::FTL::verifyModule):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileAdd):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileBitAnd):
+        (JSC::FTL::LowerDFGToLLVM::compileBitOr):
+        (JSC::FTL::LowerDFGToLLVM::compileBitRShift):
+        (JSC::FTL::LowerDFGToLLVM::compileBitLShift):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareLess):
+        (JSC::FTL::LowerDFGToLLVM::compileBranch):
+        (JSC::FTL::LowerDFGToLLVM::speculateBackward):
+        (JSC::FTL::LowerDFGToLLVM::lowBoolean):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::initialize):
+        (JSC::FTL::Output::appendTo):
+        (Output):
+        (JSC::FTL::Output::mul):
+        (JSC::FTL::Output::bitOr):
+        (JSC::FTL::Output::shl):
+        (JSC::FTL::Output::aShr):
+        (JSC::FTL::Output::addWithOverflow32):
+        (JSC::FTL::Output::mulWithOverflow32):
+        (JSC::FTL::Output::extractValue):
+        (JSC::FTL::Output::call):
+        (JSC::FTL::Output::addWithOverflow32Function):
+        (JSC::FTL::Output::mulWithOverflow32Function):
+        * ftl/FTLState.cpp: Added.
+        (FTL):
+        (JSC::FTL::State::dumpState):
+        * ftl/FTLState.h:
+        (State):
+
+2013-03-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, release mode build fix.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lowInt32):
+        (JSC::FTL::LowerDFGToLLVM::lowCell):
+        (JSC::FTL::LowerDFGToLLVM::lowBoolean):
+        (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+
+2013-03-29  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Change DO_NOT_INCLUDE_LLVM_CPP_HEADERS to LLVM_DO_NOT_INCLUDE_CPP_HEADERS
+        https://bugs.webkit.org/show_bug.cgi?id=113634
+
+        Reviewed by Dan Bernstein.
+
+        * ftl/FTLLLVMHeaders.h:
+
+2013-03-29  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL JIT should be able run some simple function
+        https://bugs.webkit.org/show_bug.cgi?id=113481
+
+        Reviewed by Geoffrey Garen.
+        
+        I forgot to make a couple of the requested review changes, so I'm making
+        them now!
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.h:
+
+2013-03-29  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL JIT should be able run some simple function
+        https://bugs.webkit.org/show_bug.cgi?id=113481
+
+        Reviewed by Geoffrey Garen.
+        
+        This is the initial version of the FTL JIT (Fourth Tier LLVM JIT).
+        It includes a lowering from the DFG IR to LLVM IR (FTL::lowerDFGToLLVM)
+        and a "backend" step that invokes the LLVM and wraps the resulting
+        function in a thunk (FTL::compile).
+        
+        All LLVM IR building functions are wrapped up into a nicer FTL API.
+        First they're wrapped in an abbreviated API (FTLAbbreviations.h) and
+        then again into an object-oriented IR builder (FTLOutput.h).
+        
+        This runs things. I don't know how fast it runs things. And I don't
+        make any claims of stability. The FTL is runtime-disabled by default;
+        you will enable it by doing --useExperimentalFTL=true. Probably if you
+        do this, you will run slower, because of the heavy thunking we do, the
+        fact that we don't have anything resembling a sensible tiering story,
+        and because we only compile ridiculously tiny functions.
+            
+        Finally, this still requires a custom set of LLVM headers to build.
+        I am working on getting that up-streamed to LLVM, and separately I'll
+        make sure that we have a build checked into this branch.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Operands.h:
+        (Operands):
+        (JSC::Operands::Operands):
+        * dfg/DFGAbstractState.h:
+        (JSC::DFG::AbstractState::needsTypeCheck):
+        (AbstractState):
+        (JSC::DFG::AbstractState::filterEdgeByUse):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::needsTypeCheck):
+        (JSC::DFG::SpeculateDoubleOperand::SpeculateDoubleOperand):
+        (JSC::DFG::SpeculateCellOperand::SpeculateCellOperand):
+        (DFG):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::shouldNotHaveTypeCheck):
+        (DFG):
+        (JSC::DFG::mayHaveTypeCheck):
+        (JSC::DFG::isDouble):
+        (JSC::DFG::isCell):
+        * ftl: Added.
+        * ftl/FTLAbbreviations.h: Added.
+        (FTL):
+        (JSC::FTL::int1Type):
+        (JSC::FTL::int32Type):
+        (JSC::FTL::int64Type):
+        (JSC::FTL::intPtrType):
+        (JSC::FTL::pointerType):
+        (JSC::FTL::getParam):
+        (JSC::FTL::constInt):
+        (JSC::FTL::appendBasicBlock):
+        (JSC::FTL::insertBasicBlock):
+        (JSC::FTL::buildAlloca):
+        (JSC::FTL::buildAdd):
+        (JSC::FTL::buildAnd):
+        (JSC::FTL::buildXor):
+        (JSC::FTL::buildLoad):
+        (JSC::FTL::buildStore):
+        (JSC::FTL::buildZExt):
+        (JSC::FTL::buildIntCast):
+        (JSC::FTL::buildIntToPtr):
+        (JSC::FTL::buildPtrToInt):
+        (JSC::FTL::buildICmp):
+        (JSC::FTL::buildSelect):
+        (JSC::FTL::buildBr):
+        (JSC::FTL::buildCondBr):
+        (JSC::FTL::buildRet):
+        (JSC::FTL::buildUnreachable):
+        * ftl/FTLCapabilities.cpp: Added.
+        (FTL):
+        (JSC::FTL::canCompile):
+        * ftl/FTLCapabilities.h: Added.
+        (FTL):
+        * ftl/FTLCompile.cpp: Added.
+        (FTL):
+        (JSC::FTL::compileEntry):
+        (JSC::FTL::compile):
+        * ftl/FTLCompile.h: Added.
+        (FTL):
+        * ftl/FTLJITCode.cpp: Added.
+        (FTL):
+        (JSC::FTL::JITCode::JITCode):
+        (JSC::FTL::JITCode::~JITCode):
+        (JSC::FTL::JITCode::addressForCall):
+        (JSC::FTL::JITCode::executableAddressAtOffset):
+        (JSC::FTL::JITCode::dataAddressAtOffset):
+        (JSC::FTL::JITCode::offsetOf):
+        (JSC::FTL::JITCode::size):
+        (JSC::FTL::JITCode::contains):
+        * ftl/FTLJITCode.h: Added.
+        (FTL):
+        (JITCode):
+        * ftl/FTLLLVMHeaders.h: Added.
+        * ftl/FTLLowerDFGToLLVM.cpp: Added.
+        (FTL):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::addFlushedLocalOpRoots):
+        (JSC::FTL::LowerDFGToLLVM::closeOverFlushedLocalOps):
+        (JSC::FTL::LowerDFGToLLVM::addFlushedLocalOp):
+        (JSC::FTL::LowerDFGToLLVM::addFlushedLocalEdge):
+        (JSC::FTL::LowerDFGToLLVM::transferAndCheckArguments):
+        (JSC::FTL::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileJSConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileGetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileMovHintAndCheck):
+        (JSC::FTL::LowerDFGToLLVM::compilePhantom):
+        (JSC::FTL::LowerDFGToLLVM::compileReturn):
+        (JSC::FTL::LowerDFGToLLVM::speculateBackward):
+        (JSC::FTL::LowerDFGToLLVM::speculateForward):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::terminate):
+        (JSC::FTL::LowerDFGToLLVM::backwardTypeCheck):
+        (JSC::FTL::LowerDFGToLLVM::forwardTypeCheck):
+        (JSC::FTL::LowerDFGToLLVM::typeCheck):
+        (JSC::FTL::LowerDFGToLLVM::lowInt32):
+        (JSC::FTL::LowerDFGToLLVM::lowCell):
+        (JSC::FTL::LowerDFGToLLVM::lowBoolean):
+        (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+        (JSC::FTL::LowerDFGToLLVM::checkNotInt32):
+        (JSC::FTL::LowerDFGToLLVM::unboxInt32):
+        (JSC::FTL::LowerDFGToLLVM::boxInt32):
+        (JSC::FTL::LowerDFGToLLVM::checkNotCell):
+        (JSC::FTL::LowerDFGToLLVM::checkNotBoolean):
+        (JSC::FTL::LowerDFGToLLVM::unboxBoolean):
+        (JSC::FTL::LowerDFGToLLVM::boxBoolean):
+        (JSC::FTL::LowerDFGToLLVM::speculateInt32):
+        (JSC::FTL::LowerDFGToLLVM::addressFor):
+        (JSC::FTL::LowerDFGToLLVM::payloadFor):
+        (JSC::FTL::LowerDFGToLLVM::tagFor):
+        (JSC::FTL::LowerDFGToLLVM::globalData):
+        (JSC::FTL::LowerDFGToLLVM::codeBlock):
+        (JSC::FTL::lowerDFGToLLVM):
+        * ftl/FTLLowerDFGToLLVM.h: Added.
+        (FTL):
+        * ftl/FTLOutput.h: Added.
+        (FTL):
+        (Output):
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::~Output):
+        (JSC::FTL::Output::initialize):
+        (JSC::FTL::Output::appendTo):
+        (JSC::FTL::Output::newBlock):
+        (JSC::FTL::Output::param):
+        (JSC::FTL::Output::constBool):
+        (JSC::FTL::Output::constInt32):
+        (JSC::FTL::Output::constIntPtr):
+        (JSC::FTL::Output::constInt64):
+        (JSC::FTL::Output::add):
+        (JSC::FTL::Output::bitAnd):
+        (JSC::FTL::Output::bitXor):
+        (JSC::FTL::Output::zeroExt):
+        (JSC::FTL::Output::intCast):
+        (JSC::FTL::Output::castToInt32):
+        (JSC::FTL::Output::get):
+        (JSC::FTL::Output::set):
+        (JSC::FTL::Output::load):
+        (JSC::FTL::Output::store):
+        (JSC::FTL::Output::load32):
+        (JSC::FTL::Output::load64):
+        (JSC::FTL::Output::loadPtr):
+        (JSC::FTL::Output::store32):
+        (JSC::FTL::Output::store64):
+        (JSC::FTL::Output::storePtr):
+        (JSC::FTL::Output::equal):
+        (JSC::FTL::Output::notEqual):
+        (JSC::FTL::Output::above):
+        (JSC::FTL::Output::aboveOrEqual):
+        (JSC::FTL::Output::below):
+        (JSC::FTL::Output::belowOrEqual):
+        (JSC::FTL::Output::greaterThan):
+        (JSC::FTL::Output::greaterThanOrEqual):
+        (JSC::FTL::Output::lessThan):
+        (JSC::FTL::Output::lessThanOrEqual):
+        (JSC::FTL::Output::isZero64):
+        (JSC::FTL::Output::notZero64):
+        (JSC::FTL::Output::testNonZero64):
+        (JSC::FTL::Output::select):
+        (JSC::FTL::Output::jump):
+        (JSC::FTL::Output::branch):
+        (JSC::FTL::Output::ret):
+        (JSC::FTL::Output::unreachable):
+        * ftl/FTLState.h: Added.
+        (FTL):
+        (State):
+        (JSC::FTL::State::State):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/Options.h:
+        (JSC):
+
+2013-03-27  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: JITCode should abstract exactly how the JIT code is structured and where it was allocated
+        https://bugs.webkit.org/show_bug.cgi?id=113437
+
+        Reviewed by Mark Hahnenberg.
+        
+        JITCode is now a virtual base class, which will allow different JITs to have radically
+        different memory allocation and management conventions in the future. It will also
+        make it easier to store JIT-specific meta-data in CodeBlock just by putting it into
+        an appropriate JITCode subclass.
+        
+        For now there is one subclass, DirectJITCode, which just behaves like JITCode used to
+        behave.
+
+        * assembler/RepatchBuffer.h:
+        (JSC::RepatchBuffer::RepatchBuffer):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::CodeBlock::codeOriginForReturn):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::getJITCode):
+        (JSC::CodeBlock::getJITType):
+        (CodeBlock):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGDriver.h:
+        (DFG):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JITCompiler):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::codeLocationForRepatch):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::compile):
+        (JIT):
+        * jit/JITCode.cpp:
+        (JSC):
+        (JSC::JITCode::JITCode):
+        (JSC::JITCode::~JITCode):
+        (JSC::JITCode::execute):
+        (JSC::JITCode::hostFunction):
+        (JSC::DirectJITCode::DirectJITCode):
+        (JSC::DirectJITCode::~DirectJITCode):
+        (JSC::DirectJITCode::addressForCall):
+        (JSC::DirectJITCode::executableAddressAtOffset):
+        (JSC::DirectJITCode::dataAddressAtOffset):
+        (JSC::DirectJITCode::offsetOf):
+        (JSC::DirectJITCode::size):
+        (JSC::DirectJITCode::contains):
+        * jit/JITCode.h:
+        (JSC):
+        (JITCode):
+        (JSC::JITCode::bottomTierJIT):
+        (JSC::JITCode::topTierJIT):
+        (JSC::JITCode::nextTierJIT):
+        (JSC::JITCode::isOptimizingJIT):
+        (JSC::JITCode::isBaselineCode):
+        (JSC::JITCode::jitType):
+        (JSC::JITCode::jitTypeFor):
+        (JSC::JITCode::executableAddress):
+        (JSC::JITCode::start):
+        (JSC::JITCode::end):
+        (DirectJITCode):
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * jit/JITStubs.cpp:
+        (JSC::lazyLinkFor):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualForGenerator):
+        * llint/LLIntEntrypoints.cpp:
+        (JSC::LLInt::getFunctionEntrypoint):
+        (JSC::LLInt::getEvalEntrypoint):
+        (JSC::LLInt::getProgramEntrypoint):
+        * llint/LLIntEntrypoints.h:
+        (JSC):
+        (LLInt):
+        (JSC::LLInt::getEntrypoint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::generatedJITCodeForCall):
+        (JSC::ExecutableBase::generatedJITCodeForConstruct):
+        (JSC::ExecutableBase::generatedJITCodeFor):
+        (ExecutableBase):
+        (JSC::ExecutableBase::hostCodeEntryFor):
+        (JSC::ExecutableBase::jsCodeEntryFor):
+        (JSC::ExecutableBase::jsCodeWithArityCheckEntryFor):
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::finishCreation):
+        (JSC::EvalExecutable::generatedJITCode):
+        (JSC::ProgramExecutable::generatedJITCode):
+        * runtime/ExecutionHarness.h:
+        (JSC::prepareForExecution):
+        (JSC::prepareFunctionForExecution):
+
 2013-07-16  Oliver Hunt  <oliver@apple.com>
 
         Merged dfgFourthTier r148570
@@ -622,7 +2158,7 @@
 
 2013-07-18  Chris Curtis  <chris_curtis@apple.com>
 
-        Fixed ASSERTION FAILED: callFrame == vm->topCallFrame in JSC::Interpreter::addStackTraceIfNecessary
+        Fixed ASSERTION FAILED: callFrame == globalData->topCallFrame in JSC::Interpreter::addStackTraceIfNecessary
         https://bugs.webkit.org/show_bug.cgi?id=118498
 
         Reviewed by Geoffrey Garen.
@@ -659,7 +2195,7 @@
         2. The exception needs to be created, and the function pointer takes 2 
             parameters (callFrame->callerFrame(), callFrame.calleeAsValue()).
         3. The exception is already created. In this case, At the time when 
-            the error functor is called, vm.exception is returned. 
+            the error functor is called, globalData.exception is returned. 
 
         * llint/LLIntSlowPaths.cpp:
         (JSC::LLInt::LLINT_SLOW_PATH_DECL):
@@ -1583,18 +3119,18 @@
         Previously, the requiredStack in StackPolicy::StackPolicy() was set to
         to a high value like 256K to reduce the chances of encountering an
         undetected stack overflow in a scenario where we have a combination of
-        deeply nested divs and a large amount recursive re-entries into the VM.
+        deeply nested divs and a large amount recursive re-entries into the JSGlobalData.
 
         However, this high value of requiredStack still does not completely
         ensure that we will never encounter an undetected stack overflow. It
         only lessens the probability of encountering it.
 
         Secondly, on some platforms, the total stack size can be less than 256K
-        to start with. Hence, this high value requiredStack renders the VM
+        to start with. Hence, this high value requiredStack renders the JSGlobalData
         unuseable on those platforms.
 
         This patch will fix the requiredStack to be more reasonable based on
-        real world stack usage by the VM. We won't (and cannot) try to prevent
+        real world stack usage by the JSGlobalData. We won't (and cannot) try to prevent
         undetected stack overflows outside of JSC as well. External code that
         do deep recursion (e.g. Documnet::updateLayout()) should do their own
         stack checks.
@@ -1661,7 +3197,7 @@
         JSManagedValue is destroyed upon deallocation. We would rather have improperly maintained 
         JSManagedValues cause memory leaks than take down the whole app. 
 
-        The fix is to use the callback to the JSC::Weak on the destruction of the VM so that we 
+        The fix is to use the callback to the JSC::Weak on the destruction of the JSGlobalData so that we 
         can safely null it out. This will prevent ~Weak from crashing.
 
         * API/JSManagedValue.mm:
@@ -2250,10 +3786,10 @@
         (JSC::msToGregorianDateTime):
         (JSC::parseDateFromNullTerminatedCharacters):
             - call getLocalTimeOffset instead of getUTCOffset/getDSTOffset
-        * runtime/VM.cpp:
-        (JSC::VM::resetDateCache):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::resetDateCache):
             - removed cachedUTCOffset, converted DSTOffsetCache -> LocalTimeOffsetCache
-        * runtime/VM.h:
+        * runtime/JSGlobalData.h:
         (JSC::LocalTimeOffsetCache::LocalTimeOffsetCache):
         (JSC::LocalTimeOffsetCache::reset):
         (LocalTimeOffsetCache):
@@ -2590,12 +4126,12 @@
         (JSC::Interpreter::throwException):
         * runtime/JSGlobalObject.cpp:
         (JSC::DynamicGlobalObjectScope::DynamicGlobalObjectScope):
-        * runtime/VM.cpp:
+        * runtime/JSGlobalData.cpp:
         (JSC):
-        (JSC::VM::clearExceptionStack):
-        * runtime/VM.h:
-        (VM):
-        (JSC::VM::exceptionStack):
+        (JSC::JSGlobalData::clearExceptionStack):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        (JSC::JSGlobalData::exceptionStack):
 
 2013-05-15  Commit Queue  <commit-queue@webkit.org>
 
@@ -2659,9 +4195,9 @@
 
         If scanExternalObjectGraph creates a new JSVirtualMachine wrapper during collection, when the 
         scanExternalObjectGraph call finishes and the autorelease pool is drained we will dealloc the 
-        JSVirtualMachine which will cause us to try to take the API lock for the corresponding VM. 
+        JSVirtualMachine which will cause us to try to take the API lock for the corresponding JSGlobalData. 
         If this happens on a GC thread other than the "main" thread, we will deadlock. The solution 
-        is to just check the VM cache, and if there is no JSVirtualMachine wrapper, return early.
+        is to just check the JSGlobalData cache, and if there is no JSVirtualMachine wrapper, return early.
 
         Reviewed by Darin Adler.
 
@@ -2833,10 +4369,10 @@
         (JSGlobalObject):
         * runtime/JSGlobalObjectFunctions.cpp:
         (JSC::globalFuncEval):
-        * runtime/VM.cpp:
-        (JSC::VM::VM):
-        * runtime/VM.h:
-        (VM):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
 
 2013-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
@@ -3218,12 +4754,12 @@
         (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVDoublePrecision::op):
         (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVDoublePrecision::rt2):
         (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVDoublePrecision::rt):
-        (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVDoublePrecision::vm):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVDoublePrecision::globalData):
         (ARMv7DOpcodeVMOVSinglePrecision):
         (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVSinglePrecision::op):
         (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVSinglePrecision::rt2):
         (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVSinglePrecision::rt):
-        (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVSinglePrecision::vm):
+        (JSC::ARMv7Disassembler::ARMv7DOpcodeVMOVSinglePrecision::globalData):
         (ARMv7DOpcodeVMSR):
         (JSC::ARMv7Disassembler::ARMv7DOpcodeVMSR::opL):
         (JSC::ARMv7Disassembler::ARMv7DOpcodeVMSR::rt):
@@ -3414,7 +4950,7 @@
 2013-04-30  Mark Lam  <mark.lam@apple.com>
 
         JSContextGroupSetExecutionTimeLimit() should not pass a callback to the
-        VM watchdog if its client did not pass one in.
+        JSGlobalData watchdog if its client did not pass one in.
         https://bugs.webkit.org/show_bug.cgi?id=115461.
 
         Reviewed by Geoffrey Garen.
@@ -3456,14 +4992,14 @@
 
 2013-04-30  Oliver Hunt  <oliver@apple.com>
 
-        JSC Stack walking logic craches in the face of inlined functions triggering VM re-entry
+        JSC Stack walking logic craches in the face of inlined functions triggering JSGlobalData re-entry
         https://bugs.webkit.org/show_bug.cgi?id=115449
 
         Reviewed by Geoffrey Garen.
 
         Rename callframeishost to something that makes sense, and fix
         getCallerInfo to correctly handle inline functions calling into
-        the VM.
+        the JSGlobalData.
 
         * bytecode/CodeBlock.cpp:
         (JSC::CodeBlock::codeOriginForReturn):
@@ -3733,7 +5269,7 @@
 
         * heap/HeapTimer.cpp:
         (JSC::HeapTimer::HeapTimer):
-        * runtime/VM.cpp:
+        * runtime/JSGlobalData.cpp:
         (JSC::enableAssembler):
         Use adoptCF free function.
 
@@ -3991,7 +5527,7 @@
         It should. This doesn't cause us to leak physical memory, but it does cause us to leak virtual 
         address space (and probably mach ports), which is also bad :-( FixedVMPoolExecutableAllocator 
         also has this bug, but it doesn't matter much because there's only one instance of that class 
-        throughout the entire lifetime of the process, whereas each VM has its own SuperRegion. 
+        throughout the entire lifetime of the process, whereas each JSGlobalData has its own SuperRegion. 
 
         * heap/SuperRegion.cpp:
         (JSC::SuperRegion::~SuperRegion):
@@ -4080,7 +5616,7 @@
         * runtime/MathObject.cpp:
         (JSC):
         (JSC::mathProtoFuncIMul):
-        * runtime/VM.cpp:
+        * runtime/JSGlobalData.cpp:
         (JSC::thunkGeneratorForIntrinsic):
 
 2013-04-25  Filip Pizlo  <fpizlo@apple.com>
@@ -4250,7 +5786,7 @@
 
 2013-04-25  Oliver Hunt  <oliver@apple.com>
 
-        Make checkSyntax take a VM instead of an ExecState
+        Make checkSyntax take a JSGlobalData instead of an ExecState
 
         RS=Tim
 

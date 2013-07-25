@@ -155,6 +155,7 @@ my (
     $workersSupport,
     $xhrTimeoutSupport,
     $xsltSupport,
+    $ftlJITSupport,
 );
 
 my @features = (
@@ -487,6 +488,9 @@ my @features = (
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
+
+    { option => "ftl-jit", desc => "Toggle FTLJIT support",
+      define => "ENABLE_FTL_JIT", default => 0, value => \$ftlJITSupport },
 );
 
 sub getFeatureOptionList()
