@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT) && USE(JSVALUE64)
 
 #include "DFGOperations.h"
+#include "DFGOSRExitCompilerCommon.h"
 #include "Operations.h"
 #include <wtf/DataLog.h>
 
@@ -592,42 +593,11 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     //     counter to 0; otherwise we set the counter to
     //     counterValueForOptimizeAfterWarmUp().
     
-    handleExitCounts(exit);
+    handleExitCounts(m_jit, exit);
     
     // 14) Reify inlined call frames.
     
-    ASSERT(m_jit.baselineCodeBlock()->getJITType() == JITCode::BaselineJIT);
-    m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)JSStack::CodeBlock));
-    
-    for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
-        CodeBlock* baselineCodeBlock = m_jit.baselineCodeBlockFor(codeOrigin);
-        CodeBlock* baselineCodeBlockForCaller = m_jit.baselineCodeBlockFor(inlineCallFrame->caller);
-        Vector<BytecodeAndMachineOffset>& decodedCodeMap = m_jit.decodedCodeMapFor(baselineCodeBlockForCaller);
-        unsigned returnBytecodeIndex = inlineCallFrame->caller.bytecodeIndex + OPCODE_LENGTH(op_call);
-        BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(decodedCodeMap, decodedCodeMap.size(), returnBytecodeIndex, BytecodeAndMachineOffset::getBytecodeIndex);
-        
-        ASSERT(mapping);
-        ASSERT(mapping->m_bytecodeIndex == returnBytecodeIndex);
-        
-        void* jumpTarget = baselineCodeBlockForCaller->getJITCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
-
-        GPRReg callerFrameGPR;
-        if (inlineCallFrame->caller.inlineCallFrame) {
-            m_jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->caller.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT3);
-            callerFrameGPR = GPRInfo::regT3;
-        } else
-            callerFrameGPR = GPRInfo::callFrameRegister;
-        
-        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::CodeBlock)));
-        if (!inlineCallFrame->isClosureCall())
-            m_jit.store64(AssemblyHelpers::TrustedImm64(JSValue::encode(JSValue(inlineCallFrame->callee->scope()))), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ScopeChain)));
-        m_jit.store64(callerFrameGPR, AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::CallerFrame)));
-        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(jumpTarget), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ReturnPC)));
-        m_jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ArgumentCount)));
-        if (!inlineCallFrame->isClosureCall())
-            m_jit.store64(AssemblyHelpers::TrustedImm64(JSValue::encode(JSValue(inlineCallFrame->callee.get()))), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::Callee)));
-    }
+    reifyInlinedCallFrames(m_jit, exit);
     
     // 15) Create arguments if necessary and place them into the appropriate aliased
     //     registers.
@@ -685,32 +655,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     if (exit.m_lastSetOperand != std::numeric_limits<int>::max())
         m_jit.load64(AssemblyHelpers::addressFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
     
-    // 17) Adjust the call frame pointer.
+    // 17) And finish.
     
-    if (exit.m_codeOrigin.inlineCallFrame)
-        m_jit.addPtr(AssemblyHelpers::TrustedImm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
-    
-    // 18) Jump into the corresponding baseline JIT code.
-    
-    CodeBlock* baselineCodeBlock = m_jit.baselineCodeBlockFor(exit.m_codeOrigin);
-    Vector<BytecodeAndMachineOffset>& decodedCodeMap = m_jit.decodedCodeMapFor(baselineCodeBlock);
-    
-    BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(decodedCodeMap, decodedCodeMap.size(), exit.m_codeOrigin.bytecodeIndex, BytecodeAndMachineOffset::getBytecodeIndex);
-    
-    ASSERT(mapping);
-    ASSERT(mapping->m_bytecodeIndex == exit.m_codeOrigin.bytecodeIndex);
-    
-    void* jumpTarget = baselineCodeBlock->getJITCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
-    
-    ASSERT(GPRInfo::regT1 != GPRInfo::cachedResultRegister);
-    
-    m_jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT1);
-    
-    m_jit.jump(GPRInfo::regT1);
-
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("-> %p\n", jumpTarget);
-#endif
+    adjustAndJumpToTarget(m_jit, exit);
 }
 
 } } // namespace JSC::DFG

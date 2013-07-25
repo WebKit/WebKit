@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,47 +127,6 @@ void compileOSRExit(ExecState* exec)
 }
 
 } // extern "C"
-
-void OSRExitCompiler::handleExitCounts(const OSRExit& exit)
-{
-    m_jit.add32(AssemblyHelpers::TrustedImm32(1), AssemblyHelpers::AbsoluteAddress(&exit.m_count));
-    
-    m_jit.move(AssemblyHelpers::TrustedImmPtr(m_jit.codeBlock()), GPRInfo::regT0);
-    
-    AssemblyHelpers::Jump tooFewFails;
-    
-    m_jit.load32(AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfOSRExitCounter()), GPRInfo::regT2);
-    m_jit.add32(AssemblyHelpers::TrustedImm32(1), GPRInfo::regT2);
-    m_jit.store32(GPRInfo::regT2, AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfOSRExitCounter()));
-    m_jit.move(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), GPRInfo::regT0);
-    tooFewFails = m_jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, AssemblyHelpers::TrustedImm32(m_jit.codeBlock()->exitCountThresholdForReoptimization()));
-    
-    // Reoptimize as soon as possible.
-#if !NUMBER_OF_ARGUMENT_REGISTERS
-    m_jit.poke(GPRInfo::regT0);
-#else
-    m_jit.move(GPRInfo::regT0, GPRInfo::argumentGPR0);
-    ASSERT(GPRInfo::argumentGPR0 != GPRInfo::regT1);
-#endif
-    m_jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(triggerReoptimizationNow)), GPRInfo::regT1);
-    m_jit.call(GPRInfo::regT1);
-    AssemblyHelpers::Jump doneAdjusting = m_jit.jump();
-    
-    tooFewFails.link(&m_jit);
-    
-    // Adjust the execution counter such that the target is to only optimize after a while.
-    int32_t activeThreshold =
-        m_jit.baselineCodeBlock()->counterValueForOptimizeAfterLongWarmUp();
-    int32_t targetValue = ExecutionCounter::applyMemoryUsageHeuristicsAndConvertToInt(
-        activeThreshold, m_jit.baselineCodeBlock());
-    int32_t clippedValue =
-        ExecutionCounter::clippedThreshold(m_jit.codeBlock()->globalObject(), targetValue);
-    m_jit.store32(AssemblyHelpers::TrustedImm32(-clippedValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
-    m_jit.store32(AssemblyHelpers::TrustedImm32(activeThreshold), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
-    m_jit.store32(AssemblyHelpers::TrustedImm32(ExecutionCounter::formattedTotalCount(clippedValue)), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionTotalCount()));
-    
-    doneAdjusting.link(&m_jit);
-}
 
 } } // namespace JSC::DFG
 

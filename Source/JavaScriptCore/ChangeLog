@@ -1,4 +1,42 @@
-2013-04-09  Filip Pizlo  <fpizlo@apple.com>
+2013-07-15  Oliver Hunt  <oliver@apple.com>
+
+        Merged dfgFourthTier r148047
+
+    2013-04-09  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should provide utilities for common OSR exit tasks
+        https://bugs.webkit.org/show_bug.cgi?id=114306
+
+        Reviewed by Mark Hahnenberg.
+        
+        Just abstract out some things that the FTL will want to use as well.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler.h:
+        (OSRExitCompiler):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp: Added.
+        (DFG):
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h: Added.
+        (DFG):
+
+2013-07-15  Oliver Hunt  <oliver@apple.com>
+
+        Merged dfgFourthTier r148037
+
+    2013-04-09  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should better abstract floating point arguments
         https://bugs.webkit.org/show_bug.cgi?id=114300
@@ -9,7 +47,11 @@
         (FPRInfo):
         (JSC::DFG::FPRInfo::toArgumentRegister):
 
-2013-04-05  Filip Pizlo  <fpizlo@apple.com>
+2013-07-15  Oliver Hunt  <oliver@apple.com>
+
+        Merged dfgFourthTier r147821
+
+    2013-04-05  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should better abstract arguments
         https://bugs.webkit.org/show_bug.cgi?id=114073

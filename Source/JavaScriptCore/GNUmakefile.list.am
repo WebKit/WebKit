@@ -250,6 +250,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler64.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompiler.h \
+	Source/JavaScriptCore/dfg/DFGOSRExitCompilerCommon.cpp \
+	Source/JavaScriptCore/dfg/DFGOSRExitCompilerCommon.h \
 	Source/JavaScriptCore/dfg/DFGOSRExit.h \
 	Source/JavaScriptCore/dfg/DFGOSRExit.cpp \
 	Source/JavaScriptCore/dfg/DFGOSRExitCompilationInfo.h \
