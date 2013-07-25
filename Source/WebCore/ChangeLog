@@ -1,3 +1,25 @@
+2013-07-25  Anders Carlsson  <andersca@apple.com>
+
+        Remove lastModifiedDate from ResourceResponse
+        https://bugs.webkit.org/show_bug.cgi?id=119092
+
+        Reviewed by Andreas Kling.
+
+        Computing m_lastResponseDate is costly on some platforms and we already have a better way to
+        get the last response time, so convert the two call sites that used to call ResourceresponseBase::lastModifiedDate()
+        over to using lastModified() instead.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit):
+        * plugins/PluginStream.cpp:
+        (WebCore::lastModifiedDate):
+        (WebCore::PluginStream::startStream):
+
 2013-07-25  Yi Shen  <max.hong.shen@gmail.com>
 
         Optimize the thread locks for API Shims

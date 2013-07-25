@@ -1,3 +1,22 @@
+2013-07-25  Anders Carlsson  <andersca@apple.com>
+
+        Remove lastModifiedDate from ResourceResponse
+        https://bugs.webkit.org/show_bug.cgi?id=119092
+
+        Reviewed by Andreas Kling.
+
+        Update for WebCore changes.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::lastModifiedDate):
+        Use ResourceResponse::lastModified() to get the last modified date.
+
+        (WebKit::PluginView::Stream::didReceiveResponse):
+        Call the static lastModified function.
+
+        (WebKit::PluginView::manualLoadDidReceiveResponse):
+        Ditto.
+
 2013-07-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support for running unit tests in the web process

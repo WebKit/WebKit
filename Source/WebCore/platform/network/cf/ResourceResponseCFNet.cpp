@@ -95,8 +95,6 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         if (textEncodingNameLength >= 2 && m_textEncodingName[0U] == '"' && m_textEncodingName[textEncodingNameLength - 1] == '"')
             m_textEncodingName = m_textEncodingName.substring(1, textEncodingNameLength - 2);
 
-        m_lastModifiedDate = toTimeT(CFURLResponseGetLastModifiedDate(m_cfResponse.get()));
-
         CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(m_cfResponse.get());
         if (httpResponse) {
             m_httpStatusCode = CFHTTPMessageGetResponseStatusCode(httpResponse);

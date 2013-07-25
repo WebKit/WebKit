@@ -88,11 +88,6 @@ public:
 
     bool isAttachment() const;
     
-    // FIXME: These are used by PluginStream on some platforms. Calculations may differ from just returning plain Last-Modified header.
-    // Leaving it for now but this should go away in favor of generic solution.
-    void setLastModifiedDate(time_t);
-    time_t lastModifiedDate() const; 
-
     // These functions return parsed values of the corresponding response headers.
     // NaN means that the header was not present or had invalid value.
     bool cacheControlContainsNoCache() const;
@@ -153,7 +148,6 @@ protected:
     int m_httpStatusCode;
     String m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
-    time_t m_lastModifiedDate;
     bool m_wasCached : 1;
     unsigned m_connectionID;
     bool m_connectionReused : 1;
@@ -198,7 +192,6 @@ public:
     int m_httpStatusCode;
     String m_httpStatusText;
     OwnPtr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
-    time_t m_lastModifiedDate;
     RefPtr<ResourceLoadTiming> m_resourceLoadTiming;
 };
 

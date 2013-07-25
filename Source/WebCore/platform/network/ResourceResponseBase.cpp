@@ -47,7 +47,6 @@ inline const ResourceResponse& ResourceResponseBase::asResourceResponse() const
 ResourceResponseBase::ResourceResponseBase()  
     : m_expectedContentLength(0)
     , m_httpStatusCode(0)
-    , m_lastModifiedDate(0)
     , m_wasCached(false)
     , m_connectionID(0)
     , m_connectionReused(false)
@@ -75,7 +74,6 @@ ResourceResponseBase::ResourceResponseBase(const KURL& url, const String& mimeTy
     , m_textEncodingName(textEncodingName)
     , m_suggestedFilename(filename)
     , m_httpStatusCode(0)
-    , m_lastModifiedDate(0)
     , m_wasCached(false)
     , m_connectionID(0)
     , m_connectionReused(false)
@@ -110,7 +108,6 @@ PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadR
 
     response->lazyInit(CommonAndUncommonFields);
     response->m_httpHeaderFields.adopt(data->m_httpHeaders.release());
-    response->setLastModifiedDate(data->m_lastModifiedDate);
     response->setResourceLoadTiming(data->m_resourceLoadTiming.release());
     response->doPlatformAdopt(data);
     return response.release();
@@ -127,7 +124,6 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() con
     data->m_httpStatusCode = httpStatusCode();
     data->m_httpStatusText = httpStatusText().isolatedCopy();
     data->m_httpHeaders = httpHeaderFields().copyData();
-    data->m_lastModifiedDate = lastModifiedDate();
     if (m_resourceLoadTiming)
         data->m_resourceLoadTiming = m_resourceLoadTiming->deepCopy();
     return asResourceResponse().doPlatformCopyData(data.release());
@@ -517,22 +513,6 @@ bool ResourceResponseBase::isAttachment() const
     return equalIgnoringCase(value, attachmentString);
 }
   
-void ResourceResponseBase::setLastModifiedDate(time_t lastModifiedDate)
-{
-    lazyInit(CommonAndUncommonFields);
-
-    m_lastModifiedDate = lastModifiedDate;
-
-    // FIXME: Should invalidate or update platform response if present.
-}
-
-time_t ResourceResponseBase::lastModifiedDate() const
-{
-    lazyInit(CommonAndUncommonFields);
-
-    return m_lastModifiedDate;
-}
-
 bool ResourceResponseBase::wasCached() const
 {
     lazyInit(CommonAndUncommonFields);
