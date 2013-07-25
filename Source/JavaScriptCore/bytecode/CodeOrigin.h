@@ -88,21 +88,6 @@ struct CodeOrigin {
     Vector<CodeOrigin> inlineStack() const;
     
     void dump(PrintStream&) const;
-
-    static inline bool isHandle(uint32_t bits) { return !!(bits & handleFlag); }
-    static inline uint32_t encodeHandle(uint32_t bits)
-    {
-        ASSERT(!isHandle(bits));
-        return bits | handleFlag;
-    }
-    static inline uint32_t decodeHandle(uint32_t bits)
-    {
-        ASSERT(isHandle(bits));
-        return bits & ~handleFlag;
-    }
-
-private:
-    static const uint32_t handleFlag = (1 << 31);
 };
 
 struct InlineCallFrame {
@@ -132,11 +117,6 @@ struct InlineCallFrame {
     MAKE_PRINT_METHOD(InlineCallFrame, dumpBriefFunctionInformation, briefFunctionInformation);
 };
 
-struct CodeOriginAtCallReturnOffset {
-    CodeOrigin codeOrigin;
-    unsigned callReturnOffset;
-};
-
 inline unsigned CodeOrigin::stackOffset() const
 {
     if (!inlineCallFrame)
@@ -151,11 +131,6 @@ inline bool CodeOrigin::operator==(const CodeOrigin& other) const
         && inlineCallFrame == other.inlineCallFrame;
 }
     
-inline unsigned getCallReturnOffsetForCodeOrigin(CodeOriginAtCallReturnOffset* data)
-{
-    return data->callReturnOffset;
-}
-
 inline ScriptExecutable* CodeOrigin::codeOriginOwner() const
 {
     if (!inlineCallFrame)

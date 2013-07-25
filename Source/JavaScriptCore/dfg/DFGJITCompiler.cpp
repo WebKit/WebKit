@@ -170,14 +170,12 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
     }
 
-    Vector<CodeOriginAtCallReturnOffset, 0, UnsafeVectorOverflow>& codeOrigins = m_codeBlock->codeOrigins();
+    Vector<CodeOrigin, 0, UnsafeVectorOverflow>& codeOrigins = m_codeBlock->codeOrigins();
     codeOrigins.resize(m_exceptionChecks.size());
     
     for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
         CallExceptionRecord& record = m_exceptionChecks[i];
-        unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_exceptionChecks[i].m_call);
-        codeOrigins[i].codeOrigin = record.m_codeOrigin;
-        codeOrigins[i].callReturnOffset = returnAddressOffset;
+        codeOrigins[i] = record.m_codeOrigin;
     }
     
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccesses.size());

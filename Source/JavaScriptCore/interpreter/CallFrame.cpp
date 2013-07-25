@@ -52,7 +52,7 @@ unsigned CallFrame::locationAsBytecodeOffset() const
 void CallFrame::setLocationAsBytecodeOffset(unsigned offset)
 {
     ASSERT(codeBlock());
-    ASSERT(!CodeOrigin::isHandle(offset));
+    ASSERT(Location::isBytecodeOffset(offset));
     setCurrentVPC(codeBlock()->instructions().begin() + offset);
     ASSERT(hasLocationAsBytecodeOffset());
 }
@@ -68,21 +68,10 @@ void CallFrame::setCurrentVPC(Instruction* vpc)
 #endif
     
 #if ENABLE(DFG_JIT)
-bool CallFrame::isInlineCallFrameSlow()
-{
-    if (!callee())
-        return false;
-    JSCell* calleeAsFunctionCell = getJSFunction(callee());
-    if (!calleeAsFunctionCell)
-        return false;
-    JSFunction* calleeAsFunction = jsCast<JSFunction*>(calleeAsFunctionCell);
-    return calleeAsFunction->executable() != codeBlock()->ownerExecutable();
-}
-
-CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
+CallFrame* CallFrame::trueCallFrame()
 {
     // Am I an inline call frame? If so, we're done.
-    if (isInlineCallFrame())
+    if (isInlinedFrame())
         return this;
     
     // If I don't have a code block, then I'm not DFG code, so I'm the true call frame.
@@ -95,47 +84,23 @@ CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
     if (!machineCodeBlock->hasCodeOrigins())
         return this;
     
-    // At this point the PC must be due either to the DFG, or it must be unset.
-    ASSERT(pc.hasJITReturnAddress() || !pc);
-    
     // Try to determine the CodeOrigin. If we don't have a pc set then the only way
     // that this makes sense is if the CodeOrigin index was set in the call frame.
-    // FIXME: Note that you will see "Not currently in inlined code" comments below.
-    // Currently, we do not record code origins for code that is not inlined, because
-    // the only thing that we use code origins for is determining the inline stack.
-    // But in the future, we'll want to use this same functionality (having a code
-    // origin mapping for any calls out of JIT code) to determine the PC at any point
-    // in the stack even if not in inlined code. When that happens, the code below
-    // will have to change the way it detects the presence of inlining: it will always
-    // get a code origin, but sometimes, that code origin will not have an inline call
-    // frame. In that case, this method should bail and return this.
     CodeOrigin codeOrigin;
-    if (pc.isSet()) {
-        ReturnAddressPtr currentReturnPC = pc.jitReturnAddress();
-        
-        bool hasCodeOrigin = machineCodeBlock->codeOriginForReturn(currentReturnPC, codeOrigin);
-        ASSERT(hasCodeOrigin);
-        if (!hasCodeOrigin) {
-            // In release builds, if we find ourselves in a situation where the return PC doesn't
-            // correspond to a valid CodeOrigin, we return zero instead of continuing. Some of
-            // the callers of trueCallFrame() will be able to recover and do conservative things,
-            // while others will crash.
-            return 0;
-        }
-    } else {
-        unsigned index = locationAsCodeOriginIndex();
-        ASSERT(machineCodeBlock->canGetCodeOrigin(index));
-        if (!machineCodeBlock->canGetCodeOrigin(index)) {
-            // See above. In release builds, we try to protect ourselves from crashing even
-            // though stack walking will be goofed up.
-            return 0;
-        }
-        codeOrigin = machineCodeBlock->codeOrigin(index);
+    unsigned index = locationAsCodeOriginIndex();
+    ASSERT(machineCodeBlock->canGetCodeOrigin(index));
+    if (!machineCodeBlock->canGetCodeOrigin(index)) {
+        // See above. In release builds, we try to protect ourselves from crashing even
+        // though stack walking will be goofed up.
+        return 0;
     }
+    codeOrigin = machineCodeBlock->codeOrigin(index);
 
     if (!codeOrigin.inlineCallFrame)
         return this; // Not currently in inlined code.
-    
+
+    CodeOrigin innerMostCodeOrigin = codeOrigin;
+
     for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame;) {
         InlineCallFrame* nextInlineCallFrame = inlineCallFrame->caller.inlineCallFrame;
         
@@ -144,7 +109,7 @@ CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
         JSFunction* calleeAsFunction = inlineCallFrame->callee.get();
         
         // Fill in the inlinedCaller
-        inlinedCaller->setCodeBlock(machineCodeBlock);
+        inlinedCaller->setCodeBlock(inlineCallFrame->baselineCodeBlock());
         if (calleeAsFunction)
             inlinedCaller->setScope(calleeAsFunction->scope());
         if (nextInlineCallFrame)
@@ -154,19 +119,23 @@ CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
         
         inlinedCaller->setInlineCallFrame(inlineCallFrame);
         inlinedCaller->setArgumentCountIncludingThis(inlineCallFrame->arguments.size());
+        inlinedCaller->setLocationAsBytecodeOffset(codeOrigin.bytecodeIndex);
+        inlinedCaller->setIsInlinedFrame();
         if (calleeAsFunction)
             inlinedCaller->setCallee(calleeAsFunction);
         
+        codeOrigin = inlineCallFrame->caller;
         inlineCallFrame = nextInlineCallFrame;
     }
     
-    return this + codeOrigin.inlineCallFrame->stackOffset;
+    return this + innerMostCodeOrigin.inlineCallFrame->stackOffset;
 }
         
 CallFrame* CallFrame::trueCallerFrame()
 {
+    CallFrame* callerFrame = this->callerFrame()->removeHostCallFrameFlag();
     if (!codeBlock())
-        return callerFrame()->removeHostCallFrameFlag();
+        return callerFrame;
 
     // this -> The callee; this is either an inlined callee in which case it already has
     //    a pointer to the true caller. Otherwise it contains current PC in the machine
@@ -176,33 +145,43 @@ CallFrame* CallFrame::trueCallerFrame()
     //    more frames above the true caller due to inlining.
 
     // Am I an inline call frame? If so, we're done.
-    if (isInlineCallFrame())
-        return callerFrame()->removeHostCallFrameFlag();
+    if (isInlinedFrame())
+        return callerFrame;
     
     // I am a machine call frame, so the question is: is my caller a machine call frame
     // that has inlines or a machine call frame that doesn't?
-    CallFrame* machineCaller = callerFrame()->removeHostCallFrameFlag();
-    if (!machineCaller)
+    if (!callerFrame)
         return 0;
-    ASSERT(!machineCaller->isInlineCallFrame());
+
+    if (!callerFrame->codeBlock())
+        return callerFrame;
+    ASSERT(!callerFrame->isInlinedFrame());
     
-    // Figure out how we want to get the current code location.
-    if (!hasReturnPC() || returnAddressIsInCtiTrampoline(returnPC()))
-        return machineCaller->trueCallFrameFromVMCode()->removeHostCallFrameFlag();
-    
-    return machineCaller->trueCallFrame(returnPC())->removeHostCallFrameFlag();
+    return callerFrame->trueCallFrame()->removeHostCallFrameFlag();
 }
 
-CodeBlock* CallFrame::someCodeBlockForPossiblyInlinedCode()
+unsigned CallFrame::bytecodeOffsetFromCodeOriginIndex()
 {
-    if (!isInlineCallFrame())
-        return codeBlock();
-    
-    return jsCast<FunctionExecutable*>(inlineCallFrame()->executable.get())->baselineCodeBlockFor(
-        inlineCallFrame()->isCall ? CodeForCall : CodeForConstruct);
+    ASSERT(hasLocationAsCodeOriginIndex());
+    CodeBlock* codeBlock = this->codeBlock();
+    ASSERT(codeBlock);
+
+    CodeOrigin codeOrigin;
+    unsigned index = locationAsCodeOriginIndex();
+    ASSERT(codeBlock->canGetCodeOrigin(index));
+    codeOrigin = codeBlock->codeOrigin(index);
+
+    for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame;) {
+        if (inlineCallFrame->baselineCodeBlock() == codeBlock)
+            return codeOrigin.bytecodeIndex;
+
+        codeOrigin = inlineCallFrame->caller;
+        inlineCallFrame = codeOrigin.inlineCallFrame;
+    }
+    return codeOrigin.bytecodeIndex;
 }
 
-#endif
+#endif // ENABLE(DFG_JIT)
 
 Register* CallFrame::frameExtentInternal()
 {

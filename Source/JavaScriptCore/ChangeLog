@@ -1,3 +1,127 @@
+2013-06-06  Mark Lam  <mark.lam@apple.com>
+
+        Encode CallFrame::Location flags in the low bits when USE(JSVALUE32_64).
+        https://bugs.webkit.org/show_bug.cgi?id=117312.
+
+        Reviewed by Michael Saboff.
+
+        For USE(JSVALUE32_64), we store the location flags in the low 2 bits of
+        the word because we need the high bits for address bits.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::setLocationAsBytecodeOffset):
+        * interpreter/CallFrame.h:
+        * interpreter/CallFrameInlines.h:
+        (JSC::CallFrame::Location::encode):
+        (JSC::CallFrame::Location::decode):
+        (JSC::CallFrame::Location::isCodeOriginIndex):
+        (JSC::CallFrame::Location::isInlinedCode):
+
+2013-06-06  Mark Lam  <mark.lam@apple.com>
+
+        CallFrame::trueCallFrame() should populate the bytecodeOffset field
+        when reifying inlined frames..
+        https://bugs.webkit.org/show_bug.cgi?id=117209.
+
+        Reviewed by Geoffrey Garen.
+
+        When reifying an inlined frame, we fill in its CodeBlock, and
+        bytecodeOffset. We also set the InlinedFrame bit in the location field.
+        This is needed in order to iterate the stack correctly. Here's why:
+
+            Let's say we have the following stack trace:
+              X calls A inlines B inlines C calls D
+
+            Based on the above scenario,
+            1. D's callerFrame points to A (not C).
+            2. A has a codeOriginIndex that points to C.
+
+        When iterating the stack (from D back towards X), we will encounter A
+        twice:
+
+            t1. when trying to find C as D's caller.
+                This is the time when we reify B and C using the
+                codeOriginIndex in A, and return C as the caller frame of D.
+
+            t2. when getting's the reified B's caller.
+                This time, we don't run the reification process, and
+                just take A as the caller frame of B.
+
+        To discern which treatment of the DFG frame (i.e. A) we need to apply,
+        we check if the callee is an inlined frame:
+
+            If callee is NOT an inlined frame (e.g. frame D), apply treatment t1.
+            If callee is an inlined frame (e.g. frame B), apply treatment t2.
+
+        Why not just reify A by replacing its codeOriginIndex with A's
+        bytecodeOffset?
+
+        We can't do this because D's callerFrame pointer still points to A, and
+        needs to remain that way because we did not deopt A. It remains a DFG
+        frame which inlined B and C.
+
+        If we replace the codeOriginIndex in A with A's bytecodeOffset, we will
+        only get to iterate the stack correctly once. If we try to iterate the
+        stack a second time, we will not have the information from the
+        codeOriginIndex to tell us that D's caller is actually the inlined C,
+        and not A.
+
+        To recap, when reifying frames for stack iteration purposes, the DFG
+        frame needs to hold on to its codeOriginIndex. This in turn means the
+        DFG frame will need to be treated in 2 possible ways, and we need to
+        know if a callee frame is an inlined frame in order to choose the
+        correct treatment for the DFG frame.
+
+        Other changes:
+        - Simplified Interpreter::getCallerInfo().
+        - Removed CodeBlock::codeOriginForReturn() and supporting code
+          which is now unneeded.
+        - Moved CallFrame location bit encoding from the CodeOrigin to the
+          new CallFrame::Location class.
+        - Explicitly tagged inlined frames. This is necessary in order to
+          iterate the stack correctly as explained above.
+
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::codeOrigins):
+        (CodeBlock):
+        (JSC::CodeBlock::codeOrigin):
+        (RareData):
+        * bytecode/CodeOrigin.h:
+        (CodeOrigin):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::beginCall):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::trueCallFrame):
+        (JSC::CallFrame::trueCallerFrame):
+        (JSC::CallFrame::bytecodeOffsetFromCodeOriginIndex):
+        * interpreter/CallFrame.h:
+        (Location):
+        (ExecState):
+        (JSC::ExecState::trueCallerFrame):
+        (JSC::ExecState::callerFrameNoFlags):
+        * interpreter/CallFrameInlines.h:
+        (JSC::CallFrame::Location::encode):
+        (JSC::CallFrame::Location::decode):
+        (JSC::CallFrame::Location::isBytecodeOffset):
+        (JSC::CallFrame::Location::isCodeOriginIndex):
+        (JSC::CallFrame::Location::isInlinedFrame):
+        (JSC::CallFrame::isInlinedFrame):
+        (JSC::CallFrame::setIsInlinedFrame):
+        (JSC::CallFrame::hasLocationAsBytecodeOffset):
+        (JSC::CallFrame::hasLocationAsCodeOriginIndex):
+        (JSC::CallFrame::locationAsBytecodeOffset):
+        (JSC::CallFrame::setLocationAsBytecodeOffset):
+        (JSC::CallFrame::locationAsCodeOriginIndex):
+        * interpreter/Interpreter.cpp:
+        (JSC::getCallerInfo):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::findFunctionCallFrameFromVMCode):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+
 2013-06-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA shouldn't filter ArrayModes with ALL_NON_ARRAY_ARRAY_MODES if the speculated type is not SpecArray

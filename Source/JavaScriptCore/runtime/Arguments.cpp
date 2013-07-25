@@ -25,6 +25,7 @@
 #include "config.h"
 #include "Arguments.h"
 
+#include "CallFrameInlines.h"
 #include "JSActivation.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -354,7 +355,7 @@ void Arguments::tearOff(CallFrame* callFrame)
         }
     }
 
-    if (!callFrame->isInlineCallFrame()) {
+    if (!callFrame->isInlinedFrame()) {
         for (size_t i = 0; i < m_numArguments; ++i)
             trySetArgument(callFrame->vm(), i, callFrame->argumentAfterCapture(i));
         return;

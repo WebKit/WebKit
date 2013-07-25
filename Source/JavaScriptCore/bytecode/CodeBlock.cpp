@@ -2815,33 +2815,6 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
 #endif
 }
 
-#if ENABLE(DFG_JIT)
-bool CodeBlock::codeOriginForReturn(ReturnAddressPtr returnAddress, CodeOrigin& codeOrigin)
-{
-    if (!hasCodeOrigins())
-        return false;
-
-    if (!jitCode()->contains(returnAddress.value())) {
-        ClosureCallStubRoutine* stub = findClosureCallForReturnPC(returnAddress);
-        ASSERT(stub);
-        if (!stub)
-            return false;
-        codeOrigin = stub->codeOrigin();
-        return true;
-    }
-    
-    unsigned offset = jitCode()->offsetOf(returnAddress.value());
-    CodeOriginAtCallReturnOffset* entry =
-        tryBinarySearch<CodeOriginAtCallReturnOffset, unsigned>(
-            codeOrigins(), codeOrigins().size(), offset,
-            getCallReturnOffsetForCodeOrigin);
-    if (!entry)
-        return false;
-    codeOrigin = entry->codeOrigin;
-    return true;
-}
-#endif // ENABLE(DFG_JIT)
-
 void CodeBlock::clearEvalCache()
 {
     if (!!m_alternative)

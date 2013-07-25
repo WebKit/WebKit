@@ -486,7 +486,6 @@ static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecode
     bytecodeOffset = 0;
     ASSERT(!callFrame->hasHostCallFrameFlag());
     CallFrame* trueCallerFrame = callFrame->trueCallerFrame();
-    bool wasCalledByHost = callFrame->callerFrame()->hasHostCallFrameFlag();
     ASSERT(!trueCallerFrame->hasHostCallFrameFlag());
 
     if (trueCallerFrame == CallFrame::noCaller() || !trueCallerFrame || !trueCallerFrame->codeBlock()) {
@@ -495,60 +494,11 @@ static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecode
     }
     
     CodeBlock* callerCodeBlock = trueCallerFrame->codeBlock();
-    
-    if (!callFrame->hasReturnPC())
-        wasCalledByHost = true;
+    if (trueCallerFrame->hasLocationAsCodeOriginIndex())
+        bytecodeOffset = trueCallerFrame->bytecodeOffsetFromCodeOriginIndex();
+    else
+        bytecodeOffset = trueCallerFrame->locationAsBytecodeOffset();
 
-    if (wasCalledByHost) {
-#if ENABLE(DFG_JIT)
-        if (callerCodeBlock && JITCode::isOptimizingJIT(callerCodeBlock->jitType())) {
-            unsigned codeOriginIndex = callFrame->callerFrame()->removeHostCallFrameFlag()->locationAsCodeOriginIndex();
-            CodeOrigin origin = callerCodeBlock->codeOrigin(codeOriginIndex);
-            bytecodeOffset = origin.bytecodeIndex;
-            if (InlineCallFrame* inlineCallFrame = origin.inlineCallFrame)
-                callerCodeBlock = inlineCallFrame->baselineCodeBlock();
-        } else
-#endif
-            bytecodeOffset = trueCallerFrame->locationAsBytecodeOffset();
-    } else {
-#if ENABLE(DFG_JIT)
-        if (callFrame->isInlineCallFrame()) {
-            InlineCallFrame* icf = callFrame->inlineCallFrame();
-            bytecodeOffset = icf->caller.bytecodeIndex;
-            if (InlineCallFrame* parentCallFrame = icf->caller.inlineCallFrame) {
-                FunctionExecutable* executable = static_cast<FunctionExecutable*>(parentCallFrame->executable.get());
-                CodeBlock* newCodeBlock = executable->baselineCodeBlockFor(parentCallFrame->isCall ? CodeForCall : CodeForConstruct);
-                ASSERT(newCodeBlock);
-                ASSERT(newCodeBlock->instructionCount() > bytecodeOffset);
-                callerCodeBlock = newCodeBlock;
-            }
-        } else if (callerCodeBlock && JITCode::isOptimizingJIT(callerCodeBlock->jitType())) {
-            CodeOrigin origin;
-            if (!callerCodeBlock->codeOriginForReturn(callFrame->returnPC(), origin)) {
-                // This should not be possible, but we're seeing cases where it does happen
-                // CallFrame already has robustness against bogus stack walks, so
-                // we'll extend that to here as well.
-                ASSERT_NOT_REACHED();
-                caller = 0;
-                return 0;
-            }
-            bytecodeOffset = origin.bytecodeIndex;
-            if (InlineCallFrame* icf = origin.inlineCallFrame) {
-                FunctionExecutable* executable = static_cast<FunctionExecutable*>(icf->executable.get());
-                CodeBlock* newCodeBlock = executable->baselineCodeBlockFor(icf->isCall ? CodeForCall : CodeForConstruct);
-                ASSERT(newCodeBlock);
-                ASSERT(newCodeBlock->instructionCount() > bytecodeOffset);
-                callerCodeBlock = newCodeBlock;
-            }
-        } else
-#endif
-        {
-            RELEASE_ASSERT(callerCodeBlock);
-            bytecodeOffset = callerCodeBlock->bytecodeOffset(trueCallerFrame, callFrame->returnPC());
-        }
-    }
-
-    RELEASE_ASSERT(callerCodeBlock);
     caller = callerCodeBlock;
     return trueCallerFrame;
 }
@@ -630,7 +580,7 @@ void Interpreter::getStackTrace(VM* vm, Vector<StackFrame>& results, size_t maxS
     if (!callFrame || callFrame == CallFrame::noCaller()) 
         return;
     unsigned bytecodeOffset = getBytecodeOffsetForCallFrame(callFrame);
-    callFrame = callFrame->trueCallFrameFromVMCode();
+    callFrame = callFrame->trueCallFrame();
     if (!callFrame)
         return;
     CodeBlock* callerCodeBlock = callFrame->codeBlock();
@@ -1380,7 +1330,7 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
 
 CallFrame* Interpreter::findFunctionCallFrameFromVMCode(CallFrame* callFrame, JSFunction* function)
 {
-    for (CallFrame* candidate = callFrame->trueCallFrameFromVMCode(); candidate; candidate = candidate->trueCallerFrame()) {
+    for (CallFrame* candidate = callFrame->trueCallFrame(); candidate; candidate = candidate->trueCallerFrame()) {
         if (candidate->callee() == function)
             return candidate;
     }

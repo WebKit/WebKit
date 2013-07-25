@@ -114,6 +114,33 @@ namespace JSC  {
 #endif
         AbstractPC abstractReturnPC(VM& vm) { return AbstractPC(vm, this); }
 
+        class Location {
+        public:
+            enum Type {
+                BytecodeOffset = 0,
+                CodeOriginIndex = (1 << 0),
+                IsInlinedCode = (1 << 1),
+            };
+
+            static inline uint32_t encode(Type, uint32_t bits);
+            static inline uint32_t decode(uint32_t bits);
+            static inline bool isBytecodeOffset(uint32_t bits);
+            static inline bool isCodeOriginIndex(uint32_t bits);
+            static inline bool isInlinedCode(uint32_t bits);
+
+        private:
+            static const uint32_t s_mask = 0x3;
+#if USE(JSVALUE64)
+            static const uint32_t s_shift = 30;
+            static const uint32_t s_shiftedMask = s_mask << s_shift;
+#else
+            static const uint32_t s_shift = 2;
+#endif
+        };
+
+        bool isInlinedFrame() const;
+        void setIsInlinedFrame();
+
         bool hasLocationAsBytecodeOffset() const;
         bool hasLocationAsCodeOriginIndex() const;
 
@@ -123,6 +150,8 @@ namespace JSC  {
 
         void setLocationAsRawBits(unsigned);
         void setLocationAsBytecodeOffset(unsigned);
+
+        unsigned bytecodeOffsetFromCodeOriginIndex();
 
         Register* frameExtent()
         {
@@ -137,7 +166,7 @@ namespace JSC  {
         InlineCallFrame* inlineCallFrame() const { return this[JSStack::ReturnPC].asInlineCallFrame(); }
 #else
         // This will never be called if !ENABLE(DFG_JIT) since all calls should be guarded by
-        // isInlineCallFrame(). But to make it easier to write code without having a bunch of
+        // isInlinedFrame(). But to make it easier to write code without having a bunch of
         // #if's, we make a dummy implementation available anyway.
         InlineCallFrame* inlineCallFrame() const
         {
@@ -231,39 +260,21 @@ namespace JSC  {
         void setReturnPC(void* value) { static_cast<Register*>(this)[JSStack::ReturnPC] = (Instruction*)value; }
         
 #if ENABLE(DFG_JIT)
-        bool isInlineCallFrame();
-        
         void setInlineCallFrame(InlineCallFrame* inlineCallFrame) { static_cast<Register*>(this)[JSStack::ReturnPC] = inlineCallFrame; }
-        
+
         // Call this to get the semantically correct JS CallFrame* for the
         // currently executing function.
-        CallFrame* trueCallFrame(AbstractPC);
-        
+        CallFrame* trueCallFrame();
+
         // Call this to get the semantically correct JS CallFrame* corresponding
         // to the caller. This resolves issues surrounding inlining and the
         // HostCallFrameFlag stuff.
         CallFrame* trueCallerFrame();
-        
-        CodeBlock* someCodeBlockForPossiblyInlinedCode();
 #else
-        bool isInlineCallFrame() { return false; }
-        
         CallFrame* trueCallFrame(AbstractPC) { return this; }
         CallFrame* trueCallerFrame() { return callerFrame()->removeHostCallFrameFlag(); }
-        
-        CodeBlock* someCodeBlockForPossiblyInlinedCode() { return codeBlock(); }
 #endif
         CallFrame* callerFrameNoFlags() { return callerFrame()->removeHostCallFrameFlag(); }
-        
-        // Call this to get the true call frame (accounted for inlining and any
-        // other optimizations), when you have entered into VM code through one
-        // of the "blessed" entrypoints (JITStubs or DFGOperations). This means
-        // that if you're pretty much anywhere in the VM you can safely call this;
-        // though if you were to magically get an ExecState* by, say, interrupting
-        // a thread that is running JS code and brutishly scraped the call frame
-        // register, calling this method would probably lead to horrible things
-        // happening.
-        CallFrame* trueCallFrameFromVMCode() { return trueCallFrame(AbstractPC()); }
 
     private:
         static const intptr_t HostCallFrameFlag = 1;
@@ -272,9 +283,6 @@ namespace JSC  {
 
 #ifndef NDEBUG
         JSStack* stack();
-#endif
-#if ENABLE(DFG_JIT)
-        bool isInlineCallFrameSlow();
 #endif
         ExecState();
         ~ExecState();

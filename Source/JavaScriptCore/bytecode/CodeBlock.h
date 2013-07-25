@@ -593,8 +593,8 @@ public:
         createRareDataIfNecessary();
         return m_rareData->m_inlineCallFrames;
     }
-
-    Vector<CodeOriginAtCallReturnOffset, 0, UnsafeVectorOverflow>& codeOrigins()
+        
+    Vector<CodeOrigin, 0, UnsafeVectorOverflow>& codeOrigins()
     {
         createRareDataIfNecessary();
         return m_rareData->m_codeOrigins;
@@ -605,9 +605,7 @@ public:
     {
         return m_rareData && !!m_rareData->m_codeOrigins.size();
     }
-
-    bool codeOriginForReturn(ReturnAddressPtr, CodeOrigin&);
-
+        
     bool canGetCodeOrigin(unsigned index)
     {
         if (!m_rareData)
@@ -618,7 +616,7 @@ public:
     CodeOrigin codeOrigin(unsigned index)
     {
         RELEASE_ASSERT(m_rareData);
-        return m_rareData->m_codeOrigins[index].codeOrigin;
+        return m_rareData->m_codeOrigins[index];
     }
 
     bool addFrequentExitSite(const DFG::FrequentExitSite& site)
@@ -1109,7 +1107,7 @@ private:
 #endif
 #if ENABLE(DFG_JIT)
         SegmentedVector<InlineCallFrame, 4> m_inlineCallFrames;
-        Vector<CodeOriginAtCallReturnOffset, 0, UnsafeVectorOverflow> m_codeOrigins;
+        Vector<CodeOrigin, 0, UnsafeVectorOverflow> m_codeOrigins;
 #endif
     };
 #if COMPILER(MSVC)
@@ -1253,15 +1251,6 @@ inline Register& ExecState::uncheckedR(int index)
     RELEASE_ASSERT(index < FirstConstantRegisterIndex);
     return this[index];
 }
-
-#if ENABLE(DFG_JIT)
-inline bool ExecState::isInlineCallFrame()
-{
-    if (LIKELY(!codeBlock() || !JITCode::isOptimizingJIT(codeBlock()->jitType())))
-        return false;
-    return isInlineCallFrameSlow();
-}
-#endif
 
 inline JSValue ExecState::argumentAfterCapture(size_t argument)
 {

@@ -27,18 +27,82 @@
 #define CallFrameInlines_h
 
 #include "CallFrame.h"
-#include "CodeOrigin.h"
 
 namespace JSC  {
 
+inline uint32_t CallFrame::Location::encode(CallFrame::Location::Type type, uint32_t bits)
+{
+#if USE(JSVALUE64)
+    ASSERT(!(bits & s_shiftedMask));
+    ASSERT(!(type & ~s_mask));
+    return bits | (type << s_shift);
+#else
+    ASSERT(!(type & ~s_mask));
+    if (type & CodeOriginIndex)
+        bits = (bits << s_shift);
+    ASSERT(!(bits & s_mask));
+    bits |= type;
+    return bits;
+#endif
+}
+
+inline uint32_t CallFrame::Location::decode(uint32_t bits)
+{
+#if USE(JSVALUE64)
+    return bits & ~s_shiftedMask;
+#else
+    if (isCodeOriginIndex(bits))
+        return bits >> s_shift;
+    return bits & ~s_mask;
+#endif
+}
+
+inline bool CallFrame::Location::isBytecodeOffset(uint32_t bits)
+{
+    return !isCodeOriginIndex(bits);
+}
+
+inline bool CallFrame::Location::isCodeOriginIndex(uint32_t bits)
+{
+#if USE(JSVALUE64)
+    Type type = static_cast<Type>(bits >> s_shift);
+    return !!(type & CodeOriginIndex);
+#else
+    return !!(bits & CodeOriginIndex);
+#endif
+}
+
+inline bool CallFrame::Location::isInlinedCode(uint32_t bits)
+{
+#if USE(JSVALUE64)
+    Type type = static_cast<Type>(bits >> s_shift);
+    return !!(type & IsInlinedCode);
+#else
+    return !!(bits & IsInlinedCode);
+#endif
+}
+
+inline bool CallFrame::isInlinedFrame() const
+{
+    return Location::isInlinedCode(locationAsRawBits());
+}
+
+inline void CallFrame::setIsInlinedFrame()
+{
+    ASSERT(codeBlock());
+    uint32_t bits = Location::encode(Location::IsInlinedCode, locationAsRawBits());
+    setLocationAsRawBits(bits);
+    ASSERT(isInlinedFrame());
+}
+
 inline bool CallFrame::hasLocationAsBytecodeOffset() const
 {
-    return !CodeOrigin::isHandle(locationAsRawBits());
+    return Location::isBytecodeOffset(locationAsRawBits());
 }
 
 inline bool CallFrame::hasLocationAsCodeOriginIndex() const
 {
-    return CodeOrigin::isHandle(locationAsRawBits());
+    return Location::isCodeOriginIndex(locationAsRawBits());
 }
 
 inline unsigned CallFrame::locationAsRawBits() const
@@ -56,13 +120,13 @@ inline unsigned CallFrame::locationAsBytecodeOffset() const
 {
     ASSERT(hasLocationAsBytecodeOffset());
     ASSERT(codeBlock());
-    return locationAsRawBits();
+    return Location::decode(locationAsRawBits());
 }
 
 inline void CallFrame::setLocationAsBytecodeOffset(unsigned offset)
 {
     ASSERT(codeBlock());
-    setLocationAsRawBits(offset);
+    setLocationAsRawBits(Location::encode(Location::BytecodeOffset, offset));
     ASSERT(hasLocationAsBytecodeOffset());
 }
 #endif // USE(JSVALUE64)
@@ -71,7 +135,7 @@ inline unsigned CallFrame::locationAsCodeOriginIndex() const
 {
     ASSERT(hasLocationAsCodeOriginIndex());
     ASSERT(codeBlock());
-    return CodeOrigin::decodeHandle(locationAsRawBits());
+    return Location::decode(locationAsRawBits());
 }
 
 } // namespace JSC

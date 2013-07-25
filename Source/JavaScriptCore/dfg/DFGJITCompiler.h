@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "DFGCCallHelpers.h"
 #include "DFGDisassembler.h"
@@ -313,8 +314,8 @@ public:
     void beginCall(CodeOrigin codeOrigin, CallBeginToken& token)
     {
         unsigned index = m_exceptionChecks.size();
-        unsigned handle = CodeOrigin::encodeHandle(index);
-        store32(TrustedImm32(handle), tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+        unsigned locationBits = CallFrame::Location::encode(CallFrame::Location::CodeOriginIndex, index);
+        store32(TrustedImm32(locationBits), tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
         token.set(codeOrigin, index);
     }
 
