@@ -33,6 +33,7 @@
 #include "DFGArrayifySlowPathGenerator.h"
 #include "DFGBinarySwitch.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
+#include "DFGSaneStringGetByValSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 #include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
@@ -2147,16 +2148,12 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
         JSGlobalObject* globalObject = m_jit.globalObjectFor(node->codeOrigin);
         if (globalObject->stringPrototypeChainIsSane()) {
 #if USE(JSVALUE64)
-            addSlowPathGenerator(
-                slowPathMove(
-                    outOfBounds, this, TrustedImm64(JSValue::encode(jsUndefined())),
-                    scratchReg));
+            addSlowPathGenerator(adoptPtr(new SaneStringGetByValSlowPathGenerator(
+                outOfBounds, this, JSValueRegs(scratchReg), baseReg, propertyReg)));
 #else
-            addSlowPathGenerator(
-                slowPathMove(
-                    outOfBounds, this,
-                    TrustedImm32(JSValue::UndefinedTag), resultTagReg,
-                    TrustedImm32(0), scratchReg));
+            addSlowPathGenerator(adoptPtr(new SaneStringGetByValSlowPathGenerator(
+                outOfBounds, this, JSValueRegs(resultTagReg, scratchReg),
+                baseReg, propertyReg)));
 #endif
         } else {
 #if USE(JSVALUE64)

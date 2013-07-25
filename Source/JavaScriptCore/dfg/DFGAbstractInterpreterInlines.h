@@ -785,7 +785,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
                 // GetByVal operation the fact that we're using a watchpoint, using
                 // something like Array::SaneChain (except not quite, because that
                 // implies an in-bounds access). None of this feels like it's worth it,
-                // so we're going with TOP for now.
+                // so we're going with TOP for now. The same thing applies to
+                // clobbering the world.
+                clobberWorld(node->codeOrigin, indexInBlock);
                 forNode(node).makeTop();
             } else
                 forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());

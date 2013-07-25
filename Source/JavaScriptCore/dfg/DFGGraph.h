@@ -497,7 +497,7 @@ public:
         case Array::SlowPutArrayStorage:
             return !node->arrayMode().mayStoreToHole();
         case Array::String:
-            return node->op() == GetByVal;
+            return node->op() == GetByVal && node->arrayMode().isInBounds();
 #if USE(JSVALUE32_64)
         case Array::Arguments:
             if (node->op() == GetByVal)

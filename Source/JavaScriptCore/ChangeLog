@@ -1,5 +1,51 @@
 2013-07-19  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: String GetByVal out-of-bounds handling is so wrong
+        https://bugs.webkit.org/show_bug.cgi?id=118935
+
+        Reviewed by Geoffrey Garen.
+        
+        Bunch of String GetByVal out-of-bounds fixes:
+        
+        - Even if the string proto chain is sane, we need to watch out for negative
+          indices. They may get values or call getters in the prototypes, since proto
+          sanity doesn't check for negative indexed properties, as they are not
+          technically indexed properties.
+        
+        - GetByVal String out-of-bounds does in fact clobberWorld(). CSE should be
+          given this information.
+        
+        - GetByVal String out-of-bounds does in fact clobberWorld(). CFA should be
+          given this information.
+        
+        Also fixed some other things:
+        
+        - If the DFG is disabled, the testRunner should pretend that we've done a
+          bunch of DFG compiles. That's necessary to prevent the tests from timing
+          out.
+        
+        - Disassembler shouldn't try to dump source code since it's not safe in the
+          concurrent JIT.
+
+        * API/JSCTestRunnerUtils.cpp:
+        (JSC::numberOfDFGCompiles):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpHeader):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::byValIsPure):
+        * dfg/DFGSaneStringGetByValSlowPathGenerator.h: Added.
+        (DFG):
+        (SaneStringGetByValSlowPathGenerator):
+        (JSC::DFG::SaneStringGetByValSlowPathGenerator::SaneStringGetByValSlowPathGenerator):
+        (JSC::DFG::SaneStringGetByValSlowPathGenerator::generateInternal):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+
+2013-07-19  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: Structure::isValidOffset() should be able to tell you if you're loading a valid JSValue, and not just not crashing
         https://bugs.webkit.org/show_bug.cgi?id=118911
 

@@ -212,6 +212,10 @@ fast/js/dfg-resolve-global-polymorphic-non-dictionary
 fast/js/dfg-resolve-global-specific-dictionary
 fast/js/dfg-side-effect-assignment-osr-exit
 fast/js/dfg-sqrt-backwards-propagation
+fast/js/dfg-string-out-of-bounds-check-structure
+fast/js/dfg-string-out-of-bounds-cse
+fast/js/dfg-string-out-of-bounds-negative-check-structure
+fast/js/dfg-string-out-of-bounds-negative-proto-value
 fast/js/dfg-string-stricteq
 fast/js/dfg-tear-off-arguments-not-activation
 fast/js/dfg-tear-off-function-dot-arguments

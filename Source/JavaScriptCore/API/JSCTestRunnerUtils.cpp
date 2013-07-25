@@ -48,17 +48,23 @@ static FunctionExecutable* getExecutable(JSContextRef context, JSValueRef theFun
 
 JSValueRef numberOfDFGCompiles(JSContextRef context, JSValueRef theFunctionValueRef)
 {
+    bool pretendToHaveManyCompiles = false;
+#if ENABLE(DFG_JIT)
+    if (!Options::useJIT() || !Options::useDFGJIT())
+        pretendToHaveManyCompiles = true;
+#else
+    pretendToHaveManyCompiles = true;
+#endif
+    
     if (FunctionExecutable* executable = getExecutable(context, theFunctionValueRef)) {
         CodeBlock* baselineCodeBlock = executable->baselineCodeBlockFor(CodeForCall);
         
         if (!baselineCodeBlock)
             return JSValueMakeNumber(context, 0);
 
-#if ENABLE(DFG_JIT)        
+        if (pretendToHaveManyCompiles)
+            return JSValueMakeNumber(context, 1000000.0);
         return JSValueMakeNumber(context, baselineCodeBlock->numberOfDFGCompiles());
-#else
-        return JSValueMakeNumber(context, 1000000.0);
-#endif
     }
     
     return JSValueMakeUndefined(context);
