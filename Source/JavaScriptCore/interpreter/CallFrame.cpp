@@ -33,17 +33,6 @@
 namespace JSC {
 
 #ifndef NDEBUG
-void CallFrame::dumpCaller()
-{
-    int signedLineNumber;
-    intptr_t sourceID;
-    String urlString;
-    JSValue function;
-    
-    interpreter()->retrieveLastCaller(this, signedLineNumber, sourceID, urlString, function);
-    dataLogF("Callpoint => %s:%d\n", urlString.utf8().data(), signedLineNumber);
-}
-
 JSStack* CallFrame::stack()
 {
     return &interpreter()->stack();

@@ -1,3 +1,29 @@
+2013-05-25  Mark Lam  <mark.lam@apple.com>
+
+        Remove Interpreter::retrieveLastCaller().
+        https://bugs.webkit.org/show_bug.cgi?id=116753.
+
+        Reviewed by Geoffrey Garen.
+
+        This is part of the refactoring effort to get rid of functions walking
+        the JS stack in their own way.
+
+        * API/JSContextRef.cpp:
+        (JSContextCreateBacktrace):
+        * interpreter/CallFrame.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::addStackTraceIfNecessary):
+        * interpreter/Interpreter.h:
+        (StackFrame):
+        (JSC::StackFrame::StackFrame):
+        (Interpreter):
+        * jsc.cpp:
+        (functionJSCStack):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+
 2013-05-24  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL boolify should support ObjectOrOtherUse

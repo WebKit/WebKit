@@ -245,7 +245,7 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
         builder.append('#');
         builder.appendNumber(i);
         builder.append(' ');
-        builder.append(functionName);
+        builder.append(stackTrace[i].friendlyFunctionName(exec));
         builder.appendLiteral("() at ");
         builder.append(urlString);
         if (frame.codeType != StackFrameNativeCode) {
@@ -255,6 +255,7 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
         if (!function)
             break;
     }
+
     return OpaqueJSString::create(builder.toString()).leakRef();
 }
 

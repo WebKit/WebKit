@@ -58,13 +58,14 @@ ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigne
 
 void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
 {
-    int lineNumber;
-    intptr_t sourceID;
-    String sourceURL;
-    JSValue function;
-
-    exec->interpreter()->retrieveLastCaller(exec, lineNumber, sourceID, sourceURL, function);
-    m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, function, sourceURL, lineNumber), m_head.get(), m_head.get());
+    Vector<StackFrame> stackTrace;
+    Interpreter::getStackTrace(&exec->vm(), stackTrace, 2);
+    if (stackTrace.size() < 2)
+        return;
+    unsigned line = 0;
+    unsigned unusedColumn = 0;
+    stackTrace[1].computeLineAndColumn(line, unusedColumn);
+    m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, stackTrace[1].callee.get(), stackTrace[1].sourceURL, line), m_head.get(), m_head.get());
     m_head->insertNode(m_currentNode.get());
 }
 

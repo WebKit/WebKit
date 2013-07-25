@@ -239,6 +239,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
 
 Interpreter::Interpreter(VM& vm)
     : m_sampleEntryDepth(0)
+    , m_vm(vm)
     , m_stack(vm)
     , m_errorHandlingModeReentry(0)
 #if !ASSERT_DISABLED
@@ -1374,27 +1375,6 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
     }
 
     return caller;
-}
-
-void Interpreter::retrieveLastCaller(CallFrame* callFrame, int& lineNumber, intptr_t& sourceID, String& sourceURL, JSValue& function) const
-{
-    function = JSValue();
-    lineNumber = -1;
-    sourceURL = String();
-
-    CallFrame* callerFrame = callFrame->callerFrame();
-    if (callerFrame->hasHostCallFrameFlag())
-        return;
-
-    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
-    if (!callerCodeBlock)
-        return;
-    unsigned bytecodeOffset = 0;
-    bytecodeOffset = callerCodeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
-    lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset - 1);
-    sourceID = callerCodeBlock->ownerExecutable()->sourceID();
-    sourceURL = callerCodeBlock->ownerExecutable()->sourceURL();
-    function = callerFrame->callee();
 }
 
 CallFrame* Interpreter::findFunctionCallFrameFromVMCode(CallFrame* callFrame, JSFunction* function)

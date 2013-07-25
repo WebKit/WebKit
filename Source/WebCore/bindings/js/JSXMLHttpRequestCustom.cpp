@@ -47,8 +47,9 @@
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "XMLHttpRequest.h"
-#include <runtime/Error.h>
 #include <interpreter/Interpreter.h>
+#include <parser/SourceProvider.h>
+#include <runtime/Error.h>
 #include <wtf/ArrayBuffer.h>
 
 using namespace JSC;
@@ -133,14 +134,15 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
             impl()->send(val.toString(exec)->value(exec), ec);
     }
 
-    int signedLineNumber;
-    intptr_t sourceID;
-    String sourceURL;
-    JSValue function;
-    exec->interpreter()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);
-    impl()->setLastSendLineNumber(signedLineNumber >= 0 ? signedLineNumber : 0);
-    impl()->setLastSendURL(sourceURL);
-
+    Vector<StackFrame> stackTrace(2);
+    Interpreter::getStackTrace(&exec->vm(), stackTrace, 2);
+    if (stackTrace.size() == 2) {
+        unsigned line = 0;
+        unsigned unusuedColumn = 0;
+        stackTrace[1].computeLineAndColumn(line, unusuedColumn);
+        impl()->setLastSendLineNumber(line);
+        impl()->setLastSendURL(stackTrace[1].sourceURL);
+    }
     setDOMException(exec, ec);
     return jsUndefined();
 }

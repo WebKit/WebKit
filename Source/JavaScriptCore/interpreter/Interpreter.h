@@ -212,7 +212,6 @@ namespace JSC {
 
         JSValue retrieveArgumentsFromVMCode(CallFrame*, JSFunction*) const;
         JSValue retrieveCallerFromVMCode(CallFrame*, JSFunction*) const;
-        JS_EXPORT_PRIVATE void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, String& sourceURL, JSValue& function) const;
         
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         
@@ -251,6 +250,7 @@ namespace JSC {
         int m_sampleEntryDepth;
         OwnPtr<SamplingTool> m_sampler;
 
+        VM& m_vm;
         JSStack m_stack;
         int m_errorHandlingModeReentry;
         
