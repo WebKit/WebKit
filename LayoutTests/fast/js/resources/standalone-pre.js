@@ -1,5 +1,6 @@
 var wasPostTestScriptParsed = false;
 var errorMessage;
+var self = this;
 
 function description(msg)
 {
@@ -155,6 +156,52 @@ function isSuccessfullyParsed()
         successfullyParsed = true;
     shouldBeTrue("successfullyParsed");
     debug("\nTEST COMPLETE\n");
+}
+
+
+function dfgCompiled(argument)
+{
+    var numberOfCompiles = "compiles" in argument ? argument.compiles : 1;
+    
+    if (!("f" in argument))
+        throw new Error("dfgCompiled called with invalid argument.");
+    
+    if (argument.f instanceof Array) {
+        for (var i = 0; i < argument.f.length; ++i) {
+            if (testRunner.numberOfDFGCompiles(argument.f[i]) < numberOfCompiles)
+                return false;
+        }
+    } else {
+        if (testRunner.numberOfDFGCompiles(argument.f) < numberOfCompiles)
+            return false;
+    }
+    
+    return true;
+}
+
+function dfgIncrement(argument)
+{
+    if (!self.testRunner)
+        return argument.i;
+    
+    if (argument.i < argument.n)
+        return argument.i;
+    
+    if (didFailSomeTests)
+        return argument.i;
+    
+    if (!dfgCompiled(argument))
+        return "start" in argument ? argument.start : 0;
+    
+    return argument.i;
+}
+
+function noInline(theFunction)
+{
+    if (!self.testRunner)
+        return;
+    
+    testRunner.neverInlineFunction(theFunction);
 }
 
 // It's possible for an async test to call finishJSTest() before js-test-post.js
