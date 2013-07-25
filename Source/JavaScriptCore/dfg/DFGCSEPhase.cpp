@@ -1185,8 +1185,7 @@ private:
             node->convertToPhantom();
             Node* dataNode = replacement->child1().node();
             ASSERT(dataNode->hasResult());
-            m_graph.clearAndDerefChild1(node);
-            node->children.child1() = Edge(dataNode);
+            node->child1() = Edge(dataNode);
             m_graph.dethread();
             m_changed = true;
             break;

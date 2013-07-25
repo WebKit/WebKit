@@ -648,9 +648,8 @@ public:
                     if (m_createsArguments.contains(node->codeOrigin.inlineCallFrame))
                         continue;
                     
-                    node->setOpAndDefaultFlags(Nop);
-                    m_graph.clearAndDerefChild1(node);
-                    m_graph.clearAndDerefChild2(node);
+                    node->setOpAndDefaultFlags(Phantom);
+                    node->children.reset();
                     break;
                 }
                     

@@ -1634,7 +1634,6 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             
     case Phantom:
     case InlineStart:
-    case Nop:
     case CountExecution:
         break;
         

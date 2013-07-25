@@ -1,3 +1,40 @@
+2013-07-07  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Graph::clearAndDerefChild() makes no sense anymore, and neither does Nop
+        https://bugs.webkit.org/show_bug.cgi?id=118452
+
+        Reviewed by Sam Weinig.
+        
+        Noticed that ArgumentsSimplificationPhase was converting something to a Nop and then
+        resetting its children using clearAndDerefChild(). Using Nop instead of Phantom is a
+        holdover from back when we needed a no-MustGenerate no-op. We don't anymore. Using
+        clearAndDerefChild() was necessary back when we did eager reference counting. We
+        don't need to do that anymore, and in fact clearAndDerefChild() appeared to not do
+        any reference counting, so it was badly named to begin with.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::freeUnnecessaryNodes):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-07-04  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL should better report its compile-times and it should be able to run in a mode where it doesn't spend time generating OSR exits

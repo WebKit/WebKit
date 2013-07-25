@@ -4698,10 +4698,6 @@ void SpeculativeJIT::compile(Node* node)
         noResult(node);
         break;
         
-    case Nop:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-        
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();
         break;

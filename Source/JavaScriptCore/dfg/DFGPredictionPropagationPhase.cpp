@@ -545,7 +545,6 @@ private:
             
         // These gets ignored because it doesn't do anything.
         case InlineStart:
-        case Nop:
         case CountExecution:
         case PhantomLocal:
         case Flush:

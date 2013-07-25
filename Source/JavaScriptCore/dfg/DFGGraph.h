@@ -100,16 +100,6 @@ public:
         changeEdge(edge, newEdge);
     }
     
-    void clearAndDerefChild(Node* node, unsigned index)
-    {
-        if (!node->children.child(index))
-            return;
-        node->children.setChild(index, Edge());
-    }
-    void clearAndDerefChild1(Node* node) { clearAndDerefChild(node, 0); }
-    void clearAndDerefChild2(Node* node) { clearAndDerefChild(node, 1); }
-    void clearAndDerefChild3(Node* node) { clearAndDerefChild(node, 2); }
-    
     void performSubstitution(Node* node)
     {
         if (node->flags() & NodeHasVarArgs) {

@@ -1085,8 +1085,6 @@ struct Node {
         case DoubleAsInt32:
         case PhantomArguments:
             return true;
-        case Nop:
-            return false;
         case Phantom:
             return child1().useKindUnchecked() != UntypedUse || child2().useKindUnchecked() != UntypedUse || child3().useKindUnchecked() != UntypedUse;
         default:

@@ -867,7 +867,6 @@ private:
         }
 
         case GetArrayLength:
-        case Nop:
         case Phi:
         case ForwardInt32ToDouble:
         case PhantomPutStructure:

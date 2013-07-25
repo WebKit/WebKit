@@ -99,8 +99,6 @@ private:
                         break;
                     }
                     break;
-                case Nop:
-                    continue;
                 default:
                     break;
                 }
