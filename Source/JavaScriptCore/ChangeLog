@@ -1,3 +1,11 @@
+2013-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Don't link gtest into JavaScriptCore
+
+        Rubber stamped by Mark Rowe.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2013-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: String::utf8() should also be available as StringImpl::utf8() so that you don't have to ref() a StringImpl just to get its utf8()

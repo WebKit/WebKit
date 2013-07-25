@@ -37,7 +37,7 @@ OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-u
 
 OTHER_LDFLAGS_LLVM = $(OTHER_LDFLAGS_LLVM_$(ENABLE_FTL_JIT));
 OTHER_LDFLAGS_LLVM_ = ;
-OTHER_LDFLAGS_LLVM_ENABLE_FTL_JIT = -lpthread -lm -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMIRReader -lLLVMAsmParser -lLLVMMCDisassembler -lLLVMMCParser -lLLVMInstrumentation -lLLVMArchive -lLLVMBitReader -lLLVMInterpreter -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMBitWriter -lLLVMMCJIT -lLLVMJIT -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMTarget -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport;
+OTHER_LDFLAGS_LLVM_ENABLE_FTL_JIT = -lpthread -lm -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMIRReader -lLLVMAsmParser -lLLVMMCDisassembler -lLLVMMCParser -lLLVMInstrumentation -lLLVMArchive -lLLVMBitReader -lLLVMInterpreter -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMBitWriter -lLLVMMCJIT -lLLVMJIT -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMTarget -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport;
 
 
 
