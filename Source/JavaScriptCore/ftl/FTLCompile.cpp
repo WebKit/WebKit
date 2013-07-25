@@ -105,10 +105,10 @@ void compile(State& state)
     LLVMAddConstantPropagationPass(pass);
     LLVMAddInstructionCombiningPass(pass);
     LLVMAddPromoteMemoryToRegisterPass(pass);
-    if (Options::enableLLVMLICM())
-        LLVMAddLICMPass(pass);
     LLVMAddBasicAliasAnalysisPass(pass);
     LLVMAddTypeBasedAliasAnalysisPass(pass);
+    if (Options::enableLLVMLICM())
+        LLVMAddLICMPass(pass);
     LLVMAddGVNPass(pass);
     LLVMAddCFGSimplificationPass(pass);
     LLVMRunPassManager(pass, state.module);
