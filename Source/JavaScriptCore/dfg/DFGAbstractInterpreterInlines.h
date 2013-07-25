@@ -1256,6 +1256,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         }
 
         node->setCanExit(true);
+        m_state.setHaveStructures(true);
 
         // If this structure check is attempting to prove knowledge already held in
         // the futurePossibleStructure set then the constant folding phase should
@@ -1268,7 +1269,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         }
 
         filter(value, set);
-        m_state.setHaveStructures(true);
         break;
     }
         

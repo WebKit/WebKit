@@ -1351,7 +1351,7 @@ private:
                 m_out.address(
                     m_heaps.properties[data.identifierNumber],
                     lowStorage(m_node->child1()),
-                    data.offset * sizeof(EncodedJSValue))));
+                    offsetRelativeToBase(data.offset))));
     }
     
     void compilePutByOffset()
@@ -1364,7 +1364,7 @@ private:
             m_out.address(
                 m_heaps.properties[data.identifierNumber],
                 lowStorage(m_node->child1()),
-                data.offset * sizeof(EncodedJSValue)));
+                offsetRelativeToBase(data.offset)));
     }
     
     void compileGetGlobalVar()

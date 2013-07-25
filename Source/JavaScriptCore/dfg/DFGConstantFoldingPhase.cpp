@@ -207,7 +207,7 @@ private:
                 node->convertToGetByOffset(m_graph.m_storageAccessData.size(), propertyStorage);
                 
                 StorageAccessData storageAccessData;
-                storageAccessData.offset = indexRelativeToBase(status.offset());
+                storageAccessData.offset = status.offset();
                 storageAccessData.identifierNumber = identifierNumber;
                 m_graph.m_storageAccessData.append(storageAccessData);
                 break;
@@ -318,7 +318,7 @@ private:
                 node->convertToPutByOffset(m_graph.m_storageAccessData.size(), propertyStorage);
                 
                 StorageAccessData storageAccessData;
-                storageAccessData.offset = indexRelativeToBase(status.offset());
+                storageAccessData.offset = status.offset();
                 storageAccessData.identifierNumber = identifierNumber;
                 m_graph.m_storageAccessData.append(storageAccessData);
                 break;

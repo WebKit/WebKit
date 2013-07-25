@@ -26,11 +26,23 @@
 #include "config.h"
 #include "FunctionExecutableDump.h"
 
+#include "CodeBlock.h"
+
 namespace JSC {
 
 void FunctionExecutableDump::dump(PrintStream& out) const
 {
-    out.print(m_executable->inferredName().string(), "#", m_executable->hashFor(CodeForCall), "/", m_executable->hashFor(CodeForConstruct), ":[", RawPointer(m_executable), "]");
+    out.print(m_executable->inferredName().string(), "#");
+    if (m_executable->isGeneratedForCall())
+        out.print(m_executable->generatedBytecodeForCall().hash());
+    else
+        out.print("<nogen>");
+    out.print("/");
+    if (m_executable->isGeneratedForConstruct())
+        out.print(m_executable->generatedBytecodeForConstruct().hash());
+    else
+        out.print("<nogen>");
+    out.print(":[", RawPointer(m_executable), "]");
 }
 
 } // namespace JSC

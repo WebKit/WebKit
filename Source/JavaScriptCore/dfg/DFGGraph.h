@@ -56,7 +56,7 @@ class ExecState;
 namespace DFG {
 
 struct StorageAccessData {
-    size_t offset;
+    PropertyOffset offset;
     unsigned identifierNumber;
 };
 

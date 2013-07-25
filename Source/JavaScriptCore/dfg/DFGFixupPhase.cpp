@@ -820,6 +820,7 @@ private:
         case GetByOffset: {
             if (!node->child1()->hasStorageResult())
                 setUseKindAndUnboxIfProfitable<KnownCellUse>(node->child1());
+            setUseKindAndUnboxIfProfitable<KnownCellUse>(node->child2());
             break;
         }
             

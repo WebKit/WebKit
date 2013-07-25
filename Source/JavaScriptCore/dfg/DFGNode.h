@@ -410,6 +410,8 @@ struct Node {
     {
         ASSERT(m_op == GetById || m_op == GetByIdFlush);
         m_opInfo = storageAccessDataIndex;
+        children.setChild2(children.child1());
+        children.child2().setUseKind(KnownCellUse);
         children.setChild1(storage);
         m_op = GetByOffset;
         m_flags &= ~NodeClobbersWorld;

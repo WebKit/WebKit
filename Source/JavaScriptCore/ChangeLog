@@ -1,3 +1,68 @@
+2013-07-19  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Structure should be able to tell you if it's valid to load at a given offset from any object with that structure
+        https://bugs.webkit.org/show_bug.cgi?id=118878
+
+        Reviewed by Oliver Hunt.
+        
+        - Change Structure::isValidOffset() to actually answer the question "If I attempted
+          to load from an object of this structure, at this offset, would I commit suicide
+          or would I get back some kind of value?"
+        
+        - Change StorageAccessData::offset to use a PropertyOffset. It should have been that
+          way from the start.
+        
+        - Fix PutStructure so that it sets haveStructures in all of the cases that it should.
+        
+        - Make GetByOffset also reference the base object in addition to the butterfly.
+        
+        The future use of this power will be to answer questions like "If I hoisted this
+        GetByOffset or PutByOffset to this point, would it cause crashes, or would it be
+        fine?"
+        
+        I don't currently plan to use this power to perform validation, since the CSE has
+        the power to eliminate CheckStructure's that the CFA wouldn't be smart enough to
+        remove - both in the case of StructureSets where size >= 2 and in the case of
+        CheckStructures that match across PutStructures. At first I tried to write a
+        validator that was aware of this, but the validation code got way too complicated
+        and I started having nightmares of spurious assertion bugs being filed against me.
+        
+        This also changes some of the code for how we hash FunctionExecutable's for debug
+        dumps, since that code still had some thread-safety issues. Basically, the
+        concurrent JIT needs to use the CodeBlock's precomputed hash and never call anything
+        that could transitively try to compute the hash from the source code. The source
+        code is a string that may be lazily computed, and that involves all manner of thread
+        unsafe things.
+
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::hash):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetByOffset):
+        (JSC::DFG::ByteCodeParser::handlePutByOffset):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (StorageAccessData):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToGetByOffset):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByOffset):
+        * runtime/FunctionExecutableDump.cpp:
+        (JSC::FunctionExecutableDump::dump):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::isValidOffset):
+
 2013-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: AbstractInterpreter should explicitly ask AbstractState to create new AbstractValues for newly born nodes

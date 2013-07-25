@@ -100,6 +100,8 @@ private:
                 Node* node = block->at(i);
                 dataLogF("      %s @%u: ", Graph::opName(node->op()), node->index());
                 m_interpreter.dump(WTF::dataFile());
+                if (m_state.haveStructures())
+                    dataLog(" (Have Structures)");
                 dataLogF("\n");
             }
             if (!m_interpreter.execute(i)) {

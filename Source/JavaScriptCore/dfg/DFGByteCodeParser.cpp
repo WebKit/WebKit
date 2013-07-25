@@ -1624,14 +1624,10 @@ Node* ByteCodeParser::handleGetByOffset(SpeculatedType prediction, Node* base, u
         propertyStorage = base;
     else
         propertyStorage = addToGraph(GetButterfly, base);
-    // FIXME: It would be far more efficient for load elimination (and safer from
-    // an OSR standpoint) if GetByOffset also referenced the object we were loading
-    // from, and if we could load eliminate a GetByOffset even if the butterfly
-    // had changed. That would be a great success.
-    Node* getByOffset = addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), propertyStorage);
+    Node* getByOffset = addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), propertyStorage, base);
 
     StorageAccessData storageAccessData;
-    storageAccessData.offset = indexRelativeToBase(offset);
+    storageAccessData.offset = offset;
     storageAccessData.identifierNumber = identifierNumber;
     m_graph.m_storageAccessData.append(storageAccessData);
 
@@ -1655,7 +1651,7 @@ Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, Propert
     Node* result = addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), propertyStorage, base, value);
     
     StorageAccessData storageAccessData;
-    storageAccessData.offset = indexRelativeToBase(offset);
+    storageAccessData.offset = offset;
     storageAccessData.identifierNumber = identifier;
     m_graph.m_storageAccessData.append(storageAccessData);
 
@@ -2456,7 +2452,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     value);
                 
                 StorageAccessData storageAccessData;
-                storageAccessData.offset = indexRelativeToBase(putByIdStatus.offset());
+                storageAccessData.offset = putByIdStatus.offset();
                 storageAccessData.identifierNumber = identifierNumber;
                 m_graph.m_storageAccessData.append(storageAccessData);
             } else {

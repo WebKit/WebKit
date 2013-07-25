@@ -220,20 +220,11 @@ public:
         return outOfLineCapacity() + inlineCapacity();
     }
 
-    PropertyOffset firstValidOffset() const
-    {
-        if (hasInlineStorage())
-            return 0;
-        return firstOutOfLineOffset;
-    }
-    PropertyOffset lastValidOffset() const
-    {
-        return m_offset;
-    }
     bool isValidOffset(PropertyOffset offset) const
     {
-        return offset >= firstValidOffset()
-            && offset <= lastValidOffset();
+        return JSC::isValidOffset(offset)
+            && (offset < m_inlineCapacity
+                || (offset >= firstOutOfLineOffset && offset <= m_offset));
     }
 
     bool masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject);
