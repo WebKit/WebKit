@@ -141,12 +141,20 @@ inline CompilationResult prepareFunctionForExecution(
 
 template<typename CodeBlockType>
 inline CompilationResult replaceWithDeferredOptimizedCode(
-    PassRefPtr<DFG::Plan> plan, RefPtr<CodeBlockType>& sink, RefPtr<JITCode>& jitCode,
+    PassRefPtr<DFG::Plan> passedPlan, RefPtr<CodeBlockType>& sink, RefPtr<JITCode>& jitCode,
     MacroAssemblerCodePtr* jitCodeWithArityCheck, int* numParameters)
 {
+    RefPtr<DFG::Plan> plan = passedPlan;
+    CompilationResult result = DFG::tryFinalizePlan(plan, jitCode, jitCodeWithArityCheck);
+    if (Options::verboseOSR()) {
+        dataLog(
+            "Deferred optimizing compilation ", *plan->key(), " -> ", *plan->codeBlock,
+            " result: ", result, "\n");
+    }
+    if (result == CompilationSuccessful)
+        plan->codeBlock->alternative()->unlinkIncomingCalls();
     return installOptimizedCode(
-        DFG::tryFinalizePlan(plan, jitCode, jitCodeWithArityCheck),
-        sink, static_cast<CodeBlockType*>(plan->codeBlock.get()), jitCode,
+        result, sink, static_cast<CodeBlockType*>(plan->codeBlock.get()), jitCode,
         jitCodeWithArityCheck ? *jitCodeWithArityCheck : MacroAssemblerCodePtr(),
         numParameters);
 }

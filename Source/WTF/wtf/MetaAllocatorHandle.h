@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,14 +31,14 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/RedBlackTree.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WTF {
 
 class MetaAllocator;
 
-class MetaAllocatorHandle : public RefCounted<MetaAllocatorHandle>, public RedBlackTree<MetaAllocatorHandle, void*>::Node {
+class MetaAllocatorHandle : public ThreadSafeRefCounted<MetaAllocatorHandle>, public RedBlackTree<MetaAllocatorHandle, void*>::Node {
 private:
     MetaAllocatorHandle(MetaAllocator*, void* start, size_t sizeInBytes, void* ownerUID);
     

@@ -45,17 +45,18 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(codeBlock->alternative()->getJITType() == JITCode::BaselineJIT);
     ASSERT(!codeBlock->jitCodeMap());
 
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("OSR in ", *codeBlock->alternative(), " -> ", *codeBlock, " from bc#", bytecodeIndex, "\n");
-#endif
+    if (Options::verboseOSR()) {
+        dataLog(
+            "OSR in ", *codeBlock->alternative(), " -> ", *codeBlock,
+            " from bc#", bytecodeIndex, "\n");
+    }
     
     VM* vm = &exec->vm();
     OSREntryData* entry = codeBlock->getJITCode()->dfg()->osrEntryDataForBytecodeIndex(bytecodeIndex);
     
     if (!entry) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("    OSR failed because the entrypoint was optimized out.\n");
-#endif
+        if (Options::verboseOSR())
+            dataLogF("    OSR failed because the entrypoint was optimized out.\n");
         return 0;
     }
     
@@ -87,11 +88,11 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     for (size_t argument = 0; argument < entry->m_expectedValues.numberOfArguments(); ++argument) {
         if (argument >= exec->argumentCountIncludingThis()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-            dataLogF("    OSR failed because argument %zu was not passed, expected ", argument);
-            entry->m_expectedValues.argument(argument).dump(WTF::dataFile());
-            dataLogF(".\n");
-#endif
+            if (Options::verboseOSR()) {
+                dataLogF("    OSR failed because argument %zu was not passed, expected ", argument);
+                entry->m_expectedValues.argument(argument).dump(WTF::dataFile());
+                dataLogF(".\n");
+            }
             return 0;
         }
         
@@ -102,9 +103,11 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
             value = exec->argument(argument - 1);
         
         if (!entry->m_expectedValues.argument(argument).validate(value)) {
-#if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("    OSR failed because argument ", argument, " is ", value, ", expected ", entry->m_expectedValues.argument(argument), ".\n");
-#endif
+            if (Options::verboseOSR()) {
+                dataLog(
+                    "    OSR failed because argument ", argument, " is ", value,
+                    ", expected ", entry->m_expectedValues.argument(argument), ".\n");
+            }
             return 0;
         }
     }
@@ -112,17 +115,22 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     for (size_t local = 0; local < entry->m_expectedValues.numberOfLocals(); ++local) {
         if (entry->m_localsForcedDouble.get(local)) {
             if (!exec->registers()[local].jsValue().isNumber()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-                dataLog("    OSR failed because variable ", local, " is ", exec->registers()[local].jsValue(), ", expected number.\n");
-#endif
+                if (Options::verboseOSR()) {
+                    dataLog(
+                        "    OSR failed because variable ", local, " is ",
+                        exec->registers()[local].jsValue(), ", expected number.\n");
+                }
                 return 0;
             }
             continue;
         }
         if (!entry->m_expectedValues.local(local).validate(exec->registers()[local].jsValue())) {
-#if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("    OSR failed because variable ", local, " is ", exec->registers()[local].jsValue(), ", expected ", entry->m_expectedValues.local(local), ".\n");
-#endif
+            if (Options::verboseOSR()) {
+                dataLog(
+                    "    OSR failed because variable ", local, " is ",
+                    exec->registers()[local].jsValue(), ", expected ",
+                    entry->m_expectedValues.local(local), ".\n");
+            }
             return 0;
         }
     }
@@ -135,15 +143,13 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     //    would have otherwise just kept running albeit less quickly.
     
     if (!vm->interpreter->stack().grow(&exec->registers()[codeBlock->m_numCalleeRegisters])) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("    OSR failed because stack growth failed.\n");
-#endif
+        if (Options::verboseOSR())
+            dataLogF("    OSR failed because stack growth failed.\n");
         return 0;
     }
     
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("    OSR should succeed.\n");
-#endif
+    if (Options::verboseOSR())
+        dataLogF("    OSR should succeed.\n");
     
     // 3) Perform data format conversions.
     for (size_t local = 0; local < entry->m_expectedValues.numberOfLocals(); ++local) {
@@ -159,9 +165,8 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     void* result = codeBlock->getJITCode()->executableAddressAtOffset(entry->m_machineCodeOffset);
     
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("    OSR returning machine code address %p.\n", result);
-#endif
+    if (Options::verboseOSR())
+        dataLogF("    OSR returning machine code address %p.\n", result);
     
     return result;
 #else // DFG_ENABLE(OSR_ENTRY)

@@ -28,11 +28,6 @@
 
 #if ENABLE(JIT)
 
-// Verbose logging of code generation
-#define ENABLE_JIT_VERBOSE 0
-// Verbose logging for OSR-related code.
-#define ENABLE_JIT_VERBOSE_OSR 0
-
 // We've run into some problems where changing the size of the class JIT leads to
 // performance fluctuations.  Try forcing alignment in an attempt to stabalize this.
 #if COMPILER(GCC)

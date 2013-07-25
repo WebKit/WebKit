@@ -282,30 +282,26 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
     codeBlock->updateAllValueProfilePredictions();
     
     if (!codeBlock->checkIfJITThresholdReached()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("    JIT threshold should be lifted.\n");
-#endif
+        if (Options::verboseOSR())
+            dataLogF("    JIT threshold should be lifted.\n");
         return false;
     }
     
     CompilationResult result = codeBlock->jitCompile(exec);
     switch (result) {
     case CompilationNotNeeded:
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("    Code was already compiled.\n");
-#endif
+        if (Options::verboseOSR())
+            dataLogF("    Code was already compiled.\n");
         codeBlock->jitSoon();
         return true;
     case CompilationFailed:
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("    JIT compilation failed.\n");
-#endif
+        if (Options::verboseOSR())
+            dataLogF("    JIT compilation failed.\n");
         codeBlock->dontJITAnytimeSoon();
         return false;
     case CompilationSuccessful:
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("    JIT compilation successful.\n");
-#endif
+        if (Options::verboseOSR())
+            dataLogF("    JIT compilation successful.\n");
         codeBlock->jitSoon();
         return true;
     default:
@@ -317,11 +313,11 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
 enum EntryKind { Prologue, ArityCheck };
 static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* codeBlock, const char *name, EntryKind kind)
 {
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog(*codeBlock, ": Entered ", name, " with executeCounter = ", codeBlock->llintExecuteCounter(), "\n");
-#else
-    UNUSED_PARAM(name);
-#endif
+    if (Options::verboseOSR()) {
+        dataLog(
+            *codeBlock, ": Entered ", name, " with executeCounter = ",
+            codeBlock->llintExecuteCounter(), "\n");
+    }
     
     if (!shouldJIT(exec)) {
         codeBlock->dontJITAnytimeSoon();
@@ -364,10 +360,12 @@ LLINT_SLOW_PATH_DECL(entry_osr_function_for_construct_arityCheck)
 LLINT_SLOW_PATH_DECL(loop_osr)
 {
     CodeBlock* codeBlock = exec->codeBlock();
-    
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog(*codeBlock, ": Entered loop_osr with executeCounter = ", codeBlock->llintExecuteCounter(), "\n");
-#endif
+
+    if (Options::verboseOSR()) {
+        dataLog(
+            *codeBlock, ": Entered loop_osr with executeCounter = ",
+            codeBlock->llintExecuteCounter(), "\n");
+    }
     
     if (!shouldJIT(exec)) {
         codeBlock->dontJITAnytimeSoon();
@@ -394,10 +392,12 @@ LLINT_SLOW_PATH_DECL(loop_osr)
 LLINT_SLOW_PATH_DECL(replace)
 {
     CodeBlock* codeBlock = exec->codeBlock();
-    
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog(*codeBlock, ": Entered replace with executeCounter = ", codeBlock->llintExecuteCounter(), "\n");
-#endif
+
+    if (Options::verboseOSR()) {
+        dataLog(
+            *codeBlock, ": Entered replace with executeCounter = ",
+            codeBlock->llintExecuteCounter(), "\n");
+    }
     
     if (shouldJIT(exec))
         jitCompileAndSetHeuristics(codeBlock, exec);

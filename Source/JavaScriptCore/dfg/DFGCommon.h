@@ -136,6 +136,15 @@ inline bool validationEnabled()
 #endif
 }
 
+inline bool enableConcurrentJIT()
+{
+#if ENABLE(CONCURRENT_JIT)
+    return Options::enableConcurrentJIT();
+#else
+    return false;
+#endif
+}
+
 enum SpillRegistersMode { NeedToSpill, DontSpill };
 
 enum NoResultTag { NoResult };

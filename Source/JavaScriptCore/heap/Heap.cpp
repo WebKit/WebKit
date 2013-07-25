@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2013 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -26,6 +26,7 @@
 #include "CopiedSpace.h"
 #include "CopiedSpaceInlines.h"
 #include "CopyVisitorInlines.h"
+#include "DFGWorklist.h"
 #include "GCActivityCallback.h"
 #include "HeapRootVisitor.h"
 #include "HeapStatistics.h"
@@ -264,6 +265,7 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_lastCodeDiscardTime(WTF::currentTime())
     , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_sweeper(IncrementalSweeper::create(this))
+    , m_deferralDepth(0)
 {
     m_storageSpace.init();
 }
@@ -306,8 +308,7 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     // collecting more frequently as long as it stays alive.
 
     didAllocate(cost);
-    if (shouldCollect())
-        collect(DoNotSweep);
+    collectIfNecessaryOrDefer();
 }
 
 void Heap::reportAbandonedObjectGraph()
@@ -693,7 +694,7 @@ void Heap::collectAllGarbage()
 {
     if (!m_isSafeToCollect)
         return;
-
+    
     collect(DoSweep);
 }
 
@@ -703,12 +704,18 @@ void Heap::collect(SweepToggle sweepToggle)
 {
     SamplingRegion samplingRegion("Garbage Collection");
     
+    RELEASE_ASSERT(!m_deferralDepth);
     GCPHASE(Collect);
     ASSERT(vm()->apiLock().currentThreadIsHoldingLock());
     RELEASE_ASSERT(vm()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
     RELEASE_ASSERT(m_operationInProgress == NoOperation);
+    
+    m_deferralDepth++; // Make sure that we don't GC in this call.
+    m_vm->prepareToDiscardCode();
+    m_deferralDepth--; // Decrement deferal manually, so we don't GC when we do so, since we are already GCing!.
+    
     m_operationInProgress = Collection;
 
     m_activityCallback->willCollect();
@@ -809,6 +816,18 @@ void Heap::collect(SweepToggle sweepToggle)
         HeapStatistics::showObjectStatistics(this);
 }
 
+bool Heap::collectIfNecessaryOrDefer()
+{
+    if (m_deferralDepth)
+        return false;
+    
+    if (!shouldCollect())
+        return false;
+    
+    collect(DoNotSweep);
+    return true;
+}
+
 void Heap::markDeadObjects()
 {
     m_objectSpace.forEachDeadCell<MarkObject>();
@@ -891,6 +910,22 @@ void Heap::zombifyDeadObjects()
     // Sweep now because destructors will crash once we're zombified.
     m_objectSpace.sweep();
     m_objectSpace.forEachDeadCell<Zombify>();
+}
+
+void Heap::incrementDeferralDepth()
+{
+    RELEASE_ASSERT(m_deferralDepth < 100); // Sanity check to make sure this doesn't get ridiculous.
+    
+    m_deferralDepth++;
+}
+
+void Heap::decrementDeferralDepthAndGCIfNeeded()
+{
+    RELEASE_ASSERT(m_deferralDepth >= 1);
+    
+    m_deferralDepth--;
+    
+    collectIfNecessaryOrDefer();
 }
 
 } // namespace JSC

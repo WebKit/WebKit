@@ -130,26 +130,8 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
         {
             return specializationFromIsConstruct(m_isConstructor);
         }
-
-#if ENABLE(JIT)
-        CodeBlock* baselineVersion()
-        {
-            if (JITCode::isBaselineCode(getJITType()))
-                return this;
-            CodeBlock* result = replacement();
-            ASSERT(result);
-            while (result->alternative())
-                result = result->alternative();
-            ASSERT(result);
-            ASSERT(JITCode::isBaselineCode(result->getJITType()));
-            return result;
-        }
-#else
-        CodeBlock* baselineVersion()
-        {
-            return this;
-        }
-#endif
+        
+        CodeBlock* baselineVersion();
 
         void visitAggregate(SlotVisitor&);
 
@@ -312,12 +294,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
                 ASSERT(getJITType() == JITCode::BaselineJIT);
                 return CompilationNotNeeded;
             }
-#if ENABLE(JIT)
             return jitCompileImpl(exec);
-#else
-            UNUSED_PARAM(exec);
-            return CompilationFailed;
-#endif
         }
         virtual CodeBlock* replacement() = 0;
 
@@ -330,20 +307,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
         }
         DFG::CapabilityLevel canCompileWithDFGState() { return m_canCompileWithDFGState; }
 
-        bool hasOptimizedReplacement()
-        {
-            ASSERT(JITCode::isBaselineCode(getJITType()));
-            bool result = JITCode::isHigherTier(replacement()->getJITType(), getJITType());
-#if !ASSERT_DISABLED
-            if (result)
-                ASSERT(JITCode::isOptimizingJIT(replacement()->getJITType()));
-            else {
-                ASSERT(JITCode::isBaselineCode(replacement()->getJITType()));
-                ASSERT(replacement() == this);
-            }
-#endif
-            return result;
-        }
+        bool hasOptimizedReplacement();
 #else
         JITCode::JITType getJITType() const { return JITCode::BaselineJIT; }
 #endif
@@ -878,7 +842,11 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
         // to trigger optimization if one of those functions becomes hot
         // in the baseline code.
         void optimizeSoon();
-
+    
+        void forceOptimizationSlowPathConcurrently();
+    
+        void setOptimizationThresholdBasedOnCompilationResult(CompilationResult);
+        
         uint32_t osrExitCounter() const { return m_osrExitCounter; }
 
         void countOSRExit() { m_osrExitCounter++; }

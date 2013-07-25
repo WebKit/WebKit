@@ -264,7 +264,7 @@ private:
     {
         ASSERT(node->op() == GetLocal);
         ASSERT(node->codeOrigin.bytecodeIndex == m_currentIndex);
-        CodeBlockLock locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         LazyOperandValueProfileKey key(m_currentIndex, node->local());
         SpeculatedType prediction = m_inlineStackTop->m_lazyOperands.prediction(locker, key);
 #if DFG_ENABLE(DEBUG_VERBOSE)
@@ -839,7 +839,7 @@ private:
     
     ArrayMode getArrayMode(ArrayProfile* profile, Array::Action action)
     {
-        CodeBlockLock locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         profile->computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
         return ArrayMode::fromObserved(locker, profile, action, false);
     }
@@ -851,7 +851,7 @@ private:
     
     ArrayMode getArrayModeAndEmitChecks(ArrayProfile* profile, Array::Action action, Node* base)
     {
-        CodeBlockLock locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         
         profile->computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
         

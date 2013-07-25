@@ -84,9 +84,7 @@ void* MarkedAllocator::allocateSlowCase(size_t bytes)
     if (LIKELY(result != 0))
         return result;
     
-    if (m_heap->shouldCollect()) {
-        m_heap->collect(Heap::DoNotSweep);
-
+    if (m_heap->collectIfNecessaryOrDefer()) {
         result = tryAllocate(bytes);
         if (result)
             return result;

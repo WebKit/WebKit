@@ -29,6 +29,7 @@
 #ifndef SymbolTable_h
 #define SymbolTable_h
 
+#include "ConcurrentJITLock.h"
 #include "JSObject.h"
 #include "Watchpoint.h"
 #include <wtf/HashTraits.h>
@@ -342,8 +343,8 @@ struct SymbolTableIndexHashTraits : HashTraits<SymbolTableEntry> {
 class SymbolTable {
 public:
     typedef HashMap<RefPtr<StringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, SymbolTableIndexHashTraits> Map;
-    typedef ByteSpinLock Lock;
-    typedef ByteSpinLocker Locker;
+    typedef ConcurrentJITLock Lock;
+    typedef ConcurrentJITLocker Locker;
 
     JS_EXPORT_PRIVATE SymbolTable();
     JS_EXPORT_PRIVATE ~SymbolTable();
@@ -433,7 +434,7 @@ public:
 private:
     Map m_map;
 public:
-    mutable ByteSpinLock m_lock;
+    mutable ConcurrentJITLock m_lock;
 };
 
 

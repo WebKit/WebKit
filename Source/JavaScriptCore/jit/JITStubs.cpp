@@ -40,6 +40,7 @@
 #include "CodeProfiling.h"
 #include "CommonSlowPaths.h"
 #include "DFGOSREntry.h"
+#include "DFGWorklist.h"
 #include "Debugger.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
@@ -961,31 +962,83 @@ DEFINE_STUB_FUNCTION(void, optimize)
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned bytecodeIndex = stackFrame.args[0].int32();
 
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog(
-        *codeBlock, ": Entered optimize with bytecodeIndex = ", bytecodeIndex,
-        ", executeCounter = ", codeBlock->jitExecuteCounter(),
-        ", optimizationDelayCounter = ", codeBlock->reoptimizationRetryCounter(),
-        ", exitCounter = ");
-    if (codeBlock->hasOptimizedReplacement())
-        dataLog(codeBlock->replacement()->osrExitCounter());
-    else
-        dataLog("N/A");
-    dataLog("\n");
-#endif
+    if (Options::verboseOSR()) {
+        dataLog(
+            *codeBlock, ": Entered optimize with bytecodeIndex = ", bytecodeIndex,
+            ", executeCounter = ", codeBlock->jitExecuteCounter(),
+            ", optimizationDelayCounter = ", codeBlock->reoptimizationRetryCounter(),
+            ", exitCounter = ");
+        if (codeBlock->hasOptimizedReplacement())
+            dataLog(codeBlock->replacement()->osrExitCounter());
+        else
+            dataLog("N/A");
+        dataLog("\n");
+    }
 
     if (!codeBlock->checkIfOptimizationThresholdReached()) {
         codeBlock->updateAllPredictions();
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Choosing not to optimize ", *codeBlock, " yet.\n");
-#endif
+        if (Options::verboseOSR())
+            dataLog("Choosing not to optimize ", *codeBlock, " yet.\n");
         return;
     }
-
-    if (codeBlock->hasOptimizedReplacement()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Considering OSR ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
-#endif
+    
+    // We cannot be in the process of asynchronous compilation and also have an optimized
+    // replacement.
+    ASSERT(
+        !stackFrame.vm->worklist
+        || !(stackFrame.vm->worklist->compilationState(codeBlock) != DFG::Worklist::NotKnown
+             && codeBlock->hasOptimizedReplacement()));
+    
+    DFG::Worklist::State worklistState;
+    if (stackFrame.vm->worklist) {
+        // The call to DFG::Worklist::completeAllReadyPlansForVM() will complete all ready
+        // (i.e. compiled) code blocks. But if it completes ours, we also need to know
+        // what the result was so that we don't plow ahead and attempt OSR or immediate
+        // reoptimization. This will have already also set the appropriate JIT execution
+        // count threshold depending on what happened, so if the compilation was anything
+        // but successful we just want to return early. See the case for worklistState ==
+        // DFG::Worklist::Compiled, below.
+        
+        // Note that we could have alternatively just called Worklist::compilationState()
+        // here, and if it returned Compiled, we could have then called
+        // completeAndScheduleOSR() below. But that would have meant that it could take
+        // longer for code blocks to be completed: they would only complete when *their*
+        // execution count trigger fired; but that could take a while since the firing is
+        // racy. It could also mean that code blocks that never run again after being
+        // compiled would sit on the worklist until next GC. That's fine, but it's
+        // probably a waste of memory. Our goal here is to complete code blocks as soon as
+        // possible in order to minimize the chances of us executing baseline code after
+        // optimized code is already available.
+        
+        worklistState =
+            stackFrame.vm->worklist->completeAllReadyPlansForVM(*stackFrame.vm, codeBlock);
+    } else
+        worklistState = DFG::Worklist::NotKnown;
+    
+    if (worklistState == DFG::Worklist::Compiling) {
+        // We cannot be in the process of asynchronous compilation and also have an optimized
+        // replacement.
+        RELEASE_ASSERT(!codeBlock->hasOptimizedReplacement());
+        codeBlock->setOptimizationThresholdBasedOnCompilationResult(CompilationDeferred);
+        return;
+    }
+    
+    if (worklistState == DFG::Worklist::Compiled) {
+        // If we don't have an optimized replacement but we did just get compiled, then
+        // either of the following happened:
+        // - The compilation failed or was invalidated, in which case the execution count
+        //   thresholds have already been set appropriately by
+        //   CodeBlock::setOptimizationThresholdBasedOnCompilationResult() and we have
+        //   nothing left to do.
+        // - GC ran after DFG::Worklist::completeAllReadyPlansForVM() and jettisoned our
+        //   code block. Obviously that's unfortunate and we'd rather not have that
+        //   happen, but it can happen, and if it did then the jettisoning logic will
+        //   have set our threshold appropriately and we have nothing left to do.
+        if (!codeBlock->hasOptimizedReplacement())
+            return;
+    } else if (codeBlock->hasOptimizedReplacement()) {
+        if (Options::verboseOSR())
+            dataLog("Considering OSR ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
         // If we have an optimized replacement, then it must be the case that we entered
         // cti_optimize from a loop. That's because is there's an optimized replacement,
         // then all calls to this function will be relinked to the replacement and so
@@ -1000,60 +1053,39 @@ DEFINE_STUB_FUNCTION(void, optimize)
         // shouldReoptimizeFromLoopNow() to always return true. But we make it do some
         // additional checking anyway, to reduce the amount of recompilation thrashing.
         if (codeBlock->replacement()->shouldReoptimizeFromLoopNow()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("Triggering reoptimization of ", *codeBlock, "(", *codeBlock->replacement(), ") (in loop).\n");
-#endif
+            if (Options::verboseOSR()) {
+                dataLog(
+                    "Triggering reoptimization of ", *codeBlock,
+                    "(", *codeBlock->replacement(), ") (in loop).\n");
+            }
             codeBlock->reoptimize();
             return;
         }
     } else {
         if (!codeBlock->shouldOptimizeNow()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("Delaying optimization for ", *codeBlock, " (in loop) because of insufficient profiling.\n");
-#endif
+            if (Options::verboseOSR()) {
+                dataLog(
+                    "Delaying optimization for ", *codeBlock,
+                    " (in loop) because of insufficient profiling.\n");
+            }
             return;
         }
         
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Triggering optimized compilation of ", *codeBlock, "\n");
-#endif
+        if (Options::verboseOSR())
+            dataLog("Triggering optimized compilation of ", *codeBlock, "\n");
         
         JSScope* scope = callFrame->scope();
         CompilationResult result;
         JSObject* error = codeBlock->compileOptimized(callFrame, scope, result, bytecodeIndex);
-        if (Options::verboseCompilation()
-            || Options::showDisassembly()
-            || Options::showDFGDisassembly())
+        if (Options::verboseOSR()) {
             dataLog("Optimizing compilation of ", *codeBlock, " result: ", result, "\n");
-#if ENABLE(JIT_VERBOSE_OSR)
-        if (error)
-            dataLog("WARNING: optimized compilation failed with a JS error.\n");
-#else
-        UNUSED_PARAM(error);
-#endif
-        
-        RELEASE_ASSERT((result == CompilationSuccessful) == (codeBlock->replacement() != codeBlock));
-        switch (result) {
-        case CompilationSuccessful:
-            break;
-        case CompilationFailed:
-        case CompilationDeferred:
-#if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("Optimizing ", *codeBlock, " failed.\n");
-#endif
-            ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
-            codeBlock->dontOptimizeAnytimeSoon();
-            return;
-        case CompilationInvalidated:
-            ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
-            // Retry with exponential backoff.
-            codeBlock->countReoptimization();
-            codeBlock->optimizeAfterWarmUp();
-            return;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return;
+            if (error)
+                dataLog("WARNING: optimized compilation failed with a JS error.\n");
         }
+        
+        codeBlock->setOptimizationThresholdBasedOnCompilationResult(result);
+        if (result != CompilationSuccessful)
+            return;
     }
     
     CodeBlock* optimizedCodeBlock = codeBlock->replacement();
@@ -1069,32 +1101,28 @@ DEFINE_STUB_FUNCTION(void, optimize)
     }
     
     if (void* address = DFG::prepareOSREntry(callFrame, optimizedCodeBlock, bytecodeIndex)) {
-        if (Options::showDFGDisassembly()) {
+        if (Options::verboseOSR()) {
             dataLog(
                 "Performing OSR ", *codeBlock, " -> ", *optimizedCodeBlock, ", address ",
                 RawPointer((STUB_RETURN_ADDRESS).value()), " -> ", RawPointer(address), ".\n");
         }
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Optimizing ", *codeBlock, " succeeded, performing OSR after a delay of ", codeBlock->optimizationDelayCounter(), ".\n");
-#endif
 
         codeBlock->optimizeSoon();
         STUB_SET_RETURN_ADDRESS(address);
         return;
     }
-    
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("Optimizing ", *codeBlock, " succeeded, OSR failed, after a delay of ", codeBlock->optimizationDelayCounter(), ".\n");
-#endif
+
+    if (Options::verboseOSR()) {
+        dataLog(
+            "Optimizing ", *codeBlock, " -> ", *codeBlock->replacement(),
+            " succeeded, OSR failed, after a delay of ",
+            codeBlock->optimizationDelayCounter(), ".\n");
+    }
 
     // Count the OSR failure as a speculation failure. If this happens a lot, then
     // reoptimize.
     optimizedCodeBlock->countOSRExit();
     
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("Encountered OSR failure ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
-#endif
-
     // We are a lot more conservative about triggering reoptimization after OSR failure than
     // before it. If we enter the optimize_from_loop trigger with a bucket full of fail
     // already, then we really would like to reoptimize immediately. But this case covers
@@ -1104,9 +1132,11 @@ DEFINE_STUB_FUNCTION(void, optimize)
     // right now. So, we only trigger reoptimization only upon the more conservative (non-loop)
     // reoptimization trigger.
     if (optimizedCodeBlock->shouldReoptimizeNow()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Triggering reoptimization of ", *codeBlock, " -> ", *codeBlock->replacement(), " (after OSR fail).\n");
-#endif
+        if (Options::verboseOSR()) {
+            dataLog(
+                "Triggering reoptimization of ", *codeBlock, " -> ",
+                *codeBlock->replacement(), " (after OSR fail).\n");
+        }
         codeBlock->reoptimize();
         return;
     }

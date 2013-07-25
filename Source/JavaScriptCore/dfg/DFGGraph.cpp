@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,12 +44,12 @@ static const char* dfgOpNames[] = {
 #undef STRINGIZE_DFG_OP_ENUM
 };
 
-Graph::Graph(VM& vm, Plan& plan)
+Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     : m_vm(vm)
     , m_plan(plan)
     , m_codeBlock(m_plan.codeBlock.get())
     , m_profiledBlock(m_codeBlock->alternative())
-    , m_allocator(vm.m_dfgState->m_allocator)
+    , m_allocator(longLivedState.m_allocator)
     , m_hasArguments(false)
     , m_fixpointState(BeforeFixpoint)
     , m_form(LoadStore)

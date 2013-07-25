@@ -33,6 +33,7 @@
 #include "CodeCache.h"
 #include "CommonIdentifiers.h"
 #include "DFGLongLivedState.h"
+#include "DFGWorklist.h"
 #include "DebuggerActivation.h"
 #include "FunctionConstructor.h"
 #include "GCActivityCallback.h"
@@ -259,12 +260,19 @@ VM::VM(VMType vmType, HeapType heapType)
 
 #if ENABLE(DFG_JIT)
     if (canUseJIT())
-        m_dfgState = adoptPtr(new DFG::LongLivedState());
+        dfgState = adoptPtr(new DFG::LongLivedState());
 #endif
 }
 
 VM::~VM()
 {
+    // Make sure concurrent compilations are done, but don't install them, since installing
+    // them might cause a GC. We don't want to GC right now.
+    if (worklist) {
+        worklist->waitUntilAllPlansForVMAreReady(*this);
+        worklist->removeAllReadyPlansForVM(*this);
+    }
+    
     // Clear this first to ensure that nobody tries to remove themselves from it.
     m_perBytecodeProfiler.clear();
     
@@ -440,8 +448,19 @@ void VM::stopSampling()
     interpreter->stopSampling();
 }
 
+void VM::prepareToDiscardCode()
+{
+#if ENABLE(DFG_JIT)
+    if (!worklist)
+        return;
+    
+    worklist->completeAllPlansForVM(*this);
+#endif
+}
+
 void VM::discardAllCode()
 {
+    prepareToDiscardCode();
     m_codeCache->clear();
     heap.deleteAllCompiledCode();
     heap.reportAbandonedObjectGraph();
@@ -483,6 +502,8 @@ struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
 
 void VM::releaseExecutableMemory()
 {
+    prepareToDiscardCode();
+    
     if (dynamicGlobalObject) {
         StackPreservingRecompiler recompiler;
         HashSet<JSCell*> roots;

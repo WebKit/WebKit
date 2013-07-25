@@ -564,10 +564,6 @@ ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(StructureStubInfo
 
 PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffort effort)
 {
-#if ENABLE(JIT_VERBOSE_OSR)
-    printf("Compiling JIT code!\n");
-#endif
-    
 #if ENABLE(VALUE_PROFILER)
     DFG::CapabilityLevel level = m_codeBlock->canCompileWithDFG();
     switch (level) {

@@ -37,6 +37,11 @@ ExecutionCounter::ExecutionCounter()
     reset();
 }
 
+void ExecutionCounter::forceSlowPathConcurrently()
+{
+    m_counter = 0;
+}
+
 bool ExecutionCounter::checkIfThresholdCrossedAndSet(CodeBlock* codeBlock)
 {
     if (hasCrossedThreshold(codeBlock))
@@ -124,11 +129,11 @@ bool ExecutionCounter::setThreshold(CodeBlock* codeBlock)
         return false;
     }
         
-    ASSERT(!hasCrossedThreshold(codeBlock));
+    ASSERT(!m_activeThreshold || !hasCrossedThreshold(codeBlock));
         
     // Compute the true total count.
     double trueTotalCount = count();
-        
+    
     // Correct the threshold for current memory usage.
     double threshold = applyMemoryUsageHeuristics(m_activeThreshold, codeBlock);
         

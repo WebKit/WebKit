@@ -118,6 +118,8 @@ void Debugger::recompileAllJSFunctions(VM* vm)
     ASSERT(!vm->dynamicGlobalObject);
     if (vm->dynamicGlobalObject)
         return;
+    
+    vm->prepareToDiscardCode();
 
     Recompiler recompiler(this);
     vm->heap.objectSpace().forEachLiveCell(recompiler);

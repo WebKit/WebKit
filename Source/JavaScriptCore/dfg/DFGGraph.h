@@ -90,7 +90,7 @@ enum AddSpeculationMode {
 // Nodes that are 'dead' remain in the vector with refCount 0.
 class Graph {
 public:
-    Graph(VM&, Plan&);
+    Graph(VM&, Plan&, LongLivedState&);
     ~Graph();
     
     void changeChild(Edge& edge, Node* newNode)

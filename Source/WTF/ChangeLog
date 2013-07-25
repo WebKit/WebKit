@@ -1,3 +1,22 @@
+2013-05-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should be able to run on a separate thread
+        https://bugs.webkit.org/show_bug.cgi?id=112839
+
+        Reviewed by Geoffrey Garen.
+        
+        * wtf/ByteSpinLock.h:
+        Make it non-copyable. We previously had bugs where we used ByteSpinLock as a locker.
+        Clearly that's bad.
+
+        * wtf/MetaAllocatorHandle.h:
+        Make it thread-safe ref-counted, since we may now be passing them between the
+        concurrent JIT thread and the main thread.
+
+        * wtf/Vector.h:
+        (WTF::Vector::takeLast):
+        I've wanted this method for ages, and now I finally added.
+
 2013-04-30  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG tries to ref/deref StringImpls in a ton of places

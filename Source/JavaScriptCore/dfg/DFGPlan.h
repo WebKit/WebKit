@@ -43,6 +43,8 @@ class CodeBlock;
 
 namespace DFG {
 
+class LongLivedState;
+
 enum CompileMode { CompileFunction, CompileOther };
 
 #if ENABLE(DFG_JIT)
@@ -53,9 +55,11 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
         unsigned osrEntryBytecodeIndex, unsigned numVarsWithValues);
     ~Plan();
     
-    void compileInThread();
+    void compileInThread(LongLivedState&);
     
     CompilationResult finalize(RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck);
+    
+    CodeBlock* key();
     
     const CompileMode compileMode;
     VM& vm;
@@ -71,6 +75,8 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     DesiredWatchpoints watchpoints;
     DesiredIdentifiers identifiers;
     DesiredStructureChains chains;
+    
+    bool isCompiled;
 
 private:
     bool isStillValid();

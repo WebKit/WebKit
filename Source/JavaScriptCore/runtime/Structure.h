@@ -27,6 +27,7 @@
 #define Structure_h
 
 #include "ClassInfo.h"
+#include "ConcurrentJITLock.h"
 #include "IndexingType.h"
 #include "JSCJSValue.h"
 #include "JSCell.h"
@@ -40,7 +41,6 @@
 #include "JSTypeInfo.h"
 #include "Watchpoint.h"
 #include "Weak.h"
-#include <wtf/ByteSpinLock.h>
 #include <wtf/CompilationThread.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -72,8 +72,8 @@ public:
 
     typedef JSCell Base;
     
-    typedef ByteSpinLock Lock;
-    typedef ByteSpinLocker Locker;
+    typedef ConcurrentJITLock Lock;
+    typedef ConcurrentJITLocker Locker;
 
     static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
 

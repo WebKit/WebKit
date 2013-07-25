@@ -38,6 +38,7 @@ class CodeBlock;
 class ExecutionCounter {
 public:
     ExecutionCounter();
+    void forceSlowPathConcurrently(); // If you use this, checkIfThresholdCrossedAndSet() may still return false.
     bool checkIfThresholdCrossedAndSet(CodeBlock*);
     void setNewThreshold(int32_t threshold, CodeBlock*);
     void deferIndefinitely();
@@ -74,7 +75,6 @@ private:
     void reset();
 
 public:
-
     // NB. These are intentionally public because it will be modified from machine code.
     
     // This counter is incremented by the JIT or LLInt. It starts out negative and is

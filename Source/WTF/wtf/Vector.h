@@ -600,7 +600,14 @@ namespace WTF {
         const T& first() const { return at(0); }
         T& last() { return at(size() - 1); }
         const T& last() const { return at(size() - 1); }
-
+        
+        T takeLast()
+        {
+            T result = last();
+            removeLast();
+            return result;
+        }
+        
         template<typename U> bool contains(const U&) const;
         template<typename U> size_t find(const U&) const;
         template<typename U> size_t reverseFind(const U&) const;

@@ -26,18 +26,12 @@
 #ifndef CodeBlockLock_h
 #define CodeBlockLock_h
 
-#include <wtf/ByteSpinLock.h>
-#include <wtf/NoLock.h>
+#include "ConcurrentJITLock.h"
 
 namespace JSC {
 
-#if ENABLE(CONCURRENT_JIT)
-typedef ByteSpinLock CodeBlockLock;
-typedef ByteSpinLocker CodeBlockLocker;
-#else
-typedef NoLock CodeBlockLock;
-typedef NoLockLocker CodeBlockLocker;
-#endif
+typedef ConcurrentJITLock CodeBlockLock;
+typedef ConcurrentJITLocker CodeBlockLocker;
 
 } // namespace JSC
 

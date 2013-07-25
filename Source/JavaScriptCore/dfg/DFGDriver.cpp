@@ -35,11 +35,13 @@
 #include "DFGJITCode.h"
 #include "DFGPlan.h"
 #include "DFGThunks.h"
+#include "DFGWorklist.h"
 #include "FTLThunks.h"
 #include "JITCode.h"
 #include "Operations.h"
 #include "Options.h"
 #include "SamplingTool.h"
+#include <wtf/Atomics.h>
 
 namespace JSC { namespace DFG {
 
@@ -69,19 +71,21 @@ static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeB
         return CompilationFailed;
 
     if (logCompilationChanges())
-        dataLog("DFG compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
+        dataLog("DFG(Driver) compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
+    
+    VM& vm = exec->vm();
     
     // Make sure that any stubs that the DFG is going to use are initialized. We want to
     // make sure that al JIT code generation does finalization on the main thread.
-    exec->vm().getCTIStub(osrExitGenerationThunkGenerator);
-    exec->vm().getCTIStub(throwExceptionFromCallSlowPathGenerator);
-    exec->vm().getCTIStub(linkCallThunkGenerator);
-    exec->vm().getCTIStub(linkConstructThunkGenerator);
-    exec->vm().getCTIStub(linkClosureCallThunkGenerator);
-    exec->vm().getCTIStub(virtualCallThunkGenerator);
-    exec->vm().getCTIStub(virtualConstructThunkGenerator);
+    vm.getCTIStub(osrExitGenerationThunkGenerator);
+    vm.getCTIStub(throwExceptionFromCallSlowPathGenerator);
+    vm.getCTIStub(linkCallThunkGenerator);
+    vm.getCTIStub(linkConstructThunkGenerator);
+    vm.getCTIStub(linkClosureCallThunkGenerator);
+    vm.getCTIStub(virtualCallThunkGenerator);
+    vm.getCTIStub(virtualConstructThunkGenerator);
 #if ENABLE(FTL_JIT)
-    exec->vm().getCTIStub(FTL::osrExitGenerationThunkGenerator);
+    vm.getCTIStub(FTL::osrExitGenerationThunkGenerator);
 #endif
     
     // Derive our set of must-handle values. The compilation must be at least conservative
@@ -108,7 +112,16 @@ static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeB
             plan->mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
     }
     
-    plan->compileInThread();
+    if (enableConcurrentJIT()) {
+        if (!vm.worklist)
+            vm.worklist = globalWorklist();
+        if (logCompilationChanges())
+            dataLog("Deferring DFG compilation of ", *codeBlock, " with queue length ", vm.worklist->queueLength(), ".\n");
+        vm.worklist->enqueue(plan);
+        return CompilationDeferred;
+    }
+    
+    plan->compileInThread(*vm.dfgState);
     return plan->finalize(jitCode, jitCodeWithArityCheck);
 }
 

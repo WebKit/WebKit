@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -110,6 +110,8 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE IncrementalSweeper* sweeper();
 
+        // true if collection is in progress
+        inline bool isCollecting();
         // true if an allocation or collection is in progress
         inline bool isBusy();
         
@@ -131,6 +133,7 @@ namespace JSC {
         enum SweepToggle { DoNotSweep, DoSweep };
         bool shouldCollect();
         void collect(SweepToggle);
+        bool collectIfNecessaryOrDefer(); // Returns true if it did collect.
 
         void reportExtraMemoryCost(size_t cost);
         JS_EXPORT_PRIVATE void reportAbandonedObjectGraph();
@@ -179,6 +182,7 @@ namespace JSC {
     private:
         friend class CodeBlock;
         friend class CopiedBlock;
+        friend class DeferGC;
         friend class GCAwareJITStubRoutine;
         friend class HandleSet;
         friend class JITStubRoutine;
@@ -222,6 +226,9 @@ namespace JSC {
 
         JSStack& stack();
         BlockAllocator& blockAllocator();
+        
+        void incrementDeferralDepth();
+        void decrementDeferralDepthAndGCIfNeeded();
 
         const HeapType m_heapType;
         const size_t m_ramSize;
@@ -268,6 +275,8 @@ namespace JSC {
         OwnPtr<GCActivityCallback> m_activityCallback;
         OwnPtr<IncrementalSweeper> m_sweeper;
         Vector<MarkedBlock*> m_blockSnapshot;
+        
+        unsigned m_deferralDepth;
     };
 
     struct MarkedBlockSnapshotFunctor : public MarkedBlock::VoidFunctor {
@@ -293,6 +302,11 @@ namespace JSC {
     bool Heap::isBusy()
     {
         return m_operationInProgress != NoOperation;
+    }
+
+    bool Heap::isCollecting()
+    {
+        return m_operationInProgress == Collection;
     }
 
     inline Heap* Heap::heap(const JSCell* cell)

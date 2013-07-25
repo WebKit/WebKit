@@ -1,3 +1,215 @@
+2013-05-20  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should be able to run on a separate thread
+        https://bugs.webkit.org/show_bug.cgi?id=112839
+
+        Reviewed by Geoffrey Garen.
+        
+        This is the final bit of concurrent JITing. The idea is that there is a
+        single global worklist, and a single global thread, that does all
+        optimizing compilation. This is the DFG::Worklist. It contains a queue of
+        DFG::Plans, and a map from CodeBlock* (the baseline code block we're
+        trying to optimize) to DFG::Plan. If the DFGDriver tries to concurrently
+        compile something, it puts the Plan on the Worklist. The Worklist's
+        thread will compile that Plan eventually, and when it's done, it will
+        signal its completion by (1) notifying anyone waiting for the Worklist to
+        be done, and (2) forcing the CodeBlock::m_jitExecuteCounter to take slow
+        path. The next Baseline JIT cti_optimize call will then install all ready
+        (i.e. compiled) Plans for that VM. Note that (1) is only for the GC and
+        VM shutdown, which will want to ensure that there aren't any outstanding
+        async compilations before proceeding. They do so by simply waiting for
+        all of the plans for the current VM to complete. (2) is the actual way
+        that code typically gets installed.
+        
+        This is all very racy by design. For example, just as we try to force the
+        execute counter to take slow path, the main thread may be setting the
+        execute counter to some other value. The main thread must set it to
+        another value because (a) JIT code is constantly incrementing the counter
+        in a racy way, (b) the cti_optimize slow path will set it to some
+        large-ish negative value to ensure that cti_optimize isn't called
+        repeatedly, and (c) OSR exits from previously jettisoned code blocks may
+        still want to reset the counter values. This "race" is made benign, by
+        ensuring that while there is an asynchronous compilation, we at worse set
+        the counter to optimizeAfterWarmUp and never to deferIndefinitely. Hence
+        if the race happens then the worst case is that we wait another ~1000
+        counts before installing the optimized code. Another defense is that if
+        any CodeBlock calls into cti_optimize, then it will check for all ready
+        plans for the VM - so even if a code block has to wait another ~1000
+        executions before it calls cti_optimize to do the installation, it may
+        actually end up being installed sooner because a different code block had
+        called cti_optimize, potentially for an unrelated reason.
+        
+        Special care is taken to ensure that installing plans informs the GC
+        about the increased memory usage, but also ensures that we don't recurse
+        infinitely - since at start of GC we try to install outstanding plans.
+        This is done by introducing a new GC deferral mechanism (the DeferGC
+        block-scoped thingy), which will ensure that GCs don't happen in the
+        scope but are allowed to happen after. This still leaves the strange
+        corner case that cti_optimize may install outstanding plans, then GC, and
+        that GC may jettison the code block that was installed. This, and the
+        fact that the plan that we took slow path to install could have been a
+        failed or invalid compile, mean that we have to take special precautions
+        in cti_optimize.
+        
+        This patch also fixes a number of small concurrency bugs that I found
+        when things started running. There are probably more of those bugs still
+        left to fix. This patch just fixes the ones I know about.
+        
+        Concurrent compilation is right now only enabled on X86_64 Mac. We need
+        platforms that are sufficiently CAStastic so that we can do the various
+        memory fence and CAS tricks that make this safe. We also need a platform
+        that uses JSVALUE64. And we need pthread_once. So, that pretty much means
+        just X64_64 for now. Enabling Linux-64_64 should be a breeze, but I'll
+        leave that up to the Qt and GTK+ ports to do at their discretion.
+        
+        This is a solid speed-up on SunSpider (8-9%) and V8Spider (16%), our two
+        main compile-time benchmarks. Most peculiarly, this also appears to
+        reduce measurement noise, rather than increasing it as you would have
+        expected. I don't understand that result but I like it anyway. On the
+        other hand, this is a slight (1%) slow-down on V8v7. I will continue to
+        investigate this but I think that the results are already good enough
+        that we should land this as-is. So far, it appears that the slow-down is
+        due to this breaking the don't-compile-inlineables heuristics. See
+        investigation in https://bugs.webkit.org/show_bug.cgi?id=116556 and the
+        bug https://bugs.webkit.org/show_bug.cgi?id=116557.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::CodeBlock::baselineVersion):
+        (JSC::CodeBlock::hasOptimizedReplacement):
+        (JSC::CodeBlock::optimizationThresholdScalingFactor):
+        (JSC::CodeBlock::checkIfOptimizationThresholdReached):
+        (JSC::CodeBlock::optimizeNextInvocation):
+        (JSC::CodeBlock::dontOptimizeAnytimeSoon):
+        (JSC::CodeBlock::optimizeAfterWarmUp):
+        (JSC::CodeBlock::optimizeAfterLongWarmUp):
+        (JSC::CodeBlock::optimizeSoon):
+        (JSC::CodeBlock::forceOptimizationSlowPathConcurrently):
+        (JSC::CodeBlock::setOptimizationThresholdBasedOnCompilationResult):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::jitCompile):
+        * bytecode/CodeBlockLock.h:
+        (JSC):
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter::forceSlowPathConcurrently):
+        (JSC):
+        (JSC::ExecutionCounter::setThreshold):
+        * bytecode/ExecutionCounter.h:
+        (ExecutionCounter):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::injectLazyOperandSpeculation):
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (JSC::DFG::ByteCodeParser::getArrayModeAndEmitChecks):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::enableConcurrentJIT):
+        (DFG):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::key):
+        (DFG):
+        * dfg/DFGPlan.h:
+        (DFG):
+        (Plan):
+        * dfg/DFGWorklist.cpp: Added.
+        (DFG):
+        (JSC::DFG::Worklist::Worklist):
+        (JSC::DFG::Worklist::~Worklist):
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::create):
+        (JSC::DFG::Worklist::enqueue):
+        (JSC::DFG::Worklist::compilationState):
+        (JSC::DFG::Worklist::waitUntilAllPlansForVMAreReady):
+        (JSC::DFG::Worklist::removeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::completeAllPlansForVM):
+        (JSC::DFG::Worklist::queueLength):
+        (JSC::DFG::Worklist::dump):
+        (JSC::DFG::Worklist::runThread):
+        (JSC::DFG::Worklist::threadFunction):
+        (JSC::DFG::initializeGlobalWorklistOnce):
+        (JSC::DFG::globalWorklist):
+        * dfg/DFGWorklist.h: Added.
+        (DFG):
+        (Worklist):
+        * heap/CopiedSpaceInlines.h:
+        (JSC::CopiedSpace::allocateBlock):
+        * heap/DeferGC.h: Added.
+        (JSC):
+        (DeferGC):
+        (JSC::DeferGC::DeferGC):
+        (JSC::DeferGC::~DeferGC):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::reportExtraMemoryCostSlowCase):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::collect):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        (JSC):
+        (JSC::Heap::incrementDeferralDepth):
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded):
+        * heap/Heap.h:
+        (Heap):
+        (JSC::Heap::isCollecting):
+        (JSC):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCase):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * profiler/ProfilerBytecodes.h:
+        * runtime/ConcurrentJITLock.h: Added.
+        (JSC):
+        * runtime/ExecutionHarness.h:
+        (JSC::replaceWithDeferredOptimizedCode):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::findRegisterIndex):
+        (JSC::JSSegmentedVariableObject::addRegisters):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSSegmentedVariableObject):
+        * runtime/Options.h:
+        (JSC):
+        * runtime/Structure.h:
+        (Structure):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::propertyTable):
+        * runtime/SymbolTable.h:
+        (SymbolTable):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        (JSC::VM::prepareToDiscardCode):
+        (JSC):
+        (JSC::VM::discardAllCode):
+        (JSC::VM::releaseExecutableMemory):
+        * runtime/VM.h:
+        (DFG):
+        (VM):
+
 2013-05-17  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         CheckArrays should be hoisted

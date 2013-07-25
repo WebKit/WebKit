@@ -135,8 +135,7 @@ inline CopiedBlock* CopiedSpace::allocateBlockForCopyingPhase()
 
 inline void CopiedSpace::allocateBlock()
 {
-    if (m_heap->shouldCollect())
-        m_heap->collect(Heap::DoNotSweep);
+    m_heap->collectIfNecessaryOrDefer();
 
     m_allocator.resetCurrentBlock();
     

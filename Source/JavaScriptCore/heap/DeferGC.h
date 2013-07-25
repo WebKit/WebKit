@@ -23,49 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ByteSpinLock_h
-#define ByteSpinLock_h
+#ifndef DeferGC_h
+#define DeferGC_h
 
-#include <wtf/Assertions.h>
-#include <wtf/Atomics.h>
-#include <wtf/Locker.h>
+#include "Heap.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/ThreadingPrimitives.h>
 
-namespace WTF {
+namespace JSC {
 
-class ByteSpinLock {
-    WTF_MAKE_NONCOPYABLE(ByteSpinLock);
+class DeferGC {
+    WTF_MAKE_NONCOPYABLE(DeferGC);
 public:
-    ByteSpinLock()
-        : m_lock(0)
+    DeferGC(Heap& heap)
+        : m_heap(heap)
     {
+        m_heap.incrementDeferralDepth();
+    }
+    
+    ~DeferGC()
+    {
+        m_heap.decrementDeferralDepthAndGCIfNeeded();
     }
 
-    void lock()
-    {
-        while (!weakCompareAndSwap(&m_lock, 0, 1))
-            pauseBriefly();
-        memoryBarrierAfterLock();
-    }
-    
-    void unlock()
-    {
-        memoryBarrierBeforeUnlock();
-        m_lock = 0;
-    }
-    
-    bool isHeld() const { return !!m_lock; }
-    
 private:
-    uint8_t m_lock;
+    Heap& m_heap;
 };
 
-typedef Locker<ByteSpinLock> ByteSpinLocker;
+} // namespace JSC
 
-} // namespace WTF
+#endif // DeferGC_h
 
-using WTF::ByteSpinLock;
-using WTF::ByteSpinLocker;
-
-#endif // ByteSpinLock_h

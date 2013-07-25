@@ -1722,9 +1722,8 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
 
 extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
 {
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog(*codeBlock, ": Entered reoptimize\n");
-#endif
+    if (Options::verboseOSR())
+        dataLog(*codeBlock, ": Entered reoptimize\n");
     // We must be called with the baseline code block.
     ASSERT(JITCode::isBaselineCode(codeBlock->getJITType()));
 

@@ -226,7 +226,7 @@ inline bool Structure::putWillGrowOutOfLineStorage()
 
 ALWAYS_INLINE WriteBarrier<PropertyTable>& Structure::propertyTable()
 {
-    ASSERT(!globalObject() || !globalObject()->vm().heap.isBusy());
+    ASSERT(!globalObject() || !globalObject()->vm().heap.isCollecting());
     return m_propertyTableUnsafe;
 }
 

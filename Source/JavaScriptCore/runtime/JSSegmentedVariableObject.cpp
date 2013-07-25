@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@ namespace JSC {
 
 int JSSegmentedVariableObject::findRegisterIndex(void* registerAddress)
 {
+    Locker locker(m_lock);
+    
     for (int i = m_registers.size(); i--;) {
         if (&m_registers[i] != registerAddress)
             continue;
@@ -46,6 +48,8 @@ int JSSegmentedVariableObject::findRegisterIndex(void* registerAddress)
 
 int JSSegmentedVariableObject::addRegisters(int numberOfRegistersToAdd)
 {
+    Locker locker(m_lock);
+    
     ASSERT(numberOfRegistersToAdd >= 0);
     
     size_t oldSize = m_registers.size();

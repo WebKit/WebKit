@@ -96,6 +96,7 @@ namespace JSC {
 #if ENABLE(DFG_JIT)
     namespace DFG {
     class LongLivedState;
+    class Worklist;
     }
 #endif // ENABLE(DFG_JIT)
 
@@ -208,7 +209,8 @@ namespace JSC {
         Heap heap;
         
 #if ENABLE(DFG_JIT)
-        OwnPtr<DFG::LongLivedState> m_dfgState;
+        OwnPtr<DFG::LongLivedState> dfgState;
+        RefPtr<DFG::Worklist> worklist;
 #endif // ENABLE(DFG_JIT)
 
         VMType vmType;
@@ -472,6 +474,8 @@ namespace JSC {
         JSLock& apiLock() { return *m_apiLock; }
         CodeCache* codeCache() { return m_codeCache.get(); }
 
+        void prepareToDiscardCode();
+        
         JS_EXPORT_PRIVATE void discardAllCode();
 
     private:

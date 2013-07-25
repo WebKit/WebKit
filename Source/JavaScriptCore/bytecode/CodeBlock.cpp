@@ -36,6 +36,7 @@
 #include "DFGCommon.h"
 #include "DFGNode.h"
 #include "DFGRepatch.h"
+#include "DFGWorklist.h"
 #include "Debugger.h"
 #include "FTLJITCode.h"
 #include "Interpreter.h"
@@ -2187,12 +2188,6 @@ void CodeBlock::visitWeakReferences(SlotVisitor& visitor)
     performTracingFixpointIteration(visitor);
 }
 
-#if ENABLE(JIT_VERBOSE_OSR)
-static const bool verboseUnlinking = true;
-#else
-static const bool verboseUnlinking = false;
-#endif
-
 void CodeBlock::finalizeUnconditionally()
 {
 #if ENABLE(LLINT)
@@ -2208,7 +2203,7 @@ void CodeBlock::finalizeUnconditionally()
             case op_put_by_id_out_of_line:
                 if (!curInstruction[4].u.structure || Heap::isMarked(curInstruction[4].u.structure.get()))
                     break;
-                if (verboseUnlinking)
+                if (Options::verboseOSR())
                     dataLogF("Clearing LLInt property access with structure %p.\n", curInstruction[4].u.structure.get());
                 curInstruction[4].u.structure.clear();
                 curInstruction[5].u.operand = 0;
@@ -2221,7 +2216,7 @@ void CodeBlock::finalizeUnconditionally()
                     && Heap::isMarked(curInstruction[6].u.structure.get())
                     && Heap::isMarked(curInstruction[7].u.structureChain.get()))
                     break;
-                if (verboseUnlinking) {
+                if (Options::verboseOSR()) {
                     dataLogF("Clearing LLInt put transition with structures %p -> %p, chain %p.\n",
                             curInstruction[4].u.structure.get(),
                             curInstruction[6].u.structure.get(),
@@ -2241,7 +2236,7 @@ void CodeBlock::finalizeUnconditionally()
 
         for (unsigned i = 0; i < m_llintCallLinkInfos.size(); ++i) {
             if (m_llintCallLinkInfos[i].isLinked() && !Heap::isMarked(m_llintCallLinkInfos[i].callee.get())) {
-                if (verboseUnlinking)
+                if (Options::verboseOSR())
                     dataLog("Clearing LLInt call from ", *this, "\n");
                 m_llintCallLinkInfos[i].unlink();
             }
@@ -2254,7 +2249,7 @@ void CodeBlock::finalizeUnconditionally()
 #if ENABLE(DFG_JIT)
     // Check if we're not live. If we are, then jettison.
     if (!(shouldImmediatelyAssumeLivenessDuringScan() || m_jitCode->dfgCommon()->livenessHasBeenProved)) {
-        if (verboseUnlinking)
+        if (Options::verboseOSR())
             dataLog(*this, " has dead weak references, jettisoning during GC.\n");
 
         if (DFG::shouldShowDisassembly()) {
@@ -2284,7 +2279,7 @@ void CodeBlock::finalizeUnconditionally()
 
     for (size_t size = m_putToBaseOperations.size(), i = 0; i < size; ++i) {
         if (m_putToBaseOperations[i].m_structure && !Heap::isMarked(m_putToBaseOperations[i].m_structure.get())) {
-            if (verboseUnlinking)
+            if (Options::verboseOSR())
                 dataLog("Clearing putToBase info in ", *this, "\n");
             m_putToBaseOperations[i].m_structure.clear();
         }
@@ -2298,7 +2293,7 @@ void CodeBlock::finalizeUnconditionally()
 #endif
         m_resolveOperations[i].last().m_structure.clear();
         if (m_resolveOperations[i].last().m_structure && !Heap::isMarked(m_resolveOperations[i].last().m_structure.get())) {
-            if (verboseUnlinking)
+            if (Options::verboseOSR())
                 dataLog("Clearing resolve info in ", *this, "\n");
             m_resolveOperations[i].last().m_structure.clear();
         }
@@ -2313,7 +2308,7 @@ void CodeBlock::finalizeUnconditionally()
                 if (ClosureCallStubRoutine* stub = callLinkInfo(i).stub.get()) {
                     if (!Heap::isMarked(stub->structure())
                         || !Heap::isMarked(stub->executable())) {
-                        if (verboseUnlinking) {
+                        if (Options::verboseOSR()) {
                             dataLog(
                                 "Clearing closure call from ", *this, " to ",
                                 stub->executable()->hashFor(callLinkInfo(i).specializationKind()),
@@ -2322,7 +2317,7 @@ void CodeBlock::finalizeUnconditionally()
                         callLinkInfo(i).unlink(*m_vm, repatchBuffer);
                     }
                 } else if (!Heap::isMarked(callLinkInfo(i).callee.get())) {
-                    if (verboseUnlinking) {
+                    if (Options::verboseOSR()) {
                         dataLog(
                             "Clearing call from ", *this, " to ",
                             RawPointer(callLinkInfo(i).callee.get()), " (",
@@ -2363,7 +2358,7 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
 {
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
     
-    if (verboseUnlinking)
+    if (Options::verboseOSR())
         dataLog("Clearing structure cache (kind ", static_cast<int>(stubInfo.accessType), ") in ", *this, ".\n");
 
     switch (getJITType()) {
@@ -2433,6 +2428,42 @@ void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
         visitor.append(&dfgCommon->weakReferences[i]);
 #endif    
 }
+
+CodeBlock* CodeBlock::baselineVersion()
+{
+#if ENABLE(JIT)
+    // When we're initializing the original baseline code block, we won't be able
+    // to get its replacement. But we'll know that it's the original baseline code
+    // block because it won't have JIT code yet and it won't have an alternative.
+    if (getJITType() == JITCode::None && !alternative())
+        return this;
+    
+    CodeBlock* result = replacement();
+    ASSERT(result);
+    while (result->alternative())
+        result = result->alternative();
+    ASSERT(result);
+    ASSERT(JITCode::isBaselineCode(result->getJITType()));
+    return result;
+#else
+    return this;
+#endif
+}
+
+#if ENABLE(JIT)
+bool CodeBlock::hasOptimizedReplacement()
+{
+    ASSERT(JITCode::isBaselineCode(getJITType()));
+    bool result = JITCode::isHigherTier(replacement()->getJITType(), getJITType());
+    if (result)
+        ASSERT(JITCode::isOptimizingJIT(replacement()->getJITType()));
+    else {
+        ASSERT(JITCode::isBaselineCode(replacement()->getJITType()));
+        ASSERT(replacement() == this);
+    }
+    return result;
+}
+#endif
 
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 {
@@ -3015,9 +3046,12 @@ double CodeBlock::optimizationThresholdScalingFactor()
     ASSERT(instructionCount); // Make sure this is called only after we have an instruction stream; otherwise it'll just return the value of d, which makes no sense.
     
     double result = d + a * sqrt(instructionCount + b) + c * instructionCount;
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog(*this, ": instruction count is ", instructionCount, ", scaling execution counter by ", result, " * ", codeTypeThresholdMultiplier(), "\n");
-#endif
+    if (Options::verboseOSR()) {
+        dataLog(
+            *this, ": instruction count is ", instructionCount,
+            ", scaling execution counter by ", result, " * ", codeTypeThresholdMultiplier(),
+            "\n");
+    }
     return result * codeTypeThresholdMultiplier();
 }
 
@@ -3058,32 +3092,88 @@ int32_t CodeBlock::counterValueForOptimizeSoon()
 
 bool CodeBlock::checkIfOptimizationThresholdReached()
 {
+#if ENABLE(DFG_JIT)
+    if (m_vm->worklist
+        && m_vm->worklist->compilationState(this) == DFG::Worklist::Compiled) {
+        optimizeNextInvocation();
+        return true;
+    }
+#endif
+    
     return m_jitExecuteCounter.checkIfThresholdCrossedAndSet(this);
 }
 
 void CodeBlock::optimizeNextInvocation()
 {
+    if (Options::verboseOSR())
+        dataLog(*this, ": Optimizing next invocation.\n");
     m_jitExecuteCounter.setNewThreshold(0, this);
 }
 
 void CodeBlock::dontOptimizeAnytimeSoon()
 {
+    if (Options::verboseOSR())
+        dataLog(*this, ": Not optimizing anytime soon.\n");
     m_jitExecuteCounter.deferIndefinitely();
 }
 
 void CodeBlock::optimizeAfterWarmUp()
 {
+    if (Options::verboseOSR())
+        dataLog(*this, ": Optimizing after warm-up.\n");
     m_jitExecuteCounter.setNewThreshold(counterValueForOptimizeAfterWarmUp(), this);
 }
 
 void CodeBlock::optimizeAfterLongWarmUp()
 {
+    if (Options::verboseOSR())
+        dataLog(*this, ": Optimizing after long warm-up.\n");
     m_jitExecuteCounter.setNewThreshold(counterValueForOptimizeAfterLongWarmUp(), this);
 }
 
 void CodeBlock::optimizeSoon()
 {
+    if (Options::verboseOSR())
+        dataLog(*this, ": Optimizing soon.\n");
     m_jitExecuteCounter.setNewThreshold(counterValueForOptimizeSoon(), this);
+}
+
+void CodeBlock::forceOptimizationSlowPathConcurrently()
+{
+    if (Options::verboseOSR())
+        dataLog(*this, ": Forcing slow path concurrently.\n");
+    m_jitExecuteCounter.forceSlowPathConcurrently();
+}
+
+void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResult result)
+{
+    RELEASE_ASSERT(getJITType() == JITCode::BaselineJIT);
+    RELEASE_ASSERT((result == CompilationSuccessful) == (replacement() != this));
+    switch (result) {
+    case CompilationSuccessful:
+        RELEASE_ASSERT(JITCode::isOptimizingJIT(replacement()->getJITType()));
+        optimizeNextInvocation();
+        break;
+    case CompilationFailed:
+        dontOptimizeAnytimeSoon();
+        break;
+    case CompilationDeferred:
+        // We'd like to do dontOptimizeAnytimeSoon() but we cannot because
+        // forceOptimizationSlowPathConcurrently() is inherently racy. It won't
+        // necessarily guarantee anything. So, we make sure that even if that
+        // function ends up being a no-op, we still eventually retry and realize
+        // that we have optimized code ready.
+        optimizeAfterWarmUp();
+        break;
+    case CompilationInvalidated:
+        // Retry with exponential backoff.
+        countReoptimization();
+        optimizeAfterWarmUp();
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 #if ENABLE(JIT)
@@ -3144,7 +3234,7 @@ ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
 void CodeBlock::updateAllPredictionsAndCountLiveness(
     OperationInProgress operation, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
-    CodeBlockLock locker(m_lock);
+    CodeBlockLocker locker(m_lock);
     
     numberOfLiveNonArgumentValueProfiles = 0;
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
@@ -3176,7 +3266,7 @@ void CodeBlock::updateAllValueProfilePredictions(OperationInProgress operation)
 
 void CodeBlock::updateAllArrayPredictions(OperationInProgress operation)
 {
-    CodeBlockLock locker(m_lock);
+    CodeBlockLocker locker(m_lock);
     
     for (unsigned i = m_arrayProfiles.size(); i--;)
         m_arrayProfiles[i].computeUpdatedPrediction(locker, this, operation);
@@ -3194,9 +3284,8 @@ void CodeBlock::updateAllPredictions(OperationInProgress operation)
 
 bool CodeBlock::shouldOptimizeNow()
 {
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("Considering optimizing ", *this, "...\n");
-#endif
+    if (Options::verboseOSR())
+        dataLog("Considering optimizing ", *this, "...\n");
 
 #if ENABLE(VERBOSE_VALUE_PROFILE)
     dumpValueProfiles();
@@ -3211,9 +3300,14 @@ bool CodeBlock::shouldOptimizeNow()
     unsigned numberOfSamplesInProfiles;
     updateAllPredictionsAndCountLiveness(NoOperation, numberOfLiveNonArgumentValueProfiles, numberOfSamplesInProfiles);
 
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("Profile hotness: %lf (%u / %u), %lf (%u / %u)\n", (double)numberOfLiveNonArgumentValueProfiles / numberOfValueProfiles(), numberOfLiveNonArgumentValueProfiles, numberOfValueProfiles(), (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles(), numberOfSamplesInProfiles, ValueProfile::numberOfBuckets * numberOfValueProfiles());
-#endif
+    if (Options::verboseOSR()) {
+        dataLogF(
+            "Profile hotness: %lf (%u / %u), %lf (%u / %u)\n",
+            (double)numberOfLiveNonArgumentValueProfiles / numberOfValueProfiles(),
+            numberOfLiveNonArgumentValueProfiles, numberOfValueProfiles(),
+            (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles(),
+            numberOfSamplesInProfiles, ValueProfile::numberOfBuckets * numberOfValueProfiles());
+    }
 
     if ((!numberOfValueProfiles() || (double)numberOfLiveNonArgumentValueProfiles / numberOfValueProfiles() >= Options::desiredProfileLivenessRate())
         && (!totalNumberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / totalNumberOfValueProfiles() >= Options::desiredProfileFullnessRate())

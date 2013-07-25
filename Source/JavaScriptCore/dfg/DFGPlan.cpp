@@ -78,6 +78,7 @@ Plan::Plan(
     , mustHandleValues(codeBlock->numParameters(), numVarsWithValues)
     , compilation(codeBlock->vm()->m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(codeBlock->vm()->m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get()), Profiler::DFG)) : 0)
     , identifiers(codeBlock.get())
+    , isCompiled(false)
 {
 }
 
@@ -85,12 +86,15 @@ Plan::~Plan()
 {
 }
 
-void Plan::compileInThread()
+void Plan::compileInThread(LongLivedState& longLivedState)
 {
     SamplingRegion samplingRegion("DFG Compilation (Plan)");
     CompilationScope compilationScope;
 
-    Graph dfg(vm, *this);
+    if (logCompilationChanges())
+        dataLog("DFG(Plan) compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
+
+    Graph dfg(vm, *this, longLivedState);
     
     if (!parse(dfg)) {
         finalizer = adoptPtr(new FailedFinalizer(*this));
@@ -197,6 +201,11 @@ CompilationResult Plan::finalize(RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCo
     reallyAdd();
     
     return CompilationSuccessful;
+}
+
+CodeBlock* Plan::key()
+{
+    return codeBlock->alternative();
 }
 
 } } // namespace JSC::DFG
