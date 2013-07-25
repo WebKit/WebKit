@@ -1,3 +1,13 @@
+2013-07-25  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Build break in debug after r153134: StringImpl.h:640: undefined reference to `WTF::isCompilationThread()
+        https://bugs.webkit.org/show_bug.cgi?id=119077
+
+        Reviewed by Christophe Dumez.
+
+        * wtf/CMakeLists.txt:
+        Added CompilationThread.{h/cpp}.
+
 2013-07-24  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG IR dumps should be easier to read

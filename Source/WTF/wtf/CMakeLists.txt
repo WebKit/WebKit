@@ -10,6 +10,7 @@ set(WTF_HEADERS
     BoundsCheckedPointer.h
     BumpPointerAllocator.h
     ByteOrder.h
+    CompilationThread.h
     Compiler.h
     CryptographicallyRandomNumber.h
     CurrentTime.h
@@ -149,6 +150,7 @@ set(WTF_SOURCES
     Assertions.cpp
     Atomics.cpp
     BitVector.cpp
+    CompilationThread.cpp
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp
     DateMath.cpp
