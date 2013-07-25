@@ -90,6 +90,7 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
     append(result, out, previousOrigin);
     
     m_graph.m_dominators.computeIfNecessary(m_graph);
+    m_graph.m_naturalLoops.computeIfNecessary(m_graph);
     
     const char* prefix = "    ";
     const char* disassemblyPrefix = "        ";

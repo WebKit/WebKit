@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGDominators_h
-#define DFGDominators_h
+#ifndef DFGAnalysis_h
+#define DFGAnalysis_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAnalysis.h"
-#include "DFGCommon.h"
-#include <wtf/FastBitVector.h>
-
 namespace JSC { namespace DFG {
 
 class Graph;
 
-class Dominators : public Analysis<Dominators> {
+// Use this as a mixin for DFG analyses. The analysis itself implements a public
+// compute(Graph&) method. Clients call computeIfNecessary() when they want
+// results.
+
+template<typename T>
+class Analysis {
 public:
-    Dominators();
-    ~Dominators();
-    
-    void compute(Graph& graph);
-    
-    bool dominates(BlockIndex from, BlockIndex to) const
+    Analysis()
+        : m_valid(false)
     {
-        ASSERT(isValid());
-        return m_results[to].get(from);
     }
     
-private:
-    bool iterateForBlock(Graph& graph, BlockIndex);
+    void invalidate()
+    {
+        m_valid = false;
+    }
     
-    Vector<FastBitVector> m_results;
-    FastBitVector m_scratch;
+    void computeIfNecessary(Graph& graph)
+    {
+        if (m_valid)
+            return;
+        static_cast<T*>(this)->compute(graph);
+        m_valid = true;
+    }
+    
+    bool isValid() const { return m_valid; }
+
+private:
+    bool m_valid;
 };
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGDominators_h
+#endif // DFGAnalysis_h
+

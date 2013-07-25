@@ -33,7 +33,6 @@
 namespace JSC { namespace DFG {
 
 Dominators::Dominators()
-    : m_valid(false)
 {
 }
 
@@ -85,8 +84,6 @@ void Dominators::compute(Graph& graph)
         for (unsigned i = numBlocks; i-- > 1;)
             changed |= iterateForBlock(graph, i);
     } while (changed);
-    
-    m_valid = true;
 }
 
 bool Dominators::iterateForBlock(Graph& graph, BlockIndex i)

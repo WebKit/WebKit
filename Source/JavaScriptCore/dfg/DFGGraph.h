@@ -36,6 +36,7 @@
 #include "DFGBasicBlock.h"
 #include "DFGDominators.h"
 #include "DFGLongLivedState.h"
+#include "DFGNaturalLoops.h"
 #include "DFGNode.h"
 #include "DFGNodeAllocator.h"
 #include "DFGPlan.h"
@@ -681,6 +682,8 @@ public:
         }
     }
     
+    void invalidateCFG();
+    
     Profiler::Compilation* compilation() { return m_plan.compilation.get(); }
     
     DesiredIdentifiers& identifiers() { return m_plan.identifiers; }
@@ -708,6 +711,7 @@ public:
     HashSet<ExecutableBase*> m_executablesWhoseArgumentsEscaped;
     BitVector m_preservedVars;
     Dominators m_dominators;
+    NaturalLoops m_naturalLoops;
     unsigned m_localVars;
     unsigned m_parameterSlots;
     

@@ -754,6 +754,9 @@
 		A730B6121250068F009D25B1 /* StrictEvalActivation.h in Headers */ = {isa = PBXBuildFile; fileRef = A730B6101250068F009D25B1 /* StrictEvalActivation.h */; };
 		A730B6131250068F009D25B1 /* StrictEvalActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A730B6111250068F009D25B1 /* StrictEvalActivation.cpp */; };
 		A731B25A130093880040A7FA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
+		A737810C1799EA2E00817533 /* DFGAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = A73781091799EA2E00817533 /* DFGAnalysis.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A737810D1799EA2E00817533 /* DFGNaturalLoops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A737810A1799EA2E00817533 /* DFGNaturalLoops.cpp */; };
+		A737810E1799EA2E00817533 /* DFGNaturalLoops.h in Headers */ = {isa = PBXBuildFile; fileRef = A737810B1799EA2E00817533 /* DFGNaturalLoops.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A7386551118697B400540279 /* SpecializedThunkJIT.h */; };
 		A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7386552118697B400540279 /* ThunkGenerators.cpp */; };
 		A7386556118697B400540279 /* ThunkGenerators.h in Headers */ = {isa = PBXBuildFile; fileRef = A7386553118697B400540279 /* ThunkGenerators.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1794,6 +1797,9 @@
 		A729009B17976C6000317298 /* MacroAssemblerARMv7.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerARMv7.cpp; sourceTree = "<group>"; };
 		A730B6101250068F009D25B1 /* StrictEvalActivation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrictEvalActivation.h; sourceTree = "<group>"; };
 		A730B6111250068F009D25B1 /* StrictEvalActivation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StrictEvalActivation.cpp; sourceTree = "<group>"; };
+		A73781091799EA2E00817533 /* DFGAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAnalysis.h; path = dfg/DFGAnalysis.h; sourceTree = "<group>"; };
+		A737810A1799EA2E00817533 /* DFGNaturalLoops.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNaturalLoops.cpp; path = dfg/DFGNaturalLoops.cpp; sourceTree = "<group>"; };
+		A737810B1799EA2E00817533 /* DFGNaturalLoops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNaturalLoops.h; path = dfg/DFGNaturalLoops.h; sourceTree = "<group>"; };
 		A7386551118697B400540279 /* SpecializedThunkJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecializedThunkJIT.h; sourceTree = "<group>"; };
 		A7386552118697B400540279 /* ThunkGenerators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThunkGenerators.cpp; sourceTree = "<group>"; };
 		A7386553118697B400540279 /* ThunkGenerators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThunkGenerators.h; sourceTree = "<group>"; };
@@ -2117,9 +2123,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				932F5BE10822A1C700736975 /* jsc */,
 				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
+				932F5BE10822A1C700736975 /* jsc */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				6511230514046A4C002B101D /* testRegExp */,
@@ -2995,6 +3001,7 @@
 				0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */,
 				0F66E16814DF3F1300B7B2E4 /* DFGAdjacencyList.h */,
 				0FB4B51916B62772003F696B /* DFGAllocator.h */,
+				A73781091799EA2E00817533 /* DFGAnalysis.h */,
 				0F1E3A431534CBAD000F9456 /* DFGArgumentPosition.h */,
 				0F16015A156198BF00C2587C /* DFGArgumentsSimplificationPhase.cpp */,
 				0F16015B156198BF00C2587C /* DFGArgumentsSimplificationPhase.h */,
@@ -3074,6 +3081,8 @@
 				0FB4B51016B3A964003F696B /* DFGMinifiedID.h */,
 				0F2BDC4C1522818300CD8910 /* DFGMinifiedNode.cpp */,
 				0F2BDC3E1522801700CD8910 /* DFGMinifiedNode.h */,
+				A737810A1799EA2E00817533 /* DFGNaturalLoops.cpp */,
+				A737810B1799EA2E00817533 /* DFGNaturalLoops.h */,
 				0FB4B51E16B62772003F696B /* DFGNode.cpp */,
 				86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */,
 				0FB4B51F16B62772003F696B /* DFGNodeAllocator.h */,
@@ -3415,6 +3424,7 @@
 				0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */,
 				0F66E16B14DF3F1600B7B2E4 /* DFGAdjacencyList.h in Headers */,
 				0FFB921816D02EB20055A5DB /* DFGAllocator.h in Headers */,
+				A737810C1799EA2E00817533 /* DFGAnalysis.h in Headers */,
 				0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */,
 				0F16015E156198C900C2587C /* DFGArgumentsSimplificationPhase.h in Headers */,
 				0F05C3B41683CF9200BAF45B /* DFGArrayifySlowPathGenerator.h in Headers */,
@@ -3464,6 +3474,7 @@
 				0F2BDC451522801B00CD8910 /* DFGMinifiedGraph.h in Headers */,
 				0F2E892D16D02BAF009E4FD2 /* DFGMinifiedID.h in Headers */,
 				0F2BDC461522802000CD8910 /* DFGMinifiedNode.h in Headers */,
+				A737810E1799EA2E00817533 /* DFGNaturalLoops.h in Headers */,
 				86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */,
 				0FFB921B16D02F010055A5DB /* DFGNodeAllocator.h in Headers */,
 				0FA581BB150E953000B9A2D9 /* DFGNodeFlags.h in Headers */,
@@ -4299,6 +4310,7 @@
 				A73A535A1799CD5D00170C19 /* DFGLazyJSValue.cpp in Sources */,
 				0FF0F19916B729F6005DF95B /* DFGLongLivedState.cpp in Sources */,
 				0F2BDC4D1522818600CD8910 /* DFGMinifiedNode.cpp in Sources */,
+				A737810D1799EA2E00817533 /* DFGNaturalLoops.cpp in Sources */,
 				0FF0F19C16B72A03005DF95B /* DFGNode.cpp in Sources */,
 				0FA581BA150E952C00B9A2D9 /* DFGNodeFlags.cpp in Sources */,
 				86EC9DCF1328DF82002B2AD7 /* DFGOperations.cpp in Sources */,

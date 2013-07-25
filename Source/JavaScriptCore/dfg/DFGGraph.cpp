@@ -302,6 +302,27 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BlockIndex blo
         }
         out.print("\n");
     }
+    if (m_naturalLoops.isValid()) {
+        if (const NaturalLoop* loop = m_naturalLoops.headerOf(blockIndex)) {
+            out.print(prefix, "  Loop header, contains:");
+            Vector<BlockIndex> sortedBlockList;
+            for (unsigned i = 0; i < loop->size(); ++i)
+                sortedBlockList.append(loop->at(i));
+            std::sort(sortedBlockList.begin(), sortedBlockList.end());
+            for (unsigned i = 0; i < sortedBlockList.size(); ++i)
+                out.print(" #", sortedBlockList[i]);
+            out.print("\n");
+        }
+        
+        Vector<const NaturalLoop*> containingLoops =
+            m_naturalLoops.loopsOf(blockIndex);
+        if (!containingLoops.isEmpty()) {
+            out.print(prefix, "  Containing loop headers:");
+            for (unsigned i = 0; i < containingLoops.size(); ++i)
+                out.print(" #", containingLoops[i]->header());
+            out.print("\n");
+        }
+    }
     out.print(prefix, "  Phi Nodes:");
     for (size_t i = 0; i < block->phis.size(); ++i) {
         Node* phiNode = block->phis[i];
@@ -436,6 +457,12 @@ void Graph::resetExitStates()
         for (unsigned indexInBlock = block->size(); indexInBlock--;)
             block->at(indexInBlock)->setCanExit(true);
     }
+}
+
+void Graph::invalidateCFG()
+{
+    m_dominators.invalidate();
+    m_naturalLoops.invalidate();
 }
 
 } } // namespace JSC::DFG

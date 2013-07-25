@@ -1,5 +1,71 @@
 2013-06-27  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: DFG should know how to find natural loops
+        https://bugs.webkit.org/show_bug.cgi?id=118152
+
+        Reviewed by Mark Hahnenberg.
+        
+        There are a bunch of things we can do when we know where the loops are.
+        Previously we didn't. With this patch, we do.
+        
+        This patch adds the classic dominator based natural loop finder.
+        
+        The only client of this right now is the DFG::Disassembler. It prints out
+        a summary of the analysis for each block.
+        
+        This will become more important when I do
+        https://bugs.webkit.org/show_bug.cgi?id=118151, which definitely requires
+        this kind of analysis, at least if we want to do the optimization over
+        DFG IR (and I'm pretty sure we do).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAnalysis.h: Added.
+        (DFG):
+        (Analysis):
+        (JSC::DFG::Analysis::Analysis):
+        (JSC::DFG::Analysis::invalidate):
+        (JSC::DFG::Analysis::computeIfNecessary):
+        (JSC::DFG::Analysis::isValid):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::createDumpList):
+        * dfg/DFGDominators.cpp:
+        (JSC::DFG::Dominators::Dominators):
+        (JSC::DFG::Dominators::compute):
+        * dfg/DFGDominators.h:
+        (Dominators):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (JSC::DFG::Graph::invalidateCFG):
+        (DFG):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGNaturalLoops.cpp: Added.
+        (DFG):
+        (JSC::DFG::NaturalLoop::dump):
+        (JSC::DFG::NaturalLoops::NaturalLoops):
+        (JSC::DFG::NaturalLoops::~NaturalLoops):
+        (JSC::DFG::NaturalLoops::compute):
+        (JSC::DFG::NaturalLoops::loopsOf):
+        (JSC::DFG::NaturalLoops::dump):
+        * dfg/DFGNaturalLoops.h: Added.
+        (DFG):
+        (NaturalLoop):
+        (JSC::DFG::NaturalLoop::NaturalLoop):
+        (JSC::DFG::NaturalLoop::addBlock):
+        (JSC::DFG::NaturalLoop::header):
+        (JSC::DFG::NaturalLoop::size):
+        (JSC::DFG::NaturalLoop::at):
+        (JSC::DFG::NaturalLoop::operator[]):
+        (JSC::DFG::NaturalLoop::contains):
+        (NaturalLoops):
+        (JSC::DFG::NaturalLoops::numLoops):
+        (JSC::DFG::NaturalLoops::loop):
+        (JSC::DFG::NaturalLoops::headerOf):
+
+2013-06-27  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: JSC's disassembly infrastructure should be able to disassemble the code that LLVM generates
         https://bugs.webkit.org/show_bug.cgi?id=118148
 

@@ -280,6 +280,7 @@ public:
                 // successors' Phi functions to remove any references from them into the
                 // removed block.
                 
+                m_graph.invalidateCFG();
                 m_graph.resetReachability();
 
                 for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
