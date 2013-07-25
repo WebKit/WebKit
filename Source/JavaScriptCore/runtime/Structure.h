@@ -39,6 +39,8 @@
 #include "StructureTransitionTable.h"
 #include "JSTypeInfo.h"
 #include "Watchpoint.h"
+#include "Weak.h"
+#include <wtf/ByteSpinLock.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringImpl.h>
@@ -68,6 +70,9 @@ public:
     friend class StructureTransitionTable;
 
     typedef JSCell Base;
+    
+    typedef ByteSpinLock Lock;
+    typedef ByteSpinLocker Locker;
 
     static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
 
@@ -235,8 +240,8 @@ public:
     PropertyOffset get(VM&, const WTF::String& name);
     JS_EXPORT_PRIVATE PropertyOffset get(VM&, PropertyName, unsigned& attributes, JSCell*& specificValue);
 
-    PropertyOffset getWithoutMaterializing(VM&, PropertyName);
-    PropertyOffset getWithoutMaterializing(VM&, PropertyName, unsigned& attributes, JSCell*& specificValue);
+    PropertyOffset getConcurrently(VM&, PropertyName);
+    PropertyOffset getConcurrently(VM&, PropertyName, unsigned& attributes, JSCell*& specificValue);
 
     bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
     bool hasReadOnlyOrGetterSetterPropertiesExcludingProto() const { return m_hasReadOnlyOrGetterSetterPropertiesExcludingProto; }
@@ -360,8 +365,12 @@ private:
     Structure(VM&, const Structure*);
 
     static Structure* create(VM&, const Structure*);
-        
-    void findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, PropertyTable*&);
+    
+    // This will return the structure that has a usable property table, that property table,
+    // and the list of structures that we visited before we got to it. If it returns a
+    // non-null structure, it will also lock the structure that it returns; it is your job
+    // to unlock it.
+    void findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*&, PropertyTable*&);
     
     typedef enum { 
         NoneDictionaryKind = 0,
@@ -373,7 +382,7 @@ private:
     PropertyOffset putSpecificValue(VM&, PropertyName, unsigned attributes, JSCell* specificValue);
     PropertyOffset remove(PropertyName);
 
-    void createPropertyMap(VM&, unsigned keyCount = 0);
+    void createPropertyMap(const Locker&, VM&, unsigned keyCount = 0);
     void checkConsistency();
 
     bool despecifyFunction(VM&, PropertyName);
@@ -472,8 +481,10 @@ private:
 
     TypeInfo m_typeInfo;
     IndexingType m_indexingType;
-
     uint8_t m_inlineCapacity;
+    
+    Lock m_lock;
+    
     unsigned m_dictionaryKind : 2;
     bool m_isPinnedPropertyTable : 1;
     bool m_hasGetterSetterProperties : 1;

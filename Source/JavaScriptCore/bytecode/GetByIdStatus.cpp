@@ -51,7 +51,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     
     unsigned attributesIgnored;
     JSCell* specificValue;
-    PropertyOffset offset = structure->get(
+    PropertyOffset offset = structure->getConcurrently(
         *profiledBlock->vm(), ident, attributesIgnored, specificValue);
     if (structure->isDictionary())
         specificValue = 0;
@@ -92,7 +92,7 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
     unsigned attributesIgnored;
     JSCell* specificValue;
         
-    result.m_offset = currentStructure->get(
+    result.m_offset = currentStructure->getConcurrently(
         *profiledBlock->vm(), ident, attributesIgnored, specificValue);
     if (currentStructure->isDictionary())
         specificValue = 0;
@@ -166,7 +166,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         Structure* structure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
         unsigned attributesIgnored;
         JSCell* specificValue;
-        result.m_offset = structure->getWithoutMaterializing(
+        result.m_offset = structure->getConcurrently(
             *profiledBlock->vm(), ident, attributesIgnored, specificValue);
         if (structure->isDictionary())
             specificValue = 0;
@@ -191,7 +191,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
             
             unsigned attributesIgnored;
             JSCell* specificValue;
-            PropertyOffset myOffset = structure->getWithoutMaterializing(
+            PropertyOffset myOffset = structure->getConcurrently(
                 *profiledBlock->vm(), ident, attributesIgnored, specificValue);
             if (structure->isDictionary())
                 specificValue = 0;
@@ -276,7 +276,7 @@ GetByIdStatus GetByIdStatus::computeFor(VM& vm, Structure* structure, Identifier
     result.m_wasSeenInJIT = false; // To my knowledge nobody that uses computeFor(VM&, Structure*, Identifier&) reads this field, but I might as well be honest: no, it wasn't seen in the JIT, since I computed it statically.
     unsigned attributes;
     JSCell* specificValue;
-    result.m_offset = structure->getWithoutMaterializing(vm, ident, attributes, specificValue);
+    result.m_offset = structure->getConcurrently(vm, ident, attributes, specificValue);
     if (!isValidOffset(result.m_offset))
         return GetByIdStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
     if (attributes & Accessor)

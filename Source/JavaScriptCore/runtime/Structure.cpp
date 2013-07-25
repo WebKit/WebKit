@@ -236,19 +236,27 @@ void Structure::destroy(JSCell* cell)
     static_cast<Structure*>(cell)->Structure::~Structure();
 }
 
-void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, PropertyTable*& table)
+void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*& structure, PropertyTable*& table)
 {
     ASSERT(structures.isEmpty());
     table = 0;
 
-    for (Structure* structure = this; structure; structure = structure->previousID()) {
-        if (structure->propertyTable()) {
-            table = structure->propertyTable().get();
+    for (structure = this; structure; structure = structure->previousID()) {
+        structure->m_lock.lock();
+        
+        table = structure->propertyTable().get();
+        if (table) {
+            // Leave the structure locked, so that the caller can do things to it atomically
+            // before it loses its property table.
             return;
         }
         
         structures.append(structure);
+        structure->m_lock.unlock();
     }
+    
+    ASSERT(!structure);
+    ASSERT(!table);
 }
 
 void Structure::materializePropertyMap(VM& vm)
@@ -257,17 +265,27 @@ void Structure::materializePropertyMap(VM& vm)
     ASSERT(!propertyTable());
 
     Vector<Structure*, 8> structures;
+    Structure* structure;
     PropertyTable* table;
     
-    findStructuresAndMapForMaterialization(structures, table);
+    findStructuresAndMapForMaterialization(structures, structure, table);
     
+    if (table) {
+        table = table->copy(vm, 0, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
+        structure->m_lock.unlock();
+    }
+    
+    // Must hold the lock on this structure, since we will be modifying this structure's
+    // property map. We don't want getConcurrently() to see the property map in a half-baked
+    // state.
+    Locker locker(m_lock);
     if (!table)
-        createPropertyMap(vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
+        createPropertyMap(locker, vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
     else
-        propertyTable().set(vm, this, table->copy(vm, 0, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity)));
+        propertyTable().set(vm, this, table);
 
     for (size_t i = structures.size(); i--;) {
-        Structure* structure = structures[i];
+        structure = structures[i];
         if (!structure->m_nameInPrevious)
             continue;
         PropertyMapEntry entry(vm, this, structure->m_nameInPrevious.get(), structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious.get());
@@ -544,8 +562,14 @@ Structure* Structure::preventExtensionsTransition(VM& vm, Structure* structure)
 PropertyTable* Structure::takePropertyTableOrCloneIfPinned(VM& vm, Structure* owner)
 {
     materializePropertyMapIfNecessaryForPinning(vm);
+    
     if (m_isPinnedPropertyTable)
         return propertyTable()->copy(vm, owner, propertyTable()->size() + 1);
+    
+    // Hold the lock while stealing the table - so that getConcurrently() on another thread
+    // will either have to bypass this structure, or will get to use the property table
+    // before it is stolen.
+    Locker locker(m_lock);
     PropertyTable* takenPropertyTable = propertyTable().get();
     propertyTable().clear();
     return takenPropertyTable;
@@ -747,24 +771,32 @@ PropertyTable* Structure::copyPropertyTableForPinning(VM& vm, Structure* owner)
     return PropertyTable::create(vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
 }
 
-PropertyOffset Structure::getWithoutMaterializing(VM&, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
+PropertyOffset Structure::getConcurrently(VM&, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
 {
+    // We can't handle uncacheable dictionaries because we can't handle concurrent remove's
+    // from the property maps.
+    RELEASE_ASSERT(!isUncacheableDictionary());
+    
     Vector<Structure*, 8> structures;
+    Structure* structure;
     PropertyTable* table;
     
-    findStructuresAndMapForMaterialization(structures, table);
+    findStructuresAndMapForMaterialization(structures, structure, table);
     
     if (table) {
         PropertyMapEntry* entry = table->find(propertyName.uid()).first;
         if (entry) {
             attributes = entry->attributes;
             specificValue = entry->specificValue.get();
-            return entry->offset;
+            PropertyOffset result = entry->offset;
+            structure->m_lock.unlock();
+            return result;
         }
+        structure->m_lock.unlock();
     }
     
     for (unsigned i = structures.size(); i--;) {
-        Structure* structure = structures[i];
+        structure = structures[i];
         if (structure->m_nameInPrevious.get() != propertyName.uid())
             continue;
         
@@ -821,6 +853,8 @@ void Structure::despecifyAllFunctions(VM& vm)
 
 PropertyOffset Structure::putSpecificValue(VM& vm, PropertyName propertyName, unsigned attributes, JSCell* specificValue)
 {
+    Locker locker(m_lock);
+    
     ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
 
     checkConsistency();
@@ -830,7 +864,7 @@ PropertyOffset Structure::putSpecificValue(VM& vm, PropertyName propertyName, un
     StringImpl* rep = propertyName.uid();
 
     if (!propertyTable())
-        createPropertyMap(vm);
+        createPropertyMap(locker, vm);
 
     PropertyOffset newOffset = propertyTable()->nextOffset(m_inlineCapacity);
 
@@ -842,6 +876,8 @@ PropertyOffset Structure::putSpecificValue(VM& vm, PropertyName propertyName, un
 
 PropertyOffset Structure::remove(PropertyName propertyName)
 {
+    Locker locker(m_lock);
+    
     checkConsistency();
 
     StringImpl* rep = propertyName.uid();
@@ -862,7 +898,7 @@ PropertyOffset Structure::remove(PropertyName propertyName)
     return offset;
 }
 
-void Structure::createPropertyMap(VM& vm, unsigned capacity)
+void Structure::createPropertyMap(const Locker&, VM& vm, unsigned capacity)
 {
     ASSERT(!propertyTable());
 

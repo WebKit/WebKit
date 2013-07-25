@@ -1,5 +1,53 @@
 2013-07-16  Oliver Hunt <oliver@apple.com>
 
+        Merge dfgFourthTier r148936
+
+    2013-04-22  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Create an equivalent of Structure::get() that can work from a compilation thread
+        https://bugs.webkit.org/show_bug.cgi?id=114987
+
+        Reviewed by Geoffrey Garen.
+        
+        This completes the work started by r148570. That patch made it possible to do
+        Structure::get() without modifying Structure. This patch takes this further, and
+        makes this thread-safe (for non-uncacheable-dictionaries) via
+        Structure::getConcurrently(). This method not only doesn't modify Structure, but
+        also ensures that any concurrent attempts to add to, remove from, or steal the
+        table from that structure doesn't mess up the result of the call. The call may
+        return invalidOffset even if a property is *just* about to be added, but it will
+        never do the reverse: if it returns a property then you can be sure that the
+        structure really does have that property and always will have it.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeForChain):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::isStringPrototypeMethodSane):
+        * runtime/PropertyMapHashTable.h:
+        (PropertyTable):
+        (JSC::PropertyTable::findConcurrently):
+        (JSC):
+        (JSC::PropertyTable::add):
+        (JSC::PropertyTable::remove):
+        (JSC::PropertyTable::reinsert):
+        (JSC::PropertyTable::rehash):
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::PropertyTable):
+        * runtime/Structure.cpp:
+        (JSC::Structure::findStructuresAndMapForMaterialization):
+        (JSC::Structure::getConcurrently):
+        * runtime/Structure.h:
+        (Structure):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::getConcurrently):
+
+2013-07-16  Oliver Hunt <oliver@apple.com>
+
         Merge dfgFourthTier r148850
 
     2013-04-21  Filip Pizlo  <fpizlo@apple.com>

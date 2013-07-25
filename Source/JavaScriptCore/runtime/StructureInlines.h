@@ -78,11 +78,11 @@ inline PropertyOffset Structure::get(VM& vm, const WTF::String& name)
     return entry ? entry->offset : invalidOffset;
 }
     
-inline PropertyOffset Structure::getWithoutMaterializing(VM& vm, PropertyName propertyName)
+inline PropertyOffset Structure::getConcurrently(VM& vm, PropertyName propertyName)
 {
     unsigned attributesIgnored;
     JSCell* specificValueIgnored;
-    return getWithoutMaterializing(
+    return getConcurrently(
         vm, propertyName, attributesIgnored, specificValueIgnored);
 }
 

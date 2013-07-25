@@ -1083,7 +1083,7 @@ private:
     {
         unsigned attributesUnused;
         JSCell* specificValue;
-        PropertyOffset offset = stringPrototypeStructure->get(
+        PropertyOffset offset = stringPrototypeStructure->getConcurrently(
             vm(), ident, attributesUnused, specificValue);
         if (!isValidOffset(offset))
             return false;

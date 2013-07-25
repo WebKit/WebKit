@@ -49,7 +49,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     
     if (instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id)
         || instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id_out_of_line)) {
-        PropertyOffset offset = structure->getWithoutMaterializing(*profiledBlock->vm(), ident);
+        PropertyOffset offset = structure->getConcurrently(*profiledBlock->vm(), ident);
         if (!isValidOffset(offset))
             return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
         
@@ -68,7 +68,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     ASSERT(newStructure);
     ASSERT(chain);
     
-    PropertyOffset offset = newStructure->getWithoutMaterializing(*profiledBlock->vm(), ident);
+    PropertyOffset offset = newStructure->getConcurrently(*profiledBlock->vm(), ident);
     if (!isValidOffset(offset))
         return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
     
@@ -106,7 +106,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         
     case access_put_by_id_replace: {
         PropertyOffset offset =
-            stubInfo.u.putByIdReplace.baseObjectStructure->getWithoutMaterializing(
+            stubInfo.u.putByIdReplace.baseObjectStructure->getConcurrently(
                 *profiledBlock->vm(), ident);
         if (isValidOffset(offset)) {
             return PutByIdStatus(
@@ -122,7 +122,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     case access_put_by_id_transition_direct: {
         ASSERT(stubInfo.u.putByIdTransition.previousStructure->transitionWatchpointSetHasBeenInvalidated());
         PropertyOffset offset = 
-            stubInfo.u.putByIdTransition.structure->getWithoutMaterializing(
+            stubInfo.u.putByIdTransition.structure->getConcurrently(
                 *profiledBlock->vm(), ident);
         if (isValidOffset(offset)) {
             return PutByIdStatus(
@@ -156,7 +156,7 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
     
     unsigned attributes;
     JSCell* specificValue;
-    PropertyOffset offset = structure->getWithoutMaterializing(
+    PropertyOffset offset = structure->getConcurrently(
         vm, ident, attributes, specificValue);
     if (isValidOffset(offset)) {
         if (attributes & (Accessor | ReadOnly))
