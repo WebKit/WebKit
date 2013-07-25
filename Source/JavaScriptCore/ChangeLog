@@ -1,3 +1,38 @@
+2013-05-01  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Structure::addPropertyTransitionToExistingStructure should be thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=115468
+
+        Reviewed by Geoffrey Garen.
+        
+        This makes the main thread modify the transition table while holding a lock. Note
+        that the GC might modify its weak pointers without locking, but the GC will lock out
+        the compilation thread anyway. The map will then only reshape in response to add()
+        and set(), which happen while holding a lock.
+        
+        This allows the compilation thread to now query transition tables safely, provided it
+        holds a lock when doing so.
+        
+        Also changed LLVM asm printer initialization to just initialize the X86 one. It makes
+        sense for us to just initialize the asm printer(s) that we actually use; you could
+        imagine us being linked to a system LLVM that has cross-compilation support; there is
+        no point in the WebKit or JSC process doing work to initialize all of those targets.
+        That part was rubber stamped by Mark Hahnenberg.
+        
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyTransitionToExistingStructureImpl):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC):
+        (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::nonPropertyTransition):
+        * runtime/Structure.h:
+        (Structure):
+
 2013-04-30  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Structure::getConcurrently() may be called from for uncacheable dictionaries, and this is safe

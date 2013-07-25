@@ -210,7 +210,7 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
     // - If we're not storing a value that could be specific: again, this would only be a
     //   problem if the existing transition did have a specific value, which we check for
     //   by passing 0 for the specificValue.
-    Structure* transition = Structure::addPropertyTransitionToExistingStructure(structure, ident, 0, 0, offset);
+    Structure* transition = Structure::addPropertyTransitionToExistingStructureConcurrently(structure, ident, 0, 0, offset);
     if (!transition)
         return PutByIdStatus(TakesSlowPath); // This occurs in bizarre cases only. See above.
     ASSERT(!transition->transitionDidInvolveSpecificValue());

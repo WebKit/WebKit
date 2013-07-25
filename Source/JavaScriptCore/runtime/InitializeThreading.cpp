@@ -73,7 +73,7 @@ static void initializeThreadingOnce()
 #if ENABLE(FTL_JIT)
     LLVMLinkInMCJIT();
     LLVMInitializeNativeTarget();
-    LLVMInitializeAllAsmPrinters();
+    LLVMInitializeX86AsmPrinter();
 #endif
 }
 

@@ -321,7 +321,7 @@ void Structure::despecifyDictionaryFunction(VM& vm, PropertyName propertyName)
     entry->specificValue.clear();
 }
 
-Structure* Structure::addPropertyTransitionToExistingStructure(Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
+Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
 {
     ASSERT(!structure->isDictionary());
     ASSERT(structure->isObject());
@@ -336,6 +336,18 @@ Structure* Structure::addPropertyTransitionToExistingStructure(Structure* struct
     }
 
     return 0;
+}
+
+Structure* Structure::addPropertyTransitionToExistingStructure(Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
+{
+    ASSERT(!isCompilationThread());
+    return addPropertyTransitionToExistingStructureImpl(structure, propertyName, attributes, specificValue, offset);
+}
+
+Structure* Structure::addPropertyTransitionToExistingStructureConcurrently(Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
+{
+    Locker locker(structure->m_lock);
+    return addPropertyTransitionToExistingStructureImpl(structure, propertyName, attributes, specificValue, offset);
 }
 
 bool Structure::anyObjectInChainMayInterceptIndexedAccesses() const
@@ -405,7 +417,10 @@ Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, Proper
     offset = transition->putSpecificValue(vm, propertyName, attributes, specificValue);
 
     checkOffset(transition->m_offset, transition->inlineCapacity());
-    structure->m_transitionTable.add(vm, transition);
+    {
+        Locker locker(structure->m_lock);
+        structure->m_transitionTable.add(vm, transition);
+    }
     transition->checkOffsetConsistency();
     structure->checkOffsetConsistency();
     return transition;
@@ -604,7 +619,10 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
     transition->m_offset = structure->m_offset;
     checkOffset(transition->m_offset, transition->inlineCapacity());
     
-    structure->m_transitionTable.add(vm, transition);
+    {
+        Locker locker(structure->m_lock);
+        structure->m_transitionTable.add(vm, transition);
+    }
     transition->checkOffsetConsistency();
     return transition;
 }

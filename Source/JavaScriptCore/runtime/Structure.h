@@ -97,6 +97,7 @@ public:
     static void dumpStatistics();
 
     JS_EXPORT_PRIVATE static Structure* addPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&);
+    static Structure* addPropertyTransitionToExistingStructureConcurrently(Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* addPropertyTransitionToExistingStructure(Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&);
     static Structure* removePropertyTransition(VM&, Structure*, PropertyName, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* changePrototypeTransition(VM&, Structure*, JSValue prototype);
@@ -367,6 +368,8 @@ private:
 
     static Structure* create(VM&, const Structure*);
     
+    static Structure* addPropertyTransitionToExistingStructureImpl(Structure*, PropertyName, unsigned attributes, JSCell* specificValue, PropertyOffset&);
+
     // This will return the structure that has a usable property table, that property table,
     // and the list of structures that we visited before we got to it. If it returns a
     // non-null structure, it will also lock the structure that it returns; it is your job
