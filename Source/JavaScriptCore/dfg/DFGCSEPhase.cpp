@@ -52,6 +52,8 @@ public:
         
         m_changed = false;
         
+        m_graph.clearReplacements();
+        
         for (unsigned blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
             performBlockCSE(m_graph.block(blockIndex));
         
@@ -1005,7 +1007,7 @@ private:
         eliminateIrrelevantPhantomChildren(m_currentNode);
         
         // At this point we will eliminate all references to this node.
-        m_currentNode->replacement = replacement;
+        m_currentNode->misc.replacement = replacement;
         
         m_changed = true;
         
@@ -1396,20 +1398,16 @@ private:
         for (unsigned i = 0; i < LastNodeType; ++i)
             m_lastSeen[i] = UINT_MAX;
         
-        // All Phis need to already be marked as relevant to OSR, and have their
-        // replacements cleared, so we don't get confused while doing substitutions on
-        // GetLocal's.
-        for (unsigned i = 0; i < block->phis.size(); ++i) {
-            ASSERT(block->phis[i]->flags() & NodeRelevantToOSR);
-            block->phis[i]->replacement = 0;
+        // All Phis need to already be marked as relevant to OSR.
+        if (!ASSERT_DISABLED) {
+            for (unsigned i = 0; i < block->phis.size(); ++i)
+                ASSERT(block->phis[i]->flags() & NodeRelevantToOSR);
         }
         
         // Make all of my SetLocal and GetLocal nodes relevant to OSR, and do some other
         // necessary bookkeeping.
         for (unsigned i = 0; i < block->size(); ++i) {
             Node* node = block->at(i);
-            
-            node->replacement = 0;
             
             switch (node->op()) {
             case SetLocal:
@@ -1430,7 +1428,7 @@ private:
         if (!ASSERT_DISABLED && cseMode == StoreElimination) {
             // Nobody should have replacements set.
             for (unsigned i = 0; i < block->size(); ++i)
-                ASSERT(!block->at(i)->replacement);
+                ASSERT(!block->at(i)->misc.replacement);
         }
     }
     

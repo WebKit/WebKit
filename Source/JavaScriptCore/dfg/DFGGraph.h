@@ -119,7 +119,7 @@ public:
             return;
         
         // Check if there is any replacement.
-        Node* replacement = child->replacement;
+        Node* replacement = child->misc.replacement;
         if (!replacement)
             return;
         
@@ -127,7 +127,7 @@ public:
         
         // There is definitely a replacement. Assert that the replacement does not
         // have a replacement.
-        ASSERT(!child->replacement);
+        ASSERT(!child->misc.replacement);
     }
     
 #define DFG_DEFINE_ADD_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
@@ -650,6 +650,8 @@ public:
     void substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal);
     
     void invalidateCFG();
+    
+    void clearReplacements();
     
     void getBlocksInDepthFirstOrder(Vector<BasicBlock*>& result);
     

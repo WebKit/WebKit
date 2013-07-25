@@ -548,6 +548,19 @@ void Graph::getBlocksInDepthFirstOrder(Vector<BasicBlock*>& result)
             addForDepthFirstSort(result, worklist, seen, block->successor(i));
     }
 }
+
+void Graph::clearReplacements()
+{
+    for (BlockIndex blockIndex = numBlocks(); blockIndex--;) {
+        BasicBlock* block = m_blocks[blockIndex].get();
+        if (!block)
+            continue;
+        for (unsigned phiIndex = block->phis.size(); phiIndex--;)
+            block->phis[phiIndex]->misc.replacement = 0;
+        for (unsigned nodeIndex = block->size(); nodeIndex--;)
+            block->at(nodeIndex)->misc.replacement = 0;
+    }
+}
     
 } } // namespace JSC::DFG
 

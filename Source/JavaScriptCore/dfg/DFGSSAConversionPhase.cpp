@@ -194,15 +194,7 @@ public:
         // do a replacement for (3).
         
         // Clear all replacements, since other phases may have used them.
-        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-            for (unsigned phiIndex = block->phis.size(); phiIndex--;)
-                block->phis[phiIndex]->replacement = 0;
-            for (unsigned nodeIndex = block->size(); nodeIndex--;)
-                block->at(nodeIndex)->replacement = 0;
-        }
+        m_graph.clearReplacements();
         
         // For all of the old CPS Phis, figure out what they correspond to in SSA.
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
@@ -217,7 +209,7 @@ public:
                         ", and its replacement in ", *block, ", ",
                         block->variablesAtHead.operand(phi->local()), "\n");
                 }
-                phi->replacement = block->variablesAtHead.operand(phi->local());
+                phi->misc.replacement = block->variablesAtHead.operand(phi->local());
             }
         }
         
@@ -232,8 +224,8 @@ public:
                 Node* node = block->variablesAtHead[i];
                 if (!node)
                     continue;
-                while (node->replacement)
-                    node = node->replacement;
+                while (node->misc.replacement)
+                    node = node->misc.replacement;
                 block->variablesAtHead[i] = node;
             }
         }
@@ -275,11 +267,11 @@ public:
                 continue;
             
             for (unsigned phiIndex = block->phis.size(); phiIndex--;) {
-                block->phis[phiIndex]->replacement =
+                block->phis[phiIndex]->misc.replacement =
                     block->variablesAtHead.operand(block->phis[phiIndex]->local());
             }
             for (unsigned nodeIndex = block->size(); nodeIndex--;)
-                ASSERT(!block->at(nodeIndex)->replacement);
+                ASSERT(!block->at(nodeIndex)->misc.replacement);
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
@@ -293,7 +285,7 @@ public:
                         node->mergeFlags(NodeMustGenerate);
                     else
                         node->setOpAndDefaultFlags(MovHint);
-                    node->replacement = node->child1().node(); // Only for Upsilons.
+                    node->misc.replacement = node->child1().node(); // Only for Upsilons.
                     break;
                 }
                     
@@ -307,7 +299,7 @@ public:
                     if (variable->isCaptured())
                         break;
                     node->convertToPhantom();
-                    node->replacement = block->variablesAtHead.operand(variable->local());
+                    node->misc.replacement = block->variablesAtHead.operand(variable->local());
                     break;
                 }
                     
@@ -315,7 +307,7 @@ public:
                     node->children.reset();
                     // This is only for Upsilons. An Upsilon will only refer to a Flush if
                     // there were no SetLocals or GetLocals in the block.
-                    node->replacement = block->variablesAtHead.operand(node->local());
+                    node->misc.replacement = block->variablesAtHead.operand(node->local());
                     break;
                 }
                     
@@ -327,7 +319,7 @@ public:
                     node->convertToPhantom();
                     // This is only for Upsilons. An Upsilon will only refer to a
                     // PhantomLocal if there were no SetLocals or GetLocals in the block.
-                    node->replacement = block->variablesAtHead.operand(variable->local());
+                    node->misc.replacement = block->variablesAtHead.operand(variable->local());
                     break;
                 }
                     

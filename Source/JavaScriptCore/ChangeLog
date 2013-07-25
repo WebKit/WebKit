@@ -1,5 +1,39 @@
 2013-07-16  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: Rationalize Node::replacement
+        https://bugs.webkit.org/show_bug.cgi?id=118774
+
+        Reviewed by Oliver Hunt.
+        
+        - Clearing of replacements is now done in Graph::clearReplacements().
+        
+        - New nodes now have replacement set to 0.
+        
+        - Node::replacement is now part of a 'misc' union. I'll be putting at least
+          one other field into that union as part of LICM work (see
+          https://bugs.webkit.org/show_bug.cgi?id=118749).
+
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::run):
+        (JSC::DFG::CPSRethreadingPhase::freeUnnecessaryNodes):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeGetLocalFor):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::run):
+        (JSC::DFG::CSEPhase::setReplacement):
+        (JSC::DFG::CSEPhase::performBlockCSE):
+        * dfg/DFGGraph.cpp:
+        (DFG):
+        (JSC::DFG::Graph::clearReplacements):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::performSubstitutionForEdge):
+        (Graph):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+
+2013-07-16  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: NaturalLoops should be able to quickly answer questions like "what loops own this basic block"
         https://bugs.webkit.org/show_bug.cgi?id=118750
 

@@ -167,6 +167,7 @@ struct Node {
         , m_refCount(1)
         , m_prediction(SpecNone)
     {
+        misc.replacement = 0;
         setOpAndDefaultFlags(op);
     }
     
@@ -178,6 +179,7 @@ struct Node {
         , m_refCount(1)
         , m_prediction(SpecNone)
     {
+        misc.replacement = 0;
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
     }
@@ -191,6 +193,7 @@ struct Node {
         , m_prediction(SpecNone)
         , m_opInfo(imm.m_value)
     {
+        misc.replacement = 0;
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
     }
@@ -205,6 +208,7 @@ struct Node {
         , m_opInfo(imm1.m_value)
         , m_opInfo2(imm2.m_value)
     {
+        misc.replacement = 0;
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
     }
@@ -219,6 +223,7 @@ struct Node {
         , m_opInfo(imm1.m_value)
         , m_opInfo2(imm2.m_value)
     {
+        misc.replacement = 0;
         setOpAndDefaultFlags(op);
         ASSERT(m_flags & NodeHasVarArgs);
     }
@@ -1398,7 +1403,9 @@ private:
 public:
     // Fields used by various analyses.
     AbstractValue value;
-    Node* replacement;
+    union {
+        Node* replacement;
+    } misc;
 };
 
 inline bool nodeComparator(Node* a, Node* b)

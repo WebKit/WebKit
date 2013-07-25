@@ -49,6 +49,7 @@ public:
         
         clearIsLoadedFrom();
         freeUnnecessaryNodes();
+        m_graph.clearReplacements();
         canonicalizeLocalsInBlocks();
         propagatePhis<LocalOperand>();
         propagatePhis<ArgumentOperand>();
@@ -102,7 +103,6 @@ private:
                 default:
                     break;
                 }
-                node->replacement = 0; // Reset the replacement since the next phase will use it.
                 block->at(toIndex++) = node;
             }
             block->resize(toIndex);
@@ -198,12 +198,12 @@ private:
             
             if (otherNode->op() == GetLocal) {
                 // Replace all references to this GetLocal with otherNode.
-                node->replacement = otherNode;
+                node->misc.replacement = otherNode;
                 return;
             }
             
             ASSERT(otherNode->op() == SetLocal);
-            node->replacement = otherNode->child1().node();
+            node->misc.replacement = otherNode->child1().node();
             return;
         }
         
