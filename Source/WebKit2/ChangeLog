@@ -1,3 +1,12 @@
+2013-05-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back in r149527 with crash fixed.
+
+        Reviewed by Oliver Hunt.
+
+            Rationalized 'this' value conversion
+            https://bugs.webkit.org/show_bug.cgi?id=115542
+
 2013-07-24  Ruth Fong  <ruth_fong@apple.com>
 
         Rename WebColorChooserProxy

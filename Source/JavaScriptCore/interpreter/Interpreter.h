@@ -264,12 +264,6 @@ namespace JSC {
 #endif
     };
 
-    // This value must not be an object that would require this conversion (WebCore's global object).
-    inline bool isValidThisObject(JSValue thisValue, ExecState* exec)
-    {
-        return !thisValue.isObject() || thisValue.toThisObject(exec) == thisValue;
-    }
-
     JSValue eval(CallFrame*);
     CallFrame* loadVarargs(CallFrame*, JSStack*, JSValue thisValue, JSValue arguments, int firstFreeRegister);
 

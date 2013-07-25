@@ -46,7 +46,7 @@ namespace JSC {
     macro(op_create_arguments, 2) \
     macro(op_create_this, 4) \
     macro(op_get_callee, 3) \
-    macro(op_convert_this, 3) \
+    macro(op_to_this, 3) \
     \
     macro(op_new_object, 4) \
     macro(op_new_array, 5) \

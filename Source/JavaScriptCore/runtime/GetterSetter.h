@@ -79,6 +79,8 @@ namespace JSC {
         return static_cast<GetterSetter*>(value.asCell());
     }
 
+    JSValue callGetter(ExecState*, JSValue base, JSValue getterSetter);
+    void callSetter(ExecState*, JSValue base, JSValue getterSetter, JSValue value, ECMAMode);
 
 } // namespace JSC
 

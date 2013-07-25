@@ -529,9 +529,11 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_internalFunctionStructure);
 }
 
-JSObject* JSGlobalObject::toThisObject(JSCell* cell, ExecState*)
+JSValue JSGlobalObject::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
 {
-    return jsCast<JSGlobalObject*>(cell)->globalThis();
+    if (ecmaMode == StrictMode)
+        return jsUndefined();
+    return exec->globalThisValue();
 }
 
 ExecState* JSGlobalObject::globalExec()

@@ -72,7 +72,7 @@ struct MethodTable;
 template <class T> class WriteBarrierBase;
 
 enum PreferredPrimitiveType { NoPreference, PreferNumber, PreferString };
-
+enum ECMAMode { StrictMode, NotStrictMode };
 
 typedef int64_t EncodedJSValue;
     
@@ -245,7 +245,7 @@ public:
     void putToPrimitiveByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
     void putByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
 
-    JSObject* toThisObject(ExecState*) const;
+    JSValue toThis(ExecState*, ECMAMode) const;
 
     static bool equal(ExecState*, JSValue v1, JSValue v2);
     static bool equalSlowCase(ExecState*, JSValue v1, JSValue v2);
@@ -275,7 +275,7 @@ private:
     JS_EXPORT_PRIVATE JSString* toStringSlowCase(ExecState*) const;
     JS_EXPORT_PRIVATE WTF::String toWTFStringSlowCase(ExecState*) const;
     JS_EXPORT_PRIVATE JSObject* toObjectSlowCase(ExecState*, JSGlobalObject*) const;
-    JS_EXPORT_PRIVATE JSObject* toThisObjectSlowCase(ExecState*) const;
+    JS_EXPORT_PRIVATE JSValue toThisSlowCase(ExecState*, ECMAMode) const;
 
 #if USE(JSVALUE32_64)
     /*

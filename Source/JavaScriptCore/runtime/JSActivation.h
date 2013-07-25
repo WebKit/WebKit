@@ -73,7 +73,7 @@ namespace JSC {
         static void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
         static bool deleteProperty(JSCell*, ExecState*, PropertyName);
 
-        static JSObject* toThisObject(JSCell*, ExecState*);
+        static JSValue toThis(JSCell*, ExecState*, ECMAMode);
 
         void tearOff(VM&);
         

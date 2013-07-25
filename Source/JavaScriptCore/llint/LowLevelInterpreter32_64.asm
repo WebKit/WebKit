@@ -396,19 +396,19 @@ _llint_op_get_callee:
     dispatch(3)
 
 
-_llint_op_convert_this:
+_llint_op_to_this:
     traceExecution()
     loadi 4[PC], t0
-    bineq TagOffset[cfr, t0, 8], CellTag, .opConvertThisSlow
+    bineq TagOffset[cfr, t0, 8], CellTag, .opToThisSlow
     loadi PayloadOffset[cfr, t0, 8], t0
     loadp JSCell::m_structure[t0], t0
-    bbb Structure::m_typeInfo + TypeInfo::m_type[t0], ObjectType, .opConvertThisSlow
+    bbneq Structure::m_typeInfo + TypeInfo::m_type[t0], FinalObjectType, .opToThisSlow
     loadi 8[PC], t1
     valueProfile(CellTag, t0, t1)
     dispatch(3)
 
-.opConvertThisSlow:
-    callSlowPath(_llint_slow_path_convert_this)
+.opToThisSlow:
+    callSlowPath(_llint_slow_path_to_this)
     dispatch(3)
 
 

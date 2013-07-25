@@ -382,22 +382,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
 
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter()) {
-                ASSERT(attributes & Accessor);
-                ASSERT(thisObject->structure()->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName) || obj == thisObject);
-                JSObject* setterFunc = asGetterSetter(gs)->setter();        
-                if (!setterFunc) {
-                    if (slot.isStrictMode())
-                        throwError(exec, createTypeError(exec, ASCIILiteral("setting a property that has only a getter")));
-                    return;
-                }
-                
-                CallData callData;
-                CallType callType = setterFunc->methodTable()->getCallData(setterFunc, callData);
-                MarkedArgumentBuffer args;
-                args.append(value);
-
-                // If this is WebCore's global object then we need to substitute the shell.
-                call(exec, setterFunc, callType, callData, thisObject->methodTable()->toThisObject(thisObject, exec), args);
+                callSetter(exec, cell, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
                 return;
             } else
                 ASSERT(!(attributes & Accessor));
@@ -1172,19 +1157,16 @@ void JSObject::setPrototype(VM& vm, JSValue prototype)
     switchToSlowPutArrayStorage(vm);
 }
 
-bool JSObject::setPrototypeWithCycleCheck(VM& vm, JSValue prototype)
+bool JSObject::setPrototypeWithCycleCheck(ExecState* exec, JSValue prototype)
 {
-    JSValue checkFor = this;
-    if (this->isGlobalObject())
-        checkFor = jsCast<JSGlobalObject*>(this)->globalExec()->thisValue();
-
+    ASSERT(methodTable()->toThis(this, exec, NotStrictMode) == this);
     JSValue nextPrototype = prototype;
     while (nextPrototype && nextPrototype.isObject()) {
-        if (nextPrototype == checkFor)
+        if (nextPrototype == this)
             return false;
         nextPrototype = asObject(nextPrototype)->prototype();
     }
-    setPrototype(vm, prototype);
+    setPrototype(exec->vm(), prototype);
     return true;
 }
 
@@ -1560,7 +1542,7 @@ JSString* JSObject::toString(ExecState* exec) const
     return primitive.toString(exec);
 }
 
-JSObject* JSObject::toThisObject(JSCell* cell, ExecState*)
+JSValue JSObject::toThis(JSCell* cell, ExecState*, ECMAMode)
 {
     return jsCast<JSObject*>(cell);
 }
@@ -1640,15 +1622,14 @@ bool JSObject::removeDirect(VM& vm, PropertyName propertyName)
     return true;
 }
 
-NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, PropertyOffset offset)
+NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue getterSetter, PropertyOffset offset)
 {
-    if (JSObject* getterFunction = asGetterSetter(getDirect(offset))->getter()) {
-        if (!structure()->isDictionary())
-            slot.setCacheableGetterSlot(this, getterFunction, offset);
-        else
-            slot.setGetterSlot(getterFunction);
-    } else
-        slot.setUndefined();
+    if (structure()->isDictionary()) {
+        slot.setGetterSlot(jsCast<GetterSetter*>(getterSetter));
+        return;
+    }
+
+    slot.setCacheableGetterSlot(this, jsCast<GetterSetter*>(getterSetter), offset);
 }
 
 void JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, PropertyDescriptor& descriptor, PropertyDescriptor& oldDescriptor)

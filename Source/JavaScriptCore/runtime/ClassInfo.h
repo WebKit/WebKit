@@ -66,8 +66,8 @@ struct MethodTable {
     typedef bool (*GetOwnPropertySlotByIndexFunctionPtr)(JSCell*, ExecState*, unsigned, PropertySlot&);
     GetOwnPropertySlotByIndexFunctionPtr getOwnPropertySlotByIndex;
 
-    typedef JSObject* (*ToThisObjectFunctionPtr)(JSCell*, ExecState*);
-    ToThisObjectFunctionPtr toThisObject;
+    typedef JSValue (*ToThisFunctionPtr)(JSCell*, ExecState*, ECMAMode);
+    ToThisFunctionPtr toThis;
 
     typedef JSValue (*DefaultValueFunctionPtr)(const JSObject*, ExecState*, PreferredPrimitiveType);
     DefaultValueFunctionPtr defaultValue;
@@ -128,7 +128,7 @@ struct MethodTable {
         &ClassName::deletePropertyByIndex, \
         &ClassName::getOwnPropertySlot, \
         &ClassName::getOwnPropertySlotByIndex, \
-        &ClassName::toThisObject, \
+        &ClassName::toThis, \
         &ClassName::defaultValue, \
         &ClassName::getOwnPropertyNames, \
         &ClassName::getOwnNonIndexPropertyNames, \

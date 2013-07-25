@@ -236,8 +236,10 @@ bool JSActivation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName pr
     return Base::deleteProperty(cell, exec, propertyName);
 }
 
-JSObject* JSActivation::toThisObject(JSCell*, ExecState* exec)
+JSValue JSActivation::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
 {
+    if (ecmaMode == StrictMode)
+        return jsUndefined();
     return exec->globalThisValue();
 }
 

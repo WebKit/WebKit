@@ -79,7 +79,7 @@ JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, J
 
     if (!thisValue || thisValue.isUndefinedOrNull())
         thisValue = exec->dynamicGlobalObject();
-    JSObject* thisObj = thisValue.toThisObject(exec);
+    JSObject* thisObj = jsCast<JSObject*>(thisValue.toThis(exec, NotStrictMode));
     JSValue result = exec->interpreter()->execute(program, exec, thisObj);
 
     if (exec->hadException()) {

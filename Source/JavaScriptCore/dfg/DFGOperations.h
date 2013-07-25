@@ -132,7 +132,7 @@ JSCell* DFG_OPERATION operationStringFromCharCode(ExecState*, int32_t)  WTF_INTE
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
 JSCell* DFG_OPERATION operationNewObject(ExecState*, Structure*) WTF_INTERNAL;
 JSCell* DFG_OPERATION operationCreateThis(ExecState*, JSObject* constructor, int32_t inlineCapacity) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationConvertThis(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+EncodedJSValue DFG_OPERATION operationToThis(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationValueAdd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationGetByVal(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty) WTF_INTERNAL;

@@ -716,9 +716,9 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             out.printf("[%4d] create_this %s, %s, %u", location, registerName(r0).data(), registerName(r1).data(), inferredInlineCapacity);
             break;
         }
-        case op_convert_this: {
+        case op_to_this: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] convert_this\t %s", location, registerName(r0).data());
+            out.printf("[%4d] to_this\t %s", location, registerName(r0).data());
             ++it; // Skip value profile.
             break;
         }
@@ -1774,7 +1774,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
             // fallthrough
         }
-        case op_convert_this:
+        case op_to_this:
         case op_get_by_id:
         case op_call_put_result:
         case op_get_callee: {

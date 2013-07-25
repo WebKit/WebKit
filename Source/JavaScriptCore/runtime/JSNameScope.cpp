@@ -44,8 +44,10 @@ void JSNameScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_registerStore);
 }
 
-JSObject* JSNameScope::toThisObject(JSCell*, ExecState* exec)
+JSValue JSNameScope::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
 {
+    if (ecmaMode == StrictMode)
+        return jsUndefined();
     return exec->globalThisValue();
 }
 

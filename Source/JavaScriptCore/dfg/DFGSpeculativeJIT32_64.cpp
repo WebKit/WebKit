@@ -3694,7 +3694,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case ConvertThis: {
+    case ToThis: {
         ASSERT(node->child1().useKind() == UntypedUse);
 
         JSValueOperand thisValue(this, node->child1());
@@ -3705,7 +3705,7 @@ void SpeculativeJIT::compile(Node* node)
         
         GPRResult2 resultTag(this);
         GPRResult resultPayload(this);
-        callOperation(operationConvertThis, resultTag.gpr(), resultPayload.gpr(), thisValueTagGPR, thisValuePayloadGPR);
+        callOperation(operationToThis, resultTag.gpr(), resultPayload.gpr(), thisValueTagGPR, thisValuePayloadGPR);
         
         cellResult(resultPayload.gpr(), node);
         break;

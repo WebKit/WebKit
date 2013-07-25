@@ -271,8 +271,10 @@ JSObject* JSString::toObject(ExecState* exec, JSGlobalObject* globalObject) cons
     return StringObject::create(exec, globalObject, const_cast<JSString*>(this));
 }
 
-JSObject* JSString::toThisObject(JSCell* cell, ExecState* exec)
+JSValue JSString::toThis(JSCell* cell, ExecState* exec, ECMAMode ecmaMode)
 {
+    if (ecmaMode == StrictMode)
+        return cell;
     return StringObject::create(exec, exec->lexicalGlobalObject(), jsCast<JSString*>(cell));
 }
 

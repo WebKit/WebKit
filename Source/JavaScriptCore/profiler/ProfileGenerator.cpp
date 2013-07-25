@@ -64,7 +64,7 @@ void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
     JSValue function;
 
     exec->interpreter()->retrieveLastCaller(exec, lineNumber, sourceID, sourceURL, function);
-    m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, function ? function.toThisObject(exec) : 0, sourceURL, lineNumber), m_head.get(), m_head.get());
+    m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, function, sourceURL, lineNumber), m_head.get(), m_head.get());
     m_head->insertNode(m_currentNode.get());
 }
 

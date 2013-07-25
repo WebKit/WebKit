@@ -2025,9 +2025,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 set(i, constantUndefined(), SetOnEntry);
             NEXT_OPCODE(op_enter);
 
-        case op_convert_this: {
+        case op_to_this: {
             Node* op1 = getThis();
-            if (op1->op() != ConvertThis) {
+            if (op1->op() != ToThis) {
                 CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
                 ValueProfile* profile =
                     m_inlineStackTop->m_profiledBlock->valueProfileForBytecodeOffset(m_currentProfilingIndex);
@@ -2041,7 +2041,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     || !profile->m_singletonValue
                     || !profile->m_singletonValue.isCell()
                     || profile->m_singletonValue.asCell()->classInfo() != &Structure::s_info)
-                    setThis(addToGraph(ConvertThis, op1));
+                    setThis(addToGraph(ToThis, op1));
                 else {
                     addToGraph(
                         CheckStructure,
@@ -2049,7 +2049,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                         op1);
                 }
             }
-            NEXT_OPCODE(op_convert_this);
+            NEXT_OPCODE(op_to_this);
         }
 
         case op_create_this: {

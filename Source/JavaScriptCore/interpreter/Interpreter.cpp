@@ -155,7 +155,6 @@ JSValue eval(CallFrame* callFrame)
     }
 
     JSValue thisValue = callerFrame->thisValue();
-    ASSERT(isValidThisObject(thisValue, callFrame));
     Interpreter* interpreter = callFrame->vm().interpreter;
     return interpreter->execute(eval, callFrame, thisValue, callerScopeChain);
 }
@@ -798,7 +797,6 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
     JSScope* scope = callFrame->scope();
     VM& vm = *scope->vm();
 
-    ASSERT(isValidThisObject(thisObj, callFrame));
     ASSERT(!vm.exception);
     ASSERT(!vm.isCollectorBusy());
     if (vm.isCollectorBusy())
@@ -963,7 +961,6 @@ failedJSONP:
 JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
     VM& vm = callFrame->vm();
-    ASSERT(isValidThisObject(thisValue, callFrame));
     ASSERT(!callFrame->hadException());
     ASSERT(!vm.isCollectorBusy());
     if (vm.isCollectorBusy())
@@ -1220,7 +1217,6 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     SamplingScope samplingScope(this);
     
     ASSERT(scope->vm() == &callFrame->vm());
-    ASSERT(isValidThisObject(thisValue, callFrame));
     ASSERT(!vm.exception);
     ASSERT(!vm.isCollectorBusy());
     if (vm.isCollectorBusy())

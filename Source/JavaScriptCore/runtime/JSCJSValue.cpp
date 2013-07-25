@@ -80,9 +80,12 @@ JSObject* JSValue::toObjectSlowCase(ExecState* exec, JSGlobalObject* globalObjec
     return JSNotAnObject::create(exec);
 }
 
-JSObject* JSValue::toThisObjectSlowCase(ExecState* exec) const
+JSValue JSValue::toThisSlowCase(ExecState* exec, ECMAMode ecmaMode) const
 {
     ASSERT(!isCell());
+
+    if (ecmaMode == StrictMode)
+        return *this;
 
     if (isInt32() || isDouble())
         return constructNumber(exec, exec->lexicalGlobalObject(), asValue());
@@ -147,20 +150,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
 
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter()) {
-                JSObject* setterFunc = asGetterSetter(gs)->setter();        
-                if (!setterFunc) {
-                    if (slot.isStrictMode())
-                        throwError(exec, createTypeError(exec, ASCIILiteral("setting a property that has only a getter")));
-                    return;
-                }
-                
-                CallData callData;
-                CallType callType = setterFunc->methodTable()->getCallData(setterFunc, callData);
-                MarkedArgumentBuffer args;
-                args.append(value);
-
-                // If this is WebCore's global object then we need to substitute the shell.
-                call(exec, setterFunc, callType, callData, *this, args);
+                callSetter(exec, *this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
                 return;
             }
 

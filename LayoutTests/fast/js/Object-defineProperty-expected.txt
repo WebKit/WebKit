@@ -99,11 +99,11 @@ PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {get:undefined, set:
 PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {set:function(x){this.result = x;}}); o.foo is undefined
 PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {set:function(x){this.result = x;}}); o.foo = 42; o.result; is 42
 PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:undefined}); o.foo is 42
-PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:undefined}); o.foo = 42; o.result; threw exception TypeError: setting a property that has only a getter.
+PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:undefined}); o.foo = 42; o.result; threw exception TypeError: Attempted to assign to readonly property..
 PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}}); o.foo is 42
-PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}}); o.foo = 42; o.result; threw exception TypeError: setting a property that has only a getter.
+PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}}); o.foo = 42; o.result; threw exception TypeError: Attempted to assign to readonly property..
 PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {get:undefined, set:undefined}); o.foo is undefined
-PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {get:undefined, set:undefined}); o.foo = 42; o.result; threw exception TypeError: setting a property that has only a getter.
+PASS 'use strict'; var o = Object.defineProperty({}, 'foo', {get:undefined, set:undefined}); o.foo = 42; o.result; threw exception TypeError: Attempted to assign to readonly property..
 PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:function(){return 13;}}); o.foo is 13
 PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:function(){return 13;}}); o.foo = 42; o.result; is 42
 PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {get:undefined}); o.foo is undefined
@@ -111,7 +111,7 @@ PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 
 PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:function(){this.result = 13;}}); o.foo is 42
 PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:function(){this.result = 13;}}); o.foo = 42; o.result; is 13
 PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo is 42
-PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo = 42; o.result; threw exception TypeError: setting a property that has only a getter.
+PASS 'use strict'; var o = Object.defineProperty(Object.defineProperty({foo:1}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}), 'foo', {set:undefined}); o.foo = 42; o.result; threw exception TypeError: Attempted to assign to readonly property..
 PASS 0 in Object.prototype is true
 PASS '0' in Object.prototype is true
 PASS var o = {}; o.readOnly = false; o.readOnly is true

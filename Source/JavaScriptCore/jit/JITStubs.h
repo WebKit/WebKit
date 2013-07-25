@@ -329,7 +329,7 @@ EncodedJSValue JIT_STUB cti_op_call_eval(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_construct_NotJSConstruct(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_check_has_instance(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_create_this(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_convert_this(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+EncodedJSValue JIT_STUB cti_op_to_this(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_del_by_id(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_del_by_val(STUB_ARGS_DECLARATION) WTF_INTERNAL;

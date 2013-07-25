@@ -357,10 +357,10 @@ public:
     JSObject* globalThisObjectFor(CodeOrigin codeOrigin)
     {
         JSGlobalObject* object = globalObjectFor(codeOrigin);
-        return object->methodTable()->toThisObject(object, 0);
+        return jsCast<JSObject*>(object->methodTable()->toThis(object, object->globalExec(), NotStrictMode));
     }
     
-    ExecutableBase* executableFor(InlineCallFrame* inlineCallFrame)
+    ScriptExecutable* executableFor(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)
             return m_codeBlock->ownerExecutable();
@@ -368,7 +368,7 @@ public:
         return inlineCallFrame->executable.get();
     }
     
-    ExecutableBase* executableFor(const CodeOrigin& codeOrigin)
+    ScriptExecutable* executableFor(const CodeOrigin& codeOrigin)
     {
         return executableFor(codeOrigin.inlineCallFrame);
     }

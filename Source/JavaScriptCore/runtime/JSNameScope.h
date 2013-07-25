@@ -52,7 +52,7 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
     bool isDynamicScope(bool& requiresDynamicChecks) const;
-    static JSObject* toThisObject(JSCell*, ExecState*);
+    static JSValue toThis(JSCell*, ExecState*, ECMAMode);
     static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 

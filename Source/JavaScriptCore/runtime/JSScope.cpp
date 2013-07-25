@@ -536,7 +536,7 @@ JSValue JSScope::resolveWithThis(CallFrame* callFrame, const Identifier& identif
         if (callFrame->vm().exception)
             return JSValue();
         ASSERT(value);
-        *base = propertyBase->structure()->typeInfo().isEnvironmentRecord() ? jsUndefined() : JSValue(propertyBase);
+        *base = JSValue(propertyBase);
         return value;
     }
     ASSERT(operations->size());

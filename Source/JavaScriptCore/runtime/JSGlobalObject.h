@@ -384,6 +384,7 @@ public:
 
     VM& vm() const { return *Heap::heap(this)->vm(); }
     JSObject* globalThis() const;
+    JS_EXPORT_PRIVATE void setGlobalThis(VM&, JSObject* globalThis);
 
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
@@ -432,9 +433,7 @@ protected:
     };
     JS_EXPORT_PRIVATE void addStaticGlobals(GlobalPropertyInfo*, int count);
 
-    JS_EXPORT_PRIVATE static JSC::JSObject* toThisObject(JSC::JSCell*, JSC::ExecState*);
-
-    JS_EXPORT_PRIVATE void setGlobalThis(VM&, JSObject* globalThis);
+    JS_EXPORT_PRIVATE static JSC::JSValue toThis(JSC::JSCell*, JSC::ExecState*, ECMAMode);
 
 private:
     friend class LLIntOffsetsExtractor;

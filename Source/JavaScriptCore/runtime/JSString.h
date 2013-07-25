@@ -200,7 +200,7 @@ protected:
 private:
     friend class LLIntOffsetsExtractor;
         
-    static JSObject* toThisObject(JSCell*, ExecState*);
+    static JSValue toThis(JSCell*, ExecState*, ECMAMode);
 
     // Actually getPropertySlot, not getOwnPropertySlot (see JSCell).
     static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);

@@ -277,7 +277,7 @@ void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(exec, value);
 
-    jsObject->setPrototypeWithCycleCheck(exec->vm(), jsValue.isObject() ? jsValue : jsNull());
+    jsObject->setPrototypeWithCycleCheck(exec, jsValue.isObject() ? jsValue : jsNull());
 }
 
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
@@ -528,8 +528,6 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     if (!jsThisObject)
         jsThisObject = exec->globalThisValue();
 
-    jsThisObject = jsThisObject->methodTable()->toThisObject(jsThisObject, exec);
-    
     MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(exec, arguments[i]));

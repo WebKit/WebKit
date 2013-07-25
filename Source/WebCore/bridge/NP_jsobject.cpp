@@ -234,7 +234,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         // Call the function object.
         MarkedArgumentBuffer argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
-        JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp->methodTable()->toThisObject(obj->imp, exec), argList);
+        JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp, argList);
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);

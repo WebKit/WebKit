@@ -614,9 +614,9 @@ inline bool JSValue::inherits(const ClassInfo* classInfo) const
     return isCell() && asCell()->inherits(classInfo);
 }
 
-inline JSObject* JSValue::toThisObject(ExecState* exec) const
+inline JSValue JSValue::toThis(ExecState* exec, ECMAMode ecmaMode) const
 {
-    return isCell() ? asCell()->methodTable()->toThisObject(asCell(), exec) : toThisObjectSlowCase(exec);
+    return isCell() ? asCell()->methodTable()->toThis(asCell(), exec, ecmaMode) : toThisSlowCase(exec, ecmaMode);
 }
 
 inline JSValue JSValue::get(ExecState* exec, PropertyName propertyName) const

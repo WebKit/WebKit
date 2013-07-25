@@ -707,10 +707,11 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
 {
-    if (!exec->thisValue().isObject())
+    JSObject* thisObject = jsDynamicCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode));
+
+    if (!thisObject)
         return JSValue::encode(exec->thisValue().synthesizePrototype(exec));
 
-    JSObject* thisObject = asObject(exec->thisValue());
     if (!thisObject->allowsAccessFrom(exec->trueCallerFrame()))
         return JSValue::encode(jsUndefined());
 
@@ -721,11 +722,12 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
 {
     JSValue value = exec->argument(0);
 
+    JSObject* thisObject = jsDynamicCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode));
+
     // Setting __proto__ of a primitive should have no effect.
-    if (!exec->thisValue().isObject())
+    if (!thisObject)
         return JSValue::encode(jsUndefined());
 
-    JSObject* thisObject = asObject(exec->thisValue());
     if (!thisObject->allowsAccessFrom(exec->trueCallerFrame()))
         return JSValue::encode(jsUndefined());
 
@@ -736,7 +738,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     if (!thisObject->isExtensible())
         return throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
 
-    if (!thisObject->setPrototypeWithCycleCheck(exec->vm(), value))
+    if (!thisObject->setPrototypeWithCycleCheck(exec, value))
         throwError(exec, createError(exec, "cyclic __proto__ value"));
     return JSValue::encode(jsUndefined());
 }

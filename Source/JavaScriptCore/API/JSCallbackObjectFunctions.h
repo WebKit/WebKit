@@ -490,7 +490,7 @@ EncodedJSValue JSCallbackObject<Parent>::call(ExecState* exec)
 {
     JSContextRef execRef = toRef(exec);
     JSObjectRef functionRef = toRef(exec->callee());
-    JSObjectRef thisObjRef = toRef(exec->hostThisValue().toThisObject(exec));
+    JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(exec->hostThisValue().toThis(exec, NotStrictMode)));
     
     for (JSClassRef jsClass = jsCast<JSCallbackObject<Parent>*>(toJS(functionRef))->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsFunctionCallback callAsFunction = jsClass->callAsFunction) {

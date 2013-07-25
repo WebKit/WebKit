@@ -31,7 +31,7 @@
 namespace JSC {
 
     class ExecState;
-    class JSObject;
+    class GetterSetter;
 
 #define JSC_VALUE_MARKER 0
 #define INDEX_GETTER_MARKER reinterpret_cast<GetValueFunc>(2)
@@ -153,21 +153,21 @@ namespace JSC {
             m_data.index = index;
         }
 
-        void setGetterSlot(JSObject* getterFunc)
+        void setGetterSlot(GetterSetter* getterSetter)
         {
-            ASSERT(getterFunc);
+            ASSERT(getterSetter);
             m_thisValue = m_slotBase;
             m_getValue = GETTER_FUNCTION_MARKER;
-            m_data.getterFunc = getterFunc;
+            m_data.getterSetter = getterSetter;
         }
 
-        void setCacheableGetterSlot(JSValue slotBase, JSObject* getterFunc, PropertyOffset offset)
+        void setCacheableGetterSlot(JSValue slotBase, GetterSetter* getterSetter, PropertyOffset offset)
         {
-            ASSERT(getterFunc);
+            ASSERT(getterSetter);
             m_getValue = GETTER_FUNCTION_MARKER;
             m_thisValue = m_slotBase;
             m_slotBase = slotBase;
-            m_data.getterFunc = getterFunc;
+            m_data.getterSetter = getterSetter;
             m_offset = offset;
             m_cachedPropertyType = Getter;
         }
@@ -226,7 +226,7 @@ namespace JSC {
         
         JSValue m_slotBase;
         union {
-            JSObject* getterFunc;
+            GetterSetter* getterSetter;
             unsigned index;
         } m_data;
 

@@ -341,12 +341,12 @@ ALWAYS_INLINE static void DFG_OPERATION operationPutByValInternal(ExecState* exe
 
 extern "C" {
 
-EncodedJSValue DFG_OPERATION operationConvertThis(ExecState* exec, EncodedJSValue encodedOp)
+EncodedJSValue DFG_OPERATION operationToThis(ExecState* exec, EncodedJSValue encodedOp)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
-    return JSValue::encode(JSValue::decode(encodedOp).toThisObject(exec));
+    return JSValue::encode(JSValue::decode(encodedOp).toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode));
 }
 
 JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor, int32_t inlineCapacity)
@@ -570,18 +570,12 @@ EncodedJSValue DFG_OPERATION operationCallCustomGetter(ExecState* exec, JSCell* 
     return JSValue::encode(function(exec, asObject(base), ident));
 }
 
-EncodedJSValue DFG_OPERATION operationCallGetter(ExecState* exec, JSCell* base, JSCell* value)
+EncodedJSValue DFG_OPERATION operationCallGetter(ExecState* exec, JSCell* base, JSCell* getterSetter)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    
-    GetterSetter* getterSetter = asGetterSetter(value);
-    JSObject* getter = getterSetter->getter();
-    if (!getter)
-        return JSValue::encode(jsUndefined());
-    CallData callData;
-    CallType callType = getter->methodTable()->getCallData(getter, callData);
-    return JSValue::encode(call(exec, getter, callType, callData, asObject(base), ArgList()));
+
+    return JSValue::encode(callGetter(exec, base, getterSetter));
 }
 
 void DFG_OPERATION operationPutByValStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)

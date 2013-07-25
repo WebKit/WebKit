@@ -293,7 +293,7 @@ bool NPJSObject::invoke(ExecState* exec, JSGlobalObject* globalObject, JSValue f
     for (uint32_t i = 0; i < argumentCount; ++i)
         argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, globalObject, arguments[i]));
 
-    JSValue value = JSC::call(exec, function, callType, callData, m_jsObject->methodTable()->toThisObject(m_jsObject.get(), exec), argumentList);
+    JSValue value = JSC::call(exec, function, callType, callData, m_jsObject.get(), argumentList);
 
     // Convert and return the result of the function call.
     m_objectMap->convertJSValueToNPVariant(exec, value, *result);

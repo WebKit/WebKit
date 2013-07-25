@@ -113,7 +113,7 @@ public:
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
 
-    static JSObject* toThisObject(JSCell*, ExecState*);
+    static JSValue toThis(JSCell*, ExecState*, ECMAMode);
 
     void zap() { *reinterpret_cast<uintptr_t**>(this) = 0; }
     bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }

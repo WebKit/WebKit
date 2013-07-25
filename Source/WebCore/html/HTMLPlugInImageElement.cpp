@@ -397,9 +397,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     if (callType == JSC::CallTypeNone)
         return;
 
-    JSC::JSObject* thisObj = globalObject->methodTable()->toThisObject(globalObject, exec);
-
-    JSC::call(exec, overlay, callType, callData, thisObj, argList);
+    JSC::call(exec, overlay, callType, callData, globalObject, argList);
 }
 
 bool HTMLPlugInImageElement::partOfSnapshotOverlay(Node* node)

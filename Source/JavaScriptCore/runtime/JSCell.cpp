@@ -139,8 +139,10 @@ bool JSCell::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned ident
     return thisObject->methodTable()->deletePropertyByIndex(thisObject, exec, identifier);
 }
 
-JSObject* JSCell::toThisObject(JSCell* cell, ExecState* exec)
+JSValue JSCell::toThis(JSCell* cell, ExecState* exec, ECMAMode ecmaMode)
 {
+    if (ecmaMode == StrictMode)
+        return cell;
     return cell->toObject(exec, exec->lexicalGlobalObject());
 }
 

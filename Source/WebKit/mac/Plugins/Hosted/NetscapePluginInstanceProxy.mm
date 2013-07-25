@@ -911,7 +911,7 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
-    JSValue value = call(exec, function, callType, callData, object->methodTable()->toThisObject(object, exec), argList);
+    JSValue value = call(exec, function, callType, callData, object, argList);
         
     marshalValue(exec, value, resultData, resultLength);
     exec->clearException();
@@ -943,7 +943,7 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
     MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
-    JSValue value = call(exec, object, callType, callData, object->methodTable()->toThisObject(object, exec), argList);
+    JSValue value = call(exec, object, callType, callData, object, argList);
     
     marshalValue(exec, value, resultData, resultLength);
     exec->clearException();

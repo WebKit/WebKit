@@ -635,8 +635,16 @@ private:
             break;
         }
             
-        case ConvertThis: {
+        case ToThis: {
+            ECMAMode ecmaMode = m_graph.executableFor(node->codeOrigin)->isStrictMode() ? StrictMode : NotStrictMode;
+
             if (isOtherSpeculation(node->child1()->prediction())) {
+                if (ecmaMode == StrictMode) {
+                    setUseKindAndUnboxIfProfitable<OtherUse>(node->child1());
+                    node->convertToIdentity();
+                    break;
+                }
+
                 m_insertionSet.insertNode(
                     m_indexInBlock, SpecNone, Phantom, node->codeOrigin,
                     Edge(node->child1().node(), OtherUse));
@@ -645,7 +653,7 @@ private:
                 break;
             }
             
-            if (isObjectSpeculation(node->child1()->prediction())) {
+            if (isFinalObjectSpeculation(node->child1()->prediction())) {
                 setUseKindAndUnboxIfProfitable<ObjectUse>(node->child1());
                 node->convertToIdentity();
                 break;

@@ -1,3 +1,231 @@
+2013-05-06  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken 32-bit build + some clean up in JITStubs.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=115684.
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITStubs.cpp:
+        - removed unneeded stubs for CPU(X86_64) && USE(JSVALUE32_64).
+        - added some line breaks to more clearly delineate between
+          ports/configurations of stub code.
+
+2013-05-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back in r149527 with crash fixed.
+
+        Reviewed by Oliver Hunt.
+
+            Rationalized 'this' value conversion
+            https://bugs.webkit.org/show_bug.cgi?id=115542
+
+            This fixes a bunch of Sputnik tests, and some bad pointer access.
+
+            The new model is that the callee always performs 'this' value conversion.
+
+            My ultimate goal is to break up resolve_with_this into single-result 
+            opcodes. This step avoids having to add a special form of convert_this
+            that distinguishes callers vs callees.
+
+            Only the callee knows whether it uses 'this' and/or whether 'this'
+            conversion should use StrictMode, so it's most natural to perform
+            convert_this in the callee. 
+
+            * API/JSCallbackFunction.cpp:
+            (JSC::JSCallbackFunction::call): Perform 'this' value conversion for
+            our callee, since it may observe 'this'.
+
+            * API/JSCallbackObjectFunctions.h:
+            (JSC::::call): Ditto.
+
+            * API/JSContextRef.cpp:
+            (JSGlobalContextCreateInGroup): Use a proxy 'this' object in global scope
+            even when we're not in the browser. This eliminates some odd cases where
+            API clients used to be able to get a direct reference to an environment
+            record. Now, any reference to an environment record unambiguously means
+            that the VM resolved that record in the scope chain.
+
+            (JSContextGetGlobalObject): Removed an incorrect comment. Now that JSC
+            participates in the proxy 'this' object scheme, the behavior is not
+            WebCore-only.
+
+            * API/JSObjectRef.cpp:
+            (JSObjectSetPrototype):
+            (JSObjectCallAsFunction): Don't perform 'this' value conversion in the
+            caller; the callee will do it if needed.
+
+            * JavaScriptCore.order: Order!
+
+            * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+            * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+            What are the chances that this will work?
+
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::dumpBytecode):
+            (JSC::CodeBlock::CodeBlock): Renamed convert_this to to_this, to match our
+            other conversion opcodes.
+
+            * bytecode/CodeOrigin.h:
+            (CodeOrigin):
+            (InlineCallFrame):
+            (JSC::CodeOrigin::codeOriginOwner): Use the more precise type for our
+            executable, so compilation can discover where we're in strict mode.
+
+            * bytecode/Opcode.h:
+            (JSC::padOpcodeName): Updated for rename.
+
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::BytecodeGenerator): Always emit to_this when
+            'this' is in use -- strict mode still needs to convert environment
+            records to 'undefined'.
+
+            * dfg/DFGAbstractState.cpp:
+            (JSC::DFG::AbstractState::executeEffects):
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * dfg/DFGCapabilities.h:
+            (JSC::DFG::canCompileOpcode): Updated for renames.
+
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode): Tightened up this code to consider
+            strict mode (a new requirement) and to consider the global object (which
+            was always a requirement).
+
+            * dfg/DFGGraph.h:
+            (JSC::DFG::Graph::globalThisObjectFor):
+            (JSC::DFG::Graph::executableFor):
+            * dfg/DFGNodeType.h:
+            * dfg/DFGOperations.cpp:
+            * dfg/DFGOperations.h:
+            * dfg/DFGPredictionPropagationPhase.cpp:
+            (JSC::DFG::PredictionPropagationPhase::propagate):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile): Ditto.
+
+            * interpreter/Interpreter.cpp:
+            (JSC::eval):
+            (JSC::Interpreter::execute):
+            (JSC::Interpreter::executeCall):
+            * interpreter/Interpreter.h: Don't ASSERT about 'this' -- it's our job
+            to fix it up if needed.
+
+            * jit/JIT.cpp:
+            (JSC::JIT::privateCompileMainPass):
+            (JSC::JIT::privateCompileSlowCases):
+            * jit/JIT.h:
+            (JIT):
+            * jit/JITOpcodes.cpp:
+            (JSC::JIT::emit_op_to_this):
+            (JSC::JIT::emitSlow_op_to_this):
+            * jit/JITOpcodes32_64.cpp:
+            (JSC::JIT::emit_op_to_this):
+            (JSC::JIT::emitSlow_op_to_this):
+            * jit/JITStubs.cpp:
+            (JSC::DEFINE_STUB_FUNCTION):
+            * jit/JITStubs.h: Removed special-case code for various kinds of
+            conversions. The baseline fast path is now final objects only. It hurt
+            my brain to think through how to keep the other fast paths working, and
+            our benchmarks do not object.
+
+            * llint/LLIntData.cpp:
+            (JSC::LLInt::Data::performAssertions):
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+            * llint/LLIntSlowPaths.h:
+            (LLInt):
+            * llint/LowLevelInterpreter.asm:
+            * llint/LowLevelInterpreter32_64.asm:
+            * llint/LowLevelInterpreter64.asm: Updated for renames. Removed some
+            special case code, as in the JIT above.
+
+            * profiler/ProfileGenerator.cpp:
+            (JSC::ProfileGenerator::addParentForConsoleStart):
+            * runtime/CallData.cpp:
+            (JSC::call):
+            * runtime/ClassInfo.h:
+            (MethodTable):
+            * runtime/Completion.cpp:
+            (JSC::evaluate):
+            * runtime/DatePrototype.cpp:
+            (JSC::dateProtoFuncToJSON): The callee performs 'this' conversion, not
+            the caller.
+
+            * runtime/GetterSetter.cpp:
+            (JSC::callGetter):
+            (JSC::callSetter):
+            * runtime/GetterSetter.h: Added helper functions for invoking getters
+            and setters from C++ code, since this was duplicated in a bunch of
+            places.
+
+            * runtime/JSActivation.cpp:
+            (JSC::JSActivation::toThis):
+            * runtime/JSActivation.h:
+            (JSActivation):
+            * runtime/JSCJSValue.cpp:
+            (JSC::JSValue::toThisSlowCase):
+            (JSC::JSValue::putToPrimitive):
+            * runtime/JSCJSValue.h:
+            (JSValue):
+            * runtime/JSCJSValueInlines.h:
+            (JSC::JSValue::toThis):
+            * runtime/JSCell.cpp:
+            (JSC::JSCell::toThis):
+            * runtime/JSCell.h:
+            (JSCell):
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::toThis):
+            * runtime/JSGlobalObject.h:
+            (JSGlobalObject): Filled out runtime support for converting 'this'
+            values as needed, according to the appropriate strictness, using
+            helper functions where getter/setter code was duplicated.
+
+            * runtime/JSGlobalObjectFunctions.cpp:
+            (JSC::globalFuncProtoGetter):
+            (JSC::globalFuncProtoSetter): Perform 'this' value conversion, since we
+            observe 'this'.
+
+            * runtime/JSNameScope.cpp:
+            (JSC::JSNameScope::toThis):
+            * runtime/JSNameScope.h:
+            (JSNameScope): Same as JSActivation.
+
+            * runtime/JSObject.cpp:
+            (JSC::JSObject::put):
+            (JSC::JSObject::setPrototypeWithCycleCheck): Bug fix. Don't peform
+            'this' value conversion in this helper function. The __proto__
+            setter does this for us, since it's the function that logically observes
+            'this' -- and we can ASSERT so. Also, the previous code used
+            "globalExec()->thisValue()", which is a read past the beginning of a
+            buffer! I don't think this ever worked on purpose.
+
+            (JSC::JSObject::toThis):
+            (JSC::JSObject::fillGetterPropertySlot):
+            * runtime/JSObject.h:
+            (JSC::JSObject::inlineGetOwnPropertySlot):
+            * runtime/JSScope.cpp:
+            (JSC::JSScope::resolveWithThis):
+            * runtime/JSString.cpp:
+            (JSC::JSString::toThis):
+            * runtime/JSString.h:
+            (JSString):
+            * runtime/PropertySlot.cpp:
+            (JSC::PropertySlot::functionGetter):
+            * runtime/PropertySlot.h:
+            (JSC):
+            (JSC::PropertySlot::setGetterSlot):
+            (JSC::PropertySlot::setCacheableGetterSlot):
+            * runtime/SparseArrayValueMap.cpp:
+            (JSC::SparseArrayEntry::get):
+            (JSC::SparseArrayEntry::put):
+            * runtime/StrictEvalActivation.cpp:
+            (JSC::StrictEvalActivation::toThis):
+            * runtime/StrictEvalActivation.h:
+            (StrictEvalActivation): Ditto.
+
 2013-05-03  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG::ByteCodeParser doesn't need ExecState*

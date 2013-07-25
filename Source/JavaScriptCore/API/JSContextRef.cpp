@@ -135,6 +135,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 
     if (!globalObjectClass) {
         JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()));
+        globalObject->setGlobalThis(*vm, JSProxy::create(*vm, JSProxy::createStructure(*vm, globalObject, globalObject->prototype()), globalObject));
         return JSGlobalContextRetain(toGlobalRef(globalObject->globalExec()));
     }
 
@@ -186,8 +187,7 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
 
-    // It is necessary to call toThisObject to get the wrapper object when used with WebCore.
-    return toRef(exec->lexicalGlobalObject()->methodTable()->toThisObject(exec->lexicalGlobalObject(), exec));
+    return toRef(jsCast<JSObject*>(exec->lexicalGlobalObject()->methodTable()->toThis(exec->lexicalGlobalObject(), exec, NotStrictMode)));
 }
 
 JSContextGroupRef JSContextGetGroup(JSContextRef ctx)

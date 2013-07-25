@@ -39,7 +39,7 @@ namespace JSC {
 
 struct InlineCallFrame;
 class ExecState;
-class ExecutableBase;
+class ScriptExecutable;
 class JSFunction;
 
 struct CodeOrigin {
@@ -82,7 +82,7 @@ struct CodeOrigin {
     
     // If the code origin corresponds to inlined code, gives you the heap object that
     // would have owned the code if it had not been inlined. Otherwise returns 0.
-    ExecutableBase* codeOriginOwner() const;
+    ScriptExecutable* codeOriginOwner() const;
     
     unsigned stackOffset() const;
     
@@ -100,7 +100,7 @@ struct CodeOrigin {
 
 struct InlineCallFrame {
     Vector<ValueRecovery> arguments;
-    WriteBarrier<ExecutableBase> executable;
+    WriteBarrier<ScriptExecutable> executable;
     WriteBarrier<JSFunction> callee; // This may be null, indicating that this is a closure call and that the JSFunction and JSScope are already on the stack.
     CodeOrigin caller;
     BitVector capturedVars; // Indexed by the machine call frame's variable numbering.
@@ -149,7 +149,7 @@ inline unsigned getCallReturnOffsetForCodeOrigin(CodeOriginAtCallReturnOffset* d
     return data->callReturnOffset;
 }
 
-inline ExecutableBase* CodeOrigin::codeOriginOwner() const
+inline ScriptExecutable* CodeOrigin::codeOriginOwner() const
 {
     if (!inlineCallFrame)
         return 0;

@@ -42,7 +42,7 @@ public:
     }
 
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-    static JSObject* toThisObject(JSCell*, ExecState*);
+    static JSValue toThis(JSCell*, ExecState*, ECMAMode);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {

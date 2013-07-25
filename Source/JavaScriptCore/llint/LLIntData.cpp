@@ -104,6 +104,7 @@ void Data::performAssertions(VM& vm)
 #endif
     ASSERT(StringType == 5);
     ASSERT(ObjectType == 17);
+    ASSERT(FinalObjectType == 18);
     ASSERT(MasqueradesAsUndefined == 1);
     ASSERT(ImplementsHasInstance == 2);
     ASSERT(ImplementsDefaultHasInstance == 8);

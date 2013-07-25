@@ -2497,11 +2497,11 @@ sub GenerateImplementation
                 }
             } else {
                 if ($interfaceName eq "DOMWindow") {
-                    push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThisObject(exec));\n");
+                    push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThis(exec, NotStrictMode));\n");
                     push(@implContent, "    if (!castedThis)\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
-                } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
-                    push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThisObject(exec));\n");
+                } elsif ($interface->extendedAttributes->{"WorkerGlobalScope"}) {
+                    push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThis(exec, NotStrictMode));\n");
                     push(@implContent, "    if (!castedThis)\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
                 } else {

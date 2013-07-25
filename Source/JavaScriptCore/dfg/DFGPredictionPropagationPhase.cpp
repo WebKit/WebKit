@@ -381,7 +381,7 @@ private:
             break;
         }
 
-        case ConvertThis: {
+        case ToThis: {
             SpeculatedType prediction = node->child1()->prediction();
             if (prediction) {
                 if (prediction & ~SpecObject) {

@@ -1106,7 +1106,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetYear(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    JSObject* object = thisValue.toThisObject(exec);
+    JSObject* object = jsCast<JSObject*>(thisValue.toThis(exec, NotStrictMode));
     if (exec->hadException())
         return JSValue::encode(jsNull());
     

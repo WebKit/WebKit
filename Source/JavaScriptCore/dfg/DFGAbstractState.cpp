@@ -1139,7 +1139,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         m_haveStructures = true;
         break;
             
-    case ConvertThis: {
+    case ToThis: {
         AbstractValue& source = forNode(node->child1());
         AbstractValue& destination = forNode(node);
             

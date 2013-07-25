@@ -491,16 +491,15 @@ LLINT_SLOW_PATH_DECL(slow_path_create_this)
     LLINT_RETURN(constructEmptyObject(exec, structure));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_convert_this)
+LLINT_SLOW_PATH_DECL(slow_path_to_this)
 {
     LLINT_BEGIN();
     JSValue v1 = LLINT_OP(1).jsValue();
-    ASSERT(v1.isPrimitive());
 #if ENABLE(VALUE_PROFILER)
-    pc[OPCODE_LENGTH(op_convert_this) - 1].u.profile->m_buckets[0] =
+    pc[OPCODE_LENGTH(op_to_this) - 1].u.profile->m_buckets[0] =
         JSValue::encode(v1.structureOrUndefined());
 #endif
-    LLINT_RETURN(v1.toThisObject(exec));
+    LLINT_RETURN(v1.toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_object)

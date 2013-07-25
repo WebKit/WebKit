@@ -21,21 +21,14 @@
 #include "config.h"
 #include "PropertySlot.h"
 
-#include "JSFunction.h"
-#include "JSGlobalObject.h"
-#include "Operations.h"
+#include "GetterSetter.h"
+#include "JSCJSValueInlines.h"
 
 namespace JSC {
 
 JSValue PropertySlot::functionGetter(ExecState* exec) const
 {
-    // Prevent getter functions from observing execution if an exception is pending.
-    if (exec->hadException())
-        return exec->exception();
-
-    CallData callData;
-    CallType callType = m_data.getterFunc->methodTable()->getCallData(m_data.getterFunc, callData);
-    return call(exec, m_data.getterFunc, callType, callData, m_thisValue.isObject() ? m_thisValue.toThisObject(exec) : m_thisValue, exec->emptyList());
+    return callGetter(exec, m_thisValue, m_data.getterSetter);
 }
 
 } // namespace JSC

@@ -49,8 +49,10 @@ bool StrictEvalActivation::deleteProperty(JSCell*, ExecState*, PropertyName)
     return false;
 }
 
-JSObject* StrictEvalActivation::toThisObject(JSCell*, ExecState* exec)
+JSValue StrictEvalActivation::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
 {
+    if (ecmaMode == StrictMode)
+        return jsUndefined();
     return exec->globalThisValue();
 }
 

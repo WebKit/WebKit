@@ -49,7 +49,7 @@ namespace JSC { namespace DFG {
     macro(Identity, NodeResultJS) \
     \
     /* Nodes for handling functions (both as call and as construct). */\
-    macro(ConvertThis, NodeResultJS) \
+    macro(ToThis, NodeResultJS) \
     macro(CreateThis, NodeResultJS) /* Note this is not MustGenerate since we're returning it anyway. */ \
     macro(GetCallee, NodeResultJS) \
     macro(SetCallee, NodeMustGenerate) \

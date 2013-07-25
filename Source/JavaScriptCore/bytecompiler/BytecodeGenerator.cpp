@@ -395,8 +395,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, JSScope* scope, FunctionBodyNode* f
 
     if (isConstructor()) {
         emitCreateThis(&m_thisRegister);
-    } else if (!codeBlock->isStrictMode() && (functionBody->usesThis() || codeBlock->usesEval() || m_shouldEmitDebugHooks)) {
-        UnlinkedValueProfile profile = emitProfiledOpcode(op_convert_this);
+    } else if (functionBody->usesThis() || codeBlock->usesEval() || m_shouldEmitDebugHooks) {
+        UnlinkedValueProfile profile = emitProfiledOpcode(op_to_this);
         instructions().append(kill(&m_thisRegister));
         instructions().append(profile);
     }

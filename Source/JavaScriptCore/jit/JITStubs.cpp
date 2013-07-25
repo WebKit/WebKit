@@ -137,68 +137,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "ret" "\n"
 );
     
-#elif COMPILER(GCC) && CPU(X86_64)
-
-// These ASSERTs remind you that, if you change the layout of JITStackFrame, you
-// need to change the assembly trampolines below to match.
-COMPILE_ASSERT(offsetof(struct JITStackFrame, code) % 32 == 0x0, JITStackFrame_maintains_32byte_stack_alignment);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, savedRBX) == 0x48, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x90, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x80, JITStackFrame_code_offset_matches_ctiTrampoline);
-
-asm (
-".globl " SYMBOL_STRING(ctiTrampoline) "\n"
-HIDE_SYMBOL(ctiTrampoline) "\n"
-SYMBOL_STRING(ctiTrampoline) ":" "\n"
-    "pushq %rbp" "\n"
-    "movq %rsp, %rbp" "\n"
-    "pushq %r12" "\n"
-    "pushq %r13" "\n"
-    "pushq %r14" "\n"
-    "pushq %r15" "\n"
-    "pushq %rbx" "\n"
-    "subq $0x48, %rsp" "\n"
-    "movq $512, %r12" "\n"
-    "movq $0xFFFF000000000000, %r14" "\n"
-    "movq $0xFFFF000000000002, %r15" "\n"
-    "movq 0x90(%rsp), %r13" "\n"
-    "call *0x80(%rsp)" "\n"
-    "addq $0x48, %rsp" "\n"
-    "popq %rbx" "\n"
-    "popq %r15" "\n"
-    "popq %r14" "\n"
-    "popq %r13" "\n"
-    "popq %r12" "\n"
-    "popq %rbp" "\n"
-    "ret" "\n"
-".globl " SYMBOL_STRING(ctiTrampolineEnd) "\n"
-HIDE_SYMBOL(ctiTrampolineEnd) "\n"
-SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
-);
-
-asm (
-".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
-HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
-SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-    "movq %rsp, %rdi" "\n"
-    "call " LOCAL_REFERENCE(cti_vm_throw) "\n"
-    "int3" "\n"
-);
-
-asm (
-".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
-HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
-SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
-    "addq $0x48, %rsp" "\n"
-    "popq %rbx" "\n"
-    "popq %r15" "\n"
-    "popq %r14" "\n"
-    "popq %r13" "\n"
-    "popq %r12" "\n"
-    "popq %rbp" "\n"
-    "ret" "\n"
-);
-
 #elif (COMPILER(GCC) || COMPILER(RVCT)) && CPU(ARM_THUMB2)
 
 #define THUNK_RETURN_ADDRESS_OFFSET      0x38
@@ -293,7 +231,9 @@ extern "C" {
 #define REGISTER_FILE_OFFSET        92
 #define GLOBAL_DATA_OFFSET         108
 #define STACK_LENGTH               112
+
 #elif CPU(SH4)
+
 #define SYMBOL_STRING(name) #name
 /* code (r4), JSStack* (r5), CallFrame* (r6), void* unused1 (r7), void* unused2(sp), VM (sp)*/
 
@@ -1456,16 +1396,14 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_this)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_convert_this)
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_to_this)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     JSValue v1 = stackFrame.args[0].jsValue();
     CallFrame* callFrame = stackFrame.callFrame;
 
-    ASSERT(v1.isPrimitive());
-
-    JSObject* result = v1.toThisObject(callFrame);
+    JSValue result = v1.toThis(callFrame, callFrame->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -1781,13 +1719,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_getter_stub)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     CallFrame* callFrame = stackFrame.callFrame;
-    GetterSetter* getterSetter = asGetterSetter(stackFrame.args[0].jsObject());
-    if (!getterSetter->getter())
-        return JSValue::encode(jsUndefined());
-    JSObject* getter = asObject(getterSetter->getter());
-    CallData callData;
-    CallType callType = getter->methodTable()->getCallData(getter, callData);
-    JSValue result = call(callFrame, getter, callType, callData, stackFrame.args[1].jsObject(), ArgList());
+    JSValue result = callGetter(callFrame, stackFrame.args[1].jsObject(), stackFrame.args[0].jsObject());
     if (callFrame->hadException())
         returnToThrowTrampoline(&callFrame->vm(), stackFrame.args[2].returnAddress(), STUB_RETURN_ADDRESS);
 

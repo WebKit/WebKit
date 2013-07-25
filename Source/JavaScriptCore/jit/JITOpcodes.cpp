@@ -887,16 +887,16 @@ void JIT::emit_op_init_lazy_reg(Instruction* currentInstruction)
     store64(TrustedImm64((int64_t)0), Address(callFrameRegister, sizeof(Register) * dst));
 }
 
-void JIT::emit_op_convert_this(Instruction* currentInstruction)
+void JIT::emit_op_to_this(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT1);
 
     emitJumpSlowCaseIfNotJSCell(regT1);
-    if (shouldEmitProfiling()) {
-        loadPtr(Address(regT1, JSCell::structureOffset()), regT0);
+    loadPtr(Address(regT1, JSCell::structureOffset()), regT0);
+    if (shouldEmitProfiling())
         emitValueProfilingSite();
-    }
-    addSlowCase(branchPtr(Equal, Address(regT1, JSCell::structureOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
+
+    addSlowCase(branch8(NotEqual, Address(regT0, Structure::typeInfoTypeOffset()), TrustedImm32(FinalObjectType)));
 }
 
 void JIT::emit_op_get_callee(Instruction* currentInstruction)
@@ -952,25 +952,11 @@ void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 
 // Slow cases
 
-void JIT::emitSlow_op_convert_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_to_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    void* globalThis = m_codeBlock->globalObject()->globalThis();
-
     linkSlowCase(iter);
-    if (shouldEmitProfiling())
-        move(TrustedImm64((JSValue::encode(jsUndefined()))), regT0);
-    Jump isNotUndefined = branch64(NotEqual, regT1, TrustedImm64(JSValue::encode(jsUndefined())));
-    emitValueProfilingSite();
-    move(TrustedImm64(JSValue::encode(JSValue(static_cast<JSCell*>(globalThis)))), regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand, regT0);
-    emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_convert_this));
-
     linkSlowCase(iter);
-    if (shouldEmitProfiling())
-        move(TrustedImm64(JSValue::encode(m_vm->stringStructure.get())), regT0);
-    isNotUndefined.link(this);
-    emitValueProfilingSite();
-    JITStubCall stubCall(this, cti_op_convert_this);
+    JITStubCall stubCall(this, cti_op_to_this);
     stubCall.addArgument(regT1);
     stubCall.call(currentInstruction[1].u.operand);
 }
