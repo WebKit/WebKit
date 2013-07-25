@@ -1,3 +1,14 @@
+2013-04-09  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should better abstract floating point arguments
+        https://bugs.webkit.org/show_bug.cgi?id=114300
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGFPRInfo.h:
+        (FPRInfo):
+        (JSC::DFG::FPRInfo::toArgumentRegister):
+
 2013-04-05  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should better abstract arguments
