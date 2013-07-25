@@ -42,7 +42,6 @@ AbstractState::AbstractState(Graph& graph)
     , m_graph(graph)
     , m_variables(m_codeBlock->numParameters(), graph.m_localVars)
     , m_block(0)
-    , m_currentNode(0)
 {
 }
 
@@ -90,7 +89,6 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
     m_isValid = true;
     m_foundConstants = false;
     m_branchDirection = InvalidBranchDirection;
-    m_currentNode = 0;
 }
 
 static void setLiveValues(HashMap<Node*, AbstractValue>& values, HashSet<Node*>& live)
@@ -262,7 +260,6 @@ void AbstractState::reset()
     m_block = 0;
     m_isValid = false;
     m_branchDirection = InvalidBranchDirection;
-    m_currentNode = 0;
 }
 
 AbstractState::BooleanResult AbstractState::booleanResult(Node* node, AbstractValue& value)
@@ -295,13 +292,7 @@ bool AbstractState::startExecuting(Node* node)
     
     node->setCanExit(false);
     
-    if (!node->shouldGenerate()) {
-        m_currentNode = 0;
-        return false;
-    }
-    
-    m_currentNode = node;
-    return true;
+    return node->shouldGenerate();
 }
 
 bool AbstractState::startExecuting(unsigned indexInBlock)
@@ -1771,6 +1762,12 @@ inline void AbstractState::clobberStructures(unsigned indexInBlock)
         return;
     for (size_t i = indexInBlock + 1; i--;)
         forNode(m_block->at(i)).clobberStructures();
+    if (m_graph.m_form == SSA) {
+        HashSet<Node*>::iterator iter = m_block->ssa->liveAtHead.begin();
+        HashSet<Node*>::iterator end = m_block->ssa->liveAtHead.end();
+        for (; iter != end; ++iter)
+            forNode(*iter).clobberStructures();
+    }
     for (size_t i = m_variables.numberOfArguments(); i--;)
         m_variables.argument(i).clobberStructures();
     for (size_t i = m_variables.numberOfLocals(); i--;)
@@ -1983,18 +1980,24 @@ inline bool AbstractState::mergeVariableBetweenBlocks(AbstractValue& destination
 
 void AbstractState::dump(PrintStream& out)
 {
-    bool first = true;
+    CommaPrinter comma(" ");
+    if (m_graph.m_form == SSA) {
+        HashSet<Node*>::iterator iter = m_block->ssa->liveAtHead.begin();
+        HashSet<Node*>::iterator end = m_block->ssa->liveAtHead.end();
+        for (; iter != end; ++iter) {
+            Node* node = *iter;
+            AbstractValue& value = forNode(node);
+            if (value.isClear())
+                continue;
+            out.print(comma, node, ":", value);
+        }
+    }
     for (size_t i = 0; i < m_block->size(); ++i) {
         Node* node = m_block->at(i);
         AbstractValue& value = forNode(node);
         if (value.isClear())
             continue;
-        if (first)
-            first = false;
-        else
-            out.printf(" ");
-        out.printf("@%lu:", static_cast<unsigned long>(node->index()));
-        value.dump(out);
+        out.print(comma, node, ":", value);
     }
 }
 

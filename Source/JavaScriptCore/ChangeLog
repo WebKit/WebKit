@@ -1,3 +1,29 @@
+2013-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: CFA should consider live-at-head for clobbering and dumping
+        https://bugs.webkit.org/show_bug.cgi?id=118857
+
+        Reviewed by Mark Hahnenberg.
+        
+        - clobberStructures() was not considering nodes live-at-head when in SSA
+          form. This means it would fail to clobber some structures.
+        
+        - dump() was not considering nodes live-at-head when in SSA form. This
+          means it wouldn't dump everything that you might be interested in.
+        
+        - AbstractState::m_currentNode is a useless variable and we should get
+          rid of it.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::AbstractState):
+        (JSC::DFG::AbstractState::beginBasicBlock):
+        (JSC::DFG::AbstractState::reset):
+        (JSC::DFG::AbstractState::startExecuting):
+        (JSC::DFG::AbstractState::clobberStructures):
+        (JSC::DFG::AbstractState::dump):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+
 2013-07-16  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Add a phase to create loop pre-headers

@@ -313,7 +313,6 @@ private:
     
     Operands<AbstractValue> m_variables;
     BasicBlock* m_block;
-    Node* m_currentNode;
     
     bool m_haveStructures;
     bool m_foundConstants;
