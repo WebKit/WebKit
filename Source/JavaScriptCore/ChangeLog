@@ -1,3 +1,14 @@
+2013-07-25  Oliver Hunt  <oliver@apple.com>
+
+        More 32bit build fixes
+
+        - Apparnetly some compilers don't track the fastcall directive everywhere we expect
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::call):
+        * bytecode/CodeBlock.cpp:
+        * runtime/Structure.cpp:
+
 2013-07-25  Yi Shen  <max.hong.shen@gmail.com>
 
         Optimize the thread locks for API Shims

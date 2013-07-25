@@ -27,6 +27,7 @@
 #include "Structure.h"
 
 #include "CodeBlock.h"
+#include "DumpContext.h"
 #include "JSObject.h"
 #include "JSPropertyNameIterator.h"
 #include "Lookup.h"

@@ -40,7 +40,7 @@ template <typename T> static EncodedJSValue JSC_HOST_CALL call(ExecState*);
 };
 
 template <typename T>
-EncodedJSValue APICallbackFunction::call(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(ExecState* exec)
 {
     JSContextRef execRef = toRef(exec);
     JSObjectRef functionRef = toRef(exec->callee());

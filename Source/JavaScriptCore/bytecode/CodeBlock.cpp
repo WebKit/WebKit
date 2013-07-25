@@ -2873,7 +2873,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
 #endif
 }
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 unsigned CodeBlock::reoptimizationRetryCounter() const
 {
     ASSERT(m_reoptimizationRetryCounter <= Options::reoptimizationRetryCounterMax());
