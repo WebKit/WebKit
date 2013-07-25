@@ -1,3 +1,54 @@
+2013-05-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: display-profiler-output should make it even easier to diff the compilation story between two different runs
+        https://bugs.webkit.org/show_bug.cgi?id=116556
+
+        Reviewed by Oliver Hunt.
+        
+        This adds three new capabilities:
+        
+        - 'display' now accepts negative compilation indices, and allows specifying
+          wildcard hashes combined with combination indices. Previously you could say
+          'display <hash>', 'display <hash>-<index>-<engine>', or 'display *'. The
+          latter would display every compilation. This improves this so that you can
+          say 'display *-<index>-<engine>'. It also makes it so that you can give a
+          negative index, which allows you to say things like 'display blah--1-dfg',
+          which displays just the last DFG compilation. Also you can say
+          'display *--1-dfg', which displays the last DFG compilation for each code
+          block. I realize that this is kind of ugly, but gosh is it practical.
+        
+        - You can now say 'sort hash', which will henceforth sort all of the output
+          by code hash rather than by the time when it was compiled. This means that
+          if you're doing 'dispay *--1-dfg' and then want to diff the results against
+          something else, you can ensure that this doesn't get confused just by
+          changes in compilation order.
+        
+        - You can now say 'counts off', which will henceforth disable the display of
+          execution counts from 'bytecode' and 'display'. This is also useful for
+          diffs, since if you're trying to figure out why two compilations are
+          different, they probably have radically different counts. 'counts off' gets
+          this out of the output so that it doesn't confuse your diff.
+        
+        Note that to use this effectively you should also have a script that scrubs
+        pointers from text so that the diff doesn't get confused by pointers. I'll
+        post my elimptr script to the bug. Maybe at some point I'll integrate that
+        into display-profiler-output.
+        
+        Put together this is pretty awesome. I was able to do the following:
+        
+        (echo "counts off" && echo "sort hash" && echo "d *--1-dfg") | Tools/Scripts/display-profiler-output richards-serial.profile | elimptr > richards-serial.asm
+        (echo "counts off" && echo "sort hash" && echo "d *--1-dfg") | Tools/Scripts/display-profiler-output richards-concurrent.profile | elimptr > richards-concurrent.asm
+        diff -u richards-serial.asm richards-concurrent.asm
+        
+        And this immediately told me that the reason why richards is slower in the
+        concurrent compilation case is just that we end up compiling *tons* more
+        functions, most of which are trivially inlineable. Basically, concurrent
+        compilation breaks our previous heuristics for delaying compilation of
+        inlineables just enough that they never trigger compilation. We should fix
+        that in a separate bug.
+
+        * Scripts/display-profiler-output:
+
 2013-04-30  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Use hw.availcpu instead of hw.ncpu, and configure LLVM with --enable-zlib=no

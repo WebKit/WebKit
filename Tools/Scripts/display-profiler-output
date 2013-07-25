@@ -250,6 +250,10 @@ class Bytecodes
         }
         sum
     end
+    
+    def codeHashSortKey
+        codeHash
+    end
 end
 
 class ProfiledBytecode
@@ -382,6 +386,10 @@ class Compilation
         @numInlinedCalls = json["numInlinedCalls"]
     end
     
+    def codeHashSortKey
+        bytecode.codeHashSortKey + "-" + compilationIndex.to_s
+    end
+    
     def counter(origin)
         @counters[origin]
     end
@@ -431,6 +439,9 @@ $compilations = $json["compilations"].map {
 }
 $engines = ["Baseline", "DFG"]
 
+$showCounts = true
+$sortMode = :time
+
 def lpad(str,chars)
   if str.length>chars
     str
@@ -469,6 +480,23 @@ def screenWidth
         HighLine::SystemExtensions.terminal_size[0]
     else
         200
+    end
+end
+
+def sortByMode(list)
+    if list.size == 1
+        return list
+    end
+    case $sortMode
+    when :time
+        list
+    when :hash
+        puts "Will sort output by code hash instead of compilation time."
+        puts "Use 'sort time' to change back to the default."
+        puts
+        list.sort { | a, b | a.codeHashSortKey <=> b.codeHashSortKey }
+    else
+        raise
     end
 end
 
@@ -604,6 +632,8 @@ def executeCommand(*commandArray)
         puts "profiling (p)   Show the (internal) profiling data for a code block."
         puts "display (d)     Display details for a code block."
         puts "inlines         Show all inlining stacks that the code block was on."
+        puts "counts          Set whether to show counts for 'bytecode' and 'display'."
+        puts "sort            Set how to sort compilations before display."
         puts "help (h)        Print this message."
         puts "quit (q)        Quit."
     when "quit", "q", "exit"
@@ -638,32 +668,42 @@ def executeCommand(*commandArray)
             pad += 1
         end
         
-        $bytecodes.each {
+        sortByMode($bytecodes).each {
             | bytecodes |
             next unless bytecodes.matches(hash)
-            puts(center("Source Counts", countCols) + " " + center("Machine Counts", machineCols) +
-                 (" " * pad) + center("Bytecode for #{bytecodes}", screenWidth - pad - countCols - 1 - machineCols))
-            puts(center("Base/DFG", countCols) + " " + center("Base/DFG", countCols))
+            if $showCounts
+                puts(center("Source Counts", countCols) + " " + center("Machine Counts", machineCols) +
+                     (" " * pad) + center("Bytecode for #{bytecodes}", screenWidth - pad - countCols - 1 - machineCols))
+                puts(center("Base/DFG", countCols) + " " + center("Base/DFG", countCols))
+            else
+                puts("Bytecode for #{bytecodes}:")
+            end
             bytecodes.each {
                 | bytecode |
-                if bytecode.shouldHaveCounts?
-                    countsString = $engines.map {
-                        | myEngine |
-                        bytecode.topExecutionCount(myEngine)
-                    }.join("/")
-                    machineString = $engines.map {
-                        | myEngine |
-                        bytecode.bottomExecutionCount(myEngine)
-                    }.join("/")
-                else
-                    countsString = ""
-                    machineString = ""
+                if $showCounts
+                    if bytecode.shouldHaveCounts?
+                        countsString = $engines.map {
+                            | myEngine |
+                            bytecode.topExecutionCount(myEngine)
+                        }.join("/")
+                        machineString = $engines.map {
+                            | myEngine |
+                            bytecode.bottomExecutionCount(myEngine)
+                        }.join("/")
+                    else
+                        countsString = ""
+                        machineString = ""
+                    end
+                    print(center(countsString, countCols) + " " + center(machineString, machineCols) + (" " * pad))
                 end
-                puts(center(countsString, countCols) + " " + center(machineString, machineCols) + (" " * pad) + bytecode.description.chomp)
+                puts(bytecode.description.chomp)
                 bytecode.osrExits.each {
                     | exit |
-                    puts(center("!!!!!", countCols) + " " + center("!!!!!", machineCols) + (" " * (pad + 10)) +
-                         "EXIT: in #{exit.compilation} due to #{exit.exitKind}, #{exit.count} times")
+                    if $showCounts
+                        print(center("!!!!!", countCols) + " " + center("!!!!!", machineCols) + (" " * pad))
+                    end
+                    print(" " * 10)
+                    puts("EXIT: in #{exit.compilation} due to #{exit.exitKind}, #{exit.count} times")
                 }
             }
         }
@@ -676,7 +716,7 @@ def executeCommand(*commandArray)
         hash = args[0]
         
         first = true
-        $compilations.each {
+        sortByMode($compilations).each {
             | compilation |
             
             compilation.profiledBytecodes.each {
@@ -714,7 +754,7 @@ def executeCommand(*commandArray)
         
         hash = args[0]
         
-        $bytecodes.each {
+        sortByMode($bytecodes).each {
             | bytecodes |
             next unless bytecodes.matches(hash)
             
@@ -787,11 +827,7 @@ def executeCommand(*commandArray)
         
         case args.length
         when 1
-            if args[0] == "*"
-                hash = nil
-            else
-                hash = args[0]
-            end
+            hash = args[0]
             engine = nil
         when 2
             if mayBeHash(args[0])
@@ -806,7 +842,7 @@ def executeCommand(*commandArray)
             return
         end
         
-        if hash and hash =~ /-([0-9]+)-/
+        if hash and hash =~ /-(-?[0-9]+)-/
             hash = $~.pre_match
             engine = $~.post_match
             compilationIndex = $1.to_i
@@ -829,15 +865,25 @@ def executeCommand(*commandArray)
             engine = trueEngine
         end
         
+        if hash == "*"
+            hash = nil
+        end
+        
         actualCountCols = 13
         sourceCountCols = 10 * $engines.size
         
         first = true
-        $compilations.each {
+        sortByMode($compilations).each {
             | compilation |
             next if hash and not compilation.bytecode.matches(hash)
             next if engine and compilation.engine != engine
-            next if compilationIndex and compilation.compilationIndex != compilationIndex
+            if compilationIndex
+                if compilationIndex < 0
+                    next unless compilation.bytecode.compilations[compilationIndex] == compilation
+                else
+                    next unless compilation.compilationIndex == compilationIndex
+                end
+            end
             
             if first
                 first = false
@@ -846,10 +892,13 @@ def executeCommand(*commandArray)
             end
             
             puts("Compilation #{compilation}:")
-            puts("    Num inlined: GetByIds: #{compilation.numInlinedGetByIds}  PutByIds: #{compilation.numInlinedPutByIds}  Calls: #{compilation.numInlinedCalls}")
-            puts(center("Actual Counts", actualCountCols) + " " + center("Source Counts", sourceCountCols) + " " + center("Disassembly in #{compilation.engine}", screenWidth - 1 - sourceCountCols - 1 - actualCountCols))
-            puts((" " * actualCountCols) + " " + center("Base/DFG", sourceCountCols))
-
+            if $showCounts
+                puts(center("Actual Counts", actualCountCols) + " " + center("Source Counts", sourceCountCols) + " " + center("Disassembly in #{compilation.engine}", screenWidth - 1 - sourceCountCols - 1 - actualCountCols))
+                puts((" " * actualCountCols) + " " + center("Base/DFG", sourceCountCols))
+            else
+                puts("Disassembly in #{compilation.engine}")
+            end
+                
             lines = []
 
             compilation.descriptions.each {
@@ -877,8 +926,14 @@ def executeCommand(*commandArray)
                 }
             }
             
-            exitPrefix = center("!!!!!", actualCountCols) + " " + center("!!!!!", sourceCountCols) + (" " * 25)
-            
+            exitPrefix = ""
+            if $showCounts
+                exitPrefix += center("!!!!!", actualCountCols) + " " + center("!!!!!", sourceCountCols) + (" " * 15)
+            else
+                exitPrefix += "   !!!!!"
+            end
+            exitPrefix += " " * 10
+
             lines.each_with_index {
                 | line, index |
                 codeAddress = line.codeAddress
@@ -894,7 +949,10 @@ def executeCommand(*commandArray)
                     end
                 end
                 if line.shouldShow
-                    puts(center(line.actualCountsString, actualCountCols) + " " + center(line.sourceCountsString, sourceCountCols) + " " + line.disassembly)
+                    if $showCounts
+                        print(center(line.actualCountsString, actualCountCols) + " " + center(line.sourceCountsString, sourceCountCols) + " ")
+                    end
+                    puts(line.disassembly)
                 end
                 if codeAddress
                     # Find the next disassembly address.
@@ -923,6 +981,43 @@ def executeCommand(*commandArray)
                 end
             }
         }
+    when "counts"
+        if args.length != 1
+            puts "Usage: counts on|off|toggle"
+        else
+            case args[0].downcase
+            when 'on'
+                $showCounts = true
+            when 'off'
+                $showCounts = false
+            when 'toggle'
+                $showCounts = !$showCounts
+            else
+                puts "Usage: counts on|off|toggle"
+            end
+        end
+        puts "Current value: #{$showCounts ? 'on' : 'off'}"
+    when "sort"
+        if args.length != 1
+            puts "Usage: sort time|hash"
+            puts
+            puts "sort time: Sorts by the timestamp of when the code was compiled."
+            puts "           This is the default."
+            puts
+            puts "sort hash: Sorts by the code hash. This is more deterministic,"
+            puts "           and is useful for diffs."
+            puts
+        else
+            case args[0].downcase
+            when 'time'
+                $sortMode = :time
+            when 'hash'
+                $sortMode = :hash
+            else
+                puts "Usage: sort time|hash"
+            end
+        end
+        puts "Current value: #{$sortMode}"
     else
         puts "Invalid command: #{command}"
     end
