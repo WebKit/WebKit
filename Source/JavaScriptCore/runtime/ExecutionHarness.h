@@ -124,10 +124,8 @@ inline CompilationResult prepareForExecution(
     ExecState* exec, RefPtr<CodeBlockType>& sink, CodeBlockType* codeBlock,
     RefPtr<JITCode>& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex)
 {
-    return installOptimizedCode(
-        prepareForExecutionImpl(
-            exec, codeBlock, jitCode, jitType, bytecodeIndex),
-        sink, codeBlock, jitCode, MacroAssemblerCodePtr(), 0);
+    CompilationResult result = prepareForExecutionImpl(exec, codeBlock, jitCode, jitType, bytecodeIndex);
+    return installOptimizedCode(result, sink, codeBlock, jitCode, MacroAssemblerCodePtr(), 0);
 }
 
 inline CompilationResult prepareFunctionForExecution(
@@ -136,11 +134,9 @@ inline CompilationResult prepareFunctionForExecution(
     int& numParameters, JITCode::JITType jitType, unsigned bytecodeIndex,
     CodeSpecializationKind kind)
 {
-    return installOptimizedCode(
-        prepareFunctionForExecutionImpl(
-            exec, codeBlock, jitCode, jitCodeWithArityCheck, jitType,
-            bytecodeIndex, kind),
-        sink, codeBlock, jitCode, jitCodeWithArityCheck, &numParameters);
+    CompilationResult result = prepareFunctionForExecutionImpl(exec, codeBlock,
+        jitCode, jitCodeWithArityCheck, jitType, bytecodeIndex, kind);
+    return installOptimizedCode(result, sink, codeBlock, jitCode, jitCodeWithArityCheck, &numParameters);
 }
 
 #if ENABLE(DFG_JIT)

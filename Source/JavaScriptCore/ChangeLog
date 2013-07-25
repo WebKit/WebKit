@@ -1,3 +1,18 @@
+2013-07-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(FTL): Most layout tests crashes
+        https://bugs.webkit.org/show_bug.cgi?id=119089
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/ExecutionHarness.h:
+        (JSC::prepareForExecution): Move prepareForExecutionImpl call into its own statement. This prevents the GCC-compiled
+        code to create the PassOwnPtr<JSC::JITCode> (intended as a parameter to the installOptimizedCode call) from the jitCode
+        RefPtr<JSC::JITCode> parameter before the latter was actually given a proper value through the prepareForExecutionImpl call.
+        Currently it's created beforehand and therefor holds a null pointer before it's anchored as the JIT code in
+        JSC::CodeBlock::setJITCode, which later indirectly causes assertions in JSC::CodeBlock::jitCompile.
+        (JSC::prepareFunctionForExecution): Ditto for prepareFunctionForExecutionImpl.
+
 2013-07-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.
