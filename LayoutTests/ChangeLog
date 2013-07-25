@@ -1,3 +1,18 @@
+2013-07-25  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Add missing includes to shape-inside polygon tests
+        https://bugs.webkit.org/show_bug.cgi?id=119098
+
+        Reviewed by Dirk Schulze.
+
+        We need to include subpixel-utils.js for tests which use simple-polygon.js, since it uses
+        SubPixelLayout, otherwise both the result/expected are generating incorrect output.
+
+        * fast/shapes/shape-inside/shape-inside-regular-polygon16-expected.html:
+        * fast/shapes/shape-inside/shape-inside-regular-polygon16.html:
+        * fast/shapes/shape-inside/shape-inside-regular-polygon8-expected.html:
+        * fast/shapes/shape-inside/shape-inside-regular-polygon8.html:
+
 2013-07-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't force layout when querying a fixed or non-box margin/padding property
