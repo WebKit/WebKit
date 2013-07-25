@@ -10,6 +10,9 @@ function doMax(a, b) {
     return Math.max(a, b);
 }
 
+testRunner.neverInlineFunction(doMin);
+testRunner.neverInlineFunction(doMax);
+
 var count = 0;
 while (!testRunner.numberOfDFGCompiles(doMin) || !testRunner.numberOfDFGCompiles(doMax)) {
     doMin(1.5, 2.5);

@@ -1,3 +1,30 @@
+2013-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+        testRunner should have a way of disabling inlining of functions
+        https://bugs.webkit.org/show_bug.cgi?id=116875
+
+        Reviewed by Mark Hahnenberg.
+
+        * API/JSCTestRunnerUtils.cpp:
+        (JSC::getExecutable):
+        (JSC):
+        (JSC::numberOfDFGCompiles):
+        (JSC::setNeverInline):
+        * API/JSCTestRunnerUtils.h:
+        (JSC):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpAssumingJITType):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::mightInlineFunctionForCall):
+        (JSC::DFG::mightInlineFunctionForClosureCall):
+        (JSC::DFG::mightInlineFunctionForConstruct):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (ScriptExecutable):
+        (JSC::ScriptExecutable::setNeverInline):
+        (JSC::ScriptExecutable::neverInline):
+        (JSC::ScriptExecutable::isInliningCandidate):
+
 2013-05-27  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL should support ArithMod

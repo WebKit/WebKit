@@ -53,17 +53,20 @@ bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 bool mightInlineFunctionForCall(CodeBlock* codeBlock)
 {
     return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount()
-        && !codeBlock->ownerExecutable()->needsActivation();
+        && !codeBlock->ownerExecutable()->needsActivation()
+        && codeBlock->ownerExecutable()->isInliningCandidate();
 }
 bool mightInlineFunctionForClosureCall(CodeBlock* codeBlock)
 {
     return codeBlock->instructionCount() <= Options::maximumFunctionForClosureCallInlineCandidateInstructionCount()
-        && !codeBlock->ownerExecutable()->needsActivation();
+        && !codeBlock->ownerExecutable()->needsActivation()
+        && codeBlock->ownerExecutable()->isInliningCandidate();
 }
 bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
     return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount()
-        && !codeBlock->ownerExecutable()->needsActivation();
+        && !codeBlock->ownerExecutable()->needsActivation()
+        && codeBlock->ownerExecutable()->isInliningCandidate();
 }
 
 inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel result)

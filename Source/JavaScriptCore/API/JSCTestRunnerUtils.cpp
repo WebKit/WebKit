@@ -32,26 +32,40 @@
 
 namespace JSC {
 
-JSValueRef numberOfDFGCompiles(JSContextRef context, JSValueRef theFunctionValueRef)
+static FunctionExecutable* getExecutable(JSContextRef context, JSValueRef theFunctionValueRef)
 {
     ExecState* exec = toJS(context);
     JSValue theFunctionValue = toJS(exec, theFunctionValueRef);
     
     JSFunction* theFunction = jsDynamicCast<JSFunction*>(theFunctionValue);
     if (!theFunction)
-        return JSValueMakeUndefined(context);
+        return 0;
     
     FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(
         theFunction->executable());
-    if (!executable)
-        return JSValueMakeUndefined(context);
+    return executable;
+}
+
+JSValueRef numberOfDFGCompiles(JSContextRef context, JSValueRef theFunctionValueRef)
+{
+    if (FunctionExecutable* executable = getExecutable(context, theFunctionValueRef)) {
+        CodeBlock* baselineCodeBlock = executable->baselineCodeBlockFor(CodeForCall);
+        
+        if (!baselineCodeBlock)
+            return JSValueMakeNumber(context, 0);
+        
+        return JSValueMakeNumber(context, baselineCodeBlock->numberOfDFGCompiles());
+    }
     
-    CodeBlock* baselineCodeBlock = executable->baselineCodeBlockFor(CodeForCall);
+    return JSValueMakeUndefined(context);
+}
+
+JSValueRef setNeverInline(JSContextRef context, JSValueRef theFunctionValueRef)
+{
+    if (FunctionExecutable* executable = getExecutable(context, theFunctionValueRef))
+        executable->setNeverInline(true);
     
-    if (!baselineCodeBlock)
-        return JSValueMakeNumber(context, 0);
-    
-    return JSValueMakeNumber(context, baselineCodeBlock->numberOfDFGCompiles());
+    return JSValueMakeUndefined(context);
 }
 
 } // namespace JSC

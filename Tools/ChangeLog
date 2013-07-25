@@ -1,3 +1,14 @@
+2013-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+        testRunner should have a way of disabling inlining of functions
+        https://bugs.webkit.org/show_bug.cgi?id=116875
+
+        Reviewed by Mark Hahnenberg.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (neverInlineFunction):
+        (TestRunner::staticFunctions):
+
 2013-05-27  Filip Pizlo  <fpizlo@apple.com>
 
         testRunner should be able to tell you if a function is DFG compiled
