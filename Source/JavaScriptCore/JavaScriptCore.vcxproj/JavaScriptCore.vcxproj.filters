@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="assembler">
@@ -100,9 +100,6 @@
       <Filter>assembler</Filter>
     </ClCompile>
     <ClCompile Include="..\assembler\MacroAssembler.cpp">
-      <Filter>assembler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\assembler\MacroAssemblerX86Common.cpp">
       <Filter>assembler</Filter>
     </ClCompile>
     <ClCompile Include="..\bytecode\ArrayAllocationProfile.cpp">
@@ -561,9 +558,6 @@
     <ClCompile Include="..\runtime\JSFunction.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\VM.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClCompile Include="..\runtime\JSGlobalObject.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -763,6 +757,9 @@
       <Filter>parser</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\PropertyTable.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\VM.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1610,9 +1607,6 @@
     <ClInclude Include="..\runtime\JSFunction.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\VM.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\JSGlobalObject.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -1949,6 +1943,12 @@
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\ArrayPrototype.lut.h">
       <Filter>Derived Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\VM.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\assembler\MacroAssemblerX86Common.cpp">
+      <Filter>assembler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

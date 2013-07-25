@@ -446,7 +446,6 @@
     <ClCompile Include="..\runtime\JSCJSValue.cpp" />
     <ClCompile Include="..\runtime\JSDateMath.cpp" />
     <ClCompile Include="..\runtime\JSFunction.cpp" />
-    <ClCompile Include="..\runtime\JSGlobalData.cpp" />
     <ClCompile Include="..\runtime\JSGlobalObject.cpp" />
     <ClCompile Include="..\runtime\JSGlobalObjectFunctions.cpp" />
     <ClCompile Include="..\runtime\JSLock.cpp" />
@@ -503,6 +502,7 @@
     <ClCompile Include="..\runtime\StructureChain.cpp" />
     <ClCompile Include="..\runtime\StructureRareData.cpp" />
     <ClCompile Include="..\runtime\SymbolTable.cpp" />
+    <ClCompile Include="..\runtime\VM.cpp" />
     <ClCompile Include="..\runtime\Watchdog.cpp" />
     <ClCompile Include="..\runtime\WatchdogNone.cpp" />
     <ClCompile Include="..\tools\CodeProfile.cpp" />
@@ -820,7 +820,6 @@
     <ClInclude Include="..\runtime\JSDestructibleObject.h" />
     <ClInclude Include="..\runtime\JSExportMacros.h" />
     <ClInclude Include="..\runtime\JSFunction.h" />
-    <ClInclude Include="..\runtime\JSGlobalData.h" />
     <ClInclude Include="..\runtime\JSGlobalObject.h" />
     <ClInclude Include="..\runtime\JSGlobalObjectFunctions.h" />
     <ClInclude Include="..\runtime\JSLock.h" />
@@ -896,6 +895,7 @@
     <ClInclude Include="..\runtime\Tracing.h" />
     <ClInclude Include="..\runtime\TypedArrayDescriptor.h" />
     <ClInclude Include="..\runtime\Uint16WithFraction.h" />
+    <ClInclude Include="..\runtime\VM.h" />
     <ClInclude Include="..\runtime\Watchdog.h" />
     <ClInclude Include="..\runtime\WeakGCMap.h" />
     <ClInclude Include="..\runtime\WeakRandom.h" />
