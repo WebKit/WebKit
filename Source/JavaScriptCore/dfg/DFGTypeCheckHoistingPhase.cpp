@@ -545,7 +545,7 @@ private:
             return;
         if (!result->value.m_arrayModeHoistingOkay || !result->value.m_arrayModeIsValid)
             return;
-        if (!result->value.m_arrayMode.isContravenedByStructure(structure))
+        if (result->value.m_arrayMode.structureWouldPassArrayModeFiltering(structure))
             return;
         result->value.disableCheckArrayHoisting();
     }
@@ -579,7 +579,7 @@ struct ArrayTypeCheck {
     static bool isContravenedByValue(CheckData& checkData, JSValue value)
     {
         ASSERT(value.isCell());
-        return checkData.m_arrayMode.isContravenedByStructure(value.asCell()->structure());
+        return !checkData.m_arrayMode.structureWouldPassArrayModeFiltering(value.asCell()->structure());
     }
 
     static bool hasEnoughVotesToHoist(VariableAccessData* variable)

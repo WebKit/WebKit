@@ -1,3 +1,21 @@
+2013-06-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        isContravenedByStructure is backwards
+        https://bugs.webkit.org/show_bug.cgi?id=117366
+
+        We should be checking if arrayModeForStructure(structure) is a 
+        subset of arrayModesThatPassFiltering(), not the other way around.
+        Also renamed isContravenedByStructure to better reflect what the 
+        function is trying to determine.
+
+        Rubber stamped by Filip Pizlo.
+
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::structureWouldPassArrayModeFiltering):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::noticeStructureCheckAccountingForArrayMode):
+        (JSC::DFG::ArrayTypeCheck::isContravenedByValue):
+
 2013-06-11  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Type check hoisting phase has a dead if statement
