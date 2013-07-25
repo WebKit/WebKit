@@ -990,7 +990,9 @@ private:
     {
         ASSERT(m_graph.valueOfJSConstant(m_node->child2().node()).isNull());
         masqueradesAsUndefinedWatchpointIfIsStillValid();
-        equalNullOrUndefined(m_node->child1(), EqualNullOrUndefined);
+        m_booleanValues.add(
+            m_node, equalNullOrUndefined(
+                m_node->child1(), AllCellsAreFalse, EqualNullOrUndefined));
     }
     
     void compileCompareStrictEq()
@@ -1028,12 +1030,14 @@ private:
         if (constant.isUndefinedOrNull()
             && !masqueradesAsUndefinedWatchpointIfIsStillValid()) {
             if (constant.isNull()) {
-                equalNullOrUndefined(m_node->child1(), EqualNull);
+                m_booleanValues.add(
+                    m_node, equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualNull));
                 return;
             }
         
             ASSERT(constant.isUndefined());
-            equalNullOrUndefined(m_node->child1(), EqualUndefined);
+            m_booleanValues.add(
+                m_node, equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualUndefined));
             return;
         }
         
@@ -1163,22 +1167,38 @@ private:
             return m_out.notZero32(lowInt32(m_node->child1()));
         case NumberUse:
             return m_out.doubleNotEqual(lowDouble(edge), m_out.doubleZero);
+        case ObjectOrOtherUse:
+            return m_out.bitNot(
+                equalNullOrUndefined(
+                    edge, CellCaseSpeculatesObject, SpeculateNullOrUndefined,
+                    ManualOperandSpeculation));
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return 0;
         }
     }
     
-    enum EqualNullOrUndefinedMode { EqualNull, EqualUndefined, EqualNullOrUndefined };
-    void equalNullOrUndefined(Edge edge, EqualNullOrUndefinedMode mode)
+    enum StringOrObjectMode {
+        AllCellsAreFalse,
+        CellCaseSpeculatesObject
+    };
+    enum EqualNullOrUndefinedMode {
+        EqualNull,
+        EqualUndefined,
+        EqualNullOrUndefined,
+        SpeculateNullOrUndefined
+    };
+    LValue equalNullOrUndefined(
+        Edge edge, StringOrObjectMode cellMode, EqualNullOrUndefinedMode primitiveMode,
+        OperandSpeculationMode operandMode = AutomaticOperandSpeculation)
     {
         bool validWatchpoint = masqueradesAsUndefinedWatchpointIsStillValid();
         
-        LValue value = lowJSValue(edge);
+        LValue value = lowJSValue(edge, operandMode);
         
-        LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("CompareEqConstant cell case"));
-        LBasicBlock primitiveCase = FTL_NEW_BLOCK(m_out, ("CompareEqConstant primitive case"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CompareEqConstant continuation"));
+        LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("EqualNullOrUndefined cell case"));
+        LBasicBlock primitiveCase = FTL_NEW_BLOCK(m_out, ("EqualNullOrUndefined primitive case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("EqualNullOrUndefined continuation"));
         
         m_out.branch(isNotCell(value), primitiveCase, cellCase);
         
@@ -1186,12 +1206,24 @@ private:
         
         Vector<ValueFromBlock, 3> results;
         
+        switch (cellMode) {
+        case AllCellsAreFalse:
+            break;
+        case CellCaseSpeculatesObject:
+            FTL_TYPE_CHECK(
+                jsValueValue(value), edge, (~SpecCell) | SpecObject,
+                m_out.equal(
+                    m_out.loadPtr(value, m_heaps.JSCell_structure),
+                    m_out.constIntPtr(vm().stringStructure.get())));
+            break;
+        }
+        
         if (validWatchpoint) {
             results.append(m_out.anchor(m_out.booleanFalse));
             m_out.jump(continuation);
         } else {
             LBasicBlock masqueradesCase =
-                FTL_NEW_BLOCK(m_out, ("CompareEqConstant masquerades case"));
+                FTL_NEW_BLOCK(m_out, ("EqualNullOrUndefined masquerades case"));
                 
             LValue structure = m_out.loadPtr(value, m_heaps.JSCell_structure);
             
@@ -1215,7 +1247,7 @@ private:
         m_out.appendTo(primitiveCase, continuation);
         
         LValue primitiveResult;
-        switch (mode) {
+        switch (primitiveMode) {
         case EqualNull:
             primitiveResult = m_out.equal(value, m_out.constInt64(ValueNull));
             break;
@@ -1227,13 +1259,21 @@ private:
                 m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
                 m_out.constInt64(ValueNull));
             break;
+        case SpeculateNullOrUndefined:
+            FTL_TYPE_CHECK(
+                jsValueValue(value), edge, SpecCell | SpecOther,
+                m_out.notEqual(
+                    m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
+                    m_out.constInt64(ValueNull)));
+            primitiveResult = m_out.booleanTrue;
+            break;
         }
         results.append(m_out.anchor(primitiveResult));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
         
-        m_booleanValues.add(m_node, m_out.phi(m_out.boolean, results));
+        return m_out.phi(m_out.boolean, results);
     }
     
     void speculateBackward(

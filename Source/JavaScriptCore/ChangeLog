@@ -1,5 +1,25 @@
 2013-05-24  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: FTL boolify should support ObjectOrOtherUse
+        https://bugs.webkit.org/show_bug.cgi?id=116741
+
+        Reviewed by Geoffrey Garen.
+        
+        Just reusing what was already there in equalNullOrUndefined(). Note that we will
+        sometimes generate some redundant IR - like having some spurious bitNot's in
+        places - but it's safe to assume that LLVM will simplify those, and that it won't
+        be the longest pole in the tent for compile times.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEqConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEqConstant):
+        (JSC::FTL::LowerDFGToLLVM::boolify):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+
+2013-05-24  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should support LogicalNot and Branch on Int32 and Number
         https://bugs.webkit.org/show_bug.cgi?id=116739
 

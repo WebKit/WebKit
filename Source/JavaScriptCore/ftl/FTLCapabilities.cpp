@@ -128,6 +128,7 @@ inline bool canCompile(Node* node)
         case BooleanUse:
         case Int32Use:
         case NumberUse:
+        case ObjectOrOtherUse:
             break;
         default:
             return false;
@@ -165,6 +166,7 @@ bool canCompile(Graph& graph)
                 case CellUse:
                 case KnownCellUse:
                 case ObjectUse:
+                case ObjectOrOtherUse:
                     // These are OK.
                     break;
                 default:
