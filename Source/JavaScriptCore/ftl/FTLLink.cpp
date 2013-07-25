@@ -28,6 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "CallFrameInlines.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGCCallHelpers.h"
 #include "DFGCommon.h"

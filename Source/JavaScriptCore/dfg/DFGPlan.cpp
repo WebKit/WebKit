@@ -150,14 +150,30 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     performFixup(dfg);
     performTypeCheckHoisting(dfg);
     
+    unsigned count = 1;
     dfg.m_fixpointState = FixpointNotConverged;
-
-    performCSE(dfg);
-    performArgumentsSimplification(dfg);
-    performCPSRethreading(dfg); // This should usually be a no-op since CSE rarely dethreads, and arguments simplification rarely does anything.
-    performCFA(dfg);
-    performConstantFolding(dfg);
-    performCFGSimplification(dfg);
+    for (;; ++count) {
+        if (logCompilationChanges())
+            dataLogF("DFG beginning optimization fixpoint iteration #%u.\n", count);
+        bool changed = false;
+        
+        if (validationEnabled())
+            validate(dfg);
+        
+        performCFA(dfg);
+        changed |= performConstantFolding(dfg);
+        changed |= performArgumentsSimplification(dfg);
+        changed |= performCFGSimplification(dfg);
+        changed |= performCSE(dfg);
+        
+        if (!changed)
+            break;
+        
+        performCPSRethreading(dfg);
+    }
+    
+    if (logCompilationChanges())
+        dataLogF("DFG optimization fixpoint converged in %u iterations.\n", count);
 
     dfg.m_fixpointState = FixpointConverged;
 
