@@ -29,6 +29,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringHasher.h>
 #include <wtf/Vector.h>
+#include <wtf/text/ConversionMode.h>
 #include <wtf/unicode/Unicode.h>
 
 #if PLATFORM(QT)
@@ -546,6 +547,8 @@ public:
 #if PLATFORM(QT)
     QStringData* qStringData() { return bufferOwnership() == BufferAdoptedQString ? m_qStringData : 0; }
 #endif
+    
+    WTF_EXPORT_STRING_API CString utf8(ConversionMode = LenientConversion) const;
 
 private:
     // The high bits of 'hash' are always empty, but we prefer to store our flags

@@ -31,7 +31,9 @@
 #include <wtf/ProcessID.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WTFThreadData.h>
+#include <wtf/text/CString.h>
 #include <wtf/unicode/CharacterNames.h>
+#include <wtf/unicode/UTF8.h>
 
 #ifdef STRING_STATS
 #include <unistd.h>
@@ -1946,6 +1948,94 @@ size_t StringImpl::sizeInBytes() const
     } else
         size *= 2;
     return size + sizeof(*this);
+}
+
+// Helper to write a three-byte UTF-8 code point to the buffer, caller must check room is available.
+static inline void putUTF8Triple(char*& buffer, UChar ch)
+{
+    ASSERT(ch >= 0x0800);
+    *buffer++ = static_cast<char>(((ch >> 12) & 0x0F) | 0xE0);
+    *buffer++ = static_cast<char>(((ch >> 6) & 0x3F) | 0x80);
+    *buffer++ = static_cast<char>((ch & 0x3F) | 0x80);
+}
+
+CString StringImpl::utf8(ConversionMode mode) const
+{
+    unsigned length = this->length();
+
+    if (!length)
+        return CString("", 0);
+
+    // Allocate a buffer big enough to hold all the characters
+    // (an individual UTF-16 UChar can only expand to 3 UTF-8 bytes).
+    // Optimization ideas, if we find this function is hot:
+    //  * We could speculatively create a CStringBuffer to contain 'length' 
+    //    characters, and resize if necessary (i.e. if the buffer contains
+    //    non-ascii characters). (Alternatively, scan the buffer first for
+    //    ascii characters, so we know this will be sufficient).
+    //  * We could allocate a CStringBuffer with an appropriate size to
+    //    have a good chance of being able to write the string into the
+    //    buffer without reallocing (say, 1.5 x length).
+    if (length > numeric_limits<unsigned>::max() / 3)
+        return CString();
+    Vector<char, 1024> bufferVector(length * 3);
+
+    char* buffer = bufferVector.data();
+
+    if (is8Bit()) {
+        const LChar* characters = this->characters8();
+
+        ConversionResult result = convertLatin1ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size());
+        ASSERT_UNUSED(result, result != targetExhausted); // (length * 3) should be sufficient for any conversion
+    } else {
+        const UChar* characters = this->characters16();
+
+        if (mode == StrictConversionReplacingUnpairedSurrogatesWithFFFD) {
+            const UChar* charactersEnd = characters + length;
+            char* bufferEnd = buffer + bufferVector.size();
+            while (characters < charactersEnd) {
+                // Use strict conversion to detect unpaired surrogates.
+                ConversionResult result = convertUTF16ToUTF8(&characters, charactersEnd, &buffer, bufferEnd, true);
+                ASSERT(result != targetExhausted);
+                // Conversion fails when there is an unpaired surrogate.
+                // Put replacement character (U+FFFD) instead of the unpaired surrogate.
+                if (result != conversionOK) {
+                    ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
+                    // There should be room left, since one UChar hasn't been converted.
+                    ASSERT((buffer + 3) <= bufferEnd);
+                    putUTF8Triple(buffer, replacementCharacter);
+                    ++characters;
+                }
+            }
+        } else {
+            bool strict = mode == StrictConversion;
+            ConversionResult result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size(), strict);
+            ASSERT(result != targetExhausted); // (length * 3) should be sufficient for any conversion
+
+            // Only produced from strict conversion.
+            if (result == sourceIllegal) {
+                ASSERT(strict);
+                return CString();
+            }
+
+            // Check for an unconverted high surrogate.
+            if (result == sourceExhausted) {
+                if (strict)
+                    return CString();
+                // This should be one unpaired high surrogate. Treat it the same
+                // was as an unpaired high surrogate would have been handled in
+                // the middle of a string with non-strict conversion - which is
+                // to say, simply encode it to UTF-8.
+                ASSERT((characters + 1) == (this->characters() + length));
+                ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
+                // There should be room left, since one UChar hasn't been converted.
+                ASSERT((buffer + 3) <= (buffer + bufferVector.size()));
+                putUTF8Triple(buffer, *characters);
+            }
+        }
+    }
+
+    return CString(bufferVector.data(), buffer - bufferVector.data());
 }
 
 } // namespace WTF

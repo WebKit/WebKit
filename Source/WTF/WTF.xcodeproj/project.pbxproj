@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		0F0D85B417234CC100338210 /* NoLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0D85B317234CB100338210 /* NoLock.h */; };
 		0F87105A16643F190090B0AD /* RawPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87105916643F190090B0AD /* RawPointer.h */; };
+		0F8F2B9C172F2596007DBDA5 /* ConversionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */; };
 		0F8F2B91172E00FC007DBDA5 /* CompilationThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B90172E00F0007DBDA5 /* CompilationThread.h */; };
 		0F8F2B92172E0103007DBDA5 /* CompilationThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F2B8F172E00F0007DBDA5 /* CompilationThread.cpp */; };
 		0F9D3360165DBA73005AD387 /* FilePrintStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */; };
@@ -290,6 +291,7 @@
 /* Begin PBXFileReference section */
 		0F0D85B317234CB100338210 /* NoLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoLock.h; sourceTree = "<group>"; };
 		0F87105916643F190090B0AD /* RawPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawPointer.h; sourceTree = "<group>"; };
+		0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversionMode.h; sourceTree = "<group>"; };
 		0F8F2B8F172E00F0007DBDA5 /* CompilationThread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationThread.cpp; sourceTree = "<group>"; };
 		0F8F2B90172E00F0007DBDA5 /* CompilationThread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilationThread.h; sourceTree = "<group>"; };
 		0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilePrintStream.cpp; sourceTree = "<group>"; };
@@ -855,6 +857,7 @@
 		A8A4731B151A825B004123FF /* text */ = {
 			isa = PBXGroup;
 			children = (
+				0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */,
 				A8A4731C151A825B004123FF /* ASCIIFastPath.h */,
 				A8A4731D151A825B004123FF /* AtomicString.cpp */,
 				A8A4731E151A825B004123FF /* AtomicString.h */,
@@ -1068,6 +1071,7 @@
 				A8A47429151A825B004123FF /* StaticConstructors.h in Headers */,
 				A8A4742A151A825B004123FF /* StdLibExtras.h in Headers */,
 				1A6BB769162F300500DD16DB /* StreamBuffer.h in Headers */,
+				0F8F2B9C172F2596007DBDA5 /* ConversionMode.h in Headers */,
 				A8A4743B151A825B004123FF /* StringBuffer.h in Headers */,
 				A8A4743D151A825B004123FF /* StringBuilder.h in Headers */,
 				A8A4743E151A825B004123FF /* StringConcatenate.h in Headers */,
