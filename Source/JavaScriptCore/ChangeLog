@@ -1,3 +1,57 @@
+2013-06-23  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should optimize identifier string equality
+        https://bugs.webkit.org/show_bug.cgi?id=117920
+
+        Reviewed by Sam Weinig.
+        
+        This is a 20% speed-up for string equality comparisons when both strings are
+        identifiers.
+        
+        This is important for two reasons:
+        
+        1) Using strings as enumerations is an idiom. A great example is typeof. It
+           would be great if this performed better.
+        
+        2) When I implement switch_string in the DFG, it would be great to optimize
+           the case where the switched-on value is an identifier. That would involve
+           a simple binary switch rather than a more complicated trie-switch over
+           characters.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::speculationFromCell):
+        * bytecode/SpeculatedType.h:
+        (JSC):
+        (JSC::isStringIdentSpeculation):
+        (JSC::isStringSpeculation):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateStringIdent):
+        (Node):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileStringEquality):
+        (JSC::DFG::SpeculativeJIT::compileStringIdentEquality):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::speculateString):
+        (JSC::DFG::SpeculativeJIT::speculateStringIdentAndLoadStorage):
+        (JSC::DFG::SpeculativeJIT::speculateStringIdent):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+
 2013-06-22  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG shouldn't exit just because a String GetByVal went out-of-bounds

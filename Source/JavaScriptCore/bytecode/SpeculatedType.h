@@ -54,9 +54,11 @@ static const SpeculatedType SpecArguments         = 0x00002000; // It's definite
 static const SpeculatedType SpecStringObject      = 0x00004000; // It's definitely a StringObject.
 static const SpeculatedType SpecObjectOther       = 0x00008000; // It's definitely an object but not JSFinalObject, JSArray, or JSFunction.
 static const SpeculatedType SpecObject            = 0x0000ffff; // Bitmask used for testing for any kind of object prediction.
-static const SpeculatedType SpecString            = 0x00010000; // It's definitely a JSString.
-static const SpeculatedType SpecCellOther         = 0x00020000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
-static const SpeculatedType SpecCell              = 0x0003ffff; // It's definitely a JSCell.
+static const SpeculatedType SpecStringIdent       = 0x00010000; // It's definitely a JSString, and it's an identifier.
+static const SpeculatedType SpecStringVar         = 0x00020000; // It's definitely a JSString, and it's not an identifier.
+static const SpeculatedType SpecString            = 0x00030000; // It's definitely a JSString.
+static const SpeculatedType SpecCellOther         = 0x00040000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
+static const SpeculatedType SpecCell              = 0x0007ffff; // It's definitely a JSCell.
 static const SpeculatedType SpecInt32             = 0x00800000; // It's definitely an Int32.
 static const SpeculatedType SpecDoubleReal        = 0x01000000; // It's definitely a non-NaN double.
 static const SpeculatedType SpecDoubleNaN         = 0x02000000; // It's definitely a NaN.
@@ -108,9 +110,14 @@ inline bool isFixedIndexedStorageObjectSpeculation(SpeculatedType value)
     return !!value && (value & FixedIndexedStorageMask) == value;
 }
 
+inline bool isStringIdentSpeculation(SpeculatedType value)
+{
+    return value == SpecStringIdent;
+}
+
 inline bool isStringSpeculation(SpeculatedType value)
 {
-    return value == SpecString;
+    return !!value && (value & SpecString) == value;
 }
 
 inline bool isArraySpeculation(SpeculatedType value)

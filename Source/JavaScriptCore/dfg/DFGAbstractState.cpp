@@ -801,29 +801,39 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
 
         JSValue leftConst = forNode(node->child1()).value();
         JSValue rightConst = forNode(node->child2()).value();
-        if (leftConst && rightConst && leftConst.isNumber() && rightConst.isNumber()) {
-            double a = leftConst.asNumber();
-            double b = rightConst.asNumber();
-            switch (node->op()) {
-            case CompareLess:
-                constantWasSet = trySetConstant(node, jsBoolean(a < b));
-                break;
-            case CompareLessEq:
-                constantWasSet = trySetConstant(node, jsBoolean(a <= b));
-                break;
-            case CompareGreater:
-                constantWasSet = trySetConstant(node, jsBoolean(a > b));
-                break;
-            case CompareGreaterEq:
-                constantWasSet = trySetConstant(node, jsBoolean(a >= b));
-                break;
-            case CompareEq:
-                constantWasSet = trySetConstant(node, jsBoolean(a == b));
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                constantWasSet = false;
-                break;
+        if (leftConst && rightConst) {
+            if (leftConst.isNumber() && rightConst.isNumber()) {
+                double a = leftConst.asNumber();
+                double b = rightConst.asNumber();
+                switch (node->op()) {
+                case CompareLess:
+                    constantWasSet = trySetConstant(node, jsBoolean(a < b));
+                    break;
+                case CompareLessEq:
+                    constantWasSet = trySetConstant(node, jsBoolean(a <= b));
+                    break;
+                case CompareGreater:
+                    constantWasSet = trySetConstant(node, jsBoolean(a > b));
+                    break;
+                case CompareGreaterEq:
+                    constantWasSet = trySetConstant(node, jsBoolean(a >= b));
+                    break;
+                case CompareEq:
+                    constantWasSet = trySetConstant(node, jsBoolean(a == b));
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    constantWasSet = false;
+                    break;
+                }
+            }
+            
+            if (!constantWasSet && node->op() == CompareEq
+                && leftConst.isString() && rightConst.isString()) {
+                const StringImpl* a = asString(leftConst)->tryGetValueImpl();
+                const StringImpl* b = asString(rightConst)->tryGetValueImpl();
+                if (a && b)
+                    constantWasSet = trySetConstant(node, jsBoolean(WTF::equal(a, b)));
             }
         }
         
@@ -858,10 +868,20 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         Node* rightNode = node->child2().node();
         JSValue left = forNode(leftNode).value();
         JSValue right = forNode(rightNode).value();
-        if (left && right && left.isNumber() && right.isNumber()
-            && trySetConstant(node, jsBoolean(left.asNumber() == right.asNumber()))) {
-            m_foundConstants = true;
-            break;
+        if (left && right) {
+            if (left.isNumber() && right.isNumber()
+                && trySetConstant(node, jsBoolean(left.asNumber() == right.asNumber()))) {
+                m_foundConstants = true;
+                break;
+            }
+            if (left.isString() && right.isString()) {
+                const StringImpl* a = asString(left)->tryGetValueImpl();
+                const StringImpl* b = asString(right)->tryGetValueImpl();
+                if (a && b && trySetConstant(node, jsBoolean(WTF::equal(a, b)))) {
+                    m_foundConstants = true;
+                    break;
+                }
+            }
         }
         forNode(node).setType(SpecBoolean);
         node->setCanExit(true); // This is overly conservative.

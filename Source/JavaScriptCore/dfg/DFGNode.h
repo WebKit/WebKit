@@ -1194,6 +1194,11 @@ struct Node {
         return isBooleanSpeculation(prediction());
     }
    
+    bool shouldSpeculateStringIdent()
+    {
+        return isStringIdentSpeculation(prediction());
+    }
+ 
     bool shouldSpeculateString()
     {
         return isStringSpeculation(prediction());

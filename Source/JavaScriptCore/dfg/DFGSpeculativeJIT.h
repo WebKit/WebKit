@@ -1876,6 +1876,7 @@ public:
     void compileObjectOrOtherLogicalNot(Edge value);
     void compileLogicalNot(Node*);
     void compileStringEquality(Node*);
+    void compileStringIdentEquality(Node*);
     void emitObjectOrOtherBranch(Edge value, BlockIndex taken, BlockIndex notTaken);
     void emitBranch(Node*);
     void emitSwitchIntJump(SwitchData*, GPRReg value, GPRReg scratch);
@@ -2066,6 +2067,10 @@ public:
     void speculateCell(Edge);
     void speculateObject(Edge);
     void speculateObjectOrOther(Edge);
+    void speculateString(Edge edge, GPRReg cell);
+    void speculateStringIdentAndLoadStorage(Edge edge, GPRReg string, GPRReg storage);
+    void speculateStringIdent(Edge edge, GPRReg string);
+    void speculateStringIdent(Edge);
     void speculateString(Edge);
     template<typename StructureLocationType>
     void speculateStringObjectForStructure(Edge, StructureLocationType);

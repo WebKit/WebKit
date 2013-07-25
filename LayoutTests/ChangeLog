@@ -1,3 +1,24 @@
+2013-06-23  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should optimize identifier string equality
+        https://bugs.webkit.org/show_bug.cgi?id=117920
+
+        Reviewed by Sam Weinig.
+        
+        Add a benchmark for string equality where there is a long identifier, and
+        also add a benchmark for non-identifier string equality (since the previous
+        test for string equality was really identifier equality).
+
+        * fast/js/regress/script-tests/string-long-ident-equality.js: Added.
+        (foo):
+        * fast/js/regress/script-tests/string-var-equality.js: Added.
+        (addFoo):
+        (foo):
+        * fast/js/regress/string-long-ident-equality-expected.txt: Added.
+        * fast/js/regress/string-long-ident-equality.html: Added.
+        * fast/js/regress/string-var-equality-expected.txt: Added.
+        * fast/js/regress/string-var-equality.html: Added.
+
 2013-06-21  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG shouldn't exit just because a String GetByVal went out-of-bounds

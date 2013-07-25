@@ -138,10 +138,19 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
                 isTop = false;
         }
 
-        if (value & SpecString)
+        if ((value & SpecString) == SpecString)
             myOut.print("String");
-        else
-            isTop = false;
+        else {
+            if (value & SpecStringIdent)
+                myOut.print("Stringident");
+            else
+                isTop = false;
+            
+            if (value & SpecStringVar)
+                myOut.print("Stringvar");
+            else
+                isTop = false;
+        }
     }
     
     if (value & SpecInt32)
@@ -149,15 +158,19 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
     else
         isTop = false;
     
-    if (value & SpecDoubleReal)
-        myOut.print("Doublereal");
-    else
-        isTop = false;
-    
-    if (value & SpecDoubleNaN)
-        myOut.print("Doublenan");
-    else
-        isTop = false;
+    if ((value & SpecDouble) == SpecDouble)
+        myOut.print("Double");
+    else {
+        if (value & SpecDoubleReal)
+            myOut.print("Doublereal");
+        else
+            isTop = false;
+        
+        if (value & SpecDoubleNaN)
+            myOut.print("Doublenan");
+        else
+            isTop = false;
+    }
     
     if (value & SpecBoolean)
         myOut.print("Bool");
@@ -186,6 +199,8 @@ static const char* speculationToAbbreviatedString(SpeculatedType prediction)
         return "<Final>";
     if (isArraySpeculation(prediction))
         return "<Array>";
+    if (isStringIdentSpeculation(prediction))
+        return "<StringIdent>";
     if (isStringSpeculation(prediction))
         return "<String>";
     if (isFunctionSpeculation(prediction))
@@ -291,6 +306,13 @@ SpeculatedType speculationFromStructure(Structure* structure)
 
 SpeculatedType speculationFromCell(JSCell* cell)
 {
+    if (JSString* string = jsDynamicCast<JSString*>(cell)) {
+        if (const StringImpl* impl = string->tryGetValueImpl()) {
+            if (impl->isIdentifier())
+                return SpecStringIdent;
+        }
+        return SpecStringVar;
+    }
     return speculationFromStructure(cell->structure());
 }
 

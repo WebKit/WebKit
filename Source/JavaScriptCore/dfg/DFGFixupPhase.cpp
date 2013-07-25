@@ -311,6 +311,11 @@ private:
                 setUseKindAndUnboxIfProfitable<BooleanUse>(node->child2());
                 break;
             }
+            if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
+                setUseKindAndUnboxIfProfitable<StringIdentUse>(node->child1());
+                setUseKindAndUnboxIfProfitable<StringIdentUse>(node->child2());
+                break;
+            }
             if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && GPRInfo::numberOfRegisters >= 7) {
                 setUseKindAndUnboxIfProfitable<StringUse>(node->child1());
                 setUseKindAndUnboxIfProfitable<StringUse>(node->child2());
@@ -352,6 +357,11 @@ private:
             if (Node::shouldSpeculateNumber(node->child1().node(), node->child2().node())) {
                 fixDoubleEdge<NumberUse>(node->child1());
                 fixDoubleEdge<NumberUse>(node->child2());
+                break;
+            }
+            if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
+                setUseKindAndUnboxIfProfitable<StringIdentUse>(node->child1());
+                setUseKindAndUnboxIfProfitable<StringIdentUse>(node->child2());
                 break;
             }
             if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && GPRInfo::numberOfRegisters >= 7) {

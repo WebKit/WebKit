@@ -1545,7 +1545,7 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
         else if (node->isBinaryUseKind(NumberUse))
             compilePeepHoleDoubleBranch(node, branchNode, doubleCondition);
         else if (node->op() == CompareEq) {
-            if (node->isBinaryUseKind(StringUse)) {
+            if (node->isBinaryUseKind(StringUse) || node->isBinaryUseKind(StringIdentUse)) {
                 // Use non-peephole comparison, for now.
                 return false;
             }
@@ -3685,6 +3685,11 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
             return false;
         }
 
+        if (node->isBinaryUseKind(StringIdentUse)) {
+            compileStringIdentEquality(node);
+            return false;
+        }
+        
         if (node->isBinaryUseKind(ObjectUse)) {
             compileObjectEquality(node);
             return false;
@@ -3834,6 +3839,11 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
         
+    case StringIdentUse: {
+        compileStringIdentEquality(node);
+        return false;
+    }
+        
     case ObjectUse: {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
@@ -3898,21 +3908,13 @@ void SpeculativeJIT::compileStringEquality(Node* node)
     JITCompiler::JumpList falseCase;
     JITCompiler::JumpList slowCase;
     
-    DFG_TYPE_CHECK(
-        JSValueSource::unboxedCell(leftGPR), node->child1(), SpecString, m_jit.branchPtr(
-            MacroAssembler::NotEqual,
-            MacroAssembler::Address(leftGPR, JSCell::structureOffset()),
-            MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+    speculateString(node->child1(), leftGPR);
     
     // It's safe to branch around the type check below, since proving that the values are
     // equal does indeed prove that the right value is a string.
     trueCase.append(m_jit.branchPtr(MacroAssembler::Equal, leftGPR, rightGPR));
     
-    DFG_TYPE_CHECK(
-        JSValueSource::unboxedCell(rightGPR), node->child2(), SpecString, m_jit.branchPtr(
-            MacroAssembler::NotEqual,
-            MacroAssembler::Address(rightGPR, JSCell::structureOffset()),
-            MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+    speculateString(node->child2(), rightGPR);
 
     m_jit.load32(MacroAssembler::Address(leftGPR, JSString::offsetOfLength()), lengthGPR);
     
@@ -3975,6 +3977,37 @@ void SpeculativeJIT::compileStringEquality(Node* node)
             slowCase, this, operationCompareStringEq, leftTempGPR, leftGPR, rightGPR));
     
 #if USE(JSVALUE64)
+    jsValueResult(leftTempGPR, node, DataFormatJSBoolean);
+#else
+    booleanResult(leftTempGPR, node);
+#endif
+}
+
+void SpeculativeJIT::compileStringIdentEquality(Node* node)
+{
+    SpeculateCellOperand left(this, node->child1());
+    SpeculateCellOperand right(this, node->child2());
+    GPRTemporary leftTemp(this);
+    GPRTemporary rightTemp(this);
+    
+    GPRReg leftGPR = left.gpr();
+    GPRReg rightGPR = right.gpr();
+    GPRReg leftTempGPR = leftTemp.gpr();
+    GPRReg rightTempGPR = rightTemp.gpr();
+
+    JITCompiler::JumpList trueCase;
+    JITCompiler::JumpList falseCase;
+    
+    speculateString(node->child1(), leftGPR);
+    speculateString(node->child2(), rightGPR);
+    
+    speculateStringIdentAndLoadStorage(node->child1(), leftGPR, leftTempGPR);
+    speculateStringIdentAndLoadStorage(node->child2(), rightGPR, rightTempGPR);
+    
+    m_jit.comparePtr(MacroAssembler::Equal, leftTempGPR, rightTempGPR, leftTempGPR);
+    
+#if USE(JSVALUE64)
+    m_jit.or32(TrustedImm32(ValueFalse), leftTempGPR);
     jsValueResult(leftTempGPR, node, DataFormatJSBoolean);
 #else
     booleanResult(leftTempGPR, node);
@@ -4541,18 +4574,61 @@ void SpeculativeJIT::speculateObjectOrOther(Edge edge)
 #endif
 }
 
+void SpeculativeJIT::speculateString(Edge edge, GPRReg cell)
+{
+    DFG_TYPE_CHECK(
+        JSValueSource::unboxedCell(cell), edge, SpecString, m_jit.branchPtr(
+            MacroAssembler::NotEqual, 
+            MacroAssembler::Address(cell, JSCell::structureOffset()), 
+            MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+}
+
+void SpeculativeJIT::speculateStringIdentAndLoadStorage(Edge edge, GPRReg string, GPRReg storage)
+{
+    m_jit.loadPtr(MacroAssembler::Address(string, JSString::offsetOfValue()), storage);
+    
+    if (!needsTypeCheck(edge, SpecStringIdent))
+        return;
+
+    speculationCheck(
+        BadType, JSValueSource::unboxedCell(string), edge,
+        m_jit.branchTestPtr(MacroAssembler::Zero, storage));
+    speculationCheck(
+        BadType, JSValueSource::unboxedCell(string), edge, m_jit.branchTest32(
+            MacroAssembler::Zero,
+            MacroAssembler::Address(storage, StringImpl::flagsOffset()),
+            MacroAssembler::TrustedImm32(StringImpl::flagIsIdentifier())));
+    
+    m_state.filter(edge, SpecStringIdent);
+}
+
+void SpeculativeJIT::speculateStringIdent(Edge edge, GPRReg string)
+{
+    if (!needsTypeCheck(edge, SpecStringIdent))
+        return;
+
+    GPRTemporary temp(this);
+    speculateStringIdentAndLoadStorage(edge, string, temp.gpr());
+}
+
+void SpeculativeJIT::speculateStringIdent(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecStringIdent))
+        return;
+    
+    SpeculateCellOperand operand(this, edge);
+    GPRReg gpr = operand.gpr();
+    speculateString(edge, gpr);
+    speculateStringIdent(edge, gpr);
+}
+
 void SpeculativeJIT::speculateString(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecString))
         return;
     
     SpeculateCellOperand operand(this, edge);
-    GPRReg gpr = operand.gpr();
-    DFG_TYPE_CHECK(
-        JSValueSource::unboxedCell(gpr), edge, SpecString, m_jit.branchPtr(
-            MacroAssembler::NotEqual, 
-            MacroAssembler::Address(gpr, JSCell::structureOffset()), 
-            MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
+    speculateString(edge, operand.gpr());
 }
 
 void SpeculativeJIT::speculateStringObject(Edge edge, GPRReg gpr)
@@ -4680,6 +4756,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case ObjectOrOtherUse:
         speculateObjectOrOther(edge);
+        break;
+    case StringIdentUse:
+        speculateStringIdent(edge);
         break;
     case StringUse:
         speculateString(edge);
