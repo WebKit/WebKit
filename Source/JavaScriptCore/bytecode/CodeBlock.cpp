@@ -82,7 +82,11 @@ CString CodeBlock::inferredName() const
 
 CodeBlockHash CodeBlock::hash() const
 {
-    return CodeBlockHash(ownerExecutable()->source(), specializationKind());
+    if (!m_hash) {
+        RELEASE_ASSERT(!isCompilationThread());
+        m_hash = CodeBlockHash(ownerExecutable()->source(), specializationKind());
+    }
+    return m_hash;
 }
 
 CString CodeBlock::sourceCodeForTools() const
@@ -1498,6 +1502,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
+    , m_hash(other.m_hash)
 #if ENABLE(JIT)
     , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
 #endif
@@ -1539,6 +1544,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
+#if ENABLE(JIT)
+    , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
+#endif
 {
     m_vm->startedCompiling(this);
 

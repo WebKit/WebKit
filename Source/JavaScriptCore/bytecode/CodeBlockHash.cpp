@@ -63,6 +63,10 @@ CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKin
     sha1.computeHash(digest);
     m_hash += digest[0] | (digest[1] << 8) | (digest[2] << 16) | (digest[3] << 24);
     m_hash ^= static_cast<unsigned>(kind);
+    
+    // Ensure that 0 corresponds to the hash not having been computed.
+    if (!m_hash)
+        m_hash = 1;
 }
 
 void CodeBlockHash::dump(PrintStream& out) const

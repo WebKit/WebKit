@@ -1088,6 +1088,8 @@ private:
     uint32_t m_osrExitCounter;
     uint16_t m_optimizationDelayCounter;
     uint16_t m_reoptimizationRetryCounter;
+    
+    mutable CodeBlockHash m_hash;
 
     struct RareData {
         WTF_MAKE_FAST_ALLOCATED;

@@ -1,3 +1,29 @@
+2013-06-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Concurrent JIT shouldn't try to recompute the CodeBlockHash as part of debug dumps, since doing so may fail if dealing with a CachedScript that doesn't have its script string handy
+        https://bugs.webkit.org/show_bug.cgi?id=117676
+
+        Reviewed by Sam Weinig.
+
+        CodeBlock now caches m_hash, and the DFG Driver will force its computation if we're doing debug dumps of any kind.
+        
+        Also made sure that CodeBlock::CodeBlock initializes all of its fields; it was previously missing the
+        initialization of m_capabilityLevelState.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::hash):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/CodeBlockHash.cpp:
+        (JSC::CodeBlockHash::CodeBlockHash):
+        * bytecode/CodeBlockHash.h:
+        (CodeBlockHash):
+        (JSC::CodeBlockHash::isSet):
+        (JSC::CodeBlockHash::operator!):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+
 2013-06-11  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should support op_in and it should use patching to make it fast

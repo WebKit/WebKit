@@ -56,6 +56,9 @@ public:
     CodeBlockHash(const SourceCode&, CodeSpecializationKind);
     
     explicit CodeBlockHash(const char*);
+
+    bool isSet() const { return !!m_hash; }
+    bool operator!() const { return !isSet(); }
     
     unsigned hash() const { return m_hash; }
     
