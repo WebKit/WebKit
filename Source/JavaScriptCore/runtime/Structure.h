@@ -43,6 +43,7 @@
 #include "Weak.h"
 #include <wtf/CompilationThread.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/PrintStream.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringImpl.h>
 
@@ -355,7 +356,9 @@ public:
     {
         return m_transitionWatchpointSet;
     }
-        
+    
+    void dump(PrintStream&) const;
+    
     static JS_EXPORTDATA const ClassInfo s_info;
 
 private:

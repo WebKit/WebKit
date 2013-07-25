@@ -1,5 +1,34 @@
 2013-06-20  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: Structure should have a dump()
+        https://bugs.webkit.org/show_bug.cgi?id=117859
+
+        Reviewed by Geoffrey Garen.
+        
+        This is pretty cool. Anywhere we previously printed Structure pointers in dumps,
+        we now print a bunch of other info as well. For example, for an object literal
+        like "{f:42, g:64, h:24}", when we print the structure we'll now get:
+
+            0x107a0af80:[Object, {f:0, g:1, h:2}, NonArray, Proto:0x107a8fff0]
+        
+        This also changes a bunch of places to use the dump method.
+
+        * bytecode/StructureSet.h:
+        (JSC::StructureSet::dump):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::dump):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dump):
+        * runtime/Structure.cpp:
+        (JSC::Structure::dump):
+        (JSC):
+        * runtime/Structure.h:
+        (Structure):
+
+2013-06-20  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: There should only be one table of SimpleJumpTables
         https://bugs.webkit.org/show_bug.cgi?id=117856
 

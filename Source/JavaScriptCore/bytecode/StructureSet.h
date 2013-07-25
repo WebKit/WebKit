@@ -167,7 +167,7 @@ public:
         CommaPrinter comma;
         out.print("[");
         for (size_t i = 0; i < m_structures.size(); ++i)
-            out.print(comma, RawPointer(m_structures[i]));
+            out.print(comma, *m_structures[i]);
         out.print("]");
     }
     

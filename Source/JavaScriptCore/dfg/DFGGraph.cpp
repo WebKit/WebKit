@@ -187,14 +187,12 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
         out.print(comma, "global", globalObjectFor(node->codeOrigin)->findRegisterIndex(node->registerPointer()), "(", RawPointer(node->registerPointer()), ")");
     if (node->hasIdentifier())
         out.print(comma, "id", node->identifierNumber(), "{", identifiers()[node->identifierNumber()], "}");
-    if (node->hasStructureSet()) {
-        for (size_t i = 0; i < node->structureSet().size(); ++i)
-            out.print(comma, "struct(", RawPointer(node->structureSet()[i]), ": ", IndexingTypeDump(node->structureSet()[i]->indexingType()), ")");
-    }
+    if (node->hasStructureSet())
+        out.print(comma, node->structureSet());
     if (node->hasStructure())
-        out.print(comma, "struct(", RawPointer(node->structure()), ": ", IndexingTypeDump(node->structure()->indexingType()), ")");
+        out.print(comma, *node->structure());
     if (node->hasStructureTransitionData())
-        out.print(comma, "struct(", RawPointer(node->structureTransitionData().previousStructure), " -> ", RawPointer(node->structureTransitionData().newStructure), ")");
+        out.print(comma, *node->structureTransitionData().previousStructure, " -> ", *node->structureTransitionData().newStructure);
     if (node->hasFunction()) {
         out.print(comma, "function(", RawPointer(node->function()), ", ");
         if (node->function()->inherits(&JSFunction::s_info)) {
@@ -253,7 +251,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
         out.print(" = ", value);
     }
     if (op == WeakJSConstant)
-        out.print(comma, RawPointer(node->weakConstant()), " (structure: ", RawPointer(node->weakConstant()->structure()), ")");
+        out.print(comma, RawPointer(node->weakConstant()), " (structure: ", *node->weakConstant()->structure(), ")");
     if (node->isBranch() || node->isJump())
         out.print(comma, "T:#", node->takenBlockIndex());
     if (node->isBranch())

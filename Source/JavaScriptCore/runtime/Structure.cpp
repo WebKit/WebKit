@@ -996,6 +996,43 @@ bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyN
     }
 }
 
+void Structure::dump(PrintStream& out) const
+{
+    out.print(RawPointer(this), ":[", classInfo()->className, ", {");
+    
+    Vector<Structure*, 8> structures;
+    Structure* structure;
+    PropertyTable* table;
+    
+    const_cast<Structure*>(this)->findStructuresAndMapForMaterialization(
+        structures, structure, table);
+    
+    CommaPrinter comma;
+    
+    if (table) {
+        PropertyTable::iterator iter = table->begin();
+        PropertyTable::iterator end = table->end();
+        for (; iter != end; ++iter)
+            out.print(comma, iter->key, ":", static_cast<int>(iter->offset));
+        
+        structure->m_lock.unlock();
+    }
+    
+    for (unsigned i = structures.size(); i--;) {
+        Structure* structure = structures[i];
+        if (!structure->m_nameInPrevious)
+            continue;
+        out.print(comma, structure->m_nameInPrevious.get(), ":", static_cast<int>(structure->m_offset));
+    }
+    
+    out.print("}, ", IndexingTypeDump(indexingType()));
+    
+    if (m_prototype.get().isCell())
+        out.print(", Proto:", RawPointer(m_prototype.get().asCell()));
+    
+    out.print("]");
+}
+
 #if DO_PROPERTYMAP_CONSTENCY_CHECK
 
 void PropertyTable::checkConsistency()

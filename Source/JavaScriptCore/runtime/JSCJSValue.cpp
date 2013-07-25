@@ -216,18 +216,13 @@ void JSValue::dump(PrintStream& out) const
             } else
                 out.print(" (unresolved)");
             out.print(": ", impl);
-        } else if (asCell()->inherits(&Structure::s_info)) {
-            Structure* structure = jsCast<Structure*>(asCell());
-            out.print(
-                "Structure: ", RawPointer(structure), ": ", structure->classInfo()->className,
-                ", ", IndexingTypeDump(structure->indexingTypeIncludingHistory()));
-        } else {
+        } else if (asCell()->inherits(&Structure::s_info))
+            out.print("Structure: ", *jsCast<Structure*>(asCell()));
+        else {
             out.print("Cell: ", RawPointer(asCell()));
             if (isObject() && asObject(*this)->butterfly())
                 out.print("->", RawPointer(asObject(*this)->butterfly()));
-            out.print(
-                " (", RawPointer(asCell()->structure()), ": ", asCell()->structure()->classInfo()->className,
-                ", ", IndexingTypeDump(asCell()->structure()->indexingTypeIncludingHistory()), ")");
+            out.print(" (", *asCell()->structure(), ")");
         }
     } else if (isTrue())
         out.print("True");
