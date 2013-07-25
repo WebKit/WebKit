@@ -1,5 +1,12 @@
 2013-07-25  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed. Further build fixing for the GTK port. Adding the forwarding header
+        for JSCTestRunnerUtils.h as required by the DumpRenderTree compilation.
+
+        * ForwardingHeaders/JavaScriptCore/JSCTestRunnerUtils.h: Added.
+
+2013-07-25  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed. Fixing the GTK build after the FTL merging by updating the build targets list.
 
         * GNUmakefile.am:
