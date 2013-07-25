@@ -379,13 +379,10 @@ for my $key (sort keys %commentByKey) {
     $localizedStrings .= "/* $commentByKey{$key} */\n\"$key\" = \"$stringByKey{$key}\";\n\n";
 }
 
-# Write out the strings file in UTF-16 with a BOM.
-utf8::decode($localizedStrings) if $^V ge v5.8;
-my $output = pack "n*", (0xFEFF, unpack "U*", $localizedStrings);
-
+# Write out the strings file as UTF-8
 if (-e "$fileToUpdate") {
     open STRINGS, ">", "$fileToUpdate" or die;
-    print STRINGS $output;
+    print STRINGS $localizedStrings;
     close STRINGS;
 } else {
     print "$fileToUpdate does not exist\n";
