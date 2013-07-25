@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "SpeculatedType.h"
 #include "Structure.h"
 #include <stdio.h>
+#include <wtf/CommaPrinter.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -161,15 +162,13 @@ public:
         return true;
     }
     
-    void dump(FILE* out)
+    void dump(PrintStream& out) const
     {
-        fprintf(out, "[");
-        for (size_t i = 0; i < m_structures.size(); ++i) {
-            if (i)
-                fprintf(out, ", ");
-            fprintf(out, "%p", m_structures[i]);
-        }
-        fprintf(out, "]");
+        CommaPrinter comma;
+        out.print("[");
+        for (size_t i = 0; i < m_structures.size(); ++i)
+            out.print(comma, RawPointer(m_structures[i]));
+        out.print("]");
     }
     
 private:

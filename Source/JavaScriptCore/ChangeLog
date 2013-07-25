@@ -1,3 +1,81 @@
+2013-06-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix release build.
+
+        * interpreter/Interpreter.cpp:
+        * jit/JITStubs.cpp:
+
+2013-06-04  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Clean up AbstractValue
+        https://bugs.webkit.org/show_bug.cgi?id=117217
+
+        Reviewed by Oliver Hunt.
+        
+        This started as an attempt to make it so that when AbstractValue becomes empty,
+        its m_type always becomes SpecNone. I wanted this to happen naturally. That turns
+        out to be basically impossible, since AbstractValue is a set that is dynamically
+        computed from the intersection of several internal sets: so the value becomes
+        empty when any of the sets go empty. It's OK if we're imprecise here because it's
+        always safe for the AbstractValue to seem to overapproximate the set of values
+        that we see. So I mostly gave up on cleaning up that aspect of AbstractValue. But
+        while trying to make this happen, I encountered two bugs:
+        
+        - filterValueByType() ignores the case when m_type contravenes m_value. Namely,
+          we might filter the AbstractValue against a SpeculatedType leading to m_value
+          becoming inconsistent with the new m_type. This change fixes that case. This
+          wasn't a symptomatic bug but it was a silly oversight.
+        
+        - filterFuturePossibleStructure() was never right. The one call to this method,
+          in filter(Graph&, const StructureSet&), assumed that the previous notions of
+          what structures the value could have in the future were still relevant. This
+          could lead to a bug where we:
+          
+          1) CheckStructure(@foo, S1)
+          
+             Where S1 has a valid watchpoint. Now @foo's abstract value will have current
+             and future structure = S1.
+          
+          2) Clobber the world.
+          
+             Now @foo's abstract value will have current structure = TOP, and future
+             possible structure = S1.
+          
+          3) CheckStructure(@foo, S2)
+          
+             Now @foo's abstract value will have current structure = S2 and future
+             possible structure = S1 intersect S2 = BOTTOM.
+          
+          Now we will think that any subsequent watchpoint on @foo is valid because the
+          value is effectively BOTTOM. That would only be correct if we had actually set
+          a watchpoint on S1. If we had done so, then (3) would only pass (i.e. @foo
+          would only have structure S2) if S1's watchpoint fired, in which case (3)
+          wouldn't have been reachable. But we didn't actually set a watchpoint on S1:
+          we just observed that we *could* have set the watchpoint. Hence future possible
+          structure should only be set to either the known structure at compile-time, or
+          it should be the structure we just checked; in both cases it should only be set
+          if the structure is watchable.
+        
+        Then, in addition to all of this, I changed AbstractValue's filtering methods to
+        call clear() if the AbstractValue is effectively clear. This is just meant to
+        simplify the recognition of truly empty AbstractValues, but doesn't actually have
+        any other implications.
+
+        * bytecode/StructureSet.h:
+        (JSC::StructureSet::dump):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filter):
+        (DFG):
+        (JSC::DFG::AbstractValue::filterArrayModes):
+        (JSC::DFG::AbstractValue::filterValueByType):
+        (JSC::DFG::AbstractValue::filterArrayModesByType):
+        (JSC::DFG::AbstractValue::shouldBeClear):
+        (JSC::DFG::AbstractValue::normalizeClarity):
+        (JSC::DFG::AbstractValue::checkConsistency):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::isClear):
+        (AbstractValue):
+
 2013-06-04  Mark Lam  <mark.lam@apple.com>
 
         The DFG JIT should populate frame bytecodeOffsets on OSR exit.
