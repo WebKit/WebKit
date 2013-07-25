@@ -1,3 +1,10 @@
+2013-06-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix minor goof in profiling output layout. We weren't accounting
+        for the "/" that is printed between engine counts.
+
+        * Scripts/display-profiler-output:
+
 2013-05-28  Filip Pizlo  <fpizlo@apple.com>
 
         testRunner should have a way of disabling inlining of functions

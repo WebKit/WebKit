@@ -576,6 +576,9 @@ function dfgCompiled(argument)
 {
     var numberOfCompiles = "compiles" in argument ? argument.compiles : 1;
     
+    if (!("f" in argument))
+        throw new Error("dfgCompiled called with invalid argument.");
+    
     if (argument.f instanceof Array) {
         for (var i = 0; i < argument.f.length; ++i) {
             if (testRunner.numberOfDFGCompiles(argument.f[i]) < numberOfCompiles)

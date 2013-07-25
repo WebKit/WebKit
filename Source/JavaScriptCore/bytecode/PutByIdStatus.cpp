@@ -161,8 +161,7 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
     
     unsigned attributes;
     JSCell* specificValue;
-    PropertyOffset offset = structure->getConcurrently(
-        vm, uid, attributes, specificValue);
+    PropertyOffset offset = structure->getConcurrently(vm, uid, attributes, specificValue);
     if (isValidOffset(offset)) {
         if (attributes & (Accessor | ReadOnly))
             return PutByIdStatus(TakesSlowPath);

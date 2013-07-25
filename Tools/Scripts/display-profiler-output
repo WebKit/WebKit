@@ -522,7 +522,7 @@ def summary(mode)
     hashCols = [[maxName, 30].min, "CodeBlock".size].max
     remaining -= hashCols + 1
     
-    countCols = [maxCountDigits * $engines.size, "Source Counts".size].max
+    countCols = [maxCountDigits * $engines.size + ($engines.size - 1), "Source Counts".size].max
     remaining -= countCols + 1
     
     if mode == :full

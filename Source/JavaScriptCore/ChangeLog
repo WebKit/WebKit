@@ -1,3 +1,53 @@
+2013-06-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Marge trunk r146653.
+
+    2013-03-22  Filip Pizlo  <fpizlo@apple.com>
+    
+            DFG folding of PutById to SimpleReplace should consider the specialized function case
+            https://bugs.webkit.org/show_bug.cgi?id=113093
+    
+            Reviewed by Geoffrey Garen and Mark Hahnenberg.
+    
+            * bytecode/PutByIdStatus.cpp:
+            (JSC::PutByIdStatus::computeFor):
+    
+2013-06-09  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG GetById patching shouldn't distinguish between self lists and proto lists
+        https://bugs.webkit.org/show_bug.cgi?id=117377
+
+        Reviewed by Geoffrey Garen.
+        
+        Previously if you did self accesses and then wanted to do a prototype access, you'd
+        have a bad time: the prototype accesses would be forced to take slow path because
+        the self list wouldn't allow prototype accesses. Likewise if you did prototype (or
+        chain) accesses and then wanted to do a self access, similar stupidity would ensue.
+        
+        This fixes the stupidity.
+
+        I believe that this was introduced way back in the days of the old interpreter,
+        where distinguishing between self lists, proto lists, and chain lists was meaningful
+        for interpreter performance: it meant fewer branches to evaluate those lists. Then
+        it got mostly carried over to the old JIT since the old JIT was just initially an
+        optimized version of the old interpreter, and then later it got carried over to the
+        DFG because I didn't know any better at the time. Now I do know better and I'm
+        fixing it.
+
+        * bytecode/PolymorphicAccessStructureList.h:
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::initGetByIdSelfList):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::getPolymorphicStructureList):
+        (DFG):
+        (JSC::DFG::patchJumpToGetByIdStub):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::dfgBuildGetByIDList):
+
 2013-06-09  Mark Lam  <mark.lam@apple.com>
 
         Fix broken no-DFG build.

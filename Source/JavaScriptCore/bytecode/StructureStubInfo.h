@@ -127,12 +127,13 @@ struct StructureStubInfo {
         u.getByIdChain.isDirect = isDirect;
     }
 
-    void initGetByIdSelfList(PolymorphicAccessStructureList* structureList, int listSize)
+    void initGetByIdSelfList(PolymorphicAccessStructureList* structureList, int listSize, bool didSelfPatching = false)
     {
         accessType = access_get_by_id_self_list;
 
         u.getByIdSelfList.structureList = structureList;
         u.getByIdSelfList.listSize = listSize;
+        u.getByIdSelfList.didSelfPatching = didSelfPatching;
     }
 
     void initGetByIdProtoList(PolymorphicAccessStructureList* structureList, int listSize)
@@ -277,7 +278,8 @@ struct StructureStubInfo {
         } getByIdChain;
         struct {
             PolymorphicAccessStructureList* structureList;
-            int listSize;
+            int listSize : 31;
+            bool didSelfPatching : 1;
         } getByIdSelfList;
         struct {
             PolymorphicAccessStructureList* structureList;

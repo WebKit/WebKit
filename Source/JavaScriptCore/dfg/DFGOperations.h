@@ -140,7 +140,6 @@ EncodedJSValue DFG_OPERATION operationGetByValCell(ExecState*, JSCell*, EncodedJ
 EncodedJSValue DFG_OPERATION operationGetByValArrayInt(ExecState*, JSArray*, int32_t) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationGetById(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationGetByIdBuildList(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildList(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationGetByIdOptimize(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationCallCustomGetter(ExecState*, JSCell*, PropertySlot::GetValueFunc, StringImpl*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationCallGetter(ExecState*, JSCell*, JSCell*) WTF_INTERNAL;

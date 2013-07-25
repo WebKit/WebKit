@@ -1,3 +1,13 @@
+2013-06-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix build. On some compilers the automatic coercion from WTF::String to NSString*
+        causes operator[] to appear ambiguous. One way around this is to make WTF::String behave like
+        most of our other classes: at(unsigned) is always a valid synonym for operator[](unsigned).
+
+        * wtf/text/WTFString.h:
+        (WTF::String::at):
+        (WTF::String::operator[]):
+
 2013-06-08  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Recursive deadlock in DFG::ByteCodeParser

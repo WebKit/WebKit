@@ -60,31 +60,31 @@ public:
             u.proto.clear();
         }
 
-        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, bool isDirect)
+        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, bool _isDirect)
         {
             stubRoutine = _stubRoutine;
             base.set(vm, owner, _base);
             u.proto.clear();
             isChain = false;
-            this->isDirect = isDirect;
+            isDirect = _isDirect;
         }
             
-        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, Structure* _proto, bool isDirect)
+        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, Structure* _proto, bool _isDirect)
         {
             stubRoutine = _stubRoutine;
             base.set(vm, owner, _base);
             u.proto.set(vm, owner, _proto);
             isChain = false;
-            this->isDirect = isDirect;
+            isDirect = _isDirect;
         }
             
-        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, StructureChain* _chain, bool isDirect)
+        void set(VM& vm, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, StructureChain* _chain, bool _isDirect)
         {
             stubRoutine = _stubRoutine;
             base.set(vm, owner, _base);
             u.chain.set(vm, owner, _chain);
             isChain = true;
-            this->isDirect = isDirect;
+            isDirect = _isDirect;
         }
     } list[POLYMORPHIC_LIST_CACHE_SIZE];
         

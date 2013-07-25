@@ -516,26 +516,6 @@ EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ExecStat
     return JSValue::encode(result);
 }
 
-J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(operationGetByIdProtoBuildList);
-EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildListWithReturnAddress(ExecState* exec, EncodedJSValue base, StringImpl* uid, ReturnAddressPtr returnAddress)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    Identifier ident(vm, uid);
-    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
-    AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
-
-    JSValue baseValue = JSValue::decode(base);
-    PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(exec, ident, slot);
-    
-    if (accessType == static_cast<AccessType>(stubInfo.accessType))
-        dfgBuildGetByIDProtoList(exec, baseValue, ident, slot, stubInfo);
-
-    return JSValue::encode(result);
-}
-
 J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(operationGetByIdOptimize);
 EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue base, StringImpl* uid, ReturnAddressPtr returnAddress)
 {

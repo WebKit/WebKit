@@ -216,12 +216,13 @@ public:
 
     WTF_EXPORT_STRING_API CString utf8(ConversionMode = LenientConversion) const;
 
-    UChar operator[](unsigned index) const
+    UChar at(unsigned index) const
     {
         if (!m_impl || index >= m_impl->length())
             return 0;
         return (*m_impl)[index];
     }
+    UChar operator[](unsigned index) const { return at(index); }
 
     WTF_EXPORT_STRING_API static String number(int);
     WTF_EXPORT_STRING_API static String number(unsigned int);

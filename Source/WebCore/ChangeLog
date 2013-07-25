@@ -1,3 +1,10 @@
+2013-06-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix build. Use at() instead of operator[] because of ambiguity on some compilers.
+
+        * page/CaptionUserPreferencesMac.mm:
+        (WebCore::languageIdentifier):
+
 2013-05-27  Filip Pizlo  <fpizlo@apple.com>
 
         testRunner should be able to tell you if a function is DFG compiled
