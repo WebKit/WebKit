@@ -178,9 +178,9 @@ void Chrome::takeFocus(FocusDirection direction) const
     m_client->takeFocus(direction);
 }
 
-void Chrome::focusedNodeChanged(Node* node) const
+void Chrome::focusedElementChanged(Element* element) const
 {
-    m_client->focusedNodeChanged(node);
+    m_client->focusedElementChanged(element);
 }
 
 void Chrome::focusedFrameChanged(Frame* frame) const

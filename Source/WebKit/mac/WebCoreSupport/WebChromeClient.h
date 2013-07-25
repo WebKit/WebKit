@@ -50,7 +50,7 @@ public:
     virtual bool canTakeFocus(WebCore::FocusDirection) OVERRIDE;
     virtual void takeFocus(WebCore::FocusDirection) OVERRIDE;
 
-    virtual void focusedNodeChanged(WebCore::Node*) OVERRIDE;
+    virtual void focusedElementChanged(WebCore::Element*) OVERRIDE;
     virtual void focusedFrameChanged(WebCore::Frame*) OVERRIDE;
 
     virtual WebCore::Page* createWindow(WebCore::Frame*, const WebCore::FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) OVERRIDE;

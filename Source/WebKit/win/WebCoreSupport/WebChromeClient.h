@@ -54,7 +54,7 @@ public:
     virtual bool canTakeFocus(WebCore::FocusDirection);
     virtual void takeFocus(WebCore::FocusDirection);
 
-    virtual void focusedNodeChanged(WebCore::Node*);
+    virtual void focusedElementChanged(WebCore::Element*);
     virtual void focusedFrameChanged(WebCore::Frame*);
 
     virtual WebCore::Page* createWindow(WebCore::Frame*, const WebCore::FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&);

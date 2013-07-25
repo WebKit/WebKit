@@ -107,7 +107,7 @@ void ChromeClientEfl::chromeDestroyed()
     delete this;
 }
 
-void ChromeClientEfl::focusedNodeChanged(Node*)
+void ChromeClientEfl::focusedElementChanged(Element*)
 {
     notImplemented();
 }

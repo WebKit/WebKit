@@ -1,3 +1,14 @@
+2013-07-25  Andreas Kling  <akling@apple.com>
+
+        ChromeClient::focusedNodeChanged() should be focusedElementChanged().
+        <http://webkit.org/b/119110>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        (WebKit::ChromeClientWinCE::focusedElementChanged):
+        * WebCoreSupport/ChromeClientWinCE.h:
+
 2013-06-26  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix after r152065.

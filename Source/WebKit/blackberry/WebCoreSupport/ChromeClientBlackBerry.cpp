@@ -202,7 +202,7 @@ void ChromeClientBlackBerry::takeFocus(FocusDirection)
     notImplemented();
 }
 
-void ChromeClientBlackBerry::focusedNodeChanged(Node*)
+void ChromeClientBlackBerry::focusedElementChanged(Element*)
 {
     m_webPagePrivate->m_inputHandler->focusedNodeChanged();
 }

@@ -3407,7 +3407,7 @@ bool Document::setFocusedElement(PassRefPtr<Element> prpNewFocusedElement, Focus
     }
 
     if (!focusChangeBlocked)
-        page()->chrome().focusedNodeChanged(m_focusedElement.get());
+        page()->chrome().focusedElementChanged(m_focusedElement.get());
 
 SetFocusedNodeDone:
     updateStyleIfNeeded();

@@ -196,14 +196,14 @@ void WebChromeClient::takeFocus(FocusDirection direction)
     }
 }
 
-void WebChromeClient::focusedNodeChanged(Node* node)
+void WebChromeClient::focusedElementChanged(Element* element)
 {
-    if (!node)
+    if (!element)
         return;
-    if (!isHTMLInputElement(node))
+    if (!isHTMLInputElement(element))
         return;
 
-    HTMLInputElement* inputElement = toHTMLInputElement(node);
+    HTMLInputElement* inputElement = toHTMLInputElement(element);
     if (!inputElement->isText())
         return;
 

@@ -163,7 +163,7 @@ void WebChromeClient::takeFocus(FocusDirection direction)
     }
 }
 
-void WebChromeClient::focusedNodeChanged(Node*)
+void WebChromeClient::focusedElementChanged(Element*)
 {
 }
 

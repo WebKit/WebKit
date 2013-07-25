@@ -44,12 +44,12 @@ class DateTimeChooserClient;
 class FileChooser;
 class FileIconLoader;
 class FloatRect;
+class Element;
 class Frame;
 class Geolocation;
 class HitTestResult;
 class IntRect;
 class NavigationAction;
-class Node;
 class Page;
 class PopupMenu;
 class PopupMenuClient;
@@ -107,7 +107,7 @@ public:
     bool canTakeFocus(FocusDirection) const;
     void takeFocus(FocusDirection) const;
 
-    void focusedNodeChanged(Node*) const;
+    void focusedElementChanged(Element*) const;
     void focusedFrameChanged(Frame*) const;
 
     Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) const;

@@ -343,7 +343,7 @@ void ChromeClient::takeFocus(FocusDirection)
     unfocus();
 }
 
-void ChromeClient::focusedNodeChanged(Node*)
+void ChromeClient::focusedElementChanged(Element*)
 {
 }
 

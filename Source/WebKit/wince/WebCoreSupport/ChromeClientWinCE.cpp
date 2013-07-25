@@ -165,7 +165,7 @@ void ChromeClientWinCE::takeFocus(FocusDirection)
     unfocus();
 }
 
-void ChromeClientWinCE::focusedNodeChanged(Node*)
+void ChromeClientWinCE::focusedElementChanged(Element*)
 {
     notImplemented();
 }

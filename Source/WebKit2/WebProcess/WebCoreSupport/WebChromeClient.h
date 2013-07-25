@@ -63,7 +63,7 @@ private:
     virtual bool canTakeFocus(WebCore::FocusDirection) OVERRIDE;
     virtual void takeFocus(WebCore::FocusDirection) OVERRIDE;
 
-    virtual void focusedNodeChanged(WebCore::Node*) OVERRIDE;
+    virtual void focusedElementChanged(WebCore::Element*) OVERRIDE;
     virtual void focusedFrameChanged(WebCore::Frame*) OVERRIDE;
 
     // The Frame pointer provides the ChromeClient with context about which

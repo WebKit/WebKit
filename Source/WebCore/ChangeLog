@@ -1,3 +1,21 @@
+2013-07-25  Andreas Kling  <akling@apple.com>
+
+        ChromeClient::focusedNodeChanged() should be focusedElementChanged().
+        <http://webkit.org/b/119110>
+
+        Reviewed by Anders Carlsson.
+
+        Because only Elements can be focused.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::focusedElementChanged):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::focusedElementChanged):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+
 2013-07-25  Kwang Yul Seo  <skyul@company100.net>
 
         [WK2][Soup] Add private browsing support

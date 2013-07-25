@@ -213,7 +213,7 @@ void ChromeClientQt::takeFocus(FocusDirection)
 }
 
 
-void ChromeClientQt::focusedNodeChanged(Node*)
+void ChromeClientQt::focusedElementChanged(Element*)
 {
 }
 

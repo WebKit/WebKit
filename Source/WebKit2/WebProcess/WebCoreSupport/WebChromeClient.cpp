@@ -160,18 +160,18 @@ void WebChromeClient::takeFocus(FocusDirection direction)
     m_page->send(Messages::WebPageProxy::TakeFocus(direction));
 }
 
-void WebChromeClient::focusedNodeChanged(Node* node)
+void WebChromeClient::focusedElementChanged(Element* element)
 {
-    if (!node)
+    if (!element)
         return;
-    if (!isHTMLInputElement(node))
+    if (!isHTMLInputElement(element))
         return;
 
-    HTMLInputElement* inputElement = toHTMLInputElement(node);
+    HTMLInputElement* inputElement = toHTMLInputElement(element);
     if (!inputElement->isText())
         return;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(node->document()->frame()->loader()->client());
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document()->frame()->loader()->client());
     WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
     ASSERT(webFrame);
     m_page->injectedBundleFormClient().didFocusTextField(m_page, inputElement, webFrame);

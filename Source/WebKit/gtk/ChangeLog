@@ -1,3 +1,14 @@
+2013-07-25  Andreas Kling  <akling@apple.com>
+
+        ChromeClient::focusedNodeChanged() should be focusedElementChanged().
+        <http://webkit.org/b/119110>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::focusedElementChanged):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2013-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] GtkAdjustmentWatcher idle source not correctly handled

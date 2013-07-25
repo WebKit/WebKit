@@ -93,7 +93,7 @@ public:
     virtual bool canTakeFocus(FocusDirection) = 0;
     virtual void takeFocus(FocusDirection) = 0;
 
-    virtual void focusedNodeChanged(Node*) = 0;
+    virtual void focusedElementChanged(Element*) = 0;
     virtual void focusedFrameChanged(Frame*) = 0;
 
     // The Frame pointer provides the ChromeClient with context about which

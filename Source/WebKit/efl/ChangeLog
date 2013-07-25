@@ -1,3 +1,14 @@
+2013-07-25  Andreas Kling  <akling@apple.com>
+
+        ChromeClient::focusedNodeChanged() should be focusedElementChanged().
+        <http://webkit.org/b/119110>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::focusedElementChanged):
+        * WebCoreSupport/ChromeClientEfl.h:
+
 2013-07-15  Kwang Yul Seo  <skyul@company100.net>
 
         NetworkStorageSession::createDefaultSession is only implemented by Soup
