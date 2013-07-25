@@ -327,9 +327,9 @@ static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* cod
         LLINT_RETURN_TWO(0, exec);
     
     if (kind == Prologue)
-        LLINT_RETURN_TWO(codeBlock->getJITCode()->executableAddress(), exec);
+        LLINT_RETURN_TWO(codeBlock->jitCode()->executableAddress(), exec);
     ASSERT(kind == ArityCheck);
-    LLINT_RETURN_TWO(codeBlock->getJITCodeWithArityCheck().executableAddress(), exec);
+    LLINT_RETURN_TWO(codeBlock->jitCodeWithArityCheck().executableAddress(), exec);
 }
 
 LLINT_SLOW_PATH_DECL(entry_osr)
@@ -375,7 +375,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     if (!jitCompileAndSetHeuristics(codeBlock, exec))
         LLINT_RETURN_TWO(0, exec);
     
-    ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
+    ASSERT(codeBlock->jitType() == JITCode::BaselineJIT);
     
     Vector<BytecodeAndMachineOffset> map;
     codeBlock->jitCodeMap()->decode(map);
@@ -383,7 +383,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     ASSERT(mapping);
     ASSERT(mapping->m_bytecodeIndex == static_cast<unsigned>(pc - codeBlock->instructions().begin()));
     
-    void* jumpTarget = codeBlock->getJITCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
+    void* jumpTarget = codeBlock->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
     ASSERT(jumpTarget);
     
     LLINT_RETURN_TWO(jumpTarget, exec);

@@ -1725,7 +1725,7 @@ extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
     if (Options::verboseOSR())
         dataLog(*codeBlock, ": Entered reoptimize\n");
     // We must be called with the baseline code block.
-    ASSERT(JITCode::isBaselineCode(codeBlock->getJITType()));
+    ASSERT(JITCode::isBaselineCode(codeBlock->jitType()));
 
     // If I am my own replacement, then reoptimization has already been triggered.
     // This can happen in recursive functions.
@@ -1735,7 +1735,7 @@ extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
     // Otherwise, the replacement must be optimized code. Use this as an opportunity
     // to check our logic.
     ASSERT(codeBlock->hasOptimizedReplacement());
-    ASSERT(JITCode::isOptimizingJIT(codeBlock->replacement()->getJITType()));
+    ASSERT(JITCode::isOptimizingJIT(codeBlock->replacement()->jitType()));
 
     codeBlock->reoptimize();
 }

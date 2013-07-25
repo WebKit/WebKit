@@ -57,7 +57,7 @@ CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
 {
     return CodeLocationJump(
         reinterpret_cast<char*>(
-            ftlCodeBlock->getJITCode()->ftl()->exitThunks().dataLocation()) +
+            ftlCodeBlock->jitCode()->ftl()->exitThunks().dataLocation()) +
         m_patchableCodeOffset);
 }
 

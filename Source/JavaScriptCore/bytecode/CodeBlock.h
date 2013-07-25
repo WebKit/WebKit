@@ -192,7 +192,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
         CallLinkInfo& getCallLinkInfo(unsigned bytecodeIndex)
         {
-            ASSERT(JITCode::isBaselineCode(getJITType()));
+            ASSERT(JITCode::isBaselineCode(jitType()));
             return *(binarySearch<CallLinkInfo, unsigned>(m_callLinkInfos, m_callLinkInfos.size(), bytecodeIndex, getCallLinkInfoBytecodeIndex));
         }
 #endif // ENABLE(JIT)
@@ -284,9 +284,9 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
                 m_vm->heap.m_dfgCodeBlocks.m_set.add(this);
 #endif
         }
-        PassRefPtr<JITCode> getJITCode() { return m_jitCode; }
-        MacroAssemblerCodePtr getJITCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
-        JITCode::JITType getJITType() const
+        PassRefPtr<JITCode> jitCode() { return m_jitCode; }
+        MacroAssemblerCodePtr jitCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
+        JITCode::JITType jitType() const
         {
             JITCode* jitCode = m_jitCode.get();
             WTF::loadLoadFence();
@@ -296,15 +296,15 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
         }
         bool hasBaselineJITProfiling() const
         {
-            return getJITType() == JITCode::BaselineJIT;
+            return jitType() == JITCode::BaselineJIT;
         }
         virtual JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex) = 0;
         virtual CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>) = 0;
         void jettison();
         CompilationResult jitCompile(ExecState* exec)
         {
-            if (getJITType() != JITCode::InterpreterThunk) {
-                ASSERT(getJITType() == JITCode::BaselineJIT);
+            if (jitType() != JITCode::InterpreterThunk) {
+                ASSERT(jitType() == JITCode::BaselineJIT);
                 return CompilationNotNeeded;
             }
             return jitCompileImpl(exec);
@@ -322,7 +322,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
         bool hasOptimizedReplacement();
 #else
-        JITCode::JITType getJITType() const { return JITCode::BaselineJIT; }
+        JITCode::JITType jitType() const { return JITCode::BaselineJIT; }
 #endif
 
         ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
@@ -634,7 +634,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
         bool addFrequentExitSite(const DFG::FrequentExitSite& site)
         {
-            ASSERT(JITCode::isBaselineCode(getJITType()));
+            ASSERT(JITCode::isBaselineCode(jitType()));
             return m_exitProfile.add(site);
         }
 
@@ -988,7 +988,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
             // CodeBlocks don't need to be jettisoned when their weak references go
             // stale. So if a basline JIT CodeBlock gets scanned, we can assume that
             // this means that it's live.
-            if (!JITCode::isOptimizingJIT(getJITType()))
+            if (!JITCode::isOptimizingJIT(jitType()))
                 return true;
 
             // For simplicity, we don't attempt to jettison code blocks during GC if
@@ -1260,7 +1260,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 #if ENABLE(DFG_JIT)
     inline bool ExecState::isInlineCallFrame()
     {
-        if (LIKELY(!codeBlock() || !JITCode::isOptimizingJIT(codeBlock()->getJITType())))
+        if (LIKELY(!codeBlock() || !JITCode::isOptimizingJIT(codeBlock()->jitType())))
             return false;
         return isInlineCallFrameSlow();
     }

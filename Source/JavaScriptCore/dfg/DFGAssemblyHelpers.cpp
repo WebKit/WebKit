@@ -41,7 +41,7 @@ ExecutableBase* AssemblyHelpers::executableFor(const CodeOrigin& codeOrigin)
 Vector<BytecodeAndMachineOffset>& AssemblyHelpers::decodedCodeMapFor(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock == codeBlock->baselineVersion());
-    ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
+    ASSERT(codeBlock->jitType() == JITCode::BaselineJIT);
     ASSERT(codeBlock->jitCodeMap());
     
     HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset> >::AddResult result = m_decodedCodeMaps.add(codeBlock, Vector<BytecodeAndMachineOffset>());

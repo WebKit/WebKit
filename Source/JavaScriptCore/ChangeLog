@@ -1,5 +1,97 @@
 2013-05-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Rename getJITCode and getJITType to jitCode and jitType.
+        
+        Rubber stampted by Mark Hahnenberg.
+
+        * assembler/RepatchBuffer.h:
+        (JSC::RepatchBuffer::RepatchBuffer):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::CodeBlock::stronglyVisitWeakReferences):
+        (JSC::CodeBlock::baselineVersion):
+        (JSC::CodeBlock::hasOptimizedReplacement):
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::CodeBlock::codeOriginForReturn):
+        (JSC::ProgramCodeBlock::compileOptimized):
+        (JSC::EvalCodeBlock::compileOptimized):
+        (JSC::FunctionCodeBlock::compileOptimized):
+        (JSC::ProgramCodeBlock::jettison):
+        (JSC::EvalCodeBlock::jettison):
+        (JSC::FunctionCodeBlock::jettison):
+        (JSC::ProgramCodeBlock::jitCompileImpl):
+        (JSC::EvalCodeBlock::jitCompileImpl):
+        (JSC::FunctionCodeBlock::jitCompileImpl):
+        (JSC::CodeBlock::setOptimizationThresholdBasedOnCompilationResult):
+        (JSC::CodeBlock::adjustedExitCountThreshold):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getCallLinkInfo):
+        (JSC::CodeBlock::jitCode):
+        (JSC::CodeBlock::jitCodeWithArityCheck):
+        (JSC::CodeBlock::jitType):
+        (JSC::CodeBlock::hasBaselineJITProfiling):
+        (JSC::CodeBlock::jitCompile):
+        (JSC::CodeBlock::addFrequentExitSite):
+        (JSC::CodeBlock::shouldImmediatelyAssumeLivenessDuringScan):
+        (JSC::ExecState::isInlineCallFrame):
+        * dfg/DFGAssemblyHelpers.cpp:
+        (JSC::DFG::AssemblyHelpers::decodedCodeMapFor):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::AssemblyHelpers):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::codeLocationForRepatch):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+        * heap/DFGCodeBlocks.cpp:
+        (JSC::DFGCodeBlocks::~DFGCodeBlocks):
+        (JSC::DFGCodeBlocks::jettison):
+        (JSC::DFGCodeBlocks::clearMarks):
+        (JSC::DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks):
+        (JSC::DFGCodeBlocks::traceMarkedCodeBlocks):
+        * interpreter/Interpreter.cpp:
+        (JSC::getLineNumberForCallFrame):
+        (JSC::getCallerInfo):
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriateImpl):
+        (JSC::jitCompileFunctionIfAppropriateImpl):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Executable.cpp:
+        (JSC::jettisonCodeBlock):
+        (JSC::EvalExecutable::compileOptimized):
+        (JSC::EvalExecutable::jettisonOptimizedCode):
+        (JSC::ProgramExecutable::compileOptimized):
+        (JSC::ProgramExecutable::jettisonOptimizedCode):
+        (JSC::FunctionExecutable::baselineCodeBlockFor):
+        (JSC::FunctionExecutable::compileOptimizedForCall):
+        (JSC::FunctionExecutable::compileOptimizedForConstruct):
+        (JSC::FunctionExecutable::jettisonOptimizedCodeForCall):
+        (JSC::FunctionExecutable::jettisonOptimizedCodeForConstruct):
+        * tools/CodeProfile.cpp:
+        (JSC::CodeProfile::sample):
+
+2013-05-22  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: Race between LLInt->Baseline tier-up and DFG reading Baseline profiling data
         https://bugs.webkit.org/show_bug.cgi?id=116633
 

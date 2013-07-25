@@ -1089,9 +1089,9 @@ DEFINE_STUB_FUNCTION(void, optimize)
     }
     
     CodeBlock* optimizedCodeBlock = codeBlock->replacement();
-    ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->getJITType()));
+    ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
     
-    if (optimizedCodeBlock->getJITType() == JITCode::FTLJIT) {
+    if (optimizedCodeBlock->jitType() == JITCode::FTLJIT) {
         // FTL JIT doesn't support OSR entry yet.
         // https://bugs.webkit.org/show_bug.cgi?id=113625
         

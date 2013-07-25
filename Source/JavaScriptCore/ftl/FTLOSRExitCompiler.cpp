@@ -172,11 +172,11 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     CodeBlock* codeBlock = exec->codeBlock();
     
     ASSERT(codeBlock);
-    ASSERT(codeBlock->getJITType() == JITCode::FTLJIT);
+    ASSERT(codeBlock->jitType() == JITCode::FTLJIT);
     
     VM* vm = &exec->vm();
     
-    OSRExit& exit = codeBlock->getJITCode()->ftl()->osrExit[exitID];
+    OSRExit& exit = codeBlock->jitCode()->ftl()->osrExit[exitID];
     
     prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
     

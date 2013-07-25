@@ -96,7 +96,7 @@ Intrinsic NativeExecutable::intrinsic() const
 template<typename T>
 static void jettisonCodeBlock(VM& vm, RefPtr<T>& codeBlock)
 {
-    ASSERT(JITCode::isOptimizingJIT(codeBlock->getJITType()));
+    ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
     ASSERT(codeBlock->alternative());
     RefPtr<T> codeBlockToJettison = codeBlock.release();
     codeBlock = static_pointer_cast<T>(codeBlockToJettison->releaseAlternative());
@@ -162,8 +162,8 @@ JSObject* EvalExecutable::compileOptimized(ExecState* exec, JSScope* scope, Comp
     ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_evalCodeBlock);
     JSObject* error = 0;
-    if (!JITCode::isOptimizingJIT(m_evalCodeBlock->getJITType()))
-        error = compileInternal(exec, scope, JITCode::nextTierJIT(m_evalCodeBlock->getJITType()), &result, bytecodeIndex);
+    if (!JITCode::isOptimizingJIT(m_evalCodeBlock->jitType()))
+        error = compileInternal(exec, scope, JITCode::nextTierJIT(m_evalCodeBlock->jitType()), &result, bytecodeIndex);
     else
         result = CompilationNotNeeded;
     ASSERT(!!m_evalCodeBlock);
@@ -248,7 +248,7 @@ CompilationResult EvalExecutable::replaceWithDeferredOptimizedCode(PassRefPtr<DF
 void EvalExecutable::jettisonOptimizedCode(VM& vm)
 {
     jettisonCodeBlock(vm, m_evalCodeBlock);
-    m_jitCodeForCall = m_evalCodeBlock->getJITCode();
+    m_jitCodeForCall = m_evalCodeBlock->jitCode();
     ASSERT(!m_jitCodeForCallWithArityCheck);
 }
 #endif
@@ -299,8 +299,8 @@ JSObject* ProgramExecutable::compileOptimized(ExecState* exec, JSScope* scope, C
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_programCodeBlock);
     JSObject* error = 0;
-    if (!JITCode::isOptimizingJIT(m_programCodeBlock->getJITType()))
-        error = compileInternal(exec, scope, JITCode::nextTierJIT(m_programCodeBlock->getJITType()), &result, bytecodeIndex);
+    if (!JITCode::isOptimizingJIT(m_programCodeBlock->jitType()))
+        error = compileInternal(exec, scope, JITCode::nextTierJIT(m_programCodeBlock->jitType()), &result, bytecodeIndex);
     else
         result = CompilationNotNeeded;
     ASSERT(!!m_programCodeBlock);
@@ -354,7 +354,7 @@ CompilationResult ProgramExecutable::replaceWithDeferredOptimizedCode(PassRefPtr
 void ProgramExecutable::jettisonOptimizedCode(VM& vm)
 {
     jettisonCodeBlock(vm, m_programCodeBlock);
-    m_jitCodeForCall = m_programCodeBlock->getJITCode();
+    m_jitCodeForCall = m_programCodeBlock->jitCode();
     ASSERT(!m_jitCodeForCallWithArityCheck);
 }
 #endif
@@ -464,7 +464,7 @@ FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKi
     while (result->alternative())
         result = static_cast<FunctionCodeBlock*>(result->alternative());
     RELEASE_ASSERT(result);
-    ASSERT(JITCode::isBaselineCode(result->getJITType()));
+    ASSERT(JITCode::isBaselineCode(result->jitType()));
     return result;
 }
 
@@ -473,8 +473,8 @@ JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, JSScope* 
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForCall);
     JSObject* error = 0;
-    if (!JITCode::isOptimizingJIT(m_codeBlockForCall->getJITType()))
-        error = compileForCallInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForCall->getJITType()), &result, bytecodeIndex);
+    if (!JITCode::isOptimizingJIT(m_codeBlockForCall->jitType()))
+        error = compileForCallInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForCall->jitType()), &result, bytecodeIndex);
     else
         result = CompilationNotNeeded;
     ASSERT(!!m_codeBlockForCall);
@@ -486,8 +486,8 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, JSSc
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForConstruct);
     JSObject* error = 0;
-    if (!JITCode::isOptimizingJIT(m_codeBlockForConstruct->getJITType()))
-        error = compileForConstructInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()), &result, bytecodeIndex);
+    if (!JITCode::isOptimizingJIT(m_codeBlockForConstruct->jitType()))
+        error = compileForConstructInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForConstruct->jitType()), &result, bytecodeIndex);
     else
         result = CompilationNotNeeded;
     ASSERT(!!m_codeBlockForConstruct);
@@ -612,15 +612,15 @@ CompilationResult FunctionExecutable::replaceWithDeferredOptimizedCodeForConstru
 void FunctionExecutable::jettisonOptimizedCodeForCall(VM& vm)
 {
     jettisonCodeBlock(vm, m_codeBlockForCall);
-    m_jitCodeForCall = m_codeBlockForCall->getJITCode();
-    m_jitCodeForCallWithArityCheck = m_codeBlockForCall->getJITCodeWithArityCheck();
+    m_jitCodeForCall = m_codeBlockForCall->jitCode();
+    m_jitCodeForCallWithArityCheck = m_codeBlockForCall->jitCodeWithArityCheck();
 }
 
 void FunctionExecutable::jettisonOptimizedCodeForConstruct(VM& vm)
 {
     jettisonCodeBlock(vm, m_codeBlockForConstruct);
-    m_jitCodeForConstruct = m_codeBlockForConstruct->getJITCode();
-    m_jitCodeForConstructWithArityCheck = m_codeBlockForConstruct->getJITCodeWithArityCheck();
+    m_jitCodeForConstruct = m_codeBlockForConstruct->jitCode();
+    m_jitCodeForConstructWithArityCheck = m_codeBlockForConstruct->jitCodeWithArityCheck();
 }
 #endif
 

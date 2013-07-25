@@ -40,9 +40,9 @@ namespace JSC { namespace DFG {
 void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
 {
 #if DFG_ENABLE(OSR_ENTRY)
-    ASSERT(codeBlock->getJITType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
     ASSERT(codeBlock->alternative());
-    ASSERT(codeBlock->alternative()->getJITType() == JITCode::BaselineJIT);
+    ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
     ASSERT(!codeBlock->jitCodeMap());
 
     if (Options::verboseOSR()) {
@@ -52,7 +52,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     }
     
     VM* vm = &exec->vm();
-    OSREntryData* entry = codeBlock->getJITCode()->dfg()->osrEntryDataForBytecodeIndex(bytecodeIndex);
+    OSREntryData* entry = codeBlock->jitCode()->dfg()->osrEntryDataForBytecodeIndex(bytecodeIndex);
     
     if (!entry) {
         if (Options::verboseOSR())
@@ -163,7 +163,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     // 5) Find and return the destination machine code address.
     
-    void* result = codeBlock->getJITCode()->executableAddressAtOffset(entry->m_machineCodeOffset);
+    void* result = codeBlock->jitCode()->executableAddressAtOffset(entry->m_machineCodeOffset);
     
     if (Options::verboseOSR())
         dataLogF("    OSR returning machine code address %p.\n", result);

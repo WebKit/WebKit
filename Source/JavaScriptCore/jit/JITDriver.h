@@ -45,7 +45,7 @@ inline CompilationResult jitCompileIfAppropriateImpl(
 {
     VM& vm = exec->vm();
     
-    if (jitType == codeBlock->getJITType())
+    if (jitType == codeBlock->jitType())
         return CompilationNotNeeded;
     
     if (!vm.canUseJIT())
@@ -82,7 +82,7 @@ inline CompilationResult jitCompileFunctionIfAppropriateImpl(
 {
     VM& vm = exec->vm();
     
-    if (jitType == codeBlock->getJITType())
+    if (jitType == codeBlock->jitType())
         return CompilationNotNeeded;
     
     if (!vm.canUseJIT())

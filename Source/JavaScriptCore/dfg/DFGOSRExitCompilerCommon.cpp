@@ -78,7 +78,7 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
 void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 {
 #if USE(JSVALUE64)
-    ASSERT(jit.baselineCodeBlock()->getJITType() == JITCode::BaselineJIT);
+    ASSERT(jit.baselineCodeBlock()->jitType() == JITCode::BaselineJIT);
     jit.storePtr(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)JSStack::CodeBlock));
     
     for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
@@ -92,7 +92,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         ASSERT(mapping);
         ASSERT(mapping->m_bytecodeIndex == returnBytecodeIndex);
         
-        void* jumpTarget = baselineCodeBlockForCaller->getJITCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
+        void* jumpTarget = baselineCodeBlockForCaller->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
 
         GPRReg callerFrameGPR;
         if (inlineCallFrame->caller.inlineCallFrame) {
@@ -111,7 +111,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             jit.store64(AssemblyHelpers::TrustedImm64(JSValue::encode(JSValue(inlineCallFrame->callee.get()))), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::Callee)));
     }
 #else // USE(JSVALUE64) // so this is the 32-bit part
-    ASSERT(jit.baselineCodeBlock()->getJITType() == JITCode::BaselineJIT);
+    ASSERT(jit.baselineCodeBlock()->jitType() == JITCode::BaselineJIT);
     jit.storePtr(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)JSStack::CodeBlock));
     
     for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
@@ -125,7 +125,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         ASSERT(mapping);
         ASSERT(mapping->m_bytecodeIndex == returnBytecodeIndex);
         
-        void* jumpTarget = baselineCodeBlockForCaller->getJITCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
+        void* jumpTarget = baselineCodeBlockForCaller->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
 
         GPRReg callerFrameGPR;
         if (inlineCallFrame->caller.inlineCallFrame) {
@@ -162,7 +162,7 @@ void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
     ASSERT(mapping);
     ASSERT(mapping->m_bytecodeIndex == exit.m_codeOrigin.bytecodeIndex);
     
-    void* jumpTarget = baselineCodeBlock->getJITCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
+    void* jumpTarget = baselineCodeBlock->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
     
     jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT2);
     jit.jump(GPRInfo::regT2);

@@ -110,7 +110,7 @@ void VariableEventStream::reconstruct(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, MinifiedGraph& graph,
     unsigned index, Operands<ValueRecovery>& valueRecoveries) const
 {
-    ASSERT(codeBlock->getJITType() == JITCode::DFGJIT);
+    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
     CodeBlock* baselineCodeBlock = codeBlock->baselineVersion();
     
     unsigned numVariables;

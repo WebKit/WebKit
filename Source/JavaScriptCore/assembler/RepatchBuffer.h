@@ -47,7 +47,7 @@ public:
     RepatchBuffer(CodeBlock* codeBlock)
     {
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-        RefPtr<JITCode> code = codeBlock->getJITCode();
+        RefPtr<JITCode> code = codeBlock->jitCode();
         m_start = code->start();
         m_size = code->size();
 

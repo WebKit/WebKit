@@ -60,7 +60,7 @@ static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeB
     
     ASSERT(codeBlock);
     ASSERT(codeBlock->alternative());
-    ASSERT(codeBlock->alternative()->getJITType() == JITCode::BaselineJIT);
+    ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
     
     ASSERT(osrEntryBytecodeIndex != UINT_MAX);
 

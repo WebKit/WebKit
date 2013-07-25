@@ -117,7 +117,7 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
 
 void CodeBlock::dump(PrintStream& out) const
 {
-    dumpAssumingJITType(out, getJITType());
+    dumpAssumingJITType(out, jitType());
 }
 
 static CString constantName(int k, JSValue value)
@@ -2052,7 +2052,7 @@ void EvalCodeCache::visitAggregate(SlotVisitor& visitor)
 void CodeBlock::visitAggregate(SlotVisitor& visitor)
 {
 #if ENABLE(PARALLEL_GC) && ENABLE(DFG_JIT)
-    if (JITCode::isOptimizingJIT(getJITType())) {
+    if (JITCode::isOptimizingJIT(jitType())) {
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
         
         // I may be asked to scan myself more than once, and it may even happen concurrently.
@@ -2301,7 +2301,7 @@ void CodeBlock::finalizeUnconditionally()
 
 #if ENABLE(JIT)
     // Handle inline caches.
-    if (!!getJITCode()) {
+    if (!!jitCode()) {
         RepatchBuffer repatchBuffer(this);
         for (unsigned i = 0; i < numberOfCallLinkInfos(); ++i) {
             if (callLinkInfo(i).isLinked()) {
@@ -2361,7 +2361,7 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
     if (Options::verboseOSR())
         dataLog("Clearing structure cache (kind ", static_cast<int>(stubInfo.accessType), ") in ", *this, ".\n");
 
-    switch (getJITType()) {
+    switch (jitType()) {
     case JITCode::BaselineJIT:
         if (isGetByIdAccess(accessType))
             JIT::resetPatchGetById(repatchBuffer, &stubInfo);
@@ -2412,7 +2412,7 @@ void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
     UNUSED_PARAM(visitor);
 
 #if ENABLE(DFG_JIT)
-    if (!JITCode::isOptimizingJIT(getJITType()))
+    if (!JITCode::isOptimizingJIT(jitType()))
         return;
     
     DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
@@ -2435,7 +2435,7 @@ CodeBlock* CodeBlock::baselineVersion()
     // When we're initializing the original baseline code block, we won't be able
     // to get its replacement. But we'll know that it's the original baseline code
     // block because it won't have JIT code yet and it won't have an alternative.
-    if (getJITType() == JITCode::None && !alternative())
+    if (jitType() == JITCode::None && !alternative())
         return this;
     
     CodeBlock* result = replacement();
@@ -2443,7 +2443,7 @@ CodeBlock* CodeBlock::baselineVersion()
     while (result->alternative())
         result = result->alternative();
     ASSERT(result);
-    ASSERT(JITCode::isBaselineCode(result->getJITType()));
+    ASSERT(JITCode::isBaselineCode(result->jitType()));
     return result;
 #else
     return this;
@@ -2453,12 +2453,12 @@ CodeBlock* CodeBlock::baselineVersion()
 #if ENABLE(JIT)
 bool CodeBlock::hasOptimizedReplacement()
 {
-    ASSERT(JITCode::isBaselineCode(getJITType()));
-    bool result = JITCode::isHigherTier(replacement()->getJITType(), getJITType());
+    ASSERT(JITCode::isBaselineCode(jitType()));
+    bool result = JITCode::isHigherTier(replacement()->jitType(), jitType());
     if (result)
-        ASSERT(JITCode::isOptimizingJIT(replacement()->getJITType()));
+        ASSERT(JITCode::isOptimizingJIT(replacement()->jitType()));
     else {
-        ASSERT(JITCode::isBaselineCode(replacement()->getJITType()));
+        ASSERT(JITCode::isBaselineCode(replacement()->jitType()));
         ASSERT(replacement() == this);
     }
     return result;
@@ -2708,7 +2708,7 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
     {
         RELEASE_ASSERT(exec->codeBlock());
         RELEASE_ASSERT(exec->codeBlock() == this);
-        RELEASE_ASSERT(JITCode::isBaselineCode(getJITType()));
+        RELEASE_ASSERT(JITCode::isBaselineCode(jitType()));
         Instruction* instruction = exec->currentVPC();
         RELEASE_ASSERT(instruction);
 
@@ -2724,8 +2724,8 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
     if (!callIndices.size())
         return 1;
     
-    if (getJITCode()->contains(returnAddress.value())) {
-        unsigned callReturnOffset = getJITCode()->offsetOf(returnAddress.value());
+    if (jitCode()->contains(returnAddress.value())) {
+        unsigned callReturnOffset = jitCode()->offsetOf(returnAddress.value());
         CallReturnOffsetToBytecodeOffset* result =
             binarySearch<CallReturnOffsetToBytecodeOffset, unsigned>(
                 callIndices, callIndices.size(), callReturnOffset, getCallReturnOffset);
@@ -2758,7 +2758,7 @@ bool CodeBlock::codeOriginForReturn(ReturnAddressPtr returnAddress, CodeOrigin& 
     if (!hasCodeOrigins())
         return false;
 
-    if (!getJITCode()->contains(returnAddress.value())) {
+    if (!jitCode()->contains(returnAddress.value())) {
         ClosureCallStubRoutine* stub = findClosureCallForReturnPC(returnAddress);
         ASSERT(stub);
         if (!stub)
@@ -2767,7 +2767,7 @@ bool CodeBlock::codeOriginForReturn(ReturnAddressPtr returnAddress, CodeOrigin& 
         return true;
     }
     
-    unsigned offset = getJITCode()->offsetOf(returnAddress.value());
+    unsigned offset = jitCode()->offsetOf(returnAddress.value());
     CodeOriginAtCallReturnOffset* entry =
         tryBinarySearch<CodeOriginAtCallReturnOffset, unsigned>(
             codeOrigins(), codeOrigins().size(), offset,
@@ -2841,7 +2841,7 @@ CodeBlock* FunctionCodeBlock::replacement()
 
 JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
-    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType())) {
+    if (JITCode::isHigherTier(replacement()->jitType(), jitType())) {
         result = CompilationNotNeeded;
         return 0;
     }
@@ -2856,7 +2856,7 @@ CompilationResult ProgramCodeBlock::replaceWithDeferredOptimizedCode(PassRefPtr<
 
 JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
-    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType())) {
+    if (JITCode::isHigherTier(replacement()->jitType(), jitType())) {
         result = CompilationNotNeeded;
         return 0;
     }
@@ -2871,7 +2871,7 @@ CompilationResult EvalCodeBlock::replaceWithDeferredOptimizedCode(PassRefPtr<DFG
 
 JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
-    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType())) {
+    if (JITCode::isHigherTier(replacement()->jitType(), jitType())) {
         result = CompilationNotNeeded;
         return 0;
     }
@@ -2903,7 +2903,7 @@ DFG::CapabilityLevel FunctionCodeBlock::canCompileWithDFGInternal()
 
 void CodeBlock::jettison()
 {
-    ASSERT(JITCode::isOptimizingJIT(getJITType()));
+    ASSERT(JITCode::isOptimizingJIT(jitType()));
     ASSERT(this == replacement());
     alternative()->optimizeAfterWarmUp();
     tallyFrequentExitSites();
@@ -2919,31 +2919,39 @@ void ProgramCodeBlock::jettisonImpl()
 
 void EvalCodeBlock::jettisonImpl()
 {
+    ASSERT(JITCode::isOptimizingJIT(jitType()));
+    ASSERT(this == replacement());
+    if (DFG::shouldShowDisassembly())
+        dataLog("Jettisoning ", *this, ".\n");
     static_cast<EvalExecutable*>(ownerExecutable())->jettisonOptimizedCode(*vm());
 }
 
 void FunctionCodeBlock::jettisonImpl()
 {
+    ASSERT(JITCode::isOptimizingJIT(jitType()));
+    ASSERT(this == replacement());
+    if (DFG::shouldShowDisassembly())
+        dataLog("Jettisoning ", *this, ".\n");
     static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*vm(), m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
 CompilationResult ProgramCodeBlock::jitCompileImpl(ExecState* exec)
 {
-    ASSERT(getJITType() == JITCode::InterpreterThunk);
+    ASSERT(jitType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());
     return static_cast<ProgramExecutable*>(ownerExecutable())->jitCompile(exec);
 }
 
 CompilationResult EvalCodeBlock::jitCompileImpl(ExecState* exec)
 {
-    ASSERT(getJITType() == JITCode::InterpreterThunk);
+    ASSERT(jitType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());
     return static_cast<EvalExecutable*>(ownerExecutable())->jitCompile(exec);
 }
 
 CompilationResult FunctionCodeBlock::jitCompileImpl(ExecState* exec)
 {
-    ASSERT(getJITType() == JITCode::InterpreterThunk);
+    ASSERT(jitType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());
     return static_cast<FunctionExecutable*>(ownerExecutable())->jitCompileFor(exec, m_isConstructor ? CodeForConstruct : CodeForCall);
 }
@@ -3147,11 +3155,11 @@ void CodeBlock::forceOptimizationSlowPathConcurrently()
 
 void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResult result)
 {
-    RELEASE_ASSERT(getJITType() == JITCode::BaselineJIT);
+    RELEASE_ASSERT(jitType() == JITCode::BaselineJIT);
     RELEASE_ASSERT((result == CompilationSuccessful) == (replacement() != this));
     switch (result) {
     case CompilationSuccessful:
-        RELEASE_ASSERT(JITCode::isOptimizingJIT(replacement()->getJITType()));
+        RELEASE_ASSERT(JITCode::isOptimizingJIT(replacement()->jitType()));
         optimizeNextInvocation();
         break;
     case CompilationFailed:
@@ -3179,7 +3187,7 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
 #if ENABLE(JIT)
 uint32_t CodeBlock::adjustedExitCountThreshold(uint32_t desiredThreshold)
 {
-    ASSERT(JITCode::isOptimizingJIT(getJITType()));
+    ASSERT(JITCode::isOptimizingJIT(jitType()));
     // Compute this the lame way so we don't saturate. This is called infrequently
     // enough that this loop won't hurt us.
     unsigned result = desiredThreshold;
@@ -3324,12 +3332,12 @@ bool CodeBlock::shouldOptimizeNow()
 #if ENABLE(DFG_JIT)
 void CodeBlock::tallyFrequentExitSites()
 {
-    ASSERT(JITCode::isOptimizingJIT(getJITType()));
-    ASSERT(alternative()->getJITType() == JITCode::BaselineJIT);
+    ASSERT(JITCode::isOptimizingJIT(jitType()));
+    ASSERT(alternative()->jitType() == JITCode::BaselineJIT);
     
     CodeBlock* profiledBlock = alternative();
     
-    switch (getJITType()) {
+    switch (jitType()) {
     case JITCode::DFGJIT: {
         DFG::JITCode* jitCode = m_jitCode->dfg();
         for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
