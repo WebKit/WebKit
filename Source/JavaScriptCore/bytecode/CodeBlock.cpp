@@ -48,6 +48,7 @@
 #include "JSNameScope.h"
 #include "LowLevelInterpreter.h"
 #include "Operations.h"
+#include "PolymorphicPutByIdList.h"
 #include "ReduceWhitespace.h"
 #include "RepatchBuffer.h"
 #include "SlotVisitorInlines.h"
@@ -2109,10 +2110,17 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     // and when it runs, it figures out whether it has any work to do.
     visitor.addUnconditionalFinalizer(this);
     
+    // There are two things that we use weak reference harvesters for: DFG fixpoint for
+    // jettisoning, and trying to find structures that would be live based on some
+    // inline cache. So it makes sense to register them regardless.
+    visitor.addWeakReferenceHarvester(this);
+    m_allTransitionsHaveBeenMarked = false;
+    
     if (shouldImmediatelyAssumeLivenessDuringScan()) {
         // This code block is live, so scan all references strongly and return.
         stronglyVisitStrongReferences(visitor);
         stronglyVisitWeakReferences(visitor);
+        propagateTransitions(visitor);
         return;
     }
     
@@ -2127,30 +2135,92 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     // decision by calling harvestWeakReferences().
     
     m_jitCode->dfgCommon()->livenessHasBeenProved = false;
-    m_jitCode->dfgCommon()->allTransitionsHaveBeenMarked = false;
     
-    performTracingFixpointIteration(visitor);
-
-    // GC doesn't have enough information yet for us to decide whether to keep our DFG
-    // data, so we need to register a handler to run again at the end of GC, when more
-    // information is available.
-    if (!(m_jitCode->dfgCommon()->livenessHasBeenProved && m_jitCode->dfgCommon()->allTransitionsHaveBeenMarked))
-        visitor.addWeakReferenceHarvester(this);
-    
+    propagateTransitions(visitor);
+    determineLiveness(visitor);
 #else // ENABLE(DFG_JIT)
     RELEASE_ASSERT_NOT_REACHED();
 #endif // ENABLE(DFG_JIT)
 }
 
-void CodeBlock::performTracingFixpointIteration(SlotVisitor& visitor)
+void CodeBlock::propagateTransitions(SlotVisitor& visitor)
 {
     UNUSED_PARAM(visitor);
+
+    if (m_allTransitionsHaveBeenMarked)
+        return;
+
+    bool allAreMarkedSoFar = true;
+        
+#if ENABLE(LLINT)
+    Interpreter* interpreter = m_vm->interpreter;
+    if (jitType() == JITCode::InterpreterThunk) {
+        const Vector<unsigned>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
+        for (size_t i = propertyAccessInstructions.size(); i--;) {
+            Instruction* instruction = &instructions()[propertyAccessInstructions[i]];
+            switch (interpreter->getOpcodeID(instruction[0].u.opcode)) {
+            case op_put_by_id_transition_direct:
+            case op_put_by_id_transition_normal:
+            case op_put_by_id_transition_direct_out_of_line:
+            case op_put_by_id_transition_normal_out_of_line: {
+                if (Heap::isMarked(instruction[4].u.structure.get()))
+                    visitor.append(&instruction[6].u.structure);
+                else
+                    allAreMarkedSoFar = false;
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
+#endif // ENABLE(LLINT)
+
+#if ENABLE(JIT)
+    if (JITCode::isJIT(jitType())) {
+        for (unsigned i = m_structureStubInfos.size(); i--;) {
+            StructureStubInfo& stubInfo = m_structureStubInfos[i];
+            switch (stubInfo.accessType) {
+            case access_put_by_id_transition_normal:
+            case access_put_by_id_transition_direct: {
+                JSCell* origin = stubInfo.codeOrigin.codeOriginOwner();
+                if ((!origin || Heap::isMarked(origin))
+                    && Heap::isMarked(stubInfo.u.putByIdTransition.previousStructure.get()))
+                    visitor.append(&stubInfo.u.putByIdTransition.structure);
+                else
+                    allAreMarkedSoFar = false;
+                break;
+            }
+
+            case access_put_by_id_list: {
+                PolymorphicPutByIdList* list = stubInfo.u.putByIdList.list;
+                JSCell* origin = stubInfo.codeOrigin.codeOriginOwner();
+                if (origin && !Heap::isMarked(origin)) {
+                    allAreMarkedSoFar = false;
+                    break;
+                }
+                for (unsigned j = list->size(); j--;) {
+                    PutByIdAccess& access = list->m_list[j];
+                    if (!access.isTransition())
+                        continue;
+                    if (Heap::isMarked(access.oldStructure()))
+                        visitor.append(&access.m_newStructure);
+                    else
+                        allAreMarkedSoFar = false;
+                }
+                break;
+            }
+            
+            default:
+                break;
+            }
+        }
+    }
+#endif // ENABLE(JIT)
     
 #if ENABLE(DFG_JIT)
-    // Evaluate our weak reference transitions, if there are still some to evaluate.
-    DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-    if (!dfgCommon->allTransitionsHaveBeenMarked) {
-        bool allAreMarkedSoFar = true;
+    if (JITCode::isOptimizingJIT(jitType())) {
+        DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
         for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
             if ((!dfgCommon->transitions[i].m_codeOrigin
                  || Heap::isMarked(dfgCommon->transitions[i].m_codeOrigin.get()))
@@ -2170,12 +2240,23 @@ void CodeBlock::performTracingFixpointIteration(SlotVisitor& visitor)
             } else
                 allAreMarkedSoFar = false;
         }
-        
-        if (allAreMarkedSoFar)
-            dfgCommon->allTransitionsHaveBeenMarked = true;
     }
+#endif // ENABLE(DFG_JIT)
     
+    if (allAreMarkedSoFar)
+        m_allTransitionsHaveBeenMarked = true;
+}
+
+void CodeBlock::determineLiveness(SlotVisitor& visitor)
+{
+    UNUSED_PARAM(visitor);
+    
+    if (shouldImmediatelyAssumeLivenessDuringScan())
+        return;
+    
+#if ENABLE(DFG_JIT)
     // Check if we have any remaining work to do.
+    DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
     if (dfgCommon->livenessHasBeenProved)
         return;
     
@@ -2204,14 +2285,15 @@ void CodeBlock::performTracingFixpointIteration(SlotVisitor& visitor)
 
 void CodeBlock::visitWeakReferences(SlotVisitor& visitor)
 {
-    performTracingFixpointIteration(visitor);
+    propagateTransitions(visitor);
+    determineLiveness(visitor);
 }
 
 void CodeBlock::finalizeUnconditionally()
 {
 #if ENABLE(LLINT)
     Interpreter* interpreter = m_vm->interpreter;
-    if (!!numberOfInstructions()) {
+    if (JITCode::couldBeInterpreted(jitType())) {
         const Vector<unsigned>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
         for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
             Instruction* curInstruction = &instructions()[propertyAccessInstructions[i]];

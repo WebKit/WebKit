@@ -197,7 +197,7 @@ struct StructureStubInfo {
         return WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
             watchpoints, codeBlock, this);
     }
-        
+    
     int8_t accessType;
     bool seen : 1;
     bool resetByGC : 1;

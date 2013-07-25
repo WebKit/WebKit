@@ -39,6 +39,7 @@
 
 namespace JSC {
 
+class CodeBlock;
 struct StructureStubInfo;
 
 class PutByIdAccess {
@@ -132,6 +133,8 @@ public:
     bool visitWeak() const;
     
 private:
+    friend class CodeBlock;
+    
     AccessType m_type;
     WriteBarrier<Structure> m_oldStructure;
     WriteBarrier<Structure> m_newStructure;
@@ -178,6 +181,8 @@ public:
     bool visitWeak() const;
     
 private:
+    friend class CodeBlock;
+    
     Vector<PutByIdAccess, 2> m_list;
     PutKind m_kind;
 };

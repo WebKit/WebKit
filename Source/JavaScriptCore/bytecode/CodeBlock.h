@@ -912,6 +912,7 @@ public:
     ConcurrentJITLock m_lock;
     
     bool m_shouldAlwaysBeInlined;
+    bool m_allTransitionsHaveBeenMarked; // Initialized and used on every GC.
     
 protected:
 #if ENABLE(JIT)
@@ -1000,9 +1001,10 @@ private:
 #else
     bool shouldImmediatelyAssumeLivenessDuringScan() { return true; }
 #endif
-
-    void performTracingFixpointIteration(SlotVisitor&);
-
+    
+    void propagateTransitions(SlotVisitor&);
+    void determineLiveness(SlotVisitor&);
+        
     void stronglyVisitStrongReferences(SlotVisitor&);
     void stronglyVisitWeakReferences(SlotVisitor&);
 

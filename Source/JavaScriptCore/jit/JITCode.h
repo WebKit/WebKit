@@ -79,6 +79,17 @@ public:
         }
     }
     
+    static bool couldBeInterpreted(JITType jitType)
+    {
+        switch (jitType) {
+        case InterpreterThunk:
+        case BaselineJIT:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
     static bool isJIT(JITType jitType)
     {
         switch (jitType) {

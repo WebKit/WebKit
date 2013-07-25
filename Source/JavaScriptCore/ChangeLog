@@ -1,3 +1,29 @@
+2013-06-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: all cached put_by_id transitions, even ones that weren't inlined by the DFG, should be propagated by the GC
+        https://bugs.webkit.org/show_bug.cgi?id=117170
+
+        Reviewed by Mark Hahnenberg.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC):
+        (JSC::CodeBlock::determineLiveness):
+        (JSC::CodeBlock::visitWeakReferences):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/PolymorphicPutByIdList.h:
+        (JSC):
+        (PutByIdAccess):
+        (PolymorphicPutByIdList):
+        * bytecode/StructureStubInfo.h:
+        (StructureStubInfo):
+        * jit/JITCode.h:
+        (JSC::JITCode::couldBeInterpreted):
+        (JITCode):
+
 2013-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Get rid of StructureStubInfo::bytecodeIndex
