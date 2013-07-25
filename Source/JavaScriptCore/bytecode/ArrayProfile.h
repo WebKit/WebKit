@@ -136,6 +136,7 @@ public:
         , m_outOfBounds(false)
         , m_mayInterceptIndexedAccesses(false)
         , m_usesOriginalArrayStructures(true)
+        , m_didPerformFirstRunPruning(false)
         , m_observedArrayModes(0)
     {
     }
@@ -148,6 +149,7 @@ public:
         , m_outOfBounds(false)
         , m_mayInterceptIndexedAccesses(false)
         , m_usesOriginalArrayStructures(true)
+        , m_didPerformFirstRunPruning(false)
         , m_observedArrayModes(0)
     {
     }
@@ -189,6 +191,7 @@ public:
     bool usesOriginalArrayStructures(const ConcurrentJITLocker&) const { return m_usesOriginalArrayStructures; }
     
     CString briefDescription(const ConcurrentJITLocker&, CodeBlock*);
+    CString briefDescriptionWithoutUpdating(const ConcurrentJITLocker&);
     
 private:
     friend class LLIntOffsetsExtractor;
@@ -200,8 +203,9 @@ private:
     Structure* m_expectedStructure;
     bool m_mayStoreToHole; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
     bool m_outOfBounds;
-    bool m_mayInterceptIndexedAccesses;
-    bool m_usesOriginalArrayStructures;
+    bool m_mayInterceptIndexedAccesses : 1;
+    bool m_usesOriginalArrayStructures : 1;
+    bool m_didPerformFirstRunPruning : 1;
     ArrayModes m_observedArrayModes;
 };
 

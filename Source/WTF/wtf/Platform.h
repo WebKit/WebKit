@@ -713,7 +713,7 @@
 #endif
 
 /* Do we have LLVM? */
-#if !defined(HAVE_LLVM) && PLATFORM(MAC) && ENABLE(FTL_JIT)
+#if !defined(HAVE_LLVM) && PLATFORM(MAC) && ENABLE(FTL_JIT) && CPU(X86_64)
 #define HAVE_LLVM 1
 #endif
 

@@ -78,6 +78,14 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker& locker, C
 {
     if (m_lastSeenStructure) {
         m_observedArrayModes |= arrayModeFromStructure(m_lastSeenStructure);
+
+        if (!m_didPerformFirstRunPruning
+            && hasTwoOrMoreBitsSet(m_observedArrayModes)) {
+            m_observedArrayModes = arrayModeFromStructure(m_lastSeenStructure);
+            m_expectedStructure = 0;
+            m_didPerformFirstRunPruning = true;
+        }
+        
         m_mayInterceptIndexedAccesses |=
             m_lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
         if (!codeBlock->globalObject()->isOriginalArrayStructure(m_lastSeenStructure))
@@ -103,7 +111,11 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker& locker, C
 CString ArrayProfile::briefDescription(const ConcurrentJITLocker& locker, CodeBlock* codeBlock)
 {
     computeUpdatedPrediction(locker, codeBlock);
-    
+    return briefDescriptionWithoutUpdating(locker);
+}
+
+CString ArrayProfile::briefDescriptionWithoutUpdating(const ConcurrentJITLocker& locker)
+{
     StringPrintStream out;
     
     bool hasPrinted = false;

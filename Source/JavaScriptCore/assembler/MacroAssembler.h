@@ -457,6 +457,11 @@ public:
         compare32(cond, left, right, dest);
     }
 
+    void comparePtr(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
+    {
+        compare32(cond, left, right, dest);
+    }
+    
     void storePtr(RegisterID src, ImplicitAddress address)
     {
         store32(src, address);

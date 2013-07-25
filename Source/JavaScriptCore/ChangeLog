@@ -1,5 +1,49 @@
 2013-07-02  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix 32-bit build.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::comparePtr):
+        (MacroAssembler):
+        * dfg/DFGBinarySwitch.cpp:
+        (JSC::DFG::BinarySwitch::advance):
+        * dfg/DFGBinarySwitch.h:
+        (JSC::DFG::BinarySwitch::caseValue):
+
+2013-07-02  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Have fewer Arrayify's
+        https://bugs.webkit.org/show_bug.cgi?id=118335
+
+        Reviewed by Mark Hahnenberg.
+        
+        A lot of Arrayify's arise because some program saw Int32 arrays early on in
+        execution, but then they all got converted to Double arrays and the program
+        will never see Int32 arrays ever again. Prior to this change you would always
+        have an Arrayify in this case. But with this change, the first time that an
+        ArrayProfile is about to go polymorphic in computeUpdatedPrediction(), it
+        instead forcibly monomorphises itself to the latest-seen structure.
+        Thereafter it will never again perform this monomorphisation. This is
+        controlled by ArrayProfile::m_didPerformFirstRunPruning. This is a 5%
+        speed-up on Kraken/imaging-gaussian-blur with the FTL enabled, and it
+        unblocks a bunch of stuff we want to do in the future because it makes a
+        bunch of loops effect-free.
+        
+        We will still want to implement Arrayify hoisting in the future, but this is
+        great anyway because it's better to not have Arrayifications than it is to
+        have hoisted Arrayifications.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        (JSC::ArrayProfile::briefDescription):
+        (JSC):
+        (JSC::ArrayProfile::briefDescriptionWithoutUpdating):
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::ArrayProfile):
+        (ArrayProfile):
+
+2013-07-02  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: add option to disable OSR entry in loops
         https://bugs.webkit.org/show_bug.cgi?id=118329
 

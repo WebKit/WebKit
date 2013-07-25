@@ -69,7 +69,7 @@ public:
     BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type);
     
     unsigned caseIndex() const { return m_cases[m_caseIndex].index; }
-    int caseValue() const { return m_cases[m_caseIndex].value; }
+    int64_t caseValue() const { return m_cases[m_caseIndex].value; }
     
     bool advance(MacroAssembler&);
     

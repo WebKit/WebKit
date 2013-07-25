@@ -66,7 +66,7 @@ bool BinarySwitch::advance(MacroAssembler& jit)
             case Int32:
                 m_fallThrough.append(jit.branch32(
                     MacroAssembler::NotEqual, m_value,
-                    MacroAssembler::Imm32(m_cases[code.index].value)));
+                    MacroAssembler::Imm32(static_cast<int32_t>(m_cases[code.index].value))));
                 break;
             case IntPtr:
                 m_fallThrough.append(jit.branchPtr(
@@ -80,7 +80,7 @@ bool BinarySwitch::advance(MacroAssembler& jit)
             case Int32:
                 m_jumpStack.append(jit.branch32(
                     MacroAssembler::NotEqual, m_value,
-                    MacroAssembler::Imm32(m_cases[code.index].value)));
+                    MacroAssembler::Imm32(static_cast<int32_t>(m_cases[code.index].value))));
                 break;
             case IntPtr:
                 m_jumpStack.append(jit.branchPtr(
@@ -94,7 +94,7 @@ bool BinarySwitch::advance(MacroAssembler& jit)
             case Int32:
                 m_jumpStack.append(jit.branch32(
                     MacroAssembler::LessThan, m_value,
-                    MacroAssembler::Imm32(m_cases[code.index].value)));
+                    MacroAssembler::Imm32(static_cast<int32_t>(m_cases[code.index].value))));
                 break;
             case IntPtr:
                 m_jumpStack.append(jit.branchPtr(
