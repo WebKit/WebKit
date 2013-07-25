@@ -1,3 +1,13 @@
+2013-06-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Printing a StringImpl* should really guard against NULL
+        https://bugs.webkit.org/show_bug.cgi?id=117675
+
+        Reviewed by Mark Hahnenberg.
+
+        * wtf/PrintStream.cpp:
+        (WTF::printInternal):
+
 2013-06-11  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should support op_in and it should use patching to make it fast
