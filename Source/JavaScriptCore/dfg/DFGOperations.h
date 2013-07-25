@@ -124,6 +124,7 @@ typedef char* DFG_OPERATION (*P_DFGOperation_EStPS)(ExecState*, Structure*, void
 typedef char* DFG_OPERATION (*P_DFGOperation_EStSS)(ExecState*, Structure*, size_t, size_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStZ)(ExecState*, Structure*, int32_t);
 typedef StringImpl* DFG_OPERATION (*I_DFGOperation_EJss)(ExecState*, JSString*);
+typedef JSString* DFG_OPERATION (*Jss_DFGOperation_EZ)(ExecState*, int32_t);
 JSCell* DFG_OPERATION operationStringFromCharCode(ExecState*, int32_t)  WTF_INTERNAL; 
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
@@ -219,6 +220,8 @@ char* DFG_OPERATION operationEnsureContiguous(ExecState*, JSCell*);
 char* DFG_OPERATION operationRageEnsureContiguous(ExecState*, JSCell*);
 char* DFG_OPERATION operationEnsureArrayStorage(ExecState*, JSCell*);
 StringImpl* DFG_OPERATION operationResolveRope(ExecState*, JSString*);
+JSString* DFG_OPERATION operationSingleCharacterString(ExecState*, int32_t);
+
 JSCell* DFG_OPERATION operationNewStringObject(ExecState*, JSString*, Structure*);
 JSCell* DFG_OPERATION operationToStringOnCell(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationToString(ExecState*, EncodedJSValue);

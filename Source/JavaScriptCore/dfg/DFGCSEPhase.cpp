@@ -593,6 +593,12 @@ private:
             case MakeRope:
                 return 0;
                 
+            // This either exits, causes a GC (lazy string allocation), or clobbers
+            // the world. The chances of it not doing any of those things are so
+            // slim that we might as well not even try to reason about it.
+            case GetByVal:
+                return 0;
+                
             case GetIndexedPropertyStorage:
                 if (node->arrayMode().getIndexedPropertyStorageMayTriggerGC())
                     return 0;

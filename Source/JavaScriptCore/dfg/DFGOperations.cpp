@@ -1572,6 +1572,14 @@ StringImpl* DFG_OPERATION operationResolveRope(ExecState* exec, JSString* string
     return string->value(exec).impl();
 }
 
+JSString* DFG_OPERATION operationSingleCharacterString(ExecState* exec, int32_t character)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    
+    return jsSingleCharacterString(exec, static_cast<UChar>(character));
+}
+
 JSCell* DFG_OPERATION operationNewStringObject(ExecState* exec, JSString* string, Structure* structure)
 {
     VM& vm = exec->vm();
