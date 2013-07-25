@@ -792,7 +792,7 @@ public:
     // to avoid thrashing.
     unsigned reoptimizationRetryCounter() const;
     void countReoptimization();
-    
+#if ENABLE(JIT)
     unsigned numberOfDFGCompiles();
 
     int32_t codeTypeThresholdMultiplier() const;
@@ -875,12 +875,14 @@ public:
 
     static ptrdiff_t offsetOfOSRExitCounter() { return OBJECT_OFFSETOF(CodeBlock, m_osrExitCounter); }
 
-#if ENABLE(JIT)
     uint32_t adjustedExitCountThreshold(uint32_t desiredThreshold);
     uint32_t exitCountThresholdForReoptimization();
     uint32_t exitCountThresholdForReoptimizationFromLoop();
     bool shouldReoptimizeNow();
     bool shouldReoptimizeFromLoopNow();
+#else // No JIT
+    void optimizeAfterWarmUp() { }
+    unsigned numberOfDFGCompiles() { return 0; }
 #endif
 
 #if ENABLE(VALUE_PROFILER)

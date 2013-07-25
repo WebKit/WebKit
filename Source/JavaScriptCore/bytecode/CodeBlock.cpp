@@ -3013,7 +3013,6 @@ int32_t CodeBlock::counterValueForOptimizeSoon()
         optimizationThresholdScalingFactor() *
         (1 << reoptimizationRetryCounter()));
 }
-#endif
 
 bool CodeBlock::checkIfOptimizationThresholdReached()
 {
@@ -3108,6 +3107,8 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
     }
 }
 
+#endif
+    
 static bool structureStubInfoLessThan(const StructureStubInfo& a, const StructureStubInfo& b)
 {
     return a.callReturnLocation.executableAddress() < b.callReturnLocation.executableAddress();

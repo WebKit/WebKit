@@ -1,5 +1,18 @@
 2013-07-25  Oliver Hunt  <oliver@apple.com>
 
+        Make all jit & non-jit combos build cleanly
+        https://bugs.webkit.org/show_bug.cgi?id=119102
+
+        Reviewed by Anders Carlsson.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::counterValueForOptimizeSoon):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::optimizeAfterWarmUp):
+        (JSC::CodeBlock::numberOfDFGCompiles):
+
+2013-07-25  Oliver Hunt  <oliver@apple.com>
+
         32 bit portion of load validation logic
         https://bugs.webkit.org/show_bug.cgi?id=118878
 
