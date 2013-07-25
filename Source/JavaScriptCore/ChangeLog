@@ -1,3 +1,13 @@
+2013-07-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        One more buildfix after FTL upstream.
+
+        Return a dummy value after RELEASE_ASSERT_NOT_REACHED() to make GCC happy.
+
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::getValue):
+        (JSC::DFG::LazyJSValue::strictEqual):
+
 2013-07-25  Julien Brianceau  <jbrianceau@nds.com>
 
         Fix "Unhandled opcode localAnnotation" build error in sh4 and mips LLINT.

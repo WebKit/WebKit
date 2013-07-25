@@ -43,6 +43,7 @@ JSValue LazyJSValue::getValue(VM& vm) const
         return jsString(&vm, u.stringImpl);
     }
     RELEASE_ASSERT_NOT_REACHED();
+    return value();
 }
 
 static TriState equalToSingleCharacter(JSValue value, UChar character)
@@ -109,6 +110,7 @@ TriState LazyJSValue::strictEqual(const LazyJSValue& other) const
         break;
     }
     RELEASE_ASSERT_NOT_REACHED();
+    return FalseTriState;
 }
 
 void LazyJSValue::dumpInContext(PrintStream& out, DumpContext* context) const
