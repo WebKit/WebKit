@@ -291,6 +291,7 @@
     <ClCompile Include="..\API\OpaqueJSString.cpp" />
     <ClCompile Include="..\assembler\LinkBuffer.cpp" />
     <ClCompile Include="..\assembler\MacroAssembler.cpp" />
+    <ClInclude Include="..\assembler\MacroAssemblerX86Common.cpp" />
     <ClCompile Include="..\bytecode\ArrayAllocationProfile.cpp" />
     <ClCompile Include="..\bytecode\ArrayProfile.cpp" />
     <ClCompile Include="..\bytecode\CallLinkInfo.cpp" />
@@ -706,6 +707,7 @@
     <ClInclude Include="..\jit\JITStubRoutine.h" />
     <ClInclude Include="..\jit\JITStubs.h" />
     <ClInclude Include="..\jit\JITStubsX86.h" />
+    <ClInclude Include="..\jit\JITStubsX86Common.h" />
     <ClInclude Include="..\jit\JITStubsX86_64.h" />
     <ClInclude Include="..\jit\JITThunks.h" />
     <ClInclude Include="..\jit\JITWriteBarrier.h" />

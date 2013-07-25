@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,10 @@
 #include <stdint.h>
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
+
+#if USE(MASM_PROBE)
+#include <xmmintrin.h>
+#endif
 
 namespace JSC {
 
@@ -71,6 +75,48 @@ namespace X86Registers {
         xmm6,
         xmm7,
     } XMMRegisterID;
+
+#if USE(MASM_PROBE)
+    #define FOR_EACH_CPU_REGISTER(V) \
+        FOR_EACH_CPU_GPREGISTER(V) \
+        FOR_EACH_CPU_FPREGISTER(V)
+
+    #define FOR_EACH_CPU_GPREGISTER(V) \
+        V(void*, eax) \
+        V(void*, ecx) \
+        V(void*, edx) \
+        V(void*, ebx) \
+        V(void*, esp) \
+        V(void*, ebp) \
+        V(void*, esi) \
+        V(void*, edi) \
+        FOR_EACH_X86_64_CPU_GPREGISTER(V) \
+        V(void*, eip)
+
+    #define FOR_EACH_CPU_FPREGISTER(V) \
+        V(__m128, xmm0) \
+        V(__m128, xmm1) \
+        V(__m128, xmm2) \
+        V(__m128, xmm3) \
+        V(__m128, xmm4) \
+        V(__m128, xmm5) \
+        V(__m128, xmm6) \
+        V(__m128, xmm7)
+
+#if CPU(X86)
+    #define FOR_EACH_X86_64_CPU_GPREGISTER(V) // Nothing to add.
+#elif CPU(X86_64)
+    #define FOR_EACH_X86_64_CPU_GPREGISTER(V) \
+        V(void*, r8) \
+        V(void*, r9) \
+        V(void*, r10) \
+        V(void*, r11) \
+        V(void*, r12) \
+        V(void*, r13) \
+        V(void*, r14) \
+        V(void*, r15)
+#endif // CPU(X86_64)
+#endif // USE(MASM_PROBE)
 }
 
 class X86Assembler {

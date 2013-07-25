@@ -79,6 +79,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/MacroAssemblerMIPS.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerSH4.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86.h \
+	Source/JavaScriptCore/assembler/MacroAssemblerX86Common.cpp \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86Common.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86_64.h \
 	Source/JavaScriptCore/assembler/MIPSAssembler.h \

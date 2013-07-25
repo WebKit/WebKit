@@ -33,12 +33,12 @@
 #if ENABLE(JIT)
 #include "JITStubs.h"
 
-#include "CommonSlowPaths.h"
 #include "Arguments.h"
 #include "ArrayConstructor.h"
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "CodeProfiling.h"
+#include "CommonSlowPaths.h"
 #include "DFGOSREntry.h"
 #include "Debugger.h"
 #include "ExceptionHelpers.h"

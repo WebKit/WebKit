@@ -1,3 +1,73 @@
+2013-05-16  Mark Lam  <mark.lam@apple.com>
+
+        Implement a probe mechanism for JIT generated code.
+        https://bugs.webkit.org/show_bug.cgi?id=115705.
+
+        Reviewed by Geoffrey Garen.
+
+        The probe is in the form of a MacroAssembler pseudo instruction.
+        It takes 3 arguments: a ProbeFunction, and 2 void* args.
+
+        When inserted into the JIT at some code generation site, the probe
+        pseudo "instruction" will emit a minimal amount of code to save the
+        stack pointer, 1 (or more) scratch register(s), and the probe
+        arguments into a ProbeContext record on the stack. The emitted code
+        will then call a probe trampoline to do the rest of the work, which
+        consists of:
+        1. saving the remaining registers into the ProbeContext.
+        2. calling the ProbeFunction, and passing it the ProbeContext pointer.
+        3. restoring the registers from the ProbeContext after the ProbeFunction
+           returns, and then returning to the JIT generated code.
+
+        The ProbeContext is stack allocated and is only valid for the duration
+        that the ProbeFunction is executing.
+
+        If the user supplied ProbeFunction alters the register values in the
+        ProbeContext, the new values will be installed into the registers upon
+        returning from the probe. This can be useful for some debugging or
+        testing purposes.
+
+        The probe mechanism is built conditional on USE(MASM_PROBE) which is
+        defined in config.h. USE(MASM_PROBE) will off by default.
+
+        This changeset only implements the probe mechanism for X86 and X86_64.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        (JSC::MacroAssembler::shouldBlind):
+        (JSC::MacroAssembler::store32):
+        * assembler/MacroAssemblerX86.h:
+        (MacroAssemblerX86):
+        (JSC::MacroAssemblerX86::trustedImm32FromPtr):
+        (JSC::MacroAssemblerX86::probe):
+        * assembler/MacroAssemblerX86Common.cpp: Added.
+        (JSC::MacroAssemblerX86Common::ProbeContext::dumpCPURegisters):
+        - CPU specific register dumper called by ProbeContext::dump().
+        (JSC::MacroAssemblerX86Common::ProbeContext::dump):
+        - Prints the ProbeContext to the DataLog.
+        * assembler/MacroAssemblerX86Common.h:
+        (MacroAssemblerX86Common):
+        (CPUState): Added.
+        (ProbeContext): Added.
+        * assembler/MacroAssemblerX86_64.h:
+        (MacroAssemblerX86_64):
+        (JSC::MacroAssemblerX86_64::trustedImm64FromPtr):
+        (JSC::MacroAssemblerX86_64::probe):
+        * assembler/X86Assembler.h:
+        * config.h: Added WTF_USE_MASM_PROBE flag.
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86Common.h: Added.
+        * jit/JITStubsX86_64.h:
+
 2013-05-15  Mark Lam  <mark.lam@apple.com>
 
         Fix for broken 32-bit build in SpeculativeJIT::checkArray().

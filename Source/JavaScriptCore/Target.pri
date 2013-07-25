@@ -51,6 +51,7 @@ SOURCES += \
     assembler/LinkBuffer.cpp \
     assembler/MacroAssembler.cpp \
     assembler/MacroAssemblerARM.cpp \
+    assembler/MacroAssemblerX86Common.cpp \
     bytecode/ArrayAllocationProfile.cpp \
     bytecode/ArrayProfile.cpp \
     bytecode/CallLinkInfo.cpp \

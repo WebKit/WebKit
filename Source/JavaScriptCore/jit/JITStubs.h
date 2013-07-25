@@ -317,6 +317,10 @@ inline bool returnAddressIsInCtiTrampoline(ReturnAddressPtr returnAddress)
 }
 #endif
 
+#if USE(MASM_PROBE)
+extern "C" void ctiMasmProbeTrampoline();
+#endif
+
 void performPlatformSpecificJITAssertions(VM*);
 
 extern "C" {

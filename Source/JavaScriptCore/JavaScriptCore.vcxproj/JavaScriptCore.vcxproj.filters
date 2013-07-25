@@ -102,6 +102,9 @@
     <ClCompile Include="..\assembler\MacroAssembler.cpp">
       <Filter>assembler</Filter>
     </ClCompile>
+    <ClCompile Include="..\assembler\MacroAssemblerX86Common.cpp">
+      <Filter>assembler</Filter>
+    </ClCompile>
     <ClCompile Include="..\bytecode\ArrayAllocationProfile.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
@@ -1269,6 +1272,15 @@
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JITStubs.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\JITStubsX86.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\JITStubsX86Common.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\JITStubsX86_64.h">
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JITThunks.h">
