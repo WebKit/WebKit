@@ -407,7 +407,7 @@ private:
                             break;
                         }
                         case CheckArray: {
-                            if (subNode->child1() != source);
+                            if (subNode->child1() != source)
                                 break;
                             noticeCheckArray(variable, subNode->arrayMode());
                             break;
