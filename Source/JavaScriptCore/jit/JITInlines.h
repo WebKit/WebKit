@@ -335,7 +335,7 @@ inline void JIT::emitAllocateJSObject(RegisterID allocator, StructureType struct
 }
 
 #if ENABLE(VALUE_PROFILER)
-inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
+inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile, RegisterID bucketCounterRegister)
 {
     ASSERT(shouldEmitProfiling());
     ASSERT(valueProfile);
@@ -373,16 +373,16 @@ inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
 #endif
 }
 
-inline void JIT::emitValueProfilingSite(unsigned bytecodeOffset)
+inline void JIT::emitValueProfilingSite(unsigned bytecodeOffset, RegisterID bucketCounterRegister)
 {
     if (!shouldEmitProfiling())
         return;
-    emitValueProfilingSite(m_codeBlock->valueProfileForBytecodeOffset(bytecodeOffset));
+    emitValueProfilingSite(m_codeBlock->valueProfileForBytecodeOffset(bytecodeOffset), bucketCounterRegister);
 }
 
-inline void JIT::emitValueProfilingSite()
+inline void JIT::emitValueProfilingSite(RegisterID bucketCounterRegister)
 {
-    emitValueProfilingSite(m_bytecodeOffset);
+    emitValueProfilingSite(m_bytecodeOffset, bucketCounterRegister);
 }
 #endif // ENABLE(VALUE_PROFILER)
 

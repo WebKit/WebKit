@@ -1135,7 +1135,7 @@ void JIT::emit_op_get_callee(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
     move(TrustedImm32(JSValue::CellTag), regT1);
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
     emitStore(dst, regT1, regT0);
 }
 
@@ -1178,7 +1178,7 @@ void JIT::emit_op_to_this(Instruction* currentInstruction)
     loadPtr(Address(regT2, JSCell::structureOffset()), regT0);
     if (shouldEmitProfiling()) {
         move(regT3, regT1);
-        emitValueProfilingSite();
+        emitValueProfilingSite(regT4);
     }
     addSlowCase(branch8(NotEqual, Address(regT0, Structure::typeInfoTypeOffset()), TrustedImm32(FinalObjectType)));
 }
@@ -1246,7 +1246,7 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
     neg32(regT2);
     loadPtr(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT0);
     loadPtr(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT1);
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
     emitStore(dst, regT1, regT0);
 }
 

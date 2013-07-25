@@ -54,7 +54,7 @@ namespace JSC {
 void JIT::emitPutCallResult(Instruction* instruction)
 {
     int dst = instruction[1].u.operand;
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
     emitPutVirtualRegister(dst);
     if (canBeOptimizedOrInlined()) {
         // Make lastResultRegister tracking simpler in the DFG. This is needed because

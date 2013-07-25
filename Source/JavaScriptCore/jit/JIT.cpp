@@ -611,7 +611,7 @@ PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCom
                 load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
                 load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
 #endif
-                emitValueProfilingSite(m_codeBlock->valueProfileForArgument(argument));
+                emitValueProfilingSite(m_codeBlock->valueProfileForArgument(argument), regT4);
             }
         }
 #endif

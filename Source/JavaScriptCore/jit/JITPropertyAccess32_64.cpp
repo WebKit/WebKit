@@ -181,7 +181,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     resultOK.link(this);
 #endif
 
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_get_by_val), dst, regT1, regT0);
     
@@ -278,7 +278,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
     m_byValInstructionIndex++;
 
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
 }
 
 void JIT::emit_op_put_by_val(Instruction* currentInstruction)
@@ -465,7 +465,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
     emitLoad(base, regT1, regT0);
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     compileGetByIdHotPath(ident);
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_get_by_id), dst, regT1, regT0);
 }
@@ -508,7 +508,7 @@ void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCase
     int ident = currentInstruction[3].u.operand;
     
     compileGetByIdSlowCase(dst, base, &(m_codeBlock->identifier(ident)), iter);
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
 }
 
 void JIT::compileGetByIdSlowCase(int dst, int base, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter)
@@ -1366,7 +1366,7 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
         addSlowCase(jump());
         break;
     }
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_get_from_scope), dst, regT1, regT0);
 }
@@ -1384,7 +1384,7 @@ void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<Slo
     JITStubCall stubCall(this, cti_op_get_from_scope);
     stubCall.addArgument(TrustedImmPtr(currentInstruction));
     stubCall.call(dst);
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
 }
 
 void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, unsigned value)

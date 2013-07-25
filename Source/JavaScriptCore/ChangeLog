@@ -1,3 +1,64 @@
+2013-06-19  Michael Saboff  <msaboff@apple.com>
+
+        FTL: arm build is broken in ToT
+        https://bugs.webkit.org/show_bug.cgi?id=117800
+
+        Unreviewed build fixes.
+
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler): Merge of r147941
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_mod): Moved variable declaration back inside #ifdef where used.
+
+2013-06-17  Michael Saboff  <msaboff@apple.com>
+
+        FTL: Add another temp register regT4 to JSInterfaceJIT
+        https://bugs.webkit.org/show_bug.cgi?id=117719
+
+        Reviewed by Geoffrey Garen.
+
+        Made the dedicated bucketCounterRegister to be regT4 and then used regT4 wherever
+        bucketCounterRegister had been used.  Since it is masked whenever it is used and
+        we are looking for some randomness in the register anyway, we can use it without
+        any issues.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emitPutCallResult):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emitPutCallResult):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emit_op_get_callee):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_callee):
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::callWithValueProfiling):
+        * jit/JSInterfaceJIT.h:
+        (JSInterfaceJIT):
+
 2013-06-17  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL should support Switch

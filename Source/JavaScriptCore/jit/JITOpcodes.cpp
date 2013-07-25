@@ -874,7 +874,7 @@ void JIT::emit_op_to_this(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT1);
     loadPtr(Address(regT1, JSCell::structureOffset()), regT0);
     if (shouldEmitProfiling())
-        emitValueProfilingSite();
+        emitValueProfilingSite(regT4);
 
     addSlowCase(branch8(NotEqual, Address(regT0, Structure::typeInfoTypeOffset()), TrustedImm32(FinalObjectType)));
 }
@@ -883,7 +883,7 @@ void JIT::emit_op_get_callee(Instruction* currentInstruction)
 {
     unsigned result = currentInstruction[1].u.operand;
     emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
     emitPutVirtualRegister(result);
 }
 
@@ -1118,7 +1118,7 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
     neg32(regT1);
     signExtend32ToPtr(regT1, regT1);
     load64(BaseIndex(callFrameRegister, regT1, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT0);
-    emitValueProfilingSite();
+    emitValueProfilingSite(regT4);
     emitPutVirtualRegister(dst, regT0);
 }
 

@@ -64,10 +64,6 @@ namespace JSC {
         static const RegisterID secondArgumentRegister = X86Registers::edx;
 #endif
 
-#if ENABLE(VALUE_PROFILER)
-        static const RegisterID bucketCounterRegister = X86Registers::r10;
-#endif
-
         static const RegisterID callFrameRegister = X86Registers::r13;
         static const RegisterID tagTypeNumberRegister = X86Registers::r14;
         static const RegisterID tagMaskRegister = X86Registers::r15;
@@ -76,6 +72,7 @@ namespace JSC {
         static const RegisterID regT1 = X86Registers::edx;
         static const RegisterID regT2 = X86Registers::ecx;
         static const RegisterID regT3 = X86Registers::ebx;
+        static const RegisterID regT4 = X86Registers::r10;
 
         static const FPRegisterID fpRegT0 = X86Registers::xmm0;
         static const FPRegisterID fpRegT1 = X86Registers::xmm1;
@@ -91,13 +88,13 @@ namespace JSC {
         static const RegisterID firstArgumentRegister = X86Registers::ecx;
         static const RegisterID secondArgumentRegister = X86Registers::edx;
         
-        static const RegisterID bucketCounterRegister = X86Registers::esi;
         static const RegisterID callFrameRegister = X86Registers::edi;
         
         static const RegisterID regT0 = X86Registers::eax;
         static const RegisterID regT1 = X86Registers::edx;
         static const RegisterID regT2 = X86Registers::ecx;
         static const RegisterID regT3 = X86Registers::ebx;
+        static const RegisterID regT4 = X86Registers::esi;
         
         static const FPRegisterID fpRegT0 = X86Registers::xmm0;
         static const FPRegisterID fpRegT1 = X86Registers::xmm1;
@@ -110,13 +107,13 @@ namespace JSC {
         static const RegisterID secondArgumentRegister = ARMRegisters::r1;
 
 #if ENABLE(VALUE_PROFILER)
-        static const RegisterID bucketCounterRegister = ARMRegisters::r7;
 #endif
 
         static const RegisterID regT0 = ARMRegisters::r0;
         static const RegisterID regT1 = ARMRegisters::r1;
         static const RegisterID regT2 = ARMRegisters::r2;
         static const RegisterID regT3 = ARMRegisters::r4;
+        static const RegisterID regT4 = ARMRegisters::r7;
 
         // Update ctiTrampoline in JITStubs.cpp if these values are changed!
         static const RegisterID callFrameRegister = ARMRegisters::r5;
@@ -131,10 +128,6 @@ namespace JSC {
         static const RegisterID firstArgumentRegister = MIPSRegisters::a0;
         static const RegisterID secondArgumentRegister = MIPSRegisters::a1;
         
-#if ENABLE(VALUE_PROFILER)
-        static const RegisterID bucketCounterRegister = MIPSRegisters::s3;
-#endif
-
         // regT0 must be v0 for returning a 32-bit value.
         static const RegisterID regT0 = MIPSRegisters::v0;
         
@@ -146,6 +139,8 @@ namespace JSC {
         // regT3 must be saved in the callee, so use an S register.
         static const RegisterID regT3 = MIPSRegisters::s2;
         
+        static const RegisterID regT4 = MIPSRegisters::s3;
+
         static const RegisterID callFrameRegister = MIPSRegisters::s0;
         
         static const FPRegisterID fpRegT0 = MIPSRegisters::f4;

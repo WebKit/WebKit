@@ -460,12 +460,12 @@ namespace JSC {
 #if ENABLE(VALUE_PROFILER)
         // This assumes that the value to profile is in regT0 and that regT3 is available for
         // scratch.
-        void emitValueProfilingSite(ValueProfile*);
-        void emitValueProfilingSite(unsigned bytecodeOffset);
-        void emitValueProfilingSite();
+        void emitValueProfilingSite(ValueProfile*, RegisterID);
+        void emitValueProfilingSite(unsigned bytecodeOffset, RegisterID);
+        void emitValueProfilingSite(RegisterID);
 #else
-        void emitValueProfilingSite(unsigned) { }
-        void emitValueProfilingSite() { }
+        void emitValueProfilingSite(unsigned, RegisterID) { }
+        void emitValueProfilingSite(RegisterID) { }
 #endif
         void emitArrayProfilingSite(RegisterID structureAndIndexingType, RegisterID scratch, ArrayProfile*);
         void emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndIndexingType, RegisterID scratch, unsigned bytecodeIndex);

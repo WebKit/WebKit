@@ -1112,11 +1112,11 @@ void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
 void JIT::emit_op_mod(Instruction* currentInstruction)
 {
+#if CPU(X86) || CPU(X86_64)
     unsigned dst = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
-#if CPU(X86) || CPU(X86_64)
     // Make sure registers are correct for x86 IDIV instructions.
     ASSERT(regT0 == X86Registers::eax);
     ASSERT(regT1 == X86Registers::edx);
