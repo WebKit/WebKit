@@ -46,8 +46,8 @@ foreach my $libName (@librariesToCopy) {
     my $lib = "$productDir/" . $libName;
     if (!-e $lib || -M $lib > -M $srcLib) {
         print "Updating $lib\n";
-        system "ditto", $srcLib, $lib;
-        system $ranlib, $lib;
+        (system("ditto", $srcLib, $lib) == 0) or die;
+        (system($ranlib, $lib) == 0) or die;
     }
 }
 
@@ -63,7 +63,7 @@ sub unpackIfNecessary
             foreach my $library (`tar -tf $package`) {
                 chomp $library;
                 print "   Ranlib $library\n";
-                system $ranlib, $targetDir . "/" . $library;
+                (system($ranlib, $targetDir . "/" . $library) == 0) or die;
             }
         }
     }
@@ -87,7 +87,15 @@ if ($ENV{ENABLE_FTL_JIT}) {
     my $majorDarwinVersion = (split /\./, `uname -r`)[0];
     my $llvmLibraryPackage;
     my $llvmIncludePackage;
-    if (defined($ENV{LLVM_LIBRARY_PACKAGE}) && defined($ENV{LLVM_INCLUDE_PACKAGE})) {
+    my $useOwnLLVM = 0;
+    my $ownLLVMDirectory;
+    if (defined($ENV{LLVM_SOURCE_PATH})) {
+        $useOwnLLVM = 1;
+        $ownLLVMDirectory = $ENV{LLVM_SOURCE_PATH};
+    } elsif (-d "llvm" && -e "llvm/LLVMBuild.txt") {
+        $useOwnLLVM = 1;
+        $ownLLVMDirectory = sourceDir() . "/llvm";
+    } elsif (defined($ENV{LLVM_LIBRARY_PACKAGE}) && defined($ENV{LLVM_INCLUDE_PACKAGE})) {
         $llvmLibraryPackage = $ENV{LLVM_LIBRARY_PACKAGE};
         $llvmIncludePackage = $ENV{LLVM_INCLUDE_PACKAGE};
     } elsif ($majorDarwinVersion == 11) {
@@ -102,7 +110,74 @@ if ($ENV{ENABLE_FTL_JIT}) {
         exit 1;
     }
 
-    unpackIfNecessary("$productDir/usr/local/include", "$productDir/usr/local/include/llvm-c/Core.h", $llvmIncludePackage, 0);
-    unpackIfNecessary($productDir, "$productDir/libLLVMCore.a", $llvmLibraryPackage, 1);
+    sub fileContains
+    {
+        my ($filename, $string) = @_;
+        open my $fileHandle, '<', $filename or die;
+        while (<$fileHandle>) {
+            return 1 if /^$string$/;
+        }
+        return 0;
+    }
+
+    sub fileContentsEquals
+    {
+        my ($filename, $string) = @_;
+        open my $fileHandle, '<', $filename or die;
+        binmode $fileHandle;
+        my $contents = <$fileHandle>;
+        return $contents eq $string;
+    }
+
+    if ($useOwnLLVM) {
+        print("Building LLVM.\n");
+        chdir $ownLLVMDirectory;
+        my $numCPUString = `sysctl hw.ncpu`;
+        $numCPUString =~ /: /;
+        my $numCPUs = $';
+        (system("make -j $numCPUs") == 0) or die;
+        chdirWebKit();
+    
+        my $ownLLVMBuildMode = "";
+        if (fileContains($ownLLVMDirectory . "/Makefile.config", "ENABLE_OPTIMIZED=1")) {
+            $ownLLVMBuildMode .= "Release";
+        } else {
+            $ownLLVMBuildMode .= "Debug";
+        }
+    
+        # FIXME: Add support for builds that disable assertions.
+        $ownLLVMBuildMode .= "+Asserts";
+    
+        my $librarySourceDirectory = "$ownLLVMDirectory/$ownLLVMBuildMode/lib";
+        my $libraryTargetDirectory = $productDir;
+        print("Symlinking libraries from $librarySourceDirectory to $libraryTargetDirectory\n");
+        opendir (my $dirHandle, $librarySourceDirectory);
+        while (my $filename = readdir($dirHandle)) {
+            next if $filename !~ /\.a$/;
+            print "   Symlink $filename\n";
+            my $sourceLibrary = "$librarySourceDirectory/$filename";
+            my $targetLibrary = "$libraryTargetDirectory/$filename";
+            my $ranlibToken = "$libraryTargetDirectory/.ranlibToken-$filename";
+            unlink($targetLibrary);
+            symlink($sourceLibrary, $targetLibrary);
+            if (!-e $ranlibToken
+                || !fileContentsEquals($ranlibToken, $sourceLibrary)
+                || -M $ranlibToken > -M $sourceLibrary) {
+                print "   Ranlib $filename\n";
+                (system($ranlib, $targetLibrary) == 0) or die;
+                (open my $fileHandle, ">", $ranlibToken) or die;
+                    print {$fileHandle} "$sourceLibrary";
+                    close $fileHandle;
+            }
+        }
+        closedir $dirHandle;
+        (system("rm", "-rf", "$productDir/usr/local/include/llvm") == 0) or die;
+        (system("rm", "-rf", "$productDir/usr/local/include/llvm-c") == 0) or die;
+        symlink("$ownLLVMDirectory/include/llvm", "$productDir/usr/local/include/llvm") or die;
+        symlink("$ownLLVMDirectory/include/llvm-c", "$productDir/usr/local/include/llvm-c") or die;
+    } else {
+        unpackIfNecessary("$productDir/usr/local/include", "$productDir/usr/local/include/llvm-c/Core.h", $llvmIncludePackage, 0);
+        unpackIfNecessary($productDir, "$productDir/libLLVMCore.a", $llvmLibraryPackage, 1);
+    }
 
 }

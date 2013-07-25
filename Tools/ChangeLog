@@ -1,3 +1,68 @@
+2013-07-16  Oliver Hunt <oliver@apple.com>
+
+        Merge dfgFourthTier r148848
+
+    2013-04-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: developing LLVM in tandem with WebKit should be fun and easy
+        https://bugs.webkit.org/show_bug.cgi?id=114925
+
+        Reviewed by Geoffrey Garen.
+        
+        This enables building LLVM along with WebKit, so that build-jsc and build-webkit
+        will also optionally build LLVM and quickly symlink LLVM's built products into
+        the right places.
+        
+        Most WebKit and JSC hackers will want to rely on the checked-in already-built
+        versions of LLVM in WebKitLibraries. But developing both systems in tandem is an
+        increasingly common use-case for me, and it may become a common use case for a
+        handful of others. Currently, this is really painful: you first have to build
+        LLVM, then you have to export-llvm-build (which takes a while), and then you
+        have to make sure that your LLVM_LIBRARY_PACKAGE and LLVM_INCLUDE_PACKAGE
+        variables are set to point to the thing you exported. The whole process loses
+        track of dependencies very quickly: making a tiny change in LLVM requires
+        packaging, and then unpackaging, a large number of potentially large headers and
+        static libraries. Not only is this slow but it then causes the WebKit build
+        system to rebuild anything that transitively includes any LLVM header, which is
+        now quite a few files. While this sort of use pattern is still worthwhile if
+        you're trying to package a binary drop and test it, it's not great if you're
+        just trying to do experimental development that involves making small changes
+        in both trees.
+        
+        This change fixes this use case while keeping the old use cases intact. You can
+        do tandem development using one of two modes:
+        
+        Your own LLVM directory: just set LLVM_SOURCE_PATH to the *absolute* path of
+        the LLVM directory you're using. Once this is done, any invocation of a WebKit
+        build via build-jsc or build-webkit will also build LLVM, and then quickly
+        symlink things into place without perturbing dependency tracking.
+        
+        Internal LLVM directory: if you check out llvm into a directory called 'llvm'
+        right off of the WebKit source tree, then the build system will automatically
+        use this.
+        
+        Here's how this takes care of dependencies:
+        
+        Headers: the include/llvm and include/llvm-c directories are symlinked into
+        $productsDir/usr/local/include. And then everything just works.
+        
+        Libraries: the build system detects, by reading LLVM's Makefile.config, which
+        mode LLVM is built in (like Release+Asserts or Debug+Asserts) and symlinks
+        the .a files into $productsDir/<thingy>. It will ranlib those libraries only
+        if they have changed, by checking both the modification time and also whether
+        the last time we had a symlink, that symlink was from the same directory.
+        This helps if you switch to an *older* LLVM build (using LLVM_SOURCE_PATH)
+        but that build wasn't yet ranlib'd.
+        
+        One problem that this does not yet solve is that xcodebuild will not relink
+        JavaScriptCore if the only thing that changed was the libraries. I will work
+        on this problem separately: https://bugs.webkit.org/show_bug.cgi?id=114926.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        (unpackIfNecessary):
+        (fileContains):
+        (fileContentsEquals):
+
 2013-04-15  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Update LLVM-related build scripts to copy generated headers as well
