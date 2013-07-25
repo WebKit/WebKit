@@ -1,5 +1,15 @@
 2013-07-25  Oliver Hunt  <oliver@apple.com>
 
+        32 bit portion of load validation logic
+        https://bugs.webkit.org/show_bug.cgi?id=118878
+
+        Reviewed by NOBODY (Build fix).
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2013-07-25  Oliver Hunt  <oliver@apple.com>
+
         More 32bit build fixes
 
         - Apparnetly some compilers don't track the fastcall directive everywhere we expect
