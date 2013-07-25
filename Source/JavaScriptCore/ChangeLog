@@ -1,3 +1,45 @@
+2013-05-02  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Structure transition table keys don't have to ref their StringImpl's
+        https://bugs.webkit.org/show_bug.cgi?id=115525
+
+        Reviewed by Geoffrey Garen.
+        
+        The structure transition table basically maps string to structure. The string is
+        always also stored, and ref'd, in the structure in Structure::m_nameInPrevious.
+        m_nameInPrevious is never mutated, and never cleared. The string cannot die unless
+        the structure dies. If the structure dies, then that entry in the transition map
+        becomes a zombie anyway and we will detect this separately.
+        
+        So, we don't need to use RefPtr<StringImpl>. We can just use StringImpl*.
+        
+        This also fixes a goof where we were getting the StringImpl's hash rather than
+        using a pointer hash. Not only is the latter faster, but it prevents my change
+        from leading to crashes: with my change we can have zombie keys, not just zombie
+        values. They will exist only until the next map mutation, which will clear them.
+        Lookups will work fine because the lookup routine will reject zombies. But it
+        does mean that the HashMap will have to deal with dangling StringImpl*'s; all it
+        takes to make this work is to ensure that the HashMap itself never dereferences
+        them. Using a pointer hash rather than StringImpl::existingHash() accomplishes
+        this.
+        
+        This also ensures that we don't accidentally call ref() or deref() from the
+        compilation thread, if the compilation thread inspects the transition table.
+        
+        And no, we wouldn't have been able to use the HashMap<RefPtr<...>, ...>
+        specialization, because the transition table is actually
+        HashMap<pair<RefPtr<StringImpl>, unsigned>, ...>: hence that specialization
+        doesn't kick in. We could have written a new specialization or something, but
+        that seemed like a lot of work given that we don't need the table to be ref'ing
+        the strings anyways.
+
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::add):
+        * runtime/StructureTransitionTable.h:
+        (StructureTransitionTable):
+        (Hash):
+        (JSC::StructureTransitionTable::Hash::hash):
+
 2013-05-01  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Structure::addPropertyTransitionToExistingStructure should be thread-safe

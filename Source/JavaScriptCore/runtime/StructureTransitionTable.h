@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #include "WeakGCMap.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
@@ -93,14 +92,13 @@ inline IndexingType newIndexingType(IndexingType oldType, NonPropertyTransition 
 class StructureTransitionTable {
     static const intptr_t UsingSingleSlotFlag = 1;
 
+    
     struct Hash {
-        typedef std::pair<RefPtr<StringImpl>, unsigned> Key;
+        typedef std::pair<StringImpl*, unsigned> Key;
+        
         static unsigned hash(const Key& p)
         {
-            unsigned result = p.second;
-            if (p.first)
-                result += p.first->existingHash();
-            return result;
+            return PtrHash<StringImpl*>::hash(p.first) + p.second;
         }
 
         static bool equal(const Key& a, const Key& b)
