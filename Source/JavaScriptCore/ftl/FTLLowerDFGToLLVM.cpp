@@ -325,6 +325,9 @@ private:
         case UInt32ToNumber:
             compileUInt32ToNumber();
             break;
+        case Int32ToDouble:
+            compileInt32ToDouble();
+            break;
         case CheckStructure:
             compileCheckStructure();
             break;
@@ -746,6 +749,18 @@ private:
             Overflow, noValue(), 0, m_out.lessThan(value, m_out.int32Zero),
             FormattedValue(ValueFormatUInt32, value));
         m_int32Values.add(m_node, value);
+    }
+    
+    void compileInt32ToDouble()
+    {
+        // This node is tricky to compile in the DFG backend because it tries to
+        // avoid converting child1 to a double in-place, as that would make subsequent
+        // int uses of of child1 fail. But the FTL needs no such special magic, since
+        // unlike the DFG backend, the FTL allows each node to have multiple
+        // contemporaneous low-level representations. So, this gives child1 a double
+        // representation and then forwards that representation to m_node.
+        
+        m_doubleValues.add(m_node, lowDouble(m_node->child1()));
     }
     
     void compileCheckStructure()

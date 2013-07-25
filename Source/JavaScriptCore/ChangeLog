@@ -1,5 +1,28 @@
 2013-05-10  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: FTL should support Int32ToDouble
+        https://bugs.webkit.org/show_bug.cgi?id=115926
+
+        Reviewed by Mark Hahnenberg.
+        
+        This node exists mainly to help the DFG see that a node may have both an int
+        and a double representation. But in the FTL, nodes already have multiple
+        representations. So this is just a no-op for the FTL.
+        
+        I considered making it so that the node isn't even inserted if we're doing
+        FTL compilation, but that would have required a bunch of conditionalizing in
+        the DFG's optimization phases, which sort of expect this node to be present
+        and necessary.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileInt32ToDouble):
+        (LowerDFGToLLVM):
+
+2013-05-10  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should support LogicalNot
         https://bugs.webkit.org/show_bug.cgi?id=115924
 

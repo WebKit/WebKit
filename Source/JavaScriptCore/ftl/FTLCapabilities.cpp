@@ -99,6 +99,7 @@ bool canCompile(Graph& graph)
             case ArithMul:
             case ArithNegate:
             case UInt32ToNumber:
+            case Int32ToDouble:
                 // These are OK.
                 break;
             case GetArrayLength:
