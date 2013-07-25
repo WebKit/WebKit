@@ -1,3 +1,17 @@
+2013-05-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        SpeculativeJIT::checkArray should use the correct ExitKind
+        https://bugs.webkit.org/show_bug.cgi?id=115943
+
+        Currently it uses Uncountable, which gives us no information if we end up exiting due to a 
+        mismatched ClassInfo pointer. It should instead use BadType and should pass the correct 
+        JSValueSource and Node instead of passing empty values.
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+
 2013-05-11  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL should support Jump and ForceOSRExit
@@ -31,6 +45,7 @@
         * runtime/Options.h:
         (JSC):
 
+>>>>>>> .r149942
 2013-05-10  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL should support CompareStrictEqConstant
