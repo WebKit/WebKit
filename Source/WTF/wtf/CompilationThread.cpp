@@ -23,45 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
+#include "config.h"
+#include "CompilationThread.h"
 
-#include <wtf/Platform.h>
+#include "StdLibExtras.h"
+#include "Threading.h"
+#include "ThreadSpecific.h"
 
-#if ENABLE(FTL_JIT)
+namespace WTF {
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLJITCode.h"
-#include "FTLOSRExitCompilationInfo.h"
-#include <wtf/Noncopyable.h>
+static ThreadSpecific<bool>* s_isCompilationThread;
+static pthread_once_t initializeCompilationThreadsKeyOnce = PTHREAD_ONCE_INIT;
 
-namespace JSC { namespace FTL {
+static void initializeCompilationThreadsOnce()
+{
+    s_isCompilationThread = new ThreadSpecific<bool>();
+}
 
-typedef EncodedJSValue (*GeneratedFunction)(ExecState*);
+static void initializeCompilationThreads()
+{
+    pthread_once(&initializeCompilationThreadsKeyOnce, initializeCompilationThreadsOnce);
+}
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
-    
-public:
-    State(DFG::Graph& graph);
-    
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    Vector<OSRExitCompilationInfo> osrExit;
-    LLVMExecutionEngineRef engine;
-    GeneratedFunction generatedFunction;
-    
-    void dumpState(const char* when);
-};
+bool isCompilationThread()
+{
+    if (!s_isCompilationThread)
+        return false;
+    if (!s_isCompilationThread->isSet())
+        return false;
+    return **s_isCompilationThread;
+}
 
-} } // namespace JSC::FTL
+bool exchangeIsCompilationThread(bool newValue)
+{
+    initializeCompilationThreads();
+    bool oldValue = isCompilationThread();
+    **s_isCompilationThread = newValue;
+    return oldValue;
+}
 
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLState_h
+} // namespace WTF
 

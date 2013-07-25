@@ -27,6 +27,7 @@
 #include "Watchpoint.h"
 
 #include "LinkBuffer.h"
+#include <wtf/CompilationThread.h>
 #include <wtf/PassRefPtr.h>
 
 namespace JSC {
@@ -53,6 +54,7 @@ WatchpointSet::~WatchpointSet()
 
 void WatchpointSet::add(Watchpoint* watchpoint)
 {
+    ASSERT(!isCompilationThread());
     if (!watchpoint)
         return;
     m_set.push(watchpoint);
@@ -83,6 +85,7 @@ void InlineWatchpointSet::add(Watchpoint* watchpoint)
 WatchpointSet* InlineWatchpointSet::inflateSlow()
 {
     ASSERT(isThin());
+    ASSERT(!isCompilationThread());
     WatchpointSet* fat = adoptRef(new WatchpointSet(InitializedBlind)).leakRef();
     if (m_data & IsInvalidatedFlag)
         fat->m_isInvalidated = true;

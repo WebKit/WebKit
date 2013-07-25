@@ -58,6 +58,7 @@ inline Structure* Structure::create(VM& vm, const Structure* structure)
 
 inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 {
+    ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == &s_info);
     materializePropertyMapIfNecessary(vm);
     if (!propertyTable())
@@ -69,6 +70,7 @@ inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 
 inline PropertyOffset Structure::get(VM& vm, const WTF::String& name)
 {
+    ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == &s_info);
     materializePropertyMapIfNecessary(vm);
     if (!propertyTable())

@@ -245,9 +245,13 @@ struct PropertyAccessRecord {
 class JITCompiler : public CCallHelpers {
 public:
     JITCompiler(Graph& dfg);
+    ~JITCompiler();
     
-    bool compile(RefPtr<JSC::JITCode>& entry);
-    bool compileFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck);
+    bool compile();
+    bool compileFunction();
+    
+    bool link(RefPtr<JSC::JITCode>& entry);
+    bool linkFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck);
 
     // Accessors for properties.
     Graph& graph() { return m_graph; }
@@ -435,7 +439,7 @@ private:
     
     // Internal implementation to compile.
     void compileEntry();
-    void compileBody(SpeculativeJIT&);
+    void compileBody();
     void link(LinkBuffer&);
 
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*);
@@ -478,6 +482,11 @@ private:
     Vector<OSRExitCompilationInfo> m_exitCompilationInfo;
     Vector<Vector<Label> > m_exitSiteLabels;
     unsigned m_currentCodeOriginIndex;
+    
+    Call m_callStackCheck;
+    Call m_callArityCheck;
+    Label m_arityCheck;
+    OwnPtr<SpeculativeJIT> m_speculative;
 };
 
 } } // namespace JSC::DFG

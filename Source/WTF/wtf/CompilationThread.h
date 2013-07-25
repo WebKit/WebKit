@@ -23,45 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
+#ifndef CompilationThread_h
+#define CompilationThread_h
 
-#include <wtf/Platform.h>
+namespace WTF {
 
-#if ENABLE(FTL_JIT)
+WTF_EXPORT_PRIVATE bool isCompilationThread();
+WTF_EXPORT_PRIVATE bool exchangeIsCompilationThread(bool newValue);
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLJITCode.h"
-#include "FTLOSRExitCompilationInfo.h"
-#include <wtf/Noncopyable.h>
-
-namespace JSC { namespace FTL {
-
-typedef EncodedJSValue (*GeneratedFunction)(ExecState*);
-
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
-    
+class CompilationScope {
 public:
-    State(DFG::Graph& graph);
+    CompilationScope()
+        : m_oldValue(exchangeIsCompilationThread(true))
+    {
+    }
     
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    Vector<OSRExitCompilationInfo> osrExit;
-    LLVMExecutionEngineRef engine;
-    GeneratedFunction generatedFunction;
+    ~CompilationScope()
+    {
+        exchangeIsCompilationThread(m_oldValue);
+    }
     
-    void dumpState(const char* when);
+    void leaveEarly()
+    {
+        exchangeIsCompilationThread(m_oldValue);
+    }
+private:
+    bool m_oldValue;
 };
 
-} } // namespace JSC::FTL
+} // namespace WTF
 
-#endif // ENABLE(FTL_JIT)
+using WTF::CompilationScope;
+using WTF::exchangeIsCompilationThread;
+using WTF::isCompilationThread;
 
-#endif // FTLState_h
+#endif // CompilationThread_h
 

@@ -810,6 +810,7 @@ PropertyOffset Structure::getConcurrently(VM&, PropertyName propertyName, unsign
 
 PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
 {
+    ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == &s_info);
 
     materializePropertyMapIfNecessary(vm);
@@ -957,6 +958,10 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyName)
 {
+    // Note, this method is called from two kinds of places: (1) assertions and (2)
+    // the compilation thread. As such, it does things somewhat carefully to ensure
+    // thread safety. Currently that only affects the way we do Structure::get().
+    
     unsigned i = propertyName.asIndex();
     if (i != PropertyName::NotAnIndex)
         return anyObjectInChainMayInterceptIndexedAccesses();
@@ -970,7 +975,7 @@ bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyN
         
         unsigned attributes;
         JSCell* specificValue;
-        PropertyOffset offset = current->get(vm, propertyName, attributes, specificValue);
+        PropertyOffset offset = current->getConcurrently(vm, propertyName, attributes, specificValue);
         if (!JSC::isValidOffset(offset))
             continue;
         

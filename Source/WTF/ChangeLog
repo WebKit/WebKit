@@ -1,5 +1,34 @@
 2013-07-16  Oliver Hunt <oliver@apple.com>
 
+        Merge dfgFourthTier r149301
+
+    2013-04-28  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: ASSERT that commonly used not-thread-safe methods in the runtime are not being called during compilation
+        https://bugs.webkit.org/show_bug.cgi?id=115297
+
+        Reviewed by Geoffrey Garen.
+        
+        Taught WTF the notion of compilation threads. This allows all parts of our stack
+        to assert that we're not being called from a JSC compilation thread. This is in
+        WTF because it will probably end up being used in StringImpl and WTFString.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CompilationThread.cpp: Added.
+        (WTF):
+        (WTF::initializeCompilationThreadsOnce):
+        (WTF::initializeCompilationThreads):
+        (WTF::isCompilationThread):
+        (WTF::exchangeIsCompilationThread):
+        * wtf/CompilationThread.h: Added.
+        (WTF):
+        (CompilationScope):
+        (WTF::CompilationScope::CompilationScope):
+        (WTF::CompilationScope::~CompilationScope):
+        (WTF::CompilationScope::leaveEarly):
+
+2013-07-16  Oliver Hunt <oliver@apple.com>
+
         Merge dfgFourthTier r148836
 
     2013-04-21  Filip Pizlo  <fpizlo@apple.com>

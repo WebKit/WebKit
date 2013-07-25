@@ -51,10 +51,12 @@
 #include "DFGVirtualRegisterAllocationPhase.h"
 #include "FTLCapabilities.h"
 #include "FTLCompile.h"
+#include "FTLLink.h"
 #include "FTLLowerDFGToLLVM.h"
 #include "FTLState.h"
 #include "Operations.h"
 #include "Options.h"
+#include <wtf/CompilationThread.h>
 
 namespace JSC { namespace DFG {
 
@@ -81,6 +83,7 @@ enum CompileMode { CompileFunction, CompileOther };
 static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck, unsigned osrEntryBytecodeIndex)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
+    CompilationScope compilationScope;
     
     numCompilations++;
     
@@ -174,7 +177,9 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         
         FTL::State state(dfg);
         FTL::lowerDFGToLLVM(state);
-        return FTL::compile(state, jitCode, *jitCodeWithArityCheck);
+        FTL::compile(state);
+        compilationScope.leaveEarly();
+        return FTL::link(state, jitCode, *jitCodeWithArityCheck);
     }
 #endif // ENABLE(FTL_JIT)
     
@@ -186,12 +191,18 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     if (compileMode == CompileFunction) {
         ASSERT(jitCodeWithArityCheck);
         
-        result = dataFlowJIT.compileFunction(jitCode, *jitCodeWithArityCheck);
+        if (!dataFlowJIT.compileFunction())
+            return false;
+        compilationScope.leaveEarly();
+        result = dataFlowJIT.linkFunction(jitCode, *jitCodeWithArityCheck);
     } else {
         ASSERT(compileMode == CompileOther);
         ASSERT(!jitCodeWithArityCheck);
         
-        result = dataFlowJIT.compile(jitCode);
+        if (!dataFlowJIT.compile())
+            return false;
+        compilationScope.leaveEarly();
+        result = dataFlowJIT.link(jitCode);
     }
     
     return result;

@@ -52,6 +52,10 @@ JITCompiler::JITCompiler(Graph& dfg)
         m_disassembler = adoptPtr(new Disassembler(dfg));
 }
 
+JITCompiler::~JITCompiler()
+{
+}
+
 void JITCompiler::linkOSRExits()
 {
     ASSERT(m_jitCode->osrExit.size() == m_exitCompilationInfo.size());
@@ -97,7 +101,7 @@ void JITCompiler::compileEntry()
     emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
 }
 
-void JITCompiler::compileBody(SpeculativeJIT& speculative)
+void JITCompiler::compileBody()
 {
     // We generate the speculative code path, followed by OSR exit code to return
     // to the old JIT code if speculations fail.
@@ -107,7 +111,7 @@ void JITCompiler::compileBody(SpeculativeJIT& speculative)
     breakpoint();
 #endif
     
-    bool compiledSpeculative = speculative.compile();
+    bool compiledSpeculative = m_speculative->compile();
     ASSERT_UNUSED(compiledSpeculative, compiledSpeculative);
 }
 
@@ -242,26 +246,31 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     m_graph.m_watchpoints.reallyAdd();
 }
 
-bool JITCompiler::compile(RefPtr<JSC::JITCode>& entry)
+bool JITCompiler::compile()
 {
     SamplingRegion samplingRegion("DFG Backend");
 
     setStartOfCode();
     compileEntry();
-    SpeculativeJIT speculative(*this);
-    compileBody(speculative);
+    m_speculative = adoptPtr(new SpeculativeJIT(*this));
+    compileBody();
     setEndOfMainPath();
 
     // Generate slow path code.
-    speculative.runSlowPathGenerators();
+    m_speculative->runSlowPathGenerators();
     
     compileExceptionHandlers();
     linkOSRExits();
     
     // Create OSR entry trampolines if necessary.
-    speculative.createOSREntries();
+    m_speculative->createOSREntries();
     setEndOfCode();
 
+    return true;
+}
+
+bool JITCompiler::link(RefPtr<JSC::JITCode>& entry)
+{
     if (!m_graph.m_watchpoints.areStillValid())
         return false;
     
@@ -269,7 +278,7 @@ bool JITCompiler::compile(RefPtr<JSC::JITCode>& entry)
     if (linkBuffer.didFailToAllocate())
         return false;
     link(linkBuffer);
-    speculative.linkOSREntries(linkBuffer);
+    m_speculative->linkOSREntries(linkBuffer);
     
     m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
@@ -284,7 +293,7 @@ bool JITCompiler::compile(RefPtr<JSC::JITCode>& entry)
     return true;
 }
 
-bool JITCompiler::compileFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck)
+bool JITCompiler::compileFunction()
 {
     SamplingRegion samplingRegion("DFG Backend");
     
@@ -305,8 +314,8 @@ bool JITCompiler::compileFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCod
 
 
     // === Function body code generation ===
-    SpeculativeJIT speculative(*this);
-    compileBody(speculative);
+    m_speculative = adoptPtr(new SpeculativeJIT(*this));
+    compileBody();
     setEndOfMainPath();
 
     // === Function footer code generation ===
@@ -323,8 +332,8 @@ bool JITCompiler::compileFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCod
 
     CallBeginToken token;
     beginCall(CodeOrigin(0), token);
-    Call callStackCheck = call();
-    notifyCall(callStackCheck, CodeOrigin(0), token);
+    m_callStackCheck = call();
+    notifyCall(m_callStackCheck, CodeOrigin(0), token);
     jump(fromStackCheck);
     
     // The fast entry point into a function does not check the correct number of arguments
@@ -332,7 +341,7 @@ bool JITCompiler::compileFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCod
     // determine the correct number of arguments have been passed, or have already checked).
     // In cases where an arity check is necessary, we enter here.
     // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
-    Label arityCheck = label();
+    m_arityCheck = label();
     compileEntry();
 
     load32(AssemblyHelpers::payloadFor((VirtualRegister)JSStack::ArgumentCount), GPRInfo::regT1);
@@ -340,21 +349,26 @@ bool JITCompiler::compileFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCod
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     beginCall(CodeOrigin(0), token);
-    Call callArityCheck = call();
-    notifyCall(callArityCheck, CodeOrigin(0), token);
+    m_callArityCheck = call();
+    notifyCall(m_callArityCheck, CodeOrigin(0), token);
     move(GPRInfo::regT0, GPRInfo::callFrameRegister);
     jump(fromArityCheck);
     
     // Generate slow path code.
-    speculative.runSlowPathGenerators();
+    m_speculative->runSlowPathGenerators();
     
     compileExceptionHandlers();
     linkOSRExits();
     
     // Create OSR entry trampolines if necessary.
-    speculative.createOSREntries();
+    m_speculative->createOSREntries();
     setEndOfCode();
     
+    return true;
+}
+
+bool JITCompiler::linkFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck)
+{
     if (!m_graph.m_watchpoints.areStillValid())
         return false;
 
@@ -363,21 +377,21 @@ bool JITCompiler::compileFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCod
     if (linkBuffer.didFailToAllocate())
         return false;
     link(linkBuffer);
-    speculative.linkOSREntries(linkBuffer);
+    m_speculative->linkOSREntries(linkBuffer);
     
     m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
     
     // FIXME: switch the stack check & arity check over to DFGOpertaion style calls, not JIT stubs.
-    linkBuffer.link(callStackCheck, cti_stack_check);
-    linkBuffer.link(callArityCheck, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
+    linkBuffer.link(m_callStackCheck, cti_stack_check);
+    linkBuffer.link(m_callArityCheck, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
     
     if (shouldShowDisassembly())
         m_disassembler->dump(linkBuffer);
     if (m_graph.m_compilation)
         m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
 
-    entryWithArityCheck = linkBuffer.locationOf(arityCheck);
+    entryWithArityCheck = linkBuffer.locationOf(m_arityCheck);
     m_jitCode->initializeCodeRef(linkBuffer.finalizeCodeWithoutDisassembly());
     entry = m_jitCode;
     return true;

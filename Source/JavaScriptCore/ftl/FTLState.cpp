@@ -39,6 +39,8 @@ State::State(Graph& graph)
     , module(0)
     , function(0)
     , jitCode(adoptRef(new JITCode()))
+    , engine(0)
+    , generatedFunction(0)
 {
 }
 
