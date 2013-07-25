@@ -89,7 +89,7 @@ function polygonXIntercepts(polygon, y) {
     if (!foundXIntercept)
         return [];
 
-    return [SubPixelLayout.snapToLayoutUnit(interceptsMinX), SubPixelLayout.snapTolayoutUnit(interceptsMaxX)];
+    return [SubPixelLayout.snapToLayoutUnit(interceptsMinX), SubPixelLayout.snapToLayoutUnit(interceptsMaxX)];
 }
 
 function polygonLineIntercepts(polygon, y, lineHeight) {

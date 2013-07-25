@@ -1,3 +1,16 @@
+2013-07-25  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Fix typo in simple-polygon.js
+        https://bugs.webkit.org/show_bug.cgi?id=119096
+
+        Reviewed by Dirk Schulze.
+
+        A function name typo was preventing tests and expectations using simple-polygon.js
+        from generating correct output.
+
+        * fast/shapes/resources/simple-polygon.js:
+        (polygonXIntercepts): Correctly camel-case function name.
+
 2013-07-25  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: support for circle and ellipse shape-outside
