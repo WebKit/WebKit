@@ -1,3 +1,24 @@
+2013-05-27  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG ArithMod should have the !nodeUsedAsNumber optimizations that ArithDiv has
+        https://bugs.webkit.org/show_bug.cgi?id=116841
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/dfg-mod-by-neg1-and-then-or-zero-interesting-reg-alloc-expected.txt: Added.
+        * fast/js/dfg-mod-by-neg1-and-then-or-zero-interesting-reg-alloc.html: Added.
+        * fast/js/dfg-mod-by-zero-and-then-or-zero-interesting-reg-alloc-expected.txt: Added.
+        * fast/js/dfg-mod-by-zero-and-then-or-zero-interesting-reg-alloc.html: Added.
+        * fast/js/dfg-mod-neg2tothe31-by-one-and-then-or-zero-with-interesting-reg-alloc-expected.txt: Added.
+        * fast/js/dfg-mod-neg2tothe31-by-one-and-then-or-zero-with-interesting-reg-alloc.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-mod-by-neg1-and-then-or-zero-interesting-reg-alloc.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-mod-by-zero-and-then-or-zero-interesting-reg-alloc.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-mod-neg2tothe31-by-one-and-then-or-zero-with-interesting-reg-alloc.js: Added.
+        (foo):
+
 2013-05-26  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: clean up ArithDiv/ArithMod in the DFG

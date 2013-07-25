@@ -1,3 +1,13 @@
+2013-05-27  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG ArithMod should have the !nodeUsedAsNumber optimizations that ArithDiv has
+        https://bugs.webkit.org/show_bug.cgi?id=116841
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+
 2013-05-26  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: clean up ArithDiv/ArithMod in the DFG

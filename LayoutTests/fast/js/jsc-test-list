@@ -190,6 +190,9 @@ fast/js/dfg-mul-big-integer-with-small-integer
 fast/js/dfg-mul-big-integer-with-small-integer-and-bitor
 fast/js/dfg-mul-big-integer-with-small-integer-and-detect-overflow
 fast/js/dfg-mul-big-integers
+fast/js/dfg-mod-by-zero-and-then-or-zero-interesting-reg-alloc
+fast/js/dfg-mod-by-neg1-and-then-or-zero-interesting-reg-alloc
+fast/js/dfg-mod-neg2tothe31-by-one-and-then-or-zero-with-interesting-reg-alloc
 fast/js/dfg-multi-basic-block-structure-clobber
 fast/js/dfg-multiply
 fast/js/dfg-negative-array-index

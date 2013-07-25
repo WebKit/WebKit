@@ -3232,9 +3232,8 @@ void SpeculativeJIT::compileArithDiv(Node* node)
         // produce a double result instead.
         if (nodeUsedAsNumber(node->arithNodeFlags()))
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::NonZero, edx.gpr()));
-        else
-            done.link(&m_jit);
-            
+        
+        done.link(&m_jit);
         integerResult(eax.gpr(), node);
 #elif CPU(APPLE_ARMV7S)
         SpeculateIntegerOperand op1(this, node->child1());
@@ -3360,7 +3359,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
 #if CPU(X86) || CPU(X86_64)
         if (isInt32Constant(node->child2().node())) {
             int32_t divisor = valueOfInt32Constant(node->child2().node());
-            if (divisor) {
+            if (divisor && divisor != -1) {
                 GPRReg op1Gpr = op1.gpr();
 
                 GPRTemporary eax(this, X86Registers::eax);
@@ -3380,15 +3379,13 @@ void SpeculativeJIT::compileArithMod(Node* node)
 
                 m_jit.move(op1Gpr, eax.gpr());
                 m_jit.move(TrustedImm32(divisor), scratchGPR);
-                if (divisor == -1)
-                    speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, eax.gpr(), TrustedImm32(-2147483647-1)));
                 m_jit.assembler().cdq();
                 m_jit.assembler().idivl_r(scratchGPR);
-                // Check that we're not about to create negative zero.
-                // FIXME: if the node use doesn't care about neg zero, we can do this more easily.
-                JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
-                speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
-                numeratorPositive.link(&m_jit);
+                if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+                    JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
+                    speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
+                    numeratorPositive.link(&m_jit);
+                }
             
                 if (op1SaveGPR != op1Gpr)
                     unlock(op1SaveGPR);
@@ -3437,11 +3434,34 @@ void SpeculativeJIT::compileArithMod(Node* node)
     
         JITCompiler::Jump safeDenominator = m_jit.branch32(JITCompiler::Above, temp, JITCompiler::TrustedImm32(1));
     
-        JITCompiler::Jump done;
-        // FIXME: if the node is not used as number then we can do this more easily.
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, op2GPR));
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1)));
-    
+        JITCompiler::JumpList done;
+        
+        // FIXME: -2^31 / -1 will actually yield negative zero, so we could have a
+        // separate case for that. But it probably doesn't matter so much.
+        if (nodeUsedAsNumber(node->arithNodeFlags())) {
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, op2GPR));
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1)));
+        } else {
+            // This is the case where we convert the result to an int after we're done, and we
+            // already know that the denominator is either -1 or 0. So, if the denominator is
+            // zero, then the result should be zero. If the denominator is not zero (i.e. it's
+            // -1) and the numerator is -2^31 then the result should be 0. Otherwise we are
+            // happy to fall through to a normal division, since we're just dividing something
+            // by negative 1.
+        
+            JITCompiler::Jump notZero = m_jit.branchTest32(JITCompiler::NonZero, op2GPR);
+            m_jit.move(TrustedImm32(0), edx.gpr());
+            done.append(m_jit.jump());
+        
+            notZero.link(&m_jit);
+            JITCompiler::Jump notNeg2ToThe31 =
+                m_jit.branch32(JITCompiler::NotEqual, op1GPR, TrustedImm32(-2147483647-1));
+            m_jit.move(TrustedImm32(0), edx.gpr());
+            done.append(m_jit.jump());
+        
+            notNeg2ToThe31.link(&m_jit);
+        }
+        
         safeDenominator.link(&m_jit);
             
         if (op2TempGPR != InvalidGPRReg) {
@@ -3457,14 +3477,16 @@ void SpeculativeJIT::compileArithMod(Node* node)
             unlock(op2TempGPR);
 
         // Check that we're not about to create negative zero.
-        // FIXME: if the node use doesn't care about neg zero, we can do this more easily.
-        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
-        numeratorPositive.link(&m_jit);
+        if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+            JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
+            numeratorPositive.link(&m_jit);
+        }
     
         if (op1SaveGPR != op1GPR)
             unlock(op1SaveGPR);
             
+        done.link(&m_jit);
         integerResult(edx.gpr(), node);
 
 #elif CPU(APPLE_ARMV7S)
