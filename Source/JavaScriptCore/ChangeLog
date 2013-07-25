@@ -1,3 +1,14 @@
+2013-07-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, add a helpful comment for why DCE is needed in the FTL.
+
+        I believe I've now twice down the experiment of disabling DCE in the FTL,
+        only to realize that this can't work, and that DCE is needed. I'd kind of
+        like to not make that mistake again.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+
 2013-07-02  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG::Node::m_opInfo2 should also be a uintptr_t

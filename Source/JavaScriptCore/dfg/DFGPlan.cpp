@@ -179,6 +179,14 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
 
     performStoreElimination(dfg);
     performCPSRethreading(dfg);
+    
+    // Note that DCE is necessary even in the FTL, because only we know what is
+    // live-in-bytecode. The FTL uses this information to determine when OSR exit
+    // values should be wired to LValues, versus being wired to ExitValue::dead().
+    // This is distinct from what ZombieHint gives us: ZombieHint says that the
+    // value in the given bytecode local is always dead; the reference counts that
+    // DCE produces tell us that the value is live for a while but eventually
+    // dies, and it tells us exactly when the death point is.
     performDCE(dfg);
 
 #if ENABLE(FTL_JIT)
