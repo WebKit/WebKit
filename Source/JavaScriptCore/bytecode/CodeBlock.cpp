@@ -1287,6 +1287,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int thisValue = (++it)->u.operand;
             int arguments = (++it)->u.operand;
             int firstFreeRegister = (++it)->u.operand;
+            ++it;
             out.printf("[%4d] call_varargs\t %s, %s, %s, %d", location, registerName(callee).data(), registerName(thisValue).data(), registerName(arguments).data(), firstFreeRegister);
             break;
         }
@@ -2619,58 +2620,6 @@ void CodeBlock::linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo* inco
     noticeIncomingCall(callerFrame);
     m_incomingLLIntCalls.push(incoming);
 }
-
-Instruction* CodeBlock::adjustPCIfAtCallSite(Instruction* potentialReturnPC)
-{
-    ASSERT(potentialReturnPC);
-
-    unsigned returnPCOffset = potentialReturnPC - instructions().begin();
-    Instruction* adjustedPC;
-    unsigned opcodeLength;
-
-    // If we are at a callsite, the LLInt stores the PC after the call
-    // instruction rather than the PC of the call instruction. This requires
-    // some correcting. If so, we can rely on the fact that the preceding
-    // instruction must be one of the call instructions, so either it's a
-    // call_varargs or it's a call, construct, or eval.
-    //
-    // If we are not at a call site, then we need to guard against the
-    // possibility of peeking past the start of the bytecode range for this
-    // codeBlock. Hence, we do a bounds check before we peek at the
-    // potential "preceding" instruction.
-    //     The bounds check is done by comparing the offset of the potential
-    // returnPC with the length of the opcode. If there is room for a call
-    // instruction before the returnPC, then the offset of the returnPC must
-    // be greater than the size of the call opcode we're looking for.
-
-    // The determination of the call instruction present (if we are at a
-    // callsite) depends on the following assumptions. So, assert that
-    // they are still true:
-    ASSERT(OPCODE_LENGTH(op_call_varargs) <= OPCODE_LENGTH(op_call));
-    ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
-    ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));
-
-    // Check for the case of a preceeding op_call_varargs:
-    opcodeLength = OPCODE_LENGTH(op_call_varargs);
-    adjustedPC = potentialReturnPC - opcodeLength;
-    if ((returnPCOffset >= opcodeLength)
-        && (adjustedPC->u.pointer == LLInt::getCodePtr(llint_op_call_varargs))) {
-        return adjustedPC;
-    }
-
-    // Check for the case of the other 3 call instructions:
-    opcodeLength = OPCODE_LENGTH(op_call);
-    adjustedPC = potentialReturnPC - opcodeLength;
-    if ((returnPCOffset >= opcodeLength)
-        && (adjustedPC->u.pointer == LLInt::getCodePtr(llint_op_call)
-            || adjustedPC->u.pointer == LLInt::getCodePtr(llint_op_construct)
-            || adjustedPC->u.pointer == LLInt::getCodePtr(llint_op_call_eval))) {
-        return adjustedPC;
-    }
-
-    // Not a call site. No need to adjust PC. Just return the original.
-    return potentialReturnPC;
-}
 #endif // ENABLE(LLINT)
 
 #if ENABLE(JIT)
@@ -2730,7 +2679,6 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
         Instruction* instruction = exec->currentVPC();
         RELEASE_ASSERT(instruction);
 
-        instruction = adjustPCIfAtCallSite(instruction);
         return bytecodeOffset(instruction);
     }
 #endif // !ENABLE(LLINT)

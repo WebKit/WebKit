@@ -38,14 +38,6 @@
 
 namespace JSC { namespace LLInt {
 
-static void fixupPCforExceptionIfNeeded(ExecState* exec)
-{
-    CodeBlock* codeBlock = exec->codeBlock();
-    ASSERT(!!codeBlock);
-    Instruction* pc = exec->currentVPC();
-    exec->setCurrentVPC(codeBlock->adjustPCIfAtCallSite(pc));
-}
-
 void interpreterThrowInCaller(ExecState* exec, ReturnAddressPtr pc)
 {
     VM* vm = &exec->vm();
@@ -53,7 +45,6 @@ void interpreterThrowInCaller(ExecState* exec, ReturnAddressPtr pc)
 #if LLINT_SLOW_PATH_TRACING
     dataLog("Throwing exception ", vm->exception, ".\n");
 #endif
-    fixupPCforExceptionIfNeeded(exec);
     genericThrow(
         vm, exec, vm->exception,
         exec->codeBlock()->bytecodeOffset(exec, pc));
@@ -69,7 +60,6 @@ static void doThrow(ExecState* exec, Instruction* pc)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    fixupPCforExceptionIfNeeded(exec);
     genericThrow(vm, exec, vm->exception, pc - exec->codeBlock()->instructions().begin());
 }
 

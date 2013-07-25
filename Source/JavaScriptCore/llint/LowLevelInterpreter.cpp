@@ -467,7 +467,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
         // So, we need to implement the equivalent of dispatchAfterCall() here
         // before dispatching to the PC.
 
-        vPC = callFrame->currentVPC();
+        vPC = callFrame->currentVPC() + OPCODE_LENGTH(op_call);
 
 #if USE(JSVALUE64)
         // Based on LowLevelInterpreter64.asm's dispatchAfterCall():

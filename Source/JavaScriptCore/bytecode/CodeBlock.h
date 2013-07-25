@@ -197,9 +197,6 @@ public:
     }
 #endif // ENABLE(JIT)
 
-#if ENABLE(LLINT)
-    Instruction* adjustPCIfAtCallSite(Instruction*);
-#endif
     unsigned bytecodeOffset(ExecState*, ReturnAddressPtr);
 
 #if ENABLE(JIT)

@@ -1888,6 +1888,7 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     instructions().append(thisRegister->index());
     instructions().append(arguments->index());
     instructions().append(firstFreeRegister->index());
+    instructions().append(0); // Pad to make it as big as an op_call.
     if (dst != ignoredResult()) {
         UnlinkedValueProfile profile = emitProfiledOpcode(op_call_put_result);
         instructions().append(kill(dst));

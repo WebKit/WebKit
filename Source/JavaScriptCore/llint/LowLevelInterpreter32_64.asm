@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -101,7 +101,7 @@ end
 
 macro dispatchAfterCall()
     loadi ArgumentCount + TagOffset[cfr], PC
-    jmp [PC]
+    dispatch(6)
 end
 
 macro cCall2(function, arg1, arg2)
@@ -179,9 +179,8 @@ macro traceValue(fromWhere, operand)
 end
 
 # Call a slowPath for call opcodes.
-macro callCallSlowPath(advance, slowPath, action)
-    addp advance * 4, PC, t0
-    storep t0, ArgumentCount + TagOffset[cfr]
+macro callCallSlowPath(slowPath, action)
+    storep PC, ArgumentCount + TagOffset[cfr]
     cCall2(slowPath, cfr, PC)
     move t1, cfr
     action(t0)
@@ -1594,13 +1593,12 @@ macro doCall(slowPath)
     loadConstantOrVariablePayload(t0, CellTag, t3, .opCallSlow)
     bineq t3, t2, .opCallSlow
     loadi 12[PC], t3
-    addp 24, PC
     lshifti 3, t3
     addp cfr, t3  # t3 contains the new value of cfr
     loadp JSFunction::m_scope[t2], t0
     storei t2, Callee + PayloadOffset[t3]
     storei t0, ScopeChain + PayloadOffset[t3]
-    loadi 8 - 24[PC], t2
+    loadi 8[PC], t2
     storei PC, ArgumentCount + TagOffset[cfr]
     storep cfr, CallerFrame[t3]
     storei t2, ArgumentCount + PayloadOffset[t3]
@@ -1610,7 +1608,7 @@ macro doCall(slowPath)
     callTargetFunction(t1)
 
 .opCallSlow:
-    slowPathForCall(6, slowPath)
+    slowPathForCall(slowPath)
 end
 
 

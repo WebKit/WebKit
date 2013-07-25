@@ -1500,7 +1500,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
     
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
     execCallee->setCallerFrame(exec);
-    exec->setCurrentVPC(pc + OPCODE_LENGTH(op_call_varargs));
+    exec->setCurrentVPC(pc);
     
     return setUpCall(execCallee, pc, CodeForCall, calleeAsValue);
 }
@@ -1518,7 +1518,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     execCallee->setScope(exec->scope());
     execCallee->setReturnPC(LLInt::getCodePtr(llint_generic_return_point));
     execCallee->setCodeBlock(0);
-    exec->setCurrentVPC(pc + OPCODE_LENGTH(op_call_eval));
+    exec->setCurrentVPC(pc);
     
     if (!isHostFunction(calleeAsValue, globalFuncEval))
         return setUpCall(execCallee, pc, CodeForCall, calleeAsValue);

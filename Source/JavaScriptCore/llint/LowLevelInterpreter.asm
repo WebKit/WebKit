@@ -1,4 +1,4 @@
-# Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -223,9 +223,8 @@ macro callTargetFunction(callLinkInfo)
     end
 end
 
-macro slowPathForCall(advance, slowPath)
+macro slowPathForCall(slowPath)
     callCallSlowPath(
-        advance,
         slowPath,
         macro (callee)
             if C_LOOP
@@ -1090,7 +1089,7 @@ _llint_op_construct:
 
 _llint_op_call_varargs:
     traceExecution()
-    slowPathForCall(6, _llint_slow_path_call_varargs)
+    slowPathForCall(_llint_slow_path_call_varargs)
 
 
 _llint_op_call_eval:
@@ -1129,7 +1128,7 @@ _llint_op_call_eval:
     # and a PC to call, and that PC may be a dummy thunk that just
     # returns the JS value that the eval returned.
     
-    slowPathForCall(4, _llint_slow_path_call_eval)
+    slowPathForCall(_llint_slow_path_call_eval)
 
 
 _llint_generic_return_point:
