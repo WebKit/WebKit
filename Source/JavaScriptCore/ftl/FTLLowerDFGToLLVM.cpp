@@ -1444,7 +1444,7 @@ private:
         Edge edge, StringOrObjectMode cellMode, EqualNullOrUndefinedMode primitiveMode,
         OperandSpeculationMode operandMode = AutomaticOperandSpeculation)
     {
-        bool validWatchpoint = masqueradesAsUndefinedWatchpointIsStillValid();
+        bool validWatchpoint = masqueradesAsUndefinedWatchpointIfIsStillValid();
         
         LValue value = lowJSValue(edge, operandMode);
         
@@ -1868,7 +1868,7 @@ private:
         FTL_TYPE_CHECK(
             jsValueValue(cell), edge, SpecObject,
             m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())));
-        if (masqueradesAsUndefinedWatchpointIsStillValid())
+        if (masqueradesAsUndefinedWatchpointIfIsStillValid())
             return;
         
         speculate(

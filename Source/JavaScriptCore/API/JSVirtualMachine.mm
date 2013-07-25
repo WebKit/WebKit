@@ -34,6 +34,7 @@
 #import "JSVirtualMachine.h"
 #import "JSVirtualMachineInternal.h"
 #import "JSWrapperMap.h"
+#import "SlotVisitorInlines.h"
 
 static NSMapTable *globalWrapperCache = 0;
 

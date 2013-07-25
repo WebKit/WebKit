@@ -742,7 +742,7 @@
 		A71236E51195F33C00BD2174 /* JITOpcodes32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */; };
 		A72028B61797601E0098028C /* JSCTestRunnerUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72028B41797601E0098028C /* JSCTestRunnerUtils.cpp */; };
 		A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A72028B51797601E0098028C /* JSCTestRunnerUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A72028BA1797603D0098028C /* JSFunctionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A72028B91797603D0098028C /* JSFunctionInlines.h */; };
+		A72028BA1797603D0098028C /* JSFunctionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A72028B91797603D0098028C /* JSFunctionInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */; };

@@ -1,5 +1,18 @@
 2013-05-28  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: FTL should call masqueradesAsUndefinedWatchpointIfIsStillValid() in all of the places where it currently calls masqueradesAsUndefinedWatchpointIsStillValid()
+        https://bugs.webkit.org/show_bug.cgi?id=116892
+
+        Reviewed by Oliver Hunt.
+        
+        All of those places mean to plant the watchpoint if it's still valid.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::LowerDFGToLLVM::speculateNonNullObject):
+
+2013-05-28  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should support ArithMin/ArithMax
         https://bugs.webkit.org/show_bug.cgi?id=116885
 

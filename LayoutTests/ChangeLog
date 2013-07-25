@@ -4,6 +4,25 @@
 
         Rubber stamped by Oliver Hunt.
 
+        * fast/js/dfg-arguments-alias-one-block-expected.txt:
+        * fast/js/dfg-arguments-cross-code-origin-expected.txt:
+        * fast/js/dfg-arguments-mixed-alias-expected.txt:
+        * fast/js/dfg-arguments-osr-exit-expected.txt:
+        * fast/js/dfg-arguments-osr-exit-multiple-blocks-before-exit-expected.txt:
+        * fast/js/dfg-arguments-unexpected-escape-expected.txt:
+        * fast/js/script-tests/dfg-arguments-alias-one-block.js:
+        * fast/js/script-tests/dfg-arguments-cross-code-origin.js:
+        * fast/js/script-tests/dfg-arguments-mixed-alias.js:
+        * fast/js/script-tests/dfg-arguments-osr-exit-multiple-blocks-before-exit.js:
+        * fast/js/script-tests/dfg-arguments-osr-exit.js:
+        * fast/js/script-tests/dfg-arguments-unexpected-escape.js:
+
+2013-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: convert more fast/js/dfg-* tests to wait for the concurrent JIT
+
+        Rubber stamped by Oliver Hunt.
+
         * fast/js/dfg-arguments-alias-activation-expected.txt:
         * fast/js/dfg-arguments-alias-activation.html:
         * fast/js/dfg-arguments-alias-expected.txt:

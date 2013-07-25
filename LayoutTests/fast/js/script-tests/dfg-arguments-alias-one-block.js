@@ -7,5 +7,8 @@ function foo() {
     return args[0] + args[1];
 }
 
-for (var i = 0; i < 200; ++i)
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 200; i = dfgIncrement({f:foo, i:i + 1, n:100}))
     shouldBe("foo(i, i + 1)", "" + (i + i + 1));

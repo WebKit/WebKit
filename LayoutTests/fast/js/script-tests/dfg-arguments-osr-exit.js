@@ -23,7 +23,10 @@ function bar(x) {
 var variable = 32;
 var expected = "74";
 
-for (var i = 0; i < 200; ++i) {
+silentTestPass = true;
+noInline(bar);
+
+for (var i = 0; i < 200; i = dfgIncrement({f:bar, i:i + 1, n:100})) {
     if (i == 150) {
         variable = "32";
         expected = "\"4232\"";
