@@ -47,7 +47,7 @@ static uint8_t* mmAllocateCodeSection(
     
     State& state = *static_cast<State*>(opaqueState);
     
-    ASSERT(alignment <= jitAllocationGranule);
+    RELEASE_ASSERT(alignment <= jitAllocationGranule);
     
     RefPtr<ExecutableMemoryHandle> result =
         state.graph.m_vm.executableAllocator.allocate(

@@ -39,7 +39,10 @@ namespace JSC { namespace FTL {
 
 LValue AbstractHeap::tbaaMetadataSlow(const AbstractHeapRepository& repository) const
 {
-    m_tbaaMetadata = mdNode(mdString(m_heapName), m_parent->tbaaMetadata(repository));
+    m_tbaaMetadata = mdNode(
+        repository.m_context,
+        mdString(repository.m_context, m_heapName),
+        m_parent->tbaaMetadata(repository));
     return m_tbaaMetadata;
 }
 
@@ -50,7 +53,7 @@ void AbstractHeap::decorateInstruction(LValue instruction, const AbstractHeapRep
     setMetadata(instruction, repository.m_tbaaKind, tbaaMetadata(repository));
 }
 
-IndexedAbstractHeap::IndexedAbstractHeap(AbstractHeap* parent, const char* heapName, size_t elementSize)
+IndexedAbstractHeap::IndexedAbstractHeap(LContext context, AbstractHeap* parent, const char* heapName, size_t elementSize)
     : m_heapForAnyIndex(parent, heapName)
     , m_heapNameLength(strlen(heapName))
     , m_elementSize(elementSize)
@@ -62,14 +65,14 @@ IndexedAbstractHeap::IndexedAbstractHeap(AbstractHeap* parent, const char* heapN
     for (unsigned i = 0; i < 4; ++i) {
         if ((1 << i) == m_elementSize) {
             if (i)
-                m_scaleTerm = constInt(intPtrType(), i, ZeroExtend);
+                m_scaleTerm = constInt(intPtrType(context), i, ZeroExtend);
             m_canShift = true;
             break;
         }
     }
     
     if (!m_canShift)
-        m_scaleTerm = constInt(intPtrType(), m_elementSize, ZeroExtend);
+        m_scaleTerm = constInt(intPtrType(context), m_elementSize, ZeroExtend);
 }
 
 IndexedAbstractHeap::~IndexedAbstractHeap()
@@ -174,8 +177,9 @@ void IndexedAbstractHeap::initialize(AbstractField& field, ptrdiff_t signedIndex
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-NumberedAbstractHeap::NumberedAbstractHeap(AbstractHeap* heap, const char* heapName)
-    : m_indexedHeap(heap, heapName, 1)
+NumberedAbstractHeap::NumberedAbstractHeap(
+    LContext context, AbstractHeap* heap, const char* heapName)
+    : m_indexedHeap(context, heap, heapName, 1)
 {
 }
 
@@ -183,8 +187,9 @@ NumberedAbstractHeap::~NumberedAbstractHeap()
 {
 }
 
-AbsoluteAbstractHeap::AbsoluteAbstractHeap(AbstractHeap* heap, const char* heapName)
-    : m_indexedHeap(heap, heapName, 1)
+AbsoluteAbstractHeap::AbsoluteAbstractHeap(
+    LContext context, AbstractHeap* heap, const char* heapName)
+    : m_indexedHeap(context, heap, heapName, 1)
 {
 }
 

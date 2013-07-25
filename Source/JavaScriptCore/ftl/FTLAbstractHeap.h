@@ -139,7 +139,7 @@ private:
 
 class IndexedAbstractHeap {
 public:
-    IndexedAbstractHeap(AbstractHeap* parent, const char* heapName, size_t elementSize);
+    IndexedAbstractHeap(LContext, AbstractHeap* parent, const char* heapName, size_t elementSize);
     ~IndexedAbstractHeap();
     
     const AbstractHeap& atAnyIndex() const { return m_heapForAnyIndex; }
@@ -190,7 +190,7 @@ private:
 
 class NumberedAbstractHeap {
 public:
-    NumberedAbstractHeap(AbstractHeap* parent, const char* heapName);
+    NumberedAbstractHeap(LContext, AbstractHeap* parent, const char* heapName);
     ~NumberedAbstractHeap();
     
     const AbstractHeap& atAnyNumber() const { return m_indexedHeap.atAnyIndex(); }
@@ -207,7 +207,7 @@ private:
 
 class AbsoluteAbstractHeap {
 public:
-    AbsoluteAbstractHeap(AbstractHeap* parent, const char* heapName);
+    AbsoluteAbstractHeap(LContext, AbstractHeap* parent, const char* heapName);
     ~AbsoluteAbstractHeap();
     
     const AbstractHeap& atAnyAddress() const { return m_indexedHeap.atAnyIndex(); }

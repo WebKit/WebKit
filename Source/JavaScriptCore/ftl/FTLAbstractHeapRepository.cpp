@@ -32,7 +32,7 @@
 
 namespace JSC { namespace FTL {
 
-AbstractHeapRepository::AbstractHeapRepository()
+AbstractHeapRepository::AbstractHeapRepository(LContext context)
     : root(0, "jscRoot")
 
 #define ABSTRACT_HEAP_INITIALIZATION(name) , name(&root, #name)
@@ -43,18 +43,19 @@ AbstractHeapRepository::AbstractHeapRepository()
     FOR_EACH_ABSTRACT_FIELD(ABSTRACT_FIELD_INITIALIZATION)
 #undef ABSTRACT_FIELD_INITIALIZATION
     
-#define INDEXED_ABSTRACT_HEAP_INITIALIZATION(name, size) , name(&root, #name, size)
+#define INDEXED_ABSTRACT_HEAP_INITIALIZATION(name, size) , name(context, &root, #name, size)
     FOR_EACH_INDEXED_ABSTRACT_HEAP(INDEXED_ABSTRACT_HEAP_INITIALIZATION)
 #undef INDEXED_ABSTRACT_HEAP_INITIALIZATION
     
-#define NUMBERED_ABSTRACT_HEAP_INITIALIZATION(name) , name(&root, #name)
+#define NUMBERED_ABSTRACT_HEAP_INITIALIZATION(name) , name(context, &root, #name)
     FOR_EACH_NUMBERED_ABSTRACT_HEAP(NUMBERED_ABSTRACT_HEAP_INITIALIZATION)
 #undef NUMBERED_ABSTRACT_HEAP_INITIALIZATION
 
-    , absolute(&root, "absolute")
-    , m_tbaaKind(mdKindID("tbaa"))
+    , absolute(context, &root, "absolute")
+    , m_context(context)
+    , m_tbaaKind(mdKindID(m_context, "tbaa"))
 {
-    root.m_tbaaMetadata = mdNode(mdString(root.m_heapName));
+    root.m_tbaaMetadata = mdNode(m_context, mdString(m_context, root.m_heapName));
     
     RELEASE_ASSERT(m_tbaaKind);
     RELEASE_ASSERT(root.m_tbaaMetadata);

@@ -44,33 +44,33 @@ namespace JSC { namespace FTL {
 #error "The FTL backend assumes that pointers are 64-bit."
 #endif
 
-static inline LType voidType() { return LLVMVoidType(); }
-static inline LType int1Type() { return LLVMInt1Type(); }
-static inline LType int8Type() { return LLVMInt8Type(); }
-static inline LType int32Type() { return LLVMInt32Type(); }
-static inline LType int64Type() { return LLVMInt64Type(); }
-static inline LType intPtrType() { return LLVMInt64Type(); }
-static inline LType doubleType() { return LLVMDoubleType(); }
+static inline LType voidType(LContext context) { return LLVMVoidTypeInContext(context); }
+static inline LType int1Type(LContext context) { return LLVMInt1TypeInContext(context); }
+static inline LType int8Type(LContext context) { return LLVMInt8TypeInContext(context); }
+static inline LType int32Type(LContext context) { return LLVMInt32TypeInContext(context); }
+static inline LType int64Type(LContext context) { return LLVMInt64TypeInContext(context); }
+static inline LType intPtrType(LContext context) { return LLVMInt64TypeInContext(context); }
+static inline LType doubleType(LContext context) { return LLVMDoubleTypeInContext(context); }
 
 static inline LType pointerType(LType type) { return LLVMPointerType(type, 0); }
 
 enum PackingMode { NotPacked, Packed };
-static inline LType structType(LType* elementTypes, unsigned elementCount, PackingMode packing = NotPacked)
+static inline LType structType(LContext context, LType* elementTypes, unsigned elementCount, PackingMode packing = NotPacked)
 {
-    return LLVMStructType(elementTypes, elementCount, packing == Packed);
+    return LLVMStructTypeInContext(context, elementTypes, elementCount, packing == Packed);
 }
-static inline LType structType(PackingMode packing = NotPacked)
+static inline LType structType(LContext context, PackingMode packing = NotPacked)
 {
-    return structType(0, 0, packing);
+    return structType(context, 0, 0, packing);
 }
-static inline LType structType(LType element1, PackingMode packing = NotPacked)
+static inline LType structType(LContext context, LType element1, PackingMode packing = NotPacked)
 {
-    return structType(&element1, 1, packing);
+    return structType(context, &element1, 1, packing);
 }
-static inline LType structType(LType element1, LType element2, PackingMode packing = NotPacked)
+static inline LType structType(LContext context, LType element1, LType element2, PackingMode packing = NotPacked)
 {
     LType elements[] = { element1, element2 };
-    return structType(elements, 2, packing);
+    return structType(context, elements, 2, packing);
 }
 
 enum Variadicity { NotVariadic, Variadic };
@@ -99,16 +99,16 @@ static inline LType functionType(LType returnType, LType param1, LType param2, V
 
 static inline LType typeOf(LValue value) { return LLVMTypeOf(value); }
 
-static inline unsigned mdKindID(const char* string) { return LLVMGetMDKindID(string, strlen(string)); }
-static inline LValue mdString(const char* string, unsigned length) { return LLVMMDString(string, length); }
-static inline LValue mdString(const char* string) { return mdString(string, strlen(string)); }
-static inline LValue mdNode(LValue* args, unsigned numArgs) { return LLVMMDNode(args, numArgs); }
-static inline LValue mdNode() { return mdNode(0, 0); }
-static inline LValue mdNode(LValue arg1) { return mdNode(&arg1, 1); }
-static inline LValue mdNode(LValue arg1, LValue arg2)
+static inline unsigned mdKindID(LContext context, const char* string) { return LLVMGetMDKindIDInContext(context, string, strlen(string)); }
+static inline LValue mdString(LContext context, const char* string, unsigned length) { return LLVMMDStringInContext(context, string, length); }
+static inline LValue mdString(LContext context, const char* string) { return mdString(context, string, strlen(string)); }
+static inline LValue mdNode(LContext context, LValue* args, unsigned numArgs) { return LLVMMDNodeInContext(context, args, numArgs); }
+static inline LValue mdNode(LContext context) { return mdNode(context, 0, 0); }
+static inline LValue mdNode(LContext context, LValue arg1) { return mdNode(context, &arg1, 1); }
+static inline LValue mdNode(LContext context, LValue arg1, LValue arg2)
 {
     LValue args[] = { arg1, arg2 };
-    return mdNode(args, 2);
+    return mdNode(context, args, 2);
 }
 
 static inline void setMetadata(LValue instruction, unsigned kind, LValue metadata) { LLVMSetMetadata(instruction, kind, metadata); }
@@ -132,8 +132,8 @@ static inline LValue constReal(LType type, double value) { return LLVMConstReal(
 static inline LValue constIntToPtr(LValue value, LType type) { return LLVMConstIntToPtr(value, type); }
 static inline LValue constBitCast(LValue value, LType type) { return LLVMConstBitCast(value, type); }
 
-static inline LBasicBlock appendBasicBlock(LValue function, const char* name = "") { return LLVMAppendBasicBlock(function, name); }
-static inline LBasicBlock insertBasicBlock(LBasicBlock beforeBasicBlock, const char* name = "") { return LLVMInsertBasicBlock(beforeBasicBlock, name); }
+static inline LBasicBlock appendBasicBlock(LContext context, LValue function, const char* name = "") { return LLVMAppendBasicBlockInContext(context, function, name); }
+static inline LBasicBlock insertBasicBlock(LContext context, LBasicBlock beforeBasicBlock, const char* name = "") { return LLVMInsertBasicBlockInContext(context, beforeBasicBlock, name); }
 
 static inline LValue buildPhi(LBuilder builder, LType type) { return LLVMBuildPhi(builder, type, ""); }
 static inline void addIncoming(LValue phi, const LValue* values, const LBasicBlock* blocks, unsigned numPredecessors)

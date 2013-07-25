@@ -67,7 +67,7 @@ enum Scale { ScaleOne, ScaleTwo, ScaleFour, ScaleEight, ScalePtr };
 
 class Output : public IntrinsicRepository {
 public:
-    Output();
+    Output(LContext);
     ~Output();
     
     void initialize(LModule module, LValue function, AbstractHeapRepository& heaps)
@@ -99,8 +99,8 @@ public:
     LBasicBlock newBlock(const char* name = "")
     {
         if (!m_nextBlock)
-            return appendBasicBlock(m_function, name);
-        return insertBasicBlock(m_nextBlock, name);
+            return appendBasicBlock(m_context, m_function, name);
+        return insertBasicBlock(m_context, m_nextBlock, name);
     }
     
     LValue param(unsigned index) { return getParam(m_function, index); }

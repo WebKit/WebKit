@@ -37,6 +37,7 @@ using namespace DFG;
 
 State::State(Graph& graph)
     : graph(graph)
+    , context(LLVMContextCreate())
     , module(0)
     , function(0)
     , jitCode(adoptRef(new JITCode()))
@@ -44,6 +45,11 @@ State::State(Graph& graph)
 {
     finalizer = new JITFinalizer(graph.m_plan);
     graph.m_plan.finalizer = adoptPtr(finalizer);
+}
+
+State::~State()
+{
+    LLVMContextDispose(context);
 }
 
 void State::dumpState(const char* when)

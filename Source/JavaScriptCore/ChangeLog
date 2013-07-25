@@ -1,3 +1,76 @@
+2013-05-22  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL shouldn't use the LLVM global context, and should instead create its own context for each compilation
+        https://bugs.webkit.org/show_bug.cgi?id=116631
+
+        Reviewed by Mark Hahnenberg.
+        
+        In the future we might want to share contexts for multiple compilations, but for
+        now using one context per compilation is a progression over just constantly using
+        the global context.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        (DFG):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPlan.h:
+        * ftl/FTLAbbreviatedTypes.h:
+        (FTL):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::voidType):
+        (JSC::FTL::int1Type):
+        (JSC::FTL::int8Type):
+        (JSC::FTL::int32Type):
+        (JSC::FTL::int64Type):
+        (JSC::FTL::intPtrType):
+        (JSC::FTL::doubleType):
+        (JSC::FTL::structType):
+        (JSC::FTL::mdKindID):
+        (JSC::FTL::mdString):
+        (JSC::FTL::mdNode):
+        (JSC::FTL::appendBasicBlock):
+        (JSC::FTL::insertBasicBlock):
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::AbstractHeap::tbaaMetadataSlow):
+        (JSC::FTL::IndexedAbstractHeap::IndexedAbstractHeap):
+        (JSC::FTL::NumberedAbstractHeap::NumberedAbstractHeap):
+        (JSC::FTL::AbsoluteAbstractHeap::AbsoluteAbstractHeap):
+        * ftl/FTLAbstractHeap.h:
+        (IndexedAbstractHeap):
+        (NumberedAbstractHeap):
+        (AbsoluteAbstractHeap):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+        (AbstractHeapRepository):
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        * ftl/FTLCommonValues.h:
+        (CommonValues):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateCodeSection):
+        * ftl/FTLIntrinsicRepository.cpp:
+        (JSC::FTL::IntrinsicRepository::IntrinsicRepository):
+        * ftl/FTLIntrinsicRepository.h:
+        (FTL):
+        (IntrinsicRepository):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::Output):
+        * ftl/FTLOutput.h:
+        (Output):
+        (JSC::FTL::Output::newBlock):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        (JSC::FTL::State::~State):
+        (FTL):
+        * ftl/FTLState.h:
+        (State):
+        * runtime/Options.h:
+        (JSC):
+
 2013-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should force LLVM to use our own JIT memory allocator, and we shouldn't have to keep around an LLVMExecutionEngineRef to keep code alive

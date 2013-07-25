@@ -30,14 +30,14 @@
 
 namespace JSC { namespace FTL {
 
-CommonValues::CommonValues()
-    : voidType(FTL::voidType())
-    , boolean(int1Type())
-    , int8(int8Type())
-    , int32(int32Type())
-    , int64(int64Type())
-    , intPtr(intPtrType())
-    , doubleType(FTL::doubleType())
+CommonValues::CommonValues(LContext context)
+    : voidType(FTL::voidType(context))
+    , boolean(int1Type(context))
+    , int8(int8Type(context))
+    , int32(int32Type(context))
+    , int64(int64Type(context))
+    , intPtr(intPtrType(context))
+    , doubleType(FTL::doubleType(context))
     , ref8(pointerType(int8))
     , ref32(pointerType(int32))
     , ref64(pointerType(int64))
@@ -56,6 +56,7 @@ CommonValues::CommonValues()
     , intPtrEight(constInt(intPtr, 8, SignExtend))
     , intPtrPtr(constInt(intPtr, sizeof(void*), SignExtend))
     , doubleZero(constReal(doubleType, 0))
+    , m_context(context)
     , m_module(0)
 {
 }

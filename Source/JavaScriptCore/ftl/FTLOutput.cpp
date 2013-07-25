@@ -30,10 +30,11 @@
 
 namespace JSC { namespace FTL {
 
-Output::Output()
-    : m_function(0)
+Output::Output(LContext context)
+    : IntrinsicRepository(context)
+    , m_function(0)
     , m_heaps(0)
-    , m_builder(LLVMCreateBuilder())
+    , m_builder(LLVMCreateBuilderInContext(m_context))
     , m_block(0)
     , m_nextBlock(0)
 {

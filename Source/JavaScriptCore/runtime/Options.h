@@ -111,6 +111,7 @@ typedef OptionRange optionRange;
     v(bool, validateGraphAtEachPhase, false) \
     v(bool, verboseOSR, false) \
     v(bool, verboseCompilationQueue, false) \
+    v(bool, reportCompileTimes, false) \
     \
     v(bool, useExperimentalFTL, false) \
     v(bool, useFTLTBAA, true) \

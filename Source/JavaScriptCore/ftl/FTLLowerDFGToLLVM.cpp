@@ -59,6 +59,8 @@ public:
     LowerDFGToLLVM(State& state)
         : m_graph(state.graph)
         , m_ftlState(state)
+        , m_heaps(state.context)
+        , m_out(state.context)
         , m_localsBoolean(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
         , m_locals32(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
         , m_locals64(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
@@ -73,7 +75,8 @@ public:
     void lower()
     {
         CString name = toCString(codeBlock()->hash());
-        m_ftlState.module = LLVMModuleCreateWithName(name.data());
+        m_ftlState.module =
+            LLVMModuleCreateWithNameInContext(name.data(), m_ftlState.context);
         
         m_ftlState.function = addFunction(
             m_ftlState.module, name.data(), functionType(m_out.int64, m_out.intPtr));
@@ -81,7 +84,7 @@ public:
         
         m_out.initialize(m_ftlState.module, m_ftlState.function, m_heaps);
         
-        m_prologue = appendBasicBlock(m_ftlState.function);
+        m_prologue = appendBasicBlock(m_ftlState.context, m_ftlState.function);
         m_out.appendTo(m_prologue);
         for (unsigned index = m_localsBoolean.size(); index--;) {
             m_localsBoolean[index] = buildAlloca(m_out.m_builder, m_out.boolean);
@@ -90,8 +93,8 @@ public:
             m_localsDouble[index] = buildAlloca(m_out.m_builder, m_out.doubleType);
         }
         
-        m_initialization = appendBasicBlock(m_ftlState.function);
-        m_argumentChecks = appendBasicBlock(m_ftlState.function);
+        m_initialization = appendBasicBlock(m_ftlState.context, m_ftlState.function);
+        m_argumentChecks = appendBasicBlock(m_ftlState.context, m_ftlState.function);
 
         m_callFrame = m_out.param(0);
         m_tagTypeNumber = m_out.constInt64(TagTypeNumber);

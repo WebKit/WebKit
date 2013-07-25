@@ -30,8 +30,8 @@
 
 namespace JSC { namespace FTL {
 
-IntrinsicRepository::IntrinsicRepository()
-    : CommonValues() // Call this explicitly to make the following macro magic work.
+IntrinsicRepository::IntrinsicRepository(LContext context)
+    : CommonValues(context)
 #define INTRINSIC_INITIALIZATION(ourName, llvmName, type) , m_##ourName(0)
     FOR_EACH_FTL_INTRINSIC(INTRINSIC_INITIALIZATION)
 #undef INTRINSIC_INITIALIZATION

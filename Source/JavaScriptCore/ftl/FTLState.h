@@ -45,10 +45,12 @@ class State {
     
 public:
     State(DFG::Graph& graph);
+    ~State();
     
     // None of these things is owned by State. It is the responsibility of
     // FTL phases to properly manage the lifecycle of the module and function.
     DFG::Graph& graph;
+    LContext context;
     LModule module;
     LValue function;
     RefPtr<JITCode> jitCode;

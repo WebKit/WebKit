@@ -79,6 +79,9 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     bool isCompiled;
 
 private:
+    enum CompilationPath { FailPath, DFGPath, FTLPath };
+    CompilationPath compileInThreadImpl(LongLivedState&);
+    
     bool isStillValid();
     void reallyAdd();
 };

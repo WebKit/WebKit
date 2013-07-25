@@ -52,6 +52,7 @@
 #include "FTLLowerDFGToLLVM.h"
 #include "FTLState.h"
 #include "Operations.h"
+#include <wtf/CurrentTime.h>
 
 namespace JSC { namespace DFG {
 
@@ -88,17 +89,44 @@ Plan::~Plan()
 
 void Plan::compileInThread(LongLivedState& longLivedState)
 {
+    double before = 0;
+    if (Options::reportCompileTimes())
+        before = currentTimeMS();
+    
     SamplingRegion samplingRegion("DFG Compilation (Plan)");
     CompilationScope compilationScope;
 
     if (logCompilationChanges())
         dataLog("DFG(Plan) compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
 
+    CompilationPath path = compileInThreadImpl(longLivedState);
+
+    RELEASE_ASSERT(finalizer);
+    
+    if (Options::reportCompileTimes()) {
+        const char* pathName;
+        switch (path) {
+        case FailPath:
+            pathName = "N/A (fail)";
+            break;
+        case DFGPath:
+            pathName = "DFG";
+            break;
+        case FTLPath:
+            pathName = "FTL";
+            break;
+        }
+        dataLog("Compiled ", *codeBlock, " with ", pathName, " in ", currentTimeMS() - before, " ms.\n");
+    }
+}
+
+Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
+{
     Graph dfg(vm, *this, longLivedState);
     
     if (!parse(dfg)) {
         finalizer = adoptPtr(new FailedFinalizer(*this));
-        return;
+        return FailPath;
     }
     
     // By this point the DFG bytecode parser will have potentially mutated various tables
@@ -151,7 +179,7 @@ void Plan::compileInThread(LongLivedState& longLivedState)
         FTL::lowerDFGToLLVM(state);
         FTL::compile(state);
         FTL::link(state);
-        return;
+        return FTLPath;
     }
 #endif // ENABLE(FTL_JIT)
     
@@ -169,7 +197,7 @@ void Plan::compileInThread(LongLivedState& longLivedState)
         dataFlowJIT.link();
     }
     
-    ASSERT(finalizer);
+    return DFGPath;
 }
 
 bool Plan::isStillValid()

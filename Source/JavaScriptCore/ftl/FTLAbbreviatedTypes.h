@@ -37,10 +37,11 @@ namespace JSC { namespace FTL {
 typedef LLVMBasicBlockRef LBasicBlock;
 typedef LLVMBuilderRef LBuilder;
 typedef LLVMCallConv LCallConv;
+typedef LLVMContextRef LContext;
 typedef LLVMIntPredicate LIntPredicate;
-typedef LLVMRealPredicate LRealPredicate;
 typedef LLVMLinkage LLinkage;
 typedef LLVMModuleRef LModule;
+typedef LLVMRealPredicate LRealPredicate;
 typedef LLVMTypeRef LType;
 typedef LLVMValueRef LValue;
 

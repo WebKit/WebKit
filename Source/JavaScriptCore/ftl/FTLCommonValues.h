@@ -36,7 +36,7 @@ namespace JSC { namespace FTL {
 
 class CommonValues {
 public:
-    CommonValues();
+    CommonValues(LContext context);
     
     void initialize(LModule module)
     {
@@ -69,6 +69,7 @@ public:
     const LValue intPtrPtr;
     const LValue doubleZero;
     
+    LContext const m_context;
     LModule m_module;
 };
 
