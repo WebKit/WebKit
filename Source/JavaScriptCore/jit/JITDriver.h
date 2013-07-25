@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@
 namespace JSC {
 
 template<typename CodeBlockType>
-inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& codeBlock, RefPtr<JITCode>& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
+inline bool jitCompileIfAppropriate(ExecState* exec, CodeBlockType* codeBlock, RefPtr<JITCode>& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
 {
     VM& vm = exec->vm();
     
@@ -52,30 +52,27 @@ inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& code
     
     RefPtr<JITCode> oldJITCode = jitCode;
     
-    bool dfgCompiled = false;
-    if (JITCode::isOptimizingJIT(jitType))
-        dfgCompiled = DFG::tryCompile(exec, codeBlock.get(), jitCode, bytecodeIndex);
-    if (dfgCompiled) {
-        if (codeBlock->alternative())
+    if (JITCode::isOptimizingJIT(jitType)) {
+        if (DFG::tryCompile(exec, codeBlock, jitCode, bytecodeIndex))
             codeBlock->alternative()->unlinkIncomingCalls();
+        else {
+            ASSERT(oldJITCode == jitCode);
+            return false;
+        }
     } else {
-        if (codeBlock->alternative()) {
-            codeBlock = static_pointer_cast<CodeBlockType>(codeBlock->releaseAlternative());
-            jitCode = oldJITCode;
+        RefPtr<JITCode> result = JIT::compile(&vm, codeBlock, effort);
+        if (result)
+            jitCode = result;
+        else
             return false;
-        }
-        jitCode = JIT::compile(&vm, codeBlock.get(), effort);
-        if (!jitCode) {
-            jitCode = oldJITCode;
-            return false;
-        }
     }
+    
     codeBlock->setJITCode(jitCode, MacroAssemblerCodePtr());
     
     return true;
 }
 
-inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
+inline bool jitCompileFunctionIfAppropriate(ExecState* exec, FunctionCodeBlock* codeBlock, RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
 {
     VM& vm = exec->vm();
     
@@ -90,26 +87,25 @@ inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCode
     RefPtr<JITCode> oldJITCode = jitCode;
     MacroAssemblerCodePtr oldJITCodeWithArityCheck = jitCodeWithArityCheck;
     
-    bool dfgCompiled = false;
-    if (JITCode::isOptimizingJIT(jitType))
-        dfgCompiled = DFG::tryCompileFunction(exec, codeBlock.get(), jitCode, jitCodeWithArityCheck, bytecodeIndex);
-    if (dfgCompiled) {
-        if (codeBlock->alternative())
+    if (JITCode::isOptimizingJIT(jitType)) {
+        if (DFG::tryCompileFunction(exec, codeBlock, jitCode, jitCodeWithArityCheck, bytecodeIndex))
             codeBlock->alternative()->unlinkIncomingCalls();
-    } else {
-        if (codeBlock->alternative()) {
-            codeBlock = static_pointer_cast<FunctionCodeBlock>(codeBlock->releaseAlternative());
-            jitCode = oldJITCode;
-            jitCodeWithArityCheck = oldJITCodeWithArityCheck;
+        else {
+            ASSERT(oldJITCode == jitCode);
+            ASSERT_UNUSED(oldJITCodeWithArityCheck, oldJITCodeWithArityCheck == jitCodeWithArityCheck);
             return false;
         }
-        jitCode = JIT::compile(&vm, codeBlock.get(), effort, &jitCodeWithArityCheck);
-        if (!jitCode) {
-            jitCode = oldJITCode;
-            jitCodeWithArityCheck = oldJITCodeWithArityCheck;
+    } else {
+        RefPtr<JITCode> result =
+            JIT::compile(&vm, codeBlock, effort, &jitCodeWithArityCheck);
+        if (result)
+            jitCode = result;
+        else {
+            ASSERT_UNUSED(oldJITCodeWithArityCheck, oldJITCodeWithArityCheck == jitCodeWithArityCheck);
             return false;
         }
     }
+
     codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
     
     return true;

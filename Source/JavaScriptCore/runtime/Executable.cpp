@@ -94,11 +94,11 @@ Intrinsic NativeExecutable::intrinsic() const
 #if ENABLE(JIT)
 // Utility method used for jettisoning code blocks.
 template<typename T>
-static void jettisonCodeBlock(VM& vm, OwnPtr<T>& codeBlock)
+static void jettisonCodeBlock(VM& vm, RefPtr<T>& codeBlock)
 {
     ASSERT(JITCode::isOptimizingJIT(codeBlock->getJITType()));
     ASSERT(codeBlock->alternative());
-    OwnPtr<T> codeBlockToJettison = codeBlock.release();
+    RefPtr<T> codeBlockToJettison = codeBlock.release();
     codeBlock = static_pointer_cast<T>(codeBlockToJettison->releaseAlternative());
     codeBlockToJettison->unlinkIncomingCalls();
     vm.heap.jettisonDFGCodeBlock(static_pointer_cast<CodeBlock>(codeBlockToJettison.release()));
@@ -171,7 +171,7 @@ JSObject* EvalExecutable::compileOptimized(ExecState* exec, JSScope* scope, unsi
 #if ENABLE(JIT)
 bool EvalExecutable::jitCompile(ExecState* exec)
 {
-    return jitCompileIfAppropriate(exec, m_evalCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
+    return jitCompileIfAppropriate(exec, m_evalCodeBlock.get(), m_jitCodeForCall, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
 #endif
 
@@ -203,10 +203,11 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
     VM* vm = &exec->vm();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     
+    RefPtr<EvalCodeBlock> newCodeBlock;
+    
     if (!!m_evalCodeBlock) {
-        PassOwnPtr<EvalCodeBlock> newCodeBlock = adoptPtr(new EvalCodeBlock(CodeBlock::CopyParsedBlock, *m_evalCodeBlock));
-        newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_evalCodeBlock.release()));
-        m_evalCodeBlock = newCodeBlock;
+        newCodeBlock = adoptRef(new EvalCodeBlock(CodeBlock::CopyParsedBlock, *m_evalCodeBlock));
+        newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_evalCodeBlock));
     } else {
         UNUSED_PARAM(scope);
         UNUSED_PARAM(vm);
@@ -219,17 +220,18 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
         if (!unlinkedEvalCode)
             return exception;
 
-        OwnPtr<CodeBlock> previousCodeBlock = m_evalCodeBlock.release();
-        ASSERT((jitType == JITCode::bottomTierJIT()) == !previousCodeBlock);
         m_unlinkedEvalCodeBlock.set(*vm, this, unlinkedEvalCode);
-        m_evalCodeBlock = adoptPtr(new EvalCodeBlock(this, unlinkedEvalCode, lexicalGlobalObject, source().provider(), scope->localDepth(), previousCodeBlock.release()));
-        m_evalCodeBlock->copyPostParseDataFromAlternative();
+        ASSERT((jitType == JITCode::bottomTierJIT()) == !m_evalCodeBlock);
+
+        newCodeBlock = adoptRef(new EvalCodeBlock(this, unlinkedEvalCode, lexicalGlobalObject, source().provider(), scope->localDepth()));
     }
 
 #if ENABLE(JIT)
-    if (!prepareForExecution(exec, m_evalCodeBlock, m_jitCodeForCall, jitType, bytecodeIndex))
+    if (!prepareForExecution(exec, newCodeBlock.get(), m_jitCodeForCall, jitType, bytecodeIndex))
         return 0;
 #endif
+    
+    m_evalCodeBlock = newCodeBlock;
 
 #if ENABLE(JIT)
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock) + m_jitCodeForCall->size());
@@ -304,7 +306,7 @@ JSObject* ProgramExecutable::compileOptimized(ExecState* exec, JSScope* scope, u
 #if ENABLE(JIT)
 bool ProgramExecutable::jitCompile(ExecState* exec)
 {
-    return jitCompileIfAppropriate(exec, m_programCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
+    return jitCompileIfAppropriate(exec, m_programCodeBlock.get(), m_jitCodeForCall, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
 #endif
 
@@ -317,21 +319,24 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JI
     UNUSED_PARAM(jitType);
     UNUSED_PARAM(bytecodeIndex);
 #endif
+    
+    RefPtr<ProgramCodeBlock> newCodeBlock;
+    
     if (!!m_programCodeBlock) {
-        OwnPtr<ProgramCodeBlock> newCodeBlock = adoptPtr(new ProgramCodeBlock(CodeBlock::CopyParsedBlock, *m_programCodeBlock));
-        newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_programCodeBlock.release()));
-        m_programCodeBlock = newCodeBlock.release();
+        newCodeBlock = adoptRef(new ProgramCodeBlock(CodeBlock::CopyParsedBlock, *m_programCodeBlock));
+        newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_programCodeBlock));
     } else {
         JSGlobalObject* globalObject = scope->globalObject();
-        m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, m_unlinkedProgramCodeBlock.get(), globalObject, source().provider(), source().startColumn(), m_programCodeBlock.release()));
-        m_programCodeBlock->copyPostParseDataFromAlternative();
+        newCodeBlock = adoptRef(new ProgramCodeBlock(this, m_unlinkedProgramCodeBlock.get(), globalObject, source().provider(), source().startColumn()));
     }
 
 #if ENABLE(JIT)
-    if (!prepareForExecution(exec, m_programCodeBlock, m_jitCodeForCall, jitType, bytecodeIndex))
+    if (!prepareForExecution(exec, newCodeBlock.get(), m_jitCodeForCall, jitType, bytecodeIndex))
         return 0;
 #endif
 
+    m_programCodeBlock = newCodeBlock;
+    
 #if ENABLE(JIT)
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock) + m_jitCodeForCall->size());
 #else
@@ -484,19 +489,24 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, JSSc
 #if ENABLE(JIT)
 bool FunctionExecutable::jitCompileForCall(ExecState* exec)
 {
-    return jitCompileFunctionIfAppropriate(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
+    return jitCompileFunctionIfAppropriate(exec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
 
 bool FunctionExecutable::jitCompileForConstruct(ExecState* exec)
 {
-    return jitCompileFunctionIfAppropriate(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
+    return jitCompileFunctionIfAppropriate(exec, m_codeBlockForConstruct.get(), m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
 #endif
 
-PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* scope, CodeSpecializationKind specializationKind, JSObject*& exception)
+PassRefPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* scope, CodeSpecializationKind specializationKind, JSObject*& exception)
 {
-    if (!!codeBlockFor(specializationKind))
-        return adoptPtr(new FunctionCodeBlock(CodeBlock::CopyParsedBlock, *codeBlockFor(specializationKind)));
+    RefPtr<FunctionCodeBlock> alternative = codeBlockFor(specializationKind);
+    
+    if (!!alternative) {
+        RefPtr<FunctionCodeBlock> result = adoptRef(new FunctionCodeBlock(CodeBlock::CopyParsedBlock, *codeBlockFor(specializationKind)));
+        result->setAlternative(alternative);
+        return result.release();
+    }
 
     VM* vm = scope->vm();
     JSGlobalObject* globalObject = scope->globalObject();
@@ -515,9 +525,7 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* s
     unsigned sourceOffset = source().startOffset();
     unsigned startColumn = source().startColumn();
 
-    OwnPtr<FunctionCodeBlock> result = adoptPtr(new FunctionCodeBlock(this, unlinkedCodeBlock, globalObject, provider, sourceOffset, startColumn));
-    result->copyPostParseDataFrom(codeBlockFor(specializationKind).get());
-    return result.release();
+    return adoptRef(new FunctionCodeBlock(this, unlinkedCodeBlock, globalObject, provider, sourceOffset, startColumn));
 }
 
 
@@ -533,20 +541,20 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* s
 #endif
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForCall);
     JSObject* exception = 0;
-    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scope, CodeForCall, exception);
+    
+    RefPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scope, CodeForCall, exception);
     if (!newCodeBlock)
         return exception;
+    
+#if ENABLE(JIT)
+    if (!prepareFunctionForExecution(exec, newCodeBlock.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck, jitType, bytecodeIndex, CodeForCall))
+        return 0;
+#endif
 
-    newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_codeBlockForCall.release()));
-    m_codeBlockForCall = newCodeBlock.release();
+    m_codeBlockForCall = newCodeBlock;
     
     m_numParametersForCall = m_codeBlockForCall->numParameters();
     RELEASE_ASSERT(m_numParametersForCall);
-
-#if ENABLE(JIT)
-    if (!prepareFunctionForExecution(exec, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, jitType, bytecodeIndex, CodeForCall))
-        return 0;
-#endif
 
 #if ENABLE(JIT)
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall) + m_jitCodeForCall->size());
@@ -569,20 +577,19 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSSco
     
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForConstruct);
     JSObject* exception = 0;
-    OwnPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scope, CodeForConstruct, exception);
+    RefPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scope, CodeForConstruct, exception);
     if (!newCodeBlock)
         return exception;
 
-    newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_codeBlockForConstruct.release()));
-    m_codeBlockForConstruct = newCodeBlock.release();
+#if ENABLE(JIT)
+    if (!prepareFunctionForExecution(exec, newCodeBlock.get(), m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, jitType, bytecodeIndex, CodeForConstruct))
+        return 0;
+#endif
+
+    m_codeBlockForConstruct = newCodeBlock;
     
     m_numParametersForConstruct = m_codeBlockForConstruct->numParameters();
     RELEASE_ASSERT(m_numParametersForConstruct);
-
-#if ENABLE(JIT)
-    if (!prepareFunctionForExecution(exec, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, jitType, bytecodeIndex, CodeForConstruct))
-        return 0;
-#endif
 
 #if ENABLE(JIT)
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct) + m_jitCodeForConstruct->size());

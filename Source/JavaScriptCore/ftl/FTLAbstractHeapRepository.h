@@ -41,7 +41,8 @@ namespace JSC { namespace FTL {
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(JSCell_structure, JSCell::structureOffset()) \
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
-    macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength())
+    macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength()) \
+    macro(Structure_typeInfoFlags, Structure::typeInfoFlagsOffset())
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
     macro(variables, sizeof(Register)) \

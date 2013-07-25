@@ -939,9 +939,12 @@ private:
         }
         
         if (m_node->isBinaryUseKind(ObjectUse)) {
+            masqueradesAsUndefinedWatchpointIfIsStillValid();
             m_booleanValues.add(
                 m_node,
-                m_out.equal(lowObject(m_node->child1()), lowObject(m_node->child2())));
+                m_out.equal(
+                    lowNonNullObject(m_node->child1()),
+                    lowNonNullObject(m_node->child2())));
             return;
         }
         
@@ -1089,6 +1092,15 @@ private:
         
         LValue result = lowCell(edge, mode);
         speculateObject(edge, result);
+        return result;
+    }
+    
+    LValue lowNonNullObject(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    {
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == ObjectUse);
+        
+        LValue result = lowCell(edge, mode);
+        speculateNonNullObject(edge, result);
         return result;
     }
     
@@ -1312,6 +1324,22 @@ private:
         speculateObject(edge, lowCell(edge));
     }
     
+    void speculateNonNullObject(Edge edge, LValue cell)
+    {
+        LValue structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecObject,
+            m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())));
+        if (masqueradesAsUndefinedWatchpointIsStillValid())
+            return;
+        
+        speculate(
+            BadType, jsValueValue(cell), edge.node(),
+            m_out.testNonZero8(
+                m_out.load8(structure, m_heaps.Structure_typeInfoFlags),
+                m_out.constInt8(MasqueradesAsUndefined)));
+    }
+    
     void speculateNumber(Edge edge)
     {
         // Do an early return here because lowDouble() can create a lot of control flow.
@@ -1331,6 +1359,20 @@ private:
         FTL_TYPE_CHECK(
             doubleValue(value), edge, SpecRealNumber,
             m_out.doubleNotEqualOrUnordered(value, value));
+    }
+
+    bool masqueradesAsUndefinedWatchpointIsStillValid()
+    {
+        return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_node->codeOrigin);
+    }
+    
+    void masqueradesAsUndefinedWatchpointIfIsStillValid()
+    {
+        if (!masqueradesAsUndefinedWatchpointIsStillValid())
+            return;
+        
+        // FIXME: Implement masquerades-as-undefined watchpoints.
+        // https://bugs.webkit.org/show_bug.cgi?id=113647
     }
     
     bool isLive(Node* node)

@@ -351,7 +351,7 @@ bool Heap::unprotect(JSValue k)
     return m_protectedValues.remove(k.asCell());
 }
 
-void Heap::jettisonDFGCodeBlock(PassOwnPtr<CodeBlock> codeBlock)
+void Heap::jettisonDFGCodeBlock(PassRefPtr<CodeBlock> codeBlock)
 {
     m_dfgCodeBlocks.jettison(codeBlock);
 }

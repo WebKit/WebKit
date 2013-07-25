@@ -314,6 +314,11 @@ public:
     {
         return !m_value;
     }
+    
+    bool operator==(const MacroAssemblerCodePtr& other) const
+    {
+        return m_value == other.m_value;
+    }
 
 private:
     void* m_value;

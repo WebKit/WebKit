@@ -105,6 +105,7 @@ public:
     
     LValue param(unsigned index) { return getParam(m_function, index); }
     LValue constBool(bool value) { return constInt(boolean, value, ZeroExtend); }
+    LValue constInt8(int8_t value) { return constInt(int8, value, SignExtend); }
     LValue constInt32(int32_t value) { return constInt(int32, value, SignExtend); }
     template<typename T>
     LValue constIntPtr(T value) { return constInt(intPtr, bitwise_cast<intptr_t>(value), SignExtend); }
@@ -176,6 +177,7 @@ public:
         pointer.heap().decorateInstruction(result, *m_heaps);
     }
     
+    LValue load8(TypedPointer pointer) { return load(pointer, ref8); }
     LValue load32(TypedPointer pointer) { return load(pointer, ref32); }
     LValue load64(TypedPointer pointer) { return load(pointer, ref64); }
     LValue loadPtr(TypedPointer pointer) { return load(pointer, refPtr); }
@@ -245,6 +247,7 @@ public:
         return TypedPointer(m_heaps->absolute[address], constIntPtr(address));
     }
     
+    LValue load8(LValue base, const AbstractField& field) { return load8(address(base, field)); }
     LValue load32(LValue base, const AbstractField& field) { return load32(address(base, field)); }
     LValue load64(LValue base, const AbstractField& field) { return load64(address(base, field)); }
     LValue loadPtr(LValue base, const AbstractField& field) { return loadPtr(address(base, field)); }
@@ -276,9 +279,13 @@ public:
     LValue doubleGreaterThanOrUnordered(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealUGT, left, right); }
     LValue doubleGreaterThanOrEqualOrUnordered(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealUGE, left, right); }
     
+    LValue isZero8(LValue value) { return equal(value, int8Zero); }
+    LValue notZero8(LValue value) { return notEqual(value, int8Zero); }
     LValue isZero64(LValue value) { return equal(value, int64Zero); }
     LValue notZero64(LValue value) { return notEqual(value, int64Zero); }
     
+    LValue testIsZero8(LValue value, LValue mask) { return isZero8(bitAnd(value, mask)); }
+    LValue testNonZero8(LValue value, LValue mask) { return notZero8(bitAnd(value, mask)); }
     LValue testIsZero64(LValue value, LValue mask) { return isZero64(bitAnd(value, mask)); }
     LValue testNonZero64(LValue value, LValue mask) { return notZero64(bitAnd(value, mask)); }
     

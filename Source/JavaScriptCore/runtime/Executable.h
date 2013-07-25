@@ -479,7 +479,7 @@ namespace JSC {
         JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        OwnPtr<EvalCodeBlock> m_evalCodeBlock;
+        RefPtr<EvalCodeBlock> m_evalCodeBlock;
         WriteBarrier<UnlinkedEvalCodeBlock> m_unlinkedEvalCodeBlock;
         RefPtr<CodeCache> m_codeCache;
     };
@@ -559,7 +559,7 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
         WriteBarrier<UnlinkedProgramCodeBlock> m_unlinkedProgramCodeBlock;
-        OwnPtr<ProgramCodeBlock> m_programCodeBlock;
+        RefPtr<ProgramCodeBlock> m_programCodeBlock;
     };
 
     class FunctionExecutable : public ScriptExecutable {
@@ -594,7 +594,7 @@ namespace JSC {
             return *m_codeBlockForConstruct;
         }
         
-        PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(JSScope*, CodeSpecializationKind, JSObject*& exception);
+        PassRefPtr<FunctionCodeBlock> produceCodeBlockFor(JSScope*, CodeSpecializationKind, JSObject*& exception);
 
         JSObject* compileForCall(ExecState* exec, JSScope* scope)
         {
@@ -746,7 +746,7 @@ namespace JSC {
         JSObject* compileForCallInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         JSObject* compileForConstructInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         
-        OwnPtr<FunctionCodeBlock>& codeBlockFor(CodeSpecializationKind kind)
+        RefPtr<FunctionCodeBlock>& codeBlockFor(CodeSpecializationKind kind)
         {
             if (kind == CodeForCall)
                 return m_codeBlockForCall;
@@ -767,8 +767,8 @@ namespace JSC {
 
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
-        OwnPtr<FunctionCodeBlock> m_codeBlockForCall;
-        OwnPtr<FunctionCodeBlock> m_codeBlockForConstruct;
+        RefPtr<FunctionCodeBlock> m_codeBlockForCall;
+        RefPtr<FunctionCodeBlock> m_codeBlockForConstruct;
     };
 
     inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope)

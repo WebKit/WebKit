@@ -36,22 +36,22 @@
 namespace JSC {
 
 template<typename CodeBlockType>
-inline bool prepareForExecution(ExecState* exec, OwnPtr<CodeBlockType>& codeBlock, RefPtr<JITCode>& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex)
+inline bool prepareForExecution(ExecState* exec, CodeBlockType* codeBlock, RefPtr<JITCode>& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex)
 {
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
         // Start off in the low level interpreter.
-        LLInt::getEntrypoint(exec->vm(), codeBlock.get(), jitCode);
+        LLInt::getEntrypoint(exec->vm(), codeBlock, jitCode);
         codeBlock->setJITCode(jitCode, MacroAssemblerCodePtr());
         if (exec->vm().m_perBytecodeProfiler)
-            exec->vm().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get());
+            exec->vm().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock);
         return true;
     }
 #endif // ENABLE(LLINT)
     return jitCompileIfAppropriate(exec, codeBlock, jitCode, jitType, bytecodeIndex, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
 }
 
-inline bool prepareFunctionForExecution(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType, unsigned bytecodeIndex, CodeSpecializationKind kind)
+inline bool prepareFunctionForExecution(ExecState* exec, FunctionCodeBlock* codeBlock, RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType, unsigned bytecodeIndex, CodeSpecializationKind kind)
 {
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
@@ -59,7 +59,7 @@ inline bool prepareFunctionForExecution(ExecState* exec, OwnPtr<FunctionCodeBloc
         LLInt::getFunctionEntrypoint(exec->vm(), kind, jitCode, jitCodeWithArityCheck);
         codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
         if (exec->vm().m_perBytecodeProfiler)
-            exec->vm().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get());
+            exec->vm().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock);
         return true;
     }
 #else

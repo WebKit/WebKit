@@ -1,5 +1,65 @@
 2013-05-09  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: CodeBlock should be RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=115594
+
+        Reviewed by Geoffrey Garen.
+        
+        This makes it possible to have the currently-being-compiled CodeBlock not be
+        installed in Executable, while also allowing it to point to its intended
+        alternative(). So long as we were using ownership and not reference counting, it
+        would have been difficult to have both CodeBlock::m_alternative and
+        Executable::m_codeBlockForBlah point to the previous CodeBlock.
+        
+        I also took the opportunity to clean up a bunch of code that appears to have
+        rotted.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (MacroAssemblerCodePtr):
+        (JSC::MacroAssemblerCodePtr::operator==):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::releaseAlternative):
+        (JSC::CodeBlock::setAlternative):
+        (CodeBlock):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        * heap/DFGCodeBlocks.cpp:
+        (JSC::DFGCodeBlocks::~DFGCodeBlocks):
+        (JSC::DFGCodeBlocks::jettison):
+        (JSC::DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks):
+        * heap/DFGCodeBlocks.h:
+        (DFGCodeBlocks):
+        * heap/Heap.cpp:
+        (JSC::Heap::jettisonDFGCodeBlock):
+        * heap/Heap.h:
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * runtime/Executable.cpp:
+        (JSC::jettisonCodeBlock):
+        (JSC::EvalExecutable::jitCompile):
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::jitCompile):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::jitCompileForCall):
+        (JSC::FunctionExecutable::jitCompileForConstruct):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (EvalExecutable):
+        (FunctionExecutable):
+        (JSC::FunctionExecutable::codeBlockFor):
+        * runtime/ExecutionHarness.h:
+        (JSC::prepareForExecution):
+        (JSC::prepareFunctionForExecution):
+
+2013-05-09  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: DFG should have its own notion of StructureChain, and it should be possible to validate it after compilation finishes
         https://bugs.webkit.org/show_bug.cgi?id=115841
 

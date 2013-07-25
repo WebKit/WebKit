@@ -138,7 +138,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE void protect(JSValue);
         JS_EXPORT_PRIVATE bool unprotect(JSValue); // True when the protect count drops to 0.
         
-        void jettisonDFGCodeBlock(PassOwnPtr<CodeBlock>);
+        void jettisonDFGCodeBlock(PassRefPtr<CodeBlock>);
 
         JS_EXPORT_PRIVATE size_t size();
         JS_EXPORT_PRIVATE size_t capacity();

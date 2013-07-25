@@ -55,6 +55,7 @@ typedef LLVMValueRef LValue;
 
 static inline LType voidType() { return LLVMVoidType(); }
 static inline LType int1Type() { return LLVMInt1Type(); }
+static inline LType int8Type() { return LLVMInt8Type(); }
 static inline LType int32Type() { return LLVMInt32Type(); }
 static inline LType int64Type() { return LLVMInt64Type(); }
 static inline LType intPtrType() { return LLVMInt64Type(); }

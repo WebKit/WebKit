@@ -59,7 +59,7 @@ public:
     // it. This is typically called either from a recompilation trigger, or from
     // an unconditional finalizer associated with a CodeBlock that had weak
     // references, where some subset of those references were dead.
-    void jettison(PassOwnPtr<CodeBlock>);
+    void jettison(PassRefPtr<CodeBlock>);
     
     // Clear all mark bits associated with DFG code blocks.
     void clearMarks();
@@ -86,7 +86,7 @@ class DFGCodeBlocks {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    void jettison(PassOwnPtr<CodeBlock>);
+    void jettison(PassRefPtr<CodeBlock>);
     void clearMarks() { }
     void mark(void*) { }
     void deleteUnmarkedJettisonedCodeBlocks() { }

@@ -90,7 +90,7 @@ namespace JSC {
 
     static ALWAYS_INLINE int missingThisObjectMarker() { return std::numeric_limits<int>::max(); }
 
-    class CodeBlock : public UnconditionalFinalizer, public WeakReferenceHarvester {
+class CodeBlock : public RefCounted<CodeBlock>, public UnconditionalFinalizer, public WeakReferenceHarvester {
         WTF_MAKE_FAST_ALLOCATED;
         friend class JIT;
         friend class LLIntOffsetsExtractor;
@@ -99,7 +99,7 @@ namespace JSC {
     protected:
         CodeBlock(CopyParsedBlockTag, CodeBlock& other);
 
-        CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSGlobalObject*, unsigned baseScopeDepth, PassRefPtr<SourceProvider>, unsigned sourceOffset, unsigned firstLineColumnOffset, PassOwnPtr<CodeBlock> alternative);
+        CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSGlobalObject*, unsigned baseScopeDepth, PassRefPtr<SourceProvider>, unsigned sourceOffset, unsigned firstLineColumnOffset);
 
         WriteBarrier<JSGlobalObject> m_globalObject;
         Heap* m_heap;
@@ -123,9 +123,9 @@ namespace JSC {
         static ptrdiff_t offsetOfNumParameters() { return OBJECT_OFFSETOF(CodeBlock, m_numParameters); }
 
         CodeBlock* alternative() { return m_alternative.get(); }
-        PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
-        void setAlternative(PassOwnPtr<CodeBlock> alternative) { m_alternative = alternative; }
-
+        PassRefPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
+        void setAlternative(PassRefPtr<CodeBlock> alternative) { m_alternative = alternative; }
+        
         CodeSpecializationKind specializationKind() const
         {
             return specializationFromIsConstruct(m_isConstructor);
@@ -1099,8 +1099,8 @@ namespace JSC {
         Vector<WriteBarrier<FunctionExecutable> > m_functionDecls;
         Vector<WriteBarrier<FunctionExecutable> > m_functionExprs;
 
-        OwnPtr<CodeBlock> m_alternative;
-
+        RefPtr<CodeBlock> m_alternative;
+        
         ExecutionCounter m_llintExecuteCounter;
 
         ExecutionCounter m_jitExecuteCounter;
@@ -1154,8 +1154,8 @@ namespace JSC {
         {
         }
 
-        GlobalCodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, unsigned baseScopeDepth, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset, PassOwnPtr<CodeBlock> alternative)
-        : CodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, baseScopeDepth, sourceProvider, sourceOffset, firstLineColumnOffset, alternative)
+        GlobalCodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, unsigned baseScopeDepth, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset)
+        : CodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, baseScopeDepth, sourceProvider, sourceOffset, firstLineColumnOffset)
         {
         }
     };
@@ -1167,8 +1167,8 @@ namespace JSC {
         {
         }
 
-        ProgramCodeBlock(ProgramExecutable* ownerExecutable, UnlinkedProgramCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned firstLineColumnOffset, PassOwnPtr<CodeBlock> alternative)
-        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, 0, sourceProvider, 0, firstLineColumnOffset, alternative)
+        ProgramCodeBlock(ProgramExecutable* ownerExecutable, UnlinkedProgramCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned firstLineColumnOffset)
+        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, 0, sourceProvider, 0, firstLineColumnOffset)
         {
         }
 
@@ -1189,8 +1189,8 @@ namespace JSC {
         {
         }
         
-        EvalCodeBlock(EvalExecutable* ownerExecutable, UnlinkedEvalCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, int baseScopeDepth, PassOwnPtr<CodeBlock> alternative)
-        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, baseScopeDepth, sourceProvider, 0, 1, alternative)
+        EvalCodeBlock(EvalExecutable* ownerExecutable, UnlinkedEvalCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, int baseScopeDepth)
+        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, baseScopeDepth, sourceProvider, 0, 1)
         {
         }
         
@@ -1217,8 +1217,8 @@ namespace JSC {
         {
         }
         
-        FunctionCodeBlock(FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset, PassOwnPtr<CodeBlock> alternative = nullptr)
-        : CodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, 0, sourceProvider, sourceOffset, firstLineColumnOffset, alternative)
+        FunctionCodeBlock(FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset)
+        : CodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, 0, sourceProvider, sourceOffset, firstLineColumnOffset)
         {
         }
         

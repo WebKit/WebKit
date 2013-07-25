@@ -45,16 +45,19 @@ public:
     
     const LType voidType;
     const LType boolean;
+    const LType int8;
     const LType int32;
     const LType int64;
     const LType intPtr;
     const LType doubleType;
+    const LType ref8;
     const LType ref32;
     const LType ref64;
     const LType refPtr;
     const LType refDouble;
     const LValue booleanTrue;
     const LValue booleanFalse;
+    const LValue int8Zero;
     const LValue int32Zero;
     const LValue int64Zero;
     const LValue intPtrZero;

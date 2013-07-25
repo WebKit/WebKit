@@ -38,20 +38,18 @@ DFGCodeBlocks::DFGCodeBlocks() { }
 
 DFGCodeBlocks::~DFGCodeBlocks()
 {
-    Vector<CodeBlock*, 16> toRemove;
+    Vector<RefPtr<CodeBlock>, 16> toRemove;
     
     for (HashSet<CodeBlock*>::iterator iter = m_set.begin(); iter != m_set.end(); ++iter) {
         if ((*iter)->getJITCode()->dfgCommon()->isJettisoned)
-            toRemove.append(*iter);
+            toRemove.append(adoptRef(*iter));
     }
-    
-    WTF::deleteAllValues(toRemove);
 }
 
-void DFGCodeBlocks::jettison(PassOwnPtr<CodeBlock> codeBlockPtr)
+void DFGCodeBlocks::jettison(PassRefPtr<CodeBlock> codeBlockPtr)
 {
     // We don't want to delete it now; we just want its pointer.
-    CodeBlock* codeBlock = codeBlockPtr.leakPtr();
+    CodeBlock* codeBlock = codeBlockPtr.leakRef();
     
     ASSERT(codeBlock);
     ASSERT(JITCode::isOptimizingJIT(codeBlock->getJITType()));
@@ -75,14 +73,12 @@ void DFGCodeBlocks::clearMarks()
 
 void DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks()
 {
-    Vector<CodeBlock*, 16> toRemove;
+    Vector<RefPtr<CodeBlock>, 16> toRemove;
     
     for (HashSet<CodeBlock*>::iterator iter = m_set.begin(); iter != m_set.end(); ++iter) {
         if ((*iter)->getJITCode()->dfgCommon()->isJettisoned && !(*iter)->getJITCode()->dfgCommon()->mayBeExecuting)
-            toRemove.append(*iter);
+            toRemove.append(adoptRef(*iter));
     }
-    
-    WTF::deleteAllValues(toRemove);
 }
 
 void DFGCodeBlocks::traceMarkedCodeBlocks(SlotVisitor& visitor)
