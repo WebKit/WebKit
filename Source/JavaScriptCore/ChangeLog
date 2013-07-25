@@ -1,3 +1,10 @@
+2013-07-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing the GTK build after the FTL merging by updating the build targets list.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+
 2013-07-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         Unreviewed buildfix after FTL upstream.

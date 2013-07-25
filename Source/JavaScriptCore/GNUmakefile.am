@@ -47,16 +47,16 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/JavaScriptCore \
 	-I$(srcdir)/Source/JavaScriptCore/API \
+	-I$(srcdir)/Source/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/Source/JavaScriptCore/assembler \
 	-I$(srcdir)/Source/JavaScriptCore/bytecode \
 	-I$(srcdir)/Source/JavaScriptCore/bytecompiler \
+	-I$(srcdir)/Source/JavaScriptCore/debugger \
 	-I$(srcdir)/Source/JavaScriptCore/dfg \
 	-I$(srcdir)/Source/JavaScriptCore/disassembler \
+	-I$(srcdir)/Source/JavaScriptCore/ftl \
 	-I$(srcdir)/Source/JavaScriptCore/heap \
-	-I$(srcdir)/Source/JavaScriptCore/debugger \
-	-I$(srcdir)/Source/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/Source/JavaScriptCore/interpreter \
-	-I$(srcdir)/Source/JavaScriptCore/jit \
 	-I$(srcdir)/Source/JavaScriptCore/jit \
 	-I$(srcdir)/Source/JavaScriptCore/llint \
 	-I$(srcdir)/Source/JavaScriptCore/parser \
