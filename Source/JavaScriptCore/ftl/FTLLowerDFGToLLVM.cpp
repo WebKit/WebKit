@@ -74,12 +74,11 @@ public:
     
     void lower()
     {
-        CString name = toCString(codeBlock()->hash());
         m_ftlState.module =
-            LLVMModuleCreateWithNameInContext(name.data(), m_ftlState.context);
+            LLVMModuleCreateWithNameInContext("jsBody", m_ftlState.context);
         
         m_ftlState.function = addFunction(
-            m_ftlState.module, name.data(), functionType(m_out.int64, m_out.intPtr));
+            m_ftlState.module, "jsBody", functionType(m_out.int64, m_out.intPtr));
         setFunctionCallingConv(m_ftlState.function, LLVMCCallConv);
         
         m_out.initialize(m_ftlState.module, m_ftlState.function, m_heaps);
@@ -368,6 +367,10 @@ private:
             break;
         case GetByVal:
             compileGetByVal();
+            break;
+        case PutByVal:
+        case PutByValAlias:
+            compilePutByVal();
             break;
         case GetByOffset:
             compileGetByOffset();
@@ -1178,11 +1181,13 @@ private:
                     m_state.forNode(m_node->child2()).m_value));
                 speculate(LoadFromHole, noValue(), 0, m_out.isZero64(result));
                 m_jsValueValues.add(m_node, result);
-                break;
+                return;
             }
             
+            // FIXME: Implement hole/OOB loads in the FTL.
+            // https://bugs.webkit.org/show_bug.cgi?id=118077
             RELEASE_ASSERT_NOT_REACHED();
-            break;
+            return;
         }
             
         case Array::Double: {
@@ -1211,13 +1216,97 @@ private:
                 break;
             }
             
+            // FIXME: Implement hole/OOB loads in the FTL.
+            // https://bugs.webkit.org/show_bug.cgi?id=118077
             RELEASE_ASSERT_NOT_REACHED();
-            break;
+            return;
         }
             
         default:
             RELEASE_ASSERT_NOT_REACHED();
-            break;
+            return;
+        }
+    }
+    
+    void compilePutByVal()
+    {
+        Edge child1 = m_graph.varArgChild(m_node, 0);
+        Edge child2 = m_graph.varArgChild(m_node, 1);
+        Edge child3 = m_graph.varArgChild(m_node, 2);
+        Edge child4 = m_graph.varArgChild(m_node, 3);
+
+        LValue index = lowInt32(child2);
+        LValue storage = lowStorage(child4);
+        
+        switch (m_node->arrayMode().type()) {
+        case Array::Int32:
+        case Array::Contiguous: {
+            LValue value = lowJSValue(child3, ManualOperandSpeculation);
+            
+            if (m_node->arrayMode().type() == Array::Int32)
+                FTL_TYPE_CHECK(jsValueValue(value), child3, SpecInt32, isNotInt32(value));
+            
+            TypedPointer elementPointer = m_out.baseIndex(
+                m_node->arrayMode().type() == Array::Int32 ?
+                m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties,
+                storage, m_out.zeroExt(index, m_out.intPtr),
+                m_state.forNode(child2).m_value);
+            
+            if (m_node->op() == PutByValAlias) {
+                m_out.store64(value, elementPointer);
+                return;
+            }
+            
+            if (m_node->arrayMode().isInBounds()) {
+                speculate(
+                    StoreToHoleOrOutOfBounds, noValue(), 0,
+                    m_out.aboveOrEqual(
+                        index, m_out.load32(storage, m_heaps.Butterfly_publicLength)));
+            } else {
+                // FIXME: Implement hole/OOB stores in the FTL.
+                // https://bugs.webkit.org/show_bug.cgi?id=118077
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            
+            m_out.store64(value, elementPointer);
+            return;
+        }
+            
+        case Array::Double: {
+            LValue value = lowDouble(child3);
+            
+            FTL_TYPE_CHECK(
+                doubleValue(value), child3, SpecRealNumber,
+                m_out.doubleNotEqualOrUnordered(value, value));
+            
+            TypedPointer elementPointer = m_out.baseIndex(
+                m_heaps.indexedDoubleProperties,
+                storage, m_out.zeroExt(index, m_out.intPtr),
+                m_state.forNode(child2).m_value);
+
+            if (m_node->op() == PutByValAlias) {
+                m_out.storeDouble(value, elementPointer);
+                return;
+            }
+            
+            if (m_node->arrayMode().isInBounds()) {
+                speculate(
+                    StoreToHoleOrOutOfBounds, noValue(), 0,
+                    m_out.aboveOrEqual(
+                        index, m_out.load32(storage, m_heaps.Butterfly_publicLength)));
+            } else {
+                // FIXME: Implement hole/OOB stores in the FTL.
+                // https://bugs.webkit.org/show_bug.cgi?id=118077
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            
+            m_out.storeDouble(value, elementPointer);
+            return;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
         }
     }
     

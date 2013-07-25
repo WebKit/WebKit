@@ -110,6 +110,26 @@ inline bool canCompile(Node* node)
             return false;
         }
         break;
+    case PutByVal:
+    case PutByValAlias:
+        switch (node->arrayMode().type()) {
+        case Array::ForceExit:
+            return true;
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+            break;
+        default:
+            return false;
+        }
+        switch (node->arrayMode().speculation()) {
+        case Array::SaneChain:
+        case Array::InBounds:
+            break;
+        default:
+            return false;
+        }
+        break;
     case CompareEq:
     case CompareStrictEq:
         if (node->isBinaryUseKind(Int32Use))

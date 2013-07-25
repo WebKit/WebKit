@@ -1,3 +1,19 @@
+2013-06-26  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support PutByVal
+        https://bugs.webkit.org/show_bug.cgi?id=118075
+
+        Reviewed by Mark Hahnenberg.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+
 2013-06-25  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Convert versus AsIs should have no bearing on whether we can do the SaneChain optimization for double array GetByVals
