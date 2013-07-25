@@ -633,7 +633,7 @@ public:
 
     WebPageGroup* pageGroup() const { return m_pageGroup.get(); }
 
-    bool isValid();
+    bool isValid() const;
 
     PassRefPtr<ImmutableArray> relatedPages() const;
 
