@@ -1,3 +1,43 @@
+2013-05-10  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL CompareEq ObjectUse should handle masquerading
+        https://bugs.webkit.org/show_bug.cgi?id=115920
+
+        Reviewed by Mark Hahnenberg.
+        
+        We don't yet support watchpoints, but this does all the wiring right up to the
+        part where we would have emitted watchpoints. I've also written this in a way that
+        makes it easy to use the case where you would have anyway speculated non-masquerading
+        even if the watchpoint was invalidated.
+        
+        This is inherently racy, of course: but the only race here is that you might first
+        set the watchpoint, and then the watchpoint is invalidated, and then you compile rest
+        of the code in a way that doesn't need the watchpoint. That's fine, since the FTL
+        will remember that it had set the watchpoint and then cancel the compilation.
+
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::int8Type):
+        * ftl/FTLAbstractHeapRepository.h:
+        (FTL):
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        * ftl/FTLCommonValues.h:
+        (CommonValues):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::LowerDFGToLLVM::lowNonNullObject):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::speculateNonNullObject):
+        (JSC::FTL::LowerDFGToLLVM::masqueradesAsUndefinedWatchpointIsStillValid):
+        (JSC::FTL::LowerDFGToLLVM::masqueradesAsUndefinedWatchpointIfIsStillValid):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::constInt8):
+        (JSC::FTL::Output::load8):
+        (JSC::FTL::Output::isZero8):
+        (JSC::FTL::Output::notZero8):
+        (JSC::FTL::Output::testIsZero8):
+        (JSC::FTL::Output::testNonZero8):
+
 2013-05-09  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG shouldn't allocate in the GC heap
