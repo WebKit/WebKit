@@ -773,10 +773,6 @@ PropertyTable* Structure::copyPropertyTableForPinning(VM& vm, Structure* owner)
 
 PropertyOffset Structure::getConcurrently(VM&, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
 {
-    // We can't handle uncacheable dictionaries because we can't handle concurrent remove's
-    // from the property maps.
-    RELEASE_ASSERT(!isUncacheableDictionary());
-    
     Vector<Structure*, 8> structures;
     Structure* structure;
     PropertyTable* table;

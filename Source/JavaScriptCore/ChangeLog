@@ -1,5 +1,22 @@
 2013-04-30  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: Structure::getConcurrently() may be called from for uncacheable dictionaries, and this is safe
+        https://bugs.webkit.org/show_bug.cgi?id=115464
+
+        Reviewed by Oliver Hunt and Geoffrey Garen.
+        
+        This can happen for example transitively from JSObject::put(). getCurrently() does
+        work for uncacheable dictionaries; it just has the obvious race that right after it
+        returns, the result it returned may no longer be right. This isn't an issue if it was
+        called on the main thread, and may not be an issue in some other situations.
+        
+        So, we should just remove the assertion, since the only thing it buys us is crashes.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::getConcurrently):
+
+2013-04-30  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: Don't link gtest into JavaScriptCore
 
         Rubber stamped by Mark Rowe.
