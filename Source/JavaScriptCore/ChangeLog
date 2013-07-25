@@ -1,5 +1,19 @@
 2013-07-02  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: since the FTL disassembly hacks cannot distinguish between code and data, the LLVM disassembler symbol table callback should be able to deal gracefully with arbitrary garbage
+        https://bugs.webkit.org/show_bug.cgi?id=118313
+
+        Reviewed by Mark Hahnenberg.
+        
+        Give it a mode where we can still crash on unrecognized reference types, so that we might
+        implement them in the future, but by default just print some stuff and keep going.
+
+        * disassembler/LLVMDisassembler.cpp:
+        (JSC):
+        (JSC::symbolLookupCallback):
+
+2013-07-02  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should use the equivalent of llvm opt -O2 by default
         https://bugs.webkit.org/show_bug.cgi?id=118311
 

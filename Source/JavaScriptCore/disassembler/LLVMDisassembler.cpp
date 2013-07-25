@@ -33,12 +33,17 @@
 
 namespace JSC {
 
-static const unsigned symbolStringSize = 20;
+static const unsigned symbolStringSize = 40;
 
 static const char *symbolLookupCallback(
     void* opaque, uint64_t referenceValue, uint64_t* referenceType, uint64_t referencePC,
     const char** referenceName)
 {
+    // Set this if you want to debug an unexpected reference type. Currently we only encounter these
+    // if we try to disassemble garbage, since our code generator never uses them. These include things
+    // like PC-relative references.
+    static const bool crashOnUnexpected = false;
+    
     char* symbolString = static_cast<char*>(opaque);
     
     switch (*referenceType) {
@@ -52,13 +57,21 @@ static const char *symbolLookupCallback(
             static_cast<unsigned long>(referenceValue));
         return symbolString;
     default:
-        dataLog("referenceValue = ", referenceValue, "\n");
-        dataLog("referenceType = ", RawPointer(referenceType), ", *referenceType = ", *referenceType, "\n");
-        dataLog("referencePC = ", referencePC, "\n");
-        dataLog("referenceName = ", RawPointer(referenceName), "\n");
-    
-        RELEASE_ASSERT_NOT_REACHED();
-        return 0;
+        if (crashOnUnexpected) {
+            dataLog("referenceValue = ", referenceValue, "\n");
+            dataLog("referenceType = ", RawPointer(referenceType), ", *referenceType = ", *referenceType, "\n");
+            dataLog("referencePC = ", referencePC, "\n");
+            dataLog("referenceName = ", RawPointer(referenceName), "\n");
+            
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        
+        *referenceName = "unimplemented reference type!";
+        *referenceType = LLVMDisassembler_ReferenceType_InOut_None;
+        snprintf(
+            symbolString, symbolStringSize, "unimplemented:0x%lx",
+            static_cast<unsigned long>(referenceValue));
+        return symbolString;
     }
 }
 
