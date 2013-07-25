@@ -51,90 +51,98 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
     
     bool isTop = true;
     
-    if (value & SpecCellOther)
-        myOut.print("Othercell");
-    else
-        isTop = false;
+    if ((value & SpecCell) == SpecCell)
+        myOut.print("Cell");
+    else {
+        if ((value & SpecObject) == SpecObject)
+            myOut.print("Object");
+        else {
+            if (value & SpecCellOther)
+                myOut.print("Othercell");
+            else
+                isTop = false;
     
-    if (value & SpecObjectOther)
-        myOut.print("Otherobj");
-    else
-        isTop = false;
+            if (value & SpecObjectOther)
+                myOut.print("Otherobj");
+            else
+                isTop = false;
     
-    if (value & SpecFinalObject)
-        myOut.print("Final");
-    else
-        isTop = false;
+            if (value & SpecFinalObject)
+                myOut.print("Final");
+            else
+                isTop = false;
 
-    if (value & SpecArray)
-        myOut.print("Array");
-    else
-        isTop = false;
+            if (value & SpecArray)
+                myOut.print("Array");
+            else
+                isTop = false;
     
-    if (value & SpecInt8Array)
-        myOut.print("Int8array");
-    else
-        isTop = false;
+            if (value & SpecInt8Array)
+                myOut.print("Int8array");
+            else
+                isTop = false;
     
-    if (value & SpecInt16Array)
-        myOut.print("Int16array");
-    else
-        isTop = false;
+            if (value & SpecInt16Array)
+                myOut.print("Int16array");
+            else
+                isTop = false;
     
-    if (value & SpecInt32Array)
-        myOut.print("Int32array");
-    else
-        isTop = false;
+            if (value & SpecInt32Array)
+                myOut.print("Int32array");
+            else
+                isTop = false;
     
-    if (value & SpecUint8Array)
-        myOut.print("Uint8array");
-    else
-        isTop = false;
+            if (value & SpecUint8Array)
+                myOut.print("Uint8array");
+            else
+                isTop = false;
 
-    if (value & SpecUint8ClampedArray)
-        myOut.print("Uint8clampedarray");
-    else
-        isTop = false;
+            if (value & SpecUint8ClampedArray)
+                myOut.print("Uint8clampedarray");
+            else
+                isTop = false;
     
-    if (value & SpecUint16Array)
-        myOut.print("Uint16array");
-    else
-        isTop = false;
+            if (value & SpecUint16Array)
+                myOut.print("Uint16array");
+            else
+                isTop = false;
     
-    if (value & SpecUint32Array)
-        myOut.print("Uint32array");
-    else
-        isTop = false;
+            if (value & SpecUint32Array)
+                myOut.print("Uint32array");
+            else
+                isTop = false;
     
-    if (value & SpecFloat32Array)
-        myOut.print("Float32array");
-    else
-        isTop = false;
+            if (value & SpecFloat32Array)
+                myOut.print("Float32array");
+            else
+                isTop = false;
     
-    if (value & SpecFloat64Array)
-        myOut.print("Float64array");
-    else
-        isTop = false;
+            if (value & SpecFloat64Array)
+                myOut.print("Float64array");
+            else
+                isTop = false;
     
-    if (value & SpecFunction)
-        myOut.print("Function");
-    else
-        isTop = false;
+            if (value & SpecFunction)
+                myOut.print("Function");
+            else
+                isTop = false;
     
-    if (value & SpecArguments)
-        myOut.print("Arguments");
-    else
-        isTop = false;
+            if (value & SpecArguments)
+                myOut.print("Arguments");
+            else
+                isTop = false;
     
-    if (value & SpecString)
-        myOut.print("String");
-    else
-        isTop = false;
-    
-    if (value & SpecStringObject)
-        myOut.print("Stringobject");
-    else
-        isTop = false;
+            if (value & SpecStringObject)
+                myOut.print("Stringobject");
+            else
+                isTop = false;
+        }
+
+        if (value & SpecString)
+            myOut.print("String");
+        else
+            isTop = false;
+    }
     
     if (value & SpecInt32)
         myOut.print("Int");

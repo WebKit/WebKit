@@ -1049,15 +1049,6 @@ private:
         dataLogF("   %s @%u: ", Graph::opName(node->op()), node->index());
 #endif
         
-        // NOTE: there are some nodes that we deliberately don't CSE even though we
-        // probably could, like MakeRope and ToPrimitive. That's because there is no
-        // evidence that doing CSE on these nodes would result in a performance
-        // progression. Hence considering these nodes in CSE would just mean that this
-        // code does more work with no win. Of course, we may want to reconsider this,
-        // since MakeRope is trivially CSE-able. It's not trivially doable for
-        // ToPrimitive, but we could change that with some speculations if we really
-        // needed to.
-        
         switch (node->op()) {
         
         case Identity:
@@ -1101,6 +1092,7 @@ private:
         case TypeOf:
         case CompareEqConstant:
         case ValueToInt32:
+        case MakeRope:
             if (cseMode == StoreElimination)
                 break;
             setReplacement(pureCSE(node));

@@ -1,5 +1,19 @@
 2013-06-21  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: DFG should CSE MakeRope
+        https://bugs.webkit.org/show_bug.cgi?id=117905
+
+        Reviewed by Geoffrey Garen.
+        
+        This benchmark speeds up by 50%.
+
+        * fast/js/regress/make-rope-cse-expected.txt: Added.
+        * fast/js/regress/make-rope-cse.html: Added.
+        * fast/js/regress/script-tests/make-rope-cse.js: Added.
+        (foo):
+
+2013-06-21  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: DFG should't exit just because it GetByVal'd a big character
         https://bugs.webkit.org/show_bug.cgi?id=117899
 
