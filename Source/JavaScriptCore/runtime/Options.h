@@ -120,6 +120,8 @@ typedef OptionRange optionRange;
     v(bool, useFTLTBAA, true) \
     v(bool, enableLLVMFastISel, false) \
     v(bool, useLLVMSmallCodeModel, false) \
+    v(bool, ftlTrapsOnOSRExit, false) \
+    v(bool, ftlOSRExitOmitsMarshalling, false) \
     v(unsigned, llvmBackendOptimizationLevel, 2) \
     v(unsigned, llvmOptimizationLevel, 2) \
     v(unsigned, llvmSizeLevel, 0) \

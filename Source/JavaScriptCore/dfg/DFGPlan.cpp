@@ -116,7 +116,11 @@ void Plan::compileInThread(LongLivedState& longLivedState)
             pathName = "FTL";
             break;
         }
-        dataLog("Optimized ", *codeBlock->alternative(), " with ", pathName, " in ", currentTimeMS() - before, " ms.\n");
+        double now = currentTimeMS();
+        dataLog("Optimized ", *codeBlock->alternative(), " with ", pathName, " in ", now - before, " ms");
+        if (path == FTLPath)
+            dataLog(" (DFG: ", beforeFTL - before, ", LLVM: ", now - beforeFTL, ")");
+        dataLog(".\n");
     }
 }
 
@@ -201,6 +205,10 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         
         FTL::State state(dfg);
         FTL::lowerDFGToLLVM(state);
+        
+        if (Options::reportCompileTimes())
+            beforeFTL = currentTimeMS();
+        
         FTL::compile(state);
         FTL::link(state);
         return FTLPath;

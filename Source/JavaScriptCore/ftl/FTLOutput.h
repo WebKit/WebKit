@@ -347,6 +347,10 @@ public:
     
     void unreachable() { buildUnreachable(m_builder); }
     
+    void trap()
+    {
+        call(trapIntrinsic());
+    }
     void crash()
     {
         call(intToPtr(constIntPtr(abort), pointerType(functionType(voidType))));

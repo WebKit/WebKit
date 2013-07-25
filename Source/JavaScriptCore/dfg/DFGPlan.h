@@ -76,6 +76,8 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     DesiredIdentifiers identifiers;
     DesiredStructureChains chains;
     
+    double beforeFTL;
+    
     bool isCompiled;
 
 private:

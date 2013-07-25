@@ -2526,6 +2526,20 @@ private:
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition,
         SpeculationDirection direction, FormattedValue recovery)
     {
+        if (Options::ftlTrapsOnOSRExit()) {
+            LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation"));
+            
+            m_out.branch(failCondition, failCase, continuation);
+            
+            LBasicBlock lastNext = m_out.appendTo(failCase, continuation);
+            m_out.trap();
+            m_out.unreachable();
+            
+            m_out.appendTo(continuation, lastNext);
+            return;
+        }
+        
         if (verboseCompilationEnabled())
             dataLog("    OSR exit with value sources: ", m_valueSources, "\n");
         
@@ -2551,7 +2565,25 @@ private:
         info.m_thunkAddress = buildAlloca(m_out.m_builder, m_out.intPtr);
         
         LBasicBlock lastNext = m_out.appendTo(failCase, continuation);
+
+        if (Options::ftlOSRExitOmitsMarshalling()) {
+            m_out.call(
+                m_out.intToPtr(
+                    m_out.get(info.m_thunkAddress),
+                    pointerType(functionType(m_out.voidType))));
+        } else
+            emitOSRExitCall(exit, info, lowValue, direction, recovery);
+        m_out.unreachable();
         
+        m_out.appendTo(continuation, lastNext);
+        
+        m_exitThunkGenerator.emitThunk(index);
+    }
+    
+    void emitOSRExitCall(
+        OSRExit& exit, OSRExitCompilationInfo& info, FormattedValue lowValue,
+        SpeculationDirection direction, FormattedValue recovery)
+    {
         ExitArgumentList arguments;
         arguments.append(m_callFrame);
         if (!!lowValue)
@@ -2622,11 +2654,6 @@ private:
                 m_out.get(info.m_thunkAddress),
                 pointerType(functionType(m_out.voidType, argumentTypes))),
             arguments);
-        m_out.unreachable();
-        
-        m_out.appendTo(continuation, lastNext);
-        
-        m_exitThunkGenerator.emitThunk(index);
     }
     
     void addExitArgumentForNode(
