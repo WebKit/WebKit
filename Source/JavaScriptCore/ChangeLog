@@ -1,5 +1,12 @@
 2013-07-25  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed.
+
+        * heap/CopyVisitor.cpp: Include CopiedSpaceInlines header so the CopiedSpace::recycleEvacuatedBlock
+        method is not left undefined, causing build failures on (at least) the GTK port.
+
+2013-07-25  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed, further build fixing on the GTK port.
 
         * GNUmakefile.list.am: Add CompilationResult source files to the build.

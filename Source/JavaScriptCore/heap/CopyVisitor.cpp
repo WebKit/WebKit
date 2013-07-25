@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CopyVisitor.h"
 
+#include "CopiedSpaceInlines.h"
 #include "CopyVisitorInlines.h"
 #include "CopyWorkList.h"
 #include "GCThreadSharedData.h"
