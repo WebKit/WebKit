@@ -144,7 +144,7 @@ static inline String targetReferenceFromResource(SVGElement* element)
 {
     String target;
     if (element->hasTagName(SVGNames::patternTag))
-        target = static_cast<SVGPatternElement*>(element)->href();
+        target = toSVGPatternElement(element)->href();
     else if (element->hasTagName(SVGNames::linearGradientTag) || element->hasTagName(SVGNames::radialGradientTag))
         target = toSVGGradientElement(element)->href();
 #if ENABLE(FILTERS)

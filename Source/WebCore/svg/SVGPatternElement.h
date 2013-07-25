@@ -30,6 +30,7 @@
 #include "SVGAnimatedTransformList.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
+#include "SVGNames.h"
 #include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
@@ -85,6 +86,12 @@ private:
     virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
     virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
+
+inline SVGPatternElement* toSVGPatternElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::patternTag));
+    return static_cast<SVGPatternElement*>(node);
+}
 
 } // namespace WebCore
 
