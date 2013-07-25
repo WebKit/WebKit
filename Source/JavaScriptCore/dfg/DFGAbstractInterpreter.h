@@ -89,6 +89,7 @@ public:
     // } else
     //     result = true;
     bool execute(unsigned indexInBlock);
+    bool execute(Node*);
     
     // Indicate the start of execution of the node. It resets any state in the node,
     // that is progressively built up by executeEdges() and executeEffects(). In
@@ -114,7 +115,7 @@ public:
     // Abstractly execute the effects of the given node. This changes the abstract
     // state assuming that edges have already been filtered.
     bool executeEffects(unsigned indexInBlock);
-    bool executeEffects(unsigned indexInBlock, Node*);
+    bool executeEffects(unsigned clobberLimit, Node*);
     
     void dump(PrintStream& out);
     

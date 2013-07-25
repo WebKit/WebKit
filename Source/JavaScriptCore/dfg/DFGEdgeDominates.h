@@ -23,24 +23,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGClobberize.h"
+#ifndef DFGEdgeDominates_h
+#define DFGEdgeDominates_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "Operations.h"
+#include "DFGGraph.h"
 
 namespace JSC { namespace DFG {
 
-bool doesWrites(Graph& graph, Node* node)
+class EdgeDominates {
+    static const bool verbose = false;
+    
+public:
+    EdgeDominates(Graph& graph, BasicBlock* block)
+        : m_graph(graph)
+        , m_block(block)
+        , m_result(true)
+    {
+    }
+    
+    void operator()(Node*, Edge edge)
+    {
+        bool result = m_graph.m_dominators.dominates(edge.node()->misc.owner, m_block);
+        if (verbose) {
+            dataLog(
+                "Checking if ", edge, " in ", *edge.node()->misc.owner,
+                " dominates ", *m_block, ": ", result, "\n");
+        }
+        m_result &= result;
+    }
+    
+    bool result() const { return m_result; }
+
+private:
+    Graph& m_graph;
+    BasicBlock* m_block;
+    bool m_result;
+};
+
+inline bool edgesDominate(Graph& graph, Node* node, BasicBlock* block)
 {
-    NoOpClobberize addRead;
-    CheckClobberize addWrite;
-    clobberize(graph, node, addRead, addWrite);
-    return addWrite.result();
+    EdgeDominates edgeDominates(graph, block);
+    DFG_NODE_DO_TO_CHILDREN(graph, node, edgeDominates);
+    return edgeDominates.result();
 }
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGEdgeDominates_h
 

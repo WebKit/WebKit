@@ -23,24 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGClobberize.h"
+#ifndef DFGLICMPhase_h
+#define DFGLICMPhase_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "Operations.h"
-
 namespace JSC { namespace DFG {
 
-bool doesWrites(Graph& graph, Node* node)
-{
-    NoOpClobberize addRead;
-    CheckClobberize addWrite;
-    clobberize(graph, node, addRead, addWrite);
-    return addWrite.result();
-}
+class Graph;
+
+// Does loop-invariant code motion, or LICM for short. This only hoists code
+// and never sinks anything. A node is hoisted if it does no writes, and if
+// its reads don't overlap the loop's writes.
+
+bool performLICM(Graph&);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGLICMPhase_h
 

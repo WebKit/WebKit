@@ -119,7 +119,7 @@ void AbstractInterpreter<AbstractStateType>::verifyEdges(Node* node)
 }
 
 template<typename AbstractStateType>
-bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBlock, Node* node)
+bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimit, Node* node)
 {
     if (!ASSERT_DISABLED)
         verifyEdges(node);
@@ -332,7 +332,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
             break;
         default:
             RELEASE_ASSERT(node->op() == ValueAdd);
-            clobberWorld(node->codeOrigin, indexInBlock);
+            clobberWorld(node->codeOrigin, clobberLimit);
             forNode(node).setType(SpecString | SpecInt32 | SpecNumber);
             break;
         }
@@ -771,7 +771,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
             m_state.setIsValid(false);
             break;
         case Array::Generic:
-            clobberWorld(node->codeOrigin, indexInBlock);
+            clobberWorld(node->codeOrigin, clobberLimit);
             forNode(node).makeTop();
             break;
         case Array::String:
@@ -786,7 +786,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
                 // implies an in-bounds access). None of this feels like it's worth it,
                 // so we're going with TOP for now. The same thing applies to
                 // clobbering the world.
-                clobberWorld(node->codeOrigin, indexInBlock);
+                clobberWorld(node->codeOrigin, clobberLimit);
                 forNode(node).makeTop();
             } else
                 forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
@@ -796,14 +796,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
             break;
         case Array::Int32:
             if (node->arrayMode().isOutOfBounds()) {
-                clobberWorld(node->codeOrigin, indexInBlock);
+                clobberWorld(node->codeOrigin, clobberLimit);
                 forNode(node).makeTop();
             } else
                 forNode(node).setType(SpecInt32);
             break;
         case Array::Double:
             if (node->arrayMode().isOutOfBounds()) {
-                clobberWorld(node->codeOrigin, indexInBlock);
+                clobberWorld(node->codeOrigin, clobberLimit);
                 forNode(node).makeTop();
             } else if (node->arrayMode().isSaneChain())
                 forNode(node).setType(SpecDouble);
@@ -814,7 +814,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
             if (node->arrayMode().isOutOfBounds())
-                clobberWorld(node->codeOrigin, indexInBlock);
+                clobberWorld(node->codeOrigin, clobberLimit);
             forNode(node).makeTop();
             break;
         case Array::Int8Array:
@@ -862,24 +862,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
             m_state.setIsValid(false);
             break;
         case Array::Generic:
-            clobberWorld(node->codeOrigin, indexInBlock);
+            clobberWorld(node->codeOrigin, clobberLimit);
             break;
         case Array::Int32:
             if (node->arrayMode().isOutOfBounds())
-                clobberWorld(node->codeOrigin, indexInBlock);
+                clobberWorld(node->codeOrigin, clobberLimit);
             break;
         case Array::Double:
             if (node->arrayMode().isOutOfBounds())
-                clobberWorld(node->codeOrigin, indexInBlock);
+                clobberWorld(node->codeOrigin, clobberLimit);
             break;
         case Array::Contiguous:
         case Array::ArrayStorage:
             if (node->arrayMode().isOutOfBounds())
-                clobberWorld(node->codeOrigin, indexInBlock);
+                clobberWorld(node->codeOrigin, clobberLimit);
             break;
         case Array::SlowPutArrayStorage:
             if (node->arrayMode().mayStoreToHole())
-                clobberWorld(node->codeOrigin, indexInBlock);
+                clobberWorld(node->codeOrigin, clobberLimit);
             break;
         default:
             break;
@@ -889,13 +889,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
             
     case ArrayPush:
         node->setCanExit(true);
-        clobberWorld(node->codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, clobberLimit);
         forNode(node).setType(SpecNumber);
         break;
             
     case ArrayPop:
         node->setCanExit(true);
-        clobberWorld(node->codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, clobberLimit);
         forNode(node).makeTop();
         break;
             
@@ -979,7 +979,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         // ToPrimitive will currently forget string constants. But that's not a big
         // deal since we don't do any optimization on those currently.
         
-        clobberWorld(node->codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, clobberLimit);
         
         SpeculatedType type = source.m_type;
         if (type & ~(SpecNumber | SpecString | SpecBoolean)) {
@@ -1007,7 +1007,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
             break;
         case CellUse:
         case UntypedUse:
-            clobberWorld(node->codeOrigin, indexInBlock);
+            clobberWorld(node->codeOrigin, clobberLimit);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1118,7 +1118,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
     case GetMyArgumentsLengthSafe:
         // This potentially clobbers all structures if the arguments object had a getter
         // installed on the length property.
-        clobberWorld(node->codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, clobberLimit);
         // We currently make no guarantee about what this returns because it does not
         // speculate that the length property is actually a length.
         forNode(node).makeTop();
@@ -1136,7 +1136,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         node->setCanExit(true);
         // This potentially clobbers all structures if the property we're accessing has
         // a getter. We don't speculate against this.
-        clobberWorld(node->codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, clobberLimit);
         // And the result is unknown.
         forNode(node).makeTop();
         break;
@@ -1225,7 +1225,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
                 }
             }
         }
-        clobberWorld(node->codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, clobberLimit);
         forNode(node).makeTop();
         break;
             
@@ -1294,7 +1294,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
     case PutStructure:
     case PhantomPutStructure:
         if (!forNode(node->child1()).m_currentKnownStructure.isClear()) {
-            clobberStructures(indexInBlock);
+            clobberStructures(clobberLimit);
             forNode(node->child1()).set(m_graph, node->structureTransitionData().newStructure);
             m_state.setHaveStructures(true);
         }
@@ -1366,7 +1366,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         ASSERT(node->arrayMode().conversion() == Array::Convert
             || node->arrayMode().conversion() == Array::RageConvert);
         node->setCanExit(true);
-        clobberStructures(indexInBlock);
+        clobberStructures(clobberLimit);
         filterArrayModes(node->child1(), node->arrayMode().arrayModesThatPassFiltering());
         m_state.setHaveStructures(true);
         break;
@@ -1378,7 +1378,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
             || value.m_currentKnownStructure.isSubsetOf(set))
             m_state.setFoundConstants(true);
         node->setCanExit(true);
-        clobberStructures(indexInBlock);
+        clobberStructures(clobberLimit);
         filter(value, set);
         m_state.setHaveStructures(true);
         break;
@@ -1425,20 +1425,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
                 break;
             }
             if (status.isSimpleTransition()) {
-                clobberStructures(indexInBlock);
+                clobberStructures(clobberLimit);
                 forNode(node->child1()).set(m_graph, status.newStructure());
                 m_state.setHaveStructures(true);
                 m_state.setFoundConstants(true);
                 break;
             }
         }
-        clobberWorld(node->codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, clobberLimit);
         break;
         
     case In:
         // FIXME: We can determine when the property definitely exists based on abstract
         // value information.
-        clobberWorld(node->codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, clobberLimit);
         forNode(node).setType(SpecBoolean);
         break;
             
@@ -1486,7 +1486,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
     case Call:
     case Construct:
         node->setCanExit(true);
-        clobberWorld(node->codeOrigin, indexInBlock);
+        clobberWorld(node->codeOrigin, clobberLimit);
         forNode(node).makeTop();
         break;
 
@@ -1530,11 +1530,21 @@ bool AbstractInterpreter<AbstractStateType>::execute(unsigned indexInBlock)
 }
 
 template<typename AbstractStateType>
+bool AbstractInterpreter<AbstractStateType>::execute(Node* node)
+{
+    if (!startExecuting(node))
+        return true;
+    
+    executeEdges(node);
+    return executeEffects(UINT_MAX, node);
+}
+
+template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::clobberWorld(
-    const CodeOrigin& codeOrigin, unsigned indexInBlock)
+    const CodeOrigin& codeOrigin, unsigned clobberLimit)
 {
     clobberCapturedVars(codeOrigin);
-    clobberStructures(indexInBlock);
+    clobberStructures(clobberLimit);
 }
 
 template<typename AbstractStateType>
@@ -1561,11 +1571,16 @@ void AbstractInterpreter<AbstractStateType>::clobberCapturedVars(const CodeOrigi
 }
 
 template<typename AbstractStateType>
-void AbstractInterpreter<AbstractStateType>::clobberStructures(unsigned indexInBlock)
+void AbstractInterpreter<AbstractStateType>::clobberStructures(unsigned clobberLimit)
 {
     if (!m_state.haveStructures())
         return;
-    for (size_t i = indexInBlock + 1; i--;)
+    if (clobberLimit >= m_state.block()->size())
+        clobberLimit = m_state.block()->size();
+    else
+        clobberLimit++;
+    ASSERT(clobberLimit <= m_state.block()->size());
+    for (size_t i = clobberLimit; i--;)
         forNode(m_state.block()->at(i)).clobberStructures();
     if (m_graph.m_form == SSA) {
         HashSet<Node*>::iterator iter = m_state.block()->ssa->liveAtHead.begin();

@@ -1,3 +1,96 @@
+2013-07-22  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should do a high-level LICM before going to FTL
+        https://bugs.webkit.org/show_bug.cgi?id=118749
+
+        Reviewed by Oliver Hunt.
+        
+        Implements LICM hoisting for nodes that never write anything and never read
+        things that are clobbered by the loop. There are some other preconditions for
+        hoisting, see DFGLICMPhase.cpp.
+
+        Also did a few fixes:
+        
+        - ClobberSet::add was failing to switch Super entries to Direct entries in
+          some cases.
+        
+        - DFGClobberize.cpp needed to #include "Operations.h".
+        
+        - DCEPhase needs to process the graph in reverse DFS order, when we're in SSA.
+        
+        - AbstractInterpreter can now execute a Node without knowing its indexInBlock.
+          Knowing the indexInBlock is an optional optimization that all other clients
+          of AI still opt into, but LICM doesn't.
+        
+        This makes the FTL a 2.19x speed-up on imaging-gaussian-blur.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreter.h:
+        (AbstractInterpreter):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        (JSC::DFG::::execute):
+        (DFG):
+        (JSC::DFG::::clobberWorld):
+        (JSC::DFG::::clobberStructures):
+        * dfg/DFGAtTailAbstractState.cpp: Added.
+        (DFG):
+        (JSC::DFG::AtTailAbstractState::AtTailAbstractState):
+        (JSC::DFG::AtTailAbstractState::~AtTailAbstractState):
+        (JSC::DFG::AtTailAbstractState::createValueForNode):
+        (JSC::DFG::AtTailAbstractState::forNode):
+        * dfg/DFGAtTailAbstractState.h: Added.
+        (DFG):
+        (AtTailAbstractState):
+        (JSC::DFG::AtTailAbstractState::initializeTo):
+        (JSC::DFG::AtTailAbstractState::forNode):
+        (JSC::DFG::AtTailAbstractState::variables):
+        (JSC::DFG::AtTailAbstractState::block):
+        (JSC::DFG::AtTailAbstractState::isValid):
+        (JSC::DFG::AtTailAbstractState::setDidClobber):
+        (JSC::DFG::AtTailAbstractState::setIsValid):
+        (JSC::DFG::AtTailAbstractState::setBranchDirection):
+        (JSC::DFG::AtTailAbstractState::setFoundConstants):
+        (JSC::DFG::AtTailAbstractState::haveStructures):
+        (JSC::DFG::AtTailAbstractState::setHaveStructures):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::insertBeforeLast):
+        * dfg/DFGBasicBlockInlines.h:
+        (DFG):
+        * dfg/DFGClobberSet.cpp:
+        (JSC::DFG::ClobberSet::add):
+        (JSC::DFG::ClobberSet::addAll):
+        * dfg/DFGClobberize.cpp:
+        (JSC::DFG::doesWrites):
+        * dfg/DFGClobberize.h:
+        (DFG):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::DCEPhase):
+        (JSC::DFG::DCEPhase::run):
+        (JSC::DFG::DCEPhase::fixupBlock):
+        (DCEPhase):
+        * dfg/DFGEdgeDominates.h: Added.
+        (DFG):
+        (EdgeDominates):
+        (JSC::DFG::EdgeDominates::EdgeDominates):
+        (JSC::DFG::EdgeDominates::operator()):
+        (JSC::DFG::EdgeDominates::result):
+        (JSC::DFG::edgesDominate):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGLICMPhase.cpp: Added.
+        (LICMPhase):
+        (JSC::DFG::LICMPhase::LICMPhase):
+        (JSC::DFG::LICMPhase::run):
+        (JSC::DFG::LICMPhase::attemptHoist):
+        (DFG):
+        (JSC::DFG::performLICM):
+        * dfg/DFGLICMPhase.h: Added.
+        (DFG):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+
 2013-07-21  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG Nodes should be able to abstractly tell you what they read and what they write

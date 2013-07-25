@@ -23,24 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGClobberize.h"
+#ifndef DFGAtTailAbstractState_h
+#define DFGAtTailAbstractState_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "Operations.h"
+#include "DFGAbstractValue.h"
+#include "DFGBasicBlock.h"
+#include "DFGGraph.h"
 
-namespace JSC { namespace DFG {
+namespace JSC { namespace DFG { 
 
-bool doesWrites(Graph& graph, Node* node)
-{
-    NoOpClobberize addRead;
-    CheckClobberize addWrite;
-    clobberize(graph, node, addRead, addWrite);
-    return addWrite.result();
-}
+class AtTailAbstractState {
+public:
+    AtTailAbstractState();
+    
+    ~AtTailAbstractState();
+    
+    void initializeTo(BasicBlock* block)
+    {
+        m_block = block;
+    }
+    
+    void createValueForNode(Node*);
+    AbstractValue& forNode(Node*);
+    AbstractValue& forNode(Edge edge) { return forNode(edge.node()); }
+    Operands<AbstractValue>& variables() { return m_block->valuesAtTail; }
+    
+    BasicBlock* block() const { return m_block; }
+    
+    bool isValid() { return m_block->cfaDidFinish; }
+    
+    void setDidClobber(bool) { }
+    void setIsValid(bool isValid) { m_block->cfaDidFinish = isValid; }
+    void setBranchDirection(BranchDirection) { }
+    void setFoundConstants(bool) { }
+    bool haveStructures() const { return true; } // It's always safe to return true.
+    void setHaveStructures(bool) { }
+
+private:
+    BasicBlock* m_block;
+};
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGAtTailAbstractState_h
 

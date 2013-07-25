@@ -62,6 +62,11 @@ struct BasicBlock : RefCounted<BasicBlock> {
     void grow(size_t size) { m_nodes.grow(size); }
     
     void append(Node* node) { m_nodes.append(node); }
+    void insertBeforeLast(Node* node)
+    {
+        append(last());
+        at(size() - 2) = node;
+    }
     
     size_t numNodes() const { return phis.size() + size(); }
     Node* node(size_t i) const

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DFGClobberize.h"
+#include "DFGAtTailAbstractState.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -32,12 +32,23 @@
 
 namespace JSC { namespace DFG {
 
-bool doesWrites(Graph& graph, Node* node)
+AtTailAbstractState::AtTailAbstractState()
+    : m_block(0)
 {
-    NoOpClobberize addRead;
-    CheckClobberize addWrite;
-    clobberize(graph, node, addRead, addWrite);
-    return addWrite.result();
+}
+
+AtTailAbstractState::~AtTailAbstractState() { }
+
+void AtTailAbstractState::createValueForNode(Node* node)
+{
+    m_block->ssa->valuesAtTail.add(node, AbstractValue());
+}
+
+AbstractValue& AtTailAbstractState::forNode(Node* node)
+{
+    HashMap<Node*, AbstractValue>::iterator iter = m_block->ssa->valuesAtTail.find(node);
+    ASSERT(iter != m_block->ssa->valuesAtTail.end());
+    return iter->value;
 }
 
 } } // namespace JSC::DFG

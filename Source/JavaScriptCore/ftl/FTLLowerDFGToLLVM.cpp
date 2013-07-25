@@ -2458,8 +2458,8 @@ private:
         SpeculationDirection direction, FormattedValue recovery)
     {
         if (Options::ftlTrapsOnOSRExit()) {
-            LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase"));
-            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation"));
+            LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation for ", m_node));
             
             m_out.branch(failCondition, failCase, continuation);
             
@@ -2490,8 +2490,8 @@ private:
         LBasicBlock continuation = 0;
         
         if (!Options::useLLVMOSRExitIntrinsic()) {
-            LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase"));
-            continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation"));
+            LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node));
+            continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation for ", m_node));
             
             m_out.branch(failCondition, failCase, continuation);
 

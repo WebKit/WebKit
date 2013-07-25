@@ -40,6 +40,7 @@ class DCEPhase : public Phase {
 public:
     DCEPhase(Graph& graph)
         : Phase(graph, "dead code elimination")
+        , m_insertionSet(graph)
     {
     }
     
@@ -104,75 +105,16 @@ public:
             }
         }
         
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-
-            InsertionSet insertionSet(m_graph);
-
-            for (unsigned indexInBlock = block->size(); indexInBlock--;) {
-                Node* node = block->at(indexInBlock);
-                if (node->shouldGenerate())
-                    continue;
-                
-                switch (node->op()) {
-                case SetLocal:
-                case MovHint: {
-                    ASSERT((node->op() == SetLocal) == (m_graph.m_form == ThreadedCPS));
-                    if (node->child1().willNotHaveCheck()) {
-                        // Consider the possibility that UInt32ToNumber is dead but its
-                        // child isn't; if so then we should MovHint the child.
-                        if (!node->child1()->shouldGenerate()
-                            && node->child1()->op() == UInt32ToNumber)
-                            node->child1() = node->child1()->child1();
-
-                        if (!node->child1()->shouldGenerate()) {
-                            node->setOpAndDefaultFlags(ZombieHint);
-                            node->child1() = Edge();
-                            break;
-                        }
-                        node->setOpAndDefaultFlags(MovHint);
-                        break;
-                    }
-                    node->setOpAndDefaultFlags(MovHintAndCheck);
-                    node->setRefCount(1);
-                    break;
-                }
-                    
-                case GetLocal:
-                case SetArgument: {
-                    if (m_graph.m_form == ThreadedCPS) {
-                        // Leave them as not shouldGenerate.
-                        break;
-                    }
-                }
-
-                default: {
-                    if (node->flags() & NodeHasVarArgs) {
-                        for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++) {
-                            Edge edge = m_graph.m_varArgChildren[childIdx];
-
-                            if (!edge || edge.willNotHaveCheck())
-                                continue;
-
-                            insertionSet.insertNode(indexInBlock, SpecNone, Phantom, node->codeOrigin, edge);
-                        }
-
-                        node->convertToPhantomUnchecked();
-                        node->children.reset();
-                        node->setRefCount(1);
-                        break;
-                    }
-
-                    node->convertToPhantom();
-                    eliminateIrrelevantPhantomChildren(node);
-                    node->setRefCount(1);
-                    break;
-                } }
-            }
-
-            insertionSet.execute(block);
+        if (m_graph.m_form == SSA) {
+            // Need to process the graph in reverse DFS order, so that we get to the uses
+            // of a node before we get to the node itself.
+            Vector<BasicBlock*> depthFirst;
+            m_graph.getBlocksInDepthFirstOrder(depthFirst);
+            for (unsigned i = depthFirst.size(); i--;)
+                fixupBlock(depthFirst[i]);
+        } else {
+            for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
+                fixupBlock(m_graph.block(blockIndex));
         }
         
         m_graph.m_refCountState = ExactRefCount;
@@ -206,6 +148,75 @@ private:
         countNode(edge.node());
     }
     
+    void fixupBlock(BasicBlock* block)
+    {
+        if (!block)
+            return;
+
+        for (unsigned indexInBlock = block->size(); indexInBlock--;) {
+            Node* node = block->at(indexInBlock);
+            if (node->shouldGenerate())
+                continue;
+                
+            switch (node->op()) {
+            case SetLocal:
+            case MovHint: {
+                ASSERT((node->op() == SetLocal) == (m_graph.m_form == ThreadedCPS));
+                if (node->child1().willNotHaveCheck()) {
+                    // Consider the possibility that UInt32ToNumber is dead but its
+                    // child isn't; if so then we should MovHint the child.
+                    if (!node->child1()->shouldGenerate()
+                        && node->child1()->op() == UInt32ToNumber)
+                        node->child1() = node->child1()->child1();
+
+                    if (!node->child1()->shouldGenerate()) {
+                        node->setOpAndDefaultFlags(ZombieHint);
+                        node->child1() = Edge();
+                        break;
+                    }
+                    node->setOpAndDefaultFlags(MovHint);
+                    break;
+                }
+                node->setOpAndDefaultFlags(MovHintAndCheck);
+                node->setRefCount(1);
+                break;
+            }
+                    
+            case GetLocal:
+            case SetArgument: {
+                if (m_graph.m_form == ThreadedCPS) {
+                    // Leave them as not shouldGenerate.
+                    break;
+                }
+            }
+
+            default: {
+                if (node->flags() & NodeHasVarArgs) {
+                    for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++) {
+                        Edge edge = m_graph.m_varArgChildren[childIdx];
+
+                        if (!edge || edge.willNotHaveCheck())
+                            continue;
+
+                        m_insertionSet.insertNode(indexInBlock, SpecNone, Phantom, node->codeOrigin, edge);
+                    }
+
+                    node->convertToPhantomUnchecked();
+                    node->children.reset();
+                    node->setRefCount(1);
+                    break;
+                }
+
+                node->convertToPhantom();
+                eliminateIrrelevantPhantomChildren(node);
+                node->setRefCount(1);
+                break;
+            } }
+        }
+
+        m_insertionSet.execute(block);
+    }
+    
     void eliminateIrrelevantPhantomChildren(Node* node)
     {
         for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
@@ -218,6 +229,7 @@ private:
     }
     
     Vector<Node*, 128> m_worklist;
+    InsertionSet m_insertionSet;
 };
 
 bool performDCE(Graph& graph)

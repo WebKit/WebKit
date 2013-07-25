@@ -624,7 +624,7 @@ private:
     bool m_result;
 };
 
-bool didWrites(Graph&, Node*);
+bool doesWrites(Graph&, Node*);
 
 } } // namespace JSC::DFG
 

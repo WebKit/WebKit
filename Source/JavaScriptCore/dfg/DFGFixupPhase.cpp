@@ -705,11 +705,6 @@ private:
             break;
         }
             
-        case CreateThis: {
-            setUseKindAndUnboxIfProfitable<CellUse>(node->child1());
-            break;
-        }
-            
         case GetMyArgumentByVal:
         case GetMyArgumentByValSafe: {
             setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
@@ -725,8 +720,7 @@ private:
         case PutStructure:
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage:
-        case GetScope:
-        case GetButterfly: {
+        case GetScope: {
             setUseKindAndUnboxIfProfitable<KnownCellUse>(node->child1());
             break;
         }
@@ -789,7 +783,9 @@ private:
         case CheckFunction:
         case PutById:
         case PutByIdDirect:
-        case CheckHasInstance: {
+        case CheckHasInstance:
+        case CreateThis:
+        case GetButterfly: {
             setUseKindAndUnboxIfProfitable<CellUse>(node->child1());
             break;
         }
@@ -1245,7 +1241,7 @@ private:
         
         if (arrayMode.usesButterfly()) {
             return m_insertionSet.insertNode(
-                m_indexInBlock, SpecNone, GetButterfly, codeOrigin, Edge(array, KnownCellUse));
+                m_indexInBlock, SpecNone, GetButterfly, codeOrigin, Edge(array, CellUse));
         }
         
         return m_insertionSet.insertNode(

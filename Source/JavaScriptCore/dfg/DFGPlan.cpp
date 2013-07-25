@@ -42,6 +42,7 @@
 #include "DFGFlushLivenessAnalysisPhase.h"
 #include "DFGFixupPhase.h"
 #include "DFGJITCompiler.h"
+#include "DFGLICMPhase.h"
 #include "DFGLivenessAnalysisPhase.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
@@ -206,6 +207,9 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performLoopPreHeaderCreation(dfg);
         performCPSRethreading(dfg);
         performSSAConversion(dfg);
+        performLivenessAnalysis(dfg);
+        performCFA(dfg);
+        performLICM(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performDCE(dfg); // We rely on this to convert dead SetLocals into the appropriate hint, and to kill dead code that won't be recognized as dead by LLVM.

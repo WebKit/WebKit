@@ -40,7 +40,7 @@ ClobberSet::~ClobberSet() { }
 void ClobberSet::add(AbstractHeap heap)
 {
     HashMap<AbstractHeap, bool>::AddResult result = m_clobbers.add(heap, true);
-    if (result.isNewEntry) {
+    if (!result.isNewEntry) {
         if (result.iterator->value)
             return;
         result.iterator->value = true;
@@ -59,6 +59,9 @@ void ClobberSet::addAll(const ClobberSet& other)
     //
     // If the other heap has a super heap, we make sure it's present but don't
     // modify its value - so we had it directly already then this doesn't change.
+    
+    if (this == &other)
+        return;
     
     HashMap<AbstractHeap, bool>::const_iterator iter = other.m_clobbers.begin();
     HashMap<AbstractHeap, bool>::const_iterator end = other.m_clobbers.end();

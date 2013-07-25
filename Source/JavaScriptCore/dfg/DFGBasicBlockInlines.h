@@ -47,8 +47,7 @@ namespace JSC { namespace DFG {
     templatePre typeParams templatePost inline Node* BasicBlock::appendNonTerminal(Graph& graph, SpeculatedType type valueParamsComma valueParams) \
     { \
         Node* result = graph.addNode(type valueParamsComma valueArgs); \
-        append(last()); \
-        at(size() - 2) = result; \
+        insertBeforeLast(result); \
         return result; \
     }
     DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)

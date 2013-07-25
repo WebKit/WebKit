@@ -837,6 +837,11 @@
 		A7D89CFF17A0B8CC00773AD8 /* DFGSSAConversionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D89CF017A0B8CC00773AD8 /* DFGSSAConversionPhase.cpp */; };
 		A7D89D0017A0B8CC00773AD8 /* DFGSSAConversionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D89CF117A0B8CC00773AD8 /* DFGSSAConversionPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D89D0217A0B90400773AD8 /* FTLLoweredNodeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D89D0117A0B90400773AD8 /* FTLLoweredNodeValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7D9A29417A0BC7400EE2618 /* DFGAtTailAbstractState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D9A28F17A0BC7400EE2618 /* DFGAtTailAbstractState.cpp */; };
+		A7D9A29517A0BC7400EE2618 /* DFGAtTailAbstractState.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D9A29017A0BC7400EE2618 /* DFGAtTailAbstractState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7D9A29617A0BC7400EE2618 /* DFGEdgeDominates.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D9A29117A0BC7400EE2618 /* DFGEdgeDominates.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7D9A29717A0BC7400EE2618 /* DFGLICMPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D9A29217A0BC7400EE2618 /* DFGLICMPhase.cpp */; };
+		A7D9A29817A0BC7400EE2618 /* DFGLICMPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D9A29317A0BC7400EE2618 /* DFGLICMPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7DCB97312E5193F00911940 /* WriteBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DCB77912E3D90500911940 /* WriteBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7E2EA6B0FB460CF00601F06 /* LiteralParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E2EA690FB460CF00601F06 /* LiteralParser.h */; };
 		A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */; };
@@ -1916,6 +1921,11 @@
 		A7D89CF017A0B8CC00773AD8 /* DFGSSAConversionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSSAConversionPhase.cpp; path = dfg/DFGSSAConversionPhase.cpp; sourceTree = "<group>"; };
 		A7D89CF117A0B8CC00773AD8 /* DFGSSAConversionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSSAConversionPhase.h; path = dfg/DFGSSAConversionPhase.h; sourceTree = "<group>"; };
 		A7D89D0117A0B90400773AD8 /* FTLLoweredNodeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLoweredNodeValue.h; path = ftl/FTLLoweredNodeValue.h; sourceTree = "<group>"; };
+		A7D9A28F17A0BC7400EE2618 /* DFGAtTailAbstractState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAtTailAbstractState.cpp; path = dfg/DFGAtTailAbstractState.cpp; sourceTree = "<group>"; };
+		A7D9A29017A0BC7400EE2618 /* DFGAtTailAbstractState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAtTailAbstractState.h; path = dfg/DFGAtTailAbstractState.h; sourceTree = "<group>"; };
+		A7D9A29117A0BC7400EE2618 /* DFGEdgeDominates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGEdgeDominates.h; path = dfg/DFGEdgeDominates.h; sourceTree = "<group>"; };
+		A7D9A29217A0BC7400EE2618 /* DFGLICMPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLICMPhase.cpp; path = dfg/DFGLICMPhase.cpp; sourceTree = "<group>"; };
+		A7D9A29317A0BC7400EE2618 /* DFGLICMPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLICMPhase.h; path = dfg/DFGLICMPhase.h; sourceTree = "<group>"; };
 		A7DCB77912E3D90500911940 /* WriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrier.h; sourceTree = "<group>"; };
 		A7E2EA690FB460CF00601F06 /* LiteralParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiteralParser.h; sourceTree = "<group>"; };
 		A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiteralParser.cpp; sourceTree = "<group>"; };
@@ -2187,9 +2197,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				932F5BE10822A1C700736975 /* jsc */,
 				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
+				932F5BE10822A1C700736975 /* jsc */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				6511230514046A4C002B101D /* testRegExp */,
@@ -3079,6 +3089,8 @@
 				0F63948215E48114006A597C /* DFGArrayMode.h */,
 				0FC0976B1468AB4A00CF2442 /* DFGAssemblyHelpers.cpp */,
 				0FC0976C1468AB4A00CF2442 /* DFGAssemblyHelpers.h */,
+				A7D9A28F17A0BC7400EE2618 /* DFGAtTailAbstractState.cpp */,
+				A7D9A29017A0BC7400EE2618 /* DFGAtTailAbstractState.h */,
 				0F714CA116EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.cpp */,
 				0F714CA216EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.h */,
 				A7D89CE317A0B8CC00773AD8 /* DFGBasicBlock.cpp */,
@@ -3132,6 +3144,7 @@
 				0FD3C82214115D0E00FD81CB /* DFGDriver.h */,
 				0FB4B51B16B62772003F696B /* DFGEdge.cpp */,
 				0F66E16914DF3F1300B7B2E4 /* DFGEdge.h */,
+				A7D9A29117A0BC7400EE2618 /* DFGEdgeDominates.h */,
 				A7986D5617A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h */,
 				A78A976C179738B8009DF744 /* DFGFailedFinalizer.cpp */,
 				A78A976D179738B8009DF744 /* DFGFailedFinalizer.h */,
@@ -3160,6 +3173,8 @@
 				A78A9771179738B8009DF744 /* DFGJITFinalizer.h */,
 				A73A53581799CD5D00170C19 /* DFGLazyJSValue.cpp */,
 				A73A53591799CD5D00170C19 /* DFGLazyJSValue.h */,
+				A7D9A29217A0BC7400EE2618 /* DFGLICMPhase.cpp */,
+				A7D9A29317A0BC7400EE2618 /* DFGLICMPhase.h */,
 				A7D89CEC17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.cpp */,
 				A7D89CED17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.h */,
 				0FB4B51C16B62772003F696B /* DFGLongLivedState.cpp */,
@@ -3528,6 +3543,7 @@
 				0F05C3B41683CF9200BAF45B /* DFGArrayifySlowPathGenerator.h in Headers */,
 				0F63948515E4811B006A597C /* DFGArrayMode.h in Headers */,
 				0FC0976D1468AB4E00CF2442 /* DFGAssemblyHelpers.h in Headers */,
+				A7D9A29517A0BC7400EE2618 /* DFGAtTailAbstractState.h in Headers */,
 				0F714CA516EA92F200F3EBEB /* DFGBackwardsPropagationPhase.h in Headers */,
 				0F620176143FCD3B0068B77C /* DFGBasicBlock.h in Headers */,
 				0FFB921A16D02EC50055A5DB /* DFGBasicBlockInlines.h in Headers */,
@@ -3558,6 +3574,7 @@
 				0F1E3A471534CBB9000F9456 /* DFGDoubleFormatState.h in Headers */,
 				0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */,
 				0F66E16C14DF3F1600B7B2E4 /* DFGEdge.h in Headers */,
+				A7D9A29617A0BC7400EE2618 /* DFGEdgeDominates.h in Headers */,
 				A7986D5717A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h in Headers */,
 				0FBC0AE81496C7C700D4FBDD /* DFGExitProfile.h in Headers */,
 				A78A9775179738B8009DF744 /* DFGFailedFinalizer.h in Headers */,
@@ -3576,6 +3593,7 @@
 				86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */,
 				A78A9779179738B8009DF744 /* DFGJITFinalizer.h in Headers */,
 				A73A535B1799CD5D00170C19 /* DFGLazyJSValue.h in Headers */,
+				A7D9A29817A0BC7400EE2618 /* DFGLICMPhase.h in Headers */,
 				A7D89CFC17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.h in Headers */,
 				0FF0F19B16B729FA005DF95B /* DFGLongLivedState.h in Headers */,
 				A767B5B617A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h in Headers */,
@@ -4394,6 +4412,7 @@
 				0F16015D156198C900C2587C /* DFGArgumentsSimplificationPhase.cpp in Sources */,
 				0F63948415E48118006A597C /* DFGArrayMode.cpp in Sources */,
 				0FC0976E1468AB5100CF2442 /* DFGAssemblyHelpers.cpp in Sources */,
+				A7D9A29417A0BC7400EE2618 /* DFGAtTailAbstractState.cpp in Sources */,
 				0F714CA416EA92F000F3EBEB /* DFGBackwardsPropagationPhase.cpp in Sources */,
 				A7D89CF217A0B8CC00773AD8 /* DFGBasicBlock.cpp in Sources */,
 				A70B083217A0B79B00DAF14B /* DFGBinarySwitch.cpp in Sources */,
@@ -4431,6 +4450,7 @@
 				86EC9DCB1328DF82002B2AD7 /* DFGJITCompiler.cpp in Sources */,
 				A78A9778179738B8009DF744 /* DFGJITFinalizer.cpp in Sources */,
 				A73A535A1799CD5D00170C19 /* DFGLazyJSValue.cpp in Sources */,
+				A7D9A29717A0BC7400EE2618 /* DFGLICMPhase.cpp in Sources */,
 				A7D89CFB17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.cpp in Sources */,
 				0FF0F19916B729F6005DF95B /* DFGLongLivedState.cpp in Sources */,
 				A767B5B517A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.cpp in Sources */,
