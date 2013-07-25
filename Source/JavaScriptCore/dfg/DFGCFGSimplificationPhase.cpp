@@ -73,7 +73,7 @@ public:
                         if (extremeLogging)
                             m_graph.dump();
                         m_graph.dethread();
-                        mergeBlocks(blockIndex, m_graph.successor(block, 0), NoBlock);
+                        mergeBlocks(blockIndex, m_graph.successor(block, 0), noBlocks());
                         innerChanged = outerChanged = true;
                         break;
                     } else {
@@ -118,7 +118,7 @@ public:
                             mergeBlocks(
                                 blockIndex,
                                 m_graph.successorForCondition(block, condition),
-                                m_graph.successorForCondition(block, !condition));
+                                oneBlock(m_graph.successorForCondition(block, !condition)));
                         } else {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                             dataLogF("CFGSimplify: Known condition (%s) branch->jump conversion on Block #%u to Block #%u, jettisoning Block #%u.\n",
@@ -148,32 +148,7 @@ public:
                     }
                     
                     if (m_graph.successor(block, 0) == m_graph.successor(block, 1)) {
-                        BlockIndex targetBlockIndex = m_graph.successor(block, 0);
-                        BasicBlock* targetBlock = m_graph.m_blocks[targetBlockIndex].get();
-                        ASSERT(targetBlock);
-                        ASSERT(targetBlock->isReachable);
-                        if (targetBlock->m_predecessors.size() == 1) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                            dataLogF("CFGSimplify: Branch to same successor merge on Block #%u to Block #%u.\n",
-                                    blockIndex, targetBlockIndex);
-#endif
-                            m_graph.dethread();
-                            mergeBlocks(blockIndex, targetBlockIndex, NoBlock);
-                        } else {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                            dataLogF("CFGSimplify: Branch->jump conversion to same successor on Block #%u to Block #%u.\n",
-                                    blockIndex, targetBlockIndex);
-#endif
-                            Node* branch = block->last();
-                            ASSERT(branch->isTerminal());
-                            ASSERT(branch->op() == Branch);
-                            branch->convertToPhantom();
-                            ASSERT(branch->refCount() == 1);
-                            
-                            block->appendNode(
-                                m_graph, SpecNone, Jump, branch->codeOrigin,
-                                OpInfo(targetBlockIndex));
-                        }
+                        convertToJump(blockIndex, m_graph.successor(block, 0));
                         innerChanged = outerChanged = true;
                         break;
                     }
@@ -189,7 +164,86 @@ public:
                     
                     break;
                 }
-                
+                    
+                case Switch: {
+                    SwitchData* data = block->last()->switchData();
+                    
+                    // Prune out cases that end up jumping to default.
+                    for (unsigned i = 0; i < data->cases.size(); ++i) {
+                        if (data->cases[i].target == data->fallThrough)
+                            data->cases[i--] = data->cases.takeLast();
+                    }
+                    
+                    // If there are no cases other than default then this turns
+                    // into a jump.
+                    if (data->cases.isEmpty()) {
+                        convertToJump(blockIndex, data->fallThrough);
+                        innerChanged = outerChanged = true;
+                        break;
+                    }
+                    
+                    // Switch on constant -> jettison all other targets and merge.
+                    if (block->last()->child1()->hasConstant()) {
+                        JSValue value = m_graph.valueOfJSConstant(block->last()->child1().node());
+                        TriState found = FalseTriState;
+                        BlockIndex targetBlockIndex = NoBlock;
+                        for (unsigned i = data->cases.size(); found == FalseTriState && i--;) {
+                            found = JSValue::pureStrictEqual(value, data->cases[i].value);
+                            if (found == TrueTriState)
+                                targetBlockIndex = data->cases[i].target;
+                        }
+                        
+                        if (found == MixedTriState)
+                            break;
+                        if (found == FalseTriState)
+                            targetBlockIndex = data->fallThrough;
+                        ASSERT(targetBlockIndex != NoBlock);
+                        
+                        Vector<BlockIndex, 1> jettisonedBlocks;
+                        for (unsigned i = m_graph.numSuccessors(block); i--;) {
+                            BlockIndex jettisonedBlockIndex = m_graph.successor(block, i);
+                            if (jettisonedBlockIndex != targetBlockIndex)
+                                jettisonedBlocks.append(jettisonedBlockIndex);
+                        }
+                        
+                        BasicBlock* targetBlock = m_graph.m_blocks[targetBlockIndex].get();
+                        
+                        if (targetBlock->m_predecessors.size() == 1) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                            dataLog(
+                                "CFGSimplify: Known constant (", value, ") switch merge on ",
+                                "Block #", blockIndex, " to Block #", targetBlockIndex,
+                                ".\n");
+#endif
+                            
+                            if (extremeLogging)
+                                m_graph.dump();
+                            m_graph.dethread();
+                            
+                            mergeBlocks(blockIndex, targetBlockIndex, jettisonedBlocks);
+                        } else {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                            dataLog(
+                                "CFGSimplify: Known constant (", value, ") switch->jump "
+                                "conversion on Block #", blockIndex, " to Block #",
+                                targetBlockIndex, ".\n");
+#endif
+                            if (extremeLogging)
+                                m_graph.dump();
+                            m_graph.dethread();
+                            
+                            CodeOrigin boundaryCodeOrigin = block->last()->codeOrigin;
+                            block->last()->convertToPhantom();
+                            for (unsigned i = jettisonedBlocks.size(); i--;)
+                                jettisonBlock(blockIndex, jettisonedBlocks[i], boundaryCodeOrigin);
+                            block->appendNode(
+                                m_graph, SpecNone, Jump, boundaryCodeOrigin, OpInfo(targetBlockIndex));
+                        }
+                        innerChanged = outerChanged = true;
+                        break;
+                    }
+                }
+                    
                 default:
                     break;
                 }
@@ -247,6 +301,38 @@ public:
     }
 
 private:
+    void convertToJump(BlockIndex blockIndex, BlockIndex targetBlockIndex)
+    {
+        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        BasicBlock* targetBlock = m_graph.m_blocks[targetBlockIndex].get();
+        ASSERT(targetBlock);
+        ASSERT(targetBlock->isReachable);
+        if (targetBlock->m_predecessors.size() == 1) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLogF(
+                "CFGSimplify: Branch/Switch to same successor merge on Block #%u to Block #%u.\n",
+                blockIndex, targetBlockIndex);
+#endif
+            m_graph.dethread();
+            mergeBlocks(blockIndex, targetBlockIndex, noBlocks());
+        } else {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLogF(
+                "CFGSimplify: Branch->jump conversion to same successor on Block #%u to Block #%u.\n",
+                blockIndex, targetBlockIndex);
+#endif
+            Node* branch = block->last();
+            ASSERT(branch->isTerminal());
+            ASSERT(branch->op() == Branch || branch->op() == Switch);
+            branch->convertToPhantom();
+            ASSERT(branch->refCount() == 1);
+            
+            block->appendNode(
+                m_graph, SpecNone, Jump, branch->codeOrigin,
+                OpInfo(targetBlockIndex));
+        }
+    }
+
     void killUnreachable(BlockIndex blockIndex)
     {
         BasicBlock* block = m_graph.m_blocks[blockIndex].get();
@@ -302,9 +388,21 @@ private:
             break;
         }
     }
+
+    Vector<BlockIndex, 1> noBlocks()
+    {
+        return Vector<BlockIndex, 1>();
+    }
+    
+    Vector<BlockIndex, 1> oneBlock(BlockIndex blockIndex)
+    {
+        Vector<BlockIndex, 1> result;
+        result.append(blockIndex);
+        return result;
+    }
     
     void mergeBlocks(
-        BlockIndex firstBlockIndex, BlockIndex secondBlockIndex, BlockIndex jettisonedBlockIndex)
+        BlockIndex firstBlockIndex, BlockIndex secondBlockIndex, Vector<BlockIndex, 1> jettisonedBlockIndices)
     {
         // This will add all of the nodes in secondBlock to firstBlock, but in so doing
         // it will also ensure that any GetLocals from the second block that refer to
@@ -322,8 +420,8 @@ private:
         firstBlock->last()->convertToPhantom();
         ASSERT(firstBlock->last()->refCount() == 1);
         
-        if (jettisonedBlockIndex != NoBlock) {
-            BasicBlock* jettisonedBlock = m_graph.m_blocks[jettisonedBlockIndex].get();
+        for (unsigned i = jettisonedBlockIndices.size(); i--;) {
+            BasicBlock* jettisonedBlock = m_graph.m_blocks[jettisonedBlockIndices[i]].get();
             
             // Time to insert ghosties for things that need to be kept alive in case we OSR
             // exit prior to hitting the firstBlock's terminal, and end up going down a
@@ -358,8 +456,8 @@ private:
         
         // Fix the predecessors of my former successors. Again, we'd rather not do this, but it's
         // an unfortunate necessity. See above comment.
-        if (jettisonedBlockIndex != NoBlock)
-            fixJettisonedPredecessors(firstBlockIndex, jettisonedBlockIndex);
+        for (unsigned i = jettisonedBlockIndices.size(); i--;)
+            fixJettisonedPredecessors(firstBlockIndex, jettisonedBlockIndices[i]);
         
         firstBlock->valuesAtTail = secondBlock->valuesAtTail;
         firstBlock->cfaBranchDirection = secondBlock->cfaBranchDirection;

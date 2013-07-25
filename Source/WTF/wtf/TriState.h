@@ -45,5 +45,6 @@ using WTF::TriState;
 using WTF::FalseTriState;
 using WTF::TrueTriState;
 using WTF::MixedTriState;
+using WTF::triState;
 
 #endif // TriState_h

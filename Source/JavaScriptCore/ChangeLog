@@ -1,3 +1,26 @@
+2013-06-15  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Add CFG simplification for Switch
+        https://bugs.webkit.org/show_bug.cgi?id=117677
+
+        Reviewed by Mark Hahnenberg.
+        
+        This is for completeness. It only speeds up a microbenchmark at this point.
+        Broadly, we want all control constructs to be known to the CFG simplifier.
+
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::convertToJump):
+        (CFGSimplificationPhase):
+        (JSC::DFG::CFGSimplificationPhase::noBlocks):
+        (JSC::DFG::CFGSimplificationPhase::oneBlock):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * runtime/JSCJSValue.h:
+        (JSValue):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::pureStrictEqual):
+        (JSC):
+
 2013-06-13  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should support op_switch_imm

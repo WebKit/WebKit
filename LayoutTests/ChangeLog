@@ -1,3 +1,21 @@
+2013-06-15  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Add CFG simplification for Switch
+        https://bugs.webkit.org/show_bug.cgi?id=117677
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/regress/script-tests/switch-constant.js: Added.
+        (foo):
+        (bar):
+        * fast/js/regress/script-tests/switch.js: Added.
+        (foo):
+        (bar):
+        * fast/js/regress/switch-constant-expected.txt: Added.
+        * fast/js/regress/switch-constant.html: Added.
+        * fast/js/regress/switch-expected.txt: Added.
+        * fast/js/regress/switch.html: Added.
+
 2013-06-11  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should support op_in and it should use patching to make it fast

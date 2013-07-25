@@ -71,6 +71,12 @@ struct NewArrayBufferData {
 // instead decide to do something different - this is entirely up to the DFG.
 // These data structures give the DFG a higher-level semantic description of
 // what is going on, which will allow it to make the right decision.
+//
+// Note that there will never be multiple SwitchCases in SwitchData::cases that
+// have the same SwitchCase::value, since the bytecode's JumpTables never have
+// duplicates - since the JumpTable maps a value to a target. It's a
+// one-to-many mapping. So we may have duplicate targets, but never duplicate
+// values.
 struct SwitchCase {
     SwitchCase()
         : target(NoBlock)

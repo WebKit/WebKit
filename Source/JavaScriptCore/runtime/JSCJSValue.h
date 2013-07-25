@@ -254,6 +254,7 @@ public:
     static bool strictEqual(ExecState*, JSValue v1, JSValue v2);
     static bool strictEqualSlowCase(ExecState*, JSValue v1, JSValue v2);
     static bool strictEqualSlowCaseInline(ExecState*, JSValue v1, JSValue v2);
+    static TriState pureStrictEqual(JSValue v1, JSValue v2);
 
     bool isCell() const;
     JSCell* asCell() const;
