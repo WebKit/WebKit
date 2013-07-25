@@ -245,8 +245,8 @@ class JITCompiler : public CCallHelpers {
 public:
     JITCompiler(Graph& dfg);
     
-    bool compile(JITCode& entry);
-    bool compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck);
+    bool compile(RefPtr<JITCode>& entry);
+    bool compileFunction(RefPtr<JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck);
 
     // Accessors for properties.
     Graph& graph() { return m_graph; }

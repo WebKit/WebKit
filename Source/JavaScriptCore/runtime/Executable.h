@@ -117,19 +117,19 @@ namespace JSC {
         static void clearCodeVirtual(ExecutableBase*);
 
 #if ENABLE(JIT)
-        JITCode& generatedJITCodeForCall()
+        PassRefPtr<JITCode> generatedJITCodeForCall()
         {
             ASSERT(m_jitCodeForCall);
             return m_jitCodeForCall;
         }
 
-        JITCode& generatedJITCodeForConstruct()
+        PassRefPtr<JITCode> generatedJITCodeForConstruct()
         {
             ASSERT(m_jitCodeForConstruct);
             return m_jitCodeForConstruct;
         }
         
-        JITCode& generatedJITCodeFor(CodeSpecializationKind kind)
+        PassRefPtr<JITCode> generatedJITCodeFor(CodeSpecializationKind kind)
         {
             if (kind == CodeForCall)
                 return generatedJITCodeForCall();
@@ -177,14 +177,6 @@ namespace JSC {
             return hasJITCodeForConstruct();
         }
 
-        static ptrdiff_t offsetOfJITCodeFor(CodeSpecializationKind kind)
-        {
-            if (kind == CodeForCall)
-                return OBJECT_OFFSETOF(ExecutableBase, m_jitCodeForCall);
-            ASSERT(kind == CodeForConstruct);
-            return OBJECT_OFFSETOF(ExecutableBase, m_jitCodeForConstruct);
-        }
-        
         static ptrdiff_t offsetOfJITCodeWithArityCheckFor(CodeSpecializationKind kind)
         {
             if (kind == CodeForCall)
@@ -215,29 +207,29 @@ namespace JSC {
 #if ENABLE(JIT) || ENABLE(LLINT_C_LOOP)
         MacroAssemblerCodePtr hostCodeEntryFor(CodeSpecializationKind kind)
         {
-            #if ENABLE(JIT)
-            return generatedJITCodeFor(kind).addressForCall();
-            #else
+#if ENABLE(JIT)
+            return generatedJITCodeFor(kind)->addressForCall();
+#else
             return LLInt::CLoop::hostCodeEntryFor(kind);
-            #endif
+#endif
         }
 
         MacroAssemblerCodePtr jsCodeEntryFor(CodeSpecializationKind kind)
         {
-            #if ENABLE(JIT)
-            return generatedJITCodeFor(kind).addressForCall();
-            #else
+#if ENABLE(JIT)
+            return generatedJITCodeFor(kind)->addressForCall();
+#else
             return LLInt::CLoop::jsCodeEntryFor(kind);
-            #endif
+#endif
         }
 
         MacroAssemblerCodePtr jsCodeWithArityCheckEntryFor(CodeSpecializationKind kind)
         {
-            #if ENABLE(JIT)
+#if ENABLE(JIT)
             return generatedJITCodeWithArityCheckFor(kind);
-            #else
+#else
             return LLInt::CLoop::jsCodeEntryWithArityCheckFor(kind);
-            #endif
+#endif
         }
 
         static void* catchRoutineFor(HandlerInfo* handler, Instruction* catchPCForInterpreter)
@@ -257,8 +249,8 @@ namespace JSC {
         ExecutableBase* m_next;
 
 #if ENABLE(JIT)
-        JITCode m_jitCodeForCall;
-        JITCode m_jitCodeForConstruct;
+        RefPtr<JITCode> m_jitCodeForCall;
+        RefPtr<JITCode> m_jitCodeForConstruct;
         MacroAssemblerCodePtr m_jitCodeForCallWithArityCheck;
         MacroAssemblerCodePtr m_jitCodeForConstructWithArityCheck;
 #endif
@@ -276,10 +268,10 @@ namespace JSC {
             NativeExecutable* executable;
             if (!callThunk) {
                 executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
-                executable->finishCreation(vm, JITCode(), JITCode(), intrinsic);
+                executable->finishCreation(vm, 0, 0, intrinsic);
             } else {
                 executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
-                executable->finishCreation(vm, JITCode::HostFunction(callThunk), JITCode::HostFunction(constructThunk), intrinsic);
+                executable->finishCreation(vm, JITCode::hostFunction(callThunk), JITCode::hostFunction(constructThunk), intrinsic);
             }
             return executable;
         }
@@ -328,13 +320,13 @@ namespace JSC {
 
     protected:
 #if ENABLE(JIT)
-        void finishCreation(VM& vm, JITCode callThunk, JITCode constructThunk, Intrinsic intrinsic)
+        void finishCreation(VM& vm, PassRefPtr<JITCode> callThunk, PassRefPtr<JITCode> constructThunk, Intrinsic intrinsic)
         {
             Base::finishCreation(vm);
+            m_jitCodeForCallWithArityCheck = callThunk ? callThunk->addressForCall() : MacroAssemblerCodePtr();
+            m_jitCodeForConstructWithArityCheck = constructThunk ? constructThunk->addressForCall() : MacroAssemblerCodePtr();
             m_jitCodeForCall = callThunk;
             m_jitCodeForConstruct = constructThunk;
-            m_jitCodeForCallWithArityCheck = callThunk.addressForCall();
-            m_jitCodeForConstructWithArityCheck = constructThunk.addressForCall();
             m_intrinsic = intrinsic;
         }
 #endif
@@ -462,7 +454,7 @@ namespace JSC {
         }
 
 #if ENABLE(JIT)
-        JITCode& generatedJITCode()
+        PassRefPtr<JITCode> generatedJITCode()
         {
             return generatedJITCodeForCall();
         }
@@ -535,7 +527,7 @@ namespace JSC {
         JSObject* checkSyntax(ExecState*);
 
 #if ENABLE(JIT)
-        JITCode& generatedJITCode()
+        PassRefPtr<JITCode> generatedJITCode()
         {
             return generatedJITCodeForCall();
         }

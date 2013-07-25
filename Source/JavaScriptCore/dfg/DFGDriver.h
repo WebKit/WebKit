@@ -41,11 +41,11 @@ namespace DFG {
 JS_EXPORT_PRIVATE unsigned getNumCompilations();
 
 #if ENABLE(DFG_JIT)
-bool tryCompile(ExecState*, CodeBlock*, JITCode&, unsigned bytecodeIndex);
-bool tryCompileFunction(ExecState*, CodeBlock*, JITCode&, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex);
+bool tryCompile(ExecState*, CodeBlock*, RefPtr<JITCode>&, unsigned bytecodeIndex);
+bool tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JITCode>&, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex);
 #else
-inline bool tryCompile(ExecState*, CodeBlock*, JITCode&, unsigned) { return false; }
-inline bool tryCompileFunction(ExecState*, CodeBlock*, JITCode&, MacroAssemblerCodePtr&, unsigned) { return false; }
+inline bool tryCompile(ExecState*, CodeBlock*, RefPtr<JITCode>&, unsigned) { return false; }
+inline bool tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JITCode>&, MacroAssemblerCodePtr&, unsigned) { return false; }
 #endif
 
 } } // namespace JSC::DFG

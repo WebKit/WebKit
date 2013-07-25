@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,75 @@
 #include "config.h"
 #include "JITCode.h"
 
+#include "Operations.h"
 #include <wtf/PrintStream.h>
+
+namespace JSC {
+
+JITCode::JITCode(JITType jitType)
+    : m_jitType(jitType)
+{
+}
+
+JITCode::~JITCode()
+{
+}
+
+JSValue JITCode::execute(JSStack* stack, CallFrame* callFrame, VM* vm)
+{
+    JSValue result = JSValue::decode(ctiTrampoline(executableAddress(), stack, callFrame, 0, 0, vm));
+    return vm->exception ? jsNull() : result;
+}
+
+PassRefPtr<JITCode> JITCode::hostFunction(JITCode::CodeRef code)
+{
+    return adoptRef(new DirectJITCode(code, HostCallThunk));
+}
+
+DirectJITCode::DirectJITCode(const JITCode::CodeRef ref, JITType jitType)
+    : JITCode(jitType)
+    , m_ref(ref)
+{
+}
+
+DirectJITCode::~DirectJITCode()
+{
+}
+
+JITCode::CodePtr DirectJITCode::addressForCall()
+{
+    return m_ref.code();
+}
+
+void* DirectJITCode::executableAddressAtOffset(size_t offset)
+{
+    return reinterpret_cast<char*>(m_ref.code().executableAddress()) + offset;
+}
+
+void* DirectJITCode::dataAddressAtOffset(size_t offset)
+{
+    ASSERT(offset <= size()); // use <= instead of < because it is valid to ask for an address at the exclusive end of the code.
+    return reinterpret_cast<char*>(m_ref.code().dataLocation()) + offset;
+}
+
+unsigned DirectJITCode::offsetOf(void* pointerIntoCode)
+{
+    intptr_t result = reinterpret_cast<intptr_t>(pointerIntoCode) - reinterpret_cast<intptr_t>(m_ref.code().executableAddress());
+    ASSERT(static_cast<intptr_t>(static_cast<unsigned>(result)) == result);
+    return static_cast<unsigned>(result);
+}
+
+size_t DirectJITCode::size()
+{
+    return m_ref.size();
+}
+
+bool DirectJITCode::contains(void* address)
+{
+    return m_ref.executableMemory()->contains(address);
+}
+
+} // namespace JSC
 
 namespace WTF {
 

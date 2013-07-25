@@ -62,7 +62,7 @@ unsigned getNumCompilations()
 }
 
 enum CompileMode { CompileFunction, CompileOther };
-inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck, unsigned osrEntryBytecodeIndex)
+inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck, unsigned osrEntryBytecodeIndex)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
     
@@ -172,12 +172,12 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     return result;
 }
 
-bool tryCompile(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, unsigned bytecodeIndex)
+bool tryCompile(ExecState* exec, CodeBlock* codeBlock, RefPtr<JITCode>& jitCode, unsigned bytecodeIndex)
 {
     return compile(CompileOther, exec, codeBlock, jitCode, 0, bytecodeIndex);
 }
 
-bool tryCompileFunction(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex)
+bool tryCompileFunction(ExecState* exec, CodeBlock* codeBlock, RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex)
 {
     return compile(CompileFunction, exec, codeBlock, jitCode, &jitCodeWithArityCheck, bytecodeIndex);
 }

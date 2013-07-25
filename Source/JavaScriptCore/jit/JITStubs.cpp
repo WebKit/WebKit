@@ -2267,7 +2267,7 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
     callFrame->setCodeBlock(0);
 
     if (executable->isHostFunction())
-        codePtr = executable->generatedJITCodeFor(kind).addressForCall();
+        codePtr = executable->generatedJITCodeFor(kind)->addressForCall();
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         if (JSObject* error = functionExecutable->compileFor(callFrame, callee->scope(), kind)) {
@@ -2279,7 +2279,7 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
             || callLinkInfo->callType == CallLinkInfo::CallVarargs)
             codePtr = functionExecutable->generatedJITCodeWithArityCheckFor(kind);
         else
-            codePtr = functionExecutable->generatedJITCodeFor(kind).addressForCall();
+            codePtr = functionExecutable->generatedJITCodeFor(kind)->addressForCall();
     }
 
     if (!callLinkInfo->seenOnce())
@@ -2330,7 +2330,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkClosureCall)
         shouldLink = true;
         
         ASSERT(executable->hasJITCodeForCall());
-        codePtr = executable->generatedJITCodeForCall().addressForCall();
+        codePtr = executable->generatedJITCodeForCall()->addressForCall();
         if (!callee->executable()->isHostFunction()) {
             calleeCodeBlock = &jsCast<FunctionExecutable*>(executable)->generatedBytecodeForCall();
             if (callFrame->argumentCountIncludingThis() < static_cast<size_t>(calleeCodeBlock->numParameters())) {
@@ -2339,7 +2339,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkClosureCall)
             }
         }
     } else if (callee->isHostFunction())
-        codePtr = executable->generatedJITCodeForCall().addressForCall();
+        codePtr = executable->generatedJITCodeForCall()->addressForCall();
     else {
         // Need to clear the code block before compilation, because compilation can GC.
         callFrame->setCodeBlock(0);

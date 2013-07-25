@@ -46,9 +46,9 @@ class RepatchBuffer {
 public:
     RepatchBuffer(CodeBlock* codeBlock)
     {
-        JITCode& code = codeBlock->getJITCode();
-        m_start = code.start();
-        m_size = code.size();
+        RefPtr<JITCode> code = codeBlock->getJITCode();
+        m_start = code->start();
+        m_size = code->size();
 
         ExecutableAllocator::makeWritable(m_start, m_size);
     }

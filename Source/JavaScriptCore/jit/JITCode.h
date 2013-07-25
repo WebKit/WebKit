@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,152 +41,94 @@ namespace JSC {
     class VM;
     class JSStack;
 #endif
+
+class JITCode : public RefCounted<JITCode> {
+public:
+    typedef MacroAssemblerCodeRef CodeRef;
+    typedef MacroAssemblerCodePtr CodePtr;
+
+    enum JITType { None, HostCallThunk, InterpreterThunk, BaselineJIT, DFGJIT };
     
-    class JITCode {
-#if ENABLE(JIT) || ENABLE(LLINT)
-        typedef MacroAssemblerCodeRef CodeRef;
-        typedef MacroAssemblerCodePtr CodePtr;
-#else
-        JITCode() { }
-#endif
-    public:
-        enum JITType { None, HostCallThunk, InterpreterThunk, BaselineJIT, DFGJIT };
-        
-        static JITType bottomTierJIT()
-        {
-            return BaselineJIT;
-        }
-        
-        static JITType topTierJIT()
-        {
-            return DFGJIT;
-        }
-        
-        static JITType nextTierJIT(JITType jitType)
-        {
-            ASSERT_UNUSED(jitType, jitType == BaselineJIT || jitType == DFGJIT);
-            return DFGJIT;
-        }
-        
-        static bool isOptimizingJIT(JITType jitType)
-        {
-            return jitType == DFGJIT;
-        }
-        
-        static bool isBaselineCode(JITType jitType)
-        {
-            return jitType == InterpreterThunk || jitType == BaselineJIT;
-        }
-        
-#if ENABLE(JIT) || ENABLE(LLINT)
-        JITCode()
-            : m_jitType(None)
-        {
-        }
+    static JITType bottomTierJIT()
+    {
+        return BaselineJIT;
+    }
+    
+    static JITType topTierJIT()
+    {
+        return DFGJIT;
+    }
+    
+    static JITType nextTierJIT(JITType jitType)
+    {
+        ASSERT_UNUSED(jitType, jitType == BaselineJIT || jitType == DFGJIT);
+        return DFGJIT;
+    }
+    
+    static bool isOptimizingJIT(JITType jitType)
+    {
+        return jitType == DFGJIT;
+    }
+    
+    static bool isBaselineCode(JITType jitType)
+    {
+        return jitType == InterpreterThunk || jitType == BaselineJIT;
+    }
+    
+protected:
+    JITCode(JITType);
+    
+public:
+    virtual ~JITCode();
+    
+    JITType jitType() const
+    {
+        return m_jitType;
+    }
+    
+    template<typename PointerType>
+    static JITType jitTypeFor(PointerType jitCode)
+    {
+        if (!jitCode)
+            return None;
+        return jitCode->jitType();
+    }
+    
+    virtual CodePtr addressForCall() = 0;
+    virtual void* executableAddressAtOffset(size_t offset) = 0;
+    void* executableAddress() { return executableAddressAtOffset(0); }
+    virtual void* dataAddressAtOffset(size_t offset) = 0;
+    virtual unsigned offsetOf(void* pointerIntoCode) = 0;
+    
+    JSValue execute(JSStack*, CallFrame*, VM*);
+    
+    void* start() { return dataAddressAtOffset(0); }
+    virtual size_t size() = 0;
+    void* end() { return reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(start()) + size()); }
+    
+    virtual bool contains(void*) = 0;
 
-        JITCode(const CodeRef ref, JITType jitType)
-            : m_ref(ref)
-            , m_jitType(jitType)
-        {
-            ASSERT(jitType != None);
-        }
-        
-        bool operator !() const
-        {
-            return !m_ref;
-        }
+    static PassRefPtr<JITCode> hostFunction(CodeRef);
 
-        CodePtr addressForCall()
-        {
-            return m_ref.code();
-        }
+private:
+    JITType m_jitType;
+};
 
-        void* executableAddressAtOffset(size_t offset) const
-        {
-            ASSERT(offset < size());
-            return reinterpret_cast<char*>(m_ref.code().executableAddress()) + offset;
-        }
-        
-        void* executableAddress() const
-        {
-            return executableAddressAtOffset(0);
-        }
-        
-        void* dataAddressAtOffset(size_t offset) const
-        {
-            ASSERT(offset <= size()); // use <= instead of < because it is valid to ask for an address at the exclusive end of the code.
-            return reinterpret_cast<char*>(m_ref.code().dataLocation()) + offset;
-        }
+class DirectJITCode : public JITCode {
+public:
+    DirectJITCode(const CodeRef, JITType);
+    ~DirectJITCode();
+    
+    CodePtr addressForCall();
+    void* executableAddressAtOffset(size_t offset);
+    void* dataAddressAtOffset(size_t offset);
+    unsigned offsetOf(void* pointerIntoCode);
+    size_t size();
+    bool contains(void*);
 
-        // This function returns the offset in bytes of 'pointerIntoCode' into
-        // this block of code.  The pointer provided must be a pointer into this
-        // block of code.  It is ASSERTed that no codeblock >4gb in size.
-        unsigned offsetOf(void* pointerIntoCode)
-        {
-            intptr_t result = reinterpret_cast<intptr_t>(pointerIntoCode) - reinterpret_cast<intptr_t>(m_ref.code().executableAddress());
-            ASSERT(static_cast<intptr_t>(static_cast<unsigned>(result)) == result);
-            return static_cast<unsigned>(result);
-        }
-
-#if ENABLE(JIT)
-        // Execute the code!
-        inline JSValue execute(JSStack* stack, CallFrame* callFrame, VM* vm)
-        {
-            JSValue result = JSValue::decode(ctiTrampoline(m_ref.code().executableAddress(), stack, callFrame, 0, 0, vm));
-            return vm->exception ? jsNull() : result;
-        }
-#endif
-
-        void* start() const
-        {
-            return m_ref.code().dataLocation();
-        }
-
-        size_t size() const
-        {
-            ASSERT(m_ref.code().executableAddress());
-            return m_ref.size();
-        }
-        
-        bool tryToDisassemble(const char* prefix) const
-        {
-            return m_ref.tryToDisassemble(prefix);
-        }
-
-        ExecutableMemoryHandle* getExecutableMemory()
-        {
-            return m_ref.executableMemory();
-        }
-        
-        JITType jitType() const
-        {
-            return m_jitType;
-        }
-
-        // Host functions are a bit special; they have a m_code pointer but they
-        // do not individully ref the executable pool containing the trampoline.
-        static JITCode HostFunction(CodeRef code)
-        {
-            return JITCode(code, HostCallThunk);
-        }
-
-        void clear()
-        {
-            m_ref.~CodeRef();
-            new (NotNull, &m_ref) CodeRef();
-        }
-
-    private:
-        JITCode(PassRefPtr<ExecutableMemoryHandle> executableMemory, JITType jitType)
-            : m_ref(executableMemory)
-            , m_jitType(jitType)
-        {
-        }
-
-        CodeRef m_ref;
-        JITType m_jitType;
-#endif // ENABLE(JIT) || ENABLE(LLINT)
-    };
+private:
+    CodeRef m_ref;
+};
 
 } // namespace JSC
 

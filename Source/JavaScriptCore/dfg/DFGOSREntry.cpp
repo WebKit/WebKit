@@ -156,7 +156,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     // 5) Find and return the destination machine code address.
     
-    void* result = codeBlock->getJITCode().executableAddressAtOffset(entry->m_machineCodeOffset);
+    void* result = codeBlock->getJITCode()->executableAddressAtOffset(entry->m_machineCodeOffset);
     
 #if ENABLE(JIT_VERBOSE_OSR)
     dataLogF("    OSR returning machine code address %p.\n", result);

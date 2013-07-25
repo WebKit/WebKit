@@ -426,21 +426,20 @@ public:
     int argumentIndexAfterCapture(size_t argument);
 
 #if ENABLE(JIT)
-    void setJITCode(const JITCode& code, MacroAssemblerCodePtr codeWithArityCheck)
+    void setJITCode(PassRefPtr<JITCode> code, MacroAssemblerCodePtr codeWithArityCheck)
     {
         m_jitCode = code;
         m_jitCodeWithArityCheck = codeWithArityCheck;
 #if ENABLE(DFG_JIT)
-        if (m_jitCode.jitType() == JITCode::DFGJIT) {
+        if (JITCode::jitTypeFor(m_jitCode) == JITCode::DFGJIT) {
             createDFGDataIfNecessary();
             m_vm->heap.m_dfgCodeBlocks.m_set.add(this);
         }
 #endif
     }
-    JITCode& getJITCode() { return m_jitCode; }
+    PassRefPtr<JITCode> getJITCode() { return m_jitCode; }
     MacroAssemblerCodePtr getJITCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
-    JITCode::JITType getJITType() const { return m_jitCode.jitType(); }
-    ExecutableMemoryHandle* executableMemory() { return getJITCode().getExecutableMemory(); }
+    JITCode::JITType getJITType() const { return JITCode::jitTypeFor(m_jitCode); }
     virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex) = 0;
     void jettison();
     enum JITCompilationResult { AlreadyCompiled, CouldNotCompile, CompiledSuccessfully };
@@ -1188,7 +1187,7 @@ private:
     Vector<StructureStubInfo> m_structureStubInfos;
     Vector<ByValInfo> m_byValInfos;
     Vector<CallLinkInfo> m_callLinkInfos;
-    JITCode m_jitCode;
+    RefPtr<JITCode> m_jitCode;
     MacroAssemblerCodePtr m_jitCodeWithArityCheck;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo> > m_incomingCalls;
 #endif

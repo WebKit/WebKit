@@ -238,7 +238,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     codeBlock()->saveCompilation(m_graph.m_compilation);
 }
 
-bool JITCompiler::compile(JITCode& entry)
+bool JITCompiler::compile(RefPtr<JITCode>& entry)
 {
     SamplingRegion samplingRegion("DFG Backend");
 
@@ -270,13 +270,13 @@ bool JITCompiler::compile(JITCode& entry)
     if (m_graph.m_compilation)
         m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
 
-    entry = JITCode(
+    entry = adoptRef(new DirectJITCode(
         linkBuffer.finalizeCodeWithoutDisassembly(),
-        JITCode::DFGJIT);
+        JITCode::DFGJIT));
     return true;
 }
 
-bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck)
+bool JITCompiler::compileFunction(RefPtr<JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck)
 {
     SamplingRegion samplingRegion("DFG Backend");
     
@@ -365,9 +365,9 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
 
     entryWithArityCheck = linkBuffer.locationOf(arityCheck);
-    entry = JITCode(
+    entry = adoptRef(new DirectJITCode(
         linkBuffer.finalizeCodeWithoutDisassembly(),
-        JITCode::DFGJIT);
+        JITCode::DFGJIT));
     return true;
 }
 

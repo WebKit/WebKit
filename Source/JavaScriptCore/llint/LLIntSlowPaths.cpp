@@ -287,7 +287,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
 #endif
         return false;
     }
-        
+    
     CodeBlock::JITCompilationResult result = codeBlock->jitCompile(exec);
     switch (result) {
     case CodeBlock::AlreadyCompiled:
@@ -330,7 +330,7 @@ static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* cod
         LLINT_RETURN_TWO(0, exec);
     
     if (kind == Prologue)
-        LLINT_RETURN_TWO(codeBlock->getJITCode().executableAddressAtOffset(0), exec);
+        LLINT_RETURN_TWO(codeBlock->getJITCode()->executableAddress(), exec);
     ASSERT(kind == ArityCheck);
     LLINT_RETURN_TWO(codeBlock->getJITCodeWithArityCheck().executableAddress(), exec);
 }
@@ -384,7 +384,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     ASSERT(mapping);
     ASSERT(mapping->m_bytecodeIndex == static_cast<unsigned>(pc - codeBlock->instructions().begin()));
     
-    void* jumpTarget = codeBlock->getJITCode().executableAddressAtOffset(mapping->m_machineCodeOffset);
+    void* jumpTarget = codeBlock->getJITCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
     ASSERT(jumpTarget);
     
     LLINT_RETURN_TWO(jumpTarget, exec);

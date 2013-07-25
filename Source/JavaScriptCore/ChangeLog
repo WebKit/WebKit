@@ -1,3 +1,133 @@
+2013-07-15  Oliver Hunt  <oliver@apple.com>
+
+        Merge dfgFourthTier r147014
+
+    2013-03-27  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: JITCode should abstract exactly how the JIT code is structured and where it was allocated
+        https://bugs.webkit.org/show_bug.cgi?id=113437
+
+        Reviewed by Mark Hahnenberg.
+        
+        JITCode is now a virtual base class, which will allow different JITs to have radically
+        different memory allocation and management conventions in the future. It will also
+        make it easier to store JIT-specific meta-data in CodeBlock just by putting it into
+        an appropriate JITCode subclass.
+        
+        For now there is one subclass, DirectJITCode, which just behaves like JITCode used to
+        behave.
+
+        * assembler/RepatchBuffer.h:
+        (JSC::RepatchBuffer::RepatchBuffer):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::CodeBlock::codeOriginForReturn):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::getJITCode):
+        (JSC::CodeBlock::getJITType):
+        (CodeBlock):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGDriver.h:
+        (DFG):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JITCompiler):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::codeLocationForRepatch):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::compile):
+        (JIT):
+        * jit/JITCode.cpp:
+        (JSC):
+        (JSC::JITCode::JITCode):
+        (JSC::JITCode::~JITCode):
+        (JSC::JITCode::execute):
+        (JSC::JITCode::hostFunction):
+        (JSC::DirectJITCode::DirectJITCode):
+        (JSC::DirectJITCode::~DirectJITCode):
+        (JSC::DirectJITCode::addressForCall):
+        (JSC::DirectJITCode::executableAddressAtOffset):
+        (JSC::DirectJITCode::dataAddressAtOffset):
+        (JSC::DirectJITCode::offsetOf):
+        (JSC::DirectJITCode::size):
+        (JSC::DirectJITCode::contains):
+        * jit/JITCode.h:
+        (JSC):
+        (JITCode):
+        (JSC::JITCode::bottomTierJIT):
+        (JSC::JITCode::topTierJIT):
+        (JSC::JITCode::nextTierJIT):
+        (JSC::JITCode::isOptimizingJIT):
+        (JSC::JITCode::isBaselineCode):
+        (JSC::JITCode::jitType):
+        (JSC::JITCode::jitTypeFor):
+        (JSC::JITCode::executableAddress):
+        (JSC::JITCode::start):
+        (JSC::JITCode::end):
+        (DirectJITCode):
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * jit/JITStubs.cpp:
+        (JSC::lazyLinkFor):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualForGenerator):
+        * llint/LLIntEntrypoints.cpp:
+        (JSC::LLInt::getFunctionEntrypoint):
+        (JSC::LLInt::getEvalEntrypoint):
+        (JSC::LLInt::getProgramEntrypoint):
+        * llint/LLIntEntrypoints.h:
+        (JSC):
+        (LLInt):
+        (JSC::LLInt::getEntrypoint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::generatedJITCodeForCall):
+        (JSC::ExecutableBase::generatedJITCodeForConstruct):
+        (JSC::ExecutableBase::generatedJITCodeFor):
+        (ExecutableBase):
+        (JSC::ExecutableBase::hostCodeEntryFor):
+        (JSC::ExecutableBase::jsCodeEntryFor):
+        (JSC::ExecutableBase::jsCodeWithArityCheckEntryFor):
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::finishCreation):
+        (JSC::EvalExecutable::generatedJITCode):
+        (JSC::ProgramExecutable::generatedJITCode):
+        * runtime/ExecutionHarness.h:
+        (JSC::prepareForExecution):
+        (JSC::prepareFunctionForExecution):
+
 2013-07-24  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to hijack IndexingHeader for things other than lengths

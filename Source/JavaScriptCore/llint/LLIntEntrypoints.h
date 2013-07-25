@@ -31,11 +31,12 @@
 #if ENABLE(LLINT)
 
 #include "CodeSpecializationKind.h"
+#include "JITCode.h"
+#include <wtf/RefPtr.h>
 
 namespace JSC {
 
 class EvalCodeBlock;
-class JITCode;
 class VM;
 class MacroAssemblerCodePtr;
 class MacroAssemblerCodeRef;
@@ -43,16 +44,16 @@ class ProgramCodeBlock;
 
 namespace LLInt {
 
-void getFunctionEntrypoint(VM&, CodeSpecializationKind, JITCode&, MacroAssemblerCodePtr& arityCheck);
-void getEvalEntrypoint(VM&, JITCode&);
-void getProgramEntrypoint(VM&, JITCode&);
+void getFunctionEntrypoint(VM&, CodeSpecializationKind, RefPtr<JITCode>&, MacroAssemblerCodePtr& arityCheck);
+void getEvalEntrypoint(VM&, RefPtr<JITCode>&);
+void getProgramEntrypoint(VM&, RefPtr<JITCode>&);
 
-inline void getEntrypoint(VM& vm, EvalCodeBlock*, JITCode& jitCode)
+inline void getEntrypoint(VM& vm, EvalCodeBlock*, RefPtr<JITCode>& jitCode)
 {
     getEvalEntrypoint(vm, jitCode);
 }
 
-inline void getEntrypoint(VM& vm, ProgramCodeBlock*, JITCode& jitCode)
+inline void getEntrypoint(VM& vm, ProgramCodeBlock*, RefPtr<JITCode>& jitCode)
 {
     getProgramEntrypoint(vm, jitCode);
 }

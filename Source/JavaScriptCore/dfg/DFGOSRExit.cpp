@@ -62,7 +62,7 @@ MacroAssembler::Jump OSRExit::getPatchableCodeOffsetAsJump() const
 
 CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* dfgCodeBlock) const
 {
-    return CodeLocationJump(dfgCodeBlock->getJITCode().dataAddressAtOffset(m_patchableCodeOffset));
+    return CodeLocationJump(dfgCodeBlock->getJITCode()->dataAddressAtOffset(m_patchableCodeOffset));
 }
 
 void OSRExit::correctJump(LinkBuffer& linkBuffer)

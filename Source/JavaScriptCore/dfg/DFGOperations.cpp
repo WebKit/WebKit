@@ -1107,7 +1107,7 @@ inline char* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction())
-        codePtr = executable->generatedJITCodeFor(kind).addressForCall();
+        codePtr = executable->generatedJITCodeFor(kind)->addressForCall();
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->compileFor(execCallee, callee->scope(), kind);
@@ -1119,7 +1119,7 @@ inline char* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
         if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
             codePtr = functionExecutable->generatedJITCodeWithArityCheckFor(kind);
         else
-            codePtr = functionExecutable->generatedJITCodeFor(kind).addressForCall();
+            codePtr = functionExecutable->generatedJITCodeFor(kind)->addressForCall();
     }
     CallLinkInfo& callLinkInfo = exec->codeBlock()->getCallLinkInfo(execCallee->returnPC());
     if (!callLinkInfo.seenOnce())
@@ -1184,7 +1184,7 @@ static bool attemptToOptimizeClosureCall(ExecState* execCallee, JSCell* calleeAs
         return false;
     
     ASSERT(callee->executable()->hasJITCodeForCall());
-    MacroAssemblerCodePtr codePtr = callee->executable()->generatedJITCodeForCall().addressForCall();
+    MacroAssemblerCodePtr codePtr = callee->executable()->generatedJITCodeForCall()->addressForCall();
     
     CodeBlock* codeBlock;
     if (callee->executable()->isHostFunction())

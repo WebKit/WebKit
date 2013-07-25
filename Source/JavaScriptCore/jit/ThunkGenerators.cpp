@@ -139,6 +139,11 @@ static MacroAssemblerCodeRef virtualForGenerator(VM* vm, FunctionPtr compile, Fu
 
     hasCodeBlock1.link(&jit);
     jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::regT2, FunctionExecutable::offsetOfJITCodeWithArityCheckFor(kind)), JSInterfaceJIT::regT0);
+#if !ASSERT_DISABLED
+    JSInterfaceJIT::Jump ok = jit.branchTestPtr(JSInterfaceJIT::NonZero, JSInterfaceJIT::regT0);
+    jit.breakpoint();
+    ok.link(&jit);
+#endif
     jit.jump(JSInterfaceJIT::regT0);
     
     slowCase.link(&jit);

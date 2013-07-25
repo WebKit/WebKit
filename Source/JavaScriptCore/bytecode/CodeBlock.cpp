@@ -2388,13 +2388,13 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
         dataLog("Clearing structure cache (kind ", static_cast<int>(stubInfo.accessType), ") in ", *this, ".\n");
     
     if (isGetByIdAccess(accessType)) {
-        if (getJITCode().jitType() == JITCode::DFGJIT)
+        if (getJITType() == JITCode::DFGJIT)
             DFG::dfgResetGetByID(repatchBuffer, stubInfo);
         else
             JIT::resetPatchGetById(repatchBuffer, &stubInfo);
     } else {
         ASSERT(isPutByIdAccess(accessType));
-        if (getJITCode().jitType() == JITCode::DFGJIT)
+        if (getJITType() == JITCode::DFGJIT)
             DFG::dfgResetPutByID(repatchBuffer, stubInfo);
         else 
             JIT::resetPatchPutById(repatchBuffer, &stubInfo);
@@ -2719,8 +2719,8 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
     if (!callIndices.size())
         return 1;
     
-    if (getJITCode().getExecutableMemory()->contains(returnAddress.value())) {
-        unsigned callReturnOffset = getJITCode().offsetOf(returnAddress.value());
+    if (getJITCode()->contains(returnAddress.value())) {
+        unsigned callReturnOffset = getJITCode()->offsetOf(returnAddress.value());
         CallReturnOffsetToBytecodeOffset* result =
             binarySearch<CallReturnOffsetToBytecodeOffset, unsigned>(
                 callIndices, callIndices.size(), callReturnOffset, getCallReturnOffset);
@@ -2753,7 +2753,7 @@ bool CodeBlock::codeOriginForReturn(ReturnAddressPtr returnAddress, CodeOrigin& 
     if (!hasCodeOrigins())
         return false;
 
-    if (!getJITCode().getExecutableMemory()->contains(returnAddress.value())) {
+    if (!getJITCode()->contains(returnAddress.value())) {
         ClosureCallStubRoutine* stub = findClosureCallForReturnPC(returnAddress);
         ASSERT(stub);
         if (!stub)
@@ -2762,7 +2762,7 @@ bool CodeBlock::codeOriginForReturn(ReturnAddressPtr returnAddress, CodeOrigin& 
         return true;
     }
     
-    unsigned offset = getJITCode().offsetOf(returnAddress.value());
+    unsigned offset = getJITCode()->offsetOf(returnAddress.value());
     CodeOriginAtCallReturnOffset* entry =
         tryBinarySearch<CodeOriginAtCallReturnOffset, unsigned>(
             codeOrigins(), codeOrigins().size(), offset,

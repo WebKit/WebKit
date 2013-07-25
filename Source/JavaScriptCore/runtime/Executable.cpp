@@ -202,9 +202,9 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     
     if (!!m_evalCodeBlock) {
-        OwnPtr<EvalCodeBlock> newCodeBlock = adoptPtr(new EvalCodeBlock(CodeBlock::CopyParsedBlock, *m_evalCodeBlock));
+        PassOwnPtr<EvalCodeBlock> newCodeBlock = adoptPtr(new EvalCodeBlock(CodeBlock::CopyParsedBlock, *m_evalCodeBlock));
         newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_evalCodeBlock.release()));
-        m_evalCodeBlock = newCodeBlock.release();
+        m_evalCodeBlock = newCodeBlock;
     } else {
         UNUSED_PARAM(scope);
         UNUSED_PARAM(vm);
@@ -230,7 +230,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
 #endif
 
 #if ENABLE(JIT)
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock) + m_jitCodeForCall.size());
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock) + m_jitCodeForCall->size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock));
 #endif
@@ -331,7 +331,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JI
 #endif
 
 #if ENABLE(JIT)
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock) + m_jitCodeForCall.size());
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock) + m_jitCodeForCall->size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock));
 #endif
@@ -546,7 +546,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* s
 #endif
 
 #if ENABLE(JIT)
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall) + m_jitCodeForCall.size());
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall) + m_jitCodeForCall->size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall));
 #endif
@@ -582,7 +582,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSSco
 #endif
 
 #if ENABLE(JIT)
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct) + m_jitCodeForConstruct.size());
+    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct) + m_jitCodeForConstruct->size());
 #else
     Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct));
 #endif

@@ -646,7 +646,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         ASSERT(mapping);
         ASSERT(mapping->m_bytecodeIndex == returnBytecodeIndex);
         
-        void* jumpTarget = baselineCodeBlockForCaller->getJITCode().executableAddressAtOffset(mapping->m_machineCodeOffset);
+        void* jumpTarget = baselineCodeBlockForCaller->getJITCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
 
         GPRReg callerFrameGPR;
         if (inlineCallFrame->caller.inlineCallFrame) {
@@ -757,7 +757,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     ASSERT(mapping);
     ASSERT(mapping->m_bytecodeIndex == exit.m_codeOrigin.bytecodeIndex);
     
-    void* jumpTarget = baselineCodeBlock->getJITCode().executableAddressAtOffset(mapping->m_machineCodeOffset);
+    void* jumpTarget = baselineCodeBlock->getJITCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
     
     ASSERT(GPRInfo::regT2 != GPRInfo::cachedResultRegister && GPRInfo::regT2 != GPRInfo::cachedResultRegister2);
     

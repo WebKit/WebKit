@@ -38,7 +38,7 @@
 namespace JSC {
 
 template<typename CodeBlockType>
-inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
+inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& codeBlock, RefPtr<JITCode>& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
 {
     VM& vm = exec->vm();
     
@@ -50,7 +50,7 @@ inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& code
     
     codeBlock->unlinkIncomingCalls();
     
-    JITCode oldJITCode = jitCode;
+    RefPtr<JITCode> oldJITCode = jitCode;
     
     bool dfgCompiled = false;
     if (jitType == JITCode::DFGJIT)
@@ -75,7 +75,7 @@ inline bool jitCompileIfAppropriate(ExecState* exec, OwnPtr<CodeBlockType>& code
     return true;
 }
 
-inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
+inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
 {
     VM& vm = exec->vm();
     
@@ -87,7 +87,7 @@ inline bool jitCompileFunctionIfAppropriate(ExecState* exec, OwnPtr<FunctionCode
     
     codeBlock->unlinkIncomingCalls();
     
-    JITCode oldJITCode = jitCode;
+    RefPtr<JITCode> oldJITCode = jitCode;
     MacroAssemblerCodePtr oldJITCodeWithArityCheck = jitCodeWithArityCheck;
     
     bool dfgCompiled = false;
