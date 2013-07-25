@@ -1,5 +1,20 @@
 2013-06-26  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: FTL::canCompile(Graph&) should not consider nodes that won't be compiled
+        https://bugs.webkit.org/show_bug.cgi?id=118097
+
+        Reviewed by Mark Hahnenberg.
+        
+        This increases coverage to include programs that have unprofiled paths. Those paths will
+        often have nodes that appear to do untyped speculations, and the FTL sometimes doesn't
+        support those; except that it doesn't matter since the reason why they were untyped is
+        that they were unprofiled and anyway we won't run them because we'll exit before them.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+
+2013-06-26  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should support ArrayifyToStructure
         https://bugs.webkit.org/show_bug.cgi?id=118095
 

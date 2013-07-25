@@ -186,7 +186,11 @@ bool canCompile(Graph& graph)
         if (!block)
             continue;
         
-        for (unsigned nodeIndex = block->size(); nodeIndex--;) {
+        // We don't care if we can compile blocks that the CFA hasn't visited.
+        if (!block->cfaHasVisited)
+            continue;
+        
+        for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
             Node* node = block->at(nodeIndex);
             
             for (unsigned childIndex = graph.numChildren(node); childIndex--;) {
@@ -225,6 +229,10 @@ bool canCompile(Graph& graph)
                 }
                 return false;
             }
+            
+            // We don't care if we can compile anything after a force-exit.
+            if (node->op() == ForceOSRExit || node->op() == ForwardForceOSRExit)
+                break;
         }
     }
     
