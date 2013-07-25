@@ -48,6 +48,7 @@ void compile(State& state)
     options.OptLevel = Options::llvmOptimizationLevel();
     options.NoFramePointerElim = true;
     options.CodeModel = LLVMCodeModelSmall;
+    options.EnableFastISel = Options::enableLLVMFastISel();
     
     if (LLVMCreateMCJITCompilerForModule(&state.engine, state.module, &options, sizeof(options), &error)) {
         dataLog("FATAL: Could not create LLVM execution engine: ", error, "\n");

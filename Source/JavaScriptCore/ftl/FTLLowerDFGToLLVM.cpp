@@ -243,12 +243,19 @@ private:
         m_state.reset();
         m_state.beginBasicBlock(m_highBlock);
         
-        for (m_nodeIndex = 0; m_nodeIndex < m_highBlock->size(); ++m_nodeIndex)
-            compileNode(m_nodeIndex);
+        for (m_nodeIndex = 0; m_nodeIndex < m_highBlock->size(); ++m_nodeIndex) {
+            if (!compileNode(m_nodeIndex))
+                break;
+        }
     }
     
-    void compileNode(unsigned nodeIndex)
+    bool compileNode(unsigned nodeIndex)
     {
+        if (!m_state.isValid()) {
+            m_out.unreachable();
+            return false;
+        }
+        
         m_node = m_highBlock->at(nodeIndex);
         m_codeOrigin = m_node->codeOrigin;
         
@@ -287,9 +294,6 @@ private:
         case Flush:
         case PhantomLocal:
         case SetArgument:
-            break;
-        case Return:
-            compileReturn();
             break;
         case ArithAdd:
         case ValueAdd:
@@ -388,8 +392,17 @@ private:
         case LogicalNot:
             compileLogicalNot();
             break;
+        case Jump:
+            compileJump();
+            break;
         case Branch:
             compileBranch();
+            break;
+        case Return:
+            compileReturn();
+            break;
+        case ForceOSRExit:
+            compileForceOSRExit();
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -404,11 +417,17 @@ private:
         
         if (shouldExecuteEffects)
             m_state.executeEffects(nodeIndex);
+        
+        return true;
     }
     
     void compileJSConstant()
     {
-        m_jsValueValues.add(m_node, m_out.constInt64(JSValue::encode(m_graph.valueOfJSConstant(m_node))));
+        JSValue value = m_graph.valueOfJSConstant(m_node);
+        if (value.isDouble())
+            m_doubleValues.add(m_node, m_out.constDouble(value.asDouble()));
+        else
+            m_jsValueValues.add(m_node, m_out.constInt64(JSValue::encode(value)));
     }
     
     void compileWeakJSConstant()
@@ -553,13 +572,6 @@ private:
     void compilePhantom()
     {
         DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, speculate);
-    }
-    
-    void compileReturn()
-    {
-        // FIXME: have a real epilogue when we switch to using our calling convention.
-        // https://bugs.webkit.org/show_bug.cgi?id=113621
-        m_out.ret(lowJSValue(m_node->child1()));
     }
     
     void compileAdd()
@@ -1123,6 +1135,11 @@ private:
         }
     }
     
+    void compileJump()
+    {
+        m_out.jump(m_blocks.get(m_graph.m_blocks[m_node->takenBlockIndex()].get()));
+    }
+    
     void compileBranch()
     {
         switch (m_node->child1().useKind()) {
@@ -1138,6 +1155,18 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+    }
+    
+    void compileReturn()
+    {
+        // FIXME: have a real epilogue when we switch to using our calling convention.
+        // https://bugs.webkit.org/show_bug.cgi?id=113621
+        m_out.ret(lowJSValue(m_node->child1()));
+    }
+    
+    void compileForceOSRExit()
+    {
+        terminate(InadequateCoverage);
     }
     
     enum EqualNullOrUndefinedMode { EqualNull, EqualUndefined, EqualNullOrUndefined };

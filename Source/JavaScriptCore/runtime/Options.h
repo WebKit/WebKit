@@ -113,6 +113,7 @@ typedef OptionRange optionRange;
     v(bool, useExperimentalFTL, false) \
     v(bool, useFTLTBAA, true) \
     v(bool, enableLLVMLICM, true) \
+    v(bool, enableLLVMFastISel, true) \
     v(unsigned, llvmOptimizationLevel, 2) \
     \
     v(bool, enableProfiler, false) \

@@ -1,3 +1,36 @@
+2013-05-11  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support Jump and ForceOSRExit
+        https://bugs.webkit.org/show_bug.cgi?id=115942
+
+        Reviewed by Oliver Hunt.
+        
+        Added two obvious nodes: Jump and ForceOSRExit. We already had everything we needed
+        to support them.
+        
+        Adding these increases our coverage a fair bit, and revealed a bug: LLVM's full
+        instruction selector currently appears to mishandle doubles in constant pools (or
+        just constant pools in general) with the small code model in the MCJIT. But switching
+        to FastISel "fixes" it. That's what this patch does, for now. This will probably
+        actually be permanent; the FastISel does pretty much everything we would ever want,
+        at least in the foreseeable future.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        (FTL):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileJSConstant):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compileJump):
+        (JSC::FTL::LowerDFGToLLVM::compileReturn):
+        (JSC::FTL::LowerDFGToLLVM::compileForceOSRExit):
+        * runtime/Options.h:
+        (JSC):
+
 2013-05-10  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL should support CompareStrictEqConstant

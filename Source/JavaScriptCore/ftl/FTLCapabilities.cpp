@@ -32,6 +32,108 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
+inline bool canCompile(Node* node)
+{
+    switch (node->op()) {
+    case JSConstant:
+    case WeakJSConstant:
+    case GetLocal:
+    case SetLocal:
+    case MovHintAndCheck:
+    case MovHint:
+    case ZombieHint:
+    case Phantom:
+    case Flush:
+    case PhantomLocal:
+    case SetArgument:
+    case Return:
+    case BitAnd:
+    case BitOr:
+    case BitXor:
+    case BitRShift:
+    case BitLShift:
+    case BitURShift:
+    case CheckStructure:
+    case StructureTransitionWatchpoint:
+    case PutStructure:
+    case PhantomPutStructure:
+    case GetButterfly:
+    case GetByOffset:
+    case PutByOffset:
+    case GetGlobalVar:
+    case PutGlobalVar:
+    case ValueAdd:
+    case ArithAdd:
+    case ArithSub:
+    case ArithMul:
+    case ArithNegate:
+    case UInt32ToNumber:
+    case Int32ToDouble:
+    case CompareEqConstant:
+    case CompareStrictEqConstant:
+    case Jump:
+    case ForceOSRExit:
+        // These are OK.
+        break;
+    case GetArrayLength:
+        switch (node->arrayMode().type()) {
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+            break;
+        default:
+            return false;
+        }
+        break;
+    case GetByVal:
+        switch (node->arrayMode().type()) {
+        case Array::ForceExit:
+            return true;
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+            break;
+        default:
+            return false;
+        }
+        switch (node->arrayMode().speculation()) {
+        case Array::SaneChain:
+        case Array::InBounds:
+            break;
+        default:
+            return false;
+        }
+        break;
+    case CompareEq:
+    case CompareStrictEq:
+        if (node->isBinaryUseKind(Int32Use))
+            break;
+        if (node->isBinaryUseKind(NumberUse))
+            break;
+        if (node->isBinaryUseKind(ObjectUse))
+            break;
+        return false;
+    case CompareLess:
+    case CompareLessEq:
+    case CompareGreater:
+    case CompareGreaterEq:
+        if (node->isBinaryUseKind(Int32Use))
+            break;
+        if (node->isBinaryUseKind(NumberUse))
+            break;
+        return false;
+    case Branch:
+    case LogicalNot:
+        if (node->child1().useKind() == BooleanUse)
+            break;
+        return false;
+    default:
+        // Don't know how to handle anything else.
+        return false;
+    }
+    return true;
+}
+
 bool canCompile(Graph& graph)
 {
     for (BlockIndex blockIndex = graph.m_blocks.size(); blockIndex--;) {
@@ -65,99 +167,8 @@ bool canCompile(Graph& graph)
                 }
             }
             
-            switch (node->op()) {
-            case JSConstant:
-            case WeakJSConstant:
-            case GetLocal:
-            case SetLocal:
-            case MovHintAndCheck:
-            case MovHint:
-            case ZombieHint:
-            case Phantom:
-            case Flush:
-            case PhantomLocal:
-            case SetArgument:
-            case Return:
-            case BitAnd:
-            case BitOr:
-            case BitXor:
-            case BitRShift:
-            case BitLShift:
-            case BitURShift:
-            case CheckStructure:
-            case StructureTransitionWatchpoint:
-            case PutStructure:
-            case PhantomPutStructure:
-            case GetButterfly:
-            case GetByOffset:
-            case PutByOffset:
-            case GetGlobalVar:
-            case PutGlobalVar:
-            case ValueAdd:
-            case ArithAdd:
-            case ArithSub:
-            case ArithMul:
-            case ArithNegate:
-            case UInt32ToNumber:
-            case Int32ToDouble:
-            case CompareEqConstant:
-            case CompareStrictEqConstant:
-                // These are OK.
-                break;
-            case GetArrayLength:
-                switch (node->arrayMode().type()) {
-                case Array::Int32:
-                case Array::Double:
-                case Array::Contiguous:
-                    break;
-                default:
-                    return false;
-                }
-                break;
-            case GetByVal:
-                switch (node->arrayMode().type()) {
-                case Array::Int32:
-                case Array::Double:
-                case Array::Contiguous:
-                    break;
-                default:
-                    return false;
-                }
-                switch (node->arrayMode().speculation()) {
-                case Array::SaneChain:
-                case Array::InBounds:
-                    break;
-                default:
-                    return false;
-                }
-                break;
-            case CompareEq:
-            case CompareStrictEq:
-                if (node->isBinaryUseKind(Int32Use))
-                    break;
-                if (node->isBinaryUseKind(NumberUse))
-                    break;
-                if (node->isBinaryUseKind(ObjectUse))
-                    break;
+            if (!canCompile(node))
                 return false;
-            case CompareLess:
-            case CompareLessEq:
-            case CompareGreater:
-            case CompareGreaterEq:
-                if (node->isBinaryUseKind(Int32Use))
-                    break;
-                if (node->isBinaryUseKind(NumberUse))
-                    break;
-                return false;
-            case Branch:
-            case LogicalNot:
-                if (node->child1().useKind() == BooleanUse)
-                    break;
-                return false;
-            default:
-                // Don't know how to handle anything else.
-                return false;
-            }
         }
     }
     
