@@ -157,8 +157,11 @@ if ($ENV{ENABLE_FTL_JIT}) {
             $ownLLVMBuildMode .= "Debug";
         }
         
-        # FIXME: Add support for builds that disable assertions.
-        $ownLLVMBuildMode .= "+Asserts";
+        if (fileContains($ownLLVMDirectory . "/Makefile.config", "DISABLE_ASSERTIONS=1")) {
+            # Nothing to do.
+        } else {
+            $ownLLVMBuildMode .= "+Asserts";
+        }
         
         my $librarySourceDirectory = "$ownLLVMDirectory/$ownLLVMBuildMode/lib";
         my $libraryTargetDirectory = $productDir;
