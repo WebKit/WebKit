@@ -1,5 +1,152 @@
 2013-07-18  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: Decouple the way that CFA stores its state from the way it does abstract interpretation
+        https://bugs.webkit.org/show_bug.cgi?id=118835
+
+        Reviewed by Oliver Hunt.
+        
+        This separates AbstractState into two things:
+        
+        - InPlaceAbstractState, which can tell you the abstract state of anything you
+          might care about, and uses the old AbstractState's algorithms and data
+          structures for doing so.
+        
+        - AbstractInterpreter<AbstractStateType>, which can execute a DFG::Node* with
+          respect to an AbstractStateType. Currently we always use
+          AbstractStateType = InPlaceAbstractState. But we could drop in an other
+          class that supports basic primitives like forNode() and variables().
+        
+        This is important because:
+        
+        - We want to hoist things out of loops.
+
+        - We don't know what things rely on what type checks.
+
+        - We only want to hoist type checks out of loops if they aren't clobbered.
+
+        - We may want to still hoist things that depended on those type checks, if it's
+          safe to do those things based on the CFA state at the tail of the loop
+          pre-header.
+
+        - We don't want things to rely on their type checks by way of a token, because
+          that's just weird.
+
+        So, we want to be able to have a special form of the CFA that can
+        incrementally update a basic block's state-at-tail, and we want to be able to
+        do this for multiple blocks simultaneously. This requires *not* storing the
+        per-node state in the nodes themselves, but instead using the at-tail HashMap
+        directly.
+
+        Hence we need to have a way of making the abstract interpreter (i.e.
+        AbstractState::execute) polymorphic with respect to state representation. Put
+        another way, we need to separate the way that abstract state is represented
+        from the way DFG IR is abstractly interpreted.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreter.h: Added.
+        (DFG):
+        (AbstractInterpreter):
+        (JSC::DFG::AbstractInterpreter::forNode):
+        (JSC::DFG::AbstractInterpreter::variables):
+        (JSC::DFG::AbstractInterpreter::needsTypeCheck):
+        (JSC::DFG::AbstractInterpreter::filterEdgeByUse):
+        (JSC::DFG::AbstractInterpreter::filter):
+        (JSC::DFG::AbstractInterpreter::filterArrayModes):
+        (JSC::DFG::AbstractInterpreter::filterByValue):
+        (JSC::DFG::AbstractInterpreter::trySetConstant):
+        (JSC::DFG::AbstractInterpreter::filterByType):
+        * dfg/DFGAbstractInterpreterInlines.h: Added.
+        (DFG):
+        (JSC::DFG::::AbstractInterpreter):
+        (JSC::DFG::::~AbstractInterpreter):
+        (JSC::DFG::::booleanResult):
+        (JSC::DFG::::startExecuting):
+        (JSC::DFG::::executeEdges):
+        (JSC::DFG::::verifyEdge):
+        (JSC::DFG::::verifyEdges):
+        (JSC::DFG::::executeEffects):
+        (JSC::DFG::::execute):
+        (JSC::DFG::::clobberWorld):
+        (JSC::DFG::::clobberCapturedVars):
+        (JSC::DFG::::clobberStructures):
+        (JSC::DFG::::dump):
+        (JSC::DFG::::filter):
+        (JSC::DFG::::filterArrayModes):
+        (JSC::DFG::::filterByValue):
+        * dfg/DFGAbstractState.cpp: Removed.
+        * dfg/DFGAbstractState.h: Removed.
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::CFAPhase):
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        (CFAPhase):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::ConstantFoldingPhase):
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (ConstantFoldingPhase):
+        * dfg/DFGInPlaceAbstractState.cpp: Added.
+        (DFG):
+        (JSC::DFG::InPlaceAbstractState::InPlaceAbstractState):
+        (JSC::DFG::InPlaceAbstractState::~InPlaceAbstractState):
+        (JSC::DFG::InPlaceAbstractState::beginBasicBlock):
+        (JSC::DFG::setLiveValues):
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+        (JSC::DFG::InPlaceAbstractState::reset):
+        (JSC::DFG::InPlaceAbstractState::mergeStateAtTail):
+        (JSC::DFG::InPlaceAbstractState::merge):
+        (JSC::DFG::InPlaceAbstractState::mergeToSuccessors):
+        (JSC::DFG::InPlaceAbstractState::mergeVariableBetweenBlocks):
+        * dfg/DFGInPlaceAbstractState.h: Added.
+        (DFG):
+        (InPlaceAbstractState):
+        (JSC::DFG::InPlaceAbstractState::forNode):
+        (JSC::DFG::InPlaceAbstractState::variables):
+        (JSC::DFG::InPlaceAbstractState::block):
+        (JSC::DFG::InPlaceAbstractState::didClobber):
+        (JSC::DFG::InPlaceAbstractState::isValid):
+        (JSC::DFG::InPlaceAbstractState::setDidClobber):
+        (JSC::DFG::InPlaceAbstractState::setIsValid):
+        (JSC::DFG::InPlaceAbstractState::setBranchDirection):
+        (JSC::DFG::InPlaceAbstractState::setFoundConstants):
+        (JSC::DFG::InPlaceAbstractState::haveStructures):
+        (JSC::DFG::InPlaceAbstractState::setHaveStructures):
+        * dfg/DFGMergeMode.h: Added.
+        (DFG):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::backwardTypeCheck):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compileToStringOnCell):
+        (JSC::DFG::SpeculativeJIT::speculateStringIdentAndLoadStorage):
+        (JSC::DFG::SpeculativeJIT::speculateStringObject):
+        (JSC::DFG::SpeculativeJIT::speculateStringOrStringObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::needsTypeCheck):
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (FTL):
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::appendTypeCheck):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateNumber):
+        (JSC::FTL::LowerDFGToLLVM::speculateRealNumber):
+        (LowerDFGToLLVM):
+
+2013-07-18  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: DFG shouldn't create CheckStructures for array accesses except if the ArrayMode implies an original array access
         https://bugs.webkit.org/show_bug.cgi?id=118867
 

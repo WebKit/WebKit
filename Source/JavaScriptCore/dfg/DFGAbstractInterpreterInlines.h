@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGAbstractState.h"
+#ifndef DFGAbstractInterpreterInlines_h
+#define DFGAbstractInterpreterInlines_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
-#include "DFGBasicBlock.h"
+#include "DFGAbstractInterpreter.h"
 #include "GetByIdStatus.h"
 #include "Operations.h"
 #include "PutByIdStatus.h"
@@ -37,232 +38,23 @@
 
 namespace JSC { namespace DFG {
 
-AbstractState::AbstractState(Graph& graph)
+template<typename AbstractStateType>
+AbstractInterpreter<AbstractStateType>::AbstractInterpreter(Graph& graph, AbstractStateType& state)
     : m_codeBlock(graph.m_codeBlock)
     , m_graph(graph)
-    , m_variables(m_codeBlock->numParameters(), graph.m_localVars)
-    , m_block(0)
+    , m_state(state)
 {
 }
 
-AbstractState::~AbstractState() { }
-
-void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
+template<typename AbstractStateType>
+AbstractInterpreter<AbstractStateType>::~AbstractInterpreter()
 {
-    ASSERT(!m_block);
-    
-    ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->valuesAtHead.numberOfLocals());
-    ASSERT(basicBlock->variablesAtTail.numberOfLocals() == basicBlock->valuesAtTail.numberOfLocals());
-    ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->variablesAtTail.numberOfLocals());
-    
-    for (size_t i = 0; i < basicBlock->size(); i++)
-        forNode(basicBlock->at(i)).clear();
-
-    m_variables = basicBlock->valuesAtHead;
-    m_haveStructures = false;
-    for (size_t i = 0; i < m_variables.numberOfArguments(); ++i) {
-        if (m_variables.argument(i).hasClobberableState()) {
-            m_haveStructures = true;
-            break;
-        }
-    }
-    for (size_t i = 0; i < m_variables.numberOfLocals(); ++i) {
-        if (m_variables.local(i).hasClobberableState()) {
-            m_haveStructures = true;
-            break;
-        }
-    }
-    
-    if (m_graph.m_form == SSA) {
-        HashMap<Node*, AbstractValue>::iterator iter = basicBlock->ssa->valuesAtHead.begin();
-        HashMap<Node*, AbstractValue>::iterator end = basicBlock->ssa->valuesAtHead.end();
-        for (; iter != end; ++iter) {
-            forNode(iter->key) = iter->value;
-            if (iter->value.hasClobberableState())
-                m_haveStructures = true;
-        }
-    }
-    
-    basicBlock->cfaShouldRevisit = false;
-    basicBlock->cfaHasVisited = true;
-    m_block = basicBlock;
-    m_isValid = true;
-    m_foundConstants = false;
-    m_branchDirection = InvalidBranchDirection;
 }
 
-static void setLiveValues(HashMap<Node*, AbstractValue>& values, HashSet<Node*>& live)
-{
-    values.clear();
-    
-    HashSet<Node*>::iterator iter = live.begin();
-    HashSet<Node*>::iterator end = live.end();
-    for (; iter != end; ++iter)
-        values.add(*iter, AbstractValue());
-}
-
-void AbstractState::initialize()
-{
-    BasicBlock* root = m_graph.block(0);
-    root->cfaShouldRevisit = true;
-    root->cfaHasVisited = false;
-    root->cfaFoundConstants = false;
-    for (size_t i = 0; i < root->valuesAtHead.numberOfArguments(); ++i) {
-        if (m_graph.m_form == SSA) {
-            root->valuesAtHead.argument(i).makeTop();
-            continue;
-        }
-        
-        Node* node = root->variablesAtHead.argument(i);
-        ASSERT(node->op() == SetArgument);
-        if (!node->variableAccessData()->shouldUnboxIfPossible()) {
-            root->valuesAtHead.argument(i).makeTop();
-            continue;
-        }
-        
-        SpeculatedType prediction =
-            node->variableAccessData()->argumentAwarePrediction();
-        if (isInt32Speculation(prediction))
-            root->valuesAtHead.argument(i).setType(SpecInt32);
-        else if (isBooleanSpeculation(prediction))
-            root->valuesAtHead.argument(i).setType(SpecBoolean);
-        else if (isCellSpeculation(prediction))
-            root->valuesAtHead.argument(i).setType(SpecCell);
-        else
-            root->valuesAtHead.argument(i).makeTop();
-        
-        root->valuesAtTail.argument(i).clear();
-    }
-    for (size_t i = 0; i < root->valuesAtHead.numberOfLocals(); ++i) {
-        Node* node = root->variablesAtHead.local(i);
-        if (node && node->variableAccessData()->isCaptured())
-            root->valuesAtHead.local(i).makeTop();
-        else
-            root->valuesAtHead.local(i).clear();
-        root->valuesAtTail.local(i).clear();
-    }
-    for (BlockIndex blockIndex = 1 ; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-        BasicBlock* block = m_graph.block(blockIndex);
-        if (!block)
-            continue;
-        ASSERT(block->isReachable);
-        block->cfaShouldRevisit = false;
-        block->cfaHasVisited = false;
-        block->cfaFoundConstants = false;
-        for (size_t i = 0; i < block->valuesAtHead.numberOfArguments(); ++i) {
-            block->valuesAtHead.argument(i).clear();
-            block->valuesAtTail.argument(i).clear();
-        }
-        for (size_t i = 0; i < block->valuesAtHead.numberOfLocals(); ++i) {
-            block->valuesAtHead.local(i).clear();
-            block->valuesAtTail.local(i).clear();
-        }
-        if (!block->isOSRTarget)
-            continue;
-        if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
-            continue;
-        for (size_t i = 0; i < m_graph.m_plan.mustHandleValues.size(); ++i) {
-            AbstractValue value;
-            value.setMostSpecific(m_graph, m_graph.m_plan.mustHandleValues[i]);
-            int operand = m_graph.m_plan.mustHandleValues.operandForIndex(i);
-            block->valuesAtHead.operand(operand).merge(value);
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("    Initializing Block #%u, operand r%d, to ", blockIndex, operand);
-            block->valuesAtHead.operand(operand).dump(WTF::dataFile());
-            dataLogF("\n");
-#endif
-        }
-        block->cfaShouldRevisit = true;
-    }
-    if (m_graph.m_form == SSA) {
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-            setLiveValues(block->ssa->valuesAtHead, block->ssa->liveAtHead);
-            setLiveValues(block->ssa->valuesAtTail, block->ssa->liveAtTail);
-        }
-    }
-}
-
-bool AbstractState::endBasicBlock(MergeMode mergeMode)
-{
-    ASSERT(m_block);
-    
-    BasicBlock* block = m_block; // Save the block for successor merging.
-    
-    block->cfaFoundConstants = m_foundConstants;
-    block->cfaDidFinish = m_isValid;
-    block->cfaBranchDirection = m_branchDirection;
-    
-    if (!m_isValid) {
-        reset();
-        return false;
-    }
-    
-    bool changed = false;
-    
-    if (mergeMode != DontMerge || !ASSERT_DISABLED) {
-        switch (m_graph.m_form) {
-        case ThreadedCPS: {
-            for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("        Merging state for argument %zu.\n", argument);
-#endif
-                AbstractValue& destination = block->valuesAtTail.argument(argument);
-                changed |= mergeStateAtTail(destination, m_variables.argument(argument), block->variablesAtTail.argument(argument));
-            }
-            
-            for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("        Merging state for local %zu.\n", local);
-#endif
-                AbstractValue& destination = block->valuesAtTail.local(local);
-                changed |= mergeStateAtTail(destination, m_variables.local(local), block->variablesAtTail.local(local));
-            }
-            break;
-        }
-            
-        case SSA: {
-            for (size_t i = 0; i < block->valuesAtTail.size(); ++i)
-                changed |= block->valuesAtTail[i].merge(m_variables[i]);
-            
-            HashSet<Node*>::iterator iter = block->ssa->liveAtTail.begin();
-            HashSet<Node*>::iterator end = block->ssa->liveAtTail.end();
-            for (; iter != end; ++iter) {
-                Node* node = *iter;
-                changed |= block->ssa->valuesAtTail.find(node)->value.merge(forNode(node));
-            }
-            break;
-        }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-    
-    ASSERT(mergeMode != DontMerge || !changed);
-    
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLogF("        Branch direction = %s\n", branchDirectionToString(m_branchDirection));
-#endif
-    
-    reset();
-    
-    if (mergeMode != MergeToSuccessors)
-        return changed;
-    
-    return mergeToSuccessors(block);
-}
-
-void AbstractState::reset()
-{
-    m_block = 0;
-    m_isValid = false;
-    m_branchDirection = InvalidBranchDirection;
-}
-
-AbstractState::BooleanResult AbstractState::booleanResult(Node* node, AbstractValue& value)
+template<typename AbstractStateType>
+typename AbstractInterpreter<AbstractStateType>::BooleanResult
+AbstractInterpreter<AbstractStateType>::booleanResult(
+    Node* node, AbstractValue& value)
 {
     JSValue childConst = value.value();
     if (childConst) {
@@ -283,44 +75,51 @@ AbstractState::BooleanResult AbstractState::booleanResult(Node* node, AbstractVa
     return UnknownBooleanResult;
 }
 
-bool AbstractState::startExecuting(Node* node)
+template<typename AbstractStateType>
+bool AbstractInterpreter<AbstractStateType>::startExecuting(Node* node)
 {
-    ASSERT(m_block);
-    ASSERT(m_isValid);
+    ASSERT(m_state.block());
+    ASSERT(m_state.isValid());
     
-    m_didClobber = false;
+    m_state.setDidClobber(false);
     
     node->setCanExit(false);
     
     return node->shouldGenerate();
 }
 
-bool AbstractState::startExecuting(unsigned indexInBlock)
+template<typename AbstractStateType>
+bool AbstractInterpreter<AbstractStateType>::startExecuting(unsigned indexInBlock)
 {
-    return startExecuting(m_block->at(indexInBlock));
+    return startExecuting(m_state.block()->at(indexInBlock));
 }
 
-void AbstractState::executeEdges(Node* node)
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::executeEdges(Node* node)
 {
     DFG_NODE_DO_TO_CHILDREN(m_graph, node, filterEdgeByUse);
 }
 
-void AbstractState::executeEdges(unsigned indexInBlock)
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::executeEdges(unsigned indexInBlock)
 {
-    executeEdges(m_block->at(indexInBlock));
+    executeEdges(m_state.block()->at(indexInBlock));
 }
 
-void AbstractState::verifyEdge(Node*, Edge edge)
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::verifyEdge(Node*, Edge edge)
 {
     RELEASE_ASSERT(!(forNode(edge).m_type & ~typeFilterFor(edge.useKind())));
 }
 
-void AbstractState::verifyEdges(Node* node)
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::verifyEdges(Node* node)
 {
     DFG_NODE_DO_TO_CHILDREN(m_graph, node, verifyEdge);
 }
 
-bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
+template<typename AbstractStateType>
+bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBlock, Node* node)
 {
     if (!ASSERT_DISABLED)
         verifyEdges(node);
@@ -341,7 +140,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case GetArgument: {
         ASSERT(m_graph.m_form == SSA);
         VariableAccessData* variable = node->variableAccessData();
-        AbstractValue& value = m_variables.operand(variable->local());
+        AbstractValue& value = m_state.variables().operand(variable->local());
         ASSERT(value.isTop());
         FiltrationResult result =
             value.filter(typeFilterFor(useKindFor(variable->flushFormat())));
@@ -353,30 +152,30 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case GetLocal: {
         VariableAccessData* variableAccessData = node->variableAccessData();
         if (variableAccessData->prediction() == SpecNone) {
-            m_isValid = false;
+            m_state.setIsValid(false);
             break;
         }
-        AbstractValue value = m_variables.operand(variableAccessData->local());
+        AbstractValue value = m_state.variables().operand(variableAccessData->local());
         if (!variableAccessData->isCaptured()) {
             if (value.isClear())
                 node->setCanExit(true);
         }
         if (value.value())
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
         forNode(node) = value;
         break;
     }
         
     case GetLocalUnlinked: {
-        AbstractValue value = m_variables.operand(node->unlinkedLocal());
+        AbstractValue value = m_state.variables().operand(node->unlinkedLocal());
         if (value.value())
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
         forNode(node) = value;
         break;
     }
         
     case SetLocal: {
-        m_variables.operand(node->local()) = forNode(node->child1());
+        m_state.variables().operand(node->local()) = forNode(node->child1());
         break;
     }
         
@@ -394,7 +193,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             
     case SetArgument:
         // Assert that the state of arguments has been set.
-        ASSERT(!m_block->valuesAtHead.operand(node->local()).isClear());
+        ASSERT(!m_state.block()->valuesAtHead.operand(node->local()).isClear());
         break;
             
     case BitAnd:
@@ -433,7 +232,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                 constantWasSet = false;
             }
             if (constantWasSet) {
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         }
@@ -446,7 +245,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         if (child && child.isNumber()) {
             ASSERT(child.isInt32());
             if (trySetConstant(node, JSValue(child.asUInt32()))) {
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         }
@@ -466,7 +265,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             int32_t asInt = JSC::toInt32(asDouble);
             if (bitwise_cast<int64_t>(static_cast<double>(asInt)) == bitwise_cast<int64_t>(asDouble)
                 && trySetConstant(node, JSValue(asInt))) {
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         }
@@ -484,7 +283,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             else
                 constantWasSet = trySetConstant(node, JSValue(JSC::toInt32(child.asDouble())));
             if (constantWasSet) {
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         }
@@ -498,7 +297,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()
             && trySetConstant(node, JSValue(JSValue::EncodeAsDouble, child.asNumber()))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         if (isInt32Speculation(forNode(node->child1()).m_type))
@@ -514,7 +313,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         JSValue right = forNode(node->child2()).value();
         if (left && right && left.isNumber() && right.isNumber()
             && trySetConstant(node, JSValue(left.asNumber() + right.asNumber()))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         switch (node->binaryUseKind()) {
@@ -549,7 +348,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         JSValue right = forNode(node->child2()).value();
         if (left && right && left.isNumber() && right.isNumber()
             && trySetConstant(node, JSValue(left.asNumber() - right.asNumber()))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         switch (node->binaryUseKind()) {
@@ -572,7 +371,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()
             && trySetConstant(node, JSValue(-child.asNumber()))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         switch (node->child1().useKind()) {
@@ -596,7 +395,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         JSValue right = forNode(node->child2()).value();
         if (left && right && left.isNumber() && right.isNumber()
             && trySetConstant(node, JSValue(left.asNumber() * right.asNumber()))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         switch (node->binaryUseKind()) {
@@ -633,7 +432,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         JSValue right = forNode(node->child2()).value();
         if (node->op() == ArithMod && right && right.isNumber() && right.asNumber() == 1
             && trySetConstant(node, JSValue(0))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         if (left && right && left.isNumber() && right.isNumber()) {
@@ -659,7 +458,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                 break;
             }
             if (constantWasSet) {
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         }
@@ -682,7 +481,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()
             && trySetConstant(node, JSValue(fabs(child.asNumber())))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         switch (node->child1().useKind()) {
@@ -704,7 +503,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()
             && trySetConstant(node, JSValue(sqrt(child.asNumber())))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         forNode(node).setType(SpecDouble);
@@ -724,7 +523,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             break;
         }
         if (didSetConstant) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         switch (node->child1().useKind()) {
@@ -782,7 +581,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                 break;
             }
             if (constantWasSet) {
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         }
@@ -798,37 +597,37 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         if (child) {
             JSValue typeString = jsTypeStringForValue(*vm, m_codeBlock->globalObjectFor(node->codeOrigin), child);
             if (trySetConstant(node, typeString)) {
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         } else if (isNumberSpeculation(abstractChild.m_type)) {
             if (trySetConstant(node, vm->smallStrings.numberString())) {
                 filter(node->child1(), SpecNumber);
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         } else if (isStringSpeculation(abstractChild.m_type)) {
             if (trySetConstant(node, vm->smallStrings.stringString())) {
                 filter(node->child1(), SpecString);
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         } else if (isFinalObjectSpeculation(abstractChild.m_type) || isArraySpeculation(abstractChild.m_type) || isArgumentsSpeculation(abstractChild.m_type)) {
             if (trySetConstant(node, vm->smallStrings.objectString())) {
                 filter(node->child1(), SpecFinalObject | SpecArray | SpecArguments);
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         } else if (isFunctionSpeculation(abstractChild.m_type)) {
             if (trySetConstant(node, vm->smallStrings.functionString())) {
                 filter(node->child1(), SpecFunction);
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         } else if (isBooleanSpeculation(abstractChild.m_type)) {
             if (trySetConstant(node, vm->smallStrings.booleanString())) {
                 filter(node->child1(), SpecBoolean);
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
         }
@@ -903,7 +702,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         
         if (constantWasSet) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         
@@ -928,14 +727,14 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         if (left && right) {
             if (left.isNumber() && right.isNumber()
                 && trySetConstant(node, jsBoolean(left.asNumber() == right.asNumber()))) {
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
             if (left.isString() && right.isString()) {
                 const StringImpl* a = asString(left)->tryGetValueImpl();
                 const StringImpl* b = asString(right)->tryGetValueImpl();
                 if (a && b && trySetConstant(node, jsBoolean(WTF::equal(a, b)))) {
-                    m_foundConstants = true;
+                    m_state.setFoundConstants(true);
                     break;
                 }
             }
@@ -968,7 +767,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             RELEASE_ASSERT_NOT_REACHED();
             break;
         case Array::ForceExit:
-            m_isValid = false;
+            m_state.setIsValid(false);
             break;
         case Array::Generic:
             clobberWorld(node->codeOrigin, indexInBlock);
@@ -1057,7 +856,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         node->setCanExit(true);
         switch (node->arrayMode().modeForPut().type()) {
         case Array::ForceExit:
-            m_isValid = false;
+            m_state.setIsValid(false);
             break;
         case Array::Generic:
             clobberWorld(node->codeOrigin, indexInBlock);
@@ -1112,11 +911,11 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         Node* child = node->child1().node();
         BooleanResult result = booleanResult(node, forNode(child));
         if (result == DefinitelyTrue) {
-            m_branchDirection = TakeTrue;
+            m_state.setBranchDirection(TakeTrue);
             break;
         }
         if (result == DefinitelyFalse) {
-            m_branchDirection = TakeFalse;
+            m_state.setBranchDirection(TakeFalse);
             break;
         }
         // FIXME: The above handles the trivial cases of sparse conditional
@@ -1124,7 +923,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         // We can specialize the source variable's value on each direction of
         // the branch.
         node->setCanExit(true); // This is overly conservative.
-        m_branchDirection = TakeBoth;
+        m_state.setBranchDirection(TakeBoth);
         break;
     }
         
@@ -1135,19 +934,19 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     }
             
     case Return:
-        m_isValid = false;
+        m_state.setIsValid(false);
         break;
         
     case Throw:
     case ThrowReferenceError:
-        m_isValid = false;
+        m_state.setIsValid(false);
         node->setCanExit(true);
         break;
             
     case ToPrimitive: {
         JSValue childConst = forNode(node->child1()).value();
         if (childConst && childConst.isNumber() && trySetConstant(node, childConst)) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         
@@ -1186,7 +985,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         destination.setType(type);
         if (destination.isClear())
-            m_isValid = false;
+            m_state.setIsValid(false);
         break;
     }
         
@@ -1226,7 +1025,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         forNode(node).set(
             m_graph,
             m_graph.globalObjectFor(node->codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
         
     case NewArrayBuffer:
@@ -1234,18 +1033,18 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         forNode(node).set(
             m_graph,
             m_graph.globalObjectFor(node->codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
 
     case NewArrayWithSize:
         node->setCanExit(true);
         forNode(node).setType(SpecArray);
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
             
     case NewRegexp:
         forNode(node).set(m_graph, m_graph.globalObjectFor(node->codeOrigin)->regExpStructure());
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
             
     case ToThis: {
@@ -1268,19 +1067,19 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
 
     case NewObject:
         forNode(node).set(m_graph, node->structure());
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
         
     case CreateActivation:
         forNode(node).set(
             m_graph, m_codeBlock->globalObjectFor(node->codeOrigin)->activationStructure());
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
         
     case CreateArguments:
         forNode(node).set(
             m_graph, m_codeBlock->globalObjectFor(node->codeOrigin)->argumentsStructure());
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
         
     case TearOffActivation:
@@ -1290,9 +1089,9 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
 
     case CheckArgumentsNotCreated:
         if (isEmptySpeculation(
-                m_variables.operand(
+                m_state.variables().operand(
                     m_graph.argumentsRegisterFor(node->codeOrigin)).m_type))
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
         else
             node->setCanExit(true);
         break;
@@ -1309,7 +1108,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             forNode(node).setType(SpecInt32);
         node->setCanExit(
             !isEmptySpeculation(
-                m_variables.operand(
+                m_state.variables().operand(
                     m_graph.argumentsRegisterFor(node->codeOrigin)).m_type));
         break;
         
@@ -1344,7 +1143,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         value = forNode(node->child1());
         
         if (!(value.m_type & SpecEmpty)) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
 
@@ -1375,7 +1174,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case SkipScope: {
         JSValue child = forNode(node->child1()).value();
         if (child && trySetConstant(node, JSValue(jsCast<JSScope*>(child.asCell())->next()))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         forNode(node).setType(SpecCellOther);
@@ -1398,7 +1197,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case GetByIdFlush:
         node->setCanExit(true);
         if (!node->prediction()) {
-            m_isValid = false;
+            m_state.setIsValid(false);
             break;
         }
         if (isCellSpeculation(node->child1()->prediction())) {
@@ -1418,7 +1217,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                         forNode(node).makeTop();
                     filter(node->child1(), status.structureSet());
                     
-                    m_foundConstants = true;
+                    m_state.setFoundConstants(true);
                     break;
                 }
             }
@@ -1450,7 +1249,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         StructureSet& set = node->structureSet();
 
         if (value.m_currentKnownStructure.isSubsetOf(set)) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
 
@@ -1461,13 +1260,13 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         // turn this into a watchpoint instead.
         if (value.m_futurePossibleStructure.isSubsetOf(set)
             && value.m_futurePossibleStructure.hasSingleton()) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             filter(value, value.m_futurePossibleStructure.singleton());
             break;
         }
 
         filter(value, set);
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
     }
         
@@ -1486,7 +1285,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             || m_graph.watchpoints().shouldAssumeMixedState(node->structure()->transitionWatchpointSet()));
         
         filter(value, node->structure());
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         node->setCanExit(true);
         break;
     }
@@ -1496,7 +1295,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         if (!forNode(node->child1()).m_currentKnownStructure.isClear()) {
             clobberStructures(indexInBlock);
             forNode(node->child1()).set(m_graph, node->structureTransitionData().newStructure);
-            m_haveStructures = true;
+            m_state.setHaveStructures(true);
         }
         break;
     case GetButterfly:
@@ -1507,7 +1306,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case ForwardCheckArray:
     case CheckArray: {
         if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         node->setCanExit(true); // Lies, but this is followed by operations (like GetByVal) that always exit, so there is no point in us trying to be clever here.
@@ -1556,12 +1355,12 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             break;
         }
         filterArrayModes(node->child1(), node->arrayMode().arrayModesThatPassFiltering());
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
     }
     case Arrayify: {
         if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             break;
         }
         ASSERT(node->arrayMode().conversion() == Array::Convert
@@ -1569,7 +1368,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         node->setCanExit(true);
         clobberStructures(indexInBlock);
         filterArrayModes(node->child1(), node->arrayMode().arrayModesThatPassFiltering());
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
     }
     case ArrayifyToStructure: {
@@ -1577,11 +1376,11 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         StructureSet set = node->structure();
         if (value.m_futurePossibleStructure.isSubsetOf(set)
             || value.m_currentKnownStructure.isSubsetOf(set))
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
         node->setCanExit(true);
         clobberStructures(indexInBlock);
         filter(value, set);
-        m_haveStructures = true;
+        m_state.setHaveStructures(true);
         break;
     }
     case GetIndexedPropertyStorage: {
@@ -1600,7 +1399,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case CheckFunction: {
         JSValue value = forNode(node->child1()).value();
         if (value == node->function()) {
-            m_foundConstants = true;
+            m_state.setFoundConstants(true);
             ASSERT(value);
             break;
         }
@@ -1622,14 +1421,14 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                 node->op() == PutByIdDirect);
             if (status.isSimpleReplace()) {
                 filter(node->child1(), structure);
-                m_foundConstants = true;
+                m_state.setFoundConstants(true);
                 break;
             }
             if (status.isSimpleTransition()) {
                 clobberStructures(indexInBlock);
                 forNode(node->child1()).set(m_graph, status.newStructure());
-                m_haveStructures = true;
-                m_foundConstants = true;
+                m_state.setHaveStructures(true);
+                m_state.setFoundConstants(true);
                 break;
             }
         }
@@ -1693,7 +1492,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case ForceOSRExit:
     case ForwardForceOSRExit:
         node->setCanExit(true);
-        m_isValid = false;
+        m_state.setIsValid(false);
         break;
             
     case CheckWatchdogTimer:
@@ -1710,17 +1509,19 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         break;
     }
     
-    return m_isValid;
+    return m_state.isValid();
 }
 
-bool AbstractState::executeEffects(unsigned indexInBlock)
+template<typename AbstractStateType>
+bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBlock)
 {
-    return executeEffects(indexInBlock, m_block->at(indexInBlock));
+    return executeEffects(indexInBlock, m_state.block()->at(indexInBlock));
 }
 
-bool AbstractState::execute(unsigned indexInBlock)
+template<typename AbstractStateType>
+bool AbstractInterpreter<AbstractStateType>::execute(unsigned indexInBlock)
 {
-    Node* node = m_block->at(indexInBlock);
+    Node* node = m_state.block()->at(indexInBlock);
     if (!startExecuting(node))
         return true;
     
@@ -1728,262 +1529,65 @@ bool AbstractState::execute(unsigned indexInBlock)
     return executeEffects(indexInBlock, node);
 }
 
-inline void AbstractState::clobberWorld(const CodeOrigin& codeOrigin, unsigned indexInBlock)
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::clobberWorld(
+    const CodeOrigin& codeOrigin, unsigned indexInBlock)
 {
     clobberCapturedVars(codeOrigin);
     clobberStructures(indexInBlock);
 }
 
-inline void AbstractState::clobberCapturedVars(const CodeOrigin& codeOrigin)
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::clobberCapturedVars(const CodeOrigin& codeOrigin)
 {
     if (codeOrigin.inlineCallFrame) {
         const BitVector& capturedVars = codeOrigin.inlineCallFrame->capturedVars;
         for (size_t i = capturedVars.size(); i--;) {
             if (!capturedVars.quickGet(i))
                 continue;
-            m_variables.local(i).makeTop();
+            m_state.variables().local(i).makeTop();
         }
     } else {
         for (size_t i = m_codeBlock->m_numVars; i--;) {
             if (m_codeBlock->isCaptured(i))
-                m_variables.local(i).makeTop();
+                m_state.variables().local(i).makeTop();
         }
     }
 
-    for (size_t i = m_variables.numberOfArguments(); i--;) {
+    for (size_t i = m_state.variables().numberOfArguments(); i--;) {
         if (m_codeBlock->isCaptured(argumentToOperand(i)))
-            m_variables.argument(i).makeTop();
+            m_state.variables().argument(i).makeTop();
     }
 }
 
-inline void AbstractState::clobberStructures(unsigned indexInBlock)
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::clobberStructures(unsigned indexInBlock)
 {
-    if (!m_haveStructures)
+    if (!m_state.haveStructures())
         return;
     for (size_t i = indexInBlock + 1; i--;)
-        forNode(m_block->at(i)).clobberStructures();
+        forNode(m_state.block()->at(i)).clobberStructures();
     if (m_graph.m_form == SSA) {
-        HashSet<Node*>::iterator iter = m_block->ssa->liveAtHead.begin();
-        HashSet<Node*>::iterator end = m_block->ssa->liveAtHead.end();
+        HashSet<Node*>::iterator iter = m_state.block()->ssa->liveAtHead.begin();
+        HashSet<Node*>::iterator end = m_state.block()->ssa->liveAtHead.end();
         for (; iter != end; ++iter)
             forNode(*iter).clobberStructures();
     }
-    for (size_t i = m_variables.numberOfArguments(); i--;)
-        m_variables.argument(i).clobberStructures();
-    for (size_t i = m_variables.numberOfLocals(); i--;)
-        m_variables.local(i).clobberStructures();
-    m_haveStructures = false;
-    m_didClobber = true;
+    for (size_t i = m_state.variables().numberOfArguments(); i--;)
+        m_state.variables().argument(i).clobberStructures();
+    for (size_t i = m_state.variables().numberOfLocals(); i--;)
+        m_state.variables().local(i).clobberStructures();
+    m_state.setHaveStructures(true);
+    m_state.setDidClobber(true);
 }
 
-bool AbstractState::mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node* node)
-{
-    if (!node)
-        return false;
-        
-    AbstractValue source;
-    
-    if (node->variableAccessData()->isCaptured()) {
-        // If it's captured then we know that whatever value was stored into the variable last is the
-        // one we care about. This is true even if the variable at tail is dead, which might happen if
-        // the last thing we did to the variable was a GetLocal and then ended up now using the
-        // GetLocal's result.
-        
-        source = inVariable;
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("          Transfering ");
-        source.dump(WTF::dataFile());
-        dataLogF(" from last access due to captured variable.\n");
-#endif
-    } else {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("          It's live, node @%u.\n", node->index());
-#endif
-    
-        switch (node->op()) {
-        case Phi:
-        case SetArgument:
-        case PhantomLocal:
-        case Flush:
-            // The block transfers the value from head to tail.
-            source = inVariable;
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("          Transfering ");
-            source.dump(WTF::dataFile());
-            dataLogF(" from head to tail.\n");
-#endif
-            break;
-            
-        case GetLocal:
-            // The block refines the value with additional speculations.
-            source = forNode(node);
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("          Refining to ");
-            source.dump(WTF::dataFile());
-            dataLogF("\n");
-#endif
-            break;
-            
-        case SetLocal:
-            // The block sets the variable, and potentially refines it, both
-            // before and after setting it.
-            if (node->variableAccessData()->shouldUseDoubleFormat()) {
-                // FIXME: This unnecessarily loses precision.
-                source.setType(SpecDouble);
-            } else
-                source = forNode(node->child1());
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("          Setting to ");
-            source.dump(WTF::dataFile());
-            dataLogF("\n");
-#endif
-            break;
-        
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-    
-    if (destination == source) {
-        // Abstract execution did not change the output value of the variable, for this
-        // basic block, on this iteration.
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("          Not changed!\n");
-#endif
-        return false;
-    }
-    
-    // Abstract execution reached a new conclusion about the speculations reached about
-    // this variable after execution of this basic block. Update the state, and return
-    // true to indicate that the fixpoint must go on!
-    destination = source;
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLogF("          Changed!\n");
-#endif
-    return true;
-}
-
-bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
-{
-    ASSERT(from->variablesAtTail.numberOfArguments() == to->variablesAtHead.numberOfArguments());
-    ASSERT(from->variablesAtTail.numberOfLocals() == to->variablesAtHead.numberOfLocals());
-    
-    bool changed = false;
-    
-    switch (m_graph.m_form) {
-    case ThreadedCPS: {
-        for (size_t argument = 0; argument < from->variablesAtTail.numberOfArguments(); ++argument) {
-            AbstractValue& destination = to->valuesAtHead.argument(argument);
-            changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.argument(argument), to->variablesAtHead.argument(argument), from->variablesAtTail.argument(argument));
-        }
-        
-        for (size_t local = 0; local < from->variablesAtTail.numberOfLocals(); ++local) {
-            AbstractValue& destination = to->valuesAtHead.local(local);
-            changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.local(local), to->variablesAtHead.local(local), from->variablesAtTail.local(local));
-        }
-        break;
-    }
-        
-    case SSA: {
-        for (size_t i = from->valuesAtTail.size(); i--;)
-            changed |= to->valuesAtHead[i].merge(from->valuesAtTail[i]);
-        
-        HashSet<Node*>::iterator iter = to->ssa->liveAtHead.begin();
-        HashSet<Node*>::iterator end = to->ssa->liveAtHead.end();
-        for (; iter != end; ++iter) {
-            Node* node = *iter;
-            changed |= to->ssa->valuesAtHead.find(node)->value.merge(
-                from->ssa->valuesAtTail.find(node)->value);
-        }
-        break;
-    }
-        
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
-
-    if (!to->cfaHasVisited)
-        changed = true;
-    
-    to->cfaShouldRevisit |= changed;
-    
-    return changed;
-}
-
-inline bool AbstractState::mergeToSuccessors(BasicBlock* basicBlock)
-{
-    Node* terminal = basicBlock->last();
-    
-    ASSERT(terminal->isTerminal());
-    
-    switch (terminal->op()) {
-    case Jump: {
-        ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("        Merging to block ", *terminal->takenBlock(), ".\n");
-#endif
-        return merge(basicBlock, terminal->takenBlock());
-    }
-        
-    case Branch: {
-        ASSERT(basicBlock->cfaBranchDirection != InvalidBranchDirection);
-        bool changed = false;
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("        Merging to block ", *terminal->takenBlock(), ".\n");
-#endif
-        if (basicBlock->cfaBranchDirection != TakeFalse)
-            changed |= merge(basicBlock, terminal->takenBlock());
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("        Merging to block ", *terminal->notTakenBlock(), ".\n");
-#endif
-        if (basicBlock->cfaBranchDirection != TakeTrue)
-            changed |= merge(basicBlock, terminal->notTakenBlock());
-        return changed;
-    }
-        
-    case Switch: {
-        // FIXME: It would be cool to be sparse conditional for Switch's. Currently
-        // we're not. However I somehow doubt that this will ever be a big deal.
-        ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
-        SwitchData* data = terminal->switchData();
-        bool changed = merge(basicBlock, data->fallThrough);
-        for (unsigned i = data->cases.size(); i--;)
-            changed |= merge(basicBlock, data->cases[i].target);
-        return changed;
-    }
-        
-    case Return:
-    case Throw:
-    case ThrowReferenceError:
-        ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
-        return false;
-        
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
-    }
-}
-
-inline bool AbstractState::mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode)
-{
-    if (!destinationNode)
-        return false;
-    
-    ASSERT_UNUSED(sourceNode, sourceNode);
-    
-    // FIXME: We could do some sparse conditional propagation here!
-    
-    return destination.merge(source);
-}
-
-void AbstractState::dump(PrintStream& out)
+template<typename AbstractStateType>
+void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
 {
     CommaPrinter comma(" ");
     if (m_graph.m_form == SSA) {
-        HashSet<Node*>::iterator iter = m_block->ssa->liveAtHead.begin();
-        HashSet<Node*>::iterator end = m_block->ssa->liveAtHead.end();
+        HashSet<Node*>::iterator iter = m_state.block()->ssa->liveAtHead.begin();
+        HashSet<Node*>::iterator end = m_state.block()->ssa->liveAtHead.end();
         for (; iter != end; ++iter) {
             Node* node = *iter;
             AbstractValue& value = forNode(node);
@@ -1992,8 +1596,8 @@ void AbstractState::dump(PrintStream& out)
             out.print(comma, node, ":", value);
         }
     }
-    for (size_t i = 0; i < m_block->size(); ++i) {
-        Node* node = m_block->at(i);
+    for (size_t i = 0; i < m_state.block()->size(); ++i) {
+        Node* node = m_state.block()->at(i);
         AbstractValue& value = forNode(node);
         if (value.isClear())
             continue;
@@ -2001,40 +1605,49 @@ void AbstractState::dump(PrintStream& out)
     }
 }
 
-FiltrationResult AbstractState::filter(AbstractValue& value, const StructureSet& set)
+template<typename AbstractStateType>
+FiltrationResult AbstractInterpreter<AbstractStateType>::filter(
+    AbstractValue& value, const StructureSet& set)
 {
     if (value.filter(m_graph, set) == FiltrationOK)
         return FiltrationOK;
-    m_isValid = false;
+    m_state.setIsValid(false);
     return Contradiction;
 }
-    
-FiltrationResult AbstractState::filterArrayModes(AbstractValue& value, ArrayModes arrayModes)
+
+template<typename AbstractStateType>
+FiltrationResult AbstractInterpreter<AbstractStateType>::filterArrayModes(
+    AbstractValue& value, ArrayModes arrayModes)
 {
     if (value.filterArrayModes(arrayModes) == FiltrationOK)
         return FiltrationOK;
-    m_isValid = false;
+    m_state.setIsValid(false);
     return Contradiction;
 }
-    
-FiltrationResult AbstractState::filter(AbstractValue& value, SpeculatedType type)
+
+template<typename AbstractStateType>
+FiltrationResult AbstractInterpreter<AbstractStateType>::filter(
+    AbstractValue& value, SpeculatedType type)
 {
     if (value.filter(type) == FiltrationOK)
         return FiltrationOK;
-    m_isValid = false;
+    m_state.setIsValid(false);
     return Contradiction;
 }
-    
-FiltrationResult AbstractState::filterByValue(
+
+template<typename AbstractStateType>
+FiltrationResult AbstractInterpreter<AbstractStateType>::filterByValue(
     AbstractValue& abstractValue, JSValue concreteValue)
 {
     if (abstractValue.filterByValue(concreteValue) == FiltrationOK)
         return FiltrationOK;
-    m_isValid = false;
+    m_state.setIsValid(false);
     return Contradiction;
 }
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGAbstractInterpreterInlines_h
 

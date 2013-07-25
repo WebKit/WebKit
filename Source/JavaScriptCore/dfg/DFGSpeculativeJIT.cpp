@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "Arguments.h"
+#include "DFGAbstractInterpreterInlines.h"
 #include "DFGArrayifySlowPathGenerator.h"
 #include "DFGBinarySwitch.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
@@ -48,6 +49,7 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_variables(jit.graph().m_localVars)
     , m_lastSetOperand(std::numeric_limits<int>::max())
     , m_state(m_jit.graph())
+    , m_interpreter(m_jit.graph(), m_state)
     , m_stream(&jit.jitCode()->variableEventStream)
     , m_minifiedGraph(&jit.jitCode()->minifiedDFG)
     , m_isCheckingArgumentTypes(false)
@@ -262,7 +264,7 @@ void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs js
 void SpeculativeJIT::backwardTypeCheck(JSValueSource source, Edge edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail)
 {
     ASSERT(needsTypeCheck(edge, typesPassedThrough));
-    m_state.filter(edge, typesPassedThrough);
+    m_interpreter.filter(edge, typesPassedThrough);
     backwardSpeculationCheck(BadType, source, edge.node(), jumpToFail);
 }
 
@@ -1736,7 +1738,7 @@ void SpeculativeJIT::compileCurrentBlock()
         }
         
         m_canExit = m_currentNode->canExit();
-        bool shouldExecuteEffects = m_state.startExecuting(m_currentNode);
+        bool shouldExecuteEffects = m_interpreter.startExecuting(m_currentNode);
         m_jit.setForNode(m_currentNode);
         m_codeOriginForOSR = m_currentNode->codeOrigin;
         if (!m_currentNode->shouldGenerate()) {
@@ -1833,7 +1835,7 @@ void SpeculativeJIT::compileCurrentBlock()
         
         // Make sure that the abstract state is rematerialized for the next node.
         if (shouldExecuteEffects)
-            m_state.executeEffects(m_indexInBlock);
+            m_interpreter.executeEffects(m_indexInBlock);
         
         if (m_currentNode->shouldGenerate())
             checkConsistency();
@@ -4362,7 +4364,8 @@ void SpeculativeJIT::compileToStringOnCell(Node* node)
         GPRReg resultGPR = result.gpr();
         
         speculateStringObject(node->child1(), op1GPR);
-        m_state.filter(node->child1(), SpecStringObject);
+        m_interpreter.filter(node->child1(), SpecStringObject);
+
         m_jit.loadPtr(JITCompiler::Address(op1GPR, JSWrapperObject::internalValueCellOffset()), resultGPR);
         cellResult(resultGPR, node);
         break;
@@ -4385,7 +4388,7 @@ void SpeculativeJIT::compileToStringOnCell(Node* node)
         m_jit.move(op1GPR, resultGPR);
         done.link(&m_jit);
         
-        m_state.filter(node->child1(), SpecString | SpecStringObject);
+        m_interpreter.filter(node->child1(), SpecString | SpecStringObject);
         
         cellResult(resultGPR, node);
         break;
@@ -4601,7 +4604,7 @@ void SpeculativeJIT::speculateStringIdentAndLoadStorage(Edge edge, GPRReg string
             MacroAssembler::Address(storage, StringImpl::flagsOffset()),
             MacroAssembler::TrustedImm32(StringImpl::flagIsIdentifier())));
     
-    m_state.filter(edge, SpecStringIdent);
+    m_interpreter.filter(edge, SpecStringIdent);
 }
 
 void SpeculativeJIT::speculateStringIdent(Edge edge, GPRReg string)
@@ -4649,7 +4652,7 @@ void SpeculativeJIT::speculateStringObject(Edge edge)
         return;
     
     speculateStringObject(edge, gpr);
-    m_state.filter(edge, SpecStringObject);
+    m_interpreter.filter(edge, SpecStringObject);
 }
 
 void SpeculativeJIT::speculateStringOrStringObject(Edge edge)
@@ -4674,7 +4677,7 @@ void SpeculativeJIT::speculateStringOrStringObject(Edge edge)
     
     isString.link(&m_jit);
     
-    m_state.filter(edge, SpecString | SpecStringObject);
+    m_interpreter.filter(edge, SpecString | SpecStringObject);
 }
 
 void SpeculativeJIT::speculateNotCell(Edge edge)

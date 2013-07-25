@@ -30,6 +30,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayPrototype.h"
+#include "DFGAbstractInterpreterInlines.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 #include "JSActivation.h"
@@ -862,7 +863,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(Edge edge, DataFormat& returnFor
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT(edge.useKind() != KnownInt32Use || !(value.m_type & ~SpecInt32));
-    m_state.filter(value, SpecInt32);
+    m_interpreter.filter(value, SpecInt32);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -963,7 +964,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT(edge.useKind() != KnownNumberUse || !(value.m_type & ~SpecNumber));
-    m_state.filter(value, SpecNumber);
+    m_interpreter.filter(value, SpecNumber);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -1100,7 +1101,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT((edge.useKind() != KnownCellUse && edge.useKind() != KnownStringUse) || !(value.m_type & ~SpecCell));
-    m_state.filter(value, SpecCell);
+    m_interpreter.filter(value, SpecCell);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
@@ -1177,7 +1178,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
 #endif
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
-    m_state.filter(value, SpecBoolean);
+    m_interpreter.filter(value, SpecBoolean);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 

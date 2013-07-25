@@ -28,9 +28,10 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAbstractState.h"
+#include "DFGAbstractInterpreterInlines.h"
 #include "DFGBasicBlock.h"
 #include "DFGGraph.h"
+#include "DFGInPlaceAbstractState.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "GetByIdStatus.h"
@@ -44,6 +45,7 @@ public:
     ConstantFoldingPhase(Graph& graph)
         : Phase(graph, "constant folding")
         , m_state(graph)
+        , m_interpreter(graph, m_state)
         , m_insertionSet(graph)
     {
     }
@@ -100,7 +102,7 @@ private:
                 else
                     set = node->structureSet();
                 if (value.m_currentKnownStructure.isSubsetOf(set)) {
-                    m_state.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                    m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     node->convertToPhantom();
                     eliminated = true;
                     break;
@@ -109,7 +111,7 @@ private:
                 if (structureValue.isSubsetOf(set)
                     && structureValue.hasSingleton()) {
                     Structure* structure = structureValue.singleton();
-                    m_state.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                    m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     AdjacencyList children = node->children;
                     children.removeEdge(0);
                     if (!!children.child1()) {
@@ -178,7 +180,7 @@ private:
                 // Now before we do anything else, push the CFA forward over the GetById
                 // and make sure we signal to the loop that it should continue and not
                 // do any eliminations.
-                m_state.execute(indexInBlock);
+                m_interpreter.execute(indexInBlock);
                 eliminated = true;
                 
                 if (needsWatchpoint) {
@@ -242,7 +244,7 @@ private:
                 // Now before we do anything else, push the CFA forward over the PutById
                 // and make sure we signal to the loop that it should continue and not
                 // do any eliminations.
-                m_state.execute(indexInBlock);
+                m_interpreter.execute(indexInBlock);
                 eliminated = true;
                 
                 if (needsWatchpoint) {
@@ -331,7 +333,7 @@ private:
                 continue;
             }
                 
-            m_state.execute(indexInBlock);
+            m_interpreter.execute(indexInBlock);
             if (!node->shouldGenerate() || m_state.didClobber() || node->hasConstant())
                 continue;
             JSValue value = m_state.forNode(node).value();
@@ -419,7 +421,8 @@ private:
             OpInfo(m_graph.addStructureSet(cell->structure())), Edge(weakConstant, CellUse));
     }
     
-    AbstractState m_state;
+    InPlaceAbstractState m_state;
+    AbstractInterpreter<InPlaceAbstractState> m_interpreter;
     InsertionSet m_insertionSet;
 };
 

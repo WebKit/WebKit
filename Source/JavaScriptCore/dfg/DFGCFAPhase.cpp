@@ -28,8 +28,9 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAbstractState.h"
+#include "DFGAbstractInterpreterInlines.h"
 #include "DFGGraph.h"
+#include "DFGInPlaceAbstractState.h"
 #include "DFGPhase.h"
 #include "Operations.h"
 
@@ -46,6 +47,7 @@ public:
     CFAPhase(Graph& graph)
         : Phase(graph, "control flow analysis")
         , m_state(graph)
+        , m_interpreter(graph, m_state)
     {
     }
     
@@ -97,10 +99,10 @@ private:
             if (verbose) {
                 Node* node = block->at(i);
                 dataLogF("      %s @%u: ", Graph::opName(node->op()), node->index());
-                m_state.dump(WTF::dataFile());
+                m_interpreter.dump(WTF::dataFile());
                 dataLogF("\n");
             }
-            if (!m_state.execute(i)) {
+            if (!m_interpreter.execute(i)) {
                 if (verbose)
                     dataLogF("         Expect OSR exit.\n");
                 break;
@@ -108,10 +110,10 @@ private:
         }
         if (verbose) {
             dataLogF("      tail regs: ");
-            m_state.dump(WTF::dataFile());
+            m_interpreter.dump(WTF::dataFile());
             dataLogF("\n");
         }
-        m_changed |= m_state.endBasicBlock(AbstractState::MergeToSuccessors);
+        m_changed |= m_state.endBasicBlock(MergeToSuccessors);
         
         if (verbose) {
             dataLogF("      tail vars: ");
@@ -131,7 +133,8 @@ private:
     }
 
 private:
-    AbstractState m_state;
+    InPlaceAbstractState m_state;
+    AbstractInterpreter<InPlaceAbstractState> m_interpreter;
     
     bool m_changed;
     unsigned m_count;

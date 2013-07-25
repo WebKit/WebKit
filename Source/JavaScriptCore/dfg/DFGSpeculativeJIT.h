@@ -30,8 +30,9 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAbstractState.h"
+#include "DFGAbstractInterpreter.h"
 #include "DFGGenerationInfo.h"
+#include "DFGInPlaceAbstractState.h"
 #include "DFGJITCompiler.h"
 #include "DFGOSRExit.h"
 #include "DFGOSRExitJumpPlaceholder.h"
@@ -2082,7 +2083,7 @@ public:
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, Edge);
     
     // Helpers for performing type checks on an edge stored in the given registers.
-    bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough) { return m_state.needsTypeCheck(edge, typesPassedThrough); }
+    bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough) { return m_interpreter.needsTypeCheck(edge, typesPassedThrough); }
     void backwardTypeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail);
     void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail);
     void forwardTypeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, const ValueRecovery&);
@@ -2194,7 +2195,8 @@ public:
     int m_lastSetOperand;
     CodeOrigin m_codeOriginForOSR;
     
-    AbstractState m_state;
+    InPlaceAbstractState m_state;
+    AbstractInterpreter<InPlaceAbstractState> m_interpreter;
     
     VariableEventStream* m_stream;
     MinifiedGraph* m_minifiedGraph;

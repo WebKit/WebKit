@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAbstractState.h"
 #include "DFGBasicBlock.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"

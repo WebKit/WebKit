@@ -29,7 +29,8 @@
 #if ENABLE(FTL_JIT)
 
 #include "CodeBlockWithJITType.h"
-#include "DFGAbstractState.h"
+#include "DFGAbstractInterpreterInlines.h"
+#include "DFGInPlaceAbstractState.h"
 #include "FTLAbstractHeapRepository.h"
 #include "FTLExitThunkGenerator.h"
 #include "FTLFormattedValue.h"
@@ -53,7 +54,7 @@ static int compileCounter;
         FormattedValue _ftc_lowValue = (lowValue);                      \
         Edge _ftc_highValue = (highValue);                              \
         SpeculatedType _ftc_typesPassedThrough = (typesPassedThrough);  \
-        if (!m_state.needsTypeCheck(_ftc_highValue, _ftc_typesPassedThrough)) \
+        if (!m_interpreter.needsTypeCheck(_ftc_highValue, _ftc_typesPassedThrough)) \
             break;                                                      \
         typeCheck(_ftc_lowValue, _ftc_highValue, _ftc_typesPassedThrough, (failCondition)); \
     } while (false)
@@ -69,6 +70,7 @@ public:
         , m_lastSetOperand(std::numeric_limits<int>::max())
         , m_exitThunkGenerator(state)
         , m_state(state.graph)
+        , m_interpreter(state.graph, m_state)
     {
     }
     
@@ -219,7 +221,7 @@ private:
         if (verboseCompilationEnabled())
             dataLog("Lowering ", m_node, "\n");
         
-        bool shouldExecuteEffects = m_state.startExecuting(m_node);
+        bool shouldExecuteEffects = m_interpreter.startExecuting(m_node);
         
         m_direction = (m_node->flags() & NodeExitsForward) ? ForwardSpeculation : BackwardSpeculation;
         
@@ -408,7 +410,7 @@ private:
             m_live.add(m_node);
         
         if (shouldExecuteEffects)
-            m_state.executeEffects(nodeIndex);
+            m_interpreter.executeEffects(nodeIndex);
         
         return true;
     }
@@ -1929,11 +1931,11 @@ private:
         FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
         LValue failCondition, SpeculationDirection direction, FormattedValue recovery)
     {
-        if (!m_state.needsTypeCheck(highValue, typesPassedThrough))
+        if (!m_interpreter.needsTypeCheck(highValue, typesPassedThrough))
             return;
         ASSERT(mayHaveTypeCheck(highValue.useKind()));
         appendOSRExit(BadType, lowValue, highValue.node(), failCondition, direction, recovery);
-        m_state.filter(highValue, typesPassedThrough);
+        m_interpreter.filter(highValue, typesPassedThrough);
     }
     
     LValue lowInt32(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
@@ -2178,7 +2180,7 @@ private:
             break;
         case KnownInt32Use:
         case KnownNumberUse:
-            ASSERT(!m_state.needsTypeCheck(edge));
+            ASSERT(!m_interpreter.needsTypeCheck(edge));
             break;
         case Int32Use:
             speculateInt32(edge);
@@ -2187,7 +2189,7 @@ private:
             speculateCell(edge);
             break;
         case KnownCellUse:
-            ASSERT(!m_state.needsTypeCheck(edge));
+            ASSERT(!m_interpreter.needsTypeCheck(edge));
             break;
         case ObjectUse:
             speculateObject(edge);
@@ -2287,7 +2289,7 @@ private:
     void speculateNumber(Edge edge)
     {
         // Do an early return here because lowDouble() can create a lot of control flow.
-        if (!m_state.needsTypeCheck(edge))
+        if (!m_interpreter.needsTypeCheck(edge))
             return;
         
         lowDouble(edge);
@@ -2296,7 +2298,7 @@ private:
     void speculateRealNumber(Edge edge)
     {
         // Do an early return here because lowDouble() can create a lot of control flow.
-        if (!m_state.needsTypeCheck(edge))
+        if (!m_interpreter.needsTypeCheck(edge))
             return;
         
         LValue value = lowDouble(edge);
@@ -2862,7 +2864,8 @@ private:
     int m_lastSetOperand;
     ExitThunkGenerator m_exitThunkGenerator;
     
-    AbstractState m_state;
+    InPlaceAbstractState m_state;
+    AbstractInterpreter<InPlaceAbstractState> m_interpreter;
     BasicBlock* m_highBlock;
     BasicBlock* m_nextHighBlock;
     LBasicBlock m_nextLowBlock;
