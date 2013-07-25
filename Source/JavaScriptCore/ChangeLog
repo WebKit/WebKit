@@ -1,3 +1,10 @@
+2013-07-25  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Unreviewed build fix after FTL upstream.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::~Worklist):
+
 2013-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed, build fix on the EFL port.
