@@ -4,6 +4,17 @@
 
         Rubber stamped by Oliver Hunt.
 
+        * fast/js/dfg-arguments-alias-activation-expected.txt:
+        * fast/js/dfg-arguments-alias-activation.html:
+        * fast/js/dfg-arguments-alias-expected.txt:
+        * fast/js/script-tests/dfg-arguments-alias.js:
+
+2013-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: convert more fast/js/dfg-* tests to wait for the concurrent JIT
+
+        Rubber stamped by Oliver Hunt.
+
         * fast/js/dfg-abs-backwards-propagation-expected.txt:
         * fast/js/dfg-add-not-number-expected.txt:
         * fast/js/dfg-arguments-alias-escape-expected.txt:

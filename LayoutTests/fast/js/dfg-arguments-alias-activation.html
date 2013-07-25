@@ -8,13 +8,14 @@ function log(s)
 	document.getElementById("console").appendChild(document.createTextNode(s + "\r\n"));
 }
 
-function shouldBe(a, aDescription, b)
+function shouldBe(a, aDescription, b, printSuccess)
 {
-	if (a == b) {
-		log("PASS: " + aDescription + " should be " + b + " and is.");
-		return;
-	}
-	log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
+    if (a == b) {
+        if (printSuccess)
+            log("PASS: " + aDescription + " should be " + b + " and is.");
+        return;
+    }
+    log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
 }
 
 if (window.testRunner) {
@@ -61,14 +62,33 @@ function f7(x) {
     return function() { return x; } && arguments;
 }
 
-for (var i = 0; i < 200; ++i) {
-    shouldBe(f0(1), "f0(1)", 1);
-    shouldBe(f1(2, 3), "f1(2, 3)", 3);
-    shouldBe(f2(4), "f2(4)", 4);
-    shouldBe(f3(5, 6), "f3(5, 6)", 6);
-    shouldBe(f4(7)[0], "f4(7)", 7);
-    shouldBe(f5(8, 9)[1], "f5(8, 9)", 9);
-    shouldBe(f6(10)[0], "f6(10)", 10);
-    shouldBe(f7(11, 12)[1], "f7(11, 12)", 12);
+function doTest(printSuccess)
+{
+    shouldBe(f0(1), "f0(1)", 1, printSuccess);
+    shouldBe(f1(2, 3), "f1(2, 3)", 3, printSuccess);
+    shouldBe(f2(4), "f2(4)", 4, printSuccess);
+    shouldBe(f3(5, 6), "f3(5, 6)", 6, printSuccess);
+    shouldBe(f4(7)[0], "f4(7)", 7, printSuccess);
+    shouldBe(f5(8, 9)[1], "f5(8, 9)", 9, printSuccess);
+    shouldBe(f6(10)[0], "f6(10)", 10, printSuccess);
+    shouldBe(f7(11, 12)[1], "f7(11, 12)", 12, printSuccess);
 }
+
+if (self.testRunner) {
+    var functions = [f0, f1, f2, f3, f4, f5, f6, f7];
+    for (var i = 0; i < functions.length; ++i)
+        testRunner.neverInlineFunction(functions[i]);
+    for (;;) {
+        var allCompiled = true;
+        for (var i = 0; i < functions.length; ++i) {
+            if (!testRunner.numberOfDFGCompiles(functions[i]))
+                allCompiled = false;
+        }
+        if (allCompiled)
+            break;
+        doTest(false);
+    }
+}
+
+doTest(true);
 </script>
