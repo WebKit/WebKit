@@ -50,7 +50,7 @@ class VM;
 class JSStack;
 #endif
 
-class JITCode : public RefCounted<JITCode> {
+class JITCode : public ThreadSafeRefCounted<JITCode> {
 public:
     typedef MacroAssemblerCodeRef CodeRef;
     typedef MacroAssemblerCodePtr CodePtr;

@@ -1,3 +1,19 @@
+2013-05-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        fourthTier: infrequent segfault in DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks()
+        https://bugs.webkit.org/show_bug.cgi?id=116134
+
+        CodeBlock and JITCode should be ThreadSafeRefCounted. We're going to
+        start using them on more threads very soon (with concurrent
+        compilation). This patch also fixes the specific place where we were
+        superfluously creating a RefPtr.
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getJITType):
+        * jit/JITCode.h:
+
 2013-05-16  Mark Lam  <mark.lam@apple.com>
 
         Implement a probe mechanism for JIT generated code.

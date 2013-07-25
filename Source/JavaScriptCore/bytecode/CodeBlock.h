@@ -90,7 +90,7 @@ namespace JSC {
 
     static ALWAYS_INLINE int missingThisObjectMarker() { return std::numeric_limits<int>::max(); }
 
-class CodeBlock : public RefCounted<CodeBlock>, public UnconditionalFinalizer, public WeakReferenceHarvester {
+class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFinalizer, public WeakReferenceHarvester {
         WTF_MAKE_FAST_ALLOCATED;
         friend class JIT;
         friend class LLIntOffsetsExtractor;
@@ -302,7 +302,7 @@ class CodeBlock : public RefCounted<CodeBlock>, public UnconditionalFinalizer, p
         }
         PassRefPtr<JITCode> getJITCode() { return m_jitCode; }
         MacroAssemblerCodePtr getJITCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
-        JITCode::JITType getJITType() const { return JITCode::jitTypeFor(m_jitCode); }
+        JITCode::JITType getJITType() const { return JITCode::jitTypeFor(m_jitCode.get()); }
         virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex) = 0;
         void jettison();
         enum JITCompilationResult { AlreadyCompiled, CouldNotCompile, CompiledSuccessfully };
