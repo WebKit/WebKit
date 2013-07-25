@@ -334,7 +334,6 @@
 		0FEA0A10170513DB00BB722C /* FTLLowerDFGToLLVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A05170513DB00BB722C /* FTLLowerDFGToLLVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A11170513DB00BB722C /* FTLOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A06170513DB00BB722C /* FTLOutput.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A12170513DB00BB722C /* FTLState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A07170513DB00BB722C /* FTLState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FEA0A141706363600BB722C /* FTLLLVMHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A131706363600BB722C /* FTLLLVMHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA0A161706BB9000BB722C /* FTLState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A151706BB9000BB722C /* FTLState.cpp */; };
 		0FEA0A1C1708B00700BB722C /* FTLAbstractHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A171708B00700BB722C /* FTLAbstractHeap.cpp */; };
 		0FEA0A1D1708B00700BB722C /* FTLAbstractHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A181708B00700BB722C /* FTLAbstractHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -810,6 +809,10 @@
 		A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */; };
 		A7E5A3A71797432D00E893C0 /* CompilationResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E5A3A51797432D00E893C0 /* CompilationResult.cpp */; };
 		A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E5A3A61797432D00E893C0 /* CompilationResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7E5AB371799E4B200D2833D /* LLVMDisassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E5AB331799E4B200D2833D /* LLVMDisassembler.cpp */; };
+		A7E5AB381799E4B200D2833D /* LLVMDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E5AB341799E4B200D2833D /* LLVMDisassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7E5AB391799E4B200D2833D /* UDis86Disassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E5AB351799E4B200D2833D /* UDis86Disassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7E5AB3A1799E4B200D2833D /* X86Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E5AB361799E4B200D2833D /* X86Disassembler.cpp */; };
 		A7F9935F0FD7325100A0B2D0 /* JSONObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F9935D0FD7325100A0B2D0 /* JSONObject.h */; };
 		A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */; };
 		A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */; };
@@ -1372,7 +1375,6 @@
 		0FEA0A05170513DB00BB722C /* FTLLowerDFGToLLVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLowerDFGToLLVM.h; path = ftl/FTLLowerDFGToLLVM.h; sourceTree = "<group>"; };
 		0FEA0A06170513DB00BB722C /* FTLOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLOutput.h; path = ftl/FTLOutput.h; sourceTree = "<group>"; };
 		0FEA0A07170513DB00BB722C /* FTLState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLState.h; path = ftl/FTLState.h; sourceTree = "<group>"; };
-		0FEA0A131706363600BB722C /* FTLLLVMHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLLVMHeaders.h; path = ftl/FTLLLVMHeaders.h; sourceTree = "<group>"; };
 		0FEA0A151706BB9000BB722C /* FTLState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLState.cpp; path = ftl/FTLState.cpp; sourceTree = "<group>"; };
 		0FEA0A171708B00700BB722C /* FTLAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLAbstractHeap.cpp; path = ftl/FTLAbstractHeap.cpp; sourceTree = "<group>"; };
 		0FEA0A181708B00700BB722C /* FTLAbstractHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLAbstractHeap.h; path = ftl/FTLAbstractHeap.h; sourceTree = "<group>"; };
@@ -1851,6 +1853,10 @@
 		A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiteralParser.cpp; sourceTree = "<group>"; };
 		A7E5A3A51797432D00E893C0 /* CompilationResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationResult.cpp; sourceTree = "<group>"; };
 		A7E5A3A61797432D00E893C0 /* CompilationResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompilationResult.h; sourceTree = "<group>"; };
+		A7E5AB331799E4B200D2833D /* LLVMDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLVMDisassembler.cpp; path = disassembler/LLVMDisassembler.cpp; sourceTree = "<group>"; };
+		A7E5AB341799E4B200D2833D /* LLVMDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLVMDisassembler.h; path = disassembler/LLVMDisassembler.h; sourceTree = "<group>"; };
+		A7E5AB351799E4B200D2833D /* UDis86Disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UDis86Disassembler.h; path = disassembler/UDis86Disassembler.h; sourceTree = "<group>"; };
+		A7E5AB361799E4B200D2833D /* X86Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = X86Disassembler.cpp; path = disassembler/X86Disassembler.cpp; sourceTree = "<group>"; };
 		A7F8690E0F9584A100558697 /* CachedCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedCall.h; sourceTree = "<group>"; };
 		A7F869EC0F95C2EC00558697 /* CallFrameClosure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrameClosure.h; sourceTree = "<group>"; };
 		A7F9935D0FD7325100A0B2D0 /* JSONObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONObject.h; sourceTree = "<group>"; };
@@ -2242,7 +2248,6 @@
 				A78A977E179738D5009DF744 /* FTLJITFinalizer.h */,
 				0F8F2B93172E049E007DBDA5 /* FTLLink.cpp */,
 				0F8F2B94172E049E007DBDA5 /* FTLLink.h */,
-				0FEA0A131706363600BB722C /* FTLLLVMHeaders.h */,
 				0FEA0A04170513DB00BB722C /* FTLLowerDFGToLLVM.cpp */,
 				0FEA0A05170513DB00BB722C /* FTLLowerDFGToLLVM.h */,
 				0F235BC617178E1C00690C7F /* FTLOSRExit.cpp */,
@@ -2276,7 +2281,11 @@
 				65C0284F171795E200351E35 /* ARMv7Disassembler.cpp */,
 				0F9D336E165DBB8D005AD387 /* Disassembler.cpp */,
 				0FF4272F158EBD44004CB9FF /* Disassembler.h */,
+				A7E5AB331799E4B200D2833D /* LLVMDisassembler.cpp */,
+				A7E5AB341799E4B200D2833D /* LLVMDisassembler.h */,
 				0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */,
+				A7E5AB351799E4B200D2833D /* UDis86Disassembler.h */,
+				A7E5AB361799E4B200D2833D /* X86Disassembler.cpp */,
 			);
 			name = disassembler;
 			sourceTree = "<group>";
@@ -3527,7 +3536,6 @@
 				0FEA0A0E170513DB00BB722C /* FTLJITCode.h in Headers */,
 				A78A9781179738D5009DF744 /* FTLJITFinalizer.h in Headers */,
 				0F8F2B96172E04A3007DBDA5 /* FTLLink.h in Headers */,
-				0FEA0A141706363600BB722C /* FTLLLVMHeaders.h in Headers */,
 				0FEA0A10170513DB00BB722C /* FTLLowerDFGToLLVM.h in Headers */,
 				0F235BDD17178E1C00690C7F /* FTLOSRExit.h in Headers */,
 				0F235BDE17178E1C00690C7F /* FTLOSRExitCompilationInfo.h in Headers */,
@@ -3685,6 +3693,7 @@
 				FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */,
 				0F4680A514BA7F8D00BFE272 /* LLIntSlowPaths.h in Headers */,
 				0F0B839D14BCF46600885B4F /* LLIntThunks.h in Headers */,
+				A7E5AB381799E4B200D2833D /* LLVMDisassembler.h in Headers */,
 				142E3139134FF0A600AFADB5 /* Local.h in Headers */,
 				142E313A134FF0A600AFADB5 /* LocalScope.h in Headers */,
 				BC18C4370E16F5CD00B34460 /* Lookup.h in Headers */,
@@ -3837,6 +3846,7 @@
 				0FF42744158EBE91004CB9FF /* udis86_input.h in Headers */,
 				0FF42748158EBE91004CB9FF /* udis86_syn.h in Headers */,
 				0FF42749158EBE91004CB9FF /* udis86_types.h in Headers */,
+				A7E5AB391799E4B200D2833D /* UDis86Disassembler.h in Headers */,
 				866739D313BFDE710023D87C /* Uint16WithFraction.h in Headers */,
 				0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */,
 				A7B601821639FD2A00372BA3 /* UnlinkedCodeBlock.h in Headers */,
@@ -4450,6 +4460,7 @@
 				0F4680A814BA7FAB00BFE272 /* LLIntExceptions.cpp in Sources */,
 				0F4680A414BA7F8D00BFE272 /* LLIntSlowPaths.cpp in Sources */,
 				0F0B839C14BCF46300885B4F /* LLIntThunks.cpp in Sources */,
+				A7E5AB371799E4B200D2833D /* LLVMDisassembler.cpp in Sources */,
 				14469DDE107EC7E700650446 /* Lookup.cpp in Sources */,
 				0F4680CC14BBB17A00BFE272 /* LowLevelInterpreter.cpp in Sources */,
 				14B723B212D7DA46003BD5ED /* MachineStackMarker.cpp in Sources */,
@@ -4559,6 +4570,7 @@
 				14E84FA014EE1ACC00D6D5D4 /* WeakSet.cpp in Sources */,
 				0F6E5C191724AF3D005C574F /* WebKitLLVMLibraryAnchor.cpp in Sources */,
 				0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */,
+				A7E5AB3A1799E4B200D2833D /* X86Disassembler.cpp in Sources */,
 				863C6D9C1521111A00585E4E /* YarrCanonicalizeUCS2.cpp in Sources */,
 				86704B8412DBA33700A9FE7B /* YarrInterpreter.cpp in Sources */,
 				86704B8612DBA33700A9FE7B /* YarrJIT.cpp in Sources */,

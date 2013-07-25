@@ -126,6 +126,9 @@ typedef OptionRange optionRange;
     \
     v(bool, enableProfiler, false) \
     \
+    v(bool, forceUDis86Disassembler, false) \
+    v(bool, forceLLVMDisassembler, false) \
+    \
     v(unsigned, maximumOptimizationCandidateInstructionCount, 10000) \
     \
     v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 180) \

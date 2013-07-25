@@ -712,6 +712,17 @@
 #define ENABLE_JIT 1
 #endif
 
+/* Do we have LLVM? */
+#if !defined(HAVE_LLVM) && PLATFORM(MAC) && ENABLE(FTL_JIT)
+#define HAVE_LLVM 1
+#endif
+
+/* If possible, try to enable the LLVM disassembler. This is optional and we can
+   fall back on UDis86 if necessary. */
+#if !defined(WTF_USE_LLVM_DISASSEMBLER) && HAVE(LLVM) && (CPU(X86_64) || CPU(X86))
+#define WTF_USE_LLVM_DISASSEMBLER 1
+#endif
+
 /* If possible, try to enable a disassembler. This is optional. We proceed in two
    steps: first we try to find some disassembler that we can use, and then we
    decide if the high-level disassembler API can be enabled. */
@@ -720,8 +731,8 @@
 #define WTF_USE_UDIS86 1
 #endif
 
-#if !defined(WTF_USE_ARMV7_DISASSEMBLER) && ENABLE(JIT) && PLATFORM(IOS) && CPU(ARM_THUMB2)
-#define WTF_USE_ARMV7_DISASSEMBLER 1
+#if !defined(ENABLE_DISASSEMBLER) && (USE(UDIS86) || USE(LLVM_DISASSEMBLER))
+#define ENABLE_DISASSEMBLER 1
 #endif
 
 #if !defined(ENABLE_DISASSEMBLER) && (USE(UDIS86) || USE(ARMV7_DISASSEMBLER))

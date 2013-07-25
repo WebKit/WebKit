@@ -1,5 +1,60 @@
 2013-06-27  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: JSC's disassembly infrastructure should be able to disassemble the code that LLVM generates
+        https://bugs.webkit.org/show_bug.cgi?id=118148
+
+        Reviewed by Anders Carlsson.
+        
+        Oh boy. UDis86 cannot disassemble the AVX (or whatever it's called) stuff
+        that LLVM generates for floating point. So the right decision is to
+        switch to the LLVM disassembler, right? Wrong!! LLVM's disassembler
+        cannot disassemble the load-from-absolute-address-into-%rax instructions
+        that our JIT generates quite a lot of.
+        
+        So, this keeps the UDis86 disassembler, but adds the LLVM disassembler,
+        and requires the caller of disassemble() to hint which one is likely to
+        be less wrong for the given code.
+        
+        Maybe in the future LLVM will catch up to UDis86, but it's definitely not
+        there right now.
+        
+        This now allows us to disassemble all of the code that LLVM generates.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * disassembler/Disassembler.cpp:
+        (JSC::disassemble):
+        * disassembler/Disassembler.h:
+        (JSC::tryToDisassemble):
+        (JSC):
+        * disassembler/LLVMDisassembler.cpp: Added.
+        (JSC):
+        (JSC::symbolLookupCallback):
+        (JSC::tryToDisassembleWithLLVM):
+        * disassembler/LLVMDisassembler.h: Added.
+        (JSC):
+        (JSC::tryToDisassembleWithLLVM):
+        * disassembler/UDis86Disassembler.cpp:
+        (JSC::tryToDisassembleWithUDis86):
+        * disassembler/UDis86Disassembler.h: Added.
+        (JSC):
+        (JSC::tryToDisassembleWithUDis86):
+        * disassembler/X86Disassembler.cpp: Added.
+        (JSC):
+        (JSC::tryToDisassemble):
+        * ftl/FTLAbbreviatedTypes.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.h:
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLLLVMHeaders.h: Removed.
+        * ftl/FTLLink.cpp:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/Options.h:
+        (JSC):
+
+2013-06-27  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should be able to dump disassembly
         https://bugs.webkit.org/show_bug.cgi?id=118141
 

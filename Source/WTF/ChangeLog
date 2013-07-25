@@ -1,3 +1,23 @@
+2013-06-27  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: JSC's disassembly infrastructure should be able to disassemble the code that LLVM generates
+        https://bugs.webkit.org/show_bug.cgi?id=118148
+
+        Reviewed by Anders Carlsson.
+        
+        We now use LLVM for two things: disassembler and FTL. Separate out the question
+        of whether we have LLVM (HAVE(LLVM)) from whether we want to use the LLVM
+        disassembler (USE(LLVM_DISASSEMBLER)) and whether we enable the FTL
+        (ENABLE(FTL_JIT)).
+        
+        Also move the cruft for including LLVM headers into WTF since now we use it in
+        a bunch of places, not all related to FTL. There's no obvious place to put that
+        file in JSC so I put it in WTF.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/LLVMHeaders.h: Copied from Source/JavaScriptCore/ftl/FTLLLVMHeaders.h.
+        * wtf/Platform.h:
+
 2013-06-25  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should support switch_string

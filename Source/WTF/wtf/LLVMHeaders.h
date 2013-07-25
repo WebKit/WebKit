@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLLLVMHeaders_h
-#define FTLLLVMHeaders_h
+#ifndef LLVMHeaders_h
+#define LLVMHeaders_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(FTL_JIT)
+#if HAVE(LLVM) && ENABLE(FTL_JIT) && 0
 
 // It is necessary to include LLVM headers via this file, because:
 // - LLVM requires defining things that we don't normally define, and
@@ -45,8 +45,9 @@
 #endif
 
 #include <llvm-c/Analysis.h>
-#include <llvm-c/ExecutionEngine.h>
 #include <llvm-c/Core.h>
+#include <llvm-c/Disassembler.h>
+#include <llvm-c/ExecutionEngine.h>
 #include <llvm-c/Target.h>
 #include <llvm-c/Transforms/Scalar.h>
 
@@ -54,6 +55,6 @@
 #pragma clang diagnostic pop
 #endif
 
-#endif // ENABLE(FTL_JIT)
+#endif // HAVE(LLVM)
 
-#endif // FTLLLVMHeaders_h
+#endif // LLVMHeaders_h

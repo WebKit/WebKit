@@ -30,7 +30,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLLLVMHeaders.h"
+#include <wtf/LLVMHeaders.h>
 
 namespace JSC { namespace FTL {
 

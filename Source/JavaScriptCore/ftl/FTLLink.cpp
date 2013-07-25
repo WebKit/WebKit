@@ -33,9 +33,9 @@
 #include "DFGCCallHelpers.h"
 #include "DFGCommon.h"
 #include "FTLJITCode.h"
-#include "FTLLLVMHeaders.h"
 #include "JITStubs.h"
 #include "LinkBuffer.h"
+#include <wtf/LLVMHeaders.h>
 
 namespace JSC { namespace FTL {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Disassembler_h
-#define Disassembler_h
+#ifndef UDis86Disassembler_h
+#define UDis86Disassembler_h
 
-#include <wtf/Platform.h>
-#include <wtf/PrintStream.h>
+#include "Disassembler.h"
 
 namespace JSC {
 
-class MacroAssemblerCodePtr;
+#if USE(UDIS86)
 
-enum InstructionSubsetHint { MacroAssemblerSubset, LLVMSubset };
+bool tryToDisassembleWithUDis86(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out, InstructionSubsetHint);
 
-#if ENABLE(DISASSEMBLER)
-bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, PrintStream&, InstructionSubsetHint = MacroAssemblerSubset);
-#else
-inline bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char*, PrintStream&, InstructionSubsetHint = MacroAssemblerSubset)
-{
-    return false;
-}
-#endif
+#else // USE(UDIS86)
 
-// Prints either the disassembly, or a line of text indicating that disassembly failed and
-// the range of machine code addresses.
-void disassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, PrintStream& out, InstructionSubsetHint = MacroAssemblerSubset);
+inline bool tryToDisassembleWithUDis86(const MacroAssemblerCodePtr&, size_t, const char*, PrintStream&, InstructionSubsetHint) { return false; }
+
+#endif // USE(UDIS86)
 
 } // namespace JSC
 
-#endif // Disassembler_h
+#endif // UDis86Disassembler_h
 

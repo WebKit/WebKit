@@ -33,9 +33,9 @@
 #include "DFGCommon.h"
 #include "Disassembler.h"
 #include "FTLJITCode.h"
-#include "FTLLLVMHeaders.h"
 #include "JITStubs.h"
 #include "LinkBuffer.h"
+#include <wtf/LLVMHeaders.h>
 
 namespace JSC { namespace FTL {
 
@@ -131,7 +131,7 @@ void compile(State& state)
                 " #", i, ":\n");
             disassemble(
                 MacroAssemblerCodePtr(handle->start()), handle->sizeInBytes(),
-                "    ", WTF::dataFile());
+                "    ", WTF::dataFile(), LLVMSubset);
         }
     }
 }

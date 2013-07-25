@@ -33,9 +33,9 @@
 #include "DFGFinalizer.h"
 #include "FTLGeneratedFunction.h"
 #include "FTLJITCode.h"
-#include "FTLLLVMHeaders.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
+#include <wtf/LLVMHeaders.h>
 
 namespace JSC { namespace FTL {
 

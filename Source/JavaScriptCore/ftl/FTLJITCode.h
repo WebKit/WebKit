@@ -31,9 +31,9 @@
 #if ENABLE(FTL_JIT)
 
 #include "DFGCommonData.h"
-#include "FTLLLVMHeaders.h"
 #include "FTLOSRExit.h"
 #include "JITCode.h"
+#include <wtf/LLVMHeaders.h>
 
 namespace JSC { namespace FTL {
 

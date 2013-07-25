@@ -23,9 +23,9 @@
 /* Begin PBXBuildFile section */
 		0F0D85B417234CC100338210 /* NoLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0D85B317234CB100338210 /* NoLock.h */; };
 		0F87105A16643F190090B0AD /* RawPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87105916643F190090B0AD /* RawPointer.h */; };
-		0F8F2B9C172F2596007DBDA5 /* ConversionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */; };
 		0F8F2B91172E00FC007DBDA5 /* CompilationThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B90172E00F0007DBDA5 /* CompilationThread.h */; };
 		0F8F2B92172E0103007DBDA5 /* CompilationThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F2B8F172E00F0007DBDA5 /* CompilationThread.cpp */; };
+		0F8F2B9C172F2596007DBDA5 /* ConversionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */; };
 		0F9D3360165DBA73005AD387 /* FilePrintStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */; };
 		0F9D3361165DBA73005AD387 /* FilePrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D335C165DBA73005AD387 /* FilePrintStream.h */; };
 		0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D335D165DBA73005AD387 /* PrintStream.cpp */; };
@@ -291,9 +291,9 @@
 /* Begin PBXFileReference section */
 		0F0D85B317234CB100338210 /* NoLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoLock.h; sourceTree = "<group>"; };
 		0F87105916643F190090B0AD /* RawPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawPointer.h; sourceTree = "<group>"; };
-		0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversionMode.h; sourceTree = "<group>"; };
 		0F8F2B8F172E00F0007DBDA5 /* CompilationThread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationThread.cpp; sourceTree = "<group>"; };
 		0F8F2B90172E00F0007DBDA5 /* CompilationThread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilationThread.h; sourceTree = "<group>"; };
+		0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConversionMode.h; sourceTree = "<group>"; };
 		0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilePrintStream.cpp; sourceTree = "<group>"; };
 		0F9D335C165DBA73005AD387 /* FilePrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePrintStream.h; sourceTree = "<group>"; };
 		0F9D335D165DBA73005AD387 /* PrintStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintStream.cpp; sourceTree = "<group>"; };
@@ -336,6 +336,7 @@
 		974CFC8D16A4F327006D5404 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtr.h; sourceTree = "<group>"; };
 		9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicStringTable.cpp; sourceTree = "<group>"; };
 		9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicStringTable.h; sourceTree = "<group>"; };
+		A736B3581799E11A00C6F05E /* LLVMHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLVMHeaders.h; sourceTree = "<group>"; };
 		A876DBD7151816E500DADB95 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		A8A47254151A825A004123FF /* Alignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alignment.h; sourceTree = "<group>"; };
 		A8A47256151A825A004123FF /* ArrayBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBuffer.cpp; sourceTree = "<group>"; };
@@ -695,6 +696,7 @@
 				A8A472BD151A825A004123FF /* Int8Array.h */,
 				A8A472C0151A825A004123FF /* IntegralTypedArrayBase.h */,
 				A8A472C1151A825A004123FF /* ListHashSet.h */,
+				A736B3581799E11A00C6F05E /* LLVMHeaders.h */,
 				A8A472C3151A825A004123FF /* Locker.h */,
 				A8A472C6151A825A004123FF /* MainThread.cpp */,
 				A8A472C7151A825B004123FF /* MainThread.h */,
@@ -857,7 +859,6 @@
 		A8A4731B151A825B004123FF /* text */ = {
 			isa = PBXGroup;
 			children = (
-				0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */,
 				A8A4731C151A825B004123FF /* ASCIIFastPath.h */,
 				A8A4731D151A825B004123FF /* AtomicString.cpp */,
 				A8A4731E151A825B004123FF /* AtomicString.h */,
@@ -867,6 +868,7 @@
 				9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */,
 				8134013615B092FD001FF0B8 /* Base64.cpp */,
 				8134013715B092FD001FF0B8 /* Base64.h */,
+				0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */,
 				A8A47321151A825B004123FF /* CString.cpp */,
 				A8A47322151A825B004123FF /* CString.h */,
 				26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */,
@@ -958,8 +960,10 @@
 				A8A47395151A825B004123FF /* CheckedBoolean.h in Headers */,
 				A8A4745F151A825B004123FF /* Collator.h in Headers */,
 				0FC4EDE61696149600F65041 /* CommaPrinter.h in Headers */,
+				0F8F2B91172E00FC007DBDA5 /* CompilationThread.h in Headers */,
 				A8A47398151A825B004123FF /* Compiler.h in Headers */,
 				A8A4748C151A8264004123FF /* config.h in Headers */,
+				0F8F2B9C172F2596007DBDA5 /* ConversionMode.h in Headers */,
 				A8A4739B151A825B004123FF /* CryptographicallyRandomNumber.h in Headers */,
 				A8A4743A151A825B004123FF /* CString.h in Headers */,
 				A8A4739D151A825B004123FF /* CurrentTime.h in Headers */,
@@ -974,7 +978,6 @@
 				A8A473B2151A825B004123FF /* double.h in Headers */,
 				A8A473A7151A825B004123FF /* DoublyLinkedList.h in Headers */,
 				A8A473BB151A825B004123FF /* dtoa.h in Headers */,
-				0F8F2B91172E00FC007DBDA5 /* CompilationThread.h in Headers */,
 				A8A473BD151A825B004123FF /* DynamicAnnotations.h in Headers */,
 				A8A473C0151A825B004123FF /* Encoder.h in Headers */,
 				44F66008171AFAE600E4AD19 /* EnumClass.h in Headers */,
@@ -1014,10 +1017,10 @@
 				A8A473E8151A825B004123FF /* MathExtras.h in Headers */,
 				A8A473EA151A825B004123FF /* MD5.h in Headers */,
 				CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */,
-				0F0D85B417234CC100338210 /* NoLock.h in Headers */,
 				A8A473EB151A825B004123FF /* MessageQueue.h in Headers */,
 				A8A473ED151A825B004123FF /* MetaAllocator.h in Headers */,
 				A8A473EE151A825B004123FF /* MetaAllocatorHandle.h in Headers */,
+				0F0D85B417234CC100338210 /* NoLock.h in Headers */,
 				A8A473EF151A825B004123FF /* Noncopyable.h in Headers */,
 				A8A473F0151A825B004123FF /* NonCopyingSort.h in Headers */,
 				A8A473F1151A825B004123FF /* NotFound.h in Headers */,
@@ -1071,7 +1074,6 @@
 				A8A47429151A825B004123FF /* StaticConstructors.h in Headers */,
 				A8A4742A151A825B004123FF /* StdLibExtras.h in Headers */,
 				1A6BB769162F300500DD16DB /* StreamBuffer.h in Headers */,
-				0F8F2B9C172F2596007DBDA5 /* ConversionMode.h in Headers */,
 				A8A4743B151A825B004123FF /* StringBuffer.h in Headers */,
 				A8A4743D151A825B004123FF /* StringBuilder.h in Headers */,
 				A8A4743E151A825B004123FF /* StringConcatenate.h in Headers */,
@@ -1201,6 +1203,7 @@
 				A8A473AC151A825B004123FF /* cached-powers.cc in Sources */,
 				A8A47460151A825B004123FF /* CollatorDefault.cpp in Sources */,
 				A8A47463151A825B004123FF /* CollatorICU.cpp in Sources */,
+				0F8F2B92172E0103007DBDA5 /* CompilationThread.cpp in Sources */,
 				A8A4739A151A825B004123FF /* CryptographicallyRandomNumber.cpp in Sources */,
 				A8A47439151A825B004123FF /* CString.cpp in Sources */,
 				A8A4739C151A825B004123FF /* CurrentTime.cpp in Sources */,
@@ -1208,7 +1211,6 @@
 				A8A473A0151A825B004123FF /* DateMath.cpp in Sources */,
 				A8A473A2151A825B004123FF /* DecimalNumber.cpp in Sources */,
 				A8A473AE151A825B004123FF /* diy-fp.cc in Sources */,
-				0F8F2B92172E0103007DBDA5 /* CompilationThread.cpp in Sources */,
 				A8A473B0151A825B004123FF /* double-conversion.cc in Sources */,
 				A8A473BA151A825B004123FF /* dtoa.cpp in Sources */,
 				A8A473BC151A825B004123FF /* DynamicAnnotations.cpp in Sources */,
