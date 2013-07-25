@@ -308,17 +308,6 @@ namespace JSC {
             return newTemporary();
         }
 
-        // Returns the place to write the final output of an operation.
-        RegisterID* finalDestinationOrIgnored(RegisterID* originalDst, RegisterID* tempDst = 0)
-        {
-            if (originalDst)
-                return originalDst;
-            ASSERT(tempDst != ignoredResult());
-            if (tempDst && tempDst->isTemporary())
-                return tempDst;
-            return newTemporary();
-        }
-
         RegisterID* destinationForAssignResult(RegisterID* dst)
         {
             if (dst && dst != ignoredResult() && m_codeBlock->needsFullScopeChain())

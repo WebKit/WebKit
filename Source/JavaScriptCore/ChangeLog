@@ -1,5 +1,14 @@
 2013-05-31  Filip Pizlo  <fpizlo@apple.com>
 
+        Remove finalDestinationOrIgnored since it isn't called anymore.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+
+2013-05-31  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: get rid of op_call_put_result
         https://bugs.webkit.org/show_bug.cgi?id=117047
 
