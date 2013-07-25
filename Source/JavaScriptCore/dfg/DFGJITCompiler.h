@@ -462,6 +462,8 @@ public:
     }
     
     PassRefPtr<JITCode> jitCode() { return m_jitCode; }
+    
+    Vector<Label>& blockHeads() { return m_blockHeads; }
 
 private:
     friend class OSRExitJumpPlaceholder;
@@ -488,6 +490,8 @@ private:
     Vector<CallLinkRecord> m_calls;
     Vector<CallExceptionRecord> m_exceptionChecks;
     
+    Vector<Label> m_blockHeads;
+
     struct JSCallRecord {
         JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, GPRReg callee, CodeOrigin codeOrigin)
             : m_fastCall(fastCall)

@@ -578,6 +578,17 @@ private:
             break;
         }
             
+        case Switch: {
+            SwitchData* data = node->switchData();
+            switch (data->kind) {
+            case SwitchImm:
+                if (node->child1()->shouldSpeculateInteger())
+                    setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
+                break;
+            }
+            break;
+        }
+            
         case ToPrimitive: {
             fixupToPrimitive(node);
             break;

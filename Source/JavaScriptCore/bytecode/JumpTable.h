@@ -96,6 +96,12 @@ namespace JSC {
             return ctiDefault;
         }
 #endif
+        
+        void clear()
+        {
+            branchOffsets.clear();
+            ctiOffsets.clear();
+        }
     };
 
 } // namespace JSC

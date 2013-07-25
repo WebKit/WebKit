@@ -1220,6 +1220,11 @@ public:
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
 
+    JITCompiler::Call callOperation(P_DFGOperation_EJS operation, GPRReg result, GPRReg value, size_t index)
+    {
+        m_jit.setupArgumentsWithExecState(value, TrustedImmPtr(index));
+        return appendCallSetResult(operation, result);
+    }
 
     JITCompiler::Call callOperation(C_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
     {
@@ -1456,6 +1461,11 @@ public:
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
 
+    JITCompiler::Call callOperation(P_DFGOperation_EJS operation, GPRReg result, JSValueRegs value, size_t index)
+    {
+        m_jit.setupArgumentsWithExecState(value.payloadGPR(), value.tagGPR(), TrustedImmPtr(index));
+        return appendCallSetResult(operation, result);
+    }
 
     JITCompiler::Call callOperation(C_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
     {
@@ -1725,146 +1735,68 @@ public:
     
     void branchDouble(JITCompiler::DoubleCondition cond, FPRReg left, FPRReg right, BlockIndex destination)
     {
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branchDouble(cond, left, right), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branchDouble(JITCompiler::invert(cond), left, right);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branchDouble(cond, left, right), destination);
     }
     
     void branchDoubleNonZero(FPRReg value, FPRReg scratch, BlockIndex destination)
     {
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branchDoubleNonZero(value, scratch), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branchDoubleZeroOrNaN(value, scratch);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branchDoubleNonZero(value, scratch), destination);
     }
     
     template<typename T, typename U>
     void branch32(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)
     {
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branch32(cond, left, right), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branch32(JITCompiler::invert(cond), left, right);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branch32(cond, left, right), destination);
     }
     
     template<typename T, typename U>
     void branchTest32(JITCompiler::ResultCondition cond, T value, U mask, BlockIndex destination)
     {
-        ASSERT(JITCompiler::isInvertible(cond));
-        
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branchTest32(cond, value, mask), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branchTest32(JITCompiler::invert(cond), value, mask);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branchTest32(cond, value, mask), destination);
     }
     
     template<typename T>
     void branchTest32(JITCompiler::ResultCondition cond, T value, BlockIndex destination)
     {
-        ASSERT(JITCompiler::isInvertible(cond));
-        
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branchTest32(cond, value), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branchTest32(JITCompiler::invert(cond), value);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branchTest32(cond, value), destination);
     }
     
 #if USE(JSVALUE64)
     template<typename T, typename U>
     void branch64(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)
     {
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branch64(cond, left, right), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branch64(JITCompiler::invert(cond), left, right);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branch64(cond, left, right), destination);
     }
 #endif
     
     template<typename T, typename U>
     void branchPtr(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)
     {
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branchPtr(cond, left, right), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branchPtr(JITCompiler::invert(cond), left, right);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branchPtr(cond, left, right), destination);
     }
     
     template<typename T, typename U>
     void branchTestPtr(JITCompiler::ResultCondition cond, T value, U mask, BlockIndex destination)
     {
-        ASSERT(JITCompiler::isInvertible(cond));
-        
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branchTestPtr(cond, value, mask), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branchTestPtr(JITCompiler::invert(cond), value, mask);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branchTestPtr(cond, value, mask), destination);
     }
     
     template<typename T>
     void branchTestPtr(JITCompiler::ResultCondition cond, T value, BlockIndex destination)
     {
-        ASSERT(JITCompiler::isInvertible(cond));
-        
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branchTestPtr(cond, value), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branchTestPtr(JITCompiler::invert(cond), value);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branchTestPtr(cond, value), destination);
     }
     
     template<typename T, typename U>
     void branchTest8(JITCompiler::ResultCondition cond, T value, U mask, BlockIndex destination)
     {
-        ASSERT(JITCompiler::isInvertible(cond));
-        
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branchTest8(cond, value, mask), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branchTest8(JITCompiler::invert(cond), value, mask);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branchTest8(cond, value, mask), destination);
     }
     
     template<typename T>
     void branchTest8(JITCompiler::ResultCondition cond, T value, BlockIndex destination)
     {
-        ASSERT(JITCompiler::isInvertible(cond));
-        
-        if (!haveEdgeCodeToEmit(destination))
-            return addBranch(m_jit.branchTest8(cond, value), destination);
-        
-        JITCompiler::Jump notTaken = m_jit.branchTest8(JITCompiler::invert(cond), value);
-        emitEdgeCode(destination);
-        addBranch(m_jit.jump(), destination);
-        notTaken.link(&m_jit);
+        return addBranch(m_jit.branchTest8(cond, value), destination);
     }
     
     enum FallThroughMode {
@@ -1873,37 +1805,18 @@ public:
     };
     void jump(BlockIndex destination, FallThroughMode fallThroughMode = AtFallThroughPoint)
     {
-        if (haveEdgeCodeToEmit(destination))
-            emitEdgeCode(destination);
         if (destination == nextBlock()
             && fallThroughMode == AtFallThroughPoint)
             return;
         addBranch(m_jit.jump(), destination);
     }
     
-    inline bool haveEdgeCodeToEmit(BlockIndex)
-    {
-        return DFG_ENABLE_EDGE_CODE_VERIFICATION;
-    }
-    void emitEdgeCode(BlockIndex destination)
-    {
-        if (!DFG_ENABLE_EDGE_CODE_VERIFICATION)
-            return;
-        m_jit.move(TrustedImm32(destination), GPRInfo::regT0);
-    }
-
     void addBranch(const MacroAssembler::Jump& jump, BlockIndex destination)
     {
         m_branches.append(BranchRecord(jump, destination));
     }
 
-    void linkBranches()
-    {
-        for (size_t i = 0; i < m_branches.size(); ++i) {
-            BranchRecord& branch = m_branches[i];
-            branch.jump.linkTo(m_blockHeads[branch.destination], &m_jit);
-        }
-    }
+    void linkBranches();
 
     BasicBlock* block()
     {
@@ -1949,6 +1862,9 @@ public:
     void compileStringEquality(Node*);
     void emitObjectOrOtherBranch(Edge value, BlockIndex taken, BlockIndex notTaken);
     void emitBranch(Node*);
+    void emitSwitchImmIntJump(Node*, SwitchData*, GPRReg value, GPRReg scratch);
+    void emitSwitchImm(Node*, SwitchData*);
+    void emitSwitch(Node*);
     
     void compileToStringOnCell(Node*);
     void compileNewStringObject(Node*);
@@ -2209,7 +2125,6 @@ public:
     RegisterBank<GPRInfo> m_gprs;
     RegisterBank<FPRInfo> m_fprs;
 
-    Vector<MacroAssembler::Label> m_blockHeads;
     Vector<MacroAssembler::Label> m_osrEntryHeads;
     
     struct BranchRecord {

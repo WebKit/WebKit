@@ -347,6 +347,20 @@ private:
             break;
         }
             
+        case Switch: {
+            SwitchData* data = node->switchData();
+            switch (data->kind) {
+            case SwitchImm: {
+                // We don't need NodeNeedsNegZero because if the cases are all integers
+                // then -0 and 0 are treated the same.  We don't need NodeUsedAsOther
+                // because if all of the cases are integers then NaN and undefined are
+                // treated the same.
+                node->child1()->mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
+                break;
+            } }
+            break;
+        }
+            
         default:
             mergeDefaultFlags(node);
             break;

@@ -3234,6 +3234,10 @@ void SpeculativeJIT::compile(Node* node)
     case Branch:
         emitBranch(node);
         break;
+        
+    case Switch:
+        emitSwitch(node);
+        break;
 
     case Return: {
         ASSERT(GPRInfo::callFrameRegister != GPRInfo::regT2);

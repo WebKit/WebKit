@@ -258,6 +258,12 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
         out.print(comma, "T:#", node->takenBlockIndex());
     if (node->isBranch())
         out.print(comma, "F:#", node->notTakenBlockIndex());
+    if (node->isSwitch()) {
+        SwitchData* data = node->switchData();
+        for (unsigned i = 0; i < data->cases.size(); ++i)
+            out.print(comma, data->cases[i].value, ":#", data->cases[i].target);
+        out.print(comma, "default:#", data->fallThrough);
+    }
     out.print(comma, "bc#", node->codeOrigin.bytecodeIndex);
     
     out.print(")");
@@ -404,17 +410,8 @@ void Graph::determineReachability()
         worklist.removeLast();
         
         BasicBlock* block = m_blocks[index].get();
-        ASSERT(block->isLinked);
-        
-        Node* node = block->last();
-        ASSERT(node->isTerminal());
-        
-        if (node->isJump())
-            handleSuccessor(worklist, index, node->takenBlockIndex());
-        else if (node->isBranch()) {
-            handleSuccessor(worklist, index, node->takenBlockIndex());
-            handleSuccessor(worklist, index, node->notTakenBlockIndex());
-        }
+        for (unsigned i = numSuccessors(block); i--;)
+            handleSuccessor(worklist, index, successor(block, i));
     }
 }
 

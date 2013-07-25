@@ -518,6 +518,7 @@ private:
         case SetMyScope:
         case DFG::Jump:
         case Branch:
+        case Switch:
         case Breakpoint:
         case CheckHasInstance:
         case ThrowReferenceError:

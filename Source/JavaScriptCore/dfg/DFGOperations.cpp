@@ -1612,6 +1612,20 @@ JSCell* DFG_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString*
     return JSRopeString::create(vm, a, b, c);
 }
 
+char* DFG_OPERATION operationFindSwitchImmTargetForDouble(
+    ExecState* exec, EncodedJSValue encodedValue, size_t tableIndex)
+{
+    CodeBlock* codeBlock = exec->codeBlock();
+    SimpleJumpTable& table = codeBlock->immediateSwitchJumpTable(tableIndex);
+    JSValue value = JSValue::decode(encodedValue);
+    ASSERT(value.isDouble());
+    double asDouble = value.asDouble();
+    int32_t asInt32 = static_cast<int32_t>(asDouble);
+    if (asDouble == asInt32)
+        return static_cast<char*>(table.ctiForValue(asInt32).executableAddress());
+    return static_cast<char*>(table.ctiDefault.executableAddress());
+}
+
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
 {
     return fmod(a, b);

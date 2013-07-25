@@ -1038,6 +1038,12 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         m_branchDirection = TakeBoth;
         break;
     }
+        
+    case Switch: {
+        // Nothing to do for now.
+        // FIXME: Do sparse conditional things.
+        break;
+    }
             
     case Return:
         m_isValid = false;
@@ -1806,6 +1812,17 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
 #endif
         if (basicBlock->cfaBranchDirection != TakeTrue)
             changed |= merge(basicBlock, graph.m_blocks[terminal->notTakenBlockIndex()].get());
+        return changed;
+    }
+        
+    case Switch: {
+        // FIXME: It would be cool to be sparse conditional for Switch's. Currently
+        // we're not. However I somehow doubt that this will ever be a big deal.
+        ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
+        SwitchData* data = terminal->switchData();
+        bool changed = merge(basicBlock, graph.m_blocks[data->fallThrough].get());
+        for (unsigned i = data->cases.size(); i--;)
+            changed |= merge(basicBlock, graph.m_blocks[data->cases[i].target].get());
         return changed;
     }
         

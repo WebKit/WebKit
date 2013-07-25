@@ -65,7 +65,6 @@ enum AddSpeculationMode {
     SpeculateInteger
 };
 
-
 //
 // === Graph ===
 //
@@ -704,6 +703,7 @@ public:
     SegmentedVector<StructureSet, 16> m_structureSet;
     SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
     SegmentedVector<NewArrayBufferData, 4> m_newArrayBufferData;
+    SegmentedVector<SwitchData, 4> m_switchData;
     bool m_hasArguments;
     HashSet<ExecutableBase*> m_executablesWhoseArgumentsEscaped;
     BitVector m_preservedVars;

@@ -43,7 +43,6 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_currentNode(0)
     , m_indexInBlock(0)
     , m_generationInfo(m_jit.codeBlock()->m_numCalleeRegisters)
-    , m_blockHeads(jit.graph().m_blocks.size())
     , m_arguments(jit.codeBlock()->numParameters())
     , m_variables(jit.graph().m_localVars)
     , m_lastSetOperand(std::numeric_limits<int>::max())
@@ -1672,7 +1671,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
         return;
     }
 
-    m_blockHeads[m_block] = m_jit.label();
+    m_jit.blockHeads()[m_block] = m_jit.label();
 #if DFG_ENABLE(JIT_BREAK_ON_EVERY_BLOCK)
     m_jit.breakpoint();
 #endif
@@ -1719,13 +1718,6 @@ void SpeculativeJIT::compile(BasicBlock& block)
     m_lastSetOperand = std::numeric_limits<int>::max();
     m_codeOriginForOSR = CodeOrigin();
     
-    if (DFG_ENABLE_EDGE_CODE_VERIFICATION) {
-        JITCompiler::Jump verificationSucceeded =
-            m_jit.branch32(JITCompiler::Equal, GPRInfo::regT0, TrustedImm32(m_block));
-        m_jit.breakpoint();
-        verificationSucceeded.link(&m_jit);
-    }
-
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLogF("\n");
 #endif
@@ -1910,9 +1902,6 @@ bool SpeculativeJIT::compile()
 {
     checkArgumentTypes();
 
-    if (DFG_ENABLE_EDGE_CODE_VERIFICATION)
-        m_jit.move(TrustedImm32(0), GPRInfo::regT0);
-
     ASSERT(!m_currentNode);
     for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block) {
         m_jit.setForBlock(m_block);
@@ -1933,18 +1922,9 @@ void SpeculativeJIT::createOSREntries()
         if (!block->isOSRTarget)
             continue;
 
-        // Currently we only need to create OSR entry trampolines when using edge code
-        // verification. But in the future, we'll need this for other things as well (like
-        // when we have global reg alloc).
-        // If we don't need OSR entry trampolin
-        if (!DFG_ENABLE_EDGE_CODE_VERIFICATION) {
-            m_osrEntryHeads.append(m_blockHeads[blockIndex]);
-            continue;
-        }
-        
-        m_osrEntryHeads.append(m_jit.label());
-        m_jit.move(TrustedImm32(blockIndex), GPRInfo::regT0);
-        m_jit.jump().linkTo(m_blockHeads[blockIndex], &m_jit);
+        // Currently we don't have OSR entry trampolines. We could add them
+        // here if need be.
+        m_osrEntryHeads.append(m_jit.blockHeads()[blockIndex]);
     }
 }
 
@@ -4651,6 +4631,95 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
+    }
+}
+
+void SpeculativeJIT::emitSwitchImmIntJump(Node*, SwitchData* data, GPRReg value, GPRReg scratch)
+{
+    SimpleJumpTable& table = m_jit.codeBlock()->immediateSwitchJumpTable(data->switchTableIndex);
+    m_jit.sub32(Imm32(table.min), value);
+    addBranch(
+        m_jit.branch32(JITCompiler::AboveOrEqual, value, Imm32(table.ctiOffsets.size())),
+        data->fallThrough);
+    m_jit.move(TrustedImmPtr(table.ctiOffsets.begin()), scratch);
+    m_jit.loadPtr(JITCompiler::BaseIndex(scratch, value, JITCompiler::timesPtr()), scratch);
+    m_jit.jump(scratch);
+    data->didUseJumpTable = true;
+}
+
+void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
+{
+    switch (node->child1().useKind()) {
+    case Int32Use: {
+        SpeculateIntegerOperand value(this, node->child1());
+        GPRTemporary temp(this);
+        emitSwitchImmIntJump(node, data, value.gpr(), temp.gpr());
+        noResult(node);
+        break;
+    }
+        
+    case UntypedUse: {
+        JSValueOperand value(this, node->child1());
+        GPRTemporary temp(this);
+        JSValueRegs valueRegs = value.jsValueRegs();
+        GPRReg scratch = temp.gpr();
+        
+        value.use();
+        
+#if USE(JSVALUE64)
+        JITCompiler::Jump notInt = m_jit.branch64(
+            JITCompiler::Below, valueRegs.gpr(), GPRInfo::tagTypeNumberRegister);
+        emitSwitchImmIntJump(node, data, valueRegs.gpr(), scratch);
+        notInt.link(&m_jit);
+        addBranch(
+            m_jit.branchTest64(
+                JITCompiler::Zero, valueRegs.gpr(), GPRInfo::tagTypeNumberRegister),
+            data->fallThrough);
+        silentSpillAllRegisters(scratch);
+        callOperation(operationFindSwitchImmTargetForDouble, scratch, valueRegs.gpr(), data->switchTableIndex);
+        silentFillAllRegisters(scratch);
+        m_jit.jump(scratch);
+#else
+        JITCompiler::Jump notInt = m_jit.branch32(
+            JITCompiler::NotEqual, valueRegs.tagGPR(), TrustedImm32(JSValue::Int32Tag));
+        emitSwitchImmIntJump(node, data, valueRegs.payloadGPR(), scratch);
+        notInt.link(&m_jit);
+        addBranch(
+            m_jit.branch32(
+                JITCompiler::AboveOrEqual, valueRegs.tagGPR(),
+                TrustedImm32(JSValue::LowestTag)),
+            data->fallThrough);
+        silentSpillAllRegisters(scratch);
+        callOperation(operationFindSwitchImmTargetForDouble, scratch, valueRegs, data->switchTableIndex);
+        silentFillAllRegisters(scratch);
+        m_jit.jump(scratch);
+#endif
+        noResult(node, UseChildrenCalledExplicitly);
+        break;
+    }
+        
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void SpeculativeJIT::emitSwitch(Node* node)
+{
+    SwitchData* data = node->switchData();
+    switch (data->kind) {
+    case SwitchImm: {
+        emitSwitchImm(node, data);
+        return;
+    } }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void SpeculativeJIT::linkBranches()
+{
+    for (size_t i = 0; i < m_branches.size(); ++i) {
+        BranchRecord& branch = m_branches[i];
+        branch.jump.linkTo(m_jit.blockHeads()[branch.destination], &m_jit);
     }
 }
 

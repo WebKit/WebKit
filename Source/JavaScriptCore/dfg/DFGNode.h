@@ -66,6 +66,50 @@ struct NewArrayBufferData {
     IndexingType indexingType;
 };
 
+// The SwitchData and associated data structures duplicate the information in
+// JumpTable. The DFG may ultimately end up using the JumpTable, though it may
+// instead decide to do something different - this is entirely up to the DFG.
+// These data structures give the DFG a higher-level semantic description of
+// what is going on, which will allow it to make the right decision.
+struct SwitchCase {
+    SwitchCase()
+        : target(NoBlock)
+    {
+    }
+    
+    SwitchCase(JSValue value, BlockIndex target)
+        : value(value)
+        , target(target)
+    {
+    }
+    
+    JSValue value;
+    BlockIndex target;
+};
+
+enum SwitchKind {
+    SwitchImm
+};
+
+struct SwitchData {
+    // Initializes most fields to obviously invalid values. Anyone
+    // constructing this should make sure to initialize everything they
+    // care about manually.
+    SwitchData()
+        : fallThrough(NoBlock)
+        , kind(static_cast<SwitchKind>(-1))
+        , switchTableIndex(UINT_MAX)
+        , didUseJumpTable(false)
+    {
+    }
+    
+    Vector<SwitchCase> cases;
+    BlockIndex fallThrough;
+    SwitchKind kind;
+    unsigned switchTableIndex;
+    bool didUseJumpTable;
+};
+
 // This type used in passing an immediate argument to Node constructor;
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
 // a constant index, argument, or identifier) from a Node*.
@@ -659,12 +703,18 @@ struct Node {
     {
         return op() == Branch;
     }
+    
+    bool isSwitch()
+    {
+        return op() == Switch;
+    }
 
     bool isTerminal()
     {
         switch (op()) {
         case Jump:
         case Branch:
+        case Switch:
         case Return:
         case Throw:
         case ThrowReferenceError:
@@ -710,6 +760,12 @@ struct Node {
         return m_opInfo2;
     }
     
+    SwitchData* switchData()
+    {
+        ASSERT(isSwitch());
+        return bitwise_cast<SwitchData*>(m_opInfo);
+    }
+    
     unsigned numSuccessors()
     {
         switch (op()) {
@@ -717,6 +773,8 @@ struct Node {
             return 1;
         case Branch:
             return 2;
+        case Switch:
+            return switchData()->cases.size() + 1;
         default:
             return 0;
         }
@@ -724,6 +782,12 @@ struct Node {
     
     BlockIndex successor(unsigned index)
     {
+        if (isSwitch()) {
+            if (index < switchData()->cases.size())
+                return switchData()->cases[index].target;
+            RELEASE_ASSERT(index == switchData()->cases.size());
+            return switchData()->fallThrough;
+        }
         switch (index) {
         case 0:
             return takenBlockIndex();

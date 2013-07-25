@@ -2458,13 +2458,16 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         m_functionDecls.shrinkToFit();
         m_functionExprs.shrinkToFit();
         m_constantRegisters.shrinkToFit();
+        
+        if (m_rareData) {
+            m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
+            m_rareData->m_characterSwitchJumpTables.shrinkToFit();
+            m_rareData->m_stringSwitchJumpTables.shrinkToFit();
+        }
     } // else don't shrink these, because we would have already pointed pointers into these tables.
 
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();
-        m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
-        m_rareData->m_characterSwitchJumpTables.shrinkToFit();
-        m_rareData->m_stringSwitchJumpTables.shrinkToFit();
 #if ENABLE(JIT)
         m_rareData->m_callReturnIndexVector.shrinkToFit();
 #endif

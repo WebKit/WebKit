@@ -48,6 +48,7 @@ JITCompiler::JITCompiler(Graph& dfg)
     : CCallHelpers(&dfg.m_vm, dfg.m_codeBlock)
     , m_graph(dfg)
     , m_jitCode(adoptRef(new JITCode()))
+    , m_blockHeads(dfg.m_blocks.size())
     , m_currentCodeOriginIndex(0)
 {
     if (shouldShowDisassembly() || m_graph.m_vm.m_perBytecodeProfiler)
@@ -155,6 +156,34 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLogF("JIT code for %p start at [%p, %p). Size = %zu.\n", m_codeBlock, linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize(), linkBuffer.debugSize());
 #endif
+    
+    BitVector usedJumpTables;
+    for (unsigned i = m_graph.m_switchData.size(); i--;) {
+        SwitchData& data = m_graph.m_switchData[i];
+        if (!data.didUseJumpTable)
+            continue;
+        
+        // Cast to int to avoid tautological comparison warnings.
+        RELEASE_ASSERT(static_cast<int>(data.kind) == static_cast<int>(SwitchImm));
+        
+        usedJumpTables.set(data.switchTableIndex);
+        SimpleJumpTable& table =
+            m_codeBlock->immediateSwitchJumpTable(data.switchTableIndex);
+        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough]);
+        for (unsigned j = table.ctiOffsets.size(); j--;)
+            table.ctiOffsets[j] = table.ctiDefault;
+        for (unsigned j = data.cases.size(); j--;) {
+            SwitchCase& myCase = data.cases[j];
+            table.ctiOffsets[myCase.value.asInt32() - table.min] =
+                linkBuffer.locationOf(m_blockHeads[myCase.target]);
+        }
+    }
+    for (unsigned i = m_codeBlock->numberOfImmediateSwitchJumpTables(); i--;) {
+        if (usedJumpTables.get(i))
+            continue;
+        
+        m_codeBlock->immediateSwitchJumpTable(i).clear();
+    }
 
     // Link all calls out from the JIT code to their respective functions.
     for (unsigned i = 0; i < m_calls.size(); ++i)

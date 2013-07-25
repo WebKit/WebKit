@@ -31,6 +31,7 @@
 #include "LLIntData.h"
 #include <wtf/DataLog.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 
 // ASSERT_VALID_CODE_POINTER checks that ptr is a non-null pointer, and that it is a valid
@@ -320,6 +321,20 @@ public:
         return m_value == other.m_value;
     }
 
+    void dumpWithName(const char* name, PrintStream& out) const
+    {
+        if (executableAddress() == dataLocation()) {
+            out.print(name, "(", RawPointer(executableAddress()), ")");
+            return;
+        }
+        out.print(name, "(executable = ", RawPointer(executableAddress()), ", dataLocation = ", RawPointer(dataLocation()), ")");
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        dumpWithName("CodePtr", out);
+    }
+
 private:
     void* m_value;
 };
@@ -392,6 +407,11 @@ public:
     }
     
     bool operator!() const { return !m_codePtr; }
+    
+    void dump(PrintStream& out) const
+    {
+        m_codePtr.dumpWithName("CodeRef", out);
+    }
 
 private:
     MacroAssemblerCodePtr m_codePtr;

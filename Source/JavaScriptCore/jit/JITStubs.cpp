@@ -2057,7 +2057,7 @@ DEFINE_STUB_FUNCTION(void*, op_switch_imm)
     if (scrutinee.isInt32())
         return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(scrutinee.asInt32()).executableAddress();
     if (scrutinee.isDouble() && scrutinee.asDouble() == static_cast<int32_t>(scrutinee.asDouble()))
-            return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(static_cast<int32_t>(scrutinee.asDouble())).executableAddress();
+        return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(static_cast<int32_t>(scrutinee.asDouble())).executableAddress();
     return codeBlock->immediateSwitchJumpTable(tableIndex).ctiDefault.executableAddress();
 }
 

@@ -95,6 +95,13 @@ public:
         TimesFour,
         TimesEight,
     };
+    
+    static Scale timesPtr()
+    {
+        if (sizeof(void*) == 4)
+            return TimesFour;
+        return TimesEight;
+    }
 
     // Address:
     //
