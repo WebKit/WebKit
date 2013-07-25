@@ -389,9 +389,7 @@ namespace JSC {
         RTTraceList* m_rtTraceList;
 #endif
 
-#ifndef NDEBUG
         ThreadIdentifier exclusiveThread;
-#endif
 
         CachedTranscendentalFunction<std::sin> cachedSin;
 

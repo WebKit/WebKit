@@ -1,3 +1,18 @@
+2013-07-25  Yi Shen  <max.hong.shen@gmail.com>
+
+        Optimize the thread locks for API Shims
+        https://bugs.webkit.org/show_bug.cgi?id=118573
+
+        Reviewed by Geoffrey Garen.
+
+        Remove the thread lock from API Shims if the VM has an exclusive thread (e.g. the VM 
+        only used by WebCore's main thread).
+
+        No new tests required since no functionality changed.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonVM):
+
 2013-07-25  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Shape methods and member variables should be guarded with the CSS_SHAPES flag

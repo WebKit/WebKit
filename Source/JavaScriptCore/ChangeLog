@@ -1,3 +1,26 @@
+2013-07-25  Yi Shen  <max.hong.shen@gmail.com>
+
+        Optimize the thread locks for API Shims
+        https://bugs.webkit.org/show_bug.cgi?id=118573
+
+        Reviewed by Geoffrey Garen.
+
+        Remove the thread lock from API Shims if the VM has an exclusive thread (e.g. the VM 
+        only used by WebCore's main thread).
+
+        * API/APIShims.h:
+        (JSC::APIEntryShim::APIEntryShim):
+        (JSC::APICallbackShim::APICallbackShim):
+        * runtime/JSLock.cpp:
+        (JSC::JSLockHolder::JSLockHolder):
+        (JSC::JSLockHolder::init):
+        (JSC::JSLockHolder::~JSLockHolder):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2013-07-25  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed build fix after r153218.

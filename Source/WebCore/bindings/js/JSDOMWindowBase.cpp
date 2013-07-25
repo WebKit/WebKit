@@ -184,9 +184,7 @@ VM* JSDOMWindowBase::commonVM()
     if (!vm) {
         ScriptController::initializeThreading();
         vm = VM::createLeaked(LargeHeap).leakRef();
-#ifndef NDEBUG
         vm->exclusiveThread = currentThread();
-#endif
         initNormalWorldClientData(vm);
     }
 

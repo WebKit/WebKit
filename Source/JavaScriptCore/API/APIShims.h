@@ -59,14 +59,14 @@ public:
     // Normal API entry
     APIEntryShim(ExecState* exec, bool registerThread = true)
         : APIEntryShimWithoutLock(&exec->vm(), registerThread)
-        , m_lockHolder(exec)
+        , m_lockHolder(exec->vm().exclusiveThread ? 0 : exec)
     {
     }
 
     // JSPropertyNameAccumulator only has a vm.
     APIEntryShim(VM* vm, bool registerThread = true)
         : APIEntryShimWithoutLock(vm, registerThread)
-        , m_lockHolder(vm)
+        , m_lockHolder(vm->exclusiveThread ? 0 : vm)
     {
     }
 
@@ -83,7 +83,7 @@ private:
 class APICallbackShim {
 public:
     APICallbackShim(ExecState* exec)
-        : m_dropAllLocks(exec)
+        : m_dropAllLocks(exec->vm().exclusiveThread ? 0 : exec)
         , m_vm(&exec->vm())
     {
         wtfThreadData().resetCurrentIdentifierTable();

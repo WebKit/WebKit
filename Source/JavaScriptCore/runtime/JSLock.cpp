@@ -51,7 +51,7 @@ void GlobalJSLock::initialize()
 }
 
 JSLockHolder::JSLockHolder(ExecState* exec)
-    : m_vm(&exec->vm())
+    : m_vm(exec ? &exec->vm() : 0)
 {
     init();
 }
@@ -70,11 +70,15 @@ JSLockHolder::JSLockHolder(VM& vm)
 
 void JSLockHolder::init()
 {
-    m_vm->apiLock().lock();
+    if (m_vm)
+        m_vm->apiLock().lock();
 }
 
 JSLockHolder::~JSLockHolder()
 {
+    if (!m_vm)
+        return;
+
     RefPtr<JSLock> apiLock(&m_vm->apiLock());
     m_vm.clear();
     apiLock->unlock();
@@ -215,21 +219,24 @@ void JSLock::grabAllLocks(unsigned lockCount)
 
 JSLock::DropAllLocks::DropAllLocks(ExecState* exec)
     : m_lockCount(0)
-    , m_vm(&exec->vm())
+    , m_vm(exec ? &exec->vm() : 0)
 {
-    m_lockCount = m_vm->apiLock().dropAllLocks();
+    if (m_vm)
+        m_lockCount = m_vm->apiLock().dropAllLocks();
 }
 
 JSLock::DropAllLocks::DropAllLocks(VM* vm)
     : m_lockCount(0)
     , m_vm(vm)
 {
-    m_lockCount = m_vm->apiLock().dropAllLocks();
+    if (m_vm)
+        m_lockCount = m_vm->apiLock().dropAllLocks();
 }
 
 JSLock::DropAllLocks::~DropAllLocks()
 {
-    m_vm->apiLock().grabAllLocks(m_lockCount);
+    if (m_vm)
+        m_vm->apiLock().grabAllLocks(m_lockCount);
 }
 
 } // namespace JSC
