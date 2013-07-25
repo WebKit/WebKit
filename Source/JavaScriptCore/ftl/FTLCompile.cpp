@@ -31,6 +31,7 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGCCallHelpers.h"
 #include "DFGCommon.h"
+#include "Disassembler.h"
 #include "FTLJITCode.h"
 #include "FTLLLVMHeaders.h"
 #include "JITStubs.h"
@@ -117,6 +118,22 @@ void compile(State& state)
     state.generatedFunction = reinterpret_cast<GeneratedFunction>(LLVMGetPointerToGlobal(engine, state.function));
     LLVMDisposePassManager(pass);
     LLVMDisposeExecutionEngine(engine);
+
+    if (shouldShowDisassembly()) {
+        // FIXME: fourthTier: FTL memory allocator should be able to tell us which of
+        // these things is actually code or data.
+        // https://bugs.webkit.org/show_bug.cgi?id=116189
+        for (unsigned i = 0; i < state.jitCode->handles().size(); ++i) {
+            ExecutableMemoryHandle* handle = state.jitCode->handles()[i].get();
+            dataLog(
+                "Generated LLVM code for ",
+                CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::DFGJIT),
+                " #", i, ":\n");
+            disassemble(
+                MacroAssemblerCodePtr(handle->start()), handle->sizeInBytes(),
+                "    ", WTF::dataFile());
+        }
+    }
 }
 
 } } // namespace JSC::FTL
