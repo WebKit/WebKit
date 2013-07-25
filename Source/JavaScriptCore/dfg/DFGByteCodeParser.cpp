@@ -2639,7 +2639,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                         addStructureTransitionCheck(prototype.asCell());
                     }
                 }
-                WTF::loadLoadFence();
                 ASSERT(putByIdStatus.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
                 
                 Node* propertyStorage;

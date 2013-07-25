@@ -56,10 +56,17 @@ public:
     
     // It is safe to call this from another thread.  It may return true
     // even if the set actually had been invalidated, but that ought to happen
-    // only in the case of races, and should be rare.
-    bool isStillValid() const { return !m_isInvalidated; }
+    // only in the case of races, and should be rare. Guarantees that if you
+    // call this after observing something that must imply that the set is
+    // invalidated, then you will see this return false. This is ensured by
+    // issuing a load-load fence prior to querying the state.
+    bool isStillValid() const
+    {
+        WTF::loadLoadFence();
+        return !m_isInvalidated;
+    }
     // Like isStillValid(), may be called from another thread.
-    bool hasBeenInvalidated() const { return m_isInvalidated; }
+    bool hasBeenInvalidated() const { return !isStillValid(); }
     
     // As a convenience, this will ignore 0. That's because code paths in the DFG
     // that create speculation watchpoints may choose to bail out if speculation
@@ -133,6 +140,7 @@ public:
     // only in the case of races, and should be rare.
     bool hasBeenInvalidated() const
     {
+        WTF::loadLoadFence();
         uintptr_t data = m_data;
         if (isFat(data)) {
             WTF::loadLoadFence();
@@ -167,6 +175,7 @@ public:
         if (!(m_data & IsWatchedFlag))
             return;
         m_data |= IsInvalidatedFlag;
+        WTF::storeStoreFence();
     }
     
 private:

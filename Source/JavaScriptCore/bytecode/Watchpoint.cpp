@@ -66,6 +66,7 @@ void WatchpointSet::notifyWriteSlow()
     fireAllWatchpoints();
     m_isWatched = false;
     m_isInvalidated = true;
+    WTF::storeStoreFence();
 }
 
 void WatchpointSet::fireAllWatchpoints()

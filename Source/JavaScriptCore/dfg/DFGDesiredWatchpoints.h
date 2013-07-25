@@ -116,7 +116,6 @@ public:
         if (iter == m_firstKnownState.end())
             return false;
         
-        WTF::loadLoadFence();
         return iter->value != set->isStillValid();
     }
 #endif

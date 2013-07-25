@@ -1,3 +1,52 @@
+2013-04-26  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: WatchpointSet should make racy uses easier to reason about
+        https://bugs.webkit.org/show_bug.cgi?id=115299
+
+        Reviewed by Anders Carlsson.
+        
+        The compiler often does things like:
+
+        1c) Observe something that would imply that a WatchpointSet ought to be invalid
+
+        2c) Check that it is invalid
+
+        The main thread often does things like:
+
+        1m) Fire the watchpoint set
+
+        2m) Do some other thing that would cause the compiler to assume that the WatchpointSet
+        ought to be invalid
+
+        An example is structure transitions, where (1c) is the compiler noticing that a
+        put_by_id inline cache is in a transition state, with the source structure being S;
+        (2c) is the compiler asserting that S's watchpoint set is invalid; (1m) is the main
+        thread firing S's watchpoint set before it does the first transition away from S; and
+        (2m) is the main thread caching the put_by_id transition away from S.
+
+        This is totally fine, except that (1c) and (2c), and (1m) and (2m) could be reordered.
+        Probably, in most cases, this ought to do enough things that the main thread probably
+        already has some fencing. But the compiler thread definitely doesn't have fencing. In
+        any case, we should play it safe and just have additional fencing in all of the
+        relevant places.
+
+        We already have some idioms to put load-load and store-store fences in the right
+        places. But this change just makes WatchpointSet take care of this for us, thus
+        reducing the chances of us getting this wrong.
+
+        * bytecode/Watchpoint.cpp:
+        (JSC::WatchpointSet::notifyWriteSlow):
+        * bytecode/Watchpoint.h:
+        (WatchpointSet):
+        (JSC::WatchpointSet::isStillValid):
+        (JSC::WatchpointSet::hasBeenInvalidated):
+        (JSC::InlineWatchpointSet::hasBeenInvalidated):
+        (JSC::InlineWatchpointSet::notifyWrite):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::GenericDesiredWatchpoints::shouldAssumeMixedState):
+
 2013-07-16  Oliver Hunt <oliver@apple.com>
 
         Merge dfgFourthTier r149233
