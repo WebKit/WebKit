@@ -8,6 +8,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/bytecompiler"
     "${JAVASCRIPTCORE_DIR}/dfg"
     "${JAVASCRIPTCORE_DIR}/disassembler"
+    "${JAVASCRIPTCORE_DIR}/ftl"
     "${JAVASCRIPTCORE_DIR}/heap"
     "${JAVASCRIPTCORE_DIR}/debugger"
     "${JAVASCRIPTCORE_DIR}/interpreter"

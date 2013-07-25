@@ -1,5 +1,14 @@
 2013-07-24  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed buildfix after FTL upstream.
+
+        Add ftl directory as include path.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.pri:
+
+2013-07-24  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed buildfix after FTL upstream for non C++11 builds.
 
         * interpreter/CallFrame.h:
