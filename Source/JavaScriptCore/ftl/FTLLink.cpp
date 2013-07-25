@@ -122,7 +122,6 @@ void link(State& state)
     linkBuffer->link(callArityCheck, state.graph.m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
     
     state.finalizer->initializeEntrypointLinkBuffer(linkBuffer.release());
-    state.finalizer->initializeCode(state.engine);
     state.finalizer->initializeFunction(state.generatedFunction);
     state.finalizer->initializeArityCheck(arityCheck);
     state.finalizer->initializeJITCode(state.jitCode);

@@ -50,7 +50,10 @@ public:
     bool contains(void*);
     
     void initializeExitThunks(CodeRef);
-    void initializeCode(LLVMExecutionEngineRef, CodeRef entrypoint);
+    void addHandle(PassRefPtr<ExecutableMemoryHandle>);
+    void initializeCode(CodeRef entrypoint);
+    
+    const Vector<RefPtr<ExecutableMemoryHandle> >& handles() const { return m_handles; }
     
     CodePtr exitThunks();
     
@@ -61,10 +64,7 @@ public:
     SegmentedVector<OSRExit, 8> osrExit;
     
 private:
-    // FIXME: LLVM should use our own JIT memory allocator, and we shouldn't have to
-    // keep around an LLVMExecutionEngineRef to keep code alive.
-    // https://bugs.webkit.org/show_bug.cgi?id=113619
-    LLVMExecutionEngineRef m_engine;
+    Vector<RefPtr<ExecutableMemoryHandle> > m_handles;
     CodeRef m_entrypoint;
     CodeRef m_exitThunks;
 };

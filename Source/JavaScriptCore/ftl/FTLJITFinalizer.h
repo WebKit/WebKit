@@ -52,10 +52,6 @@ public:
     {
         m_entrypointLinkBuffer = buffer;
     }
-    void initializeCode(LLVMExecutionEngineRef engine)
-    {
-        m_engine = engine;
-    }
     void initializeFunction(GeneratedFunction function)
     {
         m_function = function;
@@ -75,7 +71,6 @@ public:
 private:
     OwnPtr<LinkBuffer> m_exitThunksLinkBuffer;
     OwnPtr<LinkBuffer> m_entrypointLinkBuffer;
-    LLVMExecutionEngineRef m_engine;
     MacroAssembler::Label m_arityCheck;
     GeneratedFunction m_function;
     RefPtr<JITCode> m_jitCode;

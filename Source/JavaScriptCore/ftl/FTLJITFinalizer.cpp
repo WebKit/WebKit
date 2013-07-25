@@ -42,8 +42,6 @@ JITFinalizer::JITFinalizer(Plan& plan)
 
 JITFinalizer::~JITFinalizer()
 {
-    if (m_engine)
-        LLVMDisposeExecutionEngine(m_engine);
 }
 
 bool JITFinalizer::finalize(RefPtr<JSC::JITCode>&)
@@ -54,6 +52,11 @@ bool JITFinalizer::finalize(RefPtr<JSC::JITCode>&)
 
 bool JITFinalizer::finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck)
 {
+    for (unsigned i = m_jitCode->handles().size(); i--;) {
+        MacroAssembler::cacheFlush(
+            m_jitCode->handles()[i]->start(), m_jitCode->handles()[i]->sizeInBytes());
+    }
+    
     if (m_exitThunksLinkBuffer) {
         m_jitCode->initializeExitThunks(
             FINALIZE_DFG_CODE(
@@ -63,13 +66,10 @@ bool JITFinalizer::finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerC
     
     withArityCheck = m_entrypointLinkBuffer->locationOf(m_arityCheck);
     m_jitCode->initializeCode(
-        m_engine,
         FINALIZE_DFG_CODE(
             *m_entrypointLinkBuffer,
             ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data(), m_function)));
     entry = m_jitCode;
-    
-    m_engine = 0; // We don't own it anymore.
     
     return true;
 }

@@ -53,7 +53,6 @@ public:
     LValue function;
     RefPtr<JITCode> jitCode;
     Vector<OSRExitCompilationInfo> osrExit;
-    LLVMExecutionEngineRef engine;
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;
     

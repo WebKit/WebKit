@@ -1,3 +1,43 @@
+2013-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should force LLVM to use our own JIT memory allocator, and we shouldn't have to keep around an LLVMExecutionEngineRef to keep code alive
+        https://bugs.webkit.org/show_bug.cgi?id=113619
+
+        Reviewed by Geoffrey Garen.
+        
+        This uses new API that I've exposed, which allows for memory manager callbacks
+        from within LLVM. LLVM may allocate multiple independent chunks of memory for
+        a module, and we track all of those in a Vector in FTL::JITCode.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateCodeSection):
+        (FTL):
+        (JSC::FTL::mmAllocateDataSection):
+        (JSC::FTL::mmApplyPermissions):
+        (JSC::FTL::mmDestroy):
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::JITCode):
+        (JSC::FTL::JITCode::~JITCode):
+        (JSC::FTL::JITCode::addHandle):
+        (FTL):
+        (JSC::FTL::JITCode::initializeCode):
+        * ftl/FTLJITCode.h:
+        (JITCode):
+        (JSC::FTL::JITCode::handles):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::~JITFinalizer):
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h:
+        (JSC::FTL::JITFinalizer::initializeEntrypointLinkBuffer):
+        (JITFinalizer):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * ftl/FTLState.h:
+        (State):
+
 2013-05-12  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL shouldn't use FastISel and Small code model should be turned off for now

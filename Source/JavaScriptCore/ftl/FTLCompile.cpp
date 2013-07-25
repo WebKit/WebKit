@@ -31,6 +31,7 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGCCallHelpers.h"
 #include "DFGCommon.h"
+#include "FTLJITCode.h"
 #include "FTLLLVMHeaders.h"
 #include "JITStubs.h"
 #include "LinkBuffer.h"
@@ -38,6 +39,44 @@
 namespace JSC { namespace FTL {
 
 using namespace DFG;
+
+static uint8_t* mmAllocateCodeSection(
+    void* opaqueState, uintptr_t size, unsigned alignment, unsigned sectionID)
+{
+    UNUSED_PARAM(sectionID);
+    
+    State& state = *static_cast<State*>(opaqueState);
+    
+    ASSERT(alignment <= jitAllocationGranule);
+    
+    RefPtr<ExecutableMemoryHandle> result =
+        state.graph.m_vm.executableAllocator.allocate(
+            state.graph.m_vm, size, state.graph.m_codeBlock, JITCompilationMustSucceed);
+    
+    state.jitCode->addHandle(result);
+    
+    return static_cast<uint8_t*>(result->start());
+}
+
+static uint8_t* mmAllocateDataSection(
+    void* opaqueState, uintptr_t size, unsigned alignment, unsigned sectionID,
+    LLVMBool isReadOnly)
+{
+    // FIXME: fourthTier: FTL memory allocator should be able to allocate data
+    // sections in non-executable memory.
+    // https://bugs.webkit.org/show_bug.cgi?id=116189
+    UNUSED_PARAM(isReadOnly);
+    return mmAllocateCodeSection(opaqueState, size, alignment, sectionID);
+}
+
+static LLVMBool mmApplyPermissions(void*, char**)
+{
+    return false;
+}
+
+static void mmDestroy(void*)
+{
+}
 
 void compile(State& state)
 {
@@ -50,14 +89,18 @@ void compile(State& state)
     if (Options::useLLVMSmallCodeModel())
         options.CodeModel = LLVMCodeModelSmall;
     options.EnableFastISel = Options::enableLLVMFastISel();
+    options.MCJMM = LLVMCreateSimpleMCJITMemoryManager(
+        &state, mmAllocateCodeSection, mmAllocateDataSection, mmApplyPermissions, mmDestroy);
     
-    if (LLVMCreateMCJITCompilerForModule(&state.engine, state.module, &options, sizeof(options), &error)) {
+    LLVMExecutionEngineRef engine;
+    
+    if (LLVMCreateMCJITCompilerForModule(&engine, state.module, &options, sizeof(options), &error)) {
         dataLog("FATAL: Could not create LLVM execution engine: ", error, "\n");
         CRASH();
     }
     
     LLVMPassManagerRef pass = LLVMCreatePassManager();
-    LLVMAddTargetData(LLVMGetExecutionEngineTargetData(state.engine), pass);
+    LLVMAddTargetData(LLVMGetExecutionEngineTargetData(engine), pass);
     LLVMAddConstantPropagationPass(pass);
     LLVMAddInstructionCombiningPass(pass);
     LLVMAddPromoteMemoryToRegisterPass(pass);
@@ -69,13 +112,11 @@ void compile(State& state)
     if (DFG::shouldShowDisassembly() || DFG::verboseCompilationEnabled())
         state.dumpState("after optimization");
     
-    // FIXME: LLVM should use our own JIT memory allocator, and we shouldn't have to
-    // keep around an LLVMExecutionEngineRef to keep code alive.
-    // https://bugs.webkit.org/show_bug.cgi?id=113619
     // FIXME: Need to add support for the case where JIT memory allocation failed.
     // https://bugs.webkit.org/show_bug.cgi?id=113620
-    state.generatedFunction = reinterpret_cast<GeneratedFunction>(LLVMGetPointerToGlobal(state.engine, state.function));
+    state.generatedFunction = reinterpret_cast<GeneratedFunction>(LLVMGetPointerToGlobal(engine, state.function));
     LLVMDisposePassManager(pass);
+    LLVMDisposeExecutionEngine(engine);
 }
 
 } } // namespace JSC::FTL

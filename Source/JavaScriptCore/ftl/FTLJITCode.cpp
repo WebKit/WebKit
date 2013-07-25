@@ -32,14 +32,11 @@ namespace JSC { namespace FTL {
 
 JITCode::JITCode()
     : JSC::JITCode(FTLJIT)
-    , m_engine(0)
 {
 }
 
 JITCode::~JITCode()
 {
-    if (m_engine)
-        LLVMDisposeExecutionEngine(m_engine);
 }
 
 void JITCode::initializeExitThunks(CodeRef exitThunks)
@@ -47,9 +44,13 @@ void JITCode::initializeExitThunks(CodeRef exitThunks)
     m_exitThunks = exitThunks;
 }
 
-void JITCode::initializeCode(LLVMExecutionEngineRef engine, CodeRef entrypoint)
+void JITCode::addHandle(PassRefPtr<ExecutableMemoryHandle> handle)
 {
-    m_engine = engine;
+    m_handles.append(handle);
+}
+
+void JITCode::initializeCode(CodeRef entrypoint)
+{
     m_entrypoint = entrypoint;
 }
 
