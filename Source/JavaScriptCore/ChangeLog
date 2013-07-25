@@ -1,3 +1,85 @@
+2013-06-20  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support SwitchChar
+        https://bugs.webkit.org/show_bug.cgi?id=117849
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds Switch(SwitchChar) to the FTL and also implicitly does some other things.
+        SwitchChar requires calling a slow path to resolve ropes. Previously the FTL had no
+        support for calling slow paths, and we avoided adding coverage that would require
+        that. Well, this patch adds the ability to call slow paths and just uses that for
+        resolving ropes for SwitchChar. Also SwitchChar required adding awareness of strings,
+        so I did that, too.
+
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::addCodeOrigin):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.cpp:
+        (WTF):
+        (WTF::printInternal):
+        * dfg/DFGNode.h:
+        (WTF):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::int16Type):
+        (JSC::FTL::constInt):
+        * ftl/FTLAbstractHeapRepository.h:
+        (FTL):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        * ftl/FTLCommonValues.h:
+        (CommonValues):
+        * ftl/FTLIntrinsicRepository.cpp:
+        (JSC::FTL::IntrinsicRepository::IntrinsicRepository):
+        (FTL):
+        * ftl/FTLIntrinsicRepository.h:
+        (FTL):
+        (IntrinsicRepository):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::transferAndCheckArguments):
+        (JSC::FTL::LowerDFGToLLVM::compileJump):
+        (JSC::FTL::LowerDFGToLLVM::compileBranch):
+        (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+        (JSC::FTL::LowerDFGToLLVM::buildSwitch):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lowString):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::isObject):
+        (JSC::FTL::LowerDFGToLLVM::isNotString):
+        (JSC::FTL::LowerDFGToLLVM::isString):
+        (JSC::FTL::LowerDFGToLLVM::isNotObject):
+        (JSC::FTL::LowerDFGToLLVM::speculateObject):
+        (JSC::FTL::LowerDFGToLLVM::speculateString):
+        (JSC::FTL::LowerDFGToLLVM::speculateNonNullObject):
+        (JSC::FTL::LowerDFGToLLVM::vmCall):
+        (JSC::FTL::LowerDFGToLLVM::callPreflight):
+        (JSC::FTL::LowerDFGToLLVM::callCheck):
+        (JSC::FTL::LowerDFGToLLVM::lowBlock):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::constBool):
+        (JSC::FTL::Output::constInt8):
+        (JSC::FTL::Output::constInt32):
+        (JSC::FTL::Output::constIntPtr):
+        (JSC::FTL::Output::constInt64):
+        (JSC::FTL::Output::load16):
+        (JSC::FTL::Output::isNull):
+        (JSC::FTL::Output::notNull):
+        (JSC::FTL::Output::testIsZero32):
+        (JSC::FTL::Output::testNonZero32):
+        (Output):
+        (JSC::FTL::Output::operation):
+        (JSC::FTL::Output::crash):
+
 2013-06-18  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should have switch_char

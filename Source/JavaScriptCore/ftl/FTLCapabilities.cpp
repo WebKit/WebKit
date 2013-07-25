@@ -143,6 +143,7 @@ inline bool canCompile(Node* node)
     case Switch:
         switch (node->switchData()->kind) {
         case SwitchImm:
+        case SwitchChar:
             break;
         default:
             return false;
@@ -181,6 +182,7 @@ bool canCompile(Graph& graph)
                 case KnownCellUse:
                 case ObjectUse:
                 case ObjectOrOtherUse:
+                case StringUse:
                     // These are OK.
                     break;
                 default:

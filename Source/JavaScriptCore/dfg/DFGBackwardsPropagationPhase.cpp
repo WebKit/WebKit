@@ -359,8 +359,7 @@ private:
                 // (i.e. they will take default).
                 node->child1()->mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
                 break;
-            }
-            }
+            } }
             break;
         }
             

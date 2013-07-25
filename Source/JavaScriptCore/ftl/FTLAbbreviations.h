@@ -48,6 +48,7 @@ namespace JSC { namespace FTL {
 static inline LType voidType(LContext context) { return LLVMVoidTypeInContext(context); }
 static inline LType int1Type(LContext context) { return LLVMInt1TypeInContext(context); }
 static inline LType int8Type(LContext context) { return LLVMInt8TypeInContext(context); }
+static inline LType int16Type(LContext context) { return LLVMInt16TypeInContext(context); }
 static inline LType int32Type(LContext context) { return LLVMInt32TypeInContext(context); }
 static inline LType int64Type(LContext context) { return LLVMInt64TypeInContext(context); }
 static inline LType intPtrType(LContext context) { return LLVMInt64TypeInContext(context); }
@@ -128,7 +129,7 @@ static inline LValue addExternFunction(LModule module, const char* name, LType t
 static inline LValue getParam(LValue function, unsigned index) { return LLVMGetParam(function, index); }
 
 enum BitExtension { ZeroExtend, SignExtend };
-static inline LValue constInt(LType type, unsigned long long value, BitExtension extension) { return LLVMConstInt(type, value, extension == SignExtend); }
+static inline LValue constInt(LType type, unsigned long long value, BitExtension extension = ZeroExtend) { return LLVMConstInt(type, value, extension == SignExtend); }
 static inline LValue constReal(LType type, double value) { return LLVMConstReal(type, value); }
 static inline LValue constIntToPtr(LValue value, LType type) { return LLVMConstIntToPtr(value, type); }
 static inline LValue constBitCast(LValue value, LType type) { return LLVMConstBitCast(value, type); }

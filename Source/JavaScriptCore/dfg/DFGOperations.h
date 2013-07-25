@@ -123,7 +123,7 @@ typedef char* DFG_OPERATION (*P_DFGOperation_ESt)(ExecState*, Structure*);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStPS)(ExecState*, Structure*, void*, size_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStSS)(ExecState*, Structure*, size_t, size_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStZ)(ExecState*, Structure*, int32_t);
-typedef StringImpl* DFG_OPERATION (*Str_DFGOperation_EJss)(ExecState*, JSString*);
+typedef StringImpl* DFG_OPERATION (*I_DFGOperation_EJss)(ExecState*, JSString*);
 JSCell* DFG_OPERATION operationStringFromCharCode(ExecState*, int32_t)  WTF_INTERNAL; 
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.

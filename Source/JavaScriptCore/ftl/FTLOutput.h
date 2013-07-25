@@ -104,12 +104,12 @@ public:
     }
     
     LValue param(unsigned index) { return getParam(m_function, index); }
-    LValue constBool(bool value) { return constInt(boolean, value, ZeroExtend); }
-    LValue constInt8(int8_t value) { return constInt(int8, value, SignExtend); }
-    LValue constInt32(int32_t value) { return constInt(int32, value, SignExtend); }
+    LValue constBool(bool value) { return constInt(boolean, value); }
+    LValue constInt8(int8_t value) { return constInt(int8, value); }
+    LValue constInt32(int32_t value) { return constInt(int32, value); }
     template<typename T>
-    LValue constIntPtr(T value) { return constInt(intPtr, bitwise_cast<intptr_t>(value), SignExtend); }
-    LValue constInt64(int64_t value) { return constInt(int64, value, SignExtend); }
+    LValue constIntPtr(T value) { return constInt(intPtr, bitwise_cast<intptr_t>(value)); }
+    LValue constInt64(int64_t value) { return constInt(int64, value); }
     LValue constDouble(double value) { return constReal(doubleType, value); }
     
     LValue phi(LType type) { return buildPhi(m_builder, type); }
@@ -197,6 +197,7 @@ public:
     }
     
     LValue load8(TypedPointer pointer) { return load(pointer, ref8); }
+    LValue load16(TypedPointer pointer) { return load(pointer, ref16); }
     LValue load32(TypedPointer pointer) { return load(pointer, ref32); }
     LValue load64(TypedPointer pointer) { return load(pointer, ref64); }
     LValue loadPtr(TypedPointer pointer) { return load(pointer, refPtr); }
@@ -267,6 +268,7 @@ public:
     }
     
     LValue load8(LValue base, const AbstractField& field) { return load8(address(base, field)); }
+    LValue load16(LValue base, const AbstractField& field) { return load16(address(base, field)); }
     LValue load32(LValue base, const AbstractField& field) { return load32(address(base, field)); }
     LValue load64(LValue base, const AbstractField& field) { return load64(address(base, field)); }
     LValue loadPtr(LValue base, const AbstractField& field) { return loadPtr(address(base, field)); }
@@ -304,9 +306,13 @@ public:
     LValue notZero32(LValue value) { return notEqual(value, int32Zero); }
     LValue isZero64(LValue value) { return equal(value, int64Zero); }
     LValue notZero64(LValue value) { return notEqual(value, int64Zero); }
+    LValue isNull(LValue value) { return equal(value, intPtrZero); }
+    LValue notNull(LValue value) { return notEqual(value, intPtrZero); }
     
     LValue testIsZero8(LValue value, LValue mask) { return isZero8(bitAnd(value, mask)); }
     LValue testNonZero8(LValue value, LValue mask) { return notZero8(bitAnd(value, mask)); }
+    LValue testIsZero32(LValue value, LValue mask) { return isZero32(bitAnd(value, mask)); }
+    LValue testNonZero32(LValue value, LValue mask) { return notZero32(bitAnd(value, mask)); }
     LValue testIsZero64(LValue value, LValue mask) { return isZero64(bitAnd(value, mask)); }
     LValue testNonZero64(LValue value, LValue mask) { return notZero64(bitAnd(value, mask)); }
     
@@ -318,6 +324,12 @@ public:
     LValue call(LValue function) { return buildCall(m_builder, function); }
     LValue call(LValue function, LValue arg1) { return buildCall(m_builder, function, arg1); }
     LValue call(LValue function, LValue arg1, LValue arg2) { return buildCall(m_builder, function, arg1, arg2); }
+    
+    template<typename FunctionType>
+    LValue operation(FunctionType function)
+    {
+        return intToPtr(constIntPtr(function), pointerType(operationType(function)));
+    }
     
     LValue convertToTailCall(LValue call)
     {
@@ -332,6 +344,12 @@ public:
     void ret(LValue value) { buildRet(m_builder, value); }
     
     void unreachable() { buildUnreachable(m_builder); }
+    
+    void crash()
+    {
+        call(intToPtr(constIntPtr(abort), pointerType(functionType(voidType))));
+        unreachable();
+    }
     
     ValueFromBlock anchor(LValue value)
     {

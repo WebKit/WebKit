@@ -35,16 +35,29 @@ IntrinsicRepository::IntrinsicRepository(LContext context)
 #define INTRINSIC_INITIALIZATION(ourName, llvmName, type) , m_##ourName(0)
     FOR_EACH_FTL_INTRINSIC(INTRINSIC_INITIALIZATION)
 #undef INTRINSIC_INITIALIZATION
+#define FUNCTION_TYPE_INITIALIZATION(typeName, type) , m_##typeName(0)
+    FOR_EACH_FUNCTION_TYPE(FUNCTION_TYPE_INITIALIZATION)
+#undef FUNCTION_TYPE_INITIALIZATION
 {
 }
 
 #define INTRINSIC_GETTER_SLOW_DEFINITION(ourName, llvmName, type)       \
-    LValue IntrinsicRepository::ourName##IntrinsicSlow() {              \
+    LValue IntrinsicRepository::ourName##IntrinsicSlow()                \
+    {                                                                   \
         m_##ourName = addExternFunction(m_module, llvmName, type);      \
         return m_##ourName;                                             \
     }
 FOR_EACH_FTL_INTRINSIC(INTRINSIC_GETTER_SLOW_DEFINITION)
 #undef INTRINSIC_GETTER
+
+#define FUNCTION_TYPE_GETTER_SLOW_DEFINITION(typeName, type) \
+    LType IntrinsicRepository::typeName##Slow()              \
+    {                                                        \
+        m_##typeName = type;                                 \
+        return m_##typeName;                                 \
+    }
+FOR_EACH_FUNCTION_TYPE(FUNCTION_TYPE_GETTER_SLOW_DEFINITION)
+#undef FUNCTION_TYPE_GETTER_SLOW_DEFINITION
 
 } } // namespace JSC::FTL
 

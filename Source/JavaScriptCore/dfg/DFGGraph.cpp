@@ -260,6 +260,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
         out.print(comma, "F:#", node->notTakenBlockIndex());
     if (node->isSwitch()) {
         SwitchData* data = node->switchData();
+        out.print(comma, data->kind);
         for (unsigned i = 0; i < data->cases.size(); ++i)
             out.print(comma, data->cases[i].value, ":#", data->cases[i].target);
         out.print(comma, "default:#", data->fallThrough);

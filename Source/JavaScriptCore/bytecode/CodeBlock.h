@@ -601,7 +601,15 @@ public:
         createRareDataIfNecessary();
         return m_rareData->m_codeOrigins;
     }
-
+    
+    unsigned addCodeOrigin(CodeOrigin codeOrigin)
+    {
+        createRareDataIfNecessary();
+        unsigned result = m_rareData->m_codeOrigins.size();
+        m_rareData->m_codeOrigins.append(codeOrigin);
+        return result;
+    }
+        
     // Having code origins implies that there has been some inlining.
     bool hasCodeOrigins()
     {

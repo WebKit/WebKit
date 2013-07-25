@@ -1388,6 +1388,7 @@ public:
 
 namespace WTF {
 
+void printInternal(PrintStream&, JSC::DFG::SwitchKind);
 void printInternal(PrintStream&, JSC::DFG::Node*);
 
 } // namespace WTF

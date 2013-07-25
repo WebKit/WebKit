@@ -35,22 +35,28 @@
 namespace JSC { namespace FTL {
 
 #define FOR_EACH_ABSTRACT_HEAP(macro) \
-    macro(typedArrayProperties) \
-    macro(length)
+    macro(length) \
+    macro(typedArrayProperties)
 
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
+    macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength()) \
     macro(JSCell_structure, JSCell::structureOffset()) \
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
-    macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength()) \
+    macro(JSString_length, JSString::offsetOfLength()) \
+    macro(JSString_value, JSString::offsetOfValue()) \
+    macro(StringImpl_data, StringImpl::dataOffset()) \
+    macro(StringImpl_hashAndFlags, StringImpl::flagsOffset()) \
     macro(Structure_globalObject, Structure::globalObjectOffset()) \
     macro(Structure_typeInfoFlags, Structure::typeInfoFlagsOffset())
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
-    macro(variables, sizeof(Register)) \
+    macro(characters8, sizeof(LChar)) \
+    macro(characters16, sizeof(UChar)) \
     macro(indexedInt32Properties, sizeof(EncodedJSValue)) \
     macro(indexedDoubleProperties, sizeof(double)) \
     macro(indexedContiguousProperties, sizeof(EncodedJSValue)) \
-    macro(indexedArrayStorageProperties, sizeof(EncodedJSValue))
+    macro(indexedArrayStorageProperties, sizeof(EncodedJSValue)) \
+    macro(variables, sizeof(Register))
     
 #define FOR_EACH_NUMBERED_ABSTRACT_HEAP(macro) \
     macro(properties)

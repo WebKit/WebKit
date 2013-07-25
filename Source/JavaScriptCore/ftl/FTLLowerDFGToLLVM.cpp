@@ -110,11 +110,11 @@ public:
         
         closeOverFlushedLocalOps();
         
-        m_out.appendTo(m_argumentChecks, m_blocks.get(m_graph.m_blocks[0].get()));
+        m_out.appendTo(m_argumentChecks, lowBlock(0));
 
         transferAndCheckArguments();
         
-        m_out.jump(m_blocks.get(m_graph.m_blocks[0].get()));
+        m_out.jump(lowBlock(0));
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex)
             compileBlock(blockIndex);
@@ -184,7 +184,7 @@ private:
             if (variable->isCaptured())
                 continue;
             
-            LValue jsValue = m_out.load64(payloadFor(variable->local()));
+            LValue jsValue = m_out.load64(addressFor(variable->local()));
             
             if (variable->shouldUnboxIfPossible()) {
                 RELEASE_ASSERT(!variable->shouldUseDoubleFormat());
@@ -1420,15 +1420,15 @@ private:
     
     void compileJump()
     {
-        m_out.jump(m_blocks.get(m_graph.m_blocks[m_node->takenBlockIndex()].get()));
+        m_out.jump(lowBlock(m_node->takenBlockIndex()));
     }
     
     void compileBranch()
     {
         m_out.branch(
             boolify(m_node->child1()),
-            m_blocks.get(m_graph.m_blocks[m_node->takenBlockIndex()].get()),
-            m_blocks.get(m_graph.m_blocks[m_node->notTakenBlockIndex()].get()));
+            lowBlock(m_node->takenBlockIndex()),
+            lowBlock(m_node->notTakenBlockIndex()));
     }
     
     void compileSwitch()
@@ -1463,9 +1463,7 @@ private:
                 
                 m_out.appendTo(isNotInt, isDouble);
                 m_out.branch(
-                    isCellOrMisc(boxedValue),
-                    m_blocks.get(m_graph.m_blocks[data->fallThrough].get()),
-                    isDouble);
+                    isCellOrMisc(boxedValue), lowBlock(data->fallThrough), isDouble);
                 
                 m_out.appendTo(isDouble, innerLastNext);
                 LValue doubleValue = unboxDouble(boxedValue);
@@ -1473,8 +1471,7 @@ private:
                 intValues.append(m_out.anchor(intInDouble));
                 m_out.branch(
                     m_out.doubleEqual(m_out.intToDouble(intInDouble), doubleValue),
-                    switchOnInts,
-                    m_blocks.get(m_graph.m_blocks[data->fallThrough].get()));
+                    switchOnInts, lowBlock(data->fallThrough));
                 break;
             }
                 
@@ -1484,25 +1481,90 @@ private:
             }
             
             m_out.appendTo(switchOnInts, lastNext);
-            LValue intValue = m_out.phi(m_out.int32, intValues);
-            
-            Vector<SwitchCase> cases;
-            for (unsigned i = 0; i < data->cases.size(); ++i) {
-                cases.append(SwitchCase(
-                    m_out.constInt32(data->cases[i].value.switchLookupValue()),
-                    m_blocks.get(m_graph.m_blocks[data->cases[i].target].get())));
-            }
-            
-            m_out.switchInstruction(
-                intValue, cases,
-                m_blocks.get(m_graph.m_blocks[data->fallThrough].get()));
+            buildSwitch(data, m_out.int32, m_out.phi(m_out.int32, intValues));
             return;
         }
         
-        case SwitchChar:
-            RELEASE_ASSERT_NOT_REACHED();
+        case SwitchChar: {
+            LValue stringValue;
+            
+            switch (m_node->child1().useKind()) {
+            case StringUse: {
+                stringValue = lowString(m_node->child1());
+                break;
+            }
+                
+            case UntypedUse: {
+                LValue unboxedValue = lowJSValue(m_node->child1());
+                
+                LBasicBlock isCellCase = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar is cell"));
+                LBasicBlock isStringCase = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar is string"));
+                
+                m_out.branch(
+                    isNotCell(unboxedValue), lowBlock(data->fallThrough), isCellCase);
+                
+                LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
+                LValue cellValue = unboxedValue;
+                m_out.branch(isNotString(cellValue), lowBlock(data->fallThrough), isStringCase);
+                
+                m_out.appendTo(isStringCase, lastNext);
+                stringValue = cellValue;
+                break;
+            }
+                
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            
+            LBasicBlock lengthIs1 = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar length is 1"));
+            LBasicBlock needResolution = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar resolution"));
+            LBasicBlock resolved = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar resolved"));
+            LBasicBlock is8Bit = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar 8bit"));
+            LBasicBlock is16Bit = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar 16bit"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar continuation"));
+            
+            m_out.branch(
+                m_out.notEqual(
+                    m_out.load32(stringValue, m_heaps.JSString_length),
+                    m_out.int32One),
+                lowBlock(data->fallThrough), lengthIs1);
+            
+            LBasicBlock lastNext = m_out.appendTo(lengthIs1, needResolution);
+            Vector<ValueFromBlock, 2> values;
+            LValue fastValue = m_out.loadPtr(stringValue, m_heaps.JSString_value);
+            values.append(m_out.anchor(fastValue));
+            m_out.branch(m_out.isNull(fastValue), needResolution, resolved);
+            
+            m_out.appendTo(needResolution, resolved);
+            values.append(m_out.anchor(
+                vmCall(m_out.operation(operationResolveRope), m_callFrame, stringValue)));
+            m_out.jump(resolved);
+            
+            m_out.appendTo(resolved, is8Bit);
+            LValue value = m_out.phi(m_out.intPtr, values);
+            LValue characterData = m_out.loadPtr(value, m_heaps.StringImpl_data);
+            m_out.branch(
+                m_out.testNonZero32(
+                    m_out.load32(value, m_heaps.StringImpl_hashAndFlags),
+                    m_out.constInt32(StringImpl::flagIs8Bit())),
+                is8Bit, is16Bit);
+            
+            Vector<ValueFromBlock, 2> characters;
+            m_out.appendTo(is8Bit, is16Bit);
+            characters.append(m_out.anchor(
+                m_out.zeroExt(m_out.load8(characterData, m_heaps.characters8[0]), m_out.int16)));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(is16Bit, continuation);
+            characters.append(m_out.anchor(m_out.load16(characterData, m_heaps.characters16[0])));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            buildSwitch(data, m_out.int16, m_out.phi(m_out.int16, characters));
             return;
-        }
+        } }
+        
         RELEASE_ASSERT_NOT_REACHED();
     }
     
@@ -1636,6 +1698,18 @@ private:
         return m_out.phi(m_out.boolean, results);
     }
     
+    void buildSwitch(SwitchData* data, LType type, LValue switchValue)
+    {
+        Vector<SwitchCase> cases;
+        for (unsigned i = 0; i < data->cases.size(); ++i) {
+            cases.append(SwitchCase(
+                constInt(type, data->cases[i].value.switchLookupValue()),
+                lowBlock(data->cases[i].target)));
+        }
+        
+        m_out.switchInstruction(switchValue, cases, lowBlock(data->fallThrough));
+    }
+    
     void speculateBackward(
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition)
     {
@@ -1742,6 +1816,15 @@ private:
         
         LValue result = lowCell(edge, mode);
         speculateObject(edge, result);
+        return result;
+    }
+    
+    LValue lowString(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    {
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == StringUse || edge.useKind() == KnownStringUse);
+        
+        LValue result = lowCell(edge, mode);
+        speculateString(edge, result);
         return result;
     }
     
@@ -1930,6 +2013,9 @@ private:
         case ObjectUse:
             speculateObject(edge);
             break;
+        case StringUse:
+            speculateString(edge);
+            break;
         case RealNumberUse:
             speculateRealNumber(edge);
             break;
@@ -1956,13 +2042,33 @@ private:
         lowCell(edge);
     }
     
+    LValue isObject(LValue cell)
+    {
+        return m_out.notEqual(
+            m_out.loadPtr(cell, m_heaps.JSCell_structure),
+            m_out.constIntPtr(vm().stringStructure.get()));
+    }
+    
+    LValue isNotString(LValue cell)
+    {
+        return isObject(cell);
+    }
+    
+    LValue isString(LValue cell)
+    {
+        return m_out.equal(
+            m_out.loadPtr(cell, m_heaps.JSCell_structure),
+            m_out.constIntPtr(vm().stringStructure.get()));
+    }
+    
+    LValue isNotObject(LValue cell)
+    {
+        return isString(cell);
+    }
+    
     void speculateObject(Edge edge, LValue cell)
     {
-        FTL_TYPE_CHECK(
-            jsValueValue(cell), edge, SpecObject,
-            m_out.equal(
-                m_out.loadPtr(cell, m_heaps.JSCell_structure),
-                m_out.constIntPtr(vm().stringStructure.get())));
+        FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecObject, isNotObject(cell));
     }
     
     void speculateObject(Edge edge)
@@ -1970,11 +2076,21 @@ private:
         speculateObject(edge, lowCell(edge));
     }
     
+    void speculateString(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecString, isNotString(cell));
+    }
+    
+    void speculateString(Edge edge)
+    {
+        speculateString(edge, lowCell(edge));
+    }
+    
     void speculateNonNullObject(Edge edge, LValue cell)
     {
         LValue structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
         FTL_TYPE_CHECK(
-            jsValueValue(cell), edge, SpecObject,
+            jsValueValue(cell), edge, SpecObject, 
             m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())));
         if (masqueradesAsUndefinedWatchpointIfIsStillValid())
             return;
@@ -2022,6 +2138,62 @@ private:
         return true;
     }
     
+    enum ExceptionCheckMode { NoExceptions, CheckExceptions };
+    
+    LValue vmCall(LValue function, ExceptionCheckMode mode = CheckExceptions)
+    {
+        callPreflight();
+        LValue result = m_out.call(function);
+        callCheck(mode);
+        return result;
+    }
+    LValue vmCall(LValue function, LValue arg1, ExceptionCheckMode mode = CheckExceptions)
+    {
+        callPreflight();
+        LValue result = m_out.call(function, arg1);
+        callCheck(mode);
+        return result;
+    }
+    LValue vmCall(LValue function, LValue arg1, LValue arg2, ExceptionCheckMode mode = CheckExceptions)
+    {
+        callPreflight();
+        LValue result = m_out.call(function, arg1, arg2);
+        callCheck(mode);
+        return result;
+    }
+    
+    void callPreflight(CodeOrigin codeOrigin)
+    {
+        m_out.store32(
+            m_out.constInt32(
+                CallFrame::Location::encodeAsCodeOriginIndex(
+                    codeBlock()->addCodeOrigin(codeOrigin))), 
+            tagFor(JSStack::ArgumentCount));
+    }
+    void callPreflight()
+    {
+        callPreflight(m_node->codeOrigin);
+    }
+    
+    void callCheck(ExceptionCheckMode mode = CheckExceptions)
+    {
+        if (mode == NoExceptions)
+            return;
+        
+        LBasicBlock didHaveException = FTL_NEW_BLOCK(m_out, ("Did have exception"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Exception check continuation"));
+        
+        m_out.branch(
+            m_out.notZero64(m_out.load64(m_out.absolute(&vm().exception))),
+            didHaveException, continuation);
+        
+        LBasicBlock lastNext = m_out.appendTo(didHaveException, continuation);
+        // FIXME: Handle exceptions. https://bugs.webkit.org/show_bug.cgi?id=113622
+        m_out.crash();
+        
+        m_out.appendTo(continuation, lastNext);
+    }
+    
     bool isLive(Node* node)
     {
         HashMap<Node*, unsigned>::iterator iter = m_timeToLive.find(node);
@@ -2046,6 +2218,11 @@ private:
     void use(Node*, Edge edge)
     {
         use(edge);
+    }
+    
+    LBasicBlock lowBlock(BlockIndex blockIndex)
+    {
+        return m_blocks.get(m_graph.m_blocks[blockIndex].get());
     }
     
     void initializeOSRExitStateForBlock()

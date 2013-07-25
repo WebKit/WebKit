@@ -30,6 +30,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "DFGOperations.h"
 #include "FTLAbbreviations.h"
 #include "FTLCommonValues.h"
 
@@ -40,6 +41,9 @@ namespace JSC { namespace FTL {
     macro(subWithOverflow32, "llvm.ssub.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
     macro(mulWithOverflow32, "llvm.smul.with.overflow.i32", functionType(structType(m_context, int32, boolean), int32, int32)) \
     macro(doubleAbs, "llvm.fabs.f64", functionType(doubleType, doubleType))
+
+#define FOR_EACH_FUNCTION_TYPE(macro) \
+    macro(I_DFGOperation_EJss, functionType(intPtr, intPtr, intPtr))
 
 class IntrinsicRepository : public CommonValues {
 public:
@@ -54,6 +58,24 @@ public:
     FOR_EACH_FTL_INTRINSIC(INTRINSIC_GETTER)
 #undef INTRINSIC_GETTER
 
+#define FUNCTION_TYPE_GETTER(typeName, type) \
+    LType typeName()                         \
+    {                                        \
+        if (!m_##typeName)                   \
+            return typeName##Slow();         \
+        return m_##typeName;                 \
+    }
+    FOR_EACH_FUNCTION_TYPE(FUNCTION_TYPE_GETTER)
+#undef FUNCTION_TYPE_GETTER
+    
+#define FUNCTION_TYPE_RESOLVER(typeName, type) \
+    LType operationType(DFG::typeName)         \
+    {                                          \
+        return typeName();                     \
+    }
+    FOR_EACH_FUNCTION_TYPE(FUNCTION_TYPE_RESOLVER)
+#undef FUNCTION_TYPE_RESOLVER
+    
 private:
 #define INTRINSIC_GETTER_SLOW_DECLARATION(ourName, llvmName, type) \
     LValue ourName##IntrinsicSlow();
@@ -63,6 +85,16 @@ private:
 #define INTRINSIC_FIELD_DECLARATION(ourName, llvmName, type) LValue m_##ourName;
     FOR_EACH_FTL_INTRINSIC(INTRINSIC_FIELD_DECLARATION)
 #undef INTRINSIC_FIELD_DECLARATION
+
+#define FUNCTION_TYPE_GETTER_SLOW_DECLARATION(typeName, type) \
+    LType typeName##Slow();
+    FOR_EACH_FUNCTION_TYPE(FUNCTION_TYPE_GETTER_SLOW_DECLARATION)
+#undef FUNCTION_TYPE_GETTER_SLOW_DECLARATION
+
+#define FUNCTION_TYPE_FIELD_DECLARATION(typeName, type) \
+    LType m_##typeName;
+    FOR_EACH_FUNCTION_TYPE(FUNCTION_TYPE_FIELD_DECLARATION)
+#undef FUNCTION_TYPE_FIELD_DECLARATION
 };
 
 } } // namespace JSC::FTL
