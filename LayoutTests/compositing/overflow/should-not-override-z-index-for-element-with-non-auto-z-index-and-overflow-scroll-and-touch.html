@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#container {
+    overflow: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+}
+
+.red-square {
+    position: absolute;
+    z-index: 2;
+}
+
+.square {
+    height: 256px;
+    width: 256px;
+}
+</style>
+</head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<body>
+    <!-- This tests that we do not override the z-index to be 0 on an element with a non-auto z-index, CSS "overflow: scroll" and "-webkit-overflow-scrolling: touch". This test passed if you see the word PASS below. Otherwise, it FAILED. -->
+    <!-- Note, this test should pass with- and without- ACCELERATED_OVERFLOW_SCROLLING enabled. -->
+    <div id="test-container">
+        <div class="square red-square" style="background-color: red">FAIL</div>
+        <div id="container">
+            <div id="pass" class="square" style="background-color: green">PASS</div>
+        </div>
+    </div>
+    <div id="result"></div>
+    <script>
+    if (window.testRunner) {
+        // FIXME: We shouldn't hardcode the coordinates of the point to test we should find a way to query
+        // for the position of test-container.
+        document.getElementById("result").innerText = document.elementFromPoint(10, 10) == document.getElementById("pass") ? "PASS" : "FAIL";
+        document.body.removeChild(document.getElementById("test-container"));
+    }
+    </script>
+</body>
+</html>

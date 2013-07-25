@@ -1,3 +1,15 @@
+2013-07-24  Daniel Bates  <dabates@apple.com>
+
+        Add DRT test to ensure don't override z-index for overflow: scroll, -webkit-overflow-scrolling: touch
+        https://bugs.webkit.org/show_bug.cgi?id=119071
+
+        Reviewed by Simon Fraser.
+
+        Add a DRT test to ensure we don't regress the fix for <https://bugs.webkit.org/show_bug.cgi?id=119066>.
+
+        * compositing/overflow/should-not-override-z-index-for-element-with-non-auto-z-index-and-overflow-scroll-and-touch-expected.txt: Added.
+        * compositing/overflow/should-not-override-z-index-for-element-with-non-auto-z-index-and-overflow-scroll-and-touch.html: Added.
+
 2013-07-24  Robert Hogan  <robert@webkit.org>
 
         Border drawing incorrect when using both border-collapse: collapse and overflow: hidden on a table
