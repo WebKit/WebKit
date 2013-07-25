@@ -2,10 +2,11 @@
 if (self.testRunner)
     testRunner.dumpAsText(self.enablePixelTesting);
 
-var description, debug, successfullyParsed, errorMessage, silentTestPass, didPassSomeTestsSilently;
+var description, debug, successfullyParsed, errorMessage, silentTestPass, didPassSomeTestsSilently, didFailSomeTests;
 
 silentTestPass = false;
 didPassSomeTestsSilently = false;
+didFailSomeTests = false;
 
 (function() {
 
@@ -107,6 +108,7 @@ function testPassed(msg)
 
 function testFailed(msg)
 {
+    didFailSomeTests = true;
     debug('<span><span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
 }
 
@@ -595,8 +597,11 @@ function dfgIncrement(argument)
     if (argument.i < argument.n)
         return argument.i;
     
+    if (didFailSomeTests)
+        return argument.i;
+    
     if (!dfgCompiled(argument))
-        return 0;
+        return "start" in argument ? argument.start : 0;
     
     return argument.i;
 }
@@ -617,6 +622,8 @@ function isSuccessfullyParsed()
     shouldBeTrue("successfullyParsed");
     if (silentTestPass && didPassSomeTestsSilently)
         debug("Passed some tests silently.");
+    if (didFailSomeTests)
+        debug("Some tests failed.");
     debug('<br /><span class="pass">TEST COMPLETE</span>');
 }
 

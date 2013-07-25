@@ -11,9 +11,12 @@ function foo() {
     return arguments[0];
 }
 
+silentTestPass = true;
+noInline(foo);
+
 var args = [42];
 var expected = "\"42\"";
-for (var i = 0; i < 3000; ++i) {
+for (var i = 0; i < 3000; i = dfgIncrement({f:foo, i:i + 1, n:1500})) {
     if (i == 1000) {
         p = true;
         expected = "\"[object Arguments]\"";

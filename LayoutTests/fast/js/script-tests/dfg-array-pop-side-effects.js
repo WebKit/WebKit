@@ -9,8 +9,11 @@ function foo(a, b) {
     return result;
 }
 
+noInline(foo);
+silentTestPass = true;
+
 var ouches = 0;
-for (var i = 0; i < 200; ++i) {
+for (var i = 0; i < 200; i = dfgIncrement({f:foo, i:i + 1, n:100})) {
     var a = {f:1, g:2};
     var b = [];
     var expected;

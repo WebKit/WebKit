@@ -8,8 +8,11 @@ function foo() {
     return args[0] + args[1] + args[2];
 }
 
+silentTestPass = true;
+noInline(foo);
+
 var result = "";
-for (var i = 0; i < 300; ++i) {
+for (var i = 0; i < 300; i = dfgIncrement({f:foo, i:i + 1, n:100})) {
     var a;
     if (i < 200)
         a = i;

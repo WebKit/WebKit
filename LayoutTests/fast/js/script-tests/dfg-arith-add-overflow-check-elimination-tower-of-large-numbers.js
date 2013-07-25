@@ -13,17 +13,13 @@ function foo(a, b) {
             281474976710655 + 281474976710655 + 281474976710655 + 281474976710655 + 30) | 0;
 }
 
-function bar(a, b, o) {
-    eval(""); // Prevent this function from being opt compiled.
-    return foo(a, b, o);
-}
+noInline(foo);
+silentTestPass = true;
 
-var warmup = 200;
-
-for (var i = 0; i < warmup + 1; ++i) {
+for (var i = 0; i < 2; i = dfgIncrement({f:foo, i:i + 1, n:1})) {
     var a, b, c;
     var expected;
-    if (i < warmup) {
+    if (!i) {
         a = 1;
         b = 2;
         expected = 0;
@@ -32,6 +28,6 @@ for (var i = 0; i < warmup + 1; ++i) {
         b = 2147483644;
         expected = -10;
     }
-    shouldBe("bar(" + a + ", " + b + ")", "" + expected);
+    shouldBe("foo(" + a + ", " + b + ")", "" + expected);
 }
 

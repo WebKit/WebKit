@@ -1,3 +1,26 @@
+2013-05-31  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: convert more fast/js/dfg-* tests to wait for the concurrent JIT
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * fast/js/dfg-arguments-alias-one-block-overwrite-expected.txt:
+        * fast/js/dfg-arguments-out-of-bounds-expected.txt:
+        * fast/js/dfg-arith-add-overflow-check-elimination-predicted-but-not-proven-int-expected.txt:
+        * fast/js/dfg-arith-add-overflow-check-elimination-tower-of-large-numbers-expected.txt:
+        * fast/js/dfg-array-length-dead-expected.txt:
+        * fast/js/dfg-array-pop-side-effects-expected.txt:
+        * fast/js/resources/js-test-pre.js:
+        (testFailed):
+        (dfgIncrement):
+        (isSuccessfullyParsed):
+        * fast/js/script-tests/dfg-arguments-alias-one-block-overwrite.js:
+        * fast/js/script-tests/dfg-arguments-out-of-bounds.js:
+        * fast/js/script-tests/dfg-arith-add-overflow-check-elimination-predicted-but-not-proven-int.js:
+        * fast/js/script-tests/dfg-arith-add-overflow-check-elimination-tower-of-large-numbers.js:
+        * fast/js/script-tests/dfg-array-length-dead.js:
+        * fast/js/script-tests/dfg-array-pop-side-effects.js:
+
 2013-05-28  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: convert more fast/js/dfg-* tests to wait for the concurrent JIT
