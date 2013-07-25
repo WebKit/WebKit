@@ -815,7 +815,7 @@ private:
         return getArrayMode(profile, Array::Read);
     }
     
-    ArrayMode getArrayModeAndEmitChecks(ArrayProfile* profile, Array::Action action, Node* base)
+    ArrayMode getArrayModeConsideringSlowPath(ArrayProfile* profile, Array::Action action)
     {
         ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         
@@ -824,7 +824,7 @@ private:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         if (m_inlineStackTop->m_profiledBlock->numberOfRareCaseProfiles())
             dataLogF("Slow case profile for bc#%u: %u\n", m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
-        dataLogF("Array profile for bc#%u: %p%s%s, %u\n", m_currentIndex, profile->expectedStructure(), profile->structureIsPolymorphic(locker) ? " (polymorphic)" : "", profile->mayInterceptIndexedAccesses(locker) ? " (may intercept)" : "", profile->observedArrayModes(locker));
+        dataLogF("Array profile for bc#%u: %u %s%s\n", m_currentIndex, profile->observedArrayModes(locker), profile->structureIsPolymorphic(locker) ? " (polymorphic)" : "", profile->mayInterceptIndexedAccesses(locker) ? " (may intercept)" : "");
 #endif
         
         bool makeSafe =
@@ -832,11 +832,6 @@ private:
             || profile->outOfBounds(locker);
         
         ArrayMode result = ArrayMode::fromObserved(locker, profile, action, makeSafe);
-        
-        if (profile->hasDefiniteStructure(locker)
-            && result.benefitsFromStructureCheck()
-            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
-            addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure(locker))), base);
         
         return result;
     }
@@ -2328,7 +2323,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             SpeculatedType prediction = getPrediction();
             
             Node* base = get(currentInstruction[2].u.operand);
-            ArrayMode arrayMode = getArrayModeAndEmitChecks(currentInstruction[4].u.arrayProfile, Array::Read, base);
+            ArrayMode arrayMode = getArrayModeConsideringSlowPath(currentInstruction[4].u.arrayProfile, Array::Read);
             Node* property = get(currentInstruction[3].u.operand);
             Node* getByVal = addToGraph(GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction), base, property);
             set(currentInstruction[1].u.operand, getByVal);
@@ -2339,7 +2334,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_put_by_val: {
             Node* base = get(currentInstruction[1].u.operand);
 
-            ArrayMode arrayMode = getArrayModeAndEmitChecks(currentInstruction[4].u.arrayProfile, Array::Write, base);
+            ArrayMode arrayMode = getArrayModeConsideringSlowPath(currentInstruction[4].u.arrayProfile, Array::Write);
             
             Node* property = get(currentInstruction[2].u.operand);
             Node* value = get(currentInstruction[3].u.operand);

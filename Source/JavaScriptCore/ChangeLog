@@ -1,5 +1,45 @@
 2013-07-18  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: DFG shouldn't create CheckStructures for array accesses except if the ArrayMode implies an original array access
+        https://bugs.webkit.org/show_bug.cgi?id=118867
+
+        Reviewed by Mark Hahnenberg.
+        
+        This allows us to kill off a bunch of code in the parser, in fixup, and to simplify
+        ArrayProfile.
+
+        It also makes it easier to ask any array-using node how to create its type check.
+        
+        Doing this required fixing a bug in LowLevelInterpreter64, where it was storing into
+        an array profile, thinking that it was storing into a value profile. Reshuffling the
+        fields in ArrayProfile revealed this.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        (JSC::ArrayProfile::briefDescriptionWithoutUpdating):
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::ArrayProfile):
+        (ArrayProfile):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        (JSC::CodeBlock::updateAllPredictions):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        * dfg/DFGArrayMode.h:
+        (ArrayMode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getArrayModeConsideringSlowPath):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::checkArray):
+        (JSC::DFG::FixupPhase::blessArrayOperation):
+        * llint/LowLevelInterpreter64.asm:
+
+2013-07-18  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: CFA should consider live-at-head for clobbering and dumping
         https://bugs.webkit.org/show_bug.cgi?id=118857
 

@@ -345,24 +345,6 @@ public:
     Structure* originalArrayStructure(Graph&, const CodeOrigin&) const;
     Structure* originalArrayStructure(Graph&, Node*) const;
     
-    bool benefitsFromStructureCheck() const
-    {
-        switch (type()) {
-        case Array::SelectUsingPredictions:
-            // It might benefit from structure checks! If it ends up not benefiting, we can just
-            // remove it. The FixupPhase does this: if it finds a CheckStructure just before an
-            // array op and it had turned that array op into either generic or conversion mode,
-            // it will remove the CheckStructure.
-            return true;
-        case Array::Unprofiled:
-        case Array::ForceExit:
-        case Array::Generic:
-            return false;
-        default:
-            return conversion() == Array::AsIs;
-        }
-    }
-    
     bool doesConversion() const
     {
         return conversion() != Array::AsIs;

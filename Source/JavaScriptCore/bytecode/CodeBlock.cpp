@@ -3204,12 +3204,12 @@ void CodeBlock::updateAllValueProfilePredictions(OperationInProgress operation)
     updateAllPredictionsAndCountLiveness(operation, ignoredValue1, ignoredValue2);
 }
 
-void CodeBlock::updateAllArrayPredictions(OperationInProgress operation)
+void CodeBlock::updateAllArrayPredictions()
 {
     ConcurrentJITLocker locker(m_lock);
     
     for (unsigned i = m_arrayProfiles.size(); i--;)
-        m_arrayProfiles[i].computeUpdatedPrediction(locker, this, operation);
+        m_arrayProfiles[i].computeUpdatedPrediction(locker, this);
     
     // Don't count these either, for similar reasons.
     for (unsigned i = m_arrayAllocationProfiles.size(); i--;)
@@ -3219,7 +3219,7 @@ void CodeBlock::updateAllArrayPredictions(OperationInProgress operation)
 void CodeBlock::updateAllPredictions(OperationInProgress operation)
 {
     updateAllValueProfilePredictions(operation);
-    updateAllArrayPredictions(operation);
+    updateAllArrayPredictions();
 }
 
 bool CodeBlock::shouldOptimizeNow()

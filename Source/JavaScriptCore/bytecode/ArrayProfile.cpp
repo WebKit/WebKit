@@ -74,38 +74,24 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
         out.print("ArrayWithSlowPutArrayStorage");
 }
 
-void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker& locker, CodeBlock* codeBlock, OperationInProgress operation)
+void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBlock* codeBlock)
 {
-    if (m_lastSeenStructure) {
-        m_observedArrayModes |= arrayModeFromStructure(m_lastSeenStructure);
-
-        if (!m_didPerformFirstRunPruning
-            && hasTwoOrMoreBitsSet(m_observedArrayModes)) {
-            m_observedArrayModes = arrayModeFromStructure(m_lastSeenStructure);
-            m_expectedStructure = 0;
-            m_didPerformFirstRunPruning = true;
-        }
-        
-        m_mayInterceptIndexedAccesses |=
-            m_lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
-        if (!codeBlock->globalObject()->isOriginalArrayStructure(m_lastSeenStructure))
-            m_usesOriginalArrayStructures = false;
-        if (!structureIsPolymorphic(locker)) {
-            if (!m_expectedStructure)
-                m_expectedStructure = m_lastSeenStructure;
-            else if (m_expectedStructure != m_lastSeenStructure)
-                m_expectedStructure = polymorphicStructure();
-        }
-        m_lastSeenStructure = 0;
+    if (!m_lastSeenStructure)
+        return;
+    
+    m_observedArrayModes |= arrayModeFromStructure(m_lastSeenStructure);
+    
+    if (!m_didPerformFirstRunPruning
+        && hasTwoOrMoreBitsSet(m_observedArrayModes)) {
+        m_observedArrayModes = arrayModeFromStructure(m_lastSeenStructure);
+        m_didPerformFirstRunPruning = true;
     }
     
-    if (hasTwoOrMoreBitsSet(m_observedArrayModes))
-        m_expectedStructure = polymorphicStructure();
-
-    if (operation == Collection
-        && expectedStructure(locker)
-        && !Heap::isMarked(m_expectedStructure))
-        m_expectedStructure = polymorphicStructure();
+    m_mayInterceptIndexedAccesses |=
+        m_lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
+    if (!codeBlock->globalObject()->isOriginalArrayStructure(m_lastSeenStructure))
+        m_usesOriginalArrayStructures = false;
+    m_lastSeenStructure = 0;
 }
 
 CString ArrayProfile::briefDescription(const ConcurrentJITLocker& locker, CodeBlock* codeBlock)
@@ -114,7 +100,7 @@ CString ArrayProfile::briefDescription(const ConcurrentJITLocker& locker, CodeBl
     return briefDescriptionWithoutUpdating(locker);
 }
 
-CString ArrayProfile::briefDescriptionWithoutUpdating(const ConcurrentJITLocker& locker)
+CString ArrayProfile::briefDescriptionWithoutUpdating(const ConcurrentJITLocker&)
 {
     StringPrintStream out;
     
@@ -124,18 +110,6 @@ CString ArrayProfile::briefDescriptionWithoutUpdating(const ConcurrentJITLocker&
         if (hasPrinted)
             out.print(", ");
         out.print(ArrayModesDump(m_observedArrayModes));
-        hasPrinted = true;
-    }
-    
-    if (structureIsPolymorphic(locker)) {
-        if (hasPrinted)
-            out.print(", ");
-        out.print("struct = TOP");
-        hasPrinted = true;
-    } else if (m_expectedStructure) {
-        if (hasPrinted)
-            out.print(", ");
-        out.print("struct = ", RawPointer(m_expectedStructure));
         hasPrinted = true;
     }
     

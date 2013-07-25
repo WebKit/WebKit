@@ -136,7 +136,6 @@ public:
     ArrayProfile()
         : m_bytecodeOffset(std::numeric_limits<unsigned>::max())
         , m_lastSeenStructure(0)
-        , m_expectedStructure(0)
         , m_mayStoreToHole(false)
         , m_outOfBounds(false)
         , m_mayInterceptIndexedAccesses(false)
@@ -149,7 +148,6 @@ public:
     ArrayProfile(unsigned bytecodeOffset)
         : m_bytecodeOffset(bytecodeOffset)
         , m_lastSeenStructure(0)
-        , m_expectedStructure(0)
         , m_mayStoreToHole(false)
         , m_outOfBounds(false)
         , m_mayInterceptIndexedAccesses(false)
@@ -171,22 +169,8 @@ public:
         m_lastSeenStructure = structure;
     }
     
-    void computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBlock*, OperationInProgress = NoOperation);
+    void computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBlock*);
     
-    Structure* expectedStructure(const ConcurrentJITLocker& locker) const
-    {
-        if (structureIsPolymorphic(locker))
-            return 0;
-        return m_expectedStructure;
-    }
-    bool structureIsPolymorphic(const ConcurrentJITLocker&) const
-    {
-        return m_expectedStructure == polymorphicStructure();
-    }
-    bool hasDefiniteStructure(const ConcurrentJITLocker& locker) const
-    {
-        return !structureIsPolymorphic(locker) && m_expectedStructure;
-    }
     ArrayModes observedArrayModes(const ConcurrentJITLocker&) const { return m_observedArrayModes; }
     bool mayInterceptIndexedAccesses(const ConcurrentJITLocker&) const { return m_mayInterceptIndexedAccesses; }
     
@@ -205,7 +189,6 @@ private:
     
     unsigned m_bytecodeOffset;
     Structure* m_lastSeenStructure;
-    Structure* m_expectedStructure;
     bool m_mayStoreToHole; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
     bool m_outOfBounds;
     bool m_mayInterceptIndexedAccesses : 1;

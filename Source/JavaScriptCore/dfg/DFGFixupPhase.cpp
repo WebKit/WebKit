@@ -748,12 +748,6 @@ private:
                 arrayProfile->computeUpdatedPrediction(locker, profiledBlock);
                 arrayMode = ArrayMode::fromObserved(locker, arrayProfile, Array::Read, false);
                 arrayMode = arrayMode.refine(node->child1()->prediction(), node->prediction());
-                if (arrayMode.supportsLength() && arrayProfile->hasDefiniteStructure(locker)) {
-                    m_insertionSet.insertNode(
-                        m_indexInBlock, SpecNone, CheckStructure, node->codeOrigin,
-                        OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure(locker))),
-                        node->child1());
-                }
             } else
                 arrayMode = arrayMode.refine(node->child1()->prediction(), node->prediction());
             
@@ -1220,25 +1214,6 @@ private:
         m_insertionSet.execute(block);
     }
     
-    void findAndRemoveUnnecessaryStructureCheck(Node* array, const CodeOrigin& codeOrigin)
-    {
-        for (unsigned index = m_indexInBlock; index--;) {
-            Node* previousNode = m_block->at(index);
-            if (previousNode->codeOrigin != codeOrigin)
-                return;
-            
-            if (previousNode->op() != CheckStructure)
-                continue;
-            
-            if (previousNode->child1() != array)
-                continue;
-            
-            previousNode->child1() = Edge();
-            previousNode->convertToPhantom();
-            return; // Assume we were smart enough to only insert one CheckStructure on the array.
-        }
-    }
-    
     Node* checkArray(ArrayMode arrayMode, const CodeOrigin& codeOrigin, Node* array, Node* index, bool (*storageCheck)(const ArrayMode&) = canCSEStorage)
     {
         ASSERT(arrayMode.isSpecific());
@@ -1249,13 +1224,6 @@ private:
         
         if (arrayMode.doesConversion()) {
             if (structure) {
-                if (m_indexInBlock > 0) {
-                    // If the previous node was a CheckStructure inserted because of stuff
-                    // that the array profile told us, then remove it, since we're going to be
-                    // doing arrayification instead.
-                    findAndRemoveUnnecessaryStructureCheck(array, codeOrigin);
-                }
-                
                 m_insertionSet.insertNode(
                     m_indexInBlock, SpecNone, ArrayifyToStructure, codeOrigin,
                     OpInfo(structure), OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
@@ -1306,7 +1274,6 @@ private:
             return;
             
         case Array::Generic:
-            findAndRemoveUnnecessaryStructureCheck(base.node(), node->codeOrigin);
             return;
             
         default: {

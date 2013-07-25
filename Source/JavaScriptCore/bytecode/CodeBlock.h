@@ -885,12 +885,12 @@ public:
 #if ENABLE(VALUE_PROFILER)
     bool shouldOptimizeNow();
     void updateAllValueProfilePredictions(OperationInProgress = NoOperation);
-    void updateAllArrayPredictions(OperationInProgress = NoOperation);
+    void updateAllArrayPredictions();
     void updateAllPredictions(OperationInProgress = NoOperation);
 #else
     bool updateAllPredictionsAndCheckIfShouldOptimizeNow() { return false; }
     void updateAllValueProfilePredictions(OperationInProgress = NoOperation) { }
-    void updateAllArrayPredictions(OperationInProgress = NoOperation) { }
+    void updateAllArrayPredictions() { }
     void updateAllPredictions(OperationInProgress = NoOperation) { }
 #endif
 
