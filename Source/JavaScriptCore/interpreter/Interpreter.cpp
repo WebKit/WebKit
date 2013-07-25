@@ -992,6 +992,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         }
         newCodeBlock = &callData.js.functionExecutable->generatedBytecodeForCall();
         ASSERT(!!newCodeBlock);
+        newCodeBlock->m_shouldAlwaysBeInlined = false;
     } else
         newCodeBlock = 0;
 
@@ -1070,6 +1071,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         }
         newCodeBlock = &constructData.js.functionExecutable->generatedBytecodeForConstruct();
         ASSERT(!!newCodeBlock);
+        newCodeBlock->m_shouldAlwaysBeInlined = false;
     } else
         newCodeBlock = 0;
 
@@ -1137,6 +1139,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
         return CallFrameClosure();
     }
     CodeBlock* newCodeBlock = &functionExecutable->generatedBytecodeForCall();
+    newCodeBlock->m_shouldAlwaysBeInlined = false;
 
     size_t argsCount = argumentCountIncludingThis;
 

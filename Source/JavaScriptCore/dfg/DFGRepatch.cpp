@@ -1129,6 +1129,10 @@ void dfgLinkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCo
 {
     ASSERT(!callLinkInfo.stub);
     
+    // If you're being call-linked from a DFG caller then you obviously didn't get inlined.
+    if (calleeCodeBlock)
+        calleeCodeBlock->m_shouldAlwaysBeInlined = false;
+    
     CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
     VM* vm = callerCodeBlock->vm();
     
@@ -1140,7 +1144,7 @@ void dfgLinkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCo
     repatchBuffer.relink(callLinkInfo.hotPathOther, codePtr);
     
     if (calleeCodeBlock)
-        calleeCodeBlock->linkIncomingCall(&callLinkInfo);
+        calleeCodeBlock->linkIncomingCall(exec->callerFrame(), &callLinkInfo);
     
     if (kind == CodeForCall) {
         repatchBuffer.relink(callLinkInfo.callReturnLocation, vm->getCTIStub(linkClosureCallThunkGenerator).code());

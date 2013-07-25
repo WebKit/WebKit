@@ -118,6 +118,11 @@ inline bool mightInlineFunctionFor(CodeBlock* codeBlock, CodeSpecializationKind 
     return mightInlineFunctionForConstruct(codeBlock);
 }
 
+inline bool mightInlineFunction(CodeBlock* codeBlock)
+{
+    return mightInlineFunctionFor(codeBlock, codeBlock->specializationKind());
+}
+
 inline bool canInlineFunctionFor(CodeBlock* codeBlock, CodeSpecializationKind kind, bool isClosureCall)
 {
     if (isClosureCall) {

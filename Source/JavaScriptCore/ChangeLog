@@ -1,5 +1,88 @@
 2013-05-23  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: add heuristics to reduce the likelihood of a trivially inlineable function being independently compiled by the concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=116557
+
+        Reviewed by Geoffrey Garen.
+        
+        This introduces a fairly comprehensive mechanism for preventing trivially inlineable
+        functions from being compiled independently of all of the things into which they end
+        up being inlined.
+        
+        The trick is CodeBlock::m_shouldAlwaysBeInlined, or SABI for short (that's what the
+        debug logging calls it). A SABI function is one that we currently believe should
+        never be DFG optimized because it should always be inlined into the functions that
+        call it. SABI follows "innocent until proven guilty": all functions start out SABI
+        and have SABI set to false if we see proof that that function may be called in some
+        possibly non-inlineable way. So long as a function is SABI, it will not tier up to
+        the DFG: cti_optimize will perpetually postpone its optimization. Because SABI has
+        such a severe effect, we make the burden of proof of guilt quite low. SABI gets
+        cleared if any of the following happen:
+        
+        - You get called from native code (either through CallData or CachedCall).
+        
+        - You get called from an eval, since eval code takes a long time to get DFG
+          optimized.
+        
+        - You get called from global code, since often global code doesn't tier-up since
+          it's run-once.
+        
+        - You get called recursively, where recursion is detected by a stack walk of depth
+          Options::maximumInliningDepth().
+        
+        - You get called through an unlinked virtual call.
+        
+        - You get called from DFG code, since if the caller was already DFG optimized and
+          didn't inline you then obviously, you might not get inlined.
+        
+        - You've tiered up to the baseline JIT and you get called from the interpreter.
+          The idea here is that this kind of ensures that you stay SABI only if you're
+          called no more frequently than any of your callers.
+        
+        - You get called from a code block that isn't a DFG candidate.
+        
+        - You aren't an inlining candidate.
+        
+        Most of the heuristics for SABI are in CodeBlock::noticeIncomingCall().
+        
+        This is neutral on SunSpider and V8Spider, and appears to be a slight speed-up on
+        V8v7, which was previously adversely affected by concurrent compilation. I also
+        confirmed that for example on V8/richards, it dramatically reduces the number of
+        code blocks that get DFG compiled. It is a speed-up on those V8v7 benchmarks that
+        saw regressions from concurrent compilation.
+        
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpAssumingJITType):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::linkIncomingCall):
+        (JSC):
+        (JSC::CodeBlock::noticeIncomingCall):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::mightInlineFunction):
+        (DFG):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgLinkFor):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::linkFor):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::lazyLinkFor):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+
+2013-05-23  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: rationalize DFG::CapabilityLevel and DFGCapabilities.[h|cpp]
         https://bugs.webkit.org/show_bug.cgi?id=116696
 

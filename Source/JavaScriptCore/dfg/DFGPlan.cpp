@@ -116,7 +116,7 @@ void Plan::compileInThread(LongLivedState& longLivedState)
             pathName = "FTL";
             break;
         }
-        dataLog("Compiled ", *codeBlock, " with ", pathName, " in ", currentTimeMS() - before, " ms.\n");
+        dataLog("Optimized ", *codeBlock->alternative(), " with ", pathName, " in ", currentTimeMS() - before, " ms.\n");
     }
 }
 

@@ -112,6 +112,8 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
     out.print(inferredName(), "#", hash(), ":[", RawPointer(this), "->", RawPointer(ownerExecutable()), ", ", jitType, codeType());
     if (codeType() == FunctionCode)
         out.print(specializationKind());
+    if (m_shouldAlwaysBeInlined)
+        out.print(" (SABI)");
     out.print("]");
 }
 
@@ -1569,6 +1571,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_numCalleeRegisters(other.m_numCalleeRegisters)
     , m_numVars(other.m_numVars)
     , m_isConstructor(other.m_isConstructor)
+    , m_shouldAlwaysBeInlined(true)
     , m_unlinkedCode(*other.m_vm, other.m_ownerExecutable.get(), other.m_unlinkedCode.get())
     , m_ownerExecutable(*other.m_vm, other.m_ownerExecutable.get(), other.m_ownerExecutable.get())
     , m_vm(other.m_vm)
@@ -1616,6 +1619,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_numCalleeRegisters(unlinkedCodeBlock->m_numCalleeRegisters)
     , m_numVars(unlinkedCodeBlock->m_numVars)
     , m_isConstructor(unlinkedCodeBlock->isConstructor())
+    , m_shouldAlwaysBeInlined(true)
     , m_unlinkedCode(globalObject->vm(), ownerExecutable, unlinkedCodeBlock)
     , m_ownerExecutable(globalObject->vm(), ownerExecutable, ownerExecutable)
     , m_vm(unlinkedCodeBlock->vm())
@@ -2587,6 +2591,12 @@ void CodeBlock::unlinkCalls()
     }
 }
 
+void CodeBlock::linkIncomingCall(ExecState* callerFrame, CallLinkInfo* incoming)
+{
+    noticeIncomingCall(callerFrame);
+    m_incomingCalls.push(incoming);
+}
+
 void CodeBlock::unlinkIncomingCalls()
 {
 #if ENABLE(LLINT)
@@ -2602,6 +2612,12 @@ void CodeBlock::unlinkIncomingCalls()
 #endif // ENABLE(JIT)
 
 #if ENABLE(LLINT)
+void CodeBlock::linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo* incoming)
+{
+    noticeIncomingCall(callerFrame);
+    m_incomingLLIntCalls.push(incoming);
+}
+
 Instruction* CodeBlock::adjustPCIfAtCallSite(Instruction* potentialReturnPC)
 {
     ASSERT(potentialReturnPC);
@@ -2962,6 +2978,70 @@ JSGlobalObject* CodeBlock::globalObjectFor(CodeOrigin codeOrigin)
     if (!codeOrigin.inlineCallFrame)
         return globalObject();
     return jsCast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())->generatedBytecode().globalObject();
+}
+
+void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
+{
+    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
+    
+    if (Options::verboseOSR())
+        dataLog("Noticing call link from ", *callerCodeBlock, " to ", *this, "\n");
+    
+    if (!m_shouldAlwaysBeInlined)
+        return;
+    
+    if (!hasBaselineJITProfiling())
+        return;
+    
+    if (!DFG::mightInlineFunction(this))
+        return;
+    
+    if (!canInline(m_capabilityLevelState))
+        return;
+    
+    if (callerCodeBlock->jitType() == JITCode::InterpreterThunk) {
+        // If the caller is still in the interpreter, then we can't expect inlining to
+        // happen anytime soon. Assume it's profitable to optimize it separately. This
+        // ensures that a function is SABI only if it is called no more frequently than
+        // any of its callers.
+        m_shouldAlwaysBeInlined = false;
+        if (Options::verboseOSR())
+            dataLog("    Marking SABI because caller is in LLInt.\n");
+        return;
+    }
+    
+    if (callerCodeBlock->codeType() != FunctionCode) {
+        // If the caller is either eval or global code, assume that that won't be
+        // optimized anytime soon. For eval code this is particularly true since we
+        // delay eval optimization by a *lot*.
+        m_shouldAlwaysBeInlined = false;
+        if (Options::verboseOSR())
+            dataLog("    Marking SABI because caller is not a function.\n");
+        return;
+    }
+    
+    ExecState* frame = callerFrame;
+    for (unsigned i = Options::maximumInliningDepth(); i--; frame = frame->callerFrame()) {
+        if (frame->hasHostCallFrameFlag())
+            break;
+        if (frame->codeBlock() == this) {
+            // Recursive calls won't be inlined.
+            if (Options::verboseOSR())
+                dataLog("    Marking SABI because recursion was detected.\n");
+            m_shouldAlwaysBeInlined = false;
+            return;
+        }
+    }
+    
+    RELEASE_ASSERT(callerCodeBlock->m_capabilityLevelState != DFG::CapabilityLevelNotSet);
+    
+    if (canCompile(callerCodeBlock->m_capabilityLevelState))
+        return;
+    
+    if (Options::verboseOSR())
+        dataLog("    Marking SABI because the caller is not a DFG candidate.\n");
+    
+    m_shouldAlwaysBeInlined = false;
 }
 
 unsigned CodeBlock::reoptimizationRetryCounter() const

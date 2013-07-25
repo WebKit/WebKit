@@ -1434,16 +1434,18 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     
     if (!LLINT_ALWAYS_ACCESS_SLOW && callLinkInfo) {
         ExecState* execCaller = execCallee->callerFrame();
+        
+        CodeBlock* callerCodeBlock = execCaller->codeBlock();
 
-        ConcurrentJITLocker locker(execCaller->codeBlock()->m_lock);
+        ConcurrentJITLocker locker(callerCodeBlock->m_lock);
         
         if (callLinkInfo->isOnList())
             callLinkInfo->remove();
-        callLinkInfo->callee.set(vm, execCaller->codeBlock()->ownerExecutable(), callee);
-        callLinkInfo->lastSeenCallee.set(vm, execCaller->codeBlock()->ownerExecutable(), callee);
+        callLinkInfo->callee.set(vm, callerCodeBlock->ownerExecutable(), callee);
+        callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock->ownerExecutable(), callee);
         callLinkInfo->machineCodeTarget = codePtr;
         if (codeBlock)
-            codeBlock->linkIncomingCall(callLinkInfo);
+            codeBlock->linkIncomingCall(execCaller, callLinkInfo);
     }
 
     LLINT_CALL_RETURN(execCallee, pc, codePtr.executableAddress());

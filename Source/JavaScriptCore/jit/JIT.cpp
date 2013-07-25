@@ -35,8 +35,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #endif
 
 #include "CodeBlock.h"
-#include <wtf/CryptographicallyRandomNumber.h>
-#include "DFGNode.h" // for DFG_SUCCESS_STATS
+#include "DFGCapabilities.h"
 #include "Interpreter.h"
 #include "JITInlines.h"
 #include "JITStubCall.h"
@@ -47,6 +46,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 
 using namespace std;
 
@@ -587,6 +587,18 @@ PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCom
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
+    
+    switch (m_codeBlock->codeType()) {
+    case GlobalCode:
+    case EvalCode:
+        m_codeBlock->m_shouldAlwaysBeInlined = false;
+        break;
+    case FunctionCode:
+        // We could have already set it to false because we detected an uninlineable call.
+        // Don't override that observation.
+        m_codeBlock->m_shouldAlwaysBeInlined &= canInline(level) && DFG::mightInlineFunction(m_codeBlock);
+        break;
+    }
 #endif
     
     if (Options::showDisassembly() || m_vm->m_perBytecodeProfiler)
@@ -670,6 +682,7 @@ PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCom
         jump(functionBody);
 
         arityCheck = label();
+        store8(TrustedImm32(0), &m_codeBlock->m_shouldAlwaysBeInlined);
         preserveReturnAddressAfterCall(regT2);
         emitPutToCallFrameHeader(regT2, JSStack::ReturnPC);
         emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
@@ -805,7 +818,7 @@ PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCom
     return adoptRef(new DirectJITCode(result, JITCode::BaselineJIT));
 }
 
-void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, VM* vm, CodeSpecializationKind kind)
+void JIT::linkFor(ExecState* exec, JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, VM* vm, CodeSpecializationKind kind)
 {
     RepatchBuffer repatchBuffer(callerCodeBlock);
 
@@ -815,7 +828,7 @@ void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* cal
     repatchBuffer.relink(callLinkInfo->hotPathOther, code);
 
     if (calleeCodeBlock)
-        calleeCodeBlock->linkIncomingCall(callLinkInfo);
+        calleeCodeBlock->linkIncomingCall(exec, callLinkInfo);
 
     // Patch the slow patch so we do not continue to try to link.
     if (kind == CodeForCall) {

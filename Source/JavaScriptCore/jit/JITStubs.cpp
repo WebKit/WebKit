@@ -962,6 +962,12 @@ DEFINE_STUB_FUNCTION(void, optimize)
     CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned bytecodeIndex = stackFrame.args[0].int32();
 
+    if (bytecodeIndex) {
+        // If we're attempting to OSR from a loop, assume that this should be
+        // separately optimized.
+        codeBlock->m_shouldAlwaysBeInlined = false;
+    }
+    
     if (Options::verboseOSR()) {
         dataLog(
             *codeBlock, ": Entered optimize with bytecodeIndex = ", bytecodeIndex,
@@ -978,7 +984,15 @@ DEFINE_STUB_FUNCTION(void, optimize)
     if (!codeBlock->checkIfOptimizationThresholdReached()) {
         codeBlock->updateAllPredictions();
         if (Options::verboseOSR())
-            dataLog("Choosing not to optimize ", *codeBlock, " yet.\n");
+            dataLog("Choosing not to optimize ", *codeBlock, " yet, because the threshold hasn't been reached.\n");
+        return;
+    }
+    
+    if (codeBlock->m_shouldAlwaysBeInlined) {
+        codeBlock->updateAllPredictions();
+        codeBlock->optimizeAfterWarmUp();
+        if (Options::verboseOSR())
+            dataLog("Choosing not to optimize ", *codeBlock, " yet, because m_shouldAlwaysBeInlined == true.\n");
         return;
     }
     
@@ -1034,8 +1048,12 @@ DEFINE_STUB_FUNCTION(void, optimize)
         //   code block. Obviously that's unfortunate and we'd rather not have that
         //   happen, but it can happen, and if it did then the jettisoning logic will
         //   have set our threshold appropriately and we have nothing left to do.
-        if (!codeBlock->hasOptimizedReplacement())
+        if (!codeBlock->hasOptimizedReplacement()) {
+            codeBlock->updateAllPredictions();
+            if (Options::verboseOSR())
+                dataLog("Code block ", *codeBlock, " was compiled but it doesn't have an optimized replacement.\n");
             return;
+        }
     } else if (codeBlock->hasOptimizedReplacement()) {
         if (Options::verboseOSR())
             dataLog("Considering OSR ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
@@ -1066,7 +1084,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
             if (Options::verboseOSR()) {
                 dataLog(
                     "Delaying optimization for ", *codeBlock,
-                    " (in loop) because of insufficient profiling.\n");
+                    " because of insufficient profiling.\n");
             }
             return;
         }
@@ -1336,12 +1354,12 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
         else
             codePtr = functionExecutable->generatedJITCodeFor(kind)->addressForCall();
     }
-
+    
     ConcurrentJITLocker locker(callFrame->callerFrame()->codeBlock()->m_lock);
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
-        JIT::linkFor(callee, callFrame->callerFrame()->codeBlock(), codeBlock, codePtr, callLinkInfo, &callFrame->vm(), kind);
+        JIT::linkFor(callFrame->callerFrame(), callee, callFrame->callerFrame()->codeBlock(), codeBlock, codePtr, callLinkInfo, &callFrame->vm(), kind);
 
     return codePtr.executableAddress();
 }
