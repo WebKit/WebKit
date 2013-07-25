@@ -32,6 +32,7 @@
 
 #include "DFGNodeFlags.h"
 #include "DFGUseKind.h"
+#include "DumpContext.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC { namespace DFG {
@@ -87,6 +88,11 @@ inline UseKind useKindFor(FlushFormat format)
 namespace WTF {
 
 void printInternal(PrintStream&, JSC::DFG::FlushFormat);
+
+inline JSC::DFG::FlushFormat inContext(JSC::DFG::FlushFormat format, JSC::DumpContext*)
+{
+    return format;
+}
 
 } // namespace WTF
 

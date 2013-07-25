@@ -78,7 +78,7 @@ static const BlockIndex NoBlock = UINT_MAX;
 
 struct NodePointerTraits {
     static Node* defaultValue() { return 0; }
-    static void dump(Node* value, PrintStream& out);
+    static bool isEmptyForDump(Node* value) { return !value; }
 };
 
 // Use RefChildren if the child ref counts haven't already been adjusted using

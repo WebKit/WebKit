@@ -57,6 +57,7 @@ class PropertyTable;
 class StructureChain;
 class SlotVisitor;
 class JSString;
+struct DumpContext;
 
 // The out-of-line property storage capacity to use when first allocating out-of-line
 // storage. Note that all objects start out without having any out-of-line storage;
@@ -349,6 +350,10 @@ public:
     }
     
     void dump(PrintStream&) const;
+    void dumpInContext(PrintStream&, DumpContext*) const;
+    void dumpBrief(PrintStream&, const CString&) const;
+    
+    static void dumpContextHeader(PrintStream&);
     
     static JS_EXPORTDATA const ClassInfo s_info;
 

@@ -23,70 +23,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLValueSource_h
-#define FTLValueSource_h
+#include "config.h"
+#include "SixCharacterHash.h"
 
-#include <wtf/Platform.h>
-
-#if ENABLE(FTL_JIT)
-
-#include "DFGNode.h"
-#include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
-namespace JSC { namespace FTL {
+#include <string.h>
 
-enum ValueSourceKind {
-    SourceNotSet,
-    ValueInJSStack,
-    Int32InJSStack,
-    DoubleInJSStack,
-    SourceIsDead,
-    HaveNode
-};
+namespace WTF {
 
-class ValueSource {
-public:
-    ValueSource()
-        : m_value(SourceNotSet)
-    {
+#define TABLE ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
+
+unsigned sixCharacterHashStringToInteger(const char* string)
+{
+    unsigned hash = 0;
+
+    RELEASE_ASSERT(strlen(string) == 6);
+    
+    for (unsigned i = 0; i < 6; ++i) {
+        hash *= 62;
+        unsigned c = string[i];
+        if (c >= 'A' && c <= 'Z') {
+            hash += c - 'A';
+            continue;
+        }
+        if (c >= 'a' && c <= 'z') {
+            hash += c - 'a' + 26;
+            continue;
+        }
+        ASSERT(c >= '0' && c <= '9');
+        hash += c - '0' + 26 * 2;
     }
     
-    explicit ValueSource(ValueSourceKind kind)
-        : m_value(kind)
-    {
-    }
-    
-    explicit ValueSource(DFG::Node* node)
-        : m_value(bitwise_cast<uintptr_t>(node))
-    {
-    }
-    
-    ValueSourceKind kind() const
-    {
-        if (m_value < static_cast<uintptr_t>(HaveNode))
-            return static_cast<ValueSourceKind>(m_value);
-        return HaveNode;
-    }
-    
-    bool operator!() const { return kind() != SourceNotSet; }
-    
-    DFG::Node* node() const
-    {
-        ASSERT(kind() == HaveNode);
-        return bitwise_cast<DFG::Node*>(m_value);
-    }
-    
-    void dump(PrintStream&) const;
-    void dumpInContext(PrintStream&, DumpContext*) const;
+    return hash;
+}
 
-private:
-    uintptr_t m_value;
-};
+FixedArray<char, 7> integerToSixCharacterHashString(unsigned hash)
+{
+    ASSERT(strlen(TABLE) == 62);
+    
+    FixedArray<char, 7> buffer;
+    unsigned accumulator = hash;
+    for (unsigned i = 6; i--;) {
+        buffer[i] = TABLE[accumulator % 62];
+        accumulator /= 62;
+    }
+    buffer[6] = 0;
+    return buffer;
+}
 
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLValueSource_h
+} // namespace WTF
 

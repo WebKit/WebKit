@@ -23,70 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLValueSource_h
-#define FTLValueSource_h
+#ifndef OperandsInlines_h
+#define OperandsInlines_h
 
-#include <wtf/Platform.h>
+#include "Operands.h"
+#include <wtf/CommaPrinter.h>
 
-#if ENABLE(FTL_JIT)
+namespace JSC {
 
-#include "DFGNode.h"
-#include <wtf/PrintStream.h>
-#include <wtf/StdLibExtras.h>
-
-namespace JSC { namespace FTL {
-
-enum ValueSourceKind {
-    SourceNotSet,
-    ValueInJSStack,
-    Int32InJSStack,
-    DoubleInJSStack,
-    SourceIsDead,
-    HaveNode
-};
-
-class ValueSource {
-public:
-    ValueSource()
-        : m_value(SourceNotSet)
-    {
+template<typename T, typename Traits>
+void Operands<T, Traits>::dumpInContext(PrintStream& out, DumpContext* context) const
+{
+    CommaPrinter comma(" ");
+    for (size_t argumentIndex = numberOfArguments(); argumentIndex--;) {
+        if (Traits::isEmptyForDump(argument(argumentIndex)))
+            continue;
+        out.print(comma, "arg", argumentIndex, ":", inContext(argument(argumentIndex), context));
     }
-    
-    explicit ValueSource(ValueSourceKind kind)
-        : m_value(kind)
-    {
+    for (size_t localIndex = 0; localIndex < numberOfLocals(); ++localIndex) {
+        if (Traits::isEmptyForDump(local(localIndex)))
+            continue;
+        out.print(comma, "r", localIndex, ":", inContext(local(localIndex), context));
     }
-    
-    explicit ValueSource(DFG::Node* node)
-        : m_value(bitwise_cast<uintptr_t>(node))
-    {
-    }
-    
-    ValueSourceKind kind() const
-    {
-        if (m_value < static_cast<uintptr_t>(HaveNode))
-            return static_cast<ValueSourceKind>(m_value);
-        return HaveNode;
-    }
-    
-    bool operator!() const { return kind() != SourceNotSet; }
-    
-    DFG::Node* node() const
-    {
-        ASSERT(kind() == HaveNode);
-        return bitwise_cast<DFG::Node*>(m_value);
-    }
-    
-    void dump(PrintStream&) const;
-    void dumpInContext(PrintStream&, DumpContext*) const;
+}
 
-private:
-    uintptr_t m_value;
-};
+} // namespace JSC
 
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLValueSource_h
+#endif // OperandsInlines_h
 

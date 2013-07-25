@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ template<typename T> struct OperandValueTraits;
 template<typename T>
 struct OperandValueTraits {
     static T defaultValue() { return T(); }
-    static void dump(const T& value, PrintStream& out) { out.print(value); }
+    static bool isEmptyForDump(const T& value) { return !value; }
 };
 
 enum OperandKind { ArgumentOperand, LocalOperand };
@@ -230,36 +230,17 @@ public:
         return m_arguments == other.m_arguments && m_locals == other.m_locals;
     }
     
-    void dump(PrintStream& out) const;
+    void dumpInContext(PrintStream& out, DumpContext* context) const;
+    
+    void dump(PrintStream& out) const
+    {
+        dumpInContext(out, 0);
+    }
     
 private:
     Vector<T, 8> m_arguments;
     Vector<T, 16> m_locals;
 };
-
-template<typename T, typename Traits>
-void dumpOperands(const Operands<T, Traits>& operands, PrintStream& out)
-{
-    for (size_t argument = operands.numberOfArguments(); argument--;) {
-        if (argument != operands.numberOfArguments() - 1)
-            out.printf(" ");
-        out.print("arg", argument, ":");
-        Traits::dump(operands.argument(argument), out);
-    }
-    out.printf(" : ");
-    for (size_t local = 0; local < operands.numberOfLocals(); ++local) {
-        if (local)
-            out.printf(" ");
-        out.print("r", local, ":");
-        Traits::dump(operands.local(local), out);
-    }
-}
-
-template<typename T, typename Traits>
-inline void Operands<T, Traits>::dump(PrintStream& out) const
-{
-    dumpOperands(*this, out);
-}
 
 } // namespace JSC
 

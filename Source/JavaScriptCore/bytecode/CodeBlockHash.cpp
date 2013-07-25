@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,30 +28,13 @@
 
 #include "SourceCode.h"
 #include <wtf/SHA1.h>
+#include <wtf/SixCharacterHash.h>
 
 namespace JSC {
 
-#define TABLE ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
-
 CodeBlockHash::CodeBlockHash(const char* string)
-    : m_hash(0)
+    : m_hash(sixCharacterHashStringToInteger(string))
 {
-    RELEASE_ASSERT(strlen(string) == 6);
-    
-    for (unsigned i = 0; i < 6; ++i) {
-        m_hash *= 62;
-        unsigned c = string[i];
-        if (c >= 'A' && c <= 'Z') {
-            m_hash += c - 'A';
-            continue;
-        }
-        if (c >= 'a' && c <= 'z') {
-            m_hash += c - 'a' + 26;
-            continue;
-        }
-        ASSERT(c >= '0' && c <= '9');
-        m_hash += c - '0' + 26 * 2;
-    }
 }
 
 CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKind kind)
@@ -71,22 +54,14 @@ CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKin
 
 void CodeBlockHash::dump(PrintStream& out) const
 {
-    ASSERT(strlen(TABLE) == 62);
-    
-    char buffer[7];
-    unsigned accumulator = m_hash;
-    for (unsigned i = 6; i--;) {
-        buffer[i] = TABLE[accumulator % 62];
-        accumulator /= 62;
-    }
-    buffer[6] = 0;
+    FixedArray<char, 7> buffer = integerToSixCharacterHashString(m_hash);
     
 #if !ASSERT_DISABLED
-    CodeBlockHash recompute(buffer);
+    CodeBlockHash recompute(buffer.data());
     ASSERT(recompute == *this);
 #endif // !ASSERT_DISABLED
     
-    out.print(buffer);
+    out.print(buffer.data());
 }
 
 } // namespace JSC

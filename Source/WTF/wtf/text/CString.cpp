@@ -27,6 +27,8 @@
 #include "config.h"
 #include "CString.h"
 
+#include <wtf/StringHasher.h>
+
 using namespace std;
 
 namespace WTF {
@@ -120,6 +122,34 @@ bool operator==(const CString& a, const char* b)
     if (!b)
         return true;
     return !strcmp(a.data(), b);
+}
+
+unsigned CString::hash() const
+{
+    if (isNull())
+        return 0;
+    StringHasher hasher;
+    for (const char* ptr = data(); *ptr; ++ptr)
+        hasher.addCharacter(*ptr);
+    return hasher.hash();
+}
+
+bool operator<(const CString& a, const CString& b)
+{
+    if (a.isNull())
+        return !b.isNull();
+    if (b.isNull())
+        return false;
+    return strcmp(a.data(), b.data()) < 0;
+}
+
+bool CStringHash::equal(const CString& a, const CString& b)
+{
+    if (a.isHashTableDeletedValue())
+        return b.isHashTableDeletedValue();
+    if (b.isHashTableDeletedValue())
+        return false;
+    return a == b;
 }
 
 } // namespace WTF

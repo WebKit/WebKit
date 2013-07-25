@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -24,44 +24,22 @@
  */
 
 #include "config.h"
-#include "FTLValueSource.h"
+#include "DumpContext.h"
 
-#if ENABLE(FTL_JIT)
+namespace JSC {
 
-namespace JSC { namespace FTL {
+DumpContext::DumpContext() { }
+DumpContext::~DumpContext() { }
 
-void ValueSource::dump(PrintStream& out) const
+bool DumpContext::isEmpty() const
 {
-    switch (kind()) {
-    case SourceNotSet:
-        out.print("SourceNotSet");
-        return;
-    case ValueInJSStack:
-        out.print("ValueInJSStack");
-        return;
-    case Int32InJSStack:
-        out.print("Int32InJSStack");
-        return;
-    case DoubleInJSStack:
-        out.print("DoubleInJSStack");
-        return;
-    case SourceIsDead:
-        out.print("SourceIsDead");
-        return;
-    case HaveNode:
-        out.print("Node(", node(), ")");
-        return;
-    }
-    
-    RELEASE_ASSERT_NOT_REACHED();
+    return structures.isEmpty();
 }
 
-void ValueSource::dumpInContext(PrintStream& out, DumpContext*) const
+void DumpContext::dump(PrintStream& out, const char* prefix) const
 {
-    dump(out);
+    structures.dump(out, prefix);
 }
 
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
+} // namespace JSC
 

@@ -114,6 +114,7 @@ public:
     }
     
     void dump(PrintStream&) const;
+    void dumpInContext(PrintStream&, DumpContext*) const;
     
 private:
     union {

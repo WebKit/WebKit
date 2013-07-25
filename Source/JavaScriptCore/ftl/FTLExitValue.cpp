@@ -32,7 +32,7 @@
 
 namespace JSC { namespace FTL {
 
-void ExitValue::dump(PrintStream& out) const
+void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     switch (kind()) {
     case InvalidExitValue:
@@ -45,7 +45,7 @@ void ExitValue::dump(PrintStream& out) const
         out.print("Argument(", exitArgument(), ")");
         return;
     case ExitValueConstant:
-        out.print("Constant(", constant(), ")");
+        out.print("Constant(", inContext(constant(), context), ")");
         return;
     case ExitValueInJSStack:
         out.print("InJSStack");
@@ -59,6 +59,11 @@ void ExitValue::dump(PrintStream& out) const
     }
     
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void ExitValue::dump(PrintStream& out) const
+{
+    dumpInContext(out, 0);
 }
 
 } } // namespace JSC::FTL

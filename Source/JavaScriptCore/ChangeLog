@@ -1,3 +1,142 @@
+2013-07-24  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG IR dumps should be easier to read
+        https://bugs.webkit.org/show_bug.cgi?id=119050
+
+        Reviewed by Mark Hahnenberg.
+        
+        Added a DumpContext that includes support for printing an endnote
+        that describes all structures in full, while the main flow of the
+        dump just uses made-up names for the structures. This is helpful
+        since Structure::dump() may print a lot. The stuff it prints is
+        useful, but if it's all inline with the surrounding thing you're        
+        dumping (often, a node in the DFG), then you get a ridiculously
+        long print-out. All classes that dump structures (including
+        Structure itself) now have dumpInContext() methods that use
+        inContext() for dumping anything that might transitively print a
+        structure. If Structure::dumpInContext() is called with a NULL
+        context, it just uses dump() like before. Hence you don't have to
+        know anything about DumpContext unless you want to.
+        
+        inContext(*structure, context) dumps something like %B4:Array,
+        and the endnote will have something like:
+        
+            %B4:Array    = 0x10e91a180:[Array, {Edge:100, Normal:101, Line:102, NumPx:103, LastPx:104}, ArrayWithContiguous, Proto:0x10e99ffe0]
+        
+        where B4 is the inferred name that StringHashDumpContext came up
+        with.
+        
+        Also shortened a bunch of other dumps, removing information that
+        isn't so important.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ArrayProfile.cpp:
+        (JSC::dumpArrayModes):
+        * bytecode/CodeBlockHash.cpp:
+        (JSC):
+        (JSC::CodeBlockHash::CodeBlockHash):
+        (JSC::CodeBlockHash::dump):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::dumpInContext):
+        (JSC):
+        (JSC::InlineCallFrame::dumpInContext):
+        (JSC::InlineCallFrame::dump):
+        * bytecode/CodeOrigin.h:
+        (CodeOrigin):
+        (InlineCallFrame):
+        * bytecode/Operands.h:
+        (JSC::OperandValueTraits::isEmptyForDump):
+        (Operands):
+        (JSC::Operands::dump):
+        (JSC):
+        * bytecode/OperandsInlines.h: Added.
+        (JSC):
+        (JSC::::dumpInContext):
+        * bytecode/StructureSet.h:
+        (JSC::StructureSet::dumpInContext):
+        (JSC::StructureSet::dump):
+        (StructureSet):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::dump):
+        (DFG):
+        (JSC::DFG::AbstractValue::dumpInContext):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::operator!):
+        (AbstractValue):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGCommon.cpp:
+        * dfg/DFGCommon.h:
+        (JSC::DFG::NodePointerTraits::isEmptyForDump):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::createDumpList):
+        * dfg/DFGDisassembler.h:
+        (Disassembler):
+        * dfg/DFGFlushFormat.h:
+        (WTF::inContext):
+        (WTF):
+        * dfg/DFGFlushLivenessAnalysisPhase.cpp:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpCodeOrigin):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::dumpInContext):
+        (JSC::DFG::LazyJSValue::dump):
+        (DFG):
+        * dfg/DFGLazyJSValue.h:
+        (LazyJSValue):
+        * dfg/DFGNode.h:
+        (JSC::DFG::nodeMapDump):
+        (WTF::inContext):
+        (WTF):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::dumpInContext):
+        (JSC::DFG::StructureAbstractValue::dump):
+        (StructureAbstractValue):
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::dumpInContext):
+        (JSC::FTL::ExitValue::dump):
+        (FTL):
+        * ftl/FTLExitValue.h:
+        (ExitValue):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        * ftl/FTLValueSource.cpp:
+        (JSC::FTL::ValueSource::dumpInContext):
+        (FTL):
+        * ftl/FTLValueSource.h:
+        (ValueSource):
+        * runtime/DumpContext.cpp: Added.
+        (JSC):
+        (JSC::DumpContext::DumpContext):
+        (JSC::DumpContext::~DumpContext):
+        (JSC::DumpContext::isEmpty):
+        (JSC::DumpContext::dump):
+        * runtime/DumpContext.h: Added.
+        (JSC):
+        (DumpContext):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dump):
+        (JSC):
+        (JSC::JSValue::dumpInContext):
+        * runtime/JSCJSValue.h:
+        (JSC):
+        (JSValue):
+        * runtime/Structure.cpp:
+        (JSC::Structure::dumpInContext):
+        (JSC):
+        (JSC::Structure::dumpBrief):
+        (JSC::Structure::dumpContextHeader):
+        * runtime/Structure.h:
+        (JSC):
+        (Structure):
+
 2013-07-22  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should do a high-level LICM before going to FTL

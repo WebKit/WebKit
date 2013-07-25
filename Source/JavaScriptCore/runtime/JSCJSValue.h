@@ -66,6 +66,7 @@ class CLoop;
 #endif
 
 struct ClassInfo;
+struct DumpContext;
 struct Instruction;
 struct MethodTable;
 
@@ -263,6 +264,7 @@ public:
     JSValue structureOrUndefined() const;
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
+    void dumpInContext(PrintStream&, DumpContext*) const;
 
     JS_EXPORT_PRIVATE JSObject* synthesizePrototype(ExecState*) const;
 

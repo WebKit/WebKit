@@ -111,11 +111,11 @@ TriState LazyJSValue::strictEqual(const LazyJSValue& other) const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void LazyJSValue::dump(PrintStream& out) const
+void LazyJSValue::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     switch (m_kind) {
     case KnownValue:
-        value().dump(out);
+        value().dumpInContext(out, context);
         return;
     case SingleCharacterString:
         out.print("Lazy:SingleCharacterString(");
@@ -127,6 +127,11 @@ void LazyJSValue::dump(PrintStream& out) const
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void LazyJSValue::dump(PrintStream& out) const
+{
+    dumpInContext(out, 0);
 }
 
 } } // namespace JSC::DFG

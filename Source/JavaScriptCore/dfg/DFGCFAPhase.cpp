@@ -33,6 +33,7 @@
 #include "DFGInPlaceAbstractState.h"
 #include "DFGPhase.h"
 #include "DFGSafeToExecute.h"
+#include "OperandsInlines.h"
 #include "Operations.h"
 
 namespace JSC { namespace DFG {
@@ -91,11 +92,8 @@ private:
         if (m_verbose)
             dataLog("   Block ", *block, ":\n");
         m_state.beginBasicBlock(block);
-        if (m_verbose) {
-            dataLogF("      head vars: ");
-            dumpOperands(block->valuesAtHead, WTF::dataFile());
-            dataLogF("\n");
-        }
+        if (m_verbose)
+            dataLog("      head vars: ", block->valuesAtHead, "\n");
         for (unsigned i = 0; i < block->size(); ++i) {
             if (m_verbose) {
                 Node* node = block->at(i);
@@ -123,11 +121,8 @@ private:
         }
         m_changed |= m_state.endBasicBlock(MergeToSuccessors);
         
-        if (m_verbose) {
-            dataLogF("      tail vars: ");
-            dumpOperands(block->valuesAtTail, WTF::dataFile());
-            dataLogF("\n");
-        }
+        if (m_verbose)
+            dataLog("      tail vars: ", block->valuesAtTail, "\n");
     }
     
     void performForwardCFA()

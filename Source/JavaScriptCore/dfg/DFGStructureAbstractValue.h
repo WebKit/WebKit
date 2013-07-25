@@ -32,6 +32,7 @@
 
 #include "JSCell.h"
 #include "SpeculatedType.h"
+#include "DumpContext.h"
 #include "StructureSet.h"
 
 namespace JSC { namespace DFG {
@@ -307,7 +308,7 @@ public:
         return m_structure == other.m_structure;
     }
     
-    void dump(PrintStream& out) const
+    void dumpInContext(PrintStream& out, DumpContext* context) const
     {
         if (isTop()) {
             out.print("TOP");
@@ -316,8 +317,13 @@ public:
         
         out.print("[");
         if (m_structure)
-            out.print(*m_structure);
+            out.print(inContext(*m_structure, context));
         out.print("]");
+    }
+
+    void dump(PrintStream& out) const
+    {
+        dumpInContext(out, 0);
     }
 
 private:

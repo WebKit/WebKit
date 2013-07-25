@@ -29,6 +29,7 @@
 #include "ArrayProfile.h"
 #include "SpeculatedType.h"
 #include "Structure.h"
+#include "DumpContext.h"
 #include <stdio.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/Vector.h>
@@ -162,13 +163,18 @@ public:
         return true;
     }
     
-    void dump(PrintStream& out) const
+    void dumpInContext(PrintStream& out, DumpContext* context) const
     {
         CommaPrinter comma;
         out.print("[");
         for (size_t i = 0; i < m_structures.size(); ++i)
-            out.print(comma, *m_structures[i]);
+            out.print(comma, inContext(*m_structures[i], context));
         out.print("]");
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        dumpInContext(out, 0);
     }
     
 private:

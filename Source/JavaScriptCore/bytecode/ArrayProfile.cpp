@@ -35,7 +35,7 @@ namespace JSC {
 void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
 {
     if (!arrayModes) {
-        out.print("0:<empty>");
+        out.print("<empty>");
         return;
     }
     
@@ -44,34 +44,33 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
         return;
     }
     
-    out.print(arrayModes, ":");
-    
+    CommaPrinter comma("|");
     if (arrayModes & asArrayModes(NonArray))
-        out.print("NonArray");
+        out.print(comma, "NonArray");
     if (arrayModes & asArrayModes(NonArrayWithInt32))
-        out.print("NonArrayWithInt32");
+        out.print(comma, "NonArrayWithInt32");
     if (arrayModes & asArrayModes(NonArrayWithDouble))
-        out.print("NonArrayWithDouble");
+        out.print(comma, "NonArrayWithDouble");
     if (arrayModes & asArrayModes(NonArrayWithContiguous))
-        out.print("NonArrayWithContiguous");
+        out.print(comma, "NonArrayWithContiguous");
     if (arrayModes & asArrayModes(NonArrayWithArrayStorage))
-        out.print("NonArrayWithArrayStorage");
+        out.print(comma, "NonArrayWithArrayStorage");
     if (arrayModes & asArrayModes(NonArrayWithSlowPutArrayStorage))
-        out.print("NonArrayWithSlowPutArrayStorage");
+        out.print(comma, "NonArrayWithSlowPutArrayStorage");
     if (arrayModes & asArrayModes(ArrayClass))
-        out.print("ArrayClass");
+        out.print(comma, "ArrayClass");
     if (arrayModes & asArrayModes(ArrayWithUndecided))
-        out.print("ArrayWithUndecided");
+        out.print(comma, "ArrayWithUndecided");
     if (arrayModes & asArrayModes(ArrayWithInt32))
-        out.print("ArrayWithInt32");
+        out.print(comma, "ArrayWithInt32");
     if (arrayModes & asArrayModes(ArrayWithDouble))
-        out.print("ArrayWithDouble");
+        out.print(comma, "ArrayWithDouble");
     if (arrayModes & asArrayModes(ArrayWithContiguous))
-        out.print("ArrayWithContiguous");
+        out.print(comma, "ArrayWithContiguous");
     if (arrayModes & asArrayModes(ArrayWithArrayStorage))
-        out.print("ArrayWithArrayStorage");
+        out.print(comma, "ArrayWithArrayStorage");
     if (arrayModes & asArrayModes(ArrayWithSlowPutArrayStorage))
-        out.print("ArrayWithSlowPutArrayStorage");
+        out.print(comma, "ArrayWithSlowPutArrayStorage");
 }
 
 void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBlock* codeBlock)

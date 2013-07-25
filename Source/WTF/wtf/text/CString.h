@@ -26,6 +26,8 @@
 #ifndef CString_h
 #define CString_h
 
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -60,6 +62,7 @@ public:
     WTF_EXPORT_PRIVATE CString(const char*, size_t length);
     CString(CStringBuffer* buffer) : m_buffer(buffer) { }
     WTF_EXPORT_PRIVATE static CString newUninitialized(size_t length, char*& characterBuffer);
+    CString(HashTableDeletedValueType) : m_buffer(HashTableDeletedValue) { }
 
     const char* data() const
     {
@@ -75,6 +78,10 @@ public:
     bool isSafeToSendToAnotherThread() const;
 
     CStringBuffer* buffer() const { return m_buffer.get(); }
+    
+    bool isHashTableDeletedValue() const { return m_buffer.isHashTableDeletedValue(); }
+    
+    unsigned hash() const;
 
 private:
     void copyBufferIfNeeded();
@@ -86,6 +93,21 @@ WTF_EXPORT_PRIVATE bool operator==(const CString& a, const CString& b);
 inline bool operator!=(const CString& a, const CString& b) { return !(a == b); }
 WTF_EXPORT_PRIVATE bool operator==(const CString& a, const char* b);
 inline bool operator!=(const CString& a, const char* b) { return !(a == b); }
+bool operator<(const CString& a, const CString& b);
+
+struct CStringHash {
+    static unsigned hash(const CString& string) { return string.hash(); }
+    static bool equal(const CString& a, const CString& b);
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<CString> {
+    typedef CStringHash Hash;
+};
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<CString> : SimpleClassHashTraits<CString> { };
 
 } // namespace WTF
 

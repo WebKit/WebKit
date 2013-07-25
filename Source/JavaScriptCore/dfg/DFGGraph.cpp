@@ -31,6 +31,7 @@
 #include "DFGClobberSet.h"
 #include "DFGVariableAccessDataDump.h"
 #include "FunctionExecutableDump.h"
+#include "OperandsInlines.h"
 #include "Operations.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
@@ -77,7 +78,7 @@ static void printWhiteSpace(PrintStream& out, unsigned amount)
         out.print(" ");
 }
 
-bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, Node* previousNode, Node* currentNode)
+bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, Node* previousNode, Node* currentNode, DumpContext* context)
 {
     if (!previousNode)
         return false;
@@ -102,7 +103,7 @@ bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, Node* previousN
     for (unsigned i = previousInlineStack.size(); i-- > indexOfDivergence;) {
         out.print(prefix);
         printWhiteSpace(out, i * 2);
-        out.print("<-- ", *previousInlineStack[i].inlineCallFrame, "\n");
+        out.print("<-- ", inContext(*previousInlineStack[i].inlineCallFrame, context), "\n");
         hasPrinted = true;
     }
     
@@ -110,7 +111,7 @@ bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, Node* previousN
     for (unsigned i = indexOfDivergence; i < currentInlineStack.size(); ++i) {
         out.print(prefix);
         printWhiteSpace(out, i * 2);
-        out.print("--> ", *currentInlineStack[i].inlineCallFrame, "\n");
+        out.print("--> ", inContext(*currentInlineStack[i].inlineCallFrame, context), "\n");
         hasPrinted = true;
     }
     
@@ -127,7 +128,7 @@ void Graph::printNodeWhiteSpace(PrintStream& out, Node* node)
     printWhiteSpace(out, amountOfNodeWhiteSpace(node));
 }
 
-void Graph::dump(PrintStream& out, const char* prefix, Node* node)
+void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* context)
 {
     NodeType op = node->op();
 
@@ -190,11 +191,11 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
     if (node->hasIdentifier())
         out.print(comma, "id", node->identifierNumber(), "{", identifiers()[node->identifierNumber()], "}");
     if (node->hasStructureSet())
-        out.print(comma, node->structureSet());
+        out.print(comma, inContext(node->structureSet(), context));
     if (node->hasStructure())
-        out.print(comma, *node->structure());
+        out.print(comma, inContext(*node->structure(), context));
     if (node->hasStructureTransitionData())
-        out.print(comma, *node->structureTransitionData().previousStructure, " -> ", *node->structureTransitionData().newStructure);
+        out.print(comma, inContext(*node->structureTransitionData().previousStructure, context), " -> ", inContext(*node->structureTransitionData().newStructure, context));
     if (node->hasFunction()) {
         out.print(comma, "function(", RawPointer(node->function()), ", ");
         if (node->function()->inherits(&JSFunction::s_info)) {
@@ -240,7 +241,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
         out.print(node->startConstant(), ":[");
         CommaPrinter anotherComma;
         for (unsigned i = 0; i < node->numConstants(); ++i)
-            out.print(anotherComma, m_codeBlock->constantBuffer(node->startConstant())[i]);
+            out.print(anotherComma, inContext(m_codeBlock->constantBuffer(node->startConstant())[i], context));
         out.print("]");
     }
     if (node->hasIndexingType())
@@ -252,10 +253,10 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
     if (op == JSConstant) {
         out.print(comma, "$", node->constantNumber());
         JSValue value = valueOfJSConstant(node);
-        out.print(" = ", value);
+        out.print(" = ", inContext(value, context));
     }
     if (op == WeakJSConstant)
-        out.print(comma, RawPointer(node->weakConstant()), " (structure: ", *node->weakConstant()->structure(), ")");
+        out.print(comma, RawPointer(node->weakConstant()), " (", inContext(*node->weakConstant()->structure(), context), ")");
     if (node->isBranch() || node->isJump())
         out.print(comma, "T:", *node->takenBlock());
     if (node->isBranch())
@@ -264,7 +265,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
         SwitchData* data = node->switchData();
         out.print(comma, data->kind);
         for (unsigned i = 0; i < data->cases.size(); ++i)
-            out.print(comma, data->cases[i].value, ":", *data->cases[i].target);
+            out.print(comma, inContext(data->cases[i].value, context), ":", *data->cases[i].target);
         out.print(comma, "default:", *data->fallThrough);
     }
     ClobberSet reads;
@@ -288,9 +289,9 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
     out.print("\n");
 }
 
-void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* block, PhiNodeDumpMode phiNodeDumpMode)
+void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* block, PhiNodeDumpMode phiNodeDumpMode, DumpContext* context)
 {
-    out.print(prefix, "Block ", *block, " (", block->at(0)->codeOrigin, "): ", block->isReachable ? "" : "(skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
+    out.print(prefix, "Block ", *block, " (", inContext(block->at(0)->codeOrigin, context), "): ", block->isReachable ? "" : "(skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
     out.print(prefix, "  Predecessors:");
     for (size_t i = 0; i < block->predecessors.size(); ++i)
         out.print(" ", *block->predecessors[i]);
@@ -353,36 +354,33 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* bl
     }
 }
 
-void Graph::dump(PrintStream& out)
+void Graph::dump(PrintStream& out, DumpContext* context)
 {
+    DumpContext myContext;
+    if (!context)
+        context = &myContext;
+    
+    dataLog("\n");
     dataLog("DFG for ", CodeBlockWithJITType(m_codeBlock, JITCode::DFGJIT), ":\n");
     dataLog("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
-
-    out.print("  ArgumentPosition size: ", m_argumentPositions.size(), "\n");
-    for (size_t i = 0; i < m_argumentPositions.size(); ++i) {
-        out.print("    #", i, ": ");
-        ArgumentPosition& arguments = m_argumentPositions[i];
-        arguments.dump(out, this);
-    }
-
+    dataLog("\n");
+    
     Node* lastNode = 0;
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         BasicBlock* block = m_blocks[b].get();
         if (!block)
             continue;
-        dumpBlockHeader(out, "", block, DumpAllPhis);
+        dumpBlockHeader(out, "", block, DumpAllPhis, context);
         switch (m_form) {
         case LoadStore:
         case ThreadedCPS: {
             out.print("  vars before: ");
             if (block->cfaHasVisited)
-                out.print(block->valuesAtHead);
+                out.print(inContext(block->valuesAtHead, context));
             else
                 out.print("<empty>");
             out.print("\n");
-            out.print("  var links: ");
-            dumpOperands(block->variablesAtHead, out);
-            out.print("\n");
+            out.print("  var links: ", block->variablesAtHead, "\n");
             break;
         }
             
@@ -391,12 +389,12 @@ void Graph::dump(PrintStream& out)
             out.print("  Flush format: ", block->ssa->flushFormatAtHead, "\n");
             out.print("  Availability: ", block->ssa->availabilityAtHead, "\n");
             out.print("  Live: ", nodeListDump(block->ssa->liveAtHead), "\n");
-            out.print("  Values: ", nodeMapDump(block->ssa->valuesAtHead), "\n");
+            out.print("  Values: ", nodeMapDump(block->ssa->valuesAtHead, context), "\n");
             break;
         } }
         for (size_t i = 0; i < block->size(); ++i) {
-            dumpCodeOrigin(out, "", lastNode, block->at(i));
-            dump(out, "", block->at(i));
+            dumpCodeOrigin(out, "", lastNode, block->at(i), context);
+            dump(out, "", block->at(i), context);
             lastNode = block->at(i);
         }
         switch (m_form) {
@@ -404,13 +402,11 @@ void Graph::dump(PrintStream& out)
         case ThreadedCPS: {
             out.print("  vars after: ");
             if (block->cfaHasVisited)
-                out.print(block->valuesAtTail);
+                out.print(inContext(block->valuesAtTail, context));
             else
                 out.print("<empty>");
             out.print("\n");
-            out.print("  var links: ");
-            dumpOperands(block->variablesAtTail, out);
-            out.print("\n");
+            out.print("  var links: ", block->variablesAtTail, "\n");
             break;
         }
             
@@ -419,9 +415,15 @@ void Graph::dump(PrintStream& out)
             out.print("  Flush format: ", block->ssa->flushFormatAtTail, "\n");
             out.print("  Availability: ", block->ssa->availabilityAtTail, "\n");
             out.print("  Live: ", nodeListDump(block->ssa->liveAtTail), "\n");
-            out.print("  Values: ", nodeMapDump(block->ssa->valuesAtTail), "\n");
+            out.print("  Values: ", nodeMapDump(block->ssa->valuesAtTail, context), "\n");
             break;
         } }
+        dataLog("\n");
+    }
+    
+    if (!myContext.isEmpty()) {
+        myContext.dump(WTF::dataFile());
+        dataLog("\n");
     }
 }
 

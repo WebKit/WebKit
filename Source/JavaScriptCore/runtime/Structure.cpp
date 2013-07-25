@@ -1034,6 +1034,24 @@ void Structure::dump(PrintStream& out) const
     out.print("]");
 }
 
+void Structure::dumpInContext(PrintStream& out, DumpContext* context) const
+{
+    if (context)
+        context->structures.dumpBrief(this, out);
+    else
+        dump(out);
+}
+
+void Structure::dumpBrief(PrintStream& out, const CString& string) const
+{
+    out.print("%", string, ":", classInfo()->className);
+}
+
+void Structure::dumpContextHeader(PrintStream& out)
+{
+    out.print("Structures:");
+}
+
 #if DO_PROPERTYMAP_CONSTENCY_CHECK
 
 void PropertyTable::checkConsistency()

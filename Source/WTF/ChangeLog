@@ -1,3 +1,58 @@
+2013-07-24  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG IR dumps should be easier to read
+        https://bugs.webkit.org/show_bug.cgi?id=119050
+
+        Reviewed by Mark Hahnenberg.
+        
+        Added support for dumping values within a context. By default, if you say
+        print(inContext(value, context)) it calls value.dumpInContext(out, context)
+        instead of value.dump(out).
+        
+        Hoisted the support for six-character hashes out of JSC::CodeBlockHash into
+        WTF, in the form of SixCharacterHash.h.
+        
+        Added a helper for creating dump contexts where the inContext() dump will
+        just use a short string hash to "name" the object being dumped, and then
+        will print out the full dumps in an endnote to your dump.
+        
+        Added support for using CString as a hashtable key.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/PrintStream.h:
+        (WTF):
+        (ValueInContext):
+        (WTF::ValueInContext::ValueInContext):
+        (WTF::ValueInContext::dump):
+        (WTF::inContext):
+        * wtf/SixCharacterHash.cpp: Added.
+        (WTF):
+        (WTF::sixCharacterHashStringToInteger):
+        (WTF::integerToSixCharacterHashString):
+        * wtf/SixCharacterHash.h: Added.
+        (WTF):
+        * wtf/StringHashDumpContext.h: Added.
+        (WTF):
+        (StringHashDumpContext):
+        (WTF::StringHashDumpContext::StringHashDumpContext):
+        (WTF::StringHashDumpContext::getID):
+        (WTF::StringHashDumpContext::dumpBrief):
+        (WTF::StringHashDumpContext::brief):
+        (WTF::StringHashDumpContext::isEmpty):
+        (WTF::StringHashDumpContext::dump):
+        * wtf/text/CString.cpp:
+        (WTF::CString::hash):
+        (WTF):
+        (WTF::operator<):
+        (WTF::CStringHash::equal):
+        * wtf/text/CString.h:
+        (WTF::CString::CString):
+        (CString):
+        (WTF::CString::isHashTableDeletedValue):
+        (WTF):
+        (WTF::CStringHash::hash):
+        (CStringHash):
+
 2013-07-21  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG Nodes should be able to abstractly tell you what they read and what they write

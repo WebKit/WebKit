@@ -252,11 +252,20 @@ void AbstractValue::checkConsistency() const
 
 void AbstractValue::dump(PrintStream& out) const
 {
-    out.print(
-        "(", SpeculationDump(m_type), ", ", ArrayModesDump(m_arrayModes), ", ",
-        m_currentKnownStructure, ", ", m_futurePossibleStructure);
+    dumpInContext(out, 0);
+}
+
+void AbstractValue::dumpInContext(PrintStream& out, DumpContext* context) const
+{
+    out.print("(", SpeculationDump(m_type));
+    if (m_type & SpecCell) {
+        out.print(
+            ", ", ArrayModesDump(m_arrayModes), ", ",
+            inContext(m_currentKnownStructure, context), ", ",
+            inContext(m_futurePossibleStructure, context));
+    }
     if (!!m_value)
-        out.print(", ", m_value);
+        out.print(", ", inContext(m_value, context));
     out.print(")");
 }
 

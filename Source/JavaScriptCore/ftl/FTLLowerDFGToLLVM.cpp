@@ -39,6 +39,7 @@
 #include "FTLThunks.h"
 #include "FTLValueSource.h"
 #include "LinkBuffer.h"
+#include "OperandsInlines.h"
 #include "Operations.h"
 #include <wtf/ProcessID.h>
 

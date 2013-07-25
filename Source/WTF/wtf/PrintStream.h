@@ -335,11 +335,37 @@ private:
 template<typename T>
 PointerDump<T> pointerDump(const T* ptr) { return PointerDump<T>(ptr); }
 
+template<typename T, typename U>
+class ValueInContext {
+public:
+    ValueInContext(const T& value, U* context)
+        : m_value(&value)
+        , m_context(context)
+    {
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        m_value->dumpInContext(out, m_context);
+    }
+
+private:
+    const T* m_value;
+    U* m_context;
+};
+
+template<typename T, typename U>
+ValueInContext<T, U> inContext(const T& value, U* context)
+{
+    return ValueInContext<T, U>(value, context);
+}
+
 } // namespace WTF
 
 using WTF::CharacterDump;
 using WTF::PointerDump;
 using WTF::PrintStream;
+using WTF::inContext;
 using WTF::pointerDump;
 
 #endif // PrintStream_h

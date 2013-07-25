@@ -47,7 +47,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         dataLogF(" -> %p ", codeOrigin.inlineCallFrame->executable.get());
     }
     dataLogF(")  ");
-    dumpOperands(operands, WTF::dataFile());
+    dataLog(operands);
 #endif
 
     if (Options::printEachOSRExit()) {

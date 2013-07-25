@@ -186,6 +186,11 @@ void JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSVa
 
 void JSValue::dump(PrintStream& out) const
 {
+    dumpInContext(out, 0);
+}
+
+void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
+{
     if (!*this)
         out.print("<JSValue()>");
     else if (isInt32())
@@ -217,12 +222,10 @@ void JSValue::dump(PrintStream& out) const
                 out.print(" (unresolved)");
             out.print(": ", impl);
         } else if (asCell()->inherits(&Structure::s_info))
-            out.print("Structure: ", *jsCast<Structure*>(asCell()));
+            out.print("Structure: ", inContext(*jsCast<Structure*>(asCell()), context));
         else {
             out.print("Cell: ", RawPointer(asCell()));
-            if (isObject() && asObject(*this)->butterfly())
-                out.print("->", RawPointer(asObject(*this)->butterfly()));
-            out.print(" (", *asCell()->structure(), ")");
+            out.print(" (", inContext(*asCell()->structure(), context), ")");
         }
     } else if (isTrue())
         out.print("True");

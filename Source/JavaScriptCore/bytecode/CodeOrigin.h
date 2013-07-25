@@ -88,6 +88,7 @@ struct CodeOrigin {
     Vector<CodeOrigin> inlineStack() const;
     
     void dump(PrintStream&) const;
+    void dumpInContext(PrintStream&, DumpContext*) const;
 };
 
 struct InlineCallFrame {
@@ -113,6 +114,7 @@ struct InlineCallFrame {
     
     void dumpBriefFunctionInformation(PrintStream&) const;
     void dump(PrintStream&) const;
+    void dumpInContext(PrintStream&, DumpContext*) const;
 
     MAKE_PRINT_METHOD(InlineCallFrame, dumpBriefFunctionInformation, briefFunctionInformation);
 };

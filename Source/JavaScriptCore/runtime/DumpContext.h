@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,45 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FTLValueSource.h"
+#ifndef DumpContext_h
+#define DumpContext_h
 
-#if ENABLE(FTL_JIT)
+#include "Structure.h"
+#include <wtf/PrintStream.h>
+#include <wtf/StringHashDumpContext.h>
 
-namespace JSC { namespace FTL {
+namespace JSC {
 
-void ValueSource::dump(PrintStream& out) const
-{
-    switch (kind()) {
-    case SourceNotSet:
-        out.print("SourceNotSet");
-        return;
-    case ValueInJSStack:
-        out.print("ValueInJSStack");
-        return;
-    case Int32InJSStack:
-        out.print("Int32InJSStack");
-        return;
-    case DoubleInJSStack:
-        out.print("DoubleInJSStack");
-        return;
-    case SourceIsDead:
-        out.print("SourceIsDead");
-        return;
-    case HaveNode:
-        out.print("Node(", node(), ")");
-        return;
-    }
+struct DumpContext {
+    DumpContext();
+    ~DumpContext();
     
-    RELEASE_ASSERT_NOT_REACHED();
-}
+    bool isEmpty() const;
+    
+    void dump(PrintStream&, const char* prefix = "") const;
+    
+    StringHashDumpContext<Structure> structures;
+};
 
-void ValueSource::dumpInContext(PrintStream& out, DumpContext*) const
-{
-    dump(out);
-}
+} // namespace JSC
 
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
-
+#endif // DumpContext_h

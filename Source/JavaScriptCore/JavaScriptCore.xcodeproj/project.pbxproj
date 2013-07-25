@@ -735,6 +735,9 @@
 		A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1712B3A11C7B212007A5315 /* RegExpCache.cpp */; };
 		A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B3E11C7B228007A5315 /* RegExpCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B4011C7B235007A5315 /* RegExpKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A70447EA17A0BD4600F5898E /* OperandsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A70447E917A0BD4600F5898E /* OperandsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A70447ED17A0BD7000F5898E /* DumpContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A70447EB17A0BD7000F5898E /* DumpContext.cpp */; };
+		A70447EE17A0BD7000F5898E /* DumpContext.h in Headers */ = {isa = PBXBuildFile; fileRef = A70447EC17A0BD7000F5898E /* DumpContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A704D90317A0BAA8006BA554 /* DFGAbstractInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = A704D8FE17A0BAA8006BA554 /* DFGAbstractInterpreter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A704D90417A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A704D8FF17A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A704D90517A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A704D90017A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp */; };
@@ -1814,6 +1817,9 @@
 		A1712B3A11C7B212007A5315 /* RegExpCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpCache.cpp; sourceTree = "<group>"; };
 		A1712B3E11C7B228007A5315 /* RegExpCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpCache.h; sourceTree = "<group>"; };
 		A1712B4011C7B235007A5315 /* RegExpKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpKey.h; sourceTree = "<group>"; };
+		A70447E917A0BD4600F5898E /* OperandsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperandsInlines.h; sourceTree = "<group>"; };
+		A70447EB17A0BD7000F5898E /* DumpContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DumpContext.cpp; sourceTree = "<group>"; };
+		A70447EC17A0BD7000F5898E /* DumpContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpContext.h; sourceTree = "<group>"; };
 		A704D8FE17A0BAA8006BA554 /* DFGAbstractInterpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractInterpreter.h; path = dfg/DFGAbstractInterpreter.h; sourceTree = "<group>"; };
 		A704D8FF17A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractInterpreterInlines.h; path = dfg/DFGAbstractInterpreterInlines.h; sourceTree = "<group>"; };
 		A704D90017A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGInPlaceAbstractState.cpp; path = dfg/DFGInPlaceAbstractState.cpp; sourceTree = "<group>"; };
@@ -2197,9 +2203,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
 				932F5BE10822A1C700736975 /* jsc */,
+				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				6511230514046A4C002B101D /* testRegExp */,
@@ -2833,6 +2839,8 @@
 				14A1563010966365006FA260 /* DateInstanceCache.h */,
 				BCD203470E17135E002C7E82 /* DatePrototype.cpp */,
 				BCD203480E17135E002C7E82 /* DatePrototype.h */,
+				A70447EB17A0BD7000F5898E /* DumpContext.cpp */,
+				A70447EC17A0BD7000F5898E /* DumpContext.h */,
 				BC337BEA0E1B00CB0076918A /* Error.cpp */,
 				BC3046060E1F497F003232CF /* Error.h */,
 				BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */,
@@ -3403,6 +3411,7 @@
 				969A07940ED1D3AE00F1F681 /* Opcode.cpp */,
 				969A07950ED1D3AE00F1F681 /* Opcode.h */,
 				0F2BDC2B151FDE8B00CD8910 /* Operands.h */,
+				A70447E917A0BD4600F5898E /* OperandsInlines.h */,
 				0F34B14B16D43E0C001CDA5A /* PolymorphicAccessStructureList.h */,
 				0F9FC8BF14E1B5FB00D52AE0 /* PolymorphicPutByIdList.cpp */,
 				0F9FC8C014E1B5FB00D52AE0 /* PolymorphicPutByIdList.h */,
@@ -3647,6 +3656,7 @@
 				0FFFC96014EF90BD00C72532 /* DFGVirtualRegisterAllocationPhase.h in Headers */,
 				0FDB2CE8174830A2007B3C1B /* DFGWorklist.h in Headers */,
 				0FF42731158EBD54004CB9FF /* Disassembler.h in Headers */,
+				A70447EE17A0BD7000F5898E /* DumpContext.h in Headers */,
 				BC3046070E1F497F003232CF /* Error.h in Headers */,
 				BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */,
 				BC02E98D0E183E38000F9297 /* ErrorInstance.h in Headers */,
@@ -3885,6 +3895,7 @@
 				E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */,
 				969A079B0ED1D3AE00F1F681 /* Opcode.h in Headers */,
 				0F2BDC2C151FDE9100CD8910 /* Operands.h in Headers */,
+				A70447EA17A0BD4600F5898E /* OperandsInlines.h in Headers */,
 				BC18C4480E16F5CD00B34460 /* Operations.h in Headers */,
 				0FE228ED1436AB2700196C48 /* Options.h in Headers */,
 				BC18C44B0E16F5CD00B34460 /* Parser.h in Headers */,
@@ -4490,6 +4501,7 @@
 				0FFFC95F14EF90BB00C72532 /* DFGVirtualRegisterAllocationPhase.cpp in Sources */,
 				0FDB2CE7174830A2007B3C1B /* DFGWorklist.cpp in Sources */,
 				0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */,
+				A70447ED17A0BD7000F5898E /* DumpContext.cpp in Sources */,
 				147F39C7107EC37600427A48 /* Error.cpp in Sources */,
 				147F39C8107EC37600427A48 /* ErrorConstructor.cpp in Sources */,
 				147F39C9107EC37600427A48 /* ErrorInstance.cpp in Sources */,

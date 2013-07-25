@@ -35,6 +35,7 @@
 #include "DFGStructureAbstractValue.h"
 #include "JSCell.h"
 #include "SpeculatedType.h"
+#include "DumpContext.h"
 #include "StructureSet.h"
 
 namespace JSC { namespace DFG {
@@ -59,6 +60,7 @@ struct AbstractValue {
     }
     
     bool isClear() const { return m_type == SpecNone; }
+    bool operator!() const { return isClear(); }
     
     void makeTop()
     {
@@ -251,6 +253,7 @@ struct AbstractValue {
     
     void checkConsistency() const;
     
+    void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;
     
     // A great way to think about the difference between m_currentKnownStructure and

@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"
+#include "DumpContext.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 #include <wtf/HashMap.h>
@@ -88,6 +89,7 @@ private:
     void dumpDisassembly(PrintStream&, const char* prefix, LinkBuffer&, MacroAssembler::Label& previousLabel, MacroAssembler::Label currentLabel, Node* context);
     
     Graph& m_graph;
+    DumpContext m_dumpContext;
     MacroAssembler::Label m_startOfCode;
     Vector<MacroAssembler::Label> m_labelForBlockIndex;
     HashMap<Node*, MacroAssembler::Label> m_labelForNode;

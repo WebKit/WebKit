@@ -102,7 +102,7 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
             continue;
         dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_labelForBlockIndex[blockIndex], lastNode);
         append(result, out, previousOrigin);
-        m_graph.dumpBlockHeader(out, prefix, block, Graph::DumpLivePhisOnly);
+        m_graph.dumpBlockHeader(out, prefix, block, Graph::DumpLivePhisOnly, &m_dumpContext);
         append(result, out, previousOrigin);
         Node* lastNodeForDisassembly = block->at(0);
         for (size_t i = 0; i < block->size(); ++i) {
@@ -125,11 +125,11 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
             dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, currentLabel, lastNodeForDisassembly);
             append(result, out, previousOrigin);
             previousOrigin = block->at(i)->codeOrigin;
-            if (m_graph.dumpCodeOrigin(out, prefix, lastNode, block->at(i))) {
+            if (m_graph.dumpCodeOrigin(out, prefix, lastNode, block->at(i), &m_dumpContext)) {
                 append(result, out, previousOrigin);
                 previousOrigin = block->at(i)->codeOrigin;
             }
-            m_graph.dump(out, prefix, block->at(i));
+            m_graph.dump(out, prefix, block->at(i), &m_dumpContext);
             lastNode = block->at(i);
             lastNodeForDisassembly = block->at(i);
         }
@@ -139,6 +139,8 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
     out.print(prefix, "(End Of Main Path)\n");
     append(result, out, previousOrigin);
     dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_endOfCode, 0);
+    append(result, out, previousOrigin);
+    m_dumpContext.dump(out, prefix);
     append(result, out, previousOrigin);
     
     return result;

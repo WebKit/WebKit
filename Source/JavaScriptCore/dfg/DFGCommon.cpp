@@ -30,15 +30,6 @@
 
 #include "DFGNode.h"
 
-namespace JSC { namespace DFG {
-
-void NodePointerTraits::dump(Node* value, PrintStream& out)
-{
-    out.print(value);
-}
-
-} } // namespace JSC::DFG
-
 namespace WTF {
 
 using namespace JSC::DFG;

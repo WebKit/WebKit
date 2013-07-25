@@ -23,70 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLValueSource_h
-#define FTLValueSource_h
+#ifndef SixCharacterHash_h
+#define SixCharacterHash_h
 
-#include <wtf/Platform.h>
+#include <wtf/FixedArray.h>
 
-#if ENABLE(FTL_JIT)
+namespace WTF {
 
-#include "DFGNode.h"
-#include <wtf/PrintStream.h>
-#include <wtf/StdLibExtras.h>
+// Takes a six-character string that encodes a 32-bit integer, and returns that
+// integer. RELEASE_ASSERT's that the string represents a valid six-character
+// hash.
+unsigned sixCharacterHashStringToInteger(const char*);
 
-namespace JSC { namespace FTL {
+// Takes a 32-bit integer and constructs a six-character string that contains
+// the character hash.
+FixedArray<char, 7> integerToSixCharacterHashString(unsigned);
 
-enum ValueSourceKind {
-    SourceNotSet,
-    ValueInJSStack,
-    Int32InJSStack,
-    DoubleInJSStack,
-    SourceIsDead,
-    HaveNode
-};
+} // namespace WTF
 
-class ValueSource {
-public:
-    ValueSource()
-        : m_value(SourceNotSet)
-    {
-    }
-    
-    explicit ValueSource(ValueSourceKind kind)
-        : m_value(kind)
-    {
-    }
-    
-    explicit ValueSource(DFG::Node* node)
-        : m_value(bitwise_cast<uintptr_t>(node))
-    {
-    }
-    
-    ValueSourceKind kind() const
-    {
-        if (m_value < static_cast<uintptr_t>(HaveNode))
-            return static_cast<ValueSourceKind>(m_value);
-        return HaveNode;
-    }
-    
-    bool operator!() const { return kind() != SourceNotSet; }
-    
-    DFG::Node* node() const
-    {
-        ASSERT(kind() == HaveNode);
-        return bitwise_cast<DFG::Node*>(m_value);
-    }
-    
-    void dump(PrintStream&) const;
-    void dumpInContext(PrintStream&, DumpContext*) const;
+using WTF::sixCharacterHashStringToInteger;
+using WTF::integerToSixCharacterHashString;
 
-private:
-    uintptr_t m_value;
-};
-
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLValueSource_h
+#endif // SixCharacterHash_h
 

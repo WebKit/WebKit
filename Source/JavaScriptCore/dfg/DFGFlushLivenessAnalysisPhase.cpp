@@ -32,6 +32,7 @@
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
+#include "OperandsInlines.h"
 #include "Operations.h"
 
 namespace JSC { namespace DFG {

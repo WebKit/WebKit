@@ -1435,9 +1435,19 @@ CString nodeListDump(const T& nodeList)
 }
 
 template<typename T>
-CString nodeMapDump(const T& nodeMap)
+CString nodeMapDump(const T& nodeMap, DumpContext* context = 0)
 {
-    return sortedMapDump(nodeMap, nodeComparator);
+    Vector<typename T::KeyType> keys;
+    for (
+        typename T::const_iterator iter = nodeMap.begin();
+        iter != nodeMap.end(); ++iter)
+        keys.append(iter->key);
+    std::sort(keys.begin(), keys.end(), nodeComparator);
+    StringPrintStream out;
+    CommaPrinter comma;
+    for(unsigned i = 0; i < keys.size(); ++i)
+        out.print(comma, keys[i], "=>", inContext(nodeMap.get(keys[i]), context));
+    return out.toCString();
 }
 
 } } // namespace JSC::DFG
@@ -1447,7 +1457,11 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::DFG::SwitchKind);
 void printInternal(PrintStream&, JSC::DFG::Node*);
 
+inline JSC::DFG::Node* inContext(JSC::DFG::Node* node, JSC::DumpContext*) { return node; }
+
 } // namespace WTF
+
+using WTF::inContext;
 
 #endif
 #endif
