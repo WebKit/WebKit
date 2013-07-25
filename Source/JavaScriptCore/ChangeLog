@@ -1,5 +1,89 @@
 2013-04-27  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support double variables
+        https://bugs.webkit.org/show_bug.cgi?id=113624
+
+        Reviewed by Geoffrey Garen.
+        
+        Made all of the operations that the FTL already supports, also support doubles.
+        OSR exit already basically had everything it needed, so no changes there. This
+        mostly just glues together bits of DFG IR to LLVM IR, in a straight-forward way.
+
+        * ftl/FTLAbbreviations.h:
+        (FTL):
+        (JSC::FTL::doubleType):
+        (JSC::FTL::constReal):
+        (JSC::FTL::buildPhi):
+        (JSC::FTL::addIncoming):
+        (JSC::FTL::buildFAdd):
+        (JSC::FTL::buildFSub):
+        (JSC::FTL::buildFMul):
+        (JSC::FTL::buildFNeg):
+        (JSC::FTL::buildSIToFP):
+        (JSC::FTL::buildUIToFP):
+        (JSC::FTL::buildBitCast):
+        (JSC::FTL::buildFCmp):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        * ftl/FTLCommonValues.h:
+        (CommonValues):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileGetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileAdd):
+        (JSC::FTL::LowerDFGToLLVM::compileArithSub):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+        (JSC::FTL::LowerDFGToLLVM::compileUInt32ToNumber):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareLess):
+        (JSC::FTL::LowerDFGToLLVM::lowDouble):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lowJSValue):
+        (JSC::FTL::LowerDFGToLLVM::isCellOrMisc):
+        (JSC::FTL::LowerDFGToLLVM::unboxDouble):
+        (JSC::FTL::LowerDFGToLLVM::boxDouble):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateNumber):
+        (JSC::FTL::LowerDFGToLLVM::speculateRealNumber):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::constDouble):
+        (Output):
+        (JSC::FTL::Output::phi):
+        (JSC::FTL::Output::doubleAdd):
+        (JSC::FTL::Output::doubleSub):
+        (JSC::FTL::Output::doubleMul):
+        (JSC::FTL::Output::doubleNeg):
+        (JSC::FTL::Output::intToFP):
+        (JSC::FTL::Output::intToDouble):
+        (JSC::FTL::Output::unsignedToFP):
+        (JSC::FTL::Output::unsignedToDouble):
+        (JSC::FTL::Output::bitCast):
+        (JSC::FTL::Output::loadDouble):
+        (JSC::FTL::Output::storeDouble):
+        (JSC::FTL::Output::doubleEqual):
+        (JSC::FTL::Output::doubleNotEqualOrUnordered):
+        (JSC::FTL::Output::doubleLessThan):
+        (JSC::FTL::Output::doubleLessThanOrEqual):
+        (JSC::FTL::Output::doubleGreaterThan):
+        (JSC::FTL::Output::doubleGreaterThanOrEqual):
+        (JSC::FTL::Output::doubleEqualOrUnordered):
+        (JSC::FTL::Output::doubleNotEqual):
+        (JSC::FTL::Output::doubleLessThanOrUnordered):
+        (JSC::FTL::Output::doubleLessThanOrEqualOrUnordered):
+        (JSC::FTL::Output::doubleGreaterThanOrUnordered):
+        (JSC::FTL::Output::doubleGreaterThanOrEqualOrUnordered):
+        (JSC::FTL::Output::testIsZero64):
+
+2013-04-27  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: SymbolTable should be thread-safe
         https://bugs.webkit.org/show_bug.cgi?id=115301
 

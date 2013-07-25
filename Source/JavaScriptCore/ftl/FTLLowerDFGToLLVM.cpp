@@ -62,6 +62,7 @@ public:
         , m_localsBoolean(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
         , m_locals32(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
         , m_locals64(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
+        , m_localsDouble(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
         , m_valueSources(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
         , m_lastSetOperand(std::numeric_limits<int>::max())
         , m_exitThunkGenerator(state)
@@ -86,6 +87,7 @@ public:
             m_localsBoolean[index] = buildAlloca(m_out.m_builder, m_out.boolean);
             m_locals32[index] = buildAlloca(m_out.m_builder, m_out.int32);
             m_locals64[index] = buildAlloca(m_out.m_builder, m_out.int64);
+            m_localsDouble[index] = buildAlloca(m_out.m_builder, m_out.doubleType);
         }
         
         m_initialization = appendBasicBlock(m_ftlState.function);
@@ -422,9 +424,8 @@ private:
         
         if (variable->shouldUnboxIfPossible()) {
             if (variable->shouldUseDoubleFormat()) {
-                // FIXME: implement doubles in FTL.
-                // https://bugs.webkit.org/show_bug.cgi?id=113624
-                RELEASE_ASSERT_NOT_REACHED();
+                m_doubleValues.add(m_node, m_out.get(m_localsDouble.operand(variable->local())));
+                return;
             }
             
             // Locals that are marked shouldUnboxIfPossible() that aren't also forced to
@@ -456,9 +457,12 @@ private:
         
         if (variable->shouldUnboxIfPossible()) {
             if (variable->shouldUseDoubleFormat()) {
-                // FIXME: implement doubles in FTL.
-                // https://bugs.webkit.org/show_bug.cgi?id=113624
-                RELEASE_ASSERT_NOT_REACHED();
+                LValue value = lowDouble(m_node->child1());
+                m_out.set(value, m_localsDouble.operand(variable->local()));
+                if (needsFlushing) {
+                    m_out.storeDouble(value, addressFor(variable->local()));
+                    m_valueSources.operand(variable->local()) = ValueSource(DoubleInJSStack);
+                }
                 return;
             }
             
@@ -552,6 +556,13 @@ private:
             break;
         }
             
+        case NumberUse: {
+            m_doubleValues.add(
+                m_node,
+                m_out.doubleAdd(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            break;
+        }
+            
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -573,6 +584,13 @@ private:
             LValue result = m_out.subWithOverflow32(left, right);
             speculate(Overflow, noValue(), 0, m_out.extractValue(result, 1));
             m_int32Values.add(m_node, m_out.extractValue(result, 0));
+            break;
+        }
+            
+        case NumberUse: {
+            m_doubleValues.add(
+                m_node,
+                m_out.doubleSub(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             break;
         }
             
@@ -613,6 +631,13 @@ private:
             break;
         }
             
+        case NumberUse: {
+            m_doubleValues.add(
+                m_node,
+                m_out.doubleMul(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            break;
+        }
+            
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -637,6 +662,11 @@ private:
             }
             
             m_int32Values.add(m_node, result);
+            break;
+        }
+            
+        case NumberUse: {
+            m_doubleValues.add(m_node, m_out.doubleNeg(lowDouble(m_node->child1())));
             break;
         }
             
@@ -693,15 +723,13 @@ private:
     
     void compileUInt32ToNumber()
     {
+        LValue value = lowInt32(m_node->child1());
+
         if (!nodeCanSpeculateInteger(m_node->arithNodeFlags())) {
-            // FIXME: implement doubles in FTL.
-            // https://bugs.webkit.org/show_bug.cgi?id=113624
-            
-            RELEASE_ASSERT_NOT_REACHED();
+            m_doubleValues.add(m_node, m_out.unsignedToDouble(value));
             return;
         }
         
-        LValue value = lowInt32(m_node->child1());
         speculateForward(
             Overflow, noValue(), 0, m_out.lessThan(value, m_out.int32Zero),
             FormattedValue(ValueFormatUInt32, value));
@@ -821,6 +849,36 @@ private:
             break;
         }
             
+        case Array::Double: {
+            if (m_node->arrayMode().isInBounds()) {
+                if (m_node->arrayMode().isSaneChain()) {
+                    // FIXME: Implement structure transition watchpoints.
+                    // https://bugs.webkit.org/show_bug.cgi?id=113647
+                }
+            
+                speculate(
+                    OutOfBounds, noValue(), 0,
+                    m_out.aboveOrEqual(
+                        index, m_out.load32(storage, m_heaps.Butterfly_publicLength)));
+                
+                LValue result = m_out.loadDouble(m_out.baseIndex(
+                    m_heaps.indexedDoubleProperties,
+                    storage, m_out.zeroExt(index, m_out.intPtr),
+                    m_state.forNode(m_node->child2()).m_value));
+                
+                if (!m_node->arrayMode().isSaneChain()) {
+                    speculate(
+                        LoadFromHole, noValue(), 0,
+                        m_out.doubleNotEqualOrUnordered(result, result));
+                }
+                m_doubleValues.add(m_node, result);
+                break;
+            }
+            
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+            
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -874,6 +932,12 @@ private:
             return;
         }
         
+        if (m_node->isBinaryUseKind(NumberUse)) {
+            m_booleanValues.add(
+                m_node,
+                m_out.doubleEqual(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+        }
+        
         if (m_node->isBinaryUseKind(ObjectUse)) {
             m_booleanValues.add(
                 m_node,
@@ -891,6 +955,12 @@ private:
                 m_node,
                 m_out.lessThan(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
             return;
+        }
+        
+        if (m_node->isBinaryUseKind(NumberUse)) {
+            m_booleanValues.add(
+                m_node,
+                m_out.doubleLessThan(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
         }
         
         RELEASE_ASSERT_NOT_REACHED();
@@ -1042,6 +1112,57 @@ private:
         return m_out.booleanFalse;
     }
     
+    LValue lowDouble(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    {
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || isDouble(edge.useKind()));
+        
+        if (LValue result = m_doubleValues.get(edge.node()))
+            return result;
+        
+        if (LValue intResult = m_int32Values.get(edge.node())) {
+            LValue result = m_out.intToDouble(intResult);
+            m_doubleValues.add(edge.node(), result);
+            return result;
+        }
+        
+        if (LValue boxedResult = m_jsValueValues.get(edge.node())) {
+            LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("Double unboxing int case"));
+            LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("Double unboxing double case"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Double unboxing continuation"));
+            
+            m_out.branch(isNotInt32(boxedResult), doubleCase, intCase);
+            
+            LBasicBlock lastNext = m_out.appendTo(intCase, doubleCase);
+            
+            LValue intToDouble = m_out.intToDouble(unboxInt32(boxedResult));
+            LBasicBlock intToDoubleBlock = m_out.m_block;
+            m_out.jump(continuation);
+            
+            m_out.appendTo(doubleCase, continuation);
+            
+            FTL_TYPE_CHECK(
+                jsValueValue(boxedResult), edge, SpecNumber, isCellOrMisc(boxedResult));
+            
+            LValue unboxedDouble = unboxDouble(boxedResult);
+            LBasicBlock unboxedDoubleBlock = m_out.m_block;
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            
+            LValue result = m_out.phi(
+                m_out.doubleType,
+                intToDouble, intToDoubleBlock,
+                unboxedDouble, unboxedDoubleBlock);
+            
+            m_doubleValues.add(edge.node(), result);
+            return result;
+        }
+        
+        RELEASE_ASSERT(!(m_state.forNode(edge).m_type & SpecNumber));
+        terminate(Uncountable);
+        return m_out.doubleZero;
+    }
+    
     LValue lowJSValue(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == UntypedUse);
@@ -1057,6 +1178,12 @@ private:
         
         if (LValue unboxedResult = m_booleanValues.get(edge.node())) {
             LValue result = boxBoolean(unboxedResult);
+            m_jsValueValues.add(edge.node(), result);
+            return result;
+        }
+        
+        if (LValue unboxedResult = m_doubleValues.get(edge.node())) {
+            LValue result = boxDouble(unboxedResult);
             m_jsValueValues.add(edge.node(), result);
             return result;
         }
@@ -1088,6 +1215,19 @@ private:
         return m_out.add(m_out.zeroExt(value, m_out.int64), m_tagTypeNumber);
     }
     
+    LValue isCellOrMisc(LValue jsValue)
+    {
+        return m_out.testIsZero64(jsValue, m_tagTypeNumber);
+    }
+    LValue unboxDouble(LValue jsValue)
+    {
+        return m_out.bitCast(m_out.add(jsValue, m_tagTypeNumber), m_out.doubleType);
+    }
+    LValue boxDouble(LValue doubleValue)
+    {
+        return m_out.sub(m_out.bitCast(doubleValue, m_out.int64), m_tagTypeNumber);
+    }
+    
     LValue isNotCell(LValue jsValue)
     {
         return m_out.testNonZero64(jsValue, m_tagMask);
@@ -1117,6 +1257,7 @@ private:
         case UntypedUse:
             break;
         case KnownInt32Use:
+        case KnownNumberUse:
             ASSERT(!m_state.needsTypeCheck(edge));
             break;
         case Int32Use:
@@ -1130,6 +1271,12 @@ private:
             break;
         case ObjectUse:
             speculateObject(edge);
+            break;
+        case RealNumberUse:
+            speculateRealNumber(edge);
+            break;
+        case NumberUse:
+            speculateNumber(edge);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1163,6 +1310,27 @@ private:
     void speculateObject(Edge edge)
     {
         speculateObject(edge, lowCell(edge));
+    }
+    
+    void speculateNumber(Edge edge)
+    {
+        // Do an early return here because lowDouble() can create a lot of control flow.
+        if (!m_state.needsTypeCheck(edge))
+            return;
+        
+        lowDouble(edge);
+    }
+    
+    void speculateRealNumber(Edge edge)
+    {
+        // Do an early return here because lowDouble() can create a lot of control flow.
+        if (!m_state.needsTypeCheck(edge))
+            return;
+        
+        LValue value = lowDouble(edge);
+        FTL_TYPE_CHECK(
+            doubleValue(value), edge, SpecRealNumber,
+            m_out.doubleNotEqualOrUnordered(value, value));
     }
     
     bool isLive(Node* node)
@@ -1315,9 +1483,8 @@ private:
                     exit, arguments, i, ValueFormatBoolean, m_out.get(m_localsBoolean[i]));
                 break;
             case DoubleInLocals:
-                // FIXME: implement doubles in FTL.
-                // https://bugs.webkit.org/show_bug.cgi?id=113624
-                RELEASE_ASSERT_NOT_REACHED();
+                addExitArgument(
+                    exit, arguments, i, ValueFormatDouble, m_out.get(m_localsDouble[i]));
                 break;
             case ArgumentsSource:
                 // FIXME: implement PhantomArguments.
@@ -1454,8 +1621,11 @@ private:
             return;
         }
         
-        // FIXME: Implement doubles in the FTL.
-        // https://bugs.webkit.org/show_bug.cgi?id=113624
+        if (LValue result = m_doubleValues.get(node)) {
+            addExitArgument(exit, arguments, index, ValueFormatDouble, result);
+            return;
+        }
+
         RELEASE_ASSERT_NOT_REACHED();
     }
     
@@ -1600,11 +1770,13 @@ private:
     HashMap<Node*, LValue> m_jsValueValues;
     HashMap<Node*, LValue> m_booleanValues;
     HashMap<Node*, LValue> m_storageValues;
+    HashMap<Node*, LValue> m_doubleValues;
     HashMap<Node*, unsigned> m_timeToLive;
     
     Operands<LValue> m_localsBoolean;
     Operands<LValue> m_locals32;
     Operands<LValue> m_locals64;
+    Operands<LValue> m_localsDouble;
     
     Operands<ValueSource> m_valueSources;
     int m_lastSetOperand;

@@ -50,6 +50,9 @@ bool canCompile(Graph& graph)
                 case UntypedUse:
                 case Int32Use:
                 case KnownInt32Use:
+                case NumberUse:
+                case KnownNumberUse:
+                case RealNumberUse:
                 case BooleanUse:
                 case CellUse:
                 case KnownCellUse:
@@ -90,22 +93,13 @@ bool canCompile(Graph& graph)
             case PutByOffset:
             case GetGlobalVar:
             case PutGlobalVar:
-                // These are OK.
-                break;
             case ValueAdd:
             case ArithAdd:
             case ArithSub:
             case ArithMul:
-                if (node->binaryUseKind() == Int32Use)
-                    break;
-                return false;
             case ArithNegate:
-                if (node->child1().useKind() == Int32Use)
-                    break;
-                return false;
             case UInt32ToNumber:
-                if (!nodeCanSpeculateInteger(node->arithNodeFlags()))
-                    return false;
+                // These are OK.
                 break;
             case GetArrayLength:
                 switch (node->arrayMode().type()) {
@@ -120,6 +114,7 @@ bool canCompile(Graph& graph)
             case GetByVal:
                 switch (node->arrayMode().type()) {
                 case Array::Int32:
+                case Array::Double:
                 case Array::Contiguous:
                     break;
                 default:
@@ -136,11 +131,15 @@ bool canCompile(Graph& graph)
             case CompareEq:
                 if (node->isBinaryUseKind(Int32Use))
                     break;
+                if (node->isBinaryUseKind(NumberUse))
+                    break;
                 if (node->isBinaryUseKind(ObjectUse))
                     break;
                 return false;
             case CompareLess:
                 if (node->isBinaryUseKind(Int32Use))
+                    break;
+                if (node->isBinaryUseKind(NumberUse))
                     break;
                 return false;
             case Branch:

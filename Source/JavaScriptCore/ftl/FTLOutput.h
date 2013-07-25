@@ -109,11 +109,28 @@ public:
     template<typename T>
     LValue constIntPtr(T value) { return constInt(intPtr, bitwise_cast<intptr_t>(value), SignExtend); }
     LValue constInt64(int64_t value) { return constInt(int64, value, SignExtend); }
+    LValue constDouble(double value) { return constReal(doubleType, value); }
+    
+    LValue phi(LType type) { return buildPhi(m_builder, type); }
+    LValue phi(LType type, LValue value1, LBasicBlock block1)
+    {
+        return buildPhi(m_builder, type, value1, block1);
+    }
+    LValue phi(LType type, LValue value1, LBasicBlock block1, LValue value2, LBasicBlock block2)
+    {
+        return buildPhi(m_builder, type, value1, block1, value2, block2);
+    }
     
     LValue add(LValue left, LValue right) { return buildAdd(m_builder, left, right); }
     LValue sub(LValue left, LValue right) { return buildSub(m_builder, left, right); }
     LValue mul(LValue left, LValue right) { return buildMul(m_builder, left, right); }
     LValue neg(LValue value) { return buildNeg(m_builder, value); }
+
+    LValue doubleAdd(LValue left, LValue right) { return buildFAdd(m_builder, left, right); }
+    LValue doubleSub(LValue left, LValue right) { return buildFSub(m_builder, left, right); }
+    LValue doubleMul(LValue left, LValue right) { return buildFMul(m_builder, left, right); }
+    LValue doubleNeg(LValue value) { return buildFNeg(m_builder, value); }
+
     LValue bitAnd(LValue left, LValue right) { return buildAnd(m_builder, left, right); }
     LValue bitOr(LValue left, LValue right) { return buildOr(m_builder, left, right); }
     LValue bitXor(LValue left, LValue right) { return buildXor(m_builder, left, right); }
@@ -135,9 +152,14 @@ public:
     }
     
     LValue zeroExt(LValue value, LType type) { return buildZExt(m_builder, value, type); }
+    LValue intToFP(LValue value, LType type) { return buildSIToFP(m_builder, value, type); }
+    LValue intToDouble(LValue value) { return intToFP(value, doubleType); }
+    LValue unsignedToFP(LValue value, LType type) { return buildUIToFP(m_builder, value, type); }
+    LValue unsignedToDouble(LValue value) { return unsignedToFP(value, doubleType); }
     LValue intCast(LValue value, LType type) { return buildIntCast(m_builder, value, type); }
     LValue castToInt32(LValue value) { return intCast(value, int32); }
     LValue intToPtr(LValue value, LType type) { return buildIntToPtr(m_builder, value, type); }
+    LValue bitCast(LValue value, LType type) { return buildBitCast(m_builder, value, type); }
     
     LValue get(LValue reference) { return buildLoad(m_builder, reference); }
     LValue set(LValue value, LValue reference) { return buildStore(m_builder, value, reference); }
@@ -157,9 +179,11 @@ public:
     LValue load32(TypedPointer pointer) { return load(pointer, ref32); }
     LValue load64(TypedPointer pointer) { return load(pointer, ref64); }
     LValue loadPtr(TypedPointer pointer) { return load(pointer, refPtr); }
+    LValue loadDouble(TypedPointer pointer) { return load(pointer, refDouble); }
     void store32(LValue value, TypedPointer pointer) { store(value, pointer, ref32); }
     void store64(LValue value, TypedPointer pointer) { store(value, pointer, ref64); }
     void storePtr(LValue value, TypedPointer pointer) { store(value, pointer, refPtr); }
+    void storeDouble(LValue value, TypedPointer pointer) { store(value, pointer, refDouble); }
 
     LValue addPtr(LValue value, ptrdiff_t immediate = 0)
     {
@@ -239,9 +263,23 @@ public:
     LValue lessThan(LValue left, LValue right) { return buildICmp(m_builder, LLVMIntSLT, left, right); }
     LValue lessThanOrEqual(LValue left, LValue right) { return buildICmp(m_builder, LLVMIntSLE, left, right); }
     
+    LValue doubleEqual(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealOEQ, left, right); }
+    LValue doubleNotEqualOrUnordered(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealUNE, left, right); }
+    LValue doubleLessThan(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealOLT, left, right); }
+    LValue doubleLessThanOrEqual(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealOLE, left, right); }
+    LValue doubleGreaterThan(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealOGT, left, right); }
+    LValue doubleGreaterThanOrEqual(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealOGE, left, right); }
+    LValue doubleEqualOrUnordered(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealUEQ, left, right); }
+    LValue doubleNotEqual(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealONE, left, right); }
+    LValue doubleLessThanOrUnordered(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealULT, left, right); }
+    LValue doubleLessThanOrEqualOrUnordered(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealULE, left, right); }
+    LValue doubleGreaterThanOrUnordered(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealUGT, left, right); }
+    LValue doubleGreaterThanOrEqualOrUnordered(LValue left, LValue right) { return buildFCmp(m_builder, LLVMRealUGE, left, right); }
+    
     LValue isZero64(LValue value) { return equal(value, int64Zero); }
     LValue notZero64(LValue value) { return notEqual(value, int64Zero); }
     
+    LValue testIsZero64(LValue value, LValue mask) { return isZero64(bitAnd(value, mask)); }
     LValue testNonZero64(LValue value, LValue mask) { return notZero64(bitAnd(value, mask)); }
     
     LValue select(LValue value, LValue taken, LValue notTaken) { return buildSelect(m_builder, value, taken, notTaken); }

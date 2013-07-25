@@ -48,9 +48,11 @@ public:
     const LType int32;
     const LType int64;
     const LType intPtr;
+    const LType doubleType;
     const LType ref32;
     const LType ref64;
     const LType refPtr;
+    const LType refDouble;
     const LValue booleanTrue;
     const LValue booleanFalse;
     const LValue int32Zero;
@@ -62,6 +64,7 @@ public:
     const LValue intPtrFour;
     const LValue intPtrEight;
     const LValue intPtrPtr;
+    const LValue doubleZero;
     
     LModule m_module;
 };

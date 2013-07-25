@@ -47,6 +47,7 @@ typedef LLVMBasicBlockRef LBasicBlock;
 typedef LLVMBuilderRef LBuilder;
 typedef LLVMCallConv LCallConv;
 typedef LLVMIntPredicate LIntPredicate;
+typedef LLVMRealPredicate LRealPredicate;
 typedef LLVMLinkage LLinkage;
 typedef LLVMModuleRef LModule;
 typedef LLVMTypeRef LType;
@@ -57,6 +58,7 @@ static inline LType int1Type() { return LLVMInt1Type(); }
 static inline LType int32Type() { return LLVMInt32Type(); }
 static inline LType int64Type() { return LLVMInt64Type(); }
 static inline LType intPtrType() { return LLVMInt64Type(); }
+static inline LType doubleType() { return LLVMDoubleType(); }
 
 static inline LType pointerType(LType type) { return LLVMPointerType(type, 0); }
 
@@ -134,17 +136,58 @@ static inline LValue getParam(LValue function, unsigned index) { return LLVMGetP
 
 enum BitExtension { ZeroExtend, SignExtend };
 static inline LValue constInt(LType type, unsigned long long value, BitExtension extension) { return LLVMConstInt(type, value, extension == SignExtend); }
+static inline LValue constReal(LType type, double value) { return LLVMConstReal(type, value); }
 static inline LValue constIntToPtr(LValue value, LType type) { return LLVMConstIntToPtr(value, type); }
 static inline LValue constBitCast(LValue value, LType type) { return LLVMConstBitCast(value, type); }
 
 static inline LBasicBlock appendBasicBlock(LValue function, const char* name = "") { return LLVMAppendBasicBlock(function, name); }
 static inline LBasicBlock insertBasicBlock(LBasicBlock beforeBasicBlock, const char* name = "") { return LLVMInsertBasicBlock(beforeBasicBlock, name); }
 
+static inline LValue buildPhi(LBuilder builder, LType type) { return LLVMBuildPhi(builder, type, ""); }
+static inline void addIncoming(LValue phi, const LValue* values, const LBasicBlock* blocks, unsigned numPredecessors)
+{
+    LLVMAddIncoming(phi, const_cast<LValue*>(values), const_cast<LBasicBlock*>(blocks), numPredecessors);
+}
+template<typename ValueVectorType, typename BlockVectorType>
+static inline void addIncoming(LValue phi, const ValueVectorType& values, const BlockVectorType& blocks)
+{
+    ASSERT(values.size() == blocks.size());
+    addIncoming(phi, values.begin(), blocks.begin(), values.size());
+}
+static inline void addIncoming(LValue phi, LValue value1, LBasicBlock block1)
+{
+    addIncoming(phi, &value1, &block1, 1);
+}
+static inline void addIncoming(LValue phi, LValue value1, LBasicBlock block1, LValue value2, LBasicBlock block2)
+{
+    LValue values[] = { value1, value2 };
+    LBasicBlock blocks[] = { block1, block2 };
+    addIncoming(phi, values, blocks, 2);
+}
+static inline LValue buildPhi(LBuilder builder, LType type, LValue value1, LBasicBlock block1)
+{
+    LValue result = buildPhi(builder, type);
+    addIncoming(result, value1, block1);
+    return result;
+}
+static inline LValue buildPhi(
+    LBuilder builder, LType type, LValue value1, LBasicBlock block1, LValue value2,
+    LBasicBlock block2)
+{
+    LValue result = buildPhi(builder, type);
+    addIncoming(result, value1, block1, value2, block2);
+    return result;
+}
+
 static inline LValue buildAlloca(LBuilder builder, LType type) { return LLVMBuildAlloca(builder, type, ""); }
 static inline LValue buildAdd(LBuilder builder, LValue left, LValue right) { return LLVMBuildAdd(builder, left, right, ""); }
 static inline LValue buildSub(LBuilder builder, LValue left, LValue right) { return LLVMBuildSub(builder, left, right, ""); }
 static inline LValue buildMul(LBuilder builder, LValue left, LValue right) { return LLVMBuildMul(builder, left, right, ""); }
 static inline LValue buildNeg(LBuilder builder, LValue value) { return LLVMBuildNeg(builder, value, ""); }
+static inline LValue buildFAdd(LBuilder builder, LValue left, LValue right) { return LLVMBuildFAdd(builder, left, right, ""); }
+static inline LValue buildFSub(LBuilder builder, LValue left, LValue right) { return LLVMBuildFSub(builder, left, right, ""); }
+static inline LValue buildFMul(LBuilder builder, LValue left, LValue right) { return LLVMBuildFMul(builder, left, right, ""); }
+static inline LValue buildFNeg(LBuilder builder, LValue value) { return LLVMBuildFNeg(builder, value, ""); }
 static inline LValue buildAnd(LBuilder builder, LValue left, LValue right) { return LLVMBuildAnd(builder, left, right, ""); }
 static inline LValue buildOr(LBuilder builder, LValue left, LValue right) { return LLVMBuildOr(builder, left, right, ""); }
 static inline LValue buildXor(LBuilder builder, LValue left, LValue right) { return LLVMBuildXor(builder, left, right, ""); }
@@ -154,10 +197,14 @@ static inline LValue buildLShr(LBuilder builder, LValue left, LValue right) { re
 static inline LValue buildLoad(LBuilder builder, LValue pointer) { return LLVMBuildLoad(builder, pointer, ""); }
 static inline LValue buildStore(LBuilder builder, LValue value, LValue pointer) { return LLVMBuildStore(builder, value, pointer); }
 static inline LValue buildZExt(LBuilder builder, LValue value, LType type) { return LLVMBuildZExt(builder, value, type, ""); }
+static inline LValue buildSIToFP(LBuilder builder, LValue value, LType type) { return LLVMBuildSIToFP(builder, value, type, ""); }
+static inline LValue buildUIToFP(LBuilder builder, LValue value, LType type) { return LLVMBuildUIToFP(builder, value, type, ""); }
 static inline LValue buildIntCast(LBuilder builder, LValue value, LType type) { return LLVMBuildIntCast(builder, value, type, ""); }
 static inline LValue buildIntToPtr(LBuilder builder, LValue value, LType type) { return LLVMBuildIntToPtr(builder, value, type, ""); }
 static inline LValue buildPtrToInt(LBuilder builder, LValue value, LType type) { return LLVMBuildPtrToInt(builder, value, type, ""); }
+static inline LValue buildBitCast(LBuilder builder, LValue value, LType type) { return LLVMBuildBitCast(builder, value, type, ""); }
 static inline LValue buildICmp(LBuilder builder, LIntPredicate cond, LValue left, LValue right) { return LLVMBuildICmp(builder, cond, left, right, ""); }
+static inline LValue buildFCmp(LBuilder builder, LRealPredicate cond, LValue left, LValue right) { return LLVMBuildFCmp(builder, cond, left, right, ""); }
 static inline LValue buildCall(LBuilder builder, LValue function, const LValue* args, unsigned numArgs)
 {
     return LLVMBuildCall(builder, function, const_cast<LValue*>(args), numArgs, "");

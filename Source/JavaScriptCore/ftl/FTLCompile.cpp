@@ -55,9 +55,10 @@ bool compile(State& state, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr&
     char* error = 0;
     
     LLVMMCJITCompilerOptions options;
-    memset(&options, 0, sizeof(options));
+    LLVMInitializeMCJITCompilerOptions(&options, sizeof(options));
     options.OptLevel = Options::llvmOptimizationLevel();
     options.NoFramePointerElim = true;
+    options.CodeModel = LLVMCodeModelSmall;
     
     if (LLVMCreateMCJITCompilerForModule(&engine, state.module, &options, sizeof(options), &error)) {
         dataLog("FATAL: Could not create LLVM execution engine: ", error, "\n");
