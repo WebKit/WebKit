@@ -1301,7 +1301,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                     // Assert things that we can't handle and that the computeFor() method
                     // above won't be able to return.
                     ASSERT(status.structureSet().size() == 1);
-                    ASSERT(status.chain().isEmpty());
+                    ASSERT(!status.chain());
                     
                     if (status.specificValue())
                         forNode(node).set(m_graph, status.specificValue());

@@ -72,7 +72,10 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     if (!isValidOffset(offset))
         return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
     
-    return PutByIdStatus(SimpleTransition, structure, newStructure, chain, offset);
+    return PutByIdStatus(
+        SimpleTransition, structure, newStructure,
+        chain ? adoptRef(new IntendedStructureChain(profiledBlock, structure, chain)) : 0,
+        offset);
 #else
     return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
 #endif
@@ -129,7 +132,9 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
                 SimpleTransition,
                 stubInfo.u.putByIdTransition.previousStructure.get(),
                 stubInfo.u.putByIdTransition.structure.get(),
-                stubInfo.u.putByIdTransition.chain.get(),
+                stubInfo.u.putByIdTransition.chain ? adoptRef(new IntendedStructureChain(
+                    profiledBlock, stubInfo.u.putByIdTransition.previousStructure.get(),
+                    stubInfo.u.putByIdTransition.chain.get())) : 0,
                 offset);
         }
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
@@ -181,9 +186,12 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
     if (structure->typeInfo().type() == StringType)
         return PutByIdStatus(TakesSlowPath);
     
+    RefPtr<IntendedStructureChain> chain;
     if (!isDirect) {
+        chain = adoptRef(new IntendedStructureChain(globalObject, structure));
+        
         // If the prototype chain has setters or read-only properties, then give up.
-        if (structure->prototypeChainMayInterceptStoreTo(vm, uid))
+        if (chain->mayInterceptStoreTo(vm, uid))
             return PutByIdStatus(TakesSlowPath);
         
         // If the prototype chain hasn't been normalized (i.e. there are proxies or dictionaries)
@@ -193,7 +201,7 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
         // dictionaries if we have evidence to suggest that those objects were never used as
         // prototypes in a cacheable prototype access - i.e. there's a good chance that some of
         // the other checks below will fail.
-        if (!isPrototypeChainNormalized(globalObject, structure))
+        if (!chain->isNormalized())
             return PutByIdStatus(TakesSlowPath);
     }
     
@@ -216,9 +224,7 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
     ASSERT(!transition->transitionDidInvolveSpecificValue());
     ASSERT(isValidOffset(offset));
     
-    return PutByIdStatus(
-        SimpleTransition, structure, transition,
-        structure->prototypeChain(vm, globalObject), offset);
+    return PutByIdStatus(SimpleTransition, structure, transition, chain.release(), offset);
 }
 
 } // namespace JSC

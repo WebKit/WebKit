@@ -970,13 +970,9 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
         thisObject->m_propertyTableUnsafe.clear();
 }
 
-bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, StringImpl* uid)
+bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyName)
 {
-    // Note, this method is called from two kinds of places: (1) assertions and (2)
-    // the compilation thread. As such, it does things somewhat carefully to ensure
-    // thread safety. Currently that only affects the way we do Structure::get().
-    
-    unsigned i = toUInt32FromStringImpl(uid);
+    unsigned i = propertyName.asIndex();
     if (i != PropertyName::NotAnIndex)
         return anyObjectInChainMayInterceptIndexedAccesses();
     
@@ -989,7 +985,7 @@ bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, StringImpl* uid)
         
         unsigned attributes;
         JSCell* specificValue;
-        PropertyOffset offset = current->getConcurrently(vm, uid, attributes, specificValue);
+        PropertyOffset offset = current->get(vm, propertyName, attributes, specificValue);
         if (!JSC::isValidOffset(offset))
             continue;
         
@@ -998,11 +994,6 @@ bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, StringImpl* uid)
         
         return false;
     }
-}
-
-bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyName)
-{
-    return prototypeChainMayInterceptStoreTo(vm, propertyName.uid());
 }
 
 #if DO_PROPERTYMAP_CONSTENCY_CHECK

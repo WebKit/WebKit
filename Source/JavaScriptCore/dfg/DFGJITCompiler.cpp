@@ -272,7 +272,7 @@ bool JITCompiler::compile()
 
 bool JITCompiler::link(RefPtr<JSC::JITCode>& entry)
 {
-    if (!m_graph.m_watchpoints.areStillValid())
+    if (!m_graph.isStillValid())
         return false;
     
     LinkBuffer linkBuffer(*m_vm, this, m_codeBlock, JITCompilationCanFail);
@@ -372,7 +372,7 @@ bool JITCompiler::compileFunction()
 
 bool JITCompiler::linkFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck)
 {
-    if (!m_graph.m_watchpoints.areStillValid())
+    if (!m_graph.isStillValid())
         return false;
 
     // === Link ===

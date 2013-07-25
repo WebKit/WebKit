@@ -35,6 +35,7 @@
 #include "DFGAssemblyHelpers.h"
 #include "DFGBasicBlock.h"
 #include "DFGDesiredIdentifiers.h"
+#include "DFGDesiredStructureChains.h"
 #include "DFGDesiredWatchpoints.h"
 #include "DFGDominators.h"
 #include "DFGLongLivedState.h"
@@ -700,6 +701,8 @@ public:
         }
     }
     
+    bool isStillValid() const;
+    
     VM& m_vm;
     CodeBlock* m_codeBlock;
     RefPtr<Profiler::Compilation> m_compilation;
@@ -729,6 +732,7 @@ public:
     Operands<JSValue> m_mustHandleValues;
     DesiredWatchpoints m_watchpoints;
     DesiredIdentifiers m_identifiers;
+    DesiredStructureChains m_chains;
     
     OptimizationFixpointState m_fixpointState;
     GraphForm m_form;

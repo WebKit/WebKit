@@ -164,7 +164,7 @@ private:
                 }
                 
                 ASSERT(status.structureSet().size() == 1);
-                ASSERT(status.chain().isEmpty());
+                ASSERT(!status.chain());
                 ASSERT(status.structureSet().singletonStructure() == structure);
                 
                 // Now before we do anything else, push the CFA forward over the GetById
@@ -261,8 +261,10 @@ private:
                                 structure->storedPrototype().asCell());
                         }
                         
-                        for (WriteBarrier<Structure>* it = status.structureChain()->head(); *it; ++it) {
-                            JSValue prototype = (*it)->storedPrototype();
+                        m_graph.m_chains.addLazily(status.structureChain());
+                        
+                        for (unsigned i = 0; i < status.structureChain()->size(); ++i) {
+                            JSValue prototype = status.structureChain()->at(i)->storedPrototype();
                             if (prototype.isNull())
                                 continue;
                             ASSERT(prototype.isCell());

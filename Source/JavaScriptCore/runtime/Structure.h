@@ -154,6 +154,8 @@ public:
     void setGlobalObject(VM& vm, JSGlobalObject* globalObject) { m_globalObject.set(vm, this, globalObject); }
         
     JSValue storedPrototype() const { return m_prototype.get(); }
+    JSObject* storedPrototypeObject() const;
+    Structure* storedPrototypeStructure() const;
     JSValue prototypeForLookup(ExecState*) const;
     JSValue prototypeForLookup(JSGlobalObject*) const;
     JSValue prototypeForLookup(CodeBlock*) const;
@@ -162,7 +164,6 @@ public:
     static void visitChildren(JSCell*, SlotVisitor&);
         
     // Will just the prototype chain intercept this property access?
-    bool prototypeChainMayInterceptStoreTo(VM&, StringImpl* uid);
     bool prototypeChainMayInterceptStoreTo(VM&, PropertyName);
         
     bool transitionDidInvolveSpecificValue() const { return !!m_specificValueInPrevious; }

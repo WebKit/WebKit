@@ -1,3 +1,103 @@
+2013-05-09  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should have its own notion of StructureChain, and it should be possible to validate it after compilation finishes
+        https://bugs.webkit.org/show_bug.cgi?id=115841
+
+        Reviewed by Oliver Hunt.
+        
+        This adds IntendedStructureChain, which is like StructureChain, except that it holds a bit
+        more information and can be validated independantly of its owning Structure and lexical
+        GlobalObject, since it remembers both of those things. It's also malloc'd and RefCounted
+        rather than GC'd, so it can be allocated in a concurrent compilation thread.
+        
+        Gave this class a bunch of methods to allow the following idiom:
+        
+        - Snapshot a structure chain concurrently. This structure chain may end up being
+          wrong in case of races, but in that case we will find out when we try to validate
+          it.
+        
+        - Perform validation on the structure chain itself, without recomputing the chain.
+          Previously, many chain validation methods (prototypeChainMayInterceptStoreTo() for
+          example) recomputed the chain, and hence, were inherently racy: you could build one
+          chain and then validate against a different chain, and hence not realize that the
+          chain you did build was actually broken for your purposes, because the chain you
+          checked was a different one.
+        
+        - Validate that the chain is still the right one at any time, allowing the cancellation
+          of compilation if there was a race.
+        
+        Also added DFG::DesiredStructureChains, which tracks those intended structure chains that
+        the compiler had already chosen to use. If any of those are invalid at link time, throw
+        out the compilation.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForChain):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::GetByIdStatus):
+        (JSC::GetByIdStatus::chain):
+        (GetByIdStatus):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.h:
+        (JSC::PutByIdStatus::PutByIdStatus):
+        (JSC::PutByIdStatus::structureChain):
+        (PutByIdStatus):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDesiredStructureChains.cpp: Added.
+        (DFG):
+        (JSC::DFG::DesiredStructureChains::DesiredStructureChains):
+        (JSC::DFG::DesiredStructureChains::~DesiredStructureChains):
+        (JSC::DFG::DesiredStructureChains::areStillValid):
+        * dfg/DFGDesiredStructureChains.h: Added.
+        (DFG):
+        (DesiredStructureChains):
+        (JSC::DFG::DesiredStructureChains::addLazily):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isStillValid):
+        (DFG):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::linkFunction):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * runtime/IntendedStructureChain.cpp: Added.
+        (JSC):
+        (JSC::IntendedStructureChain::IntendedStructureChain):
+        (JSC::IntendedStructureChain::~IntendedStructureChain):
+        (JSC::IntendedStructureChain::isStillValid):
+        (JSC::IntendedStructureChain::matches):
+        (JSC::IntendedStructureChain::chain):
+        (JSC::IntendedStructureChain::mayInterceptStoreTo):
+        (JSC::IntendedStructureChain::isNormalized):
+        (JSC::IntendedStructureChain::terminalPrototype):
+        * runtime/IntendedStructureChain.h: Added.
+        (JSC):
+        (IntendedStructureChain):
+        (JSC::IntendedStructureChain::head):
+        (JSC::IntendedStructureChain::size):
+        (JSC::IntendedStructureChain::at):
+        (JSC::IntendedStructureChain::operator[]):
+        (JSC::IntendedStructureChain::last):
+        * runtime/Structure.cpp:
+        (JSC::Structure::prototypeChainMayInterceptStoreTo):
+        * runtime/Structure.h:
+        (Structure):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::storedPrototypeObject):
+        (JSC):
+        (JSC::Structure::storedPrototypeStructure):
+
 2013-05-06  Mark Lam  <mark.lam@apple.com>
 
         Fix broken 32-bit build + some clean up in JITStubs.cpp.

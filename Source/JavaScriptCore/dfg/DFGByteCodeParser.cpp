@@ -1735,12 +1735,13 @@ void ByteCodeParser::handleGetById(
                 
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(getByIdStatus.structureSet())), base);
     
-    if (!getByIdStatus.chain().isEmpty()) {
+    if (getByIdStatus.chain()) {
+        m_graph.m_chains.addLazily(getByIdStatus.chain());
         Structure* currentStructure = getByIdStatus.structureSet().singletonStructure();
         JSObject* currentObject = 0;
-        for (unsigned i = 0; i < getByIdStatus.chain().size(); ++i) {
+        for (unsigned i = 0; i < getByIdStatus.chain()->size(); ++i) {
             currentObject = asObject(currentStructure->prototypeForLookup(m_inlineStackTop->m_codeBlock));
-            currentStructure = getByIdStatus.chain()[i];
+            currentStructure = getByIdStatus.chain()->at(i);
             base = addStructureTransitionCheck(currentObject, currentStructure);
         }
     }
@@ -2617,13 +2618,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 storageAccessData.offset = indexRelativeToBase(putByIdStatus.offset());
                 storageAccessData.identifierNumber = identifierNumber;
                 m_graph.m_storageAccessData.append(storageAccessData);
-            } else if (!hasExitSite
-                       && putByIdStatus.isSimpleTransition()
-                       && structureChainIsStillValid(
-                           direct,
-                           putByIdStatus.oldStructure(),
-                           putByIdStatus.structureChain())) {
-
+            } else if (
+                !hasExitSite
+                && putByIdStatus.isSimpleTransition()
+                && (!putByIdStatus.structureChain()
+                    || putByIdStatus.structureChain()->isStillValid())) {
+                
+                m_graph.m_chains.addLazily(putByIdStatus.structureChain());
+                
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(putByIdStatus.oldStructure())), base);
                 if (!direct) {
                     if (!putByIdStatus.oldStructure()->storedPrototype().isNull()) {
@@ -2631,8 +2633,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                             putByIdStatus.oldStructure()->storedPrototype().asCell());
                     }
                     
-                    for (WriteBarrier<Structure>* it = putByIdStatus.structureChain()->head(); *it; ++it) {
-                        JSValue prototype = (*it)->storedPrototype();
+                    for (unsigned i = 0; i < putByIdStatus.structureChain()->size(); ++i) {
+                        JSValue prototype = putByIdStatus.structureChain()->at(i)->storedPrototype();
                         if (prototype.isNull())
                             continue;
                         ASSERT(prototype.isCell());

@@ -26,6 +26,7 @@
 #ifndef PutByIdStatus_h
 #define PutByIdStatus_h
 
+#include "IntendedStructureChain.h"
 #include "PropertyOffset.h"
 #include <wtf/NotFound.h>
 #include <wtf/text/StringImpl.h>
@@ -76,7 +77,7 @@ public:
         State state,
         Structure* oldStructure,
         Structure* newStructure,
-        StructureChain* structureChain,
+        PassRefPtr<IntendedStructureChain> structureChain,
         PropertyOffset offset)
         : m_state(state)
         , m_oldStructure(oldStructure)
@@ -86,7 +87,7 @@ public:
     {
         ASSERT((m_state == NoInformation || m_state == TakesSlowPath) == !m_oldStructure);
         ASSERT((m_state != SimpleTransition) == !m_newStructure);
-        ASSERT((m_state != SimpleTransition) == !m_structureChain);
+        ASSERT(!((m_state != SimpleTransition) && m_structureChain));
         ASSERT((m_state == NoInformation || m_state == TakesSlowPath) == (m_offset == invalidOffset));
     }
     
@@ -103,7 +104,7 @@ public:
     
     Structure* oldStructure() const { return m_oldStructure; }
     Structure* newStructure() const { return m_newStructure; }
-    StructureChain* structureChain() const { return m_structureChain; }
+    IntendedStructureChain* structureChain() const { return m_structureChain.get(); }
     PropertyOffset offset() const { return m_offset; }
     
 private:
@@ -112,7 +113,7 @@ private:
     State m_state;
     Structure* m_oldStructure;
     Structure* m_newStructure;
-    StructureChain* m_structureChain;
+    RefPtr<IntendedStructureChain> m_structureChain;
     PropertyOffset m_offset;
 };
 

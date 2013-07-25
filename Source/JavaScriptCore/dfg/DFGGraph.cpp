@@ -445,6 +445,12 @@ void Graph::resetExitStates()
     }
 }
 
+bool Graph::isStillValid() const
+{
+    return m_watchpoints.areStillValid()
+        && m_chains.areStillValid();
+}
+
 } } // namespace JSC::DFG
 
 #endif

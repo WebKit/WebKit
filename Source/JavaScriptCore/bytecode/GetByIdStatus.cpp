@@ -64,7 +64,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 #endif
 }
 
-void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBlock, StringImpl* uid, Structure* structure)
+void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBlock, StringImpl* uid)
 {
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
     // Validate the chain. If the chain is invalid, then currently the best thing
@@ -77,17 +77,13 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
     // have now is that if the structure chain has changed between when it was
     // cached on in the baseline JIT and when the DFG tried to inline the access,
     // then we fall back on a polymorphic access.
-    Structure* currentStructure = structure;
-    JSObject* currentObject = 0;
-    for (unsigned i = 0; i < result.m_chain.size(); ++i) {
-        ASSERT(!currentStructure->isDictionary());
-        currentObject = asObject(currentStructure->prototypeForLookup(profiledBlock));
-        currentStructure = result.m_chain[i];
-        if (currentObject->structure() != currentStructure)
-            return;
-    }
+    if (!result.m_chain->isStillValid())
+        return;
     
-    ASSERT(currentObject);
+    JSObject* currentObject = result.m_chain->terminalPrototype();
+    Structure* currentStructure = result.m_chain->last();
+    
+    ASSERT_UNUSED(currentObject, currentObject);
         
     unsigned attributesIgnored;
     JSCell* specificValue;
@@ -99,13 +95,12 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
     if (!isValidOffset(result.m_offset))
         return;
         
-    result.m_structureSet.add(structure);
+    result.m_structureSet.add(result.m_chain->head());
     result.m_specificValue = JSValue(specificValue);
 #else
     UNUSED_PARAM(result);
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(uid);
-    UNUSED_PARAM(structure);
     UNREACHABLE_FOR_PLATFORM();
 #endif
 }
@@ -221,21 +216,23 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     case access_get_by_id_proto: {
         if (!stubInfo.u.getByIdProto.isDirect)
             return GetByIdStatus(MakesCalls, true);
-        result.m_chain.append(stubInfo.u.getByIdProto.prototypeStructure.get());
-        computeForChain(
-            result, profiledBlock, uid,
-            stubInfo.u.getByIdProto.baseObjectStructure.get());
+        result.m_chain = adoptRef(new IntendedStructureChain(
+            profiledBlock,
+            stubInfo.u.getByIdProto.baseObjectStructure.get(),
+            stubInfo.u.getByIdProto.prototypeStructure.get()));
+        computeForChain(result, profiledBlock, uid);
         break;
     }
         
     case access_get_by_id_chain: {
         if (!stubInfo.u.getByIdChain.isDirect)
             return GetByIdStatus(MakesCalls, true);
-        for (unsigned i = 0; i < stubInfo.u.getByIdChain.count; ++i)
-            result.m_chain.append(stubInfo.u.getByIdChain.chain->head()[i].get());
-        computeForChain(
-            result, profiledBlock, uid,
-            stubInfo.u.getByIdChain.baseObjectStructure.get());
+        result.m_chain = adoptRef(new IntendedStructureChain(
+            profiledBlock,
+            stubInfo.u.getByIdChain.baseObjectStructure.get(),
+            stubInfo.u.getByIdChain.chain.get(),
+            stubInfo.u.getByIdChain.count));
+        computeForChain(result, profiledBlock, uid);
         break;
     }
         

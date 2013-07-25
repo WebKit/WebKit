@@ -49,7 +49,7 @@ static void compileEntry(CCallHelpers& jit)
 
 bool link(State& state, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
 {
-    if (!state.graph.m_watchpoints.areStillValid()) {
+    if (!state.graph.isStillValid()) {
         LLVMDisposeExecutionEngine(state.engine);
         return false;
     }

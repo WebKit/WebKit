@@ -56,6 +56,22 @@ inline Structure* Structure::create(VM& vm, const Structure* structure)
     return newStructure;
 }
 
+inline JSObject* Structure::storedPrototypeObject() const
+{
+    JSValue value = m_prototype.get();
+    if (value.isNull())
+        return 0;
+    return asObject(value);
+}
+
+inline Structure* Structure::storedPrototypeStructure() const
+{
+    JSObject* object = storedPrototypeObject();
+    if (!object)
+        return 0;
+    return object->structure();
+}
+
 inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 {
     ASSERT(!isCompilationThread());
