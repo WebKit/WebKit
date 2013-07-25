@@ -1,5 +1,32 @@
 2013-06-05  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG CFA shouldn't filter ArrayModes with ALL_NON_ARRAY_ARRAY_MODES if the speculated type is not SpecArray
+        https://bugs.webkit.org/show_bug.cgi?id=117279
+
+        Reviewed by Mark Hahnenberg.
+        
+        The normalization of abstract value clarity introduced in r151229 revealed a
+        long-standing bug where we filtered ArrayModes incorrectly and sometimes ended
+        up with BOTTOM incorrectly.
+        
+        This patch fixes that bug, and cleans up a bunch of debugging infrastructure
+        that I needed to resurrect to track this down.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::CodeBlock::noticeIncomingCall):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filterArrayModesByType):
+        * dfg/DFGCFAPhase.cpp:
+        (CFAPhase):
+        (JSC::DFG::CFAPhase::run):
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        (JSC::DFG::CFAPhase::performForwardCFA):
+        * runtime/Options.h:
+        (JSC):
+
+2013-06-05  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix release build.
 
         * interpreter/Interpreter.cpp:

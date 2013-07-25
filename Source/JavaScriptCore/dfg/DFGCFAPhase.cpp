@@ -37,6 +37,12 @@ namespace JSC { namespace DFG {
 
 class CFAPhase : public Phase {
 public:
+#if DFG_ENABLE(DFG_PROPAGATION_VERBOSE)
+    static const bool verbose = true;
+#else
+    static const bool verbose = false;
+#endif
+
     CFAPhase(Graph& graph)
         : Phase(graph, "control flow analysis")
         , m_state(graph)
@@ -49,9 +55,7 @@ public:
         ASSERT(m_graph.m_unificationState == GloballyUnified);
         ASSERT(m_graph.m_refCountState == EverythingIsLive);
         
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         m_count = 0;
-#endif
         
         // This implements a pseudo-worklist-based forward CFA, except that the visit order
         // of blocks is the bytecode program order (which is nearly topological), and
@@ -82,47 +86,46 @@ private:
             return;
         if (!block->cfaShouldRevisit)
             return;
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("   Block #%u (bc#%u):\n", blockIndex, block->bytecodeBegin);
-#endif
+        if (verbose)
+            dataLogF("   Block #%u (bc#%u):\n", blockIndex, block->bytecodeBegin);
         m_state.beginBasicBlock(block);
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("      head vars: ");
-        dumpOperands(block->valuesAtHead, WTF::dataFile());
-        dataLogF("\n");
-#endif
-        for (unsigned i = 0; i < block->size(); ++i) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            Node* node = block->at(i);
-            dataLogF("      %s @%u: ", Graph::opName(node->op()), node->index());
-            m_state.dump(WTF::dataFile());
+        if (verbose) {
+            dataLogF("      head vars: ");
+            dumpOperands(block->valuesAtHead, WTF::dataFile());
             dataLogF("\n");
-#endif
+        }
+        for (unsigned i = 0; i < block->size(); ++i) {
+            if (verbose) {
+                Node* node = block->at(i);
+                dataLogF("      %s @%u: ", Graph::opName(node->op()), node->index());
+                m_state.dump(WTF::dataFile());
+                dataLogF("\n");
+            }
             if (!m_state.execute(i)) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("         Expect OSR exit.\n");
-#endif
+                if (verbose)
+                    dataLogF("         Expect OSR exit.\n");
                 break;
             }
         }
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("      tail regs: ");
-        m_state.dump(WTF::dataFile());
-        dataLogF("\n");
-#endif
+        if (verbose) {
+            dataLogF("      tail regs: ");
+            m_state.dump(WTF::dataFile());
+            dataLogF("\n");
+        }
         m_changed |= m_state.endBasicBlock(AbstractState::MergeToSuccessors);
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("      tail vars: ");
-        dumpOperands(block->valuesAtTail, WTF::dataFile());
-        dataLogF("\n");
-#endif
+        
+        if (verbose) {
+            dataLogF("      tail vars: ");
+            dumpOperands(block->valuesAtTail, WTF::dataFile());
+            dataLogF("\n");
+        }
     }
     
     void performForwardCFA()
     {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("CFA [%u]\n", ++m_count);
-#endif
+        ++m_count;
+        if (verbose)
+            dataLogF("CFA [%u]\n", ++m_count);
         
         for (BlockIndex block = 0; block < m_graph.m_blocks.size(); ++block)
             performBlockCFA(block);
@@ -132,9 +135,7 @@ private:
     AbstractState m_state;
     
     bool m_changed;
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
     unsigned m_count;
-#endif
 };
 
 bool performCFA(Graph& graph)

@@ -2459,8 +2459,11 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
 {
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
     
-    if (Options::verboseOSR())
-        dataLog("Clearing structure cache (kind ", static_cast<int>(stubInfo.accessType), ") in ", *this, ".\n");
+    if (Options::verboseOSR()) {
+        // This can be called from GC destructor calls, so we don't try to do a full dump
+        // of the CodeBlock.
+        dataLog("Clearing structure cache (kind ", static_cast<int>(stubInfo.accessType), ") in ", RawPointer(this), ".\n");
+    }
 
     switch (jitType()) {
     case JITCode::BaselineJIT:
@@ -3020,7 +3023,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
 {
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
     
-    if (Options::verboseOSR())
+    if (Options::verboseCallLink())
         dataLog("Noticing call link from ", *callerCodeBlock, " to ", *this, "\n");
     
     if (!m_shouldAlwaysBeInlined)
@@ -3041,7 +3044,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
         // ensures that a function is SABI only if it is called no more frequently than
         // any of its callers.
         m_shouldAlwaysBeInlined = false;
-        if (Options::verboseOSR())
+        if (Options::verboseCallLink())
             dataLog("    Marking SABI because caller is in LLInt.\n");
         return;
     }
@@ -3051,7 +3054,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
         // optimized anytime soon. For eval code this is particularly true since we
         // delay eval optimization by a *lot*.
         m_shouldAlwaysBeInlined = false;
-        if (Options::verboseOSR())
+        if (Options::verboseCallLink())
             dataLog("    Marking SABI because caller is not a function.\n");
         return;
     }
@@ -3062,7 +3065,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
             break;
         if (frame->codeBlock() == this) {
             // Recursive calls won't be inlined.
-            if (Options::verboseOSR())
+            if (Options::verboseCallLink())
                 dataLog("    Marking SABI because recursion was detected.\n");
             m_shouldAlwaysBeInlined = false;
             return;
@@ -3074,7 +3077,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
     if (canCompile(callerCodeBlock->m_capabilityLevelState))
         return;
     
-    if (Options::verboseOSR())
+    if (Options::verboseCallLink())
         dataLog("    Marking SABI because the caller is not a DFG candidate.\n");
     
     m_shouldAlwaysBeInlined = false;

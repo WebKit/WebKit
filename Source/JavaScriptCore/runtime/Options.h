@@ -110,6 +110,7 @@ typedef OptionRange optionRange;
     v(bool, validateGraph, false) \
     v(bool, validateGraphAtEachPhase, false) \
     v(bool, verboseOSR, false) \
+    v(bool, verboseCallLink, false) \
     v(bool, verboseCompilationQueue, false) \
     v(bool, reportCompileTimes, false) \
     \
