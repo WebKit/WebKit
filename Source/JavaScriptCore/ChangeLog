@@ -1,3 +1,12 @@
+2013-07-25  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed build fix after r153218.
+
+        Broke the EFL port build with gcc 4.7.
+
+        * interpreter/StackIterator.cpp:
+        (JSC::printif):
+
 2013-07-25  Julien Brianceau  <jbrianceau@nds.com>
 
         Build fix: add missing #include.

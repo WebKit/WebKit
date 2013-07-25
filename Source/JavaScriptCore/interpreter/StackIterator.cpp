@@ -322,6 +322,7 @@ static void printif(int indentLevels, const char* format, ...)
 #if COMPILER(CLANG) || (COMPILER(GCC) && GCC_VERSION_AT_LEAST(4, 6, 0))
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#pragma GCC diagnostic ignored "-Wmissing-format-attribute"
 #endif
 
     WTF::dataLogFV(format, argList);
