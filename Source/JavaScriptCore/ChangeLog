@@ -1,3 +1,26 @@
+2013-07-11  Mark Lam  <mark.lam@apple.com>
+
+        Resurrect the CLoop LLINT on the FTL branch.
+        https://bugs.webkit.org/show_bug.cgi?id=118144.
+
+        Reviewed by Mark Hahnenberg.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::jitType):
+          - Fix the CodeBlock jitType to be InterpreterThunk when !ENABLE_JIT.
+        * bytecode/JumpTable.h:
+        (JSC::SimpleJumpTable::clear):
+        * interpreter/StackIterator.cpp:
+        (JSC::StackIterator::Frame::bytecodeOffset):
+        (JSC::StackIterator::Frame::print):
+        * jit/JITCode.cpp:
+        (JSC):
+        * jit/JITExceptions.cpp:
+        (JSC::getExceptionLocation):
+        * llint/LowLevelInterpreter.cpp:
+        * offlineasm/cloop.rb:
+        * runtime/Structure.cpp:
+
 2013-07-08  Filip Pizlo  <fpizlo@apple.com>
 
         NaturalLoops + Profiler = Crash

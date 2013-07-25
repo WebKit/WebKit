@@ -105,7 +105,9 @@ namespace JSC {
         void clear()
         {
             branchOffsets.clear();
+#if ENABLE(JIT)
             ctiOffsets.clear();
+#endif
         }
     };
 

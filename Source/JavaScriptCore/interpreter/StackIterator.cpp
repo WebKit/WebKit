@@ -151,8 +151,10 @@ unsigned StackIterator::Frame::bytecodeOffset()
 {
     if (!isJSFrame())
         return 0;
+#if ENABLE(DFG_JIT)
     if (hasLocationAsCodeOriginIndex())
         return bytecodeOffsetFromCodeOriginIndex();
+#endif
     return locationAsBytecodeOffset();
 }
 
@@ -360,9 +362,11 @@ void StackIterator::Frame::print(int indentLevel)
         if (hasLocationAsBytecodeOffset()) {
             unsigned bytecodeOffset = locationAsBytecodeOffset();
             printif(i, "      bytecodeOffset %u %p / %zu\n", bytecodeOffset, reinterpret_cast<void*>(bytecodeOffset), codeBlock->instructions().size());
+#if ENABLE(DFG_JIT)
         } else {
             unsigned codeOriginIndex = locationAsCodeOriginIndex();
             printif(i, "      codeOriginIdex %u %p / %zu\n", codeOriginIndex, reinterpret_cast<void*>(codeOriginIndex), codeBlock->codeOrigins().size());
+#endif
         }
         unsigned line = 0;
         unsigned column = 0;
@@ -370,11 +374,13 @@ void StackIterator::Frame::print(int indentLevel)
         printif(i, "      line %d\n", line);
         printif(i, "      column %d\n", column);
         printif(i, "      jitType %d <%s> isOptimizingJIT %d\n", jitType, jitTypeName(jitType), JITCode::isOptimizingJIT(jitType));
+#if ENABLE(DFG_JIT)
         printif(i, "      hasCodeOrigins %d\n", codeBlock->hasCodeOrigins());
         if (codeBlock->hasCodeOrigins()) {
             JITCode* jitCode = codeBlock->jitCode().get();
             printif(i, "         jitCode %p start %p end %p\n", jitCode, jitCode->start(), jitCode->end());
         }
+#endif
     }
     printif(i, "}\n");
 }

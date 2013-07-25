@@ -43,8 +43,10 @@ static unsigned getExceptionLocation(VM* vm, CallFrame* callFrame)
     UNUSED_PARAM(vm);
     ASSERT(!callFrame->hasHostCallFrameFlag());
 
+#if ENABLE(DFG_JIT)
     if (callFrame->hasLocationAsCodeOriginIndex())
         return callFrame->bytecodeOffsetFromCodeOriginIndex();
+#endif
 
     return callFrame->locationAsBytecodeOffset();
 }

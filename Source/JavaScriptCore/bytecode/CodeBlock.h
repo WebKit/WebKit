@@ -312,7 +312,7 @@ public:
 
     bool hasOptimizedReplacement();
 #else
-    JITCode::JITType jitType() const { return JITCode::BaselineJIT; }
+    JITCode::JITType jitType() const { return JITCode::InterpreterThunk; }
 #endif
 
     ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
