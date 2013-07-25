@@ -1,3 +1,54 @@
+2013-05-26  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: clean up ArithDiv/ArithMod in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=116793
+
+        Reviewed by Mark Hahnenberg.
+        
+        This makes ArithDiv and ArithMod behave similarly, and moves both of their
+        implementations entirely into DFGSpeculativeJIT.cpp into methods named like
+        the ones for ArithSub/ArithMul.
+        
+        Specifically, ArithMod now uses the wrap-in-conversion-nodes idiom that
+        ArithDiv used for platforms that don't support integer division. Previously
+        ArithMod had its own int-to-double and double-to-int conversions for this
+        purpose.
+        
+        As well, this gets rid of confusing methods like compileSoftModulo() (which
+        did no such thing, there wasn't anything "soft" about it) and 
+        compileIntegerArithDivForX86() (which is accurately named but we don't use
+        the platform-specific method convention anywhere else).
+        
+        Finally, this takes the optimized power-of-two modulo operation that was
+        previously only for ARMv7s, and makes it available for all platforms. Well,
+        sort of: I actually rewrote it to do what latest LLVM appears to do, which
+        is a crazy straight-line power-of-2 modulo based on a combination of shifts,
+        ands, additions, and subtractions. I can kind of understand it well enough
+        to see that it complies with both C and JS power-of-2 modulo semantics. I've
+        also confirmed that it does by testing (hence the corresponding improvements
+        to one of the division tests). But, I don't claim to know exactly how this
+        code works other than to observe that it is super leet.
+        
+        Overall, this patch has the effect of killing some code (no more hackish
+        int-to-double conversions in ArithMod), making some optimization work on
+        more platforms, and making the compiler less confusing by doing more things
+        with the same idiom.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-05-25  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: cti_optimize shouldn't allow GCs to get in the way of it seeing the state of its CodeBlock

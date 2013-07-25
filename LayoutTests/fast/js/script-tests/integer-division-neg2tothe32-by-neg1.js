@@ -1,5 +1,5 @@
 description(
-"Tests that -2^31/-1 does the right thing."
+"Tests that -2^31/-1 (and a bunch of other corner cases) does the right thing."
 );
 
 function myDiv(a, b) {
@@ -20,6 +20,14 @@ function myMod(a, b) {
 
 function myModByNeg1(a) {
     return a % -1;
+}
+
+function myModBy2(a) {
+    return a % 2;
+}
+
+function myModBy1073741824(a) {
+    return a % 1073741824;
 }
 
 function myModNeg2ToThe31(b) {
@@ -68,6 +76,12 @@ for (var i = 0; i < 200; ++i) {
     shouldBe("myMod(x, y)", "-0");
     shouldBe("myMod(x, z)", "-2");
     shouldBe("myModByNeg1(x)", "-0");
+    shouldBe("myModBy2(x)", "-0");
+    shouldBe("myModBy1073741824(x)", "-0");
+    shouldBe("myModBy2(y)", "-1");
+    shouldBe("myModBy1073741824(y)", "-1");
+    shouldBe("myModBy2(z)", "1");
+    shouldBe("myModBy1073741824(z)", "3");
     shouldBe("myModNeg2ToThe31(y)", "-0");
     if (i > 100) {
         w = x;

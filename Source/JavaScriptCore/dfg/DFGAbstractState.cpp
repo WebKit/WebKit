@@ -568,6 +568,11 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case ArithMod: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
+        if (node->op() == ArithMod && right && right.isNumber() && right.asNumber() == 1
+            && trySetConstant(node, JSValue(0))) {
+            m_foundConstants = true;
+            break;
+        }
         if (left && right && left.isNumber() && right.isNumber()) {
             double a = left.asNumber();
             double b = right.asNumber();

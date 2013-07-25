@@ -1998,13 +1998,8 @@ public:
     void compileArithNegate(Node*);
     void compileArithMul(Node*);
     void compileArithIMul(Node*);
-#if CPU(X86) || CPU(X86_64)
-    void compileIntegerArithDivForX86(Node*);
-#elif CPU(APPLE_ARMV7S)
-    void compileIntegerArithDivForARMv7s(Node*);
-#endif
+    void compileArithDiv(Node*);
     void compileArithMod(Node*);
-    void compileSoftModulo(Node*);
     void compileGetIndexedPropertyStorage(Node*);
     void compileGetByValOnIntTypedArray(const TypedArrayDescriptor&, Node*, size_t elementSize, TypedArraySignedness);
     void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node*, size_t elementSize, TypedArraySignedness, TypedArrayRounding = TruncateRounding);

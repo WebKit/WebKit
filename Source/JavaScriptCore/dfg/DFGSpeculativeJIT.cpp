@@ -2816,198 +2816,6 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
 #endif
 }
 
-void SpeculativeJIT::compileSoftModulo(Node* node)
-{
-    // In the fast path, the dividend value could be the final result
-    // (in case of |dividend| < |divisor|), so we speculate it as strict int32.
-    SpeculateStrictInt32Operand op1(this, node->child1());
-#if CPU(X86) || CPU(X86_64)
-    if (isInt32Constant(node->child2().node())) {
-        int32_t divisor = valueOfInt32Constant(node->child2().node());
-        if (divisor) {
-            GPRReg op1Gpr = op1.gpr();
-
-            GPRTemporary eax(this, X86Registers::eax);
-            GPRTemporary edx(this, X86Registers::edx);
-            GPRTemporary scratch(this);
-            GPRReg scratchGPR = scratch.gpr();
-
-            GPRReg op1SaveGPR;
-            if (op1Gpr == X86Registers::eax || op1Gpr == X86Registers::edx) {
-                op1SaveGPR = allocate();
-                ASSERT(op1Gpr != op1SaveGPR);
-                m_jit.move(op1Gpr, op1SaveGPR);
-            } else
-                op1SaveGPR = op1Gpr;
-            ASSERT(op1SaveGPR != X86Registers::eax);
-            ASSERT(op1SaveGPR != X86Registers::edx);
-
-            m_jit.move(op1Gpr, eax.gpr());
-            m_jit.move(TrustedImm32(divisor), scratchGPR);
-            if (divisor == -1)
-                speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, eax.gpr(), TrustedImm32(-2147483647-1)));
-            m_jit.assembler().cdq();
-            m_jit.assembler().idivl_r(scratchGPR);
-            if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
-                // Check that we're not about to create negative zero.
-                JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
-                speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
-                numeratorPositive.link(&m_jit);
-            }
-            if (op1SaveGPR != op1Gpr)
-                unlock(op1SaveGPR);
-
-            integerResult(edx.gpr(), node);
-            return;
-        }
-    }
-#elif CPU(APPLE_ARMV7S) || CPU(ARM_THUMB2)
-    if (isInt32Constant(node->child2().node())) {
-        int32_t divisor = valueOfInt32Constant(node->child2().node());
-        if (divisor > 0 && hasOneBitSet(divisor)) { // If power of 2 then just mask
-            GPRReg dividendGPR = op1.gpr();
-            GPRTemporary result(this);
-            GPRReg resultGPR = result.gpr();
-
-            m_jit.assembler().cmp(dividendGPR, ARMThumbImmediate::makeEncodedImm(0));
-            m_jit.assembler().it(ARMv7Assembler::ConditionLT, false);
-            m_jit.assembler().neg(resultGPR, dividendGPR);
-            m_jit.assembler().mov(resultGPR, dividendGPR);
-            m_jit.and32(TrustedImm32(divisor - 1), resultGPR);
-            m_jit.assembler().it(ARMv7Assembler::ConditionLT);
-            m_jit.assembler().neg(resultGPR, resultGPR);
-
-            if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
-                // Check that we're not about to create negative zero.
-                JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
-                speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, resultGPR));
-                numeratorPositive.link(&m_jit);
-            }
-            integerResult(resultGPR, node);
-            return;
-        }
-    }
-#endif
-
-    SpeculateIntegerOperand op2(this, node->child2());
-#if CPU(X86) || CPU(X86_64)
-    GPRTemporary eax(this, X86Registers::eax);
-    GPRTemporary edx(this, X86Registers::edx);
-    GPRReg op1GPR = op1.gpr();
-    GPRReg op2GPR = op2.gpr();
-    
-    GPRReg op2TempGPR;
-    GPRReg temp;
-    GPRReg op1SaveGPR;
-    
-    if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
-        op2TempGPR = allocate();
-        temp = op2TempGPR;
-    } else {
-        op2TempGPR = InvalidGPRReg;
-        if (op1GPR == X86Registers::eax)
-            temp = X86Registers::edx;
-        else
-            temp = X86Registers::eax;
-    }
-    
-    if (op1GPR == X86Registers::eax || op1GPR == X86Registers::edx) {
-        op1SaveGPR = allocate();
-        ASSERT(op1GPR != op1SaveGPR);
-        m_jit.move(op1GPR, op1SaveGPR);
-    } else
-        op1SaveGPR = op1GPR;
-    
-    ASSERT(temp != op1GPR);
-    ASSERT(temp != op2GPR);
-    ASSERT(op1SaveGPR != X86Registers::eax);
-    ASSERT(op1SaveGPR != X86Registers::edx);
-    
-    m_jit.add32(JITCompiler::TrustedImm32(1), op2GPR, temp);
-    
-    JITCompiler::Jump safeDenominator = m_jit.branch32(JITCompiler::Above, temp, JITCompiler::TrustedImm32(1));
-    
-    JITCompiler::Jump done;
-    // FIXME: if the node is not used as number then we can do this more easily.
-    speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, op2GPR));
-    speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1)));
-    
-    safeDenominator.link(&m_jit);
-            
-    if (op2TempGPR != InvalidGPRReg) {
-        m_jit.move(op2GPR, op2TempGPR);
-        op2GPR = op2TempGPR;
-    }
-            
-    m_jit.move(op1GPR, eax.gpr());
-    m_jit.assembler().cdq();
-    m_jit.assembler().idivl_r(op2GPR);
-            
-    if (op2TempGPR != InvalidGPRReg)
-        unlock(op2TempGPR);
-
-    if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
-        // Check that we're not about to create negative zero.
-        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
-        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
-        numeratorPositive.link(&m_jit);
-    }
-    
-    if (op1SaveGPR != op1GPR)
-        unlock(op1SaveGPR);
-            
-    integerResult(edx.gpr(), node);
-
-#elif CPU(APPLE_ARMV7S)
-    GPRTemporary temp(this);
-    GPRTemporary quotientThenRemainder(this);
-    GPRTemporary multiplyAnswer(this);
-    GPRReg dividendGPR = op1.gpr();
-    GPRReg divisorGPR = op2.gpr();
-    GPRReg quotientThenRemainderGPR = quotientThenRemainder.gpr();
-    GPRReg multiplyAnswerGPR = multiplyAnswer.gpr();
-
-    m_jit.assembler().sdiv(quotientThenRemainderGPR, dividendGPR, divisorGPR);
-    speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotientThenRemainderGPR, divisorGPR, multiplyAnswerGPR));
-    m_jit.assembler().sub(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);
-
-    // If the user cares about negative zero, then speculate that we're not about
-    // to produce negative zero.
-    if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
-        // Check that we're not about to create negative zero.
-        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
-        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));
-        numeratorPositive.link(&m_jit);
-    }
-
-    integerResult(quotientThenRemainderGPR, node);
-#else // not architecture that can do integer division
-    // Do this the *safest* way possible: call out to a C function that will do the modulo,
-    // and then attempt to convert back.
-    GPRReg op1GPR = op1.gpr();
-    GPRReg op2GPR = op2.gpr();
-    
-    FPRResult result(this);
-    
-    flushRegisters();
-    callOperation(operationFModOnInts, result.fpr(), op1GPR, op2GPR);
-    
-    FPRTemporary scratch(this);
-    GPRTemporary intResult(this);
-    JITCompiler::JumpList failureCases;
-    m_jit.branchConvertDoubleToInt32(result.fpr(), intResult.gpr(), failureCases, scratch.fpr(), false);
-    speculationCheck(Overflow, JSValueRegs(), 0, failureCases);
-    if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
-        // Check that we're not about to create negative zero.
-        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1GPR, TrustedImm32(0));
-        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, intResult.gpr()));
-        numeratorPositive.link(&m_jit);
-    }
-    
-    integerResult(intResult.gpr(), node);
-#endif // CPU(X86) || CPU(X86_64)
-}
-
 void SpeculativeJIT::compileAdd(Node* node)
 {
     switch (node->binaryUseKind()) {
@@ -3341,128 +3149,350 @@ void SpeculativeJIT::compileArithMul(Node* node)
     }
 }
 
+void SpeculativeJIT::compileArithDiv(Node* node)
+{
+    switch (node->binaryUseKind()) {
+    case Int32Use: {
 #if CPU(X86) || CPU(X86_64)
-void SpeculativeJIT::compileIntegerArithDivForX86(Node* node)
-{
-    SpeculateIntegerOperand op1(this, node->child1());
-    SpeculateIntegerOperand op2(this, node->child2());
-    GPRTemporary eax(this, X86Registers::eax);
-    GPRTemporary edx(this, X86Registers::edx);
-    GPRReg op1GPR = op1.gpr();
-    GPRReg op2GPR = op2.gpr();
+        SpeculateIntegerOperand op1(this, node->child1());
+        SpeculateIntegerOperand op2(this, node->child2());
+        GPRTemporary eax(this, X86Registers::eax);
+        GPRTemporary edx(this, X86Registers::edx);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
     
-    GPRReg op2TempGPR;
-    GPRReg temp;
-    if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
-        op2TempGPR = allocate();
-        temp = op2TempGPR;
-    } else {
-        op2TempGPR = InvalidGPRReg;
-        if (op1GPR == X86Registers::eax)
-            temp = X86Registers::edx;
-        else
-            temp = X86Registers::eax;
-    }
+        GPRReg op2TempGPR;
+        GPRReg temp;
+        if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
+            op2TempGPR = allocate();
+            temp = op2TempGPR;
+        } else {
+            op2TempGPR = InvalidGPRReg;
+            if (op1GPR == X86Registers::eax)
+                temp = X86Registers::edx;
+            else
+                temp = X86Registers::eax;
+        }
     
-    ASSERT(temp != op1GPR);
-    ASSERT(temp != op2GPR);
+        ASSERT(temp != op1GPR);
+        ASSERT(temp != op2GPR);
     
-    m_jit.add32(JITCompiler::TrustedImm32(1), op2GPR, temp);
+        m_jit.add32(JITCompiler::TrustedImm32(1), op2GPR, temp);
     
-    JITCompiler::Jump safeDenominator = m_jit.branch32(JITCompiler::Above, temp, JITCompiler::TrustedImm32(1));
+        JITCompiler::Jump safeDenominator = m_jit.branch32(JITCompiler::Above, temp, JITCompiler::TrustedImm32(1));
     
-    JITCompiler::JumpList done;
-    if (nodeUsedAsNumber(node->arithNodeFlags())) {
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, op2GPR));
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1)));
-    } else {
-        // This is the case where we convert the result to an int after we're done, and we
-        // already know that the denominator is either -1 or 0. So, if the denominator is
-        // zero, then the result should be zero. If the denominator is not zero (i.e. it's
-        // -1) and the numerator is -2^31 then the result should be -2^31. Otherwise we
-        // are happy to fall through to a normal division, since we're just dividing
-        // something by negative 1.
+        JITCompiler::JumpList done;
+        if (nodeUsedAsNumber(node->arithNodeFlags())) {
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, op2GPR));
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1)));
+        } else {
+            // This is the case where we convert the result to an int after we're done, and we
+            // already know that the denominator is either -1 or 0. So, if the denominator is
+            // zero, then the result should be zero. If the denominator is not zero (i.e. it's
+            // -1) and the numerator is -2^31 then the result should be -2^31. Otherwise we
+            // are happy to fall through to a normal division, since we're just dividing
+            // something by negative 1.
         
-        JITCompiler::Jump notZero = m_jit.branchTest32(JITCompiler::NonZero, op2GPR);
-        m_jit.move(TrustedImm32(0), eax.gpr());
-        done.append(m_jit.jump());
+            JITCompiler::Jump notZero = m_jit.branchTest32(JITCompiler::NonZero, op2GPR);
+            m_jit.move(TrustedImm32(0), eax.gpr());
+            done.append(m_jit.jump());
         
-        notZero.link(&m_jit);
-        JITCompiler::Jump notNeg2ToThe31 =
-            m_jit.branch32(JITCompiler::NotEqual, op1GPR, TrustedImm32(-2147483647-1));
+            notZero.link(&m_jit);
+            JITCompiler::Jump notNeg2ToThe31 =
+                m_jit.branch32(JITCompiler::NotEqual, op1GPR, TrustedImm32(-2147483647-1));
+            m_jit.move(op1GPR, eax.gpr());
+            done.append(m_jit.jump());
+        
+            notNeg2ToThe31.link(&m_jit);
+        }
+    
+        safeDenominator.link(&m_jit);
+    
+        // If the user cares about negative zero, then speculate that we're not about
+        // to produce negative zero.
+        if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+            MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
+            speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
+            numeratorNonZero.link(&m_jit);
+        }
+    
+        if (op2TempGPR != InvalidGPRReg) {
+            m_jit.move(op2GPR, op2TempGPR);
+            op2GPR = op2TempGPR;
+        }
+            
         m_jit.move(op1GPR, eax.gpr());
-        done.append(m_jit.jump());
-        
-        notNeg2ToThe31.link(&m_jit);
-    }
-    
-    safeDenominator.link(&m_jit);
-    
-    // If the user cares about negative zero, then speculate that we're not about
-    // to produce negative zero.
-    if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
-        MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
-        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
-        numeratorNonZero.link(&m_jit);
-    }
-    
-    if (op2TempGPR != InvalidGPRReg) {
-        m_jit.move(op2GPR, op2TempGPR);
-        op2GPR = op2TempGPR;
-    }
+        m_jit.assembler().cdq();
+        m_jit.assembler().idivl_r(op2GPR);
             
-    m_jit.move(op1GPR, eax.gpr());
-    m_jit.assembler().cdq();
-    m_jit.assembler().idivl_r(op2GPR);
-            
-    if (op2TempGPR != InvalidGPRReg)
-        unlock(op2TempGPR);
+        if (op2TempGPR != InvalidGPRReg)
+            unlock(op2TempGPR);
 
-    // Check that there was no remainder. If there had been, then we'd be obligated to
-    // produce a double result instead.
-    if (nodeUsedAsNumber(node->arithNodeFlags()))
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::NonZero, edx.gpr()));
-    else
-        done.link(&m_jit);
+        // Check that there was no remainder. If there had been, then we'd be obligated to
+        // produce a double result instead.
+        if (nodeUsedAsNumber(node->arithNodeFlags()))
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::NonZero, edx.gpr()));
+        else
+            done.link(&m_jit);
             
-    integerResult(eax.gpr(), node);
-}
+        integerResult(eax.gpr(), node);
 #elif CPU(APPLE_ARMV7S)
-void SpeculativeJIT::compileIntegerArithDivForARMv7s(Node* node)
-{
-    SpeculateIntegerOperand op1(this, node->child1());
-    SpeculateIntegerOperand op2(this, node->child2());
-    GPRReg op1GPR = op1.gpr();
-    GPRReg op2GPR = op2.gpr();
-    GPRTemporary quotient(this);
-    GPRTemporary multiplyAnswer(this);
+        SpeculateIntegerOperand op1(this, node->child1());
+        SpeculateIntegerOperand op2(this, node->child2());
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+        GPRTemporary quotient(this);
+        GPRTemporary multiplyAnswer(this);
 
-    // If the user cares about negative zero, then speculate that we're not about
-    // to produce negative zero.
-    if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
-        MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
-        speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
-        numeratorNonZero.link(&m_jit);
-    }
+        // If the user cares about negative zero, then speculate that we're not about
+        // to produce negative zero.
+        if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+            MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
+            speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
+            numeratorNonZero.link(&m_jit);
+        }
 
-    m_jit.assembler().sdiv(quotient.gpr(), op1GPR, op2GPR);
+        m_jit.assembler().sdiv(quotient.gpr(), op1GPR, op2GPR);
 
-    // Check that there was no remainder. If there had been, then we'd be obligated to
-    // produce a double result instead.
-    if (nodeUsedAsNumber(node->arithNodeFlags())) {
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotient.gpr(), op2GPR, multiplyAnswer.gpr()));
-        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::NotEqual, multiplyAnswer.gpr(), op1GPR));
-    }
+        // Check that there was no remainder. If there had been, then we'd be obligated to
+        // produce a double result instead.
+        if (nodeUsedAsNumber(node->arithNodeFlags())) {
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotient.gpr(), op2GPR, multiplyAnswer.gpr()));
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::NotEqual, multiplyAnswer.gpr(), op1GPR));
+        }
 
-    integerResult(quotient.gpr(), node);
-}
+        integerResult(quotient.gpr(), node);
+#else
+        RELEASE_ASSERT_NOT_REACHED();
 #endif
+        break;
+    }
+        
+    case NumberUse: {
+        SpeculateDoubleOperand op1(this, node->child1());
+        SpeculateDoubleOperand op2(this, node->child2());
+        FPRTemporary result(this, op1);
+        
+        FPRReg reg1 = op1.fpr();
+        FPRReg reg2 = op2.fpr();
+        m_jit.divDouble(reg1, reg2, result.fpr());
+        
+        doubleResult(result.fpr(), node);
+        break;
+    }
+        
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
 
 void SpeculativeJIT::compileArithMod(Node* node)
 {
     switch (node->binaryUseKind()) {
     case Int32Use: {
-        compileSoftModulo(node);
+        // In the fast path, the dividend value could be the final result
+        // (in case of |dividend| < |divisor|), so we speculate it as strict int32.
+        SpeculateStrictInt32Operand op1(this, node->child1());
+        
+        if (isInt32Constant(node->child2().node())) {
+            int32_t divisor = valueOfInt32Constant(node->child2().node());
+            if (divisor > 0 && hasOneBitSet(divisor)) {
+                ASSERT(divisor != 1);
+                unsigned logarithm = WTF::fastLog2(divisor);
+                GPRReg dividendGPR = op1.gpr();
+                GPRTemporary result(this);
+                GPRReg resultGPR = result.gpr();
+
+                // This is what LLVM generates. It's pretty crazy. Here's my
+                // attempt at understanding it.
+                
+                // First, compute either divisor - 1, or 0, depending on whether
+                // the dividend is negative:
+                //
+                // If dividend < 0:  resultGPR = divisor - 1
+                // If dividend >= 0: resultGPR = 0
+                m_jit.move(dividendGPR, resultGPR);
+                m_jit.rshift32(TrustedImm32(31), resultGPR);
+                m_jit.urshift32(TrustedImm32(32 - logarithm), resultGPR);
+                
+                // Add in the dividend, so that:
+                //
+                // If dividend < 0:  resultGPR = dividend + divisor - 1
+                // If dividend >= 0: resultGPR = dividend
+                m_jit.add32(dividendGPR, resultGPR);
+                
+                // Mask so as to only get the *high* bits. This rounds down
+                // (towards negative infinity) resultGPR to the nearest multiple
+                // of divisor, so that:
+                //
+                // If dividend < 0:  resultGPR = floor((dividend + divisor - 1) / divisor)
+                // If dividend >= 0: resultGPR = floor(dividend / divisor)
+                //
+                // Note that this can be simplified to:
+                //
+                // If dividend < 0:  resultGPR = ceil(dividend / divisor)
+                // If dividend >= 0: resultGPR = floor(dividend / divisor)
+                //
+                // Note that if the dividend is negative, resultGPR will also be negative.
+                // Regardless of the sign of dividend, resultGPR will be rounded towards
+                // zero, because of how things are conditionalized.
+                m_jit.and32(TrustedImm32(-divisor), resultGPR);
+                
+                // Subtract resultGPR from dividendGPR, which yields the remainder:
+                //
+                // resultGPR = dividendGPR - resultGPR
+                m_jit.neg32(resultGPR);
+                m_jit.add32(dividendGPR, resultGPR);
+                
+                if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+                    // Check that we're not about to create negative zero.
+                    JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
+                    speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, resultGPR));
+                    numeratorPositive.link(&m_jit);
+                }
+
+                integerResult(resultGPR, node);
+                return;
+            }
+        }
+        
+#if CPU(X86) || CPU(X86_64)
+        if (isInt32Constant(node->child2().node())) {
+            int32_t divisor = valueOfInt32Constant(node->child2().node());
+            if (divisor) {
+                GPRReg op1Gpr = op1.gpr();
+
+                GPRTemporary eax(this, X86Registers::eax);
+                GPRTemporary edx(this, X86Registers::edx);
+                GPRTemporary scratch(this);
+                GPRReg scratchGPR = scratch.gpr();
+
+                GPRReg op1SaveGPR;
+                if (op1Gpr == X86Registers::eax || op1Gpr == X86Registers::edx) {
+                    op1SaveGPR = allocate();
+                    ASSERT(op1Gpr != op1SaveGPR);
+                    m_jit.move(op1Gpr, op1SaveGPR);
+                } else
+                    op1SaveGPR = op1Gpr;
+                ASSERT(op1SaveGPR != X86Registers::eax);
+                ASSERT(op1SaveGPR != X86Registers::edx);
+
+                m_jit.move(op1Gpr, eax.gpr());
+                m_jit.move(TrustedImm32(divisor), scratchGPR);
+                if (divisor == -1)
+                    speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, eax.gpr(), TrustedImm32(-2147483647-1)));
+                m_jit.assembler().cdq();
+                m_jit.assembler().idivl_r(scratchGPR);
+                // Check that we're not about to create negative zero.
+                // FIXME: if the node use doesn't care about neg zero, we can do this more easily.
+                JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
+                speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
+                numeratorPositive.link(&m_jit);
+            
+                if (op1SaveGPR != op1Gpr)
+                    unlock(op1SaveGPR);
+
+                integerResult(edx.gpr(), node);
+                return;
+            }
+        }
+#endif
+
+        SpeculateIntegerOperand op2(this, node->child2());
+#if CPU(X86) || CPU(X86_64)
+        GPRTemporary eax(this, X86Registers::eax);
+        GPRTemporary edx(this, X86Registers::edx);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+    
+        GPRReg op2TempGPR;
+        GPRReg temp;
+        GPRReg op1SaveGPR;
+    
+        if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
+            op2TempGPR = allocate();
+            temp = op2TempGPR;
+        } else {
+            op2TempGPR = InvalidGPRReg;
+            if (op1GPR == X86Registers::eax)
+                temp = X86Registers::edx;
+            else
+                temp = X86Registers::eax;
+        }
+    
+        if (op1GPR == X86Registers::eax || op1GPR == X86Registers::edx) {
+            op1SaveGPR = allocate();
+            ASSERT(op1GPR != op1SaveGPR);
+            m_jit.move(op1GPR, op1SaveGPR);
+        } else
+            op1SaveGPR = op1GPR;
+    
+        ASSERT(temp != op1GPR);
+        ASSERT(temp != op2GPR);
+        ASSERT(op1SaveGPR != X86Registers::eax);
+        ASSERT(op1SaveGPR != X86Registers::edx);
+    
+        m_jit.add32(JITCompiler::TrustedImm32(1), op2GPR, temp);
+    
+        JITCompiler::Jump safeDenominator = m_jit.branch32(JITCompiler::Above, temp, JITCompiler::TrustedImm32(1));
+    
+        JITCompiler::Jump done;
+        // FIXME: if the node is not used as number then we can do this more easily.
+        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, op2GPR));
+        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483647-1)));
+    
+        safeDenominator.link(&m_jit);
+            
+        if (op2TempGPR != InvalidGPRReg) {
+            m_jit.move(op2GPR, op2TempGPR);
+            op2GPR = op2TempGPR;
+        }
+            
+        m_jit.move(op1GPR, eax.gpr());
+        m_jit.assembler().cdq();
+        m_jit.assembler().idivl_r(op2GPR);
+            
+        if (op2TempGPR != InvalidGPRReg)
+            unlock(op2TempGPR);
+
+        // Check that we're not about to create negative zero.
+        // FIXME: if the node use doesn't care about neg zero, we can do this more easily.
+        JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, op1SaveGPR, TrustedImm32(0));
+        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, edx.gpr()));
+        numeratorPositive.link(&m_jit);
+    
+        if (op1SaveGPR != op1GPR)
+            unlock(op1SaveGPR);
+            
+        integerResult(edx.gpr(), node);
+
+#elif CPU(APPLE_ARMV7S)
+        GPRTemporary temp(this);
+        GPRTemporary quotientThenRemainder(this);
+        GPRTemporary multiplyAnswer(this);
+        GPRReg dividendGPR = op1.gpr();
+        GPRReg divisorGPR = op2.gpr();
+        GPRReg quotientThenRemainderGPR = quotientThenRemainder.gpr();
+        GPRReg multiplyAnswerGPR = multiplyAnswer.gpr();
+
+        m_jit.assembler().sdiv(quotientThenRemainderGPR, dividendGPR, divisorGPR);
+        speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotientThenRemainderGPR, divisorGPR, multiplyAnswerGPR));
+        m_jit.assembler().sub(quotientThenRemainderGPR, dividendGPR, multiplyAnswerGPR);
+
+        // If the user cares about negative zero, then speculate that we're not about
+        // to produce negative zero.
+        if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+            // Check that we're not about to create negative zero.
+            JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));
+            numeratorPositive.link(&m_jit);
+        }
+
+        integerResult(quotientThenRemainderGPR, node);
+#else // not architecture that can do integer division
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
         return;
     }
         

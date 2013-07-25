@@ -2251,35 +2251,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case ArithDiv: {
-        switch (node->binaryUseKind()) {
-        case Int32Use: {
-#if CPU(X86)
-            compileIntegerArithDivForX86(node);
-#elif CPU(APPLE_ARMV7S)
-            compileIntegerArithDivForARMv7s(node);
-#else // CPU type without integer divide
-            RELEASE_ASSERT_NOT_REACHED(); // should have been coverted into a double divide.
-#endif
-            break;
-        }
-            
-        case NumberUse: {
-            SpeculateDoubleOperand op1(this, node->child1());
-            SpeculateDoubleOperand op2(this, node->child2());
-            FPRTemporary result(this, op1);
-            
-            FPRReg reg1 = op1.fpr();
-            FPRReg reg2 = op2.fpr();
-            m_jit.divDouble(reg1, reg2, result.fpr());
-            
-            doubleResult(result.fpr(), node);
-            break;
-        }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
+        compileArithDiv(node);
         break;
     }
 

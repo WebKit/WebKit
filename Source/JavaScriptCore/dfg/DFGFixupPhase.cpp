@@ -211,7 +211,8 @@ private:
             break;
         }
 
-        case ArithDiv: {
+        case ArithDiv:
+        case ArithMod: {
             if (Node::shouldSpeculateIntegerForArithmetic(node->child1().node(), node->child2().node())
                 && node->canSpeculateInteger()) {
                 if (isX86() || isARMv7s()) {
@@ -237,8 +238,7 @@ private:
         }
             
         case ArithMin:
-        case ArithMax:
-        case ArithMod: {
+        case ArithMax: {
             if (Node::shouldSpeculateIntegerForArithmetic(node->child1().node(), node->child2().node())
                 && node->canSpeculateInteger()) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
