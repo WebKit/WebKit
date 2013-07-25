@@ -33,7 +33,9 @@
 namespace WTF {
 
 static ThreadSpecific<bool>* s_isCompilationThread;
+#if USE(PTHREADS)
 static pthread_once_t initializeCompilationThreadsKeyOnce = PTHREAD_ONCE_INIT;
+#endif
 
 static void initializeCompilationThreadsOnce()
 {
@@ -42,7 +44,9 @@ static void initializeCompilationThreadsOnce()
 
 static void initializeCompilationThreads()
 {
+#if USE(PTHREADS)
     pthread_once(&initializeCompilationThreadsKeyOnce, initializeCompilationThreadsOnce);
+#endif
 }
 
 bool isCompilationThread()

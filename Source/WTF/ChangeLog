@@ -1,3 +1,20 @@
+2013-07-25  Michael Brüning  <michael.bruning@digia.com>
+
+        Fix Windows build after r153134.
+        https://bugs.webkit.org/show_bug.cgi?id=119090
+
+        Reviewed by Oliver Hunt.
+
+        Add USE(PTHREADS) guards around pthread specific code
+        for now. This will cause isCompilationThread to always
+        return false on non pthread platforms such as Windows.
+
+        We might be able to use the Windows one-time initialization
+        for this, but this is only available from Windows Vista on.
+
+        * wtf/CompilationThread.cpp:
+        (WTF::initializeCompilationThreads):
+
 2013-07-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Fix windows build after FTL upstream
