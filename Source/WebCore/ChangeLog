@@ -1,3 +1,44 @@
+2013-07-25  Kwang Yul Seo  <skyul@company100.net>
+
+        [WK2][Soup] Add private browsing support
+        https://bugs.webkit.org/show_bug.cgi?id=118657
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Support private browsing by adding a method to create a private
+        browsing soup session. This private browsing session uses a
+        non-persistent cookie jar and does not use the disk cache feature.
+
+        No new tests. Covered by existing private browsing tests.
+
+        * platform/network/NetworkStorageSession.h:
+        (WebCore::NetworkStorageSession::isPrivateBrowsingSession):
+        Add USE(SOUP) guard to isPrivateBrowsingSession() and m_isPrivate.
+
+        * platform/network/ResourceHandle.h:
+        Add a factory method to create a private browsing session for soup.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::createPrivateBrowsingCookieJar):
+        * platform/network/soup/CookieJarSoup.h:
+        Add a method to create a non-persistent cookie jar for private browsing.
+
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        Initialize m_isPrivate to false.
+        (WebCore::NetworkStorageSession::createPrivateBrowsingSession):
+        Implement the method by invoking ResourceHandle::createPrivateBrowsingSession.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::createSoupSession):
+        Extract common soup session creation code so that both defaultSession
+        and createPrivateBrowsingSession can use this function to create a soup
+        session.
+        (WebCore::ResourceHandle::defaultSession):
+        Change to use createSoupSession.
+        (WebCore::ResourceHandle::createPrivateBrowsingSession):
+        Create a session which uses a non-persistent cookie jar.
+
 2013-07-25  Tim Horton  <timothy_horton@apple.com>
 
         Null check m_frame in maximum and minimumScrollPosition

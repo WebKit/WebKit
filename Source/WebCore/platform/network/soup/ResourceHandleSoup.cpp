@@ -1366,9 +1366,8 @@ static void authenticateCallback(SoupSession* session, SoupMessage* soupMessage,
     handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(session, soupMessage, soupAuth, retrying, handle.get()));
 }
 
-SoupSession* ResourceHandle::defaultSession()
+static SoupSession* createSoupSession()
 {
-    static SoupSession* session = 0;
     // Values taken from http://www.browserscope.org/  following
     // the rule "Do What Every Other Modern Browser Is Doing". They seem
     // to significantly improve page loading time compared to soup's
@@ -1376,23 +1375,34 @@ SoupSession* ResourceHandle::defaultSession()
     static const int maxConnections = 35;
     static const int maxConnectionsPerHost = 6;
 
-    if (!session) {
-        session = soup_session_async_new();
-        g_object_set(session,
-                     SOUP_SESSION_MAX_CONNS, maxConnections,
-                     SOUP_SESSION_MAX_CONNS_PER_HOST, maxConnectionsPerHost,
-                     SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_CONTENT_DECODER,
-                     SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_CONTENT_SNIFFER,
-                     SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_PROXY_RESOLVER_DEFAULT,
-                     SOUP_SESSION_USE_THREAD_CONTEXT, TRUE,
-                     NULL);
-        g_signal_connect(session, "authenticate", G_CALLBACK(authenticateCallback), 0);
+    SoupSession* session = soup_session_async_new();
+    g_object_set(session,
+        SOUP_SESSION_MAX_CONNS, maxConnections,
+        SOUP_SESSION_MAX_CONNS_PER_HOST, maxConnectionsPerHost,
+        SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_CONTENT_DECODER,
+        SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_CONTENT_SNIFFER,
+        SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_PROXY_RESOLVER_DEFAULT,
+        SOUP_SESSION_USE_THREAD_CONTEXT, TRUE,
+        NULL);
+    g_signal_connect(session, "authenticate", G_CALLBACK(authenticateCallback), 0);
 
 #if ENABLE(WEB_TIMING)
-        g_signal_connect(session, "request-started", G_CALLBACK(requestStartedCallback), 0);
+    g_signal_connect(session, "request-started", G_CALLBACK(requestStartedCallback), 0);
 #endif
-    }
 
+    return session;
+}
+
+SoupSession* ResourceHandle::defaultSession()
+{
+    static SoupSession* session = createSoupSession();
+    return session;
+}
+
+SoupSession* ResourceHandle::createPrivateBrowsingSession()
+{
+    SoupSession* session = createSoupSession();
+    soup_session_add_feature(session, SOUP_SESSION_FEATURE(createPrivateBrowsingCookieJar()));
     return session;
 }
 

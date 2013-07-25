@@ -34,6 +34,8 @@ namespace WebCore {
 SoupCookieJar* soupCookieJar();
 void setSoupCookieJar(SoupCookieJar*);
 
+SoupCookieJar* createPrivateBrowsingCookieJar();
+
 }
 
 #endif

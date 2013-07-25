@@ -1,5 +1,32 @@
 2013-07-25  Kwang Yul Seo  <skyul@company100.net>
 
+        [WK2][Soup] Add private browsing support
+        https://bugs.webkit.org/show_bug.cgi?id=118657
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Support private browsing in WK2 by implementing private browsing
+        related methods in WebFrameNetworkingContext.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        Add USE(SOUP) guard.
+
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        Add private browsing support methods. Copied from the Mac port.
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::destroyPrivateBrowsingSession):
+        (WebKit::WebFrameNetworkingContext::storageSession):
+        Check if the frame enables private browsing and return the private
+        browsing session.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensurePrivateBrowsingSession):
+        Add USE(SOUP) guard.
+
+2013-07-25  Kwang Yul Seo  <skyul@company100.net>
+
         Build fix: use of long long in CoreIPC::ArgumentEncoder and CoreIPC::ArgumentDecoder
         https://bugs.webkit.org/show_bug.cgi?id=118228
 

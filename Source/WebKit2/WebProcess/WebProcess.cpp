@@ -453,7 +453,7 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 
 void WebProcess::ensurePrivateBrowsingSession()
 {
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)
     WebFrameNetworkingContext::ensurePrivateBrowsingSession();
 #endif
 }

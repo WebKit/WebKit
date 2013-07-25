@@ -41,6 +41,9 @@ public:
         return adoptRef(new WebFrameNetworkingContext(frame));
     }
 
+    static void ensurePrivateBrowsingSession();
+    static void destroyPrivateBrowsingSession();
+
 private:
     WebFrameNetworkingContext(WebFrame*);
 
