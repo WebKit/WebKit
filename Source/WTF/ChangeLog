@@ -1,3 +1,14 @@
+2013-07-25  peavo@outlook.com  <peavo@outlook.com>
+
+        [Windows] Provide ASM implemenation of 8-bit compare-and-swap
+        https://bugs.webkit.org/show_bug.cgi?id=119084
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap): Add a 32-bit X86 Assembly path for
+        Windows build.
+
 2013-07-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.

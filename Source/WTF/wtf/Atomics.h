@@ -288,6 +288,20 @@ inline bool weakCompareAndSwap(uint8_t* location, uint8_t expected, uint8_t newV
         : "memory"
         );
     return result;
+#elif OS(WINDOWS) && CPU(X86)
+    // FIXME: We need a 64-bit ASM implementation, but this cannot be inline due to
+    // Microsoft's decision to exclude it from the compiler.
+    bool result = false;
+
+    __asm {
+        mov al, expected
+        mov edx, location
+        mov cl, newValue
+        lock cmpxchg byte ptr[edx], cl
+        setz result
+    }
+
+    return result;
 #else
     uintptr_t locationValue = bitwise_cast<uintptr_t>(location);
     uintptr_t alignedLocationValue = locationValue & ~(sizeof(unsigned) - 1);
