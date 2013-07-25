@@ -168,8 +168,8 @@ struct Node {
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(1)
-        , m_opInfo(imm.m_value)
         , m_prediction(SpecNone)
+        , m_opInfo(imm.m_value)
     {
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
@@ -181,9 +181,9 @@ struct Node {
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(1)
-        , m_opInfo(imm1.m_value)
-        , m_opInfo2(safeCast<unsigned>(imm2.m_value))
         , m_prediction(SpecNone)
+        , m_opInfo(imm1.m_value)
+        , m_opInfo2(imm2.m_value)
     {
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
@@ -195,9 +195,9 @@ struct Node {
         , children(AdjacencyList::Variable, firstChild, numChildren)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(1)
-        , m_opInfo(imm1.m_value)
-        , m_opInfo2(safeCast<unsigned>(imm2.m_value))
         , m_prediction(SpecNone)
+        , m_opInfo(imm1.m_value)
+        , m_opInfo2(imm2.m_value)
     {
         setOpAndDefaultFlags(op);
         ASSERT(m_flags & NodeHasVarArgs);
@@ -1377,12 +1377,12 @@ private:
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).
     unsigned m_refCount;
+    // The prediction ascribed to this node after propagation.
+    SpeculatedType m_prediction;
     // Immediate values, accesses type-checked via accessors above. The first one is
     // big enough to store a pointer.
     uintptr_t m_opInfo;
-    unsigned m_opInfo2;
-    // The prediction ascribed to this node after propagation.
-    SpeculatedType m_prediction;
+    uintptr_t m_opInfo2;
 
 public:
     // Fields used by various analyses.
