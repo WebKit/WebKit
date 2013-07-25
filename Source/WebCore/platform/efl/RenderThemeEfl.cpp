@@ -97,36 +97,34 @@ static const int mediaSliderThumbHeight = 12;
 static const char* toEdjeGroup(FormType type)
 {
     static const char* groups[] = {
-#define W(n) "webkit/widget/"n
-        W("button"),
-        W("radio"),
-        W("entry"),
-        W("checkbox"),
-        W("combo"),
+        "webkit/widget/button",
+        "webkit/widget/radio",
+        "webkit/widget/entry",
+        "webkit/widget/checkbox",
+        "webkit/widget/combo",
 #if ENABLE(PROGRESS_ELEMENT)
-        W("progressbar"),
+        "webkit/widget/progressbar",
 #endif
-        W("search/field"),
-        W("search/decoration"),
-        W("search/results_button"),
-        W("search/results_decoration"),
-        W("search/cancel_button"),
-        W("slider/vertical"),
-        W("slider/horizontal"),
-        W("slider/thumb_vertical"),
-        W("slider/thumb_horizontal"),
+        "webkit/widget/search/field",
+        "webkit/widget/search/decoration",
+        "webkit/widget/search/results_button",
+        "webkit/widget/search/results_decoration",
+        "webkit/widget/search/cancel_button",
+        "webkit/widget/slider/vertical",
+        "webkit/widget/slider/horizontal",
+        "webkit/widget/slider/thumb_vertical",
+        "webkit/widget/slider/thumb_horizontal",
 #if ENABLE(VIDEO)
-        W("mediacontrol/playpause_button"),
-        W("mediacontrol/mute_button"),
-        W("mediacontrol/seekforward_button"),
-        W("mediacontrol/seekbackward_button"),
-        W("mediacontrol/fullscreen_button"),
+        "webkit/widget/mediacontrol/playpause_button",
+        "webkit/widget/mediacontrol/mute_button",
+        "webkit/widget/mediacontrol/seekforward_button",
+        "webkit/widget/mediacontrol/seekbackward_button",
+        "webkit/widget/mediacontrol/fullscreen_button",
 #endif
 #if ENABLE(VIDEO_TRACK)
-        W("mediacontrol/toggle_captions_button"),
+        "webkit/widget/mediacontrol/toggle_captions_button",
 #endif
-        W("spinner"),
-#undef W
+        "webkit/widget/spinner",
         0
     };
     ASSERT(type >= 0);

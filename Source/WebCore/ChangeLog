@@ -1,3 +1,13 @@
+2013-07-25  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL build fix after r153315.
+
+        Fix build error after we started compiling with c++0x support
+        in r153315.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::toEdjeGroup):
+
 2013-07-25  Anders Carlsson  <andersca@apple.com>
 
         Remove lastModifiedDate from ResourceResponse
