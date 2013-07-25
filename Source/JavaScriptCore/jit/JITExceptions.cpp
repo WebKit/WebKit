@@ -38,6 +38,17 @@
 
 namespace JSC {
 
+static unsigned getExceptionLocation(VM* vm, CallFrame* callFrame)
+{
+    UNUSED_PARAM(vm);
+    ASSERT(!callFrame->hasHostCallFrameFlag());
+
+    if (callFrame->hasLocationAsCodeOriginIndex())
+        return callFrame->bytecodeOffsetFromCodeOriginIndex();
+
+    return callFrame->locationAsBytecodeOffset();
+}
+
 ExceptionHandler genericThrow(VM* vm, ExecState* callFrame, JSValue exceptionValue, unsigned vPCIndex)
 {
     RELEASE_ASSERT(exceptionValue);
@@ -59,8 +70,15 @@ ExceptionHandler genericThrow(VM* vm, ExecState* callFrame, JSValue exceptionVal
     vm->targetInterpreterPCForThrow = catchPCForInterpreter;
     
     RELEASE_ASSERT(catchRoutine);
-    ExceptionHandler exceptionHandler = { catchRoutine, callFrame };
+    ExceptionHandler exceptionHandler = { callFrame, catchRoutine};
     return exceptionHandler;
+}
+
+ExceptionHandler jitThrowNew(VM* vm, ExecState* callFrame, JSValue exceptionValue)
+{
+    unsigned bytecodeOffset = getExceptionLocation(vm, callFrame);
+    
+    return genericThrow(vm, callFrame, exceptionValue, bytecodeOffset);
 }
 
 ExceptionHandler jitThrow(VM* vm, ExecState* callFrame, JSValue exceptionValue, ReturnAddressPtr faultLocation)

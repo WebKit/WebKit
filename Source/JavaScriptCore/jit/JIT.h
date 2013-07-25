@@ -283,6 +283,7 @@ namespace JSC {
     void ctiPatchCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction);
 
     class JIT : private JSInterfaceJIT {
+        friend class JITSlowPathCall;
         friend class JITStubCall;
         friend struct PropertyStubCompilationInfo;
 
@@ -609,7 +610,7 @@ namespace JSC {
 
         void emitTagAsBoolImmediate(RegisterID reg);
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);
-        void compileBinaryArithOpSlowCase(OpcodeID, Vector<SlowCaseEntry>::iterator&, unsigned dst, unsigned src1, unsigned src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
+        void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator&, unsigned dst, unsigned src1, unsigned src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
 
         void compileGetByIdHotPath(int baseVReg, Identifier*);
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier*, Vector<SlowCaseEntry>::iterator&);

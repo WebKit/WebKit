@@ -99,6 +99,31 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 );
 
 asm volatile (
+".globl " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
+HIDE_SYMBOL(ctiVMThrowTrampolineSlowpath) "\n"
+SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) ":" "\n"
+    "mov.l .L2"SYMBOL_STRING(cti_vm_throw_slowpath)",r0" "\n"
+    "mov r15, r4" "\n"
+    "mov.l @(r0,r12),r11" "\n"
+    "jsr @r11" "\n"
+    // When cti_vm_throw_slowpath returns, r0 has callFrame and r1 has handler address
+    "nop" "\n"
+    "add #60, r15" "\n"
+    "mov.l @r15+,r10" "\n"
+    "mov.l @r15+,r11" "\n"
+    "mov.l @r15+,r13" "\n"
+    "lds.l @r15+,pr" "\n"
+    "mov.l @r15+,r14" "\n"
+    "mov.l @r15+,r8" "\n"
+    "add #12, r15" "\n"
+    "mov r0, r4" "\n"
+    "jmp @r1" "\n"
+    "nop" "\n"
+    ".align 2" "\n"
+    ".L2"SYMBOL_STRING(cti_vm_throw_slowpath)":.long " SYMBOL_STRING(cti_vm_throw_slowpath)"@GOT \n"
+);
+
+asm volatile (
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"

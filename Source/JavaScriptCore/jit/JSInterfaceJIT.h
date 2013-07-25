@@ -58,8 +58,10 @@ namespace JSC {
         static const RegisterID cachedResultRegister = X86Registers::eax;
 #if !OS(WINDOWS)
         static const RegisterID firstArgumentRegister = X86Registers::edi;
+        static const RegisterID secondArgumentRegister = X86Registers::esi;
 #else
         static const RegisterID firstArgumentRegister = X86Registers::ecx;
+        static const RegisterID secondArgumentRegister = X86Registers::edx;
 #endif
 
 #if ENABLE(VALUE_PROFILER)
@@ -87,6 +89,7 @@ namespace JSC {
         // On x86 we always use fastcall conventions = but on
         // OS X if might make more sense to just use regparm.
         static const RegisterID firstArgumentRegister = X86Registers::ecx;
+        static const RegisterID secondArgumentRegister = X86Registers::edx;
         
         static const RegisterID bucketCounterRegister = X86Registers::esi;
         static const RegisterID callFrameRegister = X86Registers::edi;
@@ -104,6 +107,7 @@ namespace JSC {
         static const RegisterID returnValueRegister = ARMRegisters::r0;
         static const RegisterID cachedResultRegister = ARMRegisters::r0;
         static const RegisterID firstArgumentRegister = ARMRegisters::r0;
+        static const RegisterID secondArgumentRegister = ARMRegisters::r1;
 
 #if ENABLE(VALUE_PROFILER)
         static const RegisterID bucketCounterRegister = ARMRegisters::r7;
@@ -125,6 +129,7 @@ namespace JSC {
         static const RegisterID returnValueRegister = MIPSRegisters::v0;
         static const RegisterID cachedResultRegister = MIPSRegisters::v0;
         static const RegisterID firstArgumentRegister = MIPSRegisters::a0;
+        static const RegisterID secondArgumentRegister = MIPSRegisters::a1;
         
 #if ENABLE(VALUE_PROFILER)
         static const RegisterID bucketCounterRegister = MIPSRegisters::s3;
@@ -159,6 +164,7 @@ namespace JSC {
         static const RegisterID regT6 = SH4Registers::r6;
         static const RegisterID regT7 = SH4Registers::r7;
         static const RegisterID firstArgumentRegister =regT4;
+        static const RegisterID secondArgumentRegister =regT4;
 
         static const RegisterID returnValueRegister = SH4Registers::r0;
         static const RegisterID cachedResultRegister = SH4Registers::r0;

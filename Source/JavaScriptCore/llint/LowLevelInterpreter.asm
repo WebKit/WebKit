@@ -421,12 +421,12 @@ _llint_function_for_construct_prologue:
 
 _llint_function_for_call_arity_check:
     prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call_arityCheck, _llint_trace_arityCheck_for_call)
-    functionArityCheck(.functionForCallBegin, _llint_slow_path_call_arityCheck)
+    functionArityCheck(.functionForCallBegin, _slow_path_call_arityCheck)
 
 
 _llint_function_for_construct_arity_check:
     prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct_arityCheck, _llint_trace_arityCheck_for_construct)
-    functionArityCheck(.functionForConstructBegin, _llint_slow_path_construct_arityCheck)
+    functionArityCheck(.functionForConstructBegin, _slow_path_construct_arityCheck)
 
 
 # Value-representation-specific code.
@@ -464,55 +464,55 @@ _llint_op_new_regexp:
 
 _llint_op_less:
     traceExecution()
-    callSlowPath(_llint_slow_path_less)
+    callSlowPath(_slow_path_less)
     dispatch(4)
 
 
 _llint_op_lesseq:
     traceExecution()
-    callSlowPath(_llint_slow_path_lesseq)
+    callSlowPath(_slow_path_lesseq)
     dispatch(4)
 
 
 _llint_op_greater:
     traceExecution()
-    callSlowPath(_llint_slow_path_greater)
+    callSlowPath(_slow_path_greater)
     dispatch(4)
 
 
 _llint_op_greatereq:
     traceExecution()
-    callSlowPath(_llint_slow_path_greatereq)
+    callSlowPath(_slow_path_greatereq)
     dispatch(4)
 
 
 _llint_op_mod:
     traceExecution()
-    callSlowPath(_llint_slow_path_mod)
+    callSlowPath(_slow_path_mod)
     dispatch(4)
 
 
 _llint_op_typeof:
     traceExecution()
-    callSlowPath(_llint_slow_path_typeof)
+    callSlowPath(_slow_path_typeof)
     dispatch(3)
 
 
 _llint_op_is_object:
     traceExecution()
-    callSlowPath(_llint_slow_path_is_object)
+    callSlowPath(_slow_path_is_object)
     dispatch(3)
 
 
 _llint_op_is_function:
     traceExecution()
-    callSlowPath(_llint_slow_path_is_function)
+    callSlowPath(_slow_path_is_function)
     dispatch(3)
 
 
 _llint_op_in:
     traceExecution()
-    callSlowPath(_llint_slow_path_in)
+    callSlowPath(_slow_path_in)
     dispatch(4)
 
 macro withInlineStorage(object, propertyStorage, continuation)
@@ -719,7 +719,7 @@ _llint_generic_return_point:
 
 _llint_op_strcat:
     traceExecution()
-    callSlowPath(_llint_slow_path_strcat)
+    callSlowPath(_slow_path_strcat)
     dispatch(4)
 
 

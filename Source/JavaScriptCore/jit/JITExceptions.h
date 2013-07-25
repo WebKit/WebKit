@@ -40,12 +40,13 @@ class VM;
 // for the throwing and handling exceptions.
 
 struct ExceptionHandler {
-    void* catchRoutine;
     ExecState* callFrame;
+    void* catchRoutine;
 };
 
 ExceptionHandler genericThrow(VM*, ExecState*, JSValue exceptionValue, unsigned vPCIndex);
 
+ExceptionHandler jitThrowNew(VM*, ExecState*, JSValue exceptionValue);
 ExceptionHandler jitThrow(VM*, ExecState*, JSValue exceptionValue, ReturnAddressPtr faultLocation);
 
 } // namespace JSC

@@ -46,6 +46,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
+#include "SlowPathCall.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 
 using namespace std;
@@ -118,39 +119,33 @@ void JIT::emitEnterOptimizationCheck()
 
 #if USE(JSVALUE32_64)
 #define DEFINE_BINARY_OP(name) \
-    case name: { \
-        JITStubCall stubCall(this, cti_##name); \
-        stubCall.addArgument(currentInstruction[2].u.operand); \
-        stubCall.addArgument(currentInstruction[3].u.operand); \
-        stubCall.call(currentInstruction[1].u.operand); \
-        NEXT_OPCODE(name); \
+    case op_##name: { \
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_##name); \
+        slowPathCall.call(); \
+        NEXT_OPCODE(op_##name); \
     }
 
 #define DEFINE_UNARY_OP(name) \
-    case name: { \
-        JITStubCall stubCall(this, cti_##name); \
-        stubCall.addArgument(currentInstruction[2].u.operand); \
-        stubCall.call(currentInstruction[1].u.operand); \
-        NEXT_OPCODE(name); \
+    case op_##name: { \
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_##name); \
+        slowPathCall.call(); \
+        NEXT_OPCODE(op_##name); \
     }
 
 #else // USE(JSVALUE32_64)
 
 #define DEFINE_BINARY_OP(name) \
-    case name: { \
-        JITStubCall stubCall(this, cti_##name); \
-        stubCall.addArgument(currentInstruction[2].u.operand, regT2); \
-        stubCall.addArgument(currentInstruction[3].u.operand, regT2); \
-        stubCall.call(currentInstruction[1].u.operand); \
-        NEXT_OPCODE(name); \
+    case op_##name: { \
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_##name); \
+        slowPathCall.call(); \
+        NEXT_OPCODE(op_##name); \
     }
 
 #define DEFINE_UNARY_OP(name) \
-    case name: { \
-        JITStubCall stubCall(this, cti_##name); \
-        stubCall.addArgument(currentInstruction[2].u.operand, regT2); \
-        stubCall.call(currentInstruction[1].u.operand); \
-        NEXT_OPCODE(name); \
+    case op_##name: { \
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_##name); \
+        slowPathCall.call(); \
+        NEXT_OPCODE(op_##name); \
     }
 #endif // USE(JSVALUE32_64)
 
@@ -205,15 +200,15 @@ void JIT::privateCompileMainPass()
         }
 
         switch (opcodeID) {
-        DEFINE_BINARY_OP(op_del_by_val)
-        DEFINE_BINARY_OP(op_in)
-        DEFINE_BINARY_OP(op_less)
-        DEFINE_BINARY_OP(op_lesseq)
-        DEFINE_BINARY_OP(op_greater)
-        DEFINE_BINARY_OP(op_greatereq)
-        DEFINE_UNARY_OP(op_is_function)
-        DEFINE_UNARY_OP(op_is_object)
-        DEFINE_UNARY_OP(op_typeof)
+        DEFINE_BINARY_OP(del_by_val)
+        DEFINE_BINARY_OP(in)
+        DEFINE_BINARY_OP(less)
+        DEFINE_BINARY_OP(lesseq)
+        DEFINE_BINARY_OP(greater)
+        DEFINE_BINARY_OP(greatereq)
+        DEFINE_UNARY_OP(is_function)
+        DEFINE_UNARY_OP(is_object)
+        DEFINE_UNARY_OP(typeof)
 
         DEFINE_OP(op_add)
         DEFINE_OP(op_bitand)

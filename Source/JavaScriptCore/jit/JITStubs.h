@@ -32,6 +32,7 @@
 
 #include "CallData.h"
 #include "Intrinsic.h"
+#include "JITExceptions.h"
 #include "LowLevelInterpreter.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
@@ -303,6 +304,7 @@ struct JITStackFrame {
 #endif
 
 extern "C" void ctiVMThrowTrampoline();
+extern "C" void ctiVMThrowTrampolineSlowpath();
 extern "C" void ctiOpThrowNotCaught();
 extern "C" EncodedJSValue ctiTrampoline(void* code, JSStack*, CallFrame*, void* /*unused1*/, void* /*unused2*/, VM*);
 #if ENABLE(DFG_JIT)
@@ -322,20 +324,12 @@ extern "C" void ctiMasmProbeTrampoline();
 void performPlatformSpecificJITAssertions(VM*);
 
 extern "C" {
-EncodedJSValue JIT_STUB cti_op_add(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_bitand(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_bitor(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_bitxor(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_call_NotJSFunction(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_call_eval(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_construct_NotJSConstruct(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_check_has_instance(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_create_this(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_to_this(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_del_by_id(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_del_by_val(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_div(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_get_by_id(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_get_by_id_array_fail(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_get_by_id_custom_stub(STUB_ARGS_DECLARATION) WTF_INTERNAL;
@@ -349,40 +343,17 @@ EncodedJSValue JIT_STUB cti_op_get_by_id_string_fail(STUB_ARGS_DECLARATION) WTF_
 EncodedJSValue JIT_STUB cti_op_get_by_val(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_get_by_val_generic(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_get_by_val_string(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_in(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_instanceof(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_is_boolean(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_is_function(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_is_number(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_is_object(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_is_string(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_is_undefined(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_less(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_lesseq(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_greater(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_greatereq(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_lshift(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_mod(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_mul(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_negate(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_not(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_nstricteq(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_dec(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_inc(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_resolve(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_resolve_base(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_resolve_base_strict_put(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_resolve_with_this(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_put_to_base(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_rshift(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_strcat(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_stricteq(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_sub(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_to_number(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_to_primitive(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_typeof(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-EncodedJSValue JIT_STUB cti_op_urshift(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_to_object(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 JSObject* JIT_STUB cti_op_new_array(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 JSObject* JIT_STUB cti_op_new_array_with_size(STUB_ARGS_DECLARATION) WTF_INTERNAL;
@@ -444,6 +415,8 @@ void* JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION) REFERENCED_FROM_ASM WTF_INTER
 EncodedJSValue JIT_STUB cti_op_resolve_scope(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 EncodedJSValue JIT_STUB cti_op_get_from_scope(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_put_to_scope(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+
+ExceptionHandler JIT_STUB cti_vm_throw_slowpath(CallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
 } // extern "C"
 
 #elif ENABLE(LLINT_C_LOOP)

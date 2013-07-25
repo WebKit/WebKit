@@ -38,6 +38,7 @@
 #include "JSFunction.h"
 #include "JSPropertyNameIterator.h"
 #include "LinkBuffer.h"
+#include "SlowPathCall.h"
 
 namespace JSC {
 
@@ -340,10 +341,9 @@ void JIT::emit_op_to_primitive(Instruction* currentInstruction)
 
 void JIT::emit_op_strcat(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_strcat);
-    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
-    stubCall.call(currentInstruction[1].u.operand);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_strcat);
+    slowPathCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 }
 
 void JIT::emit_op_not(Instruction* currentInstruction)
@@ -910,9 +910,9 @@ void JIT::emitSlow_op_create_this(Instruction* currentInstruction, Vector<SlowCa
     linkSlowCase(iter); // doesn't have an allocation profile
     linkSlowCase(iter); // allocation failed
 
-    JITStubCall stubCall(this, cti_op_create_this);
-    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
-    stubCall.call(currentInstruction[1].u.operand);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_this);
+    slowPathCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 }
 
 void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
@@ -936,27 +936,28 @@ void JIT::emitSlow_op_to_this(Instruction* currentInstruction, Vector<SlowCaseEn
 {
     linkSlowCase(iter);
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_to_this);
-    stubCall.addArgument(regT1);
-    stubCall.call(currentInstruction[1].u.operand);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_this);
+    slowPathCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 }
 
 void JIT::emitSlow_op_to_primitive(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
 
-    JITStubCall stubCall(this, cti_op_to_primitive);
-    stubCall.addArgument(regT0);
-    stubCall.call(currentInstruction[1].u.operand);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_primitive);
+    slowPathCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 }
 
 void JIT::emitSlow_op_not(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), regT0);
-    JITStubCall stubCall(this, cti_op_not);
-    stubCall.addArgument(regT0);
-    stubCall.call(currentInstruction[1].u.operand);
+    
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_not);
+    slowPathCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 }
 
 void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -980,19 +981,17 @@ void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntr
 void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_bitxor);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
-    stubCall.call(currentInstruction[1].u.operand);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitxor);
+    slowPathCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 }
 
 void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_bitor);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
-    stubCall.call(currentInstruction[1].u.operand);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitor);
+    slowPathCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 }
 
 void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1023,10 +1022,9 @@ void JIT::emitSlow_op_stricteq(Instruction* currentInstruction, Vector<SlowCaseE
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_stricteq);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
-    stubCall.call(currentInstruction[1].u.operand);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_stricteq);
+    slowPathCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 }
 
 void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1034,10 +1032,9 @@ void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCase
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_nstricteq);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
-    stubCall.call(currentInstruction[1].u.operand);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_nstricteq);
+    slowPathCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 }
 
 void JIT::emitSlow_op_check_has_instance(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1075,9 +1072,9 @@ void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCase
 {
     linkSlowCase(iter);
 
-    JITStubCall stubCall(this, cti_op_to_number);
-    stubCall.addArgument(regT0);
-    stubCall.call(currentInstruction[1].u.operand);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_number);
+    slowPathCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 }
 
 void JIT::emit_op_get_arguments_length(Instruction* currentInstruction)

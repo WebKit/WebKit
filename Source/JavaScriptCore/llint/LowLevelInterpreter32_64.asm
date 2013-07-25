@@ -372,7 +372,7 @@ _llint_op_create_arguments:
     traceExecution()
     loadi 4[PC], t0
     bineq TagOffset[cfr, t0, 8], EmptyValueTag, .opCreateArgumentsDone
-    callSlowPath(_llint_slow_path_create_arguments)
+    callSlowPath(_slow_path_create_arguments)
 .opCreateArgumentsDone:
     dispatch(2)
 
@@ -391,7 +391,7 @@ _llint_op_create_this:
     dispatch(4)
 
 .opCreateThisSlow:
-    callSlowPath(_llint_slow_path_create_this)
+    callSlowPath(_slow_path_create_this)
     dispatch(4)
 
 
@@ -416,7 +416,7 @@ _llint_op_to_this:
     dispatch(3)
 
 .opToThisSlow:
-    callSlowPath(_llint_slow_path_to_this)
+    callSlowPath(_slow_path_to_this)
     dispatch(3)
 
 
@@ -458,7 +458,7 @@ _llint_op_not:
     dispatch(3)
 
 .opNotSlow:
-    callSlowPath(_llint_slow_path_not)
+    callSlowPath(_slow_path_not)
     dispatch(3)
 
 
@@ -478,7 +478,7 @@ _llint_op_eq:
     dispatch(4)
 
 .opEqSlow:
-    callSlowPath(_llint_slow_path_eq)
+    callSlowPath(_slow_path_eq)
     dispatch(4)
 
 
@@ -525,7 +525,7 @@ _llint_op_neq:
     dispatch(4)
 
 .opNeqSlow:
-    callSlowPath(_llint_slow_path_neq)
+    callSlowPath(_slow_path_neq)
     dispatch(4)
     
 
@@ -582,12 +582,12 @@ end
 
 _llint_op_stricteq:
     traceExecution()
-    strictEq(macro (left, right, result) cieq left, right, result end, _llint_slow_path_stricteq)
+    strictEq(macro (left, right, result) cieq left, right, result end, _slow_path_stricteq)
 
 
 _llint_op_nstricteq:
     traceExecution()
-    strictEq(macro (left, right, result) cineq left, right, result end, _llint_slow_path_nstricteq)
+    strictEq(macro (left, right, result) cineq left, right, result end, _slow_path_nstricteq)
 
 
 _llint_op_inc:
@@ -600,7 +600,7 @@ _llint_op_inc:
     dispatch(2)
 
 .opIncSlow:
-    callSlowPath(_llint_slow_path_pre_inc)
+    callSlowPath(_slow_path_inc)
     dispatch(2)
 
 
@@ -614,7 +614,7 @@ _llint_op_dec:
     dispatch(2)
 
 .opDecSlow:
-    callSlowPath(_llint_slow_path_pre_dec)
+    callSlowPath(_slow_path_dec)
     dispatch(2)
 
 
@@ -631,7 +631,7 @@ _llint_op_to_number:
     dispatch(3)
 
 .opToNumberSlow:
-    callSlowPath(_llint_slow_path_to_number)
+    callSlowPath(_slow_path_to_number)
     dispatch(3)
 
 
@@ -654,7 +654,7 @@ _llint_op_negate:
     dispatch(3)
 
 .opNegateSlow:
-    callSlowPath(_llint_slow_path_negate)
+    callSlowPath(_slow_path_negate)
     dispatch(3)
 
 
@@ -715,7 +715,7 @@ _llint_op_add:
     binaryOp(
         macro (left, right, slow) baddio left, right, slow end,
         macro (left, right) addd left, right end,
-        _llint_slow_path_add)
+        _slow_path_add)
 
 
 _llint_op_mul:
@@ -733,7 +733,7 @@ _llint_op_mul:
             storei scratch, PayloadOffset[cfr, index, 8]
         end,
         macro (left, right) muld left, right end,
-        _llint_slow_path_mul)
+        _slow_path_mul)
 
 
 _llint_op_sub:
@@ -741,7 +741,7 @@ _llint_op_sub:
     binaryOp(
         macro (left, right, slow) bsubio left, right, slow end,
         macro (left, right) subd left, right end,
-        _llint_slow_path_sub)
+        _slow_path_sub)
 
 
 _llint_op_div:
@@ -760,7 +760,7 @@ _llint_op_div:
         .done:
         end,
         macro (left, right) divd left, right end,
-        _llint_slow_path_div)
+        _slow_path_div)
 
 
 macro bitOp(operation, slowPath, advance)
@@ -785,7 +785,7 @@ _llint_op_lshift:
     traceExecution()
     bitOp(
         macro (left, right, slow) lshifti left, right end,
-        _llint_slow_path_lshift,
+        _slow_path_lshift,
         4)
 
 
@@ -793,7 +793,7 @@ _llint_op_rshift:
     traceExecution()
     bitOp(
         macro (left, right, slow) rshifti left, right end,
-        _llint_slow_path_rshift,
+        _slow_path_rshift,
         4)
 
 
@@ -804,7 +804,7 @@ _llint_op_urshift:
             urshifti left, right
             bilt right, 0, slow
         end,
-        _llint_slow_path_urshift,
+        _slow_path_urshift,
         4)
 
 
@@ -812,7 +812,7 @@ _llint_op_bitand:
     traceExecution()
     bitOp(
         macro (left, right, slow) andi left, right end,
-        _llint_slow_path_bitand,
+        _slow_path_bitand,
         5)
 
 
@@ -820,7 +820,7 @@ _llint_op_bitxor:
     traceExecution()
     bitOp(
         macro (left, right, slow) xori left, right end,
-        _llint_slow_path_bitxor,
+        _slow_path_bitxor,
         5)
 
 
@@ -828,7 +828,7 @@ _llint_op_bitor:
     traceExecution()
     bitOp(
         macro (left, right, slow) ori left, right end,
-        _llint_slow_path_bitor,
+        _slow_path_bitor,
         5)
 
 
@@ -1653,7 +1653,7 @@ _llint_op_to_primitive:
     dispatch(3)
 
 .opToPrimitiveSlowCase:
-    callSlowPath(_llint_slow_path_to_primitive)
+    callSlowPath(_slow_path_to_primitive)
     dispatch(3)
 
 

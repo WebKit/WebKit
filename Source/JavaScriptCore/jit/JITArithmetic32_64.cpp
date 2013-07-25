@@ -39,6 +39,7 @@
 #include "Operations.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
+#include "SlowPathCall.h"
 
 #ifndef NDEBUG
 #include <stdio.h>
@@ -80,9 +81,9 @@ void JIT::emitSlow_op_negate(Instruction* currentInstruction, Vector<SlowCaseEnt
     linkSlowCase(iter); // 0x7fffffff check
     linkSlowCase(iter); // double check
 
-    JITStubCall stubCall(this, cti_op_negate);
-    stubCall.addArgument(regT1, regT0);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_negate);
+    slowPathCall.call();
+    emitLoad(dst, regT1, regT0);
 }
 
 void JIT::emit_compareAndJump(OpcodeID opcode, unsigned op1, unsigned op2, unsigned target, RelationalCondition condition)
@@ -198,10 +199,9 @@ void JIT::emitSlow_op_lshift(Instruction* currentInstruction, Vector<SlowCaseEnt
         linkSlowCase(iter); // int32 check
     linkSlowCase(iter); // int32 check
 
-    JITStubCall stubCall(this, cti_op_lshift);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_lshift);
+    slowPathCall.call();
+    emitLoad(dst, regT1, regT0);
 }
 
 // RightShift (>>) and UnsignedRightShift (>>>) helper
@@ -296,10 +296,9 @@ void JIT::emitRightShiftSlowCase(Instruction* currentInstruction, Vector<SlowCas
             linkSlowCase(iter); // Can't represent unsigned result as an immediate
     }
 
-    JITStubCall stubCall(this, isUnsigned ? cti_op_urshift : cti_op_rshift);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, isUnsigned ? slow_path_urshift : slow_path_rshift);
+    slowPathCall.call();
+    emitLoad(dst, regT1, regT0);
 }
 
 // RightShift (>>)
@@ -361,10 +360,9 @@ void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEnt
         linkSlowCase(iter); // int32 check
     linkSlowCase(iter); // int32 check
 
-    JITStubCall stubCall(this, cti_op_bitand);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitand);
+    slowPathCall.call();
+    emitLoad(dst, regT1, regT0);
 }
 
 // BitOr (|)
@@ -402,10 +400,9 @@ void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntr
         linkSlowCase(iter); // int32 check
     linkSlowCase(iter); // int32 check
 
-    JITStubCall stubCall(this, cti_op_bitor);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitor);
+    slowPathCall.call();
+    emitLoad(dst, regT1, regT0);
 }
 
 // BitXor (^)
@@ -443,10 +440,9 @@ void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEnt
         linkSlowCase(iter); // int32 check
     linkSlowCase(iter); // int32 check
 
-    JITStubCall stubCall(this, cti_op_bitxor);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitxor);
+    slowPathCall.call();
+    emitLoad(dst, regT1, regT0);
 }
 
 void JIT::emit_op_inc(Instruction* currentInstruction)
@@ -467,9 +463,9 @@ void JIT::emitSlow_op_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>
     linkSlowCase(iter); // int32 check
     linkSlowCase(iter); // overflow check
 
-    JITStubCall stubCall(this, cti_op_inc);
-    stubCall.addArgument(srcDst);
-    stubCall.call(srcDst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_inc);
+    slowPathCall.call();
+    emitLoad(srcDst, regT1, regT0);
 }
 
 void JIT::emit_op_dec(Instruction* currentInstruction)
@@ -490,9 +486,9 @@ void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>
     linkSlowCase(iter); // int32 check
     linkSlowCase(iter); // overflow check
 
-    JITStubCall stubCall(this, cti_op_dec);
-    stubCall.addArgument(srcDst);
-    stubCall.call(srcDst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_dec);
+    slowPathCall.call();
+    emitLoad(srcDst, regT1, regT0);
 }
 
 // Addition (+)
@@ -506,10 +502,8 @@ void JIT::emit_op_add(Instruction* currentInstruction)
 
     if (!types.first().mightBeNumber() || !types.second().mightBeNumber()) {
         addSlowCase();
-        JITStubCall stubCall(this, cti_op_add);
-        stubCall.addArgument(op1);
-        stubCall.addArgument(op2);
-        stubCall.call(dst);
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
+        slowPathCall.call();
         return;
     }
 
@@ -611,10 +605,9 @@ void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>
         }
     }
 
-    JITStubCall stubCall(this, cti_op_add);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
+    slowPathCall.call();
+    emitLoad(dst, regT1, regT0);
 }
 
 // Subtraction (-)
@@ -689,7 +682,6 @@ void JIT::emitSub32Constant(unsigned dst, unsigned op, int32_t constant, ResultT
 void JIT::emitSlow_op_sub(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned dst = currentInstruction[1].u.operand;
-    unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
@@ -715,10 +707,9 @@ void JIT::emitSlow_op_sub(Instruction* currentInstruction, Vector<SlowCaseEntry>
         }
     }
 
-    JITStubCall stubCall(this, cti_op_sub);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_sub);
+    slowPathCall.call();
+    emitLoad(dst, regT1, regT0);
 }
 
 void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, unsigned dst, unsigned op1, unsigned op2, OperandTypes types, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters, bool op2IsInRegisters)
@@ -1022,11 +1013,9 @@ void JIT::emitSlow_op_mul(Instruction* currentInstruction, Vector<SlowCaseEntry>
         }
     }
 
-    Label jitStubCall(this);
-    JITStubCall stubCall(this, cti_op_mul);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mul);
+    slowPathCall.call();
+    emitLoad(dst, regT1, regT0);
 }
 
 // Division (/)
@@ -1097,8 +1086,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
 void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned dst = currentInstruction[1].u.operand;
-    unsigned op1 = currentInstruction[2].u.operand;
-    unsigned op2 = currentInstruction[3].u.operand;
+
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
     if (!supportsFloatingPoint())
@@ -1113,10 +1101,9 @@ void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>
         }
     }
 
-    JITStubCall stubCall(this, cti_op_div);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_div);
+    slowPathCall.call();
+    emitLoad(dst, regT1, regT0);
 }
 
 // Mod (%)
@@ -1152,28 +1139,21 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     numeratorPositive.link(this);
     emitStoreInt32(dst, regT1, (op1 == dst || op2 == dst));
 #else
-    JITStubCall stubCall(this, cti_op_mod);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
+    slowPathCall.call();
 #endif
 }
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
 #if CPU(X86) || CPU(X86_64)
-    unsigned result = currentInstruction[1].u.operand;
-    unsigned op1 = currentInstruction[2].u.operand;
-    unsigned op2 = currentInstruction[3].u.operand;
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_mod);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(result);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
+    slowPathCall.call();
 #else
     UNUSED_PARAM(currentInstruction);
     UNUSED_PARAM(iter);

@@ -395,17 +395,14 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     // Grab the return address.
     jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT1);
-
+    
     jit.move(JSInterfaceJIT::TrustedImmPtr(&vm->exceptionLocation), JSInterfaceJIT::regT2);
     jit.storePtr(JSInterfaceJIT::regT1, JSInterfaceJIT::regT2);
-    jit.poke(JSInterfaceJIT::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
 
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
-    // Set the return address.
-    jit.move(JSInterfaceJIT::TrustedImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()), JSInterfaceJIT::regT1);
-    jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT1);
 
-    jit.ret();
+    jit.move(JSInterfaceJIT::TrustedImmPtr(FunctionPtr(ctiVMThrowTrampolineSlowpath).value()), JSInterfaceJIT::regT1);
+    jit.jump(JSInterfaceJIT::regT1);
 
     LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("native %s trampoline", toCString(kind).data()));

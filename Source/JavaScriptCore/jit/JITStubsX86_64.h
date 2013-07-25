@@ -99,6 +99,16 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 );
 
 asm (
+".globl " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
+HIDE_SYMBOL(ctiVMThrowTrampolineSlowpath) "\n"
+SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) ":" "\n"
+    "movq %r13, %rdi" "\n"
+    "call " LOCAL_REFERENCE(cti_vm_throw_slowpath) "\n"
+    // When cti_vm_throw_slowpath returns, rax has callFrame and rdx has handler address
+    "jmp *%rdx" "\n"
+);
+
+asm (
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"

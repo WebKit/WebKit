@@ -134,6 +134,40 @@ asm (
 ".set noreorder" "\n"
 ".set nomacro" "\n"
 ".set nomips16" "\n"
+".globl " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
+".ent " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
+SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) ":" "\n"
+#if WTF_MIPS_PIC
+".set macro" "\n"
+".cpload $31" "\n"
+    "la    $25," SYMBOL_STRING(cti_vm_throw_slowpath) "\n"
+".set nomacro" "\n"
+    "bal " SYMBOL_STRING(cti_vm_throw_slowpath) "\n"
+    "move  $4,$16" "\n"
+#else
+    "jal " SYMBOL_STRING(cti_vm_throw_slowpath) "\n"
+    "move  $4,$16" "\n"
+#endif
+    // When cti_vm_throw_slowpath returns, v0 has callFrame and v1 has handler address
+    "lw    $16," STRINGIZE_VALUE_OF(PRESERVED_S0_OFFSET) "($29)" "\n"
+    "lw    $17," STRINGIZE_VALUE_OF(PRESERVED_S1_OFFSET) "($29)" "\n"
+    "lw    $18," STRINGIZE_VALUE_OF(PRESERVED_S2_OFFSET) "($29)" "\n"
+    "lw    $19," STRINGIZE_VALUE_OF(PRESERVED_S3_OFFSET) "($29)" "\n"
+    "lw    $20," STRINGIZE_VALUE_OF(PRESERVED_S4_OFFSET) "($29)" "\n"
+    "lw    $31," STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "($29)" "\n"
+    "jr    $3" "\n"
+    "addiu $29,$29," STRINGIZE_VALUE_OF(STACK_LENGTH) "\n"
+".set reorder" "\n"
+".set macro" "\n"
+".end " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
+);
+
+asm (
+".text" "\n"
+".align 2" "\n"
+".set noreorder" "\n"
+".set nomacro" "\n"
+".set nomips16" "\n"
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 ".ent " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"

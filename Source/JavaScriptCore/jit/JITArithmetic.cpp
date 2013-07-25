@@ -38,6 +38,7 @@
 #include "Operations.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
+#include "SlowPathCall.h"
 
 #ifndef NDEBUG
 #include <stdio.h>
@@ -219,14 +220,14 @@ void JIT::emit_op_negate(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_negate(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    unsigned result = currentInstruction[1].u.operand;
 
     linkSlowCase(iter); // 0x7fffffff check
     linkSlowCase(iter); // double check
 
-    JITStubCall stubCall(this, cti_op_negate);
-    stubCall.addArgument(regT0);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_negate);
+    slowPathCall.call();
+    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emit_op_lshift(Instruction* currentInstruction)
@@ -249,17 +250,12 @@ void JIT::emit_op_lshift(Instruction* currentInstruction)
 void JIT::emitSlow_op_lshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned result = currentInstruction[1].u.operand;
-    unsigned op1 = currentInstruction[2].u.operand;
-    unsigned op2 = currentInstruction[3].u.operand;
 
-    UNUSED_PARAM(op1);
-    UNUSED_PARAM(op2);
     linkSlowCase(iter);
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_lshift);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT2);
-    stubCall.call(result);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_lshift);
+    slowPathCall.call();
+    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emit_op_rshift(Instruction* currentInstruction)
@@ -303,31 +299,25 @@ void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEnt
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
-    JITStubCall stubCall(this, cti_op_rshift);
+    UNUSED_PARAM(op1);
 
-    if (isOperandConstantImmediateInt(op2)) {
+    if (isOperandConstantImmediateInt(op2))
         linkSlowCase(iter);
-        stubCall.addArgument(regT0);
-        stubCall.addArgument(op2, regT2);
-    } else {
+
+    else {
         if (supportsFloatingPointTruncate()) {
             linkSlowCase(iter);
             linkSlowCase(iter);
             linkSlowCase(iter);
-            // We're reloading op1 to regT0 as we can no longer guarantee that
-            // we have not munged the operand.  It may have already been shifted
-            // correctly, but it still will not have been tagged.
-            stubCall.addArgument(op1, regT0);
-            stubCall.addArgument(regT2);
         } else {
             linkSlowCase(iter);
             linkSlowCase(iter);
-            stubCall.addArgument(regT0);
-            stubCall.addArgument(regT2);
         }
     }
 
-    stubCall.call(result);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_rshift);
+    slowPathCall.call();
+    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emit_op_urshift(Instruction* currentInstruction)
@@ -418,10 +408,9 @@ void JIT::emitSlow_op_urshift(Instruction* currentInstruction, Vector<SlowCaseEn
         linkSlowCase(iter); // Can't represent unsigned result as an immediate
     }
     
-    JITStubCall stubCall(this, cti_op_urshift);
-    stubCall.addArgument(op1, regT0);
-    stubCall.addArgument(op2, regT1);
-    stubCall.call(dst);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_urshift);
+    slowPathCall.call();
+    emitGetVirtualRegister(dst, regT0);
 }
 
 void JIT::emit_compareAndJump(OpcodeID, unsigned op1, unsigned op2, unsigned target, RelationalCondition condition)
@@ -607,26 +596,12 @@ void JIT::emit_op_bitand(Instruction* currentInstruction)
 void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned result = currentInstruction[1].u.operand;
-    unsigned op1 = currentInstruction[2].u.operand;
-    unsigned op2 = currentInstruction[3].u.operand;
 
     linkSlowCase(iter);
-    if (isOperandConstantImmediateInt(op1)) {
-        JITStubCall stubCall(this, cti_op_bitand);
-        stubCall.addArgument(op1, regT2);
-        stubCall.addArgument(regT0);
-        stubCall.call(result);
-    } else if (isOperandConstantImmediateInt(op2)) {
-        JITStubCall stubCall(this, cti_op_bitand);
-        stubCall.addArgument(regT0);
-        stubCall.addArgument(op2, regT2);
-        stubCall.call(result);
-    } else {
-        JITStubCall stubCall(this, cti_op_bitand);
-        stubCall.addArgument(op1, regT2);
-        stubCall.addArgument(regT1);
-        stubCall.call(result);
-    }
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitand);
+    slowPathCall.call();
+    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emit_op_inc(Instruction* currentInstruction)
@@ -644,13 +619,11 @@ void JIT::emitSlow_op_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>
 {
     unsigned srcDst = currentInstruction[1].u.operand;
 
-    Jump notImm = getSlowCase(iter);
     linkSlowCase(iter);
+    linkSlowCase(iter);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_inc);
+    slowPathCall.call();
     emitGetVirtualRegister(srcDst, regT0);
-    notImm.link(this);
-    JITStubCall stubCall(this, cti_op_inc);
-    stubCall.addArgument(regT0);
-    stubCall.call(srcDst);
 }
 
 void JIT::emit_op_dec(Instruction* currentInstruction)
@@ -668,13 +641,11 @@ void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>
 {
     unsigned srcDst = currentInstruction[1].u.operand;
 
-    Jump notImm = getSlowCase(iter);
     linkSlowCase(iter);
+    linkSlowCase(iter);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_dec);
+    slowPathCall.call();
     emitGetVirtualRegister(srcDst, regT0);
-    notImm.link(this);
-    JITStubCall stubCall(this, cti_op_dec);
-    stubCall.addArgument(regT0);
-    stubCall.call(srcDst);
 }
 
 /* ------------------------------ BEGIN: OP_MOD ------------------------------ */
@@ -719,10 +690,9 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_mod);
-    stubCall.addArgument(regT3);
-    stubCall.addArgument(regT2);
-    stubCall.call(result);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
+    slowPathCall.call();
+    emitGetVirtualRegister(result, regT0);
 }
 
 #else // CPU(X86) || CPU(X86_64)
@@ -733,10 +703,12 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
-    JITStubCall stubCall(this, cti_op_mod);
-    stubCall.addArgument(op1, regT2);
-    stubCall.addArgument(op2, regT2);
-    stubCall.call(result);
+    UNUSED_PARAM(op1);
+    UNUSED_PARAM(op2);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
+    slowPathCall.call();
+    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -796,7 +768,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned, unsigned op1, unsign
     emitFastArithIntToImmNoCheck(regT0, regT0);
 }
 
-void JIT::compileBinaryArithOpSlowCase(OpcodeID opcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned result, unsigned op1, unsigned op2, OperandTypes types, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase)
+void JIT::compileBinaryArithOpSlowCase(Instruction* currentInstruction, OpcodeID opcodeID, Vector<SlowCaseEntry>::iterator& iter, unsigned result, unsigned op1, unsigned op2, OperandTypes types, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase)
 {
     // We assume that subtracting TagTypeNumber is equivalent to adding DoubleEncodeOffset.
     COMPILE_ASSERT(((TagTypeNumber + DoubleEncodeOffset) == 0), TagTypeNumber_PLUS_DoubleEncodeOffset_EQUALS_0);
@@ -815,17 +787,12 @@ void JIT::compileBinaryArithOpSlowCase(OpcodeID opcodeID, Vector<SlowCaseEntry>:
     linkSlowCase(iter); // Integer overflow case - we could handle this in JIT code, but this is likely rare.
     if (opcodeID == op_mul && !op1HasImmediateIntFastCase && !op2HasImmediateIntFastCase) // op_mul has an extra slow case to handle 0 * negative number.
         linkSlowCase(iter);
-    emitGetVirtualRegister(op1, regT0);
 
     Label stubFunctionCall(this);
-    JITStubCall stubCall(this, opcodeID == op_add ? cti_op_add : opcodeID == op_sub ? cti_op_sub : cti_op_mul);
-    if (op1HasImmediateIntFastCase || op2HasImmediateIntFastCase) {
-        emitGetVirtualRegister(op1, regT0);
-        emitGetVirtualRegister(op2, regT1);
-    }
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
-    stubCall.call(result);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, opcodeID == op_add ? slow_path_add : opcodeID == op_sub ? slow_path_sub : slow_path_mul);
+    slowPathCall.call();
+    emitGetVirtualRegister(result, regT0);
     Jump end = jump();
 
     if (op1HasImmediateIntFastCase) {
@@ -894,10 +861,8 @@ void JIT::emit_op_add(Instruction* currentInstruction)
 
     if (!types.first().mightBeNumber() || !types.second().mightBeNumber()) {
         addSlowCase();
-        JITStubCall stubCall(this, cti_op_add);
-        stubCall.addArgument(op1, regT2);
-        stubCall.addArgument(op2, regT2);
-        stubCall.call(result);
+        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
+        slowPathCall.call();
         return;
     }
 
@@ -931,7 +896,7 @@ void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
     bool op1HasImmediateIntFastCase = isOperandConstantImmediateInt(op1);
     bool op2HasImmediateIntFastCase = !op1HasImmediateIntFastCase && isOperandConstantImmediateInt(op2);
-    compileBinaryArithOpSlowCase(op_add, iter, result, op1, op2, types, op1HasImmediateIntFastCase, op2HasImmediateIntFastCase);
+    compileBinaryArithOpSlowCase(currentInstruction, op_add, iter, result, op1, op2, types, op1HasImmediateIntFastCase, op2HasImmediateIntFastCase);
 }
 
 void JIT::emit_op_mul(Instruction* currentInstruction)
@@ -976,7 +941,7 @@ void JIT::emitSlow_op_mul(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
     bool op1HasImmediateIntFastCase = isOperandConstantImmediateInt(op1) && getConstantOperandImmediateInt(op1) > 0;
     bool op2HasImmediateIntFastCase = !op1HasImmediateIntFastCase && isOperandConstantImmediateInt(op2) && getConstantOperandImmediateInt(op2) > 0;
-    compileBinaryArithOpSlowCase(op_mul, iter, result, op1, op2, types, op1HasImmediateIntFastCase, op2HasImmediateIntFastCase);
+    compileBinaryArithOpSlowCase(currentInstruction, op_mul, iter, result, op1, op2, types, op1HasImmediateIntFastCase, op2HasImmediateIntFastCase);
 }
 
 void JIT::emit_op_div(Instruction* currentInstruction)
@@ -1082,10 +1047,9 @@ void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>
             linkSlowCase(iter);
     }
     // There is an extra slow case for (op1 * -N) or (-N * op2), to check for 0 since this should produce a result of -0.
-    JITStubCall stubCall(this, cti_op_div);
-    stubCall.addArgument(op1, regT2);
-    stubCall.addArgument(op2, regT2);
-    stubCall.call(result);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_div);
+    slowPathCall.call();
+    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emit_op_sub(Instruction* currentInstruction)
@@ -1106,7 +1070,7 @@ void JIT::emitSlow_op_sub(Instruction* currentInstruction, Vector<SlowCaseEntry>
     unsigned op2 = currentInstruction[3].u.operand;
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
-    compileBinaryArithOpSlowCase(op_sub, iter, result, op1, op2, types, false, false);
+    compileBinaryArithOpSlowCase(currentInstruction, op_sub, iter, result, op1, op2, types, false, false);
 }
 
 /* ------------------------------ END: OP_ADD, OP_SUB, OP_MUL ------------------------------ */

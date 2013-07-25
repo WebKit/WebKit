@@ -111,6 +111,7 @@ inline uint32_t toUInt32(double number)
 class JSValue {
     friend struct EncodedJSValueHashTraits;
     friend class JIT;
+    friend class JITSlowPathCall;
     friend class JITStubs;
     friend class JITStubCall;
     friend class JSInterfaceJIT;

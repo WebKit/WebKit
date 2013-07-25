@@ -1,3 +1,241 @@
+2013-06-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolled back in http://trac.webkit.org/changeset/151342.
+
+        I filled in the missing return register loads, and tests
+        seem to pass now.
+
+                2013-06-07  Michael Saboff  <msaboff@apple.com>
+
+                        fourthTier: The baseline jit and LLint should use common slow paths
+                        https://bugs.webkit.org/show_bug.cgi?id=116889
+
+2013-06-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out http://trac.webkit.org/changeset/151342
+        It broke Kraken crypto tests in debug build. That results in a pretty bad
+        loss of test coverage.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.cpp:
+        (JSC):
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emitSlow_op_urshift):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emitSlow_op_inc):
+        (JSC::JIT::emitSlow_op_dec):
+        (JSC::JIT::emitSlow_op_mod):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emitSlow_op_div):
+        (JSC::JIT::emitSlow_op_sub):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emitRightShiftSlowCase):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emitSlow_op_inc):
+        (JSC::JIT::emitSlow_op_dec):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlow_op_sub):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emitSlow_op_div):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITExceptions.cpp:
+        (JSC):
+        (JSC::genericThrow):
+        * jit/JITExceptions.h:
+        (ExceptionHandler):
+        (JSC):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_strcat):
+        (JSC::JIT::emitSlow_op_create_this):
+        (JSC::JIT::emitSlow_op_to_this):
+        (JSC::JIT::emitSlow_op_to_primitive):
+        (JSC::JIT::emitSlow_op_not):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emitSlow_op_nstricteq):
+        (JSC::JIT::emitSlow_op_to_number):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emitSlow_op_to_primitive):
+        (JSC::JIT::emit_op_strcat):
+        (JSC::JIT::emitSlow_op_not):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emitSlow_op_nstricteq):
+        (JSC::JIT::emitSlow_op_to_number):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emitSlow_op_create_this):
+        (JSC::JIT::emitSlow_op_to_this):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC):
+        * jit/JITStubs.h:
+        (JSC):
+        * jit/JITStubsARM.h:
+        (JSC):
+        * jit/JITStubsARMv7.h:
+        (JSC):
+        * jit/JITStubsMIPS.h:
+        (JSC):
+        * jit/JITStubsSH4.h:
+        (JSC):
+        * jit/JITStubsX86.h:
+        (JSC):
+        * jit/JITStubsX86_64.h:
+        (JSC):
+        * jit/JSInterfaceJIT.h:
+        (JSInterfaceJIT):
+        * jit/SlowPathCall.h: Removed.
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (LLInt):
+        * llint/LLIntSlowPaths.h:
+        (LLInt):
+        (SlowPathReturnType):
+        (JSC::LLInt::encodeResult):
+        (JSC::LLInt::decodeResult):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp: Removed.
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSCJSValue.h:
+        (JSValue):
+
+2013-06-07  Michael Saboff  <msaboff@apple.com>
+
+        fourthTier: The baseline jit and LLint should use common slow paths
+        https://bugs.webkit.org/show_bug.cgi?id=116889
+
+        Reviewed by Filip Pizlo.
+
+        Moved the llint_slow_paths that return JSValue along with several others to CommonSlowPaths.cpp.
+        Eliminated the related JIT stubs.  Changes the baseline JIT to call these new common stubs.
+        Added a simple slow path call class that uses argument registers or the stack instead of
+        JITStackFrame.  Changes the exception mechanism for to check for an exception after making
+        a slowpath call instead of returning to the handler directly form the slowpath function.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emitSlow_op_urshift):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emitSlow_op_inc):
+        (JSC::JIT::emitSlow_op_dec):
+        (JSC::JIT::emitSlow_op_mod):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emitSlow_op_div):
+        (JSC::JIT::emitSlow_op_sub):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emitRightShiftSlowCase):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emitSlow_op_inc):
+        (JSC::JIT::emitSlow_op_dec):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlow_op_sub):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emitSlow_op_div):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITExceptions.cpp:
+        (JSC::getExceptionLocation):
+        (JSC::genericThrow):
+        (JSC::jitThrowNew):
+        * jit/JITExceptions.h:
+        (ExceptionHandler):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_strcat):
+        (JSC::JIT::emitSlow_op_create_this):
+        (JSC::JIT::emitSlow_op_to_this):
+        (JSC::JIT::emitSlow_op_to_primitive):
+        (JSC::JIT::emitSlow_op_not):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emitSlow_op_nstricteq):
+        (JSC::JIT::emitSlow_op_to_number):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emitSlow_op_to_primitive):
+        (JSC::JIT::emit_op_strcat):
+        (JSC::JIT::emitSlow_op_not):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emitSlow_op_nstricteq):
+        (JSC::JIT::emitSlow_op_to_number):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emitSlow_op_create_this):
+        (JSC::JIT::emitSlow_op_to_this):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::cti_vm_throw_slowpath):
+        * jit/JITStubs.h:
+        * jit/JITStubsARM.h:
+        * jit/JITStubsARMv7.h:
+        * jit/JITStubsMIPS.h:
+        * jit/JITStubsSH4.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86_64.h:
+        * jit/JSInterfaceJIT.h:
+        (JSInterfaceJIT):
+        * jit/SlowPathCall.h: Added.
+        (JITSlowPathCall):
+        (JSC::JITSlowPathCall::JITSlowPathCall):
+        (JSC::JITSlowPathCall::call):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * llint/LLIntSlowPaths.cpp:
+        (LLInt):
+        * llint/LLIntSlowPaths.h:
+        (LLInt):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp: Added.
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (SlowPathReturnType):
+        (JSC::encodeResult):
+        (JSC::decodeResult):
+        * runtime/JSCJSValue.h:
+        (JSValue):
+
 2013-06-11  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled back in <http://trac.webkit.org/changeset/151363>.
