@@ -396,14 +396,11 @@ struct Node {
     
     void convertToStructureTransitionWatchpoint(Structure* structure)
     {
-        ASSERT(m_op == CheckStructure || m_op == ForwardCheckStructure || m_op == ArrayifyToStructure);
+        ASSERT(m_op == CheckStructure || m_op == ArrayifyToStructure);
         ASSERT(!child2());
         ASSERT(!child3());
         m_opInfo = bitwise_cast<uintptr_t>(structure);
-        if (m_op == CheckStructure || m_op == ArrayifyToStructure)
-            m_op = StructureTransitionWatchpoint;
-        else
-            m_op = ForwardStructureTransitionWatchpoint;
+        m_op = StructureTransitionWatchpoint;
     }
     
     void convertToStructureTransitionWatchpoint()
@@ -927,7 +924,6 @@ struct Node {
     {
         switch (op()) {
         case CheckStructure:
-        case ForwardCheckStructure:
             return true;
         default:
             return false;
@@ -944,7 +940,6 @@ struct Node {
     {
         switch (op()) {
         case StructureTransitionWatchpoint:
-        case ForwardStructureTransitionWatchpoint:
         case ArrayifyToStructure:
         case NewObject:
         case NewStringObject:
@@ -1005,7 +1000,6 @@ struct Node {
         case StringCharAt:
         case StringCharCodeAt:
         case CheckArray:
-        case ForwardCheckArray:
         case Arrayify:
         case ArrayifyToStructure:
         case ArrayPush:
@@ -1086,7 +1080,6 @@ struct Node {
         case ZombieHint:
         case MovHintAndCheck:
         case Int32ToDouble:
-        case ForwardInt32ToDouble:
         case ValueToInt32:
         case UInt32ToNumber:
         case DoubleAsInt32:

@@ -93,7 +93,6 @@ private:
             }
                     
             case CheckStructure:
-            case ForwardCheckStructure:
             case ArrayifyToStructure: {
                 AbstractValue& value = m_state.forNode(node->child1());
                 StructureSet set;
@@ -130,7 +129,6 @@ private:
             }
                 
             case CheckArray:
-            case ForwardCheckArray:
             case Arrayify: {
                 if (!node->arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node->child1())))
                     break;

@@ -2220,8 +2220,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case Int32ToDouble:
-    case ForwardInt32ToDouble: {
+    case Int32ToDouble: {
         compileInt32ToDouble(node);
         break;
     }
@@ -2436,7 +2435,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case ForwardCheckArray:
     case CheckArray: {
         checkArray(node);
         break;
@@ -3971,8 +3969,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case CheckStructure:
-    case ForwardCheckStructure: {
+    case CheckStructure: {
         SpeculateCellOperand base(this, node->child1());
         
         ASSERT(node->structureSet().size());
@@ -4006,8 +4003,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case StructureTransitionWatchpoint:
-    case ForwardStructureTransitionWatchpoint: {
+    case StructureTransitionWatchpoint: {
         // There is a fascinating question here of what to do about array profiling.
         // We *could* try to tell the OSR exit about where the base of the access is.
         // The DFG will have kept it alive, though it may not be in a register, and
@@ -4812,8 +4808,7 @@ void SpeculativeJIT::compile(Node* node)
         compileIn(node);
         break;
 
-    case ForceOSRExit:
-    case ForwardForceOSRExit: {
+    case ForceOSRExit: {
         terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
         break;
     }

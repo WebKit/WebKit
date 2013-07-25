@@ -173,21 +173,23 @@ public:
                     insertionSet.insertNode(
                         indexInBlock, SpecNone, SetLocal, codeOrigin, OpInfo(variable), child1);
 
-                    // Use a ForwardCheckStructure or ForwardCheckArray to indicate that we should exit to the
-                    // next bytecode instruction rather than reexecuting the current one.
+                    // Use NodeExitsForward to indicate that we should exit to the next
+                    // bytecode instruction rather than reexecuting the current one.
+                    Node* newNode = 0;
                     if (iter->value.m_structure) {
-                        insertionSet.insertNode(
-                            indexInBlock, SpecNone, ForwardCheckStructure, codeOrigin,
+                        newNode = insertionSet.insertNode(
+                            indexInBlock, SpecNone, CheckStructure, codeOrigin,
                             OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
                             Edge(child1.node(), CellUse));
                     } else if (iter->value.m_arrayModeIsValid) {
                         ASSERT(iter->value.m_arrayModeHoistingOkay);
-                        insertionSet.insertNode(
-                            indexInBlock, SpecNone, ForwardCheckArray, codeOrigin,
+                        newNode = insertionSet.insertNode(
+                            indexInBlock, SpecNone, CheckArray, codeOrigin,
                             OpInfo(iter->value.m_arrayMode.asWord()),
                             Edge(child1.node(), CellUse));
                     } else
                         RELEASE_ASSERT_NOT_REACHED();
+                    newNode->mergeFlags(NodeExitsForward);
                     changed = true;
                     break;
                 }
@@ -226,6 +228,9 @@ private:
                 switch (node->op()) {
                 case CheckStructure:
                 case StructureTransitionWatchpoint: {
+                    // We currently rely on the fact that we're the only ones who would
+                    // insert these nodes with NodeExitsForward.
+                    RELEASE_ASSERT(!(node->flags() & NodeExitsForward));
                     Node* child = node->child1().node();
                     if (child->op() != GetLocal)
                         break;
@@ -236,13 +241,6 @@ private:
                     noticeStructureCheck(variable, node->structureSet());
                     break;
                 }
-                    
-                case ForwardCheckStructure:
-                case ForwardStructureTransitionWatchpoint:
-                    // We currently rely on the fact that we're the only ones who would
-                    // insert this node.
-                    RELEASE_ASSERT_NOT_REACHED();
-                    break;
                     
                 case GetByOffset:
                 case PutByOffset:
@@ -329,6 +327,9 @@ private:
                 Node* node = block->at(indexInBlock);
                 switch (node->op()) {
                 case CheckArray: {
+                    // We currently rely on the fact that we're the only ones who would
+                    // insert these nodes with NodeExitsForward.
+                    RELEASE_ASSERT(!(node->flags() & NodeExitsForward));
                     Node* child = node->child1().node();
                     if (child->op() != GetLocal)
                         break;
@@ -340,12 +341,6 @@ private:
                     break;
                 }
 
-                case ForwardCheckArray:
-                    // We currently rely on the fact that we're the only ones who would
-                    // insert this node.
-                    RELEASE_ASSERT_NOT_REACHED();
-                    break;
-                    
                 case CheckStructure:
                 case StructureTransitionWatchpoint:
                 case GetByOffset:

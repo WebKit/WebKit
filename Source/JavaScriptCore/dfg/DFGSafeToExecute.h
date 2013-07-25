@@ -138,7 +138,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ValueToInt32:
     case UInt32ToNumber:
     case Int32ToDouble:
-    case ForwardInt32ToDouble:
     case DoubleAsInt32:
     case ArithAdd:
     case ArithSub:
@@ -158,10 +157,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case PutByIdDirect:
     case CheckStructure:
     case CheckExecutable:
-    case ForwardCheckStructure:
     case GetButterfly:
     case CheckArray:
-    case ForwardCheckArray:
     case Arrayify:
     case ArrayifyToStructure:
     case GetScope:
@@ -232,7 +229,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ThrowReferenceError:
     case CountExecution:
     case ForceOSRExit:
-    case ForwardForceOSRExit:
     case CheckWatchdogTimer:
     case StringFromCharCode:
         return true;
@@ -252,7 +248,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
             graph, node, state.forNode(graph.varArgChild(node, 0)));
 
     case StructureTransitionWatchpoint:
-    case ForwardStructureTransitionWatchpoint:
         return state.forNode(node->child1()).m_futurePossibleStructure.isSubsetOf(
             StructureSet(node->structure()));
         

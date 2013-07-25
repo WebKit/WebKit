@@ -140,7 +140,6 @@ private:
                 return 0;
             switch (otherNode->op()) {
             case Int32ToDouble:
-            case ForwardInt32ToDouble:
                 if (otherNode->child1() == node->child1())
                     return otherNode;
                 break;
@@ -448,14 +447,12 @@ private:
 
             switch (node->op()) {
             case CheckStructure:
-            case ForwardCheckStructure:
                 if (node->child1() == child1
                     && structureSet.isSupersetOf(node->structureSet()))
                     return true;
                 break;
                 
             case StructureTransitionWatchpoint:
-            case ForwardStructureTransitionWatchpoint:
                 if (node->child1() == child1
                     && structureSet.contains(node->structure()))
                     return true;
@@ -507,7 +504,6 @@ private:
 
             switch (node->op()) {
             case CheckStructure:
-            case ForwardCheckStructure:
                 if (node->child1() == child1
                     && node->structureSet().containsOnly(structure))
                     return true;
@@ -532,7 +528,6 @@ private:
                 return false;
                 
             case StructureTransitionWatchpoint:
-            case ForwardStructureTransitionWatchpoint:
                 if (node->structure() == structure && node->child1() == child1)
                     return true;
                 break;
@@ -560,7 +555,6 @@ private:
                 break;
             switch (node->op()) {
             case CheckStructure:
-            case ForwardCheckStructure:
                 return 0;
                 
             case PhantomPutStructure:
@@ -776,7 +770,6 @@ private:
                 break;
                 
             case CheckArray:
-            case ForwardCheckArray:
                 if (node->child1() == child1 && node->arrayMode() == arrayMode)
                     return true;
                 break;
@@ -1104,7 +1097,6 @@ private:
             break;
             
         case Int32ToDouble:
-        case ForwardInt32ToDouble:
             if (cseMode == StoreElimination)
                 break;
             setReplacement(int32ToDoubleCSE(node));
@@ -1305,7 +1297,6 @@ private:
         }
             
         case CheckStructure:
-        case ForwardCheckStructure:
             if (cseMode == StoreElimination)
                 break;
             if (checkStructureElimination(node->structureSet(), node->child1().node()))
@@ -1313,7 +1304,6 @@ private:
             break;
             
         case StructureTransitionWatchpoint:
-        case ForwardStructureTransitionWatchpoint:
             if (cseMode == StoreElimination)
                 break;
             if (structureTransitionWatchpointElimination(node->structure(), node->child1().node()))
@@ -1341,7 +1331,6 @@ private:
             break;
                 
         case CheckArray:
-        case ForwardCheckArray:
             if (cseMode == StoreElimination)
                 break;
             if (checkArrayElimination(node->child1().node(), node->arrayMode()))

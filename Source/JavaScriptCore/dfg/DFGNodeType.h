@@ -97,7 +97,6 @@ namespace JSC { namespace DFG {
     /* Used to cast known integers to doubles, so as to separate the double form */\
     /* of the value from the integer form. */\
     macro(Int32ToDouble, NodeResultNumber) \
-    macro(ForwardInt32ToDouble, NodeResultNumber | NodeExitsForward) \
     /* Used to speculate that a double value is actually an integer. */\
     macro(DoubleAsInt32, NodeResultInt32 | NodeExitsForward) \
     \
@@ -131,7 +130,6 @@ namespace JSC { namespace DFG {
     macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
     macro(CheckStructure, NodeMustGenerate) \
     macro(CheckExecutable, NodeMustGenerate) \
-    macro(ForwardCheckStructure, NodeMustGenerate | NodeExitsForward) \
     /* Transition watchpoints are a contract between the party setting the watchpoint */\
     /* and the runtime system, where the party promises that the child object once had */\
     /* the structure being watched, and the runtime system in turn promises that the */\
@@ -144,14 +142,12 @@ namespace JSC { namespace DFG {
     /* the object's structure does not need to be rechecked due to side-effecting */\
     /* (clobbering) operations. */\
     macro(StructureTransitionWatchpoint, NodeMustGenerate) \
-    macro(ForwardStructureTransitionWatchpoint, NodeMustGenerate | NodeExitsForward) \
     macro(PutStructure, NodeMustGenerate) \
     macro(PhantomPutStructure, NodeMustGenerate | NodeDoesNotExit) \
     macro(AllocatePropertyStorage, NodeMustGenerate | NodeDoesNotExit | NodeResultStorage) \
     macro(ReallocatePropertyStorage, NodeMustGenerate | NodeDoesNotExit | NodeResultStorage) \
     macro(GetButterfly, NodeResultStorage) \
     macro(CheckArray, NodeMustGenerate) \
-    macro(ForwardCheckArray, NodeMustGenerate | NodeExitsForward) \
     macro(Arrayify, NodeMustGenerate) \
     macro(ArrayifyToStructure, NodeMustGenerate) \
     macro(GetIndexedPropertyStorage, NodeResultStorage) \
@@ -262,7 +258,6 @@ namespace JSC { namespace DFG {
     /* this point, but execution does continue in the basic block - just in a */\
     /* different compiler. */\
     macro(ForceOSRExit, NodeMustGenerate) \
-    macro(ForwardForceOSRExit, NodeMustGenerate | NodeExitsForward) \
     \
     /* Checks the watchdog timer. If the timer has fired, we OSR exit to the */ \
     /* baseline JIT to redo the watchdog timer check, and service the timer. */ \
@@ -299,7 +294,6 @@ inline bool needsOSRForwardRewiring(NodeType op)
 {
     switch (op) {
     case Int32ToDouble:
-    case ForwardInt32ToDouble:
     case ValueToInt32:
     case UInt32ToNumber:
     case DoubleAsInt32:

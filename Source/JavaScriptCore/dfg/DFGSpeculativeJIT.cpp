@@ -2488,7 +2488,7 @@ void SpeculativeJIT::compileInt32ToDouble(Node* node)
         MacroAssembler::AboveOrEqual, op1GPR, GPRInfo::tagTypeNumberRegister);
     
     if (needsTypeCheck(node->child1(), SpecNumber)) {
-        if (node->op() == ForwardInt32ToDouble) {
+        if (node->flags() & NodeExitsForward) {
             forwardTypeCheck(
                 JSValueRegs(op1GPR), node->child1(), SpecNumber,
                 m_jit.branchTest64(MacroAssembler::Zero, op1GPR, GPRInfo::tagTypeNumberRegister),
@@ -2519,7 +2519,7 @@ void SpeculativeJIT::compileInt32ToDouble(Node* node)
         MacroAssembler::Equal, op1TagGPR, TrustedImm32(JSValue::Int32Tag));
     
     if (needsTypeCheck(node->child1(), SpecNumber)) {
-        if (node->op() == ForwardInt32ToDouble) {
+        if (node->flags() & NodeExitsForward) {
             forwardTypeCheck(
                 JSValueRegs(op1TagGPR, op1PayloadGPR), node->child1(), SpecNumber,
                 m_jit.branch32(MacroAssembler::AboveOrEqual, op1TagGPR, TrustedImm32(JSValue::LowestTag)),

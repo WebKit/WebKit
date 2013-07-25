@@ -315,11 +315,9 @@ private:
             compileInt32ToDouble();
             break;
         case CheckStructure:
-        case ForwardCheckStructure:
             compileCheckStructure();
             break;
         case StructureTransitionWatchpoint:
-        case ForwardStructureTransitionWatchpoint:
             compileStructureTransitionWatchpoint();
             break;
         case ArrayifyToStructure:
@@ -396,7 +394,6 @@ private:
             compileReturn();
             break;
         case ForceOSRExit:
-        case ForwardForceOSRExit:
             compileForceOSRExit();
             break;
         default:
@@ -2623,7 +2620,6 @@ private:
                         continue;
                     switch (candidate->op()) {
                     case Int32ToDouble:
-                    case ForwardInt32ToDouble:
                         int32ToDouble = candidate;
                         break;
                     case ValueToInt32:

@@ -785,9 +785,7 @@ private:
             
         case CheckExecutable:
         case CheckStructure:
-        case ForwardCheckStructure:
         case StructureTransitionWatchpoint:
-        case ForwardStructureTransitionWatchpoint:
         case CheckFunction:
         case PutById:
         case PutByIdDirect:
@@ -796,8 +794,7 @@ private:
             break;
         }
             
-        case CheckArray:
-        case ForwardCheckArray: {
+        case CheckArray: {
             switch (node->arrayMode().type()) {
             case Array::String:
                 setUseKindAndUnboxIfProfitable<StringUse>(node->child1());
@@ -866,7 +863,6 @@ private:
         case Phi:
         case Upsilon:
         case GetArgument:
-        case ForwardInt32ToDouble:
         case PhantomPutStructure:
         case GetIndexedPropertyStorage:
         case LastNodeType:
@@ -923,7 +919,6 @@ private:
         case ThrowReferenceError:
         case CountExecution:
         case ForceOSRExit:
-        case ForwardForceOSRExit:
         case CheckWatchdogTimer:
             break;
 #else
@@ -1391,9 +1386,10 @@ private:
     void injectInt32ToDoubleNode(Edge& edge, UseKind useKind = NumberUse, SpeculationDirection direction = BackwardSpeculation)
     {
         Node* result = m_insertionSet.insertNode(
-            m_indexInBlock, SpecDouble, 
-            direction == BackwardSpeculation ? Int32ToDouble : ForwardInt32ToDouble,
+            m_indexInBlock, SpecDouble, Int32ToDouble,
             m_currentNode->codeOrigin, Edge(edge.node(), NumberUse));
+        if (direction == ForwardSpeculation)
+            result->mergeFlags(NodeExitsForward);
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLogF(

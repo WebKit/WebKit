@@ -467,7 +467,6 @@ private:
         case PutByValAlias:
         case GetArrayLength:
         case Int32ToDouble:
-        case ForwardInt32ToDouble:
         case DoubleAsInt32:
         case GetLocalUnlinked:
         case GetMyArgumentsLength:
@@ -475,7 +474,6 @@ private:
         case PhantomPutStructure:
         case PhantomArguments:
         case CheckArray:
-        case ForwardCheckArray:
         case Arrayify:
         case ArrayifyToStructure:
         case MovHint:
@@ -529,13 +527,10 @@ private:
         case CheckHasInstance:
         case ThrowReferenceError:
         case ForceOSRExit:
-        case ForwardForceOSRExit:
         case SetArgument:
         case CheckStructure:
         case CheckExecutable:
-        case ForwardCheckStructure:
         case StructureTransitionWatchpoint:
-        case ForwardStructureTransitionWatchpoint:
         case CheckFunction:
         case PutStructure:
         case TearOffActivation:

@@ -1,5 +1,66 @@
 2013-07-21  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: NodeExitsForward shouldn't be duplicated in NodeType
+        https://bugs.webkit.org/show_bug.cgi?id=118956
+
+        Reviewed by Sam Weinig.
+        
+        We had two way of expressing that something exits forward: the NodeExitsForward
+        flag and the word 'Forward' in the NodeType. That's kind of dumb. This patch
+        makes it just be a flag.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::int32ToDoubleCSE):
+        (JSC::DFG::CSEPhase::checkStructureElimination):
+        (JSC::DFG::CSEPhase::structureTransitionWatchpointElimination):
+        (JSC::DFG::CSEPhase::putStructureStoreElimination):
+        (JSC::DFG::CSEPhase::checkArrayElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::injectInt32ToDoubleNode):
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::belongsInMinifiedGraph):
+        (JSC::DFG::MinifiedNode::hasChild):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToStructureTransitionWatchpoint):
+        (JSC::DFG::Node::hasStructureSet):
+        (JSC::DFG::Node::hasStructure):
+        (JSC::DFG::Node::hasArrayMode):
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        (JSC::DFG::needsOSRForwardRewiring):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+
+2013-07-21  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: It should be possible for a DFG::Node to claim to exit to one CodeOrigin, but then claim that it belongs to a different CodeOrigin for all other purposes
         https://bugs.webkit.org/show_bug.cgi?id=118946
 

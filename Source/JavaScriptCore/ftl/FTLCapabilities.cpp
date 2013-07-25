@@ -54,9 +54,7 @@ inline bool canCompile(Node* node)
     case BitLShift:
     case BitURShift:
     case CheckStructure:
-    case ForwardCheckStructure:
     case StructureTransitionWatchpoint:
-    case ForwardStructureTransitionWatchpoint:
     case ArrayifyToStructure:
     case PutStructure:
     case PhantomPutStructure:
@@ -81,7 +79,6 @@ inline bool canCompile(Node* node)
     case CompareStrictEqConstant:
     case Jump:
     case ForceOSRExit:
-    case ForwardForceOSRExit:
     case Phi:
     case Upsilon:
         // These are OK.
@@ -226,7 +223,7 @@ bool canCompile(Graph& graph)
             }
             
             // We don't care if we can compile anything after a force-exit.
-            if (node->op() == ForceOSRExit || node->op() == ForwardForceOSRExit)
+            if (node->op() == ForceOSRExit)
                 break;
         }
     }

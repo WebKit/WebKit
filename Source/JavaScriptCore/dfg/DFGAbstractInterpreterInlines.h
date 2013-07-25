@@ -293,9 +293,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         forNode(node).setType(SpecInt32);
         break;
     }
-
-    case Int32ToDouble:
-    case ForwardInt32ToDouble: {
+        
+    case Int32ToDouble: {
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()
             && trySetConstant(node, JSValue(JSValue::EncodeAsDouble, child.asNumber()))) {
@@ -1244,8 +1243,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         break;
     }
 
-    case CheckStructure:
-    case ForwardCheckStructure: {
+    case CheckStructure: {
         // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
         AbstractValue& value = forNode(node->child1());
         ASSERT(!(value.m_type & ~SpecCell)); // Edge filtering should have already ensured this.
@@ -1274,8 +1272,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         break;
     }
         
-    case StructureTransitionWatchpoint:
-    case ForwardStructureTransitionWatchpoint: {
+    case StructureTransitionWatchpoint: {
         AbstractValue& value = forNode(node->child1());
 
         // It's only valid to issue a structure transition watchpoint if we already
@@ -1307,7 +1304,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
     case ReallocatePropertyStorage:
         forNode(node).clear(); // The result is not a JS value.
         break;
-    case ForwardCheckArray:
     case CheckArray: {
         if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
             m_state.setFoundConstants(true);
@@ -1495,7 +1491,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         break;
 
     case ForceOSRExit:
-    case ForwardForceOSRExit:
         node->setCanExit(true);
         m_state.setIsValid(false);
         break;
