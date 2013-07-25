@@ -51,9 +51,7 @@ macro(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
             set(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -Wno-c++0x-compat")
         endif ()
 
-        if ("${_target}" MATCHES "WebKit2")
-            set(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -std=c++0x")
-        endif ()
+        set(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -std=c++0x")
 
         set_target_properties(${_target} PROPERTIES
             COMPILE_FLAGS "${OLD_COMPILE_FLAGS}")

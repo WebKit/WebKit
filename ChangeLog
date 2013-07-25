@@ -1,3 +1,13 @@
+2013-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Enforce c++0x for cmake based ports
+        https://bugs.webkit.org/show_bug.cgi?id=119081
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/WebKitHelpers.cmake:
+        Enforce c++0x for all cmake based ports to fix build break.
+
 2013-07-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][CMAKE] Fix wrong syntax about option commands
