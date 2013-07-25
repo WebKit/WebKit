@@ -166,29 +166,29 @@ namespace JSC {
 SLOW_PATH_DECL(slow_path_call_arityCheck)
 {
     BEGIN();
-    ExecState* newExec = CommonSlowPaths::arityCheckFor(exec, &vm.interpreter->stack(), CodeForCall);
-    if (!newExec) {
+    int SlotsToAdd = CommonSlowPaths::arityCheckFor(exec, &vm.interpreter->stack(), CodeForCall);
+    if (SlotsToAdd < 0) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
         vm.exception = createStackOverflowError(exec);
         LLInt::interpreterThrowInCaller(exec, returnPC);
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }
-    RETURN_TWO(0, newExec);
+    RETURN_TWO(0, reinterpret_cast<ExecState*>(SlotsToAdd));
 }
 
 SLOW_PATH_DECL(slow_path_construct_arityCheck)
 {
     BEGIN();
-    ExecState* newExec = CommonSlowPaths::arityCheckFor(exec, &vm.interpreter->stack(), CodeForConstruct);
-    if (!newExec) {
+    int SlotsToAdd = CommonSlowPaths::arityCheckFor(exec, &vm.interpreter->stack(), CodeForConstruct);
+    if (SlotsToAdd < 0) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
         vm.exception = createStackOverflowError(exec);
         LLInt::interpreterThrowInCaller(exec, returnPC);
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }
-    RETURN_TWO(0, newExec);
+    RETURN_TWO(0, reinterpret_cast<ExecState*>(SlotsToAdd));
 }
 
 SLOW_PATH_DECL(slow_path_create_arguments)

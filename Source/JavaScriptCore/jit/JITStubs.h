@@ -398,8 +398,8 @@ void JIT_STUB cti_op_throw_static_error(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 #if ENABLE(DFG_JIT)
 void JIT_STUB cti_optimize(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 #endif
-void* JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-void* JIT_STUB cti_op_construct_arityCheck(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+int JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+int JIT_STUB cti_op_construct_arityCheck(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_op_call_jitCompile(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_op_construct_jitCompile(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_op_switch_char(STUB_ARGS_DECLARATION) WTF_INTERNAL;

@@ -70,18 +70,6 @@
 # Below we have a bunch of constant declarations. Each constant must have
 # a corresponding ASSERT() in LLIntData.cpp.
 
-
-# Value representation constants.
-const Int32Tag = -1
-const BooleanTag = -2
-const NullTag = -3
-const UndefinedTag = -4
-const CellTag = -5
-const EmptyValueTag = -6
-const DeletedValueTag = -7
-const LowestTag = DeletedValueTag
-
-
 # Utilities
 macro dispatch(advance)
     addp advance * 4, PC
@@ -320,11 +308,38 @@ macro functionArityCheck(doneLabel, slow_path)
     loadi PayloadOffset + ArgumentCount[cfr], t0
     biaeq t0, CodeBlock::m_numParameters[t1], doneLabel
     cCall2(slow_path, cfr, PC)   # This slow_path has a simple protocol: t0 = 0 => no error, t0 != 0 => error
-    move t1, cfr
-    btiz t0, .continue
+    btiz t0, .isArityFixupNeeded
     loadp JITStackFrame::vm[sp], t1
     loadp VM::callFrameForThrow[t1], t0
     jmp VM::targetMachinePCForThrow[t1]
+.isArityFixupNeeded:
+    btiz t1, .continue
+
+    // Move frame down "t1" slots
+    move cfr, t3
+    subp 8, t3
+    loadi PayloadOffset + ArgumentCount[cfr], t2
+    addi CallFrameHeaderSlots, t2
+.copyLoop:
+    loadi PayloadOffset[t3], t0
+    storei t0, PayloadOffset[t3, t1, 8]
+    loadi TagOffset[t3], t0
+    storei t0, TagOffset[t3, t1, 8]
+    subp 8, t3
+    bsubinz 1, t2, .copyLoop
+
+    // Fill new slots with JSUndefined
+    move t1, t2
+.fillLoop:
+    move 0, t0
+    storei t0, PayloadOffset[t3, t1, 8]
+    move UndefinedTag, t0
+    storei t0, TagOffset[t3, t1, 8]
+    subp 8, t3
+    bsubinz 1, t2, .fillLoop
+
+    lshiftp 3, t1
+    addp t1, cfr
 .continue:
     # Reload CodeBlock and PC, since the slow_path clobbered it.
     loadp CodeBlock[cfr], t1

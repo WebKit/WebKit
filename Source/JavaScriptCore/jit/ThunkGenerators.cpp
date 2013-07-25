@@ -27,6 +27,7 @@
 #include "ThunkGenerators.h"
 
 #include "CodeBlock.h"
+#include "JSStack.h"
 #include "Operations.h"
 #include "SpecializedThunkJIT.h"
 #include <wtf/InlineASM.h>
@@ -416,6 +417,84 @@ MacroAssemblerCodeRef nativeCallGenerator(VM* vm)
 MacroAssemblerCodeRef nativeConstructGenerator(VM* vm)
 {
     return nativeForGenerator(vm, CodeForConstruct);
+}
+
+MacroAssemblerCodeRef arityFixup(VM* vm)
+{
+    JSInterfaceJIT jit;
+
+    // We enter with fixup count in regT0
+#if USE(JSVALUE64)
+#  if CPU(X86_64)
+    jit.pop(JSInterfaceJIT::regT4);
+#  endif
+    jit.addPtr(JSInterfaceJIT::TrustedImm32(-8), JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
+    jit.load32(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, JSStack::ArgumentCount * 8), JSInterfaceJIT::regT2);
+    jit.add32(JSInterfaceJIT::TrustedImm32(JSStack::CallFrameHeaderSize), JSInterfaceJIT::regT2);
+
+    // Move current frame regT0 number of slots
+    JSInterfaceJIT::Label copyLoop(jit.label());
+    jit.load64(JSInterfaceJIT::regT3, JSInterfaceJIT::regT1);
+    jit.store64(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
+    jit.subPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT3);
+    jit.branchSub32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::regT2).linkTo(copyLoop, &jit);
+
+    // Fill in regT0 missing arg slots with undefined
+    jit.move(JSInterfaceJIT::regT0, JSInterfaceJIT::regT2);
+    jit.move(JSInterfaceJIT::TrustedImm64(ValueUndefined), JSInterfaceJIT::regT1);
+    JSInterfaceJIT::Label fillUndefinedLoop(jit.label());
+    jit.store64(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
+    jit.subPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT3);
+    jit.branchSub32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::regT2).linkTo(fillUndefinedLoop, &jit);
+
+    // Adjust call frame register to account for missing args
+    jit.lshift32(JSInterfaceJIT::TrustedImm32(3), JSInterfaceJIT::regT0);
+    jit.addPtr(JSInterfaceJIT::regT0, JSInterfaceJIT::callFrameRegister);
+
+#  if CPU(X86_64)
+    jit.push(JSInterfaceJIT::regT4);
+#  endif
+    jit.ret();
+#else
+#  if CPU(X86)
+    jit.pop(JSInterfaceJIT::regT4);
+#  endif
+    jit.addPtr(JSInterfaceJIT::TrustedImm32(-8), JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
+    jit.load32(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, JSStack::ArgumentCount * 8), JSInterfaceJIT::regT2);
+    jit.add32(JSInterfaceJIT::TrustedImm32(JSStack::CallFrameHeaderSize), JSInterfaceJIT::regT2);
+
+    // Move current frame regT0 number of slots
+    JSInterfaceJIT::Label copyLoop(jit.label());
+    jit.load32(JSInterfaceJIT::regT3, JSInterfaceJIT::regT1);
+    jit.store32(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
+    jit.load32(MacroAssembler::Address(JSInterfaceJIT::regT3, 4), JSInterfaceJIT::regT1);
+    jit.store32(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight, 4));
+    jit.subPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT3);
+    jit.branchSub32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::regT2).linkTo(copyLoop, &jit);
+
+    // Fill in regT0 missing arg slots with undefined
+    jit.move(JSInterfaceJIT::regT0, JSInterfaceJIT::regT2);
+    JSInterfaceJIT::Label fillUndefinedLoop(jit.label());
+    jit.move(JSInterfaceJIT::TrustedImm32(0), JSInterfaceJIT::regT1);
+    jit.store32(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight));
+    jit.move(JSInterfaceJIT::TrustedImm32(JSValue::UndefinedTag), JSInterfaceJIT::regT1);
+    jit.store32(JSInterfaceJIT::regT1, MacroAssembler::BaseIndex(JSInterfaceJIT::regT3, JSInterfaceJIT::regT0, JSInterfaceJIT::TimesEight, 4));
+
+    jit.subPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::regT3);
+    jit.branchSub32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::regT2).linkTo(fillUndefinedLoop, &jit);
+
+    // Adjust call frame register to account for missing args
+    jit.lshift32(JSInterfaceJIT::TrustedImm32(3), JSInterfaceJIT::regT0);
+    jit.addPtr(JSInterfaceJIT::regT0, JSInterfaceJIT::callFrameRegister);
+
+#  if CPU(X86)
+    jit.push(JSInterfaceJIT::regT4);
+#  endif
+    jit.ret();
+#endif
+
+    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
+    return FINALIZE_CODE(patchBuffer, ("fixup arity"));
 }
 
 static void stringCharLoad(SpecializedThunkJIT& jit, VM* vm)

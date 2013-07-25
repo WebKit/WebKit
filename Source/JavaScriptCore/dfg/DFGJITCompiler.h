@@ -520,6 +520,7 @@ private:
     
     Call m_callStackCheck;
     Call m_callArityCheck;
+    Call m_callArityFixup;
     Label m_arityCheck;
     OwnPtr<SpeculativeJIT> m_speculative;
 };

@@ -22,16 +22,6 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 
-# Some value representation constants.
-const TagBitTypeOther = 0x2
-const TagBitBool      = 0x4
-const TagBitUndefined = 0x8
-const ValueEmpty      = 0x0
-const ValueFalse      = TagBitTypeOther | TagBitBool
-const ValueTrue       = TagBitTypeOther | TagBitBool | 1
-const ValueUndefined  = TagBitTypeOther | TagBitUndefined
-const ValueNull       = TagBitTypeOther
-
 # Utilities.
 macro jumpToInstruction()
     jmp [PB, PC, 8]
@@ -205,11 +195,35 @@ macro functionArityCheck(doneLabel, slow_path)
     biaeq t0, CodeBlock::m_numParameters[t1], doneLabel
     prepareStateForCCall()
     cCall2(slow_path, cfr, PC)   # This slow_path has a simple protocol: t0 = 0 => no error, t0 != 0 => error
-    move t1, cfr
-    btiz t0, .continue
+    btiz t0, .isArityFixupNeeded
     loadp JITStackFrame::vm[sp], t1
     loadp VM::callFrameForThrow[t1], t0
     jmp VM::targetMachinePCForThrow[t1]
+.isArityFixupNeeded:
+    btiz t1, .continue
+
+    // Move frame down "t1" slots
+    move cfr, t3
+    subp 8, t3
+    loadi PayloadOffset + ArgumentCount[cfr], t2
+    addi CallFrameHeaderSlots, t2
+.copyLoop:
+    loadq [t3], t0
+    storeq t0, [t3, t1, 8]
+    subp 8, t3
+    bsubinz 1, t2, .copyLoop
+
+    // Fill new slots with JSUndefined
+    move t1, t2
+    move ValueUndefined, t0
+.fillLoop:
+    storeq t0, [t3, t1, 8]
+    subp 8, t3
+    bsubinz 1, t2, .fillLoop
+
+    lshiftp 3, t1
+    addp t1, cfr
+
 .continue:
     # Reload CodeBlock and reset PC, since the slow_path clobbered them.
     loadp CodeBlock[cfr], t1

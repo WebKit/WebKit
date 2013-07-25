@@ -1,5 +1,45 @@
 2013-06-19  Michael Saboff  <msaboff@apple.com>
 
+        fourthTier: Arity fixup should be done while on same stack
+        https://bugs.webkit.org/show_bug.cgi?id=117102
+
+        Reviewed by Oliver Hunt.
+
+        Removed the fixup part of op_call_arityCheck() and op_construct_arityCheck() and moved it to
+        a thunk for the JITs and as assembly for the llint.  This patch provides the plumbing needed to
+        move to the C stack for JS execution.  The fixup thunk and llint code would need to be change to
+        work with a stack that grows down when we do move to the C stack.
+        
+        Due to an issue with the offline assembler, I moved the const at the top of LowLevelInterpreter64.asm
+        and LowLevelInterpreter32_64.asm to LowLevelInterpreter.asm.  The problem is that a const defined in
+        one file that are used in a macro doesn't resolve the const if the macro is used in another file.  This
+        seemed like the quickest path.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::linkFunction):
+        * dfg/DFGJITCompiler.h:
+        (JITCompiler):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::arityFixup):
+        * jit/ThunkGenerators.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+
+2013-06-19  Michael Saboff  <msaboff@apple.com>
+
         FTL: arm build is broken in ToT
         https://bugs.webkit.org/show_bug.cgi?id=117800
 

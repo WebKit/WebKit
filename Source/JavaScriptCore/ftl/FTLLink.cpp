@@ -120,12 +120,14 @@ void link(State& state)
     // FIXME: need to make this call register with exception handling somehow. This is
     // part of a bigger problem: FTL should be able to handle exceptions.
     // https://bugs.webkit.org/show_bug.cgi?id=113622
-    jit.move(GPRInfo::regT0, GPRInfo::callFrameRegister);
+    jit.branchTest32(CCallHelpers::Zero, GPRInfo::regT0).linkTo(fromArityCheck, &jit);
+    CCallHelpers::Call callArityFixup = jit.call();
     jit.jump(fromArityCheck);
         
     OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(state.graph.m_vm, &jit, codeBlock, JITCompilationMustSucceed));
     linkBuffer->link(callStackCheck, cti_stack_check);
     linkBuffer->link(callArityCheck, codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
+    linkBuffer->link(callArityFixup, FunctionPtr((state.graph.m_vm.getCTIStub(arityFixup)).code().executableAddress()));
     
     state.finalizer->initializeEntrypointLinkBuffer(linkBuffer.release());
     state.finalizer->initializeFunction(state.generatedFunction);

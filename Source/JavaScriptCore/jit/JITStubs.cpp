@@ -1222,32 +1222,32 @@ DEFINE_STUB_FUNCTION(void*, op_construct_jitCompile)
     return result;
 }
 
-DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
+DEFINE_STUB_FUNCTION(int, op_call_arityCheck)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    CallFrame* newCallFrame = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.stack, CodeForCall);
-    if (!newCallFrame) {
+    int missingArgCount = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.stack, CodeForCall);
+    if (missingArgCount < 0) {
         ErrorWithExecFunctor functor = ErrorWithExecFunctor(createStackOverflowError);
-        return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, functor);
+        return throwExceptionFromOpCall<int>(stackFrame, callFrame, STUB_RETURN_ADDRESS, functor);
     }
-    return newCallFrame;
+    return missingArgCount;
 }
 
-DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
+DEFINE_STUB_FUNCTION(int, op_construct_arityCheck)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    CallFrame* newCallFrame = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.stack, CodeForConstruct);
-    if (!newCallFrame) {
+    int missingArgCount = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.stack, CodeForConstruct);
+    if (missingArgCount < 0) {
         ErrorWithExecFunctor functor = ErrorWithExecFunctor(createStackOverflowError);
-        return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, functor);
+        return throwExceptionFromOpCall<int>(stackFrame, callFrame, STUB_RETURN_ADDRESS, functor);
     }
-    return newCallFrame;
+    return missingArgCount;
 }
 
 inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)

@@ -387,7 +387,10 @@ void JITCompiler::compileFunction()
     beginCall(CodeOrigin(0), token);
     m_callArityCheck = call();
     notifyCall(m_callArityCheck, CodeOrigin(0), token);
-    move(GPRInfo::regT0, GPRInfo::callFrameRegister);
+    branchTest32(Zero, GPRInfo::regT0).linkTo(fromArityCheck, this);
+    beginCall(CodeOrigin(0), token);
+    m_callArityFixup = call();
+    notifyCall(m_callArityFixup, CodeOrigin(0), token);
     jump(fromArityCheck);
     
     // Generate slow path code.
@@ -418,6 +421,7 @@ void JITCompiler::linkFunction()
     // FIXME: switch the stack check & arity check over to DFGOpertaion style calls, not JIT stubs.
     linkBuffer->link(m_callStackCheck, cti_stack_check);
     linkBuffer->link(m_callArityCheck, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
+    linkBuffer->link(m_callArityFixup, FunctionPtr((m_vm->getCTIStub(arityFixup)).code().executableAddress()));
     
     disassemble(*linkBuffer);
     

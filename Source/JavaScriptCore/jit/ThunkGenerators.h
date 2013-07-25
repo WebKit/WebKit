@@ -39,6 +39,7 @@ MacroAssemblerCodeRef virtualConstructGenerator(VM*);
 MacroAssemblerCodeRef stringLengthTrampolineGenerator(VM*);
 MacroAssemblerCodeRef nativeCallGenerator(VM*);
 MacroAssemblerCodeRef nativeConstructGenerator(VM*);
+MacroAssemblerCodeRef arityFixup(VM*);
 
 MacroAssemblerCodeRef charCodeAtThunkGenerator(VM*);
 MacroAssemblerCodeRef charAtThunkGenerator(VM*);

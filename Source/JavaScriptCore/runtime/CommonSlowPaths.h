@@ -45,36 +45,22 @@ namespace JSC {
 
 namespace CommonSlowPaths {
 
-ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializationKind kind)
+ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializationKind kind)
 {
     JSFunction* callee = jsCast<JSFunction*>(exec->callee());
     ASSERT(!callee->isHostFunction());
     CodeBlock* newCodeBlock = &callee->jsExecutable()->generatedBytecodeFor(kind);
     int argumentCountIncludingThis = exec->argumentCountIncludingThis();
-
+    
     // This ensures enough space for the worst case scenario of zero arguments passed by the caller.
     if (!stack->grow(exec->registers() + newCodeBlock->numParameters() + newCodeBlock->m_numCalleeRegisters))
-        return 0;
-
+        return -1;
+    
     ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());
-
-    // Too few arguments -- copy call frame and arguments, then fill in missing arguments with undefined.
-    size_t delta = newCodeBlock->numParameters() - argumentCountIncludingThis;
-    Register* src = exec->registers();
-    Register* dst = exec->registers() + delta;
-
-    int i;
-    int end = -ExecState::offsetFor(argumentCountIncludingThis);
-    for (i = -1; i >= end; --i)
-        dst[i] = src[i];
-
-    end -= delta;
-    for ( ; i >= end; --i)
-        dst[i] = jsUndefined();
-
-    ExecState* newExec = ExecState::create(dst);
-    ASSERT((void*)newExec <= stack->end());
-    return newExec;
+    
+    // Too few arguments, return the number of missing arguments so the caller can
+    // grow the frame in place and fill in undefined values for the missing args.
+    return(newCodeBlock->numParameters() - argumentCountIncludingThis);
 }
 
 inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)

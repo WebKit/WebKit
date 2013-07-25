@@ -32,6 +32,7 @@ end
 
 # These declarations must match interpreter/JSStack.h.
 const CallFrameHeaderSize = 48
+const CallFrameHeaderSlots = 6
 const ArgumentCount = -48
 const CallerFrame = -40
 const Callee = -32
@@ -40,6 +41,27 @@ const ReturnPC = -16
 const CodeBlock = -8
 
 const ThisArgumentOffset = -CallFrameHeaderSize - 8
+
+# Some value representation constants.
+if JSVALUE64
+const TagBitTypeOther = 0x2
+const TagBitBool      = 0x4
+const TagBitUndefined = 0x8
+const ValueEmpty      = 0x0
+const ValueFalse      = TagBitTypeOther | TagBitBool
+const ValueTrue       = TagBitTypeOther | TagBitBool | 1
+const ValueUndefined  = TagBitTypeOther | TagBitUndefined
+const ValueNull       = TagBitTypeOther
+else
+const Int32Tag = -1
+const BooleanTag = -2
+const NullTag = -3
+const UndefinedTag = -4
+const CellTag = -5
+const EmptyValueTag = -6
+const DeletedValueTag = -7
+const LowestTag = DeletedValueTag
+end
 
 # Some register conventions.
 if JSVALUE64
