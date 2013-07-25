@@ -100,6 +100,7 @@ bool canCompile(Graph& graph)
             case ArithNegate:
             case UInt32ToNumber:
             case Int32ToDouble:
+            case CompareEqConstant:
                 // These are OK.
                 break;
             case GetArrayLength:

@@ -364,6 +364,9 @@ private:
         case CompareEq:
             compileCompareEq();
             break;
+        case CompareEqConstant:
+            compileCompareEqConstant();
+            break;
         case CompareStrictEq:
             compileCompareStrictEq();
             break;
@@ -965,6 +968,62 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
+    void compileCompareEqConstant()
+    {
+        ASSERT(m_graph.valueOfJSConstant(m_node->child2().node()).isNull());
+        
+        bool validWatchpoint = masqueradesAsUndefinedWatchpointIfIsStillValid();
+        
+        LValue value = lowJSValue(m_node->child1());
+        
+        LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("CompareEqConstant cell case"));
+        LBasicBlock primitiveCase = FTL_NEW_BLOCK(m_out, ("CompareEqConstant primitive case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CompareEqConstant continuation"));
+        
+        m_out.branch(isNotCell(value), primitiveCase, cellCase);
+        
+        LBasicBlock lastNext = m_out.appendTo(cellCase, primitiveCase);
+        
+        Vector<ValueFromBlock, 3> results;
+        
+        if (validWatchpoint) {
+            results.append(m_out.anchor(m_out.booleanFalse));
+            m_out.jump(continuation);
+        } else {
+            LBasicBlock masqueradesCase =
+                FTL_NEW_BLOCK(m_out, ("CompareEqConstant masquerades case"));
+                
+            LValue structure = m_out.loadPtr(value, m_heaps.JSCell_structure);
+            
+            results.append(m_out.anchor(m_out.booleanFalse));
+            
+            m_out.branch(
+                m_out.testNonZero8(
+                    m_out.load8(structure, m_heaps.Structure_typeInfoFlags),
+                    m_out.constInt8(MasqueradesAsUndefined)),
+                masqueradesCase, continuation);
+            
+            m_out.appendTo(masqueradesCase, primitiveCase);
+            
+            results.append(m_out.anchor(
+                m_out.equal(
+                    m_out.constIntPtr(m_graph.globalObjectFor(m_node->codeOrigin)),
+                    m_out.loadPtr(structure, m_heaps.Structure_globalObject))));
+            m_out.jump(continuation);
+        }
+        
+        m_out.appendTo(primitiveCase, continuation);
+        
+        results.append(m_out.anchor(m_out.equal(
+            m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
+            m_out.constInt64(ValueNull))));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        
+        m_booleanValues.add(m_node, m_out.phi(m_out.boolean, results));
+    }
+    
     void compileCompareStrictEq()
     {
         if (m_node->isBinaryUseKind(Int32Use)) {
@@ -1264,8 +1323,8 @@ private:
             
             LBasicBlock lastNext = m_out.appendTo(intCase, doubleCase);
             
-            LValue intToDouble = m_out.intToDouble(unboxInt32(boxedResult));
-            LBasicBlock intToDoubleBlock = m_out.m_block;
+            ValueFromBlock intToDouble = m_out.anchor(
+                m_out.intToDouble(unboxInt32(boxedResult)));
             m_out.jump(continuation);
             
             m_out.appendTo(doubleCase, continuation);
@@ -1273,16 +1332,12 @@ private:
             FTL_TYPE_CHECK(
                 jsValueValue(boxedResult), edge, SpecNumber, isCellOrMisc(boxedResult));
             
-            LValue unboxedDouble = unboxDouble(boxedResult);
-            LBasicBlock unboxedDoubleBlock = m_out.m_block;
+            ValueFromBlock unboxedDouble = m_out.anchor(unboxDouble(boxedResult));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
             
-            LValue result = m_out.phi(
-                m_out.doubleType,
-                intToDouble, intToDoubleBlock,
-                unboxedDouble, unboxedDoubleBlock);
+            LValue result = m_out.phi(m_out.doubleType, intToDouble, unboxedDouble);
             
             m_doubleValues.add(edge.node(), result);
             return result;
@@ -1484,13 +1539,14 @@ private:
         return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_node->codeOrigin);
     }
     
-    void masqueradesAsUndefinedWatchpointIfIsStillValid()
+    bool masqueradesAsUndefinedWatchpointIfIsStillValid()
     {
         if (!masqueradesAsUndefinedWatchpointIsStillValid())
-            return;
+            return false;
         
         // FIXME: Implement masquerades-as-undefined watchpoints.
         // https://bugs.webkit.org/show_bug.cgi?id=113647
+        return true;
     }
     
     bool isLive(Node* node)

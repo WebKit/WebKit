@@ -30,7 +30,8 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLLLVMHeaders.h"
+#include "FTLAbbreviatedTypes.h"
+#include "FTLValueFromBlock.h"
 
 namespace JSC { namespace FTL {
 
@@ -42,16 +43,6 @@ namespace JSC { namespace FTL {
 #if USE(JSVALUE32_64)
 #error "The FTL backend assumes that pointers are 64-bit."
 #endif
-
-typedef LLVMBasicBlockRef LBasicBlock;
-typedef LLVMBuilderRef LBuilder;
-typedef LLVMCallConv LCallConv;
-typedef LLVMIntPredicate LIntPredicate;
-typedef LLVMRealPredicate LRealPredicate;
-typedef LLVMLinkage LLinkage;
-typedef LLVMModuleRef LModule;
-typedef LLVMTypeRef LType;
-typedef LLVMValueRef LValue;
 
 static inline LType voidType() { return LLVMVoidType(); }
 static inline LType int1Type() { return LLVMInt1Type(); }
@@ -149,34 +140,29 @@ static inline void addIncoming(LValue phi, const LValue* values, const LBasicBlo
 {
     LLVMAddIncoming(phi, const_cast<LValue*>(values), const_cast<LBasicBlock*>(blocks), numPredecessors);
 }
-template<typename ValueVectorType, typename BlockVectorType>
-static inline void addIncoming(LValue phi, const ValueVectorType& values, const BlockVectorType& blocks)
+static inline void addIncoming(LValue phi, ValueFromBlock value1)
 {
-    ASSERT(values.size() == blocks.size());
-    addIncoming(phi, values.begin(), blocks.begin(), values.size());
+    LValue value = value1.value();
+    LBasicBlock block = value1.block();
+    addIncoming(phi, &value, &block, 1);
 }
-static inline void addIncoming(LValue phi, LValue value1, LBasicBlock block1)
+static inline void addIncoming(LValue phi, ValueFromBlock value1, ValueFromBlock value2)
 {
-    addIncoming(phi, &value1, &block1, 1);
-}
-static inline void addIncoming(LValue phi, LValue value1, LBasicBlock block1, LValue value2, LBasicBlock block2)
-{
-    LValue values[] = { value1, value2 };
-    LBasicBlock blocks[] = { block1, block2 };
+    LValue values[] = { value1.value(), value2.value() };
+    LBasicBlock blocks[] = { value1.block(), value2.block() };
     addIncoming(phi, values, blocks, 2);
 }
-static inline LValue buildPhi(LBuilder builder, LType type, LValue value1, LBasicBlock block1)
+static inline LValue buildPhi(LBuilder builder, LType type, ValueFromBlock value1)
 {
     LValue result = buildPhi(builder, type);
-    addIncoming(result, value1, block1);
+    addIncoming(result, value1);
     return result;
 }
 static inline LValue buildPhi(
-    LBuilder builder, LType type, LValue value1, LBasicBlock block1, LValue value2,
-    LBasicBlock block2)
+    LBuilder builder, LType type, ValueFromBlock value1, ValueFromBlock value2)
 {
     LValue result = buildPhi(builder, type);
-    addIncoming(result, value1, block1, value2, block2);
+    addIncoming(result, value1, value2);
     return result;
 }
 

@@ -113,13 +113,21 @@ public:
     LValue constDouble(double value) { return constReal(doubleType, value); }
     
     LValue phi(LType type) { return buildPhi(m_builder, type); }
-    LValue phi(LType type, LValue value1, LBasicBlock block1)
+    LValue phi(LType type, ValueFromBlock value1)
     {
-        return buildPhi(m_builder, type, value1, block1);
+        return buildPhi(m_builder, type, value1);
     }
-    LValue phi(LType type, LValue value1, LBasicBlock block1, LValue value2, LBasicBlock block2)
+    LValue phi(LType type, ValueFromBlock value1, ValueFromBlock value2)
     {
-        return buildPhi(m_builder, type, value1, block1, value2, block2);
+        return buildPhi(m_builder, type, value1, value2);
+    }
+    template<typename VectorType>
+    LValue phi(LType type, const VectorType& vector)
+    {
+        LValue result = phi(type);
+        for (unsigned i = 0; i < vector.size(); ++i)
+            addIncoming(result, vector[i]);
+        return result;
     }
     
     LValue add(LValue left, LValue right) { return buildAdd(m_builder, left, right); }
@@ -310,6 +318,11 @@ public:
     void ret(LValue value) { buildRet(m_builder, value); }
     
     void unreachable() { buildUnreachable(m_builder); }
+    
+    ValueFromBlock anchor(LValue value)
+    {
+        return ValueFromBlock(value, m_block);
+    }
     
     LValue m_function;
     AbstractHeapRepository* m_heaps;

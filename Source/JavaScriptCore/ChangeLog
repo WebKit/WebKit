@@ -1,5 +1,45 @@
 2013-05-10  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: FTL should support CompareEqConstant
+        https://bugs.webkit.org/show_bug.cgi?id=115939
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+        
+        The most interesting part of this patch is the way I make it easier to deal with
+        the inputs to Phi functions. This adds the notion of ValueFromBlock, which you
+        can get by doing m_out.anchor(value). You can build up a vector of these, and then
+        pass them to m_out.phi(type, vector) in one go.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * ftl/FTLAbbreviatedTypes.h: Added.
+        (FTL):
+        * ftl/FTLAbbreviations.h:
+        (FTL):
+        (JSC::FTL::addIncoming):
+        (JSC::FTL::buildPhi):
+        * ftl/FTLAbstractHeapRepository.h:
+        (FTL):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEqConstant):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lowDouble):
+        (JSC::FTL::LowerDFGToLLVM::masqueradesAsUndefinedWatchpointIfIsStillValid):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::phi):
+        (Output):
+        (JSC::FTL::Output::anchor):
+        * ftl/FTLValueFromBlock.h: Added.
+        (FTL):
+        (ValueFromBlock):
+        (JSC::FTL::ValueFromBlock::ValueFromBlock):
+        (JSC::FTL::ValueFromBlock::value):
+        (JSC::FTL::ValueFromBlock::block):
+
+2013-05-10  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should support CompareStrictEq
         https://bugs.webkit.org/show_bug.cgi?id=115927
 
