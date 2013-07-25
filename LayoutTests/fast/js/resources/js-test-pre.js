@@ -570,6 +570,23 @@ function gc() {
     }
 }
 
+function dfgCompiled(argument)
+{
+    var numberOfCompiles = "compiles" in argument ? argument.compiles : 1;
+    
+    if (argument.f instanceof Array) {
+        for (var i = 0; i < argument.f.length; ++i) {
+            if (testRunner.numberOfDFGCompiles(argument.f[i]) < numberOfCompiles)
+                return false;
+        }
+    } else {
+        if (testRunner.numberOfDFGCompiles(argument.f) < numberOfCompiles)
+            return false;
+    }
+    
+    return true;
+}
+
 function dfgIncrement(argument)
 {
     if (!self.testRunner)
@@ -578,17 +595,8 @@ function dfgIncrement(argument)
     if (argument.i < argument.n)
         return argument.i;
     
-    var numberOfCompiles = "compiles" in argument ? argument.compiles : 1;
-    
-    if (argument.f instanceof Array) {
-        for (var i = 0; i < argument.f.length; ++i) {
-            if (testRunner.numberOfDFGCompiles(argument.f[i]) < numberOfCompiles)
-                return 0;
-        }
-    } else {
-        if (testRunner.numberOfDFGCompiles(argument.f) < numberOfCompiles)
-            return 0;
-    }
+    if (!dfgCompiled(argument))
+        return 0;
     
     return argument.i;
 }

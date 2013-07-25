@@ -1,5 +1,23 @@
 2013-05-28  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: convert more fast/js/dfg-* tests to wait for the concurrent JIT
+
+        Rubber stamped by Oliver Hunt.
+
+        * fast/js/dfg-abs-backwards-propagation-expected.txt:
+        * fast/js/dfg-add-not-number-expected.txt:
+        * fast/js/dfg-arguments-alias-escape-expected.txt:
+        * fast/js/resources/js-test-pre.js:
+        (dfgCompiled):
+        (dfgIncrement):
+        * fast/js/script-tests/dfg-abs-backwards-propagation.js:
+        * fast/js/script-tests/dfg-add-not-number.js:
+        * fast/js/script-tests/dfg-arguments-alias-escape.js:
+        * fast/js/script-tests/dfg-arguments-alias-one-block-osr-exit.js:
+        * fast/js/script-tests/dfg-arguments-alias-one-block-overwrite-arguments.js:
+
+2013-05-28  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: fast/js should have a way of running tests long enough to wait for the concurrent JIT to tier up
         https://bugs.webkit.org/show_bug.cgi?id=116878
 

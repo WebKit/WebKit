@@ -7,6 +7,15 @@ function foo() {
     return args[0] + args[1] + args[2];
 }
 
+noInline(foo);
+
+while (!dfgCompiled({f:foo})) {
+    var a = i;
+    var b = i + 1;
+    var c = i + 3;
+    foo(a, b, c);
+}
+
 var result = "";
 for (var i = 0; i < 300; ++i) {
     var a;

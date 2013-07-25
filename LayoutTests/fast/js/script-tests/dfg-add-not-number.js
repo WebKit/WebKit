@@ -7,6 +7,9 @@ function foo(a) {
     return a;
 }
 
-for (var i = 0; i < 100; ++i)
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 100; i = dfgIncrement({f:foo, i:i + 1, n:50}))
     shouldBe("foo(\"foo\" + i)", "NaN");
 
