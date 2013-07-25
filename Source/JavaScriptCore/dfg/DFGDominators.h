@@ -49,7 +49,7 @@ public:
     bool dominates(BlockIndex from, BlockIndex to) const
     {
         ASSERT(isValid());
-        return m_results[from].get(to);
+        return m_results[to].get(from);
     }
     
     bool dominates(BasicBlock* from, BasicBlock* to) const
@@ -57,10 +57,12 @@ public:
         return dominates(from->index, to->index);
     }
     
+    void dump(Graph& graph, PrintStream&) const;
+    
 private:
     bool iterateForBlock(Graph& graph, BlockIndex);
     
-    Vector<FastBitVector> m_results;
+    Vector<FastBitVector> m_results; // For each block, the bitvector of blocks that dominate it.
     FastBitVector m_scratch;
 };
 

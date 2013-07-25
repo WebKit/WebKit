@@ -100,6 +100,22 @@ bool Dominators::iterateForBlock(Graph& graph, BlockIndex i)
     return m_results[i].setAndCheck(m_scratch);
 }
 
+void Dominators::dump(Graph& graph, PrintStream& out) const
+{
+    for (BlockIndex blockIndex = 0; blockIndex < graph.numBlocks(); ++blockIndex) {
+        BasicBlock* block = graph.block(blockIndex);
+        if (!block)
+            continue;
+        out.print("    Block ", *block, ":");
+        for (BlockIndex otherIndex = 0; otherIndex < graph.numBlocks(); ++otherIndex) {
+            if (!dominates(block->index, otherIndex))
+                continue;
+            out.print(" #", otherIndex);
+        }
+        out.print("\n");
+    }
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

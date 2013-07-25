@@ -58,6 +58,11 @@ void NaturalLoops::compute(Graph& graph)
     
     graph.m_dominators.computeIfNecessary(graph);
     
+    if (verbose) {
+        dataLog("Dominators:\n");
+        graph.m_dominators.dump(graph, WTF::dataFile());
+    }
+    
     m_loops.resize(0);
     
     for (BlockIndex blockIndex = graph.numBlocks(); blockIndex--;) {
@@ -71,9 +76,10 @@ void NaturalLoops::compute(Graph& graph)
                 continue;
             bool found = false;
             for (unsigned j = m_loops.size(); j--;) {
-                if (m_loops[i].header() == successor) {
-                    m_loops[i].addBlock(block);
+                if (m_loops[j].header() == successor) {
+                    m_loops[j].addBlock(block);
                     found = true;
+                    break;
                 }
             }
             if (found)

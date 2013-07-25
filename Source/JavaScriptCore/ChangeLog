@@ -1,5 +1,30 @@
 2013-07-08  Filip Pizlo  <fpizlo@apple.com>
 
+        NaturalLoops + Profiler = Crash
+        https://bugs.webkit.org/show_bug.cgi?id=118486
+
+        Reviewed by Geoffrey Garen.
+        
+        I borked dominators in:
+        http://trac.webkit.org/changeset/152431/branches/dfgFourthTier/Source/JavaScriptCore/dfg/DFGDominators.h
+        
+        This patch also adds some debug support, and fixes the loop that adds a block to
+        an already-existing natural loop. Note that we currently don't take that path in
+        most programs, but it will arise, for example if you use 'continue' - though you'd
+        have to use it rather cleverly since the bytecode will not jump to the loop header
+        in most uses of 'continue'.
+
+        * dfg/DFGDominators.cpp:
+        (JSC::DFG::Dominators::dump):
+        (DFG):
+        * dfg/DFGDominators.h:
+        (JSC::DFG::Dominators::dominates):
+        (Dominators):
+        * dfg/DFGNaturalLoops.cpp:
+        (JSC::DFG::NaturalLoops::compute):
+
+2013-07-08  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: DFG::AbstractState::beginBasicBlock() should set m_haveStructures if any of the valuesAtHead have either a current known structure or a non-top/non-bottom array modes
         https://bugs.webkit.org/show_bug.cgi?id=118489
 
