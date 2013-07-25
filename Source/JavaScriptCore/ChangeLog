@@ -1,3 +1,17 @@
+2013-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed, build fix on the EFL port.
+
+        * CMakeLists.txt:
+        Added SourceCode.cpp and removed BlackBerry file.
+        * jit/JITCode.h:
+        (JSC::JITCode::nextTierJIT):
+        Fixed to build break because of -Werror=return-type
+        * parser/Lexer.cpp: Includes JSFunctionInlines.h
+        * runtime/JSScope.h:
+        (JSC::makeType):
+        Fixed to build break because of -Werror=return-type
+
 2013-07-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         Unreviewed build fixing after FTL upstream.

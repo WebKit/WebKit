@@ -242,6 +242,7 @@ set(JavaScriptCore_SOURCES
     parser/Nodes.cpp
     parser/Parser.cpp
     parser/ParserArena.cpp
+    parser/SourceCode.cpp
     parser/SourceProvider.cpp
     parser/SourceProviderCache.cpp
 
@@ -292,7 +293,6 @@ set(JavaScriptCore_SOURCES
     runtime/FunctionExecutableDump.cpp
     runtime/FunctionPrototype.cpp
     runtime/GCActivityCallback.cpp
-    runtime/GCActivityCallbackBlackBerry.cpp
     runtime/GetterSetter.cpp
     runtime/Identifier.cpp
     runtime/IndexingType.cpp

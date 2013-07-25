@@ -71,6 +71,9 @@ inline ResolveType makeType(ResolveType type, bool needsVarInjectionChecks)
     case Dynamic:
         return type;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return type;
 }
 
 inline bool needsVarInjectionChecks(ResolveType type)

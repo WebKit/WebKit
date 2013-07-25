@@ -76,6 +76,7 @@ public:
             return FTLJIT;
         default:
             RELEASE_ASSERT_NOT_REACHED();
+            return None;
         }
     }
     

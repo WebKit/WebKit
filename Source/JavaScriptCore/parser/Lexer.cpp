@@ -25,7 +25,7 @@
 #include "config.h"
 #include "Lexer.h"
 
-#include "JSFunction.h"
+#include "JSFunctionInlines.h"
 
 #include "JSGlobalObjectFunctions.h"
 #include "Identifier.h"
