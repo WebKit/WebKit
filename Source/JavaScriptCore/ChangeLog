@@ -1,5 +1,21 @@
 2013-06-26  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: FTL should support ArrayifyToStructure
+        https://bugs.webkit.org/show_bug.cgi?id=118095
+
+        Reviewed by Mark Hahnenberg.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        (FTL):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileArrayifyToStructure):
+        (LowerDFGToLLVM):
+
+2013-06-26  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should support ForwardCheckStructure/ForwardStructureTransitionWatchpoint and doing so shouldn't break V8/crypto
         https://bugs.webkit.org/show_bug.cgi?id=118091
 

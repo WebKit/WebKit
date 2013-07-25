@@ -57,6 +57,7 @@ inline bool canCompile(Node* node)
     case ForwardCheckStructure:
     case StructureTransitionWatchpoint:
     case ForwardStructureTransitionWatchpoint:
+    case ArrayifyToStructure:
     case PutStructure:
     case PhantomPutStructure:
     case GetButterfly:

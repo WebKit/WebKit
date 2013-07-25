@@ -43,7 +43,8 @@ namespace JSC { namespace FTL {
     macro(doubleAbs, "llvm.fabs.f64", functionType(doubleType, doubleType))
 
 #define FOR_EACH_FUNCTION_TYPE(macro) \
-    macro(I_DFGOperation_EJss, functionType(intPtr, intPtr, intPtr))
+    macro(I_DFGOperation_EJss, functionType(intPtr, intPtr, intPtr)) \
+    macro(P_DFGOperation_EC, functionType(intPtr, intPtr, intPtr))
 
 class IntrinsicRepository : public CommonValues {
 public:

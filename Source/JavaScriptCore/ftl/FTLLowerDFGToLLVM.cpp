@@ -360,6 +360,9 @@ private:
         case ForwardStructureTransitionWatchpoint:
             compileStructureTransitionWatchpoint();
             break;
+        case ArrayifyToStructure:
+            compileArrayifyToStructure();
+            break;
         case PutStructure:
             compilePutStructure();
             break;
@@ -1133,6 +1136,67 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=113647
         
         speculateCell(m_node->child1());
+    }
+    
+    void compileArrayifyToStructure()
+    {
+        LValue cell = lowCell(m_node->child1());
+        LValue property = !!m_node->child2() ? lowInt32(m_node->child2()) : 0;
+        
+        LBasicBlock unexpectedStructure = FTL_NEW_BLOCK(m_out, ("ArrayifyToStructure unexpected structure"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArrayifyToStructure continuation"));
+        
+        LValue structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
+        
+        m_out.branch(
+            m_out.notEqual(structure, weakPointer(m_node->structure())),
+            unexpectedStructure, continuation);
+        
+        LBasicBlock lastNext = m_out.appendTo(unexpectedStructure, continuation);
+        
+        if (property) {
+            switch (m_node->arrayMode().type()) {
+            case Array::Int32:
+            case Array::Double:
+            case Array::Contiguous:
+                speculate(
+                    Uncountable, noValue(), 0,
+                    m_out.aboveOrEqual(property, m_out.constInt32(MIN_SPARSE_ARRAY_INDEX)));
+                break;
+            default:
+                break;
+            }
+        }
+        
+        switch (m_node->arrayMode().type()) {
+        case Array::Int32:
+            vmCall(m_out.operation(operationEnsureInt32), m_callFrame, cell);
+            break;
+        case Array::Double:
+            vmCall(m_out.operation(operationEnsureDouble), m_callFrame, cell);
+            break;
+        case Array::Contiguous:
+            if (m_node->arrayMode().conversion() == Array::RageConvert)
+                vmCall(m_out.operation(operationRageEnsureContiguous), m_callFrame, cell);
+            else
+                vmCall(m_out.operation(operationEnsureContiguous), m_callFrame, cell);
+            break;
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
+            vmCall(m_out.operation(operationEnsureArrayStorage), m_callFrame, cell);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        
+        structure = m_out.loadPtr(cell, m_heaps.JSCell_structure);
+        speculate(
+            BadIndexingType, jsValueValue(cell), 0,
+            m_out.notEqual(structure, weakPointer(m_node->structure())));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
     }
     
     void compilePutStructure()
