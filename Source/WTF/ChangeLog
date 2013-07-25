@@ -1,3 +1,23 @@
+2013-06-24  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Count external memory usage towards heap footprint
+        https://bugs.webkit.org/show_bug.cgi?id=117948
+
+        Reviewed by Geoffrey Garen.
+
+        Expose some functionality needed for properly measuring StringImpl footprint.
+
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwapSize):
+        (WTF):
+        * wtf/MathExtras.h:
+        (divideRoundedUp):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::cost):
+        (StringImpl):
+        (WTF::StringImpl::costDuringGC):
+        (WTF::StringImpl::refCount):
+
 2013-06-23  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should optimize identifier string equality

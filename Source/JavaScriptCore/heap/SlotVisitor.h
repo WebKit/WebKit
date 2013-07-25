@@ -85,6 +85,8 @@ public:
 
     void copyLater(JSCell*, void*, size_t);
     
+    void reportExtraMemoryUsage(size_t size);
+    
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     VTableSpectrum m_visitedTypeCounts;
 #endif

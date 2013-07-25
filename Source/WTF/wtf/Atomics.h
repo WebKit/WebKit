@@ -203,6 +203,11 @@ inline bool weakCompareAndSwapUIntPtr(volatile uintptr_t* location, uintptr_t ex
     return weakCompareAndSwap(reinterpret_cast<void*volatile*>(location), reinterpret_cast<void*>(expected), reinterpret_cast<void*>(newValue));
 }
 
+inline bool weakCompareAndSwapSize(volatile size_t* location, size_t expected, size_t newValue)
+{
+    return weakCompareAndSwap(reinterpret_cast<void*volatile*>(location), reinterpret_cast<void*>(expected), reinterpret_cast<void*>(newValue));
+}
+
 // Just a compiler fence. Has no effect on the hardware, but tells the compiler
 // not to move things around this call. Should not affect the compiler's ability
 // to do things like register allocation and code motion over pure operations.

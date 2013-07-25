@@ -254,6 +254,7 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_blockAllocator()
     , m_objectSpace(this)
     , m_storageSpace(this)
+    , m_extraMemoryUsage(0)
     , m_machineThreads(this)
     , m_sharedData(vm)
     , m_slotVisitor(m_sharedData)
@@ -622,7 +623,7 @@ size_t Heap::objectCount()
 
 size_t Heap::size()
 {
-    return m_objectSpace.size() + m_storageSpace.size();
+    return m_objectSpace.size() + m_storageSpace.size() + m_extraMemoryUsage;
 }
 
 size_t Heap::capacity()
@@ -721,6 +722,7 @@ void Heap::collect(SweepToggle sweepToggle)
     m_deferralDepth--; // Decrement deferal manually, so we don't GC when we do so, since we are already GCing!.
     
     m_operationInProgress = Collection;
+    m_extraMemoryUsage = 0;
 
     m_activityCallback->willCollect();
 

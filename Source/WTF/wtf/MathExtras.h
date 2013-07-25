@@ -336,6 +336,11 @@ template <typename T> inline unsigned getLSBSet(T value)
     return result;
 }
 
+template<typename T> inline T divideRoundedUp(T a, T b)
+{
+    return (a + b - 1) / b;
+}
+
 template<typename T> inline T timesThreePlusOneDividedByTwo(T value)
 {
     // Mathematically equivalent to:

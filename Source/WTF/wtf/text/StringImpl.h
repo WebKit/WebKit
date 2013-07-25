@@ -27,6 +27,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/CompilationThread.h>
 #include <wtf/Forward.h>
+#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringHasher.h>
 #include <wtf/Vector.h>
@@ -510,7 +511,21 @@ public:
             return 0;
 
         m_hashAndFlags |= s_hashFlagDidReportCost;
-        return m_length;
+        size_t result = m_length;
+        if (!is8Bit())
+            result <<= 1;
+        return result;
+    }
+    
+    size_t costDuringGC()
+    {
+        if (bufferOwnership() == BufferSubstring)
+            return divideRoundedUp(m_substringBuffer->costDuringGC(), refCount());
+        
+        size_t result = m_length;
+        if (!is8Bit())
+            result <<= 1;
+        return divideRoundedUp(result, refCount());
     }
 
     WTF_EXPORT_STRING_API size_t sizeInBytes() const;
@@ -596,6 +611,11 @@ public:
         if (hasHash())
             return existingHash();
         return hashSlowCase();
+    }
+    
+    inline size_t refCount() const
+    {
+        return m_refCount / s_refCountIncrement;
     }
     
     inline bool hasOneRef() const

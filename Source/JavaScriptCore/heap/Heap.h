@@ -244,6 +244,7 @@ namespace JSC {
         BlockAllocator m_blockAllocator;
         MarkedSpace m_objectSpace;
         CopiedSpace m_storageSpace;
+        size_t m_extraMemoryUsage;
 
 #if ENABLE(SIMPLE_HEAP_PROFILING)
         VTableSpectrum m_destroyedTypeCounts;

@@ -1,3 +1,27 @@
+2013-06-24  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Count external memory usage towards heap footprint
+        https://bugs.webkit.org/show_bug.cgi?id=117948
+
+        Reviewed by Geoffrey Garen.
+
+        Currently just count strings. Strings get counted in such a way that we won't re-count strings
+        that are aliased, by dividing by the reference count. This then ups the GC footprint and allows
+        the collector to appropriately amortize itself.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::size):
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        (Heap):
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::reportExtraMemoryUsage):
+        (JSC):
+        * runtime/JSString.cpp:
+        (JSC::JSString::visitChildren):
+
 2013-06-23  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should optimize identifier string equality

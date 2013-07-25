@@ -222,6 +222,21 @@ inline void SlotVisitor::copyLater(JSCell* owner, void* ptr, size_t bytes)
     block->reportLiveBytes(owner, bytes);
 }
     
+inline void SlotVisitor::reportExtraMemoryUsage(size_t size)
+{
+    size_t* counter = &m_shared.m_vm->heap.m_extraMemoryUsage;
+    
+#if ENABLE(COMPARE_AND_SWAP)
+    for (;;) {
+        size_t oldSize = *counter;
+        if (WTF::weakCompareAndSwapSize(counter, oldSize, oldSize + size))
+            return;
+    }
+#else
+    (*counter) += size;
+#endif
+}
+
 } // namespace JSC
 
 #endif // SlotVisitorInlines_h

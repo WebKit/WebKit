@@ -71,6 +71,11 @@ void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     if (thisObject->isRope())
         static_cast<JSRopeString*>(thisObject)->visitFibers(visitor);
+    else {
+        StringImpl* impl = thisObject->m_value.impl();
+        ASSERT(impl);
+        visitor.reportExtraMemoryUsage(impl->costDuringGC());
+    }
 }
 
 void JSRopeString::visitFibers(SlotVisitor& visitor)
