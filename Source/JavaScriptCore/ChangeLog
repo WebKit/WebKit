@@ -1,5 +1,13 @@
 2013-07-25  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Buildfix after this error:
+        error: 'pathName' may be used uninitialized in this function [-Werror=uninitialized]
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+
+2013-07-25  Csaba Osztrogonác  <ossy@webkit.org>
+
         One more buildfix after FTL upstream.
 
         Return a dummy value after RELEASE_ASSERT_NOT_REACHED() to make GCC happy.

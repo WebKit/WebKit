@@ -123,6 +123,10 @@ void Plan::compileInThread(LongLivedState& longLivedState)
         case FTLPath:
             pathName = "FTL";
             break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            pathName = "";
+            break;
         }
         double now = currentTimeMS();
         dataLog("Optimized ", *codeBlock->alternative(), " with ", pathName, " in ", now - before, " ms");
