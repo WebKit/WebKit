@@ -223,8 +223,8 @@ public:
     bool isValidOffset(PropertyOffset offset) const
     {
         return JSC::isValidOffset(offset)
-            && (offset < m_inlineCapacity
-                || (offset >= firstOutOfLineOffset && offset <= m_offset));
+            && offset <= m_offset
+            && (offset < m_inlineCapacity || offset >= firstOutOfLineOffset);
     }
 
     bool masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject);

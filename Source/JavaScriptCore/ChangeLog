@@ -1,5 +1,18 @@
 2013-07-19  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: Structure::isValidOffset() should be able to tell you if you're loading a valid JSValue, and not just not crashing
+        https://bugs.webkit.org/show_bug.cgi?id=118911
+
+        Reviewed by Geoffrey Garen.
+        
+        We could also have a separate method like "willNotCrash(offset)", but that's not
+        what isValidOffset() is intended to mean.
+
+        * runtime/Structure.h:
+        (JSC::Structure::isValidOffset):
+
+2013-07-19  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: Structure should be able to tell you if it's valid to load at a given offset from any object with that structure
         https://bugs.webkit.org/show_bug.cgi?id=118878
 
