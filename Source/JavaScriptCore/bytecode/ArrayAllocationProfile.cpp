@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,9 +32,24 @@ namespace JSC {
 
 void ArrayAllocationProfile::updateIndexingType()
 {
-    if (!m_lastArray)
+    // This is awkwardly racy but totally sound even when executed concurrently. The
+    // worst cases go something like this:
+    //
+    // - Two threads race to execute this code; one of them succeeds in updating the
+    //   m_currentIndexingType and the other either updates it again, or sees a null
+    //   m_lastArray; if it updates it again then at worst it will cause the profile
+    //   to "forget" some array. That's still sound, since we don't promise that
+    //   this profile is a reflection of any kind of truth.
+    //
+    // - A concurrent thread reads m_lastArray, but that array is now dead. While
+    //   it's possible for that array to no longer be reachable, it cannot actually
+    //   be freed, since we require the GC to wait until all concurrent JITing
+    //   finishes.
+    
+    JSArray* lastArray = m_lastArray;
+    if (!lastArray)
         return;
-    m_currentIndexingType = leastUpperBoundOfIndexingTypes(m_currentIndexingType, m_lastArray->structure()->indexingType());
+    m_currentIndexingType = leastUpperBoundOfIndexingTypes(m_currentIndexingType, lastArray->structure()->indexingType());
     m_lastArray = 0;
 }
 

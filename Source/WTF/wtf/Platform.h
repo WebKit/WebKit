@@ -757,6 +757,14 @@
 #endif
 #endif
 
+/* Concurrent JIT only works on 64-bit platforms because it requires that
+   values get stored to atomically. This is trivially true on 64-bit platforms,
+   but not true at all on 32-bit platforms where values are composed of two
+   separate sub-values. */
+#if PLATFORM(MAC) && ENABLE(DFG_JIT) && USE(JSVALUE64)
+#define ENABLE_CONCURRENT_JIT 1
+#endif
+
 /* If the jit is not available, enable the LLInt C Loop: */
 #if !ENABLE(JIT)
 #undef ENABLE_LLINT        /* Undef so that we can redefine it. */

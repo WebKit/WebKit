@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -436,9 +436,10 @@ static inline bool arrayProfileSaw(ArrayModes arrayModes, IndexingType capabilit
 
 inline JITArrayMode JIT::chooseArrayMode(ArrayProfile* profile)
 {
-#if ENABLE(VALUE_PROFILER)        
-    profile->computeUpdatedPrediction(m_codeBlock);
-    ArrayModes arrayModes = profile->observedArrayModes();
+#if ENABLE(VALUE_PROFILER)
+    CodeBlockLocker locker(m_codeBlock->m_lock);
+    profile->computeUpdatedPrediction(locker, m_codeBlock);
+    ArrayModes arrayModes = profile->observedArrayModes(locker);
     if (arrayProfileSaw(arrayModes, DoubleShape))
         return JITDouble;
     if (arrayProfileSaw(arrayModes, Int32Shape))

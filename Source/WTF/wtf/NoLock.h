@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ByteSpinLock_h
-#define ByteSpinLock_h
+#ifndef NoLock_h
+#define NoLock_h
 
-#include <wtf/Assertions.h>
-#include <wtf/Atomics.h>
 #include <wtf/Locker.h>
-#include <wtf/ThreadingPrimitives.h>
 
 namespace WTF {
 
-class ByteSpinLock {
+class NoLock {
 public:
-    ByteSpinLock()
-        : m_lock(0)
-    {
-    }
-
-    void lock()
-    {
-        while (!weakCompareAndSwap(&m_lock, 0, 1))
-            pauseBriefly();
-        memoryBarrierAfterLock();
-    }
-    
-    void unlock()
-    {
-        memoryBarrierBeforeUnlock();
-        m_lock = 0;
-    }
-    
-    bool isHeld() const { return !!m_lock; }
-    
-private:
-    uint8_t m_lock;
+    void lock() { }
+    void unlock() { }
+    bool isHeld() { return false; }
 };
 
-typedef Locker<ByteSpinLock> ByteSpinLocker;
+typedef Locker<NoLock> NoLockLocker;
 
 } // namespace WTF
 
-using WTF::ByteSpinLock;
-using WTF::ByteSpinLocker;
+using WTF::NoLock;
+using WTF::NoLockLocker;
 
-#endif // ByteSpinLock_h
+#endif // NoLock_h
+

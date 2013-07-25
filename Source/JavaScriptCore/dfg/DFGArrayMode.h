@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,27 +150,27 @@ public:
         return ArrayMode(word);
     }
     
-    static ArrayMode fromObserved(ArrayProfile*, Array::Action, bool makeSafe);
+    static ArrayMode fromObserved(const CodeBlockLocker&, ArrayProfile*, Array::Action, bool makeSafe);
     
     ArrayMode withSpeculation(Array::Speculation speculation) const
     {
         return ArrayMode(type(), arrayClass(), speculation, conversion());
     }
     
-    ArrayMode withProfile(ArrayProfile* profile, bool makeSafe) const
+    ArrayMode withProfile(const CodeBlockLocker& locker, ArrayProfile* profile, bool makeSafe) const
     {
         Array::Speculation mySpeculation;
         Array::Class myArrayClass;
         
         if (makeSafe)
             mySpeculation = Array::OutOfBounds;
-        else if (profile->mayStoreToHole())
+        else if (profile->mayStoreToHole(locker))
             mySpeculation = Array::ToHole;
         else
             mySpeculation = Array::InBounds;
         
         if (isJSArray()) {
-            if (profile->usesOriginalArrayStructures() && benefitsFromOriginalArray())
+            if (profile->usesOriginalArrayStructures(locker) && benefitsFromOriginalArray())
                 myArrayClass = Array::OriginalArray;
             else
                 myArrayClass = Array::Array;

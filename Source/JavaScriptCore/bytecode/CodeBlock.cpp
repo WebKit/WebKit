@@ -661,9 +661,11 @@ void CodeBlock::beginDumpProfiling(PrintStream& out, bool& hasPrintedProfiling)
 
 void CodeBlock::dumpValueProfiling(PrintStream& out, const Instruction*& it, bool& hasPrintedProfiling)
 {
+    CodeBlockLocker locker(m_lock);
+    
     ++it;
 #if ENABLE(VALUE_PROFILER)
-    CString description = it->u.profile->briefDescription();
+    CString description = it->u.profile->briefDescription(locker);
     if (!description.length())
         return;
     beginDumpProfiling(out, hasPrintedProfiling);
@@ -676,9 +678,11 @@ void CodeBlock::dumpValueProfiling(PrintStream& out, const Instruction*& it, boo
 
 void CodeBlock::dumpArrayProfiling(PrintStream& out, const Instruction*& it, bool& hasPrintedProfiling)
 {
+    CodeBlockLocker locker(m_lock);
+    
     ++it;
 #if ENABLE(VALUE_PROFILER)
-    CString description = it->u.arrayProfile->briefDescription(this);
+    CString description = it->u.arrayProfile->briefDescription(locker, this);
     if (!description.length())
         return;
     beginDumpProfiling(out, hasPrintedProfiling);
@@ -3145,6 +3149,8 @@ ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
 void CodeBlock::updateAllPredictionsAndCountLiveness(
     OperationInProgress operation, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
+    CodeBlockLock locker(m_lock);
+    
     numberOfLiveNonArgumentValueProfiles = 0;
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
     for (unsigned i = 0; i < totalNumberOfValueProfiles(); ++i) {
@@ -3154,16 +3160,16 @@ void CodeBlock::updateAllPredictionsAndCountLiveness(
             numSamples = ValueProfile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
         numberOfSamplesInProfiles += numSamples;
         if (profile->m_bytecodeOffset < 0) {
-            profile->computeUpdatedPrediction(operation);
+            profile->computeUpdatedPrediction(locker, operation);
             continue;
         }
         if (profile->numberOfSamples() || profile->m_prediction != SpecNone)
             numberOfLiveNonArgumentValueProfiles++;
-        profile->computeUpdatedPrediction(operation);
+        profile->computeUpdatedPrediction(locker, operation);
     }
     
 #if ENABLE(DFG_JIT)
-    m_lazyOperandValueProfiles.computeUpdatedPredictions(operation);
+    m_lazyOperandValueProfiles.computeUpdatedPredictions(locker, operation);
 #endif
 }
 
@@ -3175,8 +3181,10 @@ void CodeBlock::updateAllValueProfilePredictions(OperationInProgress operation)
 
 void CodeBlock::updateAllArrayPredictions(OperationInProgress operation)
 {
+    CodeBlockLock locker(m_lock);
+    
     for (unsigned i = m_arrayProfiles.size(); i--;)
-        m_arrayProfiles[i].computeUpdatedPrediction(this, operation);
+        m_arrayProfiles[i].computeUpdatedPrediction(locker, this, operation);
     
     // Don't count these either, for similar reasons.
     for (unsigned i = m_arrayAllocationProfiles.size(); i--;)

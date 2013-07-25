@@ -802,7 +802,7 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve)
     }
     
     {
-        CodeBlock::Locker locker(exec->codeBlock()->m_lock);
+        CodeBlockLocker locker(exec->codeBlock()->m_lock);
         operations->m_ready = true;
     }
     
@@ -824,7 +824,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_base)
     }
 
     {
-        CodeBlock::Locker locker(exec->codeBlock()->m_lock);
+        CodeBlockLocker locker(exec->codeBlock()->m_lock);
         operation->m_ready = true;
     }
     
@@ -868,7 +868,7 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_base)
     }
     
     {
-        CodeBlock::Locker locker(exec->codeBlock()->m_lock);
+        CodeBlockLocker locker(exec->codeBlock()->m_lock);
         operations->m_ready = true;
     }
     
@@ -883,7 +883,7 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_with_base)
     bool willReify = operations->isEmpty();
     JSValue result = JSScope::resolveWithBase(exec, exec->codeBlock()->identifier(pc[3].u.operand), &LLINT_OP(1), operations, pc[5].u.putToBaseOperation);
     if (willReify) {
-        CodeBlock::Locker locker(exec->codeBlock()->m_lock);
+        CodeBlockLocker locker(exec->codeBlock()->m_lock);
         operations->m_ready = true;
     }
     LLINT_CHECK_EXCEPTION();
@@ -899,7 +899,7 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_with_this)
     bool willReify = operations->isEmpty();
     JSValue result = JSScope::resolveWithThis(exec, exec->codeBlock()->identifier(pc[3].u.operand), &LLINT_OP(1), operations);
     if (willReify) {
-        CodeBlock::Locker locker(exec->codeBlock()->m_lock);
+        CodeBlockLocker locker(exec->codeBlock()->m_lock);
         operations->m_ready = true;
     }
     LLINT_CHECK_EXCEPTION();
@@ -939,7 +939,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         
         if (!structure->isUncacheableDictionary()
             && !structure->typeInfo().prohibitsPropertyCaching()) {
-            CodeBlock::Locker locker(codeBlock->m_lock);
+            CodeBlockLocker locker(codeBlock->m_lock);
             
             pc[4].u.structure.set(
                 vm, codeBlock->ownerExecutable(), structure);
@@ -1006,7 +1006,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
             && baseCell == slot.base()) {
             
             if (slot.type() == PutPropertySlot::NewProperty) {
-                CodeBlock::Locker locker(codeBlock->m_lock);
+                CodeBlockLocker locker(codeBlock->m_lock);
             
                 if (!structure->isDictionary() && structure->previousID()->outOfLineCapacity() == structure->outOfLineCapacity()) {
                     ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());
@@ -1435,7 +1435,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     if (!LLINT_ALWAYS_ACCESS_SLOW && callLinkInfo) {
         ExecState* execCaller = execCallee->callerFrame();
 
-        CodeBlock::Locker locker(execCaller->codeBlock()->m_lock);
+        CodeBlockLocker locker(execCaller->codeBlock()->m_lock);
         
         if (callLinkInfo->isOnList())
             callLinkInfo->remove();

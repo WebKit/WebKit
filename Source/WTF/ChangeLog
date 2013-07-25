@@ -1,3 +1,28 @@
+2013-07-16  Oliver Hunt <oliver@apple.com>
+
+        Merge dfgFourthTier r148804
+
+    2013-04-20  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: value profiles and array profiles should be thread-safe enough to be accessible in a concurrent compilation thread
+        https://bugs.webkit.org/show_bug.cgi?id=114906
+
+        Reviewed by Oliver Hunt.
+        
+        Add ability to abstract whether or not the CodeBlock requires locking at all,
+        since some platforms may not support the byte spin-locking and/or may not want
+        to, if they turn off concurrent JIT.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/ByteSpinLock.h:
+        * wtf/NoLock.h: Added.
+        (WTF):
+        (NoLock):
+        (WTF::NoLock::lock):
+        (WTF::NoLock::unlock):
+        (WTF::NoLock::isHeld):
+        * wtf/Platform.h:
+
 2013-04-17  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: all inline caches should thread-safe enough to allow a concurrent compilation thread to read them safely

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef ArrayProfile_h
 #define ArrayProfile_h
 
+#include "CodeBlockLock.h"
 #include "JSArray.h"
 #include "Structure.h"
 #include <wtf/HashMap.h>
@@ -163,32 +164,31 @@ public:
         m_lastSeenStructure = structure;
     }
     
-    void computeUpdatedPrediction(CodeBlock*, OperationInProgress = NoOperation);
+    void computeUpdatedPrediction(const CodeBlockLocker&, CodeBlock*, OperationInProgress = NoOperation);
     
-    Structure* expectedStructure() const
+    Structure* expectedStructure(const CodeBlockLocker& locker) const
     {
-        if (structureIsPolymorphic())
+        if (structureIsPolymorphic(locker))
             return 0;
         return m_expectedStructure;
     }
-    bool structureIsPolymorphic() const
+    bool structureIsPolymorphic(const CodeBlockLocker&) const
     {
         return m_expectedStructure == polymorphicStructure();
     }
-    bool hasDefiniteStructure() const
+    bool hasDefiniteStructure(const CodeBlockLocker& locker) const
     {
-        return !structureIsPolymorphic() && m_expectedStructure;
+        return !structureIsPolymorphic(locker) && m_expectedStructure;
     }
-    ArrayModes observedArrayModes() const { return m_observedArrayModes; }
-    ArrayModes updatedObservedArrayModes() const; // Computes the observed array modes without updating the profile.
-    bool mayInterceptIndexedAccesses() const { return m_mayInterceptIndexedAccesses; }
+    ArrayModes observedArrayModes(const CodeBlockLocker&) const { return m_observedArrayModes; }
+    bool mayInterceptIndexedAccesses(const CodeBlockLocker&) const { return m_mayInterceptIndexedAccesses; }
     
-    bool mayStoreToHole() const { return m_mayStoreToHole; }
-    bool outOfBounds() const { return m_outOfBounds; }
+    bool mayStoreToHole(const CodeBlockLocker&) const { return m_mayStoreToHole; }
+    bool outOfBounds(const CodeBlockLocker&) const { return m_outOfBounds; }
     
-    bool usesOriginalArrayStructures() const { return m_usesOriginalArrayStructures; }
+    bool usesOriginalArrayStructures(const CodeBlockLocker&) const { return m_usesOriginalArrayStructures; }
     
-    CString briefDescription(CodeBlock*);
+    CString briefDescription(const CodeBlockLocker&, CodeBlock*);
     
 private:
     friend class LLIntOffsetsExtractor;

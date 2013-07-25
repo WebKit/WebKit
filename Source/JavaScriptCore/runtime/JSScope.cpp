@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -301,7 +301,7 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
                             operations->append(ResolveOperation::checkForDynamicEntriesBeforeGlobalScope());
 
                         if (putToBaseOperation) {
-                            CodeBlock::Locker locker(callFrame->codeBlock()->m_lock);
+                            CodeBlockLocker locker(callFrame->codeBlock()->m_lock);
                             
                             putToBaseOperation->m_isDynamic = requiresDynamicChecks;
                             putToBaseOperation->m_kind = PutToBaseOperation::GlobalPropertyPut;
@@ -347,7 +347,7 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
                         goto fail;
 
                     if (putToBaseOperation) {
-                        CodeBlock::Locker locker(callFrame->codeBlock()->m_lock);
+                        CodeBlockLocker locker(callFrame->codeBlock()->m_lock);
                         
                         putToBaseOperation->m_kind = entry.isReadOnly() ? PutToBaseOperation::Readonly : PutToBaseOperation::VariablePut;
                         putToBaseOperation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), callFrame->lexicalGlobalObject()->activationStructure());
@@ -611,7 +611,7 @@ void JSScope::resolvePut(CallFrame* callFrame, JSValue base, const Identifier& p
     if (slot.base() != baseObject)
         return;
     ASSERT(!baseObject->hasInlineStorage());
-    CodeBlock::Locker locker(callFrame->codeBlock()->m_lock);
+    CodeBlockLocker locker(callFrame->codeBlock()->m_lock);
     
     operation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), baseObject->structure());
     setPutPropertyAccessOffset(operation, slot.cachedOffset());

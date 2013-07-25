@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* 
 
 ResolveGlobalStatus ResolveGlobalStatus::computeFor(CodeBlock* codeBlock, int, ResolveOperation* operation, Identifier& identifier)
 {
-    CodeBlock::Locker locker(codeBlock->m_lock);
+    CodeBlockLocker locker(codeBlock->m_lock);
     
     ASSERT(operation->m_operation == ResolveOperation::GetAndReturnGlobalProperty);
     if (!operation->m_structure)

@@ -37,9 +37,12 @@ namespace JSC { namespace DFG {
 void prepareCodeOriginForOSRExit(ExecState* exec, CodeOrigin codeOrigin)
 {
     for (; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        static_cast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())
-            ->baselineCodeBlockFor(codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct)
-            ->jitCompile(exec);
+        FunctionExecutable* executable =
+            static_cast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get());
+        CodeBlock* codeBlock = executable->baselineCodeBlockFor(
+            codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
+        
+        codeBlock->jitCompile(exec);
     }
 }
 

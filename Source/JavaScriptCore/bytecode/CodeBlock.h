@@ -36,6 +36,7 @@
 #include "CallLinkInfo.h"
 #include "CallReturnOffsetToBytecodeOffset.h"
 #include "CodeBlockHash.h"
+#include "CodeBlockLock.h"
 #include "CodeOrigin.h"
 #include "CodeType.h"
 #include "CompactJITCodeMap.h"
@@ -69,7 +70,6 @@
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
 #include "Watchpoint.h"
-#include <wtf/ByteSpinLock.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
@@ -485,9 +485,9 @@ namespace JSC {
                                                                                                               bytecodeOffset].u.opcode)) - 1].u.profile == result);
             return result;
         }
-        SpeculatedType valueProfilePredictionForBytecodeOffset(int bytecodeOffset)
+        SpeculatedType valueProfilePredictionForBytecodeOffset(const CodeBlockLocker& locker, int bytecodeOffset)
         {
-            return valueProfileForBytecodeOffset(bytecodeOffset)->computeUpdatedPrediction();
+            return valueProfileForBytecodeOffset(bytecodeOffset)->computeUpdatedPrediction(locker);
         }
 
         unsigned totalNumberOfValueProfiles()
@@ -902,7 +902,7 @@ namespace JSC {
         void updateAllArrayPredictions(OperationInProgress = NoOperation);
         void updateAllPredictions(OperationInProgress = NoOperation);
 #else
-        bool shouldOptimizeNow() { return false; }
+        bool updateAllPredictionsAndCheckIfShouldOptimizeNow() { return false; }
         void updateAllValueProfilePredictions(OperationInProgress = NoOperation) { }
         void updateAllArrayPredictions(OperationInProgress = NoOperation) { }
         void updateAllPredictions(OperationInProgress = NoOperation) { }
@@ -938,9 +938,7 @@ namespace JSC {
         // Another exception to the rules is that the GC can do whatever it wants
         // without holding any locks, because the GC is guaranteed to wait until any
         // concurrent compilation threads finish what they're doing.
-        typedef ByteSpinLock Lock;
-        typedef ByteSpinLocker Locker;
-        Lock m_lock;
+        CodeBlockLock m_lock;
 
     protected:
 #if ENABLE(JIT)

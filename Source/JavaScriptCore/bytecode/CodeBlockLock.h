@@ -23,47 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ByteSpinLock_h
-#define ByteSpinLock_h
+#ifndef CodeBlockLock_h
+#define CodeBlockLock_h
 
-#include <wtf/Assertions.h>
-#include <wtf/Atomics.h>
-#include <wtf/Locker.h>
-#include <wtf/ThreadingPrimitives.h>
+#include <wtf/ByteSpinLock.h>
+#include <wtf/NoLock.h>
 
-namespace WTF {
+namespace JSC {
 
-class ByteSpinLock {
-public:
-    ByteSpinLock()
-        : m_lock(0)
-    {
-    }
+#if ENABLE(CONCURRENT_JIT)
+typedef ByteSpinLock CodeBlockLock;
+typedef ByteSpinLocker CodeBlockLocker;
+#else
+typedef NoLock CodeBlockLock;
+typedef NoLockLocker CodeBlockLocker;
+#endif
 
-    void lock()
-    {
-        while (!weakCompareAndSwap(&m_lock, 0, 1))
-            pauseBriefly();
-        memoryBarrierAfterLock();
-    }
-    
-    void unlock()
-    {
-        memoryBarrierBeforeUnlock();
-        m_lock = 0;
-    }
-    
-    bool isHeld() const { return !!m_lock; }
-    
-private:
-    uint8_t m_lock;
-};
+} // namespace JSC
 
-typedef Locker<ByteSpinLock> ByteSpinLocker;
+#endif // CodeBlockLock_h
 
-} // namespace WTF
-
-using WTF::ByteSpinLock;
-using WTF::ByteSpinLocker;
-
-#endif // ByteSpinLock_h

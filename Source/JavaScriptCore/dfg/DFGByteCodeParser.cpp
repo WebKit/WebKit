@@ -264,9 +264,9 @@ private:
     {
         ASSERT(node->op() == GetLocal);
         ASSERT(node->codeOrigin.bytecodeIndex == m_currentIndex);
-        SpeculatedType prediction = 
-            m_inlineStackTop->m_lazyOperands.prediction(
-                LazyOperandValueProfileKey(m_currentIndex, node->local()));
+        CodeBlockLock locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        LazyOperandValueProfileKey key(m_currentIndex, node->local());
+        SpeculatedType prediction = m_inlineStackTop->m_lazyOperands.prediction(locker, key);
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLog("Lazy operand [@", node->index(), ", bc#", m_currentIndex, ", r", node->local(), "] prediction: ", SpeculationDump(prediction), "\n");
 #endif
@@ -805,7 +805,8 @@ private:
     
     SpeculatedType getPredictionWithoutOSRExit(unsigned bytecodeIndex)
     {
-        return m_inlineStackTop->m_profiledBlock->valueProfilePredictionForBytecodeOffset(bytecodeIndex);
+        CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        return m_inlineStackTop->m_profiledBlock->valueProfilePredictionForBytecodeOffset(locker, bytecodeIndex);
     }
 
     SpeculatedType getPrediction(unsigned bytecodeIndex)
@@ -833,8 +834,9 @@ private:
     
     ArrayMode getArrayMode(ArrayProfile* profile, Array::Action action)
     {
-        profile->computeUpdatedPrediction(m_inlineStackTop->m_codeBlock);
-        return ArrayMode::fromObserved(profile, action, false);
+        CodeBlockLock locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        profile->computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
+        return ArrayMode::fromObserved(locker, profile, action, false);
     }
     
     ArrayMode getArrayMode(ArrayProfile* profile)
@@ -844,24 +846,26 @@ private:
     
     ArrayMode getArrayModeAndEmitChecks(ArrayProfile* profile, Array::Action action, Node* base)
     {
-        profile->computeUpdatedPrediction(m_inlineStackTop->m_codeBlock);
+        CodeBlockLock locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        
+        profile->computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         if (m_inlineStackTop->m_profiledBlock->numberOfRareCaseProfiles())
             dataLogF("Slow case profile for bc#%u: %u\n", m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
-        dataLogF("Array profile for bc#%u: %p%s%s, %u\n", m_currentIndex, profile->expectedStructure(), profile->structureIsPolymorphic() ? " (polymorphic)" : "", profile->mayInterceptIndexedAccesses() ? " (may intercept)" : "", profile->observedArrayModes());
+        dataLogF("Array profile for bc#%u: %p%s%s, %u\n", m_currentIndex, profile->expectedStructure(), profile->structureIsPolymorphic(locker) ? " (polymorphic)" : "", profile->mayInterceptIndexedAccesses(locker) ? " (may intercept)" : "", profile->observedArrayModes(locker));
 #endif
         
         bool makeSafe =
             m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
-            || profile->outOfBounds();
+            || profile->outOfBounds(locker);
         
-        ArrayMode result = ArrayMode::fromObserved(profile, action, makeSafe);
+        ArrayMode result = ArrayMode::fromObserved(locker, profile, action, makeSafe);
         
-        if (profile->hasDefiniteStructure()
+        if (profile->hasDefiniteStructure(locker)
             && result.benefitsFromStructureCheck()
             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
-            addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure())), base);
+            addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure(locker))), base);
         
         return result;
     }
@@ -1787,7 +1791,7 @@ Node* ByteCodeParser::getScope(bool skipTop, unsigned skipCount)
 bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned identifier, ResolveOperations* resolveOperations, PutToBaseOperation* putToBaseOperation, Node** base, Node** value)
 {
     {
-        CodeBlock::Locker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
      
         if (!resolveOperations->m_ready) {
             addToGraph(ForceOSRExit);
@@ -2023,9 +2027,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_convert_this: {
             Node* op1 = getThis();
             if (op1->op() != ConvertThis) {
+                CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
                 ValueProfile* profile =
                     m_inlineStackTop->m_profiledBlock->valueProfileForBytecodeOffset(m_currentProfilingIndex);
-                profile->computeUpdatedPrediction();
+                profile->computeUpdatedPrediction(locker);
 #if DFG_ENABLE(DEBUG_VERBOSE)
                 dataLogF("[bc#%u]: profile %p: ", m_currentProfilingIndex, profile);
                 profile->dump(WTF::dataFile());
@@ -2123,8 +2128,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_get_callee: {
+            CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
             ValueProfile* profile = currentInstruction[2].u.profile;
-            profile->computeUpdatedPrediction();
+            profile->computeUpdatedPrediction(locker);
             if (profile->m_singletonValueIsTop
                 || !profile->m_singletonValue
                 || !profile->m_singletonValue.isCell())
@@ -3159,7 +3165,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             PutToBaseOperation* putToBase = currentInstruction[4].u.putToBaseOperation;
             
             {
-                CodeBlock::Locker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
                 
                 if (!putToBase->m_ready) {
                     addToGraph(ForceOSRExit);
@@ -3485,11 +3491,15 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     , m_exitProfile(profiledBlock->exitProfile())
     , m_callsiteBlockHead(callsiteBlockHead)
     , m_returnValue(returnValueVR)
-    , m_lazyOperands(profiledBlock->lazyOperandValueProfiles())
     , m_didReturn(false)
     , m_didEarlyReturn(false)
     , m_caller(byteCodeParser->m_inlineStackTop)
 {
+    {
+        CodeBlockLocker locker(m_profiledBlock->m_lock);
+        m_lazyOperands.initialize(locker, m_profiledBlock->lazyOperandValueProfiles());
+    }
+    
     m_argumentPositions.resize(argumentCountIncludingThis);
     for (int i = 0; i < argumentCountIncludingThis; ++i) {
         byteCodeParser->m_graph.m_argumentPositions.append(ArgumentPosition());

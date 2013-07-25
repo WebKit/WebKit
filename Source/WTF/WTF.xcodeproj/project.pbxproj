@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0F0D85B417234CC100338210 /* NoLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0D85B317234CB100338210 /* NoLock.h */; };
 		0F87105A16643F190090B0AD /* RawPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87105916643F190090B0AD /* RawPointer.h */; };
 		0F9D3360165DBA73005AD387 /* FilePrintStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */; };
 		0F9D3361165DBA73005AD387 /* FilePrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D335C165DBA73005AD387 /* FilePrintStream.h */; };
@@ -285,6 +286,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0F0D85B317234CB100338210 /* NoLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoLock.h; sourceTree = "<group>"; };
 		0F87105916643F190090B0AD /* RawPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawPointer.h; sourceTree = "<group>"; };
 		0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilePrintStream.cpp; sourceTree = "<group>"; };
 		0F9D335C165DBA73005AD387 /* FilePrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilePrintStream.h; sourceTree = "<group>"; };
@@ -698,6 +700,7 @@
 				A8A472CE151A825B004123FF /* MetaAllocator.h */,
 				A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */,
 				1A3F6BE6174ADA2100B2EEA7 /* NeverDestroyed.h */,
+				0F0D85B317234CB100338210 /* NoLock.h */,
 				A8A472D0151A825B004123FF /* Noncopyable.h */,
 				A8A472D1151A825B004123FF /* NonCopyingSort.h */,
 				A8A472D2151A825B004123FF /* NotFound.h */,
@@ -1001,6 +1004,7 @@
 				A8A473E8151A825B004123FF /* MathExtras.h in Headers */,
 				A8A473EA151A825B004123FF /* MD5.h in Headers */,
 				CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */,
+				0F0D85B417234CC100338210 /* NoLock.h in Headers */,
 				A8A473EB151A825B004123FF /* MessageQueue.h in Headers */,
 				A8A473ED151A825B004123FF /* MetaAllocator.h in Headers */,
 				A8A473EE151A825B004123FF /* MetaAllocatorHandle.h in Headers */,

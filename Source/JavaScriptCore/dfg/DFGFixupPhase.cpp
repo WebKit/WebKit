@@ -688,19 +688,19 @@ private:
                 break;
             if (codeBlock()->identifier(node->identifierNumber()) != vm().propertyNames->length)
                 break;
+            CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->codeOrigin);
             ArrayProfile* arrayProfile = 
-                m_graph.baselineCodeBlockFor(node->codeOrigin)->getArrayProfile(
-                    node->codeOrigin.bytecodeIndex);
+                profiledBlock->getArrayProfile(node->codeOrigin.bytecodeIndex);
             ArrayMode arrayMode = ArrayMode(Array::SelectUsingPredictions);
             if (arrayProfile) {
-                arrayProfile->computeUpdatedPrediction(m_graph.baselineCodeBlockFor(node->codeOrigin));
-                arrayMode = ArrayMode::fromObserved(arrayProfile, Array::Read, false);
-                arrayMode = arrayMode.refine(
-                    node->child1()->prediction(), node->prediction());
-                if (arrayMode.supportsLength() && arrayProfile->hasDefiniteStructure()) {
+                CodeBlockLocker locker(profiledBlock->m_lock);
+                arrayProfile->computeUpdatedPrediction(locker, profiledBlock);
+                arrayMode = ArrayMode::fromObserved(locker, arrayProfile, Array::Read, false);
+                arrayMode = arrayMode.refine(node->child1()->prediction(), node->prediction());
+                if (arrayMode.supportsLength() && arrayProfile->hasDefiniteStructure(locker)) {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, CheckStructure, node->codeOrigin,
-                        OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure())),
+                        OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure(locker))),
                         node->child1());
                 }
             } else

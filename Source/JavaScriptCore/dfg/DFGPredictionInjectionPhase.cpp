@@ -48,18 +48,24 @@ public:
         ASSERT(m_graph.m_unificationState == GloballyUnified);
         
         ASSERT(codeBlock()->numParameters() >= 1);
-        for (size_t arg = 0; arg < static_cast<size_t>(codeBlock()->numParameters()); ++arg) {
-            ValueProfile* profile = profiledBlock()->valueProfileForArgument(arg);
-            if (!profile)
-                continue;
+        {
+            CodeBlockLocker locker(profiledBlock()->m_lock);
             
-            m_graph.m_arguments[arg]->variableAccessData()->predict(profile->computeUpdatedPrediction());
+            for (size_t arg = 0; arg < static_cast<size_t>(codeBlock()->numParameters()); ++arg) {
+                ValueProfile* profile = profiledBlock()->valueProfileForArgument(arg);
+                if (!profile)
+                    continue;
+            
+                m_graph.m_arguments[arg]->variableAccessData()->predict(
+                    profile->computeUpdatedPrediction(locker));
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            dataLog(
-                "Argument [", arg, "] prediction: ",
-                SpeculationDump(m_graph.m_arguments[arg]->variableAccessData()->prediction()), "\n");
+                dataLog(
+                    "Argument [", arg, "] prediction: ",
+                    SpeculationDump(m_graph.m_arguments[arg]->variableAccessData()->prediction()),
+                    "\n");
 #endif
+            }
         }
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {

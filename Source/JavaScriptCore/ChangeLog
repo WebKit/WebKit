@@ -1,3 +1,157 @@
+2013-04-20  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: value profiles and array profiles should be thread-safe enough to be accessible in a concurrent compilation thread
+        https://bugs.webkit.org/show_bug.cgi?id=114906
+
+        Reviewed by Oliver Hunt.
+        
+        This introduces thread safety to value profiles, array profiles, and
+        array allocation profiles.
+        
+        We already have three separate operations that happen on profiles:
+        (1) writing, which the JIT, LLInt, and OSR exit do; (2) updating,
+        which happens during GC, from OSR entry slow-paths, and in the DFG;
+        and (3) reading, which happens in the DFG. For example, the JIT/LLInt
+        and OSR exit write to ValueProfile::m_buckets, which gets synthesized
+        into ValueProfile::m_prediction (and other fields) during update, and
+        the latter gets read by the DFG. Note that (2) must also happen in
+        the DFG since only the DFG knows which code blocks it will inline,
+        and those blocks' profiles may not have otherwise been updated via
+        any other mechanism.
+        
+        I refer to these three operations as writing, updating, and reading.
+        
+        Consequently, both profile updating and profile reading may happen
+        asynchronously, if the JIT is asynchronous.
+        
+        The locking protocol for profiles works as follows:
+        
+        - Writing does not require locking, but is only allowed on the main
+          thread. We require that these fields can be stored atomically by
+          the profiling code, even without locks. For value profiles, this
+          only works on 64-bit platforms, currently. For array profiles,
+          which consist of multiple separate fields, this means that an
+          asynchronous update of the profile may see slight inconsistencies
+          (like a structure that doesn't quite match the array modes bits),
+          but these should be harmless: at worst, the DFG will specialize
+          too much and we'll have OSR exits.
+        
+        - Updating a value profile requires holding a lock, but must assume
+          that the fields written by the profiling code in JIT/LLInt may
+          be written to without locking.
+        
+        - Reading a value profile requires holding a lock.
+        
+        The one major exception to these rules is the ArrayAllocationProfile,
+        which requires no locking. We do this because it's used so often and
+        in places where we don't necessarily have access to the owning
+        CodeBlock, so if we did want it to be locked it would have to have
+        its own lock. Also, I believe that it is sound to just make this
+        profile racy and not worry about locking at all. All that was needed
+        were some changes to ensure that we explicitly read some raced-over
+        fields only once.
+
+        Two additional interesting things in this change:
+        
+        - To make it easy to see which profile methods require locking, they
+          take a const CodeBlockLocker& as an argument. I saw this idiom for
+          identifying which methods require which locks to be held being used
+          in LLVM, and I quite like it.
+        
+        - Lazy operand value profiles, which are created lazily and at any
+          time, require the CodeBlockLock to be held when they are being
+          created. Writes to them are lockless and main-thread-only, but as
+          with other profiles, updates and reads require locking.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ArrayAllocationProfile.cpp:
+        (JSC::ArrayAllocationProfile::updateIndexingType):
+        * bytecode/ArrayAllocationProfile.h:
+        (JSC::ArrayAllocationProfile::selectIndexingType):
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        (JSC::ArrayProfile::briefDescription):
+        * bytecode/ArrayProfile.h:
+        (ArrayProfile):
+        (JSC::ArrayProfile::expectedStructure):
+        (JSC::ArrayProfile::structureIsPolymorphic):
+        (JSC::ArrayProfile::hasDefiniteStructure):
+        (JSC::ArrayProfile::observedArrayModes):
+        (JSC::ArrayProfile::mayInterceptIndexedAccesses):
+        (JSC::ArrayProfile::mayStoreToHole):
+        (JSC::ArrayProfile::outOfBounds):
+        (JSC::ArrayProfile::usesOriginalArrayStructures):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpValueProfiling):
+        (JSC::CodeBlock::dumpArrayProfiling):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeOffset):
+        (JSC::CodeBlock::updateAllPredictionsAndCheckIfShouldOptimizeNow):
+        (CodeBlock):
+        * bytecode/CodeBlockLock.h: Added.
+        (JSC):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions):
+        (JSC::CompressedLazyOperandValueProfileHolder::add):
+        (JSC::LazyOperandValueProfileParser::LazyOperandValueProfileParser):
+        (JSC::LazyOperandValueProfileParser::~LazyOperandValueProfileParser):
+        (JSC):
+        (JSC::LazyOperandValueProfileParser::initialize):
+        (JSC::LazyOperandValueProfileParser::prediction):
+        * bytecode/LazyOperandValueProfile.h:
+        (CompressedLazyOperandValueProfileHolder):
+        (LazyOperandValueProfileParser):
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::getSpecFailBucket):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/ResolveGlobalStatus.cpp:
+        (JSC::ResolveGlobalStatus::computeFor):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::briefDescription):
+        (ValueProfileBase):
+        (JSC::ValueProfileBase::computeUpdatedPrediction):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        * dfg/DFGArrayMode.h:
+        (ArrayMode):
+        (JSC::DFG::ArrayMode::withProfile):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::injectLazyOperandSpeculation):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (JSC::DFG::ByteCodeParser::getArrayModeAndEmitChecks):
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOSRExitPreparation.cpp:
+        (JSC::DFG::prepareCodeOriginForOSRExit):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * jit/JITInlines.h:
+        (JSC::JIT::chooseArrayMode):
+        * jit/JITStubs.cpp:
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::lazyLinkFor):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::BytecodeSequence):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolveContainingScopeInternal):
+        (JSC::JSScope::resolvePut):
+
 2013-04-17  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: all inline caches should thread-safe enough to allow a concurrent compilation thread to read them safely

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,14 +34,14 @@
 
 namespace JSC { namespace DFG {
 
-ArrayMode ArrayMode::fromObserved(ArrayProfile* profile, Array::Action action, bool makeSafe)
+ArrayMode ArrayMode::fromObserved(const CodeBlockLocker& locker, ArrayProfile* profile, Array::Action action, bool makeSafe)
 {
-    ArrayModes observed = profile->observedArrayModes();
+    ArrayModes observed = profile->observedArrayModes(locker);
     switch (observed) {
     case 0:
         return ArrayMode(Array::Unprofiled);
     case asArrayModes(NonArray):
-        if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
+        if (action == Array::Write && !profile->mayInterceptIndexedAccesses(locker))
             return ArrayMode(Array::Undecided, Array::NonArray, Array::OutOfBounds, Array::Convert);
         return ArrayMode(Array::SelectUsingPredictions);
 
@@ -51,49 +51,49 @@ ArrayMode ArrayMode::fromObserved(ArrayProfile* profile, Array::Action action, b
         return ArrayMode(Array::Generic);
         
     case asArrayModes(NonArray) | asArrayModes(ArrayWithUndecided):
-        if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
+        if (action == Array::Write && !profile->mayInterceptIndexedAccesses(locker))
             return ArrayMode(Array::Undecided, Array::PossiblyArray, Array::OutOfBounds, Array::Convert);
         return ArrayMode(Array::SelectUsingPredictions);
 
     case asArrayModes(NonArrayWithInt32):
-        return ArrayMode(Array::Int32, Array::NonArray, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::Int32, Array::NonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(ArrayWithInt32):
-        return ArrayMode(Array::Int32, Array::Array, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::Int32, Array::Array, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(NonArrayWithInt32) | asArrayModes(ArrayWithInt32):
-        return ArrayMode(Array::Int32, Array::PossiblyArray, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::Int32, Array::PossiblyArray, Array::AsIs).withProfile(locker, profile, makeSafe);
 
     case asArrayModes(NonArrayWithDouble):
-        return ArrayMode(Array::Double, Array::NonArray, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::Double, Array::NonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(ArrayWithDouble):
-        return ArrayMode(Array::Double, Array::Array, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::Double, Array::Array, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(NonArrayWithDouble) | asArrayModes(ArrayWithDouble):
-        return ArrayMode(Array::Double, Array::PossiblyArray, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::Double, Array::PossiblyArray, Array::AsIs).withProfile(locker, profile, makeSafe);
 
     case asArrayModes(NonArrayWithContiguous):
-        return ArrayMode(Array::Contiguous, Array::NonArray, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::Contiguous, Array::NonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(ArrayWithContiguous):
-        return ArrayMode(Array::Contiguous, Array::Array, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::Contiguous, Array::Array, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(NonArrayWithContiguous) | asArrayModes(ArrayWithContiguous):
-        return ArrayMode(Array::Contiguous, Array::PossiblyArray, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::Contiguous, Array::PossiblyArray, Array::AsIs).withProfile(locker, profile, makeSafe);
 
     case asArrayModes(NonArrayWithArrayStorage):
-        return ArrayMode(Array::ArrayStorage, Array::NonArray, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::ArrayStorage, Array::NonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(NonArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage):
-        return ArrayMode(Array::SlowPutArrayStorage, Array::NonArray, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::SlowPutArrayStorage, Array::NonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(ArrayWithArrayStorage):
-        return ArrayMode(Array::ArrayStorage, Array::Array, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::ArrayStorage, Array::Array, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(ArrayWithSlowPutArrayStorage):
     case asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
-        return ArrayMode(Array::SlowPutArrayStorage, Array::Array, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::SlowPutArrayStorage, Array::Array, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage):
-        return ArrayMode(Array::ArrayStorage, Array::PossiblyArray, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::ArrayStorage, Array::PossiblyArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
-        return ArrayMode(Array::SlowPutArrayStorage, Array::PossiblyArray, Array::AsIs).withProfile(profile, makeSafe);
+        return ArrayMode(Array::SlowPutArrayStorage, Array::PossiblyArray, Array::AsIs).withProfile(locker, profile, makeSafe);
 
     default:
-        if ((observed & asArrayModes(NonArray)) && profile->mayInterceptIndexedAccesses())
+        if ((observed & asArrayModes(NonArray)) && profile->mayInterceptIndexedAccesses(locker))
             return ArrayMode(Array::SelectUsingPredictions);
         
         Array::Type type;
@@ -121,7 +121,7 @@ ArrayMode ArrayMode::fromObserved(ArrayProfile* profile, Array::Action action, b
         else
             arrayClass = Array::PossiblyArray;
         
-        return ArrayMode(type, arrayClass, Array::Convert).withProfile(profile, makeSafe);
+        return ArrayMode(type, arrayClass, Array::Convert).withProfile(locker, profile, makeSafe);
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,10 +52,14 @@ EncodedJSValue* MethodOfGettingAValueProfile::getSpecFailBucket(unsigned index) 
     case Ready:
         return u.profile->specFailBucket(index);
         
-    case LazyOperand:
-        return u.lazyOperand.codeBlock->lazyOperandValueProfiles().add(
-            LazyOperandValueProfileKey(
-                u.lazyOperand.bytecodeOffset, u.lazyOperand.operand))->specFailBucket(index);
+    case LazyOperand: {
+        LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, u.lazyOperand.operand);
+        
+        CodeBlockLocker locker(u.lazyOperand.codeBlock->m_lock);
+        LazyOperandValueProfile* profile =
+            u.lazyOperand.codeBlock->lazyOperandValueProfiles().add(locker, key);
+        return profile->specFailBucket(index);
+    }
         
     default:
         RELEASE_ASSERT_NOT_REACHED();

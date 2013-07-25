@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 
 #if ENABLE(VALUE_PROFILER)
 
+#include "CodeBlockLock.h"
 #include "Heap.h"
 #include "JSArray.h"
 #include "SpeculatedType.h"
@@ -111,9 +112,9 @@ struct ValueProfileBase {
         return false;
     }
     
-    CString briefDescription()
+    CString briefDescription(const CodeBlockLocker& locker)
     {
-        computeUpdatedPrediction();
+        computeUpdatedPrediction(locker);
         
         StringPrintStream out;
         
@@ -147,8 +148,9 @@ struct ValueProfileBase {
         }
     }
     
-    // Updates the prediction and returns the new one.
-    SpeculatedType computeUpdatedPrediction(OperationInProgress operation = NoOperation)
+    // Updates the prediction and returns the new one. Never call this from any thread
+    // that isn't executing the code.
+    SpeculatedType computeUpdatedPrediction(const CodeBlockLocker&, OperationInProgress operation = NoOperation)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
