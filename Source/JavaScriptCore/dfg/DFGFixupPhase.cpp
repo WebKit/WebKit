@@ -1315,6 +1315,7 @@ private:
                 m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
             break;
         case CellUse:
+        case KnownCellUse:
         case ObjectUse:
         case StringUse:
         case KnownStringUse:
