@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,16 +32,19 @@
 #include "JSObject.h"
 #include "JSString.h"
 #include "Structure.h"
+#include <wtf/CompilationThread.h>
 
 namespace JSC {
 
 inline JSCell::JSCell(CreatingEarlyCellTag)
 {
+    ASSERT(!isCompilationThread());
 }
 
 inline JSCell::JSCell(VM& vm, Structure* structure)
     : m_structure(vm, this, structure)
 {
+    ASSERT(!isCompilationThread());
 }
 
 inline void JSCell::finishCreation(VM& vm)
