@@ -1,3 +1,9 @@
+2013-07-24  Oliver Hunt  <oliver@apple.com>
+
+        Endeavour to fix CMakelist builds
+
+        * CMakeLists.txt:
+
 2013-07-24  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG IR dumps should be easier to read
